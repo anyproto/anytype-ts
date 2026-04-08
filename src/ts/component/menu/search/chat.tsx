@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, IconObject, ObjectName, EmptySearch, Icon } from 'Component';
 import * as I from 'Interface';
@@ -17,9 +16,9 @@ interface ChatSearchResult {
 	message: I.ChatMessage;
 };
 
-const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, onKeyDown, setActive, getId, getContainer, close } = props;
+	const { param, onKeyDown, setActive, getId, getContainer, close, position } = props;
 	const { data } = param;
 	const { chatId, route, scrollToMessage } = data;
 	const { showRelativeDates, dateFormat, space } = S.Common;
@@ -41,7 +40,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		rebind();
 		focus();
-		beforePosition();
+		position();
 		analytics.event('ScreenChatSearch', { route });
 
 		return () => {
@@ -50,8 +49,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		rebind();
-		beforePosition();
+		position();
 	});
 
 	const focus = () => {
@@ -61,13 +59,13 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -185,7 +183,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const content = U.Dom.select('.content', menu);
 		const { wh } = U.Dom.getWindowDimensions();
 		const containerEl = U.Dom.getScrollContainer(data.isPopup);
-		const headerEl = containerEl?.querySelector('#header .side.center') as HTMLElement;
+		const headerEl = U.Dom.select('#header .side.center', containerEl);
 		const width = Math.min(headerEl?.clientWidth || 0, J.Size.editor);
 
 		let height = 0;
@@ -335,8 +333,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 				
 				<div className="arrowWrapper">
-					<Icon name="arrow/small" className={cnu.join(' ')} onClick={() => onArrow(1)} />
-					<Icon name="arrow/small" className={cnd.join(' ')} onClick={() => onArrow(-1)} />
+					<Icon name="arrow/small" size={8} className={cnu.join(' ')} onClick={() => onArrow(1)} />
+					<Icon name="arrow/small" size={8} className={cnd.join(' ')} onClick={() => onArrow(-1)} />
 				</div>
 			</div>
 
@@ -376,6 +374,6 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuSearchChat;

@@ -1,10 +1,10 @@
 # menu/ - Context Menus and Dropdowns
 
-Comprehensive menu system with **~50 menu types** across 8 categories.
+Comprehensive menu system with **71 TSX files** across 15 subdirectories.
 
 ## Architecture
 
-`index.tsx` (1,108 lines) is the main menu controller handling:
+`index.tsx` (~1,178 lines) is the main menu controller handling:
 - Positioning (auto-flip to avoid going off-screen)
 - Animation (show/hide transitions)
 - Keyboard navigation (arrow keys, enter, escape)
@@ -20,31 +20,58 @@ Each menu component exposes a `MenuRef` interface via `useImperativeHandle`:
 ## Menu Categories
 
 ### Block Menus (`block/`)
-`blockContext`, `blockAdd`, `blockStyle`, `blockColor`, `blockBackground`, `blockCover`, `blockAlign`, `blockLink`, `blockMention`, `blockLayout`, `blockLatex`, `blockLinkSettings`, `blockAction`, `blockRelationEdit`
+`context`, `add`, `style`, `color`, `background`, `cover`, `align`, `link` (with `link/settings`), `mention`, `layout`, `latex`, `action`, `emoji`, `relation/edit`
 
 ### Dataview Menus (`dataview/`)
-~15 menus for database views: `dataviewRelationList/Edit`, `dataviewGroupList/Edit`, `dataviewObjectList`, `dataviewFilterList/Advanced/Values`, `dataviewSort` (drag-and-drop), `dataviewViewList/Settings/Layout`, `dataviewOptionList/Edit`, `dataviewSource`
+- **Relations**: `relation/list`, `relation/edit`
+- **Groups**: `group/list`, `group/edit`
+- **Objects**: `object/list`, `object/values`
+- **Filters**: `filter/list`, `filter/advanced`, `filter/values`
+- **Options**: `option/list`, `option/edit`
+- **Views**: `view/list`, `view/settings`, `view/layout`
+- **Templates**: `template/list`, `template/context`
+- **Files**: `file/list`, `file/values`
+- **Other**: `sort` (drag-and-drop), `source`, `new`, `text`, `create/bookmark`
 
 ### Search Menus (`search/`)
-`searchText` (full-page text), `searchObject` (object finder), `searchChat`
+`text` (full-page text search), `object` (object finder), `chat` (chat search)
 
 ### Graph Menus (`graph/`)
-`graphSettings` - graph visualization controls
+`settings` - graph visualization controls
 
-### Other Menus
-- `smile.tsx` - Emoji/icon picker with tabs and search
+### Chat Menus (`chat/`)
+`create` - chat creation, `text` - chat text formatting
+
+### Comment Menus (`comment/`)
+`toolbar` - comment toolbar actions
+
+### Sync Status Menus (`syncStatus/`)
+`info` - sync status information display
+
+### Smile/Emoji (`smile/`)
+`smile.tsx` - Emoji/icon picker with tabs and search (top-level)
+`color.tsx` - Color picker for emoji
+
+### Other Top-Level Menus
 - `select.tsx` - Generic virtualized selection menu
-- `object.tsx` - Object context menu with sections and permissions
+- `object.tsx` - Object context menu (top-level, with `object/context.tsx` for detailed context)
 - `help.tsx` - Help/documentation links
-- `calendar/` - Date picker
-- `preview/` - Object and LaTeX previews
-- `widget/` - Widget management
-- `relation/` - Relation suggestions
-- `type/` - Type suggestions
+- `calendar.tsx` - Date picker (with `calendar/day.tsx`)
+- `identity.tsx` - Identity/profile menu
+- `onboarding.tsx` - Onboarding menu
+- `oneToOne.tsx` - One-to-one chat menu
+- `participant.tsx` - Participant menu
+- `publish.tsx` - Publish menu
+- `changeOwner.tsx` - Change owner menu
+- `tableOfContents.tsx` - Table of contents menu
+- `widget.tsx` - Widget menu (with `widget/section.tsx`)
+- `preview/object.tsx` - Object preview, `preview/latex.tsx` - LaTeX preview
+- `relation/suggest.tsx` - Relation suggestions
+- `type/suggest.tsx` - Type suggestions
 
 ## Item Component
 
-`item/vertical.tsx` renders individual menu items with support for icons, arrows (sub-menus), checkboxes, switches, descriptions, and more.
+`item/vertical.tsx` renders individual menu items with support for icons, arrows (sub-menus), checkboxes, switches, descriptions, and more. `item/filter.tsx` renders filter items.
 
 ## Key Libraries
 

@@ -6,6 +6,10 @@ $transitionMenuTime: 0.2s;
 $transitionPopupTime: 0.2s;
 $transitionSidebarTime: 0.2s;
 
+$easeDecelerate: cubic-bezier(0.2, 0, 0, 1);
+$easeSpring: cubic-bezier(0.34, 1.56, 0.64, 1);
+$easeSmooth: cubic-bezier(0.4, 0, 0.2, 1);
+
 @mixin text-overflow { overflow: hidden; text-overflow: ellipsis; }
 @mixin text-overflow-nw { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 

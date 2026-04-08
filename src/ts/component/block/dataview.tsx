@@ -2,7 +2,6 @@ import React, { forwardRef, useState, useRef, useEffect, MouseEvent, useImperati
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { set } from 'mobx';
 import { LayoutPlug, Icon, Label } from 'Component';
 
@@ -27,7 +26,7 @@ interface Props extends I.BlockComponent {
 	isInline?: boolean;
 };
 
-const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const { rootId, block, isPopup, isInline, readonly, onKeyDown, onKeyUp, getWrapperWidth } = props;
 	const views = S.Record.getViews(rootId, block.id);
@@ -154,31 +153,31 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const unbind = () => {
 		if (resizeHandlerRef.current) {
-			window.removeEventListener('resize', resizeHandlerRef.current);
+			U.Dom.removeEvent(window, 'resize', resizeHandlerRef.current);
 			resizeHandlerRef.current = null;
 		};
 		if (sidebarResizeHandlerRef.current) {
-			window.removeEventListener('sidebarResize', sidebarResizeHandlerRef.current);
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandlerRef.current);
 			sidebarResizeHandlerRef.current = null;
 		};
 		if (updateDataviewDataHandlerRef.current) {
-			window.removeEventListener('updateDataviewData', updateDataviewDataHandlerRef.current);
+			U.Dom.removeEvent(window, 'updateDataviewData', updateDataviewDataHandlerRef.current);
 			updateDataviewDataHandlerRef.current = null;
 		};
 		if (setDataviewSourceHandlerRef.current) {
-			window.removeEventListener('setDataviewSource', setDataviewSourceHandlerRef.current);
+			U.Dom.removeEvent(window, 'setDataviewSource', setDataviewSourceHandlerRef.current);
 			setDataviewSourceHandlerRef.current = null;
 		};
 		if (selectionEndHandlerRef.current) {
-			window.removeEventListener('selectionEnd', selectionEndHandlerRef.current);
+			U.Dom.removeEvent(window, 'selectionEnd', selectionEndHandlerRef.current);
 			selectionEndHandlerRef.current = null;
 		};
 		if (selectionClearHandlerRef.current) {
-			window.removeEventListener('selectionClear', selectionClearHandlerRef.current);
+			U.Dom.removeEvent(window, 'selectionClear', selectionClearHandlerRef.current);
 			selectionClearHandlerRef.current = null;
 		};
 		if (selectionSetHandlerRef.current) {
-			window.removeEventListener('selectionSet', selectionSetHandlerRef.current);
+			U.Dom.removeEvent(window, 'selectionSet', selectionSetHandlerRef.current);
 			selectionSetHandlerRef.current = null;
 		};
 	};
@@ -194,13 +193,15 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		selectionClearHandlerRef.current = () => onSelectEnd();
 		selectionSetHandlerRef.current = () => onSelectEnd();
 
-		window.addEventListener('resize', resizeHandlerRef.current);
-		window.addEventListener('sidebarResize', sidebarResizeHandlerRef.current);
-		window.addEventListener('updateDataviewData', updateDataviewDataHandlerRef.current);
-		window.addEventListener('setDataviewSource', setDataviewSourceHandlerRef.current);
-		window.addEventListener('selectionEnd', selectionEndHandlerRef.current);
-		window.addEventListener('selectionClear', selectionClearHandlerRef.current);
-		window.addEventListener('selectionSet', selectionSetHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['resize', resizeHandlerRef.current],
+			['sidebarResize', sidebarResizeHandlerRef.current],
+			['updateDataviewData', updateDataviewDataHandlerRef.current],
+			['setDataviewSource', setDataviewSourceHandlerRef.current],
+			['selectionEnd', selectionEndHandlerRef.current],
+			['selectionClear', selectionClearHandlerRef.current],
+			['selectionSet', selectionSetHandlerRef.current],
+		]);
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -544,7 +545,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const refGraph = viewRef.current?.refGraph;
 				if (refGraph) {
 					refGraph.addNewNode(object.id, '', null, () => {
-						window.dispatchEvent(new CustomEvent('updateGraphRoot', { detail: { id: object.id } }));
+						U.Dom.eventDispatch(window, 'updateGraphRoot', { id: object.id });
 					});
 				};
 			};
@@ -1018,8 +1019,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			onViewDrop: onViewDrop,
 		});
 
-		if (con) con.style.display = '';
-		if (sel) sel.style.display = 'none';
+		if (con) U.Dom.css(con, { display: 'block' });
+		if (sel) U.Dom.css(sel, { display: 'none' });
 	};
 
 	const onRecordDrop = (targetId: string, ids: string[], position: I.BlockPosition) => {
@@ -1077,8 +1078,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
+		const view = getView(targetId);
 		const details = Dataview.getDetails(rootId, block.id, getObjectId(), targetId);
 		const operations: any[] = []; 
+		const removeConditions = [
+			I.FilterCondition.NotIn,
+			I.FilterCondition.NotEqual,
+			I.FilterCondition.NotAllIn,
+			I.FilterCondition.NotExactIn,
+		];
+		const filters = Dataview.flattenFilters(view.filters);
 
 		for (const k in details) {
 			const relation = S.Record.getRelationByKey(k);
@@ -1096,8 +1105,27 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 
-		C.ObjectListModifyDetailValues(ids, operations);
+		for (const filter of filters) {
+			if (!removeConditions.includes(filter.condition)) {
+				continue;
+			};
 
+			const relation = S.Record.getRelationByKey(filter.relationKey);
+			if (!relation || relation.isReadonlyValue) {
+				continue;
+			};
+
+			const value = Relation.formatValue(relation, filter.value, true);
+			if (!value) {
+				continue;
+			};
+
+			if (Relation.isArrayType(relation.format)) {
+				operations.push({ relationKey: filter.relationKey, remove: value });
+			};
+		};
+
+		C.ObjectListModifyDetailValues(ids, operations);
 		S.Common.getRef('selectionProvider')?.clear();
 		selectionCheck();
 	};
@@ -1152,8 +1180,14 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const closeFilters = () => {
 		const view = getView();
+		if (!view) {
+			return;
+		};
 
-		if (view.sorts.length || U.Common.getViewFilters(view).length) {
+		const filters = Dataview.getFilteredFilters(view.filters);
+		const sorts = Dataview.getFilteredSorts(view.sorts);
+
+		if (sorts.length || filters.length) {
 			return;
 		};
 
@@ -1410,8 +1444,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const ids = selection.get(I.SelectType.Record) || [];
 		const length = ids.length;
 
-		if (con) con.style.display = length ? 'none' : '';
-		if (sel) sel.style.display = length ? '' : 'none';
+		if (con) U.Dom.css(con, { display: length ? 'none' : '' });
+		if (sel) U.Dom.css(sel, { display: length ? '' : 'none' });
 	};
 
 	const onSelectEnd = () => {
@@ -1484,10 +1518,10 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		nameRef?.onClick(e);
 
 		if (recordMouseDownHandlerRef.current) {
-			window.removeEventListener('mousedown', recordMouseDownHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousedown', recordMouseDownHandlerRef.current);
 		};
 		if (recordKeyDownHandlerRef.current) {
-			window.removeEventListener('keydown', recordKeyDownHandlerRef.current);
+			U.Dom.removeEvent(window, 'keydown', recordKeyDownHandlerRef.current);
 		};
 
 		recordMouseDownHandlerRef.current = (e: globalThis.MouseEvent) => {
@@ -1502,19 +1536,21 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			keyboard.shortcut('escape, enter', e, () => setRecordEditingOff(id));
 		};
 
-		window.addEventListener('mousedown', recordMouseDownHandlerRef.current);
-		window.addEventListener('keydown', recordKeyDownHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['mousedown', recordMouseDownHandlerRef.current],
+			['keydown', recordKeyDownHandlerRef.current],
+		]);
 	};
 
 	const setRecordEditingOff = (id: string) => {
 		const ref = recordRefs.current.get(id);
 
 		if (recordMouseDownHandlerRef.current) {
-			window.removeEventListener('mousedown', recordMouseDownHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousedown', recordMouseDownHandlerRef.current);
 			recordMouseDownHandlerRef.current = null;
 		};
 		if (recordKeyDownHandlerRef.current) {
-			window.removeEventListener('keydown', recordKeyDownHandlerRef.current);
+			U.Dom.removeEvent(window, 'keydown', recordKeyDownHandlerRef.current);
 			recordKeyDownHandlerRef.current = null;
 		};
 
@@ -1565,7 +1601,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		frame.current = raf(() => {
 			if (getWrapperWidth) {
 				const node = nodeRef.current;
-				const obj = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+				const obj = U.Dom.get(`block-${block.id}`);
 
 				if (obj && node) {
 					U.Dom.toggleClass(obj, 'isVertical', U.Dom.contentWidth(node) <= getWrapperWidth() / 2);
@@ -1593,9 +1629,11 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
 	const className = [ U.String.toCamelCase(`view-${I.ViewType[view.type]}`) ];
 	const filtersToggleId = U.String.toCamelCase(`view-${view.id}-filters`);
-	const showFilters = Storage.checkToggle(rootId, filtersToggleId)
-		&& (view.sorts.length > 0 || U.Common.getViewFilters(view).length > 0);
+	const filters = Dataview.getFilteredFilters(view.filters);
+	const sorts = Dataview.getFilteredSorts(view.sorts);
 
+	const showFilters = Storage.checkToggle(rootId, filtersToggleId)
+		&& ((sorts.length > 0) || (filters.length > 0));
 	let ViewComponent: any = null;
 	let body = null;
 
@@ -1741,7 +1779,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			const dragOverlay = blockNode ? U.Dom.select('.dragOverlay', blockNode) : null;
 			if (dragOverlay) {
-				dragOverlay.style.height = height + 'px';
+				U.Dom.css(dragOverlay, { height: height + 'px' });
 			};
 		};
 
@@ -1803,16 +1841,20 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const wrapper = getEditorWrapper();
 
 		if (wrapper) {
-			wrapper.addEventListener('dragover', onFileDragOver);
-			wrapper.addEventListener('dragleave', onFileDragLeave);
-			wrapper.addEventListener('drop', onFileDrop);
+			U.Dom.addEvents(wrapper, [
+				['dragover', onFileDragOver],
+				['dragleave', onFileDragLeave],
+				['drop', onFileDrop],
+			]);
 		};
 
 		return () => {
 			if (wrapper) {
-				wrapper.removeEventListener('dragover', onFileDragOver);
-				wrapper.removeEventListener('dragleave', onFileDragLeave);
-				wrapper.removeEventListener('drop', onFileDrop);
+				U.Dom.removeEvents(wrapper, [
+					['dragover', onFileDragOver],
+					['dragleave', onFileDragLeave],
+					['drop', onFileDrop],
+				]);
 			};
 			window.clearTimeout(timeoutDrag.current);
 		};
@@ -1862,6 +1904,6 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockDataview;

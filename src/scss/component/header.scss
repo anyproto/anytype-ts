@@ -81,6 +81,7 @@
 	&.withSidebarTotalLeft {
 		.icon.vaultToggle { display: none; }
 	}
+
 	&.withSidebarSubLeft {
 		.icon.headerWidget { display: none; }
 	}
@@ -97,7 +98,7 @@
 }
 
 .header.sidebarAnimation {
-	.side.left { transition: padding-left $transitionSidebarTime linear; }
+	.side.left { transition: padding-left $transitionSidebarTime $easeDecelerate; }
 }
 
 .header.authIndex,

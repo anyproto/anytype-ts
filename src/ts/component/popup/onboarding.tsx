@@ -41,7 +41,7 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	};
 
 	const initTypes = () => {
-		const wrapper = nodeRef.current?.querySelector('.step0') as HTMLElement;
+		const wrapper = U.Dom.select('.step0', nodeRef.current);
 		if (!wrapper) {
 			return;
 		};
@@ -51,7 +51,7 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 		interval.current = window.setInterval(() => {
 			const idx = Math.floor(Math.random() * typeIds.length);
 
-			U.Dom.removeClass(wrapper.querySelector(`#type-${typeIds[idx]}`), 'hidden');
+			U.Dom.removeClass(U.Dom.select(`#type-${typeIds[idx]}`, wrapper), 'hidden');
 			typeIds.splice(idx, 1);
 
 			if (!typeIds.length) {
@@ -64,7 +64,7 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	};
 
 	const initGallery = () => {
-		const wrapper = nodeRef.current?.querySelector('.step1') as HTMLElement;
+		const wrapper = U.Dom.select('.step1', nodeRef.current);
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => U.Dom.removeClass(wrapper, 'init'), 600);

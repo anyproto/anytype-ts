@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Icon, Button, IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
 
-const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
@@ -57,7 +56,7 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 			items.push({ isDiv: true });
 		};
 
-		items.push({ id: 'remove', name: removeLabel, color: 'red' });
+		items.push({ id: 'remove', name: removeLabel, color: 'destructive' });
 
 		return items;
 	};
@@ -213,6 +212,6 @@ const Members = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default Members;

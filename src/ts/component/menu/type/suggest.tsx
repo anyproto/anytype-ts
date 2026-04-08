@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
 import * as I from 'Interface';
@@ -8,7 +7,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT = 15;
 
-const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuTypeSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const [ dummy, setDummy ] = useState(0);
 	const { param, getId, position, close, setHover, setActive, onKeyDown } = props;
@@ -97,12 +96,12 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDownHandler);
+		U.Dom.addEvent(window, 'keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDownHandler);
+		U.Dom.removeEvent(window, 'keydown', onKeyDownHandler);
 	};
 
 	const loadMoreRows = () => {
@@ -153,7 +152,7 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			itemList.current = itemList.current.concat(message.records || []);
 			setDummy(dummy + 1);
-
+			position();
 			callBack?.(message);
 		});
 	};
@@ -233,9 +232,10 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const { data } = param;
 		const { noFilter } = data;
+		const items = getItems();
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = 16 + (noFilter ? 0 : 40);
 		const buttonHeight = buttons.length ? buttons.reduce((res: number, current: any) => res + getRowHeight(current), 16) : 0;
@@ -245,7 +245,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		height = Math.min(height, offset + buttonHeight + HEIGHT_ITEM * LIMIT);
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const Item = (item: any) => {
@@ -296,7 +295,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		resize();
 
 		return () => {
 			window.clearTimeout(timeoutFilter.current);
@@ -310,11 +308,11 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		load(true);
 	}, [ filter ]);
 
-	useEffect(() => resize());
 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -389,6 +387,6 @@ const MenuTypeSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuTypeSuggest;

@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useState, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, DragHorizontal, Cover, Loader, Label } from 'Component';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
 	const { rootId, block, readonly, isPopup } = props;
 	const [ isEditing, setIsEditing ] = useState(false);
@@ -39,17 +38,17 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 
 		resizeHandlerRef.current = () => resize();
-		window.addEventListener('resize', resizeHandlerRef.current);
+		U.Dom.addEvent(window, 'resize', resizeHandlerRef.current);
 
 		return () => {
 			if (resizeHandlerRef.current) {
-				window.removeEventListener('resize', resizeHandlerRef.current);
+				U.Dom.removeEvent(window, 'resize', resizeHandlerRef.current);
 			};
 			if (mouseMoveHandlerRef.current) {
-				window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+				U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 			};
 			if (mouseUpHandlerRef.current) {
-				window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+				U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			};
 		};
 	}, []);
@@ -124,7 +123,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 	const setLoading = (v: boolean) => {
 		if (loaderRef.current) {
-			loaderRef.current.style.display = v ? '' : 'none';
+			U.Dom.css(loaderRef.current, { display: v ? '' : 'none' });
 		};
 	};
 	
@@ -184,7 +183,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 			rectRef.current = U.Dom.getElementRect(node);
 			onScaleMove(null, object.coverScale);
-			cover.style.opacity = '1';
+			U.Dom.css(cover, { opacity: '1' });
 			dragRef.current?.setValue(object.coverScale);
 
 			if (!loadedRef.current) {
@@ -196,7 +195,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		if (loadedRef.current) {
 			cb();
 		} else {
-			cover.style.opacity = '0';
+			U.Dom.css(cover, { opacity: '0' });
 			setLoading(true);
 
 			cover.onload = cb;
@@ -225,17 +224,19 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		U.Dom.addClass(node, 'isDragging');
 
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 		};
 
 		mouseMoveHandlerRef.current = (e: globalThis.MouseEvent) => onDragMove(e.pageX, e.pageY);
 		mouseUpHandlerRef.current = (e: globalThis.MouseEvent) => onDragEnd(e.pageX, e.pageY);
 
-		window.addEventListener('mousemove', mouseMoveHandlerRef.current);
-		window.addEventListener('mouseup', mouseUpHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandlerRef.current],
+			['mouseup', mouseUpHandlerRef.current],
+		]);
 	};
 
 	const onDragMove = (pageX: number, pageY: number) => {
@@ -255,11 +256,11 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		keyboard.disableSelection(false);
 
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 			mouseMoveHandlerRef.current = null;
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			mouseUpHandlerRef.current = null;
 		};
 
@@ -283,20 +284,27 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const { coverX, coverY } = object;
 		const value = node ? U.Dom.select('#dragValue', node) : null;
 
-		v = (v + 1) * 100;
-		if (value) {
-			value.textContent = Math.ceil(v) + '%';
-		};
-		if (cover) {
-			cover.style.height = 'auto';
-			cover.style.width = v + '%';
-		};
-
 		if (!cover) {
 			return;
 		};
 
-		const rect = U.Dom.getElementRect(cover);
+		v = (v + 1) * 100;
+
+		U.Dom.css(cover, { height: 'auto', width: v + '%' });
+
+		let rect = U.Dom.getElementRect(cover);
+
+		// Ensure image covers container height
+		if (rectRef.current && (rect.height < rectRef.current.height)) {
+			const ratio = rectRef.current.height / rect.height;
+			v = v * ratio;
+			U.Dom.css(cover, { width: v + '%' });
+			rect = U.Dom.getElementRect(cover);
+		};
+
+		if (value) {
+			value.textContent = Math.ceil(v) + '%';
+		};
 
 		rectRef.current.cw = rect.width;
 		rectRef.current.ch = rect.height;
@@ -360,19 +368,17 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const my = rect.ch - rect.height;
 
 		x = Math.max(-mx, Math.min(0, x));
-		y = Math.max(-my, Math.min(0, y));
 
-		const px = Math.min(0, x / rect.cw * 100);
-		const py = Math.min(0, y / rect.ch * 100);
-		const css: any = { transform: `translate3d(${px}%,${py}%,0px)` };
-
-		if (rect.ch < rect.height) {
-			css.transform = 'translate3d(0px,0px,0px)';
-			css.height = rect.height;
-			css.width = 'auto';
+		if (rect.ch <= rect.height) {
+			y = 0;
+		} else {
+			y = Math.max(-my, Math.min(0, y));
 		};
 
-		U.Dom.css(coverRef.current, css);
+		const px = rect.cw > 0 ? Math.min(0, x / rect.cw * 100) : 0;
+		const py = rect.ch > 0 ? Math.min(0, y / rect.ch * 100) : 0;
+
+		U.Dom.css(coverRef.current, { transform: `translate3d(${px}%,${py}%,0px)` });
 
 		return { x, y };
 	};
@@ -464,6 +470,6 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		</div>
 	);
 	
-}));
+});
 
 export default BlockCover;

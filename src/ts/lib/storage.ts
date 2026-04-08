@@ -23,7 +23,7 @@ const SPACE_KEYS = new Set([
 	'recentEditMode',
 	'widgetSections',
 	'channelBanner',
-	'binViewDetailed',
+	'binViewMode',
 ]);
 
 const LOCAL_KEYS = new Set([

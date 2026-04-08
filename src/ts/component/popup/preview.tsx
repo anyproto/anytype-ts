@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Loader, Icon, ObjectName } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Mousewheel, Thumbs, Navigation, Zoom } from 'swiper/modules';
@@ -12,7 +11,7 @@ const HEIGHT_VIDEO = 585;
 const HEIGHT_HEADER = 52;
 const HEIGHT_FOOTER = 96;
 
-const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupPreview = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close, getId } = props;
 	const { data } = param;
@@ -28,7 +27,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const unbind = () => {
 		if (resizeHandler.current) {
-			window.removeEventListener('resize', resizeHandler.current);
+			U.Dom.removeEvent(window, 'resize', resizeHandler.current);
 			resizeHandler.current = null;
 		};
 	};
@@ -36,7 +35,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		resizeHandler.current = () => reload();
-		window.addEventListener('resize', resizeHandler.current);
+		U.Dom.addEvent(window, 'resize', resizeHandler.current);
 	};
 
 	const setCurrentItem = (idx?: number) => {
@@ -127,8 +126,7 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		const h = height * scale;
 
 		if (wrap) {
-			wrap.style.width = `${w}px`;
-			wrap.style.height = `${h}px`;
+			U.Dom.css(wrap, { width: `${w}px`, height: `${h}px` });
 		};
 	};
 
@@ -192,13 +190,11 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 					galleryMapRef.current.set(idx, obj);
 					resizeMedia(idx, w, h);
-					videoEl.style.width = '100%';
-					videoEl.style.height = '100%';
+					U.Dom.css(videoEl, { width: '100%', height: '100%' });
 				};
 				videoEl.onerror = () => onError(idx);
 
-				videoEl.style.width = `${w}px`;
-				videoEl.style.height = `${h}px`;
+				U.Dom.css(videoEl, { width: `${w}px`, height: `${h}px` });
 				break;
 			};
 		};
@@ -345,6 +341,6 @@ const PopupPreview = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupPreview;

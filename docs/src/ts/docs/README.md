@@ -1,7 +1,11 @@
 # docs/ - In-App Documentation
 
-Contains "What's New" content displayed in the help popup.
+Contains documentation content displayed within the app's help system.
 
 ## Files
 
-- `whatsNew.ts` - Array of release note entries with version, date, and content sections. Each entry contains title, text, and optional gallery items.
+| File | Purpose |
+|------|---------|
+| `index.ts` | Barrel export for `WhatsNew` and `Onboarding` |
+| `help/whatsNew.ts` | Array of release note entries with version, date, and content sections. Each entry contains title, text, and optional gallery items |
+| `help/onboarding.ts` | Onboarding flow content and step definitions |

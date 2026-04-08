@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
 
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
 
@@ -22,7 +21,7 @@ const HEIGHT_ITEM_BIG = 80;
 const HEIGHT_ITEM_SMALL = 28;
 const LIMIT = 40;
 
-const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, getContainer, getSize, position, close, setActive, onKeyDown } = props;
 	const { data, className, classNameWrap } = param;
@@ -50,13 +49,13 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -167,7 +166,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const offset = 16;
 		const ih = isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
 
@@ -184,7 +183,6 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
-		position();
 	};
 
 	const rowRenderer = (param: any) => {
@@ -241,7 +239,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		resize();
+		return () => unbind();
 	}, []);
 
 	useEffect(() => {
@@ -256,7 +254,6 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		resize();
 		rebind();
 		position();
 		setActive();
@@ -272,6 +269,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -316,6 +314,6 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuBlockLatex;

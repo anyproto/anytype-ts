@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { observable } from 'mobx';
-import { observer } from 'mobx-react';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
 import * as I from 'Interface';
 
-const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockRelationEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, position, getId, getSize, close } = props;
 	const { data, classNameWrap } = param;
@@ -54,12 +53,12 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => keyHandlerRef.current(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -477,6 +476,6 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		</form>
 	);
 
-}));
+});
 
 export default MenuBlockRelationEdit;

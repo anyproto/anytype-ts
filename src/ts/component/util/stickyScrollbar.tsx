@@ -25,7 +25,7 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => 
 			paddingLeft: config.paddingLeft,
 			display: config.display,
 		});
-		trackRef.current.style.width = config.trackWidth;
+		U.Dom.css(trackRef.current, { width: config.trackWidth });
 	};
 
 	const bind = (scrollElement, status) => {
@@ -37,7 +37,7 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => 
 		isSyncing.current = status;
 
 		if (scrollHandler.current) {
-			nodeRef.current.removeEventListener('scroll', scrollHandler.current);
+			U.Dom.removeEvent(nodeRef.current, 'scroll', scrollHandler.current);
 		};
 
 		scrollHandler.current = () => {
@@ -50,12 +50,12 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => 
 			};
 		};
 
-		nodeRef.current.addEventListener('scroll', scrollHandler.current);
+		U.Dom.addEvent(nodeRef.current, 'scroll', scrollHandler.current);
 	};
 
 	const unbind = () => {
 		if (nodeRef.current && scrollHandler.current) {
-			nodeRef.current.removeEventListener('scroll', scrollHandler.current);
+			U.Dom.removeEvent(nodeRef.current, 'scroll', scrollHandler.current);
 		};
 		scrollHandler.current = null;
 		scrollElementRef.current = null;

@@ -1,11 +1,10 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { InputWithFile, Error, MediaAudio, Icon } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockAudio = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const nodeRef = useRef<any>(null);
 	const playerRef = useRef<any>(null);
@@ -13,11 +12,11 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const { rootId, block, readonly, isPopup, onKeyDown, onKeyUp } = props;
 	const { id, content } = block;
 	const { state, targetObjectId } = content;
-	const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
+	const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'isArchived', 'fileExt' ], true);
 	const { name } = object;
 
 	const getPlaylist = () => {
-		const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'fileExt' ], true);
+		const object = S.Detail.get(rootId, targetObjectId, [ 'name', 'isDeleted', 'isArchived', 'fileExt' ], true);
 
 		return [ 
 			{ name: U.File.name(object), src: S.Common.fileUrl(object.id) },
@@ -95,12 +94,20 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	useImperativeHandle(ref, () => ({}));
 	
 	let element = null;
+	const typeName = translate('blockNameAudio');
 
 	if (object.isDeleted) {
 		element = (
-			<div className="deleted">
+			<div className="mediaState isRemoved">
 				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
+			</div>
+		);
+	} else if (object.isArchived) {
+		element = (
+			<div className="mediaState isInBin">
+				<Icon name="common/ghost" />
+				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
 			</div>
 		);
 	} else {
@@ -111,20 +118,20 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="audio" 
-							textFile={translate('blockAudioUpload')} 
-							accept={J.Constant.fileExtension.audio} 
-							onChangeUrl={onChangeUrl} 
-							onChangeFile={onChangeFile} 
-							readonly={readonly} 
+						<InputWithFile
+							block={block}
+							iconParam={{ name: 'menu/block/media/audio' }}
+							textFile={translate('blockAudioUpload')}
+							accept={J.Constant.fileExtension.audio}
+							onChangeUrl={onChangeUrl}
+							onChangeFile={onChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.FileState.Done: {
 				element = (
 					<MediaAudio
@@ -153,6 +160,6 @@ const BlockAudio = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		</div>
 	);
 
-}));
+});
 
 export default BlockAudio;

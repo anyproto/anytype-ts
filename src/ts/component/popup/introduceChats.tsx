@@ -24,7 +24,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	};
 
 	const initGallery = () => {
-		const wrapper = nodeRef.current?.querySelector('.step1');
+		const wrapper = U.Dom.select('.step1', nodeRef.current);
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => U.Dom.removeClass(wrapper, 'init'), 600);
@@ -40,7 +40,7 @@ const PopupIntroduceChats = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 	useEffect(() => {
 		onStepChange(0, () => {
-			U.Dom.removeClass(nodeRef.current?.querySelector('.step0'), 'init');
+			U.Dom.removeClass(U.Dom.select('.step0', nodeRef.current), 'init');
 		});
 
 		return () => {

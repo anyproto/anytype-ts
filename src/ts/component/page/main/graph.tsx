@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Header, Footer, GraphProvider, GraphTimeline, Loader } from 'Component';
 import * as I from 'Interface';
 
-const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainGraph = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ data, setData ] = useState({ edges: [], nodes: [] });
@@ -19,15 +18,15 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 		if (graphRootHandler.current) {
-			window.removeEventListener('updateGraphRoot', graphRootHandler.current);
+			U.Dom.removeEvent(window, 'updateGraphRoot', graphRootHandler.current);
 			graphRootHandler.current = null;
 		};
 		if (sidebarResizeHandler.current) {
-			window.removeEventListener('sidebarResize', sidebarResizeHandler.current);
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandler.current);
 			sidebarResizeHandler.current = null;
 		};
 	};
@@ -42,9 +41,11 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		};
 		sidebarResizeHandler.current = () => resize();
 
-		window.addEventListener('keydown', keydownHandler.current);
-		window.addEventListener('updateGraphRoot', graphRootHandler.current);
-		window.addEventListener('sidebarResize', sidebarResizeHandler.current);
+		U.Dom.addEvents(window, [
+			['keydown', keydownHandler.current],
+			['updateGraphRoot', graphRootHandler.current],
+			['sidebarResize', sidebarResizeHandler.current],
+		]);
 	};
 
 	const onKeyDown = (e: any) => {
@@ -57,9 +58,8 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		const settings = S.Common.getGraph(key);
 
 		C.ObjectGraph(S.Common.space, U.Data.getGraphFilters(), 0, [], J.Relation.graph, '', [], settings.typeEdges, (message: any) => {
-			setLoading(false);
-
 			if (message.error.code) {
+				setLoading(false);
 				return;
 			};
 
@@ -74,11 +74,10 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		};
 
 		if (v) {
-			loader.style.display = '';
-			loader.style.opacity = '1';
+			U.Dom.css(loader, { display: 'block', opacity: '1' });
 		} else {
-			loader.style.opacity = '0';
-			window.setTimeout(() => { loader.style.display = 'none'; }, 200);
+			U.Dom.css(loader, { opacity: '0' });
+			window.setTimeout(() => { U.Dom.css(loader, { display: 'none' }); }, 200);
 		};
 	};
 
@@ -86,19 +85,18 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		const container = U.Dom.getScrollContainer(isPopup);
 		const obj = U.Dom.getPageContainer(isPopup);
 		const node = nodeRef.current;
-		const wrapper = obj?.querySelector('.wrapper') as HTMLElement;
-		const header = node?.querySelector('#header') as HTMLElement;
+		const wrapper = U.Dom.select('.wrapper', obj);
+		const header = U.Dom.select('#header', node);
 		const height = (container?.clientHeight || 0) - (header?.clientHeight || 0);
 
 		if (wrapper) {
-			wrapper.style.height = `${height}px`;
+			U.Dom.css(wrapper, { height: `${height}px` });
 		};
 
 		if (isPopup) {
 			const element = U.Dom.select('#popupPage .content');
 			if (element) {
-				element.style.minHeight = 'unset';
-				element.style.height = '100%';
+				U.Dom.css(element, { minHeight: 'unset', height: '100%' });
 			};
 		};
 
@@ -134,7 +132,11 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 	useEffect(() => {
 		resize();
-		graphRef.current?.init();
+
+		if (data.nodes.length || data.edges.length) {
+			graphRef.current?.init();
+			setLoading(false);
+		};
 	}, [ data ]);
 
 	useEffect(() => resize());
@@ -179,6 +181,6 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default PageMainGraph;

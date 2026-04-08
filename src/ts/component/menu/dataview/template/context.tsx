@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewTemplateContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, onKeyDown, setActive } = props;
 	const { data } = param;
@@ -13,12 +12,12 @@ const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((prop
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getItems = () => {
@@ -30,7 +29,7 @@ const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((prop
 			isDefault && onSetDefault ? ({ id: 'unsetDefault', name: unsetDefaultName }) : null,
 			{ id: 'edit', name: translate('menuDataviewTemplateEdit') },
 			{ id: 'duplicate', name: translate('commonDuplicate') },
-			{ id: 'remove', name: translate('commonDelete'), color: 'red' },
+			{ id: 'remove', name: translate('commonDelete'), color: 'destructive' },
 		].filter(it => it);
 	};
 
@@ -59,7 +58,7 @@ const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((prop
 
 			case 'edit': {
 				U.Object.openPopup(template, {
-					onClose: () => window.dispatchEvent(new CustomEvent(`updatePreviewObject.${template.id}`))
+					onClose: () => U.Dom.eventDispatch(window, `updatePreviewObject.${template.id}`)
 				});
 
 				analytics.event('EditTemplate', { route });
@@ -133,6 +132,6 @@ const MenuDataviewTemplateContext = observer(forwardRef<I.MenuRef, I.Menu>((prop
 		</div>
 	);
 
-}));
+});
 
 export default MenuDataviewTemplateContext;

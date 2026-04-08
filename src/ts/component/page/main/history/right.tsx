@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 import sha1 from 'sha1';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Button } from 'Component';
 import * as I from 'Interface';
 
@@ -19,7 +18,7 @@ interface Ref {
 const LIMIT_RECORDS = 1000;
 const LIMIT_AUTHORS = 5;
 
-const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
+const HistoryRight = forwardRef<Ref, Props>((props, ref) => {
 
 	const [ versions, setVersions ] = useState<I.HistoryVersion[]>([]);
 	const [ version, setVersion ] = useState<I.HistoryVersion>(null);
@@ -119,7 +118,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 		U.Dom.addClass(section, 'isExpanded');
 		const items = U.Dom.select('.items', section);
 		if (items) {
-			items.style.display = '';
+			U.Dom.css(items, { display: 'block' });
 		};
 
 		const parent = list.find(it => it.id == version.parentId);
@@ -139,7 +138,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 		};
 
 		if (children) {
-			children.style.display = '';
+			U.Dom.css(children, { display: 'block' });
 		};
 
 		if (groupItem) {
@@ -181,13 +180,13 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 			U.Dom.css(children, { overflow: 'hidden', height: `${height}px` });
 
 			window.setTimeout(() => U.Dom.css(children, { height: '0px' }), 15);
-			window.setTimeout(() => { children.style.display = 'none'; }, 215);
+			window.setTimeout(() => { U.Dom.css(children, { display: 'none' }); }, 215);
 
 			togglesRef.current = togglesRef.current.filter(it => it != id);
 		} else {
 			U.Dom.addClass(item, 'isExpanded');
 
-			children.style.display = '';
+			U.Dom.css(children, { display: 'block' });
 			U.Dom.css(children, { overflow: 'visible', height: 'auto' });
 			height = U.Dom.contentHeight(children);
 
@@ -246,7 +245,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 				props.setVersion(message.version);
 			};
 
-			window.dispatchEvent(new Event('resize'));
+			U.Dom.eventDispatch(window, 'resize');
 			analytics.event('ScreenHistoryVersion');
 		});
 	};
@@ -542,6 +541,6 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default HistoryRight;

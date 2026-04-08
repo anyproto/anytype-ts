@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, MouseEvent } from 'react';
 
-import { observer } from 'mobx-react';
 import { Select, Icon, Input, MenuItemVertical, Label, OptionSelect, CalendarSelect, TabSwitch } from 'Component';
 import * as I from 'Interface';
 
 const SUB_ID_PREFIX = 'filterOptionList';
 
-const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewFilterValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setHover, close, onKeyDown, setActive, getId, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -110,13 +109,13 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -667,6 +666,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		</div>
 	);
 	
-}));
+});
 
 export default MenuDataviewFilterValues;

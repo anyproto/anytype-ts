@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState, useCallback, useMemo } from 'react';
-import { observer } from 'mobx-react';
 import NumberFlow, { NumberFlowGroup } from '@number-flow/react';
 import { DragHorizontal, Icon } from 'Component';
 
@@ -14,7 +13,7 @@ const DATE_THROTTLE = 300;
 const PAD2: Intl.NumberFormatOptions = { minimumIntegerDigits: 2 };
 const YEAR_FORMAT: Intl.NumberFormatOptions = { useGrouping: false };
 
-const GraphTimeline = observer(forwardRef<{}, Props>(({
+const GraphTimeline = forwardRef<{}, Props>(({
 	id = '',
 	graphRef,
 	storageKey = '',
@@ -99,14 +98,18 @@ const GraphTimeline = observer(forwardRef<{}, Props>(({
 			setDummy(v => v + 1);
 		};
 
-		window.addEventListener(`timelineUpdate.${id}`, onTimelineUpdate);
-		window.addEventListener(`timelineComplete.${id}`, onTimelineComplete);
-		window.addEventListener(`updateGraphSettings.${id}`, onSettingsUpdate);
+		U.Dom.addEvents(window, [
+			[`timelineUpdate.${id}`, onTimelineUpdate],
+			[`timelineComplete.${id}`, onTimelineComplete],
+			['updateGraphSettings', onSettingsUpdate],
+		]);
 
 		return () => {
-			window.removeEventListener(`timelineUpdate.${id}`, onTimelineUpdate);
-			window.removeEventListener(`timelineComplete.${id}`, onTimelineComplete);
-			window.removeEventListener(`updateGraphSettings.${id}`, onSettingsUpdate);
+			U.Dom.removeEvents(window, [
+				[`timelineUpdate.${id}`, onTimelineUpdate],
+				[`timelineComplete.${id}`, onTimelineComplete],
+				['updateGraphSettings', onSettingsUpdate],
+			]);
 			graphRef.current?.timelineReset();
 		};
 	}, []);
@@ -156,6 +159,6 @@ const GraphTimeline = observer(forwardRef<{}, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default GraphTimeline;

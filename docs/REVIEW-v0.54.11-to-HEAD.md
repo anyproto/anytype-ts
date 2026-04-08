@@ -1,156 +1,193 @@
 # Code Review: v0.54.11 to HEAD
 
-**Date:** 2026-04-01
-**Scope:** 1046 commits, 3279 files changed, +59,369 / -46,065 lines
-**Status:** Typecheck and lint pass after fixes applied below
+**Date:** 2026-04-05
+**Scope:** 1204 commits, 3353 files changed, +65,320 / -50,006 lines
+**Status:** Typecheck passes. Lint clean (1 warning: Biome suppression in generated auto-imports.d.ts).
 
 ---
 
-## Fixed Issues (applied in this review)
+## Executive Summary
 
-### 1. Electron preload missing indentation
-**File:** `electron/js/preload.cjs:39`
-`defaultPath` property was missing its tab, breaking object literal formatting in `contextBridge.exposeInMainWorld`.
+This is a major release cycle with transformational infrastructure and architecture changes alongside significant new features. The codebase has undergone:
 
-### 2. ProgressState.InProgress does not exist
-**File:** `src/ts/component/util/progressText.stories.tsx:19`
-Used `I.ProgressState.InProgress` but enum only has `None`, `Running`, `Done`, `Canceled`, `Error`. Fixed to `Running`.
+1. **Build system migration** — rspack + npm → Vite + bun
+2. **Electron TypeScript rewrite** — electron.js → electron/ts/ with esbuild bundling
+3. **jQuery complete removal** — replaced with native DOM and U.Dom helpers
+4. **MobX modernization** — mobx-react → mobx-react-lite with auto-observer Vite plugin
+5. **Icon system overhaul** — ~965 icons migrated from CSS `background-image` SVGs to TSX component registry (`src/ts/component/util/icons/`), organized into 37 packs with `Icon` component rendering via inline SVG. Eliminates dark theme icon overrides, enables color props, and removes hundreds of static SVG files.
+6. **Emoji system rewrite** — Removed `emoji-mart` dependency, replaced with custom PNG-based emoji rendering. Added 60 missing Emoji 15.0/15.1 entries, inline `:colon` search popup, and shortcode generation at init time.
+7. **gRPC event batching** — requestAnimationFrame + MobX runInAction for reduced re-renders
+8. **Inactive tab optimization** — MobX reactionScheduler pauses reactions in background tabs
+9. **New comment system** — threaded discussions with Lexical editor (~2,800 lines)
+10. **Protobuf migration** — generated classes → plain objects with ts-proto
 
-### 3. syncStatusUpdate wrong call signature
-**File:** `src/ts/component/util/sync.stories.tsx:25`
-Called `S.Auth.syncStatusUpdate(spaceId, {...})` with 2 args but method only accepts 1 (the status object with `id` inside). Removed extra `spaceId` arg.
-
-### 4. Unused import: useImperativeHandle
-**File:** `src/ts/component/page/main/archive.tsx:1`
-`useImperativeHandle` imported but never used.
-
-### 5. Unused import: Checkbox
-**File:** `src/ts/component/sidebar/preview.tsx:5`
-`Checkbox` imported from Component but never used.
-
-### 6. Missing semicolon
-**File:** `src/ts/component/sidebar/preview.tsx:104`
-Missing semicolon after JSX expression.
-
-### 7. Missing React import in 10 story files
-Files using JSX in decorators without importing React (required by project's tsconfig `jsx: "react"` setting):
-- `src/ts/component/cell/item/object.stories.tsx`
-- `src/ts/component/footer/auth/disclaimer.stories.tsx`
-- `src/ts/component/footer/auth/email.stories.tsx`
-- `src/ts/component/footer/auth/index.stories.tsx`
-- `src/ts/component/form/phrase.stories.tsx`
-- `src/ts/component/menu/item/vertical.stories.tsx`
-- `src/ts/component/preview/default.stories.tsx`
-- `src/ts/component/util/cover.stories.tsx`
-- `src/ts/component/util/deleted.stories.tsx`
-- `src/ts/component/util/object/type.stories.tsx`
+The overall quality is good. The architecture changes are well-executed with proper fallbacks. Two rounds of review fixes have been applied (see Fixed Issues below).
 
 ---
 
-## Items to Review (not auto-fixed)
+## Fixed Issues (applied during this review)
 
-### HIGH PRIORITY
+### Round 1 — `32dfba0c71`
 
-#### H1. jQuery removal is incomplete (47+ files still import jQuery)
-The jQuery removal effort has been done incrementally. ~47 component files still `import $ from 'jquery'`. Files that were migrated use `U.Dom.*` helpers and native DOM. This mixed state is functional but should be completed to fully remove the dependency.
+| # | Fix | File(s) |
+|---|-----|---------|
+| H1 | Space create: name inner callback param so it checks the correct error | `popup/space/create.tsx` |
+| H2 | Add `sidebarResize` to editor unbind events array | `editor/page.tsx` |
+| H3 | Delete orphaned dark theme widget SCSS | `scss/theme/dark/widget.scss` |
+| H4 | Replace `--color-bg-secondary` with `--color-shape-highlight-light` in errorBoundary | `scss/component/errorBoundary.scss` |
+| H7 | Remove dead `e.originalEvent` references (10 locations, 8 files) | `embed.tsx`, `page.tsx`, `chat/form.tsx`, `text.tsx`, `phrase.tsx`, `cover.tsx`, `upload.tsx`, `drag/provider.tsx` |
+| H9 | Move `setIsLoading(false)` outside `!isEdit` branch | `comment/form.tsx` |
+| M2 | Remove jQuery `.get(0)` fallback from `renderLinks` and `toggle` | `lib/util/dom.ts` |
+| M3 | Add cleanup to unmount emoji React roots | `comment/post.tsx`, `comment/reply.tsx` |
+| M9 | Remove dead `background: var(--color-bg-secondary)` | `scss/page/main/graph.scss` |
+| M11 | Move `buildTree` before `fetchAllMessages`, add to dep array | `comment/section.tsx` |
+| M12 | Add missing `build:deps` to `dist:win` script | `package.json` |
+| L1 | Add `[ toast ]` dependency array to toast useEffect | `util/toast.tsx` |
+| L3 | Cache regex in `addBodyClass` | `lib/util/dom.ts` |
+| L5 | Replace hardcoded `rgba(242,242,242,0)` with `transparent` | `scss/popup/spaceCreate.scss` |
+| L6 | Rename `$teal-accent` → `$spark-accent` | `scss/popup/aiOnboarding.scss` |
+| L7 | Remove empty `.regularContent {}` block | `scss/block/dataview/view/list.scss` |
+| L8 | Remove unused `--color-bg-grey` | `scss/theme/dark/common.scss` |
+| — | Remove unused imports (`Onboarding`, `keyboard`, `translate`, `raf`) | `chat.tsx`, `menu/search/object.tsx` |
+| — | Make `BlockStore.restrictionMap` observable for reactive readonly state | `store/block.ts` |
+| — | Add optimistic `isArchived` detail update in `Action.archive` | `lib/action.ts` |
 
-**Key files still using jQuery:**
-- `component/editor/page.tsx`
-- `component/block/text.tsx`, `component/block/index.tsx`, `component/block/table.tsx`
-- `component/block/dataview/view/grid.tsx`, `board.tsx`, `timeline.tsx`
-- `component/cell/index.tsx`, `component/cell/select.tsx`, `component/cell/object.tsx`
-- `component/widget/index.tsx`, `component/sidebar/left.tsx`, `component/sidebar/preview.tsx`
-- `component/drag/provider.tsx`, `component/selection/provider.tsx`
-- `component/graph/provider.tsx`
+### Round 2 — `c459a52887`
 
-#### H2. `.get(0)` calls on jQuery-wrapped elements
-Some dataview files use `.get(0)` which is a jQuery method. If these objects have been converted to native HTMLElement (from `U.Dom.*`), `.get(0)` would throw a runtime error. Currently these files still import jQuery so it works, but this is fragile during the ongoing migration.
-- `src/ts/component/block/dataview/view/timeline.tsx:529`
-- `src/ts/component/block/dataview/view/grid.tsx:139`
-- `src/ts/component/block/dataview/view/board.tsx:192`
+| # | Fix | File(s) |
+|---|-----|---------|
+| — | Fix phrase placeholder `display: block` → `display: flex` | `form/phrase.tsx` |
+| — | Remove 10 debug `console.log` calls from onboarding graph | `popup/graph/OnboardingGraphWorker.tsx` |
+| — | Remove render frequency debug tracker | `popup/dimmerWithGraph.tsx` |
+| — | Remove unused `useRef` import | `popup/dimmerWithGraph.tsx` |
 
-#### H3. Cell mousedown handler scope changed from pageContainer to window
-**File:** `src/ts/component/cell/index.tsx`
-Changed from listening on `pageContainer` (scoped) to `window` (global). This means ALL mousedown events globally trigger the handler, which has performance implications and could cause unexpected behavior with nested editors or popups.
+---
 
-#### H4. Graph event system mixed jQuery/CustomEvent
-**File:** `src/ts/component/graph/provider.tsx`
-Custom events dispatched via `new CustomEvent()` but some listeners may still expect jQuery event format. Defensive `data || e.originalEvent?.detail` fallback is in place but indicates incomplete migration.
+## Remaining Items
 
-#### H5. Major architectural change: Protobuf to plain objects
-**File:** `src/ts/lib/api/dispatcher.ts` and related
-Changed from Protocol Buffer generated classes (`hasX()`, `getX()`) to plain JavaScript objects (`x !== undefined`, `x`). This is a sweeping change across the API layer. All request/response handlers should be manually verified to ensure none were missed.
+### Needs Design / Larger Effort
 
-#### H6. Build system migration: rspack to Vite
-Major build tool change. Verify:
-- `scripts/build-electron.js` exists and works
-- `scripts/wait-for-localhost.js` exists
-- `scripts/analyze-deps.js` exists
-- Extension build (`vite.extension.config.ts`) works correctly
-- SCSS `api: 'legacy'` is compatible with all SCSS features used
+#### H4 (partial). `--color-bg-secondary` still used in auth.scss
+**File:** `src/scss/page/auth.scss:18,21,24`
+Auth pages use `var(--color-bg-secondary)` for notification styles. This variable is only defined in dark theme. Auth pages currently always have dark background, so it works, but will break if auth pages support light theme in the future. Pre-existing issue (not a regression).
 
-### MEDIUM PRIORITY
+#### H8. Comment system `fetchAllMessages` loads entire history
+**File:** `src/ts/component/comment/section.tsx`
+Recursively fetches all messages in pages of 100 before building the tree. For discussions with thousands of messages: high memory usage, slow initial load, potential UI freeze. Needs pagination redesign.
 
-#### M1. Icon background-image removals in dark theme
-**File:** `src/scss/theme/dark/common.scss`
-50+ icon `background-image` references removed from dark theme SCSS. These icons should now be rendered via the component system (Icon component with `S.Common.getThemePath()`). Verify all affected icons render correctly in dark mode.
+#### M4. `ensureDiscussion` silently drops concurrent calls
+**File:** `src/ts/component/comment/section.tsx:495-526`
+Uses `isCreating.current` as a mutex. If a second call arrives while creating, it silently returns without calling `callBack`. The user's comment is silently lost. Needs queueing or callback-with-error pattern.
 
-#### M4. Chat reaction button lost its icon
-**File:** `src/scss/block/chat.scss`
-`.icon.reactionAdd` had its `background-image` CSS removed. The icon should now be rendered via the Icon component. Verify the reaction add button is visible.
+#### M5. `reactionScheduler` queue grows unboundedly while paused
+**File:** `src/ts/lib/reactionScheduler.ts`
+When the tab is inactive, all MobX reaction callbacks are queued. A long-idle tab with active subscriptions accumulates an unbounded queue. On resume, all queued reactions fire at once, potentially causing a UI freeze. Could add a cap or coalesce reactions.
 
-#### M5. `scrollbar-gutter: stable` removed
-**File:** `src/scss/common/common.scss`
-This property prevents layout shift when scrollbars appear/disappear. Its removal may cause content to jump when overflow changes.
+#### M6. Subscription record removal leaks details
+**File:** `src/ts/lib/api/dispatcher.ts:983-990`
+When a subscription removes a record, `S.Detail.delete` is intentionally NOT called (to preserve dependencies). Details for non-dependency records accumulate indefinitely. Accepted trade-off to fix dependency display.
 
-#### M6. Animation removed from gallery cards
-**File:** `src/ts/component/block/dataview/view/gallery/card.tsx`
-`<AnimatePresence>` and `<motion.div>` wrapper removed. Cards no longer animate. Verify this was intentional (performance optimization) vs accidental.
-
-#### M7. CellMeasurerCache initialization in gallery
-**File:** `src/ts/component/block/dataview/view/gallery.tsx`
-```tsx
-const cache = useRef(null);
-if (!cache.current) {
-    cache.current = new CellMeasurerCache({...});
-};
-```
-This conditional check runs every render. While functionally correct (useRef persists), this is an unusual pattern. Consider initializing in `useRef(new CellMeasurerCache({...}))` or `useMemo`.
-
-#### M8. Deferred update sets in block store could grow unbounded
-**File:** `src/ts/store/block.ts`
-New `deferredParentUpdates`, `deferredNumberUpdates`, `deferredMarkupUpdates` Sets added. Verify `flushDeferredUpdates()` is called reliably to prevent memory accumulation.
-
-#### M9. Date format cases share identical mask
+#### M10. Date format masks are identical
 **File:** `src/ts/component/cell/text.tsx`
-`ShortUS`, `MonthAbbrBeforeDay`, `Long`, `Default` all map to the same mask `99.99.9999`. If these formats should have different display (e.g., "Mar 5, 2026" vs "03/05/2026"), the masks need differentiation.
+`ShortUS`, `MonthAbbrBeforeDay`, `Long`, `Default` all map to the same mask `99.99.9999`. Needs design input on correct masks per format.
 
-#### M10. Graph drag state tracking
-**File:** `src/ts/component/graph/provider.tsx`
-`wasDragging` ref is set on drag end but only cleared on next click. Rapid clicks after drag could be silently dropped. No timeout to auto-clear.
+#### L10. Pervasive `as any` / `any` typing in comment system
+**Files:** All comment component files
+Nearly all callback parameters, message objects, and refs are typed as `any`. Ongoing improvement.
 
-### LOW PRIORITY
+### Accepted / Won't Fix
 
-#### L1. Enter key processing guard uses fixed 30ms timeout
-**File:** `src/ts/component/editor/page.tsx`
-`isEnterProcessing` guard uses a 30ms timeout to prevent duplicate Enter processing. On slow systems this buffer may be insufficient. Consider using a callback-based guard instead of a fixed timer.
+| # | Item | Reason |
+|---|------|--------|
+| H5 | No URL validation for `shell.openExternal()` | Users need arbitrary deeplink schemes |
+| H6 | `exec` with shell on Windows for `openPath` | Workaround for Electron bug with non-Unicode paths |
+| M1 | `renderLinks` handler pattern | Not a bug — old handlers are properly removed before new ones are added |
+| M7 | Cell mousedown on window scope | Intentional change |
+| M8 | `sandbox: false` on renderer windows | Electron architectural constraint; `@electron/remote` migration planned |
+| L2 | Enter key 30ms timeout guard | Marginal risk |
+| L4 | Auto-observer plugin edge cases | No matching patterns in codebase |
+| L9 | `'unsafe-eval'` in CSP | Required by dependencies |
 
-#### L2. Throttle changed from 50ms to 40ms
-**File:** `src/ts/component/editor/page.tsx:16`
-`THROTTLE` constant changed from 50 to 40. Minor performance tuning - more frequent scroll handler invocations.
+---
 
-#### L3. Biome lint suppression warning
-**File:** `src/ts/auto-imports.d.ts:6`
-`// biome-ignore lint: disable` has no effect. This is a generated file so not critical.
+## Security Summary
 
-### POSITIVE CHANGES NOTED
+| Finding | Severity | Location |
+|---------|----------|----------|
+| `shell.openExternal()` without scheme validation | Accepted | `electron/ts/api.ts:432` |
+| `exec()` with shell on Windows for `openPath` | Accepted | `electron/ts/api.ts:451` |
+| `sandbox: false` on all renderer windows | Medium | `electron/ts/window.ts:770` |
+| `@electron/remote` enabled (deprecated) | Medium | `electron/ts/window.ts:47,414` |
+| `'unsafe-eval'` in CSP default-src | Low | `electron/json/cors.json:3` |
+| Broad filesystem API exposed via preload | Low | `electron/js/preload.cjs:64-75` |
 
-- **Performance:** `Array.includes()` replaced with `Set.has()` in chat store for O(n) -> O(1) lookups
-- **Performance:** `records.indexOf(id)` replaced with `Map` lookup in gallery view for O(n^2) -> O(n)
-- **Type safety:** `MenuParam<D = any>` generic added, `MenuItem` interface improved with proper React types
-- **New `menuData.ts`:** Typed menu data interfaces for better type safety
-- **Mark range validation:** `Mark.checkRanges()` added after text insertions in chat form
-- **URL detection:** Internal object URLs from different spaces now properly converted to attachments
-- **Block sorting:** Explicit array separation (layout vs non-layout) instead of sort comparator
-- **Error boundary:** Added to app entry point wrapping `<App />`
-- **useEffect dependencies:** Corrected in gallery and card components to prevent stale closures
+---
+
+## Architecture Highlights
+
+### Build System (Vite + bun)
+- **4 Vite configs:** app, extension, web, worker
+- **Code splitting:** Granular vendor chunks (react, d3, mermaid, sentry, excalidraw, protobuf)
+- **Auto-imports:** `unplugin-auto-import` for `S`, `U`, `J`, `C`, etc.
+- **Electron build:** esbuild for main process bundling
+- **Testing:** Vitest configured with 371+ unit tests
+- **SafeStorage:** Excellent atomic write pattern with crash recovery in `electron/ts/safeStorage.ts`
+
+### Icon System
+- **Registry-based** — `src/ts/component/util/icons/registry.ts` stores TSX SVG components in a `Map<string, FC>`
+- **37 icon packs** — organized by domain: `header/`, `control/`, `menu/`, `dataview/`, `type/`, `layout/`, etc.
+- **~965 registered icons** — all converted from static SVG files + CSS `background-image` to inline TSX components
+- **`Icon` component** renders via `dangerouslySetInnerHTML` from `getIconSvg()`, with props: `name`, `size`, `color`, `className`, `withBackground`, `iconWidth`/`iconHeight`
+- **Dark mode** — eliminates ~50+ dark theme CSS icon overrides; color is now a prop/CSS `currentColor`
+- **Storybook gallery** — `icons/gallery.stories.tsx` for browsing all registered icons
+
+### Emoji System
+- **emoji-mart removed** — eliminates a heavy dependency; all emoji rendering now uses PNG images from `dist/img/emoji/`
+- **Shortcode generation** — `U.Smile.init()` generates shortcodes at startup, replacing emoji-mart's data
+- **Emoji 15.0/15.1** — 60 new emojis added (including phoenix, lime, head-shaking, etc.)
+- **Inline `:colon` picker** — typing `:` in editor/chat/comments triggers emoji search popup
+- **Cross-platform rendering** — `<smile>` elements rendered as PNG images via React roots for consistent display
+
+### MobX Architecture
+- **Auto-observer plugin** (`vite.auto-observer.ts`) wraps all functional component exports with `observer()` at build time — no manual imports needed
+- **Reaction scheduler** (`lib/reactionScheduler.ts`) pauses MobX reactions in inactive tabs, flushes on activation
+- **Event batching** (`dispatcher.ts`) buffers gRPC stream events per animation frame, processes in single `runInAction`
+- **Deferred updates** in BlockStore skip expensive structural updates in inactive tabs
+- **Observable restrictionMap** — `BlockStore.restrictionMap` made observable so editor re-renders reactively on restriction changes (e.g., archive/restore)
+
+### Comment System
+- **8 components** in `src/ts/component/comment/` (~2,800 lines total)
+- **Lexical editor** for rich text editing (`component/form/commentEditor.tsx`)
+- **MobX store** (`store/comment.ts`) with posts/replies maps, pagination state
+- **Features:** Threading, mentions, emoji, attachments, reactions, markdown, code blocks, embeds
+
+### U.Dom Helpers
+- Complete replacement for jQuery DOM operations
+- Error handling in `select`/`selectAll` with try-catch for invalid selectors
+- Space-splitting in `addClass`/`removeClass` for multi-class strings
+
+### Electron TypeScript
+- Main process fully typed in `electron/ts/`
+- CSP enforcement via `session.defaultSession.webRequest.onHeadersReceived`
+- `activeTabOnly` Set prevents duplicate IPC for broadcast events
+- Multi-tab system with lazy loading, persistence, and crash recovery
+- Power monitor with hibernation recovery
+
+---
+
+## Positive Changes
+
+- **jQuery fully removed** — eliminates 87KB dependency, aligns with modern DOM APIs
+- **Icon system overhaul** — ~965 icons as TSX components, eliminates dark theme CSS overrides, enables color/size props
+- **Emoji-mart removed** — replaced with lightweight PNG rendering + custom shortcode generation
+- **MobX auto-observer** — eliminates manual `observer()` imports across 400+ components
+- **Reaction scheduler** — measurable perf win for multi-tab by pausing background reactions
+- **gRPC event batching** — reduces MobX reaction cascades from per-event to per-frame
+- **ErrorBoundary** — catches rendering crashes globally with copy-error and reload UX
+- **Set/Map lookups** — O(1) replacements for O(n) Array.includes/indexOf in hot paths
+- **DetailStore sanitizeValue** — filters `_missing_object` IDs at store level
+- **Dependency detail preservation** — subscription removal no longer deletes shared details
+- **Type safety** — MenuDataMap generics, typed MenuItem, Detail with `unknown` value
+- **Vitest** — 371+ unit tests
+- **SafeStorage** — atomic writes with crash recovery
+- **Tab system** — lazy loading, persistence, crash recovery

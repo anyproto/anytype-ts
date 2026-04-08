@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockStyle = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, onKeyDown, setActive, close } = props;
 	const { data } = param;
@@ -17,13 +16,13 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -44,10 +43,10 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const getSections = () => {
 		const sections: any[] = [];
-		const turnText = { id: 'turnText', icon: '', name: translate('menuBlockStyleTurnText'), color: '', children: U.Menu.getBlockText() };
-		const turnList = { id: 'turnList', icon: '', name: translate('menuBlockStyleTurnList'), color: '', children: U.Menu.getBlockList() };
-		const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockStyleTurnDiv'), color: '', children: U.Menu.getTurnDiv() };
-		const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockStyleTurnFile'), color: '', children: U.Menu.getTurnFile() };
+		const turnText = { id: 'turnText', name: translate('menuBlockStyleTurnText'), color: '', children: U.Menu.getBlockText() };
+		const turnList = { id: 'turnList', name: translate('menuBlockStyleTurnList'), color: '', children: U.Menu.getBlockList() };
+		const turnDiv = { id: 'turnDiv', name: translate('menuBlockStyleTurnDiv'), color: '', children: U.Menu.getTurnDiv() };
+		const turnFile = { id: 'turnFile', name: translate('menuBlockStyleTurnFile'), color: '', children: U.Menu.getTurnFile() };
 
 		let hasTurnText = true;
 		let hasTurnList = true;
@@ -137,6 +136,6 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockStyle;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, KeyboardEvent } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Icon } from 'Component';
 import * as I from 'Interface';
@@ -11,7 +10,7 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_DIV = 16;
 const LIMIT = 10;
 
-const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSelect = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setActive, onKeyDown, position, getId, getContainer, close, setHover, getMaxHeight } = props;
 	const { data } = param;
@@ -46,7 +45,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			window.setTimeout(() => setActive(active, true), 15);
 		};
 
-		beforePosition();
+		position();
 	}, []);
 
 	useEffect(() => {
@@ -70,7 +69,6 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 		};
 
-		beforePosition();
 		position();
 	});
 
@@ -87,13 +85,13 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -440,6 +438,6 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</>
 	);
 	
-}));
+});
 
 export default MenuSelect;

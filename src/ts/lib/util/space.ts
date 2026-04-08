@@ -124,6 +124,7 @@ class UtilSpace {
 			spaceAccessType: I.SpaceAccessType.Shared,
 			homepage: I.HomePredefinedId.Chat,
 			oneToOneRequestMetadataKey: key,
+			spaceType: I.SpaceType.OneToOne,
 		};
 
 		C.WorkspaceCreate(details, I.Usecase.ChatSpace, (message: any) => {

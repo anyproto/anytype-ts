@@ -114,6 +114,40 @@
 			}
 		}
 
+		.archiveTree {
+			.ReactVirtualized__List { overflow: visible !important; }
+			.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
+
+			.table {
+				.cellContent.isName {
+					.name { width: auto; min-width: 0; }
+				}
+
+				.row:not(.isHead) {
+					.stackBadge {
+						@include text-small; color: var(--color-text-secondary); background-color: var(--color-shape-highlight-medium);
+						border-radius: 15px; padding: 0px 6px; flex-shrink: 0; white-space: nowrap;
+					}
+
+					.iconWrap { position: relative; flex-shrink: 0; }
+					.iconWrap {
+						.icon.expandArrow {
+							position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-90deg);
+							width: 16px; height: 16px; transition: transform 0.15s ease, opacity 0.15s ease;
+							color: var(--color-text-primary); opacity: 0; z-index: 1;
+						}
+						.icon.expandArrow.isExpanded { transform: translate(-50%, -50%) rotate(0deg); }
+					}
+
+					&.canExpand:hover .iconWrap,
+					&.isExpanded .iconWrap {
+						.iconObject { opacity: 0; }
+						.icon.expandArrow { opacity: 1; }
+					}
+				}
+			}
+		}
+
 		&.isDetailed {
 			.listObject {
 				.cell { padding-top: 16px !important; padding-bottom: 16px !important; }
@@ -125,7 +159,7 @@
 
 					&.isPage {
 						.iconEmoji { line-height: 20px; }
-						.iconCommon, 
+						.iconCommon,
 						.smileImage { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
 					}
 					&.isBookmark {
@@ -140,6 +174,17 @@
 					&.isArchive,
 					&.isTask {
 						background-color: unset;
+					}
+				}
+
+				&.archiveTree .row:not(.isHead) {
+					.info { display: flex; flex-direction: column; overflow: hidden; }
+					.info {
+						.nameRow { display: flex; align-items: center; gap: 0px 8px; }
+						.nameRow {
+							.name { @include text-overflow-nw; }
+						}
+						.descr { @include text-overflow-nw; @include text-small; color: var(--color-text-secondary); }
 					}
 				}
 			}

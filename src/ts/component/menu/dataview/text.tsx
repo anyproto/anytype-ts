@@ -1,10 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Editable, MenuItemVertical, Icon, Input } from 'Component';
 import * as I from 'Interface';
 
-const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, getId, getContainer, position, setActive, onKeyDown, setHover, close } = props;
 	const { data } = param;
@@ -37,18 +35,16 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			inputRef.current.setFocus();
 		};
 
-		resize();
-
 		window.setTimeout(() => {
 			setActive();
 			keydownHandler.current = (e: any) => onKeyDownHandler(e);
-			window.addEventListener('keydown', keydownHandler.current);
+			U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		}, 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -93,14 +89,14 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const onInput = (e: any, v: string) => {
 		valueRef.current = isSingleLine ? String(v || '').trim() : getValue();
-		resize();
+		position();
 	};
 
 	const save = () => {
 		onChange?.(valueRef.current);
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		if (noResize) {
 			return;
 		};
@@ -110,17 +106,13 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const { wh } = U.Dom.getWindowDimensions();
 		const hh = J.Size.header;
 		const cell = U.Dom.get(cellId);
-		const nameEl = cell?.querySelector('.name') as HTMLElement;
+		const nameEl = U.Dom.select('.name', cell) as HTMLElement;
 		const lh = nameEl ? parseInt(window.getComputedStyle(nameEl).lineHeight, 10) || 20 : 20;
+		const sh = input?.scrollHeight || 0;
+		const height = Math.max(32, Math.min(wh - hh - 20, Math.max(cell?.offsetHeight || 0, sh)));
 
-		raf(() => {
-			const sh = input?.scrollHeight || 0;
-			const height = Math.max(32, Math.min(wh - hh - 20, Math.max(cell?.offsetHeight || 0, sh)));
-
-			U.Dom.css(obj, { height: `${height}px` });
-			U.Dom.css(input, { lineHeight: `${lh}px` });
-			position();
-		});
+		U.Dom.css(obj, { height: `${height}px` });
+		U.Dom.css(input, { lineHeight: `${lh}px` });
 	};
 
 	const onClick = (e: any, action: any) => {
@@ -177,6 +169,7 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	};
 
 	useImperativeHandle(ref, () => ({
+		beforePosition,
 		getItems: () => actions,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -220,6 +213,6 @@ const MenuDataviewText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuDataviewText;

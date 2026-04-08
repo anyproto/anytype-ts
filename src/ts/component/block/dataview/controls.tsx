@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -23,7 +22,7 @@ interface ControlsRefProps {
 	getNode: () => any,
 };
 
-const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
+const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const { 
 		className, rootId, block, isInline, isPopup, isCollection, readonly, getSources, onFilterChange, getTarget, getTypeId, getView, onRecordAdd, onTemplateMenu,
@@ -32,7 +31,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const target = getTarget();
 	const views = S.Record.getViews(rootId, block.id);
 	const view = getView();
-	const sortCnt = view.sorts.length;
+	const sortCnt = Dataview.getFilteredSorts(view.sorts).length;
 	const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 	const cn = [ 'dataviewControls' ];
 	const buttonWrapCn = [ 'buttonWrap' ];
@@ -66,7 +65,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		onViewSet(view);
 
 		window.setTimeout(() => {
-			const btn = U.Dom.get(`button-${U.Common.esc(block.id)}-settings`);
+			const btn = U.Dom.get(`button-${block.id}-settings`);
 			btn?.click();
 		}, 50);
 	};
@@ -126,7 +125,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const isSort = component == 'dataviewSort';
 
 		if (!readonly && isFilter) {
-			const items = U.Common.getViewFilters(view);
+			const items = Dataview.getFilteredFilters(view.filters);
 
 			if (items.length) {
 				toggleFilters();
@@ -143,7 +142,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 
 		if (!readonly && isSort) {
-			if (view.sorts.length) {
+			if (Dataview.getFilteredSorts(view.sorts).length) {
 				toggleFilters();
 			} else {
 				sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
@@ -383,7 +382,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 
 		if (filterMouseDownHandler.current && container) {
-			container.removeEventListener('mousedown', filterMouseDownHandler.current);
+			U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
 		};
 
 		filterMouseDownHandler.current = (e: any) => {
@@ -391,14 +390,18 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 			if (!value && !(e.target as HTMLElement)?.closest('.filter')) {
 				onFilterHide();
-				container?.removeEventListener('mousedown', filterMouseDownHandler.current);
+				if (container) {
+					U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
+				};
 			};
 		};
 
-		container?.addEventListener('mousedown', filterMouseDownHandler.current);
+		if (container) {
+			U.Dom.addEvent(container, 'mousedown', filterMouseDownHandler.current);
+		};
 
 		if (filterKeydownHandler.current) {
-			window.removeEventListener('keydown', filterKeydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 		};
 		filterKeydownHandler.current = (e: any) => {
 			e.stopPropagation();
@@ -406,11 +409,11 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			if (!isPopup && !keyboard.isPopup()) {
 				keyboard.shortcut('escape', e, () => {
 					onFilterHide();
-					window.removeEventListener('keydown', filterKeydownHandler.current);
+					U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 				});
 			};
 		};
-		window.addEventListener('keydown', filterKeydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', filterKeydownHandler.current);
 	};
 
 	const onFilterHide = () => {
@@ -427,7 +430,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const toggleHoverArea = (v: boolean) => {
-		const blockEl = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const blockEl = U.Dom.get(`block-${block.id}`);
 		const hoverArea = U.Dom.select('.hoverArea', blockEl);
 		U.Dom.toggleClass(hoverArea, 'active', v);
 	};
@@ -448,7 +451,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		// With flex-grow: 1, sideLeft expands to fill all space, making the measurement
 		// equal to container width regardless of actual content, which breaks at non-standard zoom levels
 		if (sideLeft) {
-			sideLeft.style.flexGrow = '0';
+			U.Dom.css(sideLeft, { flexGrow: '0' });
 		};
 
 		// Force synchronous reflow before measuring widths
@@ -457,7 +460,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const width = Math.ceil((sideLeft?.offsetWidth ?? 0) + (sideRight?.offsetWidth ?? 0));
 
 		if (sideLeft) {
-			sideLeft.style.flexGrow = '';
+			U.Dom.css(sideLeft, { flexGrow: '' });
 		};
 
 		if (width + 16 > nw) {
@@ -536,10 +539,10 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			const container = U.Dom.getPageFlexContainer(isPopup);
 
 			if (filterMouseDownHandler.current && container) {
-				container.removeEventListener('mousedown', filterMouseDownHandler.current);
+				U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
 			};
 			if (filterKeydownHandler.current) {
-				window.removeEventListener('keydown', filterKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 			};
 		};
 
@@ -645,6 +648,6 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Controls;

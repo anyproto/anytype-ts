@@ -102,11 +102,11 @@ export interface IconParam {
 	size?: number;
 	width?: number;
 	height?: number;
+	className?: string;
 };
 
 export interface MenuItem {
 	id?: string;
-	icon?: string;
 	iconParam?: IconParam;
 	object?: Record<string, unknown>;
 	name?: string | React.ReactNode;

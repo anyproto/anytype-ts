@@ -256,16 +256,16 @@ class UtilCommon {
 			};
 
 			removed = true;
-			document.removeEventListener('copy', handler, true);
+			U.Dom.removeEvent(document, 'copy', handler, true);
 			callBack?.();
 		};
 
-		document.addEventListener('copy', handler, true);
+		U.Dom.addEvent(document, 'copy', handler, true);
 		document.execCommand('copy');
 
 		// Safety cleanup in case execCommand did not trigger the copy event
 		if (!removed) {
-			document.removeEventListener('copy', handler, true);
+			U.Dom.removeEvent(document, 'copy', handler, true);
 		};
 	};
 
@@ -758,7 +758,7 @@ class UtilCommon {
 			initial: { opacity: 0, ...param.initial },
 			animate: { opacity: 1, ...param.animate },
 			exit: { opacity: 0, ...param.exit },
-			transition: { type: 'spring' as const, stiffness: 300, damping: 20, ...param.transition },
+			transition: { type: 'tween' as const, duration: 0.2, ease: [ 0.22, 1, 0.36, 1 ], ...param.transition },
 		};
 	};
 
@@ -1142,7 +1142,10 @@ class UtilCommon {
 	showWhatsNew (param?: Partial<I.PopupParam>) {
 		param = param || {};
 		param.data = param.data || {};
-		param.data.document = 'whatsNew';	
+		param.data.document = 'whatsNew';
+		param.onClose = () => {
+			Survey.checkCommon();
+		};
 
 		S.Popup.open('help', param);
 		Storage.set('whatsNew', false);
@@ -1274,12 +1277,6 @@ class UtilCommon {
 
 	tabTooltipHide () {
 		Preview.previewHide(true);
-	};
-
-	getViewFilters (view: any): any[] {
-		return (view.filters || []).filter(it => {
-			return S.Record.getRelationByKey(it.relationKey) || [ I.FilterOperator.And, I.FilterOperator.Or ].includes(it.operator);
-		});
 	};
 
 	applyAutoDownload (value: number) {

@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import Item from './calendar/item';
 import * as I from 'Interface';
 
 const PADDING = 16;
 
-const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewCalendar = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { rootId, block, isCollection, className, isInline, isPopup, getView, getTypeId, getTemplateId, getTarget } = props;
 	const view = getView();
@@ -83,10 +82,10 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 		const node = nodeRef.current;
 		if (!node) return;
 
-		const el = node.querySelector('.day.active') as HTMLElement;
+		const el = U.Dom.select('.day.active', node);
 		if (!el) return;
 
-		const scroll = node.querySelector('.body') as HTMLElement;
+		const scroll = U.Dom.select('.body', node);
 		if (!scroll) return;
 
 		const st = scroll.scrollTop;
@@ -106,16 +105,16 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 		const node = nodeRef.current;
 		if (!node) return;
 
-		const wrap = node.querySelector('.wrap') as HTMLElement;
+		const wrap = U.Dom.select('.wrap', node);
 		const container = U.Dom.getPageContainer(isPopup);
 		const mw = (container?.clientWidth ?? 0) - PADDING * 2;
-		const day = node.querySelector('.day') as HTMLElement;
+		const day = U.Dom.select('.day', node);
 		const menu = S.Menu.get('calendarDay');
 
 		if (wrap) {
 			U.Dom.css(wrap, { width: `${mw}px`, marginLeft: `${-J.Size.blockMenu + PADDING}px` });
 		};
-		window.dispatchEvent(new CustomEvent('resize.menuCalendarDay'));
+		U.Dom.eventDispatch(window, 'resize.menuCalendarDay');
 
 		if (menu && !menu.param.data.fromWidget && day) {
 			S.Menu.update('calendarDay', { width: day.offsetWidth + 8 });
@@ -231,6 +230,6 @@ const ViewCalendar = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref
 		</div>
 	);
 
-}));
+});
 
 export default ViewCalendar;

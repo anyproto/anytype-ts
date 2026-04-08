@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { getIcon } from './icons';
 import * as I from 'Interface';
 
@@ -20,7 +19,7 @@ const CheckboxIcons = [
 	getIcon('marker/checkbox2'),
 ];
 
-const Marker = observer(forwardRef<HTMLDivElement, Props>(({
+const Marker = forwardRef<HTMLDivElement, Props>(({
 	id = '',
 	type = I.MarkerType.Bulleted,
 	color = 'default',
@@ -118,6 +117,6 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 			{inner}
 		</div>
 	);
-}));
+});
 
 export default Marker;

@@ -10,7 +10,7 @@ const PopupInviteQr = forwardRef<{}, I.Popup>((props, ref) => {
 	const { link } = data;
 
 	const onDownload = () => {
-		const canvas = nodeRef.current?.querySelector('canvas') as HTMLCanvasElement;
+		const canvas = U.Dom.select('canvas', nodeRef.current) as HTMLCanvasElement;
 		if (!canvas) {
 			return;
 		};

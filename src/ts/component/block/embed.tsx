@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
-import { observer } from 'mobx-react';
 import { Icon, Label, Editable, Dimmer, Select, Error, Loader } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -49,7 +48,7 @@ const getViz = async (): Promise<any> => {
 	return _vizLoading;
 };
 
-const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
 	const { isOnline, filter, theme } = S.Common;
 	const [ isShowing, setIsShowing ] = useState(false);
@@ -92,7 +91,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		if (fieldHeight) {
 			excalidrawCss.height = Math.max(200, fieldHeight);
 		} else {
-			const el = U.Dom.get(`selectionTarget-${U.Common.esc(block.id)}`);
+			const el = U.Dom.get(`selectionTarget-${block.id}`);
 			const containerWidth = el ? U.Dom.contentWidth(el) : 600;
 			excalidrawCss.height = Math.max(200, containerWidth * (width || 1) * 9 / 16);
 		};
@@ -151,7 +150,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					S.Menu.close('previewLatex');
 				});
 			};
-			window.addEventListener('mousedown', mouseDownHandlerRef.current);
+			U.Dom.addEvent(window, 'mousedown', mouseDownHandlerRef.current);
 		};
 
 		if (node) {
@@ -163,7 +162,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		if (![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid ].includes(processor)) {
 			if (preview) {
-				preview.style.display = isOnline ? 'none' : '';
+				U.Dom.css(preview, { display: isOnline ? 'none' : '' });
 			};
 		};
 
@@ -174,7 +173,9 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		if (!U.Embed.allowAutoRender(processor)) {
 			const container = U.Dom.getScrollContainer(isPopup);
 			scrollHandlerRef.current = () => onScroll();
-			container?.addEventListener('scroll', scrollHandlerRef.current);
+			if (container) {
+				U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
+			};
 		};
 	};
 
@@ -182,24 +183,24 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const container = U.Dom.getScrollContainer(isPopup);
 
 		if (mouseDownHandlerRef.current) {
-			window.removeEventListener('mousedown', mouseDownHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousedown', mouseDownHandlerRef.current);
 			mouseDownHandlerRef.current = null;
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			mouseUpHandlerRef.current = null;
 		};
 		if (messageHandlerRef.current) {
-			window.removeEventListener('message', messageHandlerRef.current);
+			U.Dom.removeEvent(window, 'message', messageHandlerRef.current);
 			messageHandlerRef.current = null;
 		};
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 			mouseMoveHandlerRef.current = null;
 		};
 
-		if (scrollHandlerRef.current) {
-			container?.removeEventListener('scroll', scrollHandlerRef.current);
+		if (scrollHandlerRef.current && container) {
+			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
 	};
@@ -345,7 +346,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const data = e.clipboardData || e.originalEvent.clipboardData;
+		const data = e.clipboardData;
 		const text = String(data.getData('text/plain') || '');
 		const to = range.to + text.length;
 		const value = U.String.insert(getValue(), text, range.from, range.to);
@@ -446,7 +447,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const lang = U.Embed.getLang(processor);
 		const range = getRange();
 
-		if (value && lang) {
+		if (value && lang && Prism.languages[lang]) {
 			value = Prism.highlight(value, Prism.languages[lang], lang);
 		};
 
@@ -480,7 +481,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		if (error) {
 			error.textContent = '';
-			error.style.display = 'none';
+			U.Dom.css(error, { display: 'none' });
 		};
 
 		if (isUnsupported) {
@@ -599,7 +600,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					iw.postMessage(data, '*');
 
 					if (messageHandlerRef.current) {
-						window.removeEventListener('message', messageHandlerRef.current);
+						U.Dom.removeEvent(window, 'message', messageHandlerRef.current);
 					};
 					messageHandlerRef.current = (e: MessageEvent) => {
 						const { type, height, blockId, url } = e.data || {};
@@ -611,7 +612,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						switch (type) {
 							case 'resize': {
 								if (allowIframeResize) {
-									(iframe as HTMLElement).style.height = height + 'px';
+									U.Dom.css(iframe as HTMLElement, { height: height + 'px' });
 								};
 								break;
 							};
@@ -622,7 +623,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 							};
 						};
 					};
-					window.addEventListener('message', messageHandlerRef.current);
+					U.Dom.addEvent(window, 'message', messageHandlerRef.current);
 				};
 
 				if (!iframe) {
@@ -735,7 +736,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						console.error(e);
 						if (error) {
 							error.textContent = e.toString();
-							error.style.display = '';
+							U.Dom.css(error, { display: 'block' });
 						};
 					};
 				});
@@ -789,14 +790,14 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		rangeRef.current = getRange();
 
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 		};
 		mouseUpHandlerRef.current = () => {
 			keyboard.disableSelection(false);
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			mouseUpHandlerRef.current = null;
 		};
-		window.addEventListener('mouseup', mouseUpHandlerRef.current);
+		U.Dom.addEvent(window, 'mouseup', mouseUpHandlerRef.current);
 	};
 
 	const onResizeStart = (e: any, checkMax: boolean) => {
@@ -806,10 +807,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const node = nodeRef.current;
 
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 		};
 
 		selection?.clear();
@@ -831,8 +832,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		U.Dom.addClass(node, 'isResizing');
 		mouseMoveHandlerRef.current = (e: globalThis.MouseEvent) => onResizeMove(e, checkMax);
 		mouseUpHandlerRef.current = (e: globalThis.MouseEvent) => onResizeEnd(e, checkMax);
-		window.addEventListener('mousemove', mouseMoveHandlerRef.current);
-		window.addEventListener('mouseup', mouseUpHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandlerRef.current],
+			['mouseup', mouseUpHandlerRef.current],
+		]);
 	};
 
 	const onResizeMove = (e: any, checkMax: boolean) => {
@@ -849,7 +852,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const rect = U.Dom.getElementRect(wrap);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
-		wrap.style.width = (w * 100) + '%';
+		U.Dom.css(wrap, { width: (w * 100) + '%' });
 
 		if (isExcalidraw) {
 			const start = resizeStartRef.current;
@@ -858,7 +861,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			const valueEl = node ? U.Dom.select('#value', node) : null;
 
 			if (valueEl) {
-				valueEl.style.height = newHeight + 'px';
+				U.Dom.css(valueEl, { height: newHeight + 'px' });
 			};
 		};
 	};
@@ -873,7 +876,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		const iframe = node ? U.Dom.select('#receiver', node) : null;
 		if (iframe) {
-			iframe.style.height = 'auto';
+			U.Dom.css(iframe, { height: 'auto' });
 		};
 
 		const rect = U.Dom.getElementRect(wrap);
@@ -883,11 +886,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		keyboard.disableSelection(false);
 
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 			mouseMoveHandlerRef.current = null;
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			mouseUpHandlerRef.current = null;
 		};
 		U.Dom.removeClass(node, 'isResizing');
@@ -908,7 +911,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const getWidth = (checkMax: boolean, v: number): number => {
 		const { id, fields } = block;
 		const width = Number(fields.width) || 1;
-		const el = U.Dom.get(`selectionTarget-${U.Common.esc(id)}`);
+		const el = U.Dom.get(`selectionTarget-${id}`);
 
 		if (!el) {
 			return width;
@@ -1005,11 +1008,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			setRange({ from: length, to: length });
 		} else {
 			if (mouseUpHandlerRef.current) {
-				window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+				U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 				mouseUpHandlerRef.current = null;
 			};
 			if (mouseDownHandlerRef.current) {
-				window.removeEventListener('mousedown', mouseDownHandlerRef.current);
+				U.Dom.removeEvent(window, 'mousedown', mouseDownHandlerRef.current);
 				mouseDownHandlerRef.current = null;
 			};
 			keyboard.disableSelection(false);
@@ -1033,11 +1036,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 
 		if (isFullScreen) {
-			window.addEventListener('keydown', onEscape, true);
+			U.Dom.addEvent(window, 'keydown', onEscape, true);
 		};
 
 		return () => {
-			window.removeEventListener('keydown', onEscape, true);
+			U.Dom.removeEvent(window, 'keydown', onEscape, true);
 
 			if (isFullScreen && container) {
 				container.scrollTop = scrollTopRef.current;
@@ -1114,6 +1117,6 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		</div>
 	);
 
-}));
+});
 
 export default memo(BlockEmbed);

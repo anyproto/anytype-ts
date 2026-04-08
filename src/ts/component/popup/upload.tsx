@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect, DragEvent, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Input, Button, Loader, Error } from 'Component';
 import * as I from 'Interface';
 
@@ -8,7 +7,7 @@ enum Tab {
 	Link = 1,
 };
 
-const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupUpload = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -109,7 +108,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onPaste = (e: any) => {
-		const cb = e.clipboardData || e.originalEvent?.clipboardData;
+		const cb = e.clipboardData;
 		if (!cb) {
 			return;
 		};
@@ -260,11 +259,11 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	useEffect(() => {
-		window.addEventListener('paste', onPaste);
+		U.Dom.addEvent(window, 'paste', onPaste);
 		analytics.event('ScreenUploadFile', { route });
 
 		return () => {
-			window.removeEventListener('paste', onPaste);
+			U.Dom.removeEvent(window, 'paste', onPaste);
 		};
 	}, []);
 
@@ -322,6 +321,6 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupUpload;

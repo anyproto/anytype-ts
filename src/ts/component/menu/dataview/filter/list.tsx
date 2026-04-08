@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Label } from 'Component';
 import * as I from 'Interface';
@@ -9,9 +8,9 @@ const HEIGHT_FILTER = 32;
 const HEIGHT_DIV = 16;
 const LIMIT = 20;
 
-const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, onKeyDown, setActive } = props;
+	const { param, getId, onKeyDown, setActive, position } = props;
 	const { data } = param;
 	const { rootId, blockId, getView, loadData, isInline, getTarget, readonly, closeFilters } = data;
 	const nodeRef = useRef(null);
@@ -28,39 +27,35 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		beforePosition();
+		position();
 		setActive();
 	});
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getFilterItems = () => {
 		const view = getView();
-
 		if (!view) {
 			return [];
 		};
 
-		return U.Common.objectCopy(view.filters).map((it: any) => {
+		const filters = Dataview.getFilteredFilters(view.filters);
+		
+		return U.Common.objectCopy(filters).map((it: any) => {
 			return {
 				...it,
 				relation: S.Record.getRelationByKey(it.relationKey),
 				isFilter: true,
 			};
-		}).filter(it => {
-		if (Dataview.isAdvancedFilter(it)) {
-			return true;
-		};
-		return it.relation && !it.relation.isArchived && !it.relation.isDeleted;
-	}).sort((a, b) => {
+		}).sort((a, b) => {
 			const aAdvanced = Dataview.isAdvancedFilter(a);
 			const bAdvanced = Dataview.isAdvancedFilter(b);
 
@@ -487,6 +482,6 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuFilterList;

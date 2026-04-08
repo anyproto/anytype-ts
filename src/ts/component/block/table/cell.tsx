@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Block } from 'Component';
 import * as I from 'Interface';
 
@@ -10,10 +9,10 @@ interface Props extends I.BlockComponentTable {
 	column: I.Block;
 };
 
-const BlockTableCell = observer(forwardRef<{}, Props>((props, ref) => {
+const BlockTableCell = forwardRef<{}, Props>((props, ref) => {
 
-	const { 
-		readonly, block, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellEnter, 
+	const {
+		readonly, block, rowIdx, columnIdx, row, column, onHandleRow, onHandleColumn, onOptions, onCellFocus, onCellBlur, onCellClick, onCellMouseDown, onCellEnter,
 		onCellLeave, onCellKeyDown, onCellKeyUp, onResizeStart, onDragStartColumn, onDragStartRow, onEnterHandle, onLeaveHandle, onCellUpdate
 	} = props;
 
@@ -111,13 +110,22 @@ const BlockTableCell = observer(forwardRef<{}, Props>((props, ref) => {
 		);
 	};
 
-	const onMouseDown = () => {
+	const onMouseDown = (e: any) => {
+		const target = e.target as HTMLElement;
+		if (target.closest('.handle') || target.closest('.icon.menu')) {
+			return;
+		};
+
+		if (onCellMouseDown(e, row.id, column.id, cellId)) {
+			return;
+		};
+
 		keyboard.disableSelection(true);
 		const handler = () => {
 			keyboard.disableSelection(false);
-			window.removeEventListener('mousedown', handler);
+			U.Dom.removeEvent(window, 'mousedown', handler);
 		};
-		window.addEventListener('mousedown', handler);
+		U.Dom.addEvent(window, 'mousedown', handler);
 	};
 
 	return (
@@ -160,6 +168,6 @@ const BlockTableCell = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockTableCell;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, Cover, Icon, ObjectName } from 'Component';
 import * as I from 'Interface';
 
@@ -20,7 +19,7 @@ interface Props {
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 const TRACE_ID = 'preview';
 
-const PreviewObject = observer(forwardRef<{}, Props>(({
+const PreviewObject = forwardRef<{}, Props>(({
 	id = '',
 	rootId = '',
 	size = I.PreviewSize.Small,
@@ -278,12 +277,12 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 	const rebind = () => {
 		unbind();
 		updateHandler.current = () => update();
-		window.addEventListener(`updatePreviewObject.${rootId}`, updateHandler.current);
+		U.Dom.addEvent(window, `updatePreviewObject.${rootId}`, updateHandler.current);
 	};
 
 	const unbind = () => {
 		if (updateHandler.current) {
-			window.removeEventListener(`updatePreviewObject.${rootId}`, updateHandler.current);
+			U.Dom.removeEvent(window, `updatePreviewObject.${rootId}`, updateHandler.current);
 			updateHandler.current = null;
 		};
 	};
@@ -455,7 +454,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 		>
 			{onMore ? (
 				<div id={`item-more-${rootId}`} className="moreWrapper" onClick={onMore}>
-					<Icon />
+					<Icon name="common/more" />
 				</div>
 			) : ''}
 
@@ -467,6 +466,6 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 			</div>
 		</div>
 	);
-}));
+});
 
 export default PreviewObject;

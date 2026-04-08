@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
 import ItemObject from './item/object';
 import * as I from 'Interface';
 
-const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
+const CellObject = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -58,10 +57,10 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		const ph = placeholderRef.current;
 
 		if (list) {
-			list.style.display = value.existing.length ? '' : 'none';
+			U.Dom.css(list, { display: value.existing.length ? '' : 'none' });
 		};
 		if (ph) {
-			ph.style.display = (value.new || value.existing.length) ? 'none' : '';
+			U.Dom.css(ph, { display: (value.new || value.existing.length) ? 'none' : '' });
 		};
 	};
 
@@ -231,7 +230,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const scrollToBottom = () => {
-		const cell = U.Dom.get(U.Common.esc(id));
+		const cell = U.Dom.get(id);
 		if (!cell) {
 			return;
 		};
@@ -243,7 +242,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const resize = () => {
-		window.dispatchEvent(new CustomEvent('resize.menuDataviewObjectList'));
+		U.Dom.eventDispatch(window, 'resize.menuDataviewObjectList');
 	};
 
 	let value = getItems();
@@ -344,7 +343,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		const cell = U.Dom.get(U.Common.esc(id));
+		const cell = U.Dom.get(id);
 		if (!cell) {
 			return;
 		};
@@ -377,6 +376,6 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default CellObject;

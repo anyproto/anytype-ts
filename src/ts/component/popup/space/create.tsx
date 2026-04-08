@@ -1,25 +1,29 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, List } from 'react-virtualized';
 import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 
 const SUB_ID = 'popupSpaceCreateParticipants';
 
-const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close, position }, ref) => {
+const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, position }, ref) => {
 
 	const nameRef = useRef(null);
 	const iconRef = useRef(null);
 	const filterRef = useRef(null);
 	const joinInputRef = useRef(null);
+	const fileInputRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const [ canSave, setCanSave ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ iconOption, setIconOption ] = useState(U.Common.rand(1, J.Constant.count.icon));
+	const iconImagePathRef = useRef('');
+	const [ iconPreviewUrl, setIconPreviewUrl ] = useState('');
 	const [ step, setStep ] = useState(0);
 	const [ search, setSearch ] = useState('');
 	const [ name, setName ] = useState('');
 	const [ selectedMembers, setSelectedMembers ] = useState<string[]>([]);
+	const [ isScrolledTop, setIsScrolledTop ] = useState(false);
+	const [ isScrolledBottom, setIsScrolledBottom ] = useState(false);
 	const { data } = param;
 	const { type } = data;
 	const { name: limit } = J.Constant.limit.space;
@@ -61,10 +65,6 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 	};
 
 	const onNext = () => {
-		if (!selectedMembers.length) {
-			return;
-		};
-
 		const next = step + 1;
 
 		setStep(next);
@@ -93,11 +93,24 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 			ignoreHidden: false,
 			noDeps: true,
 			crossSpace: true,
+		}, () => {
+			if (!S.Record.getRecords(SUB_ID).length) {
+				setStep(1);
+			};
+			position();
 		});
 	}, []);
 
 	const getMembers = () => {
 		const list = S.Record.getRecords(SUB_ID);
+
+		// Count spaces per identity for sorting
+		const spaceCounts = new Map<string, number>();
+		list.forEach(it => {
+			if (it.identity) {
+				spaceCounts.set(it.identity, (spaceCounts.get(it.identity) || 0) + 1);
+			};
+		});
 
 		// Deduplicate by identity since the same user can be a participant in multiple spaces
 		const seen = new Set<string>();
@@ -110,13 +123,35 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 			return true;
 		});
 
-		unique.sort(U.Data.sortByName);
+		// Sort by: shared spaces count (desc), has name (desc), then name (asc)
+		unique.sort((a, b) => {
+			const ca = spaceCounts.get(a.identity) || 0;
+			const cb = spaceCounts.get(b.identity) || 0;
+
+			if (ca != cb) {
+				return cb - ca;
+			};
+
+			const na = a.name ? 1 : 0;
+			const nb = b.name ? 1 : 0;
+
+			if (na != nb) {
+				return nb - na;
+			};
+
+			return U.Data.sortByName(a, b);
+		});
 
 		if (search) {
 			return unique.filter(it => it.name.toLowerCase().includes(search.toLowerCase()));
 		};
 
 		return unique;
+	};
+
+	const onMemberListScroll = ({ scrollTop, scrollHeight, clientHeight }) => {
+		setIsScrolledTop(scrollTop > 0);
+		setIsScrolledBottom((scrollTop + clientHeight) < (scrollHeight - 1));
 	};
 
 	const onSubmit = () => {
@@ -151,17 +186,35 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 				return;
 			};
 
-			C.WorkspaceSetInfo(message.objectId, details, () => {
-				if (message.error.code) {
-					setError(message.error.description);
+			const spaceId = message.objectId;
+
+			const afterUpload = () => {
+				C.WorkspaceSetInfo(spaceId, details, (infoMessage: any) => {
+				if (infoMessage.error.code) {
+					setError(infoMessage.error.description);
 					return;
 				};
 
-				U.Router.switchSpace(message.objectId, '', true, {
+				U.Router.switchSpace(spaceId, '', true, {
 					onRouteChange: () => {
 						if (isGroup) {
 							C.SpaceMakeShareable(S.Common.space, (message: any) => {
 								if (message.error.code) {
+									if (message.error.code == 104) {
+										const { sharedSpacesLimit } = U.Space.getProfile();
+
+										S.Popup.open('confirm', {
+											data: {
+												iconParam: { name: 'popup/header/warning', color: 'grey' },
+												title: translate('popupConfirmSharedSpaceLimitTitle'),
+												text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+												textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+												canCancel: false,
+												onConfirm: () => Action.openSettings('membership', ''),
+											},
+										});
+										analytics.event('ScreenHitShareSpaceLimit');
+									};
 									return;
 								};
 
@@ -185,6 +238,19 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, type });
 				analytics.event('SelectUsecase', { type: usecase });
 			});
+			};
+
+			if (iconImagePathRef.current) {
+				C.FileUpload(spaceId, '', iconImagePathRef.current, I.FileType.Image, {}, false, '', I.ImageKind.Icon, '', '', (msg: any) => {
+					if (!msg.error.code) {
+						details.iconImage = msg.objectId;
+						details.iconOption = 0;
+					};
+					afterUpload();
+				});
+			} else {
+				afterUpload();
+			};
 		});
 	};
 
@@ -199,7 +265,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 			rect: { x: e.clientX, y: e.clientY, width: 0, height: 0 },
 			data: {
 				options: [
-					{ id: 'remove', name: translate('commonRemove'), icon: 'menu/action/remove' },
+					{ id: 'remove', name: translate('commonRemove'), iconParam: { name: 'menu/action/remove' } },
 				],
 				onSelect: () => {
 					onToggleMember(id);
@@ -228,14 +294,28 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 	};
 
 	const onIcon = () => {
-		let icon = iconOption;
+		fileInputRef.current?.click();
+	};
 
-		icon++;
-		if (icon > J.Constant.count.icon) {
-			icon = 1;
+	const onFileInputChange = (e: any) => {
+		const file = e.target.files?.[0];
+
+		if (!file) {
+			return;
 		};
 
-		setIconOption(icon);
+		const electron = U.Common.getElectron();
+		const path = electron.webFilePath(file);
+
+		iconImagePathRef.current = path;
+
+		U.File.loadPreviewBase64(file, { type: 'image/png', quality: 0.95, maxWidth: 256 }, (image: string) => {
+			setIconPreviewUrl(image);
+		});
+
+		if (fileInputRef.current) {
+			fileInputRef.current.value = '';
+		};
 	};
 
 	const object = getObject();
@@ -260,6 +340,8 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 		if (step == 0) {
 			setSearch('');
 			filterRef.current?.setValue('');
+			setIsScrolledTop(false);
+			setIsScrolledBottom(false);
 
 			if (isGroup) {
 				analytics.event('ScreenAddMember');
@@ -269,12 +351,13 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 	}, [ step ]);
 
 	const ROW_HEIGHT = 48;
-	const LIST_HEIGHT = 340;
+	const SAFE_AREA = 120;
+	const STEP0_OVERHEAD = 172;
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
-	const listHeight = Math.min(members.length * ROW_HEIGHT, LIST_HEIGHT) + 16;
-	const showGrad = (members.length * ROW_HEIGHT) > LIST_HEIGHT;
+	const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
+	const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
 
 	const rowRenderer = ({ index, key, style }) => {
 		const item = members[index];
@@ -291,7 +374,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 				onClick={() => onToggleMember(item.id)}
 			>
 				<IconObject size={32} object={item} />
-				<ObjectName object={item} />
+				<ObjectName object={item} withBadge={true} />
 				<Icon name={selectedMembers.includes(item.id) ? 'marker/checkbox2' : 'marker/checkbox0'} className="checkbox" />
 			</div>
 		);
@@ -343,6 +426,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 				<div className="memberListWrapper">
 					{members.length ? (
 						<>
+							{isScrolledTop ? <div className="grad top" /> : ''}
 							<div className="memberList" style={{ height: listHeight }}>
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
@@ -353,26 +437,24 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 											rowHeight={ROW_HEIGHT}
 											rowRenderer={rowRenderer}
 											overscanRowCount={10}
+											onScroll={onMemberListScroll}
 										/>
 									)}
 								</AutoSizer>
 							</div>
-							{showGrad ? <div className="grad" /> : ''}
+							{isScrolledBottom ? <div className="grad bottom" /> : ''}
 						</>
 					) : (
 						<div className="emptyState">{search ? translate('commonFilterEmpty') : translate('commonEmpty')}</div>
 					)}
 				</div>
 
-				<div className="wrapper">
-					<div className="buttons">
-						<Button 
-							className={!selectedMembers.length ? 'disabled' : ''} 
-							text={translate('popupSpaceCreateNext')} 
-							color="accent" 
-							onClick={onNext}
-						/>
-					</div>
+				<div className="wrapper buttons">
+					<Button
+						text={translate(selectedMembers.length ? 'popupSpaceCreateNext' : 'popupSpaceCreateContinueWithoutMembers')}
+						color="accent"
+						onClick={onNext}
+					/>
 				</div>
 			</div>
 		);
@@ -382,15 +464,18 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 				<div className="wrapper">
 					<div className="stepTitle">{title}</div>
 
-					<div className="iconWrapper">
-						<IconObject
-							ref={iconRef}
-							size={96}
-							object={object}
-							canEdit={false}
-							menuParam={{ horizontal: I.MenuDirection.Center }}
-							onClick={onIcon}
-						/>
+					<div className="iconWrapper" onClick={onIcon}>
+						{iconPreviewUrl ? (
+							<img src={iconPreviewUrl} className="iconPreview" />
+						) : (
+							<IconObject
+								ref={iconRef}
+								size={96}
+								object={object}
+								canEdit={false}
+								menuParam={{ horizontal: I.MenuDirection.Center }}
+							/>
+						)}
 					</div>
 
 					<Input
@@ -405,7 +490,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 						size={52}
 					/>
 
-					{isGroup ? (
+					{(isGroup && (members.length || selectedMemberObjects.length)) ? (
 						<div className="membersSection">
 							<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
 							<div className="item add" onClick={() => setStep(0)}>
@@ -416,7 +501,7 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 							{selectedMemberObjects.map(item => (
 								<div key={item.id} id={`member-${item.id}`} className="item" onContextMenu={e => onMemberContext(e, item.id)}>
 									<IconObject size={32} object={item} />
-									<ObjectName object={item} />
+									<ObjectName object={item} withBadge={true} />
 								</div>
 							))}
 						</div>
@@ -436,9 +521,10 @@ const PopupSpaceCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, 
 			<Icon name="common/close" className="close" onClick={() => close()} />
 			{stepContent}
 			<Error text={error} />
+			<input ref={fileInputRef} type="file" accept="image/*" className="dn" onChange={onFileInputChange} />
 		</>
 	);
 
-}));
+});
 
 export default PopupSpaceCreate;

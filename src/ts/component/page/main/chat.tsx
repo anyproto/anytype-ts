@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Onboarding, analytics, translate } from 'Lib';
+import { I, M, C, S, U, J } from 'Lib';
 
-const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainChat = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const nodeRef = useRef(null);
@@ -19,11 +18,11 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	const unbind = () => {
 		if (keydownHandlerRef.current) {
-			window.removeEventListener('keydown', keydownHandlerRef.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandlerRef.current);
 			keydownHandlerRef.current = null;
 		};
 		if (scrollToMessageHandlerRef.current) {
-			window.removeEventListener('scrollToMessage', scrollToMessageHandlerRef.current);
+			U.Dom.removeEvent(window, 'scrollToMessage', scrollToMessageHandlerRef.current);
 			scrollToMessageHandlerRef.current = null;
 		};
 	};
@@ -35,8 +34,10 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 			const { id } = e.detail;
 			chatRef.current?.getChildNode()?.loadAndScrollToMessage(id);
 		};
-		window.addEventListener('keydown', keydownHandlerRef.current);
-		window.addEventListener('scrollToMessage', scrollToMessageHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['keydown', keydownHandlerRef.current],
+			['scrollToMessage', scrollToMessageHandlerRef.current],
+		]);
 	};
 
 	const open = () => {
@@ -166,6 +167,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	return content;
 
-}));
+});
 
 export default PageMainChat;

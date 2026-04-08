@@ -1,7 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import raf from 'raf';
 import { Dimmer } from 'Component';
-import { observer } from 'mobx-react';
 import DimmerWithGraph from './dimmerWithGraph';
 
 import PopupSettingsOnboarding from './settings/onboarding';
@@ -34,7 +33,7 @@ import PopupUpload from './upload';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
-const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const Popup = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { id, param } = props;
 	const { onOpen } = param;
@@ -81,13 +80,13 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (!param.preventResize) {
 			resizeHandler.current = () => position();
-			window.addEventListener('resize', resizeHandler.current);
+			U.Dom.addEvent(window, 'resize', resizeHandler.current);
 		};
 	};
 
 	const unbind = () => {
 		if (resizeHandler.current) {
-			window.removeEventListener('resize', resizeHandler.current);
+			U.Dom.removeEvent(window, 'resize', resizeHandler.current);
 			resizeHandler.current = null;
 		};
 	};
@@ -238,6 +237,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default Popup;

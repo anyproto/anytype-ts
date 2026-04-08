@@ -1,11 +1,10 @@
 import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Label, Button } from 'Component';
 import Storage from 'Lib/storage';
 
 const STORAGE_KEY = 'updateBanner';
 
-const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
+const UpdateBanner = forwardRef<{}, {}>((props, ref) => {
 
 	const { updateVersion } = S.Common;
 	const cn = [ 'updateBanner', 'withButtons' ];
@@ -42,9 +41,7 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 			return;
 		};
 
-		node.style.left = `${coords.x}px`;
-		node.style.top = `${coords.y}px`;
-		node.style.bottom = 'auto';
+		U.Dom.css(node, { left: `${coords.x}px`, top: `${coords.y}px`, bottom: 'auto' });
 	}, [ checkCoords ]);
 
 	const resize = useCallback(() => {
@@ -77,11 +74,11 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 		keyboard.setDragging(false);
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 			mouseMoveHandler.current = null;
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 			mouseUpHandler.current = null;
 		};
 	}, []);
@@ -101,16 +98,18 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 		keyboard.setDragging(true);
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 		};
 
 		mouseMoveHandler.current = e => onDragMove(e);
 		mouseUpHandler.current = e => onDragEnd(e);
-		window.addEventListener('mousemove', mouseMoveHandler.current);
-		window.addEventListener('mouseup', mouseUpHandler.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	}, [ onDragMove, onDragEnd ]);
 
 	useEffect(() => {
@@ -162,6 +161,6 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default UpdateBanner;

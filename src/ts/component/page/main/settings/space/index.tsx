@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
-import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
+import { Icon, Title, Label, IconObject, ObjectName, Button, Editable } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
 import * as I from 'Interface';
 
-const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ isEditing, setIsEditing ] = useState(false);
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
@@ -16,6 +15,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	const type = S.Record.getTypeById(S.Common.type);
 	const participant = U.Space.getParticipant();
 	const canWrite = U.Space.canMyParticipantWrite();
+	const isOwner = U.Space.isMyOwner();
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const cnh = [ 'spaceHeader' ];
 	const nodeRef = useRef(null);
@@ -43,7 +43,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		};
 
 		if (keydownHandlerRef.current) {
-			window.removeEventListener('keydown', keydownHandlerRef.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandlerRef.current);
 			keydownHandlerRef.current = null;
 		};
 
@@ -52,7 +52,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 				keyboard.shortcut('enter', e, () => onSave());
 				keyboard.shortcut('escape', e, () => onCancel());
 			};
-			window.addEventListener('keydown', keydownHandlerRef.current);
+			U.Dom.addEvent(window, 'keydown', keydownHandlerRef.current);
 		};
 
 		modeRef.current?.setValue(String(spaceview.notificationMode));
@@ -229,7 +229,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 
 		return () => {
 			if (keydownHandlerRef.current) {
-				window.removeEventListener('keydown', keydownHandlerRef.current);
+				U.Dom.removeEvent(window, 'keydown', keydownHandlerRef.current);
 				keydownHandlerRef.current = null;
 			};
 			S.Menu.closeAll([ 'select', 'searchObject' ]);
@@ -306,7 +306,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 
 							<div className="sectionContent">
-								{!spaceview.isOneToOne ? (
+								{(!spaceview.isOneToOne && isOwner) ? (
 									<div className="item">
 										<div className="sides">
 											<Icon name="settings/home" />
@@ -362,6 +362,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsSpaceIndex;

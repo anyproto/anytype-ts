@@ -505,28 +505,28 @@ class Mark {
 		const wrapper = document.createElement('div');
 		wrapper.innerHTML = html;
 
-		wrapper.querySelectorAll(this.getTag(I.MarkType.Mention)).forEach(item => {
+		U.Dom.selectAll(this.getTag(I.MarkType.Mention), wrapper).forEach(item => {
 			item.removeAttribute('class');
-			const nameEl = item.querySelector('name');
+			const nameEl = U.Dom.select('name', item);
 			if (nameEl) {
 				item.innerHTML = nameEl.innerHTML;
 			};
 		});
 
-		wrapper.querySelectorAll('font').forEach(item => {
-			const span = item.querySelector('span');
+		U.Dom.selectAll('font', wrapper).forEach(item => {
+			const span = U.Dom.select('span', item);
 			if (span) {
 				item.replaceWith(document.createTextNode(span.innerHTML));
 			};
 		});
 
-		wrapper.querySelectorAll(this.getTag(I.MarkType.Emoji)).forEach(item => {
+		U.Dom.selectAll(this.getTag(I.MarkType.Emoji), wrapper).forEach(item => {
 			item.removeAttribute('class');
 			item.innerHTML = ' ';
 		});
 
 		// Restore original LaTeX from rendered markuplatex elements
-		wrapper.querySelectorAll(this.getTag(I.MarkType.Latex)).forEach(item => {
+		U.Dom.selectAll(this.getTag(I.MarkType.Latex), wrapper).forEach(item => {
 			const original = item.getAttribute('data-latex');
 			if (original) {
 				item.replaceWith(U.String.fromHtmlSpecialChars(original).replace(/&#36;/g, '$'));
@@ -627,7 +627,7 @@ class Mark {
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
 	fromMarkdown(html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean, updatedValue: boolean): I.FromHtmlResult {
-		const reg1 = /(^|[\s\(\[\{])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
+		const reg1 = /(^|[\s\(\[\{]|[^\x00-\x7F])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
 		const reg2 = /^(`{1}|\*+|_+|\[|~{2})/;
 		const test = reg1.test(html);
 		const checked = marks.filter(it => [I.MarkType.Code].includes(it.type));

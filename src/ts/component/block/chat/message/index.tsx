@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { motion, AnimatePresence, } from 'motion/react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
 
@@ -15,7 +14,7 @@ interface ChatMessageRefProps {
 	getNode: () => HTMLElement;
 };
 
-const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
+const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const {
 		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
@@ -38,7 +37,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 					return;
 				};
 
-				nodeRef.current.querySelectorAll('.attachment.isBookmark').forEach((el: HTMLElement) => {
+				U.Dom.selectAll('.attachment.isBookmark', nodeRef.current).forEach((el: HTMLElement) => {
 					U.Dom.toggleClass(el, 'isWide', width > 360);
 				});
 			});
@@ -56,6 +55,14 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 	useEffect(() => {
 		init();
+
+		if (bubbleRef.current && nodeRef.current) {
+			const width = bubbleRef.current.offsetWidth;
+
+			U.Dom.selectAll('.attachment.isBookmark', nodeRef.current).forEach((el: HTMLElement) => {
+				U.Dom.toggleClass(el, 'isWide', width > 360);
+			});
+		};
 	});
 
 	useImperativeHandle(ref, () => ({
@@ -77,8 +84,8 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		const node = nodeRef.current;
 		if (!node) return;
 
-		const et = node.querySelector('.bubbleOuter .text');
-		const er = node.querySelector('.reply .text');
+		const et = U.Dom.select('.bubbleOuter .text', node);
+		const er = U.Dom.select('.reply .text', node);
 
 		renderMentions(rootId, et, marks, () => text, { subId });
 		renderObjects(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
@@ -96,7 +103,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		let menuContext = null;
 
 		S.Menu.open('smile', {
-			element: node?.querySelector('#reaction-add'),
+			element: U.Dom.select('#reaction-add', node),
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
 			noFlipX: true,
@@ -419,6 +426,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default memo(ChatMessage);

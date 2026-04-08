@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { MenuItemVertical, DragHorizontal } from 'Component';
 import * as I from 'Interface';
 
-const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuGraphSettings = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, onKeyDown, setActive, getId, getSize } = props;
 	const { data, className, classNameWrap } = param;
@@ -26,13 +25,13 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		unbind();
 
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -148,7 +147,7 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		analytics.event('GraphSettings', { id });
 
 		if (id == 'typeEdges') {
-			window.dispatchEvent(new CustomEvent('updateGraphData'));
+			U.Dom.eventDispatch(window, 'updateGraphData');
 		};
 	};
 
@@ -317,6 +316,6 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default MenuGraphSettings;

@@ -1,11 +1,10 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Cell, Icon } from 'Component';
 import * as I from 'Interface';
 
 const PREFIX = 'sidebarObjectRelation';
 
-const SidebarSectionObjectRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionObjectRelation = forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 	
 	const { rootId, isPopup, item: relation } = props;
 	const nodeRef = useRef(null);
@@ -21,7 +20,7 @@ const SidebarSectionObjectRelation = observer(forwardRef<I.SidebarSectionRef, I.
 			return;
 		};
 
-		const cell = node.querySelector('.cell') as HTMLElement;
+		const cell = U.Dom.select('.cell', node);
 		const canEdit = cellRef.current?.canEdit();
 
 		U.Dom.toggleClass(node, 'canEdit', canEdit);
@@ -82,7 +81,10 @@ const SidebarSectionObjectRelation = observer(forwardRef<I.SidebarSectionRef, I.
 					readonly={!canEdit}
 					idPrefix={PREFIX}
 					onCellChange={onCellChange}
-					menuParam={{ className: 'fromSidebar fixed', classNameWrap: 'fromSidebar' }}
+					menuParam={{ 
+						className: 'fromSidebar fixed', 
+						classNameWrap: 'fromSidebar',
+					}}
 				/>
 			</div>
 
@@ -92,6 +94,6 @@ const SidebarSectionObjectRelation = observer(forwardRef<I.SidebarSectionRef, I.
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionObjectRelation;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
 
 import raf from 'raf';
@@ -10,7 +9,7 @@ import * as I from 'Interface';
 
 const PADDING = 46;
 
-const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewBoard = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { rootId, block, getView, getTarget, className, onViewSettings, isInline, isPopup, readonly, objectOrderUpdate } = props;
 	const view = getView();
@@ -65,9 +64,14 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		unbind();
 
 		scrollHorizontalHandlerRef.current = () => onScrollHorizontal();
-		scroll?.addEventListener('scroll', scrollHorizontalHandlerRef.current);
+		if (scroll) {
+			U.Dom.addEvent(scroll, 'scroll', scrollHorizontalHandlerRef.current);
+		};
 		scrollViewHandlerRef.current = onScrollView;
-		U.Dom.getPageContainer(isPopup)?.addEventListener('scroll', scrollViewHandlerRef.current);
+		const pageContainer = U.Dom.getPageContainer(isPopup);
+		if (pageContainer) {
+			U.Dom.addEvent(pageContainer, 'scroll', scrollViewHandlerRef.current);
+		};
 
 		if (!isInline) {
 			stickyScrollRef.current?.bind(scroll, isSyncingScroll.current);
@@ -77,13 +81,14 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 	const unbind = () => {
 		const scroll = scrollRef.current;
 
-		if (scrollHorizontalHandlerRef.current) {
-			scroll?.removeEventListener('scroll', scrollHorizontalHandlerRef.current);
+		if (scrollHorizontalHandlerRef.current && scroll) {
+			U.Dom.removeEvent(scroll, 'scroll', scrollHorizontalHandlerRef.current);
 			scrollHorizontalHandlerRef.current = null;
 		};
 		stickyScrollRef.current?.unbind();
-		if (scrollViewHandlerRef.current) {
-			U.Dom.getPageContainer(isPopup)?.removeEventListener('scroll', scrollViewHandlerRef.current);
+		const pageContainer = U.Dom.getPageContainer(isPopup);
+		if (scrollViewHandlerRef.current && pageContainer) {
+			U.Dom.removeEvent(pageContainer, 'scroll', scrollViewHandlerRef.current);
 			scrollViewHandlerRef.current = null;
 		};
 	};
@@ -196,23 +201,20 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		U.Dom.addClass(target, 'isDragging');
 		clone.id = '';
 		U.Dom.addClass(clone, 'isClone');
-		clone.style.zIndex = '10000';
-		clone.style.position = 'fixed';
-		clone.style.left = '-10000px';
-		clone.style.top = '-10000px';
+		U.Dom.css(clone, { zIndex: '10000', position: 'fixed', left: '-10000px', top: '-10000px' });
 		viewEl?.appendChild(clone);
 
 		if (dragOverHandlerRef.current) {
-			document.removeEventListener('dragover', dragOverHandlerRef.current);
+			U.Dom.removeEvent(document, 'dragover', dragOverHandlerRef.current);
 		};
 		dragOverHandlerRef.current = (e: Event) => e.preventDefault();
-		document.addEventListener('dragover', dragOverHandlerRef.current);
+		U.Dom.addEvent(document, 'dragover', dragOverHandlerRef.current);
 
 		if (dragHandlerRef.current) {
-			window.removeEventListener('drag', dragHandlerRef.current);
+			U.Dom.removeEvent(window, 'drag', dragHandlerRef.current);
 		};
 		if (dragEndHandlerRef.current) {
-			window.removeEventListener('dragend', dragEndHandlerRef.current);
+			U.Dom.removeEvent(window, 'dragend', dragEndHandlerRef.current);
 		};
 
 		U.Dom.addClass(document.body, 'grab');
@@ -234,11 +236,11 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		U.Dom.removeClass(document.body, 'grab');
 
 		if (dragHandlerRef.current) {
-			window.removeEventListener('drag', dragHandlerRef.current);
+			U.Dom.removeEvent(window, 'drag', dragHandlerRef.current);
 			dragHandlerRef.current = null;
 		};
 		if (dragEndHandlerRef.current) {
-			window.removeEventListener('dragend', dragEndHandlerRef.current);
+			U.Dom.removeEvent(window, 'dragend', dragEndHandlerRef.current);
 			dragEndHandlerRef.current = null;
 		};
 
@@ -282,8 +284,10 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 		dragHandlerRef.current = (e: Event) => onDragMoveColumn(e, groupId);
 		dragEndHandlerRef.current = (e: Event) => onDragEndColumn(e, groupId);
-		window.addEventListener('drag', dragHandlerRef.current);
-		window.addEventListener('dragend', dragEndHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['drag', dragHandlerRef.current],
+			['dragend', dragEndHandlerRef.current],
+		]);
 	};
 
 	const onDragMoveColumn = (e: any, groupId: any) => {
@@ -392,8 +396,10 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 		dragHandlerRef.current = (e: Event) => onDragMoveCard(e, record);
 		dragEndHandlerRef.current = (e: Event) => onDragEndCard(e, record);
-		window.addEventListener('drag', dragHandlerRef.current);
-		window.addEventListener('dragend', dragEndHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['drag', dragHandlerRef.current],
+			['dragend', dragEndHandlerRef.current],
+		]);
 	};
 
 	const onDragMoveCard = (e: any, record: any) => {
@@ -639,13 +645,10 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 			const pr = width > mw ? PADDING : 0;
 
 			if (scroll) {
-				scroll.style.width = `${cw - 4}px`;
-				scroll.style.marginLeft = `${-margin - 2}px`;
-				scroll.style.paddingLeft = `${margin}px`;
+				U.Dom.css(scroll, { width: `${cw - 4}px`, marginLeft: `${-margin - 2}px`, paddingLeft: `${margin}px` });
 			};
 			if (viewEl) {
-				viewEl.style.width = `${vw}px`;
-				viewEl.style.paddingRight = `${pr}px`;
+				U.Dom.css(viewEl, { width: `${vw}px`, paddingRight: `${pr}px` });
 			};
 
 			stickyScrollRef.current?.resize({
@@ -662,12 +665,10 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 			const margin = (cw - ww) / 2;
 
 			if (scroll) {
-				scroll.style.width = `${cw}px`;
-				scroll.style.marginLeft = `${-margin}px`;
-				scroll.style.paddingLeft = `${margin}px`;
+				U.Dom.css(scroll, { width: `${cw}px`, marginLeft: `${-margin}px`, paddingLeft: `${margin}px` });
 			};
 			if (viewEl) {
-				viewEl.style.width = `${width + margin + 2}px`;
+				U.Dom.css(viewEl, { width: `${width + margin + 2}px` });
 			};
 		};
 	};
@@ -720,6 +721,6 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		</div>
 	);	
 
-}));
+});
 
 export default ViewBoard;

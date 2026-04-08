@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Icon, Cell } from 'Component';
 import * as I from 'Interface';
@@ -11,7 +10,7 @@ const HEIGHT_ITEM = 32;
 const HEIGHT_SECTION = 42;
 const LIMIT = 10;
 
-const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, getId, getContainer, getSize, close, setActive, onKeyDown, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -29,7 +28,6 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		rebind();
 		checkFilter();
-		resize();
 
 		return () => {
 			S.Menu.closeAll(J.Menu.add);
@@ -56,7 +54,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		checkFilter();
-		resize();
+		position();
 		setActive();
 	});
 
@@ -67,13 +65,13 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -169,11 +167,11 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			const actions = U.Menu.getActions({ count: 1 });
 
 			if (block.canTurnPage()) {
-				actions.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
+				actions.push({ id: 'turnObject', iconParam: { name: 'object' }, name: translate('commonTurnIntoObject'), arrow: true });
 			};
 
 			sections = sections.concat([
-				{ id: 'action', icon: 'action', name: translate('commonActions'), color: '', children: actions },
+				{ id: 'action', iconParam: { name: 'action' }, name: translate('commonActions'), color: '', children: actions },
 			]);
 
 			if (block.canHaveAlign()) {
@@ -185,13 +183,13 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					restricted.push(I.BlockHAlign.Center);
 				};
 
-				sections.push({ id: 'align', icon: 'align', name: translate('commonAlign'), color: '', children: U.Menu.getHAlign(restricted) });
+				sections.push({ id: 'align', iconParam: { name: 'align' }, name: translate('commonAlign'), color: '', children: U.Menu.getHAlign(restricted) });
 			};
 			if (block.canHaveColor()) {
-				sections.push({ id: 'color', icon: 'color', name: translate('menuBlockAddSectionTextColor'), color: '', children: U.Menu.getTextColors() });
+				sections.push({ id: 'color', iconParam: { name: 'color' }, name: translate('menuBlockAddSectionTextColor'), color: '', children: U.Menu.getTextColors() });
 			};
 			if (block.canHaveBackground()) {
-				sections.push({ id: 'bgColor', icon: 'bgColor', name: translate('menuBlockAddSectionBackgroundColor'), color: '', children: U.Menu.getBgColors() });
+				sections.push({ id: 'bgColor', iconParam: { name: 'bgColor' }, name: translate('menuBlockAddSectionBackgroundColor'), color: '', children: U.Menu.getBgColors() });
 			};
 			
 			sections = U.Menu.sectionsFilter(sections, filter.text);
@@ -586,27 +584,27 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 							// Auto-open BlockRelation suggest menu
 							if ((param.type == I.BlockType.Relation) && !param.content.key) {
-								element?.querySelector(`.info`)?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+								U.Dom.select('.info', element)?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 							};
 
 							// Auto-open BlockEmbed edit mode
 							if (param.type == I.BlockType.Embed) {
-								element?.querySelector(`.focusable`)?.dispatchEvent(new CustomEvent('edit', { bubbles: true }));
+								U.Dom.select('.focusable', element)?.dispatchEvent(new CustomEvent('edit', { bubbles: true }));
 							};
 
 							// Auto-open BlockDataview source menu
 							if (param.type == I.BlockType.Dataview) {
-								window.dispatchEvent(new CustomEvent(`setDataviewSource.${newBlockId}`));
+								U.Dom.eventDispatch(window, `setDataviewSource.${newBlockId}`);
 							};
 
 							// Auto-open BlockFile upload dialog
 							if (param.type == I.BlockType.File) {
-								element?.querySelector(`.fileWrap`)?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+								U.Dom.select('.fileWrap .border', element)?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 							};
 
 							// Auto-focus bookmark input field
 							if (param.type == I.BlockType.Bookmark) {
-								element?.querySelector('.urlToggle')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+								U.Dom.select('.urlToggle', element)?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 							};
 						}, S.Menu.getTimeout());
 					});
@@ -641,7 +639,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		U.Data.moveToPage(rootId, ids, typeId, analytics.route.powertool);
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems().slice(0, LIMIT);
 		const content = U.Dom.select('.content', getContainer());
 
@@ -652,7 +650,6 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		height = Math.max(HEIGHT_ITEM + 18, height);
 
 		U.Dom.css(content, { height: `${height}px` });
-		position();
 	};
 
 	const getRowHeight = (item: any, index: number) => {
@@ -799,6 +796,7 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -843,6 +841,6 @@ const MenuBlockAdd = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockAdd;

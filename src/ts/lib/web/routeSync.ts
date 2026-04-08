@@ -51,7 +51,7 @@ export function initRouteSync (memoryHistory: any, router: any) {
 	});
 
 	// Browser back/forward → app navigation
-	window.addEventListener('popstate', () => {
+	U.Dom.addEvent(window, 'popstate', () => {
 		// index < 0 means memory history was reset (e.g. after logout
 		// via go() with replace: true which sets entries=[], index=-1).
 		// Push current route forward to block browser back into stale history.

@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -11,7 +10,7 @@ import * as I from 'Interface';
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, getSize, setHover, setActive, onKeyDown, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -30,12 +29,12 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const rebind = () => {
 		unbind();
 
-		window.addEventListener('keydown', onKeyDownHandler);
+		U.Dom.addEvent(window, 'keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDownHandler);
+		U.Dom.removeEvent(window, 'keydown', onKeyDownHandler);
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -191,13 +190,12 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		}));
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = !isReadonly ? 62 : 16;
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + offset));
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const items = getItems();
@@ -275,7 +273,6 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const items = getItems();
 
 		rebind();
-		resize();
 
 		cache.current = new CellMeasurerCache({
 			fixedWidth: true,
@@ -291,7 +288,6 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	}, []);
 	
 	useEffect(() => {
-		resize();
 		rebind();
 		setActive(null, true);
 		position();
@@ -304,6 +300,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -378,6 +375,6 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuRelationList;

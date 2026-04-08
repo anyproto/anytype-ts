@@ -1,10 +1,9 @@
 import React, { useRef, useImperativeHandle, forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Error } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp } = props;
 	const { width } = block.fields || {};
@@ -42,22 +41,23 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		const selection = S.Common.getRef('selectionProvider');
 
-		focus.set(block.id, { from: 0, to: 0 });
 		selection?.hide();
 		keyboard.disableSelection(true);
 		U.Dom.addClass(nodeRef.current, 'isResizing');
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 		};
 
 		mouseMoveHandler.current = e => handleResize(e, checkMax);
 		mouseUpHandler.current = e => handleResizeEnd(e, checkMax);
-		window.addEventListener('mousemove', mouseMoveHandler.current);
-		window.addEventListener('mouseup', mouseUpHandler.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const handleResize = (e: any, checkMax: boolean) => {
@@ -71,7 +71,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const rect = U.Dom.getElementRect(wrapRef.current);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
-		wrapRef.current.style.width = (w * 100) + '%';
+		U.Dom.css(wrapRef.current, { width: (w * 100) + '%' });
 	};
 
 	const handleResizeEnd = (e: any, checkMax: boolean) => {
@@ -83,11 +83,11 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - ox + 20));
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 			mouseMoveHandler.current = null;
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 			mouseUpHandler.current = null;
 		};
 
@@ -152,7 +152,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const getWidth = (checkMax: boolean, v: number): number => {
-		const el = U.Dom.get(`selectionTarget-${U.Common.esc(block.id)}`);
+		const el = U.Dom.get(`selectionTarget-${block.id}`);
 		const width = Number(block.fields.width) || 1;
 
 		if (!el) {
@@ -174,27 +174,53 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	let element = null;
+	let overlay = null;
+
+	const typeName = translate('blockNameImage');
+
 	if (object.isDeleted) {
 		element = (
-			<div className="deleted">
+			<div className="mediaState isRemoved">
 				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
 			</div>
 		);
+	} else if (object.isArchived) {
+		overlay = (
+			<div className="mediaState isInBin">
+				<Icon name="common/ghost" />
+				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
+			</div>
+		);
+		if (state == I.FileState.Done) {
+			element = (
+				<div ref={wrapRef} className="wrap" style={css}>
+					<img
+						className="mediaImage"
+						src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
+						onDragStart={e => e.preventDefault()}
+						onError={handleError}
+					/>
+					{overlay}
+				</div>
+			);
+		} else {
+			element = overlay;
+		};
 	} else {
 		switch (state) {
 			default: {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="image" 
-							textFile={translate('blockImageUpload')} 
-							accept={J.Constant.fileExtension.image} 
-							onChangeUrl={handleChangeUrl} 
-							onChangeFile={handleChangeFile} 
-							readonly={readonly} 
+						<InputWithFile
+							block={block}
+							iconParam={{ name: 'menu/block/media/image' }}
+							textFile={translate('blockImageUpload')}
+							accept={J.Constant.fileExtension.image}
+							onChangeUrl={handleChangeUrl}
+							onChangeFile={handleChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
@@ -204,12 +230,12 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			case I.FileState.Done: {
 				element = (
 					<div ref={wrapRef} className="wrap" style={css}>
-						<img 
-							className="mediaImage" 
-							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)} 
-							onDragStart={e => e.preventDefault()} 
-							onClick={handleClick} 
-							onError={handleError} 
+						<img
+							className="mediaImage"
+							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
+							onDragStart={e => e.preventDefault()}
+							onClick={handleClick}
+							onError={handleError}
 						/>
 						{isDownloading ? <Icon className="downloading" /> : <Icon name="common/download" className="download" onClick={handleDownload} />}
 						<Icon name="common/resize" className="resize" onMouseDown={e => handleResizeStart(e, false)} />
@@ -234,6 +260,6 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			{element}
 		</div>
 	);
-}));
+});
 
 export default BlockImage;

@@ -86,7 +86,7 @@ const ObjectName: FC<Props> = ({
 		};
 
 		if (withBadge && U.Object.isParticipantLayout(layout)) {
-			badge = globalName ? <Icon name="membership/badge" size={18} color="accent100" onClick={onBadgeClick} /> : '';
+			badge = globalName ? <Icon name="membership/badge" className="badge" size={18} color="accent100" onClick={onBadgeClick} /> : '';
 		};
 	};
 

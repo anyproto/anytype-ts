@@ -1,10 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { Icon, Label, Button, Checkbox, Error, Input, Editable } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
-const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -54,12 +53,12 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keyHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keyHandler.current);
+		U.Dom.addEvent(window, 'keydown', keyHandler.current);
 	};
 
 	const unbind = () => {
 		if (keyHandler.current) {
-			window.removeEventListener('keydown', keyHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keyHandler.current);
 			keyHandler.current = null;
 		};
 	};
@@ -213,6 +212,6 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupConfirm;

@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
 import { Icon, DropTarget, EditorControls, CommentSection } from 'Component';
 import PageHeadEditor from 'Component/page/elements/head/editor';
@@ -17,7 +16,7 @@ interface Props extends I.PageComponent {
 const THROTTLE = 40;
 const BUTTON_OFFSET = 10;
 
-const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const { rootId, isPopup, onOpen } = props;
 	const root = S.Block.getLeaf(rootId, rootId);
@@ -229,20 +228,20 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const unbind = () => {
 		const ns = `editor${U.Dom.getEventNamespace(isPopup)}`;
-		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
+		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus', 'sidebarResize' ];
 		const selection = S.Common.getRef('selectionProvider');
 
 		events.forEach(it => {
 			const handler = (window as any)[`_editorHandler_${it}_${ns}`];
 			if (handler) {
-				window.removeEventListener(it, handler);
+				U.Dom.removeEvent(window, it, handler);
 				delete (window as any)[`_editorHandler_${it}_${ns}`];
 			};
 		});
 
 		const sc = U.Dom.getScrollContainer(isPopup);
 		if (sc && scrollHandlerRef.current) {
-			sc.removeEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.removeEvent(sc, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
 
@@ -260,7 +259,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const storeHandler = (event: string, handler: (e: any) => void) => {
 			(window as any)[`_editorHandler_${event}_${ns}`] = handler;
-			window.addEventListener(event, handler);
+			U.Dom.addEvent(window, event, handler);
 		};
 
 		if (!readonly) {
@@ -299,7 +298,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		if (sc) {
 			scrollHandlerRef.current = () => onScroll();
-			sc.addEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.addEvent(sc, 'scroll', scrollHandlerRef.current);
 		};
 
 		Renderer.on(`commandEditor`, (e: any, cmd: string, arg: any) => onCommand(cmd, arg));
@@ -401,7 +400,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		for (const block of blocks) {
-			const obj = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+			const obj = U.Dom.get(`block-${block.id}`);
 			if (!obj || U.Dom.hasClass(obj, 'noPlus')) {
 				continue;
 			};
@@ -419,7 +418,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				hovered = obj;
 				hoveredRect = rect;
 
-				if (block.isLayout() && (pageX < rect.x) || (pageX > rect.x + J.Size.blockMenu)) {
+				if (block.isLayout() && ((pageX < rect.x) || (pageX > rect.x + J.Size.blockMenu))) {
 					continue;
 				};
 			};
@@ -435,7 +434,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			out();
 			
 			if (hovered) {
-				hovered.addClass('showMenu');
+				U.Dom.addClass(hovered, 'showMenu');
 			};
 			return;
 		};
@@ -467,7 +466,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			
 			clear();
 			U.Dom.addClass(buttonAdd.current, 'show');
-			buttonAdd.current.style.transform = `translate3d(${buttonX}px,${buttonY}px,0px)`;
+			U.Dom.css(buttonAdd.current, { transform: `translate3d(${buttonX}px,${buttonY}px,0px)` });
 			U.Dom.addClass(hovered, 'showMenu');
 
 			if (pageX <= x + 20) {
@@ -1346,7 +1345,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const st = window.scrollY;
-		const element = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const element = U.Dom.get(`block-${block.id}`);
 		const value = element ? U.Dom.select('#value', element) : null;
 
 		let sRect = U.Dom.getSelectionRect();
@@ -1427,7 +1426,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			filter = mark.param;
 			newType = mark.type;
 		} else {
-			filter = block.getText().substring(range.from, range.to);
+			filter = text.substring(range.from, range.to);
 		};
 
 		switch (type) {
@@ -2044,7 +2043,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			e.preventDefault();
 			onPaste(data);
 		} else {
-			const cb = e.clipboardData || e.originalEvent?.clipboardData;
+			const cb = e.clipboardData;
 			const clipboardItems = cb?.items;
 			const files = clipboardItems ? U.Common.getDataTransferFiles(clipboardItems) : [];
 
@@ -2310,7 +2309,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 							if (processor !== null) {
 								blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
 									blockCreate(blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
-									const previewEl = U.Dom.select(`.preview`, U.Dom.get(`block-${U.Common.esc(blockId)}`));
+									const previewEl = U.Dom.select(`.preview`, U.Dom.get(`block-${blockId}`));
 									if (previewEl) {
 										previewEl.click();
 									};
@@ -2332,7 +2331,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const getClipboardData = (e: any) => {
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const cb = e.clipboardData;
 		const data: any = {
 			text: U.String.normalizeLineEndings(String(cb.getData('text/plain') || '')),
 			html: String(cb.getData('text/html') || ''),
@@ -2649,7 +2648,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			setLayoutWidth(U.Data.getLayoutWidth(rootId));
 
 			if (blocks && last && scrollContainer) {
-				last.style.height = '';
+				U.Dom.css(last, { height: '' });
 
 				const commentSection = U.Dom.select('.commentSection', node);
 				const csh = commentSection ? commentSection.offsetHeight : 0;
@@ -2664,7 +2663,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 					let height = ch - ct - bt - bh - 8;
 					height = Math.max(J.Size.lastBlock, height);
-					last.style.height = `${height}px`;
+					U.Dom.css(last, { height: `${height}px` });
 					U.Dom.addClass(counter, 'isFixed');
 				} else {
 					U.Dom.removeClass(counter, 'isFixed');
@@ -2710,10 +2709,9 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const width = getWidth(v);
 		const elements = U.Dom.select('#elements', node);
 
-		node.style.width = `${width}px`;
+		U.Dom.css(node, { width: `${width}px` });
 		if (elements) {
-			elements.style.width = `${width}px`;
-			elements.style.marginLeft = `${-width / 2}px`;
+			U.Dom.css(elements, { width: `${width}px`, marginLeft: `${-width / 2}px` });
 		};
 
 		headerRef.current?.refDrag?.setValue(v);
@@ -2808,7 +2806,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 				<TableOfContents ref={tocRef} {...props} />
 
-				{S.Common.config.experimental && !isTemplate ? (
+				{!isTemplate ? (
 					<CommentSection
 						rootId={rootId}
 						targetId={rootId}
@@ -2823,6 +2821,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default EditorPage;

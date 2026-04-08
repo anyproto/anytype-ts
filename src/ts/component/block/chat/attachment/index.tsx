@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
 import * as I from 'Interface';
 
@@ -19,7 +18,7 @@ interface RefProps {
 	getPreviewItem: () => any;
 };
 
-const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
+const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { object, showAsFile, bookmarkAsDefault, isDownload, onPreview, updateAttachments, onRemove } = props;
 
@@ -133,14 +132,14 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 					src.current = image;
 
-					const img = node?.querySelector('#image') as HTMLImageElement;
-					const blur = node?.querySelector('#blur') as HTMLElement;
+					const img = U.Dom.select('#image', node) as HTMLImageElement;
+					const blur = U.Dom.select('#blur', node);
 
 					if (img) {
 						img.src = image;
 					};
 					if (blur) {
-						blur.style.backgroundImage = `url(${image})`;
+						U.Dom.css(blur, { backgroundImage: `url(${image})` });
 					};
 				});
 
@@ -416,10 +415,10 @@ const ChatAttachment = observer(forwardRef<RefProps, Props>((props, ref) => {
 			className={cn.join(' ')}
 		>
 			{content}
-			<Icon name="chat/buttons/remove" size={8} onClick={onRemoveHandler} />
+			<Icon name="chat/buttons/remove" className="remove" size={8} onClick={onRemoveHandler} />
 		</div>
 	);
 
-}));
+});
 
 export default ChatAttachment;

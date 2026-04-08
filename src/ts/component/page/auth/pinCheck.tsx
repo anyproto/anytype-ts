@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Frame, Title, Error, Pin, Header } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
+const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
 
 	const pinRef = useRef(null);
 	const { pin } = S.Common;
@@ -13,7 +12,7 @@ const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 
 	const unbind = () => {
 		if (focusHandler.current) {
-			window.removeEventListener('focus', focusHandler.current);
+			U.Dom.removeEvent(window, 'focus', focusHandler.current);
 			focusHandler.current = null;
 		};
 	};
@@ -21,7 +20,7 @@ const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 	const rebind = () => {
 		unbind();
 		focusHandler.current = () => pinRef.current?.focus();
-		window.addEventListener('focus', focusHandler.current);
+		U.Dom.addEvent(window, 'focus', focusHandler.current);
 	};
 
 	const onError = () => {
@@ -65,6 +64,6 @@ const PageAuthPinCheck = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 		</>
 	);
 
-}));
+});
 
 export default PageAuthPinCheck;

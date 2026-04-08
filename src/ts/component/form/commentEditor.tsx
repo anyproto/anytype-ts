@@ -7,6 +7,7 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $trimTextContentFromAnchor } from '@lexical/selection';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { ListNode, ListItemNode } from '@lexical/list';
@@ -42,10 +43,10 @@ import {
 	ElementNode,
 	DecoratorNode,
 	TextNode,
+	$splitNode,
 } from 'lexical';
 import { $setBlocksType } from '@lexical/selection';
 
-import { observer } from 'mobx-react';
 import { IconObject } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
 import EmbedPreview from 'Component/comment/embedPreview';
@@ -294,7 +295,7 @@ class AttachmentNode extends DecoratorNode<JSX.Element> {
 
 };
 
-const AttachmentDecorator = observer(({ nodeKey, data }: { nodeKey: string; data: any }) => {
+const AttachmentDecorator = ({ nodeKey, data }: { nodeKey: string; data: any }) => {
 	const [ editor ] = useLexicalComposerContext();
 	const subId = useContext(CommentSubIdContext);
 
@@ -315,7 +316,7 @@ const AttachmentDecorator = observer(({ nodeKey, data }: { nodeKey: string; data
 			}}
 		/>
 	);
-});
+};
 
 function $createAttachmentNode (data: any): AttachmentNode {
 	return new AttachmentNode(data);
@@ -515,6 +516,7 @@ interface Props {
 	placeholder?: string;
 	initialParts?: I.CommentContentPart[];
 	readonly?: boolean;
+	maxLength?: number;
 	onSubmit?: (parts: I.CommentContentPart[]) => void;
 	onCancel?: () => void;
 	onEmpty?: (isEmpty: boolean) => void;
@@ -1175,8 +1177,8 @@ const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keydown', onKeyDown);
-			return () => root.removeEventListener('keydown', onKeyDown);
+			U.Dom.addEvent(root, 'keydown', onKeyDown);
+			return () => U.Dom.removeEvent(root, 'keydown', onKeyDown);
 		};
 	}, [ editor, onSubmit ]);
 
@@ -1251,8 +1253,8 @@ const FormattingPlugin = ({ editorId }: { editorId: string }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keydown', onKeyDown);
-			return () => root.removeEventListener('keydown', onKeyDown);
+			U.Dom.addEvent(root, 'keydown', onKeyDown);
+			return () => U.Dom.removeEvent(root, 'keydown', onKeyDown);
 		};
 	}, [ editor, editorId ]);
 
@@ -1951,6 +1953,12 @@ const PasteUrlPlugin = () => {
 					return false;
 				};
 
+				// If clipboard has HTML content, let Lexical handle rich paste natively
+				const html = clipboardData.getData('text/html') || '';
+				if (html) {
+					return false;
+				};
+
 				const text = clipboardData.getData('text/plain') || '';
 				if (!text) {
 					return false;
@@ -2390,6 +2398,85 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 	});
 };
 
+/**
+ * Splits a paragraph at selection boundaries so that a block transform
+ * only affects the selected portion, not the entire paragraph.
+ */
+const splitSelectionFromParagraph = (selection: any) => {
+	if (!$isRangeSelection(selection) || selection.isCollapsed()) {
+		return;
+	};
+
+	const anchor = selection.anchor;
+	const focus = selection.focus;
+	const anchorNode = anchor.getNode();
+	const focusNode = focus.getNode();
+	const anchorTopLevel = anchorNode.getTopLevelElementOrThrow();
+	const focusTopLevel = focusNode.getTopLevelElementOrThrow();
+
+	// Only split when selection is within a single paragraph
+	if (anchorTopLevel !== focusTopLevel) {
+		return;
+	};
+
+	if (anchorTopLevel.getType() !== 'paragraph') {
+		return;
+	};
+
+	const paragraph = anchorTopLevel;
+	const children = paragraph.getChildren();
+
+	if (children.length <= 1) {
+		return;
+	};
+
+	// Find child indices for anchor and focus
+	const anchorChild = $isElementNode(anchorNode) ? anchorNode : anchorNode.getParent();
+	const focusChild = $isElementNode(focusNode) ? focusNode : focusNode.getParent();
+
+	if (!anchorChild || !focusChild) {
+		return;
+	};
+
+	const anchorIdx = children.indexOf(anchorChild === paragraph ? anchorNode : anchorChild);
+	const focusIdx = children.indexOf(focusChild === paragraph ? focusNode : focusChild);
+
+	if (anchorIdx === -1 || focusIdx === -1) {
+		return;
+	};
+
+	const startIdx = Math.min(anchorIdx, focusIdx);
+	const endIdx = Math.max(anchorIdx, focusIdx);
+
+	// Don't split if the entire paragraph is selected
+	if ((startIdx === 0) && (endIdx === children.length - 1)) {
+		return;
+	};
+
+	// Split after the end of selection (if not at the last child)
+	if (endIdx < children.length - 1) {
+		$splitNode(paragraph, endIdx + 1);
+	};
+
+	// Split before the start of selection (if not at the first child)
+	if (startIdx > 0) {
+		const [ , afterNode ] = $splitNode(paragraph, startIdx);
+		// Move selection into the new split node
+		afterNode.selectStart();
+		const sel = $getSelection();
+		if ($isRangeSelection(sel)) {
+			const lastChild = afterNode.getLastChild();
+			if (lastChild) {
+				if ($isTextNode(lastChild)) {
+					sel.focus.set(lastChild.getKey(), lastChild.getTextContentSize(), 'text');
+				} else {
+					sel.focus.set(afterNode.getKey(), afterNode.getChildrenSize(), 'element');
+				};
+			};
+		};
+	};
+};
+
 const applyBlockTransform = (editor: LexicalEditor, item: any) => {
 	if (!item) {
 		return;
@@ -2401,22 +2488,33 @@ const applyBlockTransform = (editor: LexicalEditor, item: any) => {
 			return;
 		};
 
+		// Split paragraph at selection boundaries so transform only affects selected text
+		if (item.style !== I.TextStyle.Paragraph) {
+			splitSelectionFromParagraph(selection);
+		};
+
+		// Re-read selection after potential split
+		const sel = $getSelection();
+		if (!$isRangeSelection(sel)) {
+			return;
+		};
+
 		switch (item.style) {
 			case I.TextStyle.Header1:
 			case I.TextStyle.Header2:
 			case I.TextStyle.Header3: {
 				const tag = styleToHeadingTag(item.style) as 'h1' | 'h2' | 'h3';
-				$setBlocksType(selection, () => $createHeadingNode(tag));
+				$setBlocksType(sel, () => $createHeadingNode(tag));
 				break;
 			};
 
 			case I.TextStyle.Quote: {
-				$setBlocksType(selection, () => new QuoteNode());
+				$setBlocksType(sel, () => new QuoteNode());
 				break;
 			};
 
 			case I.TextStyle.Code: {
-				$setBlocksType(selection, () => $createCodeNode());
+				$setBlocksType(sel, () => $createCodeNode());
 				break;
 			};
 
@@ -2439,7 +2537,7 @@ const applyBlockTransform = (editor: LexicalEditor, item: any) => {
 				if (item.type === I.BlockType.Div) {
 					editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
 				} else {
-					$setBlocksType(selection, () => $createParagraphNode());
+					$setBlocksType(sel, () => $createParagraphNode());
 				};
 				break;
 			};
@@ -2636,8 +2734,8 @@ const ColonEmojiPlugin = ({ editorId }: { editorId: string }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keydown', onKeyDown, true);
-			return () => root.removeEventListener('keydown', onKeyDown, true);
+			U.Dom.addEvent(root, 'keydown', onKeyDown, true);
+			return () => U.Dom.removeEvent(root, 'keydown', onKeyDown, true);
 		};
 	}, [ editor ]);
 
@@ -2723,8 +2821,8 @@ const ColonEmojiPlugin = ({ editorId }: { editorId: string }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keyup', onKeyUp);
-			return () => root.removeEventListener('keyup', onKeyUp);
+			U.Dom.addEvent(root, 'keyup', onKeyUp);
+			return () => U.Dom.removeEvent(root, 'keyup', onKeyUp);
 		};
 	}, [ editor, editorId, closeEmojiMenu ]);
 
@@ -2860,21 +2958,18 @@ const MarkdownPlugin = () => {
 					};
 
 					const remaining = (style === I.TextStyle.Code) ? '' : text.replace(pattern, '');
+					const nodeKey = node.getKey();
 
 					editor.update(() => {
-						// Remove the markdown prefix
-						node.setTextContent(remaining);
+						const current = $getNodeByKey(nodeKey);
 
-						const sel = $getSelection();
-						if (!$isRangeSelection(sel)) {
-							return;
+						if ($isTextNode(current)) {
+							current.setTextContent(remaining);
+							current.select(0, 0);
 						};
-
-						// Place cursor at start
-						node.select(0, 0);
-
+					}, { onUpdate: () => {
 						applyBlockTransform(editor, { style });
-					});
+					}});
 
 					prevText.current = '';
 					return;
@@ -3145,6 +3240,34 @@ const CodeExitPlugin = () => {
 	return null;
 };
 
+const MaxLengthPlugin = ({ maxLength }: { maxLength: number }) => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		return editor.registerNodeTransform(TextNode, () => {
+			const root = $getRoot();
+			const text = root.getTextContent();
+			const length = text.length;
+
+			if (length <= maxLength) {
+				return;
+			};
+
+			const selection = $getSelection();
+			if (!$isRangeSelection(selection)) {
+				return;
+			};
+
+			const overflow = length - maxLength;
+			const { anchor } = selection;
+
+			$trimTextContentFromAnchor(editor, anchor, overflow);
+		});
+	}, [ editor, maxLength ]);
+
+	return null;
+};
+
 const CodeBlockPlugin = () => {
 	const [ editor ] = useLexicalComposerContext();
 	const [ codeBlocks, setCodeBlocks ] = React.useState<{ key: string; lang: string }[]>([]);
@@ -3251,7 +3374,7 @@ const CodeBlockPlugin = () => {
 
 const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { subId, placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction, onPasteFiles } = props;
+	const { subId, placeholder, initialParts, readonly, maxLength, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction, onPasteFiles } = props;
 	const editorRef = useRef<LexicalEditor | null>(null);
 	const isEmptyRef = useRef(true);
 	const editorId = useRef(`commentEditor-${Math.random().toString(36).slice(2, 10)}`).current;
@@ -3558,6 +3681,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<CodeHighlightPlugin />
 				<CodeExitPlugin />
 				<CodeBlockPlugin />
+				{maxLength ? <MaxLengthPlugin maxLength={maxLength} /> : null}
 			</div>
 		</LexicalComposer>
 		</CommentSubIdContext.Provider>

@@ -5,9 +5,8 @@ import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
 const MediaPdf = React.lazy(() => import('Component/util/media/pdf'));
-import { observer } from 'mobx-react';
 
-const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
 	const [ pages, setPages ] = useState(0);
 	const [ page, setPage ] = useState(1);
@@ -33,7 +32,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 	const getWidth = (checkMax: boolean, v: number): number => {
 		const width = Number(fields.width) || 1;
-		const el = U.Dom.get(`selectionTarget-${U.Common.esc(id)}`);
+		const el = U.Dom.get(`selectionTarget-${id}`);
 
 		if (!el) {
 			return width;
@@ -94,25 +93,24 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 		const selection = S.Common.getRef('selectionProvider');
 
-		focus.set(block.id, { from: 0, to: 0 });
 		selection?.hide();
-
 		U.Dom.addClass(nodeRef.current, 'isResizing');
-
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 		};
 
 		mouseMoveHandler.current = e => onResizeMove(e, checkMax);
 		mouseUpHandler.current = e => onResizeEnd(e, checkMax);
-		window.addEventListener('mousemove', mouseMoveHandler.current);
-		window.addEventListener('mouseup', mouseUpHandler.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const onResizeMove = (e: any, checkMax: boolean) => {
@@ -126,7 +124,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		const rect = U.Dom.getElementRect(wrapRef.current);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
-		wrapRef.current.style.width = (w * 100) + '%';
+		U.Dom.css(wrapRef.current, { width: (w * 100) + '%' });
 		mediaRef.current?.resize();
 	};
 
@@ -141,11 +139,11 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		U.Dom.removeClass(nodeRef.current, 'isResizing');
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 			mouseMoveHandler.current = null;
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 			mouseUpHandler.current = null;
 		};
 
@@ -183,14 +181,45 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 	let element = null;
 	let pager = null;
+	const typeName = translate('blockNamePdf');
 
 	if (object.isDeleted) {
 		element = (
-			<div className="deleted">
+			<div className="mediaState isRemoved">
 				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
 			</div>
 		);
+	} else if (object.isArchived) {
+		if (state == I.FileState.Done) {
+			const cn = [ 'wrap', 'pdfWrapper' ];
+
+			element = (
+				<div ref={wrapRef} className={cn.join(' ')} style={css}>
+					<Suspense fallback={<Loader />}>
+						<MediaPdf
+							ref={mediaRef}
+							src={S.Common.fileUrl(targetObjectId)}
+							page={1}
+							onDocumentLoad={onDocumentLoad}
+							onPageRender={onPageRender}
+							onClick={() => {}}
+						/>
+					</Suspense>
+					<div className="mediaState isInBin">
+						<Icon name="common/ghost" />
+						<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
+					</div>
+				</div>
+			);
+		} else {
+			element = (
+				<div className="mediaState isInBin">
+					<Icon name="common/ghost" />
+					<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
+				</div>
+			);
+		};
 	} else {
 		switch (state) {
 			default:
@@ -199,30 +228,30 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="pdf" 
+						<InputWithFile
+							block={block}
+							iconParam={{ name: 'menu/block/media/pdf' }}
 							textFile={translate('blockPdfUpload')}
-							accept={J.Constant.fileExtension.pdf} 
-							onChangeUrl={onChangeUrl} 
-							onChangeFile={onChangeFile} 
-							readonly={readonly} 
+							accept={J.Constant.fileExtension.pdf}
+							onChangeUrl={onChangeUrl}
+							onChangeFile={onChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.FileState.Done: {
 				if (pages > 1) {
 					pager = (
-						<Pager 
-							offset={page - 1} 
-							limit={1} 
-							total={pages} 
+						<Pager
+							offset={page - 1}
+							limit={1}
+							total={pages}
 							pageLimit={1}
 							isShort={true}
-							onChange={setPage} 
+							onChange={setPage}
 						/>
 					);
 				};
@@ -274,6 +303,6 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		</div>
 	);
 
-}));
+});
 
 export default BlockPdf;

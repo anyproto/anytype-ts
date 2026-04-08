@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Notification, Icon } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
 const LIMIT = 5;
 
-const ListNotification = observer(forwardRef(() => {
+const ListNotification = forwardRef(() => {
 
 	const nodeRef = useRef(null);
 	const { list } = S.Notification;
@@ -55,8 +54,10 @@ const ListNotification = observer(forwardRef(() => {
 
 		window.setTimeout(() => {
 			items.forEach((item, i) => {
-				item.style.width = isExpanded.current ? '100%' : `calc(100% - ${4 * i * 2}px)`;
-				item.style.right = isExpanded.current ? '0px' : `${4 * i}px`;
+				U.Dom.css(item, {
+					width: isExpanded.current ? '100%' : `calc(100% - ${4 * i * 2}px)`,
+					right: isExpanded.current ? '0px' : `${4 * i}px`,
+				});
 
 				const h = item.offsetHeight;
 
@@ -75,7 +76,7 @@ const ListNotification = observer(forwardRef(() => {
 					listHeight += h + o;
 				};
 
-				item.style.bottom = `${bottom}px`;
+				U.Dom.css(item, { bottom: `${bottom}px` });
 				height = h;
 			});
 
@@ -86,7 +87,7 @@ const ListNotification = observer(forwardRef(() => {
 				listHeight += 38;
 			};
 
-			node.style.height = `${listHeight}px`;
+			U.Dom.css(node, { height: `${listHeight}px` });
 		}, 50);
 	};
 
@@ -101,8 +102,8 @@ const ListNotification = observer(forwardRef(() => {
 		>
 			{list.length ? (
 				<div className="head">
-					<Icon name="notification/hide" width={12} height={8} onClick={onHide} />
-					<Icon name="notification/delete" size={10} onClick={onClear} />
+					<Icon name="notification/hide" className="hide" width={12} height={8} onClick={onHide} />
+					<Icon name="notification/delete" className="clear" size={10} onClick={onClear} />
 				</div>
 			) : ''}
 
@@ -119,6 +120,6 @@ const ListNotification = observer(forwardRef(() => {
 		</div>
 	);
 
-}));
+});
 
 export default ListNotification;

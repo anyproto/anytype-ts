@@ -1,12 +1,11 @@
 import React, { forwardRef, useState, useEffect, useRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault, PreviewTab } from 'Component';
 import * as I from 'Interface';
 
 const OFFSET_Y = 8;
 const BORDER = 12;
 
-const PreviewIndex = observer(forwardRef(() => {
+const PreviewIndex = forwardRef(() => {
 
 	const nodeRef = useRef(null);
 	const polygonRef = useRef(null);
@@ -89,7 +88,7 @@ const PreviewIndex = observer(forwardRef(() => {
 		if (e.button === 2) {
 			const el = U.Dom.get('preview');
 			if (el) {
-				el.style.display = 'none';
+				U.Dom.css(el, { display: 'none' });
 			};
 			Preview.previewHide(true);
 		};
@@ -100,14 +99,14 @@ const PreviewIndex = observer(forwardRef(() => {
 			if (e.button === 2) {
 				const previewEl = U.Dom.get('preview');
 				if (previewEl && previewEl.contains(e.target)) {
-					previewEl.style.display = 'none';
+					U.Dom.css(previewEl, { display: 'none' });
 					Preview.previewHide(true);
 				};
 			};
 		};
 
-		document.addEventListener('mousedown', handler, true);
-		return () => document.removeEventListener('mousedown', handler, true);
+		U.Dom.addEvent(document, 'mousedown', handler, true);
+		return () => U.Dom.removeEvent(document, 'mousedown', handler, true);
 	}, []);
 
 	const position = () => {
@@ -116,6 +115,9 @@ const PreviewIndex = observer(forwardRef(() => {
 		if (!node || !poly) {
 			return;
 		};
+
+		// Make visible before measuring so offsetWidth/offsetHeight return real values
+		U.Dom.css(node, { display: 'block', opacity: '0' });
 
 		const { ww, wh } = U.Dom.getWindowDimensions();
 		const st = window.scrollY;
@@ -187,18 +189,14 @@ const PreviewIndex = observer(forwardRef(() => {
 		cssLeft = Math.max(BORDER, cssLeft);
 		cssLeft = Math.min(ww - ow - BORDER, cssLeft);
 
-		node.style.display = '';
-		node.style.opacity = '0';
-		node.style.left = `${cssLeft}px`;
-		node.style.top = `${cssTop}px`;
-		node.style.transform = cssTransform;
+		U.Dom.css(node, { left: `${cssLeft}px`, top: `${cssTop}px`, transform: cssTransform });
 
 		if (!preview.noAnimation) {
 			U.Dom.addClass(node, 'anim');
 		};
 
 		U.Dom.css(poly, pcss);
-		window.setTimeout(() => { node.style.opacity = '1'; node.style.transform = 'translateY(0%)'; }, 15);
+		window.setTimeout(() => { U.Dom.css(node, { opacity: '1', transform: 'translateY(0%)' }); }, 15);
 	};
 
 	let head = null;
@@ -270,6 +268,7 @@ const PreviewIndex = observer(forwardRef(() => {
 			ref={nodeRef}
 			id="preview"
 			className={cn.join(' ')}
+			onMouseEnter={() => Preview.previewCancelHide()}
 			onMouseLeave={() => Preview.previewHide(true)}
 			onMouseDown={onMouseDown}
 		>
@@ -282,6 +281,6 @@ const PreviewIndex = observer(forwardRef(() => {
 		</div>
 	) : null;
 
-}));
+});
 
 export default PreviewIndex;

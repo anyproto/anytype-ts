@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { observer } from 'mobx-react';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject, Loader } from 'Component';
 
 import BlockDataview from './dataview';
@@ -41,7 +40,7 @@ interface Ref {
 
 const SNAP = 0.01;
 
-const Block = observer(forwardRef<Ref, Props>((props, ref) => {
+const Block = forwardRef<Ref, Props>((props, ref) => {
 
 	const { 
 		rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
@@ -208,10 +207,11 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		const data = param?.data || {};
 
 		// Hide block menus and plus button
+		const pageContainer = U.Dom.getPageFlexContainer(keyboard.isPopup());
 		const addBtn = U.Dom.get('button-block-add');
 		if (addBtn) U.Dom.removeClass(addBtn, 'show');
-		U.Dom.selectAll('.block.showMenu').forEach(el => U.Dom.removeClass(el, 'showMenu'));
-		U.Dom.selectAll('.block.isAdding').forEach(el => {
+		U.Dom.selectAll('.block.showMenu', pageContainer).forEach(el => U.Dom.removeClass(el, 'showMenu'));
+		U.Dom.selectAll('.block.isAdding', pageContainer).forEach(el => {
 			U.Dom.removeClass(el, 'isAdding');
 			U.Dom.removeClass(el, 'top');
 			U.Dom.removeClass(el, 'bottom');
@@ -274,8 +274,10 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 
 		mouseMoveHandlerRef.current = (e: globalThis.MouseEvent) => onResize(e, index, offset);
 		mouseUpHandlerRef.current = (e: globalThis.MouseEvent) => onResizeEnd(e, index, offset);
-		window.addEventListener('mousemove', mouseMoveHandlerRef.current);
-		window.addEventListener('mouseup', mouseUpHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandlerRef.current],
+			['mouseup', mouseUpHandlerRef.current],
+		]);
 	};
 
 	const onResize = (e: any, index: number, offset: number) => {
@@ -303,8 +305,8 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		const w1 = res.percent * res.sum;
 		const w2 = (1 - res.percent) * res.sum;
 
-		if (prevNode) prevNode.style.width = w1 * 100 + '%';
-		if (currentNode) currentNode.style.width = w2 * 100 + '%';
+		if (prevNode) U.Dom.css(prevNode, { width: w1 * 100 + '%' });
+		if (currentNode) U.Dom.css(currentNode, { width: w2 * 100 + '%' });
 	};
 
 	const onResizeEnd = (e: any, index: number, offset: number) => {
@@ -404,17 +406,17 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 	
 	const onMouseLeaveHandler = (e: any) => {
 		if (!keyboard.isResizing) {
-			U.Dom.selectAll('.colResize.active').forEach(el => U.Dom.removeClass(el, 'active'));
+			U.Dom.selectAll('.colResize.active', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'active'));
 		};
 	};
 	
 	const unbind = () => {
 		if (mouseMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', mouseMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
 			mouseMoveHandlerRef.current = null;
 		};
 		if (mouseUpHandlerRef.current) {
-			window.removeEventListener('mouseup', mouseUpHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
 			mouseUpHandlerRef.current = null;
 		};
 	};
@@ -929,7 +931,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			};
 
 			let hasContent = false;
-			if (!object.isDeleted && (content.state == I.FileState.Done)) {
+			if (!object.isDeleted && !object.isArchived && (content.state == I.FileState.Done)) {
 				cn.push('withContent');
 				hasContent = true;
 			};
@@ -1128,7 +1130,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		);
 	} else {
 		object = (
-			<div id={isSelectionDisabled ? undefined : `selectionTarget-${id}`} className="selectionTarget">
+			<div id={(isSelectionDisabled || !canSelect) ? undefined : `selectionTarget-${id}`} className="selectionTarget">
 				{object}
 			</div>
 		);
@@ -1183,6 +1185,6 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default Block;

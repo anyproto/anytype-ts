@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle, Mo
 import { createRoot } from 'react-dom/client';
 
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon } from 'Component';
 import { InfiniteLoader, List, AutoSizer, CellMeasurer, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import * as I from 'Interface';
@@ -11,7 +10,7 @@ const HEIGHT = 36;
 const WIDTH = 40;
 const PADDING = 46;
 
-const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
+const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 	const { 
 		rootId, block, className, isCollection, isPopup, readonly, isInline, 
@@ -49,13 +48,15 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		unbind();
 		const container = U.Dom.getScrollContainer(isPopup);
 		scrollHandlerRef.current = (e: Event) => onScrollVertical(e);
-		container?.addEventListener('scroll', scrollHandlerRef.current);
+		if (container) {
+			U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
+		};
 	};
 
 	const unbind = () => {
 		const container = U.Dom.getScrollContainer(isPopup);
-		if (scrollHandlerRef.current) {
-			container?.removeEventListener('scroll', scrollHandlerRef.current);
+		if (scrollHandlerRef.current && container) {
+			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
 	};
@@ -95,11 +96,11 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		const unbind = () => {
 			if (timelineDragHandlerRef.current) {
-				window.removeEventListener('drag', timelineDragHandlerRef.current);
+				U.Dom.removeEvent(window, 'drag', timelineDragHandlerRef.current);
 				timelineDragHandlerRef.current = null;
 			};
 			if (timelineDragEndHandlerRef.current) {
-				window.removeEventListener('dragend', timelineDragEndHandlerRef.current);
+				U.Dom.removeEvent(window, 'dragend', timelineDragEndHandlerRef.current);
 				timelineDragEndHandlerRef.current = null;
 			};
 		};
@@ -139,13 +140,12 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				dy = Math.ceil((e.pageY - top) / HEIGHT) - 1;
 				if ((dy >= 0) && (dy != item.index) && (dy != item.index + 1)) {
 					if (line) {
-						line.style.top = `${dy * HEIGHT + 1}px`;
-						line.style.display = '';
+						U.Dom.css(line, { top: `${dy * HEIGHT + 1}px`, display: 'block' });
 					};
 				};
 			};
 		};
-		window.addEventListener('drag', timelineDragHandlerRef.current);
+		U.Dom.addEvent(window, 'drag', timelineDragHandlerRef.current);
 
 		timelineDragEndHandlerRef.current = (e: any) => {
 			e.stopPropagation();
@@ -162,10 +162,10 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			unbind();
 			keyboard.setDragging(false);
 			if (line) {
-				line.style.display = 'none';
+				U.Dom.css(line, { display: 'none' });
 			};
 		};
-		window.addEventListener('dragend', timelineDragEndHandlerRef.current);
+		U.Dom.addEvent(window, 'dragend', timelineDragEndHandlerRef.current);
 	};
 
 	const resizeMoveHandlerRef = useRef<((e: Event) => void) | null>(null);
@@ -177,11 +177,11 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		const unbind = () => {
 			if (resizeMoveHandlerRef.current) {
-				window.removeEventListener('mousemove', resizeMoveHandlerRef.current);
+				U.Dom.removeEvent(window, 'mousemove', resizeMoveHandlerRef.current);
 				resizeMoveHandlerRef.current = null;
 			};
 			if (resizeUpHandlerRef.current) {
-				window.removeEventListener('mouseup', resizeUpHandlerRef.current);
+				U.Dom.removeEvent(window, 'mouseup', resizeUpHandlerRef.current);
 				resizeUpHandlerRef.current = null;
 			};
 		};
@@ -248,14 +248,13 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				if (dir < 0) {
 					const nodeRect = node?.getBoundingClientRect();
 					const nodeLeft = (nodeRect?.left ?? 0) + window.scrollX;
-					el.style.left = `${left - nodeLeft + sl + d * WIDTH}px`;
-					el.style.width = `${width - d * WIDTH}px`;
+					U.Dom.css(el, { left: `${left - nodeLeft + sl + d * WIDTH}px`, width: `${width - d * WIDTH}px` });
 
 					start += d * J.Constant.day;
 				};
 
 				if (dir > 0) {
-					el.style.width = `${width + d * WIDTH}px`;
+					U.Dom.css(el, { width: `${width + d * WIDTH}px` });
 
 					end += d * J.Constant.day;
 				};
@@ -267,7 +266,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				setHover(start, end);
 			};
 		};
-		window.addEventListener('mousemove', resizeMoveHandlerRef.current);
+		U.Dom.addEvent(window, 'mousemove', resizeMoveHandlerRef.current);
 
 		resizeUpHandlerRef.current = (e: any) => {
 			e.stopPropagation();
@@ -278,7 +277,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			U.Dom.removeClass(document.body, 'eResize');
 			U.Dom.removeClass(document.body, 'wResize');
 		};
-		window.addEventListener('mouseup', resizeUpHandlerRef.current);
+		U.Dom.addEvent(window, 'mouseup', resizeUpHandlerRef.current);
 	};
 
 	const setHover = (start: number, end: number) => {
@@ -402,13 +401,12 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		const searchIds = getSearchIds();
 		const subId = getSubId();
-		const filters: I.Filter[] = [
+		const filters: I.Filter[] = Dataview.getFilteredFilters([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			{ relationKey: startRelation.relationKey, condition: I.FilterCondition.GreaterOrEqual, value: 0, quickOption: I.FilterQuickOption.ExactDate, format: startRelation.format },
 			{ relationKey: endRelation.relationKey, condition: I.FilterCondition.GreaterOrEqual, value: 0, format: endRelation.format },
-		].concat(view.filters as any[]);
-
-		const sorts: I.Sort[] = [].concat(view.sorts);
+		].concat(view.filters as any[])).map(it => Dataview.filterMapper(it, { rootId }));
+		const sorts: I.Sort[] = Dataview.getFilteredSorts(view.sorts).map(it => Dataview.sortMapper(it));
 
 		if (searchIds) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
@@ -416,8 +414,8 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		U.Subscription.subscribe({
 			subId,
-			filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
-			sorts: sorts.map(it => Dataview.sortMapper(it)),
+			filters,
+			sorts,
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			collectionId: (isCollection ? object.id : ''),
@@ -443,25 +441,22 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		const left = nodeRect.left + window.scrollX;
 
 		if (!isInline) {
-			node.style.width = '0';
-			node.style.marginLeft = '0';
+			U.Dom.css(node, { width: '0', marginLeft: '0' });
 
 			const cw = pageContainer?.clientWidth ?? 0;
 			const mw = cw - PADDING * 2;
 			const margin = (cw - mw) / 2;
 
-			node.style.width = `${cw}px`;
-			node.style.marginLeft = `${-margin - 2}px`;
+			U.Dom.css(node, { width: `${cw}px`, marginLeft: `${-margin - 2}px` });
 		};
 
 		const width = U.Dom.contentWidth(node);
 
 		if (list) {
-			list.style.height = `${Math.max(20, items.length) * HEIGHT}px`;
+			U.Dom.css(list, { height: `${Math.max(20, items.length) * HEIGHT}px` });
 		};
 		if (tooltips) {
-			tooltips.style.transform = `translate3d(${left}px, ${top}px, 0)`;
-			tooltips.style.width = `${width}px`;
+			U.Dom.css(tooltips, { transform: `translate3d(${left}px, ${top}px, 0)`, width: `${width}px` });
 		};
 	};
 
@@ -586,7 +581,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 				const root = createRoot(el);
 				root.render(<Tooltip {...object} />);
 
-				el.addEventListener('click', (e: any) => {
+				U.Dom.addEvent(el, 'click', (e: any) => {
 					e.stopPropagation();
 					e.preventDefault();
 
@@ -599,7 +594,7 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 			let el = U.Dom.get(`tooltipItem-${id}`);
 
 			if (el) {
-				el.style.top = `${itemEl.offsetTop}px`;
+				U.Dom.css(el, { top: `${itemEl.offsetTop}px` });
 			};
 
 			if (isLeft || isRight) {
@@ -765,6 +760,6 @@ const ViewTimeline = observer(forwardRef<{}, I.ViewComponent>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default ViewTimeline;

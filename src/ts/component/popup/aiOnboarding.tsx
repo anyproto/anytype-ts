@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState, useCallback, ReactNode, UIEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Loader, Error, Button, Icon, Label } from 'Component';
 import StatusMessage from './page/aiOnboarding/statusMessage';
 import * as I from 'Interface';
@@ -106,7 +105,7 @@ const EXAMPLE_GOALS = [
 	'I want to create a universe for my game development project'
 ];
 
-const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
+const PopupAIOnboarding = forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
 
 	const nodeRef = useRef(null);
 	const messagesEndRef = useRef(null);
@@ -500,7 +499,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				if (lastMessage && (lastMessage.type === 'ai')) {
 					lastMessage.content = (
 						<div className="completionMessage">
-							<Icon name="popup/header/success" color="lime" size={56} />
+							<Icon name="popup/header/success" className="success" color="lime" size={56} />
 							<div className="title">All set! Your space is ready to explore.</div>
 							<div className="spaceInfo">
 								<div className="spaceName">{sparkOnboarding.manifest.spaceName}</div>
@@ -776,7 +775,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			</div>
 		</div>
 	);
-}));
+});
 
 /*
 // Typing Indicator Component

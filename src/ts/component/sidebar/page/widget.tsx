@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
 
 
-const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ previewId, setPreviewId ] = useState('');
 	const { widgets } = S.Block;
@@ -101,11 +100,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const obj = U.Dom.select(`#widget-${U.Common.esc(block.id)}`, body);
 		const clone = document.createElement('div');
 		clone.className = 'widget isClone';
-		clone.style.zIndex = '10000';
-		clone.style.position = 'fixed';
-		clone.style.left = '-10000px';
-		clone.style.top = '-10000px';
-		clone.style.width = `${obj?.offsetWidth ?? 0}px`;
+		U.Dom.css(clone, { zIndex: '10000', position: 'fixed', left: '-10000px', top: '-10000px', width: `${obj?.offsetWidth ?? 0}px` });
 
 		const headEl = obj ? U.Dom.select('.head', obj) : null;
 		if (headEl) {
@@ -127,10 +122,10 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 		const dragEndHandler = () => {
 			onDragEnd();
-			window.removeEventListener('dragend', dragEndHandler);
+			U.Dom.removeEvent(window, 'dragend', dragEndHandler);
 		};
-		window.removeEventListener('dragend', dragEndHandler);
-		window.addEventListener('dragend', dragEndHandler);
+		U.Dom.removeEvent(window, 'dragend', dragEndHandler);
+		U.Dom.addEvent(window, 'dragend', dragEndHandler);
 
 		scrollOnMove.onMouseDown({ container: body, speed: 300, step: 1 });
 	};
@@ -265,7 +260,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			return;
 		};
 
-		const sort: any = view.sorts.length ? view.sorts[0] : {};
+		const sorts = Dataview.getFilteredSorts(view.sorts);
+		const sort: any = sorts.length ? sorts[0] : {};
 
 		let relationKey = sort.relationKey;
 		let type = sort.type;
@@ -363,8 +359,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		U.Dom.toggleClass(section, 'isOpen', !isClosed);
 		if (list) {
 			U.Dom.toggleClass(list, 'isOpen', !isClosed);
-			list.style.height = isClosed ? '0' : 'auto';
-			list.style.overflow = isClosed ? 'hidden' : 'visible';
+			U.Dom.css(list, { height: isClosed ? '0' : 'auto', overflow: isClosed ? 'hidden' : 'visible' });
 		};
 	};
 
@@ -592,7 +587,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			head = (
 				<>
 					<div className="side left">
-						<Icon name="common/back" withBackground={true} onClick={e => {
+						<Icon name="common/back" className="back" withBackground={true} onClick={e => {
 							e.stopPropagation();
 
 							setPreviewId('');
@@ -736,7 +731,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 								className={cns.join(' ')} 
 								key={`${section.id}-motion`}
 								{...U.Common.animationProps({
-									transition: { duration: 200, delay: i * 0.05 },
+									transition: { duration: 0.2, delay: i * 0.05 },
 								})}
 							>
 								<div
@@ -817,6 +812,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageWidget;

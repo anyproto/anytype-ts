@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Icon, ObjectName } from 'Component';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -7,7 +6,7 @@ import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-
 import { CSS } from '@dnd-kit/utilities';
 import * as I from 'Interface';
 
-const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionTypeRelation = forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { readonly, isPopup, object, onChange } = props;
 	const nodeRef = useRef(null);
@@ -64,10 +63,10 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		e.preventDefault();
 		e.stopPropagation();
 
-		const element = nodeRef.current?.querySelector(`#item-${U.Common.esc(item.id)}`);
+		const element = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
 
 		S.Menu.open('select', {
-			element: element?.querySelector('.icon.more'),
+			element: U.Dom.select('.icon.more', element),
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Right,
@@ -113,7 +112,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 						horizontal: I.MenuDirection.Right,
 						data: {
 							options: [
-								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
+								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
 							],
 							onSelect: (e, option) => {
 								switch (option.id) {
@@ -162,7 +161,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         const toItems = Relation.getArrayValue(object[to.relationKey]);
         const oldIndex = fromItems.indexOf(active.id);
         const newIndex = toItems.indexOf(over.id);
-		const element = nodeRef.current?.querySelector(`#item-${U.Common.esc(over.id)}`) as HTMLElement;
+		const element = U.Dom.select(`#item-${U.Common.esc(over.id)}`, nodeRef.current);
 		const rect = element ? element.getBoundingClientRect() : null;
 		const pointerY = active.rect.current.translated?.top ?? 0;
 		const offset = rect && (pointerY < (rect.top + rect.height / 2)) ? 0 : 1;
@@ -396,6 +395,6 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionTypeRelation;

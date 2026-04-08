@@ -10,12 +10,12 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const graphRootHandler = useRef((e: any) => initRootId(e.detail.id));
 
 	const unbind = () => {
-		window.removeEventListener('updateGraphRoot', graphRootHandler.current);
+		U.Dom.removeEvent(window, 'updateGraphRoot', graphRootHandler.current);
 	};
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('updateGraphRoot', graphRootHandler.current);
+		U.Dom.addEvent(window, 'updateGraphRoot', graphRootHandler.current);
 	};
 
 	const onSearch = () => {
@@ -32,7 +32,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 				canAdd: true,
 				withPlural: true,
 				onSelect: (item: any) => {
-					window.dispatchEvent(new CustomEvent('updateGraphRoot', { detail: { id: item.id } }));
+					U.Dom.eventDispatch(window, 'updateGraphRoot', { id: item.id });
 				},
 				onFilterChange: (v: string) => {
 					S.Common.graphSet(J.Constant.graphId.global, { filter: v });

@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { Tag, Icon, DragBox } from 'Component';
 import * as I from 'Interface';
 
-const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
+const CellSelect = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const { id, relation, recordId, getRecord, elementMapper, onChange, arrayLimit, canEdit, placeholder, menuParam, viewType } = props;
 	const entryRef = useRef(null);
@@ -92,11 +91,11 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		const value = getValue();
 
 		if (listRef.current) {
-			listRef.current.style.display = value.existing.length ? '' : 'none';
+			U.Dom.css(listRef.current, { display: value.existing.length ? '' : 'none' });
 		};
 
 		if (placeholderRef.current) {
-			placeholderRef.current.style.display = (value.new || value.existing.length) ? 'none' : '';
+			U.Dom.css(placeholderRef.current, { display: (value.new || value.existing.length) ? 'none' : '' });
 		};
 	};
 
@@ -137,7 +136,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const scrollToBottom = () => {
-		const cell = U.Dom.get(U.Common.esc(id));
+		const cell = U.Dom.get(id);
 		if (!cell) {
 			return;
 		};
@@ -215,7 +214,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const resize = () => {
-		window.dispatchEvent(new CustomEvent('resize.menuDataviewOptionList'));
+		U.Dom.eventDispatch(window, 'resize.menuDataviewOptionList');
 	};
 
 	let value = getItems();
@@ -319,7 +318,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	useEffect(() => {
-		const cell = U.Dom.get(U.Common.esc(id));
+		const cell = U.Dom.get(id);
 		if (cell) {
 			U.Dom.toggleClass(cell, 'isEditing', isEditing);
 		};
@@ -345,6 +344,6 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default CellSelect;

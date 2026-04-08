@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 
 import { MenuItemVertical, Loader, ObjectName, ObjectType, EmptySearch } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -9,7 +8,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT_HEIGHT = 10;
 
-const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, getContainer, close, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -25,18 +24,12 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	useEffect(() => {
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
 			unbind();
 		};
 	}, []);
-
-	useEffect(() => {
-		rebind();
-		resize();
-	});
 
 	useEffect(() => {
 		n.current = 0;
@@ -49,13 +42,13 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => props.onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => props.setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -158,7 +151,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
-
+			position();
 			callBack?.(null);
 		});
 	};
@@ -249,7 +242,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
 
 		let height = 16;
@@ -260,7 +253,6 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		};
 
 		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
-		position();
 	};
 
 	const items = getItems();
@@ -291,10 +283,9 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				columnIndex={0}
 				rowIndex={param.index}
 			>
-				<MenuItemVertical 
+				<MenuItemVertical
 					id={item.id}
 					object={object}
-					icon={item.icon}
 					name={<ObjectName object={item} withPlural={true} withPronoun={withPronoun} />}
 					onMouseEnter={e => onOver(e, item)} 
 					onClick={e => onClick(e, item)}
@@ -312,6 +303,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -360,6 +352,6 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</>
 	);
 	
-}));
+});
 
 export default MenuBlockMention;

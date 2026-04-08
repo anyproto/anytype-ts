@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 
-import { observer } from 'mobx-react';
 import { Select, Icon } from 'Component';
 import * as I from 'Interface';
 
@@ -44,7 +43,7 @@ export interface CalendarSelectRefProps {
 	setSelectedDate: (date: CalendarDay | null) => void;
 };
 
-const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props, ref) => {
+const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) => {
 
 	const {
 		value, onChange, isReadonly, canClear = true, position, menuClassNameWrap, className,
@@ -119,12 +118,12 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 	const bindKeyboard = (): void => {
 		unbindKeyboard();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbindKeyboard = (): void => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -417,6 +416,6 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 		</div>
 	);
 
-}));
+});
 
 export default CalendarSelect;

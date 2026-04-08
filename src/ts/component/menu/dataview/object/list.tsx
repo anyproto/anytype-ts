@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, Loader, ObjectName, ObjectType } from 'Component';
 import * as I from 'Interface';
@@ -12,7 +11,7 @@ const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_EMPTY = 96;
 const HEIGHT_DIV = 16;
 
-const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setActive, onKeyDown, close, position, getId } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -32,7 +31,6 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 	useEffect(() => {
 		rebind();
-		resize();
 		focus();
 		load(true);
 	}, []);
@@ -51,7 +49,6 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 			listRef.current.scrollToPosition(topRef.current);
 		};
 
-		resize();
 		focus();
 		setActive(items[n.current], false);
 	});
@@ -62,12 +59,12 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDownHandler);
+		U.Dom.addEvent(window, 'keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDownHandler);
+		U.Dom.removeEvent(window, 'keydown', onKeyDownHandler);
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -142,6 +139,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
+			position();
 		});
 	};
 
@@ -316,7 +314,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
@@ -333,7 +331,6 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(300, itemsHeight));
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const items = getItems();
@@ -357,11 +354,14 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		if (item.isSection) {
 			content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 		} else {
+			if (item.icon) {
+				item.iconParam = { name: item.icon };
+			};
+
 			content = (
 				<MenuItemVertical
 					id={item.id}
 					object={item.isSystem ? null : item}
-					icon={item.icon}
 					iconParam={item.iconParam}
 					name={item.isPlaceholder ? item.name : <ObjectName object={item} />}
 					onMouseEnter={e => onOver(e, item)}
@@ -389,6 +389,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -444,6 +445,6 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		</div>
 	);
 	
-}));
+});
 
 export default MenuDataviewObjectList;

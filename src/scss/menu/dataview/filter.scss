@@ -13,6 +13,8 @@
 			.filterInner {
 				display: flex; flex-direction: row; align-items: center;  gap: 0px 6px; border-radius: 16px;
 				@include text-common; padding: 0px 8px; height: 28px; max-width: calc(100% - 32px);
+
+				.icon { margin-right: 0px; }
 			}
 
 			.icon.filterIcon { width: 20px; height: 20px; margin-right: 0px; }
@@ -33,13 +35,14 @@
 			}
 
 			&.isActive {
-				.filterInner { color: var(--color-system-accent-100); background-color: var(--color-system-selection); }
+				.filterInner { color: var(--color-system-accent-100); background-color: var(--color-system-highlight); }
 				.relationName { font-weight: 500; }
+				.icon.hasSvg { color: var(--color-system-accent-100); }
 				.icon.relation { background-color: var(--color-system-accent-100); }
 
 				&:hover,
 				&.hover {
-					.filterInner { background-color: var(--color-system-drop-zone); }
+					.filterInner { background-color: var(--color-system-selection); }
 				}
 			}
 		}

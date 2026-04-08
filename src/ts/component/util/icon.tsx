@@ -61,6 +61,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const SvgComponent = name ? getIcon(name) : null;
+	const ArrowComponent = arrow ? getIcon('arrow/button') : null;
 
 	if (icon) {
 		style.backgroundImage = `url("${icon}")`;
@@ -104,7 +105,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 		});
 	};
 
-	const nameCn = name ? name.split('/').map((s, i) => i === 0 ? s : s.charAt(0).toUpperCase() + s.slice(1)).join('') : '';
+	const nameCn = name ? U.String.toCamelCase(name) : '';
 	const colorCn = color ? `iconColor iconColor-${color}` : '';
 	const cn = [ 'icon', nameCn, colorCn, className ];
 	const w = width || size;
@@ -141,7 +142,7 @@ const Icon = forwardRef<HTMLDivElement, Props>(({
 			{...animation}
 		>
 			{SvgComponent ? <SvgComponent style={{ width: w, height: h }} /> : ''}
-			{arrow ? <div className="icon arrow" /> : ''}
+			{ArrowComponent ? <div className="icon arrow hasSvg"><ArrowComponent style={{ width: 8, height: 8 }} /></div> : ''}
 			{inner}
 		</motion.div>
 	);

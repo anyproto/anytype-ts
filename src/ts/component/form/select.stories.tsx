@@ -32,9 +32,9 @@ const basicOptions = [
 ];
 
 const colorOptions = [
-	{ id: 'red', name: 'Red', icon: '' },
-	{ id: 'green', name: 'Green', icon: '' },
-	{ id: 'blue', name: 'Blue', icon: '' },
+	{ id: 'red', name: 'Red' },
+	{ id: 'green', name: 'Green' },
+	{ id: 'blue', name: 'Blue' },
 ];
 
 export const Default: Story = {

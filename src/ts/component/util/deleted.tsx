@@ -43,17 +43,17 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 		const container = U.Dom.getPageContainer(isPopup);
 
 		if (nodeRef.current && container) {
-			nodeRef.current.style.height = `${container.clientHeight}px`;
+			U.Dom.css(nodeRef.current, { height: `${container.clientHeight}px` });
 		};
 	};
 
 	useEffect(() => {
 		const handler = () => resize();
 
-		window.addEventListener('resize', handler);
+		U.Dom.addEvent(window, 'resize', handler);
 		resize();
 
-		return () => window.removeEventListener('resize', handler);
+		return () => U.Dom.removeEvent(window, 'resize', handler);
 	});
 
 	useLayoutEffect(() => resize());
@@ -65,7 +65,7 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 			className={[ 'deleteWrapper', className ].join(' ')}
 		>
 			<div className="mid">
-				<Icon name="common/ghost" />
+				<Icon name="common/ghost" className="ghost" />
 				<Label text={translate('utilDeletedObjectNotExist')} />
 				<Button color="blank" text={textButton} onClick={onClick} />
 			</div>

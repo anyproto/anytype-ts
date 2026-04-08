@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Button, Input, Label, Icon, Error } from 'Component';
 import * as I from 'Interface';
 
-const PageMainSettingsImportNotion = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsImportNotion = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { onPage } = props;
 	const [ error, setError ] = useState('');
@@ -71,6 +70,6 @@ const PageMainSettingsImportNotion = observer(forwardRef<I.PageRef, I.PageSettin
 		</>
 	);
 	
-}));
+});
 
 export default PageMainSettingsImportNotion;

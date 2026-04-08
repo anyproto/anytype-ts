@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -16,7 +15,7 @@ const HEIGHT_ITEM_MESSAGE = 73;
 const HEIGHT_DIV = 16;
 const VAULT_MINIMAL_OFFSET = 44;
 
-const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
 	const { space, vaultMessages, vaultIsMinimal } = S.Common;
@@ -46,11 +45,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 		if (keyupHandler.current) {
-			window.removeEventListener('keyup', keyupHandler.current);
+			U.Dom.removeEvent(window, 'keyup', keyupHandler.current);
 			keyupHandler.current = null;
 		};
 	};
@@ -59,8 +58,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
 		keyupHandler.current = (e: any) => onKeyUp(e);
-		window.addEventListener('keydown', keydownHandler.current);
-		window.addEventListener('keyup', keyupHandler.current);
+		U.Dom.addEvents(window, [
+			['keydown', keydownHandler.current],
+			['keyup', keyupHandler.current],
+		]);
 	};
 
 	const onKeyDown = (e: any) => {
@@ -420,7 +421,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 
 		const rawCounters = !isOneToOne ? S.Chat.getSpaceCounters(targetSpaceId) : null;
-		const hasUnread = rawCounters && (item.notificationMode != I.NotificationMode.Nothing) && !!(rawCounters.messageCounter || rawCounters.mentionCounter || rawCounters.reactionCounter);
+		const hasUnread = rawCounters && !!(rawCounters.messageCounter || rawCounters.mentionCounter || rawCounters.reactionCounter);
 
 		if (lastMessage) {
 			const { createdAt, creator, isSynced } = lastMessage;
@@ -623,6 +624,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		};
 	}, []);
 
+	const itemIds = items.map(it => it.id).join(',');
+
 	useEffect(() => {
 		const prev = prevItemsRef.current;
 		const currentIds = new Set(items.map(it => it.id));
@@ -641,16 +644,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			if (removedHeightAbove > 0) {
 				const newTop = Math.max(0, scrollTopRef.current - removedHeightAbove);
 				scrollTopRef.current = newTop;
-
-				const grid = U.Dom.select('.ReactVirtualized__Grid', getNode());
-				if (grid) {
-					grid.scrollTop = newTop;
-				};
+				listRef.current?.scrollToPosition(newTop);
 			};
 		};
 
 		prevItemsRef.current = items.map(it => ({ id: it.id, height: getRowHeight(it) }));
-	});
+	}, [ itemIds ]);
 
 	return (
 		<>
@@ -790,6 +789,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		</>
 	);
 
-}));
+});
 
 export default memo(SidebarPageVault);

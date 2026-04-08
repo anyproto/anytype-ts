@@ -1,7 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as d3 from 'd3';
-import { observer } from 'mobx-react';
 import { PreviewDefault } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -26,7 +25,7 @@ interface GraphRefProps {
 	timelineReset: () => void;
 };
 
-const Graph = observer(forwardRef<GraphRefProps, Props>(({
+const Graph = forwardRef<GraphRefProps, Props>(({
 	id = '',
 	isPopup = false,
 	rootId = '',
@@ -82,20 +81,16 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			keydown: (e: any) => onKeyDown(e),
 		};
 
-		for (const [ event, handler ] of Object.entries(windowHandlers.current)) {
-			window.addEventListener(event, handler);
-		};
+		U.Dom.addEvents(window, Object.entries(windowHandlers.current));
 	};
 
 	const unbind = () => {
-		for (const [ event, handler ] of Object.entries(windowHandlers.current)) {
-			window.removeEventListener(event, handler);
-		};
+		U.Dom.removeEvents(window, Object.entries(windowHandlers.current));
 		windowHandlers.current = {};
 
 		if (canvas.current) {
-			canvas.current.removeEventListener('touchstart', (canvas.current as any)._touchStartHandler);
-			canvas.current.removeEventListener('touchmove', (canvas.current as any)._touchMoveHandler);
+			U.Dom.removeEvent(canvas.current, 'touchstart', (canvas.current as any)._touchStartHandler);
+			U.Dom.removeEvent(canvas.current, 'touchmove', (canvas.current as any)._touchMoveHandler);
 			delete (canvas.current as any)._touchStartHandler;
 			delete (canvas.current as any)._touchMoveHandler;
 		};
@@ -139,8 +134,8 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 		const cnv = canvas.current;
 		if (cnv) {
-			cnv.removeEventListener('touchstart', (cnv as any)._touchStartHandler);
-			cnv.removeEventListener('touchmove', (cnv as any)._touchMoveHandler);
+			U.Dom.removeEvent(cnv, 'touchstart', (cnv as any)._touchStartHandler);
+			U.Dom.removeEvent(cnv, 'touchmove', (cnv as any)._touchMoveHandler);
 		};
 
 		const touchStartHandler = (e: TouchEvent) => {
@@ -177,8 +172,10 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		.node();
 
 		if (canvas.current) {
-			canvas.current.addEventListener('touchstart', touchStartHandler);
-			canvas.current.addEventListener('touchmove', touchMoveHandler);
+			U.Dom.addEvents(canvas.current, [
+				['touchstart', touchStartHandler],
+				['touchmove', touchMoveHandler],
+			]);
 			(canvas.current as any)._touchStartHandler = touchStartHandler;
 			(canvas.current as any)._touchMoveHandler = touchMoveHandler;
 		};
@@ -187,7 +184,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 
 		worker.current = new Worker('workers/graph.js');
 		worker.current.onerror = (e: any) => console.log(e);
-		worker.current.addEventListener('message', onMessage);
+		U.Dom.addEvent(worker.current, 'message', onMessage);
 
 		send('init', {
 			canvas: transfer,
@@ -493,7 +490,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 				layout: subject.current.layout,
 			});
 		} else {
-			item.style.display = '';
+			U.Dom.css(item, { display: 'block' });
 		};
 
 		previewPosition(data);
@@ -515,14 +512,16 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 		const top = nodeRect.top + window.scrollY;
 		const st = window.scrollY;
 
-		item.style.left = `${data.x + left - item.offsetWidth / 2}px`;
-		item.style.top = `${data.y + top + 20 - st}px`;
+		U.Dom.css(item, {
+			left: `${data.x + left - item.offsetWidth / 2}px`,
+			top: `${data.y + top + 20 - st}px`,
+		});
 	};
 
 	const onPreviewHide = () => {
 		const item = U.Dom.get('graphPreviewItem');
 		if (item) {
-			item.style.display = 'none';
+			U.Dom.css(item, { display: 'none' });
 		};
 
 		previewId.current = null;
@@ -609,7 +608,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			};
 
 			case 'setRootId': {
-				window.dispatchEvent(new CustomEvent('updateGraphRoot', { detail: { id: data.node } }));
+				U.Dom.eventDispatch(window, 'updateGraphRoot', { id: data.node });
 				break;
 			};
 
@@ -637,16 +636,16 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			};
 
 			case 'onTimelineUpdate': {
-				window.dispatchEvent(new CustomEvent(`timelineUpdate.${id}`, { detail: {
+				U.Dom.eventDispatch(window, `timelineUpdate.${id}`, {
 					position: data.position,
 					cutoffDate: data.cutoffDate,
 					isPlaying: data.isPlaying,
-				}}));
+				});
 				break;
 			};
 
 			case 'onTimelineComplete': {
-				window.dispatchEvent(new CustomEvent(`timelineComplete.${id}`));
+				U.Dom.eventDispatch(window, `timelineComplete.${id}`);
 				break;
 			};
 		};
@@ -814,7 +813,7 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			onPreviewHide();
 
 			if (worker.current) {
-				worker.current.removeEventListener('message', onMessage);
+				U.Dom.removeEvent(worker.current, 'message', onMessage);
 				worker.current.terminate();
 			};
 		};
@@ -844,6 +843,6 @@ const Graph = observer(forwardRef<GraphRefProps, Props>(({
 			<div id="graphPreview" />
 		</div>
 	);
-}));
+});
 
 export default Graph;

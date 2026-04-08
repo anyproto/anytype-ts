@@ -2,7 +2,7 @@
 
 .popups {
 	.popup.popupSpaceCreate {
-		.innerWrap { width: 480px; border-radius: 32px; position: relative; overflow: visible; }
+		.innerWrap { width: 480px; border-radius: 32px; position: relative; overflow: hidden; max-height: calc(100vh - 104px); }
 
 		#loader { border-radius: 32px; }
 
@@ -14,10 +14,15 @@
 
 		.stepTitle { @include text-paragraph; font-weight: 600; padding: 16px 0px; text-align: center; }
 		.iconWrapper { display: flex; justify-content: center; margin: 0px 0px 16px 0px; }
+		.iconWrapper {
+			.iconPreview { width: 96px; height: 96px; border-radius: 12px; object-fit: cover; }
+		}
 		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
+		.label.small { @include text-small; color: var(--color-text-secondary); text-align: center; margin: 8px 0px 0px 0px; }
 
 		.step { padding: 0px 0px 16px 0px; }
 		.wrapper { padding: 0px 16px; }
+		.wrapper.buttons { padding: 16px 16px; }
 
 		.item { display: flex; align-items: center; gap: 12px; padding: 6px 8px; position: relative; }
 		.item {
@@ -28,25 +33,29 @@
 
 			&:hover::before { background: var(--color-shape-highlight-light); }
 
-			.name { flex: 1; }
+			.name { flex: 1; display: flex; align-items: center; gap: 0px 4px; }
 			.icon.checkbox { margin-left: auto; width: 24px; height: 24px; flex-shrink: 0; }
 			.icon.markerCheckbox2 { color: var(--color-system-accent-100); }
 		}
 
 		/* Step 0 — Select Members */
 		.step.step0 {
+			> .wrapper { padding-bottom: 8px; }
+
 			.memberListWrapper { position: relative; }
 			.memberListWrapper {
 				.emptyState { @include text-small; color: var(--color-text-secondary); min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; }
 
-				.memberList { position: relative; height: 340px; }
+				.memberList { position: relative; }
 				.memberList {
 					.ReactVirtualized__List { padding: 8px; scrollbar-gutter: stable; }
 				}
 
 				.grad {
-					position: absolute; left: 0px; bottom: 0px; width: 100%; height: 36px; pointer-events: none; z-index: 1;
-					background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-bg-primary) 100%);
+					position: absolute; left: 0px; width: 100%; height: 32px; pointer-events: none; z-index: 1;
+
+					&.top { top: 0px; background: linear-gradient(180deg, var(--color-bg-primary) 0%, transparent 100%); }
+					&.bottom { bottom: 0px; background: linear-gradient(180deg, transparent 0%, var(--color-bg-primary) 100%); }
 				}
 			}
 		}

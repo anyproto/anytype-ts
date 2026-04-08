@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType } from 'Component';
 import * as I from 'Interface';
@@ -12,7 +11,7 @@ const LIMIT_HEIGHT = 15;
 
 const isMac = U.Common.isPlatformMac();
 
-const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, storageGet, storageSet, getId, close } = props;
 	const { data } = param;
@@ -27,7 +26,7 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const timeoutRef = useRef(0);
 	const rebindTimeoutRef = useRef(0);
 	const delayRef = useRef(0);
-	const cacheRef = useRef({});
+	const cacheRef = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_SECTION }));
 	const itemsRef = useRef([]);
 	const nRef = useRef(0);
 	const [ activeIndex, setActiveIndex ] = useState(0);
@@ -37,8 +36,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const storage = storageGet();
 	const filter = String(storage.filter || '');
 	const filterValueRef = useRef(filter);
-
-	cacheRef.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_SECTION });
 
 	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
@@ -61,17 +58,19 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			setDummy(dummy + 1);
 		};
 
-		window.addEventListener('keydown', keydownHandler.current);
-		window.addEventListener('archiveObject', archiveHandler.current);
+		U.Dom.addEvents(window, [
+			['keydown', keydownHandler.current],
+			['archiveObject', archiveHandler.current],
+		]);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 		if (archiveHandler.current) {
-			window.removeEventListener('archiveObject', archiveHandler.current);
+			U.Dom.removeEvent(window, 'archiveObject', archiveHandler.current);
 			archiveHandler.current = null;
 		};
 	};
@@ -665,10 +664,10 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		setActive(items[nRef.current]);
 
 		if (listRef.current) {
+			cacheRef.current.clearAll();
 			listRef.current.recomputeRowHeights(0);
-			listRef.current.scrollToPosition(topRef.current);
 		};
-	});
+	}, [ isLoading, dummy ]);
 
 	const items = getItems();
 	const shift = keyboard.shiftSymbol();
@@ -760,8 +759,13 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			if (item.links.length || item.backlinks.length) {
 				advanced = (
 					<Icon
-						name="common/more" className="advanced"
-						tooltipParam={{ text: translate('popupSearchTooltipSearchByBacklinks'), caption: `${shift} + Enter` }}
+						name="arrow/forward" 
+						className="advanced"
+						size={28}
+						tooltipParam={{ 
+							text: translate('popupSearchTooltipSearchByBacklinks'), 
+							caption: `${shift} + Enter`
+						}}
 						onClick={e => onBacklink(e, item)}
 					/>
 				);
@@ -956,6 +960,6 @@ const PopupSearch = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupSearch;

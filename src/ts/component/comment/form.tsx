@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, useCallback } from 'react';
-import { observer } from 'mobx-react';
-import { Icon, Button } from 'Component';
+import { Icon, Button, Label } from 'Component';
 import CommentEditor from 'Component/form/commentEditor';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -23,7 +22,7 @@ interface RefProps {
 	clear: () => void;
 };
 
-const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
+const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { rootId, subId, placeholder, initialParts, isEdit, isReply, readonly, onSubmit, onCancel, onResize } = props;
 	const editorRef = useRef<any>(null);
@@ -182,10 +181,11 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			if (!isEdit) {
 				editorRef.current?.clear();
 				setIsEmpty(true);
-				setIsLoading(false);
 				setIsMultiline(false);
 				clearDraft();
 			};
+
+			setIsLoading(false);
 		};
 
 		if (tmpFiles.length) {
@@ -268,6 +268,51 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			remaining--;
 		};
 	}, []);
+
+	const timeoutDrag = useRef<number>(0);
+	const [ isDraggingOver, setIsDraggingOver ] = useState(false);
+
+	const canDrop = useCallback((e: any): boolean => {
+		return !readonly && U.File.checkDropFiles(e);
+	}, [ readonly ]);
+
+	const clearDragState = useCallback(() => {
+		setIsDraggingOver(false);
+		keyboard.disableCommonDrop(false);
+	}, []);
+
+	const onDragOver = useCallback((e: any) => {
+		if (!canDrop(e)) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+		keyboard.disableCommonDrop(true);
+		setIsDraggingOver(true);
+	}, [ canDrop ]);
+
+	const onDragLeave = useCallback((e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+		timeoutDrag.current = window.setTimeout(clearDragState, 100);
+	}, [ clearDragState ]);
+
+	const onDrop = useCallback((e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (canDrop(e)) {
+			const files = Array.from(e.dataTransfer.files) as File[];
+			addAttachmentFiles(files);
+		};
+
+		clearDragState();
+	}, [ canDrop, addAttachmentFiles, clearDragState ]);
 
 	const onFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = Array.from(e.target.files || []);
@@ -602,6 +647,11 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 	}, [ isEmpty, isLoading, handleSubmit ]);
 
+	// Reset common drop flag on unmount
+	useEffect(() => {
+		return () => keyboard.disableCommonDrop(false);
+	}, []);
+
 	// Auto-focus editor when entering edit or reply mode
 	useEffect(() => {
 		if (isEdit || isReply) {
@@ -679,15 +729,29 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	if (isFocused) cn.push('isFocused');
 	if (!isEmpty) cn.push('hasContent');
 	if (isMultiline) cn.push('isMultiline');
+	if (isDraggingOver) cn.push('isDraggingOver');
 
 	return (
-		<div ref={formRef} className={cn.join(' ')}>
+		<div
+			ref={formRef}
+			className={cn.join(' ')}
+			onDragOver={onDragOver}
+			onDragLeave={onDragLeave}
+			onDrop={onDrop}
+		>
+			<div className="dragOverlay">
+				<div className="inner">
+					<Label text={translate('commonDropFiles')} />
+				</div>
+			</div>
+
 			<div className="contentArea">
 				<CommentEditor
 					ref={editorRef}
 					subId={subId}
 					placeholder={placeholder || translate('commentPlaceholder')}
 					initialParts={initialParts}
+					maxLength={J.Constant.limit.comment.text}
 					onSubmit={handleSubmit}
 					onCancel={onCancel}
 					onEmpty={handleEmpty}
@@ -706,31 +770,35 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 						<div className="div" />
 						<Icon name="comment/slash" className="slash" withBackground={true} onClick={onSlashClick} />
 						<Icon name="chat/buttons/emoji" className="emoji" withBackground={true} onClick={onEmojiClick} />
-						<Icon name="common/mention" withBackground={true} onClick={onMentionClick} />
+						<Icon name="common/mention" className="mention" withBackground={true} onClick={onMentionClick} />
 					</div>
 
 					<div className="side right">
 						{isEdit ? (
 						<>
 							{onCancel ? (
-								<div className="btn cancel" onClick={onCancel}>
-									{translate('commonCancel')}
-								</div>
+								<Button 
+									size={28} 
+									color="blank" 
+									onClick={onCancel} 
+									text={translate('commonCancel')} 
+								/>
 							) : ''}
 							<Button
-								className={[ 'btn', 'save', 'c28', (isDisabled ? 'disabled' : '') ].join(' ')}
+								className={[ (isDisabled ? 'disabled' : '') ].join(' ')}
 								color="accent"
+								size={28}
 								text={translate('commonSave')}
 								onClick={onSendClick}
 							/>
 						</>
 					) : (
-						<div
-							className={[ 'btn', 'send', (isDisabled ? 'isDisabled' : '') ].join(' ')}
+						<Icon 
+							name="comment/send" 
+							className={[ 'send', (isDisabled ? 'disabled' : '') ].join(' ')} 
+							color="white" 
 							onClick={onSendClick}
-						>
-							<Icon name="comment/send" className="send" color="white" />
-						</div>
+						/>
 					)}
 					</div>
 				</div>
@@ -745,6 +813,6 @@ const CommentForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			/>
 		</div>
 	);
-}));
+});
 
 export default CommentForm;

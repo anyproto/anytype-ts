@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover, Label } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, onKeyDown, onKeyUp, getWrapperWidth } = props;
 	const object = S.Detail.get(rootId, block.getTargetObjectId(), J.Relation.cover);
@@ -71,7 +70,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		};
 
 		Preview.previewShow({ 
-			element: nodeRef.current?.querySelector('.cardName .name') as HTMLElement,
+			element: U.Dom.select('.cardName .name', nodeRef.current),
 			object,
 			target: targetBlockId, 
 			noUnlink: true,
@@ -89,7 +88,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		const content = U.Data.checkLinkSettings(block.content, object.layout);
 		const { cardStyle } = content;
 
-		let size = 20;
+		let size = 24;
 		let iconSize = 20;
 
 		if ((cardStyle != I.LinkCardStyle.Text) && (content.iconSize == I.LinkIconSize.Medium)) {
@@ -108,7 +107,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 				return;
 			};
 
-			U.Dom.toggleClass(card, 'withIcon', !!node.querySelector('.iconObject'));
+			U.Dom.toggleClass(card, 'withIcon', !!U.Dom.select('.iconObject', node));
 			U.Dom.toggleClass(card, 'isVertical', U.Dom.contentWidth(node) <= getWrapperWidth() / 2);
 		});
 	};
@@ -130,7 +129,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 	if (isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon name="common/ghost" />
+				<Icon name="common/ghost" className="ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);
@@ -283,6 +282,6 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		</div>
 	);
 
-}));
+});
 
 export default BlockLink;

@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Filter, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuOptionEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { id, param, getId, getContainer, close, setActive, onKeyDown } = props;
 	const { data } = param;
@@ -18,13 +17,13 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDownHandler(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -106,7 +105,7 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onMouseEnter = (e: any, item: any) => {
 		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, getContainer());
 
-		if (el?.classList.contains('disabled') || keyboard.isMouseDisabled) {
+		if (U.Dom.hasClass(el, 'disabled') || keyboard.isMouseDisabled) {
 			return;
 		};
 
@@ -269,6 +268,6 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuOptionEdit;

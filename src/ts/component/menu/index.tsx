@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import raf from 'raf';
 import { Dimmer, Icon, Title } from 'Component';
 
@@ -12,7 +11,6 @@ import MenuTableOfContents from './tableOfContents';
 import MenuSelect from './select';
 
 import MenuSmile from './smile';
-import MenuSmileSkin from './smile/skin';
 import MenuSmileColor from './smile/color';
 
 import MenuCalendar from './calendar';
@@ -106,7 +104,6 @@ const Components: any = {
 	select:					 MenuSelect,
 
 	smile:					 MenuSmile,
-	smileSkin:				 MenuSmileSkin,
 	smileColor:				 MenuSmileColor,
 
 	calendar:				 MenuCalendar,
@@ -191,7 +188,7 @@ interface RefProps extends I.MenuRef {
 	props: I.Menu;
 };
 
-const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
+const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 
 	const { id, param } = props;
 	const { 
@@ -209,6 +206,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	const timeoutPoly = useRef(0);
 	const polyRef = useRef(null);
 	const isAnimating = useRef(false);
+	const isMounted = useRef(false);
 	const framePosition = useRef(0);
 
 	const getContext = () => ({
@@ -256,25 +254,30 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 			};
 
 			if (isSub && polyRef.current) {
-				polyRef.current.style.display = 'none';
+				U.Dom.css(polyRef.current, { display: 'none' });
 				window.clearTimeout(timeoutPoly.current);
 			};
 
 			rebindPrevious();
 			raf.cancel(framePosition.current);
+			window.clearTimeout(scrollTimeout.current);
 			isAnimating.current = false;
 		};
 	}, []);
 
 	useEffect(() => {
-		if (noAnimation) {
-			U.Dom.addClass(containerRef.current, 'noAnimation');
+		if (isMounted.current) {
+			if (noAnimation) {
+				U.Dom.addClass(containerRef.current, 'noAnimation');
+			};
+
+			setClass();
+
+			U.Dom.addClass(containerRef.current, 'show');
+			position();
+		} else {
+			isMounted.current = true;
 		};
-
-		setClass();
-
-		U.Dom.addClass(containerRef.current, 'show');
-		position();
 	});
 
 	useEffect(() => {
@@ -323,6 +326,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	const sidebarResizeHandler = useRef<(() => void) | null>(null);
 	const scrollHandler = useRef<(() => void) | null>(null);
 	const scrollContainerRef = useRef<HTMLElement | null>(null);
+	const scrollTimeout = useRef(0);
 
 	const rebind = () => {
 		unbind();
@@ -331,32 +335,41 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		resizeHandler.current = handler;
 		sidebarResizeHandler.current = handler;
 
-		window.addEventListener('resize', handler);
-		window.addEventListener('sidebarResize', handler);
+		U.Dom.addEvents(window, [
+			[ 'resize', handler ],
+			[ 'sidebarResize', handler ],
+		]);
 
 		const containerEl = U.Dom.getScrollContainer(keyboard.isPopup());
 		if (containerEl) {
 			scrollContainerRef.current = containerEl;
 			const onScroll = () => {
+				U.Dom.addClass(containerRef.current, 'noAnimation');
+				window.clearTimeout(scrollTimeout.current);
+
 				raf.cancel(framePosition.current);
 				framePosition.current = raf(() => position());
+
+				scrollTimeout.current = window.setTimeout(() => {
+					U.Dom.removeClass(containerRef.current, 'noAnimation');
+				}, 50);
 			};
 			scrollHandler.current = onScroll;
-			containerEl.addEventListener('scroll', onScroll);
+			U.Dom.addEvent(containerEl, 'scroll', onScroll);
 		};
 	};
 
 	const unbind = () => {
 		if (resizeHandler.current) {
-			window.removeEventListener('resize', resizeHandler.current);
+			U.Dom.removeEvent(window, 'resize', resizeHandler.current);
 			resizeHandler.current = null;
 		};
 		if (sidebarResizeHandler.current) {
-			window.removeEventListener('sidebarResize', sidebarResizeHandler.current);
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandler.current);
 			sidebarResizeHandler.current = null;
 		};
 		if (scrollHandler.current && scrollContainerRef.current) {
-			scrollContainerRef.current.removeEventListener('scroll', scrollHandler.current);
+			U.Dom.removeEvent(scrollContainerRef.current, 'scroll', scrollHandler.current);
 			scrollHandler.current = null;
 			scrollContainerRef.current = null;
 		};
@@ -398,9 +411,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	};
 
 	const position = () => {
-		if (childRef.current && childRef.current.beforePosition) {
-			childRef.current.beforePosition();
-		};
+		childRef.current?.beforePosition?.();
 
 		raf(() => {
 			const menuEl = containerRef.current;
@@ -575,7 +586,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 				};
 
 				if (polyRef.current) {
-					polyRef.current.style.display = 'block';
+					U.Dom.css(polyRef.current, { display: 'block' });
 					U.Dom.css(polyRef.current, {
 						width: `${w}px`,
 						height: `${h}px`,
@@ -591,7 +602,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 				window.clearTimeout(timeoutPoly.current);
 				timeoutPoly.current = window.setTimeout(() => {
 					if (polyRef.current) {
-						polyRef.current.style.display = 'none';
+						U.Dom.css(polyRef.current, { display: 'none' });
 					};
 				}, 500);
 			};
@@ -671,7 +682,7 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 	
 	const onMouseLeave = (e: any) => {
 		if (isSub && polyRef.current) {
-			polyRef.current.style.display = 'none';
+			U.Dom.css(polyRef.current, { display: 'none' });
 		};
 	};
 
@@ -970,9 +981,9 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		U.Dom.addClass(el, 'hover');
 
 		if (scroll) {
-			let scrollWrap = nodeRef.current?.querySelector('.scrollWrap') as HTMLElement;
+			let scrollWrap = U.Dom.select('.scrollWrap', nodeRef.current);
 			if (!scrollWrap) {
-				scrollWrap = nodeRef.current?.querySelector('.content') as HTMLElement;
+				scrollWrap = U.Dom.select('.content', nodeRef.current);
 			};
 
 			if (scrollWrap) {
@@ -1162,6 +1173,6 @@ const Menu = observer(forwardRef<RefProps, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default Menu;

@@ -1,9 +1,8 @@
 import React, { forwardRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Button, Label, Icon, Error } from 'Component';
 import * as I from 'Interface';
 
-const PageMainSettingsImportObsidian = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsImportObsidian = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ error, setError ] = useState<string>('');
 
@@ -52,6 +51,6 @@ const PageMainSettingsImportObsidian = observer(forwardRef<I.PageRef, I.PageSett
 		</>
 	);
 	
-}));
+});
 
 export default PageMainSettingsImportObsidian;

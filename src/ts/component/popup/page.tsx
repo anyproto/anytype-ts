@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { history as historyPopup } from 'Lib/history';
 import { Page } from 'Component';
 import * as I from 'Interface';
 
 interface Props extends I.Popup {};
 
-const PopupPage = observer(forwardRef<{}, Props>((props, ref) => {
+const PopupPage = forwardRef<{}, Props>((props, ref) => {
 	
 	const { param, getId } = props;
 	const { data } = param;
@@ -21,12 +20,18 @@ const PopupPage = observer(forwardRef<{}, Props>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		scrollHandlerRef.current = () => S.Menu.resizeAll();
-		getInnerWrap()?.addEventListener('scroll', scrollHandlerRef.current);
+		const wrap = getInnerWrap();
+		if (wrap) {
+			U.Dom.addEvent(wrap, 'scroll', scrollHandlerRef.current);
+		};
 	};
 
 	const unbind = () => {
 		if (scrollHandlerRef.current) {
-			getInnerWrap()?.removeEventListener('scroll', scrollHandlerRef.current);
+			const wrap = getInnerWrap();
+			if (wrap) {
+				U.Dom.removeEvent(wrap, 'scroll', scrollHandlerRef.current);
+			};
 			scrollHandlerRef.current = null;
 		};
 	};
@@ -56,6 +61,6 @@ const PopupPage = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupPage;

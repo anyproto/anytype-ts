@@ -1,12 +1,11 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
 const LIMIT_OPEN = 10;
 
-const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, onKeyDown, setActive, getId, getSize, close } = props;
 	const { data, className, classNameWrap } = param;
@@ -30,12 +29,12 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 	
 	const getSections = () => {
@@ -429,7 +428,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 			case 'archive': {
 				Action.archiveCheckType(subId, objectIds, route);
-				window.dispatchEvent(new CustomEvent('archiveObject', { detail: { ids: objectIds } }));
+				U.Dom.eventDispatch(window, 'archiveObject', { ids: objectIds });
 				break;
 			};
 
@@ -555,6 +554,6 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		</div>
 	);
 	
-}));
+});
 
 export default MenuObjectContext;

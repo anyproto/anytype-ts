@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 
 import raf from 'raf';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { LoadMore, StickyScrollbar } from 'Component';
 import HeadRow from './grid/head/row';
@@ -15,7 +14,7 @@ import * as I from 'Interface';
 const PADDING = 46;
 const HEIGHT = 48;
 
-const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { 
 		rootId, block, isPopup, isInline, className, readonly, loadData, isCollection, getView, onRecordAdd, getEmptyView, getRecords, 
@@ -29,6 +28,8 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	const scrollWrapRef = useRef(null);
 	const view = getView();
 	const relations = getVisibleRelations();
+	const relationsRef = useRef(relations);
+	relationsRef.current = relations;
 
 	useEffect(() => {
 		resize();
@@ -74,9 +75,13 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		unbind();
 
 		scrollHorizontalHandlerRef.current = () => onScrollHorizontal();
-		scroll?.addEventListener('scroll', scrollHorizontalHandlerRef.current);
+		if (scroll) {
+			U.Dom.addEvent(scroll, 'scroll', scrollHorizontalHandlerRef.current);
+		};
 		scrollVerticalHandlerRef.current = () => raf(() => onScrollVertical());
-		container?.addEventListener('scroll', scrollVerticalHandlerRef.current);
+		if (container) {
+			U.Dom.addEvent(container, 'scroll', scrollVerticalHandlerRef.current);
+		};
 
 		if (!isInline) {
 			stickyScrollbarRef.current?.bind(scroll, isSyncingScroll.current);
@@ -87,12 +92,12 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const scroll = scrollRef.current;
 		const container = U.Dom.getScrollContainer(isPopup);
 
-		if (scrollHorizontalHandlerRef.current) {
-			scroll?.removeEventListener('scroll', scrollHorizontalHandlerRef.current);
+		if (scrollHorizontalHandlerRef.current && scroll) {
+			U.Dom.removeEvent(scroll, 'scroll', scrollHorizontalHandlerRef.current);
 			scrollHorizontalHandlerRef.current = null;
 		};
-		if (scrollVerticalHandlerRef.current) {
-			container?.removeEventListener('scroll', scrollVerticalHandlerRef.current);
+		if (scrollVerticalHandlerRef.current && container) {
+			U.Dom.removeEvent(container, 'scroll', scrollVerticalHandlerRef.current);
 			scrollVerticalHandlerRef.current = null;
 		};
 		stickyScrollbarRef.current?.unbind();
@@ -100,7 +105,10 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 	const onScrollHorizontal = () => {
 		S.Menu.resizeAll();
-		resizeColumns('', 0);
+
+		if (!keyboard.isResizing) {
+			resizeColumns('', 0);
+		};
 
 		if (isInline) {
 			return;
@@ -111,7 +119,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const clone = U.Dom.select('#rowHeadClone', node);
 
 		if (clone) {
-			clone.style.transform = `translate3d(${-(scroll?.scrollLeft ?? 0)}px,0px,0px)`;
+			U.Dom.css(clone, { transform: `translate3d(${-(scroll?.scrollLeft ?? 0)}px,0px,0px)` });
 		};
 
 		if (stickyScrollbarRef) {
@@ -163,10 +171,12 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		};
 
 		if (top <= J.Size.header) {
-			clone.style.left = `${left + sx}px`;
-			clone.style.top = `${J.Size.header}px`;
-			clone.style.width = `${rowHead.offsetWidth + 2}px`;
-			clone.style.transform = `translate3d(${-sx}px,0px,0px)`;
+			U.Dom.css(clone, {
+				left: `${left + sx}px`,
+				top: `${J.Size.header}px`,
+				width: `${rowHead.offsetWidth + 2}px`,
+				transform: `translate3d(${-sx}px,0px,0px)`,
+			});
 		} else {
 			clone.remove();
 		};
@@ -176,11 +186,12 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 	const resizeColumns = (relationKey: string, width: number) => {
 		const node = nodeRef.current;
+		const rels = relationsRef.current;
 		const widths = getColumnWidths(relationKey, width);
-		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
+		const str = rels.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const size = J.Size.dataview.cell;
 
-		relations.forEach(it => {
+		rels.forEach(it => {
 			const width = widths[it.relationKey];
 			const el = U.Dom.select(`#${U.Common.esc(Relation.cellId('head', it.relationKey, ''))}`, node);
 
@@ -190,15 +201,15 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			};
 		});
 
-		U.Dom.selectAll('.rowHead', node).forEach(el => el.style.gridTemplateColumns = str);
-		U.Dom.selectAll('.rowFoot', node).forEach(el => el.style.gridTemplateColumns = str);
-		U.Dom.selectAll('.row .selectionTarget', node).forEach(el => el.style.gridTemplateColumns = str);
+		U.Dom.selectAll('.rowHead', node).forEach(el => U.Dom.css(el, { gridTemplateColumns: str }));
+		U.Dom.selectAll('.rowFoot', node).forEach(el => U.Dom.css(el, { gridTemplateColumns: str }));
+		U.Dom.selectAll('.row .selectionTarget', node).forEach(el => U.Dom.css(el, { gridTemplateColumns: str }));
 	};
 
 	const getColumnWidths = (relationKey: string, width: number): any => {
 		const columns: any = {};
-		
-		relations.forEach(it => {
+
+		relationsRef.current.forEach(it => {
 			if (!it.relation) {
 				return;
 			};
@@ -214,7 +225,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	const cellPosition = (cellId: string) => {
-		const cell = U.Dom.get(U.Common.esc(cellId));
+		const cell = U.Dom.get(cellId);
 		if (!cell || !U.Dom.hasClass(cell, 'isEditing')) {
 			return;
 		};
@@ -233,12 +244,10 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const ww = U.Dom.contentWidth(container);
 		const rx = x - sx + width;
 
-		content.style.left = '0';
-		content.style.right = 'auto';
+		U.Dom.css(content, { left: '0', right: 'auto' });
 
 		if ((rx >= ww - 92) || (rx > sw)) {
-			content.style.left = 'auto';
-			content.style.right = '0';
+			U.Dom.css(content, { left: 'auto', right: '0' });
 		};
 	};
 
@@ -257,17 +266,19 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		U.Dom.addClass(document.body, 'colResize');
 
 		if (resizeMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', resizeMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', resizeMoveHandlerRef.current);
 		};
 		if (resizeEndHandlerRef.current) {
-			window.removeEventListener('mouseup', resizeEndHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', resizeEndHandlerRef.current);
 		};
 
 		resizeMoveHandlerRef.current = (e: MouseEvent) => onResizeMove(e, relationKey, left);
 		resizeEndHandlerRef.current = (e: MouseEvent) => onResizeEnd(e, relationKey, left);
 
-		window.addEventListener('mousemove', resizeMoveHandlerRef.current);
-		window.addEventListener('mouseup', resizeEndHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['mousemove', resizeMoveHandlerRef.current],
+			['mouseup', resizeEndHandlerRef.current],
+		]);
 
 		if (el) {
 			U.Dom.addClass(el, 'isResizing');
@@ -287,14 +298,14 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		const width = checkWidth(e.pageX - ox);
 
 		if (resizeMoveHandlerRef.current) {
-			window.removeEventListener('mousemove', resizeMoveHandlerRef.current);
+			U.Dom.removeEvent(window, 'mousemove', resizeMoveHandlerRef.current);
 			resizeMoveHandlerRef.current = null;
 		};
 		if (resizeEndHandlerRef.current) {
-			window.removeEventListener('mouseup', resizeEndHandlerRef.current);
+			U.Dom.removeEvent(window, 'mouseup', resizeEndHandlerRef.current);
 			resizeEndHandlerRef.current = null;
 		};
-		window.dispatchEvent(new Event('resize'));
+		U.Dom.eventDispatch(window, 'resize');
 		U.Dom.removeClass(document.body, 'colResize');
 		U.Dom.selectAll('.cellHead.isResizing', node).forEach(el => U.Dom.removeClass(el, 'isResizing'));
 		U.Dom.selectAll('.cellKeyHover', node).forEach(el => U.Dom.removeClass(el, 'cellKeyHover'));
@@ -322,7 +333,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	const onCellAdd = (e: any) => {
-		const blockEl = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const blockEl = U.Dom.get(`block-${block.id}`);
 		const rowHead = U.Dom.select('#rowHead', blockEl);
 		const isFixed = rowHead ? U.Dom.hasClass(rowHead, 'fixed') : false;
 		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
@@ -407,20 +418,17 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 					const offset = 8;
 
 					if (scroll) {
-						scroll.style.width = `${cw}px`;
-						scroll.style.marginLeft = `${-margin}px`;
+						U.Dom.css(scroll, { width: `${cw}px`, marginLeft: `${-margin}px` });
 					};
 					if (wrap) {
-						wrap.style.width = `${vw + margin - offset}px`;
-						wrap.style.paddingLeft = `${margin}px`;
-						wrap.style.paddingRight = `${offset * 2}px`;
+						U.Dom.css(wrap, { width: `${vw + margin - offset}px`, paddingLeft: `${margin}px`, paddingRight: `${offset * 2}px` });
 					};
 				} else {
-					const parentObj = U.Dom.get(`block-${U.Common.esc(parent.id)}`);
+					const parentObj = U.Dom.get(`block-${parent.id}`);
 					const vw = parentObj ? (U.Dom.contentWidth(parentObj) - J.Size.blockMenu) : 0;
 
 					if (wrap) {
-						wrap.style.width = `${Math.max(vw, width)}px`;
+						U.Dom.css(wrap, { width: `${Math.max(vw, width)}px` });
 					};
 				};
 			};
@@ -432,15 +440,16 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			const scrollRect = scroll?.getBoundingClientRect();
 
 			if (scroll) {
-				scroll.style.width = `${cw - 4}px`;
-				scroll.style.marginLeft = `${-margin - 2}px`;
-				scroll.style.paddingLeft = `${margin}px`;
-				scroll.style.minHeight = `${ch - (scrollRect?.top ?? 0)}px`;
+				U.Dom.css(scroll, {
+					width: `${cw - 4}px`,
+					marginLeft: `${-margin - 2}px`,
+					paddingLeft: `${margin}px`,
+					minHeight: `${ch - (scrollRect?.top ?? 0)}px`,
+				});
 			};
 
 			if (wrap) {
-				wrap.style.width = `${vw}px`;
-				wrap.style.paddingRight = `${pr}px`;
+				U.Dom.css(wrap, { width: `${vw}px`, paddingRight: `${pr}px` });
 			};
 
 			stickyScrollbarRef.current?.resize({
@@ -588,6 +597,6 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default ViewGrid;

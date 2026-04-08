@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Input, IconObject, ChatCounter, Icon } from 'Component';
 import * as I from 'Interface';
 
-const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
+const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 	const [ isEditing, setIsEditing ] = useState(false);
 	const inputRef = useRef(null);
@@ -407,10 +406,9 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				setValue(Relation.formatValue(relation, record[relation.relationKey], true));
 			};
 
-			const cellContent = cell?.querySelector('.cellContent') as HTMLElement;
+			const cellContent = U.Dom.select('.cellContent', cell);
 			if (cellContent) {
-				cellContent.style.left = '';
-				cellContent.style.right = '';
+				U.Dom.css(cellContent, { left: '', right: '' });
 			};
 		};
 
@@ -422,7 +420,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		if (S.Common.cellId) {
 			U.Dom.addClass(U.Dom.get(S.Common.cellId), 'isEditing');
 		};
-	});
+	}, [ isEditing ]);
 
 	useImperativeHandle(ref, () => ({
 		setEditing: (v: boolean) => setEditingHandler(v),
@@ -450,6 +448,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		</>
 	);
 
-}));
+});
 
 export default CellText;

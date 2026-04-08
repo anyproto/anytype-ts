@@ -6,7 +6,6 @@ import React, { MouseEvent } from 'react';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { focus } from 'Lib/focus';
-import item from 'Component/block/dataview/view/calendar/item';
 
 interface SpaceContextParam {
 	isSharePage?: boolean;
@@ -462,7 +461,7 @@ class UtilMenu {
 					window.setTimeout(() => {
 						switch (option.id) {
 							case 'edit': {
-								U.Dom.get(`button-${U.Common.esc(blockId)}-settings`)?.click();
+								U.Dom.get(`button-${blockId}-settings`)?.click();
 								S.Menu.updateData('dataviewViewSettings', { view: observable.box(new M.View(view)) });
 								break;
 							};
@@ -557,7 +556,7 @@ class UtilMenu {
 			id,
 			name: translate(`widget${id}Name`),
 			description: translate(`widget${id}Description`),
-			icon: `widget-${id}`,
+			iconParam: { name: `menu/widget/${String(I.WidgetLayout[id] || '').toLowerCase()}` },
 			withDescription: true,
 		}));
 	};
@@ -792,7 +791,7 @@ class UtilMenu {
 		const isOwner = U.Space.isMyOwner();
 		const options: I.Option[] = [
 			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' }
+			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'destructive' }
 		];
 
 		S.Menu.open('select', {
@@ -1019,10 +1018,10 @@ class UtilMenu {
 				};
 
 				if (withDelete) {
-					const iconParam = { name: isOwner ? 'menu/action/remove' : 'menu/action/leave', color: 'darkRed' };
+					const iconParam = { name: isOwner ? 'menu/action/remove' : 'menu/action/leave', color: 'destructive' };
 					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
 
-					sections.delete.push({ id: 'remove', iconParam, name, color: 'red' });
+					sections.delete.push({ id: 'remove', iconParam, name, color: 'destructive' });
 				};
 			};
 
@@ -1207,9 +1206,9 @@ class UtilMenu {
 
 	sidebarModeOptions () {
 		return [
-			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
+			{ id: 'all', iconParam: { name: 'sidebar-all' }, name: translate('sidebarMenuAll') },
 			{ id: 'sidebar', iconParam: { name: 'menu/action/sidebar' }, name: translate('sidebarMenuSidebar') },
-		].map(it => ({ ...it, icon: it.icon ? `sidebar-${it.icon}` : it.icon }));
+		];
 	};
 
 	codeLangOptions (): I.Option[] {
@@ -1434,7 +1433,7 @@ class UtilMenu {
 			if (canDelete) {
 				options = options.concat([
 					{ isDiv: true },
-					{ id: 'remove', name: translate('commonDelete'), color: 'red' },
+					{ id: 'remove', name: translate('commonDelete'), color: 'destructive' },
 				]);
 			};
 
@@ -1624,6 +1623,12 @@ class UtilMenu {
 	};
 
 	spaceCreate (param: I.MenuParam, route) {
+		const analyticsName = {
+			[I.SpaceCreateType.Personal]: 'Space',
+			[I.SpaceCreateType.Group]: 'Chat',
+			[I.SpaceCreateType.Join]: 'Join',
+		};
+
 		const options = [
 			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
 			{ id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') },
@@ -1651,7 +1656,7 @@ class UtilMenu {
 				onSelect: (e: any, item: any) => {
 					Action.createSpace(item.id, route);
 
-					analytics.event(`Click${prefix}CreateMenu${U.String.toUpperCamelCase(item.id)}`);
+					analytics.event(`Click${prefix}CreateMenu${analyticsName[item.id]}`);
 				},
 			}
 		});
@@ -1871,7 +1876,7 @@ class UtilMenu {
 		const element = document.elementFromPoint(x, y) as HTMLElement;
 		const isInput = element?.tagName === 'INPUT';
 		const isTextarea = element?.tagName === 'TEXTAREA';
-		const isEditable = element?.classList.contains('editable');
+		const isEditable = U.Dom.hasClass(element, 'editable');
 
 		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
 

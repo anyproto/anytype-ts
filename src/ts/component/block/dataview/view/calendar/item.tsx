@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
 import * as I from 'Interface';
 
@@ -17,7 +16,7 @@ interface Ref {
 
 const LIMIT = 4;
 
-const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
+const CalendarItem = forwardRef<Ref, Props>((props, ref) => {
 
 	const { 
 		rootId, block, className, d, m, y, isToday, isCollection, readonly, getSubId, getView, onContext, getKeys, getTarget, getSearchIds, isAllowedObject,
@@ -59,7 +58,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(Dataview.getActiveFilters(view) as any[]);
-		const sorts: I.Sort[] = [].concat(view.sorts);
+		const sorts: I.Sort[] = [].concat(Dataview.getFilteredSorts(view.sorts));
 		const searchIds = getSearchIds();
 
 		filters.push({ 
@@ -86,7 +85,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 			subId,
 			limit,
 			filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
-			sorts: sorts.map(Dataview.filterMapper),
+			sorts: sorts.map(it => Dataview.sortMapper(it)),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			collectionId: (isCollection ? object.id : ''),
@@ -99,7 +98,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const onMouseEnter = (e: any, item: any) => {
 		const node = nodeRef.current;
-		const element = node?.querySelector(`#record-${U.Common.esc(item.id)}`) as HTMLElement;
+		const element = U.Dom.select(`#record-${U.Common.esc(item.id)}`, node);
 		const name = U.String.shorten(item.name, 50);
 
 		if (element) {
@@ -319,6 +318,6 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default CalendarItem;

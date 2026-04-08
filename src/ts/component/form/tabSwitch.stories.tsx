@@ -35,9 +35,9 @@ export const WithIcons: Story = {
 	args: {
 		value: 'left',
 		options: [
-			{ id: 'left', name: 'Left', icon: 'align left' },
-			{ id: 'center', name: 'Center', icon: 'align center' },
-			{ id: 'right', name: 'Right', icon: 'align right' },
+			{ id: 'left', name: 'Left', iconParam: { name: 'menu/align/horizontal/left' } },
+			{ id: 'center', name: 'Center', iconParam: { name: 'menu/align/horizontal/center' } },
+			{ id: 'right', name: 'Right', iconParam: { name: 'menu/align/horizontal/right' } },
 		],
 	},
 };

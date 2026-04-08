@@ -1,5 +1,4 @@
 import React, { forwardRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, ObjectName } from 'Component';
@@ -12,7 +11,7 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	onResizeStart(e: any, key: string): void;
 };
 
-const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
+const HeadCell = forwardRef<{}, Props>((props, ref) => {
 
 	const { rootId, block, relationKey, onResizeStart, getView, readonly } = props;
 	const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
@@ -34,20 +33,22 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 	
 	const onMouseDown = () => {
-		U.Dom.selectAll('.cell.isEditing').forEach(el => U.Dom.removeClass(el, 'isEditing'));
+		const blockEl = U.Dom.get(`block-${block.id}`);
+		U.Dom.selectAll('.cell.isEditing', blockEl).forEach(el => U.Dom.removeClass(el, 'isEditing'));
 		S.Menu.closeAll();
 	};
 
 	const onMouseEnter = () => {
 		if (!keyboard.isDragging && !keyboard.isResizing) {
-			const blockEl = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+			const blockEl = U.Dom.get(`block-${block.id}`);
 			U.Dom.selectAll(`.cell-key-${U.Common.esc(relationKey)}`, blockEl).forEach(el => U.Dom.addClass(el, 'cellKeyHover'));
 		};
 	};
 
 	const onMouseLeave = () => {
 		if (!keyboard.isDragging && !keyboard.isResizing) {
-			U.Dom.selectAll('.cellKeyHover').forEach(el => U.Dom.removeClass(el, 'cellKeyHover'));
+			const blockEl = U.Dom.get(`block-${block.id}`);
+			U.Dom.selectAll('.cellKeyHover', blockEl).forEach(el => U.Dom.removeClass(el, 'cellKeyHover'));
 		};
 	};
 
@@ -62,7 +63,7 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		const blockEl =	`#block-${U.Common.esc(block.id)}`;
-		const blockNode = U.Dom.get(`block-${U.Common.esc(block.id)}`);
+		const blockNode = U.Dom.get(`block-${block.id}`);
 		const rowHead = U.Dom.select('#rowHead', blockNode);
 		const isFixed = U.Dom.hasClass(rowHead, 'fixed');
 		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
@@ -144,6 +145,6 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default HeadCell;

@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Editable } from 'Component';
 import * as I from 'Interface';
 
-const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const BlockDataviewHead = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { 
 		rootId, block, readonly, className, isCollection, getTarget, onSourceSelect, onSourceTypeSelect, loadData,
@@ -53,7 +52,7 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 		};
 
 		const options: any[] = [
-			canEdit ? { id: 'editTitle', icon: 'editText', name: translate('blockDataviewHeadMenuEdit') } : null,
+			canEdit ? { id: 'editTitle', iconParam: { name: 'editText' }, name: translate('blockDataviewHeadMenuEdit') } : null,
 			canSource ? { id: 'sourceChange', iconParam: { name: 'menu/action/source' }, name: U.String.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true } : null,
 			{ id: 'sourceOpen', iconParam: { name: 'common/expand' }, name: U.String.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		].filter(it => it);
@@ -134,7 +133,7 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 			addParam.onClick = (details: any) => {
 				C.ObjectCreateSet([], details, '', S.Common.space, (message: any) => {
 					C.BlockDataviewCreateFromExistingObject(rootId, block.id, message.objectId, (message: any) => {
-						(nodeRef.current?.querySelector('#head-source-select') as HTMLElement)?.click();
+						U.Dom.select('#head-source-select', nodeRef.current)?.click();
 						onCreate(message, true);
 					});
 				});
@@ -317,6 +316,6 @@ const BlockDataviewHead = observer(forwardRef<I.ViewRef, I.ViewComponent>((props
 		</div>
 	);
 
-}));
+});
 
 export default BlockDataviewHead;

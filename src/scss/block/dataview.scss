@@ -215,9 +215,9 @@
 					.icon.relation { width: 20px; height: 20px; }
 					.icon.arrow { width: 8px; height: 8px; }
 
-					&.isActive { color: var(--color-system-accent-100); background-color: var(--color-system-selection); }
+					&.isActive { color: var(--color-system-accent-100); background-color: var(--color-system-highlight); }
 					&.isActive {
-						&:hover, &.hover { background-color: var(--color-system-drop-zone); }
+						&:hover, &.hover { background-color: var(--color-system-selection); }
 						.name { font-weight: 500; }
 
 						.icon.hasSvg { color: var(--color-system-accent-100); }

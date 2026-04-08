@@ -5,7 +5,7 @@ import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
 interface Props {
-	icon?: string;
+	iconParam?: I.IconParam;
 	textUrl?: string;
 	textFile?: string;
 	withFile?: boolean;
@@ -25,7 +25,7 @@ const Sizes = {
 };
 
 const InputWithFile: FC<Props> = ({
-	icon = '',
+	iconParam,
 	textUrl = translate('inputWithFileTextUrl'),
 	textFile = '',
 	withFile = true,
@@ -196,7 +196,7 @@ const InputWithFile: FC<Props> = ({
 			className={cn.join(' ')}
 			onClick={onClick}
 		>
-			{icon ? <Icon name={icon.includes('/') ? icon : `menu/block/${icon == 'bookmark' ? 'common' : 'media'}/${icon}`} /> : ''}
+			{iconParam ? <Icon {...iconParam} /> : ''}
 		
 			<div className="inputWithFile-inner">
 				<form className="form" onSubmit={onSubmit}>

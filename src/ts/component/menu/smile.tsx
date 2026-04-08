@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useState, useRef } from 'react';
 
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, IconEmoji, EmptySearch, Label, Loader, IconObject } from 'Component';
 import * as I from 'Interface';
@@ -24,7 +23,7 @@ const HEIGHT_LIBRARY_ITEM = 96;
 
 const ID_RECENT = 'recent';
 
-const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSmile = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const [ filter, setFilter ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -107,11 +106,11 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		window.removeEventListener('keydown', keydownHandler.current);
+		U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const load = () => {
@@ -627,7 +626,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (hasSkins(item)) {
 				timeoutMenu.current = window.setTimeout(() => {
 					if (mouseUpHandler.current) {
-						window.removeEventListener('mouseup', mouseUpHandler.current);
+						U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 						mouseUpHandler.current = null;
 					};
 					onSkin(e, item);
@@ -635,7 +634,7 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			if (mouseUpHandler.current) {
-				window.removeEventListener('mouseup', mouseUpHandler.current);
+				U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 			};
 
 			mouseUpHandler.current = () => {
@@ -650,12 +649,12 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 				window.clearTimeout(timeoutMenu.current);
 				if (mouseUpHandler.current) {
-					window.removeEventListener('mouseup', mouseUpHandler.current);
+					U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 					mouseUpHandler.current = null;
 				};
 			};
 
-			window.addEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.addEvent(window, 'mouseup', mouseUpHandler.current);
 		};
 
 		switch (tab) {
@@ -1243,6 +1242,6 @@ const MenuSmile = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuSmile;

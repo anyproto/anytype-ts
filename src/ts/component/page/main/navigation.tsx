@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
 
@@ -16,7 +15,7 @@ enum Panel {
 
 const HEIGHT = 88;
 
-const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainNavigation = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ dummy, setDummy ] = useState(0);
@@ -43,12 +42,12 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -435,6 +434,6 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		</div>
 	);
 	
-}));
+});
 
 export default PageMainNavigation;

@@ -1,17 +1,15 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, ObjectType, ObjectName, EmptySearch } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
-
 const LIMIT = 16;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_SMALL = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
 
-const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, onKeyDown, setActive, getId, position } = props;
 	const { data, menuKey } = param;
@@ -41,7 +39,6 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	useEffect(() => {
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
@@ -50,23 +47,18 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	}, []);
 
 	useEffect(() => {
-		resize();
-		rebind();
-	});
-
-	useEffect(() => {
 		n.current = 0;
 		reload();
 	}, [ menuKey, filter ]);
 	
 	const rebind = () => {
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getItems = () => {
@@ -205,6 +197,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			};
 
 			setDummy(dummy + 1);
+			position();
 		});
 	};
 
@@ -343,7 +336,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems().slice(0, LIMIT);
 		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
@@ -355,7 +348,6 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		};
 
 		U.Dom.css(obj, { height: `${height}px` });
-		position();
 	};
 
 	const rowRenderer = (param: any) => {
@@ -436,6 +428,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		getFilterRef: () => filterRef.current,
 		onClick,
 		onOver,
+		beforePosition,
 	}), []);
 
 	return (
@@ -488,6 +481,6 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 	
-}));
+});
 
 export default MenuSearchObject;

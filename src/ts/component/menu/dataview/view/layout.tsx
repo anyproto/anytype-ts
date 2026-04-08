@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Icon, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { config } = S.Common;
 	const { param, setActive, onKeyDown, getId, getSize } = props;
@@ -38,12 +37,12 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 
-		window.addEventListener('keydown', onKeyDownHandler);
+		U.Dom.addEvent(window, 'keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDownHandler);
+		U.Dom.removeEvent(window, 'keydown', onKeyDownHandler);
 	};
 	
 	const onKeyDownHandler = (e: any) => {
@@ -94,11 +93,11 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				Dataview.groupUpdate(rootId, blockId, view.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: [] }, () => {
 					onSave?.();
-					window.dispatchEvent(new CustomEvent(`updateDataviewData.${ns}`));
+					U.Dom.eventDispatch(window, `updateDataviewData.${ns}`);
 				});
 			} else {
 				onSave?.();
-				window.dispatchEvent(new CustomEvent(`updateDataviewData.${ns}`));
+				U.Dom.eventDispatch(window, `updateDataviewData.${ns}`);
 			};
 		});
 
@@ -521,6 +520,6 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuViewLayout;

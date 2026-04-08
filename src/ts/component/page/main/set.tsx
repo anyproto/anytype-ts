@@ -1,12 +1,11 @@
 import React, { forwardRef, useEffect, useLayoutEffect, useState, useRef, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
 
-const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainSet = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ isDeleted, setIsDeleted ] = useState(false);
@@ -30,11 +29,11 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		const container = U.Dom.getScrollContainer(isPopup);
 
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 		};
 
 		if (scrollHandler.current && container) {
-			container.removeEventListener('scroll', scrollHandler.current);
+			U.Dom.removeEvent(container, 'scroll', scrollHandler.current);
 		};
 	};
 
@@ -44,10 +43,12 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		unbind();
 
 		keydownHandler.current = e => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 
 		scrollHandler.current = () => onScroll();
-		container?.addEventListener('scroll', scrollHandler.current);
+		if (container) {
+			U.Dom.addEvent(container, 'scroll', scrollHandler.current);
+		};
 	};
 
 	const checkDeleted = (): boolean => {
@@ -180,7 +181,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 				const records = S.Record.getRecordIds(S.Record.getSubId(rootId, J.Constant.blockId.dataview), '');
 				selection.set(I.SelectType.Record, records);
 
-				window.dispatchEvent(new CustomEvent('selectionSet'));
+				U.Dom.eventDispatch(window, 'selectionSet');
 			});
 
 			if (count && !S.Menu.isOpen()) {
@@ -226,7 +227,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 			const hh = isPopup ? (header?.clientHeight ?? 0) : J.Size.header;
 
 			if (cover) {
-				cover.style.top = `${hh}px`;
+				U.Dom.css(cover, { top: `${hh}px` });
 			};
 		});
 	};
@@ -330,6 +331,6 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		</>
 	);
 
-}));
+});
 
 export default PageMainSet;

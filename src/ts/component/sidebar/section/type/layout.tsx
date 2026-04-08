@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Label, TabSwitch } from 'Component';
 
 import FormatPage from './format/page';
@@ -11,7 +10,7 @@ const Components = [
 	FormatList,
 ];
 
-const SidebarSectionTypeLayout = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionTypeLayout = forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 	
 	const { object, readonly, onChange } = props;
 	const formatOptions: I.Option[] = [
@@ -107,6 +106,6 @@ const SidebarSectionTypeLayout = observer(forwardRef<I.SidebarSectionRef, I.Side
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionTypeLayout;

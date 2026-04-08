@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { ObjectName, ObjectDescription, Label, IconObject, EmptySearch, Button, Loader } from 'Component';
 import * as I from 'Interface';
 
-const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
+const MenuParticipant = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -55,7 +54,7 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 		};
 
 		const node = iconRef.current;
-		const img = node?.querySelector('.iconImage') as HTMLImageElement;
+		const img = U.Dom.select('.iconImage', node) as HTMLImageElement;
 
 		if (!img) {
 			setIsLoaded(true);
@@ -64,16 +63,20 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 
 		const onImageLoad = () => setIsLoaded(true);
 
-		img.addEventListener('load', onImageLoad);
-		img.addEventListener('error', onImageLoad);
+		U.Dom.addEvents(img, [
+			[ 'load', onImageLoad ],
+			[ 'error', onImageLoad ],
+		]);
 
 		if (img.complete) {
 			setIsLoaded(true);
 		};
 
 		return () => {
-			img.removeEventListener('load', onImageLoad);
-			img.removeEventListener('error', onImageLoad);
+			U.Dom.removeEvents(img, [
+				[ 'load', onImageLoad ],
+				[ 'error', onImageLoad ],
+			]);
 		};
 	});
 
@@ -102,6 +105,6 @@ const MenuParticipant = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, r
 		</>
 	) : <EmptySearch text={translate('commonNotFound')} />;
 
-}));
+});
 
 export default MenuParticipant;

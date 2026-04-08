@@ -17,9 +17,6 @@ class Preview {
 	isTooltipOpen = false;
 
 	private clickTooltipHandler: ((e: Event) => void) | null = null;
-	private previewLeaveHandler: ((e: Event) => void) | null = null;
-	private toastEnterHandler: ((e: Event) => void) | null = null;
-	private toastLeaveHandler: ((e: Event) => void) | null = null;
 
 	tooltipShow (param: Partial<I.TooltipParam>) {
 		const el = param.element instanceof HTMLElement ? param.element : null;
@@ -127,16 +124,16 @@ class Preview {
 			this.delayTooltip = 100;
 
 			if (this.clickTooltipHandler) {
-				window.removeEventListener('click', this.clickTooltipHandler);
+				U.Dom.removeEvent(window, 'click', this.clickTooltipHandler);
 			};
 
 			this.clickTooltipHandler = () => {
 				this.tooltipHide(true);
-				window.removeEventListener('click', this.clickTooltipHandler);
+				U.Dom.removeEvent(window, 'click', this.clickTooltipHandler);
 				this.clickTooltipHandler = null;
 			};
 
-			window.addEventListener('click', this.clickTooltipHandler);
+			U.Dom.addEvent(window, 'click', this.clickTooltipHandler);
 
 		}, this.delayTooltip);
 
@@ -208,23 +205,9 @@ class Preview {
 			});
 		};
 
-		if (el) {
-			if (this.previewLeaveHandler) {
-				el.removeEventListener('mouseleave', this.previewLeaveHandler);
-			};
-
-			this.previewLeaveHandler = () => {
-				window.clearTimeout(this.timeout.preview);
-				if (rect) {
-					this.previewHide(true);
-				};
-			};
-
-			el.addEventListener('mouseleave', this.previewLeaveHandler);
-		};
 
 		U.Dom.toggleClass(obj, 'passThrough', Boolean(passThrough));
-		this.previewHide(true);
+		window.clearTimeout(this.timeout.preview);
 
 		if (param.delay) {
 			window.clearTimeout(this.timeout.preview);
@@ -236,6 +219,11 @@ class Preview {
 		this.isPreviewOpen = true;
 	};
 
+	previewCancelHide () {
+		window.clearTimeout(this.timeout.preview);
+		this.isPreviewOpen = true;
+	};
+
 	previewHide (force?: boolean) {
 		if (!this.isPreviewOpen) {
 			return;
@@ -244,9 +232,9 @@ class Preview {
 		const obj = U.Dom.get('preview');
 		const cb = () => {
 			if (obj) {
-				obj.style.display = 'none';
+				U.Dom.css(obj, { display: 'none' });
 				U.Dom.removeClass(obj, 'anim', 'top', 'bottom', 'withImage');
-				obj.style.transform = '';
+				U.Dom.css(obj, { transform: '' });
 			};
 
 			S.Common.previewClear();
@@ -258,7 +246,7 @@ class Preview {
 			cb();
 		} else {
 			if (obj) {
-				Object.assign(obj.style, { opacity: '0', transform: 'translateY(0%)' });
+				U.Dom.css(obj, { opacity: '0', transform: 'translateY(0%)' });
 			};
 			this.timeout.preview = window.setTimeout(() => cb(), DELAY_PREVIEW);
 		};
@@ -267,44 +255,34 @@ class Preview {
 	};
 
 	toastShow (param: I.Toast) {
-		const setTimeout = () => {
-			window.clearTimeout(this.timeout.toast);
-			this.timeout.toast = window.setTimeout(() => this.toastHide(false), J.Constant.delay.toast);
-		};
-
 		S.Common.toastSet(param);
+		this.toastStartHideTimer();
+	};
 
-		const obj = U.Dom.get('toast');
+	toastStartHideTimer () {
+		window.clearTimeout(this.timeout.toast);
+		this.timeout.toast = window.setTimeout(() => this.toastHide(false), J.Constant.delay.toast);
+	};
 
-		setTimeout();
+	toastPauseHide () {
+		window.clearTimeout(this.timeout.toast);
+	};
 
-		if (obj) {
-			if (this.toastEnterHandler) {
-				obj.removeEventListener('mouseenter', this.toastEnterHandler);
-			};
-			if (this.toastLeaveHandler) {
-				obj.removeEventListener('mouseleave', this.toastLeaveHandler);
-			};
-
-			this.toastEnterHandler = () => window.clearTimeout(this.timeout.toast);
-			this.toastLeaveHandler = () => setTimeout();
-
-			obj.addEventListener('mouseenter', this.toastEnterHandler);
-			obj.addEventListener('mouseleave', this.toastLeaveHandler);
-		};
+	toastResumeHide () {
+		this.toastStartHideTimer();
 	};
 
 	toastHide (force?: boolean) {
 		const obj = U.Dom.get('toast');
 
 		if (obj) {
-			Object.assign(obj.style, { opacity: '0', transform: 'scale3d(0.7,0.7,1)' });
+			U.Dom.css(obj, { opacity: '0', transform: 'scale3d(0.7,0.7,1)' });
 		};
 
 		window.clearTimeout(this.timeout.toast);
 		this.timeout.toast = window.setTimeout(() => {
 			if (obj) {
-				obj.style.display = 'none';
+				U.Dom.css(obj, { display: 'none' });
 			};
 			S.Common.toastClear();
 		}, force ? 0 : 250);

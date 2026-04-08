@@ -1,10 +1,9 @@
 import React, { useRef, forwardRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { InputWithFile, Icon, Error, MediaVideo } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const nodeRef = useRef<any>(null);
 	const wrapRef = useRef<any>(null);
@@ -21,7 +20,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 	const getWidth = (checkMax: boolean, v: number): number => {
 		const width = Number(fields.width) || 1;
-		const el = U.Dom.get(`selectionTarget-${U.Common.esc(id)}`);
+		const el = U.Dom.get(`selectionTarget-${id}`);
 
 		if (!el) {
 			return width;
@@ -74,24 +73,24 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		const selection = S.Common.getRef('selectionProvider');
 
-		focus.set(block.id, { from: 0, to: 0 });
 		selection?.hide();
-
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 		U.Dom.addClass(nodeRef.current, 'isResizing');
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 		};
 
 		mouseMoveHandler.current = e => onResizeMove(e, checkMax);
 		mouseUpHandler.current = e => onResizeEnd(e, checkMax);
-		window.addEventListener('mousemove', mouseMoveHandler.current);
-		window.addEventListener('mouseup', mouseUpHandler.current);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const onResizeMove = (e: any, checkMax: boolean) => {
@@ -105,7 +104,7 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const rect = U.Dom.getElementRect(wrapRef.current);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
-		wrapRef.current.style.width = (w * 100) + '%';
+		U.Dom.css(wrapRef.current, { width: (w * 100) + '%' });
 	};
 
 	const onResizeEnd = (e: any, checkMax: boolean) => {
@@ -117,11 +116,11 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
 		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
 			mouseMoveHandler.current = null;
 		};
 		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
 			mouseUpHandler.current = null;
 		};
 
@@ -137,13 +136,37 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	useImperativeHandle(ref, () => ({}));
 
 	let element = null;
+	let overlay = null;
+	const typeName = translate('blockNameVideo');
+
 	if (object.isDeleted) {
 		element = (
-			<div className="deleted">
+			<div className="mediaState isRemoved">
 				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
 			</div>
 		);
+	} else if (object.isArchived) {
+		overlay = (
+			<div className="mediaState isInBin">
+				<Icon name="common/ghost" />
+				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
+			</div>
+		);
+		if (state == I.FileState.Done) {
+			element = (
+				<div ref={wrapRef} className="wrap" style={css}>
+					<MediaVideo
+						src={S.Common.fileUrl(targetObjectId)}
+						onPlay={onPlay}
+						onPause={onPause}
+					/>
+					{overlay}
+				</div>
+			);
+		} else {
+			element = overlay;
+		};
 	} else {
 		switch (state) {
 			default:
@@ -152,20 +175,20 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="video" 
-							textFile={translate('blockVideoUpload')} 
-							accept={J.Constant.fileExtension.video} 
-							onChangeUrl={onChangeUrl} 
-							onChangeFile={onChangeFile} 
-							readonly={readonly} 
+						<InputWithFile
+							block={block}
+							iconParam={{ name: 'menu/block/media/video' }}
+							textFile={translate('blockVideoUpload')}
+							accept={J.Constant.fileExtension.video}
+							onChangeUrl={onChangeUrl}
+							onChangeFile={onChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.FileState.Done: {
 				element = (
 					<div ref={wrapRef} className="wrap" style={css}>
@@ -195,6 +218,6 @@ const BlockVideo = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		</div>
 	);
 	
-}));
+});
 
 export default BlockVideo;

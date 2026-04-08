@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import * as Prism from 'prismjs';
 
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -37,7 +36,7 @@ const TWIN_PAIRS = {
 	'$': '$',
 };
 
-const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const {
 		rootId, block, readonly, isPopup, isInsideTable,
@@ -1254,7 +1253,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		// Extract clipboard data synchronously because the browser clears
 		// e.clipboardData after the event handler returns
-		const cb = e.clipboardData || e.originalEvent?.clipboardData;
+		const cb = e.clipboardData;
 		const data: any = {
 			text: U.String.normalizeLineEndings(String(cb?.getData('text/plain') || '')),
 			html: String(cb?.getData('text/html') || ''),
@@ -1407,11 +1406,15 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				window.setTimeout(() => {
 					const pageContainer = U.Dom.getPageFlexContainer(isPopup);
 					const onMouseDown = () => {
-						pageContainer?.removeEventListener('mousedown', onMouseDown);
+						if (pageContainer) {
+							U.Dom.removeEvent(pageContainer, 'mousedown', onMouseDown);
+						};
 						S.Menu.close('blockContext');
 					};
 
-					pageContainer?.addEventListener('mousedown', onMouseDown);
+					if (pageContainer) {
+						U.Dom.addEvent(pageContainer, 'mousedown', onMouseDown);
+					};
 				}, S.Menu.getTimeout());
 			});
 		});
@@ -1652,6 +1655,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockText;

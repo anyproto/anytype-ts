@@ -1,11 +1,10 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Mousewheel } from 'swiper/modules';
 import * as I from 'Interface';
 
-const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const [ isAnnual, setIsAnnual ] = useState(true);
@@ -225,6 +224,6 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsMembershipIntro;

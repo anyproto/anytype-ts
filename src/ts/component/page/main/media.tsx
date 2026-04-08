@@ -1,12 +1,11 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Button, IconObject, Deleted, HeadSimple } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 
 const MAX_HEIGHT = 396;
 
-const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainMedia = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -75,8 +74,8 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			return;
 		};
 
-		const img = node.querySelector('img.media') as HTMLImageElement;
-		const wrap = node.querySelector('.block.blockMedia .wrapContent') as HTMLElement;
+		const img = U.Dom.select('img.media', node) as HTMLImageElement;
+		const wrap = U.Dom.select('.block.blockMedia .wrapContent', node);
 
 		if (!img) {
 			return;
@@ -104,8 +103,8 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			};
 		};
 
-		img.removeEventListener('load', onLoad);
-		img.addEventListener('load', onLoad);
+		U.Dom.removeEvent(img, 'load', onLoad);
+		U.Dom.addEvent(img, 'load', onLoad);
 	};
 
 	const getBlock = (): I.Block => {
@@ -132,9 +131,9 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			return;
 		};
 
-		const blocks = node.querySelector('#blocks') as HTMLElement;
-		const empty = node.querySelector('#empty') as HTMLElement;
-		const inner = node.querySelector('.side.left #inner') as HTMLElement;
+		const blocks = U.Dom.select('#blocks', node);
+		const empty = U.Dom.select('#empty', node);
+		const inner = U.Dom.select('.side.left #inner', node);
 		const container = U.Dom.getScrollContainer(isPopup);
 		const wh = (container?.clientHeight ?? 0) - 182;
 
@@ -290,6 +289,6 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default PageMainMedia;

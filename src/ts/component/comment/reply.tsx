@@ -1,6 +1,5 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import CommentForm from './form';
 import Attachment from 'Component/block/chat/attachment';
@@ -15,7 +14,7 @@ interface Props {
 	readonly?: boolean;
 };
 
-const CommentReply = observer((props: Props) => {
+const CommentReply = (props: Props) => {
 
 	const { rootId, targetId, parentId, message, readonly } = props;
 	const { space } = S.Common;
@@ -82,6 +81,8 @@ const CommentReply = observer((props: Props) => {
 		});
 
 		// Emoji marks — render as cross-platform images
+		const roots: Root[] = [];
+
 		U.Dom.selectAll(Mark.getTag(I.MarkType.Emoji), node).forEach((item: HTMLElement) => {
 			const emojiId = item.getAttribute('data-param');
 			const smile = U.Dom.select('smile', item);
@@ -98,9 +99,14 @@ const CommentReply = observer((props: Props) => {
 				const root = container._reactRoot || createRoot(container);
 
 				container._reactRoot = root;
+				roots.push(root);
 				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
 			};
 		});
+
+		return () => {
+			roots.forEach(root => root.unmount());
+		};
 	}, [ isEditing, parts, subId ]);
 
 	const onEdit = useCallback(() => {
@@ -176,7 +182,7 @@ const CommentReply = observer((props: Props) => {
 
 		if (isSelf) {
 			menuItems.push({ isDiv: true });
-			menuItems.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'darkRed' }, color: 'red' });
+			menuItems.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'destructive' }, color: 'destructive' });
 		};
 
 		setHover(true);
@@ -293,8 +299,9 @@ const CommentReply = observer((props: Props) => {
 						<IconObject
 							object={{ ...author, layout: I.ObjectLayout.Participant }}
 							size={20}
+							onClick={e => U.Object.openConfig(e, author)}
 						/>
-						<div className="author">
+						<div className="author" onClick={e => U.Object.openConfig(e, author)}>
 							<ObjectName object={author} withBadge={true} />
 						</div>
 						<div className="date">
@@ -310,6 +317,6 @@ const CommentReply = observer((props: Props) => {
 			</div>
 		</div>
 	);
-});
+};
 
 export default CommentReply;

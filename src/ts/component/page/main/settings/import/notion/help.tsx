@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Icon } from 'Component';
 import * as I from 'Interface';
 
-const PageMainSettingsImportNotionHelp = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsImportNotionHelp = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	return (
 		<div>
@@ -55,6 +54,6 @@ const PageMainSettingsImportNotionHelp = observer(forwardRef<I.PageRef, I.PageSe
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsImportNotionHelp;

@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
 import * as I from 'Interface';
 
-const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
@@ -62,7 +61,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 
 		return (
 			<div id="settings-identity-badge" className="identity">
-				<Icon name="membership/badge" size={18} color="accent100" />
+				<Icon name="membership/badge" className="badge" size={18} color="accent100" />
 				<Label text={globalName} />
 			</div>
 		);
@@ -148,6 +147,6 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		</>
 	);
 
-}));
+});
 
 export default HeaderMainSettings;

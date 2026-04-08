@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Loader } from 'Component';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
@@ -8,7 +7,7 @@ import * as Diff from 'diff';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainHistory = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [isLoading, setLoading] = useState(false);
 	const { isPopup } = props;
@@ -24,14 +23,15 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
 		};
 	};
 
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = e => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const onKeyDown = (e: any) => {
@@ -212,8 +212,8 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 			case 'BlockDataviewIsCollectionSet':
 			case 'BlockDataviewTargetObjectIdSet':
-			case 'BlockDataviewGroupOrderUpdate':
-			case 'BlockDataviewObjectOrderUpdate': {
+			case 'BlockDataViewGroupOrderUpdate':
+			case 'BlockDataViewObjectOrderUpdate': {
 				break;
 			};
 
@@ -328,29 +328,28 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		const hh = header?.clientHeight || 0;
 
 		if (sideRight) {
-			sideRight.style.height = `${height}px`;
+			U.Dom.css(sideRight, { height: `${height}px` });
 		};
 
 		if (cover) {
-			cover.style.top = `${hh}px`;
+			U.Dom.css(cover, { top: `${hh}px` });
 		};
 
 		if (isPopup) {
 			const popupEl = U.Dom.select('.pageMainHistory.isPopup');
 			if (popupEl) {
-				popupEl.style.height = `${height}px`;
+				U.Dom.css(popupEl, { height: `${height}px` });
 			};
 			if (sideLeft) {
-				sideLeft.style.height = `${height}px`;
-				sideLeft.style.paddingTop = `${hh}px`;
+				U.Dom.css(sideLeft, { height: `${height}px`, paddingTop: `${hh}px` });
 			};
 		} else
 		if (sideLeft) {
-			sideLeft.style.height = `${height}px`;
+			U.Dom.css(sideLeft, { height: `${height}px` });
 		};
 
 		if (editorWrapper) {
-			editorWrapper.style.width = !isSetOrCollection() ? `${getWrapperWidth()}px` : '';
+			U.Dom.css(editorWrapper, { width: !isSetOrCollection() ? `${getWrapperWidth()}px` : '' });
 		};
 	};
 
@@ -389,7 +388,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			leftRef.current.getHeadRef()?.forceUpdate();
 		};
 
-		window.dispatchEvent(new CustomEvent('updateDataviewData'));
+		U.Dom.eventDispatch(window, 'updateDataviewData');
 	};
 
 	useEffect(() => {
@@ -438,6 +437,6 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default PageMainHistory;

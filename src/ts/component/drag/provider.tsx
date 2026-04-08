@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, ReactNode } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { DragLayer } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -11,7 +10,7 @@ interface Props {
 
 const OFFSET = 100;
 
-const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, ref: any) => {
+const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any) => {
 
 	const { children } = props;
 	const nodeRef = useRef(null);
@@ -102,7 +101,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 		// Add block's paddings to height
 		if ((data.dropType == I.DropType.Block) && (data.type != I.BlockType.Layout)) {
-			const block = U.Dom.get(`block-${U.Common.esc(data.id)}`);
+			const block = U.Dom.get(`block-${data.id}`);
 			if (block) {
 				const top = parseInt(getComputedStyle(block).paddingTop);
 				const bot = parseInt(getComputedStyle(block).paddingBottom);
@@ -329,21 +328,23 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 			};
 		};
 
-		window.addEventListener('drag', dragHandler.current);
-		window.addEventListener('dragend', dragEndHandler.current);
-		window.addEventListener('dragover', dragOverHandler.current);
+		U.Dom.addEvents(window, [
+			['drag', dragHandler.current],
+			['dragend', dragEndHandler.current],
+			['dragover', dragOverHandler.current],
+		]);
 
 		const scrollDragHandler = (e: any) => onScroll(e);
 		if (containerEl) {
-			containerEl.addEventListener('scroll', scrollDragHandler);
+			U.Dom.addEvent(containerEl, 'scroll', scrollDragHandler);
 			(containerEl as any)._scrollDragHandler = scrollDragHandler;
 		};
 		if (sidebarEl) {
-			sidebarEl.addEventListener('scroll', scrollDragHandler);
+			U.Dom.addEvent(sidebarEl, 'scroll', scrollDragHandler);
 			(sidebarEl as any)._scrollDragHandler = scrollDragHandler;
 		};
 
-		U.Dom.selectAll('.colResize.active').forEach(el => U.Dom.removeClass(el, 'active'));
+		U.Dom.selectAll('.colResize.active', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'active'));
 		scrollOnMove.onMouseDown({
 			container: containerEl || undefined,
 			onMouseUp: () => onDragEnd(e),
@@ -526,15 +527,15 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		U.Dom.removeClass(document.body, 'isDragging');
 
 		if (endContainerEl && (endContainerEl as any)._scrollDragHandler) {
-			endContainerEl.removeEventListener('scroll', (endContainerEl as any)._scrollDragHandler);
+			U.Dom.removeEvent(endContainerEl, 'scroll', (endContainerEl as any)._scrollDragHandler);
 			delete (endContainerEl as any)._scrollDragHandler;
 		};
 		if (sidebarEl && (sidebarEl as any)._scrollDragHandler) {
-			sidebarEl.removeEventListener('scroll', (sidebarEl as any)._scrollDragHandler);
+			U.Dom.removeEvent(sidebarEl, 'scroll', (sidebarEl as any)._scrollDragHandler);
 			delete (sidebarEl as any)._scrollDragHandler;
 		};
 
-		U.Dom.selectAll('.isDragging').forEach(el => U.Dom.removeClass(el, 'isDragging'));
+		U.Dom.selectAll('.isDragging', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'isDragging'));
 		scrollOnMove.onMouseUp(true);
 
 		window.clearTimeout(timeoutDragOver.current);
@@ -565,7 +566,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 				selection?.renderSelection();
 				raf(() => {
-					window.dispatchEvent(new Event('resize'));
+					U.Dom.eventDispatch(window, 'resize');
 				});
 			};
 
@@ -810,7 +811,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	};
 
 	const checkNodes = (e: any, ex: number, ey: number) => {
-		const dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
+		const dataTransfer = e.dataTransfer;
 		const isItemDrag = U.Common.getDataTransferItems(dataTransfer.items).length ? true : false;
 		const isFileDrag = dataTransfer.types.includes('Files');
 
@@ -1064,10 +1065,10 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	};
 
 	const setClass = (ids: string[]) => {
-		U.Dom.selectAll('.block.isDragging').forEach(el => U.Dom.removeClass(el, 'isDragging'));
+		U.Dom.selectAll('.block.isDragging', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'isDragging'));
 
 		for (const id of ids) {
-			U.Dom.addClass(U.Dom.get(`block-${U.Common.esc(id)}`), 'isDragging');
+			U.Dom.addClass(U.Dom.get(`block-${id}`), 'isDragging');
 		};
 	};
 
@@ -1111,7 +1112,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	};
 
 	const clearStyle = () => {
-		U.Dom.selectAll('.dropTarget.isOver').forEach(el => U.Dom.removeClass(el, 'isOver top bottom left right middle'));
+		U.Dom.selectAll('.dropTarget.isOver', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'isOver top bottom left right middle'));
 	};
 
 	const clearState = () => {
@@ -1147,15 +1148,15 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 
 	const unbind = () => {
 		if (dragHandler.current) {
-			window.removeEventListener('drag', dragHandler.current);
+			U.Dom.removeEvent(window, 'drag', dragHandler.current);
 			dragHandler.current = null;
 		};
 		if (dragEndHandler.current) {
-			window.removeEventListener('dragend', dragEndHandler.current);
+			U.Dom.removeEvent(window, 'dragend', dragEndHandler.current);
 			dragEndHandler.current = null;
 		};
 		if (dragOverHandler.current) {
-			window.removeEventListener('dragover', dragOverHandler.current);
+			U.Dom.removeEvent(window, 'dragover', dragOverHandler.current);
 			dragOverHandler.current = null;
 		};
 	};
@@ -1169,6 +1170,7 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 	useImperativeHandle(ref, () => ({
 		onDragStart,
 		onScroll,
+		clearStyle,
 	}));
 
 	return (
@@ -1184,6 +1186,6 @@ const DragProvider = observer(forwardRef<I.DragProviderRefProps, Props>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default DragProvider;

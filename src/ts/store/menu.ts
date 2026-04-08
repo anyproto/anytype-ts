@@ -180,7 +180,7 @@ class MenuStore {
 
 		if (el) {
 			U.Dom.toggleClass(el, 'noAnimation', noAnimation);
-			el.style.transform = '';
+			U.Dom.css(el, { transform: '' });
 			U.Dom.removeClass(el, 'show');
 		};
 
@@ -333,7 +333,7 @@ class MenuStore {
 	 * @private
 	 */
 	resizeAll () {
-		this.list.forEach(it => window.dispatchEvent(new CustomEvent(`resize.${U.String.toCamelCase(`menu-${it.id}`)}`)));
+		this.list.forEach(it => U.Dom.eventDispatch(window, `resize.${U.String.toCamelCase(`menu-${it.id}`)}`));
 	};
 
 };

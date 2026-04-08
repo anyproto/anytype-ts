@@ -2,10 +2,9 @@ import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { Title, Label, Button, Tag, Icon, Loader, Error } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Mousewheel } from 'swiper/modules';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
+const PopupUsecasePageItem = forwardRef<{}, I.PopupUsecase>((props, ref) => {
 
 	const { getAuthor, onAuthor, onPage, getId, close, param } = props;
 	const { data } = param;
@@ -36,8 +35,8 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 			return;
 		};
 
-		const arrowLeft = nodeRef.current.querySelector('#arrowLeft') as HTMLElement;
-		const arrowRight = nodeRef.current.querySelector('#arrowRight') as HTMLElement;
+		const arrowLeft = U.Dom.select('#arrowLeft', nodeRef.current);
+		const arrowRight = U.Dom.select('#arrowRight', nodeRef.current);
 		const idx = swiperRef.current.activeIndex;
 		const length = (swiperRef.current.slides || []).length;
 
@@ -123,7 +122,7 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 			<div className="head">
 				<div className="inner">
 					<div className="element" onClick={() => onPage('', {})}>
-						<Icon name="common/back" />
+						<Icon name="common/back" className="back" />
 						{translate('commonBack')}
 					</div>
 				</div>
@@ -185,6 +184,6 @@ const PopupUsecasePageItem = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 		</div>
 	);
 
-}));
+});
 
 export default PopupUsecasePageItem;

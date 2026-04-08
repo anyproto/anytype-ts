@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, HeaderBanner } from 'Component';
 import * as I from 'Interface';
 
-const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderMainChat = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { rootId, isPopup, onSearch, menuOpen, renderLeftIcons } = props;
 	const [ dummy, setDummy ] = useState(0);
@@ -151,6 +150,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		</>
 	);
 
-}));
+});
 
 export default HeaderMainChat;

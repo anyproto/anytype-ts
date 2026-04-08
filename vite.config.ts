@@ -2,6 +2,7 @@ import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import AutoImport from 'unplugin-auto-import/vite';
+import { autoObserverPlugin } from './vite.auto-observer';
 import path from 'path';
 import fs from 'fs';
 import { build as esbuild } from 'esbuild';
@@ -20,6 +21,7 @@ export default defineConfig(({ mode }) => {
 		publicDir: false,
 
 		resolve: {
+			dedupe: [ 'react', 'react-dom' ],
 			extensions: ['.ts', '.tsx', '.js', '.jsx'],
 			alias: [
 				{ find: 'dist', replacement: path.resolve(__dirname, 'dist') },
@@ -122,7 +124,7 @@ export default defineConfig(({ mode }) => {
 						if (id.includes('dist/lib/pb/') || id.includes('/middleware/')) {
 							return 'protobuf';
 						}
-						if (/node_modules\/(react|react-dom|scheduler|mobx|mobx-react|mobx-react-lite|use-sync-external-store|prop-types|hoist-non-react-statics|react-is|object-assign|loose-envify|js-tokens)\//.test(id)) {
+						if (/node_modules\/(react|react-dom|scheduler|mobx|mobx-react-lite|use-sync-external-store|prop-types|hoist-non-react-statics|react-is|object-assign|loose-envify|js-tokens)\//.test(id)) {
 							return 'vendor-react';
 						}
 						if (/node_modules\/(d3|d3-[a-z-]+|internmap|delaunator|robust-predicates)\//.test(id)) {
@@ -152,6 +154,7 @@ export default defineConfig(({ mode }) => {
 
 		plugins: [
 			react(),
+			autoObserverPlugin(),
 			protobufCjsPlugin(),
 			devServerPlugin(),
 

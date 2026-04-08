@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useState, useLayoutEffect, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 
 import Form from './chat/form';
 import Message from './chat/message';
@@ -30,7 +29,7 @@ const DOWNLOAD_LAYOUTS = [
 	I.ObjectLayout.Pdf,
 ];
 
-const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) => {
+const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const { space } = S.Common;
 	const { account } = S.Auth;
@@ -88,25 +87,25 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 	const unbind = () => {
 		if (messageAddHandlerRef.current) {
-			window.removeEventListener('messageAdd', messageAddHandlerRef.current);
+			U.Dom.removeEvent(window, 'messageAdd', messageAddHandlerRef.current);
 			messageAddHandlerRef.current = null;
 		};
 		if (messageUpdateHandlerRef.current) {
-			window.removeEventListener('messageUpdate', messageUpdateHandlerRef.current);
+			U.Dom.removeEvent(window, 'messageUpdate', messageUpdateHandlerRef.current);
 			messageUpdateHandlerRef.current = null;
 		};
 		if (reactionUpdateHandlerRef.current) {
-			window.removeEventListener('reactionUpdate', reactionUpdateHandlerRef.current);
+			U.Dom.removeEvent(window, 'reactionUpdate', reactionUpdateHandlerRef.current);
 			reactionUpdateHandlerRef.current = null;
 		};
 		if (focusHandlerRef.current) {
-			window.removeEventListener('focus', focusHandlerRef.current);
+			U.Dom.removeEvent(window, 'focus', focusHandlerRef.current);
 			focusHandlerRef.current = null;
 		};
 
 		const container = U.Dom.getScrollContainer(isPopup);
 		if (container && scrollHandlerRef.current) {
-			container.removeEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
 	};
@@ -125,15 +124,17 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		reactionUpdateHandlerRef.current = () => scrollToBottomCheck();
 		focusHandlerRef.current = () => readScrolledMessages();
 
-		window.addEventListener('messageAdd', messageAddHandlerRef.current);
-		window.addEventListener('messageUpdate', messageUpdateHandlerRef.current);
-		window.addEventListener('reactionUpdate', reactionUpdateHandlerRef.current);
-		window.addEventListener('focus', focusHandlerRef.current);
+		U.Dom.addEvents(window, [
+			['messageAdd', messageAddHandlerRef.current],
+			['messageUpdate', messageUpdateHandlerRef.current],
+			['reactionUpdate', reactionUpdateHandlerRef.current],
+			['focus', focusHandlerRef.current],
+		]);
 
 		const container = U.Dom.getScrollContainer(isPopup);
 		if (container) {
 			scrollHandlerRef.current = (e: Event) => onScroll(e);
-			container.addEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 		};
 	};
 
@@ -632,10 +633,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		raf.cancel(frameRef.current);
 		frameRef.current = raf(() => {
 			dates.forEach((item: HTMLElement) => {
-				item.style.position = 'static';
-				item.style.left = '';
-				item.style.top = '';
-				item.style.width = '';
+				U.Dom.css(item, { position: 'static', left: '', top: '', width: '' });
 			});
 
 			let last: HTMLElement = null;
@@ -655,10 +653,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				const width = last.offsetWidth;
 				const rect = last.getBoundingClientRect();
 
-				last.style.position = 'fixed';
-				last.style.width = width + 'px';
-				last.style.left = rect.left + 'px';
-				last.style.top = (top + offset) + 'px';
+				U.Dom.css(last, { position: 'fixed', width: width + 'px', left: rect.left + 'px', top: (top + offset) + 'px' });
 			};
 		});
 	};
@@ -831,7 +826,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			options.push({ id: 'edit', iconParam: { name: 'common/edit' }, name: translate('commonEdit') });
 			options.push({ isDiv: true });
 			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
-			options.push({ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'darkRed' }, name: translate('commonDelete'), color: 'red' });
+			options.push({ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'destructive' }, name: translate('commonDelete'), color: 'destructive' });
 		} else {
 			if (options.length) {
 				options.push({ isDiv: true });
@@ -1181,14 +1176,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const container = U.Dom.getScrollContainer(isPopup);
 
 		if (container && scrollHandlerRef.current) {
-			container.removeEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 		};
 
 		window.clearTimeout(timeoutResize.current);
 		timeoutResize.current = window.setTimeout(() => {
 			if (container) {
 				scrollHandlerRef.current = (e: Event) => onScroll(e);
-				container.addEventListener('scroll', scrollHandlerRef.current);
+				U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 			};
 		}, 50);
 	};
@@ -1324,6 +1319,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default BlockChat;

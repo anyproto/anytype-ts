@@ -4,8 +4,7 @@ import * as Sentry from '@sentry/browser';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
-import { Provider } from 'mobx-react';
-import { configure, } from 'mobx';
+import { configure } from 'mobx';
 import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
 import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
 import * as I from 'Interface';
@@ -43,11 +42,6 @@ declare global {
 };
 
 declare global {
-	namespace JSX {
-		interface IntrinsicElements {
-			['em-emoji']: any;
-		}
-	}
 };
 
 if (!isPackaged) {
@@ -272,9 +266,9 @@ const App: FC = () => {
 		const { id, dataPath, config, isDark, languages, isPinChecked, isPinned, css, isSingleTab, activeTabId } = data;
 		const body = document.body;
 		const node = nodeRef.current;
-		const bubbleLoader = document.getElementById('bubble-loader');
-		const rootLoader = node?.querySelector('#root-loader') as HTMLElement;
-		const anim = rootLoader?.querySelector('.anim') as HTMLElement;
+		const bubbleLoader = U.Dom.get('bubble-loader');
+		const rootLoader = U.Dom.select('#root-loader', node);
+		const anim = U.Dom.select('.anim', rootLoader);
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const tabId = electron.tabId();
@@ -347,11 +341,11 @@ const App: FC = () => {
 			const t = 300;
 
 			if (bubbleLoader) {
-				bubbleLoader.style.transitionDuration = `${t}ms`;
+				U.Dom.css(bubbleLoader, { transitionDuration: `${t}ms` });
 				U.Dom.addClass(bubbleLoader, 'inflate');
 			};
 			if (anim) {
-				anim.style.transitionDuration = `${t}ms`;
+				U.Dom.css(anim, { transitionDuration: `${t}ms` });
 			};
 
 			window.setTimeout(() => {
@@ -360,7 +354,7 @@ const App: FC = () => {
 					U.Dom.addClass(anim, 'to');
 
 					window.setTimeout(() => {
-						if (rootLoader) rootLoader.style.opacity = '0';
+						if (rootLoader) U.Dom.css(rootLoader, { opacity: '0' });
 						window.setTimeout(() => hide(), t);
 					}, 0);
 				}, t * 5);
@@ -595,8 +589,7 @@ const App: FC = () => {
 	
 	return (
 		<Router history={history}>
-			<Provider {...S}>
-				<div id="appContainer" ref={nodeRef}>
+			<div id="appContainer" ref={nodeRef}>
 					{isLoading ? (
 						<div id="root-loader" className="loaderWrapper">
 							<div className="inner">
@@ -627,8 +620,7 @@ const App: FC = () => {
 							</Switch>
 						</DragProvider>
 					</SelectionProvider>
-				</div>
-			</Provider>
+			</div>
 		</Router>
 	);
 

@@ -1,11 +1,10 @@
 import React, { forwardRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Frame, Button, Footer, Error } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import Animation from 'Lib/animation';
 
-const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [ error, setError ] = useState<I.Error>({ code: 0, description: '' });
 	const { isPopup } = props;
@@ -65,62 +64,49 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 			Renderer.send('closeOtherWindows');
 
 			const spaceId = Storage.get('spaceId');
+
+			const onAuthComplete = () => {
+				const whatsNew = Storage.get('whatsNew');
+
+				const cb1 = () => {
+					const { data } = S.Membership;
+					const purchased = data?.getTopPurchasedProduct();
+					const product = data?.getTopProduct();
+
+					if (!purchased) {
+						cb2();
+					} else {
+						if (purchased.isFinalization) {
+							Action.finalizeMembership(product, analytics.route.authSetup, cb2);
+						} else {
+							cb2();
+						};
+					};
+				};
+
+				const cb2 = () => {
+					if (whatsNew) {
+						U.Common.showWhatsNew();
+					} else {
+						Survey.checkCommon();
+					};
+				};
+
+				Action.checkDiskSpace(cb1);
+			};
+
 			const routeParam = {
 				replace: true,
-				onRouteChange: () => {
-					const whatsNew = Storage.get('whatsNew');
-					const chatsOnboarding = Storage.get('multichatsOnboarding');
-
-					[
-						I.SurveyType.Register, 
-						I.SurveyType.Object,
-						I.SurveyType.Pmf,
-					].forEach(it => Survey.check(it));
-
-					const cb1 = () => {
-						const { data } = S.Membership;
-						const purchased = data?.getTopPurchasedProduct();
-						const product = data?.getTopProduct();
-
-						if (!purchased) {
-							cb2();
-						} else {
-							if (purchased.isFinalization) {
-								Action.finalizeMembership(product, analytics.route.authSetup, cb2);
-							} else {
-								cb2();
-							};
-						};
-					};
-
-					const cb2 = () => {
-						// JS-9163: multi chats onboarding popups disabled
-						// if (!chatsOnboarding) {
-						// 	S.Popup.open('introduceChats', {
-						// 		onClose: () => {
-						// 			Storage.set('multichatsOnboarding', true);
-						// 			Storage.setHighlight('createSpace', true);
-						//
-						// 			window.setTimeout(() => U.Common.showWhatsNew(), J.Constant.delay.popup * 2);
-						// 		},
-						// 	});
-						// } else
-						if (whatsNew) {
-							U.Common.showWhatsNew();
-						};
-					};
-
-					Action.checkDiskSpace(cb1);
-				},
+				onAuthComplete,
 			};
 
 			U.Data.onInfo(account.info);
 			U.Data.onAuthOnce();
-		
+
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);
 			} else {
-				U.Router.go('/main/void/select', routeParam);
+				U.Router.go('/main/void/select', { replace: true, onRouteChange: onAuthComplete });
 			};
 			
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
@@ -190,6 +176,6 @@ const PageAuthSetup = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default PageAuthSetup;

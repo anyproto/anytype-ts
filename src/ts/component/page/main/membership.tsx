@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Loader, Frame, Title } from 'Component';
 import * as I from 'Interface';
 
-const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainMembership = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const { isPopup } = props;
@@ -30,7 +29,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		const h = isPopup ? (obj?.clientHeight || 0) : window.innerHeight;
 
 		if (nodeRef.current) {
-			nodeRef.current.style.height = `${h}px`;
+			U.Dom.css(nodeRef.current, { height: `${h}px` });
 		};
 	};
 
@@ -54,6 +53,6 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		</div>
 	);
 
-}));
+});
 
 export default PageMainMembership;

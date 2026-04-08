@@ -1,11 +1,10 @@
 import React, { forwardRef, useEffect, MouseEvent, useRef, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
 import Section from 'Component/sidebar/section';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
-const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ dummy, setDummy ] = useState(0);
 	const { rootId, readonly, page, isPopup } = props;
@@ -79,8 +78,8 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 			classNameWrap: 'fromSidebar',
 			data: {
 				options: [
-					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
-					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObject'), color: 'red' },
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
+					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObject'), color: 'destructive' },
 				],
 				onSelect: (e, option) => {
 					switch (option.id) {
@@ -131,21 +130,21 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
 		if (!obj) return;
 
-		const title = obj.querySelector('.titleWrap') as HTMLElement;
-		const list = obj.querySelector(':scope > .list') as HTMLElement;
+		const title = U.Dom.select('.titleWrap', obj);
+		const list = U.Dom.select(':scope > .list', obj);
 
 		U.Dom.toggleClass(title, 'isOpen', isOpen);
 		U.Dom.toggleClass(list, 'isOpen', isOpen);
-		if (list) list.style.height = isOpen ? 'auto' : '0px';
+		if (list) U.Dom.css(list, { height: isOpen ? 'auto' : '0px' });
 	};
 
 	const onToggle = (id: string) => {
 		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
 		if (!obj) return;
 
-		const title = obj.querySelector('.titleWrap') as HTMLElement;
-		const list = obj.querySelector(':scope > .list') as HTMLElement;
-		const isOpen = list?.classList.contains('isOpen');
+		const title = U.Dom.select('.titleWrap', obj);
+		const list = U.Dom.select(':scope > .list', obj);
+		const isOpen = U.Dom.hasClass(list, 'isOpen');
 
 		U.Dom.toggle(list, 200, isOpen);
 		U.Dom.toggleClass(title, 'isOpen', !isOpen);
@@ -273,6 +272,6 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageObjectRelation;

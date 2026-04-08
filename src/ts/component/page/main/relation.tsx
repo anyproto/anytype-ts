@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Header, Footer, Loader, ListObject, Deleted, Icon, HeadSimple, IconObject, ObjectName, Tag, Switch } from 'Component';
 import { observable } from 'mobx';
 import * as I from 'Interface';
 
-const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainRelation = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ isDeleted, setIsDeleted ] = useState(false);
@@ -457,6 +456,6 @@ const PageMainRelation = observer(forwardRef<I.PageRef, I.PageComponent>((props,
 		</>
 	);
 
-}));
+});
 
 export default PageMainRelation;

@@ -35,6 +35,11 @@ const TYPE_KEYS = {
 	]
 };
 
+export interface TreeNode {
+	id: string;
+	children: TreeNode[];
+}
+
 /**
  * Utility class for data manipulation, formatting, and application-level helpers.
  * Provides methods for block styling, authentication, sorting, and more.
@@ -301,11 +306,11 @@ class UtilData {
 	};
 
 	/**
-	 * Handles authentication and routing after login.
+	 * Handles routing after space switch.
 	 * @param {any} [param] - Optional parameters for authentication.
 	 * @param {() => void} [callBack] - Optional callback after authentication.
 	 */
-	onAuth(param?: any, callBack?: () => void) {
+	onSpaceSwitch (param?: any, callBack?: () => void) {
 		param = param || {};
 
 		const { widgets } = S.Block;
@@ -322,21 +327,8 @@ class UtilData {
 
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
-				S.Common.pinInit(() => {
-					const { pin } = S.Common;
-
-					// Notify main process whether a PIN is set
-					Renderer.send('setHasPinSet', Boolean(pin));
-
-					// If no PIN, user is considered checked
-					if (!pin) {
-						keyboard.setPinChecked(true);
-					};
-
-					keyboard.initPinCheck();
-
-					// Redirect
-					if (pin && !keyboard.isPinChecked) {
+				this.initPin(() => {
+					if (S.Common.pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);
 					} else {
 						const rp = route ? U.Router.getParam(route) : {};
@@ -353,6 +345,22 @@ class UtilData {
 					callBack?.();
 				});
 			});
+		});
+	};
+
+	initPin (callBack?: () => void) {
+		S.Common.pinInit(() => {
+			// Notify main process whether a PIN is set
+			Renderer.send('setHasPinSet', !!S.Common.pin);
+
+			// If no PIN, user is considered checked
+			if (!S.Common.pin) {
+				keyboard.setPinChecked(true);
+			} else {
+				keyboard.initPinCheck();
+			};
+			
+			callBack?.();
 		});
 	};
 
@@ -1384,6 +1392,37 @@ class UtilData {
 		const menus = (menuList || S.Menu.list).some(it => it.param.visibleDimmer);
 
 		Renderer.send('setTabsDimmer', popups || menus);
+	};
+
+	treeFromRecords (ids: string[], getParent: (id: string) => string): TreeNode[] {
+		const idSet = new Set(ids);
+		const childrenMap = new Map<string, string[]>();
+
+		for (const id of ids) {
+			const parent = getParent(id);
+			if (parent && idSet.has(parent)) {
+				if (!childrenMap.has(parent)) {
+					childrenMap.set(parent, []);
+				};
+				childrenMap.get(parent).push(id);
+			};
+		};
+
+		const buildNode = (id: string): TreeNode => {
+			const children = (childrenMap.get(id) || []).map(buildNode);
+			return { id, children };
+		};
+
+		return ids
+			.filter(id => {
+				const parent = getParent(id);
+				return !parent || !idSet.has(parent);
+			})
+			.map(buildNode);
+	};
+
+	flattenIds (node: TreeNode): string[] {
+		return [ node.id, ...node.children.flatMap(c => this.flattenIds(c)) ];
 	};
 
 };

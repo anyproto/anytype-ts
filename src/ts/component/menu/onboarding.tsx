@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useEffect, } from 'react';
 
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Button, Icon, Label, ProgressBar } from 'Component';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import * as I from 'Interface';
 
-const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
+const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 
 	const { param, position, close, getId, getSize } = props;
 	const { data, noClose, highlightElements } = param;
@@ -35,7 +34,6 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 
 		clearDimmer();
 		initDimmer();
-		rebind();
 		scroll();
 		event();
 
@@ -87,10 +85,12 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 					};
 
 					U.Dom.addClass(clone, 'onboardingElement');
-					clone.style.position = 'fixed';
-					clone.style.top = `${rect.top}px`;
-					clone.style.left = `${rect.left}px`;
-					clone.style.zIndex = '1000';
+					U.Dom.css(clone, {
+						position: 'fixed',
+						top: `${rect.top}px`,
+						left: `${rect.left}px`,
+						zIndex: '1000',
+					});
 				});
 			});
 		});
@@ -112,7 +112,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 
 		param.highlightElements.concat([ param.element as string ]).forEach(selector => {
 			U.Dom.selectAll(selector).forEach(el => {
-				el.style.visibility = 'visible';
+				U.Dom.css(el, { visibility: 'visible' });
 			});
 		});
 
@@ -136,11 +136,11 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		window.removeEventListener('keydown', keydownHandler.current);
+		U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const event = () => {
@@ -442,6 +442,6 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 		</div>
 	);
 
-}));
+});
 
 export default MenuOnboarding;

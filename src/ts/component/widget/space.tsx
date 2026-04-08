@@ -1,11 +1,10 @@
 import React, { useRef, forwardRef, useEffect, useState, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
 import ChatCounter from 'Component/util/chatCounter';
 import * as I from 'Interface';
 
-const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
+const WidgetSpace = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const spaceview = U.Space.getSpaceview();
 	if (!spaceview) {
@@ -132,10 +131,10 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	useEffect(() => {
 		const handler = () => setDummy(dummy => dummy + 1);
 
-		window.addEventListener('objectView', handler);
+		U.Dom.addEvent(window, 'objectView', handler);
 
 		return () => {
-			window.removeEventListener('objectView', handler);
+			U.Dom.removeEvent(window, 'objectView', handler);
 		};
 	}, []);
 
@@ -172,6 +171,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default WidgetSpace;

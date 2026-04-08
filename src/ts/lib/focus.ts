@@ -93,7 +93,7 @@ class Focus {
 
 		// Clear selection overlay for non-text blocks
 		if (focused) {
-			const target = U.Dom.get(`selectionTarget-${U.Common.esc(focused)}`);
+			const target = U.Dom.get(`selectionTarget-${focused}`);
 			if (target) {
 				U.Dom.removeClass(target, 'isKeyboardFocused');
 			};
@@ -128,7 +128,7 @@ class Focus {
 		// Must be after node.focus() because the previous text block's
 		// blur handler calls focus.clear() which would remove the class.
 		if (!U.Dom.hasClass(node, 'value')) {
-			const target = U.Dom.get(`selectionTarget-${U.Common.esc(focused)}`);
+			const target = U.Dom.get(`selectionTarget-${focused}`);
 			if (target) {
 				U.Dom.addClass(target, 'isKeyboardFocused');
 			};

@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
 
-const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, getId, getContainer, getSize, close } = props;
 	const { data, className, classNameWrap } = param;
@@ -29,28 +28,34 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		clickMousedownHandler.current = (e: any) => {
 			const target = e.target as HTMLElement;
-			if (!target.classList.contains('icon') && !target.classList.contains('inner')) {
+			if (!U.Dom.hasClass(target, 'icon') && !U.Dom.hasClass(target, 'inner')) {
 				e.preventDefault();
 				e.stopPropagation();
 			};
 		};
 		const obj = getContainer();
-		obj?.addEventListener('click', clickMousedownHandler.current);
-		obj?.addEventListener('mousedown', clickMousedownHandler.current);
+		if (obj) {
+			U.Dom.addEvents(obj, [
+				[ 'click', clickMousedownHandler.current ],
+				[ 'mousedown', clickMousedownHandler.current ],
+			]);
+		};
 
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
 		const obj = getContainer();
-		if (clickMousedownHandler.current) {
-			obj?.removeEventListener('click', clickMousedownHandler.current);
-			obj?.removeEventListener('mousedown', clickMousedownHandler.current);
+		if (clickMousedownHandler.current && obj) {
+			U.Dom.removeEvents(obj, [
+				[ 'click', clickMousedownHandler.current ],
+				[ 'mousedown', clickMousedownHandler.current ],
+			]);
 			clickMousedownHandler.current = null;
 		};
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -150,7 +155,7 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					options: [
 						{ id: 'turnObject', iconParam: { name: 'menu/action/object' }, name: translate('commonTurnIntoObject'), arrow: true },
 						{ id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true },
-						{ id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(block.hAlign) ].join(' '), arrow: true },
+						{ id: 'align', name: translate('commonAlign'), iconParam: { name: U.Data.alignHIcon(block.hAlign) }, arrow: true },
 						{ id: 'blockRemove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') }
 					],
 					onOver: (e: any, item: any) => {
@@ -484,6 +489,6 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuBlockContext;

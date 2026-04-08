@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Label, Frame, SidebarRight } from 'Component';
 
 import PageAuthSelect from './auth/select';
@@ -64,7 +63,7 @@ const Components = {
 	'main/settings':		 PageMainSettings,
 };
 
-const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { account } = S.Auth;
@@ -137,12 +136,12 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		resizeHandlerRef.current = () => resize();
-		window.addEventListener('resize', resizeHandlerRef.current);
+		U.Dom.addEvent(window, 'resize', resizeHandlerRef.current);
 	};
 
 	const unbind = () => {
 		if (resizeHandlerRef.current) {
-			window.removeEventListener('resize', resizeHandlerRef.current);
+			U.Dom.removeEvent(window, 'resize', resizeHandlerRef.current);
 			resizeHandlerRef.current = null;
 		};
 	};
@@ -210,6 +209,6 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PageIndex;

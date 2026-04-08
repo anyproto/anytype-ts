@@ -1,5 +1,4 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import CommentList from './list';
 import CommentForm from './form';
@@ -11,7 +10,7 @@ const POST_LIMIT = 20;
 const REPLY_LIMIT = 10;
 const SCROLL_THRESHOLD = 16;
 
-const CommentSection = observer((props: I.CommentSectionProps) => {
+const CommentSection = (props: I.CommentSectionProps) => {
 
 	const { rootId, targetId, targetType, readonly, isPopup, messageId } = props;
 	const object = S.Detail.get(rootId, rootId, [ 'discussionId' ]);
@@ -80,10 +79,14 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			scrollTimerRef.current = window.setTimeout(() => setHidden(false), 150);
 		};
 
-		container?.addEventListener('scroll', scrollHandler);
+		if (container) {
+			U.Dom.addEvent(container, 'scroll', scrollHandler);
+		};
 
 		return () => {
-			container?.removeEventListener('scroll', scrollHandler);
+			if (container) {
+				U.Dom.removeEvent(container, 'scroll', scrollHandler);
+			};
 			window.clearTimeout(scrollTimerRef.current);
 
 			if (discussionId) {
@@ -108,12 +111,16 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			setHidden(false);
 		};
 
-		window.addEventListener('keydown', onKeyDown);
-		window.addEventListener('mousemove', onMouseMove);
+		U.Dom.addEvents(window, [
+			['keydown', onKeyDown],
+			['mousemove', onMouseMove],
+		]);
 
 		return () => {
-			window.removeEventListener('keydown', onKeyDown);
-			window.removeEventListener('mousemove', onMouseMove);
+			U.Dom.removeEvents(window, [
+				['keydown', onKeyDown],
+				['mousemove', onMouseMove],
+			]);
 		};
 	}, [ setHidden ]);
 
@@ -167,12 +174,16 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 	}, [ subId, loadDeps ]);
 
 	useEffect(() => {
-		window.addEventListener('messageAdd', onMessageAdd);
-		window.addEventListener('messageUpdate', onMessageAdd);
+		U.Dom.addEvents(window, [
+			['messageAdd', onMessageAdd],
+			['messageUpdate', onMessageAdd],
+		]);
 
 		return () => {
-			window.removeEventListener('messageAdd', onMessageAdd);
-			window.removeEventListener('messageUpdate', onMessageAdd);
+			U.Dom.removeEvents(window, [
+				['messageAdd', onMessageAdd],
+				['messageUpdate', onMessageAdd],
+			]);
 		};
 	}, [ onMessageAdd ]);
 
@@ -185,7 +196,7 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 				return;
 			};
 
-			const el = node.querySelector(`[data-message-id="${msgId}"]`);
+			const el = U.Dom.select(`[data-message-id="${msgId}"]`, node);
 			if (!el) {
 				return;
 			};
@@ -330,37 +341,6 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 		});
 	}, [ loadDeps ]);
 
-	const fetchAllMessages = useCallback((discId: string, sid: string, callBack?: () => void) => {
-		const PAGE_SIZE = 100;
-
-		const fetchPage = (afterOrderId: string, accumulated: any[]) => {
-			C.ChatGetMessages(discId, '', afterOrderId, PAGE_SIZE, false, (message: any) => {
-				if (message.error.code) {
-					buildTree(accumulated, sid, callBack);
-					return;
-				};
-
-				const batch = (message.messages || []).map((it: any) => ({
-					...it,
-					content: {
-						...it.content,
-						parts: U.Comment.blocksToParts(it.blocks, it.content),
-					},
-				}));
-
-				const all = [ ...accumulated, ...batch ];
-
-				if (batch.length >= PAGE_SIZE) {
-					fetchPage(batch[batch.length - 1].orderId, all);
-				} else {
-					buildTree(all, sid, callBack);
-				};
-			});
-		};
-
-		fetchPage('', []);
-	}, [ loadDeps ]);
-
 	const buildTree = useCallback((messages: any[], sid: string, callBack?: () => void) => {
 		const posts = messages.filter((it: any) => !it.replyToMessageId);
 		const replies = messages.filter((it: any) => it.replyToMessageId);
@@ -394,6 +374,37 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			callBack?.();
 		});
 	}, [ loadDeps ]);
+
+	const fetchAllMessages = useCallback((discId: string, sid: string, callBack?: () => void) => {
+		const PAGE_SIZE = 100;
+
+		const fetchPage = (afterOrderId: string, accumulated: any[]) => {
+			C.ChatGetMessages(discId, '', afterOrderId, PAGE_SIZE, false, (message: any) => {
+				if (message.error.code) {
+					buildTree(accumulated, sid, callBack);
+					return;
+				};
+
+				const batch = (message.messages || []).map((it: any) => ({
+					...it,
+					content: {
+						...it.content,
+						parts: U.Comment.blocksToParts(it.blocks, it.content),
+					},
+				}));
+
+				const all = [ ...accumulated, ...batch ];
+
+				if (batch.length >= PAGE_SIZE) {
+					fetchPage(batch[batch.length - 1].orderId, all);
+				} else {
+					buildTree(all, sid, callBack);
+				};
+			});
+		};
+
+		fetchPage('', []);
+	}, [ loadDeps, buildTree ]);
 
 	const subscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
@@ -656,6 +667,6 @@ const CommentSection = observer((props: I.CommentSectionProps) => {
 			</div>
 		</>
 	);
-});
+};
 
 export default CommentSection;

@@ -1,11 +1,10 @@
 import React, { forwardRef, useEffect, useRef, MouseEvent } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockBookmark = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp, getWrapperWidth } = props;
 	const { state, targetObjectId } = block.content;
@@ -102,12 +101,20 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 	};
 
 	let element = null;
+	const typeName = translate('blockNameBookmark');
 
 	if (isDeleted) {
 		element = (
-			<div className="deleted">
+			<div className="mediaState isRemoved">
 				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
+			</div>
+		);
+	} else if (isArchived) {
+		element = (
+			<div className="mediaState isInBin">
+				<Icon name="common/ghost" />
+				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
 			</div>
 		);
 	} else {
@@ -118,44 +125,34 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 				element = (
 					<>
 						{state == I.BookmarkState.Error ? <Error text={translate('blockBookmarkError')} /> : ''}
-						<InputWithFile 
-							block={block} 	
-							icon="bookmark" 
-							textFile={translate('inputWithFileTextUrl')} 
-							withFile={false} 
-							onChangeUrl={onChangeUrl} 
-							readonly={readonly} 
+						<InputWithFile
+							block={block}
+							iconParam={{ name: 'menu/block/common/bookmark' }}
+							textFile={translate('inputWithFileTextUrl')}
+							withFile={false}
+							onChangeUrl={onChangeUrl}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.BookmarkState.Fetching: {
 				element = <Loader />;
 				break;
 			};
-				
+
 			case I.BookmarkState.Done: {
 				const cni = [ 'inner' ];
 				const cnl = [ 'side', 'left' ];
-				
-				let archive = null;
-					
+
 				if (picture) {
 					cni.push('withImage');
 				};
 
-				if (isArchived) {
-					cni.push('isArchived');
-				};
-
 				if (block.bgColor) {
 					cni.push(`bgColor bgColor-${block.bgColor}`);
-				};
-
-				if (isArchived) {
-					archive = <div className="tagItem isMultiSelect archive">{translate('blockLinkArchived')}</div>;
 				};
 
 				element = (
@@ -176,8 +173,6 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 							</div>
 							<ObjectName object={object} />
 							<ObjectDescription object={object} />
-
-							{archive}
 						</div>
 						<div className="side right">
 							{picture ? <img src={S.Common.imageUrl(picture, I.ImageSize.Medium)} className="img" /> : ''}
@@ -220,6 +215,6 @@ const BlockBookmark = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default BlockBookmark;

@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, ReactNode, MouseEvent } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { getRange } from 'selection-ranges';
 import * as I from 'Interface';
 import * as M from 'Model';
@@ -28,7 +27,7 @@ interface SelectionRefProps {
 
 const THRESHOLD = 20;
 
-const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, ref) => {
+const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 
 	const x = useRef(0);
 	const y = useRef(0);
@@ -53,56 +52,33 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 	const target = useRef(null);
 	const contextMenuHandler = useRef<ContextMenuHandler | null>(null);
 
-	const scrollHandler = useRef<((e: Event) => void) | null>(null);
+	const mouseEvents = useRef<[string, EventListener][]>([]);
+	const scrollContainer = useRef<EventTarget | null>(null);
+	const scrollEvent = useRef<[string, EventListener][]>([]);
 
 	const rebind = () => {
 		unbind();
 		const container = U.Dom.getScrollContainer(keyboard.isPopup());
 		if (container) {
-			scrollHandler.current = (e: Event) => onScroll(e);
-			container.addEventListener('scroll', scrollHandler.current);
+			scrollContainer.current = container;
+			scrollEvent.current = [ [ 'scroll', (e: Event) => onScroll(e) ] ];
+			U.Dom.addEvents(container, scrollEvent.current);
+		};
+	};
+
+	const unbindMouse = () => {
+		if (mouseEvents.current.length) {
+			U.Dom.removeEvents(window, mouseEvents.current);
+			mouseEvents.current = [];
 		};
 	};
 
 	const unbind = () => {
 		unbindMouse();
-		unbindKeyboard();
-	};
-	
-	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
-	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
-	const blurHandler = useRef<((e: any) => void) | null>(null);
-	const keyDownHandler = useRef<((e: any) => void) | null>(null);
-	const keyUpHandler = useRef<((e: any) => void) | null>(null);
-
-	const unbindMouse = () => {
-		if (mouseMoveHandler.current) {
-			window.removeEventListener('mousemove', mouseMoveHandler.current);
-			mouseMoveHandler.current = null;
-		};
-		if (mouseUpHandler.current) {
-			window.removeEventListener('mouseup', mouseUpHandler.current);
-			mouseUpHandler.current = null;
-		};
-		if (blurHandler.current) {
-			window.removeEventListener('blur', blurHandler.current);
-			blurHandler.current = null;
-		};
-	};
-	
-	const unbindKeyboard = () => {
-		if (keyDownHandler.current) {
-			window.removeEventListener('keydown', keyDownHandler.current);
-			keyDownHandler.current = null;
-		};
-		if (keyUpHandler.current) {
-			window.removeEventListener('keyup', keyUpHandler.current);
-			keyUpHandler.current = null;
-		};
-		const container = U.Dom.getScrollContainer(keyboard.isPopup());
-		if (container && scrollHandler.current) {
-			container.removeEventListener('scroll', scrollHandler.current);
-			scrollHandler.current = null;
+		if (scrollContainer.current && scrollEvent.current.length) {
+			U.Dom.removeEvents(scrollContainer.current, scrollEvent.current);
+			scrollContainer.current = null;
+			scrollEvent.current = [];
 		};
 	};
 
@@ -189,13 +165,12 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		scrollOnMove.onMouseDown({ container: container || undefined });
 		unbindMouse();
 
-		mouseMoveHandler.current = (e: any) => onMouseMove(e);
-		mouseUpHandler.current = (e: any) => onMouseUp(e);
-		blurHandler.current = (e: any) => onMouseUp(e);
-
-		window.addEventListener('mousemove', mouseMoveHandler.current);
-		window.addEventListener('mouseup', mouseUpHandler.current);
-		window.addEventListener('blur', blurHandler.current);
+		mouseEvents.current = [
+			[ 'mousemove', (e: any) => onMouseMove(e) ],
+			[ 'mouseup', (e: any) => onMouseUp(e) ],
+			[ 'blur', (e: any) => onMouseUp(e) ],
+		];
+		U.Dom.addEvents(window, mouseEvents.current);
 	};
 
 	const initNodes = () => {
@@ -204,7 +179,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 			return;
 		};
 
-		const list = container.querySelectorAll('.selectionTarget');
+		const list = U.Dom.selectAll('.selectionTarget', container);
 
 		list.forEach((el: Element) => {
 			const id = el.getAttribute('data-id');
@@ -283,7 +258,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 					initIds();
 					renderSelection();
 
-					window.dispatchEvent(new CustomEvent('selectionClear'));
+					U.Dom.eventDispatch(window, 'selectionClear');
 				};
 			} else {
 				if (keyboard.isCmd(e)) {
@@ -325,7 +300,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 				};
 			};
 		} else {
-			window.dispatchEvent(new CustomEvent('selectionEnd'));
+			U.Dom.eventDispatch(window, 'selectionEnd');
 		};
 		
 		scrollOnMove.onMouseUp();
@@ -369,12 +344,14 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		if (allowRect.current) {
-			el.style.display = '';
-			el.style.transform = `translate3d(${rect.x}px, ${rect.y}px, 0px)`;
-			el.style.width = `${rect.width}px`;
-			el.style.height = `${rect.height}px`;
+			U.Dom.css(el, {
+				display: 'block',
+				transform: `translate3d(${rect.x}px, ${rect.y}px, 0px)`,
+				width: `${rect.width}px`,
+				height: `${rect.height}px`,
+			});
 		} else {
-			el.style.display = 'none';
+			U.Dom.css(el, { display: 'none' });
 		};
 	};
 	
@@ -467,7 +444,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		if ((length == 1) && !keyboard.isCmd(e)) {
-			const selected = U.Dom.get(`block-${U.Common.esc(list[I.SelectType.Block][0])}`);
+			const selected = U.Dom.get(`block-${list[I.SelectType.Block][0]}`);
 			const value = selected ? U.Dom.select('#value', selected) : null;
 
 			if (!value) {
@@ -529,7 +506,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 
 	const hide = () => {
 		if (rectRef.current) {
-			rectRef.current.style.display = 'none';
+			U.Dom.css(rectRef.current, { display: 'none' });
 		};
 		unbindMouse();
 	};
@@ -539,7 +516,7 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		renderSelection();
 		clearState();
 
-		window.dispatchEvent(new CustomEvent('selectionClear'));
+		U.Dom.eventDispatch(window, 'selectionClear');
 	};
 
 	const clearState = () => {
@@ -663,11 +640,12 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		};
 
 		frame.current = raf(() => {
-			U.Dom.selectAll('.isSelectionSelected').forEach(el => U.Dom.removeClass(el, 'isSelectionSelected'));
-
 			if (!container) {
+				U.Dom.selectAll('.isSelectionSelected').forEach(el => U.Dom.removeClass(el, 'isSelectionSelected'));
 				return;
 			};
+
+			U.Dom.selectAll('.isSelectionSelected', container).forEach(el => U.Dom.removeClass(el, 'isSelectionSelected'));
 
 			for (const i in I.SelectType) {
 				const type = I.SelectType[i];
@@ -776,6 +754,6 @@ const SelectionProvider = observer(forwardRef<SelectionRefProps, Props>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default SelectionProvider;

@@ -20,6 +20,14 @@ class Survey {
 		};
 	};
 
+	checkCommon () {
+		[
+			I.SurveyType.Register,
+			I.SurveyType.Object,
+			I.SurveyType.Pmf,
+		].forEach(it => this.check(it));
+	};
+
 	/**
 	 * Shows a survey popup for the given type.
 	 * @param {I.SurveyType} type - The survey type.

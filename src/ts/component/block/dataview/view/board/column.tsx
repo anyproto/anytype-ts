@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { observer } from 'mobx-react';
 import { Icon, LoadMore, Cell } from 'Component';
 import Card from './card';
 import * as I from 'Interface';
@@ -18,7 +17,7 @@ interface RefProps {
 	getItems: () => any[];
 };
 
-const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
+const BoardColumn = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { 
 		id, rootId, block, value, isCollection, getSubId, getView, getLimit, onDragStartColumn, getTarget, onRefRecord, applyObjectOrder, 
@@ -66,7 +65,7 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
 		].concat(Dataview.getActiveFilters(view) as any[]);
-		const sorts: I.Sort[] = [].concat(view.sorts);
+		const sorts: I.Sort[] = [].concat(Dataview.getFilteredSorts(view.sorts));
 		const searchIds = getSearchIds();
 
 		if (objectIds.length) {
@@ -244,6 +243,6 @@ const BoardColumn = observer(forwardRef<RefProps, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BoardColumn;

@@ -206,7 +206,7 @@ class Animation {
 			U.Dom.css(obj, {
 				transitionProperty: Object.keys(css).join(','),
 				transitionDuration: `${duration}s`,
-				transitionTimingFunction: 'ease-in-out',
+				transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
 				transitionDelay: `${delay}s`,
 			});
 		});

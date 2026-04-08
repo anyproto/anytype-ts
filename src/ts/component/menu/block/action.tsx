@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 
 import { Filter, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
@@ -7,7 +6,7 @@ import { focus } from 'Lib/focus';
 
 const CB_KEYS = { c: 'clipboardCopy', x: 'clipboardCut', v: 'clipboardPaste' };
 
-const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, setActive, onKeyDown, getId, getSize, close } = props;
 	const { data, className, classNameWrap } = param;
@@ -46,13 +45,13 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDownHandler(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -167,15 +166,15 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: U.Menu.getBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: U.Menu.getBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: U.Menu.getTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: U.Menu.getTurnDiv() };
-			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: U.Menu.getTurnFile() };
-			const action = { id: 'action', icon: '', name: translate('commonActions'), children: U.Menu.getActions(actionParam) };
-			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: U.Menu.getHAlign(restrictedAlign) };
-			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: U.Menu.getBgColors() };
-			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: U.Menu.getTextColors() };
+			const turnText = { id: 'turnText', name: translate('menuBlockActionsSectionsTextStyle'), children: U.Menu.getBlockText() };
+			const turnList = { id: 'turnList', name: translate('menuBlockActionsSectionsListStyle'), children: U.Menu.getBlockList() };
+			const turnPage = { id: 'turnPage', name: translate('commonTurnIntoObject'), children: U.Menu.getTurnPage() };
+			const turnDiv = { id: 'turnDiv', name: translate('menuBlockActionsSectionsDividerStyle'), children: U.Menu.getTurnDiv() };
+			const turnFile = { id: 'turnFile', name: translate('menuBlockActionsSectionsFileStyle'), children: U.Menu.getTurnFile() };
+			const action = { id: 'action', name: translate('commonActions'), children: U.Menu.getActions(actionParam) };
+			const align = { id: 'align', name: translate('commonAlign'), children: U.Menu.getHAlign(restrictedAlign) };
+			const bgColor = { id: 'bgColor', name: translate('commonBackground'), children: U.Menu.getBgColors() };
+			const color = { id: 'color', iconParam: { name: 'color' }, name: translate('commonColor'), arrow: true, children: U.Menu.getTextColors() };
 
 			if (hasTurnFile) {
 				action.children.push(changeFile);
@@ -204,7 +203,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				hasLink ? { id: 'linkSettings', name: translate('commonView'), caption: translate(`menuBlockLinkSettingsStyle${I.LinkCardStyle[cardStyle]}`), arrow: true } : null,
 				hasTurnFile ? { id: 'turnStyle', name: translate('commonView'), caption: I.FileStyle[style], arrow: true, isBlockFile: true } : null,
 				(hasTurnText && !isCardStyle) ? turnText : null,
-				hasTurnDiv ? { id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
+				hasTurnDiv ? { id: 'turnStyle', iconParam: { name: U.Data.styleIcon(I.BlockType.Div, style) }, name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
 				hasAlign ? { id: 'align', name: translate('commonAlign'), caption: I.BlockHAlign[hAlign], arrow: true } : null,
 				hasColor ? { id: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') } : null,
 				hasBg ? { id: 'background', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') } : null,
@@ -546,7 +545,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				};
 
 				const onCreate = () => {
-					window.setTimeout(() => window.dispatchEvent(new CustomEvent('updateDataviewData')), 50);
+					window.setTimeout(() => U.Dom.eventDispatch(window, 'updateDataviewData'), 50);
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -801,6 +800,6 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockAction;

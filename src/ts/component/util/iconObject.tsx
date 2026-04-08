@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect, forwardRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconEmoji } from 'Component';
 
 import { getIcon, getIconSvg } from './icons';
@@ -13,7 +12,6 @@ interface Props {
 	color?: string;
 	canEdit?: boolean;
 	native?: boolean;
-	asImage?: boolean;
 	size?: number;
 	iconSize?: number;
 	menuId?: string;
@@ -65,8 +63,6 @@ const IconSize = {
 	64: 32,
 	80: 56,
 	96: 56,
-	108: 64,
-	112: 64,
 	128: 64,
 	160: 160,
 	360: 360,
@@ -91,7 +87,6 @@ const FontSize = {
 	64: 40,
 	80: 48,
 	96: 64,
-	108: 64,
 	128: 72,
 };
 
@@ -103,7 +98,7 @@ const CheckboxTask = {
 	2: 'object/checkbox2',
 };
 
-const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) => {
+const IconObject = forwardRef<IconObjectRefProps, Props>((props, ref) => {
 	const {
 		className = '',
 		canEdit = false,
@@ -488,12 +483,16 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		const onLoad = () => unsetErrorIcon();
 		const onError = () => setErrorIcon();
 
-		img.addEventListener('load', onLoad);
-		img.addEventListener('error', onError);
+		U.Dom.addEvents(img, [
+			['load', onLoad],
+			['error', onError],
+		]);
 
 		return () => {
-			img.removeEventListener('load', onLoad);
-			img.removeEventListener('error', onError);
+			U.Dom.removeEvents(img, [
+				['load', onLoad],
+				['error', onError],
+			]);
 		};
 	}, []);
 
@@ -531,6 +530,6 @@ const IconObject = observer(forwardRef<IconObjectRefProps, Props>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default IconObject;

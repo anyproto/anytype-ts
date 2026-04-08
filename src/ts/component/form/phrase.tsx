@@ -118,7 +118,7 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	const onPaste = (e) => {
 		e.preventDefault();
 
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const cb = e.clipboardData;
 		const text = normalizeWhiteSpace(cb.getData('text/plain'));
 
 		clear();
@@ -210,13 +210,13 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 
 	const placeholderHide = () => {
 		if (placeholderRef.current) {
-			placeholderRef.current.style.display = 'none';
+			U.Dom.css(placeholderRef.current, { display: 'none' });
 		};
 	};
 
 	const placeholderShow = () => {
 		if (placeholderRef.current) {
-			placeholderRef.current.style.display = '';
+			U.Dom.css(placeholderRef.current, { display: 'flex' });
 		};
 	};
 

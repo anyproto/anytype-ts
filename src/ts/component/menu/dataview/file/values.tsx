@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
-import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -10,7 +9,7 @@ import * as I from 'Interface';
 
 const MENU_ID = 'dataviewFileList';
 
-const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewFileValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, position, getId, getContainer, getSize, setHover } = props;
 	const { data, classNameWrap } = param;
@@ -281,7 +280,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 					<div className="line" />
 					<MenuItemVertical 
 						id="add" 
-						icon="plus" 
+						iconParam={{ name: 'plus/menu' }}
 						name={translate('commonAdd')} 
 						onClick={onAdd}
 						onMouseEnter={() => setHover({ id: 'add' })}
@@ -292,6 +291,6 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default MenuDataviewFileValues;

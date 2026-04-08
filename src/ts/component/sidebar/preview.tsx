@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
 
-import { motion, AnimatePresence } from 'framer-motion';
-import { observer } from 'mobx-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { Title, Label, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
 import * as I from 'Interface';
 
@@ -10,7 +9,7 @@ interface RefProps {
 	show: (v: boolean) => void;
 };
 
-const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponent>((props, ref) => {
+const SidebarLayoutPreview = forwardRef<RefProps, I.SidebarPageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ object, setObject ] = useState({
@@ -85,11 +84,10 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		w = Math.max(300, w);
 
 		if (nodeRef.current) {
-			nodeRef.current.style.width = `${size.width}px`;
-			nodeRef.current.style.height = `${size.height}px`;
+			U.Dom.css(nodeRef.current, { width: `${size.width}px`, height: `${size.height}px` });
 		};
 		if (previewRef.current) {
-			previewRef.current.style.width = `${w}px`;
+			U.Dom.css(previewRef.current, { width: `${w}px` });
 		};
 	};
 
@@ -122,16 +120,24 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	const sidebarResizeHandler = useRef<() => void>(() => resize());
 
 	const unbind = () => {
-		window.removeEventListener('resize', resizeHandler.current);
-		window.removeEventListener('sidebarResize', sidebarResizeHandler.current);
+		if (resizeHandler.current) {
+			U.Dom.removeEvent(window, 'resize', resizeHandler.current);
+		};
+		if (sidebarResizeHandler.current) {
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandler.current);
+		};
+		resizeHandler.current = null;
+		sidebarResizeHandler.current = null;
 	};
 
 	const rebind = () => {
 		unbind();
 		resizeHandler.current = () => resize();
 		sidebarResizeHandler.current = () => resize();
-		window.addEventListener('resize', resizeHandler.current);
-		window.addEventListener('sidebarResize', sidebarResizeHandler.current);
+		U.Dom.addEvents(window, [
+			['resize', resizeHandler.current],
+			['sidebarResize', sidebarResizeHandler.current],
+		]);
 	};
 
 	useEffect(() => {
@@ -238,6 +244,6 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default SidebarLayoutPreview;

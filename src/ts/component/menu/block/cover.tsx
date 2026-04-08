@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, List } from 'react-virtualized';
 import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
 import * as I from 'Interface';
@@ -19,7 +18,7 @@ const Tabs = [
 	{ id: Tab.Upload },
 ].map(it => ({ ...it, name: translate(`menuBlockCover${Tab[it.id]}`) }));
 
-const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -68,10 +67,10 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const unbind = () => {
 		if (pasteHandler.current) {
-			window.removeEventListener('paste', pasteHandler.current);
+			U.Dom.removeEvent(window, 'paste', pasteHandler.current);
 		};
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 		};
 	};
 
@@ -79,8 +78,10 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		unbind();
 		pasteHandler.current = e => onPaste(e);
 		keydownHandler.current = e => onKeyDown(e);
-		window.addEventListener('paste', pasteHandler.current);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvents(window, [
+			[ 'paste', pasteHandler.current ],
+			[ 'keydown', keydownHandler.current ],
+		]);
 	};
 
 	const load = () => {
@@ -475,7 +476,7 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onPaste = (e: any) => {
 		const { data } = param;
 		const { rootId } = data;
-		const files = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
+		const files = U.Common.getDataTransferFiles(e.clipboardData.items);
 
 		if (!files.length) {
 			return;
@@ -653,6 +654,6 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuBlockCover;

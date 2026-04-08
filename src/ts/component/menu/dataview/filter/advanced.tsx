@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import Group from 'Component/block/dataview/filters/group';
 import * as I from 'Interface';
 
-const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuFilterAdvanced = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, onKeyDown, setActive, position } = props;
 	const { data } = param;
@@ -21,22 +20,22 @@ const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		};
 
 		unbind();
-		window.addEventListener('keydown', onKeyDown);
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		window.removeEventListener('keydown', onKeyDown);
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getAdvancedFilter = () => {
 		const view = getView();
-
 		if (!view) {
 			return null;
 		};
 
-		return view.filters.find((f: I.Filter) => [ I.FilterOperator.And, I.FilterOperator.Or ].includes(f.operator)) || null;
+		const filters = Dataview.getFilteredFilters(view.filters);
+		return filters.find(it => Dataview.isAdvancedFilter(it));
 	};
 
 	const onDelete = () => {
@@ -64,9 +63,6 @@ const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		});
 	};
 
-	const beforePosition = () => {
-	};
-
 	const filter = getAdvancedFilter();
 
 	useEffect(() => {
@@ -79,7 +75,7 @@ const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 	}, []);
 
 	useEffect(() => {
-		beforePosition();
+		position();
 		setActive();
 	});
 
@@ -89,7 +85,6 @@ const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		getItems: () => [],
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
-		beforePosition,
 	}), []);
 
 	if (!filter) {
@@ -125,6 +120,6 @@ const MenuFilterAdvanced = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default MenuFilterAdvanced;

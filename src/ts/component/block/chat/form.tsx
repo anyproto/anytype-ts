@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent, MouseEvent, memo } from 'react';
 import sha1 from 'sha1';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
@@ -41,7 +40,7 @@ interface RefProps {
 	onAttachment: () => void;
 };
 
-const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
+const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
@@ -55,7 +54,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const editableRef = useRef(null);
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
-	const loaderRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
@@ -84,7 +82,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const checkSendButton = () => {
 		if (sendRef.current) {
-			sendRef.current.style.display = (canSend() || isSending.current) ? '' : 'none';
+			U.Dom.css(sendRef.current, { display: (canSend() || isSending.current) ? '' : 'none' });
 		};
 	};
 
@@ -236,7 +234,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const l = value.length;
 			updateMarkup(value, { from: l, to: l });
 
-			window.dispatchEvent(new Event('resize'));
+			U.Dom.eventDispatch(window, 'resize');
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
@@ -288,6 +286,39 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 			};
 		};
+
+		// Paste without formatting
+		keyboard.shortcut(`${cmd}+shift+v`, e, () => {
+			e.preventDefault();
+
+			(async () => {
+				const text = await navigator.clipboard.readText();
+				if (!text) {
+					return;
+				};
+
+				const { from, to } = range.current;
+				const limit = J.Constant.limit.chat.text;
+				const current = getTextValue();
+
+				let newText = U.String.normalizeLineEndings(text);
+				if (newText.length >= limit) {
+					newText = newText.substring(0, limit);
+				};
+
+				const res = U.String.insert(current, newText, from, to);
+
+				marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
+				marks.current = Mark.checkRanges(res, marks.current);
+				setMarks(marks.current);
+
+				const rt = from + newText.length;
+				range.current = { from: rt, to: rt };
+				updateMarkup(res, range.current);
+				checkUrls();
+				updateCounter();
+			})();
+		});
 
 		// UnDo, ReDo
 		keyboard.shortcut('undo', e, () => onHistory(e, -1));
@@ -423,10 +454,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			updateMarkup(value, { from: to, to });
 		};
 
-		/*
-		keyboard.shortcut('space', e, () => checkUrls());
-		*/
-
 		checkSendButton();
 		removeBookmarks();
 		updateCounter();
@@ -471,8 +498,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const { from, to } = range.current;
 		const limit = J.Constant.limit.chat.text;
 		const current = getTextValue();
-		const clipboard = e.clipboardData || e.originalEvent.clipboardData;
-		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => getObjectFromFile(it)).filter(it => {
+		const clipboard = e.clipboardData;
+		const list = U.Common.getDataTransferFiles(clipboard.items).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
 
@@ -688,7 +715,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		window.clearTimeout(timeoutDrag.current);
 		if (nodeRef.current) {
 			U.Dom.addClass(nodeRef.current, 'isDraggingOver');
-			nodeRef.current.style.height = (U.Dom.getScrollContainer(isPopup)?.clientHeight ?? 0) + 'px';
+			U.Dom.css(nodeRef.current, { height: (U.Dom.getScrollContainer(isPopup)?.clientHeight ?? 0) + 'px' });
 		};
 	};
 	
@@ -724,7 +751,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const clearDragState = () => {
 		if (nodeRef.current) {
 			U.Dom.removeClass(nodeRef.current, 'isDraggingOver');
-			nodeRef.current.style.height = '';
+			U.Dom.css(nodeRef.current, { height: '' });
 		};
 	};
 
@@ -944,7 +971,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		const send = sendRef.current;
-		const loader = loaderRef.current;
 		const files = attachments.filter(it => it.isTmp && (U.Object.isFileLayout(it.layout) || U.Object.isImageLayout(it.layout)));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
@@ -952,7 +978,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const bookmark = S.Record.getBookmarkType();
 
 		U.Dom.addClass(send, 'isLoading');
-		U.Dom.addClass(loader, 'active');
 		isSending.current = true;
 
 		raf(() => {
@@ -1095,15 +1120,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const clear = () => {
 		isSending.current = false;
 		U.Dom.removeClass(sendRef.current, 'isLoading');
-		U.Dom.removeClass(sendRef.current, 'anim');
-		U.Dom.removeClass(loaderRef.current, 'active');
 
 		onEditClear();
 		onReplyClear();
 		checkSpeedLimit();
 		historyClearState();
 
-		window.dispatchEvent(new Event('resize'));
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	const onEditClear = () => {
@@ -1267,7 +1290,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			analytics.event('DetachItemChat', { chatId: analyticsChatId });
 		};
 
-		window.dispatchEvent(new Event('resize'));
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	const onNavigationClick = (type: I.ChatReadType) => {
@@ -1802,8 +1825,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				/>
 
 				<div className="form customScrollbar">
-					<Loader id="form-loader" ref={loaderRef} />
-
 					{title ? (
 						<div className="head">
 							<div className="side left">
@@ -1950,6 +1971,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default memo(ChatForm);

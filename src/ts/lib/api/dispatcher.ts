@@ -288,6 +288,30 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ObjectAutoArchive': {
+					// For RPC responses (isSync=true) auto-archived IDs are merged into the
+					// Archive toast by the calling action via message.autoArchivedIds.
+					// For stream events (isSync=false) show a standalone AutoArchive toast.
+					if (!isSync) {
+						const { objectIds } = mapped;
+						if (objectIds.length) {
+							Preview.toastShow({ action: I.ToastAction.AutoArchive, ids: objectIds });
+						};
+					};
+					break;
+				};
+
+				case 'ObjectAutoRestore': {
+					// Same pattern as ObjectAutoArchive but for the Restore toast.
+					if (!isSync) {
+						const { objectIds } = mapped;
+						if (objectIds.length) {
+							Preview.toastShow({ action: I.ToastAction.AutoRestore, ids: objectIds });
+						};
+					};
+					break;
+				};
+
 				case 'FileSpaceUsage': {
 					const { spaces } = S.Common.spaceStorage;
 					const space = spaces.find(it => it.spaceId == mapped.spaceId);
@@ -799,7 +823,7 @@ class Dispatcher {
 					S.Block.updateWidgetViews(rootId);
 
 					if (updateData) {
-						window.dispatchEvent(new CustomEvent('updateDataviewData'));
+						U.Dom.eventDispatch(window, 'updateDataviewData');
 						S.Block.updateWidgetData(rootId);
 					};
 					break;
@@ -846,7 +870,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewGroupOrderUpdate': {
+				case 'BlockDataViewGroupOrderUpdate': {
 					const { id, groupOrder } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -859,7 +883,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewObjectOrderUpdate': {
+				case 'BlockDataViewObjectOrderUpdate': {
 					const { id, viewId, groupId, changes } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -962,7 +986,6 @@ class Dispatcher {
 
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
-						S.Detail.delete(subId, id, []);
 					};
 					break;
 				};
@@ -1099,6 +1122,7 @@ class Dispatcher {
 
 					if (showNotification && notification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
 						const title = [];
+						let canNotify = true;
 
 						if (spaceview) {
 							title.push(U.String.shorten(spaceview.name, 32));
@@ -1109,22 +1133,24 @@ class Dispatcher {
 							if (!chat._empty_) {
 								title.push(U.String.shorten(chat.name, 32));
 							} else {
-								break;
+								canNotify = false;
 							};
 						};
 
-						Renderer.send('notification', {
-							id: message.id,
-							title: title.join(' - '),
-							text: notification,
-							cmd: 'openChat',
-							payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
-							silent: !Sound.isSystem(),
-						});
-						Sound.playNotification();
+						if (canNotify) {
+							Renderer.send('notification', {
+								id: message.id,
+								title: title.join(' - '),
+								text: notification,
+								cmd: 'openChat',
+								payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+								silent: !Sound.isSystem(),
+							});
+							Sound.playNotification();
+						};
 					};
 
-					window.dispatchEvent(new CustomEvent('messageAdd', { detail: { message, subIds: mapped.subIds } }));
+					U.Dom.eventDispatch(window, 'messageAdd', { message, subIds: mapped.subIds });
 					break;
 				};
 
@@ -1151,7 +1177,7 @@ class Dispatcher {
 						};
 					});
 
-					window.dispatchEvent(new CustomEvent('messageUpdate', { detail: { message: mapped.message, subIds: mapped.subIds } }));
+					U.Dom.eventDispatch(window, 'messageUpdate', { message: mapped.message, subIds: mapped.subIds });
 					break;
 				};
 
@@ -1307,7 +1333,7 @@ class Dispatcher {
 						};
 					};
 
-					window.dispatchEvent(new CustomEvent('reactionUpdate', { detail: notificationMessage }));
+					U.Dom.eventDispatch(window, 'reactionUpdate', notificationMessage);
 					break;
 				};
 
@@ -1483,7 +1509,7 @@ class Dispatcher {
 				S.Block.updateWidgetData(rootId);
 			};
 
-			window.dispatchEvent(new CustomEvent('updateDataviewData'));
+			U.Dom.eventDispatch(window, 'updateDataviewData');
 		};
 	};
 
@@ -1614,7 +1640,7 @@ class Dispatcher {
 
 		keyboard.setWindowTitle();
 
-		window.dispatchEvent(new CustomEvent('objectView'));
+		U.Dom.eventDispatch(window, 'objectView');
 	};
 
 	/**
@@ -1687,6 +1713,14 @@ class Dispatcher {
 				};
 
 				if (message.event) {
+					message.autoArchivedIds = (message.event.messages || [])
+						.filter((msg: any) => msg.objectAutoArchive?.objectIds?.length)
+						.flatMap((msg: any) => msg.objectAutoArchive.objectIds);
+
+					message.autoRestoredIds = (message.event.messages || [])
+						.filter((msg: any) => msg.objectAutoRestore?.objectIds?.length)
+						.flatMap((msg: any) => msg.objectAutoRestore.objectIds);
+
 					runInAction(() => this.event(message.event, true, true));
 				};
 

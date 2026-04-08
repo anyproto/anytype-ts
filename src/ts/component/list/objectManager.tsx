@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
 import * as I from 'Interface';
@@ -37,7 +36,7 @@ interface ObjectManagerRefProps {
 	onFilterShow(): void;
 };
 
-const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, { buttons: any[] }>(({
+const Buttons = forwardRef<{ setButtons: (buttons: any[]) => void; }, { buttons: any[] }>(({
 	buttons: initialButtons = [],
 }, ref) => {
 
@@ -66,10 +65,10 @@ const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, {
 		</>
 	);
 
-}));
+});
 
 
-const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
+const ObjectManager = forwardRef<ObjectManagerRefProps, Props>(({
 	subId = '',
 	rowLength = 2,
 	buttons,
@@ -128,10 +127,10 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		filterRef.current?.focus();
 
 		if (filterMouseDownHandler.current && container) {
-			container.removeEventListener('mousedown', filterMouseDownHandler.current);
+			U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
 		};
 		if (filterKeydownHandler.current) {
-			window.removeEventListener('keydown', filterKeydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 		};
 
 		filterMouseDownHandler.current = (e: any) => {
@@ -139,19 +138,23 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 			if (!value && !(e.target as HTMLElement)?.closest('.filterWrapper')) {
 				onFilterHide();
-				container?.removeEventListener('mousedown', filterMouseDownHandler.current);
+				if (container) {
+					U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
+				};
 			};
 		};
 
 		filterKeydownHandler.current = (e: any) => {
 			keyboard.shortcut('escape', e, () => {
 				onFilterHide();
-				window.removeEventListener('keydown', filterKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 			});
 		};
 
-		container?.addEventListener('mousedown', filterMouseDownHandler.current);
-		window.addEventListener('keydown', filterKeydownHandler.current);
+		if (container) {
+			U.Dom.addEvent(container, 'mousedown', filterMouseDownHandler.current);
+		};
+		U.Dom.addEvent(window, 'keydown', filterKeydownHandler.current);
 	};
 
 	const onFilterHide = () => {
@@ -492,10 +495,10 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			window.clearTimeout(timeout.current);
 			const cleanupEl = U.Dom.getPageFlexContainer(isPopup);
 			if (filterMouseDownHandler.current && cleanupEl) {
-				cleanupEl.removeEventListener('mousedown', filterMouseDownHandler.current);
+				U.Dom.removeEvent(cleanupEl, 'mousedown', filterMouseDownHandler.current);
 			};
 			if (filterKeydownHandler.current) {
-				window.removeEventListener('keydown', filterKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 			};
 			checkboxRef.current.clear();
 		};
@@ -546,6 +549,6 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			{content}
 		</div>
 	);
-}));
+});
 
 export default ObjectManager;

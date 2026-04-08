@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 
 import CellText from './text';
@@ -17,7 +16,7 @@ interface Props extends I.Cell {
 	editModeOn?: boolean;
 };
 
-const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
+const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 
 	const { 
 		elementId, relationKey, recordId, getRecord, getView, idPrefix,
@@ -85,7 +84,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		const { config } = S.Common;
-		const cell = U.Dom.get(U.Common.esc(cellId));
+		const cell = U.Dom.get(cellId);
 		const className = [];
 		const cellContent = U.Dom.hasClass(cell, 'cellContent') ? cell : U.Dom.select('.cellContent', cell);
 
@@ -95,6 +94,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 
 		if (isInline) {
 			className.push('isInline');
+		};
+
+		if (noInplace) {
+			className.push('withTitle');
 		};
 
 		let width = Math.max(J.Size.dataview.cell.edit, cell?.offsetWidth ?? 0);
@@ -111,7 +114,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			if (!isGrid && isName && cellContent) {
-				cellContent.style.height = `${cellContent.offsetHeight}px`;
+				U.Dom.css(cellContent, { height: `${cellContent.offsetHeight}px` });
 			};
 
 			U.Dom.addClass(cell, 'isEditing');
@@ -130,7 +133,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			keyboard.disableSelection(true);
-			window.dispatchEvent(new Event('resize'));
+			U.Dom.eventDispatch(window, 'resize');
 		};
 
 		const setOff = () => {
@@ -143,10 +146,10 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			if (!isGrid && isName && cellContent) {
-				cellContent.style.height = '';
+				U.Dom.css(cellContent, { height: '' });
 			};
 
-			U.Dom.removeClass(U.Dom.get(U.Common.esc(cellId)), 'isEditing');
+			U.Dom.removeClass(U.Dom.get(cellId), 'isEditing');
 			S.Common.cellId = '';
 		};
 
@@ -160,6 +163,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			noAnimation: true,
 			passThrough: true,
 			...menuParam,
+			className: className.join(' '),
 			onOpen: () => {
 				U.Dom.addClass(U.Dom.select(element), 'withMenu');
 				setOn();
@@ -314,11 +318,11 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.Email:
 			case I.RelationType.Phone: {
 				const options = [
-					{ id: 'go', icon: `go-${I.RelationType[relation.format].toLowerCase()}`, name: translate(`menuDataviewUrlActionGo${relation.format}`) },
-					{ id: 'copy', icon: 'copy', name: translate('commonCopy') },
+					{ id: 'go', iconParam: { name: `go-${I.RelationType[relation.format].toLowerCase()}` }, name: translate(`menuDataviewUrlActionGo${relation.format}`) },
+					{ id: 'copy', iconParam: { name: 'copy' }, name: translate('commonCopy') },
 				];
 				if (relation.relationKey == 'source') {
-					options.push({ id: 'reload', icon: 'reload', name: translate('menuDataviewUrlActionGoReload') });
+					options.push({ id: 'reload', iconParam: { name: 'reload' }, name: translate('menuDataviewUrlActionGoReload') });
 				};
 
 				const onSelect = (event: any, item: any) => {
@@ -408,12 +412,12 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
 
-					window.removeEventListener('mousedown', handler);
+					U.Dom.removeEvent(window, 'mousedown', handler);
 				};
 			};
 
-			window.removeEventListener('mousedown', handler);
-			window.addEventListener('mousedown', handler);
+			U.Dom.removeEvent(window, 'mousedown', handler);
+			U.Dom.addEvent(window, 'mousedown', handler);
 		};
 
 		if (menuId) {
@@ -433,7 +437,7 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 				bindContainerClick();
 
 				if (!config.debug.ui) {
-					window.addEventListener('blur', () => S.Menu.closeAll(J.Menu.cell), { once: true });
+					U.Dom.addEvent(window, 'blur', () => S.Menu.closeAll(J.Menu.cell), { once: true });
 				};
 			} else 
 			if (closeIfOpen) {
@@ -642,6 +646,6 @@ const Cell = observer(forwardRef<I.CellRef, Props>((props, ref) => {
 		</div> 
 	);
 
-}));
+});
 
 export default Cell;

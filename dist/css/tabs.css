@@ -40,7 +40,7 @@ body::after {
 }
 body.showDimmer::after { background: rgba(0, 0, 0, 0.25); }
 
-body.platform-darwin:not(.isFullScreen) { padding-left: 88px; }
+body.platform-darwin:not(.isFullScreen) { padding-left: 84px; }
 body.platform-win32.showMenuBar {
 	#menuBar { display: flex; }
 }
@@ -138,10 +138,6 @@ body.platform-win32.showMenuBar {
 	}
 	.tab:hover {
 		.icon.close { opacity: 1; }
-		.iconWrapper { display: none; }
-	}
-	.tab.active:hover, .tab.isPinned:hover {
-		.iconWrapper { display: flex; }
 	}
 
 	.tab.isPinned {

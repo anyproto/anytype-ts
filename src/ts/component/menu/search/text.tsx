@@ -22,7 +22,7 @@ interface ActiveMatch {
 
 const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, storageGet, storageSet, close, getId, getContainer: getMenuContainer } = props;
+	const { param, storageGet, storageSet, close, getId, getContainer: getMenuContainer, position } = props;
 	const { data } = param;
 	const { route, isPopup } = data;
 
@@ -31,7 +31,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const searchTimeoutRef = useRef(0);
 	const lastSearchRef = useRef('');
 	const n = useRef(0);
-	const matchElementsRef = useRef<NodeListOf<Element> | null>(null);
+	const matchElementsRef = useRef<HTMLElement[] | null>(null);
 
 	const expandedRef = useRef<ExpandedState>({ toggles: [] });
 	const activeMatchRef = useRef<ActiveMatch>({ toggleId: '', position: null });
@@ -40,9 +40,9 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const getContainer = () => U.Dom.getScrollContainer(isPopup);
 	const getSearchTag = () => Mark.getTag(I.MarkType.Search);
 
-	const getMatchElements = (): NodeListOf<Element> | null => {
+	const getMatchElements = (): HTMLElement[] | null => {
 		const container = getContainer();
-		return container ? container.querySelectorAll(getSearchTag()) : null;
+		return container ? U.Dom.selectAll(getSearchTag(), container) : null;
 	};
 
 	const expandToggle = (el: HTMLElement) => {
@@ -137,7 +137,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const blockId = blockClass.substring(1);
-		const containerEl = focusable.querySelector('.editable') as HTMLElement;
+		const containerEl = U.Dom.select('.editable', focusable);
 
 		if (!containerEl) {
 			activeMatchRef.current.position = null;
@@ -342,7 +342,8 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}), []);
 
 	useEffect(() => {
-		beforePosition();
+		position();
+		
 		const initTimeout = window.setTimeout(() => {
 			const value = String(data.value || storageGet().search || '');
 			inputRef.current?.setValue(value);
@@ -365,7 +366,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		<div ref={nodeRef} className="wrap">
 			<div className="filterWrapper">
 				<div className="filterContainer">
-					<Icon name="common/search" />
+					<Icon name="common/search" className="search" />
 					<Input
 						ref={inputRef}
 						placeholder={translate('commonSearch')}
@@ -377,8 +378,8 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				</div>
 
 				<div className="arrowWrapper">
-					<Icon name="arrow/small" className="arrow up" onClick={() => navigateMatch(-1)} />
-					<Icon name="arrow/small" className="arrow down" onClick={() => navigateMatch(1)} />
+					<Icon name="arrow/small" size={8} className="arrow up" onClick={() => navigateMatch(-1)} />
+					<Icon name="arrow/small" size={8} className="arrow down" onClick={() => navigateMatch(1)} />
 				</div>
 			</div>
 		</div>

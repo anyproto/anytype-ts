@@ -5,7 +5,7 @@ import * as I from 'Interface';
 const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 
 	const {
-		id = '', icon, iconParam, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural, withPronoun,
+		id = '', iconParam, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural, withPronoun,
 		className, style, iconSize, switchValue, selectValue, options, readonly, selectMenuParam, subComponent, note, sortArrow, isDiv, isSection, index,
 		onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore, onContextMenu, tooltipParam = {},
 	} = props;
@@ -86,11 +86,13 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	} else
 	if (iconParam) {
 		cn.push('withIcon');
-		iconMainElement = <Icon name={iconParam.name} color={iconParam.color} size={iconParam.size} width={iconParam.width} height={iconParam.height} className="iconMain" inner={inner} />;
-	} else
-	if (icon) {
-		cn.push('withIcon');
-		iconMainElement = <Icon className={[ icon, 'iconMain' ].join(' ')} inner={inner} />;
+		
+		const icn = [ 'iconMain' ];
+		if (iconParam.className) {
+			icn.push(iconParam.className);
+		};
+
+		iconMainElement = <Icon {...iconParam} className={icn.join(' ')} inner={inner} />;
 	};
 
 	if (withArrow) {
@@ -189,7 +191,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 		const node = nodeRef.current;
 
 		if (node && !U.Dom.hasClass(node, 'withIcon')) {
-			U.Dom.toggleClass(node, 'withIconObject', !!node.querySelectorAll('.iconObject').length);
+			U.Dom.toggleClass(node, 'withIconObject', !!U.Dom.selectAll('.iconObject', node).length);
 		};
 	};
 

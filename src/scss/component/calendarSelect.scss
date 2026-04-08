@@ -35,7 +35,7 @@
 
 	.day {
 		display: flex; width: 28px; height: 28px; line-height: 28px; text-align: center; border-radius: 4px;
-		align-items: center; justify-content: center; position: relative; cursor: pointer;
+		align-items: center; justify-content: center; position: relative;
 	}
 
 	.day {
@@ -64,7 +64,7 @@
 
 	.foot { padding: 0px 16px; }
 	.foot {
-		.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; cursor: pointer; }
+		.btn { display: inline-block; vertical-align: top; margin-right: 16px; transition: $transitionAllCommon; }
 		.btn.clear { color: var(--color-text-secondary); }
 		.btn:last-child { margin: 0px; }
 		.btn:hover { color: var(--color-system-accent-100); }

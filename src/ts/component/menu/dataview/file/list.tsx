@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, MenuItemVertical, EmptySearch, ObjectName, ObjectType } from 'Component';
 import * as I from 'Interface';
@@ -10,7 +9,7 @@ const HEIGHT_DIV = 16;
 const MENU_ID = 'dataviewFileValues';
 const LIMIT = 20;
 
-const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewFileList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, getContainer, setHover, setActive, close, onKeyDown, position } = props;
 	const { data } = param;
@@ -32,13 +31,13 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -154,13 +153,12 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const offset = 100;
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(360, itemsHeight));
 
 		U.Dom.css(U.Dom.select('.content', getContainer()), { height: items.length ? `${height}px` : '' });
-		position();
 	};
 
 	const items = getItems();
@@ -197,7 +195,6 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 
 	useEffect(() => {
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
@@ -211,7 +208,7 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 			listRef.current.scrollToPosition(topRef.current);
 		};
 
-		resize();
+		position();
 		setActive();
 	});
 
@@ -223,6 +220,7 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -279,9 +277,9 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 
 			<div className="bottom">
 				<div className="line" />
-				<MenuItemVertical 
-					id="upload" 
-					icon="plus" 
+				<MenuItemVertical
+					id="upload"
+					iconParam={{ name: 'plus' }}
 					name={translate('commonUpload')} 
 					onClick={onUpload}
 					onMouseEnter={() => setHover({ id: 'upload' })}
@@ -291,6 +289,6 @@ const MenuDataviewFileList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref)
 		</div>
 	);
 	
-}));
+});
 
 export default MenuDataviewFileList;

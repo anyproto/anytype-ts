@@ -1,10 +1,12 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Footer, Header, ListObject, Icon, Title, Filter } from 'Component';
+import ArchiveListTree from './archiveListTree';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
-const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+type ViewMode = 'tree' | 'compact' | 'detailed';
+
+const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { dateFormat } = S.Common;
@@ -13,7 +15,11 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const filterRef = useRef(null);
 	const [ selectedIds, setSelectedIds ] = useState<string[]>([]);
 	const [ filterText, setFilterText ] = useState('');
-	const [ isDetailed, setIsDetailed ] = useState(() => Boolean(Storage.get('binViewDetailed')));
+	const [ viewMode, setViewMode ] = useState<ViewMode>(() => {
+		return (Storage.get('binViewMode') as ViewMode) || 'tree';
+	});
+	const [ sortId, setSortId ] = useState('lastModifiedDate');
+	const [ sortType, setSortType ] = useState(I.SortType.Desc);
 	const filterTimeout = useRef(0);
 	const subId = J.Constant.subId.archive;
 	const spaceview = U.Space.getSpaceview();
@@ -45,7 +51,7 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		});
 	};
 
-	const relationKeys = [ 'lastModifiedDate', 'creator' ];
+	const relationKeys = [ 'lastModifiedDate', 'creator', 'createdInContext' ];
 
 	const getRecordIds = (): string[] => {
 		return S.Record.getRecordIds(subId, '');
@@ -111,11 +117,29 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		Action.delete(selectedIds, analytics.route.archive, () => setSelectedIds([]));
 	};
 
-	const onSwitchView = () => {
-		const v = !isDetailed;
+	const onSortChange = (id: string, type: I.SortType) => {
+		setSortId(id);
+		setSortType(type);
+	};
 
-		setIsDetailed(v);
-		Storage.set('binViewDetailed', v);
+	const nextViewMode: Record<ViewMode, ViewMode> = { tree: 'compact', compact: 'detailed', detailed: 'tree' };
+
+	const onSwitchView = () => {
+		const next = nextViewMode[viewMode];
+		setViewMode(next);
+		Storage.set('binViewMode', next);
+	};
+
+	const onSelectTree = (ids: string[], e: MouseEvent) => {
+		e.stopPropagation();
+		let next = [ ...selectedIds ];
+		const allPresent = ids.every(id => next.includes(id));
+		if (allPresent) {
+			next = next.filter(id => !ids.includes(id));
+		} else {
+			next = [ ...new Set([ ...next, ...ids ]) ];
+		};
+		setSelectedIds(next);
 	};
 
 	const filterMouseDownHandler = useRef<((e: any) => void) | null>(null);
@@ -132,10 +156,10 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		const container = U.Dom.getPageFlexContainer(isPopup);
 
 		if (filterMouseDownHandler.current && container) {
-			container.removeEventListener('mousedown', filterMouseDownHandler.current);
+			U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
 		};
 		if (filterKeydownHandler.current) {
-			window.removeEventListener('keydown', filterKeydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 		};
 
 		filterMouseDownHandler.current = (e: any) => {
@@ -143,19 +167,23 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 			if (!value && !(e.target as HTMLElement)?.closest('.filter')) {
 				onFilterHide();
-				container?.removeEventListener('mousedown', filterMouseDownHandler.current);
+				if (container) {
+					U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
+				};
 			};
 		};
 
 		filterKeydownHandler.current = (e: any) => {
 			keyboard.shortcut('escape', e, () => {
 				onFilterHide();
-				window.removeEventListener('keydown', filterKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 			});
 		};
 
-		container?.addEventListener('mousedown', filterMouseDownHandler.current);
-		window.addEventListener('keydown', filterKeydownHandler.current);
+		if (container) {
+			U.Dom.addEvent(container, 'mousedown', filterMouseDownHandler.current);
+		};
+		U.Dom.addEvent(window, 'keydown', filterKeydownHandler.current);
 	};
 
 	const onFilterHide = () => {
@@ -209,32 +237,35 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		return () => {
 			window.clearTimeout(filterTimeout.current);
 			const cleanupEl = U.Dom.getPageFlexContainer(isPopup);
+			
 			if (filterMouseDownHandler.current && cleanupEl) {
-				cleanupEl.removeEventListener('mousedown', filterMouseDownHandler.current);
+				U.Dom.removeEvent(cleanupEl, 'mousedown', filterMouseDownHandler.current);
+				filterMouseDownHandler.current = null;
 			};
+
 			if (filterKeydownHandler.current) {
-				window.removeEventListener('keydown', filterKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
+				filterKeydownHandler.current = null;
 			};
 		};
 	}, []);
 
 	useEffect(() => {
 		archiveKeydownHandler.current = (e: any) => onKeyDown(e);
-		window.addEventListener('keydown', archiveKeydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', archiveKeydownHandler.current);
 		return () => {
 			if (archiveKeydownHandler.current) {
-				window.removeEventListener('keydown', archiveKeydownHandler.current);
+				U.Dom.removeEvent(window, 'keydown', archiveKeydownHandler.current);
 			};
 		};
 	}, []);
 
 	const isAllSelected = hasSelection && (selectedIds.length >= getRecordIds().length);
 	const canDelete = canDeleteSelection();
-	const cnWrapper = [ 'wrapper' ];
-
-	if (isDetailed) {
-		cnWrapper.push('isDetailed');
-	};
+	const isDetailed = viewMode === 'detailed';
+	const switchIconMap = { tree: 'common/switchViewTree', compact: 'common/switchView', detailed: 'common/switchViewDetailed' };
+	const switchTooltipMap = { tree: 'binSwitchToCompact', compact: 'binSwitchToDetailed', detailed: 'binSwitchToTree' };
+	const cnWrapper = [ 'wrapper', ...(isDetailed ? [ 'isDetailed' ] : []) ];
 
 	return (
 		<>
@@ -273,9 +304,9 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 								<Icon
 									className="archiveAction"
-									name={isDetailed ? 'common/switchViewDetailed' : 'common/switchView'}
+									name={switchIconMap[viewMode]}
 									withBackground={true}
-									tooltipParam={{ text: translate('commonSwitchView') }}
+									tooltipParam={{ text: translate(switchTooltipMap[viewMode]) }}
 									onClick={onSwitchView}
 								/>
 
@@ -293,37 +324,53 @@ const PageMainArchive = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 					</div>
 				</div>
 
-				<ListObject
-					ref={listRef}
-					subId={subId}
-					rootId=""
-					spaceId={S.Common.space}
-					route={analytics.route.archive}
-					columns={columns}
-					filters={getFilters()}
-					relationKeys={relationKeys}
-					ignoreArchived={false}
-					skipLayoutFilter={true}
-					withDescription={isDetailed}
-					iconSize={isDetailed ? 32 : null}
-					rowHeight={isDetailed ? 64 : 40}
-					emptyText={translate('pageMainArchiveEmpty')}
-					defaultSortId="lastModifiedDate"
-					defaultSortType={I.SortType.Desc}
-					selectable={canWrite}
-					selectedIds={selectedIds}
-					isAllSelected={isAllSelected}
-					onSelect={onSelect}
-					onSelectAll={onSelectAll}
-					useInfiniteScroll={true}
-					isPopup={isPopup}
-				/>
+				{viewMode === 'compact' ? (
+					<ListObject
+						ref={listRef}
+						subId={subId}
+						rootId=""
+						spaceId={S.Common.space}
+						route={analytics.route.archive}
+						columns={columns}
+						filters={getFilters()}
+						relationKeys={relationKeys}
+						ignoreArchived={false}
+						skipLayoutFilter={true}
+						emptyText={translate('pageMainArchiveEmpty')}
+						defaultSortId={sortId}
+						defaultSortType={sortType}
+						onSort={onSortChange}
+						selectable={canWrite}
+						selectedIds={selectedIds}
+						isAllSelected={isAllSelected}
+						onSelect={onSelect}
+						onSelectAll={onSelectAll}
+						useInfiniteScroll={true}
+						isPopup={isPopup}
+					/>
+				) : (
+					<ArchiveListTree
+						subId={subId}
+						canWrite={canWrite}
+						isShared={isShared}
+						isPopup={isPopup}
+						isDetailed={isDetailed}
+						selectedIds={selectedIds}
+						filterText={filterText}
+						sortId={sortId}
+						sortType={sortType}
+						onSort={onSortChange}
+						onSelectChange={onSelectTree}
+						onSelectAll={onSelectAll}
+						isAllSelected={isAllSelected}
+					/>
+				)}
 			</div>
 
 			<Footer {...props} component="mainObject" />
 		</>
 	);
 
-}));
+});
 
 export default PageMainArchive;

@@ -1,10 +1,10 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, } from 'react';
 
-import { observer } from 'mobx-react';
 import { InputWithLabel, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
+import { Data } from 'Lib/util';
 
-const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuViewSettings = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, getId, setActive, setHover, onKeyDown, getSize } = props;
 	const { data } = param;
@@ -44,13 +44,13 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDownHandler(e);
-		window.addEventListener('keydown', keydownHandler.current);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
 		if (keydownHandler.current) {
-			window.removeEventListener('keydown', keydownHandler.current);
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
 		};
 	};
@@ -131,8 +131,10 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const views = S.Record.getViews(rootId, blockId);
 		const view = data.view.get();
 		const isBoard = view.type == I.ViewType.Board;
-		const sortCnt = view.sorts.length;
-		const filterCnt = U.Common.getViewFilters(view).length;
+		const filters = Dataview.getFilteredFilters(view.filters);
+		const sorts = Dataview.getFilteredSorts(view.sorts);
+		const sortCnt = sorts.length;
+		const filterCnt = filters.length;
 		const relations = view.getVisibleRelations().map(it => it.relation.name).filter(it => it);
 		const relationCnt = relations.slice(0, 2);
 
@@ -326,6 +328,6 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuViewSettings;
