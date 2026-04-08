@@ -283,12 +283,29 @@
 	}
 	.commentEditor-li-checked { text-decoration: line-through; color: var(--color-text-secondary); }
 
+	.draggableDecorator { user-select: none; }
+	.draggableDecorator {
+		&.isDragging { opacity: 0.4; pointer-events: none; }
+	}
+
+	.commentEditor-attachment.isDragging,
+	.commentEditor-embed.isDragging { opacity: 0.4; }
+
+	.decoratorDropIndicator {
+		height: 2px; border-radius: 1px; pointer-events: none; z-index: 3; background: var(--color-control-accent);
+		width: calc(100% - 24px); left: 12px;
+	}
+
+	.dragGhost {
+		position: fixed; z-index: 100; pointer-events: none; opacity: 0.7;
+		max-width: 200px; max-height: 200px; overflow: hidden; border-radius: 8px;
+	}
+
 	.commentEditor-attachment { padding: 8px 8px 4px 0px; }
 	.commentEditor-attachment {
 		.attachment {
-			position: relative; width: 100%; display: flex; flex-direction: row; align-items: center;
-			border-radius: 8px; border: 1px solid var(--color-shape-tertiary);
-			background: var(--color-bg-primary);
+			position: relative; width: 100%; display: inline-flex; flex-direction: row; align-items: center;
+			border-radius: 8px; border: 1px solid var(--color-shape-tertiary); background: var(--color-bg-primary);
 			box-shadow: 0px 0px 4px 0px var(--color-shape-highlight-medium);
 		}
 		.attachment {
@@ -301,9 +318,8 @@
 			.image { max-width: 100%; max-height: 200px; width: auto; height: auto; object-fit: contain; display: block; }
 
 			.mediaWrapper {
-				position: relative; overflow: hidden;
-				display: flex; align-items: center; justify-content: center;
-				border-radius: 12px; width: auto; height: auto;
+				position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+				border-radius: inherit; width: auto; height: auto;
 			}
 			.mediaWrapper {
 				.blur { display: none; }

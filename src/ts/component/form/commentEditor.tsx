@@ -238,6 +238,269 @@ function $isLinkTextNode (node: LexicalNode | null | undefined): node is LinkTex
 // Context for passing the discussion deps subId to decorator nodes
 export const CommentSubIdContext = createContext<string>('');
 
+// Module-level drag state for decorator node reordering
+let dragState: { sourceKey: string; sourceEl: HTMLElement; editorEl: HTMLElement; startX: number; startY: number; ghost: HTMLElement | null; active: boolean } | null = null;
+const DRAG_THRESHOLD = 5;
+const DROP_INDICATOR_CLASS = 'decoratorDropIndicator';
+
+// Get all root-level block elements in the editor (paragraphs, headings, lists, decorators, etc.)
+const getDropTargets = (): HTMLElement[] => {
+	if (!dragState?.editorEl) {
+		return [];
+	};
+
+	const input = dragState.editorEl.querySelector('.commentEditorInput');
+	if (!input) {
+		return [];
+	};
+
+	return Array.from(input.children) as HTMLElement[];
+};
+
+const removeDropIndicator = () => {
+	const existing = document.querySelector(`.${DROP_INDICATOR_CLASS}`);
+	if (existing) {
+		existing.remove();
+	};
+};
+
+const cleanupDrag = () => {
+	if (!dragState) {
+		return;
+	};
+
+	if (dragState.ghost) {
+		dragState.ghost.remove();
+	};
+
+	U.Dom.removeClass(dragState.sourceEl, 'isDragging');
+	removeDropIndicator();
+
+	dragState = null;
+};
+
+const DraggableDecorator = ({ nodeKey, children }: { nodeKey: string; children: React.ReactNode }) => {
+	const [ editor ] = useLexicalComposerContext();
+	const nodeRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const el = nodeRef.current;
+		if (!el) {
+			return;
+		};
+
+		// Prevent native image/element drag inside contentEditable
+		const onDragStart = (e: DragEvent) => {
+			e.preventDefault();
+		};
+
+		// Find the outer Lexical DOM element for this decorator node
+		const getOuterElement = (): HTMLElement | null => {
+			return editor.getElementByKey(nodeKey);
+		};
+
+		// Find the closest drop target element and position from mouse coordinates
+		const findDropTarget = (clientY: number): { element: HTMLElement; position: 'before' | 'after' } | null => {
+			const targets = getDropTargets();
+			const outerEl = getOuterElement();
+			let closest: { element: HTMLElement; distance: number; position: 'before' | 'after' } | null = null;
+
+			for (const target of targets) {
+				// Skip the source element's outer container
+				if (target === outerEl) {
+					continue;
+				};
+
+				const rect = target.getBoundingClientRect();
+				const midY = rect.top + rect.height / 2;
+				const position: 'before' | 'after' = clientY < midY ? 'before' : 'after';
+				const edgeY = position === 'before' ? rect.top : rect.bottom;
+				const distance = Math.abs(clientY - edgeY);
+
+				if (!closest || (distance < closest.distance)) {
+					closest = { element: target, distance, position };
+				};
+			};
+
+			return closest;
+		};
+
+		// Show a drop indicator line at the given element edge
+		const showDropIndicator = (target: HTMLElement, position: 'before' | 'after') => {
+			removeDropIndicator();
+
+			const contentArea = el.closest('.contentArea');
+			if (!contentArea) {
+				return;
+			};
+
+			const rect = target.getBoundingClientRect();
+			const containerRect = contentArea.getBoundingClientRect();
+			const indicator = document.createElement('div');
+
+			U.Dom.addClass(indicator, DROP_INDICATOR_CLASS);
+			U.Dom.css(indicator, {
+				left: '12px',
+				position: 'absolute',
+				top: `${(position === 'before' ? rect.top : rect.bottom) - containerRect.top + contentArea.scrollTop}px`,
+			});
+
+			U.Dom.css(contentArea as HTMLElement, { position: 'relative' });
+			contentArea.appendChild(indicator);
+		};
+
+		const onMouseDown = (e: MouseEvent) => {
+			if (e.button !== 0) {
+				return;
+			};
+
+			e.preventDefault();
+
+			const editorEl = el.closest('.commentEditorWrap') as HTMLElement;
+			if (!editorEl) {
+				return;
+			};
+
+			dragState = {
+				sourceKey: nodeKey,
+				sourceEl: el,
+				editorEl,
+				startX: e.clientX,
+				startY: e.clientY,
+				ghost: null,
+				active: false,
+			};
+
+			const onMouseMove = (me: MouseEvent) => {
+				if (!dragState) {
+					return;
+				};
+
+				if (!dragState.active) {
+					const dx = Math.abs(me.clientX - dragState.startX);
+					const dy = Math.abs(me.clientY - dragState.startY);
+
+					if ((dx < DRAG_THRESHOLD) && (dy < DRAG_THRESHOLD)) {
+						return;
+					};
+
+					dragState.active = true;
+					U.Dom.addClass(dragState.sourceEl, 'isDragging');
+
+					const outerEl = getOuterElement();
+					if (outerEl) {
+						U.Dom.addClass(outerEl, 'isDragging');
+					};
+
+					const ghost = dragState.sourceEl.cloneNode(true) as HTMLElement;
+					U.Dom.removeClass(ghost, 'isDragging');
+					U.Dom.addClass(ghost, 'dragGhost');
+					U.Dom.css(ghost, { width: `${dragState.sourceEl.offsetWidth}px` });
+					document.body.appendChild(ghost);
+					dragState.ghost = ghost;
+				};
+
+				if (dragState.ghost) {
+					U.Dom.css(dragState.ghost, {
+						left: `${me.clientX + 12}px`,
+						top: `${me.clientY + 12}px`,
+					});
+				};
+
+				const dropTarget = findDropTarget(me.clientY);
+				if (dropTarget) {
+					showDropIndicator(dropTarget.element, dropTarget.position);
+				} else {
+					removeDropIndicator();
+				};
+			};
+
+			const onMouseUp = (me: MouseEvent) => {
+				document.removeEventListener('mousemove', onMouseMove);
+				document.removeEventListener('mouseup', onMouseUp);
+
+				if (!dragState?.active) {
+					dragState = null;
+					return;
+				};
+
+				const dropTarget = findDropTarget(me.clientY);
+				const sourceKey = dragState.sourceKey;
+
+				// Also remove isDragging from the outer Lexical element
+				const outerEl = getOuterElement();
+				if (outerEl) {
+					U.Dom.removeClass(outerEl, 'isDragging');
+				};
+
+				cleanupDrag();
+
+				if (dropTarget) {
+					// Get the Lexical node key from the target DOM element
+					const targetLexicalKey = editor.getEditorState().read(() => {
+						const root = $getRoot();
+						for (const child of root.getChildren()) {
+							const childEl = editor.getElementByKey(child.getKey());
+							if (childEl === dropTarget.element) {
+								return child.getKey();
+							};
+						};
+						return null;
+					});
+
+					if (targetLexicalKey && (sourceKey !== targetLexicalKey)) {
+						editor.update(() => {
+							const sourceNode = $getNodeByKey(sourceKey);
+							const targetNode = $getNodeByKey(targetLexicalKey);
+
+							if (!sourceNode || !targetNode) {
+								return;
+							};
+
+							sourceNode.remove();
+
+							if (dropTarget.position === 'before') {
+								targetNode.insertBefore(sourceNode);
+							} else {
+								targetNode.insertAfter(sourceNode);
+							};
+						});
+					};
+				};
+
+				// Prevent the subsequent click from firing
+				const preventClick = (ce: MouseEvent) => {
+					ce.stopPropagation();
+					ce.preventDefault();
+				};
+
+				window.addEventListener('click', preventClick, true);
+				window.setTimeout(() => window.removeEventListener('click', preventClick, true), 0);
+			};
+
+			document.addEventListener('mousemove', onMouseMove);
+			document.addEventListener('mouseup', onMouseUp);
+		};
+
+		el.addEventListener('mousedown', onMouseDown);
+		el.addEventListener('dragstart', onDragStart);
+		return () => {
+			el.removeEventListener('mousedown', onMouseDown);
+			el.removeEventListener('dragstart', onDragStart);
+		};
+	}, [ nodeKey, editor ]);
+
+	return (
+		<div
+			ref={nodeRef}
+			className="draggableDecorator"
+			data-decorator-key={nodeKey}
+		>
+			{children}
+		</div>
+	);
+};
+
 // Attachment node — renders ChatAttachment inline in the editor
 export const INSERT_ATTACHMENT_COMMAND = createCommand<any>('INSERT_ATTACHMENT_COMMAND');
 export const REMOVE_ATTACHMENT_COMMAND = createCommand<string>('REMOVE_ATTACHMENT_COMMAND');
@@ -262,6 +525,7 @@ class AttachmentNode extends DecoratorNode<JSX.Element> {
 	createDOM (): HTMLElement {
 		const el = document.createElement('div');
 		el.className = 'commentEditor-attachment';
+		el.draggable = false;
 		return el;
 	};
 
@@ -309,12 +573,14 @@ const AttachmentDecorator = ({ nodeKey, data }: { nodeKey: string; data: any }) 
 	};
 
 	return (
-		<Attachment
-			object={object}
-			onRemove={() => {
-				editor.dispatchCommand(REMOVE_ATTACHMENT_COMMAND, nodeKey);
-			}}
-		/>
+		<DraggableDecorator nodeKey={nodeKey}>
+			<Attachment
+				object={object}
+				onRemove={() => {
+					editor.dispatchCommand(REMOVE_ATTACHMENT_COMMAND, nodeKey);
+				}}
+			/>
+		</DraggableDecorator>
 	);
 };
 
@@ -352,6 +618,7 @@ class EmbedNode extends DecoratorNode<JSX.Element> {
 	createDOM (): HTMLElement {
 		const el = document.createElement('div');
 		el.className = 'commentEditor-embed';
+		el.draggable = false;
 		return el;
 	};
 
@@ -437,12 +704,14 @@ const EmbedDecorator = ({ nodeKey, processor, text }: { nodeKey: string; process
 	}, [ editor, nodeKey ]);
 
 	return (
-		<EmbedPreview
-			processor={processor}
-			text={text}
-			onEdit={onEdit}
-			onRemove={onRemove}
-		/>
+		<DraggableDecorator nodeKey={nodeKey}>
+			<EmbedPreview
+				processor={processor}
+				text={text}
+				onEdit={onEdit}
+				onRemove={onRemove}
+			/>
+		</DraggableDecorator>
 	);
 };
 
