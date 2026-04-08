@@ -1,5 +1,5 @@
 import React, { useRef, useImperativeHandle, forwardRef } from 'react';
-import { InputWithFile, Icon, Error } from 'Component';
+import { InputWithFile, Icon, Error, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -179,19 +179,9 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const typeName = translate('blockNameImage');
 
 	if (object.isDeleted) {
-		element = (
-			<div className="mediaState isRemoved">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
-			</div>
-		);
+		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} />;
 	} else if (object.isArchived) {
-		overlay = (
-			<div className="mediaState isInBin">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
-			</div>
-		);
+		overlay = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={U.File.name(object)} />;
 		if (state == I.FileState.Done) {
 			element = (
 				<div ref={wrapRef} className="wrap" style={css}>

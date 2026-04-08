@@ -21,17 +21,17 @@
 			}
 		}
 
-		.mediaState { @include text-paragraph; color: var(--color-control-active); display: flex; flex-direction: column; gap: 12px 0px; align-items: center; justify-content: center; }
+		.mediaState { @include text-small; color: var(--color-control-active); display: flex; flex-direction: column; gap: 12px 0px; align-items: center; justify-content: center; }
 		.mediaState {
 			.icon.ghost { width: 48px; height: 48px; }
 			.name { text-align: center; color: var(--color-text-secondary); font-weight: 500; }
 		}
 
-		.mediaState.isRemoved { height: 264px; background: var(--color-bg-primary); border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px; }
+		.mediaState.isDeleted { height: 264px; background: var(--color-bg-primary); border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px; }
 
-		.mediaState.isInBin {
+		.mediaState.isArchived {
 			position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 2;
-			background: var(--color-bg-primary-90); border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px;
+			background: var(--color-bg-primary-90); border: 1px solid var(--color-shape-highlight-medium); border-radius: inherit;
 		}
 
 		.icon.resize, .icon.commonDownload { position: absolute; z-index: 1; opacity: 0; cursor: default; transition: $transitionAllCommon; }
@@ -107,7 +107,7 @@
 	}
 
 	.block.blockMedia.isImage, .block.blockMedia.isVideo {
-		.mediaState.isInBin { border: 0px; }
+		.mediaState.isArchived { border: 0px; }
 	}
 
 	.block.blockMedia.isAudio {
@@ -117,8 +117,8 @@
 		.mediaState {
 			.icon.ghost { width: 24px; height: 24px; }
 		}
-		.mediaState.isRemoved { background: var(--color-bg-primary); border: 1px solid var(--color-shape-highlight-medium); }
-		.mediaState.isInBin { background: var(--color-bg-primary); }
+		.mediaState.isDeleted { background: var(--color-bg-primary); border: 1px solid var(--color-shape-highlight-medium); }
+		.mediaState.isArchived { background: var(--color-bg-primary); }
 	}
 	.block.blockMedia.isAudio > .wrapContent { height: 75px; }
 	.block.blockMedia.isAudio.withContent:not(.isLoading) > .wrapContent  { border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px; }
