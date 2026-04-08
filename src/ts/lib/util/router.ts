@@ -170,6 +170,7 @@ class UtilRouter {
 			Preview.hideAll();
 
 			if (replace) {
+				this.history = this.history || {};
 				this.history.entries = [];
 				this.history.index = -1;
 			};

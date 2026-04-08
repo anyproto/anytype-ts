@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useCallback, useImperat
 import { AutoSizer, List } from 'react-virtualized';
 import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
+import raf from 'raf';
 
 const SUB_ID = 'popupSpaceCreateParticipants';
 
@@ -98,7 +99,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			if (!S.Record.getRecords(SUB_ID).length) {
 				setStep(1);
 			};
-			resize();
+			position();
 		});
 	}, []);
 
@@ -327,19 +328,21 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		};
 
 		analytics.event('ScreenSettingsSpaceCreate', { status: S.Common.isOnline ? 'Online' : 'Offline' });
-		resize();
+		position();
 
 		return () => {
 			U.Subscription.destroyList([ SUB_ID ]);
 		};
 	}, []);
 
-	const resize = () => {
-		const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
-		const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
+	const beforePosition = () => {
+		raf(() => {
+			const members = getMembers();
+			const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
+			const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
 
-		U.Dom.css(listRef.current, { height: `${listHeight}px` });
-		position();
+			U.Dom.css(listRef.current, { height: `${listHeight}px` });
+		});
 	};
 
 	useEffect(() => {
@@ -358,7 +361,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			};
 		};
 
-		resize();
+		position();
 	}, [ step ]);
 
 	const ROW_HEIGHT = 48;
@@ -527,7 +530,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	};
 
 	useImperativeHandle(ref, () => ({
-		resize,
+		beforePosition,
 	}));
 
 	return (
