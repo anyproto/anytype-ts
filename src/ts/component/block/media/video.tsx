@@ -73,9 +73,7 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		const selection = S.Common.getRef('selectionProvider');
 
-		focus.set(block.id, { from: 0, to: 0 });
 		selection?.hide();
-
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 		U.Dom.addClass(nodeRef.current, 'isResizing');
