@@ -32,8 +32,7 @@
 	.path {
 		.label { 
 			@include text-small; color: var(--color-text-secondary); padding: 3px 6px 3px 20px; border-radius: 4px; 
-			background: var(--color-shape-tertiary); @include text-overflow-nw;
-			font-weight: 400;
+			background: var(--color-shape-tertiary); @include text-overflow-nw; font-weight: 400;
 		}
 	}
 

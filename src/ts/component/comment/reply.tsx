@@ -244,6 +244,7 @@ const CommentReply = (props: Props) => {
 						object={item}
 						subId={subId}
 						showAsFile={false}
+						withInlineSize={false}
 						onRemove={() => {}}
 						onPreview={onAttachmentPreview}
 					/>

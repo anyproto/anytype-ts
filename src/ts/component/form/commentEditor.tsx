@@ -576,6 +576,7 @@ const AttachmentDecorator = ({ nodeKey, data }: { nodeKey: string; data: any }) 
 		<DraggableDecorator nodeKey={nodeKey}>
 			<Attachment
 				object={object}
+				withInlineSize={false}
 				onRemove={() => {
 					editor.dispatchCommand(REMOVE_ATTACHMENT_COMMAND, nodeKey);
 				}}

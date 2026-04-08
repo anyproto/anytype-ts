@@ -36,6 +36,7 @@ const renderPart = (part: I.CommentContentPart, index: number, subId?: string): 
 				<Attachment
 					object={object}
 					subId={subId}
+					withInlineSize={false}
 					onRemove={() => {}}
 				/>
 			</div>

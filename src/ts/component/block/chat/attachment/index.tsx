@@ -7,6 +7,7 @@ interface Props {
 	showAsFile?: boolean;
 	bookmarkAsDefault?: boolean;
 	isDownload?: boolean;
+	withInlineSize?: boolean;
 	subId?: string;
 	isPopup?: boolean;
 	onRemove: (id: string) => void;
@@ -20,7 +21,7 @@ interface RefProps {
 
 const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { object, showAsFile, bookmarkAsDefault, isDownload, onPreview, updateAttachments, onRemove } = props;
+	const { object, showAsFile, bookmarkAsDefault, isDownload, withInlineSize = true, onPreview, updateAttachments, onRemove } = props;
 
 	let syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 	if (!object.isTmp && (object.syncStatus === undefined)) {
@@ -118,7 +119,7 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 	const renderImage = () => {
 		const { object } = props;
 		const ratio = object.widthInPixels / object.heightInPixels;
-		const withBlur = ratio != 1;
+		const withBlur = withInlineSize && (ratio != 1);
 
 		cn.push('isImage');
 		if (withBlur) {
@@ -152,7 +153,7 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 		const blur = withBlur ? <div id="blur" className="blur" style={{ backgroundImage: `url(${src.current})` }} /> : null;
 		const style: any = {};
 
-		if (object.widthInPixels && object.heightInPixels) {
+		if (withInlineSize && object.widthInPixels && object.heightInPixels) {
 			const ratio = object.widthInPixels / object.heightInPixels;
 
 			let width = 0;
@@ -170,7 +171,7 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 			height = Number(height) || 0;
 
 			style.width = Number(width) || 0;
-			style.height = Number(height) || 0;		
+			style.height = Number(height) || 0;
 			style.aspectRatio = `${width}/${height}`;
 		};
 

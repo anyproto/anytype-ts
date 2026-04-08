@@ -314,7 +314,18 @@
 			.info { flex-grow: 1; width: 100%; }
 			.name { line-height: 20px; font-weight: 500; @include clamp1; }
 			.descr { @include text-small; @include clamp1; color: var(--color-text-secondary); }
-			.icon.syncStatus { display: none; }
+			.icon.syncStatus {
+				display: none; position: absolute; z-index: 2; inset: 0; margin: auto;
+				animation: rotate 1.2s infinite linear; color: var(--color-shape-highlight-medium);
+			}
+			.icon.syncStatus {
+				> svg { width: 100% !important; height: 100% !important; }
+			}
+
+			&.isSyncing .icon.syncStatus,
+			&.isQueued .icon.syncStatus,
+			&.isError .icon.syncStatus { display: block; }
+			&.isError .icon.syncStatus { animation: none; }
 			.image { max-width: 100%; max-height: 200px; width: auto; height: auto; object-fit: contain; display: block; }
 
 			.mediaWrapper {
@@ -340,7 +351,7 @@
 
 			&.isImage { width: auto; max-width: 100%; height: auto; min-width: unset; background: unset; border: none; box-shadow: none; }
 			&.isImage {
-				.image { max-width: 100%; max-height: 200px; width: auto; height: auto; object-fit: contain; border-radius: 12px; }
+				.image { max-width: 100%; max-height: 200px; width: auto; height: auto; object-fit: contain; border-radius: 8px; }
 			}
 
 			&.isBookmark {
@@ -478,7 +489,7 @@
 			.mediaWrapper {
 				position: relative; overflow: hidden;
 				display: flex; align-items: center; justify-content: center;
-				border-radius: 12px; width: auto; height: auto;
+				border-radius: 8px; width: auto; height: auto;
 			}
 			.mediaWrapper {
 				.blur { display: none; }
@@ -493,7 +504,7 @@
 
 			&.isImage { width: auto; max-width: 100%; height: auto; min-width: unset; }
 			&.isImage {
-				.image { display: block; max-width: 100%; max-height: 360px; width: auto; height: auto; object-fit: contain; border-radius: 12px; }
+				.image { display: block; max-width: 100%; max-height: 360px; width: auto; height: auto; object-fit: contain; border-radius: 8px; }
 			}
 
 			&.isVideo {
