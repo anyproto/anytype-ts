@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { InputWithFile, Error, MediaAudio, Icon } from 'Component';
+import { InputWithFile, Error, MediaAudio, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -97,19 +97,9 @@ const BlockAudio = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const typeName = translate('blockNameAudio');
 
 	if (object.isDeleted) {
-		element = (
-			<div className="mediaState isRemoved">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
-			</div>
-		);
+		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} />;
 	} else if (object.isArchived) {
-		element = (
-			<div className="mediaState isInBin">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
-			</div>
-		);
+		element = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={U.File.name(object)} />;
 	} else {
 		switch (state) {
 			default:

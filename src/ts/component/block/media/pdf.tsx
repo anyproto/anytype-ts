@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { InputWithFile, Error, Pager, Icon, Loader, ObjectName } from 'Component';
+import { InputWithFile, Error, Pager, Icon, Loader, ObjectName, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -182,14 +182,10 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	let element = null;
 	let pager = null;
 	const typeName = translate('blockNamePdf');
+	const fileName = U.File.name(object);
 
 	if (object.isDeleted) {
-		element = (
-			<div className="mediaState isRemoved">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
-			</div>
-		);
+		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} />;
 	} else if (object.isArchived) {
 		if (state == I.FileState.Done) {
 			const cn = [ 'wrap', 'pdfWrapper' ];
@@ -206,19 +202,11 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 							onClick={() => {}}
 						/>
 					</Suspense>
-					<div className="mediaState isInBin">
-						<Icon name="common/ghost" />
-						<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
-					</div>
+					<MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={fileName} />
 				</div>
 			);
 		} else {
-			element = (
-				<div className="mediaState isInBin">
-					<Icon name="common/ghost" />
-					<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
-				</div>
-			);
+			element = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={fileName} />;
 		};
 	} else {
 		switch (state) {
