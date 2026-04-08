@@ -232,7 +232,7 @@
 	.commentEditor-h2 { padding: 16px 0px 0px 0px; @include text-header2; }
 	.commentEditor-h3 { padding: 12px 0px 0px 0px; @include text-header3; }
 
-	.commentEditor-quote { min-height: 28px; padding: 4px 0px 4px 12px; position: relative; }
+	.commentEditor-quote { padding: 4px 0px 4px 12px; position: relative; }
 	.commentEditor-quote {
 		&::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 4px; height: 100%;
