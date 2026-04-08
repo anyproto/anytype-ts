@@ -11,9 +11,9 @@
 		.iconObject { background-color: var(--color-shape-tertiary); border-radius: 6px; }
 		.info { flex-grow: 1; width: 100%; }
 
-		.icon.chatButtonsRemove {
+		.icon.remove {
 			opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px; width: 20px !important; height: 20px !important;
-			background-color: var(--color-shape-primary); border-radius: 50%; z-index: 1;
+			background-color: var(--color-shape-primary); border-radius: 50%; z-index: 1; color: var(--color-control-accent);
 		}
 
 		.name { line-height: 20px; font-weight: 500; @include clamp1; }
