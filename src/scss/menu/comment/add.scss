@@ -1,0 +1,8 @@
+@import "~scss/_mixins";
+
+.menus {
+	.menu.commentAdd { width: var(--menu-width-icon); }
+	.menu.commentAdd {
+		.content { max-height: unset; }
+	}
+}
