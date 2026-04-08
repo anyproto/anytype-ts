@@ -430,21 +430,16 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const menuContextRef = useRef<any>(null);
 
 	const openCommentAddMenu = useCallback((element: any) => {
+		const { param, data } = U.Menu.getCommentAddMenuParam(menuContextRef);
+
 		S.Menu.open('commentAdd', {
-			classNameWrap: 'fromBlock',
-			component: 'select',
+			...param,
 			element,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,
 			offsetY: -4,
-			noAnimation: true,
-			subIds: [ 'typeSuggest', 'select' ],
-			onOpen: (context: any) => { menuContextRef.current = context; },
 			data: {
-				sections: U.Menu.getCommentAddSections(),
-				noFilter: true,
-				noVirtualisation: true,
-				noScroll: true,
+				...data,
 				onOver: (_e: any, item: any) => {
 					if (!item.arrow) {
 						S.Menu.closeAll([ 'typeSuggest', 'select' ]);
@@ -452,51 +447,10 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 					};
 
 					const context = menuContextRef.current;
-					if (!context) {
-						return;
-					};
-
-					if (item.id === 'create') {
-						U.Menu.typeSuggest({
-							element: `#${context.getId()} #item-create`,
-							className: 'fixed',
-							classNameWrap: 'fromSidebar',
-							offsetX: context.getSize().width,
-							vertical: I.MenuDirection.Center,
-							isSub: true,
-							data: {
-								onAdd: () => context?.close(),
-							},
-						}, {}, { noButtons: true }, '', (object: any) => {
-							editorRef.current?.insertAttachment(object);
-							openObjectPopup(object);
+					if (context && item.id === 'embed') {
+						U.Menu.openCommentEmbedMenu(context, (_e: any, embedItem: any) => {
+							handleSlashAction(embedItem);
 							context?.close();
-						});
-					};
-
-					if (item.id === 'embed') {
-						const embedOptions = U.Menu.getBlockEmbed().map(it => ({
-							...it,
-							action: 'embed',
-							embedProcessor: it.id,
-						}));
-
-						S.Menu.open('select', {
-							element: `#${context.getId()} #item-embed`,
-							className: 'fixed',
-							classNameWrap: 'fromBlock',
-							offsetX: context.getSize().width,
-							vertical: I.MenuDirection.Center,
-							isSub: true,
-							data: {
-								options: embedOptions,
-								noVirtualisation: true,
-								noScroll: true,
-								onSelect: (_e: any, embedItem: any) => {
-									handleSlashAction(embedItem);
-									context?.close();
-								},
-							},
 						});
 					};
 				},
@@ -505,15 +459,14 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				},
 			},
 		});
-	}, [ handleSlashAction, openFilePicker, openObjectPopup ]);
+	}, [ handleSlashAction ]);
 
 	const openPlusMenu = useCallback((element: any) => {
-		const attachments = U.Menu.getCommentAddSections().find(s => s.id === 'attachments');
-		if (!attachments) {
-			return;
-		};
-
-		const children = attachments.children.filter((it: any) => [ 'create', 'object', 'file' ].includes(it.id));
+		const children = [
+			{ id: 'create', action: 'create', iconParam: { name: 'comment/menu/createObject' }, name: translate('commonNewObject'), arrow: true },
+			{ id: 'object', action: 'object', iconParam: { name: 'comment/menu/plus' }, name: translate('spaceExisting') },
+			{ id: 'file', action: 'file', iconParam: { name: 'comment/menu/uploadComputer' }, name: translate('commonUploadComputer') },
+		];
 
 		S.Menu.open('commentAdd', {
 			classNameWrap: 'fromBlock',

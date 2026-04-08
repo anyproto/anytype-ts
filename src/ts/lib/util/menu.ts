@@ -1236,9 +1236,7 @@ class UtilMenu {
 			{
 				id: 'attachments', name: translate('commentSlashMenuAttachments'),
 				children: [
-					{ id: 'create', action: 'create', iconParam: { name: 'comment/menu/createObject' }, name: translate('commonNewObject'), arrow: true },
-					{ id: 'object', action: 'object', iconParam: { name: 'comment/menu/plus' }, name: translate('spaceExisting') },
-					{ id: 'file', action: 'file', iconParam: { name: 'comment/menu/uploadComputer' }, name: translate('commonUploadComputer') },
+					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/code' }, name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
 					{ id: 'embed', action: 'embed', iconParam: { name: 'menu/action/embed' }, name: translate('commentSlashMenuEmbed'), arrow: true },
 				],
 			},
@@ -1247,10 +1245,52 @@ class UtilMenu {
 				children: [
 					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/quote' }, name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
 					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, iconParam: { name: 'menu/block/div/line' }, name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
-					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/code' }, name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
 				],
 			},
 		];
+	};
+
+	getCommentAddMenuParam (contextRef: { current: any }) {
+		return {
+			param: {
+				classNameWrap: 'fromBlock',
+				className: 'commentAdd',
+				component: 'select',
+				noAnimation: true,
+				subIds: [ 'typeSuggest', 'select' ],
+				onOpen: (context: any) => { contextRef.current = context; },
+			},
+			data: {
+				sections: this.getCommentAddSections(),
+				noFilter: true,
+				noScroll: true,
+				noVirtualisation: true,
+			},
+		};
+	};
+
+	openCommentEmbedMenu (context: any, onSelect: (e: any, item: any) => void) {
+		const size = context.getSize();
+		const options = this.getBlockEmbed().map(it => ({
+			...it,
+			action: 'embed',
+			embedProcessor: it.id,
+		}));
+
+		S.Menu.open('select', {
+			element: `#${context.getId()}`,
+			className: 'fixed',
+			classNameWrap: 'fromBlock',
+			offsetX: size.width,
+			offsetY: -size.height,
+			vertical: I.MenuDirection.Bottom,
+			isSub: true,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect,
+			},
+		});
 	};
 
 	getLibrarySortOptions (sortId: I.SortId, sortType: I.SortType): any[] {

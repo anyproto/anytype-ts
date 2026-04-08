@@ -2402,6 +2402,7 @@ const PasteImagePlugin = ({ onPasteFiles }: { onPasteFiles?: (files: File[]) => 
 const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlashAction?: (item: any) => void }) => {
 	const [ editor ] = useLexicalComposerContext();
 	const slashOffset = useRef(-1);
+	const slashMenuContextRef = useRef<any>(null);
 	const prevText = useRef('');
 	const onSlashActionRef = useRef(onSlashAction);
 	onSlashActionRef.current = onSlashAction;
@@ -2456,7 +2457,7 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 					const charBefore = offset > 1 ? text[offset - 2] : '';
 					if (!charBefore || (charBefore === ' ') || (charBefore === '\n')) {
 						slashOffset.current = offset - 1;
-						openSlashMenu(editor, editorId, slashOffset, onSlashActionRef);
+						openSlashMenu(editor, editorId, slashOffset, onSlashActionRef, slashMenuContextRef);
 					};
 				};
 
@@ -2524,9 +2525,7 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 	return null;
 };
 
-let slashMenuContext: any = null;
-
-const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>, onSlashActionRef: React.MutableRefObject<((item: any) => void) | undefined>) => {
+const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>, onSlashActionRef: React.MutableRefObject<((item: any) => void) | undefined>, slashMenuContextRef: { current: any }) => {
 	const rect = U.Dom.getSelectionRect();
 	if (!rect) {
 		return;
@@ -2563,20 +2562,26 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 		});
 	};
 
+	const { param, data } = U.Menu.getCommentAddMenuParam(slashMenuContextRef);
+
+	const closeAndHandle = (cb: () => void) => {
+		const menu = S.Menu.get('commentAdd');
+		const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
+
+		S.Menu.close('commentAdd');
+		removeSlashText(filterLen);
+		cb();
+	};
+
 	S.Menu.open('commentAdd', {
-		classNameWrap: 'fromBlock',
-		component: 'select',
+		...param,
 		rect: { ...rect, y: rect.y + window.scrollY + 4, x: rect.x, width: 0, height: rect.height },
 		vertical: I.MenuDirection.Bottom,
 		horizontal: I.MenuDirection.Left,
 		offsetY: 4,
-		noAnimation: true,
 		commonFilter: true,
-		subIds: [ 'typeSuggest', 'select' ],
-		onOpen: (context: any) => { slashMenuContext = context; },
 		data: {
-			sections: U.Menu.getCommentAddSections(),
-			noFilter: true,
+			...data,
 			filter: '',
 			noClose: true,
 			onOver: (_e: any, item: any) => {
@@ -2585,60 +2590,12 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 					return;
 				};
 
-				const context = slashMenuContext;
-				if (!context) {
-					return;
-				};
-
-				if (item.id === 'create') {
-					U.Menu.typeSuggest({
-						element: `#${context.getId()} #item-create`,
-						className: 'fixed',
-						classNameWrap: 'fromSidebar',
-						offsetX: context.getSize().width,
-						vertical: I.MenuDirection.Center,
-						isSub: true,
-						data: {
-							onAdd: () => context?.close(),
-						},
-					}, {}, { noButtons: true }, '', (object: any) => {
-						const menu = S.Menu.get('commentAdd');
-						const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
-						removeSlashText(filterLen);
-
-						onSlashActionRef.current?.({ action: 'createCallback', object });
-						context?.close();
-					});
-				};
-
-				if (item.id === 'embed') {
-					const embedOptions = U.Menu.getBlockEmbed().map(it => ({
-						...it,
-						action: 'embed',
-						embedProcessor: it.id,
-					}));
-
-					S.Menu.open('select', {
-						element: `#${context.getId()} #item-embed`,
-						className: 'fixed',
-						classNameWrap: 'fromBlock',
-						offsetX: context.getSize().width,
-						vertical: I.MenuDirection.Center,
-						isSub: true,
-						data: {
-							options: embedOptions,
-							noVirtualisation: true,
-							noScroll: true,
-							onSelect: (_e: any, embedItem: any) => {
-								const menu = S.Menu.get('commentAdd');
-								const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
-
-								S.Menu.close('commentAdd');
-								removeSlashText(filterLen);
-
-								onSlashActionRef.current?.({ action: embedItem.action, embedProcessor: embedItem.embedProcessor });
-							},
-						},
+				const context = slashMenuContextRef.current;
+				if (context && item.id === 'embed') {
+					U.Menu.openCommentEmbedMenu(context, (_e: any, embedItem: any) => {
+						closeAndHandle(() => {
+							onSlashActionRef.current?.({ action: embedItem.action, embedProcessor: embedItem.embedProcessor });
+						});
 					});
 				};
 			},
@@ -2647,22 +2604,17 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 					return;
 				};
 
-				const menu = S.Menu.get('commentAdd');
-				const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
-
-				S.Menu.close('commentAdd');
-				removeSlashText(filterLen);
-
-				// Handle block transforms and action items
-				if (item.action) {
-					onSlashActionRef.current?.({ action: item.action, embedProcessor: item.embedProcessor });
-				} else
-				if (item.blockType === I.BlockType.Div) {
-					onSlashActionRef.current?.({ type: item.blockType });
-				} else
-				if (item.textStyle !== undefined) {
-					applyBlockTransform(editor, { style: item.textStyle, type: item.blockType });
-				};
+				closeAndHandle(() => {
+					if (item.action) {
+						onSlashActionRef.current?.({ action: item.action, embedProcessor: item.embedProcessor });
+					} else
+					if (item.blockType === I.BlockType.Div) {
+						onSlashActionRef.current?.({ type: item.blockType });
+					} else
+					if (item.textStyle !== undefined) {
+						applyBlockTransform(editor, { style: item.textStyle, type: item.blockType });
+					};
+				});
 			},
 		},
 	});
