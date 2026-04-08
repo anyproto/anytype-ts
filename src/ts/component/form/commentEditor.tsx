@@ -2123,6 +2123,7 @@ const PasteImagePlugin = ({ onPasteFiles }: { onPasteFiles?: (files: File[]) => 
 const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlashAction?: (item: any) => void }) => {
 	const [ editor ] = useLexicalComposerContext();
 	const slashOffset = useRef(-1);
+	const slashMenuContextRef = useRef<any>(null);
 	const prevText = useRef('');
 	const onSlashActionRef = useRef(onSlashAction);
 	onSlashActionRef.current = onSlashAction;
@@ -2177,7 +2178,7 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 					const charBefore = offset > 1 ? text[offset - 2] : '';
 					if (!charBefore || (charBefore === ' ') || (charBefore === '\n')) {
 						slashOffset.current = offset - 1;
-						openSlashMenu(editor, editorId, slashOffset, onSlashActionRef);
+						openSlashMenu(editor, editorId, slashOffset, onSlashActionRef, slashMenuContextRef);
 					};
 				};
 
@@ -2245,9 +2246,7 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 	return null;
 };
 
-const slashMenuContextRef: { current: any } = { current: null };
-
-const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>, onSlashActionRef: React.MutableRefObject<((item: any) => void) | undefined>) => {
+const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>, onSlashActionRef: React.MutableRefObject<((item: any) => void) | undefined>, slashMenuContextRef: { current: any }) => {
 	const rect = U.Dom.getSelectionRect();
 	if (!rect) {
 		return;

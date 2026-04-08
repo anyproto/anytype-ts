@@ -414,7 +414,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				},
 			},
 		});
-	}, [ handleSlashAction, openFilePicker, openObjectPopup ]);
+	}, [ handleSlashAction ]);
 
 	const openPlusMenu = useCallback((element: any) => {
 		const children = [
