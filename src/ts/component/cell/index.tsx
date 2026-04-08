@@ -84,7 +84,7 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 		};
 
 		const { config } = S.Common;
-		const cell = U.Dom.get(U.Common.esc(cellId));
+		const cell = U.Dom.get(cellId);
 		const className = [];
 		const cellContent = U.Dom.hasClass(cell, 'cellContent') ? cell : U.Dom.select('.cellContent', cell);
 
@@ -149,7 +149,7 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 				U.Dom.css(cellContent, { height: '' });
 			};
 
-			U.Dom.removeClass(U.Dom.get(U.Common.esc(cellId)), 'isEditing');
+			U.Dom.removeClass(U.Dom.get(cellId), 'isEditing');
 			S.Common.cellId = '';
 		};
 

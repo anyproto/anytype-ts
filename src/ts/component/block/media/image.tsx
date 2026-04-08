@@ -153,7 +153,7 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	};
 
 	const getWidth = (checkMax: boolean, v: number): number => {
-		const el = U.Dom.get(`selectionTarget-${U.Common.esc(block.id)}`);
+		const el = U.Dom.get(`selectionTarget-${block.id}`);
 		const width = Number(block.fields.width) || 1;
 
 		if (!el) {
@@ -176,6 +176,7 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	let element = null;
 	let overlay = null;
+
 	const typeName = translate('blockNameImage');
 
 	if (object.isDeleted) {

@@ -461,7 +461,7 @@ class UtilMenu {
 					window.setTimeout(() => {
 						switch (option.id) {
 							case 'edit': {
-								U.Dom.get(`button-${U.Common.esc(blockId)}-settings`)?.click();
+								U.Dom.get(`button-${blockId}-settings`)?.click();
 								S.Menu.updateData('dataviewViewSettings', { view: observable.box(new M.View(view)) });
 								break;
 							};

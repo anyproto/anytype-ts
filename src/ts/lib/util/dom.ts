@@ -3,6 +3,10 @@ import * as I from 'Interface';
 
 class UtilDom {
 
+	esc (v: any): string {
+		return CSS.escape(String(v));
+	};
+
 	get (id: string): HTMLElement | null {
 		return document.getElementById(id);
 	};

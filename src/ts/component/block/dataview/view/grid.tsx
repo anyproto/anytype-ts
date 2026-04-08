@@ -225,7 +225,7 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 	};
 
 	const cellPosition = (cellId: string) => {
-		const cell = U.Dom.get(U.Common.esc(cellId));
+		const cell = U.Dom.get(cellId);
 		if (!cell || !U.Dom.hasClass(cell, 'isEditing')) {
 			return;
 		};

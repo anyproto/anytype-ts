@@ -65,7 +65,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		onViewSet(view);
 
 		window.setTimeout(() => {
-			const btn = U.Dom.get(`button-${U.Common.esc(block.id)}-settings`);
+			const btn = U.Dom.get(`button-${block.id}-settings`);
 			btn?.click();
 		}, 50);
 	};

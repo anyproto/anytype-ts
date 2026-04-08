@@ -136,7 +136,7 @@ const CellSelect = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const scrollToBottom = () => {
-		const cell = U.Dom.get(U.Common.esc(id));
+		const cell = U.Dom.get(id);
 		if (!cell) {
 			return;
 		};
@@ -318,7 +318,7 @@ const CellSelect = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	useEffect(() => {
-		const cell = U.Dom.get(U.Common.esc(id));
+		const cell = U.Dom.get(id);
 		if (cell) {
 			U.Dom.toggleClass(cell, 'isEditing', isEditing);
 		};
