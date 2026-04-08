@@ -68,7 +68,7 @@
 			.handleColumn { display: block; border-color: var(--color-system-accent-100); }
 		}
 		
-		.row { display: grid; position: relative; border-right: 1px solid var(--color-shape-highlight-medium); }
+		.row { display: grid; position: relative; }
 		.row::before {
 			content: ''; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; pointer-events: none; z-index: 1;
 			box-shadow: -1px 0px var(--color-shape-highlight-medium) inset; border-radius: inherit;
@@ -179,7 +179,7 @@
 			}
 
 			.icon.menu { 
-				width: 20px; height: calc(100% - 2px); position: absolute; right: 0px; top: 1px; z-index: 2; cursor: default; opacity: 0; pointer-events: none; 
+				width: 20px; height: calc(100% - 2px); position: absolute; right: 1px; top: 1px; z-index: 2; cursor: default; opacity: 0; pointer-events: none; 
 				background-color: var(--color-bg-primary); 
 			}
 			.icon.menu {
