@@ -327,8 +327,8 @@
 
 			.icon.remove {
 				opacity: 0; transition: $transitionAllCommon; position: absolute; right: -6px; top: -6px;
-				width: 20px !important; height: 20px !important;
-				background-color: var(--color-shape-primary); border-radius: 50%; z-index: 1;
+				width: 20px !important; height: 20px !important; background-color: var(--color-shape-primary); 
+				border-radius: 50%; z-index: 1; color: var(--color-control-accent);
 			}
 
 			&.isFile {
