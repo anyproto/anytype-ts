@@ -15,6 +15,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	const type = S.Record.getTypeById(S.Common.type);
 	const participant = U.Space.getParticipant();
 	const canWrite = U.Space.canMyParticipantWrite();
+	const isOwner = U.Space.isMyOwner();
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const cnh = [ 'spaceHeader' ];
 	const nodeRef = useRef(null);
@@ -316,7 +317,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 											</div>
 
 											<div className="side right">
-												<div id="empty-dashboard-select" className="select" onClick={onDashboard}>
+												<div id="empty-dashboard-select" className={[ 'select', (!isOwner ? 'disabled' : '') ].join(' ')} onClick={isOwner ? onDashboard : undefined}>
 													<div className="item">
 														<div className="name">{home ? home.name : translate('commonSelect')}</div>
 													</div>
