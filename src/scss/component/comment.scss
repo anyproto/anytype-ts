@@ -207,7 +207,7 @@
 			min-height: 20px; padding: 0px; border: 0px; background-color: transparent;
 			outline: none; line-height: 20px; word-break: break-word;
 		}
-		.commentEditorInput > :first-child:not(.commentEditor-codeBlock) { padding-top: 0px; }
+		.commentEditorInput > :first-child:not(.commentEditor-codeBlock):not(.commentEditor-quote) { padding-top: 0px; }
 
 		.commentEditorPlaceholder {
 			position: absolute; top: 0px; left: 0px; color: var(--color-text-tertiary);
