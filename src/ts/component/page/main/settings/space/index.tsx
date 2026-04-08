@@ -306,7 +306,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 
 							<div className="sectionContent">
-								{!spaceview.isOneToOne ? (
+								{(!spaceview.isOneToOne && isOwner) ? (
 									<div className="item">
 										<div className="sides">
 											<Icon name="settings/home" />
@@ -317,7 +317,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 											</div>
 
 											<div className="side right">
-												<div id="empty-dashboard-select" className={[ 'select', (!isOwner ? 'disabled' : '') ].join(' ')} onClick={isOwner ? onDashboard : undefined}>
+												<div id="empty-dashboard-select" className="select" onClick={onDashboard}>
 													<div className="item">
 														<div className="name">{home ? home.name : translate('commonSelect')}</div>
 													</div>
