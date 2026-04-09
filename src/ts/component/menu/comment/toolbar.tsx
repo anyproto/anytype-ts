@@ -79,9 +79,9 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		e.stopPropagation();
 
 		const options = [
-			{ id: 'bulleted', iconParam: { name: 'menu/block/text/bulleted' }, name: translate('blockNameBulleted'), textStyle: I.TextStyle.Bulleted },
-			{ id: 'numbered', iconParam: { name: 'menu/block/text/numbered' }, name: translate('blockNameNumbered'), textStyle: I.TextStyle.Numbered },
-			{ id: 'checkbox', iconParam: { name: 'menu/block/text/checkbox', color: 'accent100' }, name: translate('blockNameCheckbox'), textStyle: I.TextStyle.Checkbox },
+			{ id: 'bulleted', iconParam: { name: 'menu/block/text/bulleted' }, name: translate('commentBlockBulleted'), textStyle: I.TextStyle.Bulleted },
+			{ id: 'numbered', iconParam: { name: 'menu/block/text/numbered' }, name: translate('commentBlockNumbered'), textStyle: I.TextStyle.Numbered },
+			{ id: 'checkbox', iconParam: { name: 'comment/menu/checkbox' }, name: translate('commentBlockCheckbox'), textStyle: I.TextStyle.Checkbox },
 		];
 
 		S.Menu.open('select', {
@@ -113,6 +113,22 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			case 'header2':
 			case 'header3': return 'menu/block/text/header';
 			default: return 'menu/block/text/paragraph';
+		};
+	})();
+
+	const listIcon = (() => {
+		switch (blockStyle) {
+			case 'numbered': return 'menu/block/text/numbered';
+			case 'checkbox': return 'comment/menu/checkbox';
+			default: return 'menu/block/text/bulleted';
+		};
+	})();
+
+	const listTooltip = (() => {
+		switch (blockStyle) {
+			case 'numbered': return translate('commentBlockNumbered');
+			case 'checkbox': return translate('commentBlockCheckbox');
+			default: return translate('commentBlockBulleted');
 		};
 	})();
 
@@ -164,10 +180,10 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			<div className="section last">
 				<Icon
 					id="button-list"
-					name="menu/block/text/bulleted"
+					name={listIcon}
 					className="blockStyle" withBackground={true}
 					arrow={true}
-					tooltipParam={{ text: translate('blockNameBulleted') }}
+					tooltipParam={{ text: listTooltip }}
 					onMouseDown={onListClick}
 				/>
 			</div>

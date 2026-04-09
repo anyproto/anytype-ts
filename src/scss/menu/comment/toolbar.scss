@@ -5,9 +5,9 @@
 
 		.icon { margin: 0px; }
 
-		.icon.blockStyle { width: 40px !important; background-position: 4px center; }
+		.icon.blockStyle { width: 40px !important; gap: 0px 2px; }
 		.icon.blockStyle {
-			.icon.arrow { right: 4px; }
+			.icon.arrow { position: static; }
 		}
 
 	}

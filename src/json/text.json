@@ -2957,6 +2957,7 @@
 	"commentBlockCodeDescription": "Monospace code block",
 
 	"commentSlashMenuEmbed": "Embed",
+	"commentSlashMenuNewObject": "New %s",
 	"commentBlockLatex": "LaTeX",
 	"commentBlockLatexDescription": "Mathematical formula",
 	"commentBlockMermaid": "Mermaid",

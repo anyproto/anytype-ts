@@ -216,6 +216,10 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onOpen = (e: any) => {
+		if (object.isTmp) {
+			return;
+		};
+
 		if (isDownload && (syncStatus != I.SyncStatusObject.Synced)) {
 			return;
 		};
@@ -257,6 +261,10 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onPreviewHandler = () => {
+		if (object.isTmp) {
+			return;
+		};
+
 		const item = getPreviewItem();
 
 		if (onPreview) {
