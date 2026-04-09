@@ -76,7 +76,7 @@
 					.name { color: var(--color-text-secondary); }
 				}
 
-				.selectedMembers { max-height: 288px; overflow-y: auto; }
+				.selectedMembers { overflow-y: auto; }
 			}
 		}
 	}

@@ -14,6 +14,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const joinInputRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const listRef = useRef(null);
+	const selectedListRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const [ canSave, setCanSave ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -346,6 +347,13 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 				U.Dom.css(listRef.current, { height: `${listHeight}px` });
 			};
 
+			if ((step == 1) && selectedListRef.current) {
+				const maxHeight = Math.max(window.innerHeight - SAFE_AREA - STEP1_OVERHEAD, 0);
+				const totalHeight = selectedMemberObjects.length * ROW_HEIGHT;
+				const height = Math.min(totalHeight, maxHeight);
+
+				U.Dom.css(selectedListRef.current, { height: `${height}px` });
+			};
 		});
 	};
 
@@ -371,6 +379,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const ROW_HEIGHT = 48;
 	const SAFE_AREA = 120;
 	const STEP0_OVERHEAD = 172;
+	const STEP1_OVERHEAD = 380;
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
@@ -518,7 +527,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 						</div>
 
 						{selectedMemberObjects.length ? (
-							<div className="selectedMembers">
+							<div ref={selectedListRef} className="selectedMembers">
 								{selectedMemberObjects.map(item => (
 									<div key={item.id} id={`member-${item.id}`} className="item" onContextMenu={e => onMemberContext(e, item.id)}>
 										<IconObject size={32} object={item} />
