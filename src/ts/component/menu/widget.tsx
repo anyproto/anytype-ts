@@ -24,7 +24,7 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Menu.closeAll(J.Menu.widget);
 
 			if (needUpdate.current) {
-				U.Dom.eventDispatch(window, `updateWidgetData.${blockId}`);
+				U.Dom.eventDispatch(window, 'updateWidgetData');
 			};
 		};
 	}, []);

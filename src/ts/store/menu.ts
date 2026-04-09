@@ -333,7 +333,7 @@ class MenuStore {
 	 * @private
 	 */
 	resizeAll () {
-		this.list.forEach(it => U.Dom.eventDispatch(window, `resize.${U.String.toCamelCase(`menu-${it.id}`)}`));
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 };

@@ -114,7 +114,7 @@ const ViewCalendar = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		if (wrap) {
 			U.Dom.css(wrap, { width: `${mw}px`, marginLeft: `${-J.Size.blockMenu + PADDING}px` });
 		};
-		U.Dom.eventDispatch(window, 'resize.menuCalendarDay');
+		U.Dom.eventDispatch(window, 'resize');
 
 		if (menu && !menu.param.data.fromWidget && day) {
 			S.Menu.update('calendarDay', { width: day.offsetWidth + 8 });

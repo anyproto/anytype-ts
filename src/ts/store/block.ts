@@ -1073,7 +1073,7 @@ class BlockStore {
 		blocks.forEach(block => {
 			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.getTargetObjectId() == rootId));
 			if (children.length) {
-				U.Dom.eventDispatch(window, `${code}.${block.id}`);
+				U.Dom.eventDispatch(window, code);
 			};
 		});
 	};
