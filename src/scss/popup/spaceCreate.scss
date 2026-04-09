@@ -64,8 +64,12 @@
 		}
 
 		/* Step 1 — Name & Icon */
+		.step.step1 { display: flex; flex-direction: column; max-height: calc(100vh - 104px); }
 		.step.step1 {
-			.membersSection { text-align: left; margin: 0px -8px 0px -8px; }
+			> .wrapper { flex-shrink: 0; }
+			> .wrapper.buttons { flex-shrink: 0; }
+
+			.membersSection { text-align: left; margin: 0px -8px 0px -8px; flex: 1; min-height: 0; display: flex; flex-direction: column; }
 			.membersSection {
 				.sectionLabel { @include text-very-small; color: var(--color-text-secondary); margin: 0px; padding: 4px 8px; display: flex; align-items: flex-end; }
 
@@ -74,9 +78,9 @@
 					.name { color: var(--color-text-secondary); }
 				}
 
-				.memberListWrapper { position: relative; }
+				.memberListWrapper { position: relative; flex: 1; min-height: 0; }
 				.memberListWrapper {
-					.memberList { position: relative; }
+					.memberList { position: relative; height: 100%; }
 					.memberList {
 						.ReactVirtualized__List { padding: 8px; scrollbar-gutter: stable; }
 					}
