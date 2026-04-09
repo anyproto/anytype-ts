@@ -14,6 +14,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const joinInputRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const listRef = useRef(null);
+	const selectedListRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const [ canSave, setCanSave ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -352,7 +353,16 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 				U.Dom.css(listRef.current, { height: `${listHeight}px` });
 			};
 
-			});
+			if ((step == 1) && selectedListRef.current) {
+				const LABEL_HEIGHT = 28;
+				const rowCount = selectedMemberObjects.length + 2;
+				const totalHeight = LABEL_HEIGHT + (rowCount - 1) * ROW_HEIGHT;
+				const maxHeight = Math.max(window.innerHeight - SAFE_AREA - STEP1_OVERHEAD, 80);
+				const height = Math.min(totalHeight, maxHeight) + 16;
+
+				U.Dom.css(selectedListRef.current, { height: `${height}px` });
+			};
+		});
 	};
 
 	useEffect(() => {
@@ -379,6 +389,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const ROW_HEIGHT = 48;
 	const SAFE_AREA = 120;
 	const STEP0_OVERHEAD = 172;
+	const STEP1_OVERHEAD = 380;
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
@@ -521,7 +532,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 					<div className="membersSection">
 						<div className="memberListWrapper">
 							{isSelectedScrolledTop ? <div className="grad top" /> : ''}
-							<div className="memberList">
+							<div ref={selectedListRef} className="memberList">
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => {
 										const LABEL_HEIGHT = 28;
