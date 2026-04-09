@@ -24,8 +24,8 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 	const { object, showAsFile, bookmarkAsDefault, isDownload, withInlineSize = true, onPreview, updateAttachments, onRemove } = props;
 
 	let syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
-	if (!object.isTmp && (object.syncStatus === undefined)) {
-		syncStatus = I.SyncStatusObject.Syncing;
+	if (object.syncStatus === undefined) {
+		syncStatus = object.isTmp ? I.SyncStatusObject.Queued : I.SyncStatusObject.Syncing;
 	};
 
 	const isDownloadingFile = S.Common.isDownloading(object.id);
