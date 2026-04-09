@@ -1379,7 +1379,9 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 				classNameWrap: 'fromBlock',
 				rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
 				horizontal: I.MenuDirection.Center,
-				offsetY: 4,
+				vertical: I.MenuDirection.Top,
+				offsetY: -4,
+				noAnimation: true,
 				data: {
 					value: mark?.param,
 					filter: mark?.param,
