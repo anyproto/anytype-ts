@@ -578,11 +578,24 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 							case 'anytypeMiniAppState': {
 								// React app pushed a new state via window.__ANYTYPE_API__.setState(next).
-								// Write it back into the JSON sibling code block. The subsequent
-								// MobX/subscription update will re-render the embed component, which
-								// will re-post the new state to the iframe through the same path —
-								// where iframe.html detects the html is unchanged and dispatches a
-								// state-only event instead of remounting React.
+								// Two writes happen here:
+								//
+								//   1. S.Block.updateContent — mutates the local MobX store
+								//      synchronously. This fires the embed component's observer
+								//      (because we read jsonBlock.content.text during render),
+								//      which re-runs init → setContent → posts the new payload
+								//      to the iframe, where the state-only fast path dispatches
+								//      'anytype:state' so the React app's listener can update.
+								//
+								//   2. C.BlockTextSetText — async sync to anytype-heart for
+								//      persistence. Heart's echoed BlockSetText event is
+								//      debounced and only updates the local store much later
+								//      (or not at all on the same tick), which is why we need
+								//      step 1 — without it, the React app sees a frozen state
+								//      across multiple clicks until the page is reloaded.
+								//
+								// This double-write pattern matches what anytype-ts itself does
+								// for normal text input (see U.Data.blockSetText, data.ts:449).
 								if (!appStateBlockId) {
 									break;
 								};
@@ -593,6 +606,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 									console.warn('AnytypeMiniApp: failed to serialize state', err);
 									break;
 								};
+								S.Block.updateContent(rootId, appStateBlockId, { text: serialized });
 								C.BlockTextSetText(rootId, appStateBlockId, serialized, [], { from: 0, to: 0 });
 								break;
 							};
