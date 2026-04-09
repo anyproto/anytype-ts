@@ -223,6 +223,10 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 									};
 
 									C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+										if (message.error.code) {
+											return;
+										};
+
 										analytics.event('ShareSpace');
 										analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
 
