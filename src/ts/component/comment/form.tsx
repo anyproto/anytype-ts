@@ -415,20 +415,24 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				};
 
 				case 'createType': {
-					if (item.typeId) {
-						const type = S.Record.getTypeById(item.typeId);
-						if (type) {
-							C.ObjectCreate({}, [ I.ObjectFlag.DeleteEmpty ], '', type.uniqueKey, S.Common.space, (message: any) => {
-								if (message.error.code || !message.details) {
-									return;
-								};
-
-								const object = message.details;
-								editorRef.current?.insertAttachment(object);
-								openObjectPopup(object);
-							});
-						};
+					if (!item.typeId) {
+						break;
 					};
+
+					const type = S.Record.getTypeById(item.typeId);
+					if (!type) {
+						break;
+					};
+					
+					C.ObjectCreate({}, [ I.ObjectFlag.DeleteEmpty ], '', type.uniqueKey, S.Common.space, (message: any) => {
+						if (message.error.code || !message.details) {
+							return;
+						};
+
+						const object = message.details;
+						editorRef.current?.insertAttachment(object);
+						openObjectPopup(object);
+					});
 					break;
 				};
 			};

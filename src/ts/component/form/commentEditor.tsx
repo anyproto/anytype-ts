@@ -1961,6 +1961,7 @@ const SelectionToolbarPlugin = () => {
 					vertical: I.MenuDirection.Top,
 					passThrough: true,
 					noAnimation: true,
+					noBorderY: true,
 					data: {
 						getActiveFormats,
 						getBlockStyle,
