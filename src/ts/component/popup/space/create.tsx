@@ -520,9 +520,6 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 
 				{(isGroup && (members.length || selectedMemberObjects.length)) ? (() => {
 					const LABEL_HEIGHT = 28;
-					const POPUP_WIDTH = 480;
-					const LIST_PADDING = 16;
-					const listWidth = POPUP_WIDTH - LIST_PADDING * 2;
 					const rows = [
 						{ id: '_label', type: 'label' },
 						{ id: '_add', type: 'add' },
@@ -536,41 +533,47 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 						<div className="membersSection">
 							<div className="memberListWrapper">
 								{isSelectedScrolledTop ? <div className="grad top" /> : ''}
-								<List
-									width={listWidth}
-									height={selectedListHeight}
-									rowCount={rows.length}
-									rowHeight={({ index }) => (rows[index].type == 'label') ? LABEL_HEIGHT : ROW_HEIGHT}
-									rowRenderer={({ index, key, style }) => {
-										const row = rows[index];
+								<div className="memberList" style={{ height: selectedListHeight }}>
+									<AutoSizer className="scrollArea">
+										{({ width, height }) => (
+											<List
+												width={width}
+												height={height}
+												rowCount={rows.length}
+												rowHeight={({ index }) => (rows[index].type == 'label') ? LABEL_HEIGHT : ROW_HEIGHT}
+												rowRenderer={({ index, key, style }) => {
+													const row = rows[index];
 
-										if (row.type == 'label') {
-											return (
-												<div key={key} style={style} className="sectionLabel">
-													{translate('popupSpaceCreateMembersLabel')}
-												</div>
-											);
-										};
+													if (row.type == 'label') {
+														return (
+															<div key={key} style={style} className="sectionLabel">
+																{translate('popupSpaceCreateMembersLabel')}
+															</div>
+														);
+													};
 
-										if (row.type == 'add') {
-											return (
-												<div key={key} style={style} className="item add" onClick={() => setStep(0)}>
-													<Icon name="menu/spaceCreate/group" />
-													<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
-												</div>
-											);
-										};
+													if (row.type == 'add') {
+														return (
+															<div key={key} style={style} className="item add" onClick={() => setStep(0)}>
+																<Icon name="menu/spaceCreate/group" />
+																<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
+															</div>
+														);
+													};
 
-										return (
-											<div key={key} style={style} id={`member-${row.id}`} className="item" onContextMenu={e => onMemberContext(e, row.id)}>
-												<IconObject size={32} object={row} />
-												<ObjectName object={row} withBadge={true} />
-											</div>
-										);
-									}}
-									overscanRowCount={10}
-									onScroll={onSelectedMemberListScroll}
-								/>
+													return (
+														<div key={key} style={style} id={`member-${row.id}`} className="item" onContextMenu={e => onMemberContext(e, row.id)}>
+															<IconObject size={32} object={row} />
+															<ObjectName object={row} withBadge={true} />
+														</div>
+													);
+												}}
+												overscanRowCount={10}
+												onScroll={onSelectedMemberListScroll}
+											/>
+										)}
+									</AutoSizer>
+								</div>
 								{isSelectedScrolledBottom ? <div className="grad bottom" /> : ''}
 							</div>
 						</div>
