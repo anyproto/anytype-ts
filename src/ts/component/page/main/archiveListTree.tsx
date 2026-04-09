@@ -18,13 +18,14 @@ interface Props {
 	onSelectAll: () => void;
 	onSort: (id: string, type: I.SortType) => void;
 	isAllSelected: boolean;
+	onVisibleIdsChange?: (ids: string[]) => void;
 }
 
 const LIMIT = 10000;
 const ROW_HEIGHT = 42;
 const ROW_HEIGHT_DETAILED = 64;
 
-const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, isDetailed = false, selectedIds, filterText, sortId, sortType, onSelectChange, onSelectAll, onSort, isAllSelected }: Props) => {
+const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, isDetailed = false, selectedIds, filterText, sortId, sortType, onSelectChange, onSelectAll, onSort, isAllSelected, onVisibleIdsChange }: Props) => {
 
 	const [ expandedIds, setExpandedIds ] = useState<string[]>([]);
 	const listRef = useRef(null);
@@ -118,6 +119,12 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, isDetailed = fals
 			if (va > vb) cmp = 1;
 			return sortType === I.SortType.Asc ? cmp : -cmp;
 		});
+
+	const visibleIds = useMemo(() => visibleRoots.flatMap(n => U.Data.flattenIds(n)), [ visibleRoots ]);
+
+	useEffect(() => {
+		onVisibleIdsChange?.(visibleIds);
+	}, [ visibleIds ]);
 
 	const columns = [
 		{ key: 'name', label: translate('commonName') },
