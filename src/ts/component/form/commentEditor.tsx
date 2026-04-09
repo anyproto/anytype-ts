@@ -2563,7 +2563,9 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 									S.Record.getTypes().filter((t: any) =>
 										(t.name || '').toLowerCase().includes(s) &&
 										!U.Object.isInFileOrSystemLayouts(t.recommendedLayout) &&
-										!U.Object.isInSetLayouts(t.recommendedLayout)
+										!U.Object.isInSetLayouts(t.recommendedLayout) &&
+										!U.Object.isParticipantLayout(t.recommendedLayout) &&
+										!U.Object.isTemplateType(t.id)
 									)
 								).slice(0, 5);
 
