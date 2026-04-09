@@ -26,8 +26,6 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const [ selectedMembers, setSelectedMembers ] = useState<string[]>([]);
 	const [ isScrolledTop, setIsScrolledTop ] = useState(false);
 	const [ isScrolledBottom, setIsScrolledBottom ] = useState(false);
-	const [ isSelectedScrolledTop, setIsSelectedScrolledTop ] = useState(false);
-	const [ isSelectedScrolledBottom, setIsSelectedScrolledBottom ] = useState(false);
 	const { data } = param;
 	const { type } = data;
 	const { name: limit } = J.Constant.limit.space;
@@ -158,10 +156,6 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		setIsScrolledBottom((scrollTop + clientHeight) < (scrollHeight - 1));
 	};
 
-	const onSelectedMemberListScroll = ({ scrollTop, scrollHeight, clientHeight }) => {
-		setIsSelectedScrolledTop(scrollTop > 0);
-		setIsSelectedScrolledBottom((scrollTop + clientHeight) < (scrollHeight - 1));
-	};
 
 	const onSubmit = () => {
 		if (isLoading || !canSave) {
@@ -365,8 +359,6 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			filterRef.current?.setValue('');
 			setIsScrolledTop(false);
 			setIsScrolledBottom(false);
-			setIsSelectedScrolledTop(false);
-			setIsSelectedScrolledBottom(false);
 
 			if (isGroup) {
 				analytics.event('ScreenAddMember');
@@ -379,7 +371,6 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const ROW_HEIGHT = 48;
 	const SAFE_AREA = 120;
 	const STEP0_OVERHEAD = 172;
-	const STEP1_OVERHEAD = 380;
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
@@ -518,67 +509,26 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 					/>
 				</div>
 
-				{(isGroup && (members.length || selectedMemberObjects.length)) ? (() => {
-					const LABEL_HEIGHT = 28;
-					const rows = [
-						{ id: '_label', type: 'label' },
-						{ id: '_add', type: 'add' },
-						...selectedMemberObjects.map(it => ({ ...it, type: 'member' })),
-					];
-					const totalHeight = LABEL_HEIGHT + (rows.length - 1) * ROW_HEIGHT;
-					const maxHeight = Math.max(window.innerHeight - SAFE_AREA - STEP1_OVERHEAD, 80);
-					const selectedListHeight = Math.min(totalHeight, maxHeight);
-
-					return (
-						<div className="membersSection">
-							<div className="memberListWrapper">
-								{isSelectedScrolledTop ? <div className="grad top" /> : ''}
-								<div className="memberList" style={{ height: selectedListHeight }}>
-									<AutoSizer className="scrollArea">
-										{({ width, height }) => (
-											<List
-												width={width}
-												height={height}
-												rowCount={rows.length}
-												rowHeight={({ index }) => (rows[index].type == 'label') ? LABEL_HEIGHT : ROW_HEIGHT}
-												rowRenderer={({ index, key, style }) => {
-													const row = rows[index];
-
-													if (row.type == 'label') {
-														return (
-															<div key={key} style={style} className="sectionLabel">
-																{translate('popupSpaceCreateMembersLabel')}
-															</div>
-														);
-													};
-
-													if (row.type == 'add') {
-														return (
-															<div key={key} style={style} className="item add" onClick={() => setStep(0)}>
-																<Icon name="menu/spaceCreate/group" />
-																<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
-															</div>
-														);
-													};
-
-													return (
-														<div key={key} style={style} id={`member-${row.id}`} className="item" onContextMenu={e => onMemberContext(e, row.id)}>
-															<IconObject size={32} object={row} />
-															<ObjectName object={row} withBadge={true} />
-														</div>
-													);
-												}}
-												overscanRowCount={10}
-												onScroll={onSelectedMemberListScroll}
-											/>
-										)}
-									</AutoSizer>
-								</div>
-								{isSelectedScrolledBottom ? <div className="grad bottom" /> : ''}
-							</div>
+				{(isGroup && (members.length || selectedMemberObjects.length)) ? (
+					<div className="membersSection">
+						<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
+						<div className="item add" onClick={() => setStep(0)}>
+							<Icon name="menu/spaceCreate/group" />
+							<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
 						</div>
-					);
-				})() : ''}
+
+						{selectedMemberObjects.length ? (
+							<div className="selectedMembers">
+								{selectedMemberObjects.map(item => (
+									<div key={item.id} id={`member-${item.id}`} className="item" onContextMenu={e => onMemberContext(e, item.id)}>
+										<IconObject size={32} object={item} />
+										<ObjectName object={item} withBadge={true} />
+									</div>
+								))}
+							</div>
+						) : ''}
+					</div>
+				) : ''}
 
 				<div className="wrapper buttons">
 					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateStep2Create')} color="accent" onClick={onSubmit} />
