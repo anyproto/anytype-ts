@@ -1445,7 +1445,25 @@ const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
 
 	useEffect(() => {
 		const onKeyDown = (e: KeyboardEvent) => {
-			if ((e.key === 'Enter') && (e.metaKey || e.ctrlKey)) {
+			if (e.key !== 'Enter') {
+				return;
+			};
+
+			// Don't submit when menus are open — let the menu handle Enter
+			if (S.Menu.isOpen('commentAdd') || S.Menu.isOpen('blockEmoji') || S.Menu.isOpen('blockMention') || S.Menu.isOpen('selectPasteUrl')) {
+				return;
+			};
+
+			const hasCmd = e.metaKey || e.ctrlKey;
+			const cmdSend = S.Common.commentCmdSend;
+
+			if (cmdSend && hasCmd) {
+				// Cmd+Enter to send
+				e.preventDefault();
+				onSubmit?.();
+			} else
+			if (!cmdSend && !hasCmd && !e.shiftKey) {
+				// Enter to send (Shift+Enter for newline)
 				e.preventDefault();
 				onSubmit?.();
 			};
