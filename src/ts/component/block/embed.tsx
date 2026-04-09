@@ -40,6 +40,32 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const rootRef = useRef(null);
 	const isExcalidraw = block.isEmbedExcalidraw();
 
+	// AnytypeMiniApp: read source (HTML) and initial state (JSON) from sibling
+	// code blocks under the same parent. These reads happen during render so
+	// MobX tracks them — when either sibling code block's content changes, the
+	// embed re-renders and the iframe re-loads with the new payload.
+	let appHtmlContent = '';
+	let appStateText = '';
+	let appStateBlockId = '';
+	if (processor === I.EmbedProcessor.AnytypeMiniApp) {
+		const parent = S.Block.getParentLeaf(rootId, block.id);
+		if (parent) {
+			const codeSiblings = S.Block.getChildren(rootId, parent.id, (b: I.Block) => {
+				return b && (b.id !== block.id) && b.isTextCode();
+			});
+			const htmlBlock = codeSiblings.find((b: any) => {
+				const lang = String(b.fields?.lang || '').toLowerCase();
+				return (lang === 'html') || (lang === 'markup');
+			});
+			const jsonBlock = codeSiblings.find((b: any) => {
+				return String(b.fields?.lang || '').toLowerCase() === 'json';
+			});
+			appHtmlContent = String(htmlBlock?.content?.text || '');
+			appStateText = String(jsonBlock?.content?.text || '');
+			appStateBlockId = String(jsonBlock?.id || '');
+		};
+	};
+
 	if (width) {
 		css.width = (width * 100) + '%';
 	};
@@ -500,7 +526,25 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						sanitizeParam.ADD_TAGS.push('script');
 					};
 
-					if (U.Embed.allowJs(processor)) {
+					if (processor === I.EmbedProcessor.AnytypeMiniApp) {
+						// POC: pass the sibling HTML code block straight through, plus
+						// parsed JSON state from the sibling JSON code block. iframe.html
+						// has a dedicated handler that rewrites <script> tags so the React
+						// deps in the HTML actually execute (innerHTML alone won't run them).
+						let parsedState: any = null;
+						if (appStateText) {
+							try {
+								parsedState = JSON.parse(appStateText);
+							} catch (e) {
+								console.warn('AnytypeMiniApp: invalid JSON state', e);
+							};
+						};
+
+						data.anytypeMiniApp = {
+							html: appHtmlContent,
+							state: parsedState,
+						};
+					} else if (U.Embed.allowJs(processor)) {
 						data.js = text;
 					} else {
 						text = text.replace(/\r?\n/g, '');
@@ -529,6 +573,27 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 							case 'openUrl': {
 								Action.openUrl(url);
+								break;
+							};
+
+							case 'anytypeMiniAppState': {
+								// React app pushed a new state via window.__ANYTYPE_API__.setState(next).
+								// Write it back into the JSON sibling code block. The subsequent
+								// MobX/subscription update will re-render the embed component, which
+								// will re-post the new state to the iframe through the same path —
+								// where iframe.html detects the html is unchanged and dispatches a
+								// state-only event instead of remounting React.
+								if (!appStateBlockId) {
+									break;
+								};
+								let serialized = '';
+								try {
+									serialized = JSON.stringify(oe.data.state, null, 2);
+								} catch (err) {
+									console.warn('AnytypeMiniApp: failed to serialize state', err);
+									break;
+								};
+								C.BlockTextSetText(rootId, appStateBlockId, serialized, [], { from: 0, to: 0 });
 								break;
 							};
 						};
@@ -832,7 +897,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 	useEffect(() => {
 		init();
-	}, [ block.content.text, isEditing, isShowing ]);
+		// appHtmlContent / appStateText are always '' for non-AnytypeMiniApp
+		// processors, so adding them to the deps is a no-op for those cases
+		// and re-runs init() when the sibling code blocks change for the
+		// AnytypeMiniApp processor.
+	}, [ block.content.text, isEditing, isShowing, appHtmlContent, appStateText ]);
 
 	useEffect(() => {
 		if (isEditing) {

@@ -165,6 +165,7 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.AppleMusic, name: 'Apple Music' },
 			{ id: I.EmbedProcessor.Bandcamp, name: 'Bandcamp' },
 			{ id: I.EmbedProcessor.Reddit, name: 'Reddit' },
+			{ id: I.EmbedProcessor.AnytypeMiniApp, name: 'Anytype Mini App' },
 		];
 
 		if (config.experimental) {
