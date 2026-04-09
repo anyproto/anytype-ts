@@ -660,7 +660,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			<div className="socialBlockWrap">
 				<div ref={socialRef} className="socialBlock isHidden">
 					<div className="commentCounter" onClick={onCounterClick}>
-						<Icon name="comment/discussion" className="discussion" size={16} />
+						<Icon name="comment/discussion" className="discussion" size={18} />
 						<span className="count">{counterLabel}</span>
 					</div>
 				</div>
