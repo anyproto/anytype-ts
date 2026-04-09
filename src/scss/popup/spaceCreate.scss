@@ -65,9 +65,9 @@
 
 		/* Step 1 — Name & Icon */
 		.step.step1 {
-			.membersSection { text-align: left; }
+			.membersSection { text-align: left; margin: 0px -8px 0px -8px; }
 			.membersSection {
-				.sectionLabel { @include text-very-small; color: var(--color-text-secondary); margin: 0px; padding: 4px 8px; }
+				.sectionLabel { @include text-very-small; color: var(--color-text-secondary); margin: 0px; padding: 4px 8px; display: flex; align-items: flex-end; }
 
 				.item.add {
 					.icon { width: 32px; height: 32px; border-radius: 50%; background: var(--color-shape-highlight-medium); }
