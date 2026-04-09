@@ -27,6 +27,8 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const [ selectedMembers, setSelectedMembers ] = useState<string[]>([]);
 	const [ isScrolledTop, setIsScrolledTop ] = useState(false);
 	const [ isScrolledBottom, setIsScrolledBottom ] = useState(false);
+	const [ isSelectedScrolledTop, setIsSelectedScrolledTop ] = useState(false);
+	const [ isSelectedScrolledBottom, setIsSelectedScrolledBottom ] = useState(false);
 	const { data } = param;
 	const { type } = data;
 	const { name: limit } = J.Constant.limit.space;
@@ -157,6 +159,10 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		setIsScrolledBottom((scrollTop + clientHeight) < (scrollHeight - 1));
 	};
 
+	const onSelectedListScroll = ({ scrollTop, scrollHeight, clientHeight }) => {
+		setIsSelectedScrolledTop(scrollTop > 0);
+		setIsSelectedScrolledBottom((scrollTop + clientHeight) < (scrollHeight - 1));
+	};
 
 	const onSubmit = () => {
 		if (isLoading || !canSave) {
@@ -339,7 +345,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 
 	const beforePosition = () => {
 		raf(() => {
-			if (step == 0) {
+			if ((step == 0) && listRef.current) {
 				const members = getMembers();
 				const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
 				const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
@@ -348,11 +354,12 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			};
 
 			if ((step == 1) && selectedListRef.current) {
-				const maxHeight = Math.max(window.innerHeight - SAFE_AREA - STEP1_OVERHEAD, 0);
-				const totalHeight = selectedMemberObjects.length * ROW_HEIGHT;
-				const height = Math.min(totalHeight, maxHeight);
+				const rowCount = selectedMemberObjects.length + 2;
+				const totalHeight = LABEL_HEIGHT + (rowCount - 1) * ROW_HEIGHT;
+				const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP1_OVERHEAD, 80);
+				const listHeight = Math.min(totalHeight, maxListHeight) + 16;
 
-				U.Dom.css(selectedListRef.current, { height: `${height}px` });
+				U.Dom.css(selectedListRef.current, { height: `${listHeight}px` });
 			};
 		});
 	};
@@ -367,6 +374,8 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			filterRef.current?.setValue('');
 			setIsScrolledTop(false);
 			setIsScrolledBottom(false);
+			setIsSelectedScrolledTop(false);
+			setIsSelectedScrolledBottom(false);
 
 			if (isGroup) {
 				analytics.event('ScreenAddMember');
@@ -377,12 +386,14 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	}, [ step ]);
 
 	const ROW_HEIGHT = 48;
+	const LABEL_HEIGHT = 28;
 	const SAFE_AREA = 120;
 	const STEP0_OVERHEAD = 172;
 	const STEP1_OVERHEAD = 380;
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
+	const hasMembers = isGroup && (members.length || selectedMemberObjects.length);
 	const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
 	const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
 
@@ -507,7 +518,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 
 					<Input
 						ref={nameRef}
-						className={[ 'spaceName', (!(isGroup && (members.length || selectedMemberObjects.length)) ? 'withMargin' : '') ].join(' ')}
+						className={[ 'spaceName', (hasMembers ? '' : 'withMargin') ].join(' ')}
 						value={name}
 						placeholder={translate('popupSpaceCreateNamePlaceholder')}
 						onKeyDown={onKeyDown}
@@ -518,24 +529,59 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 					/>
 				</div>
 
-				{(isGroup && (members.length || selectedMemberObjects.length)) ? (
-					<div className="membersSection">
-						<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
-						<div className="item add" onClick={() => setStep(0)}>
-							<Icon name="menu/spaceCreate/group" />
-							<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
-						</div>
+				{hasMembers ? (
+					<div className="memberListWrapper">
+						{isSelectedScrolledTop ? <div className="grad top" /> : ''}
+						<div ref={selectedListRef} className="memberList">
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => {
+									const rows = [
+										{ id: '_label', type: 'label' },
+										{ id: '_add', type: 'add' },
+										...selectedMemberObjects.map(it => ({ ...it, type: 'member' })),
+									];
 
-						{selectedMemberObjects.length ? (
-							<div ref={selectedListRef} className="selectedMembers">
-								{selectedMemberObjects.map(item => (
-									<div key={item.id} id={`member-${item.id}`} className="item" onContextMenu={e => onMemberContext(e, item.id)}>
-										<IconObject size={32} object={item} />
-										<ObjectName object={item} withBadge={true} />
-									</div>
-								))}
-							</div>
-						) : ''}
+									return (
+										<List
+											width={width}
+											height={height}
+											rowCount={rows.length}
+											rowHeight={({ index }) => (rows[index].type == 'label') ? LABEL_HEIGHT : ROW_HEIGHT}
+											rowRenderer={({ index, key, style }) => {
+												const row = rows[index];
+
+												if (row.type == 'label') {
+													return (
+														<div key={key} style={style} className="sectionLabel">
+															{translate('popupSpaceCreateMembersLabel')}
+														</div>
+													);
+												};
+
+												if (row.type == 'add') {
+													return (
+														<div key={key} style={style} className="item add" onClick={() => setStep(0)}>
+															<Icon name="menu/spaceCreate/group" />
+															<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
+														</div>
+													);
+												};
+
+												return (
+													<div key={key} style={style} id={`member-${row.id}`} className="item" onContextMenu={e => onMemberContext(e, row.id)}>
+														<IconObject size={32} object={row} />
+														<ObjectName object={row} withBadge={true} />
+													</div>
+												);
+											}}
+											overscanRowCount={10}
+											onScroll={onSelectedListScroll}
+										/>
+									);
+								}}
+							</AutoSizer>
+						</div>
+						{isSelectedScrolledBottom ? <div className="grad bottom" /> : ''}
 					</div>
 				) : ''}
 
