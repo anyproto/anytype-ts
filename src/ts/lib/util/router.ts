@@ -203,6 +203,10 @@ class UtilRouter {
 			return;
 		};
 
+		if (route) {
+			S.Common.redirectSet(route);
+		};
+
 		S.Menu.closeAllForced();
 
 		if (sendEvent) {
