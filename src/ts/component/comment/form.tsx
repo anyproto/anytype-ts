@@ -32,6 +32,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const [ isFocused, setIsFocused ] = useState(false);
 	const [ isMultiline, setIsMultiline ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
+	const isSubmittingRef = useRef(false);
 	const draftLoadedRef = useRef(false);
 	const electron = U.Common.getElectron();
 	const isDraft = !isEdit && !isReply;
@@ -56,6 +57,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		clear: () => {
 			editorRef.current?.clear();
 			setIsEmpty(true);
+			isSubmittingRef.current = false;
 			setIsLoading(false);
 			setIsMultiline(false);
 			clearDraft();
@@ -111,10 +113,11 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	}, [ rootId ]);
 
 	const handleSubmit = useCallback((parts: I.CommentContentPart[]) => {
-		if (isLoading) {
+		if (isSubmittingRef.current) {
 			return;
 		};
 
+		isSubmittingRef.current = true;
 		setIsLoading(true);
 
 		// Collect tmp files that need uploading
@@ -185,6 +188,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				clearDraft();
 			};
 
+			isSubmittingRef.current = false;
 			setIsLoading(false);
 		};
 
@@ -193,7 +197,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		} else {
 			finalize(new Map());
 		};
-	}, [ onSubmit, isEdit, isLoading, clearDraft, getLinkType, uploadTmpFiles ]);
+	}, [ onSubmit, isEdit, clearDraft, getLinkType, uploadTmpFiles ]);
 
 	const handleEmpty = useCallback((v: boolean) => {
 		setIsEmpty(v);
