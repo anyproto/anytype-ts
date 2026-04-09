@@ -1849,16 +1849,20 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 								mousewheel={true}
 								modules={[ Navigation, Mousewheel ]}
 							>
-								{attachments.map(item => (
-									<SwiperSlide key={item.id}>
-										<Attachment
-											object={item}
-											onRemove={onAttachmentRemove}
-											bookmarkAsDefault={true}
-											updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
-										/>
-									</SwiperSlide>
-								))}
+								{attachments.map(item => {
+									const object = item.isTmp ? { syncStatus: I.SyncStatusObject.Synced, ...item } : item;
+									return (
+										<SwiperSlide key={item.id}>
+											<Attachment
+												object={object}
+												withInlineSize={false}
+												onRemove={onAttachmentRemove}
+												bookmarkAsDefault={true}
+												updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
+											/>
+										</SwiperSlide>
+									);
+								})}
 							</Swiper>
 						</div>
 					) : ''}
