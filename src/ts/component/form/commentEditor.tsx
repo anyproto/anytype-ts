@@ -2561,7 +2561,7 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 								const types = S.Record.checkHiddenObjects(
 									S.Record.getTypes().filter((t: any) =>
 										(t.name || '').toLowerCase().includes(s) &&
-										!U.Object.isInFileLayouts(t.recommendedLayout) &&
+										!U.Object.isInFileOrSystemLayouts(t.recommendedLayout) &&
 										!U.Object.isInSetLayouts(t.recommendedLayout)
 									)
 								).slice(0, 5);
