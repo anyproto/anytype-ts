@@ -129,7 +129,11 @@ const CommentReply = (props: Props) => {
 			blocks,
 			attachments: message.attachments || [],
 			reactions: message.reactions || [],
-		} as any, () => {
+		} as any, (response: any) => {
+			if (response.error.code) {
+				return;
+			};
+
 			setIsEditing(false);
 
 			S.Comment.updateReply(parentId, {
@@ -143,10 +147,14 @@ const CommentReply = (props: Props) => {
 				},
 			} as any);
 		});
-	}, [ targetId, id, parentId ]);
+	}, [ targetId, id, parentId, message.attachments, message.reactions ]);
 
 	const onDelete = useCallback(() => {
-		C.ChatDeleteMessage(targetId, id, () => {
+		C.ChatDeleteMessage(targetId, id, (response: any) => {
+			if (response.error.code) {
+				return;
+			};
+
 			S.Comment.deleteReply(parentId, id);
 
 			const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);

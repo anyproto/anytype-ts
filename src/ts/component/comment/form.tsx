@@ -100,7 +100,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				(message: any) => {
 					n++;
 
-					if (message.objectId) {
+					if (!message.error.code && message.objectId) {
 						uploadMap.set(item.id, message.objectId);
 					};
 
