@@ -504,6 +504,7 @@ const DraggableDecorator = ({ nodeKey, children }: { nodeKey: string; children: 
 // Attachment node — renders ChatAttachment inline in the editor
 export const INSERT_ATTACHMENT_COMMAND = createCommand<any>('INSERT_ATTACHMENT_COMMAND');
 export const REMOVE_ATTACHMENT_COMMAND = createCommand<string>('REMOVE_ATTACHMENT_COMMAND');
+export const UPDATE_ATTACHMENT_COMMAND = createCommand<{ id: string; data: any }>('UPDATE_ATTACHMENT_COMMAND');
 
 class AttachmentNode extends DecoratorNode<JSX.Element> {
 
@@ -555,6 +556,11 @@ class AttachmentNode extends DecoratorNode<JSX.Element> {
 
 	getAttachmentData (): any {
 		return this.__attachmentData;
+	};
+
+	setAttachmentData (data: any): void {
+		const writable = this.getWritable();
+		writable.__attachmentData = data;
 	};
 
 };
@@ -1439,7 +1445,25 @@ const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
 
 	useEffect(() => {
 		const onKeyDown = (e: KeyboardEvent) => {
-			if ((e.key === 'Enter') && (e.metaKey || e.ctrlKey)) {
+			if (e.key !== 'Enter') {
+				return;
+			};
+
+			// Don't submit when menus are open — let the menu handle Enter
+			if (S.Menu.isOpen('commentAdd') || S.Menu.isOpen('blockEmoji') || S.Menu.isOpen('blockMention') || S.Menu.isOpen('selectPasteUrl')) {
+				return;
+			};
+
+			const hasCmd = e.metaKey || e.ctrlKey;
+			const cmdSend = S.Common.commentCmdSend;
+
+			if (cmdSend && hasCmd) {
+				// Cmd+Enter to send
+				e.preventDefault();
+				onSubmit?.();
+			} else
+			if (!cmdSend && !hasCmd && !e.shiftKey) {
+				// Enter to send (Shift+Enter for newline)
 				e.preventDefault();
 				onSubmit?.();
 			};
@@ -1777,40 +1801,11 @@ const SelectionToolbarPlugin = () => {
 				};
 
 				const onBlockStyle = (textStyle: I.TextStyle) => {
-					editor.update(() => {
-						const node = $getNodeByKey(savedFocusKey);
-						if (node && $isTextNode(node)) {
-							const offset = Math.min(savedFocusOffset, node.getTextContentSize());
-							node.select(offset, offset);
-						} else
-						if (node && $isElementNode(node)) {
-							node.selectEnd();
-						};
+					const isListStyle = [ I.TextStyle.Bulleted, I.TextStyle.Numbered, I.TextStyle.Checkbox ].includes(textStyle);
 
-						const sel = $getSelection();
-						if (!$isRangeSelection(sel)) {
-							return;
-						};
-
+					if (isListStyle) {
+						// List commands handle cursor positioning internally — dispatch outside update()
 						switch (textStyle) {
-							case I.TextStyle.Header1:
-							case I.TextStyle.Header2:
-							case I.TextStyle.Header3: {
-								const tag = styleToHeadingTag(textStyle) as 'h1' | 'h2' | 'h3';
-								$setBlocksType(sel, () => $createHeadingNode(tag));
-								break;
-							};
-
-							case I.TextStyle.Quote: {
-								$setBlocksType(sel, () => new QuoteNode());
-								break;
-							};
-
-							case I.TextStyle.Code: {
-								$setBlocksType(sel, () => $createCodeNode());
-								break;
-							};
-
 							case I.TextStyle.Bulleted: {
 								editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
 								break;
@@ -1825,13 +1820,49 @@ const SelectionToolbarPlugin = () => {
 								editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
 								break;
 							};
-
-							case I.TextStyle.Paragraph: {
-								$setBlocksType(sel, () => $createParagraphNode());
-								break;
-							};
 						};
-					});
+					} else {
+						editor.update(() => {
+							const node = $getNodeByKey(savedFocusKey);
+							if (node && $isTextNode(node)) {
+								const offset = Math.min(savedFocusOffset, node.getTextContentSize());
+								node.select(offset, offset);
+							} else
+							if (node && $isElementNode(node)) {
+								node.selectEnd();
+							};
+
+							const sel = $getSelection();
+							if (!$isRangeSelection(sel)) {
+								return;
+							};
+
+							switch (textStyle) {
+								case I.TextStyle.Header1:
+								case I.TextStyle.Header2:
+								case I.TextStyle.Header3: {
+									const tag = styleToHeadingTag(textStyle) as 'h1' | 'h2' | 'h3';
+									$setBlocksType(sel, () => $createHeadingNode(tag));
+									break;
+								};
+
+								case I.TextStyle.Quote: {
+									$setBlocksType(sel, () => new QuoteNode());
+									break;
+								};
+
+								case I.TextStyle.Code: {
+									$setBlocksType(sel, () => $createCodeNode());
+									break;
+								};
+
+								case I.TextStyle.Paragraph: {
+									$setBlocksType(sel, () => $createParagraphNode());
+									break;
+								};
+							};
+						});
+					};
 
 					S.Menu.closeAll([ 'select', 'commentToolbar' ]);
 					editor.focus();
@@ -2154,9 +2185,26 @@ const AttachmentPlugin = () => {
 			COMMAND_PRIORITY_LOW,
 		);
 
+		const unregisterUpdate = editor.registerCommand(
+			UPDATE_ATTACHMENT_COMMAND,
+			(payload: { id: string; data: any }) => {
+				editor.update(() => {
+					const root = $getRoot();
+					for (const child of root.getChildren()) {
+						if ($isAttachmentNode(child) && child.getAttachmentData()?.id === payload.id) {
+							child.setAttachmentData({ ...child.getAttachmentData(), ...payload.data });
+						};
+					};
+				});
+				return true;
+			},
+			COMMAND_PRIORITY_LOW,
+		);
+
 		return () => {
 			unregisterInsert();
 			unregisterRemove();
+			unregisterUpdate();
 		};
 	}, [ editor ]);
 
@@ -2457,6 +2505,12 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 					const charBefore = offset > 1 ? text[offset - 2] : '';
 					if (!charBefore || (charBefore === ' ') || (charBefore === '\n')) {
 						slashOffset.current = offset - 1;
+
+						// Close selection toolbar before opening slash menu to prevent overlap
+						if (S.Menu.isOpen('commentToolbar')) {
+							S.Menu.close('commentToolbar');
+						};
+
 						openSlashMenu(editor, editorId, slashOffset, onSlashActionRef, slashMenuContextRef);
 					};
 				};
@@ -2499,6 +2553,32 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 
 								if (matched.length) {
 									filtered.push({ ...section, children: matched });
+								};
+							};
+
+							// Match type names for "create object" suggestions
+							if (s.length >= 2) {
+								const types = S.Record.getTypes().filter((t: any) =>
+									(t.name || '').toLowerCase().includes(s) &&
+									!U.Object.isInFileLayouts(t.recommendedLayout) &&
+									!U.Object.isInSetLayouts(t.recommendedLayout)
+								).slice(0, 5);
+
+								if (types.length) {
+									const typeItems = types.map((t: any) => ({
+										id: `createType-${t.id}`,
+										action: 'createType',
+										typeId: t.id,
+										iconParam: { name: 'menu/action/createObject' },
+										name: U.String.sprintf(translate('commentSlashMenuNewObject'), t.name),
+										description: t.description || '',
+									}));
+
+									filtered.push({
+										id: 'objects',
+										name: translate('commonObjects'),
+										children: typeItems,
+									});
 								};
 							};
 
@@ -2606,7 +2686,7 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 
 				closeAndHandle(() => {
 					if (item.action) {
-						onSlashActionRef.current?.({ action: item.action, embedProcessor: item.embedProcessor });
+						onSlashActionRef.current?.({ action: item.action, embedProcessor: item.embedProcessor, typeId: item.typeId });
 					} else
 					if (item.blockType === I.BlockType.Div) {
 						onSlashActionRef.current?.({ type: item.blockType });
@@ -3824,6 +3904,10 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
 		removeAttachment: (key: string) => {
 			editorRef.current?.dispatchCommand(REMOVE_ATTACHMENT_COMMAND, key);
+		},
+
+		updateAttachment: (id: string, data: any) => {
+			editorRef.current?.dispatchCommand(UPDATE_ATTACHMENT_COMMAND, { id, data });
 		},
 
 		getAttachments: () => {

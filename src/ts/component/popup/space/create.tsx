@@ -14,6 +14,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const joinInputRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const listRef = useRef(null);
+	const selectedListRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const [ canSave, setCanSave ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -26,6 +27,8 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const [ selectedMembers, setSelectedMembers ] = useState<string[]>([]);
 	const [ isScrolledTop, setIsScrolledTop ] = useState(false);
 	const [ isScrolledBottom, setIsScrolledBottom ] = useState(false);
+	const [ isSelectedScrolledTop, setIsSelectedScrolledTop ] = useState(false);
+	const [ isSelectedScrolledBottom, setIsSelectedScrolledBottom ] = useState(false);
 	const { data } = param;
 	const { type } = data;
 	const { name: limit } = J.Constant.limit.space;
@@ -154,6 +157,11 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const onMemberListScroll = ({ scrollTop, scrollHeight, clientHeight }) => {
 		setIsScrolledTop(scrollTop > 0);
 		setIsScrolledBottom((scrollTop + clientHeight) < (scrollHeight - 1));
+	};
+
+	const onSelectedMemberListScroll = ({ scrollTop, scrollHeight, clientHeight }) => {
+		setIsSelectedScrolledTop(scrollTop > 0);
+		setIsSelectedScrolledBottom((scrollTop + clientHeight) < (scrollHeight - 1));
 	};
 
 	const onSubmit = () => {
@@ -337,11 +345,22 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 
 	const beforePosition = () => {
 		raf(() => {
-			const members = getMembers();
-			const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
-			const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
+			if (step == 0) {
+				const members = getMembers();
+				const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
+				const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
 
-			U.Dom.css(listRef.current, { height: `${listHeight}px` });
+				U.Dom.css(listRef.current, { height: `${listHeight}px` });
+			};
+
+			if ((step == 1) && selectedListRef.current) {
+				const LABEL_HEIGHT = 28;
+				const totalRows = LABEL_HEIGHT + (selectedMemberObjects.length + 1) * ROW_HEIGHT;
+				const maxSelectedHeight = Math.max(window.innerHeight - SAFE_AREA - STEP1_OVERHEAD, 80);
+				const selectedHeight = Math.min(totalRows, maxSelectedHeight) + 16;
+
+				U.Dom.css(selectedListRef.current, { height: `${selectedHeight}px` });
+			};
 		});
 	};
 
@@ -355,6 +374,8 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			filterRef.current?.setValue('');
 			setIsScrolledTop(false);
 			setIsScrolledBottom(false);
+			setIsSelectedScrolledTop(false);
+			setIsSelectedScrolledBottom(false);
 
 			if (isGroup) {
 				analytics.event('ScreenAddMember');
@@ -367,6 +388,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const ROW_HEIGHT = 48;
 	const SAFE_AREA = 120;
 	const STEP0_OVERHEAD = 172;
+	const STEP1_OVERHEAD = 340;
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
@@ -503,27 +525,69 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 						focusOnMount={true}
 						size={52}
 					/>
+				</div>
 
-					{(isGroup && (members.length || selectedMemberObjects.length)) ? (
-						<div className="membersSection">
-							<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
-							<div className="item add" onClick={() => setStep(0)}>
-								<Icon name="menu/spaceCreate/group" />
-								<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
+				{(isGroup && (members.length || selectedMemberObjects.length)) ? (
+					<div className="membersSection">
+						<div className="memberListWrapper">
+							{isSelectedScrolledTop ? <div className="grad top" /> : ''}
+							<div ref={selectedListRef} className="memberList">
+								<AutoSizer className="scrollArea">
+									{({ width, height }) => {
+										const LABEL_HEIGHT = 28;
+										const rows = [
+											{ id: '_label', type: 'label' },
+											{ id: '_add', type: 'add' },
+											...selectedMemberObjects.map(it => ({ ...it, type: 'member' })),
+										];
+
+										return (
+											<List
+												width={width}
+												height={height}
+												rowCount={rows.length}
+												rowHeight={({ index }) => (rows[index].type == 'label') ? LABEL_HEIGHT : ROW_HEIGHT}
+												rowRenderer={({ index, key, style }) => {
+													const row = rows[index];
+
+													if (row.type == 'label') {
+														return (
+															<div key={key} style={style} className="sectionLabel">
+																{translate('popupSpaceCreateMembersLabel')}
+															</div>
+														);
+													};
+
+													if (row.type == 'add') {
+														return (
+															<div key={key} style={style} className="item add" onClick={() => setStep(0)}>
+																<Icon name="menu/spaceCreate/group" />
+																<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
+															</div>
+														);
+													};
+
+													return (
+														<div key={key} style={style} id={`member-${row.id}`} className="item" onContextMenu={e => onMemberContext(e, row.id)}>
+															<IconObject size={32} object={row} />
+															<ObjectName object={row} withBadge={true} />
+														</div>
+													);
+												}}
+												overscanRowCount={10}
+												onScroll={onSelectedMemberListScroll}
+											/>
+										);
+									}}
+								</AutoSizer>
 							</div>
-
-							{selectedMemberObjects.map(item => (
-								<div key={item.id} id={`member-${item.id}`} className="item" onContextMenu={e => onMemberContext(e, item.id)}>
-									<IconObject size={32} object={item} />
-									<ObjectName object={item} withBadge={true} />
-								</div>
-							))}
+							{isSelectedScrolledBottom ? <div className="grad bottom" /> : ''}
 						</div>
-					) : ''}
-
-					<div className="buttons">
-						<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateStep2Create')} color="accent" onClick={onSubmit} />
 					</div>
+				) : ''}
+
+				<div className="wrapper buttons">
+					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateStep2Create')} color="accent" onClick={onSubmit} />
 				</div>
 			</div>
 		);

@@ -219,7 +219,7 @@ class UtilDom {
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 */
 	triggerResizeEditor (isPopup: boolean) {
-		this.eventDispatch(window, `resize.editor${this.getEventNamespace(isPopup)}`);
+		this.eventDispatch(window, 'resize');
 	};
 
 	getWindowDimensions (): { ww: number; wh: number } {

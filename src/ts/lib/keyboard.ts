@@ -142,6 +142,12 @@ class Keyboard {
 			return;
 		};
 
+		// Skip if the copy originates from a Lexical editor — it handles its own clipboard
+		const target = e.target as HTMLElement;
+		if (target?.closest?.('[data-lexical-editor]')) {
+			return;
+		};
+
 		const selection = window.getSelection();
 		if (!selection || selection.isCollapsed) {
 			return;

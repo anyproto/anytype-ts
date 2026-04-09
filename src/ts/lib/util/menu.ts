@@ -1239,8 +1239,8 @@ class UtilMenu {
 			{
 				id: 'list', name: translate('commentSlashMenuLists'),
 				children: [
-					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, iconParam: { name: 'menu/block/text/numbered' }, name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
-					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, iconParam: { name: 'menu/block/text/bulleted' }, name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
+					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/numbered' }, name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
+					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/bulleted' }, name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
 					{ id: 'checkbox', textStyle: I.TextStyle.Checkbox, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/checkbox' }, name: translate('commentBlockCheckbox'), description: translate('commentBlockCheckboxDescription') },
 				],
 			},

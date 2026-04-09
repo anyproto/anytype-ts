@@ -29,6 +29,8 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	const scrollTimerRef = useRef(0);
 	const isSectionVisibleRef = useRef(false);
 	const messageIdHandled = useRef(false);
+	const lastScrollTopRef = useRef(0);
+	const isTypingRef = useRef(false);
 
 	const posts = S.Comment.getPosts(subId);
 	const postCount = posts.length;
@@ -71,12 +73,25 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		const scrollHandler = () => {
 			const st = Math.ceil(container?.scrollTop ?? 0);
 			const max = U.Dom.getMaxScrollHeight(isPopup);
+			const lastSt = lastScrollTopRef.current;
 
 			isBottom.current = (max - st) <= SCROLL_THRESHOLD;
+			lastScrollTopRef.current = st;
 
-			setHidden(true);
-			window.clearTimeout(scrollTimerRef.current);
-			scrollTimerRef.current = window.setTimeout(() => setHidden(false), 150);
+			// Show at end of document if no comments
+			if (isBottom.current && !postCount) {
+				setHidden(false);
+				return;
+			};
+
+			// Scrolling down: hide; scrolling up: show
+			if (st > lastSt) {
+				setHidden(true);
+			} else
+			if (st < lastSt) {
+				isTypingRef.current = false;
+				setHidden(false);
+			};
 		};
 
 		if (container) {
@@ -103,23 +118,31 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				return;
 			};
 
-			window.clearTimeout(scrollTimerRef.current);
+			isTypingRef.current = true;
 			setHidden(true);
 		};
 
 		const onMouseMove = () => {
-			setHidden(false);
+			if (!isTypingRef.current) {
+				setHidden(false);
+			};
+		};
+
+		const onMouseDown = () => {
+			isTypingRef.current = false;
 		};
 
 		U.Dom.addEvents(window, [
 			['keydown', onKeyDown],
 			['mousemove', onMouseMove],
+			['mousedown', onMouseDown],
 		]);
 
 		return () => {
 			U.Dom.removeEvents(window, [
 				['keydown', onKeyDown],
 				['mousemove', onMouseMove],
+				['mousedown', onMouseDown],
 			]);
 		};
 	}, [ setHidden ]);
@@ -660,7 +683,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			<div className="socialBlockWrap">
 				<div ref={socialRef} className="socialBlock isHidden">
 					<div className="commentCounter" onClick={onCounterClick}>
-						<Icon name="comment/discussion" className="discussion" size={16} />
+						<Icon name="comment/discussion" className="discussion" size={18} />
 						<span className="count">{counterLabel}</span>
 					</div>
 				</div>

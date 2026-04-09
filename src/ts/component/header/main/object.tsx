@@ -65,7 +65,7 @@ const HeaderMainObject = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 				>
 					<IconObject object={object} size={18} />
 					<ObjectName object={object} withPlural={true} />
-					{label ? <Label text={label} iconParam={isLocked ? { name: 'common/lock' } : undefined} /> : ''}
+					{label ? <Label text={label} iconParam={isLocked ? { name: 'common/lock', width: 8, height: 12 } : undefined} /> : ''}
 				</div>
 			);
 		} else {

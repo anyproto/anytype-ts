@@ -335,13 +335,14 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const openObjectPopup = useCallback((object: any) => {
 		U.Object.openPopup(object, {
 			onClose: () => {
-				if (!subId) {
-					return;
-				};
-
 				const details = S.Detail.get(object.id, object.id, []);
 				if (!details._empty_) {
-					S.Detail.update(subId, { id: object.id, details }, false);
+					if (subId) {
+						S.Detail.update(subId, { id: object.id, details }, false);
+					};
+
+					// Update the Lexical node data so the decorator re-renders with fresh details
+					editorRef.current?.updateAttachment(object.id, details);
 				};
 			},
 		});
@@ -412,6 +413,24 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 					};
 					break;
 				};
+
+				case 'createType': {
+					if (item.typeId) {
+						const type = S.Record.getTypeById(item.typeId);
+						if (type) {
+							C.ObjectCreate({}, [ I.ObjectFlag.DeleteEmpty ], '', type.uniqueKey, S.Common.space, (message: any) => {
+								if (message.error.code || !message.details) {
+									return;
+								};
+
+								const object = message.details;
+								editorRef.current?.insertAttachment(object);
+								openObjectPopup(object);
+							});
+						};
+					};
+					break;
+				};
 			};
 		} else
 		if ((item.blockType === I.BlockType.Div) || (item.type === I.BlockType.Div)) {
@@ -425,7 +444,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		editorRef.current?.focus();
-	}, [ openFilePicker, openEmbedInput ]);
+	}, [ openFilePicker, openEmbedInput, openObjectPopup ]);
 
 	const menuContextRef = useRef<any>(null);
 

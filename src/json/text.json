@@ -922,6 +922,7 @@
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
 	"popupSettingsPersonalSectionMessaging": "Messaging",
 	"popupSettingsPersonalChatSend": "Send objects in chats with",
+	"popupSettingsPersonalCommentSend": "Send comments with",
 	"popupSettingsPersonalSectionLists": "Lists",
 	"popupSettingsPersonalGridTitleClick": "Click to edit title in Grid view",
 	"popupSettingsPersonalSectionInterface": "Interface",
@@ -2905,7 +2906,7 @@
 	"paymentProvider4": "App Store",
 	"paymentProvider5": "Google Play",
 
-	"commentLeaveComment": "Leave a comment",
+	"commentLeaveComment": "Start a discussion",
 	"commentPlaceholder": "Leave a comment...",
 	"commentReplyPlaceholder": "Write a reply...",
 	"commentLoadMore": "Load more comments",
@@ -2957,6 +2958,7 @@
 	"commentBlockCodeDescription": "Monospace code block",
 
 	"commentSlashMenuEmbed": "Embed",
+	"commentSlashMenuNewObject": "New %s",
 	"commentBlockLatex": "LaTeX",
 	"commentBlockLatexDescription": "Mathematical formula",
 	"commentBlockMermaid": "Mermaid",
