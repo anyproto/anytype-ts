@@ -343,12 +343,34 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		};
 	}, []);
 
+	const getMaxListHeight = (listEl: HTMLElement): number => {
+		const popup = listEl.closest('.innerWrap') as HTMLElement;
+		if (!popup) {
+			return 400;
+		};
+
+		const maxPopupHeight = window.innerHeight - SAFE_AREA;
+		const stepEl = listEl.closest('.step') as HTMLElement;
+		if (!stepEl) {
+			return maxPopupHeight;
+		};
+
+		let siblingsHeight = 0;
+		for (const child of Array.from(stepEl.children)) {
+			if (!child.contains(listEl)) {
+				siblingsHeight += (child as HTMLElement).offsetHeight;
+			};
+		};
+
+		return Math.max(maxPopupHeight - siblingsHeight, 80);
+	};
+
 	const beforePosition = () => {
 		raf(() => {
 			if ((step == 0) && listRef.current) {
 				const members = getMembers();
 				const totalHeight = members.length * ROW_HEIGHT;
-				const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
+				const maxListHeight = getMaxListHeight(listRef.current);
 				const listHeight = Math.min(totalHeight, maxListHeight) + 16;
 
 				U.Dom.css(listRef.current, { height: `${listHeight}px` });
@@ -358,7 +380,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			if ((step == 1) && selectedListRef.current) {
 				const rowCount = selectedMemberObjects.length + 2;
 				const totalHeight = LABEL_HEIGHT + (rowCount - 1) * ROW_HEIGHT;
-				const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
+				const maxListHeight = getMaxListHeight(selectedListRef.current);
 				const listHeight = Math.min(totalHeight, maxListHeight) + 16;
 
 				U.Dom.css(selectedListRef.current, { height: `${listHeight}px` });
@@ -391,13 +413,10 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const ROW_HEIGHT = 48;
 	const LABEL_HEIGHT = 28;
 	const SAFE_AREA = 120;
-	const STEP0_OVERHEAD = 172;
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
 	const hasMembers = isGroup && (members.length || selectedMemberObjects.length);
-	const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
-	const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
 
 	const rowRenderer = ({ index, key, style }) => {
 		const item = members[index];
