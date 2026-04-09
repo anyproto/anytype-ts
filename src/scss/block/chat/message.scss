@@ -124,8 +124,25 @@
 		.label { @include text-small; padding: 0px 12px; font-weight: 500; background: var(--color-bg-primary); color: var(--color-text-secondary); }
 	}
 
+	.markuplink, markupobject { color: var(--color-system-accent-100); border-bottom: 0px; }
+
+	markupmention { padding: 1.5px 0px; background-color: var(--color-system-highlight); border-radius: 2px; }
+	markupmention {
+		name { color: var(--color-system-accent-100); font-weight: 500; border-bottom: 0px; }
+
+		&.withImage {
+			smile, .space { display: none; }
+		}
+	}
+
 	&.isSelf {
 		::selection { background-color: var(--color-system-accent-25); }
+		.markuplink, markupobject { color: var(--color-text-white60); }
+
+		markupmention { background-color: rgba(0,0,0,0.2); }
+		markupmention {
+			name { color: var(--color-text-white); }
+		}
 
 		> .flex { flex-direction: row-reverse; }
 		> .flex {
