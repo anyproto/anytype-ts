@@ -28,7 +28,7 @@
 .tagItem.isSelect {
 	&::before {
 		content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-		flex-shrink: 0; margin-right: 6px; background-color: currentColor;
+		flex-shrink: 0; margin-right: 6px; background-color: var(--color);
 	}
 	.inner { color: var(--color-text-primary); }
 	.tagRemove { display: none; }
