@@ -1,16 +1,16 @@
-.textColor-default { --color: var(--color-text-primary); color: var(--color-text-primary) !important; }
-.textColor-black { --color: var(--color-text-primary); color: var(--color-text-primary) !important; }
-.textColor-grey { --color: var(--color-grey); color: var(--color-dark-grey) !important; }
-.textColor-yellow { --color: var(--color-yellow); color: var(--color-dark-yellow) !important; }
-.textColor-orange { --color: var(--color-orange); color: var(--color-dark-orange) !important; }
-.textColor-red { --color: var(--color-red); color: var(--color-dark-red) !important; }
-.textColor-pink { --color: var(--color-pink); color: var(--color-dark-pink) !important; }
-.textColor-purple { --color: var(--color-purple); color: var(--color-dark-purple) !important; }
-.textColor-blue { --color: var(--color-blue); color: var(--color-dark-blue) !important; }
-.textColor-ice { --color: var(--color-ice); color: var(--color-dark-ice) !important; }
-.textColor-teal { --color: var(--color-teal); color: var(--color-dark-teal) !important; }
-.textColor-lime { --color: var(--color-lime); color: var(--color-dark-lime) !important; }
-.textColor-destructive { --color: var(--color-system-destructive); color: var(--color-system-destructive) !important; }
+.textColor-default { color: var(--color-text-primary) !important; }
+.textColor-black { color: var(--color-text-primary) !important; }
+.textColor-grey { color: var(--color-dark-grey) !important; }
+.textColor-yellow { color: var(--color-dark-yellow) !important; }
+.textColor-orange { color: var(--color-dark-orange) !important; }
+.textColor-red { color: var(--color-dark-red) !important; }
+.textColor-pink { color: var(--color-dark-pink) !important; }
+.textColor-purple { color: var(--color-dark-purple) !important; }
+.textColor-blue { color: var(--color-dark-blue) !important; }
+.textColor-ice { color: var(--color-dark-ice) !important; }
+.textColor-teal { color: var(--color-dark-teal) !important; }
+.textColor-lime { color: var(--color-dark-lime) !important; }
+.textColor-destructive { color: var(--color-system-destructive) !important; }
 
 .bgColor-default { background: var(--color-shape-tertiary) !important; }
 .bgColor-black { background: var(--color-shape-tertiary) !important; }

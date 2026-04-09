@@ -28,8 +28,18 @@
 .tagItem.isSelect {
 	&::before {
 		content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-		flex-shrink: 0; margin-right: 6px; background-color: var(--color);
+		flex-shrink: 0; margin-right: 6px; background-color: currentColor;
 	}
+	&.textColor-grey::before { background-color: var(--color-grey); }
+	&.textColor-yellow::before { background-color: var(--color-yellow); }
+	&.textColor-orange::before { background-color: var(--color-orange); }
+	&.textColor-red::before { background-color: var(--color-red); }
+	&.textColor-pink::before { background-color: var(--color-pink); }
+	&.textColor-purple::before { background-color: var(--color-purple); }
+	&.textColor-blue::before { background-color: var(--color-blue); }
+	&.textColor-ice::before { background-color: var(--color-ice); }
+	&.textColor-teal::before { background-color: var(--color-teal); }
+	&.textColor-lime::before { background-color: var(--color-lime); }
 	.inner { color: var(--color-text-primary); }
 	.tagRemove { display: none; }
 }
