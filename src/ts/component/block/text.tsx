@@ -1311,8 +1311,10 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const length = block.getLength();
 
 		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, (message: any) => {
+			const text = String(message.textSlot || '').replace(/\n+$/, '');
+
 			U.Common.clipboardCopy({
-				text: message.textSlot,
+				text,
 				html: message.htmlSlot,
 				anytype: {
 					range: { from: 0, to: length },
