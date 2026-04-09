@@ -67,7 +67,7 @@
 		.step.step1 {
 			.input.spaceName.withMargin { margin: 0px 0px 8px 0px; }
 
-			.membersSection { text-align: left; margin: 0px -8px 16px -8px; }
+			.membersSection { text-align: left; }
 			.membersSection {
 				.sectionLabel { @include text-very-small; color: var(--color-text-secondary); margin: 0px; padding: 4px 8px; display: flex; align-items: flex-end; }
 
