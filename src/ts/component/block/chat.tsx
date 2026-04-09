@@ -59,7 +59,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
 		if (object._empty_) {
-			return rootId;
+			return '';
 		};
 
 		return object.chatId || rootId;
