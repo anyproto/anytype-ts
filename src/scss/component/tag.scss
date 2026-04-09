@@ -30,6 +30,16 @@
 		content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
 		flex-shrink: 0; margin-right: 6px; background-color: currentColor;
 	}
+	&.textColor-grey::before { color: var(--color-grey) !important; }
+	&.textColor-yellow::before { color: var(--color-yellow) !important; }
+	&.textColor-orange::before { color: var(--color-orange) !important; }
+	&.textColor-red::before { color: var(--color-red) !important; }
+	&.textColor-pink::before { color: var(--color-pink) !important; }
+	&.textColor-purple::before { color: var(--color-purple) !important; }
+	&.textColor-blue::before { color: var(--color-blue) !important; }
+	&.textColor-ice::before { color: var(--color-ice) !important; }
+	&.textColor-teal::before { color: var(--color-teal) !important; }
+	&.textColor-lime::before { color: var(--color-lime) !important; }
 	.inner { color: var(--color-text-primary); }
 	.tagRemove { display: none; }
 }
