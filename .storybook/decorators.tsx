@@ -79,7 +79,26 @@ export const withMenu: Decorator = (Story) => {
 	return (
 		<div className="menus">
 			<div className="menuWrap" style={{ position: 'relative' }}>
-				<div className="menu show" style={{ position: 'relative', opacity: 1, transform: 'none', boxShadow: 'none', width: 280 }}>
+				<div className="menu vertical show" style={{ position: 'relative', opacity: 1, transform: 'none', boxShadow: 'none', width: 280 }}>
+					<div className="content">
+						<div className="items">
+							<Story />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+/**
+ * Wraps menu components with a specific menu class name.
+ */
+export const withMenuClass = (menuClass: string): Decorator => {
+	return (Story) => (
+		<div className="menus">
+			<div className="menuWrap" style={{ position: 'relative' }}>
+				<div className={`menu vertical ${menuClass} show`} style={{ position: 'relative', opacity: 1, transform: 'none', boxShadow: 'none', width: 280 }}>
 					<div className="content">
 						<div className="items">
 							<Story />
@@ -122,6 +141,26 @@ export const withHeader = (component: string): Decorator => {
 		return (
 			<div className={cn.join(' ')} style={{ position: 'relative', width: '100%' }}>
 				<Story />
+			</div>
+		);
+	};
+};
+
+/**
+ * Wraps horizontal menu toolbar components in the correct DOM hierarchy.
+ * In the app: .menus > .menuWrap > .menu.horizontal.show > .content > <Component />
+ */
+export const withHorizontalMenu = (menuClass: string): Decorator => {
+	return (Story) => {
+		return (
+			<div className="menus">
+				<div className="menuWrap" style={{ position: 'relative' }}>
+					<div className={`menu horizontal ${menuClass} show`} style={{ position: 'relative', opacity: 1, transform: 'none' }}>
+						<div className="content">
+							<Story />
+						</div>
+					</div>
+				</div>
 			</div>
 		);
 	};
