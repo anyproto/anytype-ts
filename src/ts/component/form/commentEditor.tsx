@@ -2558,10 +2558,12 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 
 							// Match type names for "create object" suggestions
 							if (s.length >= 2) {
-								const types = S.Record.getTypes().filter((t: any) =>
-									(t.name || '').toLowerCase().includes(s) &&
-									!U.Object.isInFileLayouts(t.recommendedLayout) &&
-									!U.Object.isInSetLayouts(t.recommendedLayout)
+								const types = S.Record.checkHiddenObjects(
+									S.Record.getTypes().filter((t: any) =>
+										(t.name || '').toLowerCase().includes(s) &&
+										!U.Object.isInFileLayouts(t.recommendedLayout) &&
+										!U.Object.isInSetLayouts(t.recommendedLayout)
+									)
 								).slice(0, 5);
 
 								if (types.length) {
@@ -2569,7 +2571,7 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 										id: `createType-${t.id}`,
 										action: 'createType',
 										typeId: t.id,
-										iconParam: { name: 'menu/action/createObject' },
+										object: t,
 										name: U.String.sprintf(translate('commentSlashMenuNewObject'), t.name),
 										description: t.description || '',
 									}));
