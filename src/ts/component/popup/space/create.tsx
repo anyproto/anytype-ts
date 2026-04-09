@@ -356,10 +356,11 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			if ((step == 1) && selectedListRef.current) {
 				const rowCount = selectedMemberObjects.length + 2;
 				const totalHeight = LABEL_HEIGHT + (rowCount - 1) * ROW_HEIGHT;
-				const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
+				const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP1_OVERHEAD, 80);
 				const listHeight = Math.min(totalHeight, maxListHeight) + 16;
 
 				U.Dom.css(selectedListRef.current, { height: `${listHeight}px` });
+				setIsSelectedScrolledBottom(totalHeight > maxListHeight);
 			};
 		});
 	};
@@ -389,6 +390,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const LABEL_HEIGHT = 28;
 	const SAFE_AREA = 120;
 	const STEP0_OVERHEAD = 172;
+	const STEP1_OVERHEAD = 310;
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
