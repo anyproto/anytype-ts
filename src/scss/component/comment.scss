@@ -13,7 +13,7 @@
 	&.isHidden { opacity: 0; pointer-events: none; transition: opacity 0.3s $easeInQuint; }
 
 	.commentCounter {
-		display: inline-flex; align-items: center; gap: 0px 6px;
+		display: inline-flex; align-items: center; gap: 0px 4px;
 		padding: 7px 10px 7px 8px; border-radius: 18px;
 		background: var(--color-shape-tertiary);
 		user-select: none;
@@ -22,7 +22,7 @@
 	.commentCounter.isFixed { position: fixed; bottom: 18px; }
 	.commentCounter {
 		.icon.discussion { width: 13px; height: 12px; color: var(--color-text-secondary); }
-		.count { @include text-small; color: var(--color-text-secondary); line-height: 18px; }
+		.count { @include text-small; color: var(--color-text-secondary); line-height: 18px; font-weight: 500; }
 	}
 }
 
