@@ -403,7 +403,7 @@ const App: FC = () => {
 				const spaceId = param.spaceId || data.spaceId || Storage.get('spaceId');
 
 				if (spaceId) {
-					U.Router.switchSpace(spaceId, '', false, routeParam, true);
+					U.Router.switchSpace(spaceId, route, false, routeParam, true);
 				} else {
 					U.Data.onAuthWithoutSpace(routeParam);
 				};
