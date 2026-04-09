@@ -494,6 +494,23 @@
 			.image { max-width: 100%; max-height: 360px; width: auto; height: auto; object-fit: contain; }
 			.icon.remove { display: none; }
 
+			.icon.syncStatus {
+				display: none; position: absolute; z-index: 2; inset: 0; margin: auto;
+				width: 48px !important; height: 48px !important;
+				animation: rotate 1.2s infinite linear; color: var(--color-shape-highlight-medium);
+			}
+			.icon.syncStatus {
+				> svg { width: 100% !important; height: 100% !important; }
+			}
+
+			&.isSyncing .icon.syncStatus,
+			&.isQueued .icon.syncStatus,
+			&.isError .icon.syncStatus { display: block; }
+			&.isError .icon.syncStatus { animation: none; }
+
+			&.isSyncing,
+			&.isQueued { .image { opacity: 0.5; } }
+
 			.mediaWrapper {
 				position: relative; overflow: hidden;
 				display: flex; align-items: center; justify-content: center;
