@@ -171,6 +171,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 							layout: data.layout,
 							sizeInBytes: data.sizeInBytes,
 							fileExt: data.fileExt,
+							syncStatus: I.SyncStatusObject.Synced,
 						});
 					};
 				} else {

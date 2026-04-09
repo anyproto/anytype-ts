@@ -1942,7 +1942,7 @@ const SelectionToolbarPlugin = () => {
 				};
 
 				if (S.Menu.isOpen('commentToolbar')) {
-					S.Menu.updateData('commentToolbar', { getActiveFormats, getBlockStyle });
+					S.Menu.updateData('commentToolbar', { getActiveFormats, getBlockStyle, blockStyle: getBlockStyle() });
 					return;
 				};
 
@@ -1965,6 +1965,7 @@ const SelectionToolbarPlugin = () => {
 					data: {
 						getActiveFormats,
 						getBlockStyle,
+						blockStyle: getBlockStyle(),
 						onToggleFormat,
 						onBlockStyle,
 						onLink,

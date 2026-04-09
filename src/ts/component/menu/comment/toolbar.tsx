@@ -18,7 +18,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	];
 
 	const activeFormats = getActiveFormats?.() || {};
-	const blockStyle = getBlockStyle?.() || 'text';
+	const blockStyle = data.blockStyle || getBlockStyle?.() || 'text';
 
 	const onMark = (e: any, type: string) => {
 		e.preventDefault();
