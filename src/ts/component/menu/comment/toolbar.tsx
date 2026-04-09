@@ -145,7 +145,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 			</div>
 
-			<div className="section">
+			<div className="section last">
 				{markActions.map((action) => {
 					const isActive = activeFormats[action.type];
 
@@ -161,9 +161,6 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						/>
 					);
 				})}
-			</div>
-
-			<div className="section">
 				{extraActions.map((action) => (
 					<Icon
 						id={`button-${action.id}`}

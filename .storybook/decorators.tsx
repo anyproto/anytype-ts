@@ -75,11 +75,16 @@ export const withPopup = (popupId: string, className?: string): Decorator => {
  * Wraps menu item components in the correct DOM hierarchy.
  * In the app: .menus > .menuWrap > .menu.show > .content > .items > <Component />
  */
-export const withMenu: Decorator = (Story) => {
-	return (
+/**
+ * Wraps menu components in the correct DOM hierarchy.
+ * Pass an optional menu class name (e.g. 'menuBlockStyle') to add it to the .menu element.
+ * In the app: .menus > .menuWrap > .menu.vertical.show > .content > .items > <Component />
+ */
+export const withMenuClass = (menuClass?: string): Decorator => {
+	return (Story) => (
 		<div className="menus">
 			<div className="menuWrap" style={{ position: 'relative' }}>
-				<div className="menu show" style={{ position: 'relative', opacity: 1, transform: 'none', boxShadow: 'none', width: 280 }}>
+				<div className={`menu vertical ${menuClass || ''} show`.trim()} style={{ position: 'relative', opacity: 1, transform: 'none', boxShadow: 'none', width: 280 }}>
 					<div className="content">
 						<div className="items">
 							<Story />
@@ -90,6 +95,8 @@ export const withMenu: Decorator = (Story) => {
 		</div>
 	);
 };
+
+export const withMenu: Decorator = withMenuClass();
 
 /**
  * Wraps block components in the correct DOM hierarchy.
@@ -122,6 +129,26 @@ export const withHeader = (component: string): Decorator => {
 		return (
 			<div className={cn.join(' ')} style={{ position: 'relative', width: '100%' }}>
 				<Story />
+			</div>
+		);
+	};
+};
+
+/**
+ * Wraps horizontal menu toolbar components in the correct DOM hierarchy.
+ * In the app: .menus > .menuWrap > .menu.horizontal.show > .content > <Component />
+ */
+export const withHorizontalMenu = (menuClass: string): Decorator => {
+	return (Story) => {
+		return (
+			<div className="menus">
+				<div className="menuWrap" style={{ position: 'relative' }}>
+					<div className={`menu horizontal ${menuClass} show`} style={{ position: 'relative', opacity: 1, transform: 'none' }}>
+						<div className="content">
+							<Story />
+						</div>
+					</div>
+				</div>
 			</div>
 		);
 	};
