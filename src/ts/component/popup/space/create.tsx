@@ -347,10 +347,12 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		raf(() => {
 			if ((step == 0) && listRef.current) {
 				const members = getMembers();
+				const totalHeight = members.length * ROW_HEIGHT;
 				const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
-				const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
+				const listHeight = Math.min(totalHeight, maxListHeight) + 16;
 
 				U.Dom.css(listRef.current, { height: `${listHeight}px` });
+				setIsScrolledBottom(totalHeight > maxListHeight);
 			};
 
 			if ((step == 1) && selectedListRef.current) {
