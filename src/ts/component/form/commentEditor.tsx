@@ -3586,18 +3586,31 @@ const HeadingExitPlugin = () => {
 					return false;
 				};
 
-				const atEnd = (node === topLevel.getLastChild()) && (anchor.offset === node.getTextContentSize());
-
-				if (!atEnd) {
-					return false;
-				};
-
 				e?.preventDefault();
 
-				const paragraph = $createParagraphNode();
-				paragraph.append($createTextNode(''));
-				topLevel.insertAfter(paragraph);
-				paragraph.select();
+				const atEnd = (node === topLevel.getLastChild()) && (anchor.offset === node.getTextContentSize());
+
+				if (atEnd) {
+					const paragraph = $createParagraphNode();
+					paragraph.append($createTextNode(''));
+					topLevel.insertAfter(paragraph);
+					paragraph.select();
+				} else {
+					selection.insertParagraph();
+
+					const newSelection = $getSelection();
+					if ($isRangeSelection(newSelection)) {
+						const newNode = newSelection.anchor.getNode();
+						const newTopLevel = newNode.getTopLevelElementOrThrow();
+
+						if ($isHeadingNode(newTopLevel)) {
+							const paragraph = $createParagraphNode();
+							newTopLevel.getChildren().forEach((child) => paragraph.append(child));
+							newTopLevel.replace(paragraph);
+							paragraph.selectStart();
+						};
+					};
+				};
 
 				return true;
 			},
