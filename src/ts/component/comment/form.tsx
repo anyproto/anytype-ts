@@ -476,7 +476,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 					};
 
 					const context = menuContextRef.current;
-					if (context && item.id === 'embed') {
+					if (context && item.itemId === 'embed') {
 						U.Menu.openCommentEmbedMenu(context, (_e: any, embedItem: any) => {
 							handleSlashAction(embedItem);
 							context?.close();

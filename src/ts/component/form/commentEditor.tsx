@@ -2602,7 +2602,7 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 								};
 							};
 
-							menu.param.data.sections = filtered;
+							menu.param.data.sections = U.Menu.sectionsMap(filtered);
 						} else {
 							menu.param.data.sections = U.Menu.getCommentAddSections();
 						};
@@ -2691,7 +2691,7 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 				};
 
 				const context = slashMenuContextRef.current;
-				if (context && item.id === 'embed') {
+				if (context && item.itemId === 'embed') {
 					U.Menu.openCommentEmbedMenu(context, (_e: any, embedItem: any) => {
 						closeAndHandle(() => {
 							onSlashActionRef.current?.({ action: embedItem.action, embedProcessor: embedItem.embedProcessor });

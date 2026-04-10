@@ -1227,7 +1227,7 @@ class UtilMenu {
 	};
 
 	getCommentAddSections (): any[] {
-		return [
+		return this.sectionsMap([
 			{
 				id: 'text', name: translate('commentSlashMenuTitle'),
 				children: [
@@ -1259,7 +1259,7 @@ class UtilMenu {
 					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, iconParam: { name: 'menu/block/div/line' }, name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
 				],
 			},
-		];
+		]);
 	};
 
 	getCommentAddMenuParam (contextRef: { current: any }) {
@@ -1283,11 +1283,11 @@ class UtilMenu {
 
 	openCommentEmbedMenu (context: any, onSelect: (e: any, item: any) => void) {
 		const size = context.getSize();
-		const options = this.getBlockEmbed().map(it => ({
+		const options = this.prepareForSelect(this.getBlockEmbed().map(it => ({
 			...it,
 			action: 'embed',
 			embedProcessor: it.id,
-		}));
+		})));
 
 		S.Menu.open('select', {
 			element: `#${context.getId()}`,
