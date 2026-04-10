@@ -46,6 +46,8 @@ const MenuSelect = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		position();
+
+		return () => unbind();
 	}, []);
 
 	useEffect(() => {

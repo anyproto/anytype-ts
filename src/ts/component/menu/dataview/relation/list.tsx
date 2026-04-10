@@ -288,7 +288,6 @@ const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 	
 	useEffect(() => {
-		rebind();
 		setActive(null, true);
 		position();
 

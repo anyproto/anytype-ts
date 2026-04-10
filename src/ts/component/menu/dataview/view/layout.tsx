@@ -30,7 +30,6 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		rebind();
 		setActive();
 	});
 

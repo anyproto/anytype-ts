@@ -36,10 +36,6 @@ const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		rebind();
-	});
-
-	useEffect(() => {
 		n.current = -1;
 		offset.current = 0;
 		load(true);

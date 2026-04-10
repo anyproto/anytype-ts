@@ -377,6 +377,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 
 		analytics.event('ScreenOnboarding', { step: Stage[stage] });
+		return () => unbind();
 	}, [ stage ]);
 
 	return (

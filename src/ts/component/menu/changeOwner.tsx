@@ -22,6 +22,7 @@ const MenuChangeOwner = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		rebind();
 		position();
+		return () => unbind();
 	}, []);
 
 	useEffect(() => {
