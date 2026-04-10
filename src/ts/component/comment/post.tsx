@@ -365,6 +365,7 @@ const CommentPost = (props: Props) => {
 			};
 
 			S.Comment.addReply(id, newReply as any);
+			loadDeps([ newReply as any ]);
 
 			S.Comment.updatePost(subId, {
 				id,
@@ -374,7 +375,7 @@ const CommentPost = (props: Props) => {
 			setIsReplying(false);
 			replyFormRef.current?.clear();
 		});
-	}, [ targetId, id, subId, replyCount ]);
+	}, [ targetId, id, subId, replyCount, loadDeps ]);
 
 	const onCopyText = useCallback(() => {
 		const text = parts.map(p => p.text || '').join('\n');

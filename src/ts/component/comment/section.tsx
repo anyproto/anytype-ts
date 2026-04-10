@@ -615,11 +615,12 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				};
 
 				S.Comment.addPost(sid, newPost as any);
+				loadDeps([ newPost as any ]);
 				formRef.current?.clear();
 				window.setTimeout(() => scrollToBottom(), 50);
 			});
 		});
-	}, [ discussionId, subId, scrollToBottom, ensureDiscussion, getCommentAnalyticsData ]);
+	}, [ discussionId, subId, scrollToBottom, ensureDiscussion, getCommentAnalyticsData, loadDeps ]);
 
 	const onMouseDown = useCallback((e: React.MouseEvent) => {
 		keyboard.disableSelection(true);

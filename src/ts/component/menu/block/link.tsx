@@ -202,16 +202,17 @@ const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (item.url) {
 				onChange?.(I.MarkType.Link, item.url.value);
 			};
+			close();
 		} else
 		if (item.itemId == 'add') {
 			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.link, (message: any) => {
 				onChange?.(I.MarkType.Object, message.targetId);
+				close();
 			});
 		} else {
 			onChange?.(I.MarkType.Object, item.itemId);
+			close();
 		};
-
-		close();
 	};
 
 	const onScroll = ({ scrollTop }: any) => {
