@@ -34,10 +34,7 @@
 					.cellContent.c-select.isSelect {
 						.wrap { height: 24px; display: flex; align-items: center; }
 						.over { margin-top: 0px; }
-						.tagItem.isSelect { gap: 6px; }
-						.tagItem.isSelect {
-							&::before { margin-right: 0px; }
-						}
+						.tagItem.isSelect { border: none; border-radius: 0px; padding: 0px; height: auto; }
 					}
 
 					.cellContent.c-checkbox { width: auto; display: flex; gap: 0px 6px; }
@@ -86,12 +83,7 @@
 				.cardContent > .inner .cellContent.c-select {
 					.wrap { line-height: 20px; }
 					.over { height: 20px; }
-					.tagItem.isMultiSelect { height: 20px; line-height: 20px; border-radius: 10px; }
-					.tagItem.isSelect { height: 20px; border-radius: 10px; border: 1px solid var(--color-shape-secondary); padding: 0px 7px; gap: 5px; }
-					.tagItem.isSelect {
-						&::before { margin-right: 0px; }
 					}
-				}
 
 				.cellContent {
 					.name:empty { display: none; }

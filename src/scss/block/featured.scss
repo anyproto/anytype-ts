@@ -58,17 +58,12 @@
 					margin-top: -2px;
 				}
 				.tagItem { margin: 0px; max-width: 400px; }
-				.tagItem.isMultiSelect { height: 24px; line-height: 24px; border-radius: 12px; }
 			}
 
 			.cellContent.c-select.isSelect { height: 24px; border-radius: 4px; padding: 0px 8px 0px 7px; gap: 4px; align-items: center; }
 			.cellContent.c-select.isSelect {
 				.wrap { height: 24px; display: flex; align-items: center; }
 				.over { margin-top: 0px; }
-				.tagItem.isSelect { gap: 6px; }
-				.tagItem.isSelect {
-					&::before { margin-right: 0px; }
-				}
 			}
 
 			.cellContent.c-file {

@@ -1,35 +1,31 @@
 @import "~scss/_mixins";
 
 /* Base styles shared by all .tagItem variants */
-.tagItem {
-	display: inline-flex; align-items: center; vertical-align: middle; max-width: 100%; white-space: nowrap;
-	@include text-common;
-}
+.tagItem { display: inline-flex; align-items: center; vertical-align: middle; max-width: 100%; white-space: nowrap; @include text-common; }
 .tagItem {
 	.inner { display: inline-block; width: 100%; @include text-overflow-nw; vertical-align: top; }
 }
 
-/* Regular tag (pill style) */
-.tagItem:not(.isSelect) {
-	padding: 0px 6px; line-height: 20px; height: 20px; border-radius: 10px; position: relative;
-}
+/* Regular tag (pill style) — isMultiSelect */
+.tagItem:not(.isSelect) { padding: 0px 6px; line-height: 24px; height: 24px; border-radius: 12px; position: relative; }
 .tagItem:not(.isSelect) {
 	.inner { color: inherit; }
 	.tagRemove { width: 20px; height: 20px; position: absolute; right: 0px; top: 0px; }
 	.tagRemove:hover { opacity: 0.8; }
 	.tagRemove img { width: 10px; height: 10px; position: absolute; top: 50%; left: 50%; margin: -5px 0px 0px -5px; }
 
-	&.isSmall { padding: 0px 6px; line-height: 18px; height: 18px; @include text-small; }
+	&.isSmall { padding: 0px 6px; line-height: 20px; height: 20px; border-radius: 10px; @include text-small; }
 	&.canEdit { padding-right: 20px; }
 }
 
-/* Select tag (dot + label style) */
-.tagItem.isSelect { padding: 0px; border-radius: 0; line-height: 18px; box-shadow: none !important; background: none !important; }
+/* Select tag (dot + label style) — isSelect */
+.tagItem.isSelect { height: 24px; border-radius: 12px; border: 1px solid var(--color-shape-secondary); padding: 0px 7px; gap: 6px; line-height: 24px; box-shadow: none !important; background: none !important; }
 .tagItem.isSelect {
 	&::before {
 		content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
-		flex-shrink: 0; margin-right: 6px; background-color: currentColor;
+		flex-shrink: 0; margin-right: 0px; background-color: currentColor;
 	}
+	&.isSmall { height: 20px; border-radius: 10px; }
 	&.textColor-grey::before { color: var(--color-grey) !important; }
 	&.textColor-yellow::before { color: var(--color-yellow) !important; }
 	&.textColor-orange::before { color: var(--color-orange) !important; }

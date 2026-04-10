@@ -33,14 +33,6 @@
 			.cell.c-file {
 				.over { width: 100%; flex-wrap: wrap; gap: 4px 6px; max-height: clamp(22px, 140px, 140px); }
 			}
-			.cell.c-select {
-				.tagItem.isMultiSelect { height: 24px; line-height: 24px; border-radius: 12px; }
-				.tagItem.isSelect { height: 24px; border-radius: 12px; border: 1px solid var(--color-shape-secondary); padding: 0px 8px 0px 7px; gap: 6px; }
-				.tagItem.isSelect {
-					&::before { margin-right: 0px; }
-				}
-			}
-
 			.cell.c-shortText {
 				.name { width: 100%; }
 			}
