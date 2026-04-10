@@ -53,6 +53,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const jumpIds = useRef([]);
 	const prevDepsKey = useRef('');
 	const prevReplyKey = useRef('');
+	const pendingScrollToBottom = useRef(false);
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -935,8 +936,23 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 		if (!hasScroll()) {
 			readScrolledMessages();
+
+			// DOM may not be committed yet (React concurrent mode); retry once after paint
+			if (!animate) {
+				pendingScrollToBottom.current = true;
+				raf(() => {
+					if (pendingScrollToBottom.current && isBottom.current && hasScroll()) {
+						pendingScrollToBottom.current = false;
+						scrollToBottom(false);
+					} else {
+						pendingScrollToBottom.current = false;
+					};
+				});
+			};
 			return;
 		};
+
+		pendingScrollToBottom.current = false;
 
 		const doScroll = () => {
 			const y = U.Dom.getMaxScrollHeight(isPopup);
