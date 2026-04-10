@@ -119,7 +119,12 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			});
 		};
 
-		node.find('#receiver').remove();
+		// AnytypeMiniApp: keep the existing iframe alive so the state-only
+		// fast path in iframe.html can fire (just an 'anytype:state' event
+		// dispatch instead of a full tear-down and re-inject).
+		if (processor !== I.EmbedProcessor.AnytypeMiniApp) {
+			node.find('#receiver').remove();
+		};
 
 		if (![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid ].includes(processor)) {
 			isOnline ? preview.hide() : preview.show();
