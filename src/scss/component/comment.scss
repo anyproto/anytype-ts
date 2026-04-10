@@ -459,24 +459,17 @@
 
 	/* Rendered mention and link styles */
 	.content, .commentParagraph, .commentH1, .commentH2, .commentH3, .commentBlockquote {
-		markupmention {
-			color: var(--color-system-accent-100); font-weight: 500;
-		}
+		markupmention { padding: 1.5px 2px; background-color: var(--color-system-highlight); border-radius: 2px; }
 		markupmention {
 			smile, .space { display: none; }
-			name { color: inherit; font-weight: inherit; }
+			name { color: var(--color-system-accent-100); font-weight: 500; border-bottom: 0px; }
+
+			&.withImage {
+				smile, .space { display: none; }
+			}
 		}
 
-		a { color: var(--color-system-accent-100); text-decoration: underline; text-decoration-skip-ink: auto; }
-		a:hover { text-decoration: none; }
-
-		markupobject {
-			color: var(--color-system-accent-100); font-weight: 500;
-		}
-		markupobject {
-			smile, .space { display: none; }
-			name { color: inherit; font-weight: inherit; }
-		}
+		a, markupobject { color: var(--color-system-accent-100); border-bottom: 0px; }
 	}
 
 	/* Rendered attachments in posts */
