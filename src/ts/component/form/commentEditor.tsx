@@ -3214,15 +3214,15 @@ const openColonEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset
 };
 
 const MarkdownSequences: { pattern: RegExp; style: I.TextStyle }[] = [
-	{ pattern: /^\[]\s$/,		style: I.TextStyle.Checkbox },
-	{ pattern: /^###\s$/,		style: I.TextStyle.Header3 },
-	{ pattern: /^##\s$/,		style: I.TextStyle.Header2 },
-	{ pattern: /^#\s$/,		style: I.TextStyle.Header1 },
-	{ pattern: /^[*\-+]\s$/,	style: I.TextStyle.Bulleted },
-	{ pattern: /^1\.\s$/,		style: I.TextStyle.Numbered },
-	{ pattern: /^"\s$/,		style: I.TextStyle.Quote },
-	{ pattern: /^>\s$/,		style: I.TextStyle.Quote },
-	{ pattern: /^```$/,			style: I.TextStyle.Code },
+	{ pattern: /^\[]\s/,		style: I.TextStyle.Checkbox },
+	{ pattern: /^###\s/,		style: I.TextStyle.Header3 },
+	{ pattern: /^##\s/,		style: I.TextStyle.Header2 },
+	{ pattern: /^#\s/,			style: I.TextStyle.Header1 },
+	{ pattern: /^[*\-+]\s/,	style: I.TextStyle.Bulleted },
+	{ pattern: /^1\.\s/,		style: I.TextStyle.Numbered },
+	{ pattern: /^"\s/,			style: I.TextStyle.Quote },
+	{ pattern: /^>\s/,			style: I.TextStyle.Quote },
+	{ pattern: /^```/,			style: I.TextStyle.Code },
 ];
 
 const MarkdownPlugin = () => {
@@ -3265,7 +3265,7 @@ const MarkdownPlugin = () => {
 						continue;
 					};
 
-					const remaining = (style === I.TextStyle.Code) ? '' : text.replace(pattern, '');
+					const remaining = text.replace(pattern, '');
 					const nodeKey = node.getKey();
 
 					editor.update(() => {
