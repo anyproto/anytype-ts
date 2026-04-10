@@ -53,6 +53,11 @@
 			}
 			.cellContent.c-select {
 				.tagItem { margin-bottom: 0px; }
+				.tagItem.isMultiSelect { height: 24px; line-height: 24px; border-radius: 12px; }
+				.tagItem.isSelect { height: 24px; border-radius: 12px; border: 1px solid var(--color-shape-secondary); padding: 0px 7px; gap: 5px; }
+				.tagItem.isSelect {
+					&::before { margin-right: 0px; }
+				}
 			}
 		}
 	}

@@ -36,9 +36,20 @@
 		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background $transitionCommon; }
 		.cell.canEdit:hover { background: var(--color-shape-highlight-light); }
 		
-		.cell.c-select { padding: 6px 8px; line-height: 18px; }
+		.cell.c-select { padding: 6px 8px; line-height: 24px; }
 		.cell.c-select {
-			.empty { line-height: 18px; }
+			.empty { line-height: 24px; }
+			.tagItem.isMultiSelect { height: 24px; line-height: 24px; border-radius: 12px; }
+		}
+
+		.cellContent.c-select.isSelect { height: 24px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; padding: 0px 8px 0px 7px; gap: 4px; align-items: center; display: flex; width: fit-content; }
+		.cellContent.c-select.isSelect {
+			.wrap { height: 24px; display: flex; align-items: center; }
+			.over { margin-top: 0px; }
+			.tagItem.isSelect { gap: 6px; }
+			.tagItem.isSelect {
+				&::before { margin-right: 0px; }
+			}
 		}
 
 		.cell.c-select, 
@@ -58,7 +69,11 @@
 
 		.cell.isEditing.c-select {
 			.cellContent, .placeholder  { padding: 5px 8px; }
+			.tagItem {
+				.tagRemove { top: 50%; transform: translateY(-50%); }
+			}
 		}
+		.cell.isEditing .cellContent.c-select.isSelect { width: 100%; border: 0px; border-radius: 4px; }
 		.cell.isEditing.c-select.isSelect {
 			.over { width: calc(100% - 26px); }
 		}

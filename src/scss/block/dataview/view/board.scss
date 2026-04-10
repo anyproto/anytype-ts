@@ -30,6 +30,16 @@
 						.more { vertical-align: top; }
 					}
 
+					.cellContent.c-select.isSelect { height: 24px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; padding: 0px 8px 0px 7px; gap: 4px; display: inline-flex; align-items: center; width: fit-content; }
+					.cellContent.c-select.isSelect {
+						.wrap { height: 24px; display: flex; align-items: center; }
+						.over { margin-top: 0px; }
+						.tagItem.isSelect { gap: 6px; }
+						.tagItem.isSelect {
+							&::before { margin-right: 0px; }
+						}
+					}
+
 					.cellContent.c-checkbox { width: auto; display: flex; gap: 0px 6px; }
 					.cellContent.c-checkbox {
 						.icon { width: 24px; height: 24px; vertical-align: top; }
@@ -67,9 +77,20 @@
 
 			.card { width: 246px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; cursor: default; }
 			.card {
-				.cardContent { 
+				.cardContent {
 					border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px; background: var(--color-bg-primary); transition: border-color $transitionCommon;
 					box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
+				}
+
+				.cardContent > .inner .cellContent.c-select { line-height: 20px; }
+				.cardContent > .inner .cellContent.c-select {
+					.wrap { line-height: 20px; }
+					.over { height: 20px; }
+					.tagItem.isMultiSelect { height: 20px; line-height: 20px; border-radius: 10px; }
+					.tagItem.isSelect { height: 20px; border-radius: 10px; border: 1px solid var(--color-shape-secondary); padding: 0px 7px; gap: 5px; }
+					.tagItem.isSelect {
+						&::before { margin-right: 0px; }
+					}
 				}
 
 				.cellContent {
