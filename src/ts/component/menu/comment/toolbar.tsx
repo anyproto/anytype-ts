@@ -32,15 +32,12 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		const isObjectLink = activeFormats.linkMarkType === I.MarkType.Object;
 		const linkData: any = {
-			filter: isObjectLink ? '' : (activeFormats.linkParam || ''),
+			filter: isObjectLink ? (activeFormats.selectedText || '') : (activeFormats.linkParam || ''),
+			type: isObjectLink ? I.MarkType.Object : null,
 			onChange: (type: I.MarkType, param: string) => {
 				onLink?.(param, type);
 				close();
 			},
-		};
-
-		if (isObjectLink) {
-			linkData.type = I.MarkType.Object;
 		};
 
 		S.Menu.open('blockLink', {

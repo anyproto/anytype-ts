@@ -1559,12 +1559,15 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 	let hasLink = false;
 	let linkParam = '';
 	let linkMarkType: I.MarkType | undefined;
+	let selectedText = '';
 
 	editor.getEditorState().read(() => {
 		const selection = $getSelection();
 		if (!$isRangeSelection(selection) || selection.isCollapsed()) {
 			return;
 		};
+
+		selectedText = selection.getTextContent();
 
 		const nodes = selection.getNodes();
 		for (const node of nodes) {
@@ -1596,8 +1599,8 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 		offsetY: -8,
 		noAnimation: true,
 		data: {
-			filter: isObjectLink ? '' : linkParam,
-			...(isObjectLink ? { type: I.MarkType.Object } : {}),
+			filter: isObjectLink ? selectedText : linkParam,
+			type: isObjectLink ? I.MarkType.Object : null,
 			onChange: (type: I.MarkType, param: string) => {
 				if (!param) {
 					return;
@@ -1766,6 +1769,7 @@ const SelectionToolbarPlugin = () => {
 								link,
 								linkParam,
 								linkMarkType,
+								selectedText: sel.getTextContent(),
 							};
 						};
 					});
