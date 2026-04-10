@@ -151,6 +151,8 @@
 				.wrap { height: 100%; overflow: hidden; white-space: nowrap; position: static; }
 			}
 
+			.cellContent.c-select { height: 24px; overflow: visible; }
+
 			.cell.c-checkbox {
 				&.align1 .cellContent { justify-content: center; }
 				&.align2 .cellContent { justify-content: flex-end; }
