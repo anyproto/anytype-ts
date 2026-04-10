@@ -2930,6 +2930,8 @@
 	"commentSlashMenuAttachments": "Attachments",
 	"commentSlashMenuDecorations": "Decorations",
 
+	"commentBlockText": "Text",
+	"commentBlockTextDescription": "Plain text block",
 	"commentBlockTitle": "Title",
 	"commentBlockTitleDescription": "Large heading",
 	"commentBlockHeading": "Heading",

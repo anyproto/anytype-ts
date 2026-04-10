@@ -532,7 +532,7 @@
 			&.isImage { width: auto; max-width: 100%; height: auto; min-width: unset; background: unset; border: none; box-shadow: none; }
 			&.isImage {
 				.mediaWrapper { width: 100%; }
-				.image { display: block; max-width: 100%; max-height: 360px; width: 100%; height: auto; object-fit: contain; border-radius: 8px; }
+				.image { display: block; max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; }
 			}
 
 			&.isBookmark {

@@ -3548,6 +3548,52 @@ const CodeExitPlugin = () => {
 	return null;
 };
 
+const HeadingExitPlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		return editor.registerCommand(
+			KEY_ENTER_COMMAND,
+			(e: KeyboardEvent | null) => {
+				if (e?.shiftKey) {
+					return false;
+				};
+
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+					return false;
+				};
+
+				const anchor = selection.anchor;
+				const node = anchor.getNode();
+				const topLevel = node.getTopLevelElementOrThrow();
+
+				if (!$isHeadingNode(topLevel)) {
+					return false;
+				};
+
+				const atEnd = (node === topLevel.getLastChild()) && (anchor.offset === node.getTextContentSize());
+
+				if (!atEnd) {
+					return false;
+				};
+
+				e?.preventDefault();
+
+				const paragraph = $createParagraphNode();
+				paragraph.append($createTextNode(''));
+				topLevel.insertAfter(paragraph);
+				paragraph.select();
+
+				return true;
+			},
+			COMMAND_PRIORITY_HIGH,
+		);
+	}, [ editor ]);
+
+	return null;
+};
+
 const MaxLengthPlugin = ({ maxLength }: { maxLength: number }) => {
 	const [ editor ] = useLexicalComposerContext();
 
@@ -3992,6 +4038,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<InlineMarkdownPlugin />
 				<CodeHighlightPlugin />
 				<CodeExitPlugin />
+				<HeadingExitPlugin />
 				<CodeBlockPlugin />
 				{maxLength ? <MaxLengthPlugin maxLength={maxLength} /> : null}
 			</div>
