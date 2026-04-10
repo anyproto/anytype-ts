@@ -83,9 +83,9 @@
 			.icon.withBackground { width: 24px; height: 24px; }
 		}
 
-		.replyList { width: 100%; margin: 0px; padding: 0px; }
+		.replyList { width: 100%; margin: 0px; padding: 0px 0px 0px 16px; }
 
-		.replyFormWrap { width: 100%; margin: 0px; padding: 12px 0px 0px 0px; }
+		.replyFormWrap { width: 100%; margin: 0px; padding: 12px 0px 0px 16px; }
 		.replyFormWrap {
 			.commentForm { border-radius: 14px; background-color: var(--color-shape-secondary); }
 			.commentForm .contentArea { padding: 8px 12px; }
