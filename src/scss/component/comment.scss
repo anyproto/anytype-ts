@@ -431,6 +431,8 @@
 	.commentParagraph { line-height: 20px; }
 	.commentParagraph + .commentParagraph { padding-top: 8px; }
 
+	.commentBlockquoteWrap { padding: 12px 0px; }
+
 	.commentBlockquote {
 		display: flex; align-items: center; min-height: 28px;
 		padding: 4px 0px 4px 12px; line-height: 20px; position: relative;
@@ -551,6 +553,8 @@
 	}
 
 	.commentDivider { border: none; border-top: 1px solid var(--color-shape-secondary); padding: 8px 0px; }
+
+	.commentListWrap { padding: 12px 0px; }
 
 	ul.commentList, ol.commentList { padding: 2px 0px 2px 20px; line-height: 20px; }
 	.commentList li { padding: 1px 0px; }
