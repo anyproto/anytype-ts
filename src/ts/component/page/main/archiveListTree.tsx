@@ -120,11 +120,12 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, isDetailed = fals
 			return sortType === I.SortType.Asc ? cmp : -cmp;
 		});
 
-	const visibleIds = useMemo(() => visibleRoots.flatMap(n => U.Data.flattenIds(n)), [ visibleRoots ]);
+	const visibleIds = visibleRoots.flatMap(n => U.Data.flattenIds(n));
+	const visibleIdsKey = visibleIds.join(',');
 
 	useEffect(() => {
 		onVisibleIdsChange?.(visibleIds);
-	}, [ visibleIds ]);
+	}, [ visibleIdsKey ]);
 
 	const columns = [
 		{ key: 'name', label: translate('commonName') },
@@ -159,7 +160,7 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, isDetailed = fals
 		return result;
 	};
 
-	const flatRows = useMemo(() => flattenVisible(visibleRoots), [ visibleRoots, expandedIds ]);
+	const flatRows = useMemo(() => flattenVisible(visibleRoots), [ visibleIdsKey, expandedIds ]);
 
 	const renderRow = (row: FlatRow, style: React.CSSProperties): React.ReactNode => {
 		const { node, depth } = row;
