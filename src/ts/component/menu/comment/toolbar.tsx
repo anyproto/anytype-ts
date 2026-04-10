@@ -66,7 +66,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			noAnimation: true,
 			data: {
 				noClose: true,
-				options,
+				options: U.Menu.prepareForSelect(options),
 				onSelect: (_e: any, item: any) => {
 					onBlockStyle?.(item.textStyle);
 				},
@@ -93,7 +93,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			noAnimation: true,
 			data: {
 				noClose: true,
-				options,
+				options: U.Menu.prepareForSelect(options),
 				onSelect: (_e: any, item: any) => {
 					onBlockStyle?.(item.textStyle);
 				},
