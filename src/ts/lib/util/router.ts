@@ -261,7 +261,7 @@ class UtilRouter {
 								sidebar.leftPanelSubPageOpen('widget', false, true);
 							};
 
-							routeParam?.onAuthComplete?.();
+							routeParam?.onRouteChange?.();
 						});
 					};
 
