@@ -30,19 +30,26 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
+		const isObjectLink = activeFormats.linkMarkType === I.MarkType.Object;
+		const linkData: any = {
+			filter: isObjectLink ? '' : (activeFormats.linkParam || ''),
+			onChange: (type: I.MarkType, param: string) => {
+				onLink?.(param, type);
+				close();
+			},
+		};
+
+		if (isObjectLink) {
+			linkData.type = I.MarkType.Object;
+		};
+
 		S.Menu.open('blockLink', {
 			element: `#${getId()} #button-link`,
 			classNameWrap: 'fromBlock',
 			offsetY: 6,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
-			data: {
-				filter: activeFormats.linkParam || '',
-				onChange: (type: I.MarkType, param: string) => {
-					onLink?.(param, type);
-					close();
-				},
-			},
+			data: linkData,
 		});
 	};
 

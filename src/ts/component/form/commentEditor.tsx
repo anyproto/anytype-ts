@@ -1558,6 +1558,7 @@ const FormattingPlugin = ({ editorId }: { editorId: string }) => {
 const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 	let hasLink = false;
 	let linkParam = '';
+	let linkMarkType: I.MarkType | undefined;
 
 	editor.getEditorState().read(() => {
 		const selection = $getSelection();
@@ -1570,6 +1571,7 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 			if (node instanceof LinkTextNode) {
 				hasLink = true;
 				linkParam = node.getLinkUrl();
+				linkMarkType = node.getMarkType();
 				break;
 			};
 		};
@@ -1585,6 +1587,8 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 		return;
 	};
 
+	const isObjectLink = linkMarkType === I.MarkType.Object;
+
 	S.Menu.open('blockLink', {
 		classNameWrap: 'fromBlock',
 		rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: 0, height: rect.height },
@@ -1592,7 +1596,8 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 		offsetY: -8,
 		noAnimation: true,
 		data: {
-			filter: linkParam,
+			filter: isObjectLink ? '' : linkParam,
+			...(isObjectLink ? { type: I.MarkType.Object } : {}),
 			onChange: (type: I.MarkType, param: string) => {
 				if (!param) {
 					return;
@@ -1740,12 +1745,14 @@ const SelectionToolbarPlugin = () => {
 						if ($isRangeSelection(sel)) {
 							let link = false;
 							let linkParam = '';
+							let linkMarkType: I.MarkType | undefined;
 
 							const nodes = sel.getNodes();
 							for (const node of nodes) {
 								if (node instanceof LinkTextNode) {
 									link = true;
 									linkParam = node.getLinkUrl();
+									linkMarkType = node.getMarkType();
 									break;
 								};
 							};
@@ -1758,6 +1765,7 @@ const SelectionToolbarPlugin = () => {
 								code: sel.hasFormat('code'),
 								link,
 								linkParam,
+								linkMarkType,
 							};
 						};
 					});

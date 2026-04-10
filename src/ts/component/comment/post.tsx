@@ -64,9 +64,9 @@ const CommentPost = (props: Props) => {
 					return;
 				};
 
-				const object = S.Detail.get(subId, param);
 				item.onmousedown = (e: any) => {
 					e.preventDefault();
+					const object = S.Detail.get(subId, param);
 					if (!object._empty_) {
 						U.Object.openEvent(e, object);
 					};
