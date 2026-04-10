@@ -59,7 +59,12 @@
 		}
 	}
 
-	&.isFile, &.isImage { background-color: unset; }
+	&.isFile, 
+	&.isImage,
+	&.isVideo,
+	&.isAudio,
+	&.isPdf { background-color: unset; }
+
 	&.withImage { background-color: unset !important; }
 
 	&.isHuman, &.isParticipant, &.isSpaceView.spaceOneToOne {
