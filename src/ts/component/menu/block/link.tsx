@@ -349,7 +349,7 @@ const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getFilterRef: () => filterRef.current,
 		onClick,
 		onOver,
-	}), []);
+	}));
 
 	return (
 		<div className="wrap">
