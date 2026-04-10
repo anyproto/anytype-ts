@@ -56,20 +56,22 @@ const CommentPost = (props: Props) => {
 			return;
 		};
 
-		// Mentions
-		U.Dom.selectAll(Mark.getTag(I.MarkType.Mention), node).forEach((item: HTMLElement) => {
-			const param = String(item.getAttribute('data-param') || '');
-			if (!param) {
-				return;
-			};
-
-			const object = S.Detail.get(subId, param, []);
-			item.onmousedown = (e: any) => {
-				e.preventDefault();
-				if (!object._empty_) {
-					U.Object.openEvent(e, object);
+		// Mentions and Object marks
+		[ I.MarkType.Mention, I.MarkType.Object ].forEach(type => {
+			U.Dom.selectAll(Mark.getTag(type), node).forEach((item: HTMLElement) => {
+				const param = String(item.getAttribute('data-param') || '');
+				if (!param) {
+					return;
 				};
-			};
+
+				const object = S.Detail.get(subId, param);
+				item.onmousedown = (e: any) => {
+					e.preventDefault();
+					if (!object._empty_) {
+						U.Object.openEvent(e, object);
+					};
+				};
+			});
 		});
 
 		// Links
@@ -82,22 +84,6 @@ const CommentPost = (props: Props) => {
 			item.onclick = (e: any) => {
 				e.preventDefault();
 				Action.openUrl(href);
-			};
-		});
-
-		// Object marks
-		U.Dom.selectAll(Mark.getTag(I.MarkType.Object), node).forEach((item: HTMLElement) => {
-			const param = String(item.getAttribute('data-param') || '');
-			if (!param) {
-				return;
-			};
-
-			const object = S.Detail.get(subId, param, []);
-			item.onmousedown = (e: any) => {
-				e.preventDefault();
-				if (!object._empty_) {
-					U.Object.openEvent(e, object);
-				};
 			};
 		});
 

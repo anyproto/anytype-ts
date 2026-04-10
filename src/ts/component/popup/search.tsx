@@ -29,7 +29,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const cacheRef = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_SECTION }));
 	const itemsRef = useRef([]);
 	const nRef = useRef(0);
-	const [ activeIndex, setActiveIndex ] = useState(0);
 	const topRef = useRef(0);
 	const offsetRef = useRef(0);
 	const rangeRef = useRef<I.TextRange>({ from: 0, to: 0 });
@@ -88,6 +87,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const item = items[nRef.current];
 		const shortcutPrev = isMac ? 'arrowup, ctrl+p' : 'arrowup';
 		const shortcutNext = isMac ? 'arrowdown, ctrl+n' : 'arrowdown';
+
 		keyboard.disableMouse(true);
 		keyboard.shortcut('escape', e, () => {
 			if (backlinkRef.current) {
@@ -215,7 +215,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		nRef.current = getItems().findIndex(it => it.id == item.id);
-		setActiveIndex(nRef.current);
 		unsetActive();
 
 		U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current), 'active');
@@ -861,9 +860,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		);
 	};
 
-	const Footer = (props: { items: any[]; n: number }) => {
-		const { items, n } = props;
-		const item = items[n];
+	const Footer = () => {
+		const item = items[nRef.current];
 		const cmd = keyboard.cmdKey();
 
 		const isObject = item && item.isObject;
@@ -956,7 +954,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				</div>
 			) : ''}
 
-			<Footer items={items} n={activeIndex} />
+			<Footer />
 		</div>
 	);
 

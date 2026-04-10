@@ -165,3 +165,49 @@ export const withNotification: Decorator = (Story) => {
 		</div>
 	);
 };
+
+/**
+ * Wraps widget components in the correct DOM hierarchy.
+ * In the app: .widget.{widgetClass} > .contentWrapper > <Component />
+ * @param widgetClass - CSS class for the widget type, e.g. 'widgetObject', 'widgetTree', 'widgetView'
+ */
+export const withWidget = (widgetClass: string): Decorator => {
+	return (Story) => {
+		return (
+			<div className={`widget ${widgetClass}`} style={{ background: 'var(--color-shape-highlight-light)', borderRadius: 12 }}>
+				<div className="contentWrapper">
+					<Story />
+				</div>
+			</div>
+		);
+	};
+};
+
+/**
+ * Wraps widget view item components in the correct DOM hierarchy.
+ * In the app: .widget.widgetView > .contentWrapper > .{viewClass} > .body > .items > <Component />
+ * @param viewClass - CSS class for the view type, e.g. 'viewList', 'viewGallery', 'viewBoard'
+ * @param bodyClass - Optional extra class for the .body element, e.g. 'isCompact'
+ */
+export const withWidgetView = (viewClass: string, bodyClass?: string): Decorator => {
+	return (Story) => {
+		const bodyCn = [ 'body' ];
+		if (bodyClass) {
+			bodyCn.push(bodyClass);
+		};
+
+		return (
+			<div className="widget widgetView" style={{ background: 'var(--color-shape-highlight-light)', borderRadius: 12 }}>
+				<div className="contentWrapper">
+					<div className={viewClass}>
+						<div className={bodyCn.join(' ')}>
+							<div className="items">
+								<Story />
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		);
+	};
+};

@@ -175,7 +175,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 						});
 					};
 				} else {
-					const fresh = subId ? S.Detail.get(subId, data.id, []) : null;
+					const fresh = subId ? S.Detail.get(subId, data.id) : null;
 					attachmentObjects.push((fresh && !fresh._empty_) ? fresh : data);
 				};
 			};
@@ -340,7 +340,8 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const openObjectPopup = useCallback((object: any) => {
 		U.Object.openPopup(object, {
 			onClose: () => {
-				const details = S.Detail.get(object.id, object.id, []);
+				const details = S.Detail.get(object.id, object.id);
+				
 				if (!details._empty_) {
 					if (subId) {
 						S.Detail.update(subId, { id: object.id, details }, false);
