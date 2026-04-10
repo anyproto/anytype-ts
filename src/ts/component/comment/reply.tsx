@@ -52,15 +52,56 @@ const CommentReply = (props: Props) => {
 			};
 		});
 
-		U.Dom.selectAll('a', node).forEach((item: HTMLElement) => {
-			const href = String(item.getAttribute('href') || item.getAttribute('data-param') || '');
-			if (!href) {
-				return;
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Link), node).forEach((item: HTMLElement) => {
+			item.onclick = (e: Event) => {
+				e.preventDefault();
 			};
 
-			item.onclick = (e: any) => {
+			item.onmousedown = (e: MouseEvent) => {
+				if (e.button == 2) {
+					return;
+				};
+
 				e.preventDefault();
-				Action.openUrl(href);
+
+				const el = e.currentTarget as HTMLElement;
+				const url = String(el.getAttribute('href') || '');
+				const { isInside, target, spaceId } = U.Common.getLinkParamFromUrl(url);
+
+				const openObject = (id: string, spaceId: string) => {
+					if (spaceId && (spaceId != S.Common.space)) {
+						U.Router.go(U.Router.build({ page: 'main', action: 'object', id, spaceId }), {});
+						return;
+					};
+
+					const cb = (object) => {
+						if (object) {
+							U.Object.openEvent(e, object);
+						};
+					};
+
+					if (spaceId) {
+						U.Object.getById(id, { spaceId }, cb);
+					} else {
+						cb(S.Detail.get(subId, id, []));
+					};
+				};
+
+				if (isInside) {
+					openObject(target, spaceId);
+					return;
+				};
+
+				const route = U.Common.getRouteFromUrl(url);
+				if (route) {
+					const routeParam = U.Router.getParam(route);
+					if (routeParam.id) {
+						openObject(routeParam.id, routeParam.spaceId);
+						return;
+					};
+				};
+
+				Action.openUrl(target);
 			};
 		});
 
