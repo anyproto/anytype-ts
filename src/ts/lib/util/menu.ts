@@ -1231,7 +1231,7 @@ class UtilMenu {
 			{
 				id: 'text', name: translate('commentSlashMenuTitle'),
 				children: [
-					{ id: 'text', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/text' }, name: translate('commentBlockText'), description: translate('commentBlockTextDescription') },
+					{ id: 'paragraph', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/text' }, name: translate('commentBlockText'), description: translate('commentBlockTextDescription') },
 					{ id: 'title', textStyle: I.TextStyle.Header1, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header1' }, name: translate('commentBlockTitle'), description: translate('commentBlockTitleDescription') },
 					{ id: 'heading', textStyle: I.TextStyle.Header2, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header2' }, name: translate('commentBlockHeading'), description: translate('commentBlockHeadingDescription') },
 					{ id: 'subheading', textStyle: I.TextStyle.Header3, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header3' }, name: translate('commentBlockSubheading'), description: translate('commentBlockSubheadingDescription') },
