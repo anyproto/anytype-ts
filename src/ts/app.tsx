@@ -155,7 +155,13 @@ const App: FC = () => {
 		Renderer.on('pin-set', () => S.Common.pinInit());
 		Renderer.on('pin-remove', () => S.Common.pinInit());
 		Renderer.on('pin-unlocked', () => {
+			const wasPinChecked = keyboard.isPinChecked;
+
 			keyboard.isPinChecked = true;
+
+			if (wasPinChecked) {
+				return;
+			};
 
 			const { redirect } = S.Common;
 			const { account } = S.Auth;
