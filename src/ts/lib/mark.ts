@@ -301,20 +301,27 @@ class Mark {
 
 		const map = U.Common.mapToArray(marks, 'type');
 		const overlaps = [I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal];
+		const types = [ type ];
 
-		if (!map[type] || !map[type].length) {
-			return null;
+		if (type == I.MarkType.Link) {
+			types.push(I.MarkType.Object);
 		};
 
-		for (const mark of map[type]) {
-			const overlap = this.overlap(range, mark.range);
-
-			if (overlaps.includes(overlap)) {
-				return mark;
+		for (const t of types) {
+			if (!map[t] || !map[t].length) {
+				continue;
 			};
 
-			if (additional && additional.includes(overlap)) {
-				return mark;
+			for (const mark of map[t]) {
+				const overlap = this.overlap(range, mark.range);
+
+				if (overlaps.includes(overlap)) {
+					return mark;
+				};
+
+				if (additional && additional.includes(overlap)) {
+					return mark;
+				};
 			};
 		};
 		return null;
