@@ -493,7 +493,7 @@
 			.info { flex-grow: 1; width: 100%; }
 			.name { line-height: 20px; font-weight: 500; @include clamp1; }
 			.descr { @include text-small; @include clamp1; color: var(--color-text-secondary); }
-			.image { max-width: 100%; width: auto; height: auto; object-fit: contain; }
+			.image { max-width: 100%; max-height: 600px; width: auto; height: auto; object-fit: contain; }
 			.icon.remove { display: none; }
 
 			.icon.syncStatus {
