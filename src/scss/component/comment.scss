@@ -428,8 +428,7 @@
 	.commentH1 { padding: 20px 0px 0px 0px; @include text-header1; }
 	.commentH2 { padding: 16px 0px 0px 0px; @include text-header2; }
 	.commentH3 { padding: 12px 0px 0px 0px; @include text-header3; }
-	.commentParagraph { line-height: 20px; }
-	.commentParagraph + .commentParagraph { padding-top: 8px; }
+	.commentParagraph { padding-top: 8px; line-height: 20px; }
 
 	.commentBlockquoteWrap { padding: 12px 0px; }
 
