@@ -85,6 +85,7 @@
 				let useRootHeight = false;
 				let cachedHtml = '';
 				let height = 0;
+				let isMiniApp = false;
 				let blockId = '';
 				let player;
 				let html = '';
@@ -104,6 +105,7 @@
 					if (oe.data && oe.data.anytypeMiniApp) {
 						blockId = oe.data.blockId;
 						processor = oe.data.processor;
+						isMiniApp = true;
 
 						htmlEl.attr({ class: '' });
 						if (param.theme) {
@@ -216,7 +218,8 @@
 				win.on('resize', resize);
 
 				function resize () {
-					const height = useRootHeight ? root.height() : document.documentElement.scrollHeight;
+					const h = useRootHeight ? root.height() : document.documentElement.scrollHeight;
+					height = isMiniApp ? Math.max(height, h) : h;
 					window.parent.postMessage({ type: 'resize', height, blockId }, '*');
 				};
 
@@ -326,7 +329,9 @@
 					};
 
 					// Full re-inject: html changed (first load, or user edited the
-					// html code block).
+					// html code block). Reset max height so the new content
+					// measures fresh.
+					height = 0;
 					lastInjectedAppHtml = html;
 					window.__ANYTYPE_STATE__ = state;
 					setupAnytypeApi();

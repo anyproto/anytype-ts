@@ -20,28 +20,44 @@ class Server {
 		return new Promise((resolve, reject) => {
 
 			// stop will resolve immediately in case child process is not running
+			console.log('[Server] stopping previous instance...');
 			this.stop().then(() => {
+				console.log('[Server] previous instance stopped');
 				this.isRunning = false;
 
+				const isTTY = process.stdout.isTTY;
+				console.log('[Server] isTTY:', isTTY, 'binPath:', binPath, 'workingDir:', workingDir);
+
 				try {
-					if (!process.stdout.isTTY) {
+					if (!isTTY) {
 						env['GOLOG_FILE'] = path.join(logPath, `anytype_${Util.dateForFile()}.log`);
+						console.log('[Server] GOLOG_FILE:', env['GOLOG_FILE']);
 					};
-					
+
+					console.log('[Server] spawning anytypeHelper...');
 					this.cp = childProcess.spawn(binPath, [ '127.0.0.1:0', '127.0.0.1:0' ], { windowsHide: false, env });
+					console.log('[Server] spawned, pid:', this.cp.pid);
 				} catch (err) {
 					console.error('[Server] Process start error: ', err.toString());
 					reject(err);
 				};
-				
+
 				this.cp.on('error', err => {
 					this.isRunning = false;
 					console.error('[Server] Failed to start server: ', err.toString());
 					reject(err);
 				});
+
+				this.cp.on('close', (code, signal) => {
+					console.log('[Server] process closed, code:', code, 'signal:', signal);
+				});
 				
 				this.cp.stdout.on('data', data => {
 					const str = data.toString();
+
+					if (!this.isRunning) {
+						console.log('[Server] waiting for gRPC proxy, got stdout:', JSON.stringify(str));
+					};
 
 					if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
 						const regex = new RegExp(stdoutWebProxyPrefix + '([^\n^\s]+)');
@@ -58,6 +74,10 @@ class Server {
 
 				this.cp.stderr.on('data', data => {
 					const chunk = data.toString();
+
+					if (!this.isRunning) {
+						console.log('[Server] waiting for gRPC proxy, got stderr:', JSON.stringify(chunk.slice(0, 500)));
+					};
 					
 					// max chunk size is 8192 bytes
 					// https://github.com/nodejs/node/issues/12921
