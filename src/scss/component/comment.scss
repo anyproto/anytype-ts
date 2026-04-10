@@ -180,8 +180,9 @@
 		.formToolbar {
 			.side { display: flex; align-items: center; gap: 0px 8px; }
 
-			.icon.withBackground { width: 24px !important; height: 24px !important; }
-			.icon.plus { border-radius: 50%; background-color: var(--color-shape-secondary); }
+			.icon.withBackground { border-radius: 50%; }
+			.icon.withBackground:not(.plus):hover { background-color: var(--color-shape-highlight-light) !important; }
+			.icon.plus { background-color: var(--color-shape-highlight-medium); }
 
 			.div { width: 1px; height: 14px; background: var(--color-shape-highlight-dark); margin: 0px 4px; }
 
