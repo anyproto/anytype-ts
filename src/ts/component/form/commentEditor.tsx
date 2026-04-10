@@ -1738,12 +1738,26 @@ const SelectionToolbarPlugin = () => {
 					editor.getEditorState().read(() => {
 						const sel = $getSelection();
 						if ($isRangeSelection(sel)) {
+							let link = false;
+							let linkParam = '';
+
+							const nodes = sel.getNodes();
+							for (const node of nodes) {
+								if (node instanceof LinkTextNode) {
+									link = true;
+									linkParam = node.getLinkUrl();
+									break;
+								};
+							};
+
 							formats = {
 								bold: sel.hasFormat('bold'),
 								italic: sel.hasFormat('italic'),
 								strikethrough: sel.hasFormat('strikethrough'),
 								underline: sel.hasFormat('underline'),
 								code: sel.hasFormat('code'),
+								link,
+								linkParam,
 							};
 						};
 					});
