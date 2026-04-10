@@ -76,6 +76,14 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 	}, []);
 
+	const getAttachmentType = useCallback((layout: I.ObjectLayout): I.AttachmentType => {
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: return I.AttachmentType.Link;
+			case I.ObjectLayout.Image: return I.AttachmentType.Image;
+			default: return I.AttachmentType.File;
+		};
+	}, []);
+
 	const uploadTmpFiles = useCallback((tmpFiles: any[], callBack: (uploadMap: Map<string, string>) => void) => {
 		if (!tmpFiles.length) {
 			callBack(new Map());
@@ -152,7 +160,8 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				};
 			}).filter(Boolean);
 
-			// Collect attachment objects for optimistic rendering
+			// Build message attachments and collect attachment objects for optimistic rendering
+			const messageAttachments: I.ChatMessageAttachment[] = [];
 			const attachmentObjects: any[] = [];
 
 			for (const p of parts) {
@@ -165,6 +174,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				if (data.isTmp) {
 					const uploadedId = uploadMap.get(data.id);
 					if (uploadedId) {
+						messageAttachments.push({ target: uploadedId, type: getAttachmentType(data.layout) });
 						attachmentObjects.push({
 							id: uploadedId,
 							name: data.name,
@@ -175,12 +185,13 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 						});
 					};
 				} else {
+					messageAttachments.push({ target: data.id, type: getAttachmentType(data.layout) });
 					const fresh = subId ? S.Detail.get(subId, data.id) : null;
 					attachmentObjects.push((fresh && !fresh._empty_) ? fresh : data);
 				};
 			};
 
-			onSubmit?.(resolvedParts, undefined, attachmentObjects);
+			onSubmit?.(resolvedParts, messageAttachments, attachmentObjects);
 
 			if (!isEdit) {
 				editorRef.current?.clear();
@@ -198,7 +209,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		} else {
 			finalize(new Map());
 		};
-	}, [ onSubmit, isEdit, clearDraft, getLinkType, uploadTmpFiles ]);
+	}, [ onSubmit, isEdit, clearDraft, getLinkType, getAttachmentType, uploadTmpFiles ]);
 
 	const handleEmpty = useCallback((v: boolean) => {
 		setIsEmpty(v);
