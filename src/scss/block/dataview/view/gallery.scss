@@ -39,12 +39,6 @@
 				.inner { padding: 15px; }
 			}
 
-			.card .cardContent > .inner .cellContent.c-select { line-height: 20px; }
-			.card .cardContent > .inner .cellContent.c-select {
-				.wrap { line-height: 20px; }
-				.over { height: 20px; }
-			}
-
 			.cellContent.c-longText {
 				.name { overflow: hidden; @include clamp2; }
 			}

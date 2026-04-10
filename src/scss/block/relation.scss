@@ -29,79 +29,80 @@
 			.info .name { color: var(--color-text-secondary); }
 		}
 
-		.cellContent.canEdit {
-			.empty { display: block; }
-		}
-
 		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background $transitionCommon; }
-		.cell.canEdit:hover { background: var(--color-shape-highlight-light); }
+		.cell {
+			&.canEdit:hover { background: var(--color-shape-highlight-light); }
 		
-		.cell.c-select { padding: 6px 8px; line-height: 24px; }
-		.cell.c-select {
-			.empty { line-height: 24px; }
-		}
+			&.c-select { padding: 6px 8px; line-height: 24px; }
+			&.c-select {
+				.empty { line-height: 24px; }
 
-		.cellContent.c-select.isSelect { height: 24px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; padding: 0px 8px 0px 7px; gap: 4px; align-items: center; display: flex; width: fit-content; }
-		.cellContent.c-select.isSelect {
-			.wrap { height: 24px; display: flex; align-items: center; }
-			.over { margin-top: 0px; }
-			.tagItem.isSelect { border: none; border-radius: 0px; padding: 0px; height: auto; }
-		}
-
-		.cell.c-select, 
-		.cell.c-object, 
-		.cell.c-file {
-			.over { flex-wrap: wrap; }
-		}
-
-		.cell.isEditing { padding: 0px; }
-		.cell.isEditing {
-			.cellContent { position: relative; height: auto !important; min-height: 32px; border-radius: 4px; }
-			.cellContent.isName .input { height: 20px; line-height: 20px; width: calc(100% - 24px); }
-			.icon.clear { right: 6px; top: 6px; }
-
-			#entry { line-height: 18px; height: 18px; vertical-align: top; display: inline-block; }
-		}
-
-		.cell.isEditing.c-select {
-			.cellContent, .placeholder  { padding: 5px 8px; }
-			.tagItem {
-				.tagRemove { top: 50%; transform: translateY(-50%); }
+				.cellContent.isSelect { height: 24px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; padding: 0px 8px 0px 7px; gap: 4px; align-items: center; display: flex; width: fit-content; }
+				.cellContent.isSelect {
+					.wrap { height: 24px; display: flex; align-items: center; }
+					.over { margin-top: 0px; }
+					.tagItem.isSelect { border: none; border-radius: 0px; padding: 0px; height: auto; }
+				}
 			}
-		}
-		.cell.isEditing .cellContent.c-select.isSelect { width: 100%; border: 0px; border-radius: 4px; }
-		.cell.isEditing.c-select.isSelect {
-			.over { width: calc(100% - 26px); }
-		}
 
-		.cell.isEditing.c-shortText, 
-		.cell.isEditing.c-number, 
-		.cell.isEditing.c-url, 
-		.cell.isEditing.c-phone, 
-		.cell.isEditing.c-email
-		{
-			.cellContent { padding: 5px 8px !important; }
-		}
+			.cellContent.canEdit {
+				.empty { display: block; }
+			}
 
-		.cell.isEditing.c-date {
-			.cellContent { padding: 5px 8px 4px 8px !important; }
-		}
+			&.c-select, 
+			&.c-object, 
+			&.c-file {
+				.over { flex-wrap: wrap; }
+			}
 
-		.cell.c-object {
-			.element { background: none !important; }
-		}
+			&.isEditing { padding: 0px; }
+			&.isEditing {
+				.cellContent { position: relative; height: auto !important; min-height: 32px; border-radius: 4px; }
+				.cellContent.isName .input { height: 20px; line-height: 20px; width: calc(100% - 24px); }
+				.icon.clear { right: 6px; top: 6px; }
 
-		.cell.isEditing.c-object {
-			.cellContent, .placeholder { padding: 5px 8px 1px 8px !important; }
-		}
+				#entry { line-height: 18px; height: 18px; vertical-align: top; display: inline-block; }
 
-		.cell.isEditing.c-file {
-			.cellContent, .placeholder { padding: 5px 8px !important; }
-		}
+				&.c-select {
+					.cellContent, .placeholder  { padding: 5px 8px; }
+					.tagItem {
+						.tagRemove { top: 50%; transform: translateY(-50%); }
+					}
 
-		.cell.isEditing.c-longText {
-			.cellContent { box-shadow: 0px 0px; visibility: hidden; border: 0px; padding: 5px 8px; }
-			.cellContent span:empty { height: 22px; }
+					.cellContent { width: 100%; border: 0px; border-radius: 4px; }
+					.over { width: calc(100% - 26px); }
+				}
+
+				&.c-shortText, 
+				&.c-number, 
+				&.c-url, 
+				&.c-phone, 
+				&.c-email
+				{
+					.cellContent { padding: 5px 8px !important; }
+				}
+
+				&.c-date {
+					.cellContent { padding: 5px 8px 4px 8px !important; }
+				}
+
+				&.c-object {
+					.element { background: none !important; }
+				}
+
+				&.c-object {
+					.cellContent, .placeholder { padding: 5px 8px 1px 8px !important; }
+				}
+
+				&.c-file {
+					.cellContent, .placeholder { padding: 5px 8px !important; }
+				}
+
+				&.c-longText {
+					.cellContent { box-shadow: 0px 0px; visibility: hidden; border: 0px; padding: 5px 8px; }
+					.cellContent span:empty { height: 22px; }
+				}
+			}
 		}
 	}
 
