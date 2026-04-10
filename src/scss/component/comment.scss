@@ -183,6 +183,7 @@
 			.icon.withBackground { border-radius: 50%; }
 			.icon.withBackground:not(.plus):hover { background-color: var(--color-shape-highlight-light) !important; }
 			.icon.plus { background-color: var(--color-shape-highlight-medium); }
+			.icon.plus:hover { background-color: var(--color-shape-highlight-dark) !important; }
 
 			.div { width: 1px; height: 14px; background: var(--color-shape-highlight-dark); margin: 0px 4px; }
 
