@@ -1399,7 +1399,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const rect = U.Dom.getSelectionRect();
-		const mark = Mark.getInRange(marks, type, range);
+		const mark = Mark.getInRange(marks, type, range) || (type == I.MarkType.Link ? Mark.getInRange(marks, I.MarkType.Object, range) : null);
 		const menuParam: any = {
 			classNameWrap: 'fromBlock',
 			rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
