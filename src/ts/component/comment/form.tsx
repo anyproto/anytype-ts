@@ -641,6 +641,31 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 	}, [ isEdit, isReply ]);
 
+	// Catch Escape at the form level so it doesn't bubble to the global handler
+	// which would close the object. This handles the case where focus is on an
+	// attachment (image) rather than the Lexical editor.
+	useEffect(() => {
+		if (!onCancel) {
+			return;
+		};
+
+		const node = formRef.current;
+		if (!node) {
+			return;
+		};
+
+		const onKeyDown = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') {
+				e.stopPropagation();
+				e.preventDefault();
+				onCancel();
+			};
+		};
+
+		node.addEventListener('keydown', onKeyDown);
+		return () => node.removeEventListener('keydown', onKeyDown);
+	}, [ onCancel ]);
+
 	// Keep page scrolled to bottom when form resizes (new lines, attachments, toolbar)
 	useEffect(() => {
 		const node = formRef.current;
