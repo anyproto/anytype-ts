@@ -1423,8 +1423,13 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		let newType = null;
 
 		if (mark) {
-			filter = mark.param;
 			newType = mark.type;
+
+			if (mark.type == I.MarkType.Object) {
+				filter = S.Detail.get(rootId, mark.param, [ 'name' ]).name || '';
+			} else {
+				filter = mark.param;
+			};
 		} else {
 			filter = text.substring(range.from, range.to);
 		};
