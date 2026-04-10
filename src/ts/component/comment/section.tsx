@@ -13,7 +13,7 @@ const SCROLL_THRESHOLD = 16;
 const CommentSection = (props: I.CommentSectionProps) => {
 
 	const { rootId, targetId, targetType, readonly, isPopup, messageId } = props;
-	const object = S.Detail.get(rootId, rootId, [ 'discussionId' ]);
+	const object = S.Detail.get(rootId, rootId, [ 'discussionId', 'isArchived' ]);
 	const [ localDiscussionId, setLocalDiscussionId ] = useState('');
 	const [ isExpanded, setIsExpanded ] = useState(false);
 	const isHiddenRef = useRef(false);
@@ -647,7 +647,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 	const counterLabel = postCount > 0
 		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`
-		: translate('commentLeaveComment');
+		: translate(object.isArchived ? 'commentDiscussion' : 'commentLeaveComment');
 
 	const cn = [ 'commentSection', (isOpen ? 'isVisible' : '') ];
 
