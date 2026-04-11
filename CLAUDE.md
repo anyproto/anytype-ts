@@ -172,6 +172,7 @@ bun run build:pixi
 - CSS supports native nesting - use nested selectors instead of flat/inline selectors
 - Do not use `cursor: pointer` in CSS - the app does not use custom cursors
 - **Do not change any style or design properties (colors, spacing, sizes, etc.) unless explicitly asked.** Design decisions are intentional — never "fix" or "improve" visual values on your own
+- **Never change colors on your own.** Colors (CSS variables, hardcoded values, theme overrides) are only changed through design tasks with explicit design specs. Even if a color looks wrong or inconsistent, do not fix it unless a design task specifically asks for it
 - For CSS and UI styling changes, match exact pixel values, border-radius, padding, and colors from the user's specifications on the first attempt. Do not guess or approximate visual values
 
 ### Code Style
