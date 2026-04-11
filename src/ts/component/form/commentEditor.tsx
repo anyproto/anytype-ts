@@ -46,12 +46,12 @@ import {
 	$splitNode,
 } from 'lexical';
 import { $setBlocksType } from '@lexical/selection';
-import { $insertDataTransferForRichText } from '@lexical/clipboard';
 
 import { IconObject } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
 import EmbedPreview from 'Component/comment/embedPreview';
 import * as I from 'Interface';
+import * as M from 'Model';
 import Storage from 'Lib/storage';
 
 // Custom HorizontalRuleNode since @lexical/react/HorizontalRuleNode may not be available
@@ -789,6 +789,7 @@ function $isMentionNode (node: LexicalNode | null | undefined): node is MentionN
 };
 
 interface Props {
+	rootId?: string;
 	subId?: string;
 	placeholder?: string;
 	initialParts?: I.CommentContentPart[];
@@ -932,6 +933,19 @@ const extractMarks = (child: TextNode, start: number, end: number): I.Mark[] => 
 	};
 	if (child.hasFormat('code')) {
 		marks.push({ type: I.MarkType.Code, range: { ...range }, param: '' });
+	};
+
+	const style = child.getStyle();
+	if (style) {
+		const colorMatch = style.match(/--anytype-color:\s*([^;]+)/);
+		if (colorMatch) {
+			marks.push({ type: I.MarkType.Color, range: { ...range }, param: colorMatch[1].trim() });
+		};
+
+		const bgColorMatch = style.match(/--anytype-bgcolor:\s*([^;]+)/);
+		if (bgColorMatch) {
+			marks.push({ type: I.MarkType.BgColor, range: { ...range }, param: bgColorMatch[1].trim() });
+		};
 	};
 
 	return marks;
@@ -1313,6 +1327,8 @@ const createFormattedNodes = (text: string, marks: I.Mark[]): LexicalNode[] => {
 			? $createLinkTextNode(linkMark.param || '', linkMark.type, segment)
 			: $createTextNode(segment);
 
+		const styles: string[] = [];
+
 		for (const mark of marks) {
 			if ((mark.range.from <= from) && (mark.range.to >= to)) {
 				switch (mark.type) {
@@ -1321,8 +1337,26 @@ const createFormattedNodes = (text: string, marks: I.Mark[]): LexicalNode[] => {
 					case I.MarkType.Strike: node.toggleFormat('strikethrough'); break;
 					case I.MarkType.Underline: node.toggleFormat('underline'); break;
 					case I.MarkType.Code: node.toggleFormat('code'); break;
+					case I.MarkType.Color: {
+						if (mark.param) {
+							styles.push(`color: var(--color-dark-${mark.param})`);
+							styles.push(`--anytype-color: ${mark.param}`);
+						};
+						break;
+					};
+					case I.MarkType.BgColor: {
+						if (mark.param) {
+							styles.push(`background-color: var(--color-light-${mark.param})`);
+							styles.push(`--anytype-bgcolor: ${mark.param}`);
+						};
+						break;
+					};
 				};
 			};
+		};
+
+		if (styles.length) {
+			node.setStyle(styles.join('; '));
 		};
 
 		nodes.push(node);
@@ -2288,8 +2322,73 @@ const EmbedPlugin = () => {
 	return null;
 };
 
-const PasteUrlPlugin = () => {
+const PasteUrlPlugin = ({ rootId }: { rootId?: string }) => {
 	const [ editor ] = useLexicalComposerContext();
+
+	const insertParts = useCallback((parts: I.CommentContentPart[]) => {
+		editor.update(() => {
+			const selection = $getSelection();
+			if (!$isRangeSelection(selection)) {
+				return;
+			};
+
+			const nodes: LexicalNode[] = [];
+
+			for (const part of parts) {
+				if (part.type === I.BlockType.Div) {
+					nodes.push(new HorizontalRuleNode());
+					continue;
+				};
+
+				const headingTag = styleToHeadingTag(part.style);
+				if (headingTag) {
+					const heading = $createHeadingNode(headingTag as 'h1' | 'h2' | 'h3');
+					heading.append(...createFormattedNodes(part.text || '', part.marks || []));
+					nodes.push(heading);
+					continue;
+				};
+
+				if (part.style === I.TextStyle.Quote) {
+					const quote = new QuoteNode();
+					quote.append(...createFormattedNodes(part.text || '', part.marks || []));
+					nodes.push(quote);
+					continue;
+				};
+
+				if (part.style === I.TextStyle.Code) {
+					const code = $createCodeNode(part.lang || undefined);
+					code.append($createTextNode(part.text || ''));
+					nodes.push(code);
+					continue;
+				};
+
+				if ([ I.TextStyle.Bulleted, I.TextStyle.Numbered, I.TextStyle.Checkbox ].includes(part.style)) {
+					let listType: 'bullet' | 'number' | 'check' = 'bullet';
+					if (part.style === I.TextStyle.Numbered) {
+						listType = 'number';
+					} else
+					if (part.style === I.TextStyle.Checkbox) {
+						listType = 'check';
+					};
+
+					const list = $createListNode(listType);
+					const item = $createListItemNode(listType === 'check' ? part.checked || false : undefined);
+					item.append(...createFormattedNodes(part.text || '', part.marks || []));
+					list.append(item);
+					nodes.push(list);
+					continue;
+				};
+
+				const p = $createParagraphNode();
+				p.append(...createFormattedNodes(part.text || '', part.marks || []));
+				nodes.push(p);
+			};
+
+			if (nodes.length) {
+				selection.insertNodes(nodes);
+			};
+		});
+	}, [ editor ]);
 
 	useEffect(() => {
 		return editor.registerCommand(
@@ -2300,30 +2399,41 @@ const PasteUrlPlugin = () => {
 					return false;
 				};
 
-				// Handle anytype block data from internal copy (chat messages, comments)
+				// Handle anytype block data from internal copy (chat messages, comments, editor)
 				const jsonStr = clipboardData.getData('application/json') || '';
+
 				if (jsonStr) {
 					try {
 						const json = JSON.parse(jsonStr);
+
 						if (json.blocks && json.blocks.length) {
-							const htmlParts = json.blocks
-								.filter(b => b.type == I.BlockType.Text)
-								.map(b => Mark.toHtml(b.content?.text || '', b.content?.marks || []));
+							const parts: I.CommentContentPart[] = json.blocks
+								.filter((b: any) => (b.type == I.BlockType.Text) && b.content && b.content.text)
+								.map((b: any) => {
+									const text = b.content.text || '';
+									const marks = (b.content.marks || []).slice();
+									const length = text.length;
 
-							if (htmlParts.length) {
-								event.preventDefault();
+									if (b.content.color && length) {
+										marks.push({ type: I.MarkType.Color, param: b.content.color, range: { from: 0, to: length } });
+									};
 
-								const dt = new DataTransfer();
-								dt.setData('text/html', htmlParts.join('<br/>'));
-								dt.setData('text/plain', clipboardData.getData('text/plain') || '');
+									if (b.bgColor && length) {
+										marks.push({ type: I.MarkType.BgColor, param: b.bgColor, range: { from: 0, to: length } });
+									};
 
-								editor.update(() => {
-									const selection = $getSelection();
-									if ($isRangeSelection(selection)) {
-										$insertDataTransferForRichText(dt, selection, editor);
+									return {
+										text,
+										style: b.content.style || I.TextStyle.Paragraph,
+										type: I.BlockType.Text,
+										marks,
+										checked: b.content.checked,
 									};
 								});
 
+							if (parts.length) {
+								event.preventDefault();
+								insertParts(parts);
 								return true;
 							};
 						};
@@ -2332,10 +2442,34 @@ const PasteUrlPlugin = () => {
 					};
 				};
 
-				// If clipboard has HTML content, let Lexical handle rich paste natively
+				// HTML without anytype blocks: use BlockPreview to parse into blocks
 				const html = clipboardData.getData('text/html') || '';
 				if (html) {
-					return false;
+					event.preventDefault();
+
+					C.BlockPreview(html, '', (message: any) => {
+						if (!message.error.code && message.blocks && message.blocks.length) {
+							const parts = U.Comment.docBlocksToParts(message.blocks.map((it: any) => new M.Block(it)));
+
+							if (parts.length) {
+								insertParts(parts);
+								return;
+							};
+						};
+
+						// Fallback: insert plain text
+						const text = clipboardData.getData('text/plain') || '';
+						if (text) {
+							editor.update(() => {
+								const selection = $getSelection();
+								if ($isRangeSelection(selection)) {
+									selection.insertText(text);
+								};
+							});
+						};
+					});
+
+					return true;
 				};
 
 				const text = clipboardData.getData('text/plain') || '';
@@ -3800,7 +3934,7 @@ const CodeBlockPlugin = () => {
 
 const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { subId, placeholder, initialParts, readonly, maxLength, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction, onPasteFiles } = props;
+	const { rootId, subId, placeholder, initialParts, readonly, maxLength, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction, onPasteFiles } = props;
 	const editorRef = useRef<LexicalEditor | null>(null);
 	const isEmptyRef = useRef(true);
 	const editorId = useRef(`commentEditor-${Math.random().toString(36).slice(2, 10)}`).current;
@@ -4100,7 +4234,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<HorizontalRulePlugin />
 				<AttachmentPlugin />
 				<EmbedPlugin />
-				<PasteUrlPlugin />
+				<PasteUrlPlugin rootId={rootId} />
 				<PasteImagePlugin onPasteFiles={onPasteFiles} />
 				<SlashMenuPlugin editorId={editorId} onSlashAction={onSlashAction} />
 				<MentionPlugin editorId={editorId} />

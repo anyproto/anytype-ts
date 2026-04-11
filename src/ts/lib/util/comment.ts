@@ -121,6 +121,26 @@ class Comment {
 	};
 
 	/**
+	 * Converts standard document blocks (I.Block[]) into CommentContentParts.
+	 */
+	docBlocksToParts (blocks: I.Block[]): I.CommentContentPart[] {
+		return (blocks || []).filter(it => it.type == I.BlockType.Text).map(block => {
+			const part: I.CommentContentPart = {
+				text: block.content?.text || '',
+				style: block.content?.style || I.TextStyle.Paragraph,
+				type: I.BlockType.Text,
+				marks: block.content?.marks || [],
+			};
+
+			if (block.content?.checked) {
+				part.checked = block.content.checked;
+			};
+
+			return part;
+		});
+	};
+
+	/**
 	 * Extracts dependency IDs (attachment targets, mention/object mark params) from messages.
 	 */
 	getDepsIds (messages: any[]): string[] {

@@ -222,12 +222,6 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
-
-		window.setTimeout(() => {
-			if (formRef.current) {
-				formRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-			};
-		}, 300);
 	}, []);
 
 	const handleBlur = useCallback(() => {
@@ -766,6 +760,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			<div className="contentArea">
 				<CommentEditor
 					ref={editorRef}
+					rootId={rootId}
 					subId={subId}
 					placeholder={placeholder || translate('commentPlaceholder')}
 					initialParts={initialParts}

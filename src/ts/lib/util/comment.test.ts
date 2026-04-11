@@ -269,6 +269,117 @@ describe('Comment', () => {
 		});
 	});
 
+	describe('docBlocksToParts', () => {
+		it('should convert text blocks to parts', () => {
+			const blocks = [
+				{ type: 'text', content: { text: 'Hello world', style: 0, marks: [] } },
+			];
+			const parts = Comment.docBlocksToParts(blocks as any);
+
+			expect(parts).toHaveLength(1);
+			expect(parts[0].text).toBe('Hello world');
+			expect(parts[0].style).toBe(0);
+			expect(parts[0].type).toBe('text');
+			expect(parts[0].marks).toEqual([]);
+		});
+
+		it('should filter out non-text blocks', () => {
+			const blocks = [
+				{ type: 'text', content: { text: 'keep', style: 0, marks: [] } },
+				{ type: 'file', content: { targetObjectId: 'abc' } },
+				{ type: 'div', content: {} },
+				{ type: 'text', content: { text: 'also keep', style: 0, marks: [] } },
+			];
+			const parts = Comment.docBlocksToParts(blocks as any);
+
+			expect(parts).toHaveLength(2);
+			expect(parts[0].text).toBe('keep');
+			expect(parts[1].text).toBe('also keep');
+		});
+
+		it('should preserve marks from blocks', () => {
+			const blocks = [
+				{
+					type: 'text',
+					content: {
+						text: 'bold text',
+						style: 0,
+						marks: [{ type: 3, range: { from: 0, to: 4 }, param: '' }],
+					},
+				},
+			];
+			const parts = Comment.docBlocksToParts(blocks as any);
+
+			expect(parts[0].marks).toHaveLength(1);
+			expect(parts[0].marks[0].type).toBe(3); // Bold
+			expect(parts[0].marks[0].range).toEqual({ from: 0, to: 4 });
+		});
+
+		it('should preserve text style (heading, quote, etc.)', () => {
+			const blocks = [
+				{ type: 'text', content: { text: 'Heading', style: 1, marks: [] } },
+				{ type: 'text', content: { text: 'Quote', style: 5, marks: [] } },
+				{ type: 'text', content: { text: 'Code', style: 6, marks: [] } },
+			];
+			const parts = Comment.docBlocksToParts(blocks as any);
+
+			expect(parts[0].style).toBe(1); // Header1
+			expect(parts[1].style).toBe(5); // Quote
+			expect(parts[2].style).toBe(6); // Code
+		});
+
+		it('should preserve checked field for checkboxes', () => {
+			const blocks = [
+				{ type: 'text', content: { text: 'checked item', style: 8, marks: [], checked: true } },
+				{ type: 'text', content: { text: 'unchecked item', style: 8, marks: [] } },
+			];
+			const parts = Comment.docBlocksToParts(blocks as any);
+
+			expect(parts[0].checked).toBe(true);
+			expect(parts[1].checked).toBeUndefined();
+		});
+
+		it('should handle empty content gracefully', () => {
+			const blocks = [
+				{ type: 'text', content: {} },
+				{ type: 'text', content: null },
+				{ type: 'text' },
+			];
+			const parts = Comment.docBlocksToParts(blocks as any);
+
+			expect(parts).toHaveLength(3);
+			expect(parts[0].text).toBe('');
+			expect(parts[0].style).toBe(0);
+			expect(parts[0].marks).toEqual([]);
+		});
+
+		it('should handle null/undefined input', () => {
+			expect(Comment.docBlocksToParts(null as any)).toEqual([]);
+			expect(Comment.docBlocksToParts(undefined as any)).toEqual([]);
+		});
+
+		it('should handle multiple marks on a single block', () => {
+			const blocks = [
+				{
+					type: 'text',
+					content: {
+						text: 'bold and italic',
+						style: 0,
+						marks: [
+							{ type: 3, range: { from: 0, to: 4 }, param: '' },
+							{ type: 2, range: { from: 9, to: 15 }, param: '' },
+						],
+					},
+				},
+			];
+			const parts = Comment.docBlocksToParts(blocks as any);
+
+			expect(parts[0].marks).toHaveLength(2);
+			expect(parts[0].marks[0].type).toBe(3); // Bold
+			expect(parts[0].marks[1].type).toBe(2); // Italic
+		});
+	});
+
 	describe('isEmpty', () => {
 		it('should return true for null/empty arrays', () => {
 			expect(Comment.isEmpty(null as any)).toBe(true);

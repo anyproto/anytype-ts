@@ -382,8 +382,12 @@ const CommentPost = (props: Props) => {
 		const text = parts.map(p => p.text || '').join('\n');
 		const html = parts.map(p => Mark.toHtml(p.text || '', p.marks || [])).join('<br/>');
 
-		U.Common.clipboardCopy({ text, html: Mark.toStandardHtml(html) });
-		Preview.toastShow({ text: translate('toastCopy') });
+		U.Common.clipboardCopy({
+			text,
+			html: Mark.toStandardHtml(html),
+		});
+
+		Preview.toastShow({ text: translate('toastCopyBlock') });
 	}, [ parts ]);
 
 	const onCopyLink = useCallback(() => {
