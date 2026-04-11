@@ -566,6 +566,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 							U.Common.clipboardCopy({
 								text: U.String.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)),
+								html: Mark.toStandardHtml(Mark.toHtml(item.content.text, item.content.marks)),
 								anytype: {
 									range: { from: 0, to: item.content.text.length },
 									blocks: [ block ],

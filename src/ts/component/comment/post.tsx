@@ -380,7 +380,10 @@ const CommentPost = (props: Props) => {
 
 	const onCopyText = useCallback(() => {
 		const text = parts.map(p => p.text || '').join('\n');
-		U.Common.copyToast('', text);
+		const html = parts.map(p => Mark.toHtml(p.text || '', p.marks || [])).join('<br/>');
+
+		U.Common.clipboardCopy({ text, html: Mark.toStandardHtml(html) });
+		Preview.toastShow({ text: translate('toastCopy') });
 	}, [ parts ]);
 
 	const onCopyLink = useCallback(() => {

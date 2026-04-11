@@ -46,6 +46,7 @@ import {
 	$splitNode,
 } from 'lexical';
 import { $setBlocksType } from '@lexical/selection';
+import { $insertDataTransferForRichText } from '@lexical/clipboard';
 
 import { IconObject } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
@@ -2297,6 +2298,38 @@ const PasteUrlPlugin = () => {
 				const clipboardData = event.clipboardData;
 				if (!clipboardData) {
 					return false;
+				};
+
+				// Handle anytype block data from internal copy (chat messages, comments)
+				const jsonStr = clipboardData.getData('application/json') || '';
+				if (jsonStr) {
+					try {
+						const json = JSON.parse(jsonStr);
+						if (json.blocks && json.blocks.length) {
+							const htmlParts = json.blocks
+								.filter(b => b.type == I.BlockType.Text)
+								.map(b => Mark.toHtml(b.content?.text || '', b.content?.marks || []));
+
+							if (htmlParts.length) {
+								event.preventDefault();
+
+								const dt = new DataTransfer();
+								dt.setData('text/html', htmlParts.join('<br/>'));
+								dt.setData('text/plain', clipboardData.getData('text/plain') || '');
+
+								editor.update(() => {
+									const selection = $getSelection();
+									if ($isRangeSelection(selection)) {
+										$insertDataTransferForRichText(dt, selection, editor);
+									};
+								});
+
+								return true;
+							};
+						};
+					} catch (e) {
+						// Invalid JSON, fall through
+					};
 				};
 
 				// If clipboard has HTML content, let Lexical handle rich paste natively

@@ -154,19 +154,23 @@ class Keyboard {
 		};
 
 		const text = selection.toString();
-		if (!text.includes('\u200B')) {
+		const hasZws = text.includes('\u200B');
+
+		const range = selection.getRangeAt(0);
+		const div = document.createElement('div');
+		div.appendChild(range.cloneContents());
+
+		const html = div.innerHTML;
+		const hasMarkup = /markup(bold|italic|strike|underline|code)/i.test(html);
+
+		if (!hasZws && !hasMarkup) {
 			return;
 		};
 
 		e.preventDefault();
 
 		e.clipboardData.setData('text/plain', text.replace(/\u200B/g, ''));
-
-		const range = selection.getRangeAt(0);
-		const div = document.createElement('div');
-
-		div.appendChild(range.cloneContents());
-		e.clipboardData.setData('text/html', div.innerHTML.replace(/\u200B/g, ''));
+		e.clipboardData.setData('text/html', Mark.toStandardHtml(html.replace(/\u200B/g, '')));
 	};
 
 	/**
