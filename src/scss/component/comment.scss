@@ -433,8 +433,7 @@
 	.commentBlockquoteWrap { padding: 12px 0px; }
 
 	.commentBlockquote {
-		display: flex; align-items: center; min-height: 28px;
-		padding: 4px 0px 4px 12px; line-height: 20px; position: relative;
+		min-height: 28px; padding: 4px 0px 4px 12px; line-height: 20px; position: relative;
 	}
 	.commentBlockquote {
 		&::before {
