@@ -274,7 +274,14 @@ const CommentReply = (props: Props) => {
 	}, []);
 
 	const renderAttachments = () => {
+		const linkTargets = new Set(
+			parts
+				.filter(p => (p.type === I.BlockType.Link) && p.link?.targetObjectId)
+				.map(p => p.link.targetObjectId)
+		);
+
 		const list = (message.attachments || [])
+			.filter(it => !linkTargets.has(it.target))
 			.map(it => S.Detail.get(subId, it.target))
 			.filter(it => !it._empty_);
 

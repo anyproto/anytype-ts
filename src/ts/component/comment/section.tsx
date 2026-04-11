@@ -182,6 +182,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			noDeps: true,
 			ignoreHidden: true,
 			crossSpace: true,
+			updateDetails: true,
 		}, callBack);
 	}, [ targetType, discussionId, targetId ]);
 

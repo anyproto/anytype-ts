@@ -428,12 +428,12 @@
 	.commentH1 { padding: 20px 0px 0px 0px; @include text-header1; }
 	.commentH2 { padding: 16px 0px 0px 0px; @include text-header2; }
 	.commentH3 { padding: 12px 0px 0px 0px; @include text-header3; }
-	.commentParagraph { line-height: 20px; }
-	.commentParagraph + .commentParagraph { padding-top: 8px; }
+	.commentParagraph { padding-top: 8px; line-height: 20px; }
+
+	.commentBlockquoteWrap { padding: 12px 0px; }
 
 	.commentBlockquote {
-		display: flex; align-items: center; min-height: 28px;
-		padding: 4px 0px 4px 12px; line-height: 20px; position: relative;
+		min-height: 28px; padding: 4px 0px 4px 12px; line-height: 20px; position: relative;
 	}
 	.commentBlockquote {
 		&::before {
@@ -551,6 +551,8 @@
 	}
 
 	.commentDivider { border: none; border-top: 1px solid var(--color-shape-secondary); padding: 8px 0px; }
+
+	.commentListWrap { padding: 12px 0px; }
 
 	ul.commentList, ol.commentList { padding: 2px 0px 2px 20px; line-height: 20px; }
 	.commentList li { padding: 1px 0px; }

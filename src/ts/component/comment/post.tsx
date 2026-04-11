@@ -174,6 +174,7 @@ const CommentPost = (props: Props) => {
 			noDeps: true,
 			ignoreHidden: true,
 			crossSpace: true,
+			updateDetails: true,
 		}, callBack);
 	}, [ subId ]);
 
@@ -467,10 +468,17 @@ const CommentPost = (props: Props) => {
 	}, [ isSelf, onEdit, onCopyText, onCopyLink, onDelete, setHover ]);
 
 	const getAttachments = useCallback((): any[] => {
+		const linkTargets = new Set(
+			parts
+				.filter(p => (p.type === I.BlockType.Link) && p.link?.targetObjectId)
+				.map(p => p.link.targetObjectId)
+		);
+
 		return (message.attachments || [])
+			.filter(it => !linkTargets.has(it.target))
 			.map(it => S.Detail.get(subId, it.target))
 			.filter(it => !it._empty_);
-	}, [ message.attachments, subId ]);
+	}, [ message.attachments, parts, subId ]);
 
 	const onAttachmentPreview = useCallback((preview: any) => {
 		const data: any = { ...preview };
