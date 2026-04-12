@@ -7,15 +7,37 @@
 		#loader { border-radius: 32px; }
 
 		.icon.close {
-			position: absolute; right: 16px; top: 16px; width: 28px; height: 28px; border-radius: 6px; z-index: 2;
+			position: absolute; right: 12px; top: 12px; width: 32px; height: 32px; border-radius: 16px; z-index: 2;
 
 			&:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 
 		.stepTitle { @include text-paragraph; font-weight: 600; padding: 16px 0px; text-align: center; }
-		.iconWrapper { display: flex; justify-content: center; margin: 0px 0px 16px 0px; }
+		.seatCounters { @include text-small; color: var(--color-text-secondary); text-align: center; padding: 0px 0px 8px 0px; }
+
+		.offlinePill {
+			display: flex; align-items: center; justify-content: center; gap: 0px 6px;
+			@include text-small; color: var(--color-text-primary);
+			background: var(--color-system-selection); border-radius: 20px; padding: 8px 16px; margin: 8px 0px 24px 0px;
+		}
+		.offlinePill {
+			.icon { width: 16px; height: 16px; color: var(--color-text-primary); }
+		}
+		.iconWrapper { display: flex; justify-content: center; margin: 0px auto 24px auto; position: relative; width: fit-content; }
 		.iconWrapper {
 			.iconPreview { width: 96px; height: 96px; border-radius: 12px; object-fit: cover; }
+
+			.iconEdit {
+				position: absolute; right: -8px; bottom: -8px;
+				width: 32px; height: 32px; border-radius: 16px;
+				display: flex; align-items: center; justify-content: center;
+				border: 1px solid rgba(0, 0, 0, 0.03);
+				background: rgba(255, 255, 255, 0.60);
+				backdrop-filter: blur(8px);
+			}
+			.iconEdit {
+				.icon { width: 16px; height: 16px; }
+			}
 		}
 		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
 		.label.small { @include text-small; color: var(--color-text-secondary); text-align: center; margin: 8px 0px 0px 0px; }
@@ -65,6 +87,7 @@
 
 		/* Step 1 — Name & Icon */
 		.step.step1 {
+			.input.spaceName { border-radius: 12px; @include text-paragraph; font-weight: 600; }
 			.input.spaceName.withMargin { margin: 0px 0px 8px 0px; }
 
 			.memberListWrapper { position: relative; }

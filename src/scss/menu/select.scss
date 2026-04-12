@@ -97,6 +97,11 @@
 
 	.menu.menuSelect.spaceCreate {
 		.content { height: auto !important; }
+
+		.caption { display: flex; align-items: center; }
+		.caption {
+			.icon { margin: 0px; }
+		}
 	}
 
 	/* Type layout conflict */

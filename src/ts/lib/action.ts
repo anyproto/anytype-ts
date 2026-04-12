@@ -702,6 +702,28 @@ class Action {
 	 * @param {string} route - The route context for analytics.
 	 */
 	createSpace (type: I.SpaceCreateType, route: string) {
+		if (type == I.SpaceCreateType.Group) {
+			const mySharedSpaces = U.Space.getMySharedSpacesList();
+			const { sharedSpacesLimit } = U.Space.getProfile();
+
+			console.log(`[SharedSpaceLimit] ${mySharedSpaces.length} / ${sharedSpacesLimit} shared spaces used`);
+
+			if (sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit)) {
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'popup/header/warning', color: 'grey' },
+						title: translate('popupConfirmSharedSpaceLimitTitle'),
+						text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+						textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+						canCancel: false,
+						onConfirm: () => this.openSettings('membership', ''),
+					},
+				});
+				analytics.event('ScreenHitShareSpaceLimit');
+				return;
+			};
+		};
+
 		S.Popup.closeAll(null, () => {
 			S.Popup.open('spaceCreate', { data: { type, route } });
 		});
@@ -908,6 +930,92 @@ class Action {
 		} else {
 			this.createWidgetFromObject(objectId, objectId, '', I.BlockPosition.InnerFirst, route);
 		};
+	};
+
+	savePendingMembers (spaceId: string, identities: string[], writersLimit: number, members?: any[]) {
+		const pending = Storage.get('pendingMembers') || [];
+
+		pending.push({ spaceId, identities, writersLimit, members });
+		Storage.set('pendingMembers', pending);
+	};
+
+	getPendingMembers (spaceId: string): any[] {
+		const pending = Storage.get('pendingMembers') || [];
+		const entry = pending.find((it: any) => it.spaceId == spaceId);
+
+		return entry?.members || [];
+	};
+
+	processPendingMembers (retryCount: number = 0) {
+		const pending = Storage.get('pendingMembers') || [];
+
+		if (!pending.length) {
+			return;
+		};
+
+		Storage.delete('pendingMembers');
+		window.dispatchEvent(new Event('pendingMembersUpdate'));
+
+		const maxRetries = 5;
+		const failed: any[] = [];
+
+		let processed = 0;
+		const total = pending.filter((item: any) => item.identities?.length).length;
+
+		const onProcessed = () => {
+			processed++;
+
+			if (processed < total) {
+				return;
+			};
+
+			if (failed.length && (retryCount < maxRetries)) {
+				Storage.set('pendingMembers', failed);
+				window.dispatchEvent(new Event('pendingMembersUpdate'));
+
+				const delay = Math.min(5000 * Math.pow(2, retryCount), 30000);
+
+				window.setTimeout(() => this.processPendingMembers(retryCount + 1), delay);
+			};
+		};
+
+		pending.forEach((item: any) => {
+			const { spaceId, identities, writersLimit } = item;
+
+			if (!identities?.length) {
+				return;
+			};
+
+			C.SpaceMakeShareable(spaceId, (message: any) => {
+				if (message.error.code) {
+					failed.push(item);
+					onProcessed();
+					return;
+				};
+
+				C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+					if (message.error.code) {
+						failed.push(item);
+						onProcessed();
+						return;
+					};
+
+					const writerIdentities = identities.slice(0, writersLimit);
+					const readerIdentities = identities.slice(writersLimit);
+
+					if (writerIdentities.length) {
+						C.SpaceParticipantsAddList(spaceId, writerIdentities, I.ParticipantPermissions.Writer);
+					};
+
+					if (readerIdentities.length) {
+						C.SpaceParticipantsAddList(spaceId, readerIdentities, I.ParticipantPermissions.Reader);
+					};
+
+					analytics.event('AddMember', { count: identities.length });
+					onProcessed();
+				});
+			});
+		});
 	};
 
 	membershipUpgrade (event?: any) {

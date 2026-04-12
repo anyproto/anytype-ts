@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Title, Label, Icon, Button, IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
 
@@ -9,6 +9,17 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 	const participant = U.Space.getParticipant();
 	const nodeRef = useRef(null);
 	const isOwner = U.Space.isMyOwner();
+	const [ pendingMembers, setPendingMembers ] = useState(() => Action.getPendingMembers(space));
+	const { isOnline } = S.Common;
+	const showOfflinePill = !isOnline && (pendingMembers.length > 0);
+
+
+	useEffect(() => {
+		const handler = () => setPendingMembers(Action.getPendingMembers(space));
+
+		window.addEventListener('pendingMembersUpdate', handler);
+		return () => window.removeEventListener('pendingMembersUpdate', handler);
+	}, [ space ]);
 
 	const onUpgrade = (type: string) => {
 		Action.membershipUpgrade({ type, route: analytics.route.settingsSpaceShare });
@@ -127,6 +138,8 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 	};
 
 	const members = getParticipantList();
+	const activeIdentities = new Set(members.map(it => it.identity).filter(it => it));
+	const visiblePendingMembers = pendingMembers.filter(it => !activeIdentities.has(it.identity));
 	const length = members.length;
 
 	let limitLabel = '';
@@ -186,12 +199,41 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 		);
 	};
 
+	const PendingMember = (item: any) => {
+		const object = {
+			...item,
+			layout: I.ObjectLayout.Participant,
+		};
+
+		return (
+			<div className="row isPending">
+				<div className="side left">
+					<IconObject size={48} object={object} />
+					<div className="text">
+						<ObjectName object={object} />
+						{item.globalName ? <Label className="anyId" text={item.globalName} /> : ''}
+					</div>
+				</div>
+				<div className="side right">
+					<Label color="grey" text={translate('commonPending')} />
+				</div>
+			</div>
+		);
+	};
+
 	return (
 		<div
 			ref={nodeRef}
 			id="sectionMembers"
 			className="section sectionMembers"
 		>
+			{showOfflinePill ? (
+				<div className="offlinePill">
+					<Icon name="common/offline" />
+					{translate('popupSettingsSpaceShareOffline')}
+				</div>
+			) : ''}
+
 			<div className="membersTitle">
 				<Title text={translate('commonMembers')} />
 				{length > 1 ? <Label text={String(length)} /> : ''}
@@ -207,6 +249,9 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 			<div id="list" className="rows">
 				{members.map((item: any) => (
 					<Member key={item.id} {...item} />
+				))}
+				{visiblePendingMembers.map((item: any) => (
+					<PendingMember key={item.identity} {...item} />
 				))}
 			</div>
 		</div>

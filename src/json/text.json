@@ -65,6 +65,7 @@
 	"commonOpenObject": "Open as Object",
 	"commonClose": "Close",
 	"commonRemove": "Remove",
+	"commonPending": "Pending",
 	"commonChange": "Change",
 	"commonName": "Name",
 	"commonNoObjects": "No Objects",
@@ -1089,6 +1090,7 @@
 
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
+	"popupSettingsSpaceShareOffline": "Waiting for connection to add members",
 	"popupSettingsSpaceShareTitle": "Members",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedLabel": "You can't add more members",
@@ -1262,6 +1264,8 @@
 	"popupSpaceCreateStep1Placeholder": "Search by name or handle",
 	"popupSpaceCreateStep2Create": "Create",
 	"popupSpaceCreateOptionalMembers": "Optional — you can add members later",
+	"popupSpaceCreateSeatCounters": "%s of %s Editors, %s of %s Viewers",
+	"popupSpaceCreateOffline": "Members will be invited when you're back online",
 
 	"settingsSpaceHomeTitle": "Create Home",
 	"settingsSpaceHomeDescription": "Select what you and channel member see when they open the channel. You can always change it in settings.",

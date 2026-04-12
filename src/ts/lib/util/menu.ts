@@ -3,6 +3,7 @@ import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
 import Locale from 'dist/lib/json/locale.json';
 import React, { MouseEvent } from 'react';
+import { Icon } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { focus } from 'Lib/focus';
@@ -1681,9 +1682,19 @@ class UtilMenu {
 			[I.SpaceCreateType.Join]: 'Join',
 		};
 
+		const mySharedSpaces = U.Space.getMySharedSpacesList();
+		const { sharedSpacesLimit } = U.Space.getProfile();
+		const isLimitReached = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
+
+		const groupOption: any = { id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') };
+
+		if (isLimitReached) {
+			groupOption.caption = React.createElement(Icon, { name: 'common/alert', className: 'spaceLimit', color: 'grey' });
+		};
+
 		const options = [
 			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
-			{ id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') },
+			groupOption,
 			{ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
 		];
 

@@ -56,6 +56,9 @@ class Keyboard {
 			if (!S.Membership.products.length) {
 				U.Data.getMembershipData();
 			};
+			if (navigator.onLine) {
+				Action.processPendingMembers();
+			};
 		};
 		
 		this._handlers.offline = this._handlers.online;
