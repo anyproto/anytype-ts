@@ -706,8 +706,6 @@ class Action {
 			const mySharedSpaces = U.Space.getMySharedSpacesList();
 			const { sharedSpacesLimit } = U.Space.getProfile();
 
-			console.log(`[SharedSpaceLimit] ${mySharedSpaces.length} / ${sharedSpacesLimit} shared spaces used`);
-
 			if (sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit)) {
 				S.Popup.open('confirm', {
 					data: {

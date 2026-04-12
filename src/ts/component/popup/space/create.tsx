@@ -178,11 +178,16 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		const submittedName = checkName(name);
 		const usecase = I.Usecase.DataSpace;
 
-		// Resolve identities from cross-space subscription before space switch
-		const identities = S.Record.getRecords(SUB_ID)
-			.filter(it => selectedMembers.includes(it.id))
-			.map(it => it.identity)
-			.filter(it => it);
+		// Resolve identities and member data from cross-space subscription before space switch
+		const selectedRecords = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
+		const identities = selectedRecords.map(it => it.identity).filter(it => it);
+		const pendingMemberData = selectedRecords.map(it => ({
+			identity: it.identity,
+			name: it.name,
+			iconImage: it.iconImage,
+			iconOption: it.iconOption,
+			globalName: it.globalName,
+		}));
 
 		setIsLoading(true);
 
@@ -217,20 +222,9 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 								const writersLimit = product?.features?.spaceWriters || 0;
 
 								if (!S.Common.isOnline && identities.length) {
-									const pendingMemberData = S.Record.getRecords(SUB_ID)
-										.filter(it => selectedMembers.includes(it.id))
-										.map(it => ({
-											identity: it.identity,
-											name: it.name,
-											iconImage: it.iconImage,
-											iconOption: it.iconOption,
-											globalName: it.globalName,
-										}));
-
 									Action.savePendingMembers(S.Common.space, identities, writersLimit, pendingMemberData);
 								} else {
 									C.SpaceMakeShareable(S.Common.space, (message: any) => {
-										console.log(`[SharedSpaceLimit] SpaceMakeShareable result: code=${message.error.code}, space=${S.Common.space}`);
 										if (message.error.code) {
 											if (message.error.code == 104) {
 												const { sharedSpacesLimit } = U.Space.getProfile();
@@ -513,7 +507,6 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 							{U.String.sprintf(translate('popupSpaceCreateSeatCounters'), editorCount, writersLimit, viewerCount, readersLimit)}
 						</div>
 					) : ''}
-
 
 					<Filter
 						ref={filterRef}

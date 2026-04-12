@@ -13,7 +13,6 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 	const { isOnline } = S.Common;
 	const showOfflinePill = !isOnline && (pendingMembers.length > 0);
 
-
 	useEffect(() => {
 		const handler = () => setPendingMembers(Action.getPendingMembers(space));
 
