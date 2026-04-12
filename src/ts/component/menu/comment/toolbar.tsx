@@ -15,6 +15,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		{ type: 'italic', icon: 'menu/mark/italic', name: translate('commonItalic'), caption: keyboard.getCaption('textItalic') },
 		{ type: 'strikethrough', icon: 'menu/mark/strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
 		{ type: 'underline', icon: 'menu/mark/underline', name: translate('commonUnderline'), caption: keyboard.getCaption('textUnderlined') },
+		{ type: 'code', icon: 'menu/mark/code', name: translate('commonInlineCode'), caption: keyboard.getCaption('textCode') },
 	];
 
 	const activeFormats = getActiveFormats?.() || {};
@@ -78,37 +79,10 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const onListClick = (e: any) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const options = [
-			{ id: 'bulleted', iconParam: { name: 'menu/block/text/bulleted' }, name: translate('commentBlockBulleted'), textStyle: I.TextStyle.Bulleted },
-			{ id: 'numbered', iconParam: { name: 'menu/block/text/numbered' }, name: translate('commentBlockNumbered'), textStyle: I.TextStyle.Numbered },
-			{ id: 'checkbox', iconParam: { name: 'comment/menu/checkbox' }, name: translate('commentBlockCheckbox'), textStyle: I.TextStyle.Checkbox },
-		];
-
-		S.Menu.open('select', {
-			classNameWrap: 'fromBlock',
-			element: `#${getId()} #button-list`,
-			offsetY: 6,
-			horizontal: I.MenuDirection.Center,
-			vertical: I.MenuDirection.Top,
-			noAnimation: true,
-			data: {
-				noClose: true,
-				options: U.Menu.prepareForSelect(options),
-				onSelect: (_e: any, item: any) => {
-					onBlockStyle?.(item.textStyle);
-				},
-			},
-		});
-	};
 
 	const extraActions = [
 		{ id: 'link', icon: 'menu/mark/link', name: translate('commonLink'), caption: keyboard.getCaption('textLink'), isActive: activeFormats.link, onClick: onLinkClick },
 		{ id: 'quote', icon: 'comment/menu/quote', name: translate('blockNameQuote'), isActive: blockStyle == 'quote', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Quote); } },
-		{ id: 'code', icon: 'comment/menu/code', name: translate('blockNameCode'), isActive: blockStyle == 'code', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Code); } },
 	];
 
 	const styleIcon = (() => {
@@ -120,21 +94,6 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	})();
 
-	const listIcon = (() => {
-		switch (blockStyle) {
-			case 'numbered': return 'menu/block/text/numbered';
-			case 'checkbox': return 'comment/menu/checkbox';
-			default: return 'menu/block/text/bulleted';
-		};
-	})();
-
-	const listTooltip = (() => {
-		switch (blockStyle) {
-			case 'numbered': return translate('commentBlockNumbered');
-			case 'checkbox': return translate('commentBlockCheckbox');
-			default: return translate('commentBlockBulleted');
-		};
-	})();
 
 	return (
 		<div className="flex">
@@ -149,7 +108,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 			</div>
 
-			<div className="section last">
+			<div className="section">
 				{markActions.map((action) => {
 					const isActive = activeFormats[action.type];
 
@@ -178,16 +137,6 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				))}
 			</div>
 
-			<div className="section last">
-				<Icon
-					id="button-list"
-					name={listIcon}
-					className="blockStyle" withBackground={true}
-					arrow={true}
-					tooltipParam={{ text: listTooltip }}
-					onMouseDown={onListClick}
-				/>
-			</div>
 		</div>
 	);
 });

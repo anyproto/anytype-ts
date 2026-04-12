@@ -9,9 +9,9 @@
 		.icon { min-width: 32px; height: 32px !important; margin: 0px; border-radius: 16px; }
 		.icon:hover, .icon.hover, .icon.active { background-color: var(--color-shape-highlight-medium); }
 
-		.icon.blockStyle { width: 40px !important; gap: 0px 2px; }
+		.icon.blockStyle { width: 44px !important; justify-content: flex-start; padding-left: 6px; }
 		.icon.blockStyle {
-			.icon.arrow { position: static; }
+			.icon.arrow { right: 6px; width: 8px !important; height: 8px !important; min-width: unset !important; border-radius: 0; background-color: transparent !important; }
 		}
 	}
 }

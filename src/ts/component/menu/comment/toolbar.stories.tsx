@@ -23,7 +23,7 @@ export const Default: Story = {
 				/>
 			</div>
 
-			<div className="section last">
+			<div className="section">
 				<Icon name="menu/mark/bold" withBackground={true} />
 				<Icon name="menu/mark/italic" withBackground={true} />
 				<Icon name="menu/mark/strike" withBackground={true} />
@@ -47,7 +47,7 @@ export const WithActiveMarks: Story = {
 				/>
 			</div>
 
-			<div className="section last">
+			<div className="section">
 				<Icon name="menu/mark/bold" color="default" className="active" withBackground={true} />
 				<Icon name="menu/mark/italic" color="default" className="active" withBackground={true} />
 				<Icon name="menu/mark/strike" withBackground={true} />
