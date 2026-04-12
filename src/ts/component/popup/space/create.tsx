@@ -91,10 +91,10 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		const product = S.Membership.data?.getTopProduct();
 		const writersLimit = product?.features?.spaceWriters || 0;
 		const readersLimit = product?.features?.spaceReaders || 0;
-		const editorCount = Math.min(selectedMembers.length, writersLimit);
-		const viewerCount = Math.max(selectedMembers.length - writersLimit, 0);
+		const writersCount = Math.min(selectedCount, writersLimit);
+		const readersCount = Math.min(Math.max(selectedCount - writersLimit, 0), readersLimit);
 
-		return { writersLimit, readersLimit, editorCount, viewerCount };
+		return { writersLimit, readersLimit, writersCount, readersCount };
 	};
 
 	const loadMembers = useCallback(() => {
@@ -178,16 +178,11 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		const submittedName = checkName(name);
 		const usecase = I.Usecase.DataSpace;
 
-		// Resolve identities and member data from cross-space subscription before space switch
-		const selectedRecords = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
-		const identities = selectedRecords.map(it => it.identity).filter(it => it);
-		const pendingMemberData = selectedRecords.map(it => ({
-			identity: it.identity,
-			name: it.name,
-			iconImage: it.iconImage,
-			iconOption: it.iconOption,
-			globalName: it.globalName,
-		}));
+		// Resolve identities from cross-space subscription before space switch
+		const identities = S.Record.getRecords(SUB_ID)
+			.filter(it => selectedMembers.includes(it.id))
+			.map(it => it.identity)
+			.filter(it => it);
 
 		setIsLoading(true);
 
@@ -222,7 +217,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 								const writersLimit = product?.features?.spaceWriters || 0;
 
 								if (!S.Common.isOnline && identities.length) {
-									Action.savePendingMembers(S.Common.space, identities, writersLimit, pendingMemberData);
+									Action.savePendingMembers(S.Common.space, identities);
 								} else {
 									C.SpaceMakeShareable(S.Common.space, (message: any) => {
 										if (message.error.code) {
@@ -410,7 +405,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			};
 
 			if ((step == 1) && selectedListRef.current) {
-				totalHeight = LABEL_HEIGHT + ROW_HEIGHT + selectedMemberObjects.length * ROW_HEIGHT + GRAD_HEIGHT;
+				totalHeight = LABEL_HEIGHT + ROW_HEIGHT + selectedObjectsCount * ROW_HEIGHT + GRAD_HEIGHT;
 				element = selectedListRef.current;
 			};
 
@@ -448,7 +443,9 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
-	const hasMembers = isGroup && (members.length || selectedMemberObjects.length);
+	const selectedCount = selectedMembers.length;
+	const selectedObjectsCount = selectedMemberObjects.length;
+	const hasMembers = isGroup && (members.length || selectedObjectsCount);
 
 	const rowRenderer = ({ index, key, style }) => {
 		const item = members[index];
@@ -496,7 +493,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		);
 	} else
 	if (isGroup && (step == 0)) {
-		const { writersLimit, readersLimit, editorCount, viewerCount } = getSeatCounters();
+		const { writersLimit, readersLimit, writersCount, readersCount } = getSeatCounters();
 
 		stepContent = (
 			<div className="step step0">
@@ -504,7 +501,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 					<div className="stepTitle">{translate('popupSpaceCreateStep1Title')}</div>
 					{(writersLimit > 0) ? (
 						<div className="seatCounters">
-							{U.String.sprintf(translate('popupSpaceCreateSeatCounters'), editorCount, writersLimit, viewerCount, readersLimit)}
+							{U.String.sprintf(translate('popupSpaceCreateSeatCounters'), writersCount, writersLimit, readersCount, readersLimit)}
 						</div>
 					) : ''}
 
@@ -549,7 +546,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 
 				<div className="wrapper buttons">
 					<Button
-						text={translate(selectedMembers.length ? 'popupSpaceCreateNext' : 'popupSpaceCreateContinueWithoutMembers')}
+						text={translate(selectedCount ? 'popupSpaceCreateNext' : 'popupSpaceCreateContinueWithoutMembers')}
 						color="accent"
 						onClick={onNext}
 					/>
@@ -557,7 +554,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			</div>
 		);
 	} else {
-		const showOfflinePill = isGroup && (selectedMembers.length > 0) && !S.Common.isOnline;
+		const showOfflinePill = isGroup && (selectedCount > 0) && !S.Common.isOnline;
 
 		stepContent = (
 			<div className="step step1">

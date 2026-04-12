@@ -930,35 +930,41 @@ class Action {
 		};
 	};
 
-	savePendingMembers (spaceId: string, identities: string[], writersLimit: number, members?: any[]) {
-		const pending = Storage.get('pendingMembers') || [];
+	savePendingMembers (spaceId: string, identities: string[]) {
+		const existing = Storage.getSpaceKey('pendingMembers', false, spaceId) || [];
+		const merged = [ ...new Set([ ...existing, ...identities ]) ];
 
-		pending.push({ spaceId, identities, writersLimit, members });
-		Storage.set('pendingMembers', pending);
+		Storage.setSpaceKey('pendingMembers', merged, false, spaceId);
 	};
 
-	getPendingMembers (spaceId: string): any[] {
-		const pending = Storage.get('pendingMembers') || [];
-		const entry = pending.find((it: any) => it.spaceId == spaceId);
-
-		return entry?.members || [];
+	getPendingMembers (spaceId: string): string[] {
+		return Storage.getSpaceKey('pendingMembers', false, spaceId) || [];
 	};
 
 	processPendingMembers (retryCount: number = 0) {
-		const pending = Storage.get('pendingMembers') || [];
+		const spaceData = Storage.getSpace(false);
+		const entries: { spaceId: string; identities: string[] }[] = [];
 
-		if (!pending.length) {
+		for (const spaceId in spaceData) {
+			const identities = spaceData[spaceId]?.pendingMembers;
+
+			if (identities?.length) {
+				entries.push({ spaceId, identities });
+				Storage.deleteSpaceKey('pendingMembers', false, spaceId);
+			};
+		};
+
+		if (!entries.length) {
 			return;
 		};
 
-		Storage.delete('pendingMembers');
-		window.dispatchEvent(new Event('pendingMembersUpdate'));
-
+		const product = S.Membership.data?.getTopProduct();
+		const writersLimit = product?.features?.spaceWriters || 0;
 		const maxRetries = 5;
-		const failed: any[] = [];
+		const failed: { spaceId: string; identities: string[] }[] = [];
 
 		let processed = 0;
-		const total = pending.filter((item: any) => item.identities?.length).length;
+		const total = entries.length;
 
 		const onProcessed = () => {
 			processed++;
@@ -968,8 +974,7 @@ class Action {
 			};
 
 			if (failed.length && (retryCount < maxRetries)) {
-				Storage.set('pendingMembers', failed);
-				window.dispatchEvent(new Event('pendingMembersUpdate'));
+				failed.forEach(it => this.savePendingMembers(it.spaceId, it.identities));
 
 				const delay = Math.min(5000 * Math.pow(2, retryCount), 30000);
 
@@ -977,23 +982,17 @@ class Action {
 			};
 		};
 
-		pending.forEach((item: any) => {
-			const { spaceId, identities, writersLimit } = item;
-
-			if (!identities?.length) {
-				return;
-			};
-
+		entries.forEach(({ spaceId, identities }) => {
 			C.SpaceMakeShareable(spaceId, (message: any) => {
 				if (message.error.code) {
-					failed.push(item);
+					failed.push({ spaceId, identities });
 					onProcessed();
 					return;
 				};
 
 				C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
 					if (message.error.code) {
-						failed.push(item);
+						failed.push({ spaceId, identities });
 						onProcessed();
 						return;
 					};

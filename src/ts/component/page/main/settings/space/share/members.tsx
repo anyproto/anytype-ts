@@ -1,6 +1,8 @@
-import React, { forwardRef, useRef, useState, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import { Title, Label, Icon, Button, IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
+
+const SUB_ID = 'settingsPendingMembers';
 
 const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -9,16 +11,31 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 	const participant = U.Space.getParticipant();
 	const nodeRef = useRef(null);
 	const isOwner = U.Space.isMyOwner();
-	const [ pendingMembers, setPendingMembers ] = useState(() => Action.getPendingMembers(space));
+	const pendingIdentities = Action.getPendingMembers(space);
 	const { isOnline } = S.Common;
-	const showOfflinePill = !isOnline && (pendingMembers.length > 0);
+	const showOfflinePill = !isOnline && (pendingIdentities.length > 0);
 
 	useEffect(() => {
-		const handler = () => setPendingMembers(Action.getPendingMembers(space));
+		if (!pendingIdentities.length) {
+			return;
+		};
 
-		window.addEventListener('pendingMembersUpdate', handler);
-		return () => window.removeEventListener('pendingMembersUpdate', handler);
-	}, [ space ]);
+		U.Subscription.subscribe({
+			subId: SUB_ID,
+			keys: U.Subscription.participantRelationKeys(),
+			filters: [
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				{ relationKey: 'identity', condition: I.FilterCondition.In, value: pendingIdentities },
+			],
+			ignoreHidden: false,
+			noDeps: true,
+			crossSpace: true,
+		});
+
+		return () => {
+			U.Subscription.destroyList([ SUB_ID ]);
+		};
+	}, [ pendingIdentities.join(',') ]);
 
 	const onUpgrade = (type: string) => {
 		Action.membershipUpgrade({ type, route: analytics.route.settingsSpaceShare });
@@ -138,7 +155,15 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const members = getParticipantList();
 	const activeIdentities = new Set(members.map(it => it.identity).filter(it => it));
-	const visiblePendingMembers = pendingMembers.filter(it => !activeIdentities.has(it.identity));
+	const seen = new Set<string>();
+	const pendingRecords = S.Record.getRecords(SUB_ID).filter(it => {
+		if (!it.identity || activeIdentities.has(it.identity) || seen.has(it.identity)) {
+			return false;
+		};
+
+		seen.add(it.identity);
+		return true;
+	});
 	const length = members.length;
 
 	let limitLabel = '';
@@ -249,7 +274,7 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 				{members.map((item: any) => (
 					<Member key={item.id} {...item} />
 				))}
-				{visiblePendingMembers.map((item: any) => (
+				{pendingRecords.map((item: any) => (
 					<PendingMember key={item.identity} {...item} />
 				))}
 			</div>
