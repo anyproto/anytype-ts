@@ -2,6 +2,18 @@ import React, { forwardRef, useImperativeHandle } from 'react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 
+const STYLE_MAP: Record<string, number> = {
+	paragraph: I.TextStyle.Paragraph,
+	header1: I.TextStyle.Header1,
+	header2: I.TextStyle.Header2,
+	header3: I.TextStyle.Header3,
+	checkbox: I.TextStyle.Checkbox,
+	bulleted: I.TextStyle.Bulleted,
+	numbered: I.TextStyle.Numbered,
+};
+
+const LIST_STYLES = [ 'checkbox', 'bulleted', 'numbered' ];
+
 const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, close } = props;
@@ -15,10 +27,11 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		{ type: 'italic', icon: 'menu/mark/italic', name: translate('commonItalic'), caption: keyboard.getCaption('textItalic') },
 		{ type: 'strikethrough', icon: 'menu/mark/strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
 		{ type: 'underline', icon: 'menu/mark/underline', name: translate('commonUnderline'), caption: keyboard.getCaption('textUnderlined') },
+		{ type: 'code', icon: 'menu/mark/code', name: translate('commonInlineCode'), caption: keyboard.getCaption('textCode') },
 	];
 
 	const activeFormats = getActiveFormats?.() || {};
-	const blockStyle = data.blockStyle || getBlockStyle?.() || 'text';
+	const blockStyle = getBlockStyle?.() || data.blockStyle || 'text';
 
 	const onMark = (e: any, type: string) => {
 		e.preventDefault();
@@ -54,14 +67,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const options = [
-			{ id: 'paragraph', iconParam: { name: 'menu/block/text/paragraph' }, name: translate('blockNameParagraph'), textStyle: I.TextStyle.Paragraph },
-			{ id: 'header1', iconParam: { name: 'menu/block/text/header' }, name: translate('blockNameHeader1'), textStyle: I.TextStyle.Header1 },
-			{ id: 'header2', iconParam: { name: 'menu/block/text/header' }, name: translate('blockNameHeader2'), textStyle: I.TextStyle.Header2 },
-			{ id: 'header3', iconParam: { name: 'menu/block/text/header' }, name: translate('blockNameHeader3'), textStyle: I.TextStyle.Header3 },
-		];
-
-		S.Menu.open('select', {
+		S.Menu.open('blockStyle', {
 			classNameWrap: 'fromBlock',
 			element: `#${getId()} #button-style`,
 			offsetY: 6,
@@ -69,72 +75,32 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			vertical: I.MenuDirection.Top,
 			noAnimation: true,
 			data: {
-				noClose: true,
-				options: U.Menu.prepareForSelect(options),
-				onSelect: (_e: any, item: any) => {
-					onBlockStyle?.(item.textStyle);
+				rootId: '',
+				blockId: '',
+				blockIds: [],
+				allowedSections: [ 'turnText', 'turnList' ],
+				allowedItems: [
+					I.TextStyle.Paragraph, I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3,
+					I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered,
+				],
+				activeStyle: STYLE_MAP[blockStyle] ?? I.TextStyle.Paragraph,
+				onSelect: (item: any) => {
+					onBlockStyle?.(item.itemId);
 				},
 			},
 		});
 	};
 
-	const onListClick = (e: any) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const options = [
-			{ id: 'bulleted', iconParam: { name: 'menu/block/text/bulleted' }, name: translate('commentBlockBulleted'), textStyle: I.TextStyle.Bulleted },
-			{ id: 'numbered', iconParam: { name: 'menu/block/text/numbered' }, name: translate('commentBlockNumbered'), textStyle: I.TextStyle.Numbered },
-			{ id: 'checkbox', iconParam: { name: 'comment/menu/checkbox' }, name: translate('commentBlockCheckbox'), textStyle: I.TextStyle.Checkbox },
-		];
-
-		S.Menu.open('select', {
-			classNameWrap: 'fromBlock',
-			element: `#${getId()} #button-list`,
-			offsetY: 6,
-			horizontal: I.MenuDirection.Center,
-			vertical: I.MenuDirection.Top,
-			noAnimation: true,
-			data: {
-				noClose: true,
-				options: U.Menu.prepareForSelect(options),
-				onSelect: (_e: any, item: any) => {
-					onBlockStyle?.(item.textStyle);
-				},
-			},
-		});
-	};
 
 	const extraActions = [
 		{ id: 'link', icon: 'menu/mark/link', name: translate('commonLink'), caption: keyboard.getCaption('textLink'), isActive: activeFormats.link, onClick: onLinkClick },
 		{ id: 'quote', icon: 'comment/menu/quote', name: translate('blockNameQuote'), isActive: blockStyle == 'quote', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Quote); } },
-		{ id: 'code', icon: 'comment/menu/code', name: translate('blockNameCode'), isActive: blockStyle == 'code', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Code); } },
 	];
 
-	const styleIcon = (() => {
-		switch (blockStyle) {
-			case 'header1':
-			case 'header2':
-			case 'header3': return 'menu/block/text/header';
-			default: return 'menu/block/text/paragraph';
-		};
-	})();
+	const styleIcon = LIST_STYLES.includes(blockStyle)
+		? U.Data.blockTextIcon(STYLE_MAP[blockStyle])
+		: 'menu/block/text/paragraph';
 
-	const listIcon = (() => {
-		switch (blockStyle) {
-			case 'numbered': return 'menu/block/text/numbered';
-			case 'checkbox': return 'comment/menu/checkbox';
-			default: return 'menu/block/text/bulleted';
-		};
-	})();
-
-	const listTooltip = (() => {
-		switch (blockStyle) {
-			case 'numbered': return translate('commentBlockNumbered');
-			case 'checkbox': return translate('commentBlockCheckbox');
-			default: return translate('commentBlockBulleted');
-		};
-	})();
 
 	return (
 		<div className="flex">
@@ -149,7 +115,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 			</div>
 
-			<div className="section last">
+			<div className="section">
 				{markActions.map((action) => {
 					const isActive = activeFormats[action.type];
 
@@ -178,16 +144,6 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				))}
 			</div>
 
-			<div className="section last">
-				<Icon
-					id="button-list"
-					name={listIcon}
-					className="blockStyle" withBackground={true}
-					arrow={true}
-					tooltipParam={{ text: listTooltip }}
-					onMouseDown={onListClick}
-				/>
-			</div>
 		</div>
 	);
 });
