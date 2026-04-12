@@ -2,6 +2,18 @@ import React, { forwardRef, useImperativeHandle } from 'react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 
+const STYLE_MAP: Record<string, number> = {
+	paragraph: I.TextStyle.Paragraph,
+	header1: I.TextStyle.Header1,
+	header2: I.TextStyle.Header2,
+	header3: I.TextStyle.Header3,
+	checkbox: I.TextStyle.Checkbox,
+	bulleted: I.TextStyle.Bulleted,
+	numbered: I.TextStyle.Numbered,
+};
+
+const LIST_STYLES = [ 'checkbox', 'bulleted', 'numbered' ];
+
 const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, close } = props;
@@ -51,18 +63,6 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const styleMap: any = {
-		paragraph: I.TextStyle.Paragraph,
-		header1: I.TextStyle.Header1,
-		header2: I.TextStyle.Header2,
-		header3: I.TextStyle.Header3,
-		checkbox: I.TextStyle.Checkbox,
-		bulleted: I.TextStyle.Bulleted,
-		numbered: I.TextStyle.Numbered,
-	};
-
-	const listStyles = [ 'checkbox', 'bulleted', 'numbered' ];
-
 	const onStyleClick = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -83,7 +83,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					I.TextStyle.Paragraph, I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3,
 					I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered,
 				],
-				activeStyle: styleMap[blockStyle] ?? I.TextStyle.Paragraph,
+				activeStyle: STYLE_MAP[blockStyle] ?? I.TextStyle.Paragraph,
 				onSelect: (item: any) => {
 					onBlockStyle?.(item.itemId);
 				},
@@ -97,8 +97,8 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		{ id: 'quote', icon: 'comment/menu/quote', name: translate('blockNameQuote'), isActive: blockStyle == 'quote', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Quote); } },
 	];
 
-	const styleIcon = listStyles.includes(blockStyle)
-		? U.Data.blockTextIcon(styleMap[blockStyle])
+	const styleIcon = LIST_STYLES.includes(blockStyle)
+		? U.Data.blockTextIcon(STYLE_MAP[blockStyle])
 		: 'menu/block/text/paragraph';
 
 

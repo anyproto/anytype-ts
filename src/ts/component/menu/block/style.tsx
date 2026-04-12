@@ -56,8 +56,8 @@ const MenuBlockStyle = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		const textChildren = U.Menu.getBlockText().map((it: any) => {
 			if (textStyleMap[it.id] !== undefined) {
-				it.className = (it.className ? `${it.className} ` : '') + textStyleMap[it.id];
-				delete it.iconParam;
+				const { iconParam, ...rest } = it;
+				return { ...rest, className: (it.className ? `${it.className} ` : '') + textStyleMap[it.id] };
 			};
 			return it;
 		});
