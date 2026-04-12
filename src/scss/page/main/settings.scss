@@ -566,6 +566,15 @@
 
         .section.sectionMembers { min-height: 236px; display: flex; flex-direction: column; }
         .section.sectionMembers {
+            .offlinePill {
+                display: flex; align-items: center; justify-content: center; gap: 0px 6px;
+                @include text-common; color: var(--color-text-primary);
+                background: var(--color-system-selection); border-radius: 8px; padding: 0px 16px; height: 52px; margin: 0px 0px 48px 0px;
+            }
+            .offlinePill {
+                .icon { width: 16px; height: 16px; color: var(--color-text-primary); }
+            }
+
             .membersTitle { display: flex; gap: 0px 8px; margin-bottom: 8px; align-items: baseline; padding: 7px 0px; }
             .membersTitle {
                 .title { margin-bottom: 0px; }
@@ -575,6 +584,7 @@
             .rows { flex-grow: 1; }
 
             .row { border-bottom: 0px solid; padding: 8px 0px; display: flex; gap: 0px 12px; align-items: center; }
+            .row.isPending { opacity: 0.5; }
             .row.payment { grid-template-columns: 1fr auto; @include text-small; margin: 0px 0px 14px 0px; }
             .row {
                 .side { display: flex; align-items: center; }
