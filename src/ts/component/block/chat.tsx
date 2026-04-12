@@ -262,6 +262,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 				loadDepsAndReplies(messages, () => {
 					if (messages.length) {
+						if (dir < 0) {
+							setAutoLoadDisabled(true);
+						};
+
 						S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
 
 						if (first && (dir < 0)) {
@@ -668,7 +672,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const list = getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
-		const isBottom = st >= max;
+		const isBottom = (max > 0) && (st >= max);
 
 		setIsBottom(isBottom);
 
