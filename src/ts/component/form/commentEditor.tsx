@@ -1837,8 +1837,8 @@ const SelectionToolbarPlugin = () => {
 						if ($isCodeNode(topLevel)) {
 							style = 'code';
 						} else
-						if ($isListNode(topLevel) || ($isElementNode(parent) && $isListNode(parent))) {
-							const listNode = $isListNode(topLevel) ? topLevel : parent;
+						if ($isListNode(topLevel) || $isListItemNode(topLevel)) {
+							const listNode = $isListNode(topLevel) ? topLevel : topLevel.getParent();
 							if ($isListNode(listNode)) {
 								const listType = listNode.getListType();
 								switch (listType) {
@@ -1925,7 +1925,7 @@ const SelectionToolbarPlugin = () => {
 						});
 					};
 
-					S.Menu.closeAll([ 'select', 'commentToolbar' ]);
+					S.Menu.closeAll([ 'blockStyle', 'commentToolbar' ]);
 					editor.focus();
 				};
 

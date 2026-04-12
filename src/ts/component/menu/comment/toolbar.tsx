@@ -19,7 +19,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	];
 
 	const activeFormats = getActiveFormats?.() || {};
-	const blockStyle = data.blockStyle || getBlockStyle?.() || 'text';
+	const blockStyle = getBlockStyle?.() || data.blockStyle || 'text';
 
 	const onMark = (e: any, type: string) => {
 		e.preventDefault();
@@ -51,18 +51,23 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
+	const styleMap: any = {
+		paragraph: I.TextStyle.Paragraph,
+		header1: I.TextStyle.Header1,
+		header2: I.TextStyle.Header2,
+		header3: I.TextStyle.Header3,
+		checkbox: I.TextStyle.Checkbox,
+		bulleted: I.TextStyle.Bulleted,
+		numbered: I.TextStyle.Numbered,
+	};
+
+	const listStyles = [ 'checkbox', 'bulleted', 'numbered' ];
+
 	const onStyleClick = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const options = [
-			{ id: 'paragraph', iconParam: { name: 'menu/block/text/paragraph' }, name: translate('blockNameParagraph'), textStyle: I.TextStyle.Paragraph },
-			{ id: 'header1', iconParam: { name: 'menu/block/text/header' }, name: translate('blockNameHeader1'), textStyle: I.TextStyle.Header1 },
-			{ id: 'header2', iconParam: { name: 'menu/block/text/header' }, name: translate('blockNameHeader2'), textStyle: I.TextStyle.Header2 },
-			{ id: 'header3', iconParam: { name: 'menu/block/text/header' }, name: translate('blockNameHeader3'), textStyle: I.TextStyle.Header3 },
-		];
-
-		S.Menu.open('select', {
+		S.Menu.open('blockStyle', {
 			classNameWrap: 'fromBlock',
 			element: `#${getId()} #button-style`,
 			offsetY: 6,
@@ -70,10 +75,17 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			vertical: I.MenuDirection.Top,
 			noAnimation: true,
 			data: {
-				noClose: true,
-				options: U.Menu.prepareForSelect(options),
-				onSelect: (_e: any, item: any) => {
-					onBlockStyle?.(item.textStyle);
+				rootId: '',
+				blockId: '',
+				blockIds: [],
+				allowedSections: [ 'turnText', 'turnList' ],
+				allowedItems: [
+					I.TextStyle.Paragraph, I.TextStyle.Header1, I.TextStyle.Header2, I.TextStyle.Header3,
+					I.TextStyle.Checkbox, I.TextStyle.Bulleted, I.TextStyle.Numbered,
+				],
+				activeStyle: styleMap[blockStyle] ?? I.TextStyle.Paragraph,
+				onSelect: (item: any) => {
+					onBlockStyle?.(item.itemId);
 				},
 			},
 		});
@@ -85,14 +97,9 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		{ id: 'quote', icon: 'comment/menu/quote', name: translate('blockNameQuote'), isActive: blockStyle == 'quote', onClick: (e: any) => { e.preventDefault(); e.stopPropagation(); onBlockStyle?.(I.TextStyle.Quote); } },
 	];
 
-	const styleIcon = (() => {
-		switch (blockStyle) {
-			case 'header1':
-			case 'header2':
-			case 'header3': return 'menu/block/text/header';
-			default: return 'menu/block/text/paragraph';
-		};
-	})();
+	const styleIcon = listStyles.includes(blockStyle)
+		? U.Data.blockTextIcon(styleMap[blockStyle])
+		: 'menu/block/text/paragraph';
 
 
 	return (

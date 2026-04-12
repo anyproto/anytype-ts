@@ -13,10 +13,10 @@ export { meta as default };
 type Story = StoryObj<typeof meta>;
 
 const textItems: any[] = [
-	{ id: 'paragraph', iconParam: { name: 'menu/block/text/paragraph' }, name: 'Text' },
-	{ id: 'header1', iconParam: { name: 'menu/block/text/header' }, name: 'Heading 1' },
-	{ id: 'header2', iconParam: { name: 'menu/block/text/header' }, name: 'Heading 2' },
-	{ id: 'header3', iconParam: { name: 'menu/block/text/header' }, name: 'Heading 3' },
+	{ id: 'paragraph', className: 'textStyleParagraph', name: 'Text' },
+	{ id: 'header1', className: 'textStyleHeader1', name: 'Title' },
+	{ id: 'header2', className: 'textStyleHeader2', name: 'Heading' },
+	{ id: 'header3', className: 'textStyleHeader3', name: 'Subheading' },
 	{ id: 'div-text', isDiv: true },
 	{ id: 'quote', iconParam: { name: 'menu/block/text/quote' }, name: 'Highlighted' },
 	{ id: 'callout', iconParam: { name: 'menu/block/text/callout' }, name: 'Callout' },
