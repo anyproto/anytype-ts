@@ -185,7 +185,7 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const fileName = U.File.name(object);
 
 	if (object.isDeleted) {
-		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} />;
+		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} objectId={targetObjectId} rootId={rootId} />;
 	} else if (object.isArchived) {
 		if (state == I.FileState.Done) {
 			const cn = [ 'wrap', 'pdfWrapper' ];
@@ -202,11 +202,11 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 							onClick={() => {}}
 						/>
 					</Suspense>
-					<MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={fileName} />
+					<MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={fileName} objectId={targetObjectId} rootId={rootId} />
 				</div>
 			);
 		} else {
-			element = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={fileName} />;
+			element = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={fileName} objectId={targetObjectId} rootId={rootId} />;
 		};
 	} else {
 		switch (state) {

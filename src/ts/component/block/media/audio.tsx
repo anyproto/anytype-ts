@@ -97,9 +97,9 @@ const BlockAudio = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const typeName = translate('blockNameAudio');
 
 	if (object.isDeleted) {
-		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} />;
+		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} objectId={targetObjectId} rootId={rootId} />;
 	} else if (object.isArchived) {
-		element = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={U.File.name(object)} />;
+		element = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={U.File.name(object)} objectId={targetObjectId} rootId={rootId} />;
 	} else {
 		switch (state) {
 			default:

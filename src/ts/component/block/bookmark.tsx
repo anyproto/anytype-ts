@@ -104,9 +104,9 @@ const BlockBookmark = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const typeName = translate('blockNameBookmark');
 
 	if (isDeleted) {
-		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} />;
+		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} objectId={targetObjectId} rootId={rootId} />;
 	} else if (isArchived) {
-		element = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={U.File.name(object)} />;
+		element = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={U.File.name(object)} objectId={targetObjectId} rootId={rootId} />;
 	} else {
 		switch (state) {
 			default:
