@@ -1637,7 +1637,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			updateMarkup(newText, range.current);
 		};
 		const getValue = () => value;
-		const param = { onChange, subId };
+		const param = { onChange, subId, withPreview: false };
 
 		renderMentions(rootId, node, marks.current, getValue, param);
 		renderObjects(rootId, node, marks.current, getValue, props, param);
@@ -1659,7 +1659,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		const marks = message.content.marks || [];
 		const node = nodeRef.current;
 		const head = node ? U.Dom.select('.head', node) : null;
-		const param = { subId, iconSize: 16 };
+		const param = { subId, iconSize: 16, withPreview: false };
 
 		renderMentions(rootId, head, marks, getValue, param);
 		renderObjects(rootId, head, marks, getValue, props, param);

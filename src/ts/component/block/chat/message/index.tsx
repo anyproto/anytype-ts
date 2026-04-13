@@ -87,12 +87,12 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 		const et = U.Dom.select('.bubbleOuter .text', node);
 		const er = U.Dom.select('.reply .text', node);
 
-		renderMentions(rootId, et, marks, () => text, { subId });
+		renderMentions(rootId, et, marks, () => text, { subId, withPreview: false });
 		renderObjects(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
 		renderLinks(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
 		renderEmoji(et);
 
-		renderMentions(rootId, er, marks, () => text, { subId, iconSize: 16 });
+		renderMentions(rootId, er, marks, () => text, { subId, iconSize: 16, withPreview: false });
 		renderObjects(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderLinks(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderEmoji(er, { iconSize: 16 });
