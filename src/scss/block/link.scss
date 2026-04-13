@@ -14,7 +14,9 @@
 			.tagItem.archive { background: var(--color-light-grey); color: var(--color-dark-grey); font-weight: 400; }
 		}
 
-		.loading, .deleted { color: var(--color-control-active); display: flex; gap: 0px 6px; align-items: center; }
+		.loading, .deleted { display: flex; gap: 0px 6px; align-items: center; }
+		.loading { color: var(--color-control-active); }
+		.deleted { color: var(--color-text-secondary); }
 		.loading, .deleted {
 			.name { display: inline-block; vertical-align: top; max-width: calc(100% - 26px); position: relative; @include text-overflow-nw; }
 		}
