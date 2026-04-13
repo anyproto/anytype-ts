@@ -83,9 +83,9 @@
 			.icon.withBackground { width: 24px; height: 24px; }
 		}
 
-		.replyList { width: 100%; margin: 0px; padding: 0px 0px 0px 16px; }
+		.replyList { width: 100%; margin: 0px; padding: 0px; }
 
-		.replyFormWrap { width: 100%; margin: 0px; padding: 12px 0px 0px 16px; }
+		.replyFormWrap { width: 100%; margin: 0px; padding: 12px 0px 0px 28px; }
 		.replyFormWrap {
 			.commentForm { border-radius: 14px; background-color: var(--color-shape-secondary); }
 			.commentForm .contentArea { padding: 8px 12px; }
@@ -116,8 +116,11 @@
 	.commentReply {
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); border-radius: 8px; }
 
+		.commentAttachments,
+		.commentForm { margin-left: 28px; }
+
 		.content {
-			margin: 4px 0px 0px 0px; line-height: 20px; word-break: break-word;
+			margin: 4px 0px 0px 28px; line-height: 20px; word-break: break-word;
 		}
 		.content {
 			&, * { user-select: text !important; }
@@ -237,7 +240,7 @@
 	.commentEditor-h2 { padding: 16px 0px 0px 0px; @include text-header2; }
 	.commentEditor-h3 { padding: 12px 0px 0px 0px; @include text-header3; }
 
-	.commentEditor-quote { padding: 4px 0px 4px 12px; position: relative; }
+	.commentEditor-quote { padding: 4px 0px 4px 12px; margin: 12px 0px; position: relative; }
 	.commentEditor-quote {
 		&::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 4px; height: 100%;
@@ -266,8 +269,8 @@
 		.codeLangBtn:hover { color: var(--color-text-primary); background: var(--color-shape-highlight-dark); }
 	}
 
-	.commentEditor-ul { padding: 2px 0px 2px 20px; list-style-type: disc; }
-	.commentEditor-ol { padding: 2px 0px 2px 20px; list-style-type: decimal; }
+	.commentEditor-ul { padding: 2px 0px 2px 20px; margin: 12px 0px; list-style-type: disc; }
+	.commentEditor-ol { padding: 2px 0px 2px 20px; margin: 12px 0px; list-style-type: decimal; }
 	.commentEditor-li { padding: 1px 0px; }
 	.commentEditor-ul:has(> .commentEditor-li-checked, > .commentEditor-li-unchecked) { padding-left: 0px; list-style-type: none; }
 
