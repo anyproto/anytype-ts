@@ -171,6 +171,10 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const cns = [ 'sides' ];
 		const cnl = [ 'side', 'left' ];
 
+		if (isArchived && (object.layout != I.ObjectLayout.Image)) {
+			cnc[2] = 'c48';
+		};
+
 		if (withCover) {
 			cnc.push('withCover');
 		};
@@ -213,7 +217,14 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		if (withIcon) {
 			if (isArchived && (object.layout != I.ObjectLayout.Image)) {
-				icon = <Icon name="common/ghost" className="ghost" />;
+				icon = (
+					<IconObject
+						id={`block-${block.id}-icon`}
+						size={48}
+						iconSize={28}
+						object={{ ...object, isDeleted: true }}
+					/>
+				);
 			} else {
 				const canEdit = !readonly && !isArchived && U.Object.isTaskLayout(object.layout);
 				icon = (
