@@ -24,7 +24,8 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import 'scss/common.scss';
 
 const memoryHistory = hs.createMemoryHistory;
-const history = memoryHistory();
+const history = (window as any).__anytypeHistory || memoryHistory();
+(window as any).__anytypeHistory = history;
 const electron = U.Common.getElectron();
 const isPackaged = electron.isPackaged;
 
