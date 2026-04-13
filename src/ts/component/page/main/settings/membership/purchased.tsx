@@ -69,7 +69,7 @@ const PageMainSettingsMembershipPurchased = forwardRef<I.PageRef, I.PageSettings
 			<div className="section">
 				<div className={currentCn.join(' ')}>
 					<div className="top">
-						{colorStr ? <Icon name={`tier/${colorStr}`} /> : null}
+						<Icon name={`tier/${colorStr == 'default' ? 'purple' : colorStr}`} />
 						<Title text={U.String.sprintf(translate('popupSettingsMembershipCurrentTier'), name, translate(`membershipPeriod${period}`))} />
 						<Label text={membershipText} />
 					</div>
@@ -78,7 +78,7 @@ const PageMainSettingsMembershipPurchased = forwardRef<I.PageRef, I.PageSettings
 
 				<div className={nameCn.join(' ')}>
 					<div className="top">
-						<Icon name="header/anyName" />
+						<Icon name="popup/header/anyId" />
 						<Title text={globalName ? globalName : translate('popupSettingsMembershipSelectAnyNameTitle')} />
 						<Label text={translate('popupSettingsMembershipSelectAnyNameText')} />
 					</div>
