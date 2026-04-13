@@ -229,8 +229,9 @@
 	.commentEditor-underline { text-decoration: underline; }
 	.commentEditor-strikethrough { text-decoration: line-through; }
 	.commentEditor-code {
-		font-family: 'Plex Mono', monospace; font-size: 0.9em;
-		background: var(--color-shape-tertiary); padding: 1px 4px; border-radius: 4px;
+		display: inline; font-family: 'Plex'; border-radius: 4px;
+		background: var(--color-shape-highlight-medium); padding: 0px 4px;
+		box-decoration-break: clone; box-shadow: 0px 0px 0px 1px var(--color-shape-highlight-dark) inset;
 	}
 	.commentEditor-paragraph { padding: 8px 0px 0px 0px; }
 	.commentEditor-mention { color: var(--color-system-accent-100); font-weight: 500; }
