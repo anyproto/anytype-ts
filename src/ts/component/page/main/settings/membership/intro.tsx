@@ -45,8 +45,8 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 	];
 
 	const actions = [
-		{ id: 'activation', button: translate('commonActivate'), title: translate('popupSettingsMembershipActionsActivationTitle'), text: translate('popupSettingsMembershipActionsActivationText') },
-		{ id: 'contact', button: translate('popupSettingsMembershipActionsContactReachUs'), title: translate('popupSettingsMembershipActionsContactTitle'), text: translate('popupSettingsMembershipActionsContactText') }
+		{ id: 'activation', icon: 'popup/header/activation', button: translate('commonActivate'), title: translate('popupSettingsMembershipActionsActivationTitle'), text: translate('popupSettingsMembershipActionsActivationText') },
+		{ id: 'contact', icon: 'membership/contact', button: translate('popupSettingsMembershipActionsContactReachUs'), title: translate('popupSettingsMembershipActionsContactTitle'), text: translate('popupSettingsMembershipActionsContactText') }
 	];
 
 	const onAction = (item: any) => {
@@ -116,7 +116,7 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 			<div className={cn.join(' ')}>
 				<div className="top">
 					<div className="iconWrapper">
-						<Icon />
+						{item.colorStr ? <Icon name={`tier/${item.colorStr}`} /> : null}
 					</div>
 
 					<Title text={item.name} />
@@ -208,7 +208,7 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 					{actions.map((item, idx) => (
 						<div key={idx} className="action">
 							<div className="top">
-								<Icon className={item.id} />
+								<Icon name={item.icon} className={item.id} />
 								<Title text={item.title} />
 								<Label text={item.text} />
 							</div>
