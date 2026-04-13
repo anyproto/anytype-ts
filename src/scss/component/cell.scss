@@ -4,180 +4,176 @@
 	.name { @include text-overflow-nw; display: inline-block; vertical-align: top; width: 100%; }
 }
 
-.cell {
-	&.isEditing, .cellContent.isEditing {
-		.input { padding: 0px; height: 20px; background: none; border: 0px; border-radius: 0px; }
-		.icon.edit { display: none !important; }
-
-		.cellContent {
-			position: absolute; left: 0px; top: 0px; overflow: visible !important; height: auto !important; white-space: normal !important;
-			background: var(--color-bg-primary); z-index: 10; min-height: 100%; box-shadow: 0px 0px 0px 2px var(--color-system-accent-50);
-		}
-		.cellContent {
-			.name { display: inline-block; }
-		}
-
-		.empty { display: inline-block !important; visibility: visible !important; white-space: nowrap; }
-		.icon.clear { width: 20px; height: 20px; position: absolute; right: 14px; top: 14px; }
+.cell.isEditing { border-radius: 2px; }
+.cell.isEditing, .cellContent.isEditing {
+	.input { padding: 0px; height: 20px; background: none; border: 0px; border-radius: 0px; }
+	.icon.edit { display: none !important; }
+	.cellContent { 
+		position: absolute; left: 0px; top: 0px; overflow: visible !important; height: auto !important; white-space: normal !important; 
+		background: var(--color-bg-primary); z-index: 10; min-height: 100%; box-shadow: 0px 0px 0px 2px var(--color-system-accent-50);
 	}
-
-	&.isEditing { border-radius: 2px; }
-	&.isEditing {
-		&.c-select.isSelect {
-			.icon.clear { display: block; }
-			.over { display: inline-block; vertical-align: top; font-size: 0px; width: calc(100% - 30px); }
-		}
-
-		&.c-object, &.c-select {
-			.cellContent { height: 20px !important; }
-		}
-
-		&.c-file {
-			.inputWithFile { display: block; }
-		}
-
-		&.c-shortText,
-		&.c-longText,
-		&.c-number,
-		&.c-url,
-		&.c-phone,
-		&.c-email,
-		&.c-date {
-			.cellContent { cursor: text !important; }
-		}
-
-		&.c-select, &.c-object {
-			.cellContent { overflow-x: hidden !important; overflow-y: auto !important; max-height: 200px; }
-			.itemWrap { display: inline-block; }
-			.placeholder { position: absolute; left: 0px; top: 0px; height: 100%; }
-			#entry { -webkit-user-modify: read-write-plaintext-only; color: var(--color-text-primary); }
-			#list { margin-right: 6px; position: relative; word-wrap: break-word; }
-		}
-
-		&.c-select {
-			.itemWrap { margin: 0px 8px 3px 0px; position: relative; vertical-align: top; max-width: 100%; }
-			.itemWrap:last-child { margin-right: 0px !important; }
-			.itemWrap {
-				.tagItem { margin: 0px !important; }
-			}
-
-			.itemWrap.isDraggable { cursor: grab; }
-			.itemWrap.isDraggable {
-				#remove { cursor: default; }
-			}
-		}
-
-		&.c-object {
-			.itemWrap { margin: 0px 8px 3px 0px; max-width: 100%; }
-			.itemWrap:empty { margin: 0px; }
-			.itemWrap:last-child { margin-right: 0px !important; }
-			.itemWrap {
-				.element { margin: 0px !important; }
-				.element {
-					.icon.objectRemove { width: 12px !important; height: 20px !important; margin: 0px 0px 0px 2px; display: block; }
-					.icon.objectRemove:hover { opacity: 0.8; }
-				}
-			}
-		}
-
-		&.c-longText {
-			.cellContent { white-space: pre-wrap !important; }
-		}
-	}
-
-	.cellContent { cursor: default; }
 	.cellContent {
+		.name { display: inline-block; }
+	}
+	.empty { display: inline-block !important; visibility: visible !important; white-space: nowrap; }
+
+	.icon.clear {
+		width: 20px; height: 20px; position: absolute; right: 14px; top: 14px;
+	}
+}
+
+.cell.isEditing.c-select.isSelect {
+	.icon.clear { display: block; }
+	.over { display: inline-block; vertical-align: top; font-size: 0px; width: calc(100% - 30px); }
+}
+
+.cell.isEditing.c-object, .cell.isEditing.c-select {
+	.cellContent { height: 20px !important; }
+}
+
+.cell.isEditing.c-file {
+	.inputWithFile { display: block; }
+}
+
+.cellContent { cursor: default; }
+.cellContent {
+	.iconObject { cursor: default; }
+	.icon.downloading {
+		width: 20px; height: 20px;
+		background-image: url('~img/icon/loader.svg'); background-size: 20px; animation: rotate 1.2s infinite linear;
+	}
+	.icon.clear { display: none; }
+
+	.name { display: inline-block; vertical-align: top; user-select: text !important; }
+	.empty { vertical-align: top; display: none; }
+
+	.more { display: inline-block; vertical-align: middle; @include text-small; color: var(--color-text-secondary); }
+}
+
+.cellContent.editModeOn {
+	.empty { display: inline-block; white-space: nowrap; }
+}
+
+.cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }
+.cellContent.c-checkbox {
+	.icon { width: 20px; height: 20px; }
+	.label { line-height: 20px; }
+}
+
+.cellContent.c-file {
+	.inputWithFile { border: 0px; padding: 0px; display: none; }
+	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; }
+	.element {
+		.flex { align-items: center; gap: 0px 4px; }
+		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
+	}
+	.cellContent { white-space: normal; }
+}
+
+.cellContent.c-select {
+	.more { height: 18px; }
+}
+
+.cellContent.c-object {
+	.element { display: inline-block; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; }
+	.element:last-child { margin-right: 0px; }
+	.element {
+		.iconObject { margin: 0px !important; }
+		.flex { align-items: center; gap: 0px 4px; }
+		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
+	}
+}
+.cellContent.c-object.canEdit {
+	.element { cursor: grab; }
+	.element {
 		.iconObject { cursor: default; }
+		.icon.objectRemove { cursor: default; display: none; }
+	}
+}
 
-		.icon.downloading {
-			width: 20px; height: 20px;
-			background-image: url('~img/icon/loader.svg'); background-size: 20px; animation: rotate 1.2s infinite linear;
-		}
+.cellContent.isName {
+	.iconObject { z-index: 1; }
+	.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
+}
 
-		.icon.clear { display: none; }
-		.name { display: inline-block; vertical-align: top; user-select: text !important; }
-		.empty { vertical-align: top; display: none; }
-		.more { display: inline-block; vertical-align: middle; @include text-small; color: var(--color-text-secondary); }
+.cellContent.c-link {
+	.icon.user { margin-right: 5px; }
+}
 
-		&.editModeOn {
-			.empty { display: inline-block; white-space: nowrap; }
-		}
+.cellContent.c-select,
+.cellContent.c-object,
+.cellContent.c-file {
+	.over { display: inline-flex; vertical-align: top; width: 100%; gap: 4px 8px; align-items: flex-start; }
+}
 
-		&.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }
-		&.c-checkbox {
-			.icon { width: 20px; height: 20px; }
-			.label { line-height: 20px; }
-		}
+.cell.isEditing.c-shortText, 
+.cell.isEditing.c-longText, 
+.cell.isEditing.c-number, 
+.cell.isEditing.c-url, 
+.cell.isEditing.c-phone, 
+.cell.isEditing.c-email, 
+.cell.isEditing.c-date {
+	.cellContent { cursor: text !important; }
+}
 
-		&.c-file {
-			.inputWithFile { border: 0px; padding: 0px; display: none; }
-			.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; }
-			.element {
-				.flex { align-items: center; gap: 0px 4px; }
-				.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
-			}
-			.cellContent { white-space: normal; }
-		}
+.cell.isEditing.c-select, .cell.isEditing.c-object {
+	.cellContent { overflow-x: hidden !important; overflow-y: auto !important; max-height: 200px; }
+	.itemWrap { display: inline-block; }
 
-		&.c-select {
-			.more { height: 18px; }
-		}
+	.placeholder { position: absolute; left: 0px; top: 0px; height: 100%; }
+	#entry { -webkit-user-modify: read-write-plaintext-only; color: var(--color-text-primary); }
+	#list { margin-right: 6px; position: relative; word-wrap: break-word; }
+}
 
-		&.c-object {
-			.element { display: inline-block; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; }
-			.element:last-child { margin-right: 0px; }
-			.element {
-				.iconObject { margin: 0px !important; }
-				.flex { align-items: center; gap: 0px 4px; }
-				.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
-			}
+.cell.isEditing.c-select {
+	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 4px 0px; position: relative; vertical-align: top; max-width: 100%; }
+	.itemWrap:last-child { margin-right: 0px !important; }
+	.itemWrap {
+		.tagItem { margin: 0px !important; }
+	}
 
-			&.canEdit {
-				.element { cursor: grab; }
-				.element {
-					.iconObject { cursor: default; }
-					.icon.objectRemove { cursor: default; display: none; }
-				}
-			}
-		}
+	.itemWrap.isDraggable { cursor: grab; }
+	.itemWrap.isDraggable {
+		#remove { cursor: default; }
+	}
+}
 
-		&.isName {
-			.iconObject { z-index: 1; }
-			.name { line-height: 20px; @include text-overflow-nw; width: 100%; }
-		}
-
-		&.c-link {
-			.icon.user { margin-right: 5px; }
-		}
-
-		&.c-select,
-		&.c-object,
-		&.c-file {
-			.over { display: inline-flex; vertical-align: top; width: 100%; gap: 4px 8px; align-items: flex-start; }
-		}
-
-		&.c-longText { white-space: pre-wrap; }
-
-		&.canEdit {
-			&.c-shortText,
-			&.c-longText,
-			&.c-number,
-			&.c-url,
-			&.c-phone,
-			&.c-email,
-			&.c-date { cursor: text; }
-
-			&.c-url,
-			&.c-email,
-			&.c-phone {
-				.name { width: 100%; }
-			}
-		}
-
-		&.c-url,
-		&.c-email,
-		&.c-phone {
-			.name { text-decoration: none; transition: $transitionAllCommon; @include text-overflow-nw; width: 100%; }
+.cell.isEditing.c-object {
+	.itemWrap { margin: 0px 8px 4px 0px; max-width: 100%; }
+	.itemWrap:empty { margin: 0px; }
+	.itemWrap:last-child { margin-right: 0px !important; }
+	.itemWrap {
+		.element { margin: 0px !important; }
+		.element {
+			.icon.objectRemove { width: 12px !important; height: 20px !important; margin: 0px 0px 0px 2px; display: block; }
+			.icon.objectRemove:hover { opacity: 0.8; }
 		}
 	}
+}
+
+.cellContent.c-longText { white-space: pre-wrap; }
+.cell.isEditing.c-longText {
+	.cellContent { white-space: pre-wrap !important; }
+}
+
+.cellContent.canEdit.c-shortText, 
+.cellContent.canEdit.c-longText, 
+.cellContent.canEdit.c-number, 
+.cellContent.canEdit.c-url, 
+.cellContent.canEdit.c-phone, 
+.cellContent.canEdit.c-email, 
+.cellContent.canEdit.c-date { cursor: text; }
+
+.cellContent.c-url, 
+.cellContent.c-email, 
+.cellContent.c-phone 
+{
+	.name { text-decoration: none; transition: $transitionAllCommon; @include text-overflow-nw; width: 100%; }
+}
+
+.cellContent.canEdit.c-url, 
+.cellContent.canEdit.c-email, 
+.cellContent.canEdit.c-phone 
+{
+	.name { width: 100%; }
 }
