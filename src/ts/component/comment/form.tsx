@@ -29,6 +29,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const formRef = useRef<HTMLDivElement>(null);
 	const [ isEmpty, setIsEmpty ] = useState(true);
+	const [ hasAttachments, setHasAttachments ] = useState(false);
 	const [ isFocused, setIsFocused ] = useState(false);
 	const [ isMultiline, setIsMultiline ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -57,6 +58,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		clear: () => {
 			editorRef.current?.clear();
 			setIsEmpty(true);
+			setHasAttachments(false);
 			isSubmittingRef.current = false;
 			setIsLoading(false);
 			setIsMultiline(false);
@@ -196,6 +198,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			if (!isEdit) {
 				editorRef.current?.clear();
 				setIsEmpty(true);
+				setHasAttachments(false);
 				setIsMultiline(false);
 				clearDraft();
 			};
@@ -217,6 +220,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	}, []);
 
 	const handleChange = useCallback(() => {
+		setHasAttachments((editorRef.current?.getAttachments().length || 0) > 0);
 		saveDraft();
 	}, [ saveDraft ]);
 
@@ -277,6 +281,8 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 
 			remaining--;
 		};
+
+		setHasAttachments((editorRef.current?.getAttachments().length || 0) > 0);
 	}, []);
 
 	const timeoutDrag = useRef<number>(0);
@@ -623,7 +629,6 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	}, []);
 
 	const onSendClick = useCallback(() => {
-		const hasAttachments = (editorRef.current?.getAttachments().length || 0) > 0;
 		if ((isEmpty && !hasAttachments) || isLoading) {
 			return;
 		};
@@ -632,7 +637,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		if (parts) {
 			handleSubmit(parts);
 		};
-	}, [ isEmpty, isLoading, handleSubmit ]);
+	}, [ isEmpty, hasAttachments, isLoading, handleSubmit ]);
 
 	// Reset common drop flag on unmount
 	useEffect(() => {
@@ -732,7 +737,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		return null;
 	};
 
-	const isDisabled = isEmpty || isLoading;
+	const isDisabled = (isEmpty && !hasAttachments) || isLoading;
 	const showToolbar = true;
 
 	const cn = [ 'commentForm' ];
