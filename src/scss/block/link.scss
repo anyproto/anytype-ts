@@ -27,6 +27,7 @@
 		}
 		.deleted {
 			.icon.ghost { width: 24px; height: 24px; color: var(--color-control-inactive); }
+			.name { font-weight: 500; }
 		}
 
 		.linkCard {
@@ -79,7 +80,10 @@
 		.isArchived .linkCard.c48.isVertical {
 			.side.left { padding: 16px; }
 			.cardName { flex-direction: column; align-items: flex-start; gap: 8px 0px; }
-			.iconObject { position: relative; left: auto; top: auto; }
+
+			&:not(.withCover) {
+				.iconObject { position: relative; left: auto; top: auto; }
+			}
 		}
 
 		.linkCard.c48.withIcon.withCover.isVertical {

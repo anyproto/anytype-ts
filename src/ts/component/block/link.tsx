@@ -144,7 +144,7 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const cns = [ 'sides' ];
 		const cnl = [ 'side', 'left' ];
 
-		if (isArchived && (object.layout != I.ObjectLayout.Image)) {
+		if (isArchived && (object.layout != I.ObjectLayout.Image) && (cardStyle != I.LinkCardStyle.Text)) {
 			cnc[2] = 'c48';
 		};
 
@@ -193,8 +193,8 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				icon = (
 					<IconObject
 						id={`block-${block.id}-icon`}
-						size={48}
-						iconSize={28}
+						size={(cardStyle != I.LinkCardStyle.Text) ? 48 : size}
+						iconSize={(cardStyle != I.LinkCardStyle.Text) ? 28 : iconSize}
 						object={{ ...object, isDeleted: true }}
 					/>
 				);
