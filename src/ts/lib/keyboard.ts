@@ -2180,11 +2180,6 @@ class Keyboard {
 		};
 
 		document.documentElement.className = cn.join(' ');
-
-		const page = U.Dom.get('page');
-		if (page) {
-			page.className = `page ${this.getPageClass('page', false)}`;
-		};
 	};
 
 };
