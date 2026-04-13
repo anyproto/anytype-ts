@@ -132,7 +132,12 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 								value = translate('commonUnlimited');
 							};
 
-							return <Label key={key} text={U.String.sprintf(name, value)} />;
+							return (
+								<div key={key} className="label">
+									<Icon name="membership/tick" size={14} />
+									<span dangerouslySetInnerHTML={{ __html: U.String.sanitize(U.String.sprintf(name, value)) }} />
+								</div>
+							);
 						})}
 					</div>
 				</div>

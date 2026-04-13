@@ -996,8 +996,7 @@
 
                     .features { display: flex; flex-direction: column; gap: 8px 0px; }
                     .features {
-                        .label { display: flex; gap: 0px 6px; @include text-small; }
-                        .label:before { content: ''; display: block; width: 14px; height: 14px; margin-top: 1px; }
+                        .label { display: flex; gap: 0px 6px; align-items: center; @include text-small; }
                     }
 
                     .button { width: 100%; }
