@@ -116,7 +116,7 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 			<div className={cn.join(' ')}>
 				<div className="top">
 					<div className="iconWrapper">
-						<Icon name={`tier/${item.colorStr == 'default' ? 'purple' : item.colorStr}`} />
+						<Icon name={item.iconName} size={64} />
 					</div>
 
 					<Title text={item.name} />

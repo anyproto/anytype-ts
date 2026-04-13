@@ -69,7 +69,7 @@ const PageMainSettingsMembershipPurchased = forwardRef<I.PageRef, I.PageSettings
 			<div className="section">
 				<div className={currentCn.join(' ')}>
 					<div className="top">
-						<Icon name={`tier/${colorStr == 'default' ? 'purple' : colorStr}`} />
+						<Icon name={product.iconName} />
 						<Title text={U.String.sprintf(translate('popupSettingsMembershipCurrentTier'), name, translate(`membershipPeriod${period}`))} />
 						<Label text={membershipText} />
 					</div>
