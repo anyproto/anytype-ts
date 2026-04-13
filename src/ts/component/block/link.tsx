@@ -256,14 +256,16 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 					<div key="sideLeft" className={cnl.join(' ')}>
 						<div className="relationItem cardName" onMouseDown={onNameClick}>
 							{icon}
-							<ObjectName
-								object={object}
-								onMouseEnter={onMouseEnter}
-								onMouseLeave={onMouseLeave}
-								withLatex={true}
-								withPlural={true}
-							/>
-							{archive}
+							<div className="nameWrapper">
+								<ObjectName
+									object={object}
+									onMouseEnter={onMouseEnter}
+									onMouseLeave={onMouseLeave}
+									withLatex={true}
+									withPlural={true}
+								/>
+								{archive}
+							</div>
 						</div>
 
 						{descr ? (
