@@ -2127,6 +2127,36 @@ class UtilMenu {
 		});
 	};
 
+	archivedContext (e: any, objectId: string, onRestore?: () => void) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const options = [
+			{ id: 'restore', iconParam: { name: 'menu/action/restore' }, name: translate('commonRestore') },
+			{ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'destructive' }, name: translate('commonDeleteImmediately'), color: 'destructive' },
+		];
+
+		S.Menu.open('select', {
+			recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 }),
+			data: {
+				options,
+				onSelect: (e, option) => {
+					switch (option.id) {
+						case 'restore': {
+							Action.restore([ objectId ], analytics.route.block, onRestore);
+							break;
+						};
+
+						case 'delete': {
+							Action.delete([ objectId ], analytics.route.block);
+							break;
+						};
+					};
+				},
+			},
+		});
+	};
+
 };
 
 export default new UtilMenu();

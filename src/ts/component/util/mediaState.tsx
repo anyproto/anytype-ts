@@ -15,37 +15,9 @@ const MediaState = ({ isDeleted, isArchived, typeName, fileName, objectId, rootI
 	const [ isRestored, setIsRestored ] = useState(false);
 
 	const openMenu = (e: React.MouseEvent) => {
-		if (!objectId) {
-			return;
+		if (objectId) {
+			U.Menu.archivedContext(e, objectId, () => setIsRestored(true));
 		};
-
-		e.preventDefault();
-		e.stopPropagation();
-
-		const options = [
-			{ id: 'restore', iconParam: { name: 'menu/action/restore' }, name: translate('commonRestore') },
-			{ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'destructive' }, name: translate('commonDeleteImmediately'), color: 'destructive' },
-		];
-
-		S.Menu.open('select', {
-			recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 }),
-			data: {
-				options,
-				onSelect: (e, option) => {
-					switch (option.id) {
-						case 'restore': {
-							Action.restore([ objectId ], analytics.route.block, () => setIsRestored(true));
-							break;
-						};
-
-						case 'delete': {
-							Action.delete([ objectId ], analytics.route.block);
-							break;
-						};
-					};
-				},
-			},
-		});
 	};
 
 	if (isRestored || (rootId && (rootId == objectId))) {

@@ -44,34 +44,7 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	};
 
 	const openMenu = (e: any) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const targetObjectId = block.getTargetObjectId();
-		const options = [
-			{ id: 'restore', iconParam: { name: 'menu/action/restore' }, name: translate('commonRestore') },
-			{ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'destructive' }, name: translate('commonDeleteImmediately'), color: 'destructive' },
-		];
-
-		S.Menu.open('select', {
-			recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 }),
-			data: {
-				options,
-				onSelect: (e, option) => {
-					switch (option.id) {
-						case 'restore': {
-							Action.restore([ targetObjectId ], analytics.route.block, () => setIsRestored(true));
-							break;
-						};
-
-						case 'delete': {
-							Action.delete([ targetObjectId ], analytics.route.block);
-							break;
-						};
-					};
-				},
-			},
-		});
+		U.Menu.archivedContext(e, block.getTargetObjectId(), () => setIsRestored(true));
 	};
 
 	const onClick = (e: any) => {
