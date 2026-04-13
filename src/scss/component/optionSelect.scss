@@ -20,7 +20,7 @@
         &:hover, &.hover {
             .clickable { width: calc(100% - 28px); }
             .buttons {
-                .icon.more { display: block; }
+                .icon.more { display: flex; }
             }
         }
 

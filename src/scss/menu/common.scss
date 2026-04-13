@@ -132,8 +132,8 @@
 			.icon.commonDnd { width: 20px; height: 20px; margin: 0px; vertical-align: top; cursor: grab; }
 			.icon.plus { margin-right: 6px; }
 			.icon.delete, .icon.more { 
-				width: 24px !important; height: 24px !important; background-size: 20px; position: absolute; right: 10px; top: 50%; margin: -12px 0px 0px 0px; 
-				border-radius: 4px; opacity: 0; z-index: 1;
+				width: 24px !important; height: 24px !important; position: absolute; right: 10px; top: 50%; margin: -12px 0px 0px 0px; 
+				border-radius: 4px; opacity: 0; z-index: 1; display: flex; align-items: center; justify-content: center;
 			}
 
 			.icon.delete:hover, .icon.more:hover { background-color: var(--color-shape-highlight-medium); }

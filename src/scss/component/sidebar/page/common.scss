@@ -154,7 +154,7 @@
 			}
 
 			&:hover, &.active {
-				.icon.more { display: block; }
+				.icon.more { display: flex; }
 			}
 		}
 

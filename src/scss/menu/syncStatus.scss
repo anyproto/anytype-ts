@@ -72,7 +72,7 @@
 
 					.side.right {
 						.icon:not(.more) { display: none; }
-						.icon.more { display: block; }
+						.icon.more { display: flex; }
 					}
 				}
 			}

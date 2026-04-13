@@ -31,7 +31,7 @@
 			&:hover,
 			&.hover {
 				.filterInner { background-color: var(--color-shape-highlight-medium); }
-				.icon.more { display: block; }
+				.icon.more { display: flex; }
 			}
 
 			&.isActive {
