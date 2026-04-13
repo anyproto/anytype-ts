@@ -3,6 +3,7 @@ import { createRoot, Root } from 'react-dom/client';
 import { Icon, IconObject, ObjectName } from 'Component';
 import CommentForm from './form';
 import Attachment from 'Component/block/chat/attachment';
+import Reaction from 'Component/block/chat/message/reaction';
 import { renderParts } from './render';
 import * as I from 'Interface';
 
@@ -12,18 +13,19 @@ interface Props {
 	parentId: string;
 	message: I.CommentMessage;
 	readonly?: boolean;
+	onReply?: () => void;
 };
 
 const CommentReply = (props: Props) => {
 
-	const { rootId, targetId, parentId, message, readonly } = props;
+	const { rootId, targetId, parentId, message, readonly, onReply } = props;
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const [ isEditing, setIsEditing ] = useState(false);
 	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
-	const { id, creator, createdAt, modifiedAt } = message;
+	const { id, creator, createdAt, modifiedAt, reactions } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = message.content?.parts || [];
@@ -235,6 +237,40 @@ const CommentReply = (props: Props) => {
 		U.Dom.toggleClass(contentWrapRef.current, 'hover', v);
 	}, []);
 
+	const onReactionSelect = useCallback((icon: string) => {
+		const limit = J.Constant.limit.chat.reactions;
+		const hasReaction = (reactions || []).find(it => it.icon == icon);
+		const self = (reactions || []).filter(it => it.authors.includes(account.id));
+
+		if (!hasReaction && ((self.length >= limit.self) || ((reactions || []).length >= limit.all))) {
+			return;
+		};
+
+		C.ChatToggleMessageReaction(targetId, id, icon);
+	}, [ targetId, id, reactions ]);
+
+	const onReaction = useCallback((e: React.MouseEvent) => {
+		setHover(true);
+
+		S.Menu.open('smile', {
+			classNameWrap: 'fromBlock',
+			element: e.currentTarget as HTMLElement,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			noAnimation: true,
+			onClose: () => setHover(false),
+			data: {
+				noHead: true,
+				noUpload: true,
+				value: '',
+				onSelect: (icon: string) => {
+					onReactionSelect(icon);
+				},
+			},
+		});
+	}, [ onReactionSelect, setHover ]);
+
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
 		const element = e.currentTarget as HTMLElement;
 
@@ -351,16 +387,36 @@ const CommentReply = (props: Props) => {
 		);
 	};
 
+	const renderReactions = () => {
+		if (!(reactions || []).length) {
+			return null;
+		};
+
+		const sorted = [ ...reactions ].sort((a: any, b: any) => (b.authors?.length || 0) - (a.authors?.length || 0));
+
+		return (
+			<div className="reactions">
+				{sorted.map((item: any, i: number) => (
+					<Reaction key={i} {...item} onSelect={onReactionSelect} />
+				))}
+			</div>
+		);
+	};
+
 	const renderHoverActions = () => {
 		if (isEditing || readonly) {
 			return null;
 		};
 
+		const limit = J.Constant.limit.chat.reactions;
+		const self = (reactions || []).filter(it => it.authors?.includes(account.id));
+		const canReact = (self.length < limit.self) && ((reactions || []).length < limit.all);
+
 		return (
 			<div className="hoverActions">
-				<div className="hoverBtn" onClick={onMenuClick}>
-					<Icon name="common/more" className="more" />
-				</div>
+				{canReact ? <Icon name="comment/reaction" className="reaction" withBackground={true} onClick={onReaction} /> : null}
+				{onReply ? <Icon name="chat/buttons/reply" className="reply" withBackground={true} onClick={onReply} /> : null}
+				<Icon name="common/more" className="more" withBackground={true} onClick={onMenuClick} />
 			</div>
 		);
 	};
@@ -388,6 +444,7 @@ const CommentReply = (props: Props) => {
 				</div>
 
 				{renderContent()}
+				{renderReactions()}
 			</div>
 		</div>
 	);

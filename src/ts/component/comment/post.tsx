@@ -658,6 +658,7 @@ const CommentPost = (props: Props) => {
 							parentId={id}
 							message={reply}
 							readonly={readonly}
+							onReply={onReply}
 						/>
 					))}
 
