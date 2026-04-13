@@ -296,12 +296,22 @@ const CommentPost = (props: Props) => {
 	}, [ targetId, id, message.attachments, message.reactions ]);
 
 	const onDelete = useCallback(() => {
-		C.ChatDeleteMessage(targetId, id, (response: any) => {
-			if (response.error.code) {
-				return;
-			};
+		S.Popup.open('confirm', {
+			data: {
+				iconParam: { name: 'popup/header/confirm', color: 'orange' },
+				title: translate('popupConfirmChatDeleteMessageTitle'),
+				text: translate('popupConfirmChatDeleteMessageText'),
+				textConfirm: translate('commonDelete'),
+				onConfirm: () => {
+					C.ChatDeleteMessage(targetId, id, (response: any) => {
+						if (response.error.code) {
+							return;
+						};
 
-			S.Comment.deletePost(subId, id);
+						S.Comment.deletePost(subId, id);
+					});
+				},
+			},
 		});
 	}, [ targetId, id, subId ]);
 

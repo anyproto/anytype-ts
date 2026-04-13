@@ -191,21 +191,31 @@ const CommentReply = (props: Props) => {
 	}, [ targetId, id, parentId, message.attachments, message.reactions ]);
 
 	const onDelete = useCallback(() => {
-		C.ChatDeleteMessage(targetId, id, (response: any) => {
-			if (response.error.code) {
-				return;
-			};
+		S.Popup.open('confirm', {
+			data: {
+				iconParam: { name: 'popup/header/confirm', color: 'orange' },
+				title: translate('popupConfirmChatDeleteMessageTitle'),
+				text: translate('popupConfirmChatDeleteMessageText'),
+				textConfirm: translate('commonDelete'),
+				onConfirm: () => {
+					C.ChatDeleteMessage(targetId, id, (response: any) => {
+						if (response.error.code) {
+							return;
+						};
 
-			S.Comment.deleteReply(parentId, id);
+						S.Comment.deleteReply(parentId, id);
 
-			const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
-			const post = S.Comment.getPostById(subId, parentId);
-			if (post) {
-				S.Comment.updatePost(subId, {
-					id: parentId,
-					replyCount: Math.max(0, post.replyCount - 1),
-				} as any);
-			};
+						const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
+						const post = S.Comment.getPostById(subId, parentId);
+						if (post) {
+							S.Comment.updatePost(subId, {
+								id: parentId,
+								replyCount: Math.max(0, post.replyCount - 1),
+							} as any);
+						};
+					});
+				},
+			},
 		});
 	}, [ targetId, id, parentId ]);
 
