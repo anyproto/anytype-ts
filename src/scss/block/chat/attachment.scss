@@ -25,7 +25,7 @@
 		.icon.syncStatus { display: none; position: absolute; z-index: 2; inset: 0; margin: auto; animation: rotate 1.2s infinite linear; }
 		.icon.syncStatus {
 			> svg { width: 100% !important; height: 100% !important; }
-			color: var(--color-shape-highlight-medium);
+			color: var(--color-attachment-loader);
 		}
 
 		&.isSyncing,
