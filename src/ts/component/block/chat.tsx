@@ -123,7 +123,25 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			onMessageAdd(detail.message, detail.subIds);
 		};
 		reactionUpdateHandlerRef.current = () => scrollToBottomCheck();
-		focusHandlerRef.current = () => readScrolledMessages();
+		focusHandlerRef.current = () => {
+			// Re-render from windowIsFocused observable can reset scrollTop — restore it after paint
+			const prevTop = top.current;
+			const wasBottom = isBottom.current;
+
+			raf(() => {
+				if (wasBottom) {
+					scrollToBottom(false);
+				} else
+				if (prevTop > 0) {
+					const container = U.Dom.getScrollContainer(isPopup);
+					if (container && (container.scrollTop != prevTop)) {
+						container.scrollTop = prevTop;
+					};
+				};
+			});
+
+			readScrolledMessages();
+		};
 
 		U.Dom.addEvents(window, [
 			['messageAdd', messageAddHandlerRef.current],
