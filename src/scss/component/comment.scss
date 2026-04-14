@@ -183,7 +183,6 @@
 		.formToolbar {
 			.side { display: flex; align-items: center; gap: 0px 8px; }
 
-			.icon.withBackground { border-radius: 50%; }
 			.icon.withBackground:not(.plus):hover { background-color: var(--color-shape-highlight-light) !important; }
 			.icon.plus { background-color: var(--color-shape-highlight-medium); }
 			.icon.plus:hover { background-color: var(--color-shape-highlight-dark) !important; }
