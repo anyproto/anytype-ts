@@ -366,6 +366,38 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
+			// Convert ``` (+ optional language) followed by Enter into a code block
+			if ((pressed == 'enter') && block.isText() && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription()) {
+				const codeMatch = value.trim().match(/^```(\w*)$/);
+
+				if (codeMatch) {
+					const langInput = codeMatch[1] || '';
+
+					if (!langInput || Prism.languages[langInput]) {
+						e.preventDefault();
+
+						const lang = langInput || Storage.get('codeLang') || J.Constant.default.codeLang;
+
+						marksRef.current = [];
+						setValue('');
+
+						U.Data.blockSetText(rootId, block.id, '', [], true, () => {
+							C.BlockListSetFields(rootId, [
+								{ blockId: block.id, fields: { ...block.fields, lang } }
+							], () => {
+								C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Code, () => {
+									focus.set(block.id, { from: 0, to: 0 });
+									focus.apply();
+								});
+							});
+						});
+
+						ret = true;
+						return;
+					};
+				};
+			};
+
 			// Handle enter manually in the code blocks to keep caret and new lines in sync
 			if (block.isTextCode() && (pressed == 'enter')) {
 				e.preventDefault();
@@ -693,37 +725,6 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 
-		// Convert ``` (+ optional language) followed by Enter into a code block
-		if ((e.key == 'Enter') && !e.shiftKey && block.canHaveMarks() && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription()) {
-			const codeMatch = value.match(/^```(\w*)$/);
-
-			if (codeMatch) {
-				const langInput = codeMatch[1] || '';
-
-				if (!langInput || Prism.languages[langInput]) {
-					e.preventDefault();
-					e.stopPropagation();
-
-					const lang = langInput || Storage.get('codeLang') || J.Constant.default.codeLang;
-
-					marksRef.current = [];
-					setValue('');
-
-					U.Data.blockSetText(rootId, id, '', [], true, () => {
-						C.BlockListTurnInto(rootId, [ id ], I.TextStyle.Code, () => {
-							focus.set(block.id, { from: 0, to: 0 });
-							focus.apply();
-						});
-
-						C.BlockListSetFields(rootId, [
-							{ blockId: block.id, fields: { ...block.fields, lang } }
-						]);
-					});
-					return;
-				};
-			};
-		};
-
 		onKeyDown(e, value, marksRef.current, range, props);
 	};
 	
@@ -932,21 +933,25 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				setValue(value);
 
 				U.Data.blockSetText(rootId, id, value, marksRef.current, true, () => {
-					C.BlockListTurnInto(rootId, [ id ], newStyle, () => {
-						focus.set(block.id, { from: 0, to: 0 });
-						focus.apply();
-					});
+					const finishTurnInto = () => {
+						C.BlockListTurnInto(rootId, [ id ], newStyle, () => {
+							focus.set(block.id, { from: 0, to: 0 });
+							focus.apply();
+						});
 
-					if ([ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ].includes(newStyle)) {
-						S.Block.toggle(rootId, id, true);
+						if ([ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ].includes(newStyle)) {
+							S.Block.toggle(rootId, id, true);
+						};
 					};
 
 					if (newStyle == I.TextStyle.Code) {
 						const lang = match[2] || Storage.get('codeLang') || J.Constant.default.codeLang;
 
-						C.BlockListSetFields(rootId, [ 
-							{ blockId: block.id, fields: { ...block.fields, lang } } 
-						]);
+						C.BlockListSetFields(rootId, [
+							{ blockId: block.id, fields: { ...block.fields, lang } }
+						], finishTurnInto);
+					} else {
+						finishTurnInto();
 					};
 				});
 
