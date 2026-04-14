@@ -47,7 +47,7 @@ const encodeKrokiUrl = async (type: string, code: string): Promise<string> => {
 
 const MenuBlockEmbedKroki = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param } = props;
+	const { param, position } = props;
 	const { data } = param;
 	const { value, onChange } = data;
 
@@ -109,7 +109,9 @@ const MenuBlockEmbedKroki = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		onChange?.(url);
 	};
 
-	const onInput = () => {};
+	const onInput = () => {
+		position();
+	};
 
 	const onPaste = (e: any) => {
 		e.preventDefault();
@@ -133,6 +135,8 @@ const MenuBlockEmbedKroki = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		inputRef.current?.setValue(U.String.htmlSpecialChars(next));
 		inputRef.current?.setRange({ from: to, to });
 		inputRef.current?.placeholderCheck?.();
+
+		position();
 	};
 
 	const onTypeChange = (v: string) => {
