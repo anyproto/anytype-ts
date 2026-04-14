@@ -681,10 +681,12 @@ const EmbedDecorator = ({ nodeKey, processor, text }: { nodeKey: string; process
 		};
 
 		const rect = el.getBoundingClientRect();
+		const isKroki = processor === I.EmbedProcessor.Kroki;
+		const menuId = isKroki ? 'blockEmbedKroki' : 'dataviewText';
 
-		S.Menu.open('dataviewText', {
+		S.Menu.open(menuId, {
 			classNameWrap: 'fromBlock',
-			rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: rect.width, height: rect.height },
+			rect: { x: rect.x, y: rect.y + rect.height, width: rect.width, height: 0 },
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,

@@ -1,0 +1,20 @@
+@import "~scss/_mixins";
+
+.menus {
+
+	.menu.menuBlockEmbedKroki { width: 360px; }
+	.menu.menuBlockEmbedKroki {
+		.content { padding: 8px; }
+
+		.selectWrap { margin-bottom: 8px; }
+		.selectWrap {
+			.select { width: 100%; }
+		}
+
+		.inputWrapper { border: 1px solid var(--color-shape-secondary); border-radius: 6px; padding: 8px 10px; }
+		.inputWrapper {
+			#input { @include text-common; min-height: 120px; max-height: 280px; overflow: auto; white-space: pre-wrap; word-break: break-word; }
+		}
+	}
+
+}

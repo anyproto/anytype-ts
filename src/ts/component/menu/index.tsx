@@ -38,6 +38,7 @@ import MenuBlockMention from './block/mention';
 import MenuBlockEmoji from './block/emoji';
 import MenuBlockLayout from './block/layout';
 import MenuBlockLatex from './block/latex';
+import MenuBlockEmbedKroki from './block/embedKroki';
 import MenuBlockLinkSettings from './block/link/settings';
 
 import MenuBlockRelationEdit from './block/relation/edit';
@@ -131,6 +132,7 @@ const Components: any = {
 	blockEmoji:				 MenuBlockEmoji,
 	blockLayout:			 MenuBlockLayout,
 	blockLatex:				 MenuBlockLatex,
+	blockEmbedKroki:		 MenuBlockEmbedKroki,
 	blockLinkSettings:		 MenuBlockLinkSettings,
 
 	blockRelationEdit:		 MenuBlockRelationEdit,
