@@ -179,35 +179,31 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({}));
 
+	const typeName = translate('blockNamePdf');
+	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
+
 	let element = null;
 	let pager = null;
-	const typeName = translate('blockNamePdf');
-	const fileName = U.File.name(object);
 
-	if (object.isDeleted) {
-		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} />;
-	} else if (object.isArchived) {
-		if (state == I.FileState.Done) {
-			const cn = [ 'wrap', 'pdfWrapper' ];
-
-			element = (
-				<div ref={wrapRef} className={cn.join(' ')} style={css}>
-					<Suspense fallback={<Loader />}>
-						<MediaPdf
-							ref={mediaRef}
-							src={S.Common.fileUrl(targetObjectId)}
-							page={1}
-							onDocumentLoad={onDocumentLoad}
-							onPageRender={onPageRender}
-							onClick={() => {}}
-						/>
-					</Suspense>
-					<MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={fileName} />
-				</div>
-			);
-		} else {
-			element = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={fileName} />;
-		};
+	if (object.isArchived && (state == I.FileState.Done)) {
+		element = (
+			<div ref={wrapRef} className={[ 'wrap', 'pdfWrapper' ].join(' ')} style={css}>
+				<Suspense fallback={<Loader />}>
+					<MediaPdf
+						ref={mediaRef}
+						src={S.Common.fileUrl(targetObjectId)}
+						page={1}
+						onDocumentLoad={onDocumentLoad}
+						onPageRender={onPageRender}
+						onClick={() => {}}
+					/>
+				</Suspense>
+				{overlay}
+			</div>
+		);
+	} else
+	if (object.isDeleted || object.isArchived) {
+		element = overlay;
 	} else {
 		switch (state) {
 			default:

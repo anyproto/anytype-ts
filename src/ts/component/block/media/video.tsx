@@ -135,28 +135,25 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({}));
 
-	let element = null;
-	let overlay = null;
 	const typeName = translate('blockNameVideo');
+	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
 
-	if (object.isDeleted) {
-		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} />;
-	} else if (object.isArchived) {
-		overlay = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={U.File.name(object)} />;
-		if (state == I.FileState.Done) {
-			element = (
-				<div ref={wrapRef} className="wrap" style={css}>
-					<MediaVideo
-						src={S.Common.fileUrl(targetObjectId)}
-						onPlay={onPlay}
-						onPause={onPause}
-					/>
-					{overlay}
-				</div>
-			);
-		} else {
-			element = overlay;
-		};
+	let element = null;
+
+	if (object.isArchived && (state == I.FileState.Done)) {
+		element = (
+			<div ref={wrapRef} className="wrap" style={css}>
+				<MediaVideo
+					src={S.Common.fileUrl(targetObjectId)}
+					onPlay={onPlay}
+					onPause={onPause}
+				/>
+				{overlay}
+			</div>
+		);
+	} else
+	if (object.isDeleted || object.isArchived) {
+		element = overlay;
 	} else {
 		switch (state) {
 			default:

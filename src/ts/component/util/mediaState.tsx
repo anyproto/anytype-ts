@@ -1,14 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Icon } from 'Component';
 
 interface Props {
-	isDeleted: boolean;
-	isArchived: boolean;
+	object: any;
+	rootId: string;
 	typeName: string;
-	fileName?: string;
 };
 
-const MediaState = ({ isDeleted, isArchived, typeName, fileName }: Props) => {
+const MediaState = ({ object, rootId, typeName }: Props) => {
+
+	const { id, isDeleted, isArchived } = object;
+	const fileName = U.File.name(object);
+	const [ isRestored, setIsRestored ] = useState(false);
+
+	const openMenu = (e: React.MouseEvent) => {
+		if (id) {
+			U.Menu.archivedContext(e, id, () => setIsRestored(true));
+		};
+	};
+
+	if (isRestored || (rootId == id)) {
+		return null;
+	};
+
 	if (isDeleted) {
 		return (
 			<div className="mediaState isDeleted">
@@ -20,7 +34,7 @@ const MediaState = ({ isDeleted, isArchived, typeName, fileName }: Props) => {
 
 	if (isArchived) {
 		return (
-			<div className="mediaState isArchived">
+			<div className="mediaState isArchived" onClick={openMenu} onContextMenu={openMenu}>
 				<Icon name="common/ghost" />
 				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, fileName)}</div>
 			</div>

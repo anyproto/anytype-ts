@@ -80,7 +80,7 @@
 	"commonUnlinkFromObject": "Remove from Object",
 	"commonUnlinkFromSet": "Remove from Query",
 	"commonUnlinkFromCollection": "Remove from Collection",
-	"commonDeletedObject": "Non-existent object",
+	"commonDeletedObject": "Deleted",
 	"commonObjectInBin": "%s \"%s\" is in the Bin",
 	"commonObjectInBinShort": "%s is in the Bin",
 	"commonObjectRemovedShort": "%s was removed",
@@ -755,7 +755,7 @@
 	"blockTextDate": "Mention a date in editor",
 
 	"blockLinkSyncing": "Syncing...",
-	"blockLinkArchived": "Deleted",
+	"blockLinkArchived": "In Bin",
 
 	"blockDataviewCreateNewCollection": "Create new Collection",
 	"blockDataviewCreateNewCollectionWithName": "Create new Collection \"%s\"",
