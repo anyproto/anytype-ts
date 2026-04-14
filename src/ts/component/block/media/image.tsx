@@ -173,30 +173,26 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		css.width = (width * 100) + '%';
 	};
 
-	let element = null;
-	let overlay = null;
-
 	const typeName = translate('blockNameImage');
+	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
 
-	if (object.isDeleted) {
-		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} objectId={targetObjectId} rootId={rootId} />;
-	} else if (object.isArchived) {
-		overlay = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={U.File.name(object)} objectId={targetObjectId} rootId={rootId} />;
-		if (state == I.FileState.Done) {
-			element = (
-				<div ref={wrapRef} className="wrap" style={css}>
-					<img
-						className="mediaImage"
-						src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
-						onDragStart={e => e.preventDefault()}
-						onError={handleError}
-					/>
-					{overlay}
-				</div>
-			);
-		} else {
-			element = overlay;
-		};
+	let element = null;
+
+	if (object.isArchived && (state == I.FileState.Done)) {
+		element = (
+			<div ref={wrapRef} className="wrap" style={css}>
+				<img
+					className="mediaImage"
+					src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
+					onDragStart={e => e.preventDefault()}
+					onError={handleError}
+				/>
+				{overlay}
+			</div>
+		);
+	} else
+	if (object.isDeleted || object.isArchived) {
+		element = overlay;
 	} else {
 		switch (state) {
 			default: {

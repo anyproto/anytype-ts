@@ -2,25 +2,24 @@ import React, { useState } from 'react';
 import { Icon } from 'Component';
 
 interface Props {
-	isDeleted: boolean;
-	isArchived: boolean;
+	object: any;
+	rootId: string;
 	typeName: string;
-	fileName?: string;
-	objectId?: string;
-	rootId?: string;
 };
 
-const MediaState = ({ isDeleted, isArchived, typeName, fileName, objectId, rootId }: Props) => {
+const MediaState = ({ object, rootId, typeName }: Props) => {
 
+	const { id, isDeleted, isArchived } = object;
+	const fileName = U.File.name(object);
 	const [ isRestored, setIsRestored ] = useState(false);
 
 	const openMenu = (e: React.MouseEvent) => {
-		if (objectId) {
-			U.Menu.archivedContext(e, objectId, () => setIsRestored(true));
+		if (id) {
+			U.Menu.archivedContext(e, id, () => setIsRestored(true));
 		};
 	};
 
-	if (isRestored || (rootId && (rootId == objectId))) {
+	if (isRestored || (rootId == id)) {
 		return null;
 	};
 

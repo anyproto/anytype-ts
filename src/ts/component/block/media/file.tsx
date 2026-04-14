@@ -44,10 +44,8 @@ const BlockFile = forwardRef<{}, I.BlockComponent>((props, ref) => {
 	let element = null;
 	const typeName = translate('blockNameFile');
 
-	if (object.isDeleted) {
-		element = <MediaState isDeleted={true} isArchived={false} typeName={typeName} objectId={targetObjectId} rootId={rootId} />;
-	} else if (object.isArchived) {
-		element = <MediaState isDeleted={false} isArchived={true} typeName={typeName} fileName={U.File.name(object)} objectId={targetObjectId} rootId={rootId} />;
+	if (object.isDeleted || object.isArchived) {
+		element = <MediaState object={object} rootId={rootId} typeName={typeName} />;
 	} else {
 		switch (state) {
 			default:
