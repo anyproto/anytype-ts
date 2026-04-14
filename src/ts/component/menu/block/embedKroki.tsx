@@ -157,6 +157,7 @@ const MenuBlockEmbedKroki = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					arrowClassName="light"
 					onChange={onTypeChange}
 					showOn="mouseDown"
+					menuParam={{ classNameWrap: 'fromBlock' }}
 				/>
 			</div>
 			<div className="inputWrapper">
