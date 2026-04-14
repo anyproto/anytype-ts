@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
+import { Button, Icon, Widget, IconObject, ObjectName, Sync, Label } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
 
 
@@ -41,6 +41,13 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 
 		if (widgets.length) {
 			ret.push(I.WidgetSection.Pin);
+		};
+
+		const personalId = U.Object.getPersonalWidgetsId();
+		const hasPersonal = personalId && (S.Block.getChildrenIds(personalId, personalId).length > 0);
+
+		if (hasPersonal) {
+			ret.push(I.WidgetSection.MyFavorites);
 		};
 
 		ret.push(I.WidgetSection.RecentEdit);
@@ -99,8 +106,15 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 
 		const obj = U.Dom.select(`#widget-${U.Common.esc(block.id)}`, body);
 		const clone = document.createElement('div');
+
 		clone.className = 'widget isClone';
-		U.Dom.css(clone, { zIndex: '10000', position: 'fixed', left: '-10000px', top: '-10000px', width: `${obj?.offsetWidth ?? 0}px` });
+		U.Dom.css(clone, { 
+			zIndex: '10000', 
+			position: 'fixed', 
+			left: '-10000px', 
+			top: '-10000px', 
+			width: `${obj?.offsetWidth ?? 0}px`,
+		});
 
 		const headEl = obj ? U.Dom.select('.head', obj) : null;
 		if (headEl) {
@@ -403,34 +417,6 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		});
 	};
 
-	const onRecentlyOpen = () => {
-		S.Menu.open('searchObject', {
-			className: 'single fixed widthValue',
-			classNameWrap: 'fromSidebar',
-			element: '#button-recently-open',
-			data: {
-				limit: 15,
-				noFilter: true,
-				noInfiniteLoading: true,
-				label: translate('widgetRecentOpen'),
-				withPlural: true,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)).concat(I.ObjectLayout.Participant) },
-					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
-					{ relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 },
-				],
-				sorts: [
-					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
-				],
-				onSelect: (el: any) => {
-					U.Object.openConfig(null, el);
-				},
-			}
-		});
-
-		analytics.event('ClickRecentlyOpen');
-	};
-
 	const onSectionContext = (sectionId: I.WidgetSection) => {
 		if (sectionId == I.WidgetSection.Unread) {
 			return;
@@ -475,19 +461,21 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			case I.WidgetSection.Unread:
 			case I.WidgetSection.Type:
 			case I.WidgetSection.RecentEdit:
-			case I.WidgetSection.Bin: {
+			case I.WidgetSection.Bin:
+			case I.WidgetSection.MyFavorites: {
 
 				const idMap = {
 					[I.WidgetSection.Unread]: J.Constant.widgetId.unread,
 					[I.WidgetSection.Type]: J.Constant.widgetId.type,
 					[I.WidgetSection.RecentEdit]: J.Constant.widgetId.recentEdit,
 					[I.WidgetSection.Bin]: J.Constant.widgetId.bin,
+					[I.WidgetSection.MyFavorites]: J.Constant.widgetId.personalWidgets,
 				};
 
-				blocks.push(new M.Block({ 
-					id: [ space, idMap[sectionId] ].join('-'), 
-					type: I.BlockType.Widget, 
-					content: { layout: I.WidgetLayout.Object } 
+				blocks.push(new M.Block({
+					id: [ space, idMap[sectionId] ].join('-'),
+					type: I.BlockType.Widget,
+					content: { layout: I.WidgetLayout.Object }
 				}));
 				break;
 			};
@@ -619,19 +607,18 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			);
 		};
 	} else {
-		const spaceBlock = new M.Block({ id: J.Constant.widgetId.space, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
 		const sections = getSections();
+
+		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 
 		head = (
 			<>
 				<div className="side left">
 					<Icon
+						id="button-widget-panel-toggle"
 						name="widget/vaultToggle" className="vaultToggle" withBackground={true}
 						onClick={() => sidebar.leftPanelToggle(true, true)}
-						tooltipParam={{
-							text: translate('commonVault'),
-							typeY: I.MenuDirection.Bottom,
-						}}
+						tooltipParam={{ text: translate('commonToggleSidebar'), typeY: I.MenuDirection.Bottom }}
 					/>
 					<Icon
 						name="header/widget" withBackground={true}
@@ -644,18 +631,23 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					/>
 				</div>
 				<div className="side right">
-					<Sync id="headerSync" onClick={onSync} />
-
-					<Icon 
-						id="button-recently-open"
-						name="common/clock" 
-						withBackground={true}
-						onClick={onRecentlyOpen}
-						tooltipParam={{ 
-							text: translate('widgetRecentOpen'), 
-							typeY: I.MenuDirection.Bottom,
-						}}
+					<Icon
+						id="button-widget-search"
+						name="common/search" withBackground={true}
+						onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
+						tooltipParam={{ text: translate('commonSearch'), typeY: I.MenuDirection.Bottom }}
 					/>
+					{spaceview.isShared ? (
+						<Icon
+							id="button-widget-members"
+							name="widget/member" 
+							withBackground={true}
+							inner={<Label className="cnt" text={String(members.length)} />}
+							onClick={() => Action.openSpaceShare(analytics.route.widget)}
+							tooltipParam={{ text: translate('commonMembers'), typeY: I.MenuDirection.Bottom }}
+						/>
+					) : ''}
+					<Sync id="headerSync" onClick={onSync} />
 				</div>
 			</>
 		);
@@ -678,6 +670,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			obj.home = true;
 			Storage.set('channelBanner', obj);
 		};
+
+		const spaceBlock = new M.Block({ id: J.Constant.widgetId.space, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
 
 		content = (
 			<div className="content">
@@ -795,7 +789,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 
 	return (
 		<>
-			<div id="head" className="head">
+			<div id="head" className={[ 'head', (previewId ? 'isPreview' : 'isDefault') ].join(' ')}>
 				{head}
 			</div>
 

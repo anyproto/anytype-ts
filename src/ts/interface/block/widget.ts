@@ -6,6 +6,7 @@ export enum WidgetSection {
 	Unread		 = 2,
 	RecentEdit	 = 3,
 	Bin			 = 4,
+	MyFavorites	 = 5,
 };
 
 export interface WidgetSectionParam {

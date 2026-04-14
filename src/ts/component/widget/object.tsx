@@ -20,6 +20,7 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const realId = parent.id.replace(`${space}-`, '');
 	const isUnread = realId == J.Constant.widgetId.unread;
 	const isBin = realId == J.Constant.widgetId.bin;
+	const isPersonalWidgets = realId == J.Constant.widgetId.personalWidgets;
 	const canWrite = U.Space.canMyParticipantWrite();
 
 	const getId = (id: string) => {
@@ -97,6 +98,38 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const getItems = () => {
 		let items = [];
+
+		if (isPersonalWidgets) {
+			const rootId = U.Object.getPersonalWidgetsId();
+			const childrenIds = S.Block.getChildrenIds(rootId, rootId);
+
+			childrenIds.forEach(widgetId => {
+				const widgetBlock = S.Block.getLeaf(rootId, widgetId);
+				if (!widgetBlock || !widgetBlock.isWidget()) {
+					return;
+				};
+
+				const innerIds = S.Block.getChildrenIds(rootId, widgetBlock.id);
+				if (!innerIds.length) {
+					return;
+				};
+
+				const inner = S.Block.getLeaf(rootId, innerIds[0]);
+				const targetId = inner?.getTargetObjectId();
+				if (!targetId) {
+					return;
+				};
+
+				const object = S.Detail.get(rootId, targetId);
+				if (!object || object._empty_ || object.isArchived || object.isDeleted) {
+					return;
+				};
+
+				items.push(object);
+			});
+
+			return items;
+		};
 
 		switch (realId) {
 			case J.Constant.widgetId.unread: {

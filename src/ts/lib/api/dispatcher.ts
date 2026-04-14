@@ -1641,8 +1641,6 @@ class Dispatcher {
 		S.Block.updateMarkup(contextId);
 
 		keyboard.setWindowTitle();
-
-		U.Dom.eventDispatch(window, 'objectView');
 	};
 
 	/**

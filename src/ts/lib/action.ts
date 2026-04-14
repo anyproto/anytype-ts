@@ -838,6 +838,10 @@ class Action {
 	 * @param {string} [route] - The route context for analytics.
 	 */
 	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition, route?: string) {
+		this.createWidgetFromObjectIn(S.Block.widgets, rootId, objectId, targetId, position, route);
+	};
+
+	createWidgetFromObjectIn (contextId: string, rootId: string, objectId: string, targetId: string, position: I.BlockPosition, route?: string) {
 		const object = S.Detail.get(rootId, objectId);
 
 		let layout = I.WidgetLayout.Link;
@@ -845,7 +849,7 @@ class Action {
 		if (object && !object._empty_) {
 			if (U.Object.isInFileOrSystemLayouts(object.layout) || U.Object.isDateLayout(object.layout)) {
 				layout = I.WidgetLayout.Link;
-			} else 
+			} else
 			if (U.Object.isInSetLayouts(object.layout)) {
 				layout = I.WidgetLayout.View;
 			} else
@@ -855,12 +859,12 @@ class Action {
 		};
 
 		const limit = Number(U.Menu.getWidgetLimitOptions(layout)[0]?.id) || 0;
-		const newBlock = { 
+		const newBlock = {
 			type: I.BlockType.Link,
 			content: { targetBlockId: objectId },
 		};
 
-		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, (message: any) => {
+		C.BlockCreateWidget(contextId, targetId, newBlock, position, layout, limit, () => {
 			analytics.createWidget(layout, route);
 		});
 	};
@@ -927,6 +931,17 @@ class Action {
 			this.removeWidgetsForObjects([ objectId ]);
 		} else {
 			this.createWidgetFromObject(objectId, objectId, '', I.BlockPosition.InnerFirst, route);
+		};
+	};
+
+	togglePersonalWidgetsForObject (objectId: string, route?: string) {
+		const personalId = U.Object.getPersonalWidgetsId();
+		const list = S.Block.getWidgetsForTargetIn(objectId, personalId);
+
+		if (list.length) {
+			C.BlockListDelete(personalId, list.map(it => it.id));
+		} else {
+			this.createWidgetFromObjectIn(personalId, personalId, objectId, '', I.BlockPosition.InnerFirst, route);
 		};
 	};
 

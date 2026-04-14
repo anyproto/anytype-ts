@@ -1796,6 +1796,7 @@ class UtilMenu {
 		return [
 			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.Pin },
+			{ id: I.WidgetSection.MyFavorites },
 			{ id: I.WidgetSection.RecentEdit },
 			{ id: I.WidgetSection.Type },
 			{ id: I.WidgetSection.Bin },

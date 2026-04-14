@@ -25,8 +25,13 @@
 		.button.simple { @include text-common; font-weight: 500; color: var(--color-text-secondary); height: 28px; }
 		.button.simple:hover { color: var(--color-text-primary); }
 
-
 		.sync { -webkit-app-region: no-drag; }
+
+		.icon.widgetMember { width: auto !important; border-radius: 14px; display: flex; align-items: center; padding: 0px 4px; }
+		.icon.widgetMember {
+			svg, .label { flex-shrink: 0; }
+			.label { @include text-small; font-weight: 500; color: var(--color-text-secondary); }
+		}
 	}
 
 	> .subHead { 

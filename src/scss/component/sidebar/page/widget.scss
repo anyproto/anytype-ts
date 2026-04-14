@@ -1,11 +1,26 @@
 .sidebarPage.pageWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
 .sidebarPage.pageWidget {
-	> .head { 
+	> .head {
 		display: flex; flex-direction: row; align-items: center; padding: 0px 12px; height: 52px;
-		gap: 0px 8px; flex-shrink: 0; position: relative; z-index: 2;
+		gap: 0px 8px; flex-shrink: 0; position: relative; z-index: 2; justify-content: space-between;
 	}
 	> .head {
 		.name { @include text-overflow-nw; }
+
+		.side { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; min-width: 0; }
+		.side.left { flex-grow: 1; min-width: 0; }
+		.side.right { justify-content: flex-end; flex-shrink: 0; }
+
+		.spaceHead {
+			display: flex; flex-direction: row; align-items: center; gap: 0px 6px; min-width: 0;
+			padding: 4px 6px; border-radius: 6px; transition: background $transitionCommon;
+		}
+		.spaceHead {
+			.iconObject { flex-shrink: 0; }
+			.name { @include text-overflow-nw; @include text-common; font-weight: 600; color: var(--color-text-primary); }
+			.icon.arrow { width: 12px; height: 12px; flex-shrink: 0; }
+			&:hover { background: var(--color-shape-highlight-medium); }
+		}
 	}
 
 	.widgetSection { display: flex; flex-direction: column; }
