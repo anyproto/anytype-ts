@@ -11,9 +11,10 @@
 			.select { width: 100%; }
 		}
 
-		.inputWrapper { border: 1px solid var(--color-shape-secondary); border-radius: 6px; padding: 8px 10px; }
+		.inputWrapper { border: 1px solid var(--color-shape-secondary); border-radius: 6px; padding: 8px 10px; max-height: 280px; overflow: auto; }
 		.inputWrapper {
-			#input { @include text-common; min-height: 120px; max-height: 280px; overflow: auto; white-space: pre-wrap; word-break: break-word; }
+			.editableWrap, #input { height: 100%; }
+			#input { @include text-common; min-height: 120px; white-space: pre-wrap; word-break: break-word; -webkit-user-modify: read-write-plaintext-only; }
 		}
 
 		.buttons { display: flex; justify-content: flex-end; margin-top: 8px; }
