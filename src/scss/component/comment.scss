@@ -76,7 +76,7 @@
 
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
 
-		.head { margin: 0px 0px 4px 0px; }
+		.head { margin: 0px 0px 2px 0px; }
 
 		.hoverActions { display: flex; align-items: center; gap: 0px 4px; }
 		.hoverActions {
@@ -85,15 +85,15 @@
 
 		.replyList { width: 100%; margin: 0px; padding: 0px; }
 
-		.replyFormWrap { width: 100%; margin: 0px; padding: 12px 0px 0px 28px; }
+		.replyFormWrap { width: 100%; margin: 0px; padding: 12px 0px 0px 0px; }
 		.replyFormWrap {
 			.commentForm { border-radius: 14px; background-color: var(--color-shape-secondary); }
 			.commentForm .contentArea { padding: 8px 12px; }
 		}
 
 		.reactions {
-			padding: 12px 0px 0px 0px;
-			display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; align-items: center;
+			padding: 8px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; 
+			align-items: center;
 		}
 		.reactions {
 			.reaction {
@@ -108,12 +108,10 @@
 		}
 	}
 
+	.commentReply { padding: 24px 0px 0px 0px; position: relative; transition: background-color 0.3s ease; }
 	.commentReply {
-		margin: 16px 0px 0px 0px; padding: 16px 0px 0px 0px; position: relative;
-		border-top: 1px solid var(--color-shape-highlight-medium);
-		transition: background-color 0.3s ease;
-	}
-	.commentReply {
+		&::before { content: ""; position: absolute; top: 12px; left: 28px; width: calc(100% - 28px); height: 1px; background-color: var(--color-shape-highlight-medium); }
+		&:first-child::before { left: 0px; width: 100%; }
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); border-radius: 8px; }
 
 		.commentAttachments,
