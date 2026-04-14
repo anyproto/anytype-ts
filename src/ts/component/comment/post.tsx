@@ -506,7 +506,7 @@ const CommentPost = (props: Props) => {
 		return (message.attachments || [])
 			.filter(it => !linkTargets.has(it.target))
 			.map(it => S.Detail.get(subId, it.target))
-			.filter(it => !it._empty_);
+			.filter(it => !it._empty_ && !it.isDeleted);
 	}, [ message.attachments, parts, subId ]);
 
 	const onAttachmentPreview = useCallback((preview: any) => {

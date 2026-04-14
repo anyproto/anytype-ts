@@ -336,7 +336,7 @@ const CommentReply = (props: Props) => {
 		const list = (message.attachments || [])
 			.filter(it => !linkTargets.has(it.target))
 			.map(it => S.Detail.get(subId, it.target))
-			.filter(it => !it._empty_);
+			.filter(it => !it._empty_ && !it.isDeleted);
 
 		if (!list.length) {
 			return null;
