@@ -1,13 +1,12 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Icon } from 'Component';
-import { I, U, translate } from 'Lib';
+import * as I from 'Interface';
 
-const PageMainSettingsImportNotionHelp = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsImportNotionHelp = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	return (
 		<div>
-			<Icon className="logo" />
+			<Icon name="import/notion" className="logo" size={56} />
 			<Title text={translate('popupSettingsImportNotionHelpTitle')} />
 			
 			<Label className="step" text={U.String.sprintf(translate('popupSettingsImportNotionHelpStep'), 1)} />
@@ -55,6 +54,6 @@ const PageMainSettingsImportNotionHelp = observer(forwardRef<I.PageRef, I.PageSe
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsImportNotionHelp;

@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, Editable, Button, Error } from 'Component';
-import { I, C, J, S, translate, keyboard, analytics } from 'Lib';
+import * as I from 'Interface';
 
-const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuChatCreate = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -123,6 +122,6 @@ const MenuChatCreate = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default MenuChatCreate;

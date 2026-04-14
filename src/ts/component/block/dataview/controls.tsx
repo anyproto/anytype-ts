@@ -1,14 +1,14 @@
-import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
 import { observable } from 'mobx';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Button, Filter, DropTarget } from 'Component';
-import { C, I, S, U, M, analytics, Relation, keyboard, translate, Dataview, J, Storage } from 'Lib';
 import Head from './head';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 interface Props extends I.ViewComponent {
 	onFilterChange?: (v: string) => void; 
@@ -22,7 +22,7 @@ interface ControlsRefProps {
 	getNode: () => any,
 };
 
-const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
+const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const { 
 		className, rootId, block, isInline, isPopup, isCollection, readonly, getSources, onFilterChange, getTarget, getTypeId, getView, onRecordAdd, onTemplateMenu,
@@ -31,7 +31,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const target = getTarget();
 	const views = S.Record.getViews(rootId, block.id);
 	const view = getView();
-	const sortCnt = view.sorts.length;
+	const sortCnt = Dataview.getFilteredSorts(view.sorts).length;
 	const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 	const cn = [ 'dataviewControls' ];
 	const buttonWrapCn = [ 'buttonWrap' ];
@@ -48,6 +48,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const filterRef = useRef(null);
 	const headRef = useRef(null);
 	const head = isInline ? <Head ref={headRef} {...props} /> : null;
+	const collapsedKey = `controls-collapsed-${block.id}`;
+	const [ isCollapsed, setIsCollapsed ] = useState(() => isInline ? Storage.checkToggle(rootId, collapsedKey) : false);
 
 	if (isInline) {
 		cn.push('isInline');
@@ -61,11 +63,74 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		cn.push(className);
 	};
 
+	const collapsibleRef = useRef(null);
+	const collapseEndRef = useRef<(() => void) | null>(null);
+
+	const getCollapsibleWidth = (el: HTMLElement): number => {
+		const children = Array.from(el.children) as HTMLElement[];
+		const gap = 4;
+		let width = 0;
+
+		children.forEach((child, i) => {
+			width += child.offsetWidth;
+			if (i < children.length - 1) {
+				width += gap;
+			};
+		});
+
+		return width;
+	};
+
+	const onToggleCollapse = () => {
+		const el = collapsibleRef.current as HTMLElement;
+
+		if (!el) {
+			return;
+		};
+
+		if (collapseEndRef.current) {
+			el.removeEventListener('transitionend', collapseEndRef.current);
+			el.style.width = '';
+			collapseEndRef.current = null;
+		};
+
+		const onEnd = () => {
+			el.style.width = '';
+			el.removeEventListener('transitionend', onEnd);
+			collapseEndRef.current = null;
+		};
+
+		if (isCollapsed) {
+			U.Dom.removeClass(el, 'isCollapsed');
+			void el.offsetWidth;
+			const width = getCollapsibleWidth(el);
+
+			setIsCollapsed(false);
+			Storage.setToggle(rootId, collapsedKey, false);
+
+			el.style.width = '0px';
+			void el.offsetWidth;
+			el.style.width = `${width}px`;
+		} else {
+			el.style.width = `${el.offsetWidth}px`;
+			void el.offsetWidth;
+			el.style.width = '0px';
+
+			setIsCollapsed(true);
+			Storage.setToggle(rootId, collapsedKey, true);
+			U.Dom.addClass(el, 'isCollapsed');
+
+			collapseEndRef.current = onEnd;
+			el.addEventListener('transitionend', onEnd);
+		};
+	};
+
 	const onViewSwitch = (view: any) => {
 		onViewSet(view);
 
-		window.setTimeout(() => { 
-			$(`#button-${U.Common.esc(block.id)}-settings`).trigger('click'); 
+		window.setTimeout(() => {
+			const btn = U.Dom.get(`button-${block.id}-settings`);
+			btn?.click();
 		}, 50);
 	};
 
@@ -124,7 +189,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const isSort = component == 'dataviewSort';
 
 		if (!readonly && isFilter) {
-			const items = U.Common.getViewFilters(view);
+			const items = Dataview.getFilteredFilters(view.filters);
 
 			if (items.length) {
 				toggleFilters();
@@ -141,7 +206,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 
 		if (!readonly && isSort) {
-			if (view.sorts.length) {
+			if (Dataview.getFilteredSorts(view.sorts).length) {
 				toggleFilters();
 			} else {
 				sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
@@ -362,13 +427,16 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		keyboard.disableSelection(false);
 	};
 
+	const filterMouseDownHandler = useRef<((e: any) => void) | null>(null);
+
+	const filterKeydownHandler = useRef<((e: any) => void) | null>(null);
+
 	const onFilterShow = () => {
 		if (!filterRef.current) {
 			return;
 		};
 
-		const container = U.Common.getPageFlexContainer(isPopup);
-		const win = $(window);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 
 		filterRef.current.setActive(true);
 		toggleHoverArea(true);
@@ -377,25 +445,39 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 			filterRef.current?.focus();
 		};
 
-		container.off('mousedown.filter').on('mousedown.filter', (e: any) => { 
+		if (filterMouseDownHandler.current && container) {
+			U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
+		};
+
+		filterMouseDownHandler.current = (e: any) => {
 			const value = filterRef.current.getValue();
 
-			if (!value && !$(e.target).parents(`.filter`).length) {
+			if (!value && !(e.target as HTMLElement)?.closest('.filter')) {
 				onFilterHide();
-				container.off('mousedown.filter');
+				if (container) {
+					U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
+				};
 			};
-		});
+		};
 
-		win.off('keydown.filter').on('keydown.filter', (e: any) => {
+		if (container) {
+			U.Dom.addEvent(container, 'mousedown', filterMouseDownHandler.current);
+		};
+
+		if (filterKeydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
+		};
+		filterKeydownHandler.current = (e: any) => {
 			e.stopPropagation();
 
 			if (!isPopup && !keyboard.isPopup()) {
 				keyboard.shortcut('escape', e, () => {
 					onFilterHide();
-					win.off('keydown.filter');
+					U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 				});
 			};
-		});
+		};
+		U.Dom.addEvent(window, 'keydown', filterKeydownHandler.current);
 	};
 
 	const onFilterHide = () => {
@@ -412,49 +494,60 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const toggleHoverArea = (v: boolean) => {
-		$(`#block-${U.Common.esc(block.id)} .hoverArea`).toggleClass('active', v);
+		const blockEl = U.Dom.get(`block-${block.id}`);
+		const hoverArea = U.Dom.select('.hoverArea', blockEl);
+		U.Dom.toggleClass(hoverArea, 'active', v);
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const sideLeft = node.find('#dataviewControlsSideLeft');
-		const sideRight = node.find('#dataviewControlsSideRight');
-		const nw = node.outerWidth();
-
-		if (node.hasClass('small')) {
-			node.removeClass('small');
+		const node = nodeRef.current as HTMLElement;
+		if (!node) {
+			return;
 		};
 
-		const el = sideLeft[0];
+		const sideLeft = U.Dom.select('#dataviewControlsSideLeft', node);
+		const sideRight = U.Dom.select('#dataviewControlsSideRight', node);
+		const nw = node.offsetWidth;
+
+		U.Dom.removeClass(node, 'small');
 
 		// Temporarily disable flex-grow on sideLeft to measure natural content width
 		// With flex-grow: 1, sideLeft expands to fill all space, making the measurement
 		// equal to container width regardless of actual content, which breaks at non-standard zoom levels
-		if (el) {
-			el.style.flexGrow = '0';
+		if (sideLeft) {
+			U.Dom.css(sideLeft, { flexGrow: '0' });
 		};
 
 		// Force synchronous reflow before measuring widths
-		void node[0]?.offsetWidth;
+		void node.offsetWidth;
 
-		const width = Math.ceil(sideLeft.outerWidth() + sideRight.outerWidth());
+		let rightWidth = sideRight?.offsetWidth ?? 0;
 
-		if (el) {
-			el.style.flexGrow = '';
+		if (isInline && sideRight) {
+			const collapsible = U.Dom.select('.collapsible', sideRight);
+			rightWidth -= collapsible?.offsetWidth ?? 0;
+		};
+
+		const width = Math.ceil((sideLeft?.offsetWidth ?? 0) + rightWidth);
+
+		if (sideLeft) {
+			U.Dom.css(sideLeft, { flexGrow: '' });
 		};
 
 		if (width + 16 > nw) {
-			node.addClass('small');
+			U.Dom.addClass(node, 'small');
 		} else
 		if (S.Menu.isOpen('dataviewViewList')) {
 			S.Menu.closeAll([ 'dataviewViewList' ]);
 		};
 	};
 
-	const buttons = [
-		{ id: 'filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: Dataview.getActiveFilters(view).length },
-		{ id: 'sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
-		{ id: 'settings', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
+	const collapsibleButtons = [
+		{ id: 'filter', name: 'control/dataview/filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: Dataview.getActiveFilters(view).length },
+		{ id: 'sort', name: 'common/sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
+	];
+	const persistentButtons = [
+		{ id: 'settings', name: 'common/options', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 	];
 
 	const ButtonItem = (item: any) => {
@@ -468,6 +561,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		return (
 			<Icon
 				id={elementId}
+				name={item.name}
 				className={cn.join(' ')} withBackground={true}
 				tooltipParam={{ text: item.text }}
 				onClick={() => onButton(`#${elementId}`, item.menu)}
@@ -515,13 +609,30 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 	useEffect(() => {
 
 		return () => {
-			const container = U.Common.getPageFlexContainer(isPopup);
-			const win = $(window);
+			const container = U.Dom.getPageFlexContainer(isPopup);
 
-			container.off('mousedown.filter');
-			win.off('keydown.filter');
+			if (filterMouseDownHandler.current && container) {
+				U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
+			};
+			if (filterKeydownHandler.current) {
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
+			};
 		};
 
+	}, []);
+
+	useEffect(() => {
+		const el = collapsibleRef.current as HTMLElement;
+
+		if (!el) {
+			return;
+		};
+
+		if (isCollapsed) {
+			U.Dom.addClass(el, 'isCollapsed');
+		} else {
+			el.style.width = `${getCollapsibleWidth(el)}px`;
+		};
 	}, []);
 
 	useEffect(() => resize());
@@ -550,7 +661,7 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 						onContextMenu={(e: any) => onViewContext(e, `#block-${U.Common.esc(block.id)} #view-selector`, view)}
 					>
 						<div className="name">{view.name}</div>
-						<Icon className="arrow dark" />
+						<Icon name="arrow/select" className="arrow dark" />
 					</div>
 
 					<DndContext
@@ -570,9 +681,9 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 								))}
 
 								{allowedView ? (
-									<Icon 
-										id={`button-${block.id}-view-add`} 
-										className="plus" withBackground={true}
+									<Icon
+										id={`button-${block.id}-view-add`}
+										name="plus/menu" className="plus" withBackground={true}
 										tooltipParam={{ text: translate('blockDataviewControlsViewAdd') }}
 										onClick={onViewAdd} /> 
 								) : ''}
@@ -582,19 +693,50 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 				</div>
 
 				<div id="dataviewControlsSideRight" className="side right">
-					<Filter
-						ref={filterRef}
-						className="underlined"
-						placeholder={translate('blockDataviewSearch')}
-						iconParam={{ className: 'search', withBackground: true }}
-						tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
-						onChange={onFilterChange}
-						onIconClick={onFilterShow}
-					/>
+					{isInline ? (
+						<>
+							<Icon
+								className={[ 'expandControls', (isCollapsed ? 'isCollapsed' : '') ].join(' ')}
+								name="arrow/doubleChevron"
+								size={28}
+								withBackground={true}
+								onClick={onToggleCollapse}
+							/>
+							<div ref={collapsibleRef} className="collapsible">
+								<Filter
+									ref={filterRef}
+									placeholder={translate('blockDataviewSearch')}
+									iconParam={{ name: 'common/search' }}
+									tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
+									onChange={onFilterChange}
+									onIconClick={onFilterShow}
+								/>
 
-					{buttons.map((item: any, i: number) => (
+								{collapsibleButtons.map((item: any, i: number) => (
+									<ButtonItem key={item.id} {...item} />
+								))}
+							</div>
+						</>
+					) : (
+						<>
+							<Filter
+								ref={filterRef}
+								placeholder={translate('blockDataviewSearch')}
+								iconParam={{ name: 'common/search' }}
+								tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
+								onChange={onFilterChange}
+								onIconClick={onFilterShow}
+							/>
+
+							{collapsibleButtons.map((item: any, i: number) => (
+								<ButtonItem key={item.id} {...item} />
+							))}
+						</>
+					)}
+
+					{persistentButtons.map((item: any, i: number) => (
 						<ButtonItem key={item.id} {...item} />
-					))}	
+					))}
 
 					{isAllowedObject ? (
 						<div className={buttonWrapCn.join(' ')}>
@@ -611,7 +753,8 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 								<Button
 									id={`button-${block.id}-add-record-select`}
 									color="accent"
-									className="select"
+									iconParam={{ name: 'arrow/button', color: 'white', size: 8 }}
+									className="isArrow"
 									size={28}
 									tooltipParam={{ text: translate('blockDataviewShowTemplates') }}
 									onClick={e => onTemplateMenu(e, -1)}
@@ -624,6 +767,6 @@ const Controls = observer(forwardRef<ControlsRefProps, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Controls;

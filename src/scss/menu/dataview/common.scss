@@ -15,7 +15,7 @@
 			.icon.plus { margin-right: 4px; }
 		}
 
-		.item.empty { padding: 11px 16px; height: auto; line-height: 22px; border-radius: 8px; @include text-overflow-nw; display: block; }
+		.item.empty { padding: 11px 16px; height: auto; line-height: 22px; @include text-overflow-nw; }
 		.item.empty:hover::before { opacity: 0; }
 
 		.label { color: var(--color-control-active); @include text-small; padding: 0px 16px; font-weight: 500; margin-bottom: 8px; }
@@ -24,7 +24,7 @@
     .menu.menuDataviewFilterAdvanced,
     .menu.menuDataviewSort {
 		.item {
-            .icon.dnd { vertical-align: top; height: 40px; background-size: 20px; margin: 0px; }
+            .icon.commonDnd { vertical-align: top; height: 40px; background-size: 20px; margin: 0px; }
             .icon.relation { margin-right: 4px; }
 
 			.select {

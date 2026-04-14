@@ -1,16 +1,15 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { observer } from 'mobx-react';
-import { I, U, Action } from 'Lib';
 
 import PopupUsecasePageList from './page/usecase/list';
 import PopupUsecasePageItem from './page/usecase/item';
+import * as I from 'Interface';
 
 const Components: any = {
 	list: PopupUsecasePageList,
 	item: PopupUsecasePageItem,
 };
 
-const PopupUsecase = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
+const PopupUsecase = forwardRef<{}, I.PopupUsecase>((props, ref) => {
 
 	const { param, getId } = props;
 	const { data } = param;
@@ -19,12 +18,14 @@ const PopupUsecase = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
 	const componentRef = useRef(null);
 
 	const onPage = (page: string, data?: any): void => {
-		const obj = $(`#${getId()}-innerWrap`);
+		const obj = U.Dom.get(`${getId()}-innerWrap`);
 
 		data = data || {};
 		param.data = Object.assign(param.data, { ...data, page });
 
-		obj.scrollTop(0);
+		if (obj) {
+			obj.scrollTop = 0;
+		};
 	};
 
 	const getAuthor = (author: string): string => {
@@ -73,6 +74,6 @@ const PopupUsecase = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupUsecase;

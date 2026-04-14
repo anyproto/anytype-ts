@@ -1,10 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, S, U, J, keyboard, translate, Relation } from 'Lib';
 import { Input, IconObject, ChatCounter, Icon } from 'Component';
+import * as I from 'Interface';
 
-const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
+const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 
 	const [ isEditing, setIsEditing ] = useState(false);
 	const inputRef = useRef(null);
@@ -171,7 +169,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		val = String(val || '');
 	};
 
-	if (isLongText && !view?.wrapContent) {
+	if (isLongText && !isEditing && isInline && !view?.wrapContent) {
 		val = val.replace(/\n/g, ' ');
 	};
 
@@ -212,18 +210,19 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			};
 
 			EditorComponent = (item: any) => (
-				<Input 
+				<Input
 					key={[ recordId, relation.relationKey, 'input' ].join('-')}
-					ref={inputRef} 
-					id="input" 
-					{...item} 
+					ref={inputRef}
+					id="input"
+					focusOnMount={true}
+					{...item}
 					maskOptions={{
 						mask: mask.join(' '),
 						separator: '.',
 						hourFormat: 12,
 						alias: 'datetime',
-					}} 
-					placeholder={ph.join(' ')} 
+					}}
+					placeholder={ph.join(' ')}
 					onKeyUp={onKeyUpDate}
 				/>
 			);
@@ -233,6 +232,7 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 					key={[ recordId, relation.relationKey, 'input' ].join('-')}
 					ref={inputRef}
 					id="input"
+					focusOnMount={true}
 					{...item}
 					placeholder={placeholder}
 					onKeyDown={onKeyDown}
@@ -343,8 +343,8 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	}, []);
 
 	useEffect(() => {
-		const cell = $(`#${U.Common.esc(id)}`);
-		const card = viewType == I.ViewType.Grid ? null : $(`#record-${U.Common.esc(record.id)}`);
+		const cell = U.Dom.get(id);
+		const card = viewType == I.ViewType.Grid ? null : U.Dom.get(`record-${record.id}`);
 
 		if (isEditing) {
 			let val = value.current;
@@ -392,18 +392,21 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		} else {
 			setValue(Relation.formatValue(relation, record[relation.relationKey], true));
 
-			cell.find('.cellContent').css({ left: '', right: '' });
+			const cellContent = U.Dom.select('.cellContent', cell);
+			if (cellContent) {
+				U.Dom.css(cellContent, { left: '', right: '' });
+			};
 		};
 
-		cell.toggleClass('isEditing', isEditing);
-		if (card && card.length) {
-			card.toggleClass('isEditing', isEditing);
+		U.Dom.toggleClass(cell, 'isEditing', isEditing);
+		if (card) {
+			U.Dom.toggleClass(card, 'isEditing', isEditing);
 		};
 
 		if (S.Common.cellId) {
-			$(`#${U.Common.esc(S.Common.cellId)}`).addClass('isEditing');
+			U.Dom.addClass(U.Dom.get(S.Common.cellId), 'isEditing');
 		};
-	});
+	}, [ isEditing ]);
 
 	useImperativeHandle(ref, () => ({
 		setEditing: (v: boolean) => setEditingHandler(v),
@@ -421,6 +424,6 @@ const CellText = observer(forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 		</>
 	);
 
-}));
+});
 
 export default CellText;

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import DOMPurify from 'dompurify';
 import { Icon } from 'Component';
-import { I, U, translate } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	processor: I.EmbedProcessor;
@@ -138,10 +138,10 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove }: Props) => {
 				};
 			};
 
-			iframe.addEventListener('load', onLoad);
+			U.Dom.addEvent(iframe, 'load', onLoad);
 			iframe.src = './embed/iframe.html';
 
-			return () => iframe.removeEventListener('load', onLoad);
+			return () => U.Dom.removeEvent(iframe, 'load', onLoad);
 		};
 
 		let cleanup: (() => void) | undefined;
@@ -179,8 +179,8 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove }: Props) => {
 			{content}
 			{(hasContent && (onEdit || onRemove)) ? (
 				<div className="embedActions">
-					{onEdit ? <Icon className="edit" onClick={onEdit} /> : ''}
-					{onRemove ? <Icon className="remove" onClick={onRemove} /> : ''}
+					{onEdit ? <Icon name="common/edit" className="edit" onClick={onEdit} /> : ''}
+					{onRemove ? <Icon name="menu/action/remove" className="remove" onClick={onRemove} /> : ''}
 				</div>
 			) : ''}
 		</div>

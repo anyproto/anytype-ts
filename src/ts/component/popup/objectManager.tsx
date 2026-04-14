@@ -1,12 +1,10 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import $ from 'jquery';
 import { Title, Label, Button, ListObjectManager, IconObject } from 'Component';
-import { I, J, keyboard, translate, U } from 'Lib';
-import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 const ROW_HEIGHT = 30;
 
-const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupObjectManager = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, getId, close, position } = props;
 	const { data } = param;
@@ -14,13 +12,19 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const subId = [ getId(), 'data' ].join('-');
 	const managerRef = useRef(null);
 
+	const keydownHandler = useRef<(e: any) => void>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on(`keydown.${props.id}`, e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off(`keydown.${props.id}`);
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDown = (e: any) => {
@@ -39,13 +43,17 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onUpdate = () => {
 		window.setTimeout(() => {
-			const wrap = $(`#${getId()}-innerWrap`);
-			const items = wrap.find('.items');
-			const height = wrap.outerHeight() - items.outerHeight() || 0;
+			const wrap = U.Dom.get(`${getId()}-innerWrap`);
+			if (!wrap) {
+				return;
+			};
+
+			const items = U.Dom.select('.items', wrap);
+			const height = wrap.offsetHeight - (items?.offsetHeight || 0) || 0;
 			const l = managerRef.current.getItemsCount();
 
 			if (l) {
-				wrap.css({ height: height + l * ROW_HEIGHT });
+				U.Dom.css(wrap, { height: `${height + l * ROW_HEIGHT}px` });
 			};
 
 			position();
@@ -121,7 +129,7 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				onUpdate={onUpdate}
 				disableHeight={false}
 				isCompact={true}
-				scrollElement={$(`#${getId()}-innerWrap .items`).get(0)}
+				scrollElement={U.Dom.select(`#${getId()}-innerWrap .items`)}
 			/>
 
 			<div className="buttons">
@@ -131,6 +139,6 @@ const PopupObjectManager = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default PopupObjectManager;

@@ -7,7 +7,7 @@
 	}
 	.menu.menuSearchText * { -webkit-app-region: no-drag; }
 	.menu.menuSearchText {
-		.content { transition: none; padding: 0px; overflow: visible; }
+		.content { padding: 0px; overflow: visible; }
 		.wrap { height: 100%; width: 100%; display: flex; flex-direction: column; }
 
 		.filterWrapper {
@@ -20,7 +20,7 @@
 			border: 1px solid var(--color-shape-secondary); gap: 0px 6px;
 		}
 		.filterContainer {
-			.icon.search { flex-shrink: 0; margin: 0px; }
+			.icon.search { margin: 0px; }
 			.input { flex-grow: 1; height: 100%; padding: 0px; border: 0px; background: none; border-radius: 0px; }
 
 			.cnt {
@@ -28,11 +28,9 @@
 				padding: 0px 8px;
 			}
 
-			.icon.clear {
+			.icon.commonClear {
 				width: 20px; height: 20px; flex-shrink: 0; margin: 0px;
-				background-image: url('~img/icon/filter/clear-dark0.svg') !important;
 			}
-			.icon.clear:hover { background-image: url('~img/icon/filter/clear-dark0.svg') !important; }
 		}
 
 		.arrowWrapper {
@@ -40,9 +38,8 @@
 			background-color: var(--color-shape-highlight-medium); border-radius: 16px; align-items: center;
 		}
 		.arrowWrapper {
-			.icon { width: 20px; height: 20px; }
-			.icon.arrow { background-image: url('~img/arrow/searchText.svg'); }
-			.icon.arrow.down { transform: rotate(180deg); }
+			.icon { width: 20px !important; height: 20px !important; }
+			.icon.arrow.up { transform: rotate(180deg); }
 			.icon.arrow.disabled { opacity: 0.3; pointer-events: none; }
 		}
 	}

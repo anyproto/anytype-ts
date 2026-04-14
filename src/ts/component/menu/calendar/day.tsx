@@ -1,9 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, S, U, J, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
-const MenuCalendarDay = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+
+const MenuCalendarDay = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, getId, position, setActive, onKeyDown } = props;
 	const { data } = param;
@@ -26,14 +26,20 @@ const MenuCalendarDay = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		cn.push(className);
 	};
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
@@ -57,7 +63,7 @@ const MenuCalendarDay = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const relation = S.Record.getRelationByKey(relationKey);
 
 		if (!readonly && relation && !relation.isReadonlyValue && onCreate) {
-			ret.push({ id: 'add', icon: 'plus', name: translate('commonCreateNewObject') });
+			ret.push({ id: 'add', iconParam: { name: 'plus/menu' }, name: translate('commonCreateNewObject') });
 		};
 
 		return ret;
@@ -128,7 +134,7 @@ const MenuCalendarDay = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div className="sides">
 						<div className="side left">{label}</div>
 						<div className="side right">
-							<Icon className="expand" withBackground={true} tooltipParam={{ text: translate('commonOpenObject') }} />
+							<Icon name="common/expand" className="expand" withBackground={true} tooltipParam={{ text: translate('commonOpenObject') }} />
 						</div>
 					</div>
 				) : (
@@ -151,6 +157,6 @@ const MenuCalendarDay = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuCalendarDay;

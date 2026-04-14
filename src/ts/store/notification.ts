@@ -1,5 +1,6 @@
 import { observable, action, computed, makeObservable, set } from 'mobx';
-import { I, M, } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 class NotificationStore {
 

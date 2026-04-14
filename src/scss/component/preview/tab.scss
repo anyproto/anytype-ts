@@ -8,7 +8,6 @@
     .previewObject { display: flex; align-items: center; height: auto; flex-wrap: nowrap; }
     .previewHeader,
     .previewObject {
-        .iconObject { flex-shrink: 0; }
     }
 
     .previewHeader { gap: 0px 6px; }
@@ -20,7 +19,7 @@
     .previewObject { gap: 0px 12px;  }
     .previewObject {
         .side.right { @include text-overflow-nw; }
-        .iconObject { flex-shrink: 0; border-radius: 8px !important; background-color: var(--color-shape-highlight-medium) !important; }
+        .iconObject { border-radius: 8px !important; background-color: var(--color-shape-highlight-medium) !important; }
         .name { font-weight: 500; @include text-overflow-nw; }
         .type { @include text-small; color: var(--color-text-secondary); }
     }

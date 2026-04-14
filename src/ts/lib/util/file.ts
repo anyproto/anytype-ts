@@ -1,6 +1,6 @@
 import loadImage from 'blueimp-load-image';
-import { I, S, U, J, Relation, translate } from 'Lib';
 import { DragEvent } from 'react';
+import * as I from 'Interface';
 
 const SIZE_UNIT = 1024;
 const UNITS = {
@@ -324,7 +324,7 @@ class UtilFile {
 		S.Popup.open('confirm', {
 			preventCloseByClick: true,
 			data: {
-				icon: 'error',
+				iconParam: { name: 'popup/header/error', color: 'orange' },
 				title: translate('commonError'),
 				text: message.error.description || translate('popupUploadErrorText'),
 				textConfirm: translate('popupUploadErrorConfirm'),
@@ -342,7 +342,7 @@ class UtilFile {
 		S.Popup.open('confirm', {
 			preventCloseByClick: true,
 			data: {
-				icon: 'error',
+				iconParam: { name: 'popup/header/error', color: 'orange' },
 				title: U.String.sprintf(translate('popupUploadErrorTitle'), errorCount, U.Common.plural(errorCount, translate('pluralFile'))),
 				text: lastErrorDescription || translate('popupUploadErrorText'),
 				textConfirm: translate('popupUploadErrorConfirm'),

@@ -164,14 +164,16 @@ bun run build:pixi
 
 ### Key Development Notes
 - Uses Vite for bundling (esbuild dev, Rollup production) with bun as package manager
-- TypeScript with React 17
+- TypeScript with React 18
 - MobX for state management
 - Custom block-based editor system
 - gRPC for backend communication
 - Electron for desktop app packaging
 - CSS supports native nesting - use nested selectors instead of flat/inline selectors
 - Do not use `cursor: pointer` in CSS - the app does not use custom cursors
-- When a SCSS selector has both its own properties AND nested children, write the properties on separate lines with a blank line before the first child selector. Leaf selectors (no nested children) can still be one-liners.
+- **Do not change any style or design properties (colors, spacing, sizes, etc.) unless explicitly asked.** Design decisions are intentional — never "fix" or "improve" visual values on your own
+- **Never change colors on your own.** Colors (CSS variables, hardcoded values, theme overrides) are only changed through design tasks with explicit design specs. Even if a color looks wrong or inconsistent, do not fix it unless a design task specifically asks for it
+- For CSS and UI styling changes, match exact pixel values, border-radius, padding, and colors from the user's specifications on the first attempt. Do not guess or approximate visual values
 
 ### Code Style
 - **The project uses tabs for indentation, not spaces.** All TypeScript, TSX, and SCSS files use tab characters.
@@ -203,6 +205,23 @@ bun run build:pixi
   // Bad — inline class list arrays hurt readability
   return <div className={[ 'commentPost', (isEditing ? 'isEditing' : '') ].join(' ')} />;
   ```
+- Never combine a selector's own properties and its nested children in the same braces. Instead, write two separate blocks: a one-liner for the selector's own properties, then a second block with the same selector containing only nested children. Leaf selectors (no nested children) can be one-liners.
+  ```scss
+  // Good
+  .mediaState { display: flex; gap: 12px 0px; align-items: center; }
+  .mediaState {
+      .icon.ghost { width: 48px; height: 48px; }
+      .name { text-align: center; }
+  }
+
+  // Bad — mixing own properties and children in one block
+  .mediaState {
+      display: flex; gap: 12px 0px; align-items: center;
+
+      .icon.ghost { width: 48px; height: 48px; }
+      .name { text-align: center; }
+  }
+  ```
 
 ### Storybook
 - All new components should be added to Storybook automatically
@@ -215,6 +234,14 @@ bun run build:pixi
 - Use existing utility functions in `lib/util/` before creating new ones
 - Follow existing component patterns in `component/` directory
 - Store updates should trigger UI re-renders automatically via MobX
+
+### DOM Helpers
+- **Never use raw `document.getElementById()` or `element.querySelector()`** — use `U.Dom` helpers instead:
+  - `U.Dom.get(id)` — wraps `document.getElementById(id)`
+  - `U.Dom.select(selector, root?)` — wraps `root.querySelector(selector)` with error handling
+  - `U.Dom.selectAll(selector, root?)` — wraps `root.querySelectorAll(selector)`
+  - `U.Dom.addClass(el, cn)`, `U.Dom.removeClass(el, cn)`, `U.Dom.hasClass(el, cn)` — class manipulation
+- jQuery (`$`) has been removed from the project. Never use `$()` or import jQuery
 
 ## Directory Documentation
 
@@ -266,6 +293,9 @@ Detailed documentation is available in `docs/` for deeper context on each module
 - [`docs/src/img/README.md`](docs/src/img/README.md) - Images, icons (SVG), and static assets
 - [`docs/src/json/README.md`](docs/src/json/README.md) - JSON data: translations, constants, colors, keyboard shortcuts
 
+### Code Reviews
+- [`docs/REVIEW-v0.54.11-to-HEAD.md`](docs/REVIEW-v0.54.11-to-HEAD.md) - Review of changes since v0.54.11 stable release
+
 ## Web Mode Development
 
 Run in browser without Electron: `bun run start:web` (starts anytypeHelper + Vite dev server). Use `ANYTYPE_USE_SIDE_SERVER=http://...` to skip helper start. See `docs/src/ts/lib/web/README.md` for details.
@@ -289,7 +319,9 @@ curl -s -X POST "https://api.linear.app/graphql" \
 After pushing a fix for a Linear issue, always:
 
 1. **Comment on the issue** with a brief description of the fix (what was changed and why).
-2. **Move the issue** to "Waiting for testing" state.
+2. **Move the issue** to the appropriate state based on its labels:
+   - If the issue has a **"Design"** label → move to **"Design review"**
+   - Otherwise → move to **"Waiting for testing"**
 
 **Comment on an issue:**
 ```bash
@@ -327,17 +359,13 @@ Use the Figma MCP tools to fetch design context and screenshots from Figma files
 - URL format: `https://www.figma.com/design/:fileKey/:fileName?node-id=:nodeId`
 - `fileKey` is the ID after `/design/`
 - `nodeId` is in the `node-id` query parameter (convert `-` to `:` for the API)
-
-**Extract parameters from Figma URLs:**
-For URL `https://www.figma.com/design/uWka9aJ7IOdvHch60rIRlb/MyFile?node-id=12769-19003`:
-- `fileKey`: `uWka9aJ7IOdvHch60rIRlb`
-- `nodeId`: `12769:19003`
+- Example: `https://www.figma.com/design/uWka9aJ7IOdvHch60rIRlb/MyFile?node-id=12769-19003` → `fileKey`: `uWka9aJ7IOdvHch60rIRlb`, `nodeId`: `12769:19003`
 
 **Important - Icons and Images:**
 - All icons and images must be stored locally in `src/img/` - do NOT use remote Figma asset URLs
 - When implementing designs from Figma, recreate icons as SVG files in the appropriate `src/img/icon/` subdirectory
 - Follow existing icon patterns (e.g., `src/img/icon/add/` for editor control button icons)
-- Icons typically have two variants: `name0.svg` (default state, #B6B6B6) and `name1.svg` (hover state, #252525)
+- Icons use semantic naming (e.g., `arrow.svg`, `swiper.svg`); hover color is handled via CSS, not separate SVG files
 
 ## Update Docs
 
@@ -350,6 +378,7 @@ After completing any task that edits SCSS files (`src/scss/`), SVG/image files (
 - Missing dark icon variants in `src/img/theme/dark/`
 - Inline `html.themeDark` overrides that belong in `src/scss/theme/dark/`
 - Dynamic icon paths missing `S.Common.getThemePath()`
+- **Never duplicate unchanged values from light theme into dark theme** — only override CSS vars when the value actually differs
 
 ## QA Engineer
 
@@ -366,10 +395,3 @@ The QA Engineer skill:
 
 **Test suite repo:** `../anytype-desktop-suite` — Playwright E2E tests with Page Object Model, translation-aware selectors, and gRPC server lifecycle management. See its `CLAUDE.md` for test architecture details.
 
-## Code Quality
-
-This is a TypeScript project. Always run typecheck and lint after making changes. Fix any lint issues (unused imports, formatting) before committing.
-
-## UI / CSS
-
-For CSS and UI styling changes, match exact pixel values, border-radius, padding, and colors from the user's specifications on the first attempt. Do not guess or approximate visual values.

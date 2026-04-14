@@ -1,8 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, KeyboardEvent } from 'react';
-import $ from 'jquery';
 import { getRange, setRange } from 'selection-ranges';
 import { Icon } from 'Component';
-import { J, S, keyboard, translate } from 'Lib';
 
 interface Props {
 	value?: string;
@@ -70,8 +68,6 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	};
 
 	const onKeyDownHandler = (e: KeyboardEvent) => {
-		const entry = $(entryRef.current);
-
 		keyboard.shortcut('space, enter', e, () => {
 			e.preventDefault();
 			updateValue();
@@ -80,8 +76,12 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
 
-			const range = getRange(entry.get(0));
-			if (range.start || range.end) {
+			if (!entryRef.current) {
+				return;
+			};
+
+			const r = getRange(entryRef.current);
+			if (r.start || r.end) {
 				return;
 			};
 
@@ -118,7 +118,7 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	const onPaste = (e) => {
 		e.preventDefault();
 
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const cb = e.clipboardData;
 		const text = normalizeWhiteSpace(cb.getData('text/plain'));
 
 		clear();
@@ -140,10 +140,8 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	};
 
 	const onSelect = () => {
-		const entry = $(entryRef.current);
-
-		if (entry.length) {
-			range.current = getRange(entry.get(0));
+		if (entryRef.current) {
+			range.current = getRange(entryRef.current);
 		};
 	};
 
@@ -173,22 +171,22 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	};
 
 	const focus = () => {
-		if (readonly) {
+		if (readonly || !entryRef.current) {
 			return;
 		};
 
-		const entry = $(entryRef.current);
-
-		entry.trigger('focus');
-		setRange(entry.get(0), range.current || { start: 0, end: 0 });
+		entryRef.current.focus();
+		setRange(entryRef.current, range.current || { start: 0, end: 0 });
 	};
 
 	const clear = () => {
-		$(entryRef.current).text('');
+		if (entryRef.current) {
+			entryRef.current.textContent = '';
+		};
 	};
 
 	const getEntryValue = () => {
-		return normalizeWhiteSpace($(entryRef.current).text()).toLowerCase();
+		return normalizeWhiteSpace(entryRef.current?.textContent || '').toLowerCase();
 	};
 
 	const normalizeWhiteSpace = (val: string) => {
@@ -210,12 +208,16 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 		getValue().length || getEntryValue() ? placeholderHide() : placeholderShow();	
 	};
 
-	const placeholderHide= () => {
-		$(placeholderRef.current).hide();
+	const placeholderHide = () => {
+		if (placeholderRef.current) {
+			U.Dom.css(placeholderRef.current, { display: 'none' });
+		};
 	};
 
 	const placeholderShow = () => {
-		$(placeholderRef.current).show();
+		if (placeholderRef.current) {
+			U.Dom.css(placeholderRef.current, { display: 'flex' });
+		};
 	};
 
 	useEffect(() => {
@@ -265,8 +267,8 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 			</div>
 
 			{placeholder ? <div ref={placeholderRef} id="placeholder" className="placeholder">{placeholder}</div> : ''}
-			<Icon className="show" tooltipParam={{ text: translate('commonShowHide') }} onClick={onToggleHandler} />
-			<Icon className="copy" withBackground={true} tooltipParam={{ text: tooltipCopy }} onClick={onCopy} />
+			<Icon name={isHidden ? 'common/eye0' : 'common/eye1'} tooltipParam={{ text: translate('commonShowHide') }} onClick={onToggleHandler} />
+			<Icon name="menu/action/copy" className="copy" withBackground={true} tooltipParam={{ text: tooltipCopy }} onClick={onCopy} />
 		</div>
 	);
 

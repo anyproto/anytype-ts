@@ -1,30 +1,7 @@
+import { history as historyPopup } from 'Lib/history';
+import { getIconSvg } from 'Component/util/icons';
+import * as I from 'Interface';
 
-import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
-import errorIcon from '../../../img/icon/error.svg?raw';
-
-const typeIconModules = import.meta.glob([
-	'../../../img/icon/type/default/*.svg',
-	'/dist/img/icon/type/default/*.svg',
-], { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
-const typeIcons = (key: string): string => {
-	const name = key.replace('./', '');
-	for (const path of Object.keys(typeIconModules)) {
-		if (path.endsWith(`/${name}`)) return typeIconModules[path];
-	};
-	throw new Error(`Cannot find icon: ${key}`);
-};
-
-const defaultIconModules = import.meta.glob([
-	'../../../img/icon/default/*.svg',
-	'/dist/img/icon/default/*.svg',
-], { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
-const getDefaultIcon = (id: string): string => {
-	const name = `${id}.svg`;
-	for (const path of Object.keys(defaultIconModules)) {
-		if (path.endsWith(`/${name}`)) return defaultIconModules[path];
-	};
-	throw new Error(`Cannot find default icon: ${id}`);
-};
 
 /**
  * UtilObject provides utilities for working with Anytype objects.
@@ -138,7 +115,7 @@ class UtilObject {
 			spaceId: String(spaceview?.targetSpaceId || ''),
 			layout: object.layout,
 			isImage: object.iconImage,
-			uxType: spaceview?.uxType,
+			spaceType: spaceview?.spaceType,
 			objectData: { id: object.id, type: object.type, layout: object.layout },
 			route,
 			routeParam: { action: '', id: '' },
@@ -950,12 +927,12 @@ class UtilObject {
 		};
 	};
 
-	editType (id: string, isPopup: boolean) {
+	editType (id: string, isPopup: boolean, noPreview: boolean) {
 		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
 		const state = { 
 			page: 'type', 
 			rootId: id,
-			noPreview: false,
+			noPreview,
 			details: {},
 		};
 
@@ -1007,47 +984,48 @@ class UtilObject {
 	};
 
 	typeIcon (id: string, option: number, size: number, color?: string): string {
-		const newColor = color || U.Common.iconBgByOption(option);
-
-		let svg: any = '';
-		try {
-			svg = typeIcons(`./${id}.svg`);
-			svg = U.Common.updateSvg(svg, { id, size, fill: newColor });
-		} catch (e) {
-			svg = U.Common.updateSvg(errorIcon, { id, size, fill: newColor });
+		const fill = color || U.Common.iconBgByOption(option);
+		let svg = getIconSvg(`type/${id}`, { style: { width: size, height: size } }) ||
+			getIconSvg('state/error', { style: { width: size, height: size } });
+		if (!svg) {
+			return '';
 		};
-
-		return svg;
+		svg = svg.replace(/currentColor/g, fill);
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
 	defaultIcon (layout: I.ObjectLayout, typeId: string, size: number): string {
 		const theme = S.Common.getThemeClass();
 		const type = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.type), typeId, [ 'name', 'iconName' ], true);
+		const fill = J.Theme[theme].iconDefault;
 
-		let src = '';
 		if (type.iconName) {
-			src = this.typeIcon(type.iconName, 1, size, J.Theme[theme].iconDefault);
-		} else {
-			let id = '';
-			switch (layout) {
-				default: id = 'page'; break;
-				case I.ObjectLayout.ChatOld:
-				case I.ObjectLayout.Chat:
-				case I.ObjectLayout.Discussion: id = 'chat'; break;
-				case I.ObjectLayout.Collection: id = 'collection'; break;
-				case I.ObjectLayout.Set: id = 'set'; break;
-				case I.ObjectLayout.Date: id = 'date'; break;
-				case I.ObjectLayout.Type: id = 'type'; break;
-				case I.ObjectLayout.Bookmark: id = 'page'; break;
-				case I.ObjectLayout.Settings: id = 'settings'; break;
-				case I.ObjectLayout.Graph: id = 'graph'; break;
-				case I.ObjectLayout.Navigation: id = 'graph'; break;
-				case I.ObjectLayout.Archive: id = 'archive'; break;
-			};
-			src = U.Common.updateSvg(getDefaultIcon(id), { id, size, fill: J.Theme[theme].iconDefault });
+			return this.typeIcon(type.iconName, 1, size, fill);
 		};
 
-		return src;
+		let id = '';
+		switch (layout) {
+			default: id = 'page'; break;
+			case I.ObjectLayout.ChatOld:
+			case I.ObjectLayout.Chat:
+			case I.ObjectLayout.Discussion: id = 'chat'; break;
+			case I.ObjectLayout.Collection: id = 'collection'; break;
+			case I.ObjectLayout.Set: id = 'set'; break;
+			case I.ObjectLayout.Date: id = 'date'; break;
+			case I.ObjectLayout.Type: id = 'type'; break;
+			case I.ObjectLayout.Bookmark: id = 'page'; break;
+			case I.ObjectLayout.Settings: id = 'settings'; break;
+			case I.ObjectLayout.Graph: id = 'graph'; break;
+			case I.ObjectLayout.Navigation: id = 'graph'; break;
+			case I.ObjectLayout.Archive: id = 'archive'; break;
+		};
+
+		let svg = getIconSvg(`default/${id}`, { style: { width: size, height: size } });
+		if (!svg) {
+			return '';
+		};
+		svg = svg.replace(/currentColor/g, fill);
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
 	chatHasUnread (spaceId: string, chatId: string): boolean {

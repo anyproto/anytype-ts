@@ -1,7 +1,6 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { translate, U, I, Action, } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	route: string;
@@ -9,7 +8,7 @@ interface Props {
 	className?: string;
 };
 
-const UpsellMembers = observer(forwardRef<{}, Props>(({
+const UpsellMembers = forwardRef<{}, Props>(({
 	route = '',
 	isRed = false,
 	className = '',
@@ -48,6 +47,6 @@ const UpsellMembers = observer(forwardRef<{}, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default UpsellMembers;

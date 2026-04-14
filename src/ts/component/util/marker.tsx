@@ -1,12 +1,6 @@
-import React, { forwardRef, useRef } from 'react';
-import $ from 'jquery';
-import { I, S, J } from 'Lib';
-import { observer } from 'mobx-react';
-
-import checkbox0 from 'img/icon/marker/checkbox0.svg';
-import checkbox1 from 'img/icon/marker/checkbox1.svg';
-import checkbox2 from 'img/icon/marker/checkbox2.svg';
-import checkbox1Dark from 'img/theme/dark/icon/marker/checkbox1.svg';
+import React, { forwardRef, useRef, useState } from 'react';
+import { getIcon } from './icons';
+import * as I from 'Interface';
 
 interface Props {
 	id: string;
@@ -19,22 +13,13 @@ interface Props {
 	onMouseDown?(e: any): void;
 };
 
-const Icons: any = {};
-const Theme: any = { dark: {} };
+const CheckboxIcons = [
+	getIcon('marker/checkbox0'),
+	getIcon('marker/checkbox1'),
+	getIcon('marker/checkbox2'),
+];
 
-Icons[I.MarkerType.Checkbox] = {
-	0:		 checkbox0,
-	1:		 checkbox1,
-	2:		 checkbox2,
-};
-
-Theme.dark[I.MarkerType.Checkbox] = {
-	0:		 checkbox0,
-	1:		 checkbox1Dark,
-	2:		 checkbox2,
-};
-
-const Marker = observer(forwardRef<HTMLDivElement, Props>(({
+const Marker = forwardRef<HTMLDivElement, Props>(({
 	id = '',
 	type = I.MarkerType.Bulleted,
 	color = 'default',
@@ -47,6 +32,7 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 
 	const colorValue = color || 'default';
 	const refNode = useRef<HTMLDivElement>(null);
+	const [ hovered, setHovered ] = useState(false);
 	const cn = [ 'marker', `marker${I.MarkerType[type]}` ];
 
 	if (className) {
@@ -59,7 +45,7 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 	if (active) {
 		cn.push('active');
 	};
-	
+
 	const props = {
 		id: `marker-${id}`,
 		className: ci.join(' '),
@@ -67,19 +53,14 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 
 	const onCheckboxEnterHandler = () => {
 		if (!active && !readonly) {
-			$(refNode.current).find('img').attr({ src: getIcon(type)[1] });
+			setHovered(true);
 		};
 	};
 
 	const onCheckboxLeaveHandler = () => {
 		if (!active && !readonly) {
-			$(refNode.current).find('img').attr({ src: getIcon(type)[0] });
+			setHovered(false);
 		};
-	};
-
-	const getIcon = (type: I.MarkerType) => {
-		const item = Theme[themeClass];
-		return (item && item[type]) ? item[type] : Icons[type];
 	};
 
 	const getToggle = () => {
@@ -101,40 +82,41 @@ const Marker = observer(forwardRef<HTMLDivElement, Props>(({
 			inner = <span key={key} {...props} />;
 			break;
 		};
-			
+
 		case I.MarkerType.Numbered: {
 			inner = <span key={key} {...props} />;
 			break;
 		};
-			
+
 		case I.MarkerType.Checkbox: {
-			inner = (
-				<img 
-					src={getIcon(type)[active ? 2 : 0]} 
-					onDragStart={e => e.preventDefault()} 
-					onMouseEnter={onCheckboxEnterHandler} 
-					onMouseLeave={onCheckboxLeaveHandler} 
+			const idx = active ? 2 : (hovered ? 1 : 0);
+			const SvgComponent = CheckboxIcons[idx];
+
+			inner = SvgComponent ? (
+				<SvgComponent
+					onMouseEnter={onCheckboxEnterHandler}
+					onMouseLeave={onCheckboxLeaveHandler}
 				/>
-			);
+			) : null;
 			break;
 		};
-		
+
 		case I.MarkerType.Toggle: {
 			inner = <img src={getToggle()} onDragStart={e => e.preventDefault()} />;
 			break;
 		};
 	};
-	
+
 	return (
-		<div 
-			ref={refNode} 
-			className={cn.join(' ')} 
+		<div
+			ref={refNode}
+			className={cn.join(' ')}
 			onClick={onClick}
 			onMouseDown={onMouseDown}
 		>
 			{inner}
 		</div>
 	);
-}));
+});
 
 export default Marker;

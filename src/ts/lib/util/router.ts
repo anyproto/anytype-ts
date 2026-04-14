@@ -1,4 +1,6 @@
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Renderer } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface RouteParam {
 	page: string;
@@ -27,7 +29,6 @@ interface RouteParam {
 class UtilRouter {
 
 	history: any = null;
-	isOpening = false;
 
 	/**
 	 * Initializes the router with a history object.
@@ -35,7 +36,6 @@ class UtilRouter {
 	 */
 	init (history: any) {
 		this.history = history;
-		this.isOpening = false; // Reset flag on init to prevent stuck state
 	};
 
 	/**
@@ -170,6 +170,7 @@ class UtilRouter {
 			Preview.hideAll();
 
 			if (replace) {
+				this.history = this.history || {};
 				this.history.entries = [];
 				this.history.index = -1;
 			};
@@ -197,13 +198,13 @@ class UtilRouter {
 	switchSpace (id: string, route: string, sendEvent: boolean, routeParam: any, useFallback: boolean) {
 		routeParam = routeParam || {};
 
-		if (this.isOpening) {
-			return;
-		};
-
 		if (!id) {
 			console.log('[UtilRouter].swithSpace: id is empty');
 			return;
+		};
+
+		if (route) {
+			S.Common.redirectSet(route);
 		};
 
 		S.Menu.closeAllForced();
@@ -215,19 +216,16 @@ class UtilRouter {
 			analytics.event('SwitchSpace', { unreadMessageCount: messageCounter, hasMentions: !!mentionCounter });
 		};
 
-		this.isOpening = true;
 		U.Subscription.destroyTypeCheck();
 
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
-				this.isOpening = false;
-
 				if (!useFallback) {
 					U.Space.openDashboard(routeParam);
 					window.setTimeout(() => {
 						S.Popup.open('confirm', {
 							data: {
-								icon: 'error',
+								iconParam: { name: 'popup/header/error', color: 'orange' },
 								title: translate('commonError'),
 								text: message.error.description,
 								canCancel: true,
@@ -253,8 +251,7 @@ class UtilRouter {
 					this.rightSidebarCheck(false);
 
 					const onStartingIdCheck = () => {
-						U.Data.onAuth({ route, routeParam }, () => {
-							this.isOpening = false;
+						U.Data.onSpaceSwitch({ route, routeParam }, () => {
 							S.Common.setLeftSidebarState('vault', 'widget');
 
 							const dataLeft = sidebar.getData(I.SidebarPanel.Left);
@@ -263,6 +260,8 @@ class UtilRouter {
 							if (!S.Common.hideSidebar && !((dataLeft.isClosed && dataLeft.savedClosed) || dataSubLeft.savedClosed)) {
 								sidebar.leftPanelSubPageOpen('widget', false, true);
 							};
+
+							routeParam?.onRouteChange?.();
 						});
 					};
 

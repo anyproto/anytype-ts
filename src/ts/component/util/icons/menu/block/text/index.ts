@@ -1,0 +1,20 @@
+import { registerIcon } from '../../../registry';
+import Bulleted from './bulleted';
+import Callout from './callout';
+import Checkbox from './checkbox';
+import Header from './header';
+import Numbered from './numbered';
+import Paragraph from './paragraph';
+import Quote from './quote';
+import Toggle from './toggle';
+import ToggleHeader from './toggleHeader';
+
+registerIcon('menu/block/text/bulleted', Bulleted);
+registerIcon('menu/block/text/callout', Callout);
+registerIcon('menu/block/text/checkbox', Checkbox);
+registerIcon('menu/block/text/header', Header);
+registerIcon('menu/block/text/numbered', Numbered);
+registerIcon('menu/block/text/paragraph', Paragraph);
+registerIcon('menu/block/text/quote', Quote);
+registerIcon('menu/block/text/toggle', Toggle);
+registerIcon('menu/block/text/toggleHeader', ToggleHeader);

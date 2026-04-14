@@ -1,8 +1,6 @@
-import $ from 'jquery';
-import raf from 'raf';
-import { I, C, S, J, U, Preview, Renderer, translate, Mark, Action, Storage, keyboard } from 'Lib';
-import target from 'Component/selection/target';
 import TextJson from 'json/text.json';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const ALLOWED_KATEX = ['\\url', '\\href', '\\includegraphics'];
 
@@ -61,7 +59,7 @@ class UtilCommon {
 	};
 
 	esc (v: any): string {
-		return $.escapeSelector(String(v));
+		return CSS.escape(String(v));
 	};
 
 	/**
@@ -258,16 +256,16 @@ class UtilCommon {
 			};
 
 			removed = true;
-			document.removeEventListener('copy', handler, true);
+			U.Dom.removeEvent(document, 'copy', handler, true);
 			callBack?.();
 		};
 
-		document.addEventListener('copy', handler, true);
+		U.Dom.addEvent(document, 'copy', handler, true);
 		document.execCommand('copy');
 
 		// Safety cleanup in case execCommand did not trigger the copy event
 		if (!removed) {
-			document.removeEventListener('copy', handler, true);
+			U.Dom.removeEvent(document, 'copy', handler, true);
 		};
 	};
 
@@ -423,74 +421,7 @@ class UtilCommon {
 		return Object.values(map).flat();
 	};
 	
-	/**
-	 * Attaches click handlers to links in a jQuery object to open URLs or paths.
-	 * @param {any} obj - The jQuery object containing links.
-	 */
-	renderLinks (obj: any) {
-		const links = obj.find('a');
 
-		links.off('click auxclick');
-		links.on('auxclick', e => e.preventDefault());
-		links.click((e: any) => {
-			const el = $(e.currentTarget);
-			const href = el.attr('href') || el.attr('xlink:href');
-
-			e.preventDefault();
-			el.hasClass('path') ? Action.openPath(href) : Action.openUrl(href);
-		});
-	};
-	
-	/**
-	 * Gets the current selection range in the window.
-	 * @returns {Range|null} The selection range or null if none.
-	 */
-	getSelectionRange (): Range {
-		const sel: Selection = window.getSelection();
-		let range: Range = null;
-
-		if (sel && (sel.rangeCount > 0)) {
-			range = sel.getRangeAt(0);
-		};
-
-		return range;
-	};
-
-	/**
-	 * Gets the bounding rectangle of the current selection.
-	 * @returns {object|null} The rectangle or null if no selection.
-	 */
-	getSelectionRect () {
-		let rect: any = { x: 0, y: 0, width: 0, height: 0 };
-		
-		const range = this.getSelectionRange();
-		if (range) {
-			rect = range.getBoundingClientRect() as DOMRect;
-		};
-		
-		rect = this.objectCopy(rect);
-
-		if (!rect.x && !rect.y && !rect.width && !rect.height) {
-			rect = null;
-		};
-
-		return rect;
-	};
-
-	getElementRect (element: any): DOMRect | null {
-		return element ? (element.getBoundingClientRect() as DOMRect) : null;
-	};
-
-	/**
-	 * Clears the current selection in the document.
-	 */
-	clearSelection () {
-		$(document.activeElement).trigger('blur');
-		const selection = window.getSelection();
-		if (selection) {
-			selection.removeAllRanges();
-		};
-	};
 
 	/**
 	 * Returns the correct plural form of a word based on a count.
@@ -582,7 +513,7 @@ class UtilCommon {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'error',
+				iconParam: { name: 'popup/header/error', color: 'orange' },
 				title: translate('commonError'),
 				text: translate('popupConfirmObjectOpenErrorText'),
 				textConfirm: translate('popupConfirmObjectOpenErrorButton'),
@@ -610,7 +541,7 @@ class UtilCommon {
 	onErrorUpdate (onConfirm?: () => void) {
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'update',
+				iconParam: { name: 'popup/header/update', color: 'lime' },
 				title: translate('popupConfirmNeedUpdateTitle'),
 				text: translate('popupConfirmNeedUpdateText'),
 				textConfirm: translate('commonUpdate'),
@@ -623,75 +554,7 @@ class UtilCommon {
 		});
 	};
 
-	/**
-	 * Returns the scroll container jQuery object depending on popup state.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {JQuery<HTMLElement>} The scroll container.
-	 */
-	getScrollContainer (isPopup: boolean) {
-		return $(`#page.${this.getContainerClassName(isPopup)}`);
-	};
 
-	/**
-	 * Returns the scroll top position of the scroll container.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {number} The scroll top position.
-	 */
-	getScrollContainerTop (isPopup: boolean) {
-		return Math.ceil(this.getScrollContainer(isPopup).scrollTop());
-	};
-
-	/**
-	 * Returns the container class name based on popup state.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {string} The container class name.
-	 */
-	getContainerClassName (isPopup: boolean): string {
-		return isPopup ? 'isPopup' : 'isFull';
-	};
-
-	/**
-	 * Returns the page flex container jQuery object depending on popup state.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {JQuery<HTMLElement>} The page flex container.
-	 */
-	getPageFlexContainer (isPopup: boolean) {
-		return $(`#pageFlex.${this.getContainerClassName(isPopup)}`);
-	};
-
-	/**
-	 * Returns the page container jQuery object depending on popup state.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {JQuery<HTMLElement>} The page container.
-	 */
-	getPageContainer (isPopup: boolean) {
-		return $(`#page.${this.getContainerClassName(isPopup)}`);
-	};
-
-	/**
-	 * Returns the selector for a cell container based on type.
-	 * @param {string} type - The type of container.
-	 * @returns {string} The selector string.
-	 */
-	getCellContainer (type: string) {
-		switch (type) {
-			default:
-			case 'page':
-				return '#pageFlex.isFull';
-
-			case 'popup':
-				return '#pageFlex.isPopup';
-
-			case 'menuBlockAdd':
-				return `#${type}`;
-
-			case 'popupRelation':
-				return `#${type}-innerWrap`;
-
-			case 'sidebarRight':
-				return `#sidebarRight`;
-		};
-	};
 
 	/**
 	 * Parses URL search parameters into an object.
@@ -711,22 +574,7 @@ class UtilCommon {
 		return param;
 	};
 
-	/**
-	 * Adds a class to the HTML body with a given prefix and value.
-	 * @param {string} prefix - The class prefix.
-	 * @param {string} v - The value to append.
-	 */
-	addBodyClass (prefix: string, v: string) {
-		const obj = $('html');
-		const reg = new RegExp(`^${prefix}`);
-		const c = String(obj.attr('class') || '').split(' ').filter(it => !it.match(reg));
 
-		if (v) {
-			c.push(U.String.toCamelCase(`${prefix}-${v}`));
-		};
-
-		obj.attr({ class: c.join(' ') });
-	};
 
 	/**
 	 * Finds the closest number in an array to a goal value.
@@ -910,16 +758,11 @@ class UtilCommon {
 			initial: { opacity: 0, ...param.initial },
 			animate: { opacity: 1, ...param.animate },
 			exit: { opacity: 0, ...param.exit },
-			transition: { type: 'spring' as const, stiffness: 300, damping: 20, ...param.transition },
+			transition: { type: 'tween' as const, duration: 0.2, ease: [ 0.22, 1, 0.36, 1 ], ...param.transition },
 		};
 	};
 
-	/**
-	 * Pauses all audio and video elements on the page.
-	 */
-	pauseMedia () {
-		$('audio, video').each((i: number, item: any) => item.pause());
-	};
+
 
 	/**
 	 * Calculates a percentage of a number.
@@ -931,30 +774,7 @@ class UtilCommon {
 		return Number((num / 100 * percent).toFixed(3));
 	};
 
-	/**
-	 * Returns the event namespace for editor resize events.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {string} The event namespace.
-	 */
-	getEventNamespace (isPopup: boolean): string {
-		return isPopup ? '-popup' : '';
-	};
 
-	/**
-	 * Triggers a resize event for the editor.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 */
-	triggerResizeEditor (isPopup: boolean) {
-		$(window).trigger(`resize.editor${this.getEventNamespace(isPopup)}`);
-	};
-
-	/**
-	 * Get width and height of window DOM node
-	 */
-	getWindowDimensions (): { ww: number; wh: number } {
-		const win = $(window);
-		return { ww: win.width(), wh: win.height() };
-	};
 
 	/**
 	 * Returns the percent value of part/whole.
@@ -995,18 +815,7 @@ class UtilCommon {
 		return href + path.replace(/^\.\//, '/');
 	};
 
-	/**
-	 * Injects CSS into the document head with a given ID.
-	 * @param {string} id - The style element ID.
-	 * @param {string} css - The CSS string.
-	 */
-	injectCss (id: string, css: string) {
-		const head = $('head');
-		const element = $(`<style id="${id}" type="text/css">${css}</style>`);
 
-		head.find(`style#${id}`).remove();
-		head.append(element);
-	};
 
 	/**
 	 * Converts a Uint8Array to a string.
@@ -1040,50 +849,7 @@ class UtilCommon {
 		return k;
 	};
 
-	/**
-	 * Copies computed CSS styles from one element to another.
-	 * @param {HTMLElement} src - The source element.
-	 * @param {HTMLElement} dst - The destination element.
-	 */
-	copyCssSingle (src: HTMLElement, dst: HTMLElement) {
-		const styles = window.getComputedStyle(src, '');
 
-		if (styles.display && (styles.getPropertyValue('display') == 'none')) {
-			return;
-		};
-
-		const css: any = [];
-
-		for (let i = 0; i < styles.length; i++) {
-			const name = styles[i];
-			const value = styles.getPropertyValue(name);
-
-			css[name] = value;
-			css.push(`${name}: ${value}`);
-		};
-
-		css.push('visibility: visible');
-		dst.style.cssText = css.join('; ');
-	};
-
-	/**
-	 * Recursively copies computed CSS styles from one element and its children to another.
-	 * @param {HTMLElement} src - The source element.
-	 * @param {HTMLElement} dst - The destination element.
-	 */
-	copyCss (src: HTMLElement, dst: HTMLElement) {
-		this.copyCssSingle(src, dst);
-
-		const srcList = src.getElementsByTagName('*');
-		const dstList = dst.getElementsByTagName('*');
-
-		for (let i = 0; i < srcList.length; i++) {
-			const srcElement = srcList[i] as HTMLElement;
-			const dstElement = dstList[i] as HTMLElement;
-
-			this.copyCssSingle(srcElement, dstElement);
-		};
-	};
 
 	/**
 	 * Shows a browser notification with a title and text, and handles click events.
@@ -1206,92 +972,7 @@ class UtilCommon {
 		return res;
 	};
 
-	/**
-	 * Calculates text offset from DOM selection, accounting for rendered LaTeX elements.
-	 * LaTeX elements store their original text length in data-latex-length attribute.
-	 * @param {HTMLElement} root - The root editable element.
-	 * @param {Node} container - The selection container node.
-	 * @param {number} offset - The selection offset within the container.
-	 * @returns {number} The calculated text offset.
-	 */
-	getSelectionOffsetWithLatex (root: HTMLElement, container: Node, offset: number): number {
-		let result = 0;
 
-		const walk = (node: Node): boolean => {
-			if (node.nodeType === Node.ELEMENT_NODE) {
-				const el = node as HTMLElement;
-
-				if (el.tagName?.toLowerCase() === 'markuplatex') {
-					const latexLength = parseInt(el.dataset.latexLength || '0', 10);
-
-					if (el.contains(container)) {
-						// Selection is inside LaTeX - position at end of LaTeX
-						result += latexLength;
-						return true;
-					};
-
-					// Skip children and add original length
-					result += latexLength;
-					return false;
-				};
-
-				// Process children for non-latex elements
-				for (let i = 0; i < node.childNodes.length; i++) {
-					if (walk(node.childNodes[i])) {
-						return true;
-					};
-				};
-
-				return false;
-			};
-
-			if (node.nodeType === Node.TEXT_NODE) {
-				if (node === container) {
-					result += offset;
-					return true;
-				};
-
-				result += node.textContent?.length || 0;
-				return false;
-			};
-
-			return false;
-		};
-
-		walk(root);
-		return result;
-	};
-
-	/**
-	 * Toggles the open/closed state of an element with animation.
-	 * @param {any} obj - The jQuery object to toggle.
-	 * @param {number} delay - The animation delay in ms.
-	 */
-	toggle (obj: any, delay: number, isOpen: boolean, callBack?: () => void) {
-		if (isOpen) {
-			const height = obj.outerHeight();
-
-			obj.css({ height, overflow: 'hidden' });
-
-			raf(() => obj.addClass('anim').css({ height: 0 }));
-			window.setTimeout(() => {
-				obj.removeClass('isOpen anim');
-				callBack?.();
-			}, delay);
-		} else {
-			obj.css({ height: 'auto' });
-
-			const height = obj.outerHeight();
-
-			obj.css({ height: 0 }).addClass('anim');
-
-			raf(() => obj.css({ height }));
-			window.setTimeout(() => {
-				obj.removeClass('anim').addClass('isOpen').css({ height: 'auto', overflow: 'visible' });
-				callBack?.();
-			}, delay);
-		};
-	};
 
 	/**
 	 * Updates an SVG image's attributes and caches the result.
@@ -1315,27 +996,24 @@ class UtilCommon {
 			const decoded = src.includes('base64,')
 				? atob(src.split('base64,')[1]).replace(/_COLOR_VAR_/g, fill)
 				: src.replace(/_COLOR_VAR_/g, fill);
-			const obj = $(decoded);
-			const attr: any = {};
+			const parser = new DOMParser();
+			const doc = parser.parseFromString(decoded, 'image/svg+xml');
+			const el = doc.documentElement;
 
 			if (size) {
-				attr.width = size;
-				attr.height = size;
+				el.setAttribute('width', String(size));
+				el.setAttribute('height', String(size));
 			};
 
 			if (fill) {
-				attr.fill = fill;
+				el.setAttribute('fill', fill);
 			};
 
 			if (stroke) {
-				attr.stroke = stroke;
+				el.setAttribute('stroke', stroke);
 			};
 
-			if (this.objectLength(attr)) {
-				obj.attr(attr);
-			};
-			
-			ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+			ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(el.outerHTML)));
 		} catch (e) { console.warn('[Common] SVG encoding failed:', e); };
 
 		iconCache.set(key, ret);
@@ -1464,50 +1142,13 @@ class UtilCommon {
 	showWhatsNew (param?: Partial<I.PopupParam>) {
 		param = param || {};
 		param.data = param.data || {};
-		param.data.document = 'whatsNew';	
+		param.data.document = 'whatsNew';
+		param.onClose = () => {
+			Survey.checkCommon();
+		};
 
 		S.Popup.open('help', param);
 		Storage.set('whatsNew', false);
-	};
-
-	/**
-	 * Scrolls to header in Table of contents
-	 * @param {string} rootId - The root ID of the page.
-	 * @param {any} item - The item to scroll to.
-	 * @param {boolean} isPopup - Whether the context is a popup.
-	 * @returns {void}
-	 */
-	scrollToHeader (rootId: string, item: any, isPopup: boolean) {
-		const node = $(`.focusable.c${this.esc(item.id)}`);
-
-		if (!node.length) {
-			return;
-		};
-
-		const container = this.getScrollContainer(isPopup);
-
-		if (item.block && item.block.isTextTitle()) {
-			container.scrollTop(0);
-			return;
-		};
-
-		const toggleClasses = [ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ]
-			.map(s => `.block.${U.Data.blockTextClass(s)}`).join(',');
-		const toggles = node.parents(toggleClasses);
-
-		if (toggles.length) {
-			const toggle = $(toggles.get(0));
-			if (!toggle.hasClass('isToggled')) {
-				S.Block.toggle(rootId, toggle.attr('data-id'), true);
-			};
-		};
-
-		const no = node.offset().top;
-		const st = container.scrollTop();
-		const offset = 20;
-		const y = Math.max(J.Size.header + offset, no - container.offset().top + st - J.Size.header - offset);
-
-		container.scrollTop(y);
 	};
 
 	/**
@@ -1546,19 +1187,7 @@ class UtilCommon {
 		return usage;
 	};
 
-	getMaxScrollHeight (isPopup: boolean): number {
-		const container = this.getScrollContainer(isPopup);
-		if (!container.length) {
-			return 0;
-		};
 
-		const el = container.get(0);
-		return el.scrollHeight - el.clientHeight;
-	};
-
-	getAppContainerHeight () {
-		return $('#appContainer').height();
-	};
 
 	getMembershipPriceString (price?: I.MembershipAmount): string {
 		if (!price) {
@@ -1650,12 +1279,6 @@ class UtilCommon {
 		Preview.previewHide(true);
 	};
 
-	getViewFilters (view: any): any[] {
-		return (view.filters || []).filter(it => {
-			return S.Record.getRelationByKey(it.relationKey) || [ I.FilterOperator.And, I.FilterOperator.Or ].includes(it.operator);
-		});
-	};
-
 	applyAutoDownload (value: number) {
 		C.FileSetAutoDownload(value > 0, false);
 		
@@ -1666,7 +1289,7 @@ class UtilCommon {
 
 	getSpaceSettingsPages (): string[] {
 		return [
-			'spaceIndex', 'spaceIndexEmpty', 'spaceStorage', 'spaceShare', 'spaceNotifications',
+			'spaceIndex', 'spaceIndexEmpty', 'spaceStorage', 'spaceShare', 'spaceNotifications', 'spaceHome',
 			'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'importObsidian',
 			'exportIndex', 'exportProtobuf', 'exportMarkdown',
 			'set', 'relation', 'archive',

@@ -590,8 +590,6 @@ class MenuManager {
 	};
 
 	openSettings (page: string): void {
-
-
 		if (!Api.hasPinSet || Api.isPinChecked) {
 			Util.send(this.win, 'route', `/main/settings/${page}`);
 		};

@@ -27,6 +27,7 @@ import Preview from './preview';
 import Highlight from './highlight';
 import Animation from './animation';
 import { translate } from './translate';
+import Sound, { SYSTEM_SOUND_ID } from './sound';
 import { getSparkOnboardingService } from './service/sparkOnboarding';
 
 export {
@@ -60,5 +61,7 @@ export {
 	Preview,
 	Highlight,
 	Animation,
+	Sound,
+	SYSTEM_SOUND_ID,
 	getSparkOnboardingService,
 };

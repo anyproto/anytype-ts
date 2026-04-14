@@ -1,7 +1,7 @@
-import $ from 'jquery';
 import { action, computed, makeObservable, observable, set } from 'mobx';
-import { I, S, U, J, Storage, Renderer, keyboard } from 'Lib';
 import { setReactionsPaused } from 'Lib/reactionScheduler';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 interface Filter {
 	from: number;
@@ -44,6 +44,7 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public chatCmdSendValue = null;
+	public commentCmdSendValue = null;
 	public updateVersionValue = '';
 	public vaultMessagesValue = null;
 	public vaultIsMinimalValue = null;
@@ -52,7 +53,9 @@ class CommonStore {
 
 	public recentEditModeValue: I.RecentEditMode = null;
 	public hideSidebarValue = null;
+	public hideFileObjectsInTreeValue = null;
 	public autoDownloadValue = null;
+	public notificationSoundValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
 	public gallery = {
@@ -146,6 +149,7 @@ class CommonStore {
 			fileStyleValue: observable,
 			isOnlineValue: observable,
 			hideSidebarValue: observable,
+			hideFileObjectsInTreeValue: observable,
 			autoDownloadValue: observable,
 			spaceId: observable,
 			leftSidebarStateValue: observable,
@@ -159,6 +163,7 @@ class CommonStore {
 			vaultMessagesValue: observable,
 			vaultIsMinimalValue: observable,
 			gridTitleClickValue: observable,
+			notificationSoundValue: observable,
 			isActiveTab: observable,
 			isPinnedValue: observable,
 			widgetSectionsValue: observable,
@@ -181,6 +186,7 @@ class CommonStore {
 			vaultMessages: computed,
 			vaultIsMinimal: computed,
 			gridTitleClick: computed,
+			notificationSound: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
 			isPinned: computed,
@@ -211,6 +217,7 @@ class CommonStore {
 			vaultMessagesSet: action,
 			vaultIsMinimalSet: action,
 			gridTitleClickSet: action,
+			notificationSoundSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
@@ -318,6 +325,10 @@ class CommonStore {
 		return this.boolGet('hideSidebar');
 	};
 
+	get hideFileObjectsInTree (): boolean {
+		return this.boolGet('hideFileObjectsInTree');
+	};
+
 	get autoDownload (): number {
 		let ret = this.autoDownloadValue;
 
@@ -339,6 +350,14 @@ class CommonStore {
 
 	get chatCmdSend (): boolean {
 		return this.boolGet('chatCmdSend');
+	};
+
+	get commentCmdSend (): boolean {
+		if (this.commentCmdSendValue === null) {
+			const v = Storage.get('commentCmdSend');
+			this.commentCmdSendValue = v === null ? true : v;
+		};
+		return !!this.commentCmdSendValue;
 	};
 
 	get theme (): string {
@@ -366,15 +385,15 @@ class CommonStore {
 		return this.boolGet('showRelativeDates');
 	};
 
-	get linkStyle (): I.LinkCardStyle {
+	get linkStyle (): I.LinkDefaultStyle {
 		let ret = this.linkStyleValue;
 		if (ret === null) {
 			ret = Storage.get('linkStyle');
 		};
 		if (undefined === ret) {
-			ret = I.LinkCardStyle.Card;
+			ret = I.LinkDefaultStyle.Card;
 		};
-		return Number(ret) || I.LinkCardStyle.Text;
+		return Number(ret) || I.LinkDefaultStyle.Text;
 	};
 
 	get fileStyle (): I.FileStyle {
@@ -453,6 +472,17 @@ class CommonStore {
 		};
 		if (ret === undefined) {
 			ret = true;
+		};
+		return ret;
+	};
+
+	get notificationSound (): string {
+		let ret = this.notificationSoundValue;
+		if (ret === null) {
+			ret = Storage.get('notificationSound');
+		};
+		if (ret === undefined) {
+			ret = '';
 		};
 		return ret;
 	};
@@ -540,7 +570,7 @@ class CommonStore {
 	 */
 	graphSet (key: string, param: Partial<I.GraphSettings>) {
 		Storage.set(key, Object.assign(this.getGraph(key), param));
-		$(window).trigger('updateGraphSettings');
+		U.Dom.eventDispatch(window, 'updateGraphSettings');
 	};
 
 	/**
@@ -705,6 +735,10 @@ class CommonStore {
 		this.boolSet('hideSidebar', v);
 	};
 
+	hideFileObjectsInTreeSet (v: boolean) {
+		this.boolSet('hideFileObjectsInTree', v);
+	};
+
 	autoDownloadSet (v: number) {
 		const n = Number(v);
 		v = isNaN(n) ? -1 : n;
@@ -730,6 +764,14 @@ class CommonStore {
 	 */
 	chatCmdSendSet (v: boolean) {
 		this.boolSet('chatCmdSend', v);
+	};
+
+	/**
+	 * Sets the comment send shortcut option value.
+	 * @param {boolean} v - Value.
+	 */
+	commentCmdSendSet (v: boolean) {
+		this.boolSet('commentCmdSend', v);
 	};
 
 	/**
@@ -893,7 +935,7 @@ class CommonStore {
 	setThemeClass () {
 		const c = this.getThemeClass();
 
-		U.Common.addBodyClass('theme', c);
+		U.Dom.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
 	};
 
@@ -926,7 +968,7 @@ class CommonStore {
 	 * Sets the link style value.
 	 * @param {I.LinkCardStyle} v - The link style value.
 	 */
-	linkStyleSet (v: I.LinkCardStyle) {
+	linkStyleSet (v: I.LinkDefaultStyle) {
 		v = Number(v);
 		this.linkStyleValue = v;
 		Storage.set('linkStyle', v);
@@ -998,6 +1040,11 @@ class CommonStore {
 
 	gridTitleClickSet (v: boolean) {
 		this.boolSet('gridTitleClick', v);
+	};
+
+	notificationSoundSet (v: string) {
+		this.notificationSoundValue = v;
+		Storage.set('notificationSound', v);
 	};
 
 	/**

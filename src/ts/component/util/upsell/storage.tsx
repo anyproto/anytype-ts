@@ -1,7 +1,5 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { S, translate, U, Action, } from 'Lib';
 
 interface Props {
 	route: string;
@@ -9,7 +7,7 @@ interface Props {
 	className?: string;
 };
 
-const UpsellStorage = observer(forwardRef<{}, Props>(({
+const UpsellStorage = forwardRef<{}, Props>(({
 	route = '',
 	isRed = false,
 	className = '',
@@ -65,6 +63,6 @@ const UpsellStorage = observer(forwardRef<{}, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default UpsellStorage;

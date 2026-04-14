@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
-import { I, C, S, U, J, Dataview } from 'Lib';
 import { GraphProvider } from 'Component';
+import * as I from 'Interface';
 
-const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
+const WidgetViewGraph = forwardRef<{}, I.WidgetViewComponent>((props, ref) => {
 	
 	const { block, getView, getObject } = props;
 	const graphRef = useRef(null);
@@ -55,6 +54,6 @@ const WidgetViewGraph = observer(forwardRef<{}, I.WidgetViewComponent>((props, r
 		</div>
 	);
 
-}));
+});
 
 export default WidgetViewGraph;

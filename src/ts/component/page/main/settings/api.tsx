@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Icon, Button, EmptyState } from 'Component';
-import { I, S, U, C, J, translate, Preview } from 'Lib';
+import * as I from 'Interface';
 
-const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { getId } = props;
 	const { dateFormat } = S.Common;
@@ -24,19 +23,20 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 	};
 
 	const onMore = (item: any) => {
-		const element = $(`#${getId()} #icon-more-${item.hash}`);
+		const element = `#${getId()} #icon-more-${item.hash}`;
+		const el = U.Dom.select(element);
 		const options: any[] = [
 			{ id: 'copyKey', name: translate('popupSettingsApiCopyKey') },
 			{ id: 'copyMcp', name: translate('popupSettingsApiCopyMcp') },
-			{ id: 'revoke', name: translate('popupSettingsApiRevoke'), color: 'red' },
+			{ id: 'revoke', name: translate('popupSettingsApiRevoke'), color: 'destructive' },
 		];
 
 		S.Menu.open('select', {
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
+			onOpen: () => U.Dom.addClass(el, 'active'),
+			onClose: () => U.Dom.removeClass(el, 'active'),
 			data: {
 				options,
 				onSelect: (e: any, element: any) => {
@@ -75,7 +75,7 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 				</div>
 				<div 
 					className="col" 
-					onMouseEnter={e => Preview.tooltipShow({ text: item.apiKey, element: $(e.currentTarget) })} 
+					onMouseEnter={e => Preview.tooltipShow({ text: item.apiKey, element: e.currentTarget as HTMLElement })}
 					onMouseLeave={() => Preview.tooltipHide()}
 				>
 					{U.String.shortMask(item.apiKey, 3)}
@@ -87,7 +87,7 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 					{translate(`apiScope${item.scope}`)}
 				</div>
 				<div className="col colMore">
-					<Icon id={`icon-more-${item.hash}`} className="more" withBackground={true} onClick={() => onMore(item)} />
+					<Icon id={`icon-more-${item.hash}`} name="common/more" className="more" withBackground={true} onClick={() => onMore(item)} />
 				</div>
 			</div>
 		);
@@ -126,6 +126,6 @@ const PageMainSettingsApi = observer(forwardRef<I.PageRef, I.PageSettingsCompone
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsApi;

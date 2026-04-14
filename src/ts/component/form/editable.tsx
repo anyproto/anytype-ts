@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import { getRange, setRange } from 'selection-ranges';
-import { I, U, keyboard, Mark } from 'Lib';
 import raf from 'raf';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;
@@ -40,7 +40,7 @@ interface EditableRefProps {
 	getHtmlValue: () => string;
 	getRange: () => I.TextRange;
 	setRange: (range: I.TextRange) => void;
-	getNode: () => JQuery;
+	getNode: () => HTMLElement;
 	isFocused: () => boolean;
 	isAtDomEnd: () => boolean;
 	isAtDomStart: () => boolean;
@@ -86,15 +86,17 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const placeholderSet = (v: string) => {
-		$(placeholderRef.current).text(v);
+		if (placeholderRef.current) {
+			placeholderRef.current.textContent = v;
+		};
 	};
-	
+
 	const placeholderHide = () => {
-		$(placeholderRef.current).hide();
+		U.Dom.css(placeholderRef.current, { display: 'none' });
 	};
 
 	const placeholderShow = () => {
-		$(placeholderRef.current).show();
+		U.Dom.css(placeholderRef.current, { display: 'block' });
 	};
 
 	const setFocus = () => {
@@ -104,7 +106,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const setBlur = () => {
-		U.Common.clearSelection();
+		U.Dom.clearSelection();
 	};
 
 	const setValue = (html: string) => {
@@ -112,9 +114,9 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const getTextValue = (): string => {
-		const obj = Mark.cleanHtml($(editableRef.current).html());
+		const obj = Mark.cleanHtml(editableRef.current?.innerHTML || '');
 
-		let t = String(obj.get(0).innerText || '');
+		let t = String(obj.innerText || '');
 		if (t == '\n') {
 			t = '';
 		};
@@ -353,7 +355,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		getHtmlValue,
 		getRange: getRangeHandler,
 		setRange: setRangeHandler,
-		getNode: () => $(nodeRef.current),
+		getNode: () => nodeRef.current,
 		isFocused: () => isFocused.current,
 		isAtDomEnd,
 		isAtDomStart,

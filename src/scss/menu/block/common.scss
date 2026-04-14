@@ -7,6 +7,11 @@
 
 	.menu.menuBlockStyle {
 		.content { max-height: unset; }
+		.item { height: 28px; }
+
+		.item.textStyleHeader1 .name { font-weight: 600; @include text-paragraph; line-height: 20px; }
+		.item.textStyleHeader2 .name { font-weight: 600; @include text-common; }
+		.item.textStyleHeader3 .name { font-weight: 600; @include text-small; }
 	}
 
 	.menu.menuBlockAction { width: var(--menu-width-icon); }
@@ -18,7 +23,6 @@
 		.colorMark.bgColor-default { box-shadow: 0px 0px 0px 1px var(--color-light-grey) inset; background: var(--color-bg-primary); position: relative; }
 		.colorMark.bgColor-default::before {
 			content: ''; @include pos-abs-mid; width: 7px; height: 7px; transform: translate3d(-50%, -50%, 0);
-			background: url('~img/icon/menu/colorNone.svg');
 		}
 	}
 

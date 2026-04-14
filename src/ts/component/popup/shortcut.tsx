@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect, useRef, } from 'react';
-import $ from 'jquery';
 import { Filter, Icon, Select, Label, } from 'Component';
-import { I, U, J, S, translate, keyboard, Key, Storage, Renderer, Action, Preview, analytics } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -18,6 +18,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const current = page || sections[0].id;
 	const section = U.Common.objectCopy(sections.find(it => it.id == current));
 	const timeout = useRef(0);
+	const keydownHandler = useRef<any>(null);
+	const keyupHandler = useRef<any>(null);
 	const id = getId();
 
 	const onClick = (item: any) => {
@@ -204,7 +206,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 			if (errorId == item.id) {
 				cn.push('hasError');
-				alert = <Icon className="alert" />;
+				alert = <Icon name="common/alert" color="red" />;
 			};
 
 			onClickHandler = () => onClick(item);
@@ -286,12 +288,16 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 		return () => {
 			clear();
-			$(window).off('keyup.shortcut keydown.shortcut');
+			if (keyupHandler.current) {
+				U.Dom.removeEvent(window, 'keyup', keyupHandler.current);
+			};
+			if (keydownHandler.current) {
+				U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			};
 		};
 	}, []);
 
 	useEffect(() => {
-		const win = $(window);
 		const codeChecks = [ 'key', 'digit' ];
 		const codes = new Set();
 		const setTimeout = () => {
@@ -372,14 +378,19 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let pressed = [];
 
-		win.off('keyup.shortcut keydown.shortcut');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+		};
+		if (keyupHandler.current) {
+			U.Dom.removeEvent(window, 'keyup', keyupHandler.current);
+		};
 		keyboard.setShortcutEditing(!!editingId);
 
 		if (!editingId) {
 			return;
 		};
 
-		win.on('keydown.shortcut', (e: any) => {
+		keydownHandler.current = (e: any) => {
 			e.preventDefault();
 			e.stopPropagation();
 
@@ -431,12 +442,15 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 			setEditingKeys(pressed);
 			setTimeout();
-		});
+		};
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 
 	}, [ editingId ]);
 
 	useEffect(() => {
-		$(bodyRef.current).scrollTop(0);
+		if (bodyRef.current) {
+			bodyRef.current.scrollTop = 0;
+		};
 	}, [ page ]);
 
 	if (filter) {
@@ -483,8 +497,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						<Label text={translate('popupShortcutDescription')} />
 					</div>
 					<div className="side right">
-						<Icon id="icon-more" className="more" withBackground={true} onClick={onMenu} />
-						<Icon className="close" withBackground={true} tooltipParam={{ text: translate('commonClose') }} onClick={() => close()} />
+						<Icon id="icon-more" name="common/more" className="more" withBackground={true} onClick={onMenu} />
+						<Icon name="common/close" withBackground={true} tooltipParam={{ text: translate('commonClose') }} onClick={() => close()} />
 					</div>
 				</div>
 				<div className="filterWrap">

@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
 import { Title, Label, Select, Button, Icon } from 'Component';
-import { I, S, U, translate, analytics } from 'Lib';
-import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
-const PageMainSettingsPinIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsPinIndex = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { onPage, setConfirmPin } = props;
 	const { pin } = S.Common;
@@ -53,12 +52,12 @@ const PageMainSettingsPinIndex = observer(forwardRef<I.PageRef, I.PageSettingsCo
 
 					<div className="item" onClick={onChangePin}>
 						<Label text={translate('popupSettingsPinChange')} />
-						<Icon className="arrow" />
+						<Icon name="arrow/button" size={8} className="arrow" />
 					</div>
 
 					<div className="item red" onClick={onTurnOffPin}>
 						<Label text={translate('popupSettingsPinOff')} />
-						<Icon className="arrow" />
+						<Icon name="arrow/button" size={8} className="arrow" />
 					</div>
 				</div>
 			) : (
@@ -69,6 +68,6 @@ const PageMainSettingsPinIndex = observer(forwardRef<I.PageRef, I.PageSettingsCo
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsPinIndex;

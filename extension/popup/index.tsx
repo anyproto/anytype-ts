@@ -1,10 +1,11 @@
 import { forwardRef, useState, useRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { Label, Button, Error } from 'Component';
-import { I, C, S, U, J, Storage } from 'Lib';
 import Util from '../lib/util';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
-const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const Index = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const interval = useRef<any>(0);
 	const [ error, setError ] = useState('');
@@ -109,6 +110,6 @@ const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Index;

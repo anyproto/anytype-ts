@@ -1,15 +1,16 @@
 import React, { FC, useState, useRef, useEffect, useCallback } from 'react';
 import * as hs from 'history';
 import * as Sentry from '@sentry/browser';
-import $ from 'jquery';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
-import { Provider } from 'mobx-react';
-import { configure, } from 'mobx';
+import { configure } from 'mobx';
 import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
-import { I, C, S, U, J, M, keyboard, Storage, analytics, dispatcher, translate, Renderer, Preview, Animation, Onboarding, Survey, Encode, Decode, sidebar, Action } from 'Lib';
 import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
+import Animation from 'Lib/animation';
 
 configure({ enforceActions: 'never', reactionScheduler: (f) => scheduleReaction(f) });
 
@@ -23,7 +24,8 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import 'scss/common.scss';
 
 const memoryHistory = hs.createMemoryHistory;
-const history = memoryHistory();
+const history = (window as any).__anytypeHistory || memoryHistory();
+(window as any).__anytypeHistory = history;
 const electron = U.Common.getElectron();
 const isPackaged = electron.isPackaged;
 
@@ -41,14 +43,7 @@ declare global {
 };
 
 declare global {
-	namespace JSX {
-		interface IntrinsicElements {
-			['em-emoji']: any;
-		}
-	}
 };
-
-window.$ = $;
 
 if (!isPackaged) {
 	window.Anytype = {
@@ -160,6 +155,24 @@ const App: FC = () => {
 		Renderer.on('spellcheck', onSpellcheck);
 		Renderer.on('pin-set', () => S.Common.pinInit());
 		Renderer.on('pin-remove', () => S.Common.pinInit());
+		Renderer.on('pin-unlocked', () => {
+			const wasPinChecked = keyboard.isPinChecked;
+
+			keyboard.isPinChecked = true;
+
+			if (wasPinChecked) {
+				return;
+			};
+
+			const { redirect } = S.Common;
+			const { account } = S.Auth;
+
+			if (account) {
+				redirect ? U.Router.go(redirect, {}) : U.Space.openDashboard();
+			};
+
+			S.Common.redirectSet('');
+		});
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
@@ -234,6 +247,7 @@ const App: FC = () => {
 		Renderer.remove('spellcheck');
 		Renderer.remove('pin-set');
 		Renderer.remove('pin-remove');
+		Renderer.remove('pin-unlocked');
 		Renderer.remove('enter-full-screen');
 		Renderer.remove('leave-full-screen');
 		Renderer.remove('config');
@@ -257,11 +271,11 @@ const App: FC = () => {
 		data = data || {};
 
 		const { id, dataPath, config, isDark, languages, isPinChecked, isPinned, css, isSingleTab, activeTabId } = data;
-		const body = $('body');
-		const node = $(nodeRef.current);
-		const bubbleLoader = $('#bubble-loader');
-		const rootLoader = node.find('#root-loader');
-		const anim = rootLoader.find('.anim');
+		const body = document.body;
+		const node = nodeRef.current;
+		const bubbleLoader = U.Dom.get('bubble-loader');
+		const rootLoader = U.Dom.select('#root-loader', node);
+		const anim = U.Dom.select('.anim', rootLoader);
 		const accountId = Storage.get('accountId');
 		const redirect = Storage.get('redirect');
 		const tabId = electron.tabId();
@@ -318,32 +332,36 @@ const App: FC = () => {
 		};
 
 		if (css && !config.disableCss) {
-			U.Common.injectCss('anytype-custom-css', css);
+			U.Dom.injectCss('anytype-custom-css', css);
 		};
 
-		body.addClass('over');
+		U.Dom.addClass(body, 'over');
 
 		const hide = () => {
-			rootLoader.remove();
-			bubbleLoader.remove();
-			body.removeClass('over');
+			rootLoader?.remove();
+			bubbleLoader?.remove();
+			U.Dom.removeClass(body, 'over');
 		};
 		const routeParam = { replace: true, onRouteChange: hide };
 
 		const cb = () => {
 			const t = 300;
 
-			bubbleLoader.css({ transitionDuration: `${t}ms` });
-			bubbleLoader.addClass('inflate');
-			anim.css({ transitionDuration: `${t}ms` });
+			if (bubbleLoader) {
+				U.Dom.css(bubbleLoader, { transitionDuration: `${t}ms` });
+				U.Dom.addClass(bubbleLoader, 'inflate');
+			};
+			if (anim) {
+				U.Dom.css(anim, { transitionDuration: `${t}ms` });
+			};
 
 			window.setTimeout(() => {
-				raf(() => anim.removeClass('from'));
+				raf(() => U.Dom.removeClass(anim, 'from'));
 				window.setTimeout(() => {
-					anim.addClass('to');
+					U.Dom.addClass(anim, 'to');
 
 					window.setTimeout(() => {
-						rootLoader.css({ opacity: 0 });
+						if (rootLoader) U.Dom.css(rootLoader, { opacity: '0' });
 						window.setTimeout(() => hide(), t);
 					}, 0);
 				}, t * 5);
@@ -392,7 +410,7 @@ const App: FC = () => {
 				const spaceId = param.spaceId || data.spaceId || Storage.get('spaceId');
 
 				if (spaceId) {
-					U.Router.switchSpace(spaceId, '', false, routeParam, true);
+					U.Router.switchSpace(spaceId, route, false, routeParam, true);
 				} else {
 					U.Data.onAuthWithoutSpace(routeParam);
 				};
@@ -503,7 +521,7 @@ const App: FC = () => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'updated',
+				iconParam: { name: 'popup/header/updated', color: 'lime' },
 				title: translate('popupConfirmUpdateDoneTitle'),
 				text: U.String.sprintf(translate('popupConfirmUpdateDoneText'), electron.version.app),
 				textConfirm: translate('popupConfirmUpdateDoneOk'),
@@ -528,7 +546,7 @@ const App: FC = () => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'error',
+				iconParam: { name: 'popup/header/error', color: 'orange' },
 				title: translate('popupConfirmUpdateErrorTitle'),
 				text: U.String.sprintf(translate('popupConfirmUpdateErrorText'), J.Error[err] || err),
 				textConfirm: translate('commonRetry'),
@@ -578,8 +596,7 @@ const App: FC = () => {
 	
 	return (
 		<Router history={history}>
-			<Provider {...S}>
-				<div id="appContainer" ref={nodeRef}>
+			<div id="appContainer" ref={nodeRef}>
 					{isLoading ? (
 						<div id="root-loader" className="loaderWrapper">
 							<div className="inner">
@@ -610,8 +627,7 @@ const App: FC = () => {
 							</Switch>
 						</DragProvider>
 					</SelectionProvider>
-				</div>
-			</Provider>
+			</div>
 		</Router>
 	);
 

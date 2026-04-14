@@ -1,10 +1,9 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, Error, UpsellBanner } from 'Component';
-import { I, C, S, U, translate, Preview, Action, analytics, } from 'Lib';
 import Members from './share/members';
+import * as I from 'Interface';
 
-const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsSpaceShare = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ error, setError ] = useState('');
@@ -164,6 +163,23 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 						created = true;
 
 						C.SpaceMakeShareable(S.Common.space, (message: any) => {
+							if (message.error.code == 104) {
+								setIsLoading(false);
+
+								S.Popup.open('confirm', {
+									data: {
+										iconParam: { name: 'popup/header/warning', color: 'grey' },
+										title: translate('popupConfirmSharedSpaceLimitTitle'),
+										text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+										textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+										canCancel: false,
+										onConfirm: () => Action.membershipUpgrade(),
+									},
+								});
+								analytics.event('ScreenHitShareSpaceLimit');
+								return;
+							};
+
 							if (!setErrorHandler(message.error)) {
 								callBack();
 							};
@@ -184,7 +200,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 
 		return {
 			id: String(id),
-			icon: suffix.toLowerCase(),
+			iconParam: { name: `menu/inviteLink/${suffix.toLowerCase()}` },
 			name: translate(`popupSettingsSpaceShareMenuInvite${suffix}Title`),
 			description: translate(`popupSettingsSpaceShareMenuInvite${suffix}Description`),
 			withDescription: true,
@@ -208,7 +224,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 		return true;
 	};
 
-	const { name, description, icon } = getOptionById(invite.type);
+	const { name, description, iconParam } = getOptionById(invite.type);
 
 	useEffect(() => {
 		init();
@@ -232,7 +248,7 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 				<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
 
 				<div id="linkTypeWrapper" className={[ 'linkTypeWrapper', canEdit ? 'canEdit' : '' ].join(' ')} onClick={onInviteMenu}>
-					<Icon className={isLoading ? 'loading' : icon} />
+					<Icon name={isLoading ? '' : iconParam.name} className={isLoading ? 'loading' : ''} />
 					<div className="info">
 						<Title text={name} />
 						<Label text={description} />
@@ -259,6 +275,6 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsSpaceShare;

@@ -8,11 +8,11 @@ $lavender-very-light: #F5F3FB;
 $ink-deep: #0F1115;
 $amber-warm: #FFB74D;
 $amber-light: #FFE4C4;
-$teal-accent: #fe9a00; // Changed from cyan to orange/yellow to match spark
+$spark-accent: #fe9a00; // Changed from cyan to orange/yellow to match spark
 
-// Animation curves
-$spring-curve: cubic-bezier(0.34, 1.56, 0.64, 1);
-$smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
+// Animation curves (use shared variables from _mixins.scss)
+$spring-curve: $easeSpring;
+$smooth-curve: $easeSmooth;
 
 // Status message with wave animation
 .statusMessage {
@@ -241,7 +241,6 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				display: flex;
 				align-items: center;
 				justify-content: center;
-				cursor: pointer;
 				transition: all 0.2s $smooth-curve;
 				z-index: 2;
 				font-size: 13px;
@@ -318,7 +317,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					}
 
 					&.completed {
-						background: $teal-accent;
+						background: $spark-accent;
 						// No animation on completed state
 					}
 				}
@@ -518,14 +517,9 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					height: 48px;
 					margin: 0 auto 16px;
 					display: block;
-					color: $teal-accent;
+					color: $spark-accent;
 					
-					&.large {
-						background: url('~img/icon/popup/confirm/success.svg') no-repeat center;
-						background-size: contain;
-						filter: brightness(0) saturate(100%) invert(73%) sepia(44%) saturate(3462%) hue-rotate(133deg) brightness(95%) contrast(101%);
 					}
-				}
 
 				.title {
 					font-size: 18px;
@@ -561,7 +555,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 						justify-content: center;
 						
 						&.success {
-							color: $teal-accent;
+							color: $spark-accent;
 							font-weight: 500;
 						}
 					}
@@ -620,7 +614,6 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					font-weight: 400;
 					line-height: 1.4;
 					color: var(--color-text-primary);
-					cursor: pointer;
 					transition: all 0.2s $smooth-curve;
 					animation: chipFadeIn 0.3s $smooth-curve backwards;
 					min-height: 48px;
@@ -713,13 +706,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				.icon.send {
 					width: 20px;
 					height: 20px;
-					cursor: pointer;
-					flex-shrink: 0;
 					margin-left: 12px;
-					background: url('~img/icon/chat/buttons/send.svg');
-					background-size: contain;
-					background-repeat: no-repeat;
-					background-position: center;
 					transition: all 0.2s $smooth-curve;
 					
 					// Apply purple filter to the SVG
@@ -741,7 +728,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					}
 
 					&.thinking {
-						background: url('~img/icon/chat/buttons/loader.svg');
+						background: url('~img/icon/loader.svg');
 						animation: rotate 1.2s infinite linear;
 						filter: brightness(0) saturate(100%) invert(56%) sepia(11%) saturate(1831%) hue-rotate(210deg) brightness(95%) contrast(91%);
 					}
@@ -763,7 +750,6 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					border-radius: 28px;
 					font-size: 15px;
 					font-weight: 500;
-					cursor: pointer;
 					transition: all 0.2s $smooth-curve;
 					box-shadow: 0 4px 16px rgba($lavender-cool, 0.25);
 					font-family: 'Inter', -apple-system, sans-serif;
@@ -815,21 +801,20 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 					width: 100%;
 					max-width: 300px;
 					padding: 14px 36px;
-					background: linear-gradient(135deg, $teal-accent, lighten($teal-accent, 8%));
+					background: linear-gradient(135deg, $spark-accent, lighten($spark-accent, 8%));
 					color: white;
 					border: none;
 					border-radius: 28px;
 					font-size: 15px;
 					font-weight: 500;
-					cursor: pointer;
 					transition: all 0.2s $smooth-curve;
-					box-shadow: 0 4px 16px rgba($teal-accent, 0.25);
+					box-shadow: 0 4px 16px rgba($spark-accent, 0.25);
 					text-align: center;
 
 					&:hover {
 						transform: translateY(-2px);
-						box-shadow: 0 6px 20px rgba($teal-accent, 0.4);
-						background: linear-gradient(135deg, lighten($teal-accent, 5%), lighten($teal-accent, 13%));
+						box-shadow: 0 6px 20px rgba($spark-accent, 0.4);
+						background: linear-gradient(135deg, lighten($spark-accent, 5%), lighten($spark-accent, 13%));
 					}
 
 					&:active {
@@ -859,7 +844,6 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				background: var(--color-bg-primary);
 				border: 1px solid var(--color-shape-tertiary);
 				border-radius: 12px;
-				cursor: pointer;
 				transition: all 0.2s $smooth-curve;
 				font-size: 14px;
 				position: relative;
@@ -867,7 +851,6 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				.icon {
 					width: 18px;
 					height: 18px;
-					flex-shrink: 0;
 				}
 
 				.name {
@@ -924,7 +907,6 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 				border: 1px solid var(--color-shape-tertiary);
 				border-radius: 16px;
 				padding: 14px;
-				cursor: pointer;
 				transition: all 0.2s $smooth-curve;
 				animation: cardFadeIn 0.3s $smooth-curve backwards;
 
@@ -973,7 +955,7 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 
 				.progressFill {
 					height: 100%;
-					background: linear-gradient(90deg, $lavender-cool, $teal-accent);
+					background: linear-gradient(90deg, $lavender-cool, $spark-accent);
 					border-radius: 100px;
 					transition: width 0.3s $smooth-curve;
 					position: relative;
@@ -1072,7 +1054,6 @@ $smooth-curve: cubic-bezier(0.4, 0, 0.2, 1);
 						border-radius: 20px;
 						font-size: 14px;
 						font-weight: 500;
-						cursor: pointer;
 						transition: all 0.2s $smooth-curve;
 						font-family: 'Inter', -apple-system, sans-serif;
 						border: none;

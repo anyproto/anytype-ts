@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, HeaderBanner } from 'Component';
-import { I, S, U, J, keyboard, sidebar, translate, analytics, Action } from 'Lib';
+import * as I from 'Interface';
 
-const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderMainChat = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { rootId, isPopup, onSearch, menuOpen, renderLeftIcons } = props;
 	const [ dummy, setDummy ] = useState(0);
@@ -19,7 +18,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	};
 
 	let object = null;
-	if (spaceview.isChat || spaceview.isOneToOne) {
+	if (spaceview.isOneToOne) {
 		object = spaceview;
 	} else {
 		object = S.Detail.get(rootId, rootId, []);
@@ -27,8 +26,8 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	const isDeleted = object._empty_ || object.isDeleted;
 	const readonly = object.isArchived;
-	const showRelations = !isDeleted && !spaceview.isChat && !spaceview.isOneToOne;
-	const showPin = canWrite && !spaceview.isChat && !spaceview.isOneToOne;
+	const showRelations = !isDeleted && !spaceview.isOneToOne;
+	const showPin = canWrite && !spaceview.isOneToOne;
 	const bannerProps = { type: I.BannerType.None, isPopup, object };
 
 	if (object.isArchived) {
@@ -56,9 +55,9 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 	const onMore = () => {
 		const element = '#button-header-more';
 
-		if (spaceview.isChat || spaceview.isOneToOne) {
+		if (spaceview.isOneToOne) {
 			U.Menu.spaceContext(spaceview, {
-				element: U.Common.getScrollContainer(isPopup).find(`.header ${element}`),
+				element: U.Dom.select(`.header ${element}`, U.Dom.getScrollContainer(isPopup)),
 				className: 'fixed',
 				classNameWrap: 'fromHeader',
 				horizontal: I.MenuDirection.Right,
@@ -101,7 +100,7 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(!spaceview.isChat, !spaceview.isChat && !spaceview.isOneToOne, onOpen)}</div>
+			<div className="side left">{renderLeftIcons(!spaceview.isOneToOne, !spaceview.isOneToOne, onOpen)}</div>
 
 			<div className={cnc.join(' ')}>
 				{center}
@@ -111,39 +110,39 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 				<Icon
 					id="button-header-search"
 					tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText'), typeY: I.MenuDirection.Bottom }}
-					className="search" withBackground={true}
+					name="header/search" withBackground={true}
 					onClick={() => keyboard.onSearchText('', analytics.route.header)}
 					onDoubleClick={e => e.stopPropagation()}
 				/>
 
 				{showPin ? (
-					<Icon 
-						id="button-header-pin" 
-						tooltipParam={{ 
-							text: hasWidget ? translate('commonRemovePinned') : translate('commonAddPinned'), 
-							caption: keyboard.getCaption('addFavorite'), 
+					<Icon
+						id="button-header-pin"
+						tooltipParam={{
+							text: hasWidget ? translate('commonRemovePinned') : translate('commonAddPinned'),
+							caption: keyboard.getCaption('addFavorite'),
 							typeY: I.MenuDirection.Bottom,
 						}}
-						className={hasWidget ? 'unpin' : 'pin'} withBackground={true}
+						name={hasWidget ? 'header/pin1' : 'header/pin0'} withBackground={true}
 						onClick={onPin}
 						onDoubleClick={e => e.stopPropagation()}
-					/> 
+					/>
 				) : ''}
 
 				{showRelations ? (
 					<Icon
 						id="button-header-relation"
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'relation', (rightSidebar.page == 'object/relation' ? 'active' : '') ].join(' ')} withBackground={true}
+						name="header/relation" className={rightSidebar.page == 'object/relation' ? 'active' : ''} withBackground={true}
 						onClick={onRelation}
 						onDoubleClick={e => e.stopPropagation()}
 					/>
 				) : ''}
 
-				<Icon 
+				<Icon
 					id="button-header-more"
 					tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
-					className="more" withBackground={true}
+					name="common/more" withBackground={true}
 					onClick={onMore}
 					onDoubleClick={e => e.stopPropagation()}
 				/>
@@ -151,6 +150,6 @@ const HeaderMainChat = observer(forwardRef<{}, I.HeaderComponent>((props, ref) =
 		</>
 	);
 
-}));
+});
 
 export default HeaderMainChat;

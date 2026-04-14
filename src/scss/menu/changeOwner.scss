@@ -12,14 +12,12 @@
 				@include text-common; font-weight: 500; text-align: center; color: var(--color-text-primary); padding: 0px; 
 				flex-grow: 1; flex-shrink: 1;
 			}
-			.icon.close { background-image: url('~img/icon/close.svg'); }
 			.side { flex-shrink: 0; }
 		}
 
 		.items { flex: 1; overflow: hidden; }
-		.item { display: flex; align-items: center; padding: 8px 16px; gap: 0px 12px; cursor: pointer; border-radius: 8px; }
+		.item { display: flex; align-items: center; padding: 8px 16px; gap: 0px 12px; border-radius: 8px; }
 		.item {
-			.iconObject { flex-shrink: 0; }
 			.icon.badge { margin: 0px; width: 14px; height: 14px; }
 			.icon.chk { right: 16px; }
 

@@ -1,7 +1,6 @@
 import React, { FC, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Icon } from 'Component';
-import { U, translate } from 'Lib';
 
 interface Props {
 	className?: string;
@@ -25,7 +24,7 @@ const AddRow: FC<Props> = ({
 			>
 				<div className="cell add">
 					<div className="btn" onClick={onClick}>
-						<Icon className="plus" />
+						<Icon name="plus/menu" className="plus" />
 						<div className="name">{translate('commonNewObject')}</div>
 					</div>
 				</div>

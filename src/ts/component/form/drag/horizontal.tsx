@@ -1,6 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
-
 interface Props {
 	id?: string;
 	className?: string;
@@ -54,7 +52,7 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 	};
 
 	const maxWidth = (): number => {
-		return $(nodeRef.current).width() - $(iconRef.current).width();
+		return U.Dom.contentWidth(nodeRef.current) - U.Dom.contentWidth(iconRef.current);
 	};
 
 	const setValue = (v: number) => {
@@ -69,6 +67,9 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 		setValue(value);
 	};
 
+	const moveHandler = useRef<((e: any) => void) | null>(null);
+	const upHandler = useRef<((e: any) => void) | null>(null);
+
 	const start = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -76,45 +77,59 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 		if (readonly) {
 			return;
 		};
-		
-		const win = $(window);
-		const node = $(nodeRef.current);
-		const icon = $(iconRef.current);
-		const iw = icon.outerWidth();
-		const ox = node.offset().left;
-		
-		move(e.pageX - ox - iw / 2);
-		node.addClass('isDragging');
-		
-		if (onStart) {
-			onStart(e, value);
+
+		const node = nodeRef.current;
+		const icon = iconRef.current;
+		if (!node || !icon) {
+			return;
 		};
 
-		win.off('mousemove.drag touchmove.drag').on('mousemove.drag touchmove.drag', (e: any) => {
+		const iw = icon.offsetWidth;
+		const ox = node.getBoundingClientRect().left + window.scrollX;
+
+		move(e.pageX - ox - iw / 2);
+		U.Dom.addClass(node, 'isDragging');
+
+		onStart?.(e, value);
+
+		if (moveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', moveHandler.current);
+			U.Dom.removeEvent(window, 'touchmove', moveHandler.current);
+		};
+		if (upHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', upHandler.current);
+			U.Dom.removeEvent(window, 'touchend', upHandler.current);
+		};
+
+		moveHandler.current = (e: any) => {
 			move(e.pageX - ox - iw / 2);
-
-			if (onMove) {
-				onMove(e, value);
-			};
-		});
-		
-		win.off('mouseup.drag touchend.drag').on('mouseup.drag touchend.drag', (e: any) => {
+			onMove?.(e, value);
+		};
+		upHandler.current = (e: any) => {
 			end(e);
+			onEnd?.(e, value);
+		};
 
-			if (onEnd) {
-				onEnd(e, value);
-			};
-		});
+		U.Dom.addEvents(window, [
+			['mousemove', moveHandler.current],
+			['touchmove', moveHandler.current],
+			['mouseup', upHandler.current],
+			['touchend', upHandler.current],
+		]);
 	};
 
 	const move = (x: number) => {
-		const node = $(nodeRef.current);
-		const icon = $(iconRef.current);
-		const back = $(backRef.current);
-		const fill = $(fillRef.current);
-		const nw = node.outerWidth();
-		const iw = icon.outerWidth() / 2;
-		const ib = parseInt(icon.css('border-width'));
+		const node = nodeRef.current;
+		const icon = iconRef.current;
+		const back = backRef.current;
+		const fill = fillRef.current;
+		if (!node || !icon || !back || !fill) {
+			return;
+		};
+
+		const nw = node.offsetWidth;
+		const iw = icon.offsetWidth / 2;
+		const ib = parseInt(getComputedStyle(icon).borderWidth) || 0;
 		const mw = maxWidth();
 
 		x = Math.max(0, x);
@@ -140,18 +155,29 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 		x = value * mw;
 
 		const w = Math.min(nw, x + (iconIsOutside ? iw : 0));
+		const bw = Math.max(0, nw - w - iw - ib * 2);
 
-		icon.css({ left: x });
-		back.css({ left: (w + iw + ib * 2), width: (nw - w - iw - ib * 2) });
-		fill.css({ width: (w + (iconIsOutside ? 0 : iw) - ib * 2) });
+		U.Dom.css(icon, { left: `${x}px` });
+		U.Dom.css(back, { left: `${w + iw + ib * 2}px`, width: `${bw}px` });
+		U.Dom.css(fill, { width: `${w + (iconIsOutside ? 0 : iw) - ib * 2}px` });
 	};
 
 	const end = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		$(window).off('mousemove.drag touchmove.drag mouseup.drag touchend.drag');
-		$(nodeRef.current).removeClass('isDragging');
+		if (moveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', moveHandler.current);
+			U.Dom.removeEvent(window, 'touchmove', moveHandler.current);
+			moveHandler.current = null;
+		};
+		if (upHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', upHandler.current);
+			U.Dom.removeEvent(window, 'touchend', upHandler.current);
+			upHandler.current = null;
+		};
+
+		U.Dom.removeClass(nodeRef.current, 'isDragging');
 	};
 
 	useEffect(() => setValue(initialValue), []);

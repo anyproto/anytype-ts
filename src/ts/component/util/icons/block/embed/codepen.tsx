@@ -1,0 +1,9 @@
+import React from 'react';
+
+const Codepen = (props: React.SVGProps<SVGSVGElement>) => (
+	<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+		<path d="M9 23.7L20 31M9 23.7V16.3M9 23.7L20 16.3M20 31L31 23.7M20 31V23.7M31 23.7V16.3M31 23.7L20 16.3M31 16.3L20 9M31 16.3L20 23.6L9 16.3M20 9L9 16.3M20 9V16.3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+	</svg>
+);
+
+export default Codepen;

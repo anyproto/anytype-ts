@@ -231,7 +231,7 @@ $(() => {
 		const isPinned = Boolean(item.data.isPinned);
 		const icon = String(item.data.icon || '');
 		const layout = Number(item.data.layout) || 0;
-		const uxType = Number(item.data.uxType) || 0;
+		const spaceType = Number(item.data.spaceType) || 0;
 		const isImage = Boolean(item.data.isImage);
 
 		const cn = [ 'tab' ];
@@ -251,7 +251,7 @@ $(() => {
 
 		const clickable = tab.find('.clickable');
 		if (icon) {
-			const cn = [ 'icon', 'object', `layout${layout}`, `uxType${uxType}` ];
+			const cn = [ 'icon', 'object', `layout${layout}`, `spaceType${spaceType}` ];
 			if (isImage) {
 				cn.push('isImage');
 			};

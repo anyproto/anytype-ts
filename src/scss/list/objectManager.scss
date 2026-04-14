@@ -21,11 +21,7 @@
         }
         .side.right { justify-content: flex-end; }
 
-        .icon { width: 20px; height: 20px; flex-shrink: 0; }
-        .icon.checkbox { background-image: url('~img/icon/archive/controls/checkbox0.svg'); }
-        .icon.checkbox.active { background-image: url('~img/icon/archive/controls/checkbox1.svg'); }
-        .icon.remove { background-image: url('~img/icon/menu/action/remove0.svg'); }
-        .icon.search { background-image: url('~img/icon/menu/action/search0.svg'); }
+        .icon { width: 20px; height: 20px; }
 
         .filterWrapper { overflow: hidden; width: 0px; transition: $transitionAllCommon; }
         .filterWrapper.active { width: 200px; }
@@ -58,10 +54,8 @@
             .info { width: calc(100% - 100px); flex-grow: 1; }
 
             .icon.checkbox {
-                flex-shrink: 0; cursor: default !important; background-image: url('~img/icon/archive/checkbox0.svg');
                 width: 18px; height: 18px; transition: none; flex-basis: 18px;
             }
-            .icon.checkbox.active { background-image: url('~img/icon/archive/checkbox1.svg'); }
         }
     }
 
@@ -85,7 +79,7 @@
             .row { grid-template-columns: repeat(1, minmax(0, 1fr)); }
             .item { gap: 0px 8px; }
             .item {
-                .iconObject { flex-shrink: 0; flex-basis: 20px; background-color: transparent; }
+                .iconObject { flex-basis: 20px; background-color: transparent; }
                 .objectClickArea { width: calc(100% - 30px); gap: 0px 8px; }
                 .name { @include text-overflow-nw; width: 100%; }
                 .descr { display: none; }

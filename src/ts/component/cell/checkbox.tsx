@@ -1,9 +1,8 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
 import { Icon, Label } from 'Component';
-import { I, U, translate } from 'Lib';
-import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
-const CellCheckbox = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
+const CellCheckbox = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const { 
 		withLabel = false, 
@@ -12,6 +11,7 @@ const CellCheckbox = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		recordId = '', 
 		getRecord, 
 		onChange,
+		viewType,
 	} = props;
 	const record = getRecord(recordId) || {};
 	const value = Boolean(record[relation.relationKey]);
@@ -40,11 +40,15 @@ const CellCheckbox = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	return (
 		<>
-			<Icon className={cn.join(' ')} />
+			<Icon 
+				name={value ? 'marker/checkbox2' : 'marker/checkbox0'} 
+				color={value ? 'accent100' : ''} 
+				size={viewType == I.ViewType.Grid ? 20 : 16} 
+			/>
 			{label ? <Label text={label} /> : ''}
 		</>
 	);
 
-}));
+});
 
 export default CellCheckbox;

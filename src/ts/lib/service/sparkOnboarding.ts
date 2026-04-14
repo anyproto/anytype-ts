@@ -1,4 +1,4 @@
-import { I, U, C } from 'Lib';
+import * as I from 'Interface';
 
 type Listener = (...args: any[]) => void;
 
@@ -245,7 +245,7 @@ export class SparkOnboardingService {
 
 			case 'reconnected': {
 				// Server restored our session, update state
-				const reconnectMsg = message as any;
+				const reconnectMsg = message as I.ReconnectedMessage;
 				this.sessionId = reconnectMsg.sessionId;
 
 				this.emit('sessionReconnected', reconnectMsg);
@@ -288,8 +288,8 @@ export class SparkOnboardingService {
 			};
 
 			case 'type_generated': {
-				const typeMsg = message as any;
-				
+				const typeMsg = message as I.TypeGeneratedMessage;
+
 				// New structure: icon instead of schema
 				this.emit('typeGenerated', typeMsg.typeName, typeMsg.icon, typeMsg.properties);
 				break;
@@ -304,10 +304,10 @@ export class SparkOnboardingService {
 			};
 
 			case 'object_titles_generated': {
-				const titlesMsg = message as any;
+				const titlesMsg = message as I.ObjectTitlesGeneratedMessage;
 				// Use typeName for clarity - 'type' in the message is the message type itself
 				this.emit('object_titles_generated', {
-					typeName: titlesMsg.typeName || titlesMsg.type_name, // The actual type name
+					typeName: titlesMsg.typeName || titlesMsg.type_name,
 					typeKey: titlesMsg.typeKey || titlesMsg.type_key,
 					titles: titlesMsg.titles
 				});
@@ -321,7 +321,7 @@ export class SparkOnboardingService {
 			};
 
 			case 'workspace_ready': {
-				const workspaceMsg = message as any;
+				const workspaceMsg = message as I.WorkspaceReadyMessage;
 				// New structure: only spaceName and downloadUrl
 				this.emit('workspaceReady', workspaceMsg.downloadUrl, workspaceMsg.spaceName);
 				break;

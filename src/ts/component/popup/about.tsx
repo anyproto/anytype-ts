@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { Title, Icon, Label, Button } from 'Component';
-import { I, U, translate } from 'Lib';
+import * as I from 'Interface';
 
 const PopupAbout = forwardRef<{}, I.Popup>(() => {
 

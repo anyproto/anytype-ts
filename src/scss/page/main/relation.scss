@@ -23,14 +23,14 @@
 					.item {
 						.icon.remove {
 							display: none; position: absolute; right: -8px; top: -8px; width: 16px; height: 16px; border-radius: 50%;
-							background-color: var(--color-shape-secondary); background-image: url('~img/icon/close.svg'); background-size: 12px;
+							background-color: var(--color-shape-secondary); background-size: 12px;
 						}
 					}
 					.item:hover {
 						.icon.remove { display: block; }
 					}
 
-					.icon.add { display: block; width: 20px; height: 20px; background-image: url('~img/icon/plus/menu0.svg'); }
+					.icon.add { display: block; width: 20px; height: 20px; }
 
 					.more { color: var(--color-text-secondary); border-radius: 6px; padding: 0px 8px; line-height: 28px; }
 					.more:hover, .more.hover { background: var(--color-shape-highlight-medium); }
@@ -75,8 +75,7 @@
 				.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; }
 				.side.right { display: flex; flex-direction: row; align-items: center; justify-content: flex-end; gap: 0px 8px; }
 
-				.icon.plus { background-image: url('~img/icon/plus/template.svg'); }
-				.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
+	
 
 				.cnt { color: var(--color-text-secondary); }
 			}

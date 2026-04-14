@@ -1,6 +1,8 @@
 const Renderer = {
-	send: () => {},
+	send: () => Promise.resolve(),
 	on: () => {},
+	off: () => {},
+	remove: () => {},
 	removeAllListeners: () => {},
 };
 

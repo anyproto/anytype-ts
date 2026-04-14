@@ -1,5 +1,7 @@
 import { arrayMove } from '@dnd-kit/sortable';
-import { I, M, C, S, U, J, Relation, translate, Storage } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 class Dataview {
 
@@ -158,10 +160,11 @@ class Dataview {
 		const viewChange = newViewId != viewId;
 		const meta: any = { offset };
 		const viewFilters = this.getActiveFilters(view);
-		const filters = viewFilters.concat(param.filters || []);
-		const sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
-
-		filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() });
+		
+		let filters = viewFilters.concat(param.filters || []).concat([
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+		]);
+		let sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
 
 		if (viewChange) {
 			meta.viewId = newViewId;
@@ -186,12 +189,15 @@ class Dataview {
 			};
 		};
 
+		filters = this.getFilteredFilters(filters).map(it => this.filterMapper({ ...it, includeTime: false }, { rootId }));
+		sorts = this.getFilteredSorts(sorts).map(it => this.sortMapper(it));
+
 		const cb = () => {
 			U.Subscription.subscribe({
 				...param,
 				subId,
-				filters: filters.map(it => this.filterMapper({ ...it, includeTime: false }, { rootId })),
-				sorts: sorts.map(it => this.sortMapper(it)),
+				filters,
+				sorts,
 				keys,
 				limit,
 				offset,
@@ -212,18 +218,12 @@ class Dataview {
 	 * @returns {I.Filter[]} Array of filter objects.
 	 */
 	getActiveFilters (view: I.View): I.Filter[] {
-		return U.Common.objectCopy(view.filters).filter(it => {
-			if (!Relation.isFilterActive(it)) {
-				return false;
-			};
+		if (!view) {
+			return [];
+		};
 
-			if (it.operator != I.FilterOperator.None) {
-				return true;
-			};
-
-			const relation = S.Record.getRelationByKey(it.relationKey);
-			return relation && !relation.isArchived && !relation.isDeleted;
-		});
+		const filters = this.getFilteredFilters(view.filters);
+		return filters.filter(it => Relation.isFilterActive(it));
 	};
 
 	/**
@@ -400,10 +400,7 @@ class Dataview {
 
 		const groupOrder: any = {};
 		const el = block.content.groupOrder.find(it => it.viewId == view.id);
-		const filters = view.filters.filter(it => {
-			const relation = S.Record.getRelationByKey(it.relationKey);
-			return relation && !relation.isArchived && !relation.isDeleted;
-		}).map(it => this.filterMapper(it, { rootId }));
+		const filters = this.getFilteredFilters(view.filters).map(it => this.filterMapper(it, { rootId }));
 
 		if (el) {
 			el.groups.forEach(it => groupOrder[it.groupId] = it);
@@ -668,7 +665,9 @@ class Dataview {
 			};
 		};
 
-		for (const filter of view.filters) {
+		const filters = this.flattenFilters(view.filters);
+
+		for (const filter of filters) {
 			if (!conditions.includes(filter.condition) || (hasGroupValue && (filter.relationKey == view.groupRelationKey))) {
 				continue;
 			};
@@ -691,17 +690,37 @@ class Dataview {
 			if (Relation.isDate(relation.format)) {
 				value = Relation.getTimestampForQuickOption(filter.value, filter.quickOption);
 			};
-			
+
 			if (!value) {
 				continue;
 			};
-			
+
 			if (relation && !relation.isReadonlyValue) {
 				details[filter.relationKey] = Relation.formatValue(relation, value, true);
 			};
 		};
 
 		return details;
+	};
+
+	flattenFilters (filters: I.Filter[]): I.Filter[] {
+		filters = this.getFilteredFilters(filters || []);
+
+		const result: I.Filter[] = [];
+
+		for (const filter of filters) {
+			const isAdvanced = (!filter.relationKey && filter.nestedFilters?.length);
+
+			if (isAdvanced) {
+				if (filter.operator == I.FilterOperator.And) {
+					result.push(...this.flattenFilters(filter.nestedFilters));
+				};
+			} else {
+				result.push(filter);
+			};
+		};
+
+		return result;
 	};
 
 	/**
@@ -1138,6 +1157,19 @@ class Dataview {
 				}
 			],
 		};
+	};
+
+	checkDeletedRelation (relationKey: string): boolean {
+		const relation = S.Record.getRelationByKey(relationKey);
+		return relation && !relation.isDeleted && !relation.isArchived;
+	};
+
+	getFilteredFilters (filters: I.Filter[]): I.Filter[] {
+		return (filters || []).filter(it => it.relationKey ? this.checkDeletedRelation(it.relationKey) : true);	
+	};
+
+	getFilteredSorts (sorts: I.Sort[]): I.Sort[] {
+		return (sorts || []).filter(it => this.checkDeletedRelation(it.relationKey));	
 	};
 
 	/**

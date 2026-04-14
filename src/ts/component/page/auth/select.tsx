@@ -1,10 +1,10 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import $ from 'jquery';
 import { Frame, Button, Header, Footer, Error, Label } from 'Component';
-import { I, U, S, translate, Animation, analytics, Storage } from 'Lib';
-import { observer } from 'mobx-react';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import Animation from 'Lib/animation';
 
-const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageAuthSelect = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const registerRef = useRef(null);
@@ -12,7 +12,7 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 	const [ error, setError ] = useState('');
 
 	const inflate = (callBack: () => void) => {
-		$(introBubbleRef.current).addClass('inflate');
+		U.Dom.addClass(introBubbleRef.current, 'inflate');
 		window.setTimeout(callBack, 1000);
 	};
 
@@ -58,7 +58,7 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 
 	useEffect(() => {
 		Animation.to(() => {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks(nodeRef.current);
 
 			analytics.removeContext();
 			analytics.event('ScreenIndex');
@@ -96,6 +96,6 @@ const PageAuthSelect = observer(forwardRef<I.PageRef, I.PageComponent>((props, r
 		</div>
 	);
 
-}));
+});
 
 export default PageAuthSelect;

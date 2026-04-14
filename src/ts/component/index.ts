@@ -29,7 +29,7 @@ import Widget from './widget';
 
 import SidebarLeft from './sidebar/left';
 import SidebarRight from './sidebar/right';
-import SidebarProgress from './sidebar/progress';
+import SidebarProgress, { ProgressItem } from './sidebar/progress';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
@@ -48,6 +48,7 @@ import Label from './util/label';
 import Tag from './util/tag';
 import Loader from './util/loader';
 import Deleted from './util/deleted';
+import MediaState from './util/mediaState';
 import DotIndicator from './util/dotIndicator';
 import EmptySearch from './util/emptySearch';
 import EmptyState from './util/emptyState';
@@ -162,6 +163,7 @@ export {
 	Tag,
 	Loader,
 	Deleted,
+	MediaState,
 	DotIndicator,
 	Phrase,
 	TabSwitch,
@@ -198,6 +200,7 @@ export {
 	SidebarLeft,
 	SidebarRight,
 	SidebarProgress,
+	ProgressItem,
 
 	Widget,
 

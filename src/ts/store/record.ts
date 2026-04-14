@@ -1,5 +1,6 @@
 import { observable, action, set, makeObservable } from 'mobx';
-import { S, I, M, U, J, Dataview, Relation } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 enum KeyMapType {
 	Relation = 'relation',
@@ -565,7 +566,7 @@ class RecordStore {
 		return (list || []).sort((c1, c2) => {
 			return (
 				U.Data.sortByOrderId(c1, c2) ||
-				U.Data.sortByTypeKey(c1, c2, spaceview.isChat || spaceview.isOneToOne) ||
+				U.Data.sortByTypeKey(c1, c2, spaceview.isOneToOne) ||
 				U.Data.sortByName(c1, c2)
 			);
 		});

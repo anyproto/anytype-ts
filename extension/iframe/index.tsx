@@ -1,9 +1,10 @@
 import { forwardRef, useEffect } from 'react';
 import { observer } from 'mobx-react';
-import { I, Storage } from 'Lib';
 import Util from '../lib/util';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
-const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const Index = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const getPorts = (onError?: () => void): void => {
 		Util.sendMessage({ type: 'checkPorts' }, response => {
@@ -35,6 +36,6 @@ const Index = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		<div className="page pageIndex" />
 	);
 
-}));
+});
 
 export default Index;

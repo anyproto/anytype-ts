@@ -1,9 +1,9 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react'; 
-import { I, M, S, U, J, keyboard } from 'Lib';
 
-const DragLayer = observer(forwardRef((_, ref: any) => {
+import * as I from 'Interface';
+import * as M from 'Model';
+
+const DragLayer = forwardRef((_, ref: any) => {
 	
 	const nodeRef = useRef(null);
 
@@ -19,17 +19,20 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 			return;
 		};
 
-		const rect = U.Common.getElementRect(componentNode);
-		const node = $(nodeRef.current);
-		const inner = node.find('#inner').html('');
-		const container = U.Common.getPageFlexContainer(keyboard.isPopup());
-		const wrap = $('<div></div>');
+		const rect = U.Dom.getElementRect(componentNode);
+		const node = nodeRef.current;
+		const inner = U.Dom.select('#inner', node);
+		if (inner) {
+			inner.innerHTML = '';
+		};
+		const containerEl = U.Dom.getPageFlexContainer(keyboard.isPopup());
+		const wrap = document.createElement('div');
 
 		let width = rect.width;
-		
+
 		switch (type) {
 			case I.DropType.Block: {
-				wrap.addClass('blocks');
+				U.Dom.addClass(wrap, 'blocks');
 
 				width -= J.Size.blockMenu;
 				const items: M.Block[] = [];
@@ -41,39 +44,54 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 				};
 
 				items.forEach(block => {
-					const clone = container.find(`#block-${U.Common.esc(block.id)}`).clone();
+					const blockEl = containerEl ? U.Dom.select(`#block-${U.Common.esc(block.id)}`, containerEl) : null;
+					const clone = blockEl ? blockEl.cloneNode(true) as HTMLElement : null;
 
-					wrap.append(clone);
+					if (clone) {
+						wrap.appendChild(clone);
 
-					if (block.isDataview()) {
-						const controls = clone.find('.dataviewControls');
+						if (block.isDataview()) {
+							const controls = U.Dom.select('.dataviewControls', clone);
 
-						clone.find('.content').remove();
-						controls.find('#views').remove();
-						controls.find('#view-selector').remove();
-						controls.find('#sideRight').remove();
-					};
+							const content = U.Dom.select('.content', clone);
+							if (content) content.remove();
+							if (controls) {
+								const views = U.Dom.select('#views', controls);
+								if (views) views.remove();
+								const viewSelector = U.Dom.select('#view-selector', controls);
+								if (viewSelector) viewSelector.remove();
+								const sideRight = U.Dom.select('#sideRight', controls);
+								if (sideRight) sideRight.remove();
+							};
+						};
 
-					if (block.isEmbed()) {
-						clone.find('#value').remove();
-						clone.find('.preview').css({ display: 'block' });
+						if (block.isEmbed()) {
+							const value = U.Dom.select('#value', clone);
+							if (value) value.remove();
+							const preview = U.Dom.select('.preview', clone);
+							if (preview) U.Dom.css(preview, { display: 'block' });
+						};
 					};
 				});
 				break;
 			};
 
 			case I.DropType.Relation: {
-				const container = U.Common.getPageFlexContainer(keyboard.isPopup());
-				const add = $('<div class="sidebarPage pageObjectRelation"></div>');
+				const relContainerEl = U.Dom.getPageFlexContainer(keyboard.isPopup());
+				const add = document.createElement('div');
+				add.className = 'sidebarPage pageObjectRelation';
 
-				wrap.addClass('sidebar').append(add);
-				
+				U.Dom.addClass(wrap, 'sidebar');
+				wrap.appendChild(add);
+
 				ids.forEach(id => {
-					const el = container.find(`.sidebar #section-object-relation-${id}`);
-					const clone = el.clone();
-
-					add.append(clone);
-					clone.css({ width: el.outerWidth() });
+					const sidebar = relContainerEl ? U.Dom.select('.sidebar', relContainerEl) : null;
+					const el = sidebar ? U.Dom.select(`#section-object-relation-${id}`, sidebar) : null;
+					if (el) {
+						const clone = el.cloneNode(true) as HTMLElement;
+						add.appendChild(clone);
+						U.Dom.css(clone, { width: `${el.offsetWidth}px` });
+					};
 				});
 				break;
 			};
@@ -83,36 +101,50 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 					break;
 				};
 
-				const first = container.find(`#record-${U.Common.esc(ids[0])}`);
-				const cn = first.parents('.viewContent').attr('class');
-				const block = $('<div class="block blockDataview"></div>');
-				const view = $('<div />');
+				const first = containerEl ? U.Dom.select(`#record-${U.Common.esc(ids[0])}`, containerEl) : null;
+				const viewContentEl = first?.closest('.viewContent');
+				const cn = viewContentEl?.getAttribute('class') ?? '';
+				const blockDiv = document.createElement('div');
+				blockDiv.className = 'block blockDataview';
+				const view = document.createElement('div');
 
-				view.addClass(cn);
-				block.append(view);
+				if (cn) {
+					view.className = cn;
+				};
+				blockDiv.appendChild(view);
 
-				wrap.addClass('blocks').append(block);
+				U.Dom.addClass(wrap, 'blocks');
+				wrap.appendChild(blockDiv);
 
 				ids.forEach((id: string, idx: number) => {
-					const el = container.find(`#record-${U.Common.esc(id)}`);
-					const clone = el.clone().addClass('record');
-
-					view.append(clone);
-					clone.css({ width: el.outerWidth() });
+					const el = containerEl ? U.Dom.select(`#record-${U.Common.esc(id)}`, containerEl) : null;
+					if (el) {
+						const clone = el.cloneNode(true) as HTMLElement;
+						U.Dom.addClass(clone, 'record');
+						view.appendChild(clone);
+						U.Dom.css(clone, { width: `${el.offsetWidth}px` });
+					};
 				});
 				break;
 			};
 		};
 
-		inner.append(wrap);
+		if (inner) {
+			inner.appendChild(wrap);
+		};
 
-		node.css({ width });
-		node.find('.block').attr({ id: '' });
-		node.find('.selectionTarget').attr({ id: '' });
+		if (node) {
+			U.Dom.css(node, { width: `${width}px` });
+		};
+		U.Dom.selectAll('.block', node).forEach(el => el.id = '');
+		U.Dom.selectAll('.selectionTarget', node).forEach(el => el.id = '');
 	};
 
 	const hide = () => {
-		$(nodeRef.current).find('#inner').html('');
+		const inner = U.Dom.select('#inner', nodeRef.current);
+		if (inner) {
+			inner.innerHTML = '';
+		};
 	};
 
 	useImperativeHandle(ref, () => ({
@@ -130,6 +162,6 @@ const DragLayer = observer(forwardRef((_, ref: any) => {
 		</div>
 	);
 
-}));
+});
 
 export default DragLayer;

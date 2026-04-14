@@ -4,14 +4,7 @@
     .popup.popupMembershipFinalization {
         .anyNameForm { padding: 32px 56px; width: 540px; }
         .anyNameForm {
-            .icon.color { width: 120px; height: 120px; background-size: contain; margin-bottom: 24px; }
-            .icon.color {
-                &.green { background-image: url('~img/icon/payment/green.svg'); }
-                &.blue { background-image: url('~img/icon/payment/blue.svg'); }
-                &.red { background-image: url('~img/icon/payment/red.svg'); }
-                &.ice { background-image: url('~img/icon/payment/ice.svg'); }
-                &.default { background-image: url('~img/icon/payment/purple.svg'); }
-            }
+            .icon.color { width: 120px; height: 120px; margin-bottom: 24px; }
 
             .text { display: flex; flex-direction: column; gap: 8px 0px; margin-bottom: 16px; }
             .title { margin-bottom: 0px; @include text-header1; }
@@ -39,7 +32,7 @@
     .popup.popupMembershipActivation {
         .innerWrap { width: 424px; padding: 32px 32px 18px 32px; text-align: center; }
 
-        .icon.activation { width: 56px; height: 56px; margin: 0px 0px 12px 0px; background-image: url('~img/icon/popup/membership/activation.svg'); }
+        .icon.popupHeaderActivation { margin: 0px 0px 12px 0px; }
 
         .title { @include text-header3; margin: 0px 0px 4px 0px; }
         .label { margin: 0px 0px 20px 0px; }
@@ -53,7 +46,7 @@
                 border: 0; background: none; border-radius: 0px;
             }
 
-            .icon.clear { display: none; position: absolute; right: 12px; top: 10px; width: 20px; height: 20px; background-image: url('~img/icon/membership/clear.svg'); }
+            .icon.clear, .icon.commonClear { display: none; position: absolute; right: 12px; top: 10px; width: 20px; height: 20px; }
 
             &.canClear {
                 .icon.clear { display: block; }

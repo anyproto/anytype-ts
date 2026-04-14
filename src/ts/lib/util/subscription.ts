@@ -1,5 +1,5 @@
-import { I, S, J, C, U, Action, Relation } from 'Lib';
 import sha1 from 'sha1';
+import * as I from 'Interface';
 
 /**
  * Utility class for managing subscriptions, search, and data synchronization in the application.
@@ -90,7 +90,7 @@ class UtilSubscription {
 		let ignoreChat = param.ignoreChat;
 
 		if (undefined === ignoreChat) {
-			ignoreChat = spaceview.isChat || spaceview.isOneToOne;
+			ignoreChat = spaceview.isOneToOne;
 		};
 
 		if (ignoreChat) {
@@ -494,8 +494,8 @@ class UtilSubscription {
 				U.Space.getParticipantId(space.targetSpaceId, account.id),
 			];
 
-			if (!skipIds.includes(space.spaceDashboardId)) {
-				ids.push(space.spaceDashboardId);
+			if (!skipIds.includes(space.homepage)) {
+				ids.push(space.homepage);
 			};
 
 			list.push({
@@ -550,7 +550,7 @@ class UtilSubscription {
 					{
 						relationKey: 'uniqueKey',
 						type: I.SortType.Custom,
-						customOrder: U.Data.typeSortKeys(spaceview.isChat || spaceview.isOneToOne),
+						customOrder: U.Data.typeSortKeys(spaceview.isOneToOne),
 					},
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
@@ -582,7 +582,7 @@ class UtilSubscription {
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Participant ] },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10 },
+					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10, includeTime: true },
 					{ relationKey: 'lastModifiedBy', condition: I.FilterCondition.Equal, value: U.Space.getCurrentParticipantId() },
 				],
 				sorts: [
@@ -598,7 +598,7 @@ class UtilSubscription {
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Participant ] },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10 },
+					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10, includeTime: true },
 				],
 				sorts: [
 					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
@@ -823,7 +823,7 @@ class UtilSubscription {
 	getRecentSubId (): string {
 		let subId = '';
 		switch (S.Common.recentEditMode) {
-			case I.RecentEditMode.All: {
+			default: {
 				subId = this.spaceSubId(J.Constant.subId.recentEditAll);
 				break;
 			};

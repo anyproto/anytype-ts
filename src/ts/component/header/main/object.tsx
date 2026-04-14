@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label, HeaderBanner } from 'Component';
-import { I, S, U, J, keyboard, translate, analytics, Action, sidebar } from 'Lib';
+import * as I from 'Interface';
 
-const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderMainObject = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { rootId, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
@@ -66,7 +65,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				>
 					<IconObject object={object} size={18} />
 					<ObjectName object={object} withPlural={true} />
-					{label ? <Label text={label} /> : ''}
+					{label ? <Label text={label} iconParam={isLocked ? { name: 'common/lock', width: 8, height: 12 } : undefined} /> : ''}
 				</div>
 			);
 		} else {
@@ -168,7 +167,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 							caption: keyboard.getCaption('addFavorite'),
 							typeY: I.MenuDirection.Bottom,
 						}}
-						className={hasWidget ? 'unpin' : 'pin'} withBackground={true}
+						name={hasWidget ? 'header/pin1' : 'header/pin0'} withBackground={true}
 						onClick={onPin}
 						onDoubleClick={e => e.stopPropagation()}
 					/>
@@ -178,25 +177,25 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 					<Icon
 						id="button-header-relation"
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
-						className={[ 'relation', (isRelationOpen ? 'active' : '') ].join(' ')} withBackground={true}
+						name="header/relation" className={isRelationOpen ? 'active' : ''} withBackground={true}
 						onClick={onRelation}
 						onDoubleClick={e => e.stopPropagation()}
 					/>
 				) : ''}
 
 				{showMenu ? (
-					<Icon 
+					<Icon
 						id="button-header-more"
 						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
-						className="more" withBackground={true}
-						onClick={onMore} 
+						name="common/more" withBackground={true}
+						onClick={onMore}
 						onDoubleClick={e => e.stopPropagation()}
-					/> 
+					/>
 				) : ''}
 			</div>
 		</>
 	);
 
-}));
+});
 
 export default HeaderMainObject;

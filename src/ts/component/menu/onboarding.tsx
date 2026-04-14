@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useEffect, } from 'react';
-import $ from 'jquery';
-import raf from 'raf';
-import { observer } from 'mobx-react';
-import { Button, Icon, Label, ProgressBar } from 'Component';
-import { I, C, S, U, J, Onboarding, analytics, keyboard, translate, Action } from 'Lib';
-import ReactCanvasConfetti from 'react-canvas-confetti';
 
-const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
+import raf from 'raf';
+import { Button, Icon, Label, ProgressBar } from 'Component';
+import ReactCanvasConfetti from 'react-canvas-confetti';
+import * as I from 'Interface';
+
+const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) => {
 
 	const { param, position, close, getId, getSize } = props;
 	const { data, noClose, highlightElements } = param;
@@ -19,7 +18,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 		rebind();
 		event();
 		initDimmer();
-		U.Common.renderLinks($(nodeRef.current));
+		U.Dom.renderLinks(nodeRef.current);
 
 		return () => {
 			unbind();
@@ -28,10 +27,6 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 	}, []);
 
 	useEffect(() => {
-		const items = getItems();
-		const l = items.length;
-		const node = $(nodeRef.current);
-		
 		if (onShow) {
 			onShow();
 			position();
@@ -39,11 +34,10 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 
 		clearDimmer();
 		initDimmer();
-		rebind();
 		scroll();
 		event();
 
-		U.Common.renderLinks(node);
+		U.Dom.renderLinks(nodeRef.current);
 	});
 
 	const getItems = () => {
@@ -61,7 +55,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 		const { current } = data;
 		const items = getItems();
 		const item = items[current];
-		const body = $('body');
+		const body = document.body;
 
 		if (!section.showDimmer) {
 			return;
@@ -74,29 +68,36 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 
 		frame.current = raf(() => {
 			highlightElements.forEach(selector => {
-				$(selector).each((idx, el) => {
-					const element = $(el);
-					const clone = element.clone();
-					const { top, left } = element.offset();
-					const st = $(window).scrollTop();
+				U.Dom.selectAll(selector).forEach(el => {
+					const clone = el.cloneNode(true) as HTMLElement;
+					const rect = el.getBoundingClientRect();
+					const st = window.scrollY;
 
-					body.append(clone);
-					U.Common.copyCss(element.get(0), clone.get(0));
+					body.appendChild(clone);
+					U.Dom.copyCss(el, clone);
 
 					if (item.cloneElementClassName) {
-						clone.addClass(item.cloneElementClassName);
+						U.Dom.addClass(clone, item.cloneElementClassName);
 					};
 
 					if (theme == 'dark') {
-						clone.addClass('onboardingElementDark');
+						U.Dom.addClass(clone, 'onboardingElementDark');
 					};
 
-					clone.addClass('onboardingElement').css({ position: 'fixed', top: top - st, left, zIndex: 1000 });
+					U.Dom.addClass(clone, 'onboardingElement');
+					U.Dom.css(clone, {
+						position: 'fixed',
+						top: `${rect.top}px`,
+						left: `${rect.left}px`,
+						zIndex: '1000',
+					});
 				});
 			});
 		});
 
-		body.append('<div class="onboardingDimmer"></div>');
+		const dimmer = document.createElement('div');
+		dimmer.className = 'onboardingDimmer';
+		body.appendChild(dimmer);
 	};
 
 	const clearDimmer = () => {
@@ -106,11 +107,13 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 			return;
 		};
 
-		$('.onboardingElement').remove();
-		$('.onboardingDimmer').remove();
+		U.Dom.selectAll('.onboardingElement').forEach(el => el.remove());
+		U.Dom.selectAll('.onboardingDimmer').forEach(el => el.remove());
 
-		param.highlightElements.concat([ param.element ]).forEach(selector => {
-			$(selector).css({ visibility: 'visible' });
+		param.highlightElements.concat([ param.element as string ]).forEach(selector => {
+			U.Dom.selectAll(selector).forEach(el => {
+				U.Dom.css(el, { visibility: 'visible' });
+			});
 		});
 
 		if (frame.current) {
@@ -128,13 +131,16 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 		analytics.event('ClickOnboardingTooltip', { type: 'close', id: key, step: (current + 1) });
 	};
 
+	const keydownHandler = useRef<(e: any) => void>(() => {});
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const event = () => {
@@ -146,25 +152,28 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const top = container.scrollTop();
-		const element = $(param.element);
+		const containerEl = U.Dom.getScrollContainer(isPopup);
+		const top = containerEl?.scrollTop || 0;
+		const element = typeof param.element === 'string' ? U.Dom.select(param.element) : param.element as HTMLElement;
 
-		if (!element.length) {
+		if (!element) {
 			return;
 		};
 
-		const rect = U.Common.getElementRect(element.get(0));
+		const rect = U.Dom.getElementRect(element);
 		const hh = J.Size.header;
 
 		let containerOffset = { top: 0, left: 0 };
-		if (container.length) {
-			containerOffset = container.offset();
+		if (containerEl) {
+			const containerRect = containerEl.getBoundingClientRect();
+			containerOffset = { top: containerRect.top, left: containerRect.left };
 		};
 
 		if (rect.y < 0) {
 			rect.y -= rect.height + hh + containerOffset.top;
-			container.scrollTop(top + rect.y);
+			if (containerEl) {
+				containerEl.scrollTop = top + rect.y;
+			};
 		};
 	};
 
@@ -286,7 +295,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 	};
 
 	const onVideoClick = (e: any, src: string) => {
-		U.Common.pauseMedia();
+		U.Dom.pauseMedia();
 
 		S.Popup.open('preview', { 
 			preventMenuClose: true,
@@ -380,7 +389,7 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 			ref={nodeRef}
 			className="wrap"
 		>
-			{!noClose ? <Icon className="close" onClick={onClose} /> : ''}
+			{!noClose ? <Icon name="common/close" className="close" onClick={onClose} /> : ''}
 
 			<div className="textWrapper">
 				{withCounter ? <Label className="counter" text={U.String.sprintf(translate('menuOnboardingCounter'), current + 1, l)} /> : ''}
@@ -433,6 +442,6 @@ const MenuOnboarding = observer(forwardRef<I.MenuRef, I.Menu>((props: I.Menu, re
 		</div>
 	);
 
-}));
+});
 
 export default MenuOnboarding;

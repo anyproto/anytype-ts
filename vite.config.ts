@@ -1,6 +1,8 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import AutoImport from 'unplugin-auto-import/vite';
+import { autoObserverPlugin } from './vite.auto-observer';
 import path from 'path';
 import fs from 'fs';
 import { build as esbuild } from 'esbuild';
@@ -19,6 +21,7 @@ export default defineConfig(({ mode }) => {
 		publicDir: false,
 
 		resolve: {
+			dedupe: [ 'react', 'react-dom' ],
 			extensions: ['.ts', '.tsx', '.js', '.jsx'],
 			alias: [
 				{ find: 'dist', replacement: path.resolve(__dirname, 'dist') },
@@ -91,7 +94,7 @@ export default defineConfig(({ mode }) => {
 			emptyOutDir: false,
 			sourcemap: false,
 			cssCodeSplit: false,
-			assetsInlineLimit: 10000000, // Inline all assets as base64
+			assetsInlineLimit: 10000, // Inline small assets; fonts stay as URLs
 			commonjsOptions: {
 				include: [/dist\/lib\//, /node_modules\//],
 				transformMixedEsModules: true,
@@ -107,13 +110,21 @@ export default defineConfig(({ mode }) => {
 						if (assetInfo.names?.[0]?.endsWith('.css')) {
 							return 'css/[name][extname]';
 						}
+
+						// Preserve font directory structure under dist/font/
+						const original = assetInfo.originalFileNames?.[0] || '';
+						const fontMatch = original.match(/dist[\/\\]font[\/\\](.+)/);
+						if (fontMatch) {
+							return `font/${fontMatch[1]}`;
+						}
+
 						return 'assets/[name]-[hash][extname]';
 					},
 					manualChunks(id) {
 						if (id.includes('dist/lib/pb/') || id.includes('/middleware/')) {
 							return 'protobuf';
 						}
-						if (/node_modules\/(react|react-dom|scheduler|mobx|mobx-react|mobx-react-lite|use-sync-external-store|prop-types|hoist-non-react-statics|react-is|object-assign|loose-envify|js-tokens)\//.test(id)) {
+						if (/node_modules\/(react|react-dom|scheduler|mobx|mobx-react-lite|use-sync-external-store|prop-types|hoist-non-react-statics|react-is|object-assign|loose-envify|js-tokens)\//.test(id)) {
 							return 'vendor-react';
 						}
 						if (/node_modules\/(d3|d3-[a-z-]+|internmap|delaunator|robust-predicates)\//.test(id)) {
@@ -143,8 +154,57 @@ export default defineConfig(({ mode }) => {
 
 		plugins: [
 			react(),
+			autoObserverPlugin(),
 			protobufCjsPlugin(),
 			devServerPlugin(),
+
+			AutoImport({
+				imports: [
+					{
+						'Store':     [['*', 'S']],
+						'Hook':      [['*', 'H']],
+						'json':      [['*', 'J']],
+					},
+					{
+						'Lib/api/command':             [['*', 'C']],
+						'Lib/util':                    [['*', 'U']],
+						'Lib/keyboard':                [['keyboard', 'keyboard'], ['Key', 'Key']],
+						'Lib/sidebar':                 [['sidebar', 'sidebar']],
+						// Storage, focus, history, Animation excluded — clash with DOM globals
+						'Lib/mark':                    [['default', 'Mark']],
+						'Lib/relation':                [['default', 'Relation']],
+						'Lib/dataview':                [['default', 'Dataview']],
+						'Lib/scrollOnMove':            [['scrollOnMove', 'scrollOnMove']],
+						'Lib/analytics':               [['analytics', 'analytics']],
+						'Lib/action':                  [['default', 'Action']],
+						'Lib/onboarding':              [['default', 'Onboarding']],
+						'Lib/survey':                  [['default', 'Survey']],
+						'Lib/preview':                 [['default', 'Preview']],
+						// Highlight excluded — clashes with CSS Highlight API
+						'Lib/translate':               [['translate', 'translate']],
+						'Lib/sound':                   [['default', 'Sound'], ['SYSTEM_SOUND_ID', 'SYSTEM_SOUND_ID']],
+						'Lib/renderer':                [['default', 'Renderer']],
+						'Lib/api/dispatcher':          [['dispatcher', 'dispatcher']],
+						'Lib/api/mapper':              [['Mapper', 'Mapper']],
+						'Lib/api/struct':              [['Encode', 'Encode'], ['Decode', 'Decode']],
+						'Lib/service/sparkOnboarding': [['getSparkOnboardingService', 'getSparkOnboardingService']],
+					},
+				],
+				dts: './src/ts/auto-imports.d.ts',
+				include: [/\.tsx?$/],
+				exclude: [
+					/node_modules/,
+					/src\/ts\/lib\/index\.ts$/,
+					/src\/ts\/store\/index\.ts$/,
+					/src\/ts\/interface\/index\.ts$/,
+					/src\/ts\/model\/index\.ts$/,
+					/src\/ts\/component\/index\.ts$/,
+				],
+				eslintrc: {
+					enabled: true,
+					filepath: './.eslintrc-auto-import.json',
+				},
+			}),
 
 			// Move index.html from dist/src/html/index.html to dist/index.html and fix paths
 			{

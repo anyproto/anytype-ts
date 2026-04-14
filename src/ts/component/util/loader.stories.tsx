@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Loader from './loader';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 const meta: Meta<typeof Loader> = {
 	title: 'Util/Loader',

@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useRef, useEffect, KeyboardEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
-import { I, S, U, J, translate, keyboard, Action } from 'Lib';
+import * as I from 'Interface';
 
-const PageMainSettingsImportCsv = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsImportCsv = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { storageGet, storageSet } = props;
 	const [ error, setError ] = useState('');
@@ -113,7 +112,7 @@ const PageMainSettingsImportCsv = observer(forwardRef<I.PageRef, I.PageSettingsC
 
 	return (
 		<div>
-			<Icon className="logo" />
+			<Icon name="import/csv" className="logo" size={56} />
 			<Title text={translate('popupSettingsImportCsvTitle')} />
 			<Label text={translate('popupSettingsImportCsvText')} />
 
@@ -179,6 +178,6 @@ const PageMainSettingsImportCsv = observer(forwardRef<I.PageRef, I.PageSettingsC
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsImportCsv;

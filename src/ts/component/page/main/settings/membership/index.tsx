@@ -1,13 +1,12 @@
 import React, { forwardRef, useRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Title } from 'Component';
-import { I, S, translate, } from 'Lib';
 
 import Intro from './intro';
 import Purchased from './purchased';
 import Loader from './loader';
+import * as I from 'Interface';
 
-const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsMembership = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { data } = S.Membership;
 	const products = S.Membership.products.filter(it => it.isTopLevel && !it.isHidden);
@@ -41,6 +40,6 @@ const PageMainSettingsMembership = observer(forwardRef<I.PageRef, I.PageSettings
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsMembership;

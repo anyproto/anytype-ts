@@ -1,6 +1,6 @@
 import { observable, action, makeObservable, set } from 'mobx';
-import { I, S, U, J, Relation, translate } from 'Lib';
 import { memoize } from 'lodash';
+import * as I from 'Interface';
 
 interface Detail {
 	relationKey: string;
@@ -25,7 +25,6 @@ const keyMap = {
 	},
 	[I.ObjectLayout.SpaceView]: {
 		notificationMode: 'spacePushNotificationMode',
-		uxType: 'spaceUxType',
 		orderId: 'spaceOrder',
 		allIds: 'spacePushNotificationForceAllIds',
 		muteIds: 'spacePushNotificationForceMuteIds',
@@ -58,7 +57,7 @@ class DetailStore {
 	private map: Map<string, Map<string, Map<string, Detail>>> = new Map();
 
 	constructor() {
-		makeObservable(this as any, {
+		makeObservable<DetailStore, 'map'>(this, {
 			map: observable.shallow,
 			set: action,
 			update: action,
@@ -496,13 +495,13 @@ class DetailStore {
 	 * @returns {any} The mapped object.
 	 */
 	private mapSpaceView (object: any) {
-		object.spaceAccessType = Number(object.spaceAccessType) || I.SpaceType.Private;
+		object.spaceAccessType = Number(object.spaceAccessType) || I.SpaceAccessType.Private;
 		object.spaceAccountStatus = Number(object.spaceAccountStatus) || I.SpaceStatus.Unknown;
 		object.spaceLocalStatus = Number(object.spaceLocalStatus) || I.SpaceStatus.Unknown;
 		object.readersLimit = Number(object.readersLimit) || 0;
 		object.writersLimit = Number(object.writersLimit) || 0;
 		object.spaceId = Relation.getStringValue(object.spaceId);
-		object.spaceDashboardId = Relation.getStringValue(object.spaceDashboardId);
+		object.homepage = Relation.getStringValue(object.homepage);
 		object.chatId = Relation.getStringValue(object.chatId);
 		object.discussionId = Relation.getStringValue(object.discussionId);
 		object.targetSpaceId = Relation.getStringValue(object.targetSpaceId);
@@ -519,9 +518,9 @@ class DetailStore {
 		};
 
 		// Access type
-		object.isPersonal = object.spaceAccessType == I.SpaceType.Personal;
-		object.isPrivate = object.spaceAccessType == I.SpaceType.Private;
-		object.isShared = object.spaceAccessType == I.SpaceType.Shared;
+		object.isPersonal = object.spaceAccessType == I.SpaceAccessType.Personal;
+		object.isPrivate = object.spaceAccessType == I.SpaceAccessType.Private;
+		object.isShared = object.spaceAccessType == I.SpaceAccessType.Shared;
 
 		// Account status
 		object.isAccountActive = [ I.SpaceStatus.Unknown, I.SpaceStatus.Active ].includes(object.spaceAccountStatus);
@@ -533,12 +532,10 @@ class DetailStore {
 		object.isLocalOk = [ I.SpaceStatus.Unknown, I.SpaceStatus.Ok ].includes(object.spaceLocalStatus);
 		object.isLocalLoading = object.spaceLocalStatus == I.SpaceStatus.Loading;
 
-		// UX type
-		object.spaceUxType = Number(object.spaceUxType) || I.SpaceUxType.Data;
-		object.isChat = object.spaceUxType == I.SpaceUxType.Chat;
-		object.isData = object.spaceUxType == I.SpaceUxType.Data;
-		object.isStream = object.spaceUxType == I.SpaceUxType.Stream;
-		object.isOneToOne = object.spaceUxType == I.SpaceUxType.OneToOne;
+		// Space type
+		object.spaceType = Number(object.spaceType) || I.SpaceType.Data;
+		object.isData = object.spaceType == I.SpaceType.Data;
+		object.isOneToOne = object.spaceType == I.SpaceType.OneToOne;
 
 		// Chat
 		object.isMuted = [ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(object.spacePushNotificationMode);
@@ -568,6 +565,12 @@ class DetailStore {
 
 		if (object.source && (!object.name || (object.name == translate('defaultNamePage')))) {
 			object.name = U.String.shortUrl(object.source);
+		};
+
+		const picture = Relation.getStringValue(object.picture);
+		if (picture && !object.coverId) {
+			object.coverId = picture;
+			object.coverType = I.CoverType.Upload;
 		};
 
 		return object;

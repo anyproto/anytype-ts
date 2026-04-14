@@ -1,12 +1,10 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, S, U, J, C, Action, translate, analytics, keyboard, sidebar } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Mousewheel } from 'swiper/modules';
+import * as I from 'Interface';
 
-const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const [ isAnnual, setIsAnnual ] = useState(true);
@@ -47,8 +45,8 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	];
 
 	const actions = [
-		{ id: 'activation', button: translate('commonActivate'), title: translate('popupSettingsMembershipActionsActivationTitle'), text: translate('popupSettingsMembershipActionsActivationText') },
-		{ id: 'contact', button: translate('popupSettingsMembershipActionsContactReachUs'), title: translate('popupSettingsMembershipActionsContactTitle'), text: translate('popupSettingsMembershipActionsContactText') }
+		{ id: 'activation', icon: 'popup/header/activation', button: translate('commonActivate'), title: translate('popupSettingsMembershipActionsActivationTitle'), text: translate('popupSettingsMembershipActionsActivationText') },
+		{ id: 'contact', icon: 'membership/contact', button: translate('popupSettingsMembershipActionsContactReachUs'), title: translate('popupSettingsMembershipActionsContactTitle'), text: translate('popupSettingsMembershipActionsContactText') }
 	];
 
 	const onAction = (item: any) => {
@@ -118,7 +116,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 			<div className={cn.join(' ')}>
 				<div className="top">
 					<div className="iconWrapper">
-						<Icon />
+						<Icon name={item.iconName} size={64} />
 					</div>
 
 					<Title text={item.name} />
@@ -134,7 +132,12 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 								value = translate('commonUnlimited');
 							};
 
-							return <Label key={key} text={U.String.sprintf(name, value)} />;
+							return (
+								<div key={key} className="label">
+									<Icon name="membership/tick" size={14} />
+									<span dangerouslySetInnerHTML={{ __html: U.String.sanitize(U.String.sprintf(name, value)) }} />
+								</div>
+							);
 						})}
 					</div>
 				</div>
@@ -163,7 +166,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 	};
 
 	const resize = () => {
-		const { ww } = U.Common.getWindowDimensions();
+		const { ww } = U.Dom.getWindowDimensions();
 		const sw = sidebar.getDummyWidth();
 		const pw = ww - sw;
 		const breakpoint = {
@@ -173,7 +176,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		};
 
 		for (const key of Object.keys(breakpoint)) {
-			$(nodeRef.current).toggleClass(key, pw <= breakpoint[key]);
+			U.Dom.toggleClass(nodeRef.current, key, pw <= breakpoint[key]);
 		};
 	};
 
@@ -210,7 +213,7 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 					{actions.map((item, idx) => (
 						<div key={idx} className="action">
 							<div className="top">
-								<Icon className={item.id} />
+								<Icon name={item.icon} className={item.id} />
 								<Title text={item.title} />
 								<Label text={item.text} />
 							</div>
@@ -226,6 +229,6 @@ const PageMainSettingsMembershipIntro = observer(forwardRef<I.PageRef, I.PageSet
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsMembershipIntro;

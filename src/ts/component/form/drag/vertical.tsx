@@ -1,5 +1,4 @@
 import React, { useRef, useImperativeHandle, forwardRef, ChangeEvent, MouseEvent, useEffect } from 'react';
-import $ from 'jquery';
 import { Input } from 'Component';
 
 interface Props {
@@ -36,7 +35,7 @@ const DragVertical = forwardRef<DragVerticalRefProps, Props>(({
 	const divRef = useRef(null);
 
 	const setHeight = (v: number) => {
-		$(trackRef.current).css({ height: `${Math.round(v * 72)}px` });
+		U.Dom.css(trackRef.current, { height: `${Math.round(v * 72)}px` });
 	};
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>, value: string) => {

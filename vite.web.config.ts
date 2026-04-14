@@ -1,6 +1,8 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+import AutoImport from 'unplugin-auto-import/vite';
+import { autoObserverPlugin } from './vite.auto-observer';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
@@ -278,7 +280,50 @@ export default defineConfig(({ mode }) => {
 		plugins: [
 			spaFallbackPlugin(),
 			react(),
+			autoObserverPlugin(),
 			webUploadPlugin(),
+
+			AutoImport({
+				imports: [
+					{
+						'Store':     [['*', 'S']],
+						'Hook':      [['*', 'H']],
+						'json':      [['*', 'J']],
+					},
+					{
+						'Lib/api/command':             [['*', 'C']],
+						'Lib/util':                    [['*', 'U']],
+						'Lib/keyboard':                [['keyboard', 'keyboard'], ['Key', 'Key']],
+						'Lib/sidebar':                 [['sidebar', 'sidebar']],
+						'Lib/mark':                    [['default', 'Mark']],
+						'Lib/relation':                [['default', 'Relation']],
+						'Lib/dataview':                [['default', 'Dataview']],
+						'Lib/scrollOnMove':            [['scrollOnMove', 'scrollOnMove']],
+						'Lib/analytics':               [['analytics', 'analytics']],
+						'Lib/action':                  [['default', 'Action']],
+						'Lib/onboarding':              [['default', 'Onboarding']],
+						'Lib/survey':                  [['default', 'Survey']],
+						'Lib/preview':                 [['default', 'Preview']],
+						'Lib/translate':               [['translate', 'translate']],
+						'Lib/sound':                   [['default', 'Sound'], ['SYSTEM_SOUND_ID', 'SYSTEM_SOUND_ID']],
+						'Lib/renderer':                [['default', 'Renderer']],
+						'Lib/api/dispatcher':          [['dispatcher', 'dispatcher']],
+						'Lib/api/mapper':              [['Mapper', 'Mapper']],
+						'Lib/api/struct':              [['Encode', 'Encode'], ['Decode', 'Decode']],
+						'Lib/service/sparkOnboarding': [['getSparkOnboardingService', 'getSparkOnboardingService']],
+					},
+				],
+				dts: false,
+				include: [/\.tsx?$/],
+				exclude: [
+					/node_modules/,
+					/src\/ts\/lib\/index\.ts$/,
+					/src\/ts\/store\/index\.ts$/,
+					/src\/ts\/interface\/index\.ts$/,
+					/src\/ts\/model\/index\.ts$/,
+					/src\/ts\/component\/index\.ts$/,
+				],
+			}),
 
 			// Move index.web.html from dist-web/dist/ to dist-web/ and fix paths
 			{

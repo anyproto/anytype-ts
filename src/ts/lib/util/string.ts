@@ -1,7 +1,6 @@
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import parsePhoneNumber from 'libphonenumber-js';
-import { U, Mark } from 'Lib';
 
 const TEST_HTML = /<[^>]*>/;
 const UNSAFE_HTML_PATTERN = /<\s*(script|iframe|svg|img|math|object|embed|style|form|input|video|audio|source)\b|<[^>]+\s+on\w+\s*=|<[^>]+\s+style\s*=\s*["'][^"']*(?:javascript:|data:)|<[^>]+\s+(?:src|href|data|action)\s*=\s*["']?\s*(?:javascript:|data:)|<style[^>]*>[^<]*(?:javascript:|data:)/iu;
@@ -161,7 +160,7 @@ class UtilString {
 			return '';
 		};
 
-		return String(str || '').replace(/[_-\s]([a-zA-Z])/g, (_, char) => char.toUpperCase()).replace(/^[A-Z]/, char => char.toLowerCase());
+		return String(str || '').replace(/[_-\s\\/]([a-zA-Z])/g, (_, char) => char.toUpperCase()).replace(/^[A-Z]/, char => char.toLowerCase());
 	};
 
 	/**

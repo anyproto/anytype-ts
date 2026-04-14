@@ -1,15 +1,14 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Loader, Title, Label, EmptySearch, Icon, Filter } from 'Component';
-import { I, C, S, U, translate, analytics, } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel, Navigation } from 'swiper/modules';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, WindowScroller } from 'react-virtualized';
+import * as I from 'Interface';
 
 const HEIGHT = 378;
 const LIMIT = 2;
 
-const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref) => {
+const PopupUsecasePageList = forwardRef<{}, I.PopupUsecase>((props, ref) => {
 
 	const { getAuthor, onAuthor, position, onPage } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -163,7 +162,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 				id={`category-${item.id}`}
 				onClick={() => onCategory(item)}
 			>
-				{item.icon ? <Icon className={item.icon} /> : ''}
+				{item.icon ? <Icon name={`popup/usecase/${item.icon}`} size={16} /> : ''}
 				{item.name}
 			</div>
 		);
@@ -235,7 +234,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 				<Filter
 					ref={filterRef}
 					id="store-filter"
-					iconParam={{ className: 'search' }}
+					iconParam={{ name: 'common/search' }}
 					placeholder={translate('commonSearchPlaceholder')}
 					onChange={onFilterChange}
 					onClear={onFilterClear}
@@ -246,7 +245,7 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 				{!items.length ? (
 					<EmptySearch text={textEmpty} />
 				) : (
-					<WindowScroller scrollElement={$('#popupUsecase-innerWrap').get(0)}>
+					<WindowScroller scrollElement={U.Dom.get('popupUsecase-innerWrap')}>
 						{({ height, isScrolling, registerChild, scrollTop }) => (
 							<AutoSizer disableHeight={true} className="scrollArea" onResize={onResize}>
 								{({ width }) => (
@@ -271,6 +270,6 @@ const PopupUsecasePageList = observer(forwardRef<{}, I.PopupUsecase>((props, ref
 		</div>
 	);
 
-}));
+});
 
 export default PopupUsecasePageList;

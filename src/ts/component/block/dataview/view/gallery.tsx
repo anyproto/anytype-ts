@@ -1,13 +1,12 @@
 import React, { forwardRef, useRef, useState, useEffect, useLayoutEffect, useMemo, } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { motion } from 'motion/react';
-import { I, S, U, J, Relation, Dataview } from 'Lib';
-import { LoadMore } from 'Component';
+import { LoadMore, Icon } from 'Component';
 import Card from './gallery/card';
 import { throttle } from 'lodash';
+import * as I from 'Interface';
 
-const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewGallery = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { 
 		rootId, block, isPopup, isInline, className, getSubId, getView, getKeys, getLimit, 
@@ -218,7 +217,9 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 					key={`gallery-card-${view.id + id}`} 
 					className="card add" 
 					onClick={e => onRecordAdd(e, 1)} 
-				/>
+				>
+					<Icon name="plus/menu" />
+				</div>
 			);
 		} else {
 			return (
@@ -274,7 +275,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 
 		content = (
 			<WindowScroller
-				scrollElement={U.Common.getScrollContainer(isPopup).get(0)}
+				scrollElement={U.Dom.getScrollContainer(isPopup)}
 				onScroll={onScroll}
 				scrollTop={topRef.current}
 			>
@@ -319,6 +320,6 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 		</motion.div>
 	);
 
-}));
+});
 
 export default ViewGallery;

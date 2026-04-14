@@ -1,9 +1,9 @@
 import { forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { Button } from 'Component';
-import { I, C, S, U } from 'Lib';
+import * as I from 'Interface';
 
-const Success = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const Success = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const object = S.Detail.mapper(S.Extension.createdObject);
 
@@ -26,6 +26,6 @@ const Success = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Success;

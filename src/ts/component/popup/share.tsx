@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Title, Label, Button } from 'Component';
-import { I, U, J, translate, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const PopupShare: FC<I.Popup> = () => {
 

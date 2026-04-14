@@ -1,9 +1,15 @@
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 export enum LinkCardStyle {
 	Text		 = 0,
 	Card		 = 1,
 	Inline		 = 2,
+};
+
+export enum LinkDefaultStyle {
+	Text		 = 0,
+	Card		 = 1,
+	CardMedium	 = 2,
 };
 
 export enum LinkIconSize {

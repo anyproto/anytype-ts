@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, M, C, S, U, Action, Relation, keyboard, translate } from 'Lib';
 import { Block, Button, DragHorizontal, Loader } from 'Component';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
@@ -13,7 +12,7 @@ interface RefProps {
 	setPercent: (v: number) => void;
 };
 
-const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
+const PageHeadEditor = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { rootId, isPopup, readonly, onKeyDown, onKeyUp, onMenuAdd, onPaste, setLayoutWidth } = props;
 	const dragRef = useRef(null);
@@ -30,12 +29,12 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const init = () => {
-		const wrapper = $(wrapperRef.current).parents('#editorWrapper').first();
+		const wrapper = wrapperRef.current?.closest('#editorWrapper');
 
-		if (wrapper.length) {
-			wrapper.attr({ class: [ 'editorWrapper', check.className ].join(' ') });
+		if (wrapper) {
+			wrapper.className = [ 'editorWrapper', check.className ].join(' ');
 		};
-		U.Common.triggerResizeEditor(isPopup);
+		U.Dom.triggerResizeEditor(isPopup);
 	};
 
 	const onScaleStart = (e: any, v: number) => {
@@ -50,6 +49,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	
 	const onScaleEnd = (e: any, v: number) => {
 		keyboard.disableSelection(false);
+		setLayoutWidth(v);
 		setPercent(v);
 
 		const root = S.Block.getLeaf(rootId, rootId);
@@ -63,7 +63,9 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const setPercent = (v: number) => {
-		$(dragValueRef.current).text(Math.ceil((v + 1) * 100) + '%');
+		if (dragValueRef.current) {
+			dragValueRef.current.textContent = Math.ceil((v + 1) * 100) + '%';
+		};
 	};
 
 	useEffect(() => {
@@ -180,8 +182,8 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 			{bookmarkHead}
 
 			<div
-				onMouseEnter={() => $(`#editor-controls-${rootId}`).addClass('hover')}
-				onMouseLeave={() => $(`#editor-controls-${rootId}`).removeClass('hover')}
+				onMouseEnter={() => U.Dom.addClass(U.Dom.get(`editor-controls-${rootId}`), 'hover')}
+				onMouseLeave={() => U.Dom.removeClass(U.Dom.get(`editor-controls-${rootId}`), 'hover')}
 			>
 				{check.withIcon ? <Block {...props} key={icon.id} block={icon} className="noPlus" /> : ''}
 				<Block
@@ -202,6 +204,6 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default PageHeadEditor;

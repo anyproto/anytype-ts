@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState } from 'react';
 import { Title, Label, Select, Button, Error } from 'Component';
-import { I, S, U, translate, Action, analytics, Renderer, Preview } from 'Lib';
-import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
-const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { close } = props;
 	const { networkConfig } = S.Auth;
@@ -128,7 +127,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 			S.Popup.open('confirm', {
 				className: 'localOnlyWarning',
 				data: {
-					icon: 'warning',
+					iconParam: { name: 'popup/header/warning', color: 'orange' },
 					title: translate('commonAreYouSure'),
 					text: translate('popupSettingsOnboardingLocalOnlyConfirmText'),
 					textConfirm: translate('popupSettingsOnboardingLocalOnlyConfirmConfirm'),
@@ -149,7 +148,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 
 	const onTooltipShow = (e: any, text: string) => {
 		if (text) {
-			Preview.tooltipShow({ text, element: $(e.currentTarget) });
+			Preview.tooltipShow({ text, element: e.currentTarget as HTMLElement });
 		};
 	};
 
@@ -217,6 +216,6 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default PopupSettingsOnboarding;

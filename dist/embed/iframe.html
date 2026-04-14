@@ -79,6 +79,7 @@
 				const allowedOrigins = [
 					'//localhost:',
 					'file://',
+					'^null$',
 				];
 
 				let processor = 0;
@@ -143,6 +144,28 @@
 						if ((processor == Processor.Telegram) && !html.match(/<script/)) {
 							const post = html.replace(/^https:\/\/t.me\//, '');
 							html = '<' + `script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-post="${post}" data-width="100%"></script` + '>';
+						};
+
+						if (processor == Processor.Twitter) {
+							const m = html.match(/https:\/\/(?:twitter\.com|x\.com)\/\w+\/status\/(\d+)/);
+							if (m) {
+								const theme = param.theme == 'dark' ? 'dark' : 'light';
+								html = `<iframe src="https://platform.twitter.com/embed/Tweet.html?id=${m[1]}&theme=${theme}" style="width:100%;border:none;" allowfullscreen></iframe>`;
+
+								win.on('message.twitter', (e) => {
+									const d = e.originalEvent.data;
+									if (!d || !d['twttr.embed']) return;
+
+									const msg = d['twttr.embed'];
+									if ((msg.method == 'twttr.private.resize') && msg.params && msg.params.length) {
+										const h = msg.params[0] && msg.params[0].height;
+										if (h) {
+											root.find('iframe').css({ height: h });
+											resize();
+										};
+									};
+								});
+							};
 						};
 
 						if (insertBeforeLoad) {
@@ -299,7 +322,6 @@
 						};
 
 						case Processor.Twitter: {
-							libs.push('https://platform.twitter.com/widgets.js');
 							break;
 						};
 

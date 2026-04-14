@@ -1,15 +1,14 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Label } from 'Component';
-import { I, S, U } from 'Lib';
+import * as I from 'Interface';
 
-const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionObjectTableOfContents = forwardRef<{}, I.SidebarSectionComponent>((props, ref) => {
 
 	const { rootId, isPopup, blockId } = props;
 	const [ dummy, setDummy ] = useState(0);
 
 	const onClick = (e: any, item: any) => {
-		U.Common.scrollToHeader(rootId, item, isPopup);
+		U.Dom.scrollToHeader(rootId, item, isPopup);
 	};
 
 	const Item = (item: any) => {
@@ -52,6 +51,6 @@ const SidebarSectionObjectTableOfContents = observer(forwardRef<{}, I.SidebarSec
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionObjectTableOfContents;

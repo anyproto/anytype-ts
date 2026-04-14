@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Button, Icon, Label, Title } from 'Component';
-import { I, translate, Action, } from 'Lib';
+import * as I from 'Interface';
 
-const MenuIdentity = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuIdentity = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { close } = props;
 
@@ -15,7 +14,7 @@ const MenuIdentity = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	return (
 		<>
 			<div className="iconWrapper">
-				<Icon />
+				<Icon name="header/anyName" color="default" />
 			</div>
 
 			<Title text={translate('headerSettingsIdentityInfoTitle')} />
@@ -23,6 +22,6 @@ const MenuIdentity = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			<Button size={36} text={translate('headerSettingsIdentityInfoExplorePlans')} onClick={onClick} />
 		</>
 	);
-}));
+});
 
 export default MenuIdentity;

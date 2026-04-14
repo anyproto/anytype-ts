@@ -1,0 +1,22 @@
+import { registerIcon } from '../registry';
+import Activity from './activity';
+import Flags from './flags';
+import Foods from './foods';
+import Nature from './nature';
+import Objects from './objects';
+import People from './people';
+import Places from './places';
+import Random from './random';
+import Recent from './recent';
+import Symbols from './symbols';
+
+registerIcon('emoji/activity', Activity);
+registerIcon('emoji/flags', Flags);
+registerIcon('emoji/foods', Foods);
+registerIcon('emoji/nature', Nature);
+registerIcon('emoji/objects', Objects);
+registerIcon('emoji/people', People);
+registerIcon('emoji/places', Places);
+registerIcon('emoji/random', Random);
+registerIcon('emoji/recent', Recent);
+registerIcon('emoji/symbols', Symbols);

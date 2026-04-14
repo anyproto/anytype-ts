@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, ObjectName, Icon, DropTarget } from 'Component';
-import { I, S, U, C, translate, Preview, Dataview } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	d: number;
@@ -17,7 +16,7 @@ interface Ref {
 
 const LIMIT = 4;
 
-const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
+const CalendarItem = forwardRef<Ref, Props>((props, ref) => {
 
 	const { 
 		rootId, block, className, d, m, y, isToday, isCollection, readonly, getSubId, getView, onContext, getKeys, getTarget, getSearchIds, isAllowedObject,
@@ -59,7 +58,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(Dataview.getActiveFilters(view) as any[]);
-		const sorts: I.Sort[] = [].concat(view.sorts);
+		const sorts: I.Sort[] = [].concat(Dataview.getFilteredSorts(view.sorts));
 		const searchIds = getSearchIds();
 
 		filters.push({ 
@@ -86,7 +85,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 			subId,
 			limit,
 			filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
-			sorts: sorts.map(Dataview.filterMapper),
+			sorts: sorts.map(it => Dataview.sortMapper(it)),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			collectionId: (isCollection ? object.id : ''),
@@ -98,11 +97,13 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
-		const node = $(nodeRef.current);
-		const element = node.find(`#record-${U.Common.esc(item.id)}`);
+		const node = nodeRef.current;
+		const element = U.Dom.select(`#record-${U.Common.esc(item.id)}`, node);
 		const name = U.String.shorten(item.name, 50);
 
-		Preview.tooltipShow({ text: name, element });
+		if (element) {
+			Preview.tooltipShow({ text: name, element });
+		};
 	};
 
 	const onMouseLeave = () => {
@@ -110,15 +111,15 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onMore = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const view = getView();
 
 		S.Menu.closeAll([ 'calendarDay' ], () => {
 			S.Menu.open('calendarDay', {
 				element: node,
 				horizontal: I.MenuDirection.Center,
-				width: node.outerWidth() + 8,
-				offsetY: -(node.outerHeight() + 4),
+				width: (node?.offsetWidth || 0) + 8,
+				offsetY: -((node?.offsetHeight || 0) + 4),
 				classNameWrap: 'fromBlock',
 				noFlipX: true,
 				data: {
@@ -136,9 +137,9 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onContextHandler = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const options = [
-			{ id: 'open', icon: 'expand', name: translate('commonOpenObject') }
+			{ id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') }
 		] as I.Option[];
 
 		if (canCreateValue) {
@@ -147,7 +148,7 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 
 		S.Menu.open('select', {
 			element: node,
-			offsetY: -node.outerHeight() + 32,
+			offsetY: -(node?.offsetHeight || 0) + 32,
 			offsetX: 16,
 			noFlipX: true,
 			noFlipY: true,
@@ -295,8 +296,8 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 		>
 			<div className="head">
 				{canCreateValue ? (
-					<Icon 
-						className="plus" withBackground={true}
+					<Icon
+						name="plus/menu" className="plus" withBackground={true}
 						tooltipParam={{ text: translate(`commonNewObject`) }} 
 						onClick={onCreate} 
 					/> 
@@ -317,6 +318,6 @@ const CalendarItem = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default CalendarItem;

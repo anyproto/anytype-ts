@@ -46,7 +46,7 @@
 
 			.head { display: flex; flex-direction: row; align-items: center; justify-content: space-between; }
 			.head {
-				.icon { flex-shrink: 0; width: 24px !important; height: 24px !important; opacity: 0; transition: opacity $transitionCommon; }
+				.icon { width: 24px !important; height: 24px !important; opacity: 0; transition: opacity $transitionCommon; }
 
 				.number { @include text-paragraph; text-align: right; width: 100%; }
 				.number {
@@ -63,12 +63,11 @@
 			.record {
 				.dropTarget { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
 
-				.iconObject { flex-shrink: 0; }
 				.name { @include text-overflow-nw; width: 100%; }
 			}
 			.record::before {
 				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1;
-				pointer-events: none;
+				pointer-events: none; border-radius: inherit;
 			}
 			.record:hover::before { background: var(--color-shape-highlight-medium); }
 

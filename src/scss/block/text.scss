@@ -25,9 +25,14 @@
 					> span { min-width: 100%; display: inline-block; text-align: center; }
 				}
 
-				&.markerCheckbox,
-				&.markerToggle {
+				&.markerCheckbox { color: var(--color-text-tertiary); }
+				&.markerCheckbox.active { color: var(--color-system-accent-100); }
+
+				&.markerCheckbox {
 					img { width: 20px; height: 20px; }
+				}
+				&.markerToggle {
+					img { width: 24px; height: 24px; }
 				}
 			}
 		}
@@ -83,13 +88,13 @@
 
 	/* IsChecked */
 
-	.block.blockText.isChecked > .wrapContent > .selectionTarget > .dropTarget * { color: var(--color-control-active) !important; }
+	.block.blockText.isChecked > .wrapContent > .selectionTarget > .dropTarget { color: var(--color-control-active) !important; }
 
 	/* Title */
 
 	.block.blockText.textTitle { @include text-title; }
 	.block.blockText.textTitle {
-		> .wrapMenu:hover > .icon.dnd { opacity: 1; }
+		> .wrapMenu:hover > .icon.commonDnd { opacity: 1; }
 		> .wrapContent {
 			> .selectionTarget {
 				> .dropTarget {
@@ -116,7 +121,7 @@
 	/* Description */
 
 	.block.blockText.textDescription { @include text-description; }
-	.block.blockText.textDescription > .wrapMenu:hover > .icon.dnd { opacity: 1; }
+	.block.blockText.textDescription > .wrapMenu:hover > .icon.commonDnd { opacity: 1; }
 
 	/* Headers */
 
@@ -273,9 +278,7 @@
 									display: flex; flex-direction: row; gap: 0px 4px; align-items: center;
 								}
 								.btn {
-									.icon { flex-shrink: 0; width: 20px; height: 20px; }
-									.icon.codeWrap { background-image: url('~img/icon/menu/action/wrap0.svg'); }
-									.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
+									.icon { width: 20px; height: 20px; }
 
 									.txt { line-height: 20px; vertical-align: top; }
 								}

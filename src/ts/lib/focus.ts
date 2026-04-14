@@ -1,6 +1,5 @@
-import $ from 'jquery';
 import { setRange } from 'selection-ranges';
-import { I, C, U, J, keyboard, Mark } from 'Lib';
+import * as I from 'Interface';
 
 /**
  * Focus manages the focus state and text selection within the application.
@@ -81,23 +80,26 @@ class Focus {
 	 */
 	clearRange (withRange: boolean) {
 		const { focused } = this.state;
-		const el = $(`.focusable.c${U.Common.esc(focused)}`);
-		
-		if (!el.length || el.hasClass('value')) {
+		const el = U.Dom.select(`.focusable.c${U.Common.esc(focused)}`);
+
+		if (!el || U.Dom.hasClass(el, 'value')) {
 			keyboard.setFocus(false);
 		};
 
 		if (withRange) {
-			U.Common.clearSelection();
+			U.Dom.clearSelection();
 			keyboard.setFocus(false);
 		};
 
 		// Clear selection overlay for non-text blocks
 		if (focused) {
-			$(`#selectionTarget-${U.Common.esc(focused)}`).removeClass('isKeyboardFocused');
+			const target = U.Dom.get(`selectionTarget-${focused}`);
+			if (target) {
+				U.Dom.removeClass(target, 'isKeyboardFocused');
+			};
 		};
 
-		$('.focusable.isFocused').removeClass('isFocused');
+		U.Dom.selectAll('.focusable.isFocused').forEach(el => U.Dom.removeClass(el, 'isFocused'));
 	};
 
 	/**
@@ -110,29 +112,31 @@ class Focus {
 			return;
 		};
 
-		$('.focusable.isFocused').removeClass('isFocused');
-		$('.selectionTarget.isKeyboardFocused').removeClass('isKeyboardFocused');
+		U.Dom.selectAll('.focusable.isFocused').forEach(el => U.Dom.removeClass(el, 'isFocused'));
+		U.Dom.selectAll('.selectionTarget.isKeyboardFocused').forEach(el => U.Dom.removeClass(el, 'isKeyboardFocused'));
 
-		const node = $(`.focusable.c${U.Common.esc(focused)}`);
-		if (!node.length) {
+		const node = U.Dom.select(`.focusable.c${U.Common.esc(focused)}`);
+		if (!node) {
 			return;
 		};
 
-		node.addClass('isFocused');
+		U.Dom.addClass(node, 'isFocused');
 
-		const el = node.get(0);
-		el.focus({ preventScroll: true });
+		node.focus({ preventScroll: true });
 
 		// Show selection overlay for non-text blocks.
-		// Must be after el.focus() because the previous text block's
+		// Must be after node.focus() because the previous text block's
 		// blur handler calls focus.clear() which would remove the class.
-		if (!node.hasClass('value')) {
-			$(`#selectionTarget-${U.Common.esc(focused)}`).addClass('isKeyboardFocused');
+		if (!U.Dom.hasClass(node, 'value')) {
+			const target = U.Dom.get(`selectionTarget-${focused}`);
+			if (target) {
+				U.Dom.addClass(target, 'isKeyboardFocused');
+			};
 		};
 
-		if (node.hasClass('input')) {
+		if (U.Dom.hasClass(node, 'input')) {
 			window.setTimeout(() => {
-				const input = el as HTMLInputElement;
+				const input = node as HTMLInputElement;
 				input.setSelectionRange(range.from, range.to);
 
 				const style = window.getComputedStyle(input);
@@ -141,29 +145,29 @@ class Focus {
 				};
 			});
 		} else
-		if (node.hasClass('editable')) {
+		if (U.Dom.hasClass(node, 'editable')) {
 			keyboard.setFocus(true);
 
 			// Convert model offsets to DOM offsets if ZWS cursor anchors are present
-			if (Mark.hasZws(el)) {
-				const domFrom = Mark.modelToDom(range.from, el);
-				const domTo = Mark.modelToDom(range.to, el);
+			if (Mark.hasZws(node)) {
+				const domFrom = Mark.modelToDom(range.from, node);
+				const domTo = Mark.modelToDom(range.to, node);
 
-				setRange(el, { start: domFrom, end: domTo });
+				setRange(node, { start: domFrom, end: domTo });
 			} else {
-				setRange(el, { start: range.from, end: range.to });
+				setRange(node, { start: range.from, end: range.to });
 			};
 
-			const style = window.getComputedStyle(el);
+			const style = window.getComputedStyle(node);
 			if (style.direction === 'rtl') {
 				const selection = window.getSelection();
 				if (selection && selection.rangeCount) {
 					const r = selection.getRangeAt(0);
 					const rect = r.getBoundingClientRect();
-					const parentRect = el.getBoundingClientRect();
+					const parentRect = node.getBoundingClientRect();
 
 					if (rect.left < parentRect.left) {
-						el.scrollLeft = el.scrollLeft - (parentRect.left - rect.left);
+						node.scrollLeft = node.scrollLeft - (parentRect.left - rect.left);
 					};
 				};
 			};
@@ -181,29 +185,34 @@ class Focus {
 			return;
 		};
 
-		const node = $(`.focusable.c${U.Common.esc(id)}`);
-		if (!node.length) {
+		const node = U.Dom.select(`.focusable.c${U.Common.esc(id)}`);
+		if (!node) {
 			return;
 		};
 
-		let rect = U.Common.getSelectionRect();
+		let rect = U.Dom.getSelectionRect();
 		if (!rect) {
-			rect = U.Common.getElementRect(node.get(0));
+			rect = U.Dom.getElementRect(node);
 		};
 		if (!rect) {
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const ch = container.height();
-		const st = container.scrollTop();
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (!container) {
+			return;
+		};
+
+		const ch = container.clientHeight;
+		const st = container.scrollTop;
 		const { header } = J.Size;
-		const y = rect.top + st - container.offset().top;
+		const containerRect = container.getBoundingClientRect();
+		const y = rect.top + st - containerRect.top;
 		const top = st + header;
 		const bottom = st + ch;
 
 		if ((y < top) || (y > bottom)) {
-			container.scrollTop(Math.max(0, y - ch / 2));
+			container.scrollTop = Math.max(0, y - ch / 2);
 		};
 	};
 

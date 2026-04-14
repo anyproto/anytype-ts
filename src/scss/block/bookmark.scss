@@ -6,11 +6,13 @@
 		.focusable { border-radius: 4px; }
 		.loaderWrapper { border-radius: 4px; border: solid 1px var(--color-shape-secondary); height: 48px; width: 100%; }
 
-		.deleted { display: flex; gap: 0px 6px; align-items: center; color: var(--color-control-active); }
-        .deleted {
-			.icon.ghost { width: 24px; height: 24px; }
-            .name { display: inline-block; vertical-align: top; max-width: calc(100% - 26px); position: relative; @include text-overflow-nw; margin: 0px; }
-        }
+		.mediaState { @include text-small; color: var(--color-control-active); display: flex; flex-direction: column; gap: 12px 0px; align-items: center; justify-content: center; }
+		.mediaState {
+			.icon.ghost { width: 48px; height: 48px; }
+			.name { text-align: center; color: var(--color-text-secondary); font-weight: 500; }
+		}
+
+		.mediaState.isDeleted, .mediaState.isArchived { height: 104px; background: var(--color-bg-primary); border: 1px solid var(--color-shape-highlight-medium); border-radius: inherit; }
 
 		.inner { 
 			display: flex; border: 1px solid var(--color-shape-secondary); transition: border-color $transitionCommon; 
@@ -31,7 +33,6 @@
 
 			.name { @include text-common; line-height: 20px; font-weight: 500; @include clamp2; }
 			.descr { @include text-small; line-height: 16px; color: var(--color-text-secondary); @include clamp2; }
-			.archive { position: absolute; right: 16px; top: 16px; z-index: 1; }
 		}
 		
 		.inner.isVertical { display: flex; flex-direction: column; }
@@ -52,7 +53,6 @@
 				.img { width: 100%; height: 100%; position: static; left: auto; top: auto; border-radius: 4px; }
 			}
 
-			.archive { right: 0px; }
 		}
 		.inner.withImage:not(.isVertical) {
 			.side.left { display: flex; flex-direction: column; justify-content: center; }

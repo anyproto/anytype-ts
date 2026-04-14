@@ -37,7 +37,7 @@
 			.name { line-height: 20px; width: calc(100% - 26px); @include text-overflow-nw; }
 			.clickable { width: calc(100% - 44px); display: inline-block; vertical-align: top; }
 			.icon.more { background-color: var(--color-bg-primary); }
-			.icon.dnd { height: auto; align-self: stretch; background-position: center 2px; background-size: 20px; }
+			.icon.commonDnd { height: auto; align-self: stretch; background-position: center 2px; background-size: 20px; }
 		}
 		.item.isImage {
 			.icon.more { top: 12px; right: 12px; margin: 0px; }
@@ -47,7 +47,7 @@
 		.item.isFile {
 			.icon.downloading {
 				width: 20px; height: 20px; flex-shrink: 0;
-				background-image: url('~img/icon/vault/spinner.svg'); background-size: 20px; animation: rotate 1.2s infinite linear;
+				background-image: url('~img/icon/loader.svg'); background-size: 20px; animation: rotate 1.2s infinite linear;
 			}
 		}
 		.item.isFile:hover, .item.isFile.active {

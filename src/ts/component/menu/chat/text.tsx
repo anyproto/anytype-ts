@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, keyboard, Mark, S, translate, U } from 'Lib';
+import * as I from 'Interface';
 
-const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuChatText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -11,24 +10,23 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getButtons = () => {
 		return [
-			{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: keyboard.getCaption('textBold') },
-			{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: keyboard.getCaption('textItalic') },
-			{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
-			{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: keyboard.getCaption('textUnderlined') },
-			{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: keyboard.getCaption('textLink') },
-			{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonInlineCode'), caption: keyboard.getCaption('textCode') },
+			{ type: I.MarkType.Bold, icon: 'menu/mark/bold', name: translate('commonBold'), caption: keyboard.getCaption('textBold') },
+			{ type: I.MarkType.Italic, icon: 'menu/mark/italic', name: translate('commonItalic'), caption: keyboard.getCaption('textItalic') },
+			{ type: I.MarkType.Strike, icon: 'menu/mark/strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
+			{ type: I.MarkType.Underline, icon: 'menu/mark/underline', name: translate('commonUnderline'), caption: keyboard.getCaption('textUnderlined') },
+			{ type: I.MarkType.Link, icon: 'menu/mark/link', name: translate('commonLink'), caption: keyboard.getCaption('textLink') },
+			{ type: I.MarkType.Code, icon: 'menu/mark/code', name: translate('commonInlineCode'), caption: keyboard.getCaption('textCode') },
 		];
 	};
 
 	const onButton = (e: any, type: I.MarkType) => {
 		const { from, to } = range;
 		const mark = Mark.getInRange(marks, type, { from, to });
-		const rect = U.Common.getSelectionRect();
-		const win = $(window);
+		const rect = U.Dom.getSelectionRect();
 
 		const menuParam: any = {
 			element: `#button-${U.Common.esc(blockId)}-${type}`,
-			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+			rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
 			className: 'fixed',
 			classNameWrap: 'fromBlock',
 			offsetY: -4,
@@ -79,8 +77,6 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	return (
 		<div className="buttons">
 			{buttons.map((action: any, i: number) => {
-				const cn = [ action.icon ];
-
 				let isSet = false;
 				if (action.type == I.MarkType.Link) {
 					const inRange = Mark.getInRange(marks, I.MarkType.Link, range) || Mark.getInRange(marks, I.MarkType.Object, range);
@@ -89,15 +85,13 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					isSet = !!Mark.getInRange(marks, action.type, range);
 				};
 
-				if (isSet) {
-					cn.push('active');
-				};
-
 				return (
 					<Icon
 						id={`button-${blockId}-${action.type}`}
 						key={i}
-						className={cn.join(' ')}
+						name={action.icon}
+						color={isSet ? 'default' : ''}
+						className={isSet ? 'active' : ''}
 						tooltipParam={{ text: action.name, caption: action.caption }}
 						onMouseDown={e => onButton(e, action.type)}
 					/>
@@ -105,6 +99,6 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			})}
 		</div>
 	);
-}));
+});
 
 export default MenuChatText;

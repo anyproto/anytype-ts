@@ -26,7 +26,7 @@
 
 			&::before { transition: none; }
 
-			.icon.plus { margin-right: 4px; background-image: url('~img/icon/plus/menu0.svg'); }
+			.icon.plus { margin-right: 4px; }
 		}
 
 		.cell { width: calc(100% - 160px); white-space: nowrap; }
@@ -43,9 +43,7 @@
 			.name { @include clamp1; }
 		}
 
-		.icon.collection { background-image: url('~img/icon/menu/action/block/collection.svg'); }
-		.icon.set { background-image: url('~img/icon/menu/action/block/set.svg'); }
-	}
+}
 }
 
 html.platformWindows, html.platformLinux {

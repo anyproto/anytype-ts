@@ -1,4 +1,4 @@
-#page { overflow-x: hidden; overflow-y: auto; overscroll-behavior: none; }
+#page { overflow-x: hidden; overflow-y: auto; overscroll-behavior: none; scrollbar-gutter: stable; }
 #page.isDraggingProperty { pointer-events: none; }
 
 .pageFlex { 

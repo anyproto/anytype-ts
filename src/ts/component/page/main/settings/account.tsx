@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
 import { IconObject, Input, Title, Icon, Label, Button } from 'Component';
-import { I, S, U, J, C, translate, keyboard, Action, analytics, Relation } from 'Lib';
-import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
-const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsAccount = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { config } = S.Common;
 	const { account } = S.Auth;
@@ -85,7 +84,7 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 				globalName ? (
 					<div className="section">
 						<div className="anyNameWrapper">
-							<Icon className="badge" />
+							<Icon name="membership/badge" className="badge" color="default" />
 							<Title text={translate('popupSettingsAccountAnyIdTitle')} />
 						</div>
 
@@ -95,7 +94,7 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 								readonly={true}
 								onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnyIdTitle'), account.id)}
 							/>
-							<Icon className="copy" />
+							<Icon name="menu/action/copy" className="copy" />
 						</div>
 					</div>
 				) : (
@@ -108,7 +107,7 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 								readonly={true}
 								onClick={() => U.Common.copyToast(translate('popupSettingsAccountAnytypeIdentityTitle'), account.id)}
 							/>
-							<Icon className="copy" />
+							<Icon name="menu/action/copy" className="copy" />
 						</div>
 
 						<div className="upsellWrapper">
@@ -137,13 +136,13 @@ const PageMainSettingsAccount = observer(forwardRef<I.PageRef, I.PageSettingsCom
 							readonly={true}
 							onClick={() => U.Common.copyToast(translate('popupSettingsEthereumIdentityTitle'), account.info.ethereumAddress)}
 						/>
-						<Icon className="copy" />
+						<Icon name="menu/action/copy" className="copy" />
 					</div>
 				</div>
 			) : ''}
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsAccount;

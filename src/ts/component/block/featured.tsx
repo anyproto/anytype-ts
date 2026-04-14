@@ -1,9 +1,9 @@
 import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { ObjectType, Cell, Block } from 'Component';
-import { I, C, S, U, J, M, Preview, analytics, Relation, Onboarding, history as historyPopup, keyboard, translate } from 'Lib';
+import { history as historyPopup } from 'Lib/history';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 interface Props extends I.BlockComponent {
 	size?: number;
@@ -13,7 +13,7 @@ interface Props extends I.BlockComponent {
 const PREFIX = 'blockFeatured';
 const SOURCE_LIMIT = 1;
 
-const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const BlockFeatured = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const { rootId, traceId, block, size = 18, iconSize = 18, isPopup, readonly, isInsidePreview, onKeyDown, onKeyUp } = props;
 	const allowedValue = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -44,14 +44,17 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const init = () => {
 		const items = getItems().filter(it => it.relationKey != 'description');
-		const node = $(nodeRef.current);
-		const obj = $(`#block-${U.Common.esc(block.id)}`);
+		const node = nodeRef.current;
+		const obj = U.Dom.get(`block-${block.id}`);
 
-		obj.toggleClass('isHidden', !items.length);
+		U.Dom.toggleClass(obj, 'isHidden', !items.length);
 
 		if (node) {
-			node.find('.cell.first').removeClass('first');
-			node.find('.cell').first().addClass('first');
+			U.Dom.selectAll('.cell.first', node).forEach(el => U.Dom.removeClass(el, 'first'));
+			const firstCell = U.Dom.select('.cell', node);
+			if (firstCell) {
+				U.Dom.addClass(firstCell, 'first');
+			};
 		};
 	};
 
@@ -250,10 +253,12 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any, relationKey: string, text?: string) => {
-		const cell = $(`#${U.Common.esc(Relation.cellId(PREFIX, relationKey, rootId))}`);
+		const cell = U.Dom.get(Relation.cellId(PREFIX, relationKey, rootId));
 		const relation = S.Record.getRelationByKey(relationKey);
 		const show = (text: string) => {
-			Preview.tooltipShow({ text, element: cell });
+			if (cell) {
+				Preview.tooltipShow({ text, element: cell });
+			};
 		};
 
 		if (text) {
@@ -484,7 +489,7 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let menuParam = {
 			element: elementId,
-			className: 'fromBlockFeatured',
+			className: 'withTitle',
 			offsetY: 4,
 			noFlipX: true,
 			title: relation.name,
@@ -721,7 +726,10 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 									withName={true}
 									noInplace={true}
 									onCellChange={onCellChange}
-									menuParam={{ className: 'fromBlockFeatured', classNameWrap: 'fromBlock' }}
+									menuParam={{ 
+										className: 'withTitle', 
+										classNameWrap: 'fromBlock',
+									}}
 								/>
 								<div className="bullet" />
 							</span>
@@ -732,6 +740,6 @@ const BlockFeatured = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockFeatured;

@@ -1,13 +1,13 @@
 
-import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set, runInAction } from 'mobx';
-import type { Event, Event_Message } from 'Proto/pb/protos/events';
-import { I, M, S, U, J, analytics, Renderer, Action, Dataview, Mapper, keyboard, Preview, focus } from 'Lib';
+import type { Event } from 'Proto/pb/protos/events';
 import * as Response from './response';
 import type { ClientReadableStream } from 'grpc-web';
 import { ServiceClient } from './service';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const SORT_IDS = [
 	'BlockAdd',
@@ -203,7 +203,6 @@ class Dispatcher {
 		const traceId = event.traceId;
 		const ctx: string[] = [ event.contextId ];
 		const debugJson = config.flagsMw.json;
-		const win = $(window);
 
 		if (traceId) {
 			ctx.push(traceId);
@@ -286,6 +285,30 @@ class Dispatcher {
 
 				case 'ObjectRestrictionsSet': {
 					S.Block.restrictionsSet(rootId, mapped.restrictions);
+					break;
+				};
+
+				case 'ObjectAutoArchive': {
+					// For RPC responses (isSync=true) auto-archived IDs are merged into the
+					// Archive toast by the calling action via message.autoArchivedIds.
+					// For stream events (isSync=false) show a standalone AutoArchive toast.
+					if (!isSync) {
+						const { objectIds } = mapped;
+						if (objectIds.length) {
+							Preview.toastShow({ action: I.ToastAction.AutoArchive, ids: objectIds });
+						};
+					};
+					break;
+				};
+
+				case 'ObjectAutoRestore': {
+					// Same pattern as ObjectAutoArchive but for the Restore toast.
+					if (!isSync) {
+						const { objectIds } = mapped;
+						if (objectIds.length) {
+							Preview.toastShow({ action: I.ToastAction.AutoRestore, ids: objectIds });
+						};
+					};
 					break;
 				};
 
@@ -800,7 +823,7 @@ class Dispatcher {
 					S.Block.updateWidgetViews(rootId);
 
 					if (updateData) {
-						win.trigger(`updateDataviewData`);
+						U.Dom.eventDispatch(window, 'updateDataviewData');
 						S.Block.updateWidgetData(rootId);
 					};
 					break;
@@ -847,7 +870,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewGroupOrderUpdate': {
+				case 'BlockDataViewGroupOrderUpdate': {
 					const { id, groupOrder } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -860,7 +883,7 @@ class Dispatcher {
 					break;
 				};
 
-				case 'BlockDataviewObjectOrderUpdate': {
+				case 'BlockDataViewObjectOrderUpdate': {
 					const { id, viewId, groupId, changes } = mapped;
 					const block = S.Block.getLeaf(rootId, id);
 
@@ -959,11 +982,10 @@ class Dispatcher {
 
 				case 'SubscriptionRemove': {
 					const { id } = mapped;
-					const [ subId, dep = '' ] = mapped.subId.split('/');
+					const [ subId, dep = '' ] = this.parseSubId(mapped.subId);
 
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
-						S.Detail.delete(subId, id, []);
 					};
 					break;
 				};
@@ -976,7 +998,7 @@ class Dispatcher {
 				};
 
 				case 'SubscriptionCounters': {
-					const [ subId, dep = '' ] = mapped.subId.split('/');
+					const [ subId, dep = '' ] = this.parseSubId(mapped.subId);
 
 					if (!dep) {
 						S.Record.metaSet(subId, '', { total: mapped.total });
@@ -1008,7 +1030,9 @@ class Dispatcher {
 							id: item.id,
 							title: U.String.stripTags(item.title),
 							text: U.String.stripTags(item.text),
+							silent: !Sound.isSystem(),
 						});
+						Sound.playNotification();
 					};
 					break;
 				};
@@ -1075,7 +1099,7 @@ class Dispatcher {
 					});
 
 					commentSubIds.forEach(subId => {
-						const commentMsg = {
+						const commentMsg: I.CommentMessage = {
 							...mapped.message,
 							content: {
 								...mapped.message.content,
@@ -1085,43 +1109,48 @@ class Dispatcher {
 						};
 
 						if (mapped.message.replyToMessageId) {
-							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg as any);
+							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg);
 
 							const post = S.Comment.getPostById(subId, mapped.message.replyToMessageId);
 							if (post) {
 								set(post, { replyCount: (post.replyCount || 0) + 1 });
 							};
 						} else {
-							S.Comment.addPost(subId, commentMsg as any);
+							S.Comment.addPost(subId, commentMsg);
 						};
 					});
 
 					if (showNotification && notification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
 						const title = [];
+						let canNotify = true;
 
 						if (spaceview) {
 							title.push(U.String.shorten(spaceview.name, 32));
 						};
 
-						if (!spaceview.isChat && !spaceview.isOneToOne) {
+						if (!spaceview.isOneToOne) {
 							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
 							if (!chat._empty_) {
 								title.push(U.String.shorten(chat.name, 32));
 							} else {
-								break;
+								canNotify = false;
 							};
 						};
 
-						Renderer.send('notification', {
-							id: message.id,
-							title: title.join(' - '),
-							text: notification,
-							cmd: 'openChat',
-							payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
-						});
+						if (canNotify) {
+							Renderer.send('notification', {
+								id: message.id,
+								title: title.join(' - '),
+								text: notification,
+								cmd: 'openChat',
+								payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+								silent: !Sound.isSystem(),
+							});
+							Sound.playNotification();
+						};
 					};
 
-					$(window).trigger('messageAdd', [ message, mapped.subIds ]);
+					U.Dom.eventDispatch(window, 'messageAdd', { message, subIds: mapped.subIds });
 					break;
 				};
 
@@ -1130,25 +1159,27 @@ class Dispatcher {
 
 					mapped.subIds.forEach(subId => {
 						if (subId.startsWith('comment-')) {
-							const commentMsg = {
+							const commentMsg: Partial<I.CommentMessage> = {
 								id: mapped.message.id,
 								content: {
 									...mapped.message.content,
 									parts: U.Comment.blocksToParts(mapped.message.blocks, mapped.message.content),
 								},
+								attachments: mapped.message.attachments || [],
+								reactions: mapped.message.reactions || [],
 							};
 
 							if (mapped.message.replyToMessageId) {
-								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg as any);
+								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg);
 							} else {
-								S.Comment.updatePost(subId, commentMsg as any);
+								S.Comment.updatePost(subId, commentMsg);
 							};
 						} else {
 							S.Chat.update(subId, mapped.message);
 						};
 					});
 
-					$(window).trigger('messageUpdate', [ mapped.message, mapped.subIds ]);
+					U.Dom.eventDispatch(window, 'messageUpdate', { message: mapped.message, subIds: mapped.subIds });
 					break;
 				};
 
@@ -1296,13 +1327,15 @@ class Dispatcher {
 										text,
 										cmd: 'openChat',
 										payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+										silent: !Sound.isSystem(),
 									});
+									Sound.playNotification();
 								};
 							};
 						};
 					};
 
-					$(window).trigger('reactionUpdate', [ notificationMessage ]);
+					U.Dom.eventDispatch(window, 'reactionUpdate', notificationMessage);
 					break;
 				};
 
@@ -1432,7 +1465,7 @@ class Dispatcher {
 
 		const { space } = S.Common;
 		const keys = Object.keys(details);
-		const check = [ 'creator', 'spaceDashboardId', 'spaceAccountStatus' ];
+		const check = [ 'creator', 'homepage', 'spaceAccountStatus' ];
 		const intersection = check.filter(k => keys.includes(k));
 
 		if (subIds.length) {
@@ -1478,7 +1511,7 @@ class Dispatcher {
 				S.Block.updateWidgetData(rootId);
 			};
 
-			$(window).trigger('updateDataviewData');
+			U.Dom.eventDispatch(window, 'updateDataviewData');
 		};
 	};
 
@@ -1491,8 +1524,16 @@ class Dispatcher {
 	 * @param afterId - ID of the record after which to place the item (empty for start)
 	 * @param isAdding - Whether this is a new addition (skip if already exists)
 	 */
+	parseSubId (subId: string): [string, string] {
+		const idx = subId.indexOf('/');
+		if (idx === -1) {
+			return [ subId, '' ];
+		};
+		return [ subId.slice(0, idx), subId.slice(idx + 1) ];
+	};
+
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
-		const [ sid, dep ] = subId.split('/');
+		const [ sid, dep ] = this.parseSubId(subId);
 		if (dep) {
 			return;
 		};
@@ -1601,7 +1642,7 @@ class Dispatcher {
 
 		keyboard.setWindowTitle();
 
-		$(window).trigger('objectView');
+		U.Dom.eventDispatch(window, 'objectView');
 	};
 
 	/**
@@ -1674,6 +1715,14 @@ class Dispatcher {
 				};
 
 				if (message.event) {
+					message.autoArchivedIds = (message.event.messages || [])
+						.filter((msg: any) => msg.objectAutoArchive?.objectIds?.length)
+						.flatMap((msg: any) => msg.objectAutoArchive.objectIds);
+
+					message.autoRestoredIds = (message.event.messages || [])
+						.filter((msg: any) => msg.objectAutoRestore?.objectIds?.length)
+						.flatMap((msg: any) => msg.objectAutoRestore.objectIds);
+
 					runInAction(() => this.event(message.event, true, true));
 				};
 

@@ -1,22 +1,37 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Icon from './icon';
-import { registerIcon } from './iconRegistry';
-import { HeaderMoreIcon as More0Icon } from './icons/action/headerMore';
-import { Fav0Icon } from './icons/action/fav0';
-import { Turn0Icon } from './icons/action/turn0';
-import { RelationCheckboxIcon } from './icons/relation/relationCheckbox';
 
-// Register only the icons used in stories
-registerIcon('more0', More0Icon);
-registerIcon('fav0', Fav0Icon);
-registerIcon('turn0', Turn0Icon);
-registerIcon('relationCheckbox', RelationCheckboxIcon);
+import './icons/common';
+import './icons/type';
+
+const COLOR_OPTIONS = [
+	'default', 'grey', 'yellow', 'orange', 'red', 'pink', 'purple',
+	'blue', 'ice', 'teal', 'lime', 'darkGrey', 'darkOrange', 'darkRed',
+	'accent125', 'accent100', 'accent50', 'accent25',
+];
 
 const meta: Meta<typeof Icon> = {
 	title: 'Util/Icon',
 	component: Icon,
 	tags: ['autodocs'],
+	argTypes: {
+		color: {
+			control: 'select',
+			options: COLOR_OPTIONS,
+			description: 'Icon color variant (maps to iconColor-{color} CSS class)',
+		},
+		name: {
+			control: 'text',
+			description: 'Icon name from the icon registry',
+		},
+		size: {
+			control: { type: 'number', min: 12, max: 64, step: 2 },
+		},
+		withBackground: {
+			control: 'boolean',
+		},
+	},
 	decorators: [
 		(Story) => (
 			<div style={{ display: 'flex', gap: 12, alignItems: 'center', padding: 20 }}>
@@ -31,71 +46,51 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
 	args: {
-		className: 'close',
+		name: 'common/close',
+		size: 20,
 	},
 };
 
 export const WithArrow: Story = {
 	args: {
-		className: 'expand',
+		name: 'common/expand',
 		arrow: true,
 	},
 };
 
 export const Draggable: Story = {
 	args: {
-		className: 'drag',
+		name: 'control/cover/drag',
 		draggable: true,
 	},
 };
 
 export const WithInner: Story = {
 	args: {
-		className: 'plus',
+		name: 'plus/menu',
 		inner: <span style={{ fontSize: 12 }}>+</span>,
 	},
 };
 
 export const WithBackground: Story = {
 	args: {
-		className: 'more',
+		name: 'common/more',
 		withBackground: true,
 	},
 };
 
-export const CustomStyle: Story = {
-	args: {
-		className: 'custom',
-		style: { width: 32, height: 32, background: '#ddd', borderRadius: 8 },
-	},
-};
-
-export const InlineSvgIcon: Story = {
-	args: {
-		name: 'more0',
-		iconSize: 20,
-	},
-};
-
-export const InlineSvgWithBackground: Story = {
-	args: {
-		name: 'turn0',
-		withBackground: true,
-		iconSize: 20,
-	},
-};
-
-export const InlineSvgCustomColor: Story = {
-	args: {
-		name: 'fav0',
-		iconSize: 24,
-		iconColor: '#FF4500',
-	},
-};
-
-export const RelationIcon: Story = {
-	args: {
-		name: 'relationCheckbox',
-		iconSize: 20,
-	},
+export const AllColors = {
+	render: () => (
+		<div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: 20 }}>
+			<h3 style={{ margin: 0, fontWeight: 600 }}>Icon Colors</h3>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+				{COLOR_OPTIONS.map(color => (
+					<div key={color} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+						<Icon name="type/document-text" color={color} size={24} />
+						<span style={{ fontSize: 10, color: '#888' }}>{color}</span>
+					</div>
+				))}
+			</div>
+		</div>
+	),
 };

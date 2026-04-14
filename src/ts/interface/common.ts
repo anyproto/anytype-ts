@@ -1,4 +1,4 @@
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 export enum Platform {
 	None	 = '',
@@ -50,6 +50,8 @@ export interface Toast {
 	count?: number;
 	value?: boolean;
 	ids?: string[];
+	autoArchivedIds?: string[];
+	autoRestoredIds?: string[];
 	icon?: string;
 	uploadCounts?: { [key: string]: number };
 };
@@ -66,12 +68,15 @@ export enum ToastAction {
 	Widget			 = 8,
 	Restore			 = 9,
 	Upload			 = 10,
+	AutoArchive		 = 11,
+	AutoRestore		 = 12,
 };
 
 export interface Option {
 	id: any;
 	name: string;
 	icon?: string;
+	iconParam?: I.IconParam;
 	color?: string;
 	isSection?: boolean;
 	isDiv?: boolean;
@@ -138,6 +143,7 @@ export enum HomePredefinedId {
 	Chat		 = 'chat',
 	Last		 = 'lastOpened',
 	Existing	 = 'existing',
+	Widget		 = 'widgets',
 };
 
 export interface HeaderComponent {
@@ -183,6 +189,7 @@ export interface FooterComponent {
 export interface ButtonComponent {
 	id?: string;
 	icon?: string;
+	iconParam?: I.IconParam;
 	type?: string;
 	arrow?: boolean;
 	subType?: string;
@@ -333,7 +340,7 @@ export interface PageRef {
 };
 
 export interface TooltipParam {
-	element?: any;
+	element?: HTMLElement;
 	title?: string;
 	text?: string;
 	caption?: string;
@@ -417,9 +424,9 @@ export interface ImageParam {
 
 export interface StickyScrollbarRef {
 	resize: (config: { width: number; left: number; paddingLeft: number; display: string; trackWidth: number }) => void;
-	bind: (element: JQuery<HTMLElement>, isSyncing: boolean) => void;
+	bind: (element: HTMLElement, isSyncing: boolean) => void;
 	unbind: () => void;
-	sync: (element: JQuery<HTMLElement>, isSyncing: boolean) => boolean;
+	sync: (element: HTMLElement, isSyncing: boolean) => boolean;
 };
 
 export enum ClipboardMode {

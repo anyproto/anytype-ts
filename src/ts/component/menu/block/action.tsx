@@ -1,12 +1,12 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
-import $ from 'jquery';
+
 import { Filter, MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Action, translate, analytics, Dataview, Renderer } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const CB_KEYS = { c: 'clipboardCopy', x: 'clipboardCut', v: 'clipboardPaste' };
 
-const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, setActive, onKeyDown, getId, getSize, close } = props;
 	const { data, className, classNameWrap } = param;
@@ -40,14 +40,20 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		S.Menu.updateData(props.id, { filter: v });
 	};
 	
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		keydownHandler.current = (e: any) => onKeyDownHandler(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -149,7 +155,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const actionParam = { rootId, blockId, hasText, hasFile, hasCommon, hasClipboard, hasCopyMedia, hasLink, hasBookmark, hasDataview, hasTurnObject, count: blockIds.length };
-		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true };
+		const changeFile = { id: 'changeFile', iconParam: { name: 'menu/mark/link' }, name: translate('menuBlockActionsExistingFile'), arrow: true };
 		const restrictedAlign = [];
 
 		if (!hasText) {
@@ -160,15 +166,15 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: U.Menu.getBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: U.Menu.getBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: U.Menu.getTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: U.Menu.getTurnDiv() };
-			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: U.Menu.getTurnFile() };
-			const action = { id: 'action', icon: '', name: translate('commonActions'), children: U.Menu.getActions(actionParam) };
-			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: U.Menu.getHAlign(restrictedAlign) };
-			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: U.Menu.getBgColors() };
-			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: U.Menu.getTextColors() };
+			const turnText = { id: 'turnText', name: translate('menuBlockActionsSectionsTextStyle'), children: U.Menu.getBlockText() };
+			const turnList = { id: 'turnList', name: translate('menuBlockActionsSectionsListStyle'), children: U.Menu.getBlockList() };
+			const turnPage = { id: 'turnPage', name: translate('commonTurnIntoObject'), children: U.Menu.getTurnPage() };
+			const turnDiv = { id: 'turnDiv', name: translate('menuBlockActionsSectionsDividerStyle'), children: U.Menu.getTurnDiv() };
+			const turnFile = { id: 'turnFile', name: translate('menuBlockActionsSectionsFileStyle'), children: U.Menu.getTurnFile() };
+			const action = { id: 'action', name: translate('commonActions'), children: U.Menu.getActions(actionParam) };
+			const align = { id: 'align', name: translate('commonAlign'), children: U.Menu.getHAlign(restrictedAlign) };
+			const bgColor = { id: 'bgColor', name: translate('commonBackground'), children: U.Menu.getBgColors() };
+			const color = { id: 'color', iconParam: { name: 'color' }, name: translate('commonColor'), arrow: true, children: U.Menu.getTextColors() };
 
 			if (hasTurnFile) {
 				action.children.push(changeFile);
@@ -197,7 +203,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				hasLink ? { id: 'linkSettings', name: translate('commonView'), caption: translate(`menuBlockLinkSettingsStyle${I.LinkCardStyle[cardStyle]}`), arrow: true } : null,
 				hasTurnFile ? { id: 'turnStyle', name: translate('commonView'), caption: I.FileStyle[style], arrow: true, isBlockFile: true } : null,
 				(hasTurnText && !isCardStyle) ? turnText : null,
-				hasTurnDiv ? { id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
+				hasTurnDiv ? { id: 'turnStyle', iconParam: { name: U.Data.styleIcon(I.BlockType.Div, style) }, name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
 				hasAlign ? { id: 'align', name: translate('commonAlign'), caption: I.BlockHAlign[hAlign], arrow: true } : null,
 				hasColor ? { id: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') } : null,
 				hasBg ? { id: 'background', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') } : null,
@@ -211,17 +217,17 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralLCBlock'))}`;
 				const deleteName = `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`;
 
-				const move = hasCommon ? { id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true } : null;
-				const clipboardCopy = hasClipboard ? { id: 'clipboardCopy', icon: 'clipboard-copy', name: translate('commonCopy'), caption: `${cmd} + C` } : null;
-				const clipboardCut = hasClipboard ? { id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` } : null;
-				const clipboardPaste = hasClipboard ? { id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` } : null;
-				const copy = hasCommon ? { id: 'copy', icon: 'duplicate', name: copyName, caption: keyboard.getCaption('duplicate') } : null;
-				const remove = hasCommon ? { id: 'remove', icon: 'remove', name: deleteName, caption: 'Del' } : null;
-				const download = hasFile ? { id: 'download', icon: 'download', name: translate('commonDownload') } : null;
-				const copyUrl = hasBookmark ? { id: 'copyUrl', icon: 'pageLink', name: translate('libMenuCopyUrl') } : null;
-				const openAsObject = (hasFile || hasBookmark || hasDataview) ? { id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') } : null;
-				const newTab = { id: 'newTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') };
-				const newWindow = { id: 'newWindow', icon: 'newWindow', name: translate('menuObjectOpenInNewWindow') };
+				const move = hasCommon ? { id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true } : null;
+				const clipboardCopy = hasClipboard ? { id: 'clipboardCopy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy'), caption: `${cmd} + C` } : null;
+				const clipboardCut = hasClipboard ? { id: 'clipboardCut', iconParam: { name: 'menu/action/cut' }, name: translate('commonCut'), caption: `${cmd} + X` } : null;
+				const clipboardPaste = hasClipboard ? { id: 'clipboardPaste', iconParam: { name: 'menu/action/paste' }, name: translate('commonPaste'), caption: `${cmd} + V` } : null;
+				const copy = hasCommon ? { id: 'copy', iconParam: { name: 'menu/action/duplicate' }, name: copyName, caption: keyboard.getCaption('duplicate') } : null;
+				const remove = hasCommon ? { id: 'remove', iconParam: { name: 'menu/action/remove' }, name: deleteName, caption: 'Del' } : null;
+				const download = hasFile ? { id: 'download', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') } : null;
+				const copyUrl = hasBookmark ? { id: 'copyUrl', iconParam: { name: 'menu/action/pageLink' }, name: translate('libMenuCopyUrl') } : null;
+				const openAsObject = (hasFile || hasBookmark || hasDataview) ? { id: 'openAsObject', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') } : null;
+				const newTab = { id: 'newTab', iconParam: { name: 'menu/action/newTab' }, name: translate('menuObjectOpenInNewTab') };
+				const newWindow = { id: 'newWindow', iconParam: { name: 'menu/action/newWindow' }, name: translate('menuObjectOpenInNewWindow') };
 
 				if (hasLink) {
 					actionSections = [
@@ -539,7 +545,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				};
 
 				const onCreate = () => {
-					window.setTimeout(() => $(window).trigger(`updateDataviewData`), 50);
+					window.setTimeout(() => U.Dom.eventDispatch(window, 'updateDataviewData'), 50);
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -794,6 +800,6 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockAction;

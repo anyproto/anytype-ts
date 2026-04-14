@@ -1,10 +1,8 @@
 import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
-const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, setActive, onKeyDown, position, getId, getSize } = props;
 	const { data, className, classNameWrap } = param;
@@ -26,7 +24,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Menu.closeAll(J.Menu.widget);
 
 			if (needUpdate.current) {
-				$(window).trigger(`updateWidgetData.${blockId}`);
+				U.Dom.eventDispatch(window, 'updateWidgetData');
 			};
 		};
 	}, []);
@@ -38,12 +36,12 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getSections = () => {
@@ -96,25 +94,26 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const actionChildren: any[] = [];
 
 		if (!isSystem) {
-			actionChildren.push({ id: 'pageLink', icon: 'pageLink', name: translate('commonCopyLink') });
+			actionChildren.push({ id: 'pageLink', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 		};
 
 		if (canWrite && isPinned) {
 			const name = isSystem ? translate('menuWidgetRemoveWidget') : translate('commonUnpin');
-			const icon = isSystem ? 'remove' : 'unpin';
+			const iconName = isSystem ? 'menu/action/remove' : 'menu/action/unpin';
 
-			actionChildren.push({ id: 'removeWidget', name, icon });
+			actionChildren.push({ id: 'removeWidget', name, iconParam: { name: iconName } });
 		};
 
 		if (!isSystem && canWrite) {
 			if (!isType) {
-				actionChildren.push({ id: 'addCollection', icon: 'collection', name: translate('commonAddToCollection'), arrow: true });
+				actionChildren.push({ id: 'linkTo', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonLinkTo'), arrow: true });
+				actionChildren.push({ id: 'addCollection', iconParam: { name: 'menu/action/collection' }, name: translate('commonAddToCollection'), arrow: true });
 			};
 
 			const allowedArchive = S.Block.isAllowed(target?.restrictions, [ I.RestrictionObject.Delete ]);
 
 			if (allowedArchive) {
-				actionChildren.push({ id: 'archive', icon: 'remove', name: translate('commonMoveToBin') });
+				actionChildren.push({ id: 'archive', iconParam: { name: 'menu/action/remove' }, name: translate('commonMoveToBin') });
 			};
 		};
 
@@ -127,8 +126,8 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			sections.push({
 				id: 'open',
 				children: [
-					{ id: 'newTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') },
-					{ id: 'newWindow', icon: 'newWindow', name: translate('menuObjectOpenInNewWindow') },
+					{ id: 'newTab', iconParam: { name: 'menu/action/newTab' }, name: translate('menuObjectOpenInNewTab') },
+					{ id: 'newWindow', iconParam: { name: 'menu/action/newWindow' }, name: translate('menuObjectOpenInNewWindow') },
 				]
 			});
 		};
@@ -260,7 +259,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				menuParam.data = {
 					noClose: true,
 					value: String(layout),
-					options: layoutOptions.map(it => ({ id: String(it.id), name: it.name, icon: it.icon })),
+					options: layoutOptions.map(it => ({ id: String(it.id), name: it.name, iconParam: it.iconParam })),
 					onSelect: (e: any, option: any) => onSelectOption('layout', option.id),
 				};
 				break;
@@ -275,6 +274,28 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					value: String(limit),
 					options: limitOptions.map(it => ({ id: String(it.id), name: String(it.name) })),
 					onSelect: (e: any, option: any) => onSelectOption('limit', option.id),
+				};
+				break;
+			};
+
+			case 'linkTo': {
+				menuId = 'searchObject';
+				menuParam.data = {
+					filters: [
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+						{ relationKey: 'links', condition: I.FilterCondition.NotIn, value: [ target.id ] },
+					],
+					rootId: target.id,
+					blockId: target.id,
+					blockIds: [ target.id ],
+					type: I.NavigationType.LinkTo,
+					skipIds: [ target.id ],
+					position: I.BlockPosition.Bottom,
+					canAdd: true,
+					onSelect: (el: any) => {
+						close();
+					},
 				};
 				break;
 			};
@@ -329,7 +350,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				if (isSystem) {
 					const param: Partial<I.MenuParam> = {
 						data: {
-							icon: 'warning-red',
+							iconParam: { name: 'popup/header/warning', color: 'red' },
 							title: translate('popupConfirmSystemWidgetRemoveTitle'),
 							text: translate('popupConfirmSystemWidgetRemoveText'),
 							textConfirm: translate('commonDelete'),
@@ -420,6 +441,6 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuWidget;

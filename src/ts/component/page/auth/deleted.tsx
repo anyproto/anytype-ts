@@ -1,12 +1,11 @@
 import React, { forwardRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { PieChart } from 'react-minimal-pie-chart';
 import { Frame, Title, Label, Button, Header } from 'Component';
-import { I, C, S, U, Action, Survey, analytics, translate, J } from 'Lib';
+import * as I from 'Interface';
 
 const DAYS = 30;
 
-const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
+const PageAuthDeleted = forwardRef<I.PageRef, I.PageComponent>(() => {
 
 	const { account } = S.Auth;
 	const theme = S.Common.getThemeClass();
@@ -132,6 +131,6 @@ const PageAuthDeleted = observer(forwardRef<I.PageRef, I.PageComponent>(() => {
 		</div>
 	) : null;
 
-}));
+});
 
 export default PageAuthDeleted;

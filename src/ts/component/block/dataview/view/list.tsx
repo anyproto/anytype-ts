@@ -1,15 +1,14 @@
 import React, { forwardRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { LoadMore } from 'Component';
-import { I, S, U } from 'Lib';
 import BodyRow from './list/row';
 import AddRow from './grid/body/add';
+import * as I from 'Interface';
 
 const HEIGHT_COMPACT = 32;
 const HEIGHT_REGULAR = 64;
 
-const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewList = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { className, isPopup, isInline, getView, getSubId, onRecordAdd, getLimit, getEmptyView, getRecords, onRefRecord, loadData } = props;
 	const view = getView();
@@ -28,7 +27,7 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	useEffect(() => {
-		U.Common.triggerResizeEditor(isPopup);
+		U.Dom.triggerResizeEditor(isPopup);
 
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
@@ -80,7 +79,7 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 				threshold={10}
 			>
 				{({ onRowsRendered }) => (
-					<WindowScroller scrollElement={U.Common.getScrollContainer(isPopup).get(0)}>
+					<WindowScroller scrollElement={U.Dom.getScrollContainer(isPopup)}>
 						{({ height, isScrolling, scrollTop }) => (
 							<AutoSizer disableHeight={true}>
 								{({ width }) => (
@@ -133,6 +132,6 @@ const ViewList = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default ViewList;

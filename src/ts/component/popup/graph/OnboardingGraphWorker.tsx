@@ -1,14 +1,6 @@
 import React, { useRef, useEffect, useState, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { reaction } from 'mobx';
-import { S, U, J } from 'Lib';
-
-const typeIconModules = import.meta.glob('../../../../img/icon/type/default/*.svg', { eager: true, query: '?raw', import: 'default' }) as Record<string, string>;
-const getTypeIcon = (name: string): string => {
-	const path = `../../../../img/icon/type/default/${name}.svg`;
-	if (path in typeIconModules) return typeIconModules[path];
-	throw new Error(`Cannot find type icon: ${name}`);
-};
+import { getIconSvg } from 'Component/util/icons';
 
 interface OnboardingGraphWorkerProps {
 	width: number;
@@ -17,7 +9,7 @@ interface OnboardingGraphWorkerProps {
 	popupHeight?: number;
 }
 
-const OnboardingGraphWorker = observer(({ 
+const OnboardingGraphWorker = ({ 
 	width, 
 	height, 
 	popupWidth = 720,
@@ -35,67 +27,42 @@ const OnboardingGraphWorker = observer(({
 
 	// Load icon images and send to worker
 	const loadIconImages = async (nodes: any[]) => {
-		console.log('[OnboardingGraphWorker]: loadIconImages called with nodes:', nodes.map(n => ({ 
-			id: n.id, 
-			type: n.type, 
-			iconName: n.iconName,
-			label: n.label 
-		})));
-		
 		if (!workerRef.current) {
-			console.log('[OnboardingGraphWorker]: No worker ref, skipping icon loading');
 			return;
 		};
-		
+
 		for (const node of nodes) {
 			if (node.iconName && (node.type == 'type') && !loadedImages.current.has(node.iconName)) {
-				console.log('[OnboardingGraphWorker]: Loading icon for:', node.iconName);
-				
-				// Use the same pattern as in graph.ts - direct require without try/catch
-				// Use regular updateSvg with theme-appropriate fill matching node colors
-				const src = U.Common.updateSvg(getTypeIcon(node.iconName), { 
-					id: node.iconName, 
-					size: 70, // 30% smaller (was 100)
-					fill: theme === 'dark' 
-						? themeColors.node.type.fill // Use theme color for dark mode
-						: 'hsla(155, 76%, 57%, 1)', // Green matching type nodes for light mode
+				const src = U.Common.updateSvg(getIconSvg(`type/${node.iconName}`), {
+					id: node.iconName,
+					size: 70,
+					fill: theme === 'dark'
+						? themeColors.node.type.fill
+						: 'hsla(155, 76%, 57%, 1)',
 				});
-				
+
 				if (!src) {
-					console.warn('[OnboardingGraphWorker]: No src generated for icon:', node.iconName);
 					continue;
-				}
-				
-				console.log('[OnboardingGraphWorker]: Created src for icon:', node.iconName);
-				
-				// Create image and convert to bitmap
+				};
+
 				const img = new Image();
 
 				img.src = src;
-				
+
 				await new Promise((resolve) => {
 					img.onload = async () => {
-						console.log('[OnboardingGraphWorker]: Icon image loaded:', node.iconName);
 						const bitmap = await createImageBitmap(img);
 						workerRef.current?.postMessage({
 							id: 'image',
-							src: node.iconName, // Use iconName as key
+							src: node.iconName,
 							bitmap
 						}, [ bitmap ]);
 
 						loadedImages.current.add(node.iconName);
-						console.log('[OnboardingGraphWorker]: Sent icon bitmap to worker:', node.iconName);
 						resolve(true);
 					};
-					img.onerror = () => {
-						console.warn('[OnboardingGraphWorker]: Failed to load icon image:', node.iconName);
-						resolve(false);
-					};
+					img.onerror = () => resolve(false);
 				});
-			} else {
-				if (loadedImages.current.has(node.iconName)) {
-					console.log('[OnboardingGraphWorker]: Icon already loaded:', node.iconName);
-				};
 			};
 		};
 	};
@@ -106,7 +73,7 @@ const OnboardingGraphWorker = observer(({
 			return;
 		};
 		
-		const rect = U.Common.getElementRect(canvasRef.current);
+		const rect = U.Dom.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};
@@ -136,7 +103,7 @@ const OnboardingGraphWorker = observer(({
 
 		lastMouseMoveRef.current = now;
 		
-		const rect = U.Common.getElementRect(canvasRef.current);
+		const rect = U.Dom.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};
@@ -153,7 +120,7 @@ const OnboardingGraphWorker = observer(({
 			return;
 		};
 		
-		const rect = U.Common.getElementRect(canvasRef.current);
+		const rect = U.Dom.getElementRect(canvasRef.current);
 		if (!rect) {
 			return;
 		};
@@ -173,7 +140,6 @@ const OnboardingGraphWorker = observer(({
 			return;
 		};
 		
-		console.log('[OnboardingGraphWorker]: Mouse left canvas while dragging, releasing node');
 		setIsDragging(false);
 		
 		workerRef.current.postMessage({ id: 'onMouseLeave' });
@@ -273,17 +239,10 @@ const OnboardingGraphWorker = observer(({
 					return;
 				};
 				
-				// Reaction frequency tracking removed for production
-				
-				console.log('[OnboardingGraphWorker]: Sending nodes to worker:', data.nodesLength);
-		
 				// Calculate available space
 				const horizontalSpace = (width - popupWidth) / 2;
 				const verticalSpace = (height - popupHeight) / 2;
 				const useHorizontal = horizontalSpace > verticalSpace;
-		
-				// Convert sparkOnboarding nodes to worker format
-				console.log('[OnboardingGraphWorker]: Nodes from store:', data.nodes.map(n => ({ id: n.id, type: n.type, iconName: n.iconName })));
 				const nodes = data.nodes.map((node, index) => {
 					let nodeX, nodeY;
 			
@@ -410,6 +369,6 @@ const OnboardingGraphWorker = observer(({
 		</div>
 	);
 
-});
+};
 
 export default OnboardingGraphWorker;

@@ -1,7 +1,7 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
-import $ from 'jquery';
+
 import { MenuItemVertical } from 'Component';
-import { I, U, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const MenuBlockColor = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -11,15 +11,20 @@ const MenuBlockColor = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const value = String(data.value || '');
 	const n = useRef(-1);
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const getItems = () => {
@@ -61,7 +66,7 @@ const MenuBlockColor = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<MenuItemVertical 
 					{...action} 
 					key={i} 
-					icon="color" 
+					iconParam={{ name: 'color' }}
 					inner={<div className={`inner bgColor bgColor-${action.className}`} />} 
 					checkbox={action.value == value} 
 					onClick={e => onClick(e, action)} 

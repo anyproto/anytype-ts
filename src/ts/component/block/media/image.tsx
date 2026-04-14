@@ -1,10 +1,9 @@
-import React, { useRef, useImperativeHandle, forwardRef } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { InputWithFile, Icon, Error } from 'Component';
-import { I, C, S, J, U, translate, focus, Action, keyboard, analytics } from 'Lib';
+import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import { InputWithFile, Icon, Error, Loader, MediaState } from 'Component';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
-const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp } = props;
 	const { width } = block.fields || {};
@@ -12,6 +11,7 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const targetObjectId = block.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const wrapRef = useRef(null);
+	const [ isLoaded, setIsLoaded ] = useState(false);
 
 	const handleKeyDown = (e: any) => {
 		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
@@ -33,59 +33,73 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		Action.upload(I.FileType.Image, rootId, block.id, '', path);
 	};
 
+	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
+	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
+
 	const handleResizeStart = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const selection = S.Common.getRef('selectionProvider');
-		const win = $(window);
-		const node = $(nodeRef.current);
 
-		focus.set(block.id, { from: 0, to: 0 });
 		selection?.hide();
 		keyboard.disableSelection(true);
-		node.addClass('isResizing');
+		U.Dom.addClass(nodeRef.current, 'isResizing');
 
-		win.off('mousemove.media mouseup.media');
-		win.on('mousemove.media', e => handleResize(e, checkMax));
-		win.on('mouseup.media', e => handleResizeEnd(e, checkMax));
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+		};
+
+		mouseMoveHandler.current = e => handleResize(e, checkMax);
+		mouseUpHandler.current = e => handleResizeEnd(e, checkMax);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const handleResize = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const wrap = $(wrapRef.current);
-		if (!wrap.length) {
+		if (!wrapRef.current) {
 			return;
 		};
 
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrapRef.current);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
 
-		wrap.css({ width: (w * 100) + '%' });
+		U.Dom.css(wrapRef.current, { width: (w * 100) + '%' });
 	};
 
 	const handleResizeEnd = (e: any, checkMax: boolean) => {
-		const wrap = $(wrapRef.current);
-		if (!wrap.length) {
+		if (!wrapRef.current) {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const win = $(window);
-		const ox = wrap.offset().left;
+		const ox = wrapRef.current.getBoundingClientRect().left + window.scrollX;
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - ox + 20));
 
-		win.off('mousemove.media mouseup.media');
-		node.removeClass('isResizing');
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+			mouseMoveHandler.current = null;
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+			mouseUpHandler.current = null;
+		};
+
+		U.Dom.removeClass(nodeRef.current, 'isResizing');
 		keyboard.disableSelection(false);
 
 		C.BlockListSetFields(rootId, [ { blockId: block.id, fields: { width: w } } ]);
 	};
 
 	const handleError = () => {
-		$(wrapRef.current).addClass('brokenMedia');
+		U.Dom.addClass(wrapRef.current, 'brokenMedia');
 	};
 
 	const handleClick = (e: any) => {
@@ -139,49 +153,71 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const getWidth = (checkMax: boolean, v: number): number => {
-		const el = $(`#selectionTarget-${U.Common.esc(block.id)}`);
+		const el = U.Dom.get(`selectionTarget-${block.id}`);
 		const width = Number(block.fields.width) || 1;
 
-		if (!el.length) {
+		if (!el) {
 			return width;
 		};
-		
-		const ew = el.width();
+
+		const ew = U.Dom.contentWidth(el);
 		const w = Math.min(ew, Math.max(ew / 12, checkMax ? width * ew : v));
 
 		return Math.min(1, Math.max(0, w / ew));
 	};
 
-	const object = S.Detail.get(rootId, targetObjectId, []);
+	const object = S.Detail.get(rootId, targetObjectId, [ 'widthInPixels', 'heightInPixels' ]);
 	const cn = [ 'focusable', `c${block.id}` ];
 	const css: any = {};
+	const wrapCss: any = {};
 
 	if (width) {
 		css.width = (width * 100) + '%';
 	};
 
+	if (object.widthInPixels && object.heightInPixels) {
+		wrapCss.aspectRatio = `${object.widthInPixels} / ${object.heightInPixels}`;
+	} else
+	if (!isLoaded) {
+		wrapCss.height = 80;
+	};
+
+	const typeName = translate('blockNameImage');
+	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
+
 	let element = null;
-	if (object.isDeleted) {
+
+	if (object.isArchived && (state == I.FileState.Done)) {
 		element = (
-			<div className="deleted">
-				<Icon className="ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+			<div ref={wrapRef} className="wrap" style={{ ...css, ...wrapCss }}>
+				{!isLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
+				<img
+					className="mediaImage"
+					src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
+					onDragStart={e => e.preventDefault()}
+					onLoad={() => setIsLoaded(true)}
+					onError={handleError}
+				/>
+				{overlay}
 			</div>
 		);
+	} else
+	if (object.isDeleted || object.isArchived) {
+		element = overlay;
 	} else {
 		switch (state) {
 			default: {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="image" 
-							textFile={translate('blockImageUpload')} 
-							accept={J.Constant.fileExtension.image} 
-							onChangeUrl={handleChangeUrl} 
-							onChangeFile={handleChangeFile} 
-							readonly={readonly} 
+						<InputWithFile
+							block={block}
+							iconParam={{ name: 'menu/block/media/image' }}
+							textFile={translate('blockImageUpload')}
+							accept={J.Constant.fileExtension.image}
+							onChangeUrl={handleChangeUrl}
+							onChangeFile={handleChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
@@ -190,16 +226,18 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 			case I.FileState.Done: {
 				element = (
-					<div ref={wrapRef} className="wrap" style={css}>
-						<img 
-							className="mediaImage" 
-							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)} 
-							onDragStart={e => e.preventDefault()} 
-							onClick={handleClick} 
-							onError={handleError} 
+					<div ref={wrapRef} className="wrap" style={{ ...css, ...wrapCss }}>
+						{!isLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
+						<img
+							className="mediaImage"
+							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
+							onDragStart={e => e.preventDefault()}
+							onClick={handleClick}
+							onLoad={() => setIsLoaded(true)}
+							onError={handleError}
 						/>
-						<Icon className={isDownloading ? 'downloading' : 'download'} onClick={handleDownload} />
-						<Icon className="resize" onMouseDown={e => handleResizeStart(e, false)} />
+						{isDownloading ? <Icon className="downloading" /> : <Icon name="common/download" className="download" onClick={handleDownload} />}
+						<Icon name="common/resize" className="resize" onMouseDown={e => handleResizeStart(e, false)} />
 					</div>
 				);
 				break;
@@ -221,6 +259,6 @@ const BlockImage = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			{element}
 		</div>
 	);
-}));
+});
 
 export default BlockImage;

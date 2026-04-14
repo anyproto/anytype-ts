@@ -1,11 +1,10 @@
 import React, {
 	useEffect, useRef, useState, forwardRef, useImperativeHandle, ChangeEvent, SyntheticEvent, KeyboardEvent, FormEvent, FocusEvent, ClipboardEvent
 } from 'react';
-import $ from 'jquery';
 import Inputmask from 'inputmask';
-import { I, U, keyboard } from 'Lib';
+import * as I from 'Interface';
 
-type InputSize = 28 | 36 | 40;
+type InputSize = 28 | 36 | 40 | 52 | 56;
 
 interface Props {
 	id?: string;
@@ -122,7 +121,7 @@ const Input = forwardRef<InputRef, Props>(({
 		handler: ((e: any, value: string) => void) | undefined,
 		e: SyntheticEvent<HTMLInputElement>
 	) => {
-		handler?.(e, String($(e.target || e.currentTarget).val() || ''));
+		handler?.(e, String((e.target as HTMLInputElement || e.currentTarget as HTMLInputElement).value || ''));
 	};
 
 	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -131,7 +130,7 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-		if ($(inputRef.current).hasClass('disabled')) {
+		if (U.Dom.hasClass(inputRef.current, 'disabled')) {
 			return;
 		};
 
@@ -139,7 +138,7 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const handleKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {
-		if ($(inputRef.current).hasClass('disabled')) {
+		if (U.Dom.hasClass(inputRef.current, 'disabled')) {
 			return;
 		};
 
@@ -227,11 +226,11 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const addClass = (className: string) => {
-		$(inputRef.current).addClass(className);
+		U.Dom.addClass(inputRef.current, className);
 	};
 
 	const removeClass = (className: string) => {
-		$(inputRef.current).removeClass(className);
+		U.Dom.removeClass(inputRef.current, className);
 	};
 
 	const updateRange = (e: any) => {
@@ -244,36 +243,40 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	const getSelectionRect = (): DOMRect | null => {
-		const node = $(inputRef.current);
-		const parent = node.parent();
-		const { left, top } = node.position();
+		const node = inputRef.current;
+		if (!node) {
+			return null;
+		};
+
+		const parent = node.parentElement;
 		const selectionRange = rangeRef.current;
 
-		if (!selectionRange) {
+		if (!selectionRange || !parent) {
 			return null;
 		};
 
 		const elementId = `${id || 'input'}-clone`;
 
-		let clone = parent.find(`#${elementId}`);
-		if (!clone.length) {
-			clone = $('<div></div>').attr({ id: elementId });
-			parent.append(clone);
+		let clone = U.Dom.get(elementId);
+		if (!clone) {
+			clone = document.createElement('div');
+			clone.id = elementId;
+			parent.appendChild(clone);
 		};
 
-		clone.attr({ class: node.attr('class') });
-		clone.css({
+		clone.className = node.className;
+		U.Dom.css(clone, {
 			position: 'absolute',
 			width: 'auto',
-			left,
-			top,
+			left: `${node.offsetLeft}px`,
+			top: `${node.offsetTop}px`,
 			visibility: 'hidden',
 			whiteSpace: 'pre',
-			zIndex: 100,
+			zIndex: '100',
 		});
 
-		clone.text(value.substring(0, selectionRange.to));
-		const rect = U.Common.getElementRect(clone.get(0));
+		clone.textContent = value.substring(0, selectionRange.to);
+		const rect = U.Dom.getElementRect(clone);
 
 		clone.remove();
 		return rect;
@@ -308,9 +311,9 @@ const Input = forwardRef<InputRef, Props>(({
 		setValue: (v: string) => setValue(String(v || '')),
 		getValue: () => String(value || ''),
 		setType: (v: string) => setInputType(v),
-		setError: (hasError: boolean) => $(inputRef.current).toggleClass('withError', hasError),
+		setError: (hasError: boolean) => U.Dom.toggleClass(inputRef.current, 'withError', hasError),
 		getSelectionRect,
-		setPlaceholder: (placeholder: string) => $(inputRef.current).attr({ placeholder }),
+		setPlaceholder: (placeholder: string) => { if (inputRef.current) inputRef.current.placeholder = placeholder; },
 		setRange: (range: I.TextRange, preventScroll?: boolean) => {
 			callWithTimeout(() => {
 				focus(preventScroll);

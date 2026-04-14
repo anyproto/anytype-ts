@@ -1,21 +1,21 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Icon } from 'Component';
-import { I, S, U, J, translate } from 'Lib';
+import * as I from 'Interface';
 
 const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { renderLeftIcons, renderTabs, menuOpen, rootId } = props;
 	const rootIdRef = useRef('');
 
+	const graphRootHandler = useRef((e: any) => initRootId(e.detail.id));
+
 	const unbind = () => {
-		$(window).off(`updateGraphRoot.header`);
+		U.Dom.removeEvent(window, 'updateGraphRoot', graphRootHandler.current);
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on('updateGraphRoot.header', (e: any, data: any) => initRootId(data.id));
+		U.Dom.addEvent(window, 'updateGraphRoot', graphRootHandler.current);
 	};
 
 	const onSearch = () => {
@@ -32,7 +32,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 				canAdd: true,
 				withPlural: true,
 				onSelect: (item: any) => {
-					$(window).trigger('updateGraphRoot', { id: item.id });
+					U.Dom.eventDispatch(window, 'updateGraphRoot', { id: item.id });
 				},
 				onFilterChange: (v: string) => {
 					S.Common.graphSet(J.Constant.graphId.global, { filter: v });
@@ -72,25 +72,27 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 			<div className="side center">{renderTabs()}</div>
 
 			<div className="side right">
-				<Icon 
-					id="button-header-search" 
-					className="btn-search" withBackground={true}
-					tooltipParam={{ text: translate('headerGraphTooltipSearch'), typeY: I.MenuDirection.Bottom }} 
-					onClick={onSearch} 
+				<Icon
+					id="button-header-search"
+					name="header/search" withBackground={true}
+					tooltipParam={{ text: translate('headerGraphTooltipSearch'), typeY: I.MenuDirection.Bottom }}
+					onClick={onSearch}
 				/>
 
-				<Icon 
-					id="button-header-filter" 
+				<Icon
+					id="button-header-filter"
+					name="control/dataview/filter"
 					className="btn-filter dn" withBackground={true}
-					tooltipParam={{ text: translate('headerGraphTooltipFilters'), typeY: I.MenuDirection.Bottom }} 
-					onClick={onFilter} 
+					tooltipParam={{ text: translate('headerGraphTooltipFilters'), typeY: I.MenuDirection.Bottom }}
+					onClick={onFilter}
 				/>
 
-				<Icon 
-					id="button-header-settings" 
+				<Icon
+					id="button-header-settings"
+					name="common/options"
 					className="btn-settings" withBackground={true}
-					tooltipParam={{ text: translate('headerGraphTooltipSettings'), typeY: I.MenuDirection.Bottom }} 
-					onClick={onSettings} 
+					tooltipParam={{ text: translate('headerGraphTooltipSettings'), typeY: I.MenuDirection.Bottom }}
+					onClick={onSettings}
 				/>
 			</div>
 		</>

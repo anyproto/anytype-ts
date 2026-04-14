@@ -1,15 +1,13 @@
 import React, { forwardRef, useRef, useState, useEffect, DragEvent, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Icon, Input, Button, Loader, Error } from 'Component';
-import { I, C, S, U, translate, Action, analytics, Preview } from 'Lib';
+import * as I from 'Interface';
 
 enum Tab {
 	Upload = 0,
 	Link = 1,
 };
 
-const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupUpload = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -110,7 +108,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onPaste = (e: any) => {
-		const cb = e.clipboardData || e.originalEvent?.clipboardData;
+		const cb = e.clipboardData;
 		if (!cb) {
 			return;
 		};
@@ -261,11 +259,11 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	useEffect(() => {
-		$(window).on(`paste.popupUpload`, onPaste);
+		U.Dom.addEvent(window, 'paste', onPaste);
 		analytics.event('ScreenUploadFile', { route });
 
 		return () => {
-			$(window).off(`paste.popupUpload`);
+			U.Dom.removeEvent(window, 'paste', onPaste);
 		};
 	}, []);
 
@@ -299,7 +297,7 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 					onDrop={onDrop}
 					onClick={onClickZone}
 				>
-					<Icon className="upload" />
+					<Icon name="common/upload" size={48} />
 					<div className="label">{translate('popupUploadDropLabel')}</div>
 				</div>
 			) : ''}
@@ -323,6 +321,6 @@ const PopupUpload = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupUpload;

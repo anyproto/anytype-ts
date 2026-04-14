@@ -1,4 +1,5 @@
-import { I, S, U, J, Storage, analytics, Action, translate } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 class Survey {
 
@@ -17,6 +18,14 @@ class Survey {
 		if (this[fn]) {
 			this[fn](type);
 		};
+	};
+
+	checkCommon () {
+		[
+			I.SurveyType.Register,
+			I.SurveyType.Object,
+			I.SurveyType.Pmf,
+		].forEach(it => this.check(it));
 	};
 
 	/**

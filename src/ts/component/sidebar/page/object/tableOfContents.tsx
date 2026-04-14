@@ -1,10 +1,9 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Icon } from 'Component';
-import { I, S, translate, sidebar } from 'Lib';
 import Section from 'Component/sidebar/section';
+import * as I from 'Interface';
 
-const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref: any) => {
+const SidebarPageTableOfContents = forwardRef<{}, I.SidebarPageComponent>((props, ref: any) => {
 
 	const { rootId, isPopup } = props;
 	const object = S.Detail.get(rootId, rootId);
@@ -16,9 +15,9 @@ const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponen
 					<Label text={translate('sidebarToc')} />
 				</div>
 				<div className="side right">
-					<Icon 
-						className="close" withBackground={true}
-						onClick={() => sidebar.rightPanelClose(isPopup, true)} 
+					<Icon
+						name="common/close" withBackground={true}
+						onClick={() => sidebar.rightPanelClose(isPopup, true)}
 					/>
 				</div>
 			</div>
@@ -34,6 +33,6 @@ const SidebarPageTableOfContents = observer(forwardRef<{}, I.SidebarPageComponen
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageTableOfContents;

@@ -1,9 +1,7 @@
 import React, { forwardRef, useImperativeHandle, MouseEvent, useRef, useState, useEffect, useMemo } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { Loader } from 'Component';
 import { Document, Page, pdfjs } from 'react-pdf';
-import { U } from 'Lib';
 
 //pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.mjs', import.meta.url).toString();
 pdfjs.GlobalWorkerOptions.workerSrc = './workers/pdf.worker.mjs';
@@ -44,7 +42,7 @@ const MediaPdf = forwardRef<MediaPdfRefProps, Props>(({
 
 		frame.current = raf(() => {
 			if (nodeRef.current) {
-				setWidth($(nodeRef.current).width());
+				setWidth(U.Dom.contentWidth(nodeRef.current));
 			};
 		});
 	};

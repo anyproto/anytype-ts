@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { observer } from 'mobx-react';
 import { DropTarget, Icon, SelectionTarget } from 'Component';
-import { I, U, J, keyboard } from 'Lib';
 import Cell from './cell';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	style?: any;
@@ -13,7 +12,7 @@ interface Props extends I.ViewComponent {
 	onUpdate?: () => void;
 };
 
-const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
+const BodyRow = forwardRef<{}, Props>((props, ref) => {
 
 	const {
 		rootId, block, style, recordId, readonly, isInline, onRefRecord, getRecord, onContext, onDragRecordStart, getColumnWidths,
@@ -58,10 +57,10 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 					const target = mutation.target as HTMLElement;
 					const oldValue = mutation.oldValue || '';
 					const hadEditing = oldValue.includes('isEditing');
-					const hasEditing = target.classList.contains('isEditing');
+					const hasEditing = U.Dom.hasClass(target, 'isEditing');
 
 					// Check if a cell just exited edit mode (had isEditing, now doesn't)
-					if (target.classList.contains('cell') && hadEditing && !hasEditing) {
+					if (U.Dom.hasClass(target, 'cell') && hadEditing && !hasEditing) {
 						// Use requestAnimationFrame to ensure DOM has fully updated
 						requestAnimationFrame(() => onUpdate());
 						break;
@@ -115,7 +114,10 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 			<>
 				{!readonly ? (
 					<Icon
+						name="control/dataview/dnd"
 						className="drag"
+						width={7}
+						height={12}
 						draggable={true}
 						onClick={e => onSelectToggle(e, record.id)}
 						onDragStart={e => onDragRecordStart(e, record.id)}
@@ -151,6 +153,6 @@ const BodyRow = observer(forwardRef<{}, Props>((props, ref) => {
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default BodyRow;

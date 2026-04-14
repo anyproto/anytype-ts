@@ -22,7 +22,7 @@ const ShareTooltip: FC<Props> = ({
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 		>
-			<Icon className="smile" />
+			<Icon name="banner/smile" color="default" width={80} height={40} />
 			<Label text={text} />
 		</div>
 	);

@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef } from 'react';
-import $ from 'jquery';
 import { Title, Button, QR } from 'Component';
-import { I, translate, Renderer, analytics } from 'Lib';
+import * as I from 'Interface';
 
 const PopupInviteQr = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -11,7 +10,7 @@ const PopupInviteQr = forwardRef<{}, I.Popup>((props, ref) => {
 	const { link } = data;
 
 	const onDownload = () => {
-		const canvas = $(nodeRef.current).find('canvas').get(0);
+		const canvas = U.Dom.select('canvas', nodeRef.current) as HTMLCanvasElement;
 		if (!canvas) {
 			return;
 		};

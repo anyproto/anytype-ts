@@ -1,11 +1,10 @@
 import React, { forwardRef, useRef, useState, useEffect, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Icon, DragHorizontal, Cover, Loader, Label } from 'Component';
-import { I, C, S, U, J, focus, translate, keyboard, analytics } from 'Lib';
 import ControlButtons from 'Component/page/elements/head/controlButtons';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
-const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
 	const { rootId, block, readonly, isPopup } = props;
 	const [ isEditing, setIsEditing ] = useState(false);
@@ -19,6 +18,9 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const coverRef = useRef(null);
 	const loaderRef = useRef(null);
 	const dragRef = useRef(null);
+	const resizeHandlerRef = useRef<(() => void) | null>(null);
+	const mouseMoveHandlerRef = useRef<((e: globalThis.MouseEvent) => void) | null>(null);
+	const mouseUpHandlerRef = useRef<((e: globalThis.MouseEvent) => void) | null>(null);
 	const loadedRef = useRef(false);
 	const rectRef = useRef(null);
 	const x = useRef(0);
@@ -32,12 +34,22 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		resize();
 
 		if (nodeRef.current) {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks(nodeRef.current);
 		};
-		$(window).off('resize.cover').on('resize.cover', () => resize());
+
+		resizeHandlerRef.current = () => resize();
+		U.Dom.addEvent(window, 'resize', resizeHandlerRef.current);
 
 		return () => {
-			$(window).off('resize.cover');
+			if (resizeHandlerRef.current) {
+				U.Dom.removeEvent(window, 'resize', resizeHandlerRef.current);
+			};
+			if (mouseMoveHandlerRef.current) {
+				U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
+			};
+			if (mouseUpHandlerRef.current) {
+				U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
+			};
 		};
 	}, []);
 	
@@ -45,7 +57,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		resize();
 
 		if (nodeRef.current) {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks(nodeRef.current);
 		};
 	}, [ coverType, coverId ]);
 	
@@ -59,8 +71,8 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			element: `#block-${U.Common.esc(block.id)} #button-icon`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => $(elementsRef.current).addClass('hover'),
-			onClose: () => $(elementsRef.current).removeClass('hover'),
+			onOpen: () => U.Dom.addClass(elementsRef.current, 'hover'),
+			onClose: () => U.Dom.removeClass(elementsRef.current, 'hover'),
 			data: {
 				objectId: rootId,
 				value: (object.iconEmoji || object.iconImage || ''),
@@ -75,8 +87,8 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		S.Menu.open('blockLayout', { 
 			element: `#block-${U.Common.esc(block.id)} #button-layout`,
 			classNameWrap: 'fromBlock',
-			onOpen: () => $(elementsRef.current).addClass('hover'),
-			onClose: () => $(elementsRef.current).removeClass('hover'),
+			onOpen: () => U.Dom.addClass(elementsRef.current, 'hover'),
+			onClose: () => U.Dom.removeClass(elementsRef.current, 'hover'),
 			subIds: J.Menu.layout,
 			data: {
 				rootId,
@@ -86,12 +98,12 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onCoverOpen = () => {
-		$(elementsRef.current).addClass('hover');
+		U.Dom.addClass(elementsRef.current, 'hover');
 		focus.clear(true);
 	};
 
 	const onCoverClose = () => {
-		$(elementsRef.current).removeClass('hover');
+		U.Dom.removeClass(elementsRef.current, 'hover');
 	};
 
 	const onCoverSelect = (item: any) => {
@@ -110,9 +122,9 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const setLoading = (v: boolean) => {
-		const loader = $(loaderRef.current);
-
-		v ? loader.show() : loader.hide();
+		if (loaderRef.current) {
+			U.Dom.css(loaderRef.current, { display: v ? '' : 'none' });
+		};
 	};
 	
 	const onUploadStart = () => {
@@ -154,25 +166,24 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const { rootId } = props;
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
 		const { coverId, coverType } = object;
-		const node = $(nodeRef.current);
-		const cover = $(coverRef.current);
+		const node = nodeRef.current;
+		const cover = coverRef.current as HTMLImageElement;
 		const isImage = U.Data.coverIsImage(coverType);
-		
-		if (!isImage || !node.hasClass('wrap')) {
+
+		if (!isImage || !node || !U.Dom.hasClass(node, 'wrap')) {
 			return;
 		};
-		
-		const el = cover.get(0) as HTMLImageElement;
-		if (!el) {
+
+		if (!cover) {
 			return;
 		};
 
 		const cb = () => {
 			const object = S.Detail.get(rootId, rootId, [ 'coverScale' ], true);
 
-			rectRef.current = U.Common.getElementRect(node.get(0));
-			onScaleMove($.Event('resize'), object.coverScale);
-			cover.css({ opacity: 1 });
+			rectRef.current = U.Dom.getElementRect(node);
+			onScaleMove(null, object.coverScale);
+			U.Dom.css(cover, { opacity: '1' });
 			dragRef.current?.setValue(object.coverScale);
 
 			if (!loadedRef.current) {
@@ -184,15 +195,15 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		if (loadedRef.current) {
 			cb();
 		} else {
-			cover.css({ opacity: 0 });
+			U.Dom.css(cover, { opacity: '0' });
 			setLoading(true);
 
-			el.onload = cb;
-			el.onerror = cb;
+			cover.onload = cb;
+			cover.onerror = cb;
 		};
 
 		if ([ I.CoverType.Upload, I.CoverType.Source ].includes(coverType)) {
-			el.src = S.Common.imageUrl(coverId, I.ImageSize.Large);
+			cover.src = S.Common.imageUrl(coverId, I.ImageSize.Large);
 		};
 	};
 	
@@ -203,19 +214,29 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return false;
 		};
 
-		const win = $(window);
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
 		x.current = e.pageX - rectRef.current.x - x.current;
 		y.current = e.pageY - rectRef.current.y - y.current;
 		onDragMove(e.pageX, e.pageY);
 
 		keyboard.disableSelection(true);
-		node.addClass('isDragging');
-		
-		win.off('mousemove.cover mouseup.cover');
-		win.on('mousemove.cover', e => onDragMove(e.pageX, e.pageY));
-		win.on('mouseup.cover', e => onDragEnd(e.pageX, e.pageY));
+		U.Dom.addClass(node, 'isDragging');
+
+		if (mouseMoveHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
+		};
+		if (mouseUpHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
+		};
+
+		mouseMoveHandlerRef.current = (e: globalThis.MouseEvent) => onDragMove(e.pageX, e.pageY);
+		mouseUpHandlerRef.current = (e: globalThis.MouseEvent) => onDragEnd(e.pageX, e.pageY);
+
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandlerRef.current],
+			['mouseup', mouseUpHandlerRef.current],
+		]);
 	};
 
 	const onDragMove = (pageX: number, pageY: number) => {
@@ -229,13 +250,21 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onDragEnd = (pageX: number, pageY: number) => {
-		const win = $(window);
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const rect = rectRef.current;
 
 		keyboard.disableSelection(false);
-		win.off('mousemove.cover mouseup.cover');
-		node.removeClass('isDragging');
+
+		if (mouseMoveHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
+			mouseMoveHandlerRef.current = null;
+		};
+		if (mouseUpHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
+			mouseUpHandlerRef.current = null;
+		};
+
+		U.Dom.removeClass(node, 'isDragging');
 
 		x.current = pageX - rect.x - x.current;
 		y.current = pageY - rect.y - y.current;
@@ -248,23 +277,34 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 	
 	const onScaleMove = (e: any, v: number) => {
-		const node = $(nodeRef.current);
-		const cover = $(coverRef.current);
+		const node = nodeRef.current;
+		const cover = coverRef.current;
 		const { rootId } = props;
 		const object = S.Detail.get(rootId, rootId, [ 'coverX', 'coverY' ], true);
 		const { coverX, coverY } = object;
-		const value = node.find('#dragValue');
+		const value = node ? U.Dom.select('#dragValue', node) : null;
 
-		v = (v + 1) * 100;
-		value.text(Math.ceil(v) + '%');
-		cover.css({ height: 'auto', width: v + '%' });
-
-		const el = cover.get(0);
-		if (!el) {
+		if (!cover) {
 			return;
 		};
 
-		const rect = U.Common.getElementRect(el);
+		v = (v + 1) * 100;
+
+		U.Dom.css(cover, { height: 'auto', width: v + '%' });
+
+		let rect = U.Dom.getElementRect(cover);
+
+		// Ensure image covers container height
+		if (rectRef.current && (rect.height < rectRef.current.height)) {
+			const ratio = rectRef.current.height / rect.height;
+			v = v * ratio;
+			U.Dom.css(cover, { width: v + '%' });
+			rect = U.Dom.getElementRect(cover);
+		};
+
+		if (value) {
+			value.textContent = Math.ceil(v) + '%';
+		};
 
 		rectRef.current.cw = rect.width;
 		rectRef.current.ch = rect.height;
@@ -287,14 +327,14 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		e.preventDefault();
 		e.stopPropagation();
 
-		$(nodeRef.current).addClass('isDraggingOver');
+		U.Dom.addClass(nodeRef.current, 'isDraggingOver');
 	};
-	
+
 	const onDragLeave = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		$(nodeRef.current).removeClass('isDraggingOver');
+		U.Dom.removeClass(nodeRef.current, 'isDraggingOver');
 	};
 	
 	const onDrop = (e: any) => {
@@ -304,9 +344,8 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		const electron = U.Common.getElectron();
 		const file = electron.webFilePath(e.dataTransfer.files[0]);
-		const node = $(nodeRef.current);
-		
-		node.removeClass('isDraggingOver');
+
+		U.Dom.removeClass(nodeRef.current, 'isDraggingOver');
 		keyboard.disableCommonDrop(true);
 		setLoading(true);
 		
@@ -329,19 +368,17 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const my = rect.ch - rect.height;
 
 		x = Math.max(-mx, Math.min(0, x));
-		y = Math.max(-my, Math.min(0, y));
 
-		const px = Math.min(0, x / rect.cw * 100);
-		const py = Math.min(0, y / rect.ch * 100);
-		const css: any = { transform: `translate3d(${px}%,${py}%,0px)` };
-
-		if (rect.ch < rect.height) {
-			css.transform = 'translate3d(0px,0px,0px)';
-			css.height = rect.height;
-			css.width = 'auto';
+		if (rect.ch <= rect.height) {
+			y = 0;
+		} else {
+			y = Math.max(-my, Math.min(0, y));
 		};
 
-		$(coverRef.current).css(css);
+		const px = rect.cw > 0 ? Math.min(0, x / rect.cw * 100) : 0;
+		const py = rect.ch > 0 ? Math.min(0, y / rect.ch * 100) : 0;
+
+		U.Dom.css(coverRef.current, { transform: `translate3d(${px}%,${py}%,0px)` });
 
 		return { x, y };
 	};
@@ -377,7 +414,7 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		elements = (
 			<>
 				<div key="btn-drag" className="btn black drag withIcon">
-					<Icon />
+					<Icon name="control/cover/drag" size={16} />
 					<div className="txt">{translate('blockCoverDrag')}</div>
 				</div>
 				
@@ -433,6 +470,6 @@ const BlockCover = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		</div>
 	);
 	
-}));
+});
 
 export default BlockCover;

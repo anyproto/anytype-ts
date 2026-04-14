@@ -1,4 +1,3 @@
-import { S, Decode, Mapper } from 'Lib';
 
 /**
  * Response handlers for gRPC command responses.
@@ -642,7 +641,7 @@ export const SpaceInviteView = (response: any) => {
 		creatorIcon: response.creatorIconCid,
 		inviteType: response.inviteType,
 		iconOption: response.spaceIconOption,
-		uxType: response.spaceUxType,
+		spaceType: response.spaceType,
 	};
 };
 

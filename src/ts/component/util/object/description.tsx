@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { U } from 'Lib';
 
 interface Props {
 	object: any;

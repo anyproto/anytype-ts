@@ -1,29 +1,17 @@
 .menus {
-	.menu.horizontal.menuCommentToolbar { padding: 0px; transform-origin: 50% 50% !important; }
+	.menu.horizontal.menuCommentToolbar { padding: 0px; height: 40px; border-radius: 18px; transform-origin: 50% 50% !important; }
 	.menu.horizontal.menuCommentToolbar {
-		.section { padding: 4px 12px; display: flex; align-items: center; gap: 0px 8px; height: auto; }
+		.content { height: 100%; padding: 0px 4px; }
+		.section { display: flex; align-items: center; gap: 0px 4px; padding: 0px; height: auto; border-right: 0px; }
+		.section::after { content: ""; width: 1px; height: 20px; background: var(--color-shape-primary); margin: 0px 8px 0px 4px; }
+		.section:last-child::after { display: none; }
 
-		.icon { margin: 0px; }
+		.icon { min-width: 32px; height: 32px !important; margin: 0px; border-radius: 16px; }
+		.icon:hover, .icon.hover, .icon.active { background-color: var(--color-shape-highlight-medium); }
 
-		.icon.blockStyle { width: 40px !important; background-position: 4px center; }
+		.icon.blockStyle { width: 44px !important; justify-content: flex-start; padding-left: 6px; }
 		.icon.blockStyle {
-			.icon.arrow { right: 4px; }
+			.icon.arrow { right: 6px; width: 8px !important; height: 8px !important; min-width: unset !important; border-radius: 0; background-color: transparent !important; }
 		}
-
-		.icon.blockStyle.text { background-image: url('~img/icon/menu/style/text.svg'); }
-		.icon.blockStyle.header1 { background-image: url('~img/icon/menu/style/header1.svg'); }
-		.icon.blockStyle.header2 { background-image: url('~img/icon/menu/style/header2.svg'); }
-		.icon.blockStyle.header3 { background-image: url('~img/icon/menu/style/header3.svg'); }
-
-		.icon.active.bold { background-image: url('~img/icon/menu/action/mark/bold1.svg'); }
-		.icon.active.italic { background-image: url('~img/icon/menu/action/mark/italic1.svg'); }
-		.icon.active.strike { background-image: url('~img/icon/menu/action/mark/strike1.svg'); }
-		.icon.active.underline { background-image: url('~img/icon/menu/action/mark/underline1.svg'); }
-		.icon.active.link { background-image: url('~img/icon/menu/action/mark/link1.svg'); }
-
-		.icon.quote { background-image: url('~img/icon/menu/action/block/text/quote.svg'); }
-		.icon.codeSnippet { background-image: url('~img/icon/menu/action/block/code.svg'); }
-
-		.icon.blockStyle.list { background-image: url('~img/icon/menu/action/block/text/bulleted.svg'); }
 	}
 }

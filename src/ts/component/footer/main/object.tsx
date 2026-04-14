@@ -1,13 +1,12 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
-const FooterMainObject = observer(forwardRef<{}, I.FooterComponent>((props, ref) => {
+const FooterMainObject = forwardRef<{}, I.FooterComponent>((props, ref) => {
 
 	return (
 		<div className="buttons" />
 	);
 
-}));
+});
 
 export default FooterMainObject;

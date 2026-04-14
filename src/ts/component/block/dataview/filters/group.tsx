@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef } from 'react';
-import { observer } from 'mobx-react';
-import { I, C, Relation, translate } from 'Lib';
 import { MenuItemVertical, Select, Label } from 'Component';
 import Rule from './rule';
+import * as I from 'Interface';
 
 interface Props {
 	rootId: string;
@@ -23,7 +22,7 @@ interface Props {
 	position?: () => void;
 };
 
-const DataviewFilterGroup = observer(forwardRef<{}, Props>((props, ref) => {
+const DataviewFilterGroup = forwardRef<{}, Props>((props, ref) => {
 
 	const { rootId, blockId, filter, depth, parentPath, getView, getTarget, isInline, loadData, readonly, onDelete, onUpdate, position } = props;
 	const { index, parentOperator, onParentOperatorChange } = props;
@@ -178,7 +177,7 @@ const DataviewFilterGroup = observer(forwardRef<{}, Props>((props, ref) => {
 		if (depth == 0) {
 			items.push({ isDiv: true });
 		};
-		items.push({ id: 'add', name: translate('menuDataviewFilterAddRule'), icon: 'plus' });
+		items.push({ id: 'add', name: translate('menuDataviewFilterAddRule'), iconParam: { name: 'plus/menu' } });
 
 		return items;
 	};
@@ -254,6 +253,6 @@ const DataviewFilterGroup = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default DataviewFilterGroup;

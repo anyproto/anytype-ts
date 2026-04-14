@@ -1,13 +1,12 @@
 import React, { Suspense, useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { InputWithFile, Error, Pager, Icon, Loader, ObjectName } from 'Component';
+import { InputWithFile, Error, Pager, Icon, Loader, ObjectName, MediaState } from 'Component';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const MediaPdf = React.lazy(() => import('Component/util/media/pdf'));
-import { I, C, S, U, J, translate, focus, Action, keyboard, analytics } from 'Lib';
-import { observer } from 'mobx-react';
 
-const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	
 	const [ pages, setPages ] = useState(0);
 	const [ page, setPage ] = useState(1);
@@ -33,15 +32,15 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 	const getWidth = (checkMax: boolean, v: number): number => {
 		const width = Number(fields.width) || 1;
-		const el = $(`#selectionTarget-${U.Common.esc(id)}`);
+		const el = U.Dom.get(`selectionTarget-${id}`);
 
-		if (!el.length) {
+		if (!el) {
 			return width;
 		};
-		
-		const ew = el.width();
+
+		const ew = U.Dom.contentWidth(el);
 		const w = Math.min(ew, Math.max(ew / 12, checkMax ? width * ew : v));
-		
+
 		return Math.min(1, Math.max(0, w / ew));
 	};
 
@@ -70,7 +69,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 	};
 
 	const onPageRender = () => {
-		heightRef.current = $(wrapRef.current).outerHeight();
+		heightRef.current = wrapRef.current?.offsetHeight ?? 0;
 	};
 
 	const isDownloading = S.Common.isDownloading(targetObjectId);
@@ -85,60 +84,72 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		};
 	};
 
+	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
+	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
+
 	const onResizeStart = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
+
 		const selection = S.Common.getRef('selectionProvider');
-		const win = $(window);
-		
-		focus.set(block.id, { from: 0, to: 0 });
+
 		selection?.hide();
-
-		$(nodeRef.current).addClass('isResizing');
-
+		U.Dom.addClass(nodeRef.current, 'isResizing');
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 
-		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		win.on(`mousemove.${block.id}`, e => onResizeMove(e, checkMax));
-		win.on(`mouseup.${block.id}`, e => onResizeEnd(e, checkMax));
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+		};
+
+		mouseMoveHandler.current = e => onResizeMove(e, checkMax);
+		mouseUpHandler.current = e => onResizeEnd(e, checkMax);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
-	
+
 	const onResizeMove = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
-		const wrap = $(wrapRef.current);
-		
-		if (!wrap.length) {
+
+		if (!wrapRef.current) {
 			return;
 		};
-		
-		const rect = U.Common.getElementRect(wrap.get(0));
+
+		const rect = U.Dom.getElementRect(wrapRef.current);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
-		
-		wrap.css({ width: (w * 100) + '%' });
+
+		U.Dom.css(wrapRef.current, { width: (w * 100) + '%' });
 		mediaRef.current?.resize();
 	};
-	
+
 	const onResizeEnd = (e: any, checkMax: boolean) => {
-		const wrap = $(wrapRef.current);
-		
-		if (!wrap.length) {
+		if (!wrapRef.current) {
 			return;
 		};
-		
-		const win = $(window);
-		const rect = U.Common.getElementRect(wrap.get(0));
-		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
-		
-		$(nodeRef.current).removeClass('isResizing');
 
-		win.off(`mousemove.${block.id} mouseup.${block.id}`);
+		const rect = U.Dom.getElementRect(wrapRef.current);
+		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
+
+		U.Dom.removeClass(nodeRef.current, 'isResizing');
+
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+			mouseMoveHandler.current = null;
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+			mouseUpHandler.current = null;
+		};
+
 		keyboard.disableSelection(false);
 		keyboard.setResize(false);
-		
+
 		heightRef.current = 0;
 
 		C.BlockListSetFields(rootId, [
@@ -168,16 +179,31 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 	useImperativeHandle(ref, () => ({}));
 
+	const typeName = translate('blockNamePdf');
+	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
+
 	let element = null;
 	let pager = null;
 
-	if (object.isDeleted) {
+	if (object.isArchived && (state == I.FileState.Done)) {
 		element = (
-			<div className="deleted">
-				<Icon className="ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+			<div ref={wrapRef} className={[ 'wrap', 'pdfWrapper' ].join(' ')} style={css}>
+				<Suspense fallback={<Loader />}>
+					<MediaPdf
+						ref={mediaRef}
+						src={S.Common.fileUrl(targetObjectId)}
+						page={1}
+						onDocumentLoad={onDocumentLoad}
+						onPageRender={onPageRender}
+						onClick={() => {}}
+					/>
+				</Suspense>
+				{overlay}
 			</div>
 		);
+	} else
+	if (object.isDeleted || object.isArchived) {
+		element = overlay;
 	} else {
 		switch (state) {
 			default:
@@ -186,30 +212,30 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="pdf" 
+						<InputWithFile
+							block={block}
+							iconParam={{ name: 'menu/block/media/pdf' }}
 							textFile={translate('blockPdfUpload')}
-							accept={J.Constant.fileExtension.pdf} 
-							onChangeUrl={onChangeUrl} 
-							onChangeFile={onChangeFile} 
-							readonly={readonly} 
+							accept={J.Constant.fileExtension.pdf}
+							onChangeUrl={onChangeUrl}
+							onChangeFile={onChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.FileState.Done: {
 				if (pages > 1) {
 					pager = (
-						<Pager 
-							offset={page - 1} 
-							limit={1} 
-							total={pages} 
+						<Pager
+							offset={page - 1}
+							limit={1}
+							total={pages}
 							pageLimit={1}
 							isShort={true}
-							onChange={setPage} 
+							onChange={setPage}
 						/>
 					);
 				};
@@ -240,7 +266,7 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 
 						{pager}
 
-						<Icon className="resize" onMouseDown={e => onResizeStart(e, false)} />
+						<Icon name="common/resize" className="resize" onMouseDown={e => onResizeStart(e, false)} />
 					</div>
 				);
 				break;
@@ -261,6 +287,6 @@ const BlockPdf = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) 
 		</div>
 	);
 
-}));
+});
 
 export default BlockPdf;

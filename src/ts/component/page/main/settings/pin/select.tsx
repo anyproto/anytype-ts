@@ -1,10 +1,9 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import sha1 from 'sha1';
-import { observer } from 'mobx-react';
 import { Title, Pin, Error } from 'Component';
-import { I, S, translate } from 'Lib';
+import * as I from 'Interface';
 
-const PageMainSettingsPinSelect = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsPinSelect = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ pin, setPin ] = useState('');
 	const [ error, setError ] = useState('');
@@ -43,6 +42,6 @@ const PageMainSettingsPinSelect = observer(forwardRef<I.PageRef, I.PageSettingsC
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsPinSelect;

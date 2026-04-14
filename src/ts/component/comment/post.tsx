@@ -1,14 +1,12 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName } from 'Component';
-import { I, J, S, U, C, Mark, translate, Action, analytics } from 'Lib';
 import CommentForm from './form';
 import CommentReply from './reply';
 import Attachment from 'Component/block/chat/attachment';
 import Reaction from 'Component/block/chat/message/reaction';
 import { renderParts } from './render';
+import * as I from 'Interface';
 
 interface Props {
 	rootId: string;
@@ -19,7 +17,7 @@ interface Props {
 
 const REPLY_LIMIT = 10;
 
-const CommentPost = observer((props: Props) => {
+const CommentPost = (props: Props) => {
 
 	const { rootId, targetId, message, readonly } = props;
 	const { space } = S.Common;
@@ -29,6 +27,7 @@ const CommentPost = observer((props: Props) => {
 	const [ isLoadingReplies, setIsLoadingReplies ] = useState(false);
 	const replyFormRef = useRef<any>(null);
 	const postRef = useRef<HTMLDivElement>(null);
+	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
 	const { id, creator, createdAt, modifiedAt, replyCount, reactions } = message;
@@ -57,74 +56,117 @@ const CommentPost = observer((props: Props) => {
 			return;
 		};
 
-		const el = $(node);
+		// Mentions and Object marks
+		[ I.MarkType.Mention, I.MarkType.Object ].forEach(type => {
+			U.Dom.selectAll(Mark.getTag(type), node).forEach((item: HTMLElement) => {
+				const param = String(item.getAttribute('data-param') || '');
+				if (!param) {
+					return;
+				};
 
-		// Mentions
-		el.find(Mark.getTag(I.MarkType.Mention)).each((_i: number, item: any) => {
-			item = $(item);
-			const param = String(item.attr('data-param') || '');
-			if (!param) {
-				return;
-			};
-
-			const object = S.Detail.get(subId, param, []);
-			item.off('mousedown.mention').on('mousedown.mention', (e: any) => {
-				e.preventDefault();
-				if (!object._empty_) {
-					U.Object.openEvent(e, object);
+				item.onmousedown = (e: any) => {
+					e.preventDefault();
+					const object = S.Detail.get(subId, param);
+					if (!object._empty_) {
+						U.Object.openEvent(e, object);
+					};
 				};
 			});
 		});
 
 		// Links
-		el.find('a').each((_i: number, item: any) => {
-			item = $(item);
-			const href = String(item.attr('href') || item.attr('data-param') || '');
-			if (!href) {
-				return;
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Link), node).forEach((item: HTMLElement) => {
+			item.onclick = (e: Event) => {
+				e.preventDefault();
 			};
 
-			item.off('click.link').on('click.link', (e: any) => {
-				e.preventDefault();
-				Action.openUrl(href);
-			});
-		});
-
-		// Object marks
-		el.find(Mark.getTag(I.MarkType.Object)).each((_i: number, item: any) => {
-			item = $(item);
-			const param = String(item.attr('data-param') || '');
-			if (!param) {
-				return;
-			};
-
-			const object = S.Detail.get(subId, param, []);
-			item.off('mousedown.object').on('mousedown.object', (e: any) => {
-				e.preventDefault();
-				if (!object._empty_) {
-					U.Object.openEvent(e, object);
+			item.onmousedown = (e: MouseEvent) => {
+				if (e.button == 2) {
+					return;
 				};
-			});
+
+				e.preventDefault();
+
+				const el = e.currentTarget as HTMLElement;
+				const url = String(el.getAttribute('href') || '');
+				const { isInside, target, spaceId } = U.Common.getLinkParamFromUrl(url);
+
+				const openObject = (id: string, spaceId: string) => {
+					if (spaceId && (spaceId != S.Common.space)) {
+						U.Router.go(U.Router.build({ page: 'main', action: 'object', id, spaceId }), {});
+						return;
+					};
+
+					const cb = (object) => {
+						if (object) {
+							U.Object.openEvent(e, object);
+						};
+					};
+
+					if (spaceId) {
+						U.Object.getById(id, { spaceId }, cb);
+					} else {
+						cb(S.Detail.get(subId, id, []));
+					};
+				};
+
+				if (isInside) {
+					openObject(target, spaceId);
+					return;
+				};
+
+				const route = U.Common.getRouteFromUrl(url);
+				if (route) {
+					const routeParam = U.Router.getParam(route);
+					if (routeParam.id) {
+						openObject(routeParam.id, routeParam.spaceId);
+						return;
+					};
+				};
+
+				Action.openUrl(target);
+			};
 		});
 
 		// Emoji marks — render as cross-platform images
-		el.find(Mark.getTag(I.MarkType.Emoji)).each((_i: number, item: any) => {
-			item = $(item);
+		const mounted: { root: Root; container: HTMLElement & { _reactRoot?: Root } }[] = [];
 
-			const id = item.attr('data-param');
-			const smile = item.find('smile');
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Emoji), node).forEach((item: HTMLElement) => {
+			const emojiId = item.getAttribute('data-param');
+			const smile = U.Dom.select('smile', item);
 
-			if (smile.length) {
+			if (smile) {
 				// Clear native emoji text, keep only the smile mount point
-				item.contents().filter(function () { return this.nodeType === 3; }).remove();
+				Array.from(item.childNodes).forEach(child => {
+					if (child.nodeType === 3) {
+						child.remove();
+					};
+				});
 
-				const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
-				const root = container._reactRoot || createRoot(container);
+				const container = smile as HTMLElement & { _reactRoot?: Root };
 
+				// A stale root may be cached on a reused DOM node from a previous effect run
+				if (container._reactRoot) {
+					const stale = container._reactRoot;
+					container._reactRoot = null;
+					queueMicrotask(() => stale.unmount());
+				};
+
+				const root = createRoot(container);
 				container._reactRoot = root;
-				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: id }} />);
+				mounted.push({ root, container });
+				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
 			};
 		});
+
+		return () => {
+			mounted.forEach(({ root, container }) => {
+				if (container._reactRoot === root) {
+					container._reactRoot = null;
+				};
+				queueMicrotask(() => root.unmount());
+			});
+		};
 	}, [ isEditing, parts, subId ]);
 
 	const loadDeps = useCallback((messages: any[], callBack?: () => void) => {
@@ -144,6 +186,7 @@ const CommentPost = observer((props: Props) => {
 			noDeps: true,
 			ignoreHidden: true,
 			crossSpace: true,
+			updateDetails: true,
 		}, callBack);
 	}, [ subId ]);
 
@@ -233,7 +276,7 @@ const CommentPost = observer((props: Props) => {
 	}, []);
 
 	const onSaveEdit = useCallback((newParts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[]) => {
-		const blocks = U.Comment.partsToBlocks(newParts);
+		const blocks = U.Comment.partsToChatBlocks(newParts);
 
 		C.ChatEditMessageContent(targetId, id, {
 			content: {
@@ -244,7 +287,11 @@ const CommentPost = observer((props: Props) => {
 			blocks,
 			attachments: message.attachments || [],
 			reactions: message.reactions || [],
-		} as any, () => {
+		} as any, (response: any) => {
+			if (response.error.code) {
+				return;
+			};
+
 			setIsEditing(false);
 
 			S.Comment.updatePost(subId, {
@@ -258,11 +305,25 @@ const CommentPost = observer((props: Props) => {
 				},
 			} as any);
 		});
-	}, [ targetId, id ]);
+	}, [ targetId, id, message.attachments, message.reactions ]);
 
 	const onDelete = useCallback(() => {
-		C.ChatDeleteMessage(targetId, id, () => {
-			S.Comment.deletePost(subId, id);
+		S.Popup.open('confirm', {
+			data: {
+				iconParam: { name: 'popup/header/confirm', color: 'orange' },
+				title: translate('popupConfirmChatDeleteMessageTitle'),
+				text: translate('popupConfirmChatDeleteMessageText'),
+				textConfirm: translate('commonDelete'),
+				onConfirm: () => {
+					C.ChatDeleteMessage(targetId, id, (response: any) => {
+						if (response.error.code) {
+							return;
+						};
+
+						S.Comment.deletePost(subId, id);
+					});
+				},
+			},
 		});
 	}, [ targetId, id, subId ]);
 
@@ -276,7 +337,7 @@ const CommentPost = observer((props: Props) => {
 	}, []);
 
 	const onSubmitReply = useCallback((newParts: I.CommentContentPart[], messageAttachments?: I.ChatMessageAttachment[], attachmentObjects?: any[]) => {
-		const blocks = U.Comment.partsToBlocks(newParts);
+		const blocks = U.Comment.partsToChatBlocks(newParts);
 
 		const msg = {
 			replyToMessageId: id,
@@ -327,6 +388,7 @@ const CommentPost = observer((props: Props) => {
 			};
 
 			S.Comment.addReply(id, newReply as any);
+			loadDeps([ newReply as any ]);
 
 			S.Comment.updatePost(subId, {
 				id,
@@ -336,12 +398,24 @@ const CommentPost = observer((props: Props) => {
 			setIsReplying(false);
 			replyFormRef.current?.clear();
 		});
-	}, [ targetId, id, subId, replyCount ]);
+	}, [ targetId, id, subId, replyCount, loadDeps ]);
 
 	const onCopyText = useCallback(() => {
-		const text = parts.map(p => p.text || '').join('\n');
-		U.Common.copyToast('', text);
-	}, [ parts ]);
+		const blocks = U.Comment.partsToBlocks(parts);
+
+		C.BlockCopy(rootId, blocks, { from: 0, to: 0 }, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			U.Common.clipboardCopy({
+				text: String(message.textSlot || '').replace(/\n+$/, ''),
+				html: message.htmlSlot,
+			});
+
+			Preview.toastShow({ text: translate('toastCopyBlock') });
+		});
+	}, [ rootId, parts ]);
 
 	const onCopyLink = useCallback(() => {
 		const object = S.Detail.get(rootId, rootId);
@@ -362,41 +436,84 @@ const CommentPost = observer((props: Props) => {
 		C.ChatToggleMessageReaction(targetId, id, icon);
 	}, [ targetId, id, reactions ]);
 
-	const onReaction = useCallback((e: React.MouseEvent) => {
+	const setHover = useCallback((v: boolean) => {
+		U.Dom.toggleClass(contentWrapRef.current, 'hover', v);
+	}, []);
+
+	const openReactionPicker = useCallback((element: HTMLElement) => {
+		setHover(true);
+
 		S.Menu.open('smile', {
 			classNameWrap: 'fromBlock',
-			element: $(e.currentTarget),
+			element,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			noAnimation: true,
+			onClose: () => setHover(false),
 			data: {
 				noHead: true,
 				noUpload: true,
 				value: '',
-				onSelect: (icon: string) => {
-					onReactionSelect(icon);
-				},
+				onSelect: (icon: string) => onReactionSelect(icon),
 			},
 		});
-	}, [ targetId, id, onReactionSelect ]);
+	}, [ onReactionSelect, setHover ]);
+
+	const onReaction = useCallback((e: React.MouseEvent) => {
+		openReactionPicker(e.currentTarget as HTMLElement);
+	}, [ openReactionPicker ]);
+
+	const buildMenuOptions = useCallback((withQuickActions: boolean) => {
+		const limit = J.Constant.limit.chat.reactions;
+		const self = (reactions || []).filter(it => it.authors?.includes(account.id));
+		const canReact = (self.length < limit.self) && ((reactions || []).length < limit.all);
+		const items: any[] = [];
+
+		if (withQuickActions) {
+			items.push({ id: 'reply', name: translate('blockChatReply'), iconParam: { name: 'chat/buttons/reply' } });
+			if (canReact) {
+				items.push({ id: 'reaction', name: translate('blockChatReactionAdd'), iconParam: { name: 'comment/reaction' } });
+			};
+			items.push({ isDiv: true });
+		};
+
+		items.push({ id: 'copyText', name: translate('commentCopyText'), iconParam: { name: 'menu/action/copy' } });
+
+		if (withQuickActions) {
+			items.push({ isDiv: true });
+		};
+
+		items.push({ id: 'copyLink', name: translate('commentCopyLink'), iconParam: { name: 'menu/action/pageLink' } });
+
+		if (isSelf) {
+			items.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
+
+			if (!withQuickActions) {
+				items.push({ isDiv: true });
+			};
+
+			items.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'destructive' }, color: 'destructive' });
+		};
+
+		return items;
+	}, [ isSelf, reactions, account.id ]);
+
+	const onMenuSelect = useCallback((item: any, anchor: HTMLElement) => {
+		switch (item.id) {
+			case 'reply': onReply(); break;
+			case 'reaction': openReactionPicker(anchor); break;
+			case 'copyText': onCopyText(); break;
+			case 'copyLink': onCopyLink(); break;
+			case 'edit': onEdit(); break;
+			case 'delete': onDelete(); break;
+		};
+	}, [ onReply, openReactionPicker, onCopyText, onCopyLink, onEdit, onDelete ]);
 
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
-		const element = $(e.currentTarget);
+		const element = e.currentTarget as HTMLElement;
 
-		const menuItems: any[] = [];
-
-		if (isSelf) {
-			menuItems.push({ id: 'edit', name: translate('commentEdit'), icon: 'pencil' });
-		};
-
-		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), icon: 'copy' });
-		menuItems.push({ id: 'copyLink', name: translate('commentCopyLink'), icon: 'link' });
-
-		if (isSelf) {
-			menuItems.push({ isDiv: true });
-			menuItems.push({ id: 'delete', name: translate('commentDelete'), icon: 'remove', color: 'red' });
-		};
+		setHover(true);
 
 		S.Menu.open('select', {
 			classNameWrap: 'fromBlock',
@@ -404,25 +521,53 @@ const CommentPost = observer((props: Props) => {
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
+			onClose: () => setHover(false),
 			data: {
-				options: menuItems,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'edit': onEdit(); break;
-						case 'copyText': onCopyText(); break;
-						case 'copyLink': onCopyLink(); break;
-						case 'delete': onDelete(); break;
-					};
-				},
+				options: buildMenuOptions(false),
+				onSelect: (e: any, item: any) => onMenuSelect(item, element),
 			},
 		});
-	}, [ isSelf, onEdit, onCopyText, onCopyLink, onDelete ]);
+	}, [ buildMenuOptions, onMenuSelect, setHover ]);
+
+	const onContextMenu = useCallback((e: React.MouseEvent) => {
+		if (readonly || isEditing) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		const x = e.pageX;
+		const y = e.pageY;
+		const anchor = contentWrapRef.current;
+
+		setHover(true);
+
+		S.Menu.open('select', {
+			classNameWrap: 'fromBlock',
+			recalcRect: () => ({ x, y, width: 0, height: 0 }),
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			onClose: () => setHover(false),
+			data: {
+				options: buildMenuOptions(true),
+				onSelect: (e: any, item: any) => onMenuSelect(item, anchor),
+			},
+		});
+	}, [ readonly, isEditing, buildMenuOptions, onMenuSelect, setHover ]);
 
 	const getAttachments = useCallback((): any[] => {
+		const linkTargets = new Set(
+			parts
+				.filter(p => (p.type === I.BlockType.Link) && p.link?.targetObjectId)
+				.map(p => p.link.targetObjectId)
+		);
+
 		return (message.attachments || [])
+			.filter(it => !linkTargets.has(it.target))
 			.map(it => S.Detail.get(subId, it.target))
-			.filter(it => !it._empty_);
-	}, [ message.attachments, subId ]);
+			.filter(it => !it._empty_ && !it.isDeleted);
+	}, [ message.attachments, parts, subId ]);
 
 	const onAttachmentPreview = useCallback((preview: any) => {
 		const data: any = { ...preview };
@@ -459,6 +604,7 @@ const CommentPost = observer((props: Props) => {
 						object={item}
 						subId={subId}
 						showAsFile={false}
+						withInlineSize={false}
 						onRemove={() => {}}
 						onPreview={onAttachmentPreview}
 					/>
@@ -530,9 +676,9 @@ const CommentPost = observer((props: Props) => {
 
 		return (
 			<div className="hoverActions">
-				{canReact ? <Icon className="reaction" withBackground={true} onClick={onReaction} /> : null}
-				<Icon className="reply" withBackground={true} onClick={onReply} />
-				<Icon className="more" withBackground={true} onClick={onMenuClick} />
+				{canReact ? <Icon name="comment/reaction" className="reaction" withBackground={true} onClick={onReaction} /> : null}
+				<Icon name="chat/buttons/reply" className="reply" withBackground={true} onClick={onReply} />
+				<Icon name="common/more" className="more" withBackground={true} onClick={onMenuClick} />
 			</div>
 		);
 	};
@@ -541,20 +687,23 @@ const CommentPost = observer((props: Props) => {
 
 	return (
 		<div ref={postRef} className={cn.join(' ')} data-message-id={id}>
-			{renderHoverActions()}
-
-			<IconObject
-				object={{ ...author, layout: I.ObjectLayout.Participant }}
-				size={32}
-			/>
-
-			<div className="postInner">
+			<div ref={contentWrapRef} className="contentWrap" onContextMenu={onContextMenu}>
 				<div className="head">
-					<div className="author">
-						<ObjectName object={author} withBadge={true} />
+					<div className="side left">
+						<IconObject
+							object={{ ...author, layout: I.ObjectLayout.Participant }}
+							size={20}
+							onClick={e => U.Object.openConfig(e, author)}
+						/>
+						<div className="author" onClick={e => U.Object.openConfig(e, author)}>
+							<ObjectName object={author} withBadge={true} />
+						</div>
+						<div className="date">
+							{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+						</div>
 					</div>
-					<div className="date">
-						{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+					<div className="side right">
+						{renderHoverActions()}
 					</div>
 				</div>
 
@@ -581,6 +730,7 @@ const CommentPost = observer((props: Props) => {
 							parentId={id}
 							message={reply}
 							readonly={readonly}
+							onReply={onReply}
 						/>
 					))}
 
@@ -611,6 +761,6 @@ const CommentPost = observer((props: Props) => {
 		</div>
 	);
 
-});
+};
 
 export default CommentPost;

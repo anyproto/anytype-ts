@@ -1,17 +1,7 @@
-import React, { forwardRef, useEffect } from 'react';
-import { I, U } from 'Lib';
-
-const FALLBACK_TIMEOUT = 3000;
+import React, { forwardRef } from 'react';
+import * as I from 'Interface';
 
 const PageMainBlank = forwardRef<I.PageRef, I.PageComponent>(() => {
-
-	useEffect(() => {
-		const timeout = window.setTimeout(() => {
-			U.Space.openDashboard({ replace: true });
-		}, FALLBACK_TIMEOUT);
-
-		return () => window.clearTimeout(timeout);
-	}, []);
 
 	return (
 		<div />

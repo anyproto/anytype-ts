@@ -1,11 +1,10 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Icon, PreviewObject, EmptySearch } from 'Component';
-import { I, J, U, S, C, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel, Pagination } from 'swiper/modules';
+import * as I from 'Interface';
 
-const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionTypeTemplate = forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { rootId, object, readonly, onChange } = props;
 	const [ dummy, setDummy ] = useState(0);
@@ -36,13 +35,13 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 
 	const onClick = (e: any, item: any) => {
 		U.Object.openPopup(item, {
-			onClose: () => $(window).trigger(`updatePreviewObject.${item.id}`)
+			onClose: () => U.Dom.eventDispatch(window, `updatePreviewObject.${item.id}`)
 		});
 	};
 
 	const onMore = (e: any, template: any) => {
 		const item = U.Common.objectCopy(template);
-		const node = $(`#sidebarRight #preview-${U.Common.esc(item.id)}`);
+		const node = U.Dom.select(`#sidebarRight #preview-${U.Common.esc(item.id)}`);
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -64,8 +63,8 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 				subIds: J.Menu.dataviewTemplate,
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
-				onOpen: () => node.addClass('active'),
-				onClose: () => node.removeClass('active'),
+				onOpen: () => U.Dom.addClass(node, 'active'),
+				onClose: () => U.Dom.removeClass(node, 'active'),
 				data: {
 					template: item,
 					isView: false,
@@ -135,9 +134,9 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 			<div className="titleWrap">
 				<Title text={translate('commonTemplates')} />
 				{!readonly ? (
-					<Icon 
-						id="section-relation-plus" 
-						className="plus" withBackground={true}
+					<Icon
+						id="section-relation-plus"
+						name="plus/menu" className="plus" withBackground={true}
 						tooltipParam={{ text: translate('commonAddTemplate') }}
 						onClick={e => onAdd()} 
 					/>
@@ -167,6 +166,6 @@ const SidebarSectionTypeTemplate = observer(forwardRef<I.SidebarSectionRef, I.Si
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionTypeTemplate;

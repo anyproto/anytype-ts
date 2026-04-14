@@ -1,17 +1,16 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
-import $ from 'jquery';
+
 import { MenuItemVertical, Loader, ObjectName, ObjectType, EmptySearch } from 'Component';
-import { I, S, U, J, C, keyboard, Mark, Relation, translate, analytics } from 'Lib';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import * as I from 'Interface';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT_HEIGHT = 10;
 
-const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, close, position } = props;
+	const { param, getId, getContainer, close, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { pronounId, withCaption, canAdd, skipIds, onChange } = data;
 	const { filterText, space } = S.Common;
@@ -25,7 +24,6 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	useEffect(() => {
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
@@ -34,24 +32,25 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	}, []);
 
 	useEffect(() => {
-		rebind();
-		resize();
-	});
-
-	useEffect(() => {
 		n.current = 0;
 		offset.current = 0;
 		load(true);
 	}, [ filterText ]);
 	
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => props.onKeyDown(e));
+		keydownHandler.current = (e: any) => props.onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => props.setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const getSections = () => {
@@ -72,7 +71,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				name: translate('commonDates'), 
 				children: [
 					...dates,
-					{ id: 'selectDate', icon: `relation ${Relation.className(I.RelationType.Date)}`, name: translate(`placeholderCell${I.RelationType.Date}`) },
+					{ id: 'selectDate', iconParam: { name: 'relation/date' }, name: translate(`placeholderCell${I.RelationType.Date}`) },
 					{ isDiv: true },
 				]
 			});
@@ -84,7 +83,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		if (filter && canAdd) {
 			const children: any[] = [
-				{ id: 'add', icon: 'plus', name: U.String.sprintf(translate('commonCreateObjectWithName'), filter) }
+				{ id: 'add', iconParam: { name: 'plus/menu' }, name: U.String.sprintf(translate('commonCreateObjectWithName'), filter) }
 			];
 
 			if (length) {
@@ -110,6 +109,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const load = (clear: boolean, callBack?: (value: any) => void) => {
 		const skipLayouts = U.Object.getSystemLayouts().filter(it => !U.Object.isDateLayout(it) && !U.Object.isTypeLayout(it));
 		const sorts = [
+			{ relationKey: '_final_score', type: I.SortType.Desc },
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
@@ -134,6 +134,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		U.Subscription.search({
 			filters,
 			sorts,
+			keys: J.Relation.default.concat([ '_final_score' ]),
 			fullText: filterText,
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
@@ -150,7 +151,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
-
+			position();
 			callBack?.(null);
 		});
 	};
@@ -241,9 +242,8 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
 
 		let height = 16;
 		if (!items.length) {
@@ -252,8 +252,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			height = items.reduce((res: number, current: any) => res + getRowHeight(current), height);
 		};
 
-		obj.css({ height });
-		position();
+		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
 	};
 
 	const items = getItems();
@@ -284,10 +283,9 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				columnIndex={0}
 				rowIndex={param.index}
 			>
-				<MenuItemVertical 
+				<MenuItemVertical
 					id={item.id}
 					object={object}
-					icon={item.icon}
 					name={<ObjectName object={item} withPlural={true} withPronoun={withPronoun} />}
 					onMouseEnter={e => onOver(e, item)} 
 					onClick={e => onClick(e, item)}
@@ -305,6 +303,7 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -353,6 +352,6 @@ const MenuBlockMention = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</>
 	);
 	
-}));
+});
 
 export default MenuBlockMention;

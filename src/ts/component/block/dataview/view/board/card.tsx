@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { observer } from 'mobx-react';
-import { I, S, U, Relation, keyboard } from 'Lib';
 import { Cell, SelectionTarget, ObjectCover, Icon } from 'Component';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	id: string;
@@ -10,7 +9,7 @@ interface Props extends I.ViewComponent {
 	onDragStartCard?: (e: any, groupId: any, record: any) => void;
 };
 
-const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
+const BoardCard = forwardRef<I.RowRef, Props>((props, ref) => {
 
 	const {
 		rootId, block, groupId, id, isPopup, isInline, getView, onContext, onRefCell, getIdPrefix, getVisibleRelations, getCoverObject, onEditModeClick, canCellEdit,
@@ -91,12 +90,18 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const last = node.find('.cellContent:not(.isEmpty)').last();
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.find('.cellContent').removeClass('last');
-		if (last.length) {
-			last.addClass('last');
+		const cells = U.Dom.selectAll('.cellContent', node);
+		const nonEmpty = U.Dom.selectAll('.cellContent:not(.isEmpty)', node);
+		const last = nonEmpty.length ? nonEmpty[nonEmpty.length - 1] : null;
+
+		cells.forEach(el => U.Dom.removeClass(el, 'last'));
+		if (last) {
+			U.Dom.addClass(last, 'last');
 		};
 	};
 
@@ -171,6 +176,7 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 			>
 				{canEdit && config.experimental ? (
 					<Icon
+						name="common/edit"
 						className={[ 'edit', isEditing ? 'enabled' : '' ].join(' ')}
 						onClick={e => onEditModeClick(e, record.id)}
 					/>
@@ -181,6 +187,6 @@ const BoardCard = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default BoardCard;

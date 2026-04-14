@@ -1,28 +1,37 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { MenuItemVertical } from 'Component';
-import { I, S, U, keyboard, analytics, translate } from 'Lib';
 
-const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+import { MenuItemVertical } from 'Component';
+import * as I from 'Interface';
+
+const MenuBlockStyle = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, onKeyDown, setActive, close } = props;
 	const { data } = param;
-	const { rootId, blockId, blockIds, onSelect } = data;
+	const { rootId, blockId, blockIds, onSelect, activeStyle, allowedSections, allowedItems } = data;
 	const block = S.Block.getLeaf(rootId, blockId);
 	const n = useRef(-1);
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 	
 	const getActive = (): I.TextStyle | I.DivStyle | I.FileStyle => {
+		if (activeStyle !== undefined) {
+			return activeStyle;
+		};
+
 		if (!block) {
 			return 0;
 		};
@@ -32,16 +41,31 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (block.isFile()) {
 			return style != I.FileStyle.Link ? I.FileStyle.Embed : I.FileStyle.Link;
 		};
-		
+
 		return style;
 	};
 	
 	const getSections = () => {
 		const sections: any[] = [];
-		const turnText = { id: 'turnText', icon: '', name: translate('menuBlockStyleTurnText'), color: '', children: U.Menu.getBlockText() };
-		const turnList = { id: 'turnList', icon: '', name: translate('menuBlockStyleTurnList'), color: '', children: U.Menu.getBlockList() };
-		const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockStyleTurnDiv'), color: '', children: U.Menu.getTurnDiv() };
-		const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockStyleTurnFile'), color: '', children: U.Menu.getTurnFile() };
+		const textStyleMap: any = {
+			[I.TextStyle.Paragraph]: 'textStyleParagraph',
+			[I.TextStyle.Header1]: 'textStyleHeader1',
+			[I.TextStyle.Header2]: 'textStyleHeader2',
+			[I.TextStyle.Header3]: 'textStyleHeader3',
+		};
+
+		const textChildren = U.Menu.getBlockText().map((it: any) => {
+			if (textStyleMap[it.id] !== undefined) {
+				const { iconParam, ...rest } = it;
+				return { ...rest, className: [ it.className, textStyleMap[it.id] ].filter(Boolean).join(' ') };
+			};
+			return it;
+		});
+
+		const turnText = { id: 'turnText', name: translate('menuBlockStyleTurnText'), color: '', children: textChildren };
+		const turnList = { id: 'turnList', name: translate('menuBlockStyleTurnList'), color: '', children: U.Menu.getBlockList() };
+		const turnDiv = { id: 'turnDiv', name: translate('menuBlockStyleTurnDiv'), color: '', children: U.Menu.getTurnDiv() };
+		const turnFile = { id: 'turnFile', name: translate('menuBlockStyleTurnFile'), color: '', children: U.Menu.getTurnFile() };
 
 		let hasTurnText = true;
 		let hasTurnList = true;
@@ -60,20 +84,32 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (!block.isFile())			 hasTurnFile = false;
 		};
 
-		if (hasTurnText)	 sections.push(turnText);
-		if (hasTurnList)	 sections.push(turnList);
-		if (hasTurnDiv)		 sections.push(turnDiv);
-		if (hasTurnFile)	 sections.push(turnFile);
+		const allowed = allowedSections ? new Set(allowedSections) : null;
+
+		if (hasTurnText && (!allowed || allowed.has('turnText')))	 sections.push(turnText);
+		if (hasTurnList && (!allowed || allowed.has('turnList')))	 sections.push(turnList);
+		if (hasTurnDiv && (!allowed || allowed.has('turnDiv')))		 sections.push(turnDiv);
+		if (hasTurnFile && (!allowed || allowed.has('turnFile')))	 sections.push(turnFile);
+
+		if (allowedItems) {
+			const itemSet = new Set(allowedItems);
+			for (const section of sections) {
+				section.children = section.children.filter((c: any) => !c.isDiv && itemSet.has(c.id));
+			};
+		};
 
 		return U.Menu.sectionsMap(sections);
 	};
 	
 	const getItems = () => {
 		const sections = getSections();
-		
+
 		let items: any[] = [];
-		for (const section of sections) {
-			items = items.concat(section.children);
+		for (let i = 0; i < sections.length; i++) {
+			if (i > 0) {
+				items.push({ isDiv: true });
+			};
+			items = items.concat(sections[i].children);
 		};
 		return items;
 	};
@@ -131,6 +167,6 @@ const MenuBlockStyle = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockStyle;

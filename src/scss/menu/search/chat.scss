@@ -7,7 +7,7 @@
 	}
 	.menu.menuSearchChat * { -webkit-app-region: no-drag; }
 	.menu.menuSearchChat {
-		.content { transition: none; padding: 0px; overflow: visible; }
+		.content { padding: 0px; overflow: visible; }
 		.wrap { height: 100%; width: 100%; display: flex; flex-direction: column; }
 		.filterWrapper { padding: 10px 0px 4px 0px; display: flex; flex-direction: row; gap: 0px 8px; }
 
@@ -16,9 +16,8 @@
 			background-color: var(--color-shape-highlight-medium); border-radius: 16px; align-items: center;
 		}
 		.arrowWrapper {
-			.icon { width: 20px; height: 20px; }
-			.icon.arrow { background-image: url('~img/arrow/searchText.svg'); }
-			.icon.arrow.down { transform: rotate(180deg); }
+			.icon { width: 20px !important; height: 20px !important; }
+			.icon.arrow.up { transform: rotate(180deg); }
 			.icon.arrow.disabled { opacity: 0.3; pointer-events: none; }
 		}
 
@@ -34,7 +33,7 @@
 
 		.item { padding: 8px 16px; display: flex; gap: 0 12px; align-items: flex-start; }
 		.item {
-			.iconObject { flex-shrink: 0; margin: 0px; }
+			.iconObject { margin: 0px; }
 			.info { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
 			.nameWrapper { display: flex; align-items: center; gap: 0px 8px; }

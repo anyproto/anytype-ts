@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Button, Input, Label, Icon, Error } from 'Component';
-import { I, C, S, U, J, translate, analytics } from 'Lib';
+import * as I from 'Interface';
 
-const PageMainSettingsImportNotion = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsImportNotion = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { onPage } = props;
 	const [ error, setError ] = useState('');
@@ -28,7 +27,7 @@ const PageMainSettingsImportNotion = observer(forwardRef<I.PageRef, I.PageSettin
 
 	return (
 		<>
-			<Icon className="logo" />
+			<Icon name="import/notion" className="logo" size={56} />
 			<Title text={U.Menu.getImportNames()[I.ImportType.Notion]} />
 			<Label className="description" text={translate('popupSettingsImportNotionDescription')} />
 
@@ -50,7 +49,7 @@ const PageMainSettingsImportNotion = observer(forwardRef<I.PageRef, I.PageSettin
 			<div className="helpWrapper flex">
 				<Title text={U.String.sprintf(translate('popupSettingsImportNotionHowTo'), J.Url.notionFAQ)} />
 				<div className="btn" onClick={() => onPage('importNotionHelp')}>
-					<Icon className="help" />{translate('popupSettingsImportNotionStepByStepGuide')}
+					<Icon name="common/help" className="help" size={14} />{translate('popupSettingsImportNotionStepByStepGuide')}
 				</div>
 			</div>
 
@@ -71,6 +70,6 @@ const PageMainSettingsImportNotion = observer(forwardRef<I.PageRef, I.PageSettin
 		</>
 	);
 	
-}));
+});
 
 export default PageMainSettingsImportNotion;

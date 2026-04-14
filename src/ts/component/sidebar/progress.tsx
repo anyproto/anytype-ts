@@ -1,88 +1,100 @@
-import React, { FC, memo, useRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
-import { Icon, Label } from 'Component';
-import { I, S, U, C, translate } from 'Lib';
+import React, { FC, memo, useRef, useEffect, useState, useCallback } from 'react';
+import Icon from 'Component/util/icon';
+import Label from 'Component/util/label';
+import * as I from 'Interface';
 
 const AUTO_EXPAND = true;
 const SKIP_STATE = [ I.ProgressState.Done, I.ProgressState.Canceled ];
 
-const getIconClass = (type: I.ProgressType): string => {
+const getIconName = (type: I.ProgressType): string => {
 	switch (type) {
-		case I.ProgressType.Update:		return 'update';
-		case I.ProgressType.Import:		return 'import';
-		case I.ProgressType.Export:		return 'export';
-		default:						return 'download';
+		case I.ProgressType.Update:		return 'popup/header/update';
+		case I.ProgressType.Import:		return 'menu/action/import';
+		case I.ProgressType.Export:		return 'menu/action/export';
+		default:						return 'menu/action/download';
 	};
 };
 
-const ItemStatus = observer(({ id, type }: { id: string; type: I.ProgressType }) => {
-	const item = S.Progress.getItem(id);
+interface ItemStatusProps {
+	type: I.ProgressType;
+	current: number;
+	total: number;
+	error?: string;
+};
 
-	if (!item) {
-		return null;
+const ItemStatus: FC<ItemStatusProps> = memo(({ type, current, total, error }) => {
+	if (error) {
+		return <span className="error">{error}</span>;
 	};
 
-	const isError = item.state == I.ProgressState.Error;
-
-	if (isError) {
-		return <span className="error">{item.error}</span>;
-	};
-
-	const percent = item.total > 0 ? Math.min(100, Math.ceil(item.current / item.total * 100)) : 0;
+	const percent = total > 0 ? Math.min(100, Math.ceil(current / total * 100)) : 0;
 	const status = translate(U.String.toCamelCase(`progress-status-${type}`));
 
-	return <span>{percent}% &bull; {status}</span>;
+	return <span>{percent}% <span className="dot" /> {status}</span>;
 });
 
-interface ItemProps {
+export interface ProgressItemProps {
 	id: string;
 	type: I.ProgressType;
 	canCancel: boolean;
 	isError: boolean;
+	current?: number;
+	total?: number;
+	error?: string;
+	onCancel?: (id: string) => void;
 };
 
-const Item = memo(({ id, type, canCancel, isError }: ItemProps) => {
+export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, isError, current, total, error, onCancel }: ProgressItemProps) => {
 	const cn = [ 'item' ];
 	const label = translate(U.String.toCamelCase(`progress-${type}`));
-	const iconClass = getIconClass(type);
+	const iconName = getIconName(type);
 
 	if (canCancel) {
 		cn.push('canCancel');
 	};
 
-	const onCancel = (e: React.MouseEvent) => {
+	const handleCancel = (e: React.MouseEvent) => {
 		e.stopPropagation();
-		C.ProcessCancel(id);
+
+		if (onCancel) {
+			onCancel(id);
+		} else {
+			C.ProcessCancel(id);
+		};
 	};
 
 	return (
 		<div className={cn.join(' ')}>
-			<div className={[ 'iconWrap', iconClass ].join(' ')}>
-				<Icon className={`progressType ${iconClass}`} />
+			<div className="iconWrap">
+				<Icon name={iconName} className="progressType" />
 			</div>
 
 			<div className="info">
 				<div className="name">{label}</div>
 				<div className="status">
-					<ItemStatus id={id} type={type} />
+					<ItemStatus type={type} current={current || 0} total={total || 0} error={error} />
 				</div>
 			</div>
 
 			<div className={[ 'spinnerWrap', (!isError ? 'withSpinner' : '') ].join(' ')}>
-				{canCancel ? <Icon className="close" onClick={onCancel} /> : ''}
+				{canCancel ? <Icon name="common/clear" onClick={handleCancel} /> : ''}
 			</div>
 		</div>
 	);
 });
 
-const SidebarProgress: FC = observer(() => {
+const SidebarProgress: FC = () => {
 
 	const list = S.Progress.getList(it => !SKIP_STATE.includes(it.state));
 	const [ isExpanded, setIsExpanded ] = useState(false);
 	const prevCount = useRef(0);
 
+	const onHeadClick = useCallback(() => {
+		setIsExpanded(v => !v);
+	}, []);
+
 	useEffect(() => {
-		if (AUTO_EXPAND && (list.length > 0) && (prevCount.current === 0)) {
+		if ((list.length > 0) && (prevCount.current === 0) && AUTO_EXPAND) {
 			setIsExpanded(true);
 		};
 
@@ -97,17 +109,13 @@ const SidebarProgress: FC = observer(() => {
 		return null;
 	};
 
-	const onToggle = () => {
-		setIsExpanded(!isExpanded);
-	};
-
 	const headerText = U.String.sprintf(translate('progressProcessing'), list.length);
 
 	return (
 		<div className={[ 'sidebarProgress', (isExpanded ? 'isExpanded' : '') ].join(' ')}>
-			<div className="head" onClick={onToggle}>
+			<div className="head" onClick={onHeadClick}>
 				<Label text={headerText} />
-				<Icon className="arrow" />
+				<Icon name="arrow/button" size={8} className="arrow" />
 			</div>
 
 			{isExpanded ? (
@@ -117,12 +125,15 @@ const SidebarProgress: FC = observer(() => {
 						const canCancel = item.canCancel && !isError;
 
 						return (
-							<Item
+							<ProgressItem
 								key={item.id}
 								id={item.id}
 								type={item.type}
 								canCancel={canCancel}
 								isError={isError}
+								current={item.current}
+								total={item.total}
+								error={item.error}
 							/>
 						);
 					})}
@@ -131,6 +142,6 @@ const SidebarProgress: FC = observer(() => {
 		</div>
 	);
 
-});
+};
 
 export default SidebarProgress;

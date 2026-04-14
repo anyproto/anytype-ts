@@ -1,20 +1,18 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, IconObject, ObjectName, EmptySearch } from 'Component';
-import { I, S, U, keyboard, Relation, translate } from 'Lib';
+import * as I from 'Interface';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 28;
 const HEIGHT_EMPTY = 96;
 const HEIGHT_DIV = 16;
 
-const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, getId, getSize, onKeyDown, setActive, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -31,12 +29,12 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	const rebind = () => {
 		unbind();
 
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getItems = () => {
@@ -178,16 +176,13 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
-		const offset = 16;
-		const height = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
+		const height = items.reduce((res: number, current: any) => res + getRowHeight(current), 16);
 
 		listRef.current?.recomputeRowHeights(0);
-
-		obj.css({ height });
-		position();
+		U.Dom.css(obj, { height: `${height}px` });
 	};
 
 	const items = getItems();
@@ -216,12 +211,12 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				{...listeners}
 				style={style}
 			>
-				{canEdit ? <Icon className="dnd" /> : ''}
+				{canEdit ? <Icon name="common/dnd" /> : ''}
 				<span className="clickable" onClick={e => onClick(e, item)}>
 					<IconObject object={item} />
 					<ObjectName object={item} />
 				</span>
-				{canEdit ? <Icon className="delete" onClick={e => onRemove(e, item)} /> : ''}
+				{canEdit ? <Icon name="menu/common/delete" className="delete" onClick={e => onRemove(e, item)} /> : ''}
 			</div>
 		);
 	};
@@ -234,7 +229,7 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			onClick={e => onClick(e, item)}
 			style={item.style}
 		>
-			<Icon className="plus" />
+			<Icon name="plus/menu" className="plus" />
 			<div className="name">{item.name}</div>
 		</div>
 	);
@@ -276,7 +271,6 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const items = getItems();
 
 		rebind();
-		resize();
 
 		cache.current = new CellMeasurerCache({
 			fixedWidth: true,
@@ -290,18 +284,18 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	}, []);
 
 	useEffect(() => {
-		resize();
-
 		if (listRef.current && topRef.current) {
 			listRef.current.scrollToPosition(topRef.current);
 		};
 
+		position();
 		setActive(null, true);
 	});
 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems: () => items,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -351,6 +345,6 @@ const MenuObjectValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</DndContext>
 	);
 
-}));
+});
 
 export default MenuObjectValues;

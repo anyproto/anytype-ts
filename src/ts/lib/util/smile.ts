@@ -1,6 +1,3 @@
-import { U, J, translate } from 'Lib';
-import { init } from 'emoji-mart';
-
 const DIV = 65039;
 const CAP = 8419;
 
@@ -14,15 +11,17 @@ class UtilSmile {
 	 * Initializes the emoji data, icons, cache, and aliases.
 	 */
 	init () {
-		init({ data: J.Emoji });
-
 		this.icons = Object.keys(J.Emoji.emojis);
 
 		for (const id in J.Emoji.emojis) {
 			const item = J.Emoji.emojis[id];
 
-			for (const skin of item.skins) {
-				this.cache[skin.native] = skin.shortcodes;
+			for (let i = 0; i < item.skins.length; i++) {
+				const skin = item.skins[i];
+				const code = i > 0 ? `:${id}::skin-tone-${i + 1}:` : `:${id}:`;
+
+				this.cache[skin.native] = code;
+				skin.shortcodes = code;
 			};
 		};
 

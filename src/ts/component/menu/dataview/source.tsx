@@ -1,24 +1,29 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { Icon, IconObject, Label } from 'Component';
-import { I, C, S, U, Relation, analytics, keyboard, translate } from 'Lib';
 
-const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+import { Icon, IconObject, Label } from 'Component';
+import * as I from 'Interface';
+
+const MenuDataviewSource = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, getId, getSize, close, onKeyDown, setActive } = props;
 	const { data, className, classNameWrap } = param;
 	const { readonly, rootId, objectId } = data;
 	const n = useRef(-1);
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onRemove = (e: any, item: any) => {
@@ -124,7 +129,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 					id: 'type',
 					itemId: 'type',
 					name: translate('commonObjectType'),
-					customIcon: 'puzzle',
+					customIcon: 'menu/common/puzzle',
 					relationFormat: I.RelationType.Object,
 					layout: I.ObjectLayout.Relation,
 					value: translate('commonNone'),
@@ -132,6 +137,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 				{
 					id: 'relation',
 					itemId: 'relation',
+					customIcon: 'chat/attachment/object',
 					name: translate('blockNameRelation'),
 					relationFormat: I.RelationType.Relations,
 					layout: I.ObjectLayout.Relation,
@@ -166,7 +172,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 
 		let icon = null;
 		if (item.customIcon) {
-			icon = <div className="iconWrapper"><Icon className={item.customIcon} /></div>;
+			icon = <div className="iconWrapper"><Icon name={item.customIcon} /></div>;
 		} else {
 			icon = <IconObject size={40} object={item} />;
 		};
@@ -183,7 +189,7 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 					<div className="value">{item.value}</div>
 				</div>
 				<div className="buttons">
-					{canDelete ? <Icon className="delete" onClick={e => onRemove(e, item)} /> : ''}
+					{canDelete ? <Icon name="menu/common/delete" className="delete" onClick={e => onRemove(e, item)} /> : ''}
 				</div>
 			</div>
 		);
@@ -227,6 +233,6 @@ const MenuDataviewSource = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default MenuDataviewSource;

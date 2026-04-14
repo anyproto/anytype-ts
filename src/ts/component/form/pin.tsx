@@ -1,8 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import sha1 from 'sha1';
-import $ from 'jquery';
 import { Input } from 'Component';
-import { keyboard } from 'Lib';
 
 interface Props {
 	isNumeric?: boolean;
@@ -38,14 +36,20 @@ const Pin = forwardRef<PinRefProps, Props>(({
 	const inputRefs = useRef([]);
 	const index = useRef(0);
 
+	const handler = useRef<(e: MouseEvent) => void>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('mousedown.pin', e => e.preventDefault());
+		handler.current = (e: MouseEvent) => e.preventDefault();
+		U.Dom.addEvent(window, 'mousedown', handler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('mousedown.pin');
-	}; 
+		if (handler.current) {
+			U.Dom.removeEvent(window, 'mousedown', handler.current);
+			handler.current = null;
+		};
+	};
 
 	const focus = () => {
 		inputRefs.current[index.current]?.focus();
@@ -82,7 +86,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		focus();
 
 		for (const input of inputRefs.current) {
-			$(input.getNode()).removeClass('isMasked');
+			U.Dom.removeClass(input.getNode(), 'isMasked');
 		};
 	};
 
@@ -99,7 +103,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		if (prev) {
 			keyboard.shortcut('backspace', e, () => {
 				current.setValue('');
-				$(prev.getNode()).removeClass('isMasked');
+				U.Dom.removeClass(prev.getNode(), 'isMasked');
 				prev.focus();
 			});
 		};
@@ -120,7 +124,6 @@ const Pin = forwardRef<PinRefProps, Props>(({
 	const onInputChange = (index: number, value: string) => {
 		const input = inputRefs.current[index];
 		const next = inputRefs.current[index + 1];
-		const node = $(input.getNode());
 
 		let newValue = value;
 		if (isNumeric) {
@@ -135,7 +138,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		};
 
 		if (!newValue) {
-			node.removeClass('isMasked');
+			U.Dom.removeClass(input.getNode(), 'isMasked');
 			return;
 		};
 
@@ -144,7 +147,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		};
 
 		if (!isVisible) {
-			window.setTimeout(() => node.addClass('isMasked'), TIMEOUT_DURATION);
+			window.setTimeout(() => U.Dom.addClass(input.getNode(), 'isMasked'), TIMEOUT_DURATION);
 		};
 	};
 
@@ -159,7 +162,7 @@ const Pin = forwardRef<PinRefProps, Props>(({
 			const char = value[i - index] || '';
 
 			input.setValue(char);
-			$(input.getNode()).removeClass('isMasked');
+			U.Dom.removeClass(input.getNode(), 'isMasked');
 		};
 
 		inputRefs.current[pinLength - 1].focus();

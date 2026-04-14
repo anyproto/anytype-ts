@@ -1,18 +1,17 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
+
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, IconObject, MenuItemVertical, EmptySearch, ObjectName } from 'Component';
-import { I, S, U, Relation, Renderer, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
 
 const MENU_ID = 'dataviewFileList';
 
-const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewFileValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { id, param, position, getId, getSize, setHover } = props;
+	const { id, param, position, getId, getContainer, getSize, setHover } = props;
 	const { data, classNameWrap } = param;
 	const { canEdit, onChange, subId } = data;
 	const value = Relation.getArrayValue(data.value);
@@ -77,20 +76,20 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	};
 
 	const onMore = (e: any, item: any) => {
-		const itemEl = $(`#${getId()} #item-${U.Common.esc(item.id)}`);
+		const itemEl = U.Dom.select(`#item-${U.Common.esc(item.id)}`, getContainer());
 		const element = `#${getId()} #item-${U.Common.esc(item.id)} .icon.more`;
 		const isAllowed = canEdit && S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
 
 		let value = Relation.getArrayValue(data.value);
 		let options: any[] = [
-			{ id: 'open', icon: 'expand', name: translate('commonOpen') },
-			{ id: 'download', icon: 'download', name: translate('commonDownload') },
+			{ id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpen') },
+			{ id: 'download', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') },
 		];
 
 		if (isAllowed) {
 			options = options.concat([
 				{ isDiv: true },
-				{ id: 'remove', icon: 'remove', name: translate('commonDelete') },
+				{ id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') },
 			]);
 		};
 
@@ -99,12 +98,12 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 			horizontal: I.MenuDirection.Center,
 			classNameWrap: classNameWrap,
 			onOpen: () => {
-				itemEl.addClass('active');
-				$(element).addClass('active');
+				U.Dom.addClass(itemEl, 'active');
+				U.Dom.addClass(U.Dom.select(element), 'active');
 			},
 			onClose: () => {
-				itemEl.removeClass('active');
-				$(element).removeClass('active');
+				U.Dom.removeClass(itemEl, 'active');
+				U.Dom.removeClass(U.Dom.select(element), 'active');
 			},
 			data: {
 				value: '',
@@ -226,7 +225,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 				{...listeners}
 				style={style}
 			>
-				{canEdit ? <Icon className="dnd" /> : ''}
+				{canEdit ? <Icon name="common/dnd" /> : ''}
 				<div
 					className="clickable"
 					onClick={e => U.Object.openEvent(e, item)} 
@@ -236,7 +235,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 					{content}
 				</div>
 				<div className="buttons">
-					<Icon className="more" onClick={e => onMore(e, item)} />
+					<Icon name="common/more" className="more" onClick={e => onMore(e, item)} />
 				</div>
 			</div>
 		);
@@ -281,7 +280,7 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 					<div className="line" />
 					<MenuItemVertical 
 						id="add" 
-						icon="plus" 
+						iconParam={{ name: 'plus/menu' }}
 						name={translate('commonAdd')} 
 						onClick={onAdd}
 						onMouseEnter={() => setHover({ id: 'add' })}
@@ -292,6 +291,6 @@ const MenuDataviewFileValues = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default MenuDataviewFileValues;

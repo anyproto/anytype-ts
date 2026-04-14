@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef } from 'react';
 import { Title, Label, Select, Switch } from 'Component';
-import { I, S, U, translate, Action, analytics } from 'Lib';
-import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
-const PageMainSettingsLanguage = observer(forwardRef<{}, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsLanguage = forwardRef<{}, I.PageSettingsComponent>((props, ref) => {
 
 	const { config, interfaceLang, showRelativeDates, dateFormat, timeFormat, firstDay } = S.Common;
 	const { languages } = config;
@@ -136,6 +135,6 @@ const PageMainSettingsLanguage = observer(forwardRef<{}, I.PageSettingsComponent
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsLanguage;

@@ -14,16 +14,13 @@
             .icon.more { display: none; }
         }
 
-        .icon.checkbox {
-            width: 18px; height: 18px; flex-shrink: 0;
-            background-image: url('~img/icon/menu/checkbox0.svg');
-        }
-        .icon.checkbox.active { background-image: url('~img/icon/menu/checkbox1.svg'); }
+        .icon.checkbox { width: 18px; height: 18px; }
+        .icon.checkbox.active { color: var(--color-control-accent); }
 
         &:hover, &.hover {
             .clickable { width: calc(100% - 28px); }
             .buttons {
-                .icon.more { display: block; }
+                .icon.more { display: flex; }
             }
         }
 

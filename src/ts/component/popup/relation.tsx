@@ -1,15 +1,15 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Button, Cell, Error, EmptySearch } from 'Component';
-import { I, M, C, S, U, J, Relation, translate, Dataview, analytics } from 'Lib';
 
 import * as Diff from 'diff';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const ID_PREFIX = 'popupRelation';
 const SUB_ID_OBJECT = `${ID_PREFIX}-objects`;
 const SUB_ID_DEPS = `${ID_PREFIX}-deps`;
 
-const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupRelation = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -260,7 +260,7 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 			
 			const ref = cellRefs.current.get(id);
 			if (ref) {
-				ref.onClick($.Event('click'));
+				ref.onClick(new MouseEvent('click'));
 			};
 		};
 	});
@@ -332,6 +332,6 @@ const PopupRelation = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PopupRelation;

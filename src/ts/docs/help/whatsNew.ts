@@ -1,4 +1,4 @@
-import { I, J, U, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 export default () => {
 

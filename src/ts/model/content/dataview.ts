@@ -1,6 +1,6 @@
 import { observable, makeObservable } from 'mobx';
-import { I } from 'Lib';
 import View from '../view';
+import * as I from 'Interface';
 
 class BlockContentDataview implements I.ContentDataview {
 	

@@ -1,7 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { IconObject, Block, Button, Editable, Icon } from 'Component';
-import { I, M, S, U, J, C, focus, keyboard, Relation, translate, analytics, Dataview, } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import { focus } from 'Lib/focus';
 
 interface Props {
 	rootId: string;
@@ -27,7 +28,7 @@ const EDITORS = [
 
 const SUB_ID_CHECK = 'headSimple-check';
 
-const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
+const HeadSimple = forwardRef<PropsRef, Props>((props, ref) => {
 
 	const { rootId, isContextMenuDisabled, readonly, noIcon, isPopup, relationKey, getDotMap } = props;
 	const check = U.Data.checkDetails(rootId, '', []);
@@ -230,7 +231,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						name: translate('menuTypeLayoutDescription'),
 						children: [ 
 							{ isDiv: true },
-							{ id: 'reset', icon: 'reset', name: translate('menuTypeLayoutReset') },
+							{ id: 'reset', iconParam: { name: 'menu/action/reset' }, name: translate('menuTypeLayoutReset') },
 						]
 					}
 				],
@@ -317,6 +318,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						color="blank"
 						size={28}
 						className="resetLayout"
+						iconParam={{ name: 'common/typeLayout' }}
 						onClick={onLayout}
 					/>
 				);
@@ -341,7 +343,7 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 						color="blank" 
 						size={28}
 						text={translate('commonEditType')} 
-						onClick={() => U.Object.editType(rootId, isPopup)}
+						onClick={() => U.Object.editType(rootId, isPopup, false)}
 					/>
 				);
 			};
@@ -356,9 +358,9 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 	if (isDate) {
 		buttonCreate = (
 			<>
-				<Icon className="arrow left" withBackground={true} onClick={() => changeDate(-1)} />
-				<Icon className="arrow right" withBackground={true} onClick={() => changeDate(1)}/>
-				<Icon id="calendar-icon" className="calendar" withBackground={true} onClick={onCalendar} />
+				<Icon name="arrow/calendar" className="arrow left" withBackground={true} onClick={() => changeDate(-1)} />
+				<Icon name="arrow/calendar" className="arrow right" withBackground={true} onClick={() => changeDate(1)} />
+				<Icon id="calendar-icon" name="relation/date" withBackground={true} onClick={onCalendar} />
 			</>
 		);
 	};
@@ -443,6 +445,6 @@ const HeadSimple = observer(forwardRef<PropsRef, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default HeadSimple;

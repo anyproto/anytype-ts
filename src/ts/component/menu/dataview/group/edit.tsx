@@ -1,10 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, C, S, U, Dataview, keyboard, Relation, translate } from 'Lib';
-import { MenuItemVertical } from 'Component';
 
-const MenuDataviewGroupEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+import { MenuItemVertical } from 'Component';
+import * as I from 'Interface';
+
+const MenuDataviewGroupEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, onKeyDown, setActive, close } = props;
 	const { data } = param;
@@ -15,22 +14,29 @@ const MenuDataviewGroupEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 	const colorRef = useRef(group?.bgColor);
 	const isHiddenRef = useRef(group?.isHidden);
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const getSections = () => {
 		const colors = U.Menu.getBgColors().filter(it => it.id != 'bgColor-default');
 		const name = isHiddenRef.current ? translate('menuDataviewGroupEditShowColumn') : translate('menuDataviewGroupEditHideColumn');
+		const icon = isHiddenRef.current ? 'common/eye0' : 'common/eye1';
 
 		return [
-			{ children: [ { id: 'hide', icon: 'hide', name } ] },
+			{ children: [ { id: 'hide', iconParam: { name: icon }, name } ] },
 			{ children: colors },
 		];
 	};
@@ -146,6 +152,6 @@ const MenuDataviewGroupEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		</>
 	);
 
-}));
+});
 
 export default MenuDataviewGroupEdit;

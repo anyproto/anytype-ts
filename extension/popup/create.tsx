@@ -1,14 +1,15 @@
 import { forwardRef, useEffect, useRef, useState } from 'react';
-import $ from 'jquery';
+
 import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { arrayMove } from '@dnd-kit/sortable';
 import { getRange, setRange } from 'selection-ranges';
 import { Label, Input, Button, Select, Loader, Error, DragBox, Tag, Icon, IconObject } from 'Component';
-import { I, C, S, U, J, Relation, keyboard, Storage } from 'Lib';
 import Util from '../lib/util';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
-const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const Create = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef<any>(null);
 	const nameRef = useRef<Input>(null);
@@ -163,17 +164,15 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const clear = () => {
-		$(entryRef.current).text(' ');
+		if (entryRef.current) entryRef.current.textContent = ' ';
 		focus();
 	};
 
 	const focus = () => {
-		const entry = $(entryRef.current);
-		
-		if (entry.length) {
+		if (entryRef.current) {
 			window.setTimeout(() => {
-				entry.focus();
-				setRange(entry.get(0), { start: 0, end: 0 });
+				entryRef.current?.focus();
+				setRange(entryRef.current, { start: 0, end: 0 });
 
 				scrollToBottom();
 			});
@@ -189,18 +188,16 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const onKeyDown = (e: any) => {
-		const entry = $(entryRef.current);
-
 		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
 
-			const range = getRange(entry.get(0));
+			const range = getRange(entryRef.current);
 			if (range?.start || range?.end) {
 				return;
 			};
 
 			e.preventDefault();
-			
+
 			detailsRef.current.tag.pop();
 			setValue(detailsRef.current.tag);
 		});
@@ -230,9 +227,9 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 			horizontal: I.MenuDirection.Center,
 			commonFilter: true,
 			onOpen: () => {
-				window.setTimeout(() => $(element).addClass('isFocused'));
+				window.setTimeout(() => U.Dom.addClass(U.Dom.get('select-tag'), 'isFocused'));
 			},
-			onClose: () => $(element).removeClass('isFocused'),
+			onClose: () => U.Dom.removeClass(U.Dom.get('select-tag'), 'isFocused'),
 			data: {
 				canAdd: true,
 				canEdit: true,
@@ -250,19 +247,17 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const placeholderCheck = () => {
-		const node = $(nodeRef.current);
 		const value = getValue();
-		const list = node.find('#list');
-		const placeholder = node.find('#placeholder');
+		const list = U.Dom.select('#list', nodeRef.current);
+		const placeholder = U.Dom.select('#placeholder', nodeRef.current);
 		const length = detailsRef.current.tag.length;
 
-		length ? list.show() : list.hide();
-		value || length ? placeholder.hide() : placeholder.show();
+		if (list) list.style.display = length ? '' : 'none';
+		if (placeholder) placeholder.style.display = (value || length) ? 'none' : '';
 	};
 
 	const getValue = (): string => {
-		const entry = $(entryRef.current);
-		return entry.length ? String(entry.text() || '').trim() : '';
+		return entryRef.current ? String(entryRef.current.textContent || '').trim() : '';
 	};
 
 	const setValue = (value: string[]) => {
@@ -329,14 +324,15 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const scrollToBottom = () => {
-		const node = $(nodeRef.current as any);
-		const content: any = node.find('.cellContent');
+		const content = U.Dom.select('.cellContent', nodeRef.current);
 
-		content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
+		if (content) {
+			content.scrollTop = content.scrollHeight + parseInt(getComputedStyle(content).paddingBottom);
+		};
 	};
 
 	const resize = () => {
-		$(window).trigger('resize.menuDataviewOptionList');
+		window.dispatchEvent(new CustomEvent('resize'));
 	};
 
 	const tags = getTagsValue();
@@ -479,6 +475,6 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Create;

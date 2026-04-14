@@ -1,5 +1,5 @@
 import { makeObservable, observable } from 'mobx';
-import { I, U } from 'Lib';
+import * as I from 'Interface';
 
 const COLORS = [
 	'green',
@@ -88,6 +88,10 @@ class MembershipProduct implements I.MembershipProduct {
 
 	get colorStr (): string {
 		return COLORS.includes(this.color) ? this.color : 'default';
+	};
+
+	get iconName (): string {
+		return `tier/${this.colorStr == 'default' ? 'purple' : this.colorStr}`;
 	};
 
 	getPrice (isYearly: boolean): I.MembershipAmount | null {

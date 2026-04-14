@@ -74,6 +74,10 @@ else
 		exit 1
 	fi
 
+	# Rebuild the JS dev binary from anytype-heart
+	echo "Building anytype-heart JS dev binary..."
+	(cd "$HEART_DIR" && make install-dev-js)
+
 	# pb/protos/ — commands, events, changes, snapshot
 	mkdir -p "$PROTO_ROOT/pb/protos"
 	cp "$HEART_DIR/pb/protos/commands.proto" "$PROTO_ROOT/pb/protos/"
