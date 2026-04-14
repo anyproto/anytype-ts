@@ -303,6 +303,16 @@ const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				onBackspaceClose();
 			});
 		};
+
+		// Escape clears the filter first; only closes the menu when the filter is already empty
+		keyboard.shortcut('escape', e, () => {
+			if (v) {
+				e.preventDefault();
+				e.stopPropagation();
+				filterRef.current?.setValue('');
+				onFilterChange('');
+			};
+		});
 	};
 
 	const onFilterChange = (v: string) => {
