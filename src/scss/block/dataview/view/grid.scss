@@ -142,8 +142,11 @@
 					.chatCounter { display: block; }
 				}
 			};
+
+			.cell.c-select { padding-top: 12px; padding-bottom: 12px; }
 			
-			.cell.c-object, .cell.c-file {
+			.cell.c-object, 
+			.cell.c-file {
 				:not(.align1, .align2) { padding-right: 0px; }
 				&.align2 { padding-left: 0px; }
 			}
@@ -263,7 +266,8 @@
 				}
 			}
 
-			.cell.isEditing.c-select, .cell.isEditing.c-object {
+			.cell.isEditing.c-select, 
+			.cell.isEditing.c-object {
 				.placeholder { padding: 10px 14px; }
 			}
 

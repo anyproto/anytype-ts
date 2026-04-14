@@ -504,7 +504,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		const json = JSON.parse(String(clipboard.getData('application/json') || '{}'));
-		const html = String(clipboard.getData('text/html') || '');
+		const html = String(clipboard.getData('text/html') || '').replace(/<meta[^>]*>/gi, '');
 		const text = U.String.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
 
 		// If pasted content is a pure URL and there's a selection, create a link mark
