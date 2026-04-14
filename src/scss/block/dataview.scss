@@ -264,8 +264,6 @@
 					> .side.right { opacity: 1; }
 				}
 
-				.icon.expandControls { opacity: 1; }
-
 				.views {
 					.icon.plus { opacity: 1; }
 				}
@@ -285,8 +283,6 @@
 			> .sides {
 				> .side.right { opacity: 1; }
 			}
-
-			.icon.expandControls { opacity: 1; }
 
 			.views {
 				.icon.plus { opacity: 1; }
@@ -325,7 +321,7 @@
 				}
 			}
 
-			.icon.expandControls { width: 28px; height: 28px; flex-shrink: 0; opacity: 0; transition: opacity $transitionCommon; }
+			.icon.expandControls { width: 28px; height: 28px; flex-shrink: 0; }
 
 			.views { gap: 0px 12px; }
 			.viewItem { @include text-common; font-weight: 500; }

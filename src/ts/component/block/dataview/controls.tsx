@@ -694,29 +694,45 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 				<div id="dataviewControlsSideRight" className="side right">
 					{isInline ? (
-						<Icon
-							className={[ 'expandControls', (isCollapsed ? 'isCollapsed' : '') ].join(' ')}
-							name="arrow/doubleChevron"
-							size={28}
-							withBackground={true}
-							onClick={onToggleCollapse}
-						/>
-					) : ''}
+						<>
+							<Icon
+								className={[ 'expandControls', (isCollapsed ? 'isCollapsed' : '') ].join(' ')}
+								name="arrow/doubleChevron"
+								size={28}
+								withBackground={true}
+								onClick={onToggleCollapse}
+							/>
+							<div ref={collapsibleRef} className="collapsible">
+								<Filter
+									ref={filterRef}
+									placeholder={translate('blockDataviewSearch')}
+									iconParam={{ name: 'common/search' }}
+									tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
+									onChange={onFilterChange}
+									onIconClick={onFilterShow}
+								/>
 
-					<div ref={collapsibleRef} className="collapsible">
-						<Filter
-							ref={filterRef}
-							placeholder={translate('blockDataviewSearch')}
-							iconParam={{ name: 'common/search' }}
-							tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
-							onChange={onFilterChange}
-							onIconClick={onFilterShow}
-						/>
+								{collapsibleButtons.map((item: any, i: number) => (
+									<ButtonItem key={item.id} {...item} />
+								))}
+							</div>
+						</>
+					) : (
+						<>
+							<Filter
+								ref={filterRef}
+								placeholder={translate('blockDataviewSearch')}
+								iconParam={{ name: 'common/search' }}
+								tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
+								onChange={onFilterChange}
+								onIconClick={onFilterShow}
+							/>
 
-						{collapsibleButtons.map((item: any, i: number) => (
-							<ButtonItem key={item.id} {...item} />
-						))}
-					</div>
+							{collapsibleButtons.map((item: any, i: number) => (
+								<ButtonItem key={item.id} {...item} />
+							))}
+						</>
+					)}
 
 					{persistentButtons.map((item: any, i: number) => (
 						<ButtonItem key={item.id} {...item} />
