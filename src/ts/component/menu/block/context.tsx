@@ -402,11 +402,11 @@ const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		{ type: I.MarkType.Code, icon: 'menu/mark/code', name: translate('commonInlineCode'), caption: keyboard.getCaption('textCode') },
 	];
 
-	// You can't make headers bold, since they are already bold
+	// Headers are already bold, so hide the bold button
 	if (block.isTextHeader()) {
 		markActions = markActions.filter(it => ![ I.MarkType.Bold ].includes(it.type));
 	};
-	
+
 	return (
 		<div className="flex">
 			{canTurn ? (

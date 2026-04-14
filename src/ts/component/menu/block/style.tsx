@@ -103,10 +103,13 @@ const MenuBlockStyle = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const getItems = () => {
 		const sections = getSections();
-		
+
 		let items: any[] = [];
-		for (const section of sections) {
-			items = items.concat(section.children);
+		for (let i = 0; i < sections.length; i++) {
+			if (i > 0) {
+				items.push({ isDiv: true });
+			};
+			items = items.concat(sections[i].children);
 		};
 		return items;
 	};

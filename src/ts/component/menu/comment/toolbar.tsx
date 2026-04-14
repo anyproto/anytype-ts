@@ -22,7 +22,7 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({}));
 
-	const markActions = [
+	let markActions = [
 		{ type: 'bold', icon: 'menu/mark/bold', name: translate('commonBold'), caption: keyboard.getCaption('textBold') },
 		{ type: 'italic', icon: 'menu/mark/italic', name: translate('commonItalic'), caption: keyboard.getCaption('textItalic') },
 		{ type: 'strikethrough', icon: 'menu/mark/strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
@@ -32,6 +32,11 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const activeFormats = getActiveFormats?.() || {};
 	const blockStyle = getBlockStyle?.() || data.blockStyle || 'text';
+	const isHeader = [ 'header1', 'header2', 'header3' ].includes(blockStyle);
+
+	if (isHeader) {
+		markActions = markActions.filter(it => it.type !== 'bold');
+	};
 
 	const onMark = (e: any, type: string) => {
 		e.preventDefault();
