@@ -1392,6 +1392,8 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 					offsetY: -8,
 					horizontal: I.MenuDirection.Center,
 					vertical: I.MenuDirection.Top,
+					noFlipY: true,
+					noBorderY: true,
 					passThrough: true,
 					onClose: () => keyboard.disableContextClose(false),
 					data: {

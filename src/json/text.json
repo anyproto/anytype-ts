@@ -682,7 +682,7 @@
 	"editorPageCreateBookmarkObject": "Create Bookmark Object",
 	"editorPageCreateBookmark": "Create Bookmark",
 
-	"blockNameParagraph": "Text",
+	"blockNameParagraph": "Regular Text",
 	"blockNameHeader1": "Title",
 	"blockNameHeader2": "Heading",
 	"blockNameHeader3": "Subheading",

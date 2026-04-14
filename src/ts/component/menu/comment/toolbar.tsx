@@ -56,8 +56,9 @@ const MenuCommentToolbar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		S.Menu.open('blockLink', {
 			element: `#${getId()} #button-link`,
 			classNameWrap: 'fromBlock',
-			offsetY: 6,
+			offsetY: -6,
 			horizontal: I.MenuDirection.Center,
+			vertical: I.MenuDirection.Top,
 			noAnimation: true,
 			data: linkData,
 		});

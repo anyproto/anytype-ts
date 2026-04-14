@@ -3,7 +3,7 @@
 	.menu.horizontal.menuCommentToolbar {
 		.content { height: 100%; padding: 0px 4px; }
 		.section { display: flex; align-items: center; gap: 0px 4px; padding: 0px; height: auto; border-right: 0px; }
-		.section::after { content: ""; width: 1px; height: 20px; background: var(--color-shape-primary); margin: 0px 8px; }
+		.section::after { content: ""; width: 1px; height: 20px; background: var(--color-shape-primary); margin: 0px 8px 0px 4px; }
 		.section:last-child::after { display: none; }
 
 		.icon { min-width: 32px; height: 32px !important; margin: 0px; border-radius: 16px; }
