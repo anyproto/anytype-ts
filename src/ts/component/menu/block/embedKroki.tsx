@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { Editable, Select } from 'Component';
+import { Editable, Select, Button } from 'Component';
 import * as I from 'Interface';
 
 let _pako: any = null;
@@ -47,7 +47,7 @@ const encodeKrokiUrl = async (type: string, code: string): Promise<string> => {
 
 const MenuBlockEmbedKroki = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, position } = props;
+	const { param, position, close } = props;
 	const { data } = param;
 	const { value, onChange } = data;
 
@@ -144,6 +144,11 @@ const MenuBlockEmbedKroki = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		inputRef.current?.setFocus();
 	};
 
+	const onSave = async () => {
+		await save();
+		close();
+	};
+
 	useImperativeHandle(ref, () => ({
 		getItems: () => [],
 		getIndex: () => -1,
@@ -173,6 +178,9 @@ const MenuBlockEmbedKroki = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onInput={onInput}
 					onPaste={onPaste}
 				/>
+			</div>
+			<div className="buttons">
+				<Button text={translate('commonSave')} className="c28" onClick={onSave} />
 			</div>
 		</div>
 	);
