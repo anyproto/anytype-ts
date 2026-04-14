@@ -1,6 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -12,7 +10,7 @@ import * as I from 'Interface';
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, getSize, setHover, setActive, onKeyDown, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -27,16 +25,22 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
+	const keydownHandler = useRef<(e: any) => void>(null);
+	const keyHandlerRef = useRef<(e: any) => void>(null);
 
 	const rebind = () => {
 		unbind();
 
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		keydownHandler.current = (e: any) => keyHandlerRef.current?.(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -59,12 +63,16 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		};
 	};
 
+	keyHandlerRef.current = onKeyDownHandler;
+
 	const onAddHandler = (e: any) => {
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 		const object = S.Detail.get(rootId, rootId);
 
-		S.Menu.open('relationSuggest', { 
+		unbind();
+
+		S.Menu.open('relationSuggest', {
 			className,
 			classNameWrap,
 			element: `#${getId()} #item-add`,
@@ -73,6 +81,8 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			offsetY: 36,
 			noAnimation: true,
 			noFlipY: true,
+			rebind,
+			parentId: getId(),
 			data: {
 				...data,
 				menuIdEdit: 'dataviewRelationEdit',
@@ -119,12 +129,16 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			};
 		};
 
-		S.Menu.open('dataviewRelationEdit', { 
+		unbind();
+
+		S.Menu.open('dataviewRelationEdit', {
 			className,
 			classNameWrap,
 			element: `#${getId()} #item-${U.Common.esc(item.relationKey)}`,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
+			rebind,
+			parentId: getId(),
 			data: {
 				...data,
 				relationId: relation.id,
@@ -192,13 +206,12 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		}));
 	};
 
-	const resize = () => {
-		const obj = $(`#${getId()} .content`);
+	const beforePosition = () => {
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = !isReadonly ? 62 : 16;
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + offset));
 
-		obj.css({ height });
-		position();
+		U.Dom.css(obj, { height: `${height}px` });
 	};
 
 	const items = getItems();
@@ -276,7 +289,6 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const items = getItems();
 
 		rebind();
-		resize();
 
 		cache.current = new CellMeasurerCache({
 			fixedWidth: true,
@@ -292,8 +304,6 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	}, []);
 	
 	useEffect(() => {
-		resize();
-		rebind();
 		setActive(null, true);
 		position();
 
@@ -305,6 +315,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -379,6 +390,6 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuRelationList;

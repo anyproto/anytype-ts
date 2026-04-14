@@ -1,14 +1,11 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, IconObject, ObjectName, Sync } from 'Component';
-import * as I from 'Interface';
-import * as M from 'Model';
-import Storage from 'Lib/storage';
-import $ from 'jquery';
+import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
 
-const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+
+const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ previewId, setPreviewId ] = useState('');
 	const { widgets } = S.Block;
@@ -35,7 +32,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		const { total } = S.Record.getMeta(U.Subscription.spaceSubId(J.Constant.subId.archived), '');
 		const ret = [] as I.WidgetSection[];
 
-		if (!spaceview.isChat && !spaceview.isOneToOne) {
+		if (!spaceview.isOneToOne) {
 			const chats = U.Data.getWidgetChats();
 			if (chats.length) {
 				ret.push(I.WidgetSection.Unread);
@@ -65,10 +62,12 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	const initScroll = () => {
-		const body = $(bodyRef.current);
+		const body = bodyRef.current;
 		const top = Storage.getScroll('sidebarWidget', '', isPopup);
 
-		body.scrollTop(top);
+		if (body) {
+			body.scrollTop = top;
+		};
 	};
 
 	const onDragStart = (e: DragEvent, block: I.Block): void => {
@@ -92,21 +91,25 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		};
 
 		const selection = S.Common.getRef('selectionProvider');
-		const win = $(window);
-		const body = $(bodyRef.current);
-		const obj = body.find(`#widget-${U.Common.esc(block.id)}`);
-		const clone = $('<div />').addClass('widget isClone').css({ 
-			zIndex: 10000, 
-			position: 'fixed', 
-			left: -10000, 
-			top: -10000,
-			width: obj.outerWidth(),
-		});
+		const body = bodyRef.current;
 
-		clone.append(obj.find('.head').clone());
-		body.append(clone);
+		if (!body) {
+			return;
+		};
+
+		const obj = U.Dom.select(`#widget-${U.Common.esc(block.id)}`, body);
+		const clone = document.createElement('div');
+		clone.className = 'widget isClone';
+		U.Dom.css(clone, { zIndex: '10000', position: 'fixed', left: '-10000px', top: '-10000px', width: `${obj?.offsetWidth ?? 0}px` });
+
+		const headEl = obj ? U.Dom.select('.head', obj) : null;
+		if (headEl) {
+			clone.appendChild(headEl.cloneNode(true));
+		};
+
+		body.appendChild(clone);
 		selection?.clear();
-		$('body').addClass('isDragging');
+		U.Dom.addClass(document.body, 'isDragging');
 
 		keyboard.disableCommonDrop(true);
 		keyboard.disableSelection(true);
@@ -114,13 +117,15 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 		isDraggingRef.current = true;
 
-		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
+		e.dataTransfer.setDragImage(clone, 0, 0);
 		e.dataTransfer.setData('text', JSON.stringify({ blockId: block.id, section: block.content.section }));
 
-		win.off('dragend.widget').on('dragend.widget', () => {
+		const dragEndHandler = () => {
 			onDragEnd();
-			win.off('dragend.widget');
-		});
+			U.Dom.removeEvent(window, 'dragend', dragEndHandler);
+		};
+		U.Dom.removeEvent(window, 'dragend', dragEndHandler);
+		U.Dom.addEvent(window, 'dragend', dragEndHandler);
 
 		scrollOnMove.onMouseDown({ container: body, speed: 300, step: 1 });
 	};
@@ -136,7 +141,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 
 		e.preventDefault();
 
-		const target = $(e.currentTarget);
+		const target = e.currentTarget as HTMLElement;
 		const y = e.pageY;
 
 		raf.cancel(frameRef.current);
@@ -144,8 +149,9 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			clear();
 			dropTargetIdRef.current = block.id;
 
-			const { top } = target.offset();
-			const height = target.height();
+			const rect = target.getBoundingClientRect();
+			const top = rect.top + window.scrollY;
+			const height = U.Dom.contentHeight(target);
 			const child = getChild(block.id);
 
 			positionRef.current = y <= top + height / 2 ? I.BlockPosition.Top : I.BlockPosition.Bottom;
@@ -157,7 +163,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 				};
 			};
 
-			target.addClass([ 'isOver', (positionRef.current == I.BlockPosition.Top ? 'top' : 'bottom') ].join(' '));
+			U.Dom.addClass(target, `isOver ${positionRef.current == I.BlockPosition.Top ? 'top' : 'bottom'}`);
 		});
 	};
 
@@ -200,12 +206,12 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		isDraggingRef.current = false;
 		clear();
 
-		$('body').removeClass('isDragging');
+		U.Dom.removeClass(document.body, 'isDragging');
 	};
 
 	const onScroll = () => {
-		const body = $(bodyRef.current);
-		const top = body.scrollTop();
+		const body = bodyRef.current;
+		const top = body?.scrollTop ?? 0;
 
 		if (!previewId) {
 			Storage.setScroll('sidebarWidget', '', top, isPopup);
@@ -254,7 +260,8 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			return;
 		};
 
-		const sort: any = view.sorts.length ? view.sorts[0] : {};
+		const sorts = Dataview.getFilteredSorts(view.sorts);
+		const sort: any = sorts.length ? sorts[0] : {};
 
 		let relationKey = sort.relationKey;
 		let type = sort.type;
@@ -336,28 +343,44 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 	};
 
 	const initToggle = (id: I.WidgetSection) => {
-		const body = $(bodyRef.current);
-		const section = body.find(`#section-${U.Common.esc(id)}`);
-		const list = section.find('> .items');
+		const body = bodyRef.current;
+		if (!body) {
+			return;
+		};
+
+		const section = U.Dom.select(`#section-${U.Common.esc(id)}`, body);
+		if (!section) {
+			return;
+		};
+
+		const list = U.Dom.select(':scope > .items', section);
 		const isClosed = isSectionClosed(id);
 
-		section.toggleClass('isOpen', !isClosed);
-		list.toggleClass('isOpen', !isClosed).css({ 
-			height: (isClosed ? 0 : 'auto'),
-			overflow: (isClosed ? 'hidden' : 'visible'),
-		});
+		U.Dom.toggleClass(section, 'isOpen', !isClosed);
+		if (list) {
+			U.Dom.toggleClass(list, 'isOpen', !isClosed);
+			U.Dom.css(list, { height: isClosed ? '0' : 'auto', overflow: isClosed ? 'hidden' : 'visible' });
+		};
 	};
 
 	const onToggle = (id: I.WidgetSection) => {
-		const body = $(bodyRef.current);
-		const element = body.find(`#section-${U.Common.esc(id)}`);
-		const list = element.find('> .items');
+		const body = bodyRef.current;
+		if (!body) {
+			return;
+		};
+
+		const element = U.Dom.select(`#section-${U.Common.esc(id)}`, body);
+		if (!element) {
+			return;
+		};
+
+		const list = U.Dom.select(':scope > .items', element);
 		const sections = U.Common.objectCopy(widgetSections);
 		const idx = sections.findIndex(it => it.id == id);
 		const isClosed = sections[idx].isClosed;
 
 		sections[idx].isClosed = !isClosed;
-		element.toggleClass('isOpen', isClosed);
+		U.Dom.toggleClass(element, 'isOpen', isClosed);
 
 		if (isClosed) {
 			S.Common.widgetSectionsSet(sections);
@@ -421,16 +444,23 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			element,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
-			onOpen: () => $(wrap).addClass('active'),
-			onClose: () => $(wrap).removeClass('active'),
+			onOpen: () => {
+				const el = U.Dom.select(wrap);
+				U.Dom.addClass(el, 'active');
+			},
+			onClose: () => {
+				const el = U.Dom.select(wrap);
+				U.Dom.removeClass(el, 'active');
+			},
 		});
 	};
 
 	const clear = () => {
-		const body = $(bodyRef.current);
-
-		body.find('.widget.isOver').removeClass('isOver top bottom');
-		body.find('.widget.isClone').remove();
+		const body = bodyRef.current;
+		if (body) {
+			U.Dom.selectAll('.widget.isOver', body).forEach(el => U.Dom.removeClass(el, 'isOver top bottom'));
+			U.Dom.selectAll('.widget.isClone', body).forEach(el => el.remove());
+		};
 
 		dropTargetIdRef.current = '';
 		positionRef.current = null;
@@ -557,7 +587,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			head = (
 				<>
 					<div className="side left">
-						<Icon name="common/back" withBackground={true} onClick={e => {
+						<Icon name="common/back" className="back" withBackground={true} onClick={e => {
 							e.stopPropagation();
 
 							setPreviewId('');
@@ -630,6 +660,25 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 			</>
 		);
 
+		const isOwner = U.Space.isMyOwner();
+		const hasDashboard = spaceview.homepage && ![ I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(spaceview.homepage);
+		const bannerData = Storage.get('channelBanner') || {};
+		const showCreateHome = spaceview.isOneToOne && isOwner && !hasDashboard && !bannerData.home;
+
+		const onCreateHome = () => {
+			Action.openSettings('spaceHome', analytics.route.widget);
+		};
+
+		const onDismissCreateHome = (e: React.MouseEvent) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			const obj = Storage.get('channelBanner') || {};
+
+			obj.home = true;
+			Storage.set('channelBanner', obj);
+		};
+
 		content = (
 			<div className="content">
 				<Widget
@@ -643,6 +692,14 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 					sidebarDirection={sidebarDirection}
 					getObject={id => getObject(spaceBlock, id)}
 				/>
+
+				{showCreateHome ? (
+					<div className="createHome" onClick={onCreateHome}>
+						<Icon name="settings/home" className="home" />
+						<div className="name">{translate('widgetCreateHome')}</div>
+						<Icon name="common/close" className="close" onClick={onDismissCreateHome} />
+					</div>
+				) : ''}
 
 				{sections.map((section, i) => {
 					const isSectionPin = section.id == I.WidgetSection.Pin;
@@ -674,7 +731,7 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 								className={cns.join(' ')} 
 								key={`${section.id}-motion`}
 								{...U.Common.animationProps({
-									transition: { duration: 200, delay: i * 0.05 },
+									transition: { duration: 0.2, delay: i * 0.05 },
 								})}
 							>
 								<div
@@ -755,6 +812,6 @@ const SidebarPageWidget = observer(forwardRef<{}, I.SidebarPageComponent>((props
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageWidget;

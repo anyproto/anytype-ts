@@ -1,7 +1,8 @@
 @import "~scss/_mixins";
 
-.iconObject { display: inline-block; vertical-align: top; position: relative; width: 20px; height: 20px; flex-shrink: 0; }
 .iconObject {
+	display: inline-block; vertical-align: top; position: relative; width: 20px; height: 20px; flex-shrink: 0;
+
 	img { pointer-events: none; }
 
 	.iconEmoji, .iconImage, .iconFile, .iconCheckbox { width: inherit; height: inherit; transition: none; vertical-align: top; }
@@ -11,145 +12,68 @@
 	.iconCommon.hasSvg, .iconRelation.hasSvg { display: flex; align-items: center; justify-content: center; }
 
 	.iconCommon, .iconRelation, .smileImage, .iconImage, .iconFile, .iconCheckbox, .iconError {
-		&.c14 { @include pos-abs-mid; width: 14px; height: 14px; margin: -7px 0px 0px -7px; }
-		&.c16 { @include pos-abs-mid; width: 16px; height: 16px; margin: -8px 0px 0px -8px; }
-		&.c18 { @include pos-abs-mid; width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
-		&.c20 { @include pos-abs-mid; width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
-		&.c22 { @include pos-abs-mid; width: 22px; height: 22px; margin: -11px 0px 0px -11px; }
-		&.c24 { @include pos-abs-mid; width: 24px; height: 24px; margin: -12px 0px 0px -12px; }
-		&.c26 { @include pos-abs-mid; width: 26px; height: 26px; margin: -13px 0px 0px -13px; }
-		&.c28 { @include pos-abs-mid; width: 28px; height: 28px; margin: -14px 0px 0px -14px; }
-		&.c30 { @include pos-abs-mid; width: 30px; height: 30px; margin: -15px 0px 0px -15px; }
-		&.c32 { @include pos-abs-mid; width: 32px; height: 32px; margin: -16px 0px 0px -16px; }
-		&.c36 { @include pos-abs-mid; width: 36px; height: 36px; margin: -18px 0px 0px -18px; }
-		&.c40 { @include pos-abs-mid; width: 40px; height: 40px; margin: -20px 0px 0px -20px; }
-		&.c48 { @include pos-abs-mid; width: 48px; height: 48px; margin: -24px 0px 0px -24px; }
-		&.c56 { @include pos-abs-mid; width: 56px; height: 56px; margin: -28px 0px 0px -28px; }
-		&.c64 { @include pos-abs-mid; width: 64px; height: 64px; margin: -32px 0px 0px -32px; }
-		&.c80 { @include pos-abs-mid; width: 80px; height: 80px; margin: -40px 0px 0px -40px; }
+		@each $s in 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 48, 56, 64, 80 {
+			&.c#{$s} { @include pos-abs-mid; width: #{$s}px; height: #{$s}px; margin: calc(#{$s}px / -2) 0px 0px calc(#{$s}px / -2); }
+		}
 	}
 
 	.iconEmoji { display: inline-block; vertical-align: top; text-align: center; position: relative; border-radius: inherit; }
-}
-.iconObject.c14 { width: 14px; height: 14px; }
-.iconObject.c16 { width: 16px; height: 16px; }
-.iconObject.c18 { width: 18px; height: 18px; }
-.iconObject.c22 { width: 22px; height: 22px; }
-.iconObject.c24 { width: 24px; height: 24px; }
-.iconObject.c26 { width: 26px; height: 26px; }
-.iconObject.c28 { width: 28px; height: 28px; }
-.iconObject.c30 { width: 30px; height: 30px; }
-.iconObject.c32 { width: 32px; height: 32px; }
-.iconObject.c36 { width: 36px; height: 36px; }
-.iconObject.c40 { width: 40px; height: 40px; }
-.iconObject.c42 { width: 42px; height: 42px; }
-.iconObject.c44 { width: 44px; height: 44px; }
-.iconObject.c48 { width: 48px; height: 48px; }
-.iconObject.c56 { width: 56px; height: 56px; }
-.iconObject.c64 { width: 64px; height: 64px; }
-.iconObject.c80 { width: 80px; height: 80px; }
-.iconObject.c96 { width: 96px; height: 96px; }
-.iconObject.c108 { width: 108px; height: 108px; }
-.iconObject.c112 { width: 112px; height: 112px; }
-.iconObject.c128 { width: 128px; height: 128px; }
-.iconObject.c160 { width: 160px; height: 160px; }
 
-.iconObject.c48,
-.iconObject.c56,
-.iconObject.c64,
-.iconObject.c80,
-.iconObject.c96,
-.iconObject.c108,
-.iconObject.c112,
-.iconObject.c128
-.iconObject.c160 {
-	display: block; overflow: hidden; background-color: var(--color-shape-tertiary);
-}
-.iconObject.isTask { background-color: unset; }
-.iconObject.isTask {
-	.icon.hasSvg { color: var(--color-text-tertiary); }
-
-	&.isDone { 
-		.icon.hasSvg { color: var(--color-lime); }
+	/* Size classes */
+	@each $s in 14, 16, 18, 22, 24, 26, 28, 30, 32, 36, 40, 42, 44, 48, 56, 64, 80, 96, 128, 160 {
+		&.c#{$s} { width: #{$s}px; height: #{$s}px; }
 	}
-}
 
-.iconObject.c14,
-.iconObject.c16,
-.iconObject.c18,
-.iconObject.c20 {
-	border-radius: 2px;
-}
+	/* Border-radius */
+	&.c14, &.c16, &.c18 { border-radius: 2px; }
+	&.c20, &.c22, &.c26, &.c28, &.c36 { border-radius: 4px; }
+	&.c24, &.c25 { border-radius: 3px; }
+	&.c30, &.c44 { border-radius: 6px; }
+	&.c32, &.c56 { border-radius: 8px; }
+	&.c40, &.c48 { border-radius: 10px; }
+	&.c42 { border-radius: 5px; }
+	&.c64, &.c80 { border-radius: 16px; }
+	&.c96 { border-radius: 20px; }
+	&.c128 { border-radius: 24px; }
+	&.c160 { border-radius: 12px; }
 
-.iconObject.c22,
-.iconObject.c24,
-.iconObject.c25 {
-	border-radius: 3px;
-}
+	/* Large sizes: background + overflow */
+	&.c48, &.c56, &.c64, &.c80, &.c96, &.c128, &.c160 {
+		display: block; overflow: hidden; background-color: var(--color-shape-tertiary);
+	}
 
-.iconObject.c28,
-.iconObject.c30,
-.iconObject.c32,
-.iconObject.c36 {
-	border-radius: 4px;
-}
+	/* Full-bleed iconImage for medium+ sizes */
+	&.c32, &.c36, &.c40, &.c48, &.c56, &.c64, &.c80, &.c96, &.c128, &.c160 {
+		.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
 
-.iconObject.c40,
-.iconObject.c42 {
-	border-radius: 5px;
-}
+		&.isChat { border-radius: 100% !important; background-color: var(--color-shape-tertiary); }
+	}
 
-.iconObject.c44,
-.iconObject.c48 {
-	border-radius: 6px;
-}
+	&.isTask {
+		background-color: unset;
 
-.iconObject.c56,
-.iconObject.c64,
-.iconObject.c80 {
-	border-radius: 8px;
-}
+		.icon.hasSvg { color: var(--color-text-tertiary); }
 
-.iconObject.c96,
-.iconObject.c108,
-.iconObject.c112,
-.iconObject.c128,
-.iconObject.c160 {
-	border-radius: 12px;
+		&.isDone {
+			.icon.hasSvg { color: var(--color-lime); }
+		}
+	}
 
-	&.isChat { border-radius: 100% !important; }	
-}
+	&.isFile, 
+	&.isImage,
+	&.isVideo,
+	&.isAudio,
+	&.isPdf { background-color: unset; }
 
-.iconObject.c32, 
-.iconObject.c36, 
-.iconObject.c40,
-.iconObject.c48,
-.iconObject.c56,
-.iconObject.c64,
-.iconObject.c80,
-.iconObject.c96,
-.iconObject.c108,
-.iconObject.c112,
-.iconObject.c128
-.iconObject.c160 {
-	.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
+	&.withImage { background-color: unset !important; }
 
-	&.isChat { border-radius: 100% !important; background-color: var(--color-shape-tertiary); }
-}
+	&.isHuman, &.isParticipant, &.isSpaceView.spaceOneToOne {
+		border-radius: 100% !important; background-color: var(--color-shape-tertiary);
+	}
 
-.iconObject.isFile,
-.iconObject.isImage {
-	background-color: unset;
-}
+	&.withImageError {
+		img:not(.iconError) { display: none; }
 
-.iconObject.withImage { background-color: unset !important; }
-
-.iconObject.isHuman, 
-.iconObject.isParticipant, 
-.iconObject.isSpaceView.spaceChat,
-.iconObject.isSpaceView.spaceOneToOne { border-radius: 100% !important; background-color: var(--color-shape-tertiary); }
-
-.iconObject.withImageError {
-	img:not(.iconError) { display: none; }
-	.iconError { color: var(--color-shape-highlight-medium); }
+		.iconError { color: var(--color-shape-highlight-medium); }
+	}
 }

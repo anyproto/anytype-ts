@@ -1,8 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent, MouseEvent, memo } from 'react';
-import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
@@ -42,7 +40,7 @@ interface RefProps {
 	onAttachment: () => void;
 };
 
-const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
+const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
@@ -56,7 +54,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const editableRef = useRef(null);
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
-	const loaderRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
@@ -84,9 +81,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const checkSendButton = () => {
-		const button = $(sendRef.current);
-
-		canSend() || isSending.current ? button.show() : button.hide();
+		if (sendRef.current) {
+			U.Dom.css(sendRef.current, { display: (canSend() || isSending.current) ? '' : 'none' });
+		};
 	};
 
 	const onSelect = () => {
@@ -102,8 +99,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const win = $(window);
-
 		S.Common.setTimeout('chatText', 150, () => {
 			// Don't open text menu if context is disabled (e.g., during spellcheck)
 			if (keyboard.isContextOpenDisabled) {
@@ -115,7 +110,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				element: '#messageBox',
 				recalcRect: () => {
 					const rect = U.Dom.getSelectionRect();
-					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+					return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 				},
 				offsetY: 4,
 				offsetX: -8,
@@ -239,7 +234,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const l = value.length;
 			updateMarkup(value, { from: l, to: l });
 
-			$(window).trigger('resize');
+			U.Dom.eventDispatch(window, 'resize');
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
@@ -291,6 +286,39 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 			};
 		};
+
+		// Paste without formatting
+		keyboard.shortcut(`${cmd}+shift+v`, e, () => {
+			e.preventDefault();
+
+			(async () => {
+				const text = await navigator.clipboard.readText();
+				if (!text) {
+					return;
+				};
+
+				const { from, to } = range.current;
+				const limit = J.Constant.limit.chat.text;
+				const current = getTextValue();
+
+				let newText = U.String.normalizeLineEndings(text);
+				if (newText.length >= limit) {
+					newText = newText.substring(0, limit);
+				};
+
+				const res = U.String.insert(current, newText, from, to);
+
+				marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
+				marks.current = Mark.checkRanges(res, marks.current);
+				setMarks(marks.current);
+
+				const rt = from + newText.length;
+				range.current = { from: rt, to: rt };
+				updateMarkup(res, range.current);
+				checkUrls();
+				updateCounter();
+			})();
+		});
 
 		// UnDo, ReDo
 		keyboard.shortcut('undo', e, () => onHistory(e, -1));
@@ -426,10 +454,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			updateMarkup(value, { from: to, to });
 		};
 
-		/*
-		keyboard.shortcut('space', e, () => checkUrls());
-		*/
-
 		checkSendButton();
 		removeBookmarks();
 		updateCounter();
@@ -441,8 +465,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onInput = () => {
 		const value = getTextValue();
 		const checkRtl = U.String.checkRtl(value);
+		const editNode = editableRef.current?.getNode();
 
-		$(editableRef.current?.getNode()).toggleClass('isRtl', checkRtl);
+		if (editNode) {
+			U.Dom.toggleClass(editNode, 'isRtl', checkRtl);
+		};
 	};
 
 	const onCopy = () => {
@@ -471,13 +498,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const { from, to } = range.current;
 		const limit = J.Constant.limit.chat.text;
 		const current = getTextValue();
-		const clipboard = e.clipboardData || e.originalEvent.clipboardData;
-		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => getObjectFromFile(it)).filter(it => {
+		const clipboard = e.clipboardData;
+		const list = U.Common.getDataTransferFiles(clipboard.items).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
 
 		const json = JSON.parse(String(clipboard.getData('application/json') || '{}'));
-		const html = String(clipboard.getData('text/html') || '');
+		const html = String(clipboard.getData('text/html') || '').replace(/<meta[^>]*>/gi, '');
 		const text = U.String.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
 
 		// If pasted content is a pure URL and there's a selection, create a link mark
@@ -686,7 +713,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.stopPropagation();
 
 		window.clearTimeout(timeoutDrag.current);
-		$(nodeRef.current).addClass('isDraggingOver').css({ height: U.Dom.getScrollContainer(isPopup)?.clientHeight ?? 0 });
+		if (nodeRef.current) {
+			U.Dom.addClass(nodeRef.current, 'isDraggingOver');
+			U.Dom.css(nodeRef.current, { height: (U.Dom.getScrollContainer(isPopup)?.clientHeight ?? 0) + 'px' });
+		};
 	};
 	
 	const onDragLeave = (e: any) => {
@@ -719,7 +749,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const clearDragState = () => {
-		$(nodeRef.current).removeClass('isDraggingOver').css({ height: '' });
+		if (nodeRef.current) {
+			U.Dom.removeClass(nodeRef.current, 'isDraggingOver');
+			U.Dom.css(nodeRef.current, { height: '' });
+		};
 	};
 
 	const onEmoji = () => {
@@ -937,20 +970,18 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const send = $(sendRef.current);
-		const loader = $(loaderRef.current);
+		const send = sendRef.current;
 		const files = attachments.filter(it => it.isTmp && (U.Object.isFileLayout(it.layout) || U.Object.isImageLayout(it.layout)));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
 		const bl = bookmarks.length;
 		const bookmark = S.Record.getBookmarkType();
 
-		send.addClass('isLoading');
-		loader.addClass('active');
+		U.Dom.addClass(send, 'isLoading');
 		isSending.current = true;
 
 		raf(() => {
-			send.addClass('anim');
+			U.Dom.addClass(send, 'anim');
 		});
 		
 		const callBack = () => {
@@ -1087,19 +1118,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const clear = () => {
-		const send = $(sendRef.current);
-		const loader = $(loaderRef.current);
-
 		isSending.current = false;
-		send.removeClass('isLoading anim');
-		loader.removeClass('active');
+		U.Dom.removeClass(sendRef.current, 'isLoading');
 
 		onEditClear();
 		onReplyClear();
 		checkSpeedLimit();
 		historyClearState();
 
-		$(window).trigger('resize');
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	const onEditClear = () => {
@@ -1263,7 +1290,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			analytics.event('DetachItemChat', { chatId: analyticsChatId });
 		};
 
-		$(window).trigger('resize');
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	const onNavigationClick = (type: I.ChatReadType) => {
@@ -1346,14 +1373,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const { from, to } = range.current;
 		const mark = Mark.getInRange(marks.current, I.MarkType.Link, { from, to });
 		const rect = U.Dom.getSelectionRect();
-		const win = $(window);
 
 		S.Menu.close('chatText', () => {
 			S.Menu.open('blockLink', {
 				classNameWrap: 'fromBlock',
-				rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+				rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
 				horizontal: I.MenuDirection.Center,
-				offsetY: 4,
+				vertical: I.MenuDirection.Top,
+				offsetY: -4,
+				noAnimation: true,
 				data: {
 					value: mark?.param,
 					filter: mark?.param,
@@ -1541,14 +1569,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const caretMenuParam = () => {
-		const win = $(window);
 		const rect = U.Dom.getSelectionRect();
 		const param: any = {
 			classNameWrap: 'fromChat',
 			className: 'fixed',
 			recalcRect: () => {
 				const rect = U.Dom.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 			},
 			vertical: I.MenuDirection.Top,
 			onClose: () => setRange(range.current),
@@ -1610,7 +1637,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			updateMarkup(newText, range.current);
 		};
 		const getValue = () => value;
-		const param = { onChange, subId };
+		const param = { onChange, subId, withPreview: false };
 
 		renderMentions(rootId, node, marks.current, getValue, param);
 		renderObjects(rootId, node, marks.current, getValue, props, param);
@@ -1630,9 +1657,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		const getValue = () => String(message.content.text || '');
 		const marks = message.content.marks || [];
-		const node = $(nodeRef.current);
-		const head = node.find('.head');
-		const param = { subId, iconSize: 16 };
+		const node = nodeRef.current;
+		const head = node ? U.Dom.select('.head', node) : null;
+		const param = { subId, iconSize: 16, withPreview: false };
 
 		renderMentions(rootId, head, marks, getValue, param);
 		renderObjects(rootId, head, marks, getValue, props, param);
@@ -1643,21 +1670,28 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const updateCounter = (v?: string) => {
 		v = v || getTextValue();
 
-		const el = $(counterRef.current);
+		const el = counterRef.current;
 		const l = v.length;
 		const limit = J.Constant.limit.chat.text;
 
-		el.toggleClass('red', l > limit);
+		if (el) {
+			U.Dom.toggleClass(el, 'red', l > limit);
 
-		if (l > limit - 50) {
-			el.addClass('show').text(limit - l);
-		} else {
-			el.removeClass('show');
+			if (l > limit - 50) {
+				U.Dom.addClass(el, 'show');
+				el.textContent = String(limit - l);
+			} else {
+				U.Dom.removeClass(el, 'show');
+			};
 		};
 	};
 
 	const clearCounter = () => {
-		$(counterRef.current).text('').removeClass('show').removeClass('red');
+		if (counterRef.current) {
+			counterRef.current.textContent = '';
+			U.Dom.removeClass(counterRef.current, 'show');
+			U.Dom.removeClass(counterRef.current, 'red');
+		};
 	};
 
 	const checkSpeedLimit = () => {
@@ -1793,8 +1827,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				/>
 
 				<div className="form customScrollbar">
-					<Loader id="form-loader" ref={loaderRef} />
-
 					{title ? (
 						<div className="head">
 							<div className="side left">
@@ -1819,16 +1851,20 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 								mousewheel={true}
 								modules={[ Navigation, Mousewheel ]}
 							>
-								{attachments.map(item => (
-									<SwiperSlide key={item.id}>
-										<Attachment
-											object={item}
-											onRemove={onAttachmentRemove}
-											bookmarkAsDefault={true}
-											updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
-										/>
-									</SwiperSlide>
-								))}
+								{attachments.map(item => {
+									const object = item.isTmp ? { syncStatus: I.SyncStatusObject.Synced, ...item } : item;
+									return (
+										<SwiperSlide key={item.id}>
+											<Attachment
+												object={object}
+												withInlineSize={false}
+												onRemove={onAttachmentRemove}
+												bookmarkAsDefault={true}
+												updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
+											/>
+										</SwiperSlide>
+									);
+								})}
 							</Swiper>
 						</div>
 					) : ''}
@@ -1941,6 +1977,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default memo(ChatForm);

@@ -22,7 +22,9 @@ const SPACE_KEYS = new Set([
 	'graphDataview',
 	'recentEditMode',
 	'widgetSections',
-	'binViewDetailed',
+	'channelBanner',
+	'binViewMode',
+	'pendingMembers',
 ]);
 
 const LOCAL_KEYS = new Set([

@@ -1,9 +1,8 @@
 import React, { FC, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Popup } from 'Component';
 import * as I from 'Interface';
 
-const ListPopup: FC<I.PageComponent> = observer(() => {
+const ListPopup: FC<I.PageComponent> = () => {
 	const { list } = S.Popup;
 
 	useEffect(() => {
@@ -17,6 +16,6 @@ const ListPopup: FC<I.PageComponent> = observer(() => {
 			))}
 		</div>
 	);
-});
+};
 
 export default ListPopup;

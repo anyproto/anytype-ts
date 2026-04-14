@@ -1,30 +1,28 @@
 import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { Icon, Title, Label, Select, IconObject, ObjectName, Button, Editable } from 'Component';
+import { Icon, Title, Label, IconObject, ObjectName, Button, Editable } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
 import * as I from 'Interface';
 
-const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ isEditing, setIsEditing ] = useState(false);
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
 	const [ dummy, setDummy ] = useState(0);
 	const { getId } = props;
-	const { config, space } = S.Common;
+	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
 	const home = U.Space.getDashboard();
 	const type = S.Record.getTypeById(S.Common.type);
 	const participant = U.Space.getParticipant();
 	const canWrite = U.Space.canMyParticipantWrite();
-	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const isOwner = U.Space.isMyOwner();
+	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const cnh = [ 'spaceHeader' ];
 	const nodeRef = useRef(null);
 	const nameRef = useRef(null);
-	const uxTypeRef = useRef(null);
 	const modeRef = useRef(null);
 	const canSaveRef = useRef(true);
+	const keydownHandlerRef = useRef<((e: any) => void) | null>(null);
 
 	if (isEditing) {
 		cnh.push('isEditing');
@@ -36,8 +34,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const init = () => {
-		const win = $(window);
-
 		if (spaceview.isShared && !invite.cid && !invite.key) {
 			U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
 				if (cid && key) {
@@ -46,17 +42,21 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 			});
 		};
 
-		win.off('keydown.settingsSpace');
+		if (keydownHandlerRef.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandlerRef.current);
+			keydownHandlerRef.current = null;
+		};
 
 		if (isEditing) {
-			win.on('keydown.settingsSpace', (e: any) => {
+			keydownHandlerRef.current = (e: any) => {
 				keyboard.shortcut('enter', e, () => onSave());
 				keyboard.shortcut('escape', e, () => onCancel());
-			});
+			};
+			U.Dom.addEvent(window, 'keydown', keydownHandlerRef.current);
 		};
 
 		modeRef.current?.setValue(String(spaceview.notificationMode));
-		modeRef.current?.setValue(String(spaceview.uxType));
+		modeRef.current?.setValue(String(spaceview.spaceType));
 	};
 
 	const onKeyUp = () => {
@@ -65,9 +65,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const onDashboard = () => {
-		if (!spaceview.isChat && !spaceview.isOneToOne) {
-			U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
-		};
+		U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
 	};
 
 	const onType = (e: any) => {
@@ -145,35 +143,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		setIsEditing(false);
 	};
 
-	const onSpaceUxType = (v) => {
-		v = Number(v);
-
-		const onCancel = () => {
-			uxTypeRef.current?.setValue(spaceview.uxType);
-		};
-
-		S.Popup.open('confirm', {
-			onClose: onCancel,
-			data: {
-				iconParam: { name: 'popup/header/warning', color: 'red' },
-				title: translate('popupConfirmUxTypeChangeTitle'),
-				text: translate('popupConfirmUxTypeChangeText'),
-				textConfirm: translate('popupConfirmUxTypeChangeConfirm'),
-				colorConfirm: 'red',
-				onConfirm: () => {
-					const details: any = {
-						spaceUxType: v,
-						spaceDashboardId: (v == I.SpaceUxType.Chat || v == I.SpaceUxType.OneToOne ? I.HomePredefinedId.Chat : I.HomePredefinedId.Last),
-					};
-
-					C.WorkspaceSetInfo(S.Common.space, details);
-					analytics.event('ChangeSpaceUxType', { type: v, route: analytics.route.settingsSpaceIndex });
-				},
-				onCancel,
-			},
-		});
-	};
-
 	const checkName = (v: string): string => {
 		if ([ 
 			translate('defaultNameSpace'), 
@@ -185,29 +154,32 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const getButtons = (): any[] => {
-		if (!invite.cid || !invite.key) {
-			return [];
-		};
-
 		return [
 			{ id: 'invite', iconParam: { name: 'publish/member' }, name: translate('commonInvite') },
 			{ id: 'copyLink', iconParam: { name: 'menu/action/copyLink' }, name: translate('pageSettingsSpaceIndexCopyLink') },
 			{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('pageSettingsSpaceIndexQRCode') },
-		];
+		].map((el: any) => {
+			el.isDisabled = !invite.cid || !invite.key;
+			return el;
+		});
 	};
 
 	const updateCounters = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const { name, nameThreshold } = J.Constant.limit.space;
-		const el = node.find('.spaceNameWrapper .counter');
+		const el = U.Dom.select('.spaceNameWrapper .counter', node);
 		const counter = name - nameRef.current?.getTextValue().length;
 		const canSave = counter >= 0;
 
-		el.text(counter).toggleClass('show', counter <= nameThreshold);
-		el.toggleClass('red', !canSave);
+		if (el) {
+			el.textContent = String(counter);
+			U.Dom.toggleClass(el, 'show', counter <= nameThreshold);
+			U.Dom.toggleClass(el, 'red', !canSave);
+		};
 
 		canSaveRef.current = canSave;
-		node.find('.spaceHeader .buttonSave').toggleClass('disabled', !canSave);
+		const saveBtn = U.Dom.select('.spaceHeader .buttonSave', node);
+		U.Dom.toggleClass(saveBtn, 'disabled', !canSave);
 	};
 
 	const buttons = getButtons();
@@ -254,6 +226,10 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		init();
 
 		return () => {
+			if (keydownHandlerRef.current) {
+				U.Dom.removeEvent(window, 'keydown', keydownHandlerRef.current);
+				keydownHandlerRef.current = null;
+			};
 			S.Menu.closeAll([ 'select', 'searchObject' ]);
 		};
 	});
@@ -312,7 +288,7 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 					<div 
 						key={i} 
 						id={U.String.toCamelCase(`settingsSpaceButton-${item.id}`)} 
-						className="btn" 
+						className={[ 'btn', (item.isDisabled ? 'disabled' : '') ].join(' ')}
 						onClick={e => onClick(e, item)}
 					>
 						<Icon {...(item.iconParam || {})} className={item.id} />
@@ -327,36 +303,8 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 						<div className="section sectionSpaceManager">
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 
-							{isOwner && spaceview.isShared && !spaceview.isPersonal && config.sudo ? (
-								<div className="sectionContent">
-									<div className="item">
-										<div className="sides">
-											<Icon name={spaceview.uxType == I.SpaceUxType.Chat ? 'settings/space/chat' : 'settings/space/space'} className={`settings-ux${spaceview.uxType}`} />
-
-											<div className="side left">
-												<Title text={translate('popupSettingsSpaceIndexUxTypeTitle')} />
-												<Label text={translate('popupSettingsSpaceIndexUxTypeText')} />
-											</div>
-
-											<div className="side right">
-												<Select
-													id="uxType"
-													readonly={!canWrite}
-													ref={uxTypeRef}
-													value={String(spaceview.uxType)}
-													options={U.Menu.uxTypeOptions()}
-													onChange={onSpaceUxType}
-													arrowClassName="black"
-													menuParam={{ horizontal: I.MenuDirection.Right }}
-												/>
-											</div>
-										</div>
-									</div>
-								</div>
-							) : ''}
-
 							<div className="sectionContent">
-								{!spaceview.isChat && !spaceview.isOneToOne ? (
+								{spaceview.isOneToOne || isOwner ? (
 									<div className="item">
 										<div className="sides">
 											<Icon name="settings/home" />
@@ -412,6 +360,6 @@ const PageMainSettingsSpaceIndex = observer(forwardRef<I.PageRef, I.PageSettings
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsSpaceIndex;

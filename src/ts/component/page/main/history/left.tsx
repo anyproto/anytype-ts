@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Header, Block, HeadSimple } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
@@ -17,7 +16,7 @@ interface Ref {
 	getHeadRef: () => any;
 };
 
-const HistoryLeft = observer(forwardRef<Ref, Props>((props, ref) => {
+const HistoryLeft = forwardRef<Ref, Props>((props, ref) => {
 
 	const { rootId, isPopup, onCopy } = props;
 	const nodeRef = useRef(null);
@@ -60,7 +59,10 @@ const HistoryLeft = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const onScroll = () => {
 		topRef.current = nodeRef.current?.scrollTop ?? 0;
-		U.Dom.getScrollContainer(isPopup)?.dispatchEvent(new Event('scroll'));
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (container) {
+			U.Dom.eventDispatch(container, 'scroll');
+		};
 	};
 
 	useEffect(() => {
@@ -114,6 +116,6 @@ const HistoryLeft = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default HistoryLeft;

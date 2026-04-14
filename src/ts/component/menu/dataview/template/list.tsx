@@ -1,29 +1,32 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { Icon, PreviewObject, EmptySearch } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
 const TEMPLATE_WIDTH = 224;
 
-const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuTemplateList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { id, param, setHover, onKeyDown, getId, position } = props;
+	const { id, param, setHover, onKeyDown, getId, getContainer, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { activeId, typeId, fromBanner, noAdd, onSelect, getView, onSetDefault, route } = data;
 	const previewSize = data.previewSize || I.PreviewSize.Small;
 	const canWrite = U.Space.canMyParticipantWrite();
 	const nodeRef = useRef(null);
 	const n = useRef(0);
+	const keydownHandler = useRef(null);
 	const subId = [ getId(), 'data' ].join('-');
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		keydownHandler.current = (e: any) => onKeyDownHandler(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -101,7 +104,7 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	const onMore = (e: any, template: any) => {
 		const item = U.Common.objectCopy(template);
-		const node = $(`#item-${U.Common.esc(item.id)}`);
+		const node = U.Dom.get(`item-${item.id}`);
 
 		e.preventDefault();
 		e.stopPropagation();
@@ -117,14 +120,14 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		S.Menu.closeAll(J.Menu.dataviewTemplate, () => {
 			S.Menu.open('dataviewTemplateContext', {
-				className, 
+				className,
 				classNameWrap,
 				menuKey: item.id,
 				element: `#${getId()} #item-more-${item.id}`,
 				horizontal: I.MenuDirection.Right,
 				subIds: J.Menu.dataviewTemplate,
-				onOpen: () => node.addClass('active'),
-				onClose: () => node.removeClass('active'),
+				onOpen: () => U.Dom.addClass(node, 'active'),
+				onClose: () => U.Dom.removeClass(node, 'active'),
 				rebind,
 				parentId: id,
 				data: {
@@ -159,8 +162,8 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			return;
 		};
 
-		const obj = $(`#${getId()}`);
-		const list = obj.find('.items');
+		const obj = getContainer();
+		const list = U.Dom.select('.items', obj);
 		const length = items.length;
 		const isPopup = keyboard.isPopup();
 		const containerEl = U.Dom.getPageContainer(isPopup);
@@ -171,7 +174,7 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			columns = length;
 		};
 
-		list.css({ 'grid-template-columns': `repeat(${columns}, 1fr)` });
+		U.Dom.css(list, { gridTemplateColumns: `repeat(${columns}, 1fr)` });
 	};
 
 	const ItemAdd = () => (
@@ -261,6 +264,6 @@ const MenuTemplateList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuTemplateList;

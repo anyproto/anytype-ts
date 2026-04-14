@@ -1,10 +1,8 @@
 import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, setActive, onKeyDown, position, getId, getSize } = props;
 	const { data, className, classNameWrap } = param;
@@ -26,7 +24,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Menu.closeAll(J.Menu.widget);
 
 			if (needUpdate.current) {
-				$(window).trigger(`updateWidgetData.${blockId}`);
+				U.Dom.eventDispatch(window, 'updateWidgetData');
 			};
 		};
 	}, []);
@@ -38,12 +36,12 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getSections = () => {
@@ -261,7 +259,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				menuParam.data = {
 					noClose: true,
 					value: String(layout),
-					options: layoutOptions.map(it => ({ id: String(it.id), name: it.name, icon: it.icon })),
+					options: layoutOptions.map(it => ({ id: String(it.id), name: it.name, iconParam: it.iconParam })),
 					onSelect: (e: any, option: any) => onSelectOption('layout', option.id),
 				};
 				break;
@@ -443,6 +441,6 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuWidget;

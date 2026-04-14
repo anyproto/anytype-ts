@@ -1,6 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -15,7 +13,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_EMPTY = 48;
 const LIMIT = 20;
 
-const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, getId, setHover, onKeyDown, setActive, getSize, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -31,14 +29,20 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
 
+	const keydownHandler = useRef<((e: any) => void) | null>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = e => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const getSortItems = () => {
@@ -63,9 +67,10 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (!isReadonlyValue) {
 			items.push({ isDiv: true });
-			items.push({ id: 'add', name: translate('menuDataviewSortAddSort') });
+			items.push({ id: 'add', name: translate('menuDataviewSortAddSort'), iconParam: { name: 'plus/menu' } });
+
 			if (sortItems.length) {
-				items.push({ id: 'clear', name: translate('menuDataviewFilterDeleteSort') });
+				items.push({ id: 'clear', name: translate('menuDataviewFilterDeleteSort'), iconParam: { name: 'menu/action/remove' } });
 			};
 		};
 
@@ -100,8 +105,10 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			default: {
+				unbind();
 				S.Menu.open('select', {
 					rebind,
+					parentId: props.id,
 					element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 					className,
 					classNameWrap,
@@ -131,15 +138,17 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ id: I.EmptyType.End, name: translate('menuDataviewSortShowEmptyBottom') },
 		];
 
+		unbind();
 		S.Menu.open('select', {
 			rebind,
+			parentId: props.id,
 			className,
 			classNameWrap,
 			element: `${elementId} .more`,
 			horizontal: I.MenuDirection.Center,
 			noFlipY: true,
-			onOpen: () => $(elementId).addClass('hover'),
-			onClose: () => $(elementId).removeClass('hover'),
+			onOpen: () => U.Dom.addClass(U.Dom.select(elementId), 'hover'),
+			onClose: () => U.Dom.removeClass(U.Dom.select(elementId), 'hover'),
 			data: {
 				...data,
 				options,
@@ -166,7 +175,12 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offsetY: 4,
 		};
 
-		U.Menu.sortOrFilterRelationSelect(menuParam, {
+		unbind();
+		U.Menu.sortOrFilterRelationSelect({
+			...menuParam,
+			rebind,
+			parentId: props.id,
+		}, {
 			rootId,
 			blockId,
 			getView,
@@ -177,6 +191,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onAdd = () => {
+		unbind();
 		const menuParam = {
 			className,
 			classNameWrap,
@@ -185,9 +200,9 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			vertical: I.MenuDirection.Bottom,
 			offsetY: 4,
 			offsetX: 8,
+			rebind,
+			parentId: props.id,
 		};
-		const content = $(`#${getId()} .content`);
-
 		U.Menu.sortOrFilterRelationSelect(menuParam, {
 			rootId,
 			blockId,
@@ -200,7 +215,10 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				};
 
 				onSortAdd(newItem, () => {
-					content.animate({ scrollTop: content.get(0).scrollHeight }, 50);
+					const content = U.Dom.select('.content', U.Dom.get(getId()));
+					if (content) {
+						content.scrollTo({ top: content.scrollHeight, behavior: 'smooth' });
+					};
 				});
 			},
 		});
@@ -307,14 +325,15 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = 16;
 		const height = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 
-		obj.css({ height });
-		position();
+		if (obj) {
+			U.Dom.css(obj, { height: `${height}px` });
+		};
 	};
 
 	const isReadonly = () => {
@@ -410,7 +429,7 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onMouseLeave={() => setHover()}
 					style={param.style}
 				>
-					<Icon name={item.id === 'add' ? 'plus/menu' : undefined} className={item.id === 'add' ? 'plus' : 'remove'} />
+					<Icon {...item.iconParam} />
 					<div className="name">{item.name}</div>
 				</div>
 			);
@@ -435,7 +454,6 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const items = getItems();
 
 		rebind();
-		resize();
 
 		cache.current = new CellMeasurerCache({
 			fixedWidth: true,
@@ -448,20 +466,20 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Menu.closeAll(J.Menu.cell);
 		};
 	}, []);
-	
-	useEffect(() => {
-		resize();
 
-		if (listRef.current && topRef.current) {
-			listRef.current.scrollToPosition(topRef.current);
+	useEffect(() => {
+		if (topRef.current) {
+			listRef.current?.scrollToPosition(topRef.current);
 		};
 
+		position();
 		setActive();
 	});
 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -519,6 +537,6 @@ const MenuSort = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuSort;

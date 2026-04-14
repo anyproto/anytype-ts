@@ -43,94 +43,17 @@ for (const [prop, blockType] of Object.entries(PROP_TO_BLOCK_TYPE)) {
 };
 
 /**
- * Maps ts-proto Event_Message property names to event type strings.
- * Property names must match the ts-proto generated interface exactly.
+ * Excluded keys that are not event properties on a ts-proto Event_Message.
  */
-const EVENT_PROP_MAP: [string, string][] = [
-	[ 'accountShow', 'AccountShow' ],
-	[ 'accountDetails', 'AccountDetails' ],
-	[ 'accountConfigUpdate', 'AccountConfigUpdate' ],
-	[ 'accountUpdate', 'AccountUpdate' ],
-	[ 'accountLinkChallenge', 'AccountLinkChallenge' ],
-	[ 'accountLinkChallengeHide', 'AccountLinkChallengeHide' ],
+const EVENT_SKIP_KEYS = new Set([ 'spaceId' ]);
 
-	[ 'blockAdd', 'BlockAdd' ],
-	[ 'blockDelete', 'BlockDelete' ],
-	[ 'blockSetFields', 'BlockSetFields' ],
-	[ 'blockSetChildrenIds', 'BlockSetChildrenIds' ],
-	[ 'blockSetBackgroundColor', 'BlockSetBackgroundColor' ],
-	[ 'blockSetText', 'BlockSetText' ],
-	[ 'blockSetFile', 'BlockSetFile' ],
-	[ 'blockSetLink', 'BlockSetLink' ],
-	[ 'blockSetBookmark', 'BlockSetBookmark' ],
-	[ 'blockSetAlign', 'BlockSetAlign' ],
-	[ 'blockSetVerticalAlign', 'BlockSetVerticalAlign' ],
-	[ 'blockSetDiv', 'BlockSetDiv' ],
-	[ 'blockSetRelation', 'BlockSetRelation' ],
-	[ 'blockSetLatex', 'BlockSetLatex' ],
-	[ 'blockSetTableRow', 'BlockSetTableRow' ],
-	[ 'blockSetWidget', 'BlockSetWidget' ],
-
-	[ 'blockDataviewViewSet', 'BlockDataviewViewSet' ],
-	[ 'blockDataviewViewUpdate', 'BlockDataviewViewUpdate' ],
-	[ 'blockDataviewViewDelete', 'BlockDataviewViewDelete' ],
-	[ 'blockDataviewViewOrder', 'BlockDataviewViewOrder' ],
-	[ 'blockDataviewTargetObjectIdSet', 'BlockDataviewTargetObjectIdSet' ],
-	[ 'blockDataviewIsCollectionSet', 'BlockDataviewIsCollectionSet' ],
-	[ 'blockDataviewRelationSet', 'BlockDataviewRelationSet' ],
-	[ 'blockDataviewRelationDelete', 'BlockDataviewRelationDelete' ],
-	[ 'blockDataViewGroupOrderUpdate', 'BlockDataviewGroupOrderUpdate' ],
-	[ 'blockDataViewObjectOrderUpdate', 'BlockDataviewObjectOrderUpdate' ],
-
-	[ 'subscriptionAdd', 'SubscriptionAdd' ],
-	[ 'subscriptionRemove', 'SubscriptionRemove' ],
-	[ 'subscriptionPosition', 'SubscriptionPosition' ],
-	[ 'subscriptionCounters', 'SubscriptionCounters' ],
-	[ 'subscriptionGroups', 'SubscriptionGroups' ],
-
-	[ 'objectRemove', 'ObjectRemove' ],
-	[ 'objectDetailsSet', 'ObjectDetailsSet' ],
-	[ 'objectDetailsAmend', 'ObjectDetailsAmend' ],
-	[ 'objectDetailsUnset', 'ObjectDetailsUnset' ],
-	[ 'objectRelationsAmend', 'ObjectRelationsAmend' ],
-	[ 'objectRelationsRemove', 'ObjectRelationsRemove' ],
-	[ 'objectRestrictionsSet', 'ObjectRestrictionsSet' ],
-	[ 'objectClose', 'objectClose' ],
-
-	[ 'fileSpaceUsage', 'FileSpaceUsage' ],
-	[ 'fileLocalUsage', 'FileLocalUsage' ],
-	[ 'fileLimitReached', 'FileLimitReached' ],
-	[ 'fileLimitUpdated', 'FileLimitUpdated' ],
-
-	[ 'notificationSend', 'NotificationSend' ],
-	[ 'notificationUpdate', 'NotificationUpdate' ],
-
-	[ 'payloadBroadcast', 'PayloadBroadcast' ],
-
-	[ 'processNew', 'ProcessNew' ],
-	[ 'processUpdate', 'ProcessUpdate' ],
-	[ 'processDone', 'ProcessDone' ],
-
-	[ 'threadStatus', 'ThreadStatus' ],
-	[ 'spaceSyncStatusUpdate', 'SpaceSyncStatusUpdate' ],
-	[ 'p2pStatusUpdate', 'P2PStatusUpdate' ],
-
-	[ 'importFinish', 'ImportFinish' ],
-
-	[ 'chatAdd', 'ChatAdd' ],
-	[ 'chatUpdate', 'ChatUpdate' ],
-	[ 'chatDelete', 'ChatDelete' ],
-	[ 'chatUpdateReactions', 'ChatUpdateReactions' ],
-	[ 'chatStateUpdate', 'ChatStateUpdate' ],
-	[ 'chatUpdateMessageReadStatus', 'ChatUpdateMessageReadStatus' ],
-	[ 'chatUpdateMentionReadStatus', 'ChatUpdateMentionReadStatus' ],
-	[ 'chatUpdateMessageSyncStatus', 'ChatUpdateMessageSyncStatus' ],
-	[ 'chatUpdatePinnedStatus', 'ChatUpdatePinnedStatus' ],
-	[ 'chatUpdateReactionReadStatus', 'ChatUpdateReactionReadStatus' ],
-
-	[ 'membershipV2Update', 'MembershipV2Update' ],
-	[ 'membershipV2ProductsUpdate', 'MembershipV2ProductsUpdate' ],
-];
+/**
+ * Derive the event type from a ts-proto property name by capitalizing the first letter.
+ * The middleware uses camelCase property names that map 1:1 to PascalCase event types.
+ */
+const eventType = (prop: string): string => {
+	return prop.charAt(0).toUpperCase() + prop.slice(1);
+};
 
 export const Mapper = {
 
@@ -204,7 +127,7 @@ export const Mapper = {
 				networkId: obj.networkId,
 				workspaceObjectId: obj.workspaceObjectId,
 				ethereumAddress: obj.ethereumAddress,
-				metadataKey: obj.metadataKey,
+				metadataKey: obj.metaDataKey,
 			};
 		},
 
@@ -1367,9 +1290,9 @@ export const Mapper = {
 		 * Detect event type by checking which optional property is set on the message.
 		 */
 		Type (message: any): string {
-			for (const [ prop, type ] of EVENT_PROP_MAP) {
-				if (message[prop] !== undefined) {
-					return type;
+			for (const prop of Object.keys(message)) {
+				if (!EVENT_SKIP_KEYS.has(prop) && (message[prop] !== undefined)) {
+					return eventType(prop);
 				};
 			};
 			return '';
@@ -1379,9 +1302,9 @@ export const Mapper = {
 		 * Extract event type and data from a ts-proto Event_Message.
 		 */
 		Data (message: any): { type: string; data: any } {
-			for (const [ prop, type ] of EVENT_PROP_MAP) {
-				if (message[prop] !== undefined) {
-					return { type, data: message[prop] };
+			for (const prop of Object.keys(message)) {
+				if (!EVENT_SKIP_KEYS.has(prop) && (message[prop] !== undefined)) {
+					return { type: eventType(prop), data: message[prop] };
 				};
 			};
 			return { type: '', data: {} };
@@ -1689,14 +1612,14 @@ export const Mapper = {
 			};
 		},
 
-		BlockDataviewGroupOrderUpdate: (obj: any) => {
+		BlockDataViewGroupOrderUpdate: (obj: any) => {
 			return {
 				id: obj.id,
 				groupOrder: obj.groupOrder ? Mapper.From.GroupOrder(obj.groupOrder) : null,
 			};
 		},
 
-		BlockDataviewObjectOrderUpdate: (obj: any) => {
+		BlockDataViewObjectOrderUpdate: (obj: any) => {
 			return {
 				id: obj.id,
 				groupId: obj.groupId,
@@ -1738,6 +1661,18 @@ export const Mapper = {
 				id: obj.id,
 				subIds: obj.subIds || [],
 				keys: obj.keys || [],
+			};
+		},
+
+		ObjectAutoArchive: (obj: any) => {
+			return {
+				objectIds: obj.objectIds || [],
+			};
+		},
+
+		ObjectAutoRestore: (obj: any) => {
+			return {
+				objectIds: obj.objectIds || [],
 			};
 		},
 

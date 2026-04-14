@@ -1,5 +1,4 @@
 import React, { forwardRef, useImperativeHandle, useEffect, useState, useRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
 import { IconObject, Pager, ObjectName, ObjectDescription, Cell, SelectionTarget, Icon, Checkbox } from 'Component';
 import * as I from 'Interface';
@@ -38,6 +37,7 @@ interface Props {
 	rowHeight?: number;
 	onSelect?: (id: string, e: MouseEvent) => void;
 	onSelectAll?: () => void;
+	onSort?: (id: string, type: I.SortType) => void;
 	isAllSelected?: boolean;
 };
 
@@ -158,7 +158,7 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, select
 
 				return (
 					<div key={`cell-${column.relationKey}`} className={cn.join(' ')}>
-						{content ? <div className={cnc.join(' ')} onClick={onClick}>{content}</div> : ''}
+						{content ? <div className={cnc.join(' ')} onClick={onClick} onAuxClick={onClick}>{content}</div> : ''}
 					</div>
 				);
 			})}
@@ -166,7 +166,7 @@ const ListObjectRow = ({ item, columnList, css, subId, rootId, onContext, select
 	);
 };
 
-const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
+const ListObject = forwardRef<ListObjectRefProps, Props>(({
 	spaceId = '',
 	subId = '',
 	rootId = '',
@@ -189,6 +189,7 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 	rowHeight = 38,
 	onSelect,
 	onSelectAll,
+	onSort: onSortCallback,
 	isAllSelected = false,
 }, ref) => {
 
@@ -308,6 +309,10 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 
 		setSortId(relationKey);
 		setSortType(type);
+
+		if (onSortCallback) {
+			onSortCallback(relationKey, type);
+		};
 
 		analytics.event('ObjectListSort', { relationKey, route, type });
 	};
@@ -475,6 +480,6 @@ const ListObject = observer(forwardRef<ListObjectRefProps, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default ListObject;

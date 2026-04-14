@@ -1,10 +1,8 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Cell } from 'Component';
 import Item from './item';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
-import $ from 'jquery';
 
 const ANIMATION = 200;
 
@@ -14,7 +12,7 @@ interface Props extends I.WidgetViewComponent {
 	searchIds: string[];
 };
 
-const Group = observer(forwardRef<{}, Props>((props, ref) => {
+const Group = forwardRef<{}, Props>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const { rootId, block, id, value, canCreate, searchIds, onCreate, getView, getViewLimit, getObject, getContentParam } = props;
@@ -37,11 +35,11 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		const isCollection = U.Object.isCollectionLayout(object.layout);
-		const filters: I.Filter[] = [
+		const filters: I.Filter[] = Dataview.getFilteredFilters([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			Dataview.getGroupFilter(relation, value),
-		].concat(view.filters);
-		const sorts: I.Sort[] = [].concat(view.sorts);
+		].concat(view.filters)).map(it => Dataview.filterMapper(it, { rootId }));
+		const sorts: I.Sort[] = Dataview.getFilteredSorts(view.sorts).map(it => Dataview.sortMapper(it));
 
 		if (searchIds) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
@@ -50,8 +48,8 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		U.Subscription.destroyList([ subId ], false, () => {
 			U.Subscription.subscribe({
 				subId,
-				filters: filters.map(it => Dataview.filterMapper(it)),
-				sorts: sorts.map(it => Dataview.sortMapper(it)),
+				filters,
+				sorts,
 				keys: J.Relation.sidebar,
 				sources: object.setOf || [],
 				limit,
@@ -81,41 +79,47 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const item = node.find(`#item-${U.Common.esc(id)}`);
-		const children = node.find(`#item-${U.Common.esc(id)}-children`);
+		const node = nodeRef.current;
+		const item = U.Dom.select(`#item-${U.Common.esc(id)}`, node);
+		const children = U.Dom.select(`#item-${U.Common.esc(id)}-children`, node);
 
-		item.addClass('isExpanded');
-		children.show();
+		U.Dom.addClass(item, 'isExpanded');
+		if (children) {
+			U.Dom.css(children, { display: 'block' });
+		};
 	};
 
 	const onToggle = () => {
 		const subKey = getToggleKey();
 		const isOpen = Storage.checkToggle(subKey, id);
-		const node = $(nodeRef.current);
-		const item = node.find(`#item-${U.Common.esc(id)}`);
-		const children = node.find(`#item-${U.Common.esc(id)}-children`);
+		const node = nodeRef.current;
+		const item = U.Dom.select(`#item-${U.Common.esc(id)}`, node);
+		const children = U.Dom.select(`#item-${U.Common.esc(id)}-children`, node);
+
+		if (!children) {
+			return;
+		};
 
 		let height = 0;
 		if (isOpen) {
-			item.removeClass('isExpanded');
+			U.Dom.removeClass(item, 'isExpanded');
 
-			children.css({ overflow: 'visible', height: 'auto' });
-			height = children.height();
-			children.css({ overflow: 'hidden', height: height });
+			U.Dom.css(children, { overflow: 'visible', height: 'auto' });
+			height = children.offsetHeight;
+			U.Dom.css(children, { overflow: 'hidden', height: `${height}px` });
 
-			window.setTimeout(() => children.css({ height: 0 }), 15);
-			window.setTimeout(() => children.hide(), ANIMATION + 15);
+			window.setTimeout(() => U.Dom.css(children, { height: '0px' }), 15);
+			window.setTimeout(() => { U.Dom.css(children, { display: 'none' }); }, ANIMATION + 15);
 		} else {
-			item.addClass('isExpanded');
+			U.Dom.addClass(item, 'isExpanded');
 
-			children.show();
-			children.css({ overflow: 'visible', height: 'auto' });
-			height = children.height();
+			U.Dom.css(children, { display: 'block' });
+			U.Dom.css(children, { overflow: 'visible', height: 'auto' });
+			height = children.offsetHeight;
 
-			children.css({ overflow: 'hidden', height: 0 });
-			window.setTimeout(() => children.css({ height: height }), 15);
-			window.setTimeout(() => children.css({ overflow: 'visible', height: 'auto' }), ANIMATION + 15);
+			U.Dom.css(children, { overflow: 'hidden', height: '0px' });
+			window.setTimeout(() => U.Dom.css(children, { height: `${height}px` }), 15);
+			window.setTimeout(() => U.Dom.css(children, { overflow: 'visible', height: 'auto' }), ANIMATION + 15);
 		};
 
 		Storage.setToggle(subKey, id, !isOpen);
@@ -199,6 +203,6 @@ const Group = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default Group;

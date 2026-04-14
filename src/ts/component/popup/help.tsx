@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import * as Docs from 'Docs';
 import { Cover, Button } from 'Component';
 import Block from 'Component/block/help';
@@ -25,13 +24,19 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 		cn.push('withCover');
 	};
 
+	const keydownHandler = useRef<(e: any) => void>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on(`keydown.${props.id}`, e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off(`keydown.${props.id}`);
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDown = (e: any) => {
@@ -82,23 +87,25 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onArrow = (dir: number) => {
-		const obj = $(`#${getId()}-innerWrap`);
-
 		if ((page + dir < 0) || (page + dir >= length)) {
 			return;
 		};
 
-		obj.scrollTop(0);
+		const obj = U.Dom.get(`${getId()}-innerWrap`);
+		if (obj) {
+			obj.scrollTop = 0;
+		};
+
 		setPage(page + dir);
 	};
 
 	useEffect(() => {
 		rebind();
 		return () => unbind();
-	});
+	}, []);
 
 	useEffect(() => {
-		U.Dom.renderLinks($(nodeRef.current));
+		U.Dom.renderLinks(nodeRef.current);
 	});
 
 	return (

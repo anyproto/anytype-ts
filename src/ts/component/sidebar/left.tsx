@@ -1,7 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, DragEvent } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { SidebarProgress } from 'Component';
 
 import PageWidget from './page/widget';
@@ -25,7 +23,7 @@ interface SidebarLeftRefProps {
 	getNode: () => HTMLElement | null;
 };
 
-const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
+const SidebarLeft = forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
 	const { vaultIsMinimal } = S.Common;
 	const nodeRef = useRef(null);
@@ -85,27 +83,27 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const subPageId = getPageId(subPage);
 	const SubComponent = Components[subComponentId];
 
+	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
+	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
+
 	const onResizeStart = (e: DragEvent, panel: I.SidebarPanel) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const win = $(window);
-		const body = $('body');
-
 		switch (panel) {
 			case I.SidebarPanel.Left: {
-				const o = $(pageWrapperRef.current).offset();
+				const rect = pageWrapperRef.current?.getBoundingClientRect();
 
-				ox.current = o.left;
-				oy.current = o.top;
+				ox.current = (rect?.left ?? 0) + window.scrollX;
+				oy.current = (rect?.top ?? 0) + window.scrollY;
 				break;
 			};
 
 			case I.SidebarPanel.SubLeft: {
-				const o = $(subPageWrapperRef.current).offset();
+				const rect = subPageWrapperRef.current?.getBoundingClientRect();
 
-				ox.current = o.left;
-				oy.current = o.top;
+				ox.current = (rect?.left ?? 0) + window.scrollX;
+				oy.current = (rect?.top ?? 0) + window.scrollY;
 				break;
 			};
 		};
@@ -114,11 +112,21 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 		keyboard.disableSelection(true);
 		keyboard.setResize(true);
-		body.addClass('colResize');
+		U.Dom.addClass(document.body, 'colResize');
 
-		win.off('mousemove.sidebar mouseup.sidebar');
-		win.on('mousemove.sidebar', e => onResizeMove(e, panel));
-		win.on('mouseup.sidebar', e => onResizeEnd(e, panel));
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+		};
+
+		mouseMoveHandler.current = e => onResizeMove(e, panel);
+		mouseUpHandler.current = e => onResizeEnd(e, panel);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const onResizeMove = (e: any, panel: I.SidebarPanel) => {
@@ -156,8 +164,8 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			if (d > 0) {
 				if (data.isClosed || ((w >= 0) && (w <= closeWidth))) {
-					sidebar.open(panel, '', min);
-				} else 
+					sidebar.open(panel, '', min, panel == I.SidebarPanel.Left ? false : undefined);
+				} else
 				if (w > closeWidth) {
 					sidebar.setWidth(panel, false, w, false);
 				};
@@ -176,8 +184,16 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		keyboard.setResize(false);
 		raf.cancel(frame.current);
 
-		$('body').removeClass('colResize');
-		$(window).off('mousemove.sidebar mouseup.sidebar');
+		U.Dom.removeClass(document.body, 'colResize');
+
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+			mouseMoveHandler.current = null;
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+			mouseUpHandler.current = null;
+		};
 
 		const w = Math.max(0, (e.pageX - ox.current));
 		const data = sidebar.getData(panel);
@@ -275,6 +291,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default SidebarLeft;

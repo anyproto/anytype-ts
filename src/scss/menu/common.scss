@@ -25,22 +25,24 @@
 
 	.dimmer { 
 		position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(0,0,0,0.3); opacity: 0; 
-		transition: opacity $transitionMenuTime $easeInQuint;
+		transition: opacity $transitionMenuTime $easeDecelerate;
 	}
 	.dimmer.passThrough { pointer-events: none; }
 	#menu-polygon { z-index: 1000; position: absolute; }
 
 	.menu * { user-select: none; }
 	
-	.menu { 
+	.menu {
 		border-radius: 8px; position: absolute; z-index: inherit; text-align: left; backface-visibility: hidden;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: var(--color-bg-primary); opacity: 0; transform: scale3d(0.95,0.95,1);
-		transition: opacity, transform $transitionMenuTime $easeInQuint;
 	}
 	.menu.fixed { position: fixed; }
 	.menu * { user-select: none; }
 
 	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
+	.menu.show:not(.noAnimation) { 
+		transition-property: opacity, transform, height; transition-duration: $transitionMenuTime; transition-timing-function: $easeDecelerate;
+	}
 	
 	.menu.v1.h3 { transform-origin: 0% 100%; } /* left top */
 	.menu.v2.h3 { transform-origin: 0% 0%; } /* left bottom */
@@ -57,10 +59,7 @@
 	.menu {
 		.input { user-select: text; }
 		
-		.arrowDirection {
-			width: 17px; height: 8px; transition: none;
-			position: absolute;
-		}
+		.arrowDirection { width: 17px; height: 8px; transition: none; position: absolute; }
 		.arrowDirection.c1 { top: -7px; }
 		.arrowDirection.c2 { bottom: -7px; transform: rotateZ(180deg); }
 		.arrowDirection.c3 { left: -11.5px; transform: rotateZ(-90deg); }
@@ -69,7 +68,9 @@
 	
 	.menu.vertical { width: var(--menu-width-common); }
 	.menu.vertical {
-		.content { overflow-y: auto; overflow-x: hidden; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none; }
+		.content {
+			overflow-y: auto; overflow-x: hidden; max-height: 368px; padding: 8px 0px; border-radius: inherit; transform: none;
+		}
 		.ReactVirtualized__List { padding: 8px 0px; }
 
 		.filter { padding: 0px 16px; }
@@ -131,13 +132,16 @@
 			.icon.commonDnd { width: 20px; height: 20px; margin: 0px; vertical-align: top; cursor: grab; }
 			.icon.plus { margin-right: 6px; }
 			.icon.delete, .icon.more { 
-				width: 24px !important; height: 24px !important; background-size: 20px; position: absolute; right: 10px; top: 50%; margin: -12px 0px 0px 0px; 
-				border-radius: 4px; opacity: 0; z-index: 1;
+				width: 24px !important; height: 24px !important; position: absolute; right: 10px; top: 50%; margin: -12px 0px 0px 0px; 
+				border-radius: 4px; opacity: 0; z-index: 1; display: flex; align-items: center; justify-content: center;
 			}
 
 			.icon.delete:hover, .icon.more:hover { background-color: var(--color-shape-highlight-medium); }
 			.icon.arrow { width: 20px; height: 20px; position: absolute; right: 8px; top: 50%; margin: -10px 0px 0px 0px !important; }
-			.icon.chk { width: 20px; height: 20px; position: absolute; right: 8px; top: 50%; margin: -10px 0px 0px 0px; }
+			.icon.chk { 
+				width: 20px; height: 20px; position: absolute; right: 8px; top: 50%; margin: -10px 0px 0px 0px; 
+				color: var(--color-control-accent);
+			}
 			.icon.sortArrow { width: 20px; height: 20px; margin: 0px; }
 			.icon.sortArrow.c1 { transform: rotateZ(180deg); }
 
@@ -160,7 +164,7 @@
 		.item.sizeSmall { @include text-small; }
 		.item.weightMedium { font-weight: 500; }
 
-		.item.empty { cursor: default; }
+		.item.empty { display: flex; align-items: center; }
 
 		.item.withDescription { padding: 8px 16px; height: 56px; }
 		.item.withDescription {
@@ -254,17 +258,11 @@
 		.section { flex: auto; padding: 12px 18px; height: 44px; border-right: 1px solid var(--color-shape-secondary); white-space: nowrap; position: relative; }
 		.section:last-child { border: 0px; }
 		
-		.icon { width: 20px; height: 20px; margin-right: 12px; }
-		.icon:last-child { margin: 0px; }
-		
 		.icon {
-			.icon.arrow {
-				width: 8px; height: 8px; position: absolute; right: 0px; top: 50%;
-				margin-top: -4px;
+			.icon.arrow { width: 8px; height: 8px; position: absolute; right: 0px; top: 50%; margin-top: -4px; }
+			&.active {
+				.icon.arrow { background-color: var(--color-text-primary); }
 			}
-		}
-		.icon.active {
-			.icon.arrow { color: var(--color-text-primary); }
 		}
 	}
 }
@@ -309,6 +307,7 @@ html.platformWindows {
 @import "./block/cover";
 @import "./block/emoji";
 @import "./block/latex";
+@import "./block/embedKroki";
 @import "./block/link";
 @import "./block/linkSettings";
 @import "./block/mention";
@@ -333,3 +332,4 @@ html.platformWindows {
 @import "./changeOwner";
 
 @import "./comment/toolbar.scss";
+@import "./comment/add.scss";

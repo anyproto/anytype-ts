@@ -116,6 +116,8 @@ class Api {
 			if (pinTimeout) {
 				this.startPinTimer(win, pinTimeout);
 			};
+
+			WindowManager.sendToAllTabs('pin-unlocked');
 		} else {
 			this.stopPinTimer();
 		};
@@ -727,8 +729,8 @@ class Api {
 		WindowManager.openRouteInTab(win, route, data);
 	};
 
-	openSpaceInTab (win: AppWindow, spaceId: string, uxType: number): void {
-		WindowManager.openSpaceInTab(win, spaceId, uxType);
+	openSpaceInTab (win: AppWindow, spaceId: string, spaceType: number): void {
+		WindowManager.openSpaceInTab(win, spaceId, spaceType);
 	};
 
 	pinTab (win: AppWindow, id: string): void {

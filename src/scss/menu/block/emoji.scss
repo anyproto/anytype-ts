@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuBlockEmoji { width: var(--menu-width-common); }
 	.menu.menuBlockEmoji {
-		.content { transition: none; padding: 0px; }
+		.content { padding: 0px; }
 		.items { height: 100%; }
 		.item {
 			.name {

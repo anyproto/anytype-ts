@@ -1,6 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { Header, Footer } from 'Component';
-import { observer } from 'mobx-react';
 
 import PageAccount from './account';
 import PageDelete from './delete';
@@ -32,6 +31,7 @@ import PageSpaceStorage from './space/storage';
 import PageSpaceShare from './space/share';
 import PageSpaceList from './space/list';
 import PageSpaceNotifications from './space/notifications';
+import PageSpaceHome from './space/home';
 
 import PageMainSet from '../set';
 import PageMainRelation from '../relation';
@@ -75,6 +75,7 @@ const Components: any = {
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
 	spaceNotifications:	 PageSpaceNotifications,
+	spaceHome:			 PageSpaceHome,
 
 	set:				 PageMainSet,
 	relation:			 PageMainRelation,
@@ -83,7 +84,7 @@ const Components: any = {
 
 const SKIP_CONTAINER = [ 'set', 'relation', 'archive' ];
 
-const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageMainSettingsIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { id = 'account' } = keyboard.getMatch(isPopup).params;
@@ -104,7 +105,8 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			};
 
 			switch (id) {
-				case 'spaceIndexEmpty': {
+				case 'spaceIndexEmpty':
+				case 'spaceHome': {
 					page = 'widget';
 					break;
 				};
@@ -127,7 +129,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		};
 
 		if (page) {
-			if (id == 'spaceIndexEmpty') {
+			if ([ 'spaceIndexEmpty', 'spaceHome' ].includes(id)) {
 				const dataLeft = sidebar.getData(I.SidebarPanel.Left);
 				const dataSubLeft = sidebar.getData(I.SidebarPanel.SubLeft);
 
@@ -209,6 +211,6 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 
 	return content;
 
-}));
+});
 
 export default PageMainSettingsIndex;

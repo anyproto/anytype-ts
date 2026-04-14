@@ -1,10 +1,9 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Icon, Input, Button, Error, UpsellBanner } from 'Component';
 import Members from './share/members';
 import * as I from 'Interface';
 
-const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsSpaceShare = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ error, setError ] = useState('');
@@ -164,6 +163,23 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 						created = true;
 
 						C.SpaceMakeShareable(S.Common.space, (message: any) => {
+							if (message.error.code == 104) {
+								setIsLoading(false);
+
+								S.Popup.open('confirm', {
+									data: {
+										iconParam: { name: 'popup/header/warning', color: 'grey' },
+										title: translate('popupConfirmSharedSpaceLimitTitle'),
+										text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+										textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+										canCancel: false,
+										onConfirm: () => Action.membershipUpgrade(),
+									},
+								});
+								analytics.event('ScreenHitShareSpaceLimit');
+								return;
+							};
+
 							if (!setErrorHandler(message.error)) {
 								callBack();
 							};
@@ -259,6 +275,6 @@ const PageMainSettingsSpaceShare = observer(forwardRef<I.PageRef, I.PageSettings
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsSpaceShare;

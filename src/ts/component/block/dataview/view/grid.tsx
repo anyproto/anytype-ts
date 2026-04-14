@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { createRoot } from 'react-dom/client';
-import $ from 'jquery';
+
 import raf from 'raf';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { LoadMore, StickyScrollbar } from 'Component';
 import HeadRow from './grid/head/row';
@@ -15,7 +14,7 @@ import * as I from 'Interface';
 const PADDING = 46;
 const HEIGHT = 48;
 
-const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { 
 		rootId, block, isPopup, isInline, className, readonly, loadData, isCollection, getView, onRecordAdd, getEmptyView, getRecords, 
@@ -29,6 +28,8 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	const scrollWrapRef = useRef(null);
 	const view = getView();
 	const relations = getVisibleRelations();
+	const relationsRef = useRef(relations);
+	relationsRef.current = relations;
 
 	useEffect(() => {
 		resize();
@@ -65,15 +66,22 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 	const scrollVerticalHandlerRef = useRef<(() => void) | null>(null);
 
+	const scrollHorizontalHandlerRef = useRef<(() => void) | null>(null);
+
 	const rebind = () => {
-		const scroll = $(scrollRef.current);
+		const scroll = scrollRef.current;
 		const container = U.Dom.getScrollContainer(isPopup);
 
 		unbind();
 
-		scroll.on('scroll', () => onScrollHorizontal());
+		scrollHorizontalHandlerRef.current = () => onScrollHorizontal();
+		if (scroll) {
+			U.Dom.addEvent(scroll, 'scroll', scrollHorizontalHandlerRef.current);
+		};
 		scrollVerticalHandlerRef.current = () => raf(() => onScrollVertical());
-		container?.addEventListener('scroll', scrollVerticalHandlerRef.current);
+		if (container) {
+			U.Dom.addEvent(container, 'scroll', scrollVerticalHandlerRef.current);
+		};
 
 		if (!isInline) {
 			stickyScrollbarRef.current?.bind(scroll, isSyncingScroll.current);
@@ -81,12 +89,15 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	const unbind = () => {
-		const scroll = $(scrollRef.current);
+		const scroll = scrollRef.current;
 		const container = U.Dom.getScrollContainer(isPopup);
 
-		scroll.off('scroll');
-		if (scrollVerticalHandlerRef.current) {
-			container?.removeEventListener('scroll', scrollVerticalHandlerRef.current);
+		if (scrollHorizontalHandlerRef.current && scroll) {
+			U.Dom.removeEvent(scroll, 'scroll', scrollHorizontalHandlerRef.current);
+			scrollHorizontalHandlerRef.current = null;
+		};
+		if (scrollVerticalHandlerRef.current && container) {
+			U.Dom.removeEvent(container, 'scroll', scrollVerticalHandlerRef.current);
 			scrollVerticalHandlerRef.current = null;
 		};
 		stickyScrollbarRef.current?.unbind();
@@ -94,18 +105,21 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 	const onScrollHorizontal = () => {
 		S.Menu.resizeAll();
-		resizeColumns('', 0);
+
+		if (!keyboard.isResizing) {
+			resizeColumns('', 0);
+		};
 
 		if (isInline) {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const scroll = $(scrollRef.current);
-		const clone = node.find('#rowHeadClone');
+		const node = nodeRef.current;
+		const scroll = scrollRef.current;
+		const clone = U.Dom.select('#rowHeadClone', node);
 
-		if (clone.length) {
-			clone.css({ transform: `translate3d(${-scroll.scrollLeft()}px,0px,0px)` });
+		if (clone) {
+			U.Dom.css(clone, { transform: `translate3d(${-(scroll?.scrollLeft ?? 0)}px,0px,0px)` });
 		};
 
 		if (stickyScrollbarRef) {
@@ -117,26 +131,27 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		if (isInline || isPopup) {
 			return;
 		};
-		
-		const node = $(nodeRef.current);
-		const rowHead = node.find('#rowHead');
 
-		if (!rowHead.length) {
+		const node = nodeRef.current;
+		const rowHead = U.Dom.select('#rowHead', node);
+
+		if (!rowHead) {
 			return;
 		};
 
-		const scroll = $(scrollRef.current);
-		const { left, top } = rowHead.offset();
-		const sx = scroll.scrollLeft();
-		
-		let clone = node.find('#rowHeadClone');
+		const scroll = scrollRef.current;
+		const { left, top } = rowHead.getBoundingClientRect();
+		const sx = scroll?.scrollLeft ?? 0;
 
-		if (!clone.length) {
-			clone = $('<div id="rowHeadClone"></div>');
+		let clone = U.Dom.select('#rowHeadClone', node);
 
-			node.append(clone);
+		if (!clone) {
+			clone = document.createElement('div');
+			clone.id = 'rowHeadClone';
 
-			const root = createRoot(clone.get(0));
+			node.appendChild(clone);
+
+			const root = createRoot(clone);
 
 			root.render((
 				<HeadRow
@@ -149,46 +164,52 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 				/>
 			));
 
-			clone.find('.rowHead').attr({ id: '' });
+			const rowHeadInClone = U.Dom.select('.rowHead', clone);
+			if (rowHeadInClone) {
+				rowHeadInClone.id = '';
+			};
 		};
 
 		if (top <= J.Size.header) {
-			clone.css({ 
-				left: left + sx, 
-				top: J.Size.header, 
-				width: rowHead.outerWidth() + 2, 
-				transform: `translate3d(${-sx}px,0px,0px)`,	
+			U.Dom.css(clone, {
+				left: `${left + sx}px`,
+				top: `${J.Size.header}px`,
+				width: `${rowHead.offsetWidth + 2}px`,
+				transform: `translate3d(${-sx}px,0px,0px)`,
 			});
 		} else {
 			clone.remove();
 		};
 
-		rowHead.toggleClass('fixed', top <= J.Size.header);
+		U.Dom.toggleClass(rowHead, 'fixed', top <= J.Size.header);
 	};
 
 	const resizeColumns = (relationKey: string, width: number) => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		const rels = relationsRef.current;
 		const widths = getColumnWidths(relationKey, width);
-		const str = relations.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
+		const str = rels.map(it => widths[it.relationKey] + 'px').concat([ 'auto' ]).join(' ');
 		const size = J.Size.dataview.cell;
 
-		relations.forEach(it => {
+		rels.forEach(it => {
 			const width = widths[it.relationKey];
-			const el = node.find(`#${U.Common.esc(Relation.cellId('head', it.relationKey, ''))}`);
+			const el = U.Dom.select(`#${U.Common.esc(Relation.cellId('head', it.relationKey, ''))}`, node);
 
-			el.toggleClass('small', width <= size.small);
-			el.toggleClass('medium', (width > size.small) && (width <= size.medium));
+			if (el) {
+				U.Dom.toggleClass(el, 'small', width <= size.small);
+				U.Dom.toggleClass(el, 'medium', (width > size.small) && (width <= size.medium));
+			};
 		});
 
-		node.find('.rowHead').css({ gridTemplateColumns: str });
-		node.find('.rowFoot').css({ gridTemplateColumns: str });
-		node.find('.row .selectionTarget').css({ gridTemplateColumns: str });
+		U.Dom.selectAll('.rowHead', node).forEach(el => U.Dom.css(el, { gridTemplateColumns: str }));
+		U.Dom.selectAll('.rowFoot', node).forEach(el => U.Dom.css(el, { gridTemplateColumns: str }));
+		U.Dom.selectAll('.row .selectionTarget', node).forEach(el => U.Dom.css(el, { gridTemplateColumns: str }));
 	};
 
 	const getColumnWidths = (relationKey: string, width: number): any => {
 		const columns: any = {};
-		
-		relations.forEach(it => {
+
+		relationsRef.current.forEach(it => {
 			if (!it.relation) {
 				return;
 			};
@@ -204,43 +225,64 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	const cellPosition = (cellId: string) => {
-		const cell = $(`#${U.Common.esc(cellId)}`);
-		if (!cell.hasClass('isEditing')) {
+		const cell = U.Dom.get(cellId);
+		if (!cell || !U.Dom.hasClass(cell, 'isEditing')) {
 			return;
 		};
 
-		const scroll = $(scrollRef.current);
-		const content = cell.find('.cellContent');
-		const x = cell.position().left;
-		const width = content.outerWidth();
-		const sx = scroll.scrollLeft();
-		const sw = scroll.width();
-		const container = $(isPopup ? '#popupPage-innerWrap' : 'body');
-		const ww = container.width();
+		const scroll = scrollRef.current;
+		const content = U.Dom.select('.cellContent', cell);
+		if (!content) {
+			return;
+		};
+
+		const x = cell.offsetLeft;
+		const width = content.offsetWidth;
+		const sx = scroll?.scrollLeft ?? 0;
+		const sw = U.Dom.contentWidth(scroll);
+		const container = isPopup ? U.Dom.get('popupPage-innerWrap') : document.body;
+		const ww = U.Dom.contentWidth(container);
 		const rx = x - sx + width;
 
-		content.css({ left: 0, right: 'auto' });
+		U.Dom.css(content, { left: '0', right: 'auto' });
 
 		if ((rx >= ww - 92) || (rx > sw)) {
-			content.css({ left: 'auto', right: 0 });
+			U.Dom.css(content, { left: 'auto', right: '0' });
 		};
 	};
+
+	const resizeMoveHandlerRef = useRef<((e: MouseEvent) => void) | null>(null);
+	const resizeEndHandlerRef = useRef<((e: MouseEvent) => void) | null>(null);
 
 	const onResizeStart = (e: any, relationKey: string) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const win = $(window);
-		const node = $(nodeRef.current);
-		const el = node.find(`#${U.Common.esc(Relation.cellId('head', relationKey, ''))}`);
-		const { left } = el.offset();
+		const node = nodeRef.current;
+		const el = U.Dom.select(`#${U.Common.esc(Relation.cellId('head', relationKey, ''))}`, node);
+		const rect = el?.getBoundingClientRect();
+		const left = (rect?.left ?? 0) + window.scrollX;
 
-		$('body').addClass('colResize');
-		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		win.on(`mousemove.${block.id}`, e => onResizeMove(e, relationKey, left));
-		win.on(`mouseup.${block.id}`, e => onResizeEnd(e, relationKey, left));
+		U.Dom.addClass(document.body, 'colResize');
 
-		el.addClass('isResizing');
+		if (resizeMoveHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mousemove', resizeMoveHandlerRef.current);
+		};
+		if (resizeEndHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mouseup', resizeEndHandlerRef.current);
+		};
+
+		resizeMoveHandlerRef.current = (e: MouseEvent) => onResizeMove(e, relationKey, left);
+		resizeEndHandlerRef.current = (e: MouseEvent) => onResizeEnd(e, relationKey, left);
+
+		U.Dom.addEvents(window, [
+			['mousemove', resizeMoveHandlerRef.current],
+			['mouseup', resizeEndHandlerRef.current],
+		]);
+
+		if (el) {
+			U.Dom.addClass(el, 'isResizing');
+		};
 		keyboard.setResize(true);
 	};
 
@@ -252,13 +294,21 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	const onResizeEnd = (e: any, relationKey: string, ox: number) => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const width = checkWidth(e.pageX - ox);
 
-		$(window).off(`mousemove.${block.id} mouseup.${block.id}`).trigger('resize');
-		$('body').removeClass('colResize');
-		node.find('.cellHead.isResizing').removeClass('isResizing');
-		node.find('.cellKeyHover').removeClass('cellKeyHover');
+		if (resizeMoveHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mousemove', resizeMoveHandlerRef.current);
+			resizeMoveHandlerRef.current = null;
+		};
+		if (resizeEndHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mouseup', resizeEndHandlerRef.current);
+			resizeEndHandlerRef.current = null;
+		};
+		U.Dom.eventDispatch(window, 'resize');
+		U.Dom.removeClass(document.body, 'colResize');
+		U.Dom.selectAll('.cellHead.isResizing', node).forEach(el => U.Dom.removeClass(el, 'isResizing'));
+		U.Dom.selectAll('.cellKeyHover', node).forEach(el => U.Dom.removeClass(el, 'cellKeyHover'));
 
 		relations.forEach(it => {
 			if (it.relationKey == relationKey) {
@@ -283,21 +333,22 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 	};
 
 	const onCellAdd = (e: any) => {
-		const blockEl = `#block-${U.Common.esc(block.id)}`;
-		const rowHead = $(`${blockEl} #rowHead`);
-		const isFixed = rowHead.hasClass('fixed');
+		const blockEl = U.Dom.get(`block-${block.id}`);
+		const rowHead = U.Dom.select('#rowHead', blockEl);
+		const isFixed = rowHead ? U.Dom.hasClass(rowHead, 'fixed') : false;
 		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
-		const element = `${blockEl} ${headEl} #cell-add`;
-		const cellLast = $(`${blockEl} ${headEl} .cellHead.last`);
+		const element = `#block-${U.Common.esc(block.id)} ${headEl} .cellHead.last`;
+		const cellLast = blockEl ? U.Dom.select(`${headEl} .cellHead.last`, blockEl) : null;
 
 		S.Menu.open('dataviewRelationList', { 
 			classNameWrap: 'fromBlock',
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 10,
+			noAutoHover: true,
 			className: isFixed ? 'fixed' : '',
-			onOpen: () => cellLast.addClass('hover'),
-			onClose: () => cellLast.removeClass('hover'),
+			onOpen: () => { if (cellLast) U.Dom.addClass(cellLast, 'hover'); },
+			onClose: () => { if (cellLast) U.Dom.removeClass(cellLast, 'hover'); },
 			data: {
 				readonly,
 				loadData,
@@ -350,8 +401,8 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 
 	const resize = () => {
 		const parent = S.Block.getParentLeaf(rootId, block.id);
-		const scroll = $(scrollRef.current);
-		const wrap = $(scrollWrapRef.current);
+		const scroll = scrollRef.current;
+		const wrap = scrollWrapRef.current;
 		const container = U.Dom.getPageContainer(isPopup);
 		const width = getVisibleRelations().reduce((res: number, current: any) => res + current.width, J.Size.blockMenu);
 		const cw = container?.clientWidth ?? 0;
@@ -360,19 +411,25 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		if (isInline) {
 			if (parent) {
 				if (parent.isPage() || parent.isLayoutDiv()) {
-					const wrapper = $(container).find('#editorWrapper');
-					const ww = wrapper.width();
+					const wrapper = U.Dom.select('#editorWrapper', container);
+					const ww = U.Dom.contentWidth(wrapper);
 					const vw = Math.max(ww, width) + (width > ww ? PADDING : 0);
 					const margin = Math.max(0, (cw - ww) / 2);
 					const offset = 8;
 
-					scroll.css({ width: cw, marginLeft: -margin });
-					wrap.css({ width: vw + margin - offset, paddingLeft: margin, paddingRight: offset * 2 });
+					if (scroll) {
+						U.Dom.css(scroll, { width: `${cw}px`, marginLeft: `${-margin}px` });
+					};
+					if (wrap) {
+						U.Dom.css(wrap, { width: `${vw + margin - offset}px`, paddingLeft: `${margin}px`, paddingRight: `${offset * 2}px` });
+					};
 				} else {
-					const parentObj = $(`#block-${U.Common.esc(parent.id)}`);
-					const vw = parentObj.length ? (parentObj.width() - J.Size.blockMenu) : 0;
+					const parentObj = U.Dom.get(`block-${parent.id}`);
+					const vw = parentObj ? (U.Dom.contentWidth(parentObj) - J.Size.blockMenu) : 0;
 
-					wrap.css({ width: Math.max(vw, width) });
+					if (wrap) {
+						U.Dom.css(wrap, { width: `${Math.max(vw, width)}px` });
+					};
 				};
 			};
 		} else {
@@ -380,15 +437,20 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 			const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
 			const margin = (cw - mw) / 2;
 			const pr = width > mw ? PADDING : 0;
+			const scrollRect = scroll?.getBoundingClientRect();
 
-			scroll.css({ 
-				width: cw - 4, 
-				marginLeft: -margin - 2, 
-				paddingLeft: margin, 
-				minHeight: (ch - scroll.offset()?.top),
-			});
+			if (scroll) {
+				U.Dom.css(scroll, {
+					width: `${cw - 4}px`,
+					marginLeft: `${-margin - 2}px`,
+					paddingLeft: `${margin}px`,
+					minHeight: `${ch - (scrollRect?.top ?? 0)}px`,
+				});
+			};
 
-			wrap.css({ width: vw, paddingRight: pr });
+			if (wrap) {
+				U.Dom.css(wrap, { width: `${vw}px`, paddingRight: `${pr}px` });
+			};
 
 			stickyScrollbarRef.current?.resize({
 				width: mw,
@@ -398,7 +460,7 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 				trackWidth: vw,
 			});
 		};
-		
+
 		resizeColumns('', 0);
 	};
 
@@ -535,6 +597,6 @@ const ViewGrid = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default ViewGrid;

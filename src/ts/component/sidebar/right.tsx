@@ -1,8 +1,6 @@
 import React, { forwardRef, useRef, useLayoutEffect, useImperativeHandle, DragEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import $ from 'jquery';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
@@ -25,7 +23,7 @@ const Components = {
 	widget:					 PageWidget,
 };
 
-const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, ref) => {
+const SidebarRight = forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	
 	const { isPopup } = props;
 	const nodeRef = useRef(null);
@@ -55,27 +53,43 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		cn.push('customScrollbar');
 	};
 
+	const mouseMoveHandler = useRef<(e: any) => void>(null);
+	const mouseUpHandler = useRef<(e: any) => void>(null);
+
 	const onResizeStart = (e: DragEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const win = $(window);
-		const body = $('body');
-		const node = $(nodeRef.current);
-		const o = node.offset();
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		ox.current = o.left;
-		oy.current = o.top;
+		const rect = node.getBoundingClientRect();
+
+		ox.current = rect.left + window.scrollX;
+		oy.current = rect.top + window.scrollY;
 		sx.current = e.pageX;
-		width.current = node.outerWidth();
+		width.current = node.offsetWidth;
 
 		keyboard.disableSelection(true);
 		keyboard.setResize(true);
-		body.addClass('colResize');
+		U.Dom.addClass(document.body, 'colResize');
 
-		win.off('mousemove.sidebar mouseup.sidebar');
-		win.on('mousemove.sidebar', e => onResizeMove(e));
-		win.on('mouseup.sidebar', e => onResizeEnd(e));
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+		};
+
+		mouseMoveHandler.current = (e: any) => onResizeMove(e);
+		mouseUpHandler.current = (e: any) => onResizeEnd(e);
+
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const onResizeMove = (e: any) => {
@@ -110,8 +124,16 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 
 		sidebar.setWidth(I.SidebarPanel.Right, isPopup, w, true);
 
-		$('body').removeClass('colResize');
-		$(window).off('mousemove.sidebar mouseup.sidebar');
+		U.Dom.removeClass(document.body, 'colResize');
+
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+			mouseMoveHandler.current = null;
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+			mouseUpHandler.current = null;
+		};
 	};
 
 	useLayoutEffect(() => {
@@ -121,7 +143,7 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 			if (
 				U.Object.isTypeOrRelationLayout(object.layout) ||
 				(
-					(spaceview.isChat || spaceview.isOneToOne) &&
+					spaceview.isOneToOne &&
 					(U.Object.isChatLayout(object.layout) || U.Object.isSpaceLayout(object.layout))
 				)
 			) {
@@ -167,6 +189,6 @@ const SidebarRight = observer(forwardRef<SidebarRightRefProps, Props>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default SidebarRight;

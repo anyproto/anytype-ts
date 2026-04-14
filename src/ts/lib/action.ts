@@ -438,7 +438,14 @@ class Action {
 						if (isPopup) {
 							S.Popup.close('page');
 						} else {
-							U.Space.openDashboard();
+							const history = U.Router.history;
+							const prev = history.entries[history.index - 1];
+
+							if (prev) {
+								history.goBack();
+							} else {
+								U.Space.openDashboard();
+							};
 						};
 					};
 
@@ -462,7 +469,11 @@ class Action {
 				return;
 			};
 
-			Preview.toastShow({ action: I.ToastAction.Archive, ids });
+			ids.forEach(id => {
+				S.Detail.update(id, { id, details: { isArchived: true } }, false);
+			});
+
+			Preview.toastShow({ action: I.ToastAction.Archive, ids, autoArchivedIds: message.autoArchivedIds || [] });
 			analytics.event('MoveToBin', { route, count: ids.length });
 			callBack?.();
 		});
@@ -526,7 +537,11 @@ class Action {
 				return;
 			};
 
-			Preview.toastShow({ action: I.ToastAction.Restore, ids });
+			ids.forEach(id => {
+				S.Detail.update(id, { id, details: { isArchived: false } }, false);
+			});
+
+			Preview.toastShow({ action: I.ToastAction.Restore, ids, autoRestoredIds: message.autoRestoredIds || [] });
 			callBack?.();
 			analytics.event('RestoreFromBin', { route, count: ids.length });
 		});
@@ -683,12 +698,32 @@ class Action {
 
 	/**
 	 * Creates a new space with the given UX type and route.
-	 * @param {I.SpaceUxType} uxType - The UX type for the new space.
+	 * @param {I.SpaceType} spaceType - The UX type for the new space.
 	 * @param {string} route - The route context for analytics.
 	 */
-	createSpace (uxType: I.SpaceUxType, route: string) {
+	createSpace (type: I.SpaceCreateType, route: string) {
+		if (type == I.SpaceCreateType.Group) {
+			const mySharedSpaces = U.Space.getMySharedSpacesList();
+			const { sharedSpacesLimit } = U.Space.getProfile();
+
+			if (sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit)) {
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'popup/header/warning', color: 'grey' },
+						title: translate('popupConfirmSharedSpaceLimitTitle'),
+						text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+						textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+						canCancel: false,
+						onConfirm: () => this.openSettings('membership', ''),
+					},
+				});
+				analytics.event('ScreenHitShareSpaceLimit');
+				return;
+			};
+		};
+
 		S.Popup.closeAll(null, () => {
-			S.Popup.open('spaceCreate', { data: { uxType, route } });
+			S.Popup.open('spaceCreate', { data: { type, route } });
 		});
 	};
 
@@ -895,6 +930,91 @@ class Action {
 		};
 	};
 
+	savePendingMembers (spaceId: string, identities: string[]) {
+		const existing = Storage.getSpaceKey('pendingMembers', false, spaceId) || [];
+		const merged = [ ...new Set([ ...existing, ...identities ]) ];
+
+		Storage.setSpaceKey('pendingMembers', merged, false, spaceId);
+	};
+
+	getPendingMembers (spaceId: string): string[] {
+		return Storage.getSpaceKey('pendingMembers', false, spaceId) || [];
+	};
+
+	processPendingMembers (retryCount: number = 0) {
+		const spaceData = Storage.getSpace(false);
+		const entries: { spaceId: string; identities: string[] }[] = [];
+
+		for (const spaceId in spaceData) {
+			const identities = spaceData[spaceId]?.pendingMembers;
+
+			if (identities?.length) {
+				entries.push({ spaceId, identities });
+				Storage.deleteSpaceKey('pendingMembers', false, spaceId);
+			};
+		};
+
+		if (!entries.length) {
+			return;
+		};
+
+		const product = S.Membership.data?.getTopProduct();
+		const writersLimit = product?.features?.spaceWriters || 0;
+		const maxRetries = 5;
+		const failed: { spaceId: string; identities: string[] }[] = [];
+
+		let processed = 0;
+		const total = entries.length;
+
+		const onProcessed = () => {
+			processed++;
+
+			if (processed < total) {
+				return;
+			};
+
+			if (failed.length && (retryCount < maxRetries)) {
+				failed.forEach(it => this.savePendingMembers(it.spaceId, it.identities));
+
+				const delay = Math.min(5000 * Math.pow(2, retryCount), 30000);
+
+				window.setTimeout(() => this.processPendingMembers(retryCount + 1), delay);
+			};
+		};
+
+		entries.forEach(({ spaceId, identities }) => {
+			C.SpaceMakeShareable(spaceId, (message: any) => {
+				if (message.error.code) {
+					failed.push({ spaceId, identities });
+					onProcessed();
+					return;
+				};
+
+				C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+					if (message.error.code) {
+						failed.push({ spaceId, identities });
+						onProcessed();
+						return;
+					};
+
+					const writerIdentities = identities.slice(0, writersLimit);
+					const readerIdentities = identities.slice(writersLimit);
+
+					if (writerIdentities.length) {
+						C.SpaceParticipantsAddList(spaceId, writerIdentities, I.ParticipantPermissions.Writer);
+					};
+
+					if (readerIdentities.length) {
+						C.SpaceParticipantsAddList(spaceId, readerIdentities, I.ParticipantPermissions.Reader);
+					};
+
+					analytics.event('AddMember', { count: identities.length });
+					onProcessed();
+				});
+			});
+		});
+	};
+
 	membershipUpgrade (event?: any) {
 		const product = S.Membership.data?.getTopProduct();
 		if (!product) {
@@ -1095,7 +1215,7 @@ class Action {
 
 	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, route: string, callBack?: (message: any) => void) {
 		C.PushNotificationSetForceModeIds(spaceId, ids, mode, callBack);
-		analytics.event('ChangeMessageNotificationState', { type: mode, uxType: I.SpaceUxType.Data, route });
+		analytics.event('ChangeMessageNotificationState', { type: mode, spaceType: I.SpaceType.Data, route });
 	};
 
 	/**
@@ -1153,9 +1273,9 @@ class Action {
 		});
 	};
 
-	openSpaceTab (spaceId: string, uxType: I.SpaceUxType, analyticsRoute?: string) {
-		Renderer.send('openTab', { spaceId, uxType }, { setActive: false });
-		analytics.event('AddTab', { route: analyticsRoute, uxType });
+	openSpaceTab (spaceId: string, spaceType: I.SpaceType, analyticsRoute?: string) {
+		Renderer.send('openTab', { spaceId, spaceType }, { setActive: false });
+		analytics.event('AddTab', { route: analyticsRoute, spaceType });
 	};
 
 };

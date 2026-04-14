@@ -1,14 +1,12 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Icon, ObjectName } from 'Component';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import * as I from 'Interface';
-import $ from 'jquery';
 
-const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionTypeRelation = forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { readonly, isPopup, object, onChange } = props;
 	const nodeRef = useRef(null);
@@ -65,15 +63,15 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		e.preventDefault();
 		e.stopPropagation();
 
-		const element = $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`);
+		const element = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
 
 		S.Menu.open('select', {
-			element: element.find('.icon.more'),
+			element: U.Dom.select('.icon.more', element),
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Right,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
+			onOpen: () => U.Dom.addClass(element, 'active'),
+			onClose: () => U.Dom.removeClass(element, 'active'),
 			data: {
 				options: [
 					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
@@ -114,7 +112,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 						horizontal: I.MenuDirection.Right,
 						data: {
 							options: [
-								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
+								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
 							],
 							onSelect: (e, option) => {
 								switch (option.id) {
@@ -135,12 +133,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
 		setActive(e.active);
-		U.Dom.getScrollContainer(isPopup)?.classList.add('isDraggingProperty');
+		U.Dom.addClass(U.Dom.getScrollContainer(isPopup), 'isDraggingProperty');
 	};
 
 	const onSortCancel = () => {
 		keyboard.disableSelection(false);
-		U.Dom.getScrollContainer(isPopup)?.classList.remove('isDraggingProperty');
+		U.Dom.removeClass(U.Dom.getScrollContainer(isPopup), 'isDraggingProperty');
 		setActive(null);
 	};
 
@@ -163,8 +161,8 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         const toItems = Relation.getArrayValue(object[to.relationKey]);
         const oldIndex = fromItems.indexOf(active.id);
         const newIndex = toItems.indexOf(over.id);
-		const element = $(nodeRef.current).find(`#item-${U.Common.esc(over.id)}`);
-		const rect = element.length ? element.get(0).getBoundingClientRect() : null;
+		const element = U.Dom.select(`#item-${U.Common.esc(over.id)}`, nodeRef.current);
+		const rect = element ? element.getBoundingClientRect() : null;
 		const pointerY = active.rect.current.translated?.top ?? 0;
 		const offset = rect && (pointerY < (rect.top + rect.height / 2)) ? 0 : 1;
 
@@ -201,7 +199,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		const ids = list.data.map(it => it.id);
 
 		S.Menu.open('relationSuggest', {
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			horizontal: I.MenuDirection.Center,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -397,6 +395,6 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionTypeRelation;

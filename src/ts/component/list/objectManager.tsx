@@ -1,6 +1,4 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache, WindowScroller } from 'react-virtualized';
 import { Checkbox, Filter, Icon, IconObject, ObjectName, EmptySearch, ObjectDescription, Label } from 'Component';
 import * as I from 'Interface';
@@ -38,7 +36,7 @@ interface ObjectManagerRefProps {
 	onFilterShow(): void;
 };
 
-const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, { buttons: any[] }>(({
+const Buttons = forwardRef<{ setButtons: (buttons: any[]) => void; }, { buttons: any[] }>(({
 	buttons: initialButtons = [],
 }, ref) => {
 
@@ -67,10 +65,10 @@ const Buttons = observer(forwardRef<{ setButtons: (buttons: any[]) => void; }, {
 		</>
 	);
 
-}));
+});
 
 
-const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
+const ObjectManager = forwardRef<ObjectManagerRefProps, Props>(({
 	subId = '',
 	rowLength = 2,
 	buttons,
@@ -115,33 +113,48 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 	const records = S.Record.getRecords(subId);
 	const scrollContainer = scrollElement || U.Dom.getScrollContainer(isPopup);
 
+	const filterMouseDownHandler = useRef<((e: any) => void) | null>(null);
+	const filterKeydownHandler = useRef<((e: any) => void) | null>(null);
+
 	const onFilterShow = () => {
 		if (!filterRef.current) {
 			return;
 		};
 
-		const containerEl = U.Dom.getPageFlexContainer(isPopup);
-		const container = containerEl ? $(containerEl) : $();
-		const win = $(window);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 
-		$(filterWrapperRef.current).addClass('active');
+		U.Dom.addClass(filterWrapperRef.current, 'active');
 		filterRef.current?.focus();
 
-		container.off('mousedown.filter').on('mousedown.filter', (e: any) => {
+		if (filterMouseDownHandler.current && container) {
+			U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
+		};
+		if (filterKeydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
+		};
+
+		filterMouseDownHandler.current = (e: any) => {
 			const value = filterRef.current?.getValue();
 
-			if (!value && !$(e.target).parents(`.filterWrapper`).length) {
+			if (!value && !(e.target as HTMLElement)?.closest('.filterWrapper')) {
 				onFilterHide();
-				container.off('mousedown.filter');
+				if (container) {
+					U.Dom.removeEvent(container, 'mousedown', filterMouseDownHandler.current);
+				};
 			};
-		});
+		};
 
-		win.off('keydown.filter').on('keydown.filter', (e: any) => {
+		filterKeydownHandler.current = (e: any) => {
 			keyboard.shortcut('escape', e, () => {
 				onFilterHide();
-				win.off('keydown.filter');
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
 			});
-		});
+		};
+
+		if (container) {
+			U.Dom.addEvent(container, 'mousedown', filterMouseDownHandler.current);
+		};
+		U.Dom.addEvent(window, 'keydown', filterKeydownHandler.current);
 	};
 
 	const onFilterHide = () => {
@@ -149,7 +162,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			return;
 		};
 
-		$(filterWrapperRef.current).removeClass('active');
+		U.Dom.removeClass(filterWrapperRef.current, 'active');
 		filterRef.current.setValue('');
 		filterRef.current.blur();
 		load();
@@ -162,7 +175,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 
 	const onFilterClear = () => {
 		S.Menu.closeAll(J.Menu.store);
-		$(filterWrapperRef.current).addClass('active');
+		U.Dom.addClass(filterWrapperRef.current, 'active');
 	};
 
 	const onClick = (e: MouseEvent, item: any) => {
@@ -214,7 +227,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			item?.setValue(ids.includes(id));
 		});
 
-		$(controlsRef.current).toggleClass('withSelected', ids.length > 0);
+		U.Dom.toggleClass(controlsRef.current, 'withSelected', ids.length > 0);
 		buttonsRef.current?.setButtons(getButtons());
 	};
 
@@ -345,7 +358,7 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 					onChange={e => onClick(e, item)}
 				/>
 			)}
-			<div className="objectClickArea" onClick={e => U.Object.openEvent(e, item)}>
+			<div className="objectClickArea" onClick={e => U.Object.openEvent(e, item)} onAuxClick={e => U.Object.openEvent(e, item)}>
 				<IconObject object={item} size={iconSize} />
 
 				<div className="info">
@@ -481,10 +494,12 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 		return () => {
 			window.clearTimeout(timeout.current);
 			const cleanupEl = U.Dom.getPageFlexContainer(isPopup);
-			if (cleanupEl) {
-				$(cleanupEl).off('mousedown.filter');
+			if (filterMouseDownHandler.current && cleanupEl) {
+				U.Dom.removeEvent(cleanupEl, 'mousedown', filterMouseDownHandler.current);
 			};
-			$(window).off('keydown.filter');
+			if (filterKeydownHandler.current) {
+				U.Dom.removeEvent(window, 'keydown', filterKeydownHandler.current);
+			};
 			checkboxRef.current.clear();
 		};
 	}, []);
@@ -534,6 +549,6 @@ const ObjectManager = observer(forwardRef<ObjectManagerRefProps, Props>(({
 			{content}
 		</div>
 	);
-}));
+});
 
 export default ObjectManager;

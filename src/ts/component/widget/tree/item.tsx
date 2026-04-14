@@ -1,9 +1,7 @@
 import React, { forwardRef, useRef, useState, MouseEvent, SyntheticEvent } from 'react';
-import { observer } from 'mobx-react';
 import { DropTarget, Icon, IconObject, ObjectName, Label, ChatCounter } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
-import $ from 'jquery';
 
 interface Props extends I.WidgetTreeItem {
 	index: number;
@@ -18,7 +16,7 @@ interface Props extends I.WidgetTreeItem {
 	onContext?(param: any): void;
 };
 
-const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
+const TreeItem = forwardRef<{}, Props>((props, ref) => {
 
 	const { id, parentId, treeKey, depth, style, numChildren, isSection, getSubKey, getSubId, onContext, onClick, onToggle } = props;
 	const { space } = S.Common;
@@ -53,14 +51,14 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		onContext({ 
-			node, 
-			element: node, 
-			withElement, 
-			subId, 
-			objectId: id, 
+		onContext({
+			node,
+			element: node,
+			withElement,
+			subId,
+			objectId: id,
 			data: {
 				allowedCollection: true,
 				allowedLinkTo: true,
@@ -156,6 +154,6 @@ const TreeItem = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default TreeItem;

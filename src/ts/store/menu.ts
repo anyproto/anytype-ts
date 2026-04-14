@@ -1,5 +1,4 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import $ from 'jquery';
 import * as I from 'Interface';
 
 class MenuStore {
@@ -181,7 +180,7 @@ class MenuStore {
 
 		if (el) {
 			U.Dom.toggleClass(el, 'noAnimation', noAnimation);
-			el.style.transform = '';
+			U.Dom.css(el, { transform: '' });
 			U.Dom.removeClass(el, 'show');
 		};
 
@@ -334,8 +333,7 @@ class MenuStore {
 	 * @private
 	 */
 	resizeAll () {
-		const win = $(window);
-		this.list.forEach(it => win.trigger(`resize.${U.String.toCamelCase(`menu-${it.id}`)}`));
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 };

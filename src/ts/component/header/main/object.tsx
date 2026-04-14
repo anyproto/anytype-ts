@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label, HeaderBanner } from 'Component';
 import * as I from 'Interface';
 
-const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderMainObject = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { rootId, isPopup, onSearch, onTooltipShow, onTooltipHide, renderLeftIcons, menuOpen } = props;
 	const [ templatesCnt, setTemplateCnt ] = useState(0);
@@ -66,7 +65,7 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				>
 					<IconObject object={object} size={18} />
 					<ObjectName object={object} withPlural={true} />
-					{label ? <Label text={label} /> : ''}
+					{label ? <Label text={label} iconParam={isLocked ? { name: 'common/lock', width: 8, height: 12 } : undefined} /> : ''}
 				</div>
 			);
 		} else {
@@ -197,6 +196,6 @@ const HeaderMainObject = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 		</>
 	);
 
-}));
+});
 
 export default HeaderMainObject;

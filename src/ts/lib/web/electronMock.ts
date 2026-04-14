@@ -156,11 +156,11 @@ class ElectronMock {
 		handlers.set('setTheme', (args) => {
 			this.config.theme = args[0];
 			this.storage.set('config', this.config);
-			document.body.classList.remove('themeDark', 'themeLight');
+			U.Dom.removeClass(document.body as HTMLElement, 'themeDark', 'themeLight');
 			if (args[0] === 'dark') {
-				document.body.classList.add('themeDark');
+				U.Dom.addClass(document.body as HTMLElement, 'themeDark');
 			} else if (args[0] === 'light') {
-				document.body.classList.add('themeLight');
+				U.Dom.addClass(document.body as HTMLElement, 'themeLight');
 			}
 			return true;
 		});

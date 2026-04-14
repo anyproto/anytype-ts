@@ -1,10 +1,8 @@
 import React, { forwardRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, ObjectName } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId: string;
@@ -13,7 +11,7 @@ interface Props extends I.ViewComponent, I.ViewRelation {
 	onResizeStart(e: any, key: string): void;
 };
 
-const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
+const HeadCell = forwardRef<{}, Props>((props, ref) => {
 
 	const { rootId, block, relationKey, onResizeStart, getView, readonly } = props;
 	const allowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
@@ -35,19 +33,22 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 	
 	const onMouseDown = () => {
-		$('.cell.isEditing').removeClass('isEditing');
+		const blockEl = U.Dom.get(`block-${block.id}`);
+		U.Dom.selectAll('.cell.isEditing', blockEl).forEach(el => U.Dom.removeClass(el, 'isEditing'));
 		S.Menu.closeAll();
 	};
 
 	const onMouseEnter = () => {
 		if (!keyboard.isDragging && !keyboard.isResizing) {
-			$(`#block-${U.Common.esc(block.id)} .cell-key-${U.Common.esc(relationKey)}`).addClass('cellKeyHover');
+			const blockEl = U.Dom.get(`block-${block.id}`);
+			U.Dom.selectAll(`.cell-key-${U.Common.esc(relationKey)}`, blockEl).forEach(el => U.Dom.addClass(el, 'cellKeyHover'));
 		};
 	};
 
 	const onMouseLeave = () => {
 		if (!keyboard.isDragging && !keyboard.isResizing) {
-			$('.cellKeyHover').removeClass('cellKeyHover');
+			const blockEl = U.Dom.get(`block-${block.id}`);
+			U.Dom.selectAll('.cellKeyHover', blockEl).forEach(el => U.Dom.removeClass(el, 'cellKeyHover'));
 		};
 	};
 
@@ -62,11 +63,13 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		const blockEl =	`#block-${U.Common.esc(block.id)}`;
-		const rowHead = $(`${blockEl} #rowHead`);
-		const isFixed = rowHead.hasClass('fixed');
+		const blockNode = U.Dom.get(`block-${block.id}`);
+		const rowHead = U.Dom.select('#rowHead', blockNode);
+		const isFixed = U.Dom.hasClass(rowHead, 'fixed');
 		const headEl = isFixed ? `#rowHeadClone` : `#rowHead`;
-		const element = `${blockEl} ${headEl} #${U.Common.esc(Relation.cellId('head', relationKey, ''))}`;
-		const obj = $(element);
+		const cellId = U.Common.esc(Relation.cellId('head', relationKey, ''));
+		const element = `${blockEl} ${headEl} #${cellId}`;
+		const obj = U.Dom.select(`${headEl} #${cellId}`, blockNode);
 		const object = S.Detail.get(rootId, rootId);
 		const isType = U.Object.isTypeLayout(object.layout);
 		const view = getView();
@@ -79,12 +82,12 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 		};
 
 		window.setTimeout(() => {
-			S.Menu.open('dataviewRelationEdit', { 
+			S.Menu.open('dataviewRelationEdit', {
 				element,
 				horizontal: I.MenuDirection.Center,
 				noFlipY: true,
-				onOpen: () => obj.addClass('active'),
-				onClose: () => obj.removeClass('active'),
+				onOpen: () => U.Dom.addClass(obj, 'active'),
+				onClose: () => U.Dom.removeClass(obj, 'active'),
 				className: isFixed ? 'fixed' : '',
 				classNameWrap: 'fromBlock',
 				subIds: J.Menu.relationEdit,
@@ -142,6 +145,6 @@ const HeadCell = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default HeadCell;

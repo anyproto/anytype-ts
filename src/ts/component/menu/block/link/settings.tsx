@@ -1,24 +1,28 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockLinkSettings = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { id, param, getId, getSize, onKeyDown, setActive, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, blockIds } = data;
 	const n = useRef(-1);
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onClick = (e: any, item: any) => {
@@ -280,6 +284,6 @@ const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockLinkSettings;

@@ -7,6 +7,7 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { $trimTextContentFromAnchor } from '@lexical/selection';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { ListNode, ListItemNode } from '@lexical/list';
@@ -42,14 +43,15 @@ import {
 	ElementNode,
 	DecoratorNode,
 	TextNode,
+	$splitNode,
 } from 'lexical';
 import { $setBlocksType } from '@lexical/selection';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
+
 import { IconObject } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
 import EmbedPreview from 'Component/comment/embedPreview';
 import * as I from 'Interface';
+import * as M from 'Model';
 import Storage from 'Lib/storage';
 
 // Custom HorizontalRuleNode since @lexical/react/HorizontalRuleNode may not be available
@@ -189,7 +191,7 @@ class LinkTextNode extends TextNode {
 
 	createDOM (config: any): HTMLElement {
 		const el = super.createDOM(config);
-		el.classList.add('commentEditor-link');
+		U.Dom.addClass(el, 'commentEditor-link');
 		return el;
 	};
 
@@ -237,9 +239,273 @@ function $isLinkTextNode (node: LexicalNode | null | undefined): node is LinkTex
 // Context for passing the discussion deps subId to decorator nodes
 export const CommentSubIdContext = createContext<string>('');
 
+// Module-level drag state for decorator node reordering
+let dragState: { sourceKey: string; sourceEl: HTMLElement; editorEl: HTMLElement; startX: number; startY: number; ghost: HTMLElement | null; active: boolean } | null = null;
+const DRAG_THRESHOLD = 5;
+const DROP_INDICATOR_CLASS = 'decoratorDropIndicator';
+
+// Get all root-level block elements in the editor (paragraphs, headings, lists, decorators, etc.)
+const getDropTargets = (): HTMLElement[] => {
+	if (!dragState?.editorEl) {
+		return [];
+	};
+
+	const input = dragState.editorEl.querySelector('.commentEditorInput');
+	if (!input) {
+		return [];
+	};
+
+	return Array.from(input.children) as HTMLElement[];
+};
+
+const removeDropIndicator = () => {
+	const existing = document.querySelector(`.${DROP_INDICATOR_CLASS}`);
+	if (existing) {
+		existing.remove();
+	};
+};
+
+const cleanupDrag = () => {
+	if (!dragState) {
+		return;
+	};
+
+	if (dragState.ghost) {
+		dragState.ghost.remove();
+	};
+
+	U.Dom.removeClass(dragState.sourceEl, 'isDragging');
+	removeDropIndicator();
+
+	dragState = null;
+};
+
+const DraggableDecorator = ({ nodeKey, children }: { nodeKey: string; children: React.ReactNode }) => {
+	const [ editor ] = useLexicalComposerContext();
+	const nodeRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const el = nodeRef.current;
+		if (!el) {
+			return;
+		};
+
+		// Prevent native image/element drag inside contentEditable
+		const onDragStart = (e: DragEvent) => {
+			e.preventDefault();
+		};
+
+		// Find the outer Lexical DOM element for this decorator node
+		const getOuterElement = (): HTMLElement | null => {
+			return editor.getElementByKey(nodeKey);
+		};
+
+		// Find the closest drop target element and position from mouse coordinates
+		const findDropTarget = (clientY: number): { element: HTMLElement; position: 'before' | 'after' } | null => {
+			const targets = getDropTargets();
+			const outerEl = getOuterElement();
+			let closest: { element: HTMLElement; distance: number; position: 'before' | 'after' } | null = null;
+
+			for (const target of targets) {
+				// Skip the source element's outer container
+				if (target === outerEl) {
+					continue;
+				};
+
+				const rect = target.getBoundingClientRect();
+				const midY = rect.top + rect.height / 2;
+				const position: 'before' | 'after' = clientY < midY ? 'before' : 'after';
+				const edgeY = position === 'before' ? rect.top : rect.bottom;
+				const distance = Math.abs(clientY - edgeY);
+
+				if (!closest || (distance < closest.distance)) {
+					closest = { element: target, distance, position };
+				};
+			};
+
+			return closest;
+		};
+
+		// Show a drop indicator line at the given element edge
+		const showDropIndicator = (target: HTMLElement, position: 'before' | 'after') => {
+			removeDropIndicator();
+
+			const contentArea = el.closest('.contentArea');
+			if (!contentArea) {
+				return;
+			};
+
+			const rect = target.getBoundingClientRect();
+			const containerRect = contentArea.getBoundingClientRect();
+			const indicator = document.createElement('div');
+
+			U.Dom.addClass(indicator, DROP_INDICATOR_CLASS);
+			U.Dom.css(indicator, {
+				left: '12px',
+				position: 'absolute',
+				top: `${(position === 'before' ? rect.top : rect.bottom) - containerRect.top + contentArea.scrollTop}px`,
+			});
+
+			U.Dom.css(contentArea as HTMLElement, { position: 'relative' });
+			contentArea.appendChild(indicator);
+		};
+
+		const onMouseDown = (e: MouseEvent) => {
+			if (e.button !== 0) {
+				return;
+			};
+
+			e.preventDefault();
+
+			const editorEl = el.closest('.commentEditorWrap') as HTMLElement;
+			if (!editorEl) {
+				return;
+			};
+
+			dragState = {
+				sourceKey: nodeKey,
+				sourceEl: el,
+				editorEl,
+				startX: e.clientX,
+				startY: e.clientY,
+				ghost: null,
+				active: false,
+			};
+
+			const onMouseMove = (me: MouseEvent) => {
+				if (!dragState) {
+					return;
+				};
+
+				if (!dragState.active) {
+					const dx = Math.abs(me.clientX - dragState.startX);
+					const dy = Math.abs(me.clientY - dragState.startY);
+
+					if ((dx < DRAG_THRESHOLD) && (dy < DRAG_THRESHOLD)) {
+						return;
+					};
+
+					dragState.active = true;
+					U.Dom.addClass(dragState.sourceEl, 'isDragging');
+
+					const outerEl = getOuterElement();
+					if (outerEl) {
+						U.Dom.addClass(outerEl, 'isDragging');
+					};
+
+					const ghost = dragState.sourceEl.cloneNode(true) as HTMLElement;
+					U.Dom.removeClass(ghost, 'isDragging');
+					U.Dom.addClass(ghost, 'dragGhost');
+					U.Dom.css(ghost, { width: `${dragState.sourceEl.offsetWidth}px` });
+					document.body.appendChild(ghost);
+					dragState.ghost = ghost;
+				};
+
+				if (dragState.ghost) {
+					U.Dom.css(dragState.ghost, {
+						left: `${me.clientX + 12}px`,
+						top: `${me.clientY + 12}px`,
+					});
+				};
+
+				const dropTarget = findDropTarget(me.clientY);
+				if (dropTarget) {
+					showDropIndicator(dropTarget.element, dropTarget.position);
+				} else {
+					removeDropIndicator();
+				};
+			};
+
+			const onMouseUp = (me: MouseEvent) => {
+				document.removeEventListener('mousemove', onMouseMove);
+				document.removeEventListener('mouseup', onMouseUp);
+
+				if (!dragState?.active) {
+					dragState = null;
+					return;
+				};
+
+				const dropTarget = findDropTarget(me.clientY);
+				const sourceKey = dragState.sourceKey;
+
+				// Also remove isDragging from the outer Lexical element
+				const outerEl = getOuterElement();
+				if (outerEl) {
+					U.Dom.removeClass(outerEl, 'isDragging');
+				};
+
+				cleanupDrag();
+
+				if (dropTarget) {
+					// Get the Lexical node key from the target DOM element
+					const targetLexicalKey = editor.getEditorState().read(() => {
+						const root = $getRoot();
+						for (const child of root.getChildren()) {
+							const childEl = editor.getElementByKey(child.getKey());
+							if (childEl === dropTarget.element) {
+								return child.getKey();
+							};
+						};
+						return null;
+					});
+
+					if (targetLexicalKey && (sourceKey !== targetLexicalKey)) {
+						editor.update(() => {
+							const sourceNode = $getNodeByKey(sourceKey);
+							const targetNode = $getNodeByKey(targetLexicalKey);
+
+							if (!sourceNode || !targetNode) {
+								return;
+							};
+
+							sourceNode.remove();
+
+							if (dropTarget.position === 'before') {
+								targetNode.insertBefore(sourceNode);
+							} else {
+								targetNode.insertAfter(sourceNode);
+							};
+						});
+					};
+				};
+
+				// Prevent the subsequent click from firing
+				const preventClick = (ce: MouseEvent) => {
+					ce.stopPropagation();
+					ce.preventDefault();
+				};
+
+				window.addEventListener('click', preventClick, true);
+				window.setTimeout(() => window.removeEventListener('click', preventClick, true), 0);
+			};
+
+			document.addEventListener('mousemove', onMouseMove);
+			document.addEventListener('mouseup', onMouseUp);
+		};
+
+		el.addEventListener('mousedown', onMouseDown);
+		el.addEventListener('dragstart', onDragStart);
+		return () => {
+			el.removeEventListener('mousedown', onMouseDown);
+			el.removeEventListener('dragstart', onDragStart);
+		};
+	}, [ nodeKey, editor ]);
+
+	return (
+		<div
+			ref={nodeRef}
+			className="draggableDecorator"
+			data-decorator-key={nodeKey}
+		>
+			{children}
+		</div>
+	);
+};
+
 // Attachment node — renders ChatAttachment inline in the editor
 export const INSERT_ATTACHMENT_COMMAND = createCommand<any>('INSERT_ATTACHMENT_COMMAND');
 export const REMOVE_ATTACHMENT_COMMAND = createCommand<string>('REMOVE_ATTACHMENT_COMMAND');
+export const UPDATE_ATTACHMENT_COMMAND = createCommand<{ id: string; data: any }>('UPDATE_ATTACHMENT_COMMAND');
 
 class AttachmentNode extends DecoratorNode<JSX.Element> {
 
@@ -261,6 +527,7 @@ class AttachmentNode extends DecoratorNode<JSX.Element> {
 	createDOM (): HTMLElement {
 		const el = document.createElement('div');
 		el.className = 'commentEditor-attachment';
+		el.draggable = false;
 		return el;
 	};
 
@@ -292,9 +559,14 @@ class AttachmentNode extends DecoratorNode<JSX.Element> {
 		return this.__attachmentData;
 	};
 
+	setAttachmentData (data: any): void {
+		const writable = this.getWritable();
+		writable.__attachmentData = data;
+	};
+
 };
 
-const AttachmentDecorator = observer(({ nodeKey, data }: { nodeKey: string; data: any }) => {
+const AttachmentDecorator = ({ nodeKey, data }: { nodeKey: string; data: any }) => {
 	const [ editor ] = useLexicalComposerContext();
 	const subId = useContext(CommentSubIdContext);
 
@@ -308,14 +580,17 @@ const AttachmentDecorator = observer(({ nodeKey, data }: { nodeKey: string; data
 	};
 
 	return (
-		<Attachment
-			object={object}
-			onRemove={() => {
-				editor.dispatchCommand(REMOVE_ATTACHMENT_COMMAND, nodeKey);
-			}}
-		/>
+		<DraggableDecorator nodeKey={nodeKey}>
+			<Attachment
+				object={object}
+				withInlineSize={false}
+				onRemove={() => {
+					editor.dispatchCommand(REMOVE_ATTACHMENT_COMMAND, nodeKey);
+				}}
+			/>
+		</DraggableDecorator>
 	);
-});
+};
 
 function $createAttachmentNode (data: any): AttachmentNode {
 	return new AttachmentNode(data);
@@ -351,6 +626,7 @@ class EmbedNode extends DecoratorNode<JSX.Element> {
 	createDOM (): HTMLElement {
 		const el = document.createElement('div');
 		el.className = 'commentEditor-embed';
+		el.draggable = false;
 		return el;
 	};
 
@@ -405,11 +681,12 @@ const EmbedDecorator = ({ nodeKey, processor, text }: { nodeKey: string; process
 		};
 
 		const rect = el.getBoundingClientRect();
-		const win = $(window);
+		const isKroki = processor === I.EmbedProcessor.Kroki;
+		const menuId = isKroki ? 'blockEmbedKroki' : 'dataviewText';
 
-		S.Menu.open('dataviewText', {
+		S.Menu.open(menuId, {
 			classNameWrap: 'fromBlock',
-			rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: rect.width, height: rect.height },
+			rect: { x: rect.x, y: rect.y + rect.height, width: rect.width, height: 0 },
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
@@ -437,12 +714,14 @@ const EmbedDecorator = ({ nodeKey, processor, text }: { nodeKey: string; process
 	}, [ editor, nodeKey ]);
 
 	return (
-		<EmbedPreview
-			processor={processor}
-			text={text}
-			onEdit={onEdit}
-			onRemove={onRemove}
-		/>
+		<DraggableDecorator nodeKey={nodeKey}>
+			<EmbedPreview
+				processor={processor}
+				text={text}
+				onEdit={onEdit}
+				onRemove={onRemove}
+			/>
+		</DraggableDecorator>
 	);
 };
 
@@ -512,10 +791,12 @@ function $isMentionNode (node: LexicalNode | null | undefined): node is MentionN
 };
 
 interface Props {
+	rootId?: string;
 	subId?: string;
 	placeholder?: string;
 	initialParts?: I.CommentContentPart[];
 	readonly?: boolean;
+	maxLength?: number;
 	onSubmit?: (parts: I.CommentContentPart[]) => void;
 	onCancel?: () => void;
 	onEmpty?: (isEmpty: boolean) => void;
@@ -654,6 +935,19 @@ const extractMarks = (child: TextNode, start: number, end: number): I.Mark[] => 
 	};
 	if (child.hasFormat('code')) {
 		marks.push({ type: I.MarkType.Code, range: { ...range }, param: '' });
+	};
+
+	const style = child.getStyle();
+	if (style) {
+		const colorMatch = style.match(/--anytype-color:\s*([^;]+)/);
+		if (colorMatch) {
+			marks.push({ type: I.MarkType.Color, range: { ...range }, param: colorMatch[1].trim() });
+		};
+
+		const bgColorMatch = style.match(/--anytype-bgcolor:\s*([^;]+)/);
+		if (bgColorMatch) {
+			marks.push({ type: I.MarkType.BgColor, range: { ...range }, param: bgColorMatch[1].trim() });
+		};
 	};
 
 	return marks;
@@ -1035,6 +1329,8 @@ const createFormattedNodes = (text: string, marks: I.Mark[]): LexicalNode[] => {
 			? $createLinkTextNode(linkMark.param || '', linkMark.type, segment)
 			: $createTextNode(segment);
 
+		const styles: string[] = [];
+
 		for (const mark of marks) {
 			if ((mark.range.from <= from) && (mark.range.to >= to)) {
 				switch (mark.type) {
@@ -1043,8 +1339,26 @@ const createFormattedNodes = (text: string, marks: I.Mark[]): LexicalNode[] => {
 					case I.MarkType.Strike: node.toggleFormat('strikethrough'); break;
 					case I.MarkType.Underline: node.toggleFormat('underline'); break;
 					case I.MarkType.Code: node.toggleFormat('code'); break;
+					case I.MarkType.Color: {
+						if (mark.param) {
+							styles.push(`color: var(--color-dark-${mark.param})`);
+							styles.push(`--anytype-color: ${mark.param}`);
+						};
+						break;
+					};
+					case I.MarkType.BgColor: {
+						if (mark.param) {
+							styles.push(`background-color: var(--color-light-${mark.param})`);
+							styles.push(`--anytype-bgcolor: ${mark.param}`);
+						};
+						break;
+					};
 				};
 			};
+		};
+
+		if (styles.length) {
+			node.setStyle(styles.join('; '));
 		};
 
 		nodes.push(node);
@@ -1158,6 +1472,14 @@ const partsToEditor = (editor: LexicalEditor, parts: I.CommentContentPart[]) => 
 			root.append(p);
 			i++;
 		};
+
+		// Ensure there's always a trailing paragraph for the caret
+		const lastChild = root.getLastChild();
+		if (!$isElementNode(lastChild) || (lastChild.getType() !== 'paragraph')) {
+			const p = $createParagraphNode();
+			p.append($createTextNode(''));
+			root.append(p);
+		};
 	});
 };
 
@@ -1168,7 +1490,25 @@ const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
 
 	useEffect(() => {
 		const onKeyDown = (e: KeyboardEvent) => {
-			if ((e.key === 'Enter') && (e.metaKey || e.ctrlKey)) {
+			if (e.key !== 'Enter') {
+				return;
+			};
+
+			// Don't submit when menus are open — let the menu handle Enter
+			if (S.Menu.isOpen('commentAdd') || S.Menu.isOpen('blockEmoji') || S.Menu.isOpen('blockMention') || S.Menu.isOpen('selectPasteUrl')) {
+				return;
+			};
+
+			const hasCmd = e.metaKey || e.ctrlKey;
+			const cmdSend = S.Common.commentCmdSend;
+
+			if (cmdSend && hasCmd) {
+				// Cmd+Enter to send
+				e.preventDefault();
+				onSubmit?.();
+			} else
+			if (!cmdSend && !hasCmd && !e.shiftKey) {
+				// Enter to send (Shift+Enter for newline)
 				e.preventDefault();
 				onSubmit?.();
 			};
@@ -1176,8 +1516,8 @@ const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keydown', onKeyDown);
-			return () => root.removeEventListener('keydown', onKeyDown);
+			U.Dom.addEvent(root, 'keydown', onKeyDown);
+			return () => U.Dom.removeEvent(root, 'keydown', onKeyDown);
 		};
 	}, [ editor, onSubmit ]);
 
@@ -1252,8 +1592,8 @@ const FormattingPlugin = ({ editorId }: { editorId: string }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keydown', onKeyDown);
-			return () => root.removeEventListener('keydown', onKeyDown);
+			U.Dom.addEvent(root, 'keydown', onKeyDown);
+			return () => U.Dom.removeEvent(root, 'keydown', onKeyDown);
 		};
 	}, [ editor, editorId ]);
 
@@ -1263,6 +1603,8 @@ const FormattingPlugin = ({ editorId }: { editorId: string }) => {
 const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 	let hasLink = false;
 	let linkParam = '';
+	let linkMarkType: I.MarkType | undefined;
+	let selectedText = '';
 
 	editor.getEditorState().read(() => {
 		const selection = $getSelection();
@@ -1270,17 +1612,20 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 			return;
 		};
 
+		selectedText = selection.getTextContent();
+
 		const nodes = selection.getNodes();
 		for (const node of nodes) {
 			if (node instanceof LinkTextNode) {
 				hasLink = true;
 				linkParam = node.getLinkUrl();
+				linkMarkType = node.getMarkType();
 				break;
 			};
 		};
 	});
 
-	const wrap = document.getElementById(editorId);
+	const wrap = U.Dom.get(editorId);
 	if (!wrap) {
 		return;
 	};
@@ -1290,16 +1635,17 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 		return;
 	};
 
-	const win = $(window);
+	const isObjectLink = linkMarkType === I.MarkType.Object;
 
 	S.Menu.open('blockLink', {
 		classNameWrap: 'fromBlock',
-		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+		rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: 0, height: rect.height },
 		horizontal: I.MenuDirection.Center,
 		offsetY: -8,
 		noAnimation: true,
 		data: {
-			filter: linkParam,
+			filter: isObjectLink ? selectedText : linkParam,
+			type: isObjectLink ? I.MarkType.Object : null,
 			onChange: (type: I.MarkType, param: string) => {
 				if (!param) {
 					return;
@@ -1381,9 +1727,8 @@ const openLinkMenu = (editor: LexicalEditor, editorId: string) => {
 
 const openEmojiPicker = (editor: LexicalEditor, editorId: string) => {
 	const rect = U.Dom.getSelectionRect();
-	const win = $(window);
 	const root = editor.getRootElement();
-	const wrap = root?.closest('.commentEditorWrap');
+	const wrap = root?.closest('.commentEditorWrap') as HTMLElement;
 
 	const menuParam: any = {
 		classNameWrap: 'fromBlock',
@@ -1413,9 +1758,9 @@ const openEmojiPicker = (editor: LexicalEditor, editorId: string) => {
 	};
 
 	if (rect) {
-		menuParam.rect = { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height };
+		menuParam.rect = { ...rect, y: rect.y + window.scrollY, x: rect.x, width: 0, height: rect.height };
 	} else {
-		menuParam.element = wrap ? $(wrap) : $(root);
+		menuParam.element = wrap || root;
 	};
 
 	S.Menu.open('smile', menuParam);
@@ -1441,19 +1786,35 @@ const SelectionToolbarPlugin = () => {
 					return;
 				};
 
-				const win = $(window);
-
 				const getActiveFormats = () => {
 					let formats: any = {};
 					editor.getEditorState().read(() => {
 						const sel = $getSelection();
 						if ($isRangeSelection(sel)) {
+							let link = false;
+							let linkParam = '';
+							let linkMarkType: I.MarkType | undefined;
+
+							const nodes = sel.getNodes();
+							for (const node of nodes) {
+								if (node instanceof LinkTextNode) {
+									link = true;
+									linkParam = node.getLinkUrl();
+									linkMarkType = node.getMarkType();
+									break;
+								};
+							};
+
 							formats = {
 								bold: sel.hasFormat('bold'),
 								italic: sel.hasFormat('italic'),
 								strikethrough: sel.hasFormat('strikethrough'),
 								underline: sel.hasFormat('underline'),
 								code: sel.hasFormat('code'),
+								link,
+								linkParam,
+								linkMarkType,
+								selectedText: sel.getTextContent(),
 							};
 						};
 					});
@@ -1486,8 +1847,8 @@ const SelectionToolbarPlugin = () => {
 						if ($isCodeNode(topLevel)) {
 							style = 'code';
 						} else
-						if ($isListNode(topLevel) || ($isElementNode(parent) && $isListNode(parent))) {
-							const listNode = $isListNode(topLevel) ? topLevel : parent;
+						if ($isListNode(topLevel) || $isListItemNode(topLevel)) {
+							const listNode = $isListNode(topLevel) ? topLevel : topLevel.getParent();
 							if ($isListNode(listNode)) {
 								const listType = listNode.getListType();
 								switch (listType) {
@@ -1511,40 +1872,11 @@ const SelectionToolbarPlugin = () => {
 				};
 
 				const onBlockStyle = (textStyle: I.TextStyle) => {
-					editor.update(() => {
-						const node = $getNodeByKey(savedFocusKey);
-						if (node && $isTextNode(node)) {
-							const offset = Math.min(savedFocusOffset, node.getTextContentSize());
-							node.select(offset, offset);
-						} else
-						if (node && $isElementNode(node)) {
-							node.selectEnd();
-						};
+					const isListStyle = [ I.TextStyle.Bulleted, I.TextStyle.Numbered, I.TextStyle.Checkbox ].includes(textStyle);
 
-						const sel = $getSelection();
-						if (!$isRangeSelection(sel)) {
-							return;
-						};
-
+					if (isListStyle) {
+						// List commands handle cursor positioning internally — dispatch outside update()
 						switch (textStyle) {
-							case I.TextStyle.Header1:
-							case I.TextStyle.Header2:
-							case I.TextStyle.Header3: {
-								const tag = styleToHeadingTag(textStyle) as 'h1' | 'h2' | 'h3';
-								$setBlocksType(sel, () => $createHeadingNode(tag));
-								break;
-							};
-
-							case I.TextStyle.Quote: {
-								$setBlocksType(sel, () => new QuoteNode());
-								break;
-							};
-
-							case I.TextStyle.Code: {
-								$setBlocksType(sel, () => $createCodeNode());
-								break;
-							};
-
 							case I.TextStyle.Bulleted: {
 								editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
 								break;
@@ -1559,15 +1891,51 @@ const SelectionToolbarPlugin = () => {
 								editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined);
 								break;
 							};
-
-							case I.TextStyle.Paragraph: {
-								$setBlocksType(sel, () => $createParagraphNode());
-								break;
-							};
 						};
-					});
+					} else {
+						editor.update(() => {
+							const node = $getNodeByKey(savedFocusKey);
+							if (node && $isTextNode(node)) {
+								const offset = Math.min(savedFocusOffset, node.getTextContentSize());
+								node.select(offset, offset);
+							} else
+							if (node && $isElementNode(node)) {
+								node.selectEnd();
+							};
 
-					S.Menu.closeAll([ 'select', 'commentToolbar' ]);
+							const sel = $getSelection();
+							if (!$isRangeSelection(sel)) {
+								return;
+							};
+
+							switch (textStyle) {
+								case I.TextStyle.Header1:
+								case I.TextStyle.Header2:
+								case I.TextStyle.Header3: {
+									const tag = styleToHeadingTag(textStyle) as 'h1' | 'h2' | 'h3';
+									$setBlocksType(sel, () => $createHeadingNode(tag));
+									break;
+								};
+
+								case I.TextStyle.Quote: {
+									$setBlocksType(sel, () => new QuoteNode());
+									break;
+								};
+
+								case I.TextStyle.Code: {
+									$setBlocksType(sel, () => $createCodeNode());
+									break;
+								};
+
+								case I.TextStyle.Paragraph: {
+									$setBlocksType(sel, () => $createParagraphNode());
+									break;
+								};
+							};
+						});
+					};
+
+					S.Menu.closeAll([ 'blockStyle', 'commentToolbar' ]);
 					editor.focus();
 				};
 
@@ -1645,18 +2013,18 @@ const SelectionToolbarPlugin = () => {
 				};
 
 				if (S.Menu.isOpen('commentToolbar')) {
-					S.Menu.updateData('commentToolbar', { getActiveFormats, getBlockStyle });
+					S.Menu.updateData('commentToolbar', { getActiveFormats, getBlockStyle, blockStyle: getBlockStyle() });
 					return;
 				};
 
-				const wrap = root.closest('.commentEditorWrap');
+				const wrap = root.closest('.commentEditorWrap') as HTMLElement;
 
 				S.Menu.open('commentToolbar', {
-					element: wrap ? $(wrap) : $(root),
+					element: wrap || root,
 					classNameWrap: 'fromBlock',
 					recalcRect: () => {
 						const rect = U.Dom.getSelectionRect();
-						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+						return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 					},
 					type: I.MenuType.Horizontal,
 					offsetY: -8,
@@ -1664,9 +2032,11 @@ const SelectionToolbarPlugin = () => {
 					vertical: I.MenuDirection.Top,
 					passThrough: true,
 					noAnimation: true,
+					noBorderY: true,
 					data: {
 						getActiveFormats,
 						getBlockStyle,
+						blockStyle: getBlockStyle(),
 						onToggleFormat,
 						onBlockStyle,
 						onLink,
@@ -1888,9 +2258,26 @@ const AttachmentPlugin = () => {
 			COMMAND_PRIORITY_LOW,
 		);
 
+		const unregisterUpdate = editor.registerCommand(
+			UPDATE_ATTACHMENT_COMMAND,
+			(payload: { id: string; data: any }) => {
+				editor.update(() => {
+					const root = $getRoot();
+					for (const child of root.getChildren()) {
+						if ($isAttachmentNode(child) && child.getAttachmentData()?.id === payload.id) {
+							child.setAttachmentData({ ...child.getAttachmentData(), ...payload.data });
+						};
+					};
+				});
+				return true;
+			},
+			COMMAND_PRIORITY_LOW,
+		);
+
 		return () => {
 			unregisterInsert();
 			unregisterRemove();
+			unregisterUpdate();
 		};
 	}, [ editor ]);
 
@@ -1945,8 +2332,73 @@ const EmbedPlugin = () => {
 	return null;
 };
 
-const PasteUrlPlugin = () => {
+const PasteUrlPlugin = ({ rootId }: { rootId?: string }) => {
 	const [ editor ] = useLexicalComposerContext();
+
+	const insertParts = useCallback((parts: I.CommentContentPart[]) => {
+		editor.update(() => {
+			const selection = $getSelection();
+			if (!$isRangeSelection(selection)) {
+				return;
+			};
+
+			const nodes: LexicalNode[] = [];
+
+			for (const part of parts) {
+				if (part.type === I.BlockType.Div) {
+					nodes.push(new HorizontalRuleNode());
+					continue;
+				};
+
+				const headingTag = styleToHeadingTag(part.style);
+				if (headingTag) {
+					const heading = $createHeadingNode(headingTag as 'h1' | 'h2' | 'h3');
+					heading.append(...createFormattedNodes(part.text || '', part.marks || []));
+					nodes.push(heading);
+					continue;
+				};
+
+				if (part.style === I.TextStyle.Quote) {
+					const quote = new QuoteNode();
+					quote.append(...createFormattedNodes(part.text || '', part.marks || []));
+					nodes.push(quote);
+					continue;
+				};
+
+				if (part.style === I.TextStyle.Code) {
+					const code = $createCodeNode(part.lang || undefined);
+					code.append($createTextNode(part.text || ''));
+					nodes.push(code);
+					continue;
+				};
+
+				if ([ I.TextStyle.Bulleted, I.TextStyle.Numbered, I.TextStyle.Checkbox ].includes(part.style)) {
+					let listType: 'bullet' | 'number' | 'check' = 'bullet';
+					if (part.style === I.TextStyle.Numbered) {
+						listType = 'number';
+					} else
+					if (part.style === I.TextStyle.Checkbox) {
+						listType = 'check';
+					};
+
+					const list = $createListNode(listType);
+					const item = $createListItemNode(listType === 'check' ? part.checked || false : undefined);
+					item.append(...createFormattedNodes(part.text || '', part.marks || []));
+					list.append(item);
+					nodes.push(list);
+					continue;
+				};
+
+				const p = $createParagraphNode();
+				p.append(...createFormattedNodes(part.text || '', part.marks || []));
+				nodes.push(p);
+			};
+
+			if (nodes.length) {
+				selection.insertNodes(nodes);
+			};
+		});
+	}, [ editor ]);
 
 	useEffect(() => {
 		return editor.registerCommand(
@@ -1955,6 +2407,79 @@ const PasteUrlPlugin = () => {
 				const clipboardData = event.clipboardData;
 				if (!clipboardData) {
 					return false;
+				};
+
+				// Handle anytype block data from internal copy (chat messages, comments, editor)
+				const jsonStr = clipboardData.getData('application/json') || '';
+
+				if (jsonStr) {
+					try {
+						const json = JSON.parse(jsonStr);
+
+						if (json.blocks && json.blocks.length) {
+							const parts: I.CommentContentPart[] = json.blocks
+								.filter((b: any) => (b.type == I.BlockType.Text) && b.content && b.content.text)
+								.map((b: any) => {
+									const text = b.content.text || '';
+									const marks = (b.content.marks || []).slice();
+									const length = text.length;
+
+									if (b.content.color && length) {
+										marks.push({ type: I.MarkType.Color, param: b.content.color, range: { from: 0, to: length } });
+									};
+
+									if (b.bgColor && length) {
+										marks.push({ type: I.MarkType.BgColor, param: b.bgColor, range: { from: 0, to: length } });
+									};
+
+									return {
+										text,
+										style: b.content.style || I.TextStyle.Paragraph,
+										type: I.BlockType.Text,
+										marks,
+										checked: b.content.checked,
+									};
+								});
+
+							if (parts.length) {
+								event.preventDefault();
+								insertParts(parts);
+								return true;
+							};
+						};
+					} catch (e) {
+						// Invalid JSON, fall through
+					};
+				};
+
+				// HTML without anytype blocks: use BlockPreview to parse into blocks
+				const html = clipboardData.getData('text/html') || '';
+				if (html) {
+					event.preventDefault();
+
+					C.BlockPreview(html, '', (message: any) => {
+						if (!message.error.code && message.blocks && message.blocks.length) {
+							const parts = U.Comment.docBlocksToParts(message.blocks.map((it: any) => new M.Block(it)));
+
+							if (parts.length) {
+								insertParts(parts);
+								return;
+							};
+						};
+
+						// Fallback: insert plain text
+						const text = clipboardData.getData('text/plain') || '';
+						if (text) {
+							editor.update(() => {
+								const selection = $getSelection();
+								if ($isRangeSelection(selection)) {
+									selection.insertText(text);
+								};
+							});
+						};
+					});
+
+					return true;
 				};
 
 				const text = clipboardData.getData('text/plain') || '';
@@ -2008,16 +2533,15 @@ const PasteUrlPlugin = () => {
 				event.preventDefault();
 
 				const root = editor.getRootElement();
-				const wrap = root?.closest('.commentEditorWrap');
-				const win = $(window);
+				const wrap = root?.closest('.commentEditorWrap') as HTMLElement;
 
 				S.Menu.open('selectPasteUrl', {
 					classNameWrap: 'fromBlock',
 					component: 'select',
-					element: wrap ? $(wrap) : $(root),
+					element: wrap || root,
 					recalcRect: () => {
 						const rect = U.Dom.getSelectionRect();
-						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+						return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 					},
 					vertical: I.MenuDirection.Bottom,
 					horizontal: I.MenuDirection.Left,
@@ -2131,6 +2655,7 @@ const PasteImagePlugin = ({ onPasteFiles }: { onPasteFiles?: (files: File[]) => 
 const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlashAction?: (item: any) => void }) => {
 	const [ editor ] = useLexicalComposerContext();
 	const slashOffset = useRef(-1);
+	const slashMenuContextRef = useRef<any>(null);
 	const prevText = useRef('');
 	const onSlashActionRef = useRef(onSlashAction);
 	onSlashActionRef.current = onSlashAction;
@@ -2185,7 +2710,13 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 					const charBefore = offset > 1 ? text[offset - 2] : '';
 					if (!charBefore || (charBefore === ' ') || (charBefore === '\n')) {
 						slashOffset.current = offset - 1;
-						openSlashMenu(editor, editorId, slashOffset, onSlashActionRef);
+
+						// Close selection toolbar before opening slash menu to prevent overlap
+						if (S.Menu.isOpen('commentToolbar')) {
+							S.Menu.close('commentToolbar');
+						};
+
+						openSlashMenu(editor, editorId, slashOffset, onSlashActionRef, slashMenuContextRef);
 					};
 				};
 
@@ -2230,7 +2761,37 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 								};
 							};
 
-							menu.param.data.sections = filtered;
+							// Match type names for "create object" suggestions
+							if (s.length >= 2) {
+								const types = S.Record.checkHiddenObjects(
+									S.Record.getTypes().filter((t: any) =>
+										(t.name || '').toLowerCase().includes(s) &&
+										!U.Object.isInFileOrSystemLayouts(t.recommendedLayout) &&
+										!U.Object.isInSetLayouts(t.recommendedLayout) &&
+										!U.Object.isParticipantLayout(t.recommendedLayout) &&
+										!U.Object.isTemplateType(t.id)
+									)
+								).slice(0, 5);
+
+								if (types.length) {
+									const typeItems = types.map((t: any) => ({
+										id: `createType-${t.id}`,
+										action: 'createType',
+										typeId: t.id,
+										object: t,
+										name: U.String.sprintf(translate('commentSlashMenuNewObject'), t.name),
+										description: t.description || '',
+									}));
+
+									filtered.push({
+										id: 'objects',
+										name: translate('commonObjects'),
+										children: typeItems,
+									});
+								};
+							};
+
+							menu.param.data.sections = U.Menu.sectionsMap(filtered);
 						} else {
 							menu.param.data.sections = U.Menu.getCommentAddSections();
 						};
@@ -2253,15 +2814,11 @@ const SlashMenuPlugin = ({ editorId, onSlashAction }: { editorId: string; onSlas
 	return null;
 };
 
-let slashMenuContext: any = null;
-
-const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>, onSlashActionRef: React.MutableRefObject<((item: any) => void) | undefined>) => {
+const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: React.MutableRefObject<number>, onSlashActionRef: React.MutableRefObject<((item: any) => void) | undefined>, slashMenuContextRef: { current: any }) => {
 	const rect = U.Dom.getSelectionRect();
 	if (!rect) {
 		return;
 	};
-
-	const win = $(window);
 
 	const removeSlashText = (filterLen: number) => {
 		editor.update(() => {
@@ -2294,20 +2851,26 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 		});
 	};
 
+	const { param, data } = U.Menu.getCommentAddMenuParam(slashMenuContextRef);
+
+	const closeAndHandle = (cb: () => void) => {
+		const menu = S.Menu.get('commentAdd');
+		const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
+
+		S.Menu.close('commentAdd');
+		removeSlashText(filterLen);
+		cb();
+	};
+
 	S.Menu.open('commentAdd', {
-		classNameWrap: 'fromBlock',
-		component: 'select',
-		rect: { ...rect, y: rect.y + win.scrollTop() + 4, x: rect.x, width: 0, height: rect.height },
+		...param,
+		rect: { ...rect, y: rect.y + window.scrollY + 4, x: rect.x, width: 0, height: rect.height },
 		vertical: I.MenuDirection.Bottom,
 		horizontal: I.MenuDirection.Left,
 		offsetY: 4,
-		noAnimation: true,
 		commonFilter: true,
-		subIds: [ 'typeSuggest', 'select' ],
-		onOpen: (context: any) => { slashMenuContext = context; },
 		data: {
-			sections: U.Menu.getCommentAddSections(),
-			noFilter: true,
+			...data,
 			filter: '',
 			noClose: true,
 			onOver: (_e: any, item: any) => {
@@ -2316,60 +2879,12 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 					return;
 				};
 
-				const context = slashMenuContext;
-				if (!context) {
-					return;
-				};
-
-				if (item.id === 'create') {
-					U.Menu.typeSuggest({
-						element: `#${context.getId()} #item-create`,
-						className: 'fixed',
-						classNameWrap: 'fromSidebar',
-						offsetX: context.getSize().width,
-						vertical: I.MenuDirection.Center,
-						isSub: true,
-						data: {
-							onAdd: () => context?.close(),
-						},
-					}, {}, { noButtons: true }, '', (object: any) => {
-						const menu = S.Menu.get('commentAdd');
-						const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
-						removeSlashText(filterLen);
-
-						onSlashActionRef.current?.({ action: 'createCallback', object });
-						context?.close();
-					});
-				};
-
-				if (item.id === 'embed') {
-					const embedOptions = U.Menu.getBlockEmbed().map(it => ({
-						...it,
-						action: 'embed',
-						embedProcessor: it.id,
-					}));
-
-					S.Menu.open('select', {
-						element: `#${context.getId()} #item-embed`,
-						className: 'fixed',
-						classNameWrap: 'fromBlock',
-						offsetX: context.getSize().width,
-						vertical: I.MenuDirection.Center,
-						isSub: true,
-						data: {
-							options: embedOptions,
-							noVirtualisation: true,
-							noScroll: true,
-							onSelect: (_e: any, embedItem: any) => {
-								const menu = S.Menu.get('commentAdd');
-								const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
-
-								S.Menu.close('commentAdd');
-								removeSlashText(filterLen);
-
-								onSlashActionRef.current?.({ action: embedItem.action, embedProcessor: embedItem.embedProcessor });
-							},
-						},
+				const context = slashMenuContextRef.current;
+				if (context && item.itemId === 'embed') {
+					U.Menu.openCommentEmbedMenu(context, (_e: any, embedItem: any) => {
+						closeAndHandle(() => {
+							onSlashActionRef.current?.({ action: embedItem.action, embedProcessor: embedItem.embedProcessor });
+						});
 					});
 				};
 			},
@@ -2378,25 +2893,99 @@ const openSlashMenu = (editor: LexicalEditor, editorId: string, slashOffset: Rea
 					return;
 				};
 
-				const menu = S.Menu.get('commentAdd');
-				const filterLen = menu ? String(menu.param.data.filter || '').length : 0;
-
-				S.Menu.close('commentAdd');
-				removeSlashText(filterLen);
-
-				// Handle block transforms and action items
-				if (item.action) {
-					onSlashActionRef.current?.({ action: item.action, embedProcessor: item.embedProcessor });
-				} else
-				if (item.blockType === I.BlockType.Div) {
-					onSlashActionRef.current?.({ type: item.blockType });
-				} else
-				if (item.textStyle !== undefined) {
-					applyBlockTransform(editor, { style: item.textStyle, type: item.blockType });
-				};
+				closeAndHandle(() => {
+					if (item.action) {
+						onSlashActionRef.current?.({ action: item.action, embedProcessor: item.embedProcessor, typeId: item.typeId });
+					} else
+					if (item.blockType === I.BlockType.Div) {
+						onSlashActionRef.current?.({ type: item.blockType });
+					} else
+					if (item.textStyle !== undefined) {
+						applyBlockTransform(editor, { style: item.textStyle, type: item.blockType });
+					};
+				});
 			},
 		},
 	});
+};
+
+/**
+ * Splits a paragraph at selection boundaries so that a block transform
+ * only affects the selected portion, not the entire paragraph.
+ */
+const splitSelectionFromParagraph = (selection: any) => {
+	if (!$isRangeSelection(selection) || selection.isCollapsed()) {
+		return;
+	};
+
+	const anchor = selection.anchor;
+	const focus = selection.focus;
+	const anchorNode = anchor.getNode();
+	const focusNode = focus.getNode();
+	const anchorTopLevel = anchorNode.getTopLevelElementOrThrow();
+	const focusTopLevel = focusNode.getTopLevelElementOrThrow();
+
+	// Only split when selection is within a single paragraph
+	if (anchorTopLevel !== focusTopLevel) {
+		return;
+	};
+
+	if (anchorTopLevel.getType() !== 'paragraph') {
+		return;
+	};
+
+	const paragraph = anchorTopLevel;
+	const children = paragraph.getChildren();
+
+	if (children.length <= 1) {
+		return;
+	};
+
+	// Find child indices for anchor and focus
+	const anchorChild = $isElementNode(anchorNode) ? anchorNode : anchorNode.getParent();
+	const focusChild = $isElementNode(focusNode) ? focusNode : focusNode.getParent();
+
+	if (!anchorChild || !focusChild) {
+		return;
+	};
+
+	const anchorIdx = children.indexOf(anchorChild === paragraph ? anchorNode : anchorChild);
+	const focusIdx = children.indexOf(focusChild === paragraph ? focusNode : focusChild);
+
+	if (anchorIdx === -1 || focusIdx === -1) {
+		return;
+	};
+
+	const startIdx = Math.min(anchorIdx, focusIdx);
+	const endIdx = Math.max(anchorIdx, focusIdx);
+
+	// Don't split if the entire paragraph is selected
+	if ((startIdx === 0) && (endIdx === children.length - 1)) {
+		return;
+	};
+
+	// Split after the end of selection (if not at the last child)
+	if (endIdx < children.length - 1) {
+		$splitNode(paragraph, endIdx + 1);
+	};
+
+	// Split before the start of selection (if not at the first child)
+	if (startIdx > 0) {
+		const [ , afterNode ] = $splitNode(paragraph, startIdx);
+		// Move selection into the new split node
+		afterNode.selectStart();
+		const sel = $getSelection();
+		if ($isRangeSelection(sel)) {
+			const lastChild = afterNode.getLastChild();
+			if (lastChild) {
+				if ($isTextNode(lastChild)) {
+					sel.focus.set(lastChild.getKey(), lastChild.getTextContentSize(), 'text');
+				} else {
+					sel.focus.set(afterNode.getKey(), afterNode.getChildrenSize(), 'element');
+				};
+			};
+		};
+	};
 };
 
 const applyBlockTransform = (editor: LexicalEditor, item: any) => {
@@ -2410,22 +2999,33 @@ const applyBlockTransform = (editor: LexicalEditor, item: any) => {
 			return;
 		};
 
+		// Split paragraph at selection boundaries so transform only affects selected text
+		if (item.style !== I.TextStyle.Paragraph) {
+			splitSelectionFromParagraph(selection);
+		};
+
+		// Re-read selection after potential split
+		const sel = $getSelection();
+		if (!$isRangeSelection(sel)) {
+			return;
+		};
+
 		switch (item.style) {
 			case I.TextStyle.Header1:
 			case I.TextStyle.Header2:
 			case I.TextStyle.Header3: {
 				const tag = styleToHeadingTag(item.style) as 'h1' | 'h2' | 'h3';
-				$setBlocksType(selection, () => $createHeadingNode(tag));
+				$setBlocksType(sel, () => $createHeadingNode(tag));
 				break;
 			};
 
 			case I.TextStyle.Quote: {
-				$setBlocksType(selection, () => new QuoteNode());
+				$setBlocksType(sel, () => new QuoteNode());
 				break;
 			};
 
 			case I.TextStyle.Code: {
-				$setBlocksType(selection, () => $createCodeNode());
+				$setBlocksType(sel, () => $createCodeNode());
 				break;
 			};
 
@@ -2448,7 +3048,7 @@ const applyBlockTransform = (editor: LexicalEditor, item: any) => {
 				if (item.type === I.BlockType.Div) {
 					editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined);
 				} else {
-					$setBlocksType(selection, () => $createParagraphNode());
+					$setBlocksType(sel, () => $createParagraphNode());
 				};
 				break;
 			};
@@ -2521,7 +3121,6 @@ const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset:
 		return;
 	};
 
-	const win = $(window);
 	const space = S.Common.space;
 	const participantId = U.Space.getParticipantId(space, S.Auth.account?.id);
 
@@ -2529,7 +3128,7 @@ const openMentionMenu = (editor: LexicalEditor, editorId: string, mentionOffset:
 
 	S.Menu.open('blockMention', {
 		classNameWrap: 'fromBlock',
-		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+		rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: 0, height: rect.height },
 		vertical: I.MenuDirection.Top,
 		horizontal: I.MenuDirection.Left,
 		offsetY: -4,
@@ -2646,8 +3245,8 @@ const ColonEmojiPlugin = ({ editorId }: { editorId: string }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keydown', onKeyDown, true);
-			return () => root.removeEventListener('keydown', onKeyDown, true);
+			U.Dom.addEvent(root, 'keydown', onKeyDown, true);
+			return () => U.Dom.removeEvent(root, 'keydown', onKeyDown, true);
 		};
 	}, [ editor ]);
 
@@ -2733,8 +3332,8 @@ const ColonEmojiPlugin = ({ editorId }: { editorId: string }) => {
 
 		const root = editor.getRootElement();
 		if (root) {
-			root.addEventListener('keyup', onKeyUp);
-			return () => root.removeEventListener('keyup', onKeyUp);
+			U.Dom.addEvent(root, 'keyup', onKeyUp);
+			return () => U.Dom.removeEvent(root, 'keyup', onKeyUp);
 		};
 	}, [ editor, editorId, closeEmojiMenu ]);
 
@@ -2747,13 +3346,11 @@ const openColonEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset
 		return;
 	};
 
-	const win = $(window);
-
 	S.Common.filterSet(0, '');
 
 	S.Menu.open('blockEmoji', {
 		classNameWrap: 'fromBlock',
-		rect: { ...rect, y: rect.y + win.scrollTop(), x: rect.x, width: 0, height: rect.height },
+		rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: 0, height: rect.height },
 		vertical: I.MenuDirection.Top,
 		horizontal: I.MenuDirection.Left,
 		offsetY: -4,
@@ -2820,15 +3417,15 @@ const openColonEmojiMenu = (editor: LexicalEditor, editorId: string, colonOffset
 };
 
 const MarkdownSequences: { pattern: RegExp; style: I.TextStyle }[] = [
-	{ pattern: /^\[]\s$/,		style: I.TextStyle.Checkbox },
-	{ pattern: /^###\s$/,		style: I.TextStyle.Header3 },
-	{ pattern: /^##\s$/,		style: I.TextStyle.Header2 },
-	{ pattern: /^#\s$/,		style: I.TextStyle.Header1 },
-	{ pattern: /^[*\-+]\s$/,	style: I.TextStyle.Bulleted },
-	{ pattern: /^1\.\s$/,		style: I.TextStyle.Numbered },
-	{ pattern: /^"\s$/,		style: I.TextStyle.Quote },
-	{ pattern: /^>\s$/,		style: I.TextStyle.Quote },
-	{ pattern: /^```$/,			style: I.TextStyle.Code },
+	{ pattern: /^\[]\s/,		style: I.TextStyle.Checkbox },
+	{ pattern: /^###\s/,		style: I.TextStyle.Header3 },
+	{ pattern: /^##\s/,		style: I.TextStyle.Header2 },
+	{ pattern: /^#\s/,			style: I.TextStyle.Header1 },
+	{ pattern: /^[*\-+]\s/,	style: I.TextStyle.Bulleted },
+	{ pattern: /^1\.\s/,		style: I.TextStyle.Numbered },
+	{ pattern: /^"\s/,			style: I.TextStyle.Quote },
+	{ pattern: /^>\s/,			style: I.TextStyle.Quote },
+	{ pattern: /^```/,			style: I.TextStyle.Code },
 ];
 
 const MarkdownPlugin = () => {
@@ -2871,22 +3468,19 @@ const MarkdownPlugin = () => {
 						continue;
 					};
 
-					const remaining = (style === I.TextStyle.Code) ? '' : text.replace(pattern, '');
+					const remaining = text.replace(pattern, '');
+					const nodeKey = node.getKey();
 
 					editor.update(() => {
-						// Remove the markdown prefix
-						node.setTextContent(remaining);
+						const current = $getNodeByKey(nodeKey);
 
-						const sel = $getSelection();
-						if (!$isRangeSelection(sel)) {
-							return;
+						if ($isTextNode(current)) {
+							current.setTextContent(remaining);
+							current.select(0, 0);
 						};
-
-						// Place cursor at start
-						node.select(0, 0);
-
+					}, { onUpdate: () => {
 						applyBlockTransform(editor, { style });
-					});
+					}});
 
 					prevText.current = '';
 					return;
@@ -3157,6 +3751,93 @@ const CodeExitPlugin = () => {
 	return null;
 };
 
+const HeadingExitPlugin = () => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		return editor.registerCommand(
+			KEY_ENTER_COMMAND,
+			(e: KeyboardEvent | null) => {
+				if (e?.shiftKey) {
+					return false;
+				};
+
+				const selection = $getSelection();
+				if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
+					return false;
+				};
+
+				const anchor = selection.anchor;
+				const node = anchor.getNode();
+				const topLevel = node.getTopLevelElementOrThrow();
+
+				if (!$isHeadingNode(topLevel)) {
+					return false;
+				};
+
+				e?.preventDefault();
+
+				const atEnd = (node === topLevel.getLastChild()) && (anchor.offset === node.getTextContentSize());
+
+				if (atEnd) {
+					const paragraph = $createParagraphNode();
+					paragraph.append($createTextNode(''));
+					topLevel.insertAfter(paragraph);
+					paragraph.select();
+				} else {
+					selection.insertParagraph();
+
+					const newSelection = $getSelection();
+					if ($isRangeSelection(newSelection)) {
+						const newNode = newSelection.anchor.getNode();
+						const newTopLevel = newNode.getTopLevelElementOrThrow();
+
+						if ($isHeadingNode(newTopLevel)) {
+							const paragraph = $createParagraphNode();
+							newTopLevel.getChildren().forEach((child) => paragraph.append(child));
+							newTopLevel.replace(paragraph);
+							paragraph.selectStart();
+						};
+					};
+				};
+
+				return true;
+			},
+			COMMAND_PRIORITY_HIGH,
+		);
+	}, [ editor ]);
+
+	return null;
+};
+
+const MaxLengthPlugin = ({ maxLength }: { maxLength: number }) => {
+	const [ editor ] = useLexicalComposerContext();
+
+	useEffect(() => {
+		return editor.registerNodeTransform(TextNode, () => {
+			const root = $getRoot();
+			const text = root.getTextContent();
+			const length = text.length;
+
+			if (length <= maxLength) {
+				return;
+			};
+
+			const selection = $getSelection();
+			if (!$isRangeSelection(selection)) {
+				return;
+			};
+
+			const overflow = length - maxLength;
+			const { anchor } = selection;
+
+			$trimTextContentFromAnchor(editor, anchor, overflow);
+		});
+	}, [ editor, maxLength ]);
+
+	return null;
+};
+
 const CodeBlockPlugin = () => {
 	const [ editor ] = useLexicalComposerContext();
 	const [ codeBlocks, setCodeBlocks ] = React.useState<{ key: string; lang: string }[]>([]);
@@ -3196,7 +3877,7 @@ const CodeBlockPlugin = () => {
 
 		S.Menu.open('select', {
 			classNameWrap: 'fromBlock',
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,
 			offsetY: -4,
@@ -3263,7 +3944,7 @@ const CodeBlockPlugin = () => {
 
 const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { subId, placeholder, initialParts, readonly, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction, onPasteFiles } = props;
+	const { rootId, subId, placeholder, initialParts, readonly, maxLength, onSubmit, onCancel, onEmpty, onChange, onFocus, onBlur, onSlashAction, onPasteFiles } = props;
 	const editorRef = useRef<LexicalEditor | null>(null);
 	const isEmptyRef = useRef(true);
 	const editorId = useRef(`commentEditor-${Math.random().toString(36).slice(2, 10)}`).current;
@@ -3493,6 +4174,10 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 			editorRef.current?.dispatchCommand(REMOVE_ATTACHMENT_COMMAND, key);
 		},
 
+		updateAttachment: (id: string, data: any) => {
+			editorRef.current?.dispatchCommand(UPDATE_ATTACHMENT_COMMAND, { id, data });
+		},
+
 		getAttachments: () => {
 			const editor = editorRef.current;
 			if (!editor) {
@@ -3559,7 +4244,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<HorizontalRulePlugin />
 				<AttachmentPlugin />
 				<EmbedPlugin />
-				<PasteUrlPlugin />
+				<PasteUrlPlugin rootId={rootId} />
 				<PasteImagePlugin onPasteFiles={onPasteFiles} />
 				<SlashMenuPlugin editorId={editorId} onSlashAction={onSlashAction} />
 				<MentionPlugin editorId={editorId} />
@@ -3569,7 +4254,9 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				<InlineMarkdownPlugin />
 				<CodeHighlightPlugin />
 				<CodeExitPlugin />
+				<HeadingExitPlugin />
 				<CodeBlockPlugin />
+				{maxLength ? <MaxLengthPlugin maxLength={maxLength} /> : null}
 			</div>
 		</LexicalComposer>
 		</CommentSubIdContext.Provider>

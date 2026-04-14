@@ -11,11 +11,12 @@ import UpdateManager from './update';
 import MenuManager from './menu';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
-import { AppWindow, TabView, TabData, CreateMainOptions, CreateTabOptions, SavedTabState, Bounds } from './types';
+import { AppWindow, TabView, TabData, CreateMainOptions, CreateTabOptions, SavedTabState, SavedWindowsState, Bounds } from './types';
 
 const port: string = Util.getPort();
 
 const TABS_STORAGE_KEY = 'savedTabs';
+const WINDOWS_STORAGE_KEY = 'savedWindows';
 
 const DEFAULT_WIDTH = 1024;
 const DEFAULT_HEIGHT = 768;
@@ -97,7 +98,7 @@ class WindowManager {
 	};
 
 	createMain (options: CreateMainOptions): AppWindow {
-		const { isChild, initialBounds, initialTabData } = options;
+		const { isChild, initialBounds, initialTabData, restoredTabs } = options;
 		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icons', '512x512.png'));
 
 		let state: ReturnType<typeof windowStateKeeper> | Record<string, any> = {};
@@ -199,8 +200,9 @@ class WindowManager {
 			// Create window from detached tab with provided data
 			this.createTab(win, initialTabData, { setActive: true });
 		} else {
-			// Try to restore saved tabs, or create a single tab if none saved
-			const savedState = this.loadTabs();
+			// Try to restore saved tabs. If this window was created as part of multi-window
+			// restoration, restoredTabs is provided explicitly; otherwise read from storage.
+			const savedState = restoredTabs || this.loadTabs();
 			if (savedState && savedState.tabs && savedState.tabs.length > 0) {
 				const activeIndex = savedState.activeIndex || 0;
 
@@ -220,9 +222,6 @@ class WindowManager {
 				if (win.views && win.views[activeIndex]) {
 					this.setActiveTab(win, win.views[activeIndex].id);
 				};
-
-				// Clear saved tabs after restoration
-				this.clearSavedTabs();
 			} else {
 				this.createTab(win, {}, { setActive: true });
 			};
@@ -618,7 +617,7 @@ class WindowManager {
 		};
 	};
 
-	openSpaceInTab (win: AppWindow, spaceId: string, uxType: number): void {
+	openSpaceInTab (win: AppWindow, spaceId: string, spaceType: number): void {
 		if (!win || !win.views || !spaceId) {
 			return;
 		};
@@ -627,7 +626,7 @@ class WindowManager {
 		if (existing) {
 			this.setActiveTab(win, existing.id);
 		} else {
-			this.createTab(win, { spaceId, uxType }, { setActive: true });
+			this.createTab(win, { spaceId, spaceType }, { setActive: true });
 		};
 	};
 
@@ -884,58 +883,94 @@ class WindowManager {
 		return this.list.values().next().value;
 	};
 
-	/**
-	 * Saves the current tabs state to storage for restoration on next app start
-	 * @param {BrowserWindow} win - The window to save tabs from
-	 */
-	saveTabs (win: AppWindow): void {
-		if (!win || !win.views || win.isDestroyed()) {
-			return;
+	private serializeWindow (win: AppWindow): SavedTabState | null {
+		if (!win || !win.views || win.isDestroyed() || win.isChallenge) {
+			return null;
 		};
-
-		const store = getSafeStorage();
 
 		const tabsData = win.views.map((view: TabView) => ({
 			data: view.data || {},
 		}));
 
-		// Find the active tab index
-		const activeIndex = win.views.findIndex((view: TabView) => view.id === win.activeTabId);
+		if (!tabsData.length) {
+			return null;
+		};
 
-		const state = {
+		const activeIndex = win.views.findIndex((view: TabView) => view.id === win.activeTabId);
+		const b = win.getBounds();
+
+		return {
 			tabs: tabsData,
 			activeIndex: activeIndex >= 0 ? activeIndex : 0,
+			bounds: { x: b.x, y: b.y, width: b.width, height: b.height },
 		};
-
-		store.set(TABS_STORAGE_KEY, state);
-		Util.log('info', `[WindowManager].saveTabs: Saved ${tabsData.length} tabs, active index: ${state.activeIndex}`);
 	};
 
 	/**
-	 * Loads saved tabs state from storage
-	 * @returns {Object|null} The saved tabs state or null if not found
+	 * Saves the state of all open main windows for restoration on next app start.
+	 * The window passed in (usually the active/exiting one) is placed first so its
+	 * tabs are restored into the initial window created at startup.
 	 */
-	loadTabs (): SavedTabState | null {
+	saveTabs (win: AppWindow | null): void {
+		const store = getSafeStorage();
+		const seen = new Set<number>();
+		const windows: SavedTabState[] = [];
+
+		const push = (w: AppWindow) => {
+			if (!w || seen.has(w.id)) {
+				return;
+			};
+			const state = this.serializeWindow(w);
+			if (state) {
+				seen.add(w.id);
+				windows.push(state);
+			};
+		};
+
+		push(win);
+		this.list.forEach((w: AppWindow) => push(w));
+
+		const payload: SavedWindowsState = { windows };
+		store.set(WINDOWS_STORAGE_KEY, payload);
+		store.delete(TABS_STORAGE_KEY);
+		Util.log('info', `[WindowManager].saveTabs: Saved ${windows.length} window(s)`);
+	};
+
+	/**
+	 * Loads saved window states from storage.
+	 * Falls back to the legacy single-window key for users upgrading from older versions.
+	 */
+	loadAllWindows (): SavedTabState[] {
 		const store = getSafeStorage();
 
-		const state = store.get(TABS_STORAGE_KEY);
-		if (state && state.tabs && state.tabs.length > 0) {
-			Util.log('info', `[WindowManager].loadTabs: Found ${state.tabs.length} saved tabs`);
-			return state;
+		const multi = store.get(WINDOWS_STORAGE_KEY) as SavedWindowsState | undefined;
+		if (multi && Array.isArray(multi.windows) && multi.windows.length) {
+			Util.log('info', `[WindowManager].loadAllWindows: Found ${multi.windows.length} saved window(s)`);
+			return multi.windows.filter(w => w && w.tabs && w.tabs.length);
 		};
 
-		return null;
+		const legacy = store.get(TABS_STORAGE_KEY) as SavedTabState | undefined;
+		if (legacy && legacy.tabs && legacy.tabs.length) {
+			Util.log('info', `[WindowManager].loadAllWindows: Found legacy saved tabs`);
+			return [ legacy ];
+		};
+
+		return [];
 	};
 
-	/**
-	 * Clears saved tabs from storage
-	 */
+	loadTabs (): SavedTabState | null {
+		const all = this.loadAllWindows();
+		return all.length ? all[0] : null;
+	};
+
 	clearSavedTabs (): void {
 		const store = getSafeStorage();
 
+		store.delete(WINDOWS_STORAGE_KEY);
 		store.delete(TABS_STORAGE_KEY);
 		Util.log('info', '[WindowManager].clearSavedTabs: Cleared saved tabs');
 	};
+
 
 };
 

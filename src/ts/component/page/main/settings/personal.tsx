@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Select, Switch, Icon } from 'Component';
 import * as I from 'Interface';
 
@@ -8,11 +7,11 @@ enum ChatKey {
 	CmdEnter = 'cmdEnter',
 };
 
-const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick, notificationSound, hideFileObjectsInTree } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
-	const { theme, chatCmdSend } = S.Common;
+	const { theme, chatCmdSend, commentCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
 
 	const onHardwareAccelerationChange = (v: boolean) => {
@@ -134,7 +133,12 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						id="vaultMessages"
 						value={String(Number(vaultMessages))}
 						options={vaultStyles}
-						onChange={v => S.Common.vaultMessagesSet(Boolean(Number(v)))}
+						onChange={v => {
+							const value = Boolean(Number(v));
+
+							S.Common.vaultMessagesSet(value);
+							analytics.event('VaultStyleChange', { type: value ? 'MessagePreview' : 'Compact' });
+						}}
 						arrowClassName="black"
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
@@ -251,6 +255,17 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
 				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalCommentSend')} />
+					<Select
+						id="commentSend"
+						value={commentCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
+						options={chatKeys}
+						onChange={(v: string) => S.Common.commentCmdSendSet(v == ChatKey.CmdEnter)}
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
 			</div>
 
 			<Label className="section" text={translate('popupSettingsPersonalSectionAdvanced')} />
@@ -268,6 +283,6 @@ const PageMainSettingsPersonal = observer(forwardRef<I.PageRef, I.PageSettingsCo
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsPersonal;

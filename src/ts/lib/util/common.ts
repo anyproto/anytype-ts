@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import TextJson from 'json/text.json';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -60,7 +59,7 @@ class UtilCommon {
 	};
 
 	esc (v: any): string {
-		return $.escapeSelector(String(v));
+		return CSS.escape(String(v));
 	};
 
 	/**
@@ -257,16 +256,16 @@ class UtilCommon {
 			};
 
 			removed = true;
-			document.removeEventListener('copy', handler, true);
+			U.Dom.removeEvent(document, 'copy', handler, true);
 			callBack?.();
 		};
 
-		document.addEventListener('copy', handler, true);
+		U.Dom.addEvent(document, 'copy', handler, true);
 		document.execCommand('copy');
 
 		// Safety cleanup in case execCommand did not trigger the copy event
 		if (!removed) {
-			document.removeEventListener('copy', handler, true);
+			U.Dom.removeEvent(document, 'copy', handler, true);
 		};
 	};
 
@@ -759,7 +758,7 @@ class UtilCommon {
 			initial: { opacity: 0, ...param.initial },
 			animate: { opacity: 1, ...param.animate },
 			exit: { opacity: 0, ...param.exit },
-			transition: { type: 'spring' as const, stiffness: 300, damping: 20, ...param.transition },
+			transition: { type: 'tween' as const, duration: 0.2, ease: [ 0.22, 1, 0.36, 1 ], ...param.transition },
 		};
 	};
 
@@ -997,27 +996,24 @@ class UtilCommon {
 			const decoded = src.includes('base64,')
 				? atob(src.split('base64,')[1]).replace(/_COLOR_VAR_/g, fill)
 				: src.replace(/_COLOR_VAR_/g, fill);
-			const obj = $(decoded);
-			const attr: any = {};
+			const parser = new DOMParser();
+			const doc = parser.parseFromString(decoded, 'image/svg+xml');
+			const el = doc.documentElement;
 
 			if (size) {
-				attr.width = size;
-				attr.height = size;
+				el.setAttribute('width', String(size));
+				el.setAttribute('height', String(size));
 			};
 
 			if (fill) {
-				attr.fill = fill;
+				el.setAttribute('fill', fill);
 			};
 
 			if (stroke) {
-				attr.stroke = stroke;
+				el.setAttribute('stroke', stroke);
 			};
 
-			if (this.objectLength(attr)) {
-				obj.attr(attr);
-			};
-			
-			ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(obj[0].outerHTML)));
+			ret = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(el.outerHTML)));
 		} catch (e) { console.warn('[Common] SVG encoding failed:', e); };
 
 		iconCache.set(key, ret);
@@ -1146,7 +1142,10 @@ class UtilCommon {
 	showWhatsNew (param?: Partial<I.PopupParam>) {
 		param = param || {};
 		param.data = param.data || {};
-		param.data.document = 'whatsNew';	
+		param.data.document = 'whatsNew';
+		param.onClose = () => {
+			Survey.checkCommon();
+		};
 
 		S.Popup.open('help', param);
 		Storage.set('whatsNew', false);
@@ -1280,12 +1279,6 @@ class UtilCommon {
 		Preview.previewHide(true);
 	};
 
-	getViewFilters (view: any): any[] {
-		return (view.filters || []).filter(it => {
-			return S.Record.getRelationByKey(it.relationKey) || [ I.FilterOperator.And, I.FilterOperator.Or ].includes(it.operator);
-		});
-	};
-
 	applyAutoDownload (value: number) {
 		C.FileSetAutoDownload(value > 0, false);
 		
@@ -1296,7 +1289,7 @@ class UtilCommon {
 
 	getSpaceSettingsPages (): string[] {
 		return [
-			'spaceIndex', 'spaceIndexEmpty', 'spaceStorage', 'spaceShare', 'spaceNotifications',
+			'spaceIndex', 'spaceIndexEmpty', 'spaceStorage', 'spaceShare', 'spaceNotifications', 'spaceHome',
 			'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'importObsidian',
 			'exportIndex', 'exportProtobuf', 'exportMarkdown',
 			'set', 'relation', 'archive',

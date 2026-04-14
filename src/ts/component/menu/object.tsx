@@ -1,11 +1,9 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { config, space } = S.Common;
 	const { param, onKeyDown, setActive, close, getId, getSize } = props;
@@ -46,12 +44,12 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 	
 	const getSections = () => {
@@ -165,7 +163,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedNotification) {
 			notification = null;
 		} else
-		if (spaceview.isOneToOne || spaceview.isChat) {
+		if (spaceview.isOneToOne) {
 			const chatMode = U.Object.getChatNotificationMode(spaceview, object.id);
 			const isMuted = chatMode != I.NotificationMode.All;
 
@@ -428,7 +426,7 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				C.ObjectListDuplicate([ rootId ], (message: any) => {
 					if (!message.error.code && message.ids.length) {
 						U.Object.openConfig(null, { id: message.ids[0], layout: object.layout }, {
-							onClose: () => $(window).trigger(`updatePreviewObject.${message.ids[0]}`)
+							onClose: () => U.Dom.eventDispatch(window, `updatePreviewObject.${message.ids[0]}`)
 						});
 
 						analytics.event('DuplicateObject', { count: 1, route, objectType: object.type });
@@ -612,6 +610,6 @@ const MenuObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuObject;

@@ -1,12 +1,10 @@
 import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Label, Button } from 'Component';
 import Storage from 'Lib/storage';
-import $ from 'jquery';
 
 const STORAGE_KEY = 'updateBanner';
 
-const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
+const UpdateBanner = forwardRef<{}, {}>((props, ref) => {
 
 	const { updateVersion } = S.Common;
 	const cn = [ 'updateBanner', 'withButtons' ];
@@ -33,18 +31,29 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 		return { x, y };
 	}, []);
 
+	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
+	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
+
 	const setStyle = useCallback((x: number, y: number) => {
 		const coords = checkCoords(x, y);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		$(nodeRef.current).css({ left: coords.x, top: coords.y, bottom: 'auto' });
+		U.Dom.css(node, { left: `${coords.x}px`, top: `${coords.y}px`, bottom: 'auto' });
 	}, [ checkCoords ]);
 
 	const resize = useCallback(() => {
-		const obj = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
 		const coords = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY));
 
-		height.current = obj.outerHeight();
-		width.current = obj.outerWidth();
+		height.current = node.offsetHeight;
+		width.current = node.offsetWidth;
 
 		if (coords) {
 			setStyle(coords.x, coords.y);
@@ -53,9 +62,8 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 
 	const onDragMove = useCallback((e: any) => {
 		const obj = Storage.get(STORAGE_KEY, Storage.isLocal(STORAGE_KEY)) || {};
-		const win = $(window);
-		const x = e.pageX - dx.current - win.scrollLeft();
-		const y = e.pageY - dy.current - win.scrollTop();
+		const x = e.pageX - dx.current - window.scrollX;
+		const y = e.pageY - dy.current - window.scrollY;
 
 		setStyle(x, y);
 		Storage.set(STORAGE_KEY, { ...obj, x, y }, Storage.isLocal(STORAGE_KEY));
@@ -65,22 +73,43 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 		keyboard.disableSelection(false);
 		keyboard.setDragging(false);
 
-		$(window).off('mousemove.progress mouseup.progress');
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+			mouseMoveHandler.current = null;
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+			mouseUpHandler.current = null;
+		};
 	}, []);
 
 	const onDragStart = useCallback((e: any) => {
-		const win = $(window);
-		const offset = $(nodeRef.current).offset();
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		dx.current = e.pageX - offset.left;
-		dy.current = e.pageY - offset.top;
+		const rect = node.getBoundingClientRect();
+
+		dx.current = e.pageX - (rect.left + window.scrollX);
+		dy.current = e.pageY - (rect.top + window.scrollY);
 
 		keyboard.disableSelection(true);
 		keyboard.setDragging(true);
 
-		win.off('mousemove.progress mouseup.progress');
-		win.on('mousemove.progress', e => onDragMove(e));
-		win.on('mouseup.progress', e => onDragEnd(e));
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+		};
+
+		mouseMoveHandler.current = e => onDragMove(e);
+		mouseUpHandler.current = e => onDragEnd(e);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	}, [ onDragMove, onDragEnd ]);
 
 	useEffect(() => {
@@ -132,6 +161,6 @@ const UpdateBanner = observer(forwardRef<{}, {}>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default UpdateBanner;

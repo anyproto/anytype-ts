@@ -1,6 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -22,7 +20,7 @@ interface ControlButtonsRef {
 	forceUpdate: () => void;
 };
 
-const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref) => {
+const ControlButtons = forwardRef<ControlButtonsRef, Props>((props, ref) => {
 
 	const { rootId, readonly, onIcon, onLayout, onCoverOpen, onCoverClose, onEdit, onUploadStart, onUpload, onCoverSelect } = props;
 	const [ dummy, setDummy ] = useState(0);
@@ -42,13 +40,15 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 	const nodeRef = useRef(null);
 	const timeout = useRef(0);
 
+	const resizeHandler = useRef(() => resize());
+
 	const rebind = () => {
 		unbind();
-		$(window).on('resize.controlButtons', () => resize());
+		U.Dom.addEvent(window, 'resize', resizeHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('resize.controlButtons');
+		U.Dom.removeEvent(window, 'resize', resizeHandler.current);
 	};
 
 	const onIconHandler = (e: any) => {
@@ -80,7 +80,7 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		e.stopPropagation();
 
 		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
-		const element = $(e.currentTarget);
+		const element = e.currentTarget as HTMLElement;
 		const { coverType, coverId } = object;
 		const hasCover = coverType != I.CoverType.None;
 		
@@ -201,7 +201,7 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 
 	const resize = () => {
 		const { ww } = U.Dom.getWindowDimensions();
-		$(nodeRef.current).toggleClass('small', ww <= 900);
+		U.Dom.toggleClass(nodeRef.current, 'small', ww <= 900);
 	};
 
 	const { allowedIcon, allowedLayout, allowedCover, allowedDescription, allowedPrefillName } = getAllowedButtons();
@@ -264,6 +264,6 @@ const ControlButtons = observer(forwardRef<ControlButtonsRef, Props>((props, ref
 		</div>
 	) : null;
 
-}));
+});
 
 export default ControlButtons;

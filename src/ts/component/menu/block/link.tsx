@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
+
 import { MenuItemVertical, Filter, ObjectName } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
@@ -12,9 +11,9 @@ const HEIGHT_DIV = 16;
 const HEIGHT_FILTER = 44;
 const LIMIT_HEIGHT = 6;
 
-const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close, setActive, onKeyDown, getId, position } = props;
+	const { param, close, setActive, onKeyDown, getId, getContainer, position } = props;
 	const { data } = param;
 	const { type, onChange, filter, onClear, skipIds } = data;
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_ITEM }));
@@ -33,7 +32,6 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
@@ -47,7 +45,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			listRef.current.scrollToPosition(top.current);
 		};
 
-		resize();
+		position();
 		setActive();
 	});
 
@@ -58,14 +56,20 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		load(true);
 	}, [ filter ]);
 	
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onFilterChange = (e: any) => {
@@ -198,16 +202,17 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (item.url) {
 				onChange?.(I.MarkType.Link, item.url.value);
 			};
+			close();
 		} else
 		if (item.itemId == 'add') {
 			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.link, (message: any) => {
 				onChange?.(I.MarkType.Object, message.targetId);
+				close();
 			});
 		} else {
 			onChange?.(I.MarkType.Object, item.itemId);
+			close();
 		};
-
-		close();
 	};
 
 	const onScroll = ({ scrollTop }: any) => {
@@ -223,9 +228,9 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const contentEl = U.Dom.select('.content', getContainer());
 		const offset = 12;
 
 		let height = HEIGHT_FILTER;
@@ -233,8 +238,13 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			height += items.reduce((res: number, item: any) => res + getRowHeight(item), offset);
 		};
 
-		obj.css({ height }).toggleClass('initial', !filter);
-		position();
+		U.Dom.css(contentEl, { height: `${height}px` });
+
+		if (!filter) {
+			U.Dom.addClass(contentEl, 'initial');
+		} else {
+			U.Dom.removeClass(contentEl, 'initial');
+		};
 	};
 
 	const items = getItems();
@@ -270,7 +280,6 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<MenuItemVertical 
 					id={item.id}
 					object={object}
-					icon={item.icon}
 					iconParam={item.iconParam}
 					name={<ObjectName object={item} withPlural={true} />}
 					onMouseEnter={e => onOver(e, item)} 
@@ -333,6 +342,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -340,7 +350,7 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getFilterRef: () => filterRef.current,
 		onClick,
 		onOver,
-	}), []);
+	}), [ filter, dummy ]);
 
 	return (
 		<div className="wrap">
@@ -357,6 +367,6 @@ const MenuBlockLink = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockLink;

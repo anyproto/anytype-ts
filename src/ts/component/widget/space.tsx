@@ -1,12 +1,10 @@
 import React, { useRef, forwardRef, useEffect, useState, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Label } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
 import ChatCounter from 'Component/util/chatCounter';
 import * as I from 'Interface';
-import $ from 'jquery';
 
-const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
+const WidgetSpace = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const spaceview = U.Space.getSpaceview();
 	if (!spaceview) {
@@ -17,8 +15,8 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const route = analytics.route.widget;
-	const cn = [ U.Data.spaceClass(spaceview.uxType) ];
-	const iconSize = (spaceview.isChat || spaceview.isOneToOne) ? 80 : 48;
+	const cn = [ U.Data.spaceClass(spaceview.spaceType) ];
+	const iconSize = spaceview.isOneToOne ? 80 : 48;
 	const rootId = keyboard.getRootId();
 	const workspace = S.Detail.get(S.Block.workspace, S.Block.workspace, [ 'chatId' ]);
 	const chatId = workspace.chatId;
@@ -45,7 +43,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			},
 		} : null,
 		{ id: 'search', iconName: 'common/search', name: translate('commonSearch') },
-		(spaceview.isChat || spaceview.isOneToOne) ? { id: 'chat', iconName: 'widget/button/chat', name: translate('commonMainChat') } : null,
+		spaceview.isOneToOne ? { id: 'chat', iconName: 'widget/button/chat', name: translate('commonMainChat') } : null,
 	].filter(it => it);
 
 	const onButtonClick = (e: MouseEvent, item: any) => {
@@ -102,7 +100,7 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	let content = null;
-	if (spaceview.isChat || spaceview.isOneToOne) {
+	if (spaceview.isOneToOne) {
 		content = (
 			<div className="spaceInfo">
 				{icon}
@@ -131,12 +129,12 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	useEffect(() => {
-		const win = $(window);
+		const handler = () => setDummy(dummy => dummy + 1);
 
-		win.off('objectView').on('objectView', () => setDummy(dummy => dummy + 1));
+		U.Dom.addEvent(window, 'objectView', handler);
 
 		return () => {
-			win.off('objectView');
+			U.Dom.removeEvent(window, 'objectView', handler);
 		};
 	}, []);
 
@@ -173,6 +171,6 @@ const WidgetSpace = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default WidgetSpace;

@@ -1,6 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Title, Icon, IconObject, ObjectName, EmptySearch, UpsellBanner, Label } from 'Component';
 import * as I from 'Interface';
@@ -9,22 +7,23 @@ const HEIGHT = 28;
 const LIMIT = 12;
 const SUB_ID = 'syncStatusObjectsList';
 
-const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, setActive, getId, onKeyDown, position, close } = props;
+	const { param, setActive, getId, getContainer, onKeyDown, position, close } = props;
 	const { classNameWrap } = param;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ itemId, setItemId ] = useState('');
 	const listRef = useRef(null);
 	const n = useRef(0);
 	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }));
+	const keydownHandler = useRef(null);
+	const clickHandler = useRef(null);
 	const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
 	const isOwner = U.Space.isMyOwner();
 
 	useEffect(() => {
 		load();
 		rebind();
-		resize();
 
 		return () => {
 			unbind();
@@ -32,19 +31,31 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	}, []);
 
-	useEffect(() => {
-		resize();	
-	});
-
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
-		$(`#${getId()}`).on('click', () => onCloseInfo());
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
+
+		clickHandler.current = () => onCloseInfo();
+		const obj = getContainer();
+		if (obj) {
+			U.Dom.addEvent(obj, 'click', clickHandler.current);
+		};
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
-		$(`#${getId()}`).off('click');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
+
+		if (clickHandler.current) {
+			const obj = getContainer();
+			if (obj) {
+				U.Dom.removeEvent(obj, 'click', clickHandler.current);
+			};
+			clickHandler.current = null;
+		};
 	};
 
 	const onContextMenu = (e, item) => {
@@ -52,14 +63,14 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canDelete = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Delete ]);
-		const element = $(e.currentTarget);
-		const itemElement = $(`#${getId()} #item-${U.Common.esc(item.id)}`);
+		const element = `#${getId()} #item-${U.Common.esc(item.id)}`;
+		const itemElement = U.Dom.select(`#item-${U.Common.esc(item.id)}`, getContainer());
 		const options: any[] = [
 			{ id: 'open', name: translate('commonOpen') }
 		];
 
 		if (canWrite && canDelete) {
-			options.push({ id: 'delete', color: 'red', name: translate('commonDeleteImmediately') });
+			options.push({ id: 'delete', color: 'destructive', name: translate('commonDeleteImmediately') });
 		};
 
 		S.Menu.open('select', {
@@ -67,8 +78,8 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			element,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
-			onOpen: () => itemElement.addClass('hover'),
-			onClose: () => itemElement.removeClass('hover'),
+			onOpen: () => U.Dom.addClass(itemElement, 'hover'),
+			onClose: () => U.Dom.removeClass(itemElement, 'hover'),
 			data: {
 				options,
 				onSelect: (e, option) => {
@@ -153,6 +164,7 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			limit: 50,
 		}, () => {
 			setIsLoading(false);
+			position();
 			window.setTimeout(() => Onboarding.start('syncStatus', false), J.Constant.delay.menu);
 		});
 	};
@@ -329,13 +341,12 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return { id, label, iconName, iconColor, title, message, buttons };
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems().slice(0, LIMIT);
-		const obj = $(`#${getId()} .content`);
+		const content = U.Dom.select('.content', getContainer());
 		const height = items.length ? items.length * HEIGHT + 64 : 160;
 
-		obj.css({ height });
-		position();
+		U.Dom.css(content, { height: `${height}px` });
 	};
 
 	const scrollToRow = (items: any[], index: number) => {
@@ -447,6 +458,7 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -502,6 +514,6 @@ const MenuSyncStatus = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default MenuSyncStatus;

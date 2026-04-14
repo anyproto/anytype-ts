@@ -1,11 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Header, Footer, Block, Deleted } from 'Component';
-import * as I from 'Interface';
-import * as M from 'Model';
+import { I, M, C, S, U, J } from 'Lib';
 
-const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainChat = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const nodeRef = useRef(null);
@@ -16,22 +13,31 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	const [ dummy, setDummy ] = useState(0);
 	const rootId = keyboard.getRootId(isPopup);
 	const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
-	const ns = `chat${U.Dom.getEventNamespace(isPopup)}`;
+	const keydownHandlerRef = useRef<((e: any) => void) | null>(null);
+	const scrollToMessageHandlerRef = useRef<((e: any) => void) | null>(null);
 
 	const unbind = () => {
-		const events = [ 'keydown', 'scrollToMessage' ];
-
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		if (keydownHandlerRef.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandlerRef.current);
+			keydownHandlerRef.current = null;
+		};
+		if (scrollToMessageHandlerRef.current) {
+			U.Dom.removeEvent(window, 'scrollToMessage', scrollToMessageHandlerRef.current);
+			scrollToMessageHandlerRef.current = null;
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on(`keydown.${ns}`, e => onKeyDown(e));
-		win.on(`scrollToMessage.${ns}`, (e, { id }) => {
+		keydownHandlerRef.current = (e: any) => onKeyDown(e);
+		scrollToMessageHandlerRef.current = (e: CustomEvent) => {
+			const { id } = e.detail;
 			chatRef.current?.getChildNode()?.loadAndScrollToMessage(id);
-		});
+		};
+		U.Dom.addEvents(window, [
+			['keydown', keydownHandlerRef.current],
+			['scrollToMessage', scrollToMessageHandlerRef.current],
+		]);
 	};
 
 	const open = () => {
@@ -121,19 +127,19 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		content = <Deleted {...props} />;
 	} else {
 		content = (
-			<> 
-				<Header 
-					{...props} 
-					component="mainChat" 
-					ref={headerRef} 
-					rootId={rootId} 
+			<>
+				<Header
+					{...props}
+					component="mainChat"
+					ref={headerRef}
+					rootId={rootId}
 				/>
 
-				<div 
+				<div
 					ref={nodeRef}
 					className="wrapper"
-					onDragOver={onDragOver} 
-					onDragLeave={onDragLeave} 
+					onDragOver={onDragOver}
+					onDragLeave={onDragLeave}
 					onDrop={onDrop}
 				>
 					<div className="editorWrapper isChat">
@@ -161,6 +167,6 @@ const PageMainChat = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	return content;
 
-}));
+});
 
 export default PageMainChat;

@@ -1,9 +1,8 @@
 import React, { FC } from 'react';
 import { Menu } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const ListMenu: FC = observer(() => {
+const ListMenu: FC = () => {
 	const { list } = S.Menu;
 
 	return (
@@ -14,6 +13,6 @@ const ListMenu: FC = observer(() => {
 			<div id="menu-polygon" />
 		</div>
 	);
-});
+};
 
 export default ListMenu;

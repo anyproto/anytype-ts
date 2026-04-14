@@ -189,7 +189,32 @@ nativeTheme.on('updated', () => {
 });
 
 function createWindow () {
-	mainWindow = WindowManager.createMain({ route: Util.getRouteFromUrl(deeplinkingUrl), isChild: false });
+	const savedWindows = WindowManager.loadAllWindows();
+	const primaryRestored = savedWindows.length ? savedWindows[0] : undefined;
+
+	mainWindow = WindowManager.createMain({
+		route: Util.getRouteFromUrl(deeplinkingUrl),
+		isChild: false,
+		restoredTabs: primaryRestored,
+	});
+
+	// Restore remaining windows (if any) from saved state
+	if (savedWindows.length > 1) {
+		for (let i = 1; i < savedWindows.length; i++) {
+			const state = savedWindows[i];
+			try {
+				WindowManager.createMain({
+					isChild: true,
+					initialBounds: state.bounds,
+					restoredTabs: state,
+				});
+			} catch (e) {
+				Util.log('error', `[main] Failed to restore window ${i}: ${(e as Error).message}`);
+			};
+		};
+	};
+
+	WindowManager.clearSavedTabs();
 
 	mainWindow.on('close', (e: Electron.Event) => {
 		Util.log('info', 'closeMain: ' + (app as any).isQuiting);

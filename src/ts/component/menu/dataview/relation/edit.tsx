@@ -1,11 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { observable } from 'mobx';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
 import * as I from 'Interface';
 
-const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewRelationEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, getId, getSize, param, close } = props;
 	const { className, classNameWrap, data } = param;
@@ -51,13 +49,19 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		props.position();
 	});
 
+	const keydownHandler = useRef<(e: any) => void>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => keyHandlerRef.current(e));
+		keydownHandler.current = (e: any) => keyHandlerRef.current(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const focus = () => {
@@ -143,7 +147,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 					children: [
 						canFilter ? { id: 'filter', iconParam: { name: 'control/dataview/filter' }, name: translate('menuDataviewRelationEditAddFilter') } : null,
 						canSort ? { id: 'sort0', iconParam: { name: 'common/sortArrow' }, name: translate('menuDataviewRelationEditSortAscending'), type: I.SortType.Asc } : null,
-						canSort ? { id: 'sort1', iconParam: { name: 'common/sortArrow' }, name: translate('menuDataviewRelationEditSortDescending'), type: I.SortType.Desc } : null,
+						canSort ? { id: 'sort1', iconParam: { name: 'common/sortArrow', className: 'c1' }, name: translate('menuDataviewRelationEditSortDescending'), type: I.SortType.Desc } : null,
 						{ id: 'insert-left', iconParam: { name: 'menu/relation/insert' }, name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
 						{ id: 'insert-right', iconParam: { name: 'menu/relation/insert' }, className: 'rotated', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
 						canHide ? { id: 'hide', iconParam: { name: 'common/eye1' }, name: translate('menuDataviewRelationEditHideRelation') } : null,
@@ -335,8 +339,8 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						element: `#button-${U.Common.esc(blockId)}-filter`,
 						horizontal: I.MenuDirection.Center,
 						offsetY: 10,
-						onOpen: () => $(`#block-${U.Common.esc(blockId)} .hoverArea`).addClass('active'),
-						onClose: () => $(`#block-${U.Common.esc(blockId)} .hoverArea`).removeClass('active'),
+						onOpen: () => U.Dom.addClass(U.Dom.select(`#block-${U.Common.esc(blockId)} .hoverArea`), 'active'),
+						onClose: () => U.Dom.removeClass(U.Dom.select(`#block-${U.Common.esc(blockId)} .hoverArea`), 'active'),
 						data: {
 							...data,
 							view: observable.box(view),
@@ -682,7 +686,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			<div className="section">
 				<MenuItemVertical 
 					id="includeTime" 
-					icon="clock" 
+					iconParam={{ name: 'common/clock' }}
 					name={translate('commonIncludeTime')}
 					onMouseEnter={menuClose}
 					readonly={readonly}
@@ -762,6 +766,6 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		</form>
 	);
 
-}));
+});
 
 export default MenuDataviewRelationEdit;

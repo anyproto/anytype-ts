@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef, MouseEvent } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { Icon, DragHorizontal, DragVertical, Label } from 'Component';
 
@@ -46,18 +45,35 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	const isMuted = useRef(false);
 	const playOnSeek = useRef(false);
 
+	const audioHandlers = useRef<{ [key: string]: () => void }>({});
+
 	const rebind = () => {
 		unbind();
 
-		const node = $(audioRef.current);
+		const audio = audioRef.current;
+		if (!audio) {
+			return;
+		};
 
-		node.on('canplay timeupdate', () => onTimeUpdate());
-		node.on('play', () => onPlayHandler());
-		node.on('ended pause', () => onPauseHandler());
+		audioHandlers.current = {
+			canplay: () => onTimeUpdate(),
+			timeupdate: () => onTimeUpdate(),
+			play: () => onPlayHandler(),
+			ended: () => onPauseHandler(),
+			pause: () => onPauseHandler(),
+		};
+
+		U.Dom.addEvents(audio, Object.entries(audioHandlers.current));
 	};
 
 	const unbind = () => {
-		$(audioRef.current).off('canplay timeupdate play ended pause');
+		const audio = audioRef.current;
+		if (!audio) {
+			return;
+		};
+
+		U.Dom.removeEvents(audio, Object.entries(audioHandlers.current));
+		audioHandlers.current = {};
 	};
 
 	const resize = () => {
@@ -131,21 +147,34 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 		};
 	};
 
-	const positionDrag = () => {
-		const drag = $(volumeRef.current.getNode());
-		const icon = $(volumeIconRef.current);
-		const height = icon.outerHeight();
-		const { left, top } = icon.offset();
-		const st = $(window).scrollTop();
+	const scrollAudioHandler = useRef<(() => void) | null>(null);
 
-		drag.css({ left: left, top: top - height - 4 - 72 - st });
+	const positionDrag = () => {
+		const drag = volumeRef.current?.getNode() as HTMLElement;
+		const icon = volumeIconRef.current as HTMLElement;
+		if (!drag || !icon) {
+			return;
+		};
+
+		const height = icon.offsetHeight;
+		const rect = icon.getBoundingClientRect();
+		const left = rect.left + window.scrollX;
+		const top = rect.top + window.scrollY;
+
+		U.Dom.css(drag, {
+			left: `${left}px`,
+			top: `${top - height - 4 - 72 - window.scrollY}px`,
+		});
 	};
 
 	const onVolumeEnter = () => {
-		const drag = $(volumeRef.current.getNode());
-		const container = $(getScrollContainer?.());
+		const drag = volumeRef.current?.getNode() as HTMLElement;
+		const container = getScrollContainer?.() as HTMLElement;
+		if (!drag) {
+			return;
+		};
 
-		drag.show();
+		U.Dom.css(drag, { display: 'block' });
 		positionDrag();
 		clearTimeout(timeoutRef.current);
 
@@ -154,23 +183,31 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 		};
 
 		frameRef.current = raf(() => {
-			drag.addClass('active');
+			U.Dom.addClass(drag, 'active');
 
-			if (container.length) {
-				container.off('scroll.audio').on('scroll.audio', () => drag.hide());
+			if (container) {
+				if (scrollAudioHandler.current) {
+					U.Dom.removeEvent(container, 'scroll', scrollAudioHandler.current);
+				};
+				scrollAudioHandler.current = () => { U.Dom.css(drag, { display: 'none' }); };
+				U.Dom.addEvent(container, 'scroll', scrollAudioHandler.current);
 			};
 		});
 	};
 
 	const onVolumeLeave = () => {
-		const drag = $(volumeRef.current.getNode());
-		const container = $(getScrollContainer?.());
+		const drag = volumeRef.current?.getNode() as HTMLElement;
+		const container = getScrollContainer?.() as HTMLElement;
+		if (!drag) {
+			return;
+		};
 
-		drag.removeClass('active');
-		timeoutRef.current = window.setTimeout(() => drag.hide(), 200);
+		U.Dom.removeClass(drag, 'active');
+		timeoutRef.current = window.setTimeout(() => { U.Dom.css(drag, { display: 'none' }); }, 200);
 
-		if (container.length) {
-			container.off('scroll.audio');
+		if (container && scrollAudioHandler.current) {
+			U.Dom.removeEvent(container, 'scroll', scrollAudioHandler.current);
+			scrollAudioHandler.current = null;
 		};
 	};
 
@@ -184,7 +221,9 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 
 		const { m, s } = getTime(isPlaying.current ? audio.currentTime : audio.duration);
 
-		$(timeTextRef.current).text(`${U.String.sprintf('%02d', m)}:${U.String.sprintf('%02d', s)}`);
+		if (timeTextRef.current) {
+			timeTextRef.current.textContent = `${U.String.sprintf('%02d', m)}:${U.String.sprintf('%02d', s)}`;
+		};
 		ref.setValue(audio.currentTime / audio.duration);
 	};
 
@@ -215,9 +254,9 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 			unbind();
 			resizeObserver.disconnect();
 
-			const container = $(getScrollContainer?.());
-			if (container.length) {
-				container.off('scroll.audio');
+			const container = getScrollContainer?.() as HTMLElement;
+			if (container && scrollAudioHandler.current) {
+				U.Dom.removeEvent(container, 'scroll', scrollAudioHandler.current);
 			};
 
 			if (frameRef.current) {

@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { history as historyPopup } from 'Lib/history';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -14,6 +13,8 @@ class Keyboard {
 	source: any = null;
 	selection: any = null;
 	shortcuts: any = {};
+
+	private _handlers: { [key: string]: (e: any) => void } = {};
 	
 	isDragging = false;
 	isResizing = false;
@@ -41,30 +42,27 @@ class Keyboard {
 		this.unbind();
 		this.initShortcuts();
 		this.onResize();
-		
-		const win = $(window);
 
 		S.Common.isOnlineSet(navigator.onLine);
 
-		win.on('keydown.common', e => this.onKeyDown(e));
-		win.on('keyup.common', e => this.onKeyUp(e));
-		win.on('mousedown.common', e => this.onMouseDown(e));
-		win.on('scroll.common', () => this.onScroll());
-		win.on('mousemove.common', e => this.onMouseMove(e));
-		win.on('resize.common', () => this.onResize());
-
-		document.removeEventListener('copy', this.onCopyEvent);
-		document.addEventListener('copy', this.onCopyEvent);
-
-		win.on('online.common offline.common', () => {
+		this._handlers.keydown = (e: any) => this.onKeyDown(e);
+		this._handlers.keyup = (e: any) => this.onKeyUp(e);
+		this._handlers.mousedown = (e: any) => this.onMouseDown(e);
+		this._handlers.scroll = () => this.onScroll();
+		this._handlers.mousemove = (e: any) => this.onMouseMove(e);
+		this._handlers.resize = () => this.onResize();
+		this._handlers.online = () => {
 			S.Common.isOnlineSet(navigator.onLine);
-
 			if (!S.Membership.products.length) {
 				U.Data.getMembershipData();
 			};
-		});
-
-		win.on('focus.common', () => {
+			if (navigator.onLine) {
+				Action.processPendingMembers();
+			};
+		};
+		
+		this._handlers.offline = this._handlers.online;
+		this._handlers.focus = () => {
 			S.Common.windowIsFocusedSet(true);
 
 			// Restore editor focus when window regains focus with a from-block menu open
@@ -80,16 +78,32 @@ class Keyboard {
 			};
 
 			this.initPinCheck();
-		});
-		
-		win.on('blur.common', () => {
+		};
+
+		this._handlers.blur = () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
+
 			S.Common.windowIsFocusedSet(false);
 			S.Menu.closeAll([ 'blockContext' ]);
+			S.Common.getRef('dragProvider')?.clearStyle();
+		};
 
-			$('.dropTarget.isOver').removeClass('isOver');
-		});
+		U.Dom.addEvents(window, [
+			[ 'keydown', this._handlers.keydown ],
+			[ 'keyup', this._handlers.keyup ],
+			[ 'mousedown', this._handlers.mousedown ],
+			[ 'scroll', this._handlers.scroll ],
+			[ 'mousemove', this._handlers.mousemove ],
+			[ 'resize', this._handlers.resize ],
+			[ 'online', this._handlers.online ],
+			[ 'offline', this._handlers.offline ],
+			[ 'focus', this._handlers.focus ],
+			[ 'blur', this._handlers.blur ],
+		]);
+
+		U.Dom.removeEvent(document, 'copy', this.onCopyEvent);
+		U.Dom.addEvent(document, 'copy', this.onCopyEvent);
 
 		Renderer.remove('commandGlobal');
 		Renderer.on('commandGlobal', (e: any, cmd: string, arg: any) => this.onCommand(cmd, arg));
@@ -131,45 +145,57 @@ class Keyboard {
 			return;
 		};
 
+		// Skip if the copy originates from a Lexical editor — it handles its own clipboard
+		const target = e.target as HTMLElement;
+		if (target?.closest?.('[data-lexical-editor]')) {
+			return;
+		};
+
 		const selection = window.getSelection();
 		if (!selection || selection.isCollapsed) {
 			return;
 		};
 
 		const text = selection.toString();
-		if (!text.includes('\u200B')) {
+		const hasZws = text.includes('\u200B');
+
+		const range = selection.getRangeAt(0);
+		const div = document.createElement('div');
+		div.appendChild(range.cloneContents());
+
+		const html = div.innerHTML;
+		const hasMarkup = /markup(bold|italic|strike|underline|code)/i.test(html);
+
+		if (!hasZws && !hasMarkup) {
 			return;
 		};
 
 		e.preventDefault();
 
 		e.clipboardData.setData('text/plain', text.replace(/\u200B/g, ''));
-
-		const range = selection.getRangeAt(0);
-		const div = document.createElement('div');
-
-		div.appendChild(range.cloneContents());
-		e.clipboardData.setData('text/html', div.innerHTML.replace(/\u200B/g, ''));
+		e.clipboardData.setData('text/html', Mark.toStandardHtml(html.replace(/\u200B/g, '')));
 	};
 
 	/**
 	 * Unbinds all keyboard event listeners.
 	 */
 	unbind () {
-		const events = [
+		const events: [string, EventListenerOrEventListenerObject][] = [
 			'keyup',
 			'keydown',
 			'mousedown',
 			'scroll',
 			'mousemove',
 			'blur',
+			'focus',
 			'online',
 			'offline',
 			'resize',
-		];
+		].filter(event => this._handlers[event]).map(event => [ event, this._handlers[event] ]);
 
-		$(window).off(events.map(it => `${it}.common`).join(' '));
-		document.removeEventListener('copy', this.onCopyEvent);
+		U.Dom.removeEvents(window, events);
+		this._handlers = {};
+		U.Dom.removeEvent(document, 'copy', this.onCopyEvent);
 	};
 
 	/**
@@ -185,7 +211,7 @@ class Keyboard {
 	 */
 	onMouseDown (e: any) {
 		const { focused } = focus.state;
-		const target = $(e.target);
+		const target = e.target as HTMLElement;
 		const isPopup = this.isPopup();
 
 		// Mouse back
@@ -201,8 +227,9 @@ class Keyboard {
 		};
 
 		// Remove isFocusable from focused block
-		if (target.parents(`#block-${U.Common.esc(focused)}`).length <= 0) {
-			$(`.focusable.c${U.Common.esc(focused)}`).removeClass('isFocused');
+		if (!target.closest(`#block-${U.Common.esc(focused)}`)) {
+			const focusable = U.Dom.select(`.focusable.c${U.Common.esc(focused)}`);
+			U.Dom.removeClass(focusable, 'isFocused');
 		};
 	};
 
@@ -364,12 +391,12 @@ class Keyboard {
 
 			// Relation panel
 			this.shortcut('relation', e, () => {
-				$('#button-header-relation').trigger('click');
+				U.Dom.get('button-header-relation')?.click();
 			});
 
 			// Select type
 			this.shortcut('selectType', e, () => {
-				$('#button-create-arrow').trigger('click');
+				U.Dom.get('button-create-arrow')?.click();
 			});
 
 			// Lock the app
@@ -503,7 +530,7 @@ class Keyboard {
 					};
 
 					if (S.Common.isPinned) {
-						Renderer.send('openSpaceInTab', item.targetSpaceId, item.uxType);
+						Renderer.send('openSpaceInTab', item.targetSpaceId, item.spaceType);
 					} else
 					if (item.targetSpaceId != S.Common.space) {
 						U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
@@ -534,7 +561,7 @@ class Keyboard {
 		let horizontal = I.MenuDirection.Left;
 		let vertical = I.MenuDirection.Top;
 
-		if (!$(element).length) {
+		if (!U.Dom.select(element)) {
 			const { ww, wh } = U.Dom.getWindowDimensions();
 
 			rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
@@ -1158,16 +1185,16 @@ class Keyboard {
 	 */
 	printApply (className: string, clearTheme: boolean) {
 		const isPopup = this.isPopup();
-		const html = $('html');
-		const body = $('body');
-		html.addClass('printMedia');
+		const html = document.documentElement;
+		const body = document.body;
+		U.Dom.addClass(html, 'printMedia');
 
 		if (isPopup) {
-			html.addClass('withPopup');
+			U.Dom.addClass(html, 'withPopup');
 		};
 
 		if (className) {
-			html.addClass(className);
+			U.Dom.addClass(html, className);
 		};
 
 		if (clearTheme) {
@@ -1175,16 +1202,16 @@ class Keyboard {
 		};
 
 		// Set background color for dark mode to ensure it's captured in PDF
-		if (html.hasClass('themeDark') && !clearTheme) {
-			const bgColor = getComputedStyle(document.body).getPropertyValue('--color-bg-primary').trim();
+		if (U.Dom.hasClass(html, 'themeDark') && !clearTheme) {
+			const bgColor = getComputedStyle(body).getPropertyValue('--color-bg-primary').trim();
 			if (bgColor) {
-				html.css('background-color', bgColor);
-				body.css('background-color', bgColor);
+				U.Dom.css(html, { backgroundColor: bgColor });
+				U.Dom.css(body, { backgroundColor: bgColor });
 			};
 		};
 
 		// Convert table column widths from pixels to percentages to preserve proportions
-		$('.block.blockTable .row').each((_, row) => {
+		U.Dom.selectAll('.block.blockTable .row').forEach((row) => {
 			const style = row.style.gridTemplateColumns;
 			if (!style) {
 				return;
@@ -1207,22 +1234,22 @@ class Keyboard {
 	 * Removes print styles from the document.
 	 */
 	printRemove () {
-		const html = $('html');
-		const body = $('body');
+		const html = document.documentElement;
+		const body = document.body;
 
-		html.removeClass('withPopup printMedia print save');
-		html.css('background-color', '');
-		body.css('background-color', '');
+		U.Dom.removeClass(html, 'withPopup printMedia print save');
+		U.Dom.css(html, { backgroundColor: '' });
+		U.Dom.css(body, { backgroundColor: '' });
 
 		S.Common.setThemeClass();
 
 		// Clean up table print columns
-		$('.block.blockTable .row[data-print-columns]').each((_, row) => {
+		U.Dom.selectAll('.block.blockTable .row[data-print-columns]').forEach((row: HTMLElement) => {
 			row.style.removeProperty('--print-columns');
 			row.removeAttribute('data-print-columns');
 		});
 
-		$(window).trigger('resize');
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	/**
@@ -1301,8 +1328,7 @@ class Keyboard {
 		};
 
 		const menuId = isChat ? 'searchChat' : 'searchText';
-		const el = U.Dom.getScrollContainer(isPopup)?.querySelector('#header .side.center');
-		const element = el ? $(el) : null;
+		const element = U.Dom.getScrollContainer(isPopup) ? U.Dom.select('#header .side.center', U.Dom.getScrollContainer(isPopup)) : null;
 		const menuParam: Partial<I.MenuParam> = {
 			element,
 			horizontal: I.MenuDirection.Center,
@@ -1325,7 +1351,7 @@ class Keyboard {
 				chatId,
 				route,
 				scrollToMessage: (id: string) => {
-					$(window).trigger('scrollToMessage', { id });
+					U.Dom.eventDispatch(window, 'scrollToMessage', { id });
 				},
 			});
 		} else {
@@ -1725,11 +1751,7 @@ class Keyboard {
 		const { account } = S.Auth;
 		const { pin, windowIsFocused } = S.Common;
 
-		if (!account || !pin) {
-			return;
-		};
-
-		if (!windowIsFocused) {
+		if (!account || !pin || !windowIsFocused) {
 			return;
 		};
 
@@ -2025,7 +2047,7 @@ class Keyboard {
 	 * @returns {string[]} The keys.
 	 */
 	getKeys (id: string) {
-		return this.shortcuts[id].keys || [];
+		return this.shortcuts[id]?.keys || [];
 	};
 
 	/**
@@ -2118,7 +2140,7 @@ class Keyboard {
 			U.String.toCamelCase([ prefix, page, action, id ].join('-')),
 			U.String.toCamelCase([ prefix, page, action ].join('-')),
 			U.Dom.getContainerClassName(isPopup),
-			U.Data.spaceClass(spaceview.uxType),
+			U.Data.spaceClass(spaceview.spaceType),
 		].join(' ');
 	};
 
@@ -2157,7 +2179,7 @@ class Keyboard {
 			cn.push('noMenuBar');
 		};
 
-		$('html').attr({ class: cn.join(' ') });
+		document.documentElement.className = cn.join(' ');
 	};
 
 };

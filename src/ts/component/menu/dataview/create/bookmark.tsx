@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Input, Button, Loader, Icon, Error, Switch, Label } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
+
 
 const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -20,13 +20,19 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		cn.push('withPreview');
 	};
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => {});
+		keydownHandler.current = (e: any) => {};
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onSubmit = (e: any) => {

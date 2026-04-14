@@ -1,12 +1,11 @@
 import React, { FC, useRef, useState, useEffect } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { Icon, Input, Button } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
 interface Props {
-	icon?: string;
+	iconParam?: I.IconParam;
 	textUrl?: string;
 	textFile?: string;
 	withFile?: boolean;
@@ -26,7 +25,7 @@ const Sizes = {
 };
 
 const InputWithFile: FC<Props> = ({
-	icon = '',
+	iconParam,
 	textUrl = translate('inputWithFileTextUrl'),
 	textFile = '',
 	withFile = true,
@@ -83,12 +82,11 @@ const InputWithFile: FC<Props> = ({
 		};
 
 		raf(() => {
-			const node = $(nodeRef.current);
-			if (!node.length) {
+			if (!nodeRef.current) {
 				return;
 			};
 
-			const rect = U.Dom.getElementRect(node.get(0));
+			const rect = U.Dom.getElementRect(nodeRef.current);
 
 			let s = Size.Icon;
 			if (rect.width >= Sizes[Size.Small]) {
@@ -198,7 +196,7 @@ const InputWithFile: FC<Props> = ({
 			className={cn.join(' ')}
 			onClick={onClick}
 		>
-			{icon ? <Icon name={icon.includes('/') ? icon : `menu/block/${icon == 'bookmark' ? 'common' : 'media'}/${icon}`} /> : ''}
+			{iconParam ? <Icon {...iconParam} /> : ''}
 		
 			<div className="inputWithFile-inner">
 				<form className="form" onSubmit={onSubmit}>

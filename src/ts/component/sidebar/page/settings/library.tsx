@@ -1,17 +1,15 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Button, Filter, Icon, IconObject, ObjectName, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
-import $ from 'jquery';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
 const HEIGHT_SECTION = 38;
 const HEIGHT_SECTION_FIRST = 34;
 
-const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageSettingsLibrary = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { page, isPopup } = props;
 	const [ searchIds, setSearchIds ] = useState<string[]>(null);
@@ -79,7 +77,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 				{ 
 					relationKey: 'uniqueKey', 
 					type: I.SortType.Custom, 
-					customOrder: U.Data.typeSortKeys(spaceview.isChat || spaceview.isOneToOne),
+					customOrder: U.Data.typeSortKeys(spaceview.isOneToOne),
 				},
 				{ relationKey: 'name', type: I.SortType.Asc },
 			]);
@@ -278,8 +276,8 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 			return;
 		};
 
-		U.Dom.removeClass(body.querySelector('.item.active'), 'active');
-		U.Dom.addClass(body.querySelector(`#item-${U.Common.esc(id)}`), 'active');
+		U.Dom.removeClass(U.Dom.select('.item.active', body), 'active');
+		U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(id)}`, body), 'active');
 	};
 
 	const onContext = (item: any) => {
@@ -334,8 +332,8 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 			};
 
 			case I.ObjectContainerType.Relation: {
-				const node = $('.containerSettings');
-				const width = node.width() - 32;
+				const node = U.Dom.select('.containerSettings');
+				const width = U.Dom.contentWidth(node) - 32;
 
 				S.Menu.open('blockRelationEdit', {
 					element: `.containerSettings #button-object-create`,
@@ -476,7 +474,7 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		<>
 			<div id="head" className="head">
 				<div className="side left">
-					<Icon name="common/back" withBackground={true} onClick={onBack} />
+					<Icon name="common/back" className="back" withBackground={true} onClick={onBack} />
 				</div>
 				<div className="side center">
 					<Label text={title} />
@@ -536,6 +534,6 @@ const SidebarPageSettingsLibrary = observer(forwardRef<{}, I.SidebarPageComponen
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageSettingsLibrary;

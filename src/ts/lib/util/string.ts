@@ -160,7 +160,7 @@ class UtilString {
 			return '';
 		};
 
-		return String(str || '').replace(/[_-\s]([a-zA-Z])/g, (_, char) => char.toUpperCase()).replace(/^[A-Z]/, char => char.toLowerCase());
+		return String(str || '').replace(/[_-\s\\/]([a-zA-Z])/g, (_, char) => char.toUpperCase()).replace(/^[A-Z]/, char => char.toLowerCase());
 	};
 
 	/**

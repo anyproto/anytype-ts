@@ -54,31 +54,127 @@ const filtered = entries.filter(e => e.methodName !== 'ListenSessionEvents');
 // Sort alphabetically
 filtered.sort((a, b) => a.methodName.localeCompare(b.methodName));
 
-// Read existing service.ts
-const existing = fs.readFileSync(SERVICE_TS, 'utf8');
-
-// Find the registry block and replace it
-const registryStart = existing.indexOf('const registry: Record<string, RegistryEntry> = {');
-const registryEnd = existing.indexOf('};', registryStart) + 2;
-
-if (registryStart === -1) {
-	console.error('Error: could not find registry block in service.ts');
-	process.exit(1);
-}
-
 const registryLines = filtered.map(e =>
 	`\t${e.methodName}: { req: Commands.${e.reqType}, res: Commands.${e.resType} },`
 );
 
-const newRegistry = `const registry: Record<string, RegistryEntry> = {\n${registryLines.join('\n')}\n};`;
+const fileContent = `/**
+ * Custom gRPC-web service client using ts-proto MessageFns for serialization.
+ * Replaces the generated service_grpc_web_pb.js which depends on old CJS protobuf files.
+ *
+ * Auto-generated registry: ${filtered.length} unary methods.
+ */
 
-const updated = existing.substring(0, registryStart) + newRegistry + existing.substring(registryEnd);
+import { GrpcWebClientBase, MethodDescriptor, MethodType } from 'grpc-web';
+import type { ClientReadableStream } from 'grpc-web';
+import type { MessageFns } from 'Proto/google/protobuf/struct';
+import * as Commands from 'Proto/pb/protos/commands';
+import * as Events from 'Proto/pb/protos/events';
 
-// Update the comment with method count
-const finalContent = updated.replace(
-	/Auto-generated registry: \d+ unary methods/,
-	`Auto-generated registry: ${filtered.length} unary methods`
-);
+interface RegistryEntry {
+\treq: MessageFns<any>;
+\tres: MessageFns<any>;
+}
 
-fs.writeFileSync(SERVICE_TS, finalContent);
-console.log(`Generated registry with ${filtered.length} methods`);
+const registry: Record<string, RegistryEntry> = {
+${registryLines.join('\n')}
+};
+
+export class ServiceClient {
+
+\tprivate client: GrpcWebClientBase;
+\tprivate hostname: string;
+\tprivate descriptorCache = new Map<string, MethodDescriptor<any, any>>();
+
+\tconstructor (hostname: string, credentials: any, options: any) {
+\t\tthis.hostname = hostname;
+\t\tthis.client = new GrpcWebClientBase(options);
+\t};
+
+\tgetDescriptor (commandName: string): MethodDescriptor<any, any> | null {
+\t\tlet descriptor = this.descriptorCache.get(commandName);
+\t\tif (descriptor) {
+\t\t\treturn descriptor;
+\t\t};
+
+\t\tconst entry = registry[commandName];
+\t\tif (!entry) {
+\t\t\treturn null;
+\t\t};
+
+\t\tdescriptor = new MethodDescriptor(
+\t\t\t\`/anytype.ClientCommands/\${commandName}\`,
+\t\t\tMethodType.UNARY,
+\t\t\tObject as any,
+\t\t\tObject as any,
+\t\t\t(request: any) => entry.req.encode(entry.req.fromPartial(request)).finish(),
+\t\t\t(bytes: Uint8Array) => {
+\t\t\t\tconst res = entry.res.decode(bytes);
+\t\t\t\tif (!res.toObject) {
+\t\t\t\t\tres.toObject = function () { return this; };
+\t\t\t\t};
+\t\t\t\treturn res;
+\t\t\t},
+\t\t);
+
+\t\tthis.descriptorCache.set(commandName, descriptor);
+\t\treturn descriptor;
+\t};
+
+\trequest (commandName: string, data: any, metadata: any, callback: (error: any, response: any) => void) {
+\t\tconst descriptor = this.getDescriptor(commandName);
+
+\t\tif (!descriptor) {
+\t\t\tconsole.error('[ServiceClient] Unknown command:', commandName);
+\t\t\tcallback({ code: 1, message: 'Unknown command: ' + commandName }, null);
+\t\t\treturn;
+\t\t};
+
+\t\t// gRPC DevTools interceptor calls getRequestMessage().toObject()
+\t\tif (!data.toObject) {
+\t\t\tdata.toObject = function () { return this; };
+\t\t};
+
+\t\treturn this.client.rpcCall(
+\t\t\tthis.hostname + \`/anytype.ClientCommands/\${commandName}\`,
+\t\t\tdata,
+\t\t\tmetadata,
+\t\t\tdescriptor,
+\t\t\tcallback,
+\t\t);
+\t};
+
+\tlistenSessionEvents (request: Commands.StreamRequest, metadata: any): ClientReadableStream<Events.Event> {
+\t\tconst descriptor = new MethodDescriptor(
+\t\t\t'/anytype.ClientCommands/ListenSessionEvents',
+\t\t\tMethodType.SERVER_STREAMING,
+\t\t\tObject as any,
+\t\t\tObject as any,
+\t\t\t(req: any) => Commands.StreamRequest.encode(Commands.StreamRequest.fromPartial(req)).finish(),
+\t\t\t(bytes: Uint8Array) => {
+\t\t\t\tconst res = Events.Event.decode(bytes) as any;
+\t\t\t\tif (!res.toObject) {
+\t\t\t\t\tres.toObject = function () { return this; };
+\t\t\t\t};
+\t\t\t\treturn res;
+\t\t\t},
+\t\t);
+
+\t\t// gRPC DevTools interceptor calls getRequestMessage().toObject()
+\t\tif (!(request as any).toObject) {
+\t\t\t(request as any).toObject = function () { return this; };
+\t\t};
+
+\t\treturn this.client.serverStreaming(
+\t\t\tthis.hostname + '/anytype.ClientCommands/ListenSessionEvents',
+\t\t\trequest,
+\t\t\tmetadata || {},
+\t\t\tdescriptor,
+\t\t) as ClientReadableStream<Events.Event>;
+\t};
+
+};
+`;
+
+fs.writeFileSync(SERVICE_TS, fileContent);
+console.log(`Generated service.ts with ${filtered.length} methods`);

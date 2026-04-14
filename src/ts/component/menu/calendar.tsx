@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
 import { CalendarSelect } from 'Component';
 import { CalendarSelectRefProps, CalendarDay } from 'Component/util/menu/calendarSelect';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 
-const MenuCalendar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuCalendar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, position, getId, close } = props;
 	const { data, className, classNameWrap } = param;
@@ -71,6 +70,6 @@ const MenuCalendar = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		/>
 	);
 
-}));
+});
 
 export default MenuCalendar;

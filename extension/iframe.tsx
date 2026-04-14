@@ -1,6 +1,5 @@
 import { FC, useEffect } from 'react';
 import * as hs from 'history';
-import $ from 'jquery';
 import { Router, Route, Switch } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { Provider } from 'mobx-react';
@@ -52,8 +51,6 @@ const Iframe: FC = () => {
 		U.Router.init(history);
 		U.Smile.init();
 
-		const win = $(window);
-
 		/* @ts-ignore */
 		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 			switch (msg.type) {
@@ -79,13 +76,15 @@ const Iframe: FC = () => {
 			return true;
 		});
 
-		win.off('beforeunload').on('beforeunload', (e: any) => {
+		const onBeforeUnload = () => {
 			if (!S.Auth.token) {
 				return;
 			};
 
 			U.Data.destroySubscriptions(() => U.Data.closeSession());
-		});
+		};
+
+		window.addEventListener('beforeunload', onBeforeUnload);
 	}, []);
 
 	return (

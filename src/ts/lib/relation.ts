@@ -360,7 +360,7 @@ class Relation {
 		return ret;
 	};
 
-	public getFilterTemplateOption (id: string): { id: string, name: string, icon: string, templateType: I.FilterValueTemplate } {
+	public getFilterTemplateOption (id: string): { id: string, name: string, iconParam: I.IconParam, templateType: I.FilterValueTemplate } {
 		return this.getFilterTemplateOptions().find(it => it.id == id);
 	};
 
@@ -491,7 +491,6 @@ class Relation {
 		if ([ I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(condition)) {
 			return true;
 		};
-
 
 		const relation = S.Record.getRelationByKey(relationKey);
 		if (!relation) {
@@ -664,17 +663,9 @@ class Relation {
 		}));
 
 		const ret: any[] = [
-			{ id: 'none', icon: '', name: translate('commonNone') },
-			{ id: J.Relation.pageCover, icon: 'image', name: translate('libRelationPageCover') },
+			{ id: 'none', name: translate('commonNone') },
+			{ id: J.Relation.pageCover, iconParam: { name: 'common/image' }, name: translate('libRelationPageCover') },
 		];
-
-		if (!options.find(it => it.id == 'picture')) {
-			ret.push({
-				id: 'picture',
-				object: { relationFormat: I.RelationType.File, layout: I.ObjectLayout.Relation },
-				name: translate('libRelationPicture'),
-			});
-		};
 
 		return ret.concat(options);
 	};

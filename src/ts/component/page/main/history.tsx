@@ -1,6 +1,4 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Loader } from 'Component';
 import HistoryLeft from './history/left';
 import HistoryRight from './history/right';
@@ -9,7 +7,7 @@ import * as Diff from 'diff';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainHistory = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [isLoading, setLoading] = useState(false);
 	const { isPopup } = props;
@@ -21,17 +19,19 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const leftRef = useRef(null);
 	const rightRef = useRef(null);
 
-	const unbind = () => {
-		const events = ['keydown'];
+	const keydownHandler = useRef<((e: any) => void) | null>(null);
 
-		$(window).off(events.map(it => `${it}.history${ns}`).join(' '));
+	const unbind = () => {
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on(`keydown.history${ns}`, e => onKeyDown(e));
+		keydownHandler.current = e => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const onKeyDown = (e: any) => {
@@ -51,7 +51,10 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	const renderDiff = (previousId: string, diff: any[]) => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
 		// Remove all diff classes
 		for (const i in I.DiffType) {
@@ -60,7 +63,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			};
 
 			const c = `diff${I.DiffType[i]}`;
-			node.find(`.${c}`).removeClass(c);
+			U.Dom.selectAll(`.${c}`, node).forEach(el => U.Dom.removeClass(el, c));
 		};
 
 		let elements = [];
@@ -69,34 +72,33 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			elements = elements.concat(getElements(previousId, it));
 		});
 
-		elements = elements.map(it => ({ ...it, element: $(it.element) })).filter(it => it.element.length);
+		const resolved = elements.map(it => ({ ...it, element: U.Dom.select(it.element, node) })).filter(it => it.element);
 
-		if (elements.length) {
-			elements.forEach(it => {
-				it.element.addClass(U.Data.diffClass(it.type));
+		if (resolved.length) {
+			resolved.forEach(it => {
+				U.Dom.addClass(it.element, U.Data.diffClass(it.type));
 			});
 
-			scrollToElement(elements[0].element);
+			scrollToElement(resolved[0].element);
 		};
 	};
 
-	const scrollToElement = (element: any) => {
-		if (!element || !element.length) {
+	const scrollToElement = (element: HTMLElement) => {
+		if (!element) {
 			return;
 		};
 
-		const container = $(leftRef.current?.getNode());
-
-		if (!container || !container.length) {
+		const container = leftRef.current?.getNode() as HTMLElement;
+		if (!container) {
 			return;
 		};
 
-		const ch = container.height();
-		const no = element.offset().top;
-		const st = container.scrollTop();
-		const y = no - container.offset().top + st + ch / 2;
+		const ch = container.clientHeight;
+		const no = element.getBoundingClientRect().top;
+		const st = container.scrollTop;
+		const y = no - container.getBoundingClientRect().top + st + ch / 2;
 
-		container.scrollTop(Math.max(y, ch) - ch);
+		container.scrollTop = Math.max(y, ch) - ch;
 	};
 
 	const getElements = (previousId: string, event: any) => {
@@ -210,8 +212,8 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 			case 'BlockDataviewIsCollectionSet':
 			case 'BlockDataviewTargetObjectIdSet':
-			case 'BlockDataviewGroupOrderUpdate':
-			case 'BlockDataviewObjectOrderUpdate': {
+			case 'BlockDataViewGroupOrderUpdate':
+			case 'BlockDataViewObjectOrderUpdate': {
 				break;
 			};
 
@@ -317,38 +319,37 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		const node = nodeRef.current;
 		const sideLeft = leftRef.current?.getNode() as HTMLElement;
 		const sideRight = rightRef.current?.getNode() as HTMLElement;
-		const editorWrapper = node?.querySelector('#editorWrapper') as HTMLElement;
-		const cover = node?.querySelector('.block.blockCover') as HTMLElement;
+		const editorWrapper = U.Dom.select('#editorWrapper', node) as HTMLElement;
+		const cover = U.Dom.select('.block.blockCover', node) as HTMLElement;
 		const container = U.Dom.getPageContainer(isPopup);
 		const sc = U.Dom.getScrollContainer(isPopup);
-		const header = container?.querySelector('#header') as HTMLElement;
+		const header = U.Dom.select('#header', container) as HTMLElement;
 		const height = sc?.clientHeight || 0;
 		const hh = header?.clientHeight || 0;
 
 		if (sideRight) {
-			sideRight.style.height = `${height}px`;
+			U.Dom.css(sideRight, { height: `${height}px` });
 		};
 
 		if (cover) {
-			cover.style.top = `${hh}px`;
+			U.Dom.css(cover, { top: `${hh}px` });
 		};
 
 		if (isPopup) {
-			const popupEl = document.querySelector('.pageMainHistory.isPopup') as HTMLElement;
+			const popupEl = U.Dom.select('.pageMainHistory.isPopup');
 			if (popupEl) {
-				popupEl.style.height = `${height}px`;
+				U.Dom.css(popupEl, { height: `${height}px` });
 			};
 			if (sideLeft) {
-				sideLeft.style.height = `${height}px`;
-				sideLeft.style.paddingTop = `${hh}px`;
+				U.Dom.css(sideLeft, { height: `${height}px`, paddingTop: `${hh}px` });
 			};
 		} else
 		if (sideLeft) {
-			sideLeft.style.height = `${height}px`;
+			U.Dom.css(sideLeft, { height: `${height}px` });
 		};
 
 		if (editorWrapper) {
-			editorWrapper.style.width = !isSetOrCollection() ? `${getWrapperWidth()}px` : '';
+			U.Dom.css(editorWrapper, { width: !isSetOrCollection() ? `${getWrapperWidth()}px` : '' });
 		};
 	};
 
@@ -387,7 +388,7 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			leftRef.current.getHeadRef()?.forceUpdate();
 		};
 
-		$(window).trigger('updateDataviewData');
+		U.Dom.eventDispatch(window, 'updateDataviewData');
 	};
 
 	useEffect(() => {
@@ -404,7 +405,6 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	useEffect(() => {
 		resize();
-		rebind();
 	});
 
 	useImperativeHandle(ref, () => ({
@@ -436,6 +436,6 @@ const PageMainHistory = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default PageMainHistory;

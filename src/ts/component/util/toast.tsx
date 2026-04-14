@@ -1,14 +1,12 @@
 import React, { FC, useRef, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
-import $ from 'jquery';
 import raf from 'raf';
 import { Button, IconObject, ObjectName, Icon } from 'Component';
 import * as I from 'Interface';
 
-const Toast: FC = observer(() => {
+const Toast: FC = () => {
 	const nodeRef = useRef(null);
 	const { toast } = S.Common;
-	const { count, action, text, value, object, target, origin, ids, icon, uploadCounts } = toast || {};
+	const { count, action, text, value, object, target, origin, ids, autoArchivedIds, autoRestoredIds, icon, uploadCounts } = toast || {};
 
 	let buttons = [];
 	let textObject = null;
@@ -85,9 +83,10 @@ const Toast: FC = observer(() => {
 		case I.ToastAction.StorageFull: {
 			textAction = translate('toastUploadLimitExceeded');
 
-			buttons = buttons.concat([ 
+			buttons = buttons.concat([
 				{ action: 'manageStorage', label: translate('toastManageFiles') }
 			]);
+			break;
 		};
 
 		case I.ToastAction.TemplateCreate: {
@@ -108,6 +107,11 @@ const Toast: FC = observer(() => {
 			const cnt = U.String.sprintf(translate('commonCountObjects'), ids.length, U.Common.plural(ids.length, translate('pluralObject')));
 			textAction = U.String.sprintf(translate('toastMovedToBin'), cnt);
 
+			if (autoArchivedIds?.length) {
+				const autoCnt = U.String.sprintf(translate('commonCountObjects'), autoArchivedIds.length, U.Common.plural(autoArchivedIds.length, translate('pluralObject')));
+				textAction += '<br>' + U.String.sprintf(translate('toastAutoArchivedToBin'), autoCnt);
+			};
+
 			buttons = buttons.concat([
 				{ action: 'undoArchive', label: translate('commonUndo'), data: ids }
 			]);
@@ -121,6 +125,11 @@ const Toast: FC = observer(() => {
 
 			const cnt = U.String.sprintf(translate('commonCountObjects'), ids.length, U.Common.plural(ids.length, translate('pluralObject')));
 			textAction = U.String.sprintf(translate('toastMovedFromBin'), cnt);
+
+			if (autoRestoredIds?.length) {
+				const autoCnt = U.String.sprintf(translate('commonCountObjects'), autoRestoredIds.length, U.Common.plural(autoRestoredIds.length, translate('pluralObject')));
+				textAction += '<br>' + U.String.sprintf(translate('toastAutoRestoredFromBin'), autoCnt);
+			};
 
 			buttons = buttons.concat([
 				{ action: 'undoRestore', label: translate('commonUndo'), data: ids }
@@ -137,6 +146,30 @@ const Toast: FC = observer(() => {
 			if (breakdown) {
 				textAction = U.String.sprintf(translate('toastUploaded'), breakdown);
 			};
+			break;
+		};
+
+		case I.ToastAction.AutoArchive: {
+			if (!ids) {
+				break;
+			};
+
+			const cnt = U.String.sprintf(translate('commonCountObjects'), ids.length, U.Common.plural(ids.length, translate('pluralObject')));
+			textAction = U.String.sprintf(translate('toastAutoArchivedToBin'), cnt);
+
+			buttons = buttons.concat([
+				{ action: 'openBin', label: translate('commonBin') }
+			]);
+			break;
+		};
+
+		case I.ToastAction.AutoRestore: {
+			if (!ids) {
+				break;
+			};
+
+			const cnt = U.String.sprintf(translate('commonCountObjects'), ids.length, U.Common.plural(ids.length, translate('pluralObject')));
+			textAction = U.String.sprintf(translate('toastAutoRestoredFromBin'), cnt);
 			break;
 		};
 	};
@@ -172,6 +205,12 @@ const Toast: FC = observer(() => {
 			case 'manageStorage': {
 				Action.openSettings('storageManager', analytics.route.toast);
 				S.Common.toastClear();
+				break;
+			};
+
+			case 'openBin': {
+				U.Object.openRoute({ layout: I.ObjectLayout.Archive });
+				break;
 			};
 		};
 
@@ -179,18 +218,60 @@ const Toast: FC = observer(() => {
 	};
 
 	useEffect(() => {
-		const node = $(nodeRef.current);
-		const { ww } = U.Dom.getWindowDimensions();
-		const y = 32;
-		const sw = sidebar.getDummyWidth();
-		const x = (ww - sw) / 2 - node.outerWidth() / 2 + sw;
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.show().css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });
+		U.Dom.css(node, {
+			display: 'block',
+			opacity: '0',
+			transform: 'scale3d(0.7,0.7,1)',
+		});
+
+		const isPopup = keyboard.isPopup();
+		const container = U.Dom.getScrollContainer(isPopup);
+
+		if (!container) {
+			return;
+		};
+
+		const rect = container.getBoundingClientRect();
+		const y = rect.top + 32;
+		let x = 0;
+
+		if (isPopup) {
+			x = rect.left + rect.width / 2 - node.offsetWidth / 2;
+		} else {
+			const { ww } = U.Dom.getWindowDimensions();
+			const sw = sidebar.getDummyWidth();
+			x = (ww - sw) / 2 - node.offsetWidth / 2 + sw;
+		};
 
 		raf(() => {
-			node.css({ left: x, top: y, opacity: 1, transform: 'scale3d(1,1,1)' });
+			U.Dom.css(node, {
+				left: `${x}px`,
+				top: `${y}px`,
+				opacity: '1',
+				transform: 'scale3d(1,1,1)',
+			});
 		});
-	});
+
+		const onEnter = () => Preview.toastPauseHide();
+		const onLeave = () => Preview.toastResumeHide();
+
+		U.Dom.addEvents(node, [
+			['mouseenter', onEnter],
+			['mouseleave', onLeave],
+		]);
+
+		return () => {
+			U.Dom.removeEvents(node, [
+				['mouseenter', onEnter],
+				['mouseleave', onLeave],
+			]);
+		};
+	}, [ toast ]);
 
 	return toast ? (
 		<div ref={nodeRef} id="toast" className="toast" onClick={onCloseHandler}>
@@ -217,6 +298,6 @@ const Toast: FC = observer(() => {
 		</div>
 	) : null;
 
-});
+};
 
 export default Toast;

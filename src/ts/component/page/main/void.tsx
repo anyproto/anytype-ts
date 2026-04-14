@@ -1,10 +1,9 @@
 import React, { forwardRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Frame } from 'Component';
 import * as I from 'Interface';
 
-const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainVoid = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const spaces = U.Menu.getVaultItems().filter(it => it.isLocalOk);
@@ -98,6 +97,6 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default PageMainVoid;

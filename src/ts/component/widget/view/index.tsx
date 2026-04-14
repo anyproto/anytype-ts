@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Select, Label, Filter, Button } from 'Component';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel, Navigation } from 'swiper/modules';
@@ -23,7 +22,7 @@ interface WidgetViewRefProps {
 	getFilter: () => string;
 };
 
-const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
+const WidgetView = forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
 	const { 
 		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getRootId, getLimit, checkShowAllButton, onCreate,
@@ -157,7 +156,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			return [];
 		};
 
-		const sorts: I.Sort[] = U.Common.objectCopy(view.sorts || []);
+		const sorts: I.Sort[] = U.Common.objectCopy(Dataview.getFilteredSorts(view.sorts));
 
 		if (!sorts.length) {
 			sorts.push({ relationKey: 'createdDate', type: I.SortType.Desc, includeTime: true });
@@ -425,7 +424,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	}, [ searchIds ]);
 
 	useEffect(() => {
-		U.Dom.toggleClass(U.Dom.get(`widget-${U.Common.esc(parent.id)}`), 'isEmpty', isEmpty);
+		U.Dom.toggleClass(U.Dom.get(`widget-${parent.id}`), 'isEmpty', isEmpty);
 		checkShowAllButton(subId);
 	});
 
@@ -460,6 +459,6 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 		</div>
 	);
 
-}));
+});
 
 export default WidgetView;

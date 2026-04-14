@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Button, Input, Loader, Icon } from 'Component';
 import * as I from 'Interface';
 
-const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupMembershipFinalization = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -111,6 +110,6 @@ const PopupMembershipFinalization = observer(forwardRef<{}, I.Popup>((props, ref
 		</form>
 	);
 
-}));
+});
 
 export default PopupMembershipFinalization;

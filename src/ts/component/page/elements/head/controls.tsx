@@ -1,6 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Loader } from 'Component';
 import ControlButtons from './controlButtons';
 import * as I from 'Interface';
@@ -16,7 +14,7 @@ interface RefProps {
 	forceUpdate: () => void;
 };
 
-const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
+const Controls = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { rootId, readonly, isPopup, resize, onLayoutSelect } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -31,7 +29,7 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onIcon = (e: any) => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const object = S.Detail.get(rootId, rootId, []);
 		const cb = () => S.Menu.update('smile', { element: `#block-icon-${rootId}` });
 		const isType = U.Object.isTypeLayout(object.layout);
@@ -40,10 +38,10 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Menu.open('smile', {
 			classNameWrap: 'fromBlock',
-			element: node.find('#button-icon'),
+			element: U.Dom.select('#button-icon', node),
 			horizontal: I.MenuDirection.Center,
-			onOpen: () => node.addClass('hover'),
-			onClose: () => node.removeClass('hover'),
+			onOpen: () => U.Dom.addClass(node, 'hover'),
+			onClose: () => U.Dom.removeClass(node, 'hover'),
 			data: {
 				noUpload: isType,
 				noGallery: isType,
@@ -65,11 +63,11 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 	
 	const onCoverOpen = () => {
-		$(nodeRef.current).addClass('hover');
+		U.Dom.addClass(nodeRef.current, 'hover');
 	};
 
 	const onCoverClose = () => {
-		$(nodeRef.current).removeClass('hover');
+		U.Dom.removeClass(nodeRef.current, 'hover');
 	};
 
 	const onCoverSelect = (item: any) => {
@@ -77,13 +75,13 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onLayout = () => {
-		const node = $(nodeRef.current);
-		
-		S.Menu.open('blockLayout', { 
+		const node = nodeRef.current;
+
+		S.Menu.open('blockLayout', {
 			classNameWrap: 'fromBlock',
 			element: '.editorControls #button-layout',
-			onOpen: () => node.addClass('hover'),
-			onClose: () => node.removeClass('hover'),
+			onOpen: () => U.Dom.addClass(node, 'hover'),
+			onClose: () => U.Dom.removeClass(node, 'hover'),
 			subIds: J.Menu.layout,
 			data: {
 				rootId,
@@ -95,13 +93,13 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const onDragOver = (e: any) => {
 		if (U.File.checkDropFiles(e)) {
-			$(nodeRef.current).addClass('isDraggingOver');
+			U.Dom.addClass(nodeRef.current, 'isDraggingOver');
 		};
 	};
-	
+
 	const onDragLeave = (e: any) => {
 		if (U.File.checkDropFiles(e)) {
-			$(nodeRef.current).removeClass('isDraggingOver');
+			U.Dom.removeClass(nodeRef.current, 'isDraggingOver');
 		};
 	};
 	
@@ -112,9 +110,8 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 		
 		const electron = U.Common.getElectron();
 		const file = electron.webFilePath(e.dataTransfer.files[0]);
-		const node = $(nodeRef.current);
-		
-		node.removeClass('isDraggingOver');
+
+		U.Dom.removeClass(nodeRef.current, 'isDraggingOver');
 		keyboard.disableCommonDrop(true);
 		setIsLoading(true);
 		
@@ -175,6 +172,6 @@ const Controls = observer(forwardRef<RefProps, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Controls;

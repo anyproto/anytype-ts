@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuBlockMention { width: var(--menu-width-set); }
 	.menu.menuBlockMention {
-		.content { transition: none; padding: 0px; }
+		.content { padding: 0px; }
 		.items { height: 100%; }
 		.item {
 			.name { @include text-overflow-nw; width: 100%; }

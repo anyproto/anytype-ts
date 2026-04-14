@@ -1,10 +1,8 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
-const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuChatText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
@@ -25,11 +23,10 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const { from, to } = range;
 		const mark = Mark.getInRange(marks, type, { from, to });
 		const rect = U.Dom.getSelectionRect();
-		const win = $(window);
 
 		const menuParam: any = {
 			element: `#button-${U.Common.esc(blockId)}-${type}`,
-			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+			rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
 			className: 'fixed',
 			classNameWrap: 'fromBlock',
 			offsetY: -4,
@@ -102,6 +99,6 @@ const MenuChatText = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			})}
 		</div>
 	);
-}));
+});
 
 export default MenuChatText;

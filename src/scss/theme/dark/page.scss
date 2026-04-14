@@ -88,6 +88,11 @@
 	}
 
 
+	.pageSettingsSpaceHome {
+		.homeOptions .option {
+			.icon.preview { background-color: #fff; }
+		}
+	}
 
 	.pageSettingsSpaceNotifications {
         .section { display: flex; flex-direction: column; gap: 8px 0px; }

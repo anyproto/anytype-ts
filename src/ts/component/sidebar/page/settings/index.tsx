@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
@@ -11,7 +10,7 @@ const HEIGHT_SECTION_FIRST = 28;
 const HEIGHT_ACCOUNT = 56;
 const HEIGHT_DIV = 12;
 
-const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { page } = props;
 	const { data } = S.Membership;
@@ -43,7 +42,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		const map = U.Menu.settingsSectionsMap();
 		const { notSyncedCounter } = S.Auth.getSyncStatus();
 		const importExport = [
-			{ id: 'exportIndex', iconParam: { name: 'menu/action/export' }, subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
+			{ id: 'exportIndex', iconParam: { name: 'menu/action/download' }, subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
 		];
 
 		if (canWrite) {
@@ -53,17 +52,17 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		const isOwner = U.Space.isMyOwner();
 		const leaveOrRemove = !spaceview.isPersonal ? {
 			id: 'remove',
-			iconParam: isOwner ? { name: 'menu/action/remove' } : { name: 'menu/action/leave' },
+			iconParam: isOwner ? { name: 'menu/action/remove', color: 'destructive' } : { name: 'menu/action/leave', color: 'destructive' },
 			name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'),
-			color: 'red',
+			color: 'destructive',
 		} : null;
 
 		return [
 			{
 				id: 'common', name: translate('commonPreferences'), children: [
-					{ id: 'spaceIndex', icon: 'space' },
+					{ id: 'spaceIndex', iconParam: { name: 'settings/space/space' } },
 					spaceview.isPersonal ? null : { id: 'spaceShare', iconParam: { name: 'menu/action/members' } },
-					(spaceview.isOneToOne || spaceview.isChat) ? null : { id: 'spaceNotifications', iconParam: { name: 'menu/action/notification' } },
+					spaceview.isOneToOne ? null : { id: 'spaceNotifications', iconParam: { name: 'settings/pushOn' } },
 					{ id: 'spaceStorage', iconParam: { name: 'settings/storage' }, alert: notSyncedCounter },
 					{ id: 'archive', iconParam: { name: 'common/bin' } },
 				],
@@ -242,7 +241,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 				cn.push('itemAccount');
 			} else {
 				if (item.iconParam) {
-					icon = <Icon {...item.iconParam} color={item.color} className={`settings-${item.icon || item.id}`} />;
+					icon = <Icon {...item.iconParam} className={`settings-${item.icon || item.id}`} />;
 				} else {
 					const iconKey = item.icon || item.id;
 					const iconNameMap = {
@@ -304,7 +303,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		<>
 			<div className="head">
 				<div className="side left">
-					<Icon name="common/back" withBackground={true} onClick={onBack} />
+					<Icon name="common/back" className="back" withBackground={true} onClick={onBack} />
 				</div>
 				<div className="side center" />
 			</div>
@@ -350,6 +349,6 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageSettingsIndex;

@@ -1,6 +1,4 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Icon, MenuItemVertical, EmptySearch } from 'Component';
 import * as I from 'Interface';
@@ -9,7 +7,7 @@ const HEIGHT_ITEM = 28;
 const HEIGHT_DIV = 16;
 const LIMIT = 20;
 
-const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, onKeyDown, setActive, getId, getSize, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -28,7 +26,6 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 
 	useEffect(() => {
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
@@ -39,11 +36,6 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	}, []);
 
 	useEffect(() => {
-		resize();
-		rebind();
-	});
-
-	useEffect(() => {
 		n.current = -1;
 		offset.current = 0;
 		load(true);
@@ -51,12 +43,12 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const loadMoreRows = ({ startIndex, stopIndex }) => {
@@ -96,6 +88,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 			setIsLoading(false);
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
+			position();
 			callBack?.(message);
 		});
 	};
@@ -201,7 +194,8 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		};
 
 		if (item.isType || (item.id == 'add')) {
-			S.Menu.open(menuIdEdit, { 
+			unbind();
+			S.Menu.open(menuIdEdit, {
 				element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 				offsetX: getSize().width,
 				offsetY: -80,
@@ -231,13 +225,16 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		e.preventDefault();
 		e.stopPropagation();
 
-		S.Menu.open(menuIdEdit, { 
+		unbind();
+		S.Menu.open(menuIdEdit, {
 			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			noAnimation: true,
 			className,
 			classNameWrap,
+			rebind,
+			parentId: props.id,
 			data: {
 				...data,
 				rootId,
@@ -252,9 +249,9 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		return item.isDiv ? HEIGHT_DIV : HEIGHT_ITEM;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
 		let height = 16 + (noFilter ? 0 : 40);
 		if (!items.length) {
@@ -264,8 +261,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		};
 		height = Math.min(height, 376);
 
-		obj.css({ height });
-		position();
+		U.Dom.css(obj, { height: `${height}px` });
 	};
 
 	const items = getItems();
@@ -318,6 +314,7 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -373,6 +370,6 @@ const MenuRelationSuggest = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) 
 		</div>
 	);
 	
-}));
+});
 
 export default MenuRelationSuggest;

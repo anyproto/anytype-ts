@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
-import $ from 'jquery';
+
 import { MenuItemVertical } from 'Component';
 import { AutoSizer, CellMeasurer, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
@@ -36,7 +35,7 @@ const getEntries = (): EmojiEntry[] => {
 	return cachedEntries;
 };
 
-const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockEmoji = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, position } = props;
 	const { data } = param;
@@ -56,7 +55,6 @@ const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		rebind();
 		position();
 
 		const items = getItems();
@@ -65,14 +63,20 @@ const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	});
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => props.onKeyDown(e));
+		keydownHandler.current = (e: any) => props.onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => props.setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const getItems = () => {
@@ -274,14 +278,13 @@ const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${props.getId()} .content`);
 
 		let height = 16;
 		if (items.length) {
 			height = items.reduce((res: number) => res + HEIGHT_ITEM, height);
 		};
 
-		obj.css({ height });
+		U.Dom.css(U.Dom.select('.content', props.getContainer()), { height: `${height}px` });
 	};
 
 	const items = getItems();
@@ -348,6 +351,6 @@ const MenuBlockEmoji = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default MenuBlockEmoji;

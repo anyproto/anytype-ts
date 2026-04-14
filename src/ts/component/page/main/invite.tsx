@@ -25,14 +25,14 @@ const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 
 		if ((request == 'SpaceInviteView') && (code == J.Error.Code.SpaceInviteView.INVITE_NOT_FOUND)) {
-			icon = 'noAccess';
+			icon = 'warning';
 		} else {
 			icon = 'error';
 		};
 
 		S.Popup.open('confirm', {
 			data: {
-				icon,
+				iconParam: { name: `popup/header/${icon}`, color: 'destructive' },
 				title,
 				text,
 				textConfirm: translate('commonOkay'),
@@ -96,7 +96,7 @@ const PageMainInvite = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		const wh = isPopup ? oh : window.innerHeight;
 
 		if (nodeRef.current) {
-			nodeRef.current.style.height = `${wh}px`;
+			U.Dom.css(nodeRef.current, { height: `${wh}px` });
 		};
 		frameRef.current?.resize();
 	};

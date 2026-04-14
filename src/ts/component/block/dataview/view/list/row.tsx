@@ -1,7 +1,5 @@
 import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, MouseEvent } from 'react';
-import $ from 'jquery';
 import { motion, AnimatePresence } from 'motion/react';
-import { observer } from 'mobx-react';
 import { Cell, DropTarget, Icon, IconObject, SelectionTarget } from 'Component';
 import * as I from 'Interface';
 
@@ -9,7 +7,7 @@ interface Props extends I.ViewComponent {
 	style?: any;
 };
 
-const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
+const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 
 	const {
 		rootId, block, recordId, style, getRecord, getView, onRefCell, onContext, getIdPrefix, isInline, isCollection,
@@ -20,12 +18,17 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 	const view = getView();
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const first = node.find('.cellContent:not(.isEmpty)').first();
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.find('.cellContent').removeClass('first');
-		if (first.length) {
-			first.addClass('first');
+		const cells = U.Dom.selectAll('.cellContent', node);
+		const first = U.Dom.select('.cellContent:not(.isEmpty)', node);
+
+		cells.forEach(el => U.Dom.removeClass(el, 'first'));
+		if (first) {
+			U.Dom.addClass(first, 'first');
 		};
 	};
 
@@ -267,6 +270,6 @@ const ListRow = observer(forwardRef<I.RowRef, Props>((props, ref) => {
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default ListRow;

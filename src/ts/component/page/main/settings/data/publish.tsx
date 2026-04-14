@@ -1,10 +1,8 @@
 import React, { forwardRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Title, IconObject, ObjectName, Icon, EmptyState } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
-const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsDataPublish = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { getId } = props;
 	const [ list, setList ] = useState<I.PublishState[]>([]);
@@ -23,22 +21,22 @@ const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSetting
 	};
 
 	const onMore = (item: any) => {
-		const element = $(`#${getId()} #icon-more-${item.objectId}`);
+		const elementSelector = `#${getId()} #icon-more-${item.objectId}`;
 		const object = S.Detail.mapper(item.details);
 		const options: any[] = [
 			{ id: 'open', name: translate('menuPublishButtonOpen') },
 			{ isDiv: true },
 			{ id: 'view', name: translate('menuPublishButtonView') },
 			{ id: 'copy', name: translate('menuPublishButtonCopy') },
-			{ id: 'unpublish', name: translate('menuPublishButtonUnpublish'), color: 'red' },
+			{ id: 'unpublish', name: translate('menuPublishButtonUnpublish'), color: 'destructive' },
 		];
 
 		S.Menu.open('select', {
-			element,
+			element: elementSelector,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
+			onOpen: () => U.Dom.addClass(U.Dom.select(elementSelector), 'active'),
+			onClose: () => U.Dom.removeClass(U.Dom.select(elementSelector), 'active'),
 			data: {
 				options,
 				onSelect: (e: any, element: any) => {
@@ -124,6 +122,6 @@ const PageMainSettingsDataPublish = observer(forwardRef<I.PageRef, I.PageSetting
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsDataPublish;

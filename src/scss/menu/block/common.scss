@@ -7,6 +7,11 @@
 
 	.menu.menuBlockStyle {
 		.content { max-height: unset; }
+		.item { height: 28px; }
+
+		.item.textStyleHeader1 .name { font-weight: 600; @include text-paragraph; line-height: 20px; }
+		.item.textStyleHeader2 .name { font-weight: 600; @include text-common; }
+		.item.textStyleHeader3 .name { font-weight: 600; @include text-small; }
 	}
 
 	.menu.menuBlockAction { width: var(--menu-width-icon); }

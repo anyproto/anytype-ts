@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 
@@ -10,7 +9,7 @@ interface Props {
 	isMinimal?: boolean;
 };
 
-const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
+const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
 	const { spaceId = S.Common.space, chatId, className = '', isMinimal = false } = props;
 	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
@@ -113,6 +112,6 @@ const ChatCounter = observer(forwardRef<HTMLDivElement, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default ChatCounter;

@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { ObjectName, IconObject, Label } from 'Component';
 import * as I from 'Interface';
 
@@ -9,7 +8,7 @@ interface Props {
 	position?: () => void;
 };
 
-const PreviewTab = observer(forwardRef<{}, Props>((props, ref) => {
+const PreviewTab = forwardRef<{}, Props>((props, ref) => {
 
 	const {
 		spaceview = {},
@@ -33,7 +32,7 @@ const PreviewTab = observer(forwardRef<{}, Props>((props, ref) => {
 	useEffect(position);
 
 	const load = (loadId: number) => {
-		const isChat = (object?.layout == I.ObjectLayout.SpaceView) && (spaceview.isOneToOne || spaceview.isChat);
+		const isChat = (object?.layout == I.ObjectLayout.SpaceView) && spaceview.isOneToOne;
 
 		if (isChat) {
 			setDisplayObject({ layout: I.ObjectLayout.Chat, name: translate('commonMainChat') });
@@ -100,6 +99,6 @@ const PreviewTab = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PreviewTab;

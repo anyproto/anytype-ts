@@ -23,7 +23,7 @@ export interface TabView extends WebContentsView {
 export interface TabData {
 	route?: string;
 	spaceId?: string;
-	uxType?: number;
+	spaceType?: number;
 	isPinned?: boolean;
 };
 
@@ -34,6 +34,7 @@ export interface CreateMainOptions {
 	isChild: boolean;
 	initialBounds?: { x: number; y: number; width?: number; height?: number };
 	initialTabData?: TabData;
+	restoredTabs?: SavedTabState;
 };
 
 /** Options for creating a tab */
@@ -43,10 +44,16 @@ export interface CreateTabOptions {
 	fireAnalytics?: boolean;
 };
 
-/** Saved tab state for persistence */
+/** Saved tab state for a single window */
 export interface SavedTabState {
 	tabs: { data: TabData }[];
 	activeIndex: number;
+	bounds?: { x: number; y: number; width: number; height: number };
+};
+
+/** Saved state for all windows */
+export interface SavedWindowsState {
+	windows: SavedTabState[];
 };
 
 /** Bounds rectangle */

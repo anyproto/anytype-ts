@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from 'react';
-import { observer } from 'mobx-react';
 import CommentPost from './post';
 import * as I from 'Interface';
 
@@ -11,7 +10,7 @@ interface Props {
 	onLoadMore?: (callBack: () => void) => void;
 };
 
-const CommentList = observer((props: Props) => {
+const CommentList = (props: Props) => {
 
 	const { rootId, targetId, targetType, readonly, onLoadMore } = props;
 	const subId = U.Comment.getSubId(targetType, targetId);
@@ -50,6 +49,6 @@ const CommentList = observer((props: Props) => {
 			))}
 		</div>
 	);
-});
+};
 
 export default CommentList;

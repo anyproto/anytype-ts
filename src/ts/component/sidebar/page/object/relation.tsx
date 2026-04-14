@@ -1,12 +1,10 @@
 import React, { forwardRef, useEffect, MouseEvent, useRef, useImperativeHandle, useState } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Label, Button, Icon } from 'Component';
 import Section from 'Component/sidebar/section';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
-const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ dummy, setDummy ] = useState(0);
 	const { rootId, readonly, page, isPopup } = props;
@@ -80,8 +78,8 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 			classNameWrap: 'fromSidebar',
 			data: {
 				options: [
-					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
-					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObject'), color: 'red' },
+					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
+					{ id: 'remove', name: translate('sidebarRelationLocalRemoveFromObject'), color: 'destructive' },
 				],
 				onSelect: (e, option) => {
 					switch (option.id) {
@@ -110,8 +108,8 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 			return acc.concat(keys);
 		}, []);
 
-		S.Menu.open('relationSuggest', { 
-			element: $(e.currentTarget),
+		S.Menu.open('relationSuggest', {
+			element: e.currentTarget as HTMLElement,
 			horizontal: I.MenuDirection.Center,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -129,22 +127,27 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 	};
 
 	const initToggle = (id: string, isOpen: boolean) => {
-		const obj = $(`#sidebarRight #relationGroup-${id}`);
-		const title = obj.find('.titleWrap');
-		const list = obj.find('> .list');
+		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
+		if (!obj) return;
 
-		title.toggleClass('isOpen', isOpen);
-		list.toggleClass('isOpen', isOpen).css({ height: (isOpen ? 'auto': 0) });
+		const title = U.Dom.select('.titleWrap', obj);
+		const list = U.Dom.select(':scope > .list', obj);
+
+		U.Dom.toggleClass(title, 'isOpen', isOpen);
+		U.Dom.toggleClass(list, 'isOpen', isOpen);
+		if (list) U.Dom.css(list, { height: isOpen ? 'auto' : '0px' });
 	};
 
 	const onToggle = (id: string) => {
-		const obj = $(`#sidebarRight #relationGroup-${id}`);
-		const title = obj.find('.titleWrap');
-		const list = obj.find('> .list');
-		const isOpen = list.hasClass('isOpen');
+		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
+		if (!obj) return;
+
+		const title = U.Dom.select('.titleWrap', obj);
+		const list = U.Dom.select(':scope > .list', obj);
+		const isOpen = U.Dom.hasClass(list, 'isOpen');
 
 		U.Dom.toggle(list, 200, isOpen);
-		title.toggleClass('isOpen', !isOpen);
+		U.Dom.toggleClass(title, 'isOpen', !isOpen);
 		Storage.setToggle(page, id, !isOpen);
 
 		analytics.event('ScreenObjectRelationToggle', { type: isOpen ? 'Collapse' : 'Extend' });
@@ -269,6 +272,6 @@ const SidebarPageObjectRelation = observer(forwardRef<{}, I.SidebarPageComponent
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageObjectRelation;

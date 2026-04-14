@@ -566,6 +566,15 @@
 
         .section.sectionMembers { min-height: 236px; display: flex; flex-direction: column; }
         .section.sectionMembers {
+            .offlinePill {
+                display: flex; align-items: center; justify-content: center; gap: 0px 6px;
+                @include text-common; color: var(--color-text-primary);
+                background: var(--color-system-selection); border-radius: 8px; padding: 0px 16px; height: 52px; margin: 0px 0px 48px 0px;
+            }
+            .offlinePill {
+                .icon { width: 16px; height: 16px; color: var(--color-text-primary); }
+            }
+
             .membersTitle { display: flex; gap: 0px 8px; margin-bottom: 8px; align-items: baseline; padding: 7px 0px; }
             .membersTitle {
                 .title { margin-bottom: 0px; }
@@ -574,27 +583,27 @@
 
             .rows { flex-grow: 1; }
 
-            .row { border-bottom: 0px solid; padding: 8px 0px; display: grid; grid-template-columns: 1fr 120px; }
+            .row { border-bottom: 0px solid; padding: 8px 0px; display: flex; gap: 0px 12px; align-items: center; }
+            .row.isPending { opacity: 0.5; }
             .row.payment { grid-template-columns: 1fr auto; @include text-small; margin: 0px 0px 14px 0px; }
-
             .row {
                 .side { display: flex; align-items: center; }
+                .side.left { flex-grow: 1; overflow: hidden; gap: 0px 12px; }
                 .side.left {
-                    .text { display: flex; flex-direction: column; justify-content: center; }
+                    .text { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
 
-                    .iconObject { margin: 0px 12px 0px 0px; }
                     .name {
                         @include text-common; @include text-overflow-nw; font-weight: 500; width: auto; max-width: 330px;
                         display: flex; gap: 0px 4px; align-items: center;
                     }
-                    .anyId { @include text-small; color: var(--color-text-secondary); }
+                    .anyId { @include text-small; color: var(--color-text-secondary); @include text-overflow-nw; }
 
                     .tagItem { color: var(--color-text-inversion); background: var(--color-control-accent); margin: 0px 0px 0px 8px; }
-                    .caption { @include text-common; color: var(--color-text-secondary); }
+                    .caption { @include text-common; @include text-overflow-nw; color: var(--color-text-secondary); }
                     .icon.badge { width: 14px; height: 14px; }
                 }
 
-                .side.right { justify-content: flex-end; }
+                .side.right { justify-content: flex-end; flex-shrink: 0; }
                 .side.right {
                     .button.blank { color: var(--color-text-primary); border-color: var(--color-shape-primary); }
                     .button.blank:not(.disabled):hover,
@@ -987,8 +996,7 @@
 
                     .features { display: flex; flex-direction: column; gap: 8px 0px; }
                     .features {
-                        .label { display: flex; gap: 0px 6px; @include text-small; }
-                        .label:before { content: ''; display: block; width: 14px; height: 14px; margin-top: 1px; }
+                        .label { display: flex; gap: 0px 6px; align-items: center; @include text-small; }
                     }
 
                     .button { width: 100%; }
@@ -1077,4 +1085,37 @@
 .pageMainSettingsMembership { display: flex; flex-direction: column; }
 .pageMainSettingsMembership {
     .settingsPageContainer { flex: 1 1 0; }
+}
+
+.settingsPage.pageSettingsSpaceHome {
+    .frame { display: flex; flex-direction: column; align-items: center; padding: 48px 0px; position: absolute; }
+    .frame {
+        .title { @include text-header1; font-weight: 700; margin: 0px 0px 8px 0px; text-align: center; }
+        .label { @include text-paragraph; color: var(--color-text-secondary); text-align: center; max-width: 480px; margin: 0px 0px 42px 0px; }
+
+        .homeOptions { display: flex; flex-direction: row; gap: 0px 20px; margin: 0px 0px 42px 0px; font-weight: 500; }
+        .homeOptions {
+            .option { display: flex; flex-direction: column; align-items: center; gap: 10px 0px; }
+            .option {
+                .icon.preview {
+                    width: 128px; height: 96px; border-radius: 16px; border: 1px solid var(--color-shape-secondary);
+                    transition: border-color $transitionCommon; background-size: cover;
+                }
+                .icon.preview.chat { background-image: url('~img/icon/settings/chat.svg'); }
+                .icon.preview.page { background-image: url('~img/icon/settings/page.svg'); }
+                .icon.preview.collection { background-image: url('~img/icon/settings/collection.svg'); }
+                .icon.preview.empty { background-image: url('~img/icon/settings/empty.svg'); }
+
+                &:hover, &.active { color: var(--color-system-accent-100); }
+                &:hover, &.active {
+                    .icon.preview { border-color: var(--color-system-accent-50); }
+                }
+            }
+        }
+
+        .buttons { display: flex; }
+        .buttons {
+            .button { min-width: 200px; }
+        }
+    }
 }

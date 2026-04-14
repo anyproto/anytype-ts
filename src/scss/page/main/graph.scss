@@ -19,11 +19,11 @@
 	.graphTimeline {
 		position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
 		width: calc(100% - 64px); max-width: 600px; z-index: 10;
-		background: var(--color-bg-secondary); border-radius: 8px; padding: 8px 16px;
-		box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-
+		border-radius: 8px; padding: 8px 16px;
+		box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); background-color: var(--color-bg-primary);
+	}
+	.graphTimeline {
 		.controls { display: flex; align-items: center; gap: 12px; height: 32px; }
-
 		.icon.hasSvg { width: 20px; height: 20px; }
 
 		.speed {
@@ -38,7 +38,8 @@
 			@include text-small; color: var(--color-text-secondary); flex-shrink: 0;
 			min-width: 90px; text-align: right; white-space: nowrap;
 			font-variant-numeric: tabular-nums;
-
+		}
+		.dateLabel {
 			number-flow-react { display: inline; --number-flow-char-height: 1.2em; --number-flow-mask-height: 0.15em; }
 			.separator { margin: 0px 1px; }
 		}

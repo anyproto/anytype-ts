@@ -1,10 +1,9 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
 import { Label } from 'Component';
-import { observer } from 'mobx-react';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
-const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
+const BlockTableOfContents = forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, isPopup, onKeyDown, onKeyUp } = props;
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
@@ -57,6 +56,6 @@ const BlockTableOfContents = observer(forwardRef<{}, I.BlockComponent>((props, r
 		</div>
 	);
 
-}));
+});
 
 export default BlockTableOfContents;

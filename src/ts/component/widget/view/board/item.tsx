@@ -1,7 +1,5 @@
 import React, { forwardRef, useRef, MouseEvent, SyntheticEvent } from 'react';
-import $ from 'jquery';
 import { motion, AnimatePresence } from 'motion/react';
-import { observer } from 'mobx-react';
 import { ObjectName, Icon, IconObject, DropTarget } from 'Component';
 import * as I from 'Interface';
 
@@ -11,7 +9,7 @@ interface Props extends I.WidgetViewComponent {
 	hideIcon?: boolean;
 };
 
-const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
+const WidgetBoardItem = forwardRef<{}, Props>((props, ref) => {
 
 	const { subId, id, block, hideIcon, onContext, getView } = props;
 	const nodeRef = useRef(null);
@@ -41,14 +39,14 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
-		const element = node.find('.icon.more');
+		const node = nodeRef.current;
+		const element = U.Dom.select('.icon.more', node);
 
-		onContext({ 
-			node, 
-			element, 
-			withElement, 
-			subId, 
+		onContext({
+			node,
+			element,
+			withElement,
+			subId,
 			objectId: id,
 			data: {
 				relationKeys: J.Relation.default.concat(view.groupRelationKey),
@@ -131,6 +129,6 @@ const WidgetBoardItem = observer(forwardRef<{}, Props>((props, ref) => {
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default WidgetBoardItem;

@@ -1,9 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase, Footer } from 'Component';
 import * as I from 'Interface';
 import Animation from 'Lib/animation';
-import $ from 'jquery';
 
 enum Stage {
 	Phrase 		= 0,
@@ -12,7 +10,7 @@ enum Stage {
 	UseCase		= 3,
 };
 
-const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { account } = S.Auth;
 	const nodeRef = useRef(null);
@@ -33,20 +31,27 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const cnb = [];
 	const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
 
+	const onKeyDownRef = useRef<((e: any) => void) | null>(null);
+
 	const unbind = () => {
-		$(window).off('keydown.onboarding');
+		if (onKeyDownRef.current) {
+			U.Dom.removeEvent(window, 'keydown', onKeyDownRef.current);
+			onKeyDownRef.current = null;
+		};
 	};
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.onboarding', e => onKeyDown(e));
-	};
 
-	const onKeyDown = e => {
-		keyboard.shortcut('enter', e, () => {
-			e.preventDefault();
-			onForward();
-		});
+		const handler = e => {
+			keyboard.shortcut('enter', e, () => {
+				e.preventDefault();
+				onForward();
+			});
+		};
+
+		onKeyDownRef.current = handler;
+		U.Dom.addEvent(window, 'keydown', handler);
 	};
 
 	// Guard to prevent illegal state change
@@ -169,7 +174,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const onEmailKeyUp = (e: KeyboardEvent, v: string) => {
 		const isValid = U.String.matchEmail(v);
 
-		$(nextRef.current?.getNode()).toggleClass('disabled', !isValid);
+		U.Dom.toggleClass(nextRef.current?.getNode(), 'disabled', !isValid);
 	};
 
 	const shuffleItems = (stage: string) => {
@@ -372,6 +377,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		};
 
 		analytics.event('ScreenOnboarding', { step: Stage[stage] });
+		return () => unbind();
 	}, [ stage ]);
 
 	return (
@@ -395,6 +401,6 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default PageAuthOnboard;

@@ -4,7 +4,6 @@ interface Props {
 	id?: string;
 	icon?: string;
 	size?: number;
-	asImage?: boolean;
 	className?: string;
 	canEdit?: boolean;
 };
@@ -13,7 +12,6 @@ const IconEmoji = forwardRef<HTMLDivElement, Props>(({
 	id = '',
 	icon = '',
 	size = 18,
-	asImage = true,
 	className = '',
 	canEdit = false,
 }, ref) => {
@@ -25,33 +23,22 @@ const IconEmoji = forwardRef<HTMLDivElement, Props>(({
 		cn.push('canEdit');
 	};
 
-	let element = null;
 	if (!icon) {
 		return null;
 	};
 
 	const code = icon.match(':') ? icon : U.Smile.getCode(icon);
-	if (code) {
-		if (asImage) {
-			element = (
-				<img 
-					src={U.Smile.srcFromColons(code)}
-					className={[ 'smileImage', `c${size}` ].join(' ')}
-					onDragStart={e=> e.preventDefault()}
-				/>
-			);
-		} else {
-			element = <em-emoji shortcodes={code}></em-emoji>;
-		};
-	};
-
-	if (!element) {
+	if (!code) {
 		return null;
 	};
 
 	return (
 		<div id={id} style={css} className={cn.join(' ')}>
-			{element}
+			<img
+				src={U.Smile.srcFromColons(code)}
+				className={[ 'smileImage', `c${size}` ].join(' ')}
+				onDragStart={e => e.preventDefault()}
+			/>
 		</div>
 	);
 

@@ -138,10 +138,10 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove }: Props) => {
 				};
 			};
 
-			iframe.addEventListener('load', onLoad);
+			U.Dom.addEvent(iframe, 'load', onLoad);
 			iframe.src = './embed/iframe.html';
 
-			return () => iframe.removeEventListener('load', onLoad);
+			return () => U.Dom.removeEvent(iframe, 'load', onLoad);
 		};
 
 		let cleanup: (() => void) | undefined;

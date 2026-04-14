@@ -2,7 +2,7 @@
 
 .menus {
 	.menu.menuSelect {
-		.content { transition: none; overflow: hidden; padding: 0px; display: flex; flex-direction: column; }
+		.content { overflow: hidden; padding: 0px; display: flex; flex-direction: column; }
 		.items { overflow: auto; flex-grow: 1; }
 
 		.filter { flex-shrink: 0; }
@@ -95,19 +95,12 @@
 		.item.add { gap: 0px 12px; }
 	}
 
-	.menu.menuSelect.spaceCreate { width: var(--menu-width-set); }
 	.menu.menuSelect.spaceCreate {
 		.content { height: auto !important; }
 
-		.item { height: 64px; }
-		.item {
-			.info { padding-left: 58px !important; }
-			.icon { width: 48px; height: 48px; }
-		}
-
-		#item-join { height: 28px; text-align: center; color: var(--color-text-secondary); @include text-small; }
-		#item-join {
-			.icon { width: 20px; height: 20px; }
+		.caption { display: flex; align-items: center; }
+		.caption {
+			.icon { margin: 0px; }
 		}
 	}
 

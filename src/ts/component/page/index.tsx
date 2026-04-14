@@ -1,7 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Label, Frame, SidebarRight } from 'Component';
 
 import PageAuthSelect from './auth/select';
@@ -65,13 +63,14 @@ const Components = {
 	'main/settings':		 PageMainSettings,
 };
 
-const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { account } = S.Auth;
 	const { isFullScreen, singleTab, vaultIsMinimal } = S.Common;
 	const ns = U.Dom.getEventNamespace(isPopup);
 	const childRef = useRef(null);
+	const resizeHandlerRef = useRef<(() => void) | null>(null);
 	const match = keyboard.getMatch(isPopup);
 	const { page, action, id } = match.params;
 	const isMain = page == 'main';
@@ -135,19 +134,16 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const rebind = () => {
-		const { history } = U.Router;
-		const ns = U.Dom.getEventNamespace(isPopup);
-		const key = String(history?.location?.key || '');
-
 		unbind();
-		$(window).on(`resize.page${ns}${key}`, () => resize());
+		resizeHandlerRef.current = () => resize();
+		U.Dom.addEvent(window, 'resize', resizeHandlerRef.current);
 	};
 
 	const unbind = () => {
-		const { history } = U.Router;
-		const key = String(history?.location?.key || '');
-
-		$(window).off(`resize.page${ns}${key}`);
+		if (resizeHandlerRef.current) {
+			U.Dom.removeEvent(window, 'resize', resizeHandlerRef.current);
+			resizeHandlerRef.current = null;
+		};
 	};
 
 	const resize = () => {
@@ -213,6 +209,6 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default PageIndex;

@@ -25,12 +25,14 @@
 					> span { min-width: 100%; display: inline-block; text-align: center; }
 				}
 
-				&.markerCheckbox { color: var(--color-icon); }
+				&.markerCheckbox { color: var(--color-text-tertiary); }
 				&.markerCheckbox.active { color: var(--color-system-accent-100); }
 
-				&.markerCheckbox,
-				&.markerToggle {
+				&.markerCheckbox {
 					img { width: 20px; height: 20px; }
+				}
+				&.markerToggle {
+					img { width: 24px; height: 24px; }
 				}
 			}
 		}

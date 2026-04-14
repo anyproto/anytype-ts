@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
+
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, Button, IconObject, ObjectName, Label, Icon, Title, Loader, EmptySearch } from 'Component';
 import * as I from 'Interface';
@@ -8,9 +7,9 @@ import * as I from 'Interface';
 const HEIGHT = 56;
 const LIMIT = 10;
 
-const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuChangeOwner = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { setActive, onKeyDown, position, getId, close } = props;
+	const { setActive, onKeyDown, position, getId, getContainer, close } = props;
 	const { space } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const [ selected, setSelected ] = useState('');
@@ -22,11 +21,12 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		beforePosition();
+		position();
+		return () => unbind();
 	}, []);
 
 	useEffect(() => {
-		beforePosition();
+		position();
 
 		if (n.current == -1) {
 			focus();
@@ -39,14 +39,20 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		listRef.current?.scrollToPosition(top.current);
 	}, [ filter ]);
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const focus = () => {
@@ -181,8 +187,6 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${getId()}`);
-		const content = obj.find('.content');
 		const length = items.length;
 		const { wh } = U.Dom.getWindowDimensions();
 
@@ -194,7 +198,7 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 		height = Math.min(height, wh - 104);
 
-		content.css({ height });
+		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
 	};
 
 	const scrollToRow = (items: any[], index: number) => {
@@ -343,6 +347,6 @@ const MenuChangeOwner = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuChangeOwner;

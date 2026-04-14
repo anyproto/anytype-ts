@@ -1,6 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -10,7 +8,7 @@ import * as I from 'Interface';
 
 const HEIGHT = 52;
 
-const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, setActive, onKeyDown, position, close } = props;
 	const { data } = param;
@@ -26,12 +24,12 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	const rebind = () => {
 		unbind();
 
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDownHandler);
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -106,12 +104,11 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		return U.Menu.prepareForSelect(sections);
 	};
 
-	const resize = () => {
-		const obj = $(`#${getId()} .itemsWrapper`);
+	const beforePosition = () => {
+		const obj = U.Dom.select('.itemsWrapper', U.Dom.get(getId()));
 		const height = Math.max(HEIGHT, Math.min(360, items.length * HEIGHT - 8));
 
-		obj.css({ height });
-		position();
+		U.Dom.css(obj, { height: `${height}px` });
 	};
 
 	const items = getItems();
@@ -171,7 +168,6 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	
 	useEffect(() => {
 		rebind();
-		resize();
 
 		return () => {
 			unbind();
@@ -180,8 +176,6 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	}, []);
 	
 	useEffect(() => {
-		resize();
-		rebind();
 		setActive(null, true);
 		position();
 	});
@@ -189,6 +183,7 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -227,6 +222,6 @@ const MenuWidgetSection = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default MenuWidgetSection;

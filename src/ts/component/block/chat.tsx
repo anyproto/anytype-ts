@@ -1,7 +1,5 @@
 import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useState, useLayoutEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 
 import Form from './chat/form';
 import Message from './chat/message';
@@ -31,7 +29,7 @@ const DOWNLOAD_LAYOUTS = [
 	I.ObjectLayout.Pdf,
 ];
 
-const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) => {
+const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const { space } = S.Common;
 	const { account } = S.Auth;
@@ -56,13 +54,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const jumpIds = useRef([]);
 	const prevDepsKey = useRef('');
 	const prevReplyKey = useRef('');
+	const pendingScrollToBottom = useRef(false);
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
 		if (object._empty_) {
-			return rootId;
+			return '';
 		};
 
 		return object.chatId || rootId;
@@ -83,36 +82,89 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const analyticsChatId = getAnalyticsChatId();
 
 	const scrollHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const messageAddHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const messageUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const reactionUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const pinnedStatusUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const focusHandlerRef = useRef<((e: Event) => void) | null>(null);
 
 	const unbind = () => {
-		const events = [ 'messageAdd', 'messageUpdate', 'reactionUpdate', 'pinnedStatusUpdate', 'focus' ];
-		const ns = block.id + namespace;
-
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		if (messageAddHandlerRef.current) {
+			U.Dom.removeEvent(window, 'messageAdd', messageAddHandlerRef.current);
+			messageAddHandlerRef.current = null;
+		};
+		if (messageUpdateHandlerRef.current) {
+			U.Dom.removeEvent(window, 'messageUpdate', messageUpdateHandlerRef.current);
+			messageUpdateHandlerRef.current = null;
+		};
+		if (reactionUpdateHandlerRef.current) {
+			U.Dom.removeEvent(window, 'reactionUpdate', reactionUpdateHandlerRef.current);
+			reactionUpdateHandlerRef.current = null;
+		};
+		if (pinnedStatusUpdateHandlerRef.current) {
+			U.Dom.removeEvent(window, 'pinnedStatusUpdate', pinnedStatusUpdateHandlerRef.current);
+			pinnedStatusUpdateHandlerRef.current = null;
+		};
+		if (focusHandlerRef.current) {
+			U.Dom.removeEvent(window, 'focus', focusHandlerRef.current);
+			focusHandlerRef.current = null;
+		};
 
 		const container = U.Dom.getScrollContainer(isPopup);
 		if (container && scrollHandlerRef.current) {
-			container.removeEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-		const ns = block.id + namespace;
-
 		unbind();
 
-		win.on(`messageAdd.${ns}`, (e, message, subIds) => onMessageAdd(message, subIds));
-		win.on(`messageUpdate.${ns}`, (e, message, subIds) => onMessageAdd(message, subIds));
-		win.on(`reactionUpdate.${ns}`, () => scrollToBottomCheck());
-		win.on(`pinnedStatusUpdate.${ns}`, (e, message, isPinned, subIds) => onPinnedStatusUpdate(message, isPinned, subIds));
-		win.on(`focus.${ns}`, () => readScrolledMessages());
+		messageAddHandlerRef.current = (e: Event) => {
+			const detail = (e as CustomEvent).detail || {};
+			onMessageAdd(detail.message, detail.subIds);
+		};
+		messageUpdateHandlerRef.current = (e: Event) => {
+			const detail = (e as CustomEvent).detail || {};
+			onMessageAdd(detail.message, detail.subIds);
+		};
+		reactionUpdateHandlerRef.current = () => scrollToBottomCheck();
+		pinnedStatusUpdateHandlerRef.current = (e: Event) => {
+			const detail = (e as CustomEvent).detail || {};
+			onPinnedStatusUpdate(detail.message, detail.isPinned, detail.subIds);
+		};
+		focusHandlerRef.current = () => {
+			// Re-render from windowIsFocused observable can reset scrollTop — restore it after paint
+			const prevTop = top.current;
+			const wasBottom = isBottom.current;
+
+			raf(() => {
+				if (wasBottom) {
+					scrollToBottom(false);
+				} else
+				if (prevTop > 0) {
+					const container = U.Dom.getScrollContainer(isPopup);
+					if (container && (container.scrollTop != prevTop)) {
+						container.scrollTop = prevTop;
+					};
+				};
+			});
+
+			readScrolledMessages();
+		};
+
+		U.Dom.addEvents(window, [
+			['messageAdd', messageAddHandlerRef.current],
+			['messageUpdate', messageUpdateHandlerRef.current],
+			['reactionUpdate', reactionUpdateHandlerRef.current],
+			['pinnedStatusUpdate', pinnedStatusUpdateHandlerRef.current],
+			['focus', focusHandlerRef.current],
+		]);
 
 		const container = U.Dom.getScrollContainer(isPopup);
 		if (container) {
 			scrollHandlerRef.current = (e: Event) => onScroll(e);
-			container.addEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 		};
 	};
 
@@ -239,6 +291,10 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 				loadDepsAndReplies(messages, () => {
 					if (messages.length) {
+						if (dir < 0) {
+							setAutoLoadDisabled(true);
+						};
+
 						S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
 
 						if (first && (dir < 0)) {
@@ -433,6 +489,8 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
+		subIds = subIds || [];
+
 		const subId = getSubId();
 
 		if (subIds.includes(subId)) {
@@ -565,13 +623,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			);
 		};
 
+		const messageEl = U.Dom.select(message);
+
 		const menuParam: Partial<I.MenuParam> = {
 			classNameWrap: 'fromBlock',
 			onOpen: () => {
-				$(message).addClass('hover');
+				U.Dom.addClass(messageEl, 'hover');
 			},
 			onClose: () => {
-				$(message).removeClass('hover');
+				U.Dom.removeClass(messageEl, 'hover');
 			},
 			data: {
 				options: getMessageMenuOptions(item, onMore),
@@ -586,6 +646,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 							U.Common.clipboardCopy({
 								text: U.String.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)),
+								html: Mark.toStandardHtml(Mark.toHtml(item.content.text, item.content.marks)),
 								anytype: {
 									range: { from: 0, to: item.content.text.length },
 									blocks: [ block ],
@@ -649,37 +710,40 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	};
 
 	const renderDates = () => {
-		const node = $(nodeRef.current);
-		const dates = node.find('.sectionDate');
-		const pinnedHeight = node.find('.pinnedMessage').outerHeight() || 0;
+		const node = nodeRef.current;
+		if (!node) return;
+
+		const dates = U.Dom.selectAll('.sectionDate', node);
+		const pinned = U.Dom.select('.pinnedMessage', node) as HTMLElement | null;
+		const pinnedHeight = pinned ? pinned.offsetHeight : 0;
 		const offset = J.Size.header + 8 + pinnedHeight;
 		const container = U.Dom.getScrollContainer(isPopup);
 		const top = container?.getBoundingClientRect().top ?? 0;
 
 		raf.cancel(frameRef.current);
 		frameRef.current = raf(() => {
-			dates.css({ position: 'static', left: '', top: '', width: '' });
+			dates.forEach((item: HTMLElement) => {
+				U.Dom.css(item, { position: 'static', left: '', top: '', width: '' });
+			});
 
-			let last = null;
+			let last: HTMLElement = null;
 
-			dates.each((i, item: any) => {
-				item = $(item);
-
-				const y = item.offset().top;
-				if (y <= offset) {
+			dates.forEach((item: HTMLElement) => {
+				const rect = item.getBoundingClientRect();
+				if (rect.top <= offset) {
 					last = item;
 				};
 			});
 
 			if (!last && dates.length) {
-				last = dates.first();
+				last = dates[0];
 			};
 
 			if (last) {
-				const width = last.outerWidth();
-				const { left } = last.offset();
+				const width = last.offsetWidth;
+				const rect = last.getBoundingClientRect();
 
-				last.css({ position: 'fixed', width, left, top: top + offset });
+				U.Dom.css(last, { position: 'fixed', width: width + 'px', left: rect.left + 'px', top: (top + offset) + 'px' });
 			};
 		});
 	};
@@ -692,7 +756,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const list = getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
-		const isBottom = st >= max;
+		const isBottom = (max > 0) && (st >= max);
 
 		setIsBottom(isBottom);
 
@@ -793,9 +857,9 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return 0;
 		};
 
-		const node = $(ref.getNode());
+		const node = ref.getNode() as HTMLElement;
 
-		return node.length ? node.offset().top + node.outerHeight() : 0;
+		return node ? node.getBoundingClientRect().top + node.offsetHeight : 0;
 	};
 
 	const getMessageScrollPosition = (id: string): number => {
@@ -804,14 +868,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return 0;
 		};
 
-		const node = $(ref.getNode());
-		return node.length ? node.position().top + node.outerHeight() : 0;
+		const node = ref.getNode() as HTMLElement;
+		return node ? node.offsetTop + node.offsetHeight : 0;
 	};
 
 	const getMessagesInViewport = () => {
 		const messages = getMessages();
 		const container = U.Dom.getScrollContainer(isPopup);
-		const formHeight = Number($(formRef.current?.getNode()).outerHeight()) || 0;
+		const formNode = formRef.current?.getNode() as HTMLElement;
+		const formHeight = formNode ? formNode.offsetHeight : 0;
 		const ch = container?.offsetHeight ?? 0;
 		const max = ch - formHeight;
 		const ret = [];
@@ -859,7 +924,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			options.push({ id: 'edit', iconParam: { name: 'common/edit' }, name: translate('commonEdit') });
 			options.push({ isDiv: true });
 			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
-			options.push({ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'darkRed' }, name: translate('commonDelete'), color: 'red' });
+			options.push({ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'destructive' }, name: translate('commonDelete'), color: 'destructive' });
 		} else {
 			if (options.length) {
 				options.push({ isDiv: true });
@@ -925,7 +990,7 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 			return;
 		};
 
-		raf(() => {
+		const doScroll = () => {
 			const container = U.Dom.getScrollContainer(isPopup);
 			if (!container) {
 				return;
@@ -954,7 +1019,13 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				container.scrollTop = y;
 				cb();
 			};
-		});
+		};
+
+		if (animate) {
+			raf(doScroll);
+		} else {
+			doScroll();
+		};
 	};
 
 	const scrollToBottom = (animate?: boolean) => {
@@ -962,10 +1033,25 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 
 		if (!hasScroll()) {
 			readScrolledMessages();
+
+			// DOM may not be committed yet (React concurrent mode); retry once after paint
+			if (!animate) {
+				pendingScrollToBottom.current = true;
+				raf(() => {
+					if (pendingScrollToBottom.current && isBottom.current && hasScroll()) {
+						pendingScrollToBottom.current = false;
+						scrollToBottom(false);
+					} else {
+						pendingScrollToBottom.current = false;
+					};
+				});
+			};
 			return;
 		};
 
-		raf(() => {
+		pendingScrollToBottom.current = false;
+
+		const doScroll = () => {
 			const y = U.Dom.getMaxScrollHeight(isPopup);
 			const top = U.Dom.getScrollContainerTop(isPopup);
 
@@ -990,7 +1076,13 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 					cb();
 				};
 			};
-		});
+		};
+
+		if (animate) {
+			raf(doScroll);
+		} else {
+			doScroll();
+		};
 	};
 
 	const scrollToBottomCheck = () => {
@@ -1109,10 +1201,12 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 	const setIsBottom = (v: boolean) => {
 		isBottom.current = v;
 
-		const node = $(formRef.current?.getNode());
-		const btn = node.find(`#navigation-${I.ChatReadType.Message}`);
+		const formNode = formRef.current?.getNode() as HTMLElement;
+		const btn = formNode ? U.Dom.select(`#navigation-${I.ChatReadType.Message}`, formNode) : null;
 
-		btn.toggleClass('active', !v);
+		if (btn) {
+			U.Dom.toggleClass(btn, 'active', !v);
+		};
 	};
 
 	const setAutoLoadDisabled = (v: boolean) => {
@@ -1172,8 +1266,15 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 				scrollToBottom(false);
 			};
 
-			if (match.params.messageId) {
-				C.ChatGetMessagesByIds(chatId, [ match.params.messageId ], (message: any) => {
+			const storedScrollId = Storage.getChat(chatId).scrollMessageId;
+			const initialMessageId = match.params.messageId || storedScrollId;
+
+			if (storedScrollId) {
+				Storage.setChat(chatId, { scrollMessageId: '' });
+			};
+
+			if (initialMessageId) {
+				C.ChatGetMessagesByIds(chatId, [ initialMessageId ], (message: any) => {
 					if (message.error.code) {
 						return;
 					};
@@ -1196,14 +1297,14 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		const container = U.Dom.getScrollContainer(isPopup);
 
 		if (container && scrollHandlerRef.current) {
-			container.removeEventListener('scroll', scrollHandlerRef.current);
+			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 		};
 
 		window.clearTimeout(timeoutResize.current);
 		timeoutResize.current = window.setTimeout(() => {
 			if (container) {
 				scrollHandlerRef.current = (e: Event) => onScroll(e);
-				container.addEventListener('scroll', scrollHandlerRef.current);
+				U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 			};
 		}, 50);
 	};
@@ -1362,6 +1463,6 @@ const BlockChat = observer(forwardRef<RefProps, I.BlockComponent>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default BlockChat;

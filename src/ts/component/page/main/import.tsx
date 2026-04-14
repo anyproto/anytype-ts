@@ -13,7 +13,7 @@ const PageMainImport = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		const wh = isPopup ? (obj?.clientHeight || 0) : window.innerHeight;
 
 		if (nodeRef.current) {
-			nodeRef.current.style.height = `${wh}px`;
+			U.Dom.css(nodeRef.current, { height: `${wh}px` });
 		};
 	};
 

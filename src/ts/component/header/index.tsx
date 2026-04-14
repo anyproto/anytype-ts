@@ -1,8 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { Icon } from 'Component';
-import { observer } from 'mobx-react';
 
 import HeaderAuthIndex from './auth';
 import HeaderAuthLogout from './auth/logout';
@@ -35,7 +33,7 @@ const Components = {
 	mainSettings: 		 HeaderMainSettings,
 };
 
-const Header = observer(forwardRef<{}, Props>((props, ref) => {
+const Header = forwardRef<{}, Props>((props, ref) => {
 
 	const {
 		component,
@@ -188,7 +186,8 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const menuOpen = (id: string, elementId: string, param: Partial<I.MenuParam>) => {
-		const element = $(U.Dom.getScrollContainer(isPopup)).find(`.header ${elementId}`);
+		const container = U.Dom.getScrollContainer(isPopup);
+		const element = U.Dom.select(`.header ${elementId}`, container);
 		const menuParam: any = Object.assign({
 			element,
 			offsetY: 4,
@@ -203,10 +202,13 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const center = node.find('.side.center');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.toggleClass('isSmall', center.outerWidth() <= 200);
+		const center = U.Dom.select('.side.center', node);
+		U.Dom.toggleClass(node, 'isSmall', (center?.offsetWidth ?? 0) <= 200);
 	};
 
 	useEffect(() => {
@@ -265,6 +267,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Header;

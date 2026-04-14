@@ -1,10 +1,8 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
 import * as I from 'Interface';
 
-const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
@@ -29,13 +27,13 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	};
 
 	const onMore = () => {
-		const element = $('#header #button-header-more');
+		const element = '#header #button-header-more';
 		const menuParam = {
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
+			onOpen: () => U.Dom.addClass(U.Dom.select('#header #button-header-more'), 'active'),
+			onClose: () => U.Dom.removeClass(U.Dom.select('#header #button-header-more'), 'active'),
 		};
 
 		if (id == 'spaceShare') {
@@ -63,7 +61,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 
 		return (
 			<div id="settings-identity-badge" className="identity">
-				<Icon name="membership/badge" size={18} color="accent100" />
+				<Icon name="membership/badge" className="badge" size={18} color="accent100" />
 				<Label text={globalName} />
 			</div>
 		);
@@ -149,6 +147,6 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		</>
 	);
 
-}));
+});
 
 export default HeaderMainSettings;

@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { observable, action, computed, set, makeObservable } from 'mobx';
 import * as I from 'Interface';
 import * as M from 'Model';
@@ -34,7 +33,7 @@ class BlockStore {
 	public toggleVersion = 0;
 	public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
 	public blockMap: Map<string, Map<string, I.Block>> = new Map();
-	public restrictionMap: Map<string, Map<string, any>> = new Map();
+	public restrictionMap: Map<string, Map<string, any>> = observable.map();
 	public participantMap: Map<string, Map<string, string>> = new Map();
 
 	public deferredParentUpdates: Set<string> = new Set();
@@ -68,6 +67,7 @@ class BlockStore {
 			updateContent: action,
 			updateStructure: action,
 			delete: action,
+			restrictionsSet: action,
 		});
 	};
 
@@ -760,7 +760,8 @@ class BlockStore {
 				if (!item.isLayout()) {
 					if (item.isTextNumbered()) {
 						n++;
-						$(`#marker-${U.Common.esc(item.id)}`).text(`${n}.`);
+						const marker = U.Dom.get(`marker-${item.id}`);
+					if (marker) marker.textContent = `${n}.`;
 					} else {
 						n = 0;
 					};
@@ -938,12 +939,12 @@ class BlockStore {
 	};
 
 	toggle (rootId: string, blockId: string, v: boolean) {
-		const element = $(`#block-${U.Common.esc(blockId)}`);
-		if (!element.length) {
+		const element = U.Dom.get(`block-${blockId}`);
+		if (!element) {
 			return;
 		};
 
-		element.toggleClass('isToggled', v);
+		U.Dom.toggleClass(element, 'isToggled', v);
 		Storage.setToggle(rootId, blockId, v);
 		this.incrementToggleVersion();
 
@@ -1067,13 +1068,12 @@ class BlockStore {
 	 * @param {string} rootId - The root ID.
 	 */
 	triggerWidgetEvent (code: string, rootId: string) {
-		const win = $(window);
 		const blocks = this.getBlocks(this.widgets, it => it.isWidget());
 
 		blocks.forEach(block => {
 			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.getTargetObjectId() == rootId));
 			if (children.length) {
-				win.trigger(`${code}.${block.id}`);
+				U.Dom.eventDispatch(window, code);
 			};
 		});
 	};

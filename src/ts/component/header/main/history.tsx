@@ -1,5 +1,4 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
 import * as I from 'Interface';
 
@@ -7,7 +6,7 @@ interface HeaderMainHistoryRefProps {
 	setVersion: (version: I.HistoryVersion) => void;
 };
 
-const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.HeaderComponent>((props, ref) => {
+const HeaderMainHistory = forwardRef<HeaderMainHistoryRefProps, I.HeaderComponent>((props, ref) => {
 
 	const { rootId, isPopup, renderLeftIcons, menuOpen } = props;
 	const { dateFormat, timeFormat } = S.Common;
@@ -106,6 +105,6 @@ const HeaderMainHistory = observer(forwardRef<HeaderMainHistoryRefProps, I.Heade
 		</>
 	);
 
-}));
+});
 
 export default HeaderMainHistory;

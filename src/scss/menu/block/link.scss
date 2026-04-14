@@ -3,7 +3,7 @@
 .menus {
 	.menu.menuBlockLink { width: var(--menu-width-large); }
 	.menu.menuBlockLink {
-		.content { transition: none; padding: 0px; max-height: var(--menu-width-large); padding: 4px 0px 0px 0px; }
+		.content { padding: 0px; max-height: var(--menu-width-large); padding: 4px 0px 0px 0px; }
 		.content.initial {
 			.filter {
 				.line { display: none; }

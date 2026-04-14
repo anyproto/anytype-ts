@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Select, Switch } from 'Component';
 import * as I from 'Interface';
 
@@ -7,7 +6,7 @@ interface Props extends I.SidebarSectionComponent {
 	layoutOptions?: any[];
 };
 
-const SidebarSectionTypeLayoutFormatPage = observer(forwardRef<{}, Props>((props, ref) => {
+const SidebarSectionTypeLayoutFormatPage = forwardRef<{}, Props>((props, ref) => {
 
 	const { object, onChange, layoutOptions, readonly } = props;
 	const layoutRef = useRef(null);
@@ -118,6 +117,6 @@ const SidebarSectionTypeLayoutFormatPage = observer(forwardRef<{}, Props>((props
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionTypeLayoutFormatPage;

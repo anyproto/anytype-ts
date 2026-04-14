@@ -1,18 +1,18 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
 
-const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	const { param, getId, getSize, close } = props;
+	const { param, getId, getContainer, getSize, close } = props;
 	const { data, className, classNameWrap } = param;
 	const { range } = focus.state;
 	const { blockId, rootId, blockIds, marks, isInsideTable, onChange } = data;
 	const menuContext = useRef(null);
+	const keydownHandler = useRef(null);
+	const clickMousedownHandler = useRef(null);
 
 	useEffect(() => {
 		rebind();
@@ -24,25 +24,40 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	}, []);
 
 	const rebind = () => {
-		const win = $(window);
-		const obj = $(`#${getId()}`);
-
 		unbind();
 
-		obj.on('click mousedown', (e: any) => {
-			const target = $(e.target);
-			if (!target.hasClass('icon') && !target.hasClass('inner')) {
+		clickMousedownHandler.current = (e: any) => {
+			const target = e.target as HTMLElement;
+			if (!U.Dom.hasClass(target, 'icon') && !U.Dom.hasClass(target, 'inner')) {
 				e.preventDefault();
 				e.stopPropagation();
 			};
-		});
+		};
+		const obj = getContainer();
+		if (obj) {
+			U.Dom.addEvents(obj, [
+				[ 'click', clickMousedownHandler.current ],
+				[ 'mousedown', clickMousedownHandler.current ],
+			]);
+		};
 
-		win.on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(`#${getId()}`).off('click mousedown');
-		$(window).off('keydown.menu');
+		const obj = getContainer();
+		if (clickMousedownHandler.current && obj) {
+			U.Dom.removeEvents(obj, [
+				[ 'click', clickMousedownHandler.current ],
+				[ 'mousedown', clickMousedownHandler.current ],
+			]);
+			clickMousedownHandler.current = null;
+		};
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDown = (e: any) => {
@@ -60,8 +75,8 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		const { from, to } = Mark.trimRange(block.getText(), range);
 		const object = S.Detail.get(rootId, rootId);
-		const element = $(`#${getId()}`);
-		
+		const element = getContainer();
+
 		keyboard.disableContextClose(true);
 		focus.set(blockId, range);
 
@@ -140,7 +155,7 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					options: [
 						{ id: 'turnObject', iconParam: { name: 'menu/action/object' }, name: translate('commonTurnIntoObject'), arrow: true },
 						{ id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true },
-						{ id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(block.hAlign) ].join(' '), arrow: true },
+						{ id: 'align', name: translate('commonAlign'), iconParam: { name: U.Data.alignHIcon(block.hAlign) }, arrow: true },
 						{ id: 'blockRemove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') }
 					],
 					onOver: (e: any, item: any) => {
@@ -177,8 +192,8 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				menuId = 'blockLink';
 				mark = Mark.getInRange(marks, type, { from, to });
 
-				const rect = (element.get(0).getBoundingClientRect() || {}) as DOMRect;
-				rect.y = Number(rect.y) + $(window).scrollTop();
+				const rect = (element?.getBoundingClientRect() || {}) as DOMRect;
+				rect.y = Number(rect.y) + window.scrollY;
 
 				menuParam = Object.assign(menuParam, {
 					offsetY: -rect.height,
@@ -387,11 +402,11 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		{ type: I.MarkType.Code, icon: 'menu/mark/code', name: translate('commonInlineCode'), caption: keyboard.getCaption('textCode') },
 	];
 
-	// You can't make headers bold, since they are already bold
+	// Headers are already bold, so hide the bold button
 	if (block.isTextHeader()) {
 		markActions = markActions.filter(it => ![ I.MarkType.Bold ].includes(it.type));
 	};
-	
+
 	return (
 		<div className="flex">
 			{canTurn ? (
@@ -474,6 +489,6 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuBlockContext;

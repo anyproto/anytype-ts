@@ -1,8 +1,7 @@
 import React, { FC } from 'react';
 import { Banner } from 'Component';
-import { observer } from 'mobx-react';
 
-const ListBanner: FC = observer(() => {
+const ListBanner: FC = () => {
 	const { updateVersion } = S.Common;
 
 	return (
@@ -27,6 +26,6 @@ const ListBanner: FC = observer(() => {
 			) : ''}
 		</>
 	);
-});
+};
 
 export default ListBanner;

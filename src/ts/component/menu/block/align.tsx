@@ -1,10 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuBlockHAlign = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockHAlign = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setActive, onKeyDown, close } = props;
 	const { data } = param;
@@ -14,14 +12,20 @@ const MenuBlockHAlign = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const value = Number(data.value || I.BlockHAlign.Left);
 	const n = useRef(-1);
 	
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 	
 	const getItems = () => {
@@ -87,6 +91,6 @@ const MenuBlockHAlign = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockHAlign;

@@ -1,9 +1,8 @@
 import React, { forwardRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Button, Icon } from 'Component';
 import * as I from 'Interface';
 
-const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsMembershipPurchased = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ dummy, setDummy ] = useState(0);
 	const { data } = S.Membership;
@@ -70,7 +69,7 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 			<div className="section">
 				<div className={currentCn.join(' ')}>
 					<div className="top">
-						<Icon />
+						<Icon name={product.iconName} size={64} />
 						<Title text={U.String.sprintf(translate('popupSettingsMembershipCurrentTier'), name, translate(`membershipPeriod${period}`))} />
 						<Label text={membershipText} />
 					</div>
@@ -79,7 +78,7 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 
 				<div className={nameCn.join(' ')}>
 					<div className="top">
-						<Icon />
+						<Icon name="popup/header/anyId" width={60} height={48} />
 						<Title text={globalName ? globalName : translate('popupSettingsMembershipSelectAnyNameTitle')} />
 						<Label text={translate('popupSettingsMembershipSelectAnyNameText')} />
 					</div>
@@ -89,6 +88,6 @@ const PageMainSettingsMembershipPurchased = observer(forwardRef<I.PageRef, I.Pag
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsMembershipPurchased;

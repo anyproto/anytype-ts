@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Button } from 'Component';
 import * as I from 'Interface';
 
-const PageMainSettingsImportNotionWarning = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsImportNotionWarning = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const onImport = () => {
 		Preview.toastShow({ text: translate('toastImportStart') });
@@ -31,6 +30,6 @@ const PageMainSettingsImportNotionWarning = observer(forwardRef<I.PageRef, I.Pag
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsImportNotionWarning;

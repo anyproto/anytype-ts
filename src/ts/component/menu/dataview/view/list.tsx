@@ -1,6 +1,4 @@
 import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -12,7 +10,7 @@ import * as I from 'Interface';
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuViewList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, setHover, onKeyDown, setActive, close, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -29,12 +27,12 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getItems = () => {
@@ -149,14 +147,13 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = isAllowed() ? 58 : 16;
 		const height = Math.max(HEIGHT + offset, Math.min(360, items.length * HEIGHT + offset));
 
-		obj.css({ height });
-		position();
+		U.Dom.css(obj, { height: `${height}px` });
 	};
 
 	const isAllowed = () => {	
@@ -229,26 +226,24 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			keyMapper: i => (items[i] || {}).id,
 		});
 
-		resize();
-
 		return () => {
 			S.Menu.closeAll([ 'select' ]);
 		};
 	}, []);
 
 	useEffect(() => {
-		resize();
-
-		if (listRef.current && topRef.current) {
-			listRef.current.scrollToPosition(topRef.current);
+		if (topRef.current) {
+			listRef.current?.scrollToPosition(topRef.current);
 		};
 
+		position();
 		setActive(null, true);
 	});
 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems: () => items,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -327,6 +322,6 @@ const MenuViewList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuViewList;

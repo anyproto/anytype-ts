@@ -1,21 +1,18 @@
 import React, { forwardRef, useState, useEffect, useRef, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { PreviewLink, PreviewObject, PreviewDefault, PreviewTab } from 'Component';
 import * as I from 'Interface';
 
 const OFFSET_Y = 8;
 const BORDER = 12;
 
-const PreviewIndex = observer(forwardRef(() => {
-	
+const PreviewIndex = forwardRef(() => {
+
 	const nodeRef = useRef(null);
 	const polygonRef = useRef(null);
 	const { preview } = S.Common;
 	const { type, markType, target, object: initialObject, marks, range, noUnlink, noEdit, x, y, width, height, onChange, withPlural, classNameWrap } = preview;
 	const [ object, setObject ] = useState(null);
 	const cn = [ 'previewWrapper' ];
-	const win = $(window);
 
 	if (classNameWrap) {
 		cn.push(classNameWrap);
@@ -63,11 +60,13 @@ const PreviewIndex = observer(forwardRef(() => {
 		e.stopPropagation();
 
 		const mark = Mark.getInRange(marks, markType, range);
-		const rect = U.Common.objectCopy($('#preview').get(0).getBoundingClientRect());
+		const previewEl = U.Dom.get('preview');
+		const domRect = previewEl?.getBoundingClientRect();
+		const rect = domRect ? U.Common.objectCopy(domRect) : null;
 
 		S.Menu.open('blockLink', {
 			classNameWrap: 'fromBlock',
-			rect: rect ? { ...rect, height: 0, y: rect.y + win.scrollTop() } : null, 
+			rect: rect ? { ...rect, height: 0, y: rect.y + window.scrollY } : null,
 			horizontal: I.MenuDirection.Center,
 			onOpen: () => Preview.previewHide(true),
 			data: {
@@ -87,7 +86,10 @@ const PreviewIndex = observer(forwardRef(() => {
 
 	const onMouseDown = (e: MouseEvent) => {
 		if (e.button === 2) {
-			$('#preview').hide();
+			const el = U.Dom.get('preview');
+			if (el) {
+				U.Dom.css(el, { display: 'none' });
+			};
 			Preview.previewHide(true);
 		};
 	};
@@ -95,44 +97,53 @@ const PreviewIndex = observer(forwardRef(() => {
 	useEffect(() => {
 		const handler = (e: any) => {
 			if (e.button === 2) {
-				const preview = document.getElementById('preview');
-				if (preview && preview.contains(e.target)) {
-					$('#preview').hide();
+				const previewEl = U.Dom.get('preview');
+				if (previewEl && previewEl.contains(e.target)) {
+					U.Dom.css(previewEl, { display: 'none' });
 					Preview.previewHide(true);
 				};
 			};
 		};
 
-		document.addEventListener('mousedown', handler, true);
-		return () => document.removeEventListener('mousedown', handler, true);
+		U.Dom.addEvent(document, 'mousedown', handler, true);
+		return () => U.Dom.removeEvent(document, 'mousedown', handler, true);
 	}, []);
 
 	const position = () => {
-		const node = $(nodeRef.current);
-		const poly = $(polygonRef.current);
+		const node = nodeRef.current as HTMLElement;
+		const poly = polygonRef.current as HTMLElement;
+		if (!node || !poly) {
+			return;
+		};
+
+		// Make visible before measuring so offsetWidth/offsetHeight return real values
+		U.Dom.css(node, { display: 'block', opacity: '0' });
+
 		const { ww, wh } = U.Dom.getWindowDimensions();
-		const st = win.scrollTop();
-		const ow = node.outerWidth();
-		const oh = node.outerHeight();
+		const st = window.scrollY;
+		const ow = node.offsetWidth;
+		const oh = node.offsetHeight;
 		const offsetY = preview.noOffset ? 0 : OFFSET_Y;
-		const css: any = { opacity: 0, left: 0, top: 0 };
-		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: height + offsetY, clipPath: '' };
+		let cssLeft = 0;
+		let cssTop = 0;
+		let cssTransform = '';
+		const pcss: any = { top: 'auto', bottom: 'auto', width: '', left: '', height: `${height + offsetY}px`, clipPath: '' };
 		const vsTop = (1 - height / oh) / 2 * 100;
 		const vsBot = (1 + height / oh) / 2 * 100;
 
-		let typeY = I.MenuDirection.Bottom;		
+		let typeY = I.MenuDirection.Bottom;
 		let ps = (1 - width / ow) / 2 * 100;
 		let pe = ps + width / ow * 100;
 
 		let cpTop = `polygon(0% 0%, ${ps}% ${vsTop}%, ${ps}% 100%, ${pe}% 100%, ${pe}% ${vsTop}%, 100% 0%)`;
 		let cpBot = `polygon(0% 100%, ${ps}% ${vsBot}%, ${ps}% 0%, ${pe}% 0%, ${pe}% ${vsBot}%, 100% 100%)`;
-		
+
 		if (ow < width) {
-			pcss.width = width;
-			pcss.left = (ow - width) / 2;
+			pcss.width = `${width}px`;
+			pcss.left = `${(ow - width) / 2}px`;
 			ps = (width - ow) / width / 2 * 100;
 			pe = (1 - (width - ow) / width / 2) * 100;
-			
+
 			cpTop = `polygon(0% 100%, ${ps}% 0%, ${pe}% 0%, 100% 100%)`;
 			cpBot = `polygon(0% 0%, ${ps}% 100%, ${pe}% 100%, 100% 0%)`;
 		};
@@ -142,50 +153,50 @@ const PreviewIndex = observer(forwardRef(() => {
 		};
 
 		if (typeY == I.MenuDirection.Top) {
-			css.top = y - oh - offsetY;
-			css.transform = 'translateY(-5%)';
+			cssTop = y - oh - offsetY;
+			cssTransform = 'translateY(-5%)';
 
-			pcss.bottom = -height - offsetY;
+			pcss.bottom = `${-height - offsetY}px`;
 			pcss.clipPath = cpTop;
 		};
 
 		if (typeY == I.MenuDirection.Bottom) {
-			css.top = y + height + offsetY;
-			css.transform = 'translateY(5%)';
+			cssTop = y + height + offsetY;
+			cssTransform = 'translateY(5%)';
 
-			pcss.top = -height - offsetY;
+			pcss.top = `${-height - offsetY}px`;
 			pcss.clipPath = cpBot;
 		};
-			
+
 		switch (preview.typeX) {
 			default:
 			case I.MenuDirection.Center: {
-				css.left = x - ow / 2 + width / 2;
+				cssLeft = x - ow / 2 + width / 2;
 				break;
 			};
 
 			case I.MenuDirection.Left: {
-				css.left = x;
+				cssLeft = x;
 				break;
 			};
 
 			case I.MenuDirection.Right: {
-				css.left = x + width - ow;
+				cssLeft = x + width - ow;
 				break;
 			};
 		};
 
-		css.left = Math.max(BORDER, css.left);
-		css.left = Math.min(ww - ow - BORDER, css.left);
+		cssLeft = Math.max(BORDER, cssLeft);
+		cssLeft = Math.min(ww - ow - BORDER, cssLeft);
 
-		node.show().css(css);
+		U.Dom.css(node, { left: `${cssLeft}px`, top: `${cssTop}px`, transform: cssTransform });
 
 		if (!preview.noAnimation) {
-			node.addClass('anim');
+			U.Dom.addClass(node, 'anim');
 		};
 
-		poly.css(pcss);
-		window.setTimeout(() => { node.css({ opacity: 1, transform: 'translateY(0%)' }); }, 15);
+		U.Dom.css(poly, pcss);
+		window.setTimeout(() => { U.Dom.css(node, { opacity: '1', transform: 'translateY(0%)' }); }, 15);
 	};
 
 	let head = null;
@@ -257,6 +268,7 @@ const PreviewIndex = observer(forwardRef(() => {
 			ref={nodeRef}
 			id="preview"
 			className={cn.join(' ')}
+			onMouseEnter={() => Preview.previewCancelHide()}
 			onMouseLeave={() => Preview.previewHide(true)}
 			onMouseDown={onMouseDown}
 		>
@@ -269,6 +281,6 @@ const PreviewIndex = observer(forwardRef(() => {
 		</div>
 	) : null;
 
-}));
+});
 
 export default PreviewIndex;

@@ -1,12 +1,10 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Filter, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuOptionEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	const { id, param, getId, close, setActive, onKeyDown } = props;
+	const { id, param, getId, getContainer, close, setActive, onKeyDown } = props;
 	const { data } = param;
 	const { option, isNew, onChange, relationKey } = data;
 	const [ dummy, setDummy ] = useState(0);
@@ -14,15 +12,20 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const nameRef = useRef(null);
 	const colorRef = useRef('');
 	const n = useRef(-1);
+	const keydownHandler = useRef(null);
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		keydownHandler.current = (e: any) => onKeyDownHandler(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const getSections = () => {
@@ -100,9 +103,9 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
-		const el = $(`#${getId()} #item-${U.Common.esc(item.id)}`);
+		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, getContainer());
 
-		if (el.hasClass('disabled') || keyboard.isMouseDisabled) {
+		if (U.Dom.hasClass(el, 'disabled') || keyboard.isMouseDisabled) {
 			return;
 		};
 
@@ -110,7 +113,7 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onClear = () => {
-		$(nodeRef.current).find('#item-create').addClass('disabled');
+		U.Dom.addClass(U.Dom.select('#item-create', nodeRef.current), 'disabled');
 	};
 
 	const remove = () => {
@@ -176,8 +179,11 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const v = String(nameRef.current?.getValue() || '').trim();
+		const createEl = U.Dom.select('#item-create', nodeRef.current);
 
-		$(nodeRef.current).find('#item-create').toggleClass('disabled', !v.length);
+		if (createEl) {
+			U.Dom.toggleClass(createEl, 'disabled', !v.length);
+		};
 	};
 
 	const Color = (item: any) => {
@@ -262,6 +268,6 @@ const MenuOptionEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuOptionEdit;

@@ -1,13 +1,12 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, memo } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { motion, AnimatePresence, } from 'motion/react';
 import { IconObject, Icon, ObjectName, Label } from 'Component';
 
 import Attachment from '../attachment';
 import Reply from './reply';
 import Reaction from './reaction';
+import Storage from 'Lib/storage';
 import * as I from 'Interface';
 
 interface ChatMessageRefProps {
@@ -16,7 +15,7 @@ interface ChatMessageRefProps {
 	getNode: () => HTMLElement;
 };
 
-const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
+const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const {
 		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
@@ -39,8 +38,8 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 					return;
 				};
 
-				nodeRef.current.querySelectorAll('.attachment.isBookmark').forEach((el: HTMLElement) => {
-					el.classList.toggle('isWide', width > 360);
+				U.Dom.selectAll('.attachment.isBookmark', nodeRef.current).forEach((el: HTMLElement) => {
+					U.Dom.toggleClass(el, 'isWide', width > 360);
 				});
 			});
 		});
@@ -57,6 +56,14 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 
 	useEffect(() => {
 		init();
+
+		if (bubbleRef.current && nodeRef.current) {
+			const width = bubbleRef.current.offsetWidth;
+
+			U.Dom.selectAll('.attachment.isBookmark', nodeRef.current).forEach((el: HTMLElement) => {
+				U.Dom.toggleClass(el, 'isWide', width > 360);
+			});
+		};
 	});
 
 	useImperativeHandle(ref, () => ({
@@ -75,36 +82,38 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		const { account } = S.Auth;
 		const isSelf = creator == account.id;
 		const isReadonly = readonly || !isSelf;
-		const node = $(nodeRef.current);
-		const et = node.find('.bubbleOuter .text');
-		const er = node.find('.reply .text');
+		const node = nodeRef.current;
+		if (!node) return;
 
-		renderMentions(rootId, et, marks, () => text, { subId });
+		const et = U.Dom.select('.bubbleOuter .text', node);
+		const er = U.Dom.select('.reply .text', node);
+
+		renderMentions(rootId, et, marks, () => text, { subId, withPreview: false });
 		renderObjects(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
 		renderLinks(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
 		renderEmoji(et);
 
-		renderMentions(rootId, er, marks, () => text, { subId, iconSize: 16 });
+		renderMentions(rootId, er, marks, () => text, { subId, iconSize: 16, withPreview: false });
 		renderObjects(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderLinks(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderEmoji(er, { iconSize: 16 });
 	};
 
 	const onReactionAdd = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		let menuContext = null;
 
 		S.Menu.open('smile', {
-			element: node.find('#reaction-add'),
+			element: U.Dom.select('#reaction-add', node),
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Center,
 			noFlipX: true,
 			onOpen: context => {
-				node.addClass('hover');
+				U.Dom.addClass(node, 'hover');
 				menuContext = context;
 			},
 			onClose: () => {
-				node.removeClass('hover');
+				U.Dom.removeClass(node, 'hover');
 			},
 			data: {
 				noHead: true,
@@ -163,7 +172,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	};
 
 	const getAttachments = (): any[] => {
-		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
+		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
 	};
 
 	const getAttachmentsLayout = (): number => {
@@ -206,10 +215,10 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 	};
 
 	const highlight = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		node.addClass('highlight');
-		window.setTimeout(() => node.removeClass('highlight'), J.Constant.delay.highlight);
+		U.Dom.addClass(node, 'highlight');
+		window.setTimeout(() => U.Dom.removeClass(node, 'highlight'), J.Constant.delay.highlight);
 	};
 
 	if (!message) {
@@ -383,6 +392,7 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 													subId={subId}
 													onRemove={() => onAttachmentRemove(item.id)}
 													onPreview={(preview) => onPreview(preview)}
+													onClick={() => Storage.setChat(rootId, { scrollMessageId: id })}
 													showAsFile={!attachmentsLayout}
 													bookmarkAsDefault={attachments.length > 1}
 													isDownload={!isSelf}
@@ -418,6 +428,6 @@ const ChatMessage = observer(forwardRef<ChatMessageRefProps, I.ChatMessageCompon
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default memo(ChatMessage);

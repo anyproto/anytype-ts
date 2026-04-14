@@ -1,6 +1,6 @@
 .sidebarPage.pageVault { background: var(--color-shape-highlight-light-solid); border-radius: 16px; }
 .sidebarPage.pageVault {
-	> .head { 
+	> .head {
 		display: flex; flex-direction: row; align-items: center; justify-content: center; padding: 0px 12px; height: 52px;
 		gap: 0px 8px; overflow: hidden; flex-shrink: 0;
 	}
@@ -63,6 +63,7 @@
 
 		.name { flex-grow: 1; @include text-overflow-nw; font-weight: 500; line-height: 20px; }
 		.label { @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
+		.label.lastMessage { @include text-overflow-nw; }
 		.label.chatName { font-weight: 500; @include text-overflow-nw; }
 
 		&::before {
@@ -92,15 +93,12 @@
 				}
 			}
 		}
-
-		&:not(.spaceChat) {
-			.label.lastMessage { @include text-overflow-nw; }
-		}
-
-		&.spaceChat {
-			.label.lastMessage { @include clamp2; }
-		}
 	}
+
+	> .body { animation: none; }
+
+	&.isMinimal > .body,
+	&:not(.isMinimal) > .body { animation: vaultModeFade $transitionSidebarTime $easeDecelerate; }
 
 	&.isMinimal {
 		> .head { height: 0px; }
@@ -144,4 +142,9 @@
 			&:hover, &.hover { height: 134px; }
 		}
 	}
+}
+
+@keyframes vaultModeFade {
+	0% { opacity: 0; }
+	100% { opacity: 1; }
 }

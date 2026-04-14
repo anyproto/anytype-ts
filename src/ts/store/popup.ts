@@ -1,5 +1,4 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import $ from 'jquery';
 import raf from 'raf';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -8,7 +7,6 @@ const AUTH_IDS = [ 'settings' ];
 const NO_DIMMER_IDS = [
 	'settingsOnboarding',
 	'shortcut',
-	'page',
 	'export',
 	'phrase',
 	'relation',
@@ -111,7 +109,7 @@ class PopupStore {
 			this.update(id, item.param);
 
 			window.setTimeout(() => {
-				$(window).trigger('resize');
+				U.Dom.eventDispatch(window, 'resize');
 			});
 		};
 	};
@@ -171,7 +169,9 @@ class PopupStore {
 			callBack?.();
 			return;
 		};
-		
+
+		Preview.toastHide(true);
+
 		if (item.param.onClose) {
 			item.param.onClose();
 		};
@@ -184,12 +184,10 @@ class PopupStore {
 			U.Data.updateTabsDimmer();
 			callBack?.();
 		} else {
-			const el = $(`#${U.String.toCamelCase(`popup-${id}`)}`);
+			const el = U.Dom.get(U.String.toCamelCase(`popup-${id}`));
 
 			raf(() => {
-				if (el.length) {
-					el.removeClass('show');
-				};
+				U.Dom.removeClass(el, 'show');
 				U.Data.updateTabsDimmer(filtered);
 			});
 
@@ -198,7 +196,7 @@ class PopupStore {
 
 				callBack?.();
 				U.Data.updateTabsDimmer();
-				$(window).trigger('resize');
+				U.Dom.eventDispatch(window, 'resize');
 			}, J.Constant.delay.popup);
 		};
 	};
@@ -288,7 +286,7 @@ class PopupStore {
 		this.close(oldId, () => {
 			window.setTimeout(() => {
 				this.open(newId, param);
-				$(window).trigger('resize');
+				U.Dom.eventDispatch(window, 'resize');
 			});
 		});
 	};

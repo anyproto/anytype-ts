@@ -45,21 +45,13 @@
 			.pinnedText { @include text-common; color: var(--color-text-primary); @include text-overflow-nw; }
 		}
 
-		markupmention.withImage {
-			smile, .space { display: none; }
-		}
-
 		.markuplink, markupobject { color: var(--color-system-accent-100); border-bottom: 0px; }
-
+		markupmention { padding: 1.5px 2px; background-color: var(--color-system-highlight); border-radius: 2px; }
 		markupmention {
 			name { color: var(--color-system-accent-100); font-weight: 500; border-bottom: 0px; }
-		}
 
-		.message.isSelf {
-			.markuplink, markupobject { color: var(--color-text-white60); }
-
-			markupmention {
-				name { color: var(--color-text-white60); }
+			&.withImage {
+				smile, .space { display: none; }
 			}
 		}
 

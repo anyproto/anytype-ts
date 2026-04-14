@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useImperativeHandle, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Label } from 'Component';
 import Item from './filters/item';
 import AdvancedItem from './filters/advanced';
@@ -13,22 +12,26 @@ interface Props extends I.ViewComponent {
 	onClear?: () => void;
 };
 
-const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) => {
+const BlockDataviewFilters = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { rootId, block, className, isInline, getView, onFilterAddClick, onSortAdd, loadData, readonly, getTarget, closeFilters } = props;
 	const blockId = block.id;
 	const view = getView();
-	const filters = view?.filters;
 	const nodeRef = useRef(null);
 
 	if (!view) {
 		return null;
 	};
-	
+
+	const filters = Dataview.getFilteredFilters(view.filters);
+	const sorts = Dataview.getFilteredSorts(view.sorts);
+	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
+	const cn = [ 'dataviewFilters' ];
 	const items = U.Common.objectCopy(filters).map((it: any) => {
+		const relation = S.Record.getRelationByKey(it.relationKey);
 		return {
 			...it,
-			relation: S.Record.getRelationByKey(it.relationKey),
+			relation: (relation && !relation.isArchived && !relation.isDeleted) ? relation : null,
 		};
 	}).filter(it => it.relation || Dataview.isAdvancedFilter(it)).sort((a, b) => {
 		const aAdvanced = Dataview.isAdvancedFilter(a);
@@ -44,9 +47,6 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 		if (aActive === bActive) return 0;
 		return aActive ? -1 : 1;
 	});
-	const isReadonly = readonly || !S.Block.checkFlags(rootId, blockId, [ I.RestrictionDataview.View ]);
-
-	const cn = [ 'dataviewFilters' ];
 
 	if (className) {
 		cn.push(className);
@@ -56,10 +56,11 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 	};
 
 	const onClick = (e: any, item: any) => {
-		S.Menu.open('dataviewFilterValues', {
+		const isAdvanced = Dataview.isAdvancedFilter(item);
+		const menuId = isAdvanced ? 'dataviewFilterAdvanced' : 'dataviewFilterValues';
+		const menuParam: I.MenuParam = {
 			element: `#block-${U.Common.esc(blockId)} #dataviewFilters #item-${U.Common.esc(item.id)}`,
 			classNameWrap: 'fromBlock',
-			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
 			noFlipY: true,
 			data: {
@@ -69,6 +70,17 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 				getView,
 				getTarget,
 				readonly: isReadonly,
+			},
+		};
+
+		if (isAdvanced) {
+			menuParam.noFlipX = true;
+			menuParam.data = Object.assign(menuParam.data, {
+				loadData,
+			});
+		} else {
+			menuParam.data = Object.assign(menuParam.data, {
+				itemId: item.id,
 				save: () => {
 					const currentFilter = view.getFilter(item.id);
 					if (currentFilter) {
@@ -77,9 +89,10 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 						});
 					};
 				},
-				itemId: item.id,
-			}
-		});
+			});	
+		};
+
+		S.Menu.open(menuId, menuParam);
 	};
 
 	const onAdd = () => {
@@ -117,7 +130,7 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 	};
 
 	const onClear = () => {
-		const sorts = view.sorts || [];
+		const sorts = Dataview.getFilteredSorts(view.sorts);
 
 		C.BlockDataviewFilterRemove(rootId, blockId, view.id, items.map(it => it.id), () => {
 			if (sorts.length) {
@@ -170,44 +183,19 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 		});
 	};
 
-	const onAdvancedClick = (e: any, item: any) => {
-		S.Menu.open('dataviewFilterAdvanced', {
-			element: `#block-${U.Common.esc(blockId)} #dataviewFilters #item-${U.Common.esc(item.id)}`,
-			classNameWrap: 'fromBlock',
-			horizontal: I.MenuDirection.Left,
-			offsetY: 4,
-			noFlipY: true,
-			noFlipX: true,
-			data: {
-				rootId,
-				blockId,
-				isInline,
-				getView,
-				getTarget,
-				readonly: isReadonly,
-				loadData,
-			}
-		});
-	};
-
 	const openFilterMenu = (filterId: string) => {
 		const item = items.find(it => it.id == filterId);
 		if (!item) {
 			return;
 		};
 
-		if (Dataview.isAdvancedFilter(item)) {
-			onAdvancedClick(null, item);
-		} else {
-			onClick(null, item);
-		};
+		onClick(null, item);
 	};
 
 	useImperativeHandle(ref, () => ({
 		openFilterMenu,
 	}));
 
-	const sorts = view.sorts || [];
 	const sortTitle = sorts.length === 1
 		? (S.Record.getRelationByKey(sorts[0].relationKey)?.name || '')
 		: U.String.sprintf(translate('commonCountSorts'), sorts.length, U.Common.plural(sorts.length, translate('pluralSort')));
@@ -250,23 +238,11 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 						</>
 					) : ''}
 					{items.map((item: any) => {
-						if (Dataview.isAdvancedFilter(item)) {
-							return (
-								<AdvancedItem
-									{...props}
-									key={item.id}
-									filter={item}
-									subId={rootId}
-									onRemove={e => onRemove(e, item)}
-									onClick={e => onAdvancedClick(e, item)}
-									onContextMenu={e => onContextMenu(e, item)}
-									readonly={isReadonly}
-								/>
-							);
-						};
+						const isAdvanced = Dataview.isAdvancedFilter(item);
+						const Component = isAdvanced ? AdvancedItem : Item;
 
 						return (
-							<Item
+							<Component
 								{...props}
 								key={item.id}
 								filter={item}
@@ -296,6 +272,6 @@ const BlockDataviewFilters = observer(forwardRef<RefProps, Props>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default BlockDataviewFilters;

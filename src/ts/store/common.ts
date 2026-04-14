@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import { action, computed, makeObservable, observable, set } from 'mobx';
 import { setReactionsPaused } from 'Lib/reactionScheduler';
 import * as I from 'Interface';
@@ -45,6 +44,7 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public chatCmdSendValue = null;
+	public commentCmdSendValue = null;
 	public updateVersionValue = '';
 	public vaultMessagesValue = null;
 	public vaultIsMinimalValue = null;
@@ -352,6 +352,14 @@ class CommonStore {
 		return this.boolGet('chatCmdSend');
 	};
 
+	get commentCmdSend (): boolean {
+		if (this.commentCmdSendValue === null) {
+			const v = Storage.get('commentCmdSend');
+			this.commentCmdSendValue = v === null ? true : v;
+		};
+		return !!this.commentCmdSendValue;
+	};
+
 	get theme (): string {
 		return String(this.themeId || '');
 	};
@@ -562,7 +570,7 @@ class CommonStore {
 	 */
 	graphSet (key: string, param: Partial<I.GraphSettings>) {
 		Storage.set(key, Object.assign(this.getGraph(key), param));
-		$(window).trigger('updateGraphSettings');
+		U.Dom.eventDispatch(window, 'updateGraphSettings');
 	};
 
 	/**
@@ -756,6 +764,14 @@ class CommonStore {
 	 */
 	chatCmdSendSet (v: boolean) {
 		this.boolSet('chatCmdSend', v);
+	};
+
+	/**
+	 * Sets the comment send shortcut option value.
+	 * @param {boolean} v - Value.
+	 */
+	commentCmdSendSet (v: boolean) {
+		this.boolSet('commentCmdSend', v);
 	};
 
 	/**

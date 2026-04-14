@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Select } from 'Component';
 import * as I from 'Interface';
 
@@ -7,7 +6,7 @@ interface Props extends I.SidebarSectionComponent {
 	layoutOptions?: any[];
 };
 
-const SidebarSectionTypeLayoutFormatList = observer(forwardRef<{}, Props>((props, ref) => {
+const SidebarSectionTypeLayoutFormatList = forwardRef<{}, Props>((props, ref) => {
 
 	const viewRef = useRef(null);
 	const { object, onChange, readonly } = props;
@@ -90,6 +89,6 @@ const SidebarSectionTypeLayoutFormatList = observer(forwardRef<{}, Props>((props
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionTypeLayoutFormatList;

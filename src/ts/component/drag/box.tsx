@@ -1,5 +1,4 @@
 import React, { FC, useRef, ReactNode, Children, cloneElement } from 'react';
-import $ from 'jquery';
 
 interface Props {
 	children?: ReactNode;
@@ -15,95 +14,123 @@ const DragBox: FC<Props> = ({ children: initialChildren, onDragEnd }) => {
 	const oldIndex = useRef(-1);
 	const newIndex = useRef(-1);
 
+	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
+	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
+
 	const onDragStart = (e: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (!nodeRef.current) {
+		const node = nodeRef.current;
+		if (!node) {
 			return;
 		};
 
-		const win = $(window);
-		const node = $(nodeRef.current);
-		const items = node.find('.isDraggable');
-		const element = $(e.currentTarget);
-		const clone = element.clone();
-		const { left, top } = node.offset();
+		const items = U.Dom.selectAll('.isDraggable', node) as HTMLElement[];
+		const element = e.currentTarget as HTMLElement;
+		const clone = element.cloneNode(true) as HTMLElement;
+		const rect = node.getBoundingClientRect();
 
-		items.each((i: number, item: any) => {
-			item = $(item);
-
-			const id = item.data('id');
-			if (!id || item.hasClass('isClone')) {
+		items.forEach((item) => {
+			const id = item.dataset.id;
+			if (!id || U.Dom.hasClass(item, 'isClone')) {
 				return;
 			};
 
-			const p = item.position();
 			cache.current[id] = {
-				x: p.left,
-				y: p.top,
-				width: item.outerWidth(),
-				height: item.outerHeight(),
+				x: item.offsetLeft,
+				y: item.offsetTop,
+				width: item.offsetWidth,
+				height: item.offsetHeight,
 			};
 		});
 
-		ox.current = left;
-		oy.current = top;
-		oldIndex.current = element.data('index');
+		ox.current = rect.left + window.scrollX;
+		oy.current = rect.top + window.scrollY;
+		oldIndex.current = Number(element.dataset.index);
 
-		node.append(clone);
-		clone.addClass('isClone');
-		element.addClass('isDragging');
+		node.appendChild(clone);
+		U.Dom.addClass(clone, 'isClone');
+		U.Dom.addClass(element, 'isDragging');
 
-		win.off('mousemove.dragbox mouseup.dragbox');
-		win.on('mousemove.dragbox', e => onDragMove(e));
-		win.on('mouseup.dragbox', e => onDragEndHandler(e));
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+		};
+
+		mouseMoveHandler.current = e => onDragMove(e);
+		mouseUpHandler.current = e => onDragEndHandler(e);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const onDragMove = (e: any) => {
-		if (!nodeRef.current) {
+		const node = nodeRef.current;
+		if (!node) {
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const items = node.find('.isDraggable');
-		const clone = node.find('.isDraggable.isClone');
-		const width = clone.outerWidth();
-		const height = clone.outerHeight();
+		const items = U.Dom.selectAll('.isDraggable', node) as HTMLElement[];
+		const clone = U.Dom.select('.isDraggable.isClone', node) as HTMLElement;
+		if (!clone) {
+			return;
+		};
+
+		const width = clone.offsetWidth;
+		const height = clone.offsetHeight;
 		const x = e.pageX - ox.current - width / 2;
 		const y = e.pageY - oy.current - height / 2;
 		const center = x + width / 2;
 
 		newIndex.current = -1;
 
-		node.find('.isDraggable.isOver').removeClass('isOver left right');
-		clone.css({ transform: `translate3d(${x}px,${y}px,0px)` });
+		U.Dom.selectAll('.isDraggable.isOver', node).forEach(el => {
+			U.Dom.removeClass(el, 'isOver');
+			U.Dom.removeClass(el, 'left');
+			U.Dom.removeClass(el, 'right');
+		});
+		U.Dom.css(clone, { transform: `translate3d(${x}px,${y}px,0px)` });
 
 		for (let i = 0; i < items.length; ++i) {
-			const el = $(items.get(i));
-			const rect = cache.current[el.data('id')];
+			const el = items[i];
+			const rect = cache.current[el.dataset.id];
 
 			if (rect && U.Common.rectsCollide({ x: center, y, width: 2, height }, rect)) {
 				const isLeft = center <= rect.x + rect.width / 2;
 				newIndex.current = i;
-				el.addClass(`isOver ${isLeft ? 'left' : 'right'}`);
+				U.Dom.addClass(el, 'isOver');
+				U.Dom.addClass(el, isLeft ? 'left' : 'right');
 				break;
 			};
 		};
 	};
 
 	const onDragEndHandler = (e: any) => {
-		if (!nodeRef.current) {
+		const node = nodeRef.current;
+		if (!node) {
 			return;
 		};
 
-		const node = $(nodeRef.current);
+		U.Dom.select('.isDraggable.isClone', node)?.remove();
+		U.Dom.selectAll('.isDraggable.isDragging', node).forEach(el => U.Dom.removeClass(el, 'isDragging'));
+		U.Dom.selectAll('.isDraggable.isOver', node).forEach(el => {
+			U.Dom.removeClass(el, 'isOver');
+			U.Dom.removeClass(el, 'left');
+			U.Dom.removeClass(el, 'right');
+		});
 
-		node.find('.isDraggable.isClone').remove();
-		node.find('.isDraggable.isDragging').removeClass('isDragging');
-		node.find('.isDraggable.isOver').removeClass('isOver left right');
-
-		$(window).off('mousemove.dragbox mouseup.dragbox');
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+			mouseMoveHandler.current = null;
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+			mouseUpHandler.current = null;
+		};
 
 		if (newIndex.current >= 0) {
 			onDragEnd(oldIndex.current, newIndex.current);

@@ -1,6 +1,4 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Filter, IconObject, ObjectName, EmptySearch, Icon } from 'Component';
 import * as I from 'Interface';
@@ -18,9 +16,9 @@ interface ChatSearchResult {
 	message: I.ChatMessage;
 };
 
-const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, onKeyDown, setActive, getId, close } = props;
+	const { param, onKeyDown, setActive, getId, getContainer, close, position } = props;
 	const { data } = param;
 	const { chatId, route, scrollToMessage } = data;
 	const { showRelativeDates, dateFormat, space } = S.Common;
@@ -35,13 +33,14 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const n = useRef(0);
 	const offset = useRef(0);
 	const filter = useRef('');
+	const keydownHandler = useRef(null);
 	const cnu = [ 'arrow', 'up' ];
 	const cnd = [ 'arrow', 'down' ];
 
 	useEffect(() => {
 		rebind();
 		focus();
-		beforePosition();
+		position();
 		analytics.event('ScreenChatSearch', { route });
 
 		return () => {
@@ -50,8 +49,7 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		rebind();
-		beforePosition();
+		position();
 	});
 
 	const focus = () => {
@@ -60,12 +58,16 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const getItems = () => {
@@ -177,11 +179,11 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const beforePosition = () => {
 		const items = getItems().slice(0, LIMIT);
-		const menu = $(`#${getId()}`);
-		const obj = menu.find('.content');
+		const menu = getContainer();
+		const content = U.Dom.select('.content', menu);
 		const { wh } = U.Dom.getWindowDimensions();
 		const containerEl = U.Dom.getScrollContainer(data.isPopup);
-		const headerEl = containerEl?.querySelector('#header .side.center') as HTMLElement;
+		const headerEl = U.Dom.select('#header .side.center', containerEl);
 		const width = Math.min(headerEl?.clientWidth || 0, J.Size.editor);
 
 		let height = 0;
@@ -195,8 +197,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		height = Math.min(height, wh - 104);
-		menu.css({ width });
-		obj.css({ height });
+		U.Dom.css(menu, { width: `${width}px` });
+		U.Dom.css(content, { height: `${height}px` });
 	};
 
 	const getHighlightedText = (item: ChatSearchResult) => {
@@ -331,8 +333,8 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				/>
 				
 				<div className="arrowWrapper">
-					<Icon name="arrow/small" className={cnu.join(' ')} onClick={() => onArrow(1)} />
-					<Icon name="arrow/small" className={cnd.join(' ')} onClick={() => onArrow(-1)} />
+					<Icon name="arrow/small" size={8} className={cnu.join(' ')} onClick={() => onArrow(1)} />
+					<Icon name="arrow/small" size={8} className={cnd.join(' ')} onClick={() => onArrow(-1)} />
 				</div>
 			</div>
 
@@ -372,6 +374,6 @@ const MenuSearchChat = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuSearchChat;

@@ -1,6 +1,5 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Excalidraw } from '@excalidraw/excalidraw';
-import { observer } from 'mobx-react';
 import { keyboard } from 'Lib/keyboard';
 
 interface Props {
@@ -9,7 +8,7 @@ interface Props {
 	onChange?: (elements: any[], appState: any, files: any) => void;
 }
 
-const MediaExcalidraw = observer(forwardRef<{}, Props>(({
+const MediaExcalidraw = forwardRef<{}, Props>(({
 	data = {},
 	readonly = false,
 	onChange = () => {},
@@ -27,9 +26,9 @@ const MediaExcalidraw = observer(forwardRef<{}, Props>(({
 			};
 		};
 
-		window.addEventListener('mousedown', onMouseDown);
+		U.Dom.addEvent(window, 'mousedown', onMouseDown);
 		return () => {
-			window.removeEventListener('mousedown', onMouseDown);
+			U.Dom.removeEvent(window, 'mousedown', onMouseDown);
 			keyboard.setFocus(false);
 		};
 	}, []);
@@ -74,6 +73,6 @@ const MediaExcalidraw = observer(forwardRef<{}, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default MediaExcalidraw;

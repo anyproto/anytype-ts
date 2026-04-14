@@ -1,36 +1,19 @@
-import React, { useMemo, useState, useEffect, useRef } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import OnboardingGraphWorker from './graph/OnboardingGraphWorker';
 
 interface DimmerWithGraphProps {
 	onClick?: () => void;
 };
 
-const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
+const DimmerWithGraph = ({ onClick }: DimmerWithGraphProps) => {
 
 	const [ shouldRenderGraph, setShouldRenderGraph ] = useState(false);
 	const [ graphDimensions, setGraphDimensions ] = useState({
 		width: typeof window !== 'undefined' ? window.innerWidth : 1200,
 		height: typeof window !== 'undefined' ? window.innerHeight : 800,
 	});
-	
-	// Track render frequency
-	const renderCount = useRef(0);
-	const lastRenderLog = useRef(Date.now());
-	
-	renderCount.current++;
 
-	const now = Date.now();
-	if (now - lastRenderLog.current > 1000) {
-		if (renderCount.current > 1) {
-			console.log(`[DimmerWithGraph] Rendered ${renderCount.current} times/sec`);
-		};
-
-		renderCount.current = 0;
-		lastRenderLog.current = now;
-	};
-	
 	// Delay graph rendering to improve initial load performance
 	useEffect(() => {
 		const timer = setTimeout(() => {
@@ -67,7 +50,7 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 		};
 		
 		// Add resize listener
-		window.addEventListener('resize', handleResize);
+		U.Dom.addEvent(window, 'resize', handleResize);
 		
 		// Cleanup
 		return () => {
@@ -75,7 +58,7 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 				raf.cancel(animationFrame);
 			};
 
-			window.removeEventListener('resize', handleResize);
+			U.Dom.removeEvent(window, 'resize', handleResize);
 		};
 	}, []);
 	
@@ -113,6 +96,6 @@ const DimmerWithGraph = observer(({ onClick }: DimmerWithGraphProps) => {
 		</div>
 	);
 
-});
+};
 
 export default DimmerWithGraph;

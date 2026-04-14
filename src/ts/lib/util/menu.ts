@@ -1,9 +1,9 @@
-import $ from 'jquery';
 import raf from 'raf';
 import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
 import Locale from 'dist/lib/json/locale.json';
 import React, { MouseEvent } from 'react';
+import { Icon } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { focus } from 'Lib/focus';
@@ -84,11 +84,20 @@ class UtilMenu {
 	 * @returns {any[]} The list of text block types.
 	 */
 	getBlockText () {
-		return [
+		const items = [
 			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
 			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1', 'header1' ] },
 			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2', 'header2' ] },
 			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3', 'header3' ] },
+		].map((it: any) => {
+			it.type = I.BlockType.Text;
+			it.iconParam = { name: U.Data.blockTextIcon(it.id) };
+			return this.mapperBlock(it);
+		});
+
+		items.push({ isDiv: true } as any);
+
+		const extra = [
 			{ id: I.TextStyle.Quote, lang: 'Quote', aliases: [ 'quote' ] },
 			{ id: I.TextStyle.Callout, lang: 'Callout', aliases: [ 'callout' ] },
 		].map((it: any) => {
@@ -96,6 +105,8 @@ class UtilMenu {
 			it.iconParam = { name: U.Data.blockTextIcon(it.id) };
 			return this.mapperBlock(it);
 		});
+
+		return items.concat(extra);
 	};
 
 	/**
@@ -462,7 +473,7 @@ class UtilMenu {
 					window.setTimeout(() => {
 						switch (option.id) {
 							case 'edit': {
-								$(`#button-${U.Common.esc(blockId)}-settings`).trigger('click');
+								U.Dom.get(`button-${blockId}-settings`)?.click();
 								S.Menu.updateData('dataviewViewSettings', { view: observable.box(new M.View(view)) });
 								break;
 							};
@@ -557,7 +568,7 @@ class UtilMenu {
 			id,
 			name: translate(`widget${id}Name`),
 			description: translate(`widget${id}Description`),
-			icon: `widget-${id}`,
+			iconParam: { name: `menu/widget/${String(I.WidgetLayout[id] || '').toLowerCase()}` },
 			withDescription: true,
 		}));
 	};
@@ -678,15 +689,14 @@ class UtilMenu {
 	dashboardSelect (element: string, openRoute?: boolean) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
-		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
-			C.WorkspaceSetInfo(space, { spaceDashboardId: object.id }, (message: any) => {
+			C.WorkspaceSetHomepage(space, object.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				S.Detail.update(J.Constant.subId.space, { id: spaceview.id, details: { spaceDashboardId: object.id } }, false);
+				S.Detail.update(J.Constant.subId.space, { id: spaceview.id, details: { homepage: object.id } }, false);
 
 				if (update) {
 					S.Detail.update(U.Space.getSubSpaceSubId(space), { id: object.id, details: object }, false);
@@ -700,78 +710,28 @@ class UtilMenu {
 			});
 		};
 
-		let options = [];
-		if (spaceview.isChat || spaceview.isOneToOne) {
-			options.push({ id: I.HomePredefinedId.Chat, name: translate(`spaceUxType${I.SpaceUxType.Chat}`) });
-		} else {
-			options = [
-				{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
-				{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
-				{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
-			];
-		};
-
 		analytics.event('ClickChangeSpaceDashboard');
 
-		S.Menu.open('select', {
+		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
-			subIds,
-			onOpen: context => this.setContext(context),
-			onClose: () => S.Menu.closeAll(subIds),
 			data: {
-				options,
-				onOver: (e: any, item: any) => {
-					if (!this.menuContext) {
-						return;
-					};
-
-					if (!item.arrow) {
-						S.Menu.closeAll(subIds);
-						return;
-					};
-
-					switch (item.id) {
-						case I.HomePredefinedId.Existing: {
-							S.Menu.open('searchObject', {
-								element: `#${this.menuContext.getId()} #item-${U.Common.esc(item.id)}`,
-								offsetX: this.menuContext.getSize().width,
-								vertical: I.MenuDirection.Center,
-								isSub: true,
-								data: {
-									withPlural: true,
-									filters: [
-										{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
-										{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-									],
-									canAdd: true,
-									onSelect: el => {
-										onSelect(el, true);
-										this.menuContext?.close();
-
-										analytics.event('ChangeSpaceDashboard', { type: I.HomePredefinedId.Existing });
-									},
-								}
-							});
-							break;
-						};
-					};
+				withPlural: true,
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+				],
+				dataChange: (_ctx: any, items: any) => {
+					return [
+						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'common/empty' }, name: translate('commonEmpty') },
+						{ id: I.HomePredefinedId.Graph, iconParam: { name: 'header/graph' }, name: translate('commonGraph') },
+					].concat(items);
 				},
-				onSelect: (e: any, item: any) => {
-					if (item.arrow) {
-						return;
-					};
+				onSelect: el => {
+					onSelect(el, true);
 
-					switch (item.id) {
-						case I.HomePredefinedId.Graph:
-						case I.HomePredefinedId.Chat:
-						case I.HomePredefinedId.Last: {
-							onSelect({ id: item.id }, false);
-
-							analytics.event('ChangeSpaceDashboard', { type: item.id });
-							break;
-						};
-					};
+					const type = U.Space.getSystemDashboardIds().includes(el.id) ? el.id : I.HomePredefinedId.Existing;
+					analytics.event('ChangeSpaceDashboard', { type });
 				},
 			}
 		});
@@ -843,7 +803,7 @@ class UtilMenu {
 		const isOwner = U.Space.isMyOwner();
 		const options: I.Option[] = [
 			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' }
+			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'destructive' }
 		];
 
 		S.Menu.open('select', {
@@ -870,7 +830,7 @@ class UtilMenu {
 	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: Partial<SpaceContextParam>) {
 		param = param || {};
 
-		const { targetSpaceId, uxType } = space;
+		const { targetSpaceId, spaceType } = space;
 		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
@@ -888,7 +848,7 @@ class UtilMenu {
 					};
 
 					C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-					analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route });
+					analytics.event('ChangeMessageNotificationState', { type: mode, spaceType: space.spaceType, route });
 					break;
 				};
 
@@ -991,7 +951,7 @@ class UtilMenu {
 				};
 
 				case 'openNewTab': {
-					Action.openSpaceTab(targetSpaceId, uxType, route);
+					Action.openSpaceTab(targetSpaceId, spaceType, route);
 					break;
 				};
 
@@ -1070,10 +1030,10 @@ class UtilMenu {
 				};
 
 				if (withDelete) {
-					const iconParam = { name: isOwner ? 'menu/action/remove' : 'menu/action/leave', color: 'red' };
+					const iconParam = { name: isOwner ? 'menu/action/remove' : 'menu/action/leave', color: 'destructive' };
 					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
 
-					sections.delete.push({ id: 'remove', iconParam, name, color: 'red' });
+					sections.delete.push({ id: 'remove', iconParam, name, color: 'destructive' });
 				};
 			};
 
@@ -1145,23 +1105,18 @@ class UtilMenu {
 				return o;
 			};
 
-			const d1 = c1.lastMessage?.createdAt || 0;
-			const d2 = c2.lastMessage?.createdAt || 0;
+			const d1 = Math.max(c1.lastMessage?.createdAt || 0, c1.spaceJoinDate || 0, c1.creationDate || 0);
+			const d2 = Math.max(c2.lastMessage?.createdAt || 0, c2.spaceJoinDate || 0, c2.creationDate || 0);
 
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
 
-			if (c1.spaceJoinDate > c2.spaceJoinDate) return -1;
-			if (c1.spaceJoinDate < c2.spaceJoinDate) return 1;
-
 			if (c1.hasCounter && !c2.hasCounter) return -1;
 			if (!c1.hasCounter && c2.hasCounter) return 1;
 
-			if (c1.creationDate > c2.creationDate) return -1;
-			if (c1.creationDate < c2.creationDate) return 1;
 			return 0;
 		});
-
+		
 		return items;
 	};
 
@@ -1243,8 +1198,8 @@ class UtilMenu {
 			offsetX: context.getSize().width,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
+			onOpen: () => U.Dom.addClass(U.Dom.select(element), 'active'),
+			onClose: () => U.Dom.removeClass(U.Dom.select(element), 'active'),
 			data: {
 				rootId,
 				blockId,
@@ -1263,9 +1218,9 @@ class UtilMenu {
 
 	sidebarModeOptions () {
 		return [
-			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
+			{ id: 'all', iconParam: { name: 'sidebar-all' }, name: translate('sidebarMenuAll') },
 			{ id: 'sidebar', iconParam: { name: 'menu/action/sidebar' }, name: translate('sidebarMenuSidebar') },
-		].map(it => ({ ...it, icon: it.icon ? `sidebar-${it.icon}` : it.icon }));
+		];
 	};
 
 	codeLangOptions (): I.Option[] {
@@ -1273,10 +1228,11 @@ class UtilMenu {
 	};
 
 	getCommentAddSections (): any[] {
-		return [
+		return this.sectionsMap([
 			{
 				id: 'text', name: translate('commentSlashMenuTitle'),
 				children: [
+					{ id: 'paragraph', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/text' }, name: translate('commentBlockText'), description: translate('commentBlockTextDescription') },
 					{ id: 'title', textStyle: I.TextStyle.Header1, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header1' }, name: translate('commentBlockTitle'), description: translate('commentBlockTitleDescription') },
 					{ id: 'heading', textStyle: I.TextStyle.Header2, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header2' }, name: translate('commentBlockHeading'), description: translate('commentBlockHeadingDescription') },
 					{ id: 'subheading', textStyle: I.TextStyle.Header3, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header3' }, name: translate('commentBlockSubheading'), description: translate('commentBlockSubheadingDescription') },
@@ -1285,17 +1241,15 @@ class UtilMenu {
 			{
 				id: 'list', name: translate('commentSlashMenuLists'),
 				children: [
-					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, iconParam: { name: 'menu/block/text/numbered' }, name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
-					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, iconParam: { name: 'menu/block/text/bulleted' }, name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
+					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/numbered' }, name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
+					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/bulleted' }, name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
 					{ id: 'checkbox', textStyle: I.TextStyle.Checkbox, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/checkbox' }, name: translate('commentBlockCheckbox'), description: translate('commentBlockCheckboxDescription') },
 				],
 			},
 			{
 				id: 'attachments', name: translate('commentSlashMenuAttachments'),
 				children: [
-					{ id: 'create', action: 'create', iconParam: { name: 'comment/menu/createObject' }, name: translate('commonNewObject'), arrow: true },
-					{ id: 'object', action: 'object', iconParam: { name: 'comment/menu/plus' }, name: translate('spaceExisting') },
-					{ id: 'file', action: 'file', iconParam: { name: 'comment/menu/uploadComputer' }, name: translate('commonUploadComputer') },
+					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/code' }, name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
 					{ id: 'embed', action: 'embed', iconParam: { name: 'menu/action/embed' }, name: translate('commentSlashMenuEmbed'), arrow: true },
 				],
 			},
@@ -1304,10 +1258,52 @@ class UtilMenu {
 				children: [
 					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/quote' }, name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
 					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, iconParam: { name: 'menu/block/div/line' }, name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
-					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/code' }, name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
 				],
 			},
-		];
+		]);
+	};
+
+	getCommentAddMenuParam (contextRef: { current: any }) {
+		return {
+			param: {
+				classNameWrap: 'fromBlock',
+				className: 'commentAdd',
+				component: 'select',
+				noAnimation: true,
+				subIds: [ 'typeSuggest', 'select' ],
+				onOpen: (context: any) => { contextRef.current = context; },
+			},
+			data: {
+				sections: this.getCommentAddSections(),
+				noFilter: true,
+				noScroll: true,
+				noVirtualisation: true,
+			},
+		};
+	};
+
+	openCommentEmbedMenu (context: any, onSelect: (e: any, item: any) => void) {
+		const size = context.getSize();
+		const options = this.prepareForSelect(this.getBlockEmbed().map(it => ({
+			...it,
+			action: 'embed',
+			embedProcessor: it.id,
+		})));
+
+		S.Menu.open('select', {
+			element: `#${context.getId()}`,
+			className: 'fixed',
+			classNameWrap: 'fromBlock',
+			offsetX: size.width,
+			offsetY: -size.height,
+			vertical: I.MenuDirection.Bottom,
+			isSub: true,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect,
+			},
+		});
 	};
 
 	getLibrarySortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
@@ -1490,7 +1486,7 @@ class UtilMenu {
 			if (canDelete) {
 				options = options.concat([
 					{ isDiv: true },
-					{ id: 'remove', name: translate('commonDelete'), color: 'red' },
+					{ id: 'remove', name: translate('commonDelete'), color: 'destructive' },
 				]);
 			};
 
@@ -1680,27 +1676,27 @@ class UtilMenu {
 	};
 
 	spaceCreate (param: I.MenuParam, route) {
-		const ids = [ 'chat', 'space', 'join' ];
-		const options = ids.map(id => {
-			const suffix = U.String.toUpperCamelCase(id);
-			const description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);;
+		const analyticsName = {
+			[I.SpaceCreateType.Personal]: 'Space',
+			[I.SpaceCreateType.Group]: 'Chat',
+			[I.SpaceCreateType.Join]: 'Join',
+		};
 
-			let withDescription = true;
-			let iconParam = { name: `menu/spaceCreate/${id}`, size: 40 };
+		const mySharedSpaces = U.Space.getMySharedSpacesList();
+		const { sharedSpacesLimit } = U.Space.getProfile();
+		const isLimitReached = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
 
-			if (id == 'join') {
-				withDescription = false;
-				iconParam = null;
-			};
+		const groupOption: any = { id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') };
 
-			return {
-				id,
-				iconParam,
-				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
-				description,
-				withDescription,
-			};
-		});
+		if (isLimitReached) {
+			groupOption.caption = React.createElement(Icon, { name: 'common/alert', className: 'spaceLimit', color: 'grey' });
+		};
+
+		const options = [
+			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
+			groupOption,
+			{ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
+		];
 
 		let prefix = '';
 		switch (route) {
@@ -1721,24 +1717,9 @@ class UtilMenu {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'chat': {
-							Action.createSpace(I.SpaceUxType.Chat, route);
-							break;
-						};
+					Action.createSpace(item.id, route);
 
-						case 'space': {
-							Action.createSpace(I.SpaceUxType.Data, route);
-							break;
-						};
-
-						case 'join': {
-							S.Popup.closeAll(null, () => S.Popup.open('spaceJoinByLink', {}));
-							break;
-						};
-					};
-
-					analytics.event(`Click${prefix}CreateMenu${U.String.toUpperCamelCase(item.id)}`);
+					analytics.event(`Click${prefix}CreateMenu${analyticsName[item.id]}`);
 				},
 			}
 		});
@@ -1760,20 +1741,24 @@ class UtilMenu {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					S.Common.vaultMessagesSet(Boolean(Number(item.id)));
+					const value = Boolean(Number(item.id));
+
+					S.Common.vaultMessagesSet(value);
 					if (isClosed) {
 						sidebar.open(I.SidebarPanel.Left, '', );
 					};
+
+					analytics.event('VaultStyleChange', { type: value ? 'MessagePreview' : 'Compact' });
 				},
 			},
 		});
 	};
 
-	uxTypeOptions (): I.Option[] {
+	spaceTypeOptions (): I.Option[] {
 		return [
-			{ id: I.SpaceUxType.Data },
-			{ id: I.SpaceUxType.Chat },
-		].map(it => ({ ...it, name: translate(`spaceUxType${it.id}`) }));
+			{ id: I.SpaceType.Data },
+			{ id: I.SpaceType.Chat },
+		].map(it => ({ ...it, name: translate(`spaceType${it.id}`) }));
 	};
 
 	notificationModeOptions (forSettings?: boolean): I.Option[] {
@@ -1950,18 +1935,17 @@ class UtilMenu {
 		keyboard.disableContextOpen(true);
 
 		const { focused } = focus.state;
-		const win = $(window);
 		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
-		const element = $(document.elementFromPoint(x, y));
-		const isInput = element.is('input');
-		const isTextarea = element.is('textarea');
-		const isEditable = element.is('.editable');
+		const element = document.elementFromPoint(x, y) as HTMLElement;
+		const isInput = element?.tagName === 'INPUT';
+		const isTextarea = element?.tagName === 'TEXTAREA';
+		const isEditable = U.Dom.hasClass(element, 'editable');
 
 		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
 
 		S.Menu.open('select', {
 			classNameWrap: 'fromBlock',
-			recalcRect: () => rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+			recalcRect: () => rect ? { ...rect, y: rect.y + window.scrollY } : null,
 			onOpen: () => S.Menu.closeAll([ 'blockContext', 'chatText' ]),
 			onClose: () => keyboard.disableContextOpen(false),
 			data: {
@@ -1986,12 +1970,12 @@ class UtilMenu {
 
 										// Get the text content and find word boundaries
 										if (container.nodeType === Node.TEXT_NODE) {
-											const editable = $(container).closest('.editable');
-											if (editable.length) {
+											const editable = (container as HTMLElement).parentElement?.closest('.editable') as HTMLElement;
+											if (editable) {
 												// Calculate the absolute offset in the block text
 												let absoluteOffset = 0;
 												const walker = document.createTreeWalker(
-													editable.get(0),
+													editable,
 													NodeFilter.SHOW_TEXT,
 													null
 												);
@@ -2040,11 +2024,11 @@ class UtilMenu {
 									};
 								} else
 								if (isInput || isTextarea || isEditable) {
-									const isMessageBox = element.attr('id') === 'messageBox';
+									const isMessageBox = element?.id === 'messageBox';
 
 									if (isMessageBox) {
 										// Handle chat form's messageBox with marks preservation
-										const html = String(element.html() || '');
+										const html = String(element.innerHTML || '');
 										const parsed = Mark.fromHtml(html, []);
 										const { text } = parsed;
 										let { marks } = parsed;
@@ -2060,7 +2044,7 @@ class UtilMenu {
 											if (container.nodeType === Node.TEXT_NODE) {
 												let absoluteOffset = 0;
 												const walker = document.createTreeWalker(
-													element.get(0),
+													element,
 													NodeFilter.SHOW_TEXT,
 													null
 												);
@@ -2099,29 +2083,28 @@ class UtilMenu {
 											marks = Mark.adjust(marks, wordIndex + misspelledWord.length, lengthDiff);
 
 											const newHtml = Mark.toHtml(newText, marks);
-											element.html(U.String.sanitize(newHtml, true));
+											element.innerHTML = U.String.sanitize(newHtml, true);
 
 											const cursorPos = wordIndex + item.id.length;
-											const el = element.get(0) as HTMLElement;
-											el.focus();
-											setRange(el, { start: cursorPos, end: cursorPos });
+											element.focus();
+											setRange(element, { start: cursorPos, end: cursorPos });
 										};
 									} else {
 										let value = '';
 										if (isInput || isTextarea) {
-											value = String(element.val());
+											value = String((element as HTMLInputElement).value);
 										} else
 										if (isEditable) {
-											value = String((element.get(0) as HTMLElement).innerText || '');
+											value = String(element.innerText || '');
 										};
 
 										value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);
 
 										if (isInput || isTextarea) {
-											element.val(value);
+											(element as HTMLInputElement).value = value;
 										} else
 										if (isEditable) {
-											element.text(value);
+											element.textContent = value;
 										};
 									};
 								};
@@ -2141,6 +2124,36 @@ class UtilMenu {
 					});
 				},
 			}
+		});
+	};
+
+	archivedContext (e: any, objectId: string, onRestore?: () => void) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const options = [
+			{ id: 'restore', iconParam: { name: 'menu/action/restore' }, name: translate('commonRestore') },
+			{ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'destructive' }, name: translate('commonDeleteImmediately'), color: 'destructive' },
+		];
+
+		S.Menu.open('select', {
+			recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 }),
+			data: {
+				options,
+				onSelect: (e, option) => {
+					switch (option.id) {
+						case 'restore': {
+							Action.restore([ objectId ], analytics.route.block, onRestore);
+							break;
+						};
+
+						case 'delete': {
+							Action.delete([ objectId ], analytics.route.block);
+							break;
+						};
+					};
+				},
+			},
 		});
 	};
 

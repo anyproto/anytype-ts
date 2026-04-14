@@ -1,5 +1,4 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { Label } from 'Component';
 import * as I from 'Interface';
 
@@ -8,7 +7,7 @@ interface Props {
 	label: string;
 };
 
-const ProgressText = observer(forwardRef<{}, Props>(({ 
+const ProgressText = forwardRef<{}, Props>(({ 
 	label = '', 
 	type = I.ProgressType.None,
 }, ref) => {
@@ -27,6 +26,6 @@ const ProgressText = observer(forwardRef<{}, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default ProgressText;

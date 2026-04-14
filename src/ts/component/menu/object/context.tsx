@@ -1,13 +1,11 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
 const LIMIT_OPEN = 10;
 
-const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, onKeyDown, setActive, getId, getSize, close } = props;
 	const { data, className, classNameWrap } = param;
@@ -31,12 +29,12 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 	
 	const getSections = () => {
@@ -191,7 +189,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		if (!allowedNotification) {
 			notification = null;
 		} else
-		if (spaceview.isOneToOne || spaceview.isChat) {
+		if (spaceview.isOneToOne) {
 			const chatMode = (objectIds.length == 1) ? U.Object.getChatNotificationMode(spaceview, objectIds[0]) : I.NotificationMode.All;
 			const isMuted = chatMode != I.NotificationMode.All;
 
@@ -384,8 +382,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			return;
 		};
 
-		const win = $(window);
-		const length = objectIds.length;
+				const length = objectIds.length;
 		const first = length == 1 ? getObjectHandler(subId, getObject, objectIds[0]) : null;
 		const cb = () => onSelect?.(item.id);
 
@@ -431,7 +428,7 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 
 			case 'archive': {
 				Action.archiveCheckType(subId, objectIds, route);
-				win.trigger('archiveObject', { ids: objectIds });
+				U.Dom.eventDispatch(window, 'archiveObject', { ids: objectIds });
 				break;
 			};
 
@@ -557,6 +554,6 @@ const MenuObjectContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		</div>
 	);
 	
-}));
+});
 
 export default MenuObjectContext;

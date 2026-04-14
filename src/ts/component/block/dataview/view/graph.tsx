@@ -1,12 +1,10 @@
 import React, { forwardRef, useEffect, useState, useRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { GraphProvider } from 'Component';
 import * as I from 'Interface';
 
 const PADDING = 46;
 
-const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewGraph = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { rootId, block, className, isCollection, isPopup, isInline, getView, getSearchIds, getTarget } = props;
 	const cn = [ 'viewContent', className ];
@@ -37,23 +35,22 @@ const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-
-		if (!node.length) {
+		const node = nodeRef.current;
+		if (!node) {
 			return;
 		};
 
 		if (!isInline) {
-			node.css({ width: 0, height: 0, marginLeft: 0 });
+			U.Dom.css(node, { width: '0px', height: '0px', marginLeft: '0px' });
 
 			const container = U.Dom.getPageContainer(isPopup);
 			const cw = container?.clientWidth ?? 0;
 			const ch = container?.clientHeight ?? 0;
 			const mw = cw - PADDING * 2;
 			const margin = (cw - mw) / 2;
-			const { top } = node.offset();
+			const { top } = node.getBoundingClientRect();
 
-			node.css({ width: cw, height: Math.max(600, ch - top - 2), marginLeft: -margin - 2 });
+			U.Dom.css(node, { width: `${cw}px`, height: `${Math.max(600, ch - top - 2)}px`, marginLeft: `${-margin - 2}px` });
 		};
 
 		graphRef.current?.resize();
@@ -91,6 +88,6 @@ const ViewGraph = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		</div>
 	);
 
-}));
+});
 
 export default ViewGraph;

@@ -62,6 +62,9 @@ export default {
 				all:					 12,
 			},
 		},
+		comment: {
+			text:						 8000,
+		},
 
 		relation: {
 			option:						 4,

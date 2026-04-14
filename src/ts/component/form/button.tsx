@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, MouseEvent } from 'react';
-import $ from 'jquery';
 import { Icon, Loader } from 'Component';
 import * as I from 'Interface';
 
@@ -93,13 +92,13 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	};
 
 	const handleClick = (e: MouseEvent) => {
-		if (!$(nodeRef.current).hasClass('disabled') && onClick) {
+		if (!U.Dom.hasClass(nodeRef.current, 'disabled') && onClick) {
 			onClick(e);
 		};
 	};
 
 	const mouseDownHandler = (e: MouseEvent) => {
-		if (!$(nodeRef.current).hasClass('disabled') && onMouseDown) {
+		if (!U.Dom.hasClass(nodeRef.current, 'disabled') && onMouseDown) {
 			onMouseDown(e);
 		};
 	};
@@ -107,8 +106,8 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	useImperativeHandle(ref, () => ({
 		setLoading: (v: boolean) => setIsLoading(v),
 		isLoading: () => isLoading,
-		setDisabled: (v: boolean) => $(nodeRef.current).toggleClass('disabled', v),
-		isDisabled: () => $(nodeRef.current).hasClass('disabled'),
+		setDisabled: (v: boolean) => U.Dom.toggleClass(nodeRef.current, 'disabled', v),
+		isDisabled: () => U.Dom.hasClass(nodeRef.current, 'disabled'),
 		setColor,
 		getColor: () => color,
 		getNode: () => nodeRef.current,

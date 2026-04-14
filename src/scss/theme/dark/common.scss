@@ -34,7 +34,7 @@ html.themeDark {
 	--color-bg-primary-90: rgba(23, 23, 23, 0.9);
 	--color-bg-secondary: #191919;
 	--color-bg-loader: rgba(0,0,0,0.7);
-	--color-bg-grey: #232323;
+	--color-attachment-loader: rgba(255, 255, 255, 0.7);
 
 	/* Color */
 
@@ -46,9 +46,9 @@ html.themeDark {
 	--color-light-orange: #7b3306;
 	--color-dark-orange: #ffb330;
 
-	--color-very-light-red: #ffede9;
-	--color-light-red: #ffb6a2;
-	--color-dark-red: #82181a;
+	--color-very-light-red: #460809;
+	--color-light-red: #82181a;
+	--color-dark-red: #ffb6a2;
 
 	--color-very-light-pink: #510427;
 	--color-light-pink: #861043;
@@ -85,8 +85,9 @@ html.themeDark {
 	/* System */
 
 	--color-system-accent-125: #105aef;
-	--color-system-accent-50: #224c9e;
-	--color-system-accent-25: #18346e;
+	--color-system-accent-50: #699bff;
+	--color-system-accent-25: #9bbcff;
+	--color-system-highlight: rgba(55, 122, 255, 0.15);
 	--color-system-selection: rgba(55, 122, 255, 0.25);
 
 	/* Icon */
@@ -245,6 +246,14 @@ html.themeDark {
 	.shareTooltip { background: var(--color-bg-secondary); @include shadow; }
 	.shareTooltip {
 		.icon.close { background-color: var(--color-bg-secondary); }
+	}
+
+	/* Comments */
+
+	.socialBlock { background: linear-gradient(to bottom, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.04) 20%, rgba(23, 23, 23, 0.18) 40%, rgba(23, 23, 23, 0.50) 60%, rgba(23, 23, 23, 0.82) 80%, rgba(23, 23, 23, 0.96) 100%); }
+	.socialBlock {
+		.commentCounter { background: rgba(23, 23, 23, 0.6); }
+		.commentCounter:hover { background: var(--color-shape-primary); }
 	}
 
 	@import "./menu";

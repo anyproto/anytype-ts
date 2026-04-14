@@ -1,10 +1,8 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
 import * as I from 'Interface';
 
-const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuNew = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setActive, setHover, onKeyDown, getId, getSize, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -17,12 +15,12 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const loadTemplate = () => {
@@ -43,7 +41,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (isAllowedObject && isCollection) {
-			itemsAdd.push({ id: 'existing', icon: 'existingObject', name: translate('menuDataviewNewExistingObject'), arrow: true });
+			itemsAdd.push({ id: 'existing', iconParam: { name: 'menu/action/existing' }, name: translate('menuDataviewNewExistingObject'), arrow: true });
 		};
 
 		if (withTypeSelect) {
@@ -179,9 +177,8 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const resize = () => {
-		$(`#${getId()} .content`).css({ height: 'auto' });
-		position();
+	const beforePosition = () => {
+		U.Dom.css(U.Dom.select('.content', U.Dom.get(getId())), { height: 'auto' });
 	};
 
 	const sections = getSections();
@@ -206,7 +203,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useEffect(() => {
 		rebind();
 		loadTemplate();
-		window.setTimeout(() => resize(), 5);
+		window.setTimeout(() => position(), 5);
 
 		return () => {
 			unbind();
@@ -225,7 +222,7 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		onOver,
 		onMouseEnter,
 		onMouseLeave,
-		resize,
+		beforePosition,
 		Section,
 	}), []);
 
@@ -237,6 +234,6 @@ const MenuNew = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</>
 	);
 	
-}));
+});
 
 export default MenuNew;

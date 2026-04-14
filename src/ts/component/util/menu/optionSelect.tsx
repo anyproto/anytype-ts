@@ -1,6 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, CSSProperties, MouseEvent, ReactElement } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -103,7 +101,7 @@ export interface OptionSelectRefProps {
 	setFilter: (filter: string) => void;
 };
 
-const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, ref) => {
+const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 
 	const {
 		subId, relationKey, value, onChange, isReadonly, noFilter, noSelect, maxHeight, maxCount, skipIds, filterMapper, canAdd,
@@ -528,7 +526,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 		S.Menu.open('dataviewOptionEdit', {
 			element,
-			offsetX: getSize?.().width || $(element).outerWidth(),
+			offsetX: getSize?.().width || (U.Dom.select(element)?.offsetWidth ?? 0),
 			vertical: I.MenuDirection.Center,
 			passThrough: false,
 			noFlipY: true,
@@ -549,7 +547,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			setActive(item, false);
 		};
 
-		const el = nodeRef.current?.querySelector(`#item-${U.Common.esc(item.id)}`) as HTMLElement;
+		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
 		if (el) {
 			Preview.tooltipShow({ text: item.name, element: el });
 		};
@@ -560,7 +558,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			setActive(item, false);
 		};
 
-		const el = nodeRef.current?.querySelector(`#item-${U.Common.esc(item.id)}`) as HTMLElement;
+		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
 		if (el) {
 			Preview.tooltipShow({ text: item.name, element: el });
 		};
@@ -624,12 +622,14 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 	const resize = (): void => {
 		const items = getItems();
-		const obj = $(nodeRef.current);
+		const obj = nodeRef.current;
 		const offset = !isReadonly && !noFilter ? 44 : 16;
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), 0);
 		const height = Math.max(HEIGHT + offset, Math.min(360, itemsHeight + offset));
 
-		obj.css({ height });
+		if (obj) {
+			U.Dom.css(obj, { height: `${height}px` });
+		};
 		position?.();
 	};
 
@@ -930,6 +930,6 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default OptionSelect;

@@ -3,27 +3,49 @@ import * as I from 'Interface';
 
 class UtilDom {
 
+	esc (v: any): string {
+		return CSS.escape(String(v));
+	};
+
 	get (id: string): HTMLElement | null {
 		return document.getElementById(id);
 	};
 
 	select (selector: string, root: ParentNode = document): HTMLElement | null {
-		return root.querySelector(selector);
+		if (!root) {
+			return null;
+		};
+
+		try {
+			return root.querySelector(selector);
+		} catch (e) {
+			console.error('Invalid selector:', selector);
+			return null;
+		};
 	};
 
 	selectAll (selector: string, root: ParentNode = document): HTMLElement[] {
-		return Array.from(root.querySelectorAll(selector));
+		if (!root) {
+			return [];
+		};
+
+		try {
+			return Array.from(root.querySelectorAll(selector));
+		} catch (e) {
+			console.error('Invalid selector:', selector);
+			return [];
+		};
 	};
 
 	addClass (el: HTMLElement, ...names: string[]) {
 		if (el) {
-			el.classList.add(...names);
+			el.classList.add(...names.flatMap(n => n.split(/\s+/).filter(Boolean)));
 		};
 	};
 
 	removeClass (el: HTMLElement, ...names: string[]) {
 		if (el) {
-			el.classList.remove(...names);
+			el.classList.remove(...names.flatMap(n => n.split(/\s+/).filter(Boolean)));
 		};
 	};
 
@@ -37,14 +59,46 @@ class UtilDom {
 		};
 	};
 
-	contentWidth (el: HTMLElement): number {
+	contentWidth (el: HTMLElement | null): number {
+		if (!el) {
+			return 0;
+		};
 		const style = getComputedStyle(el);
 		return el.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
 	};
 
-	contentHeight (el: HTMLElement): number {
+	contentHeight (el: HTMLElement | null): number {
+		if (!el) {
+			return 0;
+		};
 		const style = getComputedStyle(el);
 		return el.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+	};
+
+	css (el: HTMLElement | null, styles: Partial<CSSStyleDeclaration>) {
+		if (el) {
+			Object.assign(el.style, styles);
+		};
+	};
+
+	addEvent (target: EventTarget, name: string, handler: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions) {
+		target.addEventListener(name, handler, options);
+	};
+
+	removeEvent (target: EventTarget, name: string, handler: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions) {
+		target.removeEventListener(name, handler, options);
+	};
+
+	addEvents (target: EventTarget, events: [string, EventListenerOrEventListenerObject][]) {
+		events.forEach(([ name, handler ]) => this.addEvent(target, name, handler));
+	};
+
+	removeEvents (target: EventTarget, events: [string, EventListenerOrEventListenerObject][]) {
+		events.forEach(([ name, handler ]) => this.removeEvent(target, name, handler));
+	};
+
+	eventDispatch (target: EventTarget, name: string, detail?: any) {
+		target.dispatchEvent(detail !== undefined ? new CustomEvent(name, { detail }) : new CustomEvent(name));
 	};
 
 	/**
@@ -165,7 +219,7 @@ class UtilDom {
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 */
 	triggerResizeEditor (isPopup: boolean) {
-		window.dispatchEvent(new CustomEvent(`resize.editor${this.getEventNamespace(isPopup)}`));
+		this.eventDispatch(window, 'resize');
 	};
 
 	getWindowDimensions (): { ww: number; wh: number } {
@@ -191,9 +245,17 @@ class UtilDom {
 	 * @param {string} prefix - The class prefix.
 	 * @param {string} v - The value to append.
 	 */
+	private bodyClassRegexCache: Map<string, RegExp> = new Map();
+
 	addBodyClass (prefix: string, v: string) {
 		const el = document.documentElement;
-		const reg = new RegExp(`^${prefix}`);
+		let reg = this.bodyClassRegexCache.get(prefix);
+
+		if (!reg) {
+			reg = new RegExp(`^${prefix}`);
+			this.bodyClassRegexCache.set(prefix, reg);
+		};
+
 		const c = String(el.className || '').split(' ').filter(it => !it.match(reg));
 
 		if (v) {
@@ -278,7 +340,7 @@ class UtilDom {
 			return;
 		};
 
-		const root = obj instanceof HTMLElement ? obj : (obj.get ? obj.get(0) : obj);
+		const root = obj instanceof HTMLElement ? obj : obj;
 		if (!root) {
 			return;
 		};
@@ -286,8 +348,8 @@ class UtilDom {
 		const links = root.querySelectorAll('a');
 
 		links.forEach((link: HTMLElement) => {
-			link.removeEventListener('click', link['_rl_click']);
-			link.removeEventListener('auxclick', link['_rl_aux']);
+			this.removeEvent(link, 'click', link['_rl_click']);
+			this.removeEvent(link, 'auxclick', link['_rl_aux']);
 
 			const onClick = (e: MouseEvent) => {
 				const href = link.getAttribute('href') || link.getAttribute('xlink:href');
@@ -301,20 +363,20 @@ class UtilDom {
 			link['_rl_click'] = onClick;
 			link['_rl_aux'] = onAux;
 
-			link.addEventListener('click', onClick);
-			link.addEventListener('auxclick', onAux);
+			this.addEvent(link, 'click', onClick);
+			this.addEvent(link, 'auxclick', onAux);
 		});
 	};
 
 	/**
 	 * Toggles the open/closed state of an element with animation.
-	 * @param {any} obj - The jQuery object to toggle.
+	 * @param {any} obj - The element to toggle.
 	 * @param {number} delay - The animation delay in ms.
 	 * @param {boolean} isOpen - Whether the element is currently open.
 	 * @param {function} [callBack] - Optional callback after toggle.
 	 */
 	toggle (obj: any, delay: number, isOpen: boolean, callBack?: () => void) {
-		const el: HTMLElement = obj instanceof HTMLElement ? obj : (obj?.get ? obj.get(0) : obj);
+		const el: HTMLElement = obj instanceof HTMLElement ? obj : obj;
 		if (!el) {
 			return;
 		};
@@ -322,29 +384,29 @@ class UtilDom {
 		if (isOpen) {
 			const height = el.offsetHeight;
 
-			Object.assign(el.style, { height: `${height}px`, overflow: 'hidden' });
+			this.css(el, { height: `${height}px`, overflow: 'hidden' });
 
 			raf(() => {
 				this.addClass(el, 'anim');
-				el.style.height = '0px';
+				this.css(el, { height: '0px' });
 			});
 			window.setTimeout(() => {
 				this.removeClass(el, 'isOpen', 'anim');
 				callBack?.();
 			}, delay);
 		} else {
-			el.style.height = 'auto';
+			this.css(el, { height: 'auto' });
 
 			const height = el.offsetHeight;
 
-			el.style.height = '0px';
+			this.css(el, { height: '0px' });
 			this.addClass(el, 'anim');
 
-			raf(() => { el.style.height = `${height}px`; });
+			raf(() => { this.css(el, { height: `${height}px` }); });
 			window.setTimeout(() => {
 				this.removeClass(el, 'anim');
 				this.addClass(el, 'isOpen');
-				Object.assign(el.style, { height: 'auto', overflow: 'visible' });
+				this.css(el, { height: 'auto', overflow: 'visible' });
 				callBack?.();
 			}, delay);
 		};

@@ -1,22 +1,21 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Icon } from 'Component';
 import * as I from 'Interface';
-import $ from 'jquery';
 
 const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { renderLeftIcons, renderTabs, menuOpen, rootId } = props;
 	const rootIdRef = useRef('');
 
+	const graphRootHandler = useRef((e: any) => initRootId(e.detail.id));
+
 	const unbind = () => {
-		$(window).off(`updateGraphRoot.header`);
+		U.Dom.removeEvent(window, 'updateGraphRoot', graphRootHandler.current);
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on('updateGraphRoot.header', (e: any, data: any) => initRootId(data.id));
+		U.Dom.addEvent(window, 'updateGraphRoot', graphRootHandler.current);
 	};
 
 	const onSearch = () => {
@@ -33,7 +32,7 @@ const HeaderMainGraph = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 				canAdd: true,
 				withPlural: true,
 				onSelect: (item: any) => {
-					$(window).trigger('updateGraphRoot', { id: item.id });
+					U.Dom.eventDispatch(window, 'updateGraphRoot', { id: item.id });
 				},
 				onFilterChange: (v: string) => {
 					S.Common.graphSet(J.Constant.graphId.global, { filter: v });

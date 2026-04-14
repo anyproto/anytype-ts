@@ -1,6 +1,4 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -12,7 +10,7 @@ import * as I from 'Interface';
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuGroupList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, setActive, onKeyDown, position } = props;
 	const { data } = param;
@@ -35,12 +33,12 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDownHandler);
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -121,13 +119,12 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + 16));
 
-		obj.css({ height });
-		position();
+		U.Dom.css(obj, { height: `${height}px` });
 	};
 
 	const Item = (item: any) => {
@@ -213,7 +210,6 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const items = getItems();
 
 		rebind();
-		resize();
 
 		cache.current = new CellMeasurerCache({
 			fixedWidth: true,
@@ -228,8 +224,6 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		resize();
-		rebind();
 		setActive(null, true);
 		position();
 
@@ -241,6 +235,7 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -297,6 +292,6 @@ const MenuGroupList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuGroupList;

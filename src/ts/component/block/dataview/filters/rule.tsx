@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Icon, Select, Input, Label, Tag } from 'Component';
 import ItemObject from 'Component/cell/item/object';
 import * as I from 'Interface';
@@ -23,7 +22,7 @@ interface Props {
 	onTurnIntoGroup: (index: number) => void;
 };
 
-const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
+const DataviewFilterRule = forwardRef<{}, Props>((props, ref) => {
 
 	const {
 		rootId, blockId, rule, index, depth, parentPath, operator, getView, getTarget, isInline, loadData,
@@ -323,6 +322,10 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onValueClick = () => {
+		if (!relation) {
+			return;
+		};
+
 		const view = getView();
 		const withMenu = [
 			I.RelationType.Object,
@@ -412,13 +415,13 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 		});
 	};
 
-	if (!relation) {
-		return null;
-	};
-
-	const valueContent = getValue();
+	const valueContent = relation ? getValue() : null;
 	const cn = [ 'rule' ];
-	const vscn = [ 'valueSelect', `is${I.RelationType[relation.format]}` ];
+	const vscn = [ 'valueSelect' ];
+
+	if (relation) {
+		vscn.push(`is${I.RelationType[relation.format]}`);
+	};
 
 	if (readonly) {
 		cn.push('isReadonly');
@@ -458,40 +461,42 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 			<div className="inner">
 				<div className="relationSelect select round size36" onClick={onRelationClick}>
 					{relation ? <Icon name={Relation.registryName(relation.relationKey, relation.format)} /> : ''}
-					<Label text={relation?.name || ''} />
+					<Label text={relation ? relation.name : translate('commonNone')} />
 					<Icon name="arrow/button" size={8} className="arrow" />
 				</div>
 
-				<Select
-					size={36}
-					className="conditionSelect round"
-					key={`${nodeId}-condition-${relationKey}`}
-					ref={conditionRef}
-					id={`${nodeId}-condition`}
-					value={String(condition)}
-					options={conditionOptions}
-					onChange={v => {
-						const newCondition = Number(v) as I.FilterCondition;
-						const data: Partial<I.Filter> = { condition: newCondition };
+				{relation ? (
+					<Select
+						size={36}
+						className="conditionSelect round"
+						key={`${nodeId}-condition-${relationKey}`}
+						ref={conditionRef}
+						id={`${nodeId}-condition`}
+						value={String(condition)}
+						options={conditionOptions}
+						onChange={v => {
+							const newCondition = Number(v) as I.FilterCondition;
+							const data: Partial<I.Filter> = { condition: newCondition };
 
-						if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(newCondition)) {
-							data.value = Relation.formatValue(relation, null, false);
-						};
-
-						if (relation.format == I.RelationType.Date) {
-							const qo = Relation.filterQuickOptions(relation.format, newCondition);
-							const currentQo = qo.find(it => it.id == rule.quickOption);
-
-							if (!currentQo && qo.length) {
-								data.quickOption = qo[0].id as I.FilterQuickOption;
+							if ([ I.FilterCondition.None, I.FilterCondition.Empty, I.FilterCondition.NotEmpty ].includes(newCondition)) {
+								data.value = Relation.formatValue(relation, null, false);
 							};
-						};
 
-						onUpdate(index, data);
-					}}
-					menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
-					readonly={readonly}
-				/>
+							if (relation.format == I.RelationType.Date) {
+								const qo = Relation.filterQuickOptions(relation.format, newCondition);
+								const currentQo = qo.find(it => it.id == rule.quickOption);
+
+								if (!currentQo && qo.length) {
+									data.quickOption = qo[0].id as I.FilterQuickOption;
+								};
+							};
+
+							onUpdate(index, data);
+						}}
+						menuParam={{ classNameWrap: 'fromBlock', offsetY: 4 }}
+						readonly={readonly}
+					/>
+				) : ''}
 
 				<div className={vscn.join(' ')} onClick={onValueClick}>
 					{valueContent}
@@ -502,6 +507,6 @@ const DataviewFilterRule = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default DataviewFilterRule;
