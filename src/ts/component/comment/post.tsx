@@ -129,7 +129,7 @@ const CommentPost = (props: Props) => {
 		});
 
 		// Emoji marks — render as cross-platform images
-		const roots: Root[] = [];
+		const mounted: { root: Root; container: HTMLElement & { _reactRoot?: Root } }[] = [];
 
 		U.Dom.selectAll(Mark.getTag(I.MarkType.Emoji), node).forEach((item: HTMLElement) => {
 			const emojiId = item.getAttribute('data-param');
@@ -144,16 +144,28 @@ const CommentPost = (props: Props) => {
 				});
 
 				const container = smile as HTMLElement & { _reactRoot?: Root };
-				const root = container._reactRoot || createRoot(container);
 
+				// A stale root may be cached on a reused DOM node from a previous effect run
+				if (container._reactRoot) {
+					const stale = container._reactRoot;
+					container._reactRoot = null;
+					queueMicrotask(() => stale.unmount());
+				};
+
+				const root = createRoot(container);
 				container._reactRoot = root;
-				roots.push(root);
+				mounted.push({ root, container });
 				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
 			};
 		});
 
 		return () => {
-			roots.forEach(root => root.unmount());
+			mounted.forEach(({ root, container }) => {
+				if (container._reactRoot === root) {
+					container._reactRoot = null;
+				};
+				queueMicrotask(() => root.unmount());
+			});
 		};
 	}, [ isEditing, parts, subId ]);
 
