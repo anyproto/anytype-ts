@@ -19,7 +19,10 @@
 }
 
 /* Select tag (dot + label style) — isSelect */
-.tagItem.isSelect { height: 24px; border-radius: 12px; border: 1px solid var(--color-shape-secondary); padding: 0px 7px; gap: 6px; line-height: 24px; box-shadow: none !important; background: none !important; }
+.tagItem.isSelect { 
+	height: 24px; border-radius: 12px; border: 1px solid var(--color-shape-secondary); padding: 0px 7px; gap: 6px; 
+	line-height: 24px; box-shadow: none !important; background: var(--color-bg-primary) !important; 
+}
 .tagItem.isSelect {
 	&::before {
 		content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%;
