@@ -5,7 +5,7 @@ class Comment {
 	/**
 	 * Converts CommentContentParts into ChatMessageBlocks for the protobuf.
 	 */
-	partsToBlocks (parts: I.CommentContentPart[]): I.ChatMessageBlock[] {
+	partsToChatBlocks (parts: I.CommentContentPart[]): I.ChatMessageBlock[] {
 		parts = (parts || []).filter(it => it.text || it.link || it.embed || (it.type != I.BlockType.Text));
 
 		return parts.map(part => {
@@ -137,6 +137,51 @@ class Comment {
 			};
 
 			return part;
+		});
+	};
+
+	/**
+	 * Converts CommentContentParts into standard document blocks (I.Block[]) for BlockCopy.
+	 */
+	partsToBlocks (parts: I.CommentContentPart[]): I.Block[] {
+		return (parts || []).filter(it => it.text || it.link || it.embed || (it.type !== I.BlockType.Text)).map((p, i) => {
+			if (p.link) {
+				return {
+					id: `copy-${i}`,
+					type: I.BlockType.Link,
+					childrenIds: [],
+					content: {
+						targetBlockId: p.link.targetObjectId,
+					},
+				};
+			};
+
+			if (p.type === I.BlockType.Div) {
+				return {
+					id: `copy-${i}`,
+					type: I.BlockType.Div,
+					childrenIds: [],
+					content: {},
+				};
+			};
+
+			const block: any = {
+				id: `copy-${i}`,
+				type: I.BlockType.Text,
+				childrenIds: [],
+				content: {
+					text: p.text || '',
+					style: p.style || I.TextStyle.Paragraph,
+					marks: p.marks || [],
+					checked: p.checked || false,
+				},
+			};
+
+			if (p.lang) {
+				block.content.lang = p.lang;
+			};
+
+			return block;
 		});
 	};
 
