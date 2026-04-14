@@ -2075,11 +2075,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		let from = 0;
 		let to = 0;
 
-		keyboard.disablePaste(true);
-
 		C.BlockPaste(rootId, focused, range, selection?.get(I.SelectType.Block, true) || [], data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
-			keyboard.disablePaste(false);
-
 			if (message.error.code) {
 				return;
 			};
