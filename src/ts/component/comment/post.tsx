@@ -276,7 +276,7 @@ const CommentPost = (props: Props) => {
 	}, []);
 
 	const onSaveEdit = useCallback((newParts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[]) => {
-		const blocks = U.Comment.partsToBlocks(newParts);
+		const blocks = U.Comment.partsToChatBlocks(newParts);
 
 		C.ChatEditMessageContent(targetId, id, {
 			content: {
@@ -337,7 +337,7 @@ const CommentPost = (props: Props) => {
 	}, []);
 
 	const onSubmitReply = useCallback((newParts: I.CommentContentPart[], messageAttachments?: I.ChatMessageAttachment[], attachmentObjects?: any[]) => {
-		const blocks = U.Comment.partsToBlocks(newParts);
+		const blocks = U.Comment.partsToChatBlocks(newParts);
 
 		const msg = {
 			replyToMessageId: id,
@@ -401,16 +401,21 @@ const CommentPost = (props: Props) => {
 	}, [ targetId, id, subId, replyCount, loadDeps ]);
 
 	const onCopyText = useCallback(() => {
-		const text = parts.map(p => p.text || '').join('\n');
-		const html = parts.map(p => Mark.toHtml(p.text || '', p.marks || [])).join('<br/>');
+		const blocks = U.Comment.partsToBlocks(parts);
 
-		U.Common.clipboardCopy({
-			text,
-			html: Mark.toStandardHtml(html),
+		C.BlockCopy(rootId, blocks, { from: 0, to: 0 }, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			U.Common.clipboardCopy({
+				text: String(message.textSlot || '').replace(/\n+$/, ''),
+				html: message.htmlSlot,
+			});
+
+			Preview.toastShow({ text: translate('toastCopyBlock') });
 		});
-
-		Preview.toastShow({ text: translate('toastCopyBlock') });
-	}, [ parts ]);
+	}, [ rootId, parts ]);
 
 	const onCopyLink = useCallback(() => {
 		const object = S.Detail.get(rootId, rootId);

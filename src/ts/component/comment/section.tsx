@@ -556,7 +556,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	}, []);
 
 	const onSubmitPost = useCallback((parts: I.CommentContentPart[], messageAttachments?: I.ChatMessageAttachment[], attachmentObjects?: any[]) => {
-		const blocks = U.Comment.partsToBlocks(parts);
+		const blocks = U.Comment.partsToChatBlocks(parts);
 		const { account } = S.Auth;
 
 		const msg = {

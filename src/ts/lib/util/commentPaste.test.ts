@@ -511,7 +511,7 @@ describe('clipboardBlocksToParts (paste transformation)', () => {
 		});
 	});
 
-	describe('round-trip: clipboardBlocksToParts -> partsToBlocks', () => {
+	describe('round-trip: clipboardBlocksToParts -> partsToChatBlocks', () => {
 		// Import Comment utility for round-trip testing
 		let Comment: any;
 
@@ -536,7 +536,7 @@ describe('clipboardBlocksToParts (paste transformation)', () => {
 			];
 
 			const parts = clipboardBlocksToParts(blocks);
-			const chatBlocks = Comment.partsToBlocks(parts);
+			const chatBlocks = Comment.partsToChatBlocks(parts);
 
 			expect(chatBlocks).toHaveLength(1);
 			expect(chatBlocks[0].text.text).toBe('bold and italic text');
@@ -554,7 +554,7 @@ describe('clipboardBlocksToParts (paste transformation)', () => {
 			];
 
 			const parts = clipboardBlocksToParts(blocks);
-			const chatBlocks = Comment.partsToBlocks(parts);
+			const chatBlocks = Comment.partsToChatBlocks(parts);
 
 			expect(chatBlocks[0].text.style).toBe(I.TextStyle.Header1);
 		});
@@ -569,7 +569,7 @@ describe('clipboardBlocksToParts (paste transformation)', () => {
 			];
 
 			const parts = clipboardBlocksToParts(blocks);
-			const chatBlocks = Comment.partsToBlocks(parts);
+			const chatBlocks = Comment.partsToChatBlocks(parts);
 
 			expect(chatBlocks[0].text.marks).toHaveLength(2);
 			const colorMark = chatBlocks[0].text.marks.find((m: any) => m.type === I.MarkType.Color);
