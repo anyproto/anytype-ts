@@ -1470,6 +1470,14 @@ const partsToEditor = (editor: LexicalEditor, parts: I.CommentContentPart[]) => 
 			root.append(p);
 			i++;
 		};
+
+		// Ensure there's always a trailing paragraph for the caret
+		const lastChild = root.getLastChild();
+		if (!$isElementNode(lastChild) || (lastChild.getType() !== 'paragraph')) {
+			const p = $createParagraphNode();
+			p.append($createTextNode(''));
+			root.append(p);
+		};
 	});
 };
 
