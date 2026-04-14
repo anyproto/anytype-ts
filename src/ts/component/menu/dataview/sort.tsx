@@ -105,8 +105,10 @@ const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			default: {
+				unbind();
 				S.Menu.open('select', {
 					rebind,
+					parentId: props.id,
 					element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 					className,
 					classNameWrap,
@@ -136,8 +138,10 @@ const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ id: I.EmptyType.End, name: translate('menuDataviewSortShowEmptyBottom') },
 		];
 
+		unbind();
 		S.Menu.open('select', {
 			rebind,
+			parentId: props.id,
 			className,
 			classNameWrap,
 			element: `${elementId} .more`,
@@ -171,7 +175,12 @@ const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offsetY: 4,
 		};
 
-		U.Menu.sortOrFilterRelationSelect(menuParam, {
+		unbind();
+		U.Menu.sortOrFilterRelationSelect({
+			...menuParam,
+			rebind,
+			parentId: props.id,
+		}, {
 			rootId,
 			blockId,
 			getView,
@@ -182,6 +191,7 @@ const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onAdd = () => {
+		unbind();
 		const menuParam = {
 			className,
 			classNameWrap,
@@ -190,6 +200,8 @@ const MenuSort = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			vertical: I.MenuDirection.Bottom,
 			offsetY: 4,
 			offsetX: 8,
+			rebind,
+			parentId: props.id,
 		};
 		U.Menu.sortOrFilterRelationSelect(menuParam, {
 			rootId,

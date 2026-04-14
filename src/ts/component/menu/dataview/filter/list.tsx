@@ -179,6 +179,7 @@ const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (Dataview.isAdvancedFilter(item)) {
+			unbind();
 			S.Menu.open('dataviewFilterAdvanced', {
 				element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 				classNameWrap: 'fromBlock',
@@ -186,6 +187,7 @@ const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				offsetY: 4,
 				noFlipY: true,
 				rebind,
+				parentId: props.id,
 				data: {
 					rootId,
 					blockId,
@@ -201,6 +203,7 @@ const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		const view = getView();
 
+		unbind();
 		S.Menu.open('dataviewFilterValues', {
 			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			classNameWrap: 'fromBlock',
@@ -208,6 +211,7 @@ const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offsetY: 4,
 			noFlipY: true,
 			rebind,
+			parentId: props.id,
 			data: {
 				rootId,
 				blockId,
@@ -258,12 +262,14 @@ const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
+		unbind();
 		S.Menu.open('select', {
 			element: `#${getId()} #item-${U.Common.esc(item.id)} .icon.more`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			rebind,
+			parentId: props.id,
 			data: {
 				options: [
 					{ id: 'clear', name: translate('commonClear') },
@@ -309,6 +315,7 @@ const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onAdd = () => {
+		unbind();
 		U.Menu.sortOrFilterRelationSelect({
 			element: `#${getId()} #item-add`,
 			classNameWrap: 'fromBlock',
@@ -316,6 +323,7 @@ const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
 			rebind,
+			parentId: props.id,
 		}, {
 			rootId,
 			blockId,
