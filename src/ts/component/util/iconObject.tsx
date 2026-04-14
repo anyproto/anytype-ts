@@ -36,8 +36,8 @@ interface IconObjectRefProps {
 	setObject(object: any): void;
 };
 
-const LAYOUTS_WITH_EMOJI_GALLERY = [ 
-	I.ObjectLayout.Page, 
+const getLayoutsWithEmojiGallery = (): I.ObjectLayout[] => [
+	I.ObjectLayout.Page,
 	I.ObjectLayout.SpaceView,
 	I.ObjectLayout.Human,
 	I.ObjectLayout.Chat,
@@ -182,7 +182,7 @@ const IconObject = forwardRef<IconObjectRefProps, Props>((props, ref) => {
 		};
 
 		const isTask = U.Object.isTaskLayout(layout);
-		const isEmoji = LAYOUTS_WITH_EMOJI_GALLERY.includes(layout);
+		const isEmoji = getLayoutsWithEmojiGallery().includes(layout);
 
 		if (isTask || isEmoji) {
 			e.preventDefault();
