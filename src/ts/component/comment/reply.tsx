@@ -221,6 +221,13 @@ const CommentReply = (props: Props) => {
 		});
 	}, [ targetId, id, parentId ]);
 
+	const onCopyLink = useCallback(() => {
+		const object = S.Detail.get(rootId, rootId);
+		const spaceObject = U.Space.getSpaceview();
+
+		U.Object.copyLink(object, spaceObject, 'deeplink', '', `&messageId=${id}`);
+	}, [ rootId, id ]);
+
 	const onCopyText = useCallback(() => {
 		const blocks = U.Comment.partsToBlocks(parts);
 
@@ -254,12 +261,12 @@ const CommentReply = (props: Props) => {
 		C.ChatToggleMessageReaction(targetId, id, icon);
 	}, [ targetId, id, reactions ]);
 
-	const onReaction = useCallback((e: React.MouseEvent) => {
+	const openReactionPicker = useCallback((element: HTMLElement) => {
 		setHover(true);
 
 		S.Menu.open('smile', {
 			classNameWrap: 'fromBlock',
-			element: e.currentTarget as HTMLElement,
+			element,
 			vertical: I.MenuDirection.Bottom,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
@@ -269,28 +276,64 @@ const CommentReply = (props: Props) => {
 				noHead: true,
 				noUpload: true,
 				value: '',
-				onSelect: (icon: string) => {
-					onReactionSelect(icon);
-				},
+				onSelect: (icon: string) => onReactionSelect(icon),
 			},
 		});
 	}, [ onReactionSelect, setHover ]);
 
+	const onReaction = useCallback((e: React.MouseEvent) => {
+		openReactionPicker(e.currentTarget as HTMLElement);
+	}, [ openReactionPicker ]);
+
+	const buildMenuOptions = useCallback((withQuickActions: boolean) => {
+		const limit = J.Constant.limit.chat.reactions;
+		const self = (reactions || []).filter(it => it.authors?.includes(account.id));
+		const canReact = (self.length < limit.self) && ((reactions || []).length < limit.all);
+		const items: any[] = [];
+
+		if (withQuickActions && onReply) {
+			items.push({ id: 'reply', name: translate('blockChatReply'), iconParam: { name: 'chat/buttons/reply' } });
+		};
+		if (withQuickActions && canReact) {
+			items.push({ id: 'reaction', name: translate('blockChatReactionAdd'), iconParam: { name: 'comment/reaction' } });
+		};
+		if (withQuickActions && (onReply || canReact)) {
+			items.push({ isDiv: true });
+		};
+
+		items.push({ id: 'copyText', name: translate('commentCopyText'), iconParam: { name: 'menu/action/copy' } });
+
+		if (withQuickActions) {
+			items.push({ isDiv: true });
+			items.push({ id: 'copyLink', name: translate('commentCopyLink'), iconParam: { name: 'menu/action/pageLink' } });
+		};
+
+		if (isSelf) {
+			items.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
+
+			if (!withQuickActions) {
+				items.push({ isDiv: true });
+			};
+
+			items.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'destructive' }, color: 'destructive' });
+		};
+
+		return items;
+	}, [ isSelf, reactions, account.id, onReply ]);
+
+	const onMenuSelect = useCallback((item: any, anchor: HTMLElement) => {
+		switch (item.id) {
+			case 'reply': onReply?.(); break;
+			case 'reaction': openReactionPicker(anchor); break;
+			case 'copyText': onCopyText(); break;
+			case 'copyLink': onCopyLink(); break;
+			case 'edit': onEdit(); break;
+			case 'delete': onDelete(); break;
+		};
+	}, [ onReply, openReactionPicker, onCopyText, onCopyLink, onEdit, onDelete ]);
+
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
 		const element = e.currentTarget as HTMLElement;
-
-		const menuItems: any[] = [];
-
-		if (isSelf) {
-			menuItems.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
-		};
-
-		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), iconParam: { name: 'menu/action/copy' } });
-
-		if (isSelf) {
-			menuItems.push({ isDiv: true });
-			menuItems.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'destructive' }, color: 'destructive' });
-		};
 
 		setHover(true);
 
@@ -302,17 +345,38 @@ const CommentReply = (props: Props) => {
 			offsetY: 4,
 			onClose: () => setHover(false),
 			data: {
-				options: menuItems,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'edit': onEdit(); break;
-						case 'copyText': onCopyText(); break;
-						case 'delete': onDelete(); break;
-					};
-				},
+				options: buildMenuOptions(false),
+				onSelect: (e: any, item: any) => onMenuSelect(item, element),
 			},
 		});
-	}, [ isSelf, onEdit, onCopyText, onDelete, setHover ]);
+	}, [ buildMenuOptions, onMenuSelect, setHover ]);
+
+	const onContextMenu = useCallback((e: React.MouseEvent) => {
+		if (readonly || isEditing) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		const x = e.pageX;
+		const y = e.pageY;
+		const anchor = contentWrapRef.current;
+
+		setHover(true);
+
+		S.Menu.open('select', {
+			classNameWrap: 'fromBlock',
+			recalcRect: () => ({ x, y, width: 0, height: 0 }),
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			onClose: () => setHover(false),
+			data: {
+				options: buildMenuOptions(true),
+				onSelect: (e: any, item: any) => onMenuSelect(item, anchor),
+			},
+		});
+	}, [ readonly, isEditing, buildMenuOptions, onMenuSelect, setHover ]);
 
 	const onAttachmentPreview = useCallback((preview: any) => {
 		const data: any = { ...preview };
@@ -428,7 +492,7 @@ const CommentReply = (props: Props) => {
 
 	return (
 		<div className="commentReply" data-message-id={id}>
-			<div ref={contentWrapRef} className="contentWrap">
+			<div ref={contentWrapRef} className="contentWrap" onContextMenu={onContextMenu}>
 				<div className="head">
 					<div className="side left">
 						<IconObject
