@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
 import { observable } from 'mobx';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -48,9 +48,15 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const filterRef = useRef(null);
 	const headRef = useRef(null);
 	const head = isInline ? <Head ref={headRef} {...props} /> : null;
+	const collapsedKey = `controls-collapsed-${block.id}`;
+	const [ isCollapsed, setIsCollapsed ] = useState(() => isInline ? Storage.checkToggle(rootId, collapsedKey) : false);
 
 	if (isInline) {
 		cn.push('isInline');
+
+		if (isCollapsed) {
+			cn.push('isCollapsed');
+		};
 	};
 
 	if (isAllowedTemplate) {
@@ -59,6 +65,46 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	if (className) {
 		cn.push(className);
+	};
+
+	const collapsibleRef = useRef(null);
+
+	const onToggleCollapse = () => {
+		const el = collapsibleRef.current as HTMLElement;
+
+		if (!el) {
+			return;
+		};
+
+		if (isCollapsed) {
+			const width = el.scrollWidth;
+
+			setIsCollapsed(false);
+			Storage.setToggle(rootId, collapsedKey, false);
+
+			el.style.width = '0px';
+			void el.offsetWidth;
+			el.style.width = `${width}px`;
+
+			const onEnd = () => {
+				el.style.width = '';
+				el.removeEventListener('transitionend', onEnd);
+			};
+			el.addEventListener('transitionend', onEnd);
+		} else {
+			el.style.width = `${el.offsetWidth}px`;
+			void el.offsetWidth;
+			el.style.width = '0px';
+
+			setIsCollapsed(true);
+			Storage.setToggle(rootId, collapsedKey, true);
+
+			const onEnd = () => {
+				el.style.width = '';
+				el.removeEventListener('transitionend', onEnd);
+			};
+			el.addEventListener('transitionend', onEnd);
+		};
 	};
 
 	const onViewSwitch = (view: any) => {
@@ -471,9 +517,11 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 	};
 
-	const buttons = [
+	const collapsibleButtons = [
 		{ id: 'filter', name: 'control/dataview/filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: Dataview.getActiveFilters(view).length },
 		{ id: 'sort', name: 'common/sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
+	];
+	const persistentButtons = [
 		{ id: 'settings', name: 'common/options', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 	];
 
@@ -606,18 +654,34 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 				</div>
 
 				<div id="dataviewControlsSideRight" className="side right">
-					<Filter
-						ref={filterRef}
-						placeholder={translate('blockDataviewSearch')}
-						iconParam={{ name: 'common/search' }}
-						tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
-						onChange={onFilterChange}
-						onIconClick={onFilterShow}
-					/>
+					{isInline ? (
+						<Icon
+							className="expandControls"
+							name="arrow/doubleChevron"
+							size={28}
+							withBackground={true}
+							onClick={onToggleCollapse}
+						/>
+					) : ''}
 
-					{buttons.map((item: any, i: number) => (
+					<div ref={collapsibleRef} className="collapsible">
+						<Filter
+							ref={filterRef}
+							placeholder={translate('blockDataviewSearch')}
+							iconParam={{ name: 'common/search' }}
+							tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
+							onChange={onFilterChange}
+							onIconClick={onFilterShow}
+						/>
+
+						{collapsibleButtons.map((item: any, i: number) => (
+							<ButtonItem key={item.id} {...item} />
+						))}
+					</div>
+
+					{persistentButtons.map((item: any, i: number) => (
 						<ButtonItem key={item.id} {...item} />
-					))}	
+					))}
 
 					{isAllowedObject ? (
 						<div className={buttonWrapCn.join(' ')}>
