@@ -936,16 +936,7 @@ class UtilMenu {
 
 				case 'manage': {
 					this.menuContext?.close(() => {
-						S.Menu.open('widgetSection', {
-							recalcRect: () => {
-								const { ww, wh } = U.Dom.getWindowDimensions();
-								return { x: 0, y: 0, width: ww, height: wh };
-							},
-							classNameWrap: 'fixed',
-							visibleDimmer: true,
-							vertical: I.MenuDirection.Center,
-							horizontal: I.MenuDirection.Center,
-						});
+						sidebar.leftPanelSubPageOpen('widgetManage', true, true);
 					});
 					break;
 				};
@@ -1818,6 +1809,7 @@ class UtilMenu {
 		const { recentEditMode } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 		const toggle = { id: 'hide', iconParam: { name: 'common/eye0' }, name: translate('widgetHideSection') };
+		const manage = { id: 'manage', iconParam: { name: 'common/edit' }, name: translate('widgetManageSections') };
 
 		let options: any[] = [];
 		let value = '';
@@ -1840,6 +1832,7 @@ class UtilMenu {
 		};
 
 		options.push(toggle);
+		options.push(manage);
 
 		S.Menu.open('select', {
 			...menuParam,
@@ -1865,6 +1858,11 @@ class UtilMenu {
 							S.Common.widgetSectionsSet([ ...widgetSections ]);
 
 							analytics.event('HideSection');
+							break;
+						};
+
+						case 'manage': {
+							sidebar.leftPanelSubPageOpen('widgetManage', true, true);
 							break;
 						};
 

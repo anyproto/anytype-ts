@@ -2337,6 +2337,10 @@
 
 	"widgetManageSections": "Manage Sections",
 	"widgetHideSection": "Hide section",
+	"widgetShowSection": "Show section",
+	"widgetManageChannelPins": "Channel Pins",
+	"widgetManageChannelPinsEmpty": "No pinned objects yet",
+	"widgetManagePersonal": "Personal",
 
 	"phrasePlaceholder": "Please enter your Key",
 
