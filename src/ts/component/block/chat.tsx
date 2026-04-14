@@ -1191,8 +1191,15 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				scrollToBottom(false);
 			};
 
-			if (match.params.messageId) {
-				C.ChatGetMessagesByIds(chatId, [ match.params.messageId ], (message: any) => {
+			const storedScrollId = Storage.getChat(chatId).scrollMessageId;
+			const initialMessageId = match.params.messageId || storedScrollId;
+
+			if (storedScrollId) {
+				Storage.setChat(chatId, { scrollMessageId: '' });
+			};
+
+			if (initialMessageId) {
+				C.ChatGetMessagesByIds(chatId, [ initialMessageId ], (message: any) => {
 					if (message.error.code) {
 						return;
 					};

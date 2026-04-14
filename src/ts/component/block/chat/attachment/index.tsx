@@ -12,6 +12,7 @@ interface Props {
 	isPopup?: boolean;
 	onRemove: (id: string) => void;
 	onPreview?: (data: any) => void;
+	onClick?: () => void;
 	updateAttachments?: () => void;
 };
 
@@ -21,7 +22,7 @@ interface RefProps {
 
 const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { object, showAsFile, bookmarkAsDefault, isDownload, withInlineSize = true, onPreview, updateAttachments, onRemove } = props;
+	const { object, showAsFile, bookmarkAsDefault, isDownload, withInlineSize = true, onPreview, onClick, updateAttachments, onRemove } = props;
 
 	let syncStatus = Number(object.syncStatus) || I.SyncStatusObject.Synced;
 	if (object.syncStatus === undefined) {
@@ -228,6 +229,8 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
+		onClick?.();
+
 		switch (object.layout) {
 			case I.ObjectLayout.Bookmark: {
 				onOpenBookmark();
@@ -264,6 +267,8 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 		if (object.isTmp) {
 			return;
 		};
+
+		onClick?.();
 
 		const item = getPreviewItem();
 

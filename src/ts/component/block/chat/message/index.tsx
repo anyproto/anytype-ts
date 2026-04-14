@@ -6,6 +6,7 @@ import { IconObject, Icon, ObjectName, Label } from 'Component';
 import Attachment from '../attachment';
 import Reply from './reply';
 import Reaction from './reaction';
+import Storage from 'Lib/storage';
 import * as I from 'Interface';
 
 interface ChatMessageRefProps {
@@ -391,6 +392,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 													subId={subId}
 													onRemove={() => onAttachmentRemove(item.id)}
 													onPreview={(preview) => onPreview(preview)}
+													onClick={() => Storage.setChat(rootId, { scrollMessageId: id })}
 													showAsFile={!attachmentsLayout}
 													bookmarkAsDefault={attachments.length > 1}
 													isDownload={!isSelf}
