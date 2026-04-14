@@ -385,10 +385,12 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		const rect = el.getBoundingClientRect();
+		const isKroki = processor === I.EmbedProcessor.Kroki;
+		const menuId = isKroki ? 'blockEmbedKroki' : 'dataviewText';
 
-		S.Menu.open('dataviewText', {
+		S.Menu.open(menuId, {
 			classNameWrap: 'fromBlock',
-			rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: rect.width, height: rect.height },
+			rect: { x: rect.x, y: rect.y, width: rect.width, height: 0 },
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,
 			offsetY: -4,
