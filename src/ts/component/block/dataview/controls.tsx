@@ -64,6 +64,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 	};
 
 	const collapsibleRef = useRef(null);
+	const collapseEndRef = useRef<(() => void) | null>(null);
 
 	const getCollapsibleWidth = (el: HTMLElement): number => {
 		const children = Array.from(el.children) as HTMLElement[];
@@ -87,13 +88,21 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 			return;
 		};
 
+		if (collapseEndRef.current) {
+			el.removeEventListener('transitionend', collapseEndRef.current);
+			el.style.width = '';
+			collapseEndRef.current = null;
+		};
+
 		const onEnd = () => {
 			el.style.width = '';
 			el.removeEventListener('transitionend', onEnd);
+			collapseEndRef.current = null;
 		};
 
 		if (isCollapsed) {
 			U.Dom.removeClass(el, 'isCollapsed');
+			void el.offsetWidth;
 			const width = getCollapsibleWidth(el);
 
 			setIsCollapsed(false);
@@ -111,6 +120,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 			Storage.setToggle(rootId, collapsedKey, true);
 			U.Dom.addClass(el, 'isCollapsed');
 
+			collapseEndRef.current = onEnd;
 			el.addEventListener('transitionend', onEnd);
 		};
 	};
