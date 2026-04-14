@@ -172,7 +172,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	};
 
 	const getAttachments = (): any[] => {
-		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
+		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
 	};
 
 	const getAttachmentsLayout = (): number => {
