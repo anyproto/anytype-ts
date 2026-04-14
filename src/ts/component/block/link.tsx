@@ -140,11 +140,13 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			</div>
 		);
 	} else {
+		const isText = cardStyle == I.LinkCardStyle.Text;
+		const isImage = object.layout == I.ObjectLayout.Image;
 		const cnc = [ 'linkCard', U.Data.layoutClass(object.id, layout), `c${size}` ];
 		const cns = [ 'sides' ];
 		const cnl = [ 'side', 'left' ];
 
-		if (isArchived && (object.layout != I.ObjectLayout.Image) && (cardStyle != I.LinkCardStyle.Text)) {
+		if (isArchived && !isImage && !isText) {
 			cnc[2] = 'c48';
 		};
 
@@ -156,13 +158,13 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			cns.push('withBgColor');
 			cnl.push(`bgColor bgColor-${block.bgColor}`);
 		};
+		const onCardClick = isArchived ? openMenu : (isText ? null : onClick);
+		const onNameClick = (!isArchived && isText) ? onClick : null;
 
 		let descr = '';
 		let archive = null;
 		let icon = null;
 		let div = null;
-		let onCardClick = null;
-		let onNameClick = null;
 
 		if (canDescription) {
 			if (description == I.LinkDescription.Added) {
@@ -177,24 +179,21 @@ const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			archive = <div className="tagItem isMultiSelect archive">{translate('blockLinkArchived')}</div>;
 		};
 
-		if (cardStyle == I.LinkCardStyle.Text) {
+		if (isText) {
 			div = (
 				<div className="div">
 					<div className="inner" />
 				</div>
 			);
-			onNameClick = isArchived ? openMenu : onClick;
-		} else {
-			onCardClick = isArchived ? openMenu : onClick;
 		};
 
 		if (withIcon) {
-			if (isArchived && (object.layout != I.ObjectLayout.Image)) {
+			if (isArchived && !isImage) {
 				icon = (
 					<IconObject
 						id={`block-${block.id}-icon`}
-						size={(cardStyle != I.LinkCardStyle.Text) ? 48 : size}
-						iconSize={(cardStyle != I.LinkCardStyle.Text) ? 28 : iconSize}
+						size={!isText ? 48 : size}
+						iconSize={!isText ? 28 : iconSize}
 						object={{ ...object, isDeleted: true }}
 					/>
 				);
