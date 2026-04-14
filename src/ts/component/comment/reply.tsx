@@ -161,7 +161,7 @@ const CommentReply = (props: Props) => {
 	}, []);
 
 	const onSaveEdit = useCallback((newParts: I.CommentContentPart[]) => {
-		const blocks = U.Comment.partsToBlocks(newParts);
+		const blocks = U.Comment.partsToChatBlocks(newParts);
 
 		C.ChatEditMessageContent(targetId, id, {
 			content: {
@@ -222,16 +222,21 @@ const CommentReply = (props: Props) => {
 	}, [ targetId, id, parentId ]);
 
 	const onCopyText = useCallback(() => {
-		const text = parts.map(p => p.text || '').join('\n');
-		const html = parts.map(p => Mark.toHtml(p.text || '', p.marks || [])).join('<br/>');
+		const blocks = U.Comment.partsToBlocks(parts);
 
-		U.Common.clipboardCopy({
-			text,
-			html: Mark.toStandardHtml(html),
+		C.BlockCopy(rootId, blocks, { from: 0, to: 0 }, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			U.Common.clipboardCopy({
+				text: String(message.textSlot || '').replace(/\n+$/, ''),
+				html: message.htmlSlot,
+			});
+
+			Preview.toastShow({ text: translate('toastCopyBlock') });
 		});
-
-		Preview.toastShow({ text: translate('toastCopyBlock') });
-	}, [ parts ]);
+	}, [ rootId, parts ]);
 
 	const setHover = useCallback((v: boolean) => {
 		U.Dom.toggleClass(contentWrapRef.current, 'hover', v);

@@ -3,12 +3,12 @@ import Comment from './comment';
 
 describe('Comment', () => {
 
-	describe('partsToBlocks', () => {
+	describe('partsToChatBlocks', () => {
 		it('should convert text parts to text blocks', () => {
 			const parts = [
 				{ text: 'Hello world', style: 0, type: 'text', marks: [] },
 			];
-			const blocks = Comment.partsToBlocks(parts as any);
+			const blocks = Comment.partsToChatBlocks(parts as any);
 
 			expect(blocks).toHaveLength(1);
 			expect(blocks[0].text).toBeDefined();
@@ -20,7 +20,7 @@ describe('Comment', () => {
 			const parts = [
 				{ link: { targetObjectId: 'abc123' }, text: '', marks: [] },
 			];
-			const blocks = Comment.partsToBlocks(parts as any);
+			const blocks = Comment.partsToChatBlocks(parts as any);
 
 			expect(blocks).toHaveLength(1);
 			expect(blocks[0].link).toEqual({ targetObjectId: 'abc123' });
@@ -30,7 +30,7 @@ describe('Comment', () => {
 			const parts = [
 				{ embed: { processor: 3, url: 'https://youtube.com/watch?v=abc' }, text: '', marks: [] },
 			];
-			const blocks = Comment.partsToBlocks(parts as any);
+			const blocks = Comment.partsToChatBlocks(parts as any);
 
 			expect(blocks).toHaveLength(1);
 			expect(blocks[0].embed).toEqual({ processor: 3, url: 'https://youtube.com/watch?v=abc' });
@@ -40,7 +40,7 @@ describe('Comment', () => {
 			const parts = [
 				{ type: 'div', text: '', marks: [] },
 			];
-			const blocks = Comment.partsToBlocks(parts as any);
+			const blocks = Comment.partsToChatBlocks(parts as any);
 
 			expect(blocks).toHaveLength(1);
 			expect(blocks[0].text.text).toBe('---');
@@ -52,7 +52,7 @@ describe('Comment', () => {
 				{ text: '', type: 'text', marks: [] },
 				{ text: 'keep', type: 'text', marks: [] },
 			];
-			const blocks = Comment.partsToBlocks(parts as any);
+			const blocks = Comment.partsToChatBlocks(parts as any);
 
 			expect(blocks).toHaveLength(1);
 			expect(blocks[0].text.text).toBe('keep');
@@ -62,15 +62,15 @@ describe('Comment', () => {
 			const parts = [
 				{ text: 'checkbox item', style: 8, type: 'text', marks: [], checked: true, lang: 'python' },
 			];
-			const blocks = Comment.partsToBlocks(parts as any);
+			const blocks = Comment.partsToChatBlocks(parts as any);
 
 			expect(blocks[0].text.checked).toBe(true);
 			expect(blocks[0].text.lang).toBe('python');
 		});
 
 		it('should handle null/undefined input', () => {
-			expect(Comment.partsToBlocks(null as any)).toEqual([]);
-			expect(Comment.partsToBlocks(undefined as any)).toEqual([]);
+			expect(Comment.partsToChatBlocks(null as any)).toEqual([]);
+			expect(Comment.partsToChatBlocks(undefined as any)).toEqual([]);
 		});
 	});
 
