@@ -693,6 +693,37 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 
+		// Convert ``` (+ optional language) followed by Enter into a code block
+		if ((e.key == 'Enter') && !e.shiftKey && block.canHaveMarks() && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription()) {
+			const codeMatch = value.match(/^```(\w*)$/);
+
+			if (codeMatch) {
+				const langInput = codeMatch[1] || '';
+
+				if (!langInput || Prism.languages[langInput]) {
+					e.preventDefault();
+					e.stopPropagation();
+
+					const lang = langInput || Storage.get('codeLang') || J.Constant.default.codeLang;
+
+					marksRef.current = [];
+					setValue('');
+
+					U.Data.blockSetText(rootId, id, '', [], true, () => {
+						C.BlockListTurnInto(rootId, [ id ], I.TextStyle.Code, () => {
+							focus.set(block.id, { from: 0, to: 0 });
+							focus.apply();
+						});
+
+						C.BlockListSetFields(rootId, [
+							{ blockId: block.id, fields: { ...block.fields, lang } }
+						]);
+					});
+					return;
+				};
+			};
+		};
+
 		onKeyDown(e, value, marksRef.current, range, props);
 	};
 	
