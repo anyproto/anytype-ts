@@ -234,7 +234,7 @@
 	}
 	.commentEditor-paragraph { padding: 8px 0px 0px 0px; }
 	.commentEditor-mention { color: var(--color-system-accent-100); font-weight: 500; }
-	.commentEditor-link { color: var(--color-system-accent-100); text-decoration: underline; }
+	.commentEditor-link { color: var(--color-system-accent-100); }
 
 	.commentEditor-h1 { padding: 20px 0px 0px 0px; @include text-header1; }
 	.commentEditor-h2 { padding: 16px 0px 0px 0px; @include text-header2; }
