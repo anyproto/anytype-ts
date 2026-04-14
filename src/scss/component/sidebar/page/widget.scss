@@ -112,7 +112,7 @@
 		.side.right { justify-content: flex-end; flex-shrink: 0; }
 	}
 
-	> .body { flex-grow: 1; overflow-y: auto; padding: 0px 8px 8px 8px; }
+	> .body { flex-grow: 1; overflow-y: auto; padding: 0px 12px 12px 12px; }
 	> .body {
 		.content { display: flex; flex-direction: column; gap: 16px 0px; }
 	}
@@ -128,7 +128,7 @@
 			.icon.add:hover, .icon.add.hover { color: var(--color-control-accent); }
 		}
 
-		.items { display: flex; flex-direction: column; gap: 4px 0px; }
+		.items { display: flex; flex-direction: column; gap: 8px 0px; }
 		.empty { padding: 8px 12px; @include text-small; color: var(--color-text-tertiary); }
 	}
 
@@ -144,5 +144,5 @@
 		.icon.action { width: 20px; height: 20px; flex-shrink: 0; }
 	}
 
-	.button.done { width: 100%; margin-top: 8px; }
+	.buttons { display: flex; flex-direction: column; }
 }

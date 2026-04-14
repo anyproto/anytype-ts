@@ -1,9 +1,10 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { Button, Icon, Widget, IconObject, ObjectName, Label } from 'Component';
+import { Button, Icon, Widget, IconObject, ObjectName, Label, Sync } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, sidebar, Action } from 'Lib';
 
 const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
@@ -141,6 +142,18 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 
 	const pinnedBlocks = getPinnedBlocks();
 	const sectionOptions = U.Menu.widgetSections();
+	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+
+	const onSync = () => {
+		S.Menu.closeAllForced(null, () => {
+			S.Menu.open('syncStatus', {
+				element: '#headerSync',
+				offsetY: 4,
+				classNameWrap: 'fixed fromSidebar',
+				subIds: J.Menu.syncStatus,
+			});
+		});
+	};
 
 	useEffect(() => {
 		S.Common.widgetSectionsInit();
@@ -150,22 +163,44 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 		<>
 			<div className="side left">
 				<Icon
+					id="button-widget-panel-toggle"
 					name="widget/vaultToggle" className="vaultToggle" withBackground={true}
 					onClick={() => sidebar.leftPanelToggle(true, true)}
 					tooltipParam={{ text: translate('commonToggleSidebar'), typeY: I.MenuDirection.Bottom }}
 				/>
+				<Icon
+					name="header/widget" withBackground={true}
+					onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
+					tooltipParam={{
+						text: translate('commonWidgets'),
+						caption: keyboard.getCaption('widget'),
+						typeY: I.MenuDirection.Bottom,
+					}}
+				/>
 			</div>
 			<div className="side right">
 				<Icon
+					id="button-widget-search"
 					name="common/search" withBackground={true}
 					onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
 					tooltipParam={{ text: translate('commonSearch'), typeY: I.MenuDirection.Bottom }}
 				/>
+				{spaceview.isShared ? (
+					<Icon
+						id="button-widget-members"
+						name="widget/member"
+						withBackground={true}
+						inner={<Label className="cnt" text={String(members.length)} />}
+						onClick={() => Action.openSpaceShare(analytics.route.widget)}
+						tooltipParam={{ text: translate('commonMembers'), typeY: I.MenuDirection.Bottom }}
+					/>
+				) : ''}
+				<Sync id="headerSync" onClick={onSync} />
 			</div>
 		</>
 	);
 
-	const PinnedItem = ({ block }: { block: I.Block }) => {
+	const PinnedItem = ({ block, index }: { block: I.Block; index: number }) => {
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id, disabled: !canWrite });
 		const child = getChild(block.id);
 		const targetId = child?.getTargetObjectId();
@@ -178,7 +213,14 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 		};
 
 		return (
-			<div ref={setNodeRef} className={cn.join(' ')} style={style} {...attributes} {...listeners}>
+			<motion.div
+				ref={setNodeRef}
+				className={cn.join(' ')}
+				style={style}
+				{...attributes}
+				{...listeners}
+				{...U.Common.animationProps({ transition: { duration: 0.2, delay: index * 0.03 } })}
+			>
 				<Icon className="dnd" name="common/dnd" />
 				<IconObject object={object} size={20} iconSize={20} />
 				<ObjectName object={object} />
@@ -188,11 +230,11 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 					onClick={e => onUnpin(e, block)}
 					tooltipParam={{ text: translate('menuWidgetUnpinFromChannel'), typeY: I.MenuDirection.Bottom }}
 				/>
-			</div>
+			</motion.div>
 		);
 	};
 
-	const SectionItem = ({ section }: { section: any }) => {
+	const SectionItem = ({ section, index }: { section: any; index: number }) => {
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: String(section.id), disabled: !canWrite });
 		const cfg = widgetSections.find(it => it.id == section.id);
 		const isHidden = !!cfg?.isHidden;
@@ -204,7 +246,14 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 		};
 
 		return (
-			<div ref={setNodeRef} className={cn.join(' ')} style={style} {...attributes} {...listeners}>
+			<motion.div
+				ref={setNodeRef}
+				className={cn.join(' ')}
+				style={style}
+				{...attributes}
+				{...listeners}
+				{...U.Common.animationProps({ transition: { duration: 0.2, delay: index * 0.03 } })}
+			>
 				<Icon className="dnd" name="common/dnd" />
 				<Label text={section.name} />
 				<Icon
@@ -213,7 +262,7 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 					onClick={e => onToggleSection(e, section.id)}
 					tooltipParam={{ text: translate(isHidden ? 'widgetShowSection' : 'widgetHideSection'), typeY: I.MenuDirection.Bottom }}
 				/>
-			</div>
+			</motion.div>
 		);
 	};
 
@@ -225,17 +274,22 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 
 			<div id="body" ref={bodyRef} className="body">
 				<div className="content">
-					<Widget
-						block={spaceBlock}
-						disableContextMenu={true}
-						canEdit={false}
-						canRemove={false}
-						sidebarDirection={sidebarDirection}
-						getObject={() => spaceview}
-					/>
+					<motion.div {...U.Common.animationProps({ transition: { duration: 0.2 } })}>
+						<Widget
+							block={spaceBlock}
+							disableContextMenu={true}
+							canEdit={false}
+							canRemove={false}
+							sidebarDirection={sidebarDirection}
+							getObject={id => id ? spaceview : null}
+						/>
+					</motion.div>
 
 					{isOwner ? (
-						<div className="manageSection">
+						<motion.div
+							className="manageSection"
+							{...U.Common.animationProps({ transition: { duration: 0.2, delay: 0.05 } })}
+						>
 							<div className="sectionHead">
 								<Label text={translate('widgetManageChannelPins')} />
 								{canWrite ? (
@@ -257,17 +311,20 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 									modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 								>
 									<SortableContext items={pinnedBlocks.map(b => b.id)} strategy={verticalListSortingStrategy}>
-										{pinnedBlocks.map(block => <PinnedItem key={block.id} block={block} />)}
+										{pinnedBlocks.map((block, i) => <PinnedItem key={block.id} block={block} index={i} />)}
 									</SortableContext>
 								</DndContext>
 								{!pinnedBlocks.length ? (
 									<div className="empty">{translate('widgetManageChannelPinsEmpty')}</div>
 								) : ''}
 							</div>
-						</div>
+						</motion.div>
 					) : ''}
 
-					<div className="manageSection">
+					<motion.div
+						className="manageSection"
+						{...U.Common.animationProps({ transition: { duration: 0.2, delay: 0.1 } })}
+					>
 						<div className="sectionHead">
 							<Label text={translate('widgetManagePersonal')} />
 						</div>
@@ -279,13 +336,18 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 								modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 							>
 								<SortableContext items={sectionOptions.map(s => String(s.id))} strategy={verticalListSortingStrategy}>
-									{sectionOptions.map(section => <SectionItem key={section.id} section={section} />)}
+									{sectionOptions.map((section, i) => <SectionItem key={section.id} section={section} index={i} />)}
 								</SortableContext>
 							</DndContext>
 						</div>
-					</div>
+					</motion.div>
 
-					<Button text={translate('commonDone')} color="accent" className="c36 done" onClick={onDone} />
+					<motion.div
+						className="buttons"
+						{...U.Common.animationProps({ transition: { duration: 0.2, delay: 0.15 } })}
+					>
+						<Button text={translate('commonDone')} color="accent" size={36} onClick={onDone} />
+					</motion.div>
 				</div>
 			</div>
 		</>
