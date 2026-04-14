@@ -85,7 +85,7 @@
 
 		.replyList { width: 100%; margin: 0px; padding: 0px; }
 
-		.replyFormWrap { width: 100%; margin: 0px; padding: 12px 0px 0px 0px; }
+		.replyFormWrap { width: 100%; margin: 0px; padding: 12px 0px 0px 28px; }
 		.replyFormWrap {
 			.commentForm { border-radius: 14px; background-color: var(--color-shape-secondary); }
 			.commentForm .contentArea { padding: 8px 12px; }
@@ -119,7 +119,7 @@
 		.commentAttachments,
 		.commentForm { margin-left: 28px; }
 
-		.content { line-height: 20px; word-break: break-word; }
+		.content { margin: 0px 0px 0px 28px; line-height: 20px; word-break: break-word; }
 		.content {
 			&, * { user-select: text !important; }
 		}
