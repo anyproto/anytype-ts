@@ -247,13 +247,13 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const addAttachmentFiles = useCallback((files: File[]) => {
 		const limit = J.Constant.limit.chat.attachments;
 		const currentCount = editorRef.current?.getAttachments().length || 0;
-		let remaining = limit - currentCount;
+		const remaining = limit - currentCount;
 
-		for (const file of files) {
-			if (remaining <= 0) {
-				break;
-			};
+		if (remaining <= 0) {
+			return;
+		};
 
+		const items = files.slice(0, remaining).map(file => {
 			const path = electron.webFilePath ? electron.webFilePath(file) : '';
 			const mime = file.type || '';
 			const ext = path ? (electron.fileExt ? electron.fileExt(path) : '') : '';
@@ -267,7 +267,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				};
 			};
 
-			editorRef.current?.insertAttachment({
+			return {
 				id: `tmp-${Date.now()}-${Math.random().toString(36).slice(2)}`,
 				name: file.name,
 				layout,
@@ -277,12 +277,23 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				mime,
 				path,
 				file,
-			});
+			};
+		});
 
-			remaining--;
-		};
+		// Clipboard images arrive as synthetic File objects with no filesystem path —
+		// persist them to disk first so the subsequent C.FileUpload has a real path.
+		U.Common.saveClipboardFiles(items, {}, (data: any) => {
+			for (const item of (data.files || [])) {
+				if (!item.path) {
+					continue;
+				};
 
-		setHasAttachments((editorRef.current?.getAttachments().length || 0) > 0);
+				const fileExt = item.fileExt || (electron.fileExt ? electron.fileExt(item.path) : '');
+				editorRef.current?.insertAttachment({ ...item, fileExt });
+			};
+
+			setHasAttachments((editorRef.current?.getAttachments().length || 0) > 0);
+		});
 	}, []);
 
 	const timeoutDrag = useRef<number>(0);
