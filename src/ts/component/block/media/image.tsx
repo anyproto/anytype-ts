@@ -1,5 +1,5 @@
-import React, { useRef, useImperativeHandle, forwardRef } from 'react';
-import { InputWithFile, Icon, Error } from 'Component';
+import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import { InputWithFile, Icon, Error, Loader, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -11,6 +11,7 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const targetObjectId = block.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const wrapRef = useRef(null);
+	const [ isLoaded, setIsLoaded ] = useState(false);
 
 	const handleKeyDown = (e: any) => {
 		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
@@ -165,48 +166,44 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		return Math.min(1, Math.max(0, w / ew));
 	};
 
-	const object = S.Detail.get(rootId, targetObjectId, []);
+	const object = S.Detail.get(rootId, targetObjectId, [ 'widthInPixels', 'heightInPixels' ]);
 	const cn = [ 'focusable', `c${block.id}` ];
 	const css: any = {};
+	const wrapCss: any = {};
 
 	if (width) {
 		css.width = (width * 100) + '%';
 	};
 
-	let element = null;
-	let overlay = null;
+	if (object.widthInPixels && object.heightInPixels) {
+		wrapCss.aspectRatio = `${object.widthInPixels} / ${object.heightInPixels}`;
+	} else
+	if (!isLoaded) {
+		wrapCss.height = 80;
+	};
 
 	const typeName = translate('blockNameImage');
+	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
 
-	if (object.isDeleted) {
+	let element = null;
+
+	if (object.isArchived && (state == I.FileState.Done)) {
 		element = (
-			<div className="mediaState isRemoved">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
+			<div ref={wrapRef} className="wrap" style={{ ...css, ...wrapCss }}>
+				{!isLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
+				<img
+					className="mediaImage"
+					src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
+					onDragStart={e => e.preventDefault()}
+					onLoad={() => setIsLoaded(true)}
+					onError={handleError}
+				/>
+				{overlay}
 			</div>
 		);
-	} else if (object.isArchived) {
-		overlay = (
-			<div className="mediaState isInBin">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
-			</div>
-		);
-		if (state == I.FileState.Done) {
-			element = (
-				<div ref={wrapRef} className="wrap" style={css}>
-					<img
-						className="mediaImage"
-						src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
-						onDragStart={e => e.preventDefault()}
-						onError={handleError}
-					/>
-					{overlay}
-				</div>
-			);
-		} else {
-			element = overlay;
-		};
+	} else
+	if (object.isDeleted || object.isArchived) {
+		element = overlay;
 	} else {
 		switch (state) {
 			default: {
@@ -229,12 +226,14 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 			case I.FileState.Done: {
 				element = (
-					<div ref={wrapRef} className="wrap" style={css}>
+					<div ref={wrapRef} className="wrap" style={{ ...css, ...wrapCss }}>
+						{!isLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
 						<img
 							className="mediaImage"
 							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
 							onDragStart={e => e.preventDefault()}
 							onClick={handleClick}
+							onLoad={() => setIsLoaded(true)}
 							onError={handleError}
 						/>
 						{isDownloading ? <Icon className="downloading" /> : <Icon name="common/download" className="download" onClick={handleDownload} />}

@@ -34,6 +34,7 @@ html.themeDark {
 	--color-bg-primary-90: rgba(23, 23, 23, 0.9);
 	--color-bg-secondary: #191919;
 	--color-bg-loader: rgba(0,0,0,0.7);
+	--color-attachment-loader: rgba(255, 255, 255, 0.7);
 
 	/* Color */
 
@@ -245,6 +246,14 @@ html.themeDark {
 	.shareTooltip { background: var(--color-bg-secondary); @include shadow; }
 	.shareTooltip {
 		.icon.close { background-color: var(--color-bg-secondary); }
+	}
+
+	/* Comments */
+
+	.socialBlock { background: linear-gradient(to bottom, rgba(23, 23, 23, 0) 0%, rgba(23, 23, 23, 0.04) 20%, rgba(23, 23, 23, 0.18) 40%, rgba(23, 23, 23, 0.50) 60%, rgba(23, 23, 23, 0.82) 80%, rgba(23, 23, 23, 0.96) 100%); }
+	.socialBlock {
+		.commentCounter { background: rgba(23, 23, 23, 0.6); }
+		.commentCounter:hover { background: var(--color-shape-primary); }
 	}
 
 	@import "./menu";

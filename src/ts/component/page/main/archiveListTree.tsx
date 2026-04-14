@@ -18,13 +18,14 @@ interface Props {
 	onSelectAll: () => void;
 	onSort: (id: string, type: I.SortType) => void;
 	isAllSelected: boolean;
+	onVisibleIdsChange?: (ids: string[]) => void;
 }
 
 const LIMIT = 10000;
 const ROW_HEIGHT = 42;
 const ROW_HEIGHT_DETAILED = 64;
 
-const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, isDetailed = false, selectedIds, filterText, sortId, sortType, onSelectChange, onSelectAll, onSort, isAllSelected }: Props) => {
+const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, isDetailed = false, selectedIds, filterText, sortId, sortType, onSelectChange, onSelectAll, onSort, isAllSelected, onVisibleIdsChange }: Props) => {
 
 	const [ expandedIds, setExpandedIds ] = useState<string[]>([]);
 	const listRef = useRef(null);
@@ -119,6 +120,13 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, isDetailed = fals
 			return sortType === I.SortType.Asc ? cmp : -cmp;
 		});
 
+	const visibleIds = visibleRoots.flatMap(n => U.Data.flattenIds(n));
+	const visibleIdsKey = visibleIds.join(',');
+
+	useEffect(() => {
+		onVisibleIdsChange?.(visibleIds);
+	}, [ visibleIdsKey ]);
+
 	const columns = [
 		{ key: 'name', label: translate('commonName') },
 		{ key: 'lastModifiedDate', label: translate('commonDeleted') },
@@ -152,7 +160,7 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, isDetailed = fals
 		return result;
 	};
 
-	const flatRows = useMemo(() => flattenVisible(visibleRoots), [ visibleRoots, expandedIds ]);
+	const flatRows = useMemo(() => flattenVisible(visibleRoots), [ visibleIdsKey, expandedIds ]);
 
 	const renderRow = (row: FlatRow, style: React.CSSProperties): React.ReactNode => {
 		const { node, depth } = row;

@@ -7,7 +7,7 @@
 
 .sync { 
 	height: 28px; width: 28px; display: flex; flex-direction: row; align-items: center; @include text-small; color: var(--color-text-secondary);
-	border-radius: 4px; gap: 0px 8px; justify-content: center;
+	border-radius: 50%; gap: 0px 8px; justify-content: center;
 }
 .sync {
 	.icon { pointer-events: none; }

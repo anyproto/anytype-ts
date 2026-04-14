@@ -332,7 +332,7 @@ const Create = forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const resize = () => {
-		window.dispatchEvent(new CustomEvent('resize.menuDataviewOptionList'));
+		window.dispatchEvent(new CustomEvent('resize'));
 	};
 
 	const tags = getTagsValue();

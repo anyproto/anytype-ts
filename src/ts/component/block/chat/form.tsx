@@ -504,7 +504,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		const json = JSON.parse(String(clipboard.getData('application/json') || '{}'));
-		const html = String(clipboard.getData('text/html') || '');
+		const html = String(clipboard.getData('text/html') || '').replace(/<meta[^>]*>/gi, '');
 		const text = U.String.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
 
 		// If pasted content is a pure URL and there's a selection, create a link mark
@@ -1379,7 +1379,9 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 				classNameWrap: 'fromBlock',
 				rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
 				horizontal: I.MenuDirection.Center,
-				offsetY: 4,
+				vertical: I.MenuDirection.Top,
+				offsetY: -4,
+				noAnimation: true,
 				data: {
 					value: mark?.param,
 					filter: mark?.param,
@@ -1635,7 +1637,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			updateMarkup(newText, range.current);
 		};
 		const getValue = () => value;
-		const param = { onChange, subId };
+		const param = { onChange, subId, withPreview: false };
 
 		renderMentions(rootId, node, marks.current, getValue, param);
 		renderObjects(rootId, node, marks.current, getValue, props, param);
@@ -1657,7 +1659,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		const marks = message.content.marks || [];
 		const node = nodeRef.current;
 		const head = node ? U.Dom.select('.head', node) : null;
-		const param = { subId, iconSize: 16 };
+		const param = { subId, iconSize: 16, withPreview: false };
 
 		renderMentions(rootId, head, marks, getValue, param);
 		renderObjects(rootId, head, marks, getValue, props, param);
@@ -1849,16 +1851,20 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 								mousewheel={true}
 								modules={[ Navigation, Mousewheel ]}
 							>
-								{attachments.map(item => (
-									<SwiperSlide key={item.id}>
-										<Attachment
-											object={item}
-											onRemove={onAttachmentRemove}
-											bookmarkAsDefault={true}
-											updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
-										/>
-									</SwiperSlide>
-								))}
+								{attachments.map(item => {
+									const object = item.isTmp ? { syncStatus: I.SyncStatusObject.Synced, ...item } : item;
+									return (
+										<SwiperSlide key={item.id}>
+											<Attachment
+												object={object}
+												withInlineSize={false}
+												onRemove={onAttachmentRemove}
+												bookmarkAsDefault={true}
+												updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
+											/>
+										</SwiperSlide>
+									);
+								})}
 							</Swiper>
 						</div>
 					) : ''}

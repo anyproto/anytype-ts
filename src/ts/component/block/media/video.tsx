@@ -1,5 +1,5 @@
 import React, { useRef, forwardRef, useImperativeHandle } from 'react';
-import { InputWithFile, Icon, Error, MediaVideo } from 'Component';
+import { InputWithFile, Icon, Error, MediaVideo, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -135,38 +135,25 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({}));
 
-	let element = null;
-	let overlay = null;
 	const typeName = translate('blockNameVideo');
+	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
 
-	if (object.isDeleted) {
+	let element = null;
+
+	if (object.isArchived && (state == I.FileState.Done)) {
 		element = (
-			<div className="mediaState isRemoved">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
+			<div ref={wrapRef} className="wrap" style={css}>
+				<MediaVideo
+					src={S.Common.fileUrl(targetObjectId)}
+					onPlay={onPlay}
+					onPause={onPause}
+				/>
+				{overlay}
 			</div>
 		);
-	} else if (object.isArchived) {
-		overlay = (
-			<div className="mediaState isInBin">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
-			</div>
-		);
-		if (state == I.FileState.Done) {
-			element = (
-				<div ref={wrapRef} className="wrap" style={css}>
-					<MediaVideo
-						src={S.Common.fileUrl(targetObjectId)}
-						onPlay={onPlay}
-						onPause={onPause}
-					/>
-					{overlay}
-				</div>
-			);
-		} else {
-			element = overlay;
-		};
+	} else
+	if (object.isDeleted || object.isArchived) {
+		element = overlay;
 	} else {
 		switch (state) {
 			default:

@@ -65,7 +65,7 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 			const spaceId = Storage.get('spaceId');
 
-			const onAuthComplete = () => {
+			const onRouteChange = () => {
 				const whatsNew = Storage.get('whatsNew');
 
 				const cb1 = () => {
@@ -97,7 +97,7 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 			const routeParam = {
 				replace: true,
-				onAuthComplete,
+				onRouteChange,
 			};
 
 			U.Data.onInfo(account.info);
@@ -106,7 +106,7 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);
 			} else {
-				U.Router.go('/main/void/select', { replace: true, onRouteChange: onAuthComplete });
+				U.Router.go('/main/void/select', routeParam);
 			};
 			
 			analytics.event('SelectAccount', { middleTime: message.middleTime });

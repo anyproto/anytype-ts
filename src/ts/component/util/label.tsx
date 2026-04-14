@@ -1,4 +1,5 @@
 import React, { FC, MouseEvent, useEffect, useRef } from 'react';
+import { Icon } from 'Component';
 import * as I from 'Interface';
 
 interface Props {
@@ -6,6 +7,7 @@ interface Props {
 	text: string;
 	color?: string;
 	className?: string;
+	iconParam?: I.IconParam;
 	tooltipParam?: Partial<I.TooltipParam>;
 	dataset?: any;
 	onMouseEnter?: (e: any) => void;
@@ -20,6 +22,7 @@ const Label: FC<Props> = ({
 	text = '',
 	color = '',
 	className = '',
+	iconParam,
 	tooltipParam = {},
 	dataset = {},
 	onClick,
@@ -71,14 +74,16 @@ const Label: FC<Props> = ({
 			ref={nodeRef}
 			id={id}
 			className={cn.join(' ')}
-			dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }}
 			onClick={onClick}
 			onMouseDown={onMouseDown}
 			onMouseEnter={mouseEnterHandler}
 			onMouseLeave={mouseLeaveHandler}
 			onDoubleClick={onDoubleClick}
 			{...U.Common.dataProps(dataProps)}
-		/>
+		>
+			{iconParam ? <Icon {...iconParam} /> : ''}
+			<span dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
+		</div>
 	);
 
 };

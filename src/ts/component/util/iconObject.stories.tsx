@@ -125,6 +125,78 @@ const variants: ObjectVariant[] = [
 			relationKey: 'description',
 		}),
 	},
+	{
+		label: 'File (PDF)',
+		getObject: () => ({
+			layout: I.ObjectLayout.Pdf,
+			name: 'document.pdf',
+			fileExt: 'pdf',
+		}),
+	},
+	{
+		label: 'File (archive)',
+		getObject: () => ({
+			layout: I.ObjectLayout.File,
+			name: 'backup.zip',
+			fileExt: 'zip',
+		}),
+	},
+	{
+		label: 'File (text)',
+		getObject: () => ({
+			layout: I.ObjectLayout.File,
+			name: 'readme.txt',
+			fileExt: 'txt',
+		}),
+	},
+	{
+		label: 'File (table)',
+		getObject: () => ({
+			layout: I.ObjectLayout.File,
+			name: 'data.xlsx',
+			fileExt: 'xlsx',
+		}),
+	},
+	{
+		label: 'File (present.)',
+		getObject: () => ({
+			layout: I.ObjectLayout.File,
+			name: 'slides.pptx',
+			fileExt: 'pptx',
+		}),
+	},
+	{
+		label: 'File (other)',
+		getObject: () => ({
+			layout: I.ObjectLayout.File,
+			name: 'data.bin',
+			fileExt: 'bin',
+		}),
+	},
+	{
+		label: 'Video',
+		getObject: () => ({
+			layout: I.ObjectLayout.Video,
+			name: 'clip.mp4',
+			fileExt: 'mp4',
+		}),
+	},
+	{
+		label: 'Audio',
+		getObject: () => ({
+			layout: I.ObjectLayout.Audio,
+			name: 'track.mp3',
+			fileExt: 'mp3',
+		}),
+	},
+	{
+		label: 'Image (no src)',
+		getObject: () => ({
+			layout: I.ObjectLayout.Image,
+			name: 'photo.jpg',
+			fileExt: 'jpg',
+		}),
+	},
 ];
 
 const IconObjectGallery = () => {
@@ -216,6 +288,11 @@ const IconObjectGallery = () => {
 					{ name: 'Chat', layout: I.ObjectLayout.Chat },
 					{ name: 'Date', layout: I.ObjectLayout.Date },
 					{ name: 'Relation', layout: I.ObjectLayout.Relation, relationFormat: I.RelationType.Number, relationKey: 'number' },
+					{ name: 'File', layout: I.ObjectLayout.File, fileExt: 'zip' },
+					{ name: 'Pdf', layout: I.ObjectLayout.Pdf, fileExt: 'pdf' },
+					{ name: 'Video', layout: I.ObjectLayout.Video, fileExt: 'mp4' },
+					{ name: 'Audio', layout: I.ObjectLayout.Audio, fileExt: 'mp3' },
+					{ name: 'Image (no src)', layout: I.ObjectLayout.Image, fileExt: 'jpg' },
 				].map((obj, i) => (
 					<div key={i} className="iconObjectGalleryLayoutItem">
 						<IconObject

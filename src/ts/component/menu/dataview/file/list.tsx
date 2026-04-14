@@ -88,6 +88,7 @@ const MenuDataviewFileList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (clear) {
 				itemsRef.current = [];
 			};
+
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
 		});
@@ -154,11 +155,12 @@ const MenuDataviewFileList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const beforePosition = () => {
+		const list = getItems();
 		const offset = 100;
-		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
+		const itemsHeight = list.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(360, itemsHeight));
 
-		U.Dom.css(U.Dom.select('.content', getContainer()), { height: items.length ? `${height}px` : '' });
+		U.Dom.css(U.Dom.select('.content', getContainer()), { height: list.length ? `${height}px` : '' });
 	};
 
 	const items = getItems();
@@ -279,7 +281,7 @@ const MenuDataviewFileList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<div className="line" />
 				<MenuItemVertical
 					id="upload"
-					iconParam={{ name: 'plus' }}
+					iconParam={{ name: 'menu/action/upload' }}
 					name={translate('commonUpload')} 
 					onClick={onUpload}
 					onMouseEnter={() => setHover({ id: 'upload' })}

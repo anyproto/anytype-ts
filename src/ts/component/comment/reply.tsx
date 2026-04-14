@@ -3,6 +3,7 @@ import { createRoot, Root } from 'react-dom/client';
 import { Icon, IconObject, ObjectName } from 'Component';
 import CommentForm from './form';
 import Attachment from 'Component/block/chat/attachment';
+import Reaction from 'Component/block/chat/message/reaction';
 import { renderParts } from './render';
 import * as I from 'Interface';
 
@@ -12,18 +13,19 @@ interface Props {
 	parentId: string;
 	message: I.CommentMessage;
 	readonly?: boolean;
+	onReply?: () => void;
 };
 
 const CommentReply = (props: Props) => {
 
-	const { rootId, targetId, parentId, message, readonly } = props;
+	const { rootId, targetId, parentId, message, readonly, onReply } = props;
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const [ isEditing, setIsEditing ] = useState(false);
 	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
-	const { id, creator, createdAt, modifiedAt } = message;
+	const { id, creator, createdAt, modifiedAt, reactions } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = message.content?.parts || [];
@@ -43,24 +45,65 @@ const CommentReply = (props: Props) => {
 				return;
 			};
 
-			const object = S.Detail.get(subId, param, []);
 			item.onmousedown = (e: any) => {
 				e.preventDefault();
+				const object = S.Detail.get(subId, param, []);
 				if (!object._empty_) {
 					U.Object.openEvent(e, object);
 				};
 			};
 		});
 
-		U.Dom.selectAll('a', node).forEach((item: HTMLElement) => {
-			const href = String(item.getAttribute('href') || item.getAttribute('data-param') || '');
-			if (!href) {
-				return;
+		U.Dom.selectAll(Mark.getTag(I.MarkType.Link), node).forEach((item: HTMLElement) => {
+			item.onclick = (e: Event) => {
+				e.preventDefault();
 			};
 
-			item.onclick = (e: any) => {
+			item.onmousedown = (e: MouseEvent) => {
+				if (e.button == 2) {
+					return;
+				};
+
 				e.preventDefault();
-				Action.openUrl(href);
+
+				const el = e.currentTarget as HTMLElement;
+				const url = String(el.getAttribute('href') || '');
+				const { isInside, target, spaceId } = U.Common.getLinkParamFromUrl(url);
+
+				const openObject = (id: string, spaceId: string) => {
+					if (spaceId && (spaceId != S.Common.space)) {
+						U.Router.go(U.Router.build({ page: 'main', action: 'object', id, spaceId }), {});
+						return;
+					};
+
+					const cb = (object) => {
+						if (object) {
+							U.Object.openEvent(e, object);
+						};
+					};
+
+					if (spaceId) {
+						U.Object.getById(id, { spaceId }, cb);
+					} else {
+						cb(S.Detail.get(subId, id, []));
+					};
+				};
+
+				if (isInside) {
+					openObject(target, spaceId);
+					return;
+				};
+
+				const route = U.Common.getRouteFromUrl(url);
+				if (route) {
+					const routeParam = U.Router.getParam(route);
+					if (routeParam.id) {
+						openObject(routeParam.id, routeParam.spaceId);
+						return;
+					};
+				};
+
+				Action.openUrl(target);
 			};
 		});
 
@@ -71,9 +114,9 @@ const CommentReply = (props: Props) => {
 				return;
 			};
 
-			const object = S.Detail.get(subId, param, []);
 			item.onmousedown = (e: any) => {
 				e.preventDefault();
+				const object = S.Detail.get(subId, param, []);
 				if (!object._empty_) {
 					U.Object.openEvent(e, object);
 				};
@@ -118,7 +161,7 @@ const CommentReply = (props: Props) => {
 	}, []);
 
 	const onSaveEdit = useCallback((newParts: I.CommentContentPart[]) => {
-		const blocks = U.Comment.partsToBlocks(newParts);
+		const blocks = U.Comment.partsToChatBlocks(newParts);
 
 		C.ChatEditMessageContent(targetId, id, {
 			content: {
@@ -129,7 +172,11 @@ const CommentReply = (props: Props) => {
 			blocks,
 			attachments: message.attachments || [],
 			reactions: message.reactions || [],
-		} as any, () => {
+		} as any, (response: any) => {
+			if (response.error.code) {
+				return;
+			};
+
 			setIsEditing(false);
 
 			S.Comment.updateReply(parentId, {
@@ -143,47 +190,150 @@ const CommentReply = (props: Props) => {
 				},
 			} as any);
 		});
-	}, [ targetId, id, parentId ]);
+	}, [ targetId, id, parentId, message.attachments, message.reactions ]);
 
 	const onDelete = useCallback(() => {
-		C.ChatDeleteMessage(targetId, id, () => {
-			S.Comment.deleteReply(parentId, id);
+		S.Popup.open('confirm', {
+			data: {
+				iconParam: { name: 'popup/header/confirm', color: 'orange' },
+				title: translate('popupConfirmChatDeleteMessageTitle'),
+				text: translate('popupConfirmChatDeleteMessageText'),
+				textConfirm: translate('commonDelete'),
+				onConfirm: () => {
+					C.ChatDeleteMessage(targetId, id, (response: any) => {
+						if (response.error.code) {
+							return;
+						};
 
-			const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
-			const post = S.Comment.getPostById(subId, parentId);
-			if (post) {
-				S.Comment.updatePost(subId, {
-					id: parentId,
-					replyCount: Math.max(0, post.replyCount - 1),
-				} as any);
-			};
+						S.Comment.deleteReply(parentId, id);
+
+						const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
+						const post = S.Comment.getPostById(subId, parentId);
+						if (post) {
+							S.Comment.updatePost(subId, {
+								id: parentId,
+								replyCount: Math.max(0, post.replyCount - 1),
+							} as any);
+						};
+					});
+				},
+			},
 		});
 	}, [ targetId, id, parentId ]);
 
+	const onCopyLink = useCallback(() => {
+		const object = S.Detail.get(rootId, rootId);
+		const spaceObject = U.Space.getSpaceview();
+
+		U.Object.copyLink(object, spaceObject, 'deeplink', '', `&messageId=${id}`);
+	}, [ rootId, id ]);
+
 	const onCopyText = useCallback(() => {
-		const text = parts.map(p => p.text || '').join('\n');
-		U.Common.copyToast('', text);
-	}, [ parts ]);
+		const blocks = U.Comment.partsToBlocks(parts);
+
+		C.BlockCopy(rootId, blocks, { from: 0, to: 0 }, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			U.Common.clipboardCopy({
+				text: String(message.textSlot || '').replace(/\n+$/, ''),
+				html: message.htmlSlot,
+			});
+
+			Preview.toastShow({ text: translate('toastCopyBlock') });
+		});
+	}, [ rootId, parts ]);
 
 	const setHover = useCallback((v: boolean) => {
 		U.Dom.toggleClass(contentWrapRef.current, 'hover', v);
 	}, []);
 
+	const onReactionSelect = useCallback((icon: string) => {
+		const limit = J.Constant.limit.chat.reactions;
+		const hasReaction = (reactions || []).find(it => it.icon == icon);
+		const self = (reactions || []).filter(it => it.authors.includes(account.id));
+
+		if (!hasReaction && ((self.length >= limit.self) || ((reactions || []).length >= limit.all))) {
+			return;
+		};
+
+		C.ChatToggleMessageReaction(targetId, id, icon);
+	}, [ targetId, id, reactions ]);
+
+	const openReactionPicker = useCallback((element: HTMLElement) => {
+		setHover(true);
+
+		S.Menu.open('smile', {
+			classNameWrap: 'fromBlock',
+			element,
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			offsetY: 4,
+			noAnimation: true,
+			onClose: () => setHover(false),
+			data: {
+				noHead: true,
+				noUpload: true,
+				value: '',
+				onSelect: (icon: string) => onReactionSelect(icon),
+			},
+		});
+	}, [ onReactionSelect, setHover ]);
+
+	const onReaction = useCallback((e: React.MouseEvent) => {
+		openReactionPicker(e.currentTarget as HTMLElement);
+	}, [ openReactionPicker ]);
+
+	const buildMenuOptions = useCallback((withQuickActions: boolean) => {
+		const limit = J.Constant.limit.chat.reactions;
+		const self = (reactions || []).filter(it => it.authors?.includes(account.id));
+		const canReact = (self.length < limit.self) && ((reactions || []).length < limit.all);
+		const items: any[] = [];
+
+		if (withQuickActions && onReply) {
+			items.push({ id: 'reply', name: translate('blockChatReply'), iconParam: { name: 'chat/buttons/reply' } });
+		};
+		if (withQuickActions && canReact) {
+			items.push({ id: 'reaction', name: translate('blockChatReactionAdd'), iconParam: { name: 'comment/reaction' } });
+		};
+		if (withQuickActions && (onReply || canReact)) {
+			items.push({ isDiv: true });
+		};
+
+		items.push({ id: 'copyText', name: translate('commentCopyText'), iconParam: { name: 'menu/action/copy' } });
+
+		if (withQuickActions) {
+			items.push({ isDiv: true });
+			items.push({ id: 'copyLink', name: translate('commentCopyLink'), iconParam: { name: 'menu/action/pageLink' } });
+		};
+
+		if (isSelf) {
+			items.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
+
+			if (!withQuickActions) {
+				items.push({ isDiv: true });
+			};
+
+			items.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'destructive' }, color: 'destructive' });
+		};
+
+		return items;
+	}, [ isSelf, reactions, account.id, onReply ]);
+
+	const onMenuSelect = useCallback((item: any, anchor: HTMLElement) => {
+		switch (item.id) {
+			case 'reply': onReply?.(); break;
+			case 'reaction': openReactionPicker(anchor); break;
+			case 'copyText': onCopyText(); break;
+			case 'copyLink': onCopyLink(); break;
+			case 'edit': onEdit(); break;
+			case 'delete': onDelete(); break;
+		};
+	}, [ onReply, openReactionPicker, onCopyText, onCopyLink, onEdit, onDelete ]);
+
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
 		const element = e.currentTarget as HTMLElement;
-
-		const menuItems: any[] = [];
-
-		if (isSelf) {
-			menuItems.push({ id: 'edit', name: translate('commentEdit'), iconParam: { name: 'common/edit' } });
-		};
-
-		menuItems.push({ id: 'copyText', name: translate('commentCopyText'), iconParam: { name: 'menu/action/copy' } });
-
-		if (isSelf) {
-			menuItems.push({ isDiv: true });
-			menuItems.push({ id: 'delete', name: translate('commentDelete'), iconParam: { name: 'menu/action/remove', color: 'destructive' }, color: 'destructive' });
-		};
 
 		setHover(true);
 
@@ -195,17 +345,38 @@ const CommentReply = (props: Props) => {
 			offsetY: 4,
 			onClose: () => setHover(false),
 			data: {
-				options: menuItems,
-				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'edit': onEdit(); break;
-						case 'copyText': onCopyText(); break;
-						case 'delete': onDelete(); break;
-					};
-				},
+				options: buildMenuOptions(false),
+				onSelect: (e: any, item: any) => onMenuSelect(item, element),
 			},
 		});
-	}, [ isSelf, onEdit, onCopyText, onDelete, setHover ]);
+	}, [ buildMenuOptions, onMenuSelect, setHover ]);
+
+	const onContextMenu = useCallback((e: React.MouseEvent) => {
+		if (readonly || isEditing) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		const x = e.pageX;
+		const y = e.pageY;
+		const anchor = contentWrapRef.current;
+
+		setHover(true);
+
+		S.Menu.open('select', {
+			classNameWrap: 'fromBlock',
+			recalcRect: () => ({ x, y, width: 0, height: 0 }),
+			vertical: I.MenuDirection.Bottom,
+			horizontal: I.MenuDirection.Right,
+			onClose: () => setHover(false),
+			data: {
+				options: buildMenuOptions(true),
+				onSelect: (e: any, item: any) => onMenuSelect(item, anchor),
+			},
+		});
+	}, [ readonly, isEditing, buildMenuOptions, onMenuSelect, setHover ]);
 
 	const onAttachmentPreview = useCallback((preview: any) => {
 		const data: any = { ...preview };
@@ -225,9 +396,16 @@ const CommentReply = (props: Props) => {
 	}, []);
 
 	const renderAttachments = () => {
+		const linkTargets = new Set(
+			parts
+				.filter(p => (p.type === I.BlockType.Link) && p.link?.targetObjectId)
+				.map(p => p.link.targetObjectId)
+		);
+
 		const list = (message.attachments || [])
+			.filter(it => !linkTargets.has(it.target))
 			.map(it => S.Detail.get(subId, it.target))
-			.filter(it => !it._empty_);
+			.filter(it => !it._empty_ && !it.isDeleted);
 
 		if (!list.length) {
 			return null;
@@ -244,6 +422,7 @@ const CommentReply = (props: Props) => {
 						object={item}
 						subId={subId}
 						showAsFile={false}
+						withInlineSize={false}
 						onRemove={() => {}}
 						onPreview={onAttachmentPreview}
 					/>
@@ -277,23 +456,43 @@ const CommentReply = (props: Props) => {
 		);
 	};
 
+	const renderReactions = () => {
+		if (!(reactions || []).length) {
+			return null;
+		};
+
+		const sorted = [ ...reactions ].sort((a: any, b: any) => (b.authors?.length || 0) - (a.authors?.length || 0));
+
+		return (
+			<div className="reactions">
+				{sorted.map((item: any, i: number) => (
+					<Reaction key={i} {...item} onSelect={onReactionSelect} />
+				))}
+			</div>
+		);
+	};
+
 	const renderHoverActions = () => {
 		if (isEditing || readonly) {
 			return null;
 		};
 
+		const limit = J.Constant.limit.chat.reactions;
+		const self = (reactions || []).filter(it => it.authors?.includes(account.id));
+		const canReact = (self.length < limit.self) && ((reactions || []).length < limit.all);
+
 		return (
 			<div className="hoverActions">
-				<div className="hoverBtn" onClick={onMenuClick}>
-					<Icon name="common/more" className="more" />
-				</div>
+				{canReact ? <Icon name="comment/reaction" className="reaction" withBackground={true} onClick={onReaction} /> : null}
+				{onReply ? <Icon name="chat/buttons/reply" className="reply" withBackground={true} onClick={onReply} /> : null}
+				<Icon name="common/more" className="more" withBackground={true} onClick={onMenuClick} />
 			</div>
 		);
 	};
 
 	return (
 		<div className="commentReply" data-message-id={id}>
-			<div ref={contentWrapRef} className="contentWrap">
+			<div ref={contentWrapRef} className="contentWrap" onContextMenu={onContextMenu}>
 				<div className="head">
 					<div className="side left">
 						<IconObject
@@ -314,6 +513,7 @@ const CommentReply = (props: Props) => {
 				</div>
 
 				{renderContent()}
+				{renderReactions()}
 			</div>
 		</div>
 	);

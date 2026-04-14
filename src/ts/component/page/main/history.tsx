@@ -405,7 +405,6 @@ const PageMainHistory = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	useEffect(() => {
 		resize();
-		rebind();
 	});
 
 	useImperativeHandle(ref, () => ({

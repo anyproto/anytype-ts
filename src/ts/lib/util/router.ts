@@ -170,6 +170,7 @@ class UtilRouter {
 			Preview.hideAll();
 
 			if (replace) {
+				this.history = this.history || {};
 				this.history.entries = [];
 				this.history.index = -1;
 			};
@@ -200,6 +201,10 @@ class UtilRouter {
 		if (!id) {
 			console.log('[UtilRouter].swithSpace: id is empty');
 			return;
+		};
+
+		if (route) {
+			S.Common.redirectSet(route);
 		};
 
 		S.Menu.closeAllForced();
@@ -256,7 +261,7 @@ class UtilRouter {
 								sidebar.leftPanelSubPageOpen('widget', false, true);
 							};
 
-							routeParam?.onAuthComplete?.();
+							routeParam?.onRouteChange?.();
 						});
 					};
 

@@ -13,7 +13,7 @@
 
 	.iconCommon, .iconRelation, .smileImage, .iconImage, .iconFile, .iconCheckbox, .iconError {
 		@each $s in 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 48, 56, 64, 80 {
-			&.c#{$s} { @include pos-abs-mid; width: #{$s}px; height: #{$s}px; margin: #{$s / -2}px 0px 0px #{$s / -2}px; }
+			&.c#{$s} { @include pos-abs-mid; width: #{$s}px; height: #{$s}px; margin: calc(#{$s}px / -2) 0px 0px calc(#{$s}px / -2); }
 		}
 	}
 
@@ -59,7 +59,12 @@
 		}
 	}
 
-	&.isFile, &.isImage { background-color: unset; }
+	&.isFile, 
+	&.isImage,
+	&.isVideo,
+	&.isAudio,
+	&.isPdf { background-color: unset; }
+
 	&.withImage { background-color: unset !important; }
 
 	&.isHuman, &.isParticipant, &.isSpaceView.spaceOneToOne {

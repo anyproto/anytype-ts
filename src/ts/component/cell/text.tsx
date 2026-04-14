@@ -222,18 +222,19 @@ const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			};
 
 			EditorComponent = (item: any) => (
-				<Input 
+				<Input
 					key={[ recordId, relation.relationKey, 'input' ].join('-')}
-					ref={inputRef} 
-					id="input" 
-					{...item} 
+					ref={inputRef}
+					id="input"
+					focusOnMount={true}
+					{...item}
 					maskOptions={{
 						mask: mask.join(' '),
 						separator: '.',
 						hourFormat: 12,
 						alias: 'datetime',
-					}} 
-					placeholder={ph.join(' ')} 
+					}}
+					placeholder={ph.join(' ')}
 					onKeyUp={onKeyUpDate}
 				/>
 			);
@@ -243,6 +244,7 @@ const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 					key={[ recordId, relation.relationKey, 'input' ].join('-')}
 					ref={inputRef}
 					id="input"
+					focusOnMount={true}
 					{...item}
 					placeholder={placeholder}
 					onKeyDown={onKeyDown}

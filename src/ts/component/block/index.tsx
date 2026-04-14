@@ -640,6 +640,10 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 					U.Object.openEvent(e, object);
 				};
 
+				if (param.withPreview === false) {
+					return;
+				};
+
 				clickable.onmouseenter = (e: Event) => {
 					const sr = U.Dom.getSelectionRange();
 					if (sr && !sr.collapsed) {

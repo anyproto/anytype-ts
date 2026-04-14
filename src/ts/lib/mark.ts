@@ -998,6 +998,30 @@ class Mark {
 	};
 
 	/**
+	 * Converts internal markup HTML (custom tags) to standard HTML for clipboard.
+	 * @param {string} html - HTML string with custom markup tags.
+	 * @returns {string} HTML with standard tags (b, i, s, u, code).
+	 */
+	toStandardHtml (html: string): string {
+		html = String(html || '');
+
+		const map: { from: string; to: string }[] = [
+			{ from: 'markupbold', to: 'b' },
+			{ from: 'markupitalic', to: 'i' },
+			{ from: 'markupstrike', to: 's' },
+			{ from: 'markupunderline', to: 'u' },
+			{ from: 'markupcode', to: 'code' },
+		];
+
+		for (const { from, to } of map) {
+			html = html.replace(new RegExp(`<${from}(\\s[^>]*)?>`, 'gi'), `<${to}>`);
+			html = html.replace(new RegExp(`</${from}>`, 'gi'), `</${to}>`);
+		};
+
+		return html;
+	};
+
+	/**
 	 * Checks and handles marks on backspace action.
 	 * @param text - The current text.
 	 * @param range - The current text range.

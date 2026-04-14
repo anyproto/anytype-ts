@@ -666,9 +666,10 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 					});
 				} catch (e) {
-					if (e instanceof katex.ParseError) {
-						html = `<div class="error">Error in LaTeX '${U.String.htmlSpecialChars(text)}': ${U.String.htmlSpecialChars(e.message)}</div>`;
-					} else {
+					const message = (e as Error)?.message || String(e);
+					html = `<div class="error">Error in LaTeX '${U.String.htmlSpecialChars(text)}': ${U.String.htmlSpecialChars(message)}</div>`;
+
+					if (!(e instanceof katex.ParseError)) {
 						console.error(e);
 					};
 				};

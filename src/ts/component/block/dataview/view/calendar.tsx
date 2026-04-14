@@ -114,7 +114,7 @@ const ViewCalendar = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		if (wrap) {
 			U.Dom.css(wrap, { width: `${mw}px`, marginLeft: `${-J.Size.blockMenu + PADDING}px` });
 		};
-		U.Dom.eventDispatch(window, 'resize.menuCalendarDay');
+		U.Dom.eventDispatch(window, 'resize');
 
 		if (menu && !menu.param.data.fromWidget && day) {
 			S.Menu.update('calendarDay', { width: day.offsetWidth + 8 });
@@ -159,22 +159,18 @@ const ViewCalendar = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 				</div>
 
 				<div className="side right">
-					<Icon 
-						name="arrow/calendar" 
-						className="arrow left" 
-						withBackground={true} 
-						onClick={() => onArrow(1)}
-						width={8}
-						height={12} 
+					<Icon
+						name="arrow/calendar"
+						className="arrow left"
+						withBackground={true}
+						onClick={() => onArrow(-1)}
 					/>
 					<div className="btn" onClick={onToday}>{translate('commonToday')}</div>
-					<Icon 
-						name="arrow/calendar" 
-						className="arrow right" 
-						withBackground={true} 
-						onClick={() => onArrow(-1)}
-						width={8}
-						height={12} 
+					<Icon
+						name="arrow/calendar"
+						className="arrow right"
+						withBackground={true}
+						onClick={() => onArrow(1)}
 					/>
 				</div>
 			</div>

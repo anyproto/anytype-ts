@@ -44,6 +44,7 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public chatCmdSendValue = null;
+	public commentCmdSendValue = null;
 	public updateVersionValue = '';
 	public vaultMessagesValue = null;
 	public vaultIsMinimalValue = null;
@@ -349,6 +350,14 @@ class CommonStore {
 
 	get chatCmdSend (): boolean {
 		return this.boolGet('chatCmdSend');
+	};
+
+	get commentCmdSend (): boolean {
+		if (this.commentCmdSendValue === null) {
+			const v = Storage.get('commentCmdSend');
+			this.commentCmdSendValue = v === null ? true : v;
+		};
+		return !!this.commentCmdSendValue;
 	};
 
 	get theme (): string {
@@ -755,6 +764,14 @@ class CommonStore {
 	 */
 	chatCmdSendSet (v: boolean) {
 		this.boolSet('chatCmdSend', v);
+	};
+
+	/**
+	 * Sets the comment send shortcut option value.
+	 * @param {boolean} v - Value.
+	 */
+	commentCmdSendSet (v: boolean) {
+		this.boolSet('commentCmdSend', v);
 	};
 
 	/**

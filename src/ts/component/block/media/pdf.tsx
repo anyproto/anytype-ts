@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { InputWithFile, Error, Pager, Icon, Loader, ObjectName } from 'Component';
+import { InputWithFile, Error, Pager, Icon, Loader, ObjectName, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -179,47 +179,31 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({}));
 
+	const typeName = translate('blockNamePdf');
+	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
+
 	let element = null;
 	let pager = null;
-	const typeName = translate('blockNamePdf');
 
-	if (object.isDeleted) {
+	if (object.isArchived && (state == I.FileState.Done)) {
 		element = (
-			<div className="mediaState isRemoved">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
+			<div ref={wrapRef} className={[ 'wrap', 'pdfWrapper' ].join(' ')} style={css}>
+				<Suspense fallback={<Loader />}>
+					<MediaPdf
+						ref={mediaRef}
+						src={S.Common.fileUrl(targetObjectId)}
+						page={1}
+						onDocumentLoad={onDocumentLoad}
+						onPageRender={onPageRender}
+						onClick={() => {}}
+					/>
+				</Suspense>
+				{overlay}
 			</div>
 		);
-	} else if (object.isArchived) {
-		if (state == I.FileState.Done) {
-			const cn = [ 'wrap', 'pdfWrapper' ];
-
-			element = (
-				<div ref={wrapRef} className={cn.join(' ')} style={css}>
-					<Suspense fallback={<Loader />}>
-						<MediaPdf
-							ref={mediaRef}
-							src={S.Common.fileUrl(targetObjectId)}
-							page={1}
-							onDocumentLoad={onDocumentLoad}
-							onPageRender={onPageRender}
-							onClick={() => {}}
-						/>
-					</Suspense>
-					<div className="mediaState isInBin">
-						<Icon name="common/ghost" />
-						<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
-					</div>
-				</div>
-			);
-		} else {
-			element = (
-				<div className="mediaState isInBin">
-					<Icon name="common/ghost" />
-					<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
-				</div>
-			);
-		};
+	} else
+	if (object.isDeleted || object.isArchived) {
+		element = overlay;
 	} else {
 		switch (state) {
 			default:

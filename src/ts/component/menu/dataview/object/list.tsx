@@ -33,6 +33,7 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 		focus();
 		load(true);
+		return () => unbind();
 	}, []);
 
 	useEffect(() => {

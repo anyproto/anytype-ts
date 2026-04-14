@@ -55,7 +55,7 @@ const CellItemObject = forwardRef<{}, Props>((props, ref: any) => {
 	};
 	if (canEdit) {
 		cn.push('canEdit');
-		iconRemove = <Icon name="object/remove" size={8} className="objectRemove" onClick={onRemoveHandler} />;
+		iconRemove = <Icon name="object/remove" size={8} className="remove" onClick={onRemoveHandler} />;
 	};
 
 	if (object._isPlaceholder) {

@@ -11,7 +11,7 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 
 	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick, notificationSound, hideFileObjectsInTree } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
-	const { theme, chatCmdSend } = S.Common;
+	const { theme, chatCmdSend, commentCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
 
 	const onHardwareAccelerationChange = (v: boolean) => {
@@ -252,6 +252,17 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 						value={chatCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
 						options={chatKeys}
 						onChange={(v: string) => S.Common.chatCmdSendSet(v == ChatKey.CmdEnter)}
+						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalCommentSend')} />
+					<Select
+						id="commentSend"
+						value={commentCmdSend ? ChatKey.CmdEnter : ChatKey.Enter}
+						options={chatKeys}
+						onChange={(v: string) => S.Common.commentCmdSendSet(v == ChatKey.CmdEnter)}
 						menuParam={{ horizontal: I.MenuDirection.Right }}
 					/>
 				</div>

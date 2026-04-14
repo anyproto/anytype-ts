@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef, MouseEvent } from 'react';
 import raf from 'raf';
-import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, Icon } from 'Component';
+import { InputWithFile, ObjectName, ObjectDescription, Loader, Error, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -103,20 +103,8 @@ const BlockBookmark = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	let element = null;
 	const typeName = translate('blockNameBookmark');
 
-	if (isDeleted) {
-		element = (
-			<div className="mediaState isRemoved">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectRemovedShort'), typeName)}</div>
-			</div>
-		);
-	} else if (isArchived) {
-		element = (
-			<div className="mediaState isInBin">
-				<Icon name="common/ghost" />
-				<div className="name">{U.String.sprintf(translate('commonObjectInBin'), typeName, U.File.name(object))}</div>
-			</div>
-		);
+	if (isDeleted || isArchived) {
+		element = <MediaState object={object} rootId={rootId} typeName={typeName} />;
 	} else {
 		switch (state) {
 			default:

@@ -59,7 +59,7 @@
 		.wrap.isEditing { background: var(--color-shape-highlight-medium); }
 
 		.preview {
-			.label { color: #464646; }
+			.label { color: var(--color-text-secondary); }
 		}
 	}
 	.block.blockEmbed:not(.isLatex) {

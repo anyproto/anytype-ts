@@ -68,6 +68,7 @@
 	"commonOpenObject": "Open as Object",
 	"commonClose": "Close",
 	"commonRemove": "Remove",
+	"commonPending": "Pending",
 	"commonChange": "Change",
 	"commonName": "Name",
 	"commonNoObjects": "No Objects",
@@ -82,8 +83,8 @@
 	"commonUnlinkFromObject": "Remove from Object",
 	"commonUnlinkFromSet": "Remove from Query",
 	"commonUnlinkFromCollection": "Remove from Collection",
-	"commonDeletedObject": "Non-existent object",
-	"commonObjectInBin": "%s %s is in the Bin",
+	"commonDeletedObject": "Deleted",
+	"commonObjectInBin": "%s \"%s\" is in the Bin",
 	"commonObjectInBinShort": "%s is in the Bin",
 	"commonObjectRemovedShort": "%s was removed",
 	"commonDeletedType": "Deleted type",
@@ -684,7 +685,7 @@
 	"editorPageCreateBookmarkObject": "Create Bookmark Object",
 	"editorPageCreateBookmark": "Create Bookmark",
 
-	"blockNameParagraph": "Text",
+	"blockNameParagraph": "Regular Text",
 	"blockNameHeader1": "Title",
 	"blockNameHeader2": "Heading",
 	"blockNameHeader3": "Subheading",
@@ -757,7 +758,7 @@
 	"blockTextDate": "Mention a date in editor",
 
 	"blockLinkSyncing": "Syncing...",
-	"blockLinkArchived": "Deleted",
+	"blockLinkArchived": "In Bin",
 
 	"blockDataviewCreateNewCollection": "Create new Collection",
 	"blockDataviewCreateNewCollectionWithName": "Create new Collection \"%s\"",
@@ -925,6 +926,7 @@
 	"popupSettingsPersonalSectionEditor": "Editor Personalisation",
 	"popupSettingsPersonalSectionMessaging": "Messaging",
 	"popupSettingsPersonalChatSend": "Send objects in chats with",
+	"popupSettingsPersonalCommentSend": "Send comments with",
 	"popupSettingsPersonalSectionLists": "Lists",
 	"popupSettingsPersonalGridTitleClick": "Click to edit title in Grid view",
 	"popupSettingsPersonalSectionInterface": "Interface",
@@ -1091,6 +1093,7 @@
 
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
+	"popupSettingsSpaceShareOffline": "Waiting for connection to add members",
 	"popupSettingsSpaceShareTitle": "Members",
 	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedLabel": "You can't add more members",
@@ -1264,6 +1267,8 @@
 	"popupSpaceCreateStep1Placeholder": "Search by name or handle",
 	"popupSpaceCreateStep2Create": "Create",
 	"popupSpaceCreateOptionalMembers": "Optional — you can add members later",
+	"popupSpaceCreateSeatCounters": "%s of %s Editors, %s of %s Viewers",
+	"popupSpaceCreateOffline": "Members will be invited when you're back online",
 
 	"settingsSpaceHomeTitle": "Create Home",
 	"settingsSpaceHomeDescription": "Select what you and channel member see when they open the channel. You can always change it in settings.",
@@ -2908,7 +2913,8 @@
 	"paymentProvider4": "App Store",
 	"paymentProvider5": "Google Play",
 
-	"commentLeaveComment": "Leave a comment",
+	"commentLeaveComment": "Start a discussion",
+	"commentDiscussion": "Discussion",
 	"commentPlaceholder": "Leave a comment...",
 	"commentReplyPlaceholder": "Write a reply...",
 	"commentLoadMore": "Load more comments",
@@ -2931,6 +2937,8 @@
 	"commentSlashMenuAttachments": "Attachments",
 	"commentSlashMenuDecorations": "Decorations",
 
+	"commentBlockText": "Text",
+	"commentBlockTextDescription": "Plain text block",
 	"commentBlockTitle": "Title",
 	"commentBlockTitleDescription": "Large heading",
 	"commentBlockHeading": "Heading",
@@ -2960,6 +2968,7 @@
 	"commentBlockCodeDescription": "Monospace code block",
 
 	"commentSlashMenuEmbed": "Embed",
+	"commentSlashMenuNewObject": "New %s",
 	"commentBlockLatex": "LaTeX",
 	"commentBlockLatexDescription": "Mathematical formula",
 	"commentBlockMermaid": "Mermaid",

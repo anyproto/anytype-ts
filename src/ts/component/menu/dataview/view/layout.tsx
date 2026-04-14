@@ -30,7 +30,6 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		rebind();
 		setActive();
 	});
 
@@ -74,7 +73,6 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				const isBoard = saveParam.current.type == I.ViewType.Board;
 		const isCalendar = saveParam.current.type == I.ViewType.Calendar;
 		const clearGroups = isBoard && saveParam.current.groupRelationKey && (view.groupRelationKey != saveParam.current.groupRelationKey);
-		const ns = block.id + U.Dom.getEventNamespace(keyboard.isPopup());
 
 		if (isBoard || isCalendar) {
 			const groupOptions = Relation.getGroupOptions(rootId, blockId, saveParam.current.type);
@@ -93,11 +91,11 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				Dataview.groupUpdate(rootId, blockId, view.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: [] }, () => {
 					onSave?.();
-					U.Dom.eventDispatch(window, `updateDataviewData.${ns}`);
+					U.Dom.eventDispatch(window, 'updateDataviewData');
 				});
 			} else {
 				onSave?.();
-				U.Dom.eventDispatch(window, `updateDataviewData.${ns}`);
+				U.Dom.eventDispatch(window, 'updateDataviewData');
 			};
 		});
 

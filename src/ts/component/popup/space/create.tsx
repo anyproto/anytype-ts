@@ -1,9 +1,14 @@
-import React, { forwardRef, useRef, useState, useEffect, useCallback } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useCallback, useImperativeHandle } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
 import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
+import raf from 'raf';
 
 const SUB_ID = 'popupSpaceCreateParticipants';
+const ROW_HEIGHT = 48;
+const LABEL_HEIGHT = 28;
+const SAFE_AREA = 120;
+const GRAD_HEIGHT = 32;
 
 const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, position }, ref) => {
 
@@ -12,6 +17,8 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const filterRef = useRef(null);
 	const joinInputRef = useRef(null);
 	const fileInputRef = useRef(null);
+	const listRef = useRef(null);
+	const selectedListRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const [ canSave, setCanSave ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -23,7 +30,6 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const [ name, setName ] = useState('');
 	const [ selectedMembers, setSelectedMembers ] = useState<string[]>([]);
 	const [ isScrolledTop, setIsScrolledTop ] = useState(false);
-	const [ isScrolledBottom, setIsScrolledBottom ] = useState(false);
 	const { data } = param;
 	const { type } = data;
 	const { name: limit } = J.Constant.limit.space;
@@ -79,6 +85,16 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 				return [ ...prev, id ];
 			};
 		});
+	};
+
+	const getSeatCounters = () => {
+		const product = S.Membership.data?.getTopProduct();
+		const writersLimit = product?.features?.spaceWriters || 0;
+		const readersLimit = product?.features?.spaceReaders || 0;
+		const writersCount = Math.min(selectedCount, writersLimit);
+		const readersCount = Math.min(Math.max(selectedCount - writersLimit, 0), readersLimit);
+
+		return { writersLimit, readersLimit, writersCount, readersCount };
 	};
 
 	const loadMembers = useCallback(() => {
@@ -149,9 +165,8 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		return unique;
 	};
 
-	const onMemberListScroll = ({ scrollTop, scrollHeight, clientHeight }) => {
+	const onScroll = ({ scrollTop, scrollHeight, clientHeight }) => {
 		setIsScrolledTop(scrollTop > 0);
-		setIsScrolledBottom((scrollTop + clientHeight) < (scrollHeight - 1));
 	};
 
 	const onSubmit = () => {
@@ -190,54 +205,75 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 
 			const afterUpload = () => {
 				C.WorkspaceSetInfo(spaceId, details, (infoMessage: any) => {
-				if (infoMessage.error.code) {
-					setError(infoMessage.error.description);
-					return;
-				};
+					if (infoMessage.error.code) {
+						setError(infoMessage.error.description);
+						return;
+					};
 
-				U.Router.switchSpace(spaceId, '', true, {
-					onRouteChange: () => {
-						if (isGroup) {
-							C.SpaceMakeShareable(S.Common.space, (message: any) => {
-								if (message.error.code) {
-									if (message.error.code == 104) {
-										const { sharedSpacesLimit } = U.Space.getProfile();
+					U.Router.switchSpace(spaceId, '', true, {
+						onRouteChange: () => {
+							if (isGroup) {
+								const product = S.Membership.data?.getTopProduct();
+								const writersLimit = product?.features?.spaceWriters || 0;
 
-										S.Popup.open('confirm', {
-											data: {
-												iconParam: { name: 'popup/header/warning', color: 'grey' },
-												title: translate('popupConfirmSharedSpaceLimitTitle'),
-												text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
-												textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
-												canCancel: false,
-												onConfirm: () => Action.openSettings('membership', ''),
-											},
+								if (!S.Common.isOnline && identities.length) {
+									Action.savePendingMembers(S.Common.space, identities);
+								} else {
+									C.SpaceMakeShareable(S.Common.space, (message: any) => {
+										if (message.error.code) {
+											if (message.error.code == 104) {
+												const { sharedSpacesLimit } = U.Space.getProfile();
+
+												S.Popup.open('confirm', {
+													data: {
+														iconParam: { name: 'popup/header/warning', color: 'grey' },
+														title: translate('popupConfirmSharedSpaceLimitTitle'),
+														text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+														textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+														canCancel: false,
+														onConfirm: () => Action.openSettings('membership', ''),
+													},
+												});
+												analytics.event('ScreenHitShareSpaceLimit');
+											};
+											return;
+										};
+
+										C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+											if (message.error.code) {
+												return;
+											};
+
+											analytics.event('ShareSpace');
+											analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
+
+											if (identities.length) {
+												const writerIdentities = identities.slice(0, writersLimit);
+												const readerIdentities = identities.slice(writersLimit);
+
+												if (writerIdentities.length) {
+													C.SpaceParticipantsAddList(S.Common.space, writerIdentities, I.ParticipantPermissions.Writer);
+												};
+
+												if (readerIdentities.length) {
+													C.SpaceParticipantsAddList(S.Common.space, readerIdentities, I.ParticipantPermissions.Reader);
+												};
+
+												analytics.event('AddMember', { count: identities.length });
+											};
 										});
-										analytics.event('ScreenHitShareSpaceLimit');
-									};
-									return;
+									});
 								};
+							};
 
-								C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
-									analytics.event('ShareSpace');
-									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
+							Action.openSettings('spaceHome', '');
+							onCreate?.(message.objectId);
+						}
+					}, false);
 
-									if (identities.length) {
-										C.SpaceParticipantsAddList(S.Common.space, identities, I.ParticipantPermissions.Writer);
-										analytics.event('AddMember', { count: identities.length });
-									};
-								});
-							});
-						};
-
-						Action.openSettings('spaceHome', '');
-						onCreate?.(message.objectId);
-					}
-				}, false);
-
-				analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, type });
-				analytics.event('SelectUsecase', { type: usecase });
-			});
+					analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, type });
+					analytics.event('SelectUsecase', { type: usecase });
+				});
 			};
 
 			if (iconImagePathRef.current) {
@@ -246,6 +282,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 						details.iconImage = msg.objectId;
 						details.iconOption = 0;
 					};
+
 					afterUpload();
 				});
 			} else {
@@ -326,38 +363,89 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		};
 
 		analytics.event('ScreenSettingsSpaceCreate', { status: S.Common.isOnline ? 'Online' : 'Offline' });
+		position();
 
 		return () => {
 			U.Subscription.destroyList([ SUB_ID ]);
 		};
 	}, []);
 
+	const getMaxListHeight = (listEl: HTMLElement): number => {
+		const popup = listEl?.closest('.innerWrap') as HTMLElement;
+		if (!popup) {
+			return 400;
+		};
+
+		const maxPopupHeight = window.innerHeight - SAFE_AREA;
+		const stepEl = listEl.closest('.step') as HTMLElement;
+		if (!stepEl) {
+			return maxPopupHeight;
+		};
+
+		let siblingsHeight = 0;
+		for (const child of Array.from(stepEl.children)) {
+			if (!child.contains(listEl)) {
+				siblingsHeight += (child as HTMLElement).offsetHeight;
+			};
+		};
+
+		return Math.max(maxPopupHeight - siblingsHeight, 80);
+	};
+
+	const beforePosition = () => {
+		raf(() => {
+			let totalHeight = 0;
+			let element = null;
+
+			if ((step == 0) && listRef.current) {
+				const members = getMembers();
+
+				totalHeight = members.length * ROW_HEIGHT + GRAD_HEIGHT;
+				element = listRef.current;
+			};
+
+			if ((step == 1) && selectedListRef.current) {
+				totalHeight = LABEL_HEIGHT + ROW_HEIGHT + selectedObjectsCount * ROW_HEIGHT + GRAD_HEIGHT;
+				element = selectedListRef.current;
+			};
+
+			if (element) {
+				const maxListHeight = getMaxListHeight(element);
+				const listHeight = Math.min(totalHeight, maxListHeight);
+
+				U.Dom.css(element, { height: `${listHeight}px` });
+			};
+		});
+	};
+
 	useEffect(() => {
 		iconRef.current?.setObject(getObject());
 	}, [ iconOption ]);
 
 	useEffect(() => {
+		setIsScrolledTop(false);
+
 		if (step == 0) {
 			setSearch('');
 			filterRef.current?.setValue('');
-			setIsScrolledTop(false);
-			setIsScrolledBottom(false);
 
 			if (isGroup) {
 				analytics.event('ScreenAddMember');
 			};
 		};
-		position?.();
+
+		position();
 	}, [ step ]);
 
-	const ROW_HEIGHT = 48;
-	const SAFE_AREA = 120;
-	const STEP0_OVERHEAD = 172;
+	useEffect(() => {
+		position();
+	}, [ search ]);
 
 	const members = getMembers();
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
-	const maxListHeight = Math.max(window.innerHeight - SAFE_AREA - STEP0_OVERHEAD, 80);
-	const listHeight = Math.min(members.length * ROW_HEIGHT, maxListHeight) + 16;
+	const selectedCount = selectedMembers.length;
+	const selectedObjectsCount = selectedMemberObjects.length;
+	const hasMembers = isGroup && (members.length || selectedObjectsCount);
 
 	const rowRenderer = ({ index, key, style }) => {
 		const item = members[index];
@@ -405,10 +493,17 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		);
 	} else
 	if (isGroup && (step == 0)) {
+		const { writersLimit, readersLimit, writersCount, readersCount } = getSeatCounters();
+
 		stepContent = (
 			<div className="step step0">
 				<div className="wrapper">
 					<div className="stepTitle">{translate('popupSpaceCreateStep1Title')}</div>
+					{(writersLimit > 0) ? (
+						<div className="seatCounters">
+							{U.String.sprintf(translate('popupSpaceCreateSeatCounters'), writersCount, writersLimit, readersCount, readersLimit)}
+						</div>
+					) : ''}
 
 					<Filter
 						ref={filterRef}
@@ -427,7 +522,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 					{members.length ? (
 						<>
 							{isScrolledTop ? <div className="grad top" /> : ''}
-							<div className="memberList" style={{ height: listHeight }}>
+							<div ref={listRef} className="memberList">
 								<AutoSizer className="scrollArea">
 									{({ width, height }) => (
 										<List
@@ -437,12 +532,12 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 											rowHeight={ROW_HEIGHT}
 											rowRenderer={rowRenderer}
 											overscanRowCount={10}
-											onScroll={onMemberListScroll}
+											onScroll={onScroll}
 										/>
 									)}
 								</AutoSizer>
 							</div>
-							{isScrolledBottom ? <div className="grad bottom" /> : ''}
+							<div className="grad bottom" />
 						</>
 					) : (
 						<div className="emptyState">{search ? translate('commonFilterEmpty') : translate('commonEmpty')}</div>
@@ -451,7 +546,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 
 				<div className="wrapper buttons">
 					<Button
-						text={translate(selectedMembers.length ? 'popupSpaceCreateNext' : 'popupSpaceCreateContinueWithoutMembers')}
+						text={translate(selectedCount ? 'popupSpaceCreateNext' : 'popupSpaceCreateContinueWithoutMembers')}
 						color="accent"
 						onClick={onNext}
 					/>
@@ -459,10 +554,19 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			</div>
 		);
 	} else {
+		const showOfflinePill = isGroup && (selectedCount > 0) && !S.Common.isOnline;
+
 		stepContent = (
 			<div className="step step1">
 				<div className="wrapper">
 					<div className="stepTitle">{title}</div>
+					{showOfflinePill ? (
+						<div className="offlinePill">
+							<Icon name="common/offline" />
+							{translate('popupSpaceCreateOffline')}
+						</div>
+					) : ''}
+
 
 					<div className="iconWrapper" onClick={onIcon}>
 						{iconPreviewUrl ? (
@@ -476,11 +580,14 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 								menuParam={{ horizontal: I.MenuDirection.Center }}
 							/>
 						)}
+						<div className="iconEdit">
+							<Icon name="common/edit" />
+						</div>
 					</div>
 
 					<Input
 						ref={nameRef}
-						className="spaceName"
+						className={[ 'spaceName', (hasMembers ? '' : 'withMargin') ].join(' ')}
 						value={name}
 						placeholder={translate('popupSpaceCreateNamePlaceholder')}
 						onKeyDown={onKeyDown}
@@ -489,31 +596,74 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 						focusOnMount={true}
 						size={52}
 					/>
+				</div>
 
-					{(isGroup && (members.length || selectedMemberObjects.length)) ? (
-						<div className="membersSection">
-							<div className="sectionLabel">{translate('popupSpaceCreateMembersLabel')}</div>
-							<div className="item add" onClick={() => setStep(0)}>
-								<Icon name="menu/spaceCreate/group" />
-								<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
-							</div>
+				{hasMembers ? (
+					<div className="memberListWrapper">
+						{isScrolledTop ? <div className="grad top" /> : ''}
+						<div ref={selectedListRef} className="memberList">
+							<AutoSizer className="scrollArea">
+								{({ width, height }) => {
+									const rows = [
+										{ id: '_label', type: 'label' },
+										{ id: '_add', type: 'add' },
+										...selectedMemberObjects.map(it => ({ ...it, type: 'member' })),
+									];
 
-							{selectedMemberObjects.map(item => (
-								<div key={item.id} id={`member-${item.id}`} className="item" onContextMenu={e => onMemberContext(e, item.id)}>
-									<IconObject size={32} object={item} />
-									<ObjectName object={item} withBadge={true} />
-								</div>
-							))}
+									return (
+										<List
+											width={width}
+											height={height}
+											rowCount={rows.length}
+											rowHeight={({ index }) => (rows[index].type == 'label') ? LABEL_HEIGHT : ROW_HEIGHT}
+											rowRenderer={({ index, key, style }) => {
+												const row = rows[index];
+
+												if (row.type == 'label') {
+													return (
+														<div key={key} style={style} className="sectionLabel">
+															{translate('popupSpaceCreateMembersLabel')}
+														</div>
+													);
+												};
+
+												if (row.type == 'add') {
+													return (
+														<div key={key} style={style} className="item add" onClick={() => setStep(0)}>
+															<Icon name="menu/spaceCreate/group" />
+															<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
+														</div>
+													);
+												};
+
+												return (
+													<div key={key} style={style} id={`member-${row.id}`} className="item" onContextMenu={e => onMemberContext(e, row.id)}>
+														<IconObject size={32} object={row} />
+														<ObjectName object={row} withBadge={true} />
+													</div>
+												);
+											}}
+											overscanRowCount={10}
+											onScroll={onScroll}
+										/>
+									);
+								}}
+							</AutoSizer>
 						</div>
-					) : ''}
-
-					<div className="buttons">
-						<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateStep2Create')} color="accent" onClick={onSubmit} />
+						<div className="grad bottom" />
 					</div>
+				) : ''}
+
+				<div className="wrapper buttons">
+					<Button className={!canSave ? 'disabled' : ''} text={translate('popupSpaceCreateStep2Create')} color="accent" onClick={onSubmit} />
 				</div>
 			</div>
 		);
 	};
+
+	useImperativeHandle(ref, () => ({
+		beforePosition,
+	}));
 
 	return (
 		<>

@@ -2652,7 +2652,6 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 				const commentSection = U.Dom.select('.commentSection', node);
 				const csh = commentSection ? commentSection.offsetHeight : 0;
-
 				const counter = U.Dom.select('.commentCounter', node);
 
 				if (!csh) {

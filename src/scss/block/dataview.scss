@@ -53,8 +53,7 @@
 			.btn:hover { background-color: var(--color-shape-highlight-medium); }
 
 			.icon.arrow { width: 24px !important; height: 24px !important; }
-			.icon.arrow.left { transform: rotateZ(90deg); }
-			.icon.arrow.right { transform: rotateZ(270deg); }
+			.icon.arrow.right { transform: rotateZ(180deg); }
 		}
 
 		.dataviewEmpty { 
@@ -315,8 +314,14 @@
 			> .sides {
 				> .side { padding: 0px; height: 28px; }
 				> .side.left { display: flex; flex-direction: column; align-items: flex-start; gap: 4px 0px; }
-				> .side.right { transition: opacity $transitionCommon; opacity: 0; }
+				> .side.right { transition: opacity $transitionCommon; opacity: 0; gap: 0px; }
+				> .side.right {
+					.icon.expandControls, .btn-settings { margin-right: 4px; }
+					.collapsible { display: flex; gap: 0px 4px; align-items: center; overflow: hidden; transition: width 0.15s $easeInQuint; }
+				}
 			}
+
+			.icon.expandControls { width: 28px; height: 28px; flex-shrink: 0; }
 
 			.views { gap: 0px 12px; }
 			.viewItem { @include text-common; font-weight: 500; }
@@ -324,6 +329,13 @@
 
 			.icon.plus { width: 20px; height: 20px; }
 			.icon.plus:hover { background-color: transparent; }
+		}
+		.dataviewControls {
+			> .sides > .side.right {
+				.collapsible:not(.isCollapsed) { margin-right: 4px; }
+				.collapsible.isCollapsed { width: 0px; }
+				.icon.expandControls.isCollapsed { transform: rotateZ(180deg); }
+			}
 		}
 		.dataviewControls::after { display: none !important; }
 
@@ -336,9 +348,13 @@
 		}
 	}
 
-	.block.blockDataview.isInline.isVertical {
+	.block.blockDataview.isInline {
+		.dataviewControls > .sides > .side.right { position: absolute; right: 0px; background-color: var(--color-bg-primary); }
+	}
+
+	.block.blockDataview.isInline.isNarrow {
 		.dataviewControls {
-			.btn-filter, .btn-sort { display: none; }
+			.icon.expandControls, .collapsible { display: none !important; }
 		}
 	}
 

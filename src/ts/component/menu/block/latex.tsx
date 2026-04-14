@@ -254,7 +254,6 @@ const MenuBlockLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		rebind();
 		position();
 		setActive();
 		onOver(null, items[n.current]);

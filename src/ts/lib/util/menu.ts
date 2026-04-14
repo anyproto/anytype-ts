@@ -3,6 +3,7 @@ import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
 import Locale from 'dist/lib/json/locale.json';
 import React, { MouseEvent } from 'react';
+import { Icon } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { focus } from 'Lib/focus';
@@ -83,11 +84,20 @@ class UtilMenu {
 	 * @returns {any[]} The list of text block types.
 	 */
 	getBlockText () {
-		return [
+		const items = [
 			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
 			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1', 'header1' ] },
 			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2', 'header2' ] },
 			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3', 'header3' ] },
+		].map((it: any) => {
+			it.type = I.BlockType.Text;
+			it.iconParam = { name: U.Data.blockTextIcon(it.id) };
+			return this.mapperBlock(it);
+		});
+
+		items.push({ isDiv: true } as any);
+
+		const extra = [
 			{ id: I.TextStyle.Quote, lang: 'Quote', aliases: [ 'quote' ] },
 			{ id: I.TextStyle.Callout, lang: 'Callout', aliases: [ 'callout' ] },
 		].map((it: any) => {
@@ -95,6 +105,8 @@ class UtilMenu {
 			it.iconParam = { name: U.Data.blockTextIcon(it.id) };
 			return this.mapperBlock(it);
 		});
+
+		return items.concat(extra);
 	};
 
 	/**
@@ -1216,10 +1228,11 @@ class UtilMenu {
 	};
 
 	getCommentAddSections (): any[] {
-		return [
+		return this.sectionsMap([
 			{
 				id: 'text', name: translate('commentSlashMenuTitle'),
 				children: [
+					{ id: 'paragraph', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/text' }, name: translate('commentBlockText'), description: translate('commentBlockTextDescription') },
 					{ id: 'title', textStyle: I.TextStyle.Header1, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header1' }, name: translate('commentBlockTitle'), description: translate('commentBlockTitleDescription') },
 					{ id: 'heading', textStyle: I.TextStyle.Header2, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header2' }, name: translate('commentBlockHeading'), description: translate('commentBlockHeadingDescription') },
 					{ id: 'subheading', textStyle: I.TextStyle.Header3, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header3' }, name: translate('commentBlockSubheading'), description: translate('commentBlockSubheadingDescription') },
@@ -1228,17 +1241,15 @@ class UtilMenu {
 			{
 				id: 'list', name: translate('commentSlashMenuLists'),
 				children: [
-					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, iconParam: { name: 'menu/block/text/numbered' }, name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
-					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, iconParam: { name: 'menu/block/text/bulleted' }, name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
+					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/numbered' }, name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
+					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/bulleted' }, name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
 					{ id: 'checkbox', textStyle: I.TextStyle.Checkbox, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/checkbox' }, name: translate('commentBlockCheckbox'), description: translate('commentBlockCheckboxDescription') },
 				],
 			},
 			{
 				id: 'attachments', name: translate('commentSlashMenuAttachments'),
 				children: [
-					{ id: 'create', action: 'create', iconParam: { name: 'comment/menu/createObject' }, name: translate('commonNewObject'), arrow: true },
-					{ id: 'object', action: 'object', iconParam: { name: 'comment/menu/plus' }, name: translate('spaceExisting') },
-					{ id: 'file', action: 'file', iconParam: { name: 'comment/menu/uploadComputer' }, name: translate('commonUploadComputer') },
+					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/code' }, name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
 					{ id: 'embed', action: 'embed', iconParam: { name: 'menu/action/embed' }, name: translate('commentSlashMenuEmbed'), arrow: true },
 				],
 			},
@@ -1247,10 +1258,52 @@ class UtilMenu {
 				children: [
 					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/quote' }, name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
 					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, iconParam: { name: 'menu/block/div/line' }, name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
-					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/code' }, name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
 				],
 			},
-		];
+		]);
+	};
+
+	getCommentAddMenuParam (contextRef: { current: any }) {
+		return {
+			param: {
+				classNameWrap: 'fromBlock',
+				className: 'commentAdd',
+				component: 'select',
+				noAnimation: true,
+				subIds: [ 'typeSuggest', 'select' ],
+				onOpen: (context: any) => { contextRef.current = context; },
+			},
+			data: {
+				sections: this.getCommentAddSections(),
+				noFilter: true,
+				noScroll: true,
+				noVirtualisation: true,
+			},
+		};
+	};
+
+	openCommentEmbedMenu (context: any, onSelect: (e: any, item: any) => void) {
+		const size = context.getSize();
+		const options = this.prepareForSelect(this.getBlockEmbed().map(it => ({
+			...it,
+			action: 'embed',
+			embedProcessor: it.id,
+		})));
+
+		S.Menu.open('select', {
+			element: `#${context.getId()}`,
+			className: 'fixed',
+			classNameWrap: 'fromBlock',
+			offsetX: size.width,
+			offsetY: -size.height,
+			vertical: I.MenuDirection.Bottom,
+			isSub: true,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect,
+			},
+		});
 	};
 
 	getLibrarySortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
@@ -1629,9 +1682,19 @@ class UtilMenu {
 			[I.SpaceCreateType.Join]: 'Join',
 		};
 
+		const mySharedSpaces = U.Space.getMySharedSpacesList();
+		const { sharedSpacesLimit } = U.Space.getProfile();
+		const isLimitReached = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
+
+		const groupOption: any = { id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') };
+
+		if (isLimitReached) {
+			groupOption.caption = React.createElement(Icon, { name: 'common/alert', className: 'spaceLimit', color: 'grey' });
+		};
+
 		const options = [
 			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
-			{ id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') },
+			groupOption,
 			{ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
 		];
 
@@ -2061,6 +2124,36 @@ class UtilMenu {
 					});
 				},
 			}
+		});
+	};
+
+	archivedContext (e: any, objectId: string, onRestore?: () => void) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const options = [
+			{ id: 'restore', iconParam: { name: 'menu/action/restore' }, name: translate('commonRestore') },
+			{ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'destructive' }, name: translate('commonDeleteImmediately'), color: 'destructive' },
+		];
+
+		S.Menu.open('select', {
+			recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 }),
+			data: {
+				options,
+				onSelect: (e, option) => {
+					switch (option.id) {
+						case 'restore': {
+							Action.restore([ objectId ], analytics.route.block, onRestore);
+							break;
+						};
+
+						case 'delete': {
+							Action.delete([ objectId ], analytics.route.block);
+							break;
+						};
+					};
+				},
+			},
 		});
 	};
 

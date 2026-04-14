@@ -461,7 +461,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 			};
 
 			case J.Constant.widgetId.recentEdit: {
-				filters.push({ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 3, includeTime: true });
+				filters.push({ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 10, includeTime: true });
 				keys.push('lastModifiedDate');
 				break;
 			};

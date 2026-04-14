@@ -305,21 +305,17 @@ const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) =>
 						/>
 					</div>
 					<div className="side right">
-						<Icon 
-							name="arrow/calendar" 
-							className="arrow left" 
-							withBackground={true} 
-							onClick={() => stepMonth(1)}
-							width={8}
-							height={12} 
-						/>
-						<Icon 
-							name="arrow/calendar" 
-							className="arrow right" 
-							withBackground={true} 
+						<Icon
+							name="arrow/calendar"
+							className="arrow left"
+							withBackground={true}
 							onClick={() => stepMonth(-1)}
-							width={8}
-							height={12} 
+						/>
+						<Icon
+							name="arrow/calendar"
+							className="arrow right"
+							withBackground={true}
+							onClick={() => stepMonth(1)}
 						/>
 					</div>
 				</div>

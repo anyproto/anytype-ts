@@ -36,10 +36,6 @@ const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		rebind();
-	});
-
-	useEffect(() => {
 		n.current = -1;
 		offset.current = 0;
 		load(true);
@@ -198,7 +194,8 @@ const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (item.isType || (item.id == 'add')) {
-			S.Menu.open(menuIdEdit, { 
+			unbind();
+			S.Menu.open(menuIdEdit, {
 				element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 				offsetX: getSize().width,
 				offsetY: -80,
@@ -228,13 +225,16 @@ const MenuRelationSuggest = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		S.Menu.open(menuIdEdit, { 
+		unbind();
+		S.Menu.open(menuIdEdit, {
 			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			offsetX: getSize().width,
 			vertical: I.MenuDirection.Center,
 			noAnimation: true,
 			className,
 			classNameWrap,
+			rebind,
+			parentId: props.id,
 			data: {
 				...data,
 				rootId,
