@@ -4,7 +4,7 @@
 	display: inline-block; vertical-align: middle; background-size: 100% 100%; background-repeat: no-repeat;
 	background-position: center center; transition: $transitionAllCommon; position: relative; flex-shrink: 0;
 }
-.icon.withBackground { width: 28px !important; height: 28px !important; background-size: 20px !important; border-radius: 6px; }
+.icon.withBackground { width: 28px !important; height: 28px !important; background-size: 20px !important; border-radius: 50%; }
 .icon.withBackground {
 	&:hover, &.hover, &.active { background-color: var(--color-shape-highlight-medium) !important; }
 };
@@ -35,6 +35,7 @@
 .icon.iconColor-accent100 { color: var(--color-system-accent-100); }
 .icon.iconColor-accent50 { color: var(--color-system-accent-50); }
 .icon.iconColor-accent25 { color: var(--color-system-accent-25); }
+.icon.iconColor-destructive { color: var(--color-system-destructive); }
 
 .icon.menuBlockTextParagraph,
 .icon.menuBlockTextHeader,

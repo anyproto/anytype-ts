@@ -8,6 +8,7 @@ export interface BlockComponentTable extends I.BlockComponent {
 	onHandleColumn: (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) => void;
 	onOptions: (e: any, type: I.BlockType, rowId: string, columnId: string, cellId: string) => void;
 	onCellClick: (e: any, rowId: string, columnId: string, cellId: string) => void;
+	onCellMouseDown: (e: any, rowId: string, columnId: string, cellId: string) => boolean;
 	onCellFocus: (e: any, rowId: string, columnId: string, cellId: string) => void;
 	onCellBlur: (e: any, rowId: string, columnId: string, cellId: string) => void;
 	onCellEnter: (e: any, rowId: string, columnId: string, cellId: string) => void;

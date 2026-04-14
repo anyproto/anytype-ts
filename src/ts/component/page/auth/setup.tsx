@@ -65,14 +65,8 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 			const spaceId = Storage.get('spaceId');
 
-			const onAuthComplete = () => {
+			const onRouteChange = () => {
 				const whatsNew = Storage.get('whatsNew');
-
-				[
-					I.SurveyType.Register,
-					I.SurveyType.Object,
-					I.SurveyType.Pmf,
-				].forEach(it => Survey.check(it));
 
 				const cb1 = () => {
 					const { data } = S.Membership;
@@ -93,6 +87,8 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				const cb2 = () => {
 					if (whatsNew) {
 						U.Common.showWhatsNew();
+					} else {
+						Survey.checkCommon();
 					};
 				};
 
@@ -101,7 +97,7 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 			const routeParam = {
 				replace: true,
-				onAuthComplete,
+				onRouteChange,
 			};
 
 			U.Data.onInfo(account.info);
@@ -110,7 +106,7 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);
 			} else {
-				U.Router.go('/main/void/select', { replace: true, onRouteChange: onAuthComplete });
+				U.Router.go('/main/void/select', routeParam);
 			};
 			
 			analytics.event('SelectAccount', { middleTime: message.middleTime });

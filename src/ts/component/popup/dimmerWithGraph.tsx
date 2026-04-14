@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useRef } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import raf from 'raf';
 import OnboardingGraphWorker from './graph/OnboardingGraphWorker';
 
@@ -13,23 +13,7 @@ const DimmerWithGraph = ({ onClick }: DimmerWithGraphProps) => {
 		width: typeof window !== 'undefined' ? window.innerWidth : 1200,
 		height: typeof window !== 'undefined' ? window.innerHeight : 800,
 	});
-	
-	// Track render frequency
-	const renderCount = useRef(0);
-	const lastRenderLog = useRef(Date.now());
-	
-	renderCount.current++;
 
-	const now = Date.now();
-	if (now - lastRenderLog.current > 1000) {
-		if (renderCount.current > 1) {
-			console.log(`[DimmerWithGraph] Rendered ${renderCount.current} times/sec`);
-		};
-
-		renderCount.current = 0;
-		lastRenderLog.current = now;
-	};
-	
 	// Delay graph rendering to improve initial load performance
 	useEffect(() => {
 		const timer = setTimeout(() => {

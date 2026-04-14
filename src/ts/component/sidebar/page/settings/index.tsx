@@ -42,7 +42,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 		const map = U.Menu.settingsSectionsMap();
 		const { notSyncedCounter } = S.Auth.getSyncStatus();
 		const importExport = [
-			{ id: 'exportIndex', iconParam: { name: 'menu/action/export' }, subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
+			{ id: 'exportIndex', iconParam: { name: 'menu/action/download' }, subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
 		];
 
 		if (canWrite) {
@@ -52,9 +52,9 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 		const isOwner = U.Space.isMyOwner();
 		const leaveOrRemove = !spaceview.isPersonal ? {
 			id: 'remove',
-			iconParam: isOwner ? { name: 'menu/action/remove', color: 'darkRed' } : { name: 'menu/action/leave', color: 'darkRed' },
+			iconParam: isOwner ? { name: 'menu/action/remove', color: 'destructive' } : { name: 'menu/action/leave', color: 'destructive' },
 			name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'),
-			color: 'red',
+			color: 'destructive',
 		} : null;
 
 		return [
@@ -62,7 +62,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 				id: 'common', name: translate('commonPreferences'), children: [
 					{ id: 'spaceIndex', iconParam: { name: 'settings/space/space' } },
 					spaceview.isPersonal ? null : { id: 'spaceShare', iconParam: { name: 'menu/action/members' } },
-					spaceview.isOneToOne ? null : { id: 'spaceNotifications', iconParam: { name: 'menu/action/notification' } },
+					spaceview.isOneToOne ? null : { id: 'spaceNotifications', iconParam: { name: 'settings/pushOn' } },
 					{ id: 'spaceStorage', iconParam: { name: 'settings/storage' }, alert: notSyncedCounter },
 					{ id: 'archive', iconParam: { name: 'common/bin' } },
 				],

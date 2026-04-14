@@ -123,15 +123,15 @@
 			.cellContent.c-select, 
 			.cellContent.c-object { line-height: 24px; }
 
-			.cellContent.c-select, 
-			.cellContent.c-object, 
+			.cellContent.c-select,
+			.cellContent.c-object,
 			.cellContent.c-file {
 				.wrap { display: inline-block; line-height: 24px; vertical-align: top; }
 				.over { display: inline-block; line-height: 24px; vertical-align: top; overflow: visible; }
 				.tagItem, .element { margin: 0px 6px 0px 0px; max-width: 300px; vertical-align: top; @include text-small; }
-				.more { margin-top: 3px; vertical-align: top; }
+				.more { margin-top: 2px; vertical-align: top; }
 				.element { margin-top: 2px; }
-				.tagItem { margin-top: 3px; }
+				.tagItem { margin-top: 2px; }
 				.tagItem:last-child, .element:last-child { margin-right: 0px; }
 			}
 
@@ -176,8 +176,6 @@
 					.selectionTarget { display: flex; align-items: center; width: 100%; height: 100%; }
 
 					.regularContent { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; width: 100%; overflow: hidden; }
-					.regularContent {
-					}
 
 					.sides { flex: 1 1 0; flex-direction: column; align-items: stretch; justify-content: center; gap: 0px; overflow: hidden; min-width: 0; }
 

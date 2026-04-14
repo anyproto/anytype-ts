@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.54.23-alpha",
+	"version": "0.54.32-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -32,7 +32,7 @@
 		"dist:mac": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64 --x64",
 		"dist:macarm": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --arm64",
 		"dist:macamd": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --macos --x64",
-		"dist:win": "bun run build:electron && vite build --config vite.config.ts && electron-builder --windows",
+		"dist:win": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && electron-builder --windows",
 		"dist:linux": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --arm64 --x64",
 		"dist:linuxamd": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --x64",
 		"dist:linuxamd-appimage": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux appImage --x64",

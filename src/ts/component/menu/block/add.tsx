@@ -54,6 +54,7 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		checkFilter();
+		position();
 		setActive();
 	});
 
@@ -593,7 +594,7 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 							// Auto-open BlockDataview source menu
 							if (param.type == I.BlockType.Dataview) {
-								U.Dom.eventDispatch(window, `setDataviewSource.${newBlockId}`);
+								U.Dom.eventDispatch(window, 'setDataviewSource');
 							};
 
 							// Auto-open BlockFile upload dialog

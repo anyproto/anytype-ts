@@ -232,10 +232,11 @@ const MenuViewList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		if (listRef.current && topRef.current) {
-			listRef.current.scrollToPosition(topRef.current);
+		if (topRef.current) {
+			listRef.current?.scrollToPosition(topRef.current);
 		};
 
+		position();
 		setActive(null, true);
 	});
 

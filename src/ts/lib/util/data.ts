@@ -306,11 +306,11 @@ class UtilData {
 	};
 
 	/**
-	 * Handles authentication and routing after login.
+	 * Handles routing after space switch.
 	 * @param {any} [param] - Optional parameters for authentication.
 	 * @param {() => void} [callBack] - Optional callback after authentication.
 	 */
-	onAuth(param?: any, callBack?: () => void) {
+	onSpaceSwitch (param?: any, callBack?: () => void) {
 		param = param || {};
 
 		const { widgets } = S.Block;
@@ -327,21 +327,8 @@ class UtilData {
 
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
-				S.Common.pinInit(() => {
-					const { pin } = S.Common;
-
-					// Notify main process whether a PIN is set
-					Renderer.send('setHasPinSet', Boolean(pin));
-
-					// If no PIN, user is considered checked
-					if (!pin) {
-						keyboard.setPinChecked(true);
-					};
-
-					keyboard.initPinCheck();
-
-					// Redirect
-					if (pin && !keyboard.isPinChecked) {
+				this.initPin(() => {
+					if (S.Common.pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);
 					} else {
 						const rp = route ? U.Router.getParam(route) : {};
@@ -358,6 +345,22 @@ class UtilData {
 					callBack?.();
 				});
 			});
+		});
+	};
+
+	initPin (callBack?: () => void) {
+		S.Common.pinInit(() => {
+			// Notify main process whether a PIN is set
+			Renderer.send('setHasPinSet', !!S.Common.pin);
+
+			// If no PIN, user is considered checked
+			if (!S.Common.pin) {
+				keyboard.setPinChecked(true);
+			} else {
+				keyboard.initPinCheck();
+			};
+			
+			callBack?.();
 		});
 	};
 

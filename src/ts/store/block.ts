@@ -33,7 +33,7 @@ class BlockStore {
 	public toggleVersion = 0;
 	public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
 	public blockMap: Map<string, Map<string, I.Block>> = new Map();
-	public restrictionMap: Map<string, Map<string, any>> = new Map();
+	public restrictionMap: Map<string, Map<string, any>> = observable.map();
 	public participantMap: Map<string, Map<string, string>> = new Map();
 
 	public deferredParentUpdates: Set<string> = new Set();
@@ -67,6 +67,7 @@ class BlockStore {
 			updateContent: action,
 			updateStructure: action,
 			delete: action,
+			restrictionsSet: action,
 		});
 	};
 
@@ -1072,7 +1073,7 @@ class BlockStore {
 		blocks.forEach(block => {
 			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.getTargetObjectId() == rootId));
 			if (children.length) {
-				U.Dom.eventDispatch(window, `${code}.${block.id}`);
+				U.Dom.eventDispatch(window, code);
 			};
 		});
 	};

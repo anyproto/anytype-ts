@@ -986,7 +986,6 @@ class Dispatcher {
 
 					if (!dep) {
 						S.Record.recordDelete(subId, '', id);
-						S.Detail.delete(subId, id, []);
 					};
 					break;
 				};
@@ -1166,6 +1165,8 @@ class Dispatcher {
 									...mapped.message.content,
 									parts: U.Comment.blocksToParts(mapped.message.blocks, mapped.message.content),
 								},
+								attachments: mapped.message.attachments || [],
+								reactions: mapped.message.reactions || [],
 							};
 
 							if (mapped.message.replyToMessageId) {

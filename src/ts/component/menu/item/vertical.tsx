@@ -86,7 +86,13 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	} else
 	if (iconParam) {
 		cn.push('withIcon');
-		iconMainElement = <Icon name={iconParam.name} color={iconParam.color} size={iconParam.size} width={iconParam.width} height={iconParam.height} className="iconMain" inner={inner} />;
+		
+		const icn = [ 'iconMain' ];
+		if (iconParam.className) {
+			icn.push(iconParam.className);
+		};
+
+		iconMainElement = <Icon {...iconParam} className={icn.join(' ')} inner={inner} />;
 	};
 
 	if (withArrow) {

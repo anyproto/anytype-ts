@@ -1272,7 +1272,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		// Extract clipboard data synchronously because the browser clears
 		// e.clipboardData after the event handler returns
-		const cb = e.clipboardData || e.originalEvent?.clipboardData;
+		const cb = e.clipboardData;
 		const data: any = {
 			text: U.String.normalizeLineEndings(String(cb?.getData('text/plain') || '')),
 			html: String(cb?.getData('text/html') || ''),
@@ -1330,8 +1330,10 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const length = block.getLength();
 
 		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, (message: any) => {
+			const text = String(message.textSlot || '').replace(/\n+$/, '');
+
 			U.Common.clipboardCopy({
-				text: message.textSlot,
+				text,
 				html: message.htmlSlot,
 				anytype: {
 					range: { from: 0, to: length },
@@ -1409,6 +1411,8 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 					offsetY: -8,
 					horizontal: I.MenuDirection.Center,
 					vertical: I.MenuDirection.Top,
+					noFlipY: true,
+					noBorderY: true,
 					passThrough: true,
 					onClose: () => keyboard.disableContextClose(false),
 					data: {

@@ -13,7 +13,7 @@ const SCROLL_THRESHOLD = 16;
 const CommentSection = (props: I.CommentSectionProps) => {
 
 	const { rootId, targetId, targetType, readonly, isPopup, messageId } = props;
-	const object = S.Detail.get(rootId, rootId, [ 'discussionId' ]);
+	const object = S.Detail.get(rootId, rootId, [ 'discussionId', 'isArchived' ]);
 	const [ localDiscussionId, setLocalDiscussionId ] = useState('');
 	const [ isExpanded, setIsExpanded ] = useState(false);
 	const isHiddenRef = useRef(false);
@@ -29,6 +29,8 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	const scrollTimerRef = useRef(0);
 	const isSectionVisibleRef = useRef(false);
 	const messageIdHandled = useRef(false);
+	const lastScrollTopRef = useRef(0);
+	const isTypingRef = useRef(false);
 
 	const posts = S.Comment.getPosts(subId);
 	const postCount = posts.length;
@@ -71,12 +73,25 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		const scrollHandler = () => {
 			const st = Math.ceil(container?.scrollTop ?? 0);
 			const max = U.Dom.getMaxScrollHeight(isPopup);
+			const lastSt = lastScrollTopRef.current;
 
 			isBottom.current = (max - st) <= SCROLL_THRESHOLD;
+			lastScrollTopRef.current = st;
 
-			setHidden(true);
-			window.clearTimeout(scrollTimerRef.current);
-			scrollTimerRef.current = window.setTimeout(() => setHidden(false), 150);
+			// Show at end of document if no comments
+			if (isBottom.current && !postCount) {
+				setHidden(false);
+				return;
+			};
+
+			// Scrolling down: hide; scrolling up: show
+			if (st > lastSt) {
+				setHidden(true);
+			} else
+			if (st < lastSt) {
+				isTypingRef.current = false;
+				setHidden(false);
+			};
 		};
 
 		if (container) {
@@ -103,23 +118,31 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				return;
 			};
 
-			window.clearTimeout(scrollTimerRef.current);
+			isTypingRef.current = true;
 			setHidden(true);
 		};
 
 		const onMouseMove = () => {
-			setHidden(false);
+			if (!isTypingRef.current) {
+				setHidden(false);
+			};
+		};
+
+		const onMouseDown = () => {
+			isTypingRef.current = false;
 		};
 
 		U.Dom.addEvents(window, [
 			['keydown', onKeyDown],
 			['mousemove', onMouseMove],
+			['mousedown', onMouseDown],
 		]);
 
 		return () => {
 			U.Dom.removeEvents(window, [
 				['keydown', onKeyDown],
 				['mousemove', onMouseMove],
+				['mousedown', onMouseDown],
 			]);
 		};
 	}, [ setHidden ]);
@@ -159,6 +182,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			noDeps: true,
 			ignoreHidden: true,
 			crossSpace: true,
+			updateDetails: true,
 		}, callBack);
 	}, [ targetType, discussionId, targetId ]);
 
@@ -341,37 +365,6 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		});
 	}, [ loadDeps ]);
 
-	const fetchAllMessages = useCallback((discId: string, sid: string, callBack?: () => void) => {
-		const PAGE_SIZE = 100;
-
-		const fetchPage = (afterOrderId: string, accumulated: any[]) => {
-			C.ChatGetMessages(discId, '', afterOrderId, PAGE_SIZE, false, (message: any) => {
-				if (message.error.code) {
-					buildTree(accumulated, sid, callBack);
-					return;
-				};
-
-				const batch = (message.messages || []).map((it: any) => ({
-					...it,
-					content: {
-						...it.content,
-						parts: U.Comment.blocksToParts(it.blocks, it.content),
-					},
-				}));
-
-				const all = [ ...accumulated, ...batch ];
-
-				if (batch.length >= PAGE_SIZE) {
-					fetchPage(batch[batch.length - 1].orderId, all);
-				} else {
-					buildTree(all, sid, callBack);
-				};
-			});
-		};
-
-		fetchPage('', []);
-	}, [ loadDeps ]);
-
 	const buildTree = useCallback((messages: any[], sid: string, callBack?: () => void) => {
 		const posts = messages.filter((it: any) => !it.replyToMessageId);
 		const replies = messages.filter((it: any) => it.replyToMessageId);
@@ -405,6 +398,37 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			callBack?.();
 		});
 	}, [ loadDeps ]);
+
+	const fetchAllMessages = useCallback((discId: string, sid: string, callBack?: () => void) => {
+		const PAGE_SIZE = 100;
+
+		const fetchPage = (afterOrderId: string, accumulated: any[]) => {
+			C.ChatGetMessages(discId, '', afterOrderId, PAGE_SIZE, false, (message: any) => {
+				if (message.error.code) {
+					buildTree(accumulated, sid, callBack);
+					return;
+				};
+
+				const batch = (message.messages || []).map((it: any) => ({
+					...it,
+					content: {
+						...it.content,
+						parts: U.Comment.blocksToParts(it.blocks, it.content),
+					},
+				}));
+
+				const all = [ ...accumulated, ...batch ];
+
+				if (batch.length >= PAGE_SIZE) {
+					fetchPage(batch[batch.length - 1].orderId, all);
+				} else {
+					buildTree(all, sid, callBack);
+				};
+			});
+		};
+
+		fetchPage('', []);
+	}, [ loadDeps, buildTree ]);
 
 	const subscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
@@ -532,7 +556,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	}, []);
 
 	const onSubmitPost = useCallback((parts: I.CommentContentPart[], messageAttachments?: I.ChatMessageAttachment[], attachmentObjects?: any[]) => {
-		const blocks = U.Comment.partsToBlocks(parts);
+		const blocks = U.Comment.partsToChatBlocks(parts);
 		const { account } = S.Auth;
 
 		const msg = {
@@ -592,11 +616,12 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				};
 
 				S.Comment.addPost(sid, newPost as any);
+				loadDeps([ newPost as any ]);
 				formRef.current?.clear();
 				window.setTimeout(() => scrollToBottom(), 50);
 			});
 		});
-	}, [ discussionId, subId, scrollToBottom, ensureDiscussion, getCommentAnalyticsData ]);
+	}, [ discussionId, subId, scrollToBottom, ensureDiscussion, getCommentAnalyticsData, loadDeps ]);
 
 	const onMouseDown = useCallback((e: React.MouseEvent) => {
 		keyboard.disableSelection(true);
@@ -624,7 +649,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 	const counterLabel = postCount > 0
 		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`
-		: translate('commentLeaveComment');
+		: translate(object.isArchived ? 'commentDiscussion' : 'commentLeaveComment');
 
 	const cn = [ 'commentSection', (isOpen ? 'isVisible' : '') ];
 
@@ -660,7 +685,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			<div className="socialBlockWrap">
 				<div ref={socialRef} className="socialBlock isHidden">
 					<div className="commentCounter" onClick={onCounterClick}>
-						<Icon name="comment/discussion" className="discussion" size={16} />
+						<Icon name="comment/discussion" className="discussion" size={18} />
 						<span className="count">{counterLabel}</span>
 					</div>
 				</div>

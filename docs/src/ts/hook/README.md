@@ -1,9 +1,7 @@
 # hook/ - Custom React Hooks
 
-Custom hooks for common patterns.
+Custom hooks directory. Accessed via `H` import alias.
 
-## Hooks
+## Current State
 
-- `useKeyPress.ts` - Detect specific key presses
-- `usePrevious.ts` - Track previous value of a prop/state
-- `useElementMovement.ts` - Track DOM element position changes
+The barrel file `index.ts` exports an empty set — no hooks are currently defined. Previously contained `useKeyPress`, `usePrevious`, and `useElementMovement`, which have been removed.

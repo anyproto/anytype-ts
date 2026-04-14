@@ -367,7 +367,6 @@ export interface MenuDataMap {
 	searchChat: MenuSearchChatData;
 	select: MenuSelectData;
 	smile: MenuSmileData;
-	smileSkin: MenuSmileSkinData;
 	smileColor: MenuSmileColorData;
 	calendar: MenuCalendarData;
 	calendarDay: MenuCalendarDayData;

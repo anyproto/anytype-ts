@@ -29,7 +29,7 @@ const MenuDataviewTemplateContext = forwardRef<I.MenuRef, I.Menu>((props, ref) =
 			isDefault && onSetDefault ? ({ id: 'unsetDefault', name: unsetDefaultName }) : null,
 			{ id: 'edit', name: translate('menuDataviewTemplateEdit') },
 			{ id: 'duplicate', name: translate('commonDuplicate') },
-			{ id: 'remove', name: translate('commonDelete'), color: 'red' },
+			{ id: 'remove', name: translate('commonDelete'), color: 'destructive' },
 		].filter(it => it);
 	};
 

@@ -1078,8 +1078,16 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
+		const view = getView(targetId);
 		const details = Dataview.getDetails(rootId, block.id, getObjectId(), targetId);
 		const operations: any[] = []; 
+		const removeConditions = [
+			I.FilterCondition.NotIn,
+			I.FilterCondition.NotEqual,
+			I.FilterCondition.NotAllIn,
+			I.FilterCondition.NotExactIn,
+		];
+		const filters = Dataview.flattenFilters(view.filters);
 
 		for (const k in details) {
 			const relation = S.Record.getRelationByKey(k);
@@ -1097,8 +1105,27 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 
-		C.ObjectListModifyDetailValues(ids, operations);
+		for (const filter of filters) {
+			if (!removeConditions.includes(filter.condition)) {
+				continue;
+			};
 
+			const relation = S.Record.getRelationByKey(filter.relationKey);
+			if (!relation || relation.isReadonlyValue) {
+				continue;
+			};
+
+			const value = Relation.formatValue(relation, filter.value, true);
+			if (!value) {
+				continue;
+			};
+
+			if (Relation.isArrayType(relation.format)) {
+				operations.push({ relationKey: filter.relationKey, remove: value });
+			};
+		};
+
+		C.ObjectListModifyDetailValues(ids, operations);
 		S.Common.getRef('selectionProvider')?.clear();
 		selectionCheck();
 	};
@@ -1153,8 +1180,14 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const closeFilters = () => {
 		const view = getView();
+		if (!view) {
+			return;
+		};
 
-		if (view.sorts.length || U.Common.getViewFilters(view).length) {
+		const filters = Dataview.getFilteredFilters(view.filters);
+		const sorts = Dataview.getFilteredSorts(view.sorts);
+
+		if (sorts.length || filters.length) {
 			return;
 		};
 
@@ -1571,7 +1604,10 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 				const obj = U.Dom.get(`block-${block.id}`);
 
 				if (obj && node) {
-					U.Dom.toggleClass(obj, 'isVertical', U.Dom.contentWidth(node) <= getWrapperWidth() / 2);
+					const cw = U.Dom.contentWidth(node);
+
+					U.Dom.toggleClass(obj, 'isVertical', cw <= getWrapperWidth() / 2);
+					U.Dom.toggleClass(obj, 'isNarrow', cw <= 250);
 				};
 			};
 
@@ -1596,9 +1632,11 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
 	const className = [ U.String.toCamelCase(`view-${I.ViewType[view.type]}`) ];
 	const filtersToggleId = U.String.toCamelCase(`view-${view.id}-filters`);
-	const showFilters = Storage.checkToggle(rootId, filtersToggleId)
-		&& (view.sorts.length > 0 || U.Common.getViewFilters(view).length > 0);
+	const filters = Dataview.getFilteredFilters(view.filters);
+	const sorts = Dataview.getFilteredSorts(view.sorts);
 
+	const showFilters = Storage.checkToggle(rootId, filtersToggleId)
+		&& ((sorts.length > 0) || (filters.length > 0));
 	let ViewComponent: any = null;
 	let body = null;
 

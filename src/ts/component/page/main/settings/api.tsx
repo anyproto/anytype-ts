@@ -28,7 +28,7 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 		const options: any[] = [
 			{ id: 'copyKey', name: translate('popupSettingsApiCopyKey') },
 			{ id: 'copyMcp', name: translate('popupSettingsApiCopyMcp') },
-			{ id: 'revoke', name: translate('popupSettingsApiRevoke'), color: 'red' },
+			{ id: 'revoke', name: translate('popupSettingsApiRevoke'), color: 'destructive' },
 		];
 
 		S.Menu.open('select', {

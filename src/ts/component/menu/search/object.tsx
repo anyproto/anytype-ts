@@ -3,8 +3,6 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { MenuItemVertical, Filter, ObjectType, ObjectName, EmptySearch } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
-import raf from 'raf';
-
 const LIMIT = 16;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_SMALL = 28;
@@ -13,7 +11,7 @@ const HEIGHT_DIV = 16;
 
 const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, onKeyDown, setActive, getId } = props;
+	const { param, onKeyDown, setActive, getId, position } = props;
 	const { data, menuKey } = param;
 	const { 
 		filter, value, label, noFilter, noIcon, onMore, withPlural, canAdd, addParam,
@@ -199,7 +197,7 @@ const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			setDummy(dummy + 1);
-			beforePosition();
+			position();
 		});
 	};
 
@@ -305,6 +303,16 @@ const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				onBackspaceClose();
 			});
 		};
+
+		// Escape clears the filter first; only closes the menu when the filter is already empty
+		keyboard.shortcut('escape', e, () => {
+			if (v) {
+				e.preventDefault();
+				e.stopPropagation();
+				filterRef.current?.setValue('');
+				onFilterChange('');
+			};
+		});
 	};
 
 	const onFilterChange = (v: string) => {

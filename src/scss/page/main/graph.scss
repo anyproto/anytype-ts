@@ -19,7 +19,7 @@
 	.graphTimeline {
 		position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
 		width: calc(100% - 64px); max-width: 600px; z-index: 10;
-		background: var(--color-bg-secondary); border-radius: 8px; padding: 8px 16px;
+		border-radius: 8px; padding: 8px 16px;
 		box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1); background-color: var(--color-bg-primary);
 	}
 	.graphTimeline {

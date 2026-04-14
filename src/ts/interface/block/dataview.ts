@@ -143,6 +143,7 @@ export interface Filter {
 	operator?: FilterOperator;
 	format?: I.RelationType;
 	quickOption?: FilterQuickOption;
+	includeTime?: boolean;
 	nestedFilters?: Filter[];
 };
 

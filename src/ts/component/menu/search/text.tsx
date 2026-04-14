@@ -22,7 +22,7 @@ interface ActiveMatch {
 
 const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, storageGet, storageSet, close, getId, getContainer: getMenuContainer } = props;
+	const { param, storageGet, storageSet, close, getId, getContainer: getMenuContainer, position } = props;
 	const { data } = param;
 	const { route, isPopup } = data;
 
@@ -342,7 +342,8 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}), []);
 
 	useEffect(() => {
-		beforePosition();
+		position();
+		
 		const initTimeout = window.setTimeout(() => {
 			const value = String(data.value || storageGet().search || '');
 			inputRef.current?.setValue(value);
@@ -377,8 +378,8 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				</div>
 
 				<div className="arrowWrapper">
-					<Icon name="arrow/small" className="arrow up" onClick={() => navigateMatch(-1)} />
-					<Icon name="arrow/small" className="arrow down" onClick={() => navigateMatch(1)} />
+					<Icon name="arrow/small" size={8} className="arrow up" onClick={() => navigateMatch(-1)} />
+					<Icon name="arrow/small" size={8} className="arrow down" onClick={() => navigateMatch(1)} />
 				</div>
 			</div>
 		</div>

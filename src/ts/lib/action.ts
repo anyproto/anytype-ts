@@ -469,6 +469,10 @@ class Action {
 				return;
 			};
 
+			ids.forEach(id => {
+				S.Detail.update(id, { id, details: { isArchived: true } }, false);
+			});
+
 			Preview.toastShow({ action: I.ToastAction.Archive, ids, autoArchivedIds: message.autoArchivedIds || [] });
 			analytics.event('MoveToBin', { route, count: ids.length });
 			callBack?.();
@@ -698,6 +702,26 @@ class Action {
 	 * @param {string} route - The route context for analytics.
 	 */
 	createSpace (type: I.SpaceCreateType, route: string) {
+		if (type == I.SpaceCreateType.Group) {
+			const mySharedSpaces = U.Space.getMySharedSpacesList();
+			const { sharedSpacesLimit } = U.Space.getProfile();
+
+			if (sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit)) {
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'popup/header/warning', color: 'grey' },
+						title: translate('popupConfirmSharedSpaceLimitTitle'),
+						text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+						textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+						canCancel: false,
+						onConfirm: () => this.openSettings('membership', ''),
+					},
+				});
+				analytics.event('ScreenHitShareSpaceLimit');
+				return;
+			};
+		};
+
 		S.Popup.closeAll(null, () => {
 			S.Popup.open('spaceCreate', { data: { type, route } });
 		});
@@ -904,6 +928,91 @@ class Action {
 		} else {
 			this.createWidgetFromObject(objectId, objectId, '', I.BlockPosition.InnerFirst, route);
 		};
+	};
+
+	savePendingMembers (spaceId: string, identities: string[]) {
+		const existing = Storage.getSpaceKey('pendingMembers', false, spaceId) || [];
+		const merged = [ ...new Set([ ...existing, ...identities ]) ];
+
+		Storage.setSpaceKey('pendingMembers', merged, false, spaceId);
+	};
+
+	getPendingMembers (spaceId: string): string[] {
+		return Storage.getSpaceKey('pendingMembers', false, spaceId) || [];
+	};
+
+	processPendingMembers (retryCount: number = 0) {
+		const spaceData = Storage.getSpace(false);
+		const entries: { spaceId: string; identities: string[] }[] = [];
+
+		for (const spaceId in spaceData) {
+			const identities = spaceData[spaceId]?.pendingMembers;
+
+			if (identities?.length) {
+				entries.push({ spaceId, identities });
+				Storage.deleteSpaceKey('pendingMembers', false, spaceId);
+			};
+		};
+
+		if (!entries.length) {
+			return;
+		};
+
+		const product = S.Membership.data?.getTopProduct();
+		const writersLimit = product?.features?.spaceWriters || 0;
+		const maxRetries = 5;
+		const failed: { spaceId: string; identities: string[] }[] = [];
+
+		let processed = 0;
+		const total = entries.length;
+
+		const onProcessed = () => {
+			processed++;
+
+			if (processed < total) {
+				return;
+			};
+
+			if (failed.length && (retryCount < maxRetries)) {
+				failed.forEach(it => this.savePendingMembers(it.spaceId, it.identities));
+
+				const delay = Math.min(5000 * Math.pow(2, retryCount), 30000);
+
+				window.setTimeout(() => this.processPendingMembers(retryCount + 1), delay);
+			};
+		};
+
+		entries.forEach(({ spaceId, identities }) => {
+			C.SpaceMakeShareable(spaceId, (message: any) => {
+				if (message.error.code) {
+					failed.push({ spaceId, identities });
+					onProcessed();
+					return;
+				};
+
+				C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+					if (message.error.code) {
+						failed.push({ spaceId, identities });
+						onProcessed();
+						return;
+					};
+
+					const writerIdentities = identities.slice(0, writersLimit);
+					const readerIdentities = identities.slice(writersLimit);
+
+					if (writerIdentities.length) {
+						C.SpaceParticipantsAddList(spaceId, writerIdentities, I.ParticipantPermissions.Writer);
+					};
+
+					if (readerIdentities.length) {
+						C.SpaceParticipantsAddList(spaceId, readerIdentities, I.ParticipantPermissions.Reader);
+					};
+
+					analytics.event('AddMember', { count: identities.length });
+					onProcessed();
+				});
+			});
+		});
 	};
 
 	membershipUpgrade (event?: any) {

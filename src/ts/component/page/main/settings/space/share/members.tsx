@@ -1,6 +1,8 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef, useRef, useEffect } from 'react';
 import { Title, Label, Icon, Button, IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
+
+const SUB_ID = 'settingsPendingMembers';
 
 const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -9,6 +11,31 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 	const participant = U.Space.getParticipant();
 	const nodeRef = useRef(null);
 	const isOwner = U.Space.isMyOwner();
+	const pendingIdentities = Action.getPendingMembers(space);
+	const { isOnline } = S.Common;
+	const showOfflinePill = !isOnline && (pendingIdentities.length > 0);
+
+	useEffect(() => {
+		if (!pendingIdentities.length) {
+			return;
+		};
+
+		U.Subscription.subscribe({
+			subId: SUB_ID,
+			keys: U.Subscription.participantRelationKeys(),
+			filters: [
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+				{ relationKey: 'identity', condition: I.FilterCondition.In, value: pendingIdentities },
+			],
+			ignoreHidden: false,
+			noDeps: true,
+			crossSpace: true,
+		});
+
+		return () => {
+			U.Subscription.destroyList([ SUB_ID ]);
+		};
+	}, [ pendingIdentities.join(',') ]);
 
 	const onUpgrade = (type: string) => {
 		Action.membershipUpgrade({ type, route: analytics.route.settingsSpaceShare });
@@ -56,7 +83,7 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 			items.push({ isDiv: true });
 		};
 
-		items.push({ id: 'remove', name: removeLabel, color: 'red' });
+		items.push({ id: 'remove', name: removeLabel, color: 'destructive' });
 
 		return items;
 	};
@@ -127,6 +154,16 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 	};
 
 	const members = getParticipantList();
+	const activeIdentities = new Set(members.map(it => it.identity).filter(it => it));
+	const seen = new Set<string>();
+	const pendingRecords = S.Record.getRecords(SUB_ID).filter(it => {
+		if (!it.identity || activeIdentities.has(it.identity) || seen.has(it.identity)) {
+			return false;
+		};
+
+		seen.add(it.identity);
+		return true;
+	});
 	const length = members.length;
 
 	let limitLabel = '';
@@ -186,12 +223,41 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 		);
 	};
 
+	const PendingMember = (item: any) => {
+		const object = {
+			...item,
+			layout: I.ObjectLayout.Participant,
+		};
+
+		return (
+			<div className="row isPending">
+				<div className="side left">
+					<IconObject size={48} object={object} />
+					<div className="text">
+						<ObjectName object={object} />
+						{item.globalName ? <Label className="anyId" text={item.globalName} /> : ''}
+					</div>
+				</div>
+				<div className="side right">
+					<Label color="grey" text={translate('commonPending')} />
+				</div>
+			</div>
+		);
+	};
+
 	return (
 		<div
 			ref={nodeRef}
 			id="sectionMembers"
 			className="section sectionMembers"
 		>
+			{showOfflinePill ? (
+				<div className="offlinePill">
+					<Icon name="common/offline" />
+					{translate('popupSettingsSpaceShareOffline')}
+				</div>
+			) : ''}
+
 			<div className="membersTitle">
 				<Title text={translate('commonMembers')} />
 				{length > 1 ? <Label text={String(length)} /> : ''}
@@ -207,6 +273,9 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 			<div id="list" className="rows">
 				{members.map((item: any) => (
 					<Member key={item.id} {...item} />
+				))}
+				{pendingRecords.map((item: any) => (
+					<PendingMember key={item.identity} {...item} />
 				))}
 			</div>
 		</div>

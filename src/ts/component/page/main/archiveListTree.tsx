@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, MouseEvent } from 'react';
 import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
-import { IconObject, ObjectName, Checkbox, Icon } from 'Component';
+import { IconObject, ObjectName, ObjectDescription, Checkbox, Icon } from 'Component';
 import { TreeNode } from 'Lib/util/data';
 import * as I from 'Interface';
 
@@ -9,6 +9,7 @@ interface Props {
 	canWrite: boolean;
 	isShared: boolean;
 	isPopup: boolean;
+	isDetailed?: boolean;
 	selectedIds: string[];
 	filterText: string;
 	sortId: string;
@@ -17,12 +18,14 @@ interface Props {
 	onSelectAll: () => void;
 	onSort: (id: string, type: I.SortType) => void;
 	isAllSelected: boolean;
+	onVisibleIdsChange?: (ids: string[]) => void;
 }
 
 const LIMIT = 10000;
 const ROW_HEIGHT = 42;
+const ROW_HEIGHT_DETAILED = 64;
 
-const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filterText, sortId, sortType, onSelectChange, onSelectAll, onSort, isAllSelected }: Props) => {
+const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, isDetailed = false, selectedIds, filterText, sortId, sortType, onSelectChange, onSelectAll, onSort, isAllSelected, onVisibleIdsChange }: Props) => {
 
 	const [ expandedIds, setExpandedIds ] = useState<string[]>([]);
 	const listRef = useRef(null);
@@ -33,7 +36,7 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filt
 		U.Subscription.subscribe({
 			subId,
 			spaceId: S.Common.space,
-			keys: [ 'name', 'iconEmoji', 'iconImage', 'iconOption', 'layout', 'type', 'lastModifiedDate', 'creator', 'createdInContext' ],
+			keys: [ 'name', 'description', 'iconEmoji', 'iconImage', 'iconOption', 'layout', 'type', 'lastModifiedDate', 'creator', 'createdInContext' ],
 			filters: [ { relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true } ],
 			sorts: [ { relationKey: 'lastModifiedDate', type: I.SortType.Desc } ],
 			offset: 0,
@@ -117,6 +120,13 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filt
 			return sortType === I.SortType.Asc ? cmp : -cmp;
 		});
 
+	const visibleIds = visibleRoots.flatMap(n => U.Data.flattenIds(n));
+	const visibleIdsKey = visibleIds.join(',');
+
+	useEffect(() => {
+		onVisibleIdsChange?.(visibleIds);
+	}, [ visibleIdsKey ]);
+
 	const columns = [
 		{ key: 'name', label: translate('commonName') },
 		{ key: 'lastModifiedDate', label: translate('commonDeleted') },
@@ -150,12 +160,12 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filt
 		return result;
 	};
 
-	const flatRows = useMemo(() => flattenVisible(visibleRoots), [ visibleRoots, expandedIds ]);
+	const flatRows = useMemo(() => flattenVisible(visibleRoots), [ visibleIdsKey, expandedIds ]);
 
 	const renderRow = (row: FlatRow, style: React.CSSProperties): React.ReactNode => {
 		const { node, depth } = row;
 		const obj = S.Detail.get(subId, node.id, [
-			'name', 'iconEmoji', 'iconImage', 'iconOption', 'layout', 'type',
+			'name', 'description', 'iconEmoji', 'iconImage', 'iconOption', 'layout', 'type',
 			'lastModifiedDate', 'creator',
 		]);
 		const subtreeIds = U.Data.flattenIds(node);
@@ -169,6 +179,12 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filt
 		const cn = [ 'row' ];
 		if (depth > 0) {
 			cn.push('isChild');
+		};
+		if (canExpand) {
+			cn.push('canExpand');
+		};
+		if (expanded) {
+			cn.push('isExpanded');
 		};
 
 		const handleRowClick = () => {
@@ -185,6 +201,10 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filt
 		const handleCheck = (e: any) => {
 			e.stopPropagation();
 			onSelectChange(subtreeIds, e);
+
+			if (canExpand && !isChecked && !expanded) {
+				toggleExpand(node.id);
+			};
 		};
 
 		const arrowCn = [ 'expandArrow' ];
@@ -206,13 +226,36 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filt
 					<div className="cell">
 						<div className="cellContent isName">
 							<div className="flex" style={nameIndent}>
-								<IconObject object={obj} onClick={handleOpen} />
-								<span onClick={handleOpen} onAuxClick={handleOpen}><ObjectName object={obj} /></span>
-								{canExpand && (
-									<span className="stackBadge">{translate('binStackCount').replace('%d', String(childCount))}</span>
-								)}
-								{canExpand && (
-									<Icon name="arrow/select" className={arrowCn.join(' ')} />
+								<div className="iconWrap">
+									<IconObject object={obj} size={isDetailed ? 32 : 20} onClick={handleOpen} />
+									{canExpand && (
+										<Icon
+											name="arrow/selectBig"
+											className={arrowCn.join(' ')}
+											onClick={(e: MouseEvent) => {
+												e.stopPropagation();
+												toggleExpand(node.id);
+											}}
+										/>
+									)}
+								</div>
+								{isDetailed ? (
+									<div className="info" onClick={handleOpen} onAuxClick={handleOpen}>
+										<div className="nameRow">
+											<ObjectName object={obj} />
+											{canExpand && (
+												<span className="stackBadge">{translate('binStackCount').replace('%d', String(childCount))}</span>
+											)}
+										</div>
+										<ObjectDescription object={obj} />
+									</div>
+								) : (
+									<>
+										<span onClick={handleOpen} onAuxClick={handleOpen}><ObjectName object={obj} /></span>
+										{canExpand && (
+											<span className="stackBadge">{translate('binStackCount').replace('%d', String(childCount))}</span>
+										)}
+									</>
 								)}
 							</div>
 						</div>
@@ -267,7 +310,7 @@ const ArchiveListTree = ({ subId, canWrite, isShared, isPopup, selectedIds, filt
 										width={Number(width) || 0}
 										isScrolling={isScrolling}
 										rowCount={flatRows.length}
-										rowHeight={ROW_HEIGHT}
+										rowHeight={isDetailed ? ROW_HEIGHT_DETAILED : ROW_HEIGHT}
 										onRowsRendered={onRowsRendered}
 										overscanRowCount={10}
 										scrollTop={scrollTop}

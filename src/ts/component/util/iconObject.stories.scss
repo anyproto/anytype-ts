@@ -23,11 +23,11 @@
 }
 
 .iconObjectGalleryRow {
-	display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; padding: 12px; border: 1px dashed var(--color-shape-secondary); border-radius: 8px;
+	display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 12px; padding: 12px; border: 1px dashed var(--color-shape-secondary); border-radius: 8px;
 }
 
 .iconObjectGalleryLabels {
-	display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px;
+	display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 12px;
 }
 
 .iconObjectGalleryCell {

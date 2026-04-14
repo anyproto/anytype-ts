@@ -14,11 +14,11 @@ import './iconObject.stories.scss';
 const SIZES = [ 128, 96, 80, 64, 48, 40, 32, 30, 26, 22, 20, 18, 16 ];
 
 const BORDER_RADIUS: Record<number, number> = {
-	128: 12, 96: 12, 80: 8, 64: 8, 56: 8,
-	48: 6, 44: 6, 42: 5, 40: 5,
-	36: 4, 32: 4, 30: 4, 28: 4,
-	26: 3, 24: 3, 22: 3,
-	20: 2, 18: 2, 16: 2, 14: 2,
+	128: 24, 96: 20, 80: 16, 64: 16, 56: 8,
+	48: 10, 44: 6, 42: 5, 40: 10,
+	36: 4, 32: 8, 30: 6, 28: 4,
+	26: 4, 24: 3, 22: 4,
+	20: 4, 18: 2, 16: 2, 14: 2,
 };
 
 const ICON_BG_COLORS = Theme.icon.bg;
@@ -125,6 +125,78 @@ const variants: ObjectVariant[] = [
 			relationKey: 'description',
 		}),
 	},
+	{
+		label: 'File (PDF)',
+		getObject: () => ({
+			layout: I.ObjectLayout.Pdf,
+			name: 'document.pdf',
+			fileExt: 'pdf',
+		}),
+	},
+	{
+		label: 'File (archive)',
+		getObject: () => ({
+			layout: I.ObjectLayout.File,
+			name: 'backup.zip',
+			fileExt: 'zip',
+		}),
+	},
+	{
+		label: 'File (text)',
+		getObject: () => ({
+			layout: I.ObjectLayout.File,
+			name: 'readme.txt',
+			fileExt: 'txt',
+		}),
+	},
+	{
+		label: 'File (table)',
+		getObject: () => ({
+			layout: I.ObjectLayout.File,
+			name: 'data.xlsx',
+			fileExt: 'xlsx',
+		}),
+	},
+	{
+		label: 'File (present.)',
+		getObject: () => ({
+			layout: I.ObjectLayout.File,
+			name: 'slides.pptx',
+			fileExt: 'pptx',
+		}),
+	},
+	{
+		label: 'File (other)',
+		getObject: () => ({
+			layout: I.ObjectLayout.File,
+			name: 'data.bin',
+			fileExt: 'bin',
+		}),
+	},
+	{
+		label: 'Video',
+		getObject: () => ({
+			layout: I.ObjectLayout.Video,
+			name: 'clip.mp4',
+			fileExt: 'mp4',
+		}),
+	},
+	{
+		label: 'Audio',
+		getObject: () => ({
+			layout: I.ObjectLayout.Audio,
+			name: 'track.mp3',
+			fileExt: 'mp3',
+		}),
+	},
+	{
+		label: 'Image (no src)',
+		getObject: () => ({
+			layout: I.ObjectLayout.Image,
+			name: 'photo.jpg',
+			fileExt: 'jpg',
+		}),
+	},
 ];
 
 const IconObjectGallery = () => {
@@ -216,6 +288,11 @@ const IconObjectGallery = () => {
 					{ name: 'Chat', layout: I.ObjectLayout.Chat },
 					{ name: 'Date', layout: I.ObjectLayout.Date },
 					{ name: 'Relation', layout: I.ObjectLayout.Relation, relationFormat: I.RelationType.Number, relationKey: 'number' },
+					{ name: 'File', layout: I.ObjectLayout.File, fileExt: 'zip' },
+					{ name: 'Pdf', layout: I.ObjectLayout.Pdf, fileExt: 'pdf' },
+					{ name: 'Video', layout: I.ObjectLayout.Video, fileExt: 'mp4' },
+					{ name: 'Audio', layout: I.ObjectLayout.Audio, fileExt: 'mp3' },
+					{ name: 'Image (no src)', layout: I.ObjectLayout.Image, fileExt: 'jpg' },
 				].map((obj, i) => (
 					<div key={i} className="iconObjectGalleryLayoutItem">
 						<IconObject

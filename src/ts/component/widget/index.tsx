@@ -175,6 +175,10 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
+		if ((layout == I.WidgetLayout.Tree) && !U.Object.isSetLayout(object.layout)) {
+			details.createdInContext = object.id;
+		};
+
 		if (!typeKey) {
 			return;
 		};
@@ -457,13 +461,13 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 			};
 
 			case J.Constant.widgetId.recentEdit: {
-				filters.push({ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 3 });
+				filters.push({ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: space.createdDate + 10, includeTime: true });
 				keys.push('lastModifiedDate');
 				break;
 			};
 
 			case J.Constant.widgetId.recentOpen: {
-				filters.push({ relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 });
+				filters.push({ relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0, includeTime: true });
 				sorts.push({ relationKey: 'lastOpenedDate', type: I.SortType.Desc });
 				keys.push('lastOpenedDate');
 				break;

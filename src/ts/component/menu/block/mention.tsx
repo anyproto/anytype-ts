@@ -32,10 +32,6 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		rebind();
-	});
-
-	useEffect(() => {
 		n.current = 0;
 		offset.current = 0;
 		load(true);
@@ -155,7 +151,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
-
+			position();
 			callBack?.(null);
 		});
 	};

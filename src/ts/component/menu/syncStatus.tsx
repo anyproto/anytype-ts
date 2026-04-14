@@ -70,7 +70,7 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		];
 
 		if (canWrite && canDelete) {
-			options.push({ id: 'delete', color: 'red', name: translate('commonDeleteImmediately') });
+			options.push({ id: 'delete', color: 'destructive', name: translate('commonDeleteImmediately') });
 		};
 
 		S.Menu.open('select', {
@@ -164,7 +164,7 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			limit: 50,
 		}, () => {
 			setIsLoading(false);
-			beforePosition();
+			position();
 			window.setTimeout(() => Onboarding.start('syncStatus', false), J.Constant.delay.menu);
 		});
 	};

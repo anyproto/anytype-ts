@@ -1,22 +1,21 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback, MouseEvent } from 'react';
-import { Footer, Header, ListObject, Icon, Title, Filter } from 'Component';
+import { Footer, Header, Icon, Title, Filter } from 'Component';
 import ArchiveListTree from './archiveListTree';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
-type ViewMode = 'tree' | 'compact' | 'detailed';
+type ViewMode = 'compact' | 'detailed';
 
 const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
-	const { dateFormat } = S.Common;
-	const nodeRef = useRef(null);
-	const listRef = useRef(null);
 	const filterRef = useRef(null);
 	const [ selectedIds, setSelectedIds ] = useState<string[]>([]);
+	const [ visibleIds, setVisibleIds ] = useState<string[]>([]);
 	const [ filterText, setFilterText ] = useState('');
 	const [ viewMode, setViewMode ] = useState<ViewMode>(() => {
-		return (Storage.get('binViewMode') as ViewMode) || 'tree';
+		const saved = Storage.get('binViewMode');
+		return (saved === 'compact' || saved === 'detailed') ? saved : 'compact';
 	});
 	const [ sortId, setSortId ] = useState('lastModifiedDate');
 	const [ sortType, setSortType ] = useState(I.SortType.Desc);
@@ -29,34 +28,6 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const canWrite = U.Space.canMyParticipantWrite();
 	const hasSelection = selectedIds.length > 0;
 
-	const filters: I.Filter[] = [
-		{ relationKey: 'isArchived', condition: I.FilterCondition.Equal, value: true },
-	];
-
-	const columns: any[] = [
-		{
-			relationKey: 'lastModifiedDate',
-			name: translate('commonDeleted'),
-			width: '20%',
-			mapper: (v: number) => v ? U.Date.dateWithFormat(dateFormat, v) : '',
-		},
-	];
-
-	if (isShared) {
-		columns.push({
-			relationKey: 'creator',
-			name: translate('commonCreatedBy'),
-			width: '20%',
-			isObject: true,
-		});
-	};
-
-	const relationKeys = [ 'lastModifiedDate', 'creator', 'createdInContext' ];
-
-	const getRecordIds = (): string[] => {
-		return S.Record.getRecordIds(subId, '');
-	};
-
 	const canDeleteSelection = (): boolean => {
 		if (isOwner || !isShared) {
 			return true;
@@ -68,35 +39,11 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		});
 	};
 
-	const onSelect = (id: string, e: MouseEvent) => {
-		e.stopPropagation();
-
-		const recordIds = getRecordIds();
-		let ids = [ ...selectedIds ];
-
-		if (e.shiftKey) {
-			const idx = recordIds.findIndex(it => it == id);
-
-			if ((idx >= 0) && (ids.length > 0)) {
-				const lastIdx = recordIds.findIndex(it => it == ids[ids.length - 1]);
-
-				if (lastIdx >= 0) {
-					const [ start, end ] = lastIdx < idx ? [ lastIdx, idx + 1 ] : [ idx, lastIdx + 1 ];
-					ids = [ ...new Set(ids.concat(recordIds.slice(start, end))) ];
-				};
-			};
-		} else {
-			ids = ids.includes(id) ? ids.filter(it => it != id) : ids.concat(id);
-		};
-
-		setSelectedIds(ids);
-	};
-
 	const onSelectAll = () => {
 		if (hasSelection) {
 			setSelectedIds([]);
 		} else {
-			setSelectedIds(getRecordIds());
+			setSelectedIds(visibleIds);
 		};
 	};
 
@@ -122,7 +69,7 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		setSortType(type);
 	};
 
-	const nextViewMode: Record<ViewMode, ViewMode> = { tree: 'compact', compact: 'detailed', detailed: 'tree' };
+	const nextViewMode: Record<ViewMode, ViewMode> = { compact: 'detailed', detailed: 'compact' };
 
 	const onSwitchView = () => {
 		const next = nextViewMode[viewMode];
@@ -204,16 +151,6 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		}, J.Constant.delay.keyboard);
 	};
 
-	const getFilters = (): I.Filter[] => {
-		const fl = [ ...filters ];
-
-		if (filterText) {
-			fl.push({ relationKey: 'name', condition: I.FilterCondition.Like, value: filterText });
-		};
-
-		return fl;
-	};
-
 	const getDeleteTooltip = (): string => {
 		if (!canDeleteSelection()) {
 			return translate('binDeleteDisabledTooltip');
@@ -260,11 +197,11 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 	}, []);
 
-	const isAllSelected = hasSelection && (selectedIds.length >= getRecordIds().length);
+	const isAllSelected = hasSelection && (visibleIds.length > 0) && (selectedIds.length >= visibleIds.length);
 	const canDelete = canDeleteSelection();
 	const isDetailed = viewMode === 'detailed';
-	const switchIconMap = { tree: 'common/switchViewTree', compact: 'common/switchView', detailed: 'common/switchViewDetailed' };
-	const switchTooltipMap = { tree: 'binSwitchToCompact', compact: 'binSwitchToDetailed', detailed: 'binSwitchToTree' };
+	const switchIconMap = { compact: 'common/switchView', detailed: 'common/switchViewDetailed' };
+	const switchTooltipMap = { compact: 'binSwitchToDetailed', detailed: 'binSwitchToCompact' };
 	const cnWrapper = [ 'wrapper', ...(isDetailed ? [ 'isDetailed' ] : []) ];
 
 	return (
@@ -274,7 +211,7 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				component="mainArchive"
 			/>
 
-			<div ref={nodeRef} className={cnWrapper.join(' ')}>
+			<div className={cnWrapper.join(' ')}>
 				<div className="titleWrapper">
 					<div className="side left">
 						<Icon name="common/bin" size={32} color="default" />
@@ -324,49 +261,22 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 					</div>
 				</div>
 
-				{viewMode === 'tree' ? (
-					<ArchiveListTree
-						subId={subId}
-						canWrite={canWrite}
-						isShared={isShared}
-						isPopup={isPopup}
-						selectedIds={selectedIds}
-						filterText={filterText}
-						sortId={sortId}
-						sortType={sortType}
-						onSort={onSortChange}
-						onSelectChange={onSelectTree}
-						onSelectAll={onSelectAll}
-						isAllSelected={isAllSelected}
-					/>
-				) : (
-					<ListObject
-						ref={listRef}
-						subId={subId}
-						rootId=""
-						spaceId={S.Common.space}
-						route={analytics.route.archive}
-						columns={columns}
-						filters={getFilters()}
-						relationKeys={relationKeys}
-						ignoreArchived={false}
-						skipLayoutFilter={true}
-						withDescription={isDetailed}
-						iconSize={isDetailed ? 32 : null}
-						rowHeight={isDetailed ? 64 : 40}
-						emptyText={translate('pageMainArchiveEmpty')}
-						defaultSortId={sortId}
-						defaultSortType={sortType}
-						onSort={onSortChange}
-						selectable={canWrite}
-						selectedIds={selectedIds}
-						isAllSelected={isAllSelected}
-						onSelect={onSelect}
-						onSelectAll={onSelectAll}
-						useInfiniteScroll={true}
-						isPopup={isPopup}
-					/>
-				)}
+				<ArchiveListTree
+					subId={subId}
+					canWrite={canWrite}
+					isShared={isShared}
+					isPopup={isPopup}
+					isDetailed={isDetailed}
+					selectedIds={selectedIds}
+					filterText={filterText}
+					sortId={sortId}
+					sortType={sortType}
+					onSort={onSortChange}
+					onSelectChange={onSelectTree}
+					onSelectAll={onSelectAll}
+					isAllSelected={isAllSelected}
+					onVisibleIdsChange={setVisibleIds}
+				/>
 			</div>
 
 			<Footer {...props} component="mainObject" />

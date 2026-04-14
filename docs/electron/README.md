@@ -22,8 +22,16 @@ Electron main process files for desktop app integration. TypeScript source in `t
 - `preload.cjs` - Preload script for renderer process security
 
 ## JSON Configuration (`json/`)
-- `constant.json` - Enabled languages list (25 locales)
+- `constant.json` - Enabled languages list (26 locales)
 - `cors.json` - CORS whitelist for allowed domains
+
+## Images (`img/`)
+- `icon.icns` - macOS app icon bundle
+- `icons/` - App icons at multiple resolutions (16x16 through 1024x1024 PNG, 256x256 ICO)
+- `iconTrayBlack.png` - Black tray icon
+- `iconTrayWhite.png` - White tray icon
+- `iconTrayTemplate.png` - macOS template tray icon (1x)
+- `iconTrayTemplate@2x.png` - macOS template tray icon (2x)
 
 ## Build Hooks (`hook/`)
 - `afterpack.js` - Post-packaging hook
@@ -39,4 +47,4 @@ Electron main process files for desktop app integration. TypeScript source in `t
 
 ## Important: `__dirname` in Bundled Code
 
-Since all `ts/` files are bundled into `electron.js` at the project root, `__dirname` resolves to the project root at runtime — not to the original source file location. All path references must account for this (e.g., `path.join(__dirname, 'dist', ...)` not `path.join(__dirname, '..', '..', 'dist', ...)`).
+Since all `ts/` files are bundled into `electron.js` at the project root, `__dirname` resolves to the project root at runtime -- not to the original source file location. All path references must account for this (e.g., `path.join(__dirname, 'dist', ...)` not `path.join(__dirname, '..', '..', 'dist', ...)`).

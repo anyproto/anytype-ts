@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { InputWithFile, Error, Pager, Icon, Loader, ObjectName } from 'Component';
+import { InputWithFile, Error, Pager, Icon, Loader, ObjectName, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -32,7 +32,7 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const getWidth = (checkMax: boolean, v: number): number => {
 		const width = Number(fields.width) || 1;
-		const el = U.Dom.get(`selectionTarget-${U.Common.esc(id)}`);
+		const el = U.Dom.get(`selectionTarget-${id}`);
 
 		if (!el) {
 			return width;
@@ -93,11 +93,8 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		const selection = S.Common.getRef('selectionProvider');
 
-		focus.set(block.id, { from: 0, to: 0 });
 		selection?.hide();
-
 		U.Dom.addClass(nodeRef.current, 'isResizing');
-
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 
@@ -182,16 +179,31 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({}));
 
+	const typeName = translate('blockNamePdf');
+	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
+
 	let element = null;
 	let pager = null;
 
-	if (object.isDeleted) {
+	if (object.isArchived && (state == I.FileState.Done)) {
 		element = (
-			<div className="deleted">
-				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+			<div ref={wrapRef} className={[ 'wrap', 'pdfWrapper' ].join(' ')} style={css}>
+				<Suspense fallback={<Loader />}>
+					<MediaPdf
+						ref={mediaRef}
+						src={S.Common.fileUrl(targetObjectId)}
+						page={1}
+						onDocumentLoad={onDocumentLoad}
+						onPageRender={onPageRender}
+						onClick={() => {}}
+					/>
+				</Suspense>
+				{overlay}
 			</div>
 		);
+	} else
+	if (object.isDeleted || object.isArchived) {
+		element = overlay;
 	} else {
 		switch (state) {
 			default:
@@ -200,30 +212,30 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
+						<InputWithFile
+							block={block}
 							iconParam={{ name: 'menu/block/media/pdf' }}
 							textFile={translate('blockPdfUpload')}
-							accept={J.Constant.fileExtension.pdf} 
-							onChangeUrl={onChangeUrl} 
-							onChangeFile={onChangeFile} 
-							readonly={readonly} 
+							accept={J.Constant.fileExtension.pdf}
+							onChangeUrl={onChangeUrl}
+							onChangeFile={onChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.FileState.Done: {
 				if (pages > 1) {
 					pager = (
-						<Pager 
-							offset={page - 1} 
-							limit={1} 
-							total={pages} 
+						<Pager
+							offset={page - 1}
+							limit={1}
+							total={pages}
 							pageLimit={1}
 							isShort={true}
-							onChange={setPage} 
+							onChange={setPage}
 						/>
 					);
 				};

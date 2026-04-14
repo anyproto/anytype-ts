@@ -34,7 +34,6 @@ const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) =
 
 		clearDimmer();
 		initDimmer();
-		rebind();
 		scroll();
 		event();
 

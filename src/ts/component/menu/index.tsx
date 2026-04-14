@@ -11,7 +11,6 @@ import MenuTableOfContents from './tableOfContents';
 import MenuSelect from './select';
 
 import MenuSmile from './smile';
-import MenuSmileSkin from './smile/skin';
 import MenuSmileColor from './smile/color';
 
 import MenuCalendar from './calendar';
@@ -39,6 +38,7 @@ import MenuBlockMention from './block/mention';
 import MenuBlockEmoji from './block/emoji';
 import MenuBlockLayout from './block/layout';
 import MenuBlockLatex from './block/latex';
+import MenuBlockEmbedKroki from './block/embedKroki';
 import MenuBlockLinkSettings from './block/link/settings';
 
 import MenuBlockRelationEdit from './block/relation/edit';
@@ -105,7 +105,6 @@ const Components: any = {
 	select:					 MenuSelect,
 
 	smile:					 MenuSmile,
-	smileSkin:				 MenuSmileSkin,
 	smileColor:				 MenuSmileColor,
 
 	calendar:				 MenuCalendar,
@@ -133,6 +132,7 @@ const Components: any = {
 	blockEmoji:				 MenuBlockEmoji,
 	blockLayout:			 MenuBlockLayout,
 	blockLatex:				 MenuBlockLatex,
+	blockEmbedKroki:		 MenuBlockEmbedKroki,
 	blockLinkSettings:		 MenuBlockLinkSettings,
 
 	blockRelationEdit:		 MenuBlockRelationEdit,
@@ -413,9 +413,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	};
 
 	const position = () => {
-		if (childRef.current && childRef.current.beforePosition) {
-			childRef.current.beforePosition();
-		};
+		childRef.current?.beforePosition?.();
 
 		raf(() => {
 			const menuEl = containerRef.current;

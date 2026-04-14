@@ -2,18 +2,43 @@
 
 .popups {
 	.popup.popupSpaceCreate {
-		.innerWrap { width: 480px; border-radius: 32px; position: relative; overflow: visible; }
+		.innerWrap { width: 480px; border-radius: 32px; position: relative; overflow: hidden; max-height: calc(100vh - 104px); }
 
 		#loader { border-radius: 32px; }
 
 		.icon.close {
-			position: absolute; right: 16px; top: 16px; width: 28px; height: 28px; border-radius: 6px; z-index: 2;
+			position: absolute; right: 12px; top: 12px; width: 32px; height: 32px; border-radius: 16px; z-index: 2;
 
 			&:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 
 		.stepTitle { @include text-paragraph; font-weight: 600; padding: 16px 0px; text-align: center; }
-		.iconWrapper { display: flex; justify-content: center; margin: 0px 0px 16px 0px; }
+		.seatCounters { @include text-small; color: var(--color-text-secondary); text-align: center; padding: 0px 0px 8px 0px; }
+
+		.offlinePill {
+			display: flex; align-items: center; justify-content: center; gap: 0px 6px;
+			@include text-small; color: var(--color-text-primary);
+			background: var(--color-system-selection); border-radius: 20px; padding: 8px 16px; margin: 8px 0px 24px 0px;
+		}
+		.offlinePill {
+			.icon { width: 16px; height: 16px; color: var(--color-text-primary); }
+		}
+		.iconWrapper { display: flex; justify-content: center; margin: 0px auto 24px auto; position: relative; width: fit-content; }
+		.iconWrapper {
+			.iconPreview { width: 96px; height: 96px; border-radius: 12px; object-fit: cover; }
+
+			.iconEdit {
+				position: absolute; right: -8px; bottom: -8px;
+				width: 32px; height: 32px; border-radius: 16px;
+				display: flex; align-items: center; justify-content: center;
+				border: 1px solid var(--color-shape-highlight-light);
+				background: var(--color-text-white60);
+				backdrop-filter: blur(8px);
+			}
+			.iconEdit {
+				.icon { width: 16px; height: 16px; color: var(--color-text-primary); }
+			}
+		}
 		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
 		.label.small { @include text-small; color: var(--color-text-secondary); text-align: center; margin: 8px 0px 0px 0px; }
 
@@ -29,7 +54,7 @@
 
 			&:hover::before { background: var(--color-shape-highlight-light); }
 
-			.name { flex: 1; }
+			.name { flex: 1; display: flex; align-items: center; gap: 0px 4px; }
 			.icon.checkbox { margin-left: auto; width: 24px; height: 24px; flex-shrink: 0; }
 			.icon.markerCheckbox2 { color: var(--color-system-accent-100); }
 		}
@@ -40,14 +65,16 @@
 			.memberListWrapper {
 				.emptyState { @include text-small; color: var(--color-text-secondary); min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; }
 
-				.memberList { position: relative; height: 340px; }
+				.memberList { position: relative; }
 				.memberList {
 					.ReactVirtualized__List { padding: 8px; scrollbar-gutter: stable; }
 				}
 
 				.grad {
-					position: absolute; left: 0px; bottom: 0px; width: 100%; height: 36px; pointer-events: none; z-index: 1;
-					background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-bg-primary) 100%);
+					position: absolute; left: 0px; width: 100%; height: 32px; pointer-events: none; z-index: 1;
+
+					&.top { top: 0px; background: linear-gradient(180deg, var(--color-bg-primary) 0%, transparent 100%); }
+					&.bottom { bottom: 0px; background: linear-gradient(180deg, transparent 0%, var(--color-bg-primary) 100%); }
 				}
 			}
 		}
@@ -60,15 +87,28 @@
 
 		/* Step 1 — Name & Icon */
 		.step.step1 {
-			.input.spaceName { margin: 0px 0px 8px 0px; }
+			.input.spaceName { border-radius: 12px; @include text-paragraph; font-weight: 600; }
+			.input.spaceName.withMargin { margin: 0px 0px 8px 0px; }
 
-			.membersSection { text-align: left; margin: 0px -8px 16px -8px; padding: 0px 0px; }
-			.membersSection {
-				.sectionLabel { @include text-very-small; color: var(--color-text-secondary); margin: 0px; padding: 4px 8px; }
+			.memberListWrapper { position: relative; }
+			.memberListWrapper {
+				.memberList { position: relative; }
+				.memberList {
+					.ReactVirtualized__List { padding: 8px; scrollbar-gutter: stable; }
+				}
+
+				.sectionLabel { @include text-very-small; color: var(--color-text-secondary); margin: 0px; padding: 4px 8px; display: flex; align-items: flex-end; }
 
 				.item.add {
 					.icon { width: 32px; height: 32px; border-radius: 50%; background: var(--color-shape-highlight-medium); }
 					.name { color: var(--color-text-secondary); }
+				}
+
+				.grad {
+					position: absolute; left: 0px; width: 100%; height: 32px; pointer-events: none; z-index: 1;
+
+					&.top { top: 0px; background: linear-gradient(180deg, var(--color-bg-primary) 0%, transparent 100%); }
+					&.bottom { bottom: 0px; background: linear-gradient(180deg, transparent 0%, var(--color-bg-primary) 100%); }
 				}
 			}
 		}

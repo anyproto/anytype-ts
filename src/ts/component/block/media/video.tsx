@@ -1,5 +1,5 @@
 import React, { useRef, forwardRef, useImperativeHandle } from 'react';
-import { InputWithFile, Icon, Error, MediaVideo } from 'Component';
+import { InputWithFile, Icon, Error, MediaVideo, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -20,7 +20,7 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const getWidth = (checkMax: boolean, v: number): number => {
 		const width = Number(fields.width) || 1;
-		const el = U.Dom.get(`selectionTarget-${U.Common.esc(id)}`);
+		const el = U.Dom.get(`selectionTarget-${id}`);
 
 		if (!el) {
 			return width;
@@ -73,9 +73,7 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		const selection = S.Common.getRef('selectionProvider');
 
-		focus.set(block.id, { from: 0, to: 0 });
 		selection?.hide();
-
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 		U.Dom.addClass(nodeRef.current, 'isResizing');
@@ -137,14 +135,25 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	useImperativeHandle(ref, () => ({}));
 
+	const typeName = translate('blockNameVideo');
+	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
+
 	let element = null;
-	if (object.isDeleted) {
+
+	if (object.isArchived && (state == I.FileState.Done)) {
 		element = (
-			<div className="deleted">
-				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+			<div ref={wrapRef} className="wrap" style={css}>
+				<MediaVideo
+					src={S.Common.fileUrl(targetObjectId)}
+					onPlay={onPlay}
+					onPause={onPause}
+				/>
+				{overlay}
 			</div>
 		);
+	} else
+	if (object.isDeleted || object.isArchived) {
+		element = overlay;
 	} else {
 		switch (state) {
 			default:
@@ -153,20 +162,20 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
+						<InputWithFile
+							block={block}
 							iconParam={{ name: 'menu/block/media/video' }}
-							textFile={translate('blockVideoUpload')} 
-							accept={J.Constant.fileExtension.video} 
-							onChangeUrl={onChangeUrl} 
-							onChangeFile={onChangeFile} 
-							readonly={readonly} 
+							textFile={translate('blockVideoUpload')}
+							accept={J.Constant.fileExtension.video}
+							onChangeUrl={onChangeUrl}
+							onChangeFile={onChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.FileState.Done: {
 				element = (
 					<div ref={wrapRef} className="wrap" style={css}>

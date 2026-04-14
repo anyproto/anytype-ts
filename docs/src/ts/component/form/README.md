@@ -1,6 +1,6 @@
 # form/ - Reusable Form Controls
 
-Form input components used across auth flows, settings, and modals. **15 files**.
+Form input components used across auth flows, settings, and modals. **30 files** (15 components + 15 Storybook stories).
 
 ## Components
 
@@ -19,8 +19,26 @@ Form input components used across auth flows, settings, and modals. **15 files**
 | `inputWithLabel.tsx` | Input with label wrapper |
 | `inputWithFile.tsx` | Input with file picker |
 | `phrase.tsx` | Mnemonic recovery phrase display |
+| `commentEditor.tsx` | Rich text comment editor built on Lexical |
 | `drag/horizontal.tsx` | Horizontal drag slider |
 | `drag/vertical.tsx` | Vertical drag slider |
+
+## Storybook Stories
+
+Each component (except `inputWithFile.tsx`) has a corresponding `.stories.tsx` file for Storybook documentation and visual testing.
+
+## Comment Editor (`commentEditor.tsx`)
+
+Full-featured rich text editor built on Lexical. Supports:
+- Rich text formatting (bold, italic, strikethrough, code, underline)
+- Lists (ordered, unordered, check)
+- Headings, code blocks, block quotes, horizontal rules
+- Mentions via `@` with object search
+- Emoji picker
+- File attachments and embed previews
+- Paste handling with URL detection
+- Max length enforcement
+- Custom `MentionNode` and `HorizontalRuleNode` Lexical nodes
 
 ## Patterns
 

@@ -1,5 +1,5 @@
-import React, { useRef, useImperativeHandle, forwardRef } from 'react';
-import { InputWithFile, Icon, Error } from 'Component';
+import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import { InputWithFile, Icon, Error, Loader, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -11,6 +11,7 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const targetObjectId = block.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const wrapRef = useRef(null);
+	const [ isLoaded, setIsLoaded ] = useState(false);
 
 	const handleKeyDown = (e: any) => {
 		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
@@ -41,7 +42,6 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		const selection = S.Common.getRef('selectionProvider');
 
-		focus.set(block.id, { from: 0, to: 0 });
 		selection?.hide();
 		keyboard.disableSelection(true);
 		U.Dom.addClass(nodeRef.current, 'isResizing');
@@ -153,7 +153,7 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	};
 
 	const getWidth = (checkMax: boolean, v: number): number => {
-		const el = U.Dom.get(`selectionTarget-${U.Common.esc(block.id)}`);
+		const el = U.Dom.get(`selectionTarget-${block.id}`);
 		const width = Number(block.fields.width) || 1;
 
 		if (!el) {
@@ -166,36 +166,58 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		return Math.min(1, Math.max(0, w / ew));
 	};
 
-	const object = S.Detail.get(rootId, targetObjectId, []);
+	const object = S.Detail.get(rootId, targetObjectId, [ 'widthInPixels', 'heightInPixels' ]);
 	const cn = [ 'focusable', `c${block.id}` ];
 	const css: any = {};
+	const wrapCss: any = {};
 
 	if (width) {
 		css.width = (width * 100) + '%';
 	};
 
+	if (object.widthInPixels && object.heightInPixels) {
+		wrapCss.aspectRatio = `${object.widthInPixels} / ${object.heightInPixels}`;
+	} else
+	if (!isLoaded) {
+		wrapCss.height = 80;
+	};
+
+	const typeName = translate('blockNameImage');
+	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
+
 	let element = null;
-	if (object.isDeleted) {
+
+	if (object.isArchived && (state == I.FileState.Done)) {
 		element = (
-			<div className="deleted">
-				<Icon name="common/ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
+			<div ref={wrapRef} className="wrap" style={{ ...css, ...wrapCss }}>
+				{!isLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
+				<img
+					className="mediaImage"
+					src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
+					onDragStart={e => e.preventDefault()}
+					onLoad={() => setIsLoaded(true)}
+					onError={handleError}
+				/>
+				{overlay}
 			</div>
 		);
+	} else
+	if (object.isDeleted || object.isArchived) {
+		element = overlay;
 	} else {
 		switch (state) {
 			default: {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
+						<InputWithFile
+							block={block}
 							iconParam={{ name: 'menu/block/media/image' }}
-							textFile={translate('blockImageUpload')} 
-							accept={J.Constant.fileExtension.image} 
-							onChangeUrl={handleChangeUrl} 
-							onChangeFile={handleChangeFile} 
-							readonly={readonly} 
+							textFile={translate('blockImageUpload')}
+							accept={J.Constant.fileExtension.image}
+							onChangeUrl={handleChangeUrl}
+							onChangeFile={handleChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
@@ -204,13 +226,15 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 			case I.FileState.Done: {
 				element = (
-					<div ref={wrapRef} className="wrap" style={css}>
-						<img 
-							className="mediaImage" 
-							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)} 
-							onDragStart={e => e.preventDefault()} 
-							onClick={handleClick} 
-							onError={handleError} 
+					<div ref={wrapRef} className="wrap" style={{ ...css, ...wrapCss }}>
+						{!isLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
+						<img
+							className="mediaImage"
+							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
+							onDragStart={e => e.preventDefault()}
+							onClick={handleClick}
+							onLoad={() => setIsLoaded(true)}
+							onError={handleError}
 						/>
 						{isDownloading ? <Icon className="downloading" /> : <Icon name="common/download" className="download" onClick={handleDownload} />}
 						<Icon name="common/resize" className="resize" onMouseDown={e => handleResizeStart(e, false)} />

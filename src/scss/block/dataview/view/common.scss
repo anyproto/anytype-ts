@@ -34,7 +34,7 @@
 				.cardContent > .inner { padding: 16px; display: flex; flex-direction: column; align-items: flex-start; }
 				.cardContent > .inner {
 					.cellContent:not(.isName) { 
-						width: unset; max-width: 100%; height: 24px; padding-top: 3px; padding-left: 4px; padding-right: 4px; margin-left: -4px; border-radius: 6px; 
+						width: unset; max-width: 100%; height: 24px; padding-top: 2px; padding-left: 4px; padding-right: 4px; margin-left: -4px; border-radius: 6px; 
 					}
 					.cellContent.c-checkbox { padding-top: 0px; }
 					.cellContent:not(.isName) {
@@ -43,6 +43,12 @@
 					.cellContent:not(.isName):hover,
 					.cellContent:not(.isName).hover { background-color: var(--color-shape-highlight-medium); }
 					.cellContent.c-longText { height: unset; min-height: 24px; }
+
+					.cellContent.c-select { line-height: 20px; }
+					.cellContent.c-select {
+						.wrap { line-height: 20px; }
+						.over { height: 20px; }
+					}
 				}
 
 				.cover {

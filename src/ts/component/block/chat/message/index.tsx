@@ -6,6 +6,7 @@ import { IconObject, Icon, ObjectName, Label } from 'Component';
 import Attachment from '../attachment';
 import Reply from './reply';
 import Reaction from './reaction';
+import Storage from 'Lib/storage';
 import * as I from 'Interface';
 
 interface ChatMessageRefProps {
@@ -87,12 +88,12 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 		const et = U.Dom.select('.bubbleOuter .text', node);
 		const er = U.Dom.select('.reply .text', node);
 
-		renderMentions(rootId, et, marks, () => text, { subId });
+		renderMentions(rootId, et, marks, () => text, { subId, withPreview: false });
 		renderObjects(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
 		renderLinks(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
 		renderEmoji(et);
 
-		renderMentions(rootId, er, marks, () => text, { subId, iconSize: 16 });
+		renderMentions(rootId, er, marks, () => text, { subId, iconSize: 16, withPreview: false });
 		renderObjects(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderLinks(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
 		renderEmoji(er, { iconSize: 16 });
@@ -171,7 +172,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	};
 
 	const getAttachments = (): any[] => {
-		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_);
+		return (message.attachments || []).map(it => S.Detail.get(subId, it.target)).filter(it => !it._empty_ && !it.isDeleted);
 	};
 
 	const getAttachmentsLayout = (): number => {
@@ -391,6 +392,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 													subId={subId}
 													onRemove={() => onAttachmentRemove(item.id)}
 													onPreview={(preview) => onPreview(preview)}
+													onClick={() => Storage.setChat(rootId, { scrollMessageId: id })}
 													showAsFile={!attachmentsLayout}
 													bookmarkAsDefault={attachments.length > 1}
 													isDownload={!isSelf}

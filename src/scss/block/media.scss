@@ -21,9 +21,17 @@
 			}
 		}
 
-		.deleted { @include text-paragraph; color: var(--color-control-active); display: flex; gap: 0px 6px; align-items: center; }
-		.deleted {
-			.icon.ghost { width: 24px; height: 24px; }
+		.mediaState { @include text-small; color: var(--color-control-active); display: flex; flex-direction: column; gap: 12px 0px; align-items: center; justify-content: center; }
+		.mediaState {
+			.icon.ghost { width: 48px; height: 48px; }
+			.name { text-align: center; color: var(--color-text-secondary); font-weight: 500; }
+		}
+
+		.mediaState.isDeleted { height: 264px; background: var(--color-bg-primary); border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px; }
+
+		.mediaState.isArchived {
+			position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 2;
+			background: var(--color-bg-primary-90); border: 1px solid var(--color-shape-highlight-medium); border-radius: inherit;
 		}
 
 		.icon.resize, .icon.commonDownload { position: absolute; z-index: 1; opacity: 0; cursor: default; transition: $transitionAllCommon; }
@@ -38,6 +46,9 @@
 		.error { margin: 0px; @include text-small; line-height: 22px; }
 		
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
+		.wrap {
+			> .loader { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1; }
+		}
 		.mediaImage { width: 100%; display: block; cursor: zoom-in; }
 		.mediaVideo {
 			.icon.syncStatus { display: none; }
@@ -98,10 +109,22 @@
 		}
 	}
 
+	.block.blockMedia.isImage, .block.blockMedia.isVideo {
+		.mediaState.isArchived { border: 0px; }
+	}
+
 	.block.blockMedia.isAudio {
 		.mediaBlockLoader { height: 80px; }
+
+		.mediaState { height: 73px; border: 0px; border-radius: 8px; flex-direction: row; gap: 0px 8px; }
+		.mediaState {
+			.icon.ghost { width: 24px; height: 24px; }
+		}
+		.mediaState.isDeleted { background: var(--color-bg-primary); border: 1px solid var(--color-shape-highlight-medium); }
+		.mediaState.isArchived { background: var(--color-bg-primary); }
 	}
-	.block.blockMedia.isAudio.withContent:not(.isLoading) > .wrapContent  { border: 1px solid var(--color-shape-secondary); border-radius: 8px; }
+	.block.blockMedia.isAudio > .wrapContent { height: 75px; }
+	.block.blockMedia.isAudio.withContent:not(.isLoading) > .wrapContent  { border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px; }
 	.block.blockMedia.isAudio > .wrapContent > .selectionTarget > .dropTarget > .focusable > .wrap { width: 100%; padding: 12px 12px 7px 14px; }
 
 	.block.blockMedia.isReadonly {

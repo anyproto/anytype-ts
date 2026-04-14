@@ -401,13 +401,12 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		const searchIds = getSearchIds();
 		const subId = getSubId();
-		const filters: I.Filter[] = [
+		const filters: I.Filter[] = Dataview.getFilteredFilters([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 			{ relationKey: startRelation.relationKey, condition: I.FilterCondition.GreaterOrEqual, value: 0, quickOption: I.FilterQuickOption.ExactDate, format: startRelation.format },
 			{ relationKey: endRelation.relationKey, condition: I.FilterCondition.GreaterOrEqual, value: 0, format: endRelation.format },
-		].concat(view.filters as any[]);
-
-		const sorts: I.Sort[] = [].concat(view.sorts);
+		].concat(view.filters as any[])).map(it => Dataview.filterMapper(it, { rootId }));
+		const sorts: I.Sort[] = Dataview.getFilteredSorts(view.sorts).map(it => Dataview.sortMapper(it));
 
 		if (searchIds) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: searchIds || [] });
@@ -415,8 +414,8 @@ const ViewTimeline = forwardRef<{}, I.ViewComponent>((props, ref) => {
 
 		U.Subscription.subscribe({
 			subId,
-			filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
-			sorts: sorts.map(it => Dataview.sortMapper(it)),
+			filters,
+			sorts,
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			collectionId: (isCollection ? object.id : ''),

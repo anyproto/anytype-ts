@@ -811,7 +811,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 	};
 
 	const checkNodes = (e: any, ex: number, ey: number) => {
-		const dataTransfer = e.dataTransfer || e.originalEvent.dataTransfer;
+		const dataTransfer = e.dataTransfer;
 		const isItemDrag = U.Common.getDataTransferItems(dataTransfer.items).length ? true : false;
 		const isFileDrag = dataTransfer.types.includes('Files');
 
@@ -1170,6 +1170,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 	useImperativeHandle(ref, () => ({
 		onDragStart,
 		onScroll,
+		clearStyle,
 	}));
 
 	return (

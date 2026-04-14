@@ -15,6 +15,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	const type = S.Record.getTypeById(S.Common.type);
 	const participant = U.Space.getParticipant();
 	const canWrite = U.Space.canMyParticipantWrite();
+	const isOwner = U.Space.isMyOwner();
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const cnh = [ 'spaceHeader' ];
 	const nodeRef = useRef(null);
@@ -64,9 +65,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	};
 
 	const onDashboard = () => {
-		if (!spaceview.isOneToOne) {
-			U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
-		};
+		U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
 	};
 
 	const onType = (e: any) => {
@@ -305,7 +304,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 
 							<div className="sectionContent">
-								{!spaceview.isOneToOne ? (
+								{spaceview.isOneToOne || isOwner ? (
 									<div className="item">
 										<div className="sides">
 											<Icon name="settings/home" />

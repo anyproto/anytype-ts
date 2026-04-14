@@ -1142,7 +1142,10 @@ class UtilCommon {
 	showWhatsNew (param?: Partial<I.PopupParam>) {
 		param = param || {};
 		param.data = param.data || {};
-		param.data.document = 'whatsNew';	
+		param.data.document = 'whatsNew';
+		param.onClose = () => {
+			Survey.checkCommon();
+		};
 
 		S.Popup.open('help', param);
 		Storage.set('whatsNew', false);
@@ -1274,12 +1277,6 @@ class UtilCommon {
 
 	tabTooltipHide () {
 		Preview.previewHide(true);
-	};
-
-	getViewFilters (view: any): any[] {
-		return (view.filters || []).filter(it => {
-			return S.Record.getRelationByKey(it.relationKey) || [ I.FilterOperator.And, I.FilterOperator.Or ].includes(it.operator);
-		});
 	};
 
 	applyAutoDownload (value: number) {

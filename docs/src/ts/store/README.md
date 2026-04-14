@@ -14,6 +14,7 @@ Reactive state stores using MobX. Each store manages a specific domain. Accessed
 | `menu.ts` | `S.Menu` | Menu state: open/close/update menus, sub-menu management |
 | `popup.ts` | `S.Popup` | Popup state: open/close/update popups, dimmer control |
 | `chat.ts` | `S.Chat` | Chat messages: message CRUD, reactions, threads, counters |
+| `comment.ts` | `S.Comment` | Comment posts and replies: CRUD for posts/replies, pagination (hasMore) |
 | `notification.ts` | `S.Notification` | Notification management |
 | `progress.ts` | `S.Progress` | Background task progress tracking |
 | `membership.ts` | `S.Membership` | Membership tier and features |
@@ -26,13 +27,13 @@ All stores use `makeObservable` with `observable`, `action`, and `computed` deco
 
 ```typescript
 class SomeStore {
-    constructor() {
-        makeObservable(this, {
-            data: observable,
-            list: computed,
-            set: action,
-        });
-    }
+	constructor() {
+		makeObservable(this, {
+			data: observable,
+			list: computed,
+			set: action,
+		});
+	}
 }
 ```
 
