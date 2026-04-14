@@ -45,7 +45,7 @@ const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			listRef.current.scrollToPosition(top.current);
 		};
 
-		beforePosition();
+		position();
 		setActive();
 	});
 
@@ -202,16 +202,17 @@ const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (item.url) {
 				onChange?.(I.MarkType.Link, item.url.value);
 			};
+			close();
 		} else
 		if (item.itemId == 'add') {
 			U.Object.create('', '', { name: filter }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.link, (message: any) => {
 				onChange?.(I.MarkType.Object, message.targetId);
+				close();
 			});
 		} else {
 			onChange?.(I.MarkType.Object, item.itemId);
+			close();
 		};
-
-		close();
 	};
 
 	const onScroll = ({ scrollTop }: any) => {
@@ -349,7 +350,7 @@ const MenuBlockLink = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getFilterRef: () => filterRef.current,
 		onClick,
 		onOver,
-	}), []);
+	}), [ filter, dummy ]);
 
 	return (
 		<div className="wrap">

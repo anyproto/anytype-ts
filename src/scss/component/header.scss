@@ -30,10 +30,10 @@
 		-webkit-app-region: no-drag; font-weight: 500;
 	}
 	.path {
-		.label { 
-			@include text-small; color: var(--color-text-secondary); padding: 3px 6px 3px 20px; border-radius: 4px; 
+		.label {
+			@include text-small; color: var(--color-text-secondary); padding: 3px 6px; border-radius: 4px;
 			background: var(--color-shape-tertiary); @include text-overflow-nw;
-			font-weight: 400;
+			font-weight: 400; display: inline-flex; align-items: center; gap: 0px 4px;
 		}
 	}
 
@@ -71,7 +71,7 @@
 	.icon.commonExpand { display: none; }
 
 	.label.btn {
-		-webkit-app-region: no-drag; @include text-common; font-weight: 500; padding: 3px 8px; border-radius: 6px;
+		-webkit-app-region: no-drag; @include text-common; font-weight: 500; padding: 3px 8px; border-radius: 14px;
 		color: var(--color-text-secondary); transition: $transitionAllCommon;
 	}
 	.label.btn {

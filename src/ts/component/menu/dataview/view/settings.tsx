@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useImperativeHandle, useEffect, } from 'reac
 
 import { InputWithLabel, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
+import { Data } from 'Lib/util';
 
 const MenuViewSettings = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -130,8 +131,10 @@ const MenuViewSettings = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const views = S.Record.getViews(rootId, blockId);
 		const view = data.view.get();
 		const isBoard = view.type == I.ViewType.Board;
-		const sortCnt = view.sorts.length;
-		const filterCnt = U.Common.getViewFilters(view).length;
+		const filters = Dataview.getFilteredFilters(view.filters);
+		const sorts = Dataview.getFilteredSorts(view.sorts);
+		const sortCnt = sorts.length;
+		const filterCnt = filters.length;
 		const relations = view.getVisibleRelations().map(it => it.relation.name).filter(it => it);
 		const relationCnt = relations.slice(0, 2);
 

@@ -156,7 +156,7 @@ const WidgetView = forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref
 			return [];
 		};
 
-		const sorts: I.Sort[] = U.Common.objectCopy(view.sorts || []);
+		const sorts: I.Sort[] = U.Common.objectCopy(Dataview.getFilteredSorts(view.sorts));
 
 		if (!sorts.length) {
 			sorts.push({ relationKey: 'createdDate', type: I.SortType.Desc, includeTime: true });

@@ -358,8 +358,8 @@ const HeadSimple = forwardRef<PropsRef, Props>((props, ref) => {
 	if (isDate) {
 		buttonCreate = (
 			<>
-				<Icon name="arrow/calendar" className="arrow left" withBackground={true} onClick={() => changeDate(-1)} width={8} height={12} />
-				<Icon name="arrow/calendar" className="arrow right" withBackground={true} onClick={() => changeDate(1)} width={8} height={12} />
+				<Icon name="arrow/calendar" className="arrow left" withBackground={true} onClick={() => changeDate(-1)} />
+				<Icon name="arrow/calendar" className="arrow right" withBackground={true} onClick={() => changeDate(1)} />
 				<Icon id="calendar-icon" name="relation/date" withBackground={true} onClick={onCalendar} />
 			</>
 		);

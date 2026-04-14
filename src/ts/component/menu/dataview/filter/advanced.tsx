@@ -30,12 +30,12 @@ const MenuFilterAdvanced = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getAdvancedFilter = () => {
 		const view = getView();
-
 		if (!view) {
 			return null;
 		};
 
-		return view.filters.find((f: I.Filter) => [ I.FilterOperator.And, I.FilterOperator.Or ].includes(f.operator)) || null;
+		const filters = Dataview.getFilteredFilters(view.filters);
+		return filters.find(it => Dataview.isAdvancedFilter(it));
 	};
 
 	const onDelete = () => {
@@ -63,9 +63,6 @@ const MenuFilterAdvanced = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const beforePosition = () => {
-	};
-
 	const filter = getAdvancedFilter();
 
 	useEffect(() => {
@@ -78,7 +75,7 @@ const MenuFilterAdvanced = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		beforePosition();
+		position();
 		setActive();
 	});
 
@@ -88,7 +85,6 @@ const MenuFilterAdvanced = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getItems: () => [],
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
-		beforePosition,
 	}), []);
 
 	if (!filter) {

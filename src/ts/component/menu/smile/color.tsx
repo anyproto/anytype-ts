@@ -73,24 +73,34 @@ const MenuSmileColor = forwardRef<{}, I.Menu>((props, ref) => {
 		if (next) U.Dom.addClass(next, 'active');
 	};
 	
-	const Item = (item: any) => (
-		<div 
-			id={`color-${item.color}`}
-			className="item" 
-			onMouseDown={e => onClick(e, item.color)}
-			onMouseEnter={e => onMouseEnter(e, item.color)}
-		>
-			{isEmoji ? (
-				<IconObject size={32} object={{ iconEmoji: U.Smile.nativeById(itemId, item.color) }} />
-			) : (
-				<IconObject iconSize={30} object={{ iconName: itemId, iconOption: item.color, layout: I.ObjectLayout.Type }} />
-			)}
-		</div>
-	);
+	const Item = (item: any) => {
+		const iconObject: any = {};
+		const iconSize = isEmoji ? undefined : 32;
+
+		if (isEmoji) {
+			iconObject.iconEmoji = U.Smile.nativeById(itemId, item.color);
+		} else {
+			iconObject.iconName = itemId;
+			iconObject.iconOption = item.color;
+			iconObject.layout = I.ObjectLayout.Type;
+		};
+
+		return (
+			<div 
+				id={`color-${item.color}`}
+				className="item" 
+				onMouseDown={e => onClick(e, item.color)}
+				onMouseEnter={e => onMouseEnter(e, item.color)}
+			>
+				<IconObject size={32} iconSize={iconSize} object={iconObject} />
+			</div>
+		);
+	};
 
 	useEffect(() => {
 		rebind();
 		setActive();
+		return () => unbind();
 	}, []);
 
 	return (

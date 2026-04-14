@@ -102,6 +102,7 @@ export interface IconParam {
 	size?: number;
 	width?: number;
 	height?: number;
+	className?: string;
 };
 
 export interface MenuItem {

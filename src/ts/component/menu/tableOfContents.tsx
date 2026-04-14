@@ -8,7 +8,7 @@ const LIMIT = 20;
 
 const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, getContainer, setActive, close, onKeyDown, setHover, getMaxHeight } = props;
+	const { param, getId, getContainer, setActive, close, onKeyDown, setHover, getMaxHeight, position } = props;
 	const { data } = param;
 	const { rootId, isPopup, blockId } = data;
 	const n = useRef(-1);
@@ -128,7 +128,7 @@ const MenuTableOfContents = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return () => unbind();
 	}, []);
 
-	useEffect(() => beforePosition());
+	useEffect(() => position());
 
 	useEffect(() => {
 		const index = items.findIndex(it => it.id == blockId);

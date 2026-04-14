@@ -172,6 +172,7 @@ bun run build:pixi
 - CSS supports native nesting - use nested selectors instead of flat/inline selectors
 - Do not use `cursor: pointer` in CSS - the app does not use custom cursors
 - **Do not change any style or design properties (colors, spacing, sizes, etc.) unless explicitly asked.** Design decisions are intentional — never "fix" or "improve" visual values on your own
+- **Never change colors on your own.** Colors (CSS variables, hardcoded values, theme overrides) are only changed through design tasks with explicit design specs. Even if a color looks wrong or inconsistent, do not fix it unless a design task specifically asks for it
 - For CSS and UI styling changes, match exact pixel values, border-radius, padding, and colors from the user's specifications on the first attempt. Do not guess or approximate visual values
 
 ### Code Style
@@ -204,7 +205,23 @@ bun run build:pixi
   // Bad — inline class list arrays hurt readability
   return <div className={[ 'commentPost', (isEditing ? 'isEditing' : '') ].join(' ')} />;
   ```
-- When a SCSS selector has both its own properties AND nested children, write the properties on separate lines with a blank line before the first child selector. Leaf selectors (no nested children) can still be one-liners.
+- Never combine a selector's own properties and its nested children in the same braces. Instead, write two separate blocks: a one-liner for the selector's own properties, then a second block with the same selector containing only nested children. Leaf selectors (no nested children) can be one-liners.
+  ```scss
+  // Good
+  .mediaState { display: flex; gap: 12px 0px; align-items: center; }
+  .mediaState {
+      .icon.ghost { width: 48px; height: 48px; }
+      .name { text-align: center; }
+  }
+
+  // Bad — mixing own properties and children in one block
+  .mediaState {
+      display: flex; gap: 12px 0px; align-items: center;
+
+      .icon.ghost { width: 48px; height: 48px; }
+      .name { text-align: center; }
+  }
+  ```
 
 ### Storybook
 - All new components should be added to Storybook automatically
@@ -361,6 +378,7 @@ After completing any task that edits SCSS files (`src/scss/`), SVG/image files (
 - Missing dark icon variants in `src/img/theme/dark/`
 - Inline `html.themeDark` overrides that belong in `src/scss/theme/dark/`
 - Dynamic icon paths missing `S.Common.getThemePath()`
+- **Never duplicate unchanged values from light theme into dark theme** — only override CSS vars when the value actually differs
 
 ## QA Engineer
 

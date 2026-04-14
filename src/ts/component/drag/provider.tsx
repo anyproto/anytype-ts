@@ -1170,6 +1170,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 	useImperativeHandle(ref, () => ({
 		onDragStart,
 		onScroll,
+		clearStyle,
 	}));
 
 	return (

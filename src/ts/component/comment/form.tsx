@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, useCallback } from 'react';
-import { Icon, Button } from 'Component';
+import { Icon, Button, Label } from 'Component';
 import CommentEditor from 'Component/form/commentEditor';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -29,9 +29,11 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const formRef = useRef<HTMLDivElement>(null);
 	const [ isEmpty, setIsEmpty ] = useState(true);
+	const [ hasAttachments, setHasAttachments ] = useState(false);
 	const [ isFocused, setIsFocused ] = useState(false);
 	const [ isMultiline, setIsMultiline ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
+	const isSubmittingRef = useRef(false);
 	const draftLoadedRef = useRef(false);
 	const electron = U.Common.getElectron();
 	const isDraft = !isEdit && !isReply;
@@ -56,6 +58,8 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		clear: () => {
 			editorRef.current?.clear();
 			setIsEmpty(true);
+			setHasAttachments(false);
+			isSubmittingRef.current = false;
 			setIsLoading(false);
 			setIsMultiline(false);
 			clearDraft();
@@ -71,6 +75,14 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			case I.ObjectLayout.Audio:
 			case I.ObjectLayout.Video: return I.ChatMessageBlockLinkType.File;
 			default: return I.ChatMessageBlockLinkType.Object;
+		};
+	}, []);
+
+	const getAttachmentType = useCallback((layout: I.ObjectLayout): I.AttachmentType => {
+		switch (layout) {
+			case I.ObjectLayout.Bookmark: return I.AttachmentType.Link;
+			case I.ObjectLayout.Image: return I.AttachmentType.Image;
+			default: return I.AttachmentType.File;
 		};
 	}, []);
 
@@ -98,7 +110,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				(message: any) => {
 					n++;
 
-					if (message.objectId) {
+					if (!message.error.code && message.objectId) {
 						uploadMap.set(item.id, message.objectId);
 					};
 
@@ -111,10 +123,11 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	}, [ rootId ]);
 
 	const handleSubmit = useCallback((parts: I.CommentContentPart[]) => {
-		if (isLoading) {
+		if (isSubmittingRef.current) {
 			return;
 		};
 
+		isSubmittingRef.current = true;
 		setIsLoading(true);
 
 		// Collect tmp files that need uploading
@@ -149,7 +162,8 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				};
 			}).filter(Boolean);
 
-			// Collect attachment objects for optimistic rendering
+			// Build message attachments and collect attachment objects for optimistic rendering
+			const messageAttachments: I.ChatMessageAttachment[] = [];
 			const attachmentObjects: any[] = [];
 
 			for (const p of parts) {
@@ -162,29 +176,34 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				if (data.isTmp) {
 					const uploadedId = uploadMap.get(data.id);
 					if (uploadedId) {
+						messageAttachments.push({ target: uploadedId, type: getAttachmentType(data.layout) });
 						attachmentObjects.push({
 							id: uploadedId,
 							name: data.name,
 							layout: data.layout,
 							sizeInBytes: data.sizeInBytes,
 							fileExt: data.fileExt,
+							syncStatus: I.SyncStatusObject.Synced,
 						});
 					};
 				} else {
-					const fresh = subId ? S.Detail.get(subId, data.id, []) : null;
+					messageAttachments.push({ target: data.id, type: getAttachmentType(data.layout) });
+					const fresh = subId ? S.Detail.get(subId, data.id) : null;
 					attachmentObjects.push((fresh && !fresh._empty_) ? fresh : data);
 				};
 			};
 
-			onSubmit?.(resolvedParts, undefined, attachmentObjects);
+			onSubmit?.(resolvedParts, messageAttachments, attachmentObjects);
 
 			if (!isEdit) {
 				editorRef.current?.clear();
 				setIsEmpty(true);
+				setHasAttachments(false);
 				setIsMultiline(false);
 				clearDraft();
 			};
 
+			isSubmittingRef.current = false;
 			setIsLoading(false);
 		};
 
@@ -193,7 +212,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		} else {
 			finalize(new Map());
 		};
-	}, [ onSubmit, isEdit, isLoading, clearDraft, getLinkType, uploadTmpFiles ]);
+	}, [ onSubmit, isEdit, clearDraft, getLinkType, getAttachmentType, uploadTmpFiles ]);
 
 	const handleEmpty = useCallback((v: boolean) => {
 		setIsEmpty(v);
@@ -201,17 +220,12 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	}, []);
 
 	const handleChange = useCallback(() => {
+		setHasAttachments((editorRef.current?.getAttachments().length || 0) > 0);
 		saveDraft();
 	}, [ saveDraft ]);
 
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
-
-		window.setTimeout(() => {
-			if (formRef.current) {
-				formRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-			};
-		}, 300);
 	}, []);
 
 	const handleBlur = useCallback(() => {
@@ -233,13 +247,13 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const addAttachmentFiles = useCallback((files: File[]) => {
 		const limit = J.Constant.limit.chat.attachments;
 		const currentCount = editorRef.current?.getAttachments().length || 0;
-		let remaining = limit - currentCount;
+		const remaining = limit - currentCount;
 
-		for (const file of files) {
-			if (remaining <= 0) {
-				break;
-			};
+		if (remaining <= 0) {
+			return;
+		};
 
+		const items = files.slice(0, remaining).map(file => {
 			const path = electron.webFilePath ? electron.webFilePath(file) : '';
 			const mime = file.type || '';
 			const ext = path ? (electron.fileExt ? electron.fileExt(path) : '') : '';
@@ -253,7 +267,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				};
 			};
 
-			editorRef.current?.insertAttachment({
+			return {
 				id: `tmp-${Date.now()}-${Math.random().toString(36).slice(2)}`,
 				name: file.name,
 				layout,
@@ -263,11 +277,69 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				mime,
 				path,
 				file,
-			});
+			};
+		});
 
-			remaining--;
-		};
+		// Clipboard images arrive as synthetic File objects with no filesystem path —
+		// persist them to disk first so the subsequent C.FileUpload has a real path.
+		U.Common.saveClipboardFiles(items, {}, (data: any) => {
+			for (const item of (data.files || [])) {
+				if (!item.path) {
+					continue;
+				};
+
+				const fileExt = item.fileExt || (electron.fileExt ? electron.fileExt(item.path) : '');
+				editorRef.current?.insertAttachment({ ...item, fileExt });
+			};
+
+			setHasAttachments((editorRef.current?.getAttachments().length || 0) > 0);
+		});
 	}, []);
+
+	const timeoutDrag = useRef<number>(0);
+	const [ isDraggingOver, setIsDraggingOver ] = useState(false);
+
+	const canDrop = useCallback((e: any): boolean => {
+		return !readonly && U.File.checkDropFiles(e);
+	}, [ readonly ]);
+
+	const clearDragState = useCallback(() => {
+		setIsDraggingOver(false);
+		keyboard.disableCommonDrop(false);
+	}, []);
+
+	const onDragOver = useCallback((e: any) => {
+		if (!canDrop(e)) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+		keyboard.disableCommonDrop(true);
+		setIsDraggingOver(true);
+	}, [ canDrop ]);
+
+	const onDragLeave = useCallback((e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+		timeoutDrag.current = window.setTimeout(clearDragState, 100);
+	}, [ clearDragState ]);
+
+	const onDrop = useCallback((e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		if (canDrop(e)) {
+			const files = Array.from(e.dataTransfer.files) as File[];
+			addAttachmentFiles(files);
+		};
+
+		clearDragState();
+	}, [ canDrop, addAttachmentFiles, clearDragState ]);
 
 	const onFileInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = Array.from(e.target.files || []);
@@ -290,13 +362,15 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const openObjectPopup = useCallback((object: any) => {
 		U.Object.openPopup(object, {
 			onClose: () => {
-				if (!subId) {
-					return;
-				};
-
-				const details = S.Detail.get(object.id, object.id, []);
+				const details = S.Detail.get(object.id, object.id);
+				
 				if (!details._empty_) {
-					S.Detail.update(subId, { id: object.id, details }, false);
+					if (subId) {
+						S.Detail.update(subId, { id: object.id, details }, false);
+					};
+
+					// Update the Lexical node data so the decorator re-renders with fresh details
+					editorRef.current?.updateAttachment(object.id, details);
 				};
 			},
 		});
@@ -311,10 +385,12 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		const rect = el.getBoundingClientRect();
+		const isKroki = processor === I.EmbedProcessor.Kroki;
+		const menuId = isKroki ? 'blockEmbedKroki' : 'dataviewText';
 
-		S.Menu.open('dataviewText', {
+		S.Menu.open(menuId, {
 			classNameWrap: 'fromBlock',
-			rect: { ...rect, y: rect.y + window.scrollY, x: rect.x, width: rect.width, height: rect.height },
+			rect: { x: rect.x, y: rect.y, width: rect.width, height: 0 },
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,
 			offsetY: -4,
@@ -367,6 +443,28 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 					};
 					break;
 				};
+
+				case 'createType': {
+					if (!item.typeId) {
+						break;
+					};
+
+					const type = S.Record.getTypeById(item.typeId);
+					if (!type) {
+						break;
+					};
+					
+					C.ObjectCreate({}, [ I.ObjectFlag.DeleteEmpty ], '', type.uniqueKey, S.Common.space, (message: any) => {
+						if (message.error.code || !message.details) {
+							return;
+						};
+
+						const object = message.details;
+						editorRef.current?.insertAttachment(object);
+						openObjectPopup(object);
+					});
+					break;
+				};
 			};
 		} else
 		if ((item.blockType === I.BlockType.Div) || (item.type === I.BlockType.Div)) {
@@ -380,26 +478,21 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		editorRef.current?.focus();
-	}, [ openFilePicker, openEmbedInput ]);
+	}, [ openFilePicker, openEmbedInput, openObjectPopup ]);
 
 	const menuContextRef = useRef<any>(null);
 
 	const openCommentAddMenu = useCallback((element: any) => {
+		const { param, data } = U.Menu.getCommentAddMenuParam(menuContextRef);
+
 		S.Menu.open('commentAdd', {
-			classNameWrap: 'fromBlock',
-			component: 'select',
+			...param,
 			element,
 			vertical: I.MenuDirection.Top,
 			horizontal: I.MenuDirection.Left,
 			offsetY: -4,
-			noAnimation: true,
-			subIds: [ 'typeSuggest', 'select' ],
-			onOpen: (context: any) => { menuContextRef.current = context; },
 			data: {
-				sections: U.Menu.getCommentAddSections(),
-				noFilter: true,
-				noVirtualisation: true,
-				noScroll: true,
+				...data,
 				onOver: (_e: any, item: any) => {
 					if (!item.arrow) {
 						S.Menu.closeAll([ 'typeSuggest', 'select' ]);
@@ -407,51 +500,10 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 					};
 
 					const context = menuContextRef.current;
-					if (!context) {
-						return;
-					};
-
-					if (item.id === 'create') {
-						U.Menu.typeSuggest({
-							element: `#${context.getId()} #item-create`,
-							className: 'fixed',
-							classNameWrap: 'fromSidebar',
-							offsetX: context.getSize().width,
-							vertical: I.MenuDirection.Center,
-							isSub: true,
-							data: {
-								onAdd: () => context?.close(),
-							},
-						}, {}, { noButtons: true }, '', (object: any) => {
-							editorRef.current?.insertAttachment(object);
-							openObjectPopup(object);
+					if (context && item.itemId === 'embed') {
+						U.Menu.openCommentEmbedMenu(context, (_e: any, embedItem: any) => {
+							handleSlashAction(embedItem);
 							context?.close();
-						});
-					};
-
-					if (item.id === 'embed') {
-						const embedOptions = U.Menu.getBlockEmbed().map(it => ({
-							...it,
-							action: 'embed',
-							embedProcessor: it.id,
-						}));
-
-						S.Menu.open('select', {
-							element: `#${context.getId()} #item-embed`,
-							className: 'fixed',
-							classNameWrap: 'fromBlock',
-							offsetX: context.getSize().width,
-							vertical: I.MenuDirection.Center,
-							isSub: true,
-							data: {
-								options: embedOptions,
-								noVirtualisation: true,
-								noScroll: true,
-								onSelect: (_e: any, embedItem: any) => {
-									handleSlashAction(embedItem);
-									context?.close();
-								},
-							},
 						});
 					};
 				},
@@ -460,15 +512,14 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				},
 			},
 		});
-	}, [ handleSlashAction, openFilePicker, openObjectPopup ]);
+	}, [ handleSlashAction ]);
 
 	const openPlusMenu = useCallback((element: any) => {
-		const attachments = U.Menu.getCommentAddSections().find(s => s.id === 'attachments');
-		if (!attachments) {
-			return;
-		};
-
-		const children = attachments.children.filter((it: any) => [ 'create', 'object', 'file' ].includes(it.id));
+		const children = [
+			{ id: 'create', action: 'create', iconParam: { name: 'comment/menu/createObject' }, name: translate('commonNewObject'), arrow: true },
+			{ id: 'object', action: 'object', iconParam: { name: 'comment/menu/plus' }, name: translate('spaceExisting') },
+			{ id: 'file', action: 'file', iconParam: { name: 'comment/menu/uploadComputer' }, name: translate('commonUploadComputer') },
+		];
 
 		S.Menu.open('commentAdd', {
 			classNameWrap: 'fromBlock',
@@ -591,7 +642,6 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	}, []);
 
 	const onSendClick = useCallback(() => {
-		const hasAttachments = (editorRef.current?.getAttachments().length || 0) > 0;
 		if ((isEmpty && !hasAttachments) || isLoading) {
 			return;
 		};
@@ -600,7 +650,12 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		if (parts) {
 			handleSubmit(parts);
 		};
-	}, [ isEmpty, isLoading, handleSubmit ]);
+	}, [ isEmpty, hasAttachments, isLoading, handleSubmit ]);
+
+	// Reset common drop flag on unmount
+	useEffect(() => {
+		return () => keyboard.disableCommonDrop(false);
+	}, []);
 
 	// Auto-focus editor when entering edit or reply mode
 	useEffect(() => {
@@ -608,6 +663,31 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			window.setTimeout(() => editorRef.current?.focus(), 50);
 		};
 	}, [ isEdit, isReply ]);
+
+	// Catch Escape at the form level so it doesn't bubble to the global handler
+	// which would close the object. This handles the case where focus is on an
+	// attachment (image) rather than the Lexical editor.
+	useEffect(() => {
+		if (!onCancel) {
+			return;
+		};
+
+		const node = formRef.current;
+		if (!node) {
+			return;
+		};
+
+		const onKeyDown = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') {
+				e.stopPropagation();
+				e.preventDefault();
+				onCancel();
+			};
+		};
+
+		node.addEventListener('keydown', onKeyDown);
+		return () => node.removeEventListener('keydown', onKeyDown);
+	}, [ onCancel ]);
 
 	// Keep page scrolled to bottom when form resizes (new lines, attachments, toolbar)
 	useEffect(() => {
@@ -670,7 +750,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		return null;
 	};
 
-	const isDisabled = isEmpty || isLoading;
+	const isDisabled = (isEmpty && !hasAttachments) || isLoading;
 	const showToolbar = true;
 
 	const cn = [ 'commentForm' ];
@@ -679,15 +759,30 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	if (isFocused) cn.push('isFocused');
 	if (!isEmpty) cn.push('hasContent');
 	if (isMultiline) cn.push('isMultiline');
+	if (isDraggingOver) cn.push('isDraggingOver');
 
 	return (
-		<div ref={formRef} className={cn.join(' ')}>
+		<div
+			ref={formRef}
+			className={cn.join(' ')}
+			onDragOver={onDragOver}
+			onDragLeave={onDragLeave}
+			onDrop={onDrop}
+		>
+			<div className="dragOverlay">
+				<div className="inner">
+					<Label text={translate('commonDropFiles')} />
+				</div>
+			</div>
+
 			<div className="contentArea">
 				<CommentEditor
 					ref={editorRef}
+					rootId={rootId}
 					subId={subId}
 					placeholder={placeholder || translate('commentPlaceholder')}
 					initialParts={initialParts}
+					maxLength={J.Constant.limit.comment.text}
 					onSubmit={handleSubmit}
 					onCancel={onCancel}
 					onEmpty={handleEmpty}
@@ -713,24 +808,28 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 						{isEdit ? (
 						<>
 							{onCancel ? (
-								<div className="btn cancel" onClick={onCancel}>
-									{translate('commonCancel')}
-								</div>
+								<Button 
+									size={28} 
+									color="blank" 
+									onClick={onCancel} 
+									text={translate('commonCancel')} 
+								/>
 							) : ''}
 							<Button
-								className={[ 'btn', 'save', 'c28', (isDisabled ? 'disabled' : '') ].join(' ')}
+								className={[ (isDisabled ? 'disabled' : '') ].join(' ')}
 								color="accent"
+								size={28}
 								text={translate('commonSave')}
 								onClick={onSendClick}
 							/>
 						</>
 					) : (
-						<div
-							className={[ 'btn', 'send', (isDisabled ? 'isDisabled' : '') ].join(' ')}
+						<Icon 
+							name="comment/send" 
+							className={[ 'send', (isDisabled ? 'disabled' : '') ].join(' ')} 
+							color="white" 
 							onClick={onSendClick}
-						>
-							<Icon name="comment/send" className="send" color="white" />
-						</div>
+						/>
 					)}
 					</div>
 				</div>

@@ -53,13 +53,14 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const jumpIds = useRef([]);
 	const prevDepsKey = useRef('');
 	const prevReplyKey = useRef('');
+	const pendingScrollToBottom = useRef(false);
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
 		const object = S.Detail.get(rootId, rootId, [ 'chatId' ]);
 
 		if (object._empty_) {
-			return rootId;
+			return '';
 		};
 
 		return object.chatId || rootId;
@@ -122,7 +123,25 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			onMessageAdd(detail.message, detail.subIds);
 		};
 		reactionUpdateHandlerRef.current = () => scrollToBottomCheck();
-		focusHandlerRef.current = () => readScrolledMessages();
+		focusHandlerRef.current = () => {
+			// Re-render from windowIsFocused observable can reset scrollTop — restore it after paint
+			const prevTop = top.current;
+			const wasBottom = isBottom.current;
+
+			raf(() => {
+				if (wasBottom) {
+					scrollToBottom(false);
+				} else
+				if (prevTop > 0) {
+					const container = U.Dom.getScrollContainer(isPopup);
+					if (container && (container.scrollTop != prevTop)) {
+						container.scrollTop = prevTop;
+					};
+				};
+			});
+
+			readScrolledMessages();
+		};
 
 		U.Dom.addEvents(window, [
 			['messageAdd', messageAddHandlerRef.current],
@@ -261,6 +280,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 				loadDepsAndReplies(messages, () => {
 					if (messages.length) {
+						if (dir < 0) {
+							setAutoLoadDisabled(true);
+						};
+
 						S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
 
 						if (first && (dir < 0)) {
@@ -565,6 +588,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 							U.Common.clipboardCopy({
 								text: U.String.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)),
+								html: Mark.toStandardHtml(Mark.toHtml(item.content.text, item.content.marks)),
 								anytype: {
 									range: { from: 0, to: item.content.text.length },
 									blocks: [ block ],
@@ -666,7 +690,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const list = getMessagesInViewport();
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
-		const isBottom = st >= max;
+		const isBottom = (max > 0) && (st >= max);
 
 		setIsBottom(isBottom);
 
@@ -826,7 +850,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			options.push({ id: 'edit', iconParam: { name: 'common/edit' }, name: translate('commonEdit') });
 			options.push({ isDiv: true });
 			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
-			options.push({ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'darkRed' }, name: translate('commonDelete'), color: 'red' });
+			options.push({ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'destructive' }, name: translate('commonDelete'), color: 'destructive' });
 		} else {
 			if (options.length) {
 				options.push({ isDiv: true });
@@ -935,8 +959,23 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 		if (!hasScroll()) {
 			readScrolledMessages();
+
+			// DOM may not be committed yet (React concurrent mode); retry once after paint
+			if (!animate) {
+				pendingScrollToBottom.current = true;
+				raf(() => {
+					if (pendingScrollToBottom.current && isBottom.current && hasScroll()) {
+						pendingScrollToBottom.current = false;
+						scrollToBottom(false);
+					} else {
+						pendingScrollToBottom.current = false;
+					};
+				});
+			};
 			return;
 		};
+
+		pendingScrollToBottom.current = false;
 
 		const doScroll = () => {
 			const y = U.Dom.getMaxScrollHeight(isPopup);
@@ -1152,8 +1191,15 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				scrollToBottom(false);
 			};
 
-			if (match.params.messageId) {
-				C.ChatGetMessagesByIds(chatId, [ match.params.messageId ], (message: any) => {
+			const storedScrollId = Storage.getChat(chatId).scrollMessageId;
+			const initialMessageId = match.params.messageId || storedScrollId;
+
+			if (storedScrollId) {
+				Storage.setChat(chatId, { scrollMessageId: '' });
+			};
+
+			if (initialMessageId) {
+				C.ChatGetMessagesByIds(chatId, [ initialMessageId ], (message: any) => {
 					if (message.error.code) {
 						return;
 					};

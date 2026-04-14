@@ -2652,7 +2652,6 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 				const commentSection = U.Dom.select('.commentSection', node);
 				const csh = commentSection ? commentSection.offsetHeight : 0;
-
 				const counter = U.Dom.select('.commentCounter', node);
 
 				if (!csh) {
@@ -2806,7 +2805,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 				<TableOfContents ref={tocRef} {...props} />
 
-				{S.Common.config.experimental && !isTemplate ? (
+				{!isTemplate ? (
 					<CommentSection
 						rootId={rootId}
 						targetId={rootId}

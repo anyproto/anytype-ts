@@ -24,7 +24,8 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import 'scss/common.scss';
 
 const memoryHistory = hs.createMemoryHistory;
-const history = memoryHistory();
+const history = (window as any).__anytypeHistory || memoryHistory();
+(window as any).__anytypeHistory = history;
 const electron = U.Common.getElectron();
 const isPackaged = electron.isPackaged;
 
@@ -155,7 +156,13 @@ const App: FC = () => {
 		Renderer.on('pin-set', () => S.Common.pinInit());
 		Renderer.on('pin-remove', () => S.Common.pinInit());
 		Renderer.on('pin-unlocked', () => {
+			const wasPinChecked = keyboard.isPinChecked;
+
 			keyboard.isPinChecked = true;
+
+			if (wasPinChecked) {
+				return;
+			};
 
 			const { redirect } = S.Common;
 			const { account } = S.Auth;
@@ -403,7 +410,7 @@ const App: FC = () => {
 				const spaceId = param.spaceId || data.spaceId || Storage.get('spaceId');
 
 				if (spaceId) {
-					U.Router.switchSpace(spaceId, '', false, routeParam, true);
+					U.Router.switchSpace(spaceId, route, false, routeParam, true);
 				} else {
 					U.Data.onAuthWithoutSpace(routeParam);
 				};

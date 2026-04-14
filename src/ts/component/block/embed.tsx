@@ -91,7 +91,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		if (fieldHeight) {
 			excalidrawCss.height = Math.max(200, fieldHeight);
 		} else {
-			const el = U.Dom.get(`selectionTarget-${U.Common.esc(block.id)}`);
+			const el = U.Dom.get(`selectionTarget-${block.id}`);
 			const containerWidth = el ? U.Dom.contentWidth(el) : 600;
 			excalidrawCss.height = Math.max(200, containerWidth * (width || 1) * 9 / 16);
 		};
@@ -447,7 +447,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const lang = U.Embed.getLang(processor);
 		const range = getRange();
 
-		if (value && lang) {
+		if (value && lang && Prism.languages[lang]) {
 			value = Prism.highlight(value, Prism.languages[lang], lang);
 		};
 
@@ -666,9 +666,10 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 					});
 				} catch (e) {
-					if (e instanceof katex.ParseError) {
-						html = `<div class="error">Error in LaTeX '${U.String.htmlSpecialChars(text)}': ${U.String.htmlSpecialChars(e.message)}</div>`;
-					} else {
+					const message = (e as Error)?.message || String(e);
+					html = `<div class="error">Error in LaTeX '${U.String.htmlSpecialChars(text)}': ${U.String.htmlSpecialChars(message)}</div>`;
+
+					if (!(e instanceof katex.ParseError)) {
 						console.error(e);
 					};
 				};
@@ -911,7 +912,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const getWidth = (checkMax: boolean, v: number): number => {
 		const { id, fields } = block;
 		const width = Number(fields.width) || 1;
-		const el = U.Dom.get(`selectionTarget-${U.Common.esc(id)}`);
+		const el = U.Dom.get(`selectionTarget-${id}`);
 
 		if (!el) {
 			return width;

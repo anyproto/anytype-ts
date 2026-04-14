@@ -33,6 +33,7 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 		focus();
 		load(true);
+		return () => unbind();
 	}, []);
 
 	useEffect(() => {
@@ -139,7 +140,7 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
-			beforePosition();
+			position();
 		});
 	};
 

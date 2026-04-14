@@ -640,6 +640,10 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 					U.Object.openEvent(e, object);
 				};
 
+				if (param.withPreview === false) {
+					return;
+				};
+
 				clickable.onmouseenter = (e: Event) => {
 					const sr = U.Dom.getSelectionRange();
 					if (sr && !sr.collapsed) {
@@ -931,7 +935,7 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 			};
 
 			let hasContent = false;
-			if (!object.isDeleted && (content.state == I.FileState.Done)) {
+			if (!object.isDeleted && !object.isArchived && (content.state == I.FileState.Done)) {
 				cn.push('withContent');
 				hasContent = true;
 			};

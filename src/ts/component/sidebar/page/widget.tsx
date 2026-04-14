@@ -260,7 +260,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			return;
 		};
 
-		const sort: any = view.sorts.length ? view.sorts[0] : {};
+		const sorts = Dataview.getFilteredSorts(view.sorts);
+		const sort: any = sorts.length ? sorts[0] : {};
 
 		let relationKey = sort.relationKey;
 		let type = sort.type;

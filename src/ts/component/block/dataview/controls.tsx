@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
 import { observable } from 'mobx';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
@@ -31,7 +31,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const target = getTarget();
 	const views = S.Record.getViews(rootId, block.id);
 	const view = getView();
-	const sortCnt = view.sorts.length;
+	const sortCnt = Dataview.getFilteredSorts(view.sorts).length;
 	const allowedView = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.View ]);
 	const cn = [ 'dataviewControls' ];
 	const buttonWrapCn = [ 'buttonWrap' ];
@@ -48,6 +48,8 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 	const filterRef = useRef(null);
 	const headRef = useRef(null);
 	const head = isInline ? <Head ref={headRef} {...props} /> : null;
+	const collapsedKey = `controls-collapsed-${block.id}`;
+	const [ isCollapsed, setIsCollapsed ] = useState(() => isInline ? Storage.checkToggle(rootId, collapsedKey) : false);
 
 	if (isInline) {
 		cn.push('isInline');
@@ -61,11 +63,73 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		cn.push(className);
 	};
 
+	const collapsibleRef = useRef(null);
+	const collapseEndRef = useRef<(() => void) | null>(null);
+
+	const getCollapsibleWidth = (el: HTMLElement): number => {
+		const children = Array.from(el.children) as HTMLElement[];
+		const gap = 4;
+		let width = 0;
+
+		children.forEach((child, i) => {
+			width += child.offsetWidth;
+			if (i < children.length - 1) {
+				width += gap;
+			};
+		});
+
+		return width;
+	};
+
+	const onToggleCollapse = () => {
+		const el = collapsibleRef.current as HTMLElement;
+
+		if (!el) {
+			return;
+		};
+
+		if (collapseEndRef.current) {
+			el.removeEventListener('transitionend', collapseEndRef.current);
+			el.style.width = '';
+			collapseEndRef.current = null;
+		};
+
+		const onEnd = () => {
+			el.style.width = '';
+			el.removeEventListener('transitionend', onEnd);
+			collapseEndRef.current = null;
+		};
+
+		if (isCollapsed) {
+			U.Dom.removeClass(el, 'isCollapsed');
+			void el.offsetWidth;
+			const width = getCollapsibleWidth(el);
+
+			setIsCollapsed(false);
+			Storage.setToggle(rootId, collapsedKey, false);
+
+			el.style.width = '0px';
+			void el.offsetWidth;
+			el.style.width = `${width}px`;
+		} else {
+			el.style.width = `${el.offsetWidth}px`;
+			void el.offsetWidth;
+			el.style.width = '0px';
+
+			setIsCollapsed(true);
+			Storage.setToggle(rootId, collapsedKey, true);
+			U.Dom.addClass(el, 'isCollapsed');
+
+			collapseEndRef.current = onEnd;
+			el.addEventListener('transitionend', onEnd);
+		};
+	};
+
 	const onViewSwitch = (view: any) => {
 		onViewSet(view);
 
 		window.setTimeout(() => {
-			const btn = U.Dom.get(`button-${U.Common.esc(block.id)}-settings`);
+			const btn = U.Dom.get(`button-${block.id}-settings`);
 			btn?.click();
 		}, 50);
 	};
@@ -125,7 +189,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		const isSort = component == 'dataviewSort';
 
 		if (!readonly && isFilter) {
-			const items = U.Common.getViewFilters(view);
+			const items = Dataview.getFilteredFilters(view.filters);
 
 			if (items.length) {
 				toggleFilters();
@@ -142,7 +206,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 
 		if (!readonly && isSort) {
-			if (view.sorts.length) {
+			if (Dataview.getFilteredSorts(view.sorts).length) {
 				toggleFilters();
 			} else {
 				sortOrFilterRelationSelect(component, { ...toggleParam, element }, () => {
@@ -457,7 +521,14 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		// Force synchronous reflow before measuring widths
 		void node.offsetWidth;
 
-		const width = Math.ceil((sideLeft?.offsetWidth ?? 0) + (sideRight?.offsetWidth ?? 0));
+		let rightWidth = sideRight?.offsetWidth ?? 0;
+
+		if (isInline && sideRight) {
+			const collapsible = U.Dom.select('.collapsible', sideRight);
+			rightWidth -= collapsible?.offsetWidth ?? 0;
+		};
+
+		const width = Math.ceil((sideLeft?.offsetWidth ?? 0) + rightWidth);
 
 		if (sideLeft) {
 			U.Dom.css(sideLeft, { flexGrow: '' });
@@ -471,9 +542,11 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		};
 	};
 
-	const buttons = [
+	const collapsibleButtons = [
 		{ id: 'filter', name: 'control/dataview/filter', text: translate('blockDataviewControlsFilters'), menu: 'dataviewFilterList', on: Dataview.getActiveFilters(view).length },
 		{ id: 'sort', name: 'common/sort', text: translate('blockDataviewControlsSorts'), menu: 'dataviewSort', on: sortCnt > 0 },
+	];
+	const persistentButtons = [
 		{ id: 'settings', name: 'common/options', text: translate('blockDataviewControlsSettings'), menu: 'dataviewViewSettings' },
 	];
 
@@ -548,6 +621,20 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	}, []);
 
+	useEffect(() => {
+		const el = collapsibleRef.current as HTMLElement;
+
+		if (!el) {
+			return;
+		};
+
+		if (isCollapsed) {
+			U.Dom.addClass(el, 'isCollapsed');
+		} else {
+			el.style.width = `${getCollapsibleWidth(el)}px`;
+		};
+	}, []);
+
 	useEffect(() => resize());
 
 	useImperativeHandle(ref, () => ({
@@ -606,18 +693,50 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 				</div>
 
 				<div id="dataviewControlsSideRight" className="side right">
-					<Filter
-						ref={filterRef}
-						placeholder={translate('blockDataviewSearch')}
-						iconParam={{ name: 'common/search' }}
-						tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
-						onChange={onFilterChange}
-						onIconClick={onFilterShow}
-					/>
+					{isInline ? (
+						<>
+							<Icon
+								className={[ 'expandControls', (isCollapsed ? 'isCollapsed' : '') ].join(' ')}
+								name="arrow/doubleChevron"
+								size={28}
+								withBackground={true}
+								onClick={onToggleCollapse}
+							/>
+							<div ref={collapsibleRef} className="collapsible">
+								<Filter
+									ref={filterRef}
+									placeholder={translate('blockDataviewSearch')}
+									iconParam={{ name: 'common/search' }}
+									tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
+									onChange={onFilterChange}
+									onIconClick={onFilterShow}
+								/>
 
-					{buttons.map((item: any, i: number) => (
+								{collapsibleButtons.map((item: any, i: number) => (
+									<ButtonItem key={item.id} {...item} />
+								))}
+							</div>
+						</>
+					) : (
+						<>
+							<Filter
+								ref={filterRef}
+								placeholder={translate('blockDataviewSearch')}
+								iconParam={{ name: 'common/search' }}
+								tooltipParam={{ text: translate('commonSearch'), caption: keyboard.getCaption('searchText') }}
+								onChange={onFilterChange}
+								onIconClick={onFilterShow}
+							/>
+
+							{collapsibleButtons.map((item: any, i: number) => (
+								<ButtonItem key={item.id} {...item} />
+							))}
+						</>
+					)}
+
+					{persistentButtons.map((item: any, i: number) => (
 						<ButtonItem key={item.id} {...item} />
-					))}	
+					))}
 
 					{isAllowedObject ? (
 						<div className={buttonWrapCn.join(' ')}>

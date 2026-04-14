@@ -25,16 +25,22 @@ const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
+	const keydownHandler = useRef<(e: any) => void>(null);
+	const keyHandlerRef = useRef<(e: any) => void>(null);
 
 	const rebind = () => {
 		unbind();
 
-		U.Dom.addEvent(window, 'keydown', onKeyDownHandler);
+		keydownHandler.current = (e: any) => keyHandlerRef.current?.(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		U.Dom.removeEvent(window, 'keydown', onKeyDownHandler);
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -57,12 +63,16 @@ const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
+	keyHandlerRef.current = onKeyDownHandler;
+
 	const onAddHandler = (e: any) => {
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 		const object = S.Detail.get(rootId, rootId);
 
-		S.Menu.open('relationSuggest', { 
+		unbind();
+
+		S.Menu.open('relationSuggest', {
 			className,
 			classNameWrap,
 			element: `#${getId()} #item-add`,
@@ -71,6 +81,8 @@ const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offsetY: 36,
 			noAnimation: true,
 			noFlipY: true,
+			rebind,
+			parentId: getId(),
 			data: {
 				...data,
 				menuIdEdit: 'dataviewRelationEdit',
@@ -117,12 +129,16 @@ const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 		};
 
-		S.Menu.open('dataviewRelationEdit', { 
+		unbind();
+
+		S.Menu.open('dataviewRelationEdit', {
 			className,
 			classNameWrap,
 			element: `#${getId()} #item-${U.Common.esc(item.relationKey)}`,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
+			rebind,
+			parentId: getId(),
 			data: {
 				...data,
 				relationId: relation.id,
@@ -288,7 +304,6 @@ const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 	
 	useEffect(() => {
-		rebind();
 		setActive(null, true);
 		position();
 

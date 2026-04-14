@@ -24,6 +24,7 @@ const transformThresholdHalf = transformThreshold / 2;
 const delayFocus = 1000;
 const maxClusterRadius = 500;
 const timelineDuration = 15000;
+const maxVisibleLabels = 100;
 
 const Layout = {
 	Human:		 1,
@@ -90,6 +91,15 @@ let paused = false;
 let isOver = '';
 let maxDegree = 0;
 let selectBox = { x: 0, y: 0, width: 0, height: 0 };
+let labelBudget = new Set();
+let _colorLink = 0;
+let _colorArrow = 0;
+let _colorText = 0;
+let _colorHighlight = 0;
+let _colorBg = 0;
+let _colorNode = 0;
+let _colorSelected = 0;
+let _colorMuted = 0;
 let borderRadius = 0;
 let lineWidth = 0;
 let lineWidth3 = 0;
@@ -930,7 +940,7 @@ updateNodeSprites = () => {
 		};
 	};
 
-	// Pre-create sprites and labels for new nodes
+	// Pre-create sprites for new nodes
 	// This avoids expensive object creation during the render loop
 	for (const d of nodes) {
 		// Pre-create sprite if needed
@@ -942,23 +952,8 @@ updateNodeSprites = () => {
 			nodeSprites.set(d.id, sprite);
 		};
 
-		// Pre-create label if needed (labels are expensive to create)
-		if (!nodeLabels.has(d.id)) {
-			const label = new PIXI.Text({
-				text: d.shortName || '',
-				style: new PIXI.TextStyle({
-					fontFamily: fontFamily,
-					fontSize: 12,
-					fill: parseColor(data.colors?.text || '#000000'),
-					align: 'center',
-				}),
-				resolution: density,
-			});
-			label.anchor.set(0.5, 0);
-			label.visible = false;
-			labelsContainer.addChild(label);
-			nodeLabels.set(d.id, label);
-		};
+		// Labels are created on-demand in drawNode to avoid
+		// creating expensive PIXI.Text objects for all nodes upfront
 	};
 };
 
@@ -1037,12 +1032,124 @@ draw = (t) => {
 
 	const radius = 5.7 / transform.k;
 
-	edges.forEach(d => {
+	// Pre-parse constant colors once per frame instead of per-edge/per-node
+	_colorLink = parseColor(data.colors.link);
+	_colorArrow = parseColor(data.colors.arrow);
+	_colorText = parseColor(data.colors.text);
+	_colorHighlight = parseColor(data.colors.highlight);
+	_colorBg = parseColor(data.colors.bg);
+	_colorNode = parseColor(data.colors.node);
+	_colorSelected = parseColor(data.colors.selected);
+	_colorMuted = parseColor(data.colors.muted);
 
+	// Batch edges by style to minimize draw calls
+	// All hover effects (highlight, dimming, labels) gated by isHovering
+	const normalEdges = [];
+	const dimmedEdges = [];
+	const highlightEdges = [];
+
+	edges.forEach(d => {
 		if (checkNodeInViewport(d.target) || checkNodeInViewport(d.source)) {
-			drawEdge(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
+			if (isHovering) {
+				const io = (isOver == d.source.id) || (isOver == d.target.id);
+				if (io) {
+					highlightEdges.push(d);
+				} else {
+					dimmedEdges.push(d);
+				};
+			} else {
+				normalEdges.push(d);
+			};
 		};
 	});
+
+	// Helper to build edge line paths
+	const buildEdgePaths = (list) => {
+		for (let i = 0; i < list.length; i++) {
+			const d = list[i];
+			const r1 = getRadius(d.source);
+			const r2 = getRadius(d.target);
+			const a1 = Math.atan2(d.target.y - d.source.y, d.target.x - d.source.x);
+			const a2 = Math.atan2(d.source.y - d.target.y, d.source.x - d.target.x);
+			edgesGraphics.moveTo(d.source.x + r1 * Math.cos(a1), d.source.y + r1 * Math.sin(a1));
+			edgesGraphics.lineTo(d.target.x + r2 * Math.cos(a2), d.target.y + r2 * Math.sin(a2));
+		};
+	};
+
+	// Normal edges (full alpha, link color)
+	if (normalEdges.length) {
+		buildEdgePaths(normalEdges);
+		edgesGraphics.stroke({ width: lineWidth, color: _colorLink, alpha: 1 });
+	};
+
+	// Dimmed edges (reduced alpha when hovering, link color)
+	if (dimmedEdges.length) {
+		buildEdgePaths(dimmedEdges);
+		edgesGraphics.stroke({ width: lineWidth, color: _colorLink, alpha: hoverAlpha });
+	};
+
+	// Highlighted edges (full alpha, highlight color)
+	if (highlightEdges.length) {
+		buildEdgePaths(highlightEdges);
+		edgesGraphics.stroke({ width: lineWidth, color: _colorHighlight, alpha: 1 });
+	};
+
+	// Draw arrows (per-edge handling needed for geometry)
+	if (settings.marker) {
+		edges.forEach(d => {
+			if (checkNodeInViewport(d.target) || checkNodeInViewport(d.source)) {
+				drawEdgeExtras(d, radius, radius * 1.3, settings.marker && d.isDouble, settings.marker);
+			};
+		});
+	};
+
+	// Draw relation labels near hovered node
+	if (isHovering && isOver && settings.label && (transform.k >= transformThreshold)) {
+		const hoveredConnections = edgeMap.get(isOver);
+		const hoveredEdgeCount = hoveredConnections ? hoveredConnections.length : 0;
+
+		if (hoveredEdgeCount > 10) {
+			drawCombinedEdgeLabels();
+		} else {
+			// Draw individual per-edge labels (original style)
+			edges.forEach(d => {
+				if (checkNodeInViewport(d.target) || checkNodeInViewport(d.source)) {
+					drawEdgeLabel(d);
+				};
+			});
+		};
+	};
+
+	// Determine which nodes get labels (cap to maxVisibleLabels for performance)
+	labelBudget = new Set();
+	if (settings.label && (transform.k >= transformThreshold)) {
+		const visibleNodes = nodes.filter(d => checkNodeInViewport(d));
+
+		if (visibleNodes.length <= maxVisibleLabels) {
+			visibleNodes.forEach(d => labelBudget.add(d.id));
+		} else {
+			// Prioritize: selected, hovered, root, then by degree (descending)
+			visibleNodes.sort((a, b) => {
+				const sa = selected.includes(a.id) ? 1 : 0;
+				const sb = selected.includes(b.id) ? 1 : 0;
+				if (sa !== sb) return sb - sa;
+
+				const ha = (a.id === isOver) ? 1 : 0;
+				const hb = (b.id === isOver) ? 1 : 0;
+				if (ha !== hb) return hb - ha;
+
+				const ra = (a.id === rootId) ? 1 : 0;
+				const rb = (b.id === rootId) ? 1 : 0;
+				if (ra !== rb) return rb - ra;
+
+				return ((b.linkCnt || 0) + (b.relationCnt || 0)) - ((a.linkCnt || 0) + (a.relationCnt || 0));
+			});
+
+			for (let i = 0; i < maxVisibleLabels; i++) {
+				labelBudget.add(visibleNodes[i].id);
+			};
+		};
+	};
 
 	// Update nodes
 	nodes.forEach(d => {
@@ -1081,7 +1188,10 @@ redraw = () => {
  * @param {boolean} arrowStart - Whether to draw an arrow at the start.
  * @param {boolean} arrowEnd - Whether to draw an arrow at the end.
  */
-drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
+/**
+ * Draws arrows and labels for a single edge (lines are batched separately in draw()).
+ */
+drawEdgeExtras = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const x1 = d.source.x;
 	const y1 = d.source.y;
 	const r1 = getRadius(d.source);
@@ -1096,110 +1206,22 @@ drawEdge = (d, arrowWidth, arrowHeight, arrowStart, arrowEnd) => {
 	const sin2 = Math.sin(a2);
 	const mx = (x1 + x2) / 2;
 	const my = (y1 + y2) / 2;
-	const sx1 = x1 + r1 * cos1;
-	const sy1 = y1 + r1 * sin1;
-	const sx2 = x2 + r2 * cos2;
-	const sy2 = y2 + r2 * sin2;
-	const k = 5 / transform.k;
-	const io = (isOver == d.source.id) || (isOver == d.target.id);
-	const showName = io && d.name && settings.label;
-
-	let colorLink = parseColor(data.colors.link);
-	let colorArrow = parseColor(data.colors.arrow);
-	let colorText = parseColor(data.colors.text);
+	let colorArrow = _colorArrow;
 	let alpha = 1;
 
 	if (isHovering) {
+		const io = (isOver == d.source.id) || (isOver == d.target.id);
 		alpha = hoverAlpha;
-	};
 
-	if (io) {
-		colorLink = colorArrow = colorText = parseColor(data.colors.highlight);
-		alpha = 1;
-	};
-
-	// Draw the edge line
-	edgesGraphics.moveTo(sx1, sy1);
-	edgesGraphics.lineTo(sx2, sy2);
-	edgesGraphics.stroke({ width: lineWidth, color: colorLink, alpha: alpha });
-
-	let tw = 0;
-	let th = 0;
-	let offset = arrowStart && arrowEnd ? -k : 0;
-
-	// Relation name label
-	if (showName && transform.k >= transformThreshold) {
-		// Use fixed font size for crisp rendering, scale container instead
-		const baseFontSize = 12;
-		const labelScale = 1 / transform.k;
-		const scaledPadding = k * transform.k;
-		const scaledBorderRadius = borderRadius * transform.k;
-		const scaledLineWidth = lineWidth3 * transform.k;
-
-		// Get or create label for this edge
-		const edgeKey = d.source.id + '-' + d.target.id;
-		let labelContainer = edgeLabels.get(edgeKey);
-
-		if (!labelContainer) {
-			labelContainer = new PIXI.Container();
-			edgeLabelsContainer.addChild(labelContainer);
-			edgeLabels.set(edgeKey, labelContainer);
+		if (io) {
+			colorArrow = _colorHighlight;
+			alpha = 1;
 		};
-
-		// Clear previous content
-		labelContainer.removeChildren();
-
-		// Create text at base resolution for crisp rendering
-		const label = new PIXI.Text({
-			text: d.name,
-			style: new PIXI.TextStyle({
-				fontFamily: fontFamily,
-				fontSize: baseFontSize,
-				fill: colorText,
-				align: 'center',
-			}),
-			resolution: density,
-		});
-		label.anchor.set(0.5);
-
-		// Get text dimensions at base size
-		const textWidth = label.width;
-		const textHeight = label.height;
-
-		// Calculate world-space dimensions for arrow offset
-		tw = textWidth * labelScale;
-		th = textHeight * labelScale;
-		offset = arrowHeight / 2;
-
-		// Create background rectangle in label space
-		const bgGraphics = new PIXI.Graphics();
-		bgGraphics.roundRect(
-			-textWidth / 2 - scaledPadding,
-			-textHeight / 2 - scaledPadding,
-			textWidth + scaledPadding * 2,
-			textHeight + scaledPadding * 2,
-			scaledBorderRadius
-		);
-		bgGraphics.fill({ color: parseColor(data.colors.bg) });
-		bgGraphics.stroke({ width: scaledLineWidth, color: colorLink });
-
-		labelContainer.addChild(bgGraphics);
-		labelContainer.addChild(label);
-
-		// Position, rotate, and scale the container
-		labelContainer.position.set(mx, my);
-		labelContainer.scale.set(labelScale);
-		// Rotate to align with edge, but keep text readable (flip if pointing left)
-		labelContainer.rotation = Math.abs(a1) <= 1.5 ? a1 : a2;
-		labelContainer.visible = true;
 	};
 
 	// Arrow heads
 	if ((arrowStart || arrowEnd) && (transform.k >= transformThresholdHalf)) {
 		let move = arrowHeight;
-		if (showName) {
-			move = arrowHeight * 2 + tw / 2 + offset;
-		} else
 		if (arrowStart && arrowEnd) {
 			move = arrowHeight * 2;
 		};
@@ -1246,6 +1268,177 @@ drawArrowHead = (x, y, angle, width, height, color, alpha) => {
 };
 
 /**
+ * Draws a single relation name label on an edge (original per-edge style).
+ */
+drawEdgeLabel = (d) => {
+	const io = (isOver == d.source.id) || (isOver == d.target.id);
+	const showName = io && d.name && settings.label;
+
+	if (!showName || transform.k < transformThreshold) {
+		return;
+	};
+
+	const x1 = d.source.x;
+	const y1 = d.source.y;
+	const x2 = d.target.x;
+	const y2 = d.target.y;
+	const a1 = Math.atan2(y2 - y1, x2 - x1);
+	const a2 = Math.atan2(y1 - y2, x1 - x2);
+	const mx = (x1 + x2) / 2;
+	const my = (y1 + y2) / 2;
+	const k = 5 / transform.k;
+
+	const baseFontSize = 12;
+	const labelScale = 1 / transform.k;
+	const scaledPadding = k * transform.k;
+	const scaledBorderRadius = borderRadius * transform.k;
+	const scaledLineWidth = lineWidth3 * transform.k;
+
+	const edgeKey = d.source.id + '-' + d.target.id;
+	let labelContainer = edgeLabels.get(edgeKey);
+
+	if (!labelContainer) {
+		labelContainer = new PIXI.Container();
+		edgeLabelsContainer.addChild(labelContainer);
+		edgeLabels.set(edgeKey, labelContainer);
+	};
+
+	labelContainer.removeChildren();
+
+	const label = new PIXI.Text({
+		text: d.name,
+		style: new PIXI.TextStyle({
+			fontFamily: fontFamily,
+			fontSize: baseFontSize,
+			fill: _colorHighlight,
+			align: 'center',
+		}),
+		resolution: density,
+	});
+	label.anchor.set(0.5);
+
+	const textWidth = label.width;
+	const textHeight = label.height;
+
+	const bgGraphics = new PIXI.Graphics();
+	bgGraphics.roundRect(
+		-textWidth / 2 - scaledPadding,
+		-textHeight / 2 - scaledPadding,
+		textWidth + scaledPadding * 2,
+		textHeight + scaledPadding * 2,
+		scaledBorderRadius
+	);
+	bgGraphics.fill({ color: _colorBg });
+	bgGraphics.stroke({ width: scaledLineWidth, color: _colorHighlight });
+
+	labelContainer.addChild(bgGraphics);
+	labelContainer.addChild(label);
+
+	labelContainer.position.set(mx, my);
+	labelContainer.scale.set(labelScale);
+	labelContainer.rotation = Math.abs(a1) <= 1.5 ? a1 : a2;
+	labelContainer.visible = true;
+};
+
+/**
+ * Draws combined relation labels as a summary list near the hovered node.
+ * Groups edges by relation name and shows counts for duplicates.
+ */
+drawCombinedEdgeLabels = () => {
+	const hoveredNode = getNodeById(isOver);
+	if (!hoveredNode) {
+		return;
+	};
+
+	// Collect relation names from connected edges
+	const nameCounts = new Map();
+	const connections = edgeMap.get(hoveredNode.id);
+
+	if (!connections || !connections.length) {
+		return;
+	};
+
+	for (let i = 0; i < connections.length; i++) {
+		const name = connections[i].name;
+		if (name) {
+			nameCounts.set(name, (nameCounts.get(name) || 0) + 1);
+		};
+	};
+
+	if (!nameCounts.size) {
+		return;
+	};
+
+	// Build summary lines sorted by count descending
+	const sorted = [...nameCounts.entries()].sort((a, b) => b[1] - a[1]);
+	const lines = sorted.map(([name, count]) => count > 1 ? `${name} \u00d7${count}` : name);
+
+	const baseFontSize = 12;
+	const labelScale = 1 / transform.k;
+	const k = 5 / transform.k;
+	const paddingH = k * transform.k;
+	const paddingV = 3;
+	const lineGap = 4;
+	const scaledBorderRadius = borderRadius * transform.k;
+	const scaledLineWidth = lineWidth3 * transform.k;
+
+	const labelContainer = new PIXI.Container();
+
+	// Create text lines and measure
+	let maxWidth = 0;
+	let textHeight = 0;
+	const textObjects = [];
+
+	for (let i = 0; i < lines.length; i++) {
+		const text = new PIXI.Text({
+			text: lines[i],
+			style: new PIXI.TextStyle({
+				fontFamily: fontFamily,
+				fontSize: baseFontSize,
+				fill: _colorHighlight,
+				align: 'left',
+			}),
+			resolution: density,
+		});
+		text.anchor.set(0, 0.5);
+		maxWidth = Math.max(maxWidth, text.width);
+		textHeight = Math.max(textHeight, text.height);
+		textObjects.push(text);
+	};
+
+	const rowHeight = textHeight + lineGap;
+	const contentHeight = lines.length * rowHeight - lineGap;
+	const boxWidth = maxWidth + paddingH * 2;
+	const boxHeight = contentHeight + paddingV * 2;
+
+	// Position text lines vertically centered in box
+	for (let i = 0; i < textObjects.length; i++) {
+		textObjects[i].position.set(paddingH, paddingV + i * rowHeight + textHeight / 2);
+	};
+
+	// Background
+	const bgGraphics = new PIXI.Graphics();
+	bgGraphics.roundRect(0, 0, boxWidth, boxHeight, scaledBorderRadius);
+	bgGraphics.fill({ color: _colorBg });
+	bgGraphics.stroke({ width: scaledLineWidth, color: _colorHighlight });
+
+	labelContainer.addChild(bgGraphics);
+	for (const t of textObjects) {
+		labelContainer.addChild(t);
+	};
+
+	// Position to the right of the hovered node, vertically centered on node
+	const nodeRadius = getRadius(hoveredNode);
+	labelContainer.position.set(
+		hoveredNode.x + nodeRadius + k * 2,
+		hoveredNode.y - (boxHeight * labelScale) / 2
+	);
+	labelContainer.scale.set(labelScale);
+
+	edgeLabelsContainer.addChild(labelContainer);
+};
+
+/**
  * Draws a single node using PixiJS sprites.
  * @param {Object} d - The node object.
  */
@@ -1265,7 +1458,7 @@ drawNode = (d) => {
 	const iconColors = data.colors?.icon || {};
 	const opt = (iconColors.list || [])[d.iconOption - 1];
 
-	let colorNode = parseColor(iconColors.bg?.[opt] || data.colors.node);
+	let colorNode = opt ? parseColor(iconColors.bg[opt]) : _colorNode;
 	let colorLine = null;
 	let lw = 0;
 	let alpha = timelineActive ? (d._timelineAlpha !== undefined ? d._timelineAlpha : 1) : 1;
@@ -1285,13 +1478,13 @@ drawNode = (d) => {
 	};
 
 	if (io || (root && (d.id == root.id))) {
-		colorNode = colorLine = parseColor(data.colors.highlight);
+		colorNode = colorLine = _colorHighlight;
 		lw = lineWidth3;
 		alpha = 1;
 	};
 
 	if (isSelected) {
-		colorNode = colorLine = parseColor(data.colors.selected);
+		colorNode = colorLine = _colorSelected;
 	};
 
 	if (io || isSelected) {
@@ -1351,6 +1544,7 @@ drawNode = (d) => {
 			// Rounded rectangle outline for all icons (matching canvas behavior)
 			const size = diameter + lw * 4;
 			edgesGraphics.roundRect(d.x - size / 2, d.y - size / 2, size, size, borderRadius);
+			edgesGraphics.fill({ color: _colorBg });
 			edgesGraphics.stroke({ width: lw, color: colorLine });
 		} else {
 			// Circle outline for non-icon nodes
@@ -1360,7 +1554,7 @@ drawNode = (d) => {
 	};
 
 	// Node label
-	if (settings.label && (transform.k >= transformThreshold)) {
+	if (labelBudget.has(d.id)) {
 		let label = nodeLabels.get(d.id);
 
 		if (!label) {
@@ -1369,7 +1563,7 @@ drawNode = (d) => {
 				style: {
 					fontFamily: fontFamily,
 					fontSize: 12,
-					fill: parseColor(data.colors.text),
+					fill: _colorText,
 					align: 'center',
 				},
 				resolution: density,
@@ -1382,8 +1576,19 @@ drawNode = (d) => {
 		const labelScale = 1 / transform.k;
 		label.scale.set(labelScale);
 		label.position.set(d.x, d.y + radius + 4 / transform.k);
-		label.style.fill = io || isSelected ? (isSelected ? parseColor(data.colors.selected) : parseColor(data.colors.highlight)) : parseColor(d.isMuted ? data.colors.muted : data.colors.text);
-		label.text = d.shortName || '';
+
+		// Only update text/fill when changed to avoid expensive texture re-renders
+		const newText = d.shortName || '';
+		const newFill = io || isSelected ? (isSelected ? _colorSelected : _colorHighlight) : (d.isMuted ? _colorMuted : _colorText);
+
+		if (label.text !== newText) {
+			label.text = newText;
+		};
+		if (label._lastFill !== newFill) {
+			label.style.fill = newFill;
+			label._lastFill = newFill;
+		};
+
 		label.visible = true;
 		label.alpha = alpha;
 	} else {

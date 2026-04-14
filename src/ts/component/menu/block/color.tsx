@@ -66,7 +66,7 @@ const MenuBlockColor = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<MenuItemVertical 
 					{...action} 
 					key={i} 
-					icon="color" 
+					iconParam={{ name: 'color' }}
 					inner={<div className={`inner textColor textColor-${action.className}`} />} 
 					checkbox={action.value == value} 
 					onClick={e => onClick(e, action)} 

@@ -90,9 +90,7 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 		move(e.pageX - ox - iw / 2);
 		U.Dom.addClass(node, 'isDragging');
 
-		if (onStart) {
-			onStart(e, value);
-		};
+		onStart?.(e, value);
 
 		if (moveHandler.current) {
 			U.Dom.removeEvent(window, 'mousemove', moveHandler.current);
@@ -157,9 +155,10 @@ const DragHorizontal = forwardRef<DragHorizontalRefProps, Props>(({
 		x = value * mw;
 
 		const w = Math.min(nw, x + (iconIsOutside ? iw : 0));
+		const bw = Math.max(0, nw - w - iw - ib * 2);
 
 		U.Dom.css(icon, { left: `${x}px` });
-		U.Dom.css(back, { left: `${w + iw + ib * 2}px`, width: `${nw - w - iw - ib * 2}px` });
+		U.Dom.css(back, { left: `${w + iw + ib * 2}px`, width: `${bw}px` });
 		U.Dom.css(fill, { width: `${w + (iconIsOutside ? 0 : iw) - ib * 2}px` });
 	};
 

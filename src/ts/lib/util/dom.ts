@@ -3,6 +3,10 @@ import * as I from 'Interface';
 
 class UtilDom {
 
+	esc (v: any): string {
+		return CSS.escape(String(v));
+	};
+
 	get (id: string): HTMLElement | null {
 		return document.getElementById(id);
 	};
@@ -215,7 +219,7 @@ class UtilDom {
 	 * @param {boolean} isPopup - Whether the context is a popup.
 	 */
 	triggerResizeEditor (isPopup: boolean) {
-		this.eventDispatch(window, `resize.editor${this.getEventNamespace(isPopup)}`);
+		this.eventDispatch(window, 'resize');
 	};
 
 	getWindowDimensions (): { ww: number; wh: number } {

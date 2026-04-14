@@ -55,7 +55,6 @@ const MenuBlockEmoji = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		rebind();
 		position();
 
 		const items = getItems();

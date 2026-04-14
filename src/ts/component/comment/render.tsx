@@ -1,5 +1,6 @@
 import React from 'react';
 import * as Prism from 'prismjs';
+import { Icon } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
 import EmbedPreview from './embedPreview';
 import * as I from 'Interface';
@@ -35,6 +36,7 @@ const renderPart = (part: I.CommentContentPart, index: number, subId?: string): 
 				<Attachment
 					object={object}
 					subId={subId}
+					withInlineSize={false}
 					onRemove={() => {}}
 				/>
 			</div>
@@ -54,7 +56,11 @@ const renderPart = (part: I.CommentContentPart, index: number, subId?: string): 
 			return <h3 key={key} className="commentH3" dangerouslySetInnerHTML={{ __html: html }} />;
 
 		case I.TextStyle.Quote:
-			return <blockquote key={key} className="commentBlockquote" dangerouslySetInnerHTML={{ __html: html }} />;
+			return (
+				<div key={key} className="commentBlockquoteWrap">
+					<blockquote className="commentBlockquote" dangerouslySetInnerHTML={{ __html: html }} />
+				</div>
+			);
 
 		case I.TextStyle.Code: {
 			const lang = part.lang || 'plain';
@@ -86,7 +92,7 @@ const renderPart = (part: I.CommentContentPart, index: number, subId?: string): 
 			};
 			return (
 				<div key={key} className={cn.join(' ')}>
-					<div className="checkboxMark" />
+					<Icon name={part.checked ? 'marker/checkbox2' : 'marker/checkbox0'} className="checkboxMark" />
 					<span dangerouslySetInnerHTML={{ __html: html }} />
 				</div>
 			);
@@ -115,7 +121,7 @@ const renderParts = (parts: I.CommentContentPart[], subId?: string): JSX.Element
 				j++;
 			};
 
-			elements.push(<ul key={`ul-${i}`} className="commentList commentUl">{items}</ul>);
+			elements.push(<div key={`ulWrap-${i}`} className="commentListWrap"><ul className="commentList commentUl">{items}</ul></div>);
 			i = j;
 			continue;
 		};
@@ -131,7 +137,7 @@ const renderParts = (parts: I.CommentContentPart[], subId?: string): JSX.Element
 				j++;
 			};
 
-			elements.push(<ol key={`ol-${i}`} className="commentList commentOl">{items}</ol>);
+			elements.push(<div key={`olWrap-${i}`} className="commentListWrap"><ol className="commentList commentOl">{items}</ol></div>);
 			i = j;
 			continue;
 		};
@@ -146,7 +152,7 @@ const renderParts = (parts: I.CommentContentPart[], subId?: string): JSX.Element
 				j++;
 			};
 
-			elements.push(<div key={`checklist-${i}`} className="commentChecklist">{items}</div>);
+			elements.push(<div key={`checklistWrap-${i}`} className="commentListWrap"><div className="commentChecklist">{items}</div></div>);
 			i = j;
 			continue;
 		};

@@ -627,7 +627,7 @@ class Mark {
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
 	fromMarkdown(html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean, updatedValue: boolean): I.FromHtmlResult {
-		const reg1 = /(^|[\s\(\[\{])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
+		const reg1 = /(^|[\s\(\[\{]|[^\x00-\x7F])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
 		const reg2 = /^(`{1}|\*+|_+|\[|~{2})/;
 		const test = reg1.test(html);
 		const checked = marks.filter(it => [I.MarkType.Code].includes(it.type));
@@ -995,6 +995,30 @@ class Mark {
 	 */
 	canSave(t: I.MarkType): boolean {
 		return ![I.MarkType.Search, I.MarkType.Change, I.MarkType.Highlight].includes(t);
+	};
+
+	/**
+	 * Converts internal markup HTML (custom tags) to standard HTML for clipboard.
+	 * @param {string} html - HTML string with custom markup tags.
+	 * @returns {string} HTML with standard tags (b, i, s, u, code).
+	 */
+	toStandardHtml (html: string): string {
+		html = String(html || '');
+
+		const map: { from: string; to: string }[] = [
+			{ from: 'markupbold', to: 'b' },
+			{ from: 'markupitalic', to: 'i' },
+			{ from: 'markupstrike', to: 's' },
+			{ from: 'markupunderline', to: 'u' },
+			{ from: 'markupcode', to: 'code' },
+		];
+
+		for (const { from, to } of map) {
+			html = html.replace(new RegExp(`<${from}(\\s[^>]*)?>`, 'gi'), `<${to}>`);
+			html = html.replace(new RegExp(`</${from}>`, 'gi'), `</${to}>`);
+		};
+
+		return html;
 	};
 
 	/**

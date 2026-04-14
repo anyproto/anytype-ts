@@ -288,7 +288,7 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			listRef.current.scrollToPosition(topRef.current);
 		};
 
-		beforePosition();
+		position();
 		setActive(null, true);
 	});
 

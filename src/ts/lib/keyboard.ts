@@ -56,6 +56,9 @@ class Keyboard {
 			if (!S.Membership.products.length) {
 				U.Data.getMembershipData();
 			};
+			if (navigator.onLine) {
+				Action.processPendingMembers();
+			};
 		};
 		
 		this._handlers.offline = this._handlers.online;
@@ -80,10 +83,10 @@ class Keyboard {
 		this._handlers.blur = () => {
 			Preview.tooltipHide(true);
 			Preview.previewHide(true);
+
 			S.Common.windowIsFocusedSet(false);
 			S.Menu.closeAll([ 'blockContext' ]);
-
-			U.Dom.selectAll('.dropTarget.isOver').forEach(el => U.Dom.removeClass(el, 'isOver'));
+			S.Common.getRef('dragProvider')?.clearStyle();
 		};
 
 		U.Dom.addEvents(window, [
@@ -142,25 +145,35 @@ class Keyboard {
 			return;
 		};
 
+		// Skip if the copy originates from a Lexical editor — it handles its own clipboard
+		const target = e.target as HTMLElement;
+		if (target?.closest?.('[data-lexical-editor]')) {
+			return;
+		};
+
 		const selection = window.getSelection();
 		if (!selection || selection.isCollapsed) {
 			return;
 		};
 
 		const text = selection.toString();
-		if (!text.includes('\u200B')) {
+		const hasZws = text.includes('\u200B');
+
+		const range = selection.getRangeAt(0);
+		const div = document.createElement('div');
+		div.appendChild(range.cloneContents());
+
+		const html = div.innerHTML;
+		const hasMarkup = /markup(bold|italic|strike|underline|code)/i.test(html);
+
+		if (!hasZws && !hasMarkup) {
 			return;
 		};
 
 		e.preventDefault();
 
 		e.clipboardData.setData('text/plain', text.replace(/\u200B/g, ''));
-
-		const range = selection.getRangeAt(0);
-		const div = document.createElement('div');
-
-		div.appendChild(range.cloneContents());
-		e.clipboardData.setData('text/html', div.innerHTML.replace(/\u200B/g, ''));
+		e.clipboardData.setData('text/html', Mark.toStandardHtml(html.replace(/\u200B/g, '')));
 	};
 
 	/**
@@ -2034,7 +2047,7 @@ class Keyboard {
 	 * @returns {string[]} The keys.
 	 */
 	getKeys (id: string) {
-		return this.shortcuts[id].keys || [];
+		return this.shortcuts[id]?.keys || [];
 	};
 
 	/**

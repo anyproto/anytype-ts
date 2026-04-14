@@ -54,7 +54,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 	const editableRef = useRef(null);
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
-	const loaderRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
@@ -288,6 +287,39 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			};
 		};
 
+		// Paste without formatting
+		keyboard.shortcut(`${cmd}+shift+v`, e, () => {
+			e.preventDefault();
+
+			(async () => {
+				const text = await navigator.clipboard.readText();
+				if (!text) {
+					return;
+				};
+
+				const { from, to } = range.current;
+				const limit = J.Constant.limit.chat.text;
+				const current = getTextValue();
+
+				let newText = U.String.normalizeLineEndings(text);
+				if (newText.length >= limit) {
+					newText = newText.substring(0, limit);
+				};
+
+				const res = U.String.insert(current, newText, from, to);
+
+				marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
+				marks.current = Mark.checkRanges(res, marks.current);
+				setMarks(marks.current);
+
+				const rt = from + newText.length;
+				range.current = { from: rt, to: rt };
+				updateMarkup(res, range.current);
+				checkUrls();
+				updateCounter();
+			})();
+		});
+
 		// UnDo, ReDo
 		keyboard.shortcut('undo', e, () => onHistory(e, -1));
 		keyboard.shortcut('redo', e, () => onHistory(e, 1));
@@ -422,10 +454,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			updateMarkup(value, { from: to, to });
 		};
 
-		/*
-		keyboard.shortcut('space', e, () => checkUrls());
-		*/
-
 		checkSendButton();
 		removeBookmarks();
 		updateCounter();
@@ -476,7 +504,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		});
 
 		const json = JSON.parse(String(clipboard.getData('application/json') || '{}'));
-		const html = String(clipboard.getData('text/html') || '');
+		const html = String(clipboard.getData('text/html') || '').replace(/<meta[^>]*>/gi, '');
 		const text = U.String.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
 
 		// If pasted content is a pure URL and there's a selection, create a link mark
@@ -943,7 +971,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		const send = sendRef.current;
-		const loader = loaderRef.current;
 		const files = attachments.filter(it => it.isTmp && (U.Object.isFileLayout(it.layout) || U.Object.isImageLayout(it.layout)));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
@@ -951,7 +978,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		const bookmark = S.Record.getBookmarkType();
 
 		U.Dom.addClass(send, 'isLoading');
-		U.Dom.addClass(loader, 'active');
 		isSending.current = true;
 
 		raf(() => {
@@ -1094,8 +1120,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 	const clear = () => {
 		isSending.current = false;
 		U.Dom.removeClass(sendRef.current, 'isLoading');
-		U.Dom.removeClass(sendRef.current, 'anim');
-		U.Dom.removeClass(loaderRef.current, 'active');
 
 		onEditClear();
 		onReplyClear();
@@ -1355,7 +1379,9 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 				classNameWrap: 'fromBlock',
 				rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
 				horizontal: I.MenuDirection.Center,
-				offsetY: 4,
+				vertical: I.MenuDirection.Top,
+				offsetY: -4,
+				noAnimation: true,
 				data: {
 					value: mark?.param,
 					filter: mark?.param,
@@ -1611,7 +1637,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			updateMarkup(newText, range.current);
 		};
 		const getValue = () => value;
-		const param = { onChange, subId };
+		const param = { onChange, subId, withPreview: false };
 
 		renderMentions(rootId, node, marks.current, getValue, param);
 		renderObjects(rootId, node, marks.current, getValue, props, param);
@@ -1633,7 +1659,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		const marks = message.content.marks || [];
 		const node = nodeRef.current;
 		const head = node ? U.Dom.select('.head', node) : null;
-		const param = { subId, iconSize: 16 };
+		const param = { subId, iconSize: 16, withPreview: false };
 
 		renderMentions(rootId, head, marks, getValue, param);
 		renderObjects(rootId, head, marks, getValue, props, param);
@@ -1801,8 +1827,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 				/>
 
 				<div className="form customScrollbar">
-					<Loader id="form-loader" ref={loaderRef} />
-
 					{title ? (
 						<div className="head">
 							<div className="side left">
@@ -1827,16 +1851,20 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 								mousewheel={true}
 								modules={[ Navigation, Mousewheel ]}
 							>
-								{attachments.map(item => (
-									<SwiperSlide key={item.id}>
-										<Attachment
-											object={item}
-											onRemove={onAttachmentRemove}
-											bookmarkAsDefault={true}
-											updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
-										/>
-									</SwiperSlide>
-								))}
+								{attachments.map(item => {
+									const object = item.isTmp ? { syncStatus: I.SyncStatusObject.Synced, ...item } : item;
+									return (
+										<SwiperSlide key={item.id}>
+											<Attachment
+												object={object}
+												withInlineSize={false}
+												onRemove={onAttachmentRemove}
+												bookmarkAsDefault={true}
+												updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
+											/>
+										</SwiperSlide>
+									);
+								})}
 							</Swiper>
 						</div>
 					) : ''}

@@ -492,7 +492,6 @@ class Relation {
 			return true;
 		};
 
-
 		const relation = S.Record.getRelationByKey(relationKey);
 		if (!relation) {
 			return false;

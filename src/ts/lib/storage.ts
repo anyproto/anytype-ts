@@ -24,6 +24,7 @@ const SPACE_KEYS = new Set([
 	'widgetSections',
 	'channelBanner',
 	'binViewMode',
+	'pendingMembers',
 ]);
 
 const LOCAL_KEYS = new Set([

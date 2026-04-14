@@ -58,7 +58,7 @@ const CalendarItem = forwardRef<Ref, Props>((props, ref) => {
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
 		].concat(Dataview.getActiveFilters(view) as any[]);
-		const sorts: I.Sort[] = [].concat(view.sorts);
+		const sorts: I.Sort[] = [].concat(Dataview.getFilteredSorts(view.sorts));
 		const searchIds = getSearchIds();
 
 		filters.push({ 
@@ -85,7 +85,7 @@ const CalendarItem = forwardRef<Ref, Props>((props, ref) => {
 			subId,
 			limit,
 			filters: filters.map(it => Dataview.filterMapper(it, { rootId })),
-			sorts: sorts.map(Dataview.filterMapper),
+			sorts: sorts.map(it => Dataview.sortMapper(it)),
 			keys: getKeys(view.id),
 			sources: object.setOf || [],
 			collectionId: (isCollection ? object.id : ''),

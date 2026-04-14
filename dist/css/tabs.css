@@ -138,10 +138,6 @@ body.platform-win32.showMenuBar {
 	}
 	.tab:hover {
 		.icon.close { opacity: 1; }
-		.iconWrapper { display: none; }
-	}
-	.tab.active:hover, .tab.isPinned:hover {
-		.iconWrapper { display: flex; }
 	}
 
 	.tab.isPinned {

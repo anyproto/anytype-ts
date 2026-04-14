@@ -21,6 +21,7 @@ export default defineConfig(({ mode }) => {
 		publicDir: false,
 
 		resolve: {
+			dedupe: [ 'react', 'react-dom' ],
 			extensions: ['.ts', '.tsx', '.js', '.jsx'],
 			alias: [
 				{ find: 'dist', replacement: path.resolve(__dirname, 'dist') },

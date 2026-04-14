@@ -1,6 +1,6 @@
 # popup/ - Modal Dialogs
 
-Modal popup system with **~27 popup types**. Managed by the `PopupStore` in `src/ts/store/popup.ts`.
+Modal popup system with **33 TSX files** (plus 10 Storybook story files). Managed by the `PopupStore` in `src/ts/store/popup.ts`.
 
 ## Architecture
 
@@ -16,42 +16,46 @@ Open a popup: `S.Popup.open('confirm', { data: { ... } })`
 ## Popup Types
 
 ### Core
-- `search` - Object search with virtualized results, filters, import (most complex, 902 lines)
-- `confirm` - Confirmation dialog with optional checkbox/input
-- `preview` - Image/video gallery with Swiper carousel, zoom, thumbnails
-- `export` - Export options (Markdown, Protobuf, PDF, HTML)
-- `help` - What's New / documentation viewer
-- `shortcut` - Keyboard shortcuts reference
+- `search.tsx` - Object search with virtualized results, filters, import (~967 lines)
+- `confirm.tsx` - Confirmation dialog with optional checkbox/input
+- `preview.tsx` - Image/video gallery with Swiper carousel, zoom, thumbnails
+- `export.tsx` - Export options (Markdown, Protobuf, PDF, HTML)
+- `help.tsx` - What's New / documentation viewer
+- `shortcut.tsx` - Keyboard shortcuts reference
+- `upload.tsx` - File upload dialog
 
 ### Pages & Objects
-- `page` - Full-page object viewer/editor in modal
-- `objectManager` - Object management interface
-- `relation` - Batch relation editor for multiple objects
+- `page.tsx` - Full-page object viewer/editor in modal
+- `objectManager.tsx` - Object management interface
+- `relation.tsx` - Batch relation editor for multiple objects
 
 ### Auth & Security
-- `pin` - PIN entry verification
-- `phrase` - Recovery phrase information
-- `logout` - Logout confirmation
+- `pin.tsx` - PIN entry verification
+- `phrase.tsx` - Recovery phrase information
+- `logout.tsx` - Logout confirmation
 
 ### Spaces & Collaboration
-- `spaceCreate` - Space creation with icon selection
-- `spaceJoinByLink` - Join space via link
-- `inviteRequest` - Space join request display
-- `inviteConfirm` - Invitation confirmation
-- `inviteQr` - QR code invitation
+- `space/create.tsx` - Space creation with icon selection
+- `invite/request.tsx` - Space join request display
+- `invite/confirm.tsx` - Invitation confirmation
+- `invite/qr.tsx` - QR code invitation
 
 ### Membership
-- `membershipActivation` - Activation flow
-- `membershipFinalization` - Finalization flow
+- `membership/activation.tsx` - Activation flow
+- `membership/finalization.tsx` - Finalization flow
 
 ### Onboarding
-- `onboarding` - Tutorial with Swiper carousel
-- `settingsOnboarding` - Settings onboarding
-- `usecase` - Use case selection
-- `aiOnboarding` - AI features introduction
-- `introduceChats` - Chat features intro
+- `onboarding.tsx` - Tutorial with Swiper carousel
+- `settings/onboarding.tsx` - Settings onboarding
+- `usecase.tsx` - Use case selection (with `page/usecase/list.tsx`, `page/usecase/item.tsx`)
+- `aiOnboarding.tsx` - AI features introduction (with `page/aiOnboarding/statusMessage.tsx`)
+- `introduceChats.tsx` - Chat features intro
+
+### Graph
+- `graph/OnboardingGraphWorker.tsx` - Graph onboarding worker
+- `dimmerWithGraph.tsx` - Dimmer overlay with graph visualization
 
 ### Other
-- `about` - About/info popup
-- `share` - App sharing link
-- `apiCreate` - API token management
+- `about.tsx` - About/info popup
+- `share.tsx` - App sharing link
+- `api/create.tsx` - API token management

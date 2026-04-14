@@ -4,8 +4,9 @@ MobX-observable model classes that represent the core data structures.
 
 ## Block Model
 
-- `block.ts` - Main Block class with type-checking methods (`isText()`, `isLayout()`, `isFile()`, etc.) and capability methods (`canHaveChildren()`, `canTurn()`, `canHaveMarks()`)
-- `blockStructure.ts` - Block tree structure
+- `block.ts` — Main Block class with type-checking methods (`isText()`, `isLayout()`, `isFile()`, etc.) and capability methods (`canHaveChildren()`, `canTurn()`, `canHaveMarks()`)
+- `block.test.ts` — Tests for Block model
+- `blockStructure.ts` — Block tree structure
 
 ## Content Models (`content/`)
 
@@ -27,13 +28,24 @@ Type-specific block content classes, instantiated by Block constructor based on 
 
 ## Other Models
 
-- `account.ts` - User account data
-- `view.ts` - Dataview view configuration
-- `viewRelation.ts` - View relation settings
-- `filter.ts` - Dataview filter
-- `sort.ts` - Dataview sort
-- `chatMessage.ts` - Chat message model
-- `notification.ts` - Notification model
-- `membershipData.ts`, `membershipProduct.ts` - Membership data
+| File | Purpose |
+|------|---------|
+| `account.ts` | User account data |
+| `view.ts` | Dataview view configuration |
+| `view.test.ts` | Tests for View model |
+| `viewRelation.ts` | View relation settings |
+| `filter.ts` | Dataview filter |
+| `filter.test.ts` | Tests for Filter model |
+| `sort.ts` | Dataview sort |
+| `sort.test.ts` | Tests for Sort model |
+| `chatMessage.ts` | Chat message model |
+| `commentMessage.ts` | Comment message model (text, style, marks, parts) |
+| `notification.ts` | Notification model |
+| `membershipData.ts` | Membership data |
+| `membershipProduct.ts` | Membership product |
+
+## Exported Models (via `index.ts`)
+
+`Account`, `Block`, `BlockStructure`, `Notification`, `ChatMessage`, `CommentMessage`, `View`, `ViewRelation`, `Filter`, `Sort`, `MembershipData`, `MembershipProduct`.
 
 All models use `makeObservable` for MobX reactivity.

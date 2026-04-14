@@ -1165,6 +1165,8 @@ class Dispatcher {
 									...mapped.message.content,
 									parts: U.Comment.blocksToParts(mapped.message.blocks, mapped.message.content),
 								},
+								attachments: mapped.message.attachments || [],
+								reactions: mapped.message.reactions || [],
 							};
 
 							if (mapped.message.replyToMessageId) {

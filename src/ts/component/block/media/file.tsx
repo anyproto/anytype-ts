@@ -1,5 +1,5 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
-import { InputWithFile, IconObject, Error, ObjectName, Icon, } from 'Component';
+import { InputWithFile, IconObject, Error, ObjectName, Icon, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -42,13 +42,10 @@ const BlockFile = forwardRef<{}, I.BlockComponent>((props, ref) => {
 	};
 
 	let element = null;
-	if (object.isDeleted) {
-		element = (
-			<div className="deleted">
-				<Icon name="common/ghost" className="ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
-			</div>
-		);
+	const typeName = translate('blockNameFile');
+
+	if (object.isDeleted || object.isArchived) {
+		element = <MediaState object={object} rootId={rootId} typeName={typeName} />;
 	} else {
 		switch (state) {
 			default:
@@ -57,19 +54,19 @@ const BlockFile = forwardRef<{}, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
+						<InputWithFile
+							block={block}
 							iconParam={{ name: 'menu/block/media/file' }}
-							textFile={translate('blockFileUpload')} 
-							onChangeUrl={onChangeUrl} 
-							onChangeFile={onChangeFile} 
-							readonly={readonly} 
+							textFile={translate('blockFileUpload')}
+							onChangeUrl={onChangeUrl}
+							onChangeFile={onChangeFile}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.FileState.Done: {
 				element = (
 					<div

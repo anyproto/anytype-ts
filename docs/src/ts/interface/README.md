@@ -8,6 +8,7 @@ Type definitions for the entire application. Accessed via `I.*` import alias.
 |------|---------|
 | `common.ts` | Core enums: BlockType, ObjectLayout, SortType, FilterCondition, TextStyle, etc. |
 | `menu.ts` | MenuParam, Menu, MenuRef, MenuItem interfaces |
+| `menuData.ts` | Per-menu-component data interfaces (MenuSearchObjectData, MenuSearchTextData, MenuSearchChatData, etc.) |
 | `popup.ts` | Popup, PopupParam interfaces |
 | `object.ts` | Object-related interfaces |
 | `account.ts` | Account interfaces |
@@ -27,11 +28,21 @@ Type definitions for the entire application. Accessed via `I.*` import alias.
 ## Block Interfaces (`block/`)
 
 Per-block-type interfaces with content types and enums:
-- `index.ts` - Block, BlockComponent, BlockRef base interfaces
-- `text.ts` - TextStyle, MarkType, ContentText
-- `file.ts` - FileType, FileState, FileStyle, ContentFile
-- `link.ts` - LinkCardStyle, LinkIconSize, ContentLink
-- `embed.ts` - EmbedProcessor enum
-- `dataview.ts` - ViewType, FilterCondition, ContentDataview
-- `widget.ts` - WidgetLayout, WidgetSection, WidgetComponent
-- And more (div, layout, relation, bookmark, table)
+
+| File | Defines |
+|------|---------|
+| `index.ts` | Block, BlockComponent, BlockRef base interfaces |
+| `text.ts` | TextStyle, MarkType, ContentText |
+| `file.ts` | FileType, FileState, FileStyle, ContentFile |
+| `link.ts` | LinkCardStyle, LinkIconSize, ContentLink |
+| `embed.ts` | EmbedProcessor enum |
+| `dataview.ts` | ViewType, FilterCondition, ContentDataview |
+| `widget.ts` | WidgetLayout, WidgetSection, WidgetComponent |
+| `chat.ts` | ChatButton, AttachmentType, ChatState, ChatStoreState enums/interfaces |
+| `comment.ts` | CommentTargetType, CommentContentPart, CommentMessage interfaces |
+| `icon.ts` | ContentIcon, BlockIcon interfaces |
+| `table.ts` | BlockComponentTable, ContentTableRow interfaces |
+| `div.ts` | ContentDiv |
+| `layout.ts` | ContentLayout |
+| `relation.ts` | ContentRelation |
+| `bookmark.ts` | ContentBookmark |

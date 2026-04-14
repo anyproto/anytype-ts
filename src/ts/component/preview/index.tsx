@@ -116,6 +116,9 @@ const PreviewIndex = forwardRef(() => {
 			return;
 		};
 
+		// Make visible before measuring so offsetWidth/offsetHeight return real values
+		U.Dom.css(node, { display: 'block', opacity: '0' });
+
 		const { ww, wh } = U.Dom.getWindowDimensions();
 		const st = window.scrollY;
 		const ow = node.offsetWidth;
@@ -186,7 +189,7 @@ const PreviewIndex = forwardRef(() => {
 		cssLeft = Math.max(BORDER, cssLeft);
 		cssLeft = Math.min(ww - ow - BORDER, cssLeft);
 
-		U.Dom.css(node, { display: 'block', opacity: '0', left: `${cssLeft}px`, top: `${cssTop}px`, transform: cssTransform });
+		U.Dom.css(node, { left: `${cssLeft}px`, top: `${cssTop}px`, transform: cssTransform });
 
 		if (!preview.noAnimation) {
 			U.Dom.addClass(node, 'anim');
@@ -265,6 +268,7 @@ const PreviewIndex = forwardRef(() => {
 			ref={nodeRef}
 			id="preview"
 			className={cn.join(' ')}
+			onMouseEnter={() => Preview.previewCancelHide()}
 			onMouseLeave={() => Preview.previewHide(true)}
 			onMouseDown={onMouseDown}
 		>
