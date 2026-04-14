@@ -334,13 +334,12 @@
 			.icon.plus { width: 20px; height: 20px; }
 			.icon.plus:hover { background-color: transparent; }
 		}
-		.dataviewControls:not(.isCollapsed) {
-			> .sides > .side.right .collapsible { margin-right: 4px; }
-		}
-		.dataviewControls.isCollapsed {
-			.icon.expandControls { transform: rotateZ(180deg); }
-
-			> .sides > .side.right .collapsible { width: 0px; }
+		.dataviewControls {
+			> .sides > .side.right {
+				.collapsible:not(.isCollapsed) { margin-right: 4px; }
+				.collapsible.isCollapsed { width: 0px; }
+				.icon.expandControls.isCollapsed { transform: rotateZ(180deg); }
+			}
 		}
 		.dataviewControls::after { display: none !important; }
 
@@ -353,10 +352,13 @@
 		}
 	}
 
-	.block.blockDataview.isInline.isVertical {
+	.block.blockDataview.isInline {
+		.dataviewControls > .sides > .side.right { position: absolute; right: 0px; background-color: var(--color-bg-primary); }
+	}
+
+	.block.blockDataview.isInline.isNarrow {
 		.dataviewControls {
-			.btn-filter, .btn-sort { display: none; }
-			.icon.expandControls { display: none; }
+			.icon.expandControls, .collapsible { display: none !important; }
 		}
 	}
 

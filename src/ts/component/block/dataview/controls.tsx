@@ -53,10 +53,6 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	if (isInline) {
 		cn.push('isInline');
-
-		if (isCollapsed) {
-			cn.push('isCollapsed');
-		};
 	};
 
 	if (isAllowedTemplate) {
@@ -69,6 +65,21 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	const collapsibleRef = useRef(null);
 
+	const getCollapsibleWidth = (el: HTMLElement): number => {
+		const children = Array.from(el.children) as HTMLElement[];
+		const gap = 4;
+		let width = 0;
+
+		children.forEach((child, i) => {
+			width += child.offsetWidth;
+			if (i < children.length - 1) {
+				width += gap;
+			};
+		});
+
+		return width;
+	};
+
 	const onToggleCollapse = () => {
 		const el = collapsibleRef.current as HTMLElement;
 
@@ -76,8 +87,14 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 			return;
 		};
 
+		const onEnd = () => {
+			el.style.width = '';
+			el.removeEventListener('transitionend', onEnd);
+		};
+
 		if (isCollapsed) {
-			const width = el.scrollWidth;
+			U.Dom.removeClass(el, 'isCollapsed');
+			const width = getCollapsibleWidth(el);
 
 			setIsCollapsed(false);
 			Storage.setToggle(rootId, collapsedKey, false);
@@ -85,12 +102,6 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 			el.style.width = '0px';
 			void el.offsetWidth;
 			el.style.width = `${width}px`;
-
-			const onEnd = () => {
-				el.style.width = '';
-				el.removeEventListener('transitionend', onEnd);
-			};
-			el.addEventListener('transitionend', onEnd);
 		} else {
 			el.style.width = `${el.offsetWidth}px`;
 			void el.offsetWidth;
@@ -98,11 +109,8 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 			setIsCollapsed(true);
 			Storage.setToggle(rootId, collapsedKey, true);
+			U.Dom.addClass(el, 'isCollapsed');
 
-			const onEnd = () => {
-				el.style.width = '';
-				el.removeEventListener('transitionend', onEnd);
-			};
 			el.addEventListener('transitionend', onEnd);
 		};
 	};
@@ -503,7 +511,14 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 		// Force synchronous reflow before measuring widths
 		void node.offsetWidth;
 
-		const width = Math.ceil((sideLeft?.offsetWidth ?? 0) + (sideRight?.offsetWidth ?? 0));
+		let rightWidth = sideRight?.offsetWidth ?? 0;
+
+		if (isInline && sideRight) {
+			const collapsible = U.Dom.select('.collapsible', sideRight);
+			rightWidth -= collapsible?.offsetWidth ?? 0;
+		};
+
+		const width = Math.ceil((sideLeft?.offsetWidth ?? 0) + rightWidth);
 
 		if (sideLeft) {
 			U.Dom.css(sideLeft, { flexGrow: '' });
@@ -596,6 +611,20 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 
 	}, []);
 
+	useEffect(() => {
+		const el = collapsibleRef.current as HTMLElement;
+
+		if (!el) {
+			return;
+		};
+
+		if (isCollapsed) {
+			U.Dom.addClass(el, 'isCollapsed');
+		} else {
+			el.style.width = `${getCollapsibleWidth(el)}px`;
+		};
+	}, []);
+
 	useEffect(() => resize());
 
 	useImperativeHandle(ref, () => ({
@@ -656,7 +685,7 @@ const Controls = forwardRef<ControlsRefProps, Props>((props, ref) => {
 				<div id="dataviewControlsSideRight" className="side right">
 					{isInline ? (
 						<Icon
-							className="expandControls"
+							className={[ 'expandControls', (isCollapsed ? 'isCollapsed' : '') ].join(' ')}
 							name="arrow/doubleChevron"
 							size={28}
 							withBackground={true}

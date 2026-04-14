@@ -1604,7 +1604,10 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 				const obj = U.Dom.get(`block-${block.id}`);
 
 				if (obj && node) {
-					U.Dom.toggleClass(obj, 'isVertical', U.Dom.contentWidth(node) <= getWrapperWidth() / 2);
+					const cw = U.Dom.contentWidth(node);
+
+					U.Dom.toggleClass(obj, 'isVertical', cw <= getWrapperWidth() / 2);
+					U.Dom.toggleClass(obj, 'isNarrow', cw <= 250);
 				};
 			};
 
