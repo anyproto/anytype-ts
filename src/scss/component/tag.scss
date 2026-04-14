@@ -7,9 +7,8 @@
 }
 .tagItem {
 	.inner { display: inline-block; width: 100%; @include text-overflow-nw; vertical-align: top; }
-	&.canEdit { padding-right: 20px; }
 
-	.tagRemove { width: 20px; height: 20px; position: absolute; right: 0px; top: 0px; }
+	.tagRemove { width: 20px; height: 100%; position: absolute; right: 0px; top: 0px; }
 	.tagRemove {
 		&:hover { opacity: 0.8; }
 		img { width: 10px; height: 10px; position: absolute; top: 50%; left: 50%; margin: -5px 0px 0px -5px; }
@@ -17,6 +16,9 @@
 
 	&.isSmall { height: 20px; border-radius: 10px; @include text-small; line-height: 20px; }
 	&.isMultiSelect { padding: 0px 6px; }
+	&.isMultiSelect {
+		&.canEdit { padding-right: 20px; }
+	}
 
 	&.isSelect { 
 		border: 1px solid var(--color-shape-secondary); background: var(--color-bg-primary) !important; padding: 0px 8px; 
