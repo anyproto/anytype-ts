@@ -65,7 +65,9 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	};
 
 	const onDashboard = () => {
-		U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
+		if (!spaceview.isOneToOne) {
+			U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
+		};
 	};
 
 	const onType = (e: any) => {
