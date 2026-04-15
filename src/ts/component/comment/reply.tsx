@@ -160,8 +160,15 @@ const CommentReply = (props: Props) => {
 		setIsEditing(false);
 	}, []);
 
-	const onSaveEdit = useCallback((newParts: I.CommentContentPart[]) => {
+	const onSaveEdit = useCallback((newParts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[], attachmentObjects?: any[]) => {
 		const blocks = U.Comment.partsToChatBlocks(newParts);
+		const newAttachments = attachments || [];
+
+		if (attachmentObjects?.length) {
+			for (const obj of attachmentObjects) {
+				S.Detail.update(subId, { id: obj.id, details: obj }, false);
+			};
+		};
 
 		C.ChatEditMessageContent(targetId, id, {
 			content: {
@@ -170,7 +177,7 @@ const CommentReply = (props: Props) => {
 				marks: [],
 			},
 			blocks,
-			attachments: message.attachments || [],
+			attachments: newAttachments,
 			reactions: message.reactions || [],
 		} as any, (response: any) => {
 			if (response.error.code) {
@@ -188,9 +195,10 @@ const CommentReply = (props: Props) => {
 					marks: [],
 					parts: newParts,
 				},
+				attachments: newAttachments,
 			} as any);
 		});
-	}, [ targetId, id, parentId, message.attachments, message.reactions ]);
+	}, [ targetId, id, parentId, subId, message.reactions ]);
 
 	const onDelete = useCallback(() => {
 		S.Popup.open('confirm', {
