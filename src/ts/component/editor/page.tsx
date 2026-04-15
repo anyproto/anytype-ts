@@ -488,7 +488,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		if ((e.target as HTMLElement)?.closest?.('.commentSection')) {
+		if ((e.target as HTMLElement)?.closest?.('.commentSection, .menuWrap')) {
 			return;
 		};
 
@@ -2556,18 +2556,15 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
-		S.Menu.closeAll();
-		S.Popup.closeAll([ 'preview' ]);
-
 		let blockIds = [];
 		if (ids.length) {
 			blockIds = [ ...ids ];
-		} else 
+		} else
 		if (focused) {
 			blockIds = [ focused.id ];
 		};
 
-		blockIds = blockIds.filter(id => {  
+		blockIds = blockIds.filter(id => {
 			const block = S.Block.getLeaf(rootId, id);
 			return block && block.isDeletable();
 		});
@@ -2575,6 +2572,9 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (!blockIds.length) {
 			return;
 		};
+
+		S.Menu.closeAll();
+		S.Popup.closeAll([ 'preview' ]);
 
 		focus.clear(true);
 
