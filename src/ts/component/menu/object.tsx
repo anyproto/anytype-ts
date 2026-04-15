@@ -520,6 +520,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'editType': {
+				S.Popup.close('preview');
 				U.Object.editType(isType ? rootId : object.type, isPopup, true);
 				break;
 			};
