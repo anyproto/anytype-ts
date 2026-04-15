@@ -224,6 +224,7 @@
 	.commentEditor-italic { font-style: italic; }
 	.commentEditor-underline { text-decoration: underline; }
 	.commentEditor-strikethrough { text-decoration: line-through; }
+	.commentEditor-strikethrough.commentEditor-underline { text-decoration: line-through underline; }
 	.commentEditor-code {
 		display: inline; font-family: 'Plex'; border-radius: 4px;
 		background: var(--color-shape-highlight-medium); padding: 0px 4px;
