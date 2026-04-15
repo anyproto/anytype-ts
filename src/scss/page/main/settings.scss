@@ -675,7 +675,7 @@
             &.options {
                 .item { font-weight: 500; display: flex; align-items: center; justify-content: space-between; }
                 .item.selected {
-                    &:after { content: ''; width: 19px; height: 20px; }
+                    .icon.check { color: var(--color-control-accent); }
                 }
             }
 
