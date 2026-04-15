@@ -1772,6 +1772,7 @@ const SelectionToolbarPlugin = () => {
 	useEffect(() => {
 		let isMouseDown = false;
 		let pendingOpen = false;
+		let openTimer = 0;
 
 		const root = editor.getRootElement();
 
@@ -2059,7 +2060,7 @@ const SelectionToolbarPlugin = () => {
 
 			if (pendingOpen) {
 				pendingOpen = false;
-				window.setTimeout(() => openToolbar(), 50);
+				openTimer = window.setTimeout(() => openToolbar(), 50);
 			};
 		};
 
@@ -2091,6 +2092,7 @@ const SelectionToolbarPlugin = () => {
 
 		return () => {
 			removeListener();
+			window.clearTimeout(openTimer);
 
 			if (root) {
 				root.removeEventListener('mousedown', onMouseDown);
