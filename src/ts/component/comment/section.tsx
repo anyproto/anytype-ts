@@ -688,6 +688,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 						<Icon name="comment/discussion" className="discussion" size={18} />
 						<span className="count">{counterLabel}</span>
 					</div>
+					<div className="grad" />
 				</div>
 			</div>
 		</>

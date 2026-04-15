@@ -39,7 +39,8 @@
 			}
 			.cellContent.disabled { opacity: 1; }
 
-			.cellContent:not(.disabled):hover, .cellContent:not(.disabled).hover { background: var(--color-shape-highlight-medium); }
+			.cellContent:not(.disabled):hover, 
+			.cellContent:not(.disabled).hover { background: var(--color-shape-highlight-medium); }
 			.cellContent {
 				.element { line-height: inherit; background: none !important; cursor: default !important; }
 				.iconObject { display: none; margin: 0px; }
