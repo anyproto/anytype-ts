@@ -340,6 +340,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const onPaste = (e: any) => {
 		e.preventDefault();
+		e.stopPropagation();
 
 		const range = getRange();
 		if (!range) {

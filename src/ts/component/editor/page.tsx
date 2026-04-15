@@ -834,6 +834,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			// Copy/Cut
 			keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+				e.stopPropagation();
 				onCopy(e, pressed.match('x') ? I.ClipboardMode.Cut : I.ClipboardMode.Copy);
 			});
 

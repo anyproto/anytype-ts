@@ -1284,6 +1284,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onPasteHandler = (e: any) => {
 		e.persist();
 		e.preventDefault();
+		e.stopPropagation();
 
 		preventMenu.current = true;
 
