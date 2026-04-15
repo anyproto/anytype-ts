@@ -315,6 +315,12 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		if (focusOnMount && !readonly) {
 			setFocus();
 		};
+
+		return () => {
+			if (isFocused.current) {
+				keyboard.setFocus(false);
+			};
+		};
 	}, []);
 
 	const isAtDomEnd = (): boolean => {
