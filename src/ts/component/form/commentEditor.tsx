@@ -2019,6 +2019,7 @@ const SelectionToolbarPlugin = () => {
 
 				if (S.Menu.isOpen('commentToolbar')) {
 					S.Menu.updateData('commentToolbar', { getActiveFormats, getBlockStyle, blockStyle: getBlockStyle() });
+					S.Menu.resizeAll();
 					return;
 				};
 
