@@ -268,9 +268,13 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		storeHandler('keydown', e => onKeyDownEditor(e));
 		storeHandler('paste', (e: any) => {
-			if (!keyboard.isFocused) {
-				onPasteEvent(e, props);
+			if (keyboard.isFocused) {
+				return;
 			};
+			if ((e.target as HTMLElement)?.closest?.('.commentSection')) {
+				return;
+			};
+			onPasteEvent(e, props);
 		});
 
 		storeHandler('focus', () => {
@@ -481,6 +485,10 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (isPopup !== keyboard.isPopup()) {
+			return;
+		};
+
+		if ((e.target as HTMLElement)?.closest?.('.commentSection')) {
 			return;
 		};
 
