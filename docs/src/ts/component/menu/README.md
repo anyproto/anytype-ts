@@ -1,6 +1,6 @@
 # menu/ - Context Menus and Dropdowns
 
-Comprehensive menu system with **71 TSX files** across 15 subdirectories.
+Comprehensive menu system with **72 TSX files** across 15 subdirectories.
 
 ## Architecture
 
@@ -20,7 +20,7 @@ Each menu component exposes a `MenuRef` interface via `useImperativeHandle`:
 ## Menu Categories
 
 ### Block Menus (`block/`)
-`context`, `add`, `style`, `color`, `background`, `cover`, `align`, `link` (with `link/settings`), `mention`, `layout`, `latex`, `action`, `emoji`, `relation/edit`
+`context`, `add`, `style`, `color`, `background`, `cover`, `align`, `link` (with `link/settings`), `mention`, `layout`, `latex`, `action`, `emoji`, `embedKroki`, `relation/edit`
 
 ### Dataview Menus (`dataview/`)
 - **Relations**: `relation/list`, `relation/edit`
