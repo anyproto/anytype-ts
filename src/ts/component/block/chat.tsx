@@ -124,7 +124,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		};
 		reactionUpdateHandlerRef.current = () => scrollToBottomCheck();
 		focusHandlerRef.current = () => {
-			// Re-render from windowIsFocused observable can reset scrollTop — restore it after paint
+			// Re-render from windowIsFocused observable can reset scrollTop — restore it after paint.
+			// readScrolledMessages must run AFTER the restore write, because its state mutations
+			// (setReadMessageStatus / setReadMentionStatus) trigger MobX re-renders that would
+			// otherwise land with scrollTop=0 before the restore takes effect.
 			const prevTop = top.current;
 			const wasBottom = isBottom.current;
 
@@ -138,9 +141,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 						container.scrollTop = prevTop;
 					};
 				};
-			});
 
-			readScrolledMessages();
+				readScrolledMessages();
+			});
 		};
 
 		U.Dom.addEvents(window, [

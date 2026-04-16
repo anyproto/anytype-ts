@@ -2031,6 +2031,15 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onPasteEvent = (e: any, props: any, data?: any) => {
 		const { isPopup } = props;
 
+		// Dedupe: if the same native paste event already had preventDefault called
+		// (by a block-level React handler or a previous pass through this fn), skip.
+		// Prevents duplicate C.BlockPaste when React-synthetic and window listeners
+		// both reach here, or when the prop-chain forwards the event more than once.
+		const native = e?.nativeEvent ?? e;
+		if (!data && native?.defaultPrevented) {
+			return;
+		};
+
 		if (isPopup !== keyboard.isPopup()) {
 			return;
 		};
