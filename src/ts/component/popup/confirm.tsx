@@ -86,7 +86,7 @@ const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
-			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? 1 : -1;
+			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? -1 : 1;
 
 			if (buttons.length < 2) {
 				return;
@@ -145,6 +145,14 @@ const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 		setHighlight();
 	};
 
+	const onMouseLeave = () => {
+		if (!nodeRef.current) {
+			return;
+		};
+
+		U.Dom.selectAll('.button.hover', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'hover'));
+	};
+
 	const setHighlight = () => {
 		if (!nodeRef.current) {
 			return;
@@ -176,7 +184,7 @@ const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 
 	
 	return (
-		<div ref={nodeRef} className={[ 'wrap', (storageKey ? 'withCheckbox' : '') ].join(' ')}>
+		<div ref={nodeRef} className={cn.join(' ')}>
 			{iconElement ? (
 				<div className="iconWrapper">
 					{iconElement}
@@ -204,8 +212,8 @@ const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 			) : ''}
 
 			<div className="buttons">
-				{canConfirm ? <Button text={textConfirm} color={colorConfirm} size={buttonSize} onClick={onConfirmHandler} onMouseEnter={onMouseEnter} /> : ''}
-				{canCancel ? <Button text={textCancel} color={colorCancel} size={buttonSize} onClick={onCancelHandler} onMouseEnter={onMouseEnter} /> : ''}
+				{canConfirm ? <Button text={textConfirm} color={colorConfirm} size={buttonSize} onClick={onConfirmHandler} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} /> : ''}
+				{canCancel ? <Button text={textCancel} color={colorCancel} size={buttonSize} onClick={onCancelHandler} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} /> : ''}
 			</div>
 
 			<Error text={errorText} />
