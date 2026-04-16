@@ -37,10 +37,6 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		load(true);
 	}, [ filterText ]);
 
-	useEffect(() => {
-		props.setActive();
-	}, [ dummy, isLoading ]);
-
 	const keydownHandler = useRef(null);
 
 	const rebind = () => {
@@ -156,6 +152,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
 			position();
+			window.setTimeout(() => props.setActive(), 15);
 			callBack?.(null);
 		});
 	};
