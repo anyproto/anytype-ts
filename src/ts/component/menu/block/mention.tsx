@@ -43,7 +43,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		unbind();
 		keydownHandler.current = (e: any) => props.onKeyDown(e);
 		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
-		window.setTimeout(() => props.setActive(), 15);
+		window.requestAnimationFrame(() => window.requestAnimationFrame(() => props.setActive()));
 	};
 
 	const unbind = () => {
@@ -152,7 +152,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
 			position();
-			window.setTimeout(() => props.setActive(), 15);
+			window.requestAnimationFrame(() => window.requestAnimationFrame(() => props.setActive()));
 			callBack?.(null);
 		});
 	};
