@@ -9,16 +9,17 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 	const phraseRef = useRef(null);
 	const [ n, setN ] = useState(0);
 
-	const setHighlight = () => {
+	const setHighlight = (index: number) => {
 		if (!buttonsRef.current) {
 			return;
 		};
 
 		const buttons = U.Dom.selectAll('.button', buttonsRef.current);
 
-		if (buttons[n]) {
-			U.Dom.selectAll('.hover', buttonsRef.current).forEach(el => U.Dom.removeClass(el, 'hover'));
-			U.Dom.addClass(buttons[n], 'hover');
+		U.Dom.selectAll('.hover', buttonsRef.current).forEach(el => U.Dom.removeClass(el, 'hover'));
+
+		if (buttons[index]) {
+			U.Dom.addClass(buttons[index], 'hover');
 		};
 	};
 
@@ -34,23 +35,25 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (arrow) => {
-			const dir = [ 'arrowup', 'arrowleft' ].includes(arrow) ? 1 : -1;
+			const dir = [ 'arrowup', 'arrowleft' ].includes(arrow) ? -1 : 1;
 			const buttons = buttonsRef.current ? U.Dom.selectAll('.button', buttonsRef.current) : [];
 
 			if (buttons.length < 2) {
 				return;
 			};
 
-			let next = n + dir;
-			if (next < 0) {
-				next = buttons.length - 1;
-			};
-			if (next > buttons.length - 1) {
-				next = 0;
-			};
+			setN((prev) => {
+				let next = prev + dir;
+				if (next < 0) {
+					next = buttons.length - 1;
+				};
+				if (next > buttons.length - 1) {
+					next = 0;
+				};
 
-			setN(next);
-			setHighlight();
+				setHighlight(next);
+				return next;
+			});
 		});
 	};
 
@@ -78,9 +81,18 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onMouseEnter = (e: any) => {
 		const buttons = buttonsRef.current ? U.Dom.selectAll('.button', buttonsRef.current) : [];
+		const index = Array.from(buttons).indexOf(e.currentTarget);
 
-		setN(Array.from(buttons).indexOf(e.currentTarget));
-		setHighlight();
+		setN(index);
+		setHighlight(index);
+	};
+
+	const onMouseLeave = () => {
+		if (!buttonsRef.current) {
+			return;
+		};
+
+		U.Dom.selectAll('.hover', buttonsRef.current).forEach(el => U.Dom.removeClass(el, 'hover'));
 	};
 
 	const init = () => {
@@ -88,7 +100,7 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		setHighlight();
+		setHighlight(0);
 
 		Renderer.send('keytarGet', account.id).then((value: string) => {
 			if (!value) {
@@ -139,8 +151,8 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 			</div>
 
 			<div ref={buttonsRef} className="buttons">
-				<Button text={translate('commonShowKey')} color="accent" size={36} onClick={onCopy} onMouseEnter={onMouseEnter} />
-				<Button text={translate('popupLogoutLogoutButton')} color="red" size={36} onClick={onLogout} onMouseEnter={onMouseEnter} />
+				<Button text={translate('commonShowKey')} color="accent" size={36} onClick={onCopy} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} />
+				<Button text={translate('popupLogoutLogoutButton')} color="red" size={36} onClick={onLogout} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} />
 			</div>
 		</div>
 	);

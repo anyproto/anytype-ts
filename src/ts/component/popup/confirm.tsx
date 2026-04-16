@@ -212,8 +212,26 @@ const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 			) : ''}
 
 			<div className="buttons">
-				{canConfirm ? <Button text={textConfirm} color={colorConfirm} size={buttonSize} onClick={onConfirmHandler} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} /> : ''}
-				{canCancel ? <Button text={textCancel} color={colorCancel} size={buttonSize} onClick={onCancelHandler} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} /> : ''}
+				{canConfirm ? (
+					<Button 
+						text={textConfirm} 
+						color={colorConfirm} 
+						size={buttonSize} 
+						onClick={onConfirmHandler} 
+						onMouseEnter={onMouseEnter} 
+						onMouseLeave={onMouseLeave} 
+					/>
+				) : ''}
+				{canCancel ? (
+					<Button 
+						text={textCancel} 
+						color={colorCancel} 
+						size={buttonSize} 
+						onClick={onCancelHandler} 
+						onMouseEnter={onMouseEnter} 
+						onMouseLeave={onMouseLeave} 
+					/> 
+				) : ''}
 			</div>
 
 			<Error text={errorText} />
