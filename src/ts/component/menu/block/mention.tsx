@@ -39,7 +39,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		props.setActive();
-	});
+	}, [ dummy, isLoading ]);
 
 	const keydownHandler = useRef(null);
 
