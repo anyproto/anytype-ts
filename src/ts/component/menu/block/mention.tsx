@@ -36,7 +36,11 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		offset.current = 0;
 		load(true);
 	}, [ filterText ]);
-	
+
+	useEffect(() => {
+		props.setActive();
+	});
+
 	const keydownHandler = useRef(null);
 
 	const rebind = () => {
