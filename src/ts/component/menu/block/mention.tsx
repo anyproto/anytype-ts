@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
+import raf from 'raf';
 
 import { MenuItemVertical, Loader, ObjectName, ObjectType, EmptySearch } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
@@ -10,7 +11,7 @@ const LIMIT_HEIGHT = 10;
 
 const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, getContainer, close, position } = props;
+	const { param, getId, getContainer, close, position, setActive } = props;
 	const { data, className, classNameWrap } = param;
 	const { pronounId, withCaption, canAdd, skipIds, onChange } = data;
 	const { filterText, space } = S.Common;
@@ -43,7 +44,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		unbind();
 		keydownHandler.current = (e: any) => props.onKeyDown(e);
 		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
-		window.requestAnimationFrame(() => window.requestAnimationFrame(() => props.setActive()));
+		raf(() => raf(() => setActive()));
 	};
 
 	const unbind = () => {
@@ -152,7 +153,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
 			position();
-			window.requestAnimationFrame(() => window.requestAnimationFrame(() => props.setActive()));
+			raf(() => raf(() => setActive()));
 			callBack?.(null);
 		});
 	};
