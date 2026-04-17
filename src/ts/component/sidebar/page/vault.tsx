@@ -397,6 +397,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		let chatName = null;
 		let time = null;
 		let last = null;
+		
 		const icons = [];
 
 		if (targetSpaceId == space) {

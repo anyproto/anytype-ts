@@ -1090,7 +1090,7 @@ class UtilMenu {
 				return {
 					...it,
 					counters,
-					hasCounter: counters.mentionCounter || counters.messageCounter,
+					hasCounter: counters.mentionCounter || counters.messageCounter || counters.reactionCounter,
 					lastMessage: S.Chat.getSpaceLastMessage(it.targetSpaceId),
 					isPinned: !!it.orderId,
 				};
