@@ -1264,7 +1264,7 @@
 	"popupSpaceCreateStep1Placeholder": "Search by name or handle",
 	"popupSpaceCreateStep2Create": "Create",
 	"popupSpaceCreateOptionalMembers": "Optional — you can add members later",
-	"popupSpaceCreateSeatCounters": "%s of %s Editors, %s of %s Viewers",
+	"popupSpaceCreateSeatCounters": "%d of %d Editors, %d of %d Viewers",
 	"popupSpaceCreateOffline": "Members will be invited when you're back online",
 
 	"settingsSpaceHomeTitle": "Create Home",
