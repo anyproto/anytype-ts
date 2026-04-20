@@ -40,6 +40,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const scrollTopRef = useRef(0);
 	const isEnterProcessing = useRef(false);
 	const scrollHandlerRef = useRef<(() => void) | null>(null);
+	const windowHandlersRef = useRef<Map<string, (e: any) => void>>(new Map());
 
 	useEffect(() => {
 		open();
@@ -227,17 +228,12 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const unbind = () => {
-		const ns = `editor${U.Dom.getEventNamespace(isPopup)}`;
-		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus', 'sidebarResize' ];
 		const selection = S.Common.getRef('selectionProvider');
 
-		events.forEach(it => {
-			const handler = (window as any)[`_editorHandler_${it}_${ns}`];
-			if (handler) {
-				U.Dom.removeEvent(window, it, handler);
-				delete (window as any)[`_editorHandler_${it}_${ns}`];
-			};
+		windowHandlersRef.current.forEach((handler, event) => {
+			U.Dom.removeEvent(window, event, handler);
 		});
+		windowHandlersRef.current.clear();
 
 		const sc = U.Dom.getScrollContainer(isPopup);
 		if (sc && scrollHandlerRef.current) {
@@ -251,14 +247,17 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const rebind = () => {
 		const selection = S.Common.getRef('selectionProvider');
-		const ns = `editor${U.Dom.getEventNamespace(isPopup)}`;
 		const sc = U.Dom.getScrollContainer(isPopup);
 		const readonly = isReadonly();
 
 		unbind();
 
 		const storeHandler = (event: string, handler: (e: any) => void) => {
-			(window as any)[`_editorHandler_${event}_${ns}`] = handler;
+			const existing = windowHandlersRef.current.get(event);
+			if (existing) {
+				U.Dom.removeEvent(window, event, existing);
+			};
+			windowHandlersRef.current.set(event, handler);
 			U.Dom.addEvent(window, event, handler);
 		};
 
