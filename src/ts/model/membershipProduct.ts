@@ -20,6 +20,7 @@ class MembershipProduct implements I.MembershipProduct {
 	offer = '';
 	pricesYearly: I.MembershipAmount[] = [];
 	pricesMonthly: I.MembershipAmount[] = [];
+	pricesLifetime: I.MembershipAmount[] = [];
 	features = {
 		storageBytes: 0,
 		spaceReaders: 0,
@@ -51,6 +52,11 @@ class MembershipProduct implements I.MembershipProduct {
 			amountCents: Number(it.amountCents) || 0,
 		})) : [];
 
+		this.pricesLifetime = Array.isArray(props.pricesLifetime) ? props.pricesLifetime.map(it => ({
+			currency: String(it.currency || ''),
+			amountCents: Number(it.amountCents) || 0,
+		})) : [];
+
 		this.features = {
 			storageBytes: Number(props.features?.storageBytes) || 0,
 			spaceReaders: Number(props.features?.spaceReaders) || 0,
@@ -72,6 +78,7 @@ class MembershipProduct implements I.MembershipProduct {
 			offer: observable,
 			pricesYearly: observable,
 			pricesMonthly: observable,
+			pricesLifetime: observable,
 			features: observable,
 		});
 

@@ -2902,6 +2902,7 @@
 	"membershipPeriod1": "monthly",
 	"membershipPeriod2": "annual",
 	"membershipPeriod3": "three years",
+	"membershipPeriod4": "lifetime",
 
 	"paymentProvider0": "None",
 	"paymentProvider1": "Stripe",

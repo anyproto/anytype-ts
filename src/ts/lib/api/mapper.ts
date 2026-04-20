@@ -635,6 +635,7 @@ export const Mapper = {
 				offer: obj.offer,
 				pricesYearly: (obj.pricesYearly || []).map(Mapper.From.MembershipAmount),
 				pricesMonthly: (obj.pricesMonthly || []).map(Mapper.From.MembershipAmount),
+				pricesLifetime: (obj.pricesLifetime || []).map(Mapper.From.MembershipAmount),
 				features: {
 					storageBytes: features.storageBytes,
 					spaceReaders: features.spaceReaders,
