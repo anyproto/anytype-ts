@@ -325,6 +325,7 @@ class UtilData {
 			return;
 		};
 
+		C.ObjectOpen(U.Object.getPersonalWidgetsId(space), '', space);
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
 				this.initPin(() => {

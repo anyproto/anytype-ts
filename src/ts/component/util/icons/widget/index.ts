@@ -11,6 +11,7 @@ import Set from './set';
 import SectionMore from './sectionMore';
 import SidebarToggle from './sidebarToggle';
 import VaultToggle from './vaultToggle';
+import Member from './member';
 
 registerIcon('widget/blank', Blank);
 registerIcon('widget/collapse', Collapse);
@@ -24,3 +25,4 @@ registerIcon('widget/set', Set);
 registerIcon('widget/sectionMore', SectionMore);
 registerIcon('widget/sidebarToggle', SidebarToggle);
 registerIcon('widget/vaultToggle', VaultToggle);
+registerIcon('widget/member', Member);

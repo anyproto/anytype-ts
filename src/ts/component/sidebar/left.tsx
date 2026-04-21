@@ -3,6 +3,7 @@ import raf from 'raf';
 import { SidebarProgress } from 'Component';
 
 import PageWidget from './page/widget';
+import PageWidgetManage from './page/widgetManage';
 import PageSettingsIndex from './page/settings/index';
 import PageSettingsLibrary from './page/settings/library';
 import PageVault from './page/vault';
@@ -10,6 +11,7 @@ import * as I from 'Interface';
 
 const Components = {
 	widget:				 PageWidget,
+	widgetManage:		 PageWidgetManage,
 	vault:				 PageVault,
 	settings:			 PageSettingsIndex,
 	settingsSpace:		 PageSettingsIndex,

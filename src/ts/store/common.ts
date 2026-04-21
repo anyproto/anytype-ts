@@ -1236,18 +1236,30 @@ class CommonStore {
 	widgetSectionsInit () {
 		const saved = Storage.get('widgetSections') || [];
 		const full = [ ...saved ];
-		const order = [ 
-			I.WidgetSection.Unread, 
-			I.WidgetSection.Pin, 
-			I.WidgetSection.RecentEdit, 
-			I.WidgetSection.Type, 
+		const order = [
+			I.WidgetSection.Unread,
+			I.WidgetSection.Pin,
+			I.WidgetSection.MyFavorites,
+			I.WidgetSection.RecentEdit,
+			I.WidgetSection.Type,
 			I.WidgetSection.Bin,
 		];
 
-		for (const id of order) {
-			if (!full.find(it => it.id == id)) {
-				full.push({ id, isClosed: false, isHidden: false });
+		for (let i = 0; i < order.length; i++) {
+			const id = order[i];
+			if (full.find(it => it.id == id)) {
+				continue;
 			};
+
+			let insertAt = full.length;
+			for (let j = i - 1; j >= 0; j--) {
+				const prevIdx = full.findIndex(it => it.id == order[j]);
+				if (prevIdx >= 0) {
+					insertAt = prevIdx + 1;
+					break;
+				};
+			};
+			full.splice(insertAt, 0, { id, isClosed: false, isHidden: false });
 		};
 
 		if (!U.Common.compareJSON(full, this.widgetSectionsValue)) {

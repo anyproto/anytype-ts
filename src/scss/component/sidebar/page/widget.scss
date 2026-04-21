@@ -1,11 +1,26 @@
 .sidebarPage.pageWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
 .sidebarPage.pageWidget {
-	> .head { 
+	> .head {
 		display: flex; flex-direction: row; align-items: center; padding: 0px 12px; height: 52px;
-		gap: 0px 8px; flex-shrink: 0; position: relative; z-index: 2;
+		gap: 0px 8px; flex-shrink: 0; position: relative; z-index: 2; justify-content: space-between;
 	}
 	> .head {
 		.name { @include text-overflow-nw; }
+
+		.side { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; min-width: 0; }
+		.side.left { flex-grow: 1; min-width: 0; }
+		.side.right { justify-content: flex-end; flex-shrink: 0; }
+
+		.spaceHead {
+			display: flex; flex-direction: row; align-items: center; gap: 0px 6px; min-width: 0;
+			padding: 4px 6px; border-radius: 6px; transition: background $transitionCommon;
+		}
+		.spaceHead {
+			.iconObject { flex-shrink: 0; }
+			.name { @include text-overflow-nw; @include text-common; font-weight: 600; color: var(--color-text-primary); }
+			.icon.arrow { width: 12px; height: 12px; flex-shrink: 0; }
+			&:hover { background: var(--color-shape-highlight-medium); }
+		}
 	}
 
 	.widgetSection { display: flex; flex-direction: column; }
@@ -83,4 +98,51 @@
 	}
 
 	> .body.isOnboardingHidden { visibility: visible; }
+}
+
+.sidebarPage.pageWidgetManage { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
+.sidebarPage.pageWidgetManage {
+	> .head {
+		display: flex; flex-direction: row; align-items: center; padding: 0px 12px; height: 52px;
+		gap: 0px 8px; flex-shrink: 0; justify-content: space-between;
+	}
+	> .head {
+		.side { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; min-width: 0; }
+		.side.left { flex-grow: 1; min-width: 0; }
+		.side.right { justify-content: flex-end; flex-shrink: 0; }
+	}
+
+	> .body { flex-grow: 1; overflow-y: auto; padding: 0px 12px 12px 12px; }
+	> .body {
+		.content { display: flex; flex-direction: column; gap: 16px 0px; }
+	}
+
+	.manageSection { display: flex; flex-direction: column; gap: 8px 0px; }
+	.manageSection {
+		.sectionHead {
+			display: flex; flex-direction: row; align-items: center; justify-content: space-between;
+			@include text-small; font-weight: 500; color: var(--color-text-secondary);
+		}
+		.sectionHead {
+			.icon.add { width: 20px !important; height: 20px !important; }
+			.icon.add:hover, .icon.add.hover { color: var(--color-control-accent); }
+		}
+
+		.items { display: flex; flex-direction: column; gap: 8px 0px; }
+		.empty { padding: 8px 12px; @include text-small; color: var(--color-text-tertiary); }
+	}
+
+	.manageItem {
+		display: flex; flex-direction: row; align-items: center; gap: 0px 8px;
+		padding: 8px 12px; border-radius: 8px; background: var(--color-shape-highlight-medium);
+	}
+	.manageItem {
+		.icon.dnd { width: 12px; height: 16px; flex-shrink: 0; }
+		.iconObject { flex-shrink: 0; }
+		.name { @include text-overflow-nw; flex-grow: 1; @include text-common; color: var(--color-text-primary); }
+		> .label { flex-grow: 1; @include text-common; color: var(--color-text-primary); }
+		.icon.action { width: 20px; height: 20px; flex-shrink: 0; }
+	}
+
+	.buttons { display: flex; flex-direction: column; }
 }

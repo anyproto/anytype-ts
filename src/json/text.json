@@ -2309,7 +2309,13 @@
 	"widgetSection2": "Unread",
 	"widgetSection3": "Recently edited",
 	"widgetSection4": "Bin",
+	"widgetSection5": "My Favorites",
 	"widgetSectionNewType": "New Type",
+
+	"menuWidgetFavorite": "Favorite",
+	"menuWidgetUnfavorite": "Unfavorite",
+	"menuWidgetPinToChannel": "Pin to Channel",
+	"menuWidgetUnpinFromChannel": "Unpin from Channel",
 
 	"widgetFavorite": "Old Pinned",
 	"widgetRecent": "Recently edited",
@@ -2333,6 +2339,10 @@
 
 	"widgetManageSections": "Manage Sections",
 	"widgetHideSection": "Hide section",
+	"widgetShowSection": "Show section",
+	"widgetManageChannelPins": "Channel Pins",
+	"widgetManageChannelPinsEmpty": "No pinned objects yet",
+	"widgetManagePersonal": "Personal",
 
 	"phrasePlaceholder": "Please enter your Key",
 

@@ -190,15 +190,17 @@ export default {
 	},
 
 	widgetId: {
-		allObject:		 'allObject',
-		favorite:		 'favorite',
-		recentEdit:		 'recent',
-		recentOpen:		 'recentOpen',
-		space:			 'space',
-		unread:			 'unread',
-		type:			 'type',
-		bin:			 'bin',
-		chat:			 'chat',
+		allObject:			 'allObject',
+		favorite:			 'favorite',
+		recentEdit:			 'recent',
+		recentOpen:			 'recentOpen',
+		space:				 'space',
+		unread:				 'unread',
+		type:				 'type',
+		bin:				 'bin',
+		chat:				 'chat',
+		personalWidgets:	 'personalWidgets',
+		personalWidgetsPrefix: '_personalWidgets_',
 	},
 
 	monthDays: {
