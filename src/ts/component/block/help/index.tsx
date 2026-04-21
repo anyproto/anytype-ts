@@ -5,7 +5,7 @@ import ContentLink from './link';
 import * as I from 'Interface';
 
 interface Props {
-	type: I.BlockType;
+	type?: I.BlockType;
 	style?: any;
 	icon?: string;
 	align?: I.BlockHAlign;
@@ -71,8 +71,10 @@ const Block = forwardRef<HTMLDivElement, Props>((props, ref) => {
 		};
 	};
 
+	const interactiveProps = onRowClick ? { onClick: onRowClick } : {};
+
 	return (
-		<div className={cn.join(' ')} onClick={onRowClick}>
+		<div className={cn.join(' ')} {...interactiveProps}>
 			<div className="wrapContent">
 				<div className="selectionTarget">
 					<div className="dropTarget">

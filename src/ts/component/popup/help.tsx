@@ -2,25 +2,10 @@ import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import * as Docs from 'Docs';
 import { Cover, Button } from 'Component';
 import Block from 'Component/block/help';
+import ToggleBlock from 'Component/block/help/toggle';
 import * as I from 'Interface';
 
 const LIMIT = 1;
-
-const ToggleBlock = ({ block, blockProps }: { block: any; blockProps: any }) => {
-	const [ open, setOpen ] = useState(false);
-	const onRowClick = () => setOpen(v => !v);
-
-	return (
-		<>
-			<Block {...blockProps} {...block} isToggled={open} onRowClick={onRowClick} />
-			{open ? (
-				<div className="toggleItems">
-					{(block.items || []).map((c: any, i: number) => <Block key={i} {...blockProps} {...c} />)}
-				</div>
-			) : null}
-		</>
-	);
-};
 
 const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 
