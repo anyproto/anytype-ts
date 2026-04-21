@@ -477,12 +477,14 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 		stepContent = (
 			<div className="step step0">
 				<div className="wrapper">
-					<div className="stepTitle">{translate('popupSpaceCreateStep1Title')}</div>
-					{(writersLimit > 0) ? (
-						<div className="seatCounters">
-							{U.String.sprintf(translate('popupSpaceCreateSeatCounters'), writersCount, writersLimit, readersCount, readersLimit)}
-						</div>
-					) : ''}
+					<div className="head">
+						<div className="stepTitle">{translate('popupSpaceCreateStep1Title')}</div>
+						{(writersLimit > 0) ? (
+							<div className="seatCounters">
+								{U.String.sprintf(translate('popupSpaceCreateSeatCounters'), writersCount, writersLimit, readersCount, readersLimit)}
+							</div>
+						) : ''}
+					</div>
 
 					<Filter
 						ref={filterRef}
