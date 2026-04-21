@@ -122,7 +122,6 @@ class UtilSpace {
 		const details: any = {
 			oneToOneIdentity: id,
 			spaceAccessType: I.SpaceAccessType.Shared,
-			homepage: I.HomePredefinedId.Chat,
 			oneToOneRequestMetadataKey: key,
 			spaceType: I.SpaceType.OneToOne,
 		};
