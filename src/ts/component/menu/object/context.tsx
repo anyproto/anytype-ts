@@ -80,6 +80,9 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const personalWidgetsId = U.Object.getPersonalWidgetsId();
 
 		objectIds.forEach((it: string) => {
+			if (S.Block.getWidgetsForTarget(it).length) pinCnt++;
+			if (S.Block.getWidgetsForTargetIn(it, personalWidgetsId).length) favCnt++;
+
 			const object = getObjectHandler(subId, getObject, it);
 
 			if (!object || object._empty_) {
@@ -90,8 +93,6 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			const isRelation = U.Object.isRelationLayout(object.layout);
 			const isChat = U.Object.isChatLayout(object.layout);
 
-			if (S.Block.getWidgetsForTarget(object.id).length) pinCnt++;
-			if (S.Block.getWidgetsForTargetIn(object.id, personalWidgetsId).length) favCnt++;
 			if (object.isArchived) archiveCnt++;
 
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
