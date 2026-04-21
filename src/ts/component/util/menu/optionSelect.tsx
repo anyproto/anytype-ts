@@ -670,7 +670,7 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 	};
 
 	const Item = (item: SelectItem): ReactElement | null => {
-		const sortable = useSortable({ id: item.id, disabled: !canSort || item.id == 'add' });
+		const sortable = useSortable({ id: item.id, disabled: !canSort || (item.id == 'add') || item.isSection || item.isDiv });
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = sortable;
 		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
 
