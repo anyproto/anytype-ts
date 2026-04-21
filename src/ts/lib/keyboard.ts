@@ -552,31 +552,10 @@ class Keyboard {
 	};
 
 	/**
-	 * Calls spaceCreate menu.
+	 * Opens the space creation popup.
 	 */
 	createSpace () {
-		const element = `#button-create-space`;
-
-		let rect = null;
-		let horizontal = I.MenuDirection.Left;
-		let vertical = I.MenuDirection.Top;
-
-		if (!U.Dom.select(element)) {
-			const { ww, wh } = U.Dom.getWindowDimensions();
-
-			rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
-			horizontal = I.MenuDirection.Center;
-			vertical = I.MenuDirection.Center;
-		};
-
-		U.Menu.spaceCreate({
-			element,
-			rect,
-			className: 'spaceCreate fixed',
-			classNameWrap: 'fromSidebar',
-			horizontal,
-			vertical,
-		}, analytics.route.shortcut);
+		Action.createSpace(analytics.route.shortcut);
 	};
 
 	/**

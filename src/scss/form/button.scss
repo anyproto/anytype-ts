@@ -41,9 +41,9 @@
 	}
 }
 
-.button.red { color: var(--color-dark-red); background: var(--color-very-light-red); }
+.button.red { color: var(--color-system-destructive-100); background: var(--color-system-destructive-25); }
 .button.red:not(.disabled):hover,
-.button.red:not(.disabled).hover { background: var(--color-light-red); }
+.button.red:not(.disabled).hover { background: var(--color-system-destructive-50); }
 
 .button.dark { background: var(--color-shape-highlight-medium); color: var(--color-text-primary); }
 .button.dark:not(.disabled):hover,

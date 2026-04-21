@@ -3,23 +3,22 @@
 .socialBlockWrap { position: sticky; bottom: 0; height: 0; z-index: 2; }
 
 .socialBlock {
-	position: absolute; bottom: 0; width: 100%; height: 140px;
-	display: flex; justify-content: center; align-items: flex-end;
-	padding: 0px 0px 12px 0px;
-	background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.04) 20%, rgba(255, 255, 255, 0.18) 40%, rgba(255, 255, 255, 0.50) 60%, rgba(255, 255, 255, 0.82) 80%, rgba(255, 255, 255, 0.96) 100%);
-	transition: opacity 0.15s ease;
+	position: absolute; bottom: 0px; width: 100%; height: 88px; display: flex; justify-content: center; 
+	align-items: flex-end; padding: 0px 0px 12px 0px; transition: opacity 0.15s ease;
 }
 .socialBlock {
 	&.isHidden { opacity: 0; pointer-events: none; }
 
+	.grad { 
+		position: absolute; top: 0px; width: 100%; height: 100%; 
+		background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-bg-primary) 68.18%);
+		pointer-events: none;
+	}
+
 	.commentCounter {
-		display: inline-flex; align-items: center; gap: 0px 4px;
-		padding: 7px 10px 7px 8px; border-radius: 18px;
-		background: var(--color-text-white60);
-		backdrop-filter: blur(10px);
-		-webkit-backdrop-filter: blur(10px);
-		transition: background 0.15s ease, opacity 0.15s ease;
-		user-select: none;
+		display: inline-flex; align-items: center; gap: 0px 4px; padding: 7px 10px 7px 8px; border-radius: 18px;
+		background: var(--color-text-white60); backdrop-filter: blur(10px); transition: background 0.15s ease, opacity 0.15s ease;
+		user-select: none; z-index: 1;
 	}
 	.commentCounter:hover { background: var(--color-shape-secondary); }
 	.commentCounter.isFixed { position: fixed; bottom: 18px; }
@@ -225,6 +224,7 @@
 	.commentEditor-italic { font-style: italic; }
 	.commentEditor-underline { text-decoration: underline; }
 	.commentEditor-strikethrough { text-decoration: line-through; }
+	.commentEditor-strikethrough.commentEditor-underline { text-decoration: line-through underline; }
 	.commentEditor-code {
 		display: inline; font-family: 'Plex'; border-radius: 4px;
 		background: var(--color-shape-highlight-medium); padding: 0px 4px;

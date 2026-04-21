@@ -275,8 +275,15 @@ const CommentPost = (props: Props) => {
 		setIsEditing(false);
 	}, []);
 
-	const onSaveEdit = useCallback((newParts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[]) => {
+	const onSaveEdit = useCallback((newParts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[], attachmentObjects?: any[]) => {
 		const blocks = U.Comment.partsToChatBlocks(newParts);
+		const newAttachments = attachments || [];
+
+		if (attachmentObjects?.length) {
+			for (const obj of attachmentObjects) {
+				S.Detail.update(subId, { id: obj.id, details: obj }, false);
+			};
+		};
 
 		C.ChatEditMessageContent(targetId, id, {
 			content: {
@@ -285,7 +292,7 @@ const CommentPost = (props: Props) => {
 				marks: [],
 			},
 			blocks,
-			attachments: message.attachments || [],
+			attachments: newAttachments,
 			reactions: message.reactions || [],
 		} as any, (response: any) => {
 			if (response.error.code) {
@@ -303,9 +310,10 @@ const CommentPost = (props: Props) => {
 					marks: [],
 					parts: newParts,
 				},
+				attachments: newAttachments,
 			} as any);
 		});
-	}, [ targetId, id, message.attachments, message.reactions ]);
+	}, [ targetId, id, subId, message.reactions ]);
 
 	const onDelete = useCallback(() => {
 		S.Popup.open('confirm', {

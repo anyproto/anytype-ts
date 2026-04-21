@@ -64,7 +64,7 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 	const cnReaction = [ 'reaction' ];
 	const showMention = mentionCounter && !spaceview?.isOneToOne;
 	const showMessage = messageCounter && (modeMessage != I.NotificationMode.Nothing);
-	const showReaction = reactionCounter && (modeReaction != I.NotificationMode.Nothing);
+	const showReaction = reactionCounter;
 
 	if (modeMention == I.NotificationMode.Nothing) {
 		cnMention.push('isMuted');

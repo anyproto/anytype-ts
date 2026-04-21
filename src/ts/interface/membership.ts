@@ -14,6 +14,7 @@ export enum MembershipPeriod {
 	Monthly					 = 1,
 	Yearly					 = 2,
 	ThreeYears				 = 3,
+	Lifetime				 = 4,
 };
 
 export enum PaymentProvider {
@@ -69,6 +70,7 @@ export interface MembershipProduct {
 	offer: string;
 	pricesYearly: MembershipAmount[];
 	pricesMonthly: MembershipAmount[];
+	pricesLifetime: MembershipAmount[];
 	features: {
 		storageBytes: number;
 		spaceReaders: number;

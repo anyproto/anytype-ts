@@ -21,6 +21,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const positionRef = useRef<I.BlockPosition>(null);
 	const isDraggingRef = useRef<boolean>(false);
 	const frameRef = useRef<number>(0);
+	const dragEndHandlerRef = useRef<(() => void) | null>(null);
 
 	let content = null;
 	let head = null;
@@ -134,11 +135,18 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		e.dataTransfer.setDragImage(clone, 0, 0);
 		e.dataTransfer.setData('text', JSON.stringify({ blockId: block.id, section: block.content.section }));
 
+		if (dragEndHandlerRef.current) {
+			U.Dom.removeEvent(window, 'dragend', dragEndHandlerRef.current);
+		};
+
 		const dragEndHandler = () => {
 			onDragEnd();
-			U.Dom.removeEvent(window, 'dragend', dragEndHandler);
+			if (dragEndHandlerRef.current) {
+				U.Dom.removeEvent(window, 'dragend', dragEndHandlerRef.current);
+				dragEndHandlerRef.current = null;
+			};
 		};
-		U.Dom.removeEvent(window, 'dragend', dragEndHandler);
+		dragEndHandlerRef.current = dragEndHandler;
 		U.Dom.addEvent(window, 'dragend', dragEndHandler);
 
 		scrollOnMove.onMouseDown({ container: body, speed: 300, step: 1 });

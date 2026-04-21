@@ -74,7 +74,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible
-	const onForward = () => {
+	const onForward = (skip?: boolean) => {
 		if (!canMoveForward()) {
 			return;
 		};
@@ -88,8 +88,12 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			};
 
 			case Stage.Email: {
-				if (!needEmail) {
+				if (!needEmail || skip) {
 					Animation.from(() => setStage(stage + 1));
+
+					if (skip) {
+						analytics.event('ScreenOnboardingSkipEmail');
+					};
 					break;
 				};
 
@@ -97,7 +101,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 				if (email) {
 					nextRef.current?.setLoading(true);
-					
+
 					C.MembershipV2SubscribeToUpdates(email, (message: any) => {
 						nextRef.current?.setLoading(false);
 
@@ -258,13 +262,13 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 							className={cnb.join(' ')}
 							text={phraseVisible ? translate('commonContinue') : translate('authOnboardPhraseRevealAndCopy')}
 							color="accent"
-							onClick={phraseVisible ? onForward : onPhraseCopy}
+							onClick={phraseVisible ? () => onForward() : onPhraseCopy}
 						/>
 					</div>
 
 					{!phraseVisible ? (
 						<div className="animation">
-							<Button color="blank" size={48} text={translate('commonSkip')} onClick={onForward} />
+							<Button color="blank" size={48} text={translate('commonSkip')} onClick={() => onForward()} />
 						</div>
 					) : ''}
 				</>
@@ -291,10 +295,10 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
+						<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
 					</div>
 					<div className="animation">
-						<Button color="blank" size={48} text={translate('commonSkip')} onClick={onForward} />
+						<Button color="blank" size={48} text={translate('commonSkip')} onClick={() => onForward(true)} />
 					</div>
 				</>
 			);
@@ -317,10 +321,10 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
+						<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
 					</div>
 					<div className="animation">
-						<Button color="blank" size={48} text={translate('commonSkip')} onClick={onForward} />
+						<Button color="blank" size={48} text={translate('commonSkip')} onClick={() => onForward()} />
 					</div>
 				</>
 			);
@@ -341,10 +345,10 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonDone')} color="accent" onClick={onForward} />
+						<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonDone')} color="accent" onClick={() => onForward()} />
 					</div>
 					<div className="animation">
-						<Button color="blank" size={48} text={translate('commonSkip')} onClick={onForward} />
+						<Button color="blank" size={48} text={translate('commonSkip')} onClick={() => onForward()} />
 					</div>
 				</>
 			);

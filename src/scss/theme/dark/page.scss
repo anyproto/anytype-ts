@@ -5,27 +5,13 @@
 	.buttons {
 		.button.accent { color: var(--color-text-primary); }
 	}
-};
 
-/* PageAuthSelect */
-.pageIndexIndex, .pageAuthSelect {
 	.bubbleWrapper {
 		.bubble {
 			.img { background-image: url('~img/theme/dark/icon/bubble.svg'); }
 		}
 	}
-}
-
-
-/* PageMainGraph */
-
-.pageMainGraph {
-    .wrapper {
-        .side.right {
-            .filter { background: none; }
-        }
-    }
-}
+};
 
 /* PageMainNavigation */
 
