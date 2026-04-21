@@ -239,11 +239,12 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 			return items;
 		};
 
+		const selectedSet = new Set(value);
 		const selected: SelectItem[] = [];
 		const rest: SelectItem[] = [];
 
 		items.forEach(it => {
-			(value.includes(it.id) ? selected : rest).push(it);
+			(selectedSet.has(it.id) ? selected : rest).push(it);
 		});
 
 		const ret: SelectItem[] = [];
@@ -671,7 +672,6 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 	const Item = (item: SelectItem): ReactElement | null => {
 		const sortable = useSortable({ id: item.id, disabled: !canSort || item.id == 'add' });
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = sortable;
-		const isSelected = value.includes(item.id);
 		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
 
 		const style: any = {
@@ -716,9 +716,6 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 		// Regular item
 		const cn = [ 'item' ];
 
-		if (isSelected) {
-			cn.push('isSelected');
-		};
 		if (isReadonly) {
 			cn.push('isReadonly');
 		};
@@ -782,13 +779,8 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 			return null;
 		};
 
-		const isSelected = value.includes(item.id);
 		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
 		const cn = [ 'item', 'isDragging' ];
-
-		if (isSelected) {
-			cn.push('isSelected');
-		};
 
 		return (
 			<div
