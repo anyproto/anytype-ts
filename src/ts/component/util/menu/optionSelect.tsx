@@ -7,7 +7,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, Filter, IconObject, ObjectName, Loader } from 'Component';
 import * as I from 'Interface';
 
-const HEIGHT = 28;
+const HEIGHT = 32;
 const HEIGHT_DIV = 16;
 const LIMIT = 40;
 const LIMIT_TYPE = 2;
