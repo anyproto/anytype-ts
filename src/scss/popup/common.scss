@@ -14,7 +14,7 @@
 	
 	.popup {
 		.innerWrap { 
-			position: absolute; left: 0px; top: 50%; z-index: 1; background: var(--color-bg-primary); border-radius: 12px; box-shadow: 0px 2px 28px rgba(0, 0, 0, 0.2);
+			position: absolute; left: 0px; top: 50%; z-index: 1; background: var(--color-bg-primary); border-radius: 24px; box-shadow: 0px 2px 28px rgba(0, 0, 0, 0.2);
 			opacity: 0; transform: scale(0.95,0.95); transition: transform $transitionPopupTime $easeInQuint, opacity $transitionPopupTime $easeInQuint;
 			overflow-x: hidden; overflow-y: auto; overscroll-behavior: none;
 		}
@@ -36,7 +36,7 @@
 			}
 		}
 
-		#loader { position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 12px; background: var(--color-bg-loader); }
+		#loader { position: absolute; left: 0px; top: 0px; z-index: 20; width: 100%; height: 100%; border-radius: 24px; background: var(--color-bg-loader); }
 	}
 }
 
