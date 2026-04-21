@@ -193,7 +193,7 @@ const BoardColumn = forwardRef<RefProps, Props>((props, ref) => {
 								subId={subId}
 								block={block}
 								relationKey={view.groupRelationKey} 
-								viewType={I.ViewType.Board}
+								viewType={I.ViewType.Grid}
 								getRecord={() => head}
 								readonly={true} 
 								arrayLimit={4}

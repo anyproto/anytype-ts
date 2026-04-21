@@ -172,7 +172,7 @@ const Group = forwardRef<{}, Props>((props, ref) => {
 					subId={subId}
 					block={S.Block.getLeaf(rootId, J.Constant.blockId.dataview)}
 					relationKey={view.groupRelationKey} 
-					viewType={I.ViewType.Board}
+					viewType={I.ViewType.Grid}
 					getRecord={() => head}
 					readonly={true} 
 					arrayLimit={2}
