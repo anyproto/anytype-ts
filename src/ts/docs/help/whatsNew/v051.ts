@@ -1,8 +1,10 @@
-import { Helpers } from './common';
+import { Block, Helpers } from './common';
 
-export default (h: Helpers) => {
-	const { hl, title, h1, h2, h4, text, callout, bullet, img, link } = h;
+export default (h: Helpers): Block[] => {
+	const { hl, icon, title, h1, h2, h4, text, callout, bullet, img, link } = h;
 	return [
+		icon('💬'),
+
 		title(`Space Multi-Chats & Navigation`),
 		h4(`<span>Release 0.51.0</span><span>November 24, 2025</span>`),
 		text(''),

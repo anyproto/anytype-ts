@@ -1,9 +1,11 @@
 import * as I from 'Interface';
-import { Helpers } from './common';
+import { Block, Helpers } from './common';
 
-export default (h: Helpers) => {
-	const { cmd, shift, hl, title, h1, h2, h3, h4, text, callout, bullet, caption, div, video, img, link } = h;
+export default (h: Helpers): Block[] => {
+	const { cmd, shift, hl, icon, title, h1, h2, h3, h4, text, callout, bullet, caption, div, video, img, link } = h;
 	return [
+		icon('💬'),
+
 		title(`Now We're Talking!`),
 		h4(`<span>Release 0.50.0</span><span>October 1, 2025</span>`),
 		text(''),

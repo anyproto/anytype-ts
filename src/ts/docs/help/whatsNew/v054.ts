@@ -1,8 +1,10 @@
-import { Helpers } from './common';
+import { Block, Helpers } from './common';
 
-export default (h: Helpers) => {
-	const { hl, title, h2, h4, text, bullet, img, link } = h;
+export default (h: Helpers): Block[] => {
+	const { hl, icon, title, h2, h4, text, bullet, img, link } = h;
 	return [
+		icon('🎯'),
+
 		title(`Focus & Flow`),
 		h4(`<span>Release 0.54.0</span>`),
 		text(''),

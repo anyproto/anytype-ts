@@ -1,12 +1,9 @@
-import * as I from 'Interface';
-import { Helpers } from './common';
+import { Block, Helpers } from './common';
 
-export default (h: Helpers) => {
-	const { cmd, shift, hl, title, h2, h4, text, bullet, link } = h;
+export default (h: Helpers): Block[] => {
+	const { cmd, shift, hl, icon, title, h2, h4, text, bullet, link } = h;
 	return [
-		//{ type: I.BlockType.IconPage, icon: '🎯' },
-		{ type: I.BlockType.IconPage, icon: '🗣️' },
-		//{ type: I.BlockType.IconPage, icon: '💬' },
+		icon('🗣️'),
 
 		title(`Let's Discuss`),
 		h4(`<span>Release 0.55.0</span>`),

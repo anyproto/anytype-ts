@@ -6,19 +6,9 @@ import v052 from './v052';
 import v051 from './v051';
 import v050 from './v050';
 
+const releases = [ v055, v054, v053, v052, v051, v050 ];
+
 export default () => {
 	const h = createHelpers();
-	return [
-		...v055(h),
-		h.div(),
-		...v054(h),
-		h.div(),
-		...v053(h),
-		h.div(),
-		...v052(h),
-		h.div(),
-		...v051(h),
-		h.div(),
-		...v050(h),
-	];
+	return releases.flatMap((r, i) => (i === 0 ? r(h) : [ h.div(), ...r(h) ]));
 };
