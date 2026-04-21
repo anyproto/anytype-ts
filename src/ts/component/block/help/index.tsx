@@ -9,6 +9,8 @@ interface Props {
 	style?: any;
 	icon?: string;
 	align?: I.BlockHAlign;
+	isToggled?: boolean;
+	onRowClick?: (e: any) => void;
 };
 
 const Block = forwardRef<HTMLDivElement, Props>((props, ref) => {
@@ -17,8 +19,14 @@ const Block = forwardRef<HTMLDivElement, Props>((props, ref) => {
 		type = I.BlockType.Text,
 		style = I.TextStyle.Paragraph,
 		align = I.BlockHAlign.Left,
+		isToggled = false,
+		onRowClick,
 	} = props;
 	const cn = [ 'block', U.Data.blockClass({ type: type, content: { style: style } }), `align${align}` ];
+
+	if (isToggled) {
+		cn.push('isToggled');
+	};
 
 	let content = null;
 
@@ -27,12 +35,12 @@ const Block = forwardRef<HTMLDivElement, Props>((props, ref) => {
 			content = <ContentIcon {...props} />;
 			break;
 		};
-			
+
 		case I.BlockType.Text: {
 			content = <ContentText {...props} />;
 			break;
 		};
-							
+
 		case I.BlockType.Link: {
 			content = <ContentLink {...props} />;
 			break;
@@ -57,14 +65,14 @@ const Block = forwardRef<HTMLDivElement, Props>((props, ref) => {
 					);
 					break;
 			};
-			
+
 			content = <div className="wrap">{inner}</div>;
 			break;
 		};
 	};
-	
+
 	return (
-		<div className={cn.join(' ')}>
+		<div className={cn.join(' ')} onClick={onRowClick}>
 			<div className="wrapContent">
 				<div className="selectionTarget">
 					<div className="dropTarget">

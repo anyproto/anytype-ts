@@ -6,6 +6,22 @@ import * as I from 'Interface';
 
 const LIMIT = 1;
 
+const ToggleBlock = ({ block, blockProps }: { block: any; blockProps: any }) => {
+	const [ open, setOpen ] = useState(false);
+	const onRowClick = () => setOpen(v => !v);
+
+	return (
+		<>
+			<Block {...blockProps} {...block} isToggled={open} onRowClick={onRowClick} />
+			{open ? (
+				<div className="toggleItems">
+					{(block.items || []).map((c: any, i: number) => <Block key={i} {...blockProps} {...c} />)}
+				</div>
+			) : null}
+		</>
+	);
+};
+
 const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { getId, param } = props;
@@ -119,7 +135,11 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 				<div className="blocks">
 					{sections.map((section: any, i: number) => (
 						<div key={i} className="section">
-							{section.children.map((child: any, i: number) => <Block key={i} {...props} {...child} />)}
+							{section.children.map((child: any, i: number) => (
+								child.style === I.TextStyle.Toggle
+									? <ToggleBlock key={i} block={child} blockProps={props} />
+									: <Block key={i} {...props} {...child} />
+							))}
 						</div>
 					))}
 				</div>

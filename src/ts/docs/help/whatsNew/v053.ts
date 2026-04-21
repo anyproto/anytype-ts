@@ -1,7 +1,7 @@
 import { Block, Helpers } from './common';
 
 export default (h: Helpers): Block[] => {
-	const { hl, icon, title, h2, h4, text, bullet, link } = h;
+	const { hl, icon, title, h2, h4, text, bullet, link, toggle } = h;
 	return [
 		icon('🎄'),
 
@@ -121,57 +121,57 @@ export default (h: Helpers): Block[] => {
 		h2(`Bug Fixes`),
 		text(``),
 
-		text(`<b>Chat & Messaging</b>`),
-		bullet(`Pressing ${hl('Tab')} in chat no longer makes the cursor disappear by dropping focus from the input. Thanks to @${link('https://community.anytype.io/t/29556', 'Code-Jack')}!`),
-		bullet(`A copied link for a specific message now leads to the correct message in chat. Thanks to @${link('https://community.anytype.io/t/29560', 'Code-Jack')}!`),
-		bullet(`Double-clicking a word in chat now behaves like text selection, instead of triggering Reply. Thanks to @${link('https://community.anytype.io/t/29677', 'e1sordo')}!`),
-		bullet(`Direct Channels now reflect the updated participant name correctly. Thanks to @${link('https://community.anytype.io/t/29604', 'e1sordo')}!`),
-		bullet(`Chat bubbles with text and multiple images now resize smoothly and no longer overlap the Sidebar.`),
-		bullet(`Space notifications now handle long names to include the Chat Object name.`),
-		bullet(`Pasting multiple links in chat no longer causes formatting side effects.`),
-		bullet(`Link styling in chat now underlines the full link consistently.`),
-		text(``),
+		toggle(`<b>Chat & Messaging</b>`, [
+			bullet(`Pressing ${hl('Tab')} in chat no longer makes the cursor disappear by dropping focus from the input. Thanks to @${link('https://community.anytype.io/t/29556', 'Code-Jack')}!`),
+			bullet(`A copied link for a specific message now leads to the correct message in chat. Thanks to @${link('https://community.anytype.io/t/29560', 'Code-Jack')}!`),
+			bullet(`Double-clicking a word in chat now behaves like text selection, instead of triggering Reply. Thanks to @${link('https://community.anytype.io/t/29677', 'e1sordo')}!`),
+			bullet(`Direct Channels now reflect the updated participant name correctly. Thanks to @${link('https://community.anytype.io/t/29604', 'e1sordo')}!`),
+			bullet(`Chat bubbles with text and multiple images now resize smoothly and no longer overlap the Sidebar.`),
+			bullet(`Space notifications now handle long names to include the Chat Object name.`),
+			bullet(`Pasting multiple links in chat no longer causes formatting side effects.`),
+			bullet(`Link styling in chat now underlines the full link consistently.`),
+		]),
 
-		text(`<b>Editor & Blocks</b>`),
-		bullet(`Accepting an autocorrect suggestion no longer converts inline LaTeX into plain text. Thanks to @${link('https://community.anytype.io/t/23979', 'dzlg')}!`),
-		bullet(`${hl('Unlink')} no longer strips inline LaTeX formatting or shifts inline text styles in the block. Thanks to @${link('https://community.anytype.io/t/29562', 'geesecross')}!`),
-		bullet(`Selecting text inside long code blocks now remains precise while dragging. Thanks to @${link('https://community.anytype.io/t/27659', 'szc188')}!`),
-		bullet(`Empty toggles now accept the cursor with a single click. Thanks to @${link('https://community.anytype.io/t/29454', 'Code-Jack')}!`),
-		bullet(`The Editor no longer flickers when you paste content or click into the empty space at the bottom of long pages. Thanks to @${link('https://community.anytype.io/t/24462', 'Facility6384')}!`),
-		bullet(`HTML entities are now kept as plain text, instead of being automatically converted into characters. Thanks to @${link('https://community.anytype.io/t/29237', 'GrubSlant')}!`),
-		bullet(`Local search (${hl('Ctrl/Cmd+F')}) lets you click a highlighted result to jump to it and continue editing, without dismissing search. Thanks to @${link('https://community.anytype.io/t/13152', 'sooyoung')}!`),
-		bullet(`Hyperlinks inside square brackets no longer disappear after searching for that bracketed text.`),
-		text(``),
+		toggle(`<b>Editor & Blocks</b>`, [
+			bullet(`Accepting an autocorrect suggestion no longer converts inline LaTeX into plain text. Thanks to @${link('https://community.anytype.io/t/23979', 'dzlg')}!`),
+			bullet(`${hl('Unlink')} no longer strips inline LaTeX formatting or shifts inline text styles in the block. Thanks to @${link('https://community.anytype.io/t/29562', 'geesecross')}!`),
+			bullet(`Selecting text inside long code blocks now remains precise while dragging. Thanks to @${link('https://community.anytype.io/t/27659', 'szc188')}!`),
+			bullet(`Empty toggles now accept the cursor with a single click. Thanks to @${link('https://community.anytype.io/t/29454', 'Code-Jack')}!`),
+			bullet(`The Editor no longer flickers when you paste content or click into the empty space at the bottom of long pages. Thanks to @${link('https://community.anytype.io/t/24462', 'Facility6384')}!`),
+			bullet(`HTML entities are now kept as plain text, instead of being automatically converted into characters. Thanks to @${link('https://community.anytype.io/t/29237', 'GrubSlant')}!`),
+			bullet(`Local search (${hl('Ctrl/Cmd+F')}) lets you click a highlighted result to jump to it and continue editing, without dismissing search. Thanks to @${link('https://community.anytype.io/t/13152', 'sooyoung')}!`),
+			bullet(`Hyperlinks inside square brackets no longer disappear after searching for that bracketed text.`),
+		]),
 
-		text(`<b>Keyboard & Shortcuts</b>`),
-		bullet(`Pressing ${hl('Esc')} now closes a media preview before exiting full-screen mode. Thanks to @${link('https://community.anytype.io/t/29675', 'e1sordo')}!`),
-		bullet(`Pressing ${hl('Esc')} to close an Object opened from View search results now only closes the modal and keeps the search results intact. Thanks to @${link('https://community.anytype.io/t/29687', 'Code-Jack')}!`),
-		bullet(`Cutting content with ${hl('Ctrl+X')} in a long page no longer causes the view to jump back toward the top. Thanks to @${link('https://community.anytype.io/t/29646', 'Code-Jack')}!`),
-		text(``),
+		toggle(`<b>Keyboard & Shortcuts</b>`, [
+			bullet(`Pressing ${hl('Esc')} now closes a media preview before exiting full-screen mode. Thanks to @${link('https://community.anytype.io/t/29675', 'e1sordo')}!`),
+			bullet(`Pressing ${hl('Esc')} to close an Object opened from View search results now only closes the modal and keeps the search results intact. Thanks to @${link('https://community.anytype.io/t/29687', 'Code-Jack')}!`),
+			bullet(`Cutting content with ${hl('Ctrl+X')} in a long page no longer causes the view to jump back toward the top. Thanks to @${link('https://community.anytype.io/t/29646', 'Code-Jack')}!`),
+		]),
 
-		text(`<b>UI & Rendering</b>`),
-		bullet(`Collections/Queries without an icon now keep proper top padding. Thanks to @${link('https://community.anytype.io/t/29640', 'LionLobes')}!`),
-		bullet(`Multiple open windows no longer show a loading bubble. Thanks to @${link('https://community.anytype.io/t/29614', 'C.c')}!`),
-		bullet(`Clicking or dragging in the Vault header no longer causes long pages to scroll upward.`),
-		bullet(`The keyboard shortcut hint on Channel hover is now visible when the name is long.`),
-		bullet(`The loading Channel placeholder in the Vault now keeps a correct size.`),
-		bullet(`Reloading the app in dark mode no longer flashes a white screen.`),
-		text(``),
+		toggle(`<b>UI & Rendering</b>`, [
+			bullet(`Collections/Queries without an icon now keep proper top padding. Thanks to @${link('https://community.anytype.io/t/29640', 'LionLobes')}!`),
+			bullet(`Multiple open windows no longer show a loading bubble. Thanks to @${link('https://community.anytype.io/t/29614', 'C.c')}!`),
+			bullet(`Clicking or dragging in the Vault header no longer causes long pages to scroll upward.`),
+			bullet(`The keyboard shortcut hint on Channel hover is now visible when the name is long.`),
+			bullet(`The loading Channel placeholder in the Vault now keeps a correct size.`),
+			bullet(`Reloading the app in dark mode no longer flashes a white screen.`),
+		]),
 
-		text(`<b>Edit Type</b>`),
-		bullet(`Changes to Property order/sections in the <b>Edit Type</b> persist after the app refresh. Thanks to @${link('https://community.anytype.io/t/29464', 'raph')}!`),
-		bullet(`The <b>Edit Type</b> settings panel now closes automatically when you switch to a different Channel or open another Object.`),
-		text(``),
+		toggle(`<b>Edit Type</b>`, [
+			bullet(`Changes to Property order/sections in the <b>Edit Type</b> persist after the app refresh. Thanks to @${link('https://community.anytype.io/t/29464', 'raph')}!`),
+			bullet(`The <b>Edit Type</b> settings panel now closes automatically when you switch to a different Channel or open another Object.`),
+		]),
 
-		text(`<b>Objects & Views</b>`),
-		bullet(`Creating an Object with Basic/Action/Profile layout now displays the <b>Untitled</b> placeholder.`),
-		bullet(`In manually sorted Queries/Collections, dragged objects now drop exactly on the indicated insertion line. Thanks to @${link('https://community.anytype.io/t/29462', 'Bass-T')}!`),
-		text(``),
+		toggle(`<b>Objects & Views</b>`, [
+			bullet(`Creating an Object with Basic/Action/Profile layout now displays the <b>Untitled</b> placeholder.`),
+			bullet(`In manually sorted Queries/Collections, dragged objects now drop exactly on the indicated insertion line. Thanks to @${link('https://community.anytype.io/t/29462', 'Bass-T')}!`),
+		]),
 
-		text(`<b>Navigation</b>`),
-		bullet(`After reloading, the ${hl('Back')} button no longer navigates back to the Entering Vault screen. Thanks to @${link('https://community.anytype.io/t/29583', 'geesecross')}!`),
-		bullet(`Switching between Objects no longer causes the opened Object to flicker.`),
-		bullet(`Opening Objects in a new window (${hl('Ctrl+Shift+N')} / ${hl('Ctrl+Click')}) works consistently. Thanks to @${link('https://community.anytype.io/t/29000', 'Ronsox')}!`),
-		text(``),
+		toggle(`<b>Navigation</b>`, [
+			bullet(`After reloading, the ${hl('Back')} button no longer navigates back to the Entering Vault screen. Thanks to @${link('https://community.anytype.io/t/29583', 'geesecross')}!`),
+			bullet(`Switching between Objects no longer causes the opened Object to flicker.`),
+			bullet(`Opening Objects in a new window (${hl('Ctrl+Shift+N')} / ${hl('Ctrl+Click')}) works consistently. Thanks to @${link('https://community.anytype.io/t/29000', 'Ronsox')}!`),
+		]),
 	];
 };

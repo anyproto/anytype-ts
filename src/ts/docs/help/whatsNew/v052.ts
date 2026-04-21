@@ -1,7 +1,7 @@
 import { Block, Helpers } from './common';
 
 export default (h: Helpers): Block[] => {
-	const { icon, title, h1, h2, h4, text, bullet, video, img, link } = h;
+	const { icon, title, h1, h2, h4, text, bullet, video, img, link, toggle } = h;
 	return [
 		icon('💬'),
 
@@ -59,38 +59,38 @@ export default (h: Helpers): Block[] => {
 		h2(`Bug Fixes`),
 		text(``),
 
-		text(`<b>Chat & Messaging</b>`),
-		bullet(`Opening an object from chat now follows the "Open objects in fullscreen" account setting.`),
-		bullet(`After opening a file from a chat link, both the mouse back button and the UI back control reliably return to the chat.`),
-		bullet(`Selecting text inside an attached object in a chat no longer opens an object unintentionally.`),
-		bullet(`Clicking "Play" in a video preview automatically starts the video upon opening in full screen.`),
-		bullet(`Wide images keep their layout when editing a message.`),
-		text(``),
+		toggle(`<b>Chat & Messaging</b>`, [
+			bullet(`Opening an object from chat now follows the "Open objects in fullscreen" account setting.`),
+			bullet(`After opening a file from a chat link, both the mouse back button and the UI back control reliably return to the chat.`),
+			bullet(`Selecting text inside an attached object in a chat no longer opens an object unintentionally.`),
+			bullet(`Clicking "Play" in a video preview automatically starts the video upon opening in full screen.`),
+			bullet(`Wide images keep their layout when editing a message.`),
+		]),
 
-		text(`<b>Editor & Blocks</b>`),
-		bullet(`Adding a new line above or below an embed block no longer causes the embed to flicker or the page to jump. Thanks to @${link('https://community.anytype.io/t/29052', 'Cephalo')}!`),
-		bullet(`Inserting Unicode or emoji separators between links no longer appends an extra letter to the following link. Thanks to @${link('https://community.anytype.io/t/28863', 'cicko')}!`),
-		text(``),
-
-
-		text(`<b>Widget Sidebar</b>`),
-		bullet(`Newly created Types and their Objects now appear immediately in the Objects Widget without requiring an app restart. Thanks to @${link('https://community.anytype.io/t/29519', 'Hexara')}!`),
-		bullet(`Fixed a visual bug where Widget header buttons could blink during animations.`),
-		text(``),
+		toggle(`<b>Editor & Blocks</b>`, [
+			bullet(`Adding a new line above or below an embed block no longer causes the embed to flicker or the page to jump. Thanks to @${link('https://community.anytype.io/t/29052', 'Cephalo')}!`),
+			bullet(`Inserting Unicode or emoji separators between links no longer appends an extra letter to the following link. Thanks to @${link('https://community.anytype.io/t/28863', 'cicko')}!`),
+		]),
 
 
-		text(`<b>Objects & Views</b>`),
-		bullet(`In zoomed-out Graph views, Object hover popups now appear directly at the cursor and no longer get stuck at the left edge of the screen. Thanks to @${link('https://community.anytype.io/t/29388', 'Code-Jack')}!`),
-		bullet(`Fixed an issue where opening a Collection from Graph in a modal and expanding it to full window could remove the New button and break view layout switching. Thanks to @${link('https://community.anytype.io/t/29417', 'Code-Jack')}!`),
-		bullet(`Mentioned-object previews now close as soon as the cursor leaves the mention’s actual bounds. Thanks to @${link('https://community.anytype.io/t/29378', 'sandyeggo')}!`),
-		bullet(`Fixed inconsistent drag-and-drop behaviour in Kanban.`),
-		text(``),
+		toggle(`<b>Widget Sidebar</b>`, [
+			bullet(`Newly created Types and their Objects now appear immediately in the Objects Widget without requiring an app restart. Thanks to @${link('https://community.anytype.io/t/29519', 'Hexara')}!`),
+			bullet(`Fixed a visual bug where Widget header buttons could blink during animations.`),
+		]),
 
 
-		text(`<b>Miscellaneous</b>`),
-		bullet(`Editing a Type correctly displays and pre-fills the current Type name and title.`),
-		bullet(`The Published Date column on My Sites now fully displays long date formats without truncation.`),
-		bullet(`Clicking a Space invite link when you’re already a member now jumps straight into that Space.`),
-		text(``),
+		toggle(`<b>Objects & Views</b>`, [
+			bullet(`In zoomed-out Graph views, Object hover popups now appear directly at the cursor and no longer get stuck at the left edge of the screen. Thanks to @${link('https://community.anytype.io/t/29388', 'Code-Jack')}!`),
+			bullet(`Fixed an issue where opening a Collection from Graph in a modal and expanding it to full window could remove the New button and break view layout switching. Thanks to @${link('https://community.anytype.io/t/29417', 'Code-Jack')}!`),
+			bullet(`Mentioned-object previews now close as soon as the cursor leaves the mention’s actual bounds. Thanks to @${link('https://community.anytype.io/t/29378', 'sandyeggo')}!`),
+			bullet(`Fixed inconsistent drag-and-drop behaviour in Kanban.`),
+		]),
+
+
+		toggle(`<b>Miscellaneous</b>`, [
+			bullet(`Editing a Type correctly displays and pre-fills the current Type name and title.`),
+			bullet(`The Published Date column on My Sites now fully displays long date formats without truncation.`),
+			bullet(`Clicking a Space invite link when you’re already a member now jumps straight into that Space.`),
+		]),
 	];
 };

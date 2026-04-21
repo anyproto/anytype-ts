@@ -1,7 +1,7 @@
 import * as I from 'Interface';
 
 export type Block =
-	| { style: I.TextStyle; text: string; align?: I.BlockHAlign; icon?: string }
+	| { style: I.TextStyle; text: string; align?: I.BlockHAlign; icon?: string; items?: Block[] }
 	| { type: I.BlockType; style?: I.DivStyle; icon?: string };
 
 export type Helpers = {
@@ -21,6 +21,7 @@ export type Helpers = {
 	caption: (t: string) => Block;
 	div: () => Block;
 	icon: (emoji: string) => Block;
+	toggle: (title: string, items: Block[]) => Block;
 	video: (src: string, c?: string) => Block;
 	img: (src: string, c?: string) => Block;
 	link: (url: string, t: string) => string;
@@ -44,8 +45,9 @@ export const createHelpers = (): Helpers => {
 	const caption = (t: string) => block(I.TextStyle.Paragraph, `<i>${t}</i>`, I.BlockHAlign.Center);
 	const div = (): Block => ({ type: I.BlockType.Div, style: I.DivStyle.Dot });
 	const icon = (emoji: string): Block => ({ type: I.BlockType.IconPage, icon: emoji });
+	const toggle = (title: string, items: Block[]): Block => ({ style: I.TextStyle.Toggle, text: title, items });
 	const video = (src: string, c?: string) => text(`<video src="${J.Url.cdn}/img/help/${src}?v=${version}" loop autoplay class="full ${c || ''}" />`);
 	const img = (src: string, c?: string) => text(`<img src="${J.Url.cdn}/img/help/${src}?v=${version}" class="full ${c || ''}" />`);
 	const link = (url: string, t: string) => `<a href="${url}">${t}</a>`;
-	return { cmd, alt, shift, hl, block, title, h1, h2, h3, h4, text, callout, bullet, caption, div, icon, video, img, link };
+	return { cmd, alt, shift, hl, block, title, h1, h2, h3, h4, text, callout, bullet, caption, div, icon, toggle, video, img, link };
 };
