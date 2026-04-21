@@ -75,6 +75,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	const placeholderRef = useRef(null);
 	const editableRef = useRef(null);
 	const isFocused = useRef(false);
+	const isComposing = useRef(false);
 	const cnw = [ 'editableWrap', classNameWrap ];
 	const cne = [ 'editable', classNameEditor ];
 	const cnp = [ 'placeholder', classNamePlaceholder ];
@@ -249,12 +250,19 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		keyboard.setFocus(false);
 		isFocused.current = false;
 
+		// Blur during composition aborts it without firing compositionend in some cases
+		if (isComposing.current) {
+			isComposing.current = false;
+			keyboard.setComposition(false);
+		};
+
 		if (onBlur) {
 			onBlur(e);
 		};
 	};
 
 	const onCompositionStartHandler = (e: any) => {
+		isComposing.current = true;
 		keyboard.setComposition(true);
 
 		if (onCompositionStart) {
@@ -263,6 +271,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const onCompositionEndHandler = (e: any) => {
+		isComposing.current = false;
 		keyboard.setComposition(false);
 		justEndedComposition.current = true;
 
@@ -319,6 +328,9 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		return () => {
 			if (isFocused.current) {
 				keyboard.setFocus(false);
+			};
+			if (isComposing.current) {
+				keyboard.setComposition(false);
 			};
 		};
 	}, []);
