@@ -32,6 +32,8 @@
 	"commonHome": "Home",
 	"commonSubmit": "Submit",
 	"commonValue": "Value",
+	"commonSelected": "Selected",
+	"commonAllValues": "All values",
 	"commonArchived": "Object is in the bin",
 	"commonEmpty": "Empty",
 	"commonBack": "Back",

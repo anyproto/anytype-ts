@@ -7,7 +7,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, Filter, IconObject, ObjectName, Loader } from 'Component';
 import * as I from 'Interface';
 
-const HEIGHT = 28;
+const HEIGHT = 32;
 const HEIGHT_DIV = 16;
 const LIMIT = 40;
 const LIMIT_TYPE = 2;
@@ -123,8 +123,6 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 	const hasMoreRef = useRef(true);
 	const timeoutFilterRef = useRef(0);
 	const objectFilterRef = useRef('');
-	const initialValueRef = useRef<string[]>([...value]);
-
 	const isObjectMode = !!searchParam;
 
 	const sensors = useSensors(
@@ -236,12 +234,29 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 		};
 	};
 
-	const sortByInitialValue = (items: SelectItem[]): SelectItem[] => {
-		const iv = initialValueRef.current;
-		return [
-			...items.filter(it => iv.includes(it.id)),
-			...items.filter(it => !iv.includes(it.id)),
-		];
+	const injectValueSections = (items: SelectItem[]): SelectItem[] => {
+		if (!value.length) {
+			return items;
+		};
+
+		const selectedSet = new Set(value);
+		const selected: SelectItem[] = [];
+		const rest: SelectItem[] = [];
+
+		items.forEach(it => {
+			(selectedSet.has(it.id) ? selected : rest).push(it);
+		});
+
+		const ret: SelectItem[] = [];
+		if (selected.length) {
+			ret.push({ id: 'section-selected', name: translate('commonSelected'), isSection: true });
+			ret.push(...selected);
+		};
+		if (rest.length) {
+			ret.push({ id: 'section-all', name: translate('commonAllValues'), isSection: true });
+			ret.push(...rest);
+		};
+		return ret;
 	};
 
 	const getObjectItems = (): SelectItem[] => {
@@ -273,7 +288,7 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 				};
 			};
 		} else {
-			items = sortByInitialValue(items);
+			items = injectValueSections(items);
 		};
 
 		return items.concat(ret);
@@ -308,7 +323,7 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 				});
 			};
 		} else {
-			items = sortByInitialValue(items);
+			items = injectValueSections(items);
 		};
 
 		return items.concat(ret);
@@ -597,7 +612,7 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const items = getItems().filter(it => it.id != 'add');
+		const items = getItems().filter(it => (it.id != 'add') && !it.isSection && !it.isDiv);
 		const oldIndex = items.findIndex(it => it.id == active.id);
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex);
@@ -655,9 +670,8 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 	};
 
 	const Item = (item: SelectItem): ReactElement | null => {
-		const sortable = useSortable({ id: item.id, disabled: !canSort || item.id == 'add' });
+		const sortable = useSortable({ id: item.id, disabled: !canSort || (item.id == 'add') || item.isSection || item.isDiv });
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = sortable;
-		const isSelected = value.includes(item.id);
 		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
 
 		const style: any = {
@@ -702,9 +716,6 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 		// Regular item
 		const cn = [ 'item' ];
 
-		if (isSelected) {
-			cn.push('isSelected');
-		};
 		if (isReadonly) {
 			cn.push('isReadonly');
 		};
@@ -740,7 +751,6 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 
 				<div className="clickable" onClick={e => onClick(e, item)}>
-					{!noSelect ? <Icon name={isSelected ? 'menu/common/checkbox1' : 'menu/common/checkbox0'} className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							{icon}
@@ -769,13 +779,8 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 			return null;
 		};
 
-		const isSelected = value.includes(item.id);
 		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
 		const cn = [ 'item', 'isDragging' ];
-
-		if (isSelected) {
-			cn.push('isSelected');
-		};
 
 		return (
 			<div
@@ -785,7 +790,6 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 			>
 				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 				<div className="clickable">
-					{!noSelect ? <Icon name={isSelected ? 'common/checkbox1' : 'common/checkbox0'} className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							<IconObject object={item} />
@@ -868,7 +872,7 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 				>
 					<SortableContext
-						items={items.map(item => item.id)}
+						items={items.filter(it => !it.isSection && !it.isDiv).map(item => item.id)}
 						strategy={verticalListSortingStrategy}
 					>
 						{list}
