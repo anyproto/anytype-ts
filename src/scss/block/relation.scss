@@ -33,7 +33,7 @@
 		.cell {
 			&.canEdit:hover { background: var(--color-shape-highlight-light); }
 		
-			&.c-select { padding: 6px 8px; line-height: 24px; }
+			&.c-select { padding: 4px 8px; line-height: 24px; }
 			&.c-select {
 				.empty { line-height: 24px; }
 			}
@@ -54,15 +54,15 @@
 				.cellContent.isName .input { height: 20px; line-height: 20px; width: calc(100% - 24px); }
 				.icon.clear { right: 6px; top: 6px; }
 
-				#entry { line-height: 18px; height: 18px; vertical-align: top; display: inline-block; }
+				#entry { line-height: inherit; height: 24px; vertical-align: top; display: inline-block; }
 
 				&.c-select {
-					.cellContent, .placeholder  { padding: 5px 8px; }
+					.cellContent, .placeholder  { padding: 4px 8px 0px 8px; }
 					.tagItem {
 						.tagRemove { top: 50%; transform: translateY(-50%); }
 					}
 
-					.cellContent { width: 100%; border: 0px; border-radius: 4px; }
+					.cellContent { width: 100%; border: 0px; border-radius: 4px; line-height: 0px; }
 					.over { width: calc(100% - 26px); }
 				}
 
