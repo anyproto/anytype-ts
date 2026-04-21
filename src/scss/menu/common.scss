@@ -98,16 +98,16 @@
 
 		.separator .inner { margin: 8px 16px 7px 16px; height: 1px; background: var(--color-shape-secondary); }
 	
-		.item { 
-			padding: 4px 16px; @include text-common; line-height: 20px; position: relative; width: 100%; background: var(--color-bg-primary); 
-			-webkit-app-region: no-drag;
+		.item {
+			padding: 4px 16px; @include text-common; line-height: 20px; position: relative; width: 100%; background: var(--color-bg-primary);
+			border-radius: 8px; -webkit-app-region: no-drag;
 		}
 		.item.isDragging::before { box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.2); }
 		.item.isReadonly { cursor: default; }
 		
-		.item::before { 
-			content: ""; position: absolute; left: 8px; top: 0px; width: calc(100% - 16px); height: 100%; background: rgba(79,79,79,0); z-index: 1; pointer-events: none; 
-			border-radius: inherit; border-radius: 6px;
+		.item::before {
+			content: ""; position: absolute; left: 8px; top: 0px; width: calc(100% - 16px); height: 100%; background: rgba(79,79,79,0); z-index: 1; pointer-events: none;
+			border-radius: inherit;
 		}
 		.item:not(.disabled).hover::before,
 		.item:not(.disabled):hover::before{ background: var(--color-shape-highlight-medium) !important; }
