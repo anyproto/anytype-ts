@@ -618,6 +618,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		const sections = getSections();
 
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const hasMembers = members.length > 1;
+		const showMembers = !spaceview.isOneToOne && (hasMembers || U.Space.isMyOwner());
 
 		head = (
 			<>
@@ -628,15 +630,6 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 						onClick={() => sidebar.leftPanelToggle(true, true)}
 						tooltipParam={{ text: translate('commonToggleSidebar'), typeY: I.MenuDirection.Bottom }}
 					/>
-					<Icon
-						name="header/widget" withBackground={true}
-						onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
-						tooltipParam={{
-							text: translate('commonWidgets'),
-							caption: keyboard.getCaption('widget'),
-							typeY: I.MenuDirection.Bottom,
-						}}
-					/>
 				</div>
 				<div className="side right">
 					<Icon
@@ -645,14 +638,17 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 						onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
 						tooltipParam={{ text: translate('commonSearch'), typeY: I.MenuDirection.Bottom }}
 					/>
-					{spaceview.isShared ? (
+					{showMembers ? (
 						<Icon
 							id="button-widget-members"
-							name="widget/member" 
+							name="widget/member"
 							withBackground={true}
-							inner={<Label className="cnt" text={String(members.length)} />}
+							inner={hasMembers ? <Label className="cnt" text={String(members.length)} /> : null}
 							onClick={() => Action.openSpaceShare(analytics.route.widget)}
-							tooltipParam={{ text: translate('commonMembers'), typeY: I.MenuDirection.Bottom }}
+							tooltipParam={{
+								text: translate(hasMembers ? 'commonMembers' : 'commonInviteMembers'),
+								typeY: I.MenuDirection.Bottom,
+							}}
 						/>
 					) : ''}
 					<Sync id="headerSync" onClick={onSync} />
