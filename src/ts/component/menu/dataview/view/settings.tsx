@@ -1,12 +1,10 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, } from 'react';
-
 import { InputWithLabel, MenuItemVertical } from 'Component';
 import * as I from 'Interface';
-import { Data } from 'Lib/util';
 
 const MenuViewSettings = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close, getId, setActive, setHover, onKeyDown, getSize } = props;
+	const { param, close, setActive, setHover, onKeyDown, getSize, position } = props;
 	const { data } = param;
 	const { rootId, blockId, onSave, readonly, loadData, getView, getSources, onSelect, isInline, getTarget } = data;
 	const nameRef = useRef(null);

@@ -103,7 +103,7 @@
 			}
 
 			.cellWrapper:not(.isName) {
-				.cellContent { padding-left: 4px; padding-right: 4px; border-radius: 6px; }
+				.cellContent { padding-left: 4px; padding-right: 4px; border-radius: 20px; }
 				.cellContent.hover,
 				.cellContent:hover { background-color: var(--color-shape-highlight-medium); }
 			}
