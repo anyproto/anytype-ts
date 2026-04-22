@@ -24,6 +24,7 @@ import PopupMembershipActivation from './membership/activation';
 import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
 import PopupSpaceCreate from './space/create';
+import PopupSpaceHome from './space/home';
 import PopupLogout from './logout';
 import PopupOnboarding from './onboarding';
 import PopupApiCreate from './api/create';
@@ -183,6 +184,7 @@ const Popup = forwardRef<{}, I.Popup>((props, ref) => {
 		membershipFinalization:  PopupMembershipFinalization,
 		share:					 PopupShare,
 		spaceCreate:			 PopupSpaceCreate,
+		spaceHome:				 PopupSpaceHome,
 		logout: 				 PopupLogout,
 		onboarding:				 PopupOnboarding,
 		apiCreate:				 PopupApiCreate,

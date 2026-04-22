@@ -285,7 +285,13 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 								};
 							};
 
-							Action.openSettings('spaceHome', '');
+							close(() => {
+								S.Popup.open('spaceHome', {
+									preventCloseByClick: true,
+									preventCloseByEscape: true,
+									preventResize: true,
+								});
+							});
 							onCreate?.(message.objectId);
 						}
 					}, false);

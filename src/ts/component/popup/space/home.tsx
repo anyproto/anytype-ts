@@ -1,5 +1,5 @@
 import React, { forwardRef, useState } from 'react';
-import { Title, Label, Button, Icon, Frame } from 'Component';
+import { Title, Label, Button, Icon } from 'Component';
 import { I, C, S, U, J, translate, analytics } from 'Lib';
 
 const HOME_OPTIONS = [
@@ -10,7 +10,7 @@ const HOME_OPTIONS = [
 
 type HomeOptionId = typeof HOME_OPTIONS[number]['id'];
 
-const PageMainSettingsSpaceHome = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PopupSpaceHome = forwardRef<{}, I.Popup>(({ close }, ref) => {
 
 	const spaceId = S.Common.space;
 	const [ selected, setSelected ] = useState<HomeOptionId>('chat');
@@ -42,7 +42,7 @@ const PageMainSettingsSpaceHome = forwardRef<I.PageRef, I.PageSettingsComponent>
 			};
 
 			C.WorkspaceSetHomepage(spaceId, message.objectId, () => {
-				U.Object.openRoute({ id: message.objectId, layout: option.layout, spaceId });
+				close(() => U.Object.openRoute({ id: message.objectId, layout: option.layout, spaceId }));
 			});
 		});
 	};
@@ -53,11 +53,13 @@ const PageMainSettingsSpaceHome = forwardRef<I.PageRef, I.PageSettingsComponent>
 		};
 
 		analytics.event('CreateHomePage', { type: 'NotNow' });
-		C.WorkspaceSetHomepage(spaceId, I.HomePredefinedId.Widget, () => U.Space.openDashboard());
+		C.WorkspaceSetHomepage(spaceId, I.HomePredefinedId.Widget, () => {
+			close(() => U.Space.openDashboard());
+		});
 	};
 
 	return (
-		<Frame>
+		<div className="wrapper">
 			<Title text={translate('settingsSpaceHomeTitle')} />
 			<Label text={translate('settingsSpaceHomeDescription')} />
 
@@ -86,9 +88,9 @@ const PageMainSettingsSpaceHome = forwardRef<I.PageRef, I.PageSettingsComponent>
 				<Button text={translate('commonNotNow')} color="blank" onClick={onNotNow} />
 				<Button text={translate('commonContinue')} color="accent" onClick={onContinue} />
 			</div>
-		</Frame>
+		</div>
 	);
 
 });
 
-export default PageMainSettingsSpaceHome;
+export default PopupSpaceHome;
