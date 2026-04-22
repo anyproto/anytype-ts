@@ -66,6 +66,22 @@
 		}
 	}
 
+	.widgetHome {
+		display: flex; flex-direction: row; align-items: center; gap: 0px 8px;
+		height: 44px; padding: 0px 12px; border-radius: 12px;
+		background: var(--color-shape-highlight-light); transition: background $transitionCommon;
+	}
+	.widgetHome {
+		.side { display: flex; flex-direction: row; align-items: center; min-width: 0; gap: 0px 8px; }
+		.side.left { flex-grow: 1; min-width: 0; }
+		.side.right { flex-shrink: 0; }
+		.iconObject { flex-shrink: 0; }
+		.name { @include text-overflow-nw; @include text-common; color: var(--color-text-primary); }
+		.icon.home { width: 20px; height: 20px; flex-shrink: 0; }
+
+		&:hover { background: var(--color-shape-highlight-medium); }
+	}
+
 	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
 	> .body.isPreview { overflow-x: hidden; overflow-y: auto; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
 	> .body {

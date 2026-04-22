@@ -685,7 +685,7 @@ class UtilMenu {
 		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
-	dashboardSelect (element: string, openRoute?: boolean) {
+	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Partial<I.MenuParam>) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 
@@ -714,6 +714,7 @@ class UtilMenu {
 		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
+			...menuParam,
 			data: {
 				withPlural: true,
 				filters: [

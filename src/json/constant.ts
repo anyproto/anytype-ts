@@ -195,6 +195,7 @@ export default {
 		recentEdit:			 'recent',
 		recentOpen:			 'recentOpen',
 		space:				 'space',
+		home:				 'home',
 		unread:				 'unread',
 		type:				 'type',
 		bin:				 'bin',
