@@ -70,8 +70,7 @@ const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const fixedIds = [ I.WidgetSection.Pin, I.WidgetSection.Unread ];
-		if (fixedIds.includes(Number(active.id)) || fixedIds.includes(Number(over.id))) {
+		if (I.FIXED_WIDGET_SECTIONS.includes(Number(active.id)) || I.FIXED_WIDGET_SECTIONS.includes(Number(over.id))) {
 			return;
 		};
 
@@ -101,8 +100,7 @@ const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const getItems = (): any[] => {
-		const fixedIds = [ I.WidgetSection.Pin, I.WidgetSection.Unread ];
-		const sections = U.Menu.widgetSections().filter(it => !fixedIds.includes(it.id)).map(it => {
+		const sections = U.Menu.widgetSections().filter(it => !I.FIXED_WIDGET_SECTIONS.includes(it.id)).map(it => {
 			const param = widgetSections.find(p => p.id == it.id) || {};
 			return { ...it, ...param };
 		});

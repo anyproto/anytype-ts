@@ -9,9 +9,14 @@ export enum WidgetSection {
 	MyFavorites	 = 5,
 };
 
+export const FIXED_WIDGET_SECTIONS: WidgetSection[] = [
+	WidgetSection.Pin,
+	WidgetSection.Unread,
+];
+
 export interface WidgetSectionParam {
-	id: I.WidgetSection; 
-	isClosed: boolean; 
+	id: I.WidgetSection;
+	isClosed: boolean;
 	isHidden: boolean;
 };
 

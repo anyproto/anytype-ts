@@ -122,8 +122,8 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 			return;
 		};
 
-		const fixedIds = [ String(I.WidgetSection.Pin), String(I.WidgetSection.Unread) ];
-		if (fixedIds.includes(String(active.id)) || fixedIds.includes(String(over.id))) {
+		const isFixed = (id: any) => I.FIXED_WIDGET_SECTIONS.includes(Number(id));
+		if (isFixed(active.id) || isFixed(over.id)) {
 			return;
 		};
 
@@ -240,7 +240,7 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 	};
 
 	const SectionItem = ({ section, index }: { section: any; index: number }) => {
-		const isFixed = [ I.WidgetSection.Pin, I.WidgetSection.Unread ].includes(section.id);
+		const isFixed = I.FIXED_WIDGET_SECTIONS.includes(section.id);
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: String(section.id), disabled: (!canWrite || isFixed) });
 		const cfg = widgetSections.find(it => it.id == section.id);
 		const isHidden = !!cfg?.isHidden;
@@ -344,7 +344,7 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 								onDragEnd={onSectionDragEnd}
 								modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 							>
-								<SortableContext items={sectionOptions.filter(s => ![ I.WidgetSection.Pin, I.WidgetSection.Unread ].includes(s.id)).map(s => String(s.id))} strategy={verticalListSortingStrategy}>
+								<SortableContext items={sectionOptions.filter(s => !I.FIXED_WIDGET_SECTIONS.includes(s.id)).map(s => String(s.id))} strategy={verticalListSortingStrategy}>
 									{sectionOptions.map((section, i) => <SectionItem key={section.id} section={section} index={i} />)}
 								</SortableContext>
 							</DndContext>

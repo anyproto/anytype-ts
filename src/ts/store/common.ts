@@ -1234,7 +1234,6 @@ class CommonStore {
 	};
 
 	widgetSectionsInit () {
-		const fixedOrder = [ I.WidgetSection.Pin, I.WidgetSection.Unread ];
 		const reorderable = [ I.WidgetSection.MyFavorites, I.WidgetSection.RecentEdit, I.WidgetSection.Type, I.WidgetSection.Bin ];
 
 		const saved: I.WidgetSectionParam[] = Storage.get('widgetSections') || [];
@@ -1245,7 +1244,7 @@ class CommonStore {
 			return { id, isClosed: prev?.isClosed ?? false, isHidden: prev?.isHidden ?? false };
 		};
 
-		const fixed = fixedOrder.map(makeParam);
+		const fixed = I.FIXED_WIDGET_SECTIONS.map(makeParam);
 		const rest = saved.filter(it => reorderable.includes(it.id));
 		for (const id of reorderable) {
 			if (!rest.find(it => it.id == id)) {
