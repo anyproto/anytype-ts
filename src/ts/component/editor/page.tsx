@@ -2097,6 +2097,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
+			selection?.clear();
+
 			let count = 1;
 
 			if (message.isSameBlockCaret) {
