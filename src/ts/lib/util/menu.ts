@@ -1738,8 +1738,8 @@ class UtilMenu {
 		const { widgetSections } = S.Common;
 
 		return [
-			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.Pin },
+			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.MyFavorites },
 			{ id: I.WidgetSection.RecentEdit },
 			{ id: I.WidgetSection.Type },

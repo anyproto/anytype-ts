@@ -630,6 +630,15 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 						onClick={() => sidebar.leftPanelToggle(true, true)}
 						tooltipParam={{ text: translate('commonToggleSidebar'), typeY: I.MenuDirection.Bottom }}
 					/>
+					<Icon
+						name="header/widget" withBackground={true}
+						onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
+						tooltipParam={{
+							text: translate('commonWidgets'),
+							caption: keyboard.getCaption('widget'),
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
 				</div>
 				<div className="side right">
 					<Icon

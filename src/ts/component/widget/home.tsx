@@ -12,7 +12,7 @@ const WidgetHome: FC = () => {
 	};
 
 	const spaceview = U.Space.getSpaceview();
-	const canChangeHome = !spaceview?.isOneToOne;
+	const canChangeHome = spaceview && !spaceview.isOneToOne;
 
 	const onClick = (e: MouseEvent) => {
 		e.preventDefault();

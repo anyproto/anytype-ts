@@ -1,4 +1,4 @@
-import React, { useRef, forwardRef, MouseEvent } from 'react';
+import React, { forwardRef, MouseEvent } from 'react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
 
@@ -9,7 +9,6 @@ const WidgetSpace = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		return null;
 	};
 
-	const nodeRef = useRef(null);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const route = analytics.route.widget;
 	const cn = [ U.Data.spaceClass(spaceview.spaceType) ];
@@ -61,7 +60,7 @@ const WidgetSpace = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	return (
-		<div ref={nodeRef} className={cn.join(' ')}>
+		<div className={cn.join(' ')}>
 			<div className="head">
 				{icon}
 				<div className="info">
