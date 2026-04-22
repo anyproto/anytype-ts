@@ -6,12 +6,14 @@ const HOME_OPTIONS = [
 	{ id: 'chat', nameKey: 'settingsSpaceHomeOptionChat', typeKey: J.Constant.typeKey.chatDerived, layout: I.ObjectLayout.Chat, details: { name: 'defaultNameGeneral' } },
 	{ id: 'page', nameKey: 'settingsSpaceHomeOptionPage', typeKey: J.Constant.typeKey.page, layout: I.ObjectLayout.Page },
 	{ id: 'collection', nameKey: 'settingsSpaceHomeOptionCollection', typeKey: J.Constant.typeKey.collection, layout: I.ObjectLayout.Collection },
-];
+] as const;
+
+type HomeOptionId = typeof HOME_OPTIONS[number]['id'];
 
 const PageMainSettingsSpaceHome = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const spaceId = S.Common.space;
-	const [ selected, setSelected ] = useState('chat');
+	const [ selected, setSelected ] = useState<HomeOptionId>('chat');
 	const [ isLoading, setIsLoading ] = useState(false);
 
 	const onContinue = () => {
@@ -19,16 +21,13 @@ const PageMainSettingsSpaceHome = forwardRef<I.PageRef, I.PageSettingsComponent>
 			return;
 		};
 
-		const option = HOME_OPTIONS.find(it => it.id == selected);
-		if (!option) {
-			return;
-		};
+		const option = HOME_OPTIONS.find(it => it.id == selected)!;
 
 		analytics.event('CreateHomePage', { type: U.String.ucFirst(selected) });
 
 		const details: any = {};
 
-		if (option.details) {
+		if ('details' in option) {
 			for (const key in option.details) {
 				details[key] = translate(option.details[key]);
 			};

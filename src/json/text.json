@@ -1274,11 +1274,8 @@
 	"settingsSpaceHomeTitle": "Create Home",
 	"settingsSpaceHomeDescription": "Select what you and channel member see when they open the channel. You can always change it in settings.",
 	"settingsSpaceHomeOptionChat": "Chat",
-	"settingsSpaceHomeOptionChatDescription": "A real-time conversation",
 	"settingsSpaceHomeOptionPage": "Page",
-	"settingsSpaceHomeOptionPageDescription": "A blank document",
 	"settingsSpaceHomeOptionCollection": "Collection",
-	"settingsSpaceHomeOptionCollectionDescription": "An organized set of objects",
 
 	"popupConfirmCloseAIOnboardingTitle": "Exit AI Onboarding?",
 	"popupConfirmCloseAIOnboardingText": "Are you sure you want to exit? Your progress will be lost.",
