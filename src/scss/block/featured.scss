@@ -49,7 +49,7 @@
 				.empty { vertical-align: top; }
 				.flex { display: inline-flex; flex-direction: row; align-items: center; }
 
-				.more { @include text-common; line-height: 18px; }
+				.more { @include text-common; line-height: 24px; }
 				.label { display: inline; vertical-align: middle; }
 			}
 
