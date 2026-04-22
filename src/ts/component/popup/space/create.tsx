@@ -231,64 +231,76 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 						return;
 					};
 
-					U.Router.switchSpace(spaceId, '', true, {
-						onRouteChange: () => {
-							if (isShared) {
-								const product = S.Membership.data?.getTopProduct();
-								const writersLimit = product?.features?.spaceWriters || 0;
+					const openPicker = () => {
+						close(() => {
+							S.Popup.open('spaceHome', {
+								data: { spaceId },
+								preventCloseByClick: true,
+								preventCloseByEscape: true,
+								preventResize: true,
+							});
+						});
+					};
 
-								if (!S.Common.isOnline) {
-									Action.savePendingMembers(S.Common.space, identities);
-								} else {
-									C.SpaceMakeShareable(S.Common.space, (message: any) => {
-										if (message.error.code) {
-											if (message.error.code == 104) {
-												const { sharedSpacesLimit } = U.Space.getProfile();
+					if (isShared) {
+						const product = S.Membership.data?.getTopProduct();
+						const writersLimit = product?.features?.spaceWriters || 0;
 
-												S.Popup.open('confirm', {
-													data: {
-														iconParam: { name: 'popup/header/warning', color: 'grey' },
-														title: translate('popupConfirmSharedSpaceLimitTitle'),
-														text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
-														textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
-														canCancel: false,
-														onConfirm: () => Action.openSettings('membership', ''),
-													},
-												});
-												analytics.event('ScreenHitShareSpaceLimit');
-											};
-											return;
-										};
+						if (!S.Common.isOnline) {
+							Action.savePendingMembers(spaceId, identities);
+							openPicker();
+						} else {
+							C.SpaceMakeShareable(spaceId, (message: any) => {
+								if (message.error.code) {
+									if (message.error.code == 104) {
+										const { sharedSpacesLimit } = U.Space.getProfile();
 
-										C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
-											if (message.error.code) {
-												return;
-											};
-
-											analytics.event('ShareSpace');
-											analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
-
-											const writerIdentities = identities.slice(0, writersLimit);
-											const readerIdentities = identities.slice(writersLimit);
-
-											if (writerIdentities.length) {
-												C.SpaceParticipantsAddList(S.Common.space, writerIdentities, I.ParticipantPermissions.Writer);
-											};
-
-											if (readerIdentities.length) {
-												C.SpaceParticipantsAddList(S.Common.space, readerIdentities, I.ParticipantPermissions.Reader);
-											};
-
-											analytics.event('AddMember', { count: identities.length });
+										S.Popup.open('confirm', {
+											data: {
+												iconParam: { name: 'popup/header/warning', color: 'grey' },
+												title: translate('popupConfirmSharedSpaceLimitTitle'),
+												text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+												textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+												canCancel: false,
+												onConfirm: () => Action.openSettings('membership', ''),
+											},
 										});
-									});
+										analytics.event('ScreenHitShareSpaceLimit');
+									};
+									openPicker();
+									return;
 								};
-							};
 
-							Action.openSettings('spaceHome', '');
-							onCreate?.(message.objectId);
-						}
-					}, false);
+								C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+									if (message.error.code) {
+										openPicker();
+										return;
+									};
+
+									analytics.event('ShareSpace');
+									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
+
+									const writerIdentities = identities.slice(0, writersLimit);
+									const readerIdentities = identities.slice(writersLimit);
+
+									if (writerIdentities.length) {
+										C.SpaceParticipantsAddList(spaceId, writerIdentities, I.ParticipantPermissions.Writer);
+									};
+
+									if (readerIdentities.length) {
+										C.SpaceParticipantsAddList(spaceId, readerIdentities, I.ParticipantPermissions.Reader);
+									};
+
+									analytics.event('AddMember', { count: identities.length });
+									openPicker();
+								});
+							});
+						};
+					} else {
+						openPicker();
+					};
+
+					onCreate?.(spaceId);
 
 					analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, type: analyticsType });
 					analytics.event('SelectUsecase', { type: usecase });

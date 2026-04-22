@@ -685,7 +685,7 @@ class UtilMenu {
 		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
-	dashboardSelect (element: string, openRoute?: boolean) {
+	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 
@@ -714,6 +714,7 @@ class UtilMenu {
 		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
+			...menuParam,
 			data: {
 				withPlural: true,
 				filters: [
@@ -721,10 +722,15 @@ class UtilMenu {
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				dataChange: (_ctx: any, items: any) => {
-					return [
-						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'common/empty' }, name: translate('commonEmpty') },
-						{ id: I.HomePredefinedId.Graph, iconParam: { name: 'header/graph' }, name: translate('commonGraph') },
-					].concat(items);
+					const head: any[] = [
+						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
+					];
+
+					if (items.length) {
+						head.push({ isDiv: true });
+					};
+
+					return head.concat(items);
 				},
 				onSelect: el => {
 					onSelect(el, true);
@@ -1732,8 +1738,8 @@ class UtilMenu {
 		const { widgetSections } = S.Common;
 
 		return [
-			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.Pin },
+			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.MyFavorites },
 			{ id: I.WidgetSection.RecentEdit },
 			{ id: I.WidgetSection.Type },

@@ -11,8 +11,8 @@ const ListPopup: FC<I.PageComponent> = () => {
 
 	return (
 		<div className="popups">
-			{list.map((item: I.Popup, i: number) => (
-				<Popup key={i} {...item} />
+			{list.map((item: I.Popup) => (
+				<Popup key={item.id} {...item} />
 			))}
 		</div>
 	);

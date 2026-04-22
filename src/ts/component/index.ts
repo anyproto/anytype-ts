@@ -26,6 +26,7 @@ import Header from './header';
 import HeaderBanner from './header/banner';
 import Footer from './footer';
 import Widget from './widget';
+import WidgetHome from './widget/home';
 
 import SidebarLeft from './sidebar/left';
 import SidebarRight from './sidebar/right';
@@ -203,6 +204,7 @@ export {
 	ProgressItem,
 
 	Widget,
+	WidgetHome,
 
 	ObjectName,
 	ObjectDescription,

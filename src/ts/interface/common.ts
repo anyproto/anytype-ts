@@ -146,6 +146,18 @@ export enum HomePredefinedId {
 	Widget		 = 'widgets',
 };
 
+export interface DashboardObject {
+	id: string;
+	name?: string;
+	layout?: I.ObjectLayout;
+	iconEmoji?: string;
+	iconImage?: string;
+	iconOption?: number;
+	_empty_?: boolean;
+	isDeleted?: boolean;
+	[key: string]: any;
+};
+
 export interface HeaderComponent {
 	rootId?: string;
 	isPopup?: boolean;

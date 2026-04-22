@@ -1,0 +1,48 @@
+@import "~scss/_mixins";
+
+.popups {
+	.popup.popupSpaceHome { z-index: 102; }
+	.popup.popupSpaceHome {
+		.innerWrap {
+			position: fixed; left: 0px; top: 0px; width: 100%; height: 100%;
+			border-radius: 0px; box-shadow: none; background: var(--color-bg-primary);
+			transform: none; margin-top: 0px;
+			display: flex; align-items: center; justify-content: center;
+			overflow: hidden;
+		}
+
+		.dimmer { display: none; }
+
+		.content { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+
+		.wrapper { display: flex; flex-direction: column; align-items: center; padding: 48px; }
+		.wrapper {
+			.title { @include text-header1; font-weight: 700; margin: 0px 0px 8px 0px; text-align: center; }
+			.label { @include text-paragraph; color: var(--color-text-secondary); text-align: center; max-width: 480px; margin: 0px 0px 42px 0px; }
+
+			.homeOptions { display: flex; flex-direction: row; gap: 0px 20px; margin: 0px 0px 42px 0px; font-weight: 500; }
+			.homeOptions {
+				.option { display: flex; flex-direction: column; align-items: center; gap: 10px 0px; }
+				.option {
+					.icon.preview {
+						width: 128px; height: 96px; border-radius: 16px; border: 1px solid var(--color-shape-secondary);
+						transition: border-color $transitionCommon; background-size: cover;
+					}
+					.icon.preview.chat { background-image: url('~img/icon/settings/chat.svg'); }
+					.icon.preview.page { background-image: url('~img/icon/settings/page.svg'); }
+					.icon.preview.collection { background-image: url('~img/icon/settings/collection.svg'); }
+
+					&:hover, &.active { color: var(--color-system-accent-100); }
+					&:hover, &.active {
+						.icon.preview { border-color: var(--color-system-accent-50); }
+					}
+				}
+			}
+
+			.buttons { display: flex; gap: 0px 10px; }
+			.buttons {
+				.button { min-width: 200px; }
+			}
+		}
+	}
+}

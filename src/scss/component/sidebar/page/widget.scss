@@ -66,22 +66,20 @@
 		}
 	}
 
-	.createHome {
-		display: flex; flex-direction: row; align-items: center; gap: 0px 8px; padding: 8px 16px; margin: 0px 8px;
-		border-radius: 8px; transition: background $transitionCommon;
+	.widgetHome {
+		display: flex; flex-direction: row; align-items: center; gap: 0px 8px;
+		height: 44px; padding: 0px 12px; border-radius: 12px;
+		background: var(--color-shape-highlight-light); transition: background $transitionCommon;
 	}
-	.createHome {
+	.widgetHome {
+		.side { display: flex; flex-direction: row; align-items: center; min-width: 0; gap: 0px 8px; }
+		.side.left { flex-grow: 1; min-width: 0; }
+		.side.right { flex-shrink: 0; }
+		.iconObject { flex-shrink: 0; }
+		.name { @include text-overflow-nw; @include text-common; font-weight: 600; color: var(--color-text-primary); }
 		.icon.home { width: 20px; height: 20px; flex-shrink: 0; }
-		.name { flex-grow: 1; @include text-common; color: var(--color-text-primary); }
-		.icon.close {
-			width: 20px; height: 20px; flex-shrink: 0; opacity: 0;
-			transition: opacity $transitionCommon;
-		}
 
 		&:hover { background: var(--color-shape-highlight-medium); }
-		&:hover {
-			.icon.close { opacity: 1; }
-		}
 	}
 
 	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }

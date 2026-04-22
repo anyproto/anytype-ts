@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, Icon, Widget, IconObject, ObjectName, Sync, Label } from 'Component';
+import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Sync, Label } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
 
 
@@ -618,6 +618,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		const sections = getSections();
 
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const hasMembers = members.length > 1;
+		const showMembers = !spaceview.isOneToOne && (hasMembers || U.Space.isMyOwner());
 
 		head = (
 			<>
@@ -645,39 +647,23 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 						onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
 						tooltipParam={{ text: translate('commonSearch'), typeY: I.MenuDirection.Bottom }}
 					/>
-					{spaceview.isShared ? (
+					{showMembers ? (
 						<Icon
 							id="button-widget-members"
-							name="widget/member" 
+							name="widget/member"
 							withBackground={true}
-							inner={<Label className="cnt" text={String(members.length)} />}
+							inner={hasMembers ? <Label className="cnt" text={String(members.length)} /> : null}
 							onClick={() => Action.openSpaceShare(analytics.route.widget)}
-							tooltipParam={{ text: translate('commonMembers'), typeY: I.MenuDirection.Bottom }}
+							tooltipParam={{
+								text: translate(hasMembers ? 'commonMembers' : 'commonInviteMembers'),
+								typeY: I.MenuDirection.Bottom,
+							}}
 						/>
 					) : ''}
 					<Sync id="headerSync" onClick={onSync} />
 				</div>
 			</>
 		);
-
-		const isOwner = U.Space.isMyOwner();
-		const hasDashboard = spaceview.homepage && ![ I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(spaceview.homepage);
-		const bannerData = Storage.get('channelBanner') || {};
-		const showCreateHome = spaceview.isOneToOne && isOwner && !hasDashboard && !bannerData.home;
-
-		const onCreateHome = () => {
-			Action.openSettings('spaceHome', analytics.route.widget);
-		};
-
-		const onDismissCreateHome = (e: React.MouseEvent) => {
-			e.preventDefault();
-			e.stopPropagation();
-
-			const obj = Storage.get('channelBanner') || {};
-
-			obj.home = true;
-			Storage.set('channelBanner', obj);
-		};
 
 		const spaceBlock = new M.Block({ id: J.Constant.widgetId.space, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
 
@@ -695,13 +681,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					getObject={id => getObject(spaceBlock, id)}
 				/>
 
-				{showCreateHome ? (
-					<div className="createHome" onClick={onCreateHome}>
-						<Icon name="settings/home" className="home" />
-						<div className="name">{translate('widgetCreateHome')}</div>
-						<Icon name="common/close" className="close" onClick={onDismissCreateHome} />
-					</div>
-				) : ''}
+				<WidgetHome />
 
 				{sections.map((section, i) => {
 					const isSectionPin = section.id == I.WidgetSection.Pin;
