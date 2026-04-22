@@ -30,6 +30,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		const widgets = getWidgets(I.WidgetSection.Pin);
 		const types = U.Data.getWidgetTypes();
 		const sections = U.Menu.widgetSections();
+		const personal = U.Data.getPersonalWidgets();
 		const { total } = S.Record.getMeta(U.Subscription.spaceSubId(J.Constant.subId.archived), '');
 		const ret = [] as I.WidgetSection[];
 
@@ -44,10 +45,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			ret.push(I.WidgetSection.Pin);
 		};
 
-		const personalId = U.Object.getPersonalWidgetsId();
-		const hasPersonal = personalId && (S.Block.getChildrenIds(personalId, personalId).length > 0);
-
-		if (hasPersonal) {
+		if (personal.length) {
 			ret.push(I.WidgetSection.MyFavorites);
 		};
 
@@ -616,7 +614,6 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		};
 	} else {
 		const sections = getSections();
-
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const hasMembers = members.length > 1;
 		const showMembers = !spaceview.isOneToOne && (hasMembers || U.Space.isMyOwner());

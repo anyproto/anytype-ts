@@ -1368,6 +1368,40 @@ class UtilData {
 		});
 	};
 
+	getPersonalWidgets (): any[] {
+		let items = [];
+
+		const rootId = U.Object.getPersonalWidgetsId();
+		const childrenIds = S.Block.getChildrenIds(rootId, rootId);
+
+		childrenIds.forEach(widgetId => {
+			const widgetBlock = S.Block.getLeaf(rootId, widgetId);
+			if (!widgetBlock || !widgetBlock.isWidget()) {
+				return;
+			};
+
+			const innerIds = S.Block.getChildrenIds(rootId, widgetBlock.id);
+			if (!innerIds.length) {
+				return;
+			};
+
+			const inner = S.Block.getLeaf(rootId, innerIds[0]);
+			const targetId = inner?.getTargetObjectId();
+			if (!targetId) {
+				return;
+			};
+
+			const object = S.Detail.get(rootId, targetId);
+			if (!object || object._empty_ || object.isArchived || object.isDeleted) {
+				return;
+			};
+
+			items.push(object);
+		});
+
+		return items;
+	};
+
 	getTypeNames (typeIds: string[], limit: number): string {
 		const types = typeIds.map(id => S.Record.getTypeById(id)).filter(it => it);
 

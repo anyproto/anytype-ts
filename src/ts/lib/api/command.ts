@@ -1926,21 +1926,15 @@ export const ChatSearch = (spaceId: string, chatId: string, fullText: string, of
 };
 
 export const ChatSetPinnedMessages = (objectId: string, messageIds: string[], pinned: boolean, callBack?: (message: any) => void) => {
-	const request = new Rpc.Chat.SetPinnedMessages.Request();
-
-	request.setChatobjectid(objectId);
-	request.setMessageidsList(messageIds);
-	request.setPinned(pinned);
-
-	dispatcher.request(ChatSetPinnedMessages.name, request, callBack);
+	dispatcher.request('ChatSetPinnedMessages', {
+		objectId,
+		messageIds,
+		pinned,
+	}, callBack);
 };
 
 export const ChatGetPinnedMessages = (objectId: string, callBack?: (message: any) => void) => {
-	const request = new Rpc.Chat.GetPinnedMessages.Request();
-
-	request.setChatobjectid(objectId);
-
-	dispatcher.request(ChatGetPinnedMessages.name, request, callBack);
+	dispatcher.request('ChatGetPinnedMessages', { objectId }, callBack);
 };
 
 export const RelationListWithValue = (spaceId: string, value: any, callBack?: (message: any) => void) => {
