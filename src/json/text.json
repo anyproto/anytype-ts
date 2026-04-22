@@ -1145,6 +1145,7 @@
 
 	"popupSettingsMembershipSwitchMonthly": "Monthly",
 	"popupSettingsMembershipSwitchAnnual": "Annual <span>-20%</span>",
+	"popupSettingsMembershipSwitchLifetime": "Lifetime",
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerGenericSingle": "per %s",
