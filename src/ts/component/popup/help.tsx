@@ -2,6 +2,7 @@ import React, { forwardRef, useState, useRef, useEffect } from 'react';
 import * as Docs from 'Docs';
 import { Cover, Button } from 'Component';
 import Block from 'Component/block/help';
+import ToggleBlock from 'Component/block/help/toggle';
 import * as I from 'Interface';
 
 const LIMIT = 1;
@@ -119,7 +120,11 @@ const PopupHelp = forwardRef<{}, I.Popup>((props, ref) => {
 				<div className="blocks">
 					{sections.map((section: any, i: number) => (
 						<div key={i} className="section">
-							{section.children.map((child: any, i: number) => <Block key={i} {...props} {...child} />)}
+							{section.children.map((child: any, i: number) => (
+								child.style === I.TextStyle.Toggle
+									? <ToggleBlock key={i} block={child} blockProps={props} />
+									: <Block key={i} {...props} {...child} />
+							))}
 						</div>
 					))}
 				</div>
