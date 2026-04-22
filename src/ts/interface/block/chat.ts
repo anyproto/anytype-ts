@@ -69,6 +69,7 @@ export interface ChatMessage {
 	reactions: ChatMessageReaction[];
 	blocks: ChatMessageBlock[];
 	isSynced: boolean;
+	isPinned: boolean;
 
 	// Internal
 	isFirst: boolean;

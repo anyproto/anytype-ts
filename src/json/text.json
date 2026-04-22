@@ -870,6 +870,7 @@
 	"blockChatButtonEmoji": "Add emoji",
 	"blockChatButtonMention": "Add mention",
 	"blockChatNewMessages": "New messages",
+	"blockChatPinnedMessage": "Pinned message",
 	"blockChatMessageEdited": "edited",
 	"blockChatEditing": "Editing message",
 	"blockChatReplying": "Replying to %s",

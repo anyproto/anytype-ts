@@ -695,6 +695,12 @@ export const ChatSearch = (response: any) => {
 	};
 };
 
+export const ChatGetPinnedMessages = (response: any) => {
+	return {
+		messages: (response.messages || []).map(Mapper.From.ChatMessage),
+	};
+};
+
 export const RelationListWithValue = (response: any) => {
 	return {
 		relations: (response.list || []).map((it: any) => {

@@ -35,6 +35,16 @@
 			}
 		}
 
+		.pinnedMessage {
+			position: sticky; left: 0px; top: 52px; display: flex; align-items: center;
+			background: var(--color-bg-primary); z-index: 11; flex-shrink: 0;
+		}
+		.pinnedMessage {
+			.pinnedInner { display: flex; flex-direction: column; gap: 0px; flex: 1;  padding: 7px 0px; @include text-overflow-nw; }
+			.pinnedLabel { @include text-small; font-weight: 500; }
+			.pinnedText { @include text-common; color: var(--color-text-primary); @include text-overflow-nw; }
+		}
+
 		.markuplink, markupobject { color: var(--color-system-accent-100); border-bottom: 0px; }
 		markupmention { padding: 1.5px 2px; background-color: var(--color-system-highlight); border-radius: 2px; }
 		markupmention {

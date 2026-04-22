@@ -739,6 +739,7 @@ export const Mapper = {
 				isReadReaction: !obj.unreadReaction,
 				hasMention: obj.hasMention,
 				isSynced: obj.synced,
+				isPinned: obj.pinned,
 			};
 		},
 
@@ -1179,6 +1180,8 @@ export const Mapper = {
 			if (obj.blocks && obj.blocks.length) {
 				item.blocks = obj.blocks.map(Mapper.To.ChatMessageBlock);
 			};
+
+			item.pinned = obj.isPinned;
 
 			return item;
 		},
@@ -1841,6 +1844,13 @@ export const Mapper = {
 				ids: obj.ids || [],
 				isSynced: obj.isSynced,
 				subIds: obj.subIds || [],
+			};
+		},
+
+		ChatUpdatePinnedStatus: (obj: any) => {
+			return {
+				message: obj.message ? Mapper.From.ChatMessage(obj.message) : null,
+				isPinned: obj.isPinned,
 			};
 		},
 

@@ -48,6 +48,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const [ firstUnreadOrderId, setFirstUnreadOrderId ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
 	const [ isLoaded, setIsLoaded ] = useState(false);
+	const [ pinnedMessages, setPinnedMessages ] = useState<I.ChatMessage[]>([]);
 	const frameRef = useRef(0);
 	const namespace = U.Dom.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
@@ -85,6 +86,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const messageAddHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const messageUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const reactionUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const pinnedStatusUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const focusHandlerRef = useRef<((e: Event) => void) | null>(null);
 
 	const unbind = () => {
@@ -99,6 +101,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		if (reactionUpdateHandlerRef.current) {
 			U.Dom.removeEvent(window, 'reactionUpdate', reactionUpdateHandlerRef.current);
 			reactionUpdateHandlerRef.current = null;
+		};
+		if (pinnedStatusUpdateHandlerRef.current) {
+			U.Dom.removeEvent(window, 'pinnedStatusUpdate', pinnedStatusUpdateHandlerRef.current);
+			pinnedStatusUpdateHandlerRef.current = null;
 		};
 		if (focusHandlerRef.current) {
 			U.Dom.removeEvent(window, 'focus', focusHandlerRef.current);
@@ -124,6 +130,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			onMessageAdd(detail.message, detail.subIds);
 		};
 		reactionUpdateHandlerRef.current = () => scrollToBottomCheck();
+		pinnedStatusUpdateHandlerRef.current = (e: Event) => {
+			const detail = (e as CustomEvent).detail || {};
+			onPinnedStatusUpdate(detail.message, detail.isPinned, detail.subIds);
+		};
 		focusHandlerRef.current = () => {
 			// Re-render from windowIsFocused observable can reset scrollTop — restore it after paint.
 			// readScrolledMessages must run AFTER the restore write, because its state mutations
@@ -151,6 +161,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			['messageAdd', messageAddHandlerRef.current],
 			['messageUpdate', messageUpdateHandlerRef.current],
 			['reactionUpdate', reactionUpdateHandlerRef.current],
+			['pinnedStatusUpdate', pinnedStatusUpdateHandlerRef.current],
 			['focus', focusHandlerRef.current],
 		]);
 
@@ -491,6 +502,53 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		};
 	};
 
+	const onPinnedStatusUpdate = (message: I.ChatMessage, isPinned: boolean, subIds: string[]) => {
+		const subId = getSubId();
+
+		if (!subIds.includes(subId)) {
+			return;
+		};
+
+		if (isPinned) {
+			const full = S.Chat.getMessageById(subId, message.id);
+
+			setPinnedMessages(prev => [ ...prev.filter(it => it.id != message.id), full || message ]);
+		} else {
+			setPinnedMessages(prev => prev.filter(it => it.id != message.id));
+		};
+	};
+
+	const loadPinnedMessages = () => {
+		if (!chatId || U.Space.getSpaceview().isOneToOne) {
+			return;
+		};
+
+		C.ChatGetPinnedMessages(chatId, (message: any) => {
+			if (!message.error.code) {
+				setPinnedMessages(message.messages || []);
+			};
+		});
+	};
+
+	const onPinToggle = (message: I.ChatMessage) => {
+		const isPinned = message.isPinned;
+
+		C.ChatSetPinnedMessages(chatId, [ message.id ], !isPinned, (response: any) => {
+			if (!response.error.code) {
+				analytics.event(isPinned ? 'UnpinMessage' : 'PinMessage', { chatId: analyticsChatId });
+			};
+		});
+	};
+
+	const onPinnedBannerClick = () => {
+		const last = pinnedMessages[pinnedMessages.length - 1];
+
+		if (last) {
+			loadAndScrollToMessage(last.id);
+			analytics.event('ClickPinnedMessage', { chatId: analyticsChatId });
+		};
+	};
+
 	const getDownloadableAttachments = (message: I.ChatMessage): any[] => {
 		return (message.attachments || [])
 			.map(it => S.Detail.get(subId, it.target))
@@ -626,6 +684,12 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 							break;
 						};
 
+						case 'pin':
+						case 'unpin': {
+							onPinToggle(item);
+							break;
+						};
+
 						case 'download': {
 							const files = getDownloadableAttachments(item);
 
@@ -654,7 +718,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		if (!node) return;
 
 		const dates = U.Dom.selectAll('.sectionDate', node);
-		const offset = J.Size.header + 8;
+		const pinned = U.Dom.select('.pinnedMessage', node) as HTMLElement | null;
+		const pinnedHeight = pinned ? pinned.offsetHeight : 0;
+		const offset = J.Size.header + 8 + pinnedHeight;
 		const container = U.Dom.getScrollContainer(isPopup);
 		const top = container?.getBoundingClientRect().top ?? 0;
 
@@ -847,6 +913,14 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			const isFileDownloading = S.Common.isDownloading(downloadable[0].id);
 
 			options.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
+		};
+
+		if (!U.Space.getSpaceview().isOneToOne) {
+			if (message.isPinned) {
+				options.push({ id: 'unpin', icon: 'chat-unpin', name: translate('commonUnpin') });
+			} else {
+				options.push({ id: 'pin', icon: 'chat-pin', name: translate('commonPin') });
+			};
 		};
 
 		if (isSelf) {
@@ -1208,6 +1282,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setIsBottom(false);
 		setFirstUnreadOrderId('');
 		loadState(() => {
+			loadPinnedMessages();
 			const subId = getSubId();
 			const match = keyboard.getMatch(isPopup);
 			const state = S.Chat.getState(subId);
@@ -1358,6 +1433,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		};
 	}, [ firstUnreadOrderId ]);
 
+	useLayoutEffect(() => {
+		renderDates();
+	}, [ pinnedMessages.length ]);
+
 	useImperativeHandle(ref, () => ({
 		forceUpdate: () => setDummy(dummy + 1),
 		resize,
@@ -1368,14 +1447,33 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		loadAndScrollToMessage,
 	}));
 
+	const lastPinned = pinnedMessages[pinnedMessages.length - 1];
+	let pinnedBanner = null;
+
+	if (lastPinned) {
+		const author = U.Space.getParticipant(U.Space.getParticipantId(space, lastPinned.creator));
+		const text = lastPinned.content?.text || U.Common.plural(1, translate('pluralAttachment'));
+
+		pinnedBanner = (
+			<div className="pinnedMessage" onClick={onPinnedBannerClick}>
+				<div className="pinnedInner">
+					<div className="pinnedLabel">{translate('blockChatPinnedMessage')}</div>
+					<div className="pinnedText">{author ? `${author.name}: ` : ''}{U.String.sanitize(text)}</div>
+				</div>
+			</div>
+		);
+	};
+
 	return (
-		<div 
+		<div
 			ref={nodeRef}
 			className="wrap"
-			onDragOver={onDragOver} 
-			onDragLeave={onDragLeave} 
+			onDragOver={onDragOver}
+			onDragLeave={onDragLeave}
 			onDrop={onDrop}
 		>
+			{pinnedBanner}
+
 			<div id="scrollWrapper" ref={scrollWrapperRef} className="scrollWrapper">
 				{content}
 			</div>
