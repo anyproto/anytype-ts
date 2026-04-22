@@ -76,7 +76,7 @@
 		.side.left { flex-grow: 1; min-width: 0; }
 		.side.right { flex-shrink: 0; }
 		.iconObject { flex-shrink: 0; }
-		.name { @include text-overflow-nw; @include text-common; color: var(--color-text-primary); }
+		.name { @include text-overflow-nw; @include text-common; font-weight: 600; color: var(--color-text-primary); }
 		.icon.home { width: 20px; height: 20px; flex-shrink: 0; }
 
 		&:hover { background: var(--color-shape-highlight-medium); }

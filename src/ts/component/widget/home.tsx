@@ -11,6 +11,9 @@ const WidgetHome: FC = () => {
 		return null;
 	};
 
+	const spaceview = U.Space.getSpaceview();
+	const canChangeHome = !spaceview?.isOneToOne;
+
 	const onClick = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -25,6 +28,10 @@ const WidgetHome: FC = () => {
 	const onContextMenu = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
+
+		if (!canChangeHome) {
+			return;
+		};
 
 		const { x, y } = keyboard.mouse.page;
 

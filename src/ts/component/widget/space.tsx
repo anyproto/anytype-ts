@@ -1,7 +1,5 @@
-import React, { useRef, forwardRef, useEffect, useState, MouseEvent } from 'react';
-import { Icon, IconObject, ObjectName, Label } from 'Component';
-import MemberCnt from 'Component/util/memberCnt';
-import ChatCounter from 'Component/util/chatCounter';
+import React, { useRef, forwardRef, MouseEvent } from 'react';
+import { Icon, IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
 
 const WidgetSpace = forwardRef<{}, I.WidgetComponent>((props, ref) => {
@@ -12,64 +10,23 @@ const WidgetSpace = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const nodeRef = useRef(null);
-	const [ dummy, setDummy ] = useState(0);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const route = analytics.route.widget;
 	const cn = [ U.Data.spaceClass(spaceview.spaceType) ];
-	const iconSize = spaceview.isOneToOne ? 80 : 32;
-	const rootId = keyboard.getRootId();
-	const workspace = S.Detail.get(S.Block.workspace, S.Block.workspace, [ 'chatId' ]);
-	const chatId = workspace.chatId;
 
 	const icon = (
 		<IconObject
-			size={iconSize}
-			iconSize={iconSize}
+			size={32}
+			iconSize={32}
 			object={spaceview}
 			onClick={() => U.Space.openDashboard()}
 		/>
 	);
 
-	let buttons = [];
-	if (spaceview.isOneToOne) {
-		[
-			canWrite ? {
-				id: 'create',
-				iconName: 'menu/action/createObject',
-				name: translate('commonCreate'),
-				withArrow: true,
-				arrowTooltipParam: {
-					text: translate('popupShortcutMainBasics19'),
-					caption: keyboard.getCaption('selectType'),
-					typeY: I.MenuDirection.Bottom as any,
-				},
-			} : null,
-			{ id: 'search', iconName: 'common/search', name: translate('commonSearch') },
-			{ id: 'chat', iconName: 'widget/button/chat', name: translate('commonMainChat') },
-		];
-	};
-	buttons = buttons.filter(it => it);
-
-	const onButtonClick = (e: MouseEvent, item: any) => {
+	const onCreate = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		switch (item.id) {
-			case 'search': {
-				keyboard.onSearchPopup(route);
-				break;
-			};
-
-			case 'create': {
-				keyboard.pageCreate({}, route, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
-				break;
-			};
-
-			case 'chat': {
-				U.Object.openRoute({ id: S.Block.workspace, layout: I.ObjectLayout.Chat });
-				break;
-			};
-		};
+		keyboard.pageCreate({}, route, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 	};
 
 	const onArrow = (e: MouseEvent) => {
@@ -103,21 +60,8 @@ const WidgetSpace = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		});
 	};
 
-	let content = null;
-	if (spaceview.isOneToOne) {
-		content = (
-			<div className="spaceInfo">
-				{icon}
-				<div className="nameWrap" onClick={onMore}>
-					<ObjectName object={spaceview} />
-					<Icon name="arrow/button" size={8} color="default" />
-				</div>
-
-				<MemberCnt route={route} />
-			</div>
-		);
-	} else {
-		content = (
+	return (
+		<div ref={nodeRef} className={cn.join(' ')}>
 			<div className="head">
 				{icon}
 				<div className="info">
@@ -128,11 +72,11 @@ const WidgetSpace = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					<div className="side right">
 						{canWrite ? (
 							<>
-								<Icon 
+								<Icon
 									id={`button-create`}
 									name="menu/action/createObject"
 									color="default"
-									onClick={e => onButtonClick(e, { id: 'create' })}
+									onClick={onCreate}
 									tooltipParam={{
 										text: translate('popupShortcutMainBasics1'),
 										caption: keyboard.getCaption('createObject'),
@@ -142,7 +86,7 @@ const WidgetSpace = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 								<Icon
 									id={`button-create-arrow`}
 									name="arrow/button"
-									size={8} 
+									size={8}
 									color="default"
 									onClick={onArrow}
 									tooltipParam={{
@@ -156,41 +100,6 @@ const WidgetSpace = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					</div>
 				</div>
 			</div>
-		);
-	};
-
-	return (
-		<div ref={nodeRef} className={cn.join(' ')}>
-			{content}
-			{buttons.length ? (
-				<div className="buttons">
-					{buttons.map((item, idx) => {
-						const cn = [ 'item' ];
-
-						if ((item.id == 'chat') && (rootId == S.Block.workspace)) {
-							cn.push('active');
-						};
-
-						return (
-							<div className={cn.join(' ')} onClick={e => onButtonClick(e, item)} key={idx}>
-								<Icon name={item.iconName} className={item.id} />
-								<Label text={item.name} />
-								{item.id == 'chat' ? <ChatCounter chatId={chatId} /> : ''}
-								{item.withArrow ? (
-									<Icon
-										id={`button-${item.id}-arrow`}
-										name="arrow/button"
-										size={8} 
-										withBackground={true}
-										onClick={onArrow}
-										tooltipParam={item.arrowTooltipParam}
-									/>
-								) : ''}
-							</div>
-						);
-					})}
-				</div>
-			) : ''}
 		</div>
 	);
 
