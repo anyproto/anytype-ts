@@ -231,12 +231,24 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 						return;
 					};
 
+					const openPicker = () => {
+						close(() => {
+							S.Popup.open('spaceHome', {
+								data: { spaceId },
+								preventCloseByClick: true,
+								preventCloseByEscape: true,
+								preventResize: true,
+							});
+						});
+					};
+
 					if (isShared) {
 						const product = S.Membership.data?.getTopProduct();
 						const writersLimit = product?.features?.spaceWriters || 0;
 
 						if (!S.Common.isOnline) {
 							Action.savePendingMembers(spaceId, identities);
+							openPicker();
 						} else {
 							C.SpaceMakeShareable(spaceId, (message: any) => {
 								if (message.error.code) {
@@ -255,11 +267,13 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 										});
 										analytics.event('ScreenHitShareSpaceLimit');
 									};
+									openPicker();
 									return;
 								};
 
 								C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
 									if (message.error.code) {
+										openPicker();
 										return;
 									};
 
@@ -278,19 +292,14 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 									};
 
 									analytics.event('AddMember', { count: identities.length });
+									openPicker();
 								});
 							});
 						};
+					} else {
+						openPicker();
 					};
 
-					close(() => {
-						S.Popup.open('spaceHome', {
-							data: { spaceId },
-							preventCloseByClick: true,
-							preventCloseByEscape: true,
-							preventResize: true,
-						});
-					});
 					onCreate?.(spaceId);
 
 					analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, type: analyticsType });

@@ -10,9 +10,13 @@ const HOME_OPTIONS = [
 
 type HomeOptionId = typeof HOME_OPTIONS[number]['id'];
 
+interface PopupSpaceHomeData {
+	spaceId?: string;
+}
+
 const PopupSpaceHome = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
-	const data = param?.data || {};
+	const data: PopupSpaceHomeData = param?.data || {};
 	const spaceId = data.spaceId || S.Common.space;
 	const [ selected, setSelected ] = useState<HomeOptionId>('chat');
 	const [ isLoading, setIsLoading ] = useState(false);
