@@ -10,11 +10,16 @@ const HOME_OPTIONS = [
 
 type HomeOptionId = typeof HOME_OPTIONS[number]['id'];
 
-const PopupSpaceHome = forwardRef<{}, I.Popup>(({ close }, ref) => {
+const PopupSpaceHome = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
-	const spaceId = S.Common.space;
+	const data = param?.data || {};
+	const spaceId = data.spaceId || S.Common.space;
 	const [ selected, setSelected ] = useState<HomeOptionId>('chat');
 	const [ isLoading, setIsLoading ] = useState(false);
+
+	const switchToSpace = (onRouteChange?: () => void) => {
+		U.Router.switchSpace(spaceId, '', true, { onRouteChange }, false);
+	};
 
 	const onContinue = () => {
 		if (isLoading) {
@@ -42,7 +47,11 @@ const PopupSpaceHome = forwardRef<{}, I.Popup>(({ close }, ref) => {
 			};
 
 			C.WorkspaceSetHomepage(spaceId, message.objectId, () => {
-				close(() => U.Object.openRoute({ id: message.objectId, layout: option.layout, spaceId }));
+				close(() => {
+					switchToSpace(() => {
+						U.Object.openRoute({ id: message.objectId, layout: option.layout, spaceId });
+					});
+				});
 			});
 		});
 	};
@@ -54,7 +63,9 @@ const PopupSpaceHome = forwardRef<{}, I.Popup>(({ close }, ref) => {
 
 		analytics.event('CreateHomePage', { type: 'NotNow' });
 		C.WorkspaceSetHomepage(spaceId, I.HomePredefinedId.Widget, () => {
-			close(() => U.Space.openDashboard());
+			close(() => {
+				switchToSpace(() => U.Space.openDashboard());
+			});
 		});
 	};
 
