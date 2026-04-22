@@ -1,8 +1,10 @@
-import React, { forwardRef, MouseEvent } from 'react';
+import React, { FC, MouseEvent } from 'react';
 import { Icon, IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
 
-const WidgetHome = forwardRef<{}, I.WidgetComponent>((props, ref) => {
+const ANCHOR = `#widget-${J.Constant.widgetId.home}`;
+
+const WidgetHome: FC = () => {
 
 	const home = U.Space.getDashboard();
 	if (!home || U.Space.getSystemDashboardIds().includes(home.id)) {
@@ -34,10 +36,10 @@ const WidgetHome = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				options: [
 					{ id: 'change', name: translate('widgetHomeChange') },
 				],
-				onSelect: (_: any, item: any) => {
+				onSelect: (_: unknown, item: { id: string }) => {
 					if (item.id == 'change') {
-						U.Menu.dashboardSelect(`#widget-home`, false, {
-							element: '#widget-home',
+						U.Menu.dashboardSelect(ANCHOR, false, {
+							element: ANCHOR,
 							className: 'fixed',
 							classNameWrap: 'fromSidebar',
 							horizontal: I.MenuDirection.Right,
@@ -51,7 +53,7 @@ const WidgetHome = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	return (
-		<div id="widget-home" className="widgetHome" onClick={onClick} onContextMenu={onContextMenu}>
+		<div id={`widget-${J.Constant.widgetId.home}`} className="widgetHome" onClick={onClick} onContextMenu={onContextMenu}>
 			<div className="side left">
 				<IconObject object={home} size={20} iconSize={20} className="headerIcon" onClick={e => e.stopPropagation()} />
 				<ObjectName object={home} />
@@ -62,6 +64,6 @@ const WidgetHome = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		</div>
 	);
 
-});
+};
 
 export default WidgetHome;

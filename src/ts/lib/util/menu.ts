@@ -685,7 +685,7 @@ class UtilMenu {
 		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
-	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Partial<I.MenuParam>) {
+	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 
