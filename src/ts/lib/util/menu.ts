@@ -721,10 +721,15 @@ class UtilMenu {
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				dataChange: (_ctx: any, items: any) => {
-					return [
-						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'common/empty' }, name: translate('commonEmpty') },
-						{ id: I.HomePredefinedId.Graph, iconParam: { name: 'header/graph' }, name: translate('commonGraph') },
-					].concat(items);
+					const head: any[] = [
+						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
+					];
+
+					if (items.length) {
+						head.push({ isDiv: true });
+					};
+
+					return head.concat(items);
 				},
 				onSelect: el => {
 					onSelect(el, true);

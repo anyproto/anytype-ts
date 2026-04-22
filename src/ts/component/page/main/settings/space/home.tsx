@@ -6,7 +6,6 @@ const HOME_OPTIONS = [
 	{ id: 'chat', nameKey: 'settingsSpaceHomeOptionChat', typeKey: J.Constant.typeKey.chatDerived, layout: I.ObjectLayout.Chat, details: { name: 'defaultNameGeneral' } },
 	{ id: 'page', nameKey: 'settingsSpaceHomeOptionPage', typeKey: J.Constant.typeKey.page, layout: I.ObjectLayout.Page },
 	{ id: 'collection', nameKey: 'settingsSpaceHomeOptionCollection', typeKey: J.Constant.typeKey.collection, layout: I.ObjectLayout.Collection },
-	{ id: 'empty', nameKey: 'settingsSpaceHomeOptionEmpty' },
 ];
 
 const PageMainSettingsSpaceHome = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
@@ -15,39 +14,47 @@ const PageMainSettingsSpaceHome = forwardRef<I.PageRef, I.PageSettingsComponent>
 	const [ selected, setSelected ] = useState('chat');
 	const [ isLoading, setIsLoading ] = useState(false);
 
-	const onCreate = () => {
+	const onContinue = () => {
 		if (isLoading) {
 			return;
 		};
 
 		const option = HOME_OPTIONS.find(it => it.id == selected);
+		if (!option) {
+			return;
+		};
 
 		analytics.event('CreateHomePage', { type: U.String.ucFirst(selected) });
 
-		if (option.typeKey) {
-			const details: any = {};
+		const details: any = {};
 
-			if (option.details) {
-				for (const key in option.details) {
-					details[key] = translate(option.details[key]);
-				};
+		if (option.details) {
+			for (const key in option.details) {
+				details[key] = translate(option.details[key]);
+			};
+		};
+
+		setIsLoading(true);
+		C.ObjectCreate(details, [], '', option.typeKey, spaceId, (message: any) => {
+			setIsLoading(false);
+
+			if (message.error.code) {
+				return;
 			};
 
-			setIsLoading(true);
-			C.ObjectCreate(details, [], '', option.typeKey, spaceId, (message: any) => {
-				setIsLoading(false);
-
-				if (message.error.code) {
-					return;
-				};
-
-				C.WorkspaceSetHomepage(spaceId, message.objectId, () => {
-					U.Object.openRoute({ id: message.objectId, layout: option.layout, spaceId });
-				});
+			C.WorkspaceSetHomepage(spaceId, message.objectId, () => {
+				U.Object.openRoute({ id: message.objectId, layout: option.layout, spaceId });
 			});
-		} else {
-			C.WorkspaceSetHomepage(spaceId, I.HomePredefinedId.Widget, () => U.Space.openDashboard());
+		});
+	};
+
+	const onNotNow = () => {
+		if (isLoading) {
+			return;
 		};
+
+		analytics.event('CreateHomePage', { type: 'NotNow' });
+		C.WorkspaceSetHomepage(spaceId, I.HomePredefinedId.Widget, () => U.Space.openDashboard());
 	};
 
 	return (
@@ -77,7 +84,8 @@ const PageMainSettingsSpaceHome = forwardRef<I.PageRef, I.PageSettingsComponent>
 			</div>
 
 			<div className="buttons">
-				<Button text={translate('commonCreate')} color="accent" onClick={onCreate} />
+				<Button text={translate('commonNotNow')} color="blank" onClick={onNotNow} />
+				<Button text={translate('commonContinue')} color="accent" onClick={onContinue} />
 			</div>
 		</Frame>
 	);

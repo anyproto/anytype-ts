@@ -225,9 +225,9 @@ class UtilSpace {
 	 * @returns {object} The last opened dashboard object.
 	 */
 	getLastOpened () {
-		return { 
+		return {
 			id: I.HomePredefinedId.Widget,
-			name: translate('commonEmpty'),
+			name: translate('commonNoHome'),
 		};
 	};
 

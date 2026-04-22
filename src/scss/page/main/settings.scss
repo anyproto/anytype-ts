@@ -1104,7 +1104,6 @@
                 .icon.preview.chat { background-image: url('~img/icon/settings/chat.svg'); }
                 .icon.preview.page { background-image: url('~img/icon/settings/page.svg'); }
                 .icon.preview.collection { background-image: url('~img/icon/settings/collection.svg'); }
-                .icon.preview.empty { background-image: url('~img/icon/settings/empty.svg'); }
 
                 &:hover, &.active { color: var(--color-system-accent-100); }
                 &:hover, &.active {
@@ -1113,7 +1112,7 @@
             }
         }
 
-        .buttons { display: flex; }
+        .buttons { display: flex; gap: 0px 10px; }
         .buttons {
             .button { min-width: 200px; }
         }

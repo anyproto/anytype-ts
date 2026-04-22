@@ -660,25 +660,6 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			</>
 		);
 
-		const isOwner = U.Space.isMyOwner();
-		const hasDashboard = spaceview.homepage && ![ I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(spaceview.homepage);
-		const bannerData = Storage.get('channelBanner') || {};
-		const showCreateHome = spaceview.isOneToOne && isOwner && !hasDashboard && !bannerData.home;
-
-		const onCreateHome = () => {
-			Action.openSettings('spaceHome', analytics.route.widget);
-		};
-
-		const onDismissCreateHome = (e: React.MouseEvent) => {
-			e.preventDefault();
-			e.stopPropagation();
-
-			const obj = Storage.get('channelBanner') || {};
-
-			obj.home = true;
-			Storage.set('channelBanner', obj);
-		};
-
 		const spaceBlock = new M.Block({ id: J.Constant.widgetId.space, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
 
 		content = (
@@ -694,14 +675,6 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					sidebarDirection={sidebarDirection}
 					getObject={id => getObject(spaceBlock, id)}
 				/>
-
-				{showCreateHome ? (
-					<div className="createHome" onClick={onCreateHome}>
-						<Icon name="settings/home" className="home" />
-						<div className="name">{translate('widgetCreateHome')}</div>
-						<Icon name="common/close" className="close" onClick={onDismissCreateHome} />
-					</div>
-				) : ''}
 
 				{sections.map((section, i) => {
 					const isSectionPin = section.id == I.WidgetSection.Pin;
