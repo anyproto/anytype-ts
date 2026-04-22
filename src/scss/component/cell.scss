@@ -71,7 +71,8 @@
 }
 
 .cellContent.c-select {
-	.more { height: 18px; }
+	#value { line-height: 24px; }
+	.more { height: 24px; }
 }
 
 .cellContent.c-object {
@@ -122,7 +123,7 @@
 
 	.placeholder { position: absolute; left: 0px; top: 0px; height: 100%; }
 	#entry { -webkit-user-modify: read-write-plaintext-only; color: var(--color-text-primary); }
-	#list { margin-right: 6px; position: relative; word-wrap: break-word; }
+	#list {  margin-right: 6px; position: relative; word-wrap: break-word; }
 }
 
 .cell.isEditing.c-select {

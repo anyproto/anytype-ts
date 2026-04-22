@@ -32,7 +32,7 @@ interface Ref extends I.SidebarSectionRef {
 
 const SidebarSectionIndex = forwardRef<Ref, Props>((props, ref) => {
 	
-	const { component, item, onDragStart, withState } = props;
+	const { component, item, onDragStart, withState, className = '' } = props;
 	const [ stateObject, setStateObject ] = useState(null);
 	const [ dummy, setDummy ] = useState(0);
 	const object = stateObject || props.object;
@@ -43,7 +43,7 @@ const SidebarSectionIndex = forwardRef<Ref, Props>((props, ref) => {
 
 	const childRef = useRef(null);
 	const Component = Components[component];
-	const cn = [ 'section', U.String.toCamelCase(component.replace(/\//g, '-')) ];
+	const cn = [ 'section', U.String.toCamelCase(component.replace(/\//g, '-')), className ];
 	const readonly = props.readonly || object?.isArchived;
 	const id = [ 'section' ].concat(component.split('/'));
 	const nodeRef = useRef(null);

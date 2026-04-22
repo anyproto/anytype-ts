@@ -105,6 +105,25 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (!isSystem && canWrite) {
+			const personalId = U.Object.getPersonalWidgetsId();
+			const isFavorite = target && S.Block.getWidgetsForTargetIn(target.id, personalId).length > 0;
+			const isPinned = target && S.Block.getWidgetsForTargetIn(target.id, widgets).length > 0;
+			const isOwner = U.Space.isMyOwner();
+
+			actionChildren.push({
+				id: isFavorite ? 'unfavorite' : 'favorite',
+				iconParam: { name: isFavorite ? 'menu/action/unfav' : 'menu/action/fav' },
+				name: translate(isFavorite ? 'menuWidgetUnfavorite' : 'menuWidgetFavorite'),
+			});
+
+			if (isOwner) {
+				actionChildren.push({
+					id: isPinned ? 'unpinFromChannel' : 'pinToChannel',
+					iconParam: { name: 'menu/action/pin' },
+					name: translate(isPinned ? 'menuWidgetUnpinFromChannel' : 'menuWidgetPinToChannel'),
+				});
+			};
+
 			if (!isType) {
 				actionChildren.push({ id: 'linkTo', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonLinkTo'), arrow: true });
 				actionChildren.push({ id: 'addCollection', iconParam: { name: 'menu/action/collection' }, name: translate('commonAddToCollection'), arrow: true });
@@ -383,6 +402,34 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'archive': {
 				Action.archiveCheckType('', [ target.id ], route);
+				break;
+			};
+
+			case 'favorite': {
+				const personalId = U.Object.getPersonalWidgetsId();
+				Action.createWidgetFromObjectIn(personalId, personalId, target.id, '', I.BlockPosition.InnerFirst, route);
+				break;
+			};
+
+			case 'unfavorite': {
+				const personalId = U.Object.getPersonalWidgetsId();
+				const list = S.Block.getWidgetsForTargetIn(target.id, personalId);
+				if (list.length) {
+					C.BlockListDelete(personalId, list.map(it => it.id));
+				};
+				break;
+			};
+
+			case 'pinToChannel': {
+				Action.createWidgetFromObjectIn(widgets, widgets, target.id, '', I.BlockPosition.InnerFirst, route);
+				break;
+			};
+
+			case 'unpinFromChannel': {
+				const list = S.Block.getWidgetsForTargetIn(target.id, widgets);
+				if (list.length) {
+					C.BlockListDelete(widgets, list.map(it => it.id));
+				};
 				break;
 			};
 

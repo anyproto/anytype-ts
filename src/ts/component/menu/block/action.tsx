@@ -20,6 +20,7 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 
 		return () => {
+			unbind();
 			keyboard.setFocus(false);
 			S.Menu.closeAll(J.Menu.action);
 			S.Menu.clearTimeout();

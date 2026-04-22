@@ -19,6 +19,18 @@ import * as I from 'Interface';
 class UtilObject {
 
 	/**
+	 * Returns the virtual personal widgets object id for the given space.
+	 * When spaceId is omitted, falls back to the current space.
+	 */
+	getPersonalWidgetsId (spaceId?: string): string {
+		return J.Constant.widgetId.personalWidgetsPrefix + (spaceId || S.Common.space).replace(/\./g, '_');
+	};
+
+	isPersonalWidgetsId (id: string): boolean {
+		return !!id && id.startsWith(J.Constant.widgetId.personalWidgetsPrefix);
+	};
+
+	/**
 	 * Get the router action string for a given object layout.
 	 * Maps layout types to their corresponding page action identifiers.
 	 * @param v - The object layout type

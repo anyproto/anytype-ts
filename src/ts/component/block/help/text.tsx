@@ -53,8 +53,13 @@ const ContentText = forwardRef<HTMLDivElement, Props>(({
 		};
 	};
 	
+	const cn = [ 'flex' ];
+	if (style === I.TextStyle.Toggle) {
+		cn.push('toggleWrapper');
+	};
+
 	return (
-		<div className="flex">
+		<div className={cn.join(' ')}>
 			<div className="markers">
 				{marker ? <Marker {...marker} color={color} /> : ''}
 			</div>

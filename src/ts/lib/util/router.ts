@@ -177,7 +177,9 @@ class UtilRouter {
 
 			this.history.push(newRoute);
 
-			if (updateTabRoute && ![ 'index', 'auth' ].includes(routeParam.page)) {
+			const isTransientMain = (routeParam.page == 'main') && [ 'blank', 'void' ].includes(routeParam.action);
+
+			if (updateTabRoute && ![ 'index', 'auth' ].includes(routeParam.page) && !isTransientMain) {
 				Renderer.send('updateTab', U.Common.getElectron().tabId(), { route: newRoute });
 			};
 

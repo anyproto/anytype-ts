@@ -43,7 +43,7 @@ const SNAP = 0.01;
 const Block = forwardRef<Ref, Props>((props, ref) => {
 
 	const { 
-		rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
+		rootId, css, className, block, index, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
 		isContextMenuDisabled, blockRemove, getWrapperWidth,
 	} = props;
 	const nodeRef = useRef(null);
@@ -820,7 +820,6 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const { id, type, fields, content, bgColor } = block;
-	const index = props.index || '';
 
 	if (!id) {
 		return null;
@@ -837,8 +836,13 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 
 	const { style, checked } = content;
 	const root = S.Block.getLeaf(rootId, rootId);
-	const cn: string[] = [ 'block', U.Data.blockClass(block), `align${hAlign}`, `index${index}` ];
-	const cd: string[] = [ 'wrapContent' ];
+	const cn = [ 'block', U.Data.blockClass(block), `align${hAlign}` ];
+
+	if (undefined !== index) {
+		cn.push(`index${index}`);
+	};
+
+	const cd = [ 'wrapContent' ];
 	const key = [ 'block', block.id, 'component' ].join(' ');
 	const participantId = S.Block.getParticipantId(rootId, block.id);
 

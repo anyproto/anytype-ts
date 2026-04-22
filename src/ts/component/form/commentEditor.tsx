@@ -1770,7 +1770,13 @@ const SelectionToolbarPlugin = () => {
 	const [ editor ] = useLexicalComposerContext();
 
 	useEffect(() => {
-		const removeListener = editor.registerUpdateListener(() => {
+		let isMouseDown = false;
+		let pendingOpen = false;
+		let openTimer = 0;
+
+		const root = editor.getRootElement();
+
+		const openToolbar = () => {
 			editor.getEditorState().read(() => {
 				const selection = $getSelection();
 
@@ -1781,7 +1787,6 @@ const SelectionToolbarPlugin = () => {
 					return;
 				};
 
-				const root = editor.getRootElement();
 				if (!root) {
 					return;
 				};
@@ -2014,6 +2019,7 @@ const SelectionToolbarPlugin = () => {
 
 				if (S.Menu.isOpen('commentToolbar')) {
 					S.Menu.updateData('commentToolbar', { getActiveFormats, getBlockStyle, blockStyle: getBlockStyle() });
+					S.Menu.resizeAll();
 					return;
 				};
 
@@ -2043,10 +2049,57 @@ const SelectionToolbarPlugin = () => {
 					},
 				});
 			});
+		};
+
+		const onMouseDown = () => {
+			isMouseDown = true;
+			pendingOpen = false;
+		};
+
+		const onMouseUp = () => {
+			isMouseDown = false;
+
+			if (pendingOpen) {
+				pendingOpen = false;
+				openTimer = window.setTimeout(() => openToolbar(), 50);
+			};
+		};
+
+		if (root) {
+			root.addEventListener('mousedown', onMouseDown);
+			document.addEventListener('mouseup', onMouseUp);
+		};
+
+		const removeListener = editor.registerUpdateListener(() => {
+			editor.getEditorState().read(() => {
+				const selection = $getSelection();
+
+				if (!$isRangeSelection(selection) || selection.isCollapsed()) {
+					pendingOpen = false;
+					if (S.Menu.isOpen('commentToolbar') && !S.Menu.isOpen('select') && !S.Menu.isOpen('blockLink')) {
+						S.Menu.close('commentToolbar');
+					};
+					return;
+				};
+
+				if (isMouseDown) {
+					pendingOpen = true;
+					return;
+				};
+
+				openToolbar();
+			});
 		});
 
 		return () => {
 			removeListener();
+			window.clearTimeout(openTimer);
+
+			if (root) {
+				root.removeEventListener('mousedown', onMouseDown);
+			};
+			document.removeEventListener('mouseup', onMouseUp);
+
 			S.Menu.close('commentToolbar');
 		};
 	}, [ editor ]);

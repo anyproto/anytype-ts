@@ -39,6 +39,7 @@ These files are not in the `index.ts` barrel export but live in the `util/` dire
 |------|-------|
 | `common.test.ts` | Common utility tests |
 | `comment.test.ts` | Comment part conversion tests |
+| `commentPaste.test.ts` | Comment paste/clipboard handling tests |
 | `date.test.ts` | Date formatting tests |
 | `embed.test.ts` | Embed HTML generation tests |
 | `file.test.ts` | File utility tests |

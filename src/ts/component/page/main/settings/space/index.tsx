@@ -65,7 +65,9 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	};
 
 	const onDashboard = () => {
-		U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
+		if (!spaceview.isOneToOne) {
+			U.Menu.dashboardSelect(`#${getId()} #empty-dashboard-select`);
+		};
 	};
 
 	const onType = (e: any) => {
@@ -304,7 +306,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 
 							<div className="sectionContent">
-								{spaceview.isOneToOne || isOwner ? (
+								{!spaceview.isOneToOne && isOwner ? (
 									<div className="item">
 										<div className="sides">
 											<Icon name="settings/home" />

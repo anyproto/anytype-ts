@@ -208,7 +208,7 @@
 			> .selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
 
 			> .selectionTarget {
-				> .dropTarget { padding: 16px 16px 0px 16px; }
+				> .dropTarget { padding: 16px 16px 0px 16px !important; }
 				> .dropTarget {
 					> .flex { gap: 0px 14px; }
 					> .flex {

@@ -12,12 +12,7 @@ const PageMainVoid = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const cn = [ 'wrapper', U.String.toCamelCase(`void-${id}`) ];
 
 	const onClick = () => {
-		U.Menu.spaceCreate({
-			element: '#void-button-create-space',
-			className: 'spaceCreate',
-			horizontal: I.MenuDirection.Center,
-			offsetY: 4,
-		}, analytics.route.void);
+		Action.createSpace(analytics.route.void);
 	};
 
 	let title = '';

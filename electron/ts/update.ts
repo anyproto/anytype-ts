@@ -146,10 +146,17 @@ class UpdateManager {
 		// app in a zombie state with middleware already stopped. Force exit as a fallback.
 		// If quitAndInstall succeeded, it schedules app.quit() via setImmediate which
 		// will terminate the process before this timeout fires.
-		setTimeout(() => {
-			Util.log('error', 'Relaunch: quitAndInstall did not exit the app, forcing exit');
-			app.exit(0);
-		}, 5000);
+		//
+		// Do NOT enable on macOS: Squirrel.Mac needs the app (and its internal proxy
+		// server) alive until the native quitAndInstall handoff completes. A premature
+		// app.exit here kills the proxy before Squirrel finishes fetching the update,
+		// so the install silently fails and the app relaunches at the old version.
+		if (is.linux) {
+			setTimeout(() => {
+				Util.log('error', 'Relaunch: quitAndInstall did not exit the app, forcing exit');
+				app.exit(0);
+			}, 5000);
+		};
 	};
 
 	cancel (): void {

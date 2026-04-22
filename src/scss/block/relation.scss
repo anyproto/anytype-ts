@@ -29,20 +29,13 @@
 			.info .name { color: var(--color-text-secondary); }
 		}
 
-		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 4px; transition: background $transitionCommon; }
+		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 16px; transition: background $transitionCommon; }
 		.cell {
 			&.canEdit:hover { background: var(--color-shape-highlight-light); }
 		
-			&.c-select { padding: 6px 8px; line-height: 24px; }
+			&.c-select { padding: 4px 8px; line-height: 24px; }
 			&.c-select {
 				.empty { line-height: 24px; }
-
-				.cellContent.isSelect { height: 24px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; padding: 0px 8px 0px 7px; gap: 4px; align-items: center; display: flex; width: fit-content; }
-				.cellContent.isSelect {
-					.wrap { height: 24px; display: flex; align-items: center; }
-					.over { margin-top: 0px; }
-					.tagItem.isSelect { border: none; border-radius: 0px; padding: 0px; height: auto; }
-				}
 			}
 
 			.cellContent.canEdit {
@@ -57,19 +50,19 @@
 
 			&.isEditing { padding: 0px; }
 			&.isEditing {
-				.cellContent { position: relative; height: auto !important; min-height: 32px; border-radius: 4px; }
+				.cellContent { position: relative; height: auto !important; min-height: 32px; border-radius: 16px; }
 				.cellContent.isName .input { height: 20px; line-height: 20px; width: calc(100% - 24px); }
 				.icon.clear { right: 6px; top: 6px; }
 
-				#entry { line-height: 18px; height: 18px; vertical-align: top; display: inline-block; }
+				#entry { line-height: inherit; height: 24px; vertical-align: top; display: inline-block; }
 
 				&.c-select {
-					.cellContent, .placeholder  { padding: 5px 8px; }
+					.cellContent, .placeholder  { padding: 4px 8px 0px 8px; }
 					.tagItem {
 						.tagRemove { top: 50%; transform: translateY(-50%); }
 					}
 
-					.cellContent { width: 100%; border: 0px; border-radius: 4px; }
+					.cellContent { width: 100%; border: 0px; border-radius: 16px; line-height: 0px; }
 					.over { width: calc(100% - 26px); }
 				}
 

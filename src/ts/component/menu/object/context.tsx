@@ -58,9 +58,12 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let archiveCnt = 0;
 		let pin = null;
 		let pinCnt = 0;
+		let fav = null;
+		let favCnt = 0;
 
 		let allowedArchive = true;
 		let allowedPin = true;
+		let allowedFav = true;
 		let allowedCopy = true;
 		let allowedType = data.allowedType;
 		let allowedLinkTo = data.allowedLinkTo;
@@ -74,7 +77,12 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let allowedExport = data.allowedExport;
 		let allowedNewTab = data.allowedNewTab;
 
+		const personalWidgetsId = U.Object.getPersonalWidgetsId();
+
 		objectIds.forEach((it: string) => {
+			if (S.Block.getWidgetsForTarget(it).length) pinCnt++;
+			if (S.Block.getWidgetsForTargetIn(it, personalWidgetsId).length) favCnt++;
+
 			const object = getObjectHandler(subId, getObject, it);
 
 			if (!object || object._empty_) {
@@ -85,7 +93,6 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			const isRelation = U.Object.isRelationLayout(object.layout);
 			const isChat = U.Object.isChatLayout(object.layout);
 
-			if (S.Block.getWidgetsForTarget(object.id).length) pinCnt++;
 			if (object.isArchived) archiveCnt++;
 
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Delete ])) {
@@ -97,6 +104,7 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			if (object.isArchived || U.Object.isTemplateType(object.type)) {
 				allowedPin = false;
+				allowedFav = false;
 			};
 			if (!S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Duplicate ])) {
 				allowedCopy = false;
@@ -120,6 +128,7 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				allowedCopy	= false;
 				allowedCollection = false;
 				allowedPin = false;
+				allowedFav = false;
 			};
 
 			if (!isChat) {
@@ -132,16 +141,23 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 
 		if (pinCnt == length) {
-			pin = { id: 'unpin', iconParam: { name: 'menu/action/unpin' }, name: translate('commonUnpin') };
+			pin = { id: 'unpinFromChannel', iconParam: { name: 'menu/action/pin' }, name: translate('menuWidgetUnpinFromChannel') };
 		} else {
-			pin = { id: 'pin', iconParam: { name: 'menu/action/pin' }, name: translate('commonPin') };
+			pin = { id: 'pinToChannel', iconParam: { name: 'menu/action/pin' }, name: translate('menuWidgetPinToChannel') };
+		};
+
+		if (favCnt == length) {
+			fav = { id: 'unfavorite', iconParam: { name: 'menu/action/unfav' }, name: translate('menuWidgetUnfavorite') };
+		} else {
+			fav = { id: 'favorite', iconParam: { name: 'menu/action/fav' }, name: translate('menuWidgetFavorite') };
 		};
 
 		if (length > 1) {
 			allowedOpen = false;
 			allowedLinkTo = false;
 			allowedLink = false;
-			allowedPin = false;	
+			allowedPin = false;
+			allowedFav = false;
 			allowedEditChat = false;
 		};
 
@@ -152,6 +168,7 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!canWrite) {
 			allowedArchive = false;
 			allowedPin = false;
+			allowedFav = false;
 			allowedCopy = false;
 			allowedType = false;
 			allowedLinkTo = false;
@@ -162,12 +179,17 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			allowedEditChat = false;
 		};
 
+		if (!U.Space.isMyOwner()) {
+			allowedPin = false;
+		};
+
 		if (archiveCnt && (archiveCnt == length)) {
 			allowedOpen = false;
 			allowedLinkTo = false;
 			allowedUnlink = false;
 			allowedType = false;
 			allowedPin = false;
+			allowedFav = false;
 			allowedCollection = false;
 			allowedNotification = false;
 			allowedEditChat = false;
@@ -178,6 +200,7 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (!allowedArchive)	 archive = null;
 		if (!allowedPin)		 pin = null;
+		if (!allowedFav)		 fav = null;
 		if (!allowedCopy)		 pageCopy = null;
 		if (!allowedType)		 changeType = null;
 		if (!allowedLinkTo)		 linkTo = null;
@@ -208,7 +231,7 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		let sections = [
 			{ children: [ open, changeType, relation ] },
-			{ children: [ pin, notification, editChat, linkTo, addCollection ] },
+			{ children: [ fav, pin, notification, editChat, linkTo, addCollection ] },
 			{ children: [ pageLink, pageCopy, exportObject, unlink, archive ] },
 			{ children: [ newTab, newWindow ] },
 		];
@@ -437,13 +460,15 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				break;
 			};
 
-			case 'pin': {
-				Action.createWidgetFromObject(subId, first.id, '', I.BlockPosition.InnerFirst, route);
+			case 'pinToChannel':
+			case 'unpinFromChannel': {
+				Action.toggleWidgetsForObject(first.id, route);
 				break;
 			};
 
-			case 'unpin': {
-				Action.removeWidgetsForObjects([ first.id ]);
+			case 'favorite':
+			case 'unfavorite': {
+				Action.togglePersonalWidgetsForObject(first.id, route);
 				break;
 			};
 

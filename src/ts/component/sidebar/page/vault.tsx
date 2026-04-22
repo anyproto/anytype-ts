@@ -397,6 +397,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		let chatName = null;
 		let time = null;
 		let last = null;
+		
 		const icons = [];
 
 		if (targetSpaceId == space) {
@@ -583,20 +584,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		Storage.setHighlight('createSpace', false);
 		Highlight.hide('createSpace');
 
-		let param: I.MenuParam = {
-			element: `#button-create-space`,
-			className: 'spaceCreate fixed',
-			classNameWrap: 'fromSidebar',
-		};
-
-		if (vaultIsMinimal) {
-			param = Object.assign(param, {
-				vertical: I.MenuDirection.Center,
-				offsetX: VAULT_MINIMAL_OFFSET,
-			});
-		};
-
-		U.Menu.spaceCreate(param, analytics.route.vault);
+		Action.createSpace(analytics.route.vault);
 	};
 
 	const onVaultContext = (e: any) => {

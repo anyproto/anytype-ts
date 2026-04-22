@@ -66,6 +66,35 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
+	const onRecentlyOpen = () => {
+		S.Menu.open('searchObject', {
+			className: 'single fixed widthValue',
+			classNameWrap: 'fromHeader',
+			element: '#button-recently-open',
+			offsetY: 4,
+			data: {
+				limit: 15,
+				noFilter: true,
+				noInfiniteLoading: true,
+				label: translate('widgetRecentOpen'),
+				withPlural: true,
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)).concat(I.ObjectLayout.Participant) },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
+					{ relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 },
+				],
+				sorts: [
+					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+				],
+				onSelect: (el: any) => {
+					U.Object.openConfig(null, el);
+				},
+			}
+		});
+
+		analytics.event('ClickRecentlyOpen');
+	};
+
 	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {
 		const { status } = S.Auth.getSyncStatus(S.Common.space);
 		const { isClosed } = sidebar.getData(I.SidebarPanel.SubLeft);
@@ -103,6 +132,18 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 						typeY: I.MenuDirection.Bottom,
 					}}
 				/>
+
+				{withGraph ? (
+					<Icon
+						id="button-recently-open"
+						name="common/clock" withBackground={true}
+						onClick={onRecentlyOpen}
+						tooltipParam={{
+							text: translate('widgetRecentOpen'),
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : ''}
 
 				{withNavigation ? (
 					<div className="arrowWrapper">

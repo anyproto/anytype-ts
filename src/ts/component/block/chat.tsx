@@ -55,6 +55,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const prevDepsKey = useRef('');
 	const prevReplyKey = useRef('');
 	const pendingScrollToBottom = useRef(false);
+	const pendingScrollToMessageId = useRef('');
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -134,7 +135,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			onPinnedStatusUpdate(detail.message, detail.isPinned, detail.subIds);
 		};
 		focusHandlerRef.current = () => {
-			// Re-render from windowIsFocused observable can reset scrollTop — restore it after paint
+			// Re-render from windowIsFocused observable can reset scrollTop — restore it after paint.
+			// readScrolledMessages must run AFTER the restore write, because its state mutations
+			// (setReadMessageStatus / setReadMentionStatus) trigger MobX re-renders that would
+			// otherwise land with scrollTop=0 before the restore takes effect.
 			const prevTop = top.current;
 			const wasBottom = isBottom.current;
 
@@ -148,9 +152,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 						container.scrollTop = prevTop;
 					};
 				};
-			});
 
-			readScrolledMessages();
+				readScrolledMessages();
+			});
 		};
 
 		U.Dom.addEvents(window, [
@@ -985,18 +989,39 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			readMessage(id, message.orderId, lastStateId, I.ChatReadType.Mention);
 		};
 
-		if (!hasScroll()) {
-			readScrolledMessages();
-			return;
-		};
+		// Mark this as the active scroll target. A newer scrollToMessage/scrollToBottom
+		// call replaces it and cancels the retry loop below.
+		pendingScrollToMessageId.current = id;
 
-		const doScroll = () => {
-			const container = U.Dom.getScrollContainer(isPopup);
-			if (!container) {
+		const doScroll = (attempts: number) => {
+			if (pendingScrollToMessageId.current != id) {
 				return;
 			};
 
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (!container) {
+				pendingScrollToMessageId.current = '';
+				return;
+			};
+
+			// When entering a chat, React concurrent mode may not have committed the
+			// messages DOM yet, so hasScroll() is false and the message ref is still
+			// null — falling through here would land container.scrollTop at 0 because
+			// getMessageScrollPosition returns 0 for a missing ref. Retry until the
+			// target message's ref is populated and the container has overflow.
 			const top = getMessageScrollPosition(id);
+			if (!hasScroll() || !top) {
+				if (attempts <= 0) {
+					pendingScrollToMessageId.current = '';
+					readScrolledMessages();
+					return;
+				};
+				raf(() => doScroll(attempts - 1));
+				return;
+			};
+
+			pendingScrollToMessageId.current = '';
+
 			const y = Math.max(0, top - (container.clientHeight / 2) - J.Size.header);
 
 			setIsBottom(false);
@@ -1022,29 +1047,43 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		};
 
 		if (animate) {
-			raf(doScroll);
+			raf(() => doScroll(30));
 		} else {
-			doScroll();
+			doScroll(30);
 		};
 	};
 
 	const scrollToBottom = (animate?: boolean) => {
 		setIsBottom(true);
 
+		// A newer scrollToMessage call takes priority, so cancel any pending scroll-to-message retry.
+		pendingScrollToMessageId.current = '';
+
 		if (!hasScroll()) {
 			readScrolledMessages();
 
-			// DOM may not be committed yet (React concurrent mode); retry once after paint
+			// DOM may not be committed yet (React concurrent mode); keep retrying until
+			// the scroll container has overflow. A single raf isn't enough for large
+			// chats whose messages commit across multiple frames.
 			if (!animate) {
 				pendingScrollToBottom.current = true;
-				raf(() => {
-					if (pendingScrollToBottom.current && isBottom.current && hasScroll()) {
+				const retry = (attempts: number) => {
+					if (!pendingScrollToBottom.current || !isBottom.current) {
+						pendingScrollToBottom.current = false;
+						return;
+					};
+					if (hasScroll()) {
 						pendingScrollToBottom.current = false;
 						scrollToBottom(false);
-					} else {
-						pendingScrollToBottom.current = false;
+						return;
 					};
-				});
+					if (attempts <= 0) {
+						pendingScrollToBottom.current = false;
+						return;
+					};
+					raf(() => retry(attempts - 1));
+				};
+				raf(() => retry(30));
 			};
 			return;
 		};

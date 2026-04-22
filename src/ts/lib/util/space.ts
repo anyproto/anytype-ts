@@ -122,7 +122,6 @@ class UtilSpace {
 		const details: any = {
 			oneToOneIdentity: id,
 			spaceAccessType: I.SpaceAccessType.Shared,
-			homepage: I.HomePredefinedId.Chat,
 			oneToOneRequestMetadataKey: key,
 			spaceType: I.SpaceType.OneToOne,
 		};
@@ -155,9 +154,9 @@ class UtilSpace {
 
 	/**
 	 * Gets the dashboard object for the current space.
-	 * @returns {any|null} The dashboard object or null if not found.
+	 * @returns {I.DashboardObject|null} The dashboard object or null if not found.
 	 */
-	getDashboard () {
+	getDashboard (): I.DashboardObject | null {
 		const space = this.getSpaceview();
 		const id = space.homepage;
 
@@ -169,7 +168,7 @@ class UtilSpace {
 			return null;
 		};
 
-		let ret = null;
+		let ret: I.DashboardObject | null = null;
 		switch (id) {
 			case I.HomePredefinedId.Graph: {
 				ret = this.getGraph();
@@ -205,30 +204,30 @@ class UtilSpace {
 	 * Gets the list of system dashboard IDs.
 	 * @returns {string[]} The list of system dashboard IDs.
 	 */
-	getSystemDashboardIds () {
+	getSystemDashboardIds (): string[] {
 		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last, I.HomePredefinedId.Widget ];
 	};
 
 	/**
 	 * Gets the graph dashboard object.
-	 * @returns {object} The graph dashboard object.
+	 * @returns {I.DashboardObject} The graph dashboard object.
 	 */
-	getGraph () {
-		return { 
-			id: I.HomePredefinedId.Graph, 
-			name: translate('commonGraph'), 
+	getGraph (): I.DashboardObject {
+		return {
+			id: I.HomePredefinedId.Graph,
+			name: translate('commonGraph'),
 			layout: I.ObjectLayout.Graph,
 		};
 	};
 
 	/**
 	 * Gets the last opened dashboard object.
-	 * @returns {object} The last opened dashboard object.
+	 * @returns {I.DashboardObject} The last opened dashboard object.
 	 */
-	getLastOpened () {
-		return { 
+	getLastOpened (): I.DashboardObject {
+		return {
 			id: I.HomePredefinedId.Widget,
-			name: translate('commonEmpty'),
+			name: translate('commonNoHome'),
 		};
 	};
 
@@ -253,10 +252,10 @@ class UtilSpace {
 
 	/**
 	 * Gets the chat dashboard object.
-	 * @returns {object} The chat dashboard object.
+	 * @returns {I.DashboardObject} The chat dashboard object.
 	 */
-	getChat () {
-		return { 
+	getChat (): I.DashboardObject {
+		return {
 			id: S.Block.workspace,
 			name: translate(`spaceType${I.SpaceType.Chat}`),
 			layout: I.ObjectLayout.Chat,

@@ -3,6 +3,8 @@
 	.section.objectRelation {
 		> .head { height: 52px; }
 
+		&.c-select.isSelect { padding-top: 11px; padding-bottom: 11px; line-height: 24px; }
+
 		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 2px 10px; align-items: center; position: relative; }
 		> .wrap {
 			&:hover {
@@ -54,6 +56,10 @@
 				.cellContent { overflow: visible !important; min-height: 24px; }
 				.tagItem {
 					.tagRemove { top: 50%; transform: translateY(-50%); }
+				}
+
+				&.isSelect {
+					.itemWrap { margin-bottom: 0px; }
 				}
 			}
 			.cell.isEditing.c-select.isSelect {

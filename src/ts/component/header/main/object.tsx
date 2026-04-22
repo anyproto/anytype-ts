@@ -20,7 +20,9 @@ const HeaderMainObject = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const showShare = S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Publish ], true) && !isDeleted && !object.isArchived;
 	const showRelations = !isTypeOrRelation && !isDate && !isDeleted;
 	const showMenu = !isDeleted;
-	const showPin = canWrite && !isRelation && !isTemplate;
+	const showPin = false; //canWrite && !isRelation && !isTemplate && U.Space.isMyOwner();
+	const showFavorite = canWrite && !isRelation && !isTemplate;
+	const isFavorite = !!S.Block.getWidgetsForTargetIn(rootId, U.Object.getPersonalWidgetsId()).length;
 	const allowedTemplateSelect = (object.internalFlags || []).includes(I.ObjectFlag.SelectTemplate);
 	const bannerProps = { type: I.BannerType.None, isPopup, object, count: 0 };
 	const readonly = object.isArchived || isLocked;
@@ -115,6 +117,10 @@ const HeaderMainObject = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 		Action.toggleWidgetsForObject(rootId, analytics.route.header);
 	};
 
+	const onFavorite = () => {
+		Action.togglePersonalWidgetsForObject(rootId, analytics.route.header);
+	};
+
 	const updateTemplatesCnt = () => {
 		if (!allowedTemplateSelect) {
 			return;
@@ -159,11 +165,24 @@ const HeaderMainObject = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 					/>
 				) : ''}
 
+				{showFavorite ? (
+					<Icon
+						id="button-header-favorite"
+						tooltipParam={{
+							text: translate(isFavorite ? 'menuWidgetUnfavorite' : 'menuWidgetFavorite'),
+							typeY: I.MenuDirection.Bottom,
+						}}
+						name={isFavorite ? 'menu/action/unfav' : 'menu/action/fav'} withBackground={true}
+						onClick={onFavorite}
+						onDoubleClick={e => e.stopPropagation()}
+					/>
+				) : ''}
+
 				{showPin ? (
 					<Icon
 						id="button-header-pin"
 						tooltipParam={{
-							text: hasWidget ? translate('commonRemovePinned') : translate('commonAddPinned'),
+							text: translate(hasWidget ? 'menuWidgetUnpinFromChannel' : 'menuWidgetPinToChannel'),
 							caption: keyboard.getCaption('addFavorite'),
 							typeY: I.MenuDirection.Bottom,
 						}}

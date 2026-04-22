@@ -2,8 +2,7 @@ import raf from 'raf';
 import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
 import Locale from 'dist/lib/json/locale.json';
-import React, { MouseEvent } from 'react';
-import { Icon } from 'Component';
+import { MouseEvent } from 'react';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { focus } from 'Lib/focus';
@@ -686,7 +685,7 @@ class UtilMenu {
 		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
-	dashboardSelect (element: string, openRoute?: boolean) {
+	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 
@@ -715,6 +714,7 @@ class UtilMenu {
 		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
+			...menuParam,
 			data: {
 				withPlural: true,
 				filters: [
@@ -722,10 +722,15 @@ class UtilMenu {
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				dataChange: (_ctx: any, items: any) => {
-					return [
-						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'common/empty' }, name: translate('commonEmpty') },
-						{ id: I.HomePredefinedId.Graph, iconParam: { name: 'header/graph' }, name: translate('commonGraph') },
-					].concat(items);
+					const head: any[] = [
+						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
+					];
+
+					if (items.length) {
+						head.push({ isDiv: true });
+					};
+
+					return head.concat(items);
 				},
 				onSelect: el => {
 					onSelect(el, true);
@@ -936,16 +941,7 @@ class UtilMenu {
 
 				case 'manage': {
 					this.menuContext?.close(() => {
-						S.Menu.open('widgetSection', {
-							recalcRect: () => {
-								const { ww, wh } = U.Dom.getWindowDimensions();
-								return { x: 0, y: 0, width: ww, height: wh };
-							},
-							classNameWrap: 'fixed',
-							visibleDimmer: true,
-							vertical: I.MenuDirection.Center,
-							horizontal: I.MenuDirection.Center,
-						});
+						sidebar.leftPanelSubPageOpen('widgetManage', true, true);
 					});
 					break;
 				};
@@ -1090,7 +1086,7 @@ class UtilMenu {
 				return {
 					...it,
 					counters,
-					hasCounter: counters.mentionCounter || counters.messageCounter,
+					hasCounter: counters.mentionCounter || counters.messageCounter || counters.reactionCounter,
 					lastMessage: S.Chat.getSpaceLastMessage(it.targetSpaceId),
 					isPinned: !!it.orderId,
 				};
@@ -1675,58 +1671,6 @@ class UtilMenu {
 		this.menuContext = context;
 	};
 
-	spaceCreate (param: I.MenuParam, route) {
-		const analyticsName = {
-			[I.SpaceCreateType.Personal]: 'Space',
-			[I.SpaceCreateType.Group]: 'Chat',
-			[I.SpaceCreateType.Join]: 'Join',
-		};
-
-		const mySharedSpaces = U.Space.getMySharedSpacesList();
-		const { sharedSpacesLimit } = U.Space.getProfile();
-		const isLimitReached = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
-
-		const groupOption: any = { id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') };
-
-		if (isLimitReached) {
-			groupOption.caption = React.createElement(Icon, { name: 'common/alert', className: 'spaceLimit', color: 'grey' });
-		};
-
-		const options = [
-			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
-			groupOption,
-			{ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
-		];
-
-		let prefix = '';
-		switch (route) {
-			case analytics.route.void: {
-				prefix = 'Void';
-				break;
-			};
-
-			case analytics.route.vault: {
-				prefix = 'Vault';
-				break;
-			};
-		};
-
-		S.Menu.open('select', {
-			...param,
-			data: {
-				options,
-				noVirtualisation: true,
-				onSelect: (e: any, item: any) => {
-					Action.createSpace(item.id, route);
-
-					analytics.event(`Click${prefix}CreateMenu${analyticsName[item.id]}`);
-				},
-			}
-		});
-
-		analytics.event(`Screen${prefix}CreateMenu`);
-	};
-
 	vaultStyle (param: I.MenuParam) {
 		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
 		const { vaultMessages } = S.Common;
@@ -1794,18 +1738,13 @@ class UtilMenu {
 		const { widgetSections } = S.Common;
 
 		return [
-			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.Pin },
+			{ id: I.WidgetSection.Unread },
+			{ id: I.WidgetSection.MyFavorites },
 			{ id: I.WidgetSection.RecentEdit },
 			{ id: I.WidgetSection.Type },
 			{ id: I.WidgetSection.Bin },
 		].sort((c1, c2) => {
-			const isUnread1 = c1.id == I.WidgetSection.Unread;
-			const isUnread2 = c2.id == I.WidgetSection.Unread;
-			
-			if (isUnread1 && !isUnread2) return -1;
-			if (!isUnread1 && isUnread2) return 1;
-			
 			const idx1 = widgetSections.findIndex(it => it.id == c1.id);
 			const idx2 = widgetSections.findIndex(it => it.id == c2.id);
 
@@ -1817,6 +1756,7 @@ class UtilMenu {
 		const { recentEditMode } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 		const toggle = { id: 'hide', iconParam: { name: 'common/eye0' }, name: translate('widgetHideSection') };
+		const manage = { id: 'manage', iconParam: { name: 'common/edit' }, name: translate('widgetManageSections') };
 
 		let options: any[] = [];
 		let value = '';
@@ -1839,6 +1779,7 @@ class UtilMenu {
 		};
 
 		options.push(toggle);
+		options.push(manage);
 
 		S.Menu.open('select', {
 			...menuParam,
@@ -1864,6 +1805,11 @@ class UtilMenu {
 							S.Common.widgetSectionsSet([ ...widgetSections ]);
 
 							analytics.event('HideSection');
+							break;
+						};
+
+						case 'manage': {
+							sidebar.leftPanelSubPageOpen('widgetManage', true, true);
 							break;
 						};
 
