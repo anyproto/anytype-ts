@@ -296,7 +296,6 @@ const HeadSimple = forwardRef<PropsRef, Props>((props, ref) => {
 				rootId={rootId} 
 				iconSize={20} 
 				block={blockFeatured} 
-				className="small" 
 				isSelectionDisabled={true}
 				readonly={!allowDetails}
 				isContextMenuDisabled={isContextMenuDisabled}
