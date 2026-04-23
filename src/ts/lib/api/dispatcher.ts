@@ -1348,7 +1348,11 @@ class Dispatcher {
 						};
 					});
 
-					$(window).trigger('pinnedStatusUpdate', [ mapped.message, mapped.isPinned, mapped.subIds ]);
+					U.Dom.eventDispatch(window, 'pinnedStatusUpdate', {
+						message: mapped.message,
+						isPinned: mapped.isPinned,
+						subIds: mapped.subIds,
+					});
 					break;
 				};
 
