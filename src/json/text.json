@@ -2297,7 +2297,7 @@
 	"widget4Name": "Same as Object",
 	"widget4Description": "Same as in object view",
 
-	"widgetSection0": "Pinned",
+	"widgetSection0": "Home and Pinned",
 	"widgetSection1": "Objects",
 	"widgetSection2": "Unread",
 	"widgetSection3": "Recently edited",
@@ -2334,9 +2334,6 @@
 	"widgetManageSections": "Manage Sections",
 	"widgetHideSection": "Hide section",
 	"widgetShowSection": "Show section",
-	"widgetManageChannelPins": "Channel Pins",
-	"widgetManageChannelPinsEmpty": "No pinned objects yet",
-	"widgetManagePersonal": "Personal",
 
 	"phrasePlaceholder": "Please enter your Key",
 
