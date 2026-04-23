@@ -713,20 +713,22 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 									transition: { duration: 0.2, delay: i * 0.05 },
 								})}
 							>
-								<div
-									className="nameWrap"
-									onContextMenu={() => onSectionContext(section.id)}
-								>
-									<div className="name" onClick={() => onToggle(section.id)}>
-										<Icon name="arrow/button" size={8} className="arrow" />
-										{section.name}
+								{!isSectionPin ? (
+									<div
+										className="nameWrap"
+										onContextMenu={() => onSectionContext(section.id)}
+									>
+										<div className="name" onClick={() => onToggle(section.id)}>
+											<Icon name="arrow/button" size={8} className="arrow" />
+											{section.name}
+										</div>
+										<div className="buttons">
+											{buttons}
+										</div>
 									</div>
-									<div className="buttons">
-										{buttons}
-									</div>
-								</div>
+								) : ''}
 
-								{!ws?.isClosed ? (
+								{(!ws?.isClosed || isSectionPin) ? (
 									<div 
 										className="items" 
 										onContextMenu={e => {
