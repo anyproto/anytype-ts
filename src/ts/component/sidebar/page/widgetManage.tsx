@@ -154,7 +154,7 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 				{...(isFixed ? {} : listeners)}
 				{...U.Common.animationProps({ transition: { duration: 0.2, delay: index * 0.03 } })}
 			>
-				{isFixed ? <Icon className="dnd" /> : <Icon className="dnd" name="common/dnd" />}
+				{!isFixed ? <Icon className="dnd" name="common/dnd" /> : ''}
 				<Label text={section.name} />
 				{!isFixed ? (
 					<Icon
