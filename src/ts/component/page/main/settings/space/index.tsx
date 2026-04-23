@@ -2,7 +2,6 @@ import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'reac
 import { Icon, Title, Label, IconObject, ObjectName, Button, Editable } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
 import * as I from 'Interface';
-import Storage from 'Lib/storage';
 
 const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -10,9 +9,8 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
 	const [ dummy, setDummy ] = useState(0);
 	const { getId } = props;
-	const { space } = S.Common;
-	const sidebarView = Storage.getSpaceKey('sidebarView', false) || 'widgets';
-	const sidebarViewName = sidebarView == 'links' ? translate('menuSidebarViewLinks') : translate('menuSidebarViewWidgets');
+	const { space, sidebarView } = S.Common;
+	const sidebarViewName = sidebarView == I.SidebarView.Links ? translate('menuSidebarViewLinks') : translate('menuSidebarViewWidgets');
 	const spaceview = U.Space.getSpaceview();
 	const home = U.Space.getDashboard();
 	const type = S.Record.getTypeById(S.Common.type);
@@ -94,22 +92,18 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	};
 
 	const onSidebarView = () => {
-		const current = Storage.getSpaceKey('sidebarView', false) || 'widgets';
-
 		S.Menu.open('select', {
 			element: `#${getId()} #sidebarView`,
 			horizontal: I.MenuDirection.Right,
 			data: {
-				value: current,
+				value: sidebarView,
 				options: [
-					{ id: 'links', name: translate('menuSidebarViewLinks') },
-					{ id: 'widgets', name: translate('menuSidebarViewWidgets') },
+					{ id: I.SidebarView.Links, name: translate('menuSidebarViewLinks') },
+					{ id: I.SidebarView.Widgets, name: translate('menuSidebarViewWidgets') },
 				],
 				onSelect: (_: any, option: any) => {
-					Storage.setSpaceKey('sidebarView', option.id, false);
-					U.Dom.eventDispatch(window, `updateSidebarView.${space}`);
+					S.Common.sidebarViewSet(option.id);
 					analytics.event('ChangeSidebarView', { type: option.id, route: analytics.route.settings });
-					setDummy(dummy + 1);
 				},
 			},
 		});

@@ -22,10 +22,6 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const isBin = realId == J.Constant.widgetId.bin;
 	const canWrite = U.Space.canMyParticipantWrite();
 
-	const getId = (id: string) => {
-		return [space, id].join('-');
-	};
-
 	const getSubId = () => {
 		let subId = '';
 
@@ -50,7 +46,7 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const isAllowedObject = (type: any): boolean => {
-		const skipLayouts = [I.ObjectLayout.Participant].concat(U.Object.getSystemLayouts());
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getSystemLayouts());
 
 		let ret = true;
 		if (skipLayouts.includes(type.recommendedLayout)) {
@@ -65,7 +61,11 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const subId = getSubId();
-	const canDrag = parent.id == getId(J.Constant.widgetId.type);
+	const canDrag = [ 
+		J.Constant.widgetId.type, 
+		J.Constant.widgetId.pinned, 
+		J.Constant.widgetId.personalWidgets,
+	].includes(realId) && canWrite;
 	const { total } = S.Record.getMeta(subId, '');
 
 	const onSortStart = (e: any) => {
@@ -90,9 +90,13 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		const newItems = arrayMove(items, oldIndex, newIndex);
 
-		U.Data.sortByOrderIdRequest(getSubId(), newItems, callBack => {
-			C.ObjectTypeSetOrder(space, newItems.map(it => it.id), callBack);
-		});
+		if (realId == J.Constant.widgetId.type) {
+			U.Data.sortByOrderIdRequest(getSubId(), newItems, callBack => {
+				C.ObjectTypeSetOrder(space, newItems.map(it => it.id), callBack);
+			});
+		} else {
+
+		};
 	};
 
 	const getItems = () => {
@@ -114,9 +118,15 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				break;
 			};
 
-			case J.Constant.widgetId.personalWidgets:
-				items = U.Data.getPersonalWidgets();
+			case J.Constant.widgetId.pinned: {
+				items = U.Data.getWidgetObjects(S.Block.widgets);
 				break;
+			};
+
+			case J.Constant.widgetId.personalWidgets: {
+				items = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId());
+				break;
+			};
 
 			case J.Constant.widgetId.bin: {
 				items = [

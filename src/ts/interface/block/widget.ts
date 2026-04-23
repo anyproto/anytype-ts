@@ -20,7 +20,7 @@ export interface WidgetSectionParam {
 	isHidden: boolean;
 };
 
-export enum WidgetLayout { 
+export enum WidgetLayout {
 	Link	 	 = 0,
 	Tree	 	 = 1,
 	List		 = 2,
@@ -29,6 +29,11 @@ export enum WidgetLayout {
 
 	Space		 = 100,
 	Object		 = 101,
+};
+
+export enum SidebarView {
+	Widgets		= 'widgets',
+	Links		= 'links',
 };
 
 export interface WidgetComponent {
@@ -40,7 +45,6 @@ export interface WidgetComponent {
 	canRemove?: boolean;
 	isSystemTarget?: boolean;
 	index?: number;
-	forceLayout?: WidgetLayout;
 	sidebarDirection?: I.SidebarDirection;
 	setPreview?: (id: string) => void;
 	getData?: (subId: string, callBack?: () => void) => void;

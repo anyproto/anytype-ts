@@ -37,7 +37,7 @@ const PageAuthSelect = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			Storage.set('multichatsOnboarding', true);
 			Storage.setOnboarding('objectDescriptionButton');
 			Storage.setOnboarding('typeResetLayout');
-			Storage.setSpaceKey('sidebarView', 'links', false, account.info.accountSpaceId);
+			Storage.setSpaceKey('sidebarView', I.SidebarView.Links, false, account.info.accountSpaceId);
 
 			U.Subscription.createGlobal(() => {
 				inflate(() => U.Router.go('/auth/onboard', {}));

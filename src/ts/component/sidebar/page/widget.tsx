@@ -1,5 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import raf from 'raf';
+import { reaction } from 'mobx';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Label } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
@@ -8,18 +9,15 @@ import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage
 const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ previewId, setPreviewId ] = useState('');
-	const [ sidebarView, setSidebarView ] = useState<string>(() => Storage.getSpaceKey('sidebarView', false) || 'widgets');
+	const [ , setDummy ] = useState(0);
+	const forceUpdate = () => setDummy(v => v + 1);
 	const { widgets } = S.Block;
 	const childrenIdsWidget = S.Block.getChildrenIds(widgets, widgets);
 	const lengthWidget = childrenIdsWidget.length;
 	const { sidebarDirection, isPopup, getId } = props;
-	const { space, widgetSections, recentEditMode } = S.Common;
-	const isLinksView = sidebarView == 'links';
-	const forceLayout = isLinksView ? I.WidgetLayout.Link : undefined;
+	const { space, widgetSections, recentEditMode, sidebarView } = S.Common;
+	const isLinksView = sidebarView == I.SidebarView.Links;
 	const cnb = [ 'body' ];
-	if (isLinksView) {
-		cnb.push('viewLinks');
-	};
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const bodyRef = useRef<HTMLDivElement>(null);
@@ -29,14 +27,18 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const frameRef = useRef<number>(0);
 	const dragEndHandlerRef = useRef<(() => void) | null>(null);
 
+	if (isLinksView) {
+		cnb.push('viewLinks');
+	};
+
 	let content = null;
 	let head = null;
 
 	const getSections = () => {
-		const widgets = getWidgets(I.WidgetSection.Pin);
 		const types = U.Data.getWidgetTypes();
 		const sections = U.Menu.widgetSections();
-		const personal = U.Data.getPersonalWidgets();
+		const pinned = U.Data.getWidgetObjects(widgets);
+		const personal = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId());
 		const { total } = S.Record.getMeta(U.Subscription.spaceSubId(J.Constant.subId.archived), '');
 		const ret = [] as I.WidgetSection[];
 
@@ -47,7 +49,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			};
 		};
 
-		if (widgets.length) {
+		if (pinned.length) {
 			ret.push(I.WidgetSection.Pin);
 		};
 
@@ -456,6 +458,16 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	};
 
 	const getWidgets = (sectionId: I.WidgetSection) => {
+		if ((sectionId == I.WidgetSection.Pin) && isLinksView) {
+			return [
+				new M.Block({
+					id: [ space, J.Constant.widgetId.pinned ].join('-'),
+					type: I.BlockType.Widget,
+					content: { layout: I.WidgetLayout.Object }
+				}),
+			];
+		};
+
 		let blocks = [];
 
 		switch (sectionId) {
@@ -642,9 +654,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		);
 
 		const spaceBlock = new M.Block({ id: J.Constant.widgetId.space, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
-
 		const onSpaceSearch = () => keyboard.onSearchPopup(analytics.route.widget);
-
 		const onSpaceCreate = () => {
 			keyboard.pageCreate({}, analytics.route.widget, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
 		};
@@ -665,9 +675,9 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			}, analytics.route.navigation, object => U.Object.openConfig(null, object));
 		};
 
-		const onSpaceMore = () => {
+		const onSpaceMore = (e: any) => {
 			U.Menu.spaceContext(U.Space.getSpaceview(), {
-				element: '#widget-space .nameWrap .icon.arrowButton',
+				element: e.currentTarget,
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
 				horizontal: I.MenuDirection.Center,
@@ -740,7 +750,6 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 				/>
 
 				{spaceName}
-
 				<WidgetHome />
 
 				{sections.map((section, i) => {
@@ -809,7 +818,6 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 												index={i}
 												canEdit={canWrite}
 												canRemove={isSectionPin}
-												forceLayout={forceLayout}
 												onDragStart={onDragStart}
 												onDragOver={onDragOver}
 												onDrag={onDrag}
@@ -836,20 +844,9 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	useEffect(() => {
 		setPreviewId('');
 		initSections();
-		setSidebarView(Storage.getSpaceKey('sidebarView', false) || 'widgets');
 	}, [ space ]);
 
-	useEffect(() => {
-		if (!space) {
-			return;
-		};
-
-		const eventName = `updateSidebarView.${space}`;
-		const handler = () => setSidebarView(Storage.getSpaceKey('sidebarView', false) || 'widgets');
-
-		U.Dom.addEvent(window, eventName, handler);
-		return () => U.Dom.removeEvent(window, eventName, handler);
-	}, [ space ]);
+	useEffect(() => reaction(() => S.Common.sidebarView, () => forceUpdate()), []);
 
 	return (
 		<>

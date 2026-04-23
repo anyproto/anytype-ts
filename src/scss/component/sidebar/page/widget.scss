@@ -1,13 +1,11 @@
-.subPageWrapper .sidebarPage.pageWidget {
-	background:
-		linear-gradient(180deg, var(--color-shape-highlight-light) 0px, transparent 100px)
-		var(--color-bg-primary);
-}
+$gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-highlight-light-solid) 100%);
+
 .sidebarPage.pageWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
 .sidebarPage.pageWidget {
 	> .head {
 		display: flex; flex-direction: row; align-items: center; padding: 0px 16px; height: 52px;
 		gap: 0px 8px; flex-shrink: 0; position: relative; z-index: 2; justify-content: space-between;
+		background: $gradient;
 	}
 	> .head {
 		.name { @include text-overflow-nw; }
@@ -71,26 +69,13 @@
 		}
 	}
 
-	.widgetHome {
-		display: flex; flex-direction: row; align-items: center; gap: 0px 8px;
-		height: 32px; padding: 0px 12px; border-radius: 8px;
-		transition: background $transitionCommon;
-	}
-	.widgetHome {
-		.iconObject { flex-shrink: 0; }
-		.name { @include text-overflow-nw; @include text-common; color: var(--color-text-primary); }
-
-		&:hover { background: var(--color-shape-highlight-medium); }
-	}
-
 	> .body { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: none; }
-	> .body.isPreview { overflow-x: hidden; overflow-y: auto; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
 	> .body {
 		> .content { display: flex; flex-direction: column; gap: 8px 0px; }
 
 		.spaceName {
-			position: sticky; top: 0px; z-index: 3; height: 32px; display: flex; align-items: center; 
-			background: var(--color-bg-primary); padding: 0px 4px;
+			position: sticky; top: 0px; z-index: 3; display: flex; align-items: center; 
+			background: var(--color-bg-primary); padding: 0px 4px 8px 4px;
 		}
 		.spaceName {
 			.info { display: flex; flex-direction: row; flex-grow: 1; align-items: center; justify-content: space-between; gap: 0px 12px; height: 32px; min-width: 0; overflow: hidden; }
@@ -131,27 +116,23 @@
 		}
 		.widget.isEditable.isOver.top::before { top: 0px; }
 		.widget.isEditable.isOver.bottom::before { bottom: 0px; }
-	}
 
-	> .body.viewLinks {
-		> .content { gap: 0px; }
+		.widget.widgetSpace::after {
+			content: ""; position: absolute; background: $gradient; height: 48px; width: calc(100% + 12px); left: 0px; top: 0px;
+		}
 
-		.widget.widgetLink { background: none; border-radius: 0px; }
-		.widget.widgetLink {
-			> .head { padding: 0px; }
-			> .head {
-				.sides { padding: 0px 16px; height: 32px; border-radius: 0px; }
-				.sides::after { border-radius: 6px; left: 8px; width: calc(100% - 16px); }
-				.side.left { height: 32px; gap: 0px 8px; }
-				.clickable { font-weight: 500; }
-				.clickable {
-					.name { @include text-common; font-weight: 500; color: var(--color-text-primary); }
-				}
+		&.isPreview { overflow-x: hidden; overflow-y: auto; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
+
+		&.viewLinks {
+			.widget.widgetObject { background: none; }
+			.widget.widgetObject {
+				.contentWrapper { padding: 0px; }
+				.item { padding-left: 4px; padding-right: 4px; }
 			}
 		}
-	}
 
-	> .body.isOnboardingHidden { visibility: visible; }
+		&.isOnboardingHidden { visibility: visible; }
+	}
 }
 
 .sidebarPage.pageWidgetManage { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }

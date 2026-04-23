@@ -200,6 +200,7 @@ export default {
 		type:				 'type',
 		bin:				 'bin',
 		chat:				 'chat',
+		pinned:				 'pinned',
 		personalWidgets:	 'personalWidgets',
 		personalWidgetsPrefix: '_personalWidgets_',
 	},

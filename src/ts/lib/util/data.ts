@@ -1368,10 +1368,9 @@ class UtilData {
 		});
 	};
 
-	getPersonalWidgets (): any[] {
+	getWidgetObjects (rootId: string): any[] {
 		let items = [];
 
-		const rootId = U.Object.getPersonalWidgetsId();
 		const childrenIds = S.Block.getChildrenIds(rootId, rootId);
 
 		childrenIds.forEach(widgetId => {
