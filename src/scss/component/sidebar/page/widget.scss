@@ -117,17 +117,7 @@
 
 	.manageSection { display: flex; flex-direction: column; gap: 8px 0px; }
 	.manageSection {
-		.sectionHead {
-			display: flex; flex-direction: row; align-items: center; justify-content: space-between;
-			@include text-small; font-weight: 500; color: var(--color-text-secondary);
-		}
-		.sectionHead {
-			.icon.add { width: 20px !important; height: 20px !important; }
-			.icon.add:hover, .icon.add.hover { color: var(--color-control-accent); }
-		}
-
 		.items { display: flex; flex-direction: column; gap: 8px 0px; }
-		.empty { padding: 8px 12px; @include text-small; color: var(--color-text-tertiary); }
 	}
 
 	.manageItem {
@@ -138,8 +128,15 @@
 		.icon.dnd { width: 12px; height: 16px; flex-shrink: 0; }
 		.iconObject { flex-shrink: 0; }
 		.name { @include text-overflow-nw; flex-grow: 1; @include text-common; color: var(--color-text-primary); }
-		> .label { flex-grow: 1; @include text-common; color: var(--color-text-primary); }
+		> .label { flex-grow: 1; @include text-small; font-weight: 500; color: var(--color-text-primary); }
 		.icon.action { width: 20px; height: 20px; flex-shrink: 0; }
+	}
+
+	.manageItem.isSection { padding: 4px; background: transparent; }
+	.manageItem.isSection {
+		> .label { color: var(--color-text-secondary); }
+		&:hover { background: var(--color-shape-highlight-light); }
+		&.isFixed { padding-left: 24px; }
 	}
 
 	.buttons { display: flex; flex-direction: column; }

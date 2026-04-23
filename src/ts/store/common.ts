@@ -1241,7 +1241,8 @@ class CommonStore {
 
 		const makeParam = (id: I.WidgetSection): I.WidgetSectionParam => {
 			const prev = savedMap.get(id);
-			return { id, isClosed: prev?.isClosed ?? false, isHidden: prev?.isHidden ?? false };
+			const isClosed = (id == I.WidgetSection.Pin) ? false : (prev?.isClosed ?? false);
+			return { id, isClosed, isHidden: prev?.isHidden ?? false };
 		};
 
 		const fixed = I.FIXED_WIDGET_SECTIONS.map(makeParam);
