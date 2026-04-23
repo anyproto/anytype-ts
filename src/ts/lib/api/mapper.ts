@@ -1851,6 +1851,7 @@ export const Mapper = {
 			return {
 				message: obj.message ? Mapper.From.ChatMessage(obj.message) : null,
 				isPinned: obj.isPinned,
+				subIds: obj.subIds || [],
 			};
 		},
 

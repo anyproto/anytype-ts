@@ -1927,14 +1927,14 @@ export const ChatSearch = (spaceId: string, chatId: string, fullText: string, of
 
 export const ChatSetPinnedMessages = (objectId: string, messageIds: string[], pinned: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('ChatSetPinnedMessages', {
-		objectId,
+		chatObjectId: objectId,
 		messageIds,
 		pinned,
 	}, callBack);
 };
 
 export const ChatGetPinnedMessages = (objectId: string, callBack?: (message: any) => void) => {
-	dispatcher.request('ChatGetPinnedMessages', { objectId }, callBack);
+	dispatcher.request('ChatGetPinnedMessages', { chatObjectId: objectId }, callBack);
 };
 
 export const RelationListWithValue = (spaceId: string, value: any, callBack?: (message: any) => void) => {

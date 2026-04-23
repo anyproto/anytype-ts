@@ -919,7 +919,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			if (message.isPinned) {
 				options.push({ id: 'unpin', iconParam: { name: 'menu/action/unpin' }, name: translate('commonUnpin') });
 			} else {
-				options.push({ id: 'pin', iconParam: { name: 'menu/action/unpin' }, name: translate('commonPin') });
+				options.push({ id: 'pin', iconParam: { name: 'menu/action/pin' }, name: translate('commonPin') });
 			};
 		};
 
