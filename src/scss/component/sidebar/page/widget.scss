@@ -1,4 +1,4 @@
-.sidebar .subPageWrapper .sidebarPage.pageWidget {
+.subPageWrapper .sidebarPage.pageWidget {
 	background:
 		linear-gradient(180deg, var(--color-shape-highlight-light) 0px, transparent 100px)
 		var(--color-bg-primary);
@@ -89,15 +89,14 @@
 		> .content { display: flex; flex-direction: column; gap: 8px 0px; }
 
 		.spaceName {
-			position: sticky; top: 0px; z-index: 3;
-			padding: 0px 16px; height: 32px; display: flex; align-items: center;
-			background: var(--color-bg-primary);
+			position: sticky; top: 0px; z-index: 3; height: 32px; display: flex; align-items: center; 
+			background: var(--color-bg-primary); padding: 0px 4px;
 		}
 		.spaceName {
-			.info { display: flex; flex-direction: row; flex-grow: 1; align-items: center; justify-content: space-between; gap: 0px 12px; height: 32px; }
-			.nameWrap { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; flex-grow: 1; cursor: default; }
+			.info { display: flex; flex-direction: row; flex-grow: 1; align-items: center; justify-content: space-between; gap: 0px 12px; height: 32px; min-width: 0; overflow: hidden; }
+			.nameWrap { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; flex-grow: 1; flex-shrink: 1; min-width: 0; cursor: default; }
 			.nameWrap {
-				.name { @include text-paragraph; font-weight: 600; @include text-overflow-nw; color: var(--color-text-primary); }
+				.name { @include text-paragraph; font-weight: 600; @include text-overflow-nw; color: var(--color-text-primary); min-width: 0; flex-shrink: 1; }
 				.icon.arrowButton { width: 8px !important; height: 8px !important; flex-shrink: 0; }
 			}
 
