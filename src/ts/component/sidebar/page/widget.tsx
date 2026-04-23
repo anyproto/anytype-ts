@@ -728,7 +728,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 									</div>
 								) : ''}
 
-								{(!ws?.isClosed || isSectionPin) ? (
+								{!ws?.isClosed ? (
 									<div 
 										className="items" 
 										onContextMenu={e => {
