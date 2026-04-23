@@ -917,9 +917,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 		if (!U.Space.getSpaceview().isOneToOne) {
 			if (message.isPinned) {
-				options.push({ id: 'unpin', icon: 'chat-unpin', name: translate('commonUnpin') });
+				options.push({ id: 'unpin', iconParam: { name: 'menu/action/unpin' }, name: translate('commonUnpin') });
 			} else {
-				options.push({ id: 'pin', icon: 'chat-pin', name: translate('commonPin') });
+				options.push({ id: 'pin', iconParam: { name: 'menu/action/unpin' }, name: translate('commonPin') });
 			};
 		};
 
