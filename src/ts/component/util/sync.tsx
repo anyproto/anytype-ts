@@ -5,12 +5,14 @@ import * as I from 'Interface';
 interface Props {
 	id?: string;
 	className?: string;
+	tooltipParam?: Partial<I.TooltipParam>;
 	onClick: (e: any) => void;
 };
 
 const Sync = forwardRef<HTMLDivElement, Props>(({
 	id = '',
 	className = '',
+	tooltipParam = {},
 	onClick,
 }, ref) => {
 
@@ -48,7 +50,7 @@ const Sync = forwardRef<HTMLDivElement, Props>(({
 			id={id}
 			className={cn.join(' ')}
 			onClick={onClickHandler}
-			onMouseEnter={e => Preview.tooltipShow({ text: tooltip, element: e.currentTarget as HTMLElement, typeY: I.MenuDirection.Bottom })}
+			onMouseEnter={e => Preview.tooltipShow({ text: tooltip, element: e.currentTarget as HTMLElement, ...tooltipParam })}
 			onMouseLeave={() => Preview.tooltipHide(false)}
 		>
 			<Icon name={iconInfo.name} color={iconInfo.color} className={iconCn.join(' ')} />

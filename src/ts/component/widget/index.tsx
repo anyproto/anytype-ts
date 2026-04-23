@@ -26,7 +26,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const subId = useRef('');
-	const { block, isPreview, className, canEdit, getObject, onDragStart, onDragOver, onDrag, setPreview, index } = props;
+	const { block, isPreview, className, canEdit, forceLayout, getObject, onDragStart, onDragOver, onDrag, setPreview, index } = props;
 	const { widgets } = S.Block;
 	const timeoutOpen = useRef(0);
 
@@ -78,6 +78,10 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 
 		if (options.length && !options.includes(layout)) {
 			layout = options[0];
+		};
+
+		if ((forceLayout !== undefined) && options.includes(forceLayout)) {
+			layout = forceLayout;
 		};
 
 		return layout;

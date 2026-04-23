@@ -1,19 +1,25 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Sync, Label } from 'Component';
+import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Label } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
 
 
 const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ previewId, setPreviewId ] = useState('');
+	const [ sidebarView, setSidebarView ] = useState<string>(() => Storage.getSpaceKey('sidebarView', false) || 'widgets');
 	const { widgets } = S.Block;
 	const childrenIdsWidget = S.Block.getChildrenIds(widgets, widgets);
 	const lengthWidget = childrenIdsWidget.length;
 	const { sidebarDirection, isPopup, getId } = props;
 	const { space, widgetSections, recentEditMode } = S.Common;
+	const isLinksView = sidebarView == 'links';
+	const forceLayout = isLinksView ? I.WidgetLayout.Link : undefined;
 	const cnb = [ 'body' ];
+	if (isLinksView) {
+		cnb.push('viewLinks');
+	};
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const bodyRef = useRef<HTMLDivElement>(null);
@@ -412,17 +418,6 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		};
 	};
 
-	const onSync = () => {
-		S.Menu.closeAllForced(null, () => {
-			S.Menu.open('syncStatus', {
-				element: '#headerSync',
-				offsetY: 4,
-				classNameWrap: 'fixed fromSidebar',
-				subIds: J.Menu.syncStatus,
-			});
-		});
-	};
-
 	const onSectionContext = (sectionId: I.WidgetSection) => {
 		if (sectionId == I.WidgetSection.Unread) {
 			return;
@@ -627,23 +622,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 						onClick={() => sidebar.leftPanelToggle(true, true)}
 						tooltipParam={{ text: translate('commonToggleSidebar'), typeY: I.MenuDirection.Bottom }}
 					/>
-					<Icon
-						name="header/widget" withBackground={true}
-						onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
-						tooltipParam={{
-							text: translate('commonWidgets'),
-							caption: keyboard.getCaption('widget'),
-							typeY: I.MenuDirection.Bottom,
-						}}
-					/>
 				</div>
 				<div className="side right">
-					<Icon
-						id="button-widget-search"
-						name="common/search" withBackground={true}
-						onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
-						tooltipParam={{ text: translate('commonSearch'), typeY: I.MenuDirection.Bottom }}
-					/>
 					{showMembers ? (
 						<Icon
 							id="button-widget-members"
@@ -657,12 +637,93 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 							}}
 						/>
 					) : ''}
-					<Sync id="headerSync" onClick={onSync} />
 				</div>
 			</>
 		);
 
 		const spaceBlock = new M.Block({ id: J.Constant.widgetId.space, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
+
+		const onSpaceSearch = () => keyboard.onSearchPopup(analytics.route.widget);
+
+		const onSpaceCreate = () => {
+			keyboard.pageCreate({}, analytics.route.widget, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+		};
+
+		const onSpaceArrow = () => {
+			analytics.event('ScreenSelectType');
+
+			U.Menu.typeSuggest({
+				element: '#button-create-arrow',
+				className: 'fixed',
+				classNameWrap: 'fromSidebar',
+				offsetY: 4,
+			}, {}, {
+				deleteEmpty: true,
+				selectTemplate: true,
+				withImport: true,
+				uploadRoute: analytics.route.uploadGlobalMenu,
+			}, analytics.route.navigation, object => U.Object.openConfig(null, object));
+		};
+
+		const onSpaceMore = () => {
+			U.Menu.spaceContext(U.Space.getSpaceview(), {
+				element: '#widget-space .nameWrap .icon.arrowButton',
+				className: 'fixed',
+				classNameWrap: 'fromSidebar',
+				horizontal: I.MenuDirection.Center,
+				offsetY: 4,
+			}, {
+				route: analytics.route.widget,
+				withDelete: true,
+			});
+		};
+
+		const spaceName = (
+			<div id="widget-space-name" className="spaceName">
+				<div className="info">
+					<div className="nameWrap" onClick={onSpaceMore}>
+						<ObjectName object={spaceview} />
+						<Icon name="arrow/button" size={8} />
+					</div>
+					<div className="side right">
+						<Icon
+							id="button-widget-search"
+							name="common/search"
+							onClick={onSpaceSearch}
+							tooltipParam={{
+								text: translate('commonSearch'),
+								typeY: I.MenuDirection.Bottom,
+							}}
+						/>
+						{canWrite ? (
+							<div className="createGroup">
+								<div id="button-create" className="createButton" onClick={onSpaceCreate}>
+									<Icon
+										name="menu/action/createObject"
+										tooltipParam={{
+											text: translate('popupShortcutMainBasics1'),
+											caption: keyboard.getCaption('createObject'),
+											typeY: I.MenuDirection.Bottom,
+										}}
+									/>
+								</div>
+								<div id="button-create-arrow" className="createArrow" onClick={onSpaceArrow}>
+									<Icon
+										name="arrow/button"
+										size={8}
+										tooltipParam={{
+											text: translate('popupShortcutMainBasics19'),
+											caption: keyboard.getCaption('selectType'),
+											typeY: I.MenuDirection.Bottom,
+										}}
+									/>
+								</div>
+							</div>
+						) : ''}
+					</div>
+				</div>
+			</div>
+		);
 
 		content = (
 			<div className="content">
@@ -677,6 +738,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					sidebarDirection={sidebarDirection}
 					getObject={id => getObject(spaceBlock, id)}
 				/>
+
+				{spaceName}
 
 				<WidgetHome />
 
@@ -746,6 +809,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 												index={i}
 												canEdit={canWrite}
 												canRemove={isSectionPin}
+												forceLayout={forceLayout}
 												onDragStart={onDragStart}
 												onDragOver={onDragOver}
 												onDrag={onDrag}
@@ -772,6 +836,19 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	useEffect(() => {
 		setPreviewId('');
 		initSections();
+		setSidebarView(Storage.getSpaceKey('sidebarView', false) || 'widgets');
+	}, [ space ]);
+
+	useEffect(() => {
+		if (!space) {
+			return;
+		};
+
+		const eventName = `updateSidebarView.${space}`;
+		const handler = () => setSidebarView(Storage.getSpaceKey('sidebarView', false) || 'widgets');
+
+		U.Dom.addEvent(window, eventName, handler);
+		return () => U.Dom.removeEvent(window, eventName, handler);
 	}, [ space ]);
 
 	return (

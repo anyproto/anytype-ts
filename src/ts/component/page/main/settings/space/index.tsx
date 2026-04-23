@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'reac
 import { Icon, Title, Label, IconObject, ObjectName, Button, Editable } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
 import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -10,6 +11,8 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	const [ dummy, setDummy ] = useState(0);
 	const { getId } = props;
 	const { space } = S.Common;
+	const sidebarView = Storage.getSpaceKey('sidebarView', false) || 'widgets';
+	const sidebarViewName = sidebarView == 'links' ? translate('menuSidebarViewLinks') : translate('menuSidebarViewWidgets');
 	const spaceview = U.Space.getSpaceview();
 	const home = U.Space.getDashboard();
 	const type = S.Record.getTypeById(S.Common.type);
@@ -87,6 +90,28 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 					setDummy(dummy + 1);
 				},
 			}
+		});
+	};
+
+	const onSidebarView = () => {
+		const current = Storage.getSpaceKey('sidebarView', false) || 'widgets';
+
+		S.Menu.open('select', {
+			element: `#${getId()} #sidebarView`,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				value: current,
+				options: [
+					{ id: 'links', name: translate('menuSidebarViewLinks') },
+					{ id: 'widgets', name: translate('menuSidebarViewWidgets') },
+				],
+				onSelect: (_: any, option: any) => {
+					Storage.setSpaceKey('sidebarView', option.id, false);
+					U.Dom.eventDispatch(window, `updateSidebarView.${space}`);
+					analytics.event('ChangeSidebarView', { type: option.id, route: analytics.route.settings });
+					setDummy(dummy + 1);
+				},
+			},
 		});
 	};
 
@@ -327,6 +352,26 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 										</div>
 									</div>
 								) : ''}
+
+								<div className="item">
+									<div className="sides">
+										<Icon name="settings/sidebarView" />
+
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexSidebarViewTitle')} />
+											<Label text={translate('popupSettingsSpaceIndexSidebarViewDescription')} />
+										</div>
+
+										<div className="side right">
+											<div id="sidebarView" className="select" onClick={onSidebarView}>
+												<div className="item">
+													<div className="name">{sidebarViewName}</div>
+												</div>
+												<Icon name="arrow/button" className="arrow black" width={6} height={10} />
+											</div>
+										</div>
+									</div>
+								</div>
 
 								<div className="item">
 									<div className="sides">

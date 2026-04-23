@@ -40,6 +40,7 @@ export interface WidgetComponent {
 	canRemove?: boolean;
 	isSystemTarget?: boolean;
 	index?: number;
+	forceLayout?: WidgetLayout;
 	sidebarDirection?: I.SidebarDirection;
 	setPreview?: (id: string) => void;
 	getData?: (subId: string, callBack?: () => void) => void;

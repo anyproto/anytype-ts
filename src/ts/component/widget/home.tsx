@@ -1,5 +1,5 @@
 import React, { FC, MouseEvent } from 'react';
-import { Icon, IconObject, ObjectName } from 'Component';
+import { IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
 
 const ANCHOR = `#widget-${J.Constant.widgetId.home}`;
@@ -61,13 +61,8 @@ const WidgetHome: FC = () => {
 
 	return (
 		<div id={`widget-${J.Constant.widgetId.home}`} className="widgetHome" onClick={onClick} onContextMenu={onContextMenu}>
-			<div className="side left">
-				<IconObject object={home} size={20} iconSize={20} className="headerIcon" onClick={e => e.stopPropagation()} />
-				<ObjectName object={home} />
-			</div>
-			<div className="side right">
-				<Icon name="settings/home" className="home" />
-			</div>
+			<IconObject object={home} size={20} iconSize={20} onClick={e => e.stopPropagation()} />
+			<ObjectName object={home} />
 		</div>
 	);
 
