@@ -1674,10 +1674,11 @@ export const MembershipV2GetPortalLink = (callBack?: (message: any) => void) => 
 	dispatcher.request('MembershipV2GetPortalLink', {}, callBack);
 };
 
-export const MembershipV2CartUpdate = (productIds: string[], isYearly: boolean, callBack?: (message: any) => void) => {
+export const MembershipV2CartUpdate = (productIds: string[], isYearly: boolean, isLifetime: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('MembershipV2CartUpdate', {
 		productIds,
 		isYearly,
+		isLifetime,
 	}, callBack);
 };
 

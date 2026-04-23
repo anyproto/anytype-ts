@@ -84,6 +84,6 @@ export interface MembershipProduct {
 	featuresList?: { key: string; value: number; }[];
 	colorStr?: string;
 	iconName?: string;
-	getPrice?: (isYearly: boolean) => MembershipAmount | null;
-	getPriceString?: (isYearly: boolean) => string;
+	getPrice?: (period: MembershipPeriod) => MembershipAmount | null;
+	getPriceString?: (period: MembershipPeriod) => string;
 };

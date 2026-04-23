@@ -1341,7 +1341,7 @@ class Dispatcher {
 
 				case 'ChatUpdatePinnedStatus': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
-					mapped.subIds.forEach((subId) => {
+					mapped.subIds.forEach(subId => {
 						const message = S.Chat.getMessageById(subId, mapped.message?.id);
 						if (message) {
 							set(message, { isPinned: mapped.isPinned });
