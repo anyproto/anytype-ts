@@ -288,6 +288,7 @@
 	"commonText": "Text",
 	"commonBlock": "Block",
 	"commonInvite": "Invite",
+	"commonFilterChannels": "Filter Channels...",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",

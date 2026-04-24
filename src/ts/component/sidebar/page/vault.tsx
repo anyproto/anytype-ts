@@ -684,7 +684,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 						ref={filterRef}
 						size={32}
 						iconParam={{ name: 'common/search' }}
-						placeholder={translate('commonSearch')}
+						placeholder={translate('commonFilterChannels')}
 						onChange={onFilterChange}
 						onClear={onFilterClear}
 					/>

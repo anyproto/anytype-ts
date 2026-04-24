@@ -20,6 +20,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
+	const isOwner = U.Space.isMyOwner();
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const dropTargetIdRef = useRef<string>('');
 	const positionRef = useRef<I.BlockPosition>(null);
@@ -238,12 +239,13 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	};
 
 	const onScroll = () => {
-		const body = bodyRef.current;
-		const top = body?.scrollTop ?? 0;
+		const top = bodyRef.current?.scrollTop ?? 0;
 
 		if (!previewId) {
 			Storage.setScroll('sidebarWidget', '', top, isPopup);
 		};
+
+		U.Dom.toggleClass(U.Dom.get(getId()), 'isScrolled', top > 0);
 	};
 
 	const onTypeCreate = () => {
@@ -623,7 +625,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		const sections = getSections();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const hasMembers = members.length > 1;
-		const showMembers = !spaceview.isOneToOne && (hasMembers || U.Space.isMyOwner());
+		const showMembers = !spaceview.isOneToOne && (hasMembers || isOwner);
 
 		head = (
 			<>
@@ -639,7 +641,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					{showMembers ? (
 						<Icon
 							id="button-widget-members"
-							name="widget/member"
+							name={hasMembers ? 'widget/member' : 'header/invite'}
 							withBackground={true}
 							inner={hasMembers ? <Label className="cnt" text={String(members.length)} /> : null}
 							onClick={() => Action.openSpaceShare(analytics.route.widget)}
@@ -693,13 +695,14 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 				<div className="info">
 					<div className="nameWrap" onClick={onSpaceMore}>
 						<ObjectName object={spaceview} />
-						<Icon name="arrow/button" size={8} />
+						<Icon name="arrow/button" size={8} color="default" />
 					</div>
 					<div className="side right">
 						<Icon
 							id="button-widget-search"
 							name="common/search"
 							onClick={onSpaceSearch}
+							withBackground={true}
 							tooltipParam={{
 								text: translate('commonSearch'),
 								typeY: I.MenuDirection.Bottom,
@@ -710,6 +713,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 								<div id="button-create" className="createButton" onClick={onSpaceCreate}>
 									<Icon
 										name="menu/action/createObject"
+										color="default"
 										tooltipParam={{
 											text: translate('popupShortcutMainBasics1'),
 											caption: keyboard.getCaption('createObject'),
@@ -721,6 +725,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 									<Icon
 										name="arrow/button"
 										size={8}
+										color="default"
 										tooltipParam={{
 											text: translate('popupShortcutMainBasics19'),
 											caption: keyboard.getCaption('selectType'),

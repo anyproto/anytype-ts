@@ -2,12 +2,19 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 
 .sidebarPage.pageWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
 .sidebarPage.pageWidget {
+	&.isScrolled {
+		> .head::after, .widget.widgetSpace::after { opacity: 0; }
+	}
+
 	> .head {
 		display: flex; flex-direction: row; align-items: center; padding: 0px 16px; height: 52px;
 		gap: 0px 8px; flex-shrink: 0; position: relative; z-index: 2; justify-content: space-between;
-		background: $gradient;
 	}
 	> .head {
+		&::after {
+			content: ""; position: absolute; background: $gradient; height: 100%; width: 100%; left: 0px; top: 0px;
+			transition: opacity 0.2s $easeDecelerate; pointer-events: none;
+		}
 		.name { @include text-overflow-nw; }
 
 		.side { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; min-width: 0; }
@@ -74,8 +81,8 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 		> .content { display: flex; flex-direction: column; gap: 8px 0px; }
 
 		.spaceName {
-			position: sticky; top: 0px; z-index: 3; display: flex; align-items: center; 
-			background: var(--color-bg-primary); padding: 8px 4px;
+			position: sticky; top: 0px; z-index: 3; display: flex; align-items: center;
+			background: var(--color-bg-primary); padding: 0px 4px 8px 4px;
 		}
 		.spaceName {
 			.info { display: flex; flex-direction: row; flex-grow: 1; align-items: center; justify-content: space-between; gap: 0px 12px; height: 32px; min-width: 0; overflow: hidden; }
@@ -85,9 +92,9 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 				.icon.arrowButton { width: 8px !important; height: 8px !important; flex-shrink: 0; }
 			}
 
-			.side.right { flex-shrink: 0; display: flex; align-items: center; height: 32px; gap: 0px 12px; }
+			.side.right { flex-shrink: 0; display: flex; align-items: center; height: 32px; gap: 0px 6px; }
 			.side.right {
-				> .icon { width: 20px; height: 20px; flex-shrink: 0; }
+				> .icon.withBackground { width: 32px !important; height: 32px !important; }
 			}
 
 			.createGroup { display: flex; flex-direction: row; align-items: center; height: 32px; }
@@ -119,6 +126,7 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 
 		.widget.widgetSpace::after {
 			content: ""; position: absolute; background: $gradient; height: 48px; width: calc(100% + 12px); left: 0px; top: 0px;
+			transition: opacity 0.2s $easeDecelerate; pointer-events: none;
 		}
 
 		&.isPreview { overflow-x: hidden; overflow-y: auto; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
