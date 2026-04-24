@@ -123,11 +123,14 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 
 		&.isPreview { overflow-x: hidden; overflow-y: auto; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
 
-		&.viewLinks {
+		&.isLinksView {
 			.widget.widgetObject { background: none; }
 			.widget.widgetObject {
 				.contentWrapper { padding: 0px; }
 				.item { padding-left: 4px; padding-right: 4px; }
+				.item {
+					.name { font-weight: 500; }
+				}
 			}
 		}
 

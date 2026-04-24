@@ -28,7 +28,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const dragEndHandlerRef = useRef<(() => void) | null>(null);
 
 	if (isLinksView) {
-		cnb.push('viewLinks');
+		cnb.push('isLinksView');
 	};
 
 	let content = null;
