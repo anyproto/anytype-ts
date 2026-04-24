@@ -493,7 +493,14 @@ class CommonStore {
 	};
 
 	get unicodeReplace (): boolean {
-		return this.boolGet('unicodeReplace');
+		let ret = this.unicodeReplaceValue;
+		if (ret === null) {
+			ret = Storage.get('unicodeReplace');
+		};
+		if (ret === undefined) {
+			ret = true;
+		};
+		return ret;
 	};
 
 	get notificationSound (): string {
