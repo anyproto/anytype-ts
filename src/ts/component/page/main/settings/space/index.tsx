@@ -338,7 +338,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 											<div className="side right">
 												<div id="empty-dashboard-select" className="select" onClick={onDashboard}>
 													<div className="item">
-														<div className="name">{home ? home.name : translate('commonSelect')}</div>
+														{home ? <ObjectName object={home} withPlural={true} /> : translate('commonSelect')}
 													</div>
 													<Icon name="arrow/button" className="arrow black" width={6} height={10} />
 												</div>

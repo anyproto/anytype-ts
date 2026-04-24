@@ -194,7 +194,7 @@ class UtilSpace {
 
 		};
 
-		if (!ret || ret._empty_ || ret.isDeleted) {
+		if (!ret || ret._empty_ || ret.isArchived || ret.isDeleted) {
 			return null;
 		};
 		return ret;

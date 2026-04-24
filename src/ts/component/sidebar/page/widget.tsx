@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Label } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
 
-
 const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ previewId, setPreviewId ] = useState('');

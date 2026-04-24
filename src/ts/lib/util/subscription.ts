@@ -505,6 +505,7 @@ class UtilSubscription {
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
 				],
+				ignoreArchived: false,
 				noDeps: true,
 			});
 		});

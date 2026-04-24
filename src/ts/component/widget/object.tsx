@@ -22,6 +22,7 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const isUnread = realId == J.Constant.widgetId.unread;
 	const isBin = realId == J.Constant.widgetId.bin;
 	const canWrite = U.Space.canMyParticipantWrite();
+	const home = U.Space.getDashboard();
 
 	const getSubId = () => {
 		let subId = '';
@@ -133,7 +134,6 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			case J.Constant.widgetId.pinned: {
 				items = U.Data.getWidgetObjects(S.Block.widgets);
 				if (isLinksView) {
-					const home = U.Space.getDashboard();
 					if (home && !U.Space.isSystemDashboard(home.id)) {
 						items = items.filter(it => it.id != home.id);
 						items.unshift({ 
