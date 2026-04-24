@@ -437,9 +437,14 @@ class UtilData {
 					S.Auth.appTokenSet(message.appToken);
 
 					dispatcher.startStream();
-				};
 
-				callBack?.(message);
+					// Wait for the ListenSessionEvents stream to establish before calling back.
+					// AccountRecover broadcasts an event that requires an active stream; without
+					// this delay the event is dropped (race between stream setup and Broadcast).
+					window.setTimeout(() => callBack?.(message), 500);
+				} else {
+					callBack?.(message);
+				};
 			});
 		});
 	};

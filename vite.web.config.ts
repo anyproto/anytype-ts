@@ -272,6 +272,7 @@ export default defineConfig(({ mode }) => {
 				'dist/lib/pb/protos/commands_pb.js',
 				'dist/lib/pb/protos/events_pb.js',
 				'dist/lib/pkg/lib/pb/model/protos/models_pb.js',
+				'dist/lib/pb/protos/service/service_grpc_web_pb.js',
 				'google-protobuf',
 				'grpc-web',
 			],
@@ -336,7 +337,7 @@ export default defineConfig(({ mode }) => {
 						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, '/');
 						fs.writeFileSync(dest, html);
 						fs.unlinkSync(src);
-						try { fs.rmdirSync(path.resolve(__dirname, 'dist-web/dist')); } catch {}
+						try { fs.rmdirSync(path.resolve(__dirname, 'dist-web/dist')); } catch (e) { console.error("[ProtobufCjsPlugin] Error evaluating exports for " + id + ":", e);}
 					}
 				},
 			} as Plugin,
