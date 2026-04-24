@@ -288,6 +288,7 @@
 	"commonText": "Text",
 	"commonBlock": "Block",
 	"commonInvite": "Invite",
+	"commonFilterChannels": "Filter Channels...",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -2114,6 +2115,11 @@
 	"menuSpaceContextSpaceSettings": "Channel Settings",
 	"menuSpaceContextCopyInviteLink": "Copy Invite Link",
 	"menuSpaceContextShowQRCode": "Show QR Code",
+	"menuSidebarViewWidgets": "Widgets",
+	"menuSidebarViewLinks": "Links",
+
+	"popupSettingsSpaceIndexSidebarViewTitle": "Show pinned objects as",
+	"popupSettingsSpaceIndexSidebarViewDescription": "Display pinned items as simple links or interactive widgets",
 
 	"menuVaultStyleCloseSidebar": "Close sidebar",
 	"menuParticipantConnect": "Connect",

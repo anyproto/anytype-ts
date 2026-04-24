@@ -9,7 +9,8 @@ import * as I from 'Interface';
 const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const { parent, onContext } = props;
-	const { space } = S.Common;
+	const { space, sidebarView } = S.Common;
+	const isLinksView = sidebarView == I.SidebarView.Links;
 	const nodeRef = useRef(null);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const sensors = useSensors(
@@ -21,10 +22,6 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const isUnread = realId == J.Constant.widgetId.unread;
 	const isBin = realId == J.Constant.widgetId.bin;
 	const canWrite = U.Space.canMyParticipantWrite();
-
-	const getId = (id: string) => {
-		return [space, id].join('-');
-	};
 
 	const getSubId = () => {
 		let subId = '';
@@ -50,7 +47,7 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const isAllowedObject = (type: any): boolean => {
-		const skipLayouts = [I.ObjectLayout.Participant].concat(U.Object.getSystemLayouts());
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getSystemLayouts());
 
 		let ret = true;
 		if (skipLayouts.includes(type.recommendedLayout)) {
@@ -65,7 +62,11 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const subId = getSubId();
-	const canDrag = parent.id == getId(J.Constant.widgetId.type);
+	const canDrag = [ 
+		J.Constant.widgetId.type, 
+		J.Constant.widgetId.pinned, 
+		J.Constant.widgetId.personalWidgets,
+	].includes(realId) && canWrite;
 	const { total } = S.Record.getMeta(subId, '');
 
 	const onSortStart = (e: any) => {
@@ -90,9 +91,24 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		const newItems = arrayMove(items, oldIndex, newIndex);
 
-		U.Data.sortByOrderIdRequest(getSubId(), newItems, callBack => {
-			C.ObjectTypeSetOrder(space, newItems.map(it => it.id), callBack);
-		});
+		if (realId == J.Constant.widgetId.type) {
+			U.Data.sortByOrderIdRequest(getSubId(), newItems, callBack => {
+				C.ObjectTypeSetOrder(space, newItems.map(it => it.id), callBack);
+			});
+		} else
+		if ([ J.Constant.widgetId.pinned, J.Constant.widgetId.personalWidgets ].includes(realId)) {
+			const rootId = realId == J.Constant.widgetId.pinned ? S.Block.widgets : U.Object.getPersonalWidgetsId();
+			const activeBlocks = S.Block.getWidgetsForTargetIn(active.id, rootId);
+			const overBlocks = S.Block.getWidgetsForTargetIn(over.id, rootId);
+
+			if (!activeBlocks.length || !overBlocks.length) {
+				return;
+			};
+
+			const position = newIndex > oldIndex ? I.BlockPosition.Bottom : I.BlockPosition.Top;
+
+			C.BlockListMoveToExistingObject(rootId, rootId, overBlocks[0].id, [ activeBlocks[0].id ], position);
+		};
 	};
 
 	const getItems = () => {
@@ -114,20 +130,50 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				break;
 			};
 
-			case J.Constant.widgetId.personalWidgets:
-				items = U.Data.getPersonalWidgets();
+			case J.Constant.widgetId.pinned: {
+				items = U.Data.getWidgetObjects(S.Block.widgets);
+				if (isLinksView) {
+					const home = U.Space.getDashboard();
+					if (home && !U.Space.isSystemDashboard(home.id)) {
+						items = items.filter(it => it.id != home.id);
+						items.unshift({ 
+							...home, 
+							iconParam: { name: 'settings/home', color: 'red' },
+							_isDisabled: true,
+						});
+					};
+				};
 				break;
+			};
+
+			case J.Constant.widgetId.personalWidgets: {
+				items = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId());
+				break;
+			};
 
 			case J.Constant.widgetId.bin: {
 				items = [
-					{ id: J.Constant.widgetId.bin, icon: 'widget-bin', iconName: 'common/bin', name: translate('commonBin'), layout: I.ObjectLayout.Archive },
+					{ 
+						id: J.Constant.widgetId.bin, 
+						icon: 'widget-bin', 
+						iconParam: { name: 'common/bin' }, 
+						name: translate('commonBin'), 
+						layout: I.ObjectLayout.Archive,
+					},
 				];
 				break;
 			};
 
 		};
 
-		return items;
+		const seen = new Set<string>();
+		return items.filter(it => {
+			if (!it?.id || seen.has(it.id)) {
+				return false;
+			};
+			seen.add(it.id);
+			return true;
+		});
 	};
 
 	const onCreate = (e: any, type: any) => {
@@ -204,12 +250,12 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const Item = (item: any) => {
-		const isChat = U.Object.isChatLayout(item.layout);
-		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: !canDrag });
+		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: item._isDisabled || !canDrag });
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
 		};
+		const isChat = U.Object.isChatLayout(item.layout);
 		const canAdd = canWrite && (realId == J.Constant.widgetId.type) && isAllowedObject(item);
 		const spaceview = U.Space.getSpaceview();
 		const itemCn = [ 'item' ];
@@ -219,8 +265,8 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		};
 
 		let icon = null;
-		if (item.icon) {
-			icon = <Icon name={item.iconName} className={item.icon} />;
+		if (item.iconParam) {
+			icon = <Icon {...item.iconParam} />;
 		} else {
 			icon = (
 				<IconObject

@@ -1,21 +1,26 @@
 import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
 import raf from 'raf';
+import { reaction } from 'mobx';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Sync, Label } from 'Component';
+import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Label } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
 
 
 const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ previewId, setPreviewId ] = useState('');
+	const [ , setDummy ] = useState(0);
+	const forceUpdate = () => setDummy(v => v + 1);
 	const { widgets } = S.Block;
 	const childrenIdsWidget = S.Block.getChildrenIds(widgets, widgets);
 	const lengthWidget = childrenIdsWidget.length;
 	const { sidebarDirection, isPopup, getId } = props;
-	const { space, widgetSections, recentEditMode } = S.Common;
+	const { space, widgetSections, recentEditMode, sidebarView } = S.Common;
+	const isLinksView = sidebarView == I.SidebarView.Links;
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
+	const isOwner = U.Space.isMyOwner();
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const dropTargetIdRef = useRef<string>('');
 	const positionRef = useRef<I.BlockPosition>(null);
@@ -23,14 +28,18 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const frameRef = useRef<number>(0);
 	const dragEndHandlerRef = useRef<(() => void) | null>(null);
 
+	if (isLinksView) {
+		cnb.push('isLinksView');
+	};
+
 	let content = null;
 	let head = null;
 
 	const getSections = () => {
-		const widgets = getWidgets(I.WidgetSection.Pin);
 		const types = U.Data.getWidgetTypes();
 		const sections = U.Menu.widgetSections();
-		const personal = U.Data.getPersonalWidgets();
+		const pinned = U.Data.getWidgetObjects(widgets);
+		const personal = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId());
 		const { total } = S.Record.getMeta(U.Subscription.spaceSubId(J.Constant.subId.archived), '');
 		const ret = [] as I.WidgetSection[];
 
@@ -41,7 +50,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			};
 		};
 
-		if (widgets.length) {
+		if (pinned.length) {
 			ret.push(I.WidgetSection.Pin);
 		};
 
@@ -230,12 +239,13 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	};
 
 	const onScroll = () => {
-		const body = bodyRef.current;
-		const top = body?.scrollTop ?? 0;
+		const top = bodyRef.current?.scrollTop ?? 0;
 
 		if (!previewId) {
 			Storage.setScroll('sidebarWidget', '', top, isPopup);
 		};
+
+		U.Dom.toggleClass(U.Dom.get(getId()), 'isScrolled', top > 0);
 	};
 
 	const onTypeCreate = () => {
@@ -412,17 +422,6 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		};
 	};
 
-	const onSync = () => {
-		S.Menu.closeAllForced(null, () => {
-			S.Menu.open('syncStatus', {
-				element: '#headerSync',
-				offsetY: 4,
-				classNameWrap: 'fixed fromSidebar',
-				subIds: J.Menu.syncStatus,
-			});
-		});
-	};
-
 	const onSectionContext = (sectionId: I.WidgetSection) => {
 		if (sectionId == I.WidgetSection.Unread) {
 			return;
@@ -461,6 +460,16 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	};
 
 	const getWidgets = (sectionId: I.WidgetSection) => {
+		if ((sectionId == I.WidgetSection.Pin) && isLinksView) {
+			return [
+				new M.Block({
+					id: [ space, J.Constant.widgetId.pinned ].join('-'),
+					type: I.BlockType.Widget,
+					content: { layout: I.WidgetLayout.Object }
+				}),
+			];
+		};
+
 		let blocks = [];
 
 		switch (sectionId) {
@@ -616,7 +625,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		const sections = getSections();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const hasMembers = members.length > 1;
-		const showMembers = !spaceview.isOneToOne && (hasMembers || U.Space.isMyOwner());
+		const showMembers = !spaceview.isOneToOne && (hasMembers || isOwner);
 
 		head = (
 			<>
@@ -627,27 +636,12 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 						onClick={() => sidebar.leftPanelToggle(true, true)}
 						tooltipParam={{ text: translate('commonToggleSidebar'), typeY: I.MenuDirection.Bottom }}
 					/>
-					<Icon
-						name="header/widget" withBackground={true}
-						onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
-						tooltipParam={{
-							text: translate('commonWidgets'),
-							caption: keyboard.getCaption('widget'),
-							typeY: I.MenuDirection.Bottom,
-						}}
-					/>
 				</div>
 				<div className="side right">
-					<Icon
-						id="button-widget-search"
-						name="common/search" withBackground={true}
-						onClick={() => keyboard.onSearchPopup(analytics.route.widget)}
-						tooltipParam={{ text: translate('commonSearch'), typeY: I.MenuDirection.Bottom }}
-					/>
 					{showMembers ? (
 						<Icon
 							id="button-widget-members"
-							name="widget/member"
+							name={hasMembers ? 'widget/member' : 'header/invite'}
 							withBackground={true}
 							inner={hasMembers ? <Label className="cnt" text={String(members.length)} /> : null}
 							onClick={() => Action.openSpaceShare(analytics.route.widget)}
@@ -657,12 +651,94 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 							}}
 						/>
 					) : ''}
-					<Sync id="headerSync" onClick={onSync} />
 				</div>
 			</>
 		);
 
 		const spaceBlock = new M.Block({ id: J.Constant.widgetId.space, type: I.BlockType.Widget, content: { layout: I.WidgetLayout.Space } });
+		const onSpaceSearch = () => keyboard.onSearchPopup(analytics.route.widget);
+		const onSpaceCreate = () => {
+			keyboard.pageCreate({}, analytics.route.widget, [ I.ObjectFlag.SelectTemplate, I.ObjectFlag.DeleteEmpty ]);
+		};
+
+		const onSpaceArrow = () => {
+			analytics.event('ScreenSelectType');
+
+			U.Menu.typeSuggest({
+				element: '#button-create-arrow',
+				className: 'fixed',
+				classNameWrap: 'fromSidebar',
+				offsetY: 4,
+			}, {}, {
+				deleteEmpty: true,
+				selectTemplate: true,
+				withImport: true,
+				uploadRoute: analytics.route.uploadGlobalMenu,
+			}, analytics.route.navigation, object => U.Object.openConfig(null, object));
+		};
+
+		const onSpaceMore = (e: any) => {
+			U.Menu.spaceContext(U.Space.getSpaceview(), {
+				element: e.currentTarget,
+				className: 'fixed',
+				classNameWrap: 'fromSidebar',
+				horizontal: I.MenuDirection.Center,
+				offsetY: 4,
+			}, {
+				route: analytics.route.widget,
+				withDelete: true,
+			});
+		};
+
+		const spaceName = (
+			<div id="widget-space-name" className="spaceName">
+				<div className="info">
+					<div className="nameWrap" onClick={onSpaceMore}>
+						<ObjectName object={spaceview} />
+						<Icon name="arrow/button" size={8} color="default" />
+					</div>
+					<div className="side right">
+						<Icon
+							id="button-widget-search"
+							name="common/search"
+							onClick={onSpaceSearch}
+							withBackground={true}
+							tooltipParam={{
+								text: translate('commonSearch'),
+								typeY: I.MenuDirection.Bottom,
+							}}
+						/>
+						{canWrite ? (
+							<div className="createGroup">
+								<div id="button-create" className="createButton" onClick={onSpaceCreate}>
+									<Icon
+										name="menu/action/createObject"
+										color="default"
+										tooltipParam={{
+											text: translate('popupShortcutMainBasics1'),
+											caption: keyboard.getCaption('createObject'),
+											typeY: I.MenuDirection.Bottom,
+										}}
+									/>
+								</div>
+								<div id="button-create-arrow" className="createArrow" onClick={onSpaceArrow}>
+									<Icon
+										name="arrow/button"
+										size={8}
+										color="default"
+										tooltipParam={{
+											text: translate('popupShortcutMainBasics19'),
+											caption: keyboard.getCaption('selectType'),
+											typeY: I.MenuDirection.Bottom,
+										}}
+									/>
+								</div>
+							</div>
+						) : ''}
+					</div>
+				</div>
+			</div>
+		);
 
 		content = (
 			<div className="content">
@@ -678,7 +754,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					getObject={id => getObject(spaceBlock, id)}
 				/>
 
-				<WidgetHome />
+				{spaceName}
+				{!isLinksView ? <WidgetHome /> : ''}
 
 				{sections.map((section, i) => {
 					const isSectionPin = section.id == I.WidgetSection.Pin;
@@ -773,6 +850,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		setPreviewId('');
 		initSections();
 	}, [ space ]);
+
+	useEffect(() => reaction(() => S.Common.sidebarView, () => forceUpdate()), []);
 
 	return (
 		<>

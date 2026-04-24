@@ -279,6 +279,8 @@
                             .label { display: inline; }
                             .label.extend { color: var(--color-red); }
                         }
+
+                        > .sides > .icon.hasSvg { color: var(--color-control-accent); }
                     }
 
                     .button.payment { margin-top: 12px; max-width: 250px !important; }

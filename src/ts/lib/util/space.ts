@@ -208,6 +208,10 @@ class UtilSpace {
 		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last, I.HomePredefinedId.Widget ];
 	};
 
+	isSystemDashboard (id: string): boolean {
+		return this.getSystemDashboardIds().includes(id);
+	};
+
 	/**
 	 * Gets the graph dashboard object.
 	 * @returns {I.DashboardObject} The graph dashboard object.

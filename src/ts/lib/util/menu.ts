@@ -735,7 +735,7 @@ class UtilMenu {
 				onSelect: el => {
 					onSelect(el, true);
 
-					const type = U.Space.getSystemDashboardIds().includes(el.id) ? el.id : I.HomePredefinedId.Existing;
+					const type = U.Space.isSystemDashboard(el.id) ? el.id : I.HomePredefinedId.Existing;
 					analytics.event('ChangeSpaceDashboard', { type });
 				},
 			}

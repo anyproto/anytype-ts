@@ -4,7 +4,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter, Sync } from 'Component';
 import * as I from 'Interface';
 import Highlight from 'Lib/highlight';
 import Storage from 'Lib/storage';
@@ -555,11 +555,14 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		Action.openSettings('account', analytics.route.vault);
 	};
 
-	const onGallery = () => {
-		S.Popup.open('usecase', {
-			data: {
-				route: analytics.route.usecaseApp,
-			},
+	const onSync = () => {
+		S.Menu.closeAllForced(null, () => {
+			S.Menu.open('syncStatus', {
+				element: `#${getId()} #headerSync`,
+				offsetY: 4,
+				classNameWrap: 'fixed fromSidebar',
+				subIds: J.Menu.syncStatus,
+			});
 		});
 	};
 
@@ -679,8 +682,9 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 				<div className="filterWrapper">
 					<Filter
 						ref={filterRef}
+						size={32}
 						iconParam={{ name: 'common/search' }}
-						placeholder={translate('commonSearch')}
+						placeholder={translate('commonFilterChannels')}
 						onChange={onFilterChange}
 						onClear={onFilterClear}
 					/>
@@ -757,13 +761,11 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 					</div>
 
 					<div className="side right">
-						<Icon
-							name="vault/gallery"
-							className="gallery"
-							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
-							onClick={onGallery}
+						<Sync 
+							id="headerSync" 
+							onClick={onSync} 
+							tooltipParam={{ typeY: I.MenuDirection.Top }}
 						/>
-
 						<Button
 							id="button-help"
 							className="help"
