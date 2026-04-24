@@ -4,7 +4,7 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 
 .widget.widgetSpace { background: none; position: static; transform: none; }
 .widget.widgetSpace {
-	.iconHead { display: flex; align-items: flex-start; padding: 0px 4px; position: relative; }
+	.iconHead { display: flex; align-items: flex-start; padding: 0px 4px; position: relative; z-index: 1; }
 	.iconHead::after {
 		content: ""; position: absolute; background: $gradient; height: 48px; width: calc(100% + 12px); left: 0px; top: 0px;
 		transition: opacity 0.2s $easeDecelerate; pointer-events: none;

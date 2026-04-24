@@ -4,6 +4,7 @@ import { reaction } from 'mobx';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Label, SpaceName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
+import bullet from 'Component/util/icons/preview/bullet';
 
 const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -631,9 +632,21 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 				<div className="side left">
 					<Icon
 						id="button-widget-panel-toggle"
-						name="widget/vaultToggle" className="vaultToggle" withBackground={true}
+						name="widget/vaultToggle" 
+						className="vaultToggle" 
+						withBackground={true}
 						onClick={() => sidebar.leftPanelToggle(true, true)}
 						tooltipParam={{ text: translate('commonToggleSidebar'), typeY: I.MenuDirection.Bottom }}
+					/>
+					<Icon
+						name="header/widget" 
+						withBackground={true}
+						onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
+						tooltipParam={{
+							text: translate('commonWidgets'),
+							caption: keyboard.getCaption('widget'),
+							typeY: I.MenuDirection.Bottom,
+						}}
 					/>
 				</div>
 				<div className="side right">
