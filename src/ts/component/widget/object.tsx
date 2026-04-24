@@ -166,7 +166,14 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		};
 
-		return items;
+		const seen = new Set<string>();
+		return items.filter(it => {
+			if (!it?.id || seen.has(it.id)) {
+				return false;
+			};
+			seen.add(it.id);
+			return true;
+		});
 	};
 
 	const onCreate = (e: any, type: any) => {
@@ -243,12 +250,12 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	};
 
 	const Item = (item: any) => {
-		const isChat = U.Object.isChatLayout(item.layout);
 		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: item._isDisabled || !canDrag });
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
 		};
+		const isChat = U.Object.isChatLayout(item.layout);
 		const canAdd = canWrite && (realId == J.Constant.widgetId.type) && isAllowedObject(item);
 		const spaceview = U.Space.getSpaceview();
 		const itemCn = [ 'item' ];

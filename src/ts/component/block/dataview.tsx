@@ -1444,8 +1444,8 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const ids = selection.get(I.SelectType.Record) || [];
 		const length = ids.length;
 
-		if (con) U.Dom.css(con, { display: length ? 'none' : '' });
-		if (sel) U.Dom.css(sel, { display: length ? '' : 'none' });
+		if (con) U.Dom.css(con, { display: length ? 'none' : 'block' });
+		if (sel) U.Dom.css(sel, { display: length ? 'block' : 'none' });
 	};
 
 	const onSelectEnd = () => {

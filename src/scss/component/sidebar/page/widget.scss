@@ -114,8 +114,8 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 			content: ""; position: absolute; background: var(--color-control-accent); height: 2px; width: calc(100% - 24px); border-radius: 2px;
 			left: 12px;
 		}
-		.widget.isEditable.isOver.top::before { top: 0px; }
-		.widget.isEditable.isOver.bottom::before { bottom: 0px; }
+		.widget.isEditable.isOver.top::before { top: -5px; }
+		.widget.isEditable.isOver.bottom::before { bottom: -5px; }
 
 		.widget.widgetSpace::after {
 			content: ""; position: absolute; background: $gradient; height: 48px; width: calc(100% + 12px); left: 0px; top: 0px;
