@@ -533,7 +533,7 @@ const CommentReply = (props: Props) => {
 							object={{ ...U.Space.getParticipant(U.Space.getParticipantId(space, account.id)), layout: I.ObjectLayout.Participant }}
 							size={20}
 						/>
-						<span className="placeholder">{translate('commentReplyPlaceholder')}</span>
+						<span className="replyInputLabel">{translate('commentReplyPlaceholder')}</span>
 					</div>
 				) : null}
 			</div>

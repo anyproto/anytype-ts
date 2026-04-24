@@ -125,7 +125,7 @@
 	.replyInput:hover { color: var(--color-text-secondary); }
 	.replyInput {
 		.iconObject { flex-shrink: 0; }
-		.placeholder { line-height: 20px; }
+		.replyInputLabel { line-height: 20px; }
 	}
 
 	.commentReply { padding: 24px 0px 0px 0px; position: relative; transition: background-color 0.3s ease; }
