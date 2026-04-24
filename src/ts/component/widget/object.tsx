@@ -135,6 +135,7 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				if (isLinksView) {
 					const home = U.Space.getDashboard();
 					if (home && !U.Space.isSystemDashboard(home.id)) {
+						items = items.filter(it => it.id != home.id);
 						items.unshift({ 
 							...home, 
 							iconParam: { name: 'settings/home', color: 'red' },
