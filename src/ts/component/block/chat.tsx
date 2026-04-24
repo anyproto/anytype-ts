@@ -5,7 +5,7 @@ import Form from './chat/form';
 import Message from './chat/message';
 import Empty from './chat/empty';
 import SectionDate from './chat/message/date';
-import { Icon } from 'Component';
+import { Icon, IconObject } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
@@ -49,6 +49,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const [ dummy, setDummy ] = useState(0);
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const [ pinnedMessages, setPinnedMessages ] = useState<I.ChatMessage[]>([]);
+	const [ pinnedIndex, setPinnedIndex ] = useState(-1);
 	const frameRef = useRef(0);
 	const namespace = U.Dom.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
@@ -540,13 +541,30 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		});
 	};
 
-	const onPinnedBannerClick = () => {
-		const last = pinnedMessages[pinnedMessages.length - 1];
+	const getPinnedIndex = () => {
+		const length = pinnedMessages.length;
+		if (!length) {
+			return 0;
+		};
 
-		if (last) {
-			loadAndScrollToMessage(last.id);
+		return ((pinnedIndex < 0) || (pinnedIndex >= length)) ? length - 1 : pinnedIndex;
+	};
+
+	const onPinnedBannerClick = () => {
+		const length = pinnedMessages.length;
+		if (!length) {
+			return;
+		};
+
+		const index = getPinnedIndex();
+		const current = pinnedMessages[index];
+
+		if (current) {
+			loadAndScrollToMessage(current.id);
 			analytics.event('ClickPinnedMessage', { chatId: analyticsChatId });
 		};
+
+		setPinnedIndex(((index - 1) + length) % length);
 	};
 
 	const getDownloadableAttachments = (message: I.ChatMessage): any[] => {
@@ -1447,18 +1465,47 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		loadAndScrollToMessage,
 	}));
 
-	const lastPinned = pinnedMessages[pinnedMessages.length - 1];
+	const pinnedLength = pinnedMessages.length;
+	const currentPinnedIndex = getPinnedIndex();
+	const currentPinned = pinnedMessages[currentPinnedIndex];
 	let pinnedBanner = null;
 
-	if (lastPinned) {
-		const author = U.Space.getParticipant(U.Space.getParticipantId(space, lastPinned.creator));
-		const text = lastPinned.content?.text || U.Common.plural(1, translate('pluralAttachment'));
+	if (currentPinned) {
+		const { text, attachment } = getReplyContent(currentPinned);
+		const iconLayouts = U.Object.getFileLayouts().concat(U.Object.getHumanLayouts());
+		const cn = [ 'pinnedMessage' ];
+
+		let icon: any = null;
+		if (attachment) {
+			const iconSize = iconLayouts.includes(attachment.layout) ? 20 : null;
+
+			icon = <IconObject object={attachment} size={32} iconSize={iconSize} />;
+			cn.push('withIcon');
+		};
+
+		let indicator = null;
+		if (pinnedLength > 1) {
+			const segmentCount = Math.min(pinnedLength, 6);
+			const activeSegment = (pinnedLength > 1)
+				? Math.round((currentPinnedIndex / (pinnedLength - 1)) * (segmentCount - 1))
+				: 0;
+			const segments = [];
+
+			for (let i = 0; i < segmentCount; i++) {
+				const sc = [ 'segment', (i == activeSegment ? 'isActive' : '') ];
+				segments.push(<div key={i} className={sc.join(' ')} />);
+			};
+
+			indicator = <div className="pinnedIndicator">{segments}</div>;
+		};
 
 		pinnedBanner = (
-			<div className="pinnedMessage" onClick={onPinnedBannerClick}>
+			<div className={cn.join(' ')} onClick={onPinnedBannerClick}>
+				{indicator}
+				{icon}
 				<div className="pinnedInner">
 					<div className="pinnedLabel">{translate('blockChatPinnedMessage')}</div>
-					<div className="pinnedText">{author ? `${author.name}: ` : ''}{U.String.sanitize(text)}</div>
+					<div className="pinnedText" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 				</div>
 			</div>
 		);
