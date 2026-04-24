@@ -22,7 +22,7 @@
 		}
 
 		.button.expand {
-			&:hover { background-color: var(--color-shape-tertiary); color: var(--color-text-primary); }
+			&:hover, &.hover { background-color: var(--color-shape-tertiary); color: var(--color-text-primary); }
 
 			.icon { width: 20px; height: 20px; display: none; }
 		}
