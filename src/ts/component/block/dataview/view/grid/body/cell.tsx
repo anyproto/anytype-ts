@@ -70,41 +70,15 @@ const BodyCell: FC<Props> = (props, ref) => {
 		cn.push(className);
 	};
 
-	const isOverNameText = (e: MouseEvent): boolean => {
-		const nameEl = (e.target as HTMLElement).closest('.name') as HTMLElement;
-		if (!nameEl) {
-			return false;
-		};
-
-		const range = document.createRange();
-		range.selectNodeContents(nameEl);
-
-		const rect = range.getBoundingClientRect();
-		const padding = 4;
-		return (e.clientX >= rect.left - padding) && (e.clientX <= rect.right + padding) && (e.clientY >= rect.top - padding) && (e.clientY <= rect.bottom + padding);
-	};
-
-	const isSplitMode = isName && !U.Object.isNoteLayout(record.layout) && canEdit && S.Common.gridTitleClick;
-
 	let button = null;
 	let onClick = e => {
 		e.stopPropagation();
 		onCellClick(e, relationKey, record.id);
 	};
-	let onMouseMove = null;
-	let onMouseLeave = null;
 
 	if (isName && !U.Object.isNoteLayout(record.layout) && canEdit) {
 		if (S.Common.gridTitleClick) {
-			onClick = e => {
-				e.stopPropagation();
-
-				if (isOverNameText(e)) {
-					onEdit(e);
-				} else {
-					onCellClick(e, relationKey, record.id);
-				};
-			};
+			onClick = onEdit;
 			button = (
 				<Button
 					color="blank"
@@ -129,29 +103,12 @@ const BodyCell: FC<Props> = (props, ref) => {
 		};
 	};
 
-	if (isSplitMode) {
-		onMouseMove = (e: MouseEvent) => {
-			const btn = U.Dom.select('.button.expand', e.currentTarget as HTMLElement);
-			if (btn) {
-				U.Dom.toggleClass(btn, 'hover', !isOverNameText(e));
-			};
-		};
-		onMouseLeave = (e: MouseEvent) => {
-			const btn = U.Dom.select('.button.expand', e.currentTarget as HTMLElement);
-			if (btn) {
-				U.Dom.removeClass(btn, 'hover');
-			};
-		};
-	};
-
 	return (
 		<div
 			key={id}
 			id={id}
 			className={cn.join(' ')}
 			onClick={onClick}
-			onMouseMove={onMouseMove}
-			onMouseLeave={onMouseLeave}
 		>
 			<Cell
 				ref={ref => {
