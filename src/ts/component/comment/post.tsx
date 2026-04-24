@@ -13,13 +13,14 @@ interface Props {
 	targetId: string;
 	message: I.CommentMessage;
 	readonly?: boolean;
+	isLast?: boolean;
 };
 
 const REPLY_LIMIT = 10;
 
 const CommentPost = (props: Props) => {
 
-	const { rootId, targetId, message, readonly } = props;
+	const { rootId, targetId, message, readonly, isLast } = props;
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const [ isEditing, setIsEditing ] = useState(false);
@@ -692,42 +693,34 @@ const CommentPost = (props: Props) => {
 	};
 
 	const cn = [ 'commentPost', (isEditing ? 'isEditing' : '') ];
-	const showReplyAction = !isEditing && !isReplying && !readonly;
+	const showReplyInput = !isEditing && !isReplying && !readonly;
 
 	return (
 		<div ref={postRef} className={cn.join(' ')} data-message-id={id}>
 			<div ref={contentWrapRef} className="contentWrap" onContextMenu={onContextMenu}>
-				<div className="head">
-					<div className="side left">
-						<IconObject
-							object={{ ...author, layout: I.ObjectLayout.Participant }}
-							size={20}
-							onClick={e => U.Object.openConfig(e, author)}
-						/>
-						<div className="author" onClick={e => U.Object.openConfig(e, author)}>
-							<ObjectName object={author} withBadge={true} />
+				{!isEditing ? (
+					<div className="head">
+						<div className="side left">
+							<IconObject
+								object={{ ...author, layout: I.ObjectLayout.Participant }}
+								size={20}
+								onClick={e => U.Object.openConfig(e, author)}
+							/>
+							<div className="author" onClick={e => U.Object.openConfig(e, author)}>
+								<ObjectName object={author} withBadge={true} />
+							</div>
+							<div className="date">
+								{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+							</div>
 						</div>
-						<div className="date">
-							{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+						<div className="side right">
+							{renderHoverActions()}
 						</div>
 					</div>
-					<div className="side right">
-						{renderHoverActions()}
-					</div>
-				</div>
+				) : null}
 
 				{renderContent()}
 				{renderReactions()}
-
-				{showReplyAction ? (
-					<div className="replyInput" onClick={onReply}>
-						<IconObject
-							object={{ ...U.Space.getParticipant(U.Space.getParticipantId(space, account.id)), layout: I.ObjectLayout.Participant }}
-							size={20}
-						/>
-						<span className="replyInputLabel">{translate('commentReplyPlaceholder')}</span>
-					</div>
-				) : null}
 			</div>
 
 			{replies.length ? (
@@ -775,6 +768,16 @@ const CommentPost = (props: Props) => {
 						onSubmit={onSubmitReply}
 						onCancel={onCancelReply}
 					/>
+				</div>
+			) : null}
+
+			{showReplyInput ? (
+				<div className="replyInput" onClick={onReply}>
+					<IconObject
+						object={{ ...U.Space.getParticipant(U.Space.getParticipantId(space, account.id)), layout: I.ObjectLayout.Participant }}
+						size={20}
+					/>
+					<span className="replyInputLabel">{translate('commentReplyPlaceholder')}</span>
 				</div>
 			) : null}
 		</div>
