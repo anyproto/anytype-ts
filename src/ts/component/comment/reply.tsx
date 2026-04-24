@@ -528,9 +528,12 @@ const CommentReply = (props: Props) => {
 				{renderReactions()}
 
 				{showReplyAction ? (
-					<div className="replyAction" onClick={onReply}>
-						<Icon name="chat/buttons/reply" className="reply" />
-						<span>{translate('commentReply')}</span>
+					<div className="replyInput" onClick={onReply}>
+						<IconObject
+							object={{ ...U.Space.getParticipant(U.Space.getParticipantId(space, account.id)), layout: I.ObjectLayout.Participant }}
+							size={20}
+						/>
+						<span className="placeholder">{translate('commentReplyPlaceholder')}</span>
 					</div>
 				) : null}
 			</div>

@@ -79,7 +79,10 @@
 		.content { word-break: break-word; }
 
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
-		&.isEditing { background-color: var(--color-shape-highlight-medium); }
+		&.isEditing::before {
+			content: ""; position: absolute; left: -8px; top: 0px; bottom: 0px;
+			width: 4px; border-radius: 4px; background: var(--color-system-accent-100);
+		}
 
 		.head { margin: 0px 0px 2px 0px; }
 
@@ -113,16 +116,16 @@
 		}
 	}
 
-	.replyAction {
-		display: inline-flex; align-items: center; gap: 0px 4px;
-		margin: 8px 0px 0px 0px; padding: 4px 8px 4px 6px; border-radius: 12px;
-		color: var(--color-text-secondary); user-select: none; align-self: flex-start;
-		@include text-small; font-weight: 500;
-		transition: background-color 0.15s ease, color 0.15s ease;
+	.replyInput {
+		display: flex; align-items: center; gap: 0px 8px;
+		margin: 8px 0px 0px 0px; padding: 4px 0px;
+		user-select: none; color: var(--color-text-tertiary);
+		transition: color 0.15s ease;
 	}
-	.replyAction:hover { background-color: var(--color-shape-highlight-medium); color: var(--color-text-primary); }
-	.replyAction {
-		.icon.reply { width: 14px; height: 14px; }
+	.replyInput:hover { color: var(--color-text-secondary); }
+	.replyInput {
+		.iconObject { flex-shrink: 0; }
+		.placeholder { line-height: 20px; }
 	}
 
 	.commentReply { padding: 24px 0px 0px 0px; position: relative; transition: background-color 0.3s ease; }
@@ -130,7 +133,10 @@
 		&::before { content: ""; position: absolute; top: 12px; left: 28px; width: calc(100% - 28px); height: 1px; background-color: var(--color-shape-highlight-medium); }
 		&:first-child::before { left: 0px; width: 100%; }
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); border-radius: 8px; }
-		&.isEditing { background-color: var(--color-shape-highlight-medium); border-radius: 8px; }
+		&.isEditing::after {
+			content: ""; position: absolute; left: -8px; top: 24px; bottom: 0px;
+			width: 4px; border-radius: 4px; background: var(--color-system-accent-100);
+		}
 
 		.commentAttachments,
 		.commentForm { margin-left: 28px; }
@@ -142,7 +148,7 @@
 
 		.reactions { margin: 0px 0px 0px 28px; }
 
-		.replyAction { margin: 8px 0px 0px 28px; }
+		.replyInput { margin: 8px 0px 0px 28px; }
 
 		.hoverActions { display: flex; align-items: center; gap: 0px 2px; }
 		.hoverActions {
