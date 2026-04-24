@@ -931,6 +931,7 @@
 	"popupSettingsPersonalCommentSend": "Send comments with",
 	"popupSettingsPersonalSectionLists": "Lists",
 	"popupSettingsPersonalGridTitleClick": "Click to edit title in Grid view",
+	"popupSettingsPersonalUnicodeReplace": "Replace typed sequences with unicode symbols",
 	"popupSettingsPersonalSectionInterface": "Interface",
 	"popupSettingsPersonalSectionContentViews": "Content & Views",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",

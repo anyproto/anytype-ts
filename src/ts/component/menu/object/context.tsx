@@ -72,8 +72,8 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let allowedUnlink = isCollection;
 		let allowedRelation = data.allowedRelation;
 		let allowedLink = true;
-		let allowedNotification = true;
-		let allowedEditChat = true;
+		let allowedNotification = false;
+		let allowedEditChat = false;
 		let allowedExport = data.allowedExport;
 		let allowedNewTab = data.allowedNewTab;
 
@@ -131,13 +131,10 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				allowedFav = false;
 			};
 
-			if (!isChat) {
-				allowedNotification = false;
-				allowedEditChat = false;
-			} else {
-				allowedExport = false;
-				allowedCollection = false;
-			};
+			allowedNotification = allowedNotification && isChat;
+			allowedEditChat = allowedEditChat && isChat;
+			allowedExport = allowedExport && !isChat;
+			allowedCollection = allowedCollection && !isChat;
 		});
 
 		if (pinCnt == length) {
