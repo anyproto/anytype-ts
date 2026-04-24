@@ -138,7 +138,7 @@ const Textarea = forwardRef<TextareaRefProps, Props>(({
 		U.Dom.removeClass(nodeRef.current, v);
 	};
 	
-	useEffect(() => setValue(initialValue));
+	useEffect(() => setValue(initialValue), [ initialValue ]);
 	useImperativeHandle(ref, () => ({ 
 		focus, 
 		select, 

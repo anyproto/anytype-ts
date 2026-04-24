@@ -61,6 +61,8 @@ contextBridge.exposeInMainWorld('Electron', {
 
 	webFilePath: file => webUtils && webUtils.getPathForFile(file),
 
+	fileRead: fp => new Uint8Array(fs.readFileSync(fp)),
+
 	fileWrite: (name, data, options) => {
 		name = String(name || 'temp');
 		options = options || {};

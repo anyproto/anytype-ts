@@ -7,6 +7,15 @@ export enum Platform {
 	Linux	 = 'Linux',
 };
 
+export enum ProfilerReason {
+	Unknown					 = 0,
+	UserRequest				 = 1,
+	MemoryPressureWarn		 = 2,
+	MemoryPressureCritical	 = 3,
+	ThermalSerious			 = 4,
+	ThermalCritical			 = 5,
+};
+
 export enum DropType {
 	None	 = '',
 	Block	 = 'block',
