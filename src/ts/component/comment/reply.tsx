@@ -498,8 +498,6 @@ const CommentReply = (props: Props) => {
 		);
 	};
 
-	const showReplyAction = !isEditing && !readonly && !!onReply;
-
 	const cn = [ 'commentReply', (isEditing ? 'isEditing' : '') ];
 
 	return (
@@ -526,16 +524,6 @@ const CommentReply = (props: Props) => {
 
 				{renderContent()}
 				{renderReactions()}
-
-				{showReplyAction ? (
-					<div className="replyInput" onClick={onReply}>
-						<IconObject
-							object={{ ...U.Space.getParticipant(U.Space.getParticipantId(space, account.id)), layout: I.ObjectLayout.Participant }}
-							size={20}
-						/>
-						<span className="replyInputLabel">{translate('commentReplyPlaceholder')}</span>
-					</div>
-				) : null}
 			</div>
 		</div>
 	);
