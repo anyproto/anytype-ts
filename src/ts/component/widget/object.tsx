@@ -94,8 +94,19 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			U.Data.sortByOrderIdRequest(getSubId(), newItems, callBack => {
 				C.ObjectTypeSetOrder(space, newItems.map(it => it.id), callBack);
 			});
-		} else {
+		} else
+		if ([ J.Constant.widgetId.pinned, J.Constant.widgetId.personalWidgets ].includes(realId)) {
+			const rootId = realId == J.Constant.widgetId.pinned ? S.Block.widgets : U.Object.getPersonalWidgetsId();
+			const activeBlocks = S.Block.getWidgetsForTargetIn(active.id, rootId);
+			const overBlocks = S.Block.getWidgetsForTargetIn(over.id, rootId);
 
+			if (!activeBlocks.length || !overBlocks.length) {
+				return;
+			};
+
+			const position = newIndex > oldIndex ? I.BlockPosition.Bottom : I.BlockPosition.Top;
+
+			C.BlockListMoveToExistingObject(rootId, rootId, overBlocks[0].id, [ activeBlocks[0].id ], position);
 		};
 	};
 
