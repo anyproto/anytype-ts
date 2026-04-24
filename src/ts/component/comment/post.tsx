@@ -692,6 +692,7 @@ const CommentPost = (props: Props) => {
 	};
 
 	const cn = [ 'commentPost', (isEditing ? 'isEditing' : '') ];
+	const showReplyAction = !isEditing && !isReplying && !readonly;
 
 	return (
 		<div ref={postRef} className={cn.join(' ')} data-message-id={id}>
@@ -717,6 +718,13 @@ const CommentPost = (props: Props) => {
 
 				{renderContent()}
 				{renderReactions()}
+
+				{showReplyAction ? (
+					<div className="replyAction" onClick={onReply}>
+						<Icon name="chat/buttons/reply" className="reply" />
+						<span>{translate('commentReply')}</span>
+					</div>
+				) : null}
 			</div>
 
 			{replies.length ? (

@@ -498,8 +498,12 @@ const CommentReply = (props: Props) => {
 		);
 	};
 
+	const showReplyAction = !isEditing && !readonly && !!onReply;
+
+	const cn = [ 'commentReply', (isEditing ? 'isEditing' : '') ];
+
 	return (
-		<div className="commentReply" data-message-id={id}>
+		<div className={cn.join(' ')} data-message-id={id}>
 			<div ref={contentWrapRef} className="contentWrap" onContextMenu={onContextMenu}>
 				<div className="head">
 					<div className="side left">
@@ -522,6 +526,13 @@ const CommentReply = (props: Props) => {
 
 				{renderContent()}
 				{renderReactions()}
+
+				{showReplyAction ? (
+					<div className="replyAction" onClick={onReply}>
+						<Icon name="chat/buttons/reply" className="reply" />
+						<span>{translate('commentReply')}</span>
+					</div>
+				) : null}
 			</div>
 		</div>
 	);

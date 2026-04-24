@@ -656,6 +656,8 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	return (
 		<>
 			<div ref={sectionRef} className={cn.join(' ')} onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+				{isOpen ? <div className="commentTitle">{translate('commentDiscussion')}</div> : null}
+
 				{postCount > 0 ? (
 					<div className="commentBody">
 						<CommentList
