@@ -2,9 +2,9 @@
 
 $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-highlight-light-solid) 100%);
 
-.widget.widgetSpace { background: none; position: static; transform: none; }
+.widget.widgetSpace { background: none; position: static; transform: none; padding: 0px 4px; }
 .widget.widgetSpace {
-	.iconHead { display: flex; align-items: flex-start; padding: 0px 4px; position: relative; }
+	.iconHead { display: flex; align-items: flex-start; position: relative; margin: 0px 0px 8px 0px; }
 	.iconHead::after {
 		content: ""; position: absolute; background: $gradient; height: 48px; width: calc(100% + 12px); left: 0px; top: 0px;
 		transition: opacity 0.2s $easeDecelerate; pointer-events: none;
@@ -12,7 +12,7 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 
 	.spaceName {
 		position: sticky; top: 0px; z-index: 3; display: flex; align-items: center;
-		background: var(--color-bg-primary); padding: 0px 4px 8px 4px;
+		background: var(--color-bg-primary); margin: 0px 0px 8px 0px;
 	}
 	.spaceName {
 		.info { display: flex; flex-direction: row; flex-grow: 1; align-items: center; justify-content: space-between; gap: 0px 12px; height: 32px; min-width: 0; overflow: hidden; }
