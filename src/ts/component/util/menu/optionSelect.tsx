@@ -240,12 +240,9 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 		};
 
 		const selectedSet = new Set(value);
-		const selected: SelectItem[] = [];
-		const rest: SelectItem[] = [];
-
-		items.forEach(it => {
-			(selectedSet.has(it.id) ? selected : rest).push(it);
-		});
+		const itemsById = new Map(items.map(it => [ it.id, it ]));
+		const selected: SelectItem[] = value.map(id => itemsById.get(id)).filter((it): it is SelectItem => !!it);
+		const rest: SelectItem[] = items.filter(it => !selectedSet.has(it.id));
 
 		const ret: SelectItem[] = [];
 		if (selected.length) {
@@ -612,6 +609,22 @@ const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 			return;
 		};
 
+		const valueSet = new Set(value);
+		const isActiveSelected = valueSet.has(active.id);
+		const isOverSelected = valueSet.has(over.id);
+
+		// Cross-section drags are a no-op
+		if (isActiveSelected !== isOverSelected) {
+			return;
+		};
+
+		// Reorder within "Selected" section — update value array only
+		if (isActiveSelected) {
+			onSortEndObjects(active, over);
+			return;
+		};
+
+		// Reorder within "All values" section — update global option order
 		const items = getItems().filter(it => (it.id != 'add') && !it.isSection && !it.isDiv);
 		const oldIndex = items.findIndex(it => it.id == active.id);
 		const newIndex = items.findIndex(it => it.id == over.id);
