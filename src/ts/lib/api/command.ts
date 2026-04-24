@@ -5,7 +5,7 @@ export const InitialSetParameters = (platform: I.Platform, version: string, work
 	dispatcher.request('InitialSetParameters', {
 		platform,
 		version,
-		workDir,
+		workdir: workDir,
 		logLevel,
 		doNotSendLogs,
 		doNotSaveLogs,
@@ -1634,8 +1634,16 @@ export const DebugExportLog = (path: string, callBack?: (message: any) => void) 
 	dispatcher.request('DebugExportLog', { dir: path }, callBack);
 };
 
-export const DebugRunProfiler = (duration: number, callBack?: (message: any) => void) => {
-	dispatcher.request('DebugRunProfiler', { durationInSeconds: duration }, callBack);
+export const DebugRunProfiler = (duration: number, reason: I.ProfilerReason, reasonDesc: string, callBack?: (message: any) => void) => {
+	dispatcher.request('DebugRunProfiler', { durationInSeconds: duration, reason, reasonDesc }, callBack);
+};
+
+export const DebugExportReport = (path: string, full: boolean, callBack?: (message: any) => void) => {
+	dispatcher.request('DebugExportReport', { dir: path, full }, callBack);
+};
+
+export const DebugCleanupReport = (ts: number, callBack?: (message: any) => void) => {
+	dispatcher.request('DebugCleanupReport', { ts }, callBack);
 };
 
 // ---------------------- NOTIFICATION ---------------------- //

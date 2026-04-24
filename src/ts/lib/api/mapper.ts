@@ -1317,6 +1317,15 @@ export const Mapper = {
 			};
 		},
 
+		DebugProfileCreated: (obj: any) => {
+			return {
+				reason: String(obj.reason || ''),
+				jsonInfo: String(obj.jsonInfo || ''),
+				path: String(obj.path || ''),
+				full: Boolean(obj.full),
+			};
+		},
+
 		AccountUpdate: (obj: any) => {
 			return {
 				status: Mapper.From.AccountStatus(obj.status || {}),
