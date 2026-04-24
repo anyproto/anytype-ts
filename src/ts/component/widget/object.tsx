@@ -132,22 +132,12 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			};
 
 			case J.Constant.widgetId.pinned: {
-				items = U.Data.getWidgetObjects(S.Block.widgets);
-				if (isLinksView) {
-					if (home && !U.Space.isSystemDashboard(home.id)) {
-						items = items.filter(it => it.id != home.id);
-						items.unshift({ 
-							...home, 
-							iconParam: { name: 'settings/home', color: 'red' },
-							_isDisabled: true,
-						});
-					};
-				};
+				items = U.Data.getWidgetObjects(S.Block.widgets, isLinksView);
 				break;
 			};
 
 			case J.Constant.widgetId.personalWidgets: {
-				items = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId());
+				items = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId(), false);
 				break;
 			};
 

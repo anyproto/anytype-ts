@@ -38,8 +38,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const getSections = () => {
 		const types = U.Data.getWidgetTypes();
 		const sections = U.Menu.widgetSections();
-		const pinned = U.Data.getWidgetObjects(widgets);
-		const personal = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId());
+		const pinned = U.Data.getWidgetObjects(widgets, isLinksView);
+		const personal = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId(), false);
 		const { total } = S.Record.getMeta(U.Subscription.spaceSubId(J.Constant.subId.archived), '');
 		const ret = [] as I.WidgetSection[];
 

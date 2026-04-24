@@ -1368,7 +1368,7 @@ class UtilData {
 		});
 	};
 
-	getWidgetObjects (rootId: string): any[] {
+	getWidgetObjects (rootId: string, withHome: boolean): any[] {
 		let items = [];
 
 		const childrenIds = S.Block.getChildrenIds(rootId, rootId);
@@ -1397,6 +1397,19 @@ class UtilData {
 
 			items.push(object);
 		});
+
+		if (withHome) {
+			const home = U.Space.getDashboard();
+
+			if (home && !U.Space.isSystemDashboard(home.id)) {
+				items = items.filter(it => it.id != home.id);
+				items.unshift({ 
+					...home, 
+					iconParam: { name: 'settings/home', color: 'red' },
+					_isDisabled: true,
+				});
+			};
+		};
 
 		return items;
 	};
