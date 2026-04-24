@@ -176,9 +176,7 @@ const PageMainNavigation = forwardRef<I.PageRef, I.PageComponent>((props, ref) =
 	};
 
 	const loadPage = (id: string) => {
-		const skipIds = U.Space.getSystemDashboardIds();
-
-		if (!id || skipIds.includes(id as any)) {
+		if (!id || U.Space.isSystemDashboard(id)) {
 			return;
 		};
 

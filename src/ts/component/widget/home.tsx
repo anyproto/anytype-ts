@@ -7,7 +7,7 @@ const ANCHOR = `#widget-${J.Constant.widgetId.home}`;
 const WidgetHome: FC = () => {
 
 	const home = U.Space.getDashboard();
-	if (!home || U.Space.getSystemDashboardIds().includes(home.id)) {
+	if (!home || U.Space.isSystemDashboard(home.id)) {
 		return null;
 	};
 

@@ -9,7 +9,8 @@ import * as I from 'Interface';
 const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const { parent, onContext } = props;
-	const { space } = S.Common;
+	const { space, sidebarView } = S.Common;
+	const isLinksView = sidebarView == I.SidebarView.Links;
 	const nodeRef = useRef(null);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const sensors = useSensors(
@@ -131,6 +132,16 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 			case J.Constant.widgetId.pinned: {
 				items = U.Data.getWidgetObjects(S.Block.widgets);
+				if (isLinksView) {
+					const home = U.Space.getDashboard();
+					if (home && !U.Space.isSystemDashboard(home.id)) {
+						items.unshift({ 
+							...home, 
+							iconParam: { name: 'settings/home', color: 'red' },
+							_isDisabled: true,
+						});
+					};
+				};
 				break;
 			};
 
@@ -141,7 +152,13 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 			case J.Constant.widgetId.bin: {
 				items = [
-					{ id: J.Constant.widgetId.bin, icon: 'widget-bin', iconName: 'common/bin', name: translate('commonBin'), layout: I.ObjectLayout.Archive },
+					{ 
+						id: J.Constant.widgetId.bin, 
+						icon: 'widget-bin', 
+						iconParam: { name: 'common/bin' }, 
+						name: translate('commonBin'), 
+						layout: I.ObjectLayout.Archive,
+					},
 				];
 				break;
 			};
@@ -226,7 +243,7 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const Item = (item: any) => {
 		const isChat = U.Object.isChatLayout(item.layout);
-		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: !canDrag });
+		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: item._isDisabled || !canDrag });
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
@@ -240,8 +257,8 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		};
 
 		let icon = null;
-		if (item.icon) {
-			icon = <Icon name={item.iconName} className={item.icon} />;
+		if (item.iconParam) {
+			icon = <Icon {...item.iconParam} />;
 		} else {
 			icon = (
 				<IconObject
