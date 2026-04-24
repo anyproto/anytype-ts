@@ -3,6 +3,7 @@
 .menus {
 	.menu.menuWidget { width: unset; min-width: var(--menu-width-common); }
 	.menu.menuWidget {
+		.content { max-height: 600px; }
 		.item {
 			.name { @include text-overflow-nw; width: calc(100% - 36px); }
 		}
