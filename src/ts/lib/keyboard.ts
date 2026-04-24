@@ -1007,13 +1007,13 @@ class Keyboard {
 					data: {
 						onSubmit: (description: string) => {
 							C.DebugRunProfiler(0, I.ProfilerReason.UserRequest, '', () => {
-								C.DebugExportReport(tmpPath, false, (message: any) => {
+								C.DebugExportReport(electron.commonPath(), false, (message: any) => {
 									if (message.error.code) {
 										return;
 									};
 
 									// Sentry envelope limit is ~20MB; keep attachments under ~10MB to be safe.
-									const data = electron.fileRead(message.path);
+									const data = electron.logRead(message.path);
 
 									Sentry.withScope(scope => {
 										scope.setLevel('info');

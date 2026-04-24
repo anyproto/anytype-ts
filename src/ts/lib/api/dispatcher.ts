@@ -294,11 +294,11 @@ class Dispatcher {
 
 								scope.addAttachment({
 									filename: electron.fileName(mapped.path),
-									data: electron.fileRead(mapped.path),
+									data: electron.logRead(mapped.path),
 									contentType: electron.fileMime(mapped.path) || 'application/octet-stream',
 								});
 							} catch (e) {
-								console.error('[DebugProfileCreated] fileRead failed:', mapped.path, e);
+								console.error('[DebugProfileCreated] logRead failed:', mapped.path, e);
 							};
 						};
 
