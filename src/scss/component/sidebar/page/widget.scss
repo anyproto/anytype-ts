@@ -1,20 +1,26 @@
 $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-highlight-light-solid) 100%);
 
-.sidebarPage.pageWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
-.sidebarPage.pageWidget {
+.sidebarPage.pageWidget,
+.sidebarPage.pageWidgetManage { 
 	&.isScrolled {
 		> .head::after, .widget.widgetSpace .iconHead::after { opacity: 0; }
 	}
 
 	> .head {
-		display: flex; flex-direction: row; align-items: center; padding: 0px 16px; height: 52px;
-		gap: 0px 8px; flex-shrink: 0; position: relative; z-index: 2; justify-content: space-between;
-	}
-	> .head {
 		&::after {
 			content: ""; position: absolute; background: $gradient; height: 100%; width: 100%; left: 0px; top: 0px;
 			transition: opacity 0.2s $easeDecelerate; pointer-events: none;
 		}
+	}
+}
+
+.sidebarPage.pageWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
+.sidebarPage.pageWidget {
+	> .head {
+		display: flex; flex-direction: row; align-items: center; padding: 0px 16px; height: 52px;
+		gap: 0px 8px; flex-shrink: 0; position: relative; z-index: 2; justify-content: space-between;
+	}
+	> .head {
 		.name { @include text-overflow-nw; }
 
 		.side { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; min-width: 0; }
@@ -108,7 +114,7 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 .sidebarPage.pageWidgetManage {
 	> .head {
 		display: flex; flex-direction: row; align-items: center; padding: 0px 12px; height: 52px;
-		gap: 0px 8px; flex-shrink: 0; justify-content: space-between;
+		gap: 0px 8px; flex-shrink: 0; justify-content: space-between; position: relative;
 	}
 	> .head {
 		.side { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; min-width: 0; }

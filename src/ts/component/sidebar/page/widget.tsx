@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react
 import raf from 'raf';
 import { reaction } from 'mobx';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Label } from 'Component';
+import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Label, SpaceName } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
 
 const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
@@ -669,6 +669,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					sidebarDirection={sidebarDirection}
 					getObject={id => getObject(spaceBlock, id)}
 				/>
+
+				<SpaceName />
 
 				{!isLinksView ? <WidgetHome /> : ''}
 
