@@ -9,7 +9,7 @@ enum ChatKey {
 
 const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick, notificationSound, hideFileObjectsInTree } = S.Common;
+	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick, notificationSound, hideFileObjectsInTree, unicodeReplace } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
 	const { theme, chatCmdSend, commentCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
@@ -238,6 +238,15 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 						className="big"
 						value={gridTitleClick}
 						onChange={(e: any, v: boolean) => S.Common.gridTitleClickSet(v)}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalUnicodeReplace')} />
+					<Switch
+						className="big"
+						value={unicodeReplace}
+						onChange={(e: any, v: boolean) => S.Common.unicodeReplaceSet(v)}
 					/>
 				</div>
 			</div>

@@ -49,6 +49,7 @@ class CommonStore {
 	public vaultMessagesValue = null;
 	public vaultIsMinimalValue = null;
 	public gridTitleClickValue = null;
+	public unicodeReplaceValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
 
 	public recentEditModeValue: I.RecentEditMode = null;
@@ -164,6 +165,7 @@ class CommonStore {
 			vaultMessagesValue: observable,
 			vaultIsMinimalValue: observable,
 			gridTitleClickValue: observable,
+			unicodeReplaceValue: observable,
 			notificationSoundValue: observable,
 			isActiveTab: observable,
 			isPinnedValue: observable,
@@ -188,6 +190,7 @@ class CommonStore {
 			vaultMessages: computed,
 			vaultIsMinimal: computed,
 			gridTitleClick: computed,
+			unicodeReplace: computed,
 			notificationSound: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
@@ -220,6 +223,7 @@ class CommonStore {
 			vaultMessagesSet: action,
 			vaultIsMinimalSet: action,
 			gridTitleClickSet: action,
+			unicodeReplaceSet: action,
 			notificationSoundSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
@@ -486,6 +490,10 @@ class CommonStore {
 			ret = true;
 		};
 		return ret;
+	};
+
+	get unicodeReplace (): boolean {
+		return this.boolGet('unicodeReplace');
 	};
 
 	get notificationSound (): string {
@@ -1052,6 +1060,10 @@ class CommonStore {
 
 	gridTitleClickSet (v: boolean) {
 		this.boolSet('gridTitleClick', v);
+	};
+
+	unicodeReplaceSet (v: boolean) {
+		this.boolSet('unicodeReplace', v);
 	};
 
 	notificationSoundSet (v: string) {
