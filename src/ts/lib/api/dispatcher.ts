@@ -75,42 +75,58 @@ class Dispatcher {
 	 * Sets up listeners for data, status, and end events with automatic reconnection.
 	 * Requires authentication token to be set in S.Auth.token.
 	 */
-	startStream () {
-		if (!S.Auth.token) {
-			console.error('[Dispatcher.startStream] No token');
-			return;
-		};
+	startStream (): Promise<void> {
+		return new Promise((resolve) => {
+			if (!S.Auth.token) {
+				console.error('[Dispatcher.startStream] No token');
+				resolve();
+				return;
+			};
 
-		window.clearTimeout(this.timeoutStream);
+			window.clearTimeout(this.timeoutStream);
 
-		this.stopStream();
+			this.stopStream();
 
-		this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, null);
+			this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, null);
 
-		this.stream.on('data', (event) => {
-			this.eventBuffer.push({ event, skipDebug: false });
+			let isResolved = false;
+			const finish = () => {
+				if (!isResolved) {
+					isResolved = true;
+					resolve();
+				}
+			};
 
-			if (!this.flushScheduled) {
-				this.flushScheduled = true;
+			this.stream.on('metadata', finish);
 
-				if (S.Common.isActiveTab) {
-					this.rafId = requestAnimationFrame(() => this.flushEvents());
-				} else {
-					this.flushTimerId = window.setTimeout(() => this.flushEvents(), 100);
+			this.stream.on('data', (event) => {
+				finish();
+				this.eventBuffer.push({ event, skipDebug: false });
+
+				if (!this.flushScheduled) {
+					this.flushScheduled = true;
+
+					if (S.Common.isActiveTab) {
+						this.rafId = requestAnimationFrame(() => this.flushEvents());
+					} else {
+						this.flushTimerId = window.setTimeout(() => this.flushEvents(), 100);
+					};
 				};
-			};
-		});
+			});
 
-		this.stream.on('status', (status) => {
-			if (status.code) {
-				console.error('[Dispatcher.stream] Restarting', status);
+			this.stream.on('status', (status) => {
+				finish();
+				if (status.code) {
+					console.error('[Dispatcher.stream] Restarting', status);
+					this.reconnect();
+				};
+			});
+
+			this.stream.on('end', () => {
+				finish();
+				console.error('[Dispatcher.stream] end, restarting');
 				this.reconnect();
-			};
-		});
-
-		this.stream.on('end', () => {
-			console.error('[Dispatcher.stream] end, restarting');
-			this.reconnect();
+			});
 		});
 	};
 
