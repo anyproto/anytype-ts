@@ -39,8 +39,10 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 		}
 	}
 
-	.widgetSection { display: flex; flex-direction: column; }
+	.widgetSection { display: flex; flex-direction: column; margin: 0px 0px 8px 0px; }
 	.widgetSection {
+		&:last-child { margin-bottom: 0px; }
+
 		> .nameWrap { display: flex; @include text-small; font-weight: 500; color: var(--color-text-secondary); justify-content: space-between; padding: 0px 4px; }
 		> .nameWrap {
 			.icon.arrow { width: 12px; height: 12px; transform: rotateZ(-90deg); }

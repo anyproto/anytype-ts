@@ -37,7 +37,7 @@
 	}
 
 	.ReactVirtualized__List { padding: 8px 4px; scrollbar-gutter: stable; }
-	.filterWrapper { padding: 0px 12px 0px 12px; overflow: hidden; }
+	.filterWrapper { padding: 0px 12px 2px 12px; overflow: hidden; }
 	.input::-webkit-input-placeholder { color: var(--color-text-secondary) !important; }
 
 	.item { display: flex; align-items: center; gap: 0px 8px; padding: 6px 8px; border-radius: 8px; -webkit-app-region: no-drag; margin: 0px 0px 1px 0px; }

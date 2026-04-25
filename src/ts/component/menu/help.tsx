@@ -34,18 +34,18 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getItems = () => {
 		return [
-			{
-				id: 'whatsNew', iconParam: { name: 'menu/help/bell' }, document: 'whatsNew',
-				caption: <Button size={16} text={U.Common.getElectron().version.app} />
-			},
+			{ id: 'gallery', iconParam: { name: 'vault/gallery' } },
 			{ id: 'shortcut', iconParam: { name: 'menu/help/keyboard' }, caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },
-			{ id: 'gallery' },
 			{ id: 'share' },
 			{ id: 'community' },
 			{ id: 'tutorial' },
 			{ id: 'contact' },
 			{ isDiv: true },
+			{
+				id: 'whatsNew', iconParam: { name: 'menu/help/bell' }, document: 'whatsNew',
+				caption: <Button size={16} text={U.Common.getElectron().version.app} />
+			},
 			{
 				id: 'developer', arrow: true, children: [
 					{ id: 'developerPortal' },
