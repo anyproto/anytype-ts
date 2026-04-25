@@ -20,6 +20,7 @@ class PopupStore {
 	public popupList: I.Popup[] = [];
 
 	timeout = 0;
+	isAnimatingFlag: Map<string, boolean> = new Map();
 
 	constructor () {
 		makeObservable(this, {
@@ -171,10 +172,7 @@ class PopupStore {
 		};
 
 		Preview.toastHide(true);
-
-		if (item.param.onClose) {
-			item.param.onClose();
-		};
+		item.param.onClose?.();
 		
 		const filtered = this.popupList.filter(it => it.id != id);
 
@@ -182,6 +180,7 @@ class PopupStore {
 			this.popupList = filtered;
 		
 			U.Data.updateTabsDimmer();
+			this.setIsAnimating(id, false);
 			callBack?.();
 		} else {
 			const el = U.Dom.get(U.String.toCamelCase(`popup-${id}`));
@@ -191,14 +190,37 @@ class PopupStore {
 				U.Data.updateTabsDimmer(filtered);
 			});
 
+			this.setIsAnimating(id, true);
 			window.setTimeout(() => {
 				this.popupList = filtered;
 
 				callBack?.();
 				U.Data.updateTabsDimmer();
 				U.Dom.eventDispatch(window, 'resize');
+
+				this.setIsAnimating(id, false);
 			}, J.Constant.delay.popup);
 		};
+	};
+
+	/**
+	 * Sets the animating flag for a popup ID.
+	 * @private
+	 * @param {string} id - The popup ID.
+	 * @param {boolean} v - The animating value.
+	 */
+	setIsAnimating (id: string, v: boolean) {
+		this.isAnimatingFlag.set(id, v);
+	};
+
+	/**
+	 * Checks if a popup is animating.
+	 * @private
+	 * @param {string} id - The popup ID.
+	 * @returns {boolean} True if animating, false otherwise.
+	 */
+	isAnimating (id?: string): boolean {
+		return !!(id ? this.isAnimatingFlag.get(id) : this.isAnimatingFlag.size);
 	};
 
 	/**

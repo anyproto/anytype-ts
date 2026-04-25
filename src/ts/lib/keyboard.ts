@@ -117,8 +117,7 @@ class Keyboard {
 
 	onResize () {
 		const { hideSidebar } = S.Common;
-		const isPopup = this.isPopup();
-		const container = U.Dom.getPageContainer(isPopup);
+		const container = U.Dom.getPageContainer(false);
 		const cw = container?.clientWidth || 0;
 		const data = sidebar.getData(I.SidebarPanel.Left, false);
 		const threshold = J.Size.sidebar.left.threshold.close;
@@ -327,7 +326,7 @@ class Keyboard {
 				if (this.isMainSettings()) {
 					U.Space.openDashboard({ replace: false });
 				} else 
-				if (!this.isAuth()) {
+				if (!this.isAuth() && !S.Menu.isAnimating() && !S.Popup.isAnimating()) {
 					this.onBack(isPopup);
 				};
 			};
