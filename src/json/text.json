@@ -234,6 +234,7 @@
 	"commonOpenType": "Open Type",
 	"commonSize": "Size",
 	"commonLogout": "Log out",
+	"commonShowInFolder": "Show in folder",
 	"commonShowMore": "Show more",
 	"commonShowLess": "Show less",
 	"commonWarning": "Warning",
@@ -359,6 +360,7 @@
 	"electronMenuDebugNet": "Network",
 	"electronMenuDebugLog": "Export log",
 	"electronMenuDebugProfiler": "Export CPU trace",
+	"electronMenuDebugReport": "Generate report",
 	"electronMenuClose": "Close Window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",
@@ -386,6 +388,7 @@
 	"electronMenuGallery": "ANY Experience Gallery",
 	"electronMenuTutorial": "Help and Tutorials",
 	"electronMenuContact": "Contact Us",
+	"electronMenuSubmitReport": "Submit report",
 	"electronMenuTech": "Technical Information",
 	"electronMenuTerms": "Terms of Use",
 	"electronMenuPrivacy": "Privacy Policy",
@@ -1393,6 +1396,13 @@
 	"popupConfirmActionRestrictedText": "You cannot do this in read-only space",
 
 	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
+
+	"popupConfirmDebugReportTitle": "Report generated",
+	"popupConfirmDebugReportText": "Share the archive with support@anytype.io and describe your issue.<br/><br/>The report includes recent error logs, object and channel IDs, your public identity ID, and basic device info (OS, processor, etc). It does not include object content. Feel free to review the archive before sending.",
+	"popupSubmitReportTitle": "Submit report",
+	"popupSubmitReportPrivacy": "The report includes recent error logs, object and channel IDs, your public identity ID, and basic device info (OS, processor, etc). It does not include object content. It is sent to the Anytype team along with your description below.",
+	"popupSubmitReportPlaceholder": "Describe the issue you are facing…",
+	"popupSubmitReportButton": "Submit",
 
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
 	"popupConfirmOpenExternalLinkText": "You are trying to open an url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",

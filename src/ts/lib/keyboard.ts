@@ -1,5 +1,6 @@
 import { history as historyPopup } from 'Lib/history';
 import * as I from 'Interface';
+import * as Sentry from '@sentry/browser';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
 
@@ -968,10 +969,81 @@ class Keyboard {
 			};
 
 			case 'debugProfiler': {
-				C.DebugRunProfiler(30, (message: any) => {
+				C.DebugRunProfiler(30, I.ProfilerReason.UserRequest, '', (message: any) => {
 					if (!message.error.code) {
 						Action.openPath(message.path);
 					};
+				});
+				break;
+			};
+
+			case 'debugReport': {
+				const full = arg?.full || false;
+
+				Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
+					C.DebugRunProfiler(0, I.ProfilerReason.UserRequest, '', () => {
+						C.DebugExportReport(paths[0], full, (message: any) => {
+							if (message.error.code) {
+								return;
+							};
+
+							S.Popup.open('confirm', {
+								data: {
+									title: translate('popupConfirmDebugReportTitle'),
+									text: translate('popupConfirmDebugReportText'),
+									textConfirm: translate('commonShowInFolder'),
+									canCancel: true,
+									onConfirm: () => Action.openPath(U.Common.getElectron().dirName(message.path)),
+								},
+							});
+						});
+					});
+				});
+				break;
+			};
+
+			case 'submitReport': {
+				S.Popup.open('submitReport', {
+					data: {
+						onSubmit: (description: string) => {
+							C.DebugRunProfiler(0, I.ProfilerReason.UserRequest, '', () => {
+								C.DebugExportReport(electron.commonPath(), false, (message: any) => {
+									if (message.error.code) {
+										return;
+									};
+
+									// Sentry envelope limit is ~20MB; keep attachments under ~10MB to be safe.
+									const data = electron.logRead(message.path);
+
+									Sentry.withScope(scope => {
+										scope.setLevel('info');
+										scope.setTag('report', 'user_submitted');
+										scope.setFingerprint([ 'debug-report' ]);
+
+										if (description) {
+											scope.setContext('report', { description });
+										};
+
+										try {
+											scope.setContext('summary', JSON.parse(message.summary));
+										} catch (e) {
+											scope.setExtra('summary', message.summary);
+										};
+
+										scope.addAttachment({
+											filename: 'debug-report.zip',
+											data,
+											contentType: 'application/zip',
+										});
+										Sentry.captureMessage('Debug report');
+									});
+
+									C.DebugCleanupReport(message.lastModifiedTs);
+									Preview.toastShow({ text: translate('commonDone') });
+								});
+							});
+						},
+					},
 				});
 				break;
 			};

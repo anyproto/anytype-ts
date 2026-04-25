@@ -1,6 +1,7 @@
 
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set, runInAction } from 'mobx';
+import * as Sentry from '@sentry/browser';
 import type { Event } from 'Proto/pb/protos/events';
 import * as Response from './response';
 import type { ClientReadableStream } from 'grpc-web';
@@ -264,6 +265,44 @@ class Dispatcher {
 						...mapped,
 						theme: S.Common.getThemeClass(),
 						lang: S.Common.interfaceLang,
+					});
+					break;
+				};
+
+				case 'DebugProfileCreated': {
+					const reason = mapped.reason || 'Unknown';
+					const electron = U.Common.getElectron();
+
+					console.log('[DebugProfileCreated] event:', mapped);
+
+					Sentry.withScope(scope => {
+						scope.setLevel('info');
+						scope.setTag('report', 'mw_profile');
+						scope.setTag('reason', reason);
+						scope.setFingerprint([ 'mw-profile', reason ]);
+
+						try {
+							scope.setContext('info', JSON.parse(mapped.jsonInfo));
+						} catch (e) {
+							scope.setExtra('info', mapped.jsonInfo);
+						};
+
+						if (mapped.path) {
+							try {
+								const size = electron.fileSize(mapped.path);
+								console.log('[DebugProfileCreated] attaching file:', mapped.path, 'size:', size);
+
+								scope.addAttachment({
+									filename: electron.fileName(mapped.path),
+									data: electron.logRead(mapped.path),
+									contentType: electron.fileMime(mapped.path) || 'application/octet-stream',
+								});
+							} catch (e) {
+								console.error('[DebugProfileCreated] logRead failed:', mapped.path, e);
+							};
+						};
+
+						Sentry.captureMessage(`MW_${reason}`);
 					});
 					break;
 				};
