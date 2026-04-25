@@ -76,10 +76,10 @@ class Dispatcher {
 	 * Requires authentication token to be set in S.Auth.token.
 	 */
 	startStream (): Promise<void> {
-		return new Promise((resolve) => {
+		return new Promise((resolve, reject) => {
 			if (!S.Auth.token) {
 				console.error('[Dispatcher.startStream] No token');
-				resolve();
+				reject(new Error('No token'));
 				return;
 			};
 
@@ -90,17 +90,21 @@ class Dispatcher {
 			this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, null);
 
 			let isResolved = false;
-			const finish = () => {
+			const finish = (source: string) => {
 				if (!isResolved) {
+					console.log(`[Dispatcher.startStream] Resolved by ${source}`);
 					isResolved = true;
 					resolve();
 				}
 			};
 
-			this.stream.on('metadata', finish);
+			this.stream.on('metadata', () => finish('metadata'));
+
+			// Fallback in case metadata never fires on grpc-web proxy
+			window.setTimeout(() => finish('timeout_fallback'), 150);
 
 			this.stream.on('data', (event) => {
-				finish();
+				finish('data');
 				this.eventBuffer.push({ event, skipDebug: false });
 
 				if (!this.flushScheduled) {
@@ -115,15 +119,20 @@ class Dispatcher {
 			});
 
 			this.stream.on('status', (status) => {
-				finish();
-				if (status.code) {
+				if (status.code !== 0) {
+					if (!isResolved) {
+						isResolved = true;
+						reject(new Error(`Stream status error: ${status.code}`));
+					}
 					console.error('[Dispatcher.stream] Restarting', status);
 					this.reconnect();
-				};
+				} else {
+					finish('status');
+				}
 			});
 
 			this.stream.on('end', () => {
-				finish();
+				finish('end');
 				console.error('[Dispatcher.stream] end, restarting');
 				this.reconnect();
 			});
@@ -171,7 +180,7 @@ class Dispatcher {
 
 		window.clearTimeout(this.timeoutStream);
 		this.timeoutStream = window.setTimeout(() => {
-			this.startStream();
+			void this.startStream();
 			this.reconnects++;
 		}, t * 1000);
 	};

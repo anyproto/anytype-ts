@@ -333,9 +333,9 @@ const mimeTypes: Record<string, string> = {
 };
 
 /**
- * Dev server plugin: rewrite /index.html to /src/html/index.html for Vite processing,
- * and serve static files from dist/ (tabs.html, workers, fonts, etc.) to match
- * the old rspack devServer.static: ['dist'] behavior.
+ * Dev server plugin: rewrite /index.html to /src/html/index.html for Vite processing.
+ * It also intercepts root URL requests (like /tabs.html, /workers/..., /font/...) and
+ * attempts to serve them from dist/ first before falling back to the SPA index.html.
  */
 function spaFallbackPlugin(): Plugin {
 	return {
@@ -355,6 +355,17 @@ function spaFallbackPlugin(): Plugin {
 						pathname.startsWith('/api/')
 					) {
 						return next();
+					}
+
+					// Try to serve static assets from dist/ (tabs.html, workers, fonts, etc.)
+					const distPath = path.resolve(__dirname, 'dist', pathname.slice(1));
+					if (fs.existsSync(distPath) && fs.statSync(distPath).isFile()) {
+						const ext = path.extname(distPath).toLowerCase();
+						const contentType = mimeTypes[ext];
+						if (contentType) {
+							res.setHeader('Content-Type', contentType);
+						}
+						return res.end(fs.readFileSync(distPath));
 					}
 
 					const htmlPath = path.resolve(__dirname, 'src/html/index.html');

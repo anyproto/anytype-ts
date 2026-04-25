@@ -436,11 +436,14 @@ class UtilData {
 					S.Auth.tokenSet(message.token);
 					S.Auth.appTokenSet(message.appToken);
 
-					await dispatcher.startStream();
-					callBack?.(message);
-				} else {
-					callBack?.(message);
+					try {
+						await dispatcher.startStream();
+					} catch (err) {
+						console.error('[U.Data].createSession startStream failed', err);
+					};
 				};
+
+				callBack?.(message);
 			});
 		});
 	};

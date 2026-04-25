@@ -47,3 +47,6 @@ dist/lib/json/internalRelations.json
 dist/lib/json/internalTypes.json
 dist/lib/json/systemRelations.json
 dist/lib/json/systemTypes.json
+
+# local binaries
+grpc-server

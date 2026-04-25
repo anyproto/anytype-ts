@@ -337,7 +337,7 @@ export default defineConfig(({ mode }) => {
 						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, '/');
 						fs.writeFileSync(dest, html);
 						fs.unlinkSync(src);
-						try { fs.rmdirSync(path.resolve(__dirname, 'dist-web/dist')); } catch (e) { console.error("[ProtobufCjsPlugin] Error evaluating exports for " + id + ":", e);}
+						try { fs.rmdirSync(path.resolve(__dirname, 'dist-web/dist')); } catch (e) { console.error('[move-html] Failed to remove dist-web/dist:', e); }
 					}
 				},
 			} as Plugin,
