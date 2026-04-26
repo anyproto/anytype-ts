@@ -50,14 +50,16 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		let ret = false;
 
-		keyboard.shortcut('space', e, () => {
-			if ([ 'hideIcon', 'coverFit', 'wrapContent' ].includes(item.id)) {
-				e.preventDefault();
+		if (item) {
+			keyboard.shortcut('space', e, () => {
+				if ([ 'hideIcon', 'coverFit', 'wrapContent' ].includes(item.id)) {
+					e.preventDefault();
 
-				onSwitch(e, item.id, !view[item.id]);
-				ret = true;
-			};
-		});
+					onSwitch(e, item.id, !view[item.id]);
+					ret = true;
+				};
+			});
+		};
 
 		if (ret) {
 			return;
