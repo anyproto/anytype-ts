@@ -3,7 +3,8 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 .sidebarPage.pageWidget,
 .sidebarPage.pageWidgetManage { 
 	&.isScrolled {
-		> .head::after, .widget.widgetSpace .iconHead::after { opacity: 0; }
+		> .head::after, 
+		.widget.widgetSpace::after { opacity: 0; }
 	}
 
 	> .head {
