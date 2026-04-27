@@ -487,10 +487,9 @@ class Action {
 		};
 
 		ids.forEach((id) => {
-			const object = S.Detail.get(rootId, id);
-
-			if (U.Object.isTypeLayout(object.layout)){
-				types.push(object);
+			const type = S.Record.getTypeById(id);
+			if (type) {
+				types.push(type);
 			};
 		});
 
