@@ -487,10 +487,9 @@ class Action {
 		};
 
 		ids.forEach((id) => {
-			const object = S.Detail.get(rootId, id);
-
-			if (U.Object.isTypeLayout(object.layout)){
-				types.push(object);
+			const type = S.Record.getTypeById(id);
+			if (type) {
+				types.push(type);
 			};
 		});
 
@@ -953,8 +952,7 @@ class Action {
 			return;
 		};
 
-		const product = S.Membership.data?.getTopProduct();
-		const writersLimit = product?.features?.spaceWriters || 0;
+		const { writersLimit } = U.Space.getTierLimits();
 		const maxRetries = 5;
 		const failed: { spaceId: string; identities: string[] }[] = [];
 
