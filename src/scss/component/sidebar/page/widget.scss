@@ -13,6 +13,10 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 			transition: opacity 0.2s $easeDecelerate; pointer-events: none;
 		}
 	}
+
+	> .body {
+		&.isLinksView { padding-left: 8px; padding-right: 8px; }
+	}
 }
 
 .sidebarPage.pageWidget { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
@@ -99,12 +103,11 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 
 		&.isPreview { overflow-x: hidden; overflow-y: auto; padding-left: 0px; padding-right: 0px; padding-bottom: 0px; }
 
-		&.isLinksView { padding-left: 8px; padding-right: 8px; }
 		&.isLinksView {
 			.widget.widgetObject { background: none; }
 			.widget.widgetObject {
 				.contentWrapper { padding: 0px; }
-				.item { padding-left: 8px; padding-right: 8px; }
+				.item { padding-left: 8px; padding-right: 8px; height: 32px; }
 				.item {
 					.name { font-weight: 500; }
 				}
@@ -157,4 +160,11 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 	}
 
 	.buttons { display: flex; flex-direction: column; }
+}
+
+:not(.spaceOneToOne) {
+	.sidebarPage.pageWidget,
+	.sidebarPage.pageWidgetManage { 	
+		> .head::after { display: none; }
+	}
 }

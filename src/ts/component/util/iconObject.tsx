@@ -303,7 +303,7 @@ const IconObject = forwardRef<IconObjectRefProps, Props>((props, ref) => {
 			} else
 			if (iconImage) {
 				cn.push('withImage');
-				icn = icn.concat([ 'iconImage', `c${size}` ]);
+				icn = icn.concat([ 'iconImage', `c${iconSize}` ]);
 				icon = <img src={S.Common.imageUrl(iconImage, I.ImageSize.Medium)} className={icn.join(' ')} />;
 			} else {
 				defaultIcon();
@@ -317,7 +317,7 @@ const IconObject = forwardRef<IconObjectRefProps, Props>((props, ref) => {
 
 		case I.ObjectLayout.Human: 
 		case I.ObjectLayout.Participant: {
-			icn = icn.concat([ 'iconImage', `c${size}` ]);
+			icn = icn.concat([ 'iconImage', `c${iconSize}` ]);
 
 			if (iconImage) {
 				cn.push('withImage');

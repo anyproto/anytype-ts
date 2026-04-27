@@ -45,7 +45,7 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let pageLink = { id: 'pageLink', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') };
 		let open = { id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') };
 		let linkTo = { id: 'linkTo', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonLinkTo'), arrow: true };
-		let addCollection = { id: 'addCollection', iconParam: { name: 'menu/block/common/collection' }, name: translate('commonAddToCollection'), arrow: true };
+		let addCollection = { id: 'addCollection', iconParam: { name: 'menu/action/collection' }, name: translate('commonAddToCollection'), arrow: true };
 		let changeType = { id: 'changeType', iconParam: { name: 'common/edit' }, name: translate('blockFeaturedTypeMenuChangeType'), arrow: true };
 		let unlink = { id: 'unlink', iconParam: { name: 'common/unlink' }, name: translate('menuObjectContextUnlinkFromCollection') };
 		let relation = { id: 'relation', iconParam: { name: 'header/relation' }, name: translate('menuObjectContextEditRelations') };

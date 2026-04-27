@@ -28,6 +28,7 @@ interface SidebarLeftRefProps {
 const SidebarLeft = forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
 	const { vaultIsMinimal } = S.Common;
+	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const pageRef = useRef(null);
 	const subPageRef = useRef(null);
@@ -40,7 +41,7 @@ const SidebarLeft = forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 	const width = useRef(0);
 	const movedX = useRef(false);
 	const { page, subPage } = S.Common.getLeftSidebarState();
-	const cn = [ 'sidebar', 'left' ];
+	const cn = [ 'sidebar', 'left', U.Data.spaceClass(spaceview.spaceType) ];
 
 	if (vaultIsMinimal) {
 		cn.push('isMinimal');

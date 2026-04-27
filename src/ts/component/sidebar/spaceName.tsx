@@ -28,7 +28,7 @@ const SpaceName = forwardRef(() => {
 		}, {}, {
 			deleteEmpty: true,
 			selectTemplate: true,
-			withImport: true,
+			withUpload: true,
 			uploadRoute: analytics.route.uploadGlobalMenu,
 		}, analytics.route.navigation, object => U.Object.openConfig(null, object));
 	};

@@ -40,6 +40,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		const sections = U.Menu.widgetSections();
 		const pinned = U.Data.getWidgetObjects(widgets, isLinksView);
 		const personal = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId(), false);
+		const recent = S.Record.getRecords(U.Subscription.getRecentSubId());
 		const { total } = S.Record.getMeta(U.Subscription.spaceSubId(J.Constant.subId.archived), '');
 		const ret = [] as I.WidgetSection[];
 
@@ -58,7 +59,9 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			ret.push(I.WidgetSection.MyFavorites);
 		};
 
-		ret.push(I.WidgetSection.RecentEdit);
+		if (recent.length) {
+			ret.push(I.WidgetSection.RecentEdit);
+		};
 
 		if (types.length) {
 			ret.push(I.WidgetSection.Type);
@@ -675,17 +678,19 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 
 		content = (
 			<div className="content">
-				<Widget
-					block={spaceBlock}
-					disableContextMenu={true}
-					onDragStart={onDragStart}
-					onDragOver={onDragOver}
-					onDrag={onDrag}
-					canEdit={false}
-					canRemove={false}
-					sidebarDirection={sidebarDirection}
-					getObject={id => getObject(spaceBlock, id)}
-				/>
+				{spaceview.isOneToOne ? (
+					<Widget
+						block={spaceBlock}
+						disableContextMenu={true}
+						onDragStart={onDragStart}
+						onDragOver={onDragOver}
+						onDrag={onDrag}
+						canEdit={false}
+						canRemove={false}
+						sidebarDirection={sidebarDirection}
+						getObject={id => getObject(spaceBlock, id)}
+					/>
+				) : ''}
 
 				<SpaceName />
 

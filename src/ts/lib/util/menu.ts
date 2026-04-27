@@ -1384,7 +1384,7 @@ class UtilMenu {
 		});
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean, uploadRoute?: string }, route: string, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withUpload?: boolean, noButtons?: boolean, uploadRoute?: string }, route: string, callBack?: (item: any) => void) {
 		param = param || {};
 		param.data = param.data || {};
 		details = details || {};
@@ -1400,9 +1400,8 @@ class UtilMenu {
 			objectFlags.push(I.ObjectFlag.DeleteEmpty);
 		};
 
-		const onImport = (e: MouseEvent) => {
-			e.stopPropagation();
-			Action.openSettings('importIndex', route);
+		const onUpload = (e: MouseEvent) => {
+			U.Menu.onFileUploadPopup(I.ObjectLayout.File, '', {}, undefined, route);
 		};
 
 		const getClipboardData = async () => {
@@ -1526,6 +1525,10 @@ class UtilMenu {
 			const buttons: any[] = [];
 
 			if (!flags.noButtons) {
+				if (flags.withUpload) {
+					buttons.push({ id: 'import', iconParam: { name: 'menu/action/uploadComputer' }, name: translate('commonUploadComputer'), onClick: onUpload, isButton: true });
+				};
+
 				buttons.push({ 
 					id: 'add', iconParam: { name: 'plus/menu' }, onClick: () => {
 						U.Object.createType({ name: this.menuContext?.getChildRef()?.getData().filter }, keyboard.isPopup());
@@ -1536,10 +1539,6 @@ class UtilMenu {
 						};
 					}, 
 				});
-
-				if (flags.withImport) {
-					buttons.push({ id: 'import', iconParam: { name: 'menu/action/import' }, name: translate('commonImport'), onClick: onImport, isButton: true });
-				};
 
 				if (items.length) {
 					buttons.unshift({ id: 'clipboard', iconParam: { name: 'menu/action/clipboard' }, name: translate('widgetItemClipboard'), onClick: onPaste, isButton: true });
@@ -1562,7 +1561,7 @@ class UtilMenu {
 					onMore,
 					buttons,
 					filters: [
-						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection().filter(it => !U.Object.isInFileLayouts(it)) },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
