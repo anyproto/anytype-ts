@@ -675,8 +675,7 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					editorQuote: { blockId, text, marks },
 				};
 
-				S.Comment.setPendingQuote(rootId, part);
-				window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`));
+				window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
 				break;
 			};
 			

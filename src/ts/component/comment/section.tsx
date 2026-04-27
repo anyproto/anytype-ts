@@ -479,8 +479,8 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	}, [ scrollToBottom ]);
 
 	useEffect(() => {
-		const onQuote = () => {
-			const part = S.Comment.consumePendingQuote(rootId);
+		const onQuote = (e: Event) => {
+			const part = (e as CustomEvent).detail as I.CommentContentPart;
 			if (!part) {
 				return;
 			};

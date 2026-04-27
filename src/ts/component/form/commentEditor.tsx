@@ -790,6 +790,62 @@ function $isMentionNode (node: LexicalNode | null | undefined): node is MentionN
 	return node instanceof MentionNode;
 };
 
+// SourceQuoteNode is a QuoteNode that carries a back-reference to the
+// originating editor block or comment message. It renders identically to
+// a stock QuoteNode (same `commentEditor-quote` class via the theme), but
+// editorStateToParts emits it as a part with `editorQuote` / `messageQuote`
+// metadata so the rendered post can be clicked back to the source.
+class SourceQuoteNode extends QuoteNode {
+
+	__sourceBlockId: string;
+	__sourceMessageId: string;
+
+	static getType (): string {
+		return 'sourceQuote';
+	};
+
+	static clone (node: SourceQuoteNode): SourceQuoteNode {
+		const cloned = new SourceQuoteNode(node.__sourceBlockId, node.__sourceMessageId, node.__key);
+		return cloned;
+	};
+
+	constructor (sourceBlockId: string, sourceMessageId: string, key?: string) {
+		super(key);
+		this.__sourceBlockId = sourceBlockId || '';
+		this.__sourceMessageId = sourceMessageId || '';
+	};
+
+	getSourceBlockId (): string {
+		return this.__sourceBlockId;
+	};
+
+	getSourceMessageId (): string {
+		return this.__sourceMessageId;
+	};
+
+	exportJSON () {
+		return {
+			...super.exportJSON(),
+			type: 'sourceQuote',
+			sourceBlockId: this.__sourceBlockId,
+			sourceMessageId: this.__sourceMessageId,
+		};
+	};
+
+	static importJSON (json: any): SourceQuoteNode {
+		return new SourceQuoteNode(json.sourceBlockId || '', json.sourceMessageId || '');
+	};
+
+};
+
+function $createSourceQuoteNode (sourceBlockId: string, sourceMessageId: string): SourceQuoteNode {
+	return new SourceQuoteNode(sourceBlockId, sourceMessageId);
+};
+
+function $isSourceQuoteNode (node: LexicalNode | null | undefined): node is SourceQuoteNode {
+	return node instanceof SourceQuoteNode;
+};
+
 interface Props {
 	rootId?: string;
 	subId?: string;
@@ -828,6 +884,7 @@ interface RefProps {
 	removeAttachment: (key: string) => void;
 	getAttachments: () => any[];
 	clearAttachments: () => void;
+	insertSourceQuote: (part: I.CommentContentPart) => void;
 };
 
 const theme = {
@@ -1194,6 +1251,29 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 				continue;
 			};
 
+			// Source-bearing quote (carries blockId or messageId back to origin)
+			if ($isSourceQuoteNode(node)) {
+				const { text, marks } = extractTextAndMarks(node);
+				const blockId = node.getSourceBlockId();
+				const messageId = node.getSourceMessageId();
+				const part: I.CommentContentPart = {
+					style: I.TextStyle.Quote,
+					type: I.BlockType.Text,
+					text,
+					marks,
+				};
+
+				if (blockId) {
+					part.editorQuote = { blockId, text, marks };
+				} else
+				if (messageId) {
+					part.messageQuote = { messageId, text, marks };
+				};
+
+				parts.push(part);
+				continue;
+			};
+
 			// Quote
 			if (node.getType() === 'quote') {
 				const { text, marks } = extractTextAndMarks(node);
@@ -1417,7 +1497,11 @@ const partsToEditor = (editor: LexicalEditor, parts: I.CommentContentPart[]) => 
 
 			// Quote
 			if (part.style === I.TextStyle.Quote) {
-				const quote = new QuoteNode();
+				const sourceBlockId = part.editorQuote?.blockId || '';
+				const sourceMessageId = part.messageQuote?.messageId || '';
+				const quote = (sourceBlockId || sourceMessageId)
+					? $createSourceQuoteNode(sourceBlockId, sourceMessageId)
+					: new QuoteNode();
 				quote.append(...createFormattedNodes(part.text || '', part.marks));
 				root.append(quote);
 				i++;
@@ -2412,7 +2496,11 @@ const PasteUrlPlugin = ({ rootId }: { rootId?: string }) => {
 				};
 
 				if (part.style === I.TextStyle.Quote) {
-					const quote = new QuoteNode();
+					const sourceBlockId = part.editorQuote?.blockId || '';
+					const sourceMessageId = part.messageQuote?.messageId || '';
+					const quote = (sourceBlockId || sourceMessageId)
+						? $createSourceQuoteNode(sourceBlockId, sourceMessageId)
+						: new QuoteNode();
 					quote.append(...createFormattedNodes(part.text || '', part.marks || []));
 					nodes.push(quote);
 					continue;
@@ -4223,6 +4311,41 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 			editorRef.current?.dispatchCommand(INSERT_ATTACHMENT_COMMAND, data);
 		},
 
+		insertSourceQuote: (part: I.CommentContentPart) => {
+			const editor = editorRef.current;
+			if (!editor || !part) {
+				return;
+			};
+
+			const sourceBlockId = part.editorQuote?.blockId || '';
+			const sourceMessageId = part.messageQuote?.messageId || '';
+
+			editor.update(() => {
+				const root = $getRoot();
+				const quote = $createSourceQuoteNode(sourceBlockId, sourceMessageId);
+				quote.append(...createFormattedNodes(part.text || '', part.marks || []));
+
+				// Prepend the quote and ensure an empty paragraph follows for typing.
+				const first = root.getFirstChild();
+				if (first) {
+					first.insertBefore(quote);
+				} else {
+					root.append(quote);
+				};
+
+				const next = quote.getNextSibling();
+				if (!next) {
+					const p = $createParagraphNode();
+					p.append($createTextNode(''));
+					quote.insertAfter(p);
+					p.selectStart();
+				} else
+				if ($isElementNode(next)) {
+					next.selectStart();
+				};
+			});
+		},
+
 		removeAttachment: (key: string) => {
 			editorRef.current?.dispatchCommand(REMOVE_ATTACHMENT_COMMAND, key);
 		},
@@ -4267,7 +4390,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 	const initialConfig = {
 		namespace: 'CommentEditor',
 		theme,
-		nodes: [ HeadingNode, QuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, HorizontalRuleNode, MentionNode, LinkTextNode, AttachmentNode, EmbedNode, EmojiNode ],
+		nodes: [ HeadingNode, QuoteNode, SourceQuoteNode, ListNode, ListItemNode, CodeNode, CodeHighlightNode, HorizontalRuleNode, MentionNode, LinkTextNode, AttachmentNode, EmbedNode, EmojiNode ],
 		onError: (error: Error) => {
 			console.error('[CommentEditor]', error);
 		},

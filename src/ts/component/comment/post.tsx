@@ -214,8 +214,7 @@ const CommentPost = (props: Props) => {
 								messageQuote: { messageId: id, text, marks: [] },
 							};
 
-							S.Comment.setPendingQuote(rootId, part);
-							window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`));
+							window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
 						} else
 						if (item.id == 'copyText') {
 							U.Common.clipboardCopy({ text });

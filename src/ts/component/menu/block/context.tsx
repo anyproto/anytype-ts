@@ -210,8 +210,7 @@ const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 									editorQuote: { blockId, text, marks: sliced },
 								};
 
-								S.Comment.setPendingQuote(rootId, part);
-								window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`));
+								window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
 								close();
 								break;
 							};

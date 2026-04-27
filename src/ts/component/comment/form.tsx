@@ -34,7 +34,6 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const [ isFocused, setIsFocused ] = useState(false);
 	const [ isMultiline, setIsMultiline ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ quote, setQuote ] = useState<I.CommentContentPart | null>(null);
 	const isSubmittingRef = useRef(false);
 	const draftLoadedRef = useRef(false);
 	const electron = U.Common.getElectron();
@@ -64,14 +63,13 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			isSubmittingRef.current = false;
 			setIsLoading(false);
 			setIsMultiline(false);
-			setQuote(null);
 			clearDraft();
 		},
 		insertQuote: (part: I.CommentContentPart) => {
 			if (!part) {
 				return;
 			};
-			setQuote(part);
+			editorRef.current?.insertSourceQuote(part);
 			window.setTimeout(() => editorRef.current?.focus(), 50);
 		},
 	}));
@@ -203,16 +201,13 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				};
 			};
 
-			const finalParts = quote ? [ quote, ...resolvedParts ] : resolvedParts;
-
-			onSubmit?.(finalParts, messageAttachments, attachmentObjects);
+			onSubmit?.(resolvedParts, messageAttachments, attachmentObjects);
 
 			if (!isEdit) {
 				editorRef.current?.clear();
 				setIsEmpty(true);
 				setHasAttachments(false);
 				setIsMultiline(false);
-				setQuote(null);
 				clearDraft();
 			};
 
@@ -225,7 +220,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		} else {
 			finalize(new Map());
 		};
-	}, [ onSubmit, isEdit, clearDraft, getLinkType, getAttachmentType, uploadTmpFiles, quote ]);
+	}, [ onSubmit, isEdit, clearDraft, getLinkType, getAttachmentType, uploadTmpFiles ]);
 
 	const handleEmpty = useCallback((v: boolean) => {
 		setIsEmpty(v);
@@ -680,11 +675,8 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	// Catch Escape at the form level so it doesn't bubble to the global handler
 	// which would close the object. This handles the case where focus is on an
 	// attachment (image) rather than the Lexical editor.
-	// Also: when a pending quote is attached, Escape drops the quote first
-	// instead of canceling, so users have a way to undo the quote without
-	// losing any text they've already typed.
 	useEffect(() => {
-		if (!onCancel && !quote) {
+		if (!onCancel) {
 			return;
 		};
 
@@ -695,24 +687,15 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 
 		const onKeyDown = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') {
-				if (quote) {
-					e.stopPropagation();
-					e.preventDefault();
-					setQuote(null);
-					return;
-				};
-
-				if (onCancel) {
-					e.stopPropagation();
-					e.preventDefault();
-					onCancel();
-				};
+				e.stopPropagation();
+				e.preventDefault();
+				onCancel();
 			};
 		};
 
 		node.addEventListener('keydown', onKeyDown);
 		return () => node.removeEventListener('keydown', onKeyDown);
-	}, [ onCancel, quote ]);
+	}, [ onCancel ]);
 
 	// Keep page scrolled to bottom when form resizes (new lines, attachments, toolbar)
 	useEffect(() => {
@@ -775,7 +758,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		return null;
 	};
 
-	const isDisabled = (isEmpty && !hasAttachments && !quote) || isLoading;
+	const isDisabled = (isEmpty && !hasAttachments) || isLoading;
 	const showToolbar = true;
 
 	const cn = [ 'commentForm' ];
@@ -803,15 +786,6 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>
-
-			{quote ? (
-				<div className="commentBlockquoteWrap">
-					<blockquote
-						className="commentBlockquote"
-						dangerouslySetInnerHTML={{ __html: U.String.sanitize(Mark.toHtml(quote.text || '', quote.marks || [])) }}
-					/>
-				</div>
-			) : null}
 
 			<div className="contentArea">
 				{withAvatar ? (
