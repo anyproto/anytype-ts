@@ -260,6 +260,7 @@ class Keyboard {
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const isOwner = U.Space.isMyOwner();
 		const selection = S.Common.getRef('selectionProvider');
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
@@ -491,11 +492,12 @@ class Keyboard {
 				};
 
 				// Pin/Unpin
-				this.shortcut('pin', e, () => {
-					e.preventDefault();
-
-					Action.toggleWidgetsForObject(rootId, analytics.route.header);
-				});
+				if (isOwner) {
+					this.shortcut('pin', e, () => {
+						e.preventDefault();
+						Action.toggleWidgetsForObject(rootId, analytics.route.header);
+					});
+				};
 
 				// Lock/Unlock
 				this.shortcut('pageLock', e, () => this.onToggleLock());
@@ -506,8 +508,7 @@ class Keyboard {
 
 					Action[object.isArchived ? 'restore' : 'archive']([ rootId ], route);
 				});
-
-				};
+			};
 
 			// Pin/Unpin Tab
 			this.shortcut('pinTab', e, () => {

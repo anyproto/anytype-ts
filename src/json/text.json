@@ -1,8 +1,5 @@
 {
 	"commonError": "Error",
-	"errorBoundaryTitle": "Something went wrong",
-	"errorBoundaryDescription": "An unexpected error occurred. You can copy the details and reload the page.",
-	"errorBoundaryReload": "Reload",
 	"commonOr": "or",
 	"commonWhere": "Where",
 	"commonMore": "more",
@@ -17,7 +14,6 @@
 	"commonRestart": "Restart",
 	"commonDelete": "Delete",
 	"commonDeleteImmediately": "Delete permanently",
-	"binDeleteDisabledTooltip": "You can only delete objects you created",
 	"commonDefault": "Default",
 	"commonDefaultType": "Default Object Type",
 	"commonSoon": "Soon",
@@ -51,10 +47,6 @@
 	"commonLibrary": "Library",
 	"commonAllContent": "All Objects",
 	"commonBin": "Bin",
-	"binSwitchToTree": "Switch to tree view",
-	"binSwitchToCompact": "Switch to compact view",
-	"binSwitchToDetailed": "Switch to detailed view",
-	"binStackCount": "+%d",
 	"commonToday": "Today",
 	"commonTomorrow": "Tomorrow",
 	"commonYesterday": "Yesterday",
@@ -290,6 +282,7 @@
 	"commonBlock": "Block",
 	"commonInvite": "Invite",
 	"commonFilterChannels": "Filter Channels...",
+	"commonToggleSidebar": "Toggle sidebar",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -2623,6 +2616,10 @@
 	"delimiterTab": "Tab",
 	"delimiterPipe": "Pipe",
 
+	"errorBoundaryTitle": "Something went wrong",
+	"errorBoundaryDescription": "An unexpected error occurred. You can copy the details and reload the page.",
+	"errorBoundaryReload": "Reload",
+
 	"errorAccountCreate901": "Network error",
 	"errorAccountCreate902": "Connection refused",
 	"errorAccountCreate903": "Network offline",
@@ -2995,5 +2992,12 @@
 	"commentToolbarRegular": "Regular Text",
 	"commentToolbarTitle": "Title",
 	"commentToolbarHeading": "Heading",
-	"commentToolbarSubheading": "Subheading"
+	"commentToolbarSubheading": "Subheading",
+
+	"binSwitchToTree": "Switch to tree view",
+	"binSwitchToCompact": "Switch to compact view",
+	"binSwitchToDetailed": "Switch to detailed view",
+	"binStackCount": "+%d",
+	"binDeleteDisabledTooltip": "You can only delete objects you created"
+
 }

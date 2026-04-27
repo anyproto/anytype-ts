@@ -1,10 +1,9 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { motion } from 'motion/react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { Button, Icon, Widget, Label, Sync, SpaceName } from 'Component';
+import { Button, Icon, Widget, Label, SpaceName } from 'Component';
 import { I, M, S, U, J, keyboard, analytics, translate, sidebar, Action } from 'Lib';
 
 const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
@@ -154,13 +153,12 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 		};
 
 		return (
-			<motion.div
+			<div
 				ref={setNodeRef}
 				className={cn.join(' ')}
 				style={style}
 				{...(isFixed ? {} : attributes)}
 				{...(isFixed ? {} : listeners)}
-				{...U.Common.animationProps({ transition: { duration: 0.2, delay: index * 0.03 } })}
 			>
 				{!isFixed ? <Icon className="dnd" name="common/dnd" /> : ''}
 				<Label text={section.name} />
@@ -172,7 +170,7 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 						tooltipParam={{ text: translate(isHidden ? 'widgetShowSection' : 'widgetHideSection'), typeY: I.MenuDirection.Bottom }}
 					/>
 				) : ''}
-			</motion.div>
+			</div>
 		);
 	};
 
@@ -184,7 +182,7 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 
 			<div id="body" ref={bodyRef} className={cnb.join(' ')} onScroll={onScroll}>
 				<div className="content">
-					<motion.div {...U.Common.animationProps({ transition: { duration: 0.2 } })}>
+					{spaceview.isOneToOne ? (
 						<Widget
 							block={spaceBlock}
 							disableContextMenu={true}
@@ -193,14 +191,11 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 							sidebarDirection={sidebarDirection}
 							getObject={id => id ? spaceview : null}
 						/>
-					</motion.div>
+					) : ''}
 
 					<SpaceName />
 
-					<motion.div
-						className="manageSection"
-						{...U.Common.animationProps({ transition: { duration: 0.2, delay: 0.1 } })}
-					>
+					<div className="manageSection">
 						<div className="items">
 							<DndContext
 								sensors={sensors}
@@ -213,14 +208,11 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 								</SortableContext>
 							</DndContext>
 						</div>
-					</motion.div>
+					</div>
 
-					<motion.div
-						className="buttons"
-						{...U.Common.animationProps({ transition: { duration: 0.2, delay: 0.15 } })}
-					>
+					<div className="buttons">
 						<Button text={translate('commonDone')} color="accent" size={36} onClick={onDone} />
-					</motion.div>
+					</div>
 				</div>
 			</div>
 		</>
