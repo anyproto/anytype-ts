@@ -71,6 +71,7 @@ const PageIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 	const ns = U.Dom.getEventNamespace(isPopup);
 	const childRef = useRef(null);
 	const resizeHandlerRef = useRef<(() => void) | null>(null);
+	const sidebarResizeHandlerRef = useRef<(() => void) | null>(null);
 	const match = keyboard.getMatch(isPopup);
 	const { page, action, id } = match.params;
 	const isMain = page == 'main';
@@ -136,13 +137,19 @@ const PageIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 	const rebind = () => {
 		unbind();
 		resizeHandlerRef.current = () => resize();
+		sidebarResizeHandlerRef.current = () => childRef.current?.resize?.();
 		U.Dom.addEvent(window, 'resize', resizeHandlerRef.current);
+		U.Dom.addEvent(window, 'sidebarResize', sidebarResizeHandlerRef.current);
 	};
 
 	const unbind = () => {
 		if (resizeHandlerRef.current) {
 			U.Dom.removeEvent(window, 'resize', resizeHandlerRef.current);
 			resizeHandlerRef.current = null;
+		};
+		if (sidebarResizeHandlerRef.current) {
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandlerRef.current);
+			sidebarResizeHandlerRef.current = null;
 		};
 	};
 
