@@ -85,9 +85,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 	};
 
 	const getSeatCounters = () => {
-		const product = S.Membership.data?.getTopProduct();
-		const writersLimit = product?.features?.spaceWriters || 0;
-		const readersLimit = product?.features?.spaceReaders || 0;
+		const { writersLimit, readersLimit } = U.Space.getTierLimits();
 		const writersCount = Math.min(selectedCount, writersLimit);
 		const readersCount = Math.min(Math.max(selectedCount - writersLimit, 0), readersLimit);
 
@@ -243,8 +241,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 					};
 
 					if (isShared) {
-						const product = S.Membership.data?.getTopProduct();
-						const writersLimit = product?.features?.spaceWriters || 0;
+						const { writersLimit } = U.Space.getTierLimits();
 
 						if (!S.Common.isOnline) {
 							Action.savePendingMembers(spaceId, identities);

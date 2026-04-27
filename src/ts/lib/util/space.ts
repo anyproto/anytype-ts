@@ -463,6 +463,19 @@ class UtilSpace {
 	};
 
 	/**
+	 * Gets writer/reader slots available to invitees from the current membership tier.
+	 * writersLimit subtracts 1 because the owner occupies one writer seat in the middleware's count.
+	 * @returns {{ writersLimit: number, readersLimit: number }} Tier-level slots for new members.
+	 */
+	getTierLimits () {
+		const product = S.Membership.data?.getTopProduct();
+		return {
+			writersLimit: Math.max(0, (product?.features?.spaceWriters || 0) - 1),
+			readersLimit: product?.features?.spaceReaders || 0,
+		};
+	};
+
+	/**
 	 * Gets the invite link for a given CID and key.
 	 * @param {string} cid - The CID.
 	 * @param {string} key - The key.
