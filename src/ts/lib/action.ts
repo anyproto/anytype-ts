@@ -953,8 +953,7 @@ class Action {
 			return;
 		};
 
-		const product = S.Membership.data?.getTopProduct();
-		const writersLimit = product?.features?.spaceWriters || 0;
+		const { writersLimit } = U.Space.getTierLimits();
 		const maxRetries = 5;
 		const failed: { spaceId: string; identities: string[] }[] = [];
 
