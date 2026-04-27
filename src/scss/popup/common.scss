@@ -7,7 +7,7 @@
 		.dimmer { opacity: 1; }
 	}
 	.popup.showDimmer {
-		.dimmer { background: rgba(0,0,0,0.25); backdrop-filter: blur(4px); }
+		.dimmer { background: rgba(0,0,0,0.25); }
 	}
 
 	.popup * { user-select: none; }
