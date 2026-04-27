@@ -103,7 +103,7 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const { color, style, cardStyle } = content;
 		const checkFlag = checkFlagByObject(block.getTargetObjectId());
 		const rootObject = S.Detail.get(rootId, rootId, [ 'type' ]);
-		const canQuoteInComment = !rootObject._empty_ && !U.Object.isTemplateType(rootObject.type);
+		const canQuoteInComment = !U.Object.isTemplateType(rootObject.type);
 
 		let sections: any[] = [];
 		let hasText = true;
