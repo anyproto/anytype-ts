@@ -187,7 +187,10 @@
 			> .selectionTarget > .dropTarget { padding: 1px 0px 2px 0px; }
 
 			> .additional {
-				> .line { width: 0px; height: 100%; position: absolute; left: 11px; top: 0px; border-left: 1.5px solid; }
+				> .line {
+					width: 4px; height: 100%; position: absolute; left: 11px; top: 0px;
+					background-color: currentColor; color: var(--color-control-inactive); border-radius: 100px;
+				}
 			}
 		}
 	}
