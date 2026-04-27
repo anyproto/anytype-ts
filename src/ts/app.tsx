@@ -191,7 +191,15 @@ const App: FC = () => {
 		});
 		Renderer.on('notification-callback', onNotificationCallback);
 		Renderer.on('payload-broadcast', onPayloadBroadcast);
-		Renderer.on('set-active-tab', (e: any, id: string) => S.Common.isActiveTabSet(id === S.Common.tabId));
+		Renderer.on('set-active-tab', (e: any, id: string) => {
+			const isActive = id === S.Common.tabId;
+
+			S.Common.isActiveTabSet(isActive);
+
+			if (isActive) {
+				U.Data.updateTabsDimmer();
+			};
+		});
 
 		Renderer.on('shutdownStart', () => {
 			setIsLoading(true);
