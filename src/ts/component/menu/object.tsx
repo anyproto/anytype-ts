@@ -66,7 +66,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let pinToChannel = { id: isPinnedToChannel ? 'unpinFromChannel' : 'pinToChannel', iconParam: { name: 'menu/action/pin' }, name: translate(isPinnedToChannel ? 'menuWidgetUnpinFromChannel' : 'menuWidgetPinToChannel') };
 		let favorite = { id: isFavorite ? 'unfavorite' : 'favorite', iconParam: { name: isFavorite ? 'menu/action/unfav' : 'menu/action/fav' }, name: translate(isFavorite ? 'menuWidgetUnfavorite' : 'menuWidgetFavorite') };
 		let linkTo = { id: 'linkTo', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonLinkTo'), arrow: true };
-		let addCollection = { id: 'addCollection', iconParam: { name: 'menu/block/common/collection' }, name: translate('commonAddToCollection'), arrow: true };
+		let addCollection = { id: 'addCollection', iconParam: { name: 'menu/action/collection' }, name: translate('commonAddToCollection'), arrow: true };
 		let searchText = { id: 'searchText', iconParam: { name: 'common/search' }, name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
 		let history = { id: 'history', iconParam: { name: 'menu/action/history' }, name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let pageCopy = { id: 'pageCopy', iconParam: { name: 'menu/action/duplicate' }, name: translate('commonDuplicate') };
