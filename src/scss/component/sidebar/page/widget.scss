@@ -161,10 +161,3 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 
 	.buttons { display: flex; flex-direction: column; }
 }
-
-:not(.spaceOneToOne) {
-	.sidebarPage.pageWidget,
-	.sidebarPage.pageWidgetManage { 	
-		> .head::after { display: none; }
-	}
-}
