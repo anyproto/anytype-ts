@@ -22,6 +22,8 @@ import {
 	$isRangeSelection,
 	$createParagraphNode,
 	$createTextNode,
+	$createRangeSelection,
+	$setSelection,
 	$isElementNode,
 	$isTextNode,
 	FORMAT_TEXT_COMMAND,
@@ -4340,10 +4342,17 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				const t = $createTextNode('');
 				p.append(t);
 				quote.insertAfter(p);
-				t.select(0, 0);
+
+				const sel = $createRangeSelection();
+				sel.anchor.set(t.getKey(), 0, 'text');
+				sel.focus.set(t.getKey(), 0, 'text');
+				$setSelection(sel);
 			});
 
-			editor.focus();
+			// Wait for the DOM to commit before focusing — otherwise focus()
+			// can fire before the new paragraph exists in the contenteditable
+			// and the cursor lands at the previous (now-stale) selection.
+			window.requestAnimationFrame(() => editor.focus());
 		},
 
 		removeAttachment: (key: string) => {

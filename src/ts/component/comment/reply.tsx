@@ -183,8 +183,8 @@ const CommentReply = (props: Props) => {
 				offsetY: 4,
 				data: {
 					options: [
-						{ id: 'quoteInComment', name: translate('commonQuoteInComment') },
-						{ id: 'copyText', name: translate('commonCopyText') },
+						{ id: 'quoteInComment', iconParam: { name: 'menu/block/text/quote' }, name: translate('commonQuoteInComment') },
+						{ id: 'copyText', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopyText') },
 					],
 					onSelect: (_e: any, item: any) => {
 						if (item.id == 'quoteInComment') {
@@ -196,7 +196,9 @@ const CommentReply = (props: Props) => {
 								messageQuote: { messageId: id },
 							};
 
-							window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
+							// Reply lives inside a thread — route the quote to the
+							// parent post's reply form, not the main form.
+							window.dispatchEvent(new CustomEvent(`commentReplyQuote.${parentId}`, { detail: part }));
 						} else
 						if (item.id == 'copyText') {
 							U.Common.clipboardCopy({ text });
@@ -208,7 +210,7 @@ const CommentReply = (props: Props) => {
 
 		node.addEventListener('contextmenu', onContextMenu);
 		return () => node.removeEventListener('contextmenu', onContextMenu);
-	}, [ rootId, id ]);
+	}, [ parentId, id ]);
 
 	const onEdit = useCallback(() => {
 		setIsEditing(true);

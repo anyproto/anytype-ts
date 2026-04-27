@@ -171,8 +171,10 @@ const CommentPost = (props: Props) => {
 	}, [ isEditing, parts, subId ]);
 
 	// Right-click on selected text in the rendered post content opens a small
-	// menu offering "Quote in comment" / "Copy Text". Plain-text quote only —
-	// marks are not extracted from selections in v1.
+	// menu offering "Quote in comment" / "Copy Text". Quoting opens the reply
+	// form for THIS post's thread (not the main form), so quotes stay attached
+	// to the conversation they came from. Plain-text quote only — marks are
+	// not extracted from selections in v1.
 	useEffect(() => {
 		const node = contentRef.current;
 		if (!node) {
@@ -201,8 +203,8 @@ const CommentPost = (props: Props) => {
 				offsetY: 4,
 				data: {
 					options: [
-						{ id: 'quoteInComment', name: translate('commonQuoteInComment') },
-						{ id: 'copyText', name: translate('commonCopyText') },
+						{ id: 'quoteInComment', iconParam: { name: 'menu/block/text/quote' }, name: translate('commonQuoteInComment') },
+						{ id: 'copyText', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopyText') },
 					],
 					onSelect: (_e: any, item: any) => {
 						if (item.id == 'quoteInComment') {
@@ -214,7 +216,7 @@ const CommentPost = (props: Props) => {
 								messageQuote: { messageId: id },
 							};
 
-							window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
+							window.dispatchEvent(new CustomEvent(`commentReplyQuote.${id}`, { detail: part }));
 						} else
 						if (item.id == 'copyText') {
 							U.Common.clipboardCopy({ text });
@@ -226,7 +228,26 @@ const CommentPost = (props: Props) => {
 
 		node.addEventListener('contextmenu', onContextMenu);
 		return () => node.removeEventListener('contextmenu', onContextMenu);
-	}, [ rootId, id ]);
+	}, [ id ]);
+
+	// Listen for quote events targeted at this post's thread (fired from
+	// either this post's own selection menu or from a reply's menu) and
+	// open the reply form pre-filled with the quote.
+	useEffect(() => {
+		const onReplyQuote = (e: Event) => {
+			const part = (e as CustomEvent).detail as I.CommentContentPart;
+			if (!part) {
+				return;
+			};
+
+			setIsReplying(true);
+			window.setTimeout(() => replyFormRef.current?.insertQuote(part), 50);
+		};
+
+		const eventName = `commentReplyQuote.${id}`;
+		window.addEventListener(eventName, onReplyQuote);
+		return () => window.removeEventListener(eventName, onReplyQuote);
+	}, [ id ]);
 
 	const loadDeps = useCallback((messages: any[], callBack?: () => void) => {
 		const ids = U.Comment.getDepsIds(messages);
