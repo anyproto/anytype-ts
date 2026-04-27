@@ -680,8 +680,11 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	// Catch Escape at the form level so it doesn't bubble to the global handler
 	// which would close the object. This handles the case where focus is on an
 	// attachment (image) rather than the Lexical editor.
+	// Also: when a pending quote is attached, Escape drops the quote first
+	// instead of canceling, so users have a way to undo the quote without
+	// losing any text they've already typed.
 	useEffect(() => {
-		if (!onCancel) {
+		if (!onCancel && !quote) {
 			return;
 		};
 
@@ -692,15 +695,24 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 
 		const onKeyDown = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') {
-				e.stopPropagation();
-				e.preventDefault();
-				onCancel();
+				if (quote) {
+					e.stopPropagation();
+					e.preventDefault();
+					setQuote(null);
+					return;
+				};
+
+				if (onCancel) {
+					e.stopPropagation();
+					e.preventDefault();
+					onCancel();
+				};
 			};
 		};
 
 		node.addEventListener('keydown', onKeyDown);
 		return () => node.removeEventListener('keydown', onKeyDown);
-	}, [ onCancel ]);
+	}, [ onCancel, quote ]);
 
 	// Keep page scrolled to bottom when form resizes (new lines, attachments, toolbar)
 	useEffect(() => {
@@ -773,7 +785,6 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	if (!isEmpty) cn.push('hasContent');
 	if (isMultiline) cn.push('isMultiline');
 	if (isDraggingOver) cn.push('isDraggingOver');
-	if (quote) cn.push('hasQuote');
 
 	const withAvatar = isReply || isEdit;
 	const { space } = S.Common;
@@ -799,7 +810,6 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 						className="commentBlockquote"
 						dangerouslySetInnerHTML={{ __html: U.String.sanitize(Mark.toHtml(quote.text || '', quote.marks || [])) }}
 					/>
-					<Icon name="menu/action/remove" className="remove" onClick={() => setQuote(null)} />
 				</div>
 			) : null}
 
