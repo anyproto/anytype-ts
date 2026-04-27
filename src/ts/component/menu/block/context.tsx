@@ -151,13 +151,19 @@ const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onOpen: context => menuContext.current = context,
 				});
 
+				const canQuoteInComment = !U.Object.isTemplateType(object?.type);
+				const quoteInComment = canQuoteInComment
+					? { id: 'quoteInComment', iconParam: { name: 'menu/block/text/quote' }, name: translate('commonQuoteInComment') }
+					: null;
+
 				menuParam.data = Object.assign(menuParam.data, {
 					options: [
+						quoteInComment,
 						{ id: 'turnObject', iconParam: { name: 'menu/action/object' }, name: translate('commonTurnIntoObject'), arrow: true },
 						{ id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true },
 						{ id: 'align', name: translate('commonAlign'), iconParam: { name: U.Data.alignHIcon(block.hAlign) }, arrow: true },
 						{ id: 'blockRemove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') }
-					],
+					].filter(it => it),
 					onOver: (e: any, item: any) => {
 						if (S.Menu.isAnimating(menuContext.current?.props.id)) {
 							return;
@@ -180,6 +186,33 @@ const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							case 'blockRemove': {
 								focus.clear(true);
 								C.BlockListDelete(rootId, [ blockId ], () => close());
+								break;
+							};
+
+							case 'quoteInComment': {
+								const fullText = block.getText();
+								const text = fullText.substring(from, to);
+								const sliced: I.Mark[] = (block.content?.marks || [])
+									.filter(m => m.range && (m.range.from < to) && (m.range.to > from))
+									.map(m => ({
+										...m,
+										range: {
+											from: Math.max(0, m.range.from - from),
+											to: Math.min(to - from, m.range.to - from),
+										},
+									}));
+
+								const part: I.CommentContentPart = {
+									style: I.TextStyle.Quote,
+									type: I.BlockType.Text,
+									text,
+									marks: sliced,
+									editorQuote: { blockId, text, marks: sliced },
+								};
+
+								S.Comment.setPendingQuote(rootId, part);
+								window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`));
+								close();
 								break;
 							};
 						};
