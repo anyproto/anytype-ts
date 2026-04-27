@@ -70,7 +70,6 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				return;
 			};
 			editorRef.current?.insertSourceQuote(part);
-			window.setTimeout(() => editorRef.current?.focus(), 50);
 		},
 	}));
 

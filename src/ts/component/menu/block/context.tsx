@@ -207,7 +207,7 @@ const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 									type: I.BlockType.Text,
 									text,
 									marks: sliced,
-									editorQuote: { blockId, text, marks: sliced },
+									editorQuote: { blockId },
 								};
 
 								window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));

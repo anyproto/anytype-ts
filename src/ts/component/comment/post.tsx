@@ -211,7 +211,7 @@ const CommentPost = (props: Props) => {
 								type: I.BlockType.Text,
 								text,
 								marks: [],
-								messageQuote: { messageId: id, text, marks: [] },
+								messageQuote: { messageId: id },
 							};
 
 							window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));

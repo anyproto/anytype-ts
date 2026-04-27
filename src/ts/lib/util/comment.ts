@@ -9,12 +9,18 @@ class Comment {
 		parts = (parts || []).filter(it => it.text || it.link || it.embed || it.editorQuote || it.messageQuote || (it.type != I.BlockType.Text));
 
 		return parts.map(part => {
+			const buildQuoteContent = (): I.ChatMessageBlockText => ({
+				text: part.text || '',
+				style: I.TextStyle.Quote,
+				marks: part.marks || [],
+			});
+
 			if (part.editorQuote) {
-				return { editorQuote: part.editorQuote };
+				return { editorQuote: { blockId: part.editorQuote.blockId, content: buildQuoteContent() } };
 			};
 
 			if (part.messageQuote) {
-				return { messageQuote: part.messageQuote };
+				return { messageQuote: { messageId: part.messageQuote.messageId, content: buildQuoteContent() } };
 			};
 
 			if (part.link) {
@@ -58,22 +64,24 @@ class Comment {
 		if (blocks && blocks.length) {
 			return blocks.filter(it => it.text || it.link || it.embed || it.editorQuote || it.messageQuote).map(block => {
 				if (block.editorQuote) {
+					const content = block.editorQuote.content || ({} as I.ChatMessageBlockText);
 					return {
 						style: I.TextStyle.Quote,
 						type: I.BlockType.Text,
-						text: block.editorQuote.text || '',
-						marks: block.editorQuote.marks || [],
-						editorQuote: block.editorQuote,
+						text: content.text || '',
+						marks: content.marks || [],
+						editorQuote: { blockId: block.editorQuote.blockId },
 					};
 				};
 
 				if (block.messageQuote) {
+					const content = block.messageQuote.content || ({} as I.ChatMessageBlockText);
 					return {
 						style: I.TextStyle.Quote,
 						type: I.BlockType.Text,
-						text: block.messageQuote.text || '',
-						marks: block.messageQuote.marks || [],
-						messageQuote: block.messageQuote,
+						text: content.text || '',
+						marks: content.marks || [],
+						messageQuote: { messageId: block.messageQuote.messageId },
 					};
 				};
 

@@ -672,7 +672,7 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					type: I.BlockType.Text,
 					text,
 					marks,
-					editorQuote: { blockId, text, marks },
+					editorQuote: { blockId },
 				};
 
 				window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));

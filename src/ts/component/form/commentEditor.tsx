@@ -1264,10 +1264,10 @@ const editorStateToParts = (editor: LexicalEditor): I.CommentContentPart[] => {
 				};
 
 				if (blockId) {
-					part.editorQuote = { blockId, text, marks };
+					part.editorQuote = { blockId };
 				} else
 				if (messageId) {
-					part.messageQuote = { messageId, text, marks };
+					part.messageQuote = { messageId };
 				};
 
 				parts.push(part);
@@ -4325,7 +4325,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 				const quote = $createSourceQuoteNode(sourceBlockId, sourceMessageId);
 				quote.append(...createFormattedNodes(part.text || '', part.marks || []));
 
-				// Prepend the quote and ensure an empty paragraph follows for typing.
+				// Prepend the quote at the top of the document.
 				const first = root.getFirstChild();
 				if (first) {
 					first.insertBefore(quote);
@@ -4333,17 +4333,17 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 					root.append(quote);
 				};
 
-				const next = quote.getNextSibling();
-				if (!next) {
-					const p = $createParagraphNode();
-					p.append($createTextNode(''));
-					quote.insertAfter(p);
-					p.selectStart();
-				} else
-				if ($isElementNode(next)) {
-					next.selectStart();
-				};
+				// Always create a fresh empty paragraph right after the quote
+				// and put the caret in it. This guarantees the user starts
+				// typing in a new text block, never inside the quote at offset 0.
+				const p = $createParagraphNode();
+				const t = $createTextNode('');
+				p.append(t);
+				quote.insertAfter(p);
+				t.select(0, 0);
 			});
+
+			editor.focus();
 		},
 
 		removeAttachment: (key: string) => {

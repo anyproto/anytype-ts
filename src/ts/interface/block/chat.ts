@@ -108,14 +108,12 @@ export interface ChatMessageBlockLink {
 
 export interface ChatMessageBlockEditorQuote {
 	blockId: string;
-	text: string;
-	marks: I.Mark[];
+	content: ChatMessageBlockText;
 };
 
 export interface ChatMessageBlockMessageQuote {
 	messageId: string;
-	text: string;
-	marks: I.Mark[];
+	content: ChatMessageBlockText;
 };
 
 export enum ChatMessageBlockLinkType {

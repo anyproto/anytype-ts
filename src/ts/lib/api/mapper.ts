@@ -836,16 +836,14 @@ export const Mapper = {
 		ChatMessageBlockEditorQuote (obj: any): I.ChatMessageBlockEditorQuote {
 			return {
 				blockId: obj.blockId || '',
-				text: obj.text || '',
-				marks: (obj.marks || []).map(Mapper.From.Mark),
+				content: Mapper.From.ChatMessageBlockText(obj.content || {}),
 			};
 		},
 
 		ChatMessageBlockMessageQuote (obj: any): I.ChatMessageBlockMessageQuote {
 			return {
 				messageId: obj.messageId || '',
-				text: obj.text || '',
-				marks: (obj.marks || []).map(Mapper.From.Mark),
+				content: Mapper.From.ChatMessageBlockText(obj.content || {}),
 			};
 		},
 
@@ -1272,16 +1270,14 @@ export const Mapper = {
 		ChatMessageBlockEditorQuote: (obj: I.ChatMessageBlockEditorQuote) => {
 			return {
 				blockId: obj.blockId || '',
-				text: obj.text || '',
-				marks: (obj.marks || []).map(Mapper.To.Mark),
+				content: Mapper.To.ChatMessageBlockText(obj.content),
 			};
 		},
 
 		ChatMessageBlockMessageQuote: (obj: I.ChatMessageBlockMessageQuote) => {
 			return {
 				messageId: obj.messageId || '',
-				text: obj.text || '',
-				marks: (obj.marks || []).map(Mapper.To.Mark),
+				content: Mapper.To.ChatMessageBlockText(obj.content),
 			};
 		},
 
