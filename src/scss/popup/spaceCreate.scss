@@ -12,7 +12,7 @@
 			&:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 
-		.stepTitle { @include text-paragraph; font-weight: 600; text-align: center; padding: 16px 0px; }
+		.stepTitle { @include text-paragraph; font-weight: 600; text-align: center; }
 
 		.head { padding: 5px 0px; }
 		.head {

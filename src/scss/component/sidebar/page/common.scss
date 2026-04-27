@@ -4,7 +4,7 @@
 
 	.spaceName {
 		position: sticky; top: 0px; z-index: 3; display: flex; align-items: center;
-		background: var(--color-bg-primary); padding: 0px 4px;
+		background: var(--color-bg-primary); padding: 0px 8px; margin: 0px 0px 8px 0px;
 	}
 	.spaceName {
 		.info { display: flex; flex-direction: row; flex-grow: 1; align-items: center; justify-content: space-between; gap: 0px 12px; height: 32px; min-width: 0; overflow: hidden; }

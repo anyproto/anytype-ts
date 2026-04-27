@@ -369,6 +369,10 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	};
 
 	const isSectionClosed = (id: I.WidgetSection) => {
+		if ([ I.WidgetSection.Pin, I.WidgetSection.Bin ].includes(id)) {
+			return false;
+		};
+
 		return widgetSections.find(it => it.id == id)?.isClosed;
 	};
 
@@ -700,6 +704,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 						return null;
 					};
 
+					const isClosed = isSectionClosed(section.id);
+
 					let buttons = null;
 					if (isSectionType) {
 						if (canWrite) {
@@ -720,7 +726,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 									transition: { duration: 0.2, delay: i * 0.05 },
 								})}
 							>
-								{!isSectionPin ? (
+								{!isSectionPin && !isSectionBin ? (
 									<div
 										className="nameWrap"
 										onContextMenu={() => onSectionContext(section.id)}
@@ -735,7 +741,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 									</div>
 								) : ''}
 
-								{!ws?.isClosed ? (
+								{!isClosed ? (
 									<div 
 										className="items" 
 										onContextMenu={e => {

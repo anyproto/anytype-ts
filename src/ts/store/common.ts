@@ -1272,7 +1272,6 @@ class CommonStore {
 
 	widgetSectionsInit () {
 		const reorderable = [ I.WidgetSection.MyFavorites, I.WidgetSection.RecentEdit, I.WidgetSection.Type, I.WidgetSection.Bin ];
-
 		const saved: I.WidgetSectionParam[] = Storage.get('widgetSections') || [];
 		const savedMap = new Map(saved.map(it => [ it.id, it ]));
 
