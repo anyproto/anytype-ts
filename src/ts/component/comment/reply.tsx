@@ -152,6 +152,65 @@ const CommentReply = (props: Props) => {
 		};
 	}, [ isEditing, parts, subId ]);
 
+	// Right-click on selected text in the rendered reply opens a small menu
+	// offering "Quote in comment" / "Copy Text". Plain-text quote only — marks
+	// are not extracted from selections in v1.
+	useEffect(() => {
+		const node = contentRef.current;
+		if (!node) {
+			return;
+		};
+
+		const onContextMenu = (e: MouseEvent) => {
+			const sel = window.getSelection();
+			const text = sel ? sel.toString() : '';
+
+			if (!text.trim() || !sel.rangeCount) {
+				return;
+			};
+
+			const range = sel.getRangeAt(0);
+			if (!node.contains(range.commonAncestorContainer)) {
+				return;
+			};
+
+			e.preventDefault();
+			e.stopPropagation();
+
+			S.Menu.open('select', {
+				rect: { x: e.clientX, y: e.clientY, width: 0, height: 0 },
+				horizontal: I.MenuDirection.Right,
+				offsetY: 4,
+				data: {
+					options: [
+						{ id: 'quoteInComment', name: translate('commonQuoteInComment') },
+						{ id: 'copyText', name: translate('commonCopyText') },
+					],
+					onSelect: (_e: any, item: any) => {
+						if (item.id == 'quoteInComment') {
+							const part: I.CommentContentPart = {
+								style: I.TextStyle.Quote,
+								type: I.BlockType.Text,
+								text,
+								marks: [],
+								messageQuote: { messageId: id, text, marks: [] },
+							};
+
+							S.Comment.setPendingQuote(rootId, part);
+							window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`));
+						} else
+						if (item.id == 'copyText') {
+							U.Common.clipboardCopy({ text });
+						};
+					},
+				},
+			});
+		};
+
+		node.addEventListener('contextmenu', onContextMenu);
+		return () => node.removeEventListener('contextmenu', onContextMenu);
+	}, [ rootId, id ]);
+
 	const onEdit = useCallback(() => {
 		setIsEditing(true);
 	}, []);

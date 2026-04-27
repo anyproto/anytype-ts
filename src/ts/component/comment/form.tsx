@@ -20,6 +20,7 @@ interface Props {
 interface RefProps {
 	focus: () => void;
 	clear: () => void;
+	insertQuote: (part: I.CommentContentPart) => void;
 };
 
 const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
@@ -33,6 +34,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const [ isFocused, setIsFocused ] = useState(false);
 	const [ isMultiline, setIsMultiline ] = useState(false);
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ quote, setQuote ] = useState<I.CommentContentPart | null>(null);
 	const isSubmittingRef = useRef(false);
 	const draftLoadedRef = useRef(false);
 	const electron = U.Common.getElectron();
@@ -62,7 +64,15 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			isSubmittingRef.current = false;
 			setIsLoading(false);
 			setIsMultiline(false);
+			setQuote(null);
 			clearDraft();
+		},
+		insertQuote: (part: I.CommentContentPart) => {
+			if (!part) {
+				return;
+			};
+			setQuote(part);
+			window.setTimeout(() => editorRef.current?.focus(), 50);
 		},
 	}));
 
@@ -193,13 +203,16 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 				};
 			};
 
-			onSubmit?.(resolvedParts, messageAttachments, attachmentObjects);
+			const finalParts = quote ? [ quote, ...resolvedParts ] : resolvedParts;
+
+			onSubmit?.(finalParts, messageAttachments, attachmentObjects);
 
 			if (!isEdit) {
 				editorRef.current?.clear();
 				setIsEmpty(true);
 				setHasAttachments(false);
 				setIsMultiline(false);
+				setQuote(null);
 				clearDraft();
 			};
 
@@ -212,7 +225,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		} else {
 			finalize(new Map());
 		};
-	}, [ onSubmit, isEdit, clearDraft, getLinkType, getAttachmentType, uploadTmpFiles ]);
+	}, [ onSubmit, isEdit, clearDraft, getLinkType, getAttachmentType, uploadTmpFiles, quote ]);
 
 	const handleEmpty = useCallback((v: boolean) => {
 		setIsEmpty(v);
@@ -750,7 +763,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		return null;
 	};
 
-	const isDisabled = (isEmpty && !hasAttachments) || isLoading;
+	const isDisabled = (isEmpty && !hasAttachments && !quote) || isLoading;
 	const showToolbar = true;
 
 	const cn = [ 'commentForm' ];
@@ -760,6 +773,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	if (!isEmpty) cn.push('hasContent');
 	if (isMultiline) cn.push('isMultiline');
 	if (isDraggingOver) cn.push('isDraggingOver');
+	if (quote) cn.push('hasQuote');
 
 	const withAvatar = isReply || isEdit;
 	const { space } = S.Common;
@@ -778,6 +792,16 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>
+
+			{quote ? (
+				<div className="commentBlockquoteWrap">
+					<blockquote
+						className="commentBlockquote"
+						dangerouslySetInnerHTML={{ __html: U.String.sanitize(Mark.toHtml(quote.text || '', quote.marks || [])) }}
+					/>
+					<Icon name="menu/action/remove" className="remove" onClick={() => setQuote(null)} />
+				</div>
+			) : null}
 
 			<div className="contentArea">
 				{withAvatar ? (

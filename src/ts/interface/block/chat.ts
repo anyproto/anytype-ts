@@ -84,6 +84,8 @@ export interface ChatMessageBlock {
 	text?: ChatMessageBlockText;
 	link?: ChatMessageBlockLink;
 	embed?: ChatMessageBlockEmbed;
+	editorQuote?: ChatMessageBlockEditorQuote;
+	messageQuote?: ChatMessageBlockMessageQuote;
 };
 
 export interface ChatMessageBlockText {
@@ -102,6 +104,18 @@ export interface ChatMessageBlockEmbed {
 export interface ChatMessageBlockLink {
 	targetObjectId: string;
 	type: ChatMessageBlockLinkType;
+};
+
+export interface ChatMessageBlockEditorQuote {
+	blockId: string;
+	text: string;
+	marks: I.Mark[];
+};
+
+export interface ChatMessageBlockMessageQuote {
+	messageId: string;
+	text: string;
+	marks: I.Mark[];
 };
 
 export enum ChatMessageBlockLinkType {

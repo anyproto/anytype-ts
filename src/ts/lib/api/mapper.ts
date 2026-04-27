@@ -798,6 +798,14 @@ export const Mapper = {
 				result.embed = Mapper.From.ChatMessageBlockEmbed(obj.embed);
 			};
 
+			if (obj.editorQuote !== undefined) {
+				result.editorQuote = Mapper.From.ChatMessageBlockEditorQuote(obj.editorQuote);
+			};
+
+			if (obj.messageQuote !== undefined) {
+				result.messageQuote = Mapper.From.ChatMessageBlockMessageQuote(obj.messageQuote);
+			};
+
 			return result;
 		},
 
@@ -822,6 +830,22 @@ export const Mapper = {
 			return {
 				targetObjectId: obj.targetObjectId,
 				type: obj.type as number,
+			};
+		},
+
+		ChatMessageBlockEditorQuote (obj: any): I.ChatMessageBlockEditorQuote {
+			return {
+				blockId: obj.blockId || '',
+				text: obj.text || '',
+				marks: (obj.marks || []).map(Mapper.From.Mark),
+			};
+		},
+
+		ChatMessageBlockMessageQuote (obj: any): I.ChatMessageBlockMessageQuote {
+			return {
+				messageId: obj.messageId || '',
+				text: obj.text || '',
+				marks: (obj.marks || []).map(Mapper.From.Mark),
 			};
 		},
 
@@ -1209,6 +1233,14 @@ export const Mapper = {
 				item.embed = Mapper.To.ChatMessageBlockEmbed(obj.embed);
 			};
 
+			if (obj.editorQuote) {
+				item.editorQuote = Mapper.To.ChatMessageBlockEditorQuote(obj.editorQuote);
+			};
+
+			if (obj.messageQuote) {
+				item.messageQuote = Mapper.To.ChatMessageBlockMessageQuote(obj.messageQuote);
+			};
+
 			return item;
 		},
 
@@ -1234,6 +1266,22 @@ export const Mapper = {
 			return {
 				targetObjectId: obj.targetObjectId,
 				type: obj.type as number,
+			};
+		},
+
+		ChatMessageBlockEditorQuote: (obj: I.ChatMessageBlockEditorQuote) => {
+			return {
+				blockId: obj.blockId || '',
+				text: obj.text || '',
+				marks: (obj.marks || []).map(Mapper.To.Mark),
+			};
+		},
+
+		ChatMessageBlockMessageQuote: (obj: I.ChatMessageBlockMessageQuote) => {
+			return {
+				messageId: obj.messageId || '',
+				text: obj.text || '',
+				marks: (obj.marks || []).map(Mapper.To.Mark),
 			};
 		},
 

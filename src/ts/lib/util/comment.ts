@@ -6,9 +6,17 @@ class Comment {
 	 * Converts CommentContentParts into ChatMessageBlocks for the protobuf.
 	 */
 	partsToChatBlocks (parts: I.CommentContentPart[]): I.ChatMessageBlock[] {
-		parts = (parts || []).filter(it => it.text || it.link || it.embed || (it.type != I.BlockType.Text));
+		parts = (parts || []).filter(it => it.text || it.link || it.embed || it.editorQuote || it.messageQuote || (it.type != I.BlockType.Text));
 
 		return parts.map(part => {
+			if (part.editorQuote) {
+				return { editorQuote: part.editorQuote };
+			};
+
+			if (part.messageQuote) {
+				return { messageQuote: part.messageQuote };
+			};
+
 			if (part.link) {
 				return { link: part.link };
 			};
@@ -48,7 +56,27 @@ class Comment {
 	 */
 	blocksToParts (blocks: I.ChatMessageBlock[], content?: I.ChatMessageContent): I.CommentContentPart[] {
 		if (blocks && blocks.length) {
-			return blocks.filter(it => it.text || it.link || it.embed).map(block => {
+			return blocks.filter(it => it.text || it.link || it.embed || it.editorQuote || it.messageQuote).map(block => {
+				if (block.editorQuote) {
+					return {
+						style: I.TextStyle.Quote,
+						type: I.BlockType.Text,
+						text: block.editorQuote.text || '',
+						marks: block.editorQuote.marks || [],
+						editorQuote: block.editorQuote,
+					};
+				};
+
+				if (block.messageQuote) {
+					return {
+						style: I.TextStyle.Quote,
+						type: I.BlockType.Text,
+						text: block.messageQuote.text || '',
+						marks: block.messageQuote.marks || [],
+						messageQuote: block.messageQuote,
+					};
+				};
+
 				if (block.link) {
 					return {
 						style: I.TextStyle.Paragraph,
@@ -244,6 +272,42 @@ class Comment {
 		};
 
 		return parts.every(it => !it.text && (it.type == I.BlockType.Text));
+	};
+
+	/**
+	 * Smooth-scrolls the editor block with the given id into view and briefly highlights it.
+	 */
+	scrollToBlock (blockId: string): void {
+		if (!blockId) {
+			return;
+		};
+
+		const el = U.Dom.get(`block-${blockId}`);
+		if (!el) {
+			return;
+		};
+
+		el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		U.Dom.addClass(el, 'isHighlighted');
+		window.setTimeout(() => U.Dom.removeClass(el, 'isHighlighted'), 2000);
+	};
+
+	/**
+	 * Smooth-scrolls the comment message with the given id into view and briefly highlights it.
+	 */
+	scrollToMessage (messageId: string): void {
+		if (!messageId) {
+			return;
+		};
+
+		const el = U.Dom.select(`[data-message-id="${messageId}"]`) as HTMLElement | null;
+		if (!el) {
+			return;
+		};
+
+		el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+		U.Dom.addClass(el, 'isHighlighted');
+		window.setTimeout(() => U.Dom.removeClass(el, 'isHighlighted'), 2000);
 	};
 
 };

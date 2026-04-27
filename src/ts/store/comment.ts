@@ -6,6 +6,7 @@ class CommentStore {
 
 	public postMap: Map<string, I.CommentMessage[]> = observable(new Map());
 	public replyMap: Map<string, I.CommentMessage[]> = observable(new Map());
+	public pendingQuoteMap: Map<string, I.CommentContentPart> = observable(new Map());
 	private hasMorePostsMap: Map<string, boolean> = observable(new Map());
 	private hasMoreRepliesMap: Map<string, boolean> = observable(new Map());
 	private hasOlderRepliesMap: Map<string, boolean> = observable(new Map());
@@ -27,6 +28,8 @@ class CommentStore {
 			setHasMorePosts: action,
 			setHasMoreReplies: action,
 			setHasOlderReplies: action,
+			setPendingQuote: action,
+			consumePendingQuote: action,
 			clear: action,
 			clearAll: action,
 		});
@@ -168,6 +171,16 @@ class CommentStore {
 		return this.hasOlderRepliesMap.get(parentId) || false;
 	};
 
+	setPendingQuote (rootId: string, part: I.CommentContentPart): void {
+		this.pendingQuoteMap.set(rootId, part);
+	};
+
+	consumePendingQuote (rootId: string): I.CommentContentPart | null {
+		const part = this.pendingQuoteMap.get(rootId) || null;
+		this.pendingQuoteMap.delete(rootId);
+		return part;
+	};
+
 	clear (subId: string): void {
 		const posts = this.getPosts(subId);
 		for (const post of posts) {
@@ -183,6 +196,7 @@ class CommentStore {
 	clearAll (): void {
 		this.postMap.clear();
 		this.replyMap.clear();
+		this.pendingQuoteMap.clear();
 		this.hasMorePostsMap.clear();
 		this.hasMoreRepliesMap.clear();
 		this.hasOlderRepliesMap.clear();

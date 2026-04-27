@@ -211,6 +211,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		};
 	}, [ onMessageAdd ]);
 
+
 	const scrollToMessage = useCallback((msgId: string) => {
 		window.setTimeout(() => {
 			resize();
@@ -476,6 +477,28 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			scrollToBottom();
 		};
 	}, [ scrollToBottom ]);
+
+	useEffect(() => {
+		const onQuote = () => {
+			const part = S.Comment.consumePendingQuote(rootId);
+			if (!part) {
+				return;
+			};
+
+			setIsExpanded(true);
+			isSectionVisibleRef.current = true;
+			updateSocialVisibility();
+
+			window.setTimeout(() => {
+				scrollToBottom();
+				formRef.current?.insertQuote(part);
+			}, 50);
+		};
+
+		const eventName = `commentQuote.${rootId}`;
+		window.addEventListener(eventName, onQuote);
+		return () => window.removeEventListener(eventName, onQuote);
+	}, [ rootId, scrollToBottom, updateSocialVisibility ]);
 
 	const onLoadMore = useCallback((callBack?: () => void) => {
 		if (!discussionId) {
