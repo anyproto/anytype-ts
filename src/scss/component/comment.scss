@@ -80,7 +80,6 @@
 	}
 
 	/* --- Shared: indented content (aligned with name, 20px avatar + 8px gap) --- */
-	.commentPost .commentAttachments,
 	.commentReply .content,
 	.commentReply .reactions,
 	.commentReply .commentAttachments { margin-left: 28px; }
@@ -149,7 +148,7 @@
 	}
 	.replyFormWrap {
 		.commentForm { background: none; max-height: none; overflow: visible; }
-		.commentForm .contentArea { padding: 0px; }
+		.commentForm .contentArea { padding: 0px; overflow: visible; }
 		.commentForm .formToolbar { padding: 8px 0px 0px 0px; }
 	}
 
