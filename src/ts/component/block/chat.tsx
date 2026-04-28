@@ -1483,20 +1483,22 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			cn.push('withIcon');
 		};
 
-		let indicator = null;
-		if (pinnedLength > 1) {
-			const segmentCount = Math.min(pinnedLength, 6);
-			const activeSegment = (pinnedLength > 1)
-				? Math.round((currentPinnedIndex / (pinnedLength - 1)) * (segmentCount - 1))
-				: 0;
-			const segments = [];
+		const segmentCount = Math.min(Math.max(pinnedLength, 1), 6);
+		const activeSegment = (pinnedLength > 1)
+			? Math.round((currentPinnedIndex / (pinnedLength - 1)) * (segmentCount - 1))
+			: 0;
+		const segments = [];
 
-			for (let i = 0; i < segmentCount; i++) {
-				const sc = [ 'segment', (i == activeSegment ? 'isActive' : '') ];
-				segments.push(<div key={i} className={sc.join(' ')} />);
-			};
+		for (let i = 0; i < segmentCount; i++) {
+			const sc = [ 'segment', (i == activeSegment ? 'isActive' : '') ];
+			segments.push(<div key={i} className={sc.join(' ')} />);
+		};
 
-			indicator = <div className="pinnedIndicator">{segments}</div>;
+		const indicator = <div className="pinnedIndicator">{segments}</div>;
+
+		const onUnpinClick = (e: React.MouseEvent) => {
+			e.stopPropagation();
+			onPinToggle(currentPinned);
 		};
 
 		pinnedBanner = (
@@ -1507,6 +1509,12 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 					<div className="pinnedLabel">{translate('blockChatPinnedMessage')}</div>
 					<div className="pinnedText" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 				</div>
+				<Icon
+					className="unpin"
+					name="menu/action/unpin"
+					onClick={onUnpinClick}
+					tooltipParam={{ text: translate('commonUnpin') }}
+				/>
 			</div>
 		);
 	};
