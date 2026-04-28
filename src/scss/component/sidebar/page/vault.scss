@@ -28,6 +28,10 @@
 				.chatWrapper,
 				.messageWrapper { align-items: flex-start; }
 			}
+
+			.item.add.inline {
+				.iconWrap { width: 48px; height: 48px; }
+			}
 		}
 	}
 
@@ -100,6 +104,14 @@
 			}
 		}
 	}
+
+	.item.add.inline { color: var(--color-text-secondary); }
+	.item.add.inline {
+		.iconWrap { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
+		.icon.plus { width: 20px; height: 20px; }
+		.name { @include text-common; font-weight: 500; }
+	}
+	.item.add.inline:hover::before { opacity: 1; }
 
 	> .body { animation: none; }
 

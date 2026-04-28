@@ -234,6 +234,9 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			};
 
 			items.unshift({ id: 'createSpace' });
+		} else
+		if (!skipUi && !filter && (items.length == 1)) {
+			items.push({ id: 'createSpaceInline' });
 		};
 
 		return items;
@@ -379,6 +382,27 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			return (
 				<div ref={forwardedRef} className="item add" style={item.style}>
 					{iconCreate()}
+				</div>
+			);
+		};
+
+		if (item.id == 'createSpaceInline') {
+			return (
+				<div
+					ref={forwardedRef}
+					id="button-create-space-inline"
+					className="item add inline"
+					style={item.style}
+					onClick={onCreate}
+				>
+					<div className="iconWrap">
+						<Icon className="plus" name="plus/menu" />
+					</div>
+					<div className="info">
+						<div className="nameWrapper">
+							<Label className="name" text={translate('commonNewChannel')} />
+						</div>
+					</div>
 				</div>
 			);
 		};

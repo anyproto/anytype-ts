@@ -1,9 +1,9 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuOnboarding { width: var(--menu-width-set); }
+	.menu.menuOnboarding { width: var(--menu-width-set); border-radius: 16px; }
 	.menu.menuOnboarding {
-		.content { padding: 16px; max-height: unset; }
+		.content { padding: 16px; max-height: unset; border-radius: inherit; }
 		.wrap { display: flex; flex-direction: column; gap: 16px 0px; }
 		.category,
 		.counter { @include text-small; color: var(--color-text-secondary); }
@@ -49,13 +49,6 @@
 				.button.black:not(.disabled):hover,
 				.button.black:not(.disabled).hover { background: #737373; }
 			}
-
-			.progressBar {
-				.bar { height: 8px; }
-				.bar {
-					.isActive { background-color: var(--color-orange); }
-				}
-			}
 		}
 	}
 
@@ -92,6 +85,8 @@
 	* { transition: none !important; }
 
 	&#sidebarPageVault { background-color: var(--color-bg-primary) !important; }
+	&#sidebarPageWidget,
+	#sidebarPageWidget { border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; }
 
 	&.icon.withBackground,
 	&.widgetSection > .items > .widget { background-color: var(--color-bg-primary) !important; }
@@ -106,7 +101,7 @@
 		&:after { border-radius: 0px 8px 8px 0px; right: -12px; }
 	}
 
-	&#button-chat-attachment { background-color: var(--color-bg-primary); }
+	&#page.pageMainChat { background-color: var(--color-bg-primary) !important; }
 
 	&.onboardingDimmer { opacity: 0 !important; }
 }
@@ -118,3 +113,9 @@
 		}
 	}
 }
+
+#button-chat-attachment.onboardingMarked {
+	background-color: var(--color-system-highlight) !important;
+	color: var(--color-system-accent-100) !important;
+}
+#button-chat-attachment.onboardingMarked svg path { fill: var(--color-system-accent-100) !important; }
