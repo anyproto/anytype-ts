@@ -64,6 +64,12 @@
 					@include text-overflow-nw;
 				}
 			}
+
+			.icon.unpin { width: 20px; height: 20px; flex-shrink: 0; opacity: 0; transition: opacity 0.15s ease-out; }
+
+			&:hover {
+				.icon.unpin { opacity: 1; }
+			}
 		}
 
 		.markuplink, markupobject { color: var(--color-system-accent-100); border-bottom: 0px; }
