@@ -55,12 +55,32 @@ const renderPart = (part: I.CommentContentPart, index: number, subId?: string): 
 		case I.TextStyle.Header3:
 			return <h3 key={key} className="commentH3" dangerouslySetInnerHTML={{ __html: html }} />;
 
-		case I.TextStyle.Quote:
+		case I.TextStyle.Quote: {
+			const sourceBlockId = part.editorQuote?.blockId || '';
+			const sourceMessageId = part.messageQuote?.messageId || '';
+			const isClickable = sourceBlockId || sourceMessageId;
+			const cn = [ 'commentBlockquote', (isClickable ? 'isClickable' : '') ];
+			const onQuoteClick = isClickable ? (() => {
+				if (sourceBlockId) {
+					U.Comment.scrollToBlock(sourceBlockId);
+				} else
+				if (sourceMessageId) {
+					U.Comment.scrollToMessage(sourceMessageId);
+				};
+			}) : undefined;
+
 			return (
 				<div key={key} className="commentBlockquoteWrap">
-					<blockquote className="commentBlockquote" dangerouslySetInnerHTML={{ __html: html }} />
+					<blockquote
+						className={cn.join(' ').trim()}
+						data-block-id={sourceBlockId || undefined}
+						data-message-id={sourceMessageId || undefined}
+						onClick={onQuoteClick}
+						dangerouslySetInnerHTML={{ __html: html }}
+					/>
 				</div>
 			);
+		};
 
 		case I.TextStyle.Code: {
 			const lang = part.lang || 'plain';

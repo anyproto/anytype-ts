@@ -98,10 +98,12 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!block) {
 			return [];
 		};
-		
+
 		const { hAlign, content, bgColor } = block;
 		const { color, style, cardStyle } = content;
 		const checkFlag = checkFlagByObject(block.getTargetObjectId());
+		const rootObject = S.Detail.get(rootId, rootId, [ 'type' ]);
+		const canQuoteInComment = !U.Object.isTemplateType(rootObject.type);
 
 		let sections: any[] = [];
 		let hasText = true;
@@ -252,6 +254,11 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					actionSections = [
 						{ children: U.Menu.getActions(actionParam) },
 					];
+				};
+
+				if (canQuoteInComment && hasText && hasCommon) {
+					const quoteInComment = { id: 'quoteInComment', iconParam: { name: 'menu/block/text/quote' }, name: translate('commonQuoteInComment') };
+					actionSections = [ { children: [ quoteInComment ] }, ...actionSections ];
 				};
 			};
 
@@ -654,6 +661,21 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'remove': {
 				Action.remove(rootId, blockId, ids);
+				break;
+			};
+
+			case 'quoteInComment': {
+				const text = block.content?.text || '';
+				const marks = block.content?.marks || [];
+				const part: I.CommentContentPart = {
+					style: I.TextStyle.Quote,
+					type: I.BlockType.Text,
+					text,
+					marks,
+					editorQuote: { blockId },
+				};
+
+				window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
 				break;
 			};
 			

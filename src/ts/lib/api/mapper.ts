@@ -798,6 +798,14 @@ export const Mapper = {
 				result.embed = Mapper.From.ChatMessageBlockEmbed(obj.embed);
 			};
 
+			if (obj.editorQuote !== undefined) {
+				result.editorQuote = Mapper.From.ChatMessageBlockEditorQuote(obj.editorQuote);
+			};
+
+			if (obj.messageQuote !== undefined) {
+				result.messageQuote = Mapper.From.ChatMessageBlockMessageQuote(obj.messageQuote);
+			};
+
 			return result;
 		},
 
@@ -822,6 +830,20 @@ export const Mapper = {
 			return {
 				targetObjectId: obj.targetObjectId,
 				type: obj.type as number,
+			};
+		},
+
+		ChatMessageBlockEditorQuote (obj: any): I.ChatMessageBlockEditorQuote {
+			return {
+				blockId: obj.blockId || '',
+				content: Mapper.From.ChatMessageBlockText(obj.content || {}),
+			};
+		},
+
+		ChatMessageBlockMessageQuote (obj: any): I.ChatMessageBlockMessageQuote {
+			return {
+				messageId: obj.messageId || '',
+				content: Mapper.From.ChatMessageBlockText(obj.content || {}),
 			};
 		},
 
@@ -1209,6 +1231,14 @@ export const Mapper = {
 				item.embed = Mapper.To.ChatMessageBlockEmbed(obj.embed);
 			};
 
+			if (obj.editorQuote) {
+				item.editorQuote = Mapper.To.ChatMessageBlockEditorQuote(obj.editorQuote);
+			};
+
+			if (obj.messageQuote) {
+				item.messageQuote = Mapper.To.ChatMessageBlockMessageQuote(obj.messageQuote);
+			};
+
 			return item;
 		},
 
@@ -1234,6 +1264,20 @@ export const Mapper = {
 			return {
 				targetObjectId: obj.targetObjectId,
 				type: obj.type as number,
+			};
+		},
+
+		ChatMessageBlockEditorQuote: (obj: I.ChatMessageBlockEditorQuote) => {
+			return {
+				blockId: obj.blockId || '',
+				content: Mapper.To.ChatMessageBlockText(obj.content),
+			};
+		},
+
+		ChatMessageBlockMessageQuote: (obj: I.ChatMessageBlockMessageQuote) => {
+			return {
+				messageId: obj.messageId || '',
+				content: Mapper.To.ChatMessageBlockText(obj.content),
 			};
 		},
 

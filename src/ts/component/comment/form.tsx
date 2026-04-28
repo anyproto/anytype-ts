@@ -20,6 +20,7 @@ interface Props {
 interface RefProps {
 	focus: () => void;
 	clear: () => void;
+	insertQuote: (part: I.CommentContentPart) => void;
 };
 
 const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
@@ -63,6 +64,12 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			setIsLoading(false);
 			setIsMultiline(false);
 			clearDraft();
+		},
+		insertQuote: (part: I.CommentContentPart) => {
+			if (!part) {
+				return;
+			};
+			editorRef.current?.insertSourceQuote(part);
 		},
 	}));
 
