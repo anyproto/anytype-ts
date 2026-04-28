@@ -161,6 +161,28 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			ret.unshift({ isSection: true, name: typeNames });
 		};
 
+		if (data.isTemplate && canEdit && isParticipantRelation()) {
+			const pid = J.Constant.placeholderId;
+			const isSelected = value.includes(pid.currentUser);
+
+			if (!isSelected) {
+				const insertIdx = ret.findIndex(it => !it.isSection);
+				const item = {
+					id: pid.currentUser,
+					name: translate('placeholderCurrentUser'),
+					isPlaceholder: true,
+					isSystem: true,
+					iconParam: { name: 'filterTemplate/user' },
+				};
+
+				if (insertIdx >= 0) {
+					ret.splice(insertIdx, 0, item);
+				} else {
+					ret.unshift(item);
+				};
+			};
+		};
+
 		if (data.filter && canAdd && canEdit) {
 			if (ret.length || typeNames) {
 				ret.push({ isDiv: true });
@@ -169,6 +191,11 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		return ret;
+	};
+
+	const isParticipantRelation = (): boolean => {
+		const types = getTypes();
+		return !types.length || types.some(it => it.uniqueKey == J.Constant.typeKey.participant);
 	};
 
 	const getTypes = () => {
@@ -221,6 +248,10 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				value = value.slice(value.length - maxCount, value.length);
 			};
 
+			if (data.isTemplate) {
+				setPlaceholdersFromValue(relation.relationKey, value);
+			};
+
 			onChange(value, () => {
 				S.Menu.updateData(props.id, { value });
 				S.Menu.updateData('dataviewObjectValues', { value });
@@ -239,6 +270,22 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			});
 		} else {
 			cb(item.id);
+		};
+	};
+
+	const setPlaceholdersFromValue = (relationKey: string, value: string[]) => {
+		const pid = J.Constant.placeholderId;
+		const values = value.map(id => {
+			if (id === pid.currentUser) {
+				return { type: I.PlaceholderType.CurrentUser };
+			};
+			return { type: I.PlaceholderType.Value, value: id };
+		});
+
+		if (values.length) {
+			C.TemplateSetPlaceholders(data.rootId, [{ relationKey, values }]);
+		} else {
+			C.TemplateDeletePlaceholders(data.rootId, [ relationKey ]);
 		};
 	};
 
@@ -308,15 +355,19 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (item.isSection) {
 			content = (<div className="sectionName" style={param.style}>{item.name}</div>);
 		} else {
+			if (item.icon) {
+				item.iconParam = { name: item.icon };
+			};
+
 			content = (
 				<MenuItemVertical
 					id={item.id}
 					object={item.isSystem ? null : item}
-					iconParam={item.icon ? { name: item.icon } : undefined}
-					name={<ObjectName object={item} />}
+					iconParam={item.iconParam}
+					name={item.isPlaceholder ? item.name : <ObjectName object={item} />}
 					onMouseEnter={e => onOver(e, item)}
 					onClick={e => onClick(e, item)}
-					onContextMenu={e => onContext(e, item)}
+					onContextMenu={item.isPlaceholder ? undefined : (e => onContext(e, item))}
 					caption={type ? <ObjectType object={type} /> : ''}
 					style={param.style}
 				/>

@@ -172,18 +172,19 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 				U.Dom.removeClass(U.Dom.select(element), 'withMenu');
 				setOff();
 			},
-			data: { 
+			data: {
 				cellId,
 				cellRef: childRef.current,
 				rootId,
 				subId,
 				blockId: block?.id,
-				value, 
+				value,
 				relation: observable.box(relation),
 				relationKey: relation.relationKey,
 				record,
 				placeholder,
 				canEdit,
+				isTemplate: U.Object.isTemplateType(record.type),
 				onChange: (value: any, callBack?: (message: any) => void) => {
 					if (childRef.current && childRef.current.onChange) {
 						childRef.current.onChange(value);
@@ -201,9 +202,11 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 		switch (relation.format) {
 
 			case I.RelationType.Date: {
+				const isPlaceholderValue = (param.data.value === J.Constant.placeholderId.today);
 				param.data = Object.assign(param.data, {
-					value: param.data.value || U.Date.now(),
+					value: isPlaceholderValue ? U.Date.now() : (param.data.value || U.Date.now()),
 					noKeyboard: true,
+					hasPlaceholder: isPlaceholderValue,
 				});
 					
 				menuId = 'calendar';
@@ -456,9 +459,54 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			return null;
 		};
 
+		if (Relation.isPlaceholderValue(value)) {
+			callBack?.(null);
+			return;
+		};
+
 		value = Relation.formatValue(relation, value, true);
+
+		if ((relation.format == I.RelationType.Date) && (value !== null) && isNaN(value)) {
+			callBack?.(null);
+			return;
+		};
+
+		const currentRecord = getRecord(recordId);
+		const isTemplate = currentRecord && U.Object.isTemplateType(currentRecord.type);
+
+		if (isTemplate && currentRecord._placeholders?.[relation.relationKey]) {
+			syncPlaceholders(relation.relationKey, value);
+			callBack?.(null);
+			return;
+		};
+
 		if (onCellChange) {
 			onCellChange(record.id, relation.relationKey, value, callBack);
+		};
+	};
+
+	const syncPlaceholders = (relationKey: string, value: any) => {
+		const pid = J.Constant.placeholderId;
+
+		if (Array.isArray(value)) {
+			const entries = value.map(v => {
+				if (v === pid.currentUser) {
+					return { type: I.PlaceholderType.CurrentUser };
+				};
+				return { type: I.PlaceholderType.Value, value: v };
+			});
+
+			if (entries.length) {
+				C.TemplateSetPlaceholders(rootId, [{ relationKey, values: entries }]);
+			} else {
+				C.TemplateDeletePlaceholders(rootId, [ relationKey ]);
+			};
+		} else {
+			if (value === null || value === undefined) {
+				C.TemplateDeletePlaceholders(rootId, [ relationKey ]);
+			} else {
+				C.TemplateSetPlaceholders(rootId, [{ relationKey, values: [{ type: I.PlaceholderType.Value, value }] }]);
+			};
 		};
 	};
 

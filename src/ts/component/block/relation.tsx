@@ -126,7 +126,7 @@ const BlockRelation = forwardRef<{}, I.BlockComponent>((props, ref) => {
 						subId={rootId}
 						block={block}
 						relationKey={relation.relationKey}
-						getRecord={() => S.Detail.get(rootId, rootId, [ relation.relationKey ], true)}
+						getRecord={() => S.Detail.get(rootId, rootId, [ relation.relationKey, 'type' ], true)}
 						viewType={I.ViewType.Grid}
 						readonly={readonly || !allowedValue}
 						idPrefix={idPrefix}

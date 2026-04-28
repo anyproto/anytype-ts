@@ -25,6 +25,9 @@ interface Props {
 	enableKeyboard?: boolean;
 	enableHoverState?: boolean;
 	showFooter?: boolean;
+	showPlaceholders?: boolean;
+	hasPlaceholder?: boolean;
+	onPlaceholder?: (id: I.PlaceholderType) => void;
 	getDotMap?: (start: number, end: number, cb: (map: Map<string, boolean>) => void) => void;
 	onDayClick?: (item: CalendarDay, ts: number) => boolean | void;
 	onDayContextMenu?: (e: MouseEvent, item: CalendarDay) => void;
@@ -44,7 +47,8 @@ const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) =>
 
 	const {
 		value, onChange, isReadonly, canClear = true, position, menuClassNameWrap, className,
-		isEmpty, enableKeyboard, enableHoverState, showFooter, getDotMap, onDayClick, onDayContextMenu, rebind, unbind,
+		isEmpty, enableKeyboard, enableHoverState, showFooter, getDotMap, onDayClick, onDayContextMenu,
+		hasPlaceholder, onPlaceholder, showPlaceholders,
 	} = props;
 
 	const [ displayValue, setDisplayValue ] = useState(value || U.Date.now());
@@ -53,13 +57,11 @@ const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) =>
 	const selectedDateRef = useRef<CalendarDay | null>(null);
 	const monthRef = useRef(null);
 	const yearRef = useRef(null);
-
 	const { m, y } = U.Date.getCalendarDateParam(displayValue);
 	const valueParam = value ? U.Date.getCalendarDateParam(value) : null;
 	const todayParam = U.Date.getCalendarDateParam(U.Date.now());
 	const days = U.Date.getWeekDays();
 	const data = U.Date.getCalendarMonth(displayValue);
-
 	const cn = [ 'calendarSelect' ];
 
 	if (className) {
@@ -372,17 +374,40 @@ const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) =>
 			</div>
 
 			{(showFooter ?? !isReadonly) ? (
-				<div className="foot">
-					<div className="sides">
-						<div className="side left">
-							<div className="btn" onClick={onToday}>{translate('commonToday')}</div>
-							<div className="btn" onClick={onTomorrow}>{translate('commonTomorrow')}</div>
-						</div>
-						<div className="side right">
-							{canClear ? <div className="btn clear" onClick={onClear}>{translate('commonClear')}</div> : ''}
+				<>
+					<div className="line" />
+					<div className="foot">
+						<div className="sides">
+							<div className="side left">
+								<div className="btn" onClick={onToday}>{translate('commonToday')}</div>
+								<div className="btn" onClick={onTomorrow}>{translate('commonTomorrow')}</div>
+							</div>
+							<div className="side right">
+								{canClear ? <div className="btn clear" onClick={onClear}>{translate('commonClear')}</div> : ''}
+							</div>
 						</div>
 					</div>
-				</div>
+				</>
+			) : ''}
+			{(showPlaceholders ?? !isReadonly) ? (
+				<>
+					<div className="line" />
+					<div className="placeholders">
+						<div
+							className={[ 'item', (hasPlaceholder ? 'active' : '') ].join(' ')}
+							onClick={() => onPlaceholder?.(I.PlaceholderType.Today)}
+						>
+							<Icon name="relation/date" />
+							<div className="name">{translate('placeholderToday')}</div>
+						</div>
+						<div
+							className="item"
+							onClick={onClear}
+						>
+							<div className="name">{translate('commonClear')}</div>
+						</div>
+					</div>
+				</>
 			) : ''}
 		</div>
 	);

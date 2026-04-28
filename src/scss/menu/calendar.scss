@@ -5,14 +5,10 @@
 	.menu.menuCalendar {
 		.titleWrapper { padding: 8px 16px 0px; }
 		.content { padding: 10px 0px; overflow: visible; max-height: unset; }
-
-		.line { margin: 8px 16px 11px 16px; }
-		
-		.input { 
+		.input {
 			height: 28px; border-radius: 4px; border: solid 1px var(--color-shape-primary); margin-bottom: 10px; padding: 0px 10px;
 			background: none; width: 100px; vertical-align: top;
 		}
-
 	}
 
 	.menu.menuCalendarDay {

@@ -8,6 +8,10 @@ export default {
 	appName:			 'Anytype',
 	anytypeProfileId:	 '_anytype_profile',
 	missingObjectId:	 '_missing_object',
+	placeholderId: {
+		today:			 '_placeholder_today_',
+		currentUser:	 '_placeholder_currentUser_',
+	},
 	blankId:			 '_blank_',
 	fontCode:			 'plex',
 	popupPinIds:		 [ 'search' ],

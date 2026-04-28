@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
-import { CalendarSelect } from 'Component';
+import { CalendarSelect, Icon } from 'Component';
 import { CalendarSelectRefProps, CalendarDay } from 'Component/util/menu/calendarSelect';
 import * as I from 'Interface';
 
@@ -7,13 +7,18 @@ const MenuCalendar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, position, getId, close } = props;
 	const { data, className, classNameWrap } = param;
-	const { value, isEmpty, relationKey, canEdit, canClear = true, noKeyboard, getDotMap, onChange } = data;
+	const { value, isEmpty, relationKey, canEdit, canClear = true, noKeyboard, getDotMap, isTemplate, hasPlaceholder, rootId, onChange } = data;
 	const calendarRef = useRef<CalendarSelectRefProps>(null);
 
 	const onDayClick = (item: CalendarDay, ts: number): boolean => {
 		if (canEdit) {
-			S.Menu.updateData(props.id, { value: ts });
-			onChange?.(ts);
+			if (isTemplate) {
+				C.TemplateSetPlaceholders(rootId, [{ relationKey, values: [{ type: I.PlaceholderType.Value, value: ts }] }]);
+			} else {
+				onChange?.(ts);
+			};
+
+			S.Menu.updateData(props.id, { value: ts, hasPlaceholder: false });
 			close();
 		} else {
 			U.Object.openDateByTimestamp(relationKey, ts);
@@ -26,8 +31,17 @@ const MenuCalendar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		S.Menu.updateData(props.id, { value: ts });
-		onChange?.(ts);
+		if (isTemplate) {
+			if (ts === null) {
+				C.TemplateDeletePlaceholders(rootId, [ relationKey ]);
+			} else {
+				C.TemplateSetPlaceholders(rootId, [{ relationKey, values: [{ type: I.PlaceholderType.Value, value: ts }] }]);
+			};
+		} else {
+			onChange?.(ts);
+		};
+
+		S.Menu.updateData(props.id, { value: ts, hasPlaceholder: false });
 		close();
 	};
 
@@ -51,6 +65,13 @@ const MenuCalendar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
+	const onPlaceholder = (type: I.PlaceholderType) => {
+		C.TemplateSetPlaceholders(rootId, [
+			{ relationKey, values: [ { type } ] },
+		]);
+		close();
+	};
+
 	return (
 		<CalendarSelect
 			ref={calendarRef}
@@ -63,10 +84,13 @@ const MenuCalendar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			isEmpty={isEmpty}
 			enableKeyboard={!noKeyboard}
 			enableHoverState={true}
-			showFooter={canEdit}
+			showFooter={canEdit && !isTemplate}
 			getDotMap={getDotMap}
 			onDayClick={onDayClick}
 			onDayContextMenu={onDayContextMenu}
+			showPlaceholders={isTemplate}
+			hasPlaceholder={hasPlaceholder}
+			onPlaceholder={onPlaceholder}
 		/>
 	);
 

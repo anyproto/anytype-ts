@@ -38,9 +38,15 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const getItems = () => {
+		const pid = J.Constant.placeholderId;
 		let value: any[] = Relation.getArrayValue(data.value);
-		value = value.map(it => S.Detail.get(subId, it, []));
-		
+		value = value.map(it => {
+			if (it === pid.currentUser) {
+				return { id: pid.currentUser, name: translate('placeholderCurrentUser'), _isPlaceholder: true };
+			};
+			return S.Detail.get(subId, it, []);
+		});
+
 		if (valueMapper) {
 			value = value.map(valueMapper);
 		};
@@ -119,12 +125,16 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onRemove = (e: any, item: any) => {
 		const relation = data.relation.get();
-		
+
 		let value = Relation.getArrayValue(data.value);
 		value = value.filter(it => it != item.id);
-		
+
 		if (relation) {
 			value = Relation.formatValue(relation, value, true);
+		};
+
+		if (data.isTemplate && relation) {
+			updatePlaceholdersFromValue(relation.relationKey, value);
 		};
 
 		n.current = -1;
@@ -133,6 +143,22 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Menu.updateData(id, { value });
 			S.Menu.updateData('dataviewObjectList', { value });
 		});
+	};
+
+	const updatePlaceholdersFromValue = (relationKey: string, value: string[]) => {
+		const pid = J.Constant.placeholderId;
+		const values = value.map(v => {
+			if (v === pid.currentUser) {
+				return { type: I.PlaceholderType.CurrentUser };
+			};
+			return { type: I.PlaceholderType.Value, value: v };
+		});
+
+		if (values.length) {
+			C.TemplateSetPlaceholders(data.rootId, [{ relationKey, values }]);
+		} else {
+			C.TemplateDeletePlaceholders(data.rootId, [ relationKey ]);
+		};
 	};
 
 	const onSortStart = () => {
@@ -159,6 +185,10 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		value = arrayMove(value, oldIndex, newIndex);
 		value = Relation.formatValue(relation, value, true);
+
+		if (data.isTemplate) {
+			updatePlaceholdersFromValue(relation.relationKey, value);
+		};
 
 		onChange(value, () => S.Menu.updateData(id, { value }));
 	};
@@ -205,15 +235,15 @@ const MenuObjectValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				id={`item-${item.id}`}
 				className={cn.join(' ')}
 				onMouseEnter={e => onOver(e, item)}
-				onContextMenu={e => onContext(e, item)}
+				onContextMenu={item._isPlaceholder ? undefined : (e => onContext(e, item))}
 				ref={setNodeRef}
 				{...attributes}
 				{...listeners}
 				style={style}
 			>
 				{canEdit ? <Icon name="common/dnd" /> : ''}
-				<span className="clickable" onClick={e => onClick(e, item)}>
-					<IconObject object={item} />
+				<span className="clickable" onClick={item._isPlaceholder ? undefined : (e => onClick(e, item))}>
+					{item._isPlaceholder ? <Icon name="filterTemplate/user" className="iconMain" /> : <IconObject object={item} />}
 					<ObjectName object={item} />
 				</span>
 				{canEdit ? <Icon name="menu/common/delete" className="delete" onClick={e => onRemove(e, item)} /> : ''}

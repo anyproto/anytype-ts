@@ -48,7 +48,7 @@
 	}
 
 	.headerBanner {
-		position: relative; display: flex; align-items: center; gap: 0px 16px; height: 32px; padding: 6px 10px; @include text-small; border-radius: 6px; background: var(--color-shape-tertiary);
+		position: relative; display: flex; align-items: center; gap: 0px 16px; height: 32px; padding: 6px 10px; @include text-small; border-radius: 16px; background: var(--color-shape-tertiary);
 		-webkit-app-region: no-drag; 
 	}
 	.headerBanner {

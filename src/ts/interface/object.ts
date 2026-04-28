@@ -50,6 +50,12 @@ export enum RelationType {
 	Relations	 = 101,
 };
 
+export enum PlaceholderType {
+	Value			 = 0,
+	Today			 = 1,
+	CurrentUser		 = 2,
+};
+
 export enum RelationScope {
 	Object				 = 0,
 	Type				 = 1,
