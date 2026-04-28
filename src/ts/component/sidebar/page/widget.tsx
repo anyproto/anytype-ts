@@ -691,8 +691,6 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 				/>
 				<SpaceName />
 
-				{!isLinksView ? <WidgetHome /> : ''}
-
 				{sections.map((section, i) => {
 					const isSectionPin = section.id == I.WidgetSection.Pin;
 					const isSectionType = section.id == I.WidgetSection.Type;
@@ -753,6 +751,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 											};
 										}}
 									>
+										{isSectionPin && !isLinksView ? <WidgetHome /> : ''}
+
 										{list.map((block, i) => (
 											<Widget
 												{...props}

@@ -6,6 +6,49 @@ import { CSS } from '@dnd-kit/utilities';
 import { Button, Icon, Widget, Label, SpaceName } from 'Component';
 import { I, M, S, U, J, keyboard, analytics, translate, sidebar, Action } from 'Lib';
 
+interface SectionItemProps {
+	section: any;
+	isFixed: boolean;
+	isHidden: boolean;
+	onToggle: (e: React.MouseEvent, sectionId: I.WidgetSection) => void;
+};
+
+const SectionItem = ({ section, isFixed, isHidden, onToggle }: SectionItemProps) => {
+	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+		id: String(section.id),
+		disabled: isFixed,
+	});
+	const style = { transform: CSS.Transform.toString(transform), transition };
+	const cn = [ 'manageItem', 'isSection' ];
+
+	if (isDragging) {
+		cn.push('isDragging');
+	};
+	if (isFixed) {
+		cn.push('isFixed');
+	};
+
+	return (
+		<div
+			ref={setNodeRef}
+			className={cn.join(' ')}
+			style={style}
+			{...attributes}
+		>
+			<Icon className="dnd" name="common/dnd" {...(isFixed ? {} : listeners)} />
+			<Label text={section.name} />
+			{!isFixed ? (
+				<Icon
+					className="action"
+					name={isHidden ? 'common/eye0' : 'common/eye1'}
+					onClick={e => onToggle(e, section.id)}
+					tooltipParam={{ text: translate(isHidden ? 'widgetShowSection' : 'widgetHideSection'), typeY: I.MenuDirection.Bottom }}
+				/>
+			) : ''}
+		</div>
+	);
+};
+
 const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { sidebarDirection, getId } = props;
@@ -119,40 +162,6 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 		</>
 	);
 
-	const SectionItem = ({ section, index }: { section: any; index: number }) => {
-		const isFixed = I.FIXED_WIDGET_SECTIONS.includes(section.id);
-		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: String(section.id) });
-		const cfg = widgetSections.find(it => it.id == section.id);
-		const isHidden = !!cfg?.isHidden;
-		const style = { transform: CSS.Transform.toString(transform), transition };
-		const cn = [ 'manageItem', 'isSection' ];
-
-		if (isDragging) {
-			cn.push('isDragging');
-		};
-
-		return (
-			<div
-				ref={setNodeRef}
-				className={cn.join(' ')}
-				style={style}
-				{...attributes}
-				{...listeners}
-			>
-				<Icon className="dnd" name="common/dnd" />
-				<Label text={section.name} />
-				{!isFixed ? (
-					<Icon
-						className="action"
-						name={isHidden ? 'common/eye0' : 'common/eye1'}
-						onClick={e => onToggleSection(e, section.id)}
-						tooltipParam={{ text: translate(isHidden ? 'widgetShowSection' : 'widgetHideSection'), typeY: I.MenuDirection.Bottom }}
-					/>
-				) : ''}
-			</div>
-		);
-	};
-
 	return (
 		<>
 			<div id="head" className="head isManage">
@@ -181,7 +190,21 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 								modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 							>
 								<SortableContext items={sectionOptions.map(s => String(s.id))} strategy={verticalListSortingStrategy}>
-									{sectionOptions.map((section, i) => <SectionItem key={section.id} section={section} index={i} />)}
+									{sectionOptions.map(section => {
+										const isFixed = I.FIXED_WIDGET_SECTIONS.includes(section.id);
+										const cfg = widgetSections.find(it => it.id == section.id);
+										const isHidden = !!cfg?.isHidden;
+
+										return (
+											<SectionItem
+												key={section.id}
+												section={section}
+												isFixed={isFixed}
+												isHidden={isHidden}
+												onToggle={onToggleSection}
+											/>
+										);
+									})}
 								</SortableContext>
 							</DndContext>
 						</div>
