@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useEffect, } from 'react';
 
 import raf from 'raf';
-import { Button, Icon, Label, ProgressBar } from 'Component';
+import { Button, Icon, Label } from 'Component';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import * as I from 'Interface';
 
@@ -57,6 +57,10 @@ const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) =
 		const item = items[current];
 		const body = document.body;
 
+		(item.markElements || []).forEach((selector: string) => {
+			U.Dom.selectAll(selector).forEach((el: HTMLElement) => U.Dom.addClass(el, 'onboardingMarked'));
+		});
+
 		if (!section.showDimmer) {
 			return;
 		};
@@ -102,6 +106,8 @@ const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) =
 
 	const clearDimmer = () => {
 		const section = getSection();
+
+		U.Dom.selectAll('.onboardingMarked').forEach((el: HTMLElement) => U.Dom.removeClass(el, 'onboardingMarked'));
 
 		if (!section.showDimmer) {
 			return;
@@ -347,12 +353,6 @@ const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) =
 
 	const { name, description, video, img } = item;
 	const l = items.length;
-	const withSteps = l > 1;
-	const segments = [];
-
-	if (withSteps) {
-		segments.push({ name: '', caption: '', percent: (current + 1) / l, isActive: true });
-	};
 
 	let buttons = [];
 	let category = '';
@@ -418,7 +418,7 @@ const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) =
 				</div>
 			) : ''}
 
-			<div className={[ 'bottom', withSteps ? 'withSteps' : '' ].join(' ')}>
+			<div className="bottom">
 				{buttons.length ? (
 					<div className="buttons">
 						{buttons.map((button, i) => (
@@ -431,10 +431,6 @@ const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) =
 							/>
 						))}
 					</div>
-				) : ''}
-
-				{withSteps ? (
-					<ProgressBar segments={segments} complete={current == l - 1} />
 				) : ''}
 			</div>
 

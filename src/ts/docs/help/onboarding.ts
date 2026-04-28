@@ -50,6 +50,9 @@ const Data = {
 	}),
 
 	chat: () => {
+		const chatEl = '#page.pageMainChat';
+		const typeSection = `#sidebarPageWidget #section-${U.Common.esc(I.WidgetSection.Type)}`;
+
 		return {
 			showDimmer: true,
 			withCounter: true,
@@ -62,16 +65,20 @@ const Data = {
 					name: translate('onboardingMainChatTitle1'),
 					description: translate('onboardingCommonText1'),
 					param: {
+						element: chatEl,
+						highlightElements: [ chatEl ],
 						vertical: I.MenuDirection.Center,
-						horizontal: I.MenuDirection.Center,
-						element: '#page.pageMainChat',
+						horizontal: I.MenuDirection.Right,
+						offsetX: U.Dom.contentWidth(U.Dom.select(chatEl)) + 8,
 					}
 				},
 				{
 					name: translate('onboardingMainChatTitle2'),
 					description: translate('onboardingCommonText2'),
+					markElements: [ '#page.pageMainChat #button-chat-attachment' ],
 					param: {
 						element: '#page.pageMainChat #button-chat-attachment',
+						highlightElements: [ chatEl ],
 						vertical: I.MenuDirection.Top,
 						offsetY: -8,
 					}
@@ -80,9 +87,10 @@ const Data = {
 					name: translate('onboardingMainChatTitle3'),
 					description: translate('onboardingCommonText3'),
 					param: {
-						element: '#sidebarPageWidget',
+						element: typeSection,
+						highlightElements: [ typeSection ],
 						vertical: I.MenuDirection.Center,
-						offsetX: U.Dom.contentWidth(U.Dom.select('#sidebarPageWidget')) + 8,
+						offsetX: U.Dom.contentWidth(U.Dom.select(typeSection)) + 8,
 					}
 				},
 			],
@@ -90,21 +98,88 @@ const Data = {
 	},
 
 	common: () => {
-		const spaceview = U.Space.getSpaceview();
 		const elements = {
-			vault: '#sidebarPageVault #body',
+			vault: '#sidebarPageVault',
+			sidebar: '#sidebarLeft',
 			channel: '#sidebarPageVault #button-create-space',
-			profile: '#sidebarPageVault .bottom .appSettings',
-			gallery: '#sidebarPageVault .bottom .icon.gallery',
+			widget: '#sidebarPageWidget',
 			pin: '#sidebarPageWidget > #body > .content > .section-pin > .items',
 			type: '#sidebarPageWidget > #body > .content > .section-type > .items',
 			relation: '#header #button-header-relation',
-			widgetSpace: `#widget-space .${U.Data.spaceClass(spaceview.spaceType)} .head`,
 		};
 
 		const getOffset = (el: string) => {
-			const offset = el == 'widgetSpace' ? 20 : 8;
-			return U.Dom.contentWidth(U.Dom.select(elements[el])) + offset;
+			return U.Dom.contentWidth(U.Dom.select(elements[el])) + 8;
+		};
+
+		const channels = U.Space.getList().filter(it => it.isAccountActive);
+
+		const items = [
+			{
+				name: translate('onboardingCommonTitleVault'),
+				description: translate('onboardingCommonTextVault'),
+				param: {
+					element: elements.vault,
+					highlightElements: [ elements.vault ],
+					offsetX: getOffset('vault'),
+				}
+			},
+			{
+				name: translate('onboardingCommonTitleSpace'),
+				description: translate('onboardingCommonTextSpace'),
+				param: {
+					element: elements.widget,
+					highlightElements: [ elements.sidebar ],
+					offsetX: getOffset('widget'),
+				}
+			},
+			{
+				name: translate('onboardingCommonTitleTypes'),
+				description: translate('onboardingCommonTextTypes'),
+				img: {
+					src: `${U.Common.helpMediaPath()}/onboarding/common/type.png`,
+				},
+				param: {
+					element: elements.type,
+					highlightElements: [ `#sidebarPageWidget #section-${U.Common.esc(I.WidgetSection.Type)}` ],
+					offsetX: getOffset('type'),
+				}
+			},
+			{
+				name: translate('onboardingCommonTitlePin'),
+				description: translate('onboardingCommonTextPin'),
+				param: {
+					element: elements.pin,
+					highlightElements: [ `#sidebarPageWidget #section-${U.Common.esc(I.WidgetSection.Pin)}` ],
+					offsetX: getOffset('pin'),
+				}
+			},
+			{
+				name: translate('onboardingCommonTitleProperties'),
+				description: translate('onboardingCommonTextProperties'),
+				img: {
+					src: `${U.Common.helpMediaPath()}/onboarding/common/relation.png`,
+					caption: translate('onboardingCommonTextPropertiesImgCaption'),
+				},
+				param: {
+					element: elements.relation,
+					highlightElements: [ elements.relation ],
+					horizontal: I.MenuDirection.Right,
+					offsetX: 0,
+				}
+			},
+		];
+
+		if (channels.length == 1) {
+			items.push({
+				name: translate('onboardingCommonTitleSettings'),
+				description: translate('onboardingCommonTextSettings'),
+				param: {
+					element: '#button-create-space-inline',
+					highlightElements: [ elements.vault ],
+					offsetX: getOffset('vault'),
+				},
+			});
 		};
 
 		return {
@@ -114,103 +189,7 @@ const Data = {
 				highlightElements: [ '#sidebarLeft #pageWrapper' ],
 				stickToElementEdge: I.MenuDirection.Top,
 			},
-			items: [
-				{
-					name: translate('onboardingCommonTitleVault'),
-					description: translate('onboardingCommonTextVault'),
-					param: {
-						element: elements.vault,
-						offsetX: getOffset('vault'),
-					}
-				},
-				{
-					name: translate('onboardingCommonTitleSpaces'),
-					description: translate('onboardingCommonTextSpaces'),
-					param: {
-						element: elements.channel,
-						offsetX: getOffset('channel'),
-					}
-				},
-				{
-					name: translate('onboardingCommonTitleProfile'),
-					description: translate('onboardingCommonTextProfile'),
-					param: {
-						element: elements.profile,
-						stickToElementEdge: null,
-						vertical: I.MenuDirection.Top,
-						offsetY: -8,
-					}
-				},
-				{
-					name: translate('onboardingCommonTitleGallery'),
-					description: translate('onboardingCommonTextGallery'),
-					param: {
-						element: elements.gallery,
-						stickToElementEdge: null,
-						vertical: I.MenuDirection.Top,
-						offsetY: -8,
-					}
-				},
-				{
-					name: translate('onboardingCommonTitleSpace'),
-					description: translate('onboardingCommonTextSpace'),
-					param: {
-						element: '.onboardingDimmer',
-						highlightElements: [],
-						stickToElementEdge: null,
-						vertical: I.MenuDirection.Center,
-						horizontal: I.MenuDirection.Center,
-					}
-				},
-				{
-					name: translate('onboardingCommonTitlePin'),
-					description: translate('onboardingCommonTextPin'),
-					param: {
-						element: elements.pin,
-						highlightElements: [ `#sidebarPageWidget #section-${U.Common.esc(I.WidgetSection.Pin)}` ],
-						offsetX: getOffset('pin'),
-					}
-				},
-				{
-					name: translate('onboardingCommonTitleTypes'),
-					description: translate('onboardingCommonTextTypes'),
-					img: {
-						src: `${U.Common.helpMediaPath()}/common/type.png`,
-					},
-					param: {
-						element: elements.type,
-						highlightElements: [ `#sidebarPageWidget #section-${U.Common.esc(I.WidgetSection.Type)}` ],
-						offsetX: getOffset('type'),
-					}
-				},
-				{
-					name: translate('onboardingCommonTitleProperties'),
-					description: translate('onboardingCommonTextProperties'),
-					img: {
-						src: `${U.Common.helpMediaPath()}/common/relation.png`,
-						caption: translate('onboardingCommonTextPropertiesImgCaption'),
-					},
-					param: {
-						element: elements.relation,
-						highlightElements: [ elements.relation ],
-						horizontal: I.MenuDirection.Right,
-						offsetX: 0,
-					}
-				},
-				{
-					name: translate('onboardingCommonTitleSettings'),
-					description: translate('onboardingCommonTextSettings'),
-					cloneElementClassName: 'widgetSpaceHead',
-					param: {
-						element: elements.widgetSpace,
-						highlightElements: [ elements.widgetSpace ],
-						stickToElementEdge: null,
-						vertical: I.MenuDirection.Bottom,
-						offsetY: -U.Dom.contentHeight(U.Dom.select(elements.widgetSpace)) - 24,
-						offsetX: getOffset('widgetSpace'),
-					}
-				},
-			]
+			items,
 		};
 	},
 
@@ -266,7 +245,7 @@ const Data = {
 					buttonText: translate('onboardingMobileButton'),
 					cloneElementClassName: 'onboardingIconP2P',
 					img: {
-						src: `${U.Common.helpMediaPath()}/syncStatus/qr.png`
+						src: `${U.Common.helpMediaPath()}/onboarding/syncStatus/qr.png`
 					},
 					param: {
 						className: 'qrDownload',
