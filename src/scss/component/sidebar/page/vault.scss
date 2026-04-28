@@ -40,7 +40,10 @@
 	.filterWrapper { padding: 0px 12px 2px 12px; overflow: hidden; }
 	.input::-webkit-input-placeholder { color: var(--color-text-secondary) !important; }
 
-	.item { display: flex; align-items: center; gap: 0px 8px; padding: 6px 8px; border-radius: 8px; -webkit-app-region: no-drag; margin: 0px 0px 1px 0px; }
+	.item { 
+		display: flex; align-items: center; gap: 0px 8px; padding: 6px 8px; border-radius: 8px; 
+		-webkit-app-region: no-drag; margin: 0px 0px 1px 0px; color: var(--color-text-primary-70);
+	}
 	.item {
 		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
 		.iconWrap {
@@ -50,7 +53,6 @@
 		.info.hasUnread {
 			.label.lastMessage, .label.chatName { color: var(--color-text-primary); }
 		}
-		.nameWrapper { color: var(--color-text-primary-70); }
 
 		&.noMessages {
 			.info { flex-direction: row; }
@@ -72,7 +74,10 @@
 			pointer-events: none; border-radius: inherit; opacity: 0;
 		}
 		&.hover::before { opacity: 1; }
-		&.active::before { opacity: 1; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); border-radius: 7px; }
+		&.active::before { 
+			opacity: 1; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); border-radius: 7px; 
+		}
+		&.active { color: var(--color-text-primary); }
 
 		.time { @include text-small; color: var(--color-text-secondary); text-align: right; display: flex; justify-content: flex-end; align-items: center; gap: 0px 4px; }
 		&.isSyncing {
