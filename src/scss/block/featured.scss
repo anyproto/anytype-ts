@@ -60,8 +60,8 @@
 				}
 				.tagItem { margin: 0px; max-width: 400px; }
 
-				&:hover { background: none; }
-				&:hover {
+				&:hover, &.hover { background: none; }
+				&:hover, &.hover {
 					.tagItem.isSelect { background: var(--color-shape-highlight-medium) !important; }
 					.tagItem.isMultiSelect {
 						&::after { 
