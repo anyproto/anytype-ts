@@ -1668,13 +1668,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 				style: I.TextStyle.Paragraph,
 			}, releaseEnterGuard);
 		} else
-		if (block.isTextParagraph() && !length && parent && (parent.canToggle() || parent.isTextCallout())) {
-			if (S.Block.isLastChild(rootId, block.id)) {
-				Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom);
-				releaseEnterGuard();
-			} else {
-				blockSplit(block, range, isShift, releaseEnterGuard);
-			};
+		if (block.isTextParagraph() && !length && parent && (parent.canToggle() || parent.isTextCallout() || parent.isTextQuote())) {
+			Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom, releaseEnterGuard);
 		} else {
 			blockSplit(block, range, isShift, releaseEnterGuard);
 		};

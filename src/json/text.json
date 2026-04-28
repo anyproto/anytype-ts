@@ -1017,7 +1017,7 @@
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
 	"popupSettingsSpaceIndexCollaborationTitle": "Collaboration",
-	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
+	"popupSettingsSpaceIndexManageSpaceTitle": "Channel Preferences",
 	"popupSettingsSpaceIndexStorageText": "You can store your files on our encrypted backup node. Once you reach your limit, files will stop syncing and will only be stored locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
@@ -2121,8 +2121,8 @@
 	"menuSidebarViewWidgets": "Widgets",
 	"menuSidebarViewLinks": "Links",
 
-	"popupSettingsSpaceIndexSidebarViewTitle": "Show pinned objects as",
-	"popupSettingsSpaceIndexSidebarViewDescription": "Display pinned items as simple links or interactive widgets",
+	"popupSettingsSpaceIndexSidebarViewTitle": "Sidebar View",
+	"popupSettingsSpaceIndexSidebarViewDescription": "Display items as compact links or interactive widgets",
 
 	"menuVaultStyleCloseSidebar": "Close sidebar",
 	"menuParticipantConnect": "Connect",

@@ -1342,13 +1342,21 @@ class UtilData {
 	};
 
 	getWidgetTypes(): any[] {
+		const allowedTypes = [
+			J.Constant.typeKey.page,
+			J.Constant.typeKey.task,
+		];
+
 		return S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
 			return (
 				!U.Object.isInSystemLayouts(it.recommendedLayout) &&
 				!U.Object.isDateLayout(it.recommendedLayout) &&
 				!U.Object.isParticipantLayout(it.recommendedLayout) &&
 				(it.uniqueKey != J.Constant.typeKey.template) &&
-				(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
+				(
+					allowedTypes.includes(it.uniqueKey) || 
+					(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
+				)
 			);
 		});
 	};

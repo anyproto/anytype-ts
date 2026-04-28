@@ -91,7 +91,8 @@
 
 		/* Step 1 — Name & Icon */
 		.step.step1 {
-			.input.spaceName { border-radius: 12px; @include text-paragraph; font-weight: 600; }
+			.stepTitle { padding: 16px 0px; }
+			.input.spaceName { @include text-paragraph; font-weight: 600; }
 			.input.spaceName.withMargin { margin: 0px 0px 8px 0px; }
 
 			.memberListWrapper { position: relative; }
