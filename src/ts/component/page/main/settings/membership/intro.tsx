@@ -129,8 +129,8 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 		};
 
 		const onClick = () => {
-			buttonRef.current.setLoading(true);
-			onPay(item, () => buttonRef.current.setLoading(false));
+			buttonRef.current?.setLoading(true);
+			onPay(item, () => buttonRef.current?.setLoading(false));
 		};
 
 		return (
