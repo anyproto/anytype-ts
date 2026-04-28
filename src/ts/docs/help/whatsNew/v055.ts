@@ -1,49 +1,68 @@
 import { Block, Helpers } from './common';
 
 export default (h: Helpers): Block[] => {
-	const { cmd, shift, hl, icon, title, h2, h4, text, bullet, toggle, link } = h;
+	const { cmd, shift, hl, icon, title, h2, h4, text, bullet, toggle, link, img } = h;
 	return [
 		icon('🗣️'),
 
 		title(`Let's Discuss`),
 		h4(`<span>Release 0.55.0</span>`),
-		text(''),
-		text('This release introduces Object Discussions – comment and have threaded conversations directly inside any Object. You can also create Channels with a guided step-by-step flow, upload files as standalone Objects, and enjoy a redesigned Bookmark layout with rich previews.'),
-		text('On top of that: a redesigned Bin with delete permissions, unified context menus, reaction notifications, emoji search, and a long list of fixes and quality-of-life improvements across the app.'),
-		text(''),
+		text(``),
+		text(`This release introduces Object Discussions — comment and have threaded conversations directly inside any Object. Spaces and Chats merge into Channels with a redesigned creation flow, files become first-class Objects you can upload and organize, Bookmarks get a dedicated layout, and the new Anytype Agents' Skill lets AI coding agents read, create, and manipulate your data.`),
+		text(`On top of that: a redesigned Bin with delete permissions, a new Sidebar view mode, pinned messages, and a long list of fixes and quality-of-life improvements across the app.`),
+		text(``),
 
 		h2(`Object Discussions`),
 		text(`You can now start a discussion and comment directly inside any Object – no need to switch to a separate Chat. Post a comment, reply to others, and build a conversation right where the work happens.`),
 		text(`Discussion posts support rich content: code blocks, checkboxes, attachments, embeds, and inline links. You can edit your posts after sending, react with emoji, and reply to specific messages to keep threads organized.`),
+		img('55/1.png'),
 		text(``),
 
 		h2(`Updated Channel Creation`),
 		text(`Spaces and Chats have been merged into a single concept: Channel. Instead of choosing between "create a Space" or "create a Chat", you now create a Channel and pick what opens as its Home – a Chat, a Page, or a Collection.`),
 		text(`The creation flow walks you through it step by step: name your Channel, invite members, and select the Home.`),
+		img('55/2.png'),
 		text(``),
 
 		h2(`Personal Favorites`),
-		text(`Each Channel now has a "My Favorites" section – a personal list of saved objects that only you see. Unlike pinned items (set by the Channel owner or admin for everyone), Favorites are yours to manage. Add any object to your Favorites for quick access without affecting what other members see.`),
+		text(`Each Channel now has two distinct mechanisms: My Favorites, visible only to you, and Shared Pins, visible to all members. Any user can add objects to My Favorites for quick access without affecting what other members see. Shared Pins remain available to Owners who need to surface important docs for the whole team. Both appear in the Widget Bar in clearly separated sections.`),
+		img('55/3.png'),
 		text(``),
 
 		h2(`File & Media Uploads`),
 		text(`You can now upload files directly as standalone Objects. Choose Image, Video, Audio, or File from the "Create" menu, drag files onto a Type page or widget, or paste from the clipboard – each file becomes its own Object that you can find, link, and organize like anything else in Anytype. Drop a folder and it converts into a Collection that mirrors the original structure.`),
+		img('55/4.png'),
 		text(``),
 
 		h2(`Bookmark Layout`),
 		text(`Bookmarks now have their own dedicated layout. Instead of inheriting the Page layout, each bookmark displays the site's preview image, a short URL with the site icon, and a prominent "Open Website" button.`),
 		text(`The paste menu has also been updated: when you paste a URL, you can now choose to insert it as a Mention, a Bookmark, an Embed, or a plain link.`),
+		img('55/5.png'),
+		text(``),
+
+		h2(`Anytype Agents' Skill`),
+		text(`The new open-source ${link('https://github.com/anyproto/anytype-agents-skill', 'anytype-agents-skill')} provides a lightweight, isolated JavaScript runtime for executing code against your Anytype data, and exposes around 30 high-level methods to read, create, search, and manipulate objects in your Channels. Give your favorite AI agent – Claude Code, Cursor, Gemini CLI, GitHub Copilot, and others – the skill, and let it handle bulk edits, data transformations, and repetitive tasks for you – gluing your data efficiently with the full power of a programming language.`),
 		text(``),
 
 		h2(`Quality of Life Improvements`),
+		text(``),
+
+		text(`<b>Sidebar Links View</b>`),
+		text(`A new option in Channel Preferences lets you switch the sidebar between two display modes: Widgets (the default), which shows rich previews, or Links – a compact view that lists objects as simple links.`),
+		img('55/6.png'),
+		text(``),
+
+		text(`<b>Redesigned Bin with Delete Permissions</b>`),
+		text(`The Bin now displays objects in a columned list with Name, Deleted date, and Created By columns. In shared Channels, editors can only permanently delete objects they created – protecting the team from accidental data loss. Owners and Admins can empty the entire Bin from a new menu.`),
+		img('55/7.png'),
 		text(``),
 
 		text(`<b>Redesigned Option Menus</b>`),
 		text(`Select, Multi-select, Object, and Attachment property menus have been redesigned with a cleaner layout, better keyboard navigation, and more consistent behavior across the app.`),
 		text(``),
 
-		text(`<b>Redesigned Bin with Delete Permissions</b>`),
-		text(`The Bin now displays objects in a columned list with Name, Deleted date, and Created By columns. In shared Channels, editors can only permanently delete objects they created – protecting the team from accidental data loss. Owners and Admins can empty the entire Bin from a new menu.`),
+		text(`<b>Pin Messages in Chats</b>`),
+		text(`You can now pin important messages in Chat. Pinned messages appear in a persistent banner at the top of the conversation. When multiple messages are pinned, click the banner to cycle through them from newest to oldest.`),
 		text(``),
 
 		text(`<b>Multi-Cell Selection in Tables</b>`),
@@ -68,6 +87,10 @@ export default (h: Helpers): Block[] => {
 
 		text(`<b>Reaction Counters and Notifications</b>`),
 		text(`Emoji reactions in Chat now show a counter next to each reaction, and you receive notifications when someone reacts to your message.`),
+		text(``),
+
+		text(`<b>Disable Automatic Text Replacements</b>`),
+		text(`A new setting lets you turn off automatic Unicode sequence replacements (like arrows and em dashes), so what you type stays exactly as you typed it.`),
 		text(``),
 
 		text(`<b>Emoji Search Popup</b>`),
@@ -104,14 +127,6 @@ export default (h: Helpers): Block[] => {
 
 		text(`<b>Download Spinner on File Objects</b>`),
 		text(`File Objects now show a spinner while downloading, so you can see the progress at a glance.`),
-		text(``),
-
-		text(`<b>Duplicate from Sidebar Opens Object</b>`),
-		text(`Duplicating an Object from the sidebar context menu now automatically opens the new copy. Thanks to @${link('https://community.anytype.io/t/30105', 'Chrispy163')}!`),
-		text(``),
-
-		text(`<b>Updated Notification Settings</b>`),
-		text(`Notification settings are now accessible from more places across the app, making them easier to find and adjust.`),
 		text(``),
 
 		text(`<b>New Notification Sound</b>`),
@@ -165,10 +180,6 @@ export default (h: Helpers): Block[] => {
 		text(`Object type icons (Task, Bookmark, Note, File, Chat, and others) and the import icon have been updated for a more consistent visual style.`),
 		text(``),
 
-		text(`<b>Redesigned Onboarding & Migration Screens</b>`),
-		text(`The vault entry, splash screen, PIN code, and migration screens have been redesigned with a fresher look.`),
-		text(``),
-
 		text(`<b>Table of Contents Scroll Tracking</b>`),
 		text(`The Table of Contents now highlights the heading you're currently viewing, so you always know where you are in long documents.`),
 		text(``),
@@ -179,10 +190,6 @@ export default (h: Helpers): Block[] => {
 
 		text(`<b>Muted and Hidden Chat Styling</b>`),
 		text(`Muted and hidden Chats now use grey text styling, making it easier to tell them apart from active conversations.`),
-		text(``),
-
-		text(`<b>Chat Message Preview</b>`),
-		text(`Chat message previews in the sidebar now use black text for the latest message, making them easier to read.`),
 		text(``),
 
 		h2(`Bug Fixes`),
@@ -211,7 +218,7 @@ export default (h: Helpers): Block[] => {
 			bullet(`A newline is no longer incorrectly added to code blocks in certain situations.`),
 			bullet(`Pressing ${hl('Enter')} no longer spams new lines when an empty block follows the current one. Thanks to @${link('https://community.anytype.io/t/30210', 'lumeno.kotobazza')}!`),
 			bullet(`Modifier keys no longer insert unwanted characters during text formatting. Thanks to @${link('https://community.anytype.io/t/30129', 'trialsin')}!`),
-			bullet(`Duplicating a toggle block no longer nests the copy inside the deepest grandchild. Thanks to @${link('https://community.anytype.io/t/30174', 'Regis')}!`),
+			bullet(`Duplicating a toggle block no longer nests the copy inside the deepest grandchild.`),
 			bullet(`Unlinking a URL from text no longer triggers an undo action.`),
 			bullet(`Heading behavior after pressing ${hl('Enter')} has been corrected.`),
 			bullet(`Multiple editor issues with block operations have been resolved.`),
@@ -220,18 +227,18 @@ export default (h: Helpers): Block[] => {
 			bullet(`Line breaks in headings now work correctly.`),
 			bullet(`Pasting a URL to create a bookmark no longer overwrites the block above it.`),
 			bullet(`Table of Contents now renders correctly when the document contains toggle headings.`),
-			bullet(`Deleting an empty line above a toggle no longer closes or removes it. Thanks to @${link('https://community.anytype.io/t/28039', 'WanderQing')}!`),
+			bullet(`Deleting an empty line above a toggle no longer closes or removes it. Thanks to @${link('https://community.anytype.io/t/28039', 'Code-Jack')}!`),
 			bullet(`Highlighting single link blocks now works correctly.`),
-			bullet(`Markdown replacement whitespace behavior has been fixed. Thanks to @${link('https://community.anytype.io/t/27193', 'Code-Jack')}!`),
-			bullet(`Inconsistent emoji editing behavior has been corrected. Thanks to @${link('https://community.anytype.io/t/25770', 'flypenguin')}!`),
+			bullet(`Markdown replacement whitespace behavior has been fixed. Thanks to @${link('https://community.anytype.io/t/27193', 'flypenguin')}!`),
+			bullet(`Inconsistent emoji editing behavior has been corrected. Thanks to @${link('https://community.anytype.io/t/25770', 'herb')}!`),
 			bullet(`Text entered before a hyperlink no longer becomes part of the link. Thanks to @${link('https://community.anytype.io/t/25349', 'a44')}!`),
 			bullet(`Text is no longer duplicated after inserting an emoji.`),
 			bullet(`Mentions can now be correctly copied and cut.`),
 			bullet(`The cursor no longer disappears when the first Mention in a block is deleted.`),
 			bullet(`Selecting a block with a triple click now correctly deletes mentions and text together.`),
-			bullet(`Chinese character input now works in Embed blocks. Thanks to @${link('https://community.anytype.io/t/28942', 'geesecross')}!`),
-			bullet(`Display issues when editing blocks in Chinese next to inline links have been fixed. Thanks to @${link('https://community.anytype.io/t/28419', 'Regis')}!`),
-			bullet(`The cursor can now move past folded toggles with nested content. Thanks to @${link('https://community.anytype.io/t/30086', 'Code-Jack')}!`),
+			bullet(`Chinese character input now works in Embed blocks. Thanks to @${link('https://community.anytype.io/t/28942', 'AlfredZhang')}!`),
+			bullet(`Display issues when editing blocks in Chinese next to inline links have been fixed. Thanks to @${link('https://community.anytype.io/t/28419', 'M.D1')}!`),
+			bullet(`The cursor can now move past folded toggles with nested content.`),
 			bullet(`Inline code blocks no longer malform text containing recognized symbols. Thanks to @${link('https://community.anytype.io/t/30211', 'spiffytech')}!`),
 			bullet(`Pressing ${hl('Enter')} in the middle of a heading now converts the text in the next block to regular style.`),
 			bullet(`Pressing ${hl('Enter')} at the beginning of a heading now creates a regular text block above it.`),
@@ -244,7 +251,7 @@ export default (h: Helpers): Block[] => {
 			bullet(`You can now place the cursor at the very first character of an inline code span without it jumping. Thanks to @${link('https://community.anytype.io/t/27826', 'spiffytech')}!`),
 			bullet(`Applying underline or other text formatting no longer extends the style to trailing whitespace.`),
 			bullet(`Duplicate toggle behavior has been corrected.`),
-			bullet(`Pasting a heading into an empty toggle no longer replaces the toggle – the heading becomes the toggle's title instead. Thanks to @${link('https://community.anytype.io/t/29661', 'Trekkie')}!`),
+			bullet(`Pasting a heading into an empty toggle no longer replaces the toggle – the heading becomes the toggle's title instead. Thanks to @${link('https://community.anytype.io/t/29661', 'Code-Jack')}!`),
 			bullet(`Backspacing in a bulleted list no longer causes unexpected indentation of the blocks below.`),
 			bullet(`Empty file block placeholders can now be copied and pasted correctly.`),
 		]),
@@ -254,12 +261,12 @@ export default (h: Helpers): Block[] => {
 			bullet(`Long-pressing an Object no longer causes it to float away.`),
 			bullet(`Images are no longer shown in the graph when the toggle for them is off.`),
 			bullet(`High CPU usage when viewing the graph has been resolved.`),
-			bullet(`Graph View filters now apply correctly when the graph is first opened. Thanks to @${link('https://community.anytype.io/t/30081', 'henrywu')}!`),
+			bullet(`Graph View filters now apply correctly when the graph is first opened. Thanks to @${link('https://community.anytype.io/t/30081', 'lhewett946')}!`),
 		]),
 
-		toggle(`<b>Objects & Views (26)</b>`, [
+		toggle(`<b>Objects & Views (29)</b>`, [
 			bullet(`Google "My Maps" embeds now render correctly.`),
-			bullet(`Opening another Channel in a new tab no longer opens the currently active Channel instead.`),
+			bullet(`Opening another Object in a new tab no longer opens the currently active Object instead.`),
 			bullet(`The "+Create option" button in Select and Multi-select properties now works correctly.`),
 			bullet(`Tag creation has been fixed.`),
 			bullet(`Copying the source link from a Bookmark now returns the correct URL.`),
@@ -267,9 +274,9 @@ export default (h: Helpers): Block[] => {
 			bullet(`Advanced Filters now work correctly.`),
 			bullet(`${hl(`${cmd}+A`)} now correctly selects all objects in a Type, Query, or Collection.`),
 			bullet(`Shortened links now open correctly instead of failing with "..". Thanks to @${link('https://community.anytype.io/t/30276', 'Shampra')}!`),
-			bullet(`Inline Sets with a default sort applied no longer return empty results.`),
-			bullet(`Restored properties now appear in the Set immediately without re-opening.`),
-			bullet(`Deleted properties via Channel Settings no longer remain accessible in Set views.`),
+			bullet(`Inline Queries with a default sort applied no longer return empty results.`),
+			bullet(`Restored properties now appear in the Query immediately without re-opening.`),
+			bullet(`Deleted properties via Channel Settings no longer remain accessible in Query views.`),
 			bullet(`Pressing ${hl('Enter')} while creating a property no longer causes unexpected behavior.`),
 			bullet(`New options in Select properties now display immediately without a refresh.`),
 			bullet(`Manual sorting within Collections has been restored.`),
@@ -278,19 +285,15 @@ export default (h: Helpers): Block[] => {
 			bullet(`The "Create Object" option no longer appears in the ${hl('/link')} menu.`),
 			bullet(`Gallery view scrolling performance has been improved. Thanks to @${link('https://community.anytype.io/t/30143', 'dpr')}!`),
 			bullet(`Scrolling now works correctly in Gallery layout.`),
-			bullet(`Graph view links can now be turned off again in query view. Thanks to @${link('https://community.anytype.io/t/30155', 'Code-Jack')}!`),
+			bullet(`Graph view links can now be turned off again in query view. Thanks to @${link('https://community.anytype.io/t/30155', 'riblek')}!`),
 			bullet(`Object Types found in search now correctly load their properties.`),
-			bullet(`Searching by Multi-select property values in Collections now finds all matching entries. Thanks to @${link('https://community.anytype.io/t/29626', 'Thuongtran')}!`),
+			bullet(`Searching by Multi-select property values in Collections now finds all matching entries. Thanks to @${link('https://community.anytype.io/t/29626', 'Code-Jack')}!`),
 			bullet(`File syncing between devices and with the Anytype network now works reliably. Thanks to @${link('https://community.anytype.io/t/30312', 'NicolasJouanin')}!`),
-			bullet(`Revoking an API key now takes effect immediately without restarting the app. Thanks to @${link('https://community.anytype.io/t/28607', 'twoone')}!`),
 			bullet(`Cover images in Gallery view now display with correct dimensions, matching what you see when the object is opened.`),
-		]),
-
-		toggle(`<b>Filters & Sorts (4)</b>`, [
 			bullet(`Properties now correctly disappear from the Advanced Filter after removal.`),
 			bullet(`The date format is now displayed correctly in property filters.`),
 			bullet(`The "Include time" switch in Advanced Filters now works as expected.`),
-			bullet(`The "Include time" toggle no longer behaves inversely in view settings. Thanks to @${link('https://community.anytype.io/t/30128', 'trialsin')}!`),
+			bullet(`Duplicating an Object from the sidebar context menu now automatically opens the new copy. Thanks to @${link('https://community.anytype.io/t/30105', 'Chrispy163')}!`),
 		]),
 
 		toggle(`<b>UI & Rendering (18)</b>`, [
@@ -307,14 +310,14 @@ export default (h: Helpers): Block[] => {
 			bullet(`Scrolling in Remote Storage now works when hovering over objects.`),
 			bullet(`The filter list popup no longer renders too small.`),
 			bullet(`Search pane animation is no longer choppy. Thanks to @${link('https://community.anytype.io/t/30092', 'dpr')}!`),
-			bullet(`The Object Type header font size is no longer oversized on Mac. Thanks to @${link('https://community.anytype.io/t/30085', 'Hexara')}!`),
-			bullet(`The "Object Type: Name" selection box now closes after clicking an option. Thanks to @${link('https://community.anytype.io/t/30148', 'riblek')}!`),
-			bullet(`Odd behavior when typing an account name has been fixed. Thanks to @${link('https://community.anytype.io/t/28866', 'AlfredZhang')}!`),
-			bullet(`A crash on new MacBook M5 models at app startup has been fixed. Thanks to @${link('https://community.anytype.io/t/30394', 'bwaldvogel')}!`),
+			bullet(`The Object Type header font size is no longer oversized on Mac. Thanks to @${link('https://community.anytype.io/t/30085', 'henrywu')}!`),
+			bullet(`The "Object Type: Name" selection box now closes after clicking an option. Thanks to @${link('https://community.anytype.io/t/30148', 'Hexara')}!`),
+			bullet(`Odd behavior when typing an account name has been fixed. Thanks to @${link('https://community.anytype.io/t/28866', 'Regis')}!`),
+			bullet(`A crash on new MacBook M5 models at app startup has been fixed. Thanks to @${link('https://community.anytype.io/t/30394', 'kic')}!`),
 			bullet(`Profile images uploaded on iOS now display correctly on Desktop.`),
 		]),
 
-		toggle(`<b>Navigation & Tabs (19)</b>`, [
+		toggle(`<b>Navigation & Tabs (18)</b>`, [
 			bullet(`The app no longer unexpectedly redirects to the auth screen.`),
 			bullet(`Logging in with two vaults on the same device no longer briefly shows the previous vault.`),
 			bullet(`Duplicated tabs now load correctly.`),
@@ -322,7 +325,7 @@ export default (h: Helpers): Block[] => {
 			bullet(`The sidebar no longer closes unexpectedly in a new tab with "Automatically hide sidebar" enabled.`),
 			bullet(`Opening another Channel from a pinned tab now opens the correct Channel.`),
 			bullet(`The interface no longer disappears after re-opening the application.`),
-			bullet(`White screen after importing data has been fixed. Thanks to @${link('https://community.anytype.io/t/30074', 'lhewett946')}!`),
+			bullet(`White screen after importing data has been fixed. Thanks to @${link('https://community.anytype.io/t/30074', 'Shampra')}!`),
 			bullet(`Creating an account in different windows no longer causes issues.`),
 			bullet(`The window can now be dragged and maximized when the menu bar is turned off.`),
 			bullet(`The right-click context menu in the Bin now opens at the correct position.`),
@@ -331,19 +334,15 @@ export default (h: Helpers): Block[] => {
 			bullet(`The description and shortcut for Pin/Unpin Tab have been corrected.`),
 			bullet(`Pinning a tab that's already open no longer creates a duplicate – the existing tab is pinned instead.`),
 			bullet(`Returning to the members list no longer shows a blank screen.`),
-			bullet(`Sidebar auto-show no longer takes 10+ seconds to appear. Thanks to @${link('https://community.anytype.io/t/30089', 'C.c')}!`),
-			bullet(`The closed sidebar no longer reopens unexpectedly. Thanks to @${link('https://community.anytype.io/t/30118', 'Code-Jack')}!`),
+			bullet(`The closed sidebar no longer reopens unexpectedly. Thanks to @${link('https://community.anytype.io/t/30089', 'C.c')}!`),
 			bullet(`The "Automatically hide sidebar" setting now applies immediately to all open tabs, not just the active one.`),
 		]),
 
-		toggle(`<b>Keyboard & Shortcuts (9)</b>`, [
+		toggle(`<b>Keyboard & Shortcuts (6)</b>`, [
 			bullet(`${hl(`${cmd}+/`)} now correctly triggers the "View Shortcuts" panel.`),
-			bullet(`Typing to filter block actions now auto-selects the first matching option. Thanks to @${link('https://community.anytype.io/t/30224', 'Shampra')}!`),
-			bullet(`Issues with the command popup have been resolved. Thanks to @${link('https://community.anytype.io/t/30250', 'Shampra')}!`),
-			bullet(`CSS formatting now correctly follows the selection in preferences. Thanks to @${link('https://community.anytype.io/t/30250', 'nathan.connor')}!`),
-			bullet(`"Jump to Previous/Next Block" hotkeys now work on Windows. Thanks to @${link('https://community.anytype.io/t/30128', 'Shampra')}!`),
-			bullet(`Spell check is now disabled for inline code styles. Thanks to @${link('https://community.anytype.io/t/30181', 'Fauzi')}!`),
-			bullet(`Closing a Toggle while its content is selected no longer fails. Thanks to @${link('https://community.anytype.io/t/30178', 'dpr')}!`),
+			bullet(`Typing to filter block actions now auto-selects the first matching option. Thanks to @${link('https://community.anytype.io/t/30224', 'nathan.connor')}!`),
+			bullet(`CSS formatting now correctly follows the selection in preferences. Thanks to @${link('https://community.anytype.io/t/30250', 'Shampra')}!`),
+			bullet(`"Jump to Previous/Next Block" hotkeys now work on Windows. Thanks to @${link('https://community.anytype.io/t/30128', 'trialsin')}!`),
 			bullet(`Keyboard shortcut for selecting text right-to-left has been fixed.`),
 			bullet(`The ${hl('@')} mention search now works correctly after switching to a non-Latin keyboard layout.`),
 		]),
