@@ -796,6 +796,9 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			parsed = getMarksFromHtml();
 			adjustMarks = parsed.adjustMarks;
 			marksRef.current = parsed.marks;
+		} else {
+			parsed = Mark.fromUnicode(value, marksRef.current, false);
+			adjustMarks = parsed.adjustMarks;
 		};
 
 		if (menuOpenAdd || menuOpenMention) {
@@ -979,7 +982,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		placeholderCheck();
 
-		const text = block.canHaveMarks() ? parsed.text : value;
+		const text = parsed.text ?? value;
 
 		// When typing space adjust several markups to break it
 		keyboard.shortcut('space', e, () => {
