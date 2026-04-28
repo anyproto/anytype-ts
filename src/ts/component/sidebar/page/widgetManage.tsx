@@ -88,17 +88,6 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 	const hasMembers = members.length > 1;
 	const showMembers = !spaceview.isOneToOne && (hasMembers || isOwner);
 
-	const onSync = () => {
-		S.Menu.closeAllForced(null, () => {
-			S.Menu.open('syncStatus', {
-				element: '#headerSync',
-				offsetY: 4,
-				classNameWrap: 'fixed fromSidebar',
-				subIds: J.Menu.syncStatus,
-			});
-		});
-	};
-
 	useEffect(() => {
 		S.Common.widgetSectionsInit();
 	}, []);
@@ -182,16 +171,14 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 
 			<div id="body" ref={bodyRef} className={cnb.join(' ')} onScroll={onScroll}>
 				<div className="content">
-					{spaceview.isOneToOne ? (
-						<Widget
-							block={spaceBlock}
-							disableContextMenu={true}
-							canEdit={false}
-							canRemove={false}
-							sidebarDirection={sidebarDirection}
-							getObject={id => id ? spaceview : null}
-						/>
-					) : ''}
+					<Widget
+						block={spaceBlock}
+						disableContextMenu={true}
+						canEdit={false}
+						canRemove={false}
+						sidebarDirection={sidebarDirection}
+						getObject={id => id ? spaceview : null}
+					/>
 
 					<SpaceName />
 

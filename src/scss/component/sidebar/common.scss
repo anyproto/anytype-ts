@@ -95,13 +95,6 @@
 			margin-right: 4px;
 		}
 	}
-
-	&:not(.spaceOneToOne) {
-		.sidebarPage.pageWidget,
-		.sidebarPage.pageWidgetManage { 	
-			> .head::after { display: none; }
-		}
-	}
 }
 
 html.platformWindows {

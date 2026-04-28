@@ -678,20 +678,17 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 
 		content = (
 			<div className="content">
-				{spaceview.isOneToOne ? (
-					<Widget
-						block={spaceBlock}
-						disableContextMenu={true}
-						onDragStart={onDragStart}
-						onDragOver={onDragOver}
-						onDrag={onDrag}
-						canEdit={false}
-						canRemove={false}
-						sidebarDirection={sidebarDirection}
-						getObject={id => getObject(spaceBlock, id)}
-					/>
-				) : ''}
-
+				<Widget
+					block={spaceBlock}
+					disableContextMenu={true}
+					onDragStart={onDragStart}
+					onDragOver={onDragOver}
+					onDrag={onDrag}
+					canEdit={false}
+					canRemove={false}
+					sidebarDirection={sidebarDirection}
+					getObject={id => getObject(spaceBlock, id)}
+				/>
 				<SpaceName />
 
 				{!isLinksView ? <WidgetHome /> : ''}
