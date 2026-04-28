@@ -242,7 +242,7 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 					{actions.map((item, idx) => (
 						<div key={idx} className="action">
 							<div className="top">
-								<Icon name={item.icon} className={item.id} />
+								<Icon name={item.icon} className={item.id} size={28} />
 								<Title text={item.title} />
 								<Label text={item.text} />
 							</div>

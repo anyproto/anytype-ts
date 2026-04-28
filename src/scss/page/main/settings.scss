@@ -1028,7 +1028,7 @@
                 .action {
                     .top { margin-bottom: 12px; }
                     .icon {
-                        width: 48px; height: 48px; border-radius: 12px; margin-bottom: 8px;
+                        width: 48px !important; height: 48px !important; border-radius: 12px; margin-bottom: 8px;
                         background-position: 50% 50%; background-repeat: no-repeat; background-color: var(--color-shape-highlight-medium);
                     }
                     .title { @include text-paragraph; font-weight: 500; margin-bottom: 2px; }
