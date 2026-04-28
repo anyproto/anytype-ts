@@ -10,9 +10,7 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 
 	const { sidebarDirection, getId } = props;
 	const { widgetSections, sidebarView } = S.Common;
-	const { widgets } = S.Block;
 	const spaceview = U.Space.getSpaceview();
-	const canWrite = U.Space.canMyParticipantWrite();
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const [ , setDummy ] = useState(0);
 	const forceUpdate = () => setDummy(v => v + 1);
@@ -123,7 +121,7 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 
 	const SectionItem = ({ section, index }: { section: any; index: number }) => {
 		const isFixed = I.FIXED_WIDGET_SECTIONS.includes(section.id);
-		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: String(section.id), disabled: (!canWrite || isFixed) });
+		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: String(section.id) });
 		const cfg = widgetSections.find(it => it.id == section.id);
 		const isHidden = !!cfg?.isHidden;
 		const style = { transform: CSS.Transform.toString(transform), transition };
@@ -132,17 +130,14 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 		if (isDragging) {
 			cn.push('isDragging');
 		};
-		if (isFixed) {
-			cn.push('isFixed');
-		};
 
 		return (
 			<div
 				ref={setNodeRef}
 				className={cn.join(' ')}
 				style={style}
-				{...(isFixed ? {} : attributes)}
-				{...(isFixed ? {} : listeners)}
+				{...attributes}
+				{...listeners}
 			>
 				<Icon className="dnd" name="common/dnd" />
 				<Label text={section.name} />
@@ -185,7 +180,7 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 								onDragEnd={onSectionDragEnd}
 								modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 							>
-								<SortableContext items={sectionOptions.filter(s => !I.FIXED_WIDGET_SECTIONS.includes(s.id)).map(s => String(s.id))} strategy={verticalListSortingStrategy}>
+								<SortableContext items={sectionOptions.map(s => String(s.id))} strategy={verticalListSortingStrategy}>
 									{sectionOptions.map((section, i) => <SectionItem key={section.id} section={section} index={i} />)}
 								</SortableContext>
 							</DndContext>

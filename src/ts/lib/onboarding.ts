@@ -98,9 +98,9 @@ class Onboarding {
 
 	initWidgetSections (unread: boolean, recentEdit: boolean) {
 		const values = {
+			[I.WidgetSection.Pin]: false,
 			[I.WidgetSection.Unread]: unread,
 			[I.WidgetSection.RecentEdit]: recentEdit,
-			[I.WidgetSection.Pin]: false,
 			[I.WidgetSection.Type]: false,
 		};
 
