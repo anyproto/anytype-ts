@@ -1401,7 +1401,38 @@ class UtilMenu {
 		};
 
 		const onUpload = (e: MouseEvent) => {
-			U.Menu.onFileUploadPopup(I.ObjectLayout.File, '', {}, undefined, route);
+			U.Menu.onFileUploadPopup(I.ObjectLayout.File, '', {}, (objectIds) => {
+				if (!objectIds?.length) {
+					return;
+				};
+
+				U.Object.getByIds(objectIds, {}, (objects) => {
+					const gallery = objects.map(object => {
+						let type = null;
+						let src = '';
+
+						if (U.Object.isImageLayout(object.layout)) {
+							type = I.FileType.Image;
+							src = S.Common.imageUrl(object.id, I.ImageSize.Large);
+						} else
+						if (object.layout == I.ObjectLayout.Video) {
+							type = I.FileType.Video;
+							src = S.Common.fileUrl(object.id);
+						};
+
+						return src ? { object, type, src } : null;
+					}).filter(it => it);
+
+					window.setTimeout(() => {
+						if (gallery.length) {
+							S.Popup.open('preview', { data: { gallery } });
+						} else
+						if (objects.length) {
+							callBack?.(objects[0]);
+						};
+					}, S.Popup.getTimeout());
+				});
+			}, flags.uploadRoute || route);
 		};
 
 		const getClipboardData = async () => {
