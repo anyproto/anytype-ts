@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef } from 'react';
-import { IconObject, Label, ObjectName } from 'Component';
+import { IconObject, Label, ObjectName, Icon } from 'Component';
 import * as I from 'Interface';
 
 interface Props {
@@ -72,6 +72,7 @@ const HeaderBanner: FC<Props> = ({
 	let target = null;
 	let action = null;
 	let onClick = null;
+	let withMenu = false;
 
 	switch (type) {
 		case I.BannerType.IsArchived: {
@@ -115,6 +116,7 @@ const HeaderBanner: FC<Props> = ({
 			};
 
 			onClick = onTemplateMenu;
+			withMenu = true;
 			break;
 		};
 	};
@@ -132,12 +134,15 @@ const HeaderBanner: FC<Props> = ({
 			className={cn.join(' ')}
 			onClick={onClick}
 		>
-			<div className="content">
-				<Label text={label} />
-				{target}
-			</div>
+			<div className="flex">
+				<div className="content">
+					<Label text={label} />
+					{target}
+				</div>
 
-			{action}
+				{action}
+			</div>
+			{withMenu ? <Icon name="arrow/select" color="default" /> : ''}
 		</div>
 	);
 
