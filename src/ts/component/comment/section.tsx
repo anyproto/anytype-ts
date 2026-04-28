@@ -13,12 +13,21 @@ const SCROLL_THRESHOLD = 16;
 const CommentSection = (props: I.CommentSectionProps) => {
 
 	const { rootId, targetId, targetType, readonly, isPopup, messageId } = props;
+	const { space: spaceId } = S.Common;
+	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 	const object = S.Detail.get(rootId, rootId, [ 'discussionId', 'isArchived' ]);
 	const [ localDiscussionId, setLocalDiscussionId ] = useState('');
 	const [ isExpanded, setIsExpanded ] = useState(false);
 	const isHiddenRef = useRef(false);
 	const discussionId = object.discussionId || localDiscussionId || '';
 	const subId = U.Comment.getSubId(targetType, discussionId || targetId);
+	const chatState = discussionId ? S.Chat.getState(subId) : null;
+	const chatMode = (discussionId && spaceview) ? U.Object.getChatNotificationMode(spaceview, discussionId) : I.NotificationMode.All;
+	const messageCounter = Number(chatState?.messageCounter) || 0;
+	const mentionCounter = Number(chatState?.mentionCounter) || 0;
+	const reactionCounter = Number(chatState?.reactionCounter) || 0;
+	const hasUnread = !!(messageCounter || mentionCounter || reactionCounter);
+	const dotIsMuted = (chatMode != I.NotificationMode.All) && !mentionCounter && !reactionCounter;
 	const formRef = useRef<any>(null);
 	const isLoaded = useRef(false);
 	const isBottom = useRef(false);
@@ -566,6 +575,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				};
 			};
 
+			S.Detail.update(rootId, { id: rootId, details: { discussionId: id } }, false);
 			setLocalDiscussionId(id);
 			subscribe(id);
 			callBack(id);
@@ -660,15 +670,40 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		updateSocialVisibility();
 		resize();
 
-		window.setTimeout(() => {
-			const container = U.Dom.getScrollContainer(isPopup);
-			if (container) {
-				container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-			};
+		const unreadOrderId = chatState?.mentionOrderId || chatState?.messageOrderId || '';
+		let unreadMessageId = '';
 
-			window.setTimeout(() => formRef.current?.focus(), 300);
+		if (unreadOrderId) {
+			const posts = S.Comment.getPosts(subId);
+			const post = posts.find(p => p.orderId == unreadOrderId);
+			if (post) {
+				unreadMessageId = post.id;
+			} else {
+				for (const p of posts) {
+					const reply = (S.Comment.getReplies(p.id) || []).find(r => r.orderId == unreadOrderId);
+					if (reply) {
+						unreadMessageId = reply.id;
+						break;
+					};
+				};
+			};
+		};
+
+		window.setTimeout(() => {
+			if (unreadMessageId) {
+				scrollToMessage(unreadMessageId);
+			} else {
+				const container = U.Dom.getScrollContainer(isPopup);
+				const node = sectionRef.current;
+				if (container && node) {
+					const rect = node.getBoundingClientRect();
+					const containerRect = container.getBoundingClientRect();
+					const top = container.scrollTop + (rect.top - containerRect.top);
+					container.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+				};
+			};
 		}, 50);
-	}, [ isPopup, resize ]);
+	}, [ isPopup, resize, chatState, subId, scrollToMessage ]);
 
 	const counterLabel = postCount > 0
 		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`
@@ -712,6 +747,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 					<div className="commentCounter" onClick={onCounterClick}>
 						<Icon name="comment/discussion" className="discussion" size={18} />
 						<span className="count">{counterLabel}</span>
+						{hasUnread ? <div className={[ 'unreadDot', (dotIsMuted ? 'isMuted' : '') ].join(' ')} /> : null}
 					</div>
 					<div className="grad" />
 				</div>

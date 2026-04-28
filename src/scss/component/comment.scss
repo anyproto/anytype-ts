@@ -25,6 +25,9 @@
 	.commentCounter {
 		.icon.discussion { width: 13px; height: 12px; color: var(--color-text-secondary); }
 		.count { @include text-small; color: var(--color-text-secondary); line-height: 18px; font-weight: 500; }
+
+		.unreadDot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-system-accent-50); }
+		.unreadDot.isMuted { background: var(--color-text-tertiary); }
 	}
 }
 

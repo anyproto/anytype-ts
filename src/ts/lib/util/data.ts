@@ -1364,17 +1364,24 @@ class UtilData {
 
 	getWidgetChats(): any[] {
 		const spaceview = U.Space.getSpaceview();
+		const spaceId = S.Common.space;
 
-		return S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.chat)).filter(it => {
-			const counters = S.Chat.getChatCounters(S.Common.space, it.id);
-			const mode = U.Object.getChatNotificationMode(spaceview, it.id);
+		const hasUnread = (id: string): boolean => {
+			const counters = S.Chat.getChatCounters(spaceId, id);
+			const mode = U.Object.getChatNotificationMode(spaceview, id);
 
 			if (mode == I.NotificationMode.Nothing) {
 				return (counters.mentionCounter > 0) || (counters.reactionCounter > 0);
 			};
 
 			return (counters.messageCounter > 0) || (counters.mentionCounter > 0) || (counters.reactionCounter > 0);
-		});
+		};
+
+		const chats = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.chat)).filter(it => hasUnread(it.id));
+		const discussions = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.discussion))
+			.filter(it => it.discussionId && hasUnread(it.discussionId));
+
+		return chats.concat(discussions);
 	};
 
 	getWidgetObjects (rootId: string, withHome: boolean): any[] {

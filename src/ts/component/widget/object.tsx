@@ -246,11 +246,13 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			transition,
 		};
 		const isChat = U.Object.isChatLayout(item.layout);
+		const hasDiscussion = !isChat && !!item.discussionId;
+		const counterId = isChat ? item.id : (hasDiscussion ? item.discussionId : '');
 		const canAdd = canWrite && (realId == J.Constant.widgetId.type) && isAllowedObject(item);
 		const spaceview = U.Space.getSpaceview();
 		const itemCn = [ 'item' ];
 
-		if (isChat && (U.Object.getChatNotificationMode(spaceview, item.id) == I.NotificationMode.Nothing)) {
+		if (counterId && (U.Object.getChatNotificationMode(spaceview, counterId) == I.NotificationMode.Nothing)) {
 			itemCn.push('isMuted');
 		};
 
@@ -284,7 +286,7 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					<ObjectName object={item} withPlural={true} />
 				</div>
 				<div className="side right">
-					{isChat && (!hasUnreadSection || isUnread) ? <ChatCounter chatId={item.id} /> : ''}
+					{counterId && (!hasUnreadSection || isUnread) ? <ChatCounter chatId={counterId} /> : ''}
 					{canAdd ? (
 						<div className="buttons">
 							<Icon

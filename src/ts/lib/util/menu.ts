@@ -1704,7 +1704,7 @@ class UtilMenu {
 		].map(it => ({ ...it, name: translate(`spaceType${it.id}`) }));
 	};
 
-	notificationModeOptions (forSettings?: boolean): I.Option[] {
+	notificationModeOptions (forSettings?: boolean, forDiscussion?: boolean): I.Option[] {
 		const spaceview = U.Space.getSpaceview();
 
 		let ret = [
@@ -1719,6 +1719,9 @@ class UtilMenu {
 			return { ...it, name };
 		});
 
+		if (forDiscussion) {
+			ret = ret.filter(it => it.id != I.NotificationMode.Nothing);
+		} else
 		if (spaceview.isOneToOne) {
 			ret = ret.filter(it => it.id != I.NotificationMode.Mentions);
 		};

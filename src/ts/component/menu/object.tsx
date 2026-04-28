@@ -27,6 +27,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const isRelation = U.Object.isRelationLayout(object.layout);
 	const isType = U.Object.isTypeLayout(object.layout);
 	const isVideoOrAudio = U.Object.isVideoOrAudioLayout(object.layout);
+	const hasDiscussion = !!object.discussionId;
 	const canWrite = U.Space.canMyParticipantWrite();
 	const canDelete = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Delete ]);
 	const route = analytics.route.menuObject;
@@ -144,7 +145,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ])
 		);
 		const allowedEditChat = canWrite && isChat;
-		const allowedNotification = isChat;
+		const allowedNotification = (isChat || hasDiscussion) && canWrite;
 		const allowedCopyMedia = U.Object.isImageLayout(object.layout);
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -172,7 +173,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedNotification) {
 			notification = null;
 		} else
-		if (spaceview.isOneToOne) {
+		if (isChat && spaceview.isOneToOne) {
 			const chatMode = U.Object.getChatNotificationMode(spaceview, object.id);
 			const isMuted = chatMode != I.NotificationMode.All;
 
@@ -367,12 +368,15 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'notification': {
+				const targetId = isChat ? object.id : (object.discussionId || object.id);
+				const mode = U.Object.getChatNotificationMode(spaceview, targetId);
+
 				menuId = 'select';
 				menuParam.data = {
-					value: String(U.Object.getChatNotificationMode(spaceview, object.id) || ''),
-					options: U.Menu.notificationModeOptions(),
+					value: String(mode ?? ''),
+					options: U.Menu.notificationModeOptions(false, hasDiscussion),
 					onSelect: (e, option) => {
-						Action.setChatNotificationMode(space, [ object.id ], Number(option.id), analytics.route.menuObject);
+						Action.setChatNotificationMode(space, [ targetId ], Number(option.id), analytics.route.menuObject);
 						close();
 					},
 				};

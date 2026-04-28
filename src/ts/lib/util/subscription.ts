@@ -455,6 +455,16 @@ class UtilSubscription {
 				noDeps: true,
 				crossSpace: true,
 			},
+			{
+				subId: J.Constant.subId.discussionGlobal,
+				filters: [
+					{ relationKey: 'discussionId', condition: I.FilterCondition.NotEmpty, value: null },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Chat },
+				],
+				keys: J.Relation.chatGlobal.concat([ 'discussionId' ]),
+				noDeps: true,
+				crossSpace: true,
+			},
 		];
 		
 		this.destroyList(list.map(it => it.subId), true, () => {
@@ -570,6 +580,19 @@ class UtilSubscription {
 				keys: this.chatRelationKeys(),
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Chat },
+				],
+				sorts: [
+					{ relationKey: 'lastMessageDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				noDeps: true,
+			},
+			{
+				subId: this.spaceSubId(J.Constant.subId.discussion),
+				keys: this.chatRelationKeys().concat([ 'discussionId' ]),
+				filters: [
+					{ relationKey: 'discussionId', condition: I.FilterCondition.NotEmpty, value: null },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotEqual, value: I.ObjectLayout.Chat },
 				],
 				sorts: [
 					{ relationKey: 'lastMessageDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },

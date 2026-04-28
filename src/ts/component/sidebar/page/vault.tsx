@@ -215,7 +215,15 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 	const getItems = (skipUi?: boolean) => {
 		let items = U.Menu.getVaultItems().map(it => {
 			if (it.lastMessage) {
-				it.chat = S.Detail.get(J.Constant.subId.chatGlobal, it.lastMessage.chatId, J.Relation.chatGlobal, true);
+				const lastChatId = it.lastMessage.chatId;
+				const chat = S.Detail.get(J.Constant.subId.chatGlobal, lastChatId, J.Relation.chatGlobal, true);
+
+				if (!chat._empty_) {
+					it.chat = chat;
+				} else {
+					const parent = S.Record.getRecords(J.Constant.subId.discussionGlobal).find(r => r.discussionId == lastChatId);
+					it.chat = parent || chat;
+				};
 			};
 			return it;
 		});
