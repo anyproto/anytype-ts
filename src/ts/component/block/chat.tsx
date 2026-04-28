@@ -1511,7 +1511,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				</div>
 				<Icon
 					className="unpin"
-					name="menu/action/unpin"
+					name="menu/action/clear"
 					onClick={onUnpinClick}
 					tooltipParam={{ text: translate('commonUnpin') }}
 				/>
