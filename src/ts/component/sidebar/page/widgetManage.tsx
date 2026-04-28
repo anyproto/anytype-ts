@@ -53,11 +53,6 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 			return;
 		};
 
-		const isFixed = (id: any) => I.FIXED_WIDGET_SECTIONS.includes(Number(id));
-		if (isFixed(active.id) || isFixed(over.id)) {
-			return;
-		};
-
 		const oldIndex = widgetSections.findIndex(it => String(it.id) == String(active.id));
 		const newIndex = widgetSections.findIndex(it => String(it.id) == String(over.id));
 
@@ -149,7 +144,7 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 				{...(isFixed ? {} : attributes)}
 				{...(isFixed ? {} : listeners)}
 			>
-				{!isFixed ? <Icon className="dnd" name="common/dnd" /> : ''}
+				<Icon className="dnd" name="common/dnd" />
 				<Label text={section.name} />
 				{!isFixed ? (
 					<Icon

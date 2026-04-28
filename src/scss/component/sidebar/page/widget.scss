@@ -156,7 +156,6 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 	.manageItem.isSection {
 		> .label { color: var(--color-text-secondary); }
 		&:hover { background: var(--color-shape-highlight-light); }
-		&.isFixed { padding-left: 24px; }
 	}
 
 	.buttons { display: flex; flex-direction: column; }
