@@ -69,7 +69,7 @@ const Data = {
 						highlightElements: [ chatEl ],
 						vertical: I.MenuDirection.Center,
 						horizontal: I.MenuDirection.Right,
-						offsetX: U.Dom.contentWidth(U.Dom.select(chatEl)) + 8,
+						offsetX: () => U.Dom.contentWidth(U.Dom.select(chatEl)) + 8,
 					}
 				},
 				{
@@ -90,7 +90,7 @@ const Data = {
 						element: typeSection,
 						highlightElements: [ typeSection ],
 						vertical: I.MenuDirection.Center,
-						offsetX: U.Dom.contentWidth(U.Dom.select(typeSection)) + 8,
+						offsetX: () => U.Dom.contentWidth(U.Dom.select(typeSection)) + 8,
 					}
 				},
 			],
@@ -108,9 +108,7 @@ const Data = {
 			relation: '#header #button-header-relation',
 		};
 
-		const getOffset = (el: string) => {
-			return U.Dom.contentWidth(U.Dom.select(elements[el])) + 8;
-		};
+		const getOffset = (el: string) => () => U.Dom.contentWidth(U.Dom.select(elements[el])) + 8;
 
 		const channels = U.Space.getList().filter(it => it.isAccountActive);
 
