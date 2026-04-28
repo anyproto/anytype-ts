@@ -1345,6 +1345,7 @@ class UtilData {
 		const allowedTypes = [
 			J.Constant.typeKey.page,
 			J.Constant.typeKey.task,
+			J.Constant.typeKey.collection,
 		];
 
 		return S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
