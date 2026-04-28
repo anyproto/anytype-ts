@@ -29,7 +29,7 @@
 			.info .name { color: var(--color-text-secondary); }
 		}
 
-		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 6px; transition: background $transitionCommon; }
+		.cell { @include text-common; width: 70%; position: relative; padding: 5px 8px; border-radius: 8px; transition: background $transitionCommon; }
 		.cell {
 			&.canEdit:hover { background: var(--color-shape-highlight-light); }
 		
@@ -50,7 +50,7 @@
 
 			&.isEditing { padding: 0px; }
 			&.isEditing {
-				.cellContent { position: relative; height: auto !important; min-height: 32px; border-radius: 16px; }
+				.cellContent { position: relative; height: auto !important; min-height: 32px; border-radius: 8px; }
 				.cellContent.isName .input { height: 20px; line-height: 20px; width: calc(100% - 24px); }
 				.icon.clear { right: 6px; top: 6px; }
 
@@ -62,7 +62,7 @@
 						.tagRemove { top: 50%; transform: translateY(-50%); }
 					}
 
-					.cellContent { width: 100%; border: 0px; border-radius: 16px; line-height: 0px; }
+					.cellContent { width: 100%; border: 0px; border-radius: 8px; line-height: 0px; }
 					.over { width: calc(100% - 26px); }
 				}
 
