@@ -19,11 +19,12 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 		products.unshift(current);
 	};
 
+	const hasLifetime = products.some(it => (it.pricesLifetime || []).length > 0);
 	const periodOptions = [
 		{ id: I.MembershipPeriod.Monthly, key: 'isMonthly', analyticsType: 'Monthly', label: translate('popupSettingsMembershipSwitchMonthly') },
 		{ id: I.MembershipPeriod.Yearly, key: 'isAnnual', analyticsType: 'Annual', label: translate('popupSettingsMembershipSwitchAnnual') },
-		{ id: I.MembershipPeriod.Lifetime, key: 'isLifetime', analyticsType: 'Lifetime', label: translate('popupSettingsMembershipSwitchLifetime') },
-	];
+		hasLifetime ? { id: I.MembershipPeriod.Lifetime, key: 'isLifetime', analyticsType: 'Lifetime', label: translate('popupSettingsMembershipSwitchLifetime') } : null,
+	].filter(it => it);
 	const activeOption = periodOptions.find(it => it.id == period) || periodOptions[1];
 
 	const onSwitch = (option: typeof periodOptions[number]) => {
