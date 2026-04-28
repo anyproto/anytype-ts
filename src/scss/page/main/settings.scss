@@ -135,8 +135,7 @@
         }
     }
 
-    > .pageSettingsSpaceIndex,
-    > .pageSettingsSpaceIndexEmpty {
+    > .pageSettingsSpaceIndex {
         .spaceHeader { position: relative; margin: 0px 0px 20px 0px; padding: 0px 44px; display: flex; flex-direction: column; align-items: center; width: 100%; }
         .spaceHeader {
             .spaceType { margin-bottom: 8px; @include text-small; color: var(--color-text-secondary); }

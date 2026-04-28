@@ -1509,7 +1509,7 @@ class Keyboard {
 		let title = titles[action];
 
 		if (action == 'settings') {
-			if ([ 'spaceIndex', 'spaceIndexEmpty' ].includes(id)) {
+			if (id == 'spaceIndex') {
 				title = translate('pageSettingsSpaceGeneralTab');
 			} else
 			if (id == 'account') {

@@ -401,7 +401,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			const home = U.Space.getDashboard();
 			if (home && (object.id == home.id)) {
-				Action.openSettings('spaceIndexEmpty', route);
+				U.Router.go('/main/void/empty', {});
 			} else {
 				keyboard.onBack(isPopup);
 			};

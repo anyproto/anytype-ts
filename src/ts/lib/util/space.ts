@@ -29,11 +29,12 @@ class UtilSpace {
 			home = this.getLastObject();
 		};
 
-		if (!home) {
-			home = { layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' };
+		if (home) {
+			U.Object.openRoute(home, param);
+		} else {
+			U.Router.go('/main/void/empty', param);
 		};
 
-		U.Object.openRoute(home, param);
 		S.Common.setLeftSidebarState('vault', 'widget');
 
 		const dataLeft = sidebar.getData(I.SidebarPanel.Left);

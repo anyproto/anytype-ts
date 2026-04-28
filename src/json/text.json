@@ -603,6 +603,7 @@
 	"pageMainVoidErrorTitle": "You're all out of channels",
 	"pageMainVoidErrorText": "Looks like you've cleaned the house. Ready to start fresh?<br/>Create a new channel to get things rolling!",
 	"pageMainVoidSelectText": "No channels opened. Select one on the left panel or create new.",
+	"pageMainVoidEmptyText": "Select an object from the sidebar or create a new one",
 
 	"pageMainDateEmptyText" : "There is nothing here for this date yet",
 

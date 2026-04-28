@@ -69,7 +69,6 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
-	spaceIndexEmpty:	 PageSpaceIndex,
 	spaceStorage:		 PageSpaceStorage,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
@@ -103,11 +102,6 @@ const PageMainSettingsIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 			};
 
 			switch (id) {
-				case 'spaceIndexEmpty': {
-					page = 'widget';
-					break;
-				};
-
 				case 'set': {
 					page = 'settings/types';
 					break;
@@ -126,16 +120,6 @@ const PageMainSettingsIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 		};
 
 		if (page) {
-			if (id == 'spaceIndexEmpty') {
-				const dataLeft = sidebar.getData(I.SidebarPanel.Left);
-				const dataSubLeft = sidebar.getData(I.SidebarPanel.SubLeft);
-
-				if ((dataLeft.isClosed && dataLeft.savedClosed) || dataSubLeft.savedClosed) {
-					sidebar.rightPanelClose(isPopup, false);
-					return;
-				};
-			};
-
 			sidebar.leftPanelSubPageOpen(page, false, false);
 		};
 

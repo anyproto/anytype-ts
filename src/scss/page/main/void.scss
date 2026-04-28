@@ -30,6 +30,10 @@
 			.iconWrapper { width: 56px; height: 56px; margin: 0px auto 16px; }
 			.label { width: 242px; color: var(--color-text-secondary); }
 		}
+
+		&.voidEmpty {
+			.label { width: 242px; color: var(--color-text-secondary); }
+		}
 	}
 
 	@media (max-width: 1128px) {
