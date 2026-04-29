@@ -76,67 +76,42 @@ class Dispatcher {
 	 * Sets up listeners for data, status, and end events with automatic reconnection.
 	 * Requires authentication token to be set in S.Auth.token.
 	 */
-	startStream (): Promise<void> {
-		return new Promise((resolve, reject) => {
-			if (!S.Auth.token) {
-				console.error('[Dispatcher.startStream] No token');
-				reject(new Error('No token'));
-				return;
-			};
+	startStream () {
+		if (!S.Auth.token) {
+			console.error('[Dispatcher.startStream] No token');
+			return;
+		};
 
-			window.clearTimeout(this.timeoutStream);
+		window.clearTimeout(this.timeoutStream);
 
-			this.stopStream();
+		this.stopStream();
 
-			this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, null);
+		this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, null);
 
-			let isResolved = false;
-			const finish = (source: string) => {
-				if (!isResolved) {
-					console.log(`[Dispatcher.startStream] Resolved by ${source}`);
-					isResolved = true;
-					resolve();
-				}
-			};
+		this.stream.on('data', (event) => {
+			this.eventBuffer.push({ event, skipDebug: false });
 
-			this.stream.on('metadata', () => finish('metadata'));
+			if (!this.flushScheduled) {
+				this.flushScheduled = true;
 
-			// Fallback in case metadata never fires on grpc-web proxy
-			window.setTimeout(() => finish('timeout_fallback'), 150);
-
-			this.stream.on('data', (event) => {
-				finish('data');
-				this.eventBuffer.push({ event, skipDebug: false });
-
-				if (!this.flushScheduled) {
-					this.flushScheduled = true;
-
-					if (S.Common.isActiveTab) {
-						this.rafId = requestAnimationFrame(() => this.flushEvents());
-					} else {
-						this.flushTimerId = window.setTimeout(() => this.flushEvents(), 100);
-					};
-				};
-			});
-
-			this.stream.on('status', (status) => {
-				if (status.code !== 0) {
-					if (!isResolved) {
-						isResolved = true;
-						reject(new Error(`Stream status error: ${status.code}`));
-					}
-					console.error('[Dispatcher.stream] Restarting', status);
-					this.reconnect();
+				if (S.Common.isActiveTab) {
+					this.rafId = requestAnimationFrame(() => this.flushEvents());
 				} else {
-					finish('status');
-				}
-			});
+					this.flushTimerId = window.setTimeout(() => this.flushEvents(), 100);
+				};
+			};
+		});
 
-			this.stream.on('end', () => {
-				finish('end');
-				console.error('[Dispatcher.stream] end, restarting');
+		this.stream.on('status', (status) => {
+			if (status.code) {
+				console.error('[Dispatcher.stream] Restarting', status);
 				this.reconnect();
-			});
+			};
+		});
+
+		this.stream.on('end', () => {
+			console.error('[Dispatcher.stream] end, restarting');
+			this.reconnect();
 		});
 	};
 
@@ -181,7 +156,7 @@ class Dispatcher {
 
 		window.clearTimeout(this.timeoutStream);
 		this.timeoutStream = window.setTimeout(() => {
-			void this.startStream();
+			this.startStream();
 			this.reconnects++;
 		}, t * 1000);
 	};
