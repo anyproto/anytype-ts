@@ -206,7 +206,7 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 		resize,
 	}));
 
-	const switchCn = [ 'switchWrapper', activeOption.key ];
+	const switchCn = [ 'switchWrapper', activeOption.key, `c${periodOptions.length}` ];
 
 	return (
 		<div ref={nodeRef} className="membershipIntro">
