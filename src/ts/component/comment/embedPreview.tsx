@@ -1,13 +1,16 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, Suspense } from 'react';
 import DOMPurify from 'dompurify';
-import { Icon } from 'Component';
+import { Icon, Loader } from 'Component';
 import * as I from 'Interface';
+
+const MediaExcalidraw = React.lazy(() => import('Component/util/media/excalidraw'));
 
 interface Props {
 	processor: I.EmbedProcessor;
 	text: string;
 	onEdit?: () => void;
 	onRemove?: () => void;
+	onChange?: (text: string) => void;
 };
 
 let _katex: any = null;
@@ -24,11 +27,14 @@ const getKatex = (): any => {
 	return null;
 };
 
-const EmbedPreview = ({ processor, text, onEdit, onRemove }: Props) => {
+const EmbedPreview = ({ processor, text, onEdit, onRemove, onChange }: Props) => {
 	const iframeRef = useRef<HTMLIFrameElement>(null);
+	const saveTimeoutRef = useRef<number>(0);
 	const [ latexHtml, setLatexHtml ] = useState('');
 	const processorName = I.EmbedProcessor[processor] || 'Embed';
 	const isLatex = processor === I.EmbedProcessor.Latex;
+	const isExcalidraw = processor === I.EmbedProcessor.Excalidraw;
+	const allowEmptyContent = U.Embed.allowEmptyContent(processor);
 	const hasContent = !!text;
 
 	useEffect(() => {
@@ -57,7 +63,7 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove }: Props) => {
 	}, [ text, isLatex ]);
 
 	useEffect(() => {
-		if (isLatex || !hasContent) {
+		if (isLatex || isExcalidraw || !hasContent) {
 			return;
 		};
 
@@ -154,7 +160,36 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove }: Props) => {
 
 	let content: React.ReactNode = null;
 
-	if (!hasContent) {
+	if (isExcalidraw) {
+		let data: any = null;
+		try {
+			data = JSON.parse(text || '{}');
+		} catch (e) {
+			console.warn('Invalid Excalidraw data:', e);
+			data = {};
+		};
+
+		content = (
+			<div className="excalidrawWrap">
+				<Suspense fallback={<Loader />}>
+					<MediaExcalidraw
+						data={data}
+						onChange={(elements, appState) => {
+							if (!onChange) {
+								return;
+							};
+
+							window.clearTimeout(saveTimeoutRef.current);
+							saveTimeoutRef.current = window.setTimeout(() => {
+								onChange(JSON.stringify({ elements, appState }));
+							}, 1000);
+						}}
+					/>
+				</Suspense>
+			</div>
+		);
+	} else
+	if (!hasContent && !allowEmptyContent) {
 		content = (
 			<div className="empty" onClick={onEdit || undefined}>
 				<span className="processorName">{processorName}</span>
@@ -174,12 +209,15 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove }: Props) => {
 		);
 	};
 
+	const showActions = (hasContent || allowEmptyContent) && (onEdit || onRemove);
+	const showEdit = onEdit && !isExcalidraw;
+
 	return (
 		<div className={cn.join(' ')} contentEditable={false}>
 			{content}
-			{(hasContent && (onEdit || onRemove)) ? (
+			{showActions ? (
 				<div className="embedActions">
-					{onEdit ? <Icon name="common/edit" className="edit" onClick={onEdit} /> : ''}
+					{showEdit ? <Icon name="common/edit" className="edit" onClick={onEdit} /> : ''}
 					{onRemove ? <Icon name="menu/action/remove" className="remove" onClick={onRemove} /> : ''}
 				</div>
 			) : ''}

@@ -386,6 +386,12 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const openEmbedInput = useCallback((processor: I.EmbedProcessor, existingText?: string) => {
 		const processorName = I.EmbedProcessor[processor] || 'Embed';
 
+		if (U.Embed.allowEmptyContent(processor)) {
+			editorRef.current?.insertEmbed(processor, '');
+			editorRef.current?.focus();
+			return;
+		};
+
 		const el = formRef.current;
 		if (!el) {
 			return;

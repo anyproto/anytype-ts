@@ -357,6 +357,11 @@ const DraggableDecorator = ({ nodeKey, children }: { nodeKey: string; children: 
 				return;
 			};
 
+			// Skip drag when interacting with content that owns its own pointer behavior (e.g. Excalidraw canvas).
+			if ((e.target as HTMLElement).closest('.mediaExcalidraw')) {
+				return;
+			};
+
 			e.preventDefault();
 
 			const editorEl = el.closest('.commentEditorWrap') as HTMLElement;
@@ -715,6 +720,10 @@ const EmbedDecorator = ({ nodeKey, processor, text }: { nodeKey: string; process
 		});
 	}, [ editor, nodeKey ]);
 
+	const onChange = useCallback((v: string) => {
+		editor.dispatchCommand(UPDATE_EMBED_COMMAND, { nodeKey, text: v });
+	}, [ editor, nodeKey ]);
+
 	return (
 		<DraggableDecorator nodeKey={nodeKey}>
 			<EmbedPreview
@@ -722,6 +731,7 @@ const EmbedDecorator = ({ nodeKey, processor, text }: { nodeKey: string; process
 				text={text}
 				onEdit={onEdit}
 				onRemove={onRemove}
+				onChange={onChange}
 			/>
 		</DraggableDecorator>
 	);
