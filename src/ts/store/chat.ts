@@ -491,18 +491,16 @@ class ChatStore {
 		const parentId = this.discussionParentMap.get(spaceId)?.get(chatId);
 		if (parentId) {
 			const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
-			if (!parent._empty_) {
-				if (parent.isArchived) {
-					return ret;
-				};
-				ret.messageCounter = Number(parent.unreadMessageCount) || 0;
-				ret.mentionCounter = Number(parent.unreadMentionCount) || 0;
+			if (parent._empty_ || parent.isArchived) {
 				return ret;
 			};
+			ret.messageCounter = Number(parent.unreadMessageCount) || 0;
+			ret.mentionCounter = Number(parent.unreadMentionCount) || 0;
+			return ret;
 		};
 
 		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
-		if (!chat._empty_ && chat.isArchived) {
+		if (chat._empty_ || chat.isArchived) {
 			return ret;
 		};
 
@@ -565,17 +563,17 @@ class ChatStore {
 		const parentId = this.discussionParentMap.get(spaceId)?.get(chatId);
 		if (parentId) {
 			const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'isArchived' ]);
-			if (!parent._empty_) {
-				return !!parent.isArchived;
+			if (parent._empty_) {
+				return true;
 			};
+			return !!parent.isArchived;
 		};
 
 		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
-		if (!chat._empty_) {
-			return !!chat.isArchived;
+		if (chat._empty_) {
+			return true;
 		};
-
-		return false;
+		return !!chat.isArchived;
 	};
 
 	/**
