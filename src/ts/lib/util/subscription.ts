@@ -588,6 +588,11 @@ class UtilSubscription {
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
+				onSubscribe: message => {
+					(message.records || []).forEach(it => {
+						S.Chat.discussionParentMapSet(it.spaceId, it.id, it.discussionId);
+					});
+				},
 			},
 			{
 				subId: this.spaceSubId(J.Constant.subId.recentEditMe),
