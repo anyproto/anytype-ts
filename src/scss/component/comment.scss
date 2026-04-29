@@ -3,31 +3,35 @@
 .socialBlockWrap { position: sticky; bottom: 0; height: 0; z-index: 2; }
 
 .socialBlock {
-	position: absolute; bottom: 0; width: 100%; height: 140px;
-	display: flex; justify-content: center; align-items: flex-end;
-	padding: 0px 0px 12px 0px;
-	background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.04) 20%, rgba(255, 255, 255, 0.18) 40%, rgba(255, 255, 255, 0.50) 60%, rgba(255, 255, 255, 0.82) 80%, rgba(255, 255, 255, 0.96) 100%);
-	transition: opacity 0.15s ease;
+	position: absolute; bottom: 0px; width: 100%; height: 88px; display: flex; justify-content: center; 
+	align-items: flex-end; padding: 0px 0px 12px 0px; transition: opacity 0.15s ease;
 }
 .socialBlock {
 	&.isHidden { opacity: 0; pointer-events: none; }
 
+	.grad { 
+		position: absolute; top: 0px; width: 100%; height: 100%; 
+		background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-bg-primary) 68.18%);
+		pointer-events: none;
+	}
+
 	.commentCounter {
-		display: inline-flex; align-items: center; gap: 0px 4px;
-		padding: 7px 10px 7px 8px; border-radius: 18px;
-		background: var(--color-text-white60);
-		backdrop-filter: blur(10px);
-		-webkit-backdrop-filter: blur(10px);
-		transition: background 0.15s ease, opacity 0.15s ease;
-		user-select: none;
+		display: inline-flex; align-items: center; gap: 0px 4px; padding: 7px 10px 7px 8px; border-radius: 18px;
+		background: var(--color-text-white60); backdrop-filter: blur(10px); transition: background 0.15s ease, opacity 0.15s ease;
+		user-select: none; z-index: 1;
 	}
 	.commentCounter:hover { background: var(--color-shape-secondary); }
 	.commentCounter.isFixed { position: fixed; bottom: 18px; }
 	.commentCounter {
 		.icon.discussion { width: 13px; height: 12px; color: var(--color-text-secondary); }
 		.count { @include text-small; color: var(--color-text-secondary); line-height: 18px; font-weight: 500; }
+		.unreadDot { width: 6px; height: 6px; border-radius: 50%; background-color: var(--color-system-accent-50); margin-left: 2px; }
 	}
 }
+
+/* ==========================================================================
+   Comment section — shell
+   ========================================================================== */
 
 .commentSection {
 	display: flex; flex-direction: column; flex: 1 1 auto;
@@ -38,18 +42,23 @@
 
 	&.isVisible {
 		position: relative; z-index: 3;
-		padding-top: 16px;
-		border-top: 1px solid var(--color-shape-secondary);
+		padding-top: 16px; border-top: 1px solid var(--color-shape-secondary);
 	}
 
+	/* --- Title --- */
+	.commentTitle {
+		@include text-paragraph; font-weight: 600; color: var(--color-text-primary);
+		margin: 0px 0px 14px 0px;
+	}
+
+	/* --- Posts container --- */
 	.commentBody { flex: 1 1 auto; }
 	.commentPosts { display: flex; flex-direction: column; gap: 16px 0px; margin: 0px 0px 16px 0px; }
 
+	/* --- Shared: comment header (avatar + name + date, plus hover actions) --- */
 	.head { display: flex; align-items: center; justify-content: space-between; }
 	.head {
-		.side.left {
-			display: flex; align-items: center; gap: 0px 8px; min-width: 0;
-		}
+		.side.left { display: flex; align-items: center; gap: 0px 8px; min-width: 0; }
 		.side.left {
 			.iconObject { flex-shrink: 0; }
 			.author { @include text-small; font-weight: 500; line-height: 18px; }
@@ -64,42 +73,48 @@
 	.hoverActions { opacity: 0; transition: opacity 0.15s ease; }
 	.contentWrap:hover, .contentWrap.hover { .hoverActions { opacity: 1; } }
 
+	/* --- Shared: edit-mode left accent bar --- */
+	.commentPost.isEditing .contentWrap::before,
+	.commentReply.isEditing .contentWrap::before {
+		content: ""; position: absolute; left: -8px; top: 0px; bottom: 0px;
+		width: 4px; border-radius: 2px; background: var(--color-system-accent-25);
+	}
+
+	/* --- Shared: indented content (aligned with name, 20px avatar + 8px gap) --- */
+	.commentReply .content,
+	.commentReply .reactions,
+	.commentReply .commentAttachments { margin-left: 28px; }
+
+/* ==========================================================================
+   Top-level post
+   ========================================================================== */
+
 	.commentPost {
-		padding: 12px 16px; border-radius: 16px; display: flex; flex-direction: column;
-		gap: 0px; position: relative;
-		background: var(--color-shape-highlight-light);
+		display: flex; flex-direction: column; gap: 0px; position: relative;
+		border-radius: 16px; background: var(--color-shape-highlight-light);
 		transition: background-color 0.3s ease;
 	}
 	.commentPost {
+		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
+
+		.contentWrap { position: relative; padding: 16px; }
+		.head { margin: 0px 0px 2px 0px; }
 		.content, .content * { user-select: text !important; }
 		.content { word-break: break-word; }
 
-		&.isHighlighted { background-color: var(--color-shape-highlight-medium); }
-
-		.head { margin: 0px 0px 2px 0px; }
-
 		.hoverActions { display: flex; align-items: center; gap: 0px 4px; }
-		.hoverActions {
-			.icon.withBackground { width: 24px; height: 24px; }
-		}
-
-		.replyList { width: 100%; margin: 0px; padding: 0px; }
-
-		.replyFormWrap { width: 100%; margin: 0px; padding: 12px 0px 0px 0px; }
-		.replyFormWrap {
-			.commentForm { border-radius: 14px; background-color: var(--color-shape-secondary); }
-			.commentForm .contentArea { padding: 8px 12px; }
-		}
+		.hoverActions { .icon.withBackground { width: 24px; height: 24px; } }
 
 		.reactions {
-			padding: 8px 0px 0px 0px; display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; 
-			align-items: center;
+			padding: 8px 0px 0px 0px;
+			display: flex; flex-wrap: wrap; flex-direction: row; gap: 8px; align-items: center;
 		}
 		.reactions {
 			.reaction {
-				display: flex; flex-direction: row; border-radius: 14px; gap: 0px 4px; align-items: center;
+				display: flex; flex-direction: row; align-items: center; gap: 0px 4px;
+				border-radius: 14px; padding: 5px 6px; flex-shrink: 0;
 				@include text-small; font-weight: 500;
-				background-color: var(--color-shape-highlight-medium); padding: 5px 6px; flex-shrink: 0;
+				background-color: var(--color-shape-highlight-medium);
 			}
 			.reaction:hover { background-color: var(--color-shape-highlight-dark); }
 			.reaction.isSelf { color: var(--color-text-inversion); background-color: var(--color-system-accent-100); }
@@ -108,21 +123,50 @@
 		}
 	}
 
-	.commentReply { padding: 24px 0px 0px 0px; position: relative; transition: background-color 0.3s ease; }
+/* ==========================================================================
+   Reply input (collapsed quick-reply at bottom of last post)
+   ========================================================================== */
+
+	.replyInput {
+		display: flex; align-items: flex-start; gap: 0px 8px;
+		padding: 16px; border-top: 1px solid var(--color-shape-primary);
+		user-select: none; color: var(--color-text-secondary);
+		transition: color 0.15s ease;
+	}
+	.replyInput:hover { color: var(--color-text-primary); }
+	.replyInput {
+		.iconObject { flex-shrink: 0; }
+		.replyInputLabel { line-height: 20px; }
+	}
+
+/* ==========================================================================
+   Reply form (expanded state inside a post)
+   ========================================================================== */
+
+	.replyFormWrap {
+		width: 100%; margin: 0px; padding: 16px;
+		border-top: 1px solid var(--color-shape-primary);
+	}
+	.replyFormWrap {
+		.commentForm { background: none; max-height: none; overflow: visible; }
+		.commentForm .contentArea { padding: 0px; overflow: visible; }
+		.commentForm .formToolbar { padding: 8px 0px 0px 0px; }
+	}
+
+/* ==========================================================================
+   Nested replies (inside a post)
+   ========================================================================== */
+
 	.commentReply {
-		&::before { content: ""; position: absolute; top: 12px; left: 28px; width: calc(100% - 28px); height: 1px; background-color: var(--color-shape-highlight-medium); }
-		&:first-child::before { left: 0px; width: 100%; }
+		position: relative; border-top: 1px solid var(--color-shape-primary);
+		transition: background-color 0.3s ease;
+	}
+	.commentReply {
 		&.isHighlighted { background-color: var(--color-shape-highlight-medium); border-radius: 8px; }
 
-		.commentAttachments,
-		.commentForm { margin-left: 28px; }
-
-		.content { margin: 0px 0px 0px 28px; line-height: 20px; word-break: break-word; }
-		.content {
-			&, * { user-select: text !important; }
-		}
-
-		.reactions { margin: 0px 0px 0px 28px; }
+		.contentWrap { position: relative; padding: 16px; }
+		.content { line-height: 20px; word-break: break-word; }
+		.content, .content * { user-select: text !important; }
 
 		.hoverActions { display: flex; align-items: center; gap: 0px 2px; }
 		.hoverActions {
@@ -170,6 +214,14 @@
 			max-height: 280px; overflow: hidden;
 
 			.formToolbar { margin-left: 0px; }
+		}
+
+		&.isReply, &.isEdit {
+			.contentArea { display: flex; align-items: flex-start; gap: 0px 8px; }
+			.contentArea {
+				> .iconObject { flex-shrink: 0; margin-top: 0px; }
+				.commentEditorWrap { flex: 1 1 auto; min-width: 0; }
+			}
 		}
 
 		.contentArea { padding: 10px 12px; overflow-y: auto; flex: 1 1 auto; }
@@ -225,6 +277,7 @@
 	.commentEditor-italic { font-style: italic; }
 	.commentEditor-underline { text-decoration: underline; }
 	.commentEditor-strikethrough { text-decoration: line-through; }
+	.commentEditor-strikethrough.commentEditor-underline { text-decoration: line-through underline; }
 	.commentEditor-code {
 		display: inline; font-family: 'Plex'; border-radius: 4px;
 		background: var(--color-shape-highlight-medium); padding: 0px 4px;

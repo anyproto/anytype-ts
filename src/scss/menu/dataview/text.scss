@@ -5,7 +5,7 @@
 	.menu.menuDataviewText {
 		#input {
 			-webkit-user-modify: read-write-plaintext-only; white-space: normal; z-index: 1; @include text-common; overflow: auto; height: 100%; width: 100%;
-			user-select: text;
+			user-select: text; background: none; border-radius: 0px; min-height: 22px;
 		}
 		#input.input { border: 0px; padding: 0px; }
 
@@ -18,14 +18,13 @@
 		}
 
 		&.withTitle {
-			.inputWrapper { margin: 0px 8px; padding: 3px 8px; border-radius: 6px; position: relative; }
+			.inputWrapper { margin: 0px 8px; padding: 3px 8px; border-radius: 6px; position: relative; display: flex; align-items: center; }
 			.inputWrapper {
 				.icon.clear {
 					display: none; position: absolute; right: 2px; top: 2px; width: 24px !important; height: 24px !important;
 				}
 
-				&:not(.focused) { cursor: default; padding-right: 28px; }
-				&:not(.focused):hover { background: var(--color-shape-highlight-medium); }
+				&:not(.focused) { cursor: default; }
 				&:not(.focused):hover {
 					.icon.clear { display: block; }
 				}
@@ -51,14 +50,6 @@
 			&.show {
 				#input { box-shadow: 0px 0px 0px 2px var(--color-system-accent-50); }
 			}
-		}
-	}
-}
-
-html.platformWindows {
-	.menus {
-		.menu.menuDataviewText {
-			#input { overflow: overlay; }
 		}
 	}
 }

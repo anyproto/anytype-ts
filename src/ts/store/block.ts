@@ -1152,29 +1152,33 @@ class BlockStore {
 	};
 
 	getWidgetsForTarget (id: string): I.Block[] {
-		const { widgets } = this;
-		const childrenIds = this.getChildrenIds(widgets, widgets); // Subscription
+		return this.getWidgetsForTargetIn(id, this.widgets);
+	};
 
-		const list = this.getBlocks(widgets, (block: I.Block) => {
+	getWidgetsForTargetIn (id: string, rootId: string): I.Block[] {
+		if (!rootId) {
+			return [];
+		};
+
+		this.getChildrenIds(rootId, rootId); // Subscription
+
+		return this.getBlocks(rootId, (block: I.Block) => {
 			if (!block.isWidget()) {
 				return false;
 			};
 
-			const childrenIds = this.getChildrenIds(widgets, block.id);
-			if (!childrenIds.length) {
+			const innerIds = this.getChildrenIds(rootId, block.id);
+			if (!innerIds.length) {
 				return false;
 			};
 
-			const child = this.getLeaf(widgets, childrenIds[0]);
+			const child = this.getLeaf(rootId, innerIds[0]);
 			if (!child) {
 				return false;
 			};
 
-			const target = child.getTargetObjectId();
-			return id == target;
+			return id == child.getTargetObjectId();
 		});
-
-		return list;
 	};
 
 };

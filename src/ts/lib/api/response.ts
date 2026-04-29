@@ -101,6 +101,14 @@ export const DebugRunProfiler = (response: any) => {
 	};
 };
 
+export const DebugExportReport = (response: any) => {
+	return {
+		path: response.path,
+		summary: response.summary,
+		lastModifiedTs: response.lastModifiedTs,
+	};
+};
+
 export const Export = (response: any) => {
 	return {
 		path: response.path,
@@ -692,6 +700,12 @@ export const ChatSubscribeToMessagePreviews = (response: any) => {
 export const ChatSearch = (response: any) => {
 	return {
 		list: (response.results || []).map(Mapper.From.ChatSearchResult),
+	};
+};
+
+export const ChatGetPinnedMessages = (response: any) => {
+	return {
+		messages: (response.messages || []).map(Mapper.From.ChatMessage),
 	};
 };
 

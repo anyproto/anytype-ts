@@ -47,26 +47,6 @@
 		.tab.active { color: var(--color-text-primary); border-color: var(--color-text-primary); }
 	}
 
-	.headerBanner {
-		position: relative; display: flex; align-items: center; gap: 0px 16px; height: 32px; padding: 6px 10px; @include text-small; border-radius: 6px; background: var(--color-shape-tertiary);
-		-webkit-app-region: no-drag; 
-	}
-	.headerBanner {
-		.label { @include text-overflow-nw; }
-
-		.content { display: flex; gap: 0px 4px; align-items: center; }
-		.content {
-			.typeName { display: flex; gap: 0px 4px; flex-wrap: nowrap; }
-			.typeName {
-				.name { font-weight: 600; }
-			}
-		}
-		.action { font-weight: 500; }
-	}
-	.headerBanner.withMenu { padding-right: 24px; }
-	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; }
-	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
-
 	.icon { -webkit-app-region: no-drag; }
 	.icon.commonExpand { display: none; }
 
@@ -92,6 +72,8 @@
 			background-color: var(--color-red); border: 3px solid var(--color-bg-primary);
 		}
 	}
+
+	@import "./headerBanner.scss";
 }
 .header.isSmall {
 	.path, .headerBanner { visibility: hidden; overflow: hidden; width: 0px; }

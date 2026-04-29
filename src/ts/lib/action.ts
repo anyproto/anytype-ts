@@ -487,10 +487,9 @@ class Action {
 		};
 
 		ids.forEach((id) => {
-			const object = S.Detail.get(rootId, id);
-
-			if (U.Object.isTypeLayout(object.layout)){
-				types.push(object);
+			const type = S.Record.getTypeById(id);
+			if (type) {
+				types.push(type);
 			};
 		});
 
@@ -697,33 +696,13 @@ class Action {
 	};
 
 	/**
-	 * Creates a new space with the given UX type and route.
-	 * @param {I.SpaceType} spaceType - The UX type for the new space.
+	 * Opens the space creation popup. Space type (personal vs shared) is
+	 * decided inside the popup based on whether the user selects members.
 	 * @param {string} route - The route context for analytics.
 	 */
-	createSpace (type: I.SpaceCreateType, route: string) {
-		if (type == I.SpaceCreateType.Group) {
-			const mySharedSpaces = U.Space.getMySharedSpacesList();
-			const { sharedSpacesLimit } = U.Space.getProfile();
-
-			if (sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit)) {
-				S.Popup.open('confirm', {
-					data: {
-						iconParam: { name: 'popup/header/warning', color: 'grey' },
-						title: translate('popupConfirmSharedSpaceLimitTitle'),
-						text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
-						textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
-						canCancel: false,
-						onConfirm: () => this.openSettings('membership', ''),
-					},
-				});
-				analytics.event('ScreenHitShareSpaceLimit');
-				return;
-			};
-		};
-
+	createSpace (route: string) {
 		S.Popup.closeAll(null, () => {
-			S.Popup.open('spaceCreate', { data: { type, route } });
+			S.Popup.open('spaceCreate', { data: { route } });
 		});
 	};
 
@@ -838,6 +817,10 @@ class Action {
 	 * @param {string} [route] - The route context for analytics.
 	 */
 	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition, route?: string) {
+		this.createWidgetFromObjectIn(S.Block.widgets, rootId, objectId, targetId, position, route);
+	};
+
+	createWidgetFromObjectIn (contextId: string, rootId: string, objectId: string, targetId: string, position: I.BlockPosition, route?: string) {
 		const object = S.Detail.get(rootId, objectId);
 
 		let layout = I.WidgetLayout.Link;
@@ -845,7 +828,7 @@ class Action {
 		if (object && !object._empty_) {
 			if (U.Object.isInFileOrSystemLayouts(object.layout) || U.Object.isDateLayout(object.layout)) {
 				layout = I.WidgetLayout.Link;
-			} else 
+			} else
 			if (U.Object.isInSetLayouts(object.layout)) {
 				layout = I.WidgetLayout.View;
 			} else
@@ -855,12 +838,12 @@ class Action {
 		};
 
 		const limit = Number(U.Menu.getWidgetLimitOptions(layout)[0]?.id) || 0;
-		const newBlock = { 
+		const newBlock = {
 			type: I.BlockType.Link,
 			content: { targetBlockId: objectId },
 		};
 
-		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, (message: any) => {
+		C.BlockCreateWidget(contextId, targetId, newBlock, position, layout, limit, () => {
 			analytics.createWidget(layout, route);
 		});
 	};
@@ -930,6 +913,17 @@ class Action {
 		};
 	};
 
+	togglePersonalWidgetsForObject (objectId: string, route?: string) {
+		const personalId = U.Object.getPersonalWidgetsId();
+		const list = S.Block.getWidgetsForTargetIn(objectId, personalId);
+
+		if (list.length) {
+			C.BlockListDelete(personalId, list.map(it => it.id));
+		} else {
+			this.createWidgetFromObjectIn(personalId, personalId, objectId, '', I.BlockPosition.InnerFirst, route);
+		};
+	};
+
 	savePendingMembers (spaceId: string, identities: string[]) {
 		const existing = Storage.getSpaceKey('pendingMembers', false, spaceId) || [];
 		const merged = [ ...new Set([ ...existing, ...identities ]) ];
@@ -958,8 +952,7 @@ class Action {
 			return;
 		};
 
-		const product = S.Membership.data?.getTopProduct();
-		const writersLimit = product?.features?.spaceWriters || 0;
+		const { writersLimit } = U.Space.getTierLimits();
 		const maxRetries = 5;
 		const failed: { spaceId: string; identities: string[] }[] = [];
 

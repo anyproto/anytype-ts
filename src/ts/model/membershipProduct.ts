@@ -20,6 +20,7 @@ class MembershipProduct implements I.MembershipProduct {
 	offer = '';
 	pricesYearly: I.MembershipAmount[] = [];
 	pricesMonthly: I.MembershipAmount[] = [];
+	pricesLifetime: I.MembershipAmount[] = [];
 	features = {
 		storageBytes: 0,
 		spaceReaders: 0,
@@ -51,6 +52,11 @@ class MembershipProduct implements I.MembershipProduct {
 			amountCents: Number(it.amountCents) || 0,
 		})) : [];
 
+		this.pricesLifetime = Array.isArray(props.pricesLifetime) ? props.pricesLifetime.map(it => ({
+			currency: String(it.currency || ''),
+			amountCents: Number(it.amountCents) || 0,
+		})) : [];
+
 		this.features = {
 			storageBytes: Number(props.features?.storageBytes) || 0,
 			spaceReaders: Number(props.features?.spaceReaders) || 0,
@@ -72,6 +78,7 @@ class MembershipProduct implements I.MembershipProduct {
 			offer: observable,
 			pricesYearly: observable,
 			pricesMonthly: observable,
+			pricesLifetime: observable,
 			features: observable,
 		});
 
@@ -94,13 +101,20 @@ class MembershipProduct implements I.MembershipProduct {
 		return `tier/${this.colorStr == 'default' ? 'purple' : this.colorStr}`;
 	};
 
-	getPrice (isYearly: boolean): I.MembershipAmount | null {
-		const prices = isYearly ? this.pricesYearly : this.pricesMonthly;
+	getPrice (period: I.MembershipPeriod): I.MembershipAmount | null {
+		let prices: I.MembershipAmount[] = [];
+
+		switch (period) {
+			case I.MembershipPeriod.Monthly: prices = this.pricesMonthly; break;
+			case I.MembershipPeriod.Yearly: prices = this.pricesYearly; break;
+			case I.MembershipPeriod.Lifetime: prices = this.pricesLifetime; break;
+		};
+
 		return prices.length ? prices[0] : null;
 	};
 
-	getPriceString (isYearly: boolean): string {
-		return U.Common.getMembershipPriceString(this.getPrice(isYearly));
+	getPriceString (period: I.MembershipPeriod): string {
+		return U.Common.getMembershipPriceString(this.getPrice(period));
 	};
 
 };

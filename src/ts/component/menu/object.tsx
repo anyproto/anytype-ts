@@ -60,8 +60,13 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let setDefaultTemplate = null;
 		let advancedOptions = [];
 		let print = { id: 'print', iconParam: { name: 'menu/action/print' }, name: translate('menuObjectPrint'), caption: keyboard.getCaption('print') };
+		const isPinnedToChannel = !!S.Block.getWidgetsForTargetIn(rootId, S.Block.widgets).length;
+		const personalWidgetsId = U.Object.getPersonalWidgetsId();
+		const isFavorite = !!S.Block.getWidgetsForTargetIn(rootId, personalWidgetsId).length;
+		let pinToChannel = { id: isPinnedToChannel ? 'unpinFromChannel' : 'pinToChannel', iconParam: { name: 'menu/action/pin' }, name: translate(isPinnedToChannel ? 'menuWidgetUnpinFromChannel' : 'menuWidgetPinToChannel') };
+		let favorite = { id: isFavorite ? 'unfavorite' : 'favorite', iconParam: { name: isFavorite ? 'menu/action/unfav' : 'menu/action/fav' }, name: translate(isFavorite ? 'menuWidgetUnfavorite' : 'menuWidgetFavorite') };
 		let linkTo = { id: 'linkTo', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonLinkTo'), arrow: true };
-		let addCollection = { id: 'addCollection', iconParam: { name: 'menu/block/common/collection' }, name: translate('commonAddToCollection'), arrow: true };
+		let addCollection = { id: 'addCollection', iconParam: { name: 'menu/action/collection' }, name: translate('commonAddToCollection'), arrow: true };
 		let searchText = { id: 'searchText', iconParam: { name: 'common/search' }, name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
 		let history = { id: 'history', iconParam: { name: 'menu/action/history' }, name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let pageCopy = { id: 'pageCopy', iconParam: { name: 'menu/action/duplicate' }, name: translate('commonDuplicate') };
@@ -116,6 +121,8 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const allowedSearchText = !isFilePreview && !isInSet && !isChat;
 		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !isChat && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystem;
+		const allowedPinToChannel = canWrite && !isRelation && !isTemplate && !object.isArchived && U.Space.isMyOwner();
+		const allowedFavorite = canWrite && !isRelation && !isTemplate && !object.isArchived;
 		const allowedLinkTo = canWrite && !isRelation && !object.isArchived;
 		const allowedAddCollection = canWrite && !isRelation && !object.isArchived && !isTemplate;
 		const allowedPageLink = !isRelation && !object.isArchived;
@@ -137,7 +144,8 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ])
 		);
 		const allowedEditChat = canWrite && isChat;
-		const allowedNotification = isChat;
+		const hasDiscussion = !isChat && !!object.discussionId;
+		const allowedNotification = isChat || (canWrite && hasDiscussion);
 		const allowedCopyMedia = U.Object.isImageLayout(object.layout);
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -151,6 +159,8 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedSearchText)		 searchText = null;
 		if (!allowedHistory)		 history = null;
 		if (!isTemplate && !allowedTemplate)	 template = null;
+		if (!allowedPinToChannel)	 pinToChannel = null;
+		if (!allowedFavorite)		 favorite = null;
 		if (!allowedLinkTo)			 linkTo = null;
 		if (!allowedAddCollection)	 addCollection = null;
 		if (!allowedExport)			 pageExport = null;
@@ -163,7 +173,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedNotification) {
 			notification = null;
 		} else
-		if (spaceview.isOneToOne) {
+		if (isChat && spaceview.isOneToOne) {
 			const chatMode = U.Object.getChatNotificationMode(spaceview, object.id);
 			const isMuted = chatMode != I.NotificationMode.All;
 
@@ -207,7 +217,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			sections = sections.concat([
 				{ children: [ openObject ] },
-				{ children: [ pageLink, linkTo, addCollection, pageCopy, archive, remove ] },
+				{ children: [ pageLink, favorite, pinToChannel, linkTo, addCollection, pageCopy, archive, remove ] },
 				{ children: [ pageLock, history ] },
 				{ children: [ downloadFile, copyMedia, print ] },
 			]);
@@ -228,7 +238,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			} else {
 				sections = sections.concat([
 					{ children: [ openObject ] },
-					{ children: [ pageLink, linkTo, addCollection, template, pageCopy, archive ] },
+					{ children: [ pageLink, favorite, pinToChannel, linkTo, addCollection, template, pageCopy, archive ] },
 					{ children: [ pageLock, searchText, history ] },
 					{ children: [ pageReload, print, pageExport ] },
 				]);
@@ -358,10 +368,16 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'notification': {
+				const isDiscussion = !isChat && !!object.discussionId;
+				const options = isDiscussion ? U.Menu.discussionNotificationModeOptions() : U.Menu.notificationModeOptions();
+				const currentMode = isDiscussion
+					? U.Object.getDiscussionNotificationMode(spaceview, object.id)
+					: U.Object.getChatNotificationMode(spaceview, object.id);
+
 				menuId = 'select';
 				menuParam.data = {
-					value: String(U.Object.getChatNotificationMode(spaceview, object.id) || ''),
-					options: U.Menu.notificationModeOptions(),
+					value: String(currentMode),
+					options,
 					onSelect: (e, option) => {
 						Action.setChatNotificationMode(space, [ object.id ], Number(option.id), analytics.route.menuObject);
 						close();
@@ -392,7 +408,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			const home = U.Space.getDashboard();
 			if (home && (object.id == home.id)) {
-				Action.openSettings('spaceIndexEmpty', route);
+				U.Router.go('/main/void/empty', {});
 			} else {
 				keyboard.onBack(isPopup);
 			};
@@ -437,6 +453,18 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'pageLink': {
 				U.Object.copyLink(object, spaceview, 'web', '');
+				break;
+			};
+
+			case 'pinToChannel':
+			case 'unpinFromChannel': {
+				Action.toggleWidgetsForObject(rootId, route);
+				break;
+			};
+
+			case 'favorite':
+			case 'unfavorite': {
+				Action.togglePersonalWidgetsForObject(rootId, route);
 				break;
 			};
 
@@ -520,6 +548,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'editType': {
+				S.Popup.close('preview');
 				U.Object.editType(isType ? rootId : object.type, isPopup, true);
 				break;
 			};

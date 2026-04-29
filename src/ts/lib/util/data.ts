@@ -325,6 +325,7 @@ class UtilData {
 			return;
 		};
 
+		C.ObjectOpen(U.Object.getPersonalWidgetsId(space), '', space);
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
 				this.initPin(() => {
@@ -430,12 +431,16 @@ class UtilData {
 	 */
 	createSession(phrase: string, key: string, token: string, callBack?: (message: any) => void) {
 		this.closeSession(() => {
-			C.WalletCreateSession(phrase, key, token, (message: any) => {
+			C.WalletCreateSession(phrase, key, token, async (message: any) => {
 				if (!message.error.code) {
 					S.Auth.tokenSet(message.token);
 					S.Auth.appTokenSet(message.appToken);
 
-					dispatcher.startStream();
+					try {
+						await dispatcher.startStream();
+					} catch (err) {
+						console.error('[U.Data].createSession startStream failed', err);
+					};
 				};
 
 				callBack?.(message);
@@ -1341,22 +1346,32 @@ class UtilData {
 	};
 
 	getWidgetTypes(): any[] {
+		const allowedTypes = [
+			J.Constant.typeKey.page,
+			J.Constant.typeKey.task,
+			J.Constant.typeKey.collection,
+		];
+
 		return S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
 			return (
 				!U.Object.isInSystemLayouts(it.recommendedLayout) &&
 				!U.Object.isDateLayout(it.recommendedLayout) &&
 				!U.Object.isParticipantLayout(it.recommendedLayout) &&
 				(it.uniqueKey != J.Constant.typeKey.template) &&
-				(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
+				(
+					allowedTypes.includes(it.uniqueKey) || 
+					(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
+				)
 			);
 		});
 	};
 
 	getWidgetChats(): any[] {
 		const spaceview = U.Space.getSpaceview();
+		const space = S.Common.space;
 
-		return S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.chat)).filter(it => {
-			const counters = S.Chat.getChatCounters(S.Common.space, it.id);
+		const chats = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.chat)).filter(it => {
+			const counters = S.Chat.getChatCounters(space, it.id);
 			const mode = U.Object.getChatNotificationMode(spaceview, it.id);
 
 			if (mode == I.NotificationMode.Nothing) {
@@ -1365,6 +1380,62 @@ class UtilData {
 
 			return (counters.messageCounter > 0) || (counters.mentionCounter > 0) || (counters.reactionCounter > 0);
 		});
+
+		const parents = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.discussion)).filter(it => {
+			return it.discussionId && U.Object.discussionHasUnread(space, it.discussionId);
+		});
+
+		return chats.concat(parents).sort((a, b) => {
+			const aDate = Number(a.lastMessageDate) || 0;
+			const bDate = Number(b.lastMessageDate) || 0;
+			return bDate - aDate;
+		});
+	};
+
+	getWidgetObjects (rootId: string, withHome: boolean): any[] {
+		let items = [];
+
+		const childrenIds = S.Block.getChildrenIds(rootId, rootId);
+
+		childrenIds.forEach(widgetId => {
+			const widgetBlock = S.Block.getLeaf(rootId, widgetId);
+			if (!widgetBlock || !widgetBlock.isWidget()) {
+				return;
+			};
+
+			const innerIds = S.Block.getChildrenIds(rootId, widgetBlock.id);
+			if (!innerIds.length) {
+				return;
+			};
+
+			const inner = S.Block.getLeaf(rootId, innerIds[0]);
+			const targetId = inner?.getTargetObjectId();
+			if (!targetId) {
+				return;
+			};
+
+			const object = S.Detail.get(rootId, targetId);
+			if (!object || object._empty_ || object.isArchived || object.isDeleted) {
+				return;
+			};
+
+			items.push(object);
+		});
+
+		if (withHome) {
+			const home = U.Space.getDashboard();
+
+			if (home && !U.Space.isSystemDashboard(home.id)) {
+				items = items.filter(it => it.id != home.id);
+				items.unshift({ 
+					...home, 
+					iconParam: { name: 'settings/home', color: 'red' },
+					_isDisabled: true,
+				});
+			};
+		};
+
+		return items;
 	};
 
 	getTypeNames (typeIds: string[], limit: number): string {

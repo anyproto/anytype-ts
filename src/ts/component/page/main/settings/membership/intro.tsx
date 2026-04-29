@@ -7,8 +7,8 @@ import * as I from 'Interface';
 const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
-	const [ isAnnual, setIsAnnual ] = useState(true);
-	
+	const [ period, setPeriod ] = useState<I.MembershipPeriod>(I.MembershipPeriod.Yearly);
+
 	const { data } = S.Membership;
 	const current = data?.getTopProduct();
 	const purchased = data?.getTopPurchasedProduct();
@@ -19,9 +19,21 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 		products.unshift(current);
 	};
 
-	const onSwitch = () => {
-		setIsAnnual(!isAnnual);
-		analytics.event('ScreenMembershipSwitchPeriod', { type: isAnnual ? 'Monthly' : 'Annual' });
+	const hasLifetime = products.some(it => (it.pricesLifetime || []).length > 0);
+	const periodOptions = [
+		{ id: I.MembershipPeriod.Monthly, key: 'isMonthly', analyticsType: 'Monthly', label: translate('popupSettingsMembershipSwitchMonthly') },
+		{ id: I.MembershipPeriod.Yearly, key: 'isAnnual', analyticsType: 'Annual', label: translate('popupSettingsMembershipSwitchAnnual') },
+		hasLifetime ? { id: I.MembershipPeriod.Lifetime, key: 'isLifetime', analyticsType: 'Lifetime', label: translate('popupSettingsMembershipSwitchLifetime') } : null,
+	].filter(it => it);
+	const activeOption = periodOptions.find(it => it.id == period) || periodOptions[1];
+
+	const onSwitch = (option: typeof periodOptions[number]) => {
+		if (option.id == period) {
+			return;
+		};
+
+		setPeriod(option.id);
+		analytics.event('ScreenMembershipSwitchPeriod', { type: option.analyticsType });
 	};
 
 	const onLink = (item: any) => {
@@ -63,7 +75,10 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 	};
 
 	const onPay = (item: any, callBack: () => void) => {
-		C.MembershipV2CartUpdate([ item.id ], isAnnual, (res) => {
+		const isYearly = period == I.MembershipPeriod.Yearly;
+		const isLifetime = period == I.MembershipPeriod.Lifetime;
+
+		C.MembershipV2CartUpdate([ item.id ], isYearly, isLifetime, (res) => {
 			if (res.error.code) {
 				callBack();
 				return;
@@ -83,7 +98,7 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 	const TierItem = (props: any) => {
 		const { item } = props;
 		const isCurrent = (item.id == current?.id) || (item.isIntro && !current);
-		const price = item.getPriceString(isAnnual);
+		const price = item.getPriceString(period);
 		const cn = [ 'tier', `c${item.id}`, item.colorStr ];
 		const buttonRef = useRef(null);
 
@@ -91,25 +106,32 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 			cn.push('isCurrent');
 		};
 
-		let period = '';
+		let periodLabel = '';
 
 		if (isCurrent) {
 			if (purchased?.isPending) {
-				period = translate('popupSettingsMembershipPending');
+				periodLabel = translate('popupSettingsMembershipPending');
 			} else
 			if (item.period && purchased?.info.dateEnds) {
-				period = U.String.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', purchased?.info.dateEnds));
+				periodLabel = U.String.sprintf(translate('popupSettingsMembershipValidUntil'), U.Date.date('d M Y', purchased?.info.dateEnds));
 			} else {
-				period = translate('popupSettingsMembershipForeverFree');
+				periodLabel = translate('popupSettingsMembershipForeverFree');
 			};
 		} else {
-			const periodName = U.Common.plural(1, isAnnual ? translate('pluralYear') : translate('pluralMonth'));
-			period = U.String.sprintf(translate('popupSettingsMembershipCurrentPricePeriod'), periodName);
+			let periodName = '';
+
+			switch (period) {
+				case I.MembershipPeriod.Monthly: periodName = U.Common.plural(1, translate('pluralMonth')); break;
+				case I.MembershipPeriod.Yearly: periodName = U.Common.plural(1, translate('pluralYear')); break;
+				case I.MembershipPeriod.Lifetime: periodName = translate('membershipPeriod4'); break;
+			};
+
+			periodLabel = U.String.sprintf(translate('popupSettingsMembershipCurrentPricePeriod'), periodName);
 		};
 
 		const onClick = () => {
-			buttonRef.current.setLoading(true);
-			onPay(item, () => buttonRef.current.setLoading(false));
+			buttonRef.current?.setLoading(true);
+			onPay(item, () => buttonRef.current?.setLoading(false));
 		};
 
 		return (
@@ -144,7 +166,7 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 				<div className="bottom">
 					{!isCurrent ? (
 						<div className="priceWrapper">
-							<span className="price">{price}</span>{period}
+							<span className="price">{price}</span>{periodLabel}
 						</div>
 					) : ''}
 					{isCurrent ? (
@@ -184,14 +206,22 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 		resize,
 	}));
 
+	const switchCn = [ 'switchWrapper', activeOption.key ];
+
 	return (
 		<div ref={nodeRef} className="membershipIntro">
 			<div className="content">
 				<Label text={translate('popupSettingsMembershipText')} />
 
-				<div className={[ 'switchWrapper', isAnnual ? 'isAnnual' : 'isMonthly' ].join(' ')} onClick={onSwitch}>
-					<Label className={!isAnnual ? 'active' : ''} text={translate('popupSettingsMembershipSwitchMonthly')} />
-					<Label className={isAnnual ? 'active' : ''} text={translate('popupSettingsMembershipSwitchAnnual')} />
+				<div className={switchCn.join(' ')}>
+					{periodOptions.map(option => (
+						<Label
+							key={option.id}
+							className={period == option.id ? 'active' : ''}
+							text={option.label}
+							onClick={() => onSwitch(option)}
+						/>
+					))}
 				</div>
 
 				<div className="tiers">
@@ -213,7 +243,7 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 					{actions.map((item, idx) => (
 						<div key={idx} className="action">
 							<div className="top">
-								<Icon name={item.icon} className={item.id} />
+								<Icon name={item.icon} className={item.id} size={28} />
 								<Title text={item.title} />
 								<Label text={item.text} />
 							</div>

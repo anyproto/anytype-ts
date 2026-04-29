@@ -97,18 +97,20 @@ const PageMainSettingsNotifications = forwardRef<I.PageRef, I.PageSettingsCompon
 
 				<div className="actionItems">
 					{notificationOptions.map((el, idx) => {
+						const isSelected = notificationMode == el.id;
 						const cn = [ 'item' ];
-						if (notificationMode == el.id) {
+						if (isSelected) {
 							cn.push('selected');
 						};
 
 						return (
-							<div 
-								key={idx} 
-								onClick={() => onSpaceModeChange(el.id)} 
+							<div
+								key={idx}
+								onClick={() => onSpaceModeChange(el.id)}
 								className={cn.join(' ')}
 							>
 								<Label text={el.name} />
+								{isSelected ? <Icon name="common/tick" className="check" /> : ''}
 							</div>
 						);
 					})}

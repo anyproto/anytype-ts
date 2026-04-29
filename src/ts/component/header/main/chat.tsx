@@ -27,7 +27,9 @@ const HeaderMainChat = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const isDeleted = object._empty_ || object.isDeleted;
 	const readonly = object.isArchived;
 	const showRelations = !isDeleted && !spaceview.isOneToOne;
-	const showPin = canWrite && !spaceview.isOneToOne;
+	const showPin = false; //canWrite && !spaceview.isOneToOne && U.Space.isMyOwner();
+	const showFavorite = canWrite && !spaceview.isOneToOne;
+	const isFavorite = !!S.Block.getWidgetsForTargetIn(rootId, U.Object.getPersonalWidgetsId()).length;
 	const bannerProps = { type: I.BannerType.None, isPopup, object };
 
 	if (object.isArchived) {
@@ -40,6 +42,10 @@ const HeaderMainChat = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const onPin = () => {
 		Action.toggleWidgetsForObject(rootId, analytics.route.header);
+	};
+
+	const onFavorite = () => {
+		Action.togglePersonalWidgetsForObject(rootId, analytics.route.header);
 	};
 
 	const onOpen = () => {
@@ -115,11 +121,24 @@ const HeaderMainChat = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 					onDoubleClick={e => e.stopPropagation()}
 				/>
 
+				{showFavorite ? (
+					<Icon
+						id="button-header-favorite"
+						tooltipParam={{
+							text: translate(isFavorite ? 'menuWidgetUnfavorite' : 'menuWidgetFavorite'),
+							typeY: I.MenuDirection.Bottom,
+						}}
+						name={isFavorite ? 'menu/action/unfav' : 'menu/action/fav'} withBackground={true}
+						onClick={onFavorite}
+						onDoubleClick={e => e.stopPropagation()}
+					/>
+				) : ''}
+
 				{showPin ? (
 					<Icon
 						id="button-header-pin"
 						tooltipParam={{
-							text: hasWidget ? translate('commonRemovePinned') : translate('commonAddPinned'),
+							text: translate(hasWidget ? 'menuWidgetUnpinFromChannel' : 'menuWidgetPinToChannel'),
 							caption: keyboard.getCaption('addFavorite'),
 							typeY: I.MenuDirection.Bottom,
 						}}

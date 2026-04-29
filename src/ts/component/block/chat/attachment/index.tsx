@@ -29,7 +29,12 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 		syncStatus = I.SyncStatusObject.Synced;
 	} else
 	if (object.syncStatus === undefined) {
-		syncStatus = object.isTmp ? I.SyncStatusObject.Queued : I.SyncStatusObject.Syncing;
+		if (object.isTmp) {
+			syncStatus = I.SyncStatusObject.Queued;
+		} else
+		if (U.Object.isInFileLayouts(object.layout)) {
+			syncStatus = I.SyncStatusObject.Syncing;
+		};
 	};
 
 	const isDownloadingFile = S.Common.isDownloading(object.id);

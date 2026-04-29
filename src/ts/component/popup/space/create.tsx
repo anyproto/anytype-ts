@@ -10,12 +10,11 @@ const LABEL_HEIGHT = 28;
 const SAFE_AREA = 120;
 const GRAD_HEIGHT = 32;
 
-const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, position }, ref) => {
+const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position }, ref) => {
 
 	const nameRef = useRef(null);
 	const iconRef = useRef(null);
 	const filterRef = useRef(null);
-	const joinInputRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const listRef = useRef(null);
 	const selectedListRef = useRef(null);
@@ -26,15 +25,13 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const iconImagePathRef = useRef('');
 	const [ iconPreviewUrl, setIconPreviewUrl ] = useState('');
 	const [ step, setStep ] = useState(0);
+	const [ ready, setReady ] = useState(false);
 	const [ search, setSearch ] = useState('');
 	const [ name, setName ] = useState('');
 	const [ selectedMembers, setSelectedMembers ] = useState<string[]>([]);
 	const [ isScrolledTop, setIsScrolledTop ] = useState(false);
 	const { data } = param;
-	const { type } = data;
 	const { name: limit } = J.Constant.limit.space;
-	const isGroup = type == I.SpaceCreateType.Group;
-	const isJoin = type == I.SpaceCreateType.Join;
 
 	const onKeyDown = (e: any) => {
 		keyboard.shortcut('enter', e, () => {
@@ -88,9 +85,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	};
 
 	const getSeatCounters = () => {
-		const product = S.Membership.data?.getTopProduct();
-		const writersLimit = product?.features?.spaceWriters || 0;
-		const readersLimit = product?.features?.spaceReaders || 0;
+		const { writersLimit, readersLimit } = U.Space.getTierLimits();
 		const writersCount = Math.min(selectedCount, writersLimit);
 		const readersCount = Math.min(Math.max(selectedCount - writersLimit, 0), readersLimit);
 
@@ -113,6 +108,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			if (!S.Record.getRecords(SUB_ID).length) {
 				setStep(1);
 			};
+			setReady(true);
 			position();
 		});
 	}, []);
@@ -184,6 +180,29 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			.map(it => it.identity)
 			.filter(it => it);
 
+		const isShared = identities.length > 0;
+		const analyticsType = isShared ? I.SpaceCreateType.Group : I.SpaceCreateType.Personal;
+
+		if (isShared) {
+			const mySharedSpaces = U.Space.getMySharedSpacesList();
+			const { sharedSpacesLimit } = U.Space.getProfile();
+
+			if (sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit)) {
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'popup/header/warning', color: 'grey' },
+						title: translate('popupConfirmSharedSpaceLimitTitle'),
+						text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+						textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+						canCancel: false,
+						onConfirm: () => Action.openSettings('membership', ''),
+					},
+				});
+				analytics.event('ScreenHitShareSpaceLimit');
+				return;
+			};
+		};
+
 		setIsLoading(true);
 
 		const details: any = {
@@ -210,68 +229,77 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 						return;
 					};
 
-					U.Router.switchSpace(spaceId, '', true, {
-						onRouteChange: () => {
-							if (isGroup) {
-								const product = S.Membership.data?.getTopProduct();
-								const writersLimit = product?.features?.spaceWriters || 0;
+					const openPicker = () => {
+						close(() => {
+							S.Popup.open('spaceHome', {
+								data: { spaceId },
+								preventCloseByClick: true,
+								preventCloseByEscape: true,
+								preventResize: true,
+							});
+						});
+					};
 
-								if (!S.Common.isOnline && identities.length) {
-									Action.savePendingMembers(S.Common.space, identities);
-								} else {
-									C.SpaceMakeShareable(S.Common.space, (message: any) => {
-										if (message.error.code) {
-											if (message.error.code == 104) {
-												const { sharedSpacesLimit } = U.Space.getProfile();
+					if (isShared) {
+						const { writersLimit } = U.Space.getTierLimits();
 
-												S.Popup.open('confirm', {
-													data: {
-														iconParam: { name: 'popup/header/warning', color: 'grey' },
-														title: translate('popupConfirmSharedSpaceLimitTitle'),
-														text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
-														textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
-														canCancel: false,
-														onConfirm: () => Action.openSettings('membership', ''),
-													},
-												});
-												analytics.event('ScreenHitShareSpaceLimit');
-											};
-											return;
-										};
+						if (!S.Common.isOnline) {
+							Action.savePendingMembers(spaceId, identities);
+							openPicker();
+						} else {
+							C.SpaceMakeShareable(spaceId, (message: any) => {
+								if (message.error.code) {
+									if (message.error.code == 104) {
+										const { sharedSpacesLimit } = U.Space.getProfile();
 
-										C.SpaceInviteGenerate(S.Common.space, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
-											if (message.error.code) {
-												return;
-											};
-
-											analytics.event('ShareSpace');
-											analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
-
-											if (identities.length) {
-												const writerIdentities = identities.slice(0, writersLimit);
-												const readerIdentities = identities.slice(writersLimit);
-
-												if (writerIdentities.length) {
-													C.SpaceParticipantsAddList(S.Common.space, writerIdentities, I.ParticipantPermissions.Writer);
-												};
-
-												if (readerIdentities.length) {
-													C.SpaceParticipantsAddList(S.Common.space, readerIdentities, I.ParticipantPermissions.Reader);
-												};
-
-												analytics.event('AddMember', { count: identities.length });
-											};
+										S.Popup.open('confirm', {
+											data: {
+												iconParam: { name: 'popup/header/warning', color: 'grey' },
+												title: translate('popupConfirmSharedSpaceLimitTitle'),
+												text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+												textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+												canCancel: false,
+												onConfirm: () => Action.openSettings('membership', ''),
+											},
 										});
-									});
+										analytics.event('ScreenHitShareSpaceLimit');
+									};
+									openPicker();
+									return;
 								};
-							};
 
-							Action.openSettings('spaceHome', '');
-							onCreate?.(message.objectId);
-						}
-					}, false);
+								C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+									if (message.error.code) {
+										openPicker();
+										return;
+									};
 
-					analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, type });
+									analytics.event('ShareSpace');
+									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
+
+									const writerIdentities = identities.slice(0, writersLimit);
+									const readerIdentities = identities.slice(writersLimit);
+
+									if (writerIdentities.length) {
+										C.SpaceParticipantsAddList(spaceId, writerIdentities, I.ParticipantPermissions.Writer);
+									};
+
+									if (readerIdentities.length) {
+										C.SpaceParticipantsAddList(spaceId, readerIdentities, I.ParticipantPermissions.Reader);
+									};
+
+									analytics.event('AddMember', { count: identities.length });
+									openPicker();
+								});
+							});
+						};
+					} else {
+						openPicker();
+					};
+
+					onCreate?.(spaceId);
+
+					analytics.event('CreateSpace', { usecase, middleTime: message.middleTime, route, type: analyticsType });
 					analytics.event('SelectUsecase', { type: usecase });
 				});
 			};
@@ -311,25 +339,6 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		});
 	};
 
-	const onJoinSubmit = (e: any) => {
-		e.preventDefault();
-
-		const route = U.Common.getRouteFromUrl(joinInputRef.current?.getValue());
-
-		if (route) {
-			close(() => U.Router.go(route, {}));
-		} else {
-			setError(translate('popupSpaceJoinByLinkError'));
-		};
-	};
-
-	const onJoinKeyUp = () => {
-		const v = joinInputRef.current?.getValue();
-
-		U.Dom.toggleClass(U.Dom.select(`#${getId()} .button`), 'disabled', !v?.length);
-		setError('');
-	};
-
 	const onIcon = () => {
 		fileInputRef.current?.click();
 	};
@@ -358,9 +367,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const object = getObject();
 
 	useEffect(() => {
-		if (isGroup) {
-			loadMembers();
-		};
+		loadMembers();
 
 		analytics.event('ScreenSettingsSpaceCreate', { status: S.Common.isOnline ? 'Online' : 'Offline' });
 		position();
@@ -429,9 +436,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			setSearch('');
 			filterRef.current?.setValue('');
 
-			if (isGroup) {
-				analytics.event('ScreenAddMember');
-			};
+			analytics.event('ScreenAddMember');
 		};
 
 		position();
@@ -445,7 +450,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
 	const selectedCount = selectedMembers.length;
 	const selectedObjectsCount = selectedMemberObjects.length;
-	const hasMembers = isGroup && (members.length || selectedObjectsCount);
+	const hasMembers = (members.length > 0) || (selectedObjectsCount > 0);
 
 	const rowRenderer = ({ index, key, style }) => {
 		const item = members[index];
@@ -468,42 +473,27 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		);
 	};
 
-	const title = translate(isGroup ? 'popupSpaceCreateTitleGroup' : 'popupSpaceCreateTitlePersonal');
+	const title = translate(selectedCount > 0 ? 'popupSpaceCreateTitleGroup' : 'popupSpaceCreateTitlePersonal');
 
 	let stepContent = null;
 
-	if (isJoin) {
-		stepContent = (
-			<div className="step stepJoin">
-				<div className="wrapper">
-					<div className="stepTitle">{translate('popupSpaceJoinByLinkLabel')}</div>
-					<form onSubmit={onJoinSubmit}>
-						<Input
-							type="text"
-							ref={joinInputRef}
-							size={40}
-							onKeyUp={onJoinKeyUp}
-							placeholder={translate('popupSpaceJoinByLinkInputPlaceholder')}
-							focusOnMount={true}
-						/>
-						<Button className="disabled" color="accent" text={translate('popupInviteRequestRequestToJoin')} onClick={onJoinSubmit} />
-					</form>
-				</div>
-			</div>
-		);
+	if (!ready) {
+		stepContent = null;
 	} else
-	if (isGroup && (step == 0)) {
+	if (step == 0) {
 		const { writersLimit, readersLimit, writersCount, readersCount } = getSeatCounters();
 
 		stepContent = (
 			<div className="step step0">
 				<div className="wrapper">
-					<div className="stepTitle">{translate('popupSpaceCreateStep1Title')}</div>
-					{(writersLimit > 0) ? (
-						<div className="seatCounters">
-							{U.String.sprintf(translate('popupSpaceCreateSeatCounters'), writersCount, writersLimit, readersCount, readersLimit)}
-						</div>
-					) : ''}
+					<div className="head">
+						<div className="stepTitle">{translate('popupSpaceCreateStep1Title')}</div>
+						{(writersLimit > 0) ? (
+							<div className="seatCounters">
+								{U.String.sprintf(translate('popupSpaceCreateSeatCounters'), writersCount, writersLimit, readersCount, readersLimit)}
+							</div>
+						) : ''}
+					</div>
 
 					<Filter
 						ref={filterRef}
@@ -554,7 +544,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			</div>
 		);
 	} else {
-		const showOfflinePill = isGroup && (selectedCount > 0) && !S.Common.isOnline;
+		const showOfflinePill = (selectedCount > 0) && !S.Common.isOnline;
 
 		stepContent = (
 			<div className="step step1">
@@ -660,6 +650,10 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			</div>
 		);
 	};
+
+	useEffect(() => {
+		position();
+	});
 
 	useImperativeHandle(ref, () => ({
 		beforePosition,

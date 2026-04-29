@@ -41,6 +41,8 @@ class CommentMessage implements I.CommentMessage {
 	attachments: I.ChatMessageAttachment[] = [];
 	reactions: I.ChatMessageReaction[] = [];
 	isSynced = false;
+	isReadMessage = false;
+	isReadMention = false;
 	replyCount = 0;
 
 	constructor (props: I.CommentMessage) {
@@ -54,6 +56,8 @@ class CommentMessage implements I.CommentMessage {
 		this.attachments = Array.isArray(props.attachments) ? props.attachments : [];
 		this.reactions = props.reactions || [];
 		this.isSynced = Boolean(props.isSynced);
+		this.isReadMessage = Boolean(props.isReadMessage);
+		this.isReadMention = Boolean(props.isReadMention);
 		this.replyCount = Number(props.replyCount) || 0;
 
 		makeObservable(this, {
@@ -66,6 +70,8 @@ class CommentMessage implements I.CommentMessage {
 			attachments: observable,
 			reactions: observable,
 			isSynced: observable,
+			isReadMessage: observable,
+			isReadMention: observable,
 			replyCount: observable,
 		});
 

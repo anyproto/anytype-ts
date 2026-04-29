@@ -12,36 +12,39 @@ const PageMainVoid = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const cn = [ 'wrapper', U.String.toCamelCase(`void-${id}`) ];
 
 	const onClick = () => {
-		U.Menu.spaceCreate({
-			element: '#void-button-create-space',
-			className: 'spaceCreate',
-			horizontal: I.MenuDirection.Center,
-			offsetY: 4,
-		}, analytics.route.void);
+		Action.createSpace(analytics.route.void);
 	};
 
 	let title = '';
 	let text = '';
+	let icon = '';
 	let button = null;
 
 	switch (id) {
 		case 'select': {
 			text = translate('pageMainVoidSelectText');
+			icon = 'state/select';
 			break;
 		};
 
 		case 'error': {
 			title = translate('pageMainVoidErrorTitle');
 			text = translate('pageMainVoidErrorText');
+			icon = 'state/error';
 			button = (
-				<Button 
-					id="void-button-create-space" 
-					onClick={onClick} 
-					color="accent" 
+				<Button
+					id="void-button-create-space"
+					onClick={onClick}
+					color="accent"
 					size={36}
 					text={translate('commonCreateSpace')}
 				/>
 			);
+			break;
+		};
+
+		case 'empty': {
+			text = translate('pageMainVoidEmptyText');
 			break;
 		};
 	};
@@ -72,19 +75,23 @@ const PageMainVoid = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				animate={{ opacity: 1, transition: { duration: 0.12 } }}
 				exit={{ opacity: 0, transition: { duration: 0.08 } }}
 			>
-				<Icon
-					name="widget/vaultToggle" className="vaultToggle" withBackground={true}
-					onClick={() => sidebar.leftPanelToggle(true, true)}
-					tooltipParam={{
-						text: translate('commonVault'),
-						typeY: I.MenuDirection.Bottom,
-					}}
-				/>
+				{id != 'empty' ? (
+					<Icon
+						name="widget/vaultToggle" className="vaultToggle" withBackground={true}
+						onClick={() => sidebar.leftPanelToggle(true, true)}
+						tooltipParam={{
+							text: translate('commonVault'),
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : ''}
 
 				<Frame>
-					<div className="iconWrapper">
-						<Icon name={id == 'select' ? 'state/select' : 'state/error'} size={56} />
-					</div>
+					{icon ? (
+						<div className="iconWrapper">
+							<Icon name={icon} size={56} />
+						</div>
+					) : ''}
 
 					<Title text={title} />
 					<Label text={text} />

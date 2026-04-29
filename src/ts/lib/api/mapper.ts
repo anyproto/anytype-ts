@@ -635,6 +635,7 @@ export const Mapper = {
 				offer: obj.offer,
 				pricesYearly: (obj.pricesYearly || []).map(Mapper.From.MembershipAmount),
 				pricesMonthly: (obj.pricesMonthly || []).map(Mapper.From.MembershipAmount),
+				pricesLifetime: (obj.pricesLifetime || []).map(Mapper.From.MembershipAmount),
 				features: {
 					storageBytes: features.storageBytes,
 					spaceReaders: features.spaceReaders,
@@ -738,6 +739,7 @@ export const Mapper = {
 				isReadReaction: !obj.unreadReaction,
 				hasMention: obj.hasMention,
 				isSynced: obj.synced,
+				isPinned: obj.pinned,
 			};
 		},
 
@@ -796,6 +798,14 @@ export const Mapper = {
 				result.embed = Mapper.From.ChatMessageBlockEmbed(obj.embed);
 			};
 
+			if (obj.editorQuote !== undefined) {
+				result.editorQuote = Mapper.From.ChatMessageBlockEditorQuote(obj.editorQuote);
+			};
+
+			if (obj.messageQuote !== undefined) {
+				result.messageQuote = Mapper.From.ChatMessageBlockMessageQuote(obj.messageQuote);
+			};
+
 			return result;
 		},
 
@@ -820,6 +830,20 @@ export const Mapper = {
 			return {
 				targetObjectId: obj.targetObjectId,
 				type: obj.type as number,
+			};
+		},
+
+		ChatMessageBlockEditorQuote (obj: any): I.ChatMessageBlockEditorQuote {
+			return {
+				blockId: obj.blockId || '',
+				content: Mapper.From.ChatMessageBlockText(obj.content || {}),
+			};
+		},
+
+		ChatMessageBlockMessageQuote (obj: any): I.ChatMessageBlockMessageQuote {
+			return {
+				messageId: obj.messageId || '',
+				content: Mapper.From.ChatMessageBlockText(obj.content || {}),
 			};
 		},
 
@@ -1179,6 +1203,8 @@ export const Mapper = {
 				item.blocks = obj.blocks.map(Mapper.To.ChatMessageBlock);
 			};
 
+			item.pinned = obj.isPinned;
+
 			return item;
 		},
 
@@ -1203,6 +1229,14 @@ export const Mapper = {
 
 			if (obj.embed) {
 				item.embed = Mapper.To.ChatMessageBlockEmbed(obj.embed);
+			};
+
+			if (obj.editorQuote) {
+				item.editorQuote = Mapper.To.ChatMessageBlockEditorQuote(obj.editorQuote);
+			};
+
+			if (obj.messageQuote) {
+				item.messageQuote = Mapper.To.ChatMessageBlockMessageQuote(obj.messageQuote);
 			};
 
 			return item;
@@ -1230,6 +1264,20 @@ export const Mapper = {
 			return {
 				targetObjectId: obj.targetObjectId,
 				type: obj.type as number,
+			};
+		},
+
+		ChatMessageBlockEditorQuote: (obj: I.ChatMessageBlockEditorQuote) => {
+			return {
+				blockId: obj.blockId || '',
+				content: Mapper.To.ChatMessageBlockText(obj.content),
+			};
+		},
+
+		ChatMessageBlockMessageQuote: (obj: I.ChatMessageBlockMessageQuote) => {
+			return {
+				messageId: obj.messageId || '',
+				content: Mapper.To.ChatMessageBlockText(obj.content),
 			};
 		},
 
@@ -1310,6 +1358,15 @@ export const Mapper = {
 		AccountShow: (obj: any) => {
 			return {
 				account: Mapper.From.Account(obj.account || {}),
+			};
+		},
+
+		DebugProfileCreated: (obj: any) => {
+			return {
+				reason: String(obj.reason || ''),
+				jsonInfo: String(obj.jsonInfo || ''),
+				path: String(obj.path || ''),
+				full: Boolean(obj.full),
 			};
 		},
 
@@ -1758,7 +1815,7 @@ export const Mapper = {
 			};
 		},
 
-		P2PStatusUpdate: (obj: any) => {
+		P2pStatusUpdate: (obj: any) => {
 			return {
 				id: obj.spaceId,
 				p2p: obj.status,
@@ -1839,6 +1896,14 @@ export const Mapper = {
 			return {
 				ids: obj.ids || [],
 				isSynced: obj.isSynced,
+				subIds: obj.subIds || [],
+			};
+		},
+
+		ChatUpdatePinnedStatus: (obj: any) => {
+			return {
+				message: obj.message ? Mapper.From.ChatMessage(obj.message) : null,
+				isPinned: obj.isPinned,
 				subIds: obj.subIds || [],
 			};
 		},

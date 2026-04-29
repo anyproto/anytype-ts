@@ -36,7 +36,8 @@ $transitionSettings: all 0.25s $easeInQuint;
 
         .side {
             > .button,
-            > .icon { transition: $transitionSettings; height: 32px; min-width: 32px; border-radius: 16px; background-color: var(--color-shape-primary);  }
+            > .icon,
+            > .sync { transition: $transitionSettings; height: 32px; min-width: 32px; width: 32px; border-radius: 16px; background-color: var(--color-shape-primary); }
 
             > .button { padding: 0px 12px; text-align: center; @include text-small; font-weight: 500; color: var(--color-text-secondary); overflow: visible; }
             > .button.help { font-size: 15px; padding: 0px; }
@@ -46,7 +47,9 @@ $transitionSettings: all 0.25s $easeInQuint;
             > .icon:hover,
             > .icon.hover,
             > .button:hover,
-            > .button.hover { background-color: var(--color-shape-secondary) !important; }
+            > .button.hover,
+            > .sync:hover,
+            > .sync.hover { background-color: var(--color-shape-secondary) !important; }
             > .button {
                 .txt { @include text-overflow-nw; }
             }

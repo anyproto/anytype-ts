@@ -293,6 +293,7 @@ class MenuManager {
 					{ label: Util.translate('electronMenuTutorial'), click: () => Util.send(this.win, 'commandGlobal', 'tutorial') },
 					{ label: Util.translate('electronMenuContact'), click: () => Util.send(this.win, 'commandGlobal', 'contact') },
 					{ label: Util.translate('electronMenuTech'), click: () => Util.send(this.win, 'commandGlobal', 'tech') },
+					{ label: Util.translate('electronMenuSubmitReport'), click: () => Util.send(this.win, 'commandGlobal', 'submitReport') },
 
 					Separator,
 
@@ -388,6 +389,10 @@ class MenuManager {
 				{ label: Util.translate('electronMenuDebugNet'), click: () => Util.send(this.win, 'commandGlobal', 'debugNet') },
 				{ label: Util.translate('electronMenuDebugLog'), click: () => Util.send(this.win, 'commandGlobal', 'debugLog') },
 				{ label: Util.translate('electronMenuDebugProfiler'), click: () => Util.send(this.win, 'commandGlobal', 'debugProfiler') },
+				{ label: Util.translate('electronMenuDebugReport'), click: (item: Electron.MenuItem, window: BrowserWindow | undefined, event: Electron.KeyboardEvent) => {
+					const full = event && (event as Electron.KeyboardEvent & { altKey?: boolean }).altKey;
+					Util.send(this.win, 'commandGlobal', 'debugReport', { full });
+				}},
 
 				Separator,
 

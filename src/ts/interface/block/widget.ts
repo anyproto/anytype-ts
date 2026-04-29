@@ -6,15 +6,21 @@ export enum WidgetSection {
 	Unread		 = 2,
 	RecentEdit	 = 3,
 	Bin			 = 4,
+	MyFavorites	 = 5,
 };
 
+export const FIXED_WIDGET_SECTIONS: WidgetSection[] = [
+	WidgetSection.Pin,
+	WidgetSection.Unread,
+];
+
 export interface WidgetSectionParam {
-	id: I.WidgetSection; 
-	isClosed: boolean; 
+	id: I.WidgetSection;
+	isClosed: boolean;
 	isHidden: boolean;
 };
 
-export enum WidgetLayout { 
+export enum WidgetLayout {
 	Link	 	 = 0,
 	Tree	 	 = 1,
 	List		 = 2,
@@ -23,6 +29,11 @@ export enum WidgetLayout {
 
 	Space		 = 100,
 	Object		 = 101,
+};
+
+export enum SidebarView {
+	Widgets		= 'widgets',
+	Links		= 'links',
 };
 
 export interface WidgetComponent {

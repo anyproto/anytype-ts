@@ -4,8 +4,7 @@ import * as I from 'Interface';
 
 const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { config } = S.Common;
-	const { param, setActive, onKeyDown, getId, getSize } = props;
+	const { param, setActive, onKeyDown, getId, getSize, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, readonly, onSave, onSelect, isInline, getTarget } = data;
 	const view = data.view.get();
@@ -21,6 +20,7 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		saveParam.current = U.Common.objectCopy(data.view.get());
 		setDummy(dummy + 1);
 		rebind();
+		position();
 
 		return () => {
 			unbind();
@@ -31,6 +31,7 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		setActive();
+		position();
 	});
 
 	const rebind = () => {
@@ -49,14 +50,16 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		let ret = false;
 
-		keyboard.shortcut('space', e, () => {
-			if ([ 'hideIcon', 'coverFit', 'wrapContent' ].includes(item.id)) {
-				e.preventDefault();
+		if (item) {
+			keyboard.shortcut('space', e, () => {
+				if ([ 'hideIcon', 'coverFit', 'wrapContent' ].includes(item.id)) {
+					e.preventDefault();
 
-				onSwitch(e, item.id, !view[item.id]);
-				ret = true;
-			};
-		});
+					onSwitch(e, item.id, !view[item.id]);
+					ret = true;
+				};
+			});
+		};
 
 		if (ret) {
 			return;

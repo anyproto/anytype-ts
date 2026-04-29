@@ -455,6 +455,20 @@ class UtilSubscription {
 				noDeps: true,
 				crossSpace: true,
 			},
+			{
+				subId: J.Constant.subId.discussionGlobal,
+				filters: [
+					{ relationKey: 'discussionId', condition: I.FilterCondition.NotEmpty, value: null },
+				],
+				keys: this.discussionRelationKeys(),
+				noDeps: true,
+				crossSpace: true,
+				onSubscribe: message => {
+					(message.records || []).forEach(it => {
+						S.Chat.discussionParentMapSet(it.spaceId, it.id, it.discussionId);
+					});
+				},
+			},
 		];
 		
 		this.destroyList(list.map(it => it.subId), true, () => {
@@ -505,6 +519,7 @@ class UtilSubscription {
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
 				],
+				ignoreArchived: false,
 				noDeps: true,
 			});
 		});
@@ -575,6 +590,23 @@ class UtilSubscription {
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
 				noDeps: true,
+			},
+			{
+				subId: this.spaceSubId(J.Constant.subId.discussion),
+				keys: this.discussionRelationKeys(),
+				filters: [
+					{ relationKey: 'discussionId', condition: I.FilterCondition.NotEmpty, value: null },
+				],
+				sorts: [
+					{ relationKey: 'lastMessageDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				noDeps: true,
+				onSubscribe: message => {
+					(message.records || []).forEach(it => {
+						S.Chat.discussionParentMapSet(it.spaceId, it.id, it.discussionId);
+					});
+				},
 			},
 			{
 				subId: this.spaceSubId(J.Constant.subId.recentEditMe),
@@ -818,6 +850,14 @@ class UtilSubscription {
 	 */
 	chatRelationKeys () {
 		return J.Relation.default.concat([ 'source', 'picture', 'widthInPixels', 'heightInPixels', 'syncStatus', 'syncError' ]);
+	};
+
+	/**
+	 * Returns the relation keys for the discussion-parent subscription.
+	 * @returns {string[]} The list of relation keys.
+	 */
+	discussionRelationKeys () {
+		return J.Relation.default.concat([ 'snippet', 'lastMessageDate', 'unreadMessageCount', 'unreadMentionCount', 'notificationSubscribers' ]);
 	};
 
 	getRecentSubId (): string {

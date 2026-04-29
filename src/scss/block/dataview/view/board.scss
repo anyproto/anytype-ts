@@ -30,8 +30,12 @@
 						.more { vertical-align: top; }
 					}
 
-					.cellContent.c-select.isSelect { height: 24px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; padding: 0px 8px 0px 7px; gap: 4px; display: inline-flex; align-items: center; width: fit-content; }
-					.cellContent.c-select.isSelect {
+					.cellContent.c-select.isSelect.isEmpty { 
+						height: 24px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; 
+						padding: 0px 8px 0px 7px; gap: 4px; display: inline-flex; align-items: center; width: fit-content; 
+						background: var(--color-bg-primary);
+					}
+					.cellContent.c-select.isSelect.isEmpty {
 						.wrap { height: 24px; display: flex; align-items: center; }
 						.over { margin-top: 0px; }
 						.tagItem.isSelect { border: none; border-radius: 0px; padding: 0px; height: auto; }

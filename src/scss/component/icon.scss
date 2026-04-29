@@ -16,7 +16,7 @@
 	> svg { flex-shrink: 0; pointer-events: none; }
 };
 
-.icon.iconColor-default { color: var(--color-text-primary); }
+.icon.iconColor-default { color: var(--color-control-accent); }
 .icon.iconColor-grey { color: var(--color-grey); }
 .icon.iconColor-yellow { color: var(--color-yellow); }
 .icon.iconColor-orange { color: var(--color-orange); }
@@ -35,7 +35,7 @@
 .icon.iconColor-accent100 { color: var(--color-system-accent-100); }
 .icon.iconColor-accent50 { color: var(--color-system-accent-50); }
 .icon.iconColor-accent25 { color: var(--color-system-accent-25); }
-.icon.iconColor-destructive { color: var(--color-system-destructive); }
+.icon.iconColor-destructive { color: var(--color-system-destructive-100); }
 
 .icon.menuBlockTextParagraph,
 .icon.menuBlockTextHeader,

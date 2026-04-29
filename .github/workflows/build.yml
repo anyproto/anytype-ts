@@ -152,9 +152,24 @@ jobs:
           ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="$( cat middleware.version )" --arch="amd"
 
       - name: Install Protoc
-        uses: arduino/setup-protoc@v3
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        env:
+          PROTOC_VERSION: "23.4"
+        run: |
+          set -euo pipefail
+          case "${{ runner.os }}" in
+            Linux)   ZIP="protoc-${PROTOC_VERSION}-linux-x86_64.zip" ;;
+            macOS)   ZIP="protoc-${PROTOC_VERSION}-osx-universal_binary.zip" ;;
+            Windows) ZIP="protoc-${PROTOC_VERSION}-win64.zip" ;;
+            *)       echo "Unsupported OS: ${{ runner.os }}"; exit 1 ;;
+          esac
+          DEST="$HOME/protoc"
+          mkdir -p "$DEST"
+          curl -fsSL -o "$DEST/protoc.zip" "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/${ZIP}"
+          unzip -o "$DEST/protoc.zip" -d "$DEST"
+          rm "$DEST/protoc.zip"
+          echo "$DEST/bin" >> "$GITHUB_PATH"
+          "$DEST/bin/protoc" --version
 
       - name: Generate protobuf TypeScript bindings
         run: bash scripts/generate-protos.sh --from-dist

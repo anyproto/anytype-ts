@@ -261,6 +261,7 @@ const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props,
 										object={object}
 										item={item}
 										readonly={isReadonly}
+										className={Relation.className(item.format)}
 										onDragStart={e => onDragStart(e, item)}
 									/>
 								))}

@@ -11,12 +11,12 @@
 
 	.btn {
 		background: var(--color-bg-primary); font-weight: 500; font-size: var(--font-size-common); color: var(--color-control-active); display: flex;
-		transition: background $transitionCommon, color $transitionCommon; height: 28px; padding: 0px 8px 0px 6px; border-radius: 6px;
+		transition: background $transitionCommon, color $transitionCommon; height: 28px; padding: 0px 8px 0px 6px; border-radius: 14px;
 		flex-direction: row; align-items: center; gap: 0px 4px;
 	}
 	.btn:hover, .btn.hover { background: var(--color-shape-highlight-medium); color: var(--color-text-primary); }
 
-	.btn.small { padding: 0px 6px; }
+	.btn.small { padding: 0px 4px; }
 
 	.btn {
 		.txt { white-space: nowrap; }

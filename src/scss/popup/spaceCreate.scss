@@ -12,8 +12,12 @@
 			&:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 
-		.stepTitle { @include text-paragraph; font-weight: 600; padding: 16px 0px; text-align: center; }
-		.seatCounters { @include text-small; color: var(--color-text-secondary); text-align: center; padding: 0px 0px 8px 0px; }
+		.stepTitle { @include text-paragraph; font-weight: 600; text-align: center; }
+
+		.head { padding: 5px 0px; }
+		.head {
+			.seatCounters { @include text-small; color: var(--color-text-secondary); text-align: center; }
+		}
 
 		.offlinePill {
 			display: flex; align-items: center; justify-content: center; gap: 0px 6px;
@@ -87,7 +91,8 @@
 
 		/* Step 1 — Name & Icon */
 		.step.step1 {
-			.input.spaceName { border-radius: 12px; @include text-paragraph; font-weight: 600; }
+			.stepTitle { padding: 16px 0px; }
+			.input.spaceName { @include text-paragraph; font-weight: 600; }
 			.input.spaceName.withMargin { margin: 0px 0px 8px 0px; }
 
 			.memberListWrapper { position: relative; }
