@@ -1231,15 +1231,23 @@ class Dispatcher {
 				case 'ChatUpdateMessageReadStatus': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						S.Chat.setReadMessageStatus(subId, mapped.ids, mapped.isRead);
+						if (subId.startsWith('comment-')) {
+							S.Comment.setReadMessageStatus(subId, mapped.ids, mapped.isRead);
+						} else {
+							S.Chat.setReadMessageStatus(subId, mapped.ids, mapped.isRead);
+						};
 					});
-					break;	
+					break;
 				};
 
 				case 'ChatUpdateMentionReadStatus': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead);
+						if (subId.startsWith('comment-')) {
+							S.Comment.setReadMentionStatus(subId, mapped.ids, mapped.isRead);
+						} else {
+							S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead);
+						};
 					});
 					break;
 				};
@@ -1247,7 +1255,11 @@ class Dispatcher {
 				case 'ChatUpdateMessageSyncStatus': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced);
+						if (subId.startsWith('comment-')) {
+							S.Comment.setSyncStatus(subId, mapped.ids, mapped.isSynced);
+						} else {
+							S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced);
+						};
 					});
 					break;
 				};
