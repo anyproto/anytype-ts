@@ -845,6 +845,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const selection = S.Common.getRef('selectionProvider');
 		const view = getView();
+		const { x, y } = keyboard.mouse.page;
 
 		if (!view) {
 			return;
@@ -858,10 +859,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		S.Menu.open('objectContext', {
 			classNameWrap: 'fromBlock',
-			recalcRect: () => { 
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			},
+			rect: { width: 0, height: 0, x: x + 4, y: y },
 			onClose: () => selection.clear(),
 			data: {
 				blockId: block.id,
