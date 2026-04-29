@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
+import raf from 'raf';
 import { Icon } from 'Component';
 import CommentList from './list';
 import CommentForm from './form';
@@ -33,6 +34,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	const lastScrollTopRef = useRef(0);
 	const isTypingRef = useRef(false);
 	const scrolledItems = useRef<Set<string>>(new Set());
+	const readVisibleMessagesRef = useRef<() => void>(() => {});
 
 	const posts = S.Comment.getPosts(subId);
 	const postCount = posts.length;
@@ -181,13 +183,19 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		readStopTimerRef.current = window.setTimeout(() => onReadStop(), 300);
 	}, [ getVisibleMessages, readMessage, onReadStop ]);
 
+	readVisibleMessagesRef.current = readVisibleMessages;
+
 	useEffect(() => {
 		updateSocialVisibility();
 		resize();
 	}, [ isOpen, updateSocialVisibility, resize ]);
 
 	useEffect(() => {
-		readVisibleMessages();
+		if (!postCount) {
+			return;
+		};
+		const id = raf(() => readVisibleMessages());
+		return () => raf.cancel(id);
 	}, [ postCount, readVisibleMessages ]);
 
 	useEffect(() => {
@@ -586,6 +594,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				isLoaded.current = true;
 				updateSocialVisibility();
 				handleMessageId(id);
+				raf(() => readVisibleMessagesRef.current());
 			});
 		});
 	}, [ targetType, fetchAllMessages, handleMessageId, updateSocialVisibility ]);
