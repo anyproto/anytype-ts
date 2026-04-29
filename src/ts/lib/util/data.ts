@@ -431,12 +431,16 @@ class UtilData {
 	 */
 	createSession(phrase: string, key: string, token: string, callBack?: (message: any) => void) {
 		this.closeSession(() => {
-			C.WalletCreateSession(phrase, key, token, (message: any) => {
+			C.WalletCreateSession(phrase, key, token, async (message: any) => {
 				if (!message.error.code) {
 					S.Auth.tokenSet(message.token);
 					S.Auth.appTokenSet(message.appToken);
 
-					dispatcher.startStream();
+					try {
+						await dispatcher.startStream();
+					} catch (err) {
+						console.error('[U.Data].createSession startStream failed', err);
+					};
 				};
 
 				callBack?.(message);
