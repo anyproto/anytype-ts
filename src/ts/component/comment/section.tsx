@@ -809,7 +809,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`
 		: translate(object.isArchived ? 'commentDiscussion' : 'commentLeaveComment');
 
-	const hasUnread = !!discussionId && U.Object.discussionHasUnread(S.Common.space, discussionId, rootId);
+	const hasUnread = !!discussionId && U.Object.discussionHasUnread(S.Common.space, discussionId);
 	const cn = [ 'commentSection', (isOpen ? 'isVisible' : '') ];
 
 	return (

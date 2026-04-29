@@ -1378,7 +1378,7 @@ class UtilData {
 		});
 
 		const parents = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.discussion)).filter(it => {
-			return it.discussionId && U.Object.discussionHasUnread(space, it.discussionId, it.id);
+			return it.discussionId && U.Object.discussionHasUnread(space, it.discussionId);
 		});
 
 		return chats.concat(parents).sort((a, b) => {

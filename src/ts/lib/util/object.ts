@@ -1091,7 +1091,7 @@ class UtilObject {
 		return I.NotificationMode.Mentions;
 	};
 
-	discussionHasUnread (spaceId: string, discussionId: string, parentObjectId: string): boolean {
+	discussionHasUnread (spaceId: string, discussionId: string): boolean {
 		if (!discussionId) {
 			return false;
 		};
