@@ -1097,13 +1097,7 @@ class UtilObject {
 		};
 
 		const counters = S.Chat.getChatCounters(spaceId, discussionId);
-		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-		const mode = this.getDiscussionNotificationMode(spaceview, parentObjectId);
-
-		return (
-			((mode == I.NotificationMode.All) && !!(counters.messageCounter || counters.mentionCounter || counters.reactionCounter)) ||
-			((mode == I.NotificationMode.Mentions) && !!counters.mentionCounter)
-		);
+		return !!(counters.messageCounter || counters.mentionCounter || counters.reactionCounter);
 	};
 
 };
