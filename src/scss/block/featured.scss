@@ -6,6 +6,9 @@
 	}
 	.block.blockFeatured {
 
+		.tagItem.isSelect { padding: 0px 6px; }
+		.tagItem.isSelect::before { display: none; }
+
 		&.isReadonly {
 			.cell.isEmpty { display: none; }
 		}

@@ -5,6 +5,17 @@
 	display: inline-flex; align-items: center; vertical-align: middle; max-width: 100%; white-space: nowrap; @include text-common; 
 	line-height: 24px; height: 24px; border-radius: 12px; position: relative; padding: 0px 6px;
 }
+.tagItem.textColor-grey .inner { color: var(--color-dark-grey); }
+.tagItem.textColor-yellow .inner { color: var(--color-dark-yellow); }
+.tagItem.textColor-orange .inner { color: var(--color-dark-orange); }
+.tagItem.textColor-red .inner { color: var(--color-dark-red); }
+.tagItem.textColor-pink .inner { color: var(--color-dark-pink); }
+.tagItem.textColor-purple .inner { color: var(--color-dark-purple); }
+.tagItem.textColor-blue .inner { color: var(--color-dark-blue); }
+.tagItem.textColor-ice .inner { color: var(--color-dark-ice); }
+.tagItem.textColor-teal .inner { color: var(--color-dark-teal); }
+.tagItem.textColor-lime .inner { color: var(--color-dark-lime); }
+
 .tagItem {
 	.inner { display: inline-block; width: 100%; @include text-overflow-nw; vertical-align: top; }
 
