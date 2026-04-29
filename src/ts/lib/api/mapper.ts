@@ -1815,7 +1815,7 @@ export const Mapper = {
 			};
 		},
 
-		P2PStatusUpdate: (obj: any) => {
+		P2pStatusUpdate: (obj: any) => {
 			return {
 				id: obj.spaceId,
 				p2p: obj.status,
