@@ -1395,7 +1395,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const selection = S.Common.getRef('selectionProvider');
-		const ids = selection?.getForClick('', false, true);
+		const ids = selection?.getForClick('', false, true) || [];
 		const range = getRange();
 		const value = getTextValue();
 
