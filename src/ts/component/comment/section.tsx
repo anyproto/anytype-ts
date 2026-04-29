@@ -107,7 +107,11 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 	const readMessage = useCallback((id: string, orderId: string, lastStateId: string, type: I.ChatReadType) => {
 		const did = discussionIdRef.current;
-		const sid = U.Comment.getSubId(targetType, did || targetId);
+		if (!did) {
+			return;
+		};
+
+		const sid = U.Comment.getSubId(targetType, did);
 
 		if (type == I.ChatReadType.Message) {
 			S.Comment.setReadMessageStatus(sid, [ id ], true);

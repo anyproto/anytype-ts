@@ -1108,11 +1108,15 @@ class Dispatcher {
 					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
 					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview?.isOneToOne);
+					const discussionParentId = S.Chat.getDiscussionParentId(spaceId, rootId);
+					const isDiscussion = !!discussionParentId;
 
 					let showNotification = false;
 
 					if (spaceview) {
-						const notificationMode = U.Object.getChatNotificationMode(spaceview, rootId);
+						const notificationMode = isDiscussion
+							? U.Object.getDiscussionNotificationMode(spaceview, discussionParentId)
+							: U.Object.getChatNotificationMode(spaceview, rootId);
 						if (notificationMode == I.NotificationMode.All) {
 							showNotification = true;
 						} else
@@ -1162,11 +1166,21 @@ class Dispatcher {
 					if (showNotification && notification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
 						const title = [];
 						let canNotify = true;
+						let openPayload: any = { id: rootId, layout: I.ObjectLayout.Chat, spaceId };
 
 						if (spaceview) {
 							title.push(U.String.shorten(spaceview.name, 32));
 						};
 
+						if (isDiscussion) {
+							const parent = S.Chat.getDiscussionParentDetail(spaceId, discussionParentId, [ 'name', 'layout', 'isArchived' ]);
+							if (!parent._empty_ && !parent.isArchived) {
+								title.push(U.String.shorten(U.Object.name(parent), 32));
+								openPayload = { id: discussionParentId, layout: parent.layout, spaceId };
+							} else {
+								canNotify = false;
+							};
+						} else
 						if (!spaceview.isOneToOne) {
 							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
 							if (!chat._empty_) {
@@ -1182,7 +1196,7 @@ class Dispatcher {
 								title: title.join(' - '),
 								text: notification,
 								cmd: 'openChat',
-								payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+								payload: openPayload,
 								silent: !Sound.isSystem(),
 							});
 							Sound.playNotification();

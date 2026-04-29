@@ -144,6 +144,7 @@ export default {
 		chat:			 		'chat',
 		chatGlobal:	 			'chatGlobal',
 		discussion:				'discussion',
+		discussionGlobal:		'discussionGlobal',
 		recentEditMe:	 		'recentEditMe',
 		recentEditAll:	 		'recentEditAll',
 	},

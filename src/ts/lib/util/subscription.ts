@@ -455,6 +455,20 @@ class UtilSubscription {
 				noDeps: true,
 				crossSpace: true,
 			},
+			{
+				subId: J.Constant.subId.discussionGlobal,
+				filters: [
+					{ relationKey: 'discussionId', condition: I.FilterCondition.NotEmpty, value: null },
+				],
+				keys: this.discussionRelationKeys(),
+				noDeps: true,
+				crossSpace: true,
+				onSubscribe: message => {
+					(message.records || []).forEach(it => {
+						S.Chat.discussionParentMapSet(it.spaceId, it.id, it.discussionId);
+					});
+				},
+			},
 		];
 		
 		this.destroyList(list.map(it => it.subId), true, () => {

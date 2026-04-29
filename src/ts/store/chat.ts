@@ -372,36 +372,71 @@ class ChatStore {
 
 		for (const space of spaces) {
 			const spaceId = space.targetSpaceId;
-			const spaceMap = this.stateMap.get(spaceId);
-
-			if (!spaceMap) {
+			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+			if (!spaceview) {
 				continue;
 			};
 
-			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+			this.aggregateSpaceCounters(ret, spaceId, spaceview, false);
+		};
 
+		return ret;
+	};
+
+	/**
+	 * Adds counters from chats (stateMap) and discussions (parent details) for a space
+	 * into the provided accumulator. Used by both getTotalCounters and getSpaceCounters.
+	 */
+	private aggregateSpaceCounters (acc: I.ChatCounter, spaceId: string, spaceview: any, ignoreMute: boolean): void {
+		const spaceMap = this.stateMap.get(spaceId);
+		const discussionMap = this.discussionParentMap.get(spaceId);
+
+		if (spaceMap) {
 			for (const [ chatId, state ] of spaceMap) {
 				if (!chatId || this.isStateEntryArchived(spaceId, chatId)) {
 					continue;
 				};
 
-				const chatMode = U.Object.getNotificationModeByChatId(spaceview, spaceId, chatId);
-
-				if (state.mentionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
-					ret.mentionCounter += Number(state.mentionCounter) || 0;
+				if (discussionMap?.has(chatId)) {
+					continue;
 				};
 
-				if (state.messageCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
-					ret.messageCounter += Number(state.messageCounter) || 0;
+				const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
+
+				if (state.mentionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+					acc.mentionCounter += Number(state.mentionCounter) || 0;
 				};
 
-				if (state.reactionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
-					ret.reactionCounter += Number(state.reactionCounter) || 0;
+				if (state.messageCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+					acc.messageCounter += Number(state.messageCounter) || 0;
+				};
+
+				if (state.reactionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+					acc.reactionCounter += Number(state.reactionCounter) || 0;
 				};
 			};
 		};
 
-		return ret;
+		if (discussionMap) {
+			for (const [ , parentId ] of discussionMap) {
+				const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
+				if (parent._empty_ || parent.isArchived) {
+					continue;
+				};
+
+				const chatMode = U.Object.getDiscussionNotificationMode(spaceview, parentId);
+				const mentionCount = Number(parent.unreadMentionCount) || 0;
+				const messageCount = Number(parent.unreadMessageCount) || 0;
+
+				if (mentionCount && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+					acc.mentionCounter += mentionCount;
+				};
+
+				if (messageCount && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+					acc.messageCounter += messageCount;
+				};
+			};
+		};
 	};
 
 	/**
@@ -412,34 +447,13 @@ class ChatStore {
 	 */
 	getSpaceCounters (spaceId: string, ignoreMute?: boolean): I.ChatCounter {
 		const ret = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
-		const spaceMap = this.stateMap.get(spaceId);
+		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
-		if (!spaceMap) {
+		if (!spaceview) {
 			return ret;
 		};
 
-		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-
-		for (const [ chatId, state ] of spaceMap) {
-			if (!chatId || this.isStateEntryArchived(spaceId, chatId)) {
-				continue;
-			};
-
-			const chatMode = U.Object.getNotificationModeByChatId(spaceview, spaceId, chatId);
-
-			if (state.mentionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
-				ret.mentionCounter += Number(state.mentionCounter) || 0;
-			};
-
-			if (state.messageCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
-				ret.messageCounter += Number(state.messageCounter) || 0;
-			};
-
-			if (state.reactionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
-				ret.reactionCounter += Number(state.reactionCounter) || 0;
-			};
-		};
-
+		this.aggregateSpaceCounters(ret, spaceId, spaceview, !!ignoreMute);
 		return ret;
 	};
 
@@ -489,7 +503,7 @@ class ChatStore {
 
 		const parentId = this.discussionParentMap.get(spaceId)?.get(chatId);
 		if (parentId) {
-			const parent = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.discussion, spaceId), parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
+			const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
 			if (!parent._empty_) {
 				if (parent.isArchived) {
 					return ret;
@@ -507,6 +521,18 @@ class ChatStore {
 			ret.reactionCounter = Number(state.reactionCounter) || 0;
 		};
 		return ret;
+	};
+
+	/**
+	 * Reads a discussion parent's detail from the per-space discussion subscription
+	 * if present, otherwise from the cross-space discussionGlobal subscription.
+	 */
+	getDiscussionParentDetail (spaceId: string, parentId: string, keys: string[]): any {
+		const local = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.discussion, spaceId), parentId, keys);
+		if (!local._empty_) {
+			return local;
+		};
+		return S.Detail.get(J.Constant.subId.discussionGlobal, parentId, keys);
 	};
 
 	/**
@@ -551,7 +577,7 @@ class ChatStore {
 
 		const parentId = this.discussionParentMap.get(spaceId)?.get(chatId);
 		if (parentId) {
-			const parent = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.discussion, spaceId), parentId, [ 'isArchived' ]);
+			const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'isArchived' ]);
 			return !!parent.isArchived;
 		};
 
