@@ -478,32 +478,26 @@ class ChatStore {
 		};
 
 		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
-		const isChat = !chat._empty_;
-		let isArchived = isChat && !!chat.isArchived;
+		let isArchived = !chat._empty_ && !!chat.isArchived;
 
-		if (!isChat) {
-			const parents = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.discussion));
-			const parent = parents.find(it => it.discussionId == chatId);
+		if (chat._empty_) {
+			const parent = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.discussion))
+				.find(it => it.discussionId == chatId);
 
-			if (!parent) {
-				return ret;
+			if (parent) {
+				isArchived = !!parent.isArchived;
 			};
-			isArchived = !!parent.isArchived;
 		};
 
 		if (isArchived) {
 			return ret;
 		};
 
-		const spaceMap = this.stateMap.get(spaceId);
-
-		if (spaceMap) {
-			const state = spaceMap.get(chatId);
-			if (state) {
-				ret.mentionCounter = Number(state.mentionCounter) || 0;
-				ret.messageCounter = Number(state.messageCounter) || 0;
-				ret.reactionCounter = Number(state.reactionCounter) || 0;
-			};
+		const state = this.stateMap.get(spaceId)?.get(chatId);
+		if (state) {
+			ret.mentionCounter = Number(state.mentionCounter) || 0;
+			ret.messageCounter = Number(state.messageCounter) || 0;
+			ret.reactionCounter = Number(state.reactionCounter) || 0;
 		};
 
 		return ret;
