@@ -314,9 +314,12 @@ curl -s -X POST "https://api.linear.app/graphql" \
 
 **Important:** Use `$(printenv LINEAR_API_KEY)` instead of `$LINEAR_API_KEY` directly in curl commands to avoid shell expansion issues.
 
-### Linear Workflow After Fixing Issues
+### Linear Workflow
 
-After pushing a fix for a Linear issue, always:
+**When starting work on an issue:**
+- **Move the issue** to **"In development"** state before beginning implementation.
+
+**After pushing a fix for an issue:**
 
 1. **Comment on the issue** with a brief description of the fix (what was changed and why).
 2. **Move the issue** to the appropriate state based on its labels:
