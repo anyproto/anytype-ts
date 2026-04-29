@@ -485,22 +485,9 @@ class ChatStore {
 			return ret;
 		};
 
-		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
-
-		if (!chat._empty_) {
-			if (chat.isArchived) {
-				return ret;
-			};
-
-			const state = this.stateMap.get(spaceId)?.get(chatId);
-			if (state) {
-				ret.mentionCounter = Number(state.mentionCounter) || 0;
-				ret.messageCounter = Number(state.messageCounter) || 0;
-				ret.reactionCounter = Number(state.reactionCounter) || 0;
-			};
-			return ret;
-		};
-
+		// Discussions: read counters from the parent object's relations. The chatPreview
+		// state subscription does not cover discussions, so stateMap can be missing or
+		// stale here even when chatGlobal has the discussion's chat object.
 		const parentId = this.discussionParentMap.get(spaceId)?.get(chatId);
 		if (parentId) {
 			const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
@@ -512,6 +499,11 @@ class ChatStore {
 				ret.mentionCounter = Number(parent.unreadMentionCount) || 0;
 				return ret;
 			};
+		};
+
+		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
+		if (!chat._empty_ && chat.isArchived) {
+			return ret;
 		};
 
 		const state = this.stateMap.get(spaceId)?.get(chatId);
@@ -570,15 +562,17 @@ class ChatStore {
 	 * its chat (or discussion parent) is archived.
 	 */
 	isStateEntryArchived (spaceId: string, chatId: string): boolean {
-		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
-		if (!chat._empty_) {
-			return !!chat.isArchived;
-		};
-
 		const parentId = this.discussionParentMap.get(spaceId)?.get(chatId);
 		if (parentId) {
 			const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'isArchived' ]);
-			return !!parent.isArchived;
+			if (!parent._empty_) {
+				return !!parent.isArchived;
+			};
+		};
+
+		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
+		if (!chat._empty_) {
+			return !!chat.isArchived;
 		};
 
 		return false;
