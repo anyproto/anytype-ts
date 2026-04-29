@@ -10,10 +10,12 @@ import { focus } from 'Lib/focus';
 // Prism language plugins expect `Prism` on the global scope
 (window as any).Prism = Prism;
 
-// Load language components sequentially to respect dependency order
+// Do not mark this import /* @vite-ignore */ — Rollup needs to glob
+// prismjs/components/prism-*.js and emit a lazy chunk per language, otherwise
+// nothing loads in production and Prism.languages.<lang> stays undefined.
 (async () => {
 	for (const lang of U.Prism.components) {
-		try { await import(/* @vite-ignore */ `prismjs/components/prism-${lang}.js`); } catch (e) {};
+		try { await import(`prismjs/components/prism-${lang}.js`); } catch (e) {};
 	};
 })();
 
