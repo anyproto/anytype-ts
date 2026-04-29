@@ -478,28 +478,30 @@ class ChatStore {
 		};
 
 		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
-		let isArchived = !chat._empty_ && !!chat.isArchived;
 
-		if (chat._empty_) {
-			const parent = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.discussion))
-				.find(it => it.discussionId == chatId);
-
-			if (parent) {
-				isArchived = !!parent.isArchived;
+		if (!chat._empty_) {
+			if (chat.isArchived) {
+				return ret;
 			};
-		};
 
-		if (isArchived) {
+			const state = this.stateMap.get(spaceId)?.get(chatId);
+			if (state) {
+				ret.mentionCounter = Number(state.mentionCounter) || 0;
+				ret.messageCounter = Number(state.messageCounter) || 0;
+				ret.reactionCounter = Number(state.reactionCounter) || 0;
+			};
 			return ret;
 		};
 
-		const state = this.stateMap.get(spaceId)?.get(chatId);
-		if (state) {
-			ret.mentionCounter = Number(state.mentionCounter) || 0;
-			ret.messageCounter = Number(state.messageCounter) || 0;
-			ret.reactionCounter = Number(state.reactionCounter) || 0;
+		const parent = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.discussion))
+			.find(it => it.discussionId == chatId);
+
+		if (!parent || parent.isArchived) {
+			return ret;
 		};
 
+		ret.messageCounter = Number(parent.unreadMessageCount) || 0;
+		ret.mentionCounter = Number(parent.unreadMentionCount) || 0;
 		return ret;
 	};
 

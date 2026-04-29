@@ -838,7 +838,7 @@ class UtilSubscription {
 	 * @returns {string[]} The list of relation keys.
 	 */
 	discussionRelationKeys () {
-		return J.Relation.default.concat([ 'snippet', 'lastMessageDate' ]);
+		return J.Relation.default.concat([ 'snippet', 'lastMessageDate', 'unreadMessageCount', 'unreadMentionCount', 'notificationSubscribers' ]);
 	};
 
 	getRecentSubId (): string {
