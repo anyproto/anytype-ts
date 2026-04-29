@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, useCallback } from 'react';
-import { Icon, Button, Label } from 'Component';
+import { Icon, Button, Label, IconObject } from 'Component';
 import CommentEditor from 'Component/form/commentEditor';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -20,6 +20,7 @@ interface Props {
 interface RefProps {
 	focus: () => void;
 	clear: () => void;
+	insertQuote: (part: I.CommentContentPart) => void;
 };
 
 const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
@@ -63,6 +64,12 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			setIsLoading(false);
 			setIsMultiline(false);
 			clearDraft();
+		},
+		insertQuote: (part: I.CommentContentPart) => {
+			if (!part) {
+				return;
+			};
+			editorRef.current?.insertSourceQuote(part);
 		},
 	}));
 
@@ -761,6 +768,10 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	if (isMultiline) cn.push('isMultiline');
 	if (isDraggingOver) cn.push('isDraggingOver');
 
+	const withAvatar = isReply || isEdit;
+	const { space } = S.Common;
+	const author = withAvatar ? U.Space.getParticipant(U.Space.getParticipantId(space, S.Auth.account?.id)) : null;
+
 	return (
 		<div
 			ref={formRef}
@@ -776,6 +787,9 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			</div>
 
 			<div className="contentArea">
+				{withAvatar ? (
+					<IconObject object={{ ...author, layout: I.ObjectLayout.Participant }} size={20} />
+				) : null}
 				<CommentEditor
 					ref={editorRef}
 					rootId={rootId}

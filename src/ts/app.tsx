@@ -127,6 +127,11 @@ const App: FC = () => {
 		U.Router.init(history);
 		U.Smile.init();
 
+		// Keep <html> class in sync with history even if React Router's subscription
+		// gets desynced (e.g. after HMR module swaps). Without this, the tree can end
+		// up on the wrong page after an HMR full-reload with the tab route restored.
+		history.listen(() => keyboard.setBodyClass());
+
 		if (window.isWebVersion) {
 			import('./lib/web/routeSync').then(({ initRouteSync }) => initRouteSync(history, U.Router));
 		}
@@ -186,7 +191,15 @@ const App: FC = () => {
 		});
 		Renderer.on('notification-callback', onNotificationCallback);
 		Renderer.on('payload-broadcast', onPayloadBroadcast);
-		Renderer.on('set-active-tab', (e: any, id: string) => S.Common.isActiveTabSet(id === S.Common.tabId));
+		Renderer.on('set-active-tab', (e: any, id: string) => {
+			const isActive = id === S.Common.tabId;
+
+			S.Common.isActiveTabSet(isActive);
+
+			if (isActive) {
+				U.Data.updateTabsDimmer();
+			};
+		});
 
 		Renderer.on('shutdownStart', () => {
 			setIsLoading(true);

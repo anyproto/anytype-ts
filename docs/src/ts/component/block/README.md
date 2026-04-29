@@ -1,6 +1,6 @@
 # block/ - Document Block Components
 
-Block-based content system. Every piece of content in Anytype (text, images, databases, etc.) is a block. Contains **62 TSX files** (plus 12 Storybook story files).
+Block-based content system. Every piece of content in Anytype (text, images, databases, etc.) is a block. Contains **62 TSX files**. Most blocks (and their subcomponents) have co-located `.stories.tsx` files for Storybook coverage.
 
 ## Architecture
 

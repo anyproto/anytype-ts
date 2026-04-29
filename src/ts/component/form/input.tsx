@@ -299,6 +299,10 @@ const Input = forwardRef<InputRef, Props>(({
 				keyboard.disableSelection(false);
 			};
 
+			if (isComposing.current) {
+				keyboard.setComposition(false);
+			};
+
 			onUnmount?.();
 		};
 	}, []);

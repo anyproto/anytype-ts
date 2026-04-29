@@ -13,13 +13,14 @@ interface Props {
 	targetId: string;
 	message: I.CommentMessage;
 	readonly?: boolean;
+	isLast?: boolean;
 };
 
 const REPLY_LIMIT = 10;
 
 const CommentPost = (props: Props) => {
 
-	const { rootId, targetId, message, readonly } = props;
+	const { rootId, targetId, message, readonly, isLast } = props;
 	const { space } = S.Common;
 	const { account } = S.Auth;
 	const [ isEditing, setIsEditing ] = useState(false);
@@ -169,6 +170,85 @@ const CommentPost = (props: Props) => {
 		};
 	}, [ isEditing, parts, subId ]);
 
+	// Right-click on selected text in the rendered post content opens a small
+	// menu offering "Quote in comment" / "Copy Text". Quoting opens the reply
+	// form for THIS post's thread (not the main form), so quotes stay attached
+	// to the conversation they came from. Plain-text quote only — marks are
+	// not extracted from selections in v1.
+	useEffect(() => {
+		const node = contentRef.current;
+		if (!node) {
+			return;
+		};
+
+		const onContextMenu = (e: MouseEvent) => {
+			const sel = window.getSelection();
+			const text = sel ? sel.toString() : '';
+
+			if (!text.trim() || !sel.rangeCount) {
+				return;
+			};
+
+			const range = sel.getRangeAt(0);
+			if (!node.contains(range.commonAncestorContainer)) {
+				return;
+			};
+
+			e.preventDefault();
+			e.stopPropagation();
+
+			S.Menu.open('select', {
+				rect: { x: e.clientX, y: e.clientY, width: 0, height: 0 },
+				horizontal: I.MenuDirection.Right,
+				offsetY: 4,
+				data: {
+					options: [
+						{ id: 'quoteInComment', iconParam: { name: 'menu/block/text/quote' }, name: translate('commonQuoteInComment') },
+						{ id: 'copyText', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopyText') },
+					],
+					onSelect: (_e: any, item: any) => {
+						if (item.id == 'quoteInComment') {
+							const part: I.CommentContentPart = {
+								style: I.TextStyle.Quote,
+								type: I.BlockType.Text,
+								text,
+								marks: [],
+								messageQuote: { messageId: id },
+							};
+
+							window.dispatchEvent(new CustomEvent(`commentReplyQuote.${id}`, { detail: part }));
+						} else
+						if (item.id == 'copyText') {
+							U.Common.clipboardCopy({ text });
+						};
+					},
+				},
+			});
+		};
+
+		node.addEventListener('contextmenu', onContextMenu);
+		return () => node.removeEventListener('contextmenu', onContextMenu);
+	}, [ id ]);
+
+	// Listen for quote events targeted at this post's thread (fired from
+	// either this post's own selection menu or from a reply's menu) and
+	// open the reply form pre-filled with the quote.
+	useEffect(() => {
+		const onReplyQuote = (e: Event) => {
+			const part = (e as CustomEvent).detail as I.CommentContentPart;
+			if (!part) {
+				return;
+			};
+
+			setIsReplying(true);
+			window.setTimeout(() => replyFormRef.current?.insertQuote(part), 50);
+		};
+
+		const eventName = `commentReplyQuote.${id}`;
+		window.addEventListener(eventName, onReplyQuote);
+		return () => window.removeEventListener(eventName, onReplyQuote);
+	}, [ id ]);
+
 	const loadDeps = useCallback((messages: any[], callBack?: () => void) => {
 		const ids = U.Comment.getDepsIds(messages);
 
@@ -275,8 +355,15 @@ const CommentPost = (props: Props) => {
 		setIsEditing(false);
 	}, []);
 
-	const onSaveEdit = useCallback((newParts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[]) => {
+	const onSaveEdit = useCallback((newParts: I.CommentContentPart[], attachments?: I.ChatMessageAttachment[], attachmentObjects?: any[]) => {
 		const blocks = U.Comment.partsToChatBlocks(newParts);
+		const newAttachments = attachments || [];
+
+		if (attachmentObjects?.length) {
+			for (const obj of attachmentObjects) {
+				S.Detail.update(subId, { id: obj.id, details: obj }, false);
+			};
+		};
 
 		C.ChatEditMessageContent(targetId, id, {
 			content: {
@@ -285,7 +372,7 @@ const CommentPost = (props: Props) => {
 				marks: [],
 			},
 			blocks,
-			attachments: message.attachments || [],
+			attachments: newAttachments,
 			reactions: message.reactions || [],
 		} as any, (response: any) => {
 			if (response.error.code) {
@@ -303,9 +390,10 @@ const CommentPost = (props: Props) => {
 					marks: [],
 					parts: newParts,
 				},
+				attachments: newAttachments,
 			} as any);
 		});
-	}, [ targetId, id, message.attachments, message.reactions ]);
+	}, [ targetId, id, subId, message.reactions ]);
 
 	const onDelete = useCallback(() => {
 		S.Popup.open('confirm', {
@@ -684,28 +772,31 @@ const CommentPost = (props: Props) => {
 	};
 
 	const cn = [ 'commentPost', (isEditing ? 'isEditing' : '') ];
+	const showReplyInput = !isEditing && !isReplying && !readonly;
 
 	return (
 		<div ref={postRef} className={cn.join(' ')} data-message-id={id}>
 			<div ref={contentWrapRef} className="contentWrap" onContextMenu={onContextMenu}>
-				<div className="head">
-					<div className="side left">
-						<IconObject
-							object={{ ...author, layout: I.ObjectLayout.Participant }}
-							size={20}
-							onClick={e => U.Object.openConfig(e, author)}
-						/>
-						<div className="author" onClick={e => U.Object.openConfig(e, author)}>
-							<ObjectName object={author} withBadge={true} />
+				{!isEditing ? (
+					<div className="head">
+						<div className="side left">
+							<IconObject
+								object={{ ...author, layout: I.ObjectLayout.Participant }}
+								size={20}
+								onClick={e => U.Object.openConfig(e, author)}
+							/>
+							<div className="author" onClick={e => U.Object.openConfig(e, author)}>
+								<ObjectName object={author} withBadge={true} />
+							</div>
+							<div className="date">
+								{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+							</div>
 						</div>
-						<div className="date">
-							{U.Date.isToday(createdAt) ? U.Date.timeWithFormat(S.Common.timeFormat, createdAt) : U.Date.date('M j', createdAt)}{editedLabel}
+						<div className="side right">
+							{renderHoverActions()}
 						</div>
 					</div>
-					<div className="side right">
-						{renderHoverActions()}
-					</div>
-				</div>
+				) : null}
 
 				{renderContent()}
 				{renderReactions()}
@@ -756,6 +847,16 @@ const CommentPost = (props: Props) => {
 						onSubmit={onSubmitReply}
 						onCancel={onCancelReply}
 					/>
+				</div>
+			) : null}
+
+			{showReplyInput ? (
+				<div className="replyInput" onClick={onReply}>
+					<IconObject
+						object={{ ...U.Space.getParticipant(U.Space.getParticipantId(space, account.id)), layout: I.ObjectLayout.Participant }}
+						size={20}
+					/>
+					<span className="replyInputLabel">{translate('commentReplyPlaceholder')}</span>
 				</div>
 			) : null}
 		</div>

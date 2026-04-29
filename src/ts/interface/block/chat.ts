@@ -69,6 +69,7 @@ export interface ChatMessage {
 	reactions: ChatMessageReaction[];
 	blocks: ChatMessageBlock[];
 	isSynced: boolean;
+	isPinned: boolean;
 
 	// Internal
 	isFirst: boolean;
@@ -83,6 +84,8 @@ export interface ChatMessageBlock {
 	text?: ChatMessageBlockText;
 	link?: ChatMessageBlockLink;
 	embed?: ChatMessageBlockEmbed;
+	editorQuote?: ChatMessageBlockEditorQuote;
+	messageQuote?: ChatMessageBlockMessageQuote;
 };
 
 export interface ChatMessageBlockText {
@@ -101,6 +104,16 @@ export interface ChatMessageBlockEmbed {
 export interface ChatMessageBlockLink {
 	targetObjectId: string;
 	type: ChatMessageBlockLinkType;
+};
+
+export interface ChatMessageBlockEditorQuote {
+	blockId: string;
+	content: ChatMessageBlockText;
+};
+
+export interface ChatMessageBlockMessageQuote {
+	messageId: string;
+	content: ChatMessageBlockText;
 };
 
 export enum ChatMessageBlockLinkType {

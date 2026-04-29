@@ -3,6 +3,7 @@ import raf from 'raf';
 import { SidebarProgress } from 'Component';
 
 import PageWidget from './page/widget';
+import PageWidgetManage from './page/widgetManage';
 import PageSettingsIndex from './page/settings/index';
 import PageSettingsLibrary from './page/settings/library';
 import PageVault from './page/vault';
@@ -10,6 +11,7 @@ import * as I from 'Interface';
 
 const Components = {
 	widget:				 PageWidget,
+	widgetManage:		 PageWidgetManage,
 	vault:				 PageVault,
 	settings:			 PageSettingsIndex,
 	settingsSpace:		 PageSettingsIndex,
@@ -26,6 +28,7 @@ interface SidebarLeftRefProps {
 const SidebarLeft = forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
 	const { vaultIsMinimal } = S.Common;
+	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const pageRef = useRef(null);
 	const subPageRef = useRef(null);
@@ -38,7 +41,7 @@ const SidebarLeft = forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 	const width = useRef(0);
 	const movedX = useRef(false);
 	const { page, subPage } = S.Common.getLeftSidebarState();
-	const cn = [ 'sidebar', 'left' ];
+	const cn = [ 'sidebar', 'left', U.Data.spaceClass(spaceview.spaceType) ];
 
 	if (vaultIsMinimal) {
 		cn.push('isMinimal');

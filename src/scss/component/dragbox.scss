@@ -1,6 +1,6 @@
 @import "~scss/_mixins";
 
-.dragbox { display: inline; position: relative; }
+.dragbox { display: inline; position: relative; line-height: 0px; }
 .dragbox {
     .isDraggable { position: relative; }
     .isDraggable.isClone { opacity: 0.75; position: absolute !important; left: 0px; top: 0px; }

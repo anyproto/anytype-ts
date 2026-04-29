@@ -40,6 +40,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const scrollTopRef = useRef(0);
 	const isEnterProcessing = useRef(false);
 	const scrollHandlerRef = useRef<(() => void) | null>(null);
+	const windowHandlersRef = useRef<Map<string, (e: any) => void>>(new Map());
 
 	useEffect(() => {
 		open();
@@ -227,17 +228,12 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const unbind = () => {
-		const ns = `editor${U.Dom.getEventNamespace(isPopup)}`;
-		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus', 'sidebarResize' ];
 		const selection = S.Common.getRef('selectionProvider');
 
-		events.forEach(it => {
-			const handler = (window as any)[`_editorHandler_${it}_${ns}`];
-			if (handler) {
-				U.Dom.removeEvent(window, it, handler);
-				delete (window as any)[`_editorHandler_${it}_${ns}`];
-			};
+		windowHandlersRef.current.forEach((handler, event) => {
+			U.Dom.removeEvent(window, event, handler);
 		});
+		windowHandlersRef.current.clear();
 
 		const sc = U.Dom.getScrollContainer(isPopup);
 		if (sc && scrollHandlerRef.current) {
@@ -251,14 +247,17 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const rebind = () => {
 		const selection = S.Common.getRef('selectionProvider');
-		const ns = `editor${U.Dom.getEventNamespace(isPopup)}`;
 		const sc = U.Dom.getScrollContainer(isPopup);
 		const readonly = isReadonly();
 
 		unbind();
 
 		const storeHandler = (event: string, handler: (e: any) => void) => {
-			(window as any)[`_editorHandler_${event}_${ns}`] = handler;
+			const existing = windowHandlersRef.current.get(event);
+			if (existing) {
+				U.Dom.removeEvent(window, event, existing);
+			};
+			windowHandlersRef.current.set(event, handler);
 			U.Dom.addEvent(window, event, handler);
 		};
 
@@ -268,9 +267,13 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		storeHandler('keydown', e => onKeyDownEditor(e));
 		storeHandler('paste', (e: any) => {
-			if (!keyboard.isFocused) {
-				onPasteEvent(e, props);
+			if (keyboard.isFocused) {
+				return;
 			};
+			if ((e.target as HTMLElement)?.closest?.('.commentSection')) {
+				return;
+			};
+			onPasteEvent(e, props);
 		});
 
 		storeHandler('focus', () => {
@@ -481,6 +484,10 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (isPopup !== keyboard.isPopup()) {
+			return;
+		};
+
+		if ((e.target as HTMLElement)?.closest?.('.commentSection, .menuWrap')) {
 			return;
 		};
 
@@ -834,6 +841,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			// Copy/Cut
 			keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+				e.stopPropagation();
 				onCopy(e, pressed.match('x') ? I.ClipboardMode.Cut : I.ClipboardMode.Copy);
 			});
 
@@ -1660,13 +1668,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 				style: I.TextStyle.Paragraph,
 			}, releaseEnterGuard);
 		} else
-		if (block.isTextParagraph() && !length && parent && (parent.canToggle() || parent.isTextCallout())) {
-			if (S.Block.isLastChild(rootId, block.id)) {
-				Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom);
-				releaseEnterGuard();
-			} else {
-				blockSplit(block, range, isShift, releaseEnterGuard);
-			};
+		if (block.isTextParagraph() && !length && parent && (parent.canToggle() || parent.isTextCallout() || parent.isTextQuote())) {
+			Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom, releaseEnterGuard);
 		} else {
 			blockSplit(block, range, isShift, releaseEnterGuard);
 		};
@@ -2022,6 +2025,15 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onPasteEvent = (e: any, props: any, data?: any) => {
 		const { isPopup } = props;
 
+		// Dedupe: if the same native paste event already had preventDefault called
+		// (by a block-level React handler or a previous pass through this fn), skip.
+		// Prevents duplicate C.BlockPaste when React-synthetic and window listeners
+		// both reach here, or when the prop-chain forwards the event more than once.
+		const native = e?.nativeEvent ?? e;
+		if (!data && native?.defaultPrevented) {
+			return;
+		};
+
 		if (isPopup !== keyboard.isPopup()) {
 			return;
 		};
@@ -2075,14 +2087,12 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		let from = 0;
 		let to = 0;
 
-		keyboard.disablePaste(true);
-
 		C.BlockPaste(rootId, focused, range, selection?.get(I.SelectType.Block, true) || [], data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
-			keyboard.disablePaste(false);
-
 			if (message.error.code) {
 				return;
 			};
+
+			selection?.clear();
 
 			let count = 1;
 
@@ -2551,18 +2561,15 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
-		S.Menu.closeAll();
-		S.Popup.closeAll([ 'preview' ]);
-
 		let blockIds = [];
 		if (ids.length) {
 			blockIds = [ ...ids ];
-		} else 
+		} else
 		if (focused) {
 			blockIds = [ focused.id ];
 		};
 
-		blockIds = blockIds.filter(id => {  
+		blockIds = blockIds.filter(id => {
 			const block = S.Block.getLeaf(rootId, id);
 			return block && block.isDeletable();
 		});
@@ -2570,6 +2577,9 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (!blockIds.length) {
 			return;
 		};
+
+		S.Menu.closeAll();
+		S.Popup.closeAll([ 'preview' ]);
 
 		focus.clear(true);
 

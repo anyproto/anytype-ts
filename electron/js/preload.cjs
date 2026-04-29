@@ -5,6 +5,11 @@ const os = require('os');
 const path = require('path');
 const mime = require('mime-types');
 const tmpPath = () => app.getPath('temp');
+const commonPath = () => {
+	const dir = path.join(app.getPath('userData'), 'common');
+	try { fs.mkdirSync(dir, { recursive: true }); } catch (e) {};
+	return dir;
+};
 
 contextBridge.exposeInMainWorld('Electron', {
 	version: {
@@ -23,6 +28,7 @@ contextBridge.exposeInMainWorld('Electron', {
 	isPackaged: app.isPackaged,
 	userPath: () => app.getPath('userData'),
 	tmpPath,
+	commonPath,
 	downloadPath: () => app.getPath('downloads'),
 	logPath: () => path.join(app.getPath('userData'), 'logs'),
 	dirName: fp => path.dirname(fp),
@@ -60,6 +66,16 @@ contextBridge.exposeInMainWorld('Electron', {
 	showOpenDialog: dialog.showOpenDialog,
 
 	webFilePath: file => webUtils && webUtils.getPathForFile(file),
+
+	logRead: fp => {
+		const base = commonPath();
+		const resolved = path.resolve(fp);
+		const rel = path.relative(base, resolved);
+		if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) {
+			throw new Error('logRead: path is outside of the common folder');
+		};
+		return new Uint8Array(fs.readFileSync(resolved));
+	},
 
 	fileWrite: (name, data, options) => {
 		name = String(name || 'temp');

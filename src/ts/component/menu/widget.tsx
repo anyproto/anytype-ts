@@ -48,6 +48,7 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const checked = checkState(layout, limit);
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(checked.layout);
 		const canWrite = U.Space.canMyParticipantWrite();
+		const isOwner = U.Space.isMyOwner();
 		const layoutOptions = U.Menu.getWidgetLayoutOptions(target?.id, target?.layout, isPreview);
 		const block = S.Block.getLeaf(widgets, blockId);
 		const isSystem = U.Menu.isSystemWidget(target?.id);
@@ -97,14 +98,25 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			actionChildren.push({ id: 'pageLink', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 		};
 
-		if (canWrite && isPinned) {
-			const name = isSystem ? translate('menuWidgetRemoveWidget') : translate('commonUnpin');
-			const iconName = isSystem ? 'menu/action/remove' : 'menu/action/unpin';
-
-			actionChildren.push({ id: 'removeWidget', name, iconParam: { name: iconName } });
-		};
-
 		if (!isSystem && canWrite) {
+			const personalId = U.Object.getPersonalWidgetsId();
+			const isFavorite = target && S.Block.getWidgetsForTargetIn(target.id, personalId).length > 0;
+			const isPinned = target && S.Block.getWidgetsForTargetIn(target.id, widgets).length > 0;
+
+			actionChildren.push({
+				id: isFavorite ? 'unfavorite' : 'favorite',
+				iconParam: { name: isFavorite ? 'menu/action/unfav' : 'menu/action/fav' },
+				name: translate(isFavorite ? 'menuWidgetUnfavorite' : 'menuWidgetFavorite'),
+			});
+
+			if (isOwner) {
+				actionChildren.push({
+					id: isPinned ? 'unpinFromChannel' : 'pinToChannel',
+					iconParam: { name: 'menu/action/pin' },
+					name: translate(isPinned ? 'menuWidgetUnpinFromChannel' : 'menuWidgetPinToChannel'),
+				});
+			};
+
 			if (!isType) {
 				actionChildren.push({ id: 'linkTo', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonLinkTo'), arrow: true });
 				actionChildren.push({ id: 'addCollection', iconParam: { name: 'menu/action/collection' }, name: translate('commonAddToCollection'), arrow: true });
@@ -383,6 +395,34 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'archive': {
 				Action.archiveCheckType('', [ target.id ], route);
+				break;
+			};
+
+			case 'favorite': {
+				const personalId = U.Object.getPersonalWidgetsId();
+				Action.createWidgetFromObjectIn(personalId, personalId, target.id, '', I.BlockPosition.InnerFirst, route);
+				break;
+			};
+
+			case 'unfavorite': {
+				const personalId = U.Object.getPersonalWidgetsId();
+				const list = S.Block.getWidgetsForTargetIn(target.id, personalId);
+				if (list.length) {
+					C.BlockListDelete(personalId, list.map(it => it.id));
+				};
+				break;
+			};
+
+			case 'pinToChannel': {
+				Action.createWidgetFromObjectIn(widgets, widgets, target.id, '', I.BlockPosition.InnerFirst, route);
+				break;
+			};
+
+			case 'unpinFromChannel': {
+				const list = S.Block.getWidgetsForTargetIn(target.id, widgets);
+				if (list.length) {
+					C.BlockListDelete(widgets, list.map(it => it.id));
+				};
 				break;
 			};
 

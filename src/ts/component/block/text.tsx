@@ -50,7 +50,8 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const root = S.Block.getLeaf(rootId, rootId);
 	const cn = [ 'flex' ];
 	const cv = [ 'value', 'focusable', `c${id}` ];
-	const checkRtl = U.String.checkRtl(text) || fields.isRtlDetected;
+	const isRtlFromText = U.String.checkRtl(text);
+	const checkRtl = isRtlFromText || fields.isRtlDetected;
 	const nodeRef = useRef(null);
 	const langRef = useRef(null);
 	const editableRef = useRef(null);
@@ -383,6 +384,38 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			if (menuOpen) {
 				e.preventDefault();
 				return;
+			};
+
+			// Convert ``` (+ optional language) followed by Enter into a code block
+			if ((pressed == 'enter') && block.isText() && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription()) {
+				const codeMatch = value.trim().match(/^```(\w*)$/);
+
+				if (codeMatch) {
+					const langInput = codeMatch[1] || '';
+
+					if (!langInput || Prism.languages[langInput]) {
+						e.preventDefault();
+
+						const lang = langInput || Storage.get('codeLang') || J.Constant.default.codeLang;
+
+						marksRef.current = [];
+						setValue('');
+
+						U.Data.blockSetText(rootId, block.id, '', [], true, () => {
+							C.BlockListSetFields(rootId, [
+								{ blockId: block.id, fields: { ...block.fields, lang } }
+							], () => {
+								C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Code, () => {
+									focus.set(block.id, { from: 0, to: 0 });
+									focus.apply();
+								});
+							});
+						});
+
+						ret = true;
+						return;
+					};
+				};
 			};
 
 			// Handle enter manually in the code blocks to keep caret and new lines in sync
@@ -783,6 +816,9 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			parsed = getMarksFromHtml();
 			adjustMarks = parsed.adjustMarks;
 			marksRef.current = parsed.marks;
+		} else {
+			parsed = Mark.fromUnicode(value, marksRef.current, false);
+			adjustMarks = parsed.adjustMarks;
 		};
 
 		if (menuOpenAdd || menuOpenMention) {
@@ -920,21 +956,25 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				setValue(value);
 
 				U.Data.blockSetText(rootId, id, value, marksRef.current, true, () => {
-					C.BlockListTurnInto(rootId, [ id ], newStyle, () => {
-						focus.set(block.id, { from: 0, to: 0 });
-						focus.apply();
-					});
+					const finishTurnInto = () => {
+						C.BlockListTurnInto(rootId, [ id ], newStyle, () => {
+							focus.set(block.id, { from: 0, to: 0 });
+							focus.apply();
+						});
 
-					if ([ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ].includes(newStyle)) {
-						S.Block.toggle(rootId, id, true);
+						if ([ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ].includes(newStyle)) {
+							S.Block.toggle(rootId, id, true);
+						};
 					};
 
 					if (newStyle == I.TextStyle.Code) {
 						const lang = match[2] || Storage.get('codeLang') || J.Constant.default.codeLang;
 
-						C.BlockListSetFields(rootId, [ 
-							{ blockId: block.id, fields: { ...block.fields, lang } } 
-						]);
+						C.BlockListSetFields(rootId, [
+							{ blockId: block.id, fields: { ...block.fields, lang } }
+						], finishTurnInto);
+					} else {
+						finishTurnInto();
 					};
 				});
 
@@ -962,7 +1002,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		placeholderCheck();
 
-		const text = block.canHaveMarks() ? parsed.text : value;
+		const text = parsed.text ?? value;
 
 		// When typing space adjust several markups to break it
 		keyboard.shortcut('space', e, () => {
@@ -1161,14 +1201,15 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		textRef.current = value;
 
 		const isRtl = U.String.checkRtl(value);
-		const cb = () => {
-			U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
-		};
 
-		if (value && (isRtl != checkRtl)) {
-			U.Data.setRtl(rootId, block, isRtl, cb);
+		if (isRtl != checkRtl) {
+			// Save text first so intermediate re-renders from setRtl have the correct text in store,
+			// preventing character loss and stale CSS direction
+			U.Data.blockSetText(rootId, block.id, value, marks, update, () => {
+				U.Data.setRtl(rootId, block, isRtl, callBack);
+			});
 		} else {
-			cb();
+			U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
 		};
 	};
 	
@@ -1267,6 +1308,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onPasteHandler = (e: any) => {
 		e.persist();
 		e.preventDefault();
+		e.stopPropagation();
 
 		preventMenu.current = true;
 
@@ -1547,7 +1589,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		cv.push(`textColor textColor-${color}`);
 	};
 
-	if (checkRtl) {
+	if (isRtlFromText) {
 		cn.push('isRtl');
 	};
 

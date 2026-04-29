@@ -1,6 +1,6 @@
 # util/ - Reusable Utility Components
 
-~940 files (excluding stories). 31 top-level components plus subdirectories for icons, media, objects, menus, upsell, and share.
+~940 files (excluding stories). 32 top-level components plus subdirectories for icons, media, objects, menus, upsell, and share.
 
 ## Top-Level Components
 
@@ -33,6 +33,7 @@
 - `errorBoundary.tsx` - React error boundary with recovery UI
 - `deleted.tsx` - Deleted object placeholder
 - `loader.tsx` - Loading spinner
+- `mediaState.tsx` - Media placeholder for archived or missing objects
 
 ### UI Helpers
 - `toast.tsx` - Toast messages

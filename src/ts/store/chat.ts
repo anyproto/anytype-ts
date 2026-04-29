@@ -10,6 +10,7 @@ class ChatStore {
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
 	public attachmentsMap: Map<string, any[]> = observable(new Map());
+	public discussionParentMap: Map<string, Map<string, string>> = observable.map(new Map());
 	private badgeValue = '';
 
 	constructor () {
@@ -20,6 +21,8 @@ class ChatStore {
 			setReply: action,
 			setState: action,
 			setAttachments: action,
+			discussionParentMapSet: action,
+			discussionParentMapDelete: action,
 		});
 	};
 
@@ -313,6 +316,7 @@ class ChatStore {
 		this.replyMap.clear();
 		this.stateMap.clear();
 		this.attachmentsMap.clear();
+		this.discussionParentMap.clear();
 	};
 
 	/**
@@ -368,41 +372,71 @@ class ChatStore {
 
 		for (const space of spaces) {
 			const spaceId = space.targetSpaceId;
-			const spaceMap = this.stateMap.get(spaceId);
-
-			if (!spaceMap) {
+			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+			if (!spaceview) {
 				continue;
 			};
 
-			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+			this.aggregateSpaceCounters(ret, spaceId, spaceview, false);
+		};
 
+		return ret;
+	};
+
+	/**
+	 * Adds counters from chats (stateMap) and discussions (parent details) for a space
+	 * into the provided accumulator. Used by both getTotalCounters and getSpaceCounters.
+	 */
+	private aggregateSpaceCounters (acc: I.ChatCounter, spaceId: string, spaceview: any, ignoreMute: boolean): void {
+		const spaceMap = this.stateMap.get(spaceId);
+		const discussionMap = this.discussionParentMap.get(spaceId);
+
+		if (spaceMap) {
 			for (const [ chatId, state ] of spaceMap) {
-				if (!chatId) {
+				if (!chatId || this.isStateEntryArchived(spaceId, chatId)) {
 					continue;
 				};
 
-				const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
-				if (chat._empty_ || chat.isArchived) {
+				if (discussionMap?.has(chatId)) {
 					continue;
 				};
 
 				const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
 
-				if (state.mentionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
-					ret.mentionCounter += Number(state.mentionCounter) || 0;
+				if (state.mentionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+					acc.mentionCounter += Number(state.mentionCounter) || 0;
 				};
 
-				if (state.messageCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
-					ret.messageCounter += Number(state.messageCounter) || 0;
+				if (state.messageCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+					acc.messageCounter += Number(state.messageCounter) || 0;
 				};
 
-				if (state.reactionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
-					ret.reactionCounter += Number(state.reactionCounter) || 0;
+				if (state.reactionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+					acc.reactionCounter += Number(state.reactionCounter) || 0;
 				};
 			};
 		};
 
-		return ret;
+		if (discussionMap) {
+			for (const [ , parentId ] of discussionMap) {
+				const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
+				if (parent._empty_ || parent.isArchived) {
+					continue;
+				};
+
+				const chatMode = U.Object.getDiscussionNotificationMode(spaceview, parentId);
+				const mentionCount = Number(parent.unreadMentionCount) || 0;
+				const messageCount = Number(parent.unreadMessageCount) || 0;
+
+				if (mentionCount && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+					acc.mentionCounter += mentionCount;
+				};
+
+				if (messageCount && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
+					acc.messageCounter += messageCount;
+				};
+			};
+		};
 	};
 
 	/**
@@ -413,39 +447,13 @@ class ChatStore {
 	 */
 	getSpaceCounters (spaceId: string, ignoreMute?: boolean): I.ChatCounter {
 		const ret = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
-		const spaceMap = this.stateMap.get(spaceId);
+		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
-		if (!spaceMap) {
+		if (!spaceview) {
 			return ret;
 		};
 
-		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-
-		for (const [ chatId, state ] of spaceMap) {
-			if (!chatId) {
-				continue;
-			};
-
-			const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
-			if (chat._empty_ || chat.isArchived) {
-				continue;
-			};
-
-			const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
-
-			if (state.mentionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
-				ret.mentionCounter += Number(state.mentionCounter) || 0;
-			};
-
-			if (state.messageCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
-				ret.messageCounter += Number(state.messageCounter) || 0;
-			};
-
-			if (state.reactionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
-				ret.reactionCounter += Number(state.reactionCounter) || 0;
-			};
-		};
-
+		this.aggregateSpaceCounters(ret, spaceId, spaceview, !!ignoreMute);
 		return ret;
 	};
 
@@ -472,24 +480,100 @@ class ChatStore {
 	 */
 	getChatCounters (spaceId: string, chatId: string): I.ChatCounter {
 		const ret = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
-		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
 
-		if (!spaceId || !chatId || chat._empty_ || chat.isArchived) {
+		if (!spaceId || !chatId) {
 			return ret;
 		};
 
-		const spaceMap = this.stateMap.get(spaceId);
-
-		if (spaceMap) {
-			const state = spaceMap.get(chatId);
-			if (state) {
-				ret.mentionCounter = Number(state.mentionCounter) || 0;
-				ret.messageCounter = Number(state.messageCounter) || 0;
-				ret.reactionCounter = Number(state.reactionCounter) || 0;
+		// Discussions: read counters from the parent object's relations. The chatPreview
+		// state subscription does not cover discussions, so stateMap can be missing or
+		// stale here even when chatGlobal has the discussion's chat object.
+		const parentId = this.discussionParentMap.get(spaceId)?.get(chatId);
+		if (parentId) {
+			const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
+			if (parent._empty_ || parent.isArchived) {
+				return ret;
 			};
+			ret.messageCounter = Number(parent.unreadMessageCount) || 0;
+			ret.mentionCounter = Number(parent.unreadMentionCount) || 0;
+			return ret;
 		};
 
+		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
+		if (chat._empty_ || chat.isArchived) {
+			return ret;
+		};
+
+		const state = this.stateMap.get(spaceId)?.get(chatId);
+		if (state) {
+			ret.mentionCounter = Number(state.mentionCounter) || 0;
+			ret.messageCounter = Number(state.messageCounter) || 0;
+			ret.reactionCounter = Number(state.reactionCounter) || 0;
+		};
 		return ret;
+	};
+
+	/**
+	 * Reads a discussion parent's detail from the per-space discussion subscription
+	 * if present, otherwise from the cross-space discussionGlobal subscription.
+	 */
+	getDiscussionParentDetail (spaceId: string, parentId: string, keys: string[]): any {
+		const local = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.discussion, spaceId), parentId, keys);
+		if (!local._empty_) {
+			return local;
+		};
+		return S.Detail.get(J.Constant.subId.discussionGlobal, parentId, keys);
+	};
+
+	/**
+	 * Add or update a discussion → parent-object mapping.
+	 */
+	discussionParentMapSet (spaceId: string, parentObjectId: string, discussionId: string) {
+		if (!spaceId || !discussionId || !parentObjectId) {
+			return;
+		};
+
+		let inner = this.discussionParentMap.get(spaceId);
+		if (!inner) {
+			inner = observable.map(new Map());
+			this.discussionParentMap.set(spaceId, inner);
+		};
+		inner.set(discussionId, parentObjectId);
+	};
+
+	/**
+	 * Remove a discussion → parent-object mapping.
+	 */
+	discussionParentMapDelete (spaceId: string, discussionId: string) {
+		this.discussionParentMap.get(spaceId)?.delete(discussionId);
+	};
+
+	/**
+	 * Returns the parent object id for a discussion, or '' if not mapped.
+	 */
+	getDiscussionParentId (spaceId: string, discussionId: string): string {
+		return this.discussionParentMap.get(spaceId)?.get(discussionId) || '';
+	};
+
+	/**
+	 * Returns true if the stateMap entry should be excluded from aggregates because
+	 * its chat (or discussion parent) is archived.
+	 */
+	isStateEntryArchived (spaceId: string, chatId: string): boolean {
+		const parentId = this.discussionParentMap.get(spaceId)?.get(chatId);
+		if (parentId) {
+			const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'isArchived' ]);
+			if (parent._empty_) {
+				return true;
+			};
+			return !!parent.isArchived;
+		};
+
+		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
+		if (chat._empty_) {
+			return true;
+		};
+		return !!chat.isArchived;
 	};
 
 	/**

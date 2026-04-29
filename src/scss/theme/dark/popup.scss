@@ -15,6 +15,14 @@
 		a:hover { color: var(--color-system-accent-100); }
 	}
 
+	/* PopupSpaceHome */
+
+	.popup.popupSpaceHome {
+		.homeOptions .option {
+			.icon.preview { background-color: #fff; }
+		}
+	}
+
 	/* PopupUsecase */
 
 	.popup.popupUsecase {

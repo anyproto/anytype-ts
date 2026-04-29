@@ -17,6 +17,8 @@ export interface CommentContentPart {
 		type: I.ChatMessageBlockLinkType;
 	};
 	embed?: I.ChatMessageBlockEmbed;
+	editorQuote?: { blockId: string };
+	messageQuote?: { messageId: string };
 	attachmentData?: any;
 };
 
@@ -31,6 +33,8 @@ export interface CommentMessage {
 	attachments: I.ChatMessageAttachment[];
 	reactions: I.ChatMessageReaction[];
 	isSynced: boolean;
+	isReadMessage: boolean;
+	isReadMention: boolean;
 	replyCount: number;
 };
 

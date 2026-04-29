@@ -26,10 +26,12 @@ import Header from './header';
 import HeaderBanner from './header/banner';
 import Footer from './footer';
 import Widget from './widget';
+import WidgetHome from './widget/home';
 
 import SidebarLeft from './sidebar/left';
 import SidebarRight from './sidebar/right';
 import SidebarProgress, { ProgressItem } from './sidebar/progress';
+import SpaceName from './sidebar/spaceName';
 
 import Menu from './menu';
 import MenuItemVertical from './menu/item/vertical';
@@ -201,8 +203,10 @@ export {
 	SidebarRight,
 	SidebarProgress,
 	ProgressItem,
+	SpaceName,
 
 	Widget,
+	WidgetHome,
 
 	ObjectName,
 	ObjectDescription,

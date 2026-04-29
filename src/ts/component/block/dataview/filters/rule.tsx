@@ -218,13 +218,12 @@ const DataviewFilterRule = forwardRef<{}, Props>((props, ref) => {
 				const isObject = Relation.isObject(relation.format);
 				const isFile = Relation.isFile(relation.format);
 
-				let items = Relation.getArrayValue(value)
-					.map(id => S.Detail.get(subId, id, []))
+				const items = Relation.getArrayValue(value)
+					.map(id => {
+						const template = isObject ? Relation.getFilterTemplateOption(id) : null;
+						return template ? { ...template, isSystem: true } : S.Detail.get(subId, id, []);
+					})
 					.filter(it => !it._empty_ && !it.isArchived && !it.isDeleted);
-
-				if (isObject) {
-					items = Relation.getFilterTemplateOptions().map(it => ({ ...it, isSystem: true })).concat(items);
-				};
 
 				if (!items.length) {
 					const key = relation.format == I.RelationType.File ? 'filterPlaceholderFile' : 'filterPlaceholderObject';

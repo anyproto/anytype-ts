@@ -197,6 +197,11 @@ html {
 			}
 
 			#header:not(.withSidebarTotalLeft) > .side.left { padding-left: 84px; }
+			#sidebar {
+				#subPageWrapper {
+					.sidebarPage > .head { padding-left: 84px; }
+				}
+			}
 		}
 	}
 

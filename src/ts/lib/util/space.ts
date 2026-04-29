@@ -29,11 +29,12 @@ class UtilSpace {
 			home = this.getLastObject();
 		};
 
-		if (!home) {
-			home = { layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' };
+		if (home) {
+			U.Object.openRoute(home, param);
+		} else {
+			U.Router.go('/main/void/empty', param);
 		};
 
-		U.Object.openRoute(home, param);
 		S.Common.setLeftSidebarState('vault', 'widget');
 
 		const dataLeft = sidebar.getData(I.SidebarPanel.Left);
@@ -122,7 +123,6 @@ class UtilSpace {
 		const details: any = {
 			oneToOneIdentity: id,
 			spaceAccessType: I.SpaceAccessType.Shared,
-			homepage: I.HomePredefinedId.Chat,
 			oneToOneRequestMetadataKey: key,
 			spaceType: I.SpaceType.OneToOne,
 		};
@@ -155,9 +155,9 @@ class UtilSpace {
 
 	/**
 	 * Gets the dashboard object for the current space.
-	 * @returns {any|null} The dashboard object or null if not found.
+	 * @returns {I.DashboardObject|null} The dashboard object or null if not found.
 	 */
-	getDashboard () {
+	getDashboard (): I.DashboardObject | null {
 		const space = this.getSpaceview();
 		const id = space.homepage;
 
@@ -169,7 +169,7 @@ class UtilSpace {
 			return null;
 		};
 
-		let ret = null;
+		let ret: I.DashboardObject | null = null;
 		switch (id) {
 			case I.HomePredefinedId.Graph: {
 				ret = this.getGraph();
@@ -195,7 +195,7 @@ class UtilSpace {
 
 		};
 
-		if (!ret || ret._empty_ || ret.isDeleted) {
+		if (!ret || ret._empty_ || ret.isArchived || ret.isDeleted) {
 			return null;
 		};
 		return ret;
@@ -205,30 +205,34 @@ class UtilSpace {
 	 * Gets the list of system dashboard IDs.
 	 * @returns {string[]} The list of system dashboard IDs.
 	 */
-	getSystemDashboardIds () {
+	getSystemDashboardIds (): string[] {
 		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last, I.HomePredefinedId.Widget ];
+	};
+
+	isSystemDashboard (id: string): boolean {
+		return this.getSystemDashboardIds().includes(id);
 	};
 
 	/**
 	 * Gets the graph dashboard object.
-	 * @returns {object} The graph dashboard object.
+	 * @returns {I.DashboardObject} The graph dashboard object.
 	 */
-	getGraph () {
-		return { 
-			id: I.HomePredefinedId.Graph, 
-			name: translate('commonGraph'), 
+	getGraph (): I.DashboardObject {
+		return {
+			id: I.HomePredefinedId.Graph,
+			name: translate('commonGraph'),
 			layout: I.ObjectLayout.Graph,
 		};
 	};
 
 	/**
 	 * Gets the last opened dashboard object.
-	 * @returns {object} The last opened dashboard object.
+	 * @returns {I.DashboardObject} The last opened dashboard object.
 	 */
-	getLastOpened () {
-		return { 
+	getLastOpened (): I.DashboardObject {
+		return {
 			id: I.HomePredefinedId.Widget,
-			name: translate('commonEmpty'),
+			name: translate('commonNoHome'),
 		};
 	};
 
@@ -253,10 +257,10 @@ class UtilSpace {
 
 	/**
 	 * Gets the chat dashboard object.
-	 * @returns {object} The chat dashboard object.
+	 * @returns {I.DashboardObject} The chat dashboard object.
 	 */
-	getChat () {
-		return { 
+	getChat (): I.DashboardObject {
+		return {
 			id: S.Block.workspace,
 			name: translate(`spaceType${I.SpaceType.Chat}`),
 			layout: I.ObjectLayout.Chat,
@@ -457,6 +461,19 @@ class UtilSpace {
 
 		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isOwner);
 		return space.writersLimit - participants.length;
+	};
+
+	/**
+	 * Gets writer/reader slots available to invitees from the current membership tier.
+	 * writersLimit subtracts 1 because the owner occupies one writer seat in the middleware's count.
+	 * @returns {{ writersLimit: number, readersLimit: number }} Tier-level slots for new members.
+	 */
+	getTierLimits () {
+		const product = S.Membership.data?.getTopProduct();
+		return {
+			writersLimit: Math.max(0, (product?.features?.spaceWriters || 0) - 1),
+			readersLimit: product?.features?.spaceReaders || 0,
+		};
 	};
 
 	/**

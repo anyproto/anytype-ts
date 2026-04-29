@@ -125,14 +125,6 @@
 	}
 
 	&.isSelf {
-		::selection { background-color: var(--color-system-accent-25); }
-		.markuplink, markupobject { color: var(--color-text-white60); }
-
-		markupmention { background-color: rgba(0,0,0,0.2); }
-		markupmention {
-			name { color: var(--color-text-white); }
-		}
-
 		> .flex { flex-direction: row-reverse; }
 		> .flex {
 			> .side.left { display: none; }
@@ -148,6 +140,14 @@
 			.bubble { color: #fff; background-color: var(--color-system-accent-100); }
 			.bubble {
 				.time { color: var(--color-text-white60); }
+			}
+
+			::selection { background-color: var(--color-system-accent-25); }
+			.markuplink, markupobject { color: var(--color-text-white60); }
+
+			markupmention { background-color: rgba(0,0,0,0.2); }
+			markupmention {
+				name { color: var(--color-text-white); }
 			}
 		}
 

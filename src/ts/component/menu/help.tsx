@@ -34,10 +34,7 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getItems = () => {
 		return [
-			{ 
-				id: 'whatsNew', iconParam: { name: 'menu/help/bell' }, document: 'whatsNew',
-				caption: <Button size={16} text={U.Common.getElectron().version.app} />
-			},
+			{ id: 'gallery', iconParam: { name: 'vault/gallery' } },
 			{ id: 'shortcut', iconParam: { name: 'menu/help/keyboard' }, caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },
 			{ id: 'share' },
@@ -45,13 +42,17 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ id: 'tutorial' },
 			{ id: 'contact' },
 			{ isDiv: true },
-			{ 
+			{
+				id: 'whatsNew', iconParam: { name: 'menu/help/bell' }, document: 'whatsNew',
+				caption: <Button size={16} text={U.Common.getElectron().version.app} />
+			},
+			{
 				id: 'developer', arrow: true, children: [
 					{ id: 'developerPortal' },
 					{ id: 'mcp' },
 				],
 			},
-			{ 
+			{
 				id: 'more', arrow: true, children: [
 					{ id: 'terms' },
 					{ id: 'privacy' },
@@ -135,6 +136,15 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'share': {
 				S.Popup.open('share', {});
+				break;
+			};
+
+			case 'gallery': {
+				S.Popup.open('usecase', {
+					data: {
+						route: analytics.route.usecaseApp,
+					},
+				});
 				break;
 			};
 		};

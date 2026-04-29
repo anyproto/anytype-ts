@@ -1,5 +1,6 @@
 import { history as historyPopup } from 'Lib/history';
 import * as I from 'Interface';
+import * as Sentry from '@sentry/browser';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
 
@@ -116,8 +117,7 @@ class Keyboard {
 
 	onResize () {
 		const { hideSidebar } = S.Common;
-		const isPopup = this.isPopup();
-		const container = U.Dom.getPageContainer(isPopup);
+		const container = U.Dom.getPageContainer(false);
 		const cw = container?.clientWidth || 0;
 		const data = sidebar.getData(I.SidebarPanel.Left, false);
 		const threshold = J.Size.sidebar.left.threshold.close;
@@ -260,6 +260,7 @@ class Keyboard {
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 		const canWrite = U.Space.canMyParticipantWrite();
+		const isOwner = U.Space.isMyOwner();
 		const selection = S.Common.getRef('selectionProvider');
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
@@ -326,7 +327,7 @@ class Keyboard {
 				if (this.isMainSettings()) {
 					U.Space.openDashboard({ replace: false });
 				} else 
-				if (!this.isAuth()) {
+				if (!this.isAuth() && !S.Menu.isAnimating() && !S.Popup.isAnimating()) {
 					this.onBack(isPopup);
 				};
 			};
@@ -491,11 +492,12 @@ class Keyboard {
 				};
 
 				// Pin/Unpin
-				this.shortcut('pin', e, () => {
-					e.preventDefault();
-
-					Action.toggleWidgetsForObject(rootId, analytics.route.header);
-				});
+				if (isOwner) {
+					this.shortcut('pin', e, () => {
+						e.preventDefault();
+						Action.toggleWidgetsForObject(rootId, analytics.route.header);
+					});
+				};
 
 				// Lock/Unlock
 				this.shortcut('pageLock', e, () => this.onToggleLock());
@@ -506,8 +508,7 @@ class Keyboard {
 
 					Action[object.isArchived ? 'restore' : 'archive']([ rootId ], route);
 				});
-
-				};
+			};
 
 			// Pin/Unpin Tab
 			this.shortcut('pinTab', e, () => {
@@ -552,31 +553,10 @@ class Keyboard {
 	};
 
 	/**
-	 * Calls spaceCreate menu.
+	 * Opens the space creation popup.
 	 */
 	createSpace () {
-		const element = `#button-create-space`;
-
-		let rect = null;
-		let horizontal = I.MenuDirection.Left;
-		let vertical = I.MenuDirection.Top;
-
-		if (!U.Dom.select(element)) {
-			const { ww, wh } = U.Dom.getWindowDimensions();
-
-			rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
-			horizontal = I.MenuDirection.Center;
-			vertical = I.MenuDirection.Center;
-		};
-
-		U.Menu.spaceCreate({
-			element,
-			rect,
-			className: 'spaceCreate fixed',
-			classNameWrap: 'fromSidebar',
-			horizontal,
-			vertical,
-		}, analytics.route.shortcut);
+		Action.createSpace(analytics.route.shortcut);
 	};
 
 	/**
@@ -989,10 +969,81 @@ class Keyboard {
 			};
 
 			case 'debugProfiler': {
-				C.DebugRunProfiler(30, (message: any) => {
+				C.DebugRunProfiler(30, I.ProfilerReason.UserRequest, '', (message: any) => {
 					if (!message.error.code) {
 						Action.openPath(message.path);
 					};
+				});
+				break;
+			};
+
+			case 'debugReport': {
+				const full = arg?.full || false;
+
+				Action.openDirectoryDialog({ buttonLabel: translate('commonExport') }, paths => {
+					C.DebugRunProfiler(0, I.ProfilerReason.UserRequest, '', () => {
+						C.DebugExportReport(paths[0], full, (message: any) => {
+							if (message.error.code) {
+								return;
+							};
+
+							S.Popup.open('confirm', {
+								data: {
+									title: translate('popupConfirmDebugReportTitle'),
+									text: translate('popupConfirmDebugReportText'),
+									textConfirm: translate('commonShowInFolder'),
+									canCancel: true,
+									onConfirm: () => Action.openPath(U.Common.getElectron().dirName(message.path)),
+								},
+							});
+						});
+					});
+				});
+				break;
+			};
+
+			case 'submitReport': {
+				S.Popup.open('submitReport', {
+					data: {
+						onSubmit: (description: string) => {
+							C.DebugRunProfiler(0, I.ProfilerReason.UserRequest, '', () => {
+								C.DebugExportReport(electron.commonPath(), false, (message: any) => {
+									if (message.error.code) {
+										return;
+									};
+
+									// Sentry envelope limit is ~20MB; keep attachments under ~10MB to be safe.
+									const data = electron.logRead(message.path);
+
+									Sentry.withScope(scope => {
+										scope.setLevel('info');
+										scope.setTag('report', 'user_submitted');
+										scope.setFingerprint([ 'debug-report' ]);
+
+										if (description) {
+											scope.setContext('report', { description });
+										};
+
+										try {
+											scope.setContext('summary', JSON.parse(message.summary));
+										} catch (e) {
+											scope.setExtra('summary', message.summary);
+										};
+
+										scope.addAttachment({
+											filename: 'debug-report.zip',
+											data,
+											contentType: 'application/zip',
+										});
+										Sentry.captureMessage('Debug report');
+									});
+
+									C.DebugCleanupReport(message.lastModifiedTs);
+									Preview.toastShow({ text: translate('commonDone') });
+								});
+							});
+						},
+					},
 				});
 				break;
 			};
@@ -1458,7 +1509,7 @@ class Keyboard {
 		let title = titles[action];
 
 		if (action == 'settings') {
-			if ([ 'spaceIndex', 'spaceIndexEmpty' ].includes(id)) {
+			if (id == 'spaceIndex') {
 				title = translate('pageSettingsSpaceGeneralTab');
 			} else
 			if (id == 'account') {

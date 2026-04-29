@@ -2,8 +2,7 @@ import raf from 'raf';
 import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
 import Locale from 'dist/lib/json/locale.json';
-import React, { MouseEvent } from 'react';
-import { Icon } from 'Component';
+import { MouseEvent } from 'react';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { focus } from 'Lib/focus';
@@ -686,7 +685,7 @@ class UtilMenu {
 		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
-	dashboardSelect (element: string, openRoute?: boolean) {
+	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 
@@ -715,6 +714,7 @@ class UtilMenu {
 		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
+			...menuParam,
 			data: {
 				withPlural: true,
 				filters: [
@@ -722,15 +722,20 @@ class UtilMenu {
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				dataChange: (_ctx: any, items: any) => {
-					return [
-						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'common/empty' }, name: translate('commonEmpty') },
-						{ id: I.HomePredefinedId.Graph, iconParam: { name: 'header/graph' }, name: translate('commonGraph') },
-					].concat(items);
+					const head: any[] = [
+						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
+					];
+
+					if (items.length) {
+						head.push({ isDiv: true });
+					};
+
+					return head.concat(items);
 				},
 				onSelect: el => {
 					onSelect(el, true);
 
-					const type = U.Space.getSystemDashboardIds().includes(el.id) ? el.id : I.HomePredefinedId.Existing;
+					const type = U.Space.isSystemDashboard(el.id) ? el.id : I.HomePredefinedId.Existing;
 					analytics.event('ChangeSpaceDashboard', { type });
 				},
 			}
@@ -936,16 +941,7 @@ class UtilMenu {
 
 				case 'manage': {
 					this.menuContext?.close(() => {
-						S.Menu.open('widgetSection', {
-							recalcRect: () => {
-								const { ww, wh } = U.Dom.getWindowDimensions();
-								return { x: 0, y: 0, width: ww, height: wh };
-							},
-							classNameWrap: 'fixed',
-							visibleDimmer: true,
-							vertical: I.MenuDirection.Center,
-							horizontal: I.MenuDirection.Center,
-						});
+						sidebar.leftPanelSubPageOpen('widgetManage', true, true);
 					});
 					break;
 				};
@@ -1090,7 +1086,7 @@ class UtilMenu {
 				return {
 					...it,
 					counters,
-					hasCounter: counters.mentionCounter || counters.messageCounter,
+					hasCounter: counters.mentionCounter || counters.messageCounter || counters.reactionCounter,
 					lastMessage: S.Chat.getSpaceLastMessage(it.targetSpaceId),
 					isPinned: !!it.orderId,
 				};
@@ -1388,7 +1384,7 @@ class UtilMenu {
 		});
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean, uploadRoute?: string }, route: string, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withUpload?: boolean, noButtons?: boolean, uploadRoute?: string }, route: string, callBack?: (item: any) => void) {
 		param = param || {};
 		param.data = param.data || {};
 		details = details || {};
@@ -1404,9 +1400,39 @@ class UtilMenu {
 			objectFlags.push(I.ObjectFlag.DeleteEmpty);
 		};
 
-		const onImport = (e: MouseEvent) => {
-			e.stopPropagation();
-			Action.openSettings('importIndex', route);
+		const onUpload = (e: MouseEvent) => {
+			U.Menu.onFileUploadPopup(I.ObjectLayout.File, '', {}, (objectIds) => {
+				if (!objectIds?.length) {
+					return;
+				};
+
+				U.Object.getByIds(objectIds, {}, (objects) => {
+					const gallery = objects.map(object => {
+						let type = null;
+						let src = '';
+
+						if (U.Object.isImageLayout(object.layout)) {
+							type = I.FileType.Image;
+							src = S.Common.imageUrl(object.id, I.ImageSize.Large);
+						} else
+						if (object.layout == I.ObjectLayout.Video) {
+							type = I.FileType.Video;
+							src = S.Common.fileUrl(object.id);
+						};
+
+						return src ? { object, type, src } : null;
+					}).filter(it => it);
+
+					window.setTimeout(() => {
+						if (gallery.length) {
+							S.Popup.open('preview', { data: { gallery } });
+						} else
+						if (objects.length) {
+							callBack?.(objects[0]);
+						};
+					}, S.Popup.getTimeout());
+				});
+			}, flags.uploadRoute || route);
 		};
 
 		const getClipboardData = async () => {
@@ -1530,6 +1556,10 @@ class UtilMenu {
 			const buttons: any[] = [];
 
 			if (!flags.noButtons) {
+				if (flags.withUpload) {
+					buttons.push({ id: 'import', iconParam: { name: 'menu/action/uploadComputer' }, name: translate('commonUploadComputer'), onClick: onUpload, isButton: true });
+				};
+
 				buttons.push({ 
 					id: 'add', iconParam: { name: 'plus/menu' }, onClick: () => {
 						U.Object.createType({ name: this.menuContext?.getChildRef()?.getData().filter }, keyboard.isPopup());
@@ -1540,10 +1570,6 @@ class UtilMenu {
 						};
 					}, 
 				});
-
-				if (flags.withImport) {
-					buttons.push({ id: 'import', iconParam: { name: 'menu/action/import' }, name: translate('commonImport'), onClick: onImport, isButton: true });
-				};
 
 				if (items.length) {
 					buttons.unshift({ id: 'clipboard', iconParam: { name: 'menu/action/clipboard' }, name: translate('widgetItemClipboard'), onClick: onPaste, isButton: true });
@@ -1566,7 +1592,7 @@ class UtilMenu {
 					onMore,
 					buttons,
 					filters: [
-						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection().filter(it => !U.Object.isInFileLayouts(it)) },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
@@ -1675,85 +1701,6 @@ class UtilMenu {
 		this.menuContext = context;
 	};
 
-	spaceCreate (param: I.MenuParam, route) {
-		const analyticsName = {
-			[I.SpaceCreateType.Personal]: 'Space',
-			[I.SpaceCreateType.Group]: 'Chat',
-			[I.SpaceCreateType.Join]: 'Join',
-		};
-
-		const mySharedSpaces = U.Space.getMySharedSpacesList();
-		const { sharedSpacesLimit } = U.Space.getProfile();
-		const isLimitReached = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
-
-		const groupOption: any = { id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') };
-
-		if (isLimitReached) {
-			groupOption.caption = React.createElement(Icon, { name: 'common/alert', className: 'spaceLimit', color: 'grey' });
-		};
-
-		const options = [
-			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
-			groupOption,
-			{ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
-		];
-
-		let prefix = '';
-		switch (route) {
-			case analytics.route.void: {
-				prefix = 'Void';
-				break;
-			};
-
-			case analytics.route.vault: {
-				prefix = 'Vault';
-				break;
-			};
-		};
-
-		S.Menu.open('select', {
-			...param,
-			data: {
-				options,
-				noVirtualisation: true,
-				onSelect: (e: any, item: any) => {
-					Action.createSpace(item.id, route);
-
-					analytics.event(`Click${prefix}CreateMenu${analyticsName[item.id]}`);
-				},
-			}
-		});
-
-		analytics.event(`Screen${prefix}CreateMenu`);
-	};
-
-	vaultStyle (param: I.MenuParam) {
-		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
-		const { vaultMessages } = S.Common;
-		const options =[
-			{ id: 0, name: translate('popupSettingsVaultCompact'), checkbox: !vaultMessages, },
-			{ id: 1, name: translate('popupSettingsVaultWithMessages'), checkbox: vaultMessages, },
-		];
-
-		S.Menu.open('select', {
-			...param,
-			data: {
-				options,
-				noVirtualisation: true,
-				onSelect: (e: any, item: any) => {
-					const value = Boolean(Number(item.id));
-
-					S.Common.vaultMessagesSet(value);
-					if (isClosed) {
-						sidebar.open(I.SidebarPanel.Left, '', );
-					};
-
-					analytics.event('VaultStyleChange', { type: value ? 'MessagePreview' : 'Compact' });
-				},
-			},
-		});
-	};
-
 	spaceTypeOptions (): I.Option[] {
 		return [
 			{ id: I.SpaceType.Data },
@@ -1783,6 +1730,13 @@ class UtilMenu {
 		return ret;
 	};
 
+	discussionNotificationModeOptions (): I.Option[] {
+		return [
+			{ id: I.NotificationMode.All },
+			{ id: I.NotificationMode.Mentions },
+		].map(it => ({ ...it, name: translate(`notificationModeDiscussion${it.id}`) }));
+	};
+
 	recentModeOptions (): I.Option[] {
 		return [
 			{ id: I.RecentEditMode.All },
@@ -1794,18 +1748,13 @@ class UtilMenu {
 		const { widgetSections } = S.Common;
 
 		return [
-			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.Pin },
+			{ id: I.WidgetSection.Unread },
+			{ id: I.WidgetSection.MyFavorites },
 			{ id: I.WidgetSection.RecentEdit },
 			{ id: I.WidgetSection.Type },
 			{ id: I.WidgetSection.Bin },
 		].sort((c1, c2) => {
-			const isUnread1 = c1.id == I.WidgetSection.Unread;
-			const isUnread2 = c2.id == I.WidgetSection.Unread;
-			
-			if (isUnread1 && !isUnread2) return -1;
-			if (!isUnread1 && isUnread2) return 1;
-			
 			const idx1 = widgetSections.findIndex(it => it.id == c1.id);
 			const idx2 = widgetSections.findIndex(it => it.id == c2.id);
 
@@ -1817,6 +1766,7 @@ class UtilMenu {
 		const { recentEditMode } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 		const toggle = { id: 'hide', iconParam: { name: 'common/eye0' }, name: translate('widgetHideSection') };
+		const manage = { id: 'manage', iconParam: { name: 'common/edit' }, name: translate('widgetManageSections') };
 
 		let options: any[] = [];
 		let value = '';
@@ -1839,6 +1789,7 @@ class UtilMenu {
 		};
 
 		options.push(toggle);
+		options.push(manage);
 
 		S.Menu.open('select', {
 			...menuParam,
@@ -1864,6 +1815,11 @@ class UtilMenu {
 							S.Common.widgetSectionsSet([ ...widgetSections ]);
 
 							analytics.event('HideSection');
+							break;
+						};
+
+						case 'manage': {
+							sidebar.leftPanelSubPageOpen('widgetManage', true, true);
 							break;
 						};
 

@@ -32,6 +32,8 @@ const TreeItem = forwardRef<{}, Props>((props, ref) => {
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
 	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
 	const isChat = U.Object.isChatLayout(object.layout);
+	const hasDiscussion = !isChat && !!object.discussionId;
+	const counterTargetId = isChat ? id : (hasDiscussion ? object.discussionId : '');
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const [ dummy, setDummy ] = useState(0);
 
@@ -122,7 +124,12 @@ const TreeItem = forwardRef<{}, Props>((props, ref) => {
 					<ObjectName object={object} withPlural={true} />
 				</div>
 
-				{isChat && !hasUnreadSection ? <ChatCounter chatId={id} /> : ''}
+				{counterTargetId && !hasUnreadSection ? (
+					<ChatCounter
+						chatId={counterTargetId}
+						mode={hasDiscussion ? U.Object.getDiscussionNotificationMode(U.Space.getSpaceview(), id) : undefined}
+					/>
+				) : ''}
 			</div>
 		);
 
