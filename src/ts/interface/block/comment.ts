@@ -33,6 +33,8 @@ export interface CommentMessage {
 	attachments: I.ChatMessageAttachment[];
 	reactions: I.ChatMessageReaction[];
 	isSynced: boolean;
+	isReadMessage: boolean;
+	isReadMention: boolean;
 	replyCount: number;
 };
 

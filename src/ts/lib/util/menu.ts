@@ -1701,33 +1701,6 @@ class UtilMenu {
 		this.menuContext = context;
 	};
 
-	vaultStyle (param: I.MenuParam) {
-		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
-		const { vaultMessages } = S.Common;
-		const options =[
-			{ id: 0, name: translate('popupSettingsVaultCompact'), checkbox: !vaultMessages, },
-			{ id: 1, name: translate('popupSettingsVaultWithMessages'), checkbox: vaultMessages, },
-		];
-
-		S.Menu.open('select', {
-			...param,
-			data: {
-				options,
-				noVirtualisation: true,
-				onSelect: (e: any, item: any) => {
-					const value = Boolean(Number(item.id));
-
-					S.Common.vaultMessagesSet(value);
-					if (isClosed) {
-						sidebar.open(I.SidebarPanel.Left, '', );
-					};
-
-					analytics.event('VaultStyleChange', { type: value ? 'MessagePreview' : 'Compact' });
-				},
-			},
-		});
-	};
-
 	spaceTypeOptions (): I.Option[] {
 		return [
 			{ id: I.SpaceType.Data },
@@ -1755,6 +1728,13 @@ class UtilMenu {
 		};
 
 		return ret;
+	};
+
+	discussionNotificationModeOptions (): I.Option[] {
+		return [
+			{ id: I.NotificationMode.All },
+			{ id: I.NotificationMode.Mentions },
+		].map(it => ({ ...it, name: translate(`notificationModeDiscussion${it.id}`) }));
 	};
 
 	recentModeOptions (): I.Option[] {

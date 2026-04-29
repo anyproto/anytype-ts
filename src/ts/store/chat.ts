@@ -10,6 +10,7 @@ class ChatStore {
 	public replyMap: Map<string, Map<string, I.ChatMessage>> = observable(new Map());
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
 	public attachmentsMap: Map<string, any[]> = observable(new Map());
+	public discussionParentMap: Map<string, Map<string, string>> = observable.map(new Map());
 	private badgeValue = '';
 
 	constructor () {
@@ -20,6 +21,8 @@ class ChatStore {
 			setReply: action,
 			setState: action,
 			setAttachments: action,
+			discussionParentMapSet: action,
+			discussionParentMapDelete: action,
 		});
 	};
 
@@ -313,6 +316,7 @@ class ChatStore {
 		this.replyMap.clear();
 		this.stateMap.clear();
 		this.attachmentsMap.clear();
+		this.discussionParentMap.clear();
 	};
 
 	/**
@@ -472,24 +476,70 @@ class ChatStore {
 	 */
 	getChatCounters (spaceId: string, chatId: string): I.ChatCounter {
 		const ret = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
-		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
 
-		if (!spaceId || !chatId || chat._empty_ || chat.isArchived) {
+		if (!spaceId || !chatId) {
 			return ret;
 		};
 
-		const spaceMap = this.stateMap.get(spaceId);
+		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
 
-		if (spaceMap) {
-			const state = spaceMap.get(chatId);
+		if (!chat._empty_) {
+			if (chat.isArchived) {
+				return ret;
+			};
+
+			const state = this.stateMap.get(spaceId)?.get(chatId);
 			if (state) {
 				ret.mentionCounter = Number(state.mentionCounter) || 0;
 				ret.messageCounter = Number(state.messageCounter) || 0;
 				ret.reactionCounter = Number(state.reactionCounter) || 0;
 			};
+			return ret;
 		};
 
+		const parentId = this.discussionParentMap.get(spaceId)?.get(chatId);
+		if (!parentId) {
+			return ret;
+		};
+
+		const parent = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.discussion, spaceId), parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
+		if (parent._empty_ || parent.isArchived) {
+			return ret;
+		};
+
+		ret.messageCounter = Number(parent.unreadMessageCount) || 0;
+		ret.mentionCounter = Number(parent.unreadMentionCount) || 0;
 		return ret;
+	};
+
+	/**
+	 * Add or update a discussion → parent-object mapping.
+	 */
+	discussionParentMapSet (spaceId: string, parentObjectId: string, discussionId: string) {
+		if (!spaceId || !discussionId || !parentObjectId) {
+			return;
+		};
+
+		let inner = this.discussionParentMap.get(spaceId);
+		if (!inner) {
+			inner = observable.map(new Map());
+			this.discussionParentMap.set(spaceId, inner);
+		};
+		inner.set(discussionId, parentObjectId);
+	};
+
+	/**
+	 * Remove a discussion → parent-object mapping.
+	 */
+	discussionParentMapDelete (spaceId: string, discussionId: string) {
+		this.discussionParentMap.get(spaceId)?.delete(discussionId);
+	};
+
+	/**
+	 * Returns the parent object id for a discussion, or '' if not mapped.
+	 */
+	getDiscussionParentId (spaceId: string, discussionId: string): string {
+		return this.discussionParentMap.get(spaceId)?.get(discussionId) || '';
 	};
 
 	/**

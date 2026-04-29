@@ -46,7 +46,6 @@ class CommonStore {
 	public chatCmdSendValue = null;
 	public commentCmdSendValue = null;
 	public updateVersionValue = '';
-	public vaultMessagesValue = null;
 	public vaultIsMinimalValue = null;
 	public gridTitleClickValue = null;
 	public unicodeReplaceValue = null;
@@ -162,7 +161,6 @@ class CommonStore {
 			pinValue: observable,
 			firstDayValue: observable,
 			updateVersionValue: observable,
-			vaultMessagesValue: observable,
 			vaultIsMinimalValue: observable,
 			gridTitleClickValue: observable,
 			unicodeReplaceValue: observable,
@@ -187,7 +185,6 @@ class CommonStore {
 			timeFormat: computed,
 			pin: computed,
 			firstDay: computed,
-			vaultMessages: computed,
 			vaultIsMinimal: computed,
 			gridTitleClick: computed,
 			unicodeReplace: computed,
@@ -220,7 +217,6 @@ class CommonStore {
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
-			vaultMessagesSet: action,
 			vaultIsMinimalSet: action,
 			gridTitleClickSet: action,
 			unicodeReplaceSet: action,
@@ -471,10 +467,6 @@ class CommonStore {
 
 	get widgetSections (): I.WidgetSectionParam[] {
 		return this.widgetSectionsValue || [];
-	};
-
-	get vaultMessages (): any {
-		return this.boolGet('vaultMessages');
 	};
 
 	get vaultIsMinimal (): any {
@@ -1047,14 +1039,6 @@ class CommonStore {
 	firstDaySet (v: number) {
 		this.firstDayValue = Number(v) || 1;
 		Storage.set('firstDay', this.firstDayValue);
-	};
-
-	/**
-	 * Sets the vault messages value.
-	 * @param {boolean} v - The vault messages value.
-	 */
-	vaultMessagesSet (v: boolean) {
-		this.boolSet('vaultMessages', v);
 	};
 
 	/**
