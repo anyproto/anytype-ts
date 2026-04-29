@@ -41,6 +41,8 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	const object = getObject(targetId);
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
 	const isChat = U.Object.isChatLayout(object?.layout);
+	const hasDiscussion = !isChat && !!object?.discussionId;
+	const counterTargetId = isChat ? object?.id : (hasDiscussion ? object?.discussionId : '');
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 
 	const getContentParam = (): { layout: I.WidgetLayout, limit: number, viewId: string } => {
@@ -771,7 +773,12 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 							</div>
 						</div>
 						<div className="side right">
-							{isChat && !hasUnreadSection ? <ChatCounter chatId={object.id} /> : ''}
+							{counterTargetId && !hasUnreadSection ? (
+								<ChatCounter
+									chatId={counterTargetId}
+									mode={hasDiscussion ? U.Object.getDiscussionNotificationMode(U.Space.getSpaceview(), object.id) : undefined}
+								/>
+							) : ''}
 
 							{buttons.length ? (
 								<div className="buttons">
