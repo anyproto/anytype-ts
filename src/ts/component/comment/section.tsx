@@ -153,7 +153,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	}, [ targetType, findMessage ]);
 
 	const readVisibleMessages = useCallback(() => {
-		if (!discussionIdRef.current || !S.Common.windowIsFocused || !isSectionVisibleRef.current) {
+		if (!discussionIdRef.current || !S.Common.windowIsFocused) {
 			return;
 		};
 
@@ -161,6 +161,10 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		const chatPreviewSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, S.Common.space, did);
 		const { lastStateId } = S.Chat.getState(chatPreviewSubId);
 		const visible = getVisibleMessages();
+
+		if (!visible.length) {
+			return;
+		};
 
 		visible.forEach(msg => {
 			scrolledItems.current.add(msg.id);
