@@ -1465,7 +1465,7 @@ class Dispatcher {
 				};
 
 				case 'SpaceSyncStatusUpdate':
-				case 'P2PStatusUpdate': {
+				case 'P2pStatusUpdate': {
 					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
@@ -1872,7 +1872,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const { event, sync, file, subscribe } = config.flagsMw;
 		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
-		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2PStatusUpdate', 'ThreadStatus' ];
+		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2pStatusUpdate', 'ThreadStatus' ];
 		const subscribeEvents = [ 'SubscriptionAdd', 'SubscriptionRemove', 'SubscriptionCounters', 'SubscriptionPosition' ];
 
 		let check = false;
