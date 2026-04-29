@@ -143,6 +143,7 @@ export default {
 		chatPreview:	 		'chatPreview',
 		chat:			 		'chat',
 		chatGlobal:	 			'chatGlobal',
+		discussion:				'discussion',
 		recentEditMe:	 		'recentEditMe',
 		recentEditAll:	 		'recentEditAll',
 	},

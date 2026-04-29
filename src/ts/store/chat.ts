@@ -472,9 +472,26 @@ class ChatStore {
 	 */
 	getChatCounters (spaceId: string, chatId: string): I.ChatCounter {
 		const ret = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
-		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
 
-		if (!spaceId || !chatId || chat._empty_ || chat.isArchived) {
+		if (!spaceId || !chatId) {
+			return ret;
+		};
+
+		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
+		const isChat = !chat._empty_;
+		let isArchived = isChat && !!chat.isArchived;
+
+		if (!isChat) {
+			const parents = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.discussion));
+			const parent = parents.find(it => it.discussionId == chatId);
+
+			if (!parent) {
+				return ret;
+			};
+			isArchived = !!parent.isArchived;
+		};
+
+		if (isArchived) {
 			return ret;
 		};
 

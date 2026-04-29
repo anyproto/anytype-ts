@@ -1364,9 +1364,10 @@ class UtilData {
 
 	getWidgetChats(): any[] {
 		const spaceview = U.Space.getSpaceview();
+		const space = S.Common.space;
 
-		return S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.chat)).filter(it => {
-			const counters = S.Chat.getChatCounters(S.Common.space, it.id);
+		const chats = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.chat)).filter(it => {
+			const counters = S.Chat.getChatCounters(space, it.id);
 			const mode = U.Object.getChatNotificationMode(spaceview, it.id);
 
 			if (mode == I.NotificationMode.Nothing) {
@@ -1374,6 +1375,16 @@ class UtilData {
 			};
 
 			return (counters.messageCounter > 0) || (counters.mentionCounter > 0) || (counters.reactionCounter > 0);
+		});
+
+		const parents = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.discussion)).filter(it => {
+			return it.discussionId && U.Object.discussionHasUnread(space, it.discussionId, it.id);
+		});
+
+		return chats.concat(parents).sort((a, b) => {
+			const aDate = Number(a.lastMessageDate) || 0;
+			const bDate = Number(b.lastMessageDate) || 0;
+			return bDate - aDate;
 		});
 	};
 

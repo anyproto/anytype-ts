@@ -11,14 +11,13 @@ import Storage from 'Lib/storage';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 45;
-const HEIGHT_ITEM_MESSAGE = 73;
 const HEIGHT_DIV = 16;
 const VAULT_MINIMAL_OFFSET = 44;
 
 const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
-	const { space, vaultMessages, vaultIsMinimal } = S.Common;
+	const { space, vaultIsMinimal } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -34,11 +33,6 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 	const cnh = [ 'head' ];
 	const cnb = [ 'body' ];
 	const cnf = [ 'bottom' ];
-
-	if (vaultMessages) {
-		cnh.push('withMessages');
-		cnb.push('withMessages');
-	};
 
 	const keydownHandler = useRef<(e: any) => void>(null);
 	const keyupHandler = useRef<(e: any) => void>(null);
@@ -415,13 +409,8 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			...item.style,
 		};
 		const cn = [ 'item', U.Data.spaceClass(item.spaceType) ];
-		const iconSize = vaultMessages && !vaultIsMinimal ? 48 : 32;
+		const iconSize = 32;
 		const counter = <ChatCounter spaceId={targetSpaceId} isMinimal={vaultIsMinimal} />;
-
-		let chatName = null;
-		let time = null;
-		let last = null;
-		
 		const icons = [];
 
 		if (targetSpaceId == space) {
@@ -449,11 +438,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		const hasUnread = rawCounters && !!(rawCounters.messageCounter || rawCounters.mentionCounter || rawCounters.reactionCounter);
 
 		if (lastMessage) {
-			const { createdAt, creator, isSynced } = lastMessage;
-
-			time = <Label className="time" text={U.Date.timeAgo(createdAt)} />;
-			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(targetSpaceId, lastMessage, !isOneToOne)} />;
-			chatName = <Label className="chatName" text={U.Object.name(item.chat)} />;
+			const { creator, isSynced } = lastMessage;
 
 			if ((creator == S.Auth.account.id) && !isSynced) {
 				cn.push('isSyncing');
@@ -462,59 +447,17 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			cn.push('noMessages');
 		};
 
-		let info = null;
-		if (vaultMessages) {
-			let message = null;
+		const info = (
+			<div className="nameWrapper">
+				<ObjectName object={item} />
 
-			if (isOneToOne) {
-				message = (
-					<div className="messageWrapper">
-						{last}
-						<div className="icons">
-							{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
-						</div>
-						{counter}
-					</div>
-				);
-			} else {
-				message = (
-					<>
-						<div className="chatWrapper">
-							{chatName}
-							<div className="icons">
-								{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
-							</div>
-							{counter}
-						</div>
-						<div className="messageWrapper">
-							{last}
-						</div>
-					</>
-				);
-			};
-
-			info = (
-				<>
-					<div className="nameWrapper">
-						<ObjectName object={item} />
-						{time}
-					</div>
-					{message}
-				</>
-			);
-		} else {
-			info = (
-				<div className="nameWrapper">
-					<ObjectName object={item} />
-
-					<div className="icons">
-						{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
-					</div>
-
-					{counter}
+				<div className="icons">
+					{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 				</div>
-			);
-		};
+
+				{counter}
+			</div>
+		);
 
 		const mergedRef = (node: any) => {
 			setNodeRef(node);
@@ -614,19 +557,11 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		Action.createSpace(analytics.route.vault);
 	};
 
-	const onVaultContext = (e: any) => {
-		U.Menu.vaultStyle({
-			element: '#button-vault-toggle',
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-		});
-	};
-
 	const getRowHeight = (item: any) => {
 		if (item.isDiv) {
 			return HEIGHT_DIV;
 		};
-		return vaultMessages && !vaultIsMinimal ? HEIGHT_ITEM_MESSAGE : HEIGHT_ITEM;
+		return HEIGHT_ITEM;
 	};
 
 	useEffect(() => {
@@ -689,14 +624,13 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 								name="widget/sidebarToggle"
 								className="toggle"
 								withBackground={true}
-								tooltipParam={{ 
-									text: translate('popupShortcutMainBasics15'), 
-									caption: keyboard.getCaption('toggleSidebar'), 
+								tooltipParam={{
+									text: translate('popupShortcutMainBasics15'),
+									caption: keyboard.getCaption('toggleSidebar'),
 									typeY: I.MenuDirection.Bottom,
 								}}
 								onClick={() => sidebar.leftPanelToggle(true, true)}
 								onMouseDown={e => e.stopPropagation()}
-								onContextMenu={onVaultContext}
 							/>
 						</>
 					) : ''}

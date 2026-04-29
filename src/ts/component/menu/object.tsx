@@ -144,7 +144,8 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ])
 		);
 		const allowedEditChat = canWrite && isChat;
-		const allowedNotification = isChat;
+		const hasDiscussion = !isChat && !!object.discussionId;
+		const allowedNotification = isChat || (canWrite && hasDiscussion);
 		const allowedCopyMedia = U.Object.isImageLayout(object.layout);
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -172,7 +173,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedNotification) {
 			notification = null;
 		} else
-		if (spaceview.isOneToOne) {
+		if (isChat && spaceview.isOneToOne) {
 			const chatMode = U.Object.getChatNotificationMode(spaceview, object.id);
 			const isMuted = chatMode != I.NotificationMode.All;
 
@@ -367,10 +368,16 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'notification': {
+				const isDiscussion = !isChat && !!object.discussionId;
+				const options = isDiscussion ? U.Menu.discussionNotificationModeOptions() : U.Menu.notificationModeOptions();
+				const currentMode = isDiscussion
+					? U.Object.getDiscussionNotificationMode(spaceview, object.id)
+					: U.Object.getChatNotificationMode(spaceview, object.id);
+
 				menuId = 'select';
 				menuParam.data = {
-					value: String(U.Object.getChatNotificationMode(spaceview, object.id) || ''),
-					options: U.Menu.notificationModeOptions(),
+					value: String(currentMode),
+					options,
 					onSelect: (e, option) => {
 						Action.setChatNotificationMode(space, [ object.id ], Number(option.id), analytics.route.menuObject);
 						close();

@@ -674,6 +674,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`
 		: translate(object.isArchived ? 'commentDiscussion' : 'commentLeaveComment');
 
+	const hasUnread = !!discussionId && U.Object.discussionHasUnread(S.Common.space, discussionId, rootId);
 	const cn = [ 'commentSection', (isOpen ? 'isVisible' : '') ];
 
 	return (
@@ -712,6 +713,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 					<div className="commentCounter" onClick={onCounterClick}>
 						<Icon name="comment/discussion" className="discussion" size={18} />
 						<span className="count">{counterLabel}</span>
+						{hasUnread ? <span className="unreadDot" /> : null}
 					</div>
 					<div className="grad" />
 				</div>

@@ -915,7 +915,6 @@
 	"popupSettingsPersonalLinkStyleCard": "Compact Card",
 	"popupSettingsPersonalLinkStyleCardMedium": "Medium Card",
 	"popupSettingsPersonalFileStyle": "File block default style",
-	"popupSettingsPersonalVaultStyle": "Channels hub density",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalAlwaysShowTabbar": "Always show tab bar",
 	"popupSettingsPersonalHardwareAcceleration": "Hardware Acceleration",
@@ -941,8 +940,6 @@
 	"popupSettingsPersonalNotificationSoundSystem": "System",
 	"popupSettingsPersonalSectionAdvanced": "Advanced",
 	"popupSettingsPersonalTimeFormat": "Time format",
-	"popupSettingsVaultCompact": "Compact",
-	"popupSettingsVaultWithMessages": "Message previews",
 
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
@@ -2883,6 +2880,9 @@
 	"notificationMode2": "Mute and hide",
 	"notificationMode3": "Custom",
 	"notificationModeDisabled": "Disabled",
+
+	"notificationModeDiscussion0": "All New Replies",
+	"notificationModeDiscussion1": "Mentions Only",
 
 	"filterTemplate0": "Value template",
 	"filterTemplate1": "This Object",

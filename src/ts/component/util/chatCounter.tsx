@@ -5,13 +5,14 @@ import * as I from 'Interface';
 interface Props {
 	spaceId?: string;
 	chatId?: string;
+	mode?: I.NotificationMode;
 	className?: string;
 	isMinimal?: boolean;
 };
 
 const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
-	const { spaceId = S.Common.space, chatId, className = '', isMinimal = false } = props;
+	const { spaceId = S.Common.space, chatId, mode, className = '', isMinimal = false } = props;
 	const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 	let counters = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
@@ -22,7 +23,7 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 	if (chatId) {
 		counters = S.Chat.getChatCounters(spaceId, chatId);
 		if (spaceview) {
-			const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
+			const chatMode = (mode !== undefined) ? mode : U.Object.getChatNotificationMode(spaceview, chatId);
 
 			modeMessage = chatMode;
 			modeMention = chatMode;

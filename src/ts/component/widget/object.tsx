@@ -246,6 +246,9 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			transition,
 		};
 		const isChat = U.Object.isChatLayout(item.layout);
+		const hasDiscussion = !isChat && !!item.discussionId;
+		const counterTargetId = isChat ? item.id : (hasDiscussion ? item.discussionId : '');
+		const showCounter = !!counterTargetId && (!hasUnreadSection || isUnread);
 		const canAdd = canWrite && (realId == J.Constant.widgetId.type) && isAllowedObject(item);
 		const spaceview = U.Space.getSpaceview();
 		const itemCn = [ 'item' ];
@@ -284,7 +287,12 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 					<ObjectName object={item} withPlural={true} />
 				</div>
 				<div className="side right">
-					{isChat && (!hasUnreadSection || isUnread) ? <ChatCounter chatId={item.id} /> : ''}
+					{showCounter ? (
+						<ChatCounter
+							chatId={counterTargetId}
+							mode={hasDiscussion ? U.Object.getDiscussionNotificationMode(spaceview, item.id) : undefined}
+						/>
+					) : ''}
 					{canAdd ? (
 						<div className="buttons">
 							<Icon
