@@ -106,7 +106,9 @@ class Onboarding {
 
 		for (const k in values) {
 			const current = S.Common.getWidgetSection(Number(k));
-			current.isClosed = values[k];
+			if (current) {
+				current.isClosed = values[k];
+			};
 		};
 
 		S.Common.widgetSectionsSet(S.Common.widgetSections);
