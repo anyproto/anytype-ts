@@ -1224,7 +1224,14 @@ class Dispatcher {
 
 				case 'ChatStateUpdate': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
-					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state));
+
+					if (mapped.subIds.some(id => id.startsWith('comment-'))) {
+						mapped.subIds.push(S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, rootId));
+					};
+
+					mapped.subIds
+						.filter(subId => !subId.startsWith('comment-'))
+						.forEach(subId => S.Chat.setState(subId, mapped.state));
 					break;
 				};
 

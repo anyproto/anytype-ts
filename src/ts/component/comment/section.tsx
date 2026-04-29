@@ -569,6 +569,11 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				return;
 			};
 
+			if (message.state) {
+				const chatPreviewSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, S.Common.space, id);
+				S.Chat.setState(chatPreviewSubId, message.state);
+			};
+
 			fetchAllMessages(id, sid, () => {
 				isLoaded.current = true;
 				updateSocialVisibility();
