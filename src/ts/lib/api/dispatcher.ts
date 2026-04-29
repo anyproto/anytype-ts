@@ -1225,8 +1225,9 @@ class Dispatcher {
 				case 'ChatStateUpdate': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 
-					if (mapped.subIds.some(id => id.startsWith('comment-'))) {
-						mapped.subIds.push(S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, rootId));
+					const chatPreviewSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, rootId);
+					if (!mapped.subIds.includes(chatPreviewSubId)) {
+						mapped.subIds.push(chatPreviewSubId);
 					};
 
 					mapped.subIds

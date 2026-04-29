@@ -1091,6 +1091,14 @@ class UtilObject {
 		return I.NotificationMode.Mentions;
 	};
 
+	getNotificationModeByChatId (spaceview: any, spaceId: string, chatId: string): I.NotificationMode {
+		const parentId = S.Chat.getDiscussionParentId(spaceId, chatId);
+		if (parentId) {
+			return this.getDiscussionNotificationMode(spaceview, parentId);
+		};
+		return this.getChatNotificationMode(spaceview, chatId);
+	};
+
 	discussionHasUnread (spaceId: string, discussionId: string, parentObjectId: string): boolean {
 		if (!discussionId) {
 			return false;

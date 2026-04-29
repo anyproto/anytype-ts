@@ -381,16 +381,11 @@ class ChatStore {
 			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 			for (const [ chatId, state ] of spaceMap) {
-				if (!chatId) {
+				if (!chatId || this.isStateEntryArchived(spaceId, chatId)) {
 					continue;
 				};
 
-				const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
-				if (chat._empty_ || chat.isArchived) {
-					continue;
-				};
-
-				const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
+				const chatMode = U.Object.getNotificationModeByChatId(spaceview, spaceId, chatId);
 
 				if (state.mentionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
 					ret.mentionCounter += Number(state.mentionCounter) || 0;
@@ -426,16 +421,11 @@ class ChatStore {
 		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 		for (const [ chatId, state ] of spaceMap) {
-			if (!chatId) {
+			if (!chatId || this.isStateEntryArchived(spaceId, chatId)) {
 				continue;
 			};
 
-			const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
-			if (chat._empty_ || chat.isArchived) {
-				continue;
-			};
-
-			const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
+			const chatMode = U.Object.getNotificationModeByChatId(spaceview, spaceId, chatId);
 
 			if (state.mentionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
 				ret.mentionCounter += Number(state.mentionCounter) || 0;
@@ -498,17 +488,24 @@ class ChatStore {
 		};
 
 		const parentId = this.discussionParentMap.get(spaceId)?.get(chatId);
-		if (!parentId) {
-			return ret;
+		if (parentId) {
+			const parent = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.discussion, spaceId), parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
+			if (!parent._empty_) {
+				if (parent.isArchived) {
+					return ret;
+				};
+				ret.messageCounter = Number(parent.unreadMessageCount) || 0;
+				ret.mentionCounter = Number(parent.unreadMentionCount) || 0;
+				return ret;
+			};
 		};
 
-		const parent = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.discussion, spaceId), parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
-		if (parent._empty_ || parent.isArchived) {
-			return ret;
+		const state = this.stateMap.get(spaceId)?.get(chatId);
+		if (state) {
+			ret.mentionCounter = Number(state.mentionCounter) || 0;
+			ret.messageCounter = Number(state.messageCounter) || 0;
+			ret.reactionCounter = Number(state.reactionCounter) || 0;
 		};
-
-		ret.messageCounter = Number(parent.unreadMessageCount) || 0;
-		ret.mentionCounter = Number(parent.unreadMentionCount) || 0;
 		return ret;
 	};
 
@@ -540,6 +537,25 @@ class ChatStore {
 	 */
 	getDiscussionParentId (spaceId: string, discussionId: string): string {
 		return this.discussionParentMap.get(spaceId)?.get(discussionId) || '';
+	};
+
+	/**
+	 * Returns true if the stateMap entry should be excluded from aggregates because
+	 * its chat (or discussion parent) is archived.
+	 */
+	isStateEntryArchived (spaceId: string, chatId: string): boolean {
+		const chat = S.Detail.get(J.Constant.subId.chatGlobal, chatId, []);
+		if (!chat._empty_) {
+			return !!chat.isArchived;
+		};
+
+		const parentId = this.discussionParentMap.get(spaceId)?.get(chatId);
+		if (parentId) {
+			const parent = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.discussion, spaceId), parentId, [ 'isArchived' ]);
+			return !!parent.isArchived;
+		};
+
+		return false;
 	};
 
 	/**
