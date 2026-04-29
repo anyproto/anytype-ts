@@ -1,4 +1,4 @@
-import { app, shell, Menu, Tray, BrowserWindow, dialog } from 'electron';
+import { app, shell, Menu, Tray, BrowserWindow, dialog, nativeImage } from 'electron';
 import { is, fixPathForAsarUnpack } from 'electron-util';
 import fs from 'fs';
 import path from 'path';
@@ -479,7 +479,7 @@ class MenuManager {
 
 		const icon = this.getTrayIcon();
 
-		this.tray = new Tray (icon);
+		this.tray = new Tray(this.toTrayImage(icon));
 		this.tray.setToolTip('Anytype');
 		this.tray.setContextMenu(Menu.buildFromTemplate([
 			{ label: Util.translate('electronMenuOpenApp'), click: () => this.winShow() },
@@ -604,7 +604,7 @@ class MenuManager {
 		if (this.tray && this.tray.setImage) {
 			const icon = this.getTrayIcon();
 			if (icon) {
-				this.tray.setImage(icon);
+				this.tray.setImage(this.toTrayImage(icon));
 			};
 		};
 	};
@@ -616,23 +616,36 @@ class MenuManager {
 			icon = path.join('icons', '256x256.ico');
 		} else
 		if (is.linux) {
-			const env = process.env.ORIGINAL_XDG_CURRENT_DESKTOP || '';
-			const panelAlwaysDark = env.includes('GNOME') || (env == 'Unity'); // for GNOME shell env, including ubuntu -- the panel is always dark
+			const env = (process.env.XDG_CURRENT_DESKTOP || process.env.ORIGINAL_XDG_CURRENT_DESKTOP || '').toUpperCase();
+			const panelAlwaysDark = env.includes('GNOME') || (env == 'UNITY'); // for GNOME shell env, including ubuntu -- the panel is always dark
 
-            if (panelAlwaysDark) {
-                icon = 'iconTrayWhite.png';
-            } else
+			if (panelAlwaysDark) {
+				icon = 'iconTrayWhite.png';
+			} else
 			if (Util.getTheme() == 'dark') {
-                icon = 'iconTrayWhite.png';
-            } else {
-                icon = 'iconTrayBlack.png';
-            };
+				icon = 'iconTrayWhite.png';
+			} else {
+				icon = 'iconTrayBlack.png';
+			};
 		} else
 		if (is.macos) {
 			icon = `iconTrayTemplate.png`;
 		};
 
 		return icon ? fixPathForAsarUnpack(path.join(Util.imagePath(), icon)) : '';
+	};
+
+	// Wrap the resolved icon path in a NativeImage so Electron streams the bytes
+	// to libappindicator/SNI as a managed temp file instead of forwarding the
+	// asar.unpacked path. Electron 40+ on GNOME falls back to a generic icon
+	// when libappindicator cannot resolve the raw path.
+	toTrayImage (iconPath: string): Electron.NativeImage | string {
+		if (!iconPath || !is.linux) {
+			return iconPath;
+		};
+
+		const image = nativeImage.createFromPath(iconPath);
+		return image.isEmpty() ? iconPath : image;
 	};
 
 	destroy (): void {
