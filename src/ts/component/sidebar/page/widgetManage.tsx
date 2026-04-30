@@ -34,8 +34,9 @@ const SectionItem = ({ section, isFixed, isHidden, onToggle }: SectionItemProps)
 			className={cn.join(' ')}
 			style={style}
 			{...attributes}
+			{...(isFixed ? {} : listeners)}
 		>
-			<Icon className="dnd" name="common/dnd" {...(isFixed ? {} : listeners)} />
+			<Icon className="dnd" name="common/dnd" />
 			<Label text={section.name} />
 			{!isFixed ? (
 				<Icon
