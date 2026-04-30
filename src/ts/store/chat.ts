@@ -1,4 +1,4 @@
-import { observable, action, makeObservable, set } from 'mobx';
+import { observable, action, makeObservable, set, autorun } from 'mobx';
 import * as I from 'Interface';
 import * as M from 'Model';
 
@@ -24,6 +24,8 @@ class ChatStore {
 			discussionParentMapSet: action,
 			discussionParentMapDelete: action,
 		});
+
+		autorun(() => this.setBadge());
 	};
 
 	/**
