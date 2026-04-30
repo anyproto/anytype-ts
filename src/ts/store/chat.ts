@@ -25,7 +25,7 @@ class ChatStore {
 			discussionParentMapDelete: action,
 		});
 
-		autorun(() => this.setBadge());
+		queueMicrotask(() => autorun(() => this.setBadge()));
 	};
 
 	/**
