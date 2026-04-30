@@ -56,11 +56,14 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onKeyDownHandler = (e: any) => {
 		let ret = false;
+		const hasActions = actions.length > 0;
 
 		if (inputRef.current?.isFocused()) {
-			keyboard.shortcut('arrowdown', e, () => {
-				inputRef.current?.setBlur();
-			});
+			if (hasActions) {
+				keyboard.shortcut('arrowdown', e, () => {
+					inputRef.current?.setBlur();
+				});
+			};
 
 			if (isSingleLine) {
 				keyboard.shortcut(`enter`, e, () => {
@@ -82,7 +85,7 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			});
 		};
 
-		if (!ret) {
+		if (!ret && hasActions) {
 			onKeyDown(e);
 		};
 	};
