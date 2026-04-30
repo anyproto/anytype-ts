@@ -176,12 +176,8 @@ class UtilSpace {
 				break;
 			};
 
-			case I.HomePredefinedId.Chat: {
-				ret = this.getChat();
-				break;
-			};
-
 			case '':
+			case I.HomePredefinedId.Chat:
 			case I.HomePredefinedId.Widget:
 			case I.HomePredefinedId.Last: {
 				ret = this.getLastOpened();
