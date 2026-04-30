@@ -187,7 +187,12 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		resizeHandlerRef.current = () => resize();
 		sidebarResizeHandlerRef.current = () => resize();
-		updateDataviewDataHandlerRef.current = () => loadData(getView().id, 0, true);
+		updateDataviewDataHandlerRef.current = () => {
+			const view = getView();
+			if (view) {
+				loadData(view.id, 0, true);
+			};
+		};
 		setDataviewSourceHandlerRef.current = () => onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 });
 		selectionEndHandlerRef.current = () => onSelectEnd();
 		selectionClearHandlerRef.current = () => onSelectEnd();

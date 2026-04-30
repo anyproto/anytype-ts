@@ -291,6 +291,10 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'linkTo': {
+				if (!target) {
+					break;
+				};
+
 				menuId = 'searchObject';
 				menuParam.data = {
 					filters: [
@@ -313,6 +317,10 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'addCollection': {
+				if (!target) {
+					break;
+				};
+
 				const collectionType = S.Record.getCollectionType();
 
 				menuId = 'searchObject';

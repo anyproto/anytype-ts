@@ -238,7 +238,7 @@ const PopupPreview = forwardRef<{}, I.Popup>((props, ref) => {
 
 			if (video) {
 				video.currentTime = 0;
-				video.play();
+				video.play().catch(() => {});
 			};
 		};
 

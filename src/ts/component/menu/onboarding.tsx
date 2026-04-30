@@ -306,7 +306,7 @@ const MenuOnboarding = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) =
 		S.Popup.open('preview', { 
 			preventMenuClose: true,
 			onClose: () => {
-				videoRef.current?.play();
+				videoRef.current?.play().catch(() => {});
 			},
 			data: { 
 				gallery: [ 
