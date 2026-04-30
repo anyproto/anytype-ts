@@ -92,7 +92,7 @@ export default defineConfig(({ mode }) => {
 		build: {
 			outDir: 'dist',
 			emptyOutDir: false,
-			sourcemap: false,
+			sourcemap: prod ? 'hidden' : false,
 			cssCodeSplit: false,
 			assetsInlineLimit: 10000, // Inline small assets; fonts stay as URLs
 			commonjsOptions: {
