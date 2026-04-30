@@ -204,10 +204,10 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			const c1: any[] = [
 				hasLink ? { id: 'linkSettings', name: translate('commonView'), caption: translate(`menuBlockLinkSettingsStyle${I.LinkCardStyle[cardStyle]}`), arrow: true } : null,
-				hasTurnFile ? { id: 'turnStyle', name: translate('commonView'), caption: I.FileStyle[style], arrow: true, isBlockFile: true } : null,
+				hasTurnFile ? { id: 'turnStyle', name: translate('commonView'), caption: translate(`blockName${I.FileStyle[style]}`), arrow: true, isBlockFile: true } : null,
 				(hasTurnText && !isCardStyle) ? turnText : null,
 				hasTurnDiv ? { id: 'turnStyle', iconParam: { name: U.Data.styleIcon(I.BlockType.Div, style) }, name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
-				hasAlign ? { id: 'align', name: translate('commonAlign'), caption: I.BlockHAlign[hAlign], arrow: true } : null,
+				hasAlign ? { id: 'align', name: translate('commonAlign'), caption: translate(`commonHAlign${I.BlockHAlign[hAlign]}`), arrow: true } : null,
 				hasColor ? { id: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') } : null,
 				hasBg ? { id: 'background', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') } : null,
 				hasText ? { id: 'clear', name: translate('libMenuClearStyle') } : null,
@@ -217,8 +217,8 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (hasAction) {
 				const cmd = keyboard.cmdSymbol();
 				const count = blockIds.length;
-				const copyName = `${translate('commonDuplicate')} ${U.Common.plural(count, translate('pluralLCBlock'))}`;
-				const deleteName = `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`;
+				const copyName = U.String.sprintf(translate('commonDuplicateBlocks'), U.Common.plural(count, translate('pluralLCBlock')));
+				const deleteName = U.String.sprintf(translate('commonDeleteBlocks'), U.Common.plural(count, translate('pluralLCBlock')));
 
 				const move = hasCommon ? { id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true } : null;
 				const clipboardCopy = hasClipboard ? { id: 'clipboardCopy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy'), caption: `${cmd} + C` } : null;
