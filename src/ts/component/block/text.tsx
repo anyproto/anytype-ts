@@ -10,12 +10,21 @@ import { focus } from 'Lib/focus';
 // Prism language plugins expect `Prism` on the global scope
 (window as any).Prism = Prism;
 
-// Do not mark this import /* @vite-ignore */ — Rollup needs to glob
-// prismjs/components/prism-*.js and emit a lazy chunk per language, otherwise
-// nothing loads in production and Prism.languages.<lang> stays undefined.
+// Use import.meta.glob so Rollup emits one lazy chunk per language. A plain
+// dynamic import with a template literal works only for relative paths —
+// bare-specifier templates like `prismjs/components/prism-${lang}.js` are
+// left unresolved in production and Prism.languages.<lang> stays undefined.
+const prismLangModules = import.meta.glob([
+	'/node_modules/prismjs/components/prism-*.js',
+	'!/node_modules/prismjs/components/prism-*.min.js',
+]);
+
 (async () => {
 	for (const lang of U.Prism.components) {
-		try { await import(`prismjs/components/prism-${lang}.js`); } catch (e) {};
+		const loader = prismLangModules[`/node_modules/prismjs/components/prism-${lang}.js`];
+		if (loader) {
+			try { await loader(); } catch (e) {};
+		};
 	};
 })();
 
