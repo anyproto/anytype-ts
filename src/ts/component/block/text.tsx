@@ -818,7 +818,8 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			parsed = getMarksFromHtml();
 			adjustMarks = parsed.adjustMarks;
 			marksRef.current = parsed.marks;
-		} else {
+		} else
+		if (!block.isTextCode()) {
 			parsed = Mark.fromUnicode(value, marksRef.current, false);
 			adjustMarks = parsed.adjustMarks;
 		};
