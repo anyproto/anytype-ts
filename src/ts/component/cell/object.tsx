@@ -113,14 +113,16 @@ const CellObject = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const focus = () => {
-		if (entryRef.current) {
-			window.setTimeout(() => {
-				entryRef.current?.focus();
-				setRange(entryRef.current, { start: 0, end: 0 });
+		window.setTimeout(() => {
+			if (!entryRef.current) {
+				return;
+			};
 
-				scrollToBottom();
-			});
-		};
+			entryRef.current.focus();
+			setRange(entryRef.current, { start: 0, end: 0 });
+
+			scrollToBottom();
+		});
 	};
 
 	const onKeyPress = (e: any) => {
