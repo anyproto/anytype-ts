@@ -357,15 +357,27 @@ function spaFallbackPlugin(): Plugin {
 						return next();
 					}
 
-					// Try to serve static assets from dist/ (tabs.html, workers, fonts, etc.)
-					const distPath = path.resolve(__dirname, 'dist', pathname.slice(1));
-					if (fs.existsSync(distPath) && fs.statSync(distPath).isFile()) {
-						const ext = path.extname(distPath).toLowerCase();
-						const contentType = mimeTypes[ext];
-						if (contentType) {
-							res.setHeader('Content-Type', contentType);
+					const isIndex = (pathname === '/') || (pathname === '/index.html');
+
+					if (!isIndex) {
+						// Try to serve static assets from dist/ (tabs.html, workers, fonts, etc.)
+						const distPath = path.resolve(__dirname, 'dist', pathname.slice(1));
+						if (fs.existsSync(distPath) && fs.statSync(distPath).isFile()) {
+							const ext = path.extname(distPath).toLowerCase();
+							const contentType = mimeTypes[ext];
+							if (contentType) {
+								res.setHeader('Content-Type', contentType);
+							}
+							return res.end(fs.readFileSync(distPath));
 						}
-						return res.end(fs.readFileSync(distPath));
+					}
+
+					const ext = path.extname(pathname).toLowerCase();
+					const accept = String(req.headers.accept || '');
+					const isHtmlRequest = isIndex || (!ext) || (ext === '.html') || accept.includes('text/html');
+
+					if (!isHtmlRequest) {
+						return next();
 					}
 
 					const htmlPath = path.resolve(__dirname, 'src/html/index.html');
