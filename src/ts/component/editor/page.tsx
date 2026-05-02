@@ -1505,7 +1505,9 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const ids = selection?.get(I.SelectType.Block, true) || [];
 
 		if (block.isText()) {
-			if (!isDelete && !range.to) {
+			// Collapsed caret at text offset 0 only — `!range.to` is also true when to is
+			// undefined/NaN and would misfire merge-at-start (#2196).
+			if (!isDelete && (range.from === range.to) && (range.from === 0)) {
 				if (block.isTextToggleHeader() && !length) {
 					const map = {
 						[I.TextStyle.ToggleHeader1]: I.TextStyle.Header1,

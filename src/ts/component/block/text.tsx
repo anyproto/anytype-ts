@@ -169,6 +169,13 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			text = '';
 		};
 
+		// Rich clipboard (e.g. AI "Copy response") can embed ZWJ / word joiner / BOM.
+		// Strip so the DOM stays clean; Editable also uses plainDomTextOffsets for code
+		// so stray U+200B cannot break caret via dom/model conversion (#2196).
+		if (block.isTextCode()) {
+			text = U.String.stripZeroWidthFormatChars(text);
+		};
+
 		textRef.current = text;
 		let html = text;
 
@@ -270,6 +277,10 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		// innerText includes that phantom <br/> as a real \n, so strip it here.
 		if (phantomNewlineRef.current && value.endsWith('\n')) {
 			value = value.slice(0, -1);
+		};
+
+		if (block.isTextCode()) {
+			value = U.String.stripZeroWidthFormatChars(value);
 		};
 
 		return value;
@@ -643,35 +654,87 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		keyboard.shortcut('backspace', e, () => {
-			if (range.to) {
-				const parsed = Mark.checkMarkOnBackspace(value, range, marksRef.current);
-
-				if (parsed.save) {
+			// Code blocks: native Backspace inside Prism/plain <br> markup is unreliable after
+			// rich paste (DOM vs model offsets). Apply deletion on the model string (#2196).
+			if (
+				block.isTextCode() &&
+				!menuOpenAdd &&
+				!menuOpenMention &&
+				!menuOpenEmoji &&
+				!menuOpenSmile
+			) {
+				if (range.from !== range.to) {
 					e.preventDefault();
 
-					value = parsed.text;
-					marksRef.current = parsed.marks;
+					const newValue = U.String.cut(value, range.from, range.to);
+					const newRange = { from: range.from, to: range.from };
+
+					focus.set(block.id, newRange);
+					U.Data.blockSetText(rootId, block.id, newValue, [], true, () => {
+						focus.apply();
+						setValue(newValue, newRange);
+					});
+					ret = true;
+				} else
+				if (range.from > 0) {
+					const del = U.String.utf16DeleteLengthBefore(value, range.from);
+
+					if (del > 0) {
+						e.preventDefault();
+
+						const newValue = U.String.cut(value, range.from - del, range.from);
+						const newRange = { from: range.from - del, to: range.from - del };
+
+						focus.set(block.id, newRange);
+						U.Data.blockSetText(rootId, block.id, newValue, [], true, () => {
+							focus.apply();
+							setValue(newValue, newRange);
+						});
+						ret = true;
+					};
+				};
+			} else {
+				// Use explicit offsets: `if (range.to)` is false when to===0 (caret at start),
+				// same as undefined/NaN from a bad range — that wrongly hit the mark-sync branch
+				// below and re-sent stale text + ret=true, skipping onKeyDown.
+				const hasNonZeroCaretOrSelection = (range.from > 0) || (range.from !== range.to);
+
+				if (hasNonZeroCaretOrSelection) {
+					const parsed = Mark.checkMarkOnBackspace(value, range, marksRef.current);
+
+					if (parsed.save) {
+						e.preventDefault();
+
+						value = parsed.text;
+						marksRef.current = parsed.marks;
+
+						U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
+							focus.set(block.id, parsed.range);
+							focus.apply();
+
+							onKeyDown(e, value, marksRef.current, range, props);
+						});
+						ret = true;
+					};
+				} else
+				if (
+					!menuOpenAdd &&
+					!menuOpenMention &&
+					!menuOpenEmoji &&
+					(range.from === range.to) &&
+					(range.from === 0)
+				) {
+					if (block.canHaveMarks()) {
+						const parsed = getMarksFromHtml();
+
+						marksRef.current = parsed.marks;
+					};
 
 					U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
-						focus.set(block.id, parsed.range);
-						focus.apply();
-
 						onKeyDown(e, value, marksRef.current, range, props);
 					});
 					ret = true;
 				};
-			} else 
-			if (!menuOpenAdd && !menuOpenMention && !menuOpenEmoji && !range.to) {
-				if (block.canHaveMarks()) {
-					const parsed = getMarksFromHtml();
-
-					marksRef.current = parsed.marks;
-				};
-
-				U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
-					onKeyDown(e, value, marksRef.current, range, props);
-				});
-				ret = true;
 			};
 
 			if (menuOpenAdd && (oneSymbolBefore == '/')) {
@@ -688,6 +751,44 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 
 		keyboard.shortcut('delete', e, () => {
+			if (
+				block.isTextCode() &&
+				!menuOpenAdd &&
+				!menuOpenMention &&
+				!menuOpenEmoji &&
+				!menuOpenSmile
+			) {
+				if (range.from !== range.to) {
+					e.preventDefault();
+
+					const newValue = U.String.cut(value, range.from, range.to);
+					const newRange = { from: range.from, to: range.from };
+
+					focus.set(block.id, newRange);
+					U.Data.blockSetText(rootId, block.id, newValue, [], true, () => {
+						focus.apply();
+						setValue(newValue, newRange);
+					});
+					ret = true;
+				} else
+				if (range.from < value.length) {
+					const del = U.String.utf16DeleteLengthAfter(value, range.from);
+
+					if (del > 0) {
+						e.preventDefault();
+
+						const newValue = U.String.cut(value, range.from, range.from + del);
+						const newRange = { from: range.from, to: range.from };
+
+						focus.set(block.id, newRange);
+						U.Data.blockSetText(rootId, block.id, newValue, [], true, () => {
+							focus.apply();
+							setValue(newValue, newRange);
+						});
+						ret = true;
+					};
+				};
+			} else
 			if ((range.from == range.to) && (range.to == value.length)) {
 				U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
 					onKeyDown(e, value, marksRef.current, range, props);
@@ -1263,7 +1364,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 					let to = selRange.collapsed ? from : U.Dom.getSelectionOffsetWithLatex(editable, selRange.endContainer, selRange.endOffset);
 
 					// Convert DOM offsets to model offsets (strip ZWS cursor anchors)
-					if (Mark.hasZws(editable)) {
+					if (Mark.hasZws(editable) && !block.isTextCode()) {
 						from = Mark.domToModel(from, editable);
 						to = Mark.domToModel(to, editable);
 					};
@@ -1726,6 +1827,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				classNamePlaceholder={`c${id}`}
 				readonly={readonly}
 				spellcheck={spellcheck}
+				plainDomTextOffsets={block.isTextCode()}
 				placeholder={placeholder}
 				onKeyDown={onKeyDownHandler}
 				onKeyUp={onKeyUpHandler}

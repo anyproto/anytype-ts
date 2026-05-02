@@ -433,6 +433,53 @@ class UtilString {
 	};
 
 	/**
+	 * Removes invisible Unicode often embedded by rich clipboard / AI copy flows.
+	 * In code blocks these make Mark.hasZws() treat content like mark-anchored text
+	 * and break dom/model range conversion (caret / backspace).
+	 */
+	stripZeroWidthFormatChars (s: string): string {
+		return String(s || '').replace(/[\u200B-\u200D\uFEFF\u2060]/g, '');
+	};
+
+	/**
+	 * UTF-16 code units to remove immediately before index (manual Backspace).
+	 */
+	utf16DeleteLengthBefore (s: string, index: number): number {
+		s = String(s || '');
+		index = Number(index) || 0;
+		if (index <= 0) {
+			return 0;
+		};
+		const low = s.charCodeAt(index - 1);
+		if ((low >= 0xDC00) && (low <= 0xDFFF) && (index >= 2)) {
+			const high = s.charCodeAt(index - 2);
+			if ((high >= 0xD800) && (high <= 0xDBFF)) {
+				return 2;
+			};
+		};
+		return 1;
+	};
+
+	/**
+	 * UTF-16 code units to remove at index going forward (manual Delete).
+	 */
+	utf16DeleteLengthAfter (s: string, index: number): number {
+		s = String(s || '');
+		index = Number(index) || 0;
+		if (index >= s.length) {
+			return 0;
+		};
+		const high = s.charCodeAt(index);
+		if ((high >= 0xD800) && (high <= 0xDBFF) && (index + 1 < s.length)) {
+			const low = s.charCodeAt(index + 1);
+			if ((low >= 0xDC00) && (low <= 0xDFFF)) {
+				return 2;
+			};
+		};
+		return 1;
+	};
+
+	/**
 	 * Escapes HTML special characters in a string.
 	 * @param {string} s - The string to escape.
 	 * @returns {string} The escaped string.

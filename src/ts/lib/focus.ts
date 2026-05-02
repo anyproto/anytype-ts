@@ -148,8 +148,12 @@ class Focus {
 		if (U.Dom.hasClass(node, 'editable')) {
 			keyboard.setFocus(true);
 
+			// Code blocks (`.textCode`): never use Mark ZWS mapping — Prism/source may still
+			// contain stray U+200B from clipboard; mapping breaks caret (#2196).
+			const isCodeTextField = Boolean(node.closest('.textCode'));
+
 			// Convert model offsets to DOM offsets if ZWS cursor anchors are present
-			if (Mark.hasZws(node)) {
+			if (Mark.hasZws(node) && !isCodeTextField) {
 				const domFrom = Mark.modelToDom(range.from, node);
 				const domTo = Mark.modelToDom(range.to, node);
 
