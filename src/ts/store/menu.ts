@@ -219,8 +219,8 @@ class MenuStore {
 	 * @param {string} id - The menu ID.
 	 * @returns {boolean} True if animating, false otherwise.
 	 */
-	isAnimating (id: string): boolean {
-		return !!this.isAnimatingFlag.get(id);
+	isAnimating (id?: string): boolean {
+		return !!(id ? this.isAnimatingFlag.get(id) : this.isAnimatingFlag.size);
 	};
 
 	/**

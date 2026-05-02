@@ -32,6 +32,8 @@ const WidgetListItem = forwardRef<{}, Props>((props, ref) => {
 	const moreRef = useRef(null);
 	const cn = [ 'item' ];
 	const isChat = U.Object.isChatLayout(object.layout);
+	const hasDiscussion = !isChat && !!object.discussionId;
+	const counterTargetId = isChat ? id : (hasDiscussion ? object.discussionId : '');
 	const isBookmark = U.Object.isBookmarkLayout(object.layout);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const style = {
@@ -163,7 +165,14 @@ const WidgetListItem = forwardRef<{}, Props>((props, ref) => {
 					{time}
 					{!hasUnreadSection ? <ChatCounter chatId={id} /> : ''}
 				</div>
-			) : ''}
+			) : (counterTargetId && !hasUnreadSection ? (
+				<div className="chatInfo">
+					<ChatCounter
+						chatId={counterTargetId}
+						mode={hasDiscussion ? U.Object.getDiscussionNotificationMode(U.Space.getSpaceview(), id) : undefined}
+					/>
+				</div>
+			) : '')}
 
 			<div className="buttons">
 				{more}

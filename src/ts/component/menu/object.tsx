@@ -66,7 +66,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let pinToChannel = { id: isPinnedToChannel ? 'unpinFromChannel' : 'pinToChannel', iconParam: { name: 'menu/action/pin' }, name: translate(isPinnedToChannel ? 'menuWidgetUnpinFromChannel' : 'menuWidgetPinToChannel') };
 		let favorite = { id: isFavorite ? 'unfavorite' : 'favorite', iconParam: { name: isFavorite ? 'menu/action/unfav' : 'menu/action/fav' }, name: translate(isFavorite ? 'menuWidgetUnfavorite' : 'menuWidgetFavorite') };
 		let linkTo = { id: 'linkTo', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonLinkTo'), arrow: true };
-		let addCollection = { id: 'addCollection', iconParam: { name: 'menu/block/common/collection' }, name: translate('commonAddToCollection'), arrow: true };
+		let addCollection = { id: 'addCollection', iconParam: { name: 'menu/action/collection' }, name: translate('commonAddToCollection'), arrow: true };
 		let searchText = { id: 'searchText', iconParam: { name: 'common/search' }, name: translate('menuObjectSearchOnPage'), caption: keyboard.getCaption('searchText') };
 		let history = { id: 'history', iconParam: { name: 'menu/action/history' }, name: translate('commonVersionHistory'), caption: keyboard.getCaption('history') };
 		let pageCopy = { id: 'pageCopy', iconParam: { name: 'menu/action/duplicate' }, name: translate('commonDuplicate') };
@@ -144,7 +144,8 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Block.isAllowed(type?.restrictions, [ I.RestrictionObject.Details ])
 		);
 		const allowedEditChat = canWrite && isChat;
-		const allowedNotification = isChat;
+		const hasDiscussion = !isChat && !!object.discussionId;
+		const allowedNotification = isChat || (canWrite && hasDiscussion);
 		const allowedCopyMedia = U.Object.isImageLayout(object.layout);
 		if (!allowedPageLink) {
 			pageLink = null;
@@ -172,7 +173,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedNotification) {
 			notification = null;
 		} else
-		if (spaceview.isOneToOne) {
+		if (isChat && spaceview.isOneToOne) {
 			const chatMode = U.Object.getChatNotificationMode(spaceview, object.id);
 			const isMuted = chatMode != I.NotificationMode.All;
 
@@ -367,10 +368,16 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'notification': {
+				const isDiscussion = !isChat && !!object.discussionId;
+				const options = isDiscussion ? U.Menu.discussionNotificationModeOptions() : U.Menu.notificationModeOptions();
+				const currentMode = isDiscussion
+					? U.Object.getDiscussionNotificationMode(spaceview, object.id)
+					: U.Object.getChatNotificationMode(spaceview, object.id);
+
 				menuId = 'select';
 				menuParam.data = {
-					value: String(U.Object.getChatNotificationMode(spaceview, object.id) || ''),
-					options: U.Menu.notificationModeOptions(),
+					value: String(currentMode),
+					options,
 					onSelect: (e, option) => {
 						Action.setChatNotificationMode(space, [ object.id ], Number(option.id), analytics.route.menuObject);
 						close();
@@ -401,7 +408,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			const home = U.Space.getDashboard();
 			if (home && (object.id == home.id)) {
-				Action.openSettings('spaceIndexEmpty', route);
+				U.Router.go('/main/void/empty', {});
 			} else {
 				keyboard.onBack(isPopup);
 			};

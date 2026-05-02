@@ -112,13 +112,13 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 	
 	const onMouseDown = (e: any) => {
 		if (
-			e.button || 
-			S.Menu.isOpen('', '', [ 'onboarding', 'searchText' ]) || 
+			e.button ||
+			S.Menu.isOpen('', '', [ 'onboarding', 'searchText' ]) ||
 			S.Popup.isOpen('', [ 'page' ])
 		) {
 			return;
 		};
-		
+
 		if (keyboard.isSelectionDisabled) {
 			hide();
 			return;

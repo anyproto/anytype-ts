@@ -32,7 +32,7 @@ class Api {
 	// Each tab has its own gRPC session/stream, so events like PayloadBroadcast
 	// and notifications arrive in every tab independently. Without this guard,
 	// the active tab would receive duplicate IPC messages (once per tab).
-	activeTabOnly: Set<string> = new Set([ 'payloadBroadcast', 'notification' ]);
+	activeTabOnly: Set<string> = new Set([ 'payloadBroadcast', 'notification', 'setTabsDimmer' ]);
 
 	getInitData (win: AppWindow, tabId: string): Record<string, any> {
 		let route = win.route || '';

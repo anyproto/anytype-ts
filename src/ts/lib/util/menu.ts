@@ -685,7 +685,7 @@ class UtilMenu {
 		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
-	dashboardSelect (element: string, openRoute?: boolean) {
+	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 
@@ -714,6 +714,7 @@ class UtilMenu {
 		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
+			...menuParam,
 			data: {
 				withPlural: true,
 				filters: [
@@ -721,15 +722,20 @@ class UtilMenu {
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 				],
 				dataChange: (_ctx: any, items: any) => {
-					return [
-						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'common/empty' }, name: translate('commonEmpty') },
-						{ id: I.HomePredefinedId.Graph, iconParam: { name: 'header/graph' }, name: translate('commonGraph') },
-					].concat(items);
+					const head: any[] = [
+						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
+					];
+
+					if (items.length) {
+						head.push({ isDiv: true });
+					};
+
+					return head.concat(items);
 				},
 				onSelect: el => {
 					onSelect(el, true);
 
-					const type = U.Space.getSystemDashboardIds().includes(el.id) ? el.id : I.HomePredefinedId.Existing;
+					const type = U.Space.isSystemDashboard(el.id) ? el.id : I.HomePredefinedId.Existing;
 					analytics.event('ChangeSpaceDashboard', { type });
 				},
 			}
@@ -1378,7 +1384,7 @@ class UtilMenu {
 		});
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean, uploadRoute?: string }, route: string, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withUpload?: boolean, noButtons?: boolean, uploadRoute?: string }, route: string, callBack?: (item: any) => void) {
 		param = param || {};
 		param.data = param.data || {};
 		details = details || {};
@@ -1394,9 +1400,39 @@ class UtilMenu {
 			objectFlags.push(I.ObjectFlag.DeleteEmpty);
 		};
 
-		const onImport = (e: MouseEvent) => {
-			e.stopPropagation();
-			Action.openSettings('importIndex', route);
+		const onUpload = (e: MouseEvent) => {
+			U.Menu.onFileUploadPopup(I.ObjectLayout.File, '', {}, (objectIds) => {
+				if (!objectIds?.length) {
+					return;
+				};
+
+				U.Object.getByIds(objectIds, {}, (objects) => {
+					const gallery = objects.map(object => {
+						let type = null;
+						let src = '';
+
+						if (U.Object.isImageLayout(object.layout)) {
+							type = I.FileType.Image;
+							src = S.Common.imageUrl(object.id, I.ImageSize.Large);
+						} else
+						if (object.layout == I.ObjectLayout.Video) {
+							type = I.FileType.Video;
+							src = S.Common.fileUrl(object.id);
+						};
+
+						return src ? { object, type, src } : null;
+					}).filter(it => it);
+
+					window.setTimeout(() => {
+						if (gallery.length) {
+							S.Popup.open('preview', { data: { gallery } });
+						} else
+						if (objects.length) {
+							callBack?.(objects[0]);
+						};
+					}, S.Popup.getTimeout());
+				});
+			}, flags.uploadRoute || route);
 		};
 
 		const getClipboardData = async () => {
@@ -1520,6 +1556,10 @@ class UtilMenu {
 			const buttons: any[] = [];
 
 			if (!flags.noButtons) {
+				if (flags.withUpload) {
+					buttons.push({ id: 'import', iconParam: { name: 'menu/action/uploadComputer' }, name: translate('commonUploadComputer'), onClick: onUpload, isButton: true });
+				};
+
 				buttons.push({ 
 					id: 'add', iconParam: { name: 'plus/menu' }, onClick: () => {
 						U.Object.createType({ name: this.menuContext?.getChildRef()?.getData().filter }, keyboard.isPopup());
@@ -1530,10 +1570,6 @@ class UtilMenu {
 						};
 					}, 
 				});
-
-				if (flags.withImport) {
-					buttons.push({ id: 'import', iconParam: { name: 'menu/action/import' }, name: translate('commonImport'), onClick: onImport, isButton: true });
-				};
 
 				if (items.length) {
 					buttons.unshift({ id: 'clipboard', iconParam: { name: 'menu/action/clipboard' }, name: translate('widgetItemClipboard'), onClick: onPaste, isButton: true });
@@ -1556,7 +1592,7 @@ class UtilMenu {
 					onMore,
 					buttons,
 					filters: [
-						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection().filter(it => !U.Object.isInFileLayouts(it)) },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
@@ -1665,33 +1701,6 @@ class UtilMenu {
 		this.menuContext = context;
 	};
 
-	vaultStyle (param: I.MenuParam) {
-		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
-		const { vaultMessages } = S.Common;
-		const options =[
-			{ id: 0, name: translate('popupSettingsVaultCompact'), checkbox: !vaultMessages, },
-			{ id: 1, name: translate('popupSettingsVaultWithMessages'), checkbox: vaultMessages, },
-		];
-
-		S.Menu.open('select', {
-			...param,
-			data: {
-				options,
-				noVirtualisation: true,
-				onSelect: (e: any, item: any) => {
-					const value = Boolean(Number(item.id));
-
-					S.Common.vaultMessagesSet(value);
-					if (isClosed) {
-						sidebar.open(I.SidebarPanel.Left, '', );
-					};
-
-					analytics.event('VaultStyleChange', { type: value ? 'MessagePreview' : 'Compact' });
-				},
-			},
-		});
-	};
-
 	spaceTypeOptions (): I.Option[] {
 		return [
 			{ id: I.SpaceType.Data },
@@ -1721,6 +1730,13 @@ class UtilMenu {
 		return ret;
 	};
 
+	discussionNotificationModeOptions (): I.Option[] {
+		return [
+			{ id: I.NotificationMode.All },
+			{ id: I.NotificationMode.Mentions },
+		].map(it => ({ ...it, name: translate(`notificationModeDiscussion${it.id}`) }));
+	};
+
 	recentModeOptions (): I.Option[] {
 		return [
 			{ id: I.RecentEditMode.All },
@@ -1732,8 +1748,8 @@ class UtilMenu {
 		const { widgetSections } = S.Common;
 
 		return [
-			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.Pin },
+			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.MyFavorites },
 			{ id: I.WidgetSection.RecentEdit },
 			{ id: I.WidgetSection.Type },

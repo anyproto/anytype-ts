@@ -9,7 +9,7 @@ enum ChatKey {
 
 const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, vaultMessages, gridTitleClick, notificationSound, hideFileObjectsInTree } = S.Common;
+	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, gridTitleClick, notificationSound, hideFileObjectsInTree, unicodeReplace } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
 	const { theme, chatCmdSend, commentCmdSend } = S.Common;
 	const cmd = keyboard.cmdSymbol();
@@ -33,11 +33,6 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 		{ id: '', class: 'light', name: translate('pageSettingsColorModeButtonLight') },
 		{ id: 'dark', class: 'dark', name: translate('pageSettingsColorModeButtonDark') },
 		{ id: 'system', class: 'system', name: translate('pageSettingsColorModeButtonSystem') },
-	];
-
-	const vaultStyles: I.Option[] = [
-		{ id: 0, name: translate('popupSettingsVaultCompact') },
-		{ id: 1, name: translate('popupSettingsVaultWithMessages') },
 	];
 
 	const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
@@ -126,24 +121,6 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 			<Label className="section" text={translate('popupSettingsPersonalSectionInterface')} />
 
 			<div className="actionItems">
-				<div className="item">
-					<Label text={translate('popupSettingsPersonalVaultStyle')} />
-
-					<Select
-						id="vaultMessages"
-						value={String(Number(vaultMessages))}
-						options={vaultStyles}
-						onChange={v => {
-							const value = Boolean(Number(v));
-
-							S.Common.vaultMessagesSet(value);
-							analytics.event('VaultStyleChange', { type: value ? 'MessagePreview' : 'Compact' });
-						}}
-						arrowClassName="black"
-						menuParam={{ horizontal: I.MenuDirection.Right }}
-					/>
-				</div>
-
 				<div className="item">
 					<Label text={translate('popupSettingsPersonalAlwaysShowTabbar')} />
 					<Switch
@@ -238,6 +215,15 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 						className="big"
 						value={gridTitleClick}
 						onChange={(e: any, v: boolean) => S.Common.gridTitleClickSet(v)}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalUnicodeReplace')} />
+					<Switch
+						className="big"
+						value={unicodeReplace}
+						onChange={(e: any, v: boolean) => S.Common.unicodeReplaceSet(v)}
 					/>
 				</div>
 			</div>

@@ -98,15 +98,17 @@ class Onboarding {
 
 	initWidgetSections (unread: boolean, recentEdit: boolean) {
 		const values = {
+			[I.WidgetSection.Pin]: false,
 			[I.WidgetSection.Unread]: unread,
 			[I.WidgetSection.RecentEdit]: recentEdit,
-			[I.WidgetSection.Pin]: false,
 			[I.WidgetSection.Type]: false,
 		};
 
 		for (const k in values) {
 			const current = S.Common.getWidgetSection(Number(k));
-			current.isClosed = values[k];
+			if (current) {
+				current.isClosed = values[k];
+			};
 		};
 
 		S.Common.widgetSectionsSet(S.Common.widgetSections);

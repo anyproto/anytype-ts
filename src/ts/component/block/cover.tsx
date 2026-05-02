@@ -210,7 +210,7 @@ const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const onDragStart = (e: MouseEvent<HTMLDivElement>) => {
 		e.preventDefault();
 
-		if (!isEditing) {
+		if (!isEditing || !rectRef.current) {
 			return false;
 		};
 
@@ -265,6 +265,10 @@ const BlockCover = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		};
 
 		U.Dom.removeClass(node, 'isDragging');
+
+		if (!rect) {
+			return;
+		};
 
 		x.current = pageX - rect.x - x.current;
 		y.current = pageY - rect.y - y.current;

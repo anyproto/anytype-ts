@@ -156,6 +156,16 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 					</div>
 				) : ''}
 
+				<Icon
+					id="button-recently-open"
+					name="common/clock" withBackground={true}
+					onClick={onRecentlyOpen}
+					tooltipParam={{
+						text: translate('widgetRecentOpen'),
+						typeY: I.MenuDirection.Bottom,
+					}}
+				/>
+
 				{withGraph ? (
 					<Icon
 						name="header/graph" withBackground={true}
@@ -163,18 +173,6 @@ const Header = forwardRef<{}, Props>((props, ref) => {
 						tooltipParam={{
 							text: translate('commonGraph'),
 							caption: keyboard.getCaption('graph'),
-							typeY: I.MenuDirection.Bottom,
-						}}
-					/>
-				) : ''}
-
-				{withGraph ? (
-					<Icon
-						id="button-recently-open"
-						name="common/clock" withBackground={true}
-						onClick={onRecentlyOpen}
-						tooltipParam={{
-							text: translate('widgetRecentOpen'),
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>

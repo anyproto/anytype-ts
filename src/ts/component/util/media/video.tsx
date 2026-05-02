@@ -85,7 +85,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 		e.stopPropagation();
 
 		U.Dom.pauseMedia();
-		videoRef.current?.play();
+		videoRef.current?.play().catch(() => {});
 	};
 
 	useEffect(() => {

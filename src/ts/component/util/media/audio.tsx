@@ -101,7 +101,7 @@ const MediaAudio = forwardRef<MediaAudioRefProps, Props>(({
 	};
 
 	const play = () => {
-		audioRef.current.play();
+		audioRef.current?.play().catch(() => {});
 	};
 
 	const pause = () => {

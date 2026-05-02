@@ -24,6 +24,9 @@ class CommentStore {
 			addReply: action,
 			updateReply: action,
 			deleteReply: action,
+			setReadMessageStatus: action,
+			setReadMentionStatus: action,
+			setSyncStatus: action,
 			setHasMorePosts: action,
 			setHasMoreReplies: action,
 			setHasOlderReplies: action,
@@ -138,6 +141,33 @@ class CommentStore {
 
 	deleteReply (parentId: string, id: string): void {
 		this.setReplies(parentId, this.getReplies(parentId).filter(it => it.id != id));
+	};
+
+	private updateInPostOrReply (subId: string, id: string, param: Partial<I.CommentMessage>): void {
+		const post = this.getPostById(subId, id);
+		if (post) {
+			set(post, param);
+			return;
+		};
+
+		this.replyMap.forEach((list, parentId) => {
+			const reply = list.find(it => it.id == id);
+			if (reply) {
+				set(reply, param);
+			};
+		});
+	};
+
+	setReadMessageStatus (subId: string, ids: string[], value: boolean): void {
+		(ids || []).forEach(id => this.updateInPostOrReply(subId, id, { isReadMessage: value }));
+	};
+
+	setReadMentionStatus (subId: string, ids: string[], value: boolean): void {
+		(ids || []).forEach(id => this.updateInPostOrReply(subId, id, { isReadMention: value }));
+	};
+
+	setSyncStatus (subId: string, ids: string[], value: boolean): void {
+		(ids || []).forEach(id => this.updateInPostOrReply(subId, id, { isSynced: value }));
 	};
 
 	getReplies (parentId: string): I.CommentMessage[] {

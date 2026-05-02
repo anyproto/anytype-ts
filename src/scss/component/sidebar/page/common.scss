@@ -2,6 +2,43 @@
 .sidebarPage {
 	&.anim { transition: opacity 0.1s $easeInQuint; }
 
+	.spaceName {
+		position: sticky; top: 0px; z-index: 3; display: flex; align-items: center; background: var(--color-bg-primary); 
+		padding: 0px 8px 8px 8px;
+	}
+	.spaceName {
+		.info { display: flex; flex-direction: row; flex-grow: 1; align-items: center; justify-content: space-between; gap: 0px 12px; height: 32px; min-width: 0; overflow: hidden; }
+		.nameWrap { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; flex-grow: 1; flex-shrink: 1; min-width: 0; cursor: default; }
+		.nameWrap {
+			.name { @include text-paragraph; font-weight: 600; @include text-overflow-nw; color: var(--color-text-primary); min-width: 0; flex-shrink: 1; }
+			.icon.arrowButton { width: 8px !important; height: 8px !important; flex-shrink: 0; }
+		}
+
+		.side.right { flex-shrink: 0; display: flex; align-items: center; height: 32px; gap: 0px 6px; }
+		.side.right {
+			> .icon.withBackground { width: 32px !important; height: 32px !important; }
+		}
+
+		.createGroup { display: flex; flex-direction: row; align-items: center; height: 32px; }
+		.createGroup {
+			.createButton,
+			.createArrow {
+				display: flex; align-items: center; justify-content: center; height: 32px;
+				background: var(--color-shape-highlight-medium); transition: background $transitionCommon;
+			}
+			.createButton { width: 28px; padding-left: 4px; border-radius: 16px 0px 0px 16px; }
+			.createButton {
+				.icon { width: 20px; height: 20px; flex-shrink: 0; }
+			}
+			.createArrow { width: 20px; padding-right: 4px; border-radius: 0px 16px 16px 0px; }
+			.createArrow {
+				.icon.arrowButton { width: 8px !important; height: 8px !important; flex-shrink: 0; }
+			}
+			.createButton:hover,
+			.createArrow:hover { background: var(--color-shape-highlight-dark); }
+		}
+	}
+
 	> .head { 
 		display: flex; flex-direction: row; align-items: center; justify-content: space-between;
 		@include text-paragraph; font-weight: 600; flex-shrink: 0; padding: 12px 16px; gap: 0px 8px;

@@ -103,20 +103,25 @@ const FootCell = forwardRef<Ref, Props>((props, ref) => {
 		const options = Relation.formulaByType(relationKey, relation.format).filter(it => it.section == item.id);
 
 		S.Menu.closeAll([ 'select2' ], () => {
+			const ctx = menuContextRef.current;
+			if (!ctx) {
+				return;
+			};
+
 			S.Menu.open('select2', {
 				component: 'select',
-				element: `#${menuContextRef.current.getId()} #item-${U.Common.esc(item.id)}`,
-				offsetX: menuContextRef.current.getSize().width,
+				element: `#${ctx.getId()} #item-${U.Common.esc(item.id)}`,
+				offsetX: ctx.getSize().width,
 				vertical: I.MenuDirection.Center,
 				isSub: true,
-				rebind: menuContextRef.current.ref?.rebind,
-				parentId: menuContextRef.current.props.id,
+				rebind: ctx.ref?.rebind,
+				parentId: ctx.props.id,
 				data: {
 					rootId,
 					options,
 					onSelect: (e: any, item: any) => {
 						onChange(item.id);
-						menuContextRef.current.close();
+						menuContextRef.current?.close();
 					},
 				}
 			});

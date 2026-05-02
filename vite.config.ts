@@ -92,7 +92,7 @@ export default defineConfig(({ mode }) => {
 		build: {
 			outDir: 'dist',
 			emptyOutDir: false,
-			sourcemap: false,
+			sourcemap: prod ? 'hidden' : false,
 			cssCodeSplit: false,
 			assetsInlineLimit: 10000, // Inline small assets; fonts stay as URLs
 			commonjsOptions: {
@@ -156,7 +156,7 @@ export default defineConfig(({ mode }) => {
 			react(),
 			autoObserverPlugin(),
 			protobufCjsPlugin(),
-			spaFallbackPlugin(),
+			devServerPlugin(),
 
 			AutoImport({
 				imports: [
@@ -333,19 +333,17 @@ const mimeTypes: Record<string, string> = {
 };
 
 /**
- * Dev server plugin: rewrite /index.html to /src/html/index.html for Vite processing.
- * It also intercepts root URL requests (like /tabs.html, /workers/..., /font/...) and
- * attempts to serve them from dist/ first before falling back to the SPA index.html.
+ * Dev server plugin: rewrite /index.html to /src/html/index.html for Vite processing,
+ * and serve static files from dist/ (tabs.html, workers, fonts, etc.) to match
+ * the old rspack devServer.static: ['dist'] behavior.
  */
-function spaFallbackPlugin(): Plugin {
+function devServerPlugin(): Plugin {
 	return {
-		name: 'spa-fallback',
+		name: 'dev-server-rewrites',
 		configureServer(server) {
-			// Return function so this runs AFTER Vite's internal middleware
-			return () => {
-				server.middlewares.use(async (req, res, next) => {
-					const url = req.url || '';
-					const pathname = url.split('?')[0];
+			// Serve static files from dist/ (tabs.html, workers/, font/, etc.)
+			server.middlewares.use((req, res, next) => {
+				if (!req.url) return next();
 
 					if (
 						pathname.startsWith('/@') ||
@@ -380,28 +378,24 @@ function spaFallbackPlugin(): Plugin {
 						return next();
 					}
 
-					const htmlPath = path.resolve(__dirname, 'src/html/index.html');
-					if (!fs.existsSync(htmlPath)) {
-						return next();
+				// Try to serve from dist/ for static files (tabs.html, workers, fonts, etc.)
+				// Skip files that Vite should process through its pipeline (JS/TS modules)
+				const urlPath = req.url.split('?')[0];
+				if (urlPath.startsWith('/dist/lib/')) {
+					return next();
+				}
+				const distPath = path.resolve(__dirname, 'dist', urlPath.slice(1));
+				if (fs.existsSync(distPath) && fs.statSync(distPath).isFile()) {
+					const ext = path.extname(distPath).toLowerCase();
+					const contentType = mimeTypes[ext];
+					if (contentType) {
+						res.setHeader('Content-Type', contentType);
 					}
+					return res.end(fs.readFileSync(distPath));
+				}
 
-					try {
-						const raw = fs.readFileSync(htmlPath, 'utf-8');
-						const html = await server.transformIndexHtml(
-							'/src/html/index.html',
-							raw,
-							req.originalUrl
-						);
-
-						res.statusCode = 200;
-						res.setHeader('Content-Type', 'text/html');
-						res.end(html);
-					} catch (err) {
-						console.error('[SPA Fallback] Error:', err);
-						next(err);
-					}
-				});
-			};
+				next();
+			});
 		},
 	};
 }

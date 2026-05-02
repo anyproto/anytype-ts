@@ -187,7 +187,12 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		resizeHandlerRef.current = () => resize();
 		sidebarResizeHandlerRef.current = () => resize();
-		updateDataviewDataHandlerRef.current = () => loadData(getView().id, 0, true);
+		updateDataviewDataHandlerRef.current = () => {
+			const view = getView();
+			if (view) {
+				loadData(view.id, 0, true);
+			};
+		};
 		setDataviewSourceHandlerRef.current = () => onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 });
 		selectionEndHandlerRef.current = () => onSelectEnd();
 		selectionClearHandlerRef.current = () => onSelectEnd();
@@ -845,6 +850,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const selection = S.Common.getRef('selectionProvider');
 		const view = getView();
+		const { x, y } = keyboard.mouse.page;
 
 		if (!view) {
 			return;
@@ -858,10 +864,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		S.Menu.open('objectContext', {
 			classNameWrap: 'fromBlock',
-			recalcRect: () => { 
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			},
+			rect: { width: 0, height: 0, x: x + 4, y: y },
 			onClose: () => selection.clear(),
 			data: {
 				blockId: block.id,
@@ -1444,8 +1447,8 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const ids = selection.get(I.SelectType.Record) || [];
 		const length = ids.length;
 
-		if (con) U.Dom.css(con, { display: length ? 'none' : '' });
-		if (sel) U.Dom.css(sel, { display: length ? '' : 'none' });
+		if (con) U.Dom.css(con, { display: length ? 'none' : 'block' });
+		if (sel) U.Dom.css(sel, { display: length ? 'block' : 'none' });
 	};
 
 	const onSelectEnd = () => {

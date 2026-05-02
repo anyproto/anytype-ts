@@ -1,8 +1,5 @@
 {
 	"commonError": "Error",
-	"errorBoundaryTitle": "Something went wrong",
-	"errorBoundaryDescription": "An unexpected error occurred. You can copy the details and reload the page.",
-	"errorBoundaryReload": "Reload",
 	"commonOr": "or",
 	"commonWhere": "Where",
 	"commonMore": "more",
@@ -17,7 +14,6 @@
 	"commonRestart": "Restart",
 	"commonDelete": "Delete",
 	"commonDeleteImmediately": "Delete permanently",
-	"binDeleteDisabledTooltip": "You can only delete objects you created",
 	"commonDefault": "Default",
 	"commonDefaultType": "Default Object Type",
 	"commonSoon": "Soon",
@@ -40,6 +36,8 @@
 	"commonForward": "Forward",
 	"commonNew": "New",
 	"commonLater": "Later",
+	"commonNotNow": "Not now",
+	"commonNoHome": "No home",
 	"commonRetry": "Retry",
 	"commonUncategorized": "Uncategorized",
 	"commonDashboard": "Dashboard",
@@ -49,10 +47,6 @@
 	"commonLibrary": "Library",
 	"commonAllContent": "All Objects",
 	"commonBin": "Bin",
-	"binSwitchToTree": "Switch to tree view",
-	"binSwitchToCompact": "Switch to compact view",
-	"binSwitchToDetailed": "Switch to detailed view",
-	"binStackCount": "+%d",
 	"commonToday": "Today",
 	"commonTomorrow": "Tomorrow",
 	"commonYesterday": "Yesterday",
@@ -61,8 +55,10 @@
 	"commonOlder": "Older",
 	"commonPhrase": "Key",
 	"commonCopy": "Copy",
+	"commonCopyText": "Copy text",
 	"commonCut": "Cut",
 	"commonPaste": "Paste",
+	"commonQuoteInComment": "Quote in discussion",
 	"commonOpen": "Open",
 	"commonOpenObject": "Open as Object",
 	"commonClose": "Close",
@@ -232,6 +228,7 @@
 	"commonOpenType": "Open Type",
 	"commonSize": "Size",
 	"commonLogout": "Log out",
+	"commonShowInFolder": "Show in folder",
 	"commonShowMore": "Show more",
 	"commonShowLess": "Show less",
 	"commonWarning": "Warning",
@@ -253,6 +250,7 @@
 	"commonAddPinned": "Add to Pinned",
 	"commonRemovePinned": "Remove from Pinned",
 	"commonCreateSpace": "Create Channel",
+	"commonNewChannel": "New channel",
 	"commonCreateChat": "Create Chat",
 	"commonMute": "Mute",
 	"commonUnmute": "Unmute",
@@ -286,6 +284,8 @@
 	"commonText": "Text",
 	"commonBlock": "Block",
 	"commonInvite": "Invite",
+	"commonFilterChannels": "Filter Channels...",
+	"commonToggleSidebar": "Toggle sidebar",
 
 	"pluralDay": "day|days",
 	"pluralObject": "Object|Objects",
@@ -356,6 +356,7 @@
 	"electronMenuDebugNet": "Network",
 	"electronMenuDebugLog": "Export log",
 	"electronMenuDebugProfiler": "Export CPU trace",
+	"electronMenuDebugReport": "Generate report",
 	"electronMenuClose": "Close Window",
 	"electronMenuEdit": "Edit",
 	"electronMenuUndo": "Undo",
@@ -383,6 +384,7 @@
 	"electronMenuGallery": "ANY Experience Gallery",
 	"electronMenuTutorial": "Help and Tutorials",
 	"electronMenuContact": "Contact Us",
+	"electronMenuSubmitReport": "Submit report",
 	"electronMenuTech": "Technical Information",
 	"electronMenuTerms": "Terms of Use",
 	"electronMenuPrivacy": "Privacy Policy",
@@ -602,6 +604,7 @@
 	"pageMainVoidErrorTitle": "You're all out of channels",
 	"pageMainVoidErrorText": "Looks like you've cleaned the house. Ready to start fresh?<br/>Create a new channel to get things rolling!",
 	"pageMainVoidSelectText": "No channels opened. Select one on the left panel or create new.",
+	"pageMainVoidEmptyText": "Select an object from the sidebar or create a new one",
 
 	"pageMainDateEmptyText" : "There is nothing here for this date yet",
 
@@ -868,6 +871,7 @@
 	"blockChatButtonEmoji": "Add emoji",
 	"blockChatButtonMention": "Add mention",
 	"blockChatNewMessages": "New messages",
+	"blockChatPinnedMessage": "Pinned message",
 	"blockChatMessageEdited": "edited",
 	"blockChatEditing": "Editing message",
 	"blockChatReplying": "Replying to %s",
@@ -911,7 +915,6 @@
 	"popupSettingsPersonalLinkStyleCard": "Compact Card",
 	"popupSettingsPersonalLinkStyleCardMedium": "Medium Card",
 	"popupSettingsPersonalFileStyle": "File block default style",
-	"popupSettingsPersonalVaultStyle": "Channels hub density",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalAlwaysShowTabbar": "Always show tab bar",
 	"popupSettingsPersonalHardwareAcceleration": "Hardware Acceleration",
@@ -928,6 +931,7 @@
 	"popupSettingsPersonalCommentSend": "Send comments with",
 	"popupSettingsPersonalSectionLists": "Lists",
 	"popupSettingsPersonalGridTitleClick": "Click to edit title in Grid view",
+	"popupSettingsPersonalUnicodeReplace": "Replace typed sequences with unicode symbols",
 	"popupSettingsPersonalSectionInterface": "Interface",
 	"popupSettingsPersonalSectionContentViews": "Content & Views",
 	"popupSettingsPersonalSectionDateTime": "Date & Time",
@@ -936,8 +940,6 @@
 	"popupSettingsPersonalNotificationSoundSystem": "System",
 	"popupSettingsPersonalSectionAdvanced": "Advanced",
 	"popupSettingsPersonalTimeFormat": "Time format",
-	"popupSettingsVaultCompact": "Compact",
-	"popupSettingsVaultWithMessages": "Message previews",
 
 	"popupSettingsMobileQRSubTitle": "Log in your vault on Android and iOS",
 	"popupSettingsMobileQRText": "Launch Anytype app, tap \u201cLogin\u201d and then \u201cScan QR code\u201d. Reveal and scan the code below to login to your vault.",
@@ -1016,7 +1018,7 @@
 	"popupSettingsSpaceIndexShareMembersViewText": "View space members",
 
 	"popupSettingsSpaceIndexCollaborationTitle": "Collaboration",
-	"popupSettingsSpaceIndexManageSpaceTitle": "Space Preferences",
+	"popupSettingsSpaceIndexManageSpaceTitle": "Channel Preferences",
 	"popupSettingsSpaceIndexStorageText": "You can store your files on our encrypted backup node. Once you reach your limit, files will stop syncing and will only be stored locally.",
 	"popupSettingsSpaceIndexStorageManageFiles": "Manage files",
 	"popupSettingsSpaceIndexHomepageDescription": "Select an Object to show when you login",
@@ -1142,6 +1144,7 @@
 
 	"popupSettingsMembershipSwitchMonthly": "Monthly",
 	"popupSettingsMembershipSwitchAnnual": "Annual <span>-20%</span>",
+	"popupSettingsMembershipSwitchLifetime": "Lifetime",
 
 	"popupSettingsMembershipJustEmail": "Just e-mail",
 	"popupSettingsMembershipPerGenericSingle": "per %s",
@@ -1271,19 +1274,9 @@
 
 	"settingsSpaceHomeTitle": "Create Home",
 	"settingsSpaceHomeDescription": "Select what you and channel member see when they open the channel. You can always change it in settings.",
-	"widgetCreateHome": "Create Home",
 	"settingsSpaceHomeOptionChat": "Chat",
-	"settingsSpaceHomeOptionChatDescription": "A real-time conversation",
 	"settingsSpaceHomeOptionPage": "Page",
-	"settingsSpaceHomeOptionPageDescription": "A blank document",
 	"settingsSpaceHomeOptionCollection": "Collection",
-	"settingsSpaceHomeOptionCollectionDescription": "An organized set of objects",
-	"settingsSpaceHomeOptionEmpty": "Empty",
-	"settingsSpaceHomeOptionEmptyDescription": "Only widgets",
-	"channelBannerSelectHome": "Select a home screen for this channel",
-	"channelBannerSelectHomeButton": "Select",
-	"channelBannerAddMembers": "Invite people to collaborate in this channel",
-	"channelBannerAddMembersButton": "Invite",
 
 	"popupConfirmCloseAIOnboardingTitle": "Exit AI Onboarding?",
 	"popupConfirmCloseAIOnboardingText": "Are you sure you want to exit? Your progress will be lost.",
@@ -1397,6 +1390,13 @@
 	"popupConfirmActionRestrictedText": "You cannot do this in read-only space",
 
 	"popupConfirmActionReconcileText": "This operation will clean up the incorrectly occupied space in the remote file storage. Are you sure?",
+
+	"popupConfirmDebugReportTitle": "Report generated",
+	"popupConfirmDebugReportText": "Share the archive with support@anytype.io and describe your issue.<br/><br/>The report includes recent error logs, object and channel IDs, your public identity ID, and basic device info (OS, processor, etc). It does not include object content. Feel free to review the archive before sending.",
+	"popupSubmitReportTitle": "Submit report",
+	"popupSubmitReportPrivacy": "The report includes recent error logs, object and channel IDs, your public identity ID, and basic device info (OS, processor, etc). It does not include object content. It is sent to the Anytype team along with your description below.",
+	"popupSubmitReportPlaceholder": "Describe the issue you are facing…",
+	"popupSubmitReportButton": "Submit",
 
 	"popupConfirmOpenExternalLinkTitle": "Are you sure?",
 	"popupConfirmOpenExternalLinkText": "You are trying to open an url that is potentially harmful. Are you sure you want to proceed?<br/>Url: %s",
@@ -2119,6 +2119,11 @@
 	"menuSpaceContextSpaceSettings": "Channel Settings",
 	"menuSpaceContextCopyInviteLink": "Copy Invite Link",
 	"menuSpaceContextShowQRCode": "Show QR Code",
+	"menuSidebarViewWidgets": "Widgets",
+	"menuSidebarViewLinks": "Links",
+
+	"popupSettingsSpaceIndexSidebarViewTitle": "Sidebar View",
+	"popupSettingsSpaceIndexSidebarViewDescription": "Display items as compact links or interactive widgets",
 
 	"menuVaultStyleCloseSidebar": "Close sidebar",
 	"menuParticipantConnect": "Connect",
@@ -2304,13 +2309,14 @@
 	"widget4Name": "Same as Object",
 	"widget4Description": "Same as in object view",
 
-	"widgetSection0": "Pinned",
+	"widgetSection0": "Home and Pinned",
 	"widgetSection1": "Types",
 	"widgetSection2": "Unread",
 	"widgetSection3": "Recently edited",
 	"widgetSection4": "Bin",
 	"widgetSection5": "My Favorites",
 	"widgetSectionNewType": "New Type",
+	"widgetHomeChange": "Change Home",
 
 	"menuWidgetFavorite": "Favorite",
 	"menuWidgetUnfavorite": "Unfavorite",
@@ -2340,9 +2346,6 @@
 	"widgetManageSections": "Manage Sections",
 	"widgetHideSection": "Hide section",
 	"widgetShowSection": "Show section",
-	"widgetManageChannelPins": "Channel Pins",
-	"widgetManageChannelPinsEmpty": "No pinned objects yet",
-	"widgetManagePersonal": "Personal",
 
 	"phrasePlaceholder": "Please enter your Key",
 
@@ -2543,16 +2546,16 @@
 	"onboardingPrimitivesSlide3Text": "Templates no longer define properties or layout. They inherit object<br/>settings and only control content and default property values.",
 	"onboardingPrimitivesSlide4Title": "See all the latest updates and bug<br/>fixes in the release notes",
 
-	"onboardingCommonTitleVault": "This is your Vault",
-	"onboardingCommonTextVault": "All your Spaces and Chats live here.",
+	"onboardingCommonTitleVault": "These are your Channels",
+	"onboardingCommonTextVault": "Channels help you organize your work and communicate with others.\nThey can be personal, one-to-one, or group — all in one place.",
 	"onboardingCommonTitleSpaces": "Create Channels",
-	"onboardingCommonTextSpaces": "Use Spaces for organizing and collaborating, or Chats for conversations, both share the same content model. Create new ones here.",
+	"onboardingCommonTextSpaces": "Use Channels for organizing and collaborating, or Chats for conversations, both share the same content model. Create new ones here.",
 	"onboardingCommonTitleProfile": "Your profile & settings",
 	"onboardingCommonTextProfile": "Update your profile, access your Key, and adjust app settings here.",
 	"onboardingCommonTitleGallery": "Use Case Gallery",
 	"onboardingCommonTextGallery": "Explore templates made by Anytype and Community and boost up your workflow.",
-	"onboardingCommonTitleSpace": "This is your Get Started Space",
-	"onboardingCommonTextSpace": "It’s both a quick guide to Anytype and a sandbox where you can explore how Spaces are organized. You can return to it whenever you like.",
+	"onboardingCommonTitleSpace": "This is your Get Started Channel",
+	"onboardingCommonTextSpace": "It’s both a quick guide to Anytype and a sandbox where you can explore how Channels are organized. You can return to it whenever you like.",
 	"onboardingCommonTitlePin": "Pin what matters most",
 	"onboardingCommonTextPin": "Pinned keeps your key objects close at hand. Choose the layout that fits you — lists, boards, or calendars.",
 	"onboardingCommonTitleTypes": "Organize with Types",
@@ -2560,8 +2563,8 @@
 	"onboardingCommonTitleProperties": "Link with Properties",
 	"onboardingCommonTextProperties": "Each object has Properties defined by its Type. Some are plain values, others are objects too — relations that link everything in your graph.",
 	"onboardingCommonTextPropertiesImgCaption": "For example, Bauhaus Archive and Marlene Dietrich can be connected by City: Berlin.",
-	"onboardingCommonTitleSettings": "Open Settings to Invite People",
-	"onboardingCommonTextSettings": "Invite members and collaborate together in a private, fully encrypted, offline-first environment.",
+	"onboardingCommonTitleSettings": "Create your first channel",
+	"onboardingCommonTextSettings": "Start with anything — a thought, a project, or a chat. You can always change it later.",
 
 	"onboardingMainChatTitle1": "Meet the most powerful private chat.",
 	"onboardingCommonText1": "Fully encrypted, offline-first, and yours forever — even without Anytype.",
@@ -2613,6 +2616,10 @@
 	"delimiterSpace": "Space",
 	"delimiterTab": "Tab",
 	"delimiterPipe": "Pipe",
+
+	"errorBoundaryTitle": "Something went wrong",
+	"errorBoundaryDescription": "An unexpected error occurred. You can copy the details and reload the page.",
+	"errorBoundaryReload": "Reload",
 
 	"errorAccountCreate901": "Network error",
 	"errorAccountCreate902": "Connection refused",
@@ -2874,6 +2881,9 @@
 	"notificationMode3": "Custom",
 	"notificationModeDisabled": "Disabled",
 
+	"notificationModeDiscussion0": "All New Replies",
+	"notificationModeDiscussion1": "Mentions Only",
+
 	"filterTemplate0": "Value template",
 	"filterTemplate1": "This Object",
 	"filterTemplate2": "Current User",
@@ -2938,7 +2948,6 @@
 	"commentSend": "Send",
 	"commentCopyText": "Copy text",
 	"commentCopyLink": "Copy link to comment",
-	"commentDiscussion": "Discussion",
 	"commentRepliesCount": "%s replies",
 	"commentReplyCount": "%s reply",
 
@@ -2987,5 +2996,12 @@
 	"commentToolbarRegular": "Regular Text",
 	"commentToolbarTitle": "Title",
 	"commentToolbarHeading": "Heading",
-	"commentToolbarSubheading": "Subheading"
+	"commentToolbarSubheading": "Subheading",
+
+	"binSwitchToTree": "Switch to tree view",
+	"binSwitchToCompact": "Switch to compact view",
+	"binSwitchToDetailed": "Switch to detailed view",
+	"binStackCount": "+%d",
+	"binDeleteDisabledTooltip": "You can only delete objects you created"
+
 }

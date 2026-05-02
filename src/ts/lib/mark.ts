@@ -771,6 +771,10 @@ class Mark {
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
 	fromUnicode(html: string, marks: I.Mark[], updatedValue: boolean): I.FromHtmlResult {
+		if (!S.Common?.unicodeReplace) {
+			return { marks, text: html, adjustMarks: false, updatedValue };
+		};
+
 		const reg = getUnicodePatternRegex();
 		reg.lastIndex = 0;
 		const test = reg.test(html);

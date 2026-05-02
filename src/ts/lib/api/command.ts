@@ -5,7 +5,7 @@ export const InitialSetParameters = (platform: I.Platform, version: string, work
 	dispatcher.request('InitialSetParameters', {
 		platform,
 		version,
-		workDir,
+		workdir: workDir,
 		logLevel,
 		doNotSendLogs,
 		doNotSaveLogs,
@@ -1634,8 +1634,16 @@ export const DebugExportLog = (path: string, callBack?: (message: any) => void) 
 	dispatcher.request('DebugExportLog', { dir: path }, callBack);
 };
 
-export const DebugRunProfiler = (duration: number, callBack?: (message: any) => void) => {
-	dispatcher.request('DebugRunProfiler', { durationInSeconds: duration }, callBack);
+export const DebugRunProfiler = (duration: number, reason: I.ProfilerReason, reasonDesc: string, callBack?: (message: any) => void) => {
+	dispatcher.request('DebugRunProfiler', { durationInSeconds: duration, reason, reasonDesc }, callBack);
+};
+
+export const DebugExportReport = (path: string, full: boolean, callBack?: (message: any) => void) => {
+	dispatcher.request('DebugExportReport', { dir: path, full }, callBack);
+};
+
+export const DebugCleanupReport = (ts: number, callBack?: (message: any) => void) => {
+	dispatcher.request('DebugCleanupReport', { ts }, callBack);
 };
 
 // ---------------------- NOTIFICATION ---------------------- //
@@ -1674,10 +1682,11 @@ export const MembershipV2GetPortalLink = (callBack?: (message: any) => void) => 
 	dispatcher.request('MembershipV2GetPortalLink', {}, callBack);
 };
 
-export const MembershipV2CartUpdate = (productIds: string[], isYearly: boolean, callBack?: (message: any) => void) => {
+export const MembershipV2CartUpdate = (productIds: string[], isYearly: boolean, isLifetime: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('MembershipV2CartUpdate', {
 		productIds,
 		isYearly,
+		isLifetime,
 	}, callBack);
 };
 
@@ -1923,6 +1932,18 @@ export const ChatSearch = (spaceId: string, chatId: string, fullText: string, of
 		limit,
 		sorts: sorts.map(Mapper.To.SearchSort),
 	}, callBack);
+};
+
+export const ChatSetPinnedMessages = (objectId: string, messageIds: string[], pinned: boolean, callBack?: (message: any) => void) => {
+	dispatcher.request('ChatSetPinnedMessages', {
+		chatObjectId: objectId,
+		messageIds,
+		pinned,
+	}, callBack);
+};
+
+export const ChatGetPinnedMessages = (objectId: string, callBack?: (message: any) => void) => {
+	dispatcher.request('ChatGetPinnedMessages', { chatObjectId: objectId }, callBack);
 };
 
 export const RelationListWithValue = (spaceId: string, value: any, callBack?: (message: any) => void) => {

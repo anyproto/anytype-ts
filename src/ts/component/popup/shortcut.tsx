@@ -300,7 +300,8 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	useEffect(() => {
 		const codeChecks = [ 'key', 'digit' ];
 		const codes = new Set();
-		const setTimeout = () => {
+		const skip: string[] = [ Key.meta, Key.ctrl, Key.alt, Key.shift ];
+		const setTimeout = (delay = 1500) => {
 			window.clearTimeout(timeout.current);
 			timeout.current = window.setTimeout(() => {
 				checkConflicts(editingId, pressed, (conflict) => {
@@ -373,7 +374,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 						}
 					});
 				});
-			}, 500);
+			}, delay);
 		};
 
 		let pressed = [];
@@ -398,7 +399,6 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			const key = keyboard.eventKey(e);
 			const which = e.which;
 			const code = String(e.code || '').toLowerCase();
-			const skip = [ Key.meta, Key.ctrl, Key.alt, Key.shift ];
 			const special = [ 'comma' ];
 
 			if (key == Key.escape) {
@@ -441,7 +441,11 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			pressed = U.Common.arrayUnique(pressed);
 
 			setEditingKeys(pressed);
-			setTimeout();
+
+			// Save quickly once a non-modifier key completes the chord; otherwise wait
+			// to give the user time to add the final key while only modifiers are held.
+			const hasNonModifier = pressed.some((k: string) => !skip.includes(k));
+			setTimeout(hasNonModifier ? 200 : 1500);
 		};
 		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 

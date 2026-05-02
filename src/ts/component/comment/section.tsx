@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
+import raf from 'raf';
 import { Icon } from 'Component';
 import CommentList from './list';
 import CommentForm from './form';
@@ -27,10 +28,13 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	const sectionRef = useRef<HTMLDivElement>(null);
 	const socialRef = useRef<HTMLDivElement>(null);
 	const scrollTimerRef = useRef(0);
+	const readStopTimerRef = useRef(0);
 	const isSectionVisibleRef = useRef(false);
 	const messageIdHandled = useRef(false);
 	const lastScrollTopRef = useRef(0);
 	const isTypingRef = useRef(false);
+	const scrolledItems = useRef<Set<string>>(new Set());
+	const readVisibleMessagesRef = useRef<() => void>(() => {});
 
 	const posts = S.Comment.getPosts(subId);
 	const postCount = posts.length;
@@ -58,10 +62,141 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		updateSocialVisibility();
 	}, [ updateSocialVisibility ]);
 
+	const findMessage = useCallback((sid: string, id: string): I.CommentMessage | null => {
+		const post = S.Comment.getPostById(sid, id);
+		if (post) {
+			return post;
+		};
+
+		for (const p of S.Comment.getPosts(sid)) {
+			const reply = S.Comment.getReplies(p.id).find(it => it.id == id);
+			if (reply) {
+				return reply;
+			};
+		};
+
+		return null;
+	}, []);
+
+	const getVisibleMessages = useCallback((): I.CommentMessage[] => {
+		const node = sectionRef.current;
+		if (!node) {
+			return [];
+		};
+
+		const container = U.Dom.getScrollContainer(isPopup);
+		const containerRect = container ? container.getBoundingClientRect() : null;
+		const top = containerRect ? containerRect.top : 0;
+		const bottom = containerRect ? containerRect.bottom : window.innerHeight;
+		const sid = U.Comment.getSubId(targetType, discussionIdRef.current || targetId);
+		const ret: I.CommentMessage[] = [];
+
+		U.Dom.selectAll('[data-message-id]', node).forEach((el: HTMLElement) => {
+			const rect = el.getBoundingClientRect();
+			if ((rect.bottom < top) || (rect.top > bottom)) {
+				return;
+			};
+
+			const id = el.getAttribute('data-message-id');
+			const msg = id ? findMessage(sid, id) : null;
+			if (msg) {
+				ret.push(msg);
+			};
+		});
+
+		return ret;
+	}, [ isPopup, targetType, targetId, findMessage ]);
+
+	const readMessage = useCallback((id: string, orderId: string, lastStateId: string, type: I.ChatReadType) => {
+		const did = discussionIdRef.current;
+		if (!did) {
+			return;
+		};
+
+		const sid = U.Comment.getSubId(targetType, did);
+
+		if (type == I.ChatReadType.Message) {
+			S.Comment.setReadMessageStatus(sid, [ id ], true);
+		};
+		if (type == I.ChatReadType.Mention) {
+			S.Comment.setReadMentionStatus(sid, [ id ], true);
+		};
+
+		C.ChatReadMessages(did, orderId, orderId, lastStateId, type);
+	}, [ targetType, targetId ]);
+
+	const onReadStop = useCallback(() => {
+		if (!scrolledItems.current.size) {
+			return;
+		};
+
+		const did = discussionIdRef.current;
+		if (!did) {
+			scrolledItems.current.clear();
+			return;
+		};
+
+		const sid = U.Comment.getSubId(targetType, did);
+		const ids: string[] = [ ...scrolledItems.current ];
+		const first = findMessage(sid, ids[0]);
+		const last = findMessage(sid, ids[ids.length - 1]);
+		const chatPreviewSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, S.Common.space, did);
+		const { lastStateId } = S.Chat.getState(chatPreviewSubId);
+
+		if (S.Common.windowIsFocused && first && last) {
+			C.ChatReadMessages(did, first.orderId, last.orderId, lastStateId, I.ChatReadType.Message);
+			C.ChatReadMessages(did, first.orderId, last.orderId, lastStateId, I.ChatReadType.Mention);
+
+			S.Comment.setReadMessageStatus(sid, ids, true);
+			S.Comment.setReadMentionStatus(sid, ids, true);
+		};
+
+		scrolledItems.current.clear();
+	}, [ targetType, findMessage ]);
+
+	const readVisibleMessages = useCallback(() => {
+		if (!discussionIdRef.current || !S.Common.windowIsFocused) {
+			return;
+		};
+
+		const did = discussionIdRef.current;
+		const chatPreviewSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, S.Common.space, did);
+		const { lastStateId } = S.Chat.getState(chatPreviewSubId);
+		const visible = getVisibleMessages();
+
+		if (!visible.length) {
+			return;
+		};
+
+		visible.forEach(msg => {
+			scrolledItems.current.add(msg.id);
+
+			if (!msg.isReadMessage) {
+				readMessage(msg.id, msg.orderId, lastStateId, I.ChatReadType.Message);
+			};
+			if (!msg.isReadMention) {
+				readMessage(msg.id, msg.orderId, lastStateId, I.ChatReadType.Mention);
+			};
+		});
+
+		window.clearTimeout(readStopTimerRef.current);
+		readStopTimerRef.current = window.setTimeout(() => onReadStop(), 300);
+	}, [ getVisibleMessages, readMessage, onReadStop ]);
+
+	readVisibleMessagesRef.current = readVisibleMessages;
+
 	useEffect(() => {
 		updateSocialVisibility();
 		resize();
 	}, [ isOpen, updateSocialVisibility, resize ]);
+
+	useEffect(() => {
+		if (!postCount) {
+			return;
+		};
+		const id = raf(() => readVisibleMessages());
+		return () => raf.cancel(id);
+	}, [ postCount, readVisibleMessages ]);
 
 	useEffect(() => {
 		if (discussionId && (subscribedId.current != discussionId)) {
@@ -77,6 +212,8 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 			isBottom.current = (max - st) <= SCROLL_THRESHOLD;
 			lastScrollTopRef.current = st;
+
+			readVisibleMessages();
 
 			// Show at end of document if no comments
 			if (isBottom.current && !postCount) {
@@ -103,12 +240,13 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				U.Dom.removeEvent(container, 'scroll', scrollHandler);
 			};
 			window.clearTimeout(scrollTimerRef.current);
+			window.clearTimeout(readStopTimerRef.current);
 
 			if (discussionId) {
 				unsubscribe(discussionId);
 			};
 		};
-	}, [ discussionId ]);
+	}, [ discussionId, readVisibleMessages ]);
 
 	useEffect(() => {
 		const onKeyDown = (e: KeyboardEvent) => {
@@ -158,11 +296,15 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		const observer = new IntersectionObserver((entries) => {
 			isSectionVisibleRef.current = entries[0]?.isIntersecting || false;
 			updateSocialVisibility();
+
+			if (isSectionVisibleRef.current) {
+				readVisibleMessages();
+			};
 		}, { threshold: 0 });
 
 		observer.observe(el);
 		return () => observer.disconnect();
-	}, [ updateSocialVisibility ]);
+	}, [ updateSocialVisibility, readVisibleMessages ]);
 
 	const loadDeps = useCallback((messages: any[], callBack?: () => void) => {
 		const ids = U.Comment.getDepsIds(messages);
@@ -210,6 +352,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			]);
 		};
 	}, [ onMessageAdd ]);
+
 
 	const scrollToMessage = useCallback((msgId: string) => {
 		window.setTimeout(() => {
@@ -442,10 +585,16 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				return;
 			};
 
+			if (message.state) {
+				const chatPreviewSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, S.Common.space, id);
+				S.Chat.setState(chatPreviewSubId, message.state);
+			};
+
 			fetchAllMessages(id, sid, () => {
 				isLoaded.current = true;
 				updateSocialVisibility();
 				handleMessageId(id);
+				raf(() => readVisibleMessagesRef.current());
 			});
 		});
 	}, [ targetType, fetchAllMessages, handleMessageId, updateSocialVisibility ]);
@@ -476,6 +625,28 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			scrollToBottom();
 		};
 	}, [ scrollToBottom ]);
+
+	useEffect(() => {
+		const onQuote = (e: Event) => {
+			const part = (e as CustomEvent).detail as I.CommentContentPart;
+			if (!part) {
+				return;
+			};
+
+			setIsExpanded(true);
+			isSectionVisibleRef.current = true;
+			updateSocialVisibility();
+
+			window.setTimeout(() => {
+				scrollToBottom();
+				formRef.current?.insertQuote(part);
+			}, 50);
+		};
+
+		const eventName = `commentQuote.${rootId}`;
+		window.addEventListener(eventName, onQuote);
+		return () => window.removeEventListener(eventName, onQuote);
+	}, [ rootId, scrollToBottom, updateSocialVisibility ]);
 
 	const onLoadMore = useCallback((callBack?: () => void) => {
 		if (!discussionId) {
@@ -651,11 +822,14 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`
 		: translate(object.isArchived ? 'commentDiscussion' : 'commentLeaveComment');
 
+	const hasUnread = !!discussionId && U.Object.discussionHasUnread(S.Common.space, discussionId);
 	const cn = [ 'commentSection', (isOpen ? 'isVisible' : '') ];
 
 	return (
 		<>
 			<div ref={sectionRef} className={cn.join(' ')} onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+				{isOpen ? <div className="commentTitle">{translate('commentDiscussion')}</div> : null}
+
 				{postCount > 0 ? (
 					<div className="commentBody">
 						<CommentList
@@ -687,6 +861,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 					<div className="commentCounter" onClick={onCounterClick}>
 						<Icon name="comment/discussion" className="discussion" size={18} />
 						<span className="count">{counterLabel}</span>
+						{hasUnread ? <span className="unreadDot" /> : null}
 					</div>
 					<div className="grad" />
 				</div>

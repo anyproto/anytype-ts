@@ -75,7 +75,7 @@ const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 			return <Icon id="button-share-one-to-one" name="header/oneToOne" withBackground={true} onClick={onOneToOne} />;
 		};
 
-		if (![ 'spaceIndex', 'spaceIndexEmpty', 'spaceShare' ].includes(id)) {
+		if (![ 'spaceIndex', 'spaceShare' ].includes(id)) {
 			return null;
 		};
 

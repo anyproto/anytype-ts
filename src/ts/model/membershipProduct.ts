@@ -101,13 +101,20 @@ class MembershipProduct implements I.MembershipProduct {
 		return `tier/${this.colorStr == 'default' ? 'purple' : this.colorStr}`;
 	};
 
-	getPrice (isYearly: boolean): I.MembershipAmount | null {
-		const prices = isYearly ? this.pricesYearly : this.pricesMonthly;
+	getPrice (period: I.MembershipPeriod): I.MembershipAmount | null {
+		let prices: I.MembershipAmount[] = [];
+
+		switch (period) {
+			case I.MembershipPeriod.Monthly: prices = this.pricesMonthly; break;
+			case I.MembershipPeriod.Yearly: prices = this.pricesYearly; break;
+			case I.MembershipPeriod.Lifetime: prices = this.pricesLifetime; break;
+		};
+
 		return prices.length ? prices[0] : null;
 	};
 
-	getPriceString (isYearly: boolean): string {
-		return U.Common.getMembershipPriceString(this.getPrice(isYearly));
+	getPriceString (period: I.MembershipPeriod): string {
+		return U.Common.getMembershipPriceString(this.getPrice(period));
 	};
 
 };

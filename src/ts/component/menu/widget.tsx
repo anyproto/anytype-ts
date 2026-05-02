@@ -48,6 +48,7 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const checked = checkState(layout, limit);
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(checked.layout);
 		const canWrite = U.Space.canMyParticipantWrite();
+		const isOwner = U.Space.isMyOwner();
 		const layoutOptions = U.Menu.getWidgetLayoutOptions(target?.id, target?.layout, isPreview);
 		const block = S.Block.getLeaf(widgets, blockId);
 		const isSystem = U.Menu.isSystemWidget(target?.id);
@@ -97,18 +98,10 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			actionChildren.push({ id: 'pageLink', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 		};
 
-		if (canWrite && isPinned) {
-			const name = isSystem ? translate('menuWidgetRemoveWidget') : translate('commonUnpin');
-			const iconName = isSystem ? 'menu/action/remove' : 'menu/action/unpin';
-
-			actionChildren.push({ id: 'removeWidget', name, iconParam: { name: iconName } });
-		};
-
 		if (!isSystem && canWrite) {
 			const personalId = U.Object.getPersonalWidgetsId();
 			const isFavorite = target && S.Block.getWidgetsForTargetIn(target.id, personalId).length > 0;
 			const isPinned = target && S.Block.getWidgetsForTargetIn(target.id, widgets).length > 0;
-			const isOwner = U.Space.isMyOwner();
 
 			actionChildren.push({
 				id: isFavorite ? 'unfavorite' : 'favorite',
@@ -298,6 +291,10 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'linkTo': {
+				if (!target) {
+					break;
+				};
+
 				menuId = 'searchObject';
 				menuParam.data = {
 					filters: [
@@ -320,6 +317,10 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'addCollection': {
+				if (!target) {
+					break;
+				};
+
 				const collectionType = S.Record.getCollectionType();
 
 				menuId = 'searchObject';

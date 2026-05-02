@@ -1073,6 +1073,33 @@ class UtilObject {
 		return spaceview.notificationMode as I.NotificationMode;
 	};
 
+	getDiscussionNotificationMode (spaceview: any, objectId: string): I.NotificationMode {
+		if (!spaceview) {
+			return I.NotificationMode.Mentions;
+		};
+
+		const allIds = Relation.getArrayValue(spaceview.allIds);
+		const mentionIds = Relation.getArrayValue(spaceview.mentionIds);
+
+		if (allIds.includes(objectId)) {
+			return I.NotificationMode.All;
+		};
+		if (mentionIds.includes(objectId)) {
+			return I.NotificationMode.Mentions;
+		};
+
+		return I.NotificationMode.Mentions;
+	};
+
+	discussionHasUnread (spaceId: string, discussionId: string): boolean {
+		if (!discussionId) {
+			return false;
+		};
+
+		const counters = S.Chat.getChatCounters(spaceId, discussionId);
+		return !!(counters.messageCounter || counters.mentionCounter || counters.reactionCounter);
+	};
+
 };
 
 export default new UtilObject();

@@ -22,7 +22,8 @@ html.printMedia {
 	.toast,
 	.focusable.isFocused::before,
 	#vault,
-	.tableOfContents
+	.tableOfContents,
+	.socialBlockWrap
 	{ display: none !important; }
 
 	#selection { overflow: visible; }

@@ -187,6 +187,9 @@ class DetailStore {
 		if (U.Object.isSpaceViewLayout(item.details.layout)) {
 			S.Record.spaceMap.set(item.details.targetSpaceId, item.details.id);
 		};
+		if (item.details.discussionId) {
+			S.Chat.discussionParentMapSet(item.details.spaceId, item.details.id, item.details.discussionId);
+		};
 
 		if (createMap) {
 			this.map.set(rootId, map);

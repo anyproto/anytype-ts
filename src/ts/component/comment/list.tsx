@@ -38,13 +38,14 @@ const CommentList = (props: Props) => {
 				</div>
 			) : null}
 
-			{posts.map(post => (
+			{posts.map((post, i) => (
 				<CommentPost
 					key={post.id}
 					rootId={rootId}
 					targetId={targetId}
 					message={post}
 					readonly={readonly}
+					isLast={i === posts.length - 1}
 				/>
 			))}
 		</div>

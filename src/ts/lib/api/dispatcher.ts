@@ -1,6 +1,7 @@
 
 import { arrayMove } from '@dnd-kit/sortable';
 import { observable, set, runInAction } from 'mobx';
+import * as Sentry from '@sentry/browser';
 import type { Event } from 'Proto/pb/protos/events';
 import * as Response from './response';
 import type { ClientReadableStream } from 'grpc-web';
@@ -75,67 +76,42 @@ class Dispatcher {
 	 * Sets up listeners for data, status, and end events with automatic reconnection.
 	 * Requires authentication token to be set in S.Auth.token.
 	 */
-	startStream (): Promise<void> {
-		return new Promise((resolve, reject) => {
-			if (!S.Auth.token) {
-				console.error('[Dispatcher.startStream] No token');
-				reject(new Error('No token'));
-				return;
-			};
+	startStream () {
+		if (!S.Auth.token) {
+			console.error('[Dispatcher.startStream] No token');
+			return;
+		};
 
-			window.clearTimeout(this.timeoutStream);
+		window.clearTimeout(this.timeoutStream);
 
-			this.stopStream();
+		this.stopStream();
 
-			this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, null);
+		this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, null);
 
-			let isResolved = false;
-			const finish = (source: string) => {
-				if (!isResolved) {
-					console.log(`[Dispatcher.startStream] Resolved by ${source}`);
-					isResolved = true;
-					resolve();
-				}
-			};
+		this.stream.on('data', (event) => {
+			this.eventBuffer.push({ event, skipDebug: false });
 
-			this.stream.on('metadata', () => finish('metadata'));
+			if (!this.flushScheduled) {
+				this.flushScheduled = true;
 
-			// Fallback in case metadata never fires on grpc-web proxy
-			window.setTimeout(() => finish('timeout_fallback'), 150);
-
-			this.stream.on('data', (event) => {
-				finish('data');
-				this.eventBuffer.push({ event, skipDebug: false });
-
-				if (!this.flushScheduled) {
-					this.flushScheduled = true;
-
-					if (S.Common.isActiveTab) {
-						this.rafId = requestAnimationFrame(() => this.flushEvents());
-					} else {
-						this.flushTimerId = window.setTimeout(() => this.flushEvents(), 100);
-					};
-				};
-			});
-
-			this.stream.on('status', (status) => {
-				if (status.code !== 0) {
-					if (!isResolved) {
-						isResolved = true;
-						reject(new Error(`Stream status error: ${status.code}`));
-					}
-					console.error('[Dispatcher.stream] Restarting', status);
-					this.reconnect();
+				if (S.Common.isActiveTab) {
+					this.rafId = requestAnimationFrame(() => this.flushEvents());
 				} else {
-					finish('status');
-				}
-			});
+					this.flushTimerId = window.setTimeout(() => this.flushEvents(), 100);
+				};
+			};
+		});
 
-			this.stream.on('end', () => {
-				finish('end');
-				console.error('[Dispatcher.stream] end, restarting');
+		this.stream.on('status', (status) => {
+			if (status.code) {
+				console.error('[Dispatcher.stream] Restarting', status);
 				this.reconnect();
-			});
+			};
+		});
+
+		this.stream.on('end', () => {
+			console.error('[Dispatcher.stream] end, restarting');
+			this.reconnect();
 		});
 	};
 
@@ -180,7 +156,7 @@ class Dispatcher {
 
 		window.clearTimeout(this.timeoutStream);
 		this.timeoutStream = window.setTimeout(() => {
-			void this.startStream();
+			this.startStream();
 			this.reconnects++;
 		}, t * 1000);
 	};
@@ -289,6 +265,44 @@ class Dispatcher {
 						...mapped,
 						theme: S.Common.getThemeClass(),
 						lang: S.Common.interfaceLang,
+					});
+					break;
+				};
+
+				case 'DebugProfileCreated': {
+					const reason = mapped.reason || 'Unknown';
+					const electron = U.Common.getElectron();
+
+					console.log('[DebugProfileCreated] event:', mapped);
+
+					Sentry.withScope(scope => {
+						scope.setLevel('info');
+						scope.setTag('report', 'mw_profile');
+						scope.setTag('reason', reason);
+						scope.setFingerprint([ 'mw-profile', reason ]);
+
+						try {
+							scope.setContext('info', JSON.parse(mapped.jsonInfo));
+						} catch (e) {
+							scope.setExtra('info', mapped.jsonInfo);
+						};
+
+						if (mapped.path) {
+							try {
+								const size = electron.fileSize(mapped.path);
+								console.log('[DebugProfileCreated] attaching file:', mapped.path, 'size:', size);
+
+								scope.addAttachment({
+									filename: electron.fileName(mapped.path),
+									data: electron.logRead(mapped.path),
+									contentType: electron.fileMime(mapped.path) || 'application/octet-stream',
+								});
+							} catch (e) {
+								console.error('[DebugProfileCreated] logRead failed:', mapped.path, e);
+							};
+						};
+
+						Sentry.captureMessage(`MW_${reason}`);
 					});
 					break;
 				};
@@ -1094,11 +1108,15 @@ class Dispatcher {
 					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
 					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview?.isOneToOne);
+					const discussionParentId = S.Chat.getDiscussionParentId(spaceId, rootId);
+					const isDiscussion = !!discussionParentId;
 
 					let showNotification = false;
 
 					if (spaceview) {
-						const notificationMode = U.Object.getChatNotificationMode(spaceview, rootId);
+						const notificationMode = isDiscussion
+							? U.Object.getDiscussionNotificationMode(spaceview, discussionParentId)
+							: U.Object.getChatNotificationMode(spaceview, rootId);
 						if (notificationMode == I.NotificationMode.All) {
 							showNotification = true;
 						} else
@@ -1148,11 +1166,21 @@ class Dispatcher {
 					if (showNotification && notification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
 						const title = [];
 						let canNotify = true;
+						let openPayload: any = { id: rootId, layout: I.ObjectLayout.Chat, spaceId };
 
 						if (spaceview) {
 							title.push(U.String.shorten(spaceview.name, 32));
 						};
 
+						if (isDiscussion) {
+							const parent = S.Chat.getDiscussionParentDetail(spaceId, discussionParentId, [ 'name', 'layout', 'isArchived' ]);
+							if (!parent._empty_ && !parent.isArchived) {
+								title.push(U.String.shorten(U.Object.name(parent), 32));
+								openPayload = { id: discussionParentId, layout: parent.layout, spaceId };
+							} else {
+								canNotify = false;
+							};
+						} else
 						if (!spaceview.isOneToOne) {
 							const chat = S.Detail.get(J.Constant.subId.chatGlobal, rootId, [ 'name' ], true);
 							if (!chat._empty_) {
@@ -1168,7 +1196,7 @@ class Dispatcher {
 								title: title.join(' - '),
 								text: notification,
 								cmd: 'openChat',
-								payload: { id: rootId, layout: I.ObjectLayout.Chat, spaceId },
+								payload: openPayload,
 								silent: !Sound.isSystem(),
 							});
 							Sound.playNotification();
@@ -1210,22 +1238,38 @@ class Dispatcher {
 
 				case 'ChatStateUpdate': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
-					mapped.subIds.forEach(subId => S.Chat.setState(subId, mapped.state));
+
+					const chatPreviewSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, rootId);
+					if (!mapped.subIds.includes(chatPreviewSubId)) {
+						mapped.subIds.push(chatPreviewSubId);
+					};
+
+					mapped.subIds
+						.filter(subId => !subId.startsWith('comment-'))
+						.forEach(subId => S.Chat.setState(subId, mapped.state));
 					break;
 				};
 
 				case 'ChatUpdateMessageReadStatus': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						S.Chat.setReadMessageStatus(subId, mapped.ids, mapped.isRead);
+						if (subId.startsWith('comment-')) {
+							S.Comment.setReadMessageStatus(subId, mapped.ids, mapped.isRead);
+						} else {
+							S.Chat.setReadMessageStatus(subId, mapped.ids, mapped.isRead);
+						};
 					});
-					break;	
+					break;
 				};
 
 				case 'ChatUpdateMentionReadStatus': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead);
+						if (subId.startsWith('comment-')) {
+							S.Comment.setReadMentionStatus(subId, mapped.ids, mapped.isRead);
+						} else {
+							S.Chat.setReadMentionStatus(subId, mapped.ids, mapped.isRead);
+						};
 					});
 					break;
 				};
@@ -1233,7 +1277,11 @@ class Dispatcher {
 				case 'ChatUpdateMessageSyncStatus': {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
-						S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced);
+						if (subId.startsWith('comment-')) {
+							S.Comment.setSyncStatus(subId, mapped.ids, mapped.isSynced);
+						} else {
+							S.Chat.setSyncStatus(subId, mapped.ids, mapped.isSynced);
+						};
 					});
 					break;
 				};
@@ -1364,6 +1412,23 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ChatUpdatePinnedStatus': {
+					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
+					mapped.subIds.forEach(subId => {
+						const message = S.Chat.getMessageById(subId, mapped.message?.id);
+						if (message) {
+							set(message, { isPinned: mapped.isPinned });
+						};
+					});
+
+					U.Dom.eventDispatch(window, 'pinnedStatusUpdate', {
+						message: mapped.message,
+						isPinned: mapped.isPinned,
+						subIds: mapped.subIds,
+					});
+					break;
+				};
+
 				case 'ProcessNew': {
 					const { process } = mapped;
 					const { progress, type } = process;
@@ -1400,7 +1465,7 @@ class Dispatcher {
 				};
 
 				case 'SpaceSyncStatusUpdate':
-				case 'P2PStatusUpdate': {
+				case 'P2pStatusUpdate': {
 					S.Auth.syncStatusUpdate(mapped);
 					break;
 				};
@@ -1807,7 +1872,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const { event, sync, file, subscribe } = config.flagsMw;
 		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
-		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2PStatusUpdate', 'ThreadStatus' ];
+		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2pStatusUpdate', 'ThreadStatus' ];
 		const subscribeEvents = [ 'SubscriptionAdd', 'SubscriptionRemove', 'SubscriptionCounters', 'SubscriptionPosition' ];
 
 		let check = false;

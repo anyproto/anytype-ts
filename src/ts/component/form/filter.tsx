@@ -127,6 +127,13 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		onChange?.(v);
 	};
 
+	const onCompositionEndHandler = () => {
+		const v = getValue();
+		if (v !== undefined) {
+			onChange?.(v);
+		};
+	};
+
 	const onKeyDownHandler = (e: any, v: string): void => {
 		// Chinese IME is open
 		if (keyboard.isComposition) {
@@ -216,15 +223,16 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 				{iconObj}
 
 				<div className="filterInputWrap">
-					<Input 
+					<Input
 						ref={inputRef}
 						id="input"
 						className={inputClassName}
 						value={value}
 						focusOnMount={focusOnMount}
-						onFocus={onFocusHandler} 
-						onBlur={onBlurHandler} 
-						onChange={onChangeHandler} 
+						onFocus={onFocusHandler}
+						onBlur={onBlurHandler}
+						onChange={onChangeHandler}
+						onCompositionEnd={onCompositionEndHandler}
 						onKeyDown={onKeyDownHandler}
 						onKeyUp={onKeyUpHandler}
 						onSelect={onSelect}
