@@ -12,6 +12,8 @@ interface Props {
 	data: any;
 	storageKey: string;
 	load?: () => void;
+	/** When true, clicking a node navigates the main app to that object (e.g. sidebar local graph). */
+	navigateOnNodeClick?: boolean;
 };
 
 interface GraphRefProps {
@@ -32,6 +34,7 @@ const Graph = forwardRef<GraphRefProps, Props>(({
 	data = {},
 	storageKey = '',
 	load = () => {},
+	navigateOnNodeClick = false,
 }, ref) => {
 
 	const nodeRef = useRef(null);
@@ -222,6 +225,10 @@ const Graph = forwardRef<GraphRefProps, Props>(({
 			const [ x, y ] = d3.pointer(e);
 
 			let event = '';
+			if (navigateOnNodeClick) {
+				event = 'onClick';
+				lastClickEvent.current = e;
+			} else
 			if (local) {
 				event = 'onSetRootId';
 			} else
@@ -760,7 +767,28 @@ const Graph = forwardRef<GraphRefProps, Props>(({
 	const onClickObject = (id: string) => {
 		setSelected([]);
 		onPreviewHide();
-		U.Object.openConfig(lastClickEvent.current, getNode(id));
+
+		const node = getNode(id);
+
+		if (navigateOnNodeClick && id) {
+			U.Object.getByIds([ id ], {}, (objects: any[]) => {
+				const object = objects[0];
+				const raw = (object && !object._empty_) ? Object.assign({}, node, object) : node;
+
+				if (!raw || !raw.id) {
+					lastClickEvent.current = null;
+
+					return;
+				};
+
+				U.Object.openAuto(nodeMapper(raw), { route: analytics.route.graph });
+				lastClickEvent.current = null;
+			});
+
+			return;
+		};
+
+		U.Object.openConfig(lastClickEvent.current, node);
 		lastClickEvent.current = null;
 	};
 

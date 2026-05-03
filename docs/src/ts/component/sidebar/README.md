@@ -12,7 +12,7 @@ Main navigation sidebar with sub-pages:
 - `page/type.tsx` - Type management page (used in right sidebar routing)
 - `page/object/relation.tsx` - Object relation panel
 - `page/object/tableOfContents.tsx` - Document TOC panel
-- `page/object/localGraph.tsx` - Local graph (space graph centered on current object) in the right panel
+- `page/object/localGraph.tsx` - Local graph in the right panel (same graph settings menu as main graph: local/full, depth, appearance; storage key `graphSidebarLocal`)
 
 Registered components: `widget`, `vault`, `settings`, `settingsSpace`, `settingsTypes`, `settingsRelations`.
 
@@ -22,7 +22,7 @@ Context-sensitive detail panel with animation (motion/react):
 - `page/type.tsx` - Type configuration
 - `page/object/relation.tsx` - Object relation editing
 - `page/object/tableOfContents.tsx` - Document TOC
-- `page/object/localGraph.tsx` - Local graph for the open object (persists while navigating until closed)
+- `page/object/localGraph.tsx` - Local graph for the open object (settings gear opens graph options; persists while navigating until closed). Horizontal resize uses a much larger max width than other right-panel pages (see `lib/sidebar.ts` `getSizeParam`); leaving this page re-clamps width to the standard right sidebar max.
 - `page/widget.tsx` - Widget preview
 
 Registered components: `type`, `objectRelation`, `objectTableOfContents`, `objectLocalGraph`, `widget`.

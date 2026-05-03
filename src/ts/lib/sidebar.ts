@@ -53,8 +53,8 @@ class Sidebar {
 			};
 
 			const data = stored?.[panel] || {};
-			const param = this.getSizeParam(panel);
-			const width = this.limitWidth(panel, data.width || param.default);
+			const param = this.getSizeParam(panel, isPopup);
+			const width = this.limitWidth(panel, data.width || param.default, isPopup);
 			const savedClosed = Boolean(data.savedClosed);
 
 			let isClosed = (undefined !== data.isClosed) && (panel != I.SidebarPanel.Right) ? Boolean(data.isClosed) : true;
@@ -78,7 +78,7 @@ class Sidebar {
 	getData (panel: I.SidebarPanel, isPopup?: boolean): SidebarData {
 		const ns = U.Dom.getEventNamespace(isPopup);
 		const key = [ panel, ns ].join('');
-		const param = this.getSizeParam(panel);
+		const param = this.getSizeParam(panel, isPopup);
 
 		return this.panelData[key] || { width: param.default, isClosed: true, savedClosed: false };
 	};
@@ -529,7 +529,7 @@ class Sidebar {
 	 * @param {number} w - The width to set.
 	 */
 	setWidth (panel: I.SidebarPanel, isPopup: boolean, width: number, save: boolean): void {
-		width = this.limitWidth(panel, width);
+		width = this.limitWidth(panel, width, isPopup);
 
 		if (panel == I.SidebarPanel.Left) {
 			S.Common.vaultIsMinimalSet(width <= J.Size.sidebar.left.threshold.minimal);
@@ -838,9 +838,12 @@ class Sidebar {
 	 */
 	private setStyle (panel: I.SidebarPanel, isPopup: boolean, v: Partial<SidebarData>): void {
 		const obj = this.getWrapper(panel, isPopup);
+		const data = this.getData(panel, isPopup);
+		const closed = (undefined !== v.isClosed) ? Boolean(v.isClosed) : data.isClosed;
+		const w = (undefined !== v.width) ? v.width : data.width;
 
 		if (obj) {
-			U.Dom.css(obj, { width: (v.isClosed ? 0 : this.limitWidth(panel, v.width)) + 'px' });
+			U.Dom.css(obj, { width: (closed ? 0 : this.limitWidth(panel, w, isPopup)) + 'px' });
 		};
 
 		if ((undefined !== v.isClosed) && obj) {
@@ -853,8 +856,8 @@ class Sidebar {
 	 * @param {number} width - The width to limit.
 	 * @returns {number} The limited width.
 	 */
-	private limitWidth (panel: I.SidebarPanel, width: number): number {
-		const { min, max } = this.getSizeParam(panel);
+	private limitWidth (panel: I.SidebarPanel, width: number, isPopup?: boolean): number {
+		const { min, max } = this.getSizeParam(panel, isPopup);
 
 		return Math.max(min, Math.min(max, Number(width) || 0));
 	};
@@ -878,9 +881,22 @@ class Sidebar {
 		return ref?.getNode() || null;
 	};
 
-	getSizeParam (panel: I.SidebarPanel) {
+	getSizeParam (panel: I.SidebarPanel, isPopup?: boolean) {
 		const param = U.Common.objectCopy(J.Size.sidebar);
-		return param[panel] ? Object.assign(param.default, param[panel]) : param.default;
+		const merged = param[panel]
+			? Object.assign({}, param.default, param[panel])
+			: { ...param.default };
+
+		if (panel == I.SidebarPanel.Right) {
+			const state = S.Common.getRightSidebarState(isPopup === true);
+			if (state.page == 'object/localGraph') {
+				const vw = window.innerWidth || 1920;
+				const cap = Math.floor(vw * 0.95);
+				merged.max = Math.max(merged.max, cap);
+			};
+		};
+
+		return merged;
 	};
 
 };

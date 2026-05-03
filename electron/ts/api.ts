@@ -404,7 +404,7 @@ class Api {
 
 	switchToTabByRoute (win: AppWindow, route: string): boolean {
 		const existing = WindowManager.findTabByRoute(win, route);
-		if (existing && existing.data && existing.data.isPinned) {
+		if (existing) {
 			WindowManager.setActiveTab(win, existing.id);
 			return true;
 		};

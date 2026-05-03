@@ -1157,6 +1157,16 @@ class CommonStore {
 			result.typeEdges = true;
 		};
 
+		if (key === J.Constant.graphId.sidebarLocal) {
+			if (undefined === stored?.local) {
+				result.local = true;
+			};
+
+			if (undefined === stored?.depth) {
+				result.depth = 2;
+			};
+		};
+
 		return result;
 	};
 

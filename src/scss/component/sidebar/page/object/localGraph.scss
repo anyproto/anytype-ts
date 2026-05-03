@@ -1,5 +1,7 @@
+.sidebarPage.pageObjectLocalGraph { height: 100%; width: 100%; display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; flex-shrink: 0; }
+
 .sidebarPage.pageObjectLocalGraph {
-	.sidebarLocalGraphBody { display: flex; flex-direction: column; flex: 1; min-height: 0px; overflow: hidden; }
+	> .body.sidebarLocalGraphBody { padding: 0px; overflow: hidden; flex: 1; min-height: 0px; display: flex; flex-direction: column; gap: 0px; }
 }
 
 .sidebarPage.pageObjectLocalGraph {
@@ -9,5 +11,23 @@
 }
 
 .sidebarPage.pageObjectLocalGraph {
-	.sidebarLocalGraphWrap { flex: 1; min-height: 280px; position: relative; }
+	.sidebarLocalGraphWrap { flex: 1; min-height: 280px; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+}
+
+.sidebarPage.pageObjectLocalGraph {
+	.sidebarLocalGraphWrap {
+		.graphWrapper { width: 100%; height: 100%; flex: 1; min-height: 0px; display: flex; flex-direction: column; }
+	}
+}
+
+.sidebarPage.pageObjectLocalGraph {
+	.sidebarLocalGraphWrap {
+		.graphWrapper > div:first-of-type { flex: 1; min-height: 0px; width: 100%; position: relative; }
+	}
+}
+
+.sidebarPage.pageObjectLocalGraph {
+	.sidebarLocalGraphWrap {
+		.graphWrapper canvas { width: 100%; height: 100%; display: block; background: var(--color-bg-primary); }
+	}
 }

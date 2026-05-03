@@ -45,6 +45,7 @@ const SidebarRight = forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	const sx = useRef(0);
 	const frame = useRef(0);
 	const width = useRef(0);
+	const prevPageRef = useRef<string | undefined>(undefined);
 	const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
 
 	if (withPreview) {
@@ -153,6 +154,12 @@ const SidebarRight = forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 				return;
 			};
 		};
+
+		if ((prevPageRef.current == 'object/localGraph') && (state.page != 'object/localGraph')) {
+			const d = sidebar.getData(I.SidebarPanel.Right, isPopup);
+			sidebar.setWidth(I.SidebarPanel.Right, isPopup, d.width, true);
+		};
+		prevPageRef.current = state.page;
 
 		pageRef.current?.forceUpdate();
 	}, [ state.rootId, state.page, state.noPreview, state.details, state.readonly, state.blockId, space ]);
