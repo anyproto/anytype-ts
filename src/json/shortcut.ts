@@ -69,6 +69,7 @@ const getSections = () => {
 						{ id: 'settingsSpace', name: translate('popupShortcutNavigationBasics12'), keys: [] },
 						{ id: 'navigation', name: translate('popupShortcutNavigationBasics2'), keys: [ cmdKey, 'o' ] },
 						{ id: 'graph', name: translate('popupShortcutNavigationBasics3'), keys: [ cmdKey, 'alt', 'o' ] },
+						{ id: 'localGraphPanel', name: translate('popupShortcutObjectLocalGraph'), keys: [ cmdKey, 'alt', 'g' ] },
 						{ id: 'search', name: translate('popupShortcutNavigationBasics4'), keys: [ cmdKey, 'k' ] },
 						{ id: 'home', name: translate('popupShortcutNavigationBasics6'), keys: [ 'alt', 'h' ] },
 						{ id: 'back', name: translate('popupShortcutNavigationBasics7'), keys: isMac ? [ cmdKey, '[' ] : [ 'alt', 'arrowleft' ] },

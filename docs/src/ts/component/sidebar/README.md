@@ -12,6 +12,7 @@ Main navigation sidebar with sub-pages:
 - `page/type.tsx` - Type management page (used in right sidebar routing)
 - `page/object/relation.tsx` - Object relation panel
 - `page/object/tableOfContents.tsx` - Document TOC panel
+- `page/object/localGraph.tsx` - Local graph (space graph centered on current object) in the right panel
 
 Registered components: `widget`, `vault`, `settings`, `settingsSpace`, `settingsTypes`, `settingsRelations`.
 
@@ -21,9 +22,10 @@ Context-sensitive detail panel with animation (motion/react):
 - `page/type.tsx` - Type configuration
 - `page/object/relation.tsx` - Object relation editing
 - `page/object/tableOfContents.tsx` - Document TOC
+- `page/object/localGraph.tsx` - Local graph for the open object (persists while navigating until closed)
 - `page/widget.tsx` - Widget preview
 
-Registered components: `type`, `objectRelation`, `objectTableOfContents`, `widget`.
+Registered components: `type`, `objectRelation`, `objectTableOfContents`, `objectLocalGraph`, `widget`.
 
 ## Sections (`section/`)
 

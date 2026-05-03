@@ -28,6 +28,7 @@ const HeaderMainObject = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const readonly = object.isArchived || isLocked;
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
 	const isRelationOpen = (rightSidebar.page == 'object/relation');
+	const isLocalGraphOpen = (rightSidebar.page == 'object/localGraph');
 	const isSearchMenuOpen = S.Menu.isOpenList([ 'searchText', 'searchChat' ]);
 	const cnc = [ 'side', 'center' ];
 
@@ -111,6 +112,10 @@ const HeaderMainObject = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const onRelation = () => {
 		sidebar.rightPanelToggle(isPopup, { page: 'object/relation', rootId, readonly });
+	};
+
+	const onLocalGraph = () => {
+		sidebar.rightPanelToggle(isPopup, { page: 'object/localGraph', rootId, readonly });
 	};
 
 	const onPin = () => {
@@ -198,6 +203,16 @@ const HeaderMainObject = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 						tooltipParam={{ text: translate('commonRelations'), caption: keyboard.getCaption('relation'), typeY: I.MenuDirection.Bottom }}
 						name="header/relation" className={isRelationOpen ? 'active' : ''} withBackground={true}
 						onClick={onRelation}
+						onDoubleClick={e => e.stopPropagation()}
+					/>
+				) : ''}
+
+				{showRelations ? (
+					<Icon
+						id="button-header-local-graph"
+						tooltipParam={{ text: translate('headerLocalGraph'), caption: keyboard.getCaption('localGraphPanel'), typeY: I.MenuDirection.Bottom }}
+						name="header/graph" className={isLocalGraphOpen ? 'active' : ''} withBackground={true}
+						onClick={onLocalGraph}
 						onDoubleClick={e => e.stopPropagation()}
 					/>
 				) : ''}

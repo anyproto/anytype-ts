@@ -116,7 +116,8 @@ export default {
 
 	graphId: {
 		global:			 'graphGlobal',
-		dataview:		 'graphDataview'
+		dataview:		 'graphDataview',
+		sidebarLocal:		 'graphSidebarLocal',
 	},
 
 	subId: {

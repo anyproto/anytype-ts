@@ -1,0 +1,13 @@
+.sidebarPage.pageObjectLocalGraph {
+	.sidebarLocalGraphBody { display: flex; flex-direction: column; flex: 1; min-height: 0px; overflow: hidden; }
+}
+
+.sidebarPage.pageObjectLocalGraph {
+	.sidebarLocalGraphBody {
+		#loader { flex: 1; min-height: 200px; }
+	}
+}
+
+.sidebarPage.pageObjectLocalGraph {
+	.sidebarLocalGraphWrap { flex: 1; min-height: 280px; position: relative; }
+}

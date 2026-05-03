@@ -321,6 +321,9 @@ class Sidebar {
 
 		if ((isClosed || !isSamePage) && (state?.page == 'object/tableOfContents')) {
 			analytics.event('ScreenTableOfContents');
+		} else
+		if ((isClosed || !isSamePage) && (state?.page == 'object/localGraph')) {
+			analytics.event('ScreenSidebarLocalGraph');
 		} else {
 			analytics.event(isClosed ? 'ExpandSidebar' : 'CollapseSidebar');
 		};

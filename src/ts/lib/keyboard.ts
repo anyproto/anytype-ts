@@ -372,6 +372,19 @@ class Keyboard {
 				U.Object.openAuto({ id: this.getRootId(), layout: I.ObjectLayout.Graph });
 			});
 
+			// Local graph (right sidebar, stays open while navigating like Obsidian)
+			this.shortcut('localGraphPanel', e, () => {
+				e.preventDefault();
+
+				const rid = this.getRootId(isPopup);
+
+				if (!rid) {
+					return;
+				};
+
+				sidebar.rightPanelToggle(isPopup, { page: 'object/localGraph', rootId: rid, readonly: false });
+			});
+
 			// Archive
 			this.shortcut('bin', e, () => {
 				e.preventDefault();

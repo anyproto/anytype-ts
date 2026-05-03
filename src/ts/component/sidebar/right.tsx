@@ -5,6 +5,7 @@ import raf from 'raf';
 import PageType from './page/type';
 import PageObjectRelation from './page/object/relation';
 import PageObjectTableOfContents from './page/object/tableOfContents';
+import PageObjectLocalGraph from './page/object/localGraph';
 import PageWidget from './page/widget';
 import * as I from 'Interface';
 
@@ -20,6 +21,7 @@ const Components = {
 	type:					 PageType,
 	objectRelation:			 PageObjectRelation,
 	objectTableOfContents:	 PageObjectTableOfContents,
+	objectLocalGraph:		 PageObjectLocalGraph,
 	widget:					 PageWidget,
 };
 
@@ -137,7 +139,7 @@ const SidebarRight = forwardRef<SidebarRightRefProps, Props>((props, ref) => {
 	};
 
 	useLayoutEffect(() => {
-		if (state.page == 'object/relation') {
+		if (state.page == 'object/relation' || state.page == 'object/localGraph') {
 			const object = S.Detail.get(state.rootId, state.rootId);
 
 			if (
