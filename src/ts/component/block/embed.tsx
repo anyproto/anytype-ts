@@ -757,12 +757,13 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
+		if (processor == I.EmbedProcessor.Excalidraw) {
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
-
-		if (processor != I.EmbedProcessor.Excalidraw) {
-			setIsEditing(true);
-		};
+		setIsEditing(true);
 	};
 
 	const save = (update: boolean, callBack?: (message: any) => void) => {
