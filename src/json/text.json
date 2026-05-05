@@ -825,6 +825,7 @@
 	"blockEmbedOffline": "You are not connected to the Internet",
 	"blockEmbedUnsupported": "Unsupported embed. Please update the app.",
 	"blockEmbedExternalImage": "External image",
+	"blockEmbedExcalidrawReadonly": "Excalidraw editing has been disabled due to performance issues. Existing diagrams remain viewable.",
 
 	"blockTableOfContentsAdd": "Add headings to create a table of contents",
 
