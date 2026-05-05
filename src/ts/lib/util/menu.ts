@@ -173,7 +173,8 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
-			{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
+			// disabled because of possible performance issues
+			// { id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 			{ id: I.EmbedProcessor.Spotify, name: 'Spotify' },
 			{ id: I.EmbedProcessor.AppleMusic, name: 'Apple Music' },
 			{ id: I.EmbedProcessor.Bandcamp, name: 'Bandcamp' },
