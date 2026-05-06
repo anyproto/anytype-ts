@@ -20,14 +20,12 @@ interface PinRefProps {
 	getValue: () => string;
 };
 
-const TIMEOUT_DURATION = 150;
 
 const Pin = forwardRef<PinRefProps, Props>(({
 	isNumeric = false,
 	pinLength = 6,
 	expectedPin = null,
 	focusOnMount = true,
-	isVisible = false,
 	readonly = false,
 	onSuccess = () => {},
 	onError = () => {},
@@ -84,10 +82,6 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		index.current = 0;
 		clear();
 		focus();
-
-		for (const input of inputRefs.current) {
-			U.Dom.removeClass(input.getNode(), 'isMasked');
-		};
 	};
 
 	// Input subcomponent methods
@@ -103,7 +97,6 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		if (prev) {
 			keyboard.shortcut('backspace', e, () => {
 				current.setValue('');
-				U.Dom.removeClass(prev.getNode(), 'isMasked');
 				prev.focus();
 			});
 		};
@@ -138,16 +131,11 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		};
 
 		if (!newValue) {
-			U.Dom.removeClass(input.getNode(), 'isMasked');
 			return;
 		};
 
 		if (next) {
 			next.focus();
-		};
-
-		if (!isVisible) {
-			window.setTimeout(() => U.Dom.addClass(input.getNode(), 'isMasked'), TIMEOUT_DURATION);
 		};
 	};
 
@@ -162,7 +150,6 @@ const Pin = forwardRef<PinRefProps, Props>(({
 			const char = value[i - index] || '';
 
 			input.setValue(char);
-			U.Dom.removeClass(input.getNode(), 'isMasked');
 		};
 
 		inputRefs.current[pinLength - 1].focus();

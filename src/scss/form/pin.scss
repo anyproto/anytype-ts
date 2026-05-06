@@ -2,8 +2,9 @@
 
 .pin { display: flex; flex-direction:row; align-items: center; gap: 0px 8px; }
 .pin {
-    .input { width: 40px; height: 40px; padding: 0px; text-align: center; vertical-align: top; font-size: var(--font-size-header3); }
-    /* Use CSS text-security instead of type="password" to avoid macOS SecureEventInput blocking third-party input methods */
-    .input.isMasked { -webkit-text-security: disc; font-size: var(--font-size-common); line-height: 1; }
+    .input { 
+        width: 40px; height: 40px; padding: 0px; text-align: center; vertical-align: top; font-size: var(--font-size-header3); 
+        -webkit-text-security: disc; font-size: var(--font-size-common); line-height: 1;
+    }
     .input:last-child { margin: 0px; }
 }
