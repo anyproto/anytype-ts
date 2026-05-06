@@ -554,7 +554,20 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		Storage.setHighlight('createSpace', false);
 		Highlight.hide('createSpace');
 
-		Action.createSpace(analytics.route.vault);
+		let param: I.MenuParam = {
+			element: '#button-create-space',
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+		};
+
+		if (vaultIsMinimal) {
+			param = Object.assign(param, {
+				vertical: I.MenuDirection.Center,
+				offsetX: VAULT_MINIMAL_OFFSET,
+			});
+		};
+
+		U.Menu.spaceCreate(param, analytics.route.vault);
 	};
 
 	const getRowHeight = (item: any) => {
