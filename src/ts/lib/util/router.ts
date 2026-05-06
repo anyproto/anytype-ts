@@ -161,7 +161,12 @@ class UtilRouter {
 			sidebar.rightPanelClose(false, false);
 		};
 
-		if (routeParam.spaceId && (routeParam.spaceId != space) && ![ 'object', 'invite' ].includes(routeParam.action)) {
+		// If route explicitly targets another space, switch before navigating.
+		// NOTE: Universal object routes (`/object?objectId=...&spaceId=...`) are normalized to
+		// `{ page: 'main', action: 'object', id: objectId, spaceId }` in `getParam()`.
+		// They must also trigger a space switch; otherwise we try to open the object in the
+		// previous space (stale `S.Common.space`) when switching spaces quickly.
+		if (routeParam.spaceId && (routeParam.spaceId != space) && ![ 'invite' ].includes(routeParam.action)) {
 			this.switchSpace(routeParam.spaceId, newRoute, false, param, false);
 			return;
 		};
