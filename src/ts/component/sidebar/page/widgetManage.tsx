@@ -16,7 +16,6 @@ interface SectionItemProps {
 const SectionItem = ({ section, isFixed, isHidden, onToggle }: SectionItemProps) => {
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: String(section.id),
-		disabled: isFixed,
 	});
 	const style = { transform: CSS.Transform.toString(transform), transition };
 	const cn = [ 'manageItem', 'isSection' ];
@@ -34,7 +33,7 @@ const SectionItem = ({ section, isFixed, isHidden, onToggle }: SectionItemProps)
 			className={cn.join(' ')}
 			style={style}
 			{...attributes}
-			{...(isFixed ? {} : listeners)}
+			{...listeners}
 		>
 			<Icon className="dnd" name="common/dnd" />
 			<Label text={section.name} />
