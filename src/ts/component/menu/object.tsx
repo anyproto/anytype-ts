@@ -128,7 +128,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const allowedPageLink = !isRelation && !object.isArchived;
 		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelation;
 		const allowedReload = canWrite && object.source && isBookmark;
-		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
+		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout);
 		const allowedExport = !isFilePreview && !isChat && !isDate;
 		const allowedPrint = !isFilePreview && !isChat && !isVideoOrAudio;
 		const allowedDownloadFile = isInFile;
@@ -170,6 +170,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedOpenObject)		 openObject = null;
 		if (!allowedEditType) 		 editType = null;
 		if (!allowedEditChat) 		 editChat = null;
+		if (!allowedCopyMedia)		 copyMedia = null;
 		if (!allowedNotification) {
 			notification = null;
 		} else
@@ -183,7 +184,6 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				notification = { id: 'mute', name: translate('commonMute'), iconParam: { name: 'menu/action/mute' } };
 			};
 		};
-		if (!allowedCopyMedia)		 copyMedia = null;
 		if (!canWrite) {
 			template = null;
 			setDefaultTemplate = null;
@@ -217,7 +217,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			sections = sections.concat([
 				{ children: [ openObject ] },
-				{ children: [ pageLink, favorite, pinToChannel, linkTo, addCollection, pageCopy, archive, remove ] },
+				{ children: [ pageLink, favorite, pinToChannel, linkTo, addCollection, pageCopy, archive, remove, template ] },
 				{ children: [ pageLock, history ] },
 				{ children: [ downloadFile, copyMedia, print ] },
 			]);
