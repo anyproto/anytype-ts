@@ -5,6 +5,7 @@
 	.block.blockDataview {
 		.wrap { position: relative; }
 		.wrapContent { z-index: 1; }
+		.wrapContent.bgColor { padding: 16px; border-radius: 8px; }
 
 		#set-loader { margin: 24px auto; }
 		.icon.plus { width: 20px; height: 20px; }
