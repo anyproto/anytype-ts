@@ -177,6 +177,9 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	if (object.widthInPixels && object.heightInPixels) {
 		wrapCss.aspectRatio = `${object.widthInPixels} / ${object.heightInPixels}`;
+		if (!width) {
+			wrapCss.width = object.widthInPixels;
+		};
 	} else
 	if (!isLoaded) {
 		wrapCss.height = 80;
