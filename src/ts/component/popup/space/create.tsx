@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback, useImperativeHandle } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
-import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon } from 'Component';
+import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon, Label } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 import raf from 'raf';
 
@@ -159,7 +159,11 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 		});
 
 		if (search) {
-			return unique.filter(it => it.name.toLowerCase().includes(search.toLowerCase()));
+			const s = search.toLowerCase();
+
+			return unique.filter(it => {
+				return it.name?.toLowerCase().includes(s) || it.globalName?.toLowerCase().includes(s);
+			});
 		};
 
 		return unique;
@@ -494,7 +498,10 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 				onClick={() => onToggleMember(item.id)}
 			>
 				<IconObject size={32} object={item} />
-				<ObjectName object={item} withBadge={true} />
+				<div className="info">
+					<ObjectName object={item} withBadge={true} />
+					{item.globalName ? <Label text={item.globalName} /> : ''}
+				</div>
 				<Icon name={selectedMembers.includes(item.id) ? 'marker/checkbox2' : 'marker/checkbox0'} className="checkbox" />
 			</div>
 		);
@@ -656,29 +663,43 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 											rowRenderer={({ index, key, style }) => {
 												const row = rows[index];
 
-												if (row.type == 'label') {
-													return (
-														<div key={key} style={style} className="sectionLabel">
-															{translate('popupSpaceCreateMembersLabel')}
-														</div>
-													);
+												let content = null;
+
+												switch (row.type) {
+													case 'label': {
+														content = (
+															<div key={key} style={style} className="sectionLabel">
+																{translate('popupSpaceCreateMembersLabel')}
+															</div>
+														);
+														break;
+													};
+
+													case 'add': {
+														content = (
+															<div key={key} style={style} className="item add" onClick={() => setStep(0)}>
+																<Icon name="menu/spaceCreate/group" />
+																<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
+															</div>
+														);
+														break;
+													};
+
+													default: {
+														content = (
+															<div key={key} style={style} id={`member-${row.id}`} className="item" onContextMenu={e => onMemberContext(e, row.id)}>
+																<IconObject size={32} object={row} />
+																<div className="info">
+																	<ObjectName object={row} withBadge={true} />
+																	{row.globalName ? <Label text={row.globalName} /> : ''}
+																</div>
+															</div>
+														);
+														break;
+													};
 												};
 
-												if (row.type == 'add') {
-													return (
-														<div key={key} style={style} className="item add" onClick={() => setStep(0)}>
-															<Icon name="menu/spaceCreate/group" />
-															<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
-														</div>
-													);
-												};
-
-												return (
-													<div key={key} style={style} id={`member-${row.id}`} className="item" onContextMenu={e => onMemberContext(e, row.id)}>
-														<IconObject size={32} object={row} />
-														<ObjectName object={row} withBadge={true} />
-													</div>
-												);
+												return content;
 											}}
 											overscanRowCount={10}
 											onScroll={onScroll}
