@@ -128,7 +128,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const allowedPageLink = !isRelation && !object.isArchived;
 		const allowedCopy = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Duplicate ]) && !isTypeOrRelation;
 		const allowedReload = canWrite && object.source && isBookmark;
-		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout);
+		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedExport = !isFilePreview && !isChat && !isDate;
 		const allowedPrint = !isFilePreview && !isChat && !isVideoOrAudio;
 		const allowedDownloadFile = isInFile;
