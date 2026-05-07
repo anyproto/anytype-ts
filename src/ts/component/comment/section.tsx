@@ -863,7 +863,6 @@ const CommentSection = (props: I.CommentSectionProps) => {
 						<span className="count">{counterLabel}</span>
 						{hasUnread ? <span className="unreadDot" /> : null}
 					</div>
-					<div className="grad" />
 				</div>
 			</div>
 		</>

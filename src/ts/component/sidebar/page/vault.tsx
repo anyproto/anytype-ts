@@ -340,6 +340,16 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		return U.Dom.get(getId());
 	};
 
+	const updateBottomGradient = (scrollTop: number, scrollHeight: number, clientHeight: number) => {
+		const bottom = U.Dom.select('.bottom', getNode());
+		if (!bottom) {
+			return;
+		};
+
+		const atBottom = (scrollHeight <= clientHeight) || (scrollTop + clientHeight >= scrollHeight - 1);
+		U.Dom.toggleClass(bottom, 'isBottom', atBottom);
+	};
+
 	const setHover = (item: any) => {
 		if (item) {
 			U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(item.id)}`, getNode()), 'hover');
@@ -612,6 +622,11 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		};
 
 		prevItemsRef.current = items.map(it => ({ id: it.id, height: getRowHeight(it) }));
+
+		const grid = U.Dom.select('.ReactVirtualized__Grid', getNode());
+		if (grid) {
+			updateBottomGradient(grid.scrollTop, grid.scrollHeight, grid.clientHeight);
+		};
 	}, [ itemIds ]);
 
 	return (
@@ -701,7 +716,10 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
 											scrollToAlignment="center"
-											onScroll={({ scrollTop }) => scrollTopRef.current = scrollTop}
+											onScroll={({ scrollTop, scrollHeight, clientHeight }) => {
+												scrollTopRef.current = scrollTop;
+												updateBottomGradient(scrollTop, scrollHeight, clientHeight);
+											}}
 										/>
 									</SortableContext>
 								</DndContext>
