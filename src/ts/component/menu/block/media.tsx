@@ -1,42 +1,68 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
-import { Cover, Filter, Icon, Input, Label, EmptySearch, Loader } from 'Component';
+import { Cover, Filter, Icon, Label, EmptySearch, Loader, Input, IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
 
 enum Tab {
 	Upload	 = 0,
 	Library	 = 1,
-	Gallery	 = 2,
-	Unsplash = 3,
+	Unsplash = 2,
 };
 
 const LIMIT = 36;
-const Tabs = [
-	{ id: Tab.Upload },
-	{ id: Tab.Library },
-	{ id: Tab.Gallery },
-	{ id: Tab.Unsplash },
-].map(it => ({ ...it, name: translate(`menuBlockCover${Tab[it.id]}`) }));
 
-const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
-	const { rootId, onSelect, onUpload, onUploadStart } = data;
+	const { rootId, blockId, type } = data;
+
+	const fileType: I.FileType = type ?? I.FileType.Image;
+	const isImage = fileType == I.FileType.Image;
+	const isPreview = isImage;
+	const hasUnsplash = isImage;
+
+	const tabs = (() => {
+		const list: { id: Tab }[] = [ { id: Tab.Upload }, { id: Tab.Library } ];
+		if (hasUnsplash) {
+			list.push({ id: Tab.Unsplash });
+		};
+		return list.map(it => ({ ...it, name: translate(`menuBlockMedia${Tab[it.id]}`) }));
+	})();
+
 	const [ filter, setFilter ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ tab, setTab ] = useState(Tab.Upload);
+	const [ tab, setTab ] = useState(tabs[0].id);
 	const [ items, setItems ] = useState([]);
 	const nodeRef = useRef(null);
 	const filterRef = useRef(null);
+	const urlRef = useRef(null);
 	const listRef = useRef(null);
 	const dropzoneRef = useRef(null);
 	const timeout = useRef(0);
 	const active = useRef(null);
 	const activeIndex = useRef(-1);
 	const rows: any[] = [];
-	const itemsPerRow = tab == Tab.Gallery ? 4 : 3;
-	const urlRef = useRef(null);
+	const isListLibrary = (tab == Tab.Library) && !isPreview;
+	const itemsPerRow = isListLibrary ? 1 : 3;
+
+	const layoutByType: Record<I.FileType, I.ObjectLayout> = {
+		[I.FileType.None]: I.ObjectLayout.File,
+		[I.FileType.File]: I.ObjectLayout.File,
+		[I.FileType.Image]: I.ObjectLayout.Image,
+		[I.FileType.Video]: I.ObjectLayout.Video,
+		[I.FileType.Audio]: I.ObjectLayout.Audio,
+		[I.FileType.Pdf]: I.ObjectLayout.Pdf,
+	};
+
+	const acceptByType: Record<I.FileType, string[]> = {
+		[I.FileType.None]: [],
+		[I.FileType.File]: [],
+		[I.FileType.Image]: J.Constant.fileExtension.image,
+		[I.FileType.Video]: J.Constant.fileExtension.video,
+		[I.FileType.Audio]: J.Constant.fileExtension.audio,
+		[I.FileType.Pdf]: J.Constant.fileExtension.pdf,
+	};
 
 	useEffect(() => {
 		load();
@@ -56,7 +82,10 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		window.setTimeout(() => filterRef.current?.focus(), 15);
+
+		if ([ Tab.Library, Tab.Unsplash ].includes(tab)) {
+			window.setTimeout(() => filterRef.current?.focus(), 15);
+		};
 
 		return () => {
 			unbind();
@@ -116,10 +145,9 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case Tab.Library: {
 				const filters: I.Filter[] = [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Image },
-					//{ relationKey: 'imageKind', condition: I.FilterCondition.Equal, value: I.ImageKind.Cover },
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: layoutByType[fileType] },
 				];
-				const sorts = [ 
+				const sorts = [
 					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 				];
@@ -143,8 +171,9 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						id: item.id,
 						itemId: item.id,
 						type: I.CoverType.Upload,
-						src: S.Common.imageUrl(item.id, I.ImageSize.Medium),
+						src: isImage ? S.Common.imageUrl(item.id, I.ImageSize.Medium) : '',
 						artist: item.name,
+						object: item,
 						coverY: -0.25,
 					})));
 				});
@@ -153,24 +182,31 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const uploadCover = (url: string, path: string) => {
-		close();
-		onUploadStart?.();
-
-		C.FileUpload(S.Common.space, url, path, I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
-			if (message.error.code) {
+	const onUploadHandler = () => {
+		Action.openFileDialog({ extensions: acceptByType[fileType] }, paths => {
+			if (!paths.length) {
 				return;
 			};
 
-			onUpload?.(I.CoverType.Upload, message.objectId);
-			analytics.event('SetCover', { type: I.CoverType.Upload });
+			close();
+			Action.upload(fileType, rootId, blockId, '', paths[0]);
 		});
 	};
 
-	const onUploadHandler = (e: any) => {
-		Action.openFileDialog({ extensions: J.Constant.fileExtension.cover }, paths => {
-			uploadCover('', paths[0]);
-		});
+	const onSelectHandler = (e: any, item: any) => {
+		if (tab == Tab.Unsplash) {
+			C.UnsplashDownload(S.Common.space, item.itemId, '', '', (message: any) => {
+				if (!message.error.code && message.objectId) {
+					C.BlockFileSetTargetObjectId(rootId, blockId, message.objectId);
+				};
+			});
+		} else
+		if (tab == Tab.Library) {
+			C.BlockFileSetTargetObjectId(rootId, blockId, item.itemId);
+		};
+
+		analytics.event('UploadMedia', { type: fileType });
+		close();
 	};
 
 	const onUrlSubmit = () => {
@@ -179,32 +215,8 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		uploadCover(url, '');
-	};
-
-	const onSelectHandler = (e: any, item: any) => {
-		const object = S.Detail.get(rootId, rootId, J.Relation.cover, true);
-
-		if (!object.coverId) {
-			close();
-		};
-
-		if (item.type == I.CoverType.Source) {
-			onUploadStart?.();
-
-			C.UnsplashDownload(S.Common.space, item.itemId, rootId, 'coverId', (message: any) => {
-				if (!message.error.code) {
-					onUpload(item.type, message.objectId);
-				};
-			});
-
-			close();
-		} else
-		if (onSelect) {
-			onSelect(item);
-		};
-
-		analytics.event('SetCover', { type: item.type, id: item.itemId });
+		close();
+		Action.upload(fileType, rootId, blockId, url, '');
 	};
 
 	const onFilterChange = (v: string) => {
@@ -213,17 +225,9 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const getSections = () => {
-		let sections: any[] = [];
+		const sections: any[] = [];
 
 		switch (tab) {
-			case Tab.Gallery: {
-				sections = sections.concat([
-					{ name: translate('menuBlockCoverGradients'), children: U.Menu.getCoverGradients() },
-					{ name: translate('menuBlockCoverSolidColors'), children: U.Menu.getCoverColors() },
-				]);
-				break;
-			};
-
 			case Tab.Library:
 			case Tab.Unsplash: {
 				if (items.length) {
@@ -232,7 +236,7 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				break;
 			};
 		};
-		
+
 		return U.Menu.sectionsMap(sections);
 	};
 
@@ -258,57 +262,50 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		U.Dom.removeClass(dropzoneRef.current, 'isDraggingOver');
 		keyboard.disableCommonDrop(true);
-		setIsLoading(true);
-		
-		C.FileUpload(S.Common.space, '', file, I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
-			setIsLoading(false);
-			keyboard.disableCommonDrop(false);
-			
-			if (!message.error.code) {
-				U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
-			};
-		
-			close();
-		});
+		close();
+
+		Action.upload(fileType, rootId, blockId, '', file);
+		keyboard.disableCommonDrop(false);
 	};
 
 	const onKeyDown = (e: any) => {
 		e.stopPropagation();
 		keyboard.disableMouse(true);
 
-		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
-			e.preventDefault();
+		if ([ Tab.Library, Tab.Unsplash ].includes(tab)) {
+			keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
+				e.preventDefault();
 
-			filterRef.current?.blur();
-			onArrowVertical(pressed == 'arrowup' ? -1 : 1);
-		});
+				filterRef.current?.blur();
+				onArrowVertical(pressed == 'arrowup' ? -1 : 1);
+			});
 
-		keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
-			if (filterRef.current?.isFocused()) {
-				return;
-			};
+			keyboard.shortcut('arrowleft, arrowright', e, (pressed: string) => {
+				if (filterRef.current?.isFocused()) {
+					return;
+				};
 
-			e.preventDefault();
-			filterRef.current?.blur();
-			onArrowHorizontal(pressed == 'arrowleft' ? -1 : 1);
-		});
+				e.preventDefault();
+				filterRef.current?.blur();
+				onArrowHorizontal(pressed == 'arrowleft' ? -1 : 1);
+			});
+		};
 
 		keyboard.shortcut('tab', e, () => {
-			let idx = Tabs.findIndex(it => it.id == tab) + 1;
+			let idx = tabs.findIndex(it => it.id == tab) + 1;
 
-			if (idx >= Tabs.length) {
+			if (idx >= tabs.length) {
 				idx = 0;
 			};
 
-			setTab(Tabs[idx].id);
+			setTab(tabs[idx].id);
 		});
 
-		if (active.current) {
+		if (active.current && [ Tab.Library, Tab.Unsplash ].includes(tab)) {
 			keyboard.shortcut('enter', e, () => {
 				e.preventDefault();
 
 				onSelectHandler(e, active.current);
-				close();
 			});
 		};
 	};
@@ -334,7 +331,7 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (newRow < 0) {
 			newRow = totalRows - 1;
-		} else 
+		} else
 		if (newRow >= totalRows) {
 			newRow = 0;
 		};
@@ -368,14 +365,13 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let newCol = currentCol + dir;
 		let newRow = currentRow;
 
-		// Wrap to previous/next row
 		if (newCol < 0) {
 			newRow -= 1;
 			if (newRow < 0) {
 				newRow = Math.ceil(items.length / itemsPerRow) - 1;
 			};
 			newCol = itemsPerRow - 1;
-		} else 
+		} else
 		if (newCol >= itemsPerRow) {
 			newRow += 1;
 			if (newRow >= Math.ceil(items.length / itemsPerRow)) {
@@ -386,7 +382,6 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		let newIndex = newRow * itemsPerRow + newCol;
 
-		// If new index is beyond items length, wrap to beginning/end
 		if (newIndex >= items.length) {
 			if (dir > 0) {
 				newIndex = 0;
@@ -422,7 +417,7 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		const itemRow = Math.floor(index / itemsPerRow);
 		const sections = getSections();
-		
+
 		let virtualRow = itemRow;
 		let itemCount = 0;
 
@@ -454,20 +449,16 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
-	const getRowHeight = (row: any, index) => {
+	const getRowHeight = (row: any, index: number) => {
 		if (row.isSection) {
 			return index ? 40 : 32;
 		};
 
-		switch (tab) {
-			case Tab.Gallery:
-				return 56;
-			case Tab.Library:
-			case Tab.Unsplash:
-				return 96;
-			default:
-				return 56;
+		if (isListLibrary) {
+			return 40;
 		};
+
+		return 96;
 	};
 
 	const getItemsFlat = () => {
@@ -488,34 +479,23 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onPaste = (e: any) => {
-		const { data } = param;
-		const { rootId } = data;
 		const files = U.Common.getDataTransferFiles(e.clipboardData.items);
 
 		if (!files.length) {
 			return;
 		};
 
-		setIsLoading(true);
-
-		U.Common.saveClipboardFiles(files, {}, (data: any) => {
-			if (!data.files.length) {
-				setIsLoading(false);
+		U.Common.saveClipboardFiles(files, {}, (clip: any) => {
+			if (!clip.files.length) {
 				return;
 			};
 
-			C.FileUpload(S.Common.space, '', data.files[0].path, I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
-				if (!message.error.code) {
-					U.Object.setCover(rootId, I.CoverType.Upload, message.objectId);
-				};
-
-				setIsLoading(false);
-				close();
-			});
+			close();
+			Action.upload(fileType, rootId, blockId, '', clip.files[0].path);
 		});
 	};
 
-	const Item = ({ item }: { item: any }) => (
+	const TileItem = ({ item }: { item: any }) => (
 		<div
 			id={`item-${item.id}`}
 			className="item"
@@ -523,9 +503,32 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			onMouseEnter={e => onMouseEnter(e, item, item.__globalIndex)}
 			onMouseLeave={() => onMouseLeave()}
 		>
-			<Cover preview={true} {...item} id={item.itemId} />
+			{item.src ? (
+				<Cover {...item} id={item.itemId} />
+			) : (
+				<div className="cover empty">
+					{item.object ? <IconObject object={item.object} size={32} /> : ''}
+				</div>
+			)}
 			{item.artist ? <div className="name">{item.artist}</div> : ''}
 		</div>
+	);
+
+	const ListItem = ({ item }: { item: any }) => (
+		<div
+			id={`item-${item.id}`}
+			className="item objectItem"
+			onClick={e => onSelectHandler(e, item)}
+			onMouseEnter={e => onMouseEnter(e, item, item.__globalIndex)}
+			onMouseLeave={() => onMouseLeave()}
+		>
+			<IconObject object={item.object} size={20} />
+			<ObjectName object={item.object} />
+		</div>
+	);
+
+	const Item = ({ item }: { item: any }) => (
+		isListLibrary ? <ListItem item={item} /> : <TileItem item={item} />
 	);
 
 	const rowRenderer = (param: any) => {
@@ -537,7 +540,7 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					{row.name}
 				</div>
 			);
-		}
+		};
 
 		return (
 			<div key={param.key} style={param.style} className="itemsRow">
@@ -569,7 +572,6 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			globalIndex++;
 			rowItems.push(itemWithIndex);
 
-			// Create a row when we reach itemsPerRow or it's the last item
 			if ((rowItems.length == itemsPerRow) || (i == children.length - 1)) {
 				rows.push({ isSection: false, children: rowItems });
 				rowItems = [];
@@ -579,10 +581,10 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	if ([ Tab.Unsplash, Tab.Library ].includes(tab)) {
 		filterElement = (
-			<Filter 
+			<Filter
 				ref={filterRef}
 				value={filter}
-				onChange={onFilterChange} 
+				onChange={onFilterChange}
 				focusOnMount={true}
 			/>
 		);
@@ -592,30 +594,41 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		content = <Loader />;
 	} else {
 		switch (tab) {
-			case Tab.Gallery:
 			case Tab.Unsplash:
 			case Tab.Library: {
-				content = (
-					<>
-						{rows.length ? (
-							<div className="sections">
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={listRef}
-											width={width}
-											height={height}
-											rowCount={rows.length}
-											rowHeight={({ index }) => getRowHeight(rows[index], index)}
-											rowRenderer={rowRenderer}
-											overscanRowCount={5}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							</div>
-						) : <EmptySearch text={filter ? U.String.sprintf(translate('menuBlockCoverEmptyFilter'), filter) : translate('menuBlockCoverEmpty')} />}
-					</>
+				const flatItems = getItemsFlat();
+				const empty = filter ? U.String.sprintf(translate('menuBlockMediaEmptyFilter'), filter) : translate('menuBlockMediaEmpty');
+
+				if (!flatItems.length) {
+					content = <EmptySearch text={empty} />;
+					break;
+				};
+
+				content = isListLibrary ? (
+					<div className="sections">
+						<div className="scrollArea list">
+							{flatItems.map((item: any) => (
+								<Item key={item.id} item={item} />
+							))}
+						</div>
+					</div>
+				) : (
+					<div className="sections">
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<List
+									ref={listRef}
+									width={width}
+									height={height}
+									rowCount={rows.length}
+									rowHeight={({ index }) => getRowHeight(rows[index], index)}
+									rowRenderer={rowRenderer}
+									overscanRowCount={5}
+									scrollToAlignment="center"
+								/>
+							)}
+						</AutoSizer>
+					</div>
 				);
 				break;
 			};
@@ -632,7 +645,7 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							onClick={onUploadHandler}
 						>
 							<Icon name="common/upload" size={28} />
-							<Label text={translate('menuBlockCoverChoose')} />
+							<Label text={translate(`menuBlockMediaChoose${I.FileType[fileType]}`)} />
 						</div>
 
 						<div className="urlSection">
@@ -642,7 +655,7 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 								<Input
 									ref={urlRef}
 									onKeyDown={(e: any) => e.stopPropagation()}
-									placeholder={translate('menuBlockMediaUrlPlaceholderImage')}
+									placeholder={translate(`menuBlockMediaUrlPlaceholder${I.FileType[fileType]}`)}
 								/>
 							</form>
 						</div>
@@ -655,27 +668,29 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	return (
 		<div ref={nodeRef} className="wrap">
-			<div className="head">
-				{Tabs.map((item: any, i: number) => {
-					const cn = [ 'btn' ];
+			{tabs.length > 1 ? (
+				<div className="head">
+					{tabs.map((item: any) => {
+						const cn = [ 'btn' ];
 
-					if (item.id == tab) {
-						cn.push('active');
-					};
+						if (item.id == tab) {
+							cn.push('active');
+						};
 
-					return (
-						<div 
-							key={item.id} 
-							className={cn.join(' ')}
-							onClick={() => setTab(item.id)}
-						>
-							{item.name}
-						</div>
-					);
-				})}
-			</div>
+						return (
+							<div
+								key={item.id}
+								className={cn.join(' ')}
+								onClick={() => setTab(item.id)}
+							>
+								{item.name}
+							</div>
+						);
+					})}
+				</div>
+			) : ''}
 
-			<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
+			<div className={[ 'body', Tab[tab].toLowerCase(), (isListLibrary ? 'list' : '') ].join(' ')}>
 				{filterElement}
 				{content}
 			</div>
@@ -684,4 +699,4 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 });
 
-export default MenuBlockCover;
+export default MenuBlockMedia;

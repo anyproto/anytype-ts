@@ -805,14 +805,19 @@
 	"blockFileUpload": "Upload a file",
 	"blockFileDownload": "Download",
 	"blockFileError": "There was an error uploading the file",
+	"blockFileAdd": "Add a file",
 
 	"blockAudioUpload": "Upload an audio",
+	"blockAudioAdd": "Add an audio",
 
 	"blockImageUpload": "Upload a picture",
+	"blockImageAdd": "Add an image",
 
 	"blockPdfUpload": "Upload a PDF",
+	"blockPdfAdd": "Add a PDF",
 
 	"blockVideoUpload": "Upload a video",
+	"blockVideoAdd": "Add a video",
 
 	"blockBookmarkError": "There was an error fetching the url",
 
@@ -1831,6 +1836,23 @@
 	"menuBlockCoverChoose": "Choose Image or <span>Drag it here</span>",
 	"menuBlockCoverGradients": "Gradients",
 	"menuBlockCoverSolidColors": "Solid colors",
+
+	"menuBlockMediaLibrary": "Library",
+	"menuBlockMediaUnsplash": "Unsplash",
+	"menuBlockMediaUpload": "Upload",
+	"menuBlockMediaEmpty": "Nothing found",
+	"menuBlockMediaEmptyFilter": "<b>Nothing found for <span>\"%s\"<\/span><\/b>Try a different search",
+	"menuBlockMediaChooseImage": "Drop image or click to upload",
+	"menuBlockMediaChooseVideo": "Drop video or click to upload",
+	"menuBlockMediaChooseFile": "Drop file or click to upload",
+	"menuBlockMediaChooseAudio": "Drop audio or click to upload",
+	"menuBlockMediaChoosePdf": "Drop PDF or click to upload",
+	"menuBlockMediaOrAddViaUrl": "Or add via URL",
+	"menuBlockMediaUrlPlaceholderImage": "Paste an image URL",
+	"menuBlockMediaUrlPlaceholderVideo": "Paste a video URL",
+	"menuBlockMediaUrlPlaceholderFile": "Paste a file URL",
+	"menuBlockMediaUrlPlaceholderAudio": "Paste an audio URL",
+	"menuBlockMediaUrlPlaceholderPdf": "Paste a PDF URL",
 
 	"menuBlockLayoutSetLayoutWidth": "Set layout width",
 	"menuBlockLayoutChooseLayoutType": "Choose layout type",
