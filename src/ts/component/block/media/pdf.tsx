@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { InputWithFile, Error, Pager, Icon, Loader, ObjectName, MediaState } from 'Component';
+import { MediaPlaceholder, Error, Pager, Icon, Loader, ObjectName, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -56,12 +56,17 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 	
-	const onChangeUrl = (e: any, url: string) => {
-		Action.upload(I.FileType.Pdf, rootId, id, url, '');
-	};
-	
-	const onChangeFile = (e: any, path: string) => {
-		Action.upload(I.FileType.Pdf, rootId, id, '', path);
+	const onPlaceholderClick = (e: any) => {
+		e.stopPropagation();
+
+		S.Menu.open('blockMedia', {
+			element: `#block-${id}`,
+			data: {
+				rootId,
+				blockId: id,
+				type: I.FileType.Pdf,
+			},
+		});
 	};
 
 	const onDocumentLoad = (result: any) => {
@@ -212,13 +217,10 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile
-							block={block}
+						<MediaPlaceholder
 							iconParam={{ name: 'menu/block/media/pdf' }}
-							textFile={translate('blockPdfUpload')}
-							accept={J.Constant.fileExtension.pdf}
-							onChangeUrl={onChangeUrl}
-							onChangeFile={onChangeFile}
+							text={translate('blockPdfAdd')}
+							onClick={onPlaceholderClick}
 							readonly={readonly}
 						/>
 					</>

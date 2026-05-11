@@ -597,9 +597,9 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 								U.Dom.eventDispatch(window, 'setDataviewSource');
 							};
 
-							// Auto-open BlockFile upload dialog
+							// Auto-open BlockFile media picker menu
 							if (param.type == I.BlockType.File) {
-								U.Dom.select('.fileWrap .border', element)?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+								U.Dom.select('.mediaPlaceholder', element)?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
 							};
 
 							// Auto-focus bookmark input field

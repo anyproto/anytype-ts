@@ -14,15 +14,15 @@ export default {
 		},
 		bg: {
 			grey: '#9b9b9b',
-			yellow: '#e9d619',
-			orange: '#fe9a00',
-			red: '#fb592c',
-			pink: '#f6339a',
-			purple: '#ad46ff',
-			blue: '#3e58eb',
+			yellow: '#dcc000',
+			orange: '#f08a00',
+			red: '#f04520',
+			pink: '#f030a0',
+			purple: '#a840f0',
+			blue: '#4a60f0',
 			ice: '#2aa7ee',
 			teal: '#00bba7',
-			lime: '#5dd400',
+			lime: '#5ec400',
 		},
 
 		list: [ 'grey', 'yellow', 'orange', 'red', 'pink', 'purple', 'blue', 'ice', 'teal', 'lime' ],
@@ -38,16 +38,16 @@ export default {
 
 		color: {
 			default: '#252525',
-			grey: '#b6b6b6',
-			yellow: '#e9d619',
-			orange: '#fe9a00',
-			red: '#fb592c',
-			pink: '#f6339a',
-			purple: '#ad46ff',
-			blue: '#3e58eb',
+			grey: '#9b9b9b',
+			yellow: '#dcc000',
+			orange: '#f08a00',
+			red: '#f04520',
+			pink: '#f030a0',
+			purple: '#a840f0',
+			blue: '#4a60f0',
 			ice: '#2aa7ee',
 			teal: '#00bba7',
-			lime: '#5dd400',
+			lime: '#5ec400',
 		},
 
 		textColor: {
@@ -137,16 +137,16 @@ export default {
 
 		color: {
 			default: '#e1e1e1',
-			grey: '#737373',
-			yellow: '#e9d619',
-			orange: '#fe9a00',
-			red: '#fb592c',
-			pink: '#f6339a',
-			purple: '#ad46ff',
-			blue: '#3e58eb',
+			grey: '#9b9b9b',
+			yellow: '#dcc000',
+			orange: '#f08a00',
+			red: '#f04520',
+			pink: '#f030a0',
+			purple: '#a840f0',
+			blue: '#4a60f0',
 			ice: '#2aa7ee',
 			teal: '#00bba7',
-			lime: '#5dd400',
+			lime: '#5ec400',
 		},
 
 		textColor: {
@@ -181,7 +181,7 @@ export default {
 			primaryColor: '#bb2528',
 			primaryTextColor: '#fff',
 			primaryBorderColor: '#7c0000',
-			lineColor: '#F8b229',
+			lineColor: '#f8b229',
 			secondaryColor: '#006100',
 			tertiaryColor: '#fff'
 		},
@@ -227,7 +227,7 @@ export default {
 				strokeHover: 'rgba(160, 160, 160, 0.7)', // Brighter hover
 			},
 			canvas: {
-				background: '#1F1F1F',
+				background: '#1f1f1f',
 				grid: '#333333',
 				nodeCenter: 'rgba(40, 40, 40, 0.95)', // Darker center for contrast
 				nodeGlow: 'rgba(80, 100, 140, 0.1)', // Very weak general glow

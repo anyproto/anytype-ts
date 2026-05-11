@@ -816,9 +816,9 @@
 
 	.icon.logo { margin: 0px 0px 16px 0px; }
 
-	> .pageSettingsImportNotion,
-    > .pageSettingsImportNotionHelp {
-        a { font-weight: bold; text-decoration: none; color: var(--color-control-active); }
+	> .pageSettingsImportNotion {
+        .icon.importNotion { color: var(--color-control-accent); }
+        a { font-weight: 600; text-decoration: none; color: var(--color-text-primary); }
     }
 
 	> .pageSettingsImportObsidian,
@@ -832,21 +832,9 @@
             .errorWrapper { flex-grow: 1; }
             .error { @include text-small; margin: 2px 0px 0px 0px; }
         }
+    }
 
-        .helpWrapper { flex-direction: row; align-items: center; gap: 0px 8px; margin: 0px 0px 16px 0px; justify-content: space-between; }
-        .helpWrapper {
-            .title { @include text-paragraph; font-weight: 700; padding: 0px; margin: 0px !important; }
-
-            .btn {
-                display: flex; flex-direction: row; align-items: center; gap: 0px 6px; @include text-small; color: var(--color-text-secondary);
-                transition: $transitionAllCommon;
-            }
-            .btn {
-                .icon.help { width: 14px; height: 14px; transition: $transitionAllCommon; }
-            }
-            .btn:hover { color: var(--color-text-primary); }
-        }
-
+    > .pageSettingsImportObsidian {
         .list {
             li { margin: 0px 0px 12px 0px; }
             .label { margin: 0px 0px 4px 0px; }
@@ -855,18 +843,17 @@
         }
     }
 
-    > .pageSettingsImportNotionHelp {
-        .title { margin: 0px 0px 44px 0px !important; }
+    > .pageSettingsImportNotion {
+        .title.howTo { @include text-header3; padding: 0px; margin: 0px 0px 16px 0px; }
         .label.step { @include text-paragraph; font-weight: 700; margin: 0px 0px 16px 0px; }
-        .label.stepDescription { @include text-common; margin: 0px 0px 16px 0px; }
 
-        .list { margin: 0px 0px 64px 0px; }
-        .list:last-child { margin-bottom: 0px; }
+        .list { margin: 0px; }
         .list {
             li { margin: 0px 0px 48px 0px; }
             li {
                 ul { display: block; padding: 0px; }
                 li { margin-bottom: 0px; list-style-type: disc; }
+                b { font-weight: 600; }
             }
             li:last-child { margin: 0px; }
             img { margin: 14px 0px 0px 0px; margin-left: -1em; width: 100%; display: block; border: 1px solid var(--color-shape-tertiary); border-radius: 6px; }

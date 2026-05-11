@@ -170,6 +170,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedOpenObject)		 openObject = null;
 		if (!allowedEditType) 		 editType = null;
 		if (!allowedEditChat) 		 editChat = null;
+		if (!allowedCopyMedia)		 copyMedia = null;
 		if (!allowedNotification) {
 			notification = null;
 		} else
@@ -183,7 +184,6 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				notification = { id: 'mute', name: translate('commonMute'), iconParam: { name: 'menu/action/mute' } };
 			};
 		};
-		if (!allowedCopyMedia)		 copyMedia = null;
 		if (!canWrite) {
 			template = null;
 			setDefaultTemplate = null;
@@ -217,7 +217,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			sections = sections.concat([
 				{ children: [ openObject ] },
-				{ children: [ pageLink, favorite, pinToChannel, linkTo, addCollection, pageCopy, archive, remove ] },
+				{ children: [ pageLink, favorite, pinToChannel, linkTo, addCollection, pageCopy, archive, remove, template ] },
 				{ children: [ pageLock, history ] },
 				{ children: [ downloadFile, copyMedia, print ] },
 			]);

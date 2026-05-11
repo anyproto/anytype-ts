@@ -1,5 +1,5 @@
 import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
-import { InputWithFile, Icon, Error, Loader, MediaState } from 'Component';
+import { MediaPlaceholder, Icon, Error, Loader, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -25,12 +25,17 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 
-	const handleChangeUrl = (e: any, url: string) => {
-		Action.upload(I.FileType.Image, rootId, block.id, url, '');
-	};
+	const handlePlaceholderClick = (e: any) => {
+		e.stopPropagation();
 
-	const handleChangeFile = (e: any, path: string) => {
-		Action.upload(I.FileType.Image, rootId, block.id, '', path);
+		S.Menu.open('blockMedia', {
+			element: `#block-${block.id}`,
+			data: {
+				rootId,
+				blockId: block.id,
+				type: I.FileType.Image,
+			},
+		});
 	};
 
 	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
@@ -177,6 +182,9 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	if (object.widthInPixels && object.heightInPixels) {
 		wrapCss.aspectRatio = `${object.widthInPixels} / ${object.heightInPixels}`;
+		if (!width) {
+			wrapCss.width = object.widthInPixels;
+		};
 	} else
 	if (!isLoaded) {
 		wrapCss.height = 80;
@@ -210,13 +218,10 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile
-							block={block}
+						<MediaPlaceholder
 							iconParam={{ name: 'menu/block/media/image' }}
-							textFile={translate('blockImageUpload')}
-							accept={J.Constant.fileExtension.image}
-							onChangeUrl={handleChangeUrl}
-							onChangeFile={handleChangeFile}
+							text={translate('blockImageAdd')}
+							onClick={handlePlaceholderClick}
 							readonly={readonly}
 						/>
 					</>

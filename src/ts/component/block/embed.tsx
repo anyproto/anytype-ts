@@ -54,9 +54,11 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const [ isShowing, setIsShowing ] = useState(false);
 	const [ isEditing, setIsEditing ] = useState(false);
 	const [ isFullScreen, setIsFullScreen ] = useState(false);
-	const { rootId, block, readonly, isPopup, onKeyDown, onKeyUp } = props;
+	const { rootId, block, isPopup, onKeyDown, onKeyUp } = props;
 	const { content, fields, hAlign } = block;
 	const { processor } = content;
+	const isExcalidrawProcessor = processor == I.EmbedProcessor.Excalidraw;
+	const readonly = props.readonly || isExcalidrawProcessor;
 	const { width, type, height: fieldHeight } = fields || {};
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '' };
@@ -753,6 +755,13 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	};
 
 	const onEdit = (e: any) => {
+		if (isExcalidrawProcessor) {
+			e.preventDefault();
+			e.stopPropagation();
+			Preview.toastShow({ text: translate('blockEmbedExcalidrawReadonly') });
+			return;
+		};
+
 		if (readonly) {
 			return;
 		};
@@ -760,9 +769,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (processor != I.EmbedProcessor.Excalidraw) {
-			setIsEditing(true);
-		};
+		setIsEditing(true);
 	};
 
 	const save = (update: boolean, callBack?: (message: any) => void) => {

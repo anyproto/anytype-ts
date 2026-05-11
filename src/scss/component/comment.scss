@@ -9,12 +9,6 @@
 .socialBlock {
 	&.isHidden { opacity: 0; pointer-events: none; }
 
-	.grad { 
-		position: absolute; top: 0px; width: 100%; height: 100%; 
-		background: linear-gradient(180deg, rgba(242, 242, 242, 0) 3.62%, var(--color-bg-primary) 68.18%);
-		pointer-events: none;
-	}
-
 	.commentCounter {
 		display: inline-flex; align-items: center; gap: 0px 4px; padding: 7px 10px 7px 8px; border-radius: 18px;
 		background: var(--color-text-white60); backdrop-filter: blur(10px); transition: background 0.15s ease, opacity 0.15s ease;

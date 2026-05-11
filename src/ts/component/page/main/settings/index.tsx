@@ -17,7 +17,6 @@ import PagePinConfirm from './pin/confirm';
 
 import PageImportIndex from './import/index';
 import PageImportNotion from './import/notion';
-import PageImportNotionHelp from './import/notion/help';
 import PageImportNotionWarning from './import/notion/warning';
 import PageImportCsv from './import/csv';
 import PageImportObsidian from './import/obsidian';
@@ -59,7 +58,6 @@ const Components: any = {
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
-	importNotionHelp:	 PageImportNotionHelp,
 	importNotionWarning: PageImportNotionWarning,
 	importCsv:			 PageImportCsv,
 	importObsidian:		 PageImportObsidian,

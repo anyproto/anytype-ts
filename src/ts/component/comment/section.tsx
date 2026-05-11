@@ -626,12 +626,23 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		};
 	}, [ scrollToBottom ]);
 
+	const quoteLockRef = useRef(0);
+
 	useEffect(() => {
 		const onQuote = (e: Event) => {
 			const part = (e as CustomEvent).detail as I.CommentContentPart;
 			if (!part) {
 				return;
 			};
+
+			// Drop rapid duplicate firings (same event reaching multiple
+			// listeners, or fast double-clicks) that would re-enter the
+			// editor.update sequence before the first one settled.
+			const now = Date.now();
+			if ((now - quoteLockRef.current) < 300) {
+				return;
+			};
+			quoteLockRef.current = now;
 
 			setIsExpanded(true);
 			isSectionVisibleRef.current = true;
@@ -863,7 +874,6 @@ const CommentSection = (props: I.CommentSectionProps) => {
 						<span className="count">{counterLabel}</span>
 						{hasUnread ? <span className="unreadDot" /> : null}
 					</div>
-					<div className="grad" />
 				</div>
 			</div>
 		</>

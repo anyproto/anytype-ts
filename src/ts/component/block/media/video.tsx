@@ -1,5 +1,5 @@
 import React, { useRef, forwardRef, useImperativeHandle } from 'react';
-import { InputWithFile, Icon, Error, MediaVideo, MediaState } from 'Component';
+import { MediaPlaceholder, Icon, Error, MediaVideo, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -56,12 +56,17 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 	
-	const onChangeUrl = (e: any, url: string) => {
-		Action.upload(I.FileType.Video, rootId, id, url, '');
-	};
-	
-	const onChangeFile = (e: any, path: string) => {
-		Action.upload(I.FileType.Video, rootId, id, '', path);
+	const onPlaceholderClick = (e: any) => {
+		e.stopPropagation();
+
+		S.Menu.open('blockMedia', {
+			element: `#block-${id}`,
+			data: {
+				rootId,
+				blockId: id,
+				type: I.FileType.Video,
+			},
+		});
 	};
 
 	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
@@ -162,13 +167,10 @@ const BlockVideo = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile
-							block={block}
+						<MediaPlaceholder
 							iconParam={{ name: 'menu/block/media/video' }}
-							textFile={translate('blockVideoUpload')}
-							accept={J.Constant.fileExtension.video}
-							onChangeUrl={onChangeUrl}
-							onChangeFile={onChangeFile}
+							text={translate('blockVideoAdd')}
+							onClick={onPlaceholderClick}
 							readonly={readonly}
 						/>
 					</>

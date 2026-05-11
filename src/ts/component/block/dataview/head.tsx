@@ -52,7 +52,7 @@ const BlockDataviewHead = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =>
 		};
 
 		const options: any[] = [
-			canEdit ? { id: 'editTitle', iconParam: { name: 'editText' }, name: translate('blockDataviewHeadMenuEdit') } : null,
+			canEdit ? { id: 'editTitle', iconParam: { name: 'menu/action/rename' }, name: translate('blockDataviewHeadMenuEdit') } : null,
 			canSource ? { id: 'sourceChange', iconParam: { name: 'menu/action/source' }, name: U.String.sprintf(translate('blockDataviewHeadMenuChange'), sourceName), arrow: true } : null,
 			{ id: 'sourceOpen', iconParam: { name: 'common/expand' }, name: U.String.sprintf(translate('blockDataviewHeadMenuOpen'), sourceName) },
 		].filter(it => it);

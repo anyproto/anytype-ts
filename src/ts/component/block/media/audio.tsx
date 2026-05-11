@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { InputWithFile, Error, MediaAudio, MediaState } from 'Component';
+import { MediaPlaceholder, Error, MediaAudio, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -57,12 +57,17 @@ const BlockAudio = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 
-	const onChangeUrl = (e: any, url: string) => {
-		Action.upload(I.FileType.Audio, rootId, block.id, url, '');
-	};
-	
-	const onChangeFile = (e: any, path: string) => {
-		Action.upload(I.FileType.Audio, rootId, block.id, '', path);
+	const onPlaceholderClick = (e: any) => {
+		e.stopPropagation();
+
+		S.Menu.open('blockMedia', {
+			element: `#block-${block.id}`,
+			data: {
+				rootId,
+				blockId: block.id,
+				type: I.FileType.Audio,
+			},
+		});
 	};
 
 	const resize = () => {
@@ -106,13 +111,10 @@ const BlockAudio = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile
-							block={block}
+						<MediaPlaceholder
 							iconParam={{ name: 'menu/block/media/audio' }}
-							textFile={translate('blockAudioUpload')}
-							accept={J.Constant.fileExtension.audio}
-							onChangeUrl={onChangeUrl}
-							onChangeFile={onChangeFile}
+							text={translate('blockAudioAdd')}
+							onClick={onPlaceholderClick}
 							readonly={readonly}
 						/>
 					</>

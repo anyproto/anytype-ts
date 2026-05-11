@@ -1,0 +1,13 @@
+@import "~scss/_mixins";
+
+.mediaPlaceholder {
+	padding: 11px 13px; border-radius: 8px; border: solid 1px var(--color-shape-secondary); color: var(--color-control-active);
+	@include text-common; transition: border $transitionCommon; overflow: hidden; line-height: 20px; text-align: left;
+	display: flex; align-items: center; gap: 0px 6px; white-space: nowrap;
+}
+.mediaPlaceholder:hover { border-color: var(--color-shape-primary); }
+.mediaPlaceholder {
+	.icon { width: 20px; height: 20px; transition: none; flex-shrink: 0; }
+	.name { color: var(--color-control-active); flex-grow: 1; @include text-overflow-nw; }
+}
+.mediaPlaceholder.isReadonly { pointer-events: none; }

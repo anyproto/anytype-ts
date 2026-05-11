@@ -696,13 +696,33 @@ class Action {
 	};
 
 	/**
-	 * Opens the space creation popup. Space type (personal vs shared) is
-	 * decided inside the popup based on whether the user selects members.
+	 * Opens the space creation popup with the selected create type.
+	 * @param {I.SpaceCreateType} type - The selected create type (Personal, Group, Join).
 	 * @param {string} route - The route context for analytics.
 	 */
-	createSpace (route: string) {
+	createSpace (type: I.SpaceCreateType, route: string) {
+		if (type == I.SpaceCreateType.Group) {
+			const mySharedSpaces = U.Space.getMySharedSpacesList();
+			const { sharedSpacesLimit } = U.Space.getProfile();
+
+			if (sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit)) {
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'popup/header/warning', color: 'grey' },
+						title: translate('popupConfirmSharedSpaceLimitTitle'),
+						text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+						textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+						canCancel: false,
+						onConfirm: () => this.openSettings('membership', ''),
+					},
+				});
+				analytics.event('ScreenHitShareSpaceLimit');
+				return;
+			};
+		};
+
 		S.Popup.closeAll(null, () => {
-			S.Popup.open('spaceCreate', { data: { route } });
+			S.Popup.open('spaceCreate', { data: { type, route } });
 		});
 	};
 

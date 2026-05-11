@@ -1261,6 +1261,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const formNode = formRef.current?.getNode() as HTMLElement;
 		const btn = formNode ? U.Dom.select(`#navigation-${I.ChatReadType.Message}`, formNode) : null;
 
+		if (formNode) {
+			U.Dom.toggleClass(formNode, 'isBottom', v);
+		};
+
 		if (btn) {
 			U.Dom.toggleClass(btn, 'active', !v);
 		};

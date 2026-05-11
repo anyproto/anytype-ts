@@ -338,7 +338,14 @@ class UtilData {
 						if (isRestorable) {
 							U.Router.go(route, routeParam);
 						} else {
-							U.Space.openDashboard(routeParam);
+							const last = U.Space.getLastObject();
+							const lastRoute = last ? U.Object.route(last) : '';
+
+							if (lastRoute) {
+								U.Router.go(lastRoute, routeParam);
+							} else {
+								U.Space.openDashboard(routeParam);
+							};
 						};
 					};
 
