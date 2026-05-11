@@ -597,27 +597,39 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		switch (tab) {
 			case Tab.Unsplash:
 			case Tab.Library: {
-				content = (
-					<>
-						{rows.length ? (
-							<div className="sections">
-								<AutoSizer className="scrollArea">
-									{({ width, height }) => (
-										<List
-											ref={listRef}
-											width={width}
-											height={height}
-											rowCount={rows.length}
-											rowHeight={({ index }) => getRowHeight(rows[index], index)}
-											rowRenderer={rowRenderer}
-											overscanRowCount={5}
-											scrollToAlignment="center"
-										/>
-									)}
-								</AutoSizer>
-							</div>
-						) : <EmptySearch text={filter ? U.String.sprintf(translate('menuBlockMediaEmptyFilter'), filter) : translate('menuBlockMediaEmpty')} />}
-					</>
+				const flatItems = getItemsFlat();
+				const empty = filter ? U.String.sprintf(translate('menuBlockMediaEmptyFilter'), filter) : translate('menuBlockMediaEmpty');
+
+				if (!flatItems.length) {
+					content = <EmptySearch text={empty} />;
+					break;
+				};
+
+				content = isListLibrary ? (
+					<div className="sections">
+						<div className="scrollArea list">
+							{flatItems.map((item: any) => (
+								<Item key={item.id} item={item} />
+							))}
+						</div>
+					</div>
+				) : (
+					<div className="sections">
+						<AutoSizer className="scrollArea">
+							{({ width, height }) => (
+								<List
+									ref={listRef}
+									width={width}
+									height={height}
+									rowCount={rows.length}
+									rowHeight={({ index }) => getRowHeight(rows[index], index)}
+									rowRenderer={rowRenderer}
+									overscanRowCount={5}
+									scrollToAlignment="center"
+								/>
+							)}
+						</AutoSizer>
+					</div>
 				);
 				break;
 			};

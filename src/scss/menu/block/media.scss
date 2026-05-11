@@ -43,18 +43,17 @@
 			}
 		}
 
-		.body.library.list .itemsRow { grid-template-columns: 1fr; padding: 0px 8px; }
-		.body.library.list .itemsRow {
+		.scrollArea.list { padding: 0px 8px 8px 8px; overflow-y: auto; height: 100%; box-sizing: border-box; }
+		.scrollArea.list {
 			.item.objectItem {
 				display: flex; align-items: center; gap: 0px 8px; padding: 6px 8px; border-radius: 6px;
 				margin: 0px;
 			}
 			.item.objectItem {
 				.iconObject { flex-shrink: 0; }
-				.name { margin: 0px; color: var(--color-text-primary); text-decoration: none; @include text-overflow-nw; }
+				.name { margin: 0px; color: var(--color-text-primary); text-decoration: none; @include text-overflow-nw; flex-grow: 1; }
 			}
 			.item.objectItem:hover, .item.objectItem.hover { background: var(--color-shape-highlight-medium); }
-			.item.objectItem:hover .name, .item.objectItem.hover .name { text-decoration: none; }
 		}
 
 		.body { height: calc(100% - 36px); display: flex; flex-direction: column; }
