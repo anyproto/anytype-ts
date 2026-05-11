@@ -46,7 +46,7 @@ const PageMainSettingsImportNotion = forwardRef<I.PageRef, I.PageSettingsCompone
 					/>
 					{error ? <Error text={error} /> : ''}
 				</div>
-				<Button text={translate('popupSettingsImportData')} size={36} onClick={onImport} />
+				<Button color="accent" text={translate('popupSettingsImportData')} size={36} onClick={onImport} />
 			</div>
 
 			<Title className="howTo" text={translate('popupSettingsImportNotionHowTo')} />

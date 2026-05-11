@@ -817,7 +817,8 @@
 	.icon.logo { margin: 0px 0px 16px 0px; }
 
 	> .pageSettingsImportNotion {
-        a { font-weight: bold; text-decoration: none; color: var(--color-control-active); }
+        .icon.importNotion { color: var(--color-control-accent); }
+        a { font-weight: 600; text-decoration: none; color: var(--color-text-primary); }
     }
 
 	> .pageSettingsImportObsidian,
@@ -852,6 +853,7 @@
             li {
                 ul { display: block; padding: 0px; }
                 li { margin-bottom: 0px; list-style-type: disc; }
+                b { font-weight: 600; }
             }
             li:last-child { margin: 0px; }
             img { margin: 14px 0px 0px 0px; margin-left: -1em; width: 100%; display: block; border: 1px solid var(--color-shape-tertiary); border-radius: 6px; }
