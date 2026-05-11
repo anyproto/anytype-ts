@@ -1290,7 +1290,7 @@ class UtilCommon {
 	getSpaceSettingsPages (): string[] {
 		return [
 			'spaceIndex', 'spaceStorage', 'spaceShare', 'spaceNotifications',
-			'importIndex', 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv', 'importObsidian',
+			'importIndex', 'importNotion', 'importNotionWarning', 'importCsv', 'importObsidian',
 			'exportIndex', 'exportProtobuf', 'exportMarkdown',
 			'set', 'relation', 'archive',
 		];

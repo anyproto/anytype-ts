@@ -25,11 +25,16 @@ const PageMainSettingsImportNotion = forwardRef<I.PageRef, I.PageSettingsCompone
 		});
 	};
 
+	const steps = [ 1, 2, 3, 4, 5, 6, 7 ];
+
 	return (
 		<>
 			<Icon name="import/notion" className="logo" size={56} />
 			<Title text={U.Menu.getImportNames()[I.ImportType.Notion]} />
-			<Label className="description" text={translate('popupSettingsImportNotionDescription')} />
+			<Label
+				className="description"
+				text={U.String.sprintf(translate('popupSettingsImportNotionDescription'), J.Url.notionFAQ)}
+			/>
 
 			<div className="inputWrapper flex">
 				<div className="errorWrapper">
@@ -44,32 +49,20 @@ const PageMainSettingsImportNotion = forwardRef<I.PageRef, I.PageSettingsCompone
 				<Button text={translate('popupSettingsImportData')} size={36} onClick={onImport} />
 			</div>
 
-			<div className="line" />
-
-			<div className="helpWrapper flex">
-				<Title text={U.String.sprintf(translate('popupSettingsImportNotionHowTo'), J.Url.notionFAQ)} />
-				<div className="btn" onClick={() => onPage('importNotionHelp')}>
-					<Icon name="common/help" className="help" size={14} />{translate('popupSettingsImportNotionStepByStepGuide')}
-				</div>
-			</div>
+			<Title className="howTo" text={translate('popupSettingsImportNotionHowTo')} />
+			<Label className="step" text={U.String.sprintf(translate('popupSettingsImportNotionHelpStep'), 1)} />
 
 			<ol className="list">
-				<li>
-					<Label text={translate('popupSettingsImportNotionIntegrationList11')} />
-					<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList12')} />
-				</li>
-				<li>
-					<Label text={translate('popupSettingsImportNotionIntegrationList21')} />
-					<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList22')} />
-				</li>
-				<li>
-					<Label text={translate('popupSettingsImportNotionIntegrationList31')} />
-					<Label className="grey" text={translate('popupSettingsImportNotionIntegrationList32')} />
-				</li>
+				{steps.map(n => (
+					<li key={n}>
+						<Label text={translate(`popupSettingsImportNotionHelpStep1${n}`)} />
+						<img src={`./img/help/notion/step${n}.png`} />
+					</li>
+				))}
 			</ol>
 		</>
 	);
-	
+
 });
 
 export default PageMainSettingsImportNotion;

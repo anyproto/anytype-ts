@@ -46,7 +46,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 		];
 
 		if (canWrite) {
-			importExport.unshift({ id: 'importIndex', iconParam: { name: 'menu/action/import' }, subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv' ] });
+			importExport.unshift({ id: 'importIndex', iconParam: { name: 'menu/action/import' }, subPages: [ 'importNotion', 'importNotionWarning', 'importCsv' ] });
 		};
 
 		const isOwner = U.Space.isMyOwner();
