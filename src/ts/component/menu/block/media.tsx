@@ -20,14 +20,11 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const fileType: I.FileType = type ?? I.FileType.Image;
 	const isImage = fileType == I.FileType.Image;
 	const isVideo = fileType == I.FileType.Video;
-	const hasLibrary = isImage || isVideo;
+	const isPreview = isImage || isVideo;
 	const hasUnsplash = isImage;
 
 	const tabs = (() => {
-		const list: { id: Tab }[] = [ { id: Tab.Upload } ];
-		if (hasLibrary) {
-			list.push({ id: Tab.Library });
-		};
+		const list: { id: Tab }[] = [ { id: Tab.Upload }, { id: Tab.Library } ];
 		if (hasUnsplash) {
 			list.push({ id: Tab.Unsplash });
 		};
@@ -47,7 +44,8 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const active = useRef(null);
 	const activeIndex = useRef(-1);
 	const rows: any[] = [];
-	const itemsPerRow = 3;
+	const isListLibrary = (tab == Tab.Library) && !isPreview;
+	const itemsPerRow = isListLibrary ? 1 : 3;
 
 	const layoutByType: Record<I.FileType, I.ObjectLayout> = {
 		[I.FileType.None]: I.ObjectLayout.File,
@@ -457,7 +455,11 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return index ? 40 : 32;
 		};
 
-		return isImage ? 96 : 56;
+		if (isListLibrary) {
+			return 40;
+		};
+
+		return 96;
 	};
 
 	const getItemsFlat = () => {
@@ -494,7 +496,7 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
-	const ImageItem = ({ item }: { item: any }) => (
+	const TileItem = ({ item }: { item: any }) => (
 		<div
 			id={`item-${item.id}`}
 			className="item"
@@ -502,12 +504,18 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			onMouseEnter={e => onMouseEnter(e, item, item.__globalIndex)}
 			onMouseLeave={() => onMouseLeave()}
 		>
-			<Cover preview={true} {...item} id={item.itemId} />
+			{item.src ? (
+				<Cover {...item} id={item.itemId} />
+			) : (
+				<div className="cover empty">
+					{item.object ? <IconObject object={item.object} size={32} /> : ''}
+				</div>
+			)}
 			{item.artist ? <div className="name">{item.artist}</div> : ''}
 		</div>
 	);
 
-	const ObjectItem = ({ item }: { item: any }) => (
+	const ListItem = ({ item }: { item: any }) => (
 		<div
 			id={`item-${item.id}`}
 			className="item objectItem"
@@ -521,7 +529,7 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	);
 
 	const Item = ({ item }: { item: any }) => (
-		(tab == Tab.Library) && !isImage ? <ObjectItem item={item} /> : <ImageItem item={item} />
+		isListLibrary ? <ListItem item={item} /> : <TileItem item={item} />
 	);
 
 	const rowRenderer = (param: any) => {
@@ -670,7 +678,7 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				</div>
 			) : ''}
 
-			<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
+			<div className={[ 'body', Tab[tab].toLowerCase(), (isListLibrary ? 'list' : '') ].join(' ')}>
 				{filterElement}
 				{content}
 			</div>
