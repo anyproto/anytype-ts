@@ -159,7 +159,7 @@
 		"linux-distro": "^4.0.1",
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
-		"mermaid": "^11.12.2",
+		"mermaid": "^11.15.0",
 		"mime-types": "^3.0.1",
 		"mobx": "^6.15.0",
 		"mobx-logger": "^0.7.1",
