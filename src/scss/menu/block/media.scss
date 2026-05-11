@@ -43,18 +43,20 @@
 			}
 		}
 
-		.scrollArea.list { padding: 0px 8px 8px 8px; overflow-y: auto; height: 100%; box-sizing: border-box; }
+		.scrollArea.list { padding: 8px; overflow-y: auto; height: 100%; box-sizing: border-box; }
 		.scrollArea.list {
 			.item.objectItem {
 				display: flex; align-items: center; gap: 0px 8px; padding: 6px 8px; border-radius: 6px;
 				margin: 0px;
 			}
 			.item.objectItem {
-				.iconObject { flex-shrink: 0; }
+				.iconObject { flex-shrink: 0; pointer-events: none; }
 				.name { margin: 0px; color: var(--color-text-primary); text-decoration: none; @include text-overflow-nw; flex-grow: 1; }
 			}
-			.item.objectItem:hover, .item.objectItem.hover { background: var(--color-shape-highlight-medium); }
+			.item.objectItem.hover { background: var(--color-shape-highlight-medium); }
 		}
+
+		.ReactVirtualized__List { padding: 8px 0px; }
 
 		.body { height: calc(100% - 36px); display: flex; flex-direction: column; }
 
