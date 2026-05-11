@@ -19,8 +19,7 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const fileType: I.FileType = type ?? I.FileType.Image;
 	const isImage = fileType == I.FileType.Image;
-	const isVideo = fileType == I.FileType.Video;
-	const isPreview = isImage || isVideo;
+	const isPreview = isImage;
 	const hasUnsplash = isImage;
 
 	const tabs = (() => {

@@ -83,6 +83,7 @@
 				.urlField {
 					.icon { position: absolute; left: 10px; width: 16px; height: 16px; background-size: 16px; pointer-events: none; }
 					.input { background: var(--color-shape-highlight-light-solid); height: 36px; border-radius: 12px; padding: 0px 12px 0px 32px; }
+					.input:hover, .input:focus { background: var(--color-shape-highlight-medium); }
 				}
 			}
 		}
