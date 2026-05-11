@@ -1,21 +1,21 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
-import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
+import { Cover, Filter, Icon, Input, Label, EmptySearch, Loader } from 'Component';
 import * as I from 'Interface';
 
 enum Tab {
-	Gallery	 = 0,
-	Unsplash = 1,
-	Library	 = 2,
-	Upload	 = 3,
+	Upload	 = 0,
+	Library	 = 1,
+	Gallery	 = 2,
+	Unsplash = 3,
 };
 
 const LIMIT = 36;
 const Tabs = [
+	{ id: Tab.Upload },
+	{ id: Tab.Library },
 	{ id: Tab.Gallery },
 	{ id: Tab.Unsplash },
-	{ id: Tab.Library },
-	{ id: Tab.Upload },
 ].map(it => ({ ...it, name: translate(`menuBlockCover${Tab[it.id]}`) }));
 
 const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
@@ -25,7 +25,7 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { rootId, onSelect, onUpload, onUploadStart } = data;
 	const [ filter, setFilter ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ tab, setTab ] = useState(Tab.Gallery);
+	const [ tab, setTab ] = useState(Tab.Upload);
 	const [ items, setItems ] = useState([]);
 	const nodeRef = useRef(null);
 	const filterRef = useRef(null);
@@ -36,6 +36,7 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const activeIndex = useRef(-1);
 	const rows: any[] = [];
 	const itemsPerRow = tab == Tab.Gallery ? 4 : 3;
+	const urlRef = useRef(null);
 
 	useEffect(() => {
 		load();
@@ -152,20 +153,33 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
+	const uploadCover = (url: string, path: string) => {
+		close();
+		onUploadStart?.();
+
+		C.FileUpload(S.Common.space, url, path, I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			onUpload?.(I.CoverType.Upload, message.objectId);
+			analytics.event('SetCover', { type: I.CoverType.Upload });
+		});
+	};
+
 	const onUploadHandler = (e: any) => {
 		Action.openFileDialog({ extensions: J.Constant.fileExtension.cover }, paths => {
-			close();
-			onUploadStart?.();
-
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				onUpload?.(I.CoverType.Upload, message.objectId);
-				analytics.event('SetCover', { type: I.CoverType.Upload });
-			});
+			uploadCover('', paths[0]);
 		});
+	};
+
+	const onUrlSubmit = () => {
+		const url = String(urlRef.current?.getValue() || '').trim();
+		if (!url) {
+			return;
+		};
+
+		uploadCover(url, '');
 	};
 
 	const onSelectHandler = (e: any, item: any) => {
@@ -608,17 +622,31 @@ const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case Tab.Upload: {
 				content = (
-					<div 
-						ref={dropzoneRef}
-						className="dropzone" 
-						onDragOver={onDragOver} 
-						onDragLeave={onDragLeave} 
-						onDrop={onDrop}
-						onClick={onUploadHandler}
-					>
-						<Icon name="common/upload" size={28} />
-						<Label text={translate('menuBlockCoverChoose')} />
-					</div>
+					<>
+						<div
+							ref={dropzoneRef}
+							className="dropzone"
+							onDragOver={onDragOver}
+							onDragLeave={onDragLeave}
+							onDrop={onDrop}
+							onClick={onUploadHandler}
+						>
+							<Icon name="common/upload" size={28} />
+							<Label text={translate('menuBlockCoverChoose')} />
+						</div>
+
+						<div className="urlSection">
+							<Label text={translate('menuBlockMediaOrAddViaUrl')} />
+							<form className="urlField" onSubmit={e => { e.preventDefault(); onUrlSubmit(); }}>
+								<Icon name="common/link" />
+								<Input
+									ref={urlRef}
+									onKeyDown={(e: any) => e.stopPropagation()}
+									placeholder={translate('menuBlockMediaUrlPlaceholderImage')}
+								/>
+							</form>
+						</div>
+					</>
 				);
 				break;
 			};

@@ -18,7 +18,7 @@
 		
 		.filter { padding-top: 12px; flex-shrink: 0; }
 		.filter {
-			.inner { height: 35px; }
+			.inner { height: 36px; border-radius: 12px; }
 		}
 
 		.loaderWrapper { position: relative; background: none; }
@@ -62,17 +62,24 @@
 			}
 		}
 
-		.body.upload { padding: 16px; }
+		.body.upload { padding: 16px; display: flex; flex-direction: column; gap: 16px 0px; }
 		.body.upload {
-			.dropzone { 
-				display: flex; align-items: center; border-radius: 2px; background: var(--color-shape-highlight-medium);
-				justify-content: center; flex-direction: column; gap: 6px 0px; height: 100%;
+			.dropzone {
+				display: flex; align-items: center; border-radius: 8px; background: var(--color-shape-highlight-medium);
+				justify-content: center; flex-direction: column; gap: 6px 0px; flex-grow: 1; min-height: 200px;
 			}
 			.dropzone.isDraggingOver { background: var(--color-system-drop-zone); }
-
 			.dropzone {
-					.label {
-					span { color: var(--color-text-secondary); }
+				.label span { color: var(--color-text-secondary); }
+			}
+
+			.urlSection { display: flex; flex-direction: column; gap: 6px 0px; flex-shrink: 0; }
+			.urlSection {
+				.label { @include text-small; color: var(--color-text-secondary); }
+				.urlField { position: relative; display: flex; align-items: center; }
+				.urlField {
+					.icon { position: absolute; left: 10px; width: 16px; height: 16px; background-size: 16px; pointer-events: none; }
+					.input { background: var(--color-shape-highlight-light-solid); height: 36px; border-radius: 12px; padding: 0px 12px 0px 32px; }
 				}
 			}
 		}

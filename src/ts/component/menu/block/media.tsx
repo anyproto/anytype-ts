@@ -651,7 +651,8 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 						<div className="urlSection">
 							<Label text={translate('menuBlockMediaOrAddViaUrl')} />
-							<form onSubmit={e => { e.preventDefault(); onUrlSubmit(); }}>
+							<form className="urlField" onSubmit={e => { e.preventDefault(); onUrlSubmit(); }}>
+								<Icon name="common/link" />
 								<Input
 									ref={urlRef}
 									onKeyDown={(e: any) => e.stopPropagation()}
