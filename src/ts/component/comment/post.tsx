@@ -203,7 +203,7 @@ const CommentPost = (props: Props) => {
 				offsetY: 4,
 				data: {
 					options: [
-						{ id: 'quoteInComment', iconParam: { name: 'menu/block/text/quote' }, name: translate('commonQuoteInComment') },
+						{ id: 'quoteInComment', iconParam: { name: 'menu/action/quote' }, name: translate('commonQuoteInComment') },
 						{ id: 'copyText', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopyText') },
 					],
 					onSelect: (_e: any, item: any) => {
@@ -216,7 +216,10 @@ const CommentPost = (props: Props) => {
 								messageQuote: { messageId: id },
 							};
 
-							window.dispatchEvent(new CustomEvent(`commentReplyQuote.${id}`, { detail: part }));
+							// Defer so the select menu's close stack unwinds first.
+							window.setTimeout(() => {
+								window.dispatchEvent(new CustomEvent(`commentReplyQuote.${id}`, { detail: part }));
+							}, 0);
 						} else
 						if (item.id == 'copyText') {
 							U.Common.clipboardCopy({ text });
@@ -233,12 +236,21 @@ const CommentPost = (props: Props) => {
 	// Listen for quote events targeted at this post's thread (fired from
 	// either this post's own selection menu or from a reply's menu) and
 	// open the reply form pre-filled with the quote.
+	const replyQuoteLockRef = useRef(0);
 	useEffect(() => {
 		const onReplyQuote = (e: Event) => {
 			const part = (e as CustomEvent).detail as I.CommentContentPart;
 			if (!part) {
 				return;
 			};
+
+			// Drop rapid duplicate firings that would re-enter editor.update
+			// before the first insertion settled.
+			const now = Date.now();
+			if ((now - replyQuoteLockRef.current) < 300) {
+				return;
+			};
+			replyQuoteLockRef.current = now;
 
 			setIsReplying(true);
 			window.setTimeout(() => replyFormRef.current?.insertQuote(part), 50);

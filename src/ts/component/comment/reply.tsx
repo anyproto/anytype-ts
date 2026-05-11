@@ -183,7 +183,7 @@ const CommentReply = (props: Props) => {
 				offsetY: 4,
 				data: {
 					options: [
-						{ id: 'quoteInComment', iconParam: { name: 'menu/block/text/quote' }, name: translate('commonQuoteInComment') },
+						{ id: 'quoteInComment', iconParam: { name: 'menu/action/quote' }, name: translate('commonQuoteInComment') },
 						{ id: 'copyText', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopyText') },
 					],
 					onSelect: (_e: any, item: any) => {
@@ -197,8 +197,11 @@ const CommentReply = (props: Props) => {
 							};
 
 							// Reply lives inside a thread — route the quote to the
-							// parent post's reply form, not the main form.
-							window.dispatchEvent(new CustomEvent(`commentReplyQuote.${parentId}`, { detail: part }));
+							// parent post's reply form, not the main form. Defer so
+							// the select menu's close stack unwinds first.
+							window.setTimeout(() => {
+								window.dispatchEvent(new CustomEvent(`commentReplyQuote.${parentId}`, { detail: part }));
+							}, 0);
 						} else
 						if (item.id == 'copyText') {
 							U.Common.clipboardCopy({ text });
