@@ -47,8 +47,9 @@
 		.scrollArea.list {
 			.item.objectItem {
 				display: flex; align-items: center; gap: 0px 8px; padding: 6px 8px; border-radius: 6px;
-				margin: 0px;
+				margin: 0px; background: var(--color-bg-primary);
 			}
+			.item.objectItem::before { content: none; }
 			.item.objectItem {
 				.iconObject { flex-shrink: 0; pointer-events: none; }
 				.name { margin: 0px; color: var(--color-text-primary); text-decoration: none; @include text-overflow-nw; flex-grow: 1; }
