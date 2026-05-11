@@ -57,28 +57,22 @@
 			.sections, .emptySearch { height: calc(100% - 47px); }
 		}
 
-		.body.upload { padding: 16px; }
+		.body.upload { padding: 16px; display: flex; flex-direction: column; gap: 16px 0px; }
 		.body.upload {
 			.dropzone {
-				display: flex; align-items: center; border-radius: 2px; background: var(--color-shape-highlight-medium);
-				justify-content: center; flex-direction: column; gap: 6px 0px; height: 100%;
+				display: flex; align-items: center; border-radius: 8px; background: var(--color-shape-highlight-medium);
+				justify-content: center; flex-direction: column; gap: 6px 0px; flex-grow: 1; min-height: 200px;
 			}
 			.dropzone.isDraggingOver { background: var(--color-system-drop-zone); }
-
 			.dropzone {
-					.label {
-					span { color: var(--color-text-secondary); }
-				}
+				.label span { color: var(--color-text-secondary); }
 			}
-		}
 
-		.body.link { padding: 16px; }
-		.body.link {
-			.link { width: 100%; }
-			.link form { display: flex; align-items: center; gap: 0px 8px; }
-			.link form {
-				.input { flex-grow: 1; }
-				.input input { width: 100%; height: 32px; padding: 0px 12px; border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
+			.urlSection { display: flex; flex-direction: column; gap: 6px 0px; flex-shrink: 0; }
+			.urlSection {
+				.label { color: var(--color-text-secondary); font-weight: 500; }
+				.input { width: 100%; height: 32px; padding: 0px 12px; border: 1px solid var(--color-shape-secondary); border-radius: 6px; }
+				.input input { width: 100%; height: 100%; background: none; border: 0px; padding: 0px; color: var(--color-text-primary); }
 			}
 		}
 	}

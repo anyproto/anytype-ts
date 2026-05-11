@@ -61,7 +61,6 @@ const BlockPdf = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		S.Menu.open('blockMedia', {
 			element: `#block-${id}`,
-			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId,
 				blockId: id,

@@ -1,13 +1,12 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
-import { Cover, Filter, Icon, Label, EmptySearch, Loader, Input, Button, IconObject, ObjectName } from 'Component';
+import { Cover, Filter, Icon, Label, EmptySearch, Loader, Input, IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
 
 enum Tab {
-	Library	 = 0,
-	Unsplash = 1,
-	Upload	 = 2,
-	Link	 = 3,
+	Upload	 = 0,
+	Library	 = 1,
+	Unsplash = 2,
 };
 
 const LIMIT = 36;
@@ -25,15 +24,13 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const hasUnsplash = isImage;
 
 	const tabs = (() => {
-		const list: { id: Tab }[] = [];
+		const list: { id: Tab }[] = [ { id: Tab.Upload } ];
 		if (hasLibrary) {
 			list.push({ id: Tab.Library });
 		};
 		if (hasUnsplash) {
 			list.push({ id: Tab.Unsplash });
 		};
-		list.push({ id: Tab.Upload });
-		list.push({ id: Tab.Link });
 		return list.map(it => ({ ...it, name: translate(`menuBlockMedia${Tab[it.id]}`) }));
 	})();
 
@@ -41,10 +38,9 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ tab, setTab ] = useState(tabs[0].id);
 	const [ items, setItems ] = useState([]);
-	const [ linkValue, setLinkValue ] = useState('');
 	const nodeRef = useRef(null);
 	const filterRef = useRef(null);
-	const linkRef = useRef(null);
+	const urlRef = useRef(null);
 	const listRef = useRef(null);
 	const dropzoneRef = useRef(null);
 	const timeout = useRef(0);
@@ -92,10 +88,6 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if ([ Tab.Library, Tab.Unsplash ].includes(tab)) {
 			window.setTimeout(() => filterRef.current?.focus(), 15);
-		};
-
-		if (tab == Tab.Link) {
-			window.setTimeout(() => linkRef.current?.focus(), 15);
 		};
 
 		return () => {
@@ -220,8 +212,8 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		close();
 	};
 
-	const onLinkSubmit = () => {
-		const url = String(linkRef.current?.getValue() || '').trim();
+	const onUrlSubmit = () => {
+		const url = String(urlRef.current?.getValue() || '').trim();
 		if (!url) {
 			return;
 		};
@@ -624,35 +616,30 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case Tab.Upload: {
 				content = (
-					<div
-						ref={dropzoneRef}
-						className="dropzone"
-						onDragOver={onDragOver}
-						onDragLeave={onDragLeave}
-						onDrop={onDrop}
-						onClick={onUploadHandler}
-					>
-						<Icon name="common/upload" size={28} />
-						<Label text={translate(`menuBlockMediaChoose${I.FileType[fileType]}`)} />
-					</div>
-				);
-				break;
-			};
+					<>
+						<div
+							ref={dropzoneRef}
+							className="dropzone"
+							onDragOver={onDragOver}
+							onDragLeave={onDragLeave}
+							onDrop={onDrop}
+							onClick={onUploadHandler}
+						>
+							<Icon name="common/upload" size={28} />
+							<Label text={translate(`menuBlockMediaChoose${I.FileType[fileType]}`)} />
+						</div>
 
-			case Tab.Link: {
-				content = (
-					<div className="link">
-						<form onSubmit={e => { e.preventDefault(); onLinkSubmit(); }}>
-							<Input
-								ref={linkRef}
-								value={linkValue}
-								onChange={(e: any, v: string) => setLinkValue(v)}
-								onKeyDown={(e: any) => e.stopPropagation()}
-								placeholder={translate('menuBlockMediaLinkPlaceholder')}
-							/>
-							<Button type="input" text={translate('commonAdd')} className="c28" />
-						</form>
-					</div>
+						<div className="urlSection">
+							<Label text={translate('menuBlockMediaOrAddViaUrl')} />
+							<form onSubmit={e => { e.preventDefault(); onUrlSubmit(); }}>
+								<Input
+									ref={urlRef}
+									onKeyDown={(e: any) => e.stopPropagation()}
+									placeholder={translate(`menuBlockMediaUrlPlaceholder${I.FileType[fileType]}`)}
+								/>
+							</form>
+						</div>
+					</>
 				);
 				break;
 			};
@@ -661,25 +648,27 @@ const MenuBlockMedia = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	return (
 		<div ref={nodeRef} className="wrap">
-			<div className="head">
-				{tabs.map((item: any) => {
-					const cn = [ 'btn' ];
+			{tabs.length > 1 ? (
+				<div className="head">
+					{tabs.map((item: any) => {
+						const cn = [ 'btn' ];
 
-					if (item.id == tab) {
-						cn.push('active');
-					};
+						if (item.id == tab) {
+							cn.push('active');
+						};
 
-					return (
-						<div
-							key={item.id}
-							className={cn.join(' ')}
-							onClick={() => setTab(item.id)}
-						>
-							{item.name}
-						</div>
-					);
-				})}
-			</div>
+						return (
+							<div
+								key={item.id}
+								className={cn.join(' ')}
+								onClick={() => setTab(item.id)}
+							>
+								{item.name}
+							</div>
+						);
+					})}
+				</div>
+			) : ''}
 
 			<div className={[ 'body', Tab[tab].toLowerCase() ].join(' ')}>
 				{filterElement}

@@ -32,7 +32,6 @@ const BlockFile = forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 		S.Menu.open('blockMedia', {
 			element: `#block-${block.id}`,
-			horizontal: I.MenuDirection.Center,
 			data: {
 				rootId,
 				blockId: block.id,
