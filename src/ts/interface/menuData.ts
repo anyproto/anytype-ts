@@ -171,6 +171,13 @@ export interface MenuBlockCoverData {
 	[key: string]: any;
 };
 
+export interface MenuBlockMediaData {
+	rootId?: string;
+	blockId?: string;
+	type?: number;
+	[key: string]: any;
+};
+
 export interface MenuBlockEmojiData {
 	onChange?: (...args: any[]) => void;
 	[key: string]: any;
@@ -380,6 +387,7 @@ export interface MenuDataMap {
 	blockLink: MenuBlockLinkData;
 	blockMention: MenuBlockMentionData;
 	blockCover: MenuBlockCoverData;
+	blockMedia: MenuBlockMediaData;
 	blockEmoji: MenuBlockEmojiData;
 	blockLayout: MenuBlockLayoutData;
 	blockLatex: MenuBlockLatexData;

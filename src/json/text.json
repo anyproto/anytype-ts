@@ -805,14 +805,19 @@
 	"blockFileUpload": "Upload a file",
 	"blockFileDownload": "Download",
 	"blockFileError": "There was an error uploading the file",
+	"blockFileAdd": "Add a file",
 
 	"blockAudioUpload": "Upload an audio",
+	"blockAudioAdd": "Add an audio",
 
 	"blockImageUpload": "Upload a picture",
+	"blockImageAdd": "Add an image",
 
 	"blockPdfUpload": "Upload a PDF",
+	"blockPdfAdd": "Add a PDF",
 
 	"blockVideoUpload": "Upload a video",
+	"blockVideoAdd": "Add a video",
 
 	"blockBookmarkError": "There was an error fetching the url",
 
@@ -1831,6 +1836,19 @@
 	"menuBlockCoverChoose": "Choose Image or <span>Drag it here</span>",
 	"menuBlockCoverGradients": "Gradients",
 	"menuBlockCoverSolidColors": "Solid colors",
+
+	"menuBlockMediaLibrary": "Library",
+	"menuBlockMediaUnsplash": "Unsplash",
+	"menuBlockMediaUpload": "Upload",
+	"menuBlockMediaLink": "From link",
+	"menuBlockMediaEmpty": "Nothing found",
+	"menuBlockMediaEmptyFilter": "<b>Nothing found for <span>\"%s\"<\/span><\/b>Try a different search",
+	"menuBlockMediaChooseImage": "Choose image or <span>Drag it here</span>",
+	"menuBlockMediaChooseVideo": "Choose video or <span>Drag it here</span>",
+	"menuBlockMediaChooseFile": "Choose file or <span>Drag it here</span>",
+	"menuBlockMediaChooseAudio": "Choose audio or <span>Drag it here</span>",
+	"menuBlockMediaChoosePdf": "Choose PDF or <span>Drag it here</span>",
+	"menuBlockMediaLinkPlaceholder": "Paste link",
 
 	"menuBlockLayoutSetLayoutWidth": "Set layout width",
 	"menuBlockLayoutChooseLayoutType": "Choose layout type",

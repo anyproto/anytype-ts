@@ -51,6 +51,7 @@ import Tag from './util/tag';
 import Loader from './util/loader';
 import Deleted from './util/deleted';
 import MediaState from './util/mediaState';
+import MediaPlaceholder from './util/mediaPlaceholder';
 import DotIndicator from './util/dotIndicator';
 import EmptySearch from './util/emptySearch';
 import EmptyState from './util/emptyState';
@@ -166,6 +167,7 @@ export {
 	Loader,
 	Deleted,
 	MediaState,
+	MediaPlaceholder,
 	DotIndicator,
 	Phrase,
 	TabSwitch,
