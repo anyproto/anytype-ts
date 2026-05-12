@@ -643,7 +643,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		const sections = getSections();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const hasMembers = members.length > 1;
-		const showMembers = !spaceview.isOneToOne && (hasMembers || isOwner);
+		const showMembers = !spaceview.isOneToOne && !spaceview.isPersonal && (hasMembers || isOwner);
 
 		const otherParticipant = spaceview.isOneToOne ? U.Space.getOneToOneParticipant(spaceview) : null;
 		const otherGlobalName = otherParticipant?.globalName || '';

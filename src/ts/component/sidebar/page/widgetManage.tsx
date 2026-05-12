@@ -122,7 +122,7 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const isOwner = U.Space.isMyOwner();
 	const hasMembers = members.length > 1;
-	const showMembers = !spaceview.isOneToOne && (hasMembers || isOwner);
+	const showMembers = !spaceview.isOneToOne && !spaceview.isPersonal && (hasMembers || isOwner);
 
 	useEffect(() => {
 		S.Common.widgetSectionsInit();
