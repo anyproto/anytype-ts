@@ -4,7 +4,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter, Sync } from 'Component';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
 import * as I from 'Interface';
 import Highlight from 'Lib/highlight';
 import Storage from 'Lib/storage';
@@ -532,14 +532,11 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		Action.openSettings('account', analytics.route.vault);
 	};
 
-	const onSync = () => {
-		S.Menu.closeAllForced(null, () => {
-			S.Menu.open('syncStatus', {
-				element: `#${getId()} #headerSync`,
-				offsetY: 4,
-				classNameWrap: 'fixed fromSidebar',
-				subIds: J.Menu.syncStatus,
-			});
+	const onGallery = () => {
+		S.Popup.open('usecase', {
+			data: {
+				route: analytics.route.usecaseApp,
+			},
 		});
 	};
 
@@ -750,10 +747,11 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 					</div>
 
 					<div className="side right">
-						<Sync 
-							id="headerSync" 
-							onClick={onSync} 
-							tooltipParam={{ typeY: I.MenuDirection.Top }}
+						<Icon
+							name="vault/gallery"
+							className="gallery"
+							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
+							onClick={onGallery}
 						/>
 						<Button
 							id="button-help"

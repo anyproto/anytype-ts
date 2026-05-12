@@ -34,7 +34,6 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getItems = () => {
 		return [
-			{ id: 'gallery', iconParam: { name: 'vault/gallery' } },
 			{ id: 'shortcut', iconParam: { name: 'menu/help/keyboard' }, caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },
 			{ id: 'share' },
@@ -136,15 +135,6 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'share': {
 				S.Popup.open('share', {});
-				break;
-			};
-
-			case 'gallery': {
-				S.Popup.open('usecase', {
-					data: {
-						route: analytics.route.usecaseApp,
-					},
-				});
 				break;
 			};
 		};

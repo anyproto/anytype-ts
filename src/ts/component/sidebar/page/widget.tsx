@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react
 import raf from 'raf';
 import { reaction } from 'mobx';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Label, SpaceName } from 'Component';
+import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Label, SpaceName, Sync } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
 import bullet from 'Component/util/icons/preview/bullet';
 
@@ -429,6 +429,17 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		};
 	};
 
+	const onSync = () => {
+		S.Menu.closeAllForced(null, () => {
+			S.Menu.open('syncStatus', {
+				element: `#${getId()} #headerSync`,
+				offsetY: 4,
+				classNameWrap: 'fixed fromSidebar',
+				subIds: J.Menu.syncStatus,
+			});
+		});
+	};
+
 	const onSectionContext = (sectionId: I.WidgetSection) => {
 		if (sectionId == I.WidgetSection.Unread) {
 			return;
@@ -670,6 +681,11 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 							}}
 						/>
 					) : ''}
+					<Sync
+						id="headerSync"
+						onClick={onSync}
+						tooltipParam={{ typeY: I.MenuDirection.Bottom }}
+					/>
 				</div>
 			</>
 		);
