@@ -21,6 +21,7 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const realId = parent.id.replace(`${space}-`, '');
 	const isUnread = realId == J.Constant.widgetId.unread;
 	const isBin = realId == J.Constant.widgetId.bin;
+	const isRecent = realId == J.Constant.widgetId.recentEdit;
 	const canWrite = U.Space.canMyParticipantWrite();
 	const home = U.Space.getDashboard();
 
@@ -224,6 +225,11 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		const element = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
 		const more = element ? U.Dom.select('.buttons', element) : null;
+		const data: any = {};
+
+		if (isRecent) {
+			data.allowedType = true;
+		};
 
 		if (isBin) {
 			U.Menu.widgetSectionContext(I.WidgetSection.Bin, {
@@ -235,7 +241,7 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				onClose: () => U.Dom.removeClass(element, 'active'),
 			});
 		} else {
-			onContext({ node: element, element: more, withElement, subId, objectId: item.id });
+			onContext({ node: element, element: more, withElement, subId, objectId: item.id, data });
 		};
 	};
 
