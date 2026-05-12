@@ -536,13 +536,14 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 	} else
 	if (isGroup && (step == 0)) {
 		const { writersLimit, readersLimit, writersCount, readersCount } = getSeatCounters();
+		const showSeatCounters = (writersLimit > 0) && (selectedCount >= writersLimit);
 
 		stepContent = (
 			<div className="step step0">
 				<div className="wrapper">
 					<div className="head">
 						<div className="stepTitle">{translate('popupSpaceCreateStep1Title')}</div>
-						{(writersLimit > 0) ? (
+						{showSeatCounters ? (
 							<div className="seatCounters">
 								{U.String.sprintf(translate('popupSpaceCreateSeatCounters'), writersCount, writersLimit, readersCount, readersLimit)}
 							</div>
