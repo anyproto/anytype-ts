@@ -1181,7 +1181,6 @@
 
 	"popupSettingsMembershipTeamMessage": "Contact your billing manager to change the membership",
 	"popupSettingsMembershipMarketMessage": "To manage your membership, please cancel your active subscription in %s and purchase a new one via Desktop app",
-	"popupSettingsMembershipCryptoMessage": "Contact care@anytype.io to manage your subscription",
 
 	"popupSettingsOnboardingModeTitle": "Network",
 	"popupSettingsOnboardingNetworkTitle": "Self-hosted Configuration",

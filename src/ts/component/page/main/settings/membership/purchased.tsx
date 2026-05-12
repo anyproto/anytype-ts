@@ -57,9 +57,6 @@ const PageMainSettingsMembershipPurchased = forwardRef<I.PageRef, I.PageSettings
 	} else 
 	if ([ I.PaymentProvider.AppStore, I.PaymentProvider.GooglePlay ].includes(data.paymentProvider)) {
 		button = <Label text={U.String.sprintf(translate('popupSettingsMembershipMarketMessage'), translate(`paymentProvider${data.paymentProvider}`))} />;
-	} else
-	if (data.paymentProvider == I.PaymentProvider.Crypto) {
-		button = <Label text={translate('popupSettingsMembershipCryptoMessage')} />;
 	} else {
 		button = <Button onClick={onManage} text={translate('popupSettingsMembershipManage')} color="blank" />;
 	};
