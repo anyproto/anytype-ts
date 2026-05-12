@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
-import { Icon, Title, Label, IconObject, ObjectName, Button, Editable } from 'Component';
+import { Icon, Title, Label, IconObject, ObjectName, ObjectDescription, Button, Editable } from 'Component';
 import MemberCnt from 'Component/util/memberCnt';
 import * as I from 'Interface';
 
@@ -18,6 +18,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	const canWrite = U.Space.canMyParticipantWrite();
 	const isOwner = U.Space.isMyOwner();
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+	const otherParticipant = spaceview.isOneToOne ? U.Space.getOneToOneParticipant(spaceview) : null;
 	const cnh = [ 'spaceHeader' ];
 	const nodeRef = useRef(null);
 	const nameRef = useRef(null);
@@ -175,6 +176,10 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	};
 
 	const getButtons = (): any[] => {
+		if (spaceview.isOneToOne) {
+			return [];
+		};
+
 		return [
 			{ id: 'invite', iconParam: { name: 'publish/member' }, name: translate('commonInvite') },
 			{ id: 'copyLink', iconParam: { name: 'menu/action/copyLink' }, name: translate('pageSettingsSpaceIndexCopyLink') },
@@ -301,22 +306,28 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 					<div className="counter" />
 				</div>
 
+				{spaceview.isOneToOne && otherParticipant ? (
+					<ObjectDescription className="userDescription" object={otherParticipant} />
+				) : ''}
+
 				<MemberCnt route={analytics.route.settings} />
 			</div>
 
-			<div className="spaceButtons">
-				{buttons.map((item, i) => (
-					<div 
-						key={i} 
-						id={U.String.toCamelCase(`settingsSpaceButton-${item.id}`)} 
-						className={[ 'btn', (item.isDisabled ? 'disabled' : '') ].join(' ')}
-						onClick={e => onClick(e, item)}
-					>
-						<Icon {...(item.iconParam || {})} className={item.id} />
-						<Label text={item.name} />
-					</div>
-				))}
-			</div>
+			{buttons.length ? (
+				<div className="spaceButtons">
+					{buttons.map((item, i) => (
+						<div
+							key={i}
+							id={U.String.toCamelCase(`settingsSpaceButton-${item.id}`)}
+							className={[ 'btn', (item.isDisabled ? 'disabled' : '') ].join(' ')}
+							onClick={e => onClick(e, item)}
+						>
+							<Icon {...(item.iconParam || {})} className={item.id} />
+							<Label text={item.name} />
+						</div>
+					))}
+				</div>
+			) : ''}
 
 			<div className="sections">
 				{canWrite ? (

@@ -30,6 +30,7 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 
 		.side { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; min-width: 0; }
 		.side.left { flex-grow: 1; min-width: 0; }
+		.side.center { flex-shrink: 1; min-width: 0; justify-content: center; }
 		.side.right { justify-content: flex-end; flex-shrink: 0; }
 
 		.spaceHead {
@@ -40,6 +41,16 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 			.iconObject { flex-shrink: 0; }
 			.name { @include text-overflow-nw; @include text-common; font-weight: 600; color: var(--color-text-primary); }
 			.icon.arrow { width: 12px; height: 12px; flex-shrink: 0; }
+			&:hover { background: var(--color-shape-highlight-medium); }
+		}
+
+		.identity {
+			-webkit-app-region: no-drag; display: flex; flex-direction: row; align-items: center; gap: 0px 4px;
+			min-width: 0; padding: 4px 8px; border-radius: 6px; transition: background $transitionCommon;
+		}
+		.identity {
+			.label { @include text-overflow-nw; @include text-common; color: var(--color-text-primary); }
+			.badge { flex-shrink: 0; }
 			&:hover { background: var(--color-shape-highlight-medium); }
 		}
 	}

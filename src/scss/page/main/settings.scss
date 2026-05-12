@@ -164,6 +164,8 @@
                 .placeholder { z-index: 0; }
             }
 
+            .userDescription { @include text-small; color: var(--color-text-secondary); text-align: center; margin: 0px 0px 6px; max-width: 360px; }
+
             .label { color: var(--color-text-secondary); }
         }
         .spaceHeader:hover,

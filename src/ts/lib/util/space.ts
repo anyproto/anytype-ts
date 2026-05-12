@@ -404,6 +404,22 @@ class UtilSpace {
 	};
 
 	/**
+	 * Gets the other participant for a 1-1 chat space.
+	 * @param {any} space - The spaceview object.
+	 * @returns {any|null} The other participant or null if not found.
+	 */
+	getOneToOneParticipant (space: any) {
+		if (!space || !space.isOneToOne || !space.oneToOneIdentity) {
+			return null;
+		};
+
+		const participantId = this.getParticipantId(space.targetSpaceId, space.oneToOneIdentity);
+		const object = S.Detail.get(this.getSubSpaceSubId(space.targetSpaceId), participantId);
+
+		return object._empty_ ? null : object;
+	};
+
+	/**
 	 * Checks if the current user can write in a given space.
 	 * @param {string} [spaceId] - The space ID.
 	 * @returns {boolean} True if the user can write, false otherwise.

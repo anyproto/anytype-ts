@@ -645,19 +645,36 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		const hasMembers = members.length > 1;
 		const showMembers = !spaceview.isOneToOne && (hasMembers || isOwner);
 
+		const otherParticipant = spaceview.isOneToOne ? U.Space.getOneToOneParticipant(spaceview) : null;
+		const otherGlobalName = otherParticipant?.globalName || '';
+		const otherIdentity = spaceview.oneToOneIdentity || '';
+		const otherAnyName = otherGlobalName || (otherIdentity ? U.String.shortMask(otherIdentity, 6) : '');
+
+		const onAnyNameClick = (e: React.MouseEvent) => {
+			e.preventDefault();
+			e.stopPropagation();
+
+			if (otherGlobalName) {
+				U.Common.copyToast(translate('commonAnyName'), otherGlobalName);
+			} else
+			if (otherIdentity) {
+				U.Common.copyToast(translate('blockFeaturedIdentity'), otherIdentity);
+			};
+		};
+
 		head = (
 			<>
 				<div className="side left">
 					<Icon
 						id="button-widget-panel-toggle"
-						name="widget/vaultToggle" 
-						className="vaultToggle" 
+						name="widget/vaultToggle"
+						className="vaultToggle"
 						withBackground={true}
 						onClick={() => sidebar.leftPanelToggle(true, true)}
 						tooltipParam={{ text: translate('commonToggleSidebar'), typeY: I.MenuDirection.Bottom }}
 					/>
 					<Icon
-						name="header/widget" 
+						name="header/widget"
 						withBackground={true}
 						onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
 						tooltipParam={{
@@ -667,6 +684,14 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 						}}
 					/>
 				</div>
+				{spaceview.isOneToOne && otherAnyName ? (
+					<div className="side center">
+						<div className="identity" onClick={onAnyNameClick}>
+							{otherGlobalName ? <Icon name="membership/badge" className="badge" size={18} color="accent100" /> : ''}
+							<Label text={otherAnyName} />
+						</div>
+					</div>
+				) : ''}
 				<div className="side right">
 					{showMembers ? (
 						<Icon
