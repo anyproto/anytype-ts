@@ -88,7 +88,19 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			S.Common.clearTimeout('blockContext');
 			window.clearTimeout(timeoutFilter.current);
 			window.clearTimeout(timeoutClick.current);
-			window.clearTimeout(timeoutText.current);
+
+			// Flush any pending debounced text save before unmount to prevent
+			// data loss when navigating away from the page while typing
+			if (timeoutText.current) {
+				window.clearTimeout(timeoutText.current);
+				timeoutText.current = 0;
+
+				// Force-save current text to middleware immediately
+				const value = String(editableRef.current?.getTextValue?.() || '');
+				if (value && (value !== textRef.current || value !== text)) {
+					U.Data.blockSetText(rootId, block.id, value, marksRef.current, true);
+				};
+			};
 
 			if (focused == block.id) {
 				focus.clear(true);
