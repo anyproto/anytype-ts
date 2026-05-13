@@ -72,6 +72,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const prevMarksRef = useRef<I.Mark[]>(marks || []);
 	const timeoutFilter = useRef(0);
 	const timeoutClick = useRef(0);
+	const timeoutText = useRef(0);
 	const preventMenu = useRef(false);
 	const clickCnt = useRef(0);
 	const prevStyleRef = useRef(style);
@@ -87,6 +88,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			S.Common.clearTimeout('blockContext');
 			window.clearTimeout(timeoutFilter.current);
 			window.clearTimeout(timeoutClick.current);
+			window.clearTimeout(timeoutText.current);
 
 			if (focused == block.id) {
 				focus.clear(true);
@@ -110,6 +112,10 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (textChanged || marksChanged) {
 			marksRef.current = marks || [];
 
+			// Only sync contenteditable from props when not focused or when content
+			// actually changed. When focused, the local editable state is the source
+			// of truth — skipping setValue prevents expensive DOM rebuilds that cause
+			// typing lag on every keystroke echo from middleware.
 			if (!isEcho) {
 				setValue(text);
 			};
@@ -121,13 +127,6 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			// Render markup even when text/marks haven't changed, to pick up
 			// newly loaded details for mentions/objects
 			renderMarkup();
-		};
-
-		// Only sync contenteditable from props when not focused or when content changed.
-		// When focused, the local editable state may be ahead of props during active editing
-		// (e.g. RTL flag change triggers re-render before text is saved to middleware).
-		if (!isEcho && ((focused != block.id) || textChanged || marksChanged)) {
-			setValue(text);
 		};
 
 		if (text) {
@@ -302,6 +301,10 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const onKeyDownHandler = (e: any) => {
 		e.persist();
+
+		// Flush any pending debounced text save to prevent stale overwrites
+		// when structural keys (Enter, Backspace, etc.) trigger their own save
+		window.clearTimeout(timeoutText.current);
 
 		if (S.Menu.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'object' ])) {
 			e.preventDefault();
@@ -1045,7 +1048,14 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			focus.apply();
 		};
 
-		setText(marksRef.current, false);
+		// Debounce the gRPC save so rapid typing doesn't saturate the main thread
+		// with synchronous middleware round-trips. The contenteditable DOM already
+		// reflects the user's input natively — we only need to persist periodically.
+		window.clearTimeout(timeoutText.current);
+		timeoutText.current = window.setTimeout(() => {
+			setText(marksRef.current, false);
+		}, 300);
+
 		onKeyUp(e, value, marksRef.current, range, props);
 
 		if (!keyboard.isSpecial(e) && !keyboard.withCommand(e)) {
@@ -1299,6 +1309,8 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			placeholderHide();
 		};
 
+		// Flush any pending debounced save before the immediate save on blur
+		window.clearTimeout(timeoutText.current);
 		setText(marksRef.current, true);
 		focus.clear(true);
 		onBlur?.(e);
@@ -1453,6 +1465,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
+			window.clearTimeout(timeoutText.current);
 			setText(marksRef.current, false, () => {
 				S.Menu.open('blockContext', {
 					classNameWrap: 'fromBlock',
