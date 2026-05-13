@@ -1040,7 +1040,7 @@ class Action {
 					title: translate('popupConfirmMembershipUpgradeTitle'),
 					text: translate('popupConfirmMembershipUpgradeText'),
 					textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-					onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
+					onConfirm: () => this.openSettings('membership', ''),
 					canCancel: false
 				}
 			});
