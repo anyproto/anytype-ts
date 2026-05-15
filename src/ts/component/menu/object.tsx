@@ -291,6 +291,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			className,
 			classNameWrap,
 			rebind,
+			parentId: getId(),
 			data: {
 				rootId,
 				blockId: rootId,

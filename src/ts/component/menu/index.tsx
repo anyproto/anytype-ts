@@ -289,11 +289,20 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	}, [ param.menuKey ]);
 
 	const rebindPrevious = () => {
-		const canRebind = parentId ? S.Menu.isOpen(parentId) : true;
-
 		childRef.current?.unbind?.();
 
-		if (!canRebind) {
+		// Without parentId we can't verify that the menu owning param.rebind
+		// is still mounted — calling rebind() on an unmounted owner re-adds
+		// its window keydown listener with nobody left to remove it, which
+		// silently leaks an `e.preventDefault()` on space across the whole tab.
+		if (!parentId) {
+			if (param.rebind) {
+				console.error(`[Menu].rebindPrevious: param.rebind passed without parentId in ${id}, skipping to avoid keydown leak`);
+			};
+			return;
+		};
+
+		if (!S.Menu.isOpen(parentId)) {
 			return;
 		};
 

@@ -92,7 +92,7 @@ Sentry.init({
 	release: electron.version.app,
 	environment: isPackaged ? 'production' : 'development',
 	dsn: SENTRY_DSN,
-	maxBreadcrumbs: 0,
+	maxBreadcrumbs: 20,
 	beforeSend: (e: any) => {
 		e.request.url = '';
 		return e;
