@@ -500,17 +500,17 @@ jobs:
             --base-url "https://${{ env.S3_BUCKET }}.s3.${{ secrets.NIGHTLY_AWS_REGION }}.amazonaws.com" \
             --channel "${{ needs.nightly-settings.outputs.channel }}"
 
-      - name: Notify Slack (workflow result)
-        uses: ravsamhq/notify-slack-action@v2
+      - name: Notify Telegram (workflow result)
+        uses: appleboy/telegram-action@v1.0.1
         with:
-          status: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && 'failure' || 'success' }}
-          notification_title: "${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && '❌' || '✅' }} {workflow} {repo}"
-          message_format: |
-            *Tag:* ${{ needs.nightly-settings.outputs.tag || 'none' }}
+          to: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && secrets.TELEGRAM_CHAT_ID_ALERTS || secrets.TELEGRAM_CHAT_ID_RELEASE_TRAIN }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && '❌' || '✅' }} *Nightly Builds anytype\-ts*
+
+            *Tag:* `${{ needs.nightly-settings.outputs.tag || 'none' }}`
             *Description:*
             ${{ needs.changelog.outputs.body || 'no changes, build skipped' }}
             *Download URL:*
             ${{ steps.urls.outputs.message }}
-          footer: "Linked Repo <{repo_url}|{repo}> | <{run_url}|View Workflow Run>"
-        env:
-          SLACK_WEBHOOK_URL: ${{ (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')) && secrets.SLACK_WEBHOOK_URL_ALERTS || secrets.SLACK_WEBHOOK_URL_RELEASE_TRAIN }}
