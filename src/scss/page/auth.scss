@@ -78,7 +78,7 @@ html.bodyAuthDeleted {
 			.img { width: 100%; height: 100%; background-size: 100%; background-image: url('~img/icon/bubble.svg'); transition: opacity $easingBubbleWrapper 1s; }
 		}
 	}
-	.bubbleWrapper.inflate { transform: scale3d(10,10,1); }
+	.bubbleWrapper.inflate { transform: scale3d(8.7,8.7,1); }
 	.bubbleWrapper.inflate {
 		.bubble { transition: background-color $easeInQuint 1s; background-color: var(--color-bg-primary); animation-play-state: paused; }
 		.bubble {
@@ -175,6 +175,12 @@ html.bodyAuthDeleted {
 	.label.description { width: 508px; }
 	.buttons { flex-direction: column; gap: 12px 0px; }
 	.title { font-weight: 600; }
+
+	.bubbleBg {
+		position: fixed; left: 50%; top: 50%; width: 1338px; height: 1338px; transform: translate(-50%, -50%);
+		border-radius: 50%; pointer-events: none; z-index: 0;
+		background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, var(--color-shape-tertiary) 100%);
+	}
 
 	.tooltipLink:hover { text-decoration: underline; }
 
@@ -374,8 +380,8 @@ html.bodyAuthDeleted {
 
 				.avatar {
 					position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-					display: flex; align-items: center; justify-content: center; padding: 6px; border-radius: 50%;
-					background-color: var(--color-bg-primary);
+					display: flex; align-items: center; justify-content: center; width: 92px; height: 92px;
+					border-radius: 50%; background-color: var(--color-bg-primary);
 				}
 			}
 

@@ -656,6 +656,8 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			ref={nodeRef}
 			className={`stage${Stage[stage]}`}
 		>
+			<div className="bubbleBg" />
+
 			<Header {...props} component="authIndex" onBack={onBack} />
 
 			<Frame ref={frameRef}>
