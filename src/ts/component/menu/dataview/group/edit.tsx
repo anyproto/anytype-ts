@@ -110,7 +110,7 @@ const MenuDataviewGroupEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				{item.children.map((action: any, i: number) => {
 					if (action.isBgColor) {
 						action.inner = <div className={`inner isMultiSelect bgColor bgColor-${action.className}`} />;
-						action.icon = 'color';
+						action.iconParam = { name: 'color' };
 						action.checkbox = action.value == colorRef.current;
 					};
 
