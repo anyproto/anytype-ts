@@ -303,7 +303,7 @@ html.bodyAuthDeleted {
 	.obCard { background-color: var(--color-bg-primary); text-align: left; }
 
 	.obCompact {
-		display: flex; align-items: center; gap: 0px 12px; width: 300px; padding: 16px;
+		box-sizing: border-box; display: flex; align-items: center; gap: 0px 12px; width: 349px; height: 80px; padding: 16px;
 		border-radius: 18px; box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.12);
 	}
 	.obCompact {
@@ -319,7 +319,7 @@ html.bodyAuthDeleted {
 	}
 
 	.obBookmark {
-		display: flex; gap: 0px 16px; width: 448px; padding: 16px;
+		box-sizing: border-box; display: flex; gap: 0px 16px; width: 448px; height: 160px; padding: 16px;
 		border-radius: 20px; box-shadow: 8px -8px 20px rgba(0, 0, 0, 0.2);
 	}
 	.obBookmark {
@@ -339,7 +339,7 @@ html.bodyAuthDeleted {
 	}
 
 	.obCover {
-		display: flex; flex-direction: column; width: 276px; padding: 24px;
+		box-sizing: border-box; display: flex; flex-direction: column; width: 276px; height: 170px; padding: 24px;
 		border-radius: 20px; box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.12);
 	}
 	.obCover {
@@ -380,8 +380,10 @@ html.bodyAuthDeleted {
 
 				.avatar {
 					position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-					display: flex; align-items: center; justify-content: center; width: 92px; height: 92px;
-					border-radius: 50%; background-color: var(--color-bg-primary);
+					padding: 6px; border-radius: 50%; background-color: var(--color-bg-primary); line-height: 0;
+				}
+				.avatar {
+					.iconObject { display: block; }
 				}
 			}
 
