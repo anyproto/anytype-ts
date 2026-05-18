@@ -351,8 +351,12 @@ class CommonStore {
 			if (ret === true) {
 				ret = 20;
 			} else
-			if ((ret === false) || (ret === undefined)) {
+			if (ret === false) {
 				ret = -1;
+			} else
+			if (ret === undefined) {
+				// Not configured yet: default ON (250 MiB) for local-only network, OFF otherwise
+				ret = !S.Auth.account?.info?.networkId ? 250 : -1;
 			};
 		};
 
