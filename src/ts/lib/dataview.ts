@@ -213,6 +213,77 @@ class Dataview {
 	};
 
 	/**
+	 * Loads all object IDs matching the current view's query, for export.
+	 * Reconstructs the exact same filters, sorts, sources and collection as the
+	 * live dataview subscription, but fetches every matching record (no page limit)
+	 * via a temporary subscription which is destroyed once the IDs are collected.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The block ID.
+	 * @param {function} callBack - Called with the resulting array of object IDs.
+	 */
+	loadExportIds (rootId: string, blockId: string, callBack: (ids: string[]) => void) {
+		const view = this.getView(rootId, blockId);
+		const block = S.Block.getLeaf(rootId, blockId);
+
+		if (!view || !block) {
+			callBack([]);
+			return;
+		};
+
+		const isCollection = this.isCollection(rootId, blockId);
+		const targetId = block.getTargetObjectId() || rootId;
+		const object = S.Detail.get(rootId, targetId, [ 'setOf' ]);
+		const subId = [ S.Record.getSubId(rootId, blockId), 'export' ].join('-');
+
+		let sources: string[] = [];
+		if (!isCollection) {
+			const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type).map(it => it.id);
+			const relations = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Relation).map(it => it.id);
+
+			sources = [].concat(types).concat(relations);
+
+			if (!sources.length) {
+				callBack([]);
+				return;
+			};
+		};
+
+		let filters = this.getActiveFilters(view).concat([
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.excludeFromSet() },
+		]);
+		let sorts = U.Common.objectCopy(view.sorts);
+
+		if (!sorts.length) {
+			sorts.push({ relationKey: 'createdDate', type: I.SortType.Desc, includeTime: true });
+		};
+
+		const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == ''));
+		const objectIds = el ? el.objectIds || [] : [];
+
+		if (objectIds.length) {
+			sorts.unshift({ relationKey: 'id', type: I.SortType.Custom, customOrder: objectIds });
+		};
+
+		filters = this.getFilteredFilters(filters).map(it => this.filterMapper({ ...it, includeTime: false }, { rootId }));
+		sorts = this.getFilteredSorts(sorts).map(it => this.sortMapper(it));
+
+		U.Subscription.subscribe({
+			subId,
+			filters,
+			sorts,
+			sources,
+			keys: [ 'id' ],
+			collectionId: isCollection ? object.id : '',
+			noDeps: true,
+		}, (message: any) => {
+			const ids = (message.records || []).map(it => it.id).filter(it => it);
+
+			U.Subscription.destroyList([ subId ]);
+			callBack(ids);
+		});
+	};
+
+	/**
 	 * Returns only active filters from given view.
 	 * @param {I.View} view - The dataview view object.
 	 * @returns {I.Filter[]} Array of filter objects.

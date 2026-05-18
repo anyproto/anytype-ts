@@ -74,6 +74,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let pageDeeplink = { id: 'pageDeeplink', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonCopyDeeplink') };
 		let pageReload = { id: 'pageReload', iconParam: { name: 'menu/action/reload' }, name: translate('menuObjectReloadFromSource') };
 		let pageExport = { id: 'pageExport', iconParam: { name: 'menu/action/export' }, name: translate('menuObjectExport') };
+		let exportSet = { id: 'exportSet', iconParam: { name: 'menu/action/export' }, name: translate('menuObjectExport') };
 		let downloadFile = { id: 'downloadFile', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') };
 		let openFile = { id: 'openFile', iconParam: { name: 'common/expand' }, name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') };
@@ -130,6 +131,8 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const allowedReload = canWrite && object.source && isBookmark;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedExport = !isFilePreview && !isChat && !isDate;
+		const dataviewId = J.Constant.blockId.dataview;
+		const allowedExportSet = isInSet && !object.isArchived && !!S.Block.getLeaf(rootId, dataviewId) && !!Dataview.getView(rootId, dataviewId);
 		const allowedPrint = !isFilePreview && !isChat && !isVideoOrAudio;
 		const allowedDownloadFile = isInFile;
 		const allowedOpenFile = isInFile;
@@ -164,6 +167,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedLinkTo)			 linkTo = null;
 		if (!allowedAddCollection)	 addCollection = null;
 		if (!allowedExport)			 pageExport = null;
+		if (!allowedExportSet)		 exportSet = null;
 		if (!allowedPrint)			 print = null;
 		if (!allowedDownloadFile)	 downloadFile = null;
 		if (!allowedOpenFile)		 openFile = null;
@@ -219,7 +223,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				{ children: [ openObject ] },
 				{ children: [ pageLink, favorite, pinToChannel, linkTo, addCollection, pageCopy, archive, remove, template ] },
 				{ children: [ pageLock, history ] },
-				{ children: [ downloadFile, copyMedia, print ] },
+				{ children: [ downloadFile, copyMedia, print, exportSet ] },
 			]);
 		} else {
 			if (isTemplate) {
@@ -471,6 +475,13 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'pageExport': {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route } });
+				break;
+			};
+
+			case 'exportSet': {
+				Dataview.loadExportIds(rootId, J.Constant.blockId.dataview, (ids: string[]) => {
+					S.Popup.open('export', { data: { objectIds: ids, allowHtml: true, route } });
+				});
 				break;
 			};
 
