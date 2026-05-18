@@ -842,6 +842,10 @@ class UtilMenu {
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const oneToOneParticipant = space.isOneToOne ? U.Space.getOneToOneParticipant(space) : null;
+		const oneToOneGlobalName = oneToOneParticipant?.globalName || '';
+		const oneToOneIdentity = space.oneToOneIdentity || '';
+		const oneToOneAnyName = oneToOneGlobalName || (oneToOneIdentity ? U.String.shortMask(oneToOneIdentity, 6) : '');
 
 		const onClick = (itemId: string, inviteLink: string) => {
 			switch (itemId) {
@@ -960,11 +964,22 @@ class UtilMenu {
 					break;
 				};
 
+				case 'copyAnyName': {
+					if (oneToOneGlobalName) {
+						U.Common.copyToast(translate('commonAnyName'), oneToOneGlobalName);
+					} else
+					if (oneToOneIdentity) {
+						U.Common.copyToast(translate('blockFeaturedIdentity'), oneToOneIdentity);
+					};
+					break;
+				};
+
 			};
 		};
 
 		const getOptions = (inviteLink: string) => {
 			const sections = {
+				anyName: [],
 				general: [],
 				actions: [],
 				delete: [],
@@ -988,6 +1003,14 @@ class UtilMenu {
 					});
 				};
 			} else {
+				if (space.isOneToOne && oneToOneAnyName) {
+					sections.anyName.push({
+						id: 'copyAnyName',
+						iconParam: oneToOneGlobalName ? { name: 'membership/badge', className: 'badge', size: 18, color: 'accent100' } : undefined,
+						name: oneToOneAnyName,
+					});
+				};
+
 				if (!isLoading) {
 					sections.general.push({ id: 'settings', iconParam: { name: 'menu/action/settings' }, name: translate('menuSpaceContextSpaceSettings') });
 				};
