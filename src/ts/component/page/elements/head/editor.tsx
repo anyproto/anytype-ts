@@ -120,20 +120,43 @@ const PageHeadEditor = forwardRef<RefProps, Props>((props, ref) => {
 		const onSourceContextMenu = (e: any) => {
 			e.preventDefault();
 
-			if (!source) {
+			const relation = S.Record.getRelationByKey('source');
+			if (!relation) {
 				return;
 			};
 
-			const options = [
+			const canEdit = allowedDetails && !readonly && !relation.isReadonlyValue;
+			const actions = source ? [
 				{ id: 'go', iconParam: { name: 'menu/action/browse' }, name: translate(`menuDataviewUrlActionGo${I.RelationType.Url}`) },
 				{ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy') },
 				{ id: 'reload', iconParam: { name: 'menu/action/reload' }, name: translate('menuDataviewUrlActionGoReload') },
-			];
+			] : [];
 
-			S.Menu.open('select', {
+			S.Menu.open('dataviewText', {
+				title: relation.name,
+				className: 'withTitle',
+				width: J.Size.menu.value,
 				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 }),
 				data: {
-					options,
+					value: String(source || ''),
+					relationKey: relation.relationKey,
+					placeholder: relation.name,
+					canEdit,
+					noResize: true,
+					actions,
+					onChange: (v: any) => {
+						if (!canEdit) {
+							return;
+						};
+
+						const value = Relation.formatValue(relation, v, true);
+						if (value == source) {
+							return;
+						};
+
+						C.ObjectListSetDetails([ rootId ], [ { key: 'source', value } ]);
+						analytics.changeRelationValue(relation, value, { type: 'menu', id: 'Single' });
+					},
 					onSelect: (e: any, item: any) => {
 						switch (item.id) {
 							case 'go': {
