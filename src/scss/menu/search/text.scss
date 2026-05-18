@@ -11,7 +11,17 @@
 		.wrap { height: 100%; width: 100%; display: flex; flex-direction: column; }
 
 		.filterWrapper {
-			padding: 10px 0px 4px 0px; display: flex; flex-direction: row; gap: 0px 8px;
+			padding: 10px 0px 4px 0px; display: flex; flex-direction: row; gap: 0px 8px; align-items: center;
+		}
+
+		.replaceToggle {
+			display: flex; align-items: center; justify-content: center; width: 20px; height: 20px;
+			cursor: pointer; flex-shrink: 0; border-radius: 4px; transition: background-color 0.2s;
+		}
+		.replaceToggle:hover { background-color: var(--color-shape-highlight-medium); }
+		.replaceToggle {
+			.icon.toggle { transform: rotate(-90deg); transition: transform 0.2s; }
+			.icon.toggle.isOpen { transform: rotate(0deg); }
 		}
 
 		.filterContainer {
@@ -41,6 +51,27 @@
 			.icon { width: 20px !important; height: 20px !important; }
 			.icon.arrow.up { transform: rotate(180deg); }
 			.icon.arrow.disabled { opacity: 0.3; pointer-events: none; }
+		}
+
+		.replaceWrapper {
+			padding: 4px 0px 4px 28px; display: flex; flex-direction: row; gap: 0px 8px; align-items: center;
+		}
+
+		.replaceContainer {
+			display: flex; flex-direction: row; align-items: center; flex-grow: 1;
+			background-color: var(--color-shape-highlight-medium); border-radius: 16px; padding: 0px 12px; height: 32px;
+			border: 1px solid var(--color-shape-secondary); gap: 0px 6px;
+		}
+		.replaceContainer {
+			.input { flex-grow: 1; height: 100%; padding: 0px; border: 0px; background: none; border-radius: 0px; }
+		}
+
+		.replaceButtons {
+			display: flex; flex-direction: row; gap: 0px 4px; flex-shrink: 0;
+		}
+		.replaceButtons {
+			.button { @include text-small; height: 28px; padding: 0px 10px; white-space: nowrap; }
+			.button:disabled, .button.disabled { opacity: 0.3; pointer-events: none; }
 		}
 	}
 }

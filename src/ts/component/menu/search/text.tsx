@@ -1,6 +1,6 @@
-import React, { forwardRef, useEffect, useRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle } from 'react';
 import findAndReplaceDOMText from 'findandreplacedomtext';
-import { Icon, Input } from 'Component';
+import { Icon, Input, Button } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -28,10 +28,12 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<any>(null);
+	const replaceInputRef = useRef<any>(null);
 	const searchTimeoutRef = useRef(0);
 	const lastSearchRef = useRef('');
 	const n = useRef(0);
 	const matchElementsRef = useRef<HTMLElement[] | null>(null);
+	const [ replaceMode, setReplaceMode ] = useState(!!data.replaceMode);
 
 	const expandedRef = useRef<ExpandedState>({ toggles: [] });
 	const activeMatchRef = useRef<ActiveMatch>({ toggleId: '', position: null });
@@ -276,6 +278,95 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		focusCurrentMatch();
 	};
 
+	const onReplace = () => {
+		const pos = activeMatchRef.current.position;
+		if (!pos) {
+			return;
+		};
+
+		const rootId = getRootId();
+		const replaceValue = replaceInputRef.current?.getValue() || '';
+
+		U.Data.blockInsertText(rootId, pos.blockId, replaceValue, pos.range.from, pos.range.to, () => {
+			lastSearchRef.current = '';
+			window.setTimeout(() => {
+				search();
+				if (matchElementsRef.current?.length) {
+					if (n.current >= matchElementsRef.current.length) {
+						n.current = 0;
+					};
+					focusCurrentMatch();
+				};
+			}, 50);
+		});
+	};
+
+	const onReplaceAll = () => {
+		const searchValue = inputRef.current?.getValue() || '';
+		const replaceValue = replaceInputRef.current?.getValue() || '';
+
+		if (!searchValue) {
+			return;
+		};
+
+		const rootId = getRootId();
+		const blocks = S.Block.getBlocks(rootId, (it: any) => it.isText());
+
+		if (!blocks.length) {
+			return;
+		};
+
+		clearSearch();
+
+		let completed = 0;
+		let total = 0;
+		const regex = new RegExp(U.String.regexEscape(searchValue), 'gi');
+
+		for (const block of blocks) {
+			const text = block.content.text || '';
+			const matches: { from: number; to: number }[] = [];
+			let match;
+
+			while ((match = regex.exec(text)) !== null) {
+				matches.push({ from: match.index, to: match.index + match[0].length });
+			};
+
+			if (!matches.length) {
+				continue;
+			};
+
+			total++;
+
+			// Replace from end to start to preserve offsets
+			let newText = text;
+			let newMarks = block.content.marks || [];
+
+			for (let i = matches.length - 1; i >= 0; i--) {
+				const m = matches[i];
+				const diff = replaceValue.length - (m.to - m.from);
+				newText = U.String.insert(newText, replaceValue, m.from, m.to);
+				newMarks = Mark.adjust(newMarks, m.from, diff);
+			};
+
+			U.Data.blockSetText(rootId, block.id, newText, newMarks, true, () => {
+				completed++;
+				if (completed >= total) {
+					lastSearchRef.current = '';
+					matchElementsRef.current = null;
+					n.current = 0;
+					updateMatchCounter();
+				};
+			});
+		};
+
+		if (total === 0) {
+			lastSearchRef.current = '';
+			matchElementsRef.current = null;
+			n.current = 0;
+			updateMatchCounter();
+		};
+	};
+
 	const onKeyDown = (e: any, v: string) => {
 		keyboard.shortcut('arrowup, arrowdown, tab, enter', e, () => {
 			e.preventDefault();
@@ -285,6 +376,13 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			e.preventDefault();
 			e.stopPropagation();
 			navigateMatch(1);
+			window.clearTimeout(searchTimeoutRef.current);
+		});
+
+		keyboard.shortcut('replaceText', e, () => {
+			e.preventDefault();
+			e.stopPropagation();
+			setReplaceMode(v => !v);
 			window.clearTimeout(searchTimeoutRef.current);
 		});
 	};
@@ -308,6 +406,13 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!handled) {
 			searchTimeoutRef.current = window.setTimeout(search, J.Constant.delay.keyboard);
 		};
+	};
+
+	const onReplaceKeyDown = (e: any, v: string) => {
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			onReplace();
+		});
 	};
 
 	const onClear = () => {
@@ -337,6 +442,12 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		U.Dom.css(menu, { width: `${width}px` });
 	};
 
+	const isReadonly = (): boolean => {
+		const rootId = getRootId();
+		const root = S.Block.getLeaf(rootId, rootId);
+		return root ? root.isLocked() : false;
+	};
+
 	useImperativeHandle(ref, () => ({
 		beforePosition,
 	}), []);
@@ -362,9 +473,15 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	}, []);
 
+	const readonly = isReadonly();
+
 	return (
-		<div ref={nodeRef} className="wrap">
+		<div ref={nodeRef} className={`wrap ${replaceMode ? 'withReplace' : ''}`}>
 			<div className="filterWrapper">
+				<div className="replaceToggle" onClick={() => setReplaceMode(!replaceMode)}>
+					<Icon name="arrow/small" size={8} className={`toggle ${replaceMode ? 'isOpen' : ''}`} />
+				</div>
+
 				<div className="filterContainer">
 					<Icon name="common/search" className="search" />
 					<Input
@@ -382,6 +499,32 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<Icon name="arrow/small" size={8} className="arrow down" onClick={() => navigateMatch(1)} />
 				</div>
 			</div>
+
+			{replaceMode ? (
+				<div className="replaceWrapper">
+					<div className="replaceContainer">
+						<Input
+							ref={replaceInputRef}
+							placeholder={translate('commonReplaceWith')}
+							onKeyDown={onReplaceKeyDown}
+						/>
+					</div>
+					<div className="replaceButtons">
+						<Button
+							text={translate('commonReplace')}
+							color="blank"
+							className={`c28 ${readonly ? 'disabled' : ''}`}
+							onClick={onReplace}
+						/>
+						<Button
+							text={translate('commonReplaceAll')}
+							color="blank"
+							className={`c28 ${readonly ? 'disabled' : ''}`}
+							onClick={onReplaceAll}
+						/>
+					</div>
+				</div>
+			) : null}
 		</div>
 	);
 

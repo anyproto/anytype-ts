@@ -502,6 +502,12 @@ class Keyboard {
 				// Lock/Unlock
 				this.shortcut('pageLock', e, () => this.onToggleLock());
 
+				// Search & Replace
+				this.shortcut('replaceText', e, () => {
+					e.preventDefault();
+					this.onSearchText('', route, true);
+				});
+
 				// Move to bin
 				this.shortcut('moveToBin', e, () => {
 					e.preventDefault();
@@ -1360,8 +1366,9 @@ class Keyboard {
 	 * Handles search menu action.
 	 * @param {string} value - The search value.
 	 * @param {string} [route] - The route context.
+	 * @param {boolean} [replaceMode] - Whether to open in replace mode.
 	 */
-	onSearchText (value: string, route?: string) {
+	onSearchText (value: string, route?: string, replaceMode?: boolean) {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 		const match = this.getMatch();
@@ -1411,6 +1418,7 @@ class Keyboard {
 				isPopup,
 				value,
 				route,
+				replaceMode: !!replaceMode,
 			});
 		};
 
