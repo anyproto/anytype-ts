@@ -7,16 +7,17 @@ const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
-	const { title, text, icon, iconParam, storageKey, onConfirm, onCancel, noCloseOnConfirm, confirmMessage } = data;
+	const { title, text, icon, iconParam, storageKey, checkboxText, requireCheckbox, onConfirm, onCancel, noCloseOnConfirm, confirmMessage } = data;
 	const cn = [ 'wrap' ];
 	const [ error, setError ] = useState('');
+	const [ isChecked, setIsChecked ] = useState(false);
 	const errorText = String(data.error || error || '');
 	const n = useRef(0);
 	const nodeRef = useRef(null);
 	const checkboxRef = useRef(null);
 	const inputRef = useRef(null);
 	const titleRef = useRef(null);
-	const canConfirm = undefined === data.canConfirm ? true : data.canConfirm;
+	const canConfirm = (undefined === data.canConfirm ? true : data.canConfirm) && (!requireCheckbox || isChecked);
 	const canCancel = undefined === data.canCancel ? true : data.canCancel;
 	const textConfirm = data.textConfirm || translate('commonOk');
 	const textCancel = data.textCancel || translate('commonCancel');
@@ -40,7 +41,7 @@ const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 	const buttonSize = (Number(data.buttonSize) || 36) as 36;
 
-	if (storageKey) {
+	if (storageKey || checkboxText) {
 		cn.push('withCheckbox');
 	};
 
@@ -130,7 +131,10 @@ const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 		const value = checkboxRef.current?.getValue();
 
 		checkboxRef.current?.toggle();
-		Storage.set(storageKey, !value);
+		setIsChecked(!value);
+		if (storageKey) {
+			Storage.set(storageKey, !value);
+		}
 	};
 	
 	const onCancelHandler = (e: any) => {
@@ -198,10 +202,10 @@ const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 			/>
 			<Label className="descr" text={text} />
 
-			{storageKey ? (
+			{(storageKey || checkboxText) ? (
 				<div className="checkboxWrapper" onClick={onCheck}>
 					<Checkbox ref={checkboxRef} value={false} />
-					<Label text={translate('commonDoNotShowAgain')} />
+					<Label text={checkboxText || translate('commonDoNotShowAgain')} />
 				</div>
 			) : ''}
 

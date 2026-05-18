@@ -341,9 +341,11 @@ function devServerPlugin(): Plugin {
 	return {
 		name: 'dev-server-rewrites',
 		configureServer(server) {
-			// Serve static files from dist/ (tabs.html, workers/, font/, etc.)
-			server.middlewares.use((req, res, next) => {
-				if (!req.url) return next();
+			// Return function so this runs AFTER Vite's internal middleware
+			return () => {
+				server.middlewares.use(async (req, res, next) => {
+					const url = req.url || '';
+					const pathname = url.split('?')[0];
 
 					if (
 						pathname.startsWith('/@') ||
@@ -378,24 +380,28 @@ function devServerPlugin(): Plugin {
 						return next();
 					}
 
-				// Try to serve from dist/ for static files (tabs.html, workers, fonts, etc.)
-				// Skip files that Vite should process through its pipeline (JS/TS modules)
-				const urlPath = req.url.split('?')[0];
-				if (urlPath.startsWith('/dist/lib/')) {
-					return next();
-				}
-				const distPath = path.resolve(__dirname, 'dist', urlPath.slice(1));
-				if (fs.existsSync(distPath) && fs.statSync(distPath).isFile()) {
-					const ext = path.extname(distPath).toLowerCase();
-					const contentType = mimeTypes[ext];
-					if (contentType) {
-						res.setHeader('Content-Type', contentType);
+					const htmlPath = path.resolve(__dirname, 'src/html/index.html');
+					if (!fs.existsSync(htmlPath)) {
+						return next();
 					}
-					return res.end(fs.readFileSync(distPath));
-				}
 
-				next();
-			});
+					try {
+						const raw = fs.readFileSync(htmlPath, 'utf-8');
+						const html = await server.transformIndexHtml(
+							'/src/html/index.html',
+							raw,
+							req.originalUrl
+						);
+
+						res.statusCode = 200;
+						res.setHeader('Content-Type', 'text/html');
+						res.end(html);
+					} catch (err) {
+						console.error('[SPA Fallback] Error:', err);
+						next(err);
+					}
+				});
+			};
 		},
 	};
 }

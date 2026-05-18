@@ -23,7 +23,20 @@ const PageMainSettingsImportIndex = forwardRef<I.PageRef, Props>((props, ref) =>
 				if (message.error.code) {
 					setError(message.error.description);
 				} else {
-					U.Space.openDashboard();
+					S.Popup.open('confirm', {
+						data: {
+							text: translate('commonImportMissingObjects'),
+							checkboxText: translate('commonDataIntegrityWarning'),
+							requireCheckbox: true,
+							buttonText: translate('commonCheckDatabase'),
+							onConfirm: () => {
+								U.Space.openDashboard();
+							},
+							onCancel: () => {
+								U.Space.openDashboard();
+							}
+						}
+					});
 				};
 			});
 		} else {
