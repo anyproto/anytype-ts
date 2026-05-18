@@ -1,14 +1,23 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
-import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase, Footer } from 'Component';
+import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase, Footer, IconObject, QR } from 'Component';
 import * as I from 'Interface';
 import Animation from 'Lib/animation';
 
 enum Stage {
-	Phrase 		= 0,
-	Email	 	= 1,
-	Persona 	= 2,
-	UseCase		= 3,
+	ChannelType		= 0,
+	Explainer		= 1,
+	Profile			= 2,
+	ProfileShare	= 3,
+	Key				= 4,
+	Email			= 5,
 };
+
+const CHANNELS = [
+	{ id: 'team', hasChat: true },
+	{ id: 'friends', hasChat: true },
+	{ id: 'community', hasChat: true },
+	{ id: 'private', hasChat: false },
+];
 
 const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -18,18 +27,19 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const nextRef = useRef(null);
 	const phraseRef = useRef(null);
 	const emailRef = useRef(null);
-	const shuffled = useRef({ role: null, purpose: null });
-	const selected = useRef({ role: null, purpose: null });
-	const [ stage, setStage ] = useState(Stage.Phrase);
+	const nameRef = useRef(null);
+	const descriptionRef = useRef(null);
+	const selectedRef = useRef('');
+	const shareLinkRef = useRef('');
+	const connectTimeout = useRef(0);
+	const [ stage, setStage ] = useState(Stage.ChannelType);
 	const [ phraseVisible, setPhraseVisible ] = useState(false);
+	const [ connected, setConnected ] = useState(false);
 	const [ error, setError ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
-	const options = {
-		role: [ 'student', 'manager', 'softwareDeveloper', 'writer', 'designer', 'artist', 'marketer', 'consultant', 'entrepreneur', 'researcher' ],
-		purpose: [ 'messaging', 'knowledge', 'noteTaking', 'projects', 'lifePlanning', 'habitTracking', 'teamWork' ],
-	};
 	const cnb = [];
 	const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
+	const lastStage = needEmail ? Stage.Email : Stage.Key;
 
 	const onKeyDownRef = useRef<((e: any) => void) | null>(null);
 
@@ -56,12 +66,18 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	// Guard to prevent illegal state change
 	const canMoveForward = (): boolean => {
-		return !!Stage[stage] && !nextRef.current?.isLoading();
+		if (nextRef.current?.isLoading()) {
+			return false;
+		};
+		if ((stage == Stage.ChannelType) && !selectedRef.current) {
+			return false;
+		};
+		return stage <= lastStage;
 	};
 
 	// Guard to prevent illegal state change
 	const canMoveBack = (): boolean => {
-		return stage <= Stage.UseCase;
+		return stage <= lastStage;
 	};
 
 	const onAuth = () => {
@@ -82,18 +98,44 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		setError('');
 
 		switch (stage) {
-			case Stage.Phrase: {
-				Animation.from(() => setStage(stage + (needEmail ? 1 : 2)));
+			case Stage.ChannelType: {
+				Animation.from(() => setStage(stage + 1));
+
+				analytics.event('ClickOnboarding', { step: 'Channel', type: U.String.toUpperCamelCase(selectedRef.current) });
+				break;
+			};
+
+			case Stage.Explainer: {
+				Animation.from(() => setStage(stage + 1));
+				break;
+			};
+
+			case Stage.Profile: {
+				saveProfile();
+				Animation.from(() => setStage(stage + 1));
+
+				analytics.event('ClickOnboarding', { step: 'Profile' });
+				break;
+			};
+
+			case Stage.ProfileShare: {
+				Animation.from(() => setStage(stage + 1));
+				break;
+			};
+
+			case Stage.Key: {
+				if (needEmail) {
+					Animation.from(() => setStage(stage + 1));
+				} else {
+					onAuth();
+				};
 				break;
 			};
 
 			case Stage.Email: {
-				if (!needEmail || skip) {
-					Animation.from(() => setStage(stage + 1));
-
-					if (skip) {
-						analytics.event('ScreenOnboardingSkipEmail');
-					};
+				if (skip) {
+					onAuth();
+					analytics.event('ScreenOnboardingSkipEmail');
 					break;
 				};
 
@@ -110,37 +152,12 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 							return;
 						};
 
-						Animation.from(() => setStage(stage + 1));
-
 						analytics.event('ScreenOnboardingEnterEmail', { middleTime: message.middleTime });
+						onAuth();
 					});
 				} else {
-					Animation.from(() => setStage(stage + 1));
 					analytics.event('ScreenOnboardingSkipEmail');
-				};
-				break;
-			};
-
-			case Stage.Persona: {
-				Animation.from(() => setStage(stage + 1));
-
-				if (selected.current.role) {
-					const items = getItems('role');
-					const type = items.find(it => it.id == selected.current.role).type;
-
-					analytics.event('ClickOnboarding', { step: 'Persona', type });
-				};
-				break;
-			};
-
-			case Stage.UseCase: {
-				onAuth();
-
-				if (selected.current.purpose) {
-					const items = getItems('purpose');
-					const type = items.find(it => it.id == selected.current.purpose).type;
-
-					analytics.event('ClickOnboarding', { step: 'UseCase', type });
+					onAuth();
 				};
 				break;
 			};
@@ -153,11 +170,43 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		if (stage == Stage.Phrase) {
+		if (stage == Stage.ChannelType) {
 			Animation.from(() => U.Router.go('/auth/select', { replace: true }));
 		} else {
 			setStage(stage - 1);
 		};
+	};
+
+	const saveProfile = () => {
+		const profile = U.Space.getProfile();
+		const name = nameRef.current?.getValue();
+		const description = descriptionRef.current?.getValue();
+		const details = [];
+
+		if ((name !== undefined) && (profile.name != name)) {
+			details.push({ key: 'name', value: String(name || '') });
+		};
+		if ((description !== undefined) && (profile.description != description)) {
+			details.push({ key: 'description', value: String(description || '') });
+		};
+
+		if (details.length) {
+			C.ObjectListSetDetails([ S.Block.profile ], details);
+		};
+	};
+
+	const loadShareLink = () => {
+		if (shareLinkRef.current) {
+			setDummy(dummy + 1);
+			return;
+		};
+
+		C.ObjectShareByLink(S.Block.profile, (message: any) => {
+			if (!message.error.code && message.link) {
+				shareLinkRef.current = message.link;
+				setDummy(dummy + 1);
+			};
+		});
 	};
 
 	const onPhraseCopy = () => {
@@ -181,44 +230,73 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		U.Dom.toggleClass(nextRef.current?.getNode(), 'disabled', !isValid);
 	};
 
-	const shuffleItems = (stage: string) => {
-		const s = options[stage].map(value => ({ value, sort: Math.random() }))
-			.sort((a, b) => a.sort - b.sort)
-			.map(({ value }) => value);
-
-		s.push('other');
-
-		shuffled.current[stage] = s;
-
-		return s;
-	};
-
-	const getItems = (stage: string) => {
-		const items = shuffled.current[stage] ? shuffled.current[stage] : shuffleItems(stage);
-
-		return items.map(it => {
-			const type = U.String.toUpperCamelCase(it);
-
-			return { id: it, name: translate(`authOnboardOptions${type}`), type, stage };
-		});
-	};
-
-	const onItemClick = (item: any) => {
-		const { id, stage } = item;
-		selected.current[stage] = item.id;
-
+	const onChannelClick = (id: string) => {
+		selectedRef.current = id;
 		setDummy(dummy + 1);
 	};
 
-	const itemsMapper = (item: any) => {
-		const { id, name, stage } = item;
-		const s = selected.current[stage];
-		const isSelected = s == item.id;
+	const onCopyLink = () => {
+		if (shareLinkRef.current) {
+			U.Common.copyToast(translate('authOnboardConnectShareTitle'), shareLinkRef.current);
+			analytics.event('ClickOnboarding', { step: 'ProfileShare', type: 'CopyLink' });
+		};
+	};
+
+	const onDownloadQr = () => {
+		const canvas = U.Dom.select('canvas', nodeRef.current) as HTMLCanvasElement;
+		if (!canvas) {
+			return;
+		};
+
+		const image = canvas.toDataURL('image/png');
+		if (image) {
+			Renderer.send('download', image, { saveAs: true });
+			analytics.event('ClickOnboarding', { step: 'ProfileShare', type: 'Download' });
+		};
+	};
+
+	const renderObjectCard = (icon: string, name: string, type: string, className?: string) => (
+		<div className={[ 'objectCard', (className || '') ].join(' ')}>
+			<Icon className={`channel ${icon}`} />
+			<div className="text">
+				<div className="name">{name}</div>
+				<div className="type">{type}</div>
+			</div>
+		</div>
+	);
+
+	const getChannel = () => CHANNELS.find(it => it.id == selectedRef.current) || CHANNELS[0];
+
+	const renderExplainer = () => {
+		const channel = getChannel();
+		const u = U.String.toUpperCamelCase(channel.id);
+		const cn = [ 'explainerWrapper', (connected ? 'connected' : ''), (channel.hasChat ? '' : 'noChat') ];
 
 		return (
-			<div className={[ 'option', 'animation', isSelected ? 'selected' : '' ].join(' ')} key={id} onClick={() => onItemClick(item)}>
-				<Icon className={id} />
-				<Label text={name} />
+			<div className={cn.join(' ')}>
+				{channel.hasChat ? (
+					<div className="chatBubble">
+						<IconObject object={U.Space.getProfile()} size={40} />
+						<div className="message">
+							<div className="text">{translate(`authOnboardExplainer${u}Message`)}</div>
+							{renderObjectCard('object', translate(`authOnboardExplainer${u}Object`), translate(`authOnboardExplainer${u}ObjectType`), 'attachment')}
+						</div>
+					</div>
+				) : (
+					<div className="topObject">
+						{renderObjectCard('object', translate(`authOnboardExplainer${u}Object`), translate(`authOnboardExplainer${u}ObjectType`))}
+					</div>
+				)}
+
+				<div className="intro">
+					<Label className="line1" text={translate('authOnboardExplainerTitle1')} />
+					<Label className="line2" text={translate('authOnboardExplainerTitle2')} />
+				</div>
+
+				<div className="links">
+					{renderObjectCard('link', translate(`authOnboardExplainer${u}Link1`), translate(`authOnboardExplainer${u}Link1Type`), 'link1')}
+					{renderObjectCard('link', translate(`authOnboardExplainer${u}Link2`), translate(`authOnboardExplainer${u}Link2Type`), 'link2')}
+				</div>
 			</div>
 		);
 	};
@@ -227,13 +305,177 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		cnb.push('disabled');
 	};
 
+	let title = null;
 	let content = null;
 	let additional = null;
 	let buttons = null;
 	let footer = null;
 
 	switch (stage) {
-		case Stage.Phrase: {
+		case Stage.ChannelType: {
+			title = (
+				<div className="intro animation">
+					<Label className="line1" text={translate('authOnboardChannelTitle')} />
+					<Label className="line2" text={translate('authOnboardChannelLabel')} />
+				</div>
+			);
+
+			content = (
+				<div className="channelsWrapper animation">
+					{CHANNELS.map(it => {
+						const u = U.String.toUpperCamelCase(it.id);
+						const cn = [ 'channel', it.id, (selectedRef.current == it.id ? 'selected' : '') ];
+
+						return (
+							<div className={cn.join(' ')} key={it.id} onClick={() => onChannelClick(it.id)}>
+								<Icon className={`channelIcon ${it.id}`} />
+								<div className="text">
+									<div className="name">{translate(`authOnboardChannel${u}Name`)}</div>
+									<div className="description">{translate(`authOnboardChannel${u}Description`)}</div>
+								</div>
+								{selectedRef.current == it.id ? <Icon className="check" /> : ''}
+							</div>
+						);
+					})}
+				</div>
+			);
+
+			buttons = (
+				<div className="animation">
+					<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
+				</div>
+			);
+			break;
+		};
+
+		case Stage.Explainer: {
+			content = renderExplainer();
+
+			buttons = (
+				<div className="animation">
+					<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
+				</div>
+			);
+			break;
+		};
+
+		case Stage.Profile: {
+			const profile = U.Space.getProfile();
+
+			let name = profile.name;
+			if (name == translate('defaultNamePage')) {
+				name = '';
+			};
+
+			title = (
+				<>
+					<Title className="animation" text={translate('authOnboardProfileTitle')} />
+					<Label id="label" className="description animation" text={translate('authOnboardProfileLabel')} />
+				</>
+			);
+
+			content = (
+				<div className="profileWrapper animation">
+					<div className="iconWrapper">
+						<IconObject
+							id="onboard-userpic"
+							object={profile}
+							size={96}
+							canEdit={true}
+							menuParam={{ horizontal: I.MenuDirection.Center, classNameWrap: 'fromBlock' }}
+						/>
+					</div>
+
+					<div className="inputWrapper">
+						<Input
+							ref={nameRef}
+							value={name}
+							placeholder={translate('authOnboardProfileNamePlaceholder')}
+							maxLength={160}
+							focusOnMount={true}
+						/>
+					</div>
+
+					<div className="inputWrapper">
+						<Input
+							ref={descriptionRef}
+							value={profile.description}
+							placeholder={translate('authOnboardProfileDescriptionPlaceholder')}
+							maxLength={160}
+						/>
+					</div>
+				</div>
+			);
+
+			buttons = (
+				<div className="animation">
+					<Button ref={nextRef} size={48} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
+				</div>
+			);
+			break;
+		};
+
+		case Stage.ProfileShare: {
+			const profile = U.Space.getProfile();
+
+			title = (
+				<>
+					<Title className="animation" text={translate('authOnboardConnectTitle')} />
+					<Label id="label" className="description animation" text={translate('authOnboardConnectLabel')} />
+				</>
+			);
+
+			content = (
+				<div className="shareWrapper animation">
+					<div className="shareCard">
+						<Label className="shareTitle" text={translate('authOnboardConnectShareTitle')} />
+
+						<div className="qrWrap">
+							<QR value={shareLinkRef.current || ' '} size={180} />
+							<div className="avatar">
+								<IconObject object={profile} size={48} />
+							</div>
+						</div>
+
+						<div className="profileName">{profile.name}</div>
+
+						<div className="actions">
+							<div className="action" onClick={onCopyLink}>
+								<Icon className="copyLink" />
+								<Label text={translate('authOnboardConnectCopyLink')} />
+							</div>
+							<div className="action" onClick={onDownloadQr}>
+								<Icon className="downloadQr" />
+								<Label text={translate('authOnboardConnectDownload')} />
+							</div>
+						</div>
+					</div>
+				</div>
+			);
+
+			buttons = (
+				<div className="animation">
+					<Button ref={nextRef} size={48} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
+				</div>
+			);
+			break;
+		};
+
+		case Stage.Key: {
+			title = (
+				<>
+					<Title className="animation" text={translate('authOnboardPhraseTitle')} />
+					<Label id="label" className="description animation" text={translate('authOnboardPhraseLabel')} />
+				</>
+			);
+
+			additional = (
+				<div className="learnMore animation" onClick={onLearnMore}>
+					<Icon name="plus/onboarding" size={18} />
+					<Label text={translate('commonLearnMore')} />
+				</div>
+			);
+
 			content = (
 				<Phrase
 					ref={phraseRef}
@@ -246,31 +488,21 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				/>
 			);
 
-			additional = (
-				<div className="learnMore animation" onClick={onLearnMore}>
-					<Icon name="plus/onboarding" size={18} />
-					<Label text={translate('commonLearnMore')} />
-				</div>
-			);
-
 			buttons = (
 				<>
 					<div className="animation">
 						<Button
 							ref={nextRef}
 							size={48}
-							className={cnb.join(' ')}
-							text={phraseVisible ? translate('commonContinue') : translate('authOnboardPhraseRevealAndCopy')}
+							text={phraseVisible ? translate('authOnboardPhraseSaved') : translate('authOnboardPhraseRevealAndCopy')}
 							color="accent"
 							onClick={phraseVisible ? () => onForward() : onPhraseCopy}
 						/>
 					</div>
 
-					{!phraseVisible ? (
-						<div className="animation">
-							<Button color="blank" size={48} text={translate('commonSkip')} onClick={() => onForward()} />
-						</div>
-					) : ''}
+					<div className="animation">
+						<Button color="blank" size={48} text={translate('authOnboardPhraseLater')} onClick={() => onForward()} />
+					</div>
 				</>
 			);
 			break;
@@ -278,6 +510,13 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 		case Stage.Email: {
 			cnb.push('disabled');
+
+			title = (
+				<>
+					<Title className="animation" text={translate('authOnboardEmailTitle')} />
+					<Label id="label" className="description animation" text={translate('authOnboardEmailLabel')} />
+				</>
+			);
 
 			content = (
 				<div className="inputWrapper animation">
@@ -306,71 +545,26 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			footer = <Footer {...props} component="authOnboardEmail" />;
 			break;
 		};
-
-		case Stage.Persona: {
-			if (!selected.current.role) {
-				cnb.push('disabled');
-			};
-
-			content = (
-				<div className="optionsWrapper">
-					{getItems('role').map(itemsMapper)}
-				</div>
-			);
-
-			buttons = (
-				<>
-					<div className="animation">
-						<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
-					</div>
-					<div className="animation">
-						<Button color="blank" size={48} text={translate('commonSkip')} onClick={() => onForward()} />
-					</div>
-				</>
-			);
-			break;
-		};
-
-		case Stage.UseCase: {
-			if (!selected.current.purpose){
-				cnb.push('disabled');
-			};
-
-			content = (
-				<div className="optionsWrapper">
-					{getItems('purpose').map(itemsMapper)}
-				</div>
-			);
-
-			buttons = (
-				<>
-					<div className="animation">
-						<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonDone')} color="accent" onClick={() => onForward()} />
-					</div>
-					<div className="animation">
-						<Button color="blank" size={48} text={translate('commonSkip')} onClick={() => onForward()} />
-					</div>
-				</>
-			);
-			break;
-		};
 	};
 
 	const init = () => {
 		Animation.to();
-		frameRef.current.resize();
+		frameRef.current?.resize();
 		rebind();
 	};
 
 	useEffect(() => {
 		init();
-		return () => unbind();
+		return () => {
+			unbind();
+			window.clearTimeout(connectTimeout.current);
+		};
 	}, []);
 
 	useEffect(() => {
 		init();
 
-		if (account && (stage == Stage.Phrase)) {
+		if (account && (stage == Stage.Key)) {
 			Renderer.send('keytarGet', account.id).then((value: string) => {
 				if (value) {
 					phraseRef.current?.setValue(value);
@@ -380,20 +574,29 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			});
 		};
 
+		if (stage == Stage.Explainer) {
+			setConnected(false);
+			window.clearTimeout(connectTimeout.current);
+			connectTimeout.current = window.setTimeout(() => setConnected(true), getChannel().hasChat ? 1200 : 400);
+		};
+
+		if (stage == Stage.ProfileShare) {
+			loadShareLink();
+		};
+
 		analytics.event('ScreenOnboarding', { step: Stage[stage] });
 		return () => unbind();
 	}, [ stage ]);
 
 	return (
-		<div 
-			ref={nodeRef} 
+		<div
+			ref={nodeRef}
 			className={`stage${Stage[stage]}`}
 		>
 			<Header {...props} component="authIndex" onBack={onBack} />
 
 			<Frame ref={frameRef}>
-				<Title className="animation" text={translate(`authOnboard${Stage[stage]}Title`)} />
-				<Label id="label" className="description animation" text={translate(`authOnboard${Stage[stage]}Label`)} />
+				{title}
 				{additional}
 
 				{content}
