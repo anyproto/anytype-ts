@@ -51,9 +51,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			};
 		};
 
-		if (pinned.length) {
-			ret.push(I.WidgetSection.Pin);
-		};
+		ret.push(I.WidgetSection.Pin);
 
 		if (personal.length) {
 			ret.push(I.WidgetSection.MyFavorites);
