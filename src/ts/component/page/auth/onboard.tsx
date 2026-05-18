@@ -274,28 +274,35 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 		return (
 			<div className={cn.join(' ')}>
-				{channel.hasChat ? (
-					<div className="chatBubble">
-						<IconObject object={U.Space.getProfile()} size={40} />
-						<div className="message">
-							<div className="text">{translate(`authOnboardExplainer${u}Message`)}</div>
-							{renderObjectCard('object', translate(`authOnboardExplainer${u}Object`), translate(`authOnboardExplainer${u}ObjectType`), 'attachment')}
-						</div>
-					</div>
-				) : (
+				<div className="scene">
+					<svg className="connectors" viewBox="0 0 1000 460" preserveAspectRatio="none">
+						<line x1="500" y1="230" x2="500" y2="60" />
+						<line x1="500" y1="230" x2="170" y2="400" />
+						<line x1="500" y1="230" x2="830" y2="400" />
+					</svg>
+
 					<div className="topObject">
 						{renderObjectCard('object', translate(`authOnboardExplainer${u}Object`), translate(`authOnboardExplainer${u}ObjectType`))}
 					</div>
-				)}
 
-				<div className="intro">
-					<Label className="line1" text={translate('authOnboardExplainerTitle1')} />
-					<Label className="line2" text={translate('authOnboardExplainerTitle2')} />
-				</div>
+					{channel.hasChat ? (
+						<div className="chatBubble">
+							<IconObject object={U.Space.getProfile()} size={40} />
+							<div className="message">
+								<div className="text">{translate(`authOnboardExplainer${u}Message`)}</div>
+							</div>
+						</div>
+					) : ''}
 
-				<div className="links">
-					{renderObjectCard('link', translate(`authOnboardExplainer${u}Link1`), translate(`authOnboardExplainer${u}Link1Type`), 'link1')}
-					{renderObjectCard('link', translate(`authOnboardExplainer${u}Link2`), translate(`authOnboardExplainer${u}Link2Type`), 'link2')}
+					<div className="intro">
+						<Label className="line1" text={translate('authOnboardExplainerTitle1')} />
+						<Label className="line2" text={translate('authOnboardExplainerTitle2')} />
+					</div>
+
+					<div className="links">
+						{renderObjectCard('link', translate(`authOnboardExplainer${u}Link1`), translate(`authOnboardExplainer${u}Link1Type`), 'link1')}
+						{renderObjectCard('link', translate(`authOnboardExplainer${u}Link2`), translate(`authOnboardExplainer${u}Link2Type`), 'link2')}
+					</div>
 				</div>
 			</div>
 		);

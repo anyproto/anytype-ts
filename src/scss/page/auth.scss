@@ -194,17 +194,6 @@ html.bodyAuthDeleted {
 			position: relative; display: flex; gap: 0px 16px; align-items: center; padding: 20px; border-radius: 28px;
 			background-color: var(--color-shape-highlight-medium); transition: background-color 0.2s $easeInQuint; text-align: left;
 		}
-		.channel::before {
-			content: ''; position: absolute; inset: 0px; border-radius: 28px; background-position: 50% 50%; background-size: cover;
-			filter: blur(28px); transform: scale(0.94); opacity: 0; transition: opacity 0.2s $easeInQuint; pointer-events: none; z-index: 0;
-		}
-		.channel.team::before { background-image: url('~img/onboarding/channel/team.png'); }
-		.channel.friends::before { background-image: url('~img/onboarding/channel/friends.png'); }
-		.channel.community::before { background-image: url('~img/onboarding/channel/community.png'); }
-		.channel.private::before { background-image: url('~img/onboarding/channel/private.png'); }
-		.channel:hover::before,
-		.channel.selected::before { opacity: 0.3; }
-
 		.channel {
 			.channelIcon {
 				position: relative; z-index: 1; flex-shrink: 0; width: 64px; height: 64px; border-radius: 16px;
@@ -230,38 +219,60 @@ html.bodyAuthDeleted {
 
 	/* Stage: Explainer */
 
-	.explainerWrapper { position: relative; width: 1064px; height: 440px; margin: 0px 0px 24px 0px; }
+	.explainerWrapper { width: 1064px; height: 460px; margin: 0px 0px 24px 0px; }
 	.explainerWrapper {
-		.intro { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; margin: 0px; }
+		.scene { position: relative; width: 100%; height: 100%; }
 
-		.chatBubble {
-			position: absolute; left: 50%; top: 0px; transform: translateX(-50%); display: flex; align-items: flex-end;
-			gap: 0px 10px; opacity: 1; transition: opacity 0.6s $easeInQuint;
-		}
-		.chatBubble {
-			.message { display: flex; flex-direction: column; gap: 8px 0px; max-width: 360px; padding: 14px 16px; border-radius: 16px; background-color: var(--color-shape-highlight-medium); }
-			.message {
-				.text { @include text-small; color: var(--color-text-primary); text-align: left; }
+		.scene {
+			.connectors { position: absolute; inset: 0px; width: 100%; height: 100%; opacity: 0; transition: opacity 0.6s $easeInQuint; pointer-events: none; }
+			.connectors {
+				line { stroke: var(--color-shape-secondary); stroke-width: 1px; vector-effect: non-scaling-stroke; }
+			}
+
+			.intro { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; margin: 0px; }
+
+			.topObject {
+				position: absolute; left: 50%; top: 90px; transform: translateX(-50%);
+				transition: top 0.6s $easeInQuint; z-index: 1;
+			}
+
+			.chatBubble {
+				position: absolute; left: 50%; top: 0px; transform: translateX(-50%); display: flex; align-items: flex-end;
+				gap: 0px 10px; opacity: 1; transition: opacity 0.6s $easeInQuint; z-index: 2;
+			}
+			.chatBubble {
+				.message { display: flex; max-width: 360px; padding: 14px 16px; border-radius: 16px; background-color: var(--color-shape-highlight-medium); }
+				.message {
+					.text { @include text-small; color: var(--color-text-primary); text-align: left; }
+				}
+			}
+
+			.links { position: absolute; left: 0px; right: 0px; bottom: 0px; display: flex; justify-content: space-between; padding: 0px 60px; }
+			.links {
+				.objectCard { opacity: 0; transform: translateY(10px); transition: opacity 0.5s $easeInQuint, transform 0.5s $easeInQuint; }
+				.objectCard.link2 { transition-delay: 0.1s; }
 			}
 		}
-
-		.topObject { position: absolute; left: 50%; top: 30px; transform: translateX(-50%); opacity: 0; transition: opacity 0.5s $easeInQuint; }
-
-		.links { position: absolute; left: 0px; right: 0px; bottom: 0px; display: flex; justify-content: space-between; }
-		.links {
-			.objectCard { opacity: 0; transform: translateY(10px); transition: opacity 0.5s $easeInQuint, transform 0.5s $easeInQuint; }
-			.objectCard.link2 { transition-delay: 0.1s; }
+	}
+	.explainerWrapper.connected,
+	.explainerWrapper.noChat {
+		.scene {
+			.connectors { opacity: 1; }
+			.topObject { top: 0px; }
+			.links {
+				.objectCard { opacity: 1; transform: translateY(0px); }
+			}
 		}
 	}
 	.explainerWrapper.connected {
-		.chatBubble { opacity: 0; pointer-events: none; }
-		.topObject { opacity: 1; }
-		.links {
-			.objectCard { opacity: 1; transform: translateY(0px); }
+		.scene {
+			.chatBubble { opacity: 0; pointer-events: none; }
 		}
 	}
 	.explainerWrapper.noChat {
-		.topObject { opacity: 1; }
+		.scene {
+			.chatBubble { display: none; }
+		}
 	}
 
 	.objectCard {
@@ -312,7 +323,8 @@ html.bodyAuthDeleted {
 			.qrWrap {
 				.avatar {
 					position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-					border-radius: 50%; border: 3px solid var(--color-bg-primary);
+					display: flex; align-items: center; justify-content: center; padding: 6px; border-radius: 50%;
+					background-color: var(--color-bg-primary);
 				}
 			}
 
