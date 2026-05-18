@@ -270,7 +270,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const renderExplainer = () => {
 		const channel = getChannel();
 		const u = U.String.toUpperCamelCase(channel.id);
-		const cn = [ 'explainerWrapper', (connected ? 'connected' : ''), (channel.hasChat ? '' : 'noChat') ];
+		const cn = [ 'explainerWrapper', 'animation', (connected ? 'connected' : ''), (channel.hasChat ? '' : 'noChat') ];
 
 		return (
 			<div className={cn.join(' ')}>
@@ -431,9 +431,9 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						<Label className="shareTitle" text={translate('authOnboardConnectShareTitle')} />
 
 						<div className="qrWrap">
-							<QR value={shareLinkRef.current || ' '} size={180} />
+							<QR value={shareLinkRef.current || ' '} size={170} />
 							<div className="avatar">
-								<IconObject object={profile} size={48} />
+								<IconObject object={profile} size={64} />
 							</div>
 						</div>
 

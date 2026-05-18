@@ -194,32 +194,35 @@ html.bodyAuthDeleted {
 			position: relative; display: flex; gap: 0px 16px; align-items: center; padding: 20px; border-radius: 28px;
 			background-color: var(--color-shape-highlight-medium); transition: background-color 0.2s $easeInQuint; text-align: left;
 		}
-		.channel:hover,
-		.channel.selected { background-color: var(--color-system-selection); }
+		.channel::before {
+			content: ''; position: absolute; inset: 0px; border-radius: 28px; background-position: 50% 50%; background-size: cover;
+			filter: blur(28px); transform: scale(0.94); opacity: 0; transition: opacity 0.2s $easeInQuint; pointer-events: none; z-index: 0;
+		}
+		.channel.team::before { background-image: url('~img/onboarding/channel/team.png'); }
+		.channel.friends::before { background-image: url('~img/onboarding/channel/friends.png'); }
+		.channel.community::before { background-image: url('~img/onboarding/channel/community.png'); }
+		.channel.private::before { background-image: url('~img/onboarding/channel/private.png'); }
+		.channel:hover::before,
+		.channel.selected::before { opacity: 0.3; }
 
 		.channel {
 			.channelIcon {
-				position: relative; flex-shrink: 0; width: 64px; height: 64px; border-radius: 16px;
-				background-color: var(--color-shape-highlight-medium);
+				position: relative; z-index: 1; flex-shrink: 0; width: 64px; height: 64px; border-radius: 16px;
+				background-color: var(--color-shape-highlight-medium); background-position: 50% 50%; background-size: cover; background-repeat: no-repeat;
 			}
-			.channelIcon::after {
-				content: ''; position: absolute; inset: 0px; background-color: var(--color-text-secondary);
-				mask-position: 50% 50%; mask-repeat: no-repeat; mask-size: 30px;
-				-webkit-mask-position: 50% 50%; -webkit-mask-repeat: no-repeat; -webkit-mask-size: 30px;
-			}
-			.channelIcon.team::after { mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM13.5 9.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM2.5 16c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4M12 12.5c2-.3 5 .8 5 3.5' stroke='black' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM13.5 9.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4ZM2.5 16c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4M12 12.5c2-.3 5 .8 5 3.5' stroke='black' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
-			.channelIcon.friends::after { mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 16s-6-3.7-6-7.8A3.2 3.2 0 0 1 10 6a3.2 3.2 0 0 1 6 2.2C16 12.3 10 16 10 16Z' stroke='black' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 16s-6-3.7-6-7.8A3.2 3.2 0 0 1 10 6a3.2 3.2 0 0 1 6 2.2C16 12.3 10 16 10 16Z' stroke='black' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
-			.channelIcon.community::after { mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='7' stroke='black' stroke-width='1.4'/%3E%3Cpath d='M3 10h14M10 3c2 2 2 12 0 14M10 3c-2 2-2 12 0 14' stroke='black' stroke-width='1.4'/%3E%3C/svg%3E"); -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='7' stroke='black' stroke-width='1.4'/%3E%3Cpath d='M3 10h14M10 3c2 2 2 12 0 14M10 3c-2 2-2 12 0 14' stroke='black' stroke-width='1.4'/%3E%3C/svg%3E"); }
-			.channelIcon.private::after { mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='4.5' y='9' width='11' height='8' rx='2' stroke='black' stroke-width='1.4'/%3E%3Cpath d='M6.5 9V7a3.5 3.5 0 1 1 7 0v2' stroke='black' stroke-width='1.4'/%3E%3Ccircle cx='10' cy='13' r='1.2' fill='black'/%3E%3C/svg%3E"); -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='4.5' y='9' width='11' height='8' rx='2' stroke='black' stroke-width='1.4'/%3E%3Cpath d='M6.5 9V7a3.5 3.5 0 1 1 7 0v2' stroke='black' stroke-width='1.4'/%3E%3Ccircle cx='10' cy='13' r='1.2' fill='black'/%3E%3C/svg%3E"); }
+			.channelIcon.team { background-image: url('~img/onboarding/channel/team.png'); }
+			.channelIcon.friends { background-image: url('~img/onboarding/channel/friends.png'); }
+			.channelIcon.community { background-image: url('~img/onboarding/channel/community.png'); }
+			.channelIcon.private { background-image: url('~img/onboarding/channel/private.png'); }
 
-			.text { display: flex; flex-direction: column; gap: 4px 0px; flex: 1 1 auto; min-width: 0px; }
+			.text { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 4px 0px; flex: 1 1 auto; min-width: 0px; }
 			.text {
 				.name { font-size: 22px; font-weight: 600; line-height: 28px; letter-spacing: -0.48px; color: var(--color-text-primary); }
 				.description { font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: -0.2px; color: var(--color-text-secondary); }
 			}
 
 			.check {
-				position: absolute; right: -6px; top: -6px; width: 24px; height: 24px; border-radius: 50%;
+				position: absolute; z-index: 2; right: -6px; top: -6px; width: 24px; height: 24px; border-radius: 50%;
 				background: var(--color-system-accent-100) url('~img/icon/onboarding/tick.svg') 50% 50% no-repeat; background-size: 12px;
 			}
 		}
@@ -299,7 +302,7 @@ html.bodyAuthDeleted {
 	.shareWrapper { display: flex; justify-content: center; margin: 0px 0px 32px 0px; }
 	.shareWrapper {
 		.shareCard {
-			display: flex; flex-direction: column; align-items: center; gap: 16px 0px; width: 320px; padding: 32px 24px;
+			display: flex; flex-direction: column; align-items: center; gap: 16px 0px; width: 366px; padding: 16px 24px 32px 24px;
 			border-radius: 24px; background-color: var(--color-bg-primary); border: 1px solid var(--color-shape-secondary);
 		}
 		.shareCard {
