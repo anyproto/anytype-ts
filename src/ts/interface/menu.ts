@@ -132,6 +132,7 @@ export interface MenuItem {
 	withSwitch?: boolean;
 	withSelect?: boolean;
 	withMore?: boolean;
+	withCopy?: boolean;
 	withPlural?: boolean;
 	withPronoun?: boolean;
 	subComponent?: string;

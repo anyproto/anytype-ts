@@ -1008,6 +1008,7 @@ class UtilMenu {
 						id: 'copyAnyName',
 						iconParam: oneToOneGlobalName ? { name: 'membership/badge', className: 'badge', size: 18, color: 'accent100' } : undefined,
 						name: oneToOneAnyName,
+						withCopy: true,
 					});
 				};
 
