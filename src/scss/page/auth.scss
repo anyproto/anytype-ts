@@ -196,10 +196,11 @@ html.bodyAuthDeleted {
 			border-radius: 28px; background-color: var(--color-shape-highlight-medium); text-align: left;
 		}
 		.channel::before {
-			content: ''; position: absolute; inset: 0px; background-position: 50% 50%; background-size: cover;
+			content: ''; position: absolute; left: 50%; top: 50%; width: 520px; height: 520px;
+			transform: translate(-50%, -50%); background-position: 50% 50%; background-size: cover; background-repeat: no-repeat;
 			filter: blur(40px); opacity: 0; transition: opacity 0.2s $easeInQuint; pointer-events: none; z-index: 0;
 		}
-		.channel.team::before { background-image: url('~img/onboarding/channel/team.png'); }
+		.channel.team::before { background-image: url('~img/onboarding/channel/team-bg.png'); }
 		.channel.friends::before { background-image: url('~img/onboarding/channel/friends.png'); }
 		.channel.community::before { background-image: url('~img/onboarding/channel/community.png'); }
 		.channel.private::before { background-image: url('~img/onboarding/channel/private.png'); }
@@ -259,10 +260,14 @@ html.bodyAuthDeleted {
 				}
 			}
 
-			.links { position: absolute; left: 0px; right: 0px; bottom: 0px; display: flex; justify-content: space-between; padding: 0px 60px; }
+			.links { position: absolute; left: 0px; right: 0px; bottom: 30px; height: 0px; }
 			.links {
-				.objectCard { opacity: 0; transform: translateY(10px); transition: opacity 0.5s $easeInQuint, transform 0.5s $easeInQuint; }
-				.objectCard.link2 { transition-delay: 0.1s; }
+				.objectCard {
+					position: absolute; bottom: 0px; width: 280px; opacity: 0; transform: translateY(10px);
+					transition: opacity 0.5s $easeInQuint, transform 0.5s $easeInQuint;
+				}
+				.objectCard.link1 { left: 60px; }
+				.objectCard.link2 { right: 60px; transition-delay: 0.1s; }
 			}
 		}
 	}
@@ -331,9 +336,12 @@ html.bodyAuthDeleted {
 		.shareCard {
 			.shareTitle { @include text-paragraph; font-weight: 600; color: var(--color-text-primary) !important; margin: 0px; }
 
-			.qrWrap { position: relative; display: flex; align-items: center; justify-content: center; }
+			.qrWrap { position: relative; flex-shrink: 0; width: 170px; height: 170px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
 			.qrWrap {
 				.qrInner { width: 170px; height: 170px; padding: 0px; border-radius: 0px; background-color: transparent; }
+				.qrInner {
+					canvas { width: 170px !important; height: 170px !important; }
+				}
 
 				.avatar {
 					position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);

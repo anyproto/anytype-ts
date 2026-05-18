@@ -275,10 +275,10 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		return (
 			<div className={cn.join(' ')}>
 				<div className="scene">
-					<svg className="connectors" viewBox="0 0 1000 460" preserveAspectRatio="none">
-						<line x1="500" y1="230" x2="500" y2="60" />
-						<line x1="500" y1="230" x2="170" y2="400" />
-						<line x1="500" y1="230" x2="830" y2="400" />
+					<svg className="connectors" viewBox="0 0 1064 460" preserveAspectRatio="none">
+						<line x1="532" y1="230" x2="532" y2="28" />
+						<line x1="532" y1="230" x2="200" y2="402" />
+						<line x1="532" y1="230" x2="864" y2="402" />
 					</svg>
 
 					<div className="topObject">
