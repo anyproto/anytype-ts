@@ -32,12 +32,12 @@ const PageAuthSelect = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			U.Data.onAuthOnce();
 
 			Storage.set('spaceId', account.info.accountSpaceId);
-			S.Common.showRelativeDatesSet(true);
-
 			Storage.set('multichatsOnboarding', true);
 			Storage.setOnboarding('objectDescriptionButton');
 			Storage.setOnboarding('typeResetLayout');
-			Storage.setSpaceKey('sidebarView', I.SidebarView.Links, false, account.info.accountSpaceId);
+
+			S.Common.showRelativeDatesSet(true);
+			S.Common.sidebarViewSet(I.SidebarView.Widgets);
 
 			U.Subscription.createGlobal(() => {
 				inflate(() => U.Router.go('/auth/onboard', {}));
