@@ -387,7 +387,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						<IconObject
 							id="onboard-userpic"
 							object={profile}
-							size={96}
+							size={128}
 							canEdit={true}
 							menuParam={{ horizontal: I.MenuDirection.Center, classNameWrap: 'fromBlock' }}
 						/>
