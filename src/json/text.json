@@ -64,6 +64,7 @@
 	"commonOpenObject": "Open as Object",
 	"commonClose": "Close",
 	"commonRemove": "Remove",
+	"commonReject": "Reject",
 	"commonPending": "Pending",
 	"commonChange": "Change",
 	"commonName": "Name",
@@ -1343,8 +1344,15 @@
 	"popupConfirmObjectOpenErrorText": "There was a problem while opening the object, please send the debug info to the support team.",
 	"popupConfirmObjectOpenErrorButton": "Collect debug info",
 
-	"popupConfirmMemberRemoveTitle": "Remove member",
-	"popupConfirmMemberRemoveText": "<b>%s</b> will be removed from the space",
+	"popupConfirmMemberRemoveTitle": "Remove the member from this channel?",
+	"popupConfirmMemberRemoveText": "They'll lose access immediately. Depending on your invite settings, they may be able to rejoin or request to rejoin.",
+
+	"popupConfirmMemberMakeAdminTitle": "Make the member an admin?",
+	"popupConfirmMemberMakeAdminText": "Admins can delete messages, remove members, and permanently delete objects from Bin.",
+	"popupConfirmMemberMakeAdminButton": "Make Admin",
+
+	"popupConfirmMemberRejectTitle": "Reject join request?",
+	"popupConfirmMemberRejectText": "<b>%s</b>'s request to join the space will be rejected.",
 
 	"popupConfirmMemberChangeText": "<b>%s</b> access to the space would become <b>%s</b>",
 
@@ -2141,6 +2149,7 @@
 	"menuParticipantConnect": "Connect",
 	"menuParticipantMessage": "Send Message",
 	"menuParticipantProfile": "Open Profile",
+	"menuParticipantRemove": "Remove member",
 
 	"previewEdit": "Edit Link",
 
@@ -2813,6 +2822,7 @@
 	"participantPermissions1": "Editor",
 	"participantPermissions2": "Owner",
 	"participantPermissions3": "No access",
+	"participantPermissions4": "Admin",
 
 	"relationMentions": "Mentioned in",
 	"relationCreator": "Created by",

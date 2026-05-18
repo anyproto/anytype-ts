@@ -1086,6 +1086,31 @@ class Action {
 	};
 
 	/**
+	 * Opens a confirmation popup to remove an active member from a space.
+	 * Reused by the Members settings screen and the participant menu.
+	 * @param {string} spaceId - The space ID.
+	 * @param {any} item - The participant object ({ identity }).
+	 * @param {function} [callBack] - Optional callback invoked after removal is dispatched.
+	 */
+	memberRemove (spaceId: string, item: any, callBack?: () => void) {
+		S.Popup.open('confirm', {
+			data: {
+				iconParam: { name: 'popup/header/error', color: 'red' },
+				title: translate('popupConfirmMemberRemoveTitle'),
+				text: translate('popupConfirmMemberRemoveText'),
+				textConfirm: translate('commonRemove'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					C.SpaceParticipantRemove(spaceId, [ item.identity ]);
+
+					analytics.event('RemoveSpaceMember');
+					callBack?.();
+				},
+			},
+		});
+	};
+
+	/**
 	 * Adds objects to a collection by target ID.
 	 * @param {string} targetId - The collection target ID.
 	 * @param {string[]} objectIds - The object IDs to add.

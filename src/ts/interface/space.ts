@@ -37,6 +37,7 @@ export enum ParticipantPermissions {
 	Writer					 = 1,
 	Owner					 = 2,
 	None					 = 3,
+	Admin					 = 4,
 };
 
 export enum ParticipantStatus {

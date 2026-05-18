@@ -11,6 +11,7 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 	const participant = U.Space.getParticipant();
 	const nodeRef = useRef(null);
 	const isOwner = U.Space.isMyOwner();
+	const canModerate = U.Space.canMyParticipantModerate();
 	const pendingIdentities = Action.getPendingMembers(space);
 	const { isOnline } = S.Common;
 	const showOfflinePill = !isOnline && (pendingIdentities.length > 0);
@@ -51,11 +52,15 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 		return U.Space.getParticipantsList(statuses).sort((c1, c2) => {
 			const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;
 			const isOwner2 = c2.permissions == I.ParticipantPermissions.Owner;
+			const isAdmin1 = c1.permissions == I.ParticipantPermissions.Admin;
+			const isAdmin2 = c2.permissions == I.ParticipantPermissions.Admin;
 			const isRequest1 = c1.isJoining;
 			const isRequest2 = c2.isJoining;
 
 			if (isOwner1 && !isOwner2) return -1;
 			if (!isOwner1 && isOwner2) return 1;
+			if (isAdmin1 && !isAdmin2) return -1;
+			if (!isAdmin1 && isAdmin2) return 1;
 			if (isRequest1 && !isRequest2) return -1;
 			if (!isRequest1 && isRequest2) return 1;
 			if (isRequest1 && isRequest2) return c1.createdDate < c2.createdDate ? -1 : 1;
@@ -68,18 +73,18 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 		const removeLabel = isNew ? translate('popupSettingsSpaceShareRejectRequest') : translate('popupSettingsSpaceShareRemoveMember');
 		const isReaderLimit = U.Space.getReaderLimit() <= 0;
 		const isWriterLimit = U.Space.getWriterLimit() <= 0;
+		const items: any[] = [];
 
-		let items: any[] = [
-			{ id: I.ParticipantPermissions.Reader, disabled: isReaderLimit },
-			{ id: I.ParticipantPermissions.Writer, disabled: isWriterLimit },
-		] as any[];
+		// Only Owners can assign roles. Admins can only remove Editors and Viewers.
+		if (isOwner) {
+			[
+				{ id: I.ParticipantPermissions.Admin, disabled: isWriterLimit },
+				{ id: I.ParticipantPermissions.Writer, disabled: isWriterLimit },
+				{ id: I.ParticipantPermissions.Reader, disabled: isReaderLimit },
+			].forEach(it => {
+				items.push({ ...it, name: translate(`participantPermissions${it.id}`) });
+			});
 
-		items = items.map(it => {
-			it.name = translate(`participantPermissions${it.id}`);
-			return it;
-		});
-
-		if (items.length) {
 			items.push({ isDiv: true });
 		};
 
@@ -101,52 +106,61 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 	};
 
 	const onChangePermissions = (item: any, v: any, isNew?: boolean) => {
-		let title = '';
-		let text = '';
-		let button = '';
-		let onConfirm = null;
 
-		switch (v) {
-			case 'remove': {
-				title = translate('popupConfirmMemberRemoveTitle');
-				text = U.String.sprintf(translate('popupConfirmMemberRemoveText'), item.name);
-				button = translate('commonRemove');
-				onConfirm = () => {
-					if (isNew) {
-						C.SpaceRequestDecline(space, item.identity);
-					} else {
-						C.SpaceParticipantRemove(space, [ item.identity ]);
-					};
-
-					analytics.event(isNew ? 'RejectInviteRequest' : 'RemoveSpaceMember');
-				};
-				break;
+		// Remove member / reject join request
+		if (v == 'remove') {
+			if (isNew) {
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'popup/header/error', color: 'red' },
+						title: translate('popupConfirmMemberRejectTitle'),
+						text: U.String.sprintf(translate('popupConfirmMemberRejectText'), item.name),
+						textConfirm: translate('commonReject'),
+						colorConfirm: 'red',
+						onConfirm: () => {
+							C.SpaceRequestDecline(space, item.identity);
+							analytics.event('RejectInviteRequest');
+						},
+					},
+				});
+			} else {
+				Action.memberRemove(space, item);
 			};
-
-			default: {
-				v = Number(v) || I.ParticipantPermissions.Reader;
-
-				title = translate('commonAreYouSure');
-				text = U.String.sprintf(translate('popupConfirmMemberChangeText'), item.name, translate(`participantPermissions${v}`));
-
-				onConfirm = () => {
-					if (isNew) {
-						C.SpaceRequestApprove(space, item.identity, v);
-					} else {
-						C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: Number(v) } ]);
-					};
-
-					analytics.event(isNew ? 'ApproveInviteRequest' : 'ChangeSpaceMemberPermissions', { type: v });
-				};
-				break;
-			};
+			return;
 		};
 
+		v = Number(v) || I.ParticipantPermissions.Reader;
+
+		const onConfirm = () => {
+			if (isNew) {
+				C.SpaceRequestApprove(space, item.identity, v);
+			} else {
+				C.SpaceParticipantPermissionsChange(space, [ { identity: item.identity, permissions: v } ]);
+			};
+
+			analytics.event(isNew ? 'ApproveInviteRequest' : 'ChangeSpaceMemberPermissions', { type: v });
+		};
+
+		// Promoting an existing member to Admin uses a dedicated confirmation
+		if (!isNew && (v == I.ParticipantPermissions.Admin) && !item.isAdmin) {
+			S.Popup.open('confirm', {
+				data: {
+					iconParam: { name: 'popup/header/confirm', color: 'lime' },
+					title: translate('popupConfirmMemberMakeAdminTitle'),
+					text: translate('popupConfirmMemberMakeAdminText'),
+					textConfirm: translate('popupConfirmMemberMakeAdminButton'),
+					colorConfirm: 'accent',
+					onConfirm,
+				},
+			});
+			return;
+		};
+
+		// Existing role change confirmation flow (incl. Admin demotion and join request approval)
 		S.Popup.open('confirm', {
 			data: {
-				title,
-				text,
-				textConfirm: button,
+				title: translate('commonAreYouSure'),
+				text: U.String.sprintf(translate('popupConfirmMemberChangeText'), item.name, translate(`participantPermissions${v}`)),
 				colorConfirm: 'red',
 				onConfirm,
 			},
@@ -184,21 +198,26 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 		let button = null;
 
-		if (isOwner) {
-			if (isCurrent) {
-				button = <Label text={translate(`participantPermissions${permissions}`)} />;
-			} else {
-				const placeholder = isJoining ? translate('popupSettingsSpaceShareSelectPermissions') : translate(`participantPermissions${item.permissions}`);
+		// Owner approves join requests; moderators (owner/admin) can manage members they have authority over.
+		const canManage = !isCurrent && (
+			(isJoining && isOwner) ||
+			(isActive && U.Space.canManageParticipant(item))
+		);
 
-				button = (
-					<div id={`item-${id}-select`} className="select" onClick={() => onPermissionsSelect(item, isJoining)}>
-						<div className="item">
-							<div className="name">{placeholder}</div>
-						</div>
-						<Icon name="arrow/small" className={[ 'arrow', isJoining ? 'light' : 'dark' ].join(' ')} width={6} height={10} />
+		if (canModerate && canManage) {
+			const placeholder = isJoining ? translate('popupSettingsSpaceShareSelectPermissions') : translate(`participantPermissions${permissions}`);
+
+			button = (
+				<div id={`item-${id}-select`} className="select" onClick={() => onPermissionsSelect(item, isJoining)}>
+					<div className="item">
+						<div className="name">{placeholder}</div>
 					</div>
-				);
-			};
+					<Icon name="arrow/small" className={[ 'arrow', isJoining ? 'light' : 'dark' ].join(' ')} width={6} height={10} />
+				</div>
+			);
+		} else
+		if (canModerate && isActive) {
+			button = <Label text={translate(`participantPermissions${permissions}`)} />;
 		} else
 		if (isActive) {
 			button = <Label color="grey" text={translate(`participantPermissions${permissions}`)} />;
