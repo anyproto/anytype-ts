@@ -232,7 +232,7 @@ html.bodyAuthDeleted {
 
 	/* Stage: Explainer */
 
-	.explainerWrapper { width: 1064px; height: 460px; margin: 0px 0px 24px 0px; }
+	.explainerWrapper { width: 1064px; height: 500px; margin: 0px 0px 24px 0px; }
 	.explainerWrapper {
 		.scene { position: relative; width: 100%; height: 100%; }
 
@@ -262,12 +262,12 @@ html.bodyAuthDeleted {
 
 			.links { position: absolute; left: 0px; right: 0px; bottom: 30px; height: 0px; }
 			.links {
-				.objectCard {
-					position: absolute; bottom: 0px; width: 280px; opacity: 0; transform: translateY(10px);
+				.obCard {
+					position: absolute; bottom: 0px; opacity: 0; transform: translateY(10px);
 					transition: opacity 0.5s $easeInQuint, transform 0.5s $easeInQuint;
 				}
-				.objectCard.link1 { left: 60px; }
-				.objectCard.link2 { right: 60px; transition-delay: 0.1s; }
+				.obCard.link1 { left: 24px; }
+				.obCard.link2 { right: 24px; transition-delay: 0.1s; }
 			}
 		}
 	}
@@ -277,7 +277,7 @@ html.bodyAuthDeleted {
 			.connectors { opacity: 1; }
 			.topObject { top: 0px; }
 			.links {
-				.objectCard { opacity: 1; transform: translateY(0px); }
+				.obCard { opacity: 1; transform: translateY(0px); }
 			}
 		}
 	}
@@ -292,26 +292,55 @@ html.bodyAuthDeleted {
 		}
 	}
 
-	.objectCard {
-		display: flex; align-items: center; gap: 0px 12px; padding: 12px 16px; border-radius: 12px;
-		background-color: var(--color-bg-primary); border: 1px solid var(--color-shape-secondary); text-align: left; max-width: 320px;
-	}
-	.objectCard {
-		.icon.channel {
-			position: relative; flex-shrink: 0; width: 40px; height: 40px; border-radius: 8px; background-color: var(--color-shape-highlight-medium);
-		}
-		.icon.channel::after {
-			content: ''; position: absolute; inset: 0px; background-color: var(--color-text-secondary);
-			mask-position: 50% 50%; mask-repeat: no-repeat; mask-size: 18px;
-			-webkit-mask-position: 50% 50%; -webkit-mask-repeat: no-repeat; -webkit-mask-size: 18px;
-			mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='4' y='3' width='12' height='14' rx='2' stroke='black' stroke-width='1.4'/%3E%3Cpath d='M7 7h6M7 10h6M7 13h4' stroke='black' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E"); -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='4' y='3' width='12' height='14' rx='2' stroke='black' stroke-width='1.4'/%3E%3Cpath d='M7 7h6M7 10h6M7 13h4' stroke='black' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
-		}
+	/* Explainer object cards (3 variants) */
 
+	.obCard { background-color: var(--color-bg-primary); text-align: left; }
+
+	.obCompact {
+		display: flex; align-items: center; gap: 0px 12px; width: 300px; padding: 16px;
+		border-radius: 18px; box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.12);
+	}
+	.obCompact {
+		.emoji {
+			flex-shrink: 0; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px;
+			border-radius: 12px; background-color: var(--color-shape-highlight-light); font-size: 26px; line-height: 1;
+		}
 		.text { display: flex; flex-direction: column; gap: 2px 0px; min-width: 0px; }
 		.text {
-			.name { @include text-small; font-weight: 600; color: var(--color-text-primary); @include text-overflow-nw; }
-			.type { @include text-very-small; color: var(--color-text-secondary); }
+			.title { font-size: 18px; font-weight: 600; line-height: 24px; letter-spacing: -0.4px; color: var(--color-text-primary); @include text-overflow-nw; }
+			.type { font-size: 14px; line-height: 20px; color: var(--color-text-secondary); }
 		}
+	}
+
+	.obBookmark {
+		display: flex; gap: 0px 16px; width: 448px; padding: 16px;
+		border-radius: 20px; box-shadow: 8px -8px 20px rgba(0, 0, 0, 0.2);
+	}
+	.obBookmark {
+		.info { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0px; }
+		.info {
+			.source { font-size: 12px; line-height: 18px; color: var(--color-text-secondary); margin: 0px 0px 6px 0px; }
+			.title { font-size: 16px; font-weight: 600; line-height: 22px; letter-spacing: -0.1px; color: var(--color-text-primary); margin: 0px 0px 6px 0px; }
+			.desc {
+				font-size: 14px; line-height: 20px; color: var(--color-text-primary); overflow: hidden;
+				display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+			}
+		}
+		.thumb { flex-shrink: 0; width: 108px; height: 108px; border-radius: 4px; background-position: 50% 50%; background-size: cover; background-repeat: no-repeat; }
+		.thumb.lisbon { background-image: url('~img/onboarding/explainer/lisbon.png'); }
+		.thumb.opensource { background-image: url('~img/onboarding/explainer/opensource.png'); }
+		.thumb.duneBookmark { background-image: url('~img/onboarding/explainer/dune-bookmark.png'); }
+	}
+
+	.obCover {
+		display: flex; flex-direction: column; width: 276px; padding: 24px;
+		border-radius: 20px; box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.12);
+	}
+	.obCover {
+		.obCoverImg { width: 64px; height: 64px; border-radius: 12px; margin: 0px 0px 12px 0px; background-position: 50% 50%; background-size: cover; background-repeat: no-repeat; }
+		.obCoverImg.duneCover { background-image: url('~img/onboarding/explainer/dune-cover.png'); }
+		.title { font-size: 18px; font-weight: 600; line-height: 24px; letter-spacing: -0.4px; color: var(--color-text-primary); margin: 0px 0px 4px 0px; }
+		.type { font-size: 14px; line-height: 20px; color: var(--color-text-secondary); }
 	}
 
 	/* Stage: Profile */

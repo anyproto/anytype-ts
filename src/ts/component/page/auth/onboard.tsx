@@ -255,41 +255,97 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 	};
 
-	const renderObjectCard = (icon: string, name: string, type: string, className?: string) => (
-		<div className={[ 'objectCard', (className || '') ].join(' ')}>
-			<Icon className={`channel ${icon}`} />
-			<div className="text">
-				<div className="name">{name}</div>
-				<div className="type">{type}</div>
-			</div>
-		</div>
-	);
-
 	const getChannel = () => CHANNELS.find(it => it.id == selectedRef.current) || CHANNELS[0];
+
+	const getExplainerContent = (id: string) => {
+		const t = (k: string) => translate(`authOnboardExplainer${U.String.toUpperCamelCase(id)}${k}`);
+
+		switch (id) {
+			case 'team':
+				return {
+					top: { kind: 'compact', icon: '🗂️', name: t('TopName'), type: t('TopType') },
+					a: { kind: 'compact', icon: '👤', name: t('AName'), type: t('AType') },
+					b: { kind: 'compact', icon: '✅', name: t('BName'), type: t('BType') },
+				};
+			case 'friends':
+				return {
+					top: { kind: 'bookmark', source: t('TopSource'), name: t('TopName'), desc: t('TopDesc'), img: 'lisbon' },
+					a: { kind: 'compact', icon: '🇵🇹', name: t('AName'), type: t('AType') },
+					b: { kind: 'compact', icon: '✅', name: t('BName'), type: t('BType') },
+				};
+			case 'community':
+				return {
+					top: { kind: 'bookmark', source: t('TopSource'), name: t('TopName'), desc: t('TopDesc'), img: 'opensource' },
+					a: { kind: 'compact', icon: '🎬', name: t('AName'), type: t('AType') },
+					b: { kind: 'compact', icon: '🏠', name: t('BName'), type: t('BType') },
+				};
+			default:
+				return {
+					top: { kind: 'compact', icon: '🍿', name: t('TopName'), type: t('TopType') },
+					a: { kind: 'bookmark', source: t('ASource'), name: t('AName'), desc: t('ADesc'), img: 'duneBookmark' },
+					b: { kind: 'cover', img: 'duneCover', name: t('BName'), type: t('BType') },
+				};
+		};
+	};
+
+	const renderCard = (c: any, cls: string) => {
+		if (c.kind == 'bookmark') {
+			return (
+				<div className={[ 'obCard', 'obBookmark', cls ].join(' ')}>
+					<div className="info">
+						<div className="source">{c.source}</div>
+						<div className="title">{c.name}</div>
+						<div className="desc">{c.desc}</div>
+					</div>
+					<div className={`thumb ${c.img}`} />
+				</div>
+			);
+		};
+
+		if (c.kind == 'cover') {
+			return (
+				<div className={[ 'obCard', 'obCover', cls ].join(' ')}>
+					<div className={`obCoverImg ${c.img}`} />
+					<div className="title">{c.name}</div>
+					<div className="type">{c.type}</div>
+				</div>
+			);
+		};
+
+		return (
+			<div className={[ 'obCard', 'obCompact', cls ].join(' ')}>
+				<div className="emoji">{c.icon}</div>
+				<div className="text">
+					<div className="title">{c.name}</div>
+					<div className="type">{c.type}</div>
+				</div>
+			</div>
+		);
+	};
 
 	const renderExplainer = () => {
 		const channel = getChannel();
-		const u = U.String.toUpperCamelCase(channel.id);
+		const content = getExplainerContent(channel.id);
 		const cn = [ 'explainerWrapper', 'animation', (connected ? 'connected' : ''), (channel.hasChat ? '' : 'noChat') ];
 
 		return (
 			<div className={cn.join(' ')}>
 				<div className="scene">
 					<svg className="connectors" viewBox="0 0 1064 460" preserveAspectRatio="none">
-						<line x1="532" y1="230" x2="532" y2="28" />
-						<line x1="532" y1="230" x2="200" y2="402" />
-						<line x1="532" y1="230" x2="864" y2="402" />
+						<line x1="532" y1="230" x2="532" y2="40" />
+						<line x1="532" y1="230" x2="210" y2="392" />
+						<line x1="532" y1="230" x2="854" y2="392" />
 					</svg>
 
 					<div className="topObject">
-						{renderObjectCard('object', translate(`authOnboardExplainer${u}Object`), translate(`authOnboardExplainer${u}ObjectType`))}
+						{renderCard(content.top, 'top')}
 					</div>
 
 					{channel.hasChat ? (
 						<div className="chatBubble">
 							<IconObject object={U.Space.getProfile()} size={40} />
 							<div className="message">
-								<div className="text">{translate(`authOnboardExplainer${u}Message`)}</div>
+								<div className="text">{translate(`authOnboardExplainer${U.String.toUpperCamelCase(channel.id)}Message`)}</div>
 							</div>
 						</div>
 					) : ''}
@@ -300,8 +356,8 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 					</div>
 
 					<div className="links">
-						{renderObjectCard('link', translate(`authOnboardExplainer${u}Link1`), translate(`authOnboardExplainer${u}Link1Type`), 'link1')}
-						{renderObjectCard('link', translate(`authOnboardExplainer${u}Link2`), translate(`authOnboardExplainer${u}Link2Type`), 'link2')}
+						{renderCard(content.a, 'link1')}
+						{renderCard(content.b, 'link2')}
 					</div>
 				</div>
 			</div>
