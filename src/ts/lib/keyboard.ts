@@ -502,6 +502,12 @@ class Keyboard {
 				// Lock/Unlock
 				this.shortcut('pageLock', e, () => this.onToggleLock());
 
+				// Search & Replace
+				this.shortcut('replaceText', e, () => {
+					e.preventDefault();
+					this.onSearchText('', route, true);
+				});
+
 				// Move to bin
 				this.shortcut('moveToBin', e, () => {
 					e.preventDefault();
@@ -1381,8 +1387,9 @@ class Keyboard {
 	 * Handles search menu action.
 	 * @param {string} value - The search value.
 	 * @param {string} [route] - The route context.
+	 * @param {boolean} [replaceMode] - Whether to open in replace mode.
 	 */
-	onSearchText (value: string, route?: string) {
+	onSearchText (value: string, route?: string, replaceMode?: boolean) {
 		const isPopup = this.isPopup();
 		const popupMatch = this.getPopupMatch();
 		const match = this.getMatch();
@@ -1427,11 +1434,20 @@ class Keyboard {
 				},
 			});
 		} else {
+			const rootId = this.getRootId();
+			const canWrite = U.Space.canMyParticipantWrite();
+			const allowed = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Block ]);
+			const object = S.Detail.get(rootId, rootId, [ 'isArchived', 'isDeleted' ], true);
+			const root = S.Block.getLeaf(rootId, rootId);
+			const isReadonly = !canWrite || !allowed || object.isArchived || object.isDeleted || (root ? root.isLocked() : false);
+
 			menuParam.passThrough = true;
 			menuParam.data = Object.assign(menuParam.data, {
 				isPopup,
 				value,
 				route,
+				replaceMode: !!replaceMode,
+				isReadonly,
 			});
 		};
 
