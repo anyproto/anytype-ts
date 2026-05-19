@@ -44,7 +44,7 @@
 
 	/* Full-bleed iconImage for medium+ sizes */
 	&.c32, &.c36, &.c40, &.c48, &.c56, &.c64, &.c80, &.c96, &.c128, &.c160 {
-		.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
+		.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px !important; }
 
 		&.isChat { border-radius: 100% !important; background-color: var(--color-shape-tertiary); }
 	}
