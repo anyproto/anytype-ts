@@ -13,7 +13,7 @@
 
 	.iconCommon, .iconRelation, .smileImage, .iconImage, .iconFile, .iconCheckbox, .iconError {
 		@each $s in 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 48, 56, 64, 80 {
-			&.c#{$s} { @include pos-abs-mid; width: #{$s}px; height: #{$s}px; margin: calc(#{$s}px / -2) 0px 0px calc(#{$s}px / -2); }
+			&.c#{$s} { @include pos-abs-mid; width: #{$s}px; height: #{$s}px; margin: calc(#{$s}px / -2) 0px 0px calc(#{$s}px / -2) !important; }
 		}
 	}
 
