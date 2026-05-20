@@ -446,6 +446,11 @@ html.bodyAuthDeleted {
 				}
 				.qrPlaceholder { width: 170px; height: 170px; border-radius: 16px; background-color: var(--color-shape-highlight-medium); }
 
+				.qrHole {
+					position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+					width: 70px; height: 70px; background-color: var(--color-bg-primary);
+				}
+
 				.avatar {
 					position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
 					padding: 3px; border-radius: 50%; background-color: var(--color-bg-primary); line-height: 0;

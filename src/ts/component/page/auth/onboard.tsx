@@ -539,8 +539,6 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			const profile = U.Space.getProfile();
 			const hasLink = !!shareLinkRef.current;
 			const actionCn = (extra: string) => [ 'action', extra, (hasLink ? '' : 'disabled') ].join(' ');
-			const holeColor = J.Theme[S.Common.getThemeClass()].qr.hole;
-			const holeSvg = `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70"><rect width="70" height="70" fill="${holeColor}"/></svg>`)}`;
 
 			title = (
 				<>
@@ -560,14 +558,9 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 									value={shareLinkRef.current}
 									size={170}
 									level="H"
-									imageParam={{
-										src: holeSvg,
-										width: 70,
-										height: 70,
-										excavate: true,
-									}}
 								/>
 							) : <div className="qrPlaceholder" />}
+							<div className="qrHole" />
 							<div className="avatar">
 								<IconObject object={profile} size={64} />
 							</div>

@@ -83,8 +83,7 @@ export default {
 
 		qr: {
 			foreground: '#000',
-			bg: '#fff',
-			hole: '#fff'
+			bg: '#fff'
 		},
 
 		iconUser: '#b6b6b6',
@@ -189,8 +188,7 @@ export default {
 
 		qr: {
 			foreground: '#000',
-			bg: '#fff',
-			hole: '#171717'
+			bg: '#fff'
 		},
 
 		iconUser: '#a3a3a3',
