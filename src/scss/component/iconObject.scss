@@ -13,7 +13,7 @@
 
 	.iconCommon, .iconRelation, .smileImage, .iconImage, .iconFile, .iconCheckbox, .iconError {
 		@each $s in 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40, 48, 56, 64, 80 {
-			&.c#{$s} { @include pos-abs-mid; width: #{$s}px; height: #{$s}px; margin: calc(#{$s}px / -2) 0px 0px calc(#{$s}px / -2) !important; }
+			&.c#{$s} { @include pos-abs-mid; width: #{$s}px; height: #{$s}px; margin: calc(#{$s}px / -2) 0px 0px calc(#{$s}px / -2); }
 		}
 	}
 
@@ -44,7 +44,7 @@
 
 	/* Full-bleed iconImage for medium+ sizes */
 	&.c32, &.c36, &.c40, &.c48, &.c56, &.c64, &.c80, &.c96, &.c128, &.c160 {
-		.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px !important; }
+		.iconImage { width: 100%; height: 100%; left: 0px; top: 0px; margin: 0px; }
 
 		&.isChat { border-radius: 100% !important; background-color: var(--color-shape-tertiary); }
 	}
