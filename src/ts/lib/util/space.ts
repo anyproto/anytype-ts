@@ -426,7 +426,7 @@ class UtilSpace {
 	 */
 	canMyParticipantWrite (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId);
-		return participant ? (participant.isWriter || participant.isOwner) : true;
+		return participant ? (participant.isWriter || participant.isAdmin || participant.isOwner) : true;
 	};
 
 	/**
@@ -437,6 +437,53 @@ class UtilSpace {
 	isMyOwner (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId || S.Common.space);
 		return participant ? participant.isOwner : false;
+	};
+
+	/**
+	 * Checks if the current user is an admin of a given space.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the user is an admin, false otherwise.
+	 */
+	isMyAdmin (spaceId?: string): boolean {
+		const participant = this.getMyParticipant(spaceId || S.Common.space);
+		return participant ? participant.isAdmin : false;
+	};
+
+	/**
+	 * Checks if the current user can moderate a given space (owner or admin).
+	 * Moderators can delete any chat message and remove members.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the user can moderate, false otherwise.
+	 */
+	canMyParticipantModerate (spaceId?: string): boolean {
+		const participant = this.getMyParticipant(spaceId || S.Common.space);
+		return participant ? (participant.isOwner || participant.isAdmin) : false;
+	};
+
+	/**
+	 * Checks if the current user can manage (change role / remove) a target participant.
+	 * Owner can manage Admins, Editors and Viewers; Admin can manage Editors and Viewers only.
+	 * Nobody can manage themselves or another Owner.
+	 * @param {any} target - The target participant object.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the current user can manage the target, false otherwise.
+	 */
+	canManageParticipant (target: any, spaceId?: string): boolean {
+		const me = this.getMyParticipant(spaceId || S.Common.space);
+
+		if (!me || !target || (me.id == target.id) || (me.identity && (me.identity == target.identity)) || target.isOwner) {
+			return false;
+		};
+
+		if (me.isOwner) {
+			return true;
+		};
+
+		if (me.isAdmin) {
+			return target.isWriter || target.isReader;
+		};
+
+		return false;
 	};
 
 	/**
@@ -471,7 +518,7 @@ class UtilSpace {
 			return 0;
 		};
 
-		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isOwner);
+		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isAdmin || it.isOwner);
 		return space.writersLimit - participants.length;
 	};
 

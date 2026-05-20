@@ -588,17 +588,18 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			const param = U.Data.widgetContentParam(object, block);
 			const hasMenu = [ I.WidgetLayout.View, I.WidgetLayout.List, I.WidgetLayout.Compact ].includes(param.layout);
 
-			let icon = null;
 			let buttons = null;
+			let menu = null;
 
-			if (object.isSystem) {
-				icon = <Icon name={object.iconName} className={object.icon} />;
-			} else {
-				icon = <IconObject object={object} size={20} iconSize={20} canEdit={false} />;
+			if (hasMenu) {
+				menu = <Icon id="button-widget-more" name="common/more" className="more" withBackground={true} onClick={onMore} />;
+			};
+
+			if (!object.isSystem) {
 				buttons = (
 					<>
 						<Icon name="common/expand" className="expand" withBackground={true} onClick={onExpand} />
-						{hasMenu ? <Icon id="button-widget-more" name="common/more" className="more" withBackground={true} onClick={onMore} /> : ''}
+						{menu}
 					</>
 				);
 			};
@@ -615,7 +616,6 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					</div>
 
 					<div className="side center">
-						{icon}
 						<ObjectName object={object} withPlural={true} />
 					</div>
 

@@ -14,6 +14,9 @@ const MenuParticipant = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) 
 	const oneToOne = U.Space.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == object.identity))[0];
 	const showButton = (oneToOne && oneToOne.targetSpaceId != space) || !oneToOne || (object.identity == account.id);
 	const globalName = object.globalName || U.String.shortMask(object.identity, 6);
+	const member = U.Space.getParticipant(U.Space.getParticipantId(space, object.identity));
+	const canRemove = member && member.isActive && (object.identity != account.id) &&
+		U.Space.canMyParticipantModerate() && U.Space.canManageParticipant(member);
 
 	let text = '';
 	let color = 'blank';
@@ -44,6 +47,10 @@ const MenuParticipant = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) 
 			U.Space.openOneToOne(object.identity, '', analytics.route.menuParticipant, () => close());
 			analytics.event('ClickConnectOneToOne', { route: analytics.route.menuParticipant });
 		};
+	};
+
+	const onRemove = () => {
+		Action.memberRemove(space, member, () => close());
 	};
 
 	useEffect(() => load(), []);
@@ -97,9 +104,10 @@ const MenuParticipant = forwardRef<I.MenuRef, I.Menu>((props: I.Menu, ref: any) 
 			</div>
 			<ObjectDescription object={object} />
 
-			{showButton ? (
+			{(showButton || canRemove) ? (
 				<div className="buttonsWrapper">
-					<Button color={color} text={text} onClick={onClick} />
+					{showButton ? <Button color={color} text={text} onClick={onClick} /> : ''}
+					{canRemove ? <Button color="red" text={translate('menuParticipantRemove')} onClick={onRemove} /> : ''}
 				</div>
 			) : ''}
 		</>

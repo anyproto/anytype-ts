@@ -952,6 +952,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				options.push({ isDiv: true });
 			};
 			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
+
+			// Owners and Admins can delete any message in the space
+			if (U.Space.canMyParticipantModerate()) {
+				options.push({ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'destructive' }, name: translate('commonDelete'), color: 'destructive' });
+			};
 		};
 
 		return options;
