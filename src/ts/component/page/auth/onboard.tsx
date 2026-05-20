@@ -201,18 +201,36 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		C.ObjectShareByLink(S.Block.profile, (message: any) => {
-			if (message.error.code) {
+		const spaceId = S.Common.space;
+		const setLink = (cid: string, key: string) => {
+			if (!cid || !key) {
 				return;
 			};
 
-			const link = String(message.link || '').replace(/[\x00-\x1f]/g, '');
-			if (!link) {
-				return;
-			};
-
-			shareLinkRef.current = link;
+			shareLinkRef.current = U.Space.getInviteLink(cid, key);
 			setDummy(dummy + 1);
+		};
+
+		// Reuse the current space invite if it already exists, otherwise generate one.
+		U.Space.getInvite(spaceId, (cid: string, key: string) => {
+			if (cid && key) {
+				setLink(cid, key);
+				return;
+			};
+
+			C.SpaceMakeShareable(spaceId, (message: any) => {
+				if (message.error.code && message.error.code != 104) {
+					return;
+				};
+
+				C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Reader, (message: any) => {
+					if (message.error.code) {
+						return;
+					};
+
+					setLink(message.inviteCid, message.inviteKey);
+				});
+			});
 		});
 	};
 
