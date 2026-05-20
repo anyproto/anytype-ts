@@ -553,7 +553,19 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						<Label className="shareTitle" text={translate('authOnboardConnectShareTitle')} />
 
 						<div className="qrWrap">
-							{hasLink ? <QR value={shareLinkRef.current} size={170} /> : <div className="qrPlaceholder" />}
+							{hasLink ? (
+								<QR
+									value={shareLinkRef.current}
+									size={170}
+									level="H"
+									imageParam={{
+										src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>',
+										width: 70,
+										height: 70,
+										excavate: true,
+									}}
+								/>
+							) : <div className="qrPlaceholder" />}
 							<div className="avatar">
 								<IconObject object={profile} size={64} />
 							</div>
