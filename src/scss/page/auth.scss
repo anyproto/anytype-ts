@@ -223,14 +223,14 @@ html.bodyAuthDeleted {
 			.channelIcon.community { background-image: url('~img/onboarding/channel/community.png'); }
 			.channelIcon.private { background-image: url('~img/onboarding/channel/private.png'); }
 
-			.text { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 4px 0px; flex: 1 1 auto; min-width: 0px; }
+			.text { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 0px; flex: 1 1 auto; min-width: 0px; }
 			.text {
 				.name { font-size: 22px; font-weight: 600; line-height: 28px; letter-spacing: -0.48px; color: var(--color-text-primary); }
-				.description { font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: -0.2px; color: var(--color-text-secondary); }
+				.description { font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: -0.2px; color: var(--color-text-primary-70); }
 			}
 
 			.check {
-				position: absolute; z-index: 2; right: 16px; top: 16px; width: 24px; height: 24px; border-radius: 50%;
+				position: absolute; z-index: 2; right: 16px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%;
 				background: var(--color-system-accent-100) url('~img/icon/onboarding/tick.svg') 50% 50% no-repeat; background-size: 12px;
 			}
 		}
@@ -353,7 +353,21 @@ html.bodyAuthDeleted {
 
 	.profileWrapper { display: flex; flex-direction: column; align-items: center; gap: 16px 0px; margin: 0px 0px 32px 0px; }
 	.profileWrapper {
-		.iconWrapper { margin: 0px 0px 8px 0px; }
+		.iconWrapper { position: relative; margin: 0px 0px 8px 0px; }
+		.iconWrapper {
+			.iconObject { margin: 0px; }
+			.icon.edit {
+				position: absolute; right: 0px; bottom: 0px; width: 32px; height: 32px; border-radius: 50%;
+				background-color: var(--color-bg-primary); border: 2px solid var(--color-shape-tertiary); box-sizing: content-box;
+			}
+			.icon.edit::after {
+				content: ''; position: absolute; inset: 0px; background-color: var(--color-text-primary);
+				mask-position: 50% 50%; mask-repeat: no-repeat; mask-size: 16px;
+				-webkit-mask-position: 50% 50%; -webkit-mask-repeat: no-repeat; -webkit-mask-size: 16px;
+				mask-image: url('~img/icon/onboarding/edit.svg');
+				-webkit-mask-image: url('~img/icon/onboarding/edit.svg');
+			}
+		}
 		.inputWrapper { margin: 0px; }
 		.inputWrapper {
 			.input { text-align: left; }
@@ -377,10 +391,11 @@ html.bodyAuthDeleted {
 				.qrInner {
 					canvas { width: 170px !important; height: 170px !important; }
 				}
+				.qrPlaceholder { width: 170px; height: 170px; border-radius: 16px; background-color: var(--color-shape-highlight-medium); }
 
 				.avatar {
 					position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-					padding: 6px; border-radius: 50%; background-color: var(--color-bg-primary); line-height: 0;
+					padding: 3px; border-radius: 50%; background-color: var(--color-bg-primary); line-height: 0;
 				}
 				.avatar {
 					.iconObject { display: block; margin: 0px; }
@@ -392,15 +407,16 @@ html.bodyAuthDeleted {
 			.actions { display: flex; gap: 0px 24px; }
 			.actions {
 				.action { display: flex; flex-direction: column; align-items: center; gap: 6px 0px; }
+				.action.disabled { opacity: 0.5; pointer-events: none; }
 				.action {
 					.icon { position: relative; width: 40px; height: 40px; border-radius: 50%; background-color: var(--color-shape-highlight-medium); }
 					.icon::after {
 						content: ''; position: absolute; inset: 0px; background-color: var(--color-text-primary);
-						mask-position: 50% 50%; mask-repeat: no-repeat; mask-size: 18px;
-						-webkit-mask-position: 50% 50%; -webkit-mask-repeat: no-repeat; -webkit-mask-size: 18px;
+						mask-position: 50% 50%; mask-repeat: no-repeat; mask-size: 20px;
+						-webkit-mask-position: 50% 50%; -webkit-mask-repeat: no-repeat; -webkit-mask-size: 20px;
 					}
-					.icon.copyLink::after { mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.5 11.5 11.5 8.5M9 6l1-1a3 3 0 0 1 4 4l-1 1M11 14l-1 1a3 3 0 0 1-4-4l1-1' stroke='black' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E"); -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8.5 11.5 11.5 8.5M9 6l1-1a3 3 0 0 1 4 4l-1 1M11 14l-1 1a3 3 0 0 1-4-4l1-1' stroke='black' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E"); }
-					.icon.downloadQr::after { mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 4v8m0 0 3-3m-3 3-3-3M5 15h10' stroke='black' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 4v8m0 0 3-3m-3 3-3-3M5 15h10' stroke='black' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+					.icon.copyLink::after { mask-image: url('~img/icon/onboarding/copy.svg'); -webkit-mask-image: url('~img/icon/onboarding/copy.svg'); }
+					.icon.downloadQr::after { mask-image: url('~img/icon/onboarding/download.svg'); -webkit-mask-image: url('~img/icon/onboarding/download.svg'); }
 					.label { @include text-small; color: var(--color-text-secondary); }
 				}
 				.action:hover {

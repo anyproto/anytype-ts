@@ -202,10 +202,17 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 
 		C.ObjectShareByLink(S.Block.profile, (message: any) => {
-			if (!message.error.code && message.link) {
-				shareLinkRef.current = message.link;
-				setDummy(dummy + 1);
+			if (message.error.code) {
+				return;
 			};
+
+			const link = String(message.link || '');
+			if (!link || !/^(https?:\/\/|anytype:)/i.test(link)) {
+				return;
+			};
+
+			shareLinkRef.current = link;
+			setDummy(dummy + 1);
 		});
 	};
 
@@ -236,10 +243,26 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	};
 
 	const onCopyLink = () => {
-		if (shareLinkRef.current) {
-			U.Common.copyToast(translate('authOnboardConnectShareTitle'), shareLinkRef.current);
-			analytics.event('ClickOnboarding', { step: 'ProfileShare', type: 'CopyLink' });
+		if (!shareLinkRef.current) {
+			return;
 		};
+
+		U.Common.copyToast(translate('authOnboardConnectShareTitle'), shareLinkRef.current);
+		analytics.event('ClickOnboarding', { step: 'ProfileShare', type: 'CopyLink' });
+	};
+
+	const onProfilePicClick = () => {
+		Action.openFileDialog({ extensions: J.Constant.fileExtension.cover }, (paths: string[]) => {
+			if (!paths.length) {
+				return;
+			};
+
+			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, false, '', I.ImageKind.Icon, S.Block.profile, 'iconImage', (message: any) => {
+				if (!message.error.code && message.objectId) {
+					U.Object.setIcon(S.Block.profile, '', message.objectId);
+				};
+			});
+		});
 	};
 
 	const onDownloadQr = () => {
@@ -439,14 +462,13 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 			content = (
 				<div className="profileWrapper animation">
-					<div className="iconWrapper">
+					<div className="iconWrapper" onClick={onProfilePicClick}>
 						<IconObject
 							id="onboard-userpic"
 							object={profile}
 							size={128}
-							canEdit={true}
-							menuParam={{ horizontal: I.MenuDirection.Center, classNameWrap: 'fromBlock' }}
 						/>
+						<Icon className="edit" />
 					</div>
 
 					<div className="inputWrapper">
@@ -480,6 +502,8 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 		case Stage.ProfileShare: {
 			const profile = U.Space.getProfile();
+			const hasLink = !!shareLinkRef.current;
+			const actionCn = (extra: string) => [ 'action', extra, (hasLink ? '' : 'disabled') ].join(' ');
 
 			title = (
 				<>
@@ -494,7 +518,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						<Label className="shareTitle" text={translate('authOnboardConnectShareTitle')} />
 
 						<div className="qrWrap">
-							<QR value={shareLinkRef.current || ' '} size={170} />
+							{hasLink ? <QR value={shareLinkRef.current} size={170} /> : <div className="qrPlaceholder" />}
 							<div className="avatar">
 								<IconObject object={profile} size={64} />
 							</div>
@@ -503,11 +527,11 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						<div className="profileName">{profile.name}</div>
 
 						<div className="actions">
-							<div className="action" onClick={onCopyLink}>
+							<div className={actionCn('copy')} onClick={onCopyLink}>
 								<Icon className="copyLink" />
 								<Label text={translate('authOnboardConnectCopyLink')} />
 							</div>
-							<div className="action" onClick={onDownloadQr}>
+							<div className={actionCn('download')} onClick={onDownloadQr}>
 								<Icon className="downloadQr" />
 								<Label text={translate('authOnboardConnectDownload')} />
 							</div>
