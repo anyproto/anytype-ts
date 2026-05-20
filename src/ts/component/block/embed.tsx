@@ -49,7 +49,7 @@ const getViz = async (): Promise<any> => {
 };
 
 const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
-
+	
 	const { isOnline, filter, theme } = S.Common;
 	const [ isShowing, setIsShowing ] = useState(false);
 	const [ isEditing, setIsEditing ] = useState(false);
@@ -62,9 +62,9 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const { width, type, height: fieldHeight } = fields || {};
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '' };
-	const embedIconName = `embed/${U.String.toCamelCase(`-${I.EmbedProcessor[ processor ]}`)}` || 'embed/default';
+	const embedIconName = `embed/${U.String.toCamelCase(`-${I.EmbedProcessor[processor]}`)}` || 'embed/default';
 	const text = String(content.text || '');
-	const isUnsupported = I.EmbedProcessor[ processor ] === undefined;
+	const isUnsupported = I.EmbedProcessor[processor] === undefined;
 	const css: any = {};
 	const nodeRef = useRef(null);
 	const editableRef = useRef(null);
@@ -83,10 +83,6 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const messageHandlerRef = useRef<((e: MessageEvent) => void) | null>(null);
 	const isExcalidraw = block.isEmbedExcalidraw();
 
-	// AnytypeMiniApp: read source (HTML) and initial state (JSON) from sibling
-	// code blocks under the same parent. These reads happen during render so
-	// MobX tracks them — when either sibling code block's content changes, the
-	// embed re-renders and the iframe re-loads with the new payload.
 	let appHtmlContent = '';
 	let appStateText = '';
 	let appStateBlockId = '';
@@ -108,6 +104,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			appStateBlockId = String(jsonBlock?.id || '');
 		};
 	};
+
 	const excalidrawCss: any = {};
 
 	if (width) {
@@ -182,9 +179,6 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		if (node) {
 			const receiver = U.Dom.select('#receiver', node);
-			// AnytypeMiniApp: keep the existing iframe alive so the state-only
-			// fast path in iframe.html can fire (just an 'anytype:state' event
-			// dispatch instead of a full tear-down and re-inject).
 			if (receiver && processor !== I.EmbedProcessor.AnytypeMiniApp) {
 				receiver.remove();
 			};
@@ -327,7 +321,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		if (block.isEmbedLatex()) {
 			const { filter } = S.Common;
-			const symbolBefore = value[ range?.from - 1 ];
+			const symbolBefore = value[range?.from - 1];
 			const menuOpen = S.Menu.isOpen('blockLatex');
 
 			if ((symbolBefore == '\\') && !keyboard.isSpecial(e)) {
@@ -478,8 +472,8 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		const lang = U.Embed.getLang(processor);
 		const range = getRange();
 
-		if (value && lang && Prism.languages[ lang ]) {
-			value = Prism.highlight(value, Prism.languages[ lang ], lang);
+		if (value && lang && Prism.languages[lang]) {
+			value = Prism.highlight(value, Prism.languages[lang], lang);
 		};
 
 		editableRef.current?.setValue(value);
@@ -538,7 +532,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			rootRef.current = createRoot(element);
 		};
 
-		switch (processor) {
+			switch (processor) {
 			default: {
 				const sandbox = [ 'allow-scripts', 'allow-same-origin', 'allow-popups' ];
 				const allowIframeResize = U.Embed.allowIframeResize(processor);
@@ -552,7 +546,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 				const onLoad = async () => {
 					const iw = (iframe as HTMLIFrameElement).contentWindow;
-					const sanitizeParam: any = {
+					const sanitizeParam: any = { 
 						ADD_TAGS: [ 'iframe', 'div', 'a' ],
 						ADD_ATTR: [
 							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy', 'src',
@@ -560,8 +554,8 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						ALLOWED_URI_REGEXP: /^(?:(?:ftp|https?|mailto|tel|callto|sms|cid|xmpp|xxx|anytype):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
 					};
 
-					const data: any = {
-						allowIframeResize,
+					const data: any = { 
+						allowIframeResize, 
 						insertBeforeLoad: U.Embed.insertBeforeLoad(processor),
 						useRootHeight: U.Embed.useRootHeight(processor),
 						align: block.hAlign,
@@ -585,7 +579,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						const pako = await getPako();
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
 						const result = btoa(U.Common.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
-						const type = fields.type || U.Embed.getKrokiOptions()[ 0 ].id;
+						const type = fields.type || U.Embed.getKrokiOptions()[0].id;
 
 						text = `https://kroki.io/${type}/svg/${result}`;
 						typeRef.current?.setValue(type);
@@ -596,7 +590,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 					};
 
 					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
-						text = text.match(/<iframe.*?<\/iframe>/)?.[ 0 ] || '';
+						text = text.match(/<iframe.*?<\/iframe>/)?.[0] || '';
 					};
 
 					if (block.isEmbedGithubGist()) {
@@ -620,10 +614,6 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 					};
 
 					if (processor === I.EmbedProcessor.AnytypeMiniApp) {
-						// POC: pass the sibling HTML code block straight through, plus
-						// parsed JSON state from the sibling JSON code block. iframe.html
-						// has a dedicated handler that rewrites <script> tags so the React
-						// deps in the HTML actually execute (innerHTML alone won't run them).
 						let parsedState: any = null;
 						if (appStateText) {
 							try {
@@ -637,7 +627,8 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 							html: appHtmlContent,
 							state: parsedState,
 						};
-					} else if (U.Embed.allowJs(processor)) {
+					} else
+					if (U.Embed.allowJs(processor)) {
 						data.js = text;
 					} else {
 						text = text.replace(/\r?\n/g, '');
@@ -672,31 +663,12 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 							};
 
 							case 'anytypeMiniAppState': {
-								// React app pushed a new state via window.__ANYTYPE_API__.setState(next).
-								// Two writes happen here:
-								//
-								//   1. S.Block.updateContent — mutates the local MobX store
-								//      synchronously. This fires the embed component's observer
-								//      (because we read jsonBlock.content.text during render),
-								//      which re-runs init → setContent → posts the new payload
-								//      to the iframe, where the state-only fast path dispatches
-								//      'anytype:state' so the React app's listener can update.
-								//
-								//   2. C.BlockTextSetText — async sync to anytype-heart for
-								//      persistence. Heart's echoed BlockSetText event is
-								//      debounced and only updates the local store much later
-								//      (or not at all on the same tick), which is why we need
-								//      step 1 — without it, the React app sees a frozen state
-								//      across multiple clicks until the page is reloaded.
-								//
-								// This double-write pattern matches what anytype-ts itself does
-								// for normal text input (see U.Data.blockSetText, data.ts:449).
 								if (!appStateBlockId) {
 									break;
 								};
 								let serialized = '';
 								try {
-									serialized = JSON.stringify(oe.data.state, null, 2);
+									serialized = JSON.stringify(e.data.state, null, 2);
 								} catch (err) {
 									console.warn('AnytypeMiniApp: failed to serialize state', err);
 									break;
@@ -923,8 +895,8 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		mouseMoveHandlerRef.current = (e: globalThis.MouseEvent) => onResizeMove(e, checkMax);
 		mouseUpHandlerRef.current = (e: globalThis.MouseEvent) => onResizeEnd(e, checkMax);
 		U.Dom.addEvents(window, [
-			[ 'mousemove', mouseMoveHandlerRef.current ],
-			[ 'mouseup', mouseUpHandlerRef.current ],
+			['mousemove', mouseMoveHandlerRef.current],
+			['mouseup', mouseUpHandlerRef.current],
 		]);
 	};
 
@@ -1034,12 +1006,12 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	if (block.isEmbedKroki()) {
 		select = (
-			<Select
-				id={`block-${block.id}-select`}
+			<Select 
+				id={`block-${block.id}-select`} 
 				ref={typeRef}
-				value={type}
-				options={U.Embed.getKrokiOptions()}
-				arrowClassName="light"
+				value={type} 
+				options={U.Embed.getKrokiOptions()} 
+				arrowClassName="light" 
 				onChange={onKrokiTypeChange}
 				showOn="mouseDown"
 			/>
@@ -1089,10 +1061,6 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	useEffect(() => {
 		init();
-		// appHtmlContent / appStateText are always '' for non-AnytypeMiniApp
-		// processors, so adding them to the deps is a no-op for those cases
-		// and re-runs init() when the sibling code blocks change for the
-		// AnytypeMiniApp processor.
 	}, [ block.content.text, isEditing, isShowing, appHtmlContent, appStateText ]);
 
 	useEffect(() => {
@@ -1155,12 +1123,12 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	};
 
 	return (
-		<div
+		<div 
 			ref={nodeRef}
-			tabIndex={tabIndex}
+			tabIndex={tabIndex} 
 			className={cn.join(' ')}
-			onKeyDown={onKeyDownProp}
-			onKeyUp={onKeyUpProp}
+			onKeyDown={onKeyDownProp} 
+			onKeyUp={onKeyUpProp} 
 			onFocus={onFocusProp}
 		>
 			{source}

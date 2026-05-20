@@ -538,7 +538,7 @@ class UtilEmbed {
 
 	// Use iframe height instead of fixed aspect ratio
 	allowIframeResize (p: I.EmbedProcessor) {
-		return [
+		return [ 
 			I.EmbedProcessor.Twitter,
 			I.EmbedProcessor.Reddit,
 			I.EmbedProcessor.Facebook,
@@ -558,7 +558,7 @@ class UtilEmbed {
 
 	// Render blocks on mount
 	allowAutoRender (p: I.EmbedProcessor) {
-		return [
+		return [ 
 			I.EmbedProcessor.Latex,
 			I.EmbedProcessor.Twitter,
 			I.EmbedProcessor.Reddit,
@@ -604,10 +604,8 @@ class UtilEmbed {
 	};
 
 	allowEmptyContent (p: I.EmbedProcessor) {
-		return [
+		return [ 
 			I.EmbedProcessor.Excalidraw,
-			// AnytypeMiniApp's source lives in sibling code blocks, so the
-			// embed block's own text is expected to be empty.
 			I.EmbedProcessor.AnytypeMiniApp,
 		].includes(p);
 	};

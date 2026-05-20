@@ -139,13 +139,10 @@ ipcMain.on('getTheme', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getT
 ipcMain.on('getBgColor', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
 ipcMain.on('getConfig', (e: Electron.IpcMainEvent) => { e.returnValue = ConfigManager.config || {}; });
 
-console.log('[Startup] is.development:', is.development);
 if (!is.development && !app.requestSingleInstanceLock()) {
-	console.log('[Startup] Failed to get single instance lock, exiting');
 	Api.exit(mainWindow, '', false, false);
 	process.exit(0);
 };
-console.log('[Startup] Single instance lock OK');
 
 remote.initialize();
 Util.setAppPath(path.join(__dirname));
@@ -287,7 +284,6 @@ function createWindow () {
 };
 
 app.on('ready', async () => {
-	console.log('[Startup] app ready event fired');
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 		callback({
 			responseHeaders: {
@@ -323,19 +319,13 @@ app.on('ready', async () => {
 
 	// Load gRPC DevTools extension in development mode
 	if (is.development) {
-		console.log('[DevTools] Attempting to install gRPC DevTools extension...');
 		try {
-			const extensionTimeout = new Promise((_, reject) =>
-				setTimeout(() => reject(new Error('Extension install timed out after 5s')), 5000)
-			);
-			await Promise.race([
-				installExtension(GRPC_DEVTOOLS_ID, {
-					loadExtensionOptions: {
-						allowFileAccess: true
-					}
-				}),
-				extensionTimeout
-			]);
+			// Install the extension using electron-devtools-installer
+			await installExtension(GRPC_DEVTOOLS_ID, {
+				loadExtensionOptions: {
+					allowFileAccess: true
+				}
+			});
 
 			console.log(`gRPC DevTools extension installed`);
 		} catch (e) {
