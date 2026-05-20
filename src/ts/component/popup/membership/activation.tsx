@@ -1,10 +1,8 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Title, Label, Button, Loader, Error, Icon, Input } from 'Component';
-import { I, C, S, translate, analytics } from 'Lib';
+import * as I from 'Interface';
 
-const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupMembershipActivation = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { close, param } = props;
 	const { data } = param;
@@ -24,14 +22,14 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 		inputRef.current?.setValue('');
 		setError('');
 		buttonRef.current?.setDisabled(true);
-		$(inputWrapperRef.current).removeClass('canClear');
+		U.Dom.removeClass(inputWrapperRef.current, 'canClear');
 	};
 
 	const checkButton = () => {
 		const v = inputRef.current?.getValue();
 
 		buttonRef.current?.setDisabled(!v.length);
-		$(inputWrapperRef.current).toggleClass('canClear', v.length > 0);
+		U.Dom.toggleClass(inputWrapperRef.current, 'canClear', v.length > 0);
 	};
 
 	const onSubmit = (e: any) => {
@@ -77,25 +75,25 @@ const PopupMembershipActivation = observer(forwardRef<{}, I.Popup>((props, ref) 
 		<form onSubmit={onSubmit}>
 			{isLoading ? <Loader id="loader" /> : ''}
 
-			<Icon className="activation" />
+			<Icon name="popup/header/activation" color="teal" size={56} />
 
 			<Title text={translate('popupMembershipActivationTitle')} />
 			<Label text={translate('popupMembershipActivationText')} />
 
 			<div ref={inputWrapperRef} className="inputWrapper">
 				<Input type="text" ref={inputRef} onKeyUp={onKeyUp} placeholder={translate('popupMembershipActivationPlaceholder')} />
-				<Icon className="clear" onClick={onClear} />
+				<Icon name="common/clear" onClick={onClear} />
 			</div>
 
 			<div className="buttons">
-				<Button ref={buttonRef} type="input" className="c36" color="accent" text={translate('commonActivate')} onClick={onSubmit} />
-				<Button className="c36" color="blank" text={translate('commonCancel')} onClick={() => close()} />
+				<Button ref={buttonRef} type="input" size={36} color="accent" text={translate('commonActivate')} onClick={onSubmit} />
+				<Button size={36} color="blank" text={translate('commonCancel')} onClick={() => close()} />
 			</div>
 
 			<Error text={error} />
 		</form>
 	);
 
-}));
+});
 
 export default PopupMembershipActivation;

@@ -1,10 +1,9 @@
 import React, { forwardRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { observer } from 'mobx-react';
 import { Icon, Title, Label, Button, Frame } from 'Component';
-import { I, U, S, translate, analytics, keyboard, sidebar } from 'Lib';
+import * as I from 'Interface';
 
-const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainVoid = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const spaces = U.Menu.getVaultItems().filter(it => it.isLocalOk);
@@ -23,26 +22,34 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	let title = '';
 	let text = '';
+	let icon = '';
 	let button = null;
 
 	switch (id) {
 		case 'select': {
 			text = translate('pageMainVoidSelectText');
+			icon = 'state/select';
 			break;
 		};
 
 		case 'error': {
 			title = translate('pageMainVoidErrorTitle');
 			text = translate('pageMainVoidErrorText');
+			icon = 'state/error';
 			button = (
-				<Button 
-					id="void-button-create-space" 
-					onClick={onClick} 
-					color="accent" 
-					className="c36" 
+				<Button
+					id="void-button-create-space"
+					onClick={onClick}
+					color="accent"
+					size={36}
 					text={translate('commonCreateSpace')}
 				/>
 			);
+			break;
+		};
+
+		case 'empty': {
+			text = translate('pageMainVoidEmptyText');
 			break;
 		};
 	};
@@ -65,26 +72,31 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	}, [ spaces, spaces.length ]);
 
 	return (
-		<AnimatePresence mode="popLayout">
+		<AnimatePresence mode="wait">
 			<motion.div
+				key={id}
 				className={cn.join(' ')}
-				{...U.Common.animationProps({
-					transition: { duration: 0.2, delay: 0.1 },
-				})}
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1, transition: { duration: 0.12 } }}
+				exit={{ opacity: 0, transition: { duration: 0.08 } }}
 			>
-				<Icon
-					className="vaultToggle withBackground"
-					onClick={() => sidebar.leftPanelToggle(true, true)}
-					tooltipParam={{
-						text: translate('commonVault'),
-						typeY: I.MenuDirection.Bottom,
-					}}
-				/>
+				{id != 'empty' ? (
+					<Icon
+						name="widget/vaultToggle" className="vaultToggle" withBackground={true}
+						onClick={() => sidebar.leftPanelToggle(true, true)}
+						tooltipParam={{
+							text: translate('commonVault'),
+							typeY: I.MenuDirection.Bottom,
+						}}
+					/>
+				) : ''}
 
 				<Frame>
-					<div className="iconWrapper">
-						<Icon />
-					</div>
+					{icon ? (
+						<div className="iconWrapper">
+							<Icon name={icon} size={56} />
+						</div>
+					) : ''}
 
 					<Title text={title} />
 					<Label text={text} />
@@ -97,6 +109,6 @@ const PageMainVoid = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default PageMainVoid;

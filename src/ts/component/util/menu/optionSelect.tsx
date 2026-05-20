@@ -1,15 +1,13 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, CSSProperties, MouseEvent, ReactElement } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { Icon, Tag, Filter, IconObject, ObjectName, Loader } from 'Component';
-import { I, C, S, U, J, keyboard, Relation, translate, Preview, analytics } from 'Lib';
+import * as I from 'Interface';
 
-const HEIGHT = 28;
+const HEIGHT = 32;
 const HEIGHT_DIV = 16;
 const LIMIT = 40;
 const LIMIT_TYPE = 2;
@@ -21,6 +19,7 @@ interface SelectItem {
 	isSection?: boolean;
 	isDiv?: boolean;
 	icon?: string;
+	iconParam?: I.IconParam;
 	isArchived?: boolean;
 	isDeleted?: boolean;
 	_empty_?: boolean;
@@ -102,7 +101,7 @@ export interface OptionSelectRefProps {
 	setFilter: (filter: string) => void;
 };
 
-const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, ref) => {
+const OptionSelect = forwardRef<OptionSelectRefProps, Props>((props, ref) => {
 
 	const {
 		subId, relationKey, value, onChange, isReadonly, noFilter, noSelect, maxHeight, maxCount, skipIds, filterMapper, canAdd,
@@ -124,8 +123,6 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	const hasMoreRef = useRef(true);
 	const timeoutFilterRef = useRef(0);
 	const objectFilterRef = useRef('');
-	const initialValueRef = useRef<string[]>([...value]);
-
 	const isObjectMode = !!searchParam;
 
 	const sensors = useSensors(
@@ -237,12 +234,26 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 	};
 
-	const sortByInitialValue = (items: SelectItem[]): SelectItem[] => {
-		const iv = initialValueRef.current;
-		return [
-			...items.filter(it => iv.includes(it.id)),
-			...items.filter(it => !iv.includes(it.id)),
-		];
+	const injectValueSections = (items: SelectItem[]): SelectItem[] => {
+		if (!value.length) {
+			return items;
+		};
+
+		const selectedSet = new Set(value);
+		const itemsById = new Map(items.map(it => [ it.id, it ]));
+		const selected: SelectItem[] = value.map(id => itemsById.get(id)).filter((it): it is SelectItem => !!it);
+		const rest: SelectItem[] = items.filter(it => !selectedSet.has(it.id));
+
+		const ret: SelectItem[] = [];
+		if (selected.length) {
+			ret.push({ id: 'section-selected', name: translate('commonSelected'), isSection: true });
+			ret.push(...selected);
+		};
+		if (rest.length) {
+			ret.push({ id: 'section-all', name: translate('commonAllValues'), isSection: true });
+			ret.push(...rest);
+		};
+		return ret;
 	};
 
 	const getObjectItems = (): SelectItem[] => {
@@ -274,7 +285,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				};
 			};
 		} else {
-			items = sortByInitialValue(items);
+			items = injectValueSections(items);
 		};
 
 		return items.concat(ret);
@@ -309,7 +320,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				});
 			};
 		} else {
-			items = sortByInitialValue(items);
+			items = injectValueSections(items);
 		};
 
 		return items.concat(ret);
@@ -527,7 +538,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 		S.Menu.open('dataviewOptionEdit', {
 			element,
-			offsetX: getSize?.().width || $(element).outerWidth(),
+			offsetX: getSize?.().width || (U.Dom.select(element)?.offsetWidth ?? 0),
 			vertical: I.MenuDirection.Center,
 			passThrough: false,
 			noFlipY: true,
@@ -548,10 +559,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			setActive(item, false);
 		};
 
-		Preview.tooltipShow({
-			text: item.name,
-			element: $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`)
-		});
+		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
+		if (el) {
+			Preview.tooltipShow({ text: item.name, element: el });
+		};
 	};
 
 	const onMouseEnter = (e: MouseEvent, item: SelectItem): void => {
@@ -559,10 +570,10 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			setActive(item, false);
 		};
 
-		Preview.tooltipShow({
-			text: item.name,
-			element: $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`)
-		});
+		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
+		if (el) {
+			Preview.tooltipShow({ text: item.name, element: el });
+		};
 	};
 
 	const onMouseLeave = (): void => {
@@ -598,7 +609,23 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			return;
 		};
 
-		const items = getItems().filter(it => it.id != 'add');
+		const valueSet = new Set(value);
+		const isActiveSelected = valueSet.has(active.id);
+		const isOverSelected = valueSet.has(over.id);
+
+		// Cross-section drags are a no-op
+		if (isActiveSelected !== isOverSelected) {
+			return;
+		};
+
+		// Reorder within "Selected" section — update value array only
+		if (isActiveSelected) {
+			onSortEndObjects(active, over);
+			return;
+		};
+
+		// Reorder within "All values" section — update global option order
+		const items = getItems().filter(it => (it.id != 'add') && !it.isSection && !it.isDiv);
 		const oldIndex = items.findIndex(it => it.id == active.id);
 		const newIndex = items.findIndex(it => it.id == over.id);
 		const newItems = arrayMove(items, oldIndex, newIndex);
@@ -623,12 +650,14 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 	const resize = (): void => {
 		const items = getItems();
-		const obj = $(nodeRef.current);
+		const obj = nodeRef.current;
 		const offset = !isReadonly && !noFilter ? 44 : 16;
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), 0);
 		const height = Math.max(HEIGHT + offset, Math.min(360, itemsHeight + offset));
 
-		obj.css({ height });
+		if (obj) {
+			U.Dom.css(obj, { height: `${height}px` });
+		};
 		position?.();
 	};
 
@@ -654,9 +683,8 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 	};
 
 	const Item = (item: SelectItem): ReactElement | null => {
-		const sortable = useSortable({ id: item.id, disabled: !canSort || item.id == 'add' });
+		const sortable = useSortable({ id: item.id, disabled: !canSort || (item.id == 'add') || item.isSection || item.isDiv });
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = sortable;
-		const isSelected = value.includes(item.id);
 		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
 
 		const style: any = {
@@ -679,7 +707,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 					onClick={e => onClick(e, item)}
 					onMouseEnter={e => onMouseEnter(e, item)}
 				>
-					<Icon className="plus" />
+					<Icon name="plus/menu" className="plus" />
 					<div className="name">{item.name}</div>
 				</div>
 			);
@@ -701,9 +729,6 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		// Regular item
 		const cn = [ 'item' ];
 
-		if (isSelected) {
-			cn.push('isSelected');
-		};
 		if (isReadonly) {
 			cn.push('isReadonly');
 		};
@@ -715,6 +740,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		};
 
 		let icon = null;
+		if (item.iconParam) {
+			icon = <Icon name={item.iconParam.name} />;
+		} else
 		if (item.icon) {
 			icon = <Icon className={item.icon} />;
 		} else {
@@ -733,10 +761,9 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				{...(canSort ? listeners : {})}
 			>
 
-				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
+				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 
 				<div className="clickable" onClick={e => onClick(e, item)}>
-					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							{icon}
@@ -753,7 +780,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 
 				{canEdit && isAllowed ? (
 					<div className="buttons">
-						<Icon className="more" onClick={e => onEdit(e, item)} />
+						<Icon name="common/more" className="more" onClick={e => onEdit(e, item)} />
 					</div>
 				) : ''}
 			</div>
@@ -765,13 +792,8 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 			return null;
 		};
 
-		const isSelected = value.includes(item.id);
 		const isAllowed = S.Block.isAllowed(item.restrictions, [ I.RestrictionObject.Details ]) && canEdit;
 		const cn = [ 'item', 'isDragging' ];
-
-		if (isSelected) {
-			cn.push('isSelected');
-		};
 
 		return (
 			<div
@@ -779,9 +801,8 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				className={cn.join(' ')}
 				style={{ height: HEIGHT }}
 			>
-				{canSort && !isReadonly ? <Icon className="dnd" /> : ''}
+				{canSort && !isReadonly ? <Icon name="common/dnd" /> : ''}
 				<div className="clickable">
-					{!noSelect ? <Icon className={[ 'checkbox', (isSelected ? 'active' : '') ].join(' ')} /> : ''}
 					{isObjectMode ? (
 						<>
 							<IconObject object={item} />
@@ -797,7 +818,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 				</div>
 				{canEdit && isAllowed ? (
 					<div className="buttons">
-						<Icon className="more" />
+						<Icon name="common/more" className="more" />
 					</div>
 				) : ''}
 			</div>
@@ -864,7 +885,7 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 					modifiers={[ restrictToVerticalAxis, restrictToFirstScrollableAncestor ]}
 				>
 					<SortableContext
-						items={items.map(item => item.id)}
+						items={items.filter(it => !it.isSection && !it.isDiv).map(item => item.id)}
 						strategy={verticalListSortingStrategy}
 					>
 						{list}
@@ -910,7 +931,6 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		<div id="utilOptionSelect" ref={nodeRef} className={cn.join(' ')}>
 			{!noFilter ? (
 				<Filter
-					className="outlined round"
 					ref={filterRef}
 					placeholder={placeholder}
 					value={filter}
@@ -927,6 +947,6 @@ const OptionSelect = observer(forwardRef<OptionSelectRefProps, Props>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default OptionSelect;

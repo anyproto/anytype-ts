@@ -1,10 +1,19 @@
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 export enum Platform {
 	None	 = '',
 	Windows	 = 'Windows',
 	Mac		 = 'Mac',
 	Linux	 = 'Linux',
+};
+
+export enum ProfilerReason {
+	Unknown					 = 0,
+	UserRequest				 = 1,
+	MemoryPressureWarn		 = 2,
+	MemoryPressureCritical	 = 3,
+	ThermalSerious			 = 4,
+	ThermalCritical			 = 5,
 };
 
 export enum DropType {
@@ -50,7 +59,10 @@ export interface Toast {
 	count?: number;
 	value?: boolean;
 	ids?: string[];
+	autoArchivedIds?: string[];
+	autoRestoredIds?: string[];
 	icon?: string;
+	uploadCounts?: { [key: string]: number };
 };
 
 export enum ToastAction {
@@ -64,12 +76,16 @@ export enum ToastAction {
 	Archive 		 = 7,
 	Widget			 = 8,
 	Restore			 = 9,
+	Upload			 = 10,
+	AutoArchive		 = 11,
+	AutoRestore		 = 12,
 };
 
 export interface Option {
 	id: any;
 	name: string;
 	icon?: string;
+	iconParam?: I.IconParam;
 	color?: string;
 	isSection?: boolean;
 	isDiv?: boolean;
@@ -136,6 +152,19 @@ export enum HomePredefinedId {
 	Chat		 = 'chat',
 	Last		 = 'lastOpened',
 	Existing	 = 'existing',
+	Widget		 = 'widgets',
+};
+
+export interface DashboardObject {
+	id: string;
+	name?: string;
+	layout?: I.ObjectLayout;
+	iconEmoji?: string;
+	iconImage?: string;
+	iconOption?: number;
+	_empty_?: boolean;
+	isDeleted?: boolean;
+	[key: string]: any;
 };
 
 export interface HeaderComponent {
@@ -181,6 +210,7 @@ export interface FooterComponent {
 export interface ButtonComponent {
 	id?: string;
 	icon?: string;
+	iconParam?: I.IconParam;
 	type?: string;
 	arrow?: boolean;
 	subType?: string;
@@ -278,13 +308,9 @@ export interface FocusState {
 	range: I.TextRange;
 };
 
-export interface RouteParam { 
+export interface RouteParam {
 	replace: boolean;
-	animate: boolean;
-	delay: number;
 	updateTabRoute: boolean;
-	onFadeOut: () => void;
-	onFadeIn?: () => void;
 	onRouteChange?: () => void;
 };
 
@@ -335,7 +361,7 @@ export interface PageRef {
 };
 
 export interface TooltipParam {
-	element?: any;
+	element?: HTMLElement;
 	title?: string;
 	text?: string;
 	caption?: string;
@@ -351,6 +377,27 @@ export enum LocalApiScope {
 	Limited		 = 0,
 	Json		 = 1,
 	Full		 = 2,
+};
+
+export interface AppConfig {
+	channel?: string;
+	theme?: string;
+	showMenuBar?: boolean;
+	alwaysShowTabs?: boolean;
+	hardwareAcceleration?: boolean;
+	hideTray?: boolean;
+	sudo?: boolean;
+	zoom?: number;
+	interfaceLang?: string;
+	userDataPath?: string;
+	updateDisabled?: boolean;
+	updateTimeout?: number;
+	disableCss?: boolean;
+	experimental?: boolean;
+	debug?: Record<string, boolean>;
+	flagsMw?: Record<string, boolean>;
+	languages?: string[];
+	[key: string]: any;
 };
 
 export interface AppInfo {
@@ -398,9 +445,9 @@ export interface ImageParam {
 
 export interface StickyScrollbarRef {
 	resize: (config: { width: number; left: number; paddingLeft: number; display: string; trackWidth: number }) => void;
-	bind: (element: JQuery<HTMLElement>, isSyncing: boolean) => void;
+	bind: (element: HTMLElement, isSyncing: boolean) => void;
 	unbind: () => void;
-	sync: (element: JQuery<HTMLElement>, isSyncing: boolean) => boolean;
+	sync: (element: HTMLElement, isSyncing: boolean) => boolean;
 };
 
 export enum ClipboardMode {

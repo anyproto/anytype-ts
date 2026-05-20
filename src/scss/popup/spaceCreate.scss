@@ -2,24 +2,124 @@
 
 .popups {
 	.popup.popupSpaceCreate {
-		.innerWrap { width: 480px; padding: 20px 56px 24px 56px; text-align: center; }
+		.innerWrap { width: 480px; border-radius: 32px; position: relative; overflow: hidden; max-height: calc(100vh - 104px); }
 
-		.label { @include text-very-small; color: var(--color-text-secondary); text-transform: uppercase; margin: 0px 0px 36px 0px; }
+		#loader { border-radius: 32px; }
 
-		.iconWrapper { display: flex; justify-content: center; margin: 0px 0px 16px 0px; }
-		.nameWrapper { margin: 0px 0px 28px 0px; position: relative; }
-		.nameWrapper {
-			.counter { position: absolute; right: -44px; bottom: 1px; @include text-small; text-align: right; display: none; }
-			.counter.show { display: block; }
-			.counter.red { color: var(--color-red); }
+		.icon.close {
+			position: absolute; right: 12px; top: 12px; width: 32px; height: 32px; border-radius: 16px; z-index: 2;
+
+			&:hover { background-color: var(--color-shape-highlight-medium); }
 		}
 
-		.spaceName { @include text-header1; height: auto; width: 100%; text-align: center; }
-		.spaceName {
-			.editable { position: relative; z-index: 1; }
-			.placeholder { z-index: 0; }
+		.stepTitle { @include text-paragraph; font-weight: 600; text-align: center; }
+
+		.head { height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+		.head {
+			.seatCounters { @include text-small; color: var(--color-text-secondary); text-align: center; }
 		}
 
+		.offlinePill {
+			display: flex; align-items: center; justify-content: center; gap: 0px 6px;
+			@include text-small; color: var(--color-text-primary);
+			background: var(--color-system-selection); border-radius: 20px; padding: 8px 16px; margin: 8px 0px 24px 0px;
+		}
+		.offlinePill {
+			.icon { width: 16px; height: 16px; color: var(--color-text-primary); }
+		}
+		.iconWrapper { display: flex; justify-content: center; margin: 0px auto 24px auto; position: relative; width: fit-content; }
+		.iconWrapper {
+			.iconPreview { width: 96px; height: 96px; border-radius: 12px; object-fit: cover; }
+
+			.iconEdit {
+				position: absolute; right: -8px; bottom: -8px;
+				width: 32px; height: 32px; border-radius: 16px;
+				display: flex; align-items: center; justify-content: center;
+				border: 1px solid var(--color-shape-highlight-light);
+				background: var(--color-text-white60);
+				backdrop-filter: blur(8px);
+			}
+			.iconEdit {
+				.icon { width: 16px; height: 16px; color: var(--color-text-primary); }
+			}
+		}
 		.buttons { display: flex; flex-direction: column; gap: 8px 0px; }
+		.label.small { @include text-small; color: var(--color-text-secondary); text-align: center; margin: 8px 0px 0px 0px; }
+
+		.step { padding: 0px 0px 16px 0px; }
+		.wrapper { padding: 0px 16px; }
+
+		.item { display: flex; align-items: center; gap: 12px; padding: 6px 8px; position: relative; }
+		.item {
+			&::before {
+				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%;
+				background: transparent; z-index: 0; pointer-events: none; border-radius: 8px;
+			}
+
+			&:hover::before { background: var(--color-shape-highlight-light); }
+
+			.info { display: flex; flex-direction: column; }
+			.name { flex: 1; display: flex; align-items: center; gap: 0px 4px; font-weight: 500; }
+			.label { @include text-small; color: var(--color-text-secondary); }
+
+			.icon.checkbox { margin-left: auto; width: 24px; height: 24px; flex-shrink: 0; }
+			.icon.markerCheckbox2 { color: var(--color-system-accent-100); }
+		}
+
+		/* Step 0 — Select Members */
+		.step.step0 {
+			.memberListWrapper { position: relative; }
+			.memberListWrapper {
+				.emptyState { @include text-small; color: var(--color-text-secondary); min-height: 80px; display: flex; align-items: center; justify-content: center; text-align: center; }
+
+				.memberList { position: relative; }
+				.memberList {
+					.ReactVirtualized__List { padding: 8px; scrollbar-gutter: stable; }
+				}
+
+				.grad {
+					position: absolute; left: 0px; width: 100%; height: 32px; pointer-events: none; z-index: 1;
+
+					&.top { top: 0px; background: linear-gradient(180deg, var(--color-bg-primary) 0%, transparent 100%); }
+					&.bottom { bottom: 0px; background: linear-gradient(180deg, transparent 0%, var(--color-bg-primary) 100%); }
+				}
+			}
+		}
+
+		/* Step Join — Join by link */
+		.step.stepJoin {
+			.stepTitle { padding: 16px 0px; }
+			.input { margin: 0px 0px 16px 0px; }
+			.button { width: 100%; }
+		}
+
+		/* Step 1 — Name & Icon */
+		.step.step1 {
+			.stepTitle { padding: 16px 0px; }
+			.input.spaceName { @include text-paragraph; font-weight: 600; }
+			.input.spaceName.withMargin { margin: 0px 0px 8px 0px; }
+
+			.memberListWrapper { position: relative; }
+			.memberListWrapper {
+				.memberList { position: relative; }
+				.memberList {
+					.ReactVirtualized__List { padding: 8px; scrollbar-gutter: stable; }
+				}
+
+				.sectionLabel { @include text-very-small; color: var(--color-text-secondary); margin: 0px; padding: 4px 8px; display: flex; align-items: flex-end; }
+
+				.item.add {
+					.icon { width: 32px; height: 32px; border-radius: 50%; background: var(--color-shape-highlight-medium); }
+					.name { color: var(--color-text-secondary); }
+				}
+
+				.grad {
+					position: absolute; left: 0px; width: 100%; height: 32px; pointer-events: none; z-index: 1;
+
+					&.top { top: 0px; background: linear-gradient(180deg, var(--color-bg-primary) 0%, transparent 100%); }
+					&.bottom { bottom: 0px; background: linear-gradient(180deg, transparent 0%, var(--color-bg-primary) 100%); }
+				}
+			}
+		}
 	}
 }

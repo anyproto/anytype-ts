@@ -1,6 +1,5 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import $ from 'jquery';
-import { I, U, J, Preview } from 'Lib';
+import * as I from 'Interface';
 
 class MenuStore {
 
@@ -27,10 +26,9 @@ class MenuStore {
 
 	/**
 	 * Opens a menu with the given ID and parameters.
-	 * @param {string} id - The menu ID.
-	 * @param {I.MenuParam} param - The menu parameters.
+	 * When a known menu ID is passed, the data property is type-checked against MenuDataMap.
 	 */
-	open (id: string, param: I.MenuParam) {
+	open <K extends string> (id: K, param: I.MenuParam<K extends keyof I.MenuDataMap ? I.MenuDataMap[K] : any>) {
 		if (!id) {
 			return;
 		};
@@ -174,22 +172,22 @@ class MenuStore {
 		const { param } = item;
 		const { noAnimation, subIds, onClose } = param;
 		const t = noAnimation ? 0 : J.Constant.delay.menu;
-		const el = $(`#${U.String.toCamelCase(`menu-${id}`)}`);
+		const el = U.Dom.get(U.String.toCamelCase(`menu-${id}`));
 
 		if (subIds && subIds.length) {
 			this.closeAll(subIds);
 		};
 
-		if (el.length) {
-			el.toggleClass('noAnimation', noAnimation);
-			el.css({ transform: '' }).removeClass('show');
+		if (el) {
+			U.Dom.toggleClass(el, 'noAnimation', noAnimation);
+			U.Dom.css(el, { transform: '' });
+			U.Dom.removeClass(el, 'show');
 		};
 
-		const filtered = this.menuList.filter(it => it.id != id);
-		U.Data.updateTabsDimmer(null, filtered);
+		U.Data.updateTabsDimmer(null, this.menuList.filter(it => it.id != id));
 
 		const onTimeout = () => {
-			this.menuList = filtered;
+			this.menuList = this.menuList.filter(it => it.id != id);
 
 			onClose?.();
 			callBack?.();
@@ -221,8 +219,8 @@ class MenuStore {
 	 * @param {string} id - The menu ID.
 	 * @returns {boolean} True if animating, false otherwise.
 	 */
-	isAnimating (id: string): boolean {
-		return !!this.isAnimatingFlag.get(id);
+	isAnimating (id?: string): boolean {
+		return !!(id ? this.isAnimatingFlag.get(id) : this.isAnimatingFlag.size);
 	};
 
 	/**
@@ -335,8 +333,7 @@ class MenuStore {
 	 * @private
 	 */
 	resizeAll () {
-		const win = $(window);
-		this.list.forEach(it => win.trigger(`resize.${U.String.toCamelCase(`menu-${it.id}`)}`));
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 };

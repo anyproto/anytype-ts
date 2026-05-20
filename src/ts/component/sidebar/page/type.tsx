@@ -1,12 +1,11 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Button } from 'Component';
-import { I, S, C, U, J, Relation, translate, sidebar, keyboard, analytics } from 'Lib';
 
 import Section from 'Component/sidebar/section';
 import SidebarLayoutPreview from 'Component/sidebar/preview';
+import * as I from 'Interface';
 
-const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageType = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 	
 	const { rootId, isPopup, page, previous, noPreview } = props;
 	const { space } = S.Common;
@@ -41,7 +40,7 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 	};
 
 	const disableButton = (v: boolean) => {
-		$(buttonSaveRef.current?.getNode()).toggleClass('disabled', v);
+		U.Dom.toggleClass(buttonSaveRef.current?.getNode(), 'disabled', v);
 	};
 
 	const getType = () => {
@@ -79,6 +78,8 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 
 	const onChange = (update: any) => {
 		const skipFormat = [ 'defaultTypeId', 'iconImage' ];
+		const textKeys = [ 'name', 'pluralName', 'description' ];
+		const isTextOnly = Object.keys(update).every(key => textKeys.includes(key));
 
 		for (const relationKey in update) {
 			if (skipFormat.includes(relationKey)) {
@@ -99,12 +100,20 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 			};
 		};
 
-		objectRef.current = Object.assign(objectRef.current, update);
-		updateRef.current = Object.assign(updateRef.current, update);
+		objectRef.current = { ...objectRef.current, ...update };
+		updateRef.current = { ...updateRef.current, ...update };
 
 		const { recommendedLayout, layoutAlign } = updateRef.current;
 
-		S.Detail.update(U.Subscription.spaceSubId(J.Constant.subId.type), { id: objectRef.current.id, details: updateRef.current }, false);
+		// Skip MobX store update and BlockDataviewRelationSet for text-only changes
+		// to prevent observer re-renders from overwriting the contentEditable DOM and resetting the caret
+		if (!isTextOnly) {
+			S.Detail.update(U.Subscription.spaceSubId(J.Constant.subId.type), { id: objectRef.current.id, details: updateRef.current }, false);
+
+			if (objectRef.current.id) {
+				C.BlockDataviewRelationSet(objectRef.current.id, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(objectRef.current.id)));
+			};
+		};
 
 		if ((undefined !== recommendedLayout) && !U.Object.isTypeLayout(objectRef.current.layout)) {
 			updateLayout(recommendedLayout);
@@ -112,10 +121,6 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 
 		updateSections();
 		disableButton(!U.Common.objectLength(updateRef.current) || (!objectRef.current.name && !objectRef.current.pluralName));
-
-		if (objectRef.current.id) {
-			C.BlockDataviewRelationSet(objectRef.current.id, J.Constant.blockId.dataview, [ 'name', 'description' ].concat(U.Object.getTypeRelationKeys(objectRef.current.id)));
-		};
 
 		let eventId = '';
 		if (undefined !== recommendedLayout) {
@@ -268,14 +273,15 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 					<Button 
 						color="blank" 
 						text={translate('commonCancel')}
-						className="c28"
+						size={28}
 						onClick={onCancel}
 					/>
 
 					<Button 
 						ref={buttonSaveRef} 
 						text={type ? translate('commonSave') : translate('commonCreate')}
-						className="c28 disabled"
+						className="disabled"
+						size={28}
 						onClick={onSave}
 					/>
 				</div>
@@ -302,6 +308,6 @@ const SidebarPageType = observer(forwardRef<{}, I.SidebarPageComponent>((props, 
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageType;

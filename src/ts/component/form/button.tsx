@@ -1,16 +1,19 @@
-import React, { useState, useRef, forwardRef, useImperativeHandle, MouseEvent } from 'react';
-import $ from 'jquery';
-import { I, U, Preview } from 'Lib';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, MouseEvent } from 'react';
 import { Icon, Loader } from 'Component';
+import * as I from 'Interface';
+
+type ButtonSize = 16 | 28 | 32 | 36 | 40 | 48;
 
 interface ButtonProps {
 	id?: string;
 	type?: string;
 	subType?: string;
 	icon?: string;
+	iconParam?: I.IconParam;
 	arrow?: boolean;
 	text?: string;
 	active?: boolean;
+	size?: ButtonSize;
 	color?: string;
 	className?: string;
 	tooltipParam?: Partial<I.TooltipParam>;
@@ -36,8 +39,10 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	type = 'button',
 	subType = 'submit',
 	icon,
+	iconParam,
 	arrow,
 	text = '',
+	size,
 	color: initialColor = 'black',
 	className = '',
 	tooltipParam = {},
@@ -51,7 +56,9 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ color, setColor ] = useState(initialColor);
 	const nodeRef = useRef<HTMLDivElement | HTMLInputElement>(null);
-	const cn = [ 'button', color, className ];
+
+	useEffect(() => setColor(initialColor), [ initialColor ]);
+	const cn = [ 'button', color, className, (size ? `size${size}` : '') ];
 
 	let content = null;
 
@@ -68,7 +75,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 		const t = Preview.tooltipCaption(text, caption);
 
 		if (t) {
-			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
 		};
 
 		if (onMouseEnter) { 
@@ -85,13 +92,13 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	};
 
 	const handleClick = (e: MouseEvent) => {
-		if (!$(nodeRef.current).hasClass('disabled') && onClick) {
+		if (!U.Dom.hasClass(nodeRef.current, 'disabled') && onClick) {
 			onClick(e);
 		};
 	};
 
 	const mouseDownHandler = (e: MouseEvent) => {
-		if (!$(nodeRef.current).hasClass('disabled') && onMouseDown) {
+		if (!U.Dom.hasClass(nodeRef.current, 'disabled') && onMouseDown) {
 			onMouseDown(e);
 		};
 	};
@@ -99,8 +106,8 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 	useImperativeHandle(ref, () => ({
 		setLoading: (v: boolean) => setIsLoading(v),
 		isLoading: () => isLoading,
-		setDisabled: (v: boolean) => $(nodeRef.current).toggleClass('disabled', v),
-		isDisabled: () => $(nodeRef.current).hasClass('disabled'),
+		setDisabled: (v: boolean) => U.Dom.toggleClass(nodeRef.current, 'disabled', v),
+		isDisabled: () => U.Dom.hasClass(nodeRef.current, 'disabled'),
 		setColor,
 		getColor: () => color,
 		getNode: () => nodeRef.current,
@@ -137,7 +144,7 @@ const Button = forwardRef<ButtonRef, ButtonProps>(({
 					{...U.Common.dataProps(dataset)}
 				>
 					{isLoading && <Loader />}
-					{icon && <Icon className={icon} />}
+					{iconParam ? <Icon {...iconParam} /> : icon ? <Icon className={icon} /> : ''}
 					<div className="txt" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 					{arrow && <div className="arrow" />}
 				</div>

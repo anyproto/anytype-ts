@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState, useCallback, ReactNode, UIEvent } from 'react';
-import { observer } from 'mobx-react';
-import { I, S, U, J, translate, getSparkOnboardingService, keyboard } from 'Lib';
 import { Loader, Error, Button, Icon, Label } from 'Component';
 import StatusMessage from './page/aiOnboarding/statusMessage';
+import * as I from 'Interface';
 
 interface Message {
 	id: string;
@@ -106,7 +105,7 @@ const EXAMPLE_GOALS = [
 	'I want to create a universe for my game development project'
 ];
 
-const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
+const PopupAIOnboarding = forwardRef<{}, I.Popup>(({ param = {}, getId, close }, ref) => {
 
 	const nodeRef = useRef(null);
 	const messagesEndRef = useRef(null);
@@ -157,7 +156,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		const wrapper = e.currentTarget;
 		
 		// Add scrolling class
-		wrapper.classList.add('isScrolling');
+		U.Dom.addClass(wrapper, 'isScrolling');
 		
 		// Clear existing timeout
 		if (scrollTimeoutRef.current) {
@@ -166,7 +165,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		
 		// Remove scrolling class after scrolling stops
 		scrollTimeoutRef.current = setTimeout(() => {
-			wrapper.classList.remove('isScrolling');
+			U.Dom.removeClass(wrapper, 'isScrolling');
 		}, 1000); // Hide scrollbar 1 second after scrolling stops
 	}, []);
 	
@@ -315,7 +314,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 		if (!force && ((sparkOnboarding.step !== I.OnboardingStep.Goal) || (messages.length > 1))) {
 			S.Popup.open('confirm', {
 				data: {
-					icon: 'confirm',
+					iconParam: { name: 'popup/header/confirm', color: 'orange' },
 					title: translate('popupConfirmCloseAIOnboardingTitle'),
 					text: translate('popupConfirmCloseAIOnboardingText'),
 					textConfirm: translate('popupConfirmCloseAIOnboardingConfirm'),
@@ -500,7 +499,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 				if (lastMessage && (lastMessage.type === 'ai')) {
 					lastMessage.content = (
 						<div className="completionMessage">
-							<Icon className="success large" />
+							<Icon name="popup/header/success" className="success" color="lime" size={56} />
 							<div className="title">All set! Your space is ready to explore.</div>
 							<div className="spaceInfo">
 								<div className="spaceName">{sparkOnboarding.manifest.spaceName}</div>
@@ -613,7 +612,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			<div ref={nodeRef} className="errorStateWrapper">
 				<div className="errorContent">
 					<div className="errorIcon">
-						<Icon className="warning large" />
+						<Icon name="popup/header/warning" className="warning large" />
 					</div>
 					<div className="errorTitle">{translate('popupAiOnboardingConnectionIssueTitle')}</div>
 					<div className="errorMessage">
@@ -621,7 +620,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 					</div>
 					<div className="errorActions">
 						<Button 
-							className="c28 primary" 
+							size={28}
+							className="primary" 
 							text={translate('commonRetry')} 
 							onClick={() => {
 								// Just trigger connect, don't reset error
@@ -631,7 +631,8 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 						/>
 
 						<Button 
-							className="c28 secondary" 
+							size={28}
+							className="secondary" 
 							text={translate('commonClose')} 
 							onClick={() => onClose(true)} 
 						/>
@@ -774,7 +775,7 @@ const PopupAIOnboarding = observer(forwardRef<{}, I.Popup>(({ param = {}, getId,
 			</div>
 		</div>
 	);
-}));
+});
 
 /*
 // Typing Indicator Component
@@ -799,7 +800,7 @@ const TypeCard = ({ type, isSelected, onToggle }) => {
 			<div className="header">
 				{type.icon && <Icon className={type.icon} />}
 				<div className="name">{type.name}</div>
-				{isSelected && <Icon className="check" />}
+				{isSelected && <Icon name="common/tick" className="check" />}
 			</div>
 		</div>
 	);

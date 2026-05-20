@@ -1,5 +1,5 @@
-import { I } from 'Lib';
 import { MouseEvent } from 'react';
+import * as I from 'Interface';
 
 export enum CardSize {
 	Small			 = 0,
@@ -143,6 +143,7 @@ export interface Filter {
 	operator?: FilterOperator;
 	format?: I.RelationType;
 	quickOption?: FilterQuickOption;
+	includeTime?: boolean;
 	nestedFilters?: Filter[];
 };
 
@@ -169,7 +170,6 @@ export interface ViewComponent {
 	rootId?: string;
 	block?: I.Block;
 	readonly: boolean;
-	pageContainer?: string;
 	isPopup?: boolean;
 	isInline?: boolean;
 	isCollection?: boolean;
@@ -274,7 +274,6 @@ export interface Cell {
 	readonly?: boolean;
 	canOpen?: boolean;
 	canEdit?: boolean;
-	pageContainer?: string;
 	isInline?: boolean;
 	size?: number;
 	iconSize?: number;

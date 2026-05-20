@@ -1,4 +1,5 @@
-import { I, C, S, U, J, Storage, translate, sidebar, analytics } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 /**
  * UtilSpace provides utilities for working with Anytype spaces.
@@ -24,15 +25,16 @@ class UtilSpace {
 		param = param || {};
 
 		let home = this.getDashboard();
-		if (home && (home.id == I.HomePredefinedId.Last)) {
+		if (home && [ '', I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(home.id)) {
 			home = this.getLastObject();
 		};
 
-		if (!home) {
-			home = { layout: I.ObjectLayout.Settings, id: 'spaceIndexEmpty' };
+		if (home) {
+			U.Object.openRoute(home, param);
+		} else {
+			U.Router.go('/main/void/empty', param);
 		};
 
-		U.Object.openRoute(home, param);
 		S.Common.setLeftSidebarState('vault', 'widget');
 
 		const dataLeft = sidebar.getData(I.SidebarPanel.Left);
@@ -120,10 +122,9 @@ class UtilSpace {
 
 		const details: any = {
 			oneToOneIdentity: id,
-			spaceUxType: I.SpaceUxType.OneToOne,
-			spaceAccessType: I.SpaceType.Shared,
-			spaceDashboardId: I.HomePredefinedId.Chat,
+			spaceAccessType: I.SpaceAccessType.Shared,
 			oneToOneRequestMetadataKey: key,
+			spaceType: I.SpaceType.OneToOne,
 		};
 
 		C.WorkspaceCreate(details, I.Usecase.ChatSpace, (message: any) => {
@@ -146,7 +147,7 @@ class UtilSpace {
 			analytics.event('CreateSpace', { 
 				usecase: I.Usecase.ChatSpace,
 				middleTime: message.middleTime, 
-				uxType: I.SpaceUxType.OneToOne,
+				spaceType: I.SpaceType.OneToOne,
 				route,
 			});
 		});
@@ -154,32 +155,30 @@ class UtilSpace {
 
 	/**
 	 * Gets the dashboard object for the current space.
-	 * @returns {any|null} The dashboard object or null if not found.
+	 * @returns {I.DashboardObject|null} The dashboard object or null if not found.
 	 */
-	getDashboard () {
+	getDashboard (): I.DashboardObject | null {
 		const space = this.getSpaceview();
-		if (space.isChat || space.isOneToOne) {
+		const id = space.homepage;
+
+		if (space.isOneToOne) {
 			return this.getChat();
 		};
-
-		const id = space.spaceDashboardId;
 
 		if (!id) {
 			return null;
 		};
 
-		let ret = null;
+		let ret: I.DashboardObject | null = null;
 		switch (id) {
 			case I.HomePredefinedId.Graph: {
 				ret = this.getGraph();
 				break;
 			};
 
-			case I.HomePredefinedId.Chat: {
-				ret = this.getChat();
-				break;
-			};
-
+			case '':
+			case I.HomePredefinedId.Chat:
+			case I.HomePredefinedId.Widget:
 			case I.HomePredefinedId.Last: {
 				ret = this.getLastOpened();
 				break;
@@ -192,7 +191,7 @@ class UtilSpace {
 
 		};
 
-		if (!ret || ret._empty_ || ret.isDeleted) {
+		if (!ret || ret._empty_ || ret.isArchived || ret.isDeleted) {
 			return null;
 		};
 		return ret;
@@ -202,30 +201,34 @@ class UtilSpace {
 	 * Gets the list of system dashboard IDs.
 	 * @returns {string[]} The list of system dashboard IDs.
 	 */
-	getSystemDashboardIds () {
-		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last ];
+	getSystemDashboardIds (): string[] {
+		return [ I.HomePredefinedId.Graph, I.HomePredefinedId.Chat, I.HomePredefinedId.Last, I.HomePredefinedId.Widget ];
+	};
+
+	isSystemDashboard (id: string): boolean {
+		return this.getSystemDashboardIds().includes(id);
 	};
 
 	/**
 	 * Gets the graph dashboard object.
-	 * @returns {object} The graph dashboard object.
+	 * @returns {I.DashboardObject} The graph dashboard object.
 	 */
-	getGraph () {
-		return { 
-			id: I.HomePredefinedId.Graph, 
-			name: translate('commonGraph'), 
+	getGraph (): I.DashboardObject {
+		return {
+			id: I.HomePredefinedId.Graph,
+			name: translate('commonGraph'),
 			layout: I.ObjectLayout.Graph,
 		};
 	};
 
 	/**
 	 * Gets the last opened dashboard object.
-	 * @returns {object} The last opened dashboard object.
+	 * @returns {I.DashboardObject} The last opened dashboard object.
 	 */
-	getLastOpened () {
-		return { 
-			id: I.HomePredefinedId.Last,
-			name: translate('spaceLast'),
+	getLastOpened (): I.DashboardObject {
+		return {
+			id: I.HomePredefinedId.Widget,
+			name: translate('commonNoHome'),
 		};
 	};
 
@@ -250,12 +253,12 @@ class UtilSpace {
 
 	/**
 	 * Gets the chat dashboard object.
-	 * @returns {object} The chat dashboard object.
+	 * @returns {I.DashboardObject} The chat dashboard object.
 	 */
-	getChat () {
-		return { 
+	getChat (): I.DashboardObject {
+		return {
 			id: S.Block.workspace,
-			name: translate(`spaceUxType${I.SpaceUxType.Chat}`),
+			name: translate(`spaceType${I.SpaceType.Chat}`),
 			layout: I.ObjectLayout.Chat,
 		};
 	};
@@ -401,13 +404,29 @@ class UtilSpace {
 	};
 
 	/**
+	 * Gets the other participant for a 1-1 chat space.
+	 * @param {any} space - The spaceview object.
+	 * @returns {any|null} The other participant or null if not found.
+	 */
+	getOneToOneParticipant (space: any) {
+		if (!space || !space.isOneToOne || !space.oneToOneIdentity) {
+			return null;
+		};
+
+		const participantId = this.getParticipantId(space.targetSpaceId, space.oneToOneIdentity);
+		const object = S.Detail.get(this.getSubSpaceSubId(space.targetSpaceId), participantId);
+
+		return object._empty_ ? null : object;
+	};
+
+	/**
 	 * Checks if the current user can write in a given space.
 	 * @param {string} [spaceId] - The space ID.
 	 * @returns {boolean} True if the user can write, false otherwise.
 	 */
 	canMyParticipantWrite (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId);
-		return participant ? (participant.isWriter || participant.isOwner) : true;
+		return participant ? (participant.isWriter || participant.isAdmin || participant.isOwner) : true;
 	};
 
 	/**
@@ -418,6 +437,53 @@ class UtilSpace {
 	isMyOwner (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId || S.Common.space);
 		return participant ? participant.isOwner : false;
+	};
+
+	/**
+	 * Checks if the current user is an admin of a given space.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the user is an admin, false otherwise.
+	 */
+	isMyAdmin (spaceId?: string): boolean {
+		const participant = this.getMyParticipant(spaceId || S.Common.space);
+		return participant ? participant.isAdmin : false;
+	};
+
+	/**
+	 * Checks if the current user can moderate a given space (owner or admin).
+	 * Moderators can delete any chat message and remove members.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the user can moderate, false otherwise.
+	 */
+	canMyParticipantModerate (spaceId?: string): boolean {
+		const participant = this.getMyParticipant(spaceId || S.Common.space);
+		return participant ? (participant.isOwner || participant.isAdmin) : false;
+	};
+
+	/**
+	 * Checks if the current user can manage (change role / remove) a target participant.
+	 * Owner can manage Admins, Editors and Viewers; Admin can manage Editors and Viewers only.
+	 * Nobody can manage themselves or another Owner.
+	 * @param {any} target - The target participant object.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the current user can manage the target, false otherwise.
+	 */
+	canManageParticipant (target: any, spaceId?: string): boolean {
+		const me = this.getMyParticipant(spaceId || S.Common.space);
+
+		if (!me || !target || (me.id == target.id) || (me.identity && (me.identity == target.identity)) || target.isOwner) {
+			return false;
+		};
+
+		if (me.isOwner) {
+			return true;
+		};
+
+		if (me.isAdmin) {
+			return target.isWriter || target.isReader;
+		};
+
+		return false;
 	};
 
 	/**
@@ -452,8 +518,21 @@ class UtilSpace {
 			return 0;
 		};
 
-		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isOwner);
+		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isAdmin || it.isOwner);
 		return space.writersLimit - participants.length;
+	};
+
+	/**
+	 * Gets writer/reader slots available to invitees from the current membership tier.
+	 * writersLimit subtracts 1 because the owner occupies one writer seat in the middleware's count.
+	 * @returns {{ writersLimit: number, readersLimit: number }} Tier-level slots for new members.
+	 */
+	getTierLimits () {
+		const product = S.Membership.data?.getTopProduct();
+		return {
+			writersLimit: Math.max(0, (product?.features?.spaceWriters || 0) - 1),
+			readersLimit: product?.features?.spaceReaders || 0,
+		};
 	};
 
 	/**

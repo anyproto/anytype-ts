@@ -1,0 +1,84 @@
+@import "~scss/_mixins";
+
+.sidebarProgress {
+	position: absolute; z-index: 3; bottom: 24px; left: calc(100% + 16px); width: 288px;
+	background: var(--color-bg-primary); border-radius: 12px;
+	box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+.sidebarProgress {
+	.head {
+		display: flex; align-items: center; justify-content: space-between; padding: 11px 12px;
+		gap: 0px 8px; @include text-common; font-weight: 500; color: var(--color-text-primary);
+	}
+	.head {
+		.icon.arrow {
+			width: 20px; height: 20px; transform: rotateZ(180deg); transition: transform 0.2s ease;
+		}
+	}
+	.head:hover {
+		.icon.arrow { color: var(--color-control-accent); }
+	}
+
+	&.isExpanded {
+		.head { padding-bottom: 3px; }
+		.head { 
+			.icon.arrow { transform: rotateZ(0deg); }
+		}
+	}
+
+	.items { display: flex; flex-direction: column; padding: 8px; }
+
+	.item {
+		display: flex; align-items: center; gap: 0px 10px; padding: 6px 8px; border-radius: 8px;
+	}
+	.item {
+		.iconWrap {
+			width: 36px; height: 36px; flex-shrink: 0; border-radius: 8px; display: flex;
+			align-items: center; justify-content: center;
+			background: var(--color-shape-highlight-medium);
+		}
+		.iconWrap {
+			.icon.progressType { width: 20px; height: 20px; }
+		}
+
+		.info { flex-grow: 1; overflow: hidden; }
+		.info {
+			.name { @include text-overflow-nw; @include text-common; font-weight: 500; color: var(--color-text-primary); }
+			.status { @include text-small; color: var(--color-text-secondary); }
+			.status {
+				> span { display: flex; align-items: center; gap: 6px; }
+				.dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); }
+				.error { margin: 0px; @include text-small; }
+			}
+		}
+
+		.spinnerWrap {
+			width: 28px; height: 28px; flex-shrink: 0; position: relative;
+		}
+		.spinnerWrap.withSpinner {
+			&::after {
+				content: ''; position: absolute; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
+				width: 20px; height: 20px;
+				background: url('~img/icon/loader.svg') 50% 50% no-repeat; background-size: 20px;
+				animation: rotate 0.8s infinite linear;
+				transition: opacity 0.15s ease;
+			}
+
+			.icon.commonClear {
+				@include pos-abs-mid; margin: -10px 0px 0px -10px; z-index: 2;
+				width: 20px; height: 20px; opacity: 0; transition: opacity 0.15s ease;
+			}
+			.icon.commonClear:hover { color: var(--color-text-primary); }
+		}
+
+		&.canCancel { transition: $transitionAllCommon; }
+
+		&.canCancel:hover { background: var(--color-shape-highlight-medium); }
+		&.canCancel:hover {
+			.spinnerWrap.withSpinner {
+				&::after { opacity: 0; }
+				.icon.commonClear { opacity: 1; }
+			}
+		}
+	}
+}

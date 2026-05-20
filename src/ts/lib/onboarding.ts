@@ -1,5 +1,6 @@
 import * as Docs from 'Docs';
-import { I, S, U, Storage, sidebar, keyboard } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 /**
  * Onboarding manages the user onboarding and tutorial flows.
@@ -40,7 +41,8 @@ class Onboarding {
 			|| !section.items
 			|| !section.items.length
 			|| (!force && Storage.getOnboarding(key))
-			|| !Storage.get('multichatsOnboarding')
+			// JS-9163: multi chats onboarding gate disabled
+			// || !Storage.get('multichatsOnboarding')
 		) {
 			return false;
 		};
@@ -63,10 +65,7 @@ class Onboarding {
 					noFlipX: true,
 					onClose: () => { 
 						Storage.setOnboarding(key);
-
-						if (section.onComplete) {
-							section.onComplete(force);
-						};
+						section.onComplete?.(force);
 					},
 					data: {
 						...param.data,
@@ -99,15 +98,17 @@ class Onboarding {
 
 	initWidgetSections (unread: boolean, recentEdit: boolean) {
 		const values = {
+			[I.WidgetSection.Pin]: false,
 			[I.WidgetSection.Unread]: unread,
 			[I.WidgetSection.RecentEdit]: recentEdit,
-			[I.WidgetSection.Pin]: false,
 			[I.WidgetSection.Type]: false,
 		};
 
 		for (const k in values) {
 			const current = S.Common.getWidgetSection(Number(k));
-			current.isClosed = values[k];
+			if (current) {
+				current.isClosed = values[k];
+			};
 		};
 
 		S.Common.widgetSectionsSet(S.Common.widgetSections);
@@ -179,16 +180,17 @@ class Onboarding {
 			param.containerHorizontal = Number(param.containerHorizontal) || I.MenuDirection.Left;
 
 			const recalcRect = () => {
-				const container = U.Common.getScrollContainer(isPopup);
-				const height = container.height();
-				const width = container.width();
-				const scrollTop = $(window).scrollTop();
+				const container = U.Dom.getScrollContainer(isPopup);
+				const height = container?.clientHeight ?? 0;
+				const width = container?.clientWidth ?? 0;
+				const scrollTop = window.scrollY;
+				const bounds = container?.getBoundingClientRect();
 
 				let offset = { left: 0, top: 0 };
 				let rect: any = { x: 0, y: 0, width: 0, height: 0 };
-	
-				if (container.length) {
-					offset = container.offset();
+
+				if (container && bounds) {
+					offset = { left: bounds.left, top: bounds.top };
 				};
 	
 				switch (param.containerVertical) {

@@ -1,6 +1,6 @@
 import loadImage from 'blueimp-load-image';
-import { I, S, U, J, Relation } from 'Lib';
 import { DragEvent } from 'react';
+import * as I from 'Interface';
 
 const SIZE_UNIT = 1024;
 const UNITS = {
@@ -249,6 +249,30 @@ class UtilFile {
 	};
 
 	/**
+	 * Returns file extensions for the given object layout used for file picker filtering.
+	 * @param {I.ObjectLayout} layout - The object layout.
+	 * @returns {string[]} The file extensions (without dots).
+	 */
+	getExtensionsByLayout (layout: I.ObjectLayout): string[] {
+		switch (layout) {
+			case I.ObjectLayout.Image:
+				return [ 'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'tiff', 'ico', 'heic', 'heif', 'avif' ];
+
+			case I.ObjectLayout.Video:
+				return [ 'mp4', 'mov', 'avi', 'mkv', 'webm', 'flv', 'wmv', 'm4v', 'ogv', '3gp' ];
+
+			case I.ObjectLayout.Audio:
+				return [ 'mp3', 'wav', 'flac', 'aac', 'ogg', 'wma', 'm4a', 'aiff', 'aif', 'opus' ];
+
+			case I.ObjectLayout.Pdf:
+				return [ 'pdf' ];
+
+			default:
+				return [];
+		};
+	};
+
+	/**
 	 * Checks if a drag event contains files.
 	 * @param {React.DragEvent} e - The drag event.
 	 * @returns {boolean} True if files are present, false otherwise.
@@ -256,6 +280,76 @@ class UtilFile {
 	checkDropFiles (e: DragEvent): boolean {
 		const dt = e.dataTransfer;
 		return ((dt.files && dt.files.length) || (dt.types && dt.types.includes('Files'))) ? true : false;
+	};
+
+	/**
+	 * Maps an ObjectLayout to a count key string.
+	 */
+	layoutToCountKey (l: I.ObjectLayout): string {
+		switch (l) {
+			case I.ObjectLayout.Image: return 'image';
+			case I.ObjectLayout.Video: return 'video';
+			case I.ObjectLayout.Audio: return 'audio';
+			default: return 'file';
+		};
+	};
+
+	/**
+	 * Formats file counts into a human-readable breakdown string.
+	 */
+	formatCountsBreakdown (counts: { [key: string]: number }): string {
+		const pluralMap = {
+			image: translate('pluralImage'),
+			video: translate('pluralVideo'),
+			audio: translate('pluralAudio'),
+			file: translate('pluralFile'),
+		};
+
+		const parts: string[] = [];
+		for (const key of [ 'image', 'video', 'audio', 'file' ]) {
+			const n = counts[key];
+			if (n > 0) {
+				parts.push(`${n} ${U.Common.plural(n, pluralMap[key]).toLowerCase()}`);
+			};
+		};
+
+		return parts.join(', ');
+	};
+
+	showFileDropError (message: any) {
+		if (!message.error.code) {
+			return;
+		};
+
+		S.Popup.open('confirm', {
+			preventCloseByClick: true,
+			data: {
+				iconParam: { name: 'popup/header/error', color: 'orange' },
+				title: translate('commonError'),
+				text: message.error.description || translate('popupUploadErrorText'),
+				textConfirm: translate('popupUploadErrorConfirm'),
+				colorConfirm: 'blank',
+				canCancel: false,
+			},
+		});
+	};
+
+	showUploadError (errorCount: number, lastErrorDescription?: string) {
+		if (!errorCount) {
+			return;
+		};
+
+		S.Popup.open('confirm', {
+			preventCloseByClick: true,
+			data: {
+				iconParam: { name: 'popup/header/error', color: 'orange' },
+				title: U.String.sprintf(translate('popupUploadErrorTitle'), errorCount, U.Common.plural(errorCount, translate('pluralFile'))),
+				text: lastErrorDescription || translate('popupUploadErrorText'),
+				textConfirm: translate('popupUploadErrorConfirm'),
+				colorConfirm: 'blank',
+				canCancel: false,
+			},
+		});
 	};
 
 };

@@ -18,11 +18,12 @@ html.printMedia {
 	#sidebarLeft,
 	#sidebarRight,
 	.sidebarDummy,
-	.progress,
+	.sidebarProgress,
 	.toast,
 	.focusable.isFocused::before,
 	#vault,
-	.tableOfContents
+	.tableOfContents,
+	.socialBlockWrap
 	{ display: none !important; }
 
 	#selection { overflow: visible; }
@@ -75,7 +76,7 @@ html.printMedia {
 		#button-block-add { display: none; }
 
 		.block {
-			.icon.dnd { display: none; }
+			.icon.commonDnd { display: none; }
 		}
 
 		.block.blockLink, 
@@ -92,7 +93,7 @@ html.printMedia {
 
 		.block.blockMedia {
 			.icon.play, 
-			.icon.download, 
+			.icon.commonDownload, 
 			.icon.resize { display: none; }
 		}
 

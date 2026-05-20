@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
-import { I, keyboard, S, translate, U, Onboarding, Action, analytics, sidebar } from 'Lib';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import * as I from 'Interface';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
@@ -11,16 +10,17 @@ const HEIGHT_SECTION_FIRST = 28;
 const HEIGHT_ACCOUNT = 56;
 const HEIGHT_DIV = 12;
 
-const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { page } = props;
 	const { data } = S.Membership;
 	const product = data?.getTopProduct();
 	const { space, isOnline } = S.Common;
-	const [ dummy, setDummy ] = useState(0);
+	const [ activeId, setActiveId ] = useState('');
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
 	const param = keyboard.getMatch().params;
+	const currentId = activeId || param.id;
 	const isSpace = page == 'settingsSpace';
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
@@ -42,32 +42,41 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		const map = U.Menu.settingsSectionsMap();
 		const { notSyncedCounter } = S.Auth.getSyncStatus();
 		const importExport = [
-			{ id: 'exportIndex', icon: 'export', subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
+			{ id: 'exportIndex', iconParam: { name: 'menu/action/download' }, subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
 		];
 
 		if (canWrite) {
-			importExport.unshift({ id: 'importIndex', icon: 'import', subPages: [ 'importNotion', 'importNotionHelp', 'importNotionWarning', 'importCsv' ] });
+			importExport.unshift({ id: 'importIndex', iconParam: { name: 'menu/action/import' }, subPages: [ 'importNotion', 'importNotionWarning', 'importCsv' ] });
 		};
+
+		const isOwner = U.Space.isMyOwner();
+		const leaveOrRemove = !spaceview.isPersonal ? {
+			id: 'remove',
+			iconParam: isOwner ? { name: 'menu/action/remove', color: 'destructive' } : { name: 'menu/action/leave', color: 'destructive' },
+			name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'),
+			color: 'destructive',
+		} : null;
 
 		return [
 			{
 				id: 'common', name: translate('commonPreferences'), children: [
-					{ id: 'spaceIndex', icon: 'space' },
-					spaceview.isPersonal ? null : { id: 'spaceShare', icon: 'members' },
-					(spaceview.isOneToOne || spaceview.isChat) ? null : { id: 'spaceNotifications', icon: 'notifications' },
-					{ id: 'spaceStorage', icon: 'storage', alert: notSyncedCounter },
-					{ id: 'archive', icon: 'bin' },
+					{ id: 'spaceIndex', iconParam: { name: 'settings/space/space' } },
+					spaceview.isPersonal ? null : { id: 'spaceShare', iconParam: { name: 'menu/action/members' } },
+					spaceview.isOneToOne ? null : { id: 'spaceNotifications', iconParam: { name: 'settings/pushOn' } },
+					{ id: 'spaceStorage', iconParam: { name: 'settings/storage' }, alert: notSyncedCounter },
+					{ id: 'archive', iconParam: { name: 'common/bin' } },
 				],
 			},
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
-					{ id: 'types', icon: 'type' },
-					{ id: 'relations', icon: 'relation' },
+					{ id: 'types', iconParam: { name: 'settings/type' } },
+					{ id: 'relations', iconParam: { name: 'settings/relation' } },
 				],
 			},
 			{ id: 'integrations', name: translate('pageSettingsSpaceIntegrations'), children: importExport },
-		].map(s => {
+			leaveOrRemove ? { id: 'delete', isDiv: true, children: [ leaveOrRemove ] } : null,
+		].filter(it => it).map(s => {
 			s.children = s.children.filter(it => it).map((c: any) => {
-				c.name = map[c.id];
+				c.name = map[c.id] || c.name;
 				return c;
 			});
 			return s;
@@ -87,21 +96,21 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 				id: 'basicSettings', name: translate('popupSettingsApplicationTitle'), children: [
 					{ id: 'personal' },
 					{ id: 'language' },
-					{ id: 'pinIndex', icon: 'pin', subPages: [ 'pinSelect', 'pinConfirm' ] },
+					{ id: 'pinIndex', iconParam: { name: 'settings/pin' }, subPages: [ 'pinSelect', 'pinConfirm' ] },
 				],
 			},
 			{
 				id: 'vaultSettings', name: translate('popupSettingsAccountAndKeyTitle'), children: [
 					{ id: 'phrase', subPages: [ 'delete' ] },
-					withMembership ? { id: 'membership', icon: 'membership' } : null,
+					withMembership ? { id: 'membership', iconParam: { name: 'settings/membership' } } : null,
 				],
 			},
 			{
 				id: 'dataManagement', name: translate('popupSettingsDataManagementTitle'), children: [
-					{ id: 'dataIndex', icon: 'storage' },
-					{ id: 'spaceList', icon: 'spaces' },
-					{ id: 'dataPublish', icon: 'sites' },
-					{ id: 'api', icon: 'api' },
+					{ id: 'dataIndex', iconParam: { name: 'settings/storage' } },
+					{ id: 'spaceList', iconParam: { name: 'settings/spaces' } },
+					{ id: 'dataPublish', iconParam: { name: 'settings/sites' } },
+					{ id: 'api', iconParam: { name: 'settings/api' } },
 				],
 			},
 		].map(s => {
@@ -151,11 +160,14 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 	};
 
 	const onClick = (item) => {
+		if (item.id == 'remove') {
+			Action.removeSpace(S.Common.space, analytics.route.settings);
+		} else
 		if ([ 'types', 'relations' ].includes(item.id)) {
 			S.Common.setLeftSidebarState('vault', `settings/${item.id}`);
 		} else {
+			setActiveId(item.id);
 			Action.openSettings(item.id, analytics.route.settings);
-			setDummy(dummy + 1);
 		};
 	};
 
@@ -196,12 +208,16 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 			let name = null;
 			let caption = '';
 
-			if (item.id == param.id || (item.subPages && item.subPages.includes(param.id))) {
+			if (item.id == currentId || (item.subPages && item.subPages.includes(currentId))) {
 				cn.push('active');
 			};
 
+			if (item.color) {
+				cn.push(`textColor-${item.color}`);
+			};
+
 			if (item.id == 'account') {
-				if ('index' == param.id) {
+				if ('index' == currentId) {
 					cn.push('active');
 				};
 
@@ -224,7 +240,16 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 
 				cn.push('itemAccount');
 			} else {
-				icon = <Icon className={`settings-${item.icon || item.id}`} />;
+				if (item.iconParam) {
+					icon = <Icon {...item.iconParam} className={`settings-${item.icon || item.id}`} />;
+				} else {
+					const iconKey = item.icon || item.id;
+					const iconNameMap = {
+						space: 'settings/overview',
+					};
+
+					icon = <Icon name={iconNameMap[iconKey] || `settings/${iconKey}`} className={`settings-${iconKey}`} />;
+				};
 				name = item.name;
 			};
 
@@ -278,7 +303,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		<>
 			<div className="head">
 				<div className="side left">
-					<Icon className="back withBackground" onClick={onBack} />
+					<Icon name="common/back" className="back" withBackground={true} onClick={onBack} />
 				</div>
 				<div className="side center" />
 			</div>
@@ -315,7 +340,7 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 
 					{!isSpace ? (
 						<div className="logout" onClick={() => S.Popup.open('logout', {})}>
-							<Icon />
+							<Icon name="header/logout" />
 							{translate('commonLogout')}
 						</div>
 					) : ''}
@@ -324,6 +349,6 @@ const SidebarPageSettingsIndex = observer(forwardRef<{}, I.SidebarPageComponent>
 		</>
 	);
 
-}));
+});
 
 export default SidebarPageSettingsIndex;

@@ -1,5 +1,4 @@
 import React, { FC, useRef, useEffect, MouseEvent } from 'react';
-import $ from 'jquery';
 
 interface Props {
 	id?: string;
@@ -7,6 +6,7 @@ interface Props {
 	className?: string;
 	color?: string;
 	canEdit?: boolean;
+	isSmall?: boolean;
 	onClick?: (e: any) => void;
 	onRemove?: (e: any) => void;
 	onContextMenu?(e: any): void;
@@ -18,19 +18,24 @@ const Tag: FC<Props> = ({
 	className = '',
 	color = '',
 	canEdit = false,
+	isSmall = false,
 	onClick,
 	onRemove,
 	onContextMenu,
 }) => {
 
 	const nodeRef = useRef(null);
-	const cn = [ 'tagItem', 'tagColor', `tagColor-${color || 'default'}` ];
-	
+	const c = color || 'default';
+	const cn = [ 'tagItem', 'textColor', `textColor-${c}`, 'bgColor', `bgColor-${c}` ];
+
 	if (className) {
 		cn.push(className);
 	};
 	if (canEdit) {
 		cn.push('canEdit');
+	};
+	if (isSmall) {
+		cn.push('isSmall');
 	};
 
 	const onRemoveHandler = (e: MouseEvent) => {
@@ -52,11 +57,17 @@ const Tag: FC<Props> = ({
 	};
 
 	const setColor = () => {
-		const node = $(nodeRef.current);
-		const remove = node.find('#remove');
-		const color = node.css('color');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		remove.attr({ src: removeSvg(color) });
+		const remove = U.Dom.select('#remove', node) as HTMLImageElement;
+		const color = getComputedStyle(node).color;
+
+		if (remove) {
+			remove.src = removeSvg(color);
+		};
 	};
 
 	let icon = null;

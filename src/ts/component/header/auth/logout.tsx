@@ -1,9 +1,9 @@
 import React, { forwardRef } from 'react';
-import { Button } from 'Component';
-import { observer } from 'mobx-react';
-import { Animation, I, S, U, translate } from 'Lib';
+import Button from 'Component/form/button';
+import * as I from 'Interface';
+import Animation from 'Lib/animation';
 
-const HeaderAuthLogout = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderAuthLogout = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const onLogout = () => {
 		S.Auth.logout(true, false);
@@ -17,10 +17,15 @@ const HeaderAuthLogout = observer(forwardRef<{}, I.HeaderComponent>((props, ref)
 				<div className="logo" />
 			</div>
 			<div className="side right">
-				<Button icon="logout" color="simple" text={translate('commonLogout')} onClick={onLogout} />
+				<Button 
+					iconParam={{ name: 'header/logout' }} 
+					color="simple" 
+					text={translate('commonLogout')} 
+					onClick={onLogout}
+				/>
 			</div>
 		</>
 	);
-}));
+});
 
 export default HeaderAuthLogout;

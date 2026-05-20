@@ -1,15 +1,16 @@
-import React, { forwardRef, useRef, useEffect, MouseEvent } from 'react';
-import $ from 'jquery';
+import React, { forwardRef, useRef, useEffect, useState, MouseEvent } from 'react';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, Loader, ObjectName, Cover, Label } from 'Component';
-import { I, S, U, J, translate, keyboard, focus, Preview } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
-const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+const BlockLink = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, onKeyDown, onKeyUp, getWrapperWidth } = props;
 	const object = S.Detail.get(rootId, block.getTargetObjectId(), J.Relation.cover);
-	const { _empty_, isArchived, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
+	const [ isRestored, setIsRestored ] = useState(false);
+	const { _empty_, isDeleted, done, layout, coverId, coverType, coverX, coverY, coverScale } = object;
+	const isArchived = object.isArchived && !isRestored;
 	const content = U.Data.checkLinkSettings(block.content, layout);
 	const readonly = props.readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 	const { description, cardStyle, relations, targetBlockId } = content;
@@ -33,7 +34,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 	const onKeyDownHandler = (e: any) => {
 		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
 	};
-	
+
 	const onKeyUpHandler = (e: any) => {
 		onKeyUp?.(e, '', [], { from: 0, to: 0 }, props);
 	};
@@ -41,9 +42,13 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 	const onFocus = () => {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
-	
+
+	const openMenu = (e: any) => {
+		U.Menu.archivedContext(e, block.getTargetObjectId(), () => setIsRestored(true));
+	};
+
 	const onClick = (e: any) => {
-		if (e.button) {
+		if (U.Common.checkAuxButton(e)) {
 			return;
 		};
 
@@ -51,10 +56,10 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		const ids = selection?.get(I.SelectType.Block) || [];
 
 		if (
-			object._empty_ || 
-			(targetBlockId == rootId) || 
+			object._empty_ ||
+			(targetBlockId == rootId) ||
 			(
-				((e.ctrlKey || e.metaKey) && (ids.length > 1)) || 
+				((e.ctrlKey || e.metaKey) && (ids.length > 1)) ||
 				keyboard.isSelectionClearDisabled
 			)
 		) {
@@ -64,16 +69,16 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		e.stopPropagation();
 		U.Object.openEvent(e, object);
 	};
-	
+
 	const onMouseEnter = (e: MouseEvent) => {
 		if (!targetBlockId || (cardStyle != I.LinkCardStyle.Text)) {
 			return;
 		};
 
-		Preview.previewShow({ 
-			element: $(nodeRef.current).find('.cardName .name'), 
+		Preview.previewShow({
+			element: U.Dom.select('.cardName .name', nodeRef.current),
 			object,
-			target: targetBlockId, 
+			target: targetBlockId,
 			noUnlink: true,
 			noEdit: true,
 			passThrough: true,
@@ -89,7 +94,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		const content = U.Data.checkLinkSettings(block.content, object.layout);
 		const { cardStyle } = content;
 
-		let size = 20;
+		let size = 24;
 		let iconSize = 20;
 
 		if ((cardStyle != I.LinkCardStyle.Text) && (content.iconSize == I.LinkIconSize.Medium)) {
@@ -102,11 +107,14 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 
 	const resize = () => {
 		window.setTimeout(() => {
-			const node = $(nodeRef.current);
-			const card = $(cardRef.current);
+			const node = nodeRef.current;
+			const card = cardRef.current;
+			if (!node || !card) {
+				return;
+			};
 
-			card.toggleClass('withIcon', !!node.find('.iconObject').length);
-			card.toggleClass('isVertical', node.width() <= getWrapperWidth() / 2);
+			U.Dom.toggleClass(card, 'withIcon', !!U.Dom.select('.iconObject', node));
+			U.Dom.toggleClass(card, 'isVertical', U.Dom.contentWidth(node) <= getWrapperWidth() / 2);
 		});
 	};
 
@@ -115,27 +123,33 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 	let element = null;
 	if (_empty_) {
 		element = (
-			<div 
-				className="loading" 
+			<div
+				className="loading"
 				{...U.Common.dataProps({ 'target-block-id': object.id })}
 			>
 				<Loader type={I.LoaderType.Loader} />
 				<div className="name">{translate('blockLinkSyncing')}</div>
 			</div>
 		);
-	} else 
+	} else
 	if (isDeleted) {
 		element = (
 			<div className="deleted">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" className="ghost" />
 				<div className="name">{translate('commonDeletedObject')}</div>
 			</div>
 		);
 	} else {
+		const isText = cardStyle == I.LinkCardStyle.Text;
+		const isImage = object.layout == I.ObjectLayout.Image;
 		const cnc = [ 'linkCard', U.Data.layoutClass(object.id, layout), `c${size}` ];
 		const cns = [ 'sides' ];
 		const cnl = [ 'side', 'left' ];
-		
+
+		if (isArchived && !isImage && !isText) {
+			cnc[2] = 'c48';
+		};
+
 		if (withCover) {
 			cnc.push('withCover');
 		};
@@ -144,13 +158,13 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 			cns.push('withBgColor');
 			cnl.push(`bgColor bgColor-${block.bgColor}`);
 		};
+		const onCardClick = isArchived ? openMenu : (isText ? null : onClick);
+		const onNameClick = (!isArchived && isText) ? onClick : null;
 
 		let descr = '';
 		let archive = null;
 		let icon = null;
 		let div = null;
-		let onCardClick = null;
-		let onNameClick = null;
 
 		if (canDescription) {
 			if (description == I.LinkDescription.Added) {
@@ -165,29 +179,37 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 			archive = <div className="tagItem isMultiSelect archive">{translate('blockLinkArchived')}</div>;
 		};
 
-		if (cardStyle == I.LinkCardStyle.Text) {
+		if (isText) {
 			div = (
 				<div className="div">
 					<div className="inner" />
 				</div>
 			);
-			onNameClick = onClick;
-		} else {
-			onCardClick = onClick;
 		};
 
 		if (withIcon) {
-			const canEdit = !readonly && !isArchived && U.Object.isTaskLayout(object.layout);
-			icon = (
-				<IconObject 
-					id={`block-${block.id}-icon`}
-					size={size}
-					iconSize={iconSize}
-					object={object} 
-					canEdit={canEdit} 
-					noClick={canEdit}
-				/>
-			);
+			if (isArchived && !isImage) {
+				icon = (
+					<IconObject
+						id={`block-${block.id}-icon`}
+						size={!isText ? 48 : size}
+						iconSize={!isText ? 28 : iconSize}
+						object={{ ...object, isDeleted: true }}
+					/>
+				);
+			} else {
+				const canEdit = !readonly && !isArchived && U.Object.isTaskLayout(object.layout);
+				icon = (
+					<IconObject
+						id={`block-${block.id}-icon`}
+						size={size}
+						iconSize={iconSize}
+						object={object}
+						canEdit={canEdit}
+						noClick={canEdit}
+					/>
+				);
+			};
 		};
 
 		let n = 1;
@@ -197,7 +219,7 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 		cnc.push(`c${n}`);
 
 		element = (
-			<div 
+			<div
 				ref={cardRef}
 				className={cnc.join(' ')}
 				onMouseDown={onCardClick}
@@ -206,13 +228,16 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 					<div key="sideLeft" className={cnl.join(' ')}>
 						<div className="relationItem cardName" onMouseDown={onNameClick}>
 							{icon}
-							<ObjectName 
-								object={object} 
-								onMouseEnter={onMouseEnter} 
-								onMouseLeave={onMouseLeave} 
-								withLatex={true} 
-								withPlural={true}
-							/>
+							<div className="nameWrapper">
+								<ObjectName
+									object={object}
+									onMouseEnter={onMouseEnter}
+									onMouseLeave={onMouseLeave}
+									withLatex={true}
+									withPlural={true}
+								/>
+								{archive}
+							</div>
 						</div>
 
 						{descr ? (
@@ -228,20 +253,18 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 								<div className="item">{type.name}</div>
 							</div>
 						) : ''}
-
-						{archive}
 					</div>
 
 					{withCover ? (
 						<div className="side right">
-							<Cover 
-								type={coverType} 
-								id={coverId} 
-								image={coverId} 
-								className={coverId} 
-								x={coverX} 
-								y={coverY} 
-								scale={coverScale} 
+							<Cover
+								type={coverType}
+								id={coverId}
+								image={coverId}
+								className={coverId}
+								x={coverX}
+								y={coverY}
+								scale={coverScale}
 								withScale={true}
 							/>
 						</div>
@@ -268,18 +291,19 @@ const BlockLink = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref)
 	}, []);
 
 	return (
-		<div 
+		<div
 			ref={nodeRef}
-			className={cn.join(' ')} 
-			tabIndex={0} 
-			onKeyDown={onKeyDownHandler} 
-			onKeyUp={onKeyUpHandler} 
+			className={cn.join(' ')}
+			tabIndex={0}
+			onKeyDown={onKeyDownHandler}
+			onKeyUp={onKeyUpHandler}
 			onFocus={onFocus}
+			onContextMenu={isArchived ? openMenu : undefined}
 		>
 			{element}
 		</div>
 	);
 
-}));
+});
 
 export default BlockLink;

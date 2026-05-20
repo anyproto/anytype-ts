@@ -1,0 +1,17 @@
+.menus {
+	.menu.horizontal.menuCommentToolbar { padding: 0px; height: 40px; border-radius: 18px; transform-origin: 50% 50% !important; }
+	.menu.horizontal.menuCommentToolbar {
+		.content { height: 100%; padding: 0px 4px; }
+		.section { display: flex; align-items: center; gap: 0px 4px; padding: 0px; height: auto; border-right: 0px; }
+		.section::after { content: ""; width: 1px; height: 20px; background: var(--color-shape-primary); margin: 0px 8px 0px 4px; }
+		.section:last-child::after { display: none; }
+
+		.icon { min-width: 32px; height: 32px !important; margin: 0px; border-radius: 16px; }
+		.icon:hover, .icon.hover, .icon.active { background-color: var(--color-shape-highlight-medium); }
+
+		.icon.blockStyle { width: 44px !important; justify-content: flex-start; padding-left: 6px; }
+		.icon.blockStyle {
+			.icon.arrow { right: 6px; width: 8px !important; height: 8px !important; min-width: unset !important; border-radius: 0; background-color: transparent !important; }
+		}
+	}
+}

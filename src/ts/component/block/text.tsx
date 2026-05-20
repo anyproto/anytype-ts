@@ -1,18 +1,35 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import * as Prism from 'prismjs';
-import $ from 'jquery';
+
 import raf from 'raf';
-import { trace } from 'mobx';
-import { observer } from 'mobx-react';
 import { Select, Marker, IconObject, Icon, Editable } from 'Component';
-import { I, C, S, U, J, keyboard, Preview, Mark, focus, Storage, translate, analytics } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
+
+// Prism language plugins expect `Prism` on the global scope
+(window as any).Prism = Prism;
+
+// Use import.meta.glob so Rollup emits one lazy chunk per language. A plain
+// dynamic import with a template literal works only for relative paths —
+// bare-specifier templates like `prismjs/components/prism-${lang}.js` are
+// left unresolved in production and Prism.languages.<lang> stays undefined.
+const prismLangModules = import.meta.glob([
+	'/node_modules/prismjs/components/prism-*.js',
+	'!/node_modules/prismjs/components/prism-*.min.js',
+]);
+
+(async () => {
+	for (const lang of U.Prism.components) {
+		const loader = prismLangModules[`/node_modules/prismjs/components/prism-${lang}.js`];
+		if (loader) {
+			try { await loader(); } catch (e) {};
+		};
+	};
+})();
 
 interface Props extends I.BlockComponent {
 	onToggle?(e: any): void;
-};
-
-for (const lang of U.Prism.components) {
-	require(`prismjs/components/prism-${lang}.js`);
 };
 
 const TWIN_PAIRS = {
@@ -30,7 +47,7 @@ const TWIN_PAIRS = {
 	'$': '$',
 };
 
-const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const {
 		rootId, block, readonly, isPopup, isInsideTable,
@@ -44,7 +61,8 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const root = S.Block.getLeaf(rootId, rootId);
 	const cn = [ 'flex' ];
 	const cv = [ 'value', 'focusable', `c${id}` ];
-	const checkRtl = U.String.checkRtl(text) || fields.isRtlDetected;
+	const isRtlFromText = U.String.checkRtl(text);
+	const checkRtl = isRtlFromText || fields.isRtlDetected;
 	const nodeRef = useRef(null);
 	const langRef = useRef(null);
 	const editableRef = useRef(null);
@@ -54,6 +72,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const prevMarksRef = useRef<I.Mark[]>(marks || []);
 	const timeoutFilter = useRef(0);
 	const timeoutClick = useRef(0);
+	const timeoutText = useRef(0);
 	const preventMenu = useRef(false);
 	const clickCnt = useRef(0);
 	const prevStyleRef = useRef(style);
@@ -70,6 +89,19 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			window.clearTimeout(timeoutFilter.current);
 			window.clearTimeout(timeoutClick.current);
 
+			// Flush any pending debounced text save before unmount to prevent
+			// data loss when navigating away from the page while typing
+			if (timeoutText.current) {
+				window.clearTimeout(timeoutText.current);
+				timeoutText.current = 0;
+
+				// Force-save current text to middleware immediately
+				const value = String(editableRef.current?.getTextValue?.() || '');
+				if (value && (value !== textRef.current || value !== text)) {
+					U.Data.blockSetText(rootId, block.id, value, marksRef.current, true);
+				};
+			};
+
 			if (focused == block.id) {
 				focus.clear(true);
 			};
@@ -81,9 +113,24 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const textChanged = prevTextRef.current !== text;
 		const marksChanged = !U.Common.compareJSON(prevMarksRef.current, marks || []);
 
+		// When focused, the local editable DOM may be ahead of the store during
+		// active editing. Skip setValue if the store update is just echoing back
+		// what we already sent — prevents a race where a stale middleware response
+		// overwrites the user's latest keystrokes (e.g. code block text reverting).
+		// Only suppress when text hasn't changed AND marks haven't changed — mark
+		// toggles (bold, italic, etc.) need setValue to re-render markup.
+		const isEcho = (focused == block.id) && (text === textRef.current) && !marksChanged;
+
 		if (textChanged || marksChanged) {
 			marksRef.current = marks || [];
-			setValue(text);
+
+			// Only sync contenteditable from props when not focused or when content
+			// actually changed. When focused, the local editable state is the source
+			// of truth — skipping setValue prevents expensive DOM rebuilds that cause
+			// typing lag on every keystroke echo from middleware.
+			if (!isEcho) {
+				setValue(text);
+			};
 
 			prevTextRef.current = text;
 			prevMarksRef.current = marks || [];
@@ -92,13 +139,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			// Render markup even when text/marks haven't changed, to pick up
 			// newly loaded details for mentions/objects
 			renderMarkup();
-		};
-
-		// Only sync contenteditable from props when not focused or when content changed.
-		// When focused, the local editable state may be ahead of props during active editing
-		// (e.g. RTL flag change triggers re-render before text is saved to middleware).
-		if ((focused != block.id) || textChanged || marksChanged) {
-			setValue(text);
 		};
 
 		if (text) {
@@ -145,9 +185,9 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		if (block.isTextCode()) {
 			const lang = U.Prism.aliasMap[fields.lang] || 'plain';
-			const grammar = Prism.languages[lang] || {};
+			const grammar = Prism.languages[lang];
 
-			html = Prism.highlight(html, grammar, lang);
+			html = grammar ? Prism.highlight(html, grammar, lang) : Prism.util.encode(html) as string;
 			langRef.current?.setValue(lang);
 		} else {
 			if (!keyboard.isComposition) {
@@ -162,13 +202,24 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		html = html.replace(/\n/g, '<br/>');
 
-		// Add extra <br/> at end for code blocks to ensure trailing newlines are visible
+		// Add extra <br/> at end to ensure trailing newlines are visible
 		// (contenteditable collapses a single trailing <br/>)
 		// Only add when focused to avoid extra line when blurred
 		phantomNewlineRef.current = false;
-		if (block.isTextCode() && text.endsWith('\n') && (focused == block.id)) {
+		if (text.endsWith('\n') && (focused == block.id)) {
 			html += '<br/>';
 			phantomNewlineRef.current = true;
+		};
+
+		// For code blocks, save scroll position before replacing innerHTML.
+		// Syntax highlighting replaces the entire DOM content, which causes
+		// the browser to scroll the page container when restoring the cursor.
+		let savedScrollTop: number | null = null;
+		if (block.isTextCode()) {
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (container) {
+				savedScrollTop = container.scrollTop;
+			};
 		};
 
 		editableRef.current?.setValue(html);
@@ -176,6 +227,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		// Restore cursor position if provided
 		if (restoreRange) {
 			editableRef.current?.setRange(restoreRange);
+		};
+
+		// Restore scroll position for code blocks
+		if (savedScrollTop !== null) {
+			const container = U.Dom.getScrollContainer(isPopup);
+			if (container) {
+				container.scrollTop = savedScrollTop;
+			};
 		};
 
 		if (!block.isTextCode() && (html != text) && marksRef.current.length) {
@@ -236,9 +295,15 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const getMarksFromHtml = (): { marks: I.Mark[], text: string } => {
-		const value = getHtmlValue();
+		let value = getHtmlValue();
+
+		// Strip phantom <br/> that was added to make trailing newlines visible in contenteditable
+		if (phantomNewlineRef.current) {
+			value = value.replace(/<br\/?>$/, '');
+		};
+
 		const restricted: I.MarkType[] = block.isTextHeader() ? [ I.MarkType.Bold ] : [];
-		
+
 		return Mark.fromHtml(value, restricted);
 	};
 
@@ -248,6 +313,10 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const onKeyDownHandler = (e: any) => {
 		e.persist();
+
+		// Flush any pending debounced text save to prevent stale overwrites
+		// when structural keys (Enter, Backspace, etc.) trigger their own save
+		window.clearTimeout(timeoutText.current);
 
 		if (S.Menu.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'object' ])) {
 			e.preventDefault();
@@ -284,8 +353,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			{ key: 'zoomOut' },
 			{ key: 'zoomReset' },
 			{ key: 'menuAction' },
-			{ key: 'indent', preventDefault: true },
-			{ key: 'outdent', preventDefault: true },
 			{ key: 'pageLock' },
 			{ key: `${cmd}+v` },
 			{ key: `${cmd}+c`, preventDefault: true },
@@ -296,7 +363,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		];
 
 		for (let i = 0; i <= 9; i++) {
-			saveKeys.push({ key: `turnBlock${i}` });
+			saveKeys.push({ key: `turnBlock${i}`, preventDefault: true });
+		};
+
+		// Non-code blocks: saveKeys handles save + onKeyDown for block indentation.
+		// Code blocks handle indent/outdent separately (tab characters in text).
+		if (!block.isTextCode()) {
+			saveKeys.push({ key: 'indent', preventDefault: true });
+			saveKeys.push({ key: 'outdent', preventDefault: true });
 		};
 
 		if (isInsideTable) {
@@ -306,18 +380,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			if (range.to == value.length) {
 				saveKeys.push({ key: `arrowright, arrowdown` });
-			};
-		};
-
-		// For code blocks, indent/outdent are handled explicitly below
-		// to avoid double blockSetText calls (causes extra lines)
-		if (block.isTextCode()) {
-			const skipKeys = [ 'indent', 'outdent' ];
-
-			for (let i = saveKeys.length - 1; i >= 0; i--) {
-				if (skipKeys.includes(saveKeys[i].key)) {
-					saveKeys.splice(i, 1);
-				};
 			};
 		};
 
@@ -350,6 +412,38 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
+			// Convert ``` (+ optional language) followed by Enter into a code block
+			if ((pressed == 'enter') && block.isText() && !block.isTextCode() && !block.isTextTitle() && !block.isTextDescription()) {
+				const codeMatch = value.trim().match(/^```(\w*)$/);
+
+				if (codeMatch) {
+					const langInput = codeMatch[1] || '';
+
+					if (!langInput || Prism.languages[langInput]) {
+						e.preventDefault();
+
+						const lang = langInput || Storage.get('codeLang') || J.Constant.default.codeLang;
+
+						marksRef.current = [];
+						setValue('');
+
+						U.Data.blockSetText(rootId, block.id, '', [], true, () => {
+							C.BlockListSetFields(rootId, [
+								{ blockId: block.id, fields: { ...block.fields, lang } }
+							], () => {
+								C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Code, () => {
+									focus.set(block.id, { from: 0, to: 0 });
+									focus.apply();
+								});
+							});
+						});
+
+						ret = true;
+						return;
+					};
+				};
+			};
+
 			// Handle enter manually in the code blocks to keep caret and new lines in sync
 			if (block.isTextCode() && (pressed == 'enter')) {
 				e.preventDefault();
@@ -371,14 +465,34 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
-			let pd = true;
+			// Handle shift+enter manually in non-code text blocks to avoid browser
+			// contenteditable bugs (browser can incorrectly split inline elements like
+			// <markupcode> when inserting <br>)
 			if (block.isText() && !block.isTextCode() && pressed.match('shift')) {
-				pd = false;
-			};
-			if (pd) {
 				e.preventDefault();
+
+				const insert = '\n';
+				const caret = range.from + insert.length;
+				const newValue = U.String.insert(value, insert, range.from, range.to);
+				const caretRange = { from: caret, to: caret };
+
+				if (range.from != range.to) {
+					marksRef.current = Mark.adjust(marksRef.current, range.from, -(range.to - range.from));
+				};
+				marksRef.current = Mark.adjust(marksRef.current, range.from, insert.length);
+
+				focus.set(block.id, caretRange);
+
+				U.Data.blockSetText(rootId, block.id, newValue, marksRef.current, true, () => {
+					focus.apply();
+				});
+
+				ret = true;
+				return;
 			};
-			
+
+			e.preventDefault();
+
 			U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => {
 				onKeyDown(e, value, marksRef.current, range, props);
 			});
@@ -389,12 +503,53 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		keyboard.shortcut('arrowleft, arrowright, arrowdown, arrowup', e, (pressed: string) => {
 			keyboard.disableContextClose(false);
 
+			const isArrowRight = pressed == 'arrowright';
+			const isArrowLeft = pressed == 'arrowleft';
+
 			// When cursor is at model boundary but DOM has ZWS to traverse, let browser handle natively
-			if ((pressed == 'arrowright') && (range.to == value.length) && !editableRef.current?.isAtDomEnd()) {
+			if (isArrowRight && (range.to == value.length) && !editableRef.current?.isAtDomEnd()) {
 				ret = true;
 			} else
-			if ((pressed == 'arrowleft') && !range.from && !editableRef.current?.isAtDomStart()) {
+			if (isArrowLeft && !range.from && !editableRef.current?.isAtDomStart()) {
 				ret = true;
+			};
+
+			// Atomic cursor navigation over emoji/mention marks (skip when menus are open)
+			if (!menuOpen && !menuOpenMention && !menuOpenEmoji && !menuOpenSmile) {
+				const atomicTypes = [ I.MarkType.Emoji, I.MarkType.Mention ];
+				const atomicMarks = (marksRef.current || []).filter(it => atomicTypes.includes(it.type));
+				const isShift = e.shiftKey;
+
+				if (isArrowRight && atomicMarks.length) {
+					const pos = isShift ? range.to : range.from;
+					const mark = atomicMarks.find(it => (it.range.from == pos) && (it.range.to > pos));
+
+					if (mark) {
+						e.preventDefault();
+
+						const newRange = isShift
+							? { from: range.from, to: mark.range.to }
+							: { from: mark.range.to, to: mark.range.to };
+
+						editableRef.current?.setRange(newRange);
+						ret = true;
+					};
+				} else
+				if (isArrowLeft && atomicMarks.length) {
+					const pos = isShift ? range.from : range.to;
+					const mark = atomicMarks.find(it => (it.range.to == pos) && (it.range.from < pos));
+
+					if (mark) {
+						e.preventDefault();
+
+						const newRange = isShift
+							? { from: mark.range.from, to: range.to }
+							: { from: mark.range.from, to: mark.range.from };
+
+						editableRef.current?.setRange(newRange);
+						ret = true;
+					};
+				};
 			};
 		});
 
@@ -411,15 +566,15 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			});
 		});
 
-		keyboard.shortcut('indent, outdent', e, (pressed: string) => {
-			e.preventDefault();
+		// Code blocks: indent/outdent inserts/removes tab characters in text
+		if (block.isTextCode()) {
+			keyboard.shortcut('indent, outdent', e, (pressed: string) => {
+				e.preventDefault();
 
-			const isOutdent = pressed == 'outdent';
-
-			if (block.isTextCode()) {
+				const isOutdent = pressed == 'outdent';
 				const lineStart = value.lastIndexOf('\n', range.from - 1) + 1;
-				let lineEnd = value.indexOf('\n', range.to);
 
+				let lineEnd = value.indexOf('\n', range.to);
 				if (lineEnd == -1) {
 					lineEnd = value.length;
 				};
@@ -438,12 +593,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					const processed = lines.map((line, i) => {
 						let removed = 0;
 
+						const match = line.match(/^ {1,4}/);
+
 						if (line.startsWith('\t')) {
 							line = line.substring(1);
 							removed = 1;
 						} else
-						if (line.match(/^ {1,4}/)) {
-							const spaces = line.match(/^ {1,4}/)[0].length;
+						if (match) {
+							const spaces = match[0].length;
 							line = line.substring(spaces);
 							removed = spaces;
 						};
@@ -495,16 +652,10 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				U.Data.blockSetText(rootId, block.id, newValue, marksRef.current, true, () => {
 					focus.apply();
 				});
-			} else
-			if (!isOutdent) {
-				setText(marksRef.current, true, () => {
-					focus.apply();
-					onKeyDown(e, value, marksRef.current, range, props);
-				});
-			};
 
-			ret = true;
-		});
+				ret = true;
+			});
+		};
 
 		keyboard.shortcut('backspace', e, () => {
 			if (range.to) {
@@ -691,6 +842,10 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			parsed = getMarksFromHtml();
 			adjustMarks = parsed.adjustMarks;
 			marksRef.current = parsed.marks;
+		} else
+		if (!block.isTextCode()) {
+			parsed = Mark.fromUnicode(value, marksRef.current, false);
+			adjustMarks = parsed.adjustMarks;
 		};
 
 		if (menuOpenAdd || menuOpenMention) {
@@ -828,21 +983,25 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				setValue(value);
 
 				U.Data.blockSetText(rootId, id, value, marksRef.current, true, () => {
-					C.BlockListTurnInto(rootId, [ id ], newStyle, () => {
-						focus.set(block.id, { from: 0, to: 0 });
-						focus.apply();
-					});
+					const finishTurnInto = () => {
+						C.BlockListTurnInto(rootId, [ id ], newStyle, () => {
+							focus.set(block.id, { from: 0, to: 0 });
+							focus.apply();
+						});
 
-					if ([ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ].includes(newStyle)) {
-						S.Block.toggle(rootId, id, true);
+						if ([ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ].includes(newStyle)) {
+							S.Block.toggle(rootId, id, true);
+						};
 					};
 
 					if (newStyle == I.TextStyle.Code) {
 						const lang = match[2] || Storage.get('codeLang') || J.Constant.default.codeLang;
 
-						C.BlockListSetFields(rootId, [ 
-							{ blockId: block.id, fields: { ...block.fields, lang } } 
-						]);
+						C.BlockListSetFields(rootId, [
+							{ blockId: block.id, fields: { ...block.fields, lang } }
+						], finishTurnInto);
+					} else {
+						finishTurnInto();
 					};
 				});
 
@@ -870,7 +1029,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		placeholderCheck();
 
-		const text = block.canHaveMarks() ? parsed.text : value;
+		const text = parsed.text ?? value;
 
 		// When typing space adjust several markups to break it
 		keyboard.shortcut('space', e, () => {
@@ -901,7 +1060,14 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			focus.apply();
 		};
 
-		setText(marksRef.current, false);
+		// Debounce the gRPC save so rapid typing doesn't saturate the main thread
+		// with synchronous middleware round-trips. The contenteditable DOM already
+		// reflects the user's input natively — we only need to persist periodically.
+		window.clearTimeout(timeoutText.current);
+		timeoutText.current = window.setTimeout(() => {
+			setText(marksRef.current, false);
+		}, 300);
+
 		onKeyUp(e, value, marksRef.current, range, props);
 
 		if (!keyboard.isSpecial(e) && !keyboard.withCommand(e)) {
@@ -915,8 +1081,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const win = $(window);
-		const element = $(`#block-${U.Common.esc(block.id)}`);
+		const element = `#block-${U.Common.esc(block.id)}`;
 
 		let value = getTextValue();
 
@@ -934,11 +1099,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				classNameWrap: 'fromBlock',
 				element,
 				recalcRect: () => {
-					const rect = U.Common.getSelectionRect();
-					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+					const rect = U.Dom.getSelectionRect();
+					return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 				},
 				offsetX: () => {
-					const rect = U.Common.getSelectionRect();
+					const rect = U.Dom.getSelectionRect();
 					return rect ? 0 : J.Size.blockMenu;
 				},
 				noFlipX: false,
@@ -973,24 +1138,22 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const win = $(window);
-
 		let value = getTextValue();
+
 		const firstChar = value.charAt(range.from - 1);
 
 		value = U.String.cut(value, range.from - 2, range.from);
-
 		S.Common.filterSet(range.from - 2, firstChar);
 
 		S.Menu.open('blockEmoji', {
 			classNameWrap: 'fromBlock',
 			element: `#block-${U.Common.esc(block.id)}`,
 			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				const rect = U.Dom.getSelectionRect();
+				return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 			},
 			offsetX: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			noFlipX: false,
@@ -1016,7 +1179,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onSmile = () => {
-		const win = $(window);
 		const range = getRange();
 
 		let value = getTextValue();
@@ -1025,11 +1187,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			element: `#block-${U.Common.esc(block.id)}`,
 			classNameWrap: 'fromBlock',
 			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				const rect = U.Dom.getSelectionRect();
+				return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 			},
 			offsetX: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			data: {
@@ -1073,14 +1235,15 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		textRef.current = value;
 
 		const isRtl = U.String.checkRtl(value);
-		const cb = () => {
-			U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
-		};
 
-		if (value && (isRtl != checkRtl)) {
-			U.Data.setRtl(rootId, block, isRtl, cb);
+		if (isRtl != checkRtl) {
+			// Save text first so intermediate re-renders from setRtl have the correct text in store,
+			// preventing character loss and stale CSS direction
+			U.Data.blockSetText(rootId, block.id, value, marks, update, () => {
+				U.Data.setRtl(rootId, block, isRtl, callBack);
+			});
 		} else {
-			cb();
+			U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
 		};
 	};
 	
@@ -1115,11 +1278,11 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			if (selection && selection.rangeCount > 0) {
 				const selRange = selection.getRangeAt(0);
-				const editable = editableRef.current?.getNode()?.find('.editable').get(0);
+				const editable = U.Dom.select('.editable', editableRef.current?.getNode());
 
 				if (editable && editable.contains(selRange.startContainer)) {
-					let from = U.Common.getSelectionOffsetWithLatex(editable, selRange.startContainer, selRange.startOffset);
-					let to = selRange.collapsed ? from : U.Common.getSelectionOffsetWithLatex(editable, selRange.endContainer, selRange.endOffset);
+					let from = U.Dom.getSelectionOffsetWithLatex(editable, selRange.startContainer, selRange.startOffset);
+					let to = selRange.collapsed ? from : U.Dom.getSelectionOffsetWithLatex(editable, selRange.endContainer, selRange.endOffset);
 
 					// Convert DOM offsets to model offsets (strip ZWS cursor anchors)
 					if (Mark.hasZws(editable)) {
@@ -1146,12 +1309,20 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const onBlurHandler = (e: any) => {
+		// Don't clear focus when a from-block menu is open
+		// (e.g., OS keyboard layout switch triggers window blur on Linux)
+		if (S.Menu.isOpenList([ 'blockAdd', 'blockMention', 'blockEmoji' ])) {
+			return;
+		};
+
 		if (block.isTextTitle() || block.isTextDescription()) {
 			placeholderCheck();
 		} else {
 			placeholderHide();
 		};
 
+		// Flush any pending debounced save before the immediate save on blur
+		window.clearTimeout(timeoutText.current);
 		setText(marksRef.current, true);
 		focus.clear(true);
 		onBlur?.(e);
@@ -1173,12 +1344,13 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onPasteHandler = (e: any) => {
 		e.persist();
 		e.preventDefault();
+		e.stopPropagation();
 
 		preventMenu.current = true;
 
 		// Extract clipboard data synchronously because the browser clears
 		// e.clipboardData after the event handler returns
-		const cb = e.clipboardData || e.originalEvent?.clipboardData;
+		const cb = e.clipboardData;
 		const data: any = {
 			text: U.String.normalizeLineEndings(String(cb?.getData('text/plain') || '')),
 			html: String(cb?.getData('text/html') || ''),
@@ -1236,8 +1408,10 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const length = block.getLength();
 
 		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, (message: any) => {
+			const text = String(message.textSlot || '').replace(/\n+$/, '');
+
 			U.Common.clipboardCopy({
-				text: message.textSlot,
+				text,
 				html: message.htmlSlot,
 				anytype: {
 					range: { from: 0, to: length },
@@ -1255,7 +1429,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const selection = S.Common.getRef('selectionProvider');
-		const ids = selection?.getForClick('', false, true);
+		const ids = selection?.getForClick('', false, true) || [];
 		const range = getRange();
 		const value = getTextValue();
 
@@ -1267,8 +1441,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const currentFrom = focus.state.range.from;
 		const currentTo = focus.state.range.to;
-		const win = $(window);
-		const el = $(`#block-${U.Common.esc(block.id)}`);
+		const el = `#block-${U.Common.esc(block.id)}`;
 
 		if (!currentTo || (currentFrom == currentTo) || !block.canHaveMarks() || ids.length) {
 			if (S.Menu.isOpen('blockContext') && !keyboard.isContextCloseDisabled) {
@@ -1304,18 +1477,21 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
+			window.clearTimeout(timeoutText.current);
 			setText(marksRef.current, false, () => {
 				S.Menu.open('blockContext', {
 					classNameWrap: 'fromBlock',
 					element: el,
-					recalcRect: () => { 
-						const rect = U.Common.getSelectionRect();
-						return rect ? { ...rect, y: rect.y + win.scrollTop() } : null; 
+					recalcRect: () => {
+						const rect = U.Dom.getSelectionRect();
+						return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 					},
 					type: I.MenuType.Horizontal,
 					offsetY: -8,
 					horizontal: I.MenuDirection.Center,
 					vertical: I.MenuDirection.Top,
+					noFlipY: true,
+					noBorderY: true,
 					passThrough: true,
 					onClose: () => keyboard.disableContextClose(false),
 					data: {
@@ -1330,12 +1506,17 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				});
 
 				window.setTimeout(() => {
-					const pageContainer = U.Common.getPageFlexContainer(isPopup);
+					const pageContainer = U.Dom.getPageFlexContainer(isPopup);
+					const onMouseDown = () => {
+						if (pageContainer) {
+							U.Dom.removeEvent(pageContainer, 'mousedown', onMouseDown);
+						};
+						S.Menu.close('blockContext');
+					};
 
-					pageContainer.off('mousedown.context').on('mousedown.context', () => { 
-						pageContainer.off('mousedown.context');
-						S.Menu.close('blockContext'); 
-					});
+					if (pageContainer) {
+						U.Dom.addEvent(pageContainer, 'mousedown', onMouseDown);
+					};
 				}, S.Menu.getTimeout());
 			});
 		});
@@ -1386,9 +1567,20 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		// Use provided value and range if available, fallback to current
 		const v = value !== undefined ? value : getTextValue();
 		const r = range !== undefined ? range : getRange();
-		
-		// Populate marks before setValue to prevent formatting issue
-		marksRef.current = getMarksFromHtml().marks;
+
+		if (block.canHaveMarks() && r) {
+			const diff = v.length - textRef.current.length;
+
+			if (diff !== 0) {
+				// Adjust marks based on text length change at insertion point.
+				// We avoid re-reading marks from DOM HTML because during IME composition
+				// the browser may insert text inside mark elements (e.g., <markupcode>),
+				// causing marks to incorrectly expand and shift their visual position.
+				const insertStart = r.from - Math.max(0, diff);
+				marksRef.current = Mark.adjust(marksRef.current, insertStart, diff);
+			};
+		};
+
 		setValue(v, r);
 	};
 
@@ -1397,20 +1589,30 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const range = getRange();
-
-		let html = getHtmlValue();
-
-		if (!/<(font|span)/.test(html)) {
+		if (!/<(font|span)/.test(getHtmlValue())) {
 			return;
 		};
 
+		// Clean browser-inserted font/span tags (e.g. from umlaut/IME input).
+		// Must re-read html AFTER the input is processed (inside raf), otherwise
+		// the cleanup restores pre-input html and undoes the user's edit.
 		raf(() => {
+			let html = getHtmlValue();
+
+			if (!/<(font|span)/.test(html)) {
+				return;
+			};
+
+			const range = getRange();
+
 			html = html.replace(/<\/?font[^>]*>/g, '');
 			html = html.replace(/<span[^>]*>(.*?)<\/span>/g, '$1');
 
 			editableRef.current?.setValue(html);
-			editableRef.current?.setRange(range);
+
+			if (range) {
+				editableRef.current?.setRange(range);
+			};
 		});
 	};
 
@@ -1424,7 +1626,7 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		cv.push(`textColor textColor-${color}`);
 	};
 
-	if (checkRtl) {
+	if (isRtlFromText) {
 		cn.push('isRtl');
 	};
 
@@ -1491,12 +1693,12 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 					<div className="buttons">
 						<div className="btn" onClick={onToggleWrap}>
-							<Icon className="codeWrap" />
+							<Icon name="menu/action/wrap" className="codeWrap" />
 							<div className="txt">{fields.isUnwrapped ? translate('blockTextWrap') : translate('blockTextUnwrap')}</div>
 						</div>
 
 						<div className="btn" onClick={onCopy}>
-							<Icon className="copy" />
+							<Icon name="menu/action/copy" className="copy" />
 							<div className="txt">{translate('commonCopy')}</div>
 						</div>
 					</div>
@@ -1566,6 +1768,6 @@ const BlockText = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockText;

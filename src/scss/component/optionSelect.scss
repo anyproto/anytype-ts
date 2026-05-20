@@ -5,7 +5,7 @@
         .items { height: 100%; }
     };
 
-    .item { display: flex; align-items: center; }
+    .item { display: flex; align-items: center; padding: 6px 16px; }
     .item:not(.add, .empty) { gap: 0px 4px; padding-left: 18px; }
     .item.withHandle { padding-left: 10px; }
     .item {
@@ -14,16 +14,10 @@
             .icon.more { display: none; }
         }
 
-        .icon.checkbox {
-            width: 18px; height: 18px; flex-shrink: 0;
-            background-image: url('~img/icon/menu/checkbox0.svg');
-        }
-        .icon.checkbox.active { background-image: url('~img/icon/menu/checkbox1.svg'); }
-
         &:hover, &.hover {
             .clickable { width: calc(100% - 28px); }
             .buttons {
-                .icon.more { display: block; }
+                .icon.more { display: flex; }
             }
         }
 

@@ -1,9 +1,12 @@
-import $ from 'jquery';
 import raf from 'raf';
 import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
-import { Action, analytics, C, Dataview, I, J, keyboard, M, Mark, Preview, Relation, S, sidebar, translate, U, Renderer, focus } from 'Lib';
+import Locale from 'dist/lib/json/locale.json';
 import React, { MouseEvent } from 'react';
+import { Icon } from 'Component';
+import * as I from 'Interface';
+import * as M from 'Model';
+import { focus } from 'Lib/focus';
 
 interface SpaceContextParam {
 	isSharePage?: boolean;
@@ -81,20 +84,31 @@ class UtilMenu {
 	 * @returns {any[]} The list of text block types.
 	 */
 	getBlockText () {
-		return [
+		const items = [
 			{ id: I.TextStyle.Paragraph, lang: 'Paragraph' },
 			{ id: I.TextStyle.Header1, lang: 'Header1', aliases: [ 'h1', 'head1', 'header1' ] },
 			{ id: I.TextStyle.Header2, lang: 'Header2', aliases: [ 'h2', 'head2', 'header2' ] },
 			{ id: I.TextStyle.Header3, lang: 'Header3', aliases: [ 'h3', 'head3', 'header3' ] },
+		].map((it: any) => {
+			it.type = I.BlockType.Text;
+			it.iconParam = { name: U.Data.blockTextIcon(it.id) };
+			return this.mapperBlock(it);
+		});
+
+		items.push({ isDiv: true } as any);
+
+		const extra = [
 			{ id: I.TextStyle.Quote, lang: 'Quote', aliases: [ 'quote' ] },
 			{ id: I.TextStyle.Callout, lang: 'Callout', aliases: [ 'callout' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = U.Data.blockTextClass(it.id);
+			it.iconParam = { name: U.Data.blockTextIcon(it.id) };
 			return this.mapperBlock(it);
 		});
+
+		return items.concat(extra);
 	};
-	
+
 	/**
 	 * Returns the list of list block types.
 	 * @returns {any[]} The list of list block types.
@@ -110,7 +124,7 @@ class UtilMenu {
 			{ id: I.TextStyle.ToggleHeader3, lang: 'ToggleHeader3', aliases: [ 'toggle subheading', 'toggled subheading', 'toggle h3', 'toggle heading 3' ] },
 		].map((it: any) => {
 			it.type = I.BlockType.Text;
-			it.icon = U.Data.blockTextClass(it.id);
+			it.iconParam = { name: U.Data.blockTextIcon(it.id) };
 			return this.mapperBlock(it);
 		});
 	};
@@ -121,13 +135,13 @@ class UtilMenu {
 	 */
 	getBlockMedia () {
 		return [
-			{ type: I.BlockType.File, id: I.FileType.File, icon: 'mediaFile', lang: 'File', aliases: [ 'file' ] },
-			{ type: I.BlockType.File, id: I.FileType.Image, icon: 'mediaImage', lang: 'Image', aliases: [ 'image', 'picture' ] },
-			{ type: I.BlockType.File, id: I.FileType.Video, icon: 'mediaVideo', lang: 'Video', aliases: [ 'video' ] },
-			{ type: I.BlockType.File, id: I.FileType.Audio, icon: 'mediaAudio', lang: 'Audio', aliases: [ 'audio' ] },
-			{ type: I.BlockType.File, id: I.FileType.Pdf, icon: 'mediaPdf', lang: 'Pdf', aliases: [ 'pdf' ] },
-			{ type: I.BlockType.Bookmark, id: 'bookmark', icon: 'bookmark', lang: 'Bookmark', aliases: [ 'bookmark' ] },
-			{ type: I.BlockType.Text, id: I.TextStyle.Code, icon: 'code', lang: 'Code', aliases: [ 'code' ] },
+			{ type: I.BlockType.File, id: I.FileType.File, iconParam: { name: 'menu/block/media/file', color: 'ice' }, lang: 'File', aliases: [ 'file' ] },
+			{ type: I.BlockType.File, id: I.FileType.Image, iconParam: { name: 'menu/block/media/image', color: 'lime' }, lang: 'Image', aliases: [ 'image', 'picture' ] },
+			{ type: I.BlockType.File, id: I.FileType.Video, iconParam: { name: 'menu/block/media/video', color: 'blue' }, lang: 'Video', aliases: [ 'video' ] },
+			{ type: I.BlockType.File, id: I.FileType.Audio, iconParam: { name: 'menu/block/media/audio', color: 'pink' }, lang: 'Audio', aliases: [ 'audio' ] },
+			{ type: I.BlockType.File, id: I.FileType.Pdf, iconParam: { name: 'menu/block/media/pdf', color: 'red' }, lang: 'Pdf', aliases: [ 'pdf' ] },
+			{ type: I.BlockType.Bookmark, id: 'bookmark', iconParam: { name: 'menu/block/common/bookmark', color: 'red' }, lang: 'Bookmark', aliases: [ 'bookmark' ] },
+			{ type: I.BlockType.Text, id: I.TextStyle.Code, iconParam: { name: 'menu/block/common/code', color: 'purple' }, lang: 'Code', aliases: [ 'code' ] },
 		].map(this.mapperBlock);
 	};
 
@@ -160,7 +174,8 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
-			{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
+			// disabled because of possible performance issues
+			// { id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 			{ id: I.EmbedProcessor.Spotify, name: 'Spotify' },
 			{ id: I.EmbedProcessor.AppleMusic, name: 'Apple Music' },
 			{ id: I.EmbedProcessor.Bandcamp, name: 'Bandcamp' },
@@ -175,8 +190,9 @@ class UtilMenu {
 		};
 
 		return ret.map(this.mapperBlock).map(it => {
+			const embedName = U.String.toCamelCase(`-${I.EmbedProcessor[it.id]}`);
 			it.type = I.BlockType.Embed;
-			it.icon = `embed-${U.String.toCamelCase(`-${I.EmbedProcessor[it.id]}`)}`;
+			it.iconParam = { name: `menu/block/embed/${embedName}` };
 			return it;
 		});
 	};
@@ -187,9 +203,9 @@ class UtilMenu {
 	 */
 	getBlockLink () {
 		return [
-			{ type: I.BlockType.Page, id: 'existingPage', icon: 'existing', lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
-			{ type: I.BlockType.File, id: 'existingFile', icon: 'existing', lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
-			{ id: 'date', icon: 'date', lang: 'Date', arrow: true },
+			{ type: I.BlockType.Page, id: 'existingPage', iconParam: { name: 'menu/block/common/linkto' }, lang: 'ExistingPage', arrow: true, aliases: [ 'link' ] },
+			{ type: I.BlockType.File, id: 'existingFile', iconParam: { name: 'menu/block/common/linkto' }, lang: 'ExistingFile', arrow: true, aliases: [ 'file' ] },
+			{ id: 'date', iconParam: { name: 'relation/date' }, lang: 'Date', arrow: true },
 		].map((it: any) => {
 			it = this.mapperBlock(it);
 
@@ -234,12 +250,12 @@ class UtilMenu {
 		const aliasInline = [ 'grid', 'table', 'gallery', 'board', 'kanban', 'calendar', 'graph', 'inline', 'collection', 'set' ];
 
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line', aliases: [ 'hr', 'line divider' ] },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot', aliases: [ 'dot', 'dots divider' ] },
-			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, icon: 'tableOfContents', lang: 'TableOfContents', aliases: [ 'tc', 'toc', 'table of contents'] },
-			{ type: I.BlockType.Table, id: I.BlockType.Table, icon: 'table', lang: 'SimpleTable', aliases: [ 'table' ] },
-			{ type: I.BlockType.Dataview, id: 'collection', icon: 'collection', lang: 'Collection', aliases: aliasInline },
-			{ type: I.BlockType.Dataview, id: 'set', icon: 'set', lang: 'Set', aliases: aliasInline },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, iconParam: { name: 'menu/block/div/line' }, lang: 'Line', aliases: [ 'hr', 'line divider' ] },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, iconParam: { name: 'menu/block/div/dot' }, lang: 'Dot', aliases: [ 'dot', 'dots divider' ] },
+			{ type: I.BlockType.TableOfContents, id: I.BlockType.TableOfContents, iconParam: { name: 'menu/block/common/tableOfContents' }, lang: 'TableOfContents', aliases: [ 'tc', 'toc', 'table of contents'] },
+			{ type: I.BlockType.Table, id: I.BlockType.Table, iconParam: { name: 'menu/block/common/table' }, lang: 'SimpleTable', aliases: [ 'table' ] },
+			{ type: I.BlockType.Dataview, id: 'collection', iconParam: { name: 'menu/block/common/collection', color: 'blue' }, lang: 'Collection', aliases: aliasInline },
+			{ type: I.BlockType.Dataview, id: 'set', iconParam: { name: 'menu/block/common/set', color: 'purple' }, lang: 'Set', aliases: aliasInline },
 		].map(this.mapperBlock);
 	};
 
@@ -274,8 +290,8 @@ class UtilMenu {
 	 */
 	getTurnDiv () {
 		return [
-			{ type: I.BlockType.Div, id: I.DivStyle.Line, icon: 'divLine', lang: 'Line' },
-			{ type: I.BlockType.Div, id: I.DivStyle.Dot, icon: 'divDot', lang: 'Dot' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Line, iconParam: { name: 'menu/block/div/line' }, lang: 'Line' },
+			{ type: I.BlockType.Div, id: I.DivStyle.Dot, iconParam: { name: 'menu/block/div/dot' }, lang: 'Dot' },
 		].map(this.mapperBlock);
 	};
 
@@ -303,57 +319,50 @@ class UtilMenu {
 
 		let items: any[] = [];
 
+		if (hasTurnObject) {
+			items.push({ id: 'turnObject', iconParam: { name: 'menu/action/object' }, name: translate('commonTurnIntoObject'), arrow: true });
+		};
+
 		if (hasCommon) {
-			items = items.concat([
-				{ id: 'remove', icon: 'remove', name: U.String.sprintf(translate('commonDeleteBlocks'), U.Common.plural(count, translate('pluralLCBlock'))), caption: 'Del' },
-				{ id: 'copy', icon: 'copy', name: copyName, caption: keyboard.getCaption('duplicate') },
-			]);
+			items.push({ id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true });
 		};
 
 		if (hasClipboard) {
 			items = items.concat([
-				{ id: 'clipboardCopy', icon: 'clipboard-copy', name: translate('commonCopy'), caption: `${cmd} + C` },
-				{ id: 'clipboardCut', icon: 'clipboard-cut', name: translate('commonCut'), caption: `${cmd} + X` },
-				{ id: 'clipboardPaste', icon: 'clipboard-paste', name: translate('commonPaste'), caption: `${cmd} + V` },
+				{ id: 'clipboardCopy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy'), caption: `${cmd} + C` },
+				{ id: 'clipboardCut', iconParam: { name: 'menu/action/cut' }, name: translate('commonCut'), caption: `${cmd} + X` },
+				{ id: 'clipboardPaste', iconParam: { name: 'menu/action/paste' }, name: translate('commonPaste'), caption: `${cmd} + V` },
 			]);
-		};
-
-		if (hasCommon) {
-			items = items.concat([
-				{ isDiv: true },
-				{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
-			]);
-		};
-
-		if (hasTurnObject) {
-			items.push({ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true });
-		};
-		
-		if (hasText) {
-			items.push({ id: 'clear', icon: 'clear', name: translate('libMenuClearStyle') });
 		};
 		
 		if (hasFile) {
-			items.push({ id: 'download', icon: 'download', name: translate('commonDownload') });
+			items.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') });
 		};
 
 		if (hasCopyMedia) {
-			items.push({ id: 'copyMedia', icon: 'copy', name: translate('commonCopyMedia') });
+			items.push({ id: 'copyMedia', iconParam: { name: 'menu/action/clipboard' }, name: translate('commonCopyToClipboard') });
 		};
 
 		if (hasBookmark) {
-			items.push({ id: 'copyUrl', icon: 'copy', name: translate('libMenuCopyUrl') });
+			items.push({ id: 'copyUrl', iconParam: { name: 'menu/action/clipboard' }, name: translate('libMenuCopyUrl') });
 		};
 
 		if (hasDataview) {
 			const isCollection = Dataview.isCollection(rootId, blockId);
 			const sourceName = isCollection ? translate('commonCollection') : translate('commonSet');
 
-			items.push({ id: 'dataviewSource', icon: 'source', name: U.String.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
+			items.push({ id: 'dataviewSource', iconParam: { name: 'menu/action/source' }, name: U.String.sprintf(translate('libMenuChangeSource'), sourceName), arrow: true });
 		};
 
 		if (hasFile || hasBookmark || hasDataview) {
-			items.push({ id: 'openAsObject', icon: 'expand', name: translate('commonOpenObject') });
+			items.push({ id: 'openAsObject', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') });
+		};
+
+		if (hasCommon) {
+			items = items.concat([
+				{ id: 'copy', iconParam: { name: 'menu/action/duplicate' }, name: copyName, caption: keyboard.getCaption('duplicate') },
+				{ id: 'remove', iconParam: { name: 'menu/action/remove' }, name: `${translate('commonDelete')} ${U.Common.plural(count, translate('pluralLCBlock'))}`, caption: 'Del' },
+			]);
 		};
 
 		return items.map(it => ({ ...it, isAction: true }));
@@ -392,7 +401,7 @@ class UtilMenu {
 		};
 
 		return ret.map((it: any) => {
-			it.icon = U.Data.alignHIcon(it.id);
+			it.iconParam = { name: U.Data.alignHIcon(it.id) };
 			it.name = translate(`commonHAlign${I.BlockHAlign[it.id]}`);
 			it.isAlign = true;
 			return it;
@@ -405,7 +414,7 @@ class UtilMenu {
 			{ id: I.BlockVAlign.Middle },
 			{ id: I.BlockVAlign.Bottom },
 		].map((it: any) => {
-			it.icon = U.Data.alignVIcon(it.id);
+			it.iconParam = { name: U.Data.alignVIcon(it.id) };
 			it.name = translate(`commonVAlign${I.BlockVAlign[it.id]}`);
 			return it;
 		});
@@ -421,34 +430,8 @@ class UtilMenu {
 		});
 	};
 
-	getLayoutIcon (layout: I.ObjectLayout) {
-		return `layout c-${I.ObjectLayout[layout].toLowerCase()}`;
-	};
-
-	getLayouts () {
-		return [
-			{ id: I.ObjectLayout.Page },
-			{ id: I.ObjectLayout.Human },
-			{ id: I.ObjectLayout.Task },
-			{ id: I.ObjectLayout.Set },
-			{ id: I.ObjectLayout.File },
-			{ id: I.ObjectLayout.Audio },
-			{ id: I.ObjectLayout.Video },
-			{ id: I.ObjectLayout.Image },
-			{ id: I.ObjectLayout.Pdf },
-			{ id: I.ObjectLayout.Type },
-			{ id: I.ObjectLayout.Relation },
-			{ id: I.ObjectLayout.Note },
-		].map(it => ({ 
-			...it,
-			icon: this.getLayoutIcon(it.id),
-			name: translate(`layout${it.id}`),
-		}));
-	};
-
-	turnLayouts () {
-		const allowed = U.Object.getPageLayouts();
-		return this.getLayouts().filter(it => allowed.includes(it.id));
+	getLayoutIcon (layout: I.ObjectLayout): I.IconParam {
+		return { name: `layout/${I.ObjectLayout[layout].toLowerCase()}` };
 	};
 
 	getViews () {
@@ -470,12 +453,12 @@ class UtilMenu {
 		const views = S.Record.getViews(rootId, blockId);
 
 		const options: any[] = [
-			{ id: 'edit', icon: 'viewSettings', name: translate('menuDataviewViewEditView') },
-			{ id: 'copy', icon: 'copy', name: translate('commonDuplicate') },
+			{ id: 'edit', iconParam: { name: 'common/options' }, name: translate('menuDataviewViewEditView') },
+			{ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('commonDuplicate') },
 		];
 
 		if (views.length > 1) {
-			options.push({ id: 'remove', icon: 'remove', name: translate('commonDelete') });
+			options.push({ id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') });
 		};
 
 		S.Menu.open('select', {
@@ -492,7 +475,7 @@ class UtilMenu {
 					window.setTimeout(() => {
 						switch (option.id) {
 							case 'edit': {
-								$(`#button-${U.Common.esc(blockId)}-settings`).trigger('click');
+								U.Dom.get(`button-${blockId}-settings`)?.click();
 								S.Menu.updateData('dataviewViewSettings', { view: observable.box(new M.View(view)) });
 								break;
 							};
@@ -528,7 +511,7 @@ class UtilMenu {
 			{ id: I.RelationType.Phone },
 		].map((it: any) => {
 			it.name = translate(`relationName${it.id}`);
-			it.icon = `relation ${Relation.className(it.id)}`;
+			it.iconParam = { name: Relation.registryName('', it.id) };
 			return it;
 		});
 	};
@@ -569,7 +552,7 @@ class UtilMenu {
 			const setLayouts = U.Object.getSetLayouts();
 			const treeSkipLayouts = setLayouts.
 				concat(U.Object.getFileAndSystemLayouts()).
-				concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date, I.ObjectLayout.Chat ]);
+				concat([ I.ObjectLayout.Participant, I.ObjectLayout.Date, I.ObjectLayout.Chat, I.ObjectLayout.Discussion ]);
 
 			// Sets can only become Link and List layouts, non-sets can't become List
 			if (treeSkipLayouts.includes(layout)) {
@@ -587,7 +570,7 @@ class UtilMenu {
 			id,
 			name: translate(`widget${id}Name`),
 			description: translate(`widget${id}Description`),
-			icon: `widget-${id}`,
+			iconParam: { name: `menu/widget/${String(I.WidgetLayout[id] || '').toLowerCase()}` },
 			withDescription: true,
 		}));
 	};
@@ -625,7 +608,7 @@ class UtilMenu {
 				return w;
 			};
 
-			if (s.toLowerCase() == f.toLowerCase()) {
+			if (s.toLowerCase() === f.toLowerCase()) {
 				w += 10000;
 			} else
 			if (s.match(regS)) {
@@ -643,7 +626,7 @@ class UtilMenu {
 
 				let ret = false;
 
-				if (c.isBlock && (c.type == I.BlockType.Table)) {
+				if (c.isBlock && (c.type === I.BlockType.Table)) {
 					const match = filter.match(/table([\d]+)(?:[^\d]{1}([\d]+))?/i);
 					if (match) {
 						c.rowCnt = Math.max(1, Math.min(25, Number(match[1]) || 3));
@@ -705,18 +688,17 @@ class UtilMenu {
 		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
-	dashboardSelect (element: string, openRoute?: boolean) {
+	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
-		const subIds = [ 'searchObject' ];
 
 		const onSelect = (object: any, update: boolean) => {
-			C.WorkspaceSetInfo(space, { spaceDashboardId: object.id }, (message: any) => {
+			C.WorkspaceSetHomepage(space, object.id, (message: any) => {
 				if (message.error.code) {
 					return;
 				};
 
-				S.Detail.update(J.Constant.subId.space, { id: spaceview.id, details: { spaceDashboardId: object.id } }, false);
+				S.Detail.update(J.Constant.subId.space, { id: spaceview.id, details: { homepage: object.id } }, false);
 
 				if (update) {
 					S.Detail.update(U.Space.getSubSpaceSubId(space), { id: object.id, details: object }, false);
@@ -730,78 +712,34 @@ class UtilMenu {
 			});
 		};
 
-		let options = [];
-		if (spaceview.isChat || spaceview.isOneToOne) {
-			options.push({ id: I.HomePredefinedId.Chat, name: translate(`spaceUxType${I.SpaceUxType.Chat}`) });
-		} else {
-			options = [
-				{ id: I.HomePredefinedId.Graph, name: translate('commonGraph') },
-				{ id: I.HomePredefinedId.Last, name: translate('spaceLast') },
-				{ id: I.HomePredefinedId.Existing, name: translate('spaceExisting'), arrow: true },
-			];
-		};
-
 		analytics.event('ClickChangeSpaceDashboard');
 
-		S.Menu.open('select', {
+		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
-			subIds,
-			onOpen: context => this.setContext(context),
-			onClose: () => S.Menu.closeAll(subIds),
+			...menuParam,
 			data: {
-				options,
-				onOver: (e: any, item: any) => {
-					if (!this.menuContext) {
-						return;
+				withPlural: true,
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+				],
+				dataChange: (_ctx: any, items: any) => {
+					const head: any[] = [
+						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
+					];
+
+					if (items.length) {
+						head.push({ isDiv: true });
 					};
 
-					if (!item.arrow) {
-						S.Menu.closeAll(subIds);
-						return;
-					};
-
-					switch (item.id) {
-						case I.HomePredefinedId.Existing: {
-							S.Menu.open('searchObject', {
-								element: `#${this.menuContext.getId()} #item-${U.Common.esc(item.id)}`,
-								offsetX: this.menuContext.getSize().width,
-								vertical: I.MenuDirection.Center,
-								isSub: true,
-								data: {
-									withPlural: true,
-									filters: [
-										{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
-										{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-									],
-									canAdd: true,
-									onSelect: el => {
-										onSelect(el, true);
-										this.menuContext?.close();
-
-										analytics.event('ChangeSpaceDashboard', { type: I.HomePredefinedId.Existing });
-									},
-								}
-							});
-							break;
-						};
-					};
+					return head.concat(items);
 				},
-				onSelect: (e: any, item: any) => {
-					if (item.arrow) {
-						return;
-					};
+				onSelect: el => {
+					onSelect(el, true);
 
-					switch (item.id) {
-						case I.HomePredefinedId.Graph:
-						case I.HomePredefinedId.Chat:
-						case I.HomePredefinedId.Last: {
-							onSelect({ id: item.id }, false);
-
-							analytics.event('ChangeSpaceDashboard', { type: item.id });
-							break;
-						};
-					};
+					const type = U.Space.isSystemDashboard(el.id) ? el.id : I.HomePredefinedId.Existing;
+					analytics.event('ChangeSpaceDashboard', { type });
 				},
 			}
 		});
@@ -819,7 +757,6 @@ class UtilMenu {
 
 	getInterfaceLanguages () {
 		const ret: any[] = [];
-		const Locale = require('lib/json/locale.json');
 
 		for (const id of J.Lang.enabled) {
 			ret.push({ id, name: Locale[id] });
@@ -862,7 +799,7 @@ class UtilMenu {
 			{ id: 'html', format: I.ImportType.Html },
 			{ id: 'text', format: I.ImportType.Text },
 			{ id: 'csv', format: I.ImportType.Csv },
-		] as any).map(it => {
+		] as { id: string; format: I.ImportType; isApp?: boolean; name?: string }[]).map(it => {
 			it.name = names[it.format];
 			return it;
 		});
@@ -874,7 +811,7 @@ class UtilMenu {
 		const isOwner = U.Space.isMyOwner();
 		const options: I.Option[] = [
 			{ id: 'spaceInfo', name: translate('popupSettingsSpaceIndexSpaceInfoTitle') },
-			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'red' }
+			{ id: 'delete', name: isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace'), color: 'destructive' }
 		];
 
 		S.Menu.open('select', {
@@ -901,11 +838,15 @@ class UtilMenu {
 	spaceContext (space: any, menuParam: Partial<I.MenuParam>, param?: Partial<SpaceContextParam>) {
 		param = param || {};
 
-		const { targetSpaceId, uxType } = space;
+		const { targetSpaceId, spaceType } = space;
 		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const oneToOneParticipant = space.isOneToOne ? U.Space.getOneToOneParticipant(space) : null;
+		const oneToOneGlobalName = oneToOneParticipant?.globalName || '';
+		const oneToOneIdentity = space.oneToOneIdentity || '';
+		const oneToOneAnyName = oneToOneGlobalName || (oneToOneIdentity ? U.String.shortMask(oneToOneIdentity, 6) : '');
 
 		const onClick = (itemId: string, inviteLink: string) => {
 			switch (itemId) {
@@ -919,7 +860,7 @@ class UtilMenu {
 					};
 
 					C.PushNotificationSetSpaceMode(targetSpaceId, mode);
-					analytics.event('ChangeMessageNotificationState', { type: mode, uxType: space.uxType, route });
+					analytics.event('ChangeMessageNotificationState', { type: mode, spaceType: space.spaceType, route });
 					break;
 				};
 
@@ -960,8 +901,8 @@ class UtilMenu {
 					if (targetSpaceId == S.Common.space) {
 						Action.openSettings(id, route);
 					} else {
-						U.Router.switchSpace(targetSpaceId, '', false, { 
-							onFadeIn: () => Action.openSettings(id, route),
+						U.Router.switchSpace(targetSpaceId, '', false, {
+							onRouteChange: () => Action.openSettings(id, route),
 						}, true);
 					};
 					break;
@@ -988,7 +929,7 @@ class UtilMenu {
 				case 'stopSharing': {
 					S.Popup.open('confirm', {
 						data: {
-							icon: 'noAccessRed',
+							iconParam: { name: 'popup/header/redLock', color: 'red' },
 							title: translate(`popupConfirmStopSharingSpaceWarningTitle`),
 							text: translate(`popupConfirmStopSharingSpaceWarningText`),
 							textConfirm: translate('commonConfirm'),
@@ -1007,22 +948,13 @@ class UtilMenu {
 
 				case 'manage': {
 					this.menuContext?.close(() => {
-						S.Menu.open('widgetSection', {
-							recalcRect: () => {
-								const { ww, wh } = U.Common.getWindowDimensions();
-								return { x: 0, y: 0, width: ww, height: wh };
-							},
-							classNameWrap: 'fixed',
-							visibleDimmer: true,
-							vertical: I.MenuDirection.Center,
-							horizontal: I.MenuDirection.Center,
-						});
+						sidebar.leftPanelSubPageOpen('widgetManage', true, true);
 					});
 					break;
 				};
 
 				case 'openNewTab': {
-					Action.openSpaceTab(targetSpaceId, uxType, route);
+					Action.openSpaceTab(targetSpaceId, spaceType, route);
 					break;
 				};
 
@@ -1033,30 +965,38 @@ class UtilMenu {
 					break;
 				};
 
+				case 'copyAnyName': {
+					if (oneToOneGlobalName) {
+						U.Common.copyToast(translate('commonAnyName'), oneToOneGlobalName);
+					} else
+					if (oneToOneIdentity) {
+						U.Common.copyToast(translate('blockFeaturedIdentity'), oneToOneIdentity);
+					};
+					break;
+				};
+
 			};
 		};
 
 		const getOptions = (inviteLink: string) => {
 			const sections = {
-				search: [],
+				anyName: [],
 				general: [],
-				share: [],
-				archive: [],
-				manage: [],
+				actions: [],
 				delete: [],
 			};
 
-			if (!noShare && inviteLink) {
-				sections.share = [
-					{ id: 'link', icon: 'copyLink', name: translate('menuSpaceContextCopyInviteLink') },
-					{ id: 'qr', icon: 'qr', name: translate('menuSpaceContextShowQRCode') },
-				];
-			}
-
 			if (isSharePage) {
+				if (inviteLink) {
+					sections.general = [
+						{ id: 'link', iconParam: { name: 'menu/action/copy' }, name: translate('menuSpaceContextCopyInviteLink') },
+						{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('menuSpaceContextShowQRCode') },
+					];
+				};
+
 				if (isOwner && space.isShared) {
 					const isDisabled = participants.length > 1;
-					sections.archive.push({
+					sections.actions.push({
 						id: 'stopSharing',
 						name: translate('popupSettingsSpaceShareMakePrivate'),
 						disabled: isDisabled,
@@ -1064,42 +1004,59 @@ class UtilMenu {
 					});
 				};
 			} else {
+				if (space.isOneToOne && oneToOneAnyName) {
+					sections.anyName.push({
+						id: 'copyAnyName',
+						iconParam: oneToOneGlobalName ? { name: 'membership/badge', className: 'badge', size: 18, color: 'accent100' } : undefined,
+						name: oneToOneAnyName,
+						withCopy: true,
+					});
+				};
+
 				if (!isLoading) {
-					sections.general.push({ id: 'settings', icon: 'settings', name: translate('menuSpaceContextSpaceSettings') });
+					sections.general.push({ id: 'settings', iconParam: { name: 'menu/action/settings' }, name: translate('menuSpaceContextSpaceSettings') });
 				};
 
-				if (withOpenNewTab) {
-					sections.general.push({ id: 'openNewTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') });
+				if (!noShare && space.isPrivate) {
+					sections.general.push({ id: 'members', iconParam: { name: 'menu/action/inviteMembers' }, name: translate('commonInviteMembers') });
 				};
 
-				if (!space.isPersonal && !space.isOneToOne && !noMembers) {
-					sections.general.push({ id: 'members', icon: 'members', name: translate('commonMembers') });
+				if (!noShare && inviteLink) {
+					sections.general = sections.general.concat([
+						{ id: 'link', iconParam: { name: 'menu/action/copy' }, name: translate('menuSpaceContextCopyInviteLink') },
+						{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('menuSpaceContextShowQRCode') },
+					]);
 				};
 
 				if (withPin) {
 					if (space.orderId) {
-						sections.manage.push({ id: 'unpin', icon: 'unpin', name: translate('commonUnpin') });
+						sections.general.push({ id: 'unpin', iconParam: { name: 'menu/action/unpin' }, name: translate('commonUnpin') });
 					} else {
-						sections.manage.push({ id: 'pin', icon: 'pin', name: translate('commonPin') });
+						sections.general.push({ id: 'pin', iconParam: { name: 'menu/action/pin' }, name: translate('commonPin') });
 					};
 				};
 
-				if (!space.isPersonal) {
+				if (!space.isPrivate) {
 					if ([ I.NotificationMode.Nothing, I.NotificationMode.Mentions ].includes(space.notificationMode)) {
-						sections.manage.push({ id: 'unmute', icon: 'unmute', name: translate('commonUnmute') });
+						sections.general.push({ id: 'unmute', iconParam: { name: 'menu/action/unmute' }, name: translate('commonUnmute') });
 					} else {
-						sections.manage.push({ id: 'mute', icon: 'mute', name: translate('commonMute') });
+						sections.general.push({ id: 'mute', iconParam: { name: 'menu/action/mute' }, name: translate('commonMute') });
 					};
+				};
+
+				if (withOpenNewTab) {
+					sections.actions.push({ id: 'openNewTab', iconParam: { name: 'menu/action/newTab' }, name: translate('menuObjectOpenInNewTab') });
 				};
 
 				if (!noManage) {
-					sections.manage.push({ id: 'manage', icon: 'manage', name: translate('widgetManageSections') });
+					sections.actions.push({ id: 'manage', iconParam: { name: 'common/options' }, name: translate('widgetManageSections') });
 				};
 
 				if (withDelete) {
+					const iconParam = { name: isOwner ? 'menu/action/remove' : 'menu/action/leave', color: 'destructive' };
 					const name = isOwner ? translate('pageSettingsSpaceDeleteSpace') : translate('commonLeaveSpace');
 
-					sections.delete.push({ id: 'remove', icon: 'remove-red', name, color: 'red' });
+					sections.delete.push({ id: 'remove', iconParam, name, color: 'destructive' });
 				};
 			};
 
@@ -1151,13 +1108,15 @@ class UtilMenu {
 			return [];
 		};
 
-		const items = U.Common.objectCopy(U.Space.getList()).
-			map(it => {
-				it.counters = S.Chat.getSpaceCounters(it.targetSpaceId);
-				it.hasCounter = it.counters.mentionCounter || it.counters.messageCounter;
-				it.lastMessage = S.Chat.getSpaceLastMessage(it.targetSpaceId);
-				it.isPinned = !!it.orderId;
-				return it;
+		const items = U.Space.getList().map(it => {
+				const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+				return {
+					...it,
+					counters,
+					hasCounter: counters.mentionCounter || counters.messageCounter || counters.reactionCounter,
+					lastMessage: S.Chat.getSpaceLastMessage(it.targetSpaceId),
+					isPinned: !!it.orderId,
+				};
 			});
 
 		items.sort((c1, c2) => {
@@ -1169,32 +1128,27 @@ class UtilMenu {
 				return o;
 			};
 
-			const d1 = c1.lastMessage?.createdAt || 0;
-			const d2 = c2.lastMessage?.createdAt || 0;
+			const d1 = Math.max(c1.lastMessage?.createdAt || 0, c1.spaceJoinDate || 0, c1.creationDate || 0);
+			const d2 = Math.max(c2.lastMessage?.createdAt || 0, c2.spaceJoinDate || 0, c2.creationDate || 0);
 
 			if (d1 > d2) return -1;
 			if (d1 < d2) return 1;
 
-			if (c1.spaceJoinDate > c2.spaceJoinDate) return -1;
-			if (c1.spaceJoinDate < c2.spaceJoinDate) return 1;
-
 			if (c1.hasCounter && !c2.hasCounter) return -1;
 			if (!c1.hasCounter && c2.hasCounter) return 1;
 
-			if (c1.creationDate > c2.creationDate) return -1;
-			if (c1.creationDate < c2.creationDate) return 1;
 			return 0;
 		});
-
+		
 		return items;
 	};
 
 	getSystemWidgets () {
 		return [
-			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin' },
-			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil' },
-			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', caption: translate('menuWidgetRecentOpenCaption') },
-			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin', layout: I.ObjectLayout.Archive },
+			{ id: J.Constant.widgetId.favorite, name: translate('widgetFavorite'), icon: 'widget-pin', iconName: 'widget/system/pin' },
+			{ id: J.Constant.widgetId.recentEdit, name: translate('widgetRecent'), icon: 'widget-pencil', iconName: 'widget/system/pencil' },
+			{ id: J.Constant.widgetId.recentOpen, name: translate('widgetRecentOpen'), icon: 'widget-eye', iconName: 'widget/system/eye', caption: translate('menuWidgetRecentOpenCaption') },
+			{ id: J.Constant.widgetId.bin, name: translate('commonBin'), icon: 'widget-bin', iconName: 'common/bin', layout: I.ObjectLayout.Archive },
 		].filter(it => it).map(it => ({ ...it, isSystem: true }));
 	};
 
@@ -1205,7 +1159,7 @@ class UtilMenu {
 
 		const hasAdvancedFilter = view?.filters?.some(f => f.operator === I.FilterOperator.And);
 		const buttons = (!onAdvancedFilterAdd || hasAdvancedFilter) ? [] : [
-			{ id: 'advancedFilter', name: translate('menuDataviewFilterAdvancedAdd'), icon: 'advancedFilter' }
+			{ id: 'advancedFilter', name: translate('menuDataviewFilterAdvancedAdd'), iconParam: { name: 'control/dataview/filter' } }
 		];
 
 		const callBack = (item: any) => {
@@ -1267,8 +1221,8 @@ class UtilMenu {
 			offsetX: context.getSize().width,
 			horizontal: I.MenuDirection.Right,
 			vertical: I.MenuDirection.Center,
-			onOpen: () => $(element).addClass('active'),
-			onClose: () => $(element).removeClass('active'),
+			onOpen: () => U.Dom.addClass(U.Dom.select(element), 'active'),
+			onClose: () => U.Dom.removeClass(U.Dom.select(element), 'active'),
 			data: {
 				rootId,
 				blockId,
@@ -1287,13 +1241,92 @@ class UtilMenu {
 
 	sidebarModeOptions () {
 		return [
-			{ id: 'all', icon: 'all', name: translate('sidebarMenuAll') },
-			{ id: 'sidebar', icon: 'sidebar', name: translate('sidebarMenuSidebar') },
-		].map(it => ({ ...it, icon: `sidebar-${it.icon}` }));
+			{ id: 'all', iconParam: { name: 'sidebar-all' }, name: translate('sidebarMenuAll') },
+			{ id: 'sidebar', iconParam: { name: 'menu/action/sidebar' }, name: translate('sidebarMenuSidebar') },
+		];
 	};
 
 	codeLangOptions (): I.Option[] {
 		return [ { id: 'plain', name: translate('blockTextPlain') } ].concat(U.Prism.getTitles());
+	};
+
+	getCommentAddSections (): any[] {
+		return this.sectionsMap([
+			{
+				id: 'text', name: translate('commentSlashMenuTitle'),
+				children: [
+					{ id: 'paragraph', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/text' }, name: translate('commentBlockText'), description: translate('commentBlockTextDescription') },
+					{ id: 'title', textStyle: I.TextStyle.Header1, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header1' }, name: translate('commentBlockTitle'), description: translate('commentBlockTitleDescription') },
+					{ id: 'heading', textStyle: I.TextStyle.Header2, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header2' }, name: translate('commentBlockHeading'), description: translate('commentBlockHeadingDescription') },
+					{ id: 'subheading', textStyle: I.TextStyle.Header3, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/header3' }, name: translate('commentBlockSubheading'), description: translate('commentBlockSubheadingDescription') },
+				],
+			},
+			{
+				id: 'list', name: translate('commentSlashMenuLists'),
+				children: [
+					{ id: 'numbered', textStyle: I.TextStyle.Numbered, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/numbered' }, name: translate('commentBlockNumbered'), description: translate('commentBlockNumberedDescription') },
+					{ id: 'bulleted', textStyle: I.TextStyle.Bulleted, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/bulleted' }, name: translate('commentBlockBulleted'), description: translate('commentBlockBulletedDescription') },
+					{ id: 'checkbox', textStyle: I.TextStyle.Checkbox, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/checkbox' }, name: translate('commentBlockCheckbox'), description: translate('commentBlockCheckboxDescription') },
+				],
+			},
+			{
+				id: 'attachments', name: translate('commentSlashMenuAttachments'),
+				children: [
+					{ id: 'code', textStyle: I.TextStyle.Code, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/code' }, name: translate('commentBlockCode'), description: translate('commentBlockCodeDescription') },
+					{ id: 'embed', action: 'embed', iconParam: { name: 'menu/action/embed' }, name: translate('commentSlashMenuEmbed'), arrow: true },
+				],
+			},
+			{
+				id: 'decorations', name: translate('commentSlashMenuDecorations'),
+				children: [
+					{ id: 'quote', textStyle: I.TextStyle.Quote, blockType: I.BlockType.Text, iconParam: { name: 'comment/menu/quote' }, name: translate('commentBlockQuote'), description: translate('commentBlockQuoteDescription') },
+					{ id: 'divider', textStyle: I.TextStyle.Paragraph, blockType: I.BlockType.Div, iconParam: { name: 'menu/block/div/line' }, name: translate('commentBlockDivider'), description: translate('commentBlockDividerDescription') },
+				],
+			},
+		]);
+	};
+
+	getCommentAddMenuParam (contextRef: { current: any }) {
+		return {
+			param: {
+				classNameWrap: 'fromBlock',
+				className: 'commentAdd',
+				component: 'select',
+				noAnimation: true,
+				subIds: [ 'typeSuggest', 'select' ],
+				onOpen: (context: any) => { contextRef.current = context; },
+			},
+			data: {
+				sections: this.getCommentAddSections(),
+				noFilter: true,
+				noScroll: true,
+				noVirtualisation: true,
+			},
+		};
+	};
+
+	openCommentEmbedMenu (context: any, onSelect: (e: any, item: any) => void) {
+		const size = context.getSize();
+		const options = this.prepareForSelect(this.getBlockEmbed().map(it => ({
+			...it,
+			action: 'embed',
+			embedProcessor: it.id,
+		})));
+
+		S.Menu.open('select', {
+			element: `#${context.getId()}`,
+			className: 'fixed',
+			classNameWrap: 'fromBlock',
+			offsetX: size.width,
+			offsetY: -size.height,
+			vertical: I.MenuDirection.Bottom,
+			isSub: true,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect,
+			},
+		});
 	};
 
 	getLibrarySortOptions (sortId: I.SortId, sortType: I.SortType): any[] {
@@ -1324,7 +1357,7 @@ class UtilMenu {
 			{ id: I.DateFormat.Long },
 			{ id: I.DateFormat.Nordic },
 			{ id: I.DateFormat.European },
-		] as any[]).map(it => {
+		] as { id: I.DateFormat; name: string }[]).map(it => {
 			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
 			return it;
 		});
@@ -1378,7 +1411,7 @@ class UtilMenu {
 		});
 	};
 
-	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withImport?: boolean, noButtons?: boolean }, route: string, callBack?: (item: any) => void) {
+	typeSuggest (param: Partial<I.MenuParam>, details: any, flags: { selectTemplate?: boolean, deleteEmpty?: boolean, withUpload?: boolean, noButtons?: boolean, uploadRoute?: string }, route: string, callBack?: (item: any) => void) {
 		param = param || {};
 		param.data = param.data || {};
 		details = details || {};
@@ -1394,14 +1427,44 @@ class UtilMenu {
 			objectFlags.push(I.ObjectFlag.DeleteEmpty);
 		};
 
-		const onImport = (e: MouseEvent) => {
-			e.stopPropagation();
-			Action.openSettings('importIndex', route);
+		const onUpload = (e: MouseEvent) => {
+			U.Menu.onFileUploadPopup(I.ObjectLayout.File, '', {}, (objectIds) => {
+				if (!objectIds?.length) {
+					return;
+				};
+
+				U.Object.getByIds(objectIds, {}, (objects) => {
+					const gallery = objects.map(object => {
+						let type = null;
+						let src = '';
+
+						if (U.Object.isImageLayout(object.layout)) {
+							type = I.FileType.Image;
+							src = S.Common.imageUrl(object.id, I.ImageSize.Large);
+						} else
+						if (object.layout == I.ObjectLayout.Video) {
+							type = I.FileType.Video;
+							src = S.Common.fileUrl(object.id);
+						};
+
+						return src ? { object, type, src } : null;
+					}).filter(it => it);
+
+					window.setTimeout(() => {
+						if (gallery.length) {
+							S.Popup.open('preview', { data: { gallery } });
+						} else
+						if (objects.length) {
+							callBack?.(objects[0]);
+						};
+					}, S.Popup.getTimeout());
+				});
+			}, flags.uploadRoute || route);
 		};
 
 		const getClipboardData = async () => {
 			let ret = [];
-			try { ret = await navigator.clipboard.read(); } catch (e) { /**/ };
+			try { ret = await navigator.clipboard.read(); } catch (e) { console.warn('[Menu] clipboard read failed:', e); };
 			return ret;
 		};
 
@@ -1476,7 +1539,7 @@ class UtilMenu {
 			if (canDelete) {
 				options = options.concat([
 					{ isDiv: true },
-					{ id: 'remove', name: translate('commonDelete'), color: 'red' },
+					{ id: 'remove', name: translate('commonDelete'), color: 'destructive' },
 				]);
 			};
 
@@ -1520,8 +1583,12 @@ class UtilMenu {
 			const buttons: any[] = [];
 
 			if (!flags.noButtons) {
+				if (flags.withUpload) {
+					buttons.push({ id: 'import', iconParam: { name: 'menu/action/uploadComputer' }, name: translate('commonUploadComputer'), onClick: onUpload, isButton: true });
+				};
+
 				buttons.push({ 
-					id: 'add', icon: 'plus', onClick: () => {
+					id: 'add', iconParam: { name: 'plus/menu' }, onClick: () => {
 						U.Object.createType({ name: this.menuContext?.getChildRef()?.getData().filter }, keyboard.isPopup());
 						this.menuContext?.close();
 
@@ -1531,12 +1598,8 @@ class UtilMenu {
 					}, 
 				});
 
-				if (flags.withImport) {
-					buttons.push({ id: 'import', icon: 'import', name: translate('commonImport'), onClick: onImport, isButton: true });
-				};
-
 				if (items.length) {
-					buttons.unshift({ id: 'clipboard', icon: 'clipboard', name: translate('widgetItemClipboard'), onClick: onPaste, isButton: true });
+					buttons.unshift({ id: 'clipboard', iconParam: { name: 'menu/action/clipboard' }, name: translate('widgetItemClipboard'), onClick: onPaste, isButton: true });
 				};
 			};
 
@@ -1556,7 +1619,7 @@ class UtilMenu {
 					onMore,
 					buttons,
 					filters: [
-						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection() },
+						{ relationKey: 'recommendedLayout', condition: I.FilterCondition.In, value: U.Object.getLayoutsForTypeSelection().filter(it => !U.Object.isInFileLayouts(it)) },
 						{ relationKey: 'uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template, J.Constant.typeKey.type ] }
 					],
 					onClick: (item: any) => {
@@ -1569,6 +1632,20 @@ class UtilMenu {
 							this.menuContext?.close();
 						};
 
+						if (U.Object.getFileLayouts().includes(item.recommendedLayout)) {
+							this.menuContext?.close();
+
+							window.setTimeout(() => {
+								this.onFileUploadPopup(item.recommendedLayout, '', details, (objectIds) => {
+									if (objectIds?.length) {
+										const object = S.Detail.get(S.Common.space, objectIds[0]);
+										if (object) {
+											cb(object, 0);
+										};
+									};
+								}, flags.uploadRoute || route);
+							}, S.Menu.getTimeout());
+						} else
 						if (U.Object.isBookmarkLayout(item.recommendedLayout) || U.Object.isChatLayout(item.recommendedLayout)) {
 							this.menuContext?.close();
 
@@ -1599,6 +1676,18 @@ class UtilMenu {
 		};
 
 		check();
+	};
+
+	onFileUploadPopup (layout: I.ObjectLayout, collectionId?: string, details?: any, callBack?: (objectIds: string[]) => void, route?: string) {
+		S.Popup.open('upload', {
+			data: {
+				layout,
+				collectionId: collectionId || '',
+				details: details || {},
+				onUpload: callBack,
+				route: route || '',
+			},
+		});
 	};
 
 	onBookmarkMenu (param?: Partial<I.MenuParam>, callBack?: (bookmark: any) => void) {
@@ -1639,29 +1728,28 @@ class UtilMenu {
 		this.menuContext = context;
 	};
 
-	spaceCreate (param: I.MenuParam, route) {
-		const ids = [ 'chat', 'space', 'join' ];
-		const options = ids.map(id => {
-			const suffix = U.String.toUpperCamelCase(id);
+	spaceCreate (param: I.MenuParam, route: string) {
+		const analyticsName = {
+			[I.SpaceCreateType.Personal]: 'Space',
+			[I.SpaceCreateType.Group]: 'Chat',
+			[I.SpaceCreateType.Join]: 'Join',
+		};
 
-			let icon = '';
-			let description = '';
-			let withDescription = false;
+		const mySharedSpaces = U.Space.getMySharedSpacesList();
+		const { sharedSpacesLimit } = U.Space.getProfile();
+		const isLimitReached = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
 
-			if (id != 'join') {
-				icon = id;
-				description = translate(`sidebarMenuSpaceCreateDescription${suffix}`);
-				withDescription = true;
-			};
+		const groupOption: any = { id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') };
 
-			return {
-				id,
-				icon,
-				name: translate(`sidebarMenuSpaceCreateTitle${suffix}`),
-				description,
-				withDescription,
-			};
-		});
+		if (isLimitReached) {
+			groupOption.caption = React.createElement(Icon, { name: 'common/alert', className: 'spaceLimit', color: 'grey' });
+		};
+
+		const options = [
+			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
+			groupOption,
+			{ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
+		];
 
 		let prefix = '';
 		switch (route) {
@@ -1682,24 +1770,9 @@ class UtilMenu {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					switch (item.id) {
-						case 'chat': {
-							Action.createSpace(I.SpaceUxType.Chat, route);
-							break;
-						};
+					Action.createSpace(item.id, route);
 
-						case 'space': {
-							Action.createSpace(I.SpaceUxType.Data, route);
-							break;
-						};
-
-						case 'join': {
-							S.Popup.closeAll(null, () => S.Popup.open('spaceJoinByLink', {}));
-							break;
-						};
-					};
-
-					analytics.event(`Click${prefix}CreateMenu${U.String.toUpperCamelCase(item.id)}`);
+					analytics.event(`Click${prefix}CreateMenu${analyticsName[item.id]}`);
 				},
 			}
 		});
@@ -1707,34 +1780,11 @@ class UtilMenu {
 		analytics.event(`Screen${prefix}CreateMenu`);
 	};
 
-	vaultStyle (param: I.MenuParam) {
-		const { isClosed } = sidebar.getData(I.SidebarPanel.Left);
-		const { vaultMessages } = S.Common;
-		const options =[
-			{ id: 0, name: translate('popupSettingsVaultCompact'), checkbox: !vaultMessages, },
-			{ id: 1, name: translate('popupSettingsVaultWithMessages'), checkbox: vaultMessages, },
-		];
-
-		S.Menu.open('select', {
-			...param,
-			data: {
-				options,
-				noVirtualisation: true,
-				onSelect: (e: any, item: any) => {
-					S.Common.vaultMessagesSet(Boolean(Number(item.id)));
-					if (isClosed) {
-						sidebar.open(I.SidebarPanel.Left, '', );
-					};
-				},
-			},
-		});
-	};
-
-	uxTypeOptions (): I.Option[] {
+	spaceTypeOptions (): I.Option[] {
 		return [
-			{ id: I.SpaceUxType.Data },
-			{ id: I.SpaceUxType.Chat },
-		].map(it => ({ ...it, name: translate(`spaceUxType${it.id}`) }));
+			{ id: I.SpaceType.Data },
+			{ id: I.SpaceType.Chat },
+		].map(it => ({ ...it, name: translate(`spaceType${it.id}`) }));
 	};
 
 	notificationModeOptions (forSettings?: boolean): I.Option[] {
@@ -1759,6 +1809,13 @@ class UtilMenu {
 		return ret;
 	};
 
+	discussionNotificationModeOptions (): I.Option[] {
+		return [
+			{ id: I.NotificationMode.All },
+			{ id: I.NotificationMode.Mentions },
+		].map(it => ({ ...it, name: translate(`notificationModeDiscussion${it.id}`) }));
+	};
+
 	recentModeOptions (): I.Option[] {
 		return [
 			{ id: I.RecentEditMode.All },
@@ -1770,18 +1827,13 @@ class UtilMenu {
 		const { widgetSections } = S.Common;
 
 		return [
-			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.Pin },
+			{ id: I.WidgetSection.Unread },
+			{ id: I.WidgetSection.MyFavorites },
 			{ id: I.WidgetSection.RecentEdit },
 			{ id: I.WidgetSection.Type },
 			{ id: I.WidgetSection.Bin },
 		].sort((c1, c2) => {
-			const isUnread1 = c1.id == I.WidgetSection.Unread;
-			const isUnread2 = c2.id == I.WidgetSection.Unread;
-			
-			if (isUnread1 && !isUnread2) return -1;
-			if (!isUnread1 && isUnread2) return 1;
-			
 			const idx1 = widgetSections.findIndex(it => it.id == c1.id);
 			const idx2 = widgetSections.findIndex(it => it.id == c2.id);
 
@@ -1792,7 +1844,8 @@ class UtilMenu {
 	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
 		const { recentEditMode } = S.Common;
 		const spaceview = U.Space.getSpaceview();
-		const toggle = { id: 'hide', icon: 'eye on', name: translate('widgetHideSection') };
+		const toggle = { id: 'hide', iconParam: { name: 'common/eye0' }, name: translate('widgetHideSection') };
+		const manage = { id: 'manage', iconParam: { name: 'common/edit' }, name: translate('widgetManageSections') };
 
 		let options: any[] = [];
 		let value = '';
@@ -1805,14 +1858,17 @@ class UtilMenu {
 			value = String(recentEditMode);
 		} else 
 		if (sectionId == I.WidgetSection.Bin) {
-			options = options.concat([
-				{ id: 'openBin', name: translate('commonOpen') },
-				{ id: 'emptyBin', name: translate('commonEmptyBin') },
-				{ isDiv: true },
-			]);
+			options.push({ id: 'openBin', name: translate('commonOpen') });
+
+			if (U.Space.isMyOwner()) {
+				options.push({ id: 'emptyBin', name: translate('commonEmptyBin') });
+			};
+
+			options.push({ isDiv: true });
 		};
 
 		options.push(toggle);
+		options.push(manage);
 
 		S.Menu.open('select', {
 			...menuParam,
@@ -1838,6 +1894,11 @@ class UtilMenu {
 							S.Common.widgetSectionsSet([ ...widgetSections ]);
 
 							analytics.event('HideSection');
+							break;
+						};
+
+						case 'manage': {
+							sidebar.leftPanelSubPageOpen('widgetManage', true, true);
 							break;
 						};
 
@@ -1870,7 +1931,7 @@ class UtilMenu {
 			exportIndex: translate('commonExport'),
 			importIndex: translate('commonImport'),
 			spaceIndex: translate('pageSettingsSpaceGeneral'),
-			spaceShare: members.length > 1 ? translate('commonMembers') : translate('pageSettingsSpaceIndexInviteMembers'),
+			spaceShare: members.length > 1 ? translate('commonMembers') : translate('commonInviteMembers'),
 			spaceNotifications: translate('commonNotifications'),
 			spaceStorage: translate('pageSettingsSpaceRemoteStorage'),
 			archive: translate('commonBin'),
@@ -1909,18 +1970,17 @@ class UtilMenu {
 		keyboard.disableContextOpen(true);
 
 		const { focused } = focus.state;
-		const win = $(window);
 		const options: any = dictionarySuggestions.map(it => ({ id: it, name: it }));
-		const element = $(document.elementFromPoint(x, y));
-		const isInput = element.is('input');
-		const isTextarea = element.is('textarea');
-		const isEditable = element.is('.editable');
+		const element = document.elementFromPoint(x, y) as HTMLElement;
+		const isInput = element?.tagName === 'INPUT';
+		const isTextarea = element?.tagName === 'TEXTAREA';
+		const isEditable = U.Dom.hasClass(element, 'editable');
 
 		options.push({ id: 'add-to-dictionary', name: translate('spellcheckAdd') });
 
 		S.Menu.open('select', {
 			classNameWrap: 'fromBlock',
-			recalcRect: () => rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+			recalcRect: () => rect ? { ...rect, y: rect.y + window.scrollY } : null,
 			onOpen: () => S.Menu.closeAll([ 'blockContext', 'chatText' ]),
 			onClose: () => keyboard.disableContextOpen(false),
 			data: {
@@ -1945,12 +2005,12 @@ class UtilMenu {
 
 										// Get the text content and find word boundaries
 										if (container.nodeType === Node.TEXT_NODE) {
-											const editable = $(container).closest('.editable');
-											if (editable.length) {
+											const editable = (container as HTMLElement).parentElement?.closest('.editable') as HTMLElement;
+											if (editable) {
 												// Calculate the absolute offset in the block text
 												let absoluteOffset = 0;
 												const walker = document.createTreeWalker(
-													editable.get(0),
+													editable,
 													NodeFilter.SHOW_TEXT,
 													null
 												);
@@ -1999,11 +2059,11 @@ class UtilMenu {
 									};
 								} else
 								if (isInput || isTextarea || isEditable) {
-									const isMessageBox = element.attr('id') === 'messageBox';
+									const isMessageBox = element?.id === 'messageBox';
 
 									if (isMessageBox) {
 										// Handle chat form's messageBox with marks preservation
-										const html = String(element.html() || '');
+										const html = String(element.innerHTML || '');
 										const parsed = Mark.fromHtml(html, []);
 										const { text } = parsed;
 										let { marks } = parsed;
@@ -2019,7 +2079,7 @@ class UtilMenu {
 											if (container.nodeType === Node.TEXT_NODE) {
 												let absoluteOffset = 0;
 												const walker = document.createTreeWalker(
-													element.get(0),
+													element,
 													NodeFilter.SHOW_TEXT,
 													null
 												);
@@ -2058,29 +2118,28 @@ class UtilMenu {
 											marks = Mark.adjust(marks, wordIndex + misspelledWord.length, lengthDiff);
 
 											const newHtml = Mark.toHtml(newText, marks);
-											element.html(U.String.sanitize(newHtml, true));
+											element.innerHTML = U.String.sanitize(newHtml, true);
 
 											const cursorPos = wordIndex + item.id.length;
-											const el = element.get(0) as HTMLElement;
-											el.focus();
-											setRange(el, { start: cursorPos, end: cursorPos });
+											element.focus();
+											setRange(element, { start: cursorPos, end: cursorPos });
 										};
 									} else {
 										let value = '';
 										if (isInput || isTextarea) {
-											value = String(element.val());
+											value = String((element as HTMLInputElement).value);
 										} else
 										if (isEditable) {
-											value = String((element.get(0) as any).innerText || '');
+											value = String(element.innerText || '');
 										};
 
 										value = value.replace(new RegExp(`${misspelledWord}`, 'g'), item.id);
 
 										if (isInput || isTextarea) {
-											element.val(value);
+											(element as HTMLInputElement).value = value;
 										} else
 										if (isEditable) {
-											element.text(value);
+											element.textContent = value;
 										};
 									};
 								};
@@ -2100,6 +2159,36 @@ class UtilMenu {
 					});
 				},
 			}
+		});
+	};
+
+	archivedContext (e: any, objectId: string, onRestore?: () => void) {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const options = [
+			{ id: 'restore', iconParam: { name: 'menu/action/restore' }, name: translate('commonRestore') },
+			{ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'destructive' }, name: translate('commonDeleteImmediately'), color: 'destructive' },
+		];
+
+		S.Menu.open('select', {
+			recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 }),
+			data: {
+				options,
+				onSelect: (e, option) => {
+					switch (option.id) {
+						case 'restore': {
+							Action.restore([ objectId ], analytics.route.block, onRestore);
+							break;
+						};
+
+						case 'delete': {
+							Action.delete([ objectId ], analytics.route.block);
+							break;
+						};
+					};
+				},
+			},
 		});
 	};
 

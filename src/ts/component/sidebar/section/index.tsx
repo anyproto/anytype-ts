@@ -1,6 +1,4 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
-import { I, U } from 'Lib';
 
 import TypeTitle from './type/title';
 import TypeLayout from './type/layout';
@@ -9,6 +7,7 @@ import TypeTemplate from './type/template';
 
 import ObjectRelation from './object/relation';
 import ObjectTableOfContents from './object/tableOfContents';
+import * as I from 'Interface';
 
 const Components = {
 	'type/title': TypeTitle,
@@ -31,9 +30,9 @@ interface Ref extends I.SidebarSectionRef {
 	getObject(): any;
 };
 
-const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
+const SidebarSectionIndex = forwardRef<Ref, Props>((props, ref) => {
 	
-	const { component, item, onDragStart, withState } = props;
+	const { component, item, onDragStart, withState, className = '' } = props;
 	const [ stateObject, setStateObject ] = useState(null);
 	const [ dummy, setDummy ] = useState(0);
 	const object = stateObject || props.object;
@@ -44,7 +43,7 @@ const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const childRef = useRef(null);
 	const Component = Components[component];
-	const cn = [ 'section', U.String.toCamelCase(component.replace(/\//g, '-')) ];
+	const cn = [ 'section', U.String.toCamelCase(component.replace(/\//g, '-')), className ];
 	const readonly = props.readonly || object?.isArchived;
 	const id = [ 'section' ].concat(component.split('/'));
 	const nodeRef = useRef(null);
@@ -96,6 +95,6 @@ const SidebarSectionIndex = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionIndex;

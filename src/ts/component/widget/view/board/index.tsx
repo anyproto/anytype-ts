@@ -1,13 +1,12 @@
 import React, { forwardRef, useEffect, useState, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
-import { I, S, J, Dataview } from 'Lib';
 import Group from './group';
+import * as I from 'Interface';
 
 interface WidgetViewBoardRefProps {
 	load: (searchIds: string[]) => void;
 };
 
-const WidgetViewBoard = observer(forwardRef<WidgetViewBoardRefProps, I.WidgetViewComponent>((props, ref) => {
+const WidgetViewBoard = forwardRef<WidgetViewBoardRefProps, I.WidgetViewComponent>((props, ref) => {
 
 	const { rootId, block, getView, getObject, getViewLimit, isPreview } = props;
 	const view = getView();
@@ -49,6 +48,6 @@ const WidgetViewBoard = observer(forwardRef<WidgetViewBoardRefProps, I.WidgetVie
 		</div>
 	);
 
-}));
+});
 
 export default WidgetViewBoard;

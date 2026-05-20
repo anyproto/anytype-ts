@@ -1,23 +1,22 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { throttle } from 'lodash';
-import { Icon, Deleted, DropTarget, EditorControls } from 'Component';
-import { I, C, S, U, J, Key, Preview, Mark, keyboard, Storage, Action, translate, analytics, Renderer, focus } from 'Lib';
+import { Icon, DropTarget, EditorControls, CommentSection } from 'Component';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
 import TableOfContents from 'Component/page/elements/tableOfContents';
-import { link } from 'fs';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
 };
 
-const THROTTLE = 50;
+const THROTTLE = 40;
 const BUTTON_OFFSET = 10;
 
-const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const { rootId, isPopup, onOpen } = props;
 	const root = S.Block.getLeaf(rootId, rootId);
@@ -39,6 +38,9 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const blockFeatured = useRef<any>(null);
 	const container = useRef<any>(null);
 	const scrollTopRef = useRef(0);
+	const isEnterProcessing = useRef(false);
+	const scrollHandlerRef = useRef<(() => void) | null>(null);
+	const windowHandlersRef = useRef<Map<string, (e: any) => void>>(new Map());
 
 	useEffect(() => {
 		open();
@@ -74,7 +76,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		rebind();
 		resizePage(() => {
 			if (scrollTopRef.current) {
-				U.Common.getScrollContainer(isPopup).scrollTop(scrollTopRef.current);
+				const sc = U.Dom.getScrollContainer(isPopup);
+				if (sc) {
+					sc.scrollTop = scrollTopRef.current;
+				};
 				scrollTopRef.current = 0;
 			};
 		});
@@ -87,11 +92,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	});
 
 	const initNodes = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		container.current = node.find('.editor');
-		buttonAdd.current = node.find('#button-block-add');
-		blockFeatured.current = node.find(`#block-${U.Common.esc(J.Constant.blockId.featured)}`);
+		container.current = U.Dom.select('.editor', node);
+		buttonAdd.current = U.Dom.select('#button-block-add', node);
+		blockFeatured.current = U.Dom.select(`#block-${U.Common.esc(J.Constant.blockId.featured)}`, node);
 	};
 
 	const getWrapperWidth = (): number => {
@@ -220,38 +228,55 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const unbind = () => {
-		const ns = `editor${U.Common.getEventNamespace(isPopup)}`;
-		const container = U.Common.getScrollContainer(isPopup);
-		const events = [ 'keydown', 'mousemove', 'paste', 'resize', 'focus' ];
 		const selection = S.Common.getRef('selectionProvider');
 
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
-		container.off(`scroll.${ns}`);
+		windowHandlersRef.current.forEach((handler, event) => {
+			U.Dom.removeEvent(window, event, handler);
+		});
+		windowHandlersRef.current.clear();
+
+		const sc = U.Dom.getScrollContainer(isPopup);
+		if (sc && scrollHandlerRef.current) {
+			U.Dom.removeEvent(sc, 'scroll', scrollHandlerRef.current);
+			scrollHandlerRef.current = null;
+		};
+
 		Renderer.remove(`commandEditor`);
 		selection?.setContextMenuHandler(null);
 	};
 
 	const rebind = () => {
 		const selection = S.Common.getRef('selectionProvider');
-		const win = $(window);
-		const ns = `editor${U.Common.getEventNamespace(isPopup)}`;
-		const container = U.Common.getScrollContainer(isPopup);
+		const sc = U.Dom.getScrollContainer(isPopup);
 		const readonly = isReadonly();
 
 		unbind();
 
-		if (!readonly) {
-			win.on(`mousemove.${ns}`, throttle(e => onMouseMove(e), THROTTLE));
+		const storeHandler = (event: string, handler: (e: any) => void) => {
+			const existing = windowHandlersRef.current.get(event);
+			if (existing) {
+				U.Dom.removeEvent(window, event, existing);
+			};
+			windowHandlersRef.current.set(event, handler);
+			U.Dom.addEvent(window, event, handler);
 		};
 
-		win.on(`keydown.${ns}`, e => onKeyDownEditor(e));
-		win.on(`paste.${ns}`, (e: any) => {
-			if (!keyboard.isFocused) {
-				onPasteEvent(e, props);
+		if (!readonly) {
+			storeHandler('mousemove', throttle(e => onMouseMove(e), THROTTLE));
+		};
+
+		storeHandler('keydown', e => onKeyDownEditor(e));
+		storeHandler('paste', (e: any) => {
+			if (keyboard.isFocused) {
+				return;
 			};
+			if ((e.target as HTMLElement)?.closest?.('.commentSection')) {
+				return;
+			};
+			onPasteEvent(e, props);
 		});
 
-		win.on(`focus.${ns}`, () => {
+		storeHandler('focus', () => {
 			const popupOpen = S.Popup.isOpen('', [ 'page' ]);
 			const menuOpen = menuCheck();
 			const ids = selection?.get(I.SelectType.Block, true) || [];
@@ -263,12 +288,21 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 
 			if (top) {
-				window.setTimeout(() => container.scrollTop(top), 10);
+				const c = U.Dom.getScrollContainer(isPopup);
+				if (c) {
+					window.setTimeout(() => c.scrollTop = top, 10);
+				};
 			};
 		});
 
-		win.on(`resize.${ns} sidebarResize.${ns}`, () => resizePage());
-		container.on(`scroll.${ns}`, () => onScroll());
+		const resizeHandler = () => resizePage();
+		storeHandler('resize', resizeHandler);
+		storeHandler('sidebarResize', resizeHandler);
+
+		if (sc) {
+			scrollHandlerRef.current = () => onScroll();
+			U.Dom.addEvent(sc, 'scroll', scrollHandlerRef.current);
+		};
 
 		Renderer.on(`commandEditor`, (e: any, cmd: string, arg: any) => onCommand(cmd, arg));
 
@@ -303,30 +337,33 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const onMouseMove = (e: any) => {
 		if (
-			!buttonAdd.current.length || 
-			!container.current.length
+			!buttonAdd.current ||
+			!container.current
 		) {
 			return;
 		};
 		
 		const selection = S.Common.getRef('selectionProvider');
 		const readonly = isReadonly();
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const menuOpen = menuCheck();
 		const popupOpen = S.Popup.isOpen('', [ 'page' ]);
-		const st = $(window).scrollTop();
+		const st = window.scrollY;
 
 		const clear = () => {
-			node.find('.block.showMenu').removeClass('showMenu');
-			node.find('.block.isAdding').removeClass('isAdding top bottom');
+			if (!node) {
+				return;
+			};
+			U.Dom.selectAll('.block.showMenu', node).forEach(el => U.Dom.removeClass(el, 'showMenu'));
+			U.Dom.selectAll('.block.isAdding', node).forEach(el => U.Dom.removeClass(el, 'isAdding top bottom'));
 		};
 
 		const out = () => {
 			window.clearTimeout(timeoutMove.current);
 			timeoutMove.current = window.setTimeout(() => {
-				buttonAdd.current.removeClass('show');
+				U.Dom.removeClass(buttonAdd.current, 'show');
 				clear();
-			}, 30);
+			}, 100);
 		};
 
 		if (
@@ -342,31 +379,36 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const { pageX, pageY } = e;
-		const blocks = S.Block.getBlocks(rootId, it => it.canCreateBlock()).sort((c1, c2) => {
-			const l1 = c1.isLayout();
-			const l2 = c2.isLayout();
+		const allBlocks = S.Block.getBlocks(rootId, it => it.canCreateBlock());
+		const layoutBlocks = [];
+		const nonLayoutBlocks = [];
 
-			if (l1 && !l2) return -1;
-			if (!l1 && l2) return 1;
+		for (const b of allBlocks) {
+			if (b.isLayout()) {
+				layoutBlocks.push(b);
+			} else {
+				nonLayoutBlocks.push(b);
+			};
+		};
 
-			return 0;
-		});
+		const blocks = layoutBlocks.concat(nonLayoutBlocks);
 
 		let offset = 140;
 		let hovered: any = null;
 		let hoveredRect = { x: 0, y: 0, height: 0 };
 
-		if (blockFeatured.current.length) {
-			offset = blockFeatured.current.offset().top + blockFeatured.current.outerHeight() - BUTTON_OFFSET;
+		if (blockFeatured.current) {
+			const bfRect = blockFeatured.current.getBoundingClientRect();
+			offset = bfRect.top + window.scrollY + blockFeatured.current.offsetHeight - BUTTON_OFFSET;
 		};
 
 		for (const block of blocks) {
-			const obj = $(`#block-${U.Common.esc(block.id)}`);
-			if (!obj.length || obj.hasClass('noPlus')) {
+			const obj = U.Dom.get(`block-${block.id}`);
+			if (!obj || U.Dom.hasClass(obj, 'noPlus')) {
 				continue;
 			};
 
-			const rect = U.Common.getElementRect(obj.get(0));
+			const rect = U.Dom.getElementRect(obj);
 
 			rect.y += st;
 
@@ -379,7 +421,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				hovered = obj;
 				hoveredRect = rect;
 
-				if (block.isLayout() && (pageX < rect.x) || (pageX > rect.x + J.Size.blockMenu)) {
+				if (block.isLayout() && ((pageX < rect.x) || (pageX > rect.x + J.Size.blockMenu))) {
 					continue;
 				};
 			};
@@ -395,7 +437,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			out();
 			
 			if (hovered) {
-				hovered.addClass('showMenu');
+				U.Dom.addClass(hovered, 'showMenu');
 			};
 			return;
 		};
@@ -404,7 +446,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let rectContainer = null;
 		if (hovered) {
-			rectContainer = U.Common.getElementRect(container.current.get(0));
+			rectContainer = U.Dom.getElementRect(container.current);
 
 			if (
 				(pageX >= x) && 
@@ -426,11 +468,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const buttonY = pageY - rectContainer.y - BUTTON_OFFSET - st;
 			
 			clear();
-			buttonAdd.current.addClass('show').css({ transform: `translate3d(${buttonX}px,${buttonY}px,0px)` });
-			hovered.addClass('showMenu');
+			U.Dom.addClass(buttonAdd.current, 'show');
+			U.Dom.css(buttonAdd.current, { transform: `translate3d(${buttonX}px,${buttonY}px,0px)` });
+			U.Dom.addClass(hovered, 'showMenu');
 
 			if (pageX <= x + 20) {
-				hovered.addClass(`isAdding ${hoverPosition.current == I.BlockPosition.Top ? 'top' : 'bottom'}`);
+				U.Dom.addClass(hovered, `isAdding ${hoverPosition.current == I.BlockPosition.Top ? 'top' : 'bottom'}`);
 			};
 		});
 	};
@@ -441,6 +484,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (isPopup !== keyboard.isPopup()) {
+			return;
+		};
+
+		if ((e.target as HTMLElement)?.closest?.('.commentSection, .menuWrap')) {
 			return;
 		};
 
@@ -621,6 +668,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				});
 
 				if (style !== null) {
+					e.preventDefault();
 					const first = S.Block.getLeaf(rootId, ids[0]);
 					if (first && first.isText()) {
 						style = resolveHeaderToggle(style, first.content.style);
@@ -629,10 +677,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				};
 			};
 
-			// Open action menu
-			keyboard.shortcut('menuAction', e, () => {
-				S.Menu.closeAll([ 'blockContext', 'blockAdd' ], () => {
-					S.Menu.open('blockAction', {
+			// Open action/add menu
+			keyboard.shortcut('menuAction, menuAdd', e, pressed => {
+				const menuId = pressed == 'menuAction' ? 'blockAction' : 'blockAdd';
+
+				S.Menu.closeAll([ 'blockContext', 'blockAdd', 'blockAction' ], () => {
+					S.Menu.open(menuId, {
 						element: `#block-${U.Common.esc(ids[0])}`,
 						classNameWrap: 'fromBlock',
 						offsetX: J.Size.blockMenu,
@@ -640,6 +690,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 							blockId: ids[0],
 							blockIds: ids,
 							rootId,
+							blockCreate,
 						},
 						onClose: () => {
 							selection.clear();
@@ -790,6 +841,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			// Copy/Cut
 			keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+				e.stopPropagation();
 				onCopy(e, pressed.match('x') ? I.ClipboardMode.Cut : I.ClipboardMode.Copy);
 			});
 
@@ -887,6 +939,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				});
 
 				if (style !== null) {
+					e.preventDefault();
 					style = resolveHeaderToggle(style, block.content.style);
 					C.BlockListTurnInto(rootId, [ block.id ], style, () => {
 						analytics.event('ChangeBlockStyle', { type: I.BlockType.Text, style });
@@ -1208,17 +1261,19 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onPageUpDown = (e: any, pressed: string) => {
 		e.preventDefault();
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const containerHeight = container.height();
-		const scrollTop = container.scrollTop();
+		const container = U.Dom.getScrollContainer(isPopup);
+		const containerHeight = container?.clientHeight ?? 0;
+		const scrollTop = container?.scrollTop ?? 0;
 		const dir = pressed.match(/up/i) ? -1 : 1;
 		const scrollAmount = containerHeight * 0.9;
 		const newScrollTop = Math.max(0, scrollTop + (dir * scrollAmount));
 
-		container.scrollTop(newScrollTop);
+		if (container) {
+			container.scrollTop = newScrollTop;
+		};
 
 		window.setTimeout(() => {
-			const containerOffset = container.offset()?.top || 0;
+			const containerOffset = container?.getBoundingClientRect().top ?? 0;
 			const targetY = dir < 0 ? (containerOffset + 100) : (containerOffset + containerHeight - 100);
 			const blocks = S.Block.getBlocks(rootId, it => it.isFocusable());
 
@@ -1226,12 +1281,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			let closestDistance = Infinity;
 
 			for (const block of blocks) {
-				const node = $(`.focusable.c${U.Common.esc(block.id)}`);
-				if (!node.length) {
+				const node = U.Dom.select(`.focusable.c${U.Common.esc(block.id)}`);
+				if (!node) {
 					continue;
 				};
 
-				const rect = U.Common.getElementRect(node.get(0));
+				const rect = U.Dom.getElementRect(node);
 				const blockY = rect.top + rect.height / 2;
 				const distance = Math.abs(blockY - targetY);
 
@@ -1297,25 +1352,24 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const win = $(window);
-		const st = win.scrollTop();
-		const element = $(`#block-${U.Common.esc(block.id)}`);
-		const value = element.find('#value');
+		const st = window.scrollY;
+		const element = U.Dom.get(`block-${block.id}`);
+		const value = element ? U.Dom.select('#value', element) : null;
 
-		let sRect = U.Common.getSelectionRect();
+		let sRect = U.Dom.getSelectionRect();
 		let vRect: any = {};
-		if (value && value.length) {
-			vRect = U.Common.getElementRect(value.get(0));
-		} else 
-		if (element && element.length) {
-			vRect = U.Common.getElementRect(element.get(0));
+		if (value) {
+			vRect = U.Dom.getElementRect(value);
+		} else
+		if (element) {
+			vRect = U.Dom.getElementRect(element);
 		};
 
 		if (!sRect) {
 			sRect = vRect;
 		};
 
-		const lh = parseInt(value.css('line-height'));
+		const lh = parseInt(value ? getComputedStyle(value).lineHeight : '0');
 		const sy = sRect.y + st;
 		const vy = vRect.y + st;
 
@@ -1352,12 +1406,11 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const rect = U.Common.getSelectionRect();
+		const rect = U.Dom.getSelectionRect();
 		const mark = Mark.getInRange(marks, type, range);
-		const win = $(window);
 		const menuParam: any = {
 			classNameWrap: 'fromBlock',
-			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+			rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
 			horizontal: I.MenuDirection.Center,
 			offsetY: 4,
 			data: {
@@ -1381,7 +1434,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			filter = mark.param;
 			newType = mark.type;
 		} else {
-			filter = block.getText().substring(range.from, range.to);
+			filter = text.substring(range.from, range.to);
 		};
 
 		switch (type) {
@@ -1462,13 +1515,6 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					C.BlockListTurnInto(rootId, [ block.id ], map[block.content.style]);
 				} else
 				if (block.isTextList() || block.isTextParagraph()) {
-					const parent = S.Block.getParentLeaf(rootId, block.id);
-					const parentElement = S.Block.getParentMapElement(rootId, block.id);
-					const canOutdent = parent && parentElement && parent.canHaveChildren() && block.isIndentable() && !parent.canToggle();
-
-					if (canOutdent) {
-						onTabBlock(e, range, true);	
-					} else 
 					if (block.isTextParagraph()) {
 						ids.length ? blockRemove(block) : blockMerge(block, -1, length);
 					} else {
@@ -1525,27 +1571,16 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		if (isShift) {
 			Action.move(rootId, rootId, obj.id, [ block.id ], I.BlockPosition.Bottom, () => {
-				Action.move(rootId, rootId, block.id, parentElement.childrenIds.slice(idx), I.BlockPosition.Inner);
 				focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
 			});
 		} else {
-			const childrenIds = S.Block.getChildrenIds(rootId, block.id);
+			Action.move(rootId, rootId, obj.id, [ block.id ], I.BlockPosition.Inner, () => {
+				focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
 
-			const doIndent = () => {
-				Action.move(rootId, rootId, obj.id, [ block.id ], I.BlockPosition.Inner, () => {
-					focus.setWithTimeout(block.id, { from: range.from, to: range.to }, 50);
-
-					if (next && next.canToggle()) {
-						S.Block.toggle(rootId, next.id, true);
-					};
-				});
-			};
-
-			if (childrenIds.length) {
-				Action.move(rootId, rootId, block.id, childrenIds, I.BlockPosition.Bottom, doIndent);
-			} else {
-				doIndent();
-			};
+				if (next && next.canToggle()) {
+					S.Block.toggle(rootId, next.id, true);
+				};
+			});
 		};
 	};
 
@@ -1578,16 +1613,33 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (menuCheck()) {
 			return;
 		};
-		
+
+		// Guard against re-entry while a block operation from a previous Enter is still in flight.
+		// On Linux, focus changes during block creation can trigger synthetic key events from input
+		// methods, causing an infinite loop of block creation on empty blocks.
+		if (isEnterProcessing.current) {
+			e.preventDefault();
+			return;
+		};
+
 		e.preventDefault();
 		e.stopPropagation();
+
+		isEnterProcessing.current = true;
+
+		// Release after the focus change settles (focusSet uses a 15ms setTimeout for focus.apply).
+		// The extra delay ensures no stale keydown events sneak through during the focus transition.
+		const releaseEnterGuard = () => {
+			window.setTimeout(() => { isEnterProcessing.current = false; }, 30);
+		};
 
 		if (replace) {
 			if (parent?.isTextList()) {
 				onTabBlock(e, range, true);
+				releaseEnterGuard();
 			} else {
 				C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Paragraph, () => {
-					C.BlockTextListClearStyle(rootId, [ block.id ]);
+					C.BlockTextListClearStyle(rootId, [ block.id ], releaseEnterGuard);
 				});
 			};
 		} else
@@ -1595,25 +1647,31 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			blockCreate(block.id, I.BlockPosition.Bottom, {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
-			});
+			}, releaseEnterGuard);
 		} else
 		if (canToggle && !Storage.checkToggle(rootId, block.id) && (range.from == length)) {
 			blockCreate(block.id, I.BlockPosition.Bottom, {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
-			});
+			}, releaseEnterGuard);
 			return;
 		} else
 		if (canToggle && !Storage.checkToggle(rootId, block.id) && S.Block.getChildrenIds(rootId, block.id).length && !range.to) {
 			blockCreate(block.id, I.BlockPosition.Top, {
 				type: I.BlockType.Text,
 				style: I.TextStyle.Paragraph,
-			});
+			}, releaseEnterGuard);
 		} else
-		if (block.isTextParagraph() && !length && parent && parent.canToggle()) {
-			Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom);
+		if (block.isTextCallout() && (range.from == length) && (range.to == length)) {
+			blockCreate(block.id, I.BlockPosition.Bottom, {
+				type: I.BlockType.Text,
+				style: I.TextStyle.Paragraph,
+			}, releaseEnterGuard);
+		} else
+		if (block.isTextParagraph() && !length && parent && (parent.canToggle() || parent.isTextCallout() || parent.isTextQuote())) {
+			Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom, releaseEnterGuard);
 		} else {
-			blockSplit(block, range, isShift);
+			blockSplit(block, range, isShift, releaseEnterGuard);
 		};
 	};
 
@@ -1867,7 +1925,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		focus.clear(true);
 
 		blockCreate(block.id, hoverPosition.current, { type: I.BlockType.Text }, (blockId: string) => {
-			$(`.placeholder.c${blockId}`).text(translate('placeholderFilter'));
+			const placeholder = U.Dom.select(`.placeholder.c${blockId}`);
+			if (placeholder) {
+				placeholder.textContent = translate('placeholderFilter');
+			};
 			onMenuAdd(blockId, '', { from: 0, to: 0 }, []);
 		});
 	};
@@ -1875,8 +1936,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onMenuAdd = (blockId: string, text: string, range: I.TextRange, marks: I.Mark[]) => {
 		const { rootId } = props;
 		const block = S.Block.getLeaf(rootId, blockId);
-		const win = $(window);
-		const rect = U.Common.getSelectionRect();
+		const rect = U.Dom.getSelectionRect();
 
 		if (!block) {
 			return;
@@ -1888,16 +1948,19 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			element: `#block-${U.Common.esc(blockId)}`,
 			classNameWrap: 'fromBlock',
 			subIds: J.Menu.add,
-			rect: rect ? { ...rect, y: rect.y + win.scrollTop() } : null,
+			rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
 			offsetX: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			commonFilter: true,
 			onClose: () => {
 				focus.apply();
 				S.Common.filterSet(0, '');
-				$(`.placeholder.c${blockId}`).text(translate('placeholderBlock'));
+				const ph = U.Dom.select(`.placeholder.c${blockId}`);
+				if (ph) {
+					ph.textContent = translate('placeholderBlock');
+				};
 			},
 			data: {
 				blockId,
@@ -1913,8 +1976,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const onScroll = () => {
 		const { rootId, isPopup } = props;
-		const container = U.Common.getScrollContainer(isPopup);
-		const top = container.scrollTop();
+		const container = U.Dom.getScrollContainer(isPopup);
+		const top = container?.scrollTop ?? 0;
 
 		Storage.setScroll('editor', rootId, top, isPopup);
 		tocRef.current?.onScroll();
@@ -1962,6 +2025,15 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onPasteEvent = (e: any, props: any, data?: any) => {
 		const { isPopup } = props;
 
+		// Dedupe: if the same native paste event already had preventDefault called
+		// (by a block-level React handler or a previous pass through this fn), skip.
+		// Prevents duplicate C.BlockPaste when React-synthetic and window listeners
+		// both reach here, or when the prop-chain forwards the event more than once.
+		const native = e?.nativeEvent ?? e;
+		if (!data && native?.defaultPrevented) {
+			return;
+		};
+
 		if (isPopup !== keyboard.isPopup()) {
 			return;
 		};
@@ -1983,7 +2055,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			e.preventDefault();
 			onPaste(data);
 		} else {
-			const cb = e.clipboardData || e.originalEvent?.clipboardData;
+			const cb = e.clipboardData;
 			const clipboardItems = cb?.items;
 			const files = clipboardItems ? U.Common.getDataTransferFiles(clipboardItems) : [];
 
@@ -2003,9 +2075,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { focused, range } = focus.state;
 		const block = S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
-		const urls = U.String.getUrlsFromText(data.text);
+		const trimmedText = data.text.trim();
+		const urls = U.String.getUrlsFromText(trimmedText);
 
-		if (urls.length && (urls[0].value == data.text) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
+		if (urls.length && (urls[0].value == trimmedText) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
 			onPasteUrl(urls[0]);
 			return;
 		};
@@ -2014,14 +2087,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		let from = 0;
 		let to = 0;
 
-		keyboard.disablePaste(true);
-
 		C.BlockPaste(rootId, focused, range, selection?.get(I.SelectType.Block, true) || [], data.anytype.range.to > 0, { ...data, anytype: data.anytype.blocks }, '', (message: any) => {
-			keyboard.disablePaste(false);
-
 			if (message.error.code) {
 				return;
 			};
+
+			selection?.clear();
 
 			let count = 1;
 
@@ -2050,13 +2121,13 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				from = to = block.getLength();
 
 				keyboard.setFocus(false);
-			} else 
+			} else
 			if (message.caretPosition >= 0) {
 				id = focused;
 				from = to = message.caretPosition;
 			};
 
-			focusSet(id, from, to, true);
+			focusSet(id, from, to, id != focused);
 			analytics.event('PasteBlock', { count });
 		});
 	};
@@ -2075,6 +2146,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const route = U.Common.getRouteFromUrl(url);
 
+		let linkParamUrl = url;
+		if (route) {
+			linkParamUrl = `${J.Constant.protocol}://${route}`;
+		};
+
+		const linkParam = U.Common.getLinkParamFromUrl(linkParamUrl);
+		const isAnytypeObject = linkParam.isInside && linkParam.target;
+
 		const marks = U.Common.objectCopy(block.content.marks || []);
 		const currentMark = Mark.getInRange(marks, I.MarkType.Link, range, [ I.MarkOverlap.Left, I.MarkOverlap.Right ]);
 
@@ -2088,19 +2167,11 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		let linkParamUrl = url;
-		if (route) {
-			linkParamUrl = `${J.Constant.protocol}://${route}`;
-		};
-
 		const isInsideTable = S.Block.checkIsInsideTable(rootId, block.id);
-		const win = $(window);
 		const length = block.getLength();
 		const position = (!length && block.isText()) ? I.BlockPosition.Replace : I.BlockPosition.Bottom;
 		const processor = U.Embed.getProcessorByUrl(url);
 		const canBookmark = !isInsideTable && !isLocal;
-		const linkParam = U.Common.getLinkParamFromUrl(linkParamUrl);
-		const isAnytypeObject = linkParam.isInside && linkParam.target;
 		const isSameSpace = !linkParam.spaceId || (linkParam.spaceId == S.Common.space);
 		const isSameObject = linkParam.target == rootId;
 		const canObject = isAnytypeObject && isSameSpace && !isSameObject && canBookmark;
@@ -2134,11 +2205,12 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			const section = options[0];
 			const cancel = options[options.length - 1];
 			const sortable = options.slice(1, -1);
+			const orderMap = new Map<string, number>(pasteOrder.map((id: string, i: number) => [ id, i ]));
 
 			sortable.sort((a: any, b: any) => {
-				const ai = pasteOrder.indexOf(a.id);
-				const bi = pasteOrder.indexOf(b.id);
-				return (ai == -1 ? sortable.length : ai) - (bi == -1 ? sortable.length : bi);
+				const ai = orderMap.get(a.id) ?? sortable.length;
+				const bi = orderMap.get(b.id) ?? sortable.length;
+				return ai - bi;
 			});
 
 			options.length = 0;
@@ -2151,11 +2223,11 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			component: 'select',
 			element: `#block-${U.Common.esc(focused)}`,
 			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				const rect = U.Dom.getSelectionRect();
+				return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 			},
 			offsetX: () => {
-				const rect = U.Common.getSelectionRect();
+				const rect = U.Dom.getSelectionRect();
 				return rect ? 0 : J.Size.blockMenu;
 			},
 			onOpen: () => {
@@ -2247,7 +2319,10 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 							if (processor !== null) {
 								blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
 									blockCreate(blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
-									$(`#block-${U.Common.esc(blockId)} .preview`).trigger('click');
+									const previewEl = U.Dom.select(`.preview`, U.Dom.get(`block-${blockId}`));
+									if (previewEl) {
+										previewEl.click();
+									};
 								});
 							};
 							break;
@@ -2266,7 +2341,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const getClipboardData = (e: any) => {
-		const cb = e.clipboardData || e.originalEvent.clipboardData;
+		const cb = e.clipboardData;
 		const data: any = {
 			text: U.String.normalizeLineEndings(String(cb.getData('text/plain') || '')),
 			html: String(cb.getData('text/html') || ''),
@@ -2368,9 +2443,23 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			analytics.event('DeleteBlock', { count: 1 });
 		};
 
+		// When deleting forward into a toggle, preserve the toggle structure
+		if ((dir > 0) && next.canToggle()) {
+			if (!length) {
+				focus.clear(true);
+				C.BlockListDelete(rootId, [ focused.id ], (message: any) => {
+					if (!message.error.code) {
+						focusSet(next.id, 0, 0, true);
+						analytics.event('DeleteBlock', { count: 1 });
+					};
+				});
+			};
+			return;
+		};
+
 		if (next.isText()) {
 			C.BlockMerge(rootId, blockId, targetId, cb);
-		} else 
+		} else
 		if (!length) {
 			focus.clear(true);
 			C.BlockListDelete(rootId, [ focused.id ], cb);
@@ -2391,7 +2480,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 	};
 	
-	const blockSplit = (focused: I.Block, range: I.TextRange, isShift: boolean) => {
+	const blockSplit = (focused: I.Block, range: I.TextRange, isShift: boolean, callBack?: () => void) => {
 		const { content } = focused;
 		const isTitle = focused.isTextTitle();
 		const isHeader = focused.isTextHeader();
@@ -2420,7 +2509,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (isHeader) {
-			style = (!range.from && !range.to) || (range.to != length) ? content.style : I.TextStyle.Paragraph;
+			mode = range.to ? I.BlockSplitMode.Bottom : I.BlockSplitMode.Top;
+			style = I.TextStyle.Paragraph;
 		};
 
 		if (isCode || (isToggle && isOpen)) {
@@ -2436,11 +2526,14 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if (isCallout || isQuote) {
-			style = content.style;
+			if ((range.from != length) || (range.to != length)) {
+				style = content.style;
+			};
 		};
 
 		C.BlockSplit(rootId, focused.id, range, style, mode, (message: any) => {
 			if (message.error.code) {
+				callBack?.();
 				return;
 			};
 
@@ -2459,25 +2552,24 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 
 			analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Text, style });
+
+			callBack?.();
 		});
 	};
-	
+
 	const blockRemove = (focused?: I.Block) => {
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Block) || [];
 
-		S.Menu.closeAll();
-		S.Popup.closeAll([ 'preview' ]);
-
 		let blockIds = [];
 		if (ids.length) {
 			blockIds = [ ...ids ];
-		} else 
+		} else
 		if (focused) {
 			blockIds = [ focused.id ];
 		};
 
-		blockIds = blockIds.filter(id => {  
+		blockIds = blockIds.filter(id => {
 			const block = S.Block.getLeaf(rootId, id);
 			return block && block.isDeletable();
 		});
@@ -2485,6 +2577,9 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (!blockIds.length) {
 			return;
 		};
+
+		S.Menu.closeAll();
+		S.Popup.closeAll([ 'preview' ]);
 
 		focus.clear(true);
 
@@ -2551,29 +2646,37 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const resizePage = (callBack?: () => void) => {
 		raf.cancel(frameResize.current);
 		frameResize.current = raf(() => {
-			const node = $(nodeRef.current);
-			const blocks = node.find('.blocks');
-			const last = node.find('#blockLast');
-			const scrollContainer = U.Common.getScrollContainer(isPopup);
+			const node = nodeRef.current;
+			if (!node) {
+				return;
+			};
+
+			const blocks = U.Dom.select('.blocks', node);
+			const last = U.Dom.select('#blockLast', node);
+			const scrollContainer = U.Dom.getScrollContainer(isPopup);
 
 			setLayoutWidth(U.Data.getLayoutWidth(rootId));
 
-			if (blocks.length && last.length && scrollContainer.length) {
-				last.css({ height: '' });
+			if (blocks && last && scrollContainer) {
+				U.Dom.css(last, { height: '' });
 
-				const ct = scrollContainer.offset().top;
-				const ch = scrollContainer.height();
-				const bt = blocks.offset().top;
-				const bh = blocks.outerHeight();
+				const commentSection = U.Dom.select('.commentSection', node);
+				const csh = commentSection ? commentSection.offsetHeight : 0;
+				const counter = U.Dom.select('.commentCounter', node);
 
-				let height = ch - ct - bt - bh;
+				if (!csh) {
+					const ct = scrollContainer.getBoundingClientRect().top;
+					const ch = scrollContainer.clientHeight;
+					const bt = blocks.getBoundingClientRect().top + window.scrollY;
+					const bh = blocks.offsetHeight;
 
-				if (bh > ch) {
-					height = Math.max(ch / 2, height);
+					let height = ch - ct - bt - bh - 8;
+					height = Math.max(J.Size.lastBlock, height);
+					U.Dom.css(last, { height: `${height}px` });
+					U.Dom.addClass(counter, 'isFixed');
+				} else {
+					U.Dom.removeClass(counter, 'isFixed');
 				};
-
-				height = Math.max(J.Size.lastBlock, height);
-				last.css({ height });
 			};
 
 			tocRef.current?.resize?.();
@@ -2607,12 +2710,18 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const setLayoutWidth = (v: number) => {
 		v = Number(v) || 0;
 
-		const node = $(nodeRef.current);
-		const width = getWidth(v);
-		const elements = node.find('#elements');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.css({ width });
-		elements.css({ width, marginLeft: -width / 2 });
+		const width = getWidth(v);
+		const elements = U.Dom.select('#elements', node);
+
+		U.Dom.css(node, { width: `${width}px` });
+		if (elements) {
+			U.Dom.css(elements, { width: `${width}px`, marginLeft: `${-width / 2}px` });
+		};
 
 		headerRef.current?.refDrag?.setValue(v);
 		headerRef.current?.setPercent(v);
@@ -2621,8 +2730,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const getWidth = (weight: number) => {
 		weight = Number(weight) || 0;
 
-		const container = U.Common.getPageContainer(isPopup);
-		const mw = container.width() - 96;
+		const container = U.Dom.getPageContainer(isPopup);
+		const mw = (container?.clientWidth ?? 0) - 96;
 		const width = Math.min(mw, J.Size.editor + (mw - J.Size.editor) * weight);
 
 		return Math.max(300, width);
@@ -2653,6 +2762,8 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const width = U.Data.getLayoutWidth(rootId);
 	const readonly = isReadonly();
+	const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+	const isTemplate = U.Object.isTemplateType(object.type);
 
 	return (
 		<div 
@@ -2671,7 +2782,7 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			
 			<div id={`editor-${rootId}`} className="editor">
 				<div className="blocks">
-					<Icon id="button-block-add" className="buttonAdd" onClick={onAdd} />
+					<Icon id="button-block-add" name="plus/blockAdd" className="buttonAdd" size={19} onClick={onAdd} />
 
 					<PageHeadEditor 
 						{...props} 
@@ -2698,15 +2809,27 @@ const EditorPage = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					/>
 				</div>
 
-				<TableOfContents ref={tocRef} {...props} />
-				
 				<DropTarget rootId={rootId} id="blockLast" dropType={I.DropType.Block} canDropMiddle={false}>
 					<div id="blockLast" className="blockLast" onClick={onLastClick} />
 				</DropTarget>
+
+				<TableOfContents ref={tocRef} {...props} />
+
+				{!isTemplate ? (
+					<CommentSection
+						rootId={rootId}
+						targetId={rootId}
+						targetType={I.CommentTargetType.Object}
+						readonly={readonly}
+						isPopup={isPopup}
+						messageId={keyboard.getMatch(isPopup)?.params?.messageId}
+						resize={resizePage}
+					/>
+				) : ''}
 			</div>
 		</div>
 	);
 	
-}));
+});
 
 export default EditorPage;

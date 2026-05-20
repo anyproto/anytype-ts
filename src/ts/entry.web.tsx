@@ -14,8 +14,9 @@ import { electronMock } from './lib/web/electronMock';
 
 // Set up global configuration from URL params or defaults
 const urlParams = new URLSearchParams(window.location.search);
+const storedAddress = localStorage.getItem('anytype_serverAddress') || '';
 const serverAddress = urlParams.get('server') ||
-                      localStorage.getItem('anytype_serverAddress') ||
+                      (storedAddress.startsWith('http') ? storedAddress : '') ||
                       'http://127.0.0.1:31008';
 const dataPath = urlParams.get('dataPath') ||
                  localStorage.getItem('anytype_dataPath') ||
@@ -25,6 +26,18 @@ const dataPath = urlParams.get('dataPath') ||
 localStorage.setItem('anytype_serverAddress', serverAddress);
 if (dataPath) {
 	localStorage.setItem('anytype_dataPath', dataPath);
+}
+
+// Clean config params from URL, keep the pathname
+if (urlParams.has('server') || urlParams.has('dataPath')) {
+	const cleanUrl = window.location.pathname || '/';
+	window.history.replaceState({}, '', cleanUrl);
+}
+
+// Deep link: save initial URL path as redirect for the app to pick up after auth
+const initialPath = window.location.pathname;
+if (initialPath && (initialPath !== '/')) {
+	localStorage.setItem('anytype_redirect', JSON.stringify(initialPath));
 }
 
 // Configure the global config object

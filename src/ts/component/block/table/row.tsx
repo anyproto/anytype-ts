@@ -1,13 +1,12 @@
 import React, { forwardRef, useEffect } from 'react';
-import { I, S } from 'Lib';
-import { observer } from 'mobx-react';
 import Cell from './cell';
+import * as I from 'Interface';
 
 interface Props extends I.BlockComponentTable {
 	onRowUpdate: (rowId: string) => void;
 };
 
-const BlockTableRow = observer(forwardRef<{}, Props>((props, ref) => {
+const BlockTableRow = forwardRef<{}, Props>((props, ref) => {
 
 	const { rootId, block, index, getData, onRowUpdate } = props;
 	const { columns } = getData();
@@ -46,6 +45,6 @@ const BlockTableRow = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockTableRow;

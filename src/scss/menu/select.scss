@@ -2,24 +2,39 @@
 
 .menus {
 	.menu.menuSelect {
-		.content { transition: none; overflow: hidden; padding: 0px; display: flex; flex-direction: column; }
+		.content { overflow: hidden; padding: 0px; display: flex; flex-direction: column; }
 		.items { overflow: auto; flex-grow: 1; }
 
 		.filter { flex-shrink: 0; }
 		.bottom { padding: 8px 0px; position: relative; flex-shrink: 0; }
 		.bottom::before {
-			content: ''; position: absolute; top: 0px; left: 14px; height: 1px; width: calc(100% - 28px); background: var(--color-shape-secondary); 
+			content: ''; position: absolute; top: 0px; left: 14px; height: 1px; width: calc(100% - 28px); background: var(--color-shape-secondary);
 		}
 
 		.item { display: flex; align-items: center; }
 		.item {
-			.icon { flex-shrink: 0; }
 			.name { width: 100%; @include text-overflow-nw; }
 		}
 
 		.item.isInitial { padding: 2px 16px; line-height: 18px; margin-bottom: 2px; }
 		.item.isInitial {
 			.name { text-transform: uppercase; @include text-very-small; }
+		}
+
+		.emojiQuickReaction {
+			position: absolute; bottom: 100%; margin-bottom: 8px; left: 50%; transform: translateX(-50%);
+			display: flex; align-items: center; gap: 8px; padding: 0px 12px; height: 44px; border-radius: 22px;
+			background: var(--color-bg-primary); box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+		}
+		.emojiQuickReaction {
+			.emojiItem { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 20px; border-radius: 50%; }
+			.emojiItem:hover { background: var(--color-shape-highlight-medium); }
+			.emojiItem:not(.emojiPlus) { padding-top: 2px; }
+			.emojiPlus { background: var(--color-shape-highlight-medium); border-radius: 50%; }
+			.emojiPlus:hover { background: var(--color-shape-highlight-dark); }
+			.emojiPlus {
+				.icon.plus { width: 20px; height: 20px; }
+			}
 		}
 
 		&.withFilter {
@@ -70,7 +85,7 @@
 		.item {
 			.icon.plus {
 				border-radius: 8px; border: 1px solid var(--color-shape-secondary); background-color: var(--color-shape-highlight-light);
-				background-image: url('~img/icon/popup/usecase/plus.svg'); width: 48px; height: 48px; background-size: 20px;
+				width: 48px; height: 48px;
 			}
 			.iconObject, .icon { margin: 0px; }
 			.iconObject.isSpaceView { border-radius: 8px !important; }
@@ -80,26 +95,20 @@
 		.item.add { gap: 0px 12px; }
 	}
 
-	.menu.menuSelect.spaceCreate { width: var(--menu-width-set); }
 	.menu.menuSelect.spaceCreate {
 		.content { height: auto !important; }
 
-		.item { height: 64px; }
-		.item {
-			.info { padding-left: 58px !important; }
-
-			.icon { width: 48px; height: 48px; }
-			.icon.chat { background-image: url('~img/icon/menu/spaceCreate/chat.svg'); }
-			.icon.space { background-image: url('~img/icon/menu/spaceCreate/space.svg'); }
-			.icon.import { background-image: url('~img/icon/menu/spaceCreate/import.svg'); }
-			.icon.join { background-image: url('~img/icon/menu/spaceCreate/join.svg'); }
+		.caption { display: flex; align-items: center; }
+		.caption {
+			.icon { margin: 0px; }
 		}
-
-		#item-join { height: 28px; text-align: center; color: var(--color-text-secondary); @include text-small; }
 	}
 
 	/* Type layout conflict */
 	.menu.menuSelect.menuTypeLayout { width: var(--menu-width-icon); }
+	.menu.menuSelect.menuTypeLayout {
+		.sectionName > .name { overflow: visible; white-space: normal; height: auto; }
+	}
 
 	/* Links, Backlinks */
 	.menu.menuSelect.featuredLinks {
@@ -111,11 +120,6 @@
 
 	/* Chat attachment */
 	.menu.menuSelect.chatAttachment {
-		.item {
-			.icon.object { background-image: url('~img/icon/chat/attachment/object.svg'); }
-			.icon.media { background-image: url('~img/icon/chat/attachment/media.svg'); }
-			.icon.file { background-image: url('~img/icon/chat/attachment/file.svg'); }
-		}
 	}
 
 	/* Invite Link */
@@ -126,10 +130,6 @@
 				width: 40px; height: 40px; border-radius: 50%; background-size: 20px;
 				background-position: 50% 50%; background-color: var(--color-shape-highlight-medium);
 			}
-			.icon.editor { background-image: url('~img/icon/menu/inviteLink/editor.svg'); }
-			.icon.viewer { background-image: url('~img/icon/menu/inviteLink/viewer.svg'); }
-			.icon.manual { background-image: url('~img/icon/menu/inviteLink/manual.svg'); }
-			.icon.none { background-image: url('~img/icon/menu/inviteLink/none.svg'); }
 		}
 	}
 

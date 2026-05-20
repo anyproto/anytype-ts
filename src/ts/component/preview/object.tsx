@@ -1,8 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { IconObject, Cover, Icon, ObjectName } from 'Component';
-import { I, C, S, U, J, Action, translate } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;
@@ -21,7 +19,7 @@ interface Props {
 const Colors = [ 'yellow', 'red', 'ice', 'lime' ];
 const TRACE_ID = 'preview';
 
-const PreviewObject = observer(forwardRef<{}, Props>(({
+const PreviewObject = forwardRef<{}, Props>(({
 	id = '',
 	rootId = '',
 	size = I.PreviewSize.Small,
@@ -83,7 +81,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 					case I.TextStyle.Checkbox: {
 						inner = (
 							<>
-								<Icon className={[ 'check', (checked ? 'active' : '') ].join(' ')} />
+								<Icon name={checked ? 'preview/check1' : 'preview/check0'} className={[ 'check', (checked ? 'active' : '') ].join(' ')} />
 								{line}
 							</>
 						);
@@ -93,7 +91,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 					case I.TextStyle.Quote: {
 						inner = (
 							<>
-								<Icon className="hl" />
+								<Icon name="preview/hl" className="hl" />
 								{line}
 							</>
 						);
@@ -103,7 +101,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 					case I.TextStyle.Bulleted: {
 						inner = (
 							<>
-								<Icon className="bullet" />
+								<Icon name="preview/bullet" className="bullet" />
 								{line}
 							</>
 						);
@@ -113,7 +111,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 					case I.TextStyle.Toggle: {
 						inner = (
 							<>
-								<Icon className="toggle" />
+								<Icon name="preview/toggle" className="toggle" />
 								{line}
 							</>
 						);
@@ -274,23 +272,29 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 		);
 	};
 
+	const updateHandler = useRef<() => void>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on(`updatePreviewObject.${rootId}`, () => update());
+		updateHandler.current = () => update();
+		U.Dom.addEvent(window, `updatePreviewObject.${rootId}`, updateHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off(`updatePreviewObject.${rootId}`);
+		if (updateHandler.current) {
+			U.Dom.removeEvent(window, `updatePreviewObject.${rootId}`, updateHandler.current);
+			updateHandler.current = null;
+		};
 	};
 
 	const onMouseEnterHandler = (e: any) => {
 		onMouseEnter?.(e);
-		$(nodeRef.current).addClass('hover');
+		U.Dom.addClass(nodeRef.current, 'hover');
 	};
 
 	const onMouseLeaveHandler = (e: any) => {
 		onMouseLeave?.(e);
-		$(nodeRef.current).removeClass('hover');
+		U.Dom.removeClass(nodeRef.current, 'hover');
 	};
 
 	const load = () => {
@@ -450,7 +454,7 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 		>
 			{onMore ? (
 				<div id={`item-more-${rootId}`} className="moreWrapper" onClick={onMore}>
-					<Icon />
+					<Icon name="common/more" />
 				</div>
 			) : ''}
 
@@ -462,6 +466,6 @@ const PreviewObject = observer(forwardRef<{}, Props>(({
 			</div>
 		</div>
 	);
-}));
+});
 
 export default PreviewObject;

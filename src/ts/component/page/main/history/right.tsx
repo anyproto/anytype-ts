@@ -1,9 +1,7 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
 import sha1 from 'sha1';
-import { observer } from 'mobx-react';
 import { Icon, IconObject, ObjectName, Button } from 'Component';
-import { I, C, S, U, translate, analytics, dispatcher, sidebar } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	rootId: string;
@@ -20,7 +18,7 @@ interface Ref {
 const LIMIT_RECORDS = 1000;
 const LIMIT_AUTHORS = 5;
 
-const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
+const HistoryRight = forwardRef<Ref, Props>((props, ref) => {
 
 	const [ versions, setVersions ] = useState<I.HistoryVersion[]>([]);
 	const [ version, setVersion ] = useState<I.HistoryVersion>(null);
@@ -81,19 +79,25 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const init = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
 		const groups = groupData();
 		const unwrapped = unwrapGroups('', groups);
 
-		node.find('.active').removeClass('active');
+		U.Dom.selectAll('.active', node).forEach(el => U.Dom.removeClass(el, 'active'));
 		togglesRef.current.forEach(id => initToggle(id, unwrapped));
 
 		if (version) {
 			initToggle(version.id, unwrapped);
-			node.find(`#item-${U.Common.esc(version.id)}`).addClass('active');
+			U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(version.id)}`, node), 'active');
 		};
 
-		$(scrollRef.current).scrollTop(topRef.current);
+		if (scrollRef.current) {
+			scrollRef.current.scrollTop = topRef.current;
+		};
 	};
 
 	const initToggle = (id: string, list: any[]) => {
@@ -102,80 +106,93 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
 		const groupId = getGroupId(version.time);
 		const hash = sha1(groupId);
-		const section = node.find(`#section-${U.Common.esc(hash)}`);
+		const section = U.Dom.select(`#section-${U.Common.esc(hash)}`, node);
 
-		section.addClass('isExpanded');
-		section.find('.items').show();
+		U.Dom.addClass(section, 'isExpanded');
+		const items = U.Dom.select('.items', section);
+		if (items) {
+			U.Dom.css(items, { display: 'block' });
+		};
 
 		const parent = list.find(it => it.id == version.parentId);
 		if (!parent) {
 			return;
 		};
 
-		let children = null; 
-		let groupItem = null;
+		let children: HTMLElement = null;
+		let groupItem: HTMLElement = null;
 
 		if (version.isTimeGroup) {
-			groupItem = node.find(`#item-${U.Common.esc(id)}`);
-			children = node.find(`#children-${U.Common.esc(id)}`);
+			groupItem = U.Dom.select(`#item-${U.Common.esc(id)}`, node);
+			children = U.Dom.select(`#children-${U.Common.esc(id)}`, node);
 		} else {
-			groupItem = node.find(`#item-${U.Common.esc(parent.id)}`);
-			children = node.find(`#children-${U.Common.esc(parent.id)}`);
+			groupItem = U.Dom.select(`#item-${U.Common.esc(parent.id)}`, node);
+			children = U.Dom.select(`#children-${U.Common.esc(parent.id)}`, node);
 		};
 
-		if (children && children.length) {
-			children.show();
+		if (children) {
+			U.Dom.css(children, { display: 'block' });
 		};
 
-		if (groupItem && groupItem.length) {
-			groupItem.addClass('isExpanded');
+		if (groupItem) {
+			U.Dom.addClass(groupItem, 'isExpanded');
 		};
 	};
 
 	const toggleSection = (e: any, id: string, hash: string) => {
 		e.stopPropagation();
 
-		const section = $(nodeRef.current).find(`#section-${U.Common.esc(hash)}`);
+		const node = nodeRef.current;
+		const section = U.Dom.select(`#section-${U.Common.esc(hash)}`, node);
+		const items = U.Dom.select('.items', section);
 
-		toggleChildren(id, section, section.find('.items'));
+		toggleChildren(id, section, items);
 	};
 
 	const onArrow = (e: any, id: string) => {
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		toggleChildren(id, node.find(`#item-${U.Common.esc(id)}`), node.find(`#children-${U.Common.esc(id)}`));
+		toggleChildren(id, U.Dom.select(`#item-${U.Common.esc(id)}`, node), U.Dom.select(`#children-${U.Common.esc(id)}`, node));
 	};
 
-	const toggleChildren = (id: string, item: any, children: any) => {
-		const isActive = item.hasClass('isExpanded');
+	const toggleChildren = (id: string, item: HTMLElement, children: HTMLElement) => {
+		if (!item || !children) {
+			return;
+		};
+
+		const isActive = U.Dom.hasClass(item, 'isExpanded');
 
 		let height = 0;
 		if (isActive) {
-			item.removeClass('isExpanded');
+			U.Dom.removeClass(item, 'isExpanded');
 
-			children.css({ overflow: 'visible', height: 'auto' });
-			height = children.height();
-			children.css({ overflow: 'hidden', height: height });
+			U.Dom.css(children, { overflow: 'visible', height: 'auto' });
+			height = U.Dom.contentHeight(children);
+			U.Dom.css(children, { overflow: 'hidden', height: `${height}px` });
 
-			window.setTimeout(() => children.css({ height: 0 }), 15);
-			window.setTimeout(() => children.hide(), 215);
+			window.setTimeout(() => U.Dom.css(children, { height: '0px' }), 15);
+			window.setTimeout(() => { U.Dom.css(children, { display: 'none' }); }, 215);
 
 			togglesRef.current = togglesRef.current.filter(it => it != id);
 		} else {
-			item.addClass('isExpanded');
+			U.Dom.addClass(item, 'isExpanded');
 
-			children.show();
-			children.css({ overflow: 'visible', height: 'auto' });
-			height = children.height();
+			U.Dom.css(children, { display: 'block' });
+			U.Dom.css(children, { overflow: 'visible', height: 'auto' });
+			height = U.Dom.contentHeight(children);
 
-			children.css({ overflow: 'hidden', height: 0 });
-			window.setTimeout(() => children.css({ height: height }), 15);
-			window.setTimeout(() => children.css({ overflow: 'visible', height: 'auto' }), 215);
+			U.Dom.css(children, { overflow: 'hidden', height: '0px' });
+			window.setTimeout(() => U.Dom.css(children, { height: `${height}px` }), 15);
+			window.setTimeout(() => U.Dom.css(children, { overflow: 'visible', height: 'auto' }), 215);
 
 			togglesRef.current.push(id);
 		};
@@ -228,7 +245,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 				props.setVersion(message.version);
 			};
 
-			$(window).trigger('resize');
+			U.Dom.eventDispatch(window, 'resize');
 			analytics.event('ScreenHistoryVersion');
 		});
 	};
@@ -251,22 +268,25 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const onScroll = () => {
-		const scroll = $(scrollRef.current);
-		const height = scroll.get(0).scrollHeight;
+		const scroll = scrollRef.current;
+		if (!scroll) {
+			return;
+		};
 
-		topRef.current = scroll.scrollTop();
+		const height = scroll.scrollHeight;
 
-		if (topRef.current >= height - scroll.height() - 12) {
+		topRef.current = scroll.scrollTop;
+
+		if (topRef.current >= height - scroll.clientHeight - 12) {
 			loadMore();
 		};
 	};
 
 	const checkScroll = () => {
-		const node = $(nodeRef.current);
-		const wrap = $(scrollRef.current);
-		const scroll = node.find('.scroll');
+		const wrap = scrollRef.current;
+		const scroll = U.Dom.select('.scroll', nodeRef.current);
 
-		if (scroll.height() < wrap.height()) {
+		if (scroll && wrap && (U.Dom.contentHeight(scroll) < U.Dom.contentHeight(wrap))) {
 			loadMore();
 		};
 	};
@@ -407,7 +427,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 							/>
 						))}
 					</div>
-					<Icon className="arrow" />
+					<Icon name="arrow/button" size={8} className="arrow" />
 				</div>
 				<div className="items">
 					{item.list.map((item: any, i: number) => (
@@ -423,9 +443,9 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 
 		let icon = null;
 		if (withChildren) {
-			icon = <Icon className="arrow" onClick={e => onArrow(e, item.id)} />;
+			icon = <Icon name="arrow/button" size={8} className="arrow" onClick={e => onArrow(e, item.id)} />;
 		} else {
-			icon = <Icon className="blank" />;
+			icon = <Icon name="widget/blank" className="blank" />;
 		};
 
 		return (
@@ -499,7 +519,7 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 		>
 			<div className="head">
 				<div className="name">{translate('commonVersionHistory')}</div>
-				<Icon className="close withBackground" onClick={onClose} />
+				<Icon name="common/close" withBackground={true} onClick={onClose} />
 			</div>
 
 			<div 
@@ -521,6 +541,6 @@ const HistoryRight = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default HistoryRight;

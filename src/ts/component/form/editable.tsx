@@ -1,7 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
 import { getRange, setRange } from 'selection-ranges';
-import { I, U, keyboard, Mark } from 'Lib';
 import raf from 'raf';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;
@@ -40,7 +40,7 @@ interface EditableRefProps {
 	getHtmlValue: () => string;
 	getRange: () => I.TextRange;
 	setRange: (range: I.TextRange) => void;
-	getNode: () => JQuery;
+	getNode: () => HTMLElement;
 	isFocused: () => boolean;
 	isAtDomEnd: () => boolean;
 	isAtDomStart: () => boolean;
@@ -75,6 +75,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	const placeholderRef = useRef(null);
 	const editableRef = useRef(null);
 	const isFocused = useRef(false);
+	const isComposing = useRef(false);
 	const cnw = [ 'editableWrap', classNameWrap ];
 	const cne = [ 'editable', classNameEditor ];
 	const cnp = [ 'placeholder', classNamePlaceholder ];
@@ -86,15 +87,17 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const placeholderSet = (v: string) => {
-		$(placeholderRef.current).text(v);
+		if (placeholderRef.current) {
+			placeholderRef.current.textContent = v;
+		};
 	};
-	
+
 	const placeholderHide = () => {
-		$(placeholderRef.current).hide();
+		U.Dom.css(placeholderRef.current, { display: 'none' });
 	};
 
 	const placeholderShow = () => {
-		$(placeholderRef.current).show();
+		U.Dom.css(placeholderRef.current, { display: 'block' });
 	};
 
 	const setFocus = () => {
@@ -104,7 +107,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const setBlur = () => {
-		U.Common.clearSelection();
+		U.Dom.clearSelection();
 	};
 
 	const setValue = (html: string) => {
@@ -112,9 +115,9 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const getTextValue = (): string => {
-		const obj = Mark.cleanHtml($(editableRef.current).html());
+		const obj = Mark.cleanHtml(editableRef.current?.innerHTML || '');
 
-		let t = String(obj.get(0).innerText || '');
+		let t = String(obj.innerText || '');
 		if (t == '\n') {
 			t = '';
 		};
@@ -161,6 +164,24 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 			setRange(editableRef.current, { start: domFrom, end: domTo });
 		} else {
 			setRange(editableRef.current, { start: range.from, end: range.to });
+		};
+
+		// Fix cursor landing inside contenteditable="false" elements (emoji/mention marks)
+		if (range.from == range.to) {
+			const sel = window.getSelection();
+
+			if (sel && sel.rangeCount) {
+				const r = sel.getRangeAt(0);
+				const container = r.startContainer.nodeType === Node.ELEMENT_NODE ? r.startContainer as HTMLElement : r.startContainer.parentElement;
+				const nonEditable = container?.closest?.('[contenteditable="false"]');
+
+				if (nonEditable && editableRef.current.contains(nonEditable)) {
+					r.setStartAfter(nonEditable);
+					r.setEndAfter(nonEditable);
+					sel.removeAllRanges();
+					sel.addRange(r);
+				};
+			};
 		};
 	};
 
@@ -229,12 +250,19 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		keyboard.setFocus(false);
 		isFocused.current = false;
 
+		// Blur during composition aborts it without firing compositionend in some cases
+		if (isComposing.current) {
+			isComposing.current = false;
+			keyboard.setComposition(false);
+		};
+
 		if (onBlur) {
 			onBlur(e);
 		};
 	};
 
 	const onCompositionStartHandler = (e: any) => {
+		isComposing.current = true;
 		keyboard.setComposition(true);
 
 		if (onCompositionStart) {
@@ -243,6 +271,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const onCompositionEndHandler = (e: any) => {
+		isComposing.current = false;
 		keyboard.setComposition(false);
 		justEndedComposition.current = true;
 
@@ -295,6 +324,15 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		if (focusOnMount && !readonly) {
 			setFocus();
 		};
+
+		return () => {
+			if (isFocused.current) {
+				keyboard.setFocus(false);
+			};
+			if (isComposing.current) {
+				keyboard.setComposition(false);
+			};
+		};
 	}, []);
 
 	const isAtDomEnd = (): boolean => {
@@ -335,7 +373,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		getHtmlValue,
 		getRange: getRangeHandler,
 		setRange: setRangeHandler,
-		getNode: () => $(nodeRef.current),
+		getNode: () => nodeRef.current,
 		isFocused: () => isFocused.current,
 		isAtDomEnd,
 		isAtDomStart,

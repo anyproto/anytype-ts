@@ -1,4 +1,4 @@
-import storage from 'Lib/storage';
+
 
 export default {
 	sentry:				 'https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3',
@@ -61,6 +61,9 @@ export default {
 				self:					 3,
 				all:					 12,
 			},
+		},
+		comment: {
+			text:						 8000,
 		},
 
 		relation: {
@@ -140,6 +143,8 @@ export default {
 		chatPreview:	 		'chatPreview',
 		chat:			 		'chat',
 		chatGlobal:	 			'chatGlobal',
+		discussion:				'discussion',
+		discussionGlobal:		'discussionGlobal',
 		recentEditMe:	 		'recentEditMe',
 		recentEditAll:	 		'recentEditAll',
 	},
@@ -166,6 +171,7 @@ export default {
 		profile:		 'ot-profile',
 		chat:			 'ot-chat',
 		chatDerived:	 'ot-chatDerived',
+		discussion:		 'ot-discussion',
 		project:		 'ot-project',
 		human:			 'ot-human',
 		participant:	 'ot-participant',
@@ -186,15 +192,19 @@ export default {
 	},
 
 	widgetId: {
-		allObject:		 'allObject',
-		favorite:		 'favorite',
-		recentEdit:		 'recent',
-		recentOpen:		 'recentOpen',
-		space:			 'space',
-		unread:			 'unread',
-		type:			 'type',
-		bin:			 'bin',
-		chat:			 'chat',
+		allObject:			 'allObject',
+		favorite:			 'favorite',
+		recentEdit:			 'recent',
+		recentOpen:			 'recentOpen',
+		space:				 'space',
+		home:				 'home',
+		unread:				 'unread',
+		type:				 'type',
+		bin:				 'bin',
+		chat:				 'chat',
+		pinned:				 'pinned',
+		personalWidgets:	 'personalWidgets',
+		personalWidgetsPrefix: '_personalWidgets_',
 	},
 
 	monthDays: {

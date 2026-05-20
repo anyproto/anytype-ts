@@ -1,17 +1,17 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, DragEvent } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { observer } from 'mobx-react';
-import { Icon } from 'Component';
-import { I, U, S, J, keyboard, Preview, sidebar, translate } from 'Lib';
+import { SidebarProgress } from 'Component';
 
 import PageWidget from './page/widget';
+import PageWidgetManage from './page/widgetManage';
 import PageSettingsIndex from './page/settings/index';
 import PageSettingsLibrary from './page/settings/library';
 import PageVault from './page/vault';
+import * as I from 'Interface';
 
 const Components = {
 	widget:				 PageWidget,
+	widgetManage:		 PageWidgetManage,
 	vault:				 PageVault,
 	settings:			 PageSettingsIndex,
 	settingsSpace:		 PageSettingsIndex,
@@ -25,9 +25,10 @@ interface SidebarLeftRefProps {
 	getNode: () => HTMLElement | null;
 };
 
-const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
+const SidebarLeft = forwardRef<SidebarLeftRefProps, {}>((props, ref) => {
 
 	const { vaultIsMinimal } = S.Common;
+	const spaceview = U.Space.getSpaceview();
 	const nodeRef = useRef(null);
 	const pageRef = useRef(null);
 	const subPageRef = useRef(null);
@@ -40,7 +41,7 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const width = useRef(0);
 	const movedX = useRef(false);
 	const { page, subPage } = S.Common.getLeftSidebarState();
-	const cn = [ 'sidebar', 'left' ];
+	const cn = [ 'sidebar', 'left', U.Data.spaceClass(spaceview.spaceType) ];
 
 	if (vaultIsMinimal) {
 		cn.push('isMinimal');
@@ -85,27 +86,27 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 	const subPageId = getPageId(subPage);
 	const SubComponent = Components[subComponentId];
 
+	const mouseMoveHandler = useRef<((e: any) => void) | null>(null);
+	const mouseUpHandler = useRef<((e: any) => void) | null>(null);
+
 	const onResizeStart = (e: DragEvent, panel: I.SidebarPanel) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const win = $(window);
-		const body = $('body');
-
 		switch (panel) {
 			case I.SidebarPanel.Left: {
-				const o = $(pageWrapperRef.current).offset();
+				const rect = pageWrapperRef.current?.getBoundingClientRect();
 
-				ox.current = o.left;
-				oy.current = o.top;
+				ox.current = (rect?.left ?? 0) + window.scrollX;
+				oy.current = (rect?.top ?? 0) + window.scrollY;
 				break;
 			};
 
 			case I.SidebarPanel.SubLeft: {
-				const o = $(subPageWrapperRef.current).offset();
+				const rect = subPageWrapperRef.current?.getBoundingClientRect();
 
-				ox.current = o.left;
-				oy.current = o.top;
+				ox.current = (rect?.left ?? 0) + window.scrollX;
+				oy.current = (rect?.top ?? 0) + window.scrollY;
 				break;
 			};
 		};
@@ -114,11 +115,21 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 		keyboard.disableSelection(true);
 		keyboard.setResize(true);
-		body.addClass('colResize');
+		U.Dom.addClass(document.body, 'colResize');
 
-		win.off('mousemove.sidebar mouseup.sidebar');
-		win.on('mousemove.sidebar', e => onResizeMove(e, panel));
-		win.on('mouseup.sidebar', e => onResizeEnd(e, panel));
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+		};
+
+		mouseMoveHandler.current = e => onResizeMove(e, panel);
+		mouseUpHandler.current = e => onResizeEnd(e, panel);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandler.current],
+			['mouseup', mouseUpHandler.current],
+		]);
 	};
 
 	const onResizeMove = (e: any, panel: I.SidebarPanel) => {
@@ -156,8 +167,8 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 
 			if (d > 0) {
 				if (data.isClosed || ((w >= 0) && (w <= closeWidth))) {
-					sidebar.open(panel, '', min);
-				} else 
+					sidebar.open(panel, '', min, panel == I.SidebarPanel.Left ? false : undefined);
+				} else
 				if (w > closeWidth) {
 					sidebar.setWidth(panel, false, w, false);
 				};
@@ -176,8 +187,16 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		keyboard.setResize(false);
 		raf.cancel(frame.current);
 
-		$('body').removeClass('colResize');
-		$(window).off('mousemove.sidebar mouseup.sidebar');
+		U.Dom.removeClass(document.body, 'colResize');
+
+		if (mouseMoveHandler.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandler.current);
+			mouseMoveHandler.current = null;
+		};
+		if (mouseUpHandler.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandler.current);
+			mouseUpHandler.current = null;
+		};
 
 		const w = Math.max(0, (e.pageX - ox.current));
 		const data = sidebar.getData(panel);
@@ -231,23 +250,24 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 			<div id="pageWrapper" ref={pageWrapperRef} className="pageWrapper">
 				{Component ? (
 					<div id={pageId} className={getClassName(componentId)}>
-						<Component 
-							ref={pageRef} 
+						<Component
+							ref={pageRef}
 							page={componentId}
-							{...props} 
+							{...props}
 							getId={() => pageId}
 							sidebarDirection={I.SidebarDirection.Left}
-						/> 
+						/>
 					</div>
 				) : ''}
-				<div 
-					className="resize-h" 
-					draggable={true} 
+				<div
+					className="resize-h"
+					draggable={true}
 					onDragStart={e => onResizeStart(e, I.SidebarPanel.Left)}
 					onClick={() => onHandleClick(I.SidebarPanel.Left)}
 				>
 					<div className="resize-handle" />
 				</div>
+				<SidebarProgress />
 			</div>
 			
 			<div id="subPageWrapper" ref={subPageWrapperRef} className="subPageWrapper">
@@ -274,6 +294,6 @@ const SidebarLeft = observer(forwardRef<SidebarLeftRefProps, {}>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default SidebarLeft;

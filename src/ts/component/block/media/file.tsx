@@ -1,14 +1,15 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
-import { InputWithFile, IconObject, Error, ObjectName, Icon } from 'Component';
-import { I, S, U, focus, translate, Action, analytics } from 'Lib';
-import { observer } from 'mobx-react';
+import { MediaPlaceholder, IconObject, Error, ObjectName, Icon, MediaState } from 'Component';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
-const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
+const BlockFile = forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, onKeyDown, onKeyUp } = props;
 	const { id, content } = block;
 	const { state, style, targetObjectId } = content;
 	const object = S.Detail.get(rootId, targetObjectId, []);
+	const isDownloading = S.Common.isDownloading(targetObjectId);
 
 	const onKeyDownHandler = (e: KeyboardEvent) => {
 		if (onKeyDown) {
@@ -26,12 +27,17 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 	
-	const onChangeUrl = (e: any, url: string) => {
-		Action.upload(I.FileType.File, rootId, block.id, url, '');
-	};
-	
-	const onChangeFile = (e: any, path: string) => {
-		Action.upload(I.FileType.File, rootId, block.id, '', path);
+	const onPlaceholderClick = (e: any) => {
+		e.stopPropagation();
+
+		S.Menu.open('blockMedia', {
+			element: `#block-${block.id}`,
+			data: {
+				rootId,
+				blockId: block.id,
+				type: I.FileType.File,
+			},
+		});
 	};
 	
 	const onClick = (e: any) => {
@@ -41,13 +47,10 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 	};
 
 	let element = null;
-	if (object.isDeleted) {
-		element = (
-			<div className="deleted">
-				<Icon className="ghost" />
-				<div className="name">{translate('commonDeletedObject')}</div>
-			</div>
-		);
+	const typeName = translate('blockNameFile');
+
+	if (object.isDeleted || object.isArchived) {
+		element = <MediaState object={object} rootId={rootId} typeName={typeName} />;
 	} else {
 		switch (state) {
 			default:
@@ -56,26 +59,28 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile 
-							block={block} 
-							icon="file" 
-							textFile={translate('blockFileUpload')} 
-							onChangeUrl={onChangeUrl} 
-							onChangeFile={onChangeFile} 
-							readonly={readonly} 
+						<MediaPlaceholder
+							iconParam={{ name: 'menu/block/media/file' }}
+							text={translate('blockFileAdd')}
+							onClick={onPlaceholderClick}
+							readonly={readonly}
 						/>
 					</>
 				);
 				break;
 			};
-				
+
 			case I.FileState.Done: {
 				element = (
-					<div 
-						className="inner" 
-						onMouseDown={onClick} 
+					<div
+						className={[ 'inner', (isDownloading ? 'isDownloading' : '') ].join(' ')}
+						onMouseDown={onClick}
 					>
-						<IconObject object={object} size={24} />
+						{isDownloading ? (
+							<Icon className="downloading" />
+						) : (
+							<IconObject object={object} size={24} />
+						)}
 						<ObjectName object={object} />
 						<span className="size">{U.File.size(object.sizeInBytes)}</span>
 					</div>
@@ -97,6 +102,6 @@ const BlockFile = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default BlockFile;

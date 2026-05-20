@@ -1,20 +1,48 @@
 @import "~scss/_mixins";
 
-.tagItem {
-	padding: 0px 4px; @include text-common; line-height: 18px; border-radius: 3px; white-space: nowrap; position: relative;
-	display: inline-block; vertical-align: middle; max-width: 100%; height: 18px;
+/* Base styles shared by all .tagItem variants */
+.tagItem { 
+	display: inline-flex; align-items: center; vertical-align: middle; max-width: 100%; white-space: nowrap; @include text-common; 
+	line-height: 24px; height: 24px; border-radius: 12px; position: relative; padding: 0px 6px;
 }
 .tagItem {
-	.inner { display: inline-block; width: 100%; @include text-overflow-nw;  vertical-align: top; }
-	
-	.tagRemove { width: 18px; height: 18px; position: absolute; right: 0px; top: 0px; }
-	.tagRemove:hover { opacity: 0.8; }
+	.inner { display: inline-block; width: 100%; @include text-overflow-nw; vertical-align: top; }
+
+	.tagRemove { width: 20px; height: 100%; position: absolute; right: 0px; top: 0px; }
 	.tagRemove {
+		&:hover { opacity: 0.8; }
 		img { width: 10px; height: 10px; position: absolute; top: 50%; left: 50%; margin: -5px 0px 0px -5px; }
 	}
-}
-.tagItem.canEdit { padding-right: 18px; }
-.tagItem.isSelect { padding: 0px; @include text-common; line-height: 18px; box-shadow: 0px 0px !important; }
-.tagItem.isSelect {
-	.tagRemove { display: none; }
+
+	&.textColor-grey .inner { color: var(--color-dark-grey); }
+	&.textColor-yellow .inner { color: var(--color-dark-yellow); }
+	&.textColor-orange .inner { color: var(--color-dark-orange); }
+	&.textColor-red .inner { color: var(--color-dark-red); }
+	&.textColor-pink .inner { color: var(--color-dark-pink); }
+	&.textColor-purple .inner { color: var(--color-dark-purple); }
+	&.textColor-blue .inner { color: var(--color-dark-blue); }
+	&.textColor-ice .inner { color: var(--color-dark-ice); }
+	&.textColor-teal .inner { color: var(--color-dark-teal); }
+	&.textColor-lime .inner { color: var(--color-dark-lime); }
+
+	&.isSmall { height: 20px; border-radius: 10px; @include text-small; line-height: 20px; }
+	&.isMultiSelect {
+		&.canEdit { padding-right: 20px; }
+	}
+
+	&.isSelect { border: 1px solid var(--color-shape-secondary); background: var(--color-bg-primary) !important; }
+	&.isSelect {
+		.tagRemove { display: none; }
+
+		&.textColor-grey .inner { color: var(--color-grey); }
+		&.textColor-yellow .inner { color: var(--color-yellow); }
+		&.textColor-orange .inner { color: var(--color-orange); }
+		&.textColor-red .inner { color: var(--color-red); }
+		&.textColor-pink .inner { color: var(--color-pink); }
+		&.textColor-purple .inner { color: var(--color-purple); }
+		&.textColor-blue .inner { color: var(--color-blue); }
+		&.textColor-ice .inner { color: var(--color-ice); }
+		&.textColor-teal .inner { color: var(--color-teal); }
+		&.textColor-lime .inner { color: var(--color-lime); }
+	}
 }

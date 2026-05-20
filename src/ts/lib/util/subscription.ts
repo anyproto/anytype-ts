@@ -1,5 +1,5 @@
-import { I, S, J, C, U, Action, Relation } from 'Lib';
 import sha1 from 'sha1';
+import * as I from 'Interface';
 
 /**
  * Utility class for managing subscriptions, search, and data synchronization in the application.
@@ -90,11 +90,11 @@ class UtilSubscription {
 		let ignoreChat = param.ignoreChat;
 
 		if (undefined === ignoreChat) {
-			ignoreChat = spaceview.isChat || spaceview.isOneToOne;
+			ignoreChat = spaceview.isOneToOne;
 		};
 
 		if (ignoreChat) {
-			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld ]);
+			skipLayouts = skipLayouts.concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ]);
 		};
 
 		if (skipLayouts.length) {
@@ -295,10 +295,11 @@ class UtilSubscription {
 		};
 
 		C.ObjectSubscribeIds(spaceId, subId, ids, keys, noDeps, (message: any) => {
+			const idxMap = new Map<string, number>(ids.map((id, i) => [ id, i ]));
 			(message.records || []).sort((c1: any, c2: any) => {
-				const i1 = ids.indexOf(c1.id);
-				const i2 = ids.indexOf(c2.id);
-				if (i1 > i2) return 1; 
+				const i1 = idxMap.get(c1.id) ?? ids.length;
+				const i2 = idxMap.get(c2.id) ?? ids.length;
+				if (i1 > i2) return 1;
 				if (i1 < i2) return -1;
 				return 0;
 			});
@@ -454,6 +455,20 @@ class UtilSubscription {
 				noDeps: true,
 				crossSpace: true,
 			},
+			{
+				subId: J.Constant.subId.discussionGlobal,
+				filters: [
+					{ relationKey: 'discussionId', condition: I.FilterCondition.NotEmpty, value: null },
+				],
+				keys: this.discussionRelationKeys(),
+				noDeps: true,
+				crossSpace: true,
+				onSubscribe: message => {
+					(message.records || []).forEach(it => {
+						S.Chat.discussionParentMapSet(it.spaceId, it.id, it.discussionId);
+					});
+				},
+			},
 		];
 		
 		this.destroyList(list.map(it => it.subId), true, () => {
@@ -493,8 +508,12 @@ class UtilSubscription {
 				U.Space.getParticipantId(space.targetSpaceId, account.id),
 			];
 
-			if (!skipIds.includes(space.spaceDashboardId)) {
-				ids.push(space.spaceDashboardId);
+			if (space.isOneToOne && space.oneToOneIdentity) {
+				ids.push(U.Space.getParticipantId(space.targetSpaceId, space.oneToOneIdentity));
+			};
+
+			if (!skipIds.includes(space.homepage)) {
+				ids.push(space.homepage);
 			};
 
 			list.push({
@@ -504,6 +523,7 @@ class UtilSubscription {
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
 				],
+				ignoreArchived: false,
 				noDeps: true,
 			});
 		});
@@ -549,7 +569,7 @@ class UtilSubscription {
 					{
 						relationKey: 'uniqueKey',
 						type: I.SortType.Custom,
-						customOrder: U.Data.typeSortKeys(spaceview.isChat || spaceview.isOneToOne),
+						customOrder: U.Data.typeSortKeys(spaceview.isOneToOne),
 					},
 					{ relationKey: 'name', type: I.SortType.Asc },
 				],
@@ -576,12 +596,29 @@ class UtilSubscription {
 				noDeps: true,
 			},
 			{
+				subId: this.spaceSubId(J.Constant.subId.discussion),
+				keys: this.discussionRelationKeys(),
+				filters: [
+					{ relationKey: 'discussionId', condition: I.FilterCondition.NotEmpty, value: null },
+				],
+				sorts: [
+					{ relationKey: 'lastMessageDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
+					{ relationKey: 'name', type: I.SortType.Asc },
+				],
+				noDeps: true,
+				onSubscribe: message => {
+					(message.records || []).forEach(it => {
+						S.Chat.discussionParentMapSet(it.spaceId, it.id, it.discussionId);
+					});
+				},
+			},
+			{
 				subId: this.spaceSubId(J.Constant.subId.recentEditMe),
 				filters: [
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Participant ] },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10 },
+					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10, includeTime: true },
 					{ relationKey: 'lastModifiedBy', condition: I.FilterCondition.Equal, value: U.Space.getCurrentParticipantId() },
 				],
 				sorts: [
@@ -597,7 +634,7 @@ class UtilSubscription {
 					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
 					{ relationKey: 'recommendedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Participant ] },
 					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10 },
+					{ relationKey: 'lastModifiedDate', condition: I.FilterCondition.Greater, value: spaceview.createdDate + 10, includeTime: true },
 				],
 				sorts: [
 					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc, format: I.RelationType.Date, includeTime: true },
@@ -819,10 +856,18 @@ class UtilSubscription {
 		return J.Relation.default.concat([ 'source', 'picture', 'widthInPixels', 'heightInPixels', 'syncStatus', 'syncError' ]);
 	};
 
+	/**
+	 * Returns the relation keys for the discussion-parent subscription.
+	 * @returns {string[]} The list of relation keys.
+	 */
+	discussionRelationKeys () {
+		return J.Relation.default.concat([ 'snippet', 'lastMessageDate', 'unreadMessageCount', 'unreadMentionCount', 'notificationSubscribers' ]);
+	};
+
 	getRecentSubId (): string {
 		let subId = '';
 		switch (S.Common.recentEditMode) {
-			case I.RecentEditMode.All: {
+			default: {
 				subId = this.spaceSubId(J.Constant.subId.recentEditAll);
 				break;
 			};

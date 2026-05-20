@@ -1,7 +1,7 @@
-import route from 'json/route';
-import { I, C, S, U, J, keyboard, history as historyPopup, Renderer, translate, analytics, Relation, sidebar } from 'Lib';
+import { history as historyPopup } from 'Lib/history';
+import { getIconSvg } from 'Component/util/icons';
+import * as I from 'Interface';
 
-const typeIcons = require.context('img/icon/type/default', false, /\.svg$/);
 
 /**
  * UtilObject provides utilities for working with Anytype objects.
@@ -17,6 +17,18 @@ const typeIcons = require.context('img/icon/type/default', false, /\.svg$/);
  * the fundamental data unit in Anytype.
  */
 class UtilObject {
+
+	/**
+	 * Returns the virtual personal widgets object id for the given space.
+	 * When spaceId is omitted, falls back to the current space.
+	 */
+	getPersonalWidgetsId (spaceId?: string): string {
+		return J.Constant.widgetId.personalWidgetsPrefix + (spaceId || S.Common.space).replace(/\./g, '_');
+	};
+
+	isPersonalWidgetsId (id: string): boolean {
+		return !!id && id.startsWith(J.Constant.widgetId.personalWidgetsPrefix);
+	};
 
 	/**
 	 * Get the router action string for a given object layout.
@@ -47,7 +59,8 @@ class UtilObject {
 			case I.ObjectLayout.Block:		 r = 'block'; break;
 			case I.ObjectLayout.Space:
 			case I.ObjectLayout.ChatOld:
-			case I.ObjectLayout.Chat:		 r = 'chat'; break;
+			case I.ObjectLayout.Chat:
+			case I.ObjectLayout.Discussion:	 r = 'chat'; break;
 			case I.ObjectLayout.Date:		 r = 'date'; break;
 		};
 		return r;
@@ -114,7 +127,7 @@ class UtilObject {
 			spaceId: String(spaceview?.targetSpaceId || ''),
 			layout: object.layout,
 			isImage: object.iconImage,
-			uxType: spaceview?.uxType,
+			spaceType: spaceview?.spaceType,
 			objectData: { id: object.id, type: object.type, layout: object.layout },
 			route,
 			routeParam: { action: '', id: '' },
@@ -461,7 +474,9 @@ class UtilObject {
 		param.limit = 1;
 
 		this.getByIds([ id ], param, objects => {
-			callBack?.(objects[0]);
+			if (objects.length) {
+				callBack?.(objects[0]);
+			};
 		});
 	};
 
@@ -582,11 +597,15 @@ class UtilObject {
 	};
 
 	isChatLayout (layout: I.ObjectLayout): boolean {
-		return layout == I.ObjectLayout.Chat;
+		return [ I.ObjectLayout.Chat, I.ObjectLayout.Discussion ].includes(layout);
 	};
 
 	isImageLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Image;
+	};
+
+	isVideoOrAudioLayout (layout: I.ObjectLayout): boolean {
+		return [ I.ObjectLayout.Video, I.ObjectLayout.Audio ].includes(layout);
 	};
 
 	isDateLayout (layout: I.ObjectLayout): boolean {
@@ -618,11 +637,11 @@ class UtilObject {
 	};
 
 	getLayoutsForTypeSelection () {
-		return this.getPageLayouts().concat(this.getSetLayouts()).concat(I.ObjectLayout.Chat).filter(it => !this.isTypeLayout(it));
+		return this.getPageLayouts().concat(this.getSetLayouts()).concat(this.getFileLayouts()).concat(I.ObjectLayout.Chat).filter(it => !this.isTypeLayout(it));
 	};
 
 	getLayoutsWithoutTemplates (): I.ObjectLayout[] {
-		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
+		return [].concat(this.getFileAndSystemLayouts()).concat([ I.ObjectLayout.Chat, I.ObjectLayout.Discussion, I.ObjectLayout.Participant, I.ObjectLayout.Date ]);
 	};
 
 	getFileAndSystemLayouts (): I.ObjectLayout[] {
@@ -637,6 +656,7 @@ class UtilObject {
 			I.ObjectLayout.Dashboard,
 			I.ObjectLayout.Space,
 			I.ObjectLayout.SpaceView,
+			I.ObjectLayout.Discussion,
 		];
 	};
 
@@ -674,10 +694,11 @@ class UtilObject {
 	};
 
 	excludeFromSet (): I.ObjectLayout[] {
-		return [ 
-			I.ObjectLayout.Option, 
-			I.ObjectLayout.SpaceView, 
+		return [
+			I.ObjectLayout.Option,
+			I.ObjectLayout.SpaceView,
 			I.ObjectLayout.Space,
+			I.ObjectLayout.Discussion,
 		];
 	};
 
@@ -918,12 +939,12 @@ class UtilObject {
 		};
 	};
 
-	editType (id: string, isPopup: boolean) {
+	editType (id: string, isPopup: boolean, noPreview: boolean) {
 		const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
 		const state = { 
 			page: 'type', 
 			rootId: id,
-			noPreview: false,
+			noPreview,
 			details: {},
 		};
 
@@ -975,46 +996,59 @@ class UtilObject {
 	};
 
 	typeIcon (id: string, option: number, size: number, color?: string): string {
-		const newColor = color || U.Common.iconBgByOption(option);
-
-		let svg: any = '';
-		try {
-			svg = typeIcons(`./${id}.svg`);
-			svg = U.Common.updateSvg(svg, { id, size, fill: newColor });
-		} catch (e) {
-			svg = U.Common.updateSvg(require('img/icon/error.svg'), { id, size, fill: newColor });
+		const fill = color || U.Common.iconBgByOption(option);
+		let svg = getIconSvg(`type/${id}`, { style: { width: size, height: size } }) ||
+			getIconSvg('state/error', { style: { width: size, height: size } });
+		if (!svg) {
+			return '';
 		};
-
-		return svg;
+		svg = svg.replace(/currentColor/g, fill);
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
 	};
 
 	defaultIcon (layout: I.ObjectLayout, typeId: string, size: number): string {
 		const theme = S.Common.getThemeClass();
 		const type = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.type), typeId, [ 'name', 'iconName' ], true);
+		const fill = J.Theme[theme].iconDefault;
 
-		let src = '';
 		if (type.iconName) {
-			src = this.typeIcon(type.iconName, 1, size, J.Theme[theme].iconDefault);
-		} else {
-			let id = '';
-			switch (layout) {
-				default: id = 'page'; break;
-				case I.ObjectLayout.ChatOld:
-				case I.ObjectLayout.Chat: id = 'chat'; break;
-				case I.ObjectLayout.Collection: id = 'collection'; break;
-				case I.ObjectLayout.Set: id = 'set'; break;
-				case I.ObjectLayout.Date: id = 'date'; break;
-				case I.ObjectLayout.Type: id = 'type'; break;
-				case I.ObjectLayout.Bookmark: id = 'page'; break;
-				case I.ObjectLayout.Settings: id = 'settings'; break;
-				case I.ObjectLayout.Graph: id = 'graph'; break;
-				case I.ObjectLayout.Navigation: id = 'graph'; break;
-				case I.ObjectLayout.Archive: id = 'archive'; break;
-			};
-			src = U.Common.updateSvg(require(`img/icon/default/${id}.svg`), { id, size, fill: J.Theme[theme].iconDefault });
+			return this.typeIcon(type.iconName, 1, size, fill);
 		};
 
-		return src;
+		let id = '';
+		switch (layout) {
+			default: id = 'page'; break;
+			case I.ObjectLayout.ChatOld:
+			case I.ObjectLayout.Chat:
+			case I.ObjectLayout.Discussion: id = 'chat'; break;
+			case I.ObjectLayout.Collection: id = 'collection'; break;
+			case I.ObjectLayout.Set: id = 'set'; break;
+			case I.ObjectLayout.Date: id = 'date'; break;
+			case I.ObjectLayout.Type: id = 'type'; break;
+			case I.ObjectLayout.Bookmark: id = 'page'; break;
+			case I.ObjectLayout.Settings: id = 'settings'; break;
+			case I.ObjectLayout.Graph: id = 'graph'; break;
+			case I.ObjectLayout.Navigation: id = 'graph'; break;
+			case I.ObjectLayout.Archive: id = 'archive'; break;
+		};
+
+		let svg = getIconSvg(`default/${id}`, { style: { width: size, height: size } });
+		if (!svg) {
+			return '';
+		};
+		svg = svg.replace(/currentColor/g, fill);
+		return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+	};
+
+	chatHasUnread (spaceId: string, chatId: string): boolean {
+		const counters = S.Chat.getChatCounters(spaceId, chatId);
+		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+		const mode = this.getChatNotificationMode(spaceview, chatId);
+
+		return (
+			((mode == I.NotificationMode.All) && !!(counters.messageCounter || counters.mentionCounter || counters.reactionCounter)) ||
+			((mode == I.NotificationMode.Mentions) && !!counters.mentionCounter)
+		);
 	};
 
 	getChatNotificationMode (spaceview: any, chatId: string): I.NotificationMode {
@@ -1037,6 +1071,33 @@ class UtilObject {
 		};
 
 		return spaceview.notificationMode as I.NotificationMode;
+	};
+
+	getDiscussionNotificationMode (spaceview: any, objectId: string): I.NotificationMode {
+		if (!spaceview) {
+			return I.NotificationMode.Mentions;
+		};
+
+		const allIds = Relation.getArrayValue(spaceview.allIds);
+		const mentionIds = Relation.getArrayValue(spaceview.mentionIds);
+
+		if (allIds.includes(objectId)) {
+			return I.NotificationMode.All;
+		};
+		if (mentionIds.includes(objectId)) {
+			return I.NotificationMode.Mentions;
+		};
+
+		return I.NotificationMode.Mentions;
+	};
+
+	discussionHasUnread (spaceId: string, discussionId: string): boolean {
+		if (!discussionId) {
+			return false;
+		};
+
+		const counters = S.Chat.getChatCounters(spaceId, discussionId);
+		return !!(counters.messageCounter || counters.mentionCounter || counters.reactionCounter);
 	};
 
 };

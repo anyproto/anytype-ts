@@ -1,16 +1,18 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, C, S, U, J, Mark, focus, keyboard, Storage, translate, analytics } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
-const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
-	const { param, getId, getSize, close } = props;
+	const { param, getId, getContainer, getSize, close } = props;
 	const { data, className, classNameWrap } = param;
 	const { range } = focus.state;
 	const { blockId, rootId, blockIds, marks, isInsideTable, onChange } = data;
 	const menuContext = useRef(null);
+	const keydownHandler = useRef(null);
+	const clickMousedownHandler = useRef(null);
 
 	useEffect(() => {
 		rebind();
@@ -22,25 +24,40 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	}, []);
 
 	const rebind = () => {
-		const win = $(window);
-		const obj = $(`#${getId()}`);
-
 		unbind();
 
-		obj.on('click mousedown', (e: any) => {
-			const target = $(e.target);
-			if (!target.hasClass('icon') && !target.hasClass('inner')) {
+		clickMousedownHandler.current = (e: any) => {
+			const target = e.target as HTMLElement;
+			if (!U.Dom.hasClass(target, 'icon') && !U.Dom.hasClass(target, 'inner')) {
 				e.preventDefault();
 				e.stopPropagation();
 			};
-		});
+		};
+		const obj = getContainer();
+		if (obj) {
+			U.Dom.addEvents(obj, [
+				[ 'click', clickMousedownHandler.current ],
+				[ 'mousedown', clickMousedownHandler.current ],
+			]);
+		};
 
-		win.on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(`#${getId()}`).off('click mousedown');
-		$(window).off('keydown.menu');
+		const obj = getContainer();
+		if (clickMousedownHandler.current && obj) {
+			U.Dom.removeEvents(obj, [
+				[ 'click', clickMousedownHandler.current ],
+				[ 'mousedown', clickMousedownHandler.current ],
+			]);
+			clickMousedownHandler.current = null;
+		};
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDown = (e: any) => {
@@ -58,8 +75,8 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		const { from, to } = Mark.trimRange(block.getText(), range);
 		const object = S.Detail.get(rootId, rootId);
-		const element = $(`#${getId()}`);
-		
+		const element = getContainer();
+
 		keyboard.disableContextClose(true);
 		focus.set(blockId, range);
 
@@ -134,13 +151,19 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					onOpen: context => menuContext.current = context,
 				});
 
+				const canQuoteInComment = !U.Object.isTemplateType(object?.type);
+				const quoteInComment = canQuoteInComment
+					? { id: 'quoteInComment', iconParam: { name: 'menu/action/quote' }, name: translate('commonQuoteInComment') }
+					: null;
+
 				menuParam.data = Object.assign(menuParam.data, {
 					options: [
-						{ id: 'turnObject', icon: 'object', name: translate('commonTurnIntoObject'), arrow: true },
-						{ id: 'move', icon: 'move', name: translate('commonMoveTo'), arrow: true },
-						{ id: 'align', name: translate('commonAlign'), icon: [ 'align', U.Data.alignHIcon(block.hAlign) ].join(' '), arrow: true },
-						{ id: 'blockRemove', icon: 'remove', name: translate('commonDelete') }
-					],
+						quoteInComment,
+						{ id: 'turnObject', iconParam: { name: 'menu/action/object' }, name: translate('commonTurnIntoObject'), arrow: true },
+						{ id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true },
+						{ id: 'align', name: translate('commonAlign'), iconParam: { name: U.Data.alignHIcon(block.hAlign) }, arrow: true },
+						{ id: 'blockRemove', iconParam: { name: 'menu/action/remove' }, name: translate('commonDelete') }
+					].filter(it => it),
 					onOver: (e: any, item: any) => {
 						if (S.Menu.isAnimating(menuContext.current?.props.id)) {
 							return;
@@ -165,6 +188,37 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 								C.BlockListDelete(rootId, [ blockId ], () => close());
 								break;
 							};
+
+							case 'quoteInComment': {
+								const fullText = block.getText();
+								const text = fullText.substring(from, to);
+								const length = text.length;
+								const sliced: I.Mark[] = (block.content?.marks || [])
+									.filter(m => m.range && (m.range.from < to) && (m.range.to > from))
+									.map(m => {
+										const mappedFrom = Math.max(0, m.range.from - from);
+										const mappedTo = Math.min(length, m.range.to - from);
+										return { ...m, range: { from: mappedFrom, to: mappedTo } };
+									})
+									.filter(m => (m.range.to > m.range.from));
+
+								const part: I.CommentContentPart = {
+									style: I.TextStyle.Quote,
+									type: I.BlockType.Text,
+									text,
+									marks: sliced,
+									editorQuote: { blockId },
+								};
+
+								close();
+								// Defer dispatch so the menu close stack unwinds before
+								// the section reacts — otherwise React state updates from
+								// close() and the form mount can collide.
+								window.setTimeout(() => {
+									window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
+								}, 0);
+								break;
+							};
 						};
 					},
 				});
@@ -175,8 +229,8 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				menuId = 'blockLink';
 				mark = Mark.getInRange(marks, type, { from, to });
 
-				const rect = (element.get(0).getBoundingClientRect() || {}) as DOMRect;
-				rect.y = Number(rect.y) + $(window).scrollTop();
+				const rect = (element?.getBoundingClientRect() || {}) as DOMRect;
+				rect.y = Number(rect.y) + window.scrollY;
 
 				menuParam = Object.assign(menuParam, {
 					offsetY: -rect.height,
@@ -377,29 +431,30 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	);
 	
 	let markActions = [
-		{ type: I.MarkType.Bold, icon: 'bold', name: translate('commonBold'), caption: keyboard.getCaption('textBold') },
-		{ type: I.MarkType.Italic, icon: 'italic', name: translate('commonItalic'), caption: keyboard.getCaption('textItalic') },
-		{ type: I.MarkType.Strike, icon: 'strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
-		{ type: I.MarkType.Underline, icon: 'underline', name: translate('commonUnderline'), caption: keyboard.getCaption('textUnderlined') },
-		{ type: I.MarkType.Link, icon: 'link', name: translate('commonLink'), caption: keyboard.getCaption('textLink') },
-		{ type: I.MarkType.Code, icon: 'kbd', name: translate('commonCode'), caption: keyboard.getCaption('textCode') },
+		{ type: I.MarkType.Bold, icon: 'menu/mark/bold', name: translate('commonBold'), caption: keyboard.getCaption('textBold') },
+		{ type: I.MarkType.Italic, icon: 'menu/mark/italic', name: translate('commonItalic'), caption: keyboard.getCaption('textItalic') },
+		{ type: I.MarkType.Strike, icon: 'menu/mark/strike', name: translate('commonStrikethrough'), caption: keyboard.getCaption('textStrike') },
+		{ type: I.MarkType.Underline, icon: 'menu/mark/underline', name: translate('commonUnderline'), caption: keyboard.getCaption('textUnderlined') },
+		{ type: I.MarkType.Link, icon: 'menu/mark/link', name: translate('commonLink'), caption: keyboard.getCaption('textLink') },
+		{ type: I.MarkType.Code, icon: 'menu/mark/code', name: translate('commonInlineCode'), caption: keyboard.getCaption('textCode') },
 	];
 
-	// You can't make headers bold, since they are already bold
+	// Headers are already bold, so hide the bold button
 	if (block.isTextHeader()) {
 		markActions = markActions.filter(it => ![ I.MarkType.Bold ].includes(it.type));
 	};
-	
+
 	return (
 		<div className="flex">
 			{canTurn ? (
 				<div className="section">
-					<Icon 
-						id={`button-${blockId}-style`} 
-						arrow={true} 
-						tooltipParam={{ text: translate('menuBlockContextSwitchStyle') }} 
-						className={[ styleIcon, 'blockStyle' ].join(' ')} 
-						onMouseDown={e => onMark(e, 'style')} 
+					<Icon
+						id={`button-${blockId}-style`}
+						name={styleIcon}
+						arrow={true}
+						tooltipParam={{ text: translate('menuBlockContextSwitchStyle') }}
+						className="blockStyle"
+						onMouseDown={e => onMark(e, 'style')}
 					/>
 				</div>
 			) : ''}
@@ -409,8 +464,6 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					{markActions.length ? (
 						<div className="section">
 							{markActions.map((action: any, i: number) => {
-								const cn = [ action.icon ];
-
 								let isSet = false;
 								if (action.type == I.MarkType.Link) {
 									const inRange = Mark.getInRange(marks, I.MarkType.Link, range) || Mark.getInRange(marks, I.MarkType.Object, range);
@@ -419,17 +472,15 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 									isSet = !!Mark.getInRange(marks, action.type, range);
 								};
 
-								if (isSet) {
-									cn.push('active');
-								};
-
 								return (
-									<Icon 
-										id={`button-${blockId}-${action.type}`} 
-										key={i} 
-										className={cn.join(' ')} 
+									<Icon
+										id={`button-${blockId}-${action.type}`}
+										key={i}
+										name={action.icon}
+										color={isSet ? 'default' : ''}
+										className={isSet ? 'active' : ''}
 										tooltipParam={{ text: action.name, caption: action.caption }}
-										onMouseDown={e => onMark(e, action.type)} 
+										onMouseDown={e => onMark(e, action.type)}
 									/>
 								);
 							})}
@@ -466,7 +517,7 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 					<Icon 
 						id={`button-${blockId}-more`}
-						className="more"
+						name="common/more" className="more"
 						tooltipParam={{ text: translate('menuBlockContextMoreOptions') }}
 						onMouseDown={e => onMark(e, 'more')}
 					/>
@@ -475,6 +526,6 @@ const MenuBlockContext = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuBlockContext;

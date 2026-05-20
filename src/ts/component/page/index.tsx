@@ -1,9 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Label, Frame, SidebarRight } from 'Component';
-import { I, S, U, J, Onboarding, Storage, analytics, keyboard, sidebar, Preview, Highlight, translate } from 'Lib';
 
 import PageAuthSelect from './auth/select';
 import PageAuthLogin from './auth/login';
@@ -31,6 +28,9 @@ import PageMainObject from './main/object';
 import PageMainChat from './main/chat';
 import PageMainDate from './main/date';
 import PageMainSettings from './main/settings';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import Highlight from 'Lib/highlight';
 
 const Components = {
 	'index/index':			 PageMainBlank,
@@ -63,13 +63,15 @@ const Components = {
 	'main/settings':		 PageMainSettings,
 };
 
-const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { account } = S.Auth;
 	const { isFullScreen, singleTab, vaultIsMinimal } = S.Common;
-	const ns = U.Common.getEventNamespace(isPopup);
+	const ns = U.Dom.getEventNamespace(isPopup);
 	const childRef = useRef(null);
+	const resizeHandlerRef = useRef<(() => void) | null>(null);
+	const sidebarResizeHandlerRef = useRef<(() => void) | null>(null);
 	const match = keyboard.getMatch(isPopup);
 	const { page, action, id } = match.params;
 	const isMain = page == 'main';
@@ -133,19 +135,22 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const rebind = () => {
-		const { history } = U.Router;
-		const ns = U.Common.getEventNamespace(isPopup);
-		const key = String(history?.location?.key || '');
-
 		unbind();
-		$(window).on(`resize.page${ns}${key}`, () => resize());
+		resizeHandlerRef.current = () => resize();
+		sidebarResizeHandlerRef.current = () => childRef.current?.resize?.();
+		U.Dom.addEvent(window, 'resize', resizeHandlerRef.current);
+		U.Dom.addEvent(window, 'sidebarResize', sidebarResizeHandlerRef.current);
 	};
 
 	const unbind = () => {
-		const { history } = U.Router;
-		const key = String(history?.location?.key || '');
-
-		$(window).off(`resize.page${ns}${key}`);
+		if (resizeHandlerRef.current) {
+			U.Dom.removeEvent(window, 'resize', resizeHandlerRef.current);
+			resizeHandlerRef.current = null;
+		};
+		if (sidebarResizeHandlerRef.current) {
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandlerRef.current);
+			sidebarResizeHandlerRef.current = null;
+		};
 	};
 
 	const resize = () => {
@@ -181,18 +186,18 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	return (
-		<div 
-			id="pageFlex" 
-			className={[ 'pageFlex', U.Common.getContainerClassName(isPopup) ].join(' ')}
+		<div
+			id="pageFlex"
+			className={[ 'pageFlex', U.Dom.getContainerClassName(isPopup) ].join(' ')}
 		>
 			{!isPopup ? <div id="sidebarDummyLeft" className="sidebarDummy" /> : ''}
-			<div 
-				id="page" 
+			<div
+				id="page"
 				className={`page ${keyboard.getPageClass('page', isPopup)}`}
 			>
 				{Component ? (
-					<Component 
-						ref={childRef} 
+					<Component
+						ref={childRef}
 						{...props}
 						storageGet={() => Storage.get(pageId) || {}}
 						storageSet={data => Storage.set(pageId, data)}
@@ -203,14 +208,14 @@ const PageIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					</Frame>
 				)}
 			</div>
-			<SidebarRight 
-				ref={ref => S.Common.refSet(`sidebarRight${ns}`, ref)} 
-				key="sidebarRight" 
-				{...props} 
+			<SidebarRight
+				ref={ref => S.Common.refSet(`sidebarRight${ns}`, ref)}
+				key="sidebarRight"
+				{...props}
 			/>
 		</div>
 	);
-	
-}));
+
+});
 
 export default PageIndex;

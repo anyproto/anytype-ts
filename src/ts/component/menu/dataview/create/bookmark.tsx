@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import { Input, Button, Loader, Icon, Error, Switch, Label } from 'Component';
-import { I, C, S, U, J, translate, analytics, Storage } from 'Lib';
+import * as I from 'Interface';
+
 
 const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -19,13 +20,19 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		cn.push('withPreview');
 	};
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => {});
+		keydownHandler.current = (e: any) => {};
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onSubmit = (e: any) => {
@@ -118,7 +125,7 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			{isLoading ? <Loader /> : ''}
 
 			<div className="inputWrap">
-				<Icon className="link" />
+				<Icon name="common/link" className="link" />
 				<Input 
 					ref={inputRef} 
 					value={value} 
@@ -153,7 +160,7 @@ const MenuDataviewCreateBookmark = forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 							<Label text={translate('menuDataviewCreateBookmarkContent')} />
 						</div>
 						<div className="side right">
-							<Button type="input" className="c28" text={translate('commonCreate')} onClick={onSubmit} />
+							<Button type="input" size={28} text={translate('commonCreate')} onClick={onSubmit} />
 						</div>
 					</div>
 				</>

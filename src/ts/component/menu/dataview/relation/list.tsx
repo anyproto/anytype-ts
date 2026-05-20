@@ -1,18 +1,16 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { I, C, S, J, U, keyboard, Relation, Dataview, translate, analytics } from 'Lib';
 import { Icon, Switch } from 'Component';
+import * as I from 'Interface';
 
 const HEIGHT = 28;
 const LIMIT = 20;
 
-const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, getId, getSize, setHover, setActive, onKeyDown, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -27,16 +25,22 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
 	);
+	const keydownHandler = useRef<(e: any) => void>(null);
+	const keyHandlerRef = useRef<(e: any) => void>(null);
 
 	const rebind = () => {
 		unbind();
 
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		keydownHandler.current = (e: any) => keyHandlerRef.current?.(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -59,12 +63,16 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		};
 	};
 
+	keyHandlerRef.current = onKeyDownHandler;
+
 	const onAddHandler = (e: any) => {
 		const view = getView();
 		const relations = Dataview.viewGetRelations(rootId, blockId, view);
 		const object = S.Detail.get(rootId, rootId);
 
-		S.Menu.open('relationSuggest', { 
+		unbind();
+
+		S.Menu.open('relationSuggest', {
 			className,
 			classNameWrap,
 			element: `#${getId()} #item-add`,
@@ -73,6 +81,8 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			offsetY: 36,
 			noAnimation: true,
 			noFlipY: true,
+			rebind,
+			parentId: getId(),
 			data: {
 				...data,
 				menuIdEdit: 'dataviewRelationEdit',
@@ -119,12 +129,16 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			};
 		};
 
-		S.Menu.open('dataviewRelationEdit', { 
+		unbind();
+
+		S.Menu.open('dataviewRelationEdit', {
 			className,
 			classNameWrap,
 			element: `#${getId()} #item-${U.Common.esc(item.relationKey)}`,
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
+			rebind,
+			parentId: getId(),
 			data: {
 				...data,
 				relationId: relation.id,
@@ -150,9 +164,8 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			return;
 		};
 
-		const ids = items.map(it => it.relationKey);
-		const oldIndex = ids.indexOf(active.id);
-		const newIndex = ids.indexOf(over.id);
+		const oldIndex = view.relations.findIndex(it => it.relationKey == active.id);
+		const newIndex = view.relations.findIndex(it => it.relationKey == over.id);
 
 		view.relations = arrayMove(view.relations, oldIndex, newIndex);
 		n.current = newIndex;
@@ -164,6 +177,11 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const view = getView();
 		const object = S.Detail.get(rootId, rootId);
 		const relation = S.Record.getRelationByKey(item.relationKey);
+		const vr = view.getRelation(item.relationKey);
+
+		if (vr) {
+			vr.isVisible = v;
+		};
 
 		C.BlockDataviewViewRelationReplace(rootId, blockId, view.id, item.relationKey, { ...item, isVisible: v });
 		analytics.event('ShowDataviewRelation', { type: v ? 'True' : 'False', relationKey: item.relationKey, format: relation.format, objectType: object.type });
@@ -188,13 +206,12 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		}));
 	};
 
-	const resize = () => {
-		const obj = $(`#${getId()} .content`);
+	const beforePosition = () => {
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const offset = !isReadonly ? 62 : 16;
 		const height = Math.max(HEIGHT * 2, Math.min(360, items.length * HEIGHT + offset));
 
-		obj.css({ height });
-		position();
+		U.Dom.css(obj, { height: `${height}px` });
 	};
 
 	const items = getItems();
@@ -237,9 +254,9 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				{...listeners}
 				style={style}
 			>
-				{!isReadonly ? <Icon className="dnd" /> : ''}
+				{!isReadonly ? <Icon name="common/dnd" /> : ''}
 				<span className="clickable" onClick={e => onClick(e, item)}>
-					<Icon className={`relation ${Relation.className(item.relation.format)}`} />
+					<Icon name={Relation.registryName(item.relation.relationKey, item.relation.format)} />
 					<div className="name">{item.relation.name}</div>
 				</span>
 				{canHide ? (
@@ -272,7 +289,6 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const items = getItems();
 
 		rebind();
-		resize();
 
 		cache.current = new CellMeasurerCache({
 			fixedWidth: true,
@@ -288,8 +304,6 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	}, []);
 	
 	useEffect(() => {
-		resize();
-		rebind();
 		setActive(null, true);
 		position();
 
@@ -301,6 +315,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -367,7 +382,7 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 						onMouseEnter={() => setHover({ id: 'add' })} 
 						onMouseLeave={() => setHover()}
 					>
-						<Icon className="plus" />
+						<Icon name="plus/menu" className="plus" />
 						<div className="name">{translate('commonAddRelation')}</div>
 					</div>
 				</div>
@@ -375,6 +390,6 @@ const MenuRelationList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuRelationList;

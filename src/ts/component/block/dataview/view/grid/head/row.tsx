@@ -1,12 +1,11 @@
 import React, { forwardRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { restrictToHorizontalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
-import { I, S, U } from 'Lib';
 import { Icon } from 'Component';
 import Cell from './cell';
+import * as I from 'Interface';
 
 interface Props extends I.ViewComponent {
 	onCellAdd(e: any): void;
@@ -16,7 +15,7 @@ interface Props extends I.ViewComponent {
 	getColumnWidths?: (relationId: string, width: number) => any;
 };
 
-const HeadRow = observer(forwardRef<{}, Props>((props, ref) => {
+const HeadRow = forwardRef<{}, Props>((props, ref) => {
 
 	const { rootId, block, readonly, onCellAdd, onSortStart, onSortEnd, onResizeStart, getColumnWidths, getVisibleRelations } = props;
 	const widths = getColumnWidths('', 0);
@@ -60,7 +59,7 @@ const HeadRow = observer(forwardRef<{}, Props>((props, ref) => {
 						))}
 
 						<div className="cellHead last">
-							{!readonly && allowed ? <Icon id="cell-add" className="plus" onClick={onCellAdd} /> : ''}
+							{!readonly && allowed ? <Icon id="cell-add" name="plus/menu" className="plus" onClick={onCellAdd} /> : ''}
 						</div>
 					</motion.div>
 				</AnimatePresence>
@@ -68,6 +67,6 @@ const HeadRow = observer(forwardRef<{}, Props>((props, ref) => {
 		</DndContext>
 	);
 
-}));
+});
 
 export default HeadRow;

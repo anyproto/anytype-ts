@@ -9,7 +9,8 @@ const os = require('os');
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const winShutdownStdinMessage = 'shutdown\n';
 
-const webPort = process.env.WEB_PORT || 9090;
+const webPort = process.env.WEB_PORT || 3030;
+const grpcWebAddr = process.env.ANYTYPE_GRPCWEB_ADDR || '127.0.0.1:31008';
 const openBrowserAuto = process.env.WEB_OPEN_BROWSER === '1' || process.env.WEB_OPEN_BROWSER === 'true';
 
 // Use the same Application Support / AppData folder as Electron
@@ -31,7 +32,7 @@ function getDefaultDataPath() {
 const dataPath = process.env.WEB_DATA_PATH || getDefaultDataPath();
 
 let helperProcess = null;
-let rspackProcess = null;
+let viteProcess = null;
 
 // Ensure data directory exists
 if (!fs.existsSync(dataPath)) {
@@ -75,7 +76,7 @@ function startHelper() {
 			}
 		};
 
-		helperProcess = childProcess.spawn(binPath, ['127.0.0.1:0', '127.0.0.1:0'], {
+		helperProcess = childProcess.spawn(binPath, ['127.0.0.1:0', grpcWebAddr], {
 			windowsHide: false,
 			env: process.env,
 		});
@@ -129,6 +130,9 @@ function startHelper() {
 				const msg = `anytypeHelper exited unexpectedly with code ${code}`;
 				console.error(`[Web] ${msg}`);
 				reject(new Error(msg));
+			} else {
+				console.error(`[Web] anytypeHelper crashed with code ${code}, shutting down`);
+				process.exit(1);
 			}
 			helperProcess = null;
 		});
@@ -158,26 +162,19 @@ function openBrowser(url) {
 const green = '\x1b[32m';
 const reset = '\x1b[0m';
 
-function startRspack(serverAddress) {
+function startVite(serverAddress) {
 	return new Promise((resolve, reject) => {
 		const webUrl = `http://127.0.0.1:${webPort}/?server=${encodeURIComponent(serverAddress)}&dataPath=${encodeURIComponent(dataPath)}`;
 
 		console.log(`\n[Web] Web URL: ${green}${webUrl}${reset}\n`);
 
-		// Set env vars for rspack config
+		// Set env vars for vite config
 		process.env.BUILD_TARGET = 'web';
 		process.env.WEB_PORT = webPort;
 		process.env.WEB_SERVER_ADDRESS = serverAddress;
 		process.env.WEB_DATA_PATH = dataPath;
 
-		const rspackArgs = [
-			'serve',
-			'--mode=development',
-			'--node-env=development',
-			'--env', 'target=web',
-		];
-
-		rspackProcess = childProcess.spawn('npx', ['rspack', ...rspackArgs], {
+		viteProcess = childProcess.spawn('bunx', ['vite', '--config', 'vite.web.config.ts'], {
 			stdio: ['inherit', 'pipe', 'inherit'],
 			shell: true,
 			env: process.env,
@@ -185,12 +182,12 @@ function startRspack(serverAddress) {
 
 		let browserOpened = false;
 
-		rspackProcess.stdout.on('data', (data) => {
+		viteProcess.stdout.on('data', (data) => {
 			const str = data.toString();
 			process.stdout.write(str);
 
-			// Open browser once webpack is ready
-			if (!browserOpened && str.includes('compiled successfully')) {
+			// Open browser once Vite is ready
+			if (!browserOpened && (str.includes('ready in') || str.includes('Local:'))) {
 				browserOpened = true;
 				if (openBrowserAuto) {
 					console.log(`\n[Web] Opening browser: ${webUrl}\n`);
@@ -199,15 +196,15 @@ function startRspack(serverAddress) {
 			}
 		});
 
-		rspackProcess.on('error', (err) => {
-			console.error('[Web] Failed to start rspack:', err.toString());
+		viteProcess.on('error', (err) => {
+			console.error('[Web] Failed to start vite:', err.toString());
 			reject(err);
 		});
 
-		rspackProcess.on('exit', (code) => {
-			rspackProcess = null;
+		viteProcess.on('exit', (code) => {
+			viteProcess = null;
 			if (code !== null && code !== 0) {
-				console.error(`[Web] rspack exited with code ${code}`);
+				console.error(`[Web] vite exited with code ${code}`);
 			}
 			resolve();
 		});
@@ -217,8 +214,8 @@ function startRspack(serverAddress) {
 function cleanup() {
 	console.log('\n[Web] Shutting down...');
 
-	if (rspackProcess) {
-		rspackProcess.kill('SIGTERM');
+	if (viteProcess) {
+		viteProcess.kill('SIGTERM');
 	}
 
 	if (helperProcess) {
@@ -246,7 +243,7 @@ async function main() {
 		console.log('[Web] ==================');
 
 		const serverAddress = await startHelper();
-		await startRspack(serverAddress);
+		await startVite(serverAddress);
 	} catch (err) {
 		console.error('[Web] Error:', err);
 		cleanup();

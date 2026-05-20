@@ -1,10 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, C, S, U, J, keyboard, sidebar } from 'Lib';
 import { Header, Footer, GraphProvider, GraphTimeline, Loader } from 'Component';
+import * as I from 'Interface';
 
-const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainGraph = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ data, setData ] = useState({ edges: [], nodes: [] });
@@ -14,22 +12,44 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const rootIdRef = useRef('');
 	const key = J.Constant.graphId.global;
 
+	const keydownHandler = useRef<(e: any) => void>(null);
+	const graphRootHandler = useRef<(e: any) => void>(null);
+	const sidebarResizeHandler = useRef<() => void>(null);
+
 	const unbind = () => {
-		const events = [ 'keydown', 'updateGraphRoot', 'sidebarResize' ];
-		$(window).off(events.map(it => `${it}.${key}`).join(' '));
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
+		if (graphRootHandler.current) {
+			U.Dom.removeEvent(window, 'updateGraphRoot', graphRootHandler.current);
+			graphRootHandler.current = null;
+		};
+		if (sidebarResizeHandler.current) {
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandler.current);
+			sidebarResizeHandler.current = null;
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on(`keydown.${key}`, e => onKeyDown(e));
-		win.on(`updateGraphRoot.${key}`, (e: any, data: any) => initRootId(data.id));
-		win.on(`sidebarResize.${key}`, () => resize());
+
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		graphRootHandler.current = (e: any) => {
+			const d = e.detail;
+			initRootId(d?.id);
+		};
+		sidebarResizeHandler.current = () => resize();
+
+		U.Dom.addEvents(window, [
+			['keydown', keydownHandler.current],
+			['updateGraphRoot', graphRootHandler.current],
+			['sidebarResize', sidebarResizeHandler.current],
+		]);
 	};
 
 	const onKeyDown = (e: any) => {
-		keyboard.shortcut('searchText', e, () => $('#button-header-search').trigger('click'));
+		keyboard.shortcut('searchText', e, () => U.Dom.get('button-header-search')?.click());
 	};
 
 	const load = () => {
@@ -38,9 +58,8 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		const settings = S.Common.getGraph(key);
 
 		C.ObjectGraph(S.Common.space, U.Data.getGraphFilters(), 0, [], J.Relation.graph, '', [], settings.typeEdges, (message: any) => {
-			setLoading(false);
-
 			if (message.error.code) {
+				setLoading(false);
 				return;
 			};
 
@@ -49,31 +68,35 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const setLoading = (v: boolean) => {
-		const node = $(nodeRef.current);
-		const loader = node.find('#loader');
+		const loader = U.Dom.select('#loader', nodeRef.current);
+		if (!loader) {
+			return;
+		};
 
 		if (v) {
-			loader.show().css({ opacity: 1 });
+			U.Dom.css(loader, { display: 'block', opacity: '1' });
 		} else {
-			loader.css({ opacity: 0 });
-			window.setTimeout(() => loader.hide(), 200);
+			U.Dom.css(loader, { opacity: '0' });
+			window.setTimeout(() => { U.Dom.css(loader, { display: 'none' }); }, 200);
 		};
 	};
 
 	const resize = () => {
-		const container = U.Common.getScrollContainer(isPopup);
-		const obj = U.Common.getPageContainer(isPopup);
-		const node = $(nodeRef.current);
-		const wrapper = obj.find('.wrapper');
-		const header = node.find('#header');
-		const height = container.height() - header.height();
+		const container = U.Dom.getScrollContainer(isPopup);
+		const obj = U.Dom.getPageContainer(isPopup);
+		const node = nodeRef.current;
+		const wrapper = U.Dom.select('.wrapper', obj);
+		const header = U.Dom.select('#header', node);
+		const height = (container?.clientHeight || 0) - (header?.clientHeight || 0);
 
-		wrapper.css({ height });
-		
+		if (wrapper) {
+			U.Dom.css(wrapper, { height: `${height}px` });
+		};
+
 		if (isPopup) {
-			const element = $('#popupPage .content');
-			if (element.length) {
-				element.css({ minHeight: 'unset', height: '100%' });
+			const element = U.Dom.select('#popupPage .content');
+			if (element) {
+				U.Dom.css(element, { minHeight: 'unset', height: '100%' });
 			};
 		};
 
@@ -109,7 +132,11 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 
 	useEffect(() => {
 		resize();
-		graphRef.current?.init();
+
+		if (data.nodes.length || data.edges.length) {
+			graphRef.current?.init();
+			setLoading(false);
+		};
 	}, [ data ]);
 
 	useEffect(() => resize());
@@ -154,6 +181,6 @@ const PageMainGraph = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default PageMainGraph;

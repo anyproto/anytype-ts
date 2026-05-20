@@ -23,11 +23,16 @@
         husky
         gitleaks
         # build deps
+        go
         libxcrypt
         libsecret
         pkg-config
         jq
         nodejs_22
+        bun
+        # anytype-heart
+        grpc-tools
+        protobuf
 
         # keytar build fails on npm install because python312 has distutils removed
         python311
@@ -72,6 +77,7 @@
         shellHook = ''
           # fixes "No GSettings schemas" error
           export XDG_DATA_DIRS=$GSETTINGS_SCHEMAS_PATH:$XDG_ICONS_PATH:$XDG_DATA_DIRS
+          export PROTOBUF_INCLUDE=${pkgs.protobuf}/include
         '';
       };
 

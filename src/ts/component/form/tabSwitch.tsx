@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
-import { I } from 'Lib';
 import { Icon } from 'Component';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;

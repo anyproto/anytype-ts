@@ -1,11 +1,9 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import $ from 'jquery';
 import { observable } from 'mobx';
-import { observer } from 'mobx-react';
-import { I, C, S, U, J, analytics, Preview, translate, keyboard, Relation, Action } from 'Lib';
 import { Input, MenuItemVertical, Button, Icon } from 'Component';
+import * as I from 'Interface';
 
-const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockRelationEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, position, getId, getSize, close } = props;
 	const { data, classNameWrap } = param;
@@ -50,13 +48,19 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		position();
 	});
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => keyHandlerRef.current(e));
+		keydownHandler.current = (e: any) => keyHandlerRef.current(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const focus = () => {
@@ -394,7 +398,7 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 			<div className="section">
 				<MenuItemVertical
 					id="includeTime"
-					icon="clock"
+					iconParam={{ name: 'common/clock' }}
 					name={translate('commonIncludeTime')}
 					onMouseEnter={menuClose}
 					readonly={readonly}
@@ -426,7 +430,7 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 					</div>
 				) : (
 					<div className="item isReadonly">
-						<Icon className="lock" />
+						<Icon name="menu/action/pageLock" className="lock" width={8} height={20} />
 						{relation ? relation.name : ''}
 					</div>
 				)}
@@ -436,7 +440,7 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 				<div className="name">{translate('menuBlockRelationEditRelationType')}</div>
 				<MenuItemVertical 
 					id="relation-type" 
-					icon={format === null ? undefined : `relation ${Relation.className(format)}`}
+					iconParam={format === null ? undefined : { name: Relation.registryName('', format) }}
 					name={format === null ? translate('menuBlockRelationEditSelectRelationType') : translate(`relationName${format}`)}
 					onMouseEnter={onRelationType} 
 					onClick={onRelationType} 
@@ -455,7 +459,7 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 							type="input" 
 							text={translate(relation ? 'commonSave' : 'commonCreate')} 
 							color="blank"
-							className="c28"
+							size={28}
 						/>
 					</div>
 				</div>
@@ -463,15 +467,15 @@ const MenuBlockRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 
 			{relation ? (
 				<div className="section">
-					<MenuItemVertical icon="expand" name={translate('commonOpenObject')} onClick={onOpen} onMouseEnter={menuClose} />
-					{canDuplicate ? <MenuItemVertical icon="copy" name={translate('commonDuplicate')} onClick={onCopy} onMouseEnter={menuClose} /> : ''}
-					{canUnlink ? <MenuItemVertical icon="unlink" name={unlinkText} onClick={onUnlink} onMouseEnter={menuClose} /> : ''}
-					{canDelete ? <MenuItemVertical icon="remove" name={translate('commonMoveToBin')} onClick={onRemove} onMouseEnter={menuClose} /> : ''}
+					<MenuItemVertical iconParam={{ name: 'common/expand' }} name={translate('commonOpenObject')} onClick={onOpen} onMouseEnter={menuClose} />
+					{canDuplicate ? <MenuItemVertical iconParam={{ name: 'menu/action/duplicate' }} name={translate('commonDuplicate')} onClick={onCopy} onMouseEnter={menuClose} /> : ''}
+					{canUnlink ? <MenuItemVertical iconParam={{ name: 'common/unlink' }} name={unlinkText} onClick={onUnlink} onMouseEnter={menuClose} /> : ''}
+					{canDelete ? <MenuItemVertical iconParam={{ name: 'menu/action/remove' }} name={translate('commonMoveToBin')} onClick={onRemove} onMouseEnter={menuClose} /> : ''}
 				</div>
 			) : ''}
 		</form>
 	);
 
-}));
+});
 
 export default MenuBlockRelationEdit;

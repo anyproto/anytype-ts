@@ -1,16 +1,15 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
-import { motion, AnimatePresence } from 'framer-motion';
-import { observer } from 'mobx-react';
-import { Title, Label, Checkbox, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
-import { I, S, U, J, Relation, translate, sidebar } from 'Lib';
+
+import { motion, AnimatePresence } from 'motion/react';
+import { Title, Label, Icon, IconObject, EmptyNodes, LayoutPlug } from 'Component';
+import * as I from 'Interface';
 
 interface RefProps {
 	update: (object: any) => void;
 	show: (v: boolean) => void;
 };
 
-const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponent>((props, ref) => {
+const SidebarLayoutPreview = forwardRef<RefProps, I.SidebarPageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ object, setObject ] = useState({
@@ -40,29 +39,32 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	const nodeRef = useRef<HTMLDivElement>(null);
 	const previewRef = useRef<HTMLDivElement>(null);
 	const timeoutRef = useRef<number>(0);
-	const ns = `sidebarPreview${U.Common.getEventNamespace(isPopup)}`;
+	const ns = `sidebarPreview${U.Dom.getEventNamespace(isPopup)}`;
 
 	const show = (v: boolean) => {
 		resize();
 
 		window.clearTimeout(timeoutRef.current);
 		timeoutRef.current = window.setTimeout(() => {
-			const node = $(nodeRef.current);
+			const node = nodeRef.current;
+			if (!node) {
+				return;
+			};
 
-			node.removeClass('in out');
-			v ? node.addClass('in') : node.addClass('out');
-			node.toggleClass('show', v);
+			U.Dom.removeClass(node, 'in out');
+			v ? U.Dom.addClass(node, 'in') : U.Dom.addClass(node, 'out');
+			U.Dom.toggleClass(node, 'show', v);
 		}, 40);
 	};
 
 	const getNodeSize = (): { width: number; height: number } => {
-		const container = U.Common.getPageFlexContainer(isPopup);
+		const container = U.Dom.getPageFlexContainer(isPopup);
 		const sidebarLeft = sidebar.leftPanelGetNode();
 		const sidebarRight = sidebar.rightPanelGetNode(isPopup);
 
 		return {
-			width: container.width() - sidebarLeft.outerWidth() - sidebarRight.outerWidth(),
-			height: container.height(),
+			width: (container?.clientWidth ?? 0) - (sidebarLeft?.offsetWidth ?? 0) - (sidebarRight?.offsetWidth ?? 0),
+			height: container?.clientHeight ?? 0,
 		};
 	};
 
@@ -81,8 +83,12 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 
 		w = Math.max(300, w);
 
-		$(nodeRef.current).css(size);
-		$(previewRef.current).css({ width: w });
+		if (nodeRef.current) {
+			U.Dom.css(nodeRef.current, { width: `${size.width}px`, height: `${size.height}px` });
+		};
+		if (previewRef.current) {
+			U.Dom.css(previewRef.current, { width: `${w}px` });
+		};
 	};
 
 	const cn = [
@@ -101,22 +107,37 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 	let icon = null;
 	if (!isFile) {
 		if (isTask) {
-			icon = <Checkbox readonly={true} value={false} />;
+			icon = <IconObject object={{ name, layout: recommendedLayout }} size={32} iconSize={28} />;
 		} else
 		if (isHuman) {
 			icon = <IconObject object={{ name, layout: recommendedLayout }} size={96} />;
 		} else {
-			icon = <Icon key={`sidebar-preview-icon-${layoutFormat}`} />;
+			icon = <Icon key={`sidebar-preview-icon-${layoutFormat}`} name="common/preview" size={isList ? 22 : 56} />;
 		};
 	};
 
+	const resizeHandler = useRef<() => void>(() => resize());
+	const sidebarResizeHandler = useRef<() => void>(() => resize());
+
 	const unbind = () => {
-		$(window).off(`resize.${ns} sidebarResize.${ns}`);
+		if (resizeHandler.current) {
+			U.Dom.removeEvent(window, 'resize', resizeHandler.current);
+		};
+		if (sidebarResizeHandler.current) {
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandler.current);
+		};
+		resizeHandler.current = null;
+		sidebarResizeHandler.current = null;
 	};
 
 	const rebind = () => {
 		unbind();
-		$(window).on(`resize.${ns} sidebarResize.${ns}`, () => resize());
+		resizeHandler.current = () => resize();
+		sidebarResizeHandler.current = () => resize();
+		U.Dom.addEvents(window, [
+			['resize', resizeHandler.current],
+			['sidebarResize', sidebarResizeHandler.current],
+		]);
 	};
 
 	useEffect(() => {
@@ -155,7 +176,9 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 					<div className="layoutHeader">
 						{!isNote ? (
 							<div className="titleWrapper">
-								{icon}
+								<div className="iconWrapper">
+									{icon}
+								</div>
 								<Title text={name || translate('defaultNamePage')} />
 							</div>
 						) : ''}
@@ -221,6 +244,6 @@ const SidebarLayoutPreview = observer(forwardRef<RefProps, I.SidebarPageComponen
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default SidebarLayoutPreview;

@@ -1,8 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import $ from 'jquery';
 import { Header, Footer } from 'Component';
-import { observer } from 'mobx-react';
-import { I, S, U, analytics, Action, translate, Preview, sidebar, Storage, keyboard } from 'Lib';
 
 import PageAccount from './account';
 import PageDelete from './delete';
@@ -20,7 +17,6 @@ import PagePinConfirm from './pin/confirm';
 
 import PageImportIndex from './import/index';
 import PageImportNotion from './import/notion';
-import PageImportNotionHelp from './import/notion/help';
 import PageImportNotionWarning from './import/notion/warning';
 import PageImportCsv from './import/csv';
 import PageImportObsidian from './import/obsidian';
@@ -40,6 +36,8 @@ import PageMainRelation from '../relation';
 import PageMainArchive from '../archive';
 
 import PageMembership from './membership/index';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 const Components: any = {
 	index: 				 PageAccount,
@@ -60,7 +58,6 @@ const Components: any = {
 
 	importIndex:		 PageImportIndex,
 	importNotion:		 PageImportNotion,
-	importNotionHelp:	 PageImportNotionHelp,
 	importNotionWarning: PageImportNotionWarning,
 	importCsv:			 PageImportCsv,
 	importObsidian:		 PageImportObsidian,
@@ -70,7 +67,6 @@ const Components: any = {
 	exportMarkdown:		 PageExportMarkdown,
 
 	spaceIndex:			 PageSpaceIndex,
-	spaceIndexEmpty:	 PageSpaceIndex,
 	spaceStorage:		 PageSpaceStorage,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
@@ -83,7 +79,7 @@ const Components: any = {
 
 const SKIP_CONTAINER = [ 'set', 'relation', 'archive' ];
 
-const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const PageMainSettingsIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const { id = 'account' } = keyboard.getMatch(isPopup).params;
@@ -104,11 +100,6 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			};
 
 			switch (id) {
-				case 'spaceIndexEmpty': {
-					page = 'widget';
-					break;
-				};
-
 				case 'set': {
 					page = 'settings/types';
 					break;
@@ -127,16 +118,6 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 		};
 
 		if (page) {
-			if (id == 'spaceIndexEmpty') {
-				const dataLeft = sidebar.getData(I.SidebarPanel.Left);
-				const dataSubLeft = sidebar.getData(I.SidebarPanel.SubLeft);
-
-				if ((dataLeft.isClosed && dataLeft.savedClosed) || dataSubLeft.savedClosed) {
-					sidebar.rightPanelClose(isPopup, false);
-					return;
-				};
-			};
-
 			sidebar.leftPanelSubPageOpen(page, false, false);
 		};
 
@@ -158,7 +139,7 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 			title: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipTitle'),
 			text: translate('popupSettingsSpaceIndexSpaceTypePersonalTooltipText'),
 			className: 'big',
-			element: $(e.currentTarget),
+			element: e.currentTarget as HTMLElement,
 			typeY: I.MenuDirection.Bottom,
 			typeX: I.MenuDirection.Left,
 		});
@@ -209,6 +190,6 @@ const PageMainSettingsIndex = observer(forwardRef<{}, I.PageComponent>((props, r
 
 	return content;
 
-}));
+});
 
 export default PageMainSettingsIndex;

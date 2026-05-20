@@ -1,9 +1,9 @@
 import React, { forwardRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Button, Switch } from 'Component';
-import { I, translate, Storage } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
-const PageMainSettingsExportMarkdown = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsExportMarkdown = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { onExport } = props;
 	const [ data, setData ] = useState(Storage.get('popupExport') || {});
@@ -44,13 +44,13 @@ const PageMainSettingsExportMarkdown = observer(forwardRef<I.PageRef, I.PageSett
 			<div className="buttons">
 				<Button 
 					text={translate('popupSettingsExportOk')} 
-					className="c36"
+					size={36}
 					onClick={() => onExport(I.ExportType.Markdown, data)} 
 				/>
 			</div>
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsExportMarkdown;

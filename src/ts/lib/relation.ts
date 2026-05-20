@@ -1,8 +1,8 @@
-import { I, S, U, J, translate, Dataview } from 'Lib';
+import systemRelationKeys from 'dist/lib/json/generated/systemRelations.json';
+import * as I from 'Interface';
 
 const DICTIONARY = [ 'layout', 'origin', 'importType' ];
 const SKIP_SYSTEM_KEYS = [ 'tag', 'description' ];
-const relationIcons = require.context('img/icon/relation/default', false, /\.svg$/);
 
 class Relation {
 
@@ -13,6 +13,11 @@ class Relation {
 	 */
 	public typeName (v: I.RelationType): string {
 		return U.String.toCamelCase(I.RelationType[v || I.RelationType.LongText]);
+	};
+
+	public registryName (key: string, v: I.RelationType): string {
+		const name = key == 'description' ? 'description' : this.typeName(v);
+		return `relation/${name}`;
 	};
 
 	/**
@@ -32,34 +37,7 @@ class Relation {
 		return `c-${c}`;
 	};
 
-	/**
-	 * Returns the icon name for a relation key and type.
-	 * @param {string} key - The relation key.
-	 * @param {I.RelationType} v - The relation type.
-	 * @returns {string} The icon name.
-	 */
-	public iconName (key: string, v: I.RelationType): string {
-		return key == 'description' ? 'description' : this.typeName(v);
-	};
 
-	public icon (key: string, format: I.RelationType, color?: string): string {
-		let svg = '';
-		try {
-			svg = relationIcons(`./${this.iconName(key, format)}.svg`) as string;
-		} catch (e) {
-			svg = require('img/icon/error.svg');
-		};
-
-		if (color) {
-			try {
-				const chunk = svg.split('base64,')[1];
-				const decoded = atob(chunk).replace(/fill="black"/g, `fill="${color}"`);
-				svg = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(decoded)));
-			} catch (e) { /**/ };
-		};
-
-		return svg;
-	};
 
 	/**
 	 * Returns the select class name for a relation type.
@@ -372,17 +350,17 @@ class Relation {
 				continue;
 			};
 
-			ret.push({ 
-				id: U.String.sprintf(`_filter_template_%d_`, i), 
+			ret.push({
+				id: U.String.sprintf(`_filter_template_%d_`, i),
 				name: translate(`filterTemplate${i}`),
-				icon: `filterTemplate-${I.FilterValueTemplate[i].toLowerCase()}`,
+				iconParam: { name: `filterTemplate/${I.FilterValueTemplate[i].toLowerCase()}` },
 				templateType: id as I.FilterValueTemplate,
 			});
 		};
 		return ret;
 	};
 
-	public getFilterTemplateOption (id: string): { id: string, name: string, icon: string, templateType: I.FilterValueTemplate } {
+	public getFilterTemplateOption (id: string): { id: string, name: string, iconParam: I.IconParam, templateType: I.FilterValueTemplate } {
 		return this.getFilterTemplateOptions().find(it => it.id == id);
 	};
 
@@ -504,13 +482,6 @@ class Relation {
 			return (filter.nestedFilters || []).some(it => this.isFilterActive(it));
 		};
 
-		const relation = S.Record.getRelationByKey(relationKey);
-		if (!relation) {
-			return false;
-		};
-
-		const { format } = relation;
-
 		// None condition is always inactive
 		if (condition == I.FilterCondition.None) {
 			return false;
@@ -521,8 +492,12 @@ class Relation {
 			return true;
 		};
 
+		const relation = S.Record.getRelationByKey(relationKey);
+		if (!relation) {
+			return false;
+		};
 
-		if (format == I.RelationType.Date) {
+		if (this.isDate(relation.format)) {
 			// Date condition In
 			if (condition == I.FilterCondition.In) {
 				return true;
@@ -532,7 +507,7 @@ class Relation {
 			if (![ I.FilterQuickOption.NumberOfDaysAgo, I.FilterQuickOption.NumberOfDaysNow, I.FilterQuickOption.ExactDate ].includes(quickOption)) {
 				return true;
 			};
-		}
+		};
 
 		// For all other conditions, check if value is present
 		return this.isFilterValueSet(value);
@@ -634,7 +609,7 @@ class Relation {
 
 			ret.push({
 				id: relation.relationKey,
-				icon: `relation ${this.className(relation.format)}`,
+				iconParam: { name: this.registryName(relation.relationKey, relation.format) },
 				name: relation.name,
 				isHidden: relation.isHidden,
 				format: relation.format,
@@ -688,17 +663,9 @@ class Relation {
 		}));
 
 		const ret: any[] = [
-			{ id: 'none', icon: '', name: translate('commonNone') },
-			{ id: J.Relation.pageCover, icon: 'image', name: translate('libRelationPageCover') },
+			{ id: 'none', name: translate('commonNone') },
+			{ id: J.Relation.pageCover, iconParam: { name: 'common/image' }, name: translate('libRelationPageCover') },
 		];
-
-		if (!options.find(it => it.id == 'picture')) {
-			ret.push({
-				id: 'picture',
-				object: { relationFormat: I.RelationType.File, layout: I.ObjectLayout.Relation },
-				name: translate('libRelationPicture'),
-			});
-		};
 
 		return ret.concat(options);
 	};
@@ -859,6 +826,7 @@ class Relation {
 		if ((typeof value === 'object') && value && U.Common.hasProperty(value, 'length')) {
 			value = value.length ? value[0] : '';
 		};
+
 		return String(value || '');
 	};
 
@@ -1107,7 +1075,7 @@ class Relation {
 	 * @returns {string[]} The system keys.
 	 */
 	systemKeys () {
-		return require('lib/json/generated/systemRelations.json');
+		return systemRelationKeys;
 	};
 
 	/**

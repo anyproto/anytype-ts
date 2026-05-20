@@ -6,10 +6,10 @@
 		.placeholder { display: none; }
 		.disabled { color: var(--color-control-active); opacity: 1 !important; }
 
-		.markers { display: flex; padding: 1px 0px; }
+		.markers { display: flex; padding: 1px 0px; align-items: flex-start; }
 		.markers {
 			.marker { 
-				text-align: center; display: inline-block; vertical-align: top; position: relative; width: 24px; height: 24px; 
+				text-align: center; display: flex; align-items: center; justify-content: center; position: relative; width: 24px; height: 24px; 
 				line-height: 24px; margin-right: 6px;
 			}
 			.marker {
@@ -17,21 +17,7 @@
 
 				&.markerBulleted { display: flex; align-items: center; justify-content: center; }
 				&.markerBulleted {
-					.markerInner { print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: var(--color-text-primary); display: block; }
-					.markerInner {
-						&.textColor-default { background-color: var(--color-text-primary) !important; }
-						&.textColor-black { background-color: var(--color-text-primary) !important; }
-						&.textColor-grey { background-color: var(--color-control-active) !important; }
-						&.textColor-yellow { background-color: var(--color-yellow) !important; }
-						&.textColor-orange { background-color: var(--color-orange) !important; }
-						&.textColor-red { background-color: var(--color-red) !important; }
-						&.textColor-pink { background-color: var(--color-pink) !important; }
-						&.textColor-purple { background-color: var(--color-purple) !important; }
-						&.textColor-blue { background-color: var(--color-blue) !important; }
-						&.textColor-ice { background-color: var(--color-ice) !important; }
-						&.textColor-teal { background-color: var(--color-teal) !important; }
-						&.textColor-lime { background-color: var(--color-lime) !important; }
-					}
+					.markerInner { print-color-adjust: exact; width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: block; }
 				}
 
 				&.markerNumbered { vertical-align: baseline; min-width: 24px; width: auto; word-break: normal; }
@@ -39,9 +25,14 @@
 					> span { min-width: 100%; display: inline-block; text-align: center; }
 				}
 
-				&.markerCheckbox,
+				&.markerCheckbox { color: var(--color-text-tertiary); }
+				&.markerCheckbox.active { color: var(--color-system-accent-100); }
+
+				&.markerCheckbox {
+					img { width: 20px; height: 20px; }
+				}
 				&.markerToggle {
-					img { width: 100%; height: 100%; }
+					img { width: 24px; height: 24px; }
 				}
 			}
 		}
@@ -97,13 +88,13 @@
 
 	/* IsChecked */
 
-	.block.blockText.isChecked > .wrapContent > .selectionTarget > .dropTarget * { color: var(--color-control-active) !important; }
+	.block.blockText.isChecked > .wrapContent > .selectionTarget > .dropTarget { color: var(--color-control-active) !important; }
 
 	/* Title */
 
 	.block.blockText.textTitle { @include text-title; }
 	.block.blockText.textTitle {
-		> .wrapMenu:hover > .icon.dnd { opacity: 1; }
+		> .wrapMenu:hover > .icon.commonDnd { opacity: 1; }
 		> .wrapContent {
 			> .selectionTarget {
 				> .dropTarget {
@@ -130,7 +121,7 @@
 	/* Description */
 
 	.block.blockText.textDescription { @include text-description; }
-	.block.blockText.textDescription > .wrapMenu:hover > .icon.dnd { opacity: 1; }
+	.block.blockText.textDescription > .wrapMenu:hover > .icon.commonDnd { opacity: 1; }
 
 	/* Headers */
 
@@ -217,7 +208,7 @@
 			> .selectionTarget.isSelectionSelected::after { left: 0px; width: 100%; border-radius: 8px; }
 
 			> .selectionTarget {
-				> .dropTarget { padding: 16px 16px 0px 16px; }
+				> .dropTarget { padding: 16px 16px 0px 16px !important; }
 				> .dropTarget {
 					> .flex { gap: 0px 14px; }
 					> .flex {
@@ -260,7 +251,10 @@
 					> .flex { position: static; }
 					> .flex {
 						#value { font-family: 'Plex'; @include text-common; tab-size: 4; white-space: pre-wrap; padding: 16px; }
-						#value * { background: none; }
+						#value {
+							* { background: none; }
+							.title { @include text-common; font-weight: 400; }
+						}
 
 						.additional { 
 							position: absolute; top: 8px; left: 0px; z-index: 3; display: flex; padding: 0px 16px; width: 100%; 
@@ -284,9 +278,7 @@
 									display: flex; flex-direction: row; gap: 0px 4px; align-items: center;
 								}
 								.btn {
-									.icon { flex-shrink: 0; width: 20px; height: 20px; }
-									.icon.codeWrap { background-image: url('~img/icon/menu/action/wrap0.svg'); }
-									.icon.copy { background-image: url('~img/icon/menu/action/copy0.svg'); }
+									.icon { width: 20px; height: 20px; }
 
 									.txt { line-height: 20px; vertical-align: top; }
 								}
@@ -320,9 +312,7 @@
 	.block.blockText.textToggleHeader3 > .wrapContent > .dropTarget.targetBot.isOver.bottom
 	{ box-shadow: 0px -2px 0px var(--color-control-accent) inset; }
 
-	.block.blockText.textParagraph > .wrapContent.bgColor > .selectionTarget > .dropTarget,
-	.block.blockText.textHeader > .wrapContent.bgColor > .selectionTarget > .dropTarget
-	{ padding-left: 8px; padding-right: 8px;  }
+	.block.blockText > .wrapContent.bgColor > .selectionTarget > .dropTarget { padding-left: 8px; padding-right: 8px; }
 }
 
 .editorWrapper.isTask {

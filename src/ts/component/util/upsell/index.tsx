@@ -1,10 +1,9 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
-import { I, S, U } from 'Lib';
 
 import UpsellStorage from './storage';
 import UpsellSpace from './space';
 import UpsellMembers from './members';
+import * as I from 'Interface';
 
 interface Props {
 	components: string[];
@@ -18,7 +17,7 @@ const Components = {
 	members: UpsellMembers,
 };
 
-const UpsellBanner = observer(forwardRef<{}, Props>(({
+const UpsellBanner = forwardRef<{}, Props>(({
 	components = [],
 	route = '',
 	className = '',
@@ -49,7 +48,7 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 
 			case 'members': {
 				const space = U.Space.getSpaceview();
-				if (!space || space.isChat || space.isOneToOne) {
+				if (!space || space.isOneToOne) {
 					return { isShown, isRed };
 				};
 
@@ -128,6 +127,6 @@ const UpsellBanner = observer(forwardRef<{}, Props>(({
 	return <Component className={className} route={route} isRed={isRed} />;
 
 
-}));
+});
 
 export default UpsellBanner;

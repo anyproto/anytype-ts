@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
 import { Block } from 'Component';
-import { observer } from 'mobx-react';
-import { I, S } from 'Lib';
+import * as I from 'Interface';
 
-const Children = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
+const Children = forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const { rootId } = props;
 	const childrenIds = S.Block.getChildrenIds(rootId, rootId);
@@ -18,6 +17,6 @@ const Children = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default Children;

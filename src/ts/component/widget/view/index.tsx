@@ -1,7 +1,5 @@
 import React, { forwardRef, useState, useRef, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
 import { Select, Label, Filter, Button } from 'Component';
-import { I, C, M, S, U, J, Dataview, Relation, keyboard, translate, analytics, Storage } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Mousewheel, Navigation } from 'swiper/modules';
 
@@ -10,7 +8,9 @@ import WidgetViewGallery from './gallery';
 import WidgetViewBoard from './board';
 import WidgetViewCalendar from './calendar';
 import WidgetViewGraph from './graph';
-import { get } from 'jquery';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 interface WidgetViewRefProps {
 	updateData: () => void;
@@ -22,7 +22,7 @@ interface WidgetViewRefProps {
 	getFilter: () => string;
 };
 
-const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
+const WidgetView = forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
 	const { 
 		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getRootId, getLimit, checkShowAllButton, onCreate,
@@ -156,7 +156,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			return [];
 		};
 
-		const sorts: I.Sort[] = U.Common.objectCopy(view.sorts || []);
+		const sorts: I.Sort[] = U.Common.objectCopy(Dataview.getFilteredSorts(view.sorts));
 
 		if (!sorts.length) {
 			sorts.push({ relationKey: 'createdDate', type: I.SortType.Desc, includeTime: true });
@@ -291,6 +291,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 					options={views}
 					onChange={onChangeView}
 					arrowClassName="light"
+					arrowParam={{ name: 'arrow/small', width: 8, height: 5 }}
 					menuParam={{
 						width: 300,
 						className: 'fixed',
@@ -312,8 +313,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 					<div className="side left">
 						<Filter
 							ref={filterRef}
-							className="outlined round"
-							icon="search"
+							iconParam={{ name: 'common/search' }}
 							placeholder={translate('commonSearch')}
 							onChange={onFilterChange}
 							onClear={() => setSearchIds([])}
@@ -324,7 +324,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 							<Button 
 								id="button-object-create" 
 								color="blank" 
-								className="c28" 
+								size={28}
 								text={translate('commonNew')} 
 								onClick={e => onCreate(e, { 
 									element: '#button-object-create', 
@@ -424,7 +424,7 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 	}, [ searchIds ]);
 
 	useEffect(() => {
-		$(`#widget-${U.Common.esc(parent.id)}`).toggleClass('isEmpty', isEmpty);
+		U.Dom.toggleClass(U.Dom.get(`widget-${parent.id}`), 'isEmpty', isEmpty);
 		checkShowAllButton(subId);
 	});
 
@@ -448,16 +448,17 @@ const WidgetView = observer(forwardRef<WidgetViewRefProps, I.WidgetComponent>((p
 			{head}
 			{content}
 			
-			<Button 
-				id="button-show-all" 
-				onClick={onSetPreview} 
-				text={translate('widgetSeeAll')} 
-				className="c28" 
-				color="blank" 
+			<Button
+				id="button-show-all"
+				onClick={onSetPreview}
+				text={translate('widgetSeeAll')}
+				size={28}
+				color="blank"
+				arrow={true}
 			/>
 		</div>
 	);
 
-}));
+});
 
 export default WidgetView;

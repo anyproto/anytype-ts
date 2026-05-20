@@ -1,0 +1,28 @@
+import { registerIcon } from '../registry';
+import Blank from './blank';
+import Collapse from './collapse';
+import Collection from './collection';
+import EmptyMore from './emptyMore';
+import Lock from './lock';
+import Options from './options';
+import Preview from './preview';
+import Remove from './remove';
+import Set from './set';
+import SectionMore from './sectionMore';
+import SidebarToggle from './sidebarToggle';
+import VaultToggle from './vaultToggle';
+import Member from './member';
+
+registerIcon('widget/blank', Blank);
+registerIcon('widget/collapse', Collapse);
+registerIcon('widget/collection', Collection);
+registerIcon('widget/emptyMore', EmptyMore);
+registerIcon('widget/lock', Lock);
+registerIcon('widget/options', Options);
+registerIcon('widget/preview', Preview);
+registerIcon('widget/remove', Remove);
+registerIcon('widget/set', Set);
+registerIcon('widget/sectionMore', SectionMore);
+registerIcon('widget/sidebarToggle', SidebarToggle);
+registerIcon('widget/vaultToggle', VaultToggle);
+registerIcon('widget/member', Member);

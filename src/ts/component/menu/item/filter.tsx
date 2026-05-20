@@ -1,9 +1,8 @@
 import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Tag, IconObject, ObjectName } from 'Component';
+import * as I from 'Interface';
 
 interface Props extends I.Menu, I.Filter {
 	id: string;
@@ -16,7 +15,7 @@ interface Props extends I.Menu, I.Filter {
 	onRemove?: (e: any) => void;
 };
 
-const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
+const MenuItemFilter = forwardRef<{}, Props>((props, ref) => {
 
 	const { id, relation, condition, quickOption, subId, readonly, onOver, onClick, onRemove } = props;
 	const isDictionary = Relation.isDictionary(relation.relationKey);
@@ -170,7 +169,7 @@ const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
 			{...listeners}
 			style={style}
 		>
-			{!readonly ? <Icon className="dnd" /> : ''}
+			{!readonly ? <Icon name="common/dnd" /> : ''}
 			<IconObject size={40} object={{ relationFormat: relation.format, layout: I.ObjectLayout.Relation }} className="mainIcon" />
 
 			<div className="txt" onClick={onClick}>
@@ -187,13 +186,13 @@ const MenuItemFilter = observer(forwardRef<{}, Props>((props, ref) => {
 
 			{!readonly ? (
 				<div className="buttons">
-					<Icon className="more withBackground" onClick={onClick} />
-					<Icon className="delete withBackground" onClick={onRemove} />
+					<Icon name="common/more" className="more" withBackground={true} onClick={onClick} />
+					<Icon name="menu/common/delete" className="delete" withBackground={true} onClick={onRemove} />
 				</div>
 			) : ''}
 		</div>
 	);
 
-}));
+});
 
 export default MenuItemFilter;

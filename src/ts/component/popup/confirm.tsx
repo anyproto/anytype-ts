@@ -1,13 +1,13 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import { Title, Icon, Label, Button, Checkbox, Error, Input, Editable } from 'Component';
-import { I, keyboard, translate, Storage, J } from 'Lib';
-import { observer } from 'mobx-react';
+import { Icon, Label, Button, Checkbox, Error, Input, Editable } from 'Component';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
-const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
-	const { title, text, icon, storageKey, onConfirm, onCancel, noCloseOnConfirm, confirmMessage } = data;
+	const { title, text, icon, iconParam, storageKey, onConfirm, onCancel, noCloseOnConfirm, confirmMessage } = data;
 	const cn = [ 'wrap' ];
 	const [ error, setError ] = useState('');
 	const errorText = String(data.error || error || '');
@@ -22,8 +22,23 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	const textCancel = data.textCancel || translate('commonCancel');
 	const colorConfirm = data.colorConfirm || 'black';
 	const colorCancel = data.colorCancel || 'blank';
-	const iconElement = 'string' == typeof(icon) ? <Icon className={icon} /> : icon;
-	const buttonSize = Number(data.buttonSize) || 36;
+	let iconElement: any = null;
+
+	if (iconParam) {
+		iconElement = (
+			<Icon
+				name={iconParam.name}
+				color={iconParam.color}
+				size={iconParam.size || 56}
+			/>
+		);
+	} else
+	if ('string' == typeof(icon)) {
+		iconElement = <Icon className={icon} />;
+	} else {
+		iconElement = icon;
+	};
+	const buttonSize = (Number(data.buttonSize) || 36) as 36;
 
 	if (storageKey) {
 		cn.push('withCheckbox');
@@ -33,19 +48,24 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		cn.push('withInput');
 	};
 
+	const keyHandler = useRef<(e: any) => void>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on(`keydown.${props.id}`, e => onKeyDown(e));
+		keyHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keyHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off(`keydown.${props.id}`);
+		if (keyHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keyHandler.current);
+			keyHandler.current = null;
+		};
 	};
 
 	const onKeyDown = (e: any) => {
-		const node = $(nodeRef.current);
+		const buttons = nodeRef.current ? U.Dom.selectAll('.button', nodeRef.current) : [];
 		const cmd = keyboard.cmdKey();
-		const buttons = node.find('.button');
 
 		keyboard.shortcut('enter, space', e, (pressed: string) => {
 			e.stopPropagation();
@@ -54,8 +74,9 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				return;
 			};
 
-			if (buttons[n.current]) {
-				$(buttons[n.current]).trigger('click');
+			const btn = buttons[n.current] as HTMLElement;
+			if (btn) {
+				btn.click();
 			};
 		});
 
@@ -65,7 +86,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (pressed: string) => {
-			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? 1 : -1;
+			const dir = [ 'arrowup', 'arrowleft' ].includes(pressed) ? -1 : 1;
 
 			if (buttons.length < 2) {
 				return;
@@ -118,21 +139,31 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any) => {
-		const node = $(nodeRef.current);
-		const buttons = node.find('.button');
+		const buttons = nodeRef.current ? U.Dom.selectAll('.button', nodeRef.current) : [];
 
-		n.current = buttons.index(e.currentTarget);
+		n.current = Array.from(buttons).indexOf(e.currentTarget);
 		setHighlight();
 	};
 
-	const setHighlight = () => {
-		const node = $(nodeRef.current);
-		const buttons = node.find('.button');
+	const onMouseLeave = () => {
+		if (!nodeRef.current) {
+			return;
+		};
 
-		node.find('.button.hover').removeClass('hover');
+		U.Dom.selectAll('.button.hover', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'hover'));
+	};
+
+	const setHighlight = () => {
+		if (!nodeRef.current) {
+			return;
+		};
+
+		const buttons = U.Dom.selectAll('.button', nodeRef.current);
+
+		U.Dom.selectAll('.button.hover', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'hover'));
 
 		if (buttons[n.current]) {
-			$(buttons[n.current]).addClass('hover');
+			U.Dom.addClass(buttons[n.current], 'hover');
 		};
 	};
 
@@ -153,7 +184,7 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 	
 	return (
-		<div ref={nodeRef} className={[ 'wrap', (storageKey ? 'withCheckbox' : '') ].join(' ')}>
+		<div ref={nodeRef} className={cn.join(' ')}>
 			{iconElement ? (
 				<div className="iconWrapper">
 					{iconElement}
@@ -176,19 +207,37 @@ const PopupConfirm = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			{confirmMessage ? (
 				<div className="confirmMessage">
-					<Input type="text" ref={inputRef} className={`round c${buttonSize}`} placeholder={confirmMessage} />
+					<Input type="text" ref={inputRef} size={buttonSize} placeholder={confirmMessage} />
 				</div>
 			) : ''}
 
 			<div className="buttons">
-				{canConfirm ? <Button text={textConfirm} color={colorConfirm} className={`c${buttonSize}`} onClick={onConfirmHandler} onMouseEnter={onMouseEnter} /> : ''}
-				{canCancel ? <Button text={textCancel} color={colorCancel} className={`c${buttonSize}`} onClick={onCancelHandler} onMouseEnter={onMouseEnter} /> : ''}
+				{canConfirm ? (
+					<Button 
+						text={textConfirm} 
+						color={colorConfirm} 
+						size={buttonSize} 
+						onClick={onConfirmHandler} 
+						onMouseEnter={onMouseEnter} 
+						onMouseLeave={onMouseLeave} 
+					/>
+				) : ''}
+				{canCancel ? (
+					<Button 
+						text={textCancel} 
+						color={colorCancel} 
+						size={buttonSize} 
+						onClick={onCancelHandler} 
+						onMouseEnter={onMouseEnter} 
+						onMouseLeave={onMouseLeave} 
+					/> 
+				) : ''}
 			</div>
 
 			<Error text={errorText} />
 		</div>
 	);
 
-}));
+});
 
 export default PopupConfirm;

@@ -229,11 +229,9 @@ $(() => {
 
 		const title = String(item.data.title || 'New tab');
 		const isPinned = Boolean(item.data.isPinned);
-		const icon = isPinned
-			? String(item.data.spaceIcon || item.data.icon || '')
-			: String(item.data.icon || '');
+		const icon = String(item.data.icon || '');
 		const layout = Number(item.data.layout) || 0;
-		const uxType = Number(item.data.uxType) || 0;
+		const spaceType = Number(item.data.spaceType) || 0;
 		const isImage = Boolean(item.data.isImage);
 
 		const cn = [ 'tab' ];
@@ -253,7 +251,7 @@ $(() => {
 
 		const clickable = tab.find('.clickable');
 		if (icon) {
-			const cn = [ 'icon', 'object', `layout${layout}`, `uxType${uxType}` ];
+			const cn = [ 'icon', 'object', `layout${layout}`, `spaceType${spaceType}` ];
 			if (isImage) {
 				cn.push('isImage');
 			};
@@ -332,7 +330,7 @@ $(() => {
 			const { isPinned, route, ...data } = activeTab?.data || {};
 
 			data.route = '/main/void/dashboard';
-			electron.Api(winId, 'openTab', data, { setActive: true, fireAnalytics: true });
+			electron.Api(winId, 'openTab', [data, { setActive: true, fireAnalytics: true }]);
 		});
 
 		return tab;

@@ -1,24 +1,28 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, Relation, translate } from 'Lib';
+import * as I from 'Interface';
 
-const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockLinkSettings = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { id, param, getId, getSize, onKeyDown, setActive, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, blockIds } = data;
 	const n = useRef(-1);
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onClick = (e: any, item: any) => {
@@ -101,10 +105,10 @@ const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 
 	const getStyles = () => {
 		return [
-			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText'), icon: 'style-text' },
-			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard'), icon: 'style-card' },
+			{ id: I.LinkCardStyle.Text, name: translate('menuBlockLinkSettingsStyleText') },
+			{ id: I.LinkCardStyle.Card, name: translate('menuBlockLinkSettingsStyleCard') },
 		].map((it: any) => {
-			it.icon = `linkStyle${it.id}`;
+			it.iconParam = { name: `menu/linkStyle/${String(I.LinkCardStyle[it.id]).toLowerCase()}` };
 			return it;
 		});
 	};
@@ -168,12 +172,12 @@ const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		const itemIconSize = canIconSize ? { id: 'iconSize', name: translate('commonIcon'), caption: icon.name, arrow: true } : null;
 		const itemIconSwitch = canIconSwitch ? { id: 'iconSwitch', name: translate('commonIcon'), withSwitch: true, switchValue: (icon.id != I.LinkIconSize.None) } : null;
 		const itemCover = canCover ? { id: 'cover', name: translate('menuBlockLinkSettingsCover'), withSwitch: true, switchValue: hasRelationKey('cover') } : null;
-		const itemName = { id: 'name', name: translate('menuBlockLinkSettingsName'), icon: `relation ${Relation.className(I.RelationType.ShortText)}` };
+		const itemName = { id: 'name', name: translate('menuBlockLinkSettingsName'), iconParam: { name: 'relation/shortText' } };
 		const itemDescription = canDescription ? {
-			id: 'description', name: translate('menuBlockLinkSettingsDescription'), icon: `relation ${Relation.className(I.RelationType.LongText)}`,
+			id: 'description', name: translate('menuBlockLinkSettingsDescription'), iconParam: { name: 'relation/longText' },
 			caption: description.name, arrow: true
 		} : null;
-		const itemType = { id: 'type', name: translate('commonObjectType'), icon: `relation ${Relation.className(I.RelationType.Object)}`, withSwitch: true, switchValue: hasRelationKey('type') };
+		const itemType = { id: 'type', name: translate('commonObjectType'), iconParam: { name: 'relation/object' }, withSwitch: true, switchValue: hasRelationKey('type') };
 
 		let sections: any[] = [
 			{ children: [ itemStyle, itemIconSize, itemIconSwitch, itemCover ] },
@@ -280,6 +284,6 @@ const MenuBlockLinkSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockLinkSettings;

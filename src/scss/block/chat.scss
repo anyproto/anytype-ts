@@ -21,10 +21,7 @@
 			.title { @include text-paragraph; font-weight: 600; text-align: center; }
 			.item { display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
 			.item {
-				.icon { width: 20px; height: 20px; flex-shrink: 0; }
-				.icon.infinity { background-image: url('~img/icon/chat/empty/infinity.svg'); }
-				.icon.wifi { background-image: url('~img/icon/chat/empty/wifi.svg'); }
-				.icon.key { background-image: url('~img/icon/chat/empty/key.svg'); }
+				.icon { width: 20px; height: 20px; }
 			}
 
 			.buttons { display: flex; justify-content: center; margin-top: 8px; }
@@ -38,8 +35,51 @@
 			}
 		}
 
-		markupmention.withImage {
-			smile, .space { display: none; }
+		.pinnedMessage {
+			position: sticky; left: 0px; top: 52px; display: flex; align-items: center;
+			gap: 0px 8px; height: 52px; padding: 7px 0px;
+			background: var(--color-bg-primary); z-index: 11; flex-shrink: 0;
+		}
+		.pinnedMessage {
+			.pinnedIndicator { display: flex; flex-direction: column; gap: 2px 0px; height: 32px; flex-shrink: 0; }
+			.pinnedIndicator {
+				.segment { width: 2px; flex: 1; border-radius: 2px; background: var(--color-shape-highlight-dark); }
+				.segment.isActive { background: var(--color-text-primary); }
+			}
+
+			.iconObject {
+				flex-shrink: 0; border-radius: 6px; overflow: hidden;
+				background-color: var(--color-shape-highlight-medium);
+			}
+			.iconObject {
+				&.withImage, &.isFile, &.isImage, &.isVideo, &.isAudio, &.isPdf,
+				&.isHuman, &.isParticipant { background-color: unset; }
+			}
+
+			.pinnedInner { display: flex; flex-direction: column; flex: 1; min-width: 0px; }
+			.pinnedInner {
+				.pinnedLabel { @include text-small; font-weight: 500; color: var(--color-text-primary); }
+				.pinnedText {
+					font-size: 14px; line-height: 20px; letter-spacing: -0.12px; color: var(--color-text-primary);
+					@include text-overflow-nw;
+				}
+			}
+
+			.icon.unpin { width: 20px; height: 20px; flex-shrink: 0; opacity: 0; transition: opacity 0.15s ease-out; }
+
+			&:hover {
+				.icon.unpin { opacity: 1; }
+			}
+		}
+
+		.markuplink, markupobject { color: var(--color-system-accent-100); border-bottom: 0px; }
+		markupmention { padding: 1.5px 2px; background-color: var(--color-system-highlight); border-radius: 2px; }
+		markupmention {
+			name { color: var(--color-system-accent-100); font-weight: 500; border-bottom: 0px; }
+
+			&.withImage {
+				smile, .space { display: none; }
+			}
 		}
 
 		@import "./chat/attachment";

@@ -1,17 +1,18 @@
 import React, { forwardRef, useRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Icon } from 'Component';
-import { I, S, U, analytics, translate, Preview } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;
 	className?: string;
+	tooltipParam?: Partial<I.TooltipParam>;
 	onClick: (e: any) => void;
 };
 
-const Sync = observer(forwardRef<HTMLDivElement, Props>(({
+const Sync = forwardRef<HTMLDivElement, Props>(({
 	id = '',
 	className = '',
+	tooltipParam = {},
 	onClick,
 }, ref) => {
 
@@ -20,11 +21,23 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 	const { status, network } = syncStatus;
 	const cn = [ 'sync', className ];
 	const tooltip = U.Data.isDevelopmentNetwork() ? translate('syncButtonStaging') : translate('menuSyncStatusTitle');
-	const icon = network == I.SyncStatusNetwork.LocalOnly ? I.SyncStatusSpace.Offline : I.SyncStatusSpace[status];
+	const hasStatus = !!syncStatus.id;
+	const statusKey = !hasStatus ? 'Synced' : (network == I.SyncStatusNetwork.LocalOnly ? 'Offline' : I.SyncStatusSpace[status]);
 
 	if (syncStatus.error) {
 		cn.push(`error${I.SyncStatusError[syncStatus.error]}`);
 	};
+
+	const syncIconMap: Record<string, { name: string; color?: string; cn?: string }> = {
+		Synced: { name: 'sync/globe' },
+		Syncing: { name: 'sync/globe', cn: 'syncing' },
+		Error: { name: 'sync/globe', color: 'red' },
+		Offline: { name: 'sync/offline' },
+		Upgrade: { name: 'sync/globe', color: 'darkOrange' },
+	};
+
+	const iconInfo = syncIconMap[statusKey] || syncIconMap.Synced;
+	const iconCn = [ (iconInfo.cn || '') ];
 
 	const onClickHandler = (e: MouseEvent) => {
 		onClick?.(e);
@@ -32,18 +45,18 @@ const Sync = observer(forwardRef<HTMLDivElement, Props>(({
 	};
 
 	return (
-		<div 
+		<div
 			ref={nodeRef}
-			id={id} 
-			className={cn.join(' ')} 
+			id={id}
+			className={cn.join(' ')}
 			onClick={onClickHandler}
-			onMouseEnter={e => Preview.tooltipShow({ text: tooltip, element: $(e.currentTarget), typeY: I.MenuDirection.Bottom })}
+			onMouseEnter={e => Preview.tooltipShow({ text: tooltip, element: e.currentTarget as HTMLElement, ...tooltipParam })}
 			onMouseLeave={() => Preview.tooltipHide(false)}
 		>
-			<Icon className={'c-' + String(icon).toLowerCase()} />
+			<Icon name={iconInfo.name} color={iconInfo.color} className={iconCn.join(' ')} />
 		</div>
 	);
 
-}));
+});
 
 export default Sync;

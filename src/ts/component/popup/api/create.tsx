@@ -1,15 +1,15 @@
 import React, { forwardRef, useRef, useState } from 'react';
-import { observer } from 'mobx-react';
 import { Input, Button, Loader, Error, Title, Icon, Textarea } from 'Component';
-import { I, C, U, translate, keyboard } from 'Lib';
+import * as I from 'Interface';
 
-const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
+const PopupApiCreate = forwardRef<{}, I.Popup>(({ param = {}, close }, ref) => {
 
 	const nameRef = useRef(null);
 	const [ error, setError ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ key, setKey ] = useState('');
-	const icon = key ? 'success' : 'create';
+	const iconName = key ? 'popup/header/success' : 'popup/header/create';
+	const iconColor = key ? 'lime' : '';
 	const title = key ? translate('popupApiCreateSuccess') : translate('popupApiCreateTitle');
 
 	const onKeyDown = (e: any, v: string) => {
@@ -62,8 +62,8 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 
 		buttons = (
 			<div className="buttons">
-				<Button text={translate('commonCopy')} className="c36" onClick={onCopy} />
-				<Button text={translate('commonClose')} className="c36" color="blank" onClick={() => close()} />
+				<Button text={translate('commonCopy')} size={36} onClick={onCopy} />
+				<Button text={translate('commonClose')} size={36} color="blank" onClick={() => close()} />
 			</div>
 		);
 	} else {
@@ -80,8 +80,8 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 
 		buttons = (
 			<div className="buttons">
-				<Button text={translate('commonCreate')} className="c36" onClick={onSubmit} />
-				<Button text={translate('commonCancel')} className="c36" color="blank" onClick={() => close()} />
+				<Button text={translate('commonCreate')} size={36} onClick={onSubmit} />
+				<Button text={translate('commonCancel')} size={36} color="blank" onClick={() => close()} />
 			</div>
 		);
 	};
@@ -91,7 +91,7 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 			{isLoading ? <Loader id="loader" /> : ''}
 
 			<div className="iconWrapper">
-				<Icon className={icon} />
+				<Icon name={iconName} color={iconColor} size={56} />
 			</div>
 
 			<Title text={title} />
@@ -105,6 +105,6 @@ const PopupApiCreate = observer(forwardRef<{}, I.Popup>(({ param = {}, close }, 
 		</>
 	);
 
-}));
+});
 
 export default PopupApiCreate;

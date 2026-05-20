@@ -1,10 +1,9 @@
 import React, { forwardRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { U, I } from 'Lib';
 import { Label, Button } from 'Component';
-import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
-const BlockDataviewEmpty = observer(forwardRef<{}, I.ViewEmpty>(({
+const BlockDataviewEmpty = forwardRef<{}, I.ViewEmpty>(({
 	block,
 	title = '',
 	description = '',
@@ -38,7 +37,7 @@ const BlockDataviewEmpty = observer(forwardRef<{}, I.ViewEmpty>(({
 						<Button 
 							id="emptyButton" 
 							color="blank" 
-							className="c28" 
+							size={28}
 							text={button} 
 							onClick={onClick} 
 						/>
@@ -48,6 +47,6 @@ const BlockDataviewEmpty = observer(forwardRef<{}, I.ViewEmpty>(({
 		</AnimatePresence>
 	);
 
-}));
+});
 
 export default BlockDataviewEmpty;

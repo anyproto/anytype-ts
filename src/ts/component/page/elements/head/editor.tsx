@@ -1,8 +1,7 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, M, C, S, U, Action, Relation, keyboard, translate } from 'Lib';
-import { Block, Button, DragHorizontal } from 'Component';
+import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import { Block, Button, DragHorizontal, Loader } from 'Component';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 interface Props extends I.BlockComponent {
 	setLayoutWidth?(v: number): void;
@@ -13,11 +12,12 @@ interface RefProps {
 	setPercent: (v: number) => void;
 };
 
-const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
+const PageHeadEditor = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { rootId, isPopup, readonly, onKeyDown, onKeyUp, onMenuAdd, onPaste, setLayoutWidth } = props;
 	const dragRef = useRef(null);
 	const dragValueRef = useRef(null);
+	const wrapperRef = useRef(null);
 	const check = U.Data.checkDetails(rootId, rootId, []);
 	const isBookmark = U.Object.isBookmarkLayout(check.layout);
 	const header = S.Block.getLeaf(rootId, 'header');
@@ -29,10 +29,12 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const init = () => {
-		const pageContainer = U.Common.getPageContainer(isPopup);
+		const wrapper = wrapperRef.current?.closest('#editorWrapper');
 
-		pageContainer.find('#editorWrapper').attr({ class: [ 'editorWrapper', check.className ].join(' ') });
-		U.Common.triggerResizeEditor(isPopup);
+		if (wrapper) {
+			wrapper.className = [ 'editorWrapper', check.className ].join(' ');
+		};
+		U.Dom.triggerResizeEditor(isPopup);
 	};
 
 	const onScaleStart = (e: any, v: number) => {
@@ -47,6 +49,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	
 	const onScaleEnd = (e: any, v: number) => {
 		keyboard.disableSelection(false);
+		setLayoutWidth(v);
 		setPercent(v);
 
 		const root = S.Block.getLeaf(rootId, rootId);
@@ -60,7 +63,9 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const setPercent = (v: number) => {
-		$(dragValueRef.current).text(Math.ceil((v + 1) * 100) + '%');
+		if (dragValueRef.current) {
+			dragValueRef.current.textContent = Math.ceil((v + 1) * 100) + '%';
+		};
 	};
 
 	useEffect(() => {
@@ -77,11 +82,31 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 		setPercent: (v: number) => setPercent(v),
 	}));
 
+	const [ ogImageLoaded, setOgImageLoaded ] = useState(false);
+	const ogImageUrlRef = useRef('');
+	const bookmarkObject = isBookmark ? S.Detail.get(rootId, rootId, [ 'source', 'picture', 'iconImage' ]) : null;
+	const bookmarkPicture = bookmarkObject?.picture || '';
+	const ogImageUrl = bookmarkPicture ? S.Common.imageUrl(bookmarkPicture, I.ImageSize.Large) : '';
+
+	useEffect(() => {
+		if (!ogImageUrl || (ogImageUrl === ogImageUrlRef.current)) {
+			return;
+		};
+
+		ogImageUrlRef.current = ogImageUrl;
+		setOgImageLoaded(false);
+
+		const img = new Image();
+		img.onload = () => setOgImageLoaded(true);
+		img.onerror = () => setOgImageLoaded(true);
+		img.src = ogImageUrl;
+	}, [ ogImageUrl ]);
+
 	let bookmarkHead = null;
 	let bookmarkFoot = null;
 
 	if (isBookmark) {
-		const object = S.Detail.get(rootId, rootId, [ 'source', 'picture', 'iconImage' ]);
+		const object = bookmarkObject;
 		const { source, picture, iconImage } = object;
 		const type = S.Record.getTypeById(object.type);
 		const allowedDetails = S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]);
@@ -92,14 +117,80 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 		relations = relations.filter(it => it);
 		relations = S.Record.checkHiddenObjects(relations);
 
+		const onSourceContextMenu = (e: any) => {
+			e.preventDefault();
+
+			const relation = S.Record.getRelationByKey('source');
+			if (!relation) {
+				return;
+			};
+
+			const canEdit = allowedDetails && !readonly && !relation.isReadonlyValue;
+			const actions = source ? [
+				{ id: 'go', iconParam: { name: 'menu/action/browse' }, name: translate(`menuDataviewUrlActionGo${I.RelationType.Url}`) },
+				{ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy') },
+				{ id: 'reload', iconParam: { name: 'menu/action/reload' }, name: translate('menuDataviewUrlActionGoReload') },
+			] : [];
+
+			S.Menu.open('dataviewText', {
+				title: relation.name,
+				className: 'withTitle',
+				width: J.Size.menu.value,
+				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 }),
+				data: {
+					value: String(source || ''),
+					relationKey: relation.relationKey,
+					placeholder: relation.name,
+					canEdit,
+					noResize: true,
+					actions,
+					onChange: (v: any) => {
+						if (!canEdit) {
+							return;
+						};
+
+						const value = Relation.formatValue(relation, v, true);
+						if (value == source) {
+							return;
+						};
+
+						C.ObjectListSetDetails([ rootId ], [ { key: 'source', value } ]);
+						analytics.changeRelationValue(relation, value, { type: 'menu', id: 'Single' });
+					},
+					onSelect: (e: any, item: any) => {
+						switch (item.id) {
+							case 'go': {
+								Action.openUrl(Relation.checkUrlScheme(I.RelationType.Url, source));
+								analytics.event('RelationUrlOpen');
+								break;
+							};
+
+							case 'copy': {
+								U.Common.copyToast(translate('commonLink'), source);
+								analytics.event('RelationUrlCopy');
+								break;
+							};
+
+							case 'reload': {
+								C.ObjectBookmarkFetch(rootId, String(source).trim(), () => analytics.event('ReloadSourceData'));
+								break;
+							};
+						};
+					},
+				},
+			});
+		};
+
 		bookmarkHead = (
 			<>
 				{picture ? (
-					<div className="bookmarkOgImage" style={{ backgroundImage: `url("${S.Common.imageUrl(picture, I.ImageSize.Large)}")` }} />
+					<div className={[ 'bookmarkOgImage', (ogImageLoaded ? 'isLoaded' : '') ].join(' ')} style={ogImageLoaded ? { backgroundImage: `url("${ogImageUrl}")` } : {}}>
+						{!ogImageLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
+					</div>
 				) : ''}
 
 				{source ? (
-					<div className="bookmarkLink" onClick={() => Action.openUrl(source)}>
+					<div className="bookmarkLink" onClick={() => Action.openUrl(source)} onContextMenu={onSourceContextMenu}>
 						{iconImage ? <img className="fav" src={S.Common.imageUrl(iconImage, I.ImageSize.Small)} /> : ''}
 						<div className="url">{U.String.shortUrl(source)}</div>
 					</div>
@@ -111,7 +202,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<>
 				{source ? (
 					<div className="bookmarkButtons">
-						<Button text={translate('pageMainBookmarkOpenWebsite')} color="blank" className="c36" onClick={() => Action.openUrl(source)} />
+						<Button text={translate('pageMainBookmarkOpenWebsite')} color="blank" size={36} onClick={() => Action.openUrl(source)} />
 					</div>
 				) : ''}
 
@@ -138,7 +229,7 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	return (
 		<>
-			<div id="editorSize" className="dragWrap">
+			<div ref={wrapperRef} id="editorSize" className="dragWrap">
 				<DragHorizontal
 					ref={dragRef}
 					value={check.layoutWidth}
@@ -155,8 +246,8 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 			{bookmarkHead}
 
 			<div
-				onMouseEnter={() => $(`#editor-controls-${rootId}`).addClass('hover')}
-				onMouseLeave={() => $(`#editor-controls-${rootId}`).removeClass('hover')}
+				onMouseEnter={() => U.Dom.addClass(U.Dom.get(`editor-controls-${rootId}`), 'hover')}
+				onMouseLeave={() => U.Dom.removeClass(U.Dom.get(`editor-controls-${rootId}`), 'hover')}
 			>
 				{check.withIcon ? <Block {...props} key={icon.id} block={icon} className="noPlus" /> : ''}
 				<Block
@@ -177,6 +268,6 @@ const PageHeadEditor = observer(forwardRef<RefProps, Props>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default PageHeadEditor;

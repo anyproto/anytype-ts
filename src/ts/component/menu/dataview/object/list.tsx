@@ -1,9 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Icon, Loader, ObjectName, ObjectType } from 'Component';
-import { I, S, U, J, keyboard, Relation, translate, analytics } from 'Lib';
+import { Filter, MenuItemVertical, Loader, ObjectName, ObjectType } from 'Component';
+import * as I from 'Interface';
 
 const LIMIT_HEIGHT = 20;
 const LIMIT_TYPE = 2;
@@ -13,7 +11,7 @@ const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_EMPTY = 96;
 const HEIGHT_DIV = 16;
 
-const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setActive, onKeyDown, close, position, getId } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -33,9 +31,9 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 	useEffect(() => {
 		rebind();
-		resize();
 		focus();
 		load(true);
+		return () => unbind();
 	}, []);
 
 	useEffect(() => {
@@ -52,7 +50,6 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 			listRef.current.scrollToPosition(topRef.current);
 		};
 
-		resize();
 		focus();
 		setActive(items[n.current], false);
 	});
@@ -63,12 +60,12 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDownHandler);
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -143,6 +140,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 
 			itemsRef.current = itemsRef.current.concat(message.records || []);
 			setDummy(dummy + 1);
+			position();
 		});
 	};
 
@@ -270,9 +268,9 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems();
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
 		let offset = 16;
 
@@ -286,8 +284,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), offset);
 		const height = Math.max(HEIGHT_ITEM + offset, Math.min(300, itemsHeight));
 
-		obj.css({ height });
-		position();
+		U.Dom.css(obj, { height: `${height}px` });
 	};
 
 	const items = getItems();
@@ -315,7 +312,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 				<MenuItemVertical
 					id={item.id}
 					object={item.isSystem ? null : item}
-					icon={item.icon}
+					iconParam={item.icon ? { name: item.icon } : undefined}
 					name={<ObjectName object={item} />}
 					onMouseEnter={e => onOver(e, item)}
 					onClick={e => onClick(e, item)}
@@ -342,6 +339,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -354,8 +352,7 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		<div className={[ 'wrap', (!noFilter ? 'withFilter' : '') ].join(' ')}>
 			{!noFilter ? (
 				<Filter
-					className="outlined round"
-					icon="search"
+					iconParam={{ name: 'common/search' }}
 					ref={filterRef} 
 					placeholder={placeholder}
 					value={filter}
@@ -398,6 +395,6 @@ const MenuDataviewObjectList = observer(forwardRef<I.MenuRef, I.Menu>((props, re
 		</div>
 	);
 	
-}));
+});
 
 export default MenuDataviewObjectList;

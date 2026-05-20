@@ -15,7 +15,10 @@ exports.default = async function (context) {
 		silent: false,
 	};
 
-	return await cli.releases.uploadSourceMaps(context.packager.appInfo.version, { 
-		include: [ '../../dist/js/main.js.map' ],
+	return await cli.releases.uploadSourceMaps(context.packager.appInfo.version, {
+		include: [ '../../dist/js' ],
+		ext: [ 'js', 'map' ],
+		urlPrefix: '~/dist/js',
+		rewrite: true,
 	});
 };

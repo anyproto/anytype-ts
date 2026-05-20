@@ -1,31 +1,50 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, S, keyboard, Relation } from 'Lib';
 import { OptionSelect } from 'Component';
+import * as I from 'Interface';
 
 const SUB_ID = 'dataviewOptionList';
 
-const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
+const MenuOptionList = forwardRef<{}, I.Menu>((props, ref) => {
 
-	const { id, param, close, position, setActive, getId, onKeyDown, getSize } = props;
+	const { id, param, close, position, setActive, getId, getContainer, onKeyDown, getSize } = props;
 	const { data, className, classNameWrap } = param;
 	const { canAdd, canEdit, noFilter, cellRef, noSelect, onChange, maxCount, filterMapper, skipIds, filter, selectFirst } = data;
 	const relation = data.relation.get();
 	const value = Relation.getArrayValue(data.value);
 	const optionSelectRef = useRef(null);
 	const n = useRef(-1);
+	const keydownHandler = useRef(null);
+	const clickHandler = useRef(null);
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
-		$(`#${getId()}`).on('click', () => S.Menu.close('dataviewOptionEdit'));
+		keydownHandler.current = (e: any) => onKeyDownHandler(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
+
+		clickHandler.current = () => S.Menu.close('dataviewOptionEdit');
+		const obj = getContainer();
+		if (obj) {
+			U.Dom.addEvent(obj, 'click', clickHandler.current);
+		};
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
-		$(`#${getId()}`).off('click');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
+		if (clickHandler.current) {
+			const obj = getContainer();
+			if (obj) {
+				U.Dom.removeEvent(obj, 'click', clickHandler.current);
+			};
+			clickHandler.current = null;
+		};
+	};
+
+	const beforePosition = () => {
+		U.Dom.toggleClass(getContainer(), 'withFilter', !noFilter);
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -103,6 +122,7 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		getListRef: () => optionSelectRef.current?.getListRef(),
 		onClick: (e: any, item: any) => optionSelectRef.current?.onClick(e, item),
 		onSortEnd: (result: any) => optionSelectRef.current?.onSortEnd?.(result),
+		beforePosition,
 	}), []);
 
 	return (
@@ -133,6 +153,6 @@ const MenuOptionList = observer(forwardRef<{}, I.Menu>((props, ref) => {
 		/>
 	);
 
-}));
+});
 
 export default MenuOptionList;

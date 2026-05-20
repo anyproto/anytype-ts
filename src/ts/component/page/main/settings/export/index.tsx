@@ -1,14 +1,13 @@
 import React, { forwardRef } from 'react';
 import { Icon, Title, Label } from 'Component';
-import { I, U, translate } from 'Lib';
-import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
 interface Props extends I.PageSettingsComponent {
 	onImport: (type: I.ImportType, param: any) => void;
 	onExport: (type: I.ExportType, param: any) => void;
 };
 
-const PageMainSettingsExportIndex = observer(forwardRef<I.PageRef, Props>((props, ref) => {
+const PageMainSettingsExportIndex = forwardRef<I.PageRef, Props>((props, ref) => {
 
 	const { onPage } = props;
 	const items = [
@@ -29,7 +28,7 @@ const PageMainSettingsExportIndex = observer(forwardRef<I.PageRef, Props>((props
 
 		return (
 			<div className={cn.join(' ')} onClick={() => onClick(item.id)} >
-				<Icon className={`import-${item.id}`} />
+				<Icon name={`import/${item.id}`} size={item.isApp ? 18 : 40} />
 				<div className="name">{item.name}</div>
 			</div>
 		);
@@ -48,6 +47,6 @@ const PageMainSettingsExportIndex = observer(forwardRef<I.PageRef, Props>((props
 		</>
 	);
 
-}));
+});
 
 export default PageMainSettingsExportIndex;

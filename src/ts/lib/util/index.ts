@@ -1,6 +1,7 @@
 import Common from './common';
 import Data from './data';
 import Date from './date';
+import Dom from './dom';
 import Embed from './embed';
 import File from './file';
 import Graph from './graph';
@@ -13,11 +14,13 @@ import Prism from './prism';
 import Subscription from './subscription';
 import String from './string';
 import StickyScrollbar from './stickyScrollbar';
+import Comment from './comment';
 
 export {
 	Common,
 	Data,
 	Date,
+	Dom,
 	Embed,
 	File,
 	Graph,
@@ -30,4 +33,5 @@ export {
 	Subscription,
 	String,
 	StickyScrollbar,
+	Comment,
 };

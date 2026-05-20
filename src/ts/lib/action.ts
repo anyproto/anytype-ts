@@ -1,7 +1,9 @@
-import block from 'Component/block';
-import { I, C, S, U, J, focus, analytics, Renderer, Preview, Storage, translate, Mapper, keyboard, Relation, Survey } from 'Lib';
 
-const Diff = require('diff');
+
+import * as Diff from 'diff';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 class Action {
 
@@ -252,7 +254,7 @@ class Action {
 		if (isDangerous || (!Storage.get(storageKey) && !isAllowed)) {
 			S.Popup.open('confirm', {
 				data: {
-					icon: 'confirm',
+					iconParam: { name: 'popup/header/confirm', color: 'orange' },
 					title: translate('popupConfirmOpenExternalLinkTitle'),
 					text: U.String.sprintf(translate('popupConfirmOpenExternalLinkText'), U.String.shorten(url, 120)),
 					textConfirm: translate('commonYes'),
@@ -281,28 +283,30 @@ class Action {
 	 * @param {string} route - The route context for analytics.
 	 */
 	openFile (object: any, route: string) {
-		if (object._empty_) {
+		if (object._empty_ || S.Common.isDownloading(object.id)) {
 			return;
 		};
 
 		const ext = String(object.fileExt || '').toLowerCase();
 		const cb = () => {
+			S.Common.downloadStart(object.id);
 			C.FileDownload(object.id, U.Common.getElectron().downloadPath(), (message: any) => {
+				S.Common.downloadDone(object.id);
 				if (message.path) {
 					this.openPath(message.path);
 					analytics.event('OpenMedia', { route });
 				};
 			});
 		};
-		const isDangerous = !ext || [ 
-			'exe', 'bat', 'cmd', 'com', 'cpl', 'scr', 'msi', 'msp', 'pif', 'reg', 'vbs', 'vbe', 'ws', 'wsf', 'wsh', 'ps1', 'jar', 
+		const isDangerous = !ext || [
+			'exe', 'bat', 'cmd', 'com', 'cpl', 'scr', 'msi', 'msp', 'pif', 'reg', 'vbs', 'vbe', 'ws', 'wsf', 'wsh', 'ps1', 'jar',
 			'app', 'action', 'command', 'csh', 'osx', 'scpt', 'workflow', 'bin', 'ksh', 'out', 'run', 'sh', 'docm', 'xlsm', 'pptm',
 		].includes(ext);
 
 		if (isDangerous) {
 			S.Popup.open('confirm', {
 				data: {
-					icon: 'confirm',
+					iconParam: { name: 'popup/header/confirm', color: 'orange' },
 					title: translate('popupConfirmOpenExternalFileTitle'),
 					text: U.String.sprintf(translate('popupConfirmOpenExternalFileText'), U.Object.name(object)),
 					textConfirm: translate('commonYes'),
@@ -321,14 +325,22 @@ class Action {
 	 * @param {boolean} isImage - Whether to treat the file as an image.
 	 */
 	downloadFile (id: string, route: string, isImage: boolean) {
-		if (!id) {
+		if (!id || S.Common.isDownloading(id)) {
 			return;
 		};
-		
+
 		const url = isImage ? S.Common.imageUrl(id, 0) : S.Common.fileUrl(id);
 
 		this.openDirectoryDialog({ buttonLabel: translate('commonDownload') }, paths => {
-			Renderer.send('download', url, { directory: paths[0] });
+			S.Common.downloadStart(id);
+
+			const promise = Renderer.send('download', url, { directory: paths[0] });
+			if (promise && promise.then) {
+				promise.then(() => S.Common.downloadDone(id));
+			} else {
+				S.Common.downloadDone(id);
+			};
+
 			analytics.event('DownloadMedia', { route });
 		});
 	};
@@ -426,7 +438,14 @@ class Action {
 						if (isPopup) {
 							S.Popup.close('page');
 						} else {
-							U.Space.openDashboard();
+							const history = U.Router.history;
+							const prev = history.entries[history.index - 1];
+
+							if (prev) {
+								history.goBack();
+							} else {
+								U.Space.openDashboard();
+							};
 						};
 					};
 
@@ -450,7 +469,11 @@ class Action {
 				return;
 			};
 
-			Preview.toastShow({ action: I.ToastAction.Archive, ids });
+			ids.forEach(id => {
+				S.Detail.update(id, { id, details: { isArchived: true } }, false);
+			});
+
+			Preview.toastShow({ action: I.ToastAction.Archive, ids, autoArchivedIds: message.autoArchivedIds || [] });
 			analytics.event('MoveToBin', { route, count: ids.length });
 			callBack?.();
 		});
@@ -464,10 +487,9 @@ class Action {
 		};
 
 		ids.forEach((id) => {
-			const object = S.Detail.get(rootId, id);
-
-			if (U.Object.isTypeLayout(object.layout)){
-				types.push(object);
+			const type = S.Record.getTypeById(id);
+			if (type) {
+				types.push(type);
 			};
 		});
 
@@ -514,7 +536,11 @@ class Action {
 				return;
 			};
 
-			Preview.toastShow({ action: I.ToastAction.Restore, ids });
+			ids.forEach(id => {
+				S.Detail.update(id, { id, details: { isArchived: false } }, false);
+			});
+
+			Preview.toastShow({ action: I.ToastAction.Restore, ids, autoRestoredIds: message.autoRestoredIds || [] });
 			callBack?.();
 			analytics.event('RestoreFromBin', { route, count: ids.length });
 		});
@@ -670,13 +696,33 @@ class Action {
 	};
 
 	/**
-	 * Creates a new space with the given UX type and route.
-	 * @param {I.SpaceUxType} uxType - The UX type for the new space.
+	 * Opens the space creation popup with the selected create type.
+	 * @param {I.SpaceCreateType} type - The selected create type (Personal, Group, Join).
 	 * @param {string} route - The route context for analytics.
 	 */
-	createSpace (uxType: I.SpaceUxType, route: string) {
+	createSpace (type: I.SpaceCreateType, route: string) {
+		if (type == I.SpaceCreateType.Group) {
+			const mySharedSpaces = U.Space.getMySharedSpacesList();
+			const { sharedSpacesLimit } = U.Space.getProfile();
+
+			if (sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit)) {
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'popup/header/warning', color: 'grey' },
+						title: translate('popupConfirmSharedSpaceLimitTitle'),
+						text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+						textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+						canCancel: false,
+						onConfirm: () => this.openSettings('membership', ''),
+					},
+				});
+				analytics.event('ScreenHitShareSpaceLimit');
+				return;
+			};
+		};
+
 		S.Popup.closeAll(null, () => {
-			S.Popup.open('spaceCreate', { data: { uxType, route } });
+			S.Popup.open('spaceCreate', { data: { type, route } });
 		});
 	};
 
@@ -714,7 +760,7 @@ class Action {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'confirm',
+				iconParam: { name: 'popup/header/confirm', color: 'orange' },
 				title,
 				text,
 				textConfirm: confirm,
@@ -791,6 +837,10 @@ class Action {
 	 * @param {string} [route] - The route context for analytics.
 	 */
 	createWidgetFromObject (rootId: string, objectId: string, targetId: string, position: I.BlockPosition, route?: string) {
+		this.createWidgetFromObjectIn(S.Block.widgets, rootId, objectId, targetId, position, route);
+	};
+
+	createWidgetFromObjectIn (contextId: string, rootId: string, objectId: string, targetId: string, position: I.BlockPosition, route?: string) {
 		const object = S.Detail.get(rootId, objectId);
 
 		let layout = I.WidgetLayout.Link;
@@ -798,7 +848,7 @@ class Action {
 		if (object && !object._empty_) {
 			if (U.Object.isInFileOrSystemLayouts(object.layout) || U.Object.isDateLayout(object.layout)) {
 				layout = I.WidgetLayout.Link;
-			} else 
+			} else
 			if (U.Object.isInSetLayouts(object.layout)) {
 				layout = I.WidgetLayout.View;
 			} else
@@ -808,12 +858,12 @@ class Action {
 		};
 
 		const limit = Number(U.Menu.getWidgetLimitOptions(layout)[0]?.id) || 0;
-		const newBlock = { 
+		const newBlock = {
 			type: I.BlockType.Link,
 			content: { targetBlockId: objectId },
 		};
 
-		C.BlockCreateWidget(S.Block.widgets, targetId, newBlock, position, layout, limit, (message: any) => {
+		C.BlockCreateWidget(contextId, targetId, newBlock, position, layout, limit, () => {
 			analytics.createWidget(layout, route);
 		});
 	};
@@ -883,6 +933,101 @@ class Action {
 		};
 	};
 
+	togglePersonalWidgetsForObject (objectId: string, route?: string) {
+		const personalId = U.Object.getPersonalWidgetsId();
+		const list = S.Block.getWidgetsForTargetIn(objectId, personalId);
+
+		if (list.length) {
+			C.BlockListDelete(personalId, list.map(it => it.id));
+		} else {
+			this.createWidgetFromObjectIn(personalId, personalId, objectId, '', I.BlockPosition.InnerFirst, route);
+		};
+	};
+
+	savePendingMembers (spaceId: string, identities: string[]) {
+		const existing = Storage.getSpaceKey('pendingMembers', false, spaceId) || [];
+		const merged = [ ...new Set([ ...existing, ...identities ]) ];
+
+		Storage.setSpaceKey('pendingMembers', merged, false, spaceId);
+	};
+
+	getPendingMembers (spaceId: string): string[] {
+		return Storage.getSpaceKey('pendingMembers', false, spaceId) || [];
+	};
+
+	processPendingMembers (retryCount: number = 0) {
+		const spaceData = Storage.getSpace(false);
+		const entries: { spaceId: string; identities: string[] }[] = [];
+
+		for (const spaceId in spaceData) {
+			const identities = spaceData[spaceId]?.pendingMembers;
+
+			if (identities?.length) {
+				entries.push({ spaceId, identities });
+				Storage.deleteSpaceKey('pendingMembers', false, spaceId);
+			};
+		};
+
+		if (!entries.length) {
+			return;
+		};
+
+		const { writersLimit } = U.Space.getTierLimits();
+		const maxRetries = 5;
+		const failed: { spaceId: string; identities: string[] }[] = [];
+
+		let processed = 0;
+		const total = entries.length;
+
+		const onProcessed = () => {
+			processed++;
+
+			if (processed < total) {
+				return;
+			};
+
+			if (failed.length && (retryCount < maxRetries)) {
+				failed.forEach(it => this.savePendingMembers(it.spaceId, it.identities));
+
+				const delay = Math.min(5000 * Math.pow(2, retryCount), 30000);
+
+				window.setTimeout(() => this.processPendingMembers(retryCount + 1), delay);
+			};
+		};
+
+		entries.forEach(({ spaceId, identities }) => {
+			C.SpaceMakeShareable(spaceId, (message: any) => {
+				if (message.error.code) {
+					failed.push({ spaceId, identities });
+					onProcessed();
+					return;
+				};
+
+				C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+					if (message.error.code) {
+						failed.push({ spaceId, identities });
+						onProcessed();
+						return;
+					};
+
+					const writerIdentities = identities.slice(0, writersLimit);
+					const readerIdentities = identities.slice(writersLimit);
+
+					if (writerIdentities.length) {
+						C.SpaceParticipantsAddList(spaceId, writerIdentities, I.ParticipantPermissions.Writer);
+					};
+
+					if (readerIdentities.length) {
+						C.SpaceParticipantsAddList(spaceId, readerIdentities, I.ParticipantPermissions.Reader);
+					};
+
+					analytics.event('AddMember', { count: identities.length });
+					onProcessed();
+				});
+			});
+		});
+	};
+
 	membershipUpgrade (event?: any) {
 		const product = S.Membership.data?.getTopProduct();
 		if (!product) {
@@ -895,7 +1040,7 @@ class Action {
 					title: translate('popupConfirmMembershipUpgradeTitle'),
 					text: translate('popupConfirmMembershipUpgradeText'),
 					textConfirm: translate('popupConfirmMembershipUpgradeButton'),
-					onConfirm: () => keyboard.onMembershipUpgradeViaEmail(),
+					onConfirm: () => this.openSettings('membership', ''),
 					canCancel: false
 				}
 			});
@@ -938,6 +1083,31 @@ class Action {
 		});
 
 		analytics.event('ScreenRevokeShareLink');
+	};
+
+	/**
+	 * Opens a confirmation popup to remove an active member from a space.
+	 * Reused by the Members settings screen and the participant menu.
+	 * @param {string} spaceId - The space ID.
+	 * @param {any} item - The participant object ({ identity }).
+	 * @param {function} [callBack] - Optional callback invoked after removal is dispatched.
+	 */
+	memberRemove (spaceId: string, item: any, callBack?: () => void) {
+		S.Popup.open('confirm', {
+			data: {
+				iconParam: { name: 'popup/header/error', color: 'red' },
+				title: translate('popupConfirmMemberRemoveTitle'),
+				text: translate('popupConfirmMemberRemoveText'),
+				textConfirm: translate('commonRemove'),
+				colorConfirm: 'red',
+				onConfirm: () => {
+					C.SpaceParticipantRemove(spaceId, [ item.identity ]);
+
+					analytics.event('RemoveSpaceMember');
+					callBack?.();
+				},
+			},
+		});
 	};
 
 	/**
@@ -1003,7 +1173,7 @@ class Action {
 				S.Popup.open('confirm', {
 					onClose: callBack,
 					data: {
-						icon: 'warning',
+						iconParam: { name: 'popup/header/warning', color: 'orange' },
 						title: translate('popupConfirmDiskSpaceTitle'),
 						text: translate('popupConfirmDiskSpaceText'),
 						textConfirm: translate('commonOkay'),
@@ -1083,7 +1253,7 @@ class Action {
 
 	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, route: string, callBack?: (message: any) => void) {
 		C.PushNotificationSetForceModeIds(spaceId, ids, mode, callBack);
-		analytics.event('ChangeMessageNotificationState', { type: mode, uxType: I.SpaceUxType.Data, route });
+		analytics.event('ChangeMessageNotificationState', { type: mode, spaceType: I.SpaceType.Data, route });
 	};
 
 	/**
@@ -1121,7 +1291,7 @@ class Action {
 			S.Popup.replace('membershipFinalization', 'confirm', {
 				onClose: () => callBack?.(),
 				data: {
-					icon: 'emoji',
+					iconParam: { name: 'popup/header/emoji', width: 232, height: 52 },
 					title,
 					text: translate('popupConfirmMembershipSurveyText'),
 					colorConfirm: 'accent',
@@ -1141,16 +1311,9 @@ class Action {
 		});
 	};
 
-	openSpaceTab (spaceId: string, uxType: I.SpaceUxType, analyticsRoute?: string) {
-		const route = U.Router.build({
-			page: 'main',
-			action: 'void',
-			id: 'dashboard',
-			spaceId,
-		});
-
-		Renderer.send('openTab', { route }, { setActive: false });
-		analytics.event('AddTab', { route: analyticsRoute, uxType });
+	openSpaceTab (spaceId: string, spaceType: I.SpaceType, analyticsRoute?: string) {
+		Renderer.send('openTab', { spaceId, spaceType }, { setActive: false });
+		analytics.event('AddTab', { route: analyticsRoute, spaceType });
 	};
 
 };

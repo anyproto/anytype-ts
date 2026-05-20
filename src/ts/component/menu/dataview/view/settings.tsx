@@ -1,12 +1,10 @@
-import React, { forwardRef, useRef, useImperativeHandle, useEffect, useState } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, C, S, U, J, analytics, keyboard, Key, translate, Dataview } from 'Lib';
+import React, { forwardRef, useRef, useImperativeHandle, useEffect, } from 'react';
 import { InputWithLabel, MenuItemVertical } from 'Component';
+import * as I from 'Interface';
 
-const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuViewSettings = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close, getId, setActive, setHover, onKeyDown, getSize } = props;
+	const { param, close, setActive, setHover, onKeyDown, getSize, position } = props;
 	const { data } = param;
 	const { rootId, blockId, onSave, readonly, loadData, getView, getSources, onSelect, isInline, getTarget } = data;
 	const nameRef = useRef(null);
@@ -39,14 +37,20 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		window.setTimeout(() => nameRef.current?.focus(), 15);
 	};
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		keydownHandler.current = (e: any) => onKeyDownHandler(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const setName = () => {
@@ -125,8 +129,10 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const views = S.Record.getViews(rootId, blockId);
 		const view = data.view.get();
 		const isBoard = view.type == I.ViewType.Board;
-		const sortCnt = view.sorts.length;
-		const filterCnt = U.Common.getViewFilters(view).length;
+		const filters = Dataview.getFilteredFilters(view.filters);
+		const sorts = Dataview.getFilteredSorts(view.sorts);
+		const sortCnt = sorts.length;
+		const filterCnt = filters.length;
 		const relations = view.getVisibleRelations().map(it => it.relation.name).filter(it => it);
 		const relationCnt = relations.slice(0, 2);
 
@@ -152,8 +158,8 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		if (view.id && !isReadonly) {
 			sections.push({
 				id: 'actions', children: [
-					{ id: 'copy', icon: 'copy', name: translate('menuDataviewViewEditDuplicateView') },
-					(views.length > 1 ? { id: 'remove', icon: 'remove', name: translate('menuDataviewViewEditRemoveView') } : null),
+					{ id: 'copy', iconParam: { name: 'menu/action/duplicate' }, name: translate('menuDataviewViewEditDuplicateView') },
+					(views.length > 1 ? { id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('menuDataviewViewEditRemoveView') } : null),
 				]
 			});
 		};
@@ -299,7 +305,7 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	return (
 		<div>
-			<div className="filter isName">
+			<div className="inputWrapper isName">
 				<InputWithLabel
 					ref={nameRef}
 					value={view.name}
@@ -320,6 +326,6 @@ const MenuViewSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default MenuViewSettings;

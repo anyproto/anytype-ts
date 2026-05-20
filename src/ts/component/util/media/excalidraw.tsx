@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Excalidraw } from '@excalidraw/excalidraw';
-import { observer } from 'mobx-react';
-import { S, keyboard } from 'Lib';
+import { keyboard } from 'Lib/keyboard';
 
 interface Props {
 	data?: any;
@@ -9,7 +8,7 @@ interface Props {
 	onChange?: (elements: any[], appState: any, files: any) => void;
 }
 
-const MediaExcalidraw = observer(forwardRef<{}, Props>(({
+const MediaExcalidraw = forwardRef<{}, Props>(({
 	data = {},
 	readonly = false,
 	onChange = () => {},
@@ -27,9 +26,9 @@ const MediaExcalidraw = observer(forwardRef<{}, Props>(({
 			};
 		};
 
-		window.addEventListener('mousedown', onMouseDown);
+		U.Dom.addEvent(window, 'mousedown', onMouseDown);
 		return () => {
-			window.removeEventListener('mousedown', onMouseDown);
+			U.Dom.removeEvent(window, 'mousedown', onMouseDown);
 			keyboard.setFocus(false);
 		};
 	}, []);
@@ -37,6 +36,7 @@ const MediaExcalidraw = observer(forwardRef<{}, Props>(({
 	data.elements = data.elements || [];
 	data.appState = data.appState || {};
 	data.appState.collaborators = new Map();
+	data.appState.viewBackgroundColor = J.Theme[theme]?.graph?.bg || '#ffffff';
 
 	return (
 		<div
@@ -60,6 +60,10 @@ const MediaExcalidraw = observer(forwardRef<{}, Props>(({
 					onChange(elements as any[], appState, files);
 				}}
 				theme={(theme ? 'dark' : 'light')}
+				validateEmbeddable={(url: string | URL) => {
+					const s = typeof url === 'string' ? url : url.toString();
+					return s.startsWith('anytype://') || /^https?:\/\/object\.any\.coop(\/|$|\?)/.test(s);
+				}}
 				UIOptions={{
 					tools: {
 						image: false,
@@ -69,6 +73,6 @@ const MediaExcalidraw = observer(forwardRef<{}, Props>(({
 		</div>
 	);
 
-}));
+});
 
 export default MediaExcalidraw;

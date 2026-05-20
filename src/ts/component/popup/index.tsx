@@ -1,9 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, analytics, Storage, Preview, translate, sidebar, Renderer } from 'Lib';
 import { Dimmer } from 'Component';
-import { observer } from 'mobx-react';
 import DimmerWithGraph from './dimmerWithGraph';
 
 import PopupSettingsOnboarding from './settings/onboarding';
@@ -27,14 +24,18 @@ import PopupMembershipActivation from './membership/activation';
 import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
 import PopupSpaceCreate from './space/create';
-import PopupSpaceJoinByLink from './space/joinByLink';
+import PopupSpaceHome from './space/home';
 import PopupLogout from './logout';
 import PopupOnboarding from './onboarding';
 import PopupApiCreate from './api/create';
 import PopupAIOnboarding from './aiOnboarding';
 import PopupIntroduceChats from './introduceChats';
+import PopupUpload from './upload';
+import PopupSubmitReport from './submitReport';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
-const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const Popup = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { id, param } = props;
 	const { onOpen } = param;
@@ -74,16 +75,22 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
+	const resizeHandler = useRef<() => void>(null);
+
 	const rebind = () => {
 		unbind();
 
 		if (!param.preventResize) {
-			$(window).on(`resize.popup${id}`, () => position());
+			resizeHandler.current = () => position();
+			U.Dom.addEvent(window, 'resize', resizeHandler.current);
 		};
 	};
 
 	const unbind = () => {
-		$(window).off(`resize.popup${id}`);
+		if (resizeHandler.current) {
+			U.Dom.removeEvent(window, 'resize', resizeHandler.current);
+			resizeHandler.current = null;
+		};
 	};
 
 	const animate = () => {
@@ -94,7 +101,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 
 			isAnimatingRef.current = true;
 
-			$(nodeRef.current).addClass('show');
+			U.Dom.addClass(nodeRef.current, 'show');
 			window.setTimeout(() => { isAnimatingRef.current = false; }, S.Popup.getTimeout());
 		});
 	};
@@ -103,12 +110,19 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		childRef.current?.beforePosition?.();
 
 		raf(() => {
-			const node = $(nodeRef.current);
-			const inner = node.find('.innerWrap');
-			const { ww } = U.Common.getWindowDimensions();
+			const node = nodeRef.current;
+			if (!node) {
+				return;
+			};
 
-			const width = inner.outerWidth();
-			const height = inner.outerHeight();
+			const inner = U.Dom.select('.innerWrap', node);
+			if (!inner) {
+				return;
+			};
+
+			const { ww } = U.Dom.getWindowDimensions();
+			const width = inner.offsetWidth;
+			const height = inner.offsetHeight;
 
 			let sw = 0;
 			if (S.Popup.noDimmerIds().includes(id)) {
@@ -120,7 +134,7 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				x -= sw / 2;
 			};
 
-			inner.css({ left: x, marginTop: -height / 2, });
+			U.Dom.css(inner, { left: `${x}px`, marginTop: `${-height / 2}px` });
 		});
 	};
 
@@ -171,12 +185,14 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		membershipFinalization:  PopupMembershipFinalization,
 		share:					 PopupShare,
 		spaceCreate:			 PopupSpaceCreate,
-		spaceJoinByLink:		 PopupSpaceJoinByLink,
+		spaceHome:				 PopupSpaceHome,
 		logout: 				 PopupLogout,
 		onboarding:				 PopupOnboarding,
 		apiCreate:				 PopupApiCreate,
 		aiOnboarding:			 PopupAIOnboarding,
 		introduceChats:			 PopupIntroduceChats,
+		upload:					 PopupUpload,
+		submitReport:			 PopupSubmitReport,
 	};
 	
 	const popupId = getId();
@@ -225,6 +241,6 @@ const Popup = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default Popup;

@@ -1,8 +1,5 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, C, S, U, J, keyboard, focus, Storage, Preview, Mark, translate, Action } from 'Lib';
 import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject, Loader } from 'Component';
 
 import BlockDataview from './dataview';
@@ -27,6 +24,9 @@ import BlockPdf from './media/pdf';
 import BlockLoader from './media/loader';
 
 import BlockEmbed from './embed';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.BlockComponent {
 	css?: any;
@@ -40,15 +40,17 @@ interface Ref {
 
 const SNAP = 0.01;
 
-const Block = observer(forwardRef<Ref, Props>((props, ref) => {
+const Block = forwardRef<Ref, Props>((props, ref) => {
 
 	const { 
-		rootId, css, className, block, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
+		rootId, css, className, block, index, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
 		isContextMenuDisabled, blockRemove, getWrapperWidth,
 	} = props;
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const idsRef = useRef<string[]>([]);
+	const mouseMoveHandlerRef = useRef<((e: globalThis.MouseEvent) => void) | null>(null);
+	const mouseUpHandlerRef = useRef<((e: globalThis.MouseEvent) => void) | null>(null);
 
 	useEffect(() => {
 		const { focused } = focus.state;
@@ -128,20 +130,20 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 	
 	const onMenuClick = () => {
 		const selection = S.Common.getRef('selectionProvider');
-		const element = $(`#button-block-menu-${block.id}`);
+		const element = U.Dom.get(`button-block-menu-${block.id}`);
 
-		if (!element.length) {
+		if (!element) {
 			return;
 		};
 
-		const offset = element.offset();
+		const rect = element.getBoundingClientRect();
 
 		selection.set(I.SelectType.Block, idsRef.current);
 
 		menuOpen({
 			horizontal: I.MenuDirection.Right,
-			offsetX: element.outerWidth(),
-			rect: { x: offset.left, y: keyboard.mouse.page.y, width: element.width(), height: 0 },
+			offsetX: element.offsetWidth,
+			rect: { x: rect.left, y: keyboard.mouse.page.y, width: U.Dom.contentWidth(element), height: 0 },
 		});
 	};
 
@@ -156,7 +158,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		};
 
 		// Allow native context menu (spellcheck) when clicking on links
-		if ($(e.target).closest('.markupLink').length) {
+		if ((e.target as HTMLElement)?.closest('.markupLink')) {
 			return;
 		};
 
@@ -205,9 +207,15 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		const data = param?.data || {};
 
 		// Hide block menus and plus button
-		$('#button-block-add').removeClass('show');
-		$('.block.showMenu').removeClass('showMenu');
-		$('.block.isAdding').removeClass('isAdding top bottom');
+		const pageContainer = U.Dom.getPageFlexContainer(keyboard.isPopup());
+		const addBtn = U.Dom.get('button-block-add');
+		if (addBtn) U.Dom.removeClass(addBtn, 'show');
+		U.Dom.selectAll('.block.showMenu', pageContainer).forEach(el => U.Dom.removeClass(el, 'showMenu'));
+		U.Dom.selectAll('.block.isAdding', pageContainer).forEach(el => {
+			U.Dom.removeClass(el, 'isAdding');
+			U.Dom.removeClass(el, 'top');
+			U.Dom.removeClass(el, 'bottom');
+		});
 
 		const menuParam: Partial<I.MenuParam> = {
 			classNameWrap: 'fromBlock',
@@ -244,71 +252,80 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		};
 
 		const selection = S.Common.getRef('selectionProvider');
-		const win = $(window);
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const prevBlockId = childrenIds[index - 1];
-		const offset = (prevBlockId ? node.find(`#block-${U.Common.esc(prevBlockId)}`).offset().left : 0) + J.Size.blockMenu;
-		
+		const prevBlockEl = prevBlockId && node ? U.Dom.select(`#block-${U.Common.esc(prevBlockId)}`, node) : null;
+		const offset = (prevBlockEl ? prevBlockEl.getBoundingClientRect().left : 0) + J.Size.blockMenu;
+
 		selection?.clear();
 
 		unbind();
-		node.addClass('isResizing');
-		$('body').addClass('colResize');
-		
+		U.Dom.addClass(node, 'isResizing');
+		U.Dom.addClass(document.body, 'colResize');
+
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
-		
-		node.find('.colResize.active').removeClass('active');
-		node.find(`.colResize.c${index}`).addClass('active');
-		
-		win.on('mousemove.block', e => onResize(e, index, offset));
-		win.on('mouseup.block', e => onResizeEnd(e, index, offset));
+
+		if (node) {
+			U.Dom.selectAll('.colResize.active', node).forEach(el => U.Dom.removeClass(el, 'active'));
+			const colResize = U.Dom.select(`.colResize.c${index}`, node);
+			if (colResize) U.Dom.addClass(colResize, 'active');
+		};
+
+		mouseMoveHandlerRef.current = (e: globalThis.MouseEvent) => onResize(e, index, offset);
+		mouseUpHandlerRef.current = (e: globalThis.MouseEvent) => onResizeEnd(e, index, offset);
+		U.Dom.addEvents(window, [
+			['mousemove', mouseMoveHandlerRef.current],
+			['mouseup', mouseUpHandlerRef.current],
+		]);
 	};
 
 	const onResize = (e: any, index: number, offset: number) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
+
 		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
 
 		if (childrenIds.length < 2) {
 			return;
 		};
-		
-		const node = $(nodeRef.current);
+
+		const node = nodeRef.current;
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
-		
-		const prevNode = node.find(`#block-${U.Common.esc(prevBlockId)}`);
-		const currentNode = node.find(`#block-${U.Common.esc(currentBlockId)}`);
+
+		const prevNode = node ? U.Dom.select(`#block-${U.Common.esc(prevBlockId)}`, node) : null;
+		const currentNode = node ? U.Dom.select(`#block-${U.Common.esc(currentBlockId)}`, node) : null;
 		const res = calcWidth(e.pageX - offset, index);
 
 		if (!res) {
 			return;
 		};
-		
+
 		const w1 = res.percent * res.sum;
 		const w2 = (1 - res.percent) * res.sum;
-		
-		prevNode.css({ width: w1 * 100 + '%' });
-		currentNode.css({ width: w2 * 100 + '%' });
+
+		if (prevNode) U.Dom.css(prevNode, { width: w1 * 100 + '%' });
+		if (currentNode) U.Dom.css(currentNode, { width: w2 * 100 + '%' });
 	};
 
 	const onResizeEnd = (e: any, index: number, offset: number) => {
 		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const prevBlockId = childrenIds[index - 1];
 		const currentBlockId = childrenIds[index];
 		const res = calcWidth(e.pageX - offset, index);
 
 		unbind();
-		node.removeClass('isResizing');
-		$('body').removeClass('colResize');
+		U.Dom.removeClass(node, 'isResizing');
+		U.Dom.removeClass(document.body, 'colResize');
 
 		keyboard.setResize(false);
-		keyboard.disableSelection(false);	
-		
-		node.find('.colResize.active').removeClass('active');
+		keyboard.disableSelection(false);
+
+		if (node) {
+			U.Dom.selectAll('.colResize.active', node).forEach(el => U.Dom.removeClass(el, 'active'));
+		};
 
 		if (res) {
 			C.BlockListSetFields(rootId, [
@@ -355,43 +372,53 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		if (keyboard.isDragging || keyboard.isResizing || readonly || !block.isLayoutRow()) {
 			return;
 		};
-		
+
 		const sm = J.Size.blockMenu;
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const childrenIds = S.Block.getChildrenIds(rootId, block.id);
 		const length = childrenIds.length;
 		const children = S.Block.getChildren(rootId, block.id);
-		const rect = U.Common.getElementRect(node.get(0));
+		const rect = U.Dom.getElementRect(node);
 		const { x, width } = rect;
 		const p = e.pageX - x - sm;
 
 		let c = 0;
 		let num = 0;
 
-		for (const i in children) {
+		for (let i = 0; i < children.length; i++) {
 			const child = children[i];
 
 			c += child.fields.width || 1 / length;
 			if ((p >= c * width - sm / 2) && (p <= c * width + sm / 2)) {
-				num = Number(i) + 1;
+				num = i + 1;
 				break;
 			};
 		};
 
-		node.find('.colResize.active').removeClass('active');
-		if (num) {
-			node.find(`.colResize.c${num}`).addClass('active');
+		if (node) {
+			U.Dom.selectAll('.colResize.active', node).forEach(el => U.Dom.removeClass(el, 'active'));
+			if (num) {
+				const colResize = U.Dom.select(`.colResize.c${num}`, node);
+				if (colResize) U.Dom.addClass(colResize, 'active');
+			};
 		};
 	};
 	
 	const onMouseLeaveHandler = (e: any) => {
 		if (!keyboard.isResizing) {
-			$('.colResize.active').removeClass('active');
+			U.Dom.selectAll('.colResize.active', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'active'));
 		};
 	};
 	
 	const unbind = () => {
-		$(window).off('mousemove.block mouseup.block');
+		if (mouseMoveHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
+			mouseMoveHandlerRef.current = null;
+		};
+		if (mouseUpHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
+			mouseUpHandlerRef.current = null;
+		};
 	};
 	
 	const onEmptyColumn = () => {
@@ -413,33 +440,31 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const renderLinks = (rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any) => {
-		node = $(node);
+		if (!node) return;
 		param = param || {};
 
 		const { readonly } = props;
-		const items = node.find(Mark.getTag(I.MarkType.Link));
+		const items = U.Dom.selectAll(Mark.getTag(I.MarkType.Link), node);
 		const subId = param.subId || rootId;
 
 		if (!items.length) {
 			return;
 		};
 
-		items.each((i: number, item: any) => {
-			item = $(item);
-
-			item.off('click.link').on('click.link', e => {
+		items.forEach((item: HTMLElement) => {
+			item.onclick = (e: Event) => {
 				e.preventDefault();
-			});
+			};
 
-			item.off('mousedown.link').on('mousedown.link', e => {
+			item.onmousedown = (e: MouseEvent) => {
 				if (e.button == 2) {
 					return;
 				};
 
 				e.preventDefault();
 
-				const item = $(e.currentTarget);
-				const url = String(item.attr('href') || '');
+				const el = e.currentTarget as HTMLElement;
+				const url = String(el.getAttribute('href') || '');
 				const { isInside, target, spaceId, messageId } = U.Common.getLinkParamFromUrl(url);
 
 				const openObject = (id: string, spaceId: string) => {
@@ -487,22 +512,22 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 				};
 
 				Action.openUrl(target);
-			});
+			};
 
-			item.off('mouseenter.link').on('mouseenter.link', e => {
-				const sr = U.Common.getSelectionRange();
+			item.onmouseenter = (e: MouseEvent) => {
+				const sr = U.Dom.getSelectionRange();
 				if (sr && !sr.collapsed) {
 					return;
 				};
 
-				const item = $(e.currentTarget);
-				const url = String(item.attr('href') || '');
+				const item = e.currentTarget as HTMLElement;
+				const url = String(item.getAttribute('href') || '');
 
 				if (!url) {
 					return;
 				};
 
-				const range = String(item.attr('data-range') || '').split('-');
+				const range = String(item.getAttribute('data-range') || '').split('-');
 				const { target, spaceId, isInside } = U.Common.getLinkParamFromUrl(url);
 
 				const cb = (object) => {
@@ -536,36 +561,34 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 					type = I.PreviewType.Link;
 					cb(object);
 				};
-			});
+			};
 		});
 	};
 
 	const renderMentions = (rootId: string, node: any, marks: I.Mark[], getValue: () => string, param?: any) => {
-		node = $(node);
+		if (!node) return;
 		param = param || {};
 
 		const size = param.iconSize || U.Data.emojiParam(block.content.style);
-		const items = node.find(Mark.getTag(I.MarkType.Mention));
+		const items = U.Dom.selectAll(Mark.getTag(I.MarkType.Mention), node);
 		const subId = param.subId || rootId;
 
 		if (!items.length) {
 			return;
 		};
 
-		items.each((i: number, item: any) => {
-			item = $(item);
-			
-			const smile = item.find('smile');
-			if (!smile.length) {
+		items.forEach((item: HTMLElement, i: number) => {
+			const smile = U.Dom.select('smile', item);
+			if (!smile) {
 				return;
 			};
 
-			const range = String(item.attr('data-range') || '').split('-');
-			const target = String(item.attr('data-param') || '');
+			const range = String(item.getAttribute('data-range') || '').split('-');
+			const target = String(item.getAttribute('data-param') || '');
 			const object = S.Detail.get(subId, target, []);
 			const { id, _empty_, layout, done, isDeleted, isArchived } = object;
 			const isTask = U.Object.isTaskLayout(layout);
-			const name = item.find('name');
+			const name = U.Dom.select('name', item);
 			const clickable = isTask ? name : item;
 
 			let icon = null;
@@ -586,99 +609,105 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 				);
 			};
 
-			item.removeClass('disabled isDone');
+			U.Dom.removeClass(item, 'disabled');
+			U.Dom.removeClass(item, 'isDone');
 
 			if (_empty_ || isDeleted) {
-				item.addClass('disabled');
+				U.Dom.addClass(item, 'disabled');
 			};
 
 			if ((layout == I.ObjectLayout.Task) && done) {
-				item.addClass('isDone');
+				U.Dom.addClass(item, 'isDone');
 			};
 
 
-			const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
+			const container = smile as HTMLElement & { _reactRoot?: Root };
 			const root = container._reactRoot || createRoot(container);
 
 			container._reactRoot = root;
 			root.render(icon);
 
-			item.addClass(`withImage c${size}`);
+			U.Dom.addClass(item, `withImage`);
+			U.Dom.addClass(item, `c${size}`);
 
-			if (!target || item.hasClass('disabled')) {
+			if (!target || U.Dom.hasClass(item, 'disabled')) {
 				return;
 			};
 
-			clickable.off('mousedown.mention').on('mousedown.mention', e => {
-				e.preventDefault();
-				U.Object.openEvent(e, object);
-			});
+			if (clickable) {
+				clickable.onmousedown = (e: Event) => {
+					e.preventDefault();
+					U.Object.openEvent(e, object);
+				};
 
-			clickable.off('mouseenter.mention').on('mouseenter.mention', e => {
-				const sr = U.Common.getSelectionRange();
-				if (sr && !sr.collapsed) {
+				if (param.withPreview === false) {
 					return;
 				};
 
-				Preview.previewShow({
-					target: object.id,
-					markType: I.MarkType.Mention,
-					object,
-					element: name,
-					range: { 
-						from: Number(range[0]) || 0,
-						to: Number(range[1]) || 0, 
-					},
-					noUnlink: true,
-					withPlural: true,
-					marks,
-					onChange: marks => setMarksCallback(getValue(), marks, param.onChange),
-				});
-			});
+				clickable.onmouseenter = (e: Event) => {
+					const sr = U.Dom.getSelectionRange();
+					if (sr && !sr.collapsed) {
+						return;
+					};
+
+					Preview.previewShow({
+						target: object.id,
+						markType: I.MarkType.Mention,
+						object,
+						element: name,
+						range: {
+							from: Number(range[0]) || 0,
+							to: Number(range[1]) || 0,
+						},
+						noUnlink: true,
+						withPlural: true,
+						marks,
+						onChange: marks => setMarksCallback(getValue(), marks, param.onChange),
+					});
+				};
+			};
 		});
 	};
 
 	const renderObjects = (rootId: string, node: any, marks: I.Mark[], getValue: () => string, props: any, param?: any) => {
-		node = $(node);
+		if (!node) return;
 		param = param || {};
 
 		const { readonly } = props;
-		const items = node.find(Mark.getTag(I.MarkType.Object));
+		const items = U.Dom.selectAll(Mark.getTag(I.MarkType.Object), node);
 		const subId = param.subId || rootId;
 
 		if (!items.length) {
 			return;
 		};
 
-		items.each((i: number, item: any) => {
-			item = $(item);
-
-			const param = item.attr('data-param');
-			const scheme = U.String.urlScheme(param);
+		items.forEach((item: HTMLElement) => {
+			const dataParam = item.getAttribute('data-param');
+			const scheme = U.String.urlScheme(dataParam);
 			const isRoute = scheme && (scheme == J.Constant.protocol);
-			
-			let id = param;
+
+			let id = dataParam;
 			let routeParam = null;
 
 			if (isRoute) {
-				routeParam = U.Router.getParam(param.replace(`${J.Constant.protocol}://`, ''));
+				routeParam = U.Router.getParam(dataParam.replace(`${J.Constant.protocol}://`, ''));
 				id = routeParam.id;
 			};
 
 			const object = S.Detail.get(subId, id, []);
-			const range = String(item.attr('data-range') || '').split('-');
+			const range = String(item.getAttribute('data-range') || '').split('-');
 
 			if (!id) {
 				return;
 			};
 
-			item.removeClass('disabled');
+			U.Dom.removeClass(item, 'disabled');
 
 			if (object._empty_ || object.isDeleted) {
-				item.addClass('disabled');
+				U.Dom.addClass(item, 'disabled');
 			};
 
-			item.off('mousedown.object').on('mousedown.object', e => {
+			item.onmousedown = (e: Event) => {
 				e.preventDefault();
 
 				object._routeParam_ = {};
@@ -687,12 +716,12 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 				};
 
 				U.Object.openEvent(e, object);
-			});
+			};
 
-			item.off('mouseleave.object').on('mouseleave.object', () => Preview.tooltipHide(false));
+			item.onmouseleave = () => Preview.tooltipHide(false);
 
-			item.off('mouseenter.object').on('mouseenter.object', () => {
-				const sr = U.Common.getSelectionRange();
+			item.onmouseenter = () => {
+				const sr = U.Dom.getSelectionRange();
 				const tt = object.isDeleted ? translate('commonDeletedObject') : '';
 
 				if (sr && !sr.collapsed) {
@@ -719,29 +748,27 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 					withPlural: true,
 					onChange: marks => setMarksCallback(getValue(), marks, param.onChange),
 				});
-			});
+			};
 		});
 	};
 
 	const renderEmoji = (node: any, param?: any) => {
-		node = $(node);
+		if (!node) return;
 		param = param || {};
 
-		const items = node.find(Mark.getTag(I.MarkType.Emoji));
+		const items = U.Dom.selectAll(Mark.getTag(I.MarkType.Emoji), node);
 		if (!items.length) {
 			return;
 		};
 
 		const size = param.iconSize || U.Data.emojiParam(block.content.style);
 
-		items.each((i: number, item: any) => {
-			item = $(item);
+		items.forEach((item: HTMLElement) => {
+			const id = item.getAttribute('data-param');
+			const smile = U.Dom.select('smile', item);
 
-			const id = item.attr('data-param');
-			const smile = item.find('smile');
-
-			if (smile.length) {
-				const container = smile.get(0) as HTMLElement & { _reactRoot?: Root };
+			if (smile) {
+				const container = smile as HTMLElement & { _reactRoot?: Root };
 				const root = container._reactRoot || createRoot(container);
 
 				container._reactRoot = root;
@@ -793,7 +820,6 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 	};
 
 	const { id, type, fields, content, bgColor } = block;
-	const index = props.index || '';
 
 	if (!id) {
 		return null;
@@ -810,8 +836,13 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 
 	const { style, checked } = content;
 	const root = S.Block.getLeaf(rootId, rootId);
-	const cn: string[] = [ 'block', U.Data.blockClass(block), `align${hAlign}`, `index${index}` ];
-	const cd: string[] = [ 'wrapContent' ];
+	const cn = [ 'block', U.Data.blockClass(block), `align${hAlign}` ];
+
+	if (undefined !== index) {
+		cn.push(`index${index}`);
+	};
+
+	const cd = [ 'wrapContent' ];
 	const key = [ 'block', block.id, 'component' ].join(' ');
 	const participantId = S.Block.getParticipantId(rootId, block.id);
 
@@ -908,7 +939,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			};
 
 			let hasContent = false;
-			if (!object.isDeleted && (content.state == I.FileState.Done)) {
+			if (!object.isDeleted && !object.isArchived && (content.state == I.FileState.Done)) {
 				cn.push('withContent');
 				hasContent = true;
 			};
@@ -1107,7 +1138,7 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		);
 	} else {
 		object = (
-			<div id={`selectionTarget-${id}`} className="selectionTarget">
+			<div id={(isSelectionDisabled || !canSelect) ? undefined : `selectionTarget-${id}`} className="selectionTarget">
 				{object}
 			</div>
 		);
@@ -1129,13 +1160,14 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 			{...U.Common.dataProps({ id })}
 		>
 			<div className="wrapMenu">
-				<Icon 
-					id={`button-block-menu-${id}`} 
-					className="dnd" 
-					draggable={true} 
-					onDragStart={onDragStart} 
-					onMouseDown={onMenuDown} 
-					onClick={onMenuClick} 
+				<Icon
+					id={`button-block-menu-${id}`}
+					name="block/menu"
+					className="commonDnd"
+					draggable={true}
+					onDragStart={onDragStart}
+					onMouseDown={onMenuDown}
+					onClick={onMenuClick}
 				/>
 				{participant ? <IconObject object={participant} size={24} iconSize={18} /> : ''}
 			</div>
@@ -1161,6 +1193,6 @@ const Block = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default Block;

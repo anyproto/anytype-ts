@@ -1,17 +1,15 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle, useRef } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { MenuItemVertical, Filter, ObjectType, ObjectName, EmptySearch } from 'Component';
-import { I, C, S, U, J, keyboard, Preview, analytics, Action, focus, translate } from 'Lib';
-
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 const LIMIT = 16;
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_SMALL = 28;
 const HEIGHT_ITEM_BIG = 56;
 const HEIGHT_DIV = 16;
 
-const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, onKeyDown, setActive, getId, position } = props;
 	const { data, menuKey } = param;
@@ -41,7 +39,6 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 	useEffect(() => {
 		rebind();
-		resize();
 		load(true);
 
 		return () => {
@@ -50,23 +47,18 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 	}, []);
 
 	useEffect(() => {
-		resize();
-		rebind();
-	});
-
-	useEffect(() => {
 		n.current = 0;
 		reload();
 	}, [ menuKey, filter ]);
 	
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getItems = () => {
@@ -80,18 +72,18 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 
 		if (canAdd && canWrite) {
 			let name = '';
-			let icon = 'plus';
+			let iconParam: any = { name: 'plus/menu' };
 			let arrow = false;
 
 			if (addParam) {
 				if (addParam.nameWithFilter && filter) {
 					name = U.String.sprintf(addParam.nameWithFilter, filter);
-				} else 
+				} else
 				if (addParam.name) {
 					name = addParam.name;
 				};
 				if (addParam.icon) {
-					icon = addParam.icon;
+					iconParam = { name: addParam.icon };
 				};
 				if (addParam.arrow) {
 					arrow = true;
@@ -107,7 +99,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					items.unshift({ isDiv: true });
 				};
 
-				items.unshift({ id: 'add', icon, name, arrow, isAdd: true });
+				items.unshift({ id: 'add', iconParam, name, arrow, isAdd: true });
 			};
 		};
 
@@ -205,6 +197,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			};
 
 			setDummy(dummy + 1);
+			position();
 		});
 	};
 
@@ -264,23 +257,17 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 					break;
 
 				case I.NavigationType.LinkTo:
-					const isCollection = U.Object.isCollectionLayout(target.layout);
-					const cb = (message: any) => {
-						if (message.error.code) {
-							return;
-						};
-
-						const action = isCollection ? I.ToastAction.Collection : I.ToastAction.Link;
-						const linkType = isCollection ? 'Collection' : 'Object';
-
-						Preview.toastShow({ action, objectId: blockId, targetId: target.id });
-						analytics.event('LinkToObject', { objectType: target.type, linkType });
-					};
-
-					if (isCollection) {
-						C.ObjectCollectionAdd(target.id, [ rootId ], cb);
+					if (U.Object.isCollectionLayout(target.layout)) {
+						Action.addToCollection(target.id, [ rootId ]);
 					} else {
-						C.BlockCreate(target.id, '', position, U.Data.getLinkBlockParam(blockId, object.layout, true), cb);
+						C.BlockCreate(target.id, '', position, U.Data.getLinkBlockParam(blockId, object.layout, true), (message: any) => {
+							if (message.error.code) {
+								return;
+							};
+
+							Preview.toastShow({ action: I.ToastAction.Link, objectId: blockId, targetId: target.id });
+							analytics.event('LinkToObject', { objectType: target.type, linkType: 'Object' });
+						});
 					};
 					break;
 			};
@@ -316,6 +303,16 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 				onBackspaceClose();
 			});
 		};
+
+		// Escape clears the filter first; only closes the menu when the filter is already empty
+		keyboard.shortcut('escape', e, () => {
+			if (v) {
+				e.preventDefault();
+				e.stopPropagation();
+				filterRef.current?.setValue('');
+				onFilterChange('');
+			};
+		});
 	};
 
 	const onFilterChange = (v: string) => {
@@ -349,9 +346,9 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		return h;
 	};
 
-	const resize = () => {
+	const beforePosition = () => {
 		const items = getItems().slice(0, LIMIT);
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 
 		let height = 16 + (noFilter ? 0 : 40);
 		if (!items.length) {
@@ -360,8 +357,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			height = items.reduce((res: number, current: any) => res + getRowHeight(current), height);
 		};
 
-		obj.css({ height });
-		position();
+		U.Dom.css(obj, { height: `${height}px` });
 	};
 
 	const rowRenderer = (param: any) => {
@@ -374,7 +370,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		const cn = [];
 		const props = {
 			...item,
-			object: (item.isAdd || item.isSection || item.isSystem ? undefined : item),
+			object: (item.isAdd || item.isSection || item.isSystem || item.iconParam ? undefined : item),
 			withPlural,
 		};
 
@@ -442,6 +438,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		getFilterRef: () => filterRef.current,
 		onClick,
 		onOver,
+		beforePosition,
 	}), []);
 
 	return (
@@ -449,7 +446,7 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 			{!noFilter ? (
 				<Filter 
 					ref={filterRef}
-					className="outlined round"
+					iconParam={{ name: 'common/search' }}
 					placeholder={placeholder} 
 					value={filter}
 					onChange={onFilterChange} 
@@ -494,6 +491,6 @@ const MenuSearchObject = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => 
 		</div>
 	);
 	
-}));
+});
 
 export default MenuSearchObject;

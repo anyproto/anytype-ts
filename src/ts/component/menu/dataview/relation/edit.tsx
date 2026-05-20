@@ -1,11 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { observable } from 'mobx';
-import { I, C, S, U, J, Relation, translate, Dataview, keyboard, analytics, Preview, Action } from 'Lib';
 import { Icon, Input, MenuItemVertical, Button } from 'Component';
+import * as I from 'Interface';
 
-const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewRelationEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, getId, getSize, param, close } = props;
 	const { className, classNameWrap, data } = param;
@@ -51,13 +49,19 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		props.position();
 	});
 
+	const keydownHandler = useRef<(e: any) => void>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => keyHandlerRef.current(e));
+		keydownHandler.current = (e: any) => keyHandlerRef.current(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const focus = () => {
@@ -129,10 +133,10 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		let sections: any[] = [
 			{
 				children: [
-					canOpen ? { id: 'open', icon: 'expand', name: translate('commonOpenObject') } : null,
-					canDuplicate ? { id: 'copy', icon: 'copy', name: translate('commonDuplicate') } : null,
-					canUnlink ? { id: 'unlink', icon: 'unlink', name: unlinkText } : null,
-					canDelete ? { id: 'remove', icon: 'remove', name: translate('commonMoveToBin') } : null,
+					canOpen ? { id: 'open', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') } : null,
+					canDuplicate ? { id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('commonDuplicate') } : null,
+					canUnlink ? { id: 'unlink', iconParam: { name: 'common/unlink' }, name: unlinkText } : null,
+					canDelete ? { id: 'remove', iconParam: { name: 'menu/action/remove' }, name: translate('commonMoveToBin') } : null,
 				]
 			}
 		];
@@ -141,18 +145,18 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			sections = sections.concat([
 				{
 					children: [
-						canFilter ? { id: 'filter', icon: 'relation-filter', name: translate('menuDataviewRelationEditAddFilter') } : null,
-						canSort ? { id: 'sort0', icon: 'relation-sort0', name: translate('menuDataviewRelationEditSortAscending'), type: I.SortType.Asc } : null,
-						canSort ? { id: 'sort1', icon: 'relation-sort1', name: translate('menuDataviewRelationEditSortDescending'), type: I.SortType.Desc } : null,
-						{ id: 'insert-left', icon: 'relation-insert-left', name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
-						{ id: 'insert-right', icon: 'relation-insert-right', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
-						canHide ? { id: 'hide', icon: 'relation-hide', name: translate('menuDataviewRelationEditHideRelation') } : null,
+						canFilter ? { id: 'filter', iconParam: { name: 'control/dataview/filter' }, name: translate('menuDataviewRelationEditAddFilter') } : null,
+						canSort ? { id: 'sort0', iconParam: { name: 'common/sortArrow' }, name: translate('menuDataviewRelationEditSortAscending'), type: I.SortType.Asc } : null,
+						canSort ? { id: 'sort1', iconParam: { name: 'common/sortArrow', className: 'c1' }, name: translate('menuDataviewRelationEditSortDescending'), type: I.SortType.Desc } : null,
+						{ id: 'insert-left', iconParam: { name: 'menu/relation/insert' }, name: translate('menuDataviewRelationEditInsertLeft'), dir: -1 },
+						{ id: 'insert-right', iconParam: { name: 'menu/relation/insert' }, className: 'rotated', name: translate('menuDataviewRelationEditInsertRight'), dir: 1 },
+						canHide ? { id: 'hide', iconParam: { name: 'common/eye1' }, name: translate('menuDataviewRelationEditHideRelation') } : null,
 					]
 				},
 				{
 					children: [
-						canAlign ? { id: 'align', icon: U.Data.alignHIcon(viewRelation?.align), name: translate('commonAlign'), arrow: true } : null,
-						canCalculate ? { id: 'calculate', icon: `relation ${Relation.className(I.RelationType.Number)}`, name: translate('commonCalculate'), arrow: true } : null,
+						canAlign ? { id: 'align', iconParam: { name: U.Data.alignHIcon(viewRelation?.align) }, name: translate('commonAlign'), arrow: true } : null,
+						canCalculate ? { id: 'calculate', iconParam: { name: 'relation/number' }, name: translate('commonCalculate'), arrow: true } : null,
 					]
 				},
 			]);
@@ -320,9 +324,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			};
 
 			case 'remove': {
-				Action.archive([ relation.id ], '', () => {
-					C.BlockDataviewRelationDelete(rootId, blockId, [ relation.relationKey ], () => close());
-				});
+				Action.archive([ relation.id ], '');
 				break;
 			};
 
@@ -337,8 +339,8 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						element: `#button-${U.Common.esc(blockId)}-filter`,
 						horizontal: I.MenuDirection.Center,
 						offsetY: 10,
-						onOpen: () => $(`#block-${U.Common.esc(blockId)} .hoverArea`).addClass('active'),
-						onClose: () => $(`#block-${U.Common.esc(blockId)} .hoverArea`).removeClass('active'),
+						onOpen: () => U.Dom.addClass(U.Dom.select(`#block-${U.Common.esc(blockId)} .hoverArea`), 'active'),
+						onClose: () => U.Dom.removeClass(U.Dom.select(`#block-${U.Common.esc(blockId)} .hoverArea`), 'active'),
 						data: {
 							...data,
 							view: observable.box(view),
@@ -684,7 +686,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 			<div className="section">
 				<MenuItemVertical 
 					id="includeTime" 
-					icon="clock" 
+					iconParam={{ name: 'common/clock' }}
 					name={translate('commonIncludeTime')}
 					onMouseEnter={menuClose}
 					readonly={readonly}
@@ -715,7 +717,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 					</div>
 				) : (
 					<div className="item isReadonly">
-						<Icon className="lock" />
+						<Icon name="menu/action/pageLock" className="lock" width={8} height={20} />
 						{relation ? relation.name : ''}
 					</div>
 				)}
@@ -725,7 +727,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				<div className="name">{translate('menuDataviewRelationEditRelationType')}</div>
 				<MenuItemVertical 
 					id="relation-type" 
-					icon={format === null ? undefined : `relation ${Relation.className(format)}`}
+					iconParam={format === null ? undefined : { name: Relation.registryName('', format) }}
 					name={format === null ? translate('menuDataviewRelationEditSelectRelationType') : translate(`relationName${format}`)}
 					onMouseEnter={onRelationType} 
 					readonly={isReadonly}
@@ -743,7 +745,7 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 							type="input" 
 							text={translate(relation ? 'commonSave' : 'commonCreate')} 
 							color="blank" 
-							className="c28"
+							size={28}
 						/>
 					</div>
 				</div>
@@ -764,6 +766,6 @@ const MenuDataviewRelationEdit = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		</form>
 	);
 
-}));
+});
 
 export default MenuDataviewRelationEdit;

@@ -14,6 +14,7 @@ export enum MembershipPeriod {
 	Monthly					 = 1,
 	Yearly					 = 2,
 	ThreeYears				 = 3,
+	Lifetime				 = 4,
 };
 
 export enum PaymentProvider {
@@ -69,6 +70,7 @@ export interface MembershipProduct {
 	offer: string;
 	pricesYearly: MembershipAmount[];
 	pricesMonthly: MembershipAmount[];
+	pricesLifetime: MembershipAmount[];
 	features: {
 		storageBytes: number;
 		spaceReaders: number;
@@ -81,6 +83,7 @@ export interface MembershipProduct {
 	};
 	featuresList?: { key: string; value: number; }[];
 	colorStr?: string;
-	getPrice?: (isYearly: boolean) => MembershipAmount | null;
-	getPriceString?: (isYearly: boolean) => string;
+	iconName?: string;
+	getPrice?: (period: MembershipPeriod) => MembershipAmount | null;
+	getPriceString?: (period: MembershipPeriod) => string;
 };

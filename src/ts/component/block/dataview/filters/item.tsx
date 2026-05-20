@@ -1,7 +1,6 @@
 import React, { forwardRef, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
-import { I, S, U, Relation, translate } from 'Lib';
 import { Icon, Label } from 'Component';
+import * as I from 'Interface';
 
 interface FilterWithRelation extends I.Filter {
 	relation: any;
@@ -17,10 +16,9 @@ interface Props {
 	onContextMenu?: (e: MouseEvent) => void;
 };
 
-const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
+const DataviewFilterItem = forwardRef<{}, Props>((props, ref) => {
 
-	const { config } = S.Common;
-	const { subId, filter, readonly, onOver, onClick, onRemove, onContextMenu } = props;
+	const { subId, filter, readonly, onOver, onClick, onContextMenu } = props;
 	const { id, condition, quickOption, relation } = filter;
 
 	if (!relation) {
@@ -104,12 +102,11 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 		case I.RelationType.Object: {
 			const isObject = Relation.isObject(relation.format);
 
-			list = Relation.getArrayValue(value).map(it => S.Detail.get(subId, it, []));
+			list = Relation.getArrayValue(value).map(it => {
+				const template = isObject ? Relation.getFilterTemplateOption(it) : null;
+				return template ? { ...template, isSystem: true } : S.Detail.get(subId, it, []);
+			});
 			list = list.filter(it => !it._empty_);
-
-			if (isObject) {
-				list = Relation.getFilterTemplateOptions().map(it => ({ ...it, isSystem: true })).concat(list);
-			};
 
 			v = list.map(it => it.name).join(', ');
 			break;
@@ -147,7 +144,7 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 			onClick={onClick}
 			onContextMenu={onContextMenu}
 		>
-			<Icon className={`relation ${Relation.className(relation.format)}`} />
+			<Icon name={Relation.registryName(relation.relationKey, relation.format)} />
 
 			<div className="content">
 				<Label className="name" text={displayName} />
@@ -160,11 +157,10 @@ const DataviewFilterItem = observer(forwardRef<{}, Props>((props, ref) => {
 				) : ''}
 			</div>
 
-			<Icon className="arrow" />
-			{config.experimental ? <Icon className="delete" onClick={onRemove} /> : ''}
+			<Icon name="arrow/button" size={8} className="arrow" />
 		</div>
 	);
 
-}));
+});
 
 export default DataviewFilterItem;

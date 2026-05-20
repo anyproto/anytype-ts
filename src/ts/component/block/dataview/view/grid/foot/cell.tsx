@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
-import { I, S, C, U, keyboard, Relation, Dataview, analytics, Preview } from 'Lib';
+import * as I from 'Interface';
+
 
 interface Props extends I.ViewComponent, I.ViewRelation {
 	rootId?: string;
@@ -11,7 +11,7 @@ interface Ref {
 	calculate: () => void;
 };
 
-const FootCell = observer(forwardRef<Ref, Props>((props, ref) => {
+const FootCell = forwardRef<Ref, Props>((props, ref) => {
 
 	const { rootId, block, relationKey, getView } = props;
 	const [ result, setResult ] = useState<any>(null);
@@ -103,20 +103,25 @@ const FootCell = observer(forwardRef<Ref, Props>((props, ref) => {
 		const options = Relation.formulaByType(relationKey, relation.format).filter(it => it.section == item.id);
 
 		S.Menu.closeAll([ 'select2' ], () => {
+			const ctx = menuContextRef.current;
+			if (!ctx) {
+				return;
+			};
+
 			S.Menu.open('select2', {
 				component: 'select',
-				element: `#${menuContextRef.current.getId()} #item-${U.Common.esc(item.id)}`,
-				offsetX: menuContextRef.current.getSize().width,
+				element: `#${ctx.getId()} #item-${U.Common.esc(item.id)}`,
+				offsetX: ctx.getSize().width,
 				vertical: I.MenuDirection.Center,
 				isSub: true,
-				rebind: menuContextRef.current.ref?.rebind,
-				parentId: menuContextRef.current.props.id,
+				rebind: ctx.ref?.rebind,
+				parentId: ctx.props.id,
 				data: {
 					rootId,
 					options,
 					onSelect: (e: any, item: any) => {
 						onChange(item.id);
-						menuContextRef.current.close();
+						menuContextRef.current?.close();
 					},
 				}
 			});
@@ -144,9 +149,9 @@ const FootCell = observer(forwardRef<Ref, Props>((props, ref) => {
 			return;
 		};
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		node.addClass('hover');
+		U.Dom.addClass(node, 'hover');
 
 		if ((result === null) || S.Menu.isOpen()) {
 			return;
@@ -154,12 +159,12 @@ const FootCell = observer(forwardRef<Ref, Props>((props, ref) => {
 
 		const t = Preview.tooltipCaption(name, result);
 		if (t) {
-			Preview.tooltipShow({ text: t, element: node, typeY: I.MenuDirection.Top });
+			Preview.tooltipShow({ text: t, element: nodeRef.current, typeY: I.MenuDirection.Top });
 		};
 	};
 
 	const onMouseLeave = () => {
-		$(nodeRef.current).removeClass('hover');
+		U.Dom.removeClass(nodeRef.current, 'hover');
 		Preview.tooltipHide();
 	};
 
@@ -184,6 +189,6 @@ const FootCell = observer(forwardRef<Ref, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default FootCell;

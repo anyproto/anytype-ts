@@ -1,9 +1,7 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect, KeyboardEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Filter, MenuItemVertical, Label, Icon } from 'Component';
-import { I, U, Relation, keyboard, translate } from 'Lib';
+import { Filter, MenuItemVertical, Icon } from 'Component';
+import * as I from 'Interface';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_ITEM_BIG = 56;
@@ -12,12 +10,12 @@ const HEIGHT_DESCRIPTION = 56;
 const HEIGHT_DIV = 16;
 const LIMIT = 10;
 
-const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuSelect = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, setActive, onKeyDown, position, getId, close, setHover, getMaxHeight } = props;
+	const { param, setActive, onKeyDown, position, getId, getContainer, close, setHover, getMaxHeight } = props;
 	const { data } = param;
-	const { 
-		filter, value, disabled, placeholder, noVirtualisation, noKeys, preventFilter, withAdd, 
+	const {
+		filter, value, disabled, placeholder, noVirtualisation, noKeys, preventFilter, withAdd,
 		canSelectInitial, onSelect, onContext, noClose, noScroll, maxHeight, noFilter, onSwitch, buttons = [],
 		useMaxWindowHeight,
 	} = data;
@@ -26,6 +24,8 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const listRef = useRef(null);
 	const n = useRef(-1);
 	const top = useRef(0);
+	const prevItemKeys = useRef('');
+	const keydownHandler = useRef(null);
 	const sections = data.sections || [];
 
 	useEffect(() => {
@@ -38,14 +38,16 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		let active = value ? items.find(it => it.id == value) : null;
 		if (!active && items.length && !withFilter) {
-			active = items[0];
+			active = items.find(it => !it.isSection && !it.isDiv) || items[0];
 		};
 
 		if (active && !active.isInitial) {
 			window.setTimeout(() => setActive(active, true), 15);
 		};
 
-		beforePosition();
+		position();
+
+		return () => unbind();
 	}, []);
 
 	useEffect(() => {
@@ -55,14 +57,28 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			focus();
 		};
 
-		beforePosition();
+		// Re-select first item when items change (e.g. external filtering)
+		const currentItems = getItems(false);
+		const itemKeys = currentItems.map(it => it.id).join(',');
+
+		if (itemKeys !== prevItemKeys.current) {
+			prevItemKeys.current = itemKeys;
+
+			const first = currentItems.find(it => !it.isSection && !it.isDiv);
+			if (first) {
+				n.current = currentItems.indexOf(first);
+				window.setTimeout(() => setActive(first, false), 0);
+			};
+		};
+
+		position();
 	});
 
 	useEffect(() => {
-		if (!withFilter) {
+		if (!isWithFilter()) {
 			return;
 		};
-		
+
 		n.current = -1;
 		top.current = 0;
 		listRef.current?.scrollToPosition(top.current);
@@ -70,12 +86,16 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const focus = () => {
@@ -164,6 +184,50 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return HEIGHT_ITEM;
 	};
 
+	const scrollToRow = (_items: any[], index: number) => {
+		if (!listRef.current) {
+			return;
+		};
+
+		const item = _items[index];
+		if (!item) {
+			return;
+		};
+
+		// Use the full rendered list (with sections) to calculate offsets
+		const all = getItems(true);
+		const rowIndex = all.findIndex(it => it.id == item.id);
+
+		if (rowIndex < 0) {
+			return;
+		};
+
+		const listHeight = listRef.current.props.height;
+		const itemHeight = getRowHeight(all[rowIndex]);
+
+		let offset = 0;
+		let total = 0;
+
+		for (let i = 0; i < all.length; ++i) {
+			const h = getRowHeight(all[i]);
+
+			if (i < rowIndex) {
+				offset += h;
+			};
+			total += h;
+		};
+
+		if (offset + itemHeight < listHeight) {
+			offset = 0;
+		} else {
+			offset -= listHeight / 2 - itemHeight / 2;
+		};
+
+		offset = Math.min(offset, total - listHeight + 16);
+		offset = Math.max(0, offset);
+		listRef.current.scrollToPosition(offset);
+	};
+
 	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
 			top.current = scrollTop;
@@ -171,7 +235,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const isWithFilter = () => {
-		if (withFilter) {
+		if (data.withFilter) {
 			return true;
 		};
 
@@ -193,8 +257,8 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const beforePosition = () => {
 		const items = getItems(true);
-		const obj = $(`#${getId()}`);
-		const content = obj.find('.content');
+		const obj = getContainer();
+		const content = U.Dom.select('.content', obj);
 		const withFilter = isWithFilter();
 		const mh = useMaxWindowHeight ? getMaxHeight?.(keyboard.isPopup()) || 0 : maxHeight;
 
@@ -210,16 +274,16 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			height = buttons.reduce((res: number, current: any) => res + getRowHeight(current), height);
 
 			height = Math.min(mh || 370, height);
-			height = Math.max(48, height);
+			height = Math.max(44, height);
 
-			content.css({ height });
+			U.Dom.css(content, { height: `${height}px` });
 		};
 
-		obj.toggleClass('withFilter', !!withFilter);
-		obj.toggleClass('withAdd', !!withAdd);
-		obj.toggleClass('noScroll', !!noScroll);
-		obj.toggleClass('noVirtualisation', !!noVirtualisation);
-		obj.toggleClass('withMaxHeight', !!useMaxWindowHeight);
+		U.Dom.toggleClass(obj, 'withFilter', !!withFilter);
+		U.Dom.toggleClass(obj, 'withAdd', !!withAdd);
+		U.Dom.toggleClass(obj, 'noScroll', !!noScroll);
+		U.Dom.toggleClass(obj, 'noVirtualisation', !!noVirtualisation);
+		U.Dom.toggleClass(obj, 'withMaxHeight', !!useMaxWindowHeight);
 	};
 
 	const items = getItems(true);
@@ -242,7 +306,7 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					onClick={e => onClick(e, item)}
 					style={item.style}
 				>
-					<Icon className="plus" />
+					<Icon name="plus/menu" className="plus" />
 					<div className="name">{item.name}</div>
 				</div>
 			);
@@ -341,14 +405,14 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		updateOptions,
 		onSwitch,
 		beforePosition,
+		scrollToRow,
 	}));
 	
 	return (
 		<>
 			{withFilter ? (
-				<Filter 
+				<Filter
 					ref={filterRef}
-					className="outlined round"
 					value={filter}
 					placeholder={placeholder}
 					onChange={onFilterChange}
@@ -376,6 +440,6 @@ const MenuSelect = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</>
 	);
 	
-}));
+});
 
 export default MenuSelect;

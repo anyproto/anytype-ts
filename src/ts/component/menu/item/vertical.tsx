@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { Icon, IconObject, Switch, Select, ObjectName } from 'Component';
-import { I, U, Preview } from 'Lib';
+import * as I from 'Interface';
 
 const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 
-	const { 
-		id = '', icon, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural, withPronoun,
+	const {
+		id = '', iconParam, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withCopy, withPlural, withPronoun,
 		className, style, iconSize, switchValue, selectValue, options, readonly, selectMenuParam, subComponent, note, sortArrow, isDiv, isSection, index,
 		onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore, onContextMenu, tooltipParam = {},
 	} = props;
@@ -67,6 +66,9 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	if (withMore) {
 		cn.push('withMore');
 	};
+	if (withCopy) {
+		cn.push('withCopy');
+	};
 	if (isActive) {
 		cn.push('active');
 	};
@@ -85,16 +87,22 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 			cn.push('isHidden');
 		};
 	} else
-	if (icon) {
+	if (iconParam) {
 		cn.push('withIcon');
-		iconMainElement = <Icon className={[ icon, 'iconMain' ].join(' ')} inner={inner} />;
+		
+		const icn = [ 'iconMain' ];
+		if (iconParam.className) {
+			icn.push(iconParam.className);
+		};
+
+		iconMainElement = <Icon {...iconParam} className={icn.join(' ')} inner={inner} />;
 	};
 
 	if (withArrow) {
-		iconSideElement = <Icon className="arrow" />;
+		iconSideElement = <Icon name="arrow/item" className="arrow" />;
 	};
 	if (checkbox) {
-		iconSideElement = <Icon className="chk" />;
+		iconSideElement = <Icon name="menu/common/chk" className="chk" />;
 	};
 	if (note) {
 		cn.push('withNote');
@@ -107,7 +115,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	};
 	if (undefined !== sortArrow) {
 		cn.push('withSortArrow');
-		iconSideElement = <Icon className={`sortArrow c${sortArrow}`} />;
+		iconSideElement = <Icon name="common/sortArrow" className={`sortArrow c${sortArrow}`} />;
 	};
 
 	let content = null;
@@ -161,7 +169,8 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 					) : (
 						<div className="caption">{caption}</div>
 					)}
-					{withMore ? <Icon className="more withBackground" onMouseDown={onMore} /> : ''}
+					{withMore ? <Icon name="common/more" className="more" withBackground={true} onMouseDown={onMore} /> : ''}
+					{withCopy ? <Icon name="menu/action/copy" className="copy" withBackground={true} /> : ''}
 				</>
 			);
 		};
@@ -183,10 +192,10 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		
-		if (!node.hasClass('withIcon')) {
-			node.toggleClass('withIconObject', !!node.find('.iconObject').length);
+		const node = nodeRef.current;
+
+		if (node && !U.Dom.hasClass(node, 'withIcon')) {
+			U.Dom.toggleClass(node, 'withIconObject', !!U.Dom.selectAll('.iconObject', node).length);
 		};
 	};
 
@@ -195,7 +204,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 		const t = Preview.tooltipCaption(text, caption);
 
 		if (t) {
-			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
 		};
 		
 		onMouseEnter?.(e);

@@ -18,7 +18,7 @@ export default {
 	gallery:			 'https://gallery.any.coop',
 	cdn:				 'https://anytype-static.fra1.cdn.digitaloceanspaces.com',
 	webclipper:			 'https://chromewebstore.google.com/detail/anytype-web-clipper/jbnammhjiplhpjfncnlejjjejghimdkf?hl=en',
-	membershipUpgrade:	 'mailto:membership-upgrade@anytype.io?subject=Upgrade%20%25name%25&body=Hello%20Anytype%20team%21%20I%20would%20like%20to%20extend%20my%20current%20membership%20for%20more%20%28please%20choose%20an%20option%29%3A%20%0A%0AExtra%20remote%20storage%0A%0AMore%20space%20editors%0A%0AAdditional%20shared%20spaces%0A%0ASpecifically%2C%20Please%20provide%20specific%20details%20of%20your%20needs%20here.',
+	membershipUpgrade:	 'mailto:care@anytype.io?subject=Upgrade%20%25name%25&body=Hello%20Anytype%20team%21%20I%20would%20like%20to%20extend%20my%20current%20membership%20for%20more%20%28please%20choose%20an%20option%29%3A%20%0A%0AExtra%20remote%20storage%0A%0AMore%20space%20editors%0A%0AAdditional%20shared%20spaces%0A%0ASpecifically%2C%20Please%20provide%20specific%20details%20of%20your%20needs%20here.',
 	membershipSpecial:	 'mailto:support@anytype.io?subject=Special%20Pricing%20Request%20AnytypeId%20%25accountId%25&body=Please%20specify%20your%20request%3A%0A-%20highlight%20if%20you%20represent%20an%20educational%2C%20governmental%2C%20or%20non-profit%20organization%0A-%20tell%20us%20more%20about%20your%20organization%3A%20number%20of%20employees%20and%20future%20Anytype%20users%2C%20markets%20you%27re%20working%20on%2C%20etc.%2C%0A-%20provide%20additional%20details%20about%20how%20your%20organization%20uses%20Anytype',
 	invite:				 'https://invite.any.coop/%s#%s',
 	share: 				 'https://join.anytype.io/',

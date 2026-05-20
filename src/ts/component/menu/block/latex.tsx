@@ -1,20 +1,29 @@
-import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, S, U, J, keyboard, translate } from 'Lib';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
 
-const katex = require('katex');
-require('katex/dist/contrib/mhchem');
+import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
+import * as I from 'Interface';
+
+let _katex: any = null;
+let _katexLoading: Promise<any> | null = null;
+const getKatex = (): any => {
+	if (_katex) return _katex;
+	if (!_katexLoading) {
+		_katexLoading = import('katex').then(m => {
+			_katex = m.default || m;
+			return import('katex/dist/contrib/mhchem');
+		}).then(() => _katex);
+	};
+	return null;
+};
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_ITEM_BIG = 80;
 const HEIGHT_ITEM_SMALL = 28;
 const LIMIT = 40;
 
-const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, getSize, position, close, setActive, onKeyDown } = props;
+	const { param, getId, getContainer, getSize, position, close, setActive, onKeyDown } = props;
 	const { data, className, classNameWrap } = param;
 	const { onSelect, isTemplate } = data;
 	const { filter } = S.Common;
@@ -22,15 +31,33 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const n = useRef(-1);
 	const emptyRef = useRef(0);
 	const listRef = useRef(null);
+	const [ katexLoaded, setKatexLoaded ] = useState(!!getKatex());
+
+	useEffect(() => {
+		if (!katexLoaded) {
+			const katex = getKatex();
+			if (katex) {
+				setKatexLoaded(true);
+			} else {
+				_katexLoading?.then(() => setKatexLoaded(true));
+			};
+		};
+	}, []);
+
+	const keydownHandler = useRef(null);
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onOver = (e: any, item: any) => {
@@ -139,8 +166,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
 	};
 
-	const resize = () => {
-		const obj = $(`#${getId()} .content`);
+	const beforePosition = () => {
 		const offset = 16;
 		const ih = isTemplate ? HEIGHT_ITEM_BIG : HEIGHT_ITEM_SMALL;
 
@@ -156,8 +182,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			height = 44;
 		};
 
-		obj.css({ height });
-		position();
+		U.Dom.css(U.Dom.select('.content', getContainer()), { height: `${height}px` });
 	};
 
 	const rowRenderer = (param: any) => {
@@ -169,13 +194,14 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		} else {
 			const name = String(item.name || '').replace(/\\\\/g, '\\');
 
-			const math = katex.renderToString(item.comment || item.symbol, {
+			const katex = getKatex();
+			const math = katex ? katex.renderToString(item.comment || item.symbol, {
 				displayMode: true,
 				throwOnError: false,
 				output: 'html',
 				fleqn: false,
 				trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
-			});
+			}) : '';
 
 			content = (
 				<div
@@ -213,7 +239,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		resize();
+		return () => unbind();
 	}, []);
 
 	useEffect(() => {
@@ -228,8 +254,6 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		resize();
-		rebind();
 		position();
 		setActive();
 		onOver(null, items[n.current]);
@@ -244,6 +268,7 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,
+		beforePosition,
 		getItems,
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
@@ -288,6 +313,6 @@ const MenuBlockLatex = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuBlockLatex;

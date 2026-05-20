@@ -132,7 +132,9 @@ export interface ObjectGeneratedMessage {
 export interface ObjectTitlesGeneratedMessage {
 	type: 'object_titles_generated';
 	typeName?: string;
+	type_name?: string;
 	typeKey?: string;
+	type_key?: string;
 	typeNameAlt?: string;
 	titles: string[];
 }

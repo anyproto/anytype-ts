@@ -25,6 +25,8 @@ Anytype is a **personal knowledge base**—your digital brain—that lets you ga
 - [Prerequisites](#-prerequisites)
 - [Building from Source](#-building-from-source)
 - [Development Workflow](#-development-workflow)
+  - [Updating Middleware](#updating-middleware)
+  - [Updating Protobuf Bindings](#updating-protobuf-bindings)
 - [Localisation](#-localisation)
 - [Contributing](#-contributing)
 - [Community & Support](#-community--support)
@@ -35,41 +37,29 @@ Anytype is a **personal knowledge base**—your digital brain—that lets you ga
 
 Just want to try it? Grab the latest installer from the [releases page](https://github.com/anyproto/anytype-ts/releases) or head to **[download.anytype.io](https://download.anytype.io)** and log in with your *Any‑ID*.
 
-
-## 🛠 Prerequisites
-
-| Platform          | System packages                            |
-|-------------------|--------------------------------------------|
-| **Debian/Ubuntu** | `sudo apt install libsecret-1-dev jq`      |
-| **Fedora**        | `sudo dnf install libsecret jq`            |
-| **Arch Linux**    | `sudo pacman -S libsecret jq`              |
-| **Alpine**        | `apk add libsecret jq`                     |
-
-Also install:
-
-- **Node.js ≥ 20** & npm ≥ 10 *(or pnpm ≥ 9)*
-- **Go ≥ 1.22** (to build [anytype‑heart](https://github.com/anyproto/anytype-heart))
+## 🏗 Building from Source
 
 On ARM systems, node package `keytar` needs to be rebuilt during installation, so make sure that your system has a C++ compiler, Python3 and Python package `setuptools`. E.g. on Debian/Ubuntu: `sudo apt install python3-setuptools`. Alternatively, on any system, create a Python virtual environment (venv) and inside the venv: `pip install setuptools`. Then build from source inside the venv.
 
-## 🏗 Building from Source
-
 ```bash
-# 1 – Clone & install JS deps
-git clone https://github.com/anyproto/anytype-ts.git
-cd anytype-ts
-npm ci               # or: pnpm i --frozen-lockfile
+# 1 – Clone & open this repository
+git clone https://github.com/anyproto/anytype-ts.git && cd anytype-ts
 
-# 2 – Fetch / build middleware & protobuf bindings
+# 2 - Install JavaScript dependencies
+bun install
+
+# 3 – Fetch / build middleware & protobuf bindings
 ./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd>
 
-# 3 – Build the core engine (outside this repo)
-git clone https://github.com/anyproto/anytype-heart.git && cd anytype-heart
-make install-dev-js && cd ../anytype-ts
+# 4 – Build the core engine
+cd .. && git clone https://github.com/anyproto/anytype-heart.git && cd anytype-heart
+make install-dev-js CLIENT_DESKTOP_PATH=../anytype-ts && cd ../anytype-ts
 
-# 4 – Build the Electron desktop app
-npm run update:locale
-npm run dist:mac      # or dist:win / dist:linux
+# 5 - Update locale
+bun run update:locale
+
+# 6 – Build the Electron desktop app (see package.json for more options)
+bun run dist:<linux|win|mac>
 ```
 
 ### Environment flags
@@ -82,37 +72,90 @@ npm run dist:mac      # or dist:win / dist:linux
 
 ## 🧑‍💻 Development Workflow
 
-You can either run the helper (from *anytype‑heart*) separately or just launch the client with hot‑reload:
+You can use [nix](https://nix.dev/install-nix) to install all the required dependencies at once.
 
-```bash
-anytypeHelper &       # or ./bin/anytypeHelper
-npm run start:dev     # Windows: npm run start:dev-win
+```shell
+# open a shell with all the required dependencies
+nix develop --command $SHELL
 ```
 
-For browser-based development without Electron, see [Web Mode](./src/ts/lib/web/README.md).
-
-Optional env vars:
-
-| Name         | Purpose                                  |
-|--------------|-------------------------------------------|
-| `SERVER_PORT`| Local gRPC port of *anytype‑heart*        |
-| `ANYPROF`    | Expose Go `pprof` on `localhost:<port>`   |
-
-### Web Clipper extension Development
-
-Switch manifest before testing/packaging the addon for different browsers using the following scripts:
+Start the dev server with hot‑reload (builds Electron bundle, starts Vite, then launches Electron):
 
 ```bash
-npm run ext:manifest:firefox
-npm run ext:manifest:chromium
+bun run start:dev     # Windows: bun run start:dev-win
+# add --user-data-dir=./my_dir to electron(-win) script in package.json if you want to use custom user data directory
 ```
+
+When you close Electron, the Vite dev server is automatically stopped.
+
+For browser-based development without Electron:
+
+```bash
+bun run start:web
+```
+
+See [Web Mode](./docs/src/ts/lib/web/README.md) for details.
+
+### Useful commands
+
+```bash
+bun run build         # Production build (Vite)
+bun run build:dev     # Development build (Vite)
+bun run typecheck     # TypeScript type checking
+bun run lint          # Run linters (Biome + ESLint)
+```
+
+### Environment variables
+
+| Name         | Purpose                                           |
+|--------------|---------------------------------------------------|
+| `SERVER_PORT`| Vite dev server port (default: `8080`)             |
+| `ANYPROF`    | Expose Go `pprof` on `localhost:<port>`            |
+
+### Web Clipper Extension
+
+Build and switch manifest for different browsers:
+
+```bash
+bun run build:ext
+bun run ext:manifest:firefox
+bun run ext:manifest:chromium
+```
+
+### Updating Middleware
+
+The middleware version is pinned in `middleware.version`. To fetch a pre-built middleware binary and its protobuf/JSON assets:
+
+```bash
+./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd>
+```
+
+This downloads the `anytype-heart` release matching the version in `middleware.version`, extracts the `anytypeHelper` binary into `dist/`, and copies protobuf definitions and generated JSON into `dist/lib/`.
+
+For CI environments (requires GitHub credentials):
+
+```bash
+./update-ci.sh --user=<GITHUB_USER> --token=<GITHUB_TOKEN> --os=<OS> --arch=<ARCH> --middleware-version=<VERSION>
+```
+
+### Updating Protobuf Bindings
+
+To regenerate TypeScript protobuf bindings from a local [anytype-heart](https://github.com/anyproto/anytype-heart) checkout (expected at `../anytype-heart`):
+
+```bash
+bun run generate:protos
+```
+
+**Prerequisites:** `protoc` (protobuf compiler) must be installed, and `bun install` must have been run (for `ts-proto`).
+
+This reads `.proto` files from `../anytype-heart`, generates TypeScript bindings into `middleware/`, and creates a service registry.
 
 ## 🌍 Localisation
 
 Translations live on [Crowdin](https://crowdin.com/project/anytype-desktop). Pull the latest locale files with:
 
 ```bash
-npm run update:locale
+bun run update:locale
 ```
 
 

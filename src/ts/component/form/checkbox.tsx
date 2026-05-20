@@ -1,10 +1,12 @@
 import React, { forwardRef, useState, useEffect, useImperativeHandle } from 'react';
+import { Icon } from 'Component';
 
 interface Props {
 	id?: string;
 	value: boolean;
 	className?: string;
 	readonly?: boolean;
+	size?: number;
 	onChange?(e: any, value: boolean): void;
 };
 
@@ -20,17 +22,10 @@ const Checkbox = forwardRef<CheckboxRefProps, Props>(({
 	className = '',
 	readonly = false,
 	onChange,
+	size,
 }, ref: any) => {
 
 	const [ value, setValue ] = useState(false);
-	const cn = [ 'icon', 'checkbox', className ];
-
-	if (readonly) {
-		cn.push('isReadonly');
-	};
-	if (value) {
-		cn.push('active');
-	};
 
 	const onChangeHandler = (e: any) => {
 		if (readonly) {
@@ -48,13 +43,15 @@ const Checkbox = forwardRef<CheckboxRefProps, Props>(({
 		setValue,
 		toggle: () => setValue(!value)
 	}));
-	
-	useEffect(() => setValue(initialValue), []);
-	
+
+	useEffect(() => setValue(initialValue), [ initialValue ]);
+
 	return (
-		<div
+		<Icon
 			id={id}
-			className={cn.join(' ')}
+			name={value ? 'object/checkbox2' : 'object/checkbox0'}
+			size={size}
+			className={[ 'checkbox', (readonly ? 'isReadonly' : ''), className ].join(' ')}
 			onClick={onChangeHandler}
 		/>
 	);

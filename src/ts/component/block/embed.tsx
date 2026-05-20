@@ -1,32 +1,70 @@
-import React, { forwardRef, useEffect, useState, useRef, memo } from 'react';
+import React, { Suspense, forwardRef, useEffect, useState, useRef, memo } from 'react';
 import { createRoot } from 'react-dom/client';
-import $ from 'jquery';
 import raf from 'raf';
 import DOMPurify from 'dompurify';
 import Prism from 'prismjs';
-import { instance as viz } from '@viz-js/viz';
-import { observer } from 'mobx-react';
-import { Icon, Label, Editable, Dimmer, Select, Error, MediaMermaid, MediaExcalidraw } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Action, translate } from 'Lib';
+import { Icon, Label, Editable, Dimmer, Select, Error, Loader } from 'Component';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
-const katex = require('katex');
-const pako = require('pako');
+const MediaMermaid = React.lazy(() => import('Component/util/media/mermaid'));
+const MediaExcalidraw = React.lazy(() => import('Component/util/media/excalidraw'));
 
-require('katex/dist/contrib/mhchem');
+let _katex: any = null;
+let _katexLoading: Promise<any> | null = null;
+let _pako: any = null;
+let _pakoLoading: Promise<any> | null = null;
+let _viz: any = null;
+let _vizLoading: Promise<any> | null = null;
 
-const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
-	
+const getKatex = (): any => {
+	if (_katex) return _katex;
+	if (!_katexLoading) {
+		_katexLoading = import('katex').then(m => {
+			_katex = m.default || m;
+			return import('katex/dist/contrib/mhchem');
+		});
+	};
+	return null;
+};
+
+
+const getPako = async (): Promise<any> => {
+	if (_pako) return _pako;
+	if (!_pakoLoading) {
+		_pakoLoading = import('pako').then(m => { _pako = m.default || m; return _pako; });
+	};
+	return _pakoLoading;
+};
+
+const getViz = async (): Promise<any> => {
+	if (_viz) return _viz;
+	if (!_vizLoading) {
+		_vizLoading = import('@viz-js/viz').then(m => {
+			_viz = m.instance;
+			return _viz;
+		});
+	};
+	return _vizLoading;
+};
+
+const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
+
 	const { isOnline, filter, theme } = S.Common;
 	const [ isShowing, setIsShowing ] = useState(false);
 	const [ isEditing, setIsEditing ] = useState(false);
-	const { rootId, block, readonly, isPopup, onKeyDown, onKeyUp } = props;
+	const [ isFullScreen, setIsFullScreen ] = useState(false);
+	const { rootId, block, isPopup, onKeyDown, onKeyUp } = props;
 	const { content, fields, hAlign } = block;
 	const { processor } = content;
-	const { width, type } = fields || {};
+	const isExcalidrawProcessor = processor == I.EmbedProcessor.Excalidraw;
+	const readonly = props.readonly || isExcalidrawProcessor;
+	const { width, type, height: fieldHeight } = fields || {};
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
-	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '', icon: '' };
+	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '' };
+	const embedIconName = `embed/${U.String.toCamelCase(`-${I.EmbedProcessor[ processor ]}`)}` || 'embed/default';
 	const text = String(content.text || '');
-	const isUnsupported = I.EmbedProcessor[processor] === undefined;
+	const isUnsupported = I.EmbedProcessor[ processor ] === undefined;
 	const css: any = {};
 	const nodeRef = useRef(null);
 	const editableRef = useRef(null);
@@ -38,6 +76,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	const selection = S.Common.getRef('selectionProvider');
 	const allowEmptyContent = U.Embed.allowEmptyContent(processor);
 	const rootRef = useRef(null);
+	const resizeStartRef = useRef({ x: 0, y: 0, w: 0, h: 0 });
+	const scrollTopRef = useRef(0);
+	const mouseUpHandlerRef = useRef<((e: globalThis.MouseEvent) => void) | null>(null);
+	const mouseMoveHandlerRef = useRef<((e: globalThis.MouseEvent) => void) | null>(null);
+	const messageHandlerRef = useRef<((e: MessageEvent) => void) | null>(null);
 	const isExcalidraw = block.isEmbedExcalidraw();
 
 	// AnytypeMiniApp: read source (HTML) and initial state (JSON) from sibling
@@ -65,9 +108,20 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			appStateBlockId = String(jsonBlock?.id || '');
 		};
 	};
+	const excalidrawCss: any = {};
 
 	if (width) {
 		css.width = (width * 100) + '%';
+	};
+
+	if (isExcalidraw) {
+		if (fieldHeight) {
+			excalidrawCss.height = Math.max(200, fieldHeight);
+		} else {
+			const el = U.Dom.get(`selectionTarget-${block.id}`);
+			const containerWidth = el ? U.Dom.contentWidth(el) : 600;
+			excalidrawCss.height = Math.max(200, containerWidth * (width || 1) * 9 / 16);
+		};
 	};
 
 	if (!text) {
@@ -82,7 +136,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		cn.push('isUnsupported');
 	};
 
-	const init = () => {
+	if (isFullScreen) {
+		cn.push('isFullScreen');
+	};
+
+	const init = async () => {
 		setText(block.content.text);
 		setValue(text);
 		setContent(text);
@@ -90,20 +148,22 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		rebind();
 	};
 
+	const scrollHandlerRef = useRef<(() => void) | null>(null);
+	const mouseDownHandlerRef = useRef<((e: globalThis.MouseEvent) => void) | null>(null);
+
 	const rebind = () => {
-		const win = $(window);
-		const node = $(nodeRef.current);
-		const preview = node.find('#preview');
+		const node = nodeRef.current;
+		const preview = node ? U.Dom.select('#preview', node) : null;
 
 		unbind();
 
 		if (isEditing) {
-			win.on(`mousedown.${block.id}`, (e: any) => {
+			mouseDownHandlerRef.current = (e: globalThis.MouseEvent) => {
 				if (S.Menu.isOpenList([ 'blockLatex', 'select' ])) {
 					return;
 				};
 
-				if ($(e.target).parents(`#block-${U.Common.esc(block.id)}`).length > 0) {
+				if ((e.target as HTMLElement)?.closest(`#block-${U.Common.esc(block.id)}`)) {
 					return;
 				};
 
@@ -112,22 +172,28 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				S.Menu.close('blockLatex');
 
 				placeholderCheck();
-				save(true, () => { 
+				save(true, () => {
 					setIsEditing(false);
 					S.Menu.close('previewLatex');
 				});
-			});
+			};
+			U.Dom.addEvent(window, 'mousedown', mouseDownHandlerRef.current);
 		};
 
-		// AnytypeMiniApp: keep the existing iframe alive so the state-only
-		// fast path in iframe.html can fire (just an 'anytype:state' event
-		// dispatch instead of a full tear-down and re-inject).
-		if (processor !== I.EmbedProcessor.AnytypeMiniApp) {
-			node.find('#receiver').remove();
+		if (node) {
+			const receiver = U.Dom.select('#receiver', node);
+			// AnytypeMiniApp: keep the existing iframe alive so the state-only
+			// fast path in iframe.html can fire (just an 'anytype:state' event
+			// dispatch instead of a full tear-down and re-inject).
+			if (receiver && processor !== I.EmbedProcessor.AnytypeMiniApp) {
+				receiver.remove();
+			};
 		};
 
 		if (![ I.EmbedProcessor.Latex, I.EmbedProcessor.Mermaid ].includes(processor)) {
-			isOnline ? preview.hide() : preview.show();
+			if (preview) {
+				U.Dom.css(preview, { display: isOnline ? 'none' : '' });
+			};
 		};
 
 		if (isOnline && (isShowing || U.Embed.allowAutoRender(processor))) {
@@ -135,19 +201,38 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		};
 
 		if (!U.Embed.allowAutoRender(processor)) {
-			const container = U.Common.getScrollContainer(isPopup);
-			container.on(`scroll.${block.id}`, () => onScroll());
+			const container = U.Dom.getScrollContainer(isPopup);
+			scrollHandlerRef.current = () => onScroll();
+			if (container) {
+				U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
+			};
 		};
-
-		node.on('edit', e => onEdit(e));
 	};
 
 	const unbind = () => {
-		const container = U.Common.getScrollContainer(isPopup);
-		const events = [ 'mousedown', 'mouseup', 'online', 'offline', 'resize' ];
+		const container = U.Dom.getScrollContainer(isPopup);
 
-		$(window).off(events.map(it => `${it}.${block.id}`).join(' '));
-		container.off(`scroll.${block.id}`);
+		if (mouseDownHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mousedown', mouseDownHandlerRef.current);
+			mouseDownHandlerRef.current = null;
+		};
+		if (mouseUpHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
+			mouseUpHandlerRef.current = null;
+		};
+		if (messageHandlerRef.current) {
+			U.Dom.removeEvent(window, 'message', messageHandlerRef.current);
+			messageHandlerRef.current = null;
+		};
+		if (mouseMoveHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
+			mouseMoveHandlerRef.current = null;
+		};
+
+		if (scrollHandlerRef.current && container) {
+			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
+			scrollHandlerRef.current = null;
+		};
 	};
 
 	const onScroll = () => {
@@ -157,16 +242,17 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		window.clearTimeout(timeoutScrollRef.current);
 		timeoutScrollRef.current = window.setTimeout(() => {
-			const container = U.Common.getScrollContainer(isPopup);
-			const node = $(nodeRef.current);
-			if (!node.length) {
+			const container = U.Dom.getScrollContainer(isPopup);
+			const node = nodeRef.current;
+			if (!node || !container) {
 				return;
 			};
 
-			const ch = container.height();
-			const st = container.scrollTop();
-			const rect = U.Common.getElementRect(node.get(0));
-			const top = rect.top - container.offset().top;
+			const ch = container.clientHeight;
+			const st = container.scrollTop;
+			const rect = U.Dom.getElementRect(node);
+			const containerRect = container.getBoundingClientRect();
+			const top = rect.top - containerRect.top;
 
 			if (top <= st + ch) {
 				setIsShowing(true);
@@ -186,8 +272,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const isEditing = node.hasClass('isEditing');
+		const node = nodeRef.current;
+		const isEditing = node ? U.Dom.hasClass(node, 'isEditing') : false;
 
 		if (isEditing) {
 			// Undo
@@ -217,8 +303,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			return;
 		};
 
-		const node = $(nodeRef.current);
-		const isEditing = node.hasClass('isEditing');
+		const node = nodeRef.current;
+		const isEditing = node ? U.Dom.hasClass(node, 'isEditing') : false;
 
 		if (onKeyUp && !isEditing) {
 			onKeyUp(e, '', [], { from: 0, to: 0 }, props);
@@ -241,7 +327,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 		if (block.isEmbedLatex()) {
 			const { filter } = S.Common;
-			const symbolBefore = value[range?.from - 1];
+			const symbolBefore = value[ range?.from - 1 ];
 			const menuOpen = S.Menu.isOpen('blockLatex');
 
 			if ((symbolBefore == '\\') && !keyboard.isSpecial(e)) {
@@ -284,13 +370,14 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 	const onPaste = (e: any) => {
 		e.preventDefault();
+		e.stopPropagation();
 
 		const range = getRange();
 		if (!range) {
 			return;
 		};
 
-		const data = e.clipboardData || e.originalEvent.clipboardData;
+		const data = e.clipboardData;
 		const text = String(data.getData('text/plain') || '');
 		const to = range.to + text.length;
 		const value = U.String.insert(getValue(), text, range.from, range.to);
@@ -336,11 +423,9 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onLatexMenu = (e: any, element: string, isTemplate: boolean) => {
-		const win = $(window);
-
 		const recalcRect = () => {
-			const rect = element == 'input' ? U.Common.getSelectionRect() : null;
-			return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+			const rect = element == 'input' ? U.Dom.getSelectionRect() : null;
+			return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 		};
 
 		const menuParam = {
@@ -393,8 +478,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		const lang = U.Embed.getLang(processor);
 		const range = getRange();
 
-		if (value && lang) {
-			value = Prism.highlight(value, Prism.languages[lang], lang);
+		if (value && lang && Prism.languages[ lang ]) {
+			value = Prism.highlight(value, Prism.languages[ lang ], lang);
 		};
 
 		editableRef.current?.setValue(value);
@@ -410,62 +495,64 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const updateRect = () => {
-		const rect = U.Common.getSelectionRect();
+		const rect = U.Dom.getSelectionRect();
 		if (!rect || !S.Menu.isOpen('blockLatex')) {
 			return;
 		};
 
-		S.Menu.update('blockLatex', { 
-			rect: { ...rect, y: rect.y + $(window).scrollTop() }
+		S.Menu.update('blockLatex', {
+			rect: { ...rect, y: rect.y + window.scrollY }
 		});
 	};
 
 	const setContent = (text: string) => {
-		const node = $(nodeRef.current);
-		const value = node.find('#value');
-		const error = node.find('#error');
+		const node = nodeRef.current;
+		const value = node ? U.Dom.select('#value', node) : null;
+		const error = node ? U.Dom.select('#error', node) : null;
 
-		error.text('').hide();
+		if (error) {
+			error.textContent = '';
+			U.Dom.css(error, { display: 'none' });
+		};
 
 		if (isUnsupported) {
-			value.html('');
+			if (value) value.innerHTML = '';
 			return;
 		};
 
 		if (!isShowing && !U.Embed.allowAutoRender(processor)) {
-			value.html('');
+			if (value) value.innerHTML = '';
 			return;
 		};
 
 		setText(text);
 
 		if (!text && !allowEmptyContent) {
-			value.html('');
+			if (value) value.innerHTML = '';
 			return;
 		};
 
-		const win = $(window);
-		const element = value.get(0) as HTMLElement;
+		const element = value as HTMLElement;
 
 		if ([ I.EmbedProcessor.Mermaid, I.EmbedProcessor.Excalidraw ].includes(processor) && !rootRef.current) {
 			rootRef.current = createRoot(element);
 		};
 
-			switch (processor) {
+		switch (processor) {
 			default: {
 				const sandbox = [ 'allow-scripts', 'allow-same-origin', 'allow-popups' ];
 				const allowIframeResize = U.Embed.allowIframeResize(processor);
 
-				let iframe = node.find('#receiver');
+				let iframe = node ? U.Dom.select('#receiver', node) as HTMLIFrameElement : null;
 				let allowScript = false;
 
 				if (U.Embed.allowPresentation(processor)) {
 					sandbox.push('allow-presentation');
 				};
 
-				const onLoad = () => {
-					const iw = (iframe[0] as HTMLIFrameElement).contentWindow;
-					const sanitizeParam: any = { 
+				const onLoad = async () => {
+					const iw = (iframe as HTMLIFrameElement).contentWindow;
+					const sanitizeParam: any = {
 						ADD_TAGS: [ 'iframe', 'div', 'a' ],
 						ADD_ATTR: [
 							'frameborder', 'title', 'allow', 'allowfullscreen', 'loading', 'referrerpolicy', 'src',
@@ -473,8 +560,8 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						ALLOWED_URI_REGEXP: /^(?:(?:ftp|https?|mailto|tel|callto|sms|cid|xmpp|xxx|anytype):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
 					};
 
-					const data: any = { 
-						allowIframeResize, 
+					const data: any = {
+						allowIframeResize,
 						insertBeforeLoad: U.Embed.insertBeforeLoad(processor),
 						useRootHeight: U.Embed.useRootHeight(processor),
 						align: block.hAlign,
@@ -495,9 +582,10 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 					// If content is Kroki code pack the code into SVG url
 					if (block.isEmbedKroki() && !text.match(/^https:\/\/kroki.io/)) {
+						const pako = await getPako();
 						const compressed = pako.deflate(new TextEncoder().encode(text), { level: 9 });
 						const result = btoa(U.Common.uint8ToString(compressed)).replace(/\+/g, '-').replace(/\//g, '_');
-						const type = fields.type || U.Embed.getKrokiOptions()[0].id;
+						const type = fields.type || U.Embed.getKrokiOptions()[ 0 ].id;
 
 						text = `https://kroki.io/${type}/svg/${result}`;
 						typeRef.current?.setValue(type);
@@ -508,7 +596,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 					};
 
 					if (block.isEmbedSketchfab() && text.match(/<(iframe|script)/)) {
-						text = text.match(/<iframe.*?<\/iframe>/)?.[0] || '';
+						text = text.match(/<iframe.*?<\/iframe>/)?.[ 0 ] || '';
 					};
 
 					if (block.isEmbedGithubGist()) {
@@ -560,9 +648,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 					iw.postMessage(data, '*');
 
-					win.off(`message.${block.id}`).on(`message.${block.id}`, e => {
-						const oe = e.originalEvent as any;
-						const { type, height, blockId, url } = oe.data;
+					if (messageHandlerRef.current) {
+						U.Dom.removeEvent(window, 'message', messageHandlerRef.current);
+					};
+					messageHandlerRef.current = (e: MessageEvent) => {
+						const { type, height, blockId, url } = e.data || {};
 
 						if (blockId != block.id) {
 							return;
@@ -571,7 +661,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						switch (type) {
 							case 'resize': {
 								if (allowIframeResize) {
-									iframe.css({ height });
+									U.Dom.css(iframe as HTMLElement, { height: height + 'px' });
 								};
 								break;
 							};
@@ -616,22 +706,25 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 								break;
 							};
 						};
-					});
+					};
+					U.Dom.addEvent(window, 'message', messageHandlerRef.current);
 				};
 
-				if (!iframe.length) {
-					iframe = $('<iframe />', {
-						id: 'receiver',
-						src: U.Common.fixAsarPath(`./embed/iframe.html?theme=${S.Common.getThemeClass()}`),
-						frameborder: 0,
-						scrolling: 'no',
-						sandbox: sandbox.join(' '),
-						allowtransparency: true,
-						referrerpolicy: 'strict-origin-when-cross-origin',
-					});
+				if (!iframe) {
+					iframe = document.createElement('iframe');
+					iframe.id = 'receiver';
+					iframe.src = U.Common.fixAsarPath(`./embed/iframe.html?theme=${S.Common.getThemeClass()}`);
+					iframe.setAttribute('frameborder', '0');
+					iframe.setAttribute('scrolling', 'no');
+					iframe.setAttribute('sandbox', sandbox.join(' '));
+					iframe.setAttribute('allowtransparency', 'true');
+					iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
 
-					iframe.off('load').on('load', onLoad);
-					value.html('').append(iframe);
+					iframe.onload = () => onLoad();
+					if (value) {
+						value.innerHTML = '';
+						value.appendChild(iframe);
+					};
 				} else {
 					onLoad();
 				};
@@ -639,11 +732,17 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 			};
 
 			case I.EmbedProcessor.Latex: {
+				const katex = getKatex();
+				if (!katex) {
+					_katexLoading?.then(() => init());
+					break;
+				};
+
 				let html = '';
 
 				try {
-					html = katex.renderToString(text, { 
-						displayMode: true, 
+					html = katex.renderToString(text, {
+						displayMode: true,
 						strict: false,
 						throwOnError: true,
 						output: 'html',
@@ -651,30 +750,36 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 						trust: (context: any) => [ '\\url', '\\href', '\\includegraphics' ].includes(context.command),
 					});
 				} catch (e) {
-					if (e instanceof katex.ParseError) {
-						html = `<div class="error">Error in LaTeX '${U.String.htmlSpecialChars(text)}': ${U.String.htmlSpecialChars(e.message)}</div>`;
-					} else {
+					const message = (e as Error)?.message || String(e);
+					html = `<div class="error">Error in LaTeX '${U.String.htmlSpecialChars(text)}': ${U.String.htmlSpecialChars(message)}</div>`;
+
+					if (!(e instanceof katex.ParseError)) {
 						console.error(e);
 					};
 				};
 
-				value.html(html);
+				if (value) value.innerHTML = html;
 
-				value.find('a').each((i: number, item: any) => {
-					item = $(item);
-
-					item.off('click').click((e: any) => {
-						e.preventDefault();
-						Action.openUrl(item.attr('href'));
+				if (value) {
+					const links = U.Dom.selectAll('a', value);
+					links.forEach((item: HTMLAnchorElement) => {
+						item.onclick = (e: Event) => {
+							e.preventDefault();
+							Action.openUrl(item.getAttribute('href'));
+						};
 					});
-				});
+				};
 
 				updateRect();
 				break;
 			};
 
 			case I.EmbedProcessor.Mermaid: {
-				rootRef.current.render(<MediaMermaid id={`block-${block.id}-mermaid`} chart={text} />);
+				rootRef.current.render(
+					<Suspense fallback={<Loader />}>
+						<MediaMermaid id={`block-${block.id}-mermaid`} chart={text} />
+					</Suspense>
+				);
 				break;
 			};
 
@@ -687,31 +792,42 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 				};
 
 				rootRef.current.render(
-					<MediaExcalidraw
-						data={data}
-						onChange={(elements, appState, files) => {
-							window.clearTimeout(timeoutSaveRef.current);
-							timeoutSaveRef.current = window.setTimeout(() => {
-								C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState }));
-							}, 1000);
-						}}
-						readonly={readonly}
-					/>
+					<Suspense fallback={<Loader />}>
+						<MediaExcalidraw
+							data={data}
+							onChange={(elements, appState, files) => {
+								window.clearTimeout(timeoutSaveRef.current);
+								timeoutSaveRef.current = window.setTimeout(() => {
+									C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState }));
+								}, 1000);
+							}}
+							readonly={readonly}
+						/>
+					</Suspense>
 				);
 				break;
 			};
 
 			case I.EmbedProcessor.Graphviz: {
-				viz().then(res => {
+				getViz().then(instance => {
+					return instance();
+				}).then(res => {
 					try {
-						value.html(res.renderSVGElement(text));
+						if (value) {
+							value.innerHTML = '';
+							value.appendChild(res.renderSVGElement(text));
+						};
 					} catch (e) {
 						console.error(e);
-						error.text(e.toString()).show();
+						if (error) {
+							error.textContent = e.toString();
+							U.Dom.css(error, { display: 'block' });
+						};
 					};
 				});
 				break;
 			};
+
 		};
 	};
 
@@ -720,6 +836,13 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onEdit = (e: any) => {
+		if (isExcalidrawProcessor) {
+			e.preventDefault();
+			e.stopPropagation();
+			Preview.toastShow({ text: translate('blockEmbedExcalidrawReadonly') });
+			return;
+		};
+
 		if (readonly) {
 			return;
 		};
@@ -727,9 +850,7 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (processor != I.EmbedProcessor.Excalidraw) {
-			setIsEditing(true);
-		};
+		setIsEditing(true);
 	};
 
 	const save = (update: boolean, callBack?: (message: any) => void) => {
@@ -755,93 +876,140 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	const onSelect = () => {
-		const win = $(window);
-
 		keyboard.disableSelection(true);
 		rangeRef.current = getRange();
 
-		win.off(`mouseup.${block.id}`).on(`mouseup.${block.id}`, () => {	
+		if (mouseUpHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
+		};
+		mouseUpHandlerRef.current = () => {
 			keyboard.disableSelection(false);
-			win.off(`mouseup.${block.id}`);
-		});
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
+			mouseUpHandlerRef.current = null;
+		};
+		U.Dom.addEvent(window, 'mouseup', mouseUpHandlerRef.current);
 	};
 
 	const onResizeStart = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
-		const win = $(window);
-		const node = $(nodeRef.current);
 
-		focus.set(block.id, { from: 0, to: 0 });
-		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		
+		const node = nodeRef.current;
+
+		if (mouseMoveHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
+		};
+		if (mouseUpHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
+		};
+
+		selection?.clear();
 		selection?.hide();
 
 		keyboard.setResize(true);
 		keyboard.disableSelection(true);
 
-		node.addClass('isResizing');
-		win.on(`mousemove.${block.id}`, e => onResizeMove(e, checkMax));
-		win.on(`mouseup.${block.id}`, e => onResizeEnd(e, checkMax));
+		if (isExcalidraw) {
+			const media = node ? U.Dom.select('.mediaExcalidraw', node) : null;
+			resizeStartRef.current = {
+				x: e.pageX,
+				y: e.pageY,
+				w: Number(fields.width) || 1,
+				h: media ? U.Dom.contentHeight(media) : 400,
+			};
+		};
+
+		U.Dom.addClass(node, 'isResizing');
+		mouseMoveHandlerRef.current = (e: globalThis.MouseEvent) => onResizeMove(e, checkMax);
+		mouseUpHandlerRef.current = (e: globalThis.MouseEvent) => onResizeEnd(e, checkMax);
+		U.Dom.addEvents(window, [
+			[ 'mousemove', mouseMoveHandlerRef.current ],
+			[ 'mouseup', mouseUpHandlerRef.current ],
+		]);
 	};
 
 	const onResizeMove = (e: any, checkMax: boolean) => {
 		e.preventDefault();
 		e.stopPropagation();
-		
-		const node = $(nodeRef.current);
-		const wrap = node.find('#valueWrap');
-		
-		if (!wrap.length) {
+
+		const node = nodeRef.current;
+		const wrap = node ? U.Dom.select('#valueWrap', node) : null;
+
+		if (!wrap) {
 			return;
 		};
 
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
-		
-		wrap.css({ width: (w * 100) + '%' });
+
+		U.Dom.css(wrap, { width: (w * 100) + '%' });
+
+		if (isExcalidraw) {
+			const start = resizeStartRef.current;
+			const dy = e.pageY - start.y;
+			const newHeight = Math.max(200, start.h + dy);
+			const valueEl = node ? U.Dom.select('#value', node) : null;
+
+			if (valueEl) {
+				U.Dom.css(valueEl, { height: newHeight + 'px' });
+			};
+		};
 	};
 
 	const onResizeEnd = (e: any, checkMax: boolean) => {
-		const node = $(nodeRef.current);
-		const wrap = node.find('#valueWrap');
-		
-		if (!wrap.length) {
+		const node = nodeRef.current;
+		const wrap = node ? U.Dom.select('#valueWrap', node) : null;
+
+		if (!wrap) {
 			return;
 		};
 
-		const iframe = node.find('#receiver');
+		const iframe = node ? U.Dom.select('#receiver', node) : null;
+		if (iframe) {
+			U.Dom.css(iframe, { height: 'auto' });
+		};
 
-		iframe.css({ height: 'auto' });
-
-		const win = $(window);
-		const rect = U.Common.getElementRect(wrap.get(0));
+		const rect = U.Dom.getElementRect(wrap);
 		const w = U.Common.snapWidth(getWidth(checkMax, e.pageX - rect.x + 20));
-		
+
 		keyboard.setResize(false);
 		keyboard.disableSelection(false);
 
-		win.off(`mousemove.${block.id} mouseup.${block.id}`);
-		node.removeClass('isResizing');
+		if (mouseMoveHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mousemove', mouseMoveHandlerRef.current);
+			mouseMoveHandlerRef.current = null;
+		};
+		if (mouseUpHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
+			mouseUpHandlerRef.current = null;
+		};
+		U.Dom.removeClass(node, 'isResizing');
+
+		const newFields: any = { ...fields, width: w };
+
+		if (isExcalidraw) {
+			const start = resizeStartRef.current;
+			const dy = e.pageY - start.y;
+			newFields.height = Math.max(200, start.h + dy);
+		};
 
 		C.BlockListSetFields(rootId, [
-			{ blockId: block.id, fields: { ...fields, width: w } },
+			{ blockId: block.id, fields: newFields },
 		]);
 	};
 
 	const getWidth = (checkMax: boolean, v: number): number => {
 		const { id, fields } = block;
 		const width = Number(fields.width) || 1;
-		const el = $(`#selectionTarget-${U.Common.esc(id)}`);
+		const el = U.Dom.get(`selectionTarget-${id}`);
 
-		if (!el.length) {
+		if (!el) {
 			return width;
 		};
-		
-		const ew = el.width();
+
+		const ew = U.Dom.contentWidth(el);
 		const w = Math.min(ew, Math.max(ew / 12, checkMax ? width * ew : v));
-		
+
 		return Math.min(1, Math.max(0, w / ew));
 	};
 
@@ -852,21 +1020,26 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	let select = null;
 	let source = null;
 	let resizeIcon = null;
+	let expandIcon = null;
 	let empty = '';
 	let placeholder = '';
 
-	if (U.Embed.allowBlockResize(processor) && text) {
-		resizeIcon = <Icon className="resize" onMouseDown={e => onResizeStart(e, false)} />;
+	if (U.Embed.allowBlockResize(processor) && (text || isExcalidraw)) {
+		resizeIcon = <Icon name="common/resize" className="resize" onMouseDown={e => onResizeStart(e, false)} />;
+	};
+
+	if (isExcalidraw) {
+		expandIcon = <Icon name="common/expand" className="expand" withBackground={true} onMouseDown={() => setIsFullScreen(!isFullScreen)} />;
 	};
 
 	if (block.isEmbedKroki()) {
 		select = (
-			<Select 
-				id={`block-${block.id}-select`} 
+			<Select
+				id={`block-${block.id}-select`}
 				ref={typeRef}
-				value={type} 
-				options={U.Embed.getKrokiOptions()} 
-				arrowClassName="light" 
+				value={type}
+				options={U.Embed.getKrokiOptions()}
+				arrowClassName="light"
 				onChange={onKrokiTypeChange}
 				showOn="mouseDown"
 			/>
@@ -879,11 +1052,11 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		select = (
 			<div id="select" className="select" onMouseDown={onLatexTemplate}>
 				<div className="name">{translate('blockEmbedLatexTemplate')}</div>
-				<Icon className="arrow light" />
+				<Icon name="arrow/button" size={8} className="arrow light" />
 			</div>
 		);
 	} else {
-		source = <Icon className="source" onMouseDown={onEdit} />;
+		source = <Icon name="menu/action/source" className="source" onMouseDown={onEdit} />;
 		placeholder = U.String.sprintf(translate('blockEmbedPlaceholder'), menuItem.name);
 		empty = !text && !allowEmptyContent ? U.String.sprintf(translate('blockEmbedEmpty'), menuItem.name) : '';
 
@@ -928,11 +1101,46 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 
 			setRange({ from: length, to: length });
 		} else {
-			$(window).off(`mouseup.${block.id} mousedown.${block.id}`);
+			if (mouseUpHandlerRef.current) {
+				U.Dom.removeEvent(window, 'mouseup', mouseUpHandlerRef.current);
+				mouseUpHandlerRef.current = null;
+			};
+			if (mouseDownHandlerRef.current) {
+				U.Dom.removeEvent(window, 'mousedown', mouseDownHandlerRef.current);
+				mouseDownHandlerRef.current = null;
+			};
 			keyboard.disableSelection(false);
 			keyboard.setComposition(false);
 		};
 	}, [ isEditing ]);
+
+	useEffect(() => {
+		const container = U.Dom.getScrollContainer(isPopup);
+
+		if (isFullScreen) {
+			scrollTopRef.current = container?.scrollTop ?? 0;
+		};
+
+		const onEscape = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') {
+				e.preventDefault();
+				e.stopPropagation();
+				setIsFullScreen(false);
+			};
+		};
+
+		if (isFullScreen) {
+			U.Dom.addEvent(window, 'keydown', onEscape, true);
+		};
+
+		return () => {
+			U.Dom.removeEvent(window, 'keydown', onEscape, true);
+
+			if (isFullScreen && container) {
+				container.scrollTop = scrollTopRef.current;
+			};
+		};
+	}, [ isFullScreen ]);
 
 	let tabIndex = -1;
 	let onKeyDownProp;
@@ -947,30 +1155,32 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 	};
 
 	return (
-		<div 
+		<div
 			ref={nodeRef}
-			tabIndex={tabIndex} 
+			tabIndex={tabIndex}
 			className={cn.join(' ')}
-			onKeyDown={onKeyDownProp} 
-			onKeyUp={onKeyUpProp} 
+			onKeyDown={onKeyDownProp}
+			onKeyUp={onKeyUpProp}
 			onFocus={onFocusProp}
 		>
 			{source}
+			{expandIcon}
 
 			<div id="valueWrap" className="valueWrap" style={css}>
 				{select ? <div className="selectWrap">{select}</div> : ''}
 
 				{isUnsupported ? (
 					<div className="preview unsupported">
-						<Icon className="iconEmbed" />
+						<Icon name="embed/default" size={40} className="iconEmbed" />
 						<Label text={translate('blockEmbedUnsupported')} />
 					</div>
 				) : (
 					<>
 						<div id="preview" className={[ 'preview', U.Data.blockEmbedClass(processor) ].join(' ')} onClick={() => setIsShowing(true)}>
+							<Icon name={embedIconName} size={40} className="iconEmbed" />
 							<Label text={translate('blockEmbedOffline')} />
 						</div>
-						<div id="value" onMouseDown={onEdit} />
+						<div id="value" style={excalidrawCss} onMouseDown={onEdit} />
 
 						{empty ? <Label text={empty} className="label empty" onMouseDown={onEdit} /> : ''}
 						{resizeIcon}
@@ -1001,6 +1211,6 @@ const BlockEmbed = observer(forwardRef<I.BlockRef, I.BlockComponent>((props, ref
 		</div>
 	);
 
-}));
+});
 
 export default memo(BlockEmbed);

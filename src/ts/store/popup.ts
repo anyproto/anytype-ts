@@ -1,17 +1,18 @@
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, J, focus, Preview } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const AUTH_IDS = [ 'settings' ];
 const NO_DIMMER_IDS = [
 	'settingsOnboarding',
 	'shortcut',
-	'page',
 	'export',
 	'phrase',
 	'relation',
 	'inviteQr',
+	'inviteRequest',
+	'inviteConfirm',
 ];
 
 class PopupStore {
@@ -19,6 +20,7 @@ class PopupStore {
 	public popupList: I.Popup[] = [];
 
 	timeout = 0;
+	isAnimatingFlag: Map<string, boolean> = new Map();
 
 	constructor () {
 		makeObservable(this, {
@@ -68,7 +70,7 @@ class PopupStore {
 			this.popupList.push({ id, param });
 		};
 
-		window.setTimeout(() => U.Data.updateTabsDimmer(), 50);
+		U.Data.updateTabsDimmer();
 		Preview.previewHide(true);
 	};
 
@@ -108,7 +110,7 @@ class PopupStore {
 			this.update(id, item.param);
 
 			window.setTimeout(() => {
-				$(window).trigger('resize');
+				U.Dom.eventDispatch(window, 'resize');
 			});
 		};
 	};
@@ -168,10 +170,9 @@ class PopupStore {
 			callBack?.();
 			return;
 		};
-		
-		if (item.param.onClose) {
-			item.param.onClose();
-		};
+
+		Preview.toastHide(true);
+		item.param.onClose?.();
 		
 		const filtered = this.popupList.filter(it => it.id != id);
 
@@ -179,24 +180,47 @@ class PopupStore {
 			this.popupList = filtered;
 		
 			U.Data.updateTabsDimmer();
+			this.setIsAnimating(id, false);
 			callBack?.();
 		} else {
-			const el = $(`#${U.String.toCamelCase(`popup-${id}`)}`);
+			const el = U.Dom.get(U.String.toCamelCase(`popup-${id}`));
 
 			raf(() => {
-				if (el.length) {
-					el.removeClass('show');
-				};
+				U.Dom.removeClass(el, 'show');
 				U.Data.updateTabsDimmer(filtered);
 			});
 
+			this.setIsAnimating(id, true);
 			window.setTimeout(() => {
 				this.popupList = filtered;
 
 				callBack?.();
-				$(window).trigger('resize');
+				U.Data.updateTabsDimmer();
+				U.Dom.eventDispatch(window, 'resize');
+
+				this.setIsAnimating(id, false);
 			}, J.Constant.delay.popup);
 		};
+	};
+
+	/**
+	 * Sets the animating flag for a popup ID.
+	 * @private
+	 * @param {string} id - The popup ID.
+	 * @param {boolean} v - The animating value.
+	 */
+	setIsAnimating (id: string, v: boolean) {
+		this.isAnimatingFlag.set(id, v);
+	};
+
+	/**
+	 * Checks if a popup is animating.
+	 * @private
+	 * @param {string} id - The popup ID.
+	 * @returns {boolean} True if animating, false otherwise.
+	 */
+	isAnimating (id?: string): boolean {
+		return !!(id ? this.isAnimatingFlag.get(id) : this.isAnimatingFlag.size);
 	};
 
 	/**
@@ -284,7 +308,7 @@ class PopupStore {
 		this.close(oldId, () => {
 			window.setTimeout(() => {
 				this.open(newId, param);
-				$(window).trigger('resize');
+				U.Dom.eventDispatch(window, 'resize');
 			});
 		});
 	};

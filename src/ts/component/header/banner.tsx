@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useRef } from 'react';
-import $ from 'jquery';
-import { IconObject, Label, ObjectName } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, Onboarding } from 'Lib';
+import { IconObject, Label, ObjectName, Icon } from 'Component';
+import * as I from 'Interface';
 
 interface Props {
 	type: I.BannerType;
@@ -24,7 +23,7 @@ const HeaderBanner: FC<Props> = ({
 	const onTemplateMenu = () => {
 		const { sourceObject } = object;
 		const type = S.Record.getTypeById(object.type);
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
 		if (!type || S.Menu.isOpen('dataviewTemplateList')) {
 			return;
@@ -41,9 +40,9 @@ const HeaderBanner: FC<Props> = ({
 			horizontal: I.MenuDirection.Center,
 			onOpen: (context) => {
 				menuContext = context;
-				node.addClass('active');
+				U.Dom.addClass(node, 'active');
 			},
-			onClose: () => node.removeClass('active'),
+			onClose: () => U.Dom.removeClass(node, 'active'),
 			data: {
 				fromBanner: true,
 				withTypeSelect: false,
@@ -73,6 +72,7 @@ const HeaderBanner: FC<Props> = ({
 	let target = null;
 	let action = null;
 	let onClick = null;
+	let withMenu = false;
 
 	switch (type) {
 		case I.BannerType.IsArchived: {
@@ -116,6 +116,7 @@ const HeaderBanner: FC<Props> = ({
 			};
 
 			onClick = onTemplateMenu;
+			withMenu = true;
 			break;
 		};
 	};
@@ -133,12 +134,15 @@ const HeaderBanner: FC<Props> = ({
 			className={cn.join(' ')}
 			onClick={onClick}
 		>
-			<div className="content">
-				<Label text={label} />
-				{target}
-			</div>
+			<div className="flex">
+				<div className="content">
+					<Label text={label} />
+					{target}
+				</div>
 
-			{action}
+				{action}
+			</div>
+			{withMenu ? <Icon name="arrow/select" color="default" /> : ''}
 		</div>
 	);
 

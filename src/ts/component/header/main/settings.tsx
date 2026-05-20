@@ -1,10 +1,8 @@
-import React, { forwardRef, useEffect, useState } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { S, I, U, translate, analytics, keyboard, sidebar, Relation } from 'Lib';
+import React, { forwardRef, useEffect, useState, MouseEvent } from 'react';
 import { Icon, Label } from 'Component';
+import * as I from 'Interface';
 
-const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, ref) => {
+const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
@@ -29,13 +27,13 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	};
 
 	const onMore = () => {
-		const element = $('#header #button-header-more');
+		const element = '#header #button-header-more';
 		const menuParam = {
 			element,
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
+			onOpen: () => U.Dom.addClass(U.Dom.select('#header #button-header-more'), 'active'),
+			onClose: () => U.Dom.removeClass(U.Dom.select('#header #button-header-more'), 'active'),
 		};
 
 		if (id == 'spaceShare') {
@@ -57,13 +55,43 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	};
 
 	const renderIdentity = () => {
+		if (space.isOneToOne && (id == 'spaceIndex')) {
+			const otherParticipant = U.Space.getOneToOneParticipant(space);
+			const otherGlobalName = otherParticipant?.globalName || '';
+			const otherIdentity = space.oneToOneIdentity || '';
+			const otherAnyName = otherGlobalName || (otherIdentity ? U.String.shortMask(otherIdentity, 6) : '');
+
+			if (!otherAnyName) {
+				return null;
+			};
+
+			const onAnyNameClick = (e: MouseEvent) => {
+				e.preventDefault();
+				e.stopPropagation();
+
+				if (otherGlobalName) {
+					U.Common.copyToast(translate('commonAnyName'), otherGlobalName);
+				} else
+				if (otherIdentity) {
+					U.Common.copyToast(translate('blockFeaturedIdentity'), otherIdentity);
+				};
+			};
+
+			return (
+				<div className="identity" onClick={onAnyNameClick}>
+					{otherGlobalName ? <Icon name="membership/badge" className="badge" size={18} color="accent100" /> : ''}
+					<Label text={otherAnyName} />
+				</div>
+			);
+		};
+
 		if (![ 'account', 'index' ].includes(id) || !globalName) {
 			return null;
 		};
 
 		return (
 			<div id="settings-identity-badge" className="identity">
-				<Icon className="badge" />
+				<Icon name="membership/badge" className="badge" size={18} color="accent100" />
 				<Label text={globalName} />
 			</div>
 		);
@@ -74,10 +102,10 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		const spaceShareShowButton = hasLink || (isOwner && space.isShared);
 
 		if (id == 'account') {
-			return <Icon id="button-share-one-to-one" className="oneToOne withBackground" onClick={onOneToOne} />;
+			return <Icon id="button-share-one-to-one" name="header/oneToOne" withBackground={true} onClick={onOneToOne} />;
 		};
 
-		if (![ 'spaceIndex', 'spaceIndexEmpty', 'spaceShare' ].includes(id)) {
+		if (![ 'spaceIndex', 'spaceShare' ].includes(id)) {
 			return null;
 		};
 
@@ -89,7 +117,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 			<Icon
 				id="button-header-more"
 				tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}
-				className="more withBackground"
+				name="common/more" withBackground={true}
 				onClick={onMore}
 				onDoubleClick={e => e.stopPropagation()}
 			/>
@@ -99,7 +127,7 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 	const onTransferOwnership = () => {
 		S.Menu.open('changeOwner', {
 			recalcRect: () => {
-				const { ww, wh } = U.Common.getWindowDimensions();
+				const { ww, wh } = U.Dom.getWindowDimensions();
 				return { x: 0, y: 0, width: ww, height: wh };
 			},
 			classNameWrap: 'fixed',
@@ -123,12 +151,12 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		<>
 			<div className="side left">
 				{!isPopup ? (
-					<Icon 
-						className="widgetPanel withBackground" 
+					<Icon
+						name="header/widget" withBackground={true}
 						onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
-						tooltipParam={{ 
-							text: translate('commonWidgets'), 
-							caption: keyboard.getCaption('widget'), 
+						tooltipParam={{
+							text: translate('commonWidgets'),
+							caption: keyboard.getCaption('widget'),
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>
@@ -149,6 +177,6 @@ const HeaderMainSettings = observer(forwardRef<{}, I.HeaderComponent>((props, re
 		</>
 	);
 
-}));
+});
 
 export default HeaderMainSettings;

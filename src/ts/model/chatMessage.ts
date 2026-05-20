@@ -1,6 +1,6 @@
-import { I } from 'Lib';
 import { observable, makeObservable } from 'mobx';
 import { Mark } from './content/text';
+import * as I from 'Interface';
 
 class ChatMessageContent implements I.ChatMessageContent {
 
@@ -60,13 +60,16 @@ class ChatMessage implements I.ChatMessage {
 	attachments: I.ChatMessageAttachment[] = [];
 	dependencies: Map<string, any> = new Map();
 	reactions = [];
+	blocks: I.ChatMessageBlock[] = [];
 
 	isFirst = false;
 	isLast = false;
 	isReadMessage = false;
 	isReadMention = false;
+	isReadReaction = false;
 	hasMention = false;
 	isSynced = false;
+	isPinned = false;
 
 	constructor (props: I.ChatMessage) {
 
@@ -81,12 +84,15 @@ class ChatMessage implements I.ChatMessage {
 		this.attachments = Array.isArray(props.attachments) ? props.attachments : [];
 		this.dependencies = props.dependencies || new Map();
 		this.reactions = props.reactions || [];
+		this.blocks = Array.isArray(props.blocks) ? props.blocks : [];
 		this.isFirst = Boolean(props.isFirst);
 		this.isLast = Boolean(props.isLast);
 		this.isReadMessage = Boolean(props.isReadMessage);
 		this.isReadMention = Boolean(props.isReadMention);
+		this.isReadReaction = Boolean(props.isReadReaction);
 		this.hasMention = Boolean(props.hasMention);
 		this.isSynced = Boolean(props.isSynced);
+		this.isPinned = Boolean(props.isPinned);
 
 		this.reactions.sort((c1, c2) => {
 			const l1 = c1.authors.length;
@@ -109,10 +115,13 @@ class ChatMessage implements I.ChatMessage {
 			attachments: observable,
 			dependencies: observable,
 			reactions: observable,
+			blocks: observable,
 			isReadMessage: observable,
 			isReadMention: observable,
+			isReadReaction: observable,
 			hasMention: observable,
 			isSynced: observable,
+			isPinned: observable,
 		});
 
 		return this;

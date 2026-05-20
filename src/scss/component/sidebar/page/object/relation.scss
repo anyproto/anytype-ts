@@ -3,6 +3,8 @@
 	.section.objectRelation {
 		> .head { height: 52px; }
 
+		&.c-select.isSelect { padding-top: 11px; padding-bottom: 11px; line-height: 24px; }
+
 		> .wrap { display: flex; flex-direction: row; flex-wrap: wrap; gap: 2px 10px; align-items: center; position: relative; }
 		> .wrap {
 			&:hover {
@@ -23,18 +25,16 @@
 
 			> .name { @include text-overflow-nw; color: var(--color-text-secondary); }
 			> .icon.more { 
-				width: 20px; height: 20px; background-image: url('~img/icon/menu/action/more0.svg'); position: absolute; right: 0px; top: 1px; opacity: 0; 
+				width: 20px; height: 20px; position: absolute; right: 0px; top: 1px; opacity: 0; 
 				transition: $transitionAllCommon;
 			}
-			> .icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
 
 			.cell { line-height: 22px; transition: background $transitionCommon; position: relative; flex-grow: 1; max-width: 100%; }
-			.cell.c-select, 
-			.cell.c-object, 
+			.cell.c-select,
+			.cell.c-object,
 			.cell.c-file {
-				.over { width: 100%; flex-wrap: wrap; gap: 4px 6px; max-height: clamp(22px, 126px, 126px); }
+				.over { width: 100%; flex-wrap: wrap; gap: 4px 6px; max-height: clamp(22px, 140px, 140px); }
 			}
-
 			.cell.c-shortText {
 				.name { width: 100%; }
 			}
@@ -47,15 +47,24 @@
 				.cellContent { position: relative; height: auto !important; box-shadow: 0px 0px; background-color: unset; }
 				.cellContent.isName .input { height: 20px; line-height: 20px; }
 
-				.icon.clear { right: 0px; top: 2px; }
-				.input { height: 22px; }
+				.icon.clear { right: 0px; top: 50%; transform: translateY(-50%); }
+				.input { height: 22px; background: none; border: 0px; border-radius: 0px; }
 			}
 
 			.cell.isEditing.c-select {
 				.empty { display: inline-block; }
+				.cellContent { overflow: visible !important; min-height: 24px; }
+				.tagItem {
+					.tagRemove { top: 50%; transform: translateY(-50%); }
+				}
+
+				&.isSelect {
+					.itemWrap { margin-bottom: 0px; }
+				}
 			}
 			.cell.isEditing.c-select.isSelect {
-				.over { width: calc(100% - 26px); }
+				.cellContent { display: flex; align-items: center; }
+				.over { width: calc(100% - 26px); display: flex; align-items: center; }
 			}
 
 			.cell.isEditing.c-longText {

@@ -1,10 +1,8 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, S, J, U, keyboard, translate, analytics } from 'Lib';
 import { MenuItemVertical, DragHorizontal } from 'Component';
+import * as I from 'Interface';
 
-const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuGraphSettings = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { id, param, onKeyDown, setActive, getId, getSize } = props;
 	const { data, className, classNameWrap } = param;
@@ -21,15 +19,21 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		snaps.push(i / graphDepth);
 	};
 
+	const keydownHandler = useRef<(e: any) => void>(null);
+
 	const rebind = () => {
 		unbind();
 
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onMouseEnter = (e: any, item: any) => {
@@ -86,14 +90,15 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 	};
 
 	const onDragMove = (id: string, v: number) => {
-		const node = $(nodeRef.current);
-		const value = node.find(`#value-${id}`);
+		const value = U.Dom.select(`#value-${id}`, nodeRef.current);
 
 		if (id == 'depth') {
 			v = getDepth(v);
 		};
 
-		value.text(v);	
+		if (value) {
+			value.textContent = String(v);
+		};
 	};
 
 	const onDragEnd = (id: string, v: number) => {
@@ -116,7 +121,7 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 			if (v) {
 				values.filterTypes = values.filterTypes.filter(it => it != id);
 			} else {
-				values.filterTypes.push(id);
+				values.filterTypes = [ ...values.filterTypes, id ];
 			};
 
 			save(values);
@@ -142,7 +147,7 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		analytics.event('GraphSettings', { id });
 
 		if (id == 'typeEdges') {
-			$(window).trigger('updateGraphData');
+			U.Dom.eventDispatch(window, 'updateGraphData');
 		};
 	};
 
@@ -311,6 +316,6 @@ const MenuGraphSettings = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default MenuGraphSettings;

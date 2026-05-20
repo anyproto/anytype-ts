@@ -1,13 +1,12 @@
-import React, { forwardRef, useRef, useState, useEffect, useLayoutEffect, useMemo, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
+import React, { forwardRef, useRef, useState, useEffect, useLayoutEffect, useMemo, } from 'react';
 import { AutoSizer, WindowScroller, List, CellMeasurer, CellMeasurerCache } from 'react-virtualized';
 import { motion } from 'motion/react';
-import { I, S, U, J, Relation, Dataview } from 'Lib';
-import { LoadMore } from 'Component';
+import { LoadMore, Icon } from 'Component';
 import Card from './gallery/card';
 import { throttle } from 'lodash';
+import * as I from 'Interface';
 
-const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewGallery = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { 
 		rootId, block, isPopup, isInline, className, getSubId, getView, getKeys, getLimit, 
@@ -25,12 +24,16 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 	const { offset, total } = S.Record.getMeta(subId, '');
 	const limit = getLimit();
 	const cn = [ 'viewContent', className ];
-	const cache = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: J.Size.dataview.gallery.height }));
+	const cache = useRef(null);
 	const listRef = useRef(null);
 	const topRef = useRef(0);
 
+	if (!cache.current) {
+		cache.current = new CellMeasurerCache({ fixedWidth: true, defaultHeight: J.Size.dataview.gallery.height });
+	};
+
 	const getItems = () => {
-		const records = U.Common.objectCopy(getRecords());
+		const records = [ ...getRecords() ];
 		
 		if (isAllowedObject()) {
 			records.push('add-record');
@@ -205,6 +208,8 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 		};
 	};
 
+	const recordIdxMap = new Map(records.map((id, i) => [ id, i ]));
+
 	const cardItem = (id: string) => {
 		if (id == 'add-record') {
 			return (
@@ -212,7 +217,9 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 					key={`gallery-card-${view.id + id}`} 
 					className="card add" 
 					onClick={e => onRecordAdd(e, 1)} 
-				/>
+				>
+					<Icon name="plus/menu" />
+				</div>
 			);
 		} else {
 			return (
@@ -222,7 +229,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 					{...props} 
 					getCoverObject={getCoverObject}
 					recordId={id}
-					recordIdx={records.indexOf(id)}
+					recordIdx={recordIdxMap.get(id)}
 				/>
 			);
 		};
@@ -268,7 +275,7 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 
 		content = (
 			<WindowScroller
-				scrollElement={U.Common.getScrollContainer(isPopup).get(0)}
+				scrollElement={U.Dom.getScrollContainer(isPopup)}
 				onScroll={onScroll}
 				scrollTop={topRef.current}
 			>
@@ -313,6 +320,6 @@ const ViewGallery = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref)
 		</motion.div>
 	);
 
-}));
+});
 
 export default ViewGallery;

@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useState } from 'react';
-import { Title, Label, Select, Switch, Button, Error } from 'Component';
-import { I, S, U, translate, Action, analytics, Renderer, Preview } from 'Lib';
-import { observer } from 'mobx-react';
+import { Title, Label, Select, Button, Error } from 'Component';
+import * as I from 'Interface';
 
-const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { close } = props;
 	const { networkConfig } = S.Auth;
@@ -128,7 +127,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 			S.Popup.open('confirm', {
 				className: 'localOnlyWarning',
 				data: {
-					icon: 'warning',
+					iconParam: { name: 'popup/header/warning', color: 'orange' },
 					title: translate('commonAreYouSure'),
 					text: translate('popupSettingsOnboardingLocalOnlyConfirmText'),
 					textConfirm: translate('popupSettingsOnboardingLocalOnlyConfirmConfirm'),
@@ -149,7 +148,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 
 	const onTooltipShow = (e: any, text: string) => {
 		if (text) {
-			Preview.tooltipShow({ text, element: $(e.currentTarget) });
+			Preview.tooltipShow({ text, element: e.currentTarget as HTMLElement });
 		};
 	};
 
@@ -191,7 +190,7 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 								<Label text={translate('popupSettingsOnboardingNetworkTitle')} />
 								{config.path ? <Label className="small" text={U.String.shorten(config.path, 32)} /> : ''}
 							</div>
-							<Button className="c28" text={translate('commonLoad')} onClick={onUpload} />
+							<Button size={28} text={translate('commonLoad')} onClick={onUpload} />
 						</div>
 					) : ''}
 
@@ -201,29 +200,12 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 							<Label className="small" text={U.String.shorten(config.userPath, 32)} />
 						</div>
 						<div className="buttons">
-							<Button className="c28" text={translate('commonChange')} onClick={onChangeStorage} />
-							{!isDefault ? <Button className="c28" text={translate('commonReset')} onClick={onResetStorage} /> : ''}
+							<Button size={28} text={translate('commonChange')} onClick={onChangeStorage} />
+							{!isDefault ? <Button size={28} text={translate('commonReset')} onClick={onResetStorage} /> : ''}
 						</div>
 					</div>
 
-					<div className="item">
-						<div>
-							<Label text={translate('popupSettingsPersonalAnalyticsDeviceId')} />
-							<Label className="small" text={translate('popupSettingsPersonalAnalyticsDeviceIdDescription')} />
-						</div>
-						<Switch
-							className="big"
-							value={S.Common.analyticsDeviceId}
-							onChange={(e: any, v: boolean) => {
-								S.Common.analyticsDeviceIdSet(v);
-								if (!v) {
-									analytics.clearAmplitudeStorage();
-								};
-								analytics.reinit();
-							}}
-						/>
 					</div>
-				</div>
 
 				<div className="buttons">
 					<Button text={translate('commonSave')} onClick={onSave} />
@@ -234,6 +216,6 @@ const PopupSettingsOnboarding = observer(forwardRef<{}, I.Popup>((props, ref) =>
 		</div>
 	);
 
-}));
+});
 
 export default PopupSettingsOnboarding;

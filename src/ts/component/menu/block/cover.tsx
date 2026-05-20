@@ -1,33 +1,31 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
-import { observer } from 'mobx-react';
-import $ from 'jquery';
 import { AutoSizer, List } from 'react-virtualized';
-import { I, C, S, U, J, analytics, translate, keyboard, Action } from 'Lib';
-import { Cover, Filter, Icon, Label, EmptySearch, Loader } from 'Component';
+import { Cover, Filter, Icon, Input, Label, EmptySearch, Loader } from 'Component';
+import * as I from 'Interface';
 
 enum Tab {
-	Gallery	 = 0,
-	Unsplash = 1,
-	Library	 = 2,
-	Upload	 = 3,
+	Upload	 = 0,
+	Library	 = 1,
+	Gallery	 = 2,
+	Unsplash = 3,
 };
 
 const LIMIT = 36;
 const Tabs = [
+	{ id: Tab.Upload },
+	{ id: Tab.Library },
 	{ id: Tab.Gallery },
 	{ id: Tab.Unsplash },
-	{ id: Tab.Library },
-	{ id: Tab.Upload },
 ].map(it => ({ ...it, name: translate(`menuBlockCover${Tab[it.id]}`) }));
 
-const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockCover = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close } = props;
 	const { data } = param;
 	const { rootId, onSelect, onUpload, onUploadStart } = data;
 	const [ filter, setFilter ] = useState('');
 	const [ isLoading, setIsLoading ] = useState(false);
-	const [ tab, setTab ] = useState(Tab.Gallery);
+	const [ tab, setTab ] = useState(Tab.Upload);
 	const [ items, setItems ] = useState([]);
 	const nodeRef = useRef(null);
 	const filterRef = useRef(null);
@@ -38,6 +36,7 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const activeIndex = useRef(-1);
 	const rows: any[] = [];
 	const itemsPerRow = tab == Tab.Gallery ? 4 : 3;
+	const urlRef = useRef(null);
 
 	useEffect(() => {
 		load();
@@ -64,16 +63,26 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	}, [ filter, tab, items ]);
 
+	const pasteHandler = useRef<((e: any) => void) | null>(null);
+	const keydownHandler = useRef<((e: any) => void) | null>(null);
+
 	const unbind = () => {
-		$(window).off('paste.menu keydown.menu');
+		if (pasteHandler.current) {
+			U.Dom.removeEvent(window, 'paste', pasteHandler.current);
+		};
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on('paste.menu', e => onPaste(e));
-		win.on('keydown.menu', e => onKeyDown(e));
+		pasteHandler.current = e => onPaste(e);
+		keydownHandler.current = e => onKeyDown(e);
+		U.Dom.addEvents(window, [
+			[ 'paste', pasteHandler.current ],
+			[ 'keydown', keydownHandler.current ],
+		]);
 	};
 
 	const load = () => {
@@ -144,20 +153,33 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 	};
 
+	const uploadCover = (url: string, path: string) => {
+		close();
+		onUploadStart?.();
+
+		C.FileUpload(S.Common.space, url, path, I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			onUpload?.(I.CoverType.Upload, message.objectId);
+			analytics.event('SetCover', { type: I.CoverType.Upload });
+		});
+	};
+
 	const onUploadHandler = (e: any) => {
 		Action.openFileDialog({ extensions: J.Constant.fileExtension.cover }, paths => {
-			close();
-			onUploadStart?.();
-
-			C.FileUpload(S.Common.space, '', paths[0], I.FileType.Image, {}, false, '', I.ImageKind.Cover, rootId, 'coverId', (message: any) => {
-				if (message.error.code) {
-					return;
-				};
-
-				onUpload?.(I.CoverType.Upload, message.objectId);
-				analytics.event('SetCover', { type: I.CoverType.Upload });
-			});
+			uploadCover('', paths[0]);
 		});
+	};
+
+	const onUrlSubmit = () => {
+		const url = String(urlRef.current?.getValue() || '').trim();
+		if (!url) {
+			return;
+		};
+
+		uploadCover(url, '');
 	};
 
 	const onSelectHandler = (e: any, item: any) => {
@@ -216,25 +238,25 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onDragOver = (e: any) => {
 		if (U.File.checkDropFiles(e)) {
-			$(dropzoneRef.current).addClass('isDraggingOver');
+			U.Dom.addClass(dropzoneRef.current, 'isDraggingOver');
 		};
 	};
-	
+
 	const onDragLeave = (e: any) => {
 		if (U.File.checkDropFiles(e)) {
-			$(dropzoneRef.current).removeClass('isDraggingOver');
+			U.Dom.removeClass(dropzoneRef.current, 'isDraggingOver');
 		};
 	};
-	
+
 	const onDrop = (e: any) => {
 		if (!U.File.checkDropFiles(e)) {
 			return;
 		};
-		
+
 		const electron = U.Common.getElectron();
 		const file = electron.webFilePath(e.dataTransfer.files[0]);
-		
-		$(dropzoneRef.current).removeClass('isDraggingOver');
+
+		U.Dom.removeClass(dropzoneRef.current, 'isDraggingOver');
 		keyboard.disableCommonDrop(true);
 		setIsLoading(true);
 		
@@ -378,9 +400,9 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const setActive = (item: any, index: number, scroll: boolean) => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		node.find('.item.hover').removeClass('hover');
+		U.Dom.selectAll('.item.hover', node).forEach(el => U.Dom.removeClass(el, 'hover'));
 
 		active.current = item;
 		if (index !== undefined) {
@@ -391,8 +413,8 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		const element = node.find(`#item-${U.Common.esc(item.id)}`);
-		element.addClass('hover');
+		const element = U.Dom.select(`#item-${U.Common.esc(item.id)}`, node);
+		U.Dom.addClass(element, 'hover');
 
 		if (!scroll || !listRef.current || (index === undefined)) {
 			return;
@@ -468,7 +490,7 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onPaste = (e: any) => {
 		const { data } = param;
 		const { rootId } = data;
-		const files = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items);
+		const files = U.Common.getDataTransferFiles(e.clipboardData.items);
 
 		if (!files.length) {
 			return;
@@ -559,7 +581,6 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		filterElement = (
 			<Filter 
 				ref={filterRef}
-				className="outlined round"
 				value={filter}
 				onChange={onFilterChange} 
 				focusOnMount={true}
@@ -601,17 +622,31 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case Tab.Upload: {
 				content = (
-					<div 
-						ref={dropzoneRef}
-						className="dropzone" 
-						onDragOver={onDragOver} 
-						onDragLeave={onDragLeave} 
-						onDrop={onDrop}
-						onClick={onUploadHandler}
-					>
-						<Icon className="coverUpload" />
-						<Label text={translate('menuBlockCoverChoose')} />
-					</div>
+					<>
+						<div
+							ref={dropzoneRef}
+							className="dropzone"
+							onDragOver={onDragOver}
+							onDragLeave={onDragLeave}
+							onDrop={onDrop}
+							onClick={onUploadHandler}
+						>
+							<Icon name="common/upload" size={28} />
+							<Label text={translate('menuBlockCoverChoose')} />
+						</div>
+
+						<div className="urlSection">
+							<Label text={translate('menuBlockMediaOrAddViaUrl')} />
+							<form className="urlField" onSubmit={e => { e.preventDefault(); onUrlSubmit(); }}>
+								<Icon name="common/link" />
+								<Input
+									ref={urlRef}
+									onKeyDown={(e: any) => e.stopPropagation()}
+									placeholder={translate('menuBlockMediaUrlPlaceholderImage')}
+								/>
+							</form>
+						</div>
+					</>
 				);
 				break;
 			};
@@ -647,6 +682,6 @@ const MenuBlockCover = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuBlockCover;

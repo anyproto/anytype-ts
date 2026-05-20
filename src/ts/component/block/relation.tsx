@@ -1,9 +1,9 @@
 import React, { forwardRef, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Cell, Icon } from 'Component';
-import { I, C, S, U, J, focus, analytics, Relation, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
-const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => {
+const BlockRelation = forwardRef<{}, I.BlockComponent>((props, ref) => {
 
 	const { rootId, block, readonly, isPopup, passParam, onKeyDown, onKeyUp } = props;
 	const relationKey = block.content.key;
@@ -102,7 +102,7 @@ const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => 
 				<div className={[ 'info', 'noValue', (!readonly ? 'canEdit' : '') ].join(' ')} onClick={onMenu}>
 					{relation ? (
 						<>
-							<Icon className="ghost" />
+							<Icon name="common/ghost" className="ghost" />
 							{translate('commonDeletedRelation')}
 						</>
 					) : translate('menuBlockAddNewRelation')} 
@@ -131,7 +131,6 @@ const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => 
 						readonly={readonly || !allowedValue}
 						idPrefix={idPrefix}
 						onCellChange={onCellChange}
-						pageContainer={U.Common.getCellContainer(isPopup ? 'popup' : 'page')}
 						menuParam={{ 
 							className: 'fromBlockRelation', 
 							classNameWrap: 'fromBlock',
@@ -148,6 +147,6 @@ const BlockRelation = observer(forwardRef<{}, I.BlockComponent>((props, ref) => 
 		</div>
 	);
 
-}));
+});
 
 export default BlockRelation;

@@ -1,13 +1,12 @@
 import React, { forwardRef, useState, useRef, useImperativeHandle, useEffect, MouseEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Title, Label, Icon, ObjectName } from 'Component';
-import { I, S, U, Relation, translate, keyboard, analytics } from 'Lib';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
+import * as I from 'Interface';
 
-const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
+const SidebarSectionTypeRelation = forwardRef<I.SidebarSectionRef, I.SidebarSectionComponent>((props, ref) => {
 
 	const { readonly, isPopup, object, onChange } = props;
 	const nodeRef = useRef(null);
@@ -64,15 +63,15 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		e.preventDefault();
 		e.stopPropagation();
 
-		const element = $(nodeRef.current).find(`#item-${U.Common.esc(item.id)}`);
+		const element = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
 
 		S.Menu.open('select', {
-			element: element.find('.icon.more'),
+			element: U.Dom.select('.icon.more', element),
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
 			horizontal: I.MenuDirection.Right,
-			onOpen: () => element.addClass('active'),
-			onClose: () => element.removeClass('active'),
+			onOpen: () => U.Dom.addClass(element, 'active'),
+			onClose: () => U.Dom.removeClass(element, 'active'),
 			data: {
 				options: [
 					{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
@@ -113,7 +112,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 						horizontal: I.MenuDirection.Right,
 						data: {
 							options: [
-								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType'), icon: '' },
+								{ id: 'addToType', name: translate('sidebarRelationLocalAddToType') },
 							],
 							onSelect: (e, option) => {
 								switch (option.id) {
@@ -134,12 +133,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 	const onSortStart = (e: any) => {
 		keyboard.disableSelection(true);
 		setActive(e.active);
-		U.Common.getScrollContainer(isPopup).addClass('isDraggingProperty');
+		U.Dom.addClass(U.Dom.getScrollContainer(isPopup), 'isDraggingProperty');
 	};
 
 	const onSortCancel = () => {
 		keyboard.disableSelection(false);
-		U.Common.getScrollContainer(isPopup).removeClass('isDraggingProperty');
+		U.Dom.removeClass(U.Dom.getScrollContainer(isPopup), 'isDraggingProperty');
 		setActive(null);
 	};
 
@@ -162,8 +161,8 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
         const toItems = Relation.getArrayValue(object[to.relationKey]);
         const oldIndex = fromItems.indexOf(active.id);
         const newIndex = toItems.indexOf(over.id);
-		const element = $(nodeRef.current).find(`#item-${U.Common.esc(over.id)}`);
-		const rect = element.length ? element.get(0).getBoundingClientRect() : null;
+		const element = U.Dom.select(`#item-${U.Common.esc(over.id)}`, nodeRef.current);
+		const rect = element ? element.getBoundingClientRect() : null;
 		const pointerY = active.rect.current.translated?.top ?? 0;
 		const offset = rect && (pointerY < (rect.top + rect.height / 2)) ? 0 : 1;
 
@@ -199,8 +198,8 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		const keys = U.Object.getTypeRelationKeys(object.id).concat('description');
 		const ids = list.data.map(it => it.id);
 
-		S.Menu.open('relationSuggest', { 
-			element: $(e.currentTarget),
+		S.Menu.open('relationSuggest', {
+			element: e.currentTarget as HTMLElement,
 			horizontal: I.MenuDirection.Center,
 			className: 'fixed',
 			classNameWrap: 'fromSidebar',
@@ -275,12 +274,12 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 			>
 				{!item.isEmpty ? (
 					<>
-						{canDrag ? <Icon className="dnd" /> : ''}
-						<Icon className={`relation ${Relation.className(item.format)}`} />
+						{canDrag ? <Icon name="common/dnd" /> : ''}
+						<Icon name={Relation.registryName(item.relationKey, item.format)} />
 					</>
 				) : ''}
 				<ObjectName object={item} />
-				{list.onMore ? <Icon className="more" onClick={e => list.onMore(e, item)} /> : ''}
+				{list.onMore ? <Icon name="common/more" className="more" onClick={e => list.onMore(e, item)} /> : ''}
 			</div>
 		);
 	};
@@ -299,7 +298,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 					<Label text={list.name} />
 					{list.description ? (
 						<Icon 
-							className="question"
+							name="common/question"
 							tooltipParam={{
 								text: list.description, 
 								className: 'relationGroupDescription',
@@ -315,7 +314,7 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 					{list.onInfo ? (
 						<Icon 
 							id={`button-more-${list.id}`}
-							className="more withBackground"
+							name="common/more" className="more" withBackground={true}
 							tooltipParam={{ text: translate('commonActions') }}
 							onClick={list.onInfo}
 						/>
@@ -371,9 +370,9 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		<div ref={nodeRef} className="wrap">
 			<div className="titleWrap">
 				<Title text={translate('sidebarTypeRelation')} />
-				<Icon 
-					id="section-relation-plus" 
-					className="plus withBackground" 
+				<Icon
+					id="section-relation-plus"
+					name="plus/menu" className="plus" withBackground={true}
 					tooltipParam={{ text: translate('commonAddRelation') }}
 					onClick={e => onAdd(e, lists.find(it => it.id == I.SidebarRelationList.Recommended))} 
 				/>
@@ -396,6 +395,6 @@ const SidebarSectionTypeRelation = observer(forwardRef<I.SidebarSectionRef, I.Si
 		</div>
 	);
 
-}));
+});
 
 export default SidebarSectionTypeRelation;

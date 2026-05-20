@@ -1,11 +1,11 @@
 import React, { forwardRef, useEffect, useLayoutEffect, useState, useRef, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Header, Footer, Loader, Block, Deleted, HeadSimple, EditorControls } from 'Component';
-import { I, M, C, S, U, J, Action, keyboard, Dataview, analytics, sidebar, Onboarding, Storage } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
-const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainSet = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ isDeleted, setIsDeleted ] = useState(false);
@@ -22,22 +22,33 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 	const scrollTopRef = useRef(0);
 	const isClosingRef = useRef(false);
 
-	const unbind = () => {
-		const ns = U.Common.getEventNamespace(isPopup);
-		const events = [ 'keydown', 'scroll' ];
+	const keydownHandler = useRef<((e: any) => void) | null>(null);
+	const scrollHandler = useRef<(() => void) | null>(null);
 
-		$(window).off(events.map(it => `${it}.set${ns}`).join(' '));
+	const unbind = () => {
+		const container = U.Dom.getScrollContainer(isPopup);
+
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+		};
+
+		if (scrollHandler.current && container) {
+			U.Dom.removeEvent(container, 'scroll', scrollHandler.current);
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-		const ns = U.Common.getEventNamespace(isPopup);
-		const container = U.Common.getScrollContainer(isPopup);
+		const container = U.Dom.getScrollContainer(isPopup);
 
 		unbind();
 
-		win.on(`keydown.set${ns}`, e => onKeyDown(e));
-		container.on(`scroll.set${ns}`, () => onScroll());
+		keydownHandler.current = e => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
+
+		scrollHandler.current = () => onScroll();
+		if (container) {
+			U.Dom.addEvent(container, 'scroll', scrollHandler.current);
+		};
 	};
 
 	const checkDeleted = (): boolean => {
@@ -90,15 +101,14 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 				const restore = () => {
 					cnt++;
 
-					const container = U.Common.getScrollContainer(isPopup);
-					const el = container.get(0);
+					const container = U.Dom.getScrollContainer(isPopup);
 
-					if (!el) {
+					if (!container) {
 						return;
 					};
 
-					if ((el.scrollHeight > target) || (cnt >= 30)) {
-						container.scrollTop(target);
+					if ((container.scrollHeight > target) || (cnt >= 30)) {
+						container.scrollTop = target;
 					} else {
 						window.setTimeout(restore, 50);
 					};
@@ -128,8 +138,8 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 			return;
 		};
 
-		const container = U.Common.getScrollContainer(isPopup);
-		const top = container.scrollTop();
+		const container = U.Dom.getScrollContainer(isPopup);
+		const top = container?.scrollTop ?? 0;
 
 		Storage.setScroll('set', rootId, top, isPopup);
 		S.Common.getRef('selectionProvider')?.renderSelection();
@@ -140,16 +150,18 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 			return;
 		};
 
+		const rootId = keyboard.getRootId(isPopup);
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
 		const count = ids.length;
 		const ref = blockRefs.current[J.Constant.blockId.dataview];
-		const { ww, wh } = U.Common.getWindowDimensions();
+		const { ww, wh } = U.Dom.getWindowDimensions();
 
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 
-			$(bodyRef.current).find('#dataviewControls .filter .icon.search').trigger('click');
+			const searchIcon = U.Dom.select('#dataviewControls .filter .icon.commonSearch', bodyRef.current) as HTMLElement;
+			searchIcon?.click();
 		});
 
 		keyboard.shortcut('createObject', e, () => {
@@ -169,7 +181,7 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 				const records = S.Record.getRecordIds(S.Record.getSubId(rootId, J.Constant.blockId.dataview), '');
 				selection.set(I.SelectType.Record, records);
 
-				$(window).trigger('selectionSet');
+				U.Dom.eventDispatch(window, 'selectionSet');
 			});
 
 			if (count && !S.Menu.isOpen()) {
@@ -209,13 +221,13 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		};
 
 		raf(() => {
-			const container = U.Common.getPageContainer(isPopup);
-			const header = container.find('#header');
-			const cover = container.find('.block.blockCover');
-			const hh = isPopup ? header.height() : J.Size.header;
+			const container = U.Dom.getPageContainer(isPopup);
+			const header = U.Dom.select('#header', container);
+			const cover = U.Dom.select('.block.blockCover', container);
+			const hh = isPopup ? (header?.clientHeight ?? 0) : J.Size.header;
 
-			if (cover.length) {
-				cover.css({ top: hh });
+			if (cover) {
+				U.Dom.css(cover, { top: `${hh}px` });
 			};
 		});
 	};
@@ -319,6 +331,6 @@ const PageMainSet = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref)
 		</>
 	);
 
-}));
+});
 
 export default PageMainSet;

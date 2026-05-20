@@ -6,10 +6,17 @@
 
 		.isArchived {
 			.cardName { color: var(--color-control-active); }
-			.cardName span::before { display: none; }
+			.cardName {
+				span::before { display: none; }
+				.name { color: var(--color-text-secondary); }
+			}
+			.iconObject .iconCommon { color: var(--color-control-inactive); }
+			.tagItem.archive { background: var(--color-light-grey); color: var(--color-dark-grey); font-weight: 400; }
 		}
 
-		.loading, .deleted { color: var(--color-control-active); display: flex; gap: 0px 6px; align-items: center; }
+		.loading, .deleted { display: flex; gap: 0px 6px; align-items: center; }
+		.loading { color: var(--color-control-active); }
+		.deleted { color: var(--color-text-secondary); }
 		.loading, .deleted {
 			.name { display: inline-block; vertical-align: top; max-width: calc(100% - 26px); position: relative; @include text-overflow-nw; }
 		}
@@ -19,7 +26,8 @@
 			.loader { width: 20px; height: 20px; margin: -10px 0px 0px -10px; }
 		}
 		.deleted {
-			.icon.ghost { width: 24px; height: 24px; }
+			.icon.ghost { width: 24px; height: 24px; color: var(--color-control-inactive); }
+			.name { font-weight: 500; }
 		}
 
 		.linkCard {
@@ -33,10 +41,10 @@
 			}
 
 			.cover { position: relative; height: 100%; background-size: cover !important; background-color: unset; }
-			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; position: static; }
+			.cardName { display: flex; flex-direction: row; gap: 0px 6px; align-items: center; position: static; overflow: hidden; }
 			.cardName {
 				.name { transition: color $transitionCommon, border-color $transitionCommon; font-weight: 500; }
-				.iconObject { flex-shrink: 0; }
+				.nameWrapper { display: flex; align-items: center; gap: 0px 6px; flex-grow: 1; overflow: hidden; }
 			}
 			.cardDescription { @include text-small; line-height: 16px; @include clamp2; margin: 2px 0px 0px 0px; }
 			.cardDescription:empty { margin: 0px; }
@@ -67,6 +75,15 @@
 			.sides { min-height: 80px; }
 			.side.left { padding: 16px 16px 16px 80px; flex-grow: 1; }
 			.iconObject { position: absolute; left: 16px; top: 15px; background-color: var(--color-shape-highlight-medium); border-radius: 10px; }
+		}
+
+		.isArchived .linkCard.c48.isVertical {
+			.side.left { padding: 16px; }
+			.cardName { flex-direction: column; align-items: flex-start; gap: 8px 0px; }
+
+			&:not(.withCover) {
+				.iconObject { position: relative; left: auto; top: auto; }
+			}
 		}
 
 		.linkCard.c48.withIcon.withCover.isVertical {
@@ -108,9 +125,16 @@
 				}
 			}
 
+			&.withIcon {
+				.cardName {
+					.iconObject { position: relative; }
+					.name { text-indent: 0px; }
+				}
+			}
+
 			.cardName { flex-wrap: nowrap; vertical-align: top; max-width: 100%; }
 			.cardName {
-				.name { @include text-overflow-nw; line-height: 19px; border-color: inherit; }
+				.name { @include text-overflow-nw; line-height: 20x; border-color: inherit; }
 			}
 
 			.cardDescription { @include text-small; }
@@ -153,7 +177,7 @@
 			.cardName { @include text-common; line-height: 20px; }
 			.cardName .name { @include clamp2; font-weight: 500; }
 
-			.archive { position: absolute; right: 10px; top: 10px; z-index: 1; }
+			.archive { flex-shrink: 0; }
 		}
 	}
 

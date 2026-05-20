@@ -1,13 +1,11 @@
 import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { DragBox } from 'Component';
-import { I, S, U, J, Relation, keyboard, analytics } from 'Lib';
 import ItemObject from './item/object';
+import * as I from 'Interface';
 
-const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
+const CellObject = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -55,11 +53,15 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const placeholderCheck = () => {
 		const value = getValue();
-		const list = $(listRef.current);
-		const placeholder = $(placeholderRef.current);
+		const list = listRef.current;
+		const ph = placeholderRef.current;
 
-		value.existing.length ? list.show() : list.hide();
-		value.new || value.existing.length ? placeholder.hide() : placeholder.show();
+		if (list) {
+			U.Dom.css(list, { display: value.existing.length ? '' : 'none' });
+		};
+		if (ph) {
+			U.Dom.css(ph, { display: (value.new || value.existing.length) ? 'none' : '' });
+		};
 	};
 
 	const getItems = (): any[] => {
@@ -73,19 +75,16 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const getValue = () => {
-		const list = $(listRef.current);
-		const items = list.find('.itemWrap');
-		const entry = $(entryRef.current);
+		const items = listRef.current ? U.Dom.selectAll('.itemWrap', listRef.current) : [];
 		const existing = [];
 
-		items.each((i: number, item: any) => {
-			item = $(item);
-			existing.push(item.data('id'));
+		items.forEach((item: any) => {
+			existing.push(item.dataset.id);
 		});
 
 		return {
 			existing,
-			new: (entry.length ? String(entry.text() || '').trim() : ''),
+			new: (entryRef.current ? String(entryRef.current.textContent || '').trim() : ''),
 		};
 	};
 
@@ -114,16 +113,16 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const focus = () => {
-		const entry = $(entryRef.current);
-		
-		if (entry.length) {
-			window.setTimeout(() => {
-				entry.focus();
-				setRange(entry.get(0), { start: 0, end: 0 });
+		window.setTimeout(() => {
+			if (!entryRef.current) {
+				return;
+			};
 
-				scrollToBottom();
-			});
-		};
+			entryRef.current.focus();
+			setRange(entryRef.current, { start: 0, end: 0 });
+
+			scrollToBottom();
+		});
 	};
 
 	const onKeyPress = (e: any) => {
@@ -131,9 +130,7 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 			return;
 		};
 
-		const entry = $(entryRef.current);
-
-		if (entry.length && (entry.text().length >= J.Constant.limit.cellEntry)) {
+		if (entryRef.current && (entryRef.current.textContent.length >= J.Constant.limit.cellEntry)) {
 			e.preventDefault();
 		};
 	};
@@ -142,8 +139,6 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		if (keyboard.isComposition) {
 			return;
 		};
-
-		const entry = $(entryRef.current);
 
 		keyboard.shortcut('enter', e, () => {
 			e.preventDefault();
@@ -154,17 +149,17 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 				onOptionAdd(value.new);
 			};
 		});
-		
+
 		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
 
-			const range = getRange(entry.get(0));
+			const range = getRange(entryRef.current);
 			if (range.start || range.end) {
 				return;
 			};
 
 			e.preventDefault();
-			
+
 			const value = getValue();
 			value.existing.pop();
 			setValue(value.existing);
@@ -220,27 +215,32 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const clear = () => {
-		$(entryRef.current).text(' ');
+		if (entryRef.current) {
+			entryRef.current.textContent = ' ';
+		};
 
 		S.Menu.updateData('dataviewObjectList', { filter: '' });
 		focus();
 	};
 
 	const blur = () => {
-		$(entryRef.current).trigger('blur');
+		entryRef.current?.blur();
 	};
 
 	const scrollToBottom = () => {
-		const cell = $(`#${U.Common.esc(id)}`);
-		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
+		const cell = U.Dom.get(id);
+		if (!cell) {
+			return;
+		};
 
-		if (content.length) {
-			content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
+		const content = U.Dom.hasClass(cell, 'cellContent') ? cell : U.Dom.select('.cellContent', cell);
+		if (content) {
+			content.scrollTop = content.scrollHeight + parseInt(getComputedStyle(content).paddingBottom);
 		};
 	};
 
 	const resize = () => {
-		$(window).trigger('resize.menuDataviewObjectList');
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	let value = getItems();
@@ -341,20 +341,24 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		const cell = $(`#${U.Common.esc(id)}`);
+		const cell = U.Dom.get(id);
+		if (!cell) {
+			return;
+		};
+
 		const value = getItems();
 
 		if (isEditing) {
-			cell.addClass('isEditing');
+			U.Dom.addClass(cell, 'isEditing');
 
 			placeholderCheck();
 			focus();
 			resize();
 		} else {
-			cell.removeClass('isEditing');
+			U.Dom.removeClass(cell, 'isEditing');
 		};
 
-		cell.toggleClass('isEmpty', !value.length);
+		U.Dom.toggleClass(cell, 'isEmpty', !value.length);
 	});
 
 	useImperativeHandle(ref, () => ({
@@ -370,6 +374,6 @@ const CellObject = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default CellObject;

@@ -1,14 +1,12 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
-import $ from 'jquery';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { getRange, setRange } from 'selection-ranges';
 import { Tag, Icon, DragBox } from 'Component';
-import { I, S, U, J, Relation, keyboard } from 'Lib';
+import * as I from 'Interface';
 
-const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
+const CellSelect = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
-	const { id, relation, recordId, getRecord, elementMapper, onChange, arrayLimit, canEdit, placeholder, menuParam } = props;
+	const { id, relation, recordId, getRecord, elementMapper, onChange, arrayLimit, canEdit, placeholder, menuParam, viewType } = props;
 	const entryRef = useRef(null);
 	const listRef = useRef(null);
 	const placeholderRef = useRef(null);
@@ -33,9 +31,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 			return;
 		};
 
-		const entry = $(entryRef.current);
-
-		if (entry.length && (entry.text().length >= J.Constant.limit.cellEntry)) {
+		if (entryRef.current && (entryRef.current.textContent.length >= J.Constant.limit.cellEntry)) {
 			e.preventDefault();
 		};
 	};
@@ -45,12 +41,10 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 			return;
 		};
 
-		const entry = $(entryRef.current);
-
 		keyboard.shortcut('backspace', e, () => {
 			e.stopPropagation();
 
-			const range = getRange(entry.get(0));
+			const range = getRange(entryRef.current);
 			if (range.start || range.end) {
 				return;
 			};
@@ -95,15 +89,20 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const placeholderCheck = () => {
 		const value = getValue();
-		const list = $(listRef.current);
-		const placeholder = $(placeholderRef.current);
 
-		value.existing.length ? list.show() : list.hide();
-		value.new || value.existing.length ? placeholder.hide() : placeholder.show();
+		if (listRef.current) {
+			U.Dom.css(listRef.current, { display: value.existing.length ? '' : 'none' });
+		};
+
+		if (placeholderRef.current) {
+			U.Dom.css(placeholderRef.current, { display: (value.new || value.existing.length) ? 'none' : '' });
+		};
 	};
 
 	const clear = () => {
-		$(entryRef.current).text(' ');
+		if (entryRef.current) {
+			entryRef.current.textContent = ' ';
+		};
 		focus();
 	};
 
@@ -137,11 +136,15 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const scrollToBottom = () => {
-		const cell = $(`#${U.Common.esc(id)}`);
-		const content = cell.hasClass('.cellContent') ? cell : cell.find('.cellContent');
+		const cell = U.Dom.get(id);
+		if (!cell) {
+			return;
+		};
 
-		if (content.length) {
-			content.scrollTop(content.get(0).scrollHeight + parseInt(content.css('paddingBottom')));
+		const content = U.Dom.hasClass(cell, 'cellContent') ? cell : U.Dom.select('.cellContent', cell);
+
+		if (content) {
+			content.scrollTop = content.scrollHeight + parseInt(getComputedStyle(content).paddingBottom);
 		};
 	};
 
@@ -180,19 +183,16 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const getValue = () => {
-		const list = $(listRef.current);
-		const items = list.find('.itemWrap');
-		const entry = $(entryRef.current);
+		const items = listRef.current ? U.Dom.selectAll('.itemWrap', listRef.current) : [];
 		const existing = [];
 
-		items.each((i: number, item: any) => {
-			item = $(item);
-			existing.push(item.data('id'));
+		items.forEach((item: any) => {
+			existing.push(item.dataset.id);
 		});
 
 		return {
 			existing,
-			new: (entry.length ? String(entry.text() || '').trim() : ''),
+			new: (entryRef.current ? String(entryRef.current.textContent || '').trim() : ''),
 		};
 	};
 
@@ -214,7 +214,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	const resize = () => {
-		$(window).trigger('resize.menuDataviewOptionList');
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	let value = getItems();
@@ -263,6 +263,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 									className={Relation.selectClassName(relation.format)}
 									onClick={e => onClick(e, item.id)}
 									onRemove={() => onValueRemove(item.id)}
+									isSmall={viewType != I.ViewType.Grid}
 								/>
 							</span>
 						))}
@@ -289,7 +290,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 					</span>
 				) : ''}
 
-				{isSelect ? <Icon className="clear" onMouseDown={onClear} /> : ''}
+				{isSelect ? <Icon name="common/clear" className="clear" onMouseDown={onClear} /> : ''}
 			</div>
 		);
 	} else {
@@ -307,6 +308,7 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 							className={Relation.selectClassName(relation.format)}
 							onClick={e => onClick(e, item.id)}
 							onContextMenu={e => onContextMenu(e, item)}
+							isSmall={viewType != I.ViewType.Grid}
 						/>
 					))}
 					{arrayLimit && (length > arrayLimit) ? <div className="more">+{length - arrayLimit}</div> : ''}
@@ -316,7 +318,10 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	useEffect(() => {
-		$(`#${U.Common.esc(id)}`).toggleClass('isEditing', isEditing);
+		const cell = U.Dom.get(id);
+		if (cell) {
+			U.Dom.toggleClass(cell, 'isEditing', isEditing);
+		};
 
 		if (isEditing) {
 			placeholderCheck();
@@ -339,6 +344,6 @@ const CellSelect = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default CellSelect;

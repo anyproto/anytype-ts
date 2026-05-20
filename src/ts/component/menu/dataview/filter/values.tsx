@@ -1,13 +1,11 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, S, U, J, C, translate, analytics, Relation, Dataview } from 'Lib';
+
 import { Select, Icon, Input, MenuItemVertical, Label, OptionSelect, CalendarSelect, TabSwitch } from 'Component';
-import { format } from 'path';
+import * as I from 'Interface';
 
 const SUB_ID_PREFIX = 'filterOptionList';
 
-const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuDataviewFilterValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, setHover, close, onKeyDown, setActive, getId, position } = props;
 	const { data, className, classNameWrap } = param;
@@ -23,6 +21,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	const exactDateValueRef = useRef<number | null>(null);
 	const relativeDateRef = useRef<{ quickOption: I.FilterQuickOption; value: any } | null>(null);
 	const [ dummy, setDummy ] = useState(0);
+	const [ clearActive, setClearActive ] = useState(false);
 
 	const view = getView();
 	const item = filterProp || view?.getFilter(itemId);
@@ -89,7 +88,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		const isDate = Relation.isDate(rel.format);
 		const withFilter = [ I.RelationType.Select, I.RelationType.MultiSelect ].includes(rel.format);
 
-		if (inputRef.current.setValue && !withFilter) {
+		if (inputRef.current.setValue && !withFilter && !timeout.current) {
 			if (isDate) {
 				// NumberOfDaysAgo/NumberOfDaysNow use input, ExactDate uses CalendarSelect
 				if (it.quickOption != I.FilterQuickOption.ExactDate) {
@@ -105,14 +104,20 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		};
 	});
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const init = () => {
@@ -298,7 +303,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	};
 
 	const checkClear = (v: any) => {
-		$(nodeRef.current).find('.icon.clear').toggleClass('active', !!v);
+		setClearActive(!!v);
 	};
 
 	const onClear = (e: any) => {
@@ -397,6 +402,11 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 	];
 	const relationOption: any = relationOptions.find(it => it.id == item.relationKey) || {};
 	const items = getQuickOptions();
+	const hasExactDate = Relation.isDate(relation.format) && 
+		Relation.filterQuickOptions(relation.format, item.condition)
+			.some(it => it.id == I.FilterQuickOption.ExactDate);
+	const isExactTab = hasExactDate && item.quickOption == I.FilterQuickOption.ExactDate;
+	const onSubmit = e => onSubmitHandler(e);
 	const selectParam = {
 		width: 260,
 		isSub: true,
@@ -407,21 +417,17 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		className,
 		classNameWrap,
 		rebind,
+		parentId: getId(),
 	};
-
-	const hasExactDate = relation.format == I.RelationType.Date &&
-		Relation.filterQuickOptions(relation.format, item.condition)
-			.some(it => it.id == I.FilterQuickOption.ExactDate);
-	const isExactTab = hasExactDate && item.quickOption == I.FilterQuickOption.ExactDate;
 
 	let wrapValue = false;
 	let value = null;
-	const onSubmit = e => onSubmitHandler(e);
+
 
 	const textInput = (key?: string, placeholder?: string): any => (
 		<div className="textInputWrapper">
 			<Input
-				className="round c36"
+				size={36}
 				key={key ? key : 'value-text'}
 				ref={inputRef}
 				value={item.value}
@@ -431,7 +437,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 				onSelect={onSelect}
 				readonly={isReadonly}
 			/>
-			<Icon className="clear" onClick={onClear} />
+			{clearActive ? <Icon name="common/close" onClick={onClear} /> : ''}
 		</div>
 	);
 
@@ -550,7 +556,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 						isReadonly={isReadonly}
 						canClear={true}
 						position={position}
-						className="isInline"
+						className="isInline round"
 						menuClassNameWrap="fromBlock"
 						showFooter={false}
 					/>
@@ -600,8 +606,10 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		);
 	};
 
+	const cn = [ 'inner', Relation.className(relation.format) ];
+
 	return (
-		<div ref={nodeRef} className="inner">
+		<div ref={nodeRef} className={cn.join(' ')}>
 			{!hideHead ? (
 				<div className="head menuHead">
 					<div className="conditionSelect" onClickCapture={onConditionClick}>
@@ -617,7 +625,7 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 							readonly={isReadonly}
 						/>
 					</div>
-					{!isReadonly ? <Icon className="more withBackground" onClick={onMore} /> : ''}
+					{!isReadonly ? <Icon name="common/more" className="more" withBackground={true} onClick={onMore} /> : ''}
 				</div>
 			) : ''}
 
@@ -659,6 +667,6 @@ const MenuDataviewFilterValues = observer(forwardRef<I.MenuRef, I.Menu>((props, 
 		</div>
 	);
 	
-}));
+});
 
 export default MenuDataviewFilterValues;

@@ -1,6 +1,8 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { MenuItemVertical, Button, ShareTooltip } from 'Component';
-import { I, S, U, J, keyboard, analytics, Action, Highlight, translate } from 'Lib';
+import * as I from 'Interface';
+import Highlight from 'Lib/highlight';
+
 
 const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
@@ -8,15 +10,20 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const n = useRef(-1);
 	const showIncentive = U.Data.isFreeMember();
 
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const optionMapper = (it: any) => ({ 
@@ -27,32 +34,32 @@ const MenuHelp = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getItems = () => {
 		return [
-			{ 
-				id: 'whatsNew', icon: 'help-bell', document: 'whatsNew', 
-				caption: <Button className="c16" text={U.Common.getElectron().version.app} /> 
-			},
-			{ id: 'shortcut', icon: 'help-keyboard', caption: keyboard.getCaption('shortcut') },
+			{ id: 'shortcut', iconParam: { name: 'menu/help/keyboard' }, caption: keyboard.getCaption('shortcut') },
 			{ isDiv: true },
 			{ id: 'share' },
 			{ id: 'community' },
 			{ id: 'tutorial' },
 			{ id: 'contact' },
 			{ isDiv: true },
-			{ 
+			{
+				id: 'whatsNew', iconParam: { name: 'menu/help/bell' }, document: 'whatsNew',
+				caption: <Button size={16} text={U.Common.getElectron().version.app} />
+			},
+			{
 				id: 'developer', arrow: true, children: [
 					{ id: 'developerPortal' },
 					{ id: 'mcp' },
 				],
 			},
-			{ 
+			{
 				id: 'more', arrow: true, children: [
 					{ id: 'terms' },
 					{ id: 'privacy' },
 					{ id: 'tech' },
 				],
 			},
-		].map(it => {
-			it.icon = it.icon || (it.id ? `help-${it.id}` : '');
+		].map((it: any) => {
+			it.iconParam = it.iconParam || { name: `menu/help/${it.icon || it.id}` };
 			return optionMapper(it);
 		});
 	};

@@ -1,6 +1,6 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { Title, Icon, Label, Button, Phrase } from 'Component';
-import { I, keyboard, translate, Storage, S, Renderer, C, analytics, U, sidebar } from 'Lib';
+import { Title, Label, Button, Phrase } from 'Component';
+import * as I from 'Interface';
 
 const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -9,43 +9,51 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 	const phraseRef = useRef(null);
 	const [ n, setN ] = useState(0);
 
-	const setHighlight = () => {
-		const buttons = $(buttonsRef).find('.button');
+	const setHighlight = (index: number) => {
+		if (!buttonsRef.current) {
+			return;
+		};
 
-		if (buttons[n]) {
-			$(buttonsRef).find('.hover').removeClass('hover');
-			$(buttons[n]).addClass('hover');
+		const buttons = U.Dom.selectAll('.button', buttonsRef.current);
+
+		U.Dom.selectAll('.hover', buttonsRef.current).forEach(el => U.Dom.removeClass(el, 'hover'));
+
+		if (buttons[index]) {
+			U.Dom.addClass(buttons[index], 'hover');
 		};
 	};
 
 	const onKeyDown = (e) => {
 		keyboard.shortcut('enter, space', e, () => {
 			e.stopPropagation();
-			const buttons = $(buttonsRef).find('.button');
+			const buttons = buttonsRef.current ? U.Dom.selectAll('.button', buttonsRef.current) : [];
 
-			if (buttons[n]) {
-				$(buttons[n]).trigger('click');
+			const btn = buttons[n] as HTMLElement;
+			if (btn) {
+				btn.click();
 			};
 		});
 
 		keyboard.shortcut('arrowup, arrowdown, arrowleft, arrowright', e, (arrow) => {
-			const dir = [ 'arrowup', 'arrowleft' ].includes(arrow) ? 1 : -1;
-			const buttons = $(buttonsRef).find('.button');
+			const dir = [ 'arrowup', 'arrowleft' ].includes(arrow) ? -1 : 1;
+			const buttons = buttonsRef.current ? U.Dom.selectAll('.button', buttonsRef.current) : [];
 
 			if (buttons.length < 2) {
 				return;
 			};
 
-			let next = n + dir;
-			if (next < 0) {
-				next = buttons.length - 1;
-			};
-			if (next > buttons.length - 1) {
-				next = 0;
-			};
+			setN((prev) => {
+				let next = prev + dir;
+				if (next < 0) {
+					next = buttons.length - 1;
+				};
+				if (next > buttons.length - 1) {
+					next = 0;
+				};
 
-			setN(next);
-			setHighlight();
+				setHighlight(next);
+				return next;
+			});
 		});
 	};
 
@@ -72,10 +80,19 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onMouseEnter = (e: any) => {
-		const buttons = $(buttonsRef).find('.button');
+		const buttons = buttonsRef.current ? U.Dom.selectAll('.button', buttonsRef.current) : [];
+		const index = Array.from(buttons).indexOf(e.currentTarget);
 
-		setN($(buttons).index(e.currentTarget));
-		setHighlight();
+		setN(index);
+		setHighlight(index);
+	};
+
+	const onMouseLeave = () => {
+		if (!buttonsRef.current) {
+			return;
+		};
+
+		U.Dom.selectAll('.hover', buttonsRef.current).forEach(el => U.Dom.removeClass(el, 'hover'));
 	};
 
 	const init = () => {
@@ -83,7 +100,7 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		setHighlight();
+		setHighlight(0);
 
 		Renderer.send('keytarGet', account.id).then((value: string) => {
 			if (!value) {
@@ -104,12 +121,17 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 		analytics.event('ScreenKeychain', { type: 'BeforeLogout' });
 	};
 
+	const keyHandler = useRef<(e: any) => void>(null);
+
 	useEffect(() => {
 		init();
-		$(window).on(`keydown.${props.id}`, e => onKeyDown(e));
+		keyHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keyHandler.current);
 
 		return () => {
-			$(window).off(`keydown.${props.id}`);
+			if (keyHandler.current) {
+				U.Dom.removeEvent(window, 'keydown', keyHandler.current);
+			};
 		};
 	}, []);
 
@@ -129,8 +151,22 @@ const PopupLogout = forwardRef<{}, I.Popup>((props, ref) => {
 			</div>
 
 			<div ref={buttonsRef} className="buttons">
-				<Button text={translate('commonShowKey')} color="black" className="c36" onClick={onCopy} onMouseEnter={onMouseEnter} />
-				<Button text={translate('popupLogoutLogoutButton')} color="red" className="c36" onClick={onLogout} onMouseEnter={onMouseEnter} />
+				<Button 
+					text={translate('commonShowKey')} 
+					color="accent" 
+					size={36} 
+					onClick={onCopy} 
+					onMouseEnter={onMouseEnter} 
+					onMouseLeave={onMouseLeave} 
+				/>
+				<Button 
+					text={translate('popupLogoutLogoutButton')} 
+					color="red" 
+					size={36} 
+					onClick={onLogout} 
+					onMouseEnter={onMouseEnter} 
+					onMouseLeave={onMouseLeave} 
+				/>
 			</div>
 		</div>
 	);

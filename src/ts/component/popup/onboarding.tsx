@@ -1,9 +1,8 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import $ from 'jquery';
 import { Title, Label, Button, Icon } from 'Component';
-import { I, U, S, translate, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Keyboard, Navigation } from 'swiper/modules';
+import * as I from 'Interface';
 
 const SLIDE_COUNT = 5;
 
@@ -42,29 +41,33 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 	};
 
 	const initTypes = () => {
-		const wrapper = $(nodeRef.current).find('.step0');
+		const wrapper = U.Dom.select('.step0', nodeRef.current);
+		if (!wrapper) {
+			return;
+		};
+
 		const typeIds = types.map(it => it.id);
 
 		interval.current = window.setInterval(() => {
 			const idx = Math.floor(Math.random() * typeIds.length);
 
-			wrapper.find(`#type-${typeIds[idx]}`).removeClass('hidden');
+			U.Dom.removeClass(U.Dom.select(`#type-${typeIds[idx]}`, wrapper), 'hidden');
 			typeIds.splice(idx, 1);
 
 			if (!typeIds.length) {
 				window.clearInterval(interval.current);
 				window.clearTimeout(timeout.current);
 
-				timeout.current = window.setTimeout(() => wrapper.removeClass('init'), 300);
+				timeout.current = window.setTimeout(() => U.Dom.removeClass(wrapper, 'init'), 300);
 			};
 		}, 100);
 	};
 
 	const initGallery = () => {
-		const wrapper = $(nodeRef.current).find('.step1');
+		const wrapper = U.Dom.select('.step1', nodeRef.current);
 
 		window.clearTimeout(timeout.current);
-		timeout.current = window.setTimeout(() => wrapper.removeClass('init'), 600);
+		timeout.current = window.setTimeout(() => U.Dom.removeClass(wrapper, 'init'), 600);
 	};
 
 	const onSlideChange = () => {
@@ -102,7 +105,7 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 
 				<Title text={translate('onboardingPrimitivesTitle')} />
 				<Label text={translate('onboardingPrimitivesDescription')} />
-				<Button onClick={() => onStepChange(1, initGallery)} text={translate('commonSeeChanges')} className="c42" />
+				<Button onClick={() => onStepChange(1, initGallery)} text={translate('commonSeeChanges')} size={48} />
 			</div>
 
 			<div className="step1 init">
@@ -116,7 +119,7 @@ const PopupOnboarding = forwardRef<{}, I.Popup>(({ param, close }, ref) => {
 									<Label className="description hidden" text={translate(`onboardingPrimitivesSlide${idx}Text`)} />
 									<Label className="count hidden" text={`${idx + 1} / ${SLIDE_COUNT - 1}`} />
 								</>
-							) : <Button onClick={() => close()} className="c36" text={translate('commonSeeUpdates')} />}
+							) : <Button onClick={() => close()} size={36} text={translate('commonSeeUpdates')} />}
 						</div>
 					))}
 				</div>

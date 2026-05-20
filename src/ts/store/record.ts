@@ -1,5 +1,6 @@
 import { observable, action, set, makeObservable } from 'mobx';
-import { S, I, M, U, J, Dataview, Relation } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 enum KeyMapType {
 	Relation = 'relation',
@@ -479,6 +480,15 @@ class RecordStore {
 	};
 
 	/**
+	 * Gets the discussion type object.
+	 * @private
+	 * @returns {any|null} The discussion type object or null.
+	 */
+	getDiscussionType () {
+		return this.getTypeByKey(J.Constant.typeKey.discussion);
+	};
+
+	/**
 	 * Gets the space type object.
 	 * @private
 	 * @returns {any|null} The space type object or null.
@@ -556,7 +566,7 @@ class RecordStore {
 		return (list || []).sort((c1, c2) => {
 			return (
 				U.Data.sortByOrderId(c1, c2) ||
-				U.Data.sortByTypeKey(c1, c2, spaceview.isChat || spaceview.isOneToOne) ||
+				U.Data.sortByTypeKey(c1, c2, spaceview.isOneToOne) ||
 				U.Data.sortByName(c1, c2)
 			);
 		});
@@ -605,7 +615,8 @@ class RecordStore {
 		const type = S.Record.getTypeById(typeId);
 		const recommended = Relation.getArrayValue(type?.recommendedRelations);
 		const typeRelations = recommended.map(it => this.getRelationById(it)).filter(it => it);
-		const objectRelations = S.Detail.getKeys(rootId, rootId).map(it => this.getRelationByKey(it)).filter(it => it && !recommended.includes(it.id));
+		const recommendedSet = new Set(recommended);
+		const objectRelations = S.Detail.getKeys(rootId, rootId).map(it => this.getRelationByKey(it)).filter(it => it && !recommendedSet.has(it.id));
 
 		return this.checkHiddenObjects(typeRelations.concat(objectRelations));
 	};

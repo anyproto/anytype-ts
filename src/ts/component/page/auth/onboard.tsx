@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
-import { observer } from 'mobx-react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase, Footer } from 'Component';
-import { I, C, S, U, translate, Animation, analytics, keyboard, Renderer, Onboarding } from 'Lib';
-import { set } from 'lodash';
+import * as I from 'Interface';
+import Animation from 'Lib/animation';
 
 enum Stage {
 	Phrase 		= 0,
@@ -11,7 +10,7 @@ enum Stage {
 	UseCase		= 3,
 };
 
-const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { account } = S.Auth;
 	const nodeRef = useRef(null);
@@ -29,23 +28,30 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		role: [ 'student', 'manager', 'softwareDeveloper', 'writer', 'designer', 'artist', 'marketer', 'consultant', 'entrepreneur', 'researcher' ],
 		purpose: [ 'messaging', 'knowledge', 'noteTaking', 'projects', 'lifePlanning', 'habitTracking', 'teamWork' ],
 	};
-	const cnb = [ 'c48' ];
+	const cnb = [];
 	const needEmail = U.Data.isAnytypeNetwork() && S.Common.isOnline;
 
+	const onKeyDownRef = useRef<((e: any) => void) | null>(null);
+
 	const unbind = () => {
-		$(window).off('keydown.onboarding');
+		if (onKeyDownRef.current) {
+			U.Dom.removeEvent(window, 'keydown', onKeyDownRef.current);
+			onKeyDownRef.current = null;
+		};
 	};
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.onboarding', e => onKeyDown(e));
-	};
 
-	const onKeyDown = e => {
-		keyboard.shortcut('enter', e, () => {
-			e.preventDefault();
-			onForward();
-		});
+		const handler = e => {
+			keyboard.shortcut('enter', e, () => {
+				e.preventDefault();
+				onForward();
+			});
+		};
+
+		onKeyDownRef.current = handler;
+		U.Dom.addEvent(window, 'keydown', handler);
 	};
 
 	// Guard to prevent illegal state change
@@ -60,7 +66,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 	const onAuth = () => {
 		U.Router.switchSpace(S.Common.space, '', false, {
-			onFadeIn: () => {
+			onRouteChange: () => {
 				Onboarding.startCommon(props.isPopup);
 				analytics.event('OpenAccount');
 			},
@@ -68,7 +74,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	};
 
 	// Moves the Onboarding Flow one stage forward if possible
-	const onForward = () => {
+	const onForward = (skip?: boolean) => {
 		if (!canMoveForward()) {
 			return;
 		};
@@ -82,8 +88,12 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			};
 
 			case Stage.Email: {
-				if (!needEmail) {
+				if (!needEmail || skip) {
 					Animation.from(() => setStage(stage + 1));
+
+					if (skip) {
+						analytics.event('ScreenOnboardingSkipEmail');
+					};
 					break;
 				};
 
@@ -91,7 +101,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 				if (email) {
 					nextRef.current?.setLoading(true);
-					
+
 					C.MembershipV2SubscribeToUpdates(email, (message: any) => {
 						nextRef.current?.setLoading(false);
 
@@ -168,7 +178,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 	const onEmailKeyUp = (e: KeyboardEvent, v: string) => {
 		const isValid = U.String.matchEmail(v);
 
-		$(nextRef.current?.getNode()).toggleClass('disabled', !isValid);
+		U.Dom.toggleClass(nextRef.current?.getNode(), 'disabled', !isValid);
 	};
 
 	const shuffleItems = (stage: string) => {
@@ -238,7 +248,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 
 			additional = (
 				<div className="learnMore animation" onClick={onLearnMore}>
-					<Icon />
+					<Icon name="plus/onboarding" size={18} />
 					<Label text={translate('commonLearnMore')} />
 				</div>
 			);
@@ -246,18 +256,19 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			buttons = (
 				<>
 					<div className="animation">
-						<Button 
-							ref={nextRef} 
+						<Button
+							ref={nextRef}
+							size={48}
 							className={cnb.join(' ')}
-							text={phraseVisible ? translate('commonContinue') : translate('authOnboardPhraseRevealAndCopy')} 
-							color="accent" 
-							onClick={phraseVisible ? onForward : onPhraseCopy}
+							text={phraseVisible ? translate('commonContinue') : translate('authOnboardPhraseRevealAndCopy')}
+							color="accent"
+							onClick={phraseVisible ? () => onForward() : onPhraseCopy}
 						/>
 					</div>
 
 					{!phraseVisible ? (
 						<div className="animation">
-							<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+							<Button color="blank" size={48} text={translate('commonSkip')} onClick={() => onForward()} />
 						</div>
 					) : ''}
 				</>
@@ -284,10 +295,10 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
+						<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
 					</div>
 					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+						<Button color="blank" size={48} text={translate('commonSkip')} onClick={() => onForward(true)} />
 					</div>
 				</>
 			);
@@ -310,10 +321,10 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={onForward} />
+						<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonContinue')} color="accent" onClick={() => onForward()} />
 					</div>
 					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+						<Button color="blank" size={48} text={translate('commonSkip')} onClick={() => onForward()} />
 					</div>
 				</>
 			);
@@ -334,10 +345,10 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 			buttons = (
 				<>
 					<div className="animation">
-						<Button ref={nextRef} className={cnb.join(' ')} text={translate('commonDone')} color="accent" onClick={onForward} />
+						<Button ref={nextRef} size={48} className={cnb.join(' ')} text={translate('commonDone')} color="accent" onClick={() => onForward()} />
 					</div>
 					<div className="animation">
-						<Button color="blank" className="c48" text={translate('commonSkip')} onClick={onForward} />
+						<Button color="blank" size={48} text={translate('commonSkip')} onClick={() => onForward()} />
 					</div>
 				</>
 			);
@@ -370,6 +381,7 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		};
 
 		analytics.event('ScreenOnboarding', { step: Stage[stage] });
+		return () => unbind();
 	}, [ stage ]);
 
 	return (
@@ -393,6 +405,6 @@ const PageAuthOnboard = observer(forwardRef<I.PageRef, I.PageComponent>((props, 
 		</div>
 	);
 
-}));
+});
 
 export default PageAuthOnboard;

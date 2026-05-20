@@ -4,6 +4,11 @@
 	.menu.menuDataviewOptionList { width: var(--menu-width-value); }
 	.menu.menuDataviewOptionList {
 		.content { padding: 0px; }
+
+		&.withFilter {
+			.content { padding-top: 12px; }
+			.titleWrapper + .content { padding-top: 4px; }
+		}
 	}
 
 	.menu.menuDataviewOptionEdit {

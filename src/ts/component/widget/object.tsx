@@ -1,16 +1,16 @@
 import React, { forwardRef, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, ChatCounter, Icon } from 'Component';
-import { I, J, U, S, C, translate, keyboard, analytics } from 'Lib';
+import * as I from 'Interface';
 
-const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => {
+const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const { parent, onContext } = props;
-	const { space } = S.Common;
+	const { space, sidebarView } = S.Common;
+	const isLinksView = sidebarView == I.SidebarView.Links;
 	const nodeRef = useRef(null);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const sensors = useSensors(
@@ -21,11 +21,9 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	const realId = parent.id.replace(`${space}-`, '');
 	const isUnread = realId == J.Constant.widgetId.unread;
 	const isBin = realId == J.Constant.widgetId.bin;
+	const isRecent = realId == J.Constant.widgetId.recentEdit;
 	const canWrite = U.Space.canMyParticipantWrite();
-
-	const getId = (id: string) => {
-		return [space, id].join('-');
-	};
+	const home = U.Space.getDashboard();
 
 	const getSubId = () => {
 		let subId = '';
@@ -51,7 +49,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	};
 
 	const isAllowedObject = (type: any): boolean => {
-		const skipLayouts = [I.ObjectLayout.Participant].concat(U.Object.getFileAndSystemLayouts());
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getSystemLayouts());
 
 		let ret = true;
 		if (skipLayouts.includes(type.recommendedLayout)) {
@@ -66,7 +64,11 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 	};
 
 	const subId = getSubId();
-	const canDrag = parent.id == getId(J.Constant.widgetId.type);
+	const canDrag = [ 
+		J.Constant.widgetId.type, 
+		J.Constant.widgetId.pinned, 
+		J.Constant.widgetId.personalWidgets,
+	].includes(realId) && canWrite;
 	const { total } = S.Record.getMeta(subId, '');
 
 	const onSortStart = (e: any) => {
@@ -91,9 +93,24 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 
 		const newItems = arrayMove(items, oldIndex, newIndex);
 
-		U.Data.sortByOrderIdRequest(getSubId(), newItems, callBack => {
-			C.ObjectTypeSetOrder(space, newItems.map(it => it.id), callBack);
-		});
+		if (realId == J.Constant.widgetId.type) {
+			U.Data.sortByOrderIdRequest(getSubId(), newItems, callBack => {
+				C.ObjectTypeSetOrder(space, newItems.map(it => it.id), callBack);
+			});
+		} else
+		if ([ J.Constant.widgetId.pinned, J.Constant.widgetId.personalWidgets ].includes(realId)) {
+			const rootId = realId == J.Constant.widgetId.pinned ? S.Block.widgets : U.Object.getPersonalWidgetsId();
+			const activeBlocks = S.Block.getWidgetsForTargetIn(active.id, rootId);
+			const overBlocks = S.Block.getWidgetsForTargetIn(over.id, rootId);
+
+			if (!activeBlocks.length || !overBlocks.length) {
+				return;
+			};
+
+			const position = newIndex > oldIndex ? I.BlockPosition.Bottom : I.BlockPosition.Top;
+
+			C.BlockListMoveToExistingObject(rootId, rootId, overBlocks[0].id, [ activeBlocks[0].id ], position);
+		};
 	};
 
 	const getItems = () => {
@@ -115,15 +132,39 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				break;
 			};
 
+			case J.Constant.widgetId.pinned: {
+				items = U.Data.getWidgetObjects(S.Block.widgets, isLinksView);
+				break;
+			};
+
+			case J.Constant.widgetId.personalWidgets: {
+				items = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId(), false);
+				break;
+			};
+
 			case J.Constant.widgetId.bin: {
 				items = [
-					{ id: J.Constant.widgetId.bin, icon: 'widget-bin', name: translate('commonBin'), layout: I.ObjectLayout.Archive },
+					{ 
+						id: J.Constant.widgetId.bin, 
+						icon: 'widget-bin', 
+						iconParam: { name: 'common/bin' }, 
+						name: translate('commonBin'), 
+						layout: I.ObjectLayout.Archive,
+					},
 				];
 				break;
 			};
+
 		};
 
-		return items;
+		const seen = new Set<string>();
+		return items.filter(it => {
+			if (!it?.id || seen.has(it.id)) {
+				return false;
+			};
+			seen.add(it.id);
+			return true;
+		});
 	};
 
 	const onCreate = (e: any, type: any) => {
@@ -142,8 +183,8 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 			const menuParam = {
 				element: `${element} .icon.plus`,
-				onOpen: () => $(element).addClass('active'),
-				onClose: () => $(element).removeClass('active'),
+				onOpen: () => U.Dom.addClass(U.Dom.select(element), 'active'),
+				onClose: () => U.Dom.removeClass(U.Dom.select(element), 'active'),
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
 				offsetY: 4,
@@ -159,6 +200,18 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 			return;
 		};
 
+		if (U.Object.getFileLayouts().includes(type.recommendedLayout)) {
+			U.Menu.onFileUploadPopup(type.recommendedLayout, '', details, (objectIds) => {
+				if (objectIds?.length) {
+					const object = S.Detail.get(S.Common.space, objectIds[0]);
+					if (object) {
+						cb(object);
+					};
+				};
+			}, analytics.route.uploadTypeWidget);
+			return;
+		};
+
 		C.ObjectCreate(details, flags, type.defaultTemplateId, type.uniqueKey, S.Common.space, (message: any) => {
 			if (!message.error.code) {
 				cb(message.details);
@@ -170,9 +223,13 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
-		const element = node.find(`#item-${U.Common.esc(item.id)}`);
-		const more = element.find('.buttons');
+		const element = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
+		const more = element ? U.Dom.select('.buttons', element) : null;
+		const data: any = {};
+
+		if (isRecent) {
+			data.allowedType = true;
+		};
 
 		if (isBin) {
 			U.Menu.widgetSectionContext(I.WidgetSection.Bin, {
@@ -180,21 +237,24 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				horizontal: I.MenuDirection.Center,
 				className: 'fixed',
 				classNameWrap: 'fromSidebar',
-				onOpen: () => $(element).addClass('active'),
-				onClose: () => $(element).removeClass('active'),
+				onOpen: () => U.Dom.addClass(element, 'active'),
+				onClose: () => U.Dom.removeClass(element, 'active'),
 			});
 		} else {
-			onContext({ node: element, element: more, withElement, subId, objectId: item.id });
+			onContext({ node: element, element: more, withElement, subId, objectId: item.id, data });
 		};
 	};
 
 	const Item = (item: any) => {
-		const isChat = U.Object.isChatLayout(item.layout);
-		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: !canDrag });
+		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: item._isDisabled || !canDrag });
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
 		};
+		const isChat = U.Object.isChatLayout(item.layout);
+		const hasDiscussion = !isChat && !!item.discussionId;
+		const counterTargetId = isChat ? item.id : (hasDiscussion ? item.discussionId : '');
+		const showCounter = !!counterTargetId && (!hasUnreadSection || isUnread);
 		const canAdd = canWrite && (realId == J.Constant.widgetId.type) && isAllowedObject(item);
 		const spaceview = U.Space.getSpaceview();
 		const itemCn = [ 'item' ];
@@ -204,8 +264,8 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		};
 
 		let icon = null;
-		if (item.icon) {
-			icon = <Icon className={item.icon} />;
+		if (item.iconParam) {
+			icon = <Icon {...item.iconParam} />;
 		} else {
 			icon = (
 				<IconObject
@@ -225,6 +285,7 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 				{...listeners}
 				style={style}
 				onClick={e => U.Object.openEvent(e, item)}
+				onAuxClick={e => U.Object.openEvent(e, item)}
 				onContextMenu={e => onContextHandler(e, item, false)}
 			>
 				<div className="side left">
@@ -232,10 +293,16 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 					<ObjectName object={item} withPlural={true} />
 				</div>
 				<div className="side right">
-					{isChat && (!hasUnreadSection || isUnread) ? <ChatCounter chatId={item.id} /> : ''}
+					{showCounter ? (
+						<ChatCounter
+							chatId={counterTargetId}
+							mode={hasDiscussion ? U.Object.getDiscussionNotificationMode(spaceview, item.id) : undefined}
+						/>
+					) : ''}
 					{canAdd ? (
 						<div className="buttons">
 							<Icon
+								name="plus/menu"
 								className="plus"
 								tooltipParam={{ text: translate('commonCreateNewObject') }}
 								onClick={e => onCreate(e, item)}
@@ -276,6 +343,6 @@ const WidgetObject = observer(forwardRef<{}, I.WidgetComponent>((props, ref) => 
 		</>
 	);
 
-}));
+});
 
 export default WidgetObject;

@@ -1,14 +1,14 @@
 import React, { forwardRef, useRef, useState, useImperativeHandle, useEffect, DragEvent, MouseEvent, memo } from 'react';
-import $ from 'jquery';
 import sha1 from 'sha1';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { Editable, Icon, IconObject, Label, Loader } from 'Component';
-import { I, C, S, U, J, M, keyboard, Mark, translate, Storage, Preview, analytics } from 'Lib';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Mousewheel } from 'swiper/modules';
 
 import Attachment from './attachment';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 interface Props extends I.BlockComponent {
 	blockId: string;
@@ -22,7 +22,8 @@ interface Props extends I.BlockComponent {
 	getMessages: () => I.ChatMessage[];
 	getReplyContent: (message: any) => any;
 	highlightMessage: (id: string, orderId?: string) => void;
-	loadDepsAndReplies: (list: I.ChatMessage[], callBack?: () => void) => void;
+	reloadAndScrollToBottom: () => void;
+	isBottom: React.RefObject<boolean>;
 };
 
 interface RefProps {
@@ -39,21 +40,20 @@ interface RefProps {
 	onAttachment: () => void;
 };
 
-const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
+const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 	const { account } = S.Auth;
 	const { space } = S.Common;
 	const { 
-		rootId, block, subId, readonly, isEmpty, isPopup, getReplyContent, loadDepsAndReplies, getMessages, 
-		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId, 
-		highlightMessage, analyticsChatId,
+		rootId, block, subId, readonly, isPopup, getReplyContent, getMessages,
+		scrollToBottom, scrollToMessage, renderMentions, renderObjects, renderLinks, renderEmoji, onScrollToBottomClick, loadMessagesByOrderId,
+		analyticsChatId, reloadAndScrollToBottom, isBottom,
 	} = props;
 	const [ replyingId, setReplyingId ] = useState<string>('');
 	const nodeRef = useRef(null);
 	const editableRef = useRef(null);
 	const counterRef = useRef(null);
 	const sendRef = useRef(null);
-	const loaderRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
@@ -65,11 +65,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const editingId = useRef<string>('');
 	const speedLimit = useRef({ last: 0, counter: 0 });
 	const counters = S.Chat.getState(subId);
-	const mentionCounter = counters.mentionCounter;
+	const { mentionCounter, reactionCounter } = counters;
 	const messageCounter = S.Chat.counterString(counters.messageCounter);
 	const history = useRef({ position: -1, states: [] });
 	const menuContext = useRef(null);
-	const namespace = U.Common.getEventNamespace(isPopup);
+	const namespace = U.Dom.getEventNamespace(isPopup);
 	const attachmentsSubId = subId + namespace;
 	const spaceview = U.Space.getSpaceview();
 	const electron = U.Common.getElectron();
@@ -81,9 +81,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const checkSendButton = () => {
-		const button = $(sendRef.current);
-
-		canSend() || isSending.current ? button.show() : button.hide();
+		if (sendRef.current) {
+			U.Dom.css(sendRef.current, { display: (canSend() || isSending.current) ? '' : 'none' });
+		};
 	};
 
 	const onSelect = () => {
@@ -99,8 +99,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const win = $(window);
-
 		S.Common.setTimeout('chatText', 150, () => {
 			// Don't open text menu if context is disabled (e.g., during spellcheck)
 			if (keyboard.isContextOpenDisabled) {
@@ -111,8 +109,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				classNameWrap: 'fromBlock',
 				element: '#messageBox',
 				recalcRect: () => {
-					const rect = U.Common.getSelectionRect();
-					return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+					const rect = U.Dom.getSelectionRect();
+					return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 				},
 				offsetY: 4,
 				offsetX: -8,
@@ -236,7 +234,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const l = value.length;
 			updateMarkup(value, { from: l, to: l });
 
-			$(window).trigger('resize');
+			U.Dom.eventDispatch(window, 'resize');
 		});
 
 		keyboard.shortcut('menuSmile', e, () => {
@@ -280,9 +278,47 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			if (type !== null) {
 				e.preventDefault();
-				onTextButtonToggle(type, '');
+
+				if (type == I.MarkType.Link) {
+					openLinkMenu();
+				} else {
+					onTextButtonToggle(type, '');
+				};
 			};
 		};
+
+		// Paste without formatting
+		keyboard.shortcut(`${cmd}+shift+v`, e, () => {
+			e.preventDefault();
+
+			(async () => {
+				const text = await navigator.clipboard.readText();
+				if (!text) {
+					return;
+				};
+
+				const { from, to } = range.current;
+				const limit = J.Constant.limit.chat.text;
+				const current = getTextValue();
+
+				let newText = U.String.normalizeLineEndings(text);
+				if (newText.length >= limit) {
+					newText = newText.substring(0, limit);
+				};
+
+				const res = U.String.insert(current, newText, from, to);
+
+				marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
+				marks.current = Mark.checkRanges(res, marks.current);
+				setMarks(marks.current);
+
+				const rt = from + newText.length;
+				range.current = { from: rt, to: rt };
+				updateMarkup(res, range.current);
+				checkUrls();
+				updateCounter();
+			})();
+		});
 
 		// UnDo, ReDo
 		keyboard.shortcut('undo', e, () => onHistory(e, -1));
@@ -418,10 +454,6 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			updateMarkup(value, { from: to, to });
 		};
 
-		/*
-		keyboard.shortcut('space', e, () => checkUrls());
-		*/
-
 		checkSendButton();
 		removeBookmarks();
 		updateCounter();
@@ -433,8 +465,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const onInput = () => {
 		const value = getTextValue();
 		const checkRtl = U.String.checkRtl(value);
+		const editNode = editableRef.current?.getNode();
 
-		$(editableRef.current?.getNode()).toggleClass('isRtl', checkRtl);
+		if (editNode) {
+			U.Dom.toggleClass(editNode, 'isRtl', checkRtl);
+		};
 	};
 
 	const onCopy = () => {
@@ -463,13 +498,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		const { from, to } = range.current;
 		const limit = J.Constant.limit.chat.text;
 		const current = getTextValue();
-		const clipboard = e.clipboardData || e.originalEvent.clipboardData;
-		const list = U.Common.getDataTransferFiles((e.clipboardData || e.originalEvent.clipboardData).items).map((it: File) => getObjectFromFile(it)).filter(it => {
+		const clipboard = e.clipboardData;
+		const list = U.Common.getDataTransferFiles(clipboard.items).map((it: File) => getObjectFromFile(it)).filter(it => {
 			return !electron.isDirectory(it.path);
 		});
 
 		const json = JSON.parse(String(clipboard.getData('application/json') || '{}'));
-		const html = String(clipboard.getData('text/html') || '');
+		const html = String(clipboard.getData('text/html') || '').replace(/<meta[^>]*>/gi, '');
 		const text = U.String.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
 
 		// If pasted content is a pure URL and there's a selection, create a link mark
@@ -536,15 +571,16 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			const res = U.String.insert(current, newText, from, to);
 			const skipMarks = [ I.MarkType.Color, I.MarkType.BgColor ];
 
-			newMarks = Mark.adjust(newMarks, 0, to);
+			newMarks = Mark.adjust(newMarks, 0, from);
 
-			marks.current = Mark.adjust(marks.current, from, newText.length);
+			marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
 			marks.current = marks.current.concat(newMarks);
 			marks.current = marks.current.filter(it => !skipMarks.includes(it.type));
+			marks.current = Mark.checkRanges(res, marks.current);
 
 			setMarks(marks.current);
 
-			const rt = to + newText.length;
+			const rt = from + newText.length;
 			range.current = { from: rt, to: rt };
 			updateMarkup(res, range.current);
 			checkUrls();
@@ -677,7 +713,10 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		e.stopPropagation();
 
 		window.clearTimeout(timeoutDrag.current);
-		$(nodeRef.current).addClass('isDraggingOver').css({ height: U.Common.getScrollContainer(isPopup).height() });
+		if (nodeRef.current) {
+			U.Dom.addClass(nodeRef.current, 'isDraggingOver');
+			U.Dom.css(nodeRef.current, { height: (U.Dom.getScrollContainer(isPopup)?.clientHeight ?? 0) + 'px' });
+		};
 	};
 	
 	const onDragLeave = (e: any) => {
@@ -710,14 +749,18 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const clearDragState = () => {
-		$(nodeRef.current).removeClass('isDraggingOver').css({ height: '' });
+		if (nodeRef.current) {
+			U.Dom.removeClass(nodeRef.current, 'isDraggingOver');
+			U.Dom.css(nodeRef.current, { height: '' });
+		};
 	};
 
 	const onEmoji = () => {
 		S.Menu.open('smile', {
 			element: `#button-${U.Common.esc(block.id)}-emoji`,
-			horizontal: I.MenuDirection.Right,
 			...caretMenuParam(),
+			horizontal: I.MenuDirection.Right,
+			recalcRect: undefined,
 			data: {
 				noHead: true,
 				noUpload: true,
@@ -781,9 +824,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 	const onAttachment = () => {
 		const options: any[] = [
-			{ id: 'create', icon: 'createObject', name: translate('commonNewObject'), arrow: true },
-			{ id: 'search', icon: 'plus', name: translate('spaceExisting') },
-			{ id: 'upload', icon: 'uploadComputer', name: translate('commonUploadComputer') },
+			{ id: 'create', iconParam: { name: 'menu/action/createObject' }, name: translate('commonNewObject'), arrow: true },
+			{ id: 'search', iconParam: { name: 'menu/block/common/linkto' }, name: translate('spaceExisting') },
+			{ id: 'upload', iconParam: { name: 'menu/action/uploadComputer' }, name: translate('commonUploadComputer') },
 		];
 
 		S.Menu.closeAll(null, () => {
@@ -838,11 +881,11 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 		list = list.map(it => ({ ...it, timestamp: U.Date.now() }));
 
 		if (list.length + attachments.length > limit) {
+			list = list.slice(0, limit);
 			Preview.toastShow({
 				icon: 'notice',
 				text: U.String.sprintf(translate('toastChatAttachmentsLimitReached'), limit, U.Common.plural(limit, translate('pluralFile')).toLowerCase())
 			});
-			return;
 		};
 
 		saveState([ ...attachments, ...list ]);
@@ -927,20 +970,18 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
-		const send = $(sendRef.current);
-		const loader = $(loaderRef.current);
+		const send = sendRef.current;
 		const files = attachments.filter(it => it.isTmp && (U.Object.isFileLayout(it.layout) || U.Object.isImageLayout(it.layout)));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
 		const fl = files.length;
 		const bl = bookmarks.length;
 		const bookmark = S.Record.getBookmarkType();
 
-		send.addClass('isLoading');
-		loader.addClass('active');
+		U.Dom.addClass(send, 'isLoading');
 		isSending.current = true;
 
 		raf(() => {
-			send.addClass('anim');
+			U.Dom.addClass(send, 'anim');
 		});
 		
 		const callBack = () => {
@@ -990,7 +1031,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				};
 
 				C.ChatAddMessage(rootId, message, () => {
-					scrollToBottom();
+					reloadAndScrollToBottom();
 					clear();
 
 					analytics.event('SentMessage', { type: messageType, chatId: analyticsChatId});
@@ -1077,19 +1118,15 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const clear = () => {
-		const send = $(sendRef.current);
-		const loader = $(loaderRef.current);
-
 		isSending.current = false;
-		send.removeClass('isLoading anim');
-		loader.removeClass('active');
+		U.Dom.removeClass(sendRef.current, 'isLoading');
 
 		onEditClear();
 		onReplyClear();
 		checkSpeedLimit();
 		historyClearState();
 
-		$(window).trigger('resize');
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	const onEditClear = () => {
@@ -1132,7 +1169,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		S.Popup.open('confirm', {
 			data: {
-				icon: 'confirm',
+				iconParam: { name: 'popup/header/confirm', color: 'orange' },
 				title: translate('popupConfirmChatDeleteMessageTitle'),
 				text: translate('popupConfirmChatDeleteMessageText'),
 				textConfirm: translate('commonDelete'),
@@ -1253,7 +1290,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			analytics.event('DetachItemChat', { chatId: analyticsChatId });
 		};
 
-		$(window).trigger('resize');
+		U.Dom.eventDispatch(window, 'resize');
 	};
 
 	const onNavigationClick = (type: I.ChatReadType) => {
@@ -1273,11 +1310,33 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					scrollToMessage(target.id, true, true);
 				} else {
 					loadMessagesByOrderId(mentionOrderId, () => {
-						highlightMessage('', mentionOrderId);
+						const loaded = S.Chat.getMessageByOrderId(subId, mentionOrderId);
+						if (loaded) {
+							scrollToMessage(loaded.id, true, true);
+						};
 					});
 				};
 
 				analytics.event('ClickScrollToMention', { chatId: analyticsChatId });
+				break;
+			};
+
+			case I.ChatReadType.Reaction: {
+				const { reactionOrderId } = S.Chat.getState(subId);
+				const target = S.Chat.getMessageByOrderId(subId, reactionOrderId);
+
+				if (target) {
+					scrollToMessage(target.id, true, true);
+				} else {
+					loadMessagesByOrderId(reactionOrderId, () => {
+						const loaded = S.Chat.getMessageByOrderId(subId, reactionOrderId);
+						if (loaded) {
+							scrollToMessage(loaded.id, true, true);
+						};
+					});
+				};
+
+				analytics.event('ClickScrollToReaction', { chatId: analyticsChatId });
 				break;
 			};
 		};
@@ -1308,6 +1367,35 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				break;
 			};
 		};
+	};
+
+	const openLinkMenu = () => {
+		const { from, to } = range.current;
+		const mark = Mark.getInRange(marks.current, I.MarkType.Link, { from, to });
+		const rect = U.Dom.getSelectionRect();
+
+		S.Menu.close('chatText', () => {
+			S.Menu.open('blockLink', {
+				classNameWrap: 'fromBlock',
+				rect: rect ? { ...rect, y: rect.y + window.scrollY } : null,
+				horizontal: I.MenuDirection.Center,
+				vertical: I.MenuDirection.Top,
+				offsetY: -4,
+				noAnimation: true,
+				data: {
+					value: mark?.param,
+					filter: mark?.param,
+					type: mark?.type,
+					skipIds: [ rootId ],
+					onChange: onTextButtonToggle,
+					onClear: (before) => {
+						if (before) {
+							removeBookmark(before);
+						};
+					},
+				},
+			});
+		});
 	};
 
 	const onTextButtonToggle = (type: I.MarkType, param: string) => {
@@ -1481,14 +1569,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const caretMenuParam = () => {
-		const win = $(window);
-		const rect = U.Common.getSelectionRect();
+		const rect = U.Dom.getSelectionRect();
 		const param: any = {
 			classNameWrap: 'fromChat',
 			className: 'fixed',
 			recalcRect: () => {
-				const rect = U.Common.getSelectionRect();
-				return rect ? { ...rect, y: rect.y + win.scrollTop() } : null;
+				const rect = U.Dom.getSelectionRect();
+				return rect ? { ...rect, y: rect.y + window.scrollY } : null;
 			},
 			vertical: I.MenuDirection.Top,
 			onClose: () => setRange(range.current),
@@ -1510,9 +1597,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		return !isLoading.current.length && !isLimit &&
 		!!(
-			editingId.current ||
 			v.trim().length ||
-			attachments.length || 
+			attachments.length ||
 			marks.current.length
 		);
 	};
@@ -1551,7 +1637,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			updateMarkup(newText, range.current);
 		};
 		const getValue = () => value;
-		const param = { onChange, subId };
+		const param = { onChange, subId, withPreview: false };
 
 		renderMentions(rootId, node, marks.current, getValue, param);
 		renderObjects(rootId, node, marks.current, getValue, props, param);
@@ -1571,9 +1657,9 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 		const getValue = () => String(message.content.text || '');
 		const marks = message.content.marks || [];
-		const node = $(nodeRef.current);
-		const head = node.find('.head');
-		const param = { subId, iconSize: 16 };
+		const node = nodeRef.current;
+		const head = node ? U.Dom.select('.head', node) : null;
+		const param = { subId, iconSize: 16, withPreview: false };
 
 		renderMentions(rootId, head, marks, getValue, param);
 		renderObjects(rootId, head, marks, getValue, props, param);
@@ -1584,21 +1670,28 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	const updateCounter = (v?: string) => {
 		v = v || getTextValue();
 
-		const el = $(counterRef.current);
+		const el = counterRef.current;
 		const l = v.length;
 		const limit = J.Constant.limit.chat.text;
 
-		el.toggleClass('red', l > limit);
+		if (el) {
+			U.Dom.toggleClass(el, 'red', l > limit);
 
-		if (l > limit - 50) {
-			el.addClass('show').text(limit - l);
-		} else {
-			el.removeClass('show');
+			if (l > limit - 50) {
+				U.Dom.addClass(el, 'show');
+				el.textContent = String(limit - l);
+			} else {
+				U.Dom.removeClass(el, 'show');
+			};
 		};
 	};
 
 	const clearCounter = () => {
-		$(counterRef.current).text('').removeClass('show').removeClass('red');
+		if (counterRef.current) {
+			counterRef.current.textContent = '';
+			U.Dom.removeClass(counterRef.current, 'show');
+			U.Dom.removeClass(counterRef.current, 'red');
+		};
 	};
 
 	const checkSpeedLimit = () => {
@@ -1620,7 +1713,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					setRange(range.current);
 				},
 				data: {
-					icon: 'warning',
+					iconParam: { name: 'popup/header/warning', color: 'orange' },
 					title: translate('popupConfirmSpeedLimitTitle'),
 					text: translate('popupConfirmSpeedLimitText'),
 					textConfirm: translate('commonOkay'),
@@ -1696,7 +1789,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 				icon = <IconObject className={iconSize ? 'noBg' : ''} object={object} size={32} iconSize={iconSize} />;
 			};
 			if (reply.isMultiple && !reply.attachment) {
-				icon = <Icon className="isMultiple" />;
+				icon = <Icon name="chat/attachment/multiple" className="isMultiple" />;
 			};
 
 			onClear = onReplyClear;
@@ -1704,13 +1797,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const Button = (item: any) => (
-		<div 
-			id={`navigation-${item.type}`} 
-			className={`btn ${item.className || ''}`} 
-			onClick={() => onNavigationClick(item.type)}
+		<div
+			id={`navigation-${item.type}`}
+			className={`btn ${item.className || ''}`}
+			onMouseDown={() => onNavigationClick(item.type)}
 		>
 			<div className="bg" />
-			<Icon className={item.icon} />
+			<Icon name={item.name} className={item.icon} />
 
 			{item.cnt ? (
 				<div className="counter">
@@ -1727,14 +1820,13 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 			<>
 				<Icon
 					id={`button-${block.id}-attachment`}
+					name="plus/menu"
 					className="plus"
 					onClick={onAttachment}
 					tooltipParam={{ text: translate('blockChatAddAttachment'), caption: keyboard.getCaption('chatObject') }}
 				/>
 
 				<div className="form customScrollbar">
-					<Loader id="form-loader" ref={loaderRef} />
-
 					{title ? (
 						<div className="head">
 							<div className="side left">
@@ -1745,7 +1837,7 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 								</div>
 							</div>
 							<div className="side right">
-								<Icon className="clear" onClick={onClear} />
+								<Icon name="common/clear" onClick={onClear} />
 							</div>
 						</div>
 					) : ''}
@@ -1759,16 +1851,20 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 								mousewheel={true}
 								modules={[ Navigation, Mousewheel ]}
 							>
-								{attachments.map(item => (
-									<SwiperSlide key={item.id}>
-										<Attachment
-											object={item}
-											onRemove={onAttachmentRemove}
-											bookmarkAsDefault={true}
-											updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
-										/>
-									</SwiperSlide>
-								))}
+								{attachments.map(item => {
+									const object = item.isTmp ? { syncStatus: I.SyncStatusObject.Synced, ...item } : item;
+									return (
+										<SwiperSlide key={item.id}>
+											<Attachment
+												object={object}
+												withInlineSize={false}
+												onRemove={onAttachmentRemove}
+												bookmarkAsDefault={true}
+												updateAttachments={() => updateAttachments(S.Chat.getAttachments(attachmentsSubId))}
+											/>
+										</SwiperSlide>
+									);
+								})}
 							</Swiper>
 						</div>
 					) : ''}
@@ -1791,11 +1887,12 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 					/>
 
 					<div ref={counterRef} className="charCounter" />
-					<Icon ref={sendRef} className="send" onClick={onSend} />
+					<Icon ref={sendRef} name="chat/buttons/send" className="send" onClick={onSend} />
 				</div>
 
 				<Icon
 					id={`button-${block.id}-emoji`}
+					name="chat/buttons/emoji"
 					className="emoji"
 					onClick={onEmoji}
 					tooltipParam={{ text: translate('menuSmileGallery') }}
@@ -1822,10 +1919,8 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 	}, [ rootId ]);
 
 	useEffect(() => {
-		loadDepsAndReplies([], () => {
-			renderMarkup();
-			renderReply();
-		});
+		renderMarkup();
+		renderReply();
 
 		checkSendButton();
 		scrollToBottom();
@@ -1865,24 +1960,23 @@ const ChatForm = observer(forwardRef<RefProps, Props>((props, ref) => {
 
 			<div className="dragOverlay">
 				<div className="inner">
-					<Icon />
+					<Icon name="state/drag" size={56} />
 					<Label text={translate('commonDropFiles')} />
 				</div>
 			</div>
 
 			<div className="inner">
-				{!isEmpty ? (
-					<div className="navigation">
-						{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} icon="mention" className="active" cnt={mentionCounter} /> : ''}
-						<Button type={I.ChatReadType.Message} icon="arrow" className={messageCounter ? 'active' : ''} cnt={messageCounter} />
-					</div>
-				) : ''}
+				<div className="navigation">
+					{reactionCounter ? <Button type={I.ChatReadType.Reaction} name="chat/navigation/reaction" icon="reaction" className="active" cnt={reactionCounter} /> : ''}
+					{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} name="chat/navigation/mention" icon="mention" className="active" cnt={mentionCounter} /> : ''}
+					<Button type={I.ChatReadType.Message} name="chat/navigation/arrow" icon="arrow" className={(!isBottom.current || messageCounter) ? 'active' : ''} cnt={messageCounter} />
+				</div>
 
 				{form}
 			</div>
 		</div>
 	);
 
-}));
+});
 
 export default memo(ChatForm);

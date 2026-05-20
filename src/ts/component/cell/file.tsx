@@ -1,10 +1,8 @@
 import React, { forwardRef, useState, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { IconObject, ObjectName } from 'Component';
-import { I, S, U, Relation } from 'Lib';
+import * as I from 'Interface';
 
-const CellFile = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
+const CellFile = forwardRef<I.CellRef, I.Cell>((props, ref) => {
 
 	const [ isEditing, setIsEditing ] = useState(false);
 	const { id, subId, relation, recordId, size, iconSize, placeholder, arrayLimit, canEdit, getRecord, elementMapper } = props;
@@ -47,7 +45,7 @@ const CellFile = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 	};
 
 	useEffect(() => {
-		$(`#${U.Common.esc(id)}`).toggleClass('isEditing', isEditing);
+		U.Dom.toggleClass(U.Dom.get(id), 'isEditing', isEditing);
 	}, [ isEditing ]);
 
 	useImperativeHandle(ref, () => ({
@@ -71,6 +69,6 @@ const CellFile = observer(forwardRef<I.CellRef, I.Cell>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default CellFile;

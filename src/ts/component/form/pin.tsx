@@ -1,8 +1,6 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import sha1 from 'sha1';
-import $ from 'jquery';
 import { Input } from 'Component';
-import { keyboard } from 'Lib';
 
 interface Props {
 	isNumeric?: boolean;
@@ -22,14 +20,12 @@ interface PinRefProps {
 	getValue: () => string;
 };
 
-const TIMEOUT_DURATION = 150;
 
 const Pin = forwardRef<PinRefProps, Props>(({
 	isNumeric = false,
 	pinLength = 6,
 	expectedPin = null,
 	focusOnMount = true,
-	isVisible = false,
 	readonly = false,
 	onSuccess = () => {},
 	onError = () => {},
@@ -38,14 +34,20 @@ const Pin = forwardRef<PinRefProps, Props>(({
 	const inputRefs = useRef([]);
 	const index = useRef(0);
 
+	const handler = useRef<(e: MouseEvent) => void>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('mousedown.pin', e => e.preventDefault());
+		handler.current = (e: MouseEvent) => e.preventDefault();
+		U.Dom.addEvent(window, 'mousedown', handler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('mousedown.pin');
-	}; 
+		if (handler.current) {
+			U.Dom.removeEvent(window, 'mousedown', handler.current);
+			handler.current = null;
+		};
+	};
 
 	const focus = () => {
 		inputRefs.current[index.current]?.focus();
@@ -70,8 +72,8 @@ const Pin = forwardRef<PinRefProps, Props>(({
 
 	/** sets all the input boxes to empty string */
 	const clear = () => {
-		for (const i in inputRefs.current) {
-			inputRefs.current[i].setValue('');
+		for (const input of inputRefs.current) {
+			input.setValue('');
 		};
 	};
 
@@ -80,10 +82,6 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		index.current = 0;
 		clear();
 		focus();
-
-		for (const i in inputRefs.current) {
-			$(inputRefs.current[i].getNode()).removeClass('isMasked');
-		};
 	};
 
 	// Input subcomponent methods
@@ -99,7 +97,6 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		if (prev) {
 			keyboard.shortcut('backspace', e, () => {
 				current.setValue('');
-				$(prev.getNode()).removeClass('isMasked');
 				prev.focus();
 			});
 		};
@@ -120,7 +117,6 @@ const Pin = forwardRef<PinRefProps, Props>(({
 	const onInputChange = (index: number, value: string) => {
 		const input = inputRefs.current[index];
 		const next = inputRefs.current[index + 1];
-		const node = $(input.getNode());
 
 		let newValue = value;
 		if (isNumeric) {
@@ -135,16 +131,11 @@ const Pin = forwardRef<PinRefProps, Props>(({
 		};
 
 		if (!newValue) {
-			node.removeClass('isMasked');
 			return;
 		};
 
 		if (next) {
 			next.focus();
-		};
-
-		if (!isVisible) {
-			window.setTimeout(() => node.addClass('isMasked'), TIMEOUT_DURATION);
 		};
 	};
 
@@ -159,7 +150,6 @@ const Pin = forwardRef<PinRefProps, Props>(({
 			const char = value[i - index] || '';
 
 			input.setValue(char);
-			$(input.getNode()).removeClass('isMasked');
 		};
 
 		inputRefs.current[pinLength - 1].focus();

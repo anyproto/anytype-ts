@@ -1,12 +1,16 @@
-import $ from 'jquery';
-import { I, U } from 'Lib';
+import * as I from 'Interface';
 
 const Tags: { [key: string]: string } = {};
 for (const i in I.MarkType) {
 	if (!isNaN(Number(i))) {
-		Tags[i] = `markup${I.MarkType[i].toLowerCase()}`;
+		const type = Number(i) as I.MarkType;
+		Tags[i] = type == I.MarkType.Link ? 'a' : `markup${I.MarkType[i].toLowerCase()}`;
 	};
 };
+
+const TagValues = Object.values(Tags).join('|');
+const RE_HTML_TAGS = new RegExp(`<(\/)?(${TagValues})\\b(?:([^>]*)>|>)`, 'ig');
+const RE_DATA_PARAM = new RegExp('data-param="([^"]*)"', 'i');
 
 const Patterns: { [key: string]: string } = {
 	// Arrows and Directional Indicators
@@ -45,6 +49,15 @@ const Patterns: { [key: string]: string } = {
 
 	// Mathematical and Scientific
 	'|~': '≉',
+};
+
+let RE_UNICODE_PATTERNS: RegExp = null;
+const getUnicodePatternRegex = (): RegExp => {
+	if (!RE_UNICODE_PATTERNS) {
+		const keys = Object.keys(Patterns).map(it => U.String.regexEscape(it));
+		RE_UNICODE_PATTERNS = new RegExp(`(${keys.join('|')})`, 'g');
+	};
+	return RE_UNICODE_PATTERNS;
 };
 
 const Order = [
@@ -197,7 +210,7 @@ class Mark {
 			map[type].push(mark);
 		};
 
-		return U.Common.unmap(map).sort(this.sort);
+		return (U.Common.unmap(map) as I.Mark[]).sort(this.sort);
 	};
 
 	/**
@@ -315,7 +328,7 @@ class Mark {
 	 * @returns {I.Mark[]} The adjusted marks.
 	 */
 	adjust(marks: I.Mark[], from: number, length: number) {
-		marks = U.Common.objectCopy(marks || []);
+		marks = (marks || []).map(m => ({ ...m, range: { ...m.range } }));
 
 		for (const mark of marks) {
 			if ((mark.range.from < from) && (mark.range.to > from)) {
@@ -428,8 +441,9 @@ class Mark {
 				const needsZws = ZWS_TYPES.includes(mark.type);
 				const zwsBefore = needsZws ? ZWS : '';
 				const zwsAfter = needsZws ? ZWS : '';
+				const zwsInner = needsZws ? ZWS : '';
 
-				r[mark.range.from] = `${zwsBefore}<${tag} ${attr} ${data.join(' ')}>${prefix}${r[mark.range.from]}`;
+				r[mark.range.from] = `${zwsBefore}<${tag} ${attr} ${data.join(' ')}>${prefix}${zwsInner}${r[mark.range.from]}`;
 				r[mark.range.to - 1] += `${suffix}</${tag}>${zwsAfter}`;
 			};
 		};
@@ -488,30 +502,38 @@ class Mark {
 		html = html.replace(/<br\/?>/g, '\n');
 
 		// Remove inner tags from mentions and emoji
-		const obj = $(`<div>${html}</div>`);
+		const wrapper = document.createElement('div');
+		wrapper.innerHTML = html;
 
-		obj.find(this.getTag(I.MarkType.Mention)).removeAttr('class').each((i: number, item: any) => {
-			item = $(item);
-			item.html(item.find('name').html());
+		U.Dom.selectAll(this.getTag(I.MarkType.Mention), wrapper).forEach(item => {
+			item.removeAttribute('class');
+			const nameEl = U.Dom.select('name', item);
+			if (nameEl) {
+				item.innerHTML = nameEl.innerHTML;
+			};
 		});
 
-		obj.find('font').each((i: number, item: any) => {
-			item = $(item);
-			item.replaceWith(item.find('span').html());
+		U.Dom.selectAll('font', wrapper).forEach(item => {
+			const span = U.Dom.select('span', item);
+			if (span) {
+				item.replaceWith(document.createTextNode(span.innerHTML));
+			};
 		});
 
-		obj.find(this.getTag(I.MarkType.Emoji)).removeAttr('class').html(' ');
+		U.Dom.selectAll(this.getTag(I.MarkType.Emoji), wrapper).forEach(item => {
+			item.removeAttribute('class');
+			item.innerHTML = ' ';
+		});
 
 		// Restore original LaTeX from rendered markuplatex elements
-		obj.find(this.getTag(I.MarkType.Latex)).each((i: number, item: any) => {
-			item = $(item);
-			const original = item.attr('data-latex');
+		U.Dom.selectAll(this.getTag(I.MarkType.Latex), wrapper).forEach(item => {
+			const original = item.getAttribute('data-latex');
 			if (original) {
 				item.replaceWith(U.String.fromHtmlSpecialChars(original).replace(/&#36;/g, '$'));
 			};
 		});
 
-		return obj;
+		return wrapper;
 	};
 
 	/**
@@ -521,13 +543,13 @@ class Mark {
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
 	fromHtml(html: string, restricted: I.MarkType[]): I.FromHtmlResult {
-		const tags = this.getTags();
-		const rh = new RegExp(`<(\/)?(${Object.values(tags).join('|')})(?:([^>]*)>|>)`, 'ig');
-		const rp = new RegExp('data-param="([^"]*)"', 'i');
+		RE_HTML_TAGS.lastIndex = 0;
+		const rh = RE_HTML_TAGS;
+		const rp = RE_DATA_PARAM;
 		const obj = this.cleanHtml(html);
 		const marks: I.Mark[] = [];
 
-		let text = obj.html();
+		let text = obj.innerHTML;
 
 		text = text.replace(/data-range="[^"]+"/g, '');
 		text = text.replace(/contenteditable="[^"]+"/g, '');
@@ -538,7 +560,7 @@ class Mark {
 		text = text.replace(/<span style="font-weight:(?:[^;]+);">([^<]*)(?:<\/span>)?/g, (s: string, p: string) => p);
 
 		// Fix browser markup bug
-		text = text.replace(/<\/?(i|b|strike|font|markupsearch)[^>]*>/g, (s: string, p: string) => {
+		text = text.replace(/<\/?(i|b|strike|font|markupsearch)\b[^>]*>/g, (s: string, p: string) => {
 			let r = '';
 
 			if (p == 'i') r = this.getTag(I.MarkType.Italic);
@@ -561,7 +583,7 @@ class Mark {
 			const end = p1 == '/';
 			const offset = Number(text.indexOf(s)) || 0;
 
-			const key = U.Common.getKeyByValue(tags, p2);
+			const key = U.Common.getKeyByValue(Tags, p2);
 			if (undefined === key) {
 				return;
 			};
@@ -605,7 +627,7 @@ class Mark {
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
 	fromMarkdown(html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean, updatedValue: boolean): I.FromHtmlResult {
-		const reg1 = /(^|[\s\(\[\{])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
+		const reg1 = /(^|[\s\(\[\{]|[^\x00-\x7F])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
 		const reg2 = /^(`{1}|\*+|_+|\[|~{2})/;
 		const test = reg1.test(html);
 		const checked = marks.filter(it => [I.MarkType.Code].includes(it.type));
@@ -665,9 +687,20 @@ class Mark {
 			const suffix = hasZws ? '' : ' ';
 			const replace = p2.replace(new RegExp(U.String.regexEscape(symbol), 'g'), '') + suffix;
 
+			// Trim leading/trailing spaces from mark range so they stay outside the formatting
+			const inner = p2.slice(length, p2.length - length);
+			const leadingSpaces = inner.length - inner.trimStart().length;
+			const trailingSpaces = inner.length - inner.trimEnd().length;
+			const markFrom = from + leadingSpaces;
+			const markTo = to - trailingSpaces;
+
+			if (markFrom >= markTo) {
+				return s;
+			};
+
 			let check = true;
 			for (const mark of checked) {
-				const overlap = this.overlap({ from, to }, mark.range);
+				const overlap = this.overlap({ from: markFrom, to: markTo }, mark.range);
 				if (overlaps.includes(overlap)) {
 					check = false;
 					break;
@@ -680,7 +713,7 @@ class Mark {
 
 			marks = this.adjust(marks, from, -length);
 			marks = this.adjust(marks, to, -length + (hasZws ? 0 : 1));
-			marks.push({ type, range: { from, to }, param: '' });
+			marks.push({ type, range: { from: markFrom, to: markTo }, param: '' });
 
 			text = U.String.insert(text, replace, o + p1l, o + p1l + p2l);
 			adjustMarks = true;
@@ -738,9 +771,14 @@ class Mark {
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
 	fromUnicode(html: string, marks: I.Mark[], updatedValue: boolean): I.FromHtmlResult {
-		const keys = Object.keys(Patterns).map(it => U.String.regexEscape(it));
-		const reg = new RegExp(`(${keys.join('|')})`, 'g');
+		if (!S.Common?.unicodeReplace) {
+			return { marks, text: html, adjustMarks: false, updatedValue };
+		};
+
+		const reg = getUnicodePatternRegex();
+		reg.lastIndex = 0;
 		const test = reg.test(html);
+		reg.lastIndex = 0;
 		const overlaps = [I.MarkOverlap.Inner, I.MarkOverlap.InnerLeft, I.MarkOverlap.InnerRight, I.MarkOverlap.Equal];
 
 		if (!test) {
@@ -918,8 +956,8 @@ class Mark {
 		const tags: any = {};
 
 		for (const i in I.MarkType) {
-			if (isNaN(I.MarkType[i] as any)) {
-				tags[i] = this.getTag(i as any);
+			if (isNaN(Number(I.MarkType[i]))) {
+				tags[i] = this.getTag(Number(i));
 			};
 		};
 
@@ -964,6 +1002,30 @@ class Mark {
 	};
 
 	/**
+	 * Converts internal markup HTML (custom tags) to standard HTML for clipboard.
+	 * @param {string} html - HTML string with custom markup tags.
+	 * @returns {string} HTML with standard tags (b, i, s, u, code).
+	 */
+	toStandardHtml (html: string): string {
+		html = String(html || '');
+
+		const map: { from: string; to: string }[] = [
+			{ from: 'markupbold', to: 'b' },
+			{ from: 'markupitalic', to: 'i' },
+			{ from: 'markupstrike', to: 's' },
+			{ from: 'markupunderline', to: 'u' },
+			{ from: 'markupcode', to: 'code' },
+		];
+
+		for (const { from, to } of map) {
+			html = html.replace(new RegExp(`<${from}(\\s[^>]*)?>`, 'gi'), `<${to}>`);
+			html = html.replace(new RegExp(`</${from}>`, 'gi'), `</${to}>`);
+		};
+
+		return html;
+	};
+
+	/**
 	 * Checks and handles marks on backspace action.
 	 * @param text - The current text.
 	 * @param range - The current text range.
@@ -1005,11 +1067,40 @@ class Mark {
 	};
 
 	/**
+	 * Build a flat text representation of the element's DOM that includes
+	 * BR elements as \n characters, matching how selection-ranges counts them.
+	 * textContent alone omits BRs, causing offset mismatches.
+	 */
+	getDomText (el: HTMLElement): string {
+		const parts: string[] = [];
+		const walk = (node: Node) => {
+			if (node.nodeType === Node.TEXT_NODE) {
+				parts.push(node.textContent || '');
+			} else
+			if (node.nodeType === Node.ELEMENT_NODE) {
+				if ((node as HTMLElement).tagName === 'BR') {
+					parts.push('\n');
+				} else {
+					for (let i = 0; i < node.childNodes.length; i++) {
+						walk(node.childNodes[i]);
+					};
+				};
+			};
+		};
+
+		for (let i = 0; i < el.childNodes.length; i++) {
+			walk(el.childNodes[i]);
+		};
+
+		return parts.join('');
+	};
+
+	/**
 	 * Convert a DOM text offset (with ZWS) to model text offset (without ZWS).
-	 * Scans the element's textContent for ZWS characters and subtracts them.
+	 * Scans the element's DOM text (including BRs) for ZWS characters and subtracts them.
 	 */
 	domToModel (domOffset: number, el: HTMLElement): number {
-		const text = el.textContent || '';
+		const text = this.getDomText(el);
 		let model = 0;
 
 		for (let i = 0; i < domOffset && i < text.length; i++) {
@@ -1023,10 +1114,10 @@ class Mark {
 
 	/**
 	 * Convert a model text offset (without ZWS) to DOM text offset (with ZWS).
-	 * Scans the element's textContent for ZWS characters and adds them.
+	 * Scans the element's DOM text (including BRs) for ZWS characters and adds them.
 	 */
 	modelToDom (modelOffset: number, el: HTMLElement): number {
-		const text = el.textContent || '';
+		const text = this.getDomText(el);
 		let model = 0;
 		let dom = 0;
 

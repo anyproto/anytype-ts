@@ -1,9 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useLayoutEffect } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { I, S, U, J, Renderer, keyboard, sidebar, Preview, translate } from 'Lib';
 import { Icon } from 'Component';
-import { observer } from 'mobx-react';
 
 import HeaderAuthIndex from './auth';
 import HeaderAuthLogout from './auth/logout';
@@ -14,6 +11,8 @@ import HeaderMainGraph from './main/graph';
 import HeaderMainNavigation from './main/navigation';
 import HeaderMainSettings from './main/settings';
 import HeaderMainEmpty from './main/empty';
+import HeaderMainArchive from './main/archive';
+import * as I from 'Interface';
 
 interface Props extends I.HeaderComponent {
 	component: string;
@@ -30,10 +29,11 @@ const Components = {
 	mainGraph:			 HeaderMainGraph,
 	mainNavigation:		 HeaderMainNavigation,
 	mainEmpty:			 HeaderMainEmpty,
+	mainArchive:		 HeaderMainArchive,
 	mainSettings: 		 HeaderMainSettings,
 };
 
-const Header = observer(forwardRef<{}, Props>((props, ref) => {
+const Header = forwardRef<{}, Props>((props, ref) => {
 
 	const {
 		component,
@@ -66,6 +66,35 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		U.Object.openAuto({ id: keyboard.getRootId(), layout: I.ObjectLayout.Graph });
 	};
 
+	const onRecentlyOpen = () => {
+		S.Menu.open('searchObject', {
+			className: 'single fixed widthValue',
+			classNameWrap: 'fromHeader',
+			element: '#button-recently-open',
+			offsetY: 4,
+			data: {
+				limit: 15,
+				noFilter: true,
+				noInfiniteLoading: true,
+				label: translate('widgetRecentOpen'),
+				withPlural: true,
+				filters: [
+					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it)).concat(I.ObjectLayout.Participant) },
+					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
+					{ relationKey: 'lastOpenedDate', condition: I.FilterCondition.Greater, value: 0 },
+				],
+				sorts: [
+					{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+				],
+				onSelect: (el: any) => {
+					U.Object.openConfig(null, el);
+				},
+			}
+		});
+
+		analytics.event('ClickRecentlyOpen');
+	};
+
 	const renderLeftIcons = (withNavigation?: boolean, withGraph?: boolean, onOpen?: () => void) => {
 		const { status } = S.Auth.getSyncStatus(S.Common.space);
 		const { isClosed } = sidebar.getData(I.SidebarPanel.SubLeft);
@@ -75,13 +104,10 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 			bullet = <div className="bullet" />;
 		};
 
-		const cnb = [ 'back', 'withBackground', (!keyboard.checkBack(isPopup) ? 'disabled' : '') ];
-		const cnf = [ 'forward', 'withBackground', (!keyboard.checkForward(isPopup) ? 'disabled' : '') ];
-
 		return (
 			<>
 				<Icon
-					className="vaultToggle withBackground"
+					name="widget/vaultToggle" className="vaultToggle" withBackground={true}
 					onClick={() => sidebar.leftPanelToggle(true, true)}
 					tooltipParam={{
 						text: translate('commonVault'),
@@ -89,7 +115,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					}}
 				/>
 				<Icon
-					className="widgetPanel withBackground"
+					name="header/widget" withBackground={true}
 					onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
 					inner={bullet}
 					tooltipParam={{
@@ -99,7 +125,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					}}
 				/>
 				<Icon
-					className="expand withBackground"
+					name="common/expand" withBackground={true}
 					onClick={onOpen || onExpand}
 					tooltipParam={{
 						text: translate('commonOpenObject'),
@@ -110,7 +136,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 				{withNavigation ? (
 					<div className="arrowWrapper">
 						<Icon
-							className={cnb.join(' ')}
+							name="common/back" className={!keyboard.checkBack(isPopup) ? 'disabled' : ''} withBackground={true}
 							onClick={() => keyboard.onBack(isPopup)}
 							tooltipParam={{
 								text: translate('commonBack'),
@@ -119,7 +145,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 							}}
 						/>
 						<Icon
-							className={cnf.join(' ')}
+							name="common/back" className={[ 'forward', (!keyboard.checkForward(isPopup) ? 'disabled' : '') ].join(' ')} withBackground={true}
 							onClick={() => keyboard.onForward(isPopup)}
 							tooltipParam={{
 								text: translate('commonForward'),
@@ -130,9 +156,19 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 					</div>
 				) : ''}
 
+				<Icon
+					id="button-recently-open"
+					name="common/clock" withBackground={true}
+					onClick={onRecentlyOpen}
+					tooltipParam={{
+						text: translate('widgetRecentOpen'),
+						typeY: I.MenuDirection.Bottom,
+					}}
+				/>
+
 				{withGraph ? (
 					<Icon
-						className="graph withBackground"
+						name="header/graph" withBackground={true}
 						onClick={onGraph}
 						tooltipParam={{
 							text: translate('commonGraph'),
@@ -174,7 +210,7 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	const onTooltipShow = (e: any, text: string, caption?: string) => {
 		const t = Preview.tooltipCaption(text, caption);
 		if (t) {
-			Preview.tooltipShow({ text: t, element: $(e.currentTarget), typeY: I.MenuDirection.Bottom });
+			Preview.tooltipShow({ text: t, element: e.currentTarget as HTMLElement, typeY: I.MenuDirection.Bottom });
 		};
 	};
 
@@ -189,7 +225,8 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const menuOpen = (id: string, elementId: string, param: Partial<I.MenuParam>) => {
-		const element = U.Common.getScrollContainer(isPopup).find(`.header ${elementId}`);
+		const container = U.Dom.getScrollContainer(isPopup);
+		const element = U.Dom.select(`.header ${elementId}`, container);
 		const menuParam: any = Object.assign({
 			element,
 			offsetY: 4,
@@ -204,10 +241,13 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const center = node.find('.side.center');
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
-		node.toggleClass('isSmall', center.outerWidth() <= 200);
+		const center = U.Dom.select('.side.center', node);
+		U.Dom.toggleClass(node, 'isSmall', (center?.offsetWidth ?? 0) <= 200);
 	};
 
 	useEffect(() => {
@@ -266,6 +306,6 @@ const Header = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Header;

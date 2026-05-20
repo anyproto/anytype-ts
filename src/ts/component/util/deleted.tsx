@@ -1,7 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useLayoutEffect } from 'react';
-import $ from 'jquery';
 import { Icon, Label, Button } from 'Component';
-import { I, S, U, translate, Action } from 'Lib';
+import * as I from 'Interface';
 
 interface Props {
 	className?: string;
@@ -21,7 +20,7 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 			const home = U.Space.getDashboard();
 
 			let last = null;
-			if (home && (home.id == I.HomePredefinedId.Last)) {
+			if (home && [ '', I.HomePredefinedId.Last, I.HomePredefinedId.Widget ].includes(home.id)) {
 				last = U.Space.getLastObject();
 			};
 
@@ -40,25 +39,21 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 	};
 	const textButton = isPopup ? translate('commonClose') : translate('utilDeletedBackToDashboard');
 
-	const unbind = () => {
-		$(window).off('resize.deleted');
-	};
-
-	const rebind = () => {
-		$(window).on('resize.deleted', () => resize());
-	};
-
 	const resize = () => {
-		const container = U.Common.getPageContainer(isPopup);
+		const container = U.Dom.getPageContainer(isPopup);
 
-		$(nodeRef.current).css({ height: container.height() });
+		if (nodeRef.current && container) {
+			U.Dom.css(nodeRef.current, { height: `${container.clientHeight}px` });
+		};
 	};
 
 	useEffect(() => {
-		rebind();
+		const handler = () => resize();
+
+		U.Dom.addEvent(window, 'resize', handler);
 		resize();
 
-		return () => unbind();
+		return () => U.Dom.removeEvent(window, 'resize', handler);
 	});
 
 	useLayoutEffect(() => resize());
@@ -70,7 +65,7 @@ const Deleted = forwardRef<HTMLDivElement, Props>(({
 			className={[ 'deleteWrapper', className ].join(' ')}
 		>
 			<div className="mid">
-				<Icon className="ghost" />
+				<Icon name="common/ghost" className="ghost" />
 				<Label text={translate('utilDeletedObjectNotExist')} />
 				<Button color="blank" text={textButton} onClick={onClick} />
 			</div>

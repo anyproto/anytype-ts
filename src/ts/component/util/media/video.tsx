@@ -1,6 +1,4 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
-import $ from 'jquery';
-import { U } from 'Lib';
 import { Icon } from 'Component';
 
 interface Props {
@@ -31,24 +29,40 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 	const rebind = () => {
 		unbind();
 
-		const video = $(videoRef.current);
+		const video = videoRef.current;
+		if (!video) {
+			return;
+		};
 
-		video.on('play', onPlayHandler);
-		video.on('pause', onPause);
-		video.on('ended', onEnded);
-		video.on('canplay', onLoad);
-		video.on('loadedmetadata', onMetaData);
+		U.Dom.addEvents(video, [
+			['play', onPlayHandler],
+			['pause', onPause],
+			['ended', onEnded],
+			['canplay', onLoad],
+			['loadedmetadata', onMetaData],
+		]);
 	};
 
 	const unbind = () => {
-		$(videoRef.current).off('canplay ended pause play loadedmetadata');
+		const video = videoRef.current;
+		if (!video) {
+			return;
+		};
+
+		U.Dom.removeEvents(video, [
+			['play', onPlayHandler],
+			['pause', onPause],
+			['ended', onEnded],
+			['canplay', onLoad],
+			['loadedmetadata', onMetaData],
+		]);
 	};
 
 	const onPlayHandler = (e: any) => {
 		if (videoRef.current) {
 			videoRef.current.controls = true;
 		};
-		$(nodeRef.current).addClass('isPlaying');
+		U.Dom.addClass(nodeRef.current, 'isPlaying');
 
 		onPlay?.(e);
 	};
@@ -57,7 +71,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 		if (videoRef.current) {
 			videoRef.current.controls = false;
 		};
-		$(nodeRef.current).removeClass('isPlaying');
+		U.Dom.removeClass(nodeRef.current, 'isPlaying');
 
 		onPause?.(e);
 	};
@@ -70,8 +84,8 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 		e.preventDefault();
 		e.stopPropagation();
 
-		U.Common.pauseMedia();
-		videoRef.current?.play();
+		U.Dom.pauseMedia();
+		videoRef.current?.play().catch(() => {});
 	};
 
 	useEffect(() => {
@@ -89,7 +103,7 @@ const MediaVideo = forwardRef<HTMLDivElement, Props>(({
 
 			<div className="controls">
 				<Icon className="syncStatus" onClick={onSyncStatusClick} />
-				<Icon className="play" onClick={onPlayClick} />
+				<Icon name="popup/preview/play" size={44} className="play" onClick={onPlayClick} />
 			</div>
 		</div>
 	);

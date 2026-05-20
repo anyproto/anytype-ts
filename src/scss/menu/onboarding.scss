@@ -1,12 +1,10 @@
 @import "~scss/_mixins";
 
 .menus {
-	.menu.menuOnboarding { width: var(--menu-width-set); }
+	.menu.menuOnboarding { width: var(--menu-width-set); border-radius: 16px; }
 	.menu.menuOnboarding {
-		.content { padding: 16px; max-height: unset; }
+		.content { padding: 16px; max-height: unset; border-radius: inherit; }
 		.wrap { display: flex; flex-direction: column; gap: 16px 0px; }
-		.arrowDirection { background-image: url('~img/arrow/menuDirectionInversion.svg') }
-
 		.category,
 		.counter { @include text-small; color: var(--color-text-secondary); }
 
@@ -24,11 +22,10 @@
 		}
 		a { color: var(--color-text-inversion); text-decoration: underline; }
 
-		.icon.close { 
-			width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; border-radius: 4px; 
-			background-image: url('~img/icon/menu/onboarding/close0.svg'); z-index: 10;
+		.icon.close {
+			width: 16px; height: 16px; position: absolute; right: 16px; top: 17px; border-radius: 4px; z-index: 10;
 		}
-		.icon.close:hover { background-image: url('~img/icon/menu/onboarding/close1.svg'); }
+		.icon.close:hover { color: var(--color-text-primary); }
 
 		video { border-radius: 4px; border: 1px solid var(--color-shape-secondary); cursor: zoom-in; aspect-ratio: 16/9; object-fit: cover; }
 
@@ -51,13 +48,6 @@
 				.button.black { font-weight: 500; background-color: #d4d4d4; color: #171717; }
 				.button.black:not(.disabled):hover,
 				.button.black:not(.disabled).hover { background: #737373; }
-			}
-
-			.progressBar {
-				.bar { height: 8px; }
-				.bar {
-					.isActive { background-color: var(--color-orange); }
-				}
 			}
 		}
 	}
@@ -83,19 +73,10 @@
 .onboardingElement.onboardingSettingsItem { background-color: var(--color-shape-tertiary) !important; }
 .onboardingElement.onboardingClonedSection {
 	.nameWrap > .name { -webkit-text-fill-color: var(--color-text-primary) !important; }
-	.nameWrap > .name {
-		.icon.arrow { background-image: url('~img/arrow/widgetSection1.svg') !important; }
-	}
 }
 .onboardingElement.onboardingClonedSectionDark { height: auto !important; padding-bottom: 8px !important; border-radius: 8px !important; }
 .onboardingElement.onboardingClonedSectionDark {
 	.nameWrap > .name { -webkit-text-fill-color: var(--color-text-primary) !important; }
-	.nameWrap > .name {
-		.icon.arrow { background-image: url('~img/theme/dark/arrow/widgetSection1.svg') !important; }
-	}
-}
-.onboardingElement.onboardingVaultItem {
-	.iconWrap { background-color: var(--color-shape-tertiary) !important; }
 }
 .onboardingElement.onboardingHeaderSync.sync { background-color: var(--color-shape-tertiary) !important; }
 .onboardingElement.onboardingIconP2P { background-color: var(--color-shape-tertiary) !important; border-radius: 50% !important; }
@@ -104,6 +85,8 @@
 	* { transition: none !important; }
 
 	&#sidebarPageVault { background-color: var(--color-bg-primary) !important; }
+	&#sidebarPageWidget,
+	#sidebarPageWidget { border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important; }
 
 	&.icon.withBackground,
 	&.widgetSection > .items > .widget { background-color: var(--color-bg-primary) !important; }
@@ -118,7 +101,7 @@
 		&:after { border-radius: 0px 8px 8px 0px; right: -12px; }
 	}
 
-	&#button-chat-attachment { background-color: var(--color-bg-primary); }
+	&#page.pageMainChat { background-color: var(--color-bg-primary) !important; }
 
 	&.onboardingDimmer { opacity: 0 !important; }
 }
@@ -130,3 +113,9 @@
 		}
 	}
 }
+
+#button-chat-attachment.onboardingMarked {
+	background-color: var(--color-system-highlight) !important;
+	color: var(--color-system-accent-100) !important;
+}
+#button-chat-attachment.onboardingMarked svg path { fill: var(--color-system-accent-100) !important; }

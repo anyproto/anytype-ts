@@ -1,12 +1,12 @@
-import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react';
-import $ from 'jquery';
+import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
+
 import { Filter, MenuItemVertical } from 'Component';
-import { I, C, S, U, J, keyboard, focus, Action, translate, analytics, Dataview, Renderer } from 'Lib';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 const CB_KEYS = { c: 'clipboardCopy', x: 'clipboardCut', v: 'clipboardPaste' };
 
-const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, setActive, onKeyDown, getId, getSize, close } = props;
 	const { data, className, classNameWrap } = param;
@@ -20,6 +20,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 
 		return () => {
+			unbind();
 			keyboard.setFocus(false);
 			S.Menu.closeAll(J.Menu.action);
 			S.Menu.clearTimeout();
@@ -28,6 +29,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		n.current = 0;
+		setActive(null, true);
 	}, [ filter ]);
 	
 	const onFilterFocus = (e: any) => {
@@ -39,14 +41,20 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		S.Menu.updateData(props.id, { filter: v });
 	};
 	
+	const keydownHandler = useRef(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		keydownHandler.current = (e: any) => onKeyDownHandler(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -90,10 +98,12 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!block) {
 			return [];
 		};
-		
+
 		const { hAlign, content, bgColor } = block;
-		const { color, style } = content;
+		const { color, style, cardStyle } = content;
 		const checkFlag = checkFlagByObject(block.getTargetObjectId());
+		const rootObject = S.Detail.get(rootId, rootId, [ 'type' ]);
+		const canQuoteInComment = !U.Object.isTemplateType(rootObject.type);
 
 		let sections: any[] = [];
 		let hasText = true;
@@ -148,7 +158,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const actionParam = { rootId, blockId, hasText, hasFile, hasCommon, hasClipboard, hasCopyMedia, hasLink, hasBookmark, hasDataview, hasTurnObject, count: blockIds.length };
-		const changeFile = { id: 'changeFile', icon: 'link', name: translate('menuBlockActionsExistingFile'), arrow: true };
+		const changeFile = { id: 'changeFile', iconParam: { name: 'menu/mark/link' }, name: translate('menuBlockActionsExistingFile'), arrow: true };
 		const restrictedAlign = [];
 
 		if (!hasText) {
@@ -159,15 +169,15 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (filter) {
-			const turnText = { id: 'turnText', icon: '', name: translate('menuBlockActionsSectionsTextStyle'), children: U.Menu.getBlockText() };
-			const turnList = { id: 'turnList', icon: '', name: translate('menuBlockActionsSectionsListStyle'), children: U.Menu.getBlockList() };
-			const turnPage = { id: 'turnPage', icon: '', name: translate('commonTurnIntoObject'), children: U.Menu.getTurnPage() };
-			const turnDiv = { id: 'turnDiv', icon: '', name: translate('menuBlockActionsSectionsDividerStyle'), children: U.Menu.getTurnDiv() };
-			const turnFile = { id: 'turnFile', icon: '', name: translate('menuBlockActionsSectionsFileStyle'), children: U.Menu.getTurnFile() };
-			const action = { id: 'action', icon: '', name: translate('commonActions'), children: U.Menu.getActions(actionParam) };
-			const align = { id: 'align', icon: '', name: translate('commonAlign'), children: U.Menu.getHAlign(restrictedAlign) };
-			const bgColor = { id: 'bgColor', icon: '', name: translate('commonBackground'), children: U.Menu.getBgColors() };
-			const color = { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, children: U.Menu.getTextColors() };
+			const turnText = { id: 'turnText', name: translate('menuBlockActionsSectionsTextStyle'), children: U.Menu.getBlockText() };
+			const turnList = { id: 'turnList', name: translate('menuBlockActionsSectionsListStyle'), children: U.Menu.getBlockList() };
+			const turnPage = { id: 'turnPage', name: translate('commonTurnIntoObject'), children: U.Menu.getTurnPage() };
+			const turnDiv = { id: 'turnDiv', name: translate('menuBlockActionsSectionsDividerStyle'), children: U.Menu.getTurnDiv() };
+			const turnFile = { id: 'turnFile', name: translate('menuBlockActionsSectionsFileStyle'), children: U.Menu.getTurnFile() };
+			const action = { id: 'action', name: translate('commonActions'), children: U.Menu.getActions(actionParam) };
+			const align = { id: 'align', name: translate('commonAlign'), children: U.Menu.getHAlign(restrictedAlign) };
+			const bgColor = { id: 'bgColor', name: translate('commonBackground'), children: U.Menu.getBgColors() };
+			const color = { id: 'color', iconParam: { name: 'color' }, name: translate('commonColor'), arrow: true, children: U.Menu.getTextColors() };
 
 			if (hasTurnFile) {
 				action.children.push(changeFile);
@@ -186,23 +196,97 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			sections = U.Menu.sectionsFilter(sections, filter);
 		} else {
 			const turnText = { 
-				id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Text, style), name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
+				id: 'turnStyle', name: translate('menuBlockActionsSectionsTextStyle'), arrow: true,
 				caption: (I.TextStyle[style] ? translate(U.String.toCamelCase(`blockName-${I.TextStyle[style]}`)) : ''),
 			};
 
-			const c1 = hasAction ? U.Menu.getActions(actionParam) : [];
-			const c2: any[] = [
-				hasLink ? { id: 'linkSettings', icon: `linkStyle${content.cardStyle}`, name: translate('commonPreview'), arrow: true } : null,
-				hasTurnFile ? { id: 'turnStyle', icon: 'customize', name: translate('commonAppearance'), arrow: true, isBlockFile: true } : null,
-				hasTurnFile ? changeFile : null,
-				hasTurnText ? turnText : null,
-				hasTurnDiv ? { id: 'turnStyle', icon: U.Data.styleIcon(I.BlockType.Div, style), name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
-				hasAlign ? { id: 'align', icon: U.Data.alignHIcon(hAlign), name: translate('commonAlign'), arrow: true } : null,
-				hasColor ? { id: 'color', icon: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') } : null,
-				hasBg ? { id: 'background', icon: 'color', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') } : null,
-			].filter(it => it);
+			const isCardStyle = hasLink && (cardStyle == I.LinkCardStyle.Card);
 
-			sections = [ { children: c1 }, { children: c2 } ];
+			const c1: any[] = [
+				hasLink ? { id: 'linkSettings', name: translate('commonView'), caption: translate(`menuBlockLinkSettingsStyle${I.LinkCardStyle[cardStyle]}`), arrow: true } : null,
+				hasTurnFile ? { id: 'turnStyle', name: translate('commonView'), caption: translate(`blockName${I.FileStyle[style]}`), arrow: true, isBlockFile: true } : null,
+				(hasTurnText && !isCardStyle) ? turnText : null,
+				hasTurnDiv ? { id: 'turnStyle', iconParam: { name: U.Data.styleIcon(I.BlockType.Div, style) }, name: translate('menuBlockActionsSectionsDividerStyle'), arrow: true, isBlockDiv: true } : null,
+				hasAlign ? { id: 'align', name: translate('commonAlign'), caption: translate(`commonHAlign${I.BlockHAlign[hAlign]}`), arrow: true } : null,
+				hasColor ? { id: 'color', name: translate('commonColor'), arrow: true, isTextColor: true, value: (color || 'default') } : null,
+				hasBg ? { id: 'background', name: translate('commonBackground'), arrow: true, isBgColor: true, value: (bgColor || 'default') } : null,
+				hasText ? { id: 'clear', name: translate('libMenuClearStyle') } : null,
+			].filter(it => it);
+			let actionSections: any[] = [];
+
+			if (hasAction) {
+				const cmd = keyboard.cmdSymbol();
+				const count = blockIds.length;
+				const copyName = U.String.sprintf(translate('commonDuplicateBlocks'), U.Common.plural(count, translate('pluralLCBlock')));
+				const deleteName = U.String.sprintf(translate('commonDeleteBlocks'), U.Common.plural(count, translate('pluralLCBlock')));
+
+				const move = hasCommon ? { id: 'move', iconParam: { name: 'menu/action/move' }, name: translate('commonMoveTo'), arrow: true } : null;
+				const clipboardCopy = hasClipboard ? { id: 'clipboardCopy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy'), caption: `${cmd} + C` } : null;
+				const clipboardCut = hasClipboard ? { id: 'clipboardCut', iconParam: { name: 'menu/action/cut' }, name: translate('commonCut'), caption: `${cmd} + X` } : null;
+				const clipboardPaste = hasClipboard ? { id: 'clipboardPaste', iconParam: { name: 'menu/action/paste' }, name: translate('commonPaste'), caption: `${cmd} + V` } : null;
+				const copy = hasCommon ? { id: 'copy', iconParam: { name: 'menu/action/duplicate' }, name: copyName, caption: keyboard.getCaption('duplicate') } : null;
+				const remove = hasCommon ? { id: 'remove', iconParam: { name: 'menu/action/remove' }, name: deleteName, caption: 'Del' } : null;
+				const download = hasFile ? { id: 'download', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') } : null;
+				const copyUrl = hasBookmark ? { id: 'copyUrl', iconParam: { name: 'menu/action/pageLink' }, name: translate('libMenuCopyUrl') } : null;
+				const openAsObject = (hasFile || hasBookmark || hasDataview) ? { id: 'openAsObject', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') } : null;
+				const newTab = { id: 'newTab', iconParam: { name: 'menu/action/newTab' }, name: translate('menuObjectOpenInNewTab') };
+				const newWindow = { id: 'newWindow', iconParam: { name: 'menu/action/newWindow' }, name: translate('menuObjectOpenInNewWindow') };
+
+				if (hasLink) {
+					actionSections = [
+						{ children: [ move, clipboardCopy, clipboardCut, clipboardPaste, copy, remove ] },
+						{ children: [ newTab, newWindow ] },
+					];
+				} else
+				if (hasFile) {
+					actionSections = [
+						{ children: [ move, clipboardCopy, clipboardCut, clipboardPaste, copy, remove ] },
+						{ children: [ download ] },
+						{ children: [ openAsObject, newTab, newWindow ] },
+					];
+				} else
+				if (hasBookmark) {
+					actionSections = [
+						{ children: [ copyUrl, move, clipboardCopy, clipboardCut, clipboardPaste, copy, remove ] },
+						{ children: [ openAsObject, newTab, newWindow ] },
+					];
+				} else {
+					actionSections = [
+						{ children: U.Menu.getActions(actionParam) },
+					];
+				};
+
+				if (canQuoteInComment && hasText && hasCommon) {
+					const quoteInComment = { id: 'quoteInComment', iconParam: { name: 'menu/action/quote' }, name: translate('commonQuoteInComment') };
+					actionSections = [ { children: [ quoteInComment ] }, ...actionSections ];
+				};
+			};
+
+			let sectionName = '';
+			const count = blockIds.length;
+
+			if (count > 1) {
+				sectionName = `${count} ${U.Common.plural(count, translate('pluralBlock'))}`;
+			} else
+			if (hasText) {
+				sectionName = translate('commonText');
+			} else
+			if (hasLink) {
+				sectionName = translate('commonObject');
+			} else
+			if (hasFile) {
+				sectionName = translate((content.type == I.FileType.Image) ? 'commonImage' : 'commonFile');
+			} else
+			if (hasBookmark) {
+				sectionName = translate('commonBookmark');
+			} else {
+				sectionName = translate('commonBlock');
+			};
+
+			sections = [
+				{ name: sectionName, className: 'settingsText', children: c1 },
+				...actionSections,
+			];
 		};
 
 		return U.Menu.sectionsMap(sections);
@@ -378,7 +462,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'color':
 			case 'background': {
-				ids = selection?.getForClick(blockId, false, false);
+				ids = selection?.getForClick(blockId, true, false);
 
 				let cmd = '';
 				let event = '';
@@ -469,7 +553,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				};
 
 				const onCreate = () => {
-					window.setTimeout(() => $(window).trigger(`updateDataviewData`), 50);
+					window.setTimeout(() => U.Dom.eventDispatch(window, 'updateDataviewData'), 50);
 				};
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -501,7 +585,7 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 		
 		const selection = S.Common.getRef('selectionProvider');
-		const ids = selection.getForClick(blockId, true, false);
+		const ids = selection.getForClick(blockId, false, false);
 		const idsWithChildren = selection.getForClick(blockId, true, false);
 		const targetObjectId = block.getTargetObjectId();
 
@@ -562,9 +646,42 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				U.Common.copyToast(translate('commonLink'), block.content.url);
 				break;
 			};
-				
+
+			case 'newTab':
+			case 'newWindow': {
+				const object = S.Detail.get(rootId, targetObjectId);
+
+				if (item.itemId == 'newTab') {
+					U.Object.openTabs([ object ], analytics.route.menuAction);
+				} else {
+					U.Object.openWindows([ object ], S.Auth.token);
+				};
+				break;
+			};
+
 			case 'remove': {
 				Action.remove(rootId, blockId, ids);
+				break;
+			};
+
+			case 'quoteInComment': {
+				const text = block.content?.text || '';
+				const length = text.length;
+				const marks = (block.content?.marks || []).filter(m => m.range && (m.range.to > m.range.from) && (m.range.from < length));
+				const part: I.CommentContentPart = {
+					style: I.TextStyle.Quote,
+					type: I.BlockType.Text,
+					text,
+					marks,
+					editorQuote: { blockId },
+				};
+
+				// Defer dispatch until after the menu close at the end of
+				// onClick — otherwise React state updates from close() and the
+				// section's form mount can race.
+				window.setTimeout(() => {
+					window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
+				}, 0);
 				break;
 			};
 			
@@ -646,26 +763,24 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		focus.apply();
 	};
 
+	const colorMark = (value: string, isBg?: boolean) => {
+		const prefix = isBg ? 'bgColor' : 'textColor';
+		return <div className={`colorMark ${prefix} ${prefix}-${value || 'default'}`} />;
+	};
+
 	const sections = getSections();
-	
+
 	const Section = (item: any) => (
-		<div className="section">
+		<div className={[ 'section', item.className ? item.className : '' ].join(' ')}>
 			{item.name ? <div className="name">{item.name}</div> : ''}
 			<div className="items">
 				{item.children.map((action: any, i: number) => {
-					const icn: string[] = [ 'inner' ];
-					
 					if (action.isTextColor) {
-						icn.push(`textColor textColor-${action.value || 'default'}`);
+						action.caption = colorMark(action.value);
 					};
 
 					if (action.isBgColor) {
-						icn.push(`bgColor bgColor-${action.value || 'default'}`);
-					};
-
-					if (action.isTextColor || action.isBgColor) {
-						action.icon = 'color';
-						action.inner = <div className={icn.join(' ')} />;
+						action.caption = colorMark(action.value, true);
 					};
 
 					if (action.isObject) {
@@ -694,13 +809,12 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getFilterRef: () => filterRef.current,
 		onClick,
 		onOver,
-	}), []);
+	}));
 	
 	return (
 		<div>
 			<Filter 
 				ref={filterRef}
-				className="outlined round"
 				placeholder={translate('menuBlockActionsFilterActions')}
 				value={filter}
 				onFocus={onFilterFocus} 
@@ -715,6 +829,6 @@ const MenuBlockAction = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 	
-}));
+});
 
 export default MenuBlockAction;

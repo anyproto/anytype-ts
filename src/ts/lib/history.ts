@@ -1,5 +1,3 @@
-import { U } from 'Lib';
-
 class History {
 
 	list: string[] = [];

@@ -1,13 +1,10 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle, useState } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, C, S, U, J, analytics, keyboard, translate, Dataview, Relation } from 'Lib';
 import { Label, Icon, MenuItemVertical } from 'Component';
+import * as I from 'Interface';
 
-const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { config } = S.Common;
-	const { param, setActive, onKeyDown, getId, getSize } = props;
+	const { param, setActive, onKeyDown, getId, getSize, position } = props;
 	const { data, className, classNameWrap } = param;
 	const { rootId, blockId, readonly, onSave, onSelect, isInline, getTarget } = data;
 	const view = data.view.get();
@@ -23,6 +20,7 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		saveParam.current = U.Common.objectCopy(data.view.get());
 		setDummy(dummy + 1);
 		rebind();
+		position();
 
 		return () => {
 			unbind();
@@ -32,19 +30,19 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		rebind();
 		setActive();
+		position();
 	});
 
 	const rebind = () => {
 		unbind();
 
-		$(window).on('keydown.menu', e => onKeyDownHandler(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDownHandler);
 		window.setTimeout(() => setActive(), 15);
 	};
 	
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDownHandler);
 	};
 	
 	const onKeyDownHandler = (e: any) => {
@@ -52,14 +50,16 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		let ret = false;
 
-		keyboard.shortcut('space', e, () => {
-			if ([ 'hideIcon', 'coverFit', 'wrapContent' ].includes(item.id)) {
-				e.preventDefault();
+		if (item) {
+			keyboard.shortcut('space', e, () => {
+				if ([ 'hideIcon', 'coverFit', 'wrapContent' ].includes(item.id)) {
+					e.preventDefault();
 
-				onSwitch(e, item.id, !view[item.id]);
-				ret = true;
-			};
-		});
+					onSwitch(e, item.id, !view[item.id]);
+					ret = true;
+				};
+			});
+		};
 
 		if (ret) {
 			return;
@@ -73,11 +73,9 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 	
-		const win = $(window);
-		const isBoard = saveParam.current.type == I.ViewType.Board;
+				const isBoard = saveParam.current.type == I.ViewType.Board;
 		const isCalendar = saveParam.current.type == I.ViewType.Calendar;
 		const clearGroups = isBoard && saveParam.current.groupRelationKey && (view.groupRelationKey != saveParam.current.groupRelationKey);
-		const ns = block.id + U.Common.getEventNamespace(keyboard.isPopup());
 
 		if (isBoard || isCalendar) {
 			const groupOptions = Relation.getGroupOptions(rootId, blockId, saveParam.current.type);
@@ -96,11 +94,11 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				Dataview.groupUpdate(rootId, blockId, view.id, []);
 				C.BlockDataviewGroupOrderUpdate(rootId, blockId, { viewId: view.id, groups: [] }, () => {
 					onSave?.();
-					win.trigger(`updateDataviewData.${ns}`);
+					U.Dom.eventDispatch(window, 'updateDataviewData');
 				});
 			} else {
 				onSave?.();
-				win.trigger(`updateDataviewData.${ns}`);
+				U.Dom.eventDispatch(window, 'updateDataviewData');
 			};
 		});
 
@@ -242,7 +240,7 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!isReadonly) {
 			options = options.concat([
 				{ isDiv: true },
-				{ id: 'addRelation', icon: 'plus', name: translate('commonAddRelation') },
+				{ id: 'addRelation', iconParam: { name: 'plus/menu' }, name: translate('commonAddRelation') },
 			]);
 		};
 
@@ -268,11 +266,11 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			vertical: I.MenuDirection.Center,
 			isSub: true,
 			onOpen: context => {
-				$(element).addClass('active');
+				U.Dom.addClass(U.Dom.select(element), 'active');
 				menuContext.current = context;
 			},
 			onClose: () => {
-				$(element).removeClass('active');
+				U.Dom.removeClass(U.Dom.select(element), 'active');
 				menuContext.current = null;
 			},
 			rebind,
@@ -445,9 +443,18 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const sections = getSections();
+	const viewIconMap = {
+		[I.ViewType.Grid]: 'dataview/view/grid',
+		[I.ViewType.List]: 'dataview/view/list',
+		[I.ViewType.Gallery]: 'dataview/view/gallery',
+		[I.ViewType.Board]: 'dataview/view/kanban',
+		[I.ViewType.Calendar]: 'dataview/view/calendar',
+		[I.ViewType.Graph]: 'dataview/view/graph',
+	};
+
 	const layouts = U.Menu.getViews().map((it: any) => {
 		it.sectionId = 'type';
-		it.icon = `view c${it.id}`;
+		it.icon = viewIconMap[it.id] || `view c${it.id}`;
 		return it;
 	});
 
@@ -467,7 +474,7 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				onClick={e => onClick(e, item)}
 				onMouseEnter={menuClose}
 			>
-				<Icon className={item.icon} />
+				<Icon name={item.icon} size={56} />
 				<Label text={item.name} />
 			</div>
 		);
@@ -514,6 +521,6 @@ const MenuViewLayout = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuViewLayout;

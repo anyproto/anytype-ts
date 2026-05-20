@@ -1,7 +1,7 @@
-import $ from 'jquery';
 import { action, computed, makeObservable, observable, set } from 'mobx';
-import { I, S, U, J, Storage, Renderer, keyboard } from 'Lib';
 import { setReactionsPaused } from 'Lib/reactionScheduler';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
 
 interface Filter {
 	from: number;
@@ -24,7 +24,7 @@ class CommonStore {
 	public filterObj: Filter = { from: 0, text: '' };
 	public gatewayUrl = '';
 	public toastObj: I.Toast = null;
-	public configObj: any = {};
+	public configObj: I.AppConfig = {};
 	public cellId = '';
 	public themeId = '';
 	public nativeThemeIsDark = false;
@@ -44,16 +44,19 @@ class CommonStore {
 	public timeFormatValue = null;
 	public isOnlineValue = false;
 	public chatCmdSendValue = null;
+	public commentCmdSendValue = null;
 	public updateVersionValue = '';
-	public vaultMessagesValue = null;
 	public vaultIsMinimalValue = null;
 	public gridTitleClickValue = null;
-	public analyticsDeviceIdValue = null;
+	public unicodeReplaceValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
 
 	public recentEditModeValue: I.RecentEditMode = null;
+	public sidebarViewValue: I.SidebarView = null;
 	public hideSidebarValue = null;
+	public hideFileObjectsInTreeValue = null;
 	public autoDownloadValue = null;
+	public notificationSoundValue = null;
 	public pinValue = null;
 	public firstDayValue = null;
 	public gallery = {
@@ -67,9 +70,9 @@ class CommonStore {
 	public isActiveTab = true;
 	public windowIsFocused = true;
 	public routeParam: any = {};
-	public openObjectIds: Map<string, Set<string>> = new Map();
 	public isPinnedValue = false;
 	public widgetSectionsValue: I.WidgetSectionParam[] = null;
+	public downloadingIdsValue: Set<string> = new Set();
 
 	public rightSidebarStateValue: { full: I.SidebarRightState, popup: I.SidebarRightState } = { 
 		full: {
@@ -147,6 +150,7 @@ class CommonStore {
 			fileStyleValue: observable,
 			isOnlineValue: observable,
 			hideSidebarValue: observable,
+			hideFileObjectsInTreeValue: observable,
 			autoDownloadValue: observable,
 			spaceId: observable,
 			leftSidebarStateValue: observable,
@@ -157,14 +161,16 @@ class CommonStore {
 			pinValue: observable,
 			firstDayValue: observable,
 			updateVersionValue: observable,
-			vaultMessagesValue: observable,
 			vaultIsMinimalValue: observable,
 			gridTitleClickValue: observable,
-			analyticsDeviceIdValue: observable,
+			unicodeReplaceValue: observable,
+			notificationSoundValue: observable,
 			isActiveTab: observable,
 			isPinnedValue: observable,
 			widgetSectionsValue: observable,
+			downloadingIdsValue: observable,
 			recentEditModeValue: observable,
+			sidebarViewValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -179,12 +185,13 @@ class CommonStore {
 			timeFormat: computed,
 			pin: computed,
 			firstDay: computed,
-			vaultMessages: computed,
 			vaultIsMinimal: computed,
 			gridTitleClick: computed,
-			analyticsDeviceId: computed,
+			unicodeReplace: computed,
+			notificationSound: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
+			sidebarView: computed,
 			isPinned: computed,
 			singleTab: computed,
 			autoDownload: computed,
@@ -210,21 +217,24 @@ class CommonStore {
 			showRelativeDatesSet: action,
 			pinSet: action,
 			firstDaySet: action,
-			vaultMessagesSet: action,
 			vaultIsMinimalSet: action,
 			gridTitleClickSet: action,
-			analyticsDeviceIdSet: action,
+			unicodeReplaceSet: action,
+			notificationSoundSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
+			sidebarViewSet: action,
 			isActiveTabSet: action,
 			isPinnedSet: action,
 			singleTabSet: action,
 			autoDownloadSet: action,
+			downloadStart: action,
+			downloadDone: action,
 		});
 	};
 
-	get config (): any {
+	get config (): I.AppConfig {
 		const config = window.AnytypeGlobalConfig || this.configObj || {};
 
 		return {
@@ -304,6 +314,14 @@ class CommonStore {
 		return Number(ret) || I.RecentEditMode.All;
 	};
 
+	get sidebarView (): I.SidebarView {
+		let ret = this.sidebarViewValue;
+		if (ret === null) {
+			ret = Storage.getSpaceKey('sidebarView', false);
+		};
+		return ret || I.SidebarView.Widgets;
+	};
+
 	get fullscreenObject (): boolean {
 		let ret = this.fullscreenObjectValue;
 		if (ret === null) {
@@ -315,19 +333,12 @@ class CommonStore {
 		return ret;
 	};
 
-	get analyticsDeviceId (): boolean {
-		let ret = this.analyticsDeviceIdValue;
-		if (ret === null) {
-			ret = Storage.get('analyticsDeviceId');
-		};
-		if (ret === undefined) {
-			ret = true;
-		};
-		return ret;
-	};
-
 	get hideSidebar (): boolean {
 		return this.boolGet('hideSidebar');
+	};
+
+	get hideFileObjectsInTree (): boolean {
+		return this.boolGet('hideFileObjectsInTree');
 	};
 
 	get autoDownload (): number {
@@ -340,8 +351,12 @@ class CommonStore {
 			if (ret === true) {
 				ret = 20;
 			} else
-			if ((ret === false) || (ret === undefined)) {
+			if (ret === false) {
 				ret = -1;
+			} else
+			if (ret === undefined) {
+				// Not configured yet: default ON (250 MiB) for local-only network, OFF otherwise
+				ret = !S.Auth.account?.info?.networkId ? 250 : -1;
 			};
 		};
 
@@ -351,6 +366,14 @@ class CommonStore {
 
 	get chatCmdSend (): boolean {
 		return this.boolGet('chatCmdSend');
+	};
+
+	get commentCmdSend (): boolean {
+		if (this.commentCmdSendValue === null) {
+			const v = Storage.get('commentCmdSend');
+			this.commentCmdSendValue = v === null ? true : v;
+		};
+		return !!this.commentCmdSendValue;
 	};
 
 	get theme (): string {
@@ -378,15 +401,15 @@ class CommonStore {
 		return this.boolGet('showRelativeDates');
 	};
 
-	get linkStyle (): I.LinkCardStyle {
+	get linkStyle (): I.LinkDefaultStyle {
 		let ret = this.linkStyleValue;
 		if (ret === null) {
 			ret = Storage.get('linkStyle');
 		};
 		if (undefined === ret) {
-			ret = I.LinkCardStyle.Card;
+			ret = I.LinkDefaultStyle.Card;
 		};
-		return Number(ret) || I.LinkCardStyle.Text;
+		return Number(ret) || I.LinkDefaultStyle.Text;
 	};
 
 	get fileStyle (): I.FileStyle {
@@ -450,10 +473,6 @@ class CommonStore {
 		return this.widgetSectionsValue || [];
 	};
 
-	get vaultMessages (): any {
-		return this.boolGet('vaultMessages');
-	};
-
 	get vaultIsMinimal (): any {
 		return this.boolGet('vaultIsMinimal');
 	};
@@ -465,6 +484,28 @@ class CommonStore {
 		};
 		if (ret === undefined) {
 			ret = true;
+		};
+		return ret;
+	};
+
+	get unicodeReplace (): boolean {
+		let ret = this.unicodeReplaceValue;
+		if (ret === null) {
+			ret = Storage.get('unicodeReplace');
+		};
+		if (ret === undefined) {
+			ret = true;
+		};
+		return ret;
+	};
+
+	get notificationSound (): string {
+		let ret = this.notificationSoundValue;
+		if (ret === null) {
+			ret = Storage.get('notificationSound');
+		};
+		if (ret === undefined) {
+			ret = '';
 		};
 		return ret;
 	};
@@ -552,7 +593,7 @@ class CommonStore {
 	 */
 	graphSet (key: string, param: Partial<I.GraphSettings>) {
 		Storage.set(key, Object.assign(this.getGraph(key), param));
-		$(window).trigger('updateGraphSettings');
+		U.Dom.eventDispatch(window, 'updateGraphSettings');
 	};
 
 	/**
@@ -709,16 +750,16 @@ class CommonStore {
 		this.boolSet('fullscreenObject', v);
 	};
 
-	analyticsDeviceIdSet (v: boolean) {
-		this.boolSet('analyticsDeviceId', v);
-	};
-
 	/**
 	 * Sets the hide sidebar value.
 	 * @param {boolean} v - The hide sidebar value.
 	 */
 	hideSidebarSet (v: boolean) {
 		this.boolSet('hideSidebar', v);
+	};
+
+	hideFileObjectsInTreeSet (v: boolean) {
+		this.boolSet('hideFileObjectsInTree', v);
 	};
 
 	autoDownloadSet (v: number) {
@@ -728,12 +769,32 @@ class CommonStore {
 		Storage.set('autoDownload', v);
 	};
 
+	downloadStart (id: string) {
+		this.downloadingIdsValue.add(id);
+	};
+
+	downloadDone (id: string) {
+		this.downloadingIdsValue.delete(id);
+	};
+
+	isDownloading (id: string): boolean {
+		return this.downloadingIdsValue.has(id);
+	};
+
 	/**
 	 * Sets the hide chat send option value.
 	 * @param {boolean} v - Value.
 	 */
 	chatCmdSendSet (v: boolean) {
 		this.boolSet('chatCmdSend', v);
+	};
+
+	/**
+	 * Sets the comment send shortcut option value.
+	 * @param {boolean} v - Value.
+	 */
+	commentCmdSendSet (v: boolean) {
+		this.boolSet('commentCmdSend', v);
 	};
 
 	/**
@@ -816,7 +877,7 @@ class CommonStore {
 	redirectSet (v: string) {
 		const param = U.Router.getParam(v);
 
-		if ((param.page == 'auth') && (param.action == 'pin-check')) {
+		if (param.page == 'auth') {
 			return;
 		};
 
@@ -840,6 +901,14 @@ class CommonStore {
 		if (id && ref) {
 			this.refs.set(id, ref);
 		};
+	};
+
+	/**
+	 * Removes a reference by ID.
+	 * @param {string} id - The reference ID.
+	 */
+	refDelete (id: string) {
+		this.refs.delete(id);
 	};
 
 	/**
@@ -889,7 +958,7 @@ class CommonStore {
 	setThemeClass () {
 		const c = this.getThemeClass();
 
-		U.Common.addBodyClass('theme', c);
+		U.Dom.addBodyClass('theme', c);
 		Renderer.send('setBackground', c);
 	};
 
@@ -922,7 +991,7 @@ class CommonStore {
 	 * Sets the link style value.
 	 * @param {I.LinkCardStyle} v - The link style value.
 	 */
-	linkStyleSet (v: I.LinkCardStyle) {
+	linkStyleSet (v: I.LinkDefaultStyle) {
 		v = Number(v);
 		this.linkStyleValue = v;
 		Storage.set('linkStyle', v);
@@ -977,14 +1046,6 @@ class CommonStore {
 	};
 
 	/**
-	 * Sets the vault messages value.
-	 * @param {boolean} v - The vault messages value.
-	 */
-	vaultMessagesSet (v: boolean) {
-		this.boolSet('vaultMessages', v);
-	};
-
-	/**
 	 * Sets the vault isMinimal value.
 	 * @param {boolean} v - The vault isMinimal value.
 	 */
@@ -996,13 +1057,22 @@ class CommonStore {
 		this.boolSet('gridTitleClick', v);
 	};
 
+	unicodeReplaceSet (v: boolean) {
+		this.boolSet('unicodeReplace', v);
+	};
+
+	notificationSoundSet (v: string) {
+		this.notificationSoundValue = v;
+		Storage.set('notificationSound', v);
+	};
+
 	/**
 	 * Sets the config object, optionally forcing all values.
-	 * @param {any} config - The config object.
+	 * @param {I.AppConfig} config - The config object.
 	 * @param {boolean} force - Whether to force all values.
 	 */
-	configSet (config: any, force: boolean) {
-		let newConfig: any = {};
+	configSet (config: I.AppConfig, force: boolean) {
+		let newConfig: I.AppConfig = {};
 		if (force) {
 			newConfig = Object.assign(newConfig, config);
 		} else {
@@ -1082,7 +1152,7 @@ class CommonStore {
 	 * @returns {I.GraphSettings} The graph settings.
 	 */
 	getGraph (key: string): I.GraphSettings {
-		const stored = Storage.get(key);
+		const stored = U.Common.objectCopy(Storage.get(key));
 		const def = U.Common.objectCopy(this.graphObj);
 		const result = Object.assign(def, stored);
 
@@ -1177,25 +1247,48 @@ class CommonStore {
 		Storage.set('recentEditMode', this.recentEditModeValue);
 	};
 
+	sidebarViewSet (v: I.SidebarView) {
+		this.sidebarViewValue = v || I.SidebarView.Widgets;
+		Storage.setSpaceKey('sidebarView', this.sidebarViewValue, false);
+	};
+
 	nullifySpaceKeys () {
 		this.defaultType = null;
+		this.sidebarViewValue = null;
 		this.widgetSectionsInit();
 	};
 
 	widgetSectionsInit () {
-		const saved = Storage.get('widgetSections') || [];
-		const full = [ ...saved ];
-		const order = [ 
-			I.WidgetSection.Unread, 
-			I.WidgetSection.Pin, 
-			I.WidgetSection.RecentEdit, 
-			I.WidgetSection.Type, 
+		const allIds = [
+			I.WidgetSection.Pin,
+			I.WidgetSection.Unread,
+			I.WidgetSection.MyFavorites,
+			I.WidgetSection.RecentEdit,
+			I.WidgetSection.Type,
 			I.WidgetSection.Bin,
 		];
+		const saved: I.WidgetSectionParam[] = Storage.get('widgetSections') || [];
+		const savedMap = new Map(saved.map(it => [ it.id, it ]));
 
-		for (const id of order) {
-			if (!full.find(it => it.id == id)) {
-				full.push({ id, isClosed: false, isHidden: false });
+		const makeParam = (id: I.WidgetSection): I.WidgetSectionParam => {
+			const prev = savedMap.get(id);
+			const isClosed = (id == I.WidgetSection.Pin) ? false : (prev?.isClosed ?? false);
+			return { id, isClosed, isHidden: prev?.isHidden ?? false };
+		};
+
+		const seen = new Set<I.WidgetSection>();
+		const full: I.WidgetSectionParam[] = [];
+
+		for (const item of saved) {
+			if (allIds.includes(item.id) && !seen.has(item.id)) {
+				full.push(makeParam(item.id));
+				seen.add(item.id);
+			};
+		};
+		for (const id of allIds) {
+			if (!seen.has(id)) {
+				full.push(makeParam(id));
+				seen.add(id);
 			};
 		};
 

@@ -1,12 +1,13 @@
 import React, { FC, MouseEvent, useEffect, useRef } from 'react';
-import $ from 'jquery';
-import { I, Preview, U } from 'Lib';
+import { Icon } from 'Component';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;
 	text: string;
 	color?: string;
 	className?: string;
+	iconParam?: I.IconParam;
 	tooltipParam?: Partial<I.TooltipParam>;
 	dataset?: any;
 	onMouseEnter?: (e: any) => void;
@@ -21,6 +22,7 @@ const Label: FC<Props> = ({
 	text = '',
 	color = '',
 	className = '',
+	iconParam,
 	tooltipParam = {},
 	dataset = {},
 	onClick,
@@ -50,7 +52,7 @@ const Label: FC<Props> = ({
 		const t = Preview.tooltipCaption(text, caption);
 
 		if (t) {
-			Preview.tooltipShow({ ...tooltipParam, text: t, element: $(nodeRef.current) });
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
 		};
 
 		onMouseEnter?.(e);
@@ -63,7 +65,7 @@ const Label: FC<Props> = ({
 
 	useEffect(() => {
 		if (nodeRef.current) {
-			U.Common.renderLinks($(nodeRef.current));
+			U.Dom.renderLinks(nodeRef.current);
 		};
 	}, []);
 
@@ -72,14 +74,16 @@ const Label: FC<Props> = ({
 			ref={nodeRef}
 			id={id}
 			className={cn.join(' ')}
-			dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }}
 			onClick={onClick}
 			onMouseDown={onMouseDown}
 			onMouseEnter={mouseEnterHandler}
 			onMouseLeave={mouseLeaveHandler}
 			onDoubleClick={onDoubleClick}
 			{...U.Common.dataProps(dataProps)}
-		/>
+		>
+			{iconParam ? <Icon {...iconParam} /> : ''}
+			<span dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
+		</div>
 	);
 
 };

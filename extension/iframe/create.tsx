@@ -1,12 +1,12 @@
 import { forwardRef, useEffect, useRef, useState } from 'react';
-import $ from 'jquery';
 import { observer } from 'mobx-react';
 import { Button, Block, Loader, Icon, Select, IconObject, EmptySearch } from 'Component';
-import { I, C, M, S, U, J, translate } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const ROOT_ID = 'preview';
 
-const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
+const Create = forwardRef<{}, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef<any>(null);
 	const spaceRef = useRef<Select>(null);
@@ -71,14 +71,14 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const onSelect = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const filters: I.Filter[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] }
 		];
 
 		S.Menu.open('searchObject', {
-			element: node.find('#select-object'),
+			element: node?.querySelector('#select-object'),
 			data: {
 				value: object ? [ object.id ] : [],
 				canAdd: true,
@@ -96,8 +96,7 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 	};
 
 	const getWrapperWidth = () => {
-		const win: any = $(window);
-		return win.width() - 96;
+		return window.innerWidth - 96;
 	};
 
 	const onSave = () => {
@@ -155,8 +154,8 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 					</div>
 				</div>
 				<div className="side right">
-					<Button text="Cancel" color="blank" className="c32" onClick={onClose} />
-					<Button text="Save" color="pink" className="c32" onClick={onSave} />
+					<Button text="Cancel" color="blank" size={32} onClick={onClose} />
+					<Button text="Save" color="pink" size={32} onClick={onSave} />
 				</div>
 			</div>
 
@@ -178,6 +177,6 @@ const Create = observer(forwardRef<{}, I.PageComponent>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default Create;

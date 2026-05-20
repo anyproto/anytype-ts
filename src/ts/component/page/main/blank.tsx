@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-import { I } from 'Lib';
+import * as I from 'Interface';
 
 const PageMainBlank = forwardRef<I.PageRef, I.PageComponent>(() => {
 

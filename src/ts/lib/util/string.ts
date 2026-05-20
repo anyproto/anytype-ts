@@ -1,7 +1,6 @@
 import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import parsePhoneNumber from 'libphonenumber-js';
-import { I, U, Mark } from 'Lib';
 
 const TEST_HTML = /<[^>]*>/;
 const UNSAFE_HTML_PATTERN = /<\s*(script|iframe|svg|img|math|object|embed|style|form|input|video|audio|source)\b|<[^>]+\s+on\w+\s*=|<[^>]+\s+style\s*=\s*["'][^"']*(?:javascript:|data:)|<[^>]+\s+(?:src|href|data|action)\s*=\s*["']?\s*(?:javascript:|data:)|<style[^>]*>[^<]*(?:javascript:|data:)/iu;
@@ -161,7 +160,7 @@ class UtilString {
 			return '';
 		};
 
-		return String(str || '').replace(/[_-\s]([a-zA-Z])/g, (_, char) => char.toUpperCase()).replace(/^[A-Z]/, char => char.toLowerCase());
+		return String(str || '').replace(/[_-\s\\/]([a-zA-Z])/g, (_, char) => char.toUpperCase()).replace(/^[A-Z]/, char => char.toLowerCase());
 	};
 
 	/**
@@ -282,7 +281,7 @@ class UtilString {
 	 * @returns {string} The converted string.
 	 */
 	lbBr (s: string) {
-		return s.toString().replace(new RegExp(/\n/gi), '<br/>');
+		return s.toString().replace(/\n/g, '<br/>');
 	};
 
 	/**
@@ -462,7 +461,7 @@ class UtilString {
 	 * @returns {boolean} True if RTL, false otherwise.
 	 */
 	checkRtl (s: string): boolean {
-		return /^[\u0591-\u05EA\u05F0-\u05F4\u0600-\u06FF]/.test(s);
+		return /^\s*[\u0591-\u05EA\u05F0-\u05F4\u0600-\u06FF]/.test(s);
 	};
 
 	/**

@@ -7,7 +7,6 @@
 			.label { padding: 0px; }
 			.flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: center; @include text-paragraph; font-weight: 600; }
 
-			.iconObject { flex-shrink: 0; }
 			.editableWrap { flex-grow: 1; @include text-overflow-nw; }
 		}
 	}
@@ -39,6 +38,9 @@
 		.previewObject { width: calc(50% - 6px); height: 96px; background-color: var(--color-bg-primary); }
 		.previewObject {
 			.moreWrapper { width: 24px; height: 24px; }
+			.moreWrapper:hover {
+				.icon.hasSvg { color: var(--color-control-accent); }
+			}
 
 			&::before { 
 				content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: rgba(79,79,79,0); z-index: 1; pointer-events: none; 
@@ -60,12 +62,10 @@
 
 		.item { padding-left: 4px; }
 		.item {
-			.icon { width: 20px; height: 20px; flex-shrink: 0; }
-			.icon.dnd { background-image: url('~img/icon/sidebar/dnd.svg'); cursor: grab; }
-			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-			.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+			.icon { width: 20px; height: 20px; }
+			.icon.commonDnd { cursor: grab; }
 
-			.iconObject { margin: 0px 6px 0px 0px; flex-shrink: 0; }
+			.iconObject { margin: 0px 6px 0px 0px; }
 
 			.name { @include text-overflow-nw; flex-grow: 1; }
 

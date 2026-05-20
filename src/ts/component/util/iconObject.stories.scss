@@ -1,0 +1,67 @@
+.iconObjectGallery {
+	display: flex; flex-direction: column; gap: 32px; padding: 24px; overflow: auto; height: 100vh;
+}
+
+.iconObjectGalleryMainTitle {
+	margin: 0; font-weight: 600; font-size: 20px; color: var(--color-text-primary);
+}
+
+.iconObjectGallerySection {
+	display: flex; flex-direction: column; gap: 4px;
+}
+
+.iconObjectGallerySizeHeader {
+	display: flex; align-items: baseline; gap: 8px; margin: 0 0 4px;
+}
+
+.iconObjectGallerySize {
+	font-weight: 600; font-size: 14px; color: var(--color-text-primary);
+}
+
+.iconObjectGalleryRadius {
+	font-size: 12px; color: var(--color-red);
+}
+
+.iconObjectGalleryRow {
+	display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 12px; padding: 12px; border: 1px dashed var(--color-shape-secondary); border-radius: 8px;
+}
+
+.iconObjectGalleryLabels {
+	display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 12px;
+}
+
+.iconObjectGalleryCell {
+	display: flex; align-items: center; justify-content: center;
+}
+
+.iconObjectGalleryLabel {
+	font-size: 10px; color: #888; text-align: center;
+}
+
+.iconObjectGalleryColorSection {
+	display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 16px;
+}
+
+.iconObjectGalleryColorItem {
+	display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+
+.iconObjectGalleryColorRow {
+	display: flex; gap: 8px;
+}
+
+.iconObjectGalleryColorLabel {
+	display: flex; flex-direction: column; align-items: center; font-size: 12px; color: var(--color-text-primary);
+}
+
+.iconObjectGalleryColorHex {
+	font-size: 10px; color: #888;
+}
+
+.iconObjectGalleryLayoutGrid {
+	display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 16px;
+}
+
+.iconObjectGalleryLayoutItem {
+	display: flex; flex-direction: column; align-items: center; gap: 6px;
+}

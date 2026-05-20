@@ -120,15 +120,15 @@ const Pager: FC<Props> = ({
 
 	return (
 		<div className={cn.join(' ')}>
-			{isShort ? <Icon className={cnel.join(' ')} onClick={() => onChangeHandler(1)} /> : ''}
-			<Icon className={cnl.join(' ')} onClick={() => onChangeHandler(page - 1)} />
-			
+			{isShort ? <Icon name="arrow/pagerEnd" className={cnel.join(' ')} onClick={() => onChangeHandler(1)} /> : ''}
+			<Icon name="arrow/pager" className={cnl.join(' ')} onClick={() => onChangeHandler(page - 1)} />
+
 			{startPage}
 			{list}
 			{endPage}
 
-			<Icon className={cnr.join(' ')} onClick={() => onChangeHandler(page + 1)} />
-			{isShort ? <Icon className={cner.join(' ')} onClick={() => onChangeHandler(pages)} /> : ''}
+			<Icon name="arrow/pager" className={cnr.join(' ')} onClick={() => onChangeHandler(page + 1)} />
+			{isShort ? <Icon name="arrow/pagerEnd" className={cner.join(' ')} onClick={() => onChangeHandler(pages)} /> : ''}
 		</div>
 	);
 

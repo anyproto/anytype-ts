@@ -1,7 +1,5 @@
-import React, { forwardRef } from 'react';
-import { observer } from 'mobx-react';
+import React, { forwardRef, useEffect } from 'react';
 import { Label, Button } from 'Component';
-import { translate, U, Action, analytics } from 'Lib';
 
 interface Props {
 	route: string;
@@ -9,7 +7,7 @@ interface Props {
 	className?: string;
 };
 
-const UpsellSpace = observer(forwardRef<{}, Props>(({
+const UpsellSpace = forwardRef<{}, Props>(({
 	route = '',
 	className = '',
 }, ref) => {
@@ -22,6 +20,11 @@ const UpsellSpace = observer(forwardRef<{}, Props>(({
 	];
 
 	const mySharedSpaces = U.Space.getMySharedSpacesList();
+
+	useEffect(() => {
+		analytics.event('ScreenHitShareSpaceLimit');
+	}, []);
+
 	const onClick = () => {
 		Action.membershipUpgrade({ type: 'SpaceWarning', route });
 	};
@@ -32,10 +35,10 @@ const UpsellSpace = observer(forwardRef<{}, Props>(({
 				<Label className="usage" text={U.String.sprintf(translate('upsellBannerSpaceUsageText'), mySharedSpaces.length)} />
 				<Label className="upsell" text={translate('upsellBannerSpaceUpsellText')} />
 			</div>
-			<Button text={translate('commonUpgrade')} color="black" className="c28" onClick={onClick} />
+			<Button text={translate('commonUpgrade')} color="black" size={28} onClick={onClick} />
 		</div>
 	);
 
-}));
+});
 
 export default UpsellSpace;

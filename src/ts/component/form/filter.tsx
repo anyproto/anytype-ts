@@ -1,13 +1,15 @@
 import React, { forwardRef, useImperativeHandle, useEffect, useState, useRef } from 'react';
-import $ from 'jquery';
 import { Input, Icon } from 'Component';
-import { I, keyboard, translate } from 'Lib';
+import * as I from 'Interface';
+
+type FilterSize = 28 | 32 | 36;
 
 interface Props {
 	id?: string;
+	size?: FilterSize;
 	className?: string;
 	inputClassName?: string;
-	icon?: string;
+	iconParam?: I.IconParam;
 	value?: string;
 	placeholder?: string;
 	tooltipParam?: I.TooltipParam;
@@ -35,9 +37,10 @@ interface FilterRefProps {
 
 const Filter = forwardRef<FilterRefProps, Props>(({
 	id = '',
+	size = 28,
 	className = '',
 	inputClassName = '',
-	icon = '',
+	iconParam,
 	value = '',
 	placeholder = translate('commonFilterClick'),
 	tooltipParam = {},
@@ -56,7 +59,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	const inputRef = useRef(null);
 	const [ isFocused, setIsFocused ] = useState(false);
 	const [ isActive, setIsActive ] = useState(false);
-	const cn = [ 'filter', className ];
+	const cn = [ 'filter', `size${size}`, className ];
 
 	if (isFocused) {
 		cn.push('isFocused');
@@ -67,12 +70,16 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	};
 
 	let iconObj = null;
-	if (icon) {
+	if (iconParam) {
 		iconObj = (
-			<Icon 
-				className={icon} 
+			<Icon
+				name={iconParam.name}
+				color={iconParam.color}
+				size={iconParam.size}
+				width={iconParam.width}
+				height={iconParam.height}
 				tooltipParam={tooltipParam}
-				onClick={onIconClick} 
+				onClick={onIconClick}
 			/>
 		);
 		cn.push('withIcon');
@@ -120,6 +127,13 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		onChange?.(v);
 	};
 
+	const onCompositionEndHandler = () => {
+		const v = getValue();
+		if (v !== undefined) {
+			onChange?.(v);
+		};
+	};
+
 	const onKeyDownHandler = (e: any, v: string): void => {
 		// Chinese IME is open
 		if (keyboard.isComposition) {
@@ -153,7 +167,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	};
 
 	const buttonCheck = () => {
-		$(nodeRef.current).toggleClass('active', Boolean(getValue()));
+		U.Dom.toggleClass(nodeRef.current, 'active', Boolean(getValue()));
 	};
 
 	const getValue = () => {
@@ -169,7 +183,10 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 	};
 
 	const placeholderSet = (v: string) => {
-		$(inputRef.current?.getNode()).attr('placeholder', v);
+		const node = inputRef.current?.getNode();
+		if (node) {
+			node.setAttribute('placeholder', v);
+		};
 	};
 	
 	const init = () => {
@@ -206,15 +223,16 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 				{iconObj}
 
 				<div className="filterInputWrap">
-					<Input 
+					<Input
 						ref={inputRef}
 						id="input"
 						className={inputClassName}
 						value={value}
 						focusOnMount={focusOnMount}
-						onFocus={onFocusHandler} 
-						onBlur={onBlurHandler} 
-						onChange={onChangeHandler} 
+						onFocus={onFocusHandler}
+						onBlur={onBlurHandler}
+						onChange={onChangeHandler}
+						onCompositionEnd={onCompositionEndHandler}
 						onKeyDown={onKeyDownHandler}
 						onKeyUp={onKeyUpHandler}
 						onSelect={onSelect}
@@ -222,7 +240,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 					/>
 				</div>
 
-				<Icon className="clear" onClick={onClearHandler} />
+				<Icon name="common/clear" onClick={onClearHandler} />
 			</div>
 			<div className="line" />
 		</div>

@@ -1,0 +1,26 @@
+import { registerIcon } from '../../registry';
+import Header1 from './header1';
+import Header2 from './header2';
+import Header3 from './header3';
+import Checkbox from './checkbox';
+import Numbered from './numbered';
+import Bulleted from './bulleted';
+import Code from './code';
+import Quote from './quote';
+import Text from './text';
+import Plus from './plus';
+import CreateObject from './createObject';
+import UploadComputer from './uploadComputer';
+
+registerIcon('comment/menu/header1', Header1);
+registerIcon('comment/menu/header2', Header2);
+registerIcon('comment/menu/header3', Header3);
+registerIcon('comment/menu/checkbox', Checkbox);
+registerIcon('comment/menu/numbered', Numbered);
+registerIcon('comment/menu/bulleted', Bulleted);
+registerIcon('comment/menu/code', Code);
+registerIcon('comment/menu/quote', Quote);
+registerIcon('comment/menu/text', Text);
+registerIcon('comment/menu/plus', Plus);
+registerIcon('comment/menu/createObject', CreateObject);
+registerIcon('comment/menu/uploadComputer', UploadComputer);

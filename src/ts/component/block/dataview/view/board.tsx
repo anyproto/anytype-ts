@@ -1,16 +1,15 @@
 import React, { forwardRef, useEffect, useRef, useImperativeHandle, useState } from 'react';
-import { observer } from 'mobx-react';
 import { arrayMove } from '@dnd-kit/sortable';
-import $ from 'jquery';
+
 import raf from 'raf';
 import { StickyScrollbar } from 'Component';
-import { I, C, S, U, J, Dataview, keyboard, translate } from 'Lib';
 import Empty from '../empty';
 import Column from './board/column';
+import * as I from 'Interface';
 
 const PADDING = 46;
 
-const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
+const ViewBoard = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const { rootId, block, getView, getTarget, className, onViewSettings, isInline, isPopup, readonly, objectOrderUpdate } = props;
 	const view = getView();
@@ -45,7 +44,7 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 	useEffect(() => {
 		resize();
-		U.Common.triggerResizeEditor(isPopup);
+		U.Dom.triggerResizeEditor(isPopup);
 
 		const selection = S.Common.getRef('selectionProvider');
 		const ids = selection?.get(I.SelectType.Record) || [];
@@ -55,13 +54,24 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		};
 	});
 
+	const scrollViewHandlerRef = useRef<(() => void) | null>(null);
+
+	const scrollHorizontalHandlerRef = useRef<(() => void) | null>(null);
+
 	const rebind = () => {
-		const scroll = $(scrollRef.current);
+		const scroll = scrollRef.current;
 
 		unbind();
 
-		scroll.on('scroll', () => onScrollHorizontal());
-		U.Common.getPageContainer(isPopup).on('scroll.board', onScrollView);
+		scrollHorizontalHandlerRef.current = () => onScrollHorizontal();
+		if (scroll) {
+			U.Dom.addEvent(scroll, 'scroll', scrollHorizontalHandlerRef.current);
+		};
+		scrollViewHandlerRef.current = onScrollView;
+		const pageContainer = U.Dom.getPageContainer(isPopup);
+		if (pageContainer) {
+			U.Dom.addEvent(pageContainer, 'scroll', scrollViewHandlerRef.current);
+		};
 
 		if (!isInline) {
 			stickyScrollRef.current?.bind(scroll, isSyncingScroll.current);
@@ -69,16 +79,23 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 	};
 
 	const unbind = () => {
-		const scroll = $(scrollRef.current);
+		const scroll = scrollRef.current;
 
-		scroll.off('scroll');
+		if (scrollHorizontalHandlerRef.current && scroll) {
+			U.Dom.removeEvent(scroll, 'scroll', scrollHorizontalHandlerRef.current);
+			scrollHorizontalHandlerRef.current = null;
+		};
 		stickyScrollRef.current?.unbind();
-		U.Common.getPageContainer(isPopup).off('scroll.board');
+		const pageContainer = U.Dom.getPageContainer(isPopup);
+		if (scrollViewHandlerRef.current && pageContainer) {
+			U.Dom.removeEvent(pageContainer, 'scroll', scrollViewHandlerRef.current);
+			scrollViewHandlerRef.current = null;
+		};
 	};
 
 	const onScrollHorizontal = () => {
 		if (stickyScrollRef.current) {
-			isSyncingScroll.current = stickyScrollRef.current.sync($(scrollRef.current), isSyncingScroll.current);
+			isSyncingScroll.current = stickyScrollRef.current.sync(scrollRef.current, isSyncingScroll.current);
 		};
 	};
 
@@ -102,11 +119,11 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 	const initCacheColumn = () => {
 		const groups = getGroups(true);
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
 		cache.current = {};
 		groups.forEach((group: any, i: number) => {
-			const el = node.find(`#column-${group.id}`);
+			const el = U.Dom.select(`#column-${group.id}`, node);
 			const item = {
 				id: group.id,
 				index: i,
@@ -116,22 +133,22 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 				height: 0,
 			};
 
-			if (el.length) {
-				const { left, top } = el.offset();
+			if (el) {
+				const rect = el.getBoundingClientRect();
 
-				item.x = left;
-				item.y = top;
-				item.width = el.outerWidth();
-				item.height = el.outerHeight();
+				item.x = rect.left + window.scrollX;
+				item.y = rect.top + window.scrollY;
+				item.width = el.offsetWidth;
+				item.height = el.offsetHeight;
 			};
-			
+
 			cache.current[group.id] = item;
 		});
 	};
 
 	const initCacheCard = () => {
 		const groups = getGroups(false);
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
 		cache.current = {};
 
@@ -145,19 +162,19 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 			items.push({ id: `${group.id}-add`, isAdd: true });
 			items.forEach((item: any, i: number) => {
-				const el = node.find(`#record-${U.Common.esc(item.id)}`);
-				if (!el.length) {
+				const el = U.Dom.select(`#record-${U.Common.esc(item.id)}`, node);
+				if (!el) {
 					return;
 				};
 
-				const { left, top } = el.offset();
+				const rect = el.getBoundingClientRect();
 				cache.current[item.id] = {
 					id: item.id,
 					groupId: group.id,
-					x: left,
-					y: top,
-					width: el.outerWidth(),
-					height: el.outerHeight(),
+					x: rect.left + window.scrollX,
+					y: rect.top + window.scrollY,
+					width: el.offsetWidth,
+					height: el.offsetHeight,
 					index: i,
 					isAdd: item.isAdd,
 				};
@@ -165,25 +182,44 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		});
 	};
 
-	const onDragStartCommon = (e: any, target: any) => {
+	const dragOverHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const dragHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const dragEndHandlerRef = useRef<((e: Event) => void) | null>(null);
+
+	const onDragStartCommon = (e: any, target: HTMLElement) => {
 		e.stopPropagation();
 
 		const selection = S.Common.getRef('selectionProvider');
-		const node = $(nodeRef.current);
-		const view = node.find('.viewContent');
-		const clone = target.clone();
-		
-		ox.current = node.find('#columns').offset().left;
+		const node = nodeRef.current;
+		const viewEl = U.Dom.select('.viewContent', node);
+		const clone = target.cloneNode(true) as HTMLElement;
+		const columnsEl = U.Dom.select('#columns', node);
+		const columnsRect = columnsEl?.getBoundingClientRect();
 
-		target.addClass('isDragging');
-		clone.attr({ id: '' }).addClass('isClone').css({ zIndex: 10000, position: 'fixed', left: -10000, top: -10000 });
-		view.append(clone);
+		ox.current = (columnsRect?.left ?? 0) + window.scrollX;
 
-		$(document).off('dragover').on('dragover', e => e.preventDefault());
-		$(window).off('dragend.board drag.board');
-		$('body').addClass('grab');
+		U.Dom.addClass(target, 'isDragging');
+		clone.id = '';
+		U.Dom.addClass(clone, 'isClone');
+		U.Dom.css(clone, { zIndex: '10000', position: 'fixed', left: '-10000px', top: '-10000px' });
+		viewEl?.appendChild(clone);
 
-		e.dataTransfer.setDragImage(clone.get(0), 0, 0);
+		if (dragOverHandlerRef.current) {
+			U.Dom.removeEvent(document, 'dragover', dragOverHandlerRef.current);
+		};
+		dragOverHandlerRef.current = (e: Event) => e.preventDefault();
+		U.Dom.addEvent(document, 'dragover', dragOverHandlerRef.current);
+
+		if (dragHandlerRef.current) {
+			U.Dom.removeEvent(window, 'drag', dragHandlerRef.current);
+		};
+		if (dragEndHandlerRef.current) {
+			U.Dom.removeEvent(window, 'dragend', dragEndHandlerRef.current);
+		};
+
+		U.Dom.addClass(document.body, 'grab');
+
+		e.dataTransfer.setDragImage(clone, 0, 0);
 
 		keyboard.setDragging(true);
 		keyboard.disableSelection(true);
@@ -195,14 +231,28 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 	const onDragEndCommon = (e: any) => {
 		e.preventDefault();
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		$('body').removeClass('grab');
-		$(window).off('dragend.board drag.board').trigger('mouseup.selection');
+		U.Dom.removeClass(document.body, 'grab');
 
-		node.find('.isClone').remove();
-		node.find('.isDragging').removeClass('isDragging');
-		node.find('.isOver').removeClass('isOver left right top bottom');
+		if (dragHandlerRef.current) {
+			U.Dom.removeEvent(window, 'drag', dragHandlerRef.current);
+			dragHandlerRef.current = null;
+		};
+		if (dragEndHandlerRef.current) {
+			U.Dom.removeEvent(window, 'dragend', dragEndHandlerRef.current);
+			dragEndHandlerRef.current = null;
+		};
+
+		U.Dom.selectAll('.isClone', node).forEach(el => el.remove());
+		U.Dom.selectAll('.isDragging', node).forEach(el => U.Dom.removeClass(el, 'isDragging'));
+		U.Dom.selectAll('.isOver', node).forEach(el => {
+			U.Dom.removeClass(el, 'isOver');
+			U.Dom.removeClass(el, 'left');
+			U.Dom.removeClass(el, 'right');
+			U.Dom.removeClass(el, 'top');
+			U.Dom.removeClass(el, 'bottom');
+		});
 
 		keyboard.disableSelection(false);
 		keyboard.disableCommonDrop(false);
@@ -221,19 +271,27 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 			return;
 		};
 
-		const win = $(window);
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		const columnEl = U.Dom.select(`#column-${groupId}`, node);
 
-		onDragStartCommon(e, node.find(`#column-${groupId}`));
+		if (!columnEl) {
+			return;
+		};
+
+		onDragStartCommon(e, columnEl);
 		initCacheColumn();
 		isDraggingColumn.current = true;
 
-		win.on('drag.board', e => onDragMoveColumn(e, groupId));
-		win.on('dragend.board', e => onDragEndColumn(e, groupId));
+		dragHandlerRef.current = (e: Event) => onDragMoveColumn(e, groupId);
+		dragEndHandlerRef.current = (e: Event) => onDragEndColumn(e, groupId);
+		U.Dom.addEvents(window, [
+			['drag', dragHandlerRef.current],
+			['dragend', dragEndHandlerRef.current],
+		]);
 	};
 
 	const onDragMoveColumn = (e: any, groupId: any) => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const current = cache.current[groupId];
 		const groups = getGroups(false);
 
@@ -274,10 +332,18 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		};
 
 		frame.current = raf(() => {
-			node.find('.isOver').removeClass('isOver left right');
+			U.Dom.selectAll('.isOver', node).forEach(el => {
+				U.Dom.removeClass(el, 'isOver');
+				U.Dom.removeClass(el, 'left');
+				U.Dom.removeClass(el, 'right');
+			});
 
 			if (hoverId.current) {
-				node.find(`#column-${hoverId.current}`).addClass(`isOver ${isLeft ? 'left' : 'right'}`);
+				const hoverEl = U.Dom.select(`#column-${hoverId.current}`, node);
+				if (hoverEl) {
+					U.Dom.addClass(hoverEl, 'isOver');
+					U.Dom.addClass(hoverEl, isLeft ? 'left' : 'right');
+				};
 			};
 		});
 	};
@@ -313,7 +379,6 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 			return;
 		};
 		
-		const win = $(window);
 		const selection = S.Common.getRef('selectionProvider');
 		const selectedIds = selection?.get(I.SelectType.Record) || [];
 
@@ -325,16 +390,20 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 			selectedRecordIds.current = [record.id];
 		};
 
-		onDragStartCommon(e, $(e.currentTarget));
+		onDragStartCommon(e, e.currentTarget as HTMLElement);
 		initCacheCard();
 		isDraggingCard.current = true;
 
-		win.on('drag.board', e => onDragMoveCard(e, record));
-		win.on('dragend.board', e => onDragEndCard(e, record));
+		dragHandlerRef.current = (e: Event) => onDragMoveCard(e, record);
+		dragEndHandlerRef.current = (e: Event) => onDragEndCard(e, record);
+		U.Dom.addEvents(window, [
+			['drag', dragHandlerRef.current],
+			['dragend', dragEndHandlerRef.current],
+		]);
 	};
 
 	const onDragMoveCard = (e: any, record: any) => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 		const current = cache.current[record.id];
 
 		if (!current) {
@@ -367,10 +436,18 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		};
 
 		frame.current = raf(() => {
-			node.find('.isOver').removeClass('isOver top bottom');
+			U.Dom.selectAll('.isOver', node).forEach(el => {
+				U.Dom.removeClass(el, 'isOver');
+				U.Dom.removeClass(el, 'top');
+				U.Dom.removeClass(el, 'bottom');
+			});
 
 			if (hoverId.current) {
-				node.find(`#record-${U.Common.esc(hoverId.current)}`).addClass(`isOver ${isTop ? 'top' : 'bottom'}`);
+				const hoverEl = U.Dom.select(`#record-${U.Common.esc(hoverId.current)}`, node);
+				if (hoverEl) {
+					U.Dom.addClass(hoverEl, 'isOver');
+					U.Dom.addClass(hoverEl, isTop ? 'top' : 'bottom');
+				};
 			};
 		});
 	};
@@ -505,7 +582,7 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 	const onScrollView = () => {
 		const groups = getGroups(false);
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
 		if (isDraggingColumn.current) {
 			groups.forEach((group: any, i: number) => {
@@ -514,14 +591,14 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 					return;
 				};
 
-				const el = node.find(`#column-${group.id}`);
-				if (!el.length) {
+				const el = U.Dom.select(`#column-${group.id}`, node);
+				if (!el) {
 					return;
 				};
 
-				const { left, top } = el.offset();
-				rect.x = left;
-				rect.y = top;
+				const elRect = el.getBoundingClientRect();
+				rect.x = elRect.left + window.scrollX;
+				rect.y = elRect.top + window.scrollY;
 			});
 		} else
 		if (isDraggingCard.current) {
@@ -533,14 +610,14 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 				const items = column.getItems();
 				items.forEach((item: any, i: number) => {
-					const el = node.find(`#record-${U.Common.esc(item.id)}`);
-					if (!el.length) {
+					const el = U.Dom.select(`#record-${U.Common.esc(item.id)}`, node);
+					if (!el) {
 						return;
 					};
 
-					const { left, top } = el.offset();
-					cache.current[item.id].x = left;
-					cache.current[item.id].y = top;
+					const elRect = el.getBoundingClientRect();
+					cache.current[item.id].x = elRect.left + window.scrollX;
+					cache.current[item.id].y = elRect.top + window.scrollY;
 				});
 			});
 		};
@@ -552,11 +629,11 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 
 	const resize = () => {
 		const parent = S.Block.getParentLeaf(rootId, block.id);
-		const node = $(nodeRef.current);
-		const scroll = $(scrollRef.current);
-		const view = node.find('.viewContent');
-		const container = U.Common.getPageContainer(isPopup);
-		const cw = container.width();
+		const node = nodeRef.current;
+		const scroll = scrollRef.current;
+		const viewEl = U.Dom.select('.viewContent', node);
+		const container = U.Dom.getPageContainer(isPopup);
+		const cw = container?.clientWidth ?? 0;
 		const size = J.Size.dataview.board;
 		const groups = getGroups(false);
 		const width = groups.length * (size.card + size.margin) - size.margin;
@@ -567,8 +644,12 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 			const vw = Math.max(mw, width) + (width > mw ? PADDING : 0);
 			const pr = width > mw ? PADDING : 0;
 
-			scroll.css({ width: cw - 4, marginLeft: -margin - 2, paddingLeft: margin });
-			view.css({ width: vw, paddingRight: pr });
+			if (scroll) {
+				U.Dom.css(scroll, { width: `${cw - 4}px`, marginLeft: `${-margin - 2}px`, paddingLeft: `${margin}px` });
+			};
+			if (viewEl) {
+				U.Dom.css(viewEl, { width: `${vw}px`, paddingRight: `${pr}px` });
+			};
 
 			stickyScrollRef.current?.resize({
 				width: mw,
@@ -579,12 +660,16 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 			});
 		} else
 		if (parent && (parent.isPage() || parent.isLayoutDiv())) {
-			const wrapper = $('#editorWrapper');
-			const ww = wrapper.width();
+			const wrapper = U.Dom.get('editorWrapper');
+			const ww = U.Dom.contentWidth(wrapper);
 			const margin = (cw - ww) / 2;
 
-			scroll.css({ width: cw, marginLeft: -margin, paddingLeft: margin });
-			view.css({ width: width + margin + 2 });
+			if (scroll) {
+				U.Dom.css(scroll, { width: `${cw}px`, marginLeft: `${-margin}px`, paddingLeft: `${margin}px` });
+			};
+			if (viewEl) {
+				U.Dom.css(viewEl, { width: `${width + margin + 2}px` });
+			};
 		};
 	};
 
@@ -636,6 +721,6 @@ const ViewBoard = observer(forwardRef<I.ViewRef, I.ViewComponent>((props, ref) =
 		</div>
 	);	
 
-}));
+});
 
 export default ViewBoard;

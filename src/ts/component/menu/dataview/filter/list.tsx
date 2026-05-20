@@ -1,18 +1,16 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { I, C, S, U, Relation, keyboard, translate, analytics, Dataview, J } from 'Lib';
 import { MenuItemVertical, Icon, Label } from 'Component';
+import * as I from 'Interface';
 
 const HEIGHT_ITEM = 28;
 const HEIGHT_FILTER = 32;
 const HEIGHT_DIV = 16;
 const LIMIT = 20;
 
-const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, getId, onKeyDown, setActive } = props;
+	const { param, getId, onKeyDown, setActive, position } = props;
 	const { data } = param;
 	const { rootId, blockId, getView, loadData, isInline, getTarget, readonly, closeFilters } = data;
 	const nodeRef = useRef(null);
@@ -29,34 +27,35 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		beforePosition();
+		position();
 		setActive();
 	});
 
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getFilterItems = () => {
 		const view = getView();
-
 		if (!view) {
 			return [];
 		};
 
-		return U.Common.objectCopy(view.filters).map((it: any) => {
+		const filters = Dataview.getFilteredFilters(view.filters);
+		
+		return U.Common.objectCopy(filters).map((it: any) => {
 			return {
 				...it,
 				relation: S.Record.getRelationByKey(it.relationKey),
 				isFilter: true,
 			};
-		}).filter(it => it.relation || Dataview.isAdvancedFilter(it)).sort((a, b) => {
+		}).sort((a, b) => {
 			const aAdvanced = Dataview.isAdvancedFilter(a);
 			const bAdvanced = Dataview.isAdvancedFilter(b);
 
@@ -78,10 +77,10 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		if (!isReadonly) {
 			items.push({ isDiv: true });
-			items.push({ id: 'add', name: translate('menuDataviewFilterNewFilter'), icon: 'plus' });
+			items.push({ id: 'add', name: translate('menuDataviewFilterNewFilter'), iconParam: { name: 'plus/menu' } });
 
 			if (filterItems.length) {
-				items.push({ id: 'clear', name: translate('commonClear'), icon: 'remove' });
+				items.push({ id: 'clear', name: translate('commonClear'), iconParam: { name: 'menu/action/remove' } });
 			};
 		};
 
@@ -180,6 +179,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (Dataview.isAdvancedFilter(item)) {
+			unbind();
 			S.Menu.open('dataviewFilterAdvanced', {
 				element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 				classNameWrap: 'fromBlock',
@@ -187,6 +187,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				offsetY: 4,
 				noFlipY: true,
 				rebind,
+				parentId: props.id,
 				data: {
 					rootId,
 					blockId,
@@ -202,6 +203,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		const view = getView();
 
+		unbind();
 		S.Menu.open('dataviewFilterValues', {
 			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			classNameWrap: 'fromBlock',
@@ -209,6 +211,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			offsetY: 4,
 			noFlipY: true,
 			rebind,
+			parentId: props.id,
 			data: {
 				rootId,
 				blockId,
@@ -259,12 +262,14 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
+		unbind();
 		S.Menu.open('select', {
 			element: `#${getId()} #item-${U.Common.esc(item.id)} .icon.more`,
 			classNameWrap: 'fromBlock',
 			horizontal: I.MenuDirection.Right,
 			offsetY: 4,
 			rebind,
+			parentId: props.id,
 			data: {
 				options: [
 					{ id: 'clear', name: translate('commonClear') },
@@ -310,6 +315,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onAdd = () => {
+		unbind();
 		U.Menu.sortOrFilterRelationSelect({
 			element: `#${getId()} #item-add`,
 			classNameWrap: 'fromBlock',
@@ -317,6 +323,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			horizontal: I.MenuDirection.Left,
 			offsetY: 4,
 			rebind,
+			parentId: props.id,
 		}, {
 			rootId,
 			blockId,
@@ -359,7 +366,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			content = (
 				<MenuItemVertical
 					id={item.id}
-					icon={item.icon}
+					iconParam={item.iconParam}
 					name={item.name}
 					onMouseEnter={e => onMouseEnter(e, item)}
 					onClick={e => onClick(e, item)}
@@ -391,14 +398,14 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					<div className="filterInner">
 						{isAdvanced ? (
 							<>
-								<Icon className="filterIcon advanced" />
+								<Icon name="control/dataview/advanced" className="filterIcon advanced" />
 								<div className="filterContent">
 									<Label className="relationName" text={getName(item)} />
 								</div>
 							</>
 						) : (
 							<>
-								<Icon className={`relation ${Relation.className(item.relation.format)}`} />
+								<Icon name={Relation.registryName(item.relation.relationKey, item.relation.format)} />
 								<div className="filterContent">
 									<Label className="relationName" text={item.relation.name} />
 									{Relation.isFilterActive(item) ? (
@@ -411,7 +418,7 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							</>
 						)}
 					</div>
-					{!isReadonly ? <Icon className="more" onClick={e => onMore(e, item)} /> : ''}
+					{!isReadonly ? <Icon name="common/more" className="more" onClick={e => onMore(e, item)} /> : ''}
 				</div>
 			);
 		};
@@ -430,12 +437,12 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const beforePosition = () => {
-		const obj = $(`#${getId()} .content`);
+		const obj = U.Dom.select('.content', U.Dom.get(getId()));
 		const items = getItems();
 		const itemsHeight = items.reduce((res: number, current: any) => res + getRowHeight(current), 0);
 		const height = Math.max(HEIGHT_ITEM + 16, Math.min(400, itemsHeight + 16));
 
-		obj.css({ height });
+		U.Dom.css(obj, { height: `${height}px` });
 	};
 
 	useImperativeHandle(ref, () => ({
@@ -483,6 +490,6 @@ const MenuFilterList = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuFilterList;

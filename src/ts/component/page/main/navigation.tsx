@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { Button, Cover, Loader, IconObject, Header, Footer, ObjectName, ObjectDescription } from 'Component';
-import { I, C, S, U, keyboard, focus, translate } from 'Lib';
 
 import Item from 'Component/page/main/navigation/item';
+import * as I from 'Interface';
+import { focus } from 'Lib/focus';
 
 enum Panel { 
 	Left = 1, 
@@ -16,7 +15,7 @@ enum Panel {
 
 const HEIGHT = 88;
 
-const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainNavigation = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ dummy, setDummy ] = useState(0);
@@ -38,30 +37,38 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		[Panel.Right]: new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT }),
 	});
 
+	const keydownHandler = useRef<(e: any) => void>(null);
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.navigation', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbind = () => {
-		$(window).off('keydown.navigation');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 	
 	const resize = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
 
 		raf(() => {
-			const container = U.Common.getScrollContainer(isPopup);
-			const header = node.find('#header');
-			const items = node.find('.items');
-			const sides = node.find('.sides');
-			const empty = node.find('#empty');
-			const hh = header.height();
-			const oh = container.height() - hh;
+			const container = U.Dom.getScrollContainer(isPopup);
+			const header = U.Dom.select('#header', node);
+			const sides = U.Dom.select('.sides', node);
+			const empty = U.Dom.select('#empty', node);
+			const hh = header ? U.Dom.contentHeight(header) : 0;
+			const oh = (container?.clientHeight ?? 0) - hh;
 
-			sides.css({ height: oh });
-			items.css({ height: oh });
-			empty.css({ height: oh, lineHeight: oh + 'px' });
+			U.Dom.css(sides, { height: `${oh}px` });
+			U.Dom.selectAll('.items', node).forEach(el => U.Dom.css(el, { height: `${oh}px` }));
+			U.Dom.css(empty, { height: `${oh}px`, lineHeight: `${oh}px` });
 		});
 	};
 	
@@ -153,11 +160,11 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		};
 
 		unsetActive();
-		$(nodeRef.current).find(`#panel-${U.Common.esc(panelRef.current)} #item-${U.Common.esc(item.id)}`).addClass('active');
+		U.Dom.addClass(U.Dom.select(`#panel-${U.Common.esc(panelRef.current)} #item-${U.Common.esc(item.id)}`, nodeRef.current), 'active');
 	};
 
 	const unsetActive = () => {
-		$(nodeRef.current).find('.items .item.active').removeClass('active');
+		U.Dom.selectAll('.items .item.active', nodeRef.current).forEach(el => U.Dom.removeClass(el, 'active'));
 	};
 
 	const onOver = (item: any) => {
@@ -169,9 +176,7 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	};
 
 	const loadPage = (id: string) => {
-		const skipIds = U.Space.getSystemDashboardIds();
-
-		if (!id || skipIds.includes(id as any)) {
+		if (!id || U.Space.isSystemDashboard(id)) {
 			return;
 		};
 
@@ -295,8 +300,8 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 				{coverId && coverType ? <Cover type={coverType} id={coverId} image={coverId} className={coverId} x={coverX} y={coverY} scale={coverScale} withScale={true} /> : ''}
 			
 				<div className="buttons">
-					<Button text={translate('popupNavigationOpen')} className="c36" onClick={e => onConfirm(e, item)} />
-					{isPopup ? <Button text={translate('popupNavigationCancel')} className="c36" color="blank" onClick={() => S.Popup.close('page')} /> : ''}
+					<Button text={translate('popupNavigationOpen')} size={36} onClick={e => onConfirm(e, item)} />
+					{isPopup ? <Button text={translate('popupNavigationCancel')} size={36} color="blank" onClick={() => S.Popup.close('page')} /> : ''}
 				</div>
 			</div>
 		);
@@ -427,6 +432,6 @@ const PageMainNavigation = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		</div>
 	);
 	
-}));
+});
 
 export default PageMainNavigation;

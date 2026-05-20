@@ -11,14 +11,14 @@
 			.column.isOver.right::before { right: -5px; }
 
 			.column {
-				.bgColor { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; opacity: 0.5; }
+				.head > .bgColor, .body > .bg > .bgColor { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; opacity: 0.5; }
 
 				.head { cursor: grab; color: var(--color-text-secondary); width: 100%; position: relative; padding: 8px 16px 0px 16px; }
 				.head * { cursor: grab; }
 				.head {
-					.sides { display: flex; width: 100%; gap: 0px 6px; line-height: 24px; position: relative; z-index: 1; }
-					.side.left { width: calc(100% - 54px); display: flex; align-items: center; gap: 0px 6px; justify-content: flex-start; }
-					.side.right { width: 54px; display: flex; align-items: flex-start; gap: 0px 6px; flex-shrink: 0; justify-content: flex-end; }
+					.sides { display: flex; width: 100%; gap: 0px 6px; height: 28px; position: relative; z-index: 1; }
+					.side.left { display: flex; align-items: center; gap: 0px 6px; justify-content: flex-start; flex-grow: 1; overflow: hidden; }
+					.side.right { display: none; align-items: center; gap: 0px 6px; flex-shrink: 0; justify-content: flex-end; }
 
 					.label { @include text-overflow-nw; }
 
@@ -30,32 +30,39 @@
 						.more { vertical-align: top; }
 					}
 
+					.cellContent.c-select.isSelect.isEmpty { 
+						height: 24px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; 
+						padding: 0px 8px 0px 7px; gap: 4px; display: inline-flex; align-items: center; width: fit-content; 
+						background: var(--color-bg-primary);
+					}
+					.cellContent.c-select.isSelect.isEmpty {
+						.wrap { height: 24px; display: flex; align-items: center; }
+						.over { margin-top: 0px; }
+						.tagItem.isSelect { border: none; border-radius: 0px; padding: 0px; height: auto; }
+					}
+
 					.cellContent.c-checkbox { width: auto; display: flex; gap: 0px 6px; }
 					.cellContent.c-checkbox {
 						.icon { width: 24px; height: 24px; vertical-align: top; }
 					}
 
 					.side.right {
-						.icon { flex-shrink: 0; width: 24px; height: 24px; background-size: 20px; border-radius: 4px; vertical-align: top; opacity: 0; cursor: default; }
-						.icon:hover, .icon.hover { background-color: var(--color-shape-highlight-medium); }
-
-						.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-						.icon.add { background-image: url('~img/icon/plus/menu0.svg'); }
+						.icon.withBackground { width: 24px; height: 24px; vertical-align: top; }
 					}
 
-					.bgColor { border-radius: 4px 4px 0px 0px; }
+					> .bgColor { border-radius: 4px 4px 0px 0px; }
 				}
 
 				.body { position: relative; z-index: 1; }
 				.body {
 					.bg { position: relative; padding: 7px; }
-					.bgColor { border-radius: 0px 0px 4px 4px; }
+					.bg > .bgColor { border-radius: 0px 0px 4px 4px; }
 				}
 
 				.loadMore { margin-bottom: 8px; position: relative; z-index: 1; }
 			}
 			.column:hover, .column.active {
-				.head .side.right .icon { opacity: 1; }
+				.head .side.right { display: flex; }
 			}
 
 			.column.withColor {
@@ -71,7 +78,7 @@
 
 			.card { width: 246px; display: flex; flex-direction: column; margin: 0px auto 8px auto; position: relative; z-index: 1; cursor: default; }
 			.card {
-				.cardContent { 
+				.cardContent {
 					border: 1px solid var(--color-shape-highlight-medium); border-radius: 8px; background: var(--color-bg-primary); transition: border-color $transitionCommon;
 					box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.05);
 				}
@@ -111,10 +118,7 @@
 			}
 			.card.add.first { margin: 0px; }
 			.card.add {
-				.icon { background-image: url('~img/icon/plus/column0.svg'); vertical-align: top; }
-			}
-			.card.add:hover {
-				.icon { background-image: url('~img/icon/plus/column1.svg'); }
+				.icon { vertical-align: top; }
 			}
 
 			.card.add.isOver.bottom::before { top: -6px; }

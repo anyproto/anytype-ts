@@ -1,8 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { I, U, J, translate, keyboard } from 'Lib';
+
 import { Select, Icon } from 'Component';
+import * as I from 'Interface';
 
 export interface CalendarDay {
 	d: number;
@@ -41,7 +40,7 @@ export interface CalendarSelectRefProps {
 	setSelectedDate: (date: CalendarDay | null) => void;
 };
 
-const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props, ref) => {
+const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) => {
 
 	const {
 		value, onChange, isReadonly, canClear = true, position, menuClassNameWrap, className,
@@ -112,13 +111,19 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 		};
 	}, [ value ]);
 
+	const keydownHandler = useRef(null);
+
 	const bindKeyboard = (): void => {
 		unbindKeyboard();
-		$(window).on('keydown.calendarSelect', e => onKeyDown(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 	};
 
 	const unbindKeyboard = (): void => {
-		$(window).off('keydown.calendarSelect');
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
 	};
 
 	const onKeyDown = (e: any): void => {
@@ -287,7 +292,6 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 							menuParam={{ width: 124, classNameWrap: menuClassNameWrap }}
 							readonly={isReadonly}
 						/>
-
 						<Select
 							ref={yearRef}
 							id="calendar-year"
@@ -299,8 +303,18 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 						/>
 					</div>
 					<div className="side right">
-						<Icon className="arrow left" onClick={() => stepMonth(-1)} />
-						<Icon className="arrow right" onClick={() => stepMonth(1)} />
+						<Icon
+							name="arrow/calendar"
+							className="arrow left"
+							withBackground={true}
+							onClick={() => stepMonth(-1)}
+						/>
+						<Icon
+							name="arrow/calendar"
+							className="arrow right"
+							withBackground={true}
+							onClick={() => stepMonth(1)}
+						/>
 					</div>
 				</div>
 
@@ -373,6 +387,6 @@ const CalendarSelect = observer(forwardRef<CalendarSelectRefProps, Props>((props
 		</div>
 	);
 
-}));
+});
 
 export default CalendarSelect;

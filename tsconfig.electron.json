@@ -1,0 +1,24 @@
+{
+	"compilerOptions": {
+		"outDir": "./",
+		"sourceMap": false,
+		"skipLibCheck": true,
+		"noImplicitAny": false,
+		"module": "commonjs",
+		"target": "es2022",
+		"resolveJsonModule": true,
+		"moduleResolution": "Node",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"allowJs": true,
+		"isolatedModules": true,
+		"types": ["node"],
+		"strict": false
+	},
+	"include": [
+		"electron/ts/**/*"
+	],
+	"exclude": [
+		"node_modules/**/*"
+	]
+}

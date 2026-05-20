@@ -30,10 +30,10 @@
 		-webkit-app-region: no-drag; font-weight: 500;
 	}
 	.path {
-		.label { 
-			@include text-small; color: var(--color-text-secondary); padding: 3px 6px 3px 20px; border-radius: 4px; 
-			background: var(--color-shape-tertiary) url('~img/icon/lock.svg') 6px 6px no-repeat; @include text-overflow-nw;
-			font-weight: 400;
+		.label {
+			@include text-small; color: var(--color-text-secondary); padding: 3px 6px; border-radius: 4px;
+			background: var(--color-shape-tertiary); @include text-overflow-nw;
+			font-weight: 400; display: inline-flex; align-items: center; gap: 0px 4px;
 		}
 	}
 
@@ -47,43 +47,11 @@
 		.tab.active { color: var(--color-text-primary); border-color: var(--color-text-primary); }
 	}
 
-	.headerBanner {
-		position: relative; display: flex; align-items: center; gap: 0px 16px; height: 32px; padding: 6px 10px; @include text-small; border-radius: 6px; background: var(--color-shape-tertiary);
-		-webkit-app-region: no-drag; 
-	}
-	.headerBanner {
-		.label { @include text-overflow-nw; }
-
-		.content { display: flex; gap: 0px 4px; align-items: center; }
-		.content {
-			.typeName { display: flex; gap: 0px 4px; flex-wrap: nowrap; }
-			.typeName {
-				.name { font-weight: 600; }
-			}
-		}
-		.action { font-weight: 500; }
-	}
-	.headerBanner.withMenu { padding-right: 24px; }
-	.headerBanner.withMenu:after { content: ''; position: absolute; right: 10px; top: 12px; width: 8px; height: 8px; background-image: url('~img/arrow/button/black.svg'); }
-	.headerBanner.withMenu.active:after { transform: rotateZ(180deg); }
-
-	.icon { -webkit-app-region: no-drag; flex-shrink: 0; }
-	.icon.more { background-image: url('~img/icon/header/more.svg'); }
-	.icon.settings { background-image: url('~img/icon/header/settings.svg'); }
-	.icon.expand { display: none; background-image: url('~img/icon/header/expand.svg'); }
-	.icon.vaultToggle { background-image: url('~img/icon/widget/toggle0.svg'); }
-	.icon.widgetPanel { background-image: url('~img/icon/header/widget0.svg'); }
-	.icon.relation { background-image: url('~img/icon/header/relation.svg'); }
-	.icon.graph { background-image: url('~img/icon/header/graph.svg'); }
-	.icon.pin { background-image: url('~img/icon/header/pin.svg'); }
-	.icon.unpin { background-image: url('~img/icon/header/unpin.svg'); }
-	.icon.invite { background-image: url('~img/icon/header/invite.svg'); }
-	.icon.oneToOne { background-image: url('~img/icon/header/oneToOne.svg'); }
-	.icon.search { background-image: url('~img/icon/header/search.svg'); }
-	.icon.logout { background-image: url('~img/icon/header/logout.svg'); }
+	.icon { -webkit-app-region: no-drag; }
+	.icon.commonExpand { display: none; }
 
 	.label.btn {
-		-webkit-app-region: no-drag; @include text-common; font-weight: 500; padding: 3px 8px; border-radius: 6px;
+		-webkit-app-region: no-drag; @include text-common; font-weight: 500; padding: 3px 8px; border-radius: 14px;
 		color: var(--color-text-secondary); transition: $transitionAllCommon;
 	}
 	.label.btn {
@@ -93,23 +61,26 @@
 	&.withSidebarTotalLeft {
 		.icon.vaultToggle { display: none; }
 	}
+
 	&.withSidebarSubLeft {
-		.icon.widgetPanel { display: none; }
+		.icon.headerWidget { display: none; }
 	}
 
-	.icon.widgetPanel {
+	.icon.headerWidget {
 		.bullet {
 			position: absolute; right: 0px; bottom: 0px; width: 12px; height: 12px; border-radius: 6px;
 			background-color: var(--color-red); border: 3px solid var(--color-bg-primary);
 		}
 	}
+
+	@import "./headerBanner.scss";
 }
 .header.isSmall {
 	.path, .headerBanner { visibility: hidden; overflow: hidden; width: 0px; }
 }
 
 .header.sidebarAnimation {
-	.side.left { transition: padding-left $transitionSidebarTime linear; }
+	.side.left { transition: padding-left $transitionSidebarTime $easeDecelerate; }
 }
 
 .header.authIndex,
@@ -117,18 +88,16 @@
 
 .header.authIndex, 
 .header.authLogout {
-	.logo { width: 70px; height: 18px; background: url('~img/icon/header/logo.svg'); }
+	.logo { width: 70px; height: 18px; background: url('~img/logo/header.svg'); }
 
 	.select {
-		border: 0px; -webkit-app-region: no-drag; padding: 4px 6px 4px 29px; border-radius: 6px;
+		border: 0px; -webkit-app-region: no-drag; padding: 4px 6px; border-radius: 6px;
 		@include text-small; font-weight: 500; color: var(--color-text-secondary);
 	}
 	.select:hover,
 	.select.hover { background: var(--color-shape-highlight-medium); }
 	.select {
 		.icon.arrow { display: none; }
-
-		&:before { content: ''; position: absolute; left: 6px; top: 4px; width: 18px; height: 18px; background: url('~img/icon/header/language.svg'); }
 	}
 
 	.button.simple { 
@@ -166,7 +135,6 @@ html.bodyAuthSelect {
 .header.isCommon {
 	.path { border: 1px solid rgba(0,0,0,0); padding: 0px 10px; display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 0px 6px; }
 	.path {
-		.iconObject { flex-shrink: 0; }
 		.name { @include text-overflow-nw; color: var(--color-text-secondary); }
 	}
 	.path:hover { border-color: var(--color-shape-secondary); }
@@ -183,17 +151,20 @@ html.bodyAuthSelect {
 	}
 	.filterWrap.active { width: 200px; }
 
-	.icon.btn-search { background-image: url('~img/icon/header/search.svg'); }
-	.icon.btn-filter { background-image: url('~img/icon/dataview/button/filter0.svg'); }
-	.icon.btn-settings { background-image: url('~img/icon/dataview/button/settings.svg'); }
 }
 
 .header.mainSettings {
-	.identity { 
-		-webkit-app-region: no-drag; display: flex; gap: 0px 6px; align-items: center; height: 22px; width: 100%; 
-		overflow: hidden; justify-content: center;
+	&:has(.identity) {
+		.side.left, .side.right { flex: 1 1 0px; min-width: 0; }
+	}
+
+	.identity {
+		-webkit-app-region: no-drag; display: flex; flex-direction: row; align-items: center; gap: 0px 4px;
+		min-width: 0; height: 24px; padding: 0px 6px; border-radius: 100px; transition: background $transitionCommon;
 	}
 	.identity {
-		.label { color: var(--color-text-primary); @include text-overflow-nw; }
+		.label { @include text-overflow-nw; @include text-common; color: var(--color-text-secondary); font-weight: 500; }
+		.badge { flex-shrink: 0; }
+		&:hover { background: var(--color-shape-highlight-medium); }
 	}
 }

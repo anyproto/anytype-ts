@@ -5,8 +5,8 @@
 }
 
 .cell.isEditing { border-radius: 2px; }
-.cell.isEditing {
-	.input-text { padding: 0px; height: 20px; }
+.cell.isEditing, .cellContent.isEditing {
+	.input { padding: 0px; height: 20px; background: none; border: 0px; border-radius: 0px; }
 	.icon.edit { display: none !important; }
 	.cellContent { 
 		position: absolute; left: 0px; top: 0px; overflow: visible !important; height: auto !important; white-space: normal !important; 
@@ -17,11 +17,9 @@
 	}
 	.empty { display: inline-block !important; visibility: visible !important; white-space: nowrap; }
 
-	.icon.clear { 
-		width: 20px; height: 20px; background-image: url('~img/icon/clear0.svg'); position: absolute; right: 14px; top: 14px;
-		transition: background-image $transitionCommon;
+	.icon.clear {
+		width: 20px; height: 20px; position: absolute; right: 14px; top: 14px;
 	}
-	.icon.clear:hover { background-image: url('~img/icon/clear1.svg'); }
 }
 
 .cell.isEditing.c-select.isSelect {
@@ -29,7 +27,8 @@
 	.over { display: inline-block; vertical-align: top; font-size: 0px; width: calc(100% - 30px); }
 }
 
-.cell.isEditing.c-object, .cell.isEditing.c-select {
+.cell.isEditing.c-object, 
+.cell.isEditing.c-select {
 	.cellContent { height: 20px !important; }
 }
 
@@ -39,7 +38,11 @@
 
 .cellContent { cursor: default; }
 .cellContent {
-	.iconObject { flex-shrink: 0; cursor: default; }
+	.iconObject { cursor: default; }
+	.icon.downloading {
+		width: 20px; height: 20px;
+		background-image: url('~img/icon/loader.svg'); background-size: 20px; animation: rotate 1.2s infinite linear;
+	}
 	.icon.clear { display: none; }
 
 	.name { display: inline-block; vertical-align: top; user-select: text !important; }
@@ -54,20 +57,14 @@
 
 .cellContent.c-checkbox { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; }
 .cellContent.c-checkbox {
-	.icon { width: 20px; height: 20px; background-image: url('~img/icon/dataview/checkbox0.svg'); }
-	.icon.active { background-image: url('~img/icon/dataview/checkbox2.svg'); }
-
+	.icon { width: 20px; height: 20px; }
 	.label { line-height: 20px; }
-}
-.cellContent.c-checkbox.canEdit {
-	.icon:not(.active):hover { background-image: url('~img/icon/dataview/checkbox1.svg'); }
 }
 
 .cellContent.c-file {
 	.inputWithFile { border: 0px; padding: 0px; display: none; }
 	.element { display: inline-block; vertical-align: top; white-space: nowrap; max-width: 100%; }
 	.element {
-		.iconObject { flex-shrink: 0; }
 		.flex { align-items: center; gap: 0px 4px; }
 		.name { line-height: 20px; width: 100%; @include text-overflow-nw; }
 	}
@@ -75,10 +72,13 @@
 }
 
 .cellContent.c-select {
-	.more { height: 18px; }
+	#value { line-height: 24px; }
+	.more { height: 24px; }
 }
 
 .cellContent.c-object {
+	#value { line-height: 20px; }
+
 	.element { display: inline-block; vertical-align: top; max-width: 100%; line-height: 20px; white-space: nowrap; }
 	.element:last-child { margin-right: 0px; }
 	.element {
@@ -122,15 +122,15 @@
 
 .cell.isEditing.c-select, .cell.isEditing.c-object {
 	.cellContent { overflow-x: hidden !important; overflow-y: auto !important; max-height: 200px; }
-	.itemWrap { display: inline-block; }
+	.itemWrap { display: inline-block; vertical-align: top; }
 
 	.placeholder { position: absolute; left: 0px; top: 0px; height: 100%; }
 	#entry { -webkit-user-modify: read-write-plaintext-only; color: var(--color-text-primary); }
-	#list { margin-right: 6px; position: relative; word-wrap: break-word; }
+	#list {  margin-right: 6px; position: relative; word-wrap: break-word; }
 }
 
 .cell.isEditing.c-select {
-	.itemWrap { height: 18px; line-height: 18px; margin: 0px 8px 4px 0px; position: relative; vertical-align: top; max-width: 100%; }
+	.itemWrap { margin: 0px 8px 4px 0px; position: relative; vertical-align: top; max-width: 100%; }
 	.itemWrap:last-child { margin-right: 0px !important; }
 	.itemWrap {
 		.tagItem { margin: 0px !important; }
@@ -149,10 +149,7 @@
 	.itemWrap {
 		.element { margin: 0px !important; }
 		.element {
-			.icon.objectRemove { 
-				width: 12px; height: 20px; margin: 0px 0px 0px 2px; flex-shrink: 0; display: block;
-				background-image: url('~img/icon/object/remove.svg'); background-size: 8px;
-			}
+			.icon.objectRemove { width: 12px !important; height: 20px !important; margin: 0px 0px 0px 2px; display: block; }
 			.icon.objectRemove:hover { opacity: 0.8; }
 		}
 	}
@@ -184,4 +181,3 @@
 {
 	.name { width: 100%; }
 }
-

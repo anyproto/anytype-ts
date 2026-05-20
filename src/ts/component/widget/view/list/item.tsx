@@ -1,10 +1,8 @@
 import React, { forwardRef, useEffect, useRef, SyntheticEvent, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { ObjectName, Icon, IconObject, ObjectDescription, DropTarget, Label, ChatCounter } from 'Component';
-import { I, S, U, J, keyboard, analytics, translate } from 'Lib';
+import * as I from 'Interface';
 
 interface Props extends I.WidgetViewComponent {
 	subId: string;
@@ -17,7 +15,7 @@ interface Props extends I.WidgetViewComponent {
 	hideIcon?: boolean;
 };
 
-const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
+const WidgetListItem = forwardRef<{}, Props>((props, ref) => {
 
 	const { subId, id, block, isCompact, isSection, hideIcon, onContext } = props;
 	const { space } = S.Common;
@@ -34,6 +32,8 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	const moreRef = useRef(null);
 	const cn = [ 'item' ];
 	const isChat = U.Object.isChatLayout(object.layout);
+	const hasDiscussion = !isChat && !!object.discussionId;
+	const counterTargetId = isChat ? id : (hasDiscussion ? object.discussionId : '');
 	const isBookmark = U.Object.isBookmarkLayout(object.layout);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const style = {
@@ -51,7 +51,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onClick = (e: MouseEvent) => {
-		if (e.button) {
+		if (U.Common.checkAuxButton(e)) {
 			return;
 		};
 
@@ -66,29 +66,29 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
 
-		onContext({ 
-			node, 
-			element: $(moreRef.current), 
-			withElement, 
+		onContext({
+			node,
+			element: moreRef.current,
+			withElement,
 			subId, 
 			objectId: id,
 			data: {
-				allowedCollection: true, 
-				allowedExport: true,
+				allowedCollection: true,
 				allowedLinkTo: true,
 			},
 		});
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
+		const node = nodeRef.current;
+		if (!node) return;
 
-		node.toggleClass('withIcon', !!node.find('.iconObject').length);
+		U.Dom.toggleClass(node, 'withIcon', !!U.Dom.select('.iconObject', node));
 	};
 
-	useEffect(() => resize());
+	useEffect(() => resize(), [ id, hideIcon ]);
 
 	if (isSection) {
 		return (
@@ -136,6 +136,9 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 
 			const last = list.length ? list[0] : null;
 			const text = last ? S.Chat.getMessageSimpleText(space, last, true) : translate('widgetNoMessages');
+			if (U.Object.chatHasUnread(space, id)) {
+				cn.push('hasUnread');
+			};
 
 			descr = <Label className="descr" text={text} />;
 			time = last ? <div className="time">{U.Date.timeAgo(last.createdAt)}</div> : '';
@@ -145,7 +148,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasMore) {
-		more = <Icon ref={moreRef} className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
+		more = <Icon ref={moreRef} name="common/more" className="more" tooltipParam={{ text: translate('widgetOptions') }} onMouseDown={e => onContextHandler(e, true)} />;
 	};
 
 	let inner = (
@@ -162,7 +165,14 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 					{time}
 					{!hasUnreadSection ? <ChatCounter chatId={id} /> : ''}
 				</div>
-			) : ''}
+			) : (counterTargetId && !hasUnreadSection ? (
+				<div className="chatInfo">
+					<ChatCounter
+						chatId={counterTargetId}
+						mode={hasDiscussion ? U.Object.getDiscussionNotificationMode(U.Space.getSpaceview(), id) : undefined}
+					/>
+				</div>
+			) : '')}
 
 			<div className="buttons">
 				{more}
@@ -173,7 +183,7 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 	if (canDrag) {
 		inner = (
 			<>
-				<Icon className="dnd" />
+				<Icon name="common/dnd" />
 				{inner}
 			</>
 		);
@@ -211,6 +221,6 @@ const WidgetListItem = observer(forwardRef<{}, Props>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default WidgetListItem;

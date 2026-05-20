@@ -1,6 +1,9 @@
 import * as Sentry from '@sentry/browser';
-import { I, C, M, S, J, U, keyboard, translate, Storage, analytics, dispatcher, Mark, focus, Renderer, Action, Relation, sidebar } from 'Lib';
 import object from './object';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 const TYPE_KEYS = {
 	default: [
@@ -32,6 +35,11 @@ const TYPE_KEYS = {
 	]
 };
 
+export interface TreeNode {
+	id: string;
+	children: TreeNode[];
+}
+
 /**
  * Utility class for data manipulation, formatting, and application-level helpers.
  * Provides methods for block styling, authentication, sorting, and more.
@@ -43,6 +51,25 @@ class UtilData {
 	 * @param {I.TextStyle} v - The text style.
 	 * @returns {string} The CSS class.
 	 */
+	blockTextIcon (v: I.TextStyle): string {
+		const map: Record<number, string> = {
+			[I.TextStyle.Paragraph]: 'paragraph',
+			[I.TextStyle.Header1]: 'header',
+			[I.TextStyle.Header2]: 'header',
+			[I.TextStyle.Header3]: 'header',
+			[I.TextStyle.Quote]: 'quote',
+			[I.TextStyle.Callout]: 'callout',
+			[I.TextStyle.Checkbox]: 'checkbox',
+			[I.TextStyle.Bulleted]: 'bulleted',
+			[I.TextStyle.Numbered]: 'numbered',
+			[I.TextStyle.Toggle]: 'toggle',
+			[I.TextStyle.ToggleHeader1]: 'toggleHeader',
+			[I.TextStyle.ToggleHeader2]: 'toggleHeader',
+			[I.TextStyle.ToggleHeader3]: 'toggleHeader',
+		};
+		return `menu/block/text/${map[v] || 'paragraph'}`;
+	};
+
 	blockTextClass(v: I.TextStyle): string {
 		const toggleHeaders = [
 			I.TextStyle.ToggleHeader1, 
@@ -97,12 +124,12 @@ class UtilData {
 
 	/**
 	 * Returns the CSS class for a space UX type.
-	 * @param {I.SpaceUxType} v - The space UX type.
+	 * @param {I.SpaceType} v - The space UX type.
 	 * @returns {string} The CSS class.
 	 */
-	spaceClass (v: I.SpaceUxType): string {
-		v = Number(v) || I.SpaceUxType.None;
-		return v ? `space${String(I.SpaceUxType[v])}` : '';
+	spaceClass (v: I.SpaceType): string {
+		v = Number(v) || I.SpaceType.None;
+		return v ? `space${String(I.SpaceType[v])}` : '';
 	};
 
 	/**
@@ -116,13 +143,9 @@ class UtilData {
 		switch (type) {
 			case I.BlockType.Text:
 				switch (v) {
-					default: icon = this.blockTextClass(v); break;
-					case I.TextStyle.Code: icon = 'kbd'; break;
+					default: icon = this.blockTextIcon(v); break;
+					case I.TextStyle.Code: icon = 'menu/mark/code'; break;
 				};
-				break;
-
-			case I.BlockType.Div:
-				icon = this.blockDivClass(v);
 				break;
 		};
 		return icon;
@@ -223,6 +246,10 @@ class UtilData {
 		return s ? `c-${s}` : '';
 	};
 
+	syncStatusIcon (v: I.SyncStatusObject): string {
+		return `menu/syncStatus/${String(I.SyncStatusObject[v]).toLowerCase()}`;
+	};
+
 	/**
 	 * Returns the icon class for horizontal alignment.
 	 * @param {I.BlockHAlign} v - The horizontal alignment.
@@ -230,17 +257,17 @@ class UtilData {
 	 */
 	alignHIcon(v: I.BlockHAlign): string {
 		v = v || I.BlockHAlign.Left;
-		return `align ${String(I.BlockHAlign[v]).toLowerCase()}`;
+		return `menu/align/horizontal/${String(I.BlockHAlign[v]).toLowerCase()}`;
 	};
 
 	/**
-	 * Returns the icon class for vertical alignment.
+	 * Returns the registry icon name for vertical alignment.
 	 * @param {I.BlockVAlign} v - The vertical alignment.
-	 * @returns {string} The icon class.
+	 * @returns {string} The registry icon name.
 	 */
 	alignVIcon(v: I.BlockVAlign): string {
 		v = v || I.BlockVAlign.Top;
-		return `valign ${String(I.BlockVAlign[v]).toLowerCase()}`;
+		return `menu/align/vertical/${String(I.BlockVAlign[v]).toLowerCase()}`;
 	};
 
 	/**
@@ -279,11 +306,11 @@ class UtilData {
 	};
 
 	/**
-	 * Handles authentication and routing after login.
+	 * Handles routing after space switch.
 	 * @param {any} [param] - Optional parameters for authentication.
 	 * @param {() => void} [callBack] - Optional callback after authentication.
 	 */
-	onAuth(param?: any, callBack?: () => void) {
+	onSpaceSwitch (param?: any, callBack?: () => void) {
 		param = param || {};
 
 		const { widgets } = S.Block;
@@ -298,29 +325,27 @@ class UtilData {
 			return;
 		};
 
+		C.ObjectOpen(U.Object.getPersonalWidgetsId(space), '', space);
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
-				S.Common.pinInit(() => {
-					const { pin } = S.Common;
-
-					// Notify main process whether a PIN is set
-					Renderer.send('setHasPinSet', Boolean(pin));
-
-					// If no PIN, user is considered checked
-					if (!pin) {
-						keyboard.setPinChecked(true);
-					};
-
-					keyboard.initPinCheck();
-
-					// Redirect
-					if (pin && !keyboard.isPinChecked) {
+				this.initPin(() => {
+					if (S.Common.pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);
 					} else {
-						if (route) {
+						const rp = route ? U.Router.getParam(route) : {};
+						const isRestorable = route && !(rp.page == 'auth') && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
+
+						if (isRestorable) {
 							U.Router.go(route, routeParam);
 						} else {
-							U.Space.openDashboard(routeParam);
+							const last = U.Space.getLastObject();
+							const lastRoute = last ? U.Object.route(last) : '';
+
+							if (lastRoute) {
+								U.Router.go(lastRoute, routeParam);
+							} else {
+								U.Space.openDashboard(routeParam);
+							};
 						};
 					};
 
@@ -328,6 +353,22 @@ class UtilData {
 					callBack?.();
 				});
 			});
+		});
+	};
+
+	initPin (callBack?: () => void) {
+		S.Common.pinInit(() => {
+			// Notify main process whether a PIN is set
+			Renderer.send('setHasPinSet', !!S.Common.pin);
+
+			// If no PIN, user is considered checked
+			if (!S.Common.pin) {
+				keyboard.setPinChecked(true);
+			} else {
+				keyboard.initPinCheck();
+			};
+			
+			callBack?.();
 		});
 	};
 
@@ -764,9 +805,12 @@ class UtilData {
 	 * @returns {object} The default link settings.
 	 */
 	defaultLinkSettings() {
+		const linkStyle = S.Common.linkStyle;
+		const isCardMedium = (linkStyle == I.LinkDefaultStyle.CardMedium);
+
 		return {
-			iconSize: I.LinkIconSize.Small,
-			cardStyle: S.Common.linkStyle,
+			iconSize: isCardMedium ? I.LinkIconSize.Medium : I.LinkIconSize.Small,
+			cardStyle: (linkStyle == I.LinkDefaultStyle.Text) ? I.LinkCardStyle.Text : I.LinkCardStyle.Card,
 			description: I.LinkDescription.None,
 			relations: [],
 		};
@@ -814,7 +858,7 @@ class UtilData {
 		const spaceview = U.Space.getSpaceview();
 
 		let ret = null;
-		if ((spaceview.isChat || spaceview.isOneToOne) && (rootId == S.Block.workspace)) {
+		if (spaceview.isOneToOne && (rootId == S.Block.workspace)) {
 			ret = spaceview;
 		} else {
 			ret = S.Detail.get(rootId, objectId);
@@ -911,12 +955,12 @@ class UtilData {
 	};
 
 	getGraphData (message: any): { nodes: any[]; edges: any[] } {
-		const nodes = message.nodes.map(it => S.Detail.mapper(it)).filter(it => it.type);
+		const nodes = (message.nodes || []).map(it => S.Detail.mapper(it)).filter(it => it.type);
 		const nodeIds = new Set(nodes.map(it => it.id));
 
 		return {
 			nodes,
-			edges: message.edges.filter(it => nodeIds.has(it.source) && nodeIds.has(it.target)),
+			edges: (message.edges || []).filter(it => nodeIds.has(it.source) && nodeIds.has(it.target)),
 		};
 	};
 
@@ -1063,7 +1107,7 @@ class UtilData {
 						});
 
 						analytics.event('CreateAccount', { middleTime: message.middleTime });
-						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted, uxType: I.SpaceUxType.Data });
+						analytics.event('CreateSpace', { middleTime: message.middleTime, usecase: I.Usecase.GetStarted, spaceType: I.SpaceType.Data });
 					});
 				});
 			});
@@ -1305,30 +1349,96 @@ class UtilData {
 	};
 
 	getWidgetTypes(): any[] {
+		const allowedTypes = [
+			J.Constant.typeKey.page,
+			J.Constant.typeKey.task,
+			J.Constant.typeKey.collection,
+		];
+
 		return S.Record.checkHiddenObjects(S.Record.getTypes()).filter(it => {
 			return (
 				!U.Object.isInSystemLayouts(it.recommendedLayout) &&
 				!U.Object.isDateLayout(it.recommendedLayout) &&
 				!U.Object.isParticipantLayout(it.recommendedLayout) &&
 				(it.uniqueKey != J.Constant.typeKey.template) &&
-				(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
+				(
+					allowedTypes.includes(it.uniqueKey) || 
+					(S.Record.getRecordIds(U.Subscription.typeCheckSubId(it.uniqueKey), '').length > 0)
+				)
 			);
 		});
 	};
 
 	getWidgetChats(): any[] {
 		const spaceview = U.Space.getSpaceview();
+		const space = S.Common.space;
 
-		return S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.chat)).filter(it => {
-			const counters = S.Chat.getChatCounters(S.Common.space, it.id);
+		const chats = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.chat)).filter(it => {
+			const counters = S.Chat.getChatCounters(space, it.id);
 			const mode = U.Object.getChatNotificationMode(spaceview, it.id);
 
 			if (mode == I.NotificationMode.Nothing) {
-				return counters.mentionCounter > 0;
+				return (counters.mentionCounter > 0) || (counters.reactionCounter > 0);
 			};
 
-			return (counters.messageCounter > 0) || (counters.mentionCounter > 0);
+			return (counters.messageCounter > 0) || (counters.mentionCounter > 0) || (counters.reactionCounter > 0);
 		});
+
+		const parents = S.Record.getRecords(U.Subscription.spaceSubId(J.Constant.subId.discussion)).filter(it => {
+			return it.discussionId && U.Object.discussionHasUnread(space, it.discussionId);
+		});
+
+		return chats.concat(parents).sort((a, b) => {
+			const aDate = Number(a.lastMessageDate) || 0;
+			const bDate = Number(b.lastMessageDate) || 0;
+			return bDate - aDate;
+		});
+	};
+
+	getWidgetObjects (rootId: string, withHome: boolean): any[] {
+		let items = [];
+
+		const childrenIds = S.Block.getChildrenIds(rootId, rootId);
+
+		childrenIds.forEach(widgetId => {
+			const widgetBlock = S.Block.getLeaf(rootId, widgetId);
+			if (!widgetBlock || !widgetBlock.isWidget()) {
+				return;
+			};
+
+			const innerIds = S.Block.getChildrenIds(rootId, widgetBlock.id);
+			if (!innerIds.length) {
+				return;
+			};
+
+			const inner = S.Block.getLeaf(rootId, innerIds[0]);
+			const targetId = inner?.getTargetObjectId();
+			if (!targetId) {
+				return;
+			};
+
+			const object = S.Detail.get(rootId, targetId);
+			if (!object || object._empty_ || object.isArchived || object.isDeleted) {
+				return;
+			};
+
+			items.push(object);
+		});
+
+		if (withHome) {
+			const home = U.Space.getDashboard();
+
+			if (home && !U.Space.isSystemDashboard(home.id)) {
+				items = items.filter(it => it.id != home.id);
+				items.unshift({ 
+					...home, 
+					iconParam: { name: 'settings/home', color: 'red' },
+					_isDisabled: true,
+				});
+			};
+		};
+
+		return items;
 	};
 
 	getTypeNames (typeIds: string[], limit: number): string {
@@ -1356,6 +1466,37 @@ class UtilData {
 		const menus = (menuList || S.Menu.list).some(it => it.param.visibleDimmer);
 
 		Renderer.send('setTabsDimmer', popups || menus);
+	};
+
+	treeFromRecords (ids: string[], getParent: (id: string) => string): TreeNode[] {
+		const idSet = new Set(ids);
+		const childrenMap = new Map<string, string[]>();
+
+		for (const id of ids) {
+			const parent = getParent(id);
+			if (parent && idSet.has(parent)) {
+				if (!childrenMap.has(parent)) {
+					childrenMap.set(parent, []);
+				};
+				childrenMap.get(parent).push(id);
+			};
+		};
+
+		const buildNode = (id: string): TreeNode => {
+			const children = (childrenMap.get(id) || []).map(buildNode);
+			return { id, children };
+		};
+
+		return ids
+			.filter(id => {
+				const parent = getParent(id);
+				return !parent || !idSet.has(parent);
+			})
+			.map(buildNode);
+	};
+
+	flattenIds (node: TreeNode): string[] {
+		return [ node.id, ...node.children.flatMap(c => this.flattenIds(c)) ];
 	};
 
 };

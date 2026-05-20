@@ -1,6 +1,7 @@
-import $ from 'jquery';
 import { observable, action, computed, set, makeObservable } from 'mobx';
-import { I, M, S, U, J, Storage, Mark, translate, keyboard } from 'Lib';
+import * as I from 'Interface';
+import * as M from 'Model';
+import Storage from 'Lib/storage';
 
 /**
  * BlockStore manages the block data structure for all open objects.
@@ -32,7 +33,7 @@ class BlockStore {
 	public toggleVersion = 0;
 	public treeMap: Map<string, Map<string, I.BlockStructure>> = new Map();
 	public blockMap: Map<string, Map<string, I.Block>> = new Map();
-	public restrictionMap: Map<string, Map<string, any>> = new Map();
+	public restrictionMap: Map<string, Map<string, any>> = observable.map();
 	public participantMap: Map<string, Map<string, string>> = new Map();
 
 	public deferredParentUpdates: Set<string> = new Set();
@@ -66,6 +67,7 @@ class BlockStore {
 			updateContent: action,
 			updateStructure: action,
 			delete: action,
+			restrictionsSet: action,
 		});
 	};
 
@@ -395,6 +397,16 @@ class BlockStore {
 		return element ? (element.childrenIds || []) : [];
 	};
 
+	isLastChild (rootId: string, blockId: string): boolean {
+		const parentElement = this.getParentMapElement(rootId, blockId);
+		if (!parentElement) {
+			return false;
+		};
+
+		const ids = parentElement.childrenIds || [];
+		return ids.length > 0 && (ids[ids.length - 1] === blockId);
+	};
+
 	getChildren (rootId: string, blockId: string, filter?: (it: any) => boolean): I.Block[] {
 		return this.getChildrenIds(rootId, blockId).map(id => this.getLeaf(rootId, id)).filter((it: any) => {
 			return it ? (filter ? filter(it) : true) : false;
@@ -722,7 +734,7 @@ class BlockStore {
 		const unwrap = (list: any) => {
 			list = list || [];
 
-			const ret = [] as any[];
+			const ret: I.Block[] = [];
 			for (const item of list) {
 				item.childBlocks = item.childBlocks || [];
 
@@ -748,7 +760,8 @@ class BlockStore {
 				if (!item.isLayout()) {
 					if (item.isTextNumbered()) {
 						n++;
-						$(`#marker-${U.Common.esc(item.id)}`).text(`${n}.`);
+						const marker = U.Dom.get(`marker-${item.id}`);
+					if (marker) marker.textContent = `${n}.`;
 					} else {
 						n = 0;
 					};
@@ -926,16 +939,16 @@ class BlockStore {
 	};
 
 	toggle (rootId: string, blockId: string, v: boolean) {
-		const element = $(`#block-${U.Common.esc(blockId)}`);
-		if (!element.length) {
+		const element = U.Dom.get(`block-${blockId}`);
+		if (!element) {
 			return;
 		};
 
-		element.toggleClass('isToggled', v);
+		U.Dom.toggleClass(element, 'isToggled', v);
 		Storage.setToggle(rootId, blockId, v);
 		this.incrementToggleVersion();
 
-		U.Common.triggerResizeEditor(keyboard.isPopup());
+		U.Dom.triggerResizeEditor(keyboard.isPopup());
 	};
 
 	/**
@@ -1055,13 +1068,12 @@ class BlockStore {
 	 * @param {string} rootId - The root ID.
 	 */
 	triggerWidgetEvent (code: string, rootId: string) {
-		const win = $(window);
 		const blocks = this.getBlocks(this.widgets, it => it.isWidget());
 
 		blocks.forEach(block => {
 			const children = this.getChildren(this.widgets, block.id, it => it.isLink() && (it.getTargetObjectId() == rootId));
 			if (children.length) {
-				win.trigger(`${code}.${block.id}`);
+				U.Dom.eventDispatch(window, code);
 			};
 		});
 	};
@@ -1140,29 +1152,33 @@ class BlockStore {
 	};
 
 	getWidgetsForTarget (id: string): I.Block[] {
-		const { widgets } = this;
-		const childrenIds = this.getChildrenIds(widgets, widgets); // Subscription
+		return this.getWidgetsForTargetIn(id, this.widgets);
+	};
 
-		const list = this.getBlocks(widgets, (block: I.Block) => {
+	getWidgetsForTargetIn (id: string, rootId: string): I.Block[] {
+		if (!rootId) {
+			return [];
+		};
+
+		this.getChildrenIds(rootId, rootId); // Subscription
+
+		return this.getBlocks(rootId, (block: I.Block) => {
 			if (!block.isWidget()) {
 				return false;
 			};
 
-			const childrenIds = this.getChildrenIds(widgets, block.id);
-			if (!childrenIds.length) {
+			const innerIds = this.getChildrenIds(rootId, block.id);
+			if (!innerIds.length) {
 				return false;
 			};
 
-			const child = this.getLeaf(widgets, childrenIds[0]);
+			const child = this.getLeaf(rootId, innerIds[0]);
 			if (!child) {
 				return false;
 			};
 
-			const target = child.getTargetObjectId();
-			return id == target;
+			return id == child.getTargetObjectId();
 		});
-
-		return list;
 	};
 
 };

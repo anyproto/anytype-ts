@@ -1,53 +1,12 @@
 @import "~scss/_mixins";
 
-.widget.widgetSpace { background: none; }
+$gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-highlight-light-solid) 100%);
+
+.widget.widgetSpace { background: none; position: relative; transform: none; z-index: 2; }
 .widget.widgetSpace {
-	.nameWrap { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
-	.icon.arrow { width: 8px; height: 8px; background-image: url('~img/arrow/select/space.svg'); flex-shrink: 0; }
-
-	.buttons { padding: 8px; background: var(--color-shape-highlight-light); border-radius: 12px; }
-	.buttons {
-		.item { 
-			display: flex; flex-direction: row; align-items: center; gap: 0px 6px; padding: 2px 8px; border-radius: 6px;
-			line-height: 24px; position: relative; font-weight: 600;;
-		}
-		.item::before {
-			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
-			opacity: 0; border-radius: inherit;
-		}
-		.item:hover::before, .item.hover::before, .item.active::before { opacity: 1; }
-		.item {
-			.icon { width: 20px; height: 20px; }
-			.icon.withBackground { width: 20px !important; height: 20px !important;}
-			.icon.create { background-image: url('~img/icon/widget/button/create.svg'); }
-			.icon.chat { background-image: url('~img/icon/widget/button/chat.svg'); }
-			.icon.search { background-image: url('~img/icon/sidebar/search.svg'); }
-			.icon.arrow { background-image: url('~img/icon/widget/button/arrow.svg'); }
-
-			.label { @include text-overflow-nw; flex-grow: 1; }
-		}
-	}
-
-	.spaceChat,
-	.spaceOneToOne {
-		.spaceInfo { margin: 0px 0px 24px 0px; display: flex; flex-direction: column; align-items: center; }
-		.spaceInfo {
-			.iconObject { margin-bottom: 8px; }
-			.name { @include text-header3; margin-bottom: 0px; text-align: center; }
-			.label { @include text-small; color: var(--color-text-secondary); }
-		}
-	}
-
-	.spaceData,
-	.spaceStream {
-		.head { padding: 0px 0px 16px 0px; display: flex; flex-direction: row; align-items: center; gap: 0px 12px; }
-		.head {
-			.iconObject { flex-shrink: 0; }
-			.info { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
-
-			.name { @include text-paragraph; font-weight: 600; @include text-overflow-nw; }
-
-			.label { @include text-small; color: var(--color-text-secondary); }
-		}
+	.iconHead { display: flex; align-items: flex-start; padding: 0px 8px; position: relative; z-index: 2; }
+	&::after {
+		content: ""; position: absolute; background: $gradient; height: 48px; width: calc(100% + 12px); left: 0px; top: 0px;
+		transition: opacity 0.2s $easeDecelerate; pointer-events: none;
 	}
 }

@@ -1,12 +1,9 @@
 import React, { forwardRef, useState, useRef, useEffect, MouseEvent, useImperativeHandle } from 'react';
-import $ from 'jquery';
 import raf from 'raf';
 import { motion, AnimatePresence } from 'motion/react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { observer } from 'mobx-react';
 import { set } from 'mobx';
-import { LayoutPlug } from 'Component';
-import { I, C, S, U, J, analytics, Dataview, keyboard, Onboarding, Relation, focus, translate, Action, Storage } from 'Lib';
+import { LayoutPlug, Icon, Label } from 'Component';
 
 import Controls from './dataview/controls';
 import Selection from './dataview/selection';
@@ -21,12 +18,15 @@ import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
 import ViewTimeline from './dataview/view/timeline';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
 };
 
-const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
+const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const { rootId, block, isPopup, isInline, readonly, onKeyDown, onKeyUp, getWrapperWidth } = props;
 	const views = S.Record.getViews(rootId, block.id);
@@ -39,6 +39,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const isCreating = useRef(false);
 	const frame = useRef(0);
 	const timeoutFilter = useRef(0);
+	const timeoutDrag = useRef(0);
 	const editingRecordId = useRef('');
 	const filterRef = useRef('');
 	const viewIdRef = useRef('');
@@ -48,6 +49,15 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const recordRefs = useRef<Map<string, any>>(new Map());
 	const [ searchIds, setSearchIds ] = useState<string[] | null>(null);
 	const [ dummy, setDummy ] = useState<number>(0);
+	const resizeHandlerRef = useRef<(() => void) | null>(null);
+	const sidebarResizeHandlerRef = useRef<(() => void) | null>(null);
+	const updateDataviewDataHandlerRef = useRef<(() => void) | null>(null);
+	const setDataviewSourceHandlerRef = useRef<(() => void) | null>(null);
+	const selectionEndHandlerRef = useRef<(() => void) | null>(null);
+	const selectionClearHandlerRef = useRef<(() => void) | null>(null);
+	const selectionSetHandlerRef = useRef<(() => void) | null>(null);
+	const recordMouseDownHandlerRef = useRef<((e: globalThis.MouseEvent) => void) | null>(null);
+	const recordKeyDownHandlerRef = useRef<((e: KeyboardEvent) => void) | null>(null);
 	const analyticsRoute = isCollection ? analytics.route.collection : analytics.route.set;
 
 	useEffect(() => {
@@ -132,30 +142,71 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	}, [ searchIds ]);
 
 	const init = () => {
-		const node = $(nodeRef.current);
-		const head = node.find(`#block-head-${block.id}`);
+		const node = nodeRef.current;
+		const head = node ? U.Dom.select(`#block-head-${block.id}`, node) : null;
 		const object = getTarget();
 
-		head.toggleClass('isDeleted', object.isDeleted);
+		if (head) {
+			U.Dom.toggleClass(head, 'isDeleted', object.isDeleted);
+		};
 	};
 
 	const unbind = () => {
-		const events = [ 'resize', 'sidebarResize', 'updateDataviewData', 'setDataviewSource', 'selectionEnd', 'selectionClear', 'selectionSet' ];
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
-
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		if (resizeHandlerRef.current) {
+			U.Dom.removeEvent(window, 'resize', resizeHandlerRef.current);
+			resizeHandlerRef.current = null;
+		};
+		if (sidebarResizeHandlerRef.current) {
+			U.Dom.removeEvent(window, 'sidebarResize', sidebarResizeHandlerRef.current);
+			sidebarResizeHandlerRef.current = null;
+		};
+		if (updateDataviewDataHandlerRef.current) {
+			U.Dom.removeEvent(window, 'updateDataviewData', updateDataviewDataHandlerRef.current);
+			updateDataviewDataHandlerRef.current = null;
+		};
+		if (setDataviewSourceHandlerRef.current) {
+			U.Dom.removeEvent(window, 'setDataviewSource', setDataviewSourceHandlerRef.current);
+			setDataviewSourceHandlerRef.current = null;
+		};
+		if (selectionEndHandlerRef.current) {
+			U.Dom.removeEvent(window, 'selectionEnd', selectionEndHandlerRef.current);
+			selectionEndHandlerRef.current = null;
+		};
+		if (selectionClearHandlerRef.current) {
+			U.Dom.removeEvent(window, 'selectionClear', selectionClearHandlerRef.current);
+			selectionClearHandlerRef.current = null;
+		};
+		if (selectionSetHandlerRef.current) {
+			U.Dom.removeEvent(window, 'selectionSet', selectionSetHandlerRef.current);
+			selectionSetHandlerRef.current = null;
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-		const ns = block.id + U.Common.getEventNamespace(isPopup);
-
 		unbind();
 
-		win.on(`resize.${ns} sidebarResize.${ns}`, () => resize());
-		win.on(`updateDataviewData.${ns}`, () => loadData(getView().id, 0, true));
-		win.on(`setDataviewSource.${ns}`, () => onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 }));
-		win.on(`selectionEnd.${ns} selectionClear.${ns} selectionSet.${ns}`, () => onSelectEnd());
+		resizeHandlerRef.current = () => resize();
+		sidebarResizeHandlerRef.current = () => resize();
+		updateDataviewDataHandlerRef.current = () => {
+			const view = getView();
+			if (view) {
+				loadData(view.id, 0, true);
+			};
+		};
+		setDataviewSourceHandlerRef.current = () => onSourceSelect(`#block-head-${block.id} #value`, { offsetY: 36 });
+		selectionEndHandlerRef.current = () => onSelectEnd();
+		selectionClearHandlerRef.current = () => onSelectEnd();
+		selectionSetHandlerRef.current = () => onSelectEnd();
+
+		U.Dom.addEvents(window, [
+			['resize', resizeHandlerRef.current],
+			['sidebarResize', sidebarResizeHandlerRef.current],
+			['updateDataviewData', updateDataviewDataHandlerRef.current],
+			['setDataviewSource', setDataviewSourceHandlerRef.current],
+			['selectionEnd', selectionEndHandlerRef.current],
+			['selectionClear', selectionClearHandlerRef.current],
+			['selectionSet', selectionSetHandlerRef.current],
+		]);
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -313,7 +364,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const subId = getSubId(groupId);
 		const records = S.Record.getRecordIds(subId, '');
 
-		return applyObjectOrder('', U.Common.objectCopy(records));
+		return applyObjectOrder('', [ ...records ]);
 	};
 
 	const getRecord = (id: string) => {
@@ -368,27 +419,27 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const getMenuParam = (e: any, dir: number): any => {
-		const node = $(nodeRef.current);
-		const hoverArea = node.find('.hoverArea');
+		const node = nodeRef.current;
+		const hoverArea = node ? U.Dom.select('.hoverArea', node) : null;
 
 		const menuParam: any = {
 			classNameWrap: 'fromBlock',
 			onOpen: (context: any) => {
 				menuContext.current = context;
-				hoverArea.addClass('active');
+				U.Dom.addClass(hoverArea, 'active');
 			},
 			onClose: () => {
 				isCreating.current = false;
-				hoverArea.removeClass('active');
+				U.Dom.removeClass(hoverArea, 'active');
 			},
 		};
 
 		if (dir) {
-			menuParam.element = $(e.currentTarget);
+			menuParam.element = e.currentTarget;
 		} else {
 			menuParam.horizontal = I.MenuDirection.Center;
 			menuParam.recalcRect = () => {
-				const { ww, wh } = U.Common.getWindowDimensions();
+				const { ww, wh } = U.Dom.getWindowDimensions();
 				return { x: ww / 2, y: wh / 2, width: 200, height: 0 };
 			};
 		};
@@ -499,7 +550,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				const refGraph = viewRef.current?.refGraph;
 				if (refGraph) {
 					refGraph.addNewNode(object.id, '', null, () => {
-						$(window).trigger('updateGraphRoot', { id: object.id });
+						U.Dom.eventDispatch(window, 'updateGraphRoot', { id: object.id });
 					});
 				};
 			};
@@ -538,6 +589,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			groupId = 'empty';
 		};
 
+		if (type && U.Object.getFileLayouts().includes(type.recommendedLayout)) {
+			const objectId = getObjectId();
+			const details = getDetails(groupId);
+
+			U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? objectId : '', details, (objects) => {
+				if (isCollection && objects?.length) {
+					// Collection add is handled inside the popup for each file
+				};
+			}, analytics.route.uploadTypePage);
+		} else
 		if (type && (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout))) {
 			onObjectMenu(e, dir, type.recommendedLayout, groupId, menuParam);
 		} else {
@@ -646,6 +707,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					const typeId = getTypeId();
 					const type = S.Record.getTypeById(typeId);
 
+					if (!type) {
+						return;
+					};
+
+					if (U.Object.getFileLayouts().includes(type.recommendedLayout)) {
+						menuContext?.close();
+						const objectId = getObjectId();
+						const details = getDetails('');
+						U.Menu.onFileUploadPopup(type.recommendedLayout, isCollection ? objectId : '', details, undefined, analytics.route.uploadTypePage);
+					} else
 					if (U.Object.isBookmarkLayout(type.recommendedLayout) || U.Object.isChatLayout(type.recommendedLayout)) {
 						menuContext?.close();
 						onObjectMenu(e, dir, type.recommendedLayout, '', { element: `#button-${U.Common.esc(block.id)}-add-record` });
@@ -700,7 +771,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onCellClick = (e: any, relationKey: string, recordId: string, record?: any) => {
-		if (e.button) {
+		if (U.Common.checkAuxButton(e)) {
 			return;
 		};
 
@@ -779,6 +850,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const selection = S.Common.getRef('selectionProvider');
 		const view = getView();
+		const { x, y } = keyboard.mouse.page;
 
 		if (!view) {
 			return;
@@ -792,10 +864,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		S.Menu.open('objectContext', {
 			classNameWrap: 'fromBlock',
-			recalcRect: () => { 
-				const { x, y } = keyboard.mouse.page;
-				return { width: 0, height: 0, x: x + 4, y: y };
-			},
+			rect: { width: 0, height: 0, x: x + 4, y: y },
 			onClose: () => selection.clear(),
 			data: {
 				blockId: block.id,
@@ -850,12 +919,12 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const onSelect = (item: any, isNew: boolean) => {
 			C.BlockDataviewCreateFromExistingObject(rootId, block.id, item.id, (message: any) => {
-				const button = $(nodeRef.current).find('#head-source-select');
+				const button = nodeRef.current ? U.Dom.select('#head-source-select', nodeRef.current) : null;
 
 				S.Detail.update(rootId, { id: item.id, details: item }, false);
 
-				if (!isCollection && isNew && button.length) {
-					button.trigger('click');
+				if (!isCollection && isNew && button) {
+					button.click();
 				};
 
 				if (message.views && message.views.length) {
@@ -887,7 +956,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		S.Menu.open('searchObject', Object.assign({
-			element: $(element),
+			element,
 			className: 'single',
 			classNameWrap: 'fromBlock',
 			data: {
@@ -907,15 +976,15 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const onSourceTypeSelect = (obj: any) => {
 		const objectId = getObjectId();
-		const element = $(obj);
+		const element = (typeof obj === 'string') ? U.Dom.select(obj) : obj;
 
 		S.Menu.closeAll(null, () => {
 			S.Menu.open('dataviewSource', {
 				classNameWrap: 'fromBlock',
 				element,
 				horizontal: I.MenuDirection.Center,
-				onOpen: () => element.addClass('active'), 
-				onClose: () => element.removeClass('active'), 
+				onOpen: () => U.Dom.addClass(element, 'active'),
+				onClose: () => U.Dom.removeClass(element, 'active'),
 				data: {
 					rootId,
 					objectId,
@@ -932,8 +1001,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		const selection = S.Common.getRef('selectionProvider');
 		const record = getRecord(recordId);
 		const ids = selection?.get(I.SelectType.Record) || [];
-		const con = $(controlsRef.current?.getNode());
-		const sel = $(selectRef.current?.getNode());
+		const con = controlsRef.current?.getNode();
+		const sel = selectRef.current?.getNode();
 
 		if (!ids.length) {
 			ids.push(record.id);
@@ -953,8 +1022,8 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			onViewDrop: onViewDrop,
 		});
 
-		con.show();
-		sel.hide();
+		if (con) U.Dom.css(con, { display: 'block' });
+		if (sel) U.Dom.css(sel, { display: 'none' });
 	};
 
 	const onRecordDrop = (targetId: string, ids: string[], position: I.BlockPosition) => {
@@ -1012,8 +1081,16 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
+		const view = getView(targetId);
 		const details = Dataview.getDetails(rootId, block.id, getObjectId(), targetId);
 		const operations: any[] = []; 
+		const removeConditions = [
+			I.FilterCondition.NotIn,
+			I.FilterCondition.NotEqual,
+			I.FilterCondition.NotAllIn,
+			I.FilterCondition.NotExactIn,
+		];
+		const filters = Dataview.flattenFilters(view.filters);
 
 		for (const k in details) {
 			const relation = S.Record.getRelationByKey(k);
@@ -1031,8 +1108,27 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 
-		C.ObjectListModifyDetailValues(ids, operations);
+		for (const filter of filters) {
+			if (!removeConditions.includes(filter.condition)) {
+				continue;
+			};
 
+			const relation = S.Record.getRelationByKey(filter.relationKey);
+			if (!relation || relation.isReadonlyValue) {
+				continue;
+			};
+
+			const value = Relation.formatValue(relation, filter.value, true);
+			if (!value) {
+				continue;
+			};
+
+			if (Relation.isArrayType(relation.format)) {
+				operations.push({ relationKey: filter.relationKey, remove: value });
+			};
+		};
+
+		C.ObjectListModifyDetailValues(ids, operations);
 		S.Common.getRef('selectionProvider')?.clear();
 		selectionCheck();
 	};
@@ -1087,8 +1183,14 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const closeFilters = () => {
 		const view = getView();
+		if (!view) {
+			return;
+		};
 
-		if (view.sorts.length || U.Common.getViewFilters(view).length) {
+		const filters = Dataview.getFilteredFilters(view.filters);
+		const sorts = Dataview.getFilteredSorts(view.sorts);
+
+		if (sorts.length || filters.length) {
 			return;
 		};
 
@@ -1235,6 +1337,12 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let isAllowed = !readonly && S.Block.checkFlags(rootId, block.id, [ I.RestrictionDataview.Object ]);
 		if (!isAllowed) {
+			const typeId = getTypeId();
+			const type = S.Record.getTypeById(typeId);
+
+			if (!readonly && type && U.Object.isInFileLayouts(type.recommendedLayout)) {
+				return true;
+			};
 			return false;
 		};
 
@@ -1249,7 +1357,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const targetId = getObjectId();
 		const types = Relation.getSetOfObjects(rootId, targetId, I.ObjectLayout.Type);
-		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getFileAndSystemLayouts());
+		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getSystemLayouts());
 
 		for (const type of types) {
 			if (skipLayouts.includes(type.recommendedLayout)) {
@@ -1334,13 +1442,13 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const con = $(controlsRef.current.getNode());
-		const sel = $(selectRef.current.getNode());
+		const con = controlsRef.current.getNode();
+		const sel = selectRef.current.getNode();
 		const ids = selection.get(I.SelectType.Record) || [];
 		const length = ids.length;
 
-		length ? con.hide() : con.show();
-		length ? sel.show() : sel.hide();
+		if (con) U.Dom.css(con, { display: length ? 'none' : 'block' });
+		if (sel) U.Dom.css(sel, { display: length ? 'block' : 'none' });
 	};
 
 	const onSelectEnd = () => {
@@ -1395,11 +1503,15 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 	};
 
-	const setRecordEditingOn = (e: any, id: string) => {
+	const setRecordEditingOn = (e: any, id: string, retries?: number) => {
 		const ref = recordRefs.current.get(id);
 		const nameId = Relation.cellId(getIdPrefix(), 'name', id);
 		const nameRef = cellRefs.current.get(nameId);
-		const win = $(window);
+
+		if (!nameRef && (retries === undefined || retries > 0)) {
+			window.setTimeout(() => setRecordEditingOn(e, id, (retries ?? 5) - 1), 50);
+			return;
+		};
 
 		if (ref && ref.setIsEditing) {
 			ref.setIsEditing(true);
@@ -1408,25 +1520,42 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		nameRef?.onClick(e);
 
-		win.on(`mousedown.record-${id}`, (e: any) => {
-			if ($(e.target).parents(`#record-${U.Common.esc(id)}, .menu`).length > 0) {
+		if (recordMouseDownHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mousedown', recordMouseDownHandlerRef.current);
+		};
+		if (recordKeyDownHandlerRef.current) {
+			U.Dom.removeEvent(window, 'keydown', recordKeyDownHandlerRef.current);
+		};
+
+		recordMouseDownHandlerRef.current = (e: globalThis.MouseEvent) => {
+			if ((e.target as HTMLElement)?.closest(`#record-${U.Common.esc(id)}, .menu`)) {
 				return;
 			};
 
 			setRecordEditingOff(id);
-		});
+		};
 
-		win.on(`keydown.record-${id}`, (e) => {
+		recordKeyDownHandlerRef.current = (e: KeyboardEvent) => {
 			keyboard.shortcut('escape, enter', e, () => setRecordEditingOff(id));
-		});
+		};
+
+		U.Dom.addEvents(window, [
+			['mousedown', recordMouseDownHandlerRef.current],
+			['keydown', recordKeyDownHandlerRef.current],
+		]);
 	};
 
 	const setRecordEditingOff = (id: string) => {
 		const ref = recordRefs.current.get(id);
-		const win = $(window);
-		const pageContainer = getPageContainer();
 
-		win.off(`mousedown.record-${id} keydown.record-${id}`);
+		if (recordMouseDownHandlerRef.current) {
+			U.Dom.removeEvent(window, 'mousedown', recordMouseDownHandlerRef.current);
+			recordMouseDownHandlerRef.current = null;
+		};
+		if (recordKeyDownHandlerRef.current) {
+			U.Dom.removeEvent(window, 'keydown', recordKeyDownHandlerRef.current);
+			recordKeyDownHandlerRef.current = null;
+		};
 
 		const nameId = Relation.cellId(getIdPrefix(), 'name', id);
 		const nameRef = cellRefs.current.get(nameId);
@@ -1436,11 +1565,7 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 			editingRecordId.current = '';
 		};
 
-		if (nameRef) {
-			nameRef.onBlur();
-		};
-
-		$(pageContainer).trigger('mousedown');
+		nameRef?.onBlur();
 	};
 
 	const multiSelectAction = (id: string) => {
@@ -1478,19 +1603,20 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		frame.current = raf(() => {
 			if (getWrapperWidth) {
-				const node = $(nodeRef.current);
-				const obj = $(`#block-${U.Common.esc(block.id)}`);
+				const node = nodeRef.current;
+				const obj = U.Dom.get(`block-${block.id}`);
 
-				obj.toggleClass('isVertical', node.width() <= getWrapperWidth() / 2);
+				if (obj && node) {
+					const cw = U.Dom.contentWidth(node);
+
+					U.Dom.toggleClass(obj, 'isVertical', cw <= getWrapperWidth() / 2);
+					U.Dom.toggleClass(obj, 'isNarrow', cw <= 250);
+				};
 			};
 
 			controlsRef.current?.resize?.();
 			viewRef.current?.resize?.();
 		});
-	};
-
-	const getPageContainer = () => {
-		return U.Common.getCellContainer(isPopup ? 'popup' : 'page');
 	};
 
 	if (!views.length) {
@@ -1509,9 +1635,11 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 	const { groupRelationKey, endRelationKey, pageLimit, defaultTemplateId } = view;
 	const className = [ U.String.toCamelCase(`view-${I.ViewType[view.type]}`) ];
 	const filtersToggleId = U.String.toCamelCase(`view-${view.id}-filters`);
-	const showFilters = Storage.checkToggle(rootId, filtersToggleId)
-		&& (view.sorts.length > 0 || U.Common.getViewFilters(view).length > 0);
+	const filters = Dataview.getFilteredFilters(view.filters);
+	const sorts = Dataview.getFilteredSorts(view.sorts);
 
+	const showFilters = Storage.checkToggle(rootId, filtersToggleId)
+		&& ((sorts.length > 0) || (filters.length > 0));
 	let ViewComponent: any = null;
 	let body = null;
 
@@ -1613,7 +1741,6 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 					onRefRecord={(ref: any, id: string) => recordRefs.current.set(id, ref)}
 					{...props}
 					{...dataviewProps}
-					pageContainer={getPageContainer()}
 					onCellClick={onCellClick}
 					onCellChange={onCellChange}
 					onContext={onContext}
@@ -1627,33 +1754,139 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 		);
 	};
 
+	const getEditorWrapper = (): HTMLElement | null => {
+		return nodeRef.current?.closest('.editorWrapper') ?? null;
+	};
+
+	const getBlockNode = (): HTMLElement | null => {
+		return nodeRef.current?.closest('.block.blockDataview') ?? null;
+	};
+
+	const onFileDragOver = (e: any) => {
+		if (!U.File.checkDropFiles(e)) {
+			return;
+		};
+
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+
+		const blockNode = getBlockNode();
+		const wrapper = getEditorWrapper();
+		const container = U.Dom.getScrollContainer(isPopup);
+		const hoverArea = blockNode ? U.Dom.select('.hoverArea', blockNode) : null;
+
+		if (hoverArea && container) {
+			const rect = hoverArea.getBoundingClientRect();
+			const top = rect.bottom;
+			const containerBottom = container.getBoundingClientRect().bottom;
+			const height = containerBottom - top;
+
+			const dragOverlay = blockNode ? U.Dom.select('.dragOverlay', blockNode) : null;
+			if (dragOverlay) {
+				U.Dom.css(dragOverlay, { height: height + 'px' });
+			};
+		};
+
+		U.Dom.addClass(wrapper, 'isDraggingOver');
+	};
+
+	const onFileDragLeave = (e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		window.clearTimeout(timeoutDrag.current);
+		timeoutDrag.current = window.setTimeout(() => {
+			U.Dom.removeClass(getEditorWrapper(), 'isDraggingOver');
+		}, 100);
+	};
+
+	const onFileDrop = (e: any) => {
+		e.preventDefault();
+		e.stopPropagation();
+		window.clearTimeout(timeoutDrag.current);
+		U.Dom.removeClass(getEditorWrapper(), 'isDraggingOver');
+
+		const electron = U.Common.getElectron();
+		const files = e.dataTransfer?.files;
+		if (!files || !files.length) {
+			return;
+		};
+
+		const paths: string[] = [];
+		for (let i = 0; i < files.length; i++) {
+			const path = electron.webFilePath(files[i]);
+			if (path) {
+				paths.push(path);
+			};
+		};
+
+		if (paths.length) {
+			C.FileDrop(rootId, block.id, I.BlockPosition.Inner, paths, (message: any) => {
+				U.File.showFileDropError(message);
+
+				if (!message.error.code) {
+					analytics.event('UploadFile', { route: analytics.route.uploadDnDSet, count: paths.length });
+				};
+			});
+		};
+	};
+
 	useImperativeHandle(ref, () => ({
 		getNode: () => nodeRef.current,
 		onRecordAdd,
 		resize,
 	}));
-	
+
+	useEffect(() => {
+		if (isInline || readonly || !isCollection) {
+			return;
+		};
+
+		const wrapper = getEditorWrapper();
+
+		if (wrapper) {
+			U.Dom.addEvents(wrapper, [
+				['dragover', onFileDragOver],
+				['dragleave', onFileDragLeave],
+				['drop', onFileDrop],
+			]);
+		};
+
+		return () => {
+			if (wrapper) {
+				U.Dom.removeEvents(wrapper, [
+					['dragover', onFileDragOver],
+					['dragleave', onFileDragLeave],
+					['drop', onFileDrop],
+				]);
+			};
+			window.clearTimeout(timeoutDrag.current);
+		};
+	}, [ readonly ]);
+
 	return (
-		<div 
+		<div
 			ref={nodeRef}
-			tabIndex={0} 
+			tabIndex={0}
 			className={cn.join(' ')}
-			onKeyDown={onKeyDownHandler} 
-			onKeyUp={onKeyUpHandler} 
+			onKeyDown={onKeyDownHandler}
+			onKeyUp={onKeyUpHandler}
 			onFocus={onFocus}
 		>
 			<div className="hoverArea">
-				<Controls 
-					ref={controlsRef} 
-					{...props} 
-					{...dataviewProps} 
+				<Controls
+					ref={controlsRef}
+					{...props}
+					{...dataviewProps}
 					onFilterChange={onFilterChange}
 				/>
-				<Selection 
-					ref={selectRef} 
-					{...props} 
-					{...dataviewProps} 
-					multiSelectAction={multiSelectAction} 
+				<Selection
+					ref={selectRef}
+					{...props}
+					{...dataviewProps}
+					multiSelectAction={multiSelectAction}
 				/>
 			</div>
 
@@ -1666,10 +1899,17 @@ const BlockDataview = observer(forwardRef<I.BlockRef, Props>((props, ref) => {
 				/>
 			) : ''}
 
+			<div className="dragOverlay">
+				<div className="inner">
+					<Icon name="state/drag" size={56} />
+					<Label text={translate('commonDropFiles')} />
+				</div>
+			</div>
+
 			{body}
 		</div>
 	);
 
-}));
+});
 
 export default BlockDataview;

@@ -1,21 +1,19 @@
 import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { MenuItemVertical, Icon } from 'Component';
-import { I, C, S, U, J, keyboard, translate, Action, analytics } from 'Lib';
+import { MenuItemVertical } from 'Component';
+import * as I from 'Interface';
 
-const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
+const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
-	const { param, close, setActive, onKeyDown, position } = props;
-	const { data } = param;
-	const { blockId, isPreview } = data;
+	const { param, close, setActive, onKeyDown, position, getId, getSize } = props;
+	const { data, className, classNameWrap } = param;
+	const { blockId, isPreview, target } = data;
 	const { widgets } = S.Block;
 	const [ layout, setLayout ] = useState<I.WidgetLayout>(data.layout);
 	const [ limit, setLimit ] = useState(data.limit);
-	const [ target, setTarget ] = useState(data.target);
 	const nodeRef = useRef(null);
 	const needUpdate = useRef(false);
 	const n = useRef(-1);
+	const route = analytics.route.widget;
 
 	useEffect(() => {
 		needUpdate.current = false;
@@ -26,7 +24,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			S.Menu.closeAll(J.Menu.widget);
 
 			if (needUpdate.current) {
-				$(window).trigger(`updateWidgetData.${blockId}`);
+				U.Dom.eventDispatch(window, 'updateWidgetData');
 			};
 		};
 	}, []);
@@ -35,78 +33,113 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		setActive();
 		position();
 	});
-	
+
 	const rebind = () => {
 		unbind();
-		$(window).on('keydown.menu', e => onKeyDown(e));
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
 		window.setTimeout(() => setActive(), 15);
 	};
-	
+
 	const unbind = () => {
-		$(window).off('keydown.menu');
+		U.Dom.removeEvent(window, 'keydown', onKeyDown);
 	};
 
 	const getSections = () => {
 		const checked = checkState(layout, limit);
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(checked.layout);
-		const canRemove = U.Space.canMyParticipantWrite();
+		const canWrite = U.Space.canMyParticipantWrite();
+		const isOwner = U.Space.isMyOwner();
 		const layoutOptions = U.Menu.getWidgetLayoutOptions(target?.id, target?.layout, isPreview);
 		const block = S.Block.getLeaf(widgets, blockId);
 		const isSystem = U.Menu.isSystemWidget(target?.id);
+		const isType = U.Object.isTypeLayout(target?.layout);
 
 		if (!block) {
 			return [];
 		};
 
+		const isPinned = block.content.section == I.WidgetSection.Pin;
+		const currentLayout = layoutOptions.find(it => it.id == layout);
 		const sections: any[] = [];
 
+		// Section 1: Widget settings (View + Number of Objects)
+		const settingsChildren: any[] = [];
+
 		if (layoutOptions.length > 1) {
-			sections.push({
+			settingsChildren.push({
 				id: 'layout',
-				name: translate('commonAppearance'),
-				children: [],
-				options: layoutOptions,
-				value: layout,
+				name: translate('menuWidgetView'),
+				caption: currentLayout?.name || '',
+				arrow: true,
 			});
 		};
 
 		if (hasLimit) {
-			sections.push({
+			settingsChildren.push({
 				id: 'limit',
 				name: translate('menuWidgetNumberOfObjects'),
-				children: [],
-				options: U.Menu.getWidgetLimitOptions(layout),
-				value: limit,
+				caption: String(limit),
+				arrow: true,
 			});
 		};
 
-		if (canRemove) {
-			const children: any[] = [];
-			const isPinned = block.content.section == I.WidgetSection.Pin;
-			const isSystem = U.Menu.isSystemWidget(target?.id);
+		if (settingsChildren.length) {
+			sections.push({
+				id: 'settings',
+				name: translate('menuWidgetTitle'),
+				children: settingsChildren,
+			});
+		};
 
-			if (isPinned) {
-				const name = isSystem ? translate('menuWidgetRemoveWidget') : translate('commonUnpin');
-				const icon = isSystem ? 'remove' : 'unpin';
+		// Section 2: Actions
+		const actionChildren: any[] = [];
 
-				children.push({ id: 'removeWidget', name, icon });
+		if (!isSystem) {
+			actionChildren.push({ id: 'pageLink', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
+		};
+
+		if (!isSystem && canWrite) {
+			const personalId = U.Object.getPersonalWidgetsId();
+			const isFavorite = target && S.Block.getWidgetsForTargetIn(target.id, personalId).length > 0;
+			const isPinned = target && S.Block.getWidgetsForTargetIn(target.id, widgets).length > 0;
+
+			actionChildren.push({
+				id: isFavorite ? 'unfavorite' : 'favorite',
+				iconParam: { name: isFavorite ? 'menu/action/unfav' : 'menu/action/fav' },
+				name: translate(isFavorite ? 'menuWidgetUnfavorite' : 'menuWidgetFavorite'),
+			});
+
+			if (isOwner) {
+				actionChildren.push({
+					id: isPinned ? 'unpinFromChannel' : 'pinToChannel',
+					iconParam: { name: 'menu/action/pin' },
+					name: translate(isPinned ? 'menuWidgetUnpinFromChannel' : 'menuWidgetPinToChannel'),
+				});
 			};
 
-			if (sections.length && children.length) {
-				children.unshift({ isDiv: true });
+			if (!isType) {
+				actionChildren.push({ id: 'linkTo', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonLinkTo'), arrow: true });
+				actionChildren.push({ id: 'addCollection', iconParam: { name: 'menu/action/collection' }, name: translate('commonAddToCollection'), arrow: true });
 			};
 
-			if (children.length) {
-				sections.push({ children });
+			const allowedArchive = S.Block.isAllowed(target?.restrictions, [ I.RestrictionObject.Delete ]);
+
+			if (allowedArchive) {
+				actionChildren.push({ id: 'archive', iconParam: { name: 'menu/action/remove' }, name: translate('commonMoveToBin') });
 			};
 		};
 
+		if (actionChildren.length) {
+			sections.push({ id: 'actions', children: actionChildren });
+		};
+
+		// Section 3: Open in New Tab / New Window
 		if (!isSystem) {
 			sections.push({
+				id: 'open',
 				children: [
-					{ isDiv: true },
-					{ id: 'newTab', icon: 'newTab', name: translate('menuObjectOpenInNewTab') },
-					{ id: 'newWindow', icon: 'newWindow', name: translate('menuObjectOpenInNewWindow') },
+					{ id: 'newTab', iconParam: { name: 'menu/action/newTab' }, name: translate('menuObjectOpenInNewTab') },
+					{ id: 'newWindow', iconParam: { name: 'menu/action/newWindow' }, name: translate('menuObjectOpenInNewWindow') },
 				]
 			});
 		};
@@ -161,10 +194,11 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const onMouseEnter = (e: MouseEvent, item): void => {
 		if (!keyboard.isMouseDisabled) {
 			setActive(item, false);
+			onOver(e, item);
 		};
 	};
 
-	const onOptionClick = (e: MouseEvent, option: any, section: any) => {
+	const onSelectOption = (key: string, optionId: string) => {
 		const block = S.Block.getLeaf(widgets, blockId);
 
 		if (!block) {
@@ -174,33 +208,153 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const isSectionPin = block.content.section == I.WidgetSection.Pin;
 
 		needUpdate.current = true;
+		n.current = -1;
 
-		switch (section.id) {
+		switch (key) {
 			case 'layout': {
-				const { layout } = checkState(Number(option.id), limit);
-				
-				setLayout(layout);
+				const { layout: newLayout } = checkState(Number(optionId), limit);
+
+				setLayout(newLayout);
+				S.Menu.updateData('select', { value: String(newLayout) });
 
 				if (isSectionPin) {
-					C.BlockWidgetSetLayout(widgets, blockId, layout, () => close());
+					C.BlockWidgetSetLayout(widgets, blockId, newLayout);
 				};
 
-				analytics.event('ChangeWidgetLayout', { layout, route: 'Inner', params: { target } });
+				analytics.event('ChangeWidgetLayout', { layout: newLayout, route: 'Inner', params: { target } });
 				break;
 			};
 
 			case 'limit': {
-				const { limit } = checkState(layout, Number(option.id));
+				const { limit: newLimit } = checkState(layout, Number(optionId));
 
-				setLimit(limit);
+				setLimit(newLimit);
+				S.Menu.updateData('select', { value: String(newLimit) });
 
 				if (isSectionPin) {
-					C.BlockWidgetSetLimit(widgets, blockId, limit, () => close());
+					C.BlockWidgetSetLimit(widgets, blockId, newLimit);
 				};
 
-				analytics.event('ChangeWidgetLimit', { limit, layout, route: 'Inner', params: { target } });
+				analytics.event('ChangeWidgetLimit', { limit: newLimit, layout, route: 'Inner', params: { target } });
 				break;
 			};
+		};
+	};
+
+	const onOver = (e: any, item: any) => {
+		if (!item.arrow) {
+			S.Menu.closeAll(J.Menu.widget);
+			return;
+		};
+
+		const menuParam: any = {
+			menuKey: item.id,
+			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
+			offsetX: getSize().width,
+			vertical: I.MenuDirection.Center,
+			isSub: true,
+			noAutoHover: true,
+			className,
+			classNameWrap,
+			rebind,
+			parentId: props.id,
+			data: {},
+		};
+
+		let menuId = '';
+
+		switch (item.id) {
+			case 'layout': {
+				const layoutOptions = U.Menu.getWidgetLayoutOptions(target?.id, target?.layout, isPreview);
+
+				menuId = 'select';
+				menuParam.data = {
+					noClose: true,
+					value: String(layout),
+					options: layoutOptions.map(it => ({ id: String(it.id), name: it.name, iconParam: it.iconParam })),
+					onSelect: (e: any, option: any) => onSelectOption('layout', option.id),
+				};
+				break;
+			};
+
+			case 'limit': {
+				const limitOptions = U.Menu.getWidgetLimitOptions(layout);
+
+				menuId = 'select';
+				menuParam.data = {
+					noClose: true,
+					value: String(limit),
+					options: limitOptions.map(it => ({ id: String(it.id), name: String(it.name) })),
+					onSelect: (e: any, option: any) => onSelectOption('limit', option.id),
+				};
+				break;
+			};
+
+			case 'linkTo': {
+				if (!target) {
+					break;
+				};
+
+				menuId = 'searchObject';
+				menuParam.data = {
+					filters: [
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getPageLayouts() },
+						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+						{ relationKey: 'links', condition: I.FilterCondition.NotIn, value: [ target.id ] },
+					],
+					rootId: target.id,
+					blockId: target.id,
+					blockIds: [ target.id ],
+					type: I.NavigationType.LinkTo,
+					skipIds: [ target.id ],
+					position: I.BlockPosition.Bottom,
+					canAdd: true,
+					onSelect: (el: any) => {
+						close();
+					},
+				};
+				break;
+			};
+
+			case 'addCollection': {
+				if (!target) {
+					break;
+				};
+
+				const collectionType = S.Record.getCollectionType();
+
+				menuId = 'searchObject';
+				menuParam.className = [ 'single', className ].join(' ');
+				menuParam.data = {
+					filters: [
+						{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: I.ObjectLayout.Collection },
+						{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotIn, value: [ J.Constant.typeKey.template ] },
+						{ relationKey: 'isReadonly', condition: I.FilterCondition.NotEqual, value: true },
+					],
+					canAdd: true,
+					addParam: {
+						name: translate('blockDataviewCreateNewCollection'),
+						nameWithFilter: translate('blockDataviewCreateNewCollectionWithName'),
+						onClick: (details: any) => {
+							C.ObjectCreate(details, [], '', collectionType?.uniqueKey, S.Common.space, (message) => {
+								Action.addToCollection(message.objectId, [ target.id ]);
+								U.Object.openAuto(message.details);
+							});
+						},
+					},
+					onSelect: (el: any) => {
+						Action.addToCollection(el.id, [ target.id ]);
+						close();
+					},
+				};
+				break;
+			};
+		};
+
+		if (menuId && !S.Menu.isOpen(menuId, item.id) && !S.Menu.isAnimating(menuId)) {
+			S.Menu.closeAll(J.Menu.widget, () => {
+				S.Menu.open(menuId, menuParam);
+			});
 		};
 	};
 
@@ -216,7 +370,7 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				if (isSystem) {
 					const param: Partial<I.MenuParam> = {
 						data: {
-							icon: 'warning-red',
+							iconParam: { name: 'popup/header/warning', color: 'red' },
 							title: translate('popupConfirmSystemWidgetRemoveTitle'),
 							text: translate('popupConfirmSystemWidgetRemoveText'),
 							textConfirm: translate('commonDelete'),
@@ -241,8 +395,47 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				break;
 			};
 
+			case 'pageLink': {
+				const spaceview = U.Space.getSpaceview();
+				U.Object.copyLink(target, spaceview, 'web', route);
+				break;
+			};
+
+			case 'archive': {
+				Action.archiveCheckType('', [ target.id ], route);
+				break;
+			};
+
+			case 'favorite': {
+				const personalId = U.Object.getPersonalWidgetsId();
+				Action.createWidgetFromObjectIn(personalId, personalId, target.id, '', I.BlockPosition.InnerFirst, route);
+				break;
+			};
+
+			case 'unfavorite': {
+				const personalId = U.Object.getPersonalWidgetsId();
+				const list = S.Block.getWidgetsForTargetIn(target.id, personalId);
+				if (list.length) {
+					C.BlockListDelete(personalId, list.map(it => it.id));
+				};
+				break;
+			};
+
+			case 'pinToChannel': {
+				Action.createWidgetFromObjectIn(widgets, widgets, target.id, '', I.BlockPosition.InnerFirst, route);
+				break;
+			};
+
+			case 'unpinFromChannel': {
+				const list = S.Block.getWidgetsForTargetIn(target.id, widgets);
+				if (list.length) {
+					C.BlockListDelete(widgets, list.map(it => it.id));
+				};
+				break;
+			};
+
 			case 'newTab': {
-				U.Object.openTab(target, analytics.route.widget);
+				U.Object.openTab(target, route);
 				break;
 			};
 
@@ -257,31 +450,9 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const sections = getSections();
 
-	const Section = item => (
+	const Section = (item: any) => (
 		<div id={`section-${item.id}`} className="section">
 			{item.name ? <div className="name">{item.name}</div> : ''}
-
-			{item.options ? (
-				<div className="options">
-					{item.options.map((option, i) => {
-						const cn = [ 'option' ];
-
-						if (item.value == option.id) {
-							cn.push('active');
-						};
-
-						if (option.icon) {
-							cn.push('icon');
-						};
-
-						return (
-							<div className={cn.join(' ')} key={i} onClick={e => onOptionClick(e, option, item)}>
-								{option.icon ? <Icon className={option.icon} tooltipParam={{ text: option.description }} /> : option.name}
-							</div>
-						);
-					})}
-				</div>
-			) : ''}
 
 			{item.children.length ? (
 				<div className="items">
@@ -305,8 +476,9 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		getIndex: () => n.current,
 		setIndex: (i: number) => n.current = i,
 		onClick,
+		onOver,
 	}), []);
-	
+
 	return (
 		<div ref={nodeRef}>
 			<div className="sections">
@@ -317,6 +489,6 @@ const MenuWidget = observer(forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		</div>
 	);
 
-}));
+});
 
 export default MenuWidget;

@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { Title, Label, Button, Error, IconObject } from 'Component';
-import { I, C, S, U, translate, analytics, Preview , Action} from 'Lib';
-import { observer } from 'mobx-react';
+import * as I from 'Interface';
 
-const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
+const PopupInviteRequest = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, close } = props;
 	const { account } = S.Auth;
@@ -23,34 +22,14 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		case I.InviteType.WithApprove: {
 			title = translate('popupInviteRequestAccessTitle');
 			button = translate('popupInviteRequestRequestToJoin');
-
-			switch (invite.uxType) {
-				default: {
-					text = translate('popupInviteRequestAccessTextData');
-					break;
-				};
-
-				case I.SpaceUxType.Chat:
-					text = translate('popupInviteRequestAccessTextChat');
-					break;
-			};
+			text = translate('popupInviteRequestAccessTextData');
 			break;
 		};
 
 		case I.InviteType.WithoutApprove:
 			title = translate('popupInviteRequestInviteTitle');
 			button = translate('commonJoin');
-
-			switch (invite.uxType) {
-				default: {
-					text = translate('popupInviteRequestInviteTextData');
-					break;
-				};
-
-				case I.SpaceUxType.Chat:
-					text = translate('popupInviteRequestInviteTextChat');
-					break;
-			};
+			text = translate('popupInviteRequestInviteTextData');
 			break;
 	};
 
@@ -68,6 +47,9 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 				setError(message.error.description);
 				return;
 			};
+
+			const rootId = keyboard.getRootId();
+			U.Data.setTabTitle(rootId, rootId);
 
 			if (invite.inviteType === I.InviteType.WithApprove) {
 				close(() => Action.inviteRequest());
@@ -97,7 +79,7 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 						name: spaceName, 
 						iconImage: invite.iconImage,
 						iconOption: invite.iconOption || 1,
-						uxType: invite.uxType || I.SpaceUxType.Data,
+						spaceType: invite.spaceType || I.SpaceType.Data,
 					}}
 					size={96} 
 				/>
@@ -128,6 +110,6 @@ const PopupInviteRequest = observer(forwardRef<{}, I.Popup>((props, ref) => {
 		</>
 	);
 
-}));
+});
 
 export default PopupInviteRequest;

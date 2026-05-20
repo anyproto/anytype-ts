@@ -1,12 +1,11 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
-import { Header, Footer, Loader, Block, Button, Icon, IconObject, Deleted, HeadSimple } from 'Component';
-import { I, C, S, M, U, Action, translate, Relation, analytics, sidebar, keyboard } from 'Lib';
+import { Header, Footer, Loader, Block, Button, IconObject, Deleted, HeadSimple } from 'Component';
+import * as I from 'Interface';
+import * as M from 'Model';
 
 const MAX_HEIGHT = 396;
 
-const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainMedia = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const { isPopup } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
@@ -70,35 +69,42 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	};
 
 	const rebind = () => {
-		const node = $(nodeRef.current);
-		const img = node.find('img.media');
-		const wrap = node.find('.block.blockMedia .wrapContent');
-
-		if (!img.length) {
+		const node = nodeRef.current;
+		if (!node) {
 			return;
 		};
 
-		img.off('load').on('load', () => {
-			const w = img.width();
-			const h = img.height();
+		const img = U.Dom.select('img.media', node) as HTMLImageElement;
+		const wrap = U.Dom.select('.block.blockMedia .wrapContent', node);
 
-			let wh = wrap.height();
+		if (!img) {
+			return;
+		};
+
+		const onLoad = () => {
+			const w = img.naturalWidth;
+			const h = img.naturalHeight;
+
+			let wh = wrap?.clientHeight ?? 0;
 			if (wh < MAX_HEIGHT) {
 				wh = MAX_HEIGHT;
-				wrap.css({ height: MAX_HEIGHT });
+				U.Dom.css(wrap, { height: `${MAX_HEIGHT}px` });
 			};
 
 			if (h < wh) {
-				img.css({ 
+				U.Dom.css(img, {
 					position: 'absolute',
 					left: '50%',
 					top: '50%',
-					width: w, 
-					height: h,
+					width: `${w}px`,
+					height: `${h}px`,
 					transform: 'translate3d(-50%, -50%, 0px)',
 				});
 			};
-		});
+		};
+
+		U.Dom.removeEvent(img, 'load', onLoad);
+		U.Dom.addEvent(img, 'load', onLoad);
 	};
 
 	const getBlock = (): I.Block => {
@@ -109,24 +115,34 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 	const onDownload = () => {
 		const block = getBlock();
 		if (block) {
-			Action.downloadFile(block.getTargetObjectId(), analytics.route.media, block.isFileImage());
+			const targetObjectId = block.getTargetObjectId();
+
+			if (S.Common.isDownloading(targetObjectId)) {
+				return;
+			};
+
+			Action.downloadFile(targetObjectId, analytics.route.media, block.isFileImage());
 		};
 	};
 
 	const resize = () => {
-		const node = $(nodeRef.current);
-		const blocks = node.find('#blocks');
-		const empty = node.find('#empty');
-		const inner = node.find('.side.left #inner');
-		const container = U.Common.getScrollContainer(isPopup);
-		const wh = container.height() - 182;
-
-		if (blocks.hasClass('vertical')) {
-			inner.css({ minHeight: wh });
+		const node = nodeRef.current;
+		if (!node) {
+			return;
 		};
 
-		if (empty.length) {
-			empty.css({ lineHeight: wh + 'px' });
+		const blocks = U.Dom.select('#blocks', node);
+		const empty = U.Dom.select('#empty', node);
+		const inner = U.Dom.select('.side.left #inner', node);
+		const container = U.Dom.getScrollContainer(isPopup);
+		const wh = (container?.clientHeight ?? 0) - 182;
+
+		if (U.Dom.hasClass(blocks, 'vertical')) {
+			U.Dom.css(inner, { minHeight: `${wh}px` });
+		};
+
+		if (empty) {
+			U.Dom.css(empty, { lineHeight: `${wh}px` });
 		};
 	};
 
@@ -237,7 +253,13 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 								/>
 
 								<div className="buttons">
-									<Button text={translate('commonDownload')} color="blank" className="c36" onClick={onDownload} />
+									<Button
+										text={S.Common.isDownloading(file.getTargetObjectId()) ? translate('commonDownloading') : translate('commonDownload')}
+										icon={S.Common.isDownloading(file.getTargetObjectId()) ? 'downloading' : ''}
+										color="blank"
+										className={[ 'c36', (S.Common.isDownloading(file.getTargetObjectId()) ? 'disabled' : '') ].join(' ')}
+										onClick={onDownload}
+									/>
 								</div>
 							</div>
 
@@ -267,6 +289,6 @@ const PageMainMedia = observer(forwardRef<I.PageRef, I.PageComponent>((props, re
 		</div>
 	);
 
-}));
+});
 
 export default PageMainMedia;

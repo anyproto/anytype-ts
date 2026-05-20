@@ -1,9 +1,8 @@
 import React, { forwardRef, useRef, useImperativeHandle, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Loader, Frame, Title } from 'Component';
-import { I, S, U, translate, keyboard, Action, analytics } from 'Lib';
+import * as I from 'Interface';
 
-const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
+const PageMainMembership = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const nodeRef = useRef(null);
 	const { isPopup } = props;
@@ -13,7 +12,7 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 
 		U.Space.openDashboardOrVoid({
 			replace: true,
-			onFadeIn: () => {
+			onRouteChange: () => {
 				if (code) {
 					S.Popup.open('membershipActivation', { data: { code } });
 				} else {
@@ -26,11 +25,12 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 	};
 
 	const resize = () => {
-		const win = $(window);
-		const node = $(nodeRef.current);
-		const obj = U.Common.getPageFlexContainer(isPopup);
+		const obj = U.Dom.getPageFlexContainer(isPopup);
+		const h = isPopup ? (obj?.clientHeight || 0) : window.innerHeight;
 
-		node.css({ height: (isPopup ? obj.height() : win.height()) });
+		if (nodeRef.current) {
+			U.Dom.css(nodeRef.current, { height: `${h}px` });
+		};
 	};
 
 	useEffect(() => {
@@ -53,6 +53,6 @@ const PageMainMembership = observer(forwardRef<I.PageRef, I.PageComponent>((prop
 		</div>
 	);
 
-}));
+});
 
 export default PageMainMembership;

@@ -1,24 +1,23 @@
 import React, { forwardRef, useRef, useEffect, useState, memo, MouseEvent } from 'react';
-import $ from 'jquery';
-import { observer } from 'mobx-react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
-import { I, U, S, J, C, keyboard, translate, analytics, sidebar, Key, Highlight, Storage, Action, Preview, Renderer } from 'Lib';
+import * as I from 'Interface';
+import Highlight from 'Lib/highlight';
+import Storage from 'Lib/storage';
 
 const LIMIT = 20;
-const HEIGHT_ITEM = 44;
-const HEIGHT_ITEM_MESSAGE = 72;
+const HEIGHT_ITEM = 45;
 const HEIGHT_DIV = 16;
 const VAULT_MINIMAL_OFFSET = 44;
 
-const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
+const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { getId } = props;
-	const { space, vaultMessages, vaultIsMinimal } = S.Common;
+	const { space, vaultIsMinimal } = S.Common;
 	const [ filter, setFilter ] = useState('');
 	const checkKeyUp = useRef(false);
 	const closeSidebar = useRef(false);
@@ -35,24 +34,28 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	const cnb = [ 'body' ];
 	const cnf = [ 'bottom' ];
 
-	if (vaultMessages) {
-		cnh.push('withMessages');
-		cnb.push('withMessages');
-	};
+	const keydownHandler = useRef<(e: any) => void>(null);
+	const keyupHandler = useRef<(e: any) => void>(null);
 
 	const unbind = () => {
-		const events = [ 'keydown', 'keyup' ];
-		const ns = 'sidebarPageVault';
-
-		$(window).off(events.map(it => `${it}.${ns}`).join(' '));
+		if (keydownHandler.current) {
+			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+			keydownHandler.current = null;
+		};
+		if (keyupHandler.current) {
+			U.Dom.removeEvent(window, 'keyup', keyupHandler.current);
+			keyupHandler.current = null;
+		};
 	};
 
 	const rebind = () => {
-		const win = $(window);
-
 		unbind();
-		win.on('keydown.sidebarPageVault', e => onKeyDown(e));
-		win.on('keyup.sidebarPageVault', e => onKeyUp(e));
+		keydownHandler.current = (e: any) => onKeyDown(e);
+		keyupHandler.current = (e: any) => onKeyUp(e);
+		U.Dom.addEvents(window, [
+			['keydown', keydownHandler.current],
+			['keyup', keyupHandler.current],
+		]);
 	};
 
 	const onKeyDown = (e: any) => {
@@ -148,22 +151,26 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		if (!vaultIsMinimal) {
 			return;
 		};
-		
+
 		const items = getItems(true);
 		const node = getNode();
-		const element = node.find(`#item-${U.Common.esc(item.id)}`);
-		const iconWrap = element.find('.iconWrap');
+		const el = U.Dom.select(`#item-${U.Common.esc(item.id)}`, node);
+		const iconWrap = U.Dom.select(`#item-${U.Common.esc(item.id)} .iconWrap`, node);
 		const idx = items.findIndex(it => it.id == item.id) + 1;
 		const caption = (idx >= 1) && (idx <= 9) ? keyboard.getCaption(`space${idx}`) : '';
 		const text = Preview.tooltipCaption(U.String.htmlSpecialChars(item.tooltip || item.name), caption);
 
-		Preview.tooltipShow({ 
-			text, 
-			element, 
-			className: 'fromVault', 
+		if (!el) {
+			return;
+		};
+
+		Preview.tooltipShow({
+			text,
+			element: el,
+			className: 'fromVault',
 			typeX: I.MenuDirection.Left,
 			typeY: I.MenuDirection.Center,
-			offsetX: node.width() / 2 + iconWrap.width() / 2,
+			offsetX: U.Dom.contentWidth(node) / 2 + U.Dom.contentWidth(iconWrap) / 2,
 			delay,
 		});
 	};
@@ -221,6 +228,9 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			};
 
 			items.unshift({ id: 'createSpace' });
+		} else
+		if (!skipUi && !filter && (items.length == 1)) {
+			items.push({ id: 'createSpaceInline' });
 		};
 
 		return items;
@@ -241,6 +251,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			withOpenNewTab: true,
 			noMembers: true, 
 			noManage: true,
+			noShare: true,
 			route: analytics.route.vault,
 		});
 	};
@@ -277,16 +288,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const iconCreate = () => {
-		const cn = [ 'plus' ];
-
-		if (!vaultIsMinimal) {
-			cn.push('withBackground');
-		};
-
 		return (
 			<Icon
 				id="button-create-space"
-				className={cn.join(' ')}
+				name="plus/menu" className="plus" withBackground={!vaultIsMinimal}
 				tooltipParam={{
 					...tooltipParam(),
 					text: translate('commonCreateSpace'),
@@ -299,12 +304,12 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 	const onClick = (e: any, item: any) => {
 		if (e.ctrlKey || e.metaKey) {
-			Action.openSpaceTab(item.targetSpaceId, item.uxType, analytics.route.vault);
+			Action.openSpaceTab(item.targetSpaceId, item.spaceType, analytics.route.vault);
 			return;
 		};
 
 		if (S.Common.isPinned) {
-			Renderer.send('openSpaceInTab', item.targetSpaceId, item.uxType);
+			Renderer.send('openSpaceInTab', item.targetSpaceId, item.spaceType);
 		} else
 		if (item.targetSpaceId != space) {
 			U.Router.switchSpace(item.targetSpaceId, '', !!space, {}, false);
@@ -332,17 +337,27 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const getNode = () => {
-		return $(`#${getId()}`);
+		return U.Dom.get(getId());
+	};
+
+	const updateBottomGradient = (scrollTop: number, scrollHeight: number, clientHeight: number) => {
+		const bottom = U.Dom.select('.bottom', getNode());
+		if (!bottom) {
+			return;
+		};
+
+		const atBottom = (scrollHeight <= clientHeight) || (scrollTop + clientHeight >= scrollHeight - 1);
+		U.Dom.toggleClass(bottom, 'isBottom', atBottom);
 	};
 
 	const setHover = (item: any) => {
 		if (item) {
-			getNode().find(`#item-${U.Common.esc(item.id)}`).addClass('hover');
+			U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(item.id)}`, getNode()), 'hover');
 		};
 	};
 
 	const unsetHover = () => {
-		getNode().find('.item.hover').removeClass('hover');
+		U.Dom.selectAll('.item.hover', getNode()).forEach(el => U.Dom.removeClass(el, 'hover'));
 	};
 
 	const onFilterChange = (v: string) => {
@@ -358,10 +373,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		setFilter('');
 	};
 
-	const ItemObject = (item: any) => {
+	const ItemObject = forwardRef((item: any, forwardedRef: any) => {
 		if (item.isDiv) {
 			return (
-				<div className="separator" style={item.style}>
+				<div ref={forwardedRef} className="separator" style={item.style}>
 					<div className="inner" />
 				</div>
 			);
@@ -369,26 +384,43 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (item.id == 'createSpace') {
 			return (
-				<div className="item add" style={item.style}>
+				<div ref={forwardedRef} className="item add" style={item.style}>
 					{iconCreate()}
 				</div>
 			);
 		};
 
-		const { targetSpaceId, id, lastMessage, isOneToOne, isChat, isPinned } = item;
+		if (item.id == 'createSpaceInline') {
+			return (
+				<div
+					ref={forwardedRef}
+					id="button-create-space-inline"
+					className="item add inline"
+					style={item.style}
+					onClick={onCreate}
+				>
+					<div className="iconWrap">
+						<Icon className="plus" name="plus/menu" />
+					</div>
+					<div className="info">
+						<div className="nameWrapper">
+							<Label className="name" text={translate('commonNewChannel')} />
+						</div>
+					</div>
+				</div>
+			);
+		};
+
+		const { targetSpaceId, id, lastMessage, isOneToOne, isPinned } = item;
 		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, disabled: !isPinned });
 		const style = {
 			transform: CSS.Transform.toString(transform),
 			transition,
 			...item.style,
 		};
-		const cn = [ 'item', U.Data.spaceClass(item.uxType) ];
-		const iconSize = vaultMessages && !vaultIsMinimal ? 48 : 32;
-		const counter = <ChatCounter spaceId={targetSpaceId} disableMention={vaultIsMinimal} />;
-
-		let chatName = null;
-		let time = null;
-		let last = null;
+		const cn = [ 'item', U.Data.spaceClass(item.spaceType) ];
+		const iconSize = 32;
+		const counter = <ChatCounter spaceId={targetSpaceId} isMinimal={vaultIsMinimal} />;
 		const icons = [];
 
 		if (targetSpaceId == space) {
@@ -405,22 +437,18 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 		if (!item.hasCounter && item.isPinned) {
 			cn.push('isPinned');
-			icons.push('pin');
+			icons.push({ className: 'pin', name: 'vault/pin' });
 		};
 
 		if (item.notificationMode != I.NotificationMode.All) {
 			cn.push('isMuted');
 		};
 
-		const rawCounters = !isChat && !isOneToOne ? S.Chat.getSpaceCounters(targetSpaceId) : null;
-		const hasUnread = rawCounters && (item.notificationMode != I.NotificationMode.Nothing) && !!(rawCounters.messageCounter || rawCounters.mentionCounter);
+		const rawCounters = !isOneToOne ? S.Chat.getSpaceCounters(targetSpaceId) : null;
+		const hasUnread = rawCounters && !!(rawCounters.messageCounter || rawCounters.mentionCounter || rawCounters.reactionCounter);
 
 		if (lastMessage) {
-			const { createdAt, creator, isSynced } = lastMessage;
-
-			time = <Label className="time" text={U.Date.timeAgo(createdAt)} />;
-			last = <Label className="lastMessage" text={S.Chat.getMessageSimpleText(targetSpaceId, lastMessage, !isOneToOne)} />;
-			chatName = <Label className="chatName" text={U.Object.name(item.chat)} />;
+			const { creator, isSynced } = lastMessage;
 
 			if ((creator == S.Auth.account.id) && !isSynced) {
 				cn.push('isSyncing');
@@ -429,68 +457,36 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			cn.push('noMessages');
 		};
 
-		let info = null;
-		if (vaultMessages) {
-			let message = null;
+		const info = (
+			<div className="nameWrapper">
+				<ObjectName object={item} />
 
-			if (isChat || isOneToOne) {
-				message = (
-					<div className="messageWrapper">
-						{last}
-						<div className="icons">
-							{icons.map(icon => <Icon key={icon} className={icon} />)}
-						</div>
-						{counter}
-					</div>
-				);
-			} else {
-				message = (
-					<>
-						<div className="chatWrapper">
-							{chatName}
-							<div className="icons">
-								{icons.map(icon => <Icon key={icon} className={icon} />)}
-							</div>
-							{counter}
-						</div>
-						<div className="messageWrapper">
-							{last}
-						</div>
-					</>
-				);
-			};
-
-			info = (
-				<>
-					<div className="nameWrapper">
-						<ObjectName object={item} />
-						{time}
-					</div>
-					{message}
-				</>
-			);
-		} else {
-			info = (
-				<div className="nameWrapper">
-					<ObjectName object={item} />
-
-					<div className="icons">
-						{icons.map(icon => <Icon key={icon} className={icon} />)}
-					</div>
-
-					{counter}
+				<div className="icons">
+					{icons.map(icon => <Icon key={icon.className} name={icon.name} className={icon.className} />)}
 				</div>
-			);
+
+				{counter}
+			</div>
+		);
+
+		const mergedRef = (node: any) => {
+			setNodeRef(node);
+			if (typeof forwardedRef === 'function') {
+				forwardedRef(node);
+			} else
+			if (forwardedRef) {
+				forwardedRef.current = node;
+			};
 		};
 
 		return (
-			<div 
-				ref={setNodeRef}
+			<div
+				ref={mergedRef}
 				id={`item-${item.id}`}
 				className={cn.join(' ')}
 				{...attributes}
 				{...listeners}
-				style={style} 
+				style={style}
 				onClick={e => onClick(e, item)}
 				onMouseEnter={() => onOver(item)}
 				onMouseLeave={onOut}
@@ -507,7 +503,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				) : ''}
 			</div>
 		);
-	};
+	});
 
 	const rowRenderer = (param: any) => {
 		const item: any = items[param.index];
@@ -553,10 +549,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			offsetY: menuHelpOffset,
 			subIds: J.Menu.help,
 			onOpen: () => {
-				$(`#${getId()} .bottom`).addClass('hover');
+				U.Dom.addClass(U.Dom.select(`#${getId()} .bottom`), 'hover');
 			},
 			onClose: () => {
-				$(`#${getId()} .bottom`).removeClass('hover');
+				U.Dom.removeClass(U.Dom.select(`#${getId()} .bottom`), 'hover');
 			},
 		});
 	};
@@ -566,7 +562,7 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		Highlight.hide('createSpace');
 
 		let param: I.MenuParam = {
-			element: `#button-create-space`,
+			element: '#button-create-space',
 			className: 'spaceCreate fixed',
 			classNameWrap: 'fromSidebar',
 		};
@@ -581,19 +577,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		U.Menu.spaceCreate(param, analytics.route.vault);
 	};
 
-	const onVaultContext = (e: any) => {
-		U.Menu.vaultStyle({
-			rect: { x: e.pageX, y: e.pageY, width: 0, height: 0 },
-			className: 'vaultStyle fixed',
-			classNameWrap: 'fromSidebar',
-		});
-	};
-
 	const getRowHeight = (item: any) => {
 		if (item.isDiv) {
 			return HEIGHT_DIV;
 		};
-		return vaultMessages && !vaultIsMinimal ? HEIGHT_ITEM_MESSAGE : HEIGHT_ITEM;
+		return HEIGHT_ITEM;
 	};
 
 	useEffect(() => {
@@ -605,6 +593,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			unbind();
 		};
 	}, []);
+
+	const itemIds = items.map(it => it.id).join(',');
 
 	useEffect(() => {
 		const prev = prevItemsRef.current;
@@ -624,18 +614,24 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 			if (removedHeightAbove > 0) {
 				const newTop = Math.max(0, scrollTopRef.current - removedHeightAbove);
 				scrollTopRef.current = newTop;
-
-				const node = getNode();
-				node.find('.ReactVirtualized__Grid').scrollTop(newTop);
+				listRef.current?.scrollToPosition(newTop);
 			};
 		};
 
 		prevItemsRef.current = items.map(it => ({ id: it.id, height: getRowHeight(it) }));
-	});
+
+		const grid = U.Dom.select('.ReactVirtualized__Grid', getNode());
+		if (grid) {
+			updateBottomGradient(grid.scrollTop, grid.scrollHeight, grid.clientHeight);
+		};
+	}, [ itemIds ]);
 
 	return (
 		<>
-			<div onContextMenu={onVaultContext} id="head" className={cnh.join(' ')}>
+			<div 
+				id="head" 
+				className={cnh.join(' ')}
+			>
 				<div className="side left">
 					{!vaultIsMinimal ? (
 						<div className="name">
@@ -648,11 +644,14 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 					{!vaultIsMinimal ? (
 						<>
 							{iconCreate()}
-							<Icon 
-								className="toggle withBackground"
-								tooltipParam={{ 
-									text: translate('popupShortcutMainBasics15'), 
-									caption: keyboard.getCaption('toggleSidebar'), 
+							<Icon
+								id="button-vault-toggle"
+								name="widget/sidebarToggle"
+								className="toggle"
+								withBackground={true}
+								tooltipParam={{
+									text: translate('popupShortcutMainBasics15'),
+									caption: keyboard.getCaption('toggleSidebar'),
 									typeY: I.MenuDirection.Bottom,
 								}}
 								onClick={() => sidebar.leftPanelToggle(true, true)}
@@ -666,15 +665,18 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 				<div className="filterWrapper">
 					<Filter
 						ref={filterRef}
-						icon="search"
-						className="outlined round"
-						placeholder={translate('commonSearch')}
+						size={32}
+						iconParam={{ name: 'common/search' }}
+						placeholder={translate('commonFilterChannels')}
 						onChange={onFilterChange}
 						onClear={onFilterClear}
 					/>
 				</div>
 			) : ''}
-			<div onContextMenu={onVaultContext} id="body" className={cnb.join(' ')}>
+			<div 
+				id="body" 
+				className={cnb.join(' ')}
+			>
 				{!items.length && !vaultIsMinimal ? (
 					<EmptySearch filter={filter} text={translate('commonObjectEmpty')} />
 				) : ''}
@@ -711,7 +713,10 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
 											scrollToAlignment="center"
-											onScroll={({ scrollTop }) => scrollTopRef.current = scrollTop}
+											onScroll={({ scrollTop, scrollHeight, clientHeight }) => {
+												scrollTopRef.current = scrollTop;
+												updateBottomGradient(scrollTop, scrollHeight, clientHeight);
+											}}
 										/>
 									</SortableContext>
 								</DndContext>
@@ -731,8 +736,8 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 							onMouseEnter={e => Preview.tooltipShow({ 
 								...tooltipParam(),
 								typeY: vaultIsMinimal ? I.MenuDirection.Center : I.MenuDirection.Top,
-								text: translate('popupSettingsAccountPersonalInformationTitle'), 
-								element: $(e.currentTarget),
+								text: translate('popupSettingsAccountPersonalInformationTitle'),
+								element: e.currentTarget as HTMLElement,
 							})}
 							onMouseLeave={() => Preview.tooltipHide(false)}
 						>
@@ -743,11 +748,11 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 
 					<div className="side right">
 						<Icon
+							name="vault/gallery"
 							className="gallery"
 							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
 							onClick={onGallery}
 						/>
-
 						<Button
 							id="button-help"
 							className="help"
@@ -761,6 +766,6 @@ const SidebarPageVault = observer(forwardRef<{}, I.SidebarPageComponent>((props,
 		</>
 	);
 
-}));
+});
 
 export default memo(SidebarPageVault);

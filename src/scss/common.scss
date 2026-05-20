@@ -6,7 +6,7 @@ html, body { height: 100%; }
 
 body {
 	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow: hidden; background: var(--color-bg-primary);
-	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none; scrollbar-gutter: stable;
+	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none;
 }
 body.colResize { cursor: col-resize !important; }
 body.colResize * { cursor: col-resize !important; user-select: none !important; }
@@ -58,14 +58,6 @@ input, textarea, select { font-family: 'Inter'; }
 	.version { @include text-small; transition-delay: 0.15s; }
 }
 
-#globalFade { 
-	position: fixed; z-index: 23; background: var(--color-bg-primary); right: 0px; top: 0px; width: 100%; height: 100%; display: none; opacity: 0; 
-	transition: opacity 0.3s $easeInQuint;
-}
-#globalFade {
-	#loader { position: absolute; right: 0px; top: 0px; width: 100%; height: 100%; width: 100%; }
-}
-#globalFade.show { opacity: 1; }
 #graphPreview { position: fixed; z-index: 1000; left: 0px; top: 0px; }
 
 #mainAnimation { display: none; }
@@ -143,7 +135,7 @@ a { color: var(--color-text-primary); }
 .block.isSelectionSelected > .wrapContent > .selectionTarget::after,
 .selectionTarget.isKeyboardFocused::after
 {
-	display: block; position: absolute; left: -2px; top: 0px; width: calc(100% + 4px); height: 100%; background-color: var(--color-system-selection);
+	display: block; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background-color: var(--color-system-selection);
 	pointer-events: none; z-index: 10; content: ""; border-radius: 2px;
 }
 
@@ -164,7 +156,7 @@ a { color: var(--color-text-primary); }
 	}
 	
 	.icon.resize { display: none; }
-	.icon.download { display: none; }
+	.icon.commonDownload { display: none; }
 }
 
 @import "./debug";
@@ -178,6 +170,7 @@ a { color: var(--color-text-primary); }
 @import "./widget/common.scss";
 @import "./popup/common.scss";
 @import "./menu/common.scss";
+@import "./menu/icon.scss";
 @import "./notification/common.scss";
 
 @import "./media/print.scss";
@@ -188,67 +181,47 @@ html {
 		.pageWrapper { padding-top: 8px; }
 		.subPageWrapper { padding: 0px; }
 		.pageFlex { padding: 0px; }
+
+		&.platformMac:not(.isFullScreen) {
+			#dragPanel {
+				display: block; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1;
+				user-select: none; pointer-events: all; background: var(--color-shape-primary); -webkit-app-region: drag;
+			}
+
+			.sidebar.isMinimal .pageWrapper { padding-top: 52px; }
+
+			.sidebar:not(.isMinimal) .sidebarPage.pageVault > .head {
+				height: 36px; margin-bottom: 8px;
+
+				.side.left .name { display: none; }
+			}
+
+			#header:not(.withSidebarTotalLeft) > .side.left { padding-left: 84px; }
+			#sidebar {
+				#subPageWrapper {
+					.sidebarPage > .head { padding-left: 84px; }
+				}
+			}
+		}
 	}
 
 	&:not(.isSingleTab) {
 		.sidebarPage.pageWidget > .body { padding-bottom: 0px; }
 	}
 
-	&.platformMac.isSingleTab {
-		&:not(.isFullScreen) {
-			#dragPanel {
-				display: block; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1;
-				user-select: none; pointer-events: all; background: var(--color-shape-primary); -webkit-app-region: drag;
-			}
-
-			.sidebar.isMinimal {
-				.pageWrapper { padding-top: 52px; }
-			}
-
-			.sidebar:not(.isMinimal) {
-				.sidebarPage.pageVault {
-					> .head { height: 36px; margin-bottom: 8px; }
-				}
-
-				.sidebarPage.pageVault {
-					> .head {
-						.side.left {
-							.name { display: none; }
-						}
-					}
-				}
-			}
-
-			#header:not(.withSidebarTotalLeft) {
-				> .side.left { padding-left: 88px; }
-			}
+	&.platformWindows.isSingleTab:not(.isFullScreen) {
+		&.noMenuBar #dragPanel {
+			display: block; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1;
+			user-select: none; pointer-events: all; background: var(--color-shape-primary); -webkit-app-region: drag;
 		}
-	}
 
-
-	&.platformWindows {
-		&.isSingleTab:not(.isFullScreen) {
-			&.noMenuBar {
-				#dragPanel {
-					display: block; position: fixed; top: 0px; left: 0px; width: 100%; height: 52px; z-index: -1;
-					user-select: none; pointer-events: all; background: var(--color-shape-primary); -webkit-app-region: drag;
-				}
-			}
-
-			.sidebar {
-				.pageWrapper { padding-top: 8px; }
-			}
-		}
+		.sidebar .pageWrapper { padding-top: 8px; }
 	}
 
 	&.platformLinux {
 		body { overflow-y: auto; }
 
-		&.isSingleTab:not(.isFullScreen) {
-			.sidebar {
-				.pageWrapper { padding-top: 8px; }
-			}
-		}
+		&.isSingleTab:not(.isFullScreen) .sidebar .pageWrapper { padding-top: 8px; }
 	}
 
 	&.platformWindows, &.platformLinux {
@@ -256,17 +229,5 @@ html {
 		::-webkit-scrollbar-thumb { background: var(--color-control-active); border-radius: 5px; }
 		::-webkit-scrollbar-corner { background-color: transparent; }
 		::-webkit-scrollbar-button { display: none; }
-	}
-
-	&.platformLinux {
-		.sidebar {
-			.subPageWrapper:not(.withSidebarLeft) {
-				.sidebarPage {
-					> .head {
-						.side.left	{ padding-left: 36px; }
-					}
-				}
-			}
-		}
 	}
 }

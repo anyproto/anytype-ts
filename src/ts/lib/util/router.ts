@@ -1,5 +1,6 @@
-import $ from 'jquery';
-import { I, C, S, U, J, Preview, analytics, Storage, sidebar, translate, focus, Renderer } from 'Lib';
+import * as I from 'Interface';
+import Storage from 'Lib/storage';
+import { focus } from 'Lib/focus';
 
 interface RouteParam {
 	page: string;
@@ -18,7 +19,7 @@ interface RouteParam {
  *
  * Key responsibilities:
  * - Building and parsing route URLs
- * - Navigating between pages with optional animations
+ * - Navigating between pages
  * - Managing browser history
  * - Switching between spaces with proper state management
  *
@@ -28,7 +29,6 @@ interface RouteParam {
 class UtilRouter {
 
 	history: any = null;
-	isOpening = false;
 
 	/**
 	 * Initializes the router with a history object.
@@ -36,7 +36,6 @@ class UtilRouter {
 	 */
 	init (history: any) {
 		this.history = history;
-		this.isOpening = false; // Reset flag on init to prevent stuck state
 	};
 
 	/**
@@ -128,7 +127,7 @@ class UtilRouter {
 	};
 
 	/**
-	 * Navigates to a route with optional parameters and animation.
+	 * Navigates to a route with optional parameters.
 	 * @param {string} route - The route string.
 	 * @param {Partial<I.RouteParam>} param - Additional navigation parameters.
 	 */
@@ -140,7 +139,7 @@ class UtilRouter {
 		param = param || {};
 
 		const { space } = S.Common;
-		const { replace, animate, delay, onFadeOut, onFadeIn, onRouteChange } = param;
+		const { replace, onRouteChange } = param;
 		const routeParam = this.getParam(route);
 		const newRoute = this.build(routeParam);
 
@@ -158,57 +157,41 @@ class UtilRouter {
 		S.Popup.closeAll();
 		focus.clear(true);
 
-		if (routeParam.spaceId && (routeParam.spaceId != space) && ![ 'object', 'invite' ].includes(routeParam.action)) {
+		if (S.Common.getRightSidebarState(false).page == 'object/tableOfContents') {
+			sidebar.rightPanelClose(false, false);
+		};
+
+		// If route explicitly targets another space, switch before navigating.
+		// NOTE: Universal object routes (`/object?objectId=...&spaceId=...`) are normalized to
+		// `{ page: 'main', action: 'object', id: objectId, spaceId }` in `getParam()`.
+		// They must also trigger a space switch; otherwise we try to open the object in the
+		// previous space (stale `S.Common.space`) when switching spaces quickly.
+		if (routeParam.spaceId && (routeParam.spaceId != space) && ![ 'invite' ].includes(routeParam.action)) {
 			this.switchSpace(routeParam.spaceId, newRoute, false, param, false);
 			return;
 		};
 
 		const change = () => {
+			Preview.hideAll();
+
+			if (replace) {
+				this.history = this.history || {};
+				this.history.entries = [];
+				this.history.index = -1;
+			};
+
 			this.history.push(newRoute);
 
-			if (updateTabRoute && ![ 'index', 'auth' ].includes(routeParam.page)) {
+			const isTransientMain = (routeParam.page == 'main') && [ 'blank', 'void' ].includes(routeParam.action);
+
+			if (updateTabRoute && ![ 'index', 'auth' ].includes(routeParam.page) && !isTransientMain) {
 				Renderer.send('updateTab', U.Common.getElectron().tabId(), { route: newRoute });
 			};
 
 			onRouteChange?.();
 		};
 
-		const onTimeout = () => {
-			Preview.hideAll();
-
-			if (replace) {
-				this.history.entries = [];
-				this.history.index = -1;
-			};
-
-			if (!animate) {
-				onFadeOut?.();
-				change();
-				onFadeIn?.();
-				return;
-			};
-
-			const fade = $('#globalFade');
-			const t = delay || J.Constant.delay.route;
-			const wait = t;
-
-			fade.css({ transitionDuration: `${t / 1000}s` }).show();
-				
-			window.setTimeout(() => fade.addClass('show'), 15);
-
-			window.setTimeout(() => {
-				onFadeOut?.();
-				change();
-			}, t);
-
-			window.setTimeout(() => {
-				onFadeIn?.();
-				fade.removeClass('show');
-				window.setTimeout(() => fade.hide(), t);
-			}, wait + t);
-		};
-
-		timeout ? window.setTimeout(() => onTimeout(), timeout) : onTimeout();
+		timeout ? window.setTimeout(() => change(), timeout) : change();
 	};
 
 	/**
@@ -222,17 +205,16 @@ class UtilRouter {
 	switchSpace (id: string, route: string, sendEvent: boolean, routeParam: any, useFallback: boolean) {
 		routeParam = routeParam || {};
 
-		if (this.isOpening) {
-			return;
-		};
-
 		if (!id) {
 			console.log('[UtilRouter].swithSpace: id is empty');
 			return;
 		};
 
+		if (route) {
+			S.Common.redirectSet(route);
+		};
+
 		S.Menu.closeAllForced();
-		S.Progress.showSet(false);
 
 		if (sendEvent) {
 			const counters = S.Chat.getSpaceCounters(id);
@@ -241,19 +223,16 @@ class UtilRouter {
 			analytics.event('SwitchSpace', { unreadMessageCount: messageCounter, hasMentions: !!mentionCounter });
 		};
 
-		this.isOpening = true;
 		U.Subscription.destroyTypeCheck();
 
 		C.WorkspaceOpen(id, (message: any) => {
 			if (message.error.code) {
-				this.isOpening = false;
-
 				if (!useFallback) {
 					U.Space.openDashboard(routeParam);
 					window.setTimeout(() => {
 						S.Popup.open('confirm', {
 							data: {
-								icon: 'error',
+								iconParam: { name: 'popup/header/error', color: 'orange' },
 								title: translate('commonError'),
 								text: message.error.description,
 								canCancel: true,
@@ -266,7 +245,7 @@ class UtilRouter {
 				return;
 			};
 
-			this.go('/main/blank', { 
+			this.go('/main/blank', {
 				updateTabRoute: false,
 				onRouteChange: () => {
 					Storage.set('spaceId', id);
@@ -279,8 +258,7 @@ class UtilRouter {
 					this.rightSidebarCheck(false);
 
 					const onStartingIdCheck = () => {
-						U.Data.onAuth({ route, routeParam }, () => {
-							this.isOpening = false;
+						U.Data.onSpaceSwitch({ route, routeParam }, () => {
 							S.Common.setLeftSidebarState('vault', 'widget');
 
 							const dataLeft = sidebar.getData(I.SidebarPanel.Left);
@@ -289,6 +267,8 @@ class UtilRouter {
 							if (!S.Common.hideSidebar && !((dataLeft.isClosed && dataLeft.savedClosed) || dataSubLeft.savedClosed)) {
 								sidebar.leftPanelSubPageOpen('widget', false, true);
 							};
+
+							routeParam?.onRouteChange?.();
 						});
 					};
 

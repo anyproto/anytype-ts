@@ -1,9 +1,8 @@
 import React, { forwardRef, useEffect, useState, useRef } from 'react';
-import { observer } from 'mobx-react';
 import { Label, Title, IconObject, Icon } from 'Component';
-import { I, U, S, translate, C, Action, Relation, analytics } from 'Lib';
+import * as I from 'Interface';
 
-const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsNotifications = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { getId } = props;
 	const { space } = S.Common;
@@ -43,7 +42,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 
 	const onSpaceModeChange = (v: I.NotificationMode) => {
 		C.PushNotificationSetSpaceMode(space, Number(v));
-		analytics.event('ChangeMessageNotificationState', { type: v, uxType: spaceview.uxType, route: analytics.route.settingsSpaceNotifications });
+		analytics.event('ChangeMessageNotificationState', { type: v, spaceType: spaceview.spaceType, route: analytics.route.settingsSpaceNotifications });
 	};
 
 	const onChatModeClick = (el: any) => {
@@ -98,18 +97,20 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 
 				<div className="actionItems">
 					{notificationOptions.map((el, idx) => {
+						const isSelected = notificationMode == el.id;
 						const cn = [ 'item' ];
-						if (notificationMode == el.id) {
+						if (isSelected) {
 							cn.push('selected');
 						};
 
 						return (
-							<div 
-								key={idx} 
-								onClick={() => onSpaceModeChange(el.id)} 
+							<div
+								key={idx}
+								onClick={() => onSpaceModeChange(el.id)}
 								className={cn.join(' ')}
 							>
 								<Label text={el.name} />
+								{isSelected ? <Icon name="common/tick" className="check" /> : ''}
 							</div>
 						);
 					})}
@@ -132,7 +133,7 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 									</div>
 								</div>
 								<div className="side right">
-									<Icon onClick={() => onChatModeClick(el)} className="more withBackground" />
+									<Icon name="common/more" className="more" withBackground={true} onClick={() => onChatModeClick(el)} />
 								</div>
 							</div>
 						))}
@@ -143,6 +144,6 @@ const PageMainSettingsNotifications = observer(forwardRef<I.PageRef, I.PageSetti
 		</div>
 	);
 
-}));
+});
 
 export default PageMainSettingsNotifications;

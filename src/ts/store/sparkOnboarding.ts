@@ -1,7 +1,7 @@
 import { observable, action, makeObservable, computed } from 'mobx';
-import { I, getSparkOnboardingService } from 'Lib';
 import { SparkOnboardingService } from 'Lib/service/sparkOnboarding';
 import { GRAPH_CONFIG, UI_CONFIG, VALIDATION_CONFIG } from 'Lib/constant/sparkOnboarding';
+import * as I from 'Interface';
 
 class SparkOnboardingStore {
 	step: I.OnboardingStep = I.OnboardingStep.Goal;
@@ -608,7 +608,7 @@ class SparkOnboardingStore {
 					const nodeId = this.typeNameToNodeId(type.name);
 					
 					// Extract icon from the type data (if available in the new structure)
-					const iconName = (type as any).icon || undefined;
+					const iconName = type.icon || undefined;
 					
 					const node: I.GraphNode = {
 						id: nodeId,
@@ -623,7 +623,7 @@ class SparkOnboardingStore {
 					this.addGraphNode(node);
 					
 					// Add example objects with additional delay after the type appears
-					const exampleTitles = (type as any).exampleTitles || [];
+					const exampleTitles = type.exampleTitles || [];
 					if (exampleTitles.length > 0) {
 						
 						exampleTitles.forEach((title: string, objIndex: number) => {

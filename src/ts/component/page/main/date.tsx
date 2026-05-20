@@ -1,12 +1,11 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { observer } from 'mobx-react';
 import { Header, Footer, Deleted, ListObject, Button, Label, Loader, HeadSimple } from 'Component';
-import { I, C, S, U, J, Action, translate, analytics, keyboard, sidebar } from 'Lib';
 import { eachDayOfInterval, isEqual, format, fromUnixTime } from 'date-fns';
+import * as I from 'Interface';
 
 const SUB_ID = 'dateListObject';
 
-const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref: any) => {
+const PageMainDate = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) => {
 
 	const { space, config } = S.Common;
 	const { isPopup } = props;
@@ -115,7 +114,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 	};
 
 	const reload = () => {
-		listRef.current?.getData(1);
+		listRef.current?.reload();
 	};
 
 	const getFilters = (start: number, end: number): I.Filter[] => {
@@ -216,7 +215,7 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 								key={item.relationKey}
 								active={relationKey == item.relationKey}
 								color="blank"
-								className="c36"
+								size={28}
 								onClick={() => onCategoryClick(item.relationKey)}
 								icon={icon}
 								text={item.name}
@@ -235,6 +234,8 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 					filters={filters}
 					route={analytics.route.screenDate}
 					relationKeys={keys}
+					useInfiniteScroll={true}
+					isPopup={isPopup}
 				/>
 			</>
 		);
@@ -292,6 +293,6 @@ const PageMainDate = observer(forwardRef<I.PageRef, I.PageComponent>((props, ref
 
 	return content;
 
-}));
+});
 
 export default PageMainDate;

@@ -1,4 +1,4 @@
-import $ from 'jquery';
+
 
 /**
  * Utility class for managing sticky horizontal scrollbar synchronization
@@ -14,21 +14,19 @@ class UtilStickyScrollbar {
 	 * @param isSyncingScroll - Ref to prevent feedback loops
 	 * @returns The new isSyncingScroll state
 	 */
-	syncFromMain (scroll: JQuery<HTMLElement>, stickyScrollbar: JQuery<HTMLElement>, isSyncingScroll: boolean): boolean {
-		if (!stickyScrollbar.length || isSyncingScroll) {
+	syncFromMain (scroll: HTMLElement, stickyScrollbar: HTMLElement, isSyncingScroll: boolean): boolean {
+		if (!stickyScrollbar || isSyncingScroll) {
 			return isSyncingScroll;
 		};
 
 		isSyncingScroll = true;
 
-		const scrollEl = scroll.get(0);
-		const stickyEl = stickyScrollbar.get(0);
-		const maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
-		const maxSticky = stickyEl.scrollWidth - stickyEl.clientWidth;
+		const maxScroll = scroll.scrollWidth - scroll.clientWidth;
+		const maxSticky = stickyScrollbar.scrollWidth - stickyScrollbar.clientWidth;
 
 		if (maxScroll > 0 && maxSticky > 0) {
-			const scrollRatio = scrollEl.scrollLeft / maxScroll;
-			stickyScrollbar.scrollLeft(scrollRatio * maxSticky);
+			const scrollRatio = scroll.scrollLeft / maxScroll;
+			stickyScrollbar.scrollLeft = scrollRatio * maxSticky;
 		};
 
 		isSyncingScroll = false;
@@ -43,22 +41,20 @@ class UtilStickyScrollbar {
 	 * @param isSyncingScroll - Ref to prevent feedback loops
 	 * @returns The new isSyncingScroll state
 	 */
-	syncFromSticky (scroll: JQuery<HTMLElement>, stickyScrollbar: JQuery<HTMLElement>, isSyncingScroll: boolean): boolean {
+	syncFromSticky (scroll: HTMLElement, stickyScrollbar: HTMLElement, isSyncingScroll: boolean): boolean {
 		if (isSyncingScroll) {
 			return isSyncingScroll;
 		};
 
 		isSyncingScroll = true;
 
-		if (scroll.length && stickyScrollbar.length) {
-			const scrollEl = scroll.get(0);
-			const stickyEl = stickyScrollbar.get(0);
-			const maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
-			const maxSticky = stickyEl.scrollWidth - stickyEl.clientWidth;
+		if (scroll && stickyScrollbar) {
+			const maxScroll = scroll.scrollWidth - scroll.clientWidth;
+			const maxSticky = stickyScrollbar.scrollWidth - stickyScrollbar.clientWidth;
 
 			if (maxScroll > 0 && maxSticky > 0) {
-				const stickyRatio = stickyEl.scrollLeft / maxSticky;
-				scroll.scrollLeft(stickyRatio * maxScroll);
+				const stickyRatio = stickyScrollbar.scrollLeft / maxSticky;
+				scroll.scrollLeft = stickyRatio * maxScroll;
 			};
 		};
 

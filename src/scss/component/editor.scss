@@ -22,14 +22,20 @@
 	}
 
 	.editor {
-		.icon.buttonAdd { 
-			width: 19px; height: 19px; position: absolute; z-index: 5; user-select: none; background-image: url('~img/icon/block/add0.svg'); 
-			transition: opacity 0.075s $easeInQuint, transform 0.075s $easeInQuint, background-image 0.1s $easeInQuint; display: none;
+		.icon.buttonAdd {
+			width: 19px; height: 19px; position: absolute; z-index: 5; user-select: none;
+			transition: opacity 0.075s $easeInQuint, transform 0.075s $easeInQuint; display: none;
+
+			.bg { fill: var(--color-shape-secondary); }
+			.cross { fill: var(--color-icon); }
 		}
-		.icon.buttonAdd:hover { background-image: url('~img/icon/block/add1.svg'); }
-		.icon.buttonAdd.show { display: block; }
+		.icon.buttonAdd:hover {
+			.bg { fill: var(--color-text-primary); }
+			.cross { fill: #fff; }
+		}
+		.icon.buttonAdd.show { display: flex; }
 		
-		.blockLast { margin-left: -50px; }
+		.blockLast { margin-left: -50px; height: 44px; }
 
 		.tableOfContents { position: fixed; top: 50%; transform: translate3d(0px, -50%, 0px); padding: 16px; z-index: 10; }
 		.tableOfContents {

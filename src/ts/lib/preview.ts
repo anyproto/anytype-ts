@@ -1,13 +1,8 @@
-import $ from 'jquery';
-import { I, S, U, J, keyboard } from 'Lib';
+import * as I from 'Interface';
 
 const BORDER = 12;
 const DELAY_TOOLTIP = 650;
 const DELAY_PREVIEW = 300;
-
-/**
- * Preview class for handling tooltips, previews, and toasts.
- */
 
 class Preview {
 
@@ -21,12 +16,10 @@ class Preview {
 	isPreviewOpen = false;
 	isTooltipOpen = false;
 
-	/**
-	 * Displays a tooltip with the given parameters.
-	 * @param {Partial<I.TooltipParam>} param - Tooltip parameters.
-	 */
+	private clickTooltipHandler: ((e: Event) => void) | null = null;
+
 	tooltipShow (param: Partial<I.TooltipParam>) {
-		const { element } = param;
+		const el = param.element instanceof HTMLElement ? param.element : null;
 		const typeX = Number(param.typeX) || I.MenuDirection.Center;
 		const typeY = Number(param.typeY) || I.MenuDirection.Top;
 		const offsetX = Number(param.offsetX) || 0;
@@ -37,7 +30,7 @@ class Preview {
 			delay = param.delay;
 		};
 
-		if (!element.length || keyboard.isResizing) {
+		if (!el || keyboard.isResizing) {
 			return;
 		};
 
@@ -48,30 +41,40 @@ class Preview {
 
 		window.clearTimeout(this.timeout.tooltip);
 		this.timeout.tooltip = window.setTimeout(() => {
-			const win = $(window);
-			const obj = $('#tooltipContainer');
-			const { left, top } = element.offset();
-			const st = win.scrollTop(); 
-			const ew = element.outerWidth();
-			const eh = element.outerHeight();
-			const { ww } = U.Common.getWindowDimensions();
-			const node = $(`<div class="tooltip anim"><div class="txt">${text}</div></div>`);
+			const obj = U.Dom.get('tooltipContainer');
+			if (!obj) {
+				return;
+			};
+
+			const rect = el.getBoundingClientRect();
+			const st = window.scrollY;
+			const ew = el.offsetWidth;
+			const eh = el.offsetHeight;
+			const { ww } = U.Dom.getWindowDimensions();
+
+			const node = document.createElement('div');
+			node.className = 'tooltip anim';
+			node.innerHTML = `<div class="txt">${text}</div>`;
 
 			if (param.className) {
-				node.addClass(param.className);
+				U.Dom.addClass(node, param.className);
 			};
 
 			if (param.title) {
-				node.prepend(`<div class="title">${param.title}</div>`);
+				const titleEl = document.createElement('div');
+				titleEl.className = 'title';
+				titleEl.innerHTML = param.title;
+				node.prepend(titleEl);
 			};
 
-			obj.html('').append(node);
-			
-			const ow = node.outerWidth();
-			const oh = node.outerHeight();
+			obj.innerHTML = '';
+			obj.appendChild(node);
 
-			let x = left + offsetX;
-			let y = top + offsetY;
+			const ow = node.offsetWidth;
+			const oh = node.offsetHeight;
+
+			let x = rect.left + offsetX;
+			let y = rect.top + st + offsetY;
 
 			switch (typeX) {
 				default:
@@ -96,7 +99,7 @@ class Preview {
 					y -= oh + 6 + st;
 					break;
 				};
-				
+
 				case I.MenuDirection.Bottom: {
 					y += eh + 6 - st;
 					break;
@@ -107,45 +110,48 @@ class Preview {
 					break;
 				};
 			};
-			
+
 			x = Math.max(BORDER, x);
 			x = Math.min(ww - ow - BORDER, x);
 
 			y = Math.max(BORDER, y);
 
-			node.css({ left: x, top: y }).addClass('show');
+			Object.assign(node.style, { left: `${x}px`, top: `${y}px` });
+			U.Dom.addClass(node, 'show');
 
 			window.clearTimeout(this.timeout.delay);
 			this.timeout.delay = window.setTimeout(() => this.delayTooltip = delay, 500);
 			this.delayTooltip = 100;
 
-			win.off('click.tooltip').on('click.tooltip', () => {
-				this.tooltipHide(true);
+			if (this.clickTooltipHandler) {
+				U.Dom.removeEvent(window, 'click', this.clickTooltipHandler);
+			};
 
-				win.off('click.tooltip');
-			});
+			this.clickTooltipHandler = () => {
+				this.tooltipHide(true);
+				U.Dom.removeEvent(window, 'click', this.clickTooltipHandler);
+				this.clickTooltipHandler = null;
+			};
+
+			U.Dom.addEvent(window, 'click', this.clickTooltipHandler);
 
 		}, this.delayTooltip);
 
 		this.isTooltipOpen = true;
 	};
 
-	/**
-	 * Hides the tooltip, if any is being shown.
-	 * @param {boolean} [force] - If true, hides the tooltip immediately.
-	 */
 	tooltipHide (force?: boolean) {
 		if (!this.isTooltipOpen) {
 			return;
 		};
 
-		const obj = $('.tooltip');
+		const tooltips = U.Dom.selectAll('.tooltip');
 
 		if (force) {
-			obj.removeClass('anim');
+			tooltips.forEach(el => U.Dom.removeClass(el, 'anim'));
 		};
 
-		obj.removeClass('show');
+		tooltips.forEach(el => U.Dom.removeClass(el, 'show'));
 
 		window.clearTimeout(this.timeout.tooltip);
 		window.clearTimeout(this.timeout.delay);
@@ -153,12 +159,6 @@ class Preview {
 		this.isTooltipOpen = false;
 	};
 
-	/**
-	 * Combines text and caption for tooltip display.
-	 * @param {string} text - The main text.
-	 * @param {string} caption - The caption text.
-	 * @returns {string} The combined tooltip HTML.
-	 */
 	tooltipCaption (text: string, caption: string): string {
 		const t = [];
 		if (text) {
@@ -170,14 +170,10 @@ class Preview {
 		return t.length ? t.join(' ') : '';
 	};
 
-	/**
-	 * Displays a preview popup with the given parameters.
-	 * @param {I.Preview} param - Preview parameters.
-	 */
 	previewShow (param: I.Preview) {
 		if (
-			keyboard.isPreviewDisabled || 
-			keyboard.isResizing || 
+			keyboard.isPreviewDisabled ||
+			keyboard.isResizing ||
 			keyboard.isDragging
 		) {
 			window.clearTimeout(this.timeout.preview);
@@ -186,40 +182,32 @@ class Preview {
 
 		param.type = param.type || I.PreviewType.Default;
 		param.delay = (undefined === param.delay) ? DELAY_PREVIEW : param.delay;
-		
-		const { rect, passThrough } = param;
-		const element = $(param.element);
-		const obj = $('#preview');
 
-		if (!element && !rect) {
+		const { rect, passThrough } = param;
+		const el = param.element instanceof HTMLElement ? param.element : (typeof param.element === 'string' ? U.Dom.select(param.element) : null);
+		const obj = U.Dom.get('preview');
+
+		if (!el && !rect) {
 			return;
 		};
 
 		if (rect) {
 			param = Object.assign(param, rect);
-		} else 
-		if (element && element.length) {
-			const offset = element.offset();
+		} else
+		if (el) {
+			const elRect = el.getBoundingClientRect();
 
-			param = Object.assign(param, { 
-				x: offset.left, 
-				y: offset.top, 
-				width: element.outerWidth(), 
-				height: element.outerHeight(),
+			param = Object.assign(param, {
+				x: elRect.left,
+				y: elRect.top + window.scrollY,
+				width: el.offsetWidth,
+				height: el.offsetHeight,
 			});
 		};
 
-		if (element) {
-			element.off('mouseleave.preview').on('mouseleave.preview', () => {
-				window.clearTimeout(this.timeout.preview); 
-				if (rect) {
-					this.previewHide(true);
-				};
-			});
-		};
 
-		obj.toggleClass('passThrough', Boolean(passThrough));
-		this.previewHide(true);
+		U.Dom.toggleClass(obj, 'passThrough', Boolean(passThrough));
+		window.clearTimeout(this.timeout.preview);
 
 		if (param.delay) {
 			window.clearTimeout(this.timeout.preview);
@@ -231,20 +219,24 @@ class Preview {
 		this.isPreviewOpen = true;
 	};
 
-	/**
-	 * Hides preview, if any is being shown.
-	 * @param force - hide the preview immediately, without 250ms delay
-	 */
+	previewCancelHide () {
+		window.clearTimeout(this.timeout.preview);
+		this.isPreviewOpen = true;
+	};
+
 	previewHide (force?: boolean) {
 		if (!this.isPreviewOpen) {
 			return;
 		};
 
-		const obj = $('#preview');
+		const obj = U.Dom.get('preview');
 		const cb = () => {
-			obj.hide();
-			obj.removeClass('anim top bottom withImage').css({ transform: '' });
-			
+			if (obj) {
+				U.Dom.css(obj, { display: 'none' });
+				U.Dom.removeClass(obj, 'anim', 'top', 'bottom', 'withImage');
+				U.Dom.css(obj, { transform: '' });
+			};
+
 			S.Common.previewClear();
 		};
 
@@ -253,52 +245,49 @@ class Preview {
 		if (force) {
 			cb();
 		} else {
-			obj.css({ opacity: 0, transform: 'translateY(0%)' });
+			if (obj) {
+				U.Dom.css(obj, { opacity: '0', transform: 'translateY(0%)' });
+			};
 			this.timeout.preview = window.setTimeout(() => cb(), DELAY_PREVIEW);
 		};
 
 		this.isPreviewOpen = false;
 	};
 
-	/**
-	 * Show a toast (an on-screen short lived notification)
-	 * @param param 
-	 */
 	toastShow (param: I.Toast) {
-		const setTimeout = () => {
-			window.clearTimeout(this.timeout.toast);
-			this.timeout.toast = window.setTimeout(() => this.toastHide(false), J.Constant.delay.toast);
-		};
-
 		S.Common.toastSet(param);
-
-		const obj = $('#toast');
-
-		setTimeout();
-		obj.off('mouseenter.toast mouseleave.toast');
-		obj.on('mouseenter.toast', () => window.clearTimeout(this.timeout.toast));
-		obj.on('mouseleave.toast', () => setTimeout());
+		this.toastStartHideTimer();
 	};
 
-	/**
-	 * show hide any toast being shown
-	 * @param force - hide the preview immediately, without 250ms delay
-	 */
-	toastHide (force?: boolean) {
-		const obj = $('#toast');
+	toastStartHideTimer () {
+		window.clearTimeout(this.timeout.toast);
+		this.timeout.toast = window.setTimeout(() => this.toastHide(false), J.Constant.delay.toast);
+	};
 
-		obj.css({ opacity: 0, transform: 'scale3d(0.7,0.7,1)' });
+	toastPauseHide () {
+		window.clearTimeout(this.timeout.toast);
+	};
+
+	toastResumeHide () {
+		this.toastStartHideTimer();
+	};
+
+	toastHide (force?: boolean) {
+		const obj = U.Dom.get('toast');
+
+		if (obj) {
+			U.Dom.css(obj, { opacity: '0', transform: 'scale3d(0.7,0.7,1)' });
+		};
 
 		window.clearTimeout(this.timeout.toast);
 		this.timeout.toast = window.setTimeout(() => {
-			obj.hide();
+			if (obj) {
+				U.Dom.css(obj, { display: 'none' });
+			};
 			S.Common.toastClear();
 		}, force ? 0 : 250);
 	};
 
-	/**
-	 * Force hides all tooltips, previews, and toasts.
-	 */
 	hideAll () {
 		this.tooltipHide(true);
 		this.previewHide(true);

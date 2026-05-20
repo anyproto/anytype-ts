@@ -5,15 +5,13 @@
 	.label.small { display: inline-block; @include text-small; color: var(--color-text-secondary); }
 	.label.small.withText { margin: 0px 0px 0px 4px; }
 
-	markupcode { color: var(--color-text-primary); }
-
 	> .flex { display: flex; flex-direction: row; gap: 0px 8px; align-items: stretch; }
 	> .flex {
 		> .side.left { flex-shrink: 0; width: 32px; display: flex; align-items: flex-end; }
 		> .side.left {
 			.iconObject { display: none; }
 		}
-		> .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; flex-grow: 1; }
+		> .side.right { display: flex; flex-direction: column; position: relative; align-items: flex-start; flex-grow: 1; overflow: hidden; }
 	}
 
 	.bubbleOuter { display: flex; flex-direction: column; width: 100%; }
@@ -26,21 +24,18 @@
 		}
 		> .controls {
 			.icon { width: 20px; height: 20px; }
-			.icon.messageReply { background-image: url('~img/icon/chat/buttons/reply0.svg'); }
-			.icon.messageReply:hover, .icon.messageReply.hover { background-image: url('~img/icon/chat/buttons/reply1.svg'); }
-
-			.icon.more { background-image: url('~img/icon/menu/action/more0.svg'); }
-			.icon.more:hover, .icon.more.hover { background-image: url('~img/icon/menu/action/more1.svg'); }
+			.icon:hover, .icon.hover { color: var(--color-text-primary); }
 		}
 
 		.bubble:not(.withLayout) { max-width: 480px; }
 		.bubble.withLayout { max-width: 540px; }
 	}
 
-	.icon.status { width: 12px; height: 12px; }
+	.icon.status { width: 12px !important; height: 12px !important; color: inherit; }
+	.icon.status {
+		> svg { width: 100%; height: 100%; }
+	}
 	.icon.status.isHidden { display: none; }
-	.icon.status.syncing { background-image: url('~img/icon/chat/messageStatus/syncing.svg'); }
-	.icon.status.error { background-image: url('~img/icon/chat/messageStatus/error.svg'); }
 
 	.bubble { 
 		border-radius: 16px; background-color: var(--color-shape-tertiary); display: flex; flex-direction: column;
@@ -57,8 +52,7 @@
 		.attachments { padding: 4px; }
 	}
 
-	.icon.reactionAdd { width: 28px; height: 28px; background: url('~img/icon/chat/buttons/reaction0.svg') 50% 50% no-repeat; background-size: 20px; border-radius: 50%; }
-	.icon.reactionAdd:hover, .icon.reactionAdd.hover { background-image: url('~img/icon/chat/buttons/reaction2.svg'); }
+	.icon.reactionAdd { width: 28px; height: 28px; border-radius: 50%; }
 
 	.reply { margin: 0px 0px 4px 0px; position: relative; overflow: hidden; opacity: 0.5; max-width: 360px; cursor: default; }
 	.reply {
@@ -71,10 +65,9 @@
 			border-radius: 4px;
 		}
 
-		> .icon, > .iconObject { flex-shrink: 0; width: 32px; height: 32px; }
+		> .icon, > .iconObject { width: 32px; height: 32px; }
 		> .iconObject:not(.noBg, .isParticipant) { border-radius: 4px !important; background-color: var(--color-shape-highlight-medium) !important; }
 
-		.icon.isMultiple { background-image: url('~img/icon/chat/attachment/multiple.svg'); }
 
 		.textWrapper { padding: 0px; width: 100%; @include text-small; display: flex; flex-direction: column; overflow: hidden; }
 		.name { @include text-small; font-weight: 500; padding-left: 12px; }
@@ -82,6 +75,8 @@
 		:not(.withAttachment) {
 			.text { @include clamp3; }
 		}
+
+		.markuplink, markupobject { color: var(--color-text-primary); pointer-events: none; }
 
 		&.withAttachment {
 			.text { @include clamp1; display: block; height: var(--line-height-small); }
@@ -91,11 +86,11 @@
 
 	.attachments {
 		.attachment {
-			.icon.remove { display: none; }
+			.icon.chatButtonsRemove { display: none; }
 		}
 	}
 
-	.author { display: none; align-items: center; gap: 0px 8px; margin-bottom: 4px; padding-left: 12px; }
+	.author { display: none; align-items: center; gap: 0px 8px; margin-bottom: 4px; padding-left: 12px; max-width: calc(100% - 12px); }
 	.author {
 		.name { @include text-small; @include text-overflow-nw; font-weight: 500; }
 	}
@@ -121,7 +116,7 @@
 
 			.count { min-width: 18px; text-align: center; user-select: none !important; cursor: default; }
 		}
-		.reactionAdd { background-color: var(--color-shape-highlight-medium); background-image: url('~img/icon/chat/buttons/reaction1.svg'); }
+		.reactionAdd { background-color: var(--color-shape-highlight-medium); }
 	}
 
 	.newMessages { display: none; justify-content: center; position: absolute; top: -9px; left: 0px;  width: 100%; }
@@ -130,8 +125,6 @@
 	}
 
 	&.isSelf {
-		::selection { background-color: var(--color-system-accent-25); }
-
 		> .flex { flex-direction: row-reverse; }
 		> .flex {
 			> .side.left { display: none; }
@@ -147,6 +140,14 @@
 			.bubble { color: #fff; background-color: var(--color-system-accent-100); }
 			.bubble {
 				.time { color: var(--color-text-white60); }
+			}
+
+			::selection { background-color: var(--color-system-accent-25); }
+			.markuplink, markupobject { color: var(--color-text-white60); }
+
+			markupmention { background-color: rgba(0,0,0,0.2); }
+			markupmention {
+				name { color: var(--color-text-white); }
 			}
 		}
 
@@ -212,7 +213,9 @@
 
 	&.highlight {
 		.bubbleInner {
-			.bubble { background-color: var(--color-very-light-ice) !important;}
+			.bubble { 
+				background-color: var(--color-very-light-ice) !important; color: var(--color-text-primary) !important;
+			}
 		}
 	}
 
