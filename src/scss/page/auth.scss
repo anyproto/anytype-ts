@@ -235,7 +235,7 @@ html.bodyAuthDeleted {
 			}
 
 			.check {
-				position: absolute; z-index: 2; right: 16px; top: 16px; width: 24px; height: 24px; border-radius: 50%;
+				position: absolute; z-index: 2; right: -4px; top: -4px; width: 24px; height: 24px; border-radius: 50%;
 				background: var(--color-system-accent-100) url('~img/icon/onboarding/tick.svg') 50% 50% no-repeat; background-size: 12px;
 			}
 		}
