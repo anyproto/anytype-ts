@@ -1,3 +1,12 @@
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M10 3v9m0 0 3.5-3.5M10 12 6.5 8.5M4 15h12" stroke="#737373" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="4" y="4" width="6" height="6" rx="1.5" stroke="#252525" stroke-width="1.5"/>
+<rect x="10" y="4" width="6" height="6" rx="1.5" stroke="#252525" stroke-width="1.5"/>
+<rect x="4" y="10" width="6" height="6" rx="1.5" stroke="#252525" stroke-width="1.5"/>
+<rect x="6.5" y="6.5" width="1" height="1" fill="#252525"/>
+<rect x="12.5" y="6.5" width="1" height="1" fill="#252525"/>
+<rect x="6.5" y="12.5" width="1" height="1" fill="#252525"/>
+<rect x="10.5" y="10.5" width="1.5" height="1.5" fill="#252525"/>
+<rect x="14" y="10.5" width="1.5" height="1.5" fill="#252525"/>
+<rect x="10.5" y="14" width="1.5" height="1.5" fill="#252525"/>
+<rect x="14" y="14" width="1.5" height="1.5" fill="#252525"/>
 </svg>

@@ -286,21 +286,21 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		switch (id) {
 			case 'team':
 				return {
-					top: { kind: 'compact', icon: '🗂️', name: t('TopName'), type: t('TopType') },
+					top: { kind: 'compact', icon: '🍭', name: t('TopName'), type: t('TopType') },
 					a: { kind: 'compact', icon: '👤', name: t('AName'), type: t('AType') },
-					b: { kind: 'compact', icon: '✅', name: t('BName'), type: t('BType') },
+					b: { kind: 'task', name: t('BName'), type: t('BType'), desc: t('BDesc') },
 				};
 			case 'friends':
 				return {
 					top: { kind: 'bookmark', source: t('TopSource'), name: t('TopName'), desc: t('TopDesc'), img: 'lisbon' },
 					a: { kind: 'compact', icon: '🇵🇹', name: t('AName'), type: t('AType') },
-					b: { kind: 'compact', icon: '✅', name: t('BName'), type: t('BType') },
+					b: { kind: 'task', name: t('BName'), type: t('BType'), desc: t('BDesc') },
 				};
 			case 'community':
 				return {
 					top: { kind: 'bookmark', source: t('TopSource'), name: t('TopName'), desc: t('TopDesc'), img: 'opensource' },
 					a: { kind: 'compact', icon: '🎬', name: t('AName'), type: t('AType') },
-					b: { kind: 'compact', icon: '🏠', name: t('BName'), type: t('BType') },
+					b: { kind: 'task', icon: '🏠', name: t('BName'), type: t('BType'), desc: t('BDesc') },
 				};
 			default:
 				return {
@@ -335,6 +335,19 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			);
 		};
 
+		if (c.kind == 'task') {
+			return (
+				<div className={[ 'obCard', 'obTask', cls ].join(' ')}>
+					<div className="head">
+						{c.icon ? <div className="emoji">{c.icon}</div> : <Icon className="taskCheck" />}
+						<div className="title">{c.name}</div>
+					</div>
+					<div className="type">{c.type}</div>
+					<div className="desc">{c.desc}</div>
+				</div>
+			);
+		};
+
 		return (
 			<div className={[ 'obCard', 'obCompact', cls ].join(' ')}>
 				<div className="emoji">{c.icon}</div>
@@ -349,7 +362,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const renderExplainer = () => {
 		const channel = getChannel();
 		const content = getExplainerContent(channel.id);
-		const cn = [ 'explainerWrapper', 'animation', (connected ? 'connected' : ''), (channel.hasChat ? '' : 'noChat') ];
+		const cn = [ 'explainerWrapper', 'animation', `channel-${channel.id}`, (connected ? 'connected' : ''), (channel.hasChat ? '' : 'noChat') ];
 
 		return (
 			<div className={cn.join(' ')}>
@@ -360,18 +373,21 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						<line x1="532" y1="230" x2="854" y2="392" />
 					</svg>
 
+					{channel.hasChat ? (
+						<>
+							<div className="chatBubble">
+								<div className="message">{translate(`authOnboardExplainer${U.String.toUpperCamelCase(channel.id)}Message`)}</div>
+							</div>
+							<div className="chatAvatar">
+								<IconObject object={U.Space.getProfile()} size={48} />
+							</div>
+							<div className="chatTail" />
+						</>
+					) : ''}
+
 					<div className="topObject">
 						{renderCard(content.top, 'top')}
 					</div>
-
-					{channel.hasChat ? (
-						<div className="chatBubble">
-							<IconObject object={U.Space.getProfile()} size={40} />
-							<div className="message">
-								<div className="text">{translate(`authOnboardExplainer${U.String.toUpperCamelCase(channel.id)}Message`)}</div>
-							</div>
-						</div>
-					) : ''}
 
 					<div className="intro">
 						<Label className="line1" text={translate('authOnboardExplainerTitle1')} />

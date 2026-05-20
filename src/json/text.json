@@ -557,6 +557,7 @@
 	"authOnboardExplainerTeamAType": "Assignee",
 	"authOnboardExplainerTeamBName": "Pricing page redesign",
 	"authOnboardExplainerTeamBType": "Task",
+	"authOnboardExplainerTeamBDesc": "Goal: increase sign-ups from the pricing page. Simplify how plans are compared, add answers to common questions, and test two layout variations before the Cycle 2 launch.",
 
 	"authOnboardExplainerFriendsMessage": "Guys, found this for our Lisbon trip. Saving it to the checklist so we don’t forget.",
 	"authOnboardExplainerFriendsTopSource": "tripadvisor.com",
@@ -566,6 +567,7 @@
 	"authOnboardExplainerFriendsAType": "Country",
 	"authOnboardExplainerFriendsBName": "Summer Trip Checklist",
 	"authOnboardExplainerFriendsBType": "Page",
+	"authOnboardExplainerFriendsBDesc": "Our shared list for the Lisbon trip. Add anything we shouldn’t forget.",
 
 	"authOnboardExplainerCommunityMessage": "Here is a very cool article about open source",
 	"authOnboardExplainerCommunityTopSource": "opensource.com",
@@ -575,6 +577,7 @@
 	"authOnboardExplainerCommunityAType": "Video",
 	"authOnboardExplainerCommunityBName": "Open source",
 	"authOnboardExplainerCommunityBType": "Article",
+	"authOnboardExplainerCommunityBDesc": "It is software with source code that anyone can inspect, modify, and enhance. It brings customization, security, reliability, freedom, and transparency. It also fosters innovation and collaboration resulting in better software for everyone.",
 
 	"authOnboardExplainerPrivateTopName": "Watch Later",
 	"authOnboardExplainerPrivateTopType": "Collection",

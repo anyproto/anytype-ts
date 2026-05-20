@@ -198,12 +198,12 @@ html.bodyAuthDeleted {
 	.channelsWrapper { display: flex; flex-direction: column; gap: 12px 0px; width: 480px; margin: 0px 0px 32px 0px; }
 	.channelsWrapper {
 		.channel {
-			position: relative; overflow: hidden; display: flex; gap: 0px 16px; align-items: center; padding: 20px;
+			position: relative; display: flex; gap: 0px 16px; align-items: center; padding: 20px;
 			border-radius: 28px; background-color: var(--color-shape-highlight-medium); text-align: left;
 		}
 		.channel::before {
-			content: ''; position: absolute; left: 50%; top: 50%; width: 520px; height: 520px;
-			transform: translate(-50%, -50%); background-position: 50% 50%; background-size: cover; background-repeat: no-repeat;
+			content: ''; position: absolute; inset: 0; border-radius: 28px; overflow: hidden;
+			background-position: 50% 50%; background-size: 520px 520px; background-repeat: no-repeat;
 			filter: blur(40px); opacity: 0; transition: opacity 0.2s $easeInQuint; pointer-events: none; z-index: 0;
 		}
 		.channel.team::before { background-image: url('~img/onboarding/channel/team-bg.png'); }
@@ -226,12 +226,13 @@ html.bodyAuthDeleted {
 			.text { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 0px; flex: 1 1 auto; min-width: 0px; }
 			.text {
 				.name { font-size: 22px; font-weight: 600; line-height: 28px; letter-spacing: -0.48px; color: var(--color-text-primary); }
-				.description { font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: -0.2px; color: var(--color-text-primary-70); }
+				.description { font-size: 16px; font-weight: 400; line-height: 24px; letter-spacing: -0.2px; color: var(--color-text-secondary-transparent); }
 			}
 
 			.check {
-				position: absolute; z-index: 2; right: 16px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%;
-				background: var(--color-system-accent-100) url('~img/icon/onboarding/tick.svg') 50% 50% no-repeat; background-size: 12px;
+				position: absolute; z-index: 2; right: -8px; top: -8px; width: 32px; height: 32px; border-radius: 50%;
+				background: var(--color-system-accent-100) url('~img/icon/onboarding/tick.svg') 50% 50% no-repeat; background-size: 14px;
+				box-shadow: 0px 0px 0px 4px var(--color-bg-primary);
 			}
 		}
 	}
@@ -252,18 +253,31 @@ html.bodyAuthDeleted {
 
 			.topObject {
 				position: absolute; left: 50%; top: 90px; transform: translateX(-50%);
-				transition: top 0.6s $easeInQuint; z-index: 1;
+				transition: top 0.6s $easeInQuint; z-index: 2;
 			}
 
 			.chatBubble {
-				position: absolute; left: 50%; top: 0px; transform: translateX(-50%); display: flex; align-items: flex-end;
-				gap: 0px 10px; opacity: 1; transition: opacity 0.6s $easeInQuint; z-index: 2;
+				position: absolute; left: 50%; transform: translateX(-50%);
+				background-color: var(--color-shape-tertiary); border-radius: 22px;
+				opacity: 1; transition: opacity 0.6s $easeInQuint; z-index: 1;
 			}
 			.chatBubble {
-				.message { display: flex; max-width: 360px; padding: 14px 16px; border-radius: 16px; background-color: var(--color-shape-highlight-medium); }
 				.message {
-					.text { @include text-small; color: var(--color-text-primary); text-align: left; }
+					position: absolute; left: 16px; right: 16px; top: 8px;
+					font-size: 18px; font-weight: 400; line-height: 26px; letter-spacing: -0.28px;
+					color: var(--color-text-primary); text-align: left;
 				}
+			}
+
+			.chatAvatar { position: absolute; z-index: 3; opacity: 1; transition: opacity 0.6s $easeInQuint; }
+			.chatAvatar {
+				.iconObject { margin: 0px; }
+			}
+			.chatTail {
+				position: absolute; z-index: 2; width: 20px; height: 14px; opacity: 1; transition: opacity 0.6s $easeInQuint;
+				background-color: var(--color-shape-tertiary);
+				mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='14' viewBox='0 0 20 14' fill='black'%3E%3Cpath d='M0 14 C 10 14, 20 6, 20 0 L 20 14 Z'/%3E%3C/svg%3E");
+				-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='14' viewBox='0 0 20 14' fill='black'%3E%3Cpath d='M0 14 C 10 14, 20 6, 20 0 L 20 14 Z'/%3E%3C/svg%3E");
 			}
 
 			.links { position: absolute; left: 0px; right: 0px; bottom: 30px; height: 0px; }
@@ -275,6 +289,27 @@ html.bodyAuthDeleted {
 				.obCard.link1 { left: 24px; }
 				.obCard.link2 { right: 24px; transition-delay: 0.1s; }
 			}
+		}
+	}
+	.explainerWrapper.channel-team {
+		.scene {
+			.chatBubble { top: 24px; width: 357px; height: 150px; }
+			.chatAvatar { top: 222px; left: calc(50% - 178.5px - 56px); }
+			.chatTail { top: 160px; left: calc(50% - 178.5px - 4px); }
+		}
+	}
+	.explainerWrapper.channel-friends {
+		.scene {
+			.chatBubble { top: 22px; width: 456px; height: 224px; }
+			.chatAvatar { top: 226px; left: calc(50% - 228px - 56px); }
+			.chatTail { top: 230px; left: calc(50% - 228px - 4px); }
+		}
+	}
+	.explainerWrapper.channel-community {
+		.scene {
+			.chatBubble { top: 50px; width: 456px; height: 204px; }
+			.chatAvatar { top: 222px; left: calc(50% - 228px - 56px); }
+			.chatTail { top: 210px; left: calc(50% - 228px - 4px); }
 		}
 	}
 	.explainerWrapper.connected,
@@ -289,12 +324,16 @@ html.bodyAuthDeleted {
 	}
 	.explainerWrapper.connected {
 		.scene {
-			.chatBubble { opacity: 0; pointer-events: none; }
+			.chatBubble,
+			.chatAvatar,
+			.chatTail { opacity: 0; pointer-events: none; }
 		}
 	}
 	.explainerWrapper.noChat {
 		.scene {
-			.chatBubble { display: none; }
+			.chatBubble,
+			.chatAvatar,
+			.chatTail { display: none; }
 		}
 	}
 
@@ -349,6 +388,21 @@ html.bodyAuthDeleted {
 		.type { font-size: 14px; line-height: 20px; color: var(--color-text-secondary); }
 	}
 
+	.obTask {
+		box-sizing: border-box; display: flex; flex-direction: column; width: 352px; padding: 24px;
+		border-radius: 20px; box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.12);
+	}
+	.obTask {
+		.head { display: flex; align-items: center; gap: 0px 8px; margin: 0px 0px 4px 0px; }
+		.head {
+			.taskCheck { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--color-shape-primary); flex-shrink: 0; }
+			.emoji { width: 20px; height: 20px; font-size: 18px; line-height: 20px; flex-shrink: 0; text-align: center; }
+			.title { font-size: 18px; font-weight: 600; line-height: 24px; letter-spacing: -0.4px; color: var(--color-text-primary); @include text-overflow-nw; }
+		}
+		.type { font-size: 14px; line-height: 18px; color: var(--color-text-secondary); margin: 0px 0px 12px 0px; }
+		.desc { font-size: 14px; line-height: 20px; color: var(--color-text-primary); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; }
+	}
+
 	/* Stage: Profile */
 
 	.profileWrapper { display: flex; flex-direction: column; align-items: center; gap: 16px 0px; margin: 0px 0px 32px 0px; }
@@ -357,8 +411,9 @@ html.bodyAuthDeleted {
 		.iconWrapper {
 			.iconObject { margin: 0px; }
 			.icon.edit {
-				position: absolute; right: 0px; bottom: 0px; width: 32px; height: 32px; border-radius: 50%;
-				background-color: var(--color-bg-primary); border: 2px solid var(--color-shape-tertiary); box-sizing: content-box;
+				position: absolute; right: 8px; bottom: 8px; width: 32px; height: 32px; border-radius: 50%;
+				background-color: rgba(255, 255, 255, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+				border: 1px solid rgba(0, 0, 0, 0.03);
 			}
 			.icon.edit::after {
 				content: ''; position: absolute; inset: 0px; background-color: var(--color-text-primary);
@@ -406,10 +461,10 @@ html.bodyAuthDeleted {
 
 			.actions { display: flex; gap: 0px 24px; }
 			.actions {
-				.action { display: flex; flex-direction: column; align-items: center; gap: 6px 0px; }
+				.action { display: flex; flex-direction: column; align-items: center; gap: 5px 0px; }
 				.action.disabled { opacity: 0.5; pointer-events: none; }
 				.action {
-					.icon { position: relative; width: 40px; height: 40px; border-radius: 50%; background-color: var(--color-shape-highlight-medium); }
+					.icon { position: relative; width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium); }
 					.icon::after {
 						content: ''; position: absolute; inset: 0px; background-color: var(--color-text-primary);
 						mask-position: 50% 50%; mask-repeat: no-repeat; mask-size: 20px;
@@ -417,7 +472,7 @@ html.bodyAuthDeleted {
 					}
 					.icon.copyLink::after { mask-image: url('~img/icon/onboarding/copy.svg'); -webkit-mask-image: url('~img/icon/onboarding/copy.svg'); }
 					.icon.downloadQr::after { mask-image: url('~img/icon/onboarding/download.svg'); -webkit-mask-image: url('~img/icon/onboarding/download.svg'); }
-					.label { @include text-small; color: var(--color-text-secondary); }
+					.label { font-size: 12px; line-height: 18px; font-weight: 500; color: var(--color-text-primary); }
 				}
 				.action:hover {
 					.label { color: var(--color-text-primary); }
