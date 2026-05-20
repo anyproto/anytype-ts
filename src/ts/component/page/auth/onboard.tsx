@@ -322,19 +322,19 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			case 'team':
 				return {
 					top: { kind: 'compact', icon: '🍭', name: t('TopName'), type: t('TopType') },
-					a: { kind: 'compact', icon: '👤', name: t('AName'), type: t('AType') },
+					a: { kind: 'person', avatar: 'userAvatar', name: t('AName'), type: t('AType') },
 					b: { kind: 'task', name: t('BName'), type: t('BType'), desc: t('BDesc') },
 				};
 			case 'friends':
 				return {
 					top: { kind: 'bookmark', source: t('TopSource'), name: t('TopName'), desc: t('TopDesc'), img: 'lisbon' },
-					a: { kind: 'compact', icon: '🇵🇹', name: t('AName'), type: t('AType') },
+					a: { kind: 'country', flag: 'portugal', name: t('AName'), type: t('AType') },
 					b: { kind: 'task', name: t('BName'), type: t('BType'), desc: t('BDesc') },
 				};
 			case 'community':
 				return {
 					top: { kind: 'bookmark', source: t('TopSource'), name: t('TopName'), desc: t('TopDesc'), img: 'opensource' },
-					a: { kind: 'compact', icon: '🎬', name: t('AName'), type: t('AType') },
+					a: { kind: 'video', thumb: 'videoAvatar', name: t('AName'), type: t('AType') },
 					b: { kind: 'task', icon: '🏠', name: t('BName'), type: t('BType'), desc: t('BDesc') },
 				};
 			default:
@@ -366,6 +366,37 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 					<div className={`obCoverImg ${c.img}`} />
 					<div className="title">{c.name}</div>
 					<div className="type">{c.type}</div>
+				</div>
+			);
+		};
+
+		if (c.kind == 'person') {
+			return (
+				<div className={[ 'obCard', 'obPerson', cls ].join(' ')}>
+					<div className={`avatar ${c.avatar}`} />
+					<div className="title">{c.name}</div>
+					<div className="type">{c.type}</div>
+				</div>
+			);
+		};
+
+		if (c.kind == 'country') {
+			return (
+				<div className={[ 'obCard', 'obCountry', cls ].join(' ')}>
+					<div className={`flag ${c.flag}`} />
+					<div className="title">{c.name}</div>
+					<div className="type">{c.type}</div>
+				</div>
+			);
+		};
+
+		if (c.kind == 'video') {
+			return (
+				<div className={[ 'obCard', 'obVideo', cls ].join(' ')}>
+					<div className="type">{c.type}</div>
+					<div className={`thumb ${c.thumb}`} />
+					<div className="play" />
+					<div className="title">{c.name}</div>
 				</div>
 			);
 		};
@@ -413,9 +444,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 							<div className="chatBubble">
 								<div className="message">{translate(`authOnboardExplainer${U.String.toUpperCamelCase(channel.id)}Message`)}</div>
 							</div>
-							<div className="chatAvatar">
-								<IconObject object={U.Space.getProfile()} size={48} />
-							</div>
+							<div className="chatAvatar" />
 							<div className="chatTail" />
 						</>
 					) : ''}
