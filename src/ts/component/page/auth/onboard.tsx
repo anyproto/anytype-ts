@@ -207,7 +207,9 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			};
 
 			const link = String(message.link || '');
-			if (!link || !/^(https?:\/\/|anytype:)/i.test(link)) {
+			// Reject responses containing control bytes (e.g. middleware returns
+			// raw protobuf with `panic recovered` in the link field on error).
+			if (!link || /[\x00-\x1f]/.test(link)) {
 				return;
 			};
 
@@ -430,6 +432,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 						return (
 							<div className={cn.join(' ')} key={it.id} onClick={() => onChannelClick(it.id)}>
+								<div className="channelBg" />
 								<Icon className={`channelIcon ${it.id}`} />
 								<div className="text">
 									<div className="name">{translate(`authOnboardChannel${u}Name`)}</div>

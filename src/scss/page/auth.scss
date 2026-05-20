@@ -201,17 +201,22 @@ html.bodyAuthDeleted {
 			position: relative; display: flex; gap: 0px 16px; align-items: center; padding: 20px;
 			border-radius: 28px; background-color: var(--color-shape-highlight-medium); text-align: left;
 		}
-		.channel::before {
-			content: ''; position: absolute; inset: 0; border-radius: 28px; overflow: hidden;
-			background-position: 50% 50%; background-size: 520px 520px; background-repeat: no-repeat;
-			filter: blur(40px); opacity: 0; transition: opacity 0.2s $easeInQuint; pointer-events: none; z-index: 0;
+		.channel {
+			.channelBg {
+				position: absolute; inset: 0; border-radius: 28px; overflow: hidden; pointer-events: none; z-index: 0;
+			}
+			.channelBg::before {
+				content: ''; position: absolute; left: 50%; top: 50%; width: 520px; height: 520px;
+				transform: translate(-50%, -50%); background-position: 50% 50%; background-size: cover; background-repeat: no-repeat;
+				filter: blur(40px); opacity: 0; transition: opacity 0.2s $easeInQuint;
+			}
 		}
-		.channel.team::before { background-image: url('~img/onboarding/channel/team-bg.png'); }
-		.channel.friends::before { background-image: url('~img/onboarding/channel/friends.png'); }
-		.channel.community::before { background-image: url('~img/onboarding/channel/community.png'); }
-		.channel.private::before { background-image: url('~img/onboarding/channel/private.png'); }
-		.channel:hover::before,
-		.channel.selected::before { opacity: 0.3; }
+		.channel.team .channelBg::before { background-image: url('~img/onboarding/channel/team-bg.png'); }
+		.channel.friends .channelBg::before { background-image: url('~img/onboarding/channel/friends.png'); }
+		.channel.community .channelBg::before { background-image: url('~img/onboarding/channel/community.png'); }
+		.channel.private .channelBg::before { background-image: url('~img/onboarding/channel/private.png'); }
+		.channel:hover .channelBg::before,
+		.channel.selected .channelBg::before { opacity: 0.3; }
 
 		.channel {
 			.channelIcon {
@@ -230,9 +235,8 @@ html.bodyAuthDeleted {
 			}
 
 			.check {
-				position: absolute; z-index: 2; right: -8px; top: -8px; width: 32px; height: 32px; border-radius: 50%;
-				background: var(--color-system-accent-100) url('~img/icon/onboarding/tick.svg') 50% 50% no-repeat; background-size: 14px;
-				box-shadow: 0px 0px 0px 4px var(--color-bg-primary);
+				position: absolute; z-index: 2; right: 16px; top: 16px; width: 24px; height: 24px; border-radius: 50%;
+				background: var(--color-system-accent-100) url('~img/icon/onboarding/tick.svg') 50% 50% no-repeat; background-size: 12px;
 			}
 		}
 	}
@@ -467,8 +471,8 @@ html.bodyAuthDeleted {
 					.icon { position: relative; width: 48px; height: 48px; border-radius: 50%; background-color: var(--color-shape-highlight-medium); }
 					.icon::after {
 						content: ''; position: absolute; inset: 0px; background-color: var(--color-text-primary);
-						mask-position: 50% 50%; mask-repeat: no-repeat; mask-size: 20px;
-						-webkit-mask-position: 50% 50%; -webkit-mask-repeat: no-repeat; -webkit-mask-size: 20px;
+						mask-position: 50% 50%; mask-repeat: no-repeat; mask-size: 28px;
+						-webkit-mask-position: 50% 50%; -webkit-mask-repeat: no-repeat; -webkit-mask-size: 28px;
 					}
 					.icon.copyLink::after { mask-image: url('~img/icon/onboarding/copy.svg'); -webkit-mask-image: url('~img/icon/onboarding/copy.svg'); }
 					.icon.downloadQr::after { mask-image: url('~img/icon/onboarding/download.svg'); -webkit-mask-image: url('~img/icon/onboarding/download.svg'); }
