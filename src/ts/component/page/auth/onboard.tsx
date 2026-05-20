@@ -558,12 +558,6 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 									value={shareLinkRef.current}
 									size={170}
 									level="H"
-									imageParam={{
-										src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>',
-										width: 70,
-										height: 70,
-										excavate: true,
-									}}
 								/>
 							) : <div className="qrPlaceholder" />}
 							<div className="avatar">
