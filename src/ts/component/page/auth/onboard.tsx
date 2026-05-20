@@ -206,10 +206,8 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				return;
 			};
 
-			const link = String(message.link || '');
-			// Reject responses containing control bytes (e.g. middleware returns
-			// raw protobuf with `panic recovered` in the link field on error).
-			if (!link || /[\x00-\x1f]/.test(link)) {
+			const link = String(message.link || '').replace(/[\x00-\x1f]/g, '');
+			if (!link) {
 				return;
 			};
 
