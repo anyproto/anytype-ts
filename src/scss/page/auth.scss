@@ -417,14 +417,8 @@ html.bodyAuthDeleted {
 			.icon.edit {
 				position: absolute; right: 8px; bottom: 8px; width: 32px; height: 32px; border-radius: 50%;
 				background-color: rgba(255, 255, 255, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-				border: 1px solid rgba(0, 0, 0, 0.03);
-			}
-			.icon.edit::after {
-				content: ''; position: absolute; inset: 0px; background-color: var(--color-text-primary);
-				mask-position: 50% 50%; mask-repeat: no-repeat; mask-size: 16px;
-				-webkit-mask-position: 50% 50%; -webkit-mask-repeat: no-repeat; -webkit-mask-size: 16px;
-				mask-image: url('~img/icon/onboarding/edit.svg');
-				-webkit-mask-image: url('~img/icon/onboarding/edit.svg');
+				border: 1px solid rgba(0, 0, 0, 0.03); background-image: url('~img/icon/onboarding/edit.svg');
+				background-size: 24px;
 			}
 		}
 		.inputWrapper { margin: 0px; }
