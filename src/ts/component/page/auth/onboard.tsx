@@ -89,6 +89,23 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		}, false);
 	};
 
+	const isJustMe = () => selectedRef.current == 'private';
+
+	// Just-me users skip Profile + ProfileShare and go straight from Explainer to Key.
+	const nextStage = (s: Stage): Stage => {
+		if (isJustMe() && (s == Stage.Explainer)) {
+			return Stage.Key;
+		};
+		return s + 1;
+	};
+
+	const prevStage = (s: Stage): Stage => {
+		if (isJustMe() && (s == Stage.Key)) {
+			return Stage.Explainer;
+		};
+		return s - 1;
+	};
+
 	// Moves the Onboarding Flow one stage forward if possible
 	const onForward = (skip?: boolean) => {
 		if (!canMoveForward()) {
@@ -99,33 +116,33 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 		switch (stage) {
 			case Stage.ChannelType: {
-				Animation.from(() => setStage(stage + 1));
+				Animation.from(() => setStage(nextStage(stage)));
 
 				analytics.event('ClickOnboarding', { step: 'Channel', type: U.String.toUpperCamelCase(selectedRef.current) });
 				break;
 			};
 
 			case Stage.Explainer: {
-				Animation.from(() => setStage(stage + 1));
+				Animation.from(() => setStage(nextStage(stage)));
 				break;
 			};
 
 			case Stage.Profile: {
 				saveProfile();
-				Animation.from(() => setStage(stage + 1));
+				Animation.from(() => setStage(nextStage(stage)));
 
 				analytics.event('ClickOnboarding', { step: 'Profile' });
 				break;
 			};
 
 			case Stage.ProfileShare: {
-				Animation.from(() => setStage(stage + 1));
+				Animation.from(() => setStage(nextStage(stage)));
 				break;
 			};
 
 			case Stage.Key: {
 				if (needEmail) {
-					Animation.from(() => setStage(stage + 1));
+					Animation.from(() => setStage(nextStage(stage)));
 				} else {
 					onAuth();
 				};
@@ -173,7 +190,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		if (stage == Stage.ChannelType) {
 			Animation.from(() => U.Router.go('/auth/select', { replace: true }));
 		} else {
-			setStage(stage - 1);
+			setStage(prevStage(stage));
 		};
 	};
 
