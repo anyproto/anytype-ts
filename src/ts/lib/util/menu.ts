@@ -185,6 +185,7 @@ class UtilMenu {
 		if (config.experimental) {
 			ret = ret.concat([
 				{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
+				{ id: I.EmbedProcessor.AnytypeMiniApp, name: 'Anytype Mini App' },
 			]);
 		};
 

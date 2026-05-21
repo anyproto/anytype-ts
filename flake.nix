@@ -29,8 +29,8 @@
         pkg-config
         jq
         nodejs_22
+        bun
         # anytype-heart
-        grpc-tools
         protobuf
 
         # keytar build fails on npm install because python312 has distutils removed

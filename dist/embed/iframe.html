@@ -86,6 +86,7 @@
 				let useRootHeight = false;
 				let cachedHtml = '';
 				let height = 0;
+				let isMiniApp = false;
 				let blockId = '';
 				let player;
 				let html = '';
@@ -97,6 +98,36 @@
 					if (!allowedOrigins.some(it => oe.origin.match(it))) {
 						return;
 					};
+
+					// ── AnytypeMiniApp short-circuit ──────────────────────────────
+					// Receives { html, state } and injects the html into #root,
+					// re-creating <script> elements so React deps actually execute.
+					// State is exposed on window.__ANYTYPE_STATE__ before scripts run.
+					if (oe.data && oe.data.anytypeMiniApp) {
+						blockId = oe.data.blockId;
+						processor = oe.data.processor;
+						isMiniApp = true;
+
+						htmlEl.attr({ class: '' });
+						if (param.theme) {
+							htmlEl.addClass(param.theme);
+						};
+						if (oe.data.allowIframeResize) {
+							htmlEl.addClass('allowIframeResize');
+						};
+						htmlEl.addClass(`align${oe.data.align}`);
+
+						if (oe.data.allowIframeResize) {
+							if (window.__anytypeMiniAppResizeTimer__) {
+								clearInterval(window.__anytypeMiniAppResizeTimer__);
+							};
+							window.__anytypeMiniAppResizeTimer__ = setInterval(resize, 300);
+						};
+
+						injectAnytypeMiniApp(oe.data.anytypeMiniApp);
+						return;
+					};
+					// ──────────────────────────────────────────────────────────────
 
 					let { js, className, insertBeforeLoad, allowIframeResize, align } = oe.data;
 
@@ -210,7 +241,8 @@
 				win.on('resize', resize);
 
 				function resize () {
-					const height = useRootHeight ? root.height() : document.documentElement.scrollHeight;
+					const h = useRootHeight ? root.height() : document.documentElement.scrollHeight;
+					height = isMiniApp ? Math.max(height, h) : h;
 					window.parent.postMessage({ type: 'resize', height, blockId }, '*');
 				};
 
@@ -280,6 +312,110 @@
 							resize();
 						}
 					});
+				};
+
+				let lastInjectedAppHtml = null;
+
+				function setupAnytypeApi () {
+					// Outbound bridge: React calls window.__ANYTYPE_API__.setState(next)
+					// to push a new state to the host. Anytype writes it into the JSON
+					// sibling block; on the echo back the state-only path runs and
+					// dispatches an 'anytype:state' CustomEvent, which the React app
+					// listens to and uses to update its local mirror state.
+					//
+					// IMPORTANT: the React app's 'anytype:state' listener must NOT
+					// call setState() — it should only update its local React state.
+					// That's the structural rule that prevents echo loops.
+					window.__ANYTYPE_API__ = {
+						setState: function (nextState) {
+							window.parent.postMessage({
+								type: 'anytypeMiniAppState',
+								state: nextState,
+								blockId: blockId,
+							}, '*');
+						},
+					};
+				};
+
+				function injectAnytypeMiniApp (payload) {
+					const html = String((payload && payload.html) || '');
+					const state = (payload && payload.state) !== undefined ? payload.state : null;
+
+					// State-only fast path: html unchanged → don't tear down React.
+					// Just update window.__ANYTYPE_STATE__ and dispatch an event so
+					// the user's React app can update its local state without losing
+					// scroll position, focus, or any non-canonical UI state.
+					if (html === lastInjectedAppHtml) {
+						window.__ANYTYPE_STATE__ = state;
+						window.dispatchEvent(new CustomEvent('anytype:state', { detail: state }));
+						return;
+					};
+
+					// Full re-inject: html changed (first load, or user edited the
+					// html code block). Reset max height so the new content
+					// measures fresh.
+					height = 0;
+					lastInjectedAppHtml = html;
+					window.__ANYTYPE_STATE__ = state;
+					setupAnytypeApi();
+
+					// Wipe previous content + scripts so re-injects start clean.
+					scripts.html('');
+					root.empty();
+
+					if (!html) {
+						return;
+					};
+
+					// Parse the HTML in a detached div so we can extract <script>
+					// elements. innerHTML alone does NOT execute <script> tags;
+					// we have to clone them into fresh nodes appended to the DOM.
+					const tmp = document.createElement('div');
+					tmp.innerHTML = html;
+
+					const scriptNodes = Array.from(tmp.querySelectorAll('script'));
+					scriptNodes.forEach(s => s.parentNode && s.parentNode.removeChild(s));
+
+					// Move the non-script content into #root.
+					const rootEl = root.get(0);
+					while (tmp.firstChild) {
+						rootEl.appendChild(tmp.firstChild);
+					};
+
+					// Now sequentially append fresh script elements. External
+					// (src=) scripts wait for onload before the next runs so
+					// dependency order (e.g. react before react-dom before app)
+					// is preserved. Inline scripts execute synchronously on append.
+					const scriptsEl = scripts.get(0);
+					let i = 0;
+					function next () {
+						if (i >= scriptNodes.length) {
+							resize();
+							return;
+						};
+						const old = scriptNodes[i++];
+						const s = document.createElement('script');
+
+						for (let j = 0; j < old.attributes.length; j++) {
+							const attr = old.attributes[j];
+							s.setAttribute(attr.name, attr.value);
+						};
+
+						if (old.src) {
+							s.async = false;
+							s.onload = next;
+							s.onerror = function () {
+								console.warn('AnytypeMiniApp: script load failed', old.src);
+								next();
+							};
+							scriptsEl.appendChild(s);
+						} else {
+							s.textContent = old.textContent;
+							scriptsEl.appendChild(s);
+							next();
+						};
+					};
+					next();
 				};
 
 				function loadKroki (html) {

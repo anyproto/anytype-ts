@@ -83,6 +83,28 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const messageHandlerRef = useRef<((e: MessageEvent) => void) | null>(null);
 	const isExcalidraw = block.isEmbedExcalidraw();
 
+	let appHtmlContent = '';
+	let appStateText = '';
+	let appStateBlockId = '';
+	if (processor === I.EmbedProcessor.AnytypeMiniApp) {
+		const parent = S.Block.getParentLeaf(rootId, block.id);
+		if (parent) {
+			const codeSiblings = S.Block.getChildren(rootId, parent.id, (b: I.Block) => {
+				return b && (b.id !== block.id) && b.isTextCode();
+			});
+			const htmlBlock = codeSiblings.find((b: any) => {
+				const lang = String(b.fields?.lang || '').toLowerCase();
+				return (lang === 'html') || (lang === 'markup');
+			});
+			const jsonBlock = codeSiblings.find((b: any) => {
+				return String(b.fields?.lang || '').toLowerCase() === 'json';
+			});
+			appHtmlContent = String(htmlBlock?.content?.text || '');
+			appStateText = String(jsonBlock?.content?.text || '');
+			appStateBlockId = String(jsonBlock?.id || '');
+		};
+	};
+
 	const excalidrawCss: any = {};
 
 	if (width) {
@@ -157,7 +179,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		if (node) {
 			const receiver = U.Dom.select('#receiver', node);
-			if (receiver) {
+			if (receiver && processor !== I.EmbedProcessor.AnytypeMiniApp) {
 				receiver.remove();
 			};
 		};
@@ -591,6 +613,21 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						sanitizeParam.ADD_TAGS.push('script');
 					};
 
+					if (processor === I.EmbedProcessor.AnytypeMiniApp) {
+						let parsedState: any = null;
+						if (appStateText) {
+							try {
+								parsedState = JSON.parse(appStateText);
+							} catch (e) {
+								console.warn('AnytypeMiniApp: invalid JSON state', e);
+							};
+						};
+
+						data.anytypeMiniApp = {
+							html: appHtmlContent,
+							state: parsedState,
+						};
+					} else
 					if (U.Embed.allowJs(processor)) {
 						data.js = text;
 					} else {
@@ -622,6 +659,22 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 							case 'openUrl': {
 								Action.openUrl(url);
+								break;
+							};
+
+							case 'anytypeMiniAppState': {
+								if (!appStateBlockId) {
+									break;
+								};
+								let serialized = '';
+								try {
+									serialized = JSON.stringify(e.data.state, null, 2);
+								} catch (err) {
+									console.warn('AnytypeMiniApp: failed to serialize state', err);
+									break;
+								};
+								S.Block.updateContent(rootId, appStateBlockId, { text: serialized });
+								C.BlockTextSetText(rootId, appStateBlockId, serialized, [], { from: 0, to: 0 });
 								break;
 							};
 						};
@@ -1008,7 +1061,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	useEffect(() => {
 		init();
-	}, [ block.content.text, isEditing, isShowing ]);
+	}, [ block.content.text, isEditing, isShowing, appHtmlContent, appStateText ]);
 
 	useEffect(() => {
 		if (isEditing) {
