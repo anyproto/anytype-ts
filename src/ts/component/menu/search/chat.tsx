@@ -44,6 +44,7 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		analytics.event('ScreenChatSearch', { route });
 
 		return () => {
+			unbind();
 			window.clearTimeout(timeout.current);
 		};
 	}, []);

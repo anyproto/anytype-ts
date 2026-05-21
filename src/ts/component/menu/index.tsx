@@ -211,6 +211,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	const polyRef = useRef(null);
 	const isAnimating = useRef(false);
 	const isMounted = useRef(false);
+	const isUnmountedRef = useRef(false);
 	const framePosition = useRef(0);
 
 	const getContext = () => ({
@@ -250,6 +251,8 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 
 		return () => {
 			const el = getElement();
+
+			isUnmountedRef.current = true;
 
 			unbind();
 
@@ -708,7 +711,11 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDown = (e: any) => {
-		if (!childRef.current || !childRef.current.getItems || keyboard.isComposition) {
+		// Defense-in-depth: a leaked window keydown listener (e.g. one a
+		// child menu added but never removed in its cleanup) would still
+		// hold this closure after the menu unmounts. Bail out immediately
+		// so no preventDefault on space ever fires for a dead menu.
+		if (isUnmountedRef.current || !childRef.current || !childRef.current.getItems || keyboard.isComposition) {
 			return;
 		};
 
