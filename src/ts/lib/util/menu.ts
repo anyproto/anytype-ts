@@ -1846,7 +1846,6 @@ class UtilMenu {
 		const spaceview = U.Space.getSpaceview();
 		const toggle = { id: 'hide', iconParam: { name: 'common/eye0' }, name: translate('widgetHideSection') };
 		const manage = { id: 'manage', iconParam: { name: 'common/edit' }, name: translate('widgetManageSections') };
-		const hasViewToggle = [ I.WidgetSection.Pin, I.WidgetSection.MyFavorites ].includes(sectionId);
 
 		let options: any[] = [];
 		let value = '';
@@ -1857,7 +1856,7 @@ class UtilMenu {
 			options.push({ isDiv: true });
 
 			value = String(recentEditMode);
-		} else
+		} else 
 		if (sectionId == I.WidgetSection.Bin) {
 			options.push({ id: 'openBin', name: translate('commonOpen') });
 
@@ -1866,16 +1865,6 @@ class UtilMenu {
 			};
 
 			options.push({ isDiv: true });
-		} else
-		if (hasViewToggle) {
-			const currentView = S.Common.getWidgetSection(sectionId)?.view || I.SidebarView.Widgets;
-
-			options.push({ name: translate('widgetSidebarViewTitle'), isSection: true });
-			options.push({ id: `view-${I.SidebarView.Widgets}`, name: translate('menuSidebarViewWidgets') });
-			options.push({ id: `view-${I.SidebarView.Links}`, name: translate('menuSidebarViewLinks') });
-			options.push({ isDiv: true });
-
-			value = `view-${currentView}`;
 		};
 
 		options.push(toggle);
@@ -1924,14 +1913,7 @@ class UtilMenu {
 						};
 
 						default: {
-							if (String(element.id || '').startsWith('view-')) {
-								const view = String(element.id).replace('view-', '') as I.SidebarView;
-
-								S.Common.updateWidgetSection({ id: sectionId, view });
-								analytics.event('ChangeSidebarView', { type: view, route: analytics.route.widget });
-							} else {
-								S.Common.recentEditModeSet(Number(element.id));
-							};
+							S.Common.recentEditModeSet(Number(element.id));
 							break;
 						};
 					};

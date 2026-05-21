@@ -24,8 +24,8 @@ interface WidgetViewRefProps {
 
 const WidgetView = forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref: any) => {
 
-	const {
-		parent, block, parentRootId, isSystemTarget, isPreview, canCreate, getData, getTraceId, getRootId, getLimit, checkShowAllButton, onCreate,
+	const { 
+		parent, block, isSystemTarget, isPreview, canCreate, getData, getTraceId, getRootId, getLimit, checkShowAllButton, onCreate,
 		getContentParam, getObject, onSetPreview
 	} = props;
 	const { space } = S.Common;
@@ -175,12 +175,9 @@ const WidgetView = forwardRef<WidgetViewRefProps, I.WidgetComponent>((props, ref
 	};
 
 	const onChangeView = (viewId: string) => {
-		const widgetsRootId = parentRootId || S.Block.widgets;
-
 		switch (parent.content.section) {
-			case I.WidgetSection.Pin:
-			case I.WidgetSection.MyFavorites: {
-				C.BlockWidgetSetViewId(widgetsRootId, parent.id, viewId);
+			case I.WidgetSection.Pin: {
+				C.BlockWidgetSetViewId(S.Block.widgets, parent.id, viewId);
 				break;
 			};
 		};

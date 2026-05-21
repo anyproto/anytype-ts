@@ -9,7 +9,8 @@ import * as I from 'Interface';
 const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const { parent, onContext } = props;
-	const { space } = S.Common;
+	const { space, sidebarView } = S.Common;
+	const isLinksView = sidebarView == I.SidebarView.Links;
 	const nodeRef = useRef(null);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const sensors = useSensors(
@@ -21,10 +22,6 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const isUnread = realId == J.Constant.widgetId.unread;
 	const isBin = realId == J.Constant.widgetId.bin;
 	const isRecent = realId == J.Constant.widgetId.recentEdit;
-	const isPinned = realId == J.Constant.widgetId.pinned;
-	const isPersonalWidgets = realId == J.Constant.widgetId.personalWidgets;
-	const pinView = S.Common.getWidgetSection(I.WidgetSection.Pin)?.view || I.SidebarView.Widgets;
-	const favoritesView = S.Common.getWidgetSection(I.WidgetSection.MyFavorites)?.view || I.SidebarView.Widgets;
 	const canWrite = U.Space.canMyParticipantWrite();
 	const home = U.Space.getDashboard();
 
@@ -136,7 +133,7 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			};
 
 			case J.Constant.widgetId.pinned: {
-				items = U.Data.getWidgetObjects(S.Block.widgets, pinView == I.SidebarView.Links);
+				items = U.Data.getWidgetObjects(S.Block.widgets, isLinksView);
 				break;
 			};
 

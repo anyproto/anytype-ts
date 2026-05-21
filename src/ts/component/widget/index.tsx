@@ -26,8 +26,8 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const childRef = useRef(null);
 	const subId = useRef('');
-	const { block, parentRootId, isPreview, className, canEdit, getObject, onDragStart, onDragOver, onDrag, setPreview, index } = props;
-	const widgets = parentRootId || S.Block.widgets;
+	const { block, isPreview, className, canEdit, getObject, onDragStart, onDragOver, onDrag, setPreview, index } = props;
+	const { widgets } = S.Block;
 	const timeoutOpen = useRef(0);
 
 	const getChild = (): I.Block => {
@@ -604,7 +604,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 				return;
 			};
 
-			const object = S.Detail.get(widgets, targetId);
+			const object = S.Detail.get(S.Block.widgets, targetId);
 			const total = Relation.getArrayValue(object.links).length;
 
 			show = !isPreview && (total > limit);
@@ -814,7 +814,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 				<DropTarget 
 					{...props} 
 					isTargetTop={true} 
-					rootId={widgets}
+					rootId={S.Block.widgets} 
 					id={block.id} 
 					dropType={I.DropType.Widget} 
 					canDropMiddle={false} 
@@ -826,7 +826,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 				<DropTarget 
 					{...props} 
 					isTargetBottom={true} 
-					rootId={widgets}
+					rootId={S.Block.widgets} 
 					id={block.id} 
 					dropType={I.DropType.Widget} 
 					canDropMiddle={false} 

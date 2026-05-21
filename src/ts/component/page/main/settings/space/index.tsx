@@ -9,7 +9,8 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	const [ invite, setInvite ] = useState({ cid: '', key: '' });
 	const [ dummy, setDummy ] = useState(0);
 	const { getId } = props;
-	const { space } = S.Common;
+	const { space, sidebarView } = S.Common;
+	const sidebarViewName = sidebarView == I.SidebarView.Links ? translate('menuSidebarViewLinks') : translate('menuSidebarViewWidgets');
 	const spaceview = U.Space.getSpaceview();
 	const home = U.Space.getDashboard();
 	const type = S.Record.getTypeById(S.Common.type);
@@ -88,6 +89,24 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 					setDummy(dummy + 1);
 				},
 			}
+		});
+	};
+
+	const onSidebarView = () => {
+		S.Menu.open('select', {
+			element: `#${getId()} #sidebarView`,
+			horizontal: I.MenuDirection.Right,
+			data: {
+				value: sidebarView,
+				options: [
+					{ id: I.SidebarView.Links, name: translate('menuSidebarViewLinks') },
+					{ id: I.SidebarView.Widgets, name: translate('menuSidebarViewWidgets') },
+				],
+				onSelect: (_: any, option: any) => {
+					S.Common.sidebarViewSet(option.id);
+					analytics.event('ChangeSidebarView', { type: option.id, route: analytics.route.settings });
+				},
+			},
 		});
 	};
 
@@ -338,6 +357,26 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 										</div>
 									</div>
 								) : ''}
+
+								<div className="item">
+									<div className="sides">
+										<Icon name="settings/sidebarView" />
+
+										<div className="side left">
+											<Title text={translate('popupSettingsSpaceIndexSidebarViewTitle')} />
+											<Label text={translate('popupSettingsSpaceIndexSidebarViewDescription')} />
+										</div>
+
+										<div className="side right">
+											<div id="sidebarView" className="select" onClick={onSidebarView}>
+												<div className="item">
+													<div className="name">{sidebarViewName}</div>
+												</div>
+												<Icon name="arrow/button" className="arrow black" width={6} height={10} />
+											</div>
+										</div>
+									</div>
+								</div>
 
 								<div className="item">
 									<div className="sides">
