@@ -49,7 +49,6 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 	.widgetSection {
 		&:last-child { margin-bottom: 0px; }
 
-		&.isLinksView { padding-left: 8px; padding-right: 8px; }
 		&.isLinksView {
 			.widget.widgetObject { background: none; }
 			.widget.widgetObject {
