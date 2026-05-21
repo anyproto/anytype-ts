@@ -2,9 +2,8 @@ import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react
 import raf from 'raf';
 import { reaction } from 'mobx';
 import { motion, AnimatePresence } from 'motion/react';
-import { Button, Icon, Widget, WidgetHome, IconObject, ObjectName, Label, SpaceName, Sync } from 'Component';
+import { Button, Icon, Widget, WidgetHome, ObjectName, Label, SpaceName, Sync } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
-import bullet from 'Component/util/icons/preview/bullet';
 
 const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -15,8 +14,12 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const childrenIdsWidget = S.Block.getChildrenIds(widgets, widgets);
 	const lengthWidget = childrenIdsWidget.length;
 	const { sidebarDirection, isPopup, getId } = props;
-	const { space, widgetSections, recentEditMode, sidebarView } = S.Common;
-	const isLinksView = sidebarView == I.SidebarView.Links;
+	const { space, widgetSections, recentEditMode } = S.Common;
+	const personalWidgetsId = U.Object.getPersonalWidgetsId();
+	const getSectionView = (id: I.WidgetSection): I.SidebarView => (
+		S.Common.getWidgetSection(id)?.view || I.SidebarView.Widgets
+	);
+	const isSectionLinks = (id: I.WidgetSection): boolean => getSectionView(id) == I.SidebarView.Links;
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
@@ -28,18 +31,13 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const frameRef = useRef<number>(0);
 	const dragEndHandlerRef = useRef<(() => void) | null>(null);
 
-	if (isLinksView) {
-		cnb.push('isLinksView');
-	};
-
 	let content = null;
 	let head = null;
 
 	const getSections = () => {
 		const types = U.Data.getWidgetTypes();
 		const sections = U.Menu.widgetSections();
-		const pinned = U.Data.getWidgetObjects(widgets, isLinksView);
-		const personal = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId(), false);
+		const personal = U.Data.getWidgetObjects(personalWidgetsId, false);
 		const recent = S.Record.getRecords(U.Subscription.getRecentSubId());
 		const { total } = S.Record.getMeta(U.Subscription.spaceSubId(J.Constant.subId.archived), '');
 		const ret = [] as I.WidgetSection[];
@@ -86,7 +84,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		};
 	};
 
-	const onDragStart = (e: DragEvent, block: I.Block): void => {
+	const onDragStart = (e: DragEvent, block: I.Block, sectionId?: I.WidgetSection): void => {
 		e.stopPropagation();
 
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -94,7 +92,9 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			return;
 		};
 
-		const child = getChild(block.id);
+		const isFavorites = sectionId == I.WidgetSection.MyFavorites;
+		const blockRootId = isFavorites ? personalWidgetsId : widgets;
+		const child = getChild(block.id, blockRootId);
 		if (!child) {
 			return;
 		};
@@ -140,8 +140,10 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 
 		isDraggingRef.current = true;
 
+		const section = sectionId ?? block.content.section;
+
 		e.dataTransfer.setDragImage(clone, 0, 0);
-		e.dataTransfer.setData('text', JSON.stringify({ blockId: block.id, section: block.content.section }));
+		e.dataTransfer.setData('text', JSON.stringify({ blockId: block.id, section }));
 
 		if (dragEndHandlerRef.current) {
 			U.Dom.removeEvent(window, 'dragend', dragEndHandlerRef.current);
@@ -221,6 +223,11 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		switch (section) {
 			case I.WidgetSection.Pin: {
 				C.BlockListMoveToExistingObject(widgets, widgets, dropTargetIdRef.current, [ blockId ], positionRef.current);
+				break;
+			};
+
+			case I.WidgetSection.MyFavorites: {
+				C.BlockListMoveToExistingObject(personalWidgetsId, personalWidgetsId, dropTargetIdRef.current, [ blockId ], positionRef.current);
 				break;
 			};
 		};
@@ -476,10 +483,20 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	};
 
 	const getWidgets = (sectionId: I.WidgetSection) => {
-		if ((sectionId == I.WidgetSection.Pin) && isLinksView) {
+		if ((sectionId == I.WidgetSection.Pin) && isSectionLinks(sectionId)) {
 			return [
 				new M.Block({
 					id: [ space, J.Constant.widgetId.pinned ].join('-'),
+					type: I.BlockType.Widget,
+					content: { layout: I.WidgetLayout.Object }
+				}),
+			];
+		};
+
+		if ((sectionId == I.WidgetSection.MyFavorites) && isSectionLinks(sectionId)) {
+			return [
+				new M.Block({
+					id: [ space, J.Constant.widgetId.personalWidgets ].join('-'),
 					type: I.BlockType.Widget,
 					content: { layout: I.WidgetLayout.Object }
 				}),
@@ -492,15 +509,13 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			case I.WidgetSection.Unread:
 			case I.WidgetSection.Type:
 			case I.WidgetSection.RecentEdit:
-			case I.WidgetSection.Bin:
-			case I.WidgetSection.MyFavorites: {
+			case I.WidgetSection.Bin: {
 
 				const idMap = {
 					[I.WidgetSection.Unread]: J.Constant.widgetId.unread,
 					[I.WidgetSection.Type]: J.Constant.widgetId.type,
 					[I.WidgetSection.RecentEdit]: J.Constant.widgetId.recentEdit,
 					[I.WidgetSection.Bin]: J.Constant.widgetId.bin,
-					[I.WidgetSection.MyFavorites]: J.Constant.widgetId.personalWidgets,
 				};
 
 				blocks.push(new M.Block({
@@ -508,6 +523,29 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					type: I.BlockType.Widget,
 					content: { layout: I.WidgetLayout.Object }
 				}));
+				break;
+			};
+
+			case I.WidgetSection.MyFavorites: {
+				blocks = S.Block.getChildren(personalWidgetsId, personalWidgetsId, (block: I.Block) => {
+					if (!block.isWidget()) {
+						return false;
+					};
+
+					const child = getChild(block.id, personalWidgetsId);
+					if (!child) {
+						return false;
+					};
+
+					const target = child.getTargetObjectId();
+					const object = getObject(block, target, personalWidgetsId);
+
+					if (!object || object._empty_ || object.isArchived || object.isDeleted) {
+						return false;
+					};
+
+					return true;
+				});
 				break;
 			};
 
@@ -547,33 +585,36 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		return blocks;
 	};
 
-	const getChild = (id: string): I.Block => {
-		const childrenIds = S.Block.getChildrenIds(widgets, id);
+	const getChild = (id: string, rootId?: string): I.Block => {
+		const root = rootId || widgets;
+		const childrenIds = S.Block.getChildrenIds(root, id);
 
 		if (!childrenIds.length) {
 			return null;
 		};
 
-		return S.Block.getLeaf(widgets, childrenIds[0]);
+		return S.Block.getLeaf(root, childrenIds[0]);
 	};
 
 	const getChildRootId = (targetId: string, blockId: string): string => {
 		return [ targetId, 'widget', blockId ].join('-');
 	};
 
-	const getObject = (block: I.Block, id: string) => {
+	const getObject = (block: I.Block, id: string, rootId?: string) => {
 		if (!id) {
 			return null;
 		};
 
+		const root = rootId || widgets;
 		let object = null;
+
 		if (U.Menu.isSystemWidget(id)) {
 			object = U.Menu.getSystemWidgets().find(it => it.id == id);
-		} else 
+		} else
 		if (block.content.section == I.WidgetSection.Type) {
 			object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.type), id);
 		} else {
-			object = S.Detail.get(widgets, id);
+			object = S.Detail.get(root, id);
 		};
 		return object;
 	};
@@ -710,6 +751,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					const isSectionType = section.id == I.WidgetSection.Type;
 					const isSectionUnread = section.id == I.WidgetSection.Unread;
 					const isSectionBin = section.id == I.WidgetSection.Bin;
+					const isSectionFavorites = section.id == I.WidgetSection.MyFavorites;
+					const sectionLinksView = isSectionLinks(section.id);
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
 					const list = getWidgets(section.id);
 					const ws: any = widgetSections.find(it => it.id == section.id) || {};
@@ -718,7 +761,12 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 						return null;
 					};
 
+					if (sectionLinksView && (isSectionPin || isSectionFavorites)) {
+						cns.push('isLinksView');
+					};
+
 					const isClosed = isSectionClosed(section.id);
+					const sectionRootId = isSectionFavorites ? personalWidgetsId : widgets;
 
 					let buttons = null;
 					if (isSectionType) {
@@ -765,22 +813,23 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 											};
 										}}
 									>
-										{isSectionPin && !isLinksView ? <WidgetHome /> : ''}
+										{isSectionPin && !sectionLinksView ? <WidgetHome /> : ''}
 
 										{list.map((block, i) => (
 											<Widget
 												{...props}
 												key={`widget-${block.id}`}
 												block={block}
+												parentRootId={sectionRootId}
 												index={i}
 												canEdit={canWrite}
-												canRemove={isSectionPin}
-												onDragStart={onDragStart}
+												canRemove={isSectionPin || isSectionFavorites}
+												onDragStart={(e: any, b) => onDragStart(e, b, section.id)}
 												onDragOver={onDragOver}
 												onDrag={onDrag}
 												setPreview={setPreviewId}
 												sidebarDirection={sidebarDirection}
-												getObject={id => getObject(block, id)}
+												getObject={id => getObject(block, id, sectionRootId)}
 											/>
 										))}
 									</div>
@@ -803,7 +852,10 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		initSections();
 	}, [ space ]);
 
-	useEffect(() => reaction(() => S.Common.sidebarView, () => forceUpdate()), []);
+	useEffect(() => reaction(
+		() => S.Common.widgetSections.map(it => `${it.id}:${it.view || ''}`).join(','),
+		() => forceUpdate(),
+	), []);
 
 	return (
 		<>

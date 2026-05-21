@@ -52,21 +52,16 @@ const SectionItem = ({ section, isFixed, isHidden, onToggle }: SectionItemProps)
 const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const { sidebarDirection, getId } = props;
-	const { widgetSections, sidebarView } = S.Common;
+	const { widgetSections } = S.Common;
 	const spaceview = U.Space.getSpaceview();
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const [ , setDummy ] = useState(0);
 	const forceUpdate = () => setDummy(v => v + 1);
-	const isLinksView = sidebarView == I.SidebarView.Links;
 	const cnb = [ 'body' ];
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
 	);
-
-	if (isLinksView) {
-		cnb.push('isLinksView');
-	};
 
 	const onDone = () => {
 		sidebar.leftPanelSubPageOpen('widget', true, true);

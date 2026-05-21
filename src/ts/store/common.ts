@@ -52,7 +52,6 @@ class CommonStore {
 	public leftSidebarStateValue = { page: '', subPage: '' };
 
 	public recentEditModeValue: I.RecentEditMode = null;
-	public sidebarViewValue: I.SidebarView = null;
 	public hideSidebarValue = null;
 	public hideFileObjectsInTreeValue = null;
 	public autoDownloadValue = null;
@@ -170,7 +169,6 @@ class CommonStore {
 			widgetSectionsValue: observable,
 			downloadingIdsValue: observable,
 			recentEditModeValue: observable,
-			sidebarViewValue: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -191,7 +189,6 @@ class CommonStore {
 			notificationSound: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
-			sidebarView: computed,
 			isPinned: computed,
 			singleTab: computed,
 			autoDownload: computed,
@@ -224,7 +221,6 @@ class CommonStore {
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
-			sidebarViewSet: action,
 			isActiveTabSet: action,
 			isPinnedSet: action,
 			singleTabSet: action,
@@ -312,14 +308,6 @@ class CommonStore {
 			ret = Storage.get('recentEditMode');
 		};
 		return Number(ret) || I.RecentEditMode.All;
-	};
-
-	get sidebarView (): I.SidebarView {
-		let ret = this.sidebarViewValue;
-		if (ret === null) {
-			ret = Storage.getSpaceKey('sidebarView', false);
-		};
-		return ret || I.SidebarView.Widgets;
 	};
 
 	get fullscreenObject (): boolean {
@@ -1247,14 +1235,8 @@ class CommonStore {
 		Storage.set('recentEditMode', this.recentEditModeValue);
 	};
 
-	sidebarViewSet (v: I.SidebarView) {
-		this.sidebarViewValue = v || I.SidebarView.Widgets;
-		Storage.setSpaceKey('sidebarView', this.sidebarViewValue, false);
-	};
-
 	nullifySpaceKeys () {
 		this.defaultType = null;
-		this.sidebarViewValue = null;
 		this.widgetSectionsInit();
 	};
 
@@ -1269,11 +1251,18 @@ class CommonStore {
 		];
 		const saved: I.WidgetSectionParam[] = Storage.get('widgetSections') || [];
 		const savedMap = new Map(saved.map(it => [ it.id, it ]));
+		const legacyView: I.SidebarView = Storage.getSpaceKey('sidebarView', false);
 
 		const makeParam = (id: I.WidgetSection): I.WidgetSectionParam => {
 			const prev = savedMap.get(id);
 			const isClosed = (id == I.WidgetSection.Pin) ? false : (prev?.isClosed ?? false);
-			return { id, isClosed, isHidden: prev?.isHidden ?? false };
+
+			let view: I.SidebarView = prev?.view ?? I.SidebarView.Widgets;
+			if ((id == I.WidgetSection.Pin) && (prev?.view === undefined) && (legacyView == I.SidebarView.Links)) {
+				view = I.SidebarView.Links;
+			};
+
+			return { id, isClosed, isHidden: prev?.isHidden ?? false, view };
 		};
 
 		const seen = new Set<I.WidgetSection>();
@@ -1312,8 +1301,8 @@ class CommonStore {
 	};
 
 	updateWidgetSection (param: Partial<I.WidgetSectionParam>) {
-		set(this.getWidgetSection(param.id), param);
-		this.widgetSectionsSet(this.widgetSections);
+		const sections = this.widgetSections.map(it => (it.id == param.id ? { ...it, ...param } : it));
+		this.widgetSectionsSet(sections);
 	};
 
 };

@@ -21,7 +21,8 @@ interface WidgetTreeRefProps {
 
 const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
 
-	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, addGroupLabels, checkShowAllButton, onCreate, onSetPreview } = props;
+	const { block, parent, parentRootId, isPreview, isSystemTarget, canCreate, getLimit, getData, addGroupLabels, checkShowAllButton, onCreate, onSetPreview } = props;
+	const widgetsRootId = parentRootId || S.Block.widgets;
 	const targetId = block?.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -29,7 +30,7 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 	const archivedIds = new Set(S.Record.getRecordIds(U.Subscription.spaceSubId(J.Constant.subId.archived), ''));
 	const dl = deletedIds.size;
 	const al = archivedIds.size;
-	const object = S.Detail.get(S.Block.widgets, targetId);
+	const object = S.Detail.get(widgetsRootId, targetId);
 	const subKey = block ? `widget${block.id}` : '';
 	const links = useRef([]);
 	const top = useRef(0);

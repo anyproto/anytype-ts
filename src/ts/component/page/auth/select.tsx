@@ -37,7 +37,6 @@ const PageAuthSelect = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			Storage.setOnboarding('typeResetLayout');
 
 			S.Common.showRelativeDatesSet(true);
-			S.Common.sidebarViewSet(I.SidebarView.Widgets);
 
 			U.Subscription.createGlobal(() => {
 				inflate(() => U.Router.go('/auth/onboard', {}));
