@@ -253,7 +253,7 @@ html.bodyAuthDeleted {
 				line { stroke: var(--color-shape-secondary); stroke-width: 1px; vector-effect: non-scaling-stroke; }
 			}
 
-			.intro { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; margin: 0px; }
+			.intro { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; margin: 0px; transition: top 0.6s $easeInQuint; }
 
 			.topObject {
 				position: absolute; left: 50%; top: 90px; transform: translateX(-50%);
@@ -312,6 +312,7 @@ html.bodyAuthDeleted {
 			.chatBubble { top: 22px; width: 456px; height: 224px; }
 			.chatAvatar { top: 198px; left: calc(50% - 228px - 56px); }
 			.chatTail { top: 232px; left: calc(50% - 228px - 4px); }
+			.intro { top: 70%; }
 		}
 	}
 	.explainerWrapper.channel-community {
@@ -319,6 +320,13 @@ html.bodyAuthDeleted {
 			.chatBubble { top: 50px; width: 456px; height: 204px; }
 			.chatAvatar { top: 206px; left: calc(50% - 228px - 56px); }
 			.chatTail { top: 240px; left: calc(50% - 228px - 4px); }
+			.intro { top: 70%; }
+		}
+	}
+	.explainerWrapper.channel-friends.connected,
+	.explainerWrapper.channel-community.connected {
+		.scene {
+			.intro { top: 50%; }
 		}
 	}
 	.explainerWrapper.channel-private { height: 580px; }
@@ -416,8 +424,8 @@ html.bodyAuthDeleted {
 	.obPerson {
 		.avatar { width: 64px; height: 64px; border-radius: 50%; margin: 0px 0px 12px 0px; background-position: 50% 50%; background-size: cover; background-repeat: no-repeat; }
 		.avatar.userAvatar { background-image: url('~img/onboarding/explainer/user-avatar.png'); }
-		.title { font-size: 18px; font-weight: 600; line-height: 24px; letter-spacing: -0.4px; color: var(--color-text-primary); margin: 0px; @include text-overflow-nw; }
-		.type { font-size: 14px; line-height: 20px; color: var(--color-text-secondary); }
+		.title { font-size: 18px; font-weight: 600; line-height: 22px; letter-spacing: -0.4px; color: var(--color-text-primary); margin: 0px; @include text-overflow-nw; }
+		.type { font-size: 14px; line-height: 18px; color: var(--color-text-secondary); }
 	}
 
 	.obCountry {
@@ -432,23 +440,24 @@ html.bodyAuthDeleted {
 	}
 
 	.obVideo {
-		box-sizing: border-box; position: relative; width: 352px; height: 200px; padding: 24px;
+		box-sizing: border-box; position: relative; width: 352px; height: 200px;
 		border-radius: 20px; overflow: hidden;
 	}
 	.obVideo {
 		.thumb {
-			position: absolute; left: 0px; right: 0px; bottom: 0px; height: 152px;
+			position: absolute; top: 0px; left: 0px; right: 0px; height: 152px;
 			background-position: 50% 50%; background-size: cover; background-repeat: no-repeat;
 		}
 		.thumb.videoAvatar { background-image: url('~img/onboarding/explainer/video-avatar.png'); }
 		.play {
-			position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 56px; height: 56px;
+			position: absolute; left: 50%; top: 76px; transform: translate(-50%, -50%); width: 56px; height: 56px;
 			background: url('~img/icon/onboarding/video-play.svg') 50% 50% no-repeat; background-size: 56px;
 		}
-		.type { position: relative; z-index: 1; font-size: 14px; line-height: 20px; color: var(--color-text-secondary); }
 		.title {
-			position: absolute; left: 24px; right: 24px; bottom: 16px; z-index: 1;
-			font-size: 16px; font-weight: 600; line-height: 22px; letter-spacing: -0.1px; color: var(--color-text-primary);
+			position: absolute; left: 16px; right: 16px; bottom: 14px;
+			font-size: 16px; font-weight: 600; line-height: 22px; letter-spacing: -0.1px;
+			color: var(--color-text-primary);
+			@include text-overflow-nw;
 		}
 	}
 
@@ -457,12 +466,23 @@ html.bodyAuthDeleted {
 		border-radius: 20px;
 	}
 	.obTask {
-		.head { display: flex; align-items: center; gap: 0px 8px; margin: 0px 0px 4px 0px; }
+		.head { display: flex; align-items: flex-start; gap: 0px 8px; margin: 0px 0px 4px 0px; }
 		.head {
-			.taskCheck { width: 20px; height: 20px; flex-shrink: 0; position: relative; }
+			.taskCheck { width: 20px; height: 20px; flex-shrink: 0; position: relative; margin-top: 4px; }
 			.taskCheck::after {
 				content: ''; position: absolute; left: 2px; top: 2px; width: 16px; height: 16px;
 				box-sizing: border-box; border: 1.5px solid var(--color-shape-primary); border-radius: 4px;
+			}
+			.taskPage {
+				width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; position: relative;
+			}
+			.taskPage::after {
+				content: ''; position: absolute; inset: 0px;
+				background-color: var(--color-shape-primary);
+				mask-position: 50% 50%; mask-repeat: no-repeat; mask-size: 20px;
+				-webkit-mask-position: 50% 50%; -webkit-mask-repeat: no-repeat; -webkit-mask-size: 20px;
+				mask-image: url('~img/icon/onboarding/page.svg');
+				-webkit-mask-image: url('~img/icon/onboarding/page.svg');
 			}
 			.emoji { width: 24px; height: 24px; font-size: 18px; line-height: 24px; flex-shrink: 0; text-align: center; }
 			.title { font-size: 18px; font-weight: 600; line-height: 24px; letter-spacing: -0.4px; color: var(--color-text-primary); @include text-overflow-nw; }

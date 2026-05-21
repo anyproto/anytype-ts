@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useEffect, KeyboardEvent } from 'react';
+import React, { forwardRef, useRef, useState, useEffect, useLayoutEffect, KeyboardEvent } from 'react';
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase, Footer, IconObject, QR } from 'Component';
 import * as I from 'Interface';
 import Animation from 'Lib/animation';
@@ -329,7 +329,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				return {
 					top: { kind: 'bookmark', source: t('TopSource'), name: t('TopName'), desc: t('TopDesc'), img: 'lisbon' },
 					a: { kind: 'country', flag: 'portugal', name: t('AName'), type: t('AType') },
-					b: { kind: 'task', name: t('BName'), type: t('BType'), desc: t('BDesc') },
+					b: { kind: 'task', icon: 'page', name: t('BName'), type: t('BType'), desc: t('BDesc') },
 				};
 			case 'community':
 				return {
@@ -393,7 +393,6 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		if (c.kind == 'video') {
 			return (
 				<div className={[ 'obCard', 'obVideo', cls ].join(' ')}>
-					<div className="type">{c.type}</div>
 					<div className={`thumb ${c.thumb}`} />
 					<div className="play" />
 					<div className="title">{c.name}</div>
@@ -402,10 +401,20 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 
 		if (c.kind == 'task') {
+			let head = null;
+			if (c.icon == 'page') {
+				head = <Icon className="taskPage" />;
+			} else
+			if (c.icon) {
+				head = <div className="emoji">{c.icon}</div>;
+			} else {
+				head = <Icon className="taskCheck" />;
+			};
+
 			return (
 				<div className={[ 'obCard', 'obTask', cls ].join(' ')}>
 					<div className="head">
-						{c.icon ? <div className="emoji">{c.icon}</div> : <Icon className="taskCheck" />}
+						{head}
 						<div className="title">{c.name}</div>
 					</div>
 					<div className="type">{c.type}</div>
@@ -736,6 +745,12 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 	}, []);
 
+	useLayoutEffect(() => {
+		if (stage == Stage.Explainer) {
+			setConnected(false);
+		};
+	}, [ stage ]);
+
 	useEffect(() => {
 		init();
 
@@ -750,7 +765,6 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 
 		if (stage == Stage.Explainer) {
-			setConnected(false);
 			window.clearTimeout(connectTimeout.current);
 			connectTimeout.current = window.setTimeout(() => setConnected(true), getChannel().hasChat ? 1200 : 400);
 		};
