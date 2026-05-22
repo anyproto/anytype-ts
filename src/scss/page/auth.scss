@@ -281,8 +281,9 @@ html.bodyAuthDeleted {
 			.chatTail {
 				position: absolute; z-index: 2; width: 20px; height: 14px; opacity: 1; transition: opacity 0.6s $easeInQuint;
 				background-color: var(--color-shape-tertiary);
-				mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='14' viewBox='0 0 20 14' fill='black'%3E%3Cpath d='M0 14 C 10 14, 20 6, 20 0 L 20 14 Z'/%3E%3C/svg%3E");
-				-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='14' viewBox='0 0 20 14' fill='black'%3E%3Cpath d='M0 14 C 10 14, 20 6, 20 0 L 20 14 Z'/%3E%3C/svg%3E");
+				mask-image: url('~img/icon/onboarding/chat-tail.svg');
+				-webkit-mask-image: url('~img/icon/onboarding/chat-tail.svg');
+				mask-size: 100% 100%; -webkit-mask-size: 100% 100%;
 			}
 
 			.topObject {
@@ -304,14 +305,14 @@ html.bodyAuthDeleted {
 		.scene {
 			.chatBubble { top: 24px; width: 357px; height: 150px; }
 			.chatAvatar { top: 126px; left: calc(50% - 178.5px - 56px); }
-			.chatTail { top: 160px; left: calc(50% - 178.5px - 4px); }
+			.chatTail { top: 160px; left: calc(50% - 178.5px); }
 		}
 	}
 	.explainerWrapper.channel-friends {
 		.scene {
 			.chatBubble { top: 22px; width: 456px; height: 224px; }
 			.chatAvatar { top: 198px; left: calc(50% - 228px - 56px); }
-			.chatTail { top: 232px; left: calc(50% - 228px - 4px); }
+			.chatTail { top: 232px; left: calc(50% - 228px); }
 			.intro { top: 70%; }
 		}
 	}
@@ -319,7 +320,7 @@ html.bodyAuthDeleted {
 		.scene {
 			.chatBubble { top: 50px; width: 456px; height: 196px; }
 			.chatAvatar { top: 198px; left: calc(50% - 228px - 56px); }
-			.chatTail { top: 232px; left: calc(50% - 228px - 4px); }
+			.chatTail { top: 232px; left: calc(50% - 228px); }
 			.intro { top: 70%; }
 		}
 	}
