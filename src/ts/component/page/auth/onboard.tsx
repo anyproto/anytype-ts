@@ -393,9 +393,12 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		if (c.kind == 'video') {
 			return (
 				<div className={[ 'obCard', 'obVideo', cls ].join(' ')}>
-					<div className={`thumb ${c.thumb}`} />
-					<div className="play" />
+					<div className="type">{c.type}</div>
 					<div className="title">{c.name}</div>
+					<div className="thumbWrap">
+						<div className={`thumb ${c.thumb}`} />
+					</div>
+					<div className="play" />
 				</div>
 			);
 		};
@@ -403,7 +406,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		if (c.kind == 'task') {
 			let head = null;
 			if (c.icon == 'page') {
-				head = <Icon className="taskPage" />;
+				head = <Icon name="default/page" />;
 			} else
 			if (c.icon) {
 				head = <div className="emoji">{c.icon}</div>;
