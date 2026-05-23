@@ -139,7 +139,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const blockId = blockClass.substring(1);
-		const containerEl = U.Dom.select('.editable', focusable);
+		const containerEl = U.Dom.hasClass(focusable, 'editable') ? focusable : U.Dom.select('.editable', focusable);
 
 		if (!containerEl) {
 			activeMatchRef.current.position = null;
