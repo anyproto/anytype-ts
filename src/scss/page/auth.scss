@@ -62,6 +62,11 @@ html.bodyAuthDeleted {
 
 	.error { margin: 0.3em 0px; }
 
+	@keyframes typingDot {
+		0%, 60%, 100% { transform: translateY(0px); }
+		30% { transform: translateY(-5px); }
+	}
+
 	$easingBubbleWrapper: cubic-bezier(0.5, 0, 0.75, 0);
 	@keyframes bubble {
 		0%, 100% { transform: scale3d(0.9, 0.9, 1);  }
@@ -244,6 +249,62 @@ html.bodyAuthDeleted {
 	/* Stage: Explainer */
 
 	.explainerWrapper { width: 1064px; height: 500px; margin: 0px 0px 24px 0px; }
+
+	/* Explainer Scene – Framer Motion layer */
+	.explainerWrapper { .esScene { position: relative; width: 100%; height: 100%; overflow: visible; } }
+	.explainerWrapper {
+		.esScene {
+			.esChatGroup { position: absolute; inset: 0px; pointer-events: none; }
+			.esGraph { position: absolute; inset: 0px; pointer-events: none; }
+			.esConnectors { position: absolute; inset: 0px; width: 100%; height: 100%; }
+			.esTopCard { position: absolute; }
+			.esLinkCard { position: absolute; }
+			.esIntro { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; display: flex; flex-direction: column; gap: 4px 0px; align-items: center; }
+		.esIntro {
+			.label { margin: 0px; line-height: 48px; font-weight: 400; }
+			.label.line1 { font-size: 44px; letter-spacing: -2px; color: var(--color-text-primary) !important; }
+			.label.line2 { font-size: 48px; font-family: 'RiccioneExtraLight'; letter-spacing: -0.8px; color: var(--color-text-secondary) !important; }
+		}
+		}
+	}
+	.explainerWrapper {
+		.esScene {
+			.esChatAvatar {
+				position: absolute; width: 48px; height: 48px; border-radius: 50%;
+				background: url('~img/onboarding/explainer/user-avatar.png') 50% 50% no-repeat; background-size: cover;
+			}
+			.esChatBubble {
+				position: absolute; z-index: 1;
+				background-color: var(--color-shape-tertiary); border-radius: 24px;
+				overflow: hidden;
+			}
+			.esChatTail {
+				position: absolute; z-index: 0; width: 20px; height: 14px;
+				background-color: var(--color-shape-tertiary);
+				mask-image: url('~img/icon/onboarding/chat-tail.svg');
+				-webkit-mask-image: url('~img/icon/onboarding/chat-tail.svg');
+				mask-size: 100% 100%; -webkit-mask-size: 100% 100%;
+			}
+			.esBubbleDotsWrap { display: flex; align-items: center; justify-content: center; width: 84px; height: 48px; }
+			.esBubbleContent { padding: 0; }
+			.esMessage {
+				font-size: 18px; font-weight: 400; line-height: 26px; letter-spacing: -0.3px;
+				color: var(--color-text-primary); margin: 0; padding: 12px 16px 0px; text-align: left;
+			}
+			.esAttachment { border-radius: 16px; overflow: hidden; padding: 4px; }
+			.esAttachment {
+				.obCard { width: 100%; box-sizing: border-box; box-shadow: none; }
+				.obCompact { width: 100%; height: auto; padding: 16px; }
+			}
+			.typingDots { display: flex; align-items: center; gap: 0px 6px; }
+			.typingDots {
+				span {
+					display: block; width: 8px; height: 8px; border-radius: 50%;
+					background-color: var(--color-text-secondary);
+				}
+			}
+		}
+	}
 	.explainerWrapper {
 		.scene { position: relative; width: 100%; height: 100%; }
 
@@ -253,17 +314,34 @@ html.bodyAuthDeleted {
 				line { stroke: var(--color-shape-secondary); stroke-width: 1px; vector-effect: non-scaling-stroke; }
 			}
 
-			.intro { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; margin: 0px; transition: top 0.6s $easeInQuint; }
+			.intro { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; margin: 0px; opacity: 0; transition: top 0.6s $easeInQuint, opacity 0.6s $easeInQuint; }
 
 			.topObject {
 				position: absolute; left: 50%; top: 90px; transform: translateX(-50%);
-				transition: top 0.6s $easeInQuint; z-index: 2;
+				opacity: 0; transition: top 0.6s $easeInQuint, opacity 0.6s $easeInQuint; z-index: 2;
+			}
+
+			.typingBubble {
+				position: absolute;
+				background-color: var(--color-shape-tertiary); border-radius: 18px;
+				width: 72px; height: 36px;
+				display: flex; align-items: center; justify-content: center; gap: 0px 6px;
+				opacity: 0; transition: opacity 0.4s $easeInQuint; z-index: 1;
+			}
+			.typingBubble {
+				span {
+					display: block; width: 8px; height: 8px; border-radius: 50%;
+					background-color: var(--color-text-secondary);
+					animation: typingDot 1.2s ease-in-out infinite;
+				}
+				span:nth-child(2) { animation-delay: 0.2s; }
+				span:nth-child(3) { animation-delay: 0.4s; }
 			}
 
 			.chatBubble {
-				position: absolute; left: 50%; transform: translateX(-50%);
+				position: absolute; left: 50%; transform: translateX(-50%) scale(0.95);
 				background-color: var(--color-shape-tertiary); border-radius: 22px;
-				opacity: 1; transition: opacity 0.6s $easeInQuint; z-index: 1;
+				opacity: 0; transition: opacity 0.5s $easeInQuint, transform 0.5s $easeInQuint; z-index: 1;
 			}
 			.chatBubble {
 				.message {
@@ -276,10 +354,10 @@ html.bodyAuthDeleted {
 			.chatAvatar {
 				position: absolute; z-index: 3; width: 48px; height: 48px; border-radius: 50%;
 				background: url('~img/onboarding/explainer/user-avatar.png') 50% 50% no-repeat; background-size: cover;
-				opacity: 1; transition: opacity 0.6s $easeInQuint;
+				opacity: 0; transition: opacity 0.5s $easeInQuint;
 			}
 			.chatTail {
-				position: absolute; z-index: 2; width: 20px; height: 14px; opacity: 1; transition: opacity 0.6s $easeInQuint;
+				position: absolute; z-index: 2; width: 20px; height: 14px; opacity: 0; transition: opacity 0.5s $easeInQuint;
 				background-color: var(--color-shape-tertiary);
 				mask-image: url('~img/icon/onboarding/chat-tail.svg');
 				-webkit-mask-image: url('~img/icon/onboarding/chat-tail.svg');
@@ -303,6 +381,7 @@ html.bodyAuthDeleted {
 	}
 	.explainerWrapper.channel-team {
 		.scene {
+			.typingBubble { top: 124px; left: calc(50% - 178.5px); }
 			.chatBubble { top: 24px; width: 357px; height: 150px; }
 			.chatAvatar { top: 126px; left: calc(50% - 178.5px - 56px); }
 			.chatTail { top: 160px; left: calc(50% - 178.5px); }
@@ -310,6 +389,7 @@ html.bodyAuthDeleted {
 	}
 	.explainerWrapper.channel-friends {
 		.scene {
+			.typingBubble { top: 196px; left: calc(50% - 228px); }
 			.chatBubble { top: 22px; width: 456px; height: 224px; }
 			.chatAvatar { top: 198px; left: calc(50% - 228px - 56px); }
 			.chatTail { top: 232px; left: calc(50% - 228px); }
@@ -318,14 +398,15 @@ html.bodyAuthDeleted {
 	}
 	.explainerWrapper.channel-community {
 		.scene {
+			.typingBubble { top: 196px; left: calc(50% - 228px); }
 			.chatBubble { top: 50px; width: 456px; height: 196px; }
 			.chatAvatar { top: 198px; left: calc(50% - 228px - 56px); }
 			.chatTail { top: 232px; left: calc(50% - 228px); }
 			.intro { top: 70%; }
 		}
 	}
-	.explainerWrapper.channel-friends.connected,
-	.explainerWrapper.channel-community.connected {
+	.explainerWrapper.channel-friends.phase3,
+	.explainerWrapper.channel-community.phase3 {
 		.scene {
 			.intro { top: 50%; }
 		}
@@ -339,28 +420,40 @@ html.bodyAuthDeleted {
 			}
 		}
 	}
-	.explainerWrapper.connected,
+	.explainerWrapper.phase1,
+	.explainerWrapper.phase2 {
+		.scene {
+			.chatAvatar { opacity: 1; }
+			.chatTail { opacity: 1; }
+		}
+	}
+	.explainerWrapper.phase1 {
+		.scene {
+			.typingBubble { opacity: 1; }
+		}
+	}
+	.explainerWrapper.phase2 {
+		.scene {
+			.chatBubble { opacity: 1; transform: translateX(-50%) scale(1); }
+		}
+	}
+	.explainerWrapper.phase3,
 	.explainerWrapper.noChat {
 		.scene {
 			.connectors { opacity: 1; }
-			.topObject { top: 0px; }
+			.topObject { top: 0px; opacity: 1; }
 			.topObject {
 				.obCard { box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.12); }
 			}
+			.intro { opacity: 1; }
 			.links {
 				.obCard { opacity: 1; transform: translateY(0px); }
 			}
 		}
 	}
-	.explainerWrapper.connected {
-		.scene {
-			.chatBubble,
-			.chatAvatar,
-			.chatTail { opacity: 0; pointer-events: none; }
-		}
-	}
 	.explainerWrapper.noChat {
 		.scene {
+			.typingBubble,
 			.chatBubble,
 			.chatAvatar,
 			.chatTail { display: none; }
