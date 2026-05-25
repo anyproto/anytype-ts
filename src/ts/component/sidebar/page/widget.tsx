@@ -37,6 +37,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const getSections = () => {
 		const types = U.Data.getWidgetTypes();
 		const sections = U.Menu.widgetSections();
+		const pinned = U.Data.getWidgetObjects(widgets, false);
 		const personal = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId(), false);
 		const recent = S.Record.getRecords(U.Subscription.getRecentSubId());
 		const { total } = S.Record.getMeta(U.Subscription.spaceSubId(J.Constant.subId.archived), '');
@@ -49,7 +50,9 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			};
 		};
 
-		ret.push(I.WidgetSection.Pin);
+		if (pinned.length) {
+			ret.push(I.WidgetSection.Pin);
+		};
 
 		if (personal.length) {
 			ret.push(I.WidgetSection.MyFavorites);
