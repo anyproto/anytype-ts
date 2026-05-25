@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useState, useEffect, useLayoutEffect, Keyboa
 import { Frame, Title, Label, Button, Icon, Input, Error, Header, Phrase, Footer, IconObject, QR } from 'Component';
 import * as I from 'Interface';
 import Animation from 'Lib/animation';
+import ExplainerScene from './explainerScene';
 
 enum Stage {
 	ChannelType		= 0,
@@ -13,10 +14,10 @@ enum Stage {
 };
 
 const CHANNELS = [
-	{ id: 'team', hasChat: true },
-	{ id: 'friends', hasChat: true },
-	{ id: 'community', hasChat: true },
-	{ id: 'private', hasChat: false },
+	{ id: 'team', hasChat: true, bubbleWidth: 358 },
+	{ id: 'friends', hasChat: true, bubbleWidth: 456 },
+	{ id: 'community', hasChat: true, bubbleWidth: 456 },
+	{ id: 'private', hasChat: false, bubbleWidth: 358 },
 ];
 
 const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
@@ -31,10 +32,10 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const descriptionRef = useRef(null);
 	const selectedRef = useRef('');
 	const shareLinkRef = useRef('');
-	const connectTimeout = useRef(0);
+	const connectTimeouts = useRef<number[]>([]);
 	const [ stage, setStage ] = useState(Stage.ChannelType);
 	const [ phraseVisible, setPhraseVisible ] = useState(false);
-	const [ connected, setConnected ] = useState(false);
+	const [ explainerPhase, setExplainerPhase ] = useState(0);
 	const [ error, setError ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
 	const cnb = [];
@@ -346,136 +347,22 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 	};
 
-	const renderCard = (c: any, cls: string) => {
-		if (c.kind == 'bookmark') {
-			return (
-				<div className={[ 'obCard', 'obBookmark', cls ].join(' ')}>
-					<div className="info">
-						<div className="source">{c.source}</div>
-						<div className="title">{c.name}</div>
-						<div className="desc">{c.desc}</div>
-					</div>
-					<div className={`thumb ${c.img}`} />
-				</div>
-			);
-		};
-
-		if (c.kind == 'cover') {
-			return (
-				<div className={[ 'obCard', 'obCover', cls ].join(' ')}>
-					<div className={`obCoverImg ${c.img}`} />
-					<div className="title">{c.name}</div>
-					<div className="type">{c.type}</div>
-				</div>
-			);
-		};
-
-		if (c.kind == 'person') {
-			return (
-				<div className={[ 'obCard', 'obPerson', cls ].join(' ')}>
-					<div className={`avatar ${c.avatar}`} />
-					<div className="title">{c.name}</div>
-					<div className="type">{c.type}</div>
-				</div>
-			);
-		};
-
-		if (c.kind == 'country') {
-			return (
-				<div className={[ 'obCard', 'obCountry', cls ].join(' ')}>
-					<div className={`flag ${c.flag}`} />
-					<div className="title">{c.name}</div>
-					<div className="type">{c.type}</div>
-				</div>
-			);
-		};
-
-		if (c.kind == 'video') {
-			return (
-				<div className={[ 'obCard', 'obVideo', cls ].join(' ')}>
-					<div className="type">{c.type}</div>
-					<div className="title">{c.name}</div>
-					<div className="thumbWrap">
-						<div className={`thumb ${c.thumb}`} />
-					</div>
-					<div className="play" />
-				</div>
-			);
-		};
-
-		if (c.kind == 'task') {
-			let head = null;
-			if (c.icon == 'page') {
-				head = <Icon name="default/page" />;
-			} else
-			if (c.icon) {
-				head = <div className="emoji">{c.icon}</div>;
-			} else {
-				head = <Icon className="taskCheck" />;
-			};
-
-			return (
-				<div className={[ 'obCard', 'obTask', cls ].join(' ')}>
-					<div className="head">
-						{head}
-						<div className="title">{c.name}</div>
-					</div>
-					<div className="type">{c.type}</div>
-					<div className="desc">{c.desc}</div>
-				</div>
-			);
-		};
-
-		return (
-			<div className={[ 'obCard', 'obCompact', cls ].join(' ')}>
-				<div className="emoji">{c.icon}</div>
-				<div className="text">
-					<div className="title">{c.name}</div>
-					<div className="type">{c.type}</div>
-				</div>
-			</div>
-		);
-	};
-
 	const renderExplainer = () => {
 		const channel = getChannel();
 		const content = getExplainerContent(channel.id);
-		const cn = [ 'explainerWrapper', 'animation', `channel-${channel.id}`, (connected ? 'connected' : ''), (channel.hasChat ? '' : 'noChat') ];
+		const message = translate(`authOnboardExplainer${U.String.toUpperCamelCase(channel.id)}Message`);
 
 		return (
-			<div className={cn.join(' ')}>
-				<div className="scene">
-					<svg className="connectors" viewBox="0 0 1064 460" preserveAspectRatio="none">
-						<line x1="532" y1="230" x2="532" y2="40" />
-						<line x1="532" y1="230" x2="210" y2="392" />
-						<line x1="532" y1="230" x2="854" y2="392" />
-					</svg>
-
-					{channel.hasChat ? (
-						<>
-							<div className="chatBubble">
-								<div className="message">{translate(`authOnboardExplainer${U.String.toUpperCamelCase(channel.id)}Message`)}</div>
-							</div>
-							<div className="chatAvatar" />
-							<div className="chatTail" />
-						</>
-					) : ''}
-
-					<div className="topObject">
-						{renderCard(content.top, 'top')}
-					</div>
-
-					<div className="intro">
-						<Label className="line1" text={translate('authOnboardExplainerTitle1')} />
-						<Label className="line2" text={translate('authOnboardExplainerTitle2')} />
-					</div>
-
-					<div className="links">
-						{renderCard(content.a, 'link1')}
-						{renderCard(content.b, 'link2')}
-					</div>
-				</div>
-			</div>
+			<ExplainerScene
+				channelId={channel.id}
+				hasChat={channel.hasChat}
+				bubbleWidth={channel.bubbleWidth}
+				message={message}
+				topContent={content.top}
+				linkA={content.a}
+				linkB={content.b}
+				phase={explainerPhase}
+			/>
 		);
 	};
 
@@ -744,13 +631,13 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		init();
 		return () => {
 			unbind();
-			window.clearTimeout(connectTimeout.current);
+			connectTimeouts.current.forEach(t => window.clearTimeout(t));
 		};
 	}, []);
 
 	useLayoutEffect(() => {
 		if (stage == Stage.Explainer) {
-			setConnected(false);
+			setExplainerPhase(0);
 		};
 	}, [ stage ]);
 
@@ -768,8 +655,16 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 
 		if (stage == Stage.Explainer) {
-			window.clearTimeout(connectTimeout.current);
-			connectTimeout.current = window.setTimeout(() => setConnected(true), getChannel().hasChat ? 1200 : 400);
+			connectTimeouts.current.forEach(t => window.clearTimeout(t));
+			connectTimeouts.current = [];
+
+			if (getChannel().hasChat) {
+				setExplainerPhase(1);
+				connectTimeouts.current.push(window.setTimeout(() => setExplainerPhase(2), 1800));
+				connectTimeouts.current.push(window.setTimeout(() => setExplainerPhase(3), 4300));
+			} else {
+				connectTimeouts.current.push(window.setTimeout(() => setExplainerPhase(3), 400));
+			};
 		};
 
 		if (stage == Stage.ProfileShare) {
