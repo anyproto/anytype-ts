@@ -129,6 +129,27 @@
 					};
 					// ──────────────────────────────────────────────────────────────
 
+					// ── Raw HTML Preview (Bypasses CSP) ──────────────────────────────
+					if (oe.data && oe.data.rawHtmlPreview !== undefined) {
+						body.css({ margin: 0, padding: 0 });
+
+						const blob = new Blob([oe.data.rawHtmlPreview], { type: 'text/html' });
+						const blobUrl = URL.createObjectURL(blob);
+
+						const iframe = document.createElement('iframe');
+						iframe.src = blobUrl;
+						iframe.sandbox = 'allow-scripts allow-same-origin allow-popups';
+
+						root.empty();
+						scripts.empty();
+						root.get(0).appendChild(iframe);
+
+						// Cleanup blob URL when iframe unloads
+						win.on('unload', () => URL.revokeObjectURL(blobUrl));
+						return;
+					};
+					// ──────────────────────────────────────────────────────────────
+
 					let { js, className, insertBeforeLoad, allowIframeResize, align } = oe.data;
 
 					html = String(oe.data.html || '');

@@ -1,4 +1,5 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useEffect, useMemo, useCallback, useState } from 'react';
+import ReactDOM from 'react-dom';
 import * as Prism from 'prismjs';
 
 import raf from 'raf';
@@ -57,6 +58,13 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const { id, content } = block;
 	const fields = block.fields || {};
 	const { text, marks, style, checked, color, iconEmoji, iconImage } = content;
+	const codeLang = fields.lang || J.Constant.default.codeLang;
+	const isHtml = block.isTextCode() && (
+		codeLang === 'html' || 
+		codeLang === 'htm' || 
+		codeLang === 'xhtml' || 
+		U.Prism.aliasMap[codeLang] === 'markup'
+	);
 	const { theme } = S.Common;
 	const root = S.Block.getLeaf(rootId, rootId);
 	const cn = [ 'flex' ];
@@ -1404,6 +1412,12 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		]);
 	};
 
+	const onTogglePreview = () => {
+		C.BlockListSetFields(rootId, [
+			{ blockId: id, fields: { ...fields, showPreview: !fields.showPreview } },
+		]);
+	};
+
 	const onCopy = () => {
 		const length = block.getLength();
 
@@ -1692,6 +1706,13 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 					/>
 
 					<div className="buttons">
+						{isHtml && (
+							<div className="btn" onClick={onTogglePreview}>
+								<Icon name={fields.showPreview ? 'common/eye1' : 'common/eye0'} className="preview" />
+								<div className="txt">{fields.showPreview ? translate('blockTextHidePreview') : translate('blockTextShowPreview')}</div>
+							</div>
+						)}
+
 						<div className="btn" onClick={onToggleWrap}>
 							<Icon name="menu/action/wrap" className="codeWrap" />
 							<div className="txt">{fields.isUnwrapped ? translate('blockTextWrap') : translate('blockTextUnwrap')}</div>
@@ -1732,18 +1753,73 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	};
 
-	return (
-		<div 
-			ref={nodeRef}
-			className={cn.join(' ')}
-		>
-			<div className="markers">
-				{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
-				{markerIcon}
+	const showPreview = block.isTextCode() && fields.showPreview && isHtml;
+	const iframeRef = useRef<HTMLIFrameElement>(null);
+	const [ isPreviewFullscreen, setIsPreviewFullscreen ] = useState(false);
+
+	const sendPreviewData = useCallback(() => {
+		if (!iframeRef.current || !iframeRef.current.contentWindow) return;
+		
+		const data = {
+			rawHtmlPreview: text,
+			blockId: id,
+		};
+		iframeRef.current.contentWindow.postMessage(data, '*');
+	}, [ text, id ]);
+
+	useEffect(() => {
+		if (showPreview) {
+			sendPreviewData();
+			document.body.classList.add('html-preview-split-active');
+		} else {
+			document.body.classList.remove('html-preview-split-active');
+		}
+
+		return () => document.body.classList.remove('html-preview-split-active');
+	}, [ showPreview, text, sendPreviewData ]);
+
+	const onHidePreview = (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setIsPreviewFullscreen(false);
+		C.BlockListSetFields(rootId, [
+			{ blockId: id, fields: { ...fields, showPreview: false } },
+		]);
+	};
+
+	const onToggleFullscreen = (e: React.MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setIsPreviewFullscreen(!isPreviewFullscreen);
+	};
+
+	const previewPanel = showPreview ? ReactDOM.createPortal(
+		<div className={[ 'htmlPreviewPanel', isPreviewFullscreen ? 'isFullscreen' : '' ].join(' ')}>
+			<div className="htmlPreviewPanel-header">
+				<span className="htmlPreviewPanel-title">HTML Preview</span>
+				<div className="htmlPreviewPanel-actions">
+					<div className="htmlPreviewPanel-btn" onMouseDown={onToggleFullscreen} title={isPreviewFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}>
+						<Icon name="common/expand" />
+					</div>
+					<div className="htmlPreviewPanel-btn" onMouseDown={onHidePreview} title="Close Preview">
+						<Icon name="common/close" />
+					</div>
+				</div>
 			</div>
+			<iframe
+				ref={iframeRef}
+				title={`preview-${id}`}
+				sandbox="allow-scripts allow-same-origin allow-popups"
+				src={U.Common.fixAsarPath(`./embed/iframe.html?theme=${S.Common.getThemeClass()}`)}
+				className="htmlPreviewPanel-iframe"
+				onLoad={sendPreviewData}
+			/>
+		</div>,
+		document.body
+	) : null;
 
-			{additional ? <div className="additional">{additional}</div> : ''}
-
+	const editorContent = (
+		<>
 			<Editable 
 				ref={editableRef}
 				id="value"
@@ -1765,6 +1841,23 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				onCompositionEnd={onCompositionEnd}
 				onBeforeInput={onBeforeInput}
 			/>
+			{previewPanel}
+		</>
+	);
+
+	return (
+		<div 
+			ref={nodeRef}
+			className={cn.join(' ')}
+		>
+			<div className="markers">
+				{marker ? <Marker {...marker} id={id} color={color} readonly={readonly} /> : ''}
+				{markerIcon}
+			</div>
+
+			{additional ? <div className="additional">{additional}</div> : ''}
+
+			{editorContent}
 		</div>
 	);
 

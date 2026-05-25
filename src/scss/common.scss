@@ -37,7 +37,9 @@ select:-webkit-autofill:focus { transition: background-color 5000s linear 0s; }
 input, textarea, select { font-family: 'Inter'; }
 
 #root { height: 100%; }
-#appContainer { display: flex; flex-direction: column; height: 100%; }
+#appContainer { display: flex; flex-direction: column; height: 100%; transition: width 0.2s ease; width: 100vw; }
+
+body.html-preview-split-active #appContainer { width: 50vw; }
 #selection { flex-grow: 1; overflow: hidden; }
 .swiper-navigation-icon { display: none !important; }
 

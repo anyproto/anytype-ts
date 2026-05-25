@@ -285,6 +285,12 @@ function createWindow () {
 
 app.on('ready', async () => {
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+		// Skip CSP injection for iframe embeds which need to load external scripts
+		if (details.url.includes('/embed/iframe.html')) {
+			callback({ responseHeaders: details.responseHeaders });
+			return;
+		};
+
 		callback({
 			responseHeaders: {
 				...details.responseHeaders,

@@ -299,6 +299,8 @@
 		#value { white-space: pre; overflow-x: scroll; }
 	}
 
+
+
 	/* DropTarget */
 
 	.block.blockText.textParagraph > .wrapContent > .dropTarget.targetBot.isOver.bottom,
@@ -321,4 +323,80 @@
 		.flex { gap: 0px 8px; }
 		.marker { width: 30px; height: 30px; margin: 0px; }
 	}
+}
+
+/* HTML Preview Panel — fixed right-side overlay rendered via Portal */
+.htmlPreviewPanel {
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 50%;
+	height: 100vh;
+	z-index: 10000;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-bg-primary);
+	border-left: 1px solid var(--color-shape-secondary);
+	box-shadow: -4px 0 16px rgba(0, 0, 0, 0.2);
+	transition: width 0.2s ease;
+
+	&.isFullscreen {
+		width: 100%;
+		border-left: none;
+	}
+}
+
+.htmlPreviewPanel-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 36px;
+	min-height: 36px;
+	padding: 0 8px 0 12px;
+	background-color: var(--color-bg-secondary);
+	border-bottom: 1px solid var(--color-shape-secondary);
+	user-select: none;
+}
+
+.htmlPreviewPanel-title {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--color-text-secondary);
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+}
+
+.htmlPreviewPanel-actions {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
+
+.htmlPreviewPanel-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: background-color 0.15s ease;
+
+	&:hover { background-color: var(--color-bg-tertiary); }
+
+	.icon {
+		width: 16px;
+		height: 16px;
+		opacity: 0.5;
+		transition: opacity 0.15s ease;
+	}
+
+	&:hover .icon { opacity: 0.8; }
+}
+
+.htmlPreviewPanel-iframe {
+	flex: 1;
+	width: 100%;
+	border: none;
+	display: block;
 }

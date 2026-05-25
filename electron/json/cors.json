@@ -260,6 +260,9 @@
 	"frame-src": [
 		"chrome-extension://react-developer-tools",
 		"file://*",
+		"about:",
+		"data:",
+		"blob:",
 		"http://localhost:*/embed/iframe.html",
 		"https://*.youtube.com",
 		"https://*.youtube-nocookie.com",
