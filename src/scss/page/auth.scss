@@ -271,7 +271,7 @@ html.bodyAuthDeleted {
 		.esScene {
 			.esChatAvatar {
 				position: absolute; width: 48px; height: 48px; border-radius: 50%;
-				background: url('~img/onboarding/explainer/user-avatar.png') 50% 50% no-repeat; background-size: cover;
+				background: url('~img/onboarding/explainer/sender-avatar.png') 50% 50% no-repeat; background-size: cover;
 			}
 			.esChatBubble {
 				position: absolute; z-index: 1;
@@ -353,7 +353,7 @@ html.bodyAuthDeleted {
 
 			.chatAvatar {
 				position: absolute; z-index: 3; width: 48px; height: 48px; border-radius: 50%;
-				background: url('~img/onboarding/explainer/user-avatar.png') 50% 50% no-repeat; background-size: cover;
+				background: url('~img/onboarding/explainer/sender-avatar.png') 50% 50% no-repeat; background-size: cover;
 				opacity: 0; transition: opacity 0.5s $easeInQuint;
 			}
 			.chatTail {

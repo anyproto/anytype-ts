@@ -29,6 +29,7 @@ interface Props {
 const SPRING = { type: 'spring' as const, stiffness: 300, damping: 28 };
 const SPRING_CARD = { type: 'spring' as const, stiffness: 400, damping: 30 };
 const EASE_OUT = { duration: 0.4, ease: [ 0, 0, 0.2, 1 ] as [ number, number, number, number ] };
+const EASE_STANDARD = { duration: 0.45, ease: [ 0.4, 0, 0.2, 1 ] as [ number, number, number, number ] };
 
 // Card size constants matching SCSS
 const CARD_SIZES: Record<string, { w: number; h: number }> = {
@@ -184,8 +185,13 @@ const ExplainerScene: React.FC<Props> = ({ channelId, hasChat, bubbleWidth, mess
 	const textLines = Math.max(1, Math.ceil(message.length / Math.floor(textAreaW / 8.5)));
 	const bubbleH = 12 + textLines * 26 + 8 + topSize.h;
 
-	const avatarTopPhase1 = bubbleTop + 48 - 48;
-	const avatarTopPhase2 = bubbleTop + bubbleH - 48;
+	const TYPING_H = 48;
+	// Tail and avatar anchored at the bottom of the full bubble — never move
+	const tailTop = bubbleTop + bubbleH - 12;
+	const avatarTop = bubbleTop + bubbleH - 48;
+	// Typing bubble starts at the same bottom edge, expands right and up
+	const bubbleTopPhase1 = bubbleTop + bubbleH - TYPING_H;
+	const bubbleTopPhase2 = bubbleTop;
 
 
 	const showPhase3 = (phase >= 3) || !hasChat;
@@ -205,29 +211,41 @@ const ExplainerScene: React.FC<Props> = ({ channelId, hasChat, bubbleWidth, mess
 							exit={{ opacity: 0, y: -14 }}
 							transition={phase === 1 ? EASE_OUT : { duration: 0.3, ease: 'easeIn' }}
 						>
+							{/* Avatar — fixed at final position, never moves */}
 							<motion.div
 								className="esChatAvatar"
-								style={{ left: avatarLeft, top: avatarTopPhase1 }}
-								initial={{ opacity: 0, scale: 0.8, top: avatarTopPhase1 }}
-								animate={{ opacity: 1, scale: 1, top: phase === 1 ? avatarTopPhase1 : avatarTopPhase2 }}
-								transition={{ opacity: EASE_OUT, scale: EASE_OUT, top: SPRING }}
+								style={{ left: avatarLeft, top: avatarTop }}
+								initial={{ opacity: 0, scale: 0.9 }}
+								animate={{ opacity: 1, scale: 1 }}
+								transition={EASE_OUT}
 							/>
 
-							{/* Tail — sits 12px into bubble bottom, behind the bubble in z-order */}
+							{/* Tail — fixed at final position, never moves */}
 							<motion.div
 								className="esChatTail"
-								style={{ left: bubbleLeft, top: bubbleTop + 36 }}
-								animate={{ top: bubbleTop + (phase === 1 ? 36 : bubbleH - 12) }}
-								transition={SPRING}
+								style={{ left: bubbleLeft, top: tailTop }}
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								transition={EASE_OUT}
 							/>
 
+							{/* Bubble — starts at bottom (aligned with tail), expands right and up */}
 							<motion.div
 								className="esChatBubble"
-								style={{ left: bubbleLeft, top: bubbleTop }}
-								layout
-								transition={SPRING}
-								initial={{ opacity: 0, scale: 0.9, width: bubbleWidthSmall }}
-								animate={{ opacity: 1, scale: 1, width: phase === 1 ? bubbleWidthSmall : bubbleWidthFull }}
+								style={{ left: bubbleLeft }}
+								initial={{ top: bubbleTopPhase1, opacity: 0, width: bubbleWidthSmall, height: TYPING_H }}
+								animate={{
+									top: phase === 1 ? bubbleTopPhase1 : bubbleTopPhase2,
+									width: phase === 1 ? bubbleWidthSmall : bubbleWidthFull,
+									height: phase === 1 ? TYPING_H : bubbleH,
+									opacity: 1,
+								}}
+								transition={{
+									top: EASE_STANDARD,
+									width: EASE_STANDARD,
+									height: EASE_STANDARD,
+									opacity: { duration: 0.3 },
+								}}
 							>
 
 								<AnimatePresence mode="wait">
@@ -238,7 +256,7 @@ const ExplainerScene: React.FC<Props> = ({ channelId, hasChat, bubbleWidth, mess
 											initial={{ opacity: 0 }}
 											animate={{ opacity: 1 }}
 											exit={{ opacity: 0 }}
-											transition={{ duration: 0.1 }}
+											transition={{ duration: 0.18, ease: 'easeOut' }}
 										>
 											<TypingDots />
 										</motion.div>
@@ -250,15 +268,15 @@ const ExplainerScene: React.FC<Props> = ({ channelId, hasChat, bubbleWidth, mess
 											className="esBubbleContent"
 											initial={{ opacity: 0 }}
 											animate={{ opacity: 1 }}
-											transition={{ duration: 0.25 }}
+											transition={{ duration: 0.35, delay: 0.08 }}
 										>
 											<div className="esMessage">{message}</div>
 											<motion.div
 												layoutId="topCard"
 												className="esAttachment"
-												initial={{ scale: 0, opacity: 0 }}
+												initial={{ scale: 0.94, opacity: 0 }}
 												animate={{ scale: 1, opacity: 1 }}
-												transition={{ ...SPRING_CARD, delay: 0.15 }}
+												transition={{ duration: 0.4, delay: 0.2, ease: [ 0, 0, 0.2, 1 ] as [ number, number, number, number ] }}
 											>
 												{renderCardContent(topContent)}
 											</motion.div>
