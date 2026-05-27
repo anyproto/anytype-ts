@@ -98,6 +98,14 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			actionChildren.push({ id: 'pageLink', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 		};
 
+		if (isSystem && isPinned && canWrite && isOwner) {
+			actionChildren.push({
+				id: 'removeWidget',
+				iconParam: { name: 'menu/action/remove' },
+				name: translate('menuWidgetRemoveWidget'),
+			});
+		};
+
 		if (!isSystem && canWrite) {
 			const personalId = U.Object.getPersonalWidgetsId();
 			const isFavorite = target && S.Block.getWidgetsForTargetIn(target.id, personalId).length > 0;
