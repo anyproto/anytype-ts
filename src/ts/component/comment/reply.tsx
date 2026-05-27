@@ -25,12 +25,22 @@ const CommentReply = (props: Props) => {
 	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
+	const emojiRootsRef = useRef<Map<HTMLElement, Root>>(new Map());
 	const { id, creator, createdAt, modifiedAt, reactions } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = message.content?.parts || [];
 	const editedLabel = modifiedAt ? ` (${translate('commentEdited')})` : '';
 	const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
+
+	// Unmount any remaining inline emoji roots when the reply itself unmounts.
+	useEffect(() => {
+		const roots = emojiRootsRef.current;
+		return () => {
+			roots.forEach(root => root.unmount());
+			roots.clear();
+		};
+	}, []);
 
 	// Bind click handlers for mentions and links
 	useEffect(() => {
@@ -123,33 +133,43 @@ const CommentReply = (props: Props) => {
 			};
 		});
 
-		// Emoji marks — render as cross-platform images
-		const roots: Root[] = [];
+		// Emoji marks — render as cross-platform images.
+		// Reconcile against a persistent per-reply Map<container, Root>;
+		// see the matching comment in post.tsx for the full rationale.
+		const roots = emojiRootsRef.current;
+		const seen = new Set<HTMLElement>();
 
 		U.Dom.selectAll(Mark.getTag(I.MarkType.Emoji), node).forEach((item: HTMLElement) => {
 			const emojiId = item.getAttribute('data-param');
-			const smile = U.Dom.select('smile', item);
+			const smile = U.Dom.select('smile', item) as HTMLElement | null;
 
-			if (smile) {
-				// Clear native emoji text, keep only the smile mount point
-				Array.from(item.childNodes).forEach(child => {
-					if (child.nodeType === 3) {
-						child.remove();
-					};
-				});
-
-				const container = smile as HTMLElement & { _reactRoot?: Root };
-				const root = container._reactRoot || createRoot(container);
-
-				container._reactRoot = root;
-				roots.push(root);
-				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
+			if (!smile) {
+				return;
 			};
+
+			// Clear native emoji text, keep only the smile mount point
+			Array.from(item.childNodes).forEach(child => {
+				if (child.nodeType === 3) {
+					child.remove();
+				};
+			});
+
+			seen.add(smile);
+
+			let root = roots.get(smile);
+			if (!root) {
+				root = createRoot(smile);
+				roots.set(smile, root);
+			};
+			root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
 		});
 
-		return () => {
-			roots.forEach(root => root.unmount());
-		};
+		roots.forEach((root, container) => {
+			if (!seen.has(container)) {
+				roots.delete(container);
+				root.unmount();
+			};
+		});
 	}, [ isEditing, parts, subId ]);
 
 	// Right-click on selected text in the rendered reply opens a small menu

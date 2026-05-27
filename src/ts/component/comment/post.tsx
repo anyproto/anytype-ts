@@ -31,6 +31,7 @@ const CommentPost = (props: Props) => {
 	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
+	const emojiRootsRef = useRef<Map<HTMLElement, Root>>(new Map());
 	const { id, creator, createdAt, modifiedAt, replyCount, reactions } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
@@ -41,6 +42,15 @@ const CommentPost = (props: Props) => {
 	const hasOlderReplies = S.Comment.getHasOlderReplies(id);
 	const [ isLoadingOlderReplies, setIsLoadingOlderReplies ] = useState(false);
 	const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
+
+	// Unmount any remaining inline emoji roots when the post itself unmounts.
+	useEffect(() => {
+		const roots = emojiRootsRef.current;
+		return () => {
+			roots.forEach(root => root.unmount());
+			roots.clear();
+		};
+	}, []);
 
 	useEffect(() => {
 		const existing = S.Comment.getReplies(id);
@@ -129,45 +139,51 @@ const CommentPost = (props: Props) => {
 			};
 		});
 
-		// Emoji marks — render as cross-platform images
-		const mounted: { root: Root; container: HTMLElement & { _reactRoot?: Root } }[] = [];
+		// Emoji marks — render as cross-platform images.
+		//
+		// Reconcile against a persistent per-post Map<container, Root> instead
+		// of unmount + createRoot on every effect run: dangerouslySetInnerHTML
+		// replaces the smile elements on every parts change, and rapid
+		// concurrent ChatUpdates would otherwise stack microtask unmounts
+		// against fresh createRoot calls on the same containers, which React
+		// 18 explicitly forbids and which can stall the reconciler — the
+		// "tab unresponsive" symptom seen with concurrent discussion edits.
+		const roots = emojiRootsRef.current;
+		const seen = new Set<HTMLElement>();
 
 		U.Dom.selectAll(Mark.getTag(I.MarkType.Emoji), node).forEach((item: HTMLElement) => {
 			const emojiId = item.getAttribute('data-param');
-			const smile = U.Dom.select('smile', item);
+			const smile = U.Dom.select('smile', item) as HTMLElement | null;
 
-			if (smile) {
-				// Clear native emoji text, keep only the smile mount point
-				Array.from(item.childNodes).forEach(child => {
-					if (child.nodeType === 3) {
-						child.remove();
-					};
-				});
-
-				const container = smile as HTMLElement & { _reactRoot?: Root };
-
-				// A stale root may be cached on a reused DOM node from a previous effect run
-				if (container._reactRoot) {
-					const stale = container._reactRoot;
-					container._reactRoot = null;
-					queueMicrotask(() => stale.unmount());
-				};
-
-				const root = createRoot(container);
-				container._reactRoot = root;
-				mounted.push({ root, container });
-				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
+			if (!smile) {
+				return;
 			};
+
+			// Clear native emoji text, keep only the smile mount point
+			Array.from(item.childNodes).forEach(child => {
+				if (child.nodeType === 3) {
+					child.remove();
+				};
+			});
+
+			seen.add(smile);
+
+			let root = roots.get(smile);
+			if (!root) {
+				root = createRoot(smile);
+				roots.set(smile, root);
+			};
+			root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
 		});
 
-		return () => {
-			mounted.forEach(({ root, container }) => {
-				if (container._reactRoot === root) {
-					container._reactRoot = null;
-				};
-				queueMicrotask(() => root.unmount());
-			});
-		};
+		// Containers replaced by the new innerHTML are detached — unmount the
+		// roots that were bound to them.
+		roots.forEach((root, container) => {
+			if (!seen.has(container)) {
+				roots.delete(container);
+				root.unmount();
+			};
+		});
 	}, [ isEditing, parts, subId ]);
 
 	// Right-click on selected text in the rendered post content opens a small
