@@ -1347,6 +1347,12 @@ class UtilMenu {
 	};
 
 	dateFormatOptions () {
+		// Use a fixed, asymmetric sample date (Jul 30, 2020) so Short (30/07/2020)
+		// and ShortUS (07/30/2020) stay visually distinct year-round. Using today's
+		// date collapsed both labels to the same string on symmetric dates
+		// (01/01, 02/02, ..., 12/12) — see issue #2208.
+		const sample = U.Date.timestamp(2020, 7, 30);
+
 		return ([
 			{ id: I.DateFormat.Default },
 			{ id: I.DateFormat.MonthAbbrBeforeDay },
@@ -1358,7 +1364,7 @@ class UtilMenu {
 			{ id: I.DateFormat.Nordic },
 			{ id: I.DateFormat.European },
 		] as { id: I.DateFormat; name: string }[]).map(it => {
-			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
+			it.name = U.Date.dateWithFormat(it.id, sample);
 			return it;
 		});
 	};
