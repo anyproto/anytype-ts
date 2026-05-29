@@ -77,7 +77,7 @@
 
 			&.isWide { max-width: 100%; overflow: hidden; }
 			&.isWide {
-				.inner { flex-direction: row; padding: 0px; align-items: stretch; overflow: hidden; }
+				.inner { flex-direction: row; padding: 0px; align-items: flex-start; overflow: hidden; }
 				.inner.withImage {
 					.side.left { padding-right: 0px; }
 				}
@@ -85,7 +85,7 @@
 				.side.left { flex-grow: 1; padding: 16px; justify-content: center; min-width: 0; }
 				.side.right {
 					padding: 16px; width: 28%; min-height: 90px; display: flex; justify-content: center; align-items: center; position: relative;
-					overflow: hidden; aspect-ratio: 7 / 3;
+					overflow: hidden; aspect-ratio: 1;
 				}
 				.side.right {
 					.img { border-radius: 4px; }
