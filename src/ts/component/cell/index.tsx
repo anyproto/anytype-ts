@@ -328,7 +328,13 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 				};
 
 				const onSelect = (event: any, item: any) => {
-					const value = childRef.current.getValue();
+					// Always read from the underlying record value, never from a child
+					// cell that may expose a display-only (truncated) representation.
+					// Fixes #2163: when the featured-relations header renders a URL
+					// with `shortUrl`/`textLimit`, the visible string can be a form
+					// like "github.com/an...issues"; the Open/Copy/Reload actions
+					// must operate on the full target URL stored on the record.
+					const value = String(record[relation.relationKey] || '');
 					if (!value) {
 						return;
 					};
