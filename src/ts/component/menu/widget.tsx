@@ -6,8 +6,10 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, close, setActive, onKeyDown, position, getId, getSize } = props;
 	const { data, className, classNameWrap } = param;
-	const { blockId, isPreview, target } = data;
+	const { blockId, isPreview, target, rootId: blockRootId } = data;
 	const { widgets } = S.Block;
+	const effectiveRootId = blockRootId || widgets;
+	const isPersonalWidget = !!blockRootId;
 	const [ layout, setLayout ] = useState<I.WidgetLayout>(data.layout);
 	const [ limit, setLimit ] = useState(data.limit);
 	const nodeRef = useRef(null);
@@ -50,7 +52,7 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const canWrite = U.Space.canMyParticipantWrite();
 		const canModerate = U.Space.canMyParticipantModerate();
 		const layoutOptions = U.Menu.getWidgetLayoutOptions(target?.id, target?.layout, isPreview);
-		const block = S.Block.getLeaf(widgets, blockId);
+		const block = S.Block.getLeaf(effectiveRootId, blockId);
 		const isSystem = U.Menu.isSystemWidget(target?.id);
 		const isType = U.Object.isTypeLayout(target?.layout);
 
@@ -58,7 +60,7 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return [];
 		};
 
-		const isPinned = block.content.section == I.WidgetSection.Pin;
+		const isPinned = !isPersonalWidget && (block.content.section == I.WidgetSection.Pin);
 		const currentLayout = layoutOptions.find(it => it.id == layout);
 		const sections: any[] = [];
 
@@ -207,13 +209,13 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onSelectOption = (key: string, optionId: string) => {
-		const block = S.Block.getLeaf(widgets, blockId);
+		const block = S.Block.getLeaf(effectiveRootId, blockId);
 
 		if (!block) {
 			return;
 		};
 
-		const isSectionPin = block.content.section == I.WidgetSection.Pin;
+		const isSectionPin = !isPersonalWidget && (block.content.section == I.WidgetSection.Pin);
 
 		needUpdate.current = true;
 		n.current = -1;
@@ -227,6 +229,9 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 				if (isSectionPin) {
 					C.BlockWidgetSetLayout(widgets, blockId, newLayout);
+				} else
+				if (isPersonalWidget) {
+					C.BlockWidgetSetLayout(effectiveRootId, blockId, newLayout);
 				};
 
 				analytics.event('ChangeWidgetLayout', { layout: newLayout, route: 'Inner', params: { target } });
@@ -241,6 +246,9 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 				if (isSectionPin) {
 					C.BlockWidgetSetLimit(widgets, blockId, newLimit);
+				} else
+				if (isPersonalWidget) {
+					C.BlockWidgetSetLimit(effectiveRootId, blockId, newLimit);
 				};
 
 				analytics.event('ChangeWidgetLimit', { limit: newLimit, layout, route: 'Inner', params: { target } });

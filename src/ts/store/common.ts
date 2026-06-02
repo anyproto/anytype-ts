@@ -1273,7 +1273,7 @@ class CommonStore {
 		const makeParam = (id: I.WidgetSection): I.WidgetSectionParam => {
 			const prev = savedMap.get(id);
 			const isClosed = (id == I.WidgetSection.Pin) ? false : (prev?.isClosed ?? false);
-			return { id, isClosed, isHidden: prev?.isHidden ?? false };
+			return { id, isClosed, isHidden: prev?.isHidden ?? false, view: prev?.view ?? 'list' };
 		};
 
 		const seen = new Set<I.WidgetSection>();
@@ -1313,7 +1313,7 @@ class CommonStore {
 
 	updateWidgetSection (param: Partial<I.WidgetSectionParam>) {
 		set(this.getWidgetSection(param.id), param);
-		this.widgetSectionsSet(this.widgetSections);
+		this.widgetSectionsSet([ ...this.widgetSections ]);
 	};
 
 };

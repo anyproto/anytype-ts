@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -11,6 +11,8 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const { parent, onContext } = props;
 	const { space, sidebarView } = S.Common;
 	const isLinksView = sidebarView == I.SidebarView.Links;
+	const [ , setDummy ] = useState(0);
+	const forceUpdate = () => setDummy(v => v + 1);
 	const nodeRef = useRef(null);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const sensors = useSensors(
@@ -22,8 +24,24 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const isUnread = realId == J.Constant.widgetId.unread;
 	const isBin = realId == J.Constant.widgetId.bin;
 	const isRecent = realId == J.Constant.widgetId.recentEdit;
+	const isPersonalWidgets = realId == J.Constant.widgetId.personalWidgets;
+	const personalSubId = `${parent.id}-objects`;
 	const canWrite = U.Space.canMyParticipantWrite();
 	const home = U.Space.getDashboard();
+
+	const getPersonalTargetIds = (): string[] => {
+		const personalRootId = U.Object.getPersonalWidgetsId();
+		return S.Block.getChildrenIds(personalRootId, personalRootId)
+			.map(widgetId => {
+				const wb = S.Block.getLeaf(personalRootId, widgetId);
+				if (!wb?.isWidget()) return null;
+				const innerIds = S.Block.getChildrenIds(personalRootId, wb.id);
+				if (!innerIds.length) return null;
+				const inner = S.Block.getLeaf(personalRootId, innerIds[0]);
+				return inner?.getTargetObjectId() || null;
+			})
+			.filter(Boolean);
+	};
 
 	const getSubId = () => {
 		let subId = '';
@@ -43,10 +61,44 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				subId = U.Subscription.getRecentSubId();
 				break;
 			};
+
+			case J.Constant.widgetId.personalWidgets: {
+				subId = personalSubId;
+				break;
+			};
 		};
 
 		return subId;
 	};
+
+	const updateData = () => {
+		if (!isPersonalWidgets) {
+			return;
+		};
+
+		const ids = getPersonalTargetIds();
+		if (!ids.length) {
+			return;
+		};
+
+		U.Subscription.destroyList([ personalSubId ]);
+		U.Subscription.subscribe({
+			subId: personalSubId,
+			filters: [ { relationKey: 'id', condition: I.FilterCondition.In, value: ids } ],
+			keys: J.Relation.sidebar,
+			noDeps: true,
+		}, forceUpdate);
+	};
+
+	useImperativeHandle(ref, () => ({ updateData }));
+
+	useEffect(() => {
+		updateData();
+
+		return () => {
+			U.Subscription.destroyList([ personalSubId ]);
+		};
+	}, []);
 
 	const isAllowedObject = (type: any): boolean => {
 		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getSystemLayouts());
@@ -138,7 +190,16 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			};
 
 			case J.Constant.widgetId.personalWidgets: {
-				items = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId(), false);
+				const personalRootId = U.Object.getPersonalWidgetsId();
+				const subscribedMap = new Map(S.Record.getRecords(personalSubId).map(it => [ it.id, it ]));
+
+				getPersonalTargetIds().forEach(targetId => {
+					const object = subscribedMap.get(targetId) || S.Detail.get(personalRootId, targetId);
+					if (!object || object._empty_ || object.isArchived || object.isDeleted) {
+						return;
+					};
+					items.push(object);
+				});
 				break;
 			};
 

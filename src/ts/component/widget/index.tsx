@@ -28,11 +28,12 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	const subId = useRef('');
 	const { block, isPreview, className, canEdit, getObject, onDragStart, onDragOver, onDrag, setPreview, index } = props;
 	const { widgets } = S.Block;
+	const blockRootId = props.rootId || widgets;
 	const timeoutOpen = useRef(0);
 
 	const getChild = (): I.Block => {
-		const childrenIds = S.Block.getChildrenIds(widgets, block.id);
-		const child = childrenIds.length ? S.Block.getLeaf(widgets, childrenIds[0]) : null;
+		const childrenIds = S.Block.getChildrenIds(blockRootId, block.id);
+		const child = childrenIds.length ? S.Block.getLeaf(blockRootId, childrenIds[0]) : null;
 		return child;
 	};
 
@@ -283,6 +284,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 				target: object,
 				blockId: block.id,
 				isPreview,
+				rootId: props.rootId,
 			},
 		});
 	};
@@ -604,8 +606,8 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 				return;
 			};
 
-			const object = S.Detail.get(S.Block.widgets, targetId);
-			const total = Relation.getArrayValue(object.links).length;
+			const treeObject = getObject(targetId);
+			const total = Relation.getArrayValue(treeObject?.links).length;
 
 			show = !isPreview && (total > limit);
 		} else {
@@ -810,28 +812,30 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 				);
 			};
 
-			targetTop = (
-				<DropTarget 
-					{...props} 
-					isTargetTop={true} 
-					rootId={S.Block.widgets} 
-					id={block.id} 
-					dropType={I.DropType.Widget} 
-					canDropMiddle={false} 
-					onClick={onClickHandler}
-				/>
-			);
+			if (!props.rootId) {
+				targetTop = (
+					<DropTarget
+						{...props}
+						isTargetTop={true}
+						rootId={S.Block.widgets}
+						id={block.id}
+						dropType={I.DropType.Widget}
+						canDropMiddle={false}
+						onClick={onClickHandler}
+					/>
+				);
 
-			targetBot = (
-				<DropTarget 
-					{...props} 
-					isTargetBottom={true} 
-					rootId={S.Block.widgets} 
-					id={block.id} 
-					dropType={I.DropType.Widget} 
-					canDropMiddle={false} 
-				/>
-			);
+				targetBot = (
+					<DropTarget
+						{...props}
+						isTargetBottom={true}
+						rootId={S.Block.widgets}
+						id={block.id}
+						dropType={I.DropType.Widget}
+						canDropMiddle={false}
+					/>
+				);
+			};
 		};
 	};
 

@@ -2408,6 +2408,10 @@
 	"widgetRecentEditMode0": "Anyone",
 	"widgetRecentEditMode1": "Only me",
 
+	"widgetFavoritesViewTitle": "Show as",
+	"widgetFavoritesViewList": "List",
+	"widgetFavoritesViewWidgets": "Widgets",
+
 	"widgetManageSections": "Manage Sections",
 	"widgetHideSection": "Hide section",
 	"widgetShowSection": "Show section",
