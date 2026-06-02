@@ -300,16 +300,6 @@ Detailed documentation is available in `docs/` for deeper context on each module
 
 Run in browser without Electron: `bun run start:web` (starts anytypeHelper + Vite dev server). Use `ANYTYPE_USE_SIDE_SERVER=http://...` to skip helper start. See `docs/src/ts/lib/web/README.md` for details.
 
-## Pull Request Workflow
-
-After creating any pull request, always post the following comment on it:
-
-```
-I have read the CLA Document and I hereby sign the CLA.
-```
-
-Use `gh pr comment <number> --body "I have read the CLA Document and I hereby sign the CLA."`.
-
 ## Linear API Integration
 
 Use the `LINEAR_API_KEY` environment variable to fetch issue details from Linear.
