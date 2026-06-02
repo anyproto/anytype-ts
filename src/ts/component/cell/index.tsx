@@ -205,8 +205,8 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 					const el = U.Dom.get(cellId);
 					const rect = el?.getBoundingClientRect();
 					return {
-						x: clickX,
-						y: rect ? rect.top + window.scrollY : clickY,
+						x: clickX + window.scrollX,
+						y: rect ? rect.top + window.scrollY : clickY + window.scrollY,
 						width: 0,
 						height: rect ? rect.height : 0,
 					};

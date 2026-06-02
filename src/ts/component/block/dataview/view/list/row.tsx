@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, MouseEvent } from 'react';
+import React, { forwardRef, useEffect, useLayoutEffect, useRef, useState, useImperativeHandle, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Cell, DropTarget, Icon, IconObject, SelectionTarget } from 'Component';
 import * as I from 'Interface';
@@ -15,6 +15,7 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 	} = props;
 	const [ isEditing, setIsEditing ] = useState(false);
 	const nodeRef = useRef(null);
+	const resizeRef = useRef(null);
 	const view = getView();
 
 	const resize = () => {
@@ -45,28 +46,28 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 			return;
 		};
 
-		// Clear any previous water-fill inline flex so the left side reports
-		// its true content width when we measure it below.
-		wrappers.forEach(el => { el.style.flex = ''; });
+		// Only clear previous water-fill flex when it was actually set.
+		// An unconditional clear changes layout and triggers a spurious second
+		// ResizeObserver callback on every tick.
+		if (wrappers.some(el => el.style.flex)) {
+			wrappers.forEach(el => { el.style.flex = ''; });
+		};
 
 		// Compute available space from the container, not from rightSide.offsetWidth.
 		// rightSide.offsetWidth is unreliable because inner elements have
 		// max-width:100% which creates a circular reference when the right side
 		// has no fixed width, causing it to collapse to near-zero.
 		const sidesEl = rightSide.parentElement as HTMLElement;
+		if (!sidesEl) {
+			return;
+		};
 		const leftSideEl = U.Dom.select('.side.left', sidesEl) as HTMLElement;
-		if (!sidesEl || !leftSideEl) {
+		if (!leftSideEl) {
 			return;
 		};
 
-		leftSideEl.style.flex = '0 0 auto';
-		const leftNatural = leftSideEl.offsetWidth;
-		leftSideEl.style.flex = '';
-
 		const sidesWidth = sidesEl.offsetWidth;
-		// Respect the CSS min-width:40% on the left side.
-		const effectiveLeft = Math.max(leftNatural, sidesWidth * 0.4);
-		const available = Math.max(0, sidesWidth - effectiveLeft - 12);
+		const available = Math.max(0, sidesWidth - leftSideEl.offsetWidth - 12);
 		if (!available) {
 			return;
 		};
@@ -97,9 +98,6 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 			return;
 		};
 
-		// Cap each measured width at the CSS .name max-width (300px).
-		// Without this, text cells (description) measure at full text width and get
-		// assigned more space than they can display, creating an empty gap.
 		const naturalCapped = natural.map(w => Math.min(w, 300));
 		const total = naturalCapped.reduce((s, w) => s + w, 0);
 		if (total <= available) {
@@ -112,13 +110,13 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 		let remaining = available;
 		let slots = wrappers.length;
 
-		const sorted = natural.map((_, i) => i).sort((a, b) => natural[a] - natural[b]);
+		const sorted = naturalCapped.map((_, i) => i).sort((a, b) => naturalCapped[a] - naturalCapped[b]);
 
 		for (const idx of sorted) {
 			const share = remaining / slots;
-			if (natural[idx] <= share) {
-				assigned[idx] = natural[idx];
-				remaining -= natural[idx];
+			if (naturalCapped[idx] <= share) {
+				assigned[idx] = naturalCapped[idx];
+				remaining -= naturalCapped[idx];
 				slots--;
 			} else {
 				break;
@@ -131,7 +129,20 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 		});
 	};
 
-	useEffect(() => resize());
+	useLayoutEffect(() => {
+		resizeRef.current = resize;
+	});
+
+	useEffect(() => {
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+		const target = (U.Dom.select('.sides', node) as HTMLElement) || node;
+		const ro = new ResizeObserver(() => resizeRef.current());
+		ro.observe(target);
+		return () => ro.disconnect();
+	}, []);
 
 	useImperativeHandle(ref, () => ({
 		setIsEditing,
