@@ -196,6 +196,22 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 
 		if (noInplace) {
 			param.title = relation.name;
+
+			if (!isGrid) {
+				const clickX = e.clientX;
+				const clickY = e.clientY;
+
+				param.recalcRect = () => {
+					const el = U.Dom.get(cellId);
+					const rect = el?.getBoundingClientRect();
+					return {
+						x: clickX,
+						y: rect ? rect.top + window.scrollY : clickY,
+						width: 0,
+						height: rect ? rect.height : 0,
+					};
+				};
+			};
 		};
 
 		switch (relation.format) {

@@ -73,6 +73,18 @@
 			.sides {
 				.side { display: flex; flex-direction: row; align-items: center; overflow: hidden; }
 				.side.left { flex: 1 1 auto; min-width: 40%; }
+				.side.right { flex-shrink: 1; min-width: 0; }
+				.side.right {
+					> .cellWrapper:not(.isName) { min-width: 0; overflow: hidden; }
+					.cellContent:not(.isName) { width: 100%; }
+					.cellContent:not(.isName) {
+						.wrap { overflow: hidden; max-width: 100%; }
+						.over { overflow: hidden; max-width: 100%; }
+						.element { overflow: hidden; max-width: 100%; }
+						.tagItem { overflow: hidden; max-width: 100%; }
+					}
+					.element .iconObject { display: none; }
+				}
 				.side.left {
 					.cellWrapper { margin-right: 4px; }
 					.cellWrapper.isName { width: 100%; }

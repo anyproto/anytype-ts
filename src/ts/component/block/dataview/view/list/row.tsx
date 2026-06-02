@@ -30,6 +30,105 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 		if (first) {
 			U.Dom.addClass(first, 'first');
 		};
+
+		const rightSide = U.Dom.select('.side.right', node) as HTMLElement;
+		if (!rightSide) {
+			return;
+		};
+
+		const wrappers = Array.from(rightSide.children).filter(
+			el => (el as HTMLElement).classList.contains('cellWrapper') &&
+			      !(el as HTMLElement).classList.contains('isEmpty')
+		) as HTMLElement[];
+
+		if (wrappers.length < 2) {
+			return;
+		};
+
+		// Clear any previous water-fill inline flex so the left side reports
+		// its true content width when we measure it below.
+		wrappers.forEach(el => { el.style.flex = ''; });
+
+		// Compute available space from the container, not from rightSide.offsetWidth.
+		// rightSide.offsetWidth is unreliable because inner elements have
+		// max-width:100% which creates a circular reference when the right side
+		// has no fixed width, causing it to collapse to near-zero.
+		const sidesEl = rightSide.parentElement as HTMLElement;
+		const leftSideEl = U.Dom.select('.side.left', sidesEl) as HTMLElement;
+		if (!sidesEl || !leftSideEl) {
+			return;
+		};
+
+		leftSideEl.style.flex = '0 0 auto';
+		const leftNatural = leftSideEl.offsetWidth;
+		leftSideEl.style.flex = '';
+
+		const sidesWidth = sidesEl.offsetWidth;
+		// Respect the CSS min-width:40% on the left side.
+		const effectiveLeft = Math.max(leftNatural, sidesWidth * 0.4);
+		const available = Math.max(0, sidesWidth - effectiveLeft - 12);
+		if (!available) {
+			return;
+		};
+
+		// Measure natural widths using an off-screen clone so we never mutate live
+		// elements. Mutating live widths mid-render interferes with concurrent
+		// getBoundingClientRect calls from menu/popup positioning code.
+		// .name is intentionally left constrained to max-width:300px so text cells
+		// (description) measure at their visual cap and don't receive excess space.
+		const clone = rightSide.cloneNode(true) as HTMLElement;
+		clone.style.cssText = 'position:absolute;left:-9999px;top:-9999px;visibility:hidden;';
+		document.body.appendChild(clone);
+
+		const cloneWrappers = Array.from(clone.children).filter(
+			el => el.classList.contains('cellWrapper') && !el.classList.contains('isEmpty')
+		) as HTMLElement[];
+
+		cloneWrappers.forEach(el => { el.style.flex = 'none'; el.style.width = 'max-content'; el.style.maxWidth = 'none'; });
+		Array.from(clone.querySelectorAll<HTMLElement>('.cellContent, .tagItem, .element, .over, .wrap')).forEach(el => {
+			el.style.width = 'max-content';
+			el.style.maxWidth = 'none';
+		});
+
+		const natural = cloneWrappers.map(el => el.offsetWidth);
+		clone.remove();
+
+		if (natural.length !== wrappers.length) {
+			return;
+		};
+
+		// Cap each measured width at the CSS .name max-width (300px).
+		// Without this, text cells (description) measure at full text width and get
+		// assigned more space than they can display, creating an empty gap.
+		const naturalCapped = natural.map(w => Math.min(w, 300));
+		const total = naturalCapped.reduce((s, w) => s + w, 0);
+		if (total <= available) {
+			return;
+		};
+
+		// Water-fill: items that fit within their equal share keep their natural width;
+		// the remaining space is then split equally among items that need more.
+		const assigned: number[] = new Array(wrappers.length).fill(-1);
+		let remaining = available;
+		let slots = wrappers.length;
+
+		const sorted = natural.map((_, i) => i).sort((a, b) => natural[a] - natural[b]);
+
+		for (const idx of sorted) {
+			const share = remaining / slots;
+			if (natural[idx] <= share) {
+				assigned[idx] = natural[idx];
+				remaining -= natural[idx];
+				slots--;
+			} else {
+				break;
+			};
+		};
+
+		const equalShare = remaining / slots;
+		wrappers.forEach((el, i) => {
+			el.style.flex = `0 0 ${assigned[i] === -1 ? equalShare : assigned[i]}px`;
+		});
 	};
 
 	useEffect(() => resize());
@@ -174,8 +273,6 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 		);
 	};
 
-	const lw = 50 + left.length * 5;
-
 	let content = null;
 
 	if (isRegular) {
@@ -218,7 +315,6 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 			<div className="sides">
 				<div
 					className={[ 'side', 'left', (left.length > 1 ? 's60' : '') ].join(' ')}
-					style={{ width: `${lw}%` }}
 				>
 					{left.map(mapper)}
 				</div>
