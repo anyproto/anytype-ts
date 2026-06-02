@@ -17,6 +17,7 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const resizeRef = useRef(null);
 	const view = getView();
+	const record = getRecord(recordId);
 
 	const resize = () => {
 		const node = nodeRef.current;
@@ -139,10 +140,25 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 			return;
 		};
 		const target = (U.Dom.select('.sides', node) as HTMLElement) || node;
-		const ro = new ResizeObserver(() => resizeRef.current());
+		const ro = new ResizeObserver(() => resizeRef.current?.());
 		ro.observe(target);
 		return () => ro.disconnect();
 	}, []);
+
+	// Re-run water-fill when right-side cell values change (e.g. after a
+	// relation value edit via popup). The ResizeObserver alone won't catch
+	// this because .sides width stays constant when only content changes.
+	const rightValueKey = view ? view.getVisibleRelations()
+		.filter(vr => vr.relationKey != 'name')
+		.map(vr => {
+			const v = record?.[vr.relationKey];
+			return Array.isArray(v) ? v.join(',') : String(v ?? '');
+		})
+		.join('|') : '';
+
+	useEffect(() => {
+		resizeRef.current?.();
+	}, [ rightValueKey ]);
 
 	useImperativeHandle(ref, () => ({
 		setIsEditing,
@@ -154,7 +170,6 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 
 	const idPrefix = getIdPrefix();
 	const subId = S.Record.getSubId(rootId, block.id);
-	const record = getRecord(recordId);
 	const cn = [ 'row' ];
 	const relations = view.getVisibleRelations();
 	const nameIndex = relations.findIndex(it => it.relationKey == 'name');
