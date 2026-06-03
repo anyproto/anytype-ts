@@ -186,7 +186,7 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 				<IconObject
 					id={`list-icon-${record.id}`}
 					object={record}
-					size={48}
+					size={32}
 					canEdit={!props.readonly && U.Object.isTaskLayout(record.layout)}
 					noClick={true}
 				/>
