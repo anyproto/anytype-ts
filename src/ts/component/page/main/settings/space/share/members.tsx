@@ -45,7 +45,7 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 	const getParticipantList = () => {
 		const statuses = [ I.ParticipantStatus.Active ];
 
-		if (isOwner) {
+		if (canModerate) {
 			statuses.push(I.ParticipantStatus.Joining);
 		};
 
@@ -75,13 +75,18 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 		const isWriterLimit = U.Space.getWriterLimit() <= 0;
 		const items: any[] = [];
 
-		// Only Owners can assign roles. Admins can only remove Editors and Viewers.
-		if (isOwner) {
-			[
-				{ id: I.ParticipantPermissions.Admin, disabled: isWriterLimit },
-				{ id: I.ParticipantPermissions.Writer, disabled: isWriterLimit },
-				{ id: I.ParticipantPermissions.Reader, disabled: isReaderLimit },
-			].forEach(it => {
+		// Moderators (owners/admins) can assign roles. Only Owners can assign the Admin role.
+		if (canModerate) {
+			const roles: any[] = [];
+
+			if (isOwner) {
+				roles.push({ id: I.ParticipantPermissions.Admin, disabled: isWriterLimit });
+			};
+
+			roles.push({ id: I.ParticipantPermissions.Writer, disabled: isWriterLimit });
+			roles.push({ id: I.ParticipantPermissions.Reader, disabled: isReaderLimit });
+
+			roles.forEach(it => {
 				items.push({ ...it, name: translate(`participantPermissions${it.id}`) });
 			});
 
@@ -200,7 +205,7 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 		// Owner approves join requests; moderators (owner/admin) can manage members they have authority over.
 		const canManage = !isCurrent && (
-			(isJoining && isOwner) ||
+			(isJoining && canModerate) ||
 			(isActive && U.Space.canManageParticipant(item))
 		);
 

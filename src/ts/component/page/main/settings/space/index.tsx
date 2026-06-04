@@ -16,7 +16,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	const type = S.Record.getTypeById(S.Common.type);
 	const participant = U.Space.getParticipant();
 	const canWrite = U.Space.canMyParticipantWrite();
-	const isOwner = U.Space.isMyOwner();
+	const canModerate = U.Space.canMyParticipantModerate();
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 	const otherParticipant = spaceview.isOneToOne ? U.Space.getOneToOneParticipant(spaceview) : null;
 	const cnh = [ 'spaceHeader' ];
@@ -336,7 +336,7 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 							<Label className="sub" text={translate(`popupSettingsSpaceIndexManageSpaceTitle`)} />
 
 							<div className="sectionContent">
-								{!spaceview.isOneToOne && isOwner ? (
+								{!spaceview.isOneToOne && canModerate ? (
 									<div className="item">
 										<div className="sides">
 											<Icon name="settings/home" />

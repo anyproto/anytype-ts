@@ -260,7 +260,7 @@ class Keyboard {
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const isOwner = U.Space.isMyOwner();
+		const canModerate = U.Space.canMyParticipantModerate();
 		const selection = S.Common.getRef('selectionProvider');
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
@@ -492,7 +492,7 @@ class Keyboard {
 				};
 
 				// Pin/Unpin
-				if (isOwner) {
+				if (canModerate) {
 					this.shortcut('pin', e, () => {
 						e.preventDefault();
 						Action.toggleWidgetsForObject(rootId, analytics.route.header);

@@ -842,6 +842,7 @@ class UtilMenu {
 		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
+		const canModerate = U.Space.canMyParticipantModerate(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const oneToOneParticipant = space.isOneToOne ? U.Space.getOneToOneParticipant(space) : null;
 		const oneToOneGlobalName = oneToOneParticipant?.globalName || '';
@@ -994,7 +995,7 @@ class UtilMenu {
 					];
 				};
 
-				if (isOwner && space.isShared) {
+				if (canModerate && space.isShared) {
 					const isDisabled = participants.length > 1;
 					sections.actions.push({
 						id: 'stopSharing',
@@ -1866,7 +1867,7 @@ class UtilMenu {
 		if (sectionId == I.WidgetSection.Bin) {
 			options.push({ id: 'openBin', name: translate('commonOpen') });
 
-			if (U.Space.isMyOwner()) {
+			if (U.Space.canMyParticipantModerate()) {
 				options.push({ id: 'emptyBin', name: translate('commonEmptyBin') });
 			};
 

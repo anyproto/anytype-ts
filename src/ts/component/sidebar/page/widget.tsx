@@ -19,7 +19,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const cnb = [ 'body' ];
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
-	const isOwner = U.Space.isMyOwner();
+	const canModerate = U.Space.canMyParticipantModerate();
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const dropTargetIdRef = useRef<string>('');
 	const positionRef = useRef<I.BlockPosition>(null);
@@ -642,7 +642,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		const sections = getSections();
 		const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
 		const hasMembers = members.length > 1;
-		const showMembers = !spaceview.isOneToOne && !spaceview.isPersonal && (hasMembers || isOwner);
+		const showMembers = !spaceview.isOneToOne && !spaceview.isPersonal && (hasMembers || canModerate);
 
 		head = (
 			<>

@@ -48,7 +48,7 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const checked = checkState(layout, limit);
 		const hasLimit = ![ I.WidgetLayout.Link ].includes(checked.layout);
 		const canWrite = U.Space.canMyParticipantWrite();
-		const isOwner = U.Space.isMyOwner();
+		const canModerate = U.Space.canMyParticipantModerate();
 		const layoutOptions = U.Menu.getWidgetLayoutOptions(target?.id, target?.layout, isPreview);
 		const block = S.Block.getLeaf(widgets, blockId);
 		const isSystem = U.Menu.isSystemWidget(target?.id);
@@ -98,7 +98,7 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			actionChildren.push({ id: 'pageLink', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 		};
 
-		if (isSystem && isPinned && canWrite && isOwner) {
+		if (isSystem && isPinned && canWrite && canModerate) {
 			actionChildren.push({
 				id: 'removeWidget',
 				iconParam: { name: 'menu/action/remove' },
@@ -117,7 +117,7 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				name: translate(isFavorite ? 'menuWidgetUnfavorite' : 'menuWidgetFavorite'),
 			});
 
-			if (isOwner) {
+			if (canModerate) {
 				actionChildren.push({
 					id: isPinned ? 'unpinFromChannel' : 'pinToChannel',
 					iconParam: { name: 'menu/action/pin' },

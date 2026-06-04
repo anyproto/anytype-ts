@@ -19,7 +19,7 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const keydownHandler = useRef(null);
 	const clickHandler = useRef(null);
 	const emptyText = U.Data.isLocalNetwork() ? translate('menuSyncStatusEmptyLocal') : translate('menuSyncStatusEmpty');
-	const isOwner = U.Space.isMyOwner();
+	const canModerate = U.Space.canMyParticipantModerate();
 
 	useEffect(() => {
 		load();
@@ -142,7 +142,7 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getSystemLayouts().concat(I.ObjectLayout.Participant) },
 		];
 
-		if (!isOwner) {
+		if (!canModerate) {
 			const participant = U.Space.getMyParticipant();
 			
 			filters.push({ relationKey: 'creator', condition: I.FilterCondition.Equal, value: participant?.id });
