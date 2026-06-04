@@ -11,7 +11,7 @@ const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const participant = U.Space.getParticipant() || profile;
 	const globalName = Relation.getStringValue(participant?.globalName);
 	const space = U.Space.getSpaceview();
-	const isOwner = U.Space.isMyOwner();
+	const canModerate = U.Space.canMyParticipantModerate();
 	const showTransfer = (id == 'spaceShare') && U.Space.canTransferOwnership();
 
 	const init = () => {
@@ -99,7 +99,7 @@ const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const renderMore = () => {
 		const hasLink = invite.cid && invite.key;
-		const spaceShareShowButton = hasLink || (isOwner && space.isShared);
+		const spaceShareShowButton = hasLink || (canModerate && space.isShared);
 
 		if (id == 'account') {
 			return <Icon id="button-share-one-to-one" name="header/oneToOne" withBackground={true} onClick={onOneToOne} />;

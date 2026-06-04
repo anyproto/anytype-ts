@@ -23,13 +23,13 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const subId = J.Constant.subId.archive;
 	const spaceview = U.Space.getSpaceview();
 	const isShared = spaceview.isShared;
-	const isOwner = U.Space.isMyOwner();
+	const canModerate = U.Space.canMyParticipantModerate();
 	const participantId = U.Space.getCurrentParticipantId();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const hasSelection = selectedIds.length > 0;
 
 	const canDeleteSelection = (): boolean => {
-		if (isOwner || !isShared) {
+		if (canModerate || !isShared) {
 			return true;
 		};
 
