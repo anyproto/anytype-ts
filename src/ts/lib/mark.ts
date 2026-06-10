@@ -345,6 +345,30 @@ class Mark {
 	};
 
 	/**
+	 * Extracts marks for a text slice, clamped to the slice and rebased to zero.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @param {number} from - The start of the slice.
+	 * @param {number} to - The end of the slice.
+	 * @returns {I.Mark[]} The marks of the extracted slice.
+	 */
+	cutRange(marks: I.Mark[], from: number, to: number): I.Mark[] {
+		const ret: I.Mark[] = [];
+
+		for (const mark of (marks || [])) {
+			const mf = Math.max(mark.range.from, from);
+			const mt = Math.min(mark.range.to, to);
+
+			if (mf >= mt) {
+				continue;
+			};
+
+			ret.push({ ...mark, range: { from: mf - from, to: mt - from } });
+		};
+
+		return ret;
+	};
+
+	/**
 	 * Converts text and marks to HTML.
 	 * @param {string} text - The text content.
 	 * @param {I.Mark[]} marks - The list of marks.

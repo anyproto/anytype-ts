@@ -11,6 +11,16 @@ interface Props {
 
 type ContextMenuHandler = (e: MouseEvent, ids: string[]) => void;
 
+interface TextSelectionEnd {
+	id: string;
+	range: I.TextRange;
+};
+
+interface TextSelectionState {
+	from: TextSelectionEnd;
+	to: TextSelectionEnd;
+};
+
 interface SelectionRefProps {
 	get(type: I.SelectType): string[];
 	getForClick(id: string, withChildren: boolean, save: boolean): string[];
@@ -23,6 +33,10 @@ interface SelectionRefProps {
 	hide(): void;
 	rebind(): void;
 	setContextMenuHandler(handler: ContextMenuHandler | null): void;
+	getTextSelection(): TextSelectionState | null;
+	getTextSelectionIds(): string[];
+	clearTextSelection(): void;
+	isCrossSelecting(): boolean;
 };
 
 const THRESHOLD = 20;
@@ -55,6 +69,16 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 	const mouseEvents = useRef<[string, EventListener][]>([]);
 	const scrollContainer = useRef<EventTarget | null>(null);
 	const scrollEvent = useRef<[string, EventListener][]>([]);
+
+	const textAnchorId = useRef('');
+	const crossSelecting = useRef(false);
+	const crossState = useRef<TextSelectionState | null>(null);
+	const crossContainer = useRef<HTMLElement | null>(null);
+	const crossEvents = useRef<[string, EventListener][]>([]);
+	const crossTimeout = useRef(0);
+	const crossAnchor = useRef<{ node: Node; offset: number; id: string; model: number } | null>(null);
+	const crossFrame = useRef(0);
+	const selectionChangeHandler = useRef<(() => void) | null>(null);
 
 	const rebind = () => {
 		unbind();
@@ -123,7 +147,20 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 			hide();
 			return;
 		};
-		
+
+		if (crossState.current) {
+			// Shift+click extends the native cross-block selection, state is remapped on selectionchange
+			if (e.shiftKey) {
+				return;
+			};
+			clearTextSelection();
+		};
+
+		const targetValue = (e.target as HTMLElement).closest('.value');
+		const targetBlock = targetValue?.closest('.block');
+
+		textAnchorId.current = (targetBlock && targetValue?.closest('.blocks')) ? String(targetBlock.getAttribute('data-id') || '') : '';
+
 		const isPopup = keyboard.isPopup();
 		const { focused } = focus.state;
 		const container = U.Dom.getScrollContainer(isPopup);
@@ -203,6 +240,14 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 			return;
 		};
 
+		// Native painting and autoscroll are used during cross-block text selection, but the native drag
+		// re-bases its anchor after the editing host change, so the selection is re-applied each frame
+		if (crossSelecting.current) {
+			hasMoved.current = true;
+			scheduleCrossUpdate(e.clientX, e.clientY);
+			return;
+		};
+
 		const isPopup = keyboard.isPopup();
 		const { x: x1, y: y1 } = recalcCoords(e.pageX, e.pageY);
 		const rect = getRect(x.current, y.current, x1, y1);
@@ -220,6 +265,13 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 	};
 
 	const onScroll = (e: any) => {
+		if (crossSelecting.current) {
+			if (isSelecting.current && hasMoved.current) {
+				scheduleCrossUpdate(keyboard.mouse.client.x, keyboard.mouse.client.y);
+			};
+			return;
+		};
+
 		if (!isSelecting.current || !hasMoved.current || keyboard.isSelectionDisabled) {
 			return;
 		};
@@ -252,6 +304,10 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 	};
 	
 	const onMouseUp = (e: any) => {
+		if (crossSelecting.current) {
+			finalizeCrossSelect();
+		};
+
 		if (!hasMoved.current) {
 			if (!e.shiftKey && !e.altKey && !e.ctrlKey && !e.metaKey) {
 				if (!keyboard.isSelectionClearDisabled) {
@@ -488,12 +544,22 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 				};
 			};
 		} else {
+			if (!crossSelecting.current && canCrossSelect(e)) {
+				startCrossSelect(e);
+			};
+
+			if (crossSelecting.current) {
+				initIds();
+				renderSelection();
+				return;
+			};
+
 			const { focused, range: fr } = focus.state;
 
 			if (focused && fr.to) {
 				focus.clear(false);
 			};
-			
+
 			keyboard.setFocus(false);
 			window.getSelection().empty();
 			window.focus();
@@ -501,7 +567,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 			allowRect.current = true;
 		};
 
-		renderSelection();		
+		renderSelection();
 	};
 
 	const hide = () => {
@@ -510,8 +576,352 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 		};
 		unbindMouse();
 	};
-	
+
+	const caretFromPoint = (x: number, y: number): { node: Node; offset: number } | null => {
+		const doc = document as any;
+
+		if (doc.caretRangeFromPoint) {
+			const r = doc.caretRangeFromPoint(x, y);
+			return r ? { node: r.startContainer, offset: r.startOffset } : null;
+		};
+
+		if (doc.caretPositionFromPoint) {
+			const p = doc.caretPositionFromPoint(x, y);
+			return p ? { node: p.offsetNode, offset: p.offset } : null;
+		};
+
+		return null;
+	};
+
+	const canCrossSelect = (e: any): boolean => {
+		if (!textAnchorId.current || keyboard.isCmd(e) || e.altKey || e.shiftKey) {
+			return false;
+		};
+
+		const block = S.Block.getLeaf(keyboard.getRootId(), textAnchorId.current);
+		if (!block || !block.isText()) {
+			return false;
+		};
+
+		const sel = window.getSelection();
+		if (!sel || !sel.rangeCount || !sel.anchorNode) {
+			return false;
+		};
+
+		// The drag must still be anchored inside the block where it started
+		const el = (sel.anchorNode.nodeType == Node.ELEMENT_NODE) ? sel.anchorNode as HTMLElement : sel.anchorNode.parentElement;
+		const blockEl = el?.closest('.block');
+
+		return blockEl?.getAttribute('data-id') == textAnchorId.current;
+	};
+
+	const startCrossSelect = (e: any) => {
+		const sel = window.getSelection();
+		const { anchorNode, anchorOffset } = sel;
+		const el = (anchorNode.nodeType == Node.ELEMENT_NODE) ? anchorNode as HTMLElement : anchorNode.parentElement;
+		const wrapper = el?.closest('.blocks') as HTMLElement;
+		const value = el?.closest('.value') as HTMLElement;
+
+		if (!wrapper || !value) {
+			return;
+		};
+
+		// Merging blocks into a single editing host lets the native drag selection cross block boundaries
+		crossContainer.current = wrapper;
+		wrapper.setAttribute('contenteditable', 'true');
+		wrapper.setAttribute('spellcheck', 'false');
+
+		crossEvents.current = [
+			[ 'beforeinput', e => crossGuard(e) ],
+			[ 'cut', e => crossGuard(e) ],
+			[ 'dragstart', e => crossGuard(e) ],
+		];
+		U.Dom.addEvents(wrapper, crossEvents.current);
+
+		crossAnchor.current = {
+			node: anchorNode,
+			offset: anchorOffset,
+			id: textAnchorId.current,
+			model: getCrossOffset(value, anchorNode, anchorOffset),
+		};
+
+		crossSelecting.current = true;
+		allowRect.current = false;
+
+		// Changing the editing host re-bases the native drag anchor, so the selection is driven programmatically
+		const x = (undefined === e.clientX) ? keyboard.mouse.client.x : e.clientX;
+		const y = (undefined === e.clientY) ? keyboard.mouse.client.y : e.clientY;
+
+		applyCrossUpdate(x, y);
+
+		focus.clear(false);
+		keyboard.setFocus(false);
+
+		S.Common.clearTimeout('blockContext');
+		S.Menu.close('blockContext');
+
+		if (rectRef.current) {
+			U.Dom.css(rectRef.current, { display: 'none' });
+		};
+	};
+
+	const scheduleCrossUpdate = (x: number, y: number) => {
+		raf.cancel(crossFrame.current);
+		crossFrame.current = raf(() => applyCrossUpdate(x, y));
+	};
+
+	// Re-applies the selection from the saved anchor to the pointer, overriding the re-based native drag update
+	const applyCrossUpdate = (x: number, y: number) => {
+		if (!crossSelecting.current || !crossAnchor.current) {
+			return;
+		};
+
+		const pos = caretFromPoint(x, y);
+		if (!pos || !crossContainer.current?.contains(pos.node)) {
+			return;
+		};
+
+		let { node, offset } = crossAnchor.current;
+
+		// The anchor block can re-render on blur: recover the anchor from the model offset
+		if (!node || !node.isConnected) {
+			const value = U.Dom.select(`#block-${U.Common.esc(crossAnchor.current.id)} .value`) as HTMLElement;
+			const restored = value ? nodeFromOffset(value, crossAnchor.current.model) : null;
+
+			if (!restored) {
+				return;
+			};
+
+			crossAnchor.current.node = node = restored.node;
+			crossAnchor.current.offset = offset = restored.offset;
+		};
+
+		try {
+			window.getSelection().setBaseAndExtent(node, offset, pos.node, pos.offset);
+		} catch (e) { /**/ };
+	};
+
+	// DOM position of a model text offset within a block value (ZWS anchors excluded)
+	const nodeFromOffset = (el: HTMLElement, model: number): { node: Node; offset: number } | null => {
+		const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+
+		let rest = model;
+		let last = null;
+
+		while (walker.nextNode()) {
+			const node = walker.currentNode;
+			const text = String(node.textContent || '');
+
+			last = node;
+
+			for (let i = 0; i < text.length; i++) {
+				if (text[i] == '\u200B') {
+					continue;
+				};
+
+				if (!rest) {
+					return { node, offset: i };
+				};
+				rest--;
+			};
+
+			if (!rest) {
+				return { node, offset: text.length };
+			};
+		};
+
+		return last ? { node: last, offset: String(last.textContent || '').length } : null;
+	};
+
+	const crossGuard = (e: Event) => {
+		if (crossSelecting.current || crossState.current) {
+			e.preventDefault();
+		};
+	};
+
+	const finalizeCrossSelect = () => {
+		// The native drag can re-base the selection after the last scheduled update, re-apply before reading it
+		raf.cancel(crossFrame.current);
+		applyCrossUpdate(keyboard.mouse.client.x, keyboard.mouse.client.y);
+
+		crossSelecting.current = false;
+
+		const coverage = getCrossCoverage();
+
+		if (!coverage.length) {
+			clearTextSelection();
+			return;
+		};
+
+		// Selection shrank back into a single block: restore the standard focus flow
+		if (coverage.length == 1) {
+			const { id, range } = coverage[0];
+
+			clearTextSelection();
+			focus.set(id, range);
+			focus.apply();
+			return;
+		};
+
+		crossState.current = { from: coverage[0], to: coverage[coverage.length - 1] };
+		bindSelectionChange();
+	};
+
+	const getCrossCoverage = (): TextSelectionEnd[] => {
+		const ret: TextSelectionEnd[] = [];
+		const sel = window.getSelection();
+
+		if (!sel || !sel.rangeCount || sel.isCollapsed || !crossContainer.current) {
+			return ret;
+		};
+
+		const rootId = keyboard.getRootId();
+		const r = sel.getRangeAt(0);
+		const values = U.Dom.selectAll('.value.focusable', crossContainer.current);
+
+		values.forEach((el: HTMLElement) => {
+			const id = el.closest('.block')?.getAttribute('data-id');
+			const block = id ? S.Block.getLeaf(rootId, id) : null;
+
+			if (!block || !block.isText() || !r.intersectsNode(el)) {
+				return;
+			};
+
+			const full = document.createRange();
+			full.selectNodeContents(el);
+
+			const length = block.getLength();
+			const from = (full.compareBoundaryPoints(Range.START_TO_START, r) >= 0) ? 0 : getCrossOffset(el, r.startContainer, r.startOffset);
+			const to = (full.compareBoundaryPoints(Range.END_TO_END, r) <= 0) ? length : getCrossOffset(el, r.endContainer, r.endOffset);
+
+			if (to > from) {
+				ret.push({ id, range: { from, to } });
+			};
+		});
+
+		return ret;
+	};
+
+	// Model text offset of a selection boundary within a block value (ZWS anchors excluded, see Mark.domToModel)
+	const getCrossOffset = (el: HTMLElement, node: Node, offset: number): number => {
+		const prefix = document.createRange();
+
+		prefix.selectNodeContents(el);
+
+		try {
+			prefix.setEnd(node, offset);
+		} catch (e) {
+			return 0;
+		};
+
+		return prefix.toString().replace(/\u200B/g, '').length;
+	};
+
+	const bindSelectionChange = () => {
+		unbindSelectionChange();
+		selectionChangeHandler.current = () => onSelectionChange();
+		document.addEventListener('selectionchange', selectionChangeHandler.current);
+	};
+
+	const unbindSelectionChange = () => {
+		window.clearTimeout(crossTimeout.current);
+
+		if (selectionChangeHandler.current) {
+			document.removeEventListener('selectionchange', selectionChangeHandler.current);
+			selectionChangeHandler.current = null;
+		};
+	};
+
+	const onSelectionChange = () => {
+		if (crossSelecting.current || !crossState.current) {
+			return;
+		};
+
+		window.clearTimeout(crossTimeout.current);
+		crossTimeout.current = window.setTimeout(() => remapCrossSelect(), 150);
+	};
+
+	// Keeps state in sync when the native selection is extended (Shift+Arrow, Shift+Click) or dissolved
+	const remapCrossSelect = () => {
+		if (!crossState.current) {
+			return;
+		};
+
+		const sel = window.getSelection();
+
+		if (!sel || !sel.rangeCount || sel.isCollapsed) {
+			clearTextSelection();
+			return;
+		};
+
+		const coverage = getCrossCoverage();
+
+		if (!coverage.length) {
+			clearTextSelection();
+			return;
+		};
+
+		if (coverage.length == 1) {
+			const { id, range } = coverage[0];
+
+			clearTextSelection();
+			focus.set(id, range);
+			focus.apply();
+			return;
+		};
+
+		crossState.current = { from: coverage[0], to: coverage[coverage.length - 1] };
+	};
+
+	const clearTextSelection = () => {
+		if (!crossState.current && !crossSelecting.current && !crossContainer.current) {
+			return;
+		};
+
+		unbindSelectionChange();
+
+		if (crossContainer.current) {
+			if (crossEvents.current.length) {
+				U.Dom.removeEvents(crossContainer.current, crossEvents.current);
+				crossEvents.current = [];
+			};
+
+			crossContainer.current.removeAttribute('contenteditable');
+			crossContainer.current.removeAttribute('spellcheck');
+			crossContainer.current = null;
+		};
+
+		crossState.current = null;
+		crossSelecting.current = false;
+
+		window.getSelection()?.removeAllRanges();
+	};
+
+	const getTextSelection = (): TextSelectionState | null => {
+		return crossState.current ? U.Common.objectCopy(crossState.current) : null;
+	};
+
+	// Ordered document slice of block ids covered by the cross-block text selection
+	const getTextSelectionIds = (): string[] => {
+		if (!crossState.current) {
+			return [];
+		};
+
+		const { from, to } = crossState.current;
+		const rootId = keyboard.getRootId();
+		const list = S.Block.unwrapTree(S.Block.getTree(rootId, S.Block.getBlocks(rootId)));
+		const idxStart = list.findIndex(it => it.id == from.id);
+		const idxEnd = list.findIndex(it => it.id == to.id);
+
+		if ((idxStart < 0) || (idxEnd < 0)) {
+			return [];
+		};
+
+		return list.slice(Math.min(idxStart, idxEnd), Math.max(idxStart, idxEnd) + 1).map(it => it.id);
+	};
+
 	const clear = () => {
+		clearTextSelection();
 		initIds();
 		renderSelection();
 		clearState();
@@ -525,6 +935,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 		setIsSelecting(false);
 		cacheNodeMap.current.clear();
 		focusedId.current = '';
+		textAnchorId.current = '';
 		nodes.current = [];
 		range.current = null;
 		containerOffset.current = null;
@@ -725,7 +1136,10 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 
 	useEffect(() => {
 		rebind();
-		return () => unbind();
+		return () => {
+			clearTextSelection();
+			unbind();
+		};
 	}, []);
 
 	useImperativeHandle(ref, () => ({
@@ -740,6 +1154,10 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 		hide,
 		rebind,
 		setContextMenuHandler,
+		getTextSelection,
+		getTextSelectionIds,
+		clearTextSelection,
+		isCrossSelecting: () => crossSelecting.current,
 	}));
 
 	return (

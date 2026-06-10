@@ -1407,7 +1407,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onCopy = () => {
 		const length = block.getLength();
 
-		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, (message: any) => {
+		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, null, (message: any) => {
 			const text = String(message.textSlot || '').replace(/\n+$/, '');
 
 			U.Common.clipboardCopy({
@@ -1429,6 +1429,12 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const selection = S.Common.getRef('selectionProvider');
+
+		// Cross-block text selection is handled by the selection provider
+		if (selection?.isCrossSelecting() || selection?.getTextSelection()) {
+			return;
+		};
+
 		const ids = selection?.getForClick('', false, true) || [];
 		const range = getRange();
 		const value = getTextValue();

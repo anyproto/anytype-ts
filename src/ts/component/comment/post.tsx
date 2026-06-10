@@ -519,7 +519,7 @@ const CommentPost = (props: Props) => {
 	const onCopyText = useCallback(() => {
 		const blocks = U.Comment.partsToBlocks(parts);
 
-		C.BlockCopy(rootId, blocks, { from: 0, to: 0 }, (message: any) => {
+		C.BlockCopy(rootId, blocks, { from: 0, to: 0 }, null, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
