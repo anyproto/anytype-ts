@@ -233,10 +233,15 @@ function waitForLibraryAndCreateWindows () {
 
 	Util.mkDir(Util.logPath());
 
+	// Create windows immediately so renderer boot (process spawn, bundle
+	// parse/eval, React mount) overlaps middleware startup instead of waiting
+	// for it. The renderer obtains the gRPC address via Api.getServerAddress,
+	// which resolves once the server is up (Server.whenReady)
+	createWindow();
+	isReady = true;
+
 	waitLibraryPromise.then(() => {
 		global.serverAddress = Server.getAddress();
-		createWindow();
-		isReady = true;
 	}, (err: Error) => {
 		dialog.showErrorBox('Error: failed to run server', err.toString());
 	});

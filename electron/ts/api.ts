@@ -65,6 +65,15 @@ class Api {
 		};
 	};
 
+	/**
+	 * Resolves with the gRPC web proxy address once the middleware is up.
+	 * Windows are created in parallel with server startup, so the renderer
+	 * awaits this before initializing the dispatcher.
+	 */
+	getServerAddress (win: AppWindow): Promise<string> {
+		return Server.whenReady();
+	};
+
 	logout (win: AppWindow): void {
 		WindowManager.sendToAllTabs('logout');
 	};
