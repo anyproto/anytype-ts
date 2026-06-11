@@ -152,7 +152,7 @@ export const AccountRecover = (callBack?: (message: any) => void) => {
 	dispatcher.request('AccountRecover', {}, callBack);
 };
 
-export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
+export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, preferredSpaceId: string, callBack?: (message: any) => void) => {
 	dispatcher.request('AccountSelect', {
 		id,
 		rootPath: path,
@@ -160,7 +160,12 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 		networkCustomConfigFilePath: networkConfigPath,
 		jsonApiListenAddr: J.Url.api,
 		enableMembershipV2: true,
+		preferredSpaceId,
 	}, callBack);
+};
+
+export const AccountPreloadRemainingSpaces = (callBack?: (message: any) => void) => {
+	dispatcher.request('AccountPreloadRemainingSpaces', {}, callBack);
 };
 
 export const AccountMigrate = (id: string, path: string, callBack?: (message: any) => void) => {

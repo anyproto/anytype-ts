@@ -307,27 +307,29 @@ class Storage {
 	/**
 	 * Gets an account key value for the current account.
 	 * @param {string} key - The account key.
+	 * @param {string} [accountId] - The account ID (defaults to the current account).
 	 * @returns {any} The value for the account key.
 	 */
-	getAccountKey (key: string, isLocal: boolean) {
-		const accountId = this.getAccountId();
+	getAccountKey (key: string, isLocal: boolean, accountId?: string) {
+		accountId = accountId || this.getAccountId();
 		if (!accountId) {
 			return;
 		};
 
-		const obj = this.getAccount(isLocal);
+		const obj = this.getAccount(isLocal, accountId);
 
 		return obj[accountId]?.[key];
 	};
 
 	/**
 	 * Gets the account object from storage.
+	 * @param {string} [accountId] - The account ID (defaults to the current account).
 	 * @returns {any} The account object.
 	 */
-	getAccount (isLocal: boolean) {
+	getAccount (isLocal: boolean, accountId?: string) {
 		const obj = this.get('account', isLocal) || {};
-		const accountId = this.getAccountId();
 
+		accountId = accountId || this.getAccountId();
 		obj[accountId] = obj[accountId] || {};
 
 		return obj;

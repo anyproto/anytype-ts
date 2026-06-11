@@ -26,7 +26,7 @@ const SORT_IDS = [
 ];
 
 const SKIP_IDS = [ 'BlockSetCarriage' ];
-const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose' ];
+const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose', 'AccountPreloadRemainingSpaces' ];
 
 /**
  * Dispatcher class handles all communication between the Electron frontend

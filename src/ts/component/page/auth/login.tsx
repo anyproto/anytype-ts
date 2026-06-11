@@ -70,7 +70,9 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 		S.Auth.accountSet(account);
 		Renderer.send('keytarSet', account.id, getPhrase());
 
-		C.AccountSelect(account.id, S.Common.dataPath, mode, path, (message: any) => {
+		const preferredSpaceId = Storage.get('spaceId') || '';
+
+		C.AccountSelect(account.id, S.Common.dataPath, mode, path, preferredSpaceId, (message: any) => {
 			if (setErrorHandler(message.error.code, message.error.description) || !message.account) {
 				isSelecting.current = false;
 				return;
