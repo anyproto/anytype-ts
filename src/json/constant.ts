@@ -121,7 +121,6 @@ export default {
 	},
 
 	subId: {
-		search:			 		'search',
 		profile:		 		'profile',
 		deleted:		 		'deleted',
 		archived:		 		'archived',
