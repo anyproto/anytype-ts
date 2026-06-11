@@ -391,9 +391,11 @@ const App: FC = () => {
 			const { dataPath } = S.Common;
 			const { networkConfig } = S.Auth;
 			const { mode, path: networkPath } = networkConfig;
+			const param = route ? U.Router.getParam(route) : {};
+			const spaceId = param.spaceId || data.spaceId || Storage.getAccountKey('spaceId', false, accountId) || '';
 
 			S.Auth.tokenSet(token);
-			C.AccountSelect(accountId, dataPath, mode, networkPath, (message: any) => {
+			C.AccountSelect(accountId, dataPath, mode, networkPath, spaceId, (message: any) => {
 				if (message.error.code) {
 					console.error('[App.onInit]:', message.error.description);
 					S.Common.redirectSet(route);
@@ -418,9 +420,6 @@ const App: FC = () => {
 				U.Data.onInfo(account.info);
 				S.Common.spaceSet('');
 				U.Data.onAuthOnce();
-
-				const param = route ? U.Router.getParam(route) : {};
-				const spaceId = param.spaceId || data.spaceId || Storage.get('spaceId');
 
 				if (spaceId) {
 					U.Router.switchSpace(spaceId, route, false, routeParam, true);

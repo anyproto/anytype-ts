@@ -46,6 +46,8 @@ export interface TreeNode {
  */
 class UtilData {
 
+	private spacesPreloaded = false;
+
 	/**
 	 * Returns the CSS class for a text block style.
 	 * @param {I.TextStyle} v - The text style.
@@ -321,6 +323,7 @@ class UtilData {
 		if (!widgets) {
 			console.error('[U.Data].onAuth No widgets defined');
 			U.Space.openDashboard(routeParam);
+			this.preloadRemainingSpaces();
 			callBack?.();
 			return;
 		};
@@ -350,10 +353,25 @@ class UtilData {
 					};
 
 					S.Common.redirectSet('');
+					this.preloadRemainingSpaces();
 					callBack?.();
 				});
 			});
 		});
+	};
+
+	/**
+	 * Tells the middleware the priority screen is up, so it can start loading the spaces
+	 * deferred by AccountSelect.preferredSpaceId. Fires once per process; errors are benign —
+	 * the middleware has its own timer fallback.
+	 */
+	preloadRemainingSpaces () {
+		if (this.spacesPreloaded) {
+			return;
+		};
+
+		this.spacesPreloaded = true;
+		window.setTimeout(() => C.AccountPreloadRemainingSpaces(), J.Constant.delay.spacePreload);
 	};
 
 	initPin (callBack?: () => void) {
