@@ -273,6 +273,24 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			if ((e.target as HTMLElement)?.closest?.('.commentSection')) {
 				return;
 			};
+
+			// Paste replaces the cross-block text selection
+			const textSel = selection?.getTextSelection();
+			if (textSel) {
+				if (isReadonly()) {
+					return;
+				};
+
+				const data = getClipboardData(e);
+				if (!data.text && !data.html) {
+					return;
+				};
+
+				e.preventDefault();
+				deleteTextSelection('', () => onPaste(data));
+				return;
+			};
+
 			onPasteEvent(e, props);
 		});
 
@@ -282,7 +300,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			const ids = selection?.get(I.SelectType.Block, true) || [];
 			const top = Storage.getScroll('editor', rootId, isPopup);
 
-			if (!ids.length && !menuOpen && !popupOpen) {
+			if (!ids.length && !menuOpen && !popupOpen && !selection?.getTextSelection()) {
 				focus.restore();
 				raf(() => focus.apply());
 			};
@@ -509,6 +527,75 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const styleParam = getStyleParam();
 
 		let ret = false;
+
+		// Cross-block text selection
+		const textSel = selection.getTextSelection();
+		if (textSel) {
+			let handled = false;
+
+			keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+				onCopy(e, pressed.match('x') ? I.ClipboardMode.Cut : I.ClipboardMode.Copy);
+				handled = true;
+			});
+
+			keyboard.shortcut('escape', e, () => {
+				if (!menuOpen) {
+					selection.clear();
+				};
+				handled = true;
+			});
+
+			keyboard.shortcut('backspace, delete', e, () => {
+				if (!readonly) {
+					e.preventDefault();
+					deleteTextSelection();
+				};
+				handled = true;
+			});
+
+			keyboard.shortcut('arrowleft, arrowup', e, () => {
+				e.preventDefault();
+				selection.clear();
+				focusSet(textSel.from.id, textSel.from.range.from, textSel.from.range.from, true);
+				handled = true;
+			});
+
+			keyboard.shortcut('arrowright, arrowdown', e, () => {
+				e.preventDefault();
+				selection.clear();
+				focusSet(textSel.to.id, textSel.to.range.to, textSel.to.range.to, true);
+				handled = true;
+			});
+
+			// Shift+Arrow extends the native selection, state is remapped on selectionchange
+			keyboard.shortcut('shift+arrowleft, shift+arrowright, shift+arrowup, shift+arrowdown', e, () => {
+				handled = true;
+			});
+
+			keyboard.shortcut('enter', e, () => {
+				if (!menuOpen && !popupOpen && !readonly) {
+					e.preventDefault();
+					deleteTextSelection();
+				};
+				handled = true;
+			});
+
+			// Clear the text selection and let the default handling run
+			keyboard.shortcut('selectAll, undo, redo, history', e, () => {
+				selection.clearTextSelection();
+			});
+
+			// Typing replaces the selection
+			if (!handled && !readonly && !keyboard.isSpecial(e) && !e.metaKey && !e.ctrlKey && !e.altKey && (e.key.length == 1)) {
+				e.preventDefault();
+				deleteTextSelection(e.key);
+				handled = true;
+			};
+
+			if (handled) {
+				return;
+			};
+		};
 
 		// Select all
 		keyboard.shortcut('selectAll', e, () => {
@@ -1995,6 +2082,13 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
+		// Cross-block text selection: the middleware trims/cuts the partially selected edge blocks
+		if (selection?.getTextSelection()) {
+			e.preventDefault();
+			Action.copyTextSelection(rootId, mode);
+			return;
+		};
+
 		let ids = selection?.get(I.SelectType.Block, true) || [];
 
 		if (root.isLocked() && !ids.length) {
@@ -2604,6 +2698,102 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 	};
 	
+	// Removes the content covered by a cross-block text selection, merging the edge blocks like a native editor
+	const deleteTextSelection = (insert?: string, callBack?: () => void) => {
+		const selection = S.Common.getRef('selectionProvider');
+		const textSel = selection?.getTextSelection();
+
+		if (!textSel || isReadonly()) {
+			return;
+		};
+
+		const list = selection.getTextSelectionIds();
+		if (!list.length) {
+			selection?.clearTextSelection();
+			return;
+		};
+
+		const first = S.Block.getLeaf(rootId, textSel.from.id);
+		const last = S.Block.getLeaf(rootId, textSel.to.id);
+
+		if (!first || !last) {
+			selection?.clearTextSelection();
+			return;
+		};
+
+		insert = String(insert || '');
+
+		const sameBlock = first.id == last.id;
+
+		let deleteIds = [];
+		let text = insert;
+		let marks: I.Mark[] = [];
+		let focusId = '';
+		let caret = 0;
+
+		if (first.isText()) {
+			const ft = String(first.content.text || '');
+
+			text = ft.slice(0, textSel.from.range.from) + insert;
+			marks = Mark.cutRange(first.content.marks || [], 0, textSel.from.range.from);
+			focusId = first.id;
+			caret = text.length;
+			deleteIds = list.filter(id => id != first.id);
+
+			const tailSource = sameBlock ? first : (last.isText() ? last : null);
+			if (tailSource) {
+				const lt = String(tailSource.content.text || '');
+				const tailMarks = Mark.cutRange(tailSource.content.marks || [], textSel.to.range.to, lt.length);
+
+				text += lt.slice(textSel.to.range.to);
+				marks = marks.concat(Mark.adjust(tailMarks, 0, caret));
+			};
+		} else
+		if (last.isText() && !sameBlock) {
+			// The first block is removed entirely, the tail of the last text block is kept
+			const lt = String(last.content.text || '');
+
+			text = insert + lt.slice(textSel.to.range.to);
+			marks = Mark.adjust(Mark.cutRange(last.content.marks || [], textSel.to.range.to, lt.length), 0, insert.length);
+			focusId = last.id;
+			caret = insert.length;
+			deleteIds = list.filter(id => id != last.id);
+		} else {
+			deleteIds = [ ...list ];
+		};
+
+		deleteIds = deleteIds.filter(id => {
+			const block = S.Block.getLeaf(rootId, id);
+			return block && block.isDeletable();
+		});
+
+		selection?.clear();
+		S.Menu.closeAll();
+
+		const done = () => {
+			if (focusId) {
+				focusSet(focusId, caret, caret, true);
+			};
+			callBack?.();
+		};
+
+		const remove = () => {
+			if (deleteIds.length) {
+				C.BlockListDelete(rootId, deleteIds, () => done());
+			} else {
+				done();
+			};
+		};
+
+		if (focusId) {
+			U.Data.blockSetText(rootId, focusId, text, marks, true, () => remove());
+		} else {
+			remove();
+		};
+
+		analytics.event('DeleteBlock', { count: deleteIds.length });
+	};
+
 	const onLastClick = (e: any) => {
 		const readonly = isReadonly();
 

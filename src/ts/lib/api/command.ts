@@ -457,23 +457,25 @@ export const BlockUpload = (contextId: string, blockId: string, url: string, pat
 	}, callBack);
 };
 
-export const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
+export const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, rangeLastBlock?: I.TextRange, callBack?: (message: any) => void) => {
 	blocks = U.Common.objectCopy(blocks);
 
 	dispatcher.request('BlockCopy', {
 		contextId,
 		blocks: blocks.map(Mapper.To.Block),
 		selectedTextRange: Mapper.To.Range(range),
+		selectedTextRangeLastBlock: rangeLastBlock ? Mapper.To.Range(rangeLastBlock) : undefined,
 	}, callBack);
 };
 
-export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
+export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, rangeLastBlock?: I.TextRange, callBack?: (message: any) => void) => {
 	blocks = U.Common.objectCopy(blocks);
 
 	dispatcher.request('BlockCut', {
 		contextId,
 		blocks: blocks.map(Mapper.To.Block),
 		selectedTextRange: Mapper.To.Range(range),
+		selectedTextRangeLastBlock: rangeLastBlock ? Mapper.To.Range(rangeLastBlock) : undefined,
 	}, callBack);
 };
 
