@@ -124,6 +124,8 @@ const App: FC = () => {
 	const init = () => {
 		const { version, arch, getGlobal, tabId } = electron;
 
+		U.Perf.step('boot:init', 'boot:entry');
+
 		U.Router.init(history);
 		U.Smile.init();
 
@@ -141,7 +143,10 @@ const App: FC = () => {
 		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
 		registerIpcEvents();
-		Renderer.send('getInitData', tabId()).then((data: any) => onInit(data));
+		Renderer.send('getInitData', tabId()).then((data: any) => {
+			U.Perf.step('boot:init-data', 'boot:init');
+			onInit(data);
+		});
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
@@ -329,6 +334,8 @@ const App: FC = () => {
 		sidebar.init(false);
 		analytics.init();
 
+		U.Perf.step('boot:stores', 'boot:init-data');
+
 		const lastAppVersion = Storage.get('lastAppVersion');
 		const currentAppVersion = electron.version?.app;
 
@@ -350,7 +357,13 @@ const App: FC = () => {
 
 		U.Dom.addClass(body, 'over');
 
+		let measured = false;
 		const hide = () => {
+			if (!measured) {
+				measured = true;
+				U.Perf.step('boot:ready', 'boot:entry');
+			};
+
 			rootLoader?.remove();
 			bubbleLoader?.remove();
 			U.Dom.removeClass(body, 'over');
@@ -409,6 +422,8 @@ const App: FC = () => {
 					U.Router.go('/auth/setup/init', routeParam);
 					return;
 				};
+
+				U.Perf.step('boot:account', 'boot:init');
 
 				keyboard.setPinChecked(isPinChecked);
 				S.Auth.accountSet(account);

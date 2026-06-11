@@ -8,7 +8,7 @@ declare global {
 process.stdout?.on?.('error', () => {});
 process.stderr?.on?.('error', () => {});
 
-import { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog } from 'electron';
+import { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog, contentTracing } from 'electron';
 import { is, fixPathForAsarUnpack } from 'electron-util';
 import path from 'path';
 import storage from 'electron-json-storage';
@@ -147,6 +147,71 @@ if (!is.development && !app.requestSingleInstanceLock()) {
 remote.initialize();
 Util.setAppPath(path.join(__dirname));
 
+/**
+ * Captures a full cold-start Chromium trace (main + renderer + GPU + network + CPU samples),
+ * including the renderer's own User Timing marks (U.Perf — blink.user_timing category).
+ *
+ * Enable by launching with ANYTYPE_TRACE_STARTUP=1. Optional ANYTYPE_TRACE_DURATION (ms,
+ * default 20000) bounds the capture window — bump it if the middleware/server is slow to start.
+ * The resulting .json opens in https://ui.perfetto.dev (preferred) or chrome://tracing.
+ */
+async function maybeStartStartupTrace () {
+	const flag = String(process.env.ANYTYPE_TRACE_STARTUP || '').toLowerCase();
+	if (![ '1', 'true', 'yes', 'on' ].includes(flag)) {
+		return;
+	};
+
+	// Full contentTracing instruments the network service. In dev, Vite serves the app
+	// unbundled (thousands of separate module requests) and we lift the localhost connection
+	// limit, so the throttled net service can't establish all those parallel connections —
+	// the renderer fails to load with ERR_CONNECTION_TIMED_OUT. Dev startup is dominated by
+	// Vite transforms anyway and isn't representative of real resource loading, so skip it
+	// here: use DevTools Performance (reload-record) in dev, and capture a real cold start
+	// from a packaged build.
+	if (is.development) {
+		console.warn('[Trace] Startup tracing skipped in dev — it breaks Vite module loading (ERR_CONNECTION_TIMED_OUT). Use DevTools Performance reload-record in dev, or run a packaged build with ANYTYPE_TRACE_STARTUP=1.');
+		return;
+	};
+
+	const duration = Number(process.env.ANYTYPE_TRACE_DURATION) || 20000;
+
+	try {
+		// Kept lean on purpose: 'toplevel' and 'disabled-by-default-devtools.timeline'
+		// produce ~85% of trace volume (per-task scheduler/microtask noise) and most of the
+		// tracing overhead, while everything needed for startup analysis — resource waterfall
+		// ('loading'), JS flame chart (cpu_profiler samples + script eval/compile events via
+		// 'devtools.timeline'), and our U.Perf marks ('blink.user_timing') — lives in the
+		// cheap categories below.
+		await contentTracing.startRecording({
+			included_categories: [
+				'devtools.timeline',
+				'disabled-by-default-devtools.timeline.frame',
+				'disabled-by-default-v8.cpu_profiler',
+				'v8.execute',
+				'blink.user_timing',
+				'loading',
+				'navigation',
+			],
+		});
+
+		console.log(`[Trace] Recording startup for ${duration}ms…`);
+
+		setTimeout(async () => {
+			try {
+				const out = path.join(app.getPath('userData'), `startup-trace-${Date.now()}.json`);
+				await contentTracing.stopRecording(out);
+
+				console.log(`[Trace] Saved: ${out}`);
+				console.log('[Trace] Open at https://ui.perfetto.dev or chrome://tracing');
+			} catch (e) {
+				console.error('[Trace] Failed to stop recording:', (e as Error).message);
+			};
+		}, duration);
+	} catch (e) {
+		console.error('[Trace] Failed to start recording:', (e as Error).message);
+	};
+};
+
 function waitForLibraryAndCreateWindows () {
 	const { userDataPath } = ConfigManager.config;
 
@@ -284,6 +349,8 @@ function createWindow () {
 };
 
 app.on('ready', async () => {
+	await maybeStartStartupTrace();
+
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
 		callback({
 			responseHeaders: {
