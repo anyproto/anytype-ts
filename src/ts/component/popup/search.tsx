@@ -338,7 +338,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			setIsLoading(true);
 		};
 
-		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', '_final_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
+		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', 'creator', '_final_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
 			if (message.error.code) {
 				setIsLoading(false);
 				return;
@@ -356,16 +356,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			});
 
 			itemsRef.current = itemsRef.current.concat(records);
-
-			if (itemsRef.current.length) {
-				U.Subscription.destroyList([ J.Constant.subId.search ], true, () => {
-					U.Subscription.subscribeIds({
-						subId: J.Constant.subId.search,
-						ids: itemsRef.current.map(it => it.id),
-						noDeps: true,
-					});
-				});
-			};
 
 			if (clear) {
 				setIsLoading(false);
@@ -596,7 +586,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			classNameWrap: 'fromPopup',
 			vertical: I.MenuDirection.Center,
 			data: {
-				subId: J.Constant.subId.search,
+				getObject: id => itemsRef.current.find(it => it.id == id),
 				route,
 				objectIds: [ item.id ],
 				allowedNewTab: true,
@@ -651,7 +641,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		return () => {
 			unbind();
-			U.Subscription.destroyList([ J.Constant.subId.search ]);
 			window.clearTimeout(timeoutRef.current);
 			window.clearTimeout(rebindTimeoutRef.current);
 		};
