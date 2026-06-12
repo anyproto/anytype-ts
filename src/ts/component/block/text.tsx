@@ -1058,6 +1058,14 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			focus.set(focused, { from: range.from - diff, to: range.to - diff });
 			focus.apply();
+
+			// After markdown auto-conversion the caret lands on the closing tag
+			// boundary and the browser keeps typing inside the new mark — move it
+			// past the trailing ZWS anchor so continued typing stays unformatted
+			const editable = U.Dom.select('.editable', editableRef.current?.getNode());
+			if (editable) {
+				Mark.escapeMarkBoundary(editable);
+			};
 		};
 
 		// Debounce the gRPC save so rapid typing doesn't saturate the main thread
