@@ -9,6 +9,7 @@ for (const i in I.MarkType) {
 };
 
 const TagValues = Object.values(Tags).join('|');
+const TagSet = new Set(Object.values(Tags));
 const RE_HTML_TAGS = new RegExp(`<(\/)?(${TagValues})\\b(?:([^>]*)>|>)`, 'ig');
 const RE_DATA_PARAM = new RegExp('data-param="([^"]*)"', 'i');
 
@@ -1161,6 +1162,78 @@ class Mark {
 	hasZws (el: HTMLElement): boolean {
 		const text = el.textContent || '';
 		return text.includes(ZWS);
+	};
+
+	/**
+	 * Check if a node is a markup element (markupbold, markupitalic, a, etc.).
+	 */
+	isMarkupElement (node: Node): boolean {
+		return node && (node.nodeType === Node.ELEMENT_NODE) && TagSet.has((node as HTMLElement).tagName.toLowerCase());
+	};
+
+	/**
+	 * Move a collapsed caret sitting right after a closing markup tag past the
+	 * trailing ZWS anchor. The browser canonicalizes a caret on the element
+	 * boundary to the end of the text inside the tag, so typed characters would
+	 * inherit the mark's formatting (e.g. right after markdown auto-conversion).
+	 * The model offset is unchanged: domToModel does not count ZWS characters.
+	 * @param {HTMLElement} root - The editable element containing the caret.
+	 */
+	escapeMarkBoundary (root: HTMLElement) {
+		const sel = window.getSelection();
+		if (!sel || !sel.rangeCount || !sel.isCollapsed) {
+			return;
+		};
+
+		const range = sel.getRangeAt(0);
+
+		let node: Node = range.startContainer;
+		let offset = range.startOffset;
+		let moved = false;
+
+		if (!root.contains(node)) {
+			return;
+		};
+
+		for (let i = 0; i < 16; ++i) {
+			// Caret at the end of a ZWS-only closing anchor — hop out of the enclosing tag
+			if ((node.nodeType === Node.TEXT_NODE) && (node.textContent === ZWS) && (offset == 1)) {
+				const parent = node.parentNode;
+
+				if (!parent || (parent === root) || !this.isMarkupElement(parent) || (parent.lastChild !== node)) {
+					break;
+				};
+
+				const grand = parent.parentNode;
+				if (!grand) {
+					break;
+				};
+
+				offset = Array.prototype.indexOf.call(grand.childNodes, parent) + 1;
+				node = grand;
+				moved = true;
+				continue;
+			};
+
+			if (node.nodeType !== Node.ELEMENT_NODE) {
+				break;
+			};
+
+			const prev = node.childNodes[offset - 1];
+			const next = node.childNodes[offset];
+
+			if (!prev || !this.isMarkupElement(prev) || !next || (next.nodeType !== Node.TEXT_NODE) || !String(next.textContent || '').startsWith(ZWS)) {
+				break;
+			};
+
+			node = next;
+			offset = 1;
+			moved = true;
+		};
+
+		if (moved) {
+			sel.collapse(node, offset);
+		};
 	};
 
 };
