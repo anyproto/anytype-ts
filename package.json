@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.55.13-alpha",
+	"version": "0.55.14-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -197,6 +197,7 @@
 		"jsonfile": "^6.1.0",
 		"lodash-es": "^4.17.23",
 		"micromatch": "^4.0.8",
+		"node-gyp": "^12.1.0",
 		"tar": "^7.5.7",
 		"tmp": "^0.2.4",
 		"trim-newlines": "^3.0.1"
