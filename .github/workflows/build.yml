@@ -17,7 +17,7 @@ jobs:
         os:
           - macos-15
           - ubuntu-22.04
-          - windows-latest
+          - windows-2022
 
     steps:
       - name: Setup
