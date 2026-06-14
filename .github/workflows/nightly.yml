@@ -183,7 +183,7 @@ jobs:
         os:
           - macos-15
           - ubuntu-22.04
-          - windows-2022
+          - windows-2025
     steps:
       - name: Setup
         run: |
