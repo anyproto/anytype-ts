@@ -609,6 +609,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const message = `#block-${U.Common.esc(block.id)} #item-${U.Common.esc(item.id)}`;
 		const isRightClick = !onMore;
 
+		// Right-clicking a URL inside the message text offers a "Copy link" for that URL,
+		// distinct from "Copy message link" (the message deeplink)
+		const linkEl = isRightClick ? (e.target as HTMLElement)?.closest('a.markuplink') as HTMLElement : null;
+		const url = linkEl ? String(linkEl.getAttribute('href') || '') : '';
+
 		let satellite = null;
 
 		if (isRightClick && canAddReaction(item)) {
@@ -656,7 +661,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				U.Dom.removeClass(messageEl, 'hover');
 			},
 			data: {
-				options: getMessageMenuOptions(item, onMore),
+				options: getMessageMenuOptions(item, onMore, url),
 				satellite,
 				onSelect: (e, option) => {
 					switch (option.id) {
@@ -683,6 +688,12 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 							const object = S.Detail.get(rootId, rootId);
 
 							U.Object.copyLink(object, space, 'deeplink', '', `&messageId=${item.id}`);
+							analytics.event('ClickMessageMenuLink', { chatId: analyticsChatId });
+							break;
+						};
+
+						case 'copyLink': {
+							U.Common.copyToast(translate('commonLink'), url);
 							analytics.event('ClickMessageMenuLink', { chatId: analyticsChatId });
 							break;
 						};
@@ -914,7 +925,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		return ret;
 	};
 
-	const getMessageMenuOptions = (message: I.ChatMessage, noControls: boolean): I.Option[] => {
+	const getMessageMenuOptions = (message: I.ChatMessage, noControls: boolean, url?: string): I.Option[] => {
 		const isSelf = message.creator == S.Auth.account.id;
 		const downloadable = getDownloadableAttachments(message);
 		const options: any[] = [];
@@ -925,6 +936,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 		if (message.content.text) {
 			options.push({ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('blockChatCopyText') });
+		};
+
+		// Only offered when the menu was opened on a URL inside the message text
+		if (url) {
+			options.push({ id: 'copyLink', iconParam: { name: 'menu/action/copyLink' }, name: translate('blockChatCopyLink') });
 		};
 
 		if (downloadable.length == 1) {
@@ -945,13 +961,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			options.push({ isDiv: true });
 			options.push({ id: 'edit', iconParam: { name: 'common/edit' }, name: translate('commonEdit') });
 			options.push({ isDiv: true });
-			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
+			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('blockChatCopyMessageLink') });
 			options.push({ id: 'delete', iconParam: { name: 'menu/action/remove', color: 'destructive' }, name: translate('commonDelete'), color: 'destructive' });
 		} else {
 			if (options.length) {
 				options.push({ isDiv: true });
 			};
-			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
+			options.push({ id: 'link', iconParam: { name: 'menu/action/pageLink' }, name: translate('blockChatCopyMessageLink') });
 
 			// Owners and Admins can delete any message in the space
 			if (U.Space.canMyParticipantModerate()) {
