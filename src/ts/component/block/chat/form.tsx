@@ -175,8 +175,11 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 	const insertNewLine = () => {
 		let value = getTextValue();
+		const atEnd = range.current.from >= value.length;
 
-		if (!value.match(/\r?\n$/)) {
+		// The trailing-newline append only makes a newline visible at the very end of the
+		// contentEditable; appending it when the caret is mid-text leaves a stray blank line.
+		if (atEnd && !value.match(/\r?\n$/)) {
 			value += '\n';
 		};
 

@@ -49,6 +49,7 @@
 			color: var(--color-text-primary); font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
 			white-space: pre-wrap; tab-size: 4; overflow-wrap: anywhere; user-select: text !important;
 		}
+		.textWrapper > .codeBlock:first-child { margin-top: 0px; }
 		.time {
 			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding: 4px 0px 0px 4px;
 			display: flex; align-items: center; gap: 0px 4px; white-space: nowrap;
@@ -154,6 +155,8 @@
 			markupmention {
 				name { color: var(--color-text-white); }
 			}
+
+			.codeBlock { color: var(--color-text-white); background: rgba(0,0,0,0.2); }
 		}
 
 		.reactions { justify-content: flex-end; }

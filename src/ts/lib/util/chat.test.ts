@@ -80,6 +80,33 @@ describe('Chat', () => {
 			expect(res.blocks).toHaveLength(1);
 			expect(res.blocks[0].text.style).toBe(I.TextStyle.Code);
 		});
+
+		it('clamps a mark straddling the paragraph/code boundary to the paragraph length', () => {
+			const text = [ 'Hi', `${F}`, 'x', F, 'bye' ].join('\n');
+			// Bold starts at "Hi" (0) and runs into the code region (to: 8) — must be clamped to "Hi" (0..2).
+			const marks: I.Mark[] = [{ type: I.MarkType.Bold, range: { from: 0, to: 8 } }];
+			const res = Chat.fenceToBlocks(text, marks);
+
+			expect(res.blocks[0].text.text).toBe('Hi');
+			expect(res.blocks[0].text.marks).toEqual([{ type: I.MarkType.Bold, range: { from: 0, to: 2 } }]);
+		});
+
+		it('does not emit a code block for a lone/stray opening fence', () => {
+			for (const text of [ `${F}`, `${F}ts`, [ `${F}`, F ].join('\n') ]) {
+				const res = Chat.fenceToBlocks(text, []);
+				expect(res.hasCode).toBe(false);
+				expect(res.blocks).toHaveLength(0);
+			};
+		});
+
+		it('omits a whitespace-only paragraph between two code blocks', () => {
+			const text = [ `${F}`, 'c', F, '   ', `${F}`, 'd', F ].join('\n');
+			const res = Chat.fenceToBlocks(text, []);
+
+			expect(res.blocks).toHaveLength(2);
+			expect(res.blocks[0].text.style).toBe(I.TextStyle.Code);
+			expect(res.blocks[1].text.style).toBe(I.TextStyle.Code);
+		});
 	});
 
 	describe('isInOpenCodeFence', () => {

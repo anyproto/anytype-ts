@@ -115,6 +115,11 @@ class UtilChat {
 
 		for (const seg of segments) {
 			if (seg.type == 'code') {
+				// Skip degenerate empty code blocks (a lone/stray fence or an all-whitespace body).
+				if (!seg.text.trim().length) {
+					continue;
+				};
+
 				hasCode = true;
 
 				const block: I.ChatMessageBlock = {
@@ -127,14 +132,17 @@ class UtilChat {
 
 				blocks.push(block);
 			} else {
-				if (!seg.text.length) {
+				// Skip empty / whitespace-only paragraph segments (e.g. blank lines around fences).
+				if (!seg.text.trim().length) {
 					continue;
 				};
 
 				const part = Mark.getPartOfString(text, { from: seg.from, to: seg.to }, marks || []);
 
+				// checkRanges clamps marks to the sliced block's own length — getPartOfString does not,
+				// so a mark straddling the paragraph/code boundary would otherwise carry an out-of-bounds range.
 				blocks.push({
-					text: { text: part.text, style: I.TextStyle.Paragraph, marks: part.marks || [] },
+					text: { text: part.text, style: I.TextStyle.Paragraph, marks: Mark.checkRanges(part.text, part.marks || []) },
 				});
 			};
 		};

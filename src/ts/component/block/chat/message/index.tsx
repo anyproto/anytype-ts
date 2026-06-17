@@ -324,7 +324,10 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	if (text) {
 		cn.push('withText');
 	};
-	if (U.String.checkRtl(text)) {
+	// For blocks-based messages, base RTL on the actual paragraph text, not the fenced source
+	// (which would start with the LTR ``` marker for a code-led message).
+	const rtlSource = hasBlocks ? textBlocks.map(it => it.text?.text || '').join(' ') : text;
+	if (U.String.checkRtl(rtlSource)) {
 		ct.push('isRtl');
 	};
 	if (!isReadMessage || !isReadMention) {
