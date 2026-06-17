@@ -85,13 +85,29 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 		const node = nodeRef.current;
 		if (!node) return;
 
-		const et = U.Dom.select('.bubbleOuter .text', node);
 		const er = U.Dom.select('.reply .text', node);
+		const paragraphBlocks = (message.blocks || []).filter(it => it.text && (it.text.style != I.TextStyle.Code));
 
-		renderMentions(rootId, et, marks, () => text, { subId, withPreview: false });
-		renderObjects(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
-		renderLinks(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
-		renderEmoji(et);
+		if (paragraphBlocks.length) {
+			U.Dom.selectAll('.bubbleOuter .text', node).forEach((el: HTMLElement, i: number) => {
+				const bt = paragraphBlocks[i]?.text;
+				if (!bt) {
+					return;
+				};
+
+				renderMentions(rootId, el, bt.marks, () => bt.text, { subId, withPreview: false });
+				renderObjects(rootId, el, bt.marks, () => bt.text, { readonly: isReadonly }, { subId });
+				renderLinks(rootId, el, bt.marks, () => bt.text, { readonly: isReadonly }, { subId });
+				renderEmoji(el);
+			});
+		} else {
+			const et = U.Dom.select('.bubbleOuter .text', node);
+
+			renderMentions(rootId, et, marks, () => text, { subId, withPreview: false });
+			renderObjects(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
+			renderLinks(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
+			renderEmoji(et);
+		};
 
 		renderMentions(rootId, er, marks, () => text, { subId, iconSize: 16, withPreview: false });
 		renderObjects(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
@@ -241,6 +257,21 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	const controls = [];
 	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks))).replace(/\u200B/g, '');
 	const cns = [ 'status', 'syncing' ];
+	const textBlocks = (message.blocks || []).filter(it => it.text);
+	const hasBlocks = textBlocks.length > 0;
+	const renderBlocks = () => textBlocks.map((b, i) => {
+		const bt = b.text;
+		if (!bt) {
+			return null;
+		};
+
+		if (bt.style == I.TextStyle.Code) {
+			return <pre key={i} className="codeBlock">{bt.text}</pre>;
+		};
+
+		const html = U.String.sanitize(U.String.lbBr(Mark.toHtml(bt.text, bt.marks))).replace(/​/g, '');
+		return <div key={i} className="text" dangerouslySetInnerHTML={{ __html: html }} />;
+	});
 
 	if (!text && !hasAttachments) {
 		return null;
@@ -365,11 +396,13 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 							<div className="bubbleInner">
 								<div ref={bubbleRef} className={cnBubble.join(' ')}>
 									<div className={ct.join(' ')}>
-										<div
-											ref={textRef}
-											className="text"
-											dangerouslySetInnerHTML={{ __html: text }}
-										/>
+										{hasBlocks ? renderBlocks() : (
+											<div
+												ref={textRef}
+												className="text"
+												dangerouslySetInnerHTML={{ __html: text }}
+											/>
+										)}
 										<div className="time">
 											<Icon name="chat/messageStatus/syncing" size={12} className={cns.join(' ')} />
 											{editedLabel} {U.Date.date('H:i', createdAt)}
