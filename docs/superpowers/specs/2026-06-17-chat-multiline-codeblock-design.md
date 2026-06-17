@@ -45,12 +45,10 @@ Why this split:
   last-message preview, notifications, search) shows readable text with `` ``` `` markers.
 - A code block is **NOT** a mark — `MarkType.Code` stays inline-code-only and untouched.
 
-> **Open design choice for review (D1):** we keep the `` ``` `` markers inside `content.text`.
-> The trade-off is that non-block-aware previews (reply head, chat list) display the raw fence
-> markers. The alternative — strip fences from `content.text` and reconstruct them from `blocks`
-> on edit — gives cleaner previews but adds a `blocksToFence` serializer and changes `onEdit`.
-> Recommendation: keep fences in `content.text` (lower risk); optionally add a `stripFences()`
-> helper used only in preview surfaces. **Please confirm.**
+> **D1 — RESOLVED (maintainer approved 2026-06-18):** keep the `` ``` `` markers inside
+> `content.text` (lower risk, free edit round-trip). Trade-off accepted: non-block-aware previews
+> (reply head, chat list) display the raw fence markers. An optional `stripFences()` helper for
+> preview surfaces may be added as polish but is **not** required for v1.
 
 ### 3.2 Fence syntax (line-based, GitHub-style)
 
