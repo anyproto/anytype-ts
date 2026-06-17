@@ -325,21 +325,34 @@ class Action {
 	 * @param {boolean} isImage - Whether to treat the file as an image.
 	 */
 	downloadFile (id: string, route: string, isImage: boolean) {
-		if (!id || S.Common.isDownloading(id)) {
+		this.downloadFiles([ { id, isImage } ], route);
+	};
+
+	/**
+	 * Downloads multiple files into a single chosen directory using one dialog.
+	 * @param {{ id: string, isImage: boolean }[]} files - The files to download.
+	 * @param {string} route - The route context for analytics.
+	 */
+	downloadFiles (files: { id: string, isImage: boolean }[], route: string) {
+		files = (files || []).filter(it => it.id && !S.Common.isDownloading(it.id));
+
+		if (!files.length) {
 			return;
 		};
 
-		const url = isImage ? S.Common.imageUrl(id, 0) : S.Common.fileUrl(id);
-
 		this.openDirectoryDialog({ buttonLabel: translate('commonDownload') }, paths => {
-			S.Common.downloadStart(id);
+			files.forEach(file => {
+				const url = file.isImage ? S.Common.imageUrl(file.id, 0) : S.Common.fileUrl(file.id);
 
-			const promise = Renderer.send('download', url, { directory: paths[0] });
-			if (promise && promise.then) {
-				promise.then(() => S.Common.downloadDone(id));
-			} else {
-				S.Common.downloadDone(id);
-			};
+				S.Common.downloadStart(file.id);
+
+				const promise = Renderer.send('download', url, { directory: paths[0] });
+				if (promise && promise.then) {
+					promise.then(() => S.Common.downloadDone(file.id));
+				} else {
+					S.Common.downloadDone(file.id);
+				};
+			});
 
 			analytics.event('DownloadMedia', { route });
 		});
