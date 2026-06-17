@@ -1,6 +1,6 @@
 # util/ - Utility Classes
 
-17 utility classes providing helper functions across the app. Accessed via `U.*` import alias.
+18 utility classes providing helper functions across the app. Accessed via `U.*` import alias.
 
 ## Utility Classes
 
@@ -23,6 +23,7 @@
 | `prism.ts` | `U.Prism` | PrismJS language map, alias resolution, dependency loading |
 | `stickyScrollbar.ts` | `U.StickyScrollbar` | Sticky horizontal scrollbar sync for dataview grid/board views |
 | `comment.ts` | `U.Comment` | Comment content part conversion (parts to/from chat message blocks) |
+| `chat.ts` | `U.Chat` | Chat message fence parsing: triple-backtick code blocks ↔ `ChatMessageBlock`, open-fence caret detection |
 
 ## Non-exported Utility Files
 
