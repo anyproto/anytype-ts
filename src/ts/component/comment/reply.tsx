@@ -312,12 +312,20 @@ const CommentReply = (props: Props) => {
 		});
 	}, [ targetId, id, parentId ]);
 
-	const onCopyLink = useCallback(() => {
+	const onCopyMessageLink = useCallback(() => {
 		const object = S.Detail.get(rootId, rootId);
 		const spaceObject = U.Space.getSpaceview();
 
 		U.Object.copyLink(object, spaceObject, 'deeplink', '', `&messageId=${id}`);
 	}, [ rootId, id ]);
+
+	const onCopyUrl = useCallback((url: string) => {
+		if (!url) {
+			return;
+		};
+
+		U.Common.copyToast(translate('commonLink'), url);
+	}, []);
 
 	const onCopyText = useCallback(() => {
 		const blocks = U.Comment.partsToBlocks(parts);
@@ -376,7 +384,7 @@ const CommentReply = (props: Props) => {
 		openReactionPicker(e.currentTarget as HTMLElement);
 	}, [ openReactionPicker ]);
 
-	const buildMenuOptions = useCallback((withQuickActions: boolean) => {
+	const buildMenuOptions = useCallback((withQuickActions: boolean, url?: string) => {
 		const limit = J.Constant.limit.chat.reactions;
 		const self = (reactions || []).filter(it => it.authors?.includes(account.id));
 		const canReact = (self.length < limit.self) && ((reactions || []).length < limit.all);
@@ -394,9 +402,14 @@ const CommentReply = (props: Props) => {
 
 		items.push({ id: 'copyText', name: translate('commentCopyText'), iconParam: { name: 'menu/action/copy' } });
 
+		// Only offered when the menu was opened on a URL inside the message text
+		if (url) {
+			items.push({ id: 'copyLink', name: translate('commentCopyLink'), iconParam: { name: 'menu/action/copyLink' } });
+		};
+
 		if (withQuickActions) {
 			items.push({ isDiv: true });
-			items.push({ id: 'copyLink', name: translate('commentCopyLink'), iconParam: { name: 'menu/action/pageLink' } });
+			items.push({ id: 'copyMessageLink', name: translate('commentCopyMessageLink'), iconParam: { name: 'menu/action/pageLink' } });
 		};
 
 		if (isSelf) {
@@ -412,16 +425,17 @@ const CommentReply = (props: Props) => {
 		return items;
 	}, [ isSelf, reactions, account.id, onReply ]);
 
-	const onMenuSelect = useCallback((item: any, anchor: HTMLElement) => {
+	const onMenuSelect = useCallback((item: any, anchor: HTMLElement, url?: string) => {
 		switch (item.id) {
 			case 'reply': onReply?.(); break;
 			case 'reaction': openReactionPicker(anchor); break;
 			case 'copyText': onCopyText(); break;
-			case 'copyLink': onCopyLink(); break;
+			case 'copyLink': onCopyUrl(url); break;
+			case 'copyMessageLink': onCopyMessageLink(); break;
 			case 'edit': onEdit(); break;
 			case 'delete': onDelete(); break;
 		};
-	}, [ onReply, openReactionPicker, onCopyText, onCopyLink, onEdit, onDelete ]);
+	}, [ onReply, openReactionPicker, onCopyText, onCopyUrl, onCopyMessageLink, onEdit, onDelete ]);
 
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
 		const element = e.currentTarget as HTMLElement;
@@ -453,6 +467,8 @@ const CommentReply = (props: Props) => {
 		const x = e.pageX;
 		const y = e.pageY;
 		const anchor = contentWrapRef.current;
+		const link = (e.target as HTMLElement)?.closest(Mark.getTag(I.MarkType.Link)) as HTMLElement;
+		const url = link ? String(link.getAttribute('href') || '') : '';
 
 		setHover(true);
 
@@ -463,8 +479,8 @@ const CommentReply = (props: Props) => {
 			horizontal: I.MenuDirection.Right,
 			onClose: () => setHover(false),
 			data: {
-				options: buildMenuOptions(true),
-				onSelect: (e: any, item: any) => onMenuSelect(item, anchor),
+				options: buildMenuOptions(true, url),
+				onSelect: (e: any, item: any) => onMenuSelect(item, anchor, url),
 			},
 		});
 	}, [ readonly, isEditing, buildMenuOptions, onMenuSelect, setHover ]);
