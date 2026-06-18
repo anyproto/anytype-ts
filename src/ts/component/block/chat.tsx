@@ -948,7 +948,18 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			if (target) {
 				const isFileDownloading = S.Common.isDownloading(target.id);
 
-				options.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
+				// With a single file the name is obvious; only spell it out to disambiguate one file among many.
+				let name = '';
+				if (isFileDownloading) {
+					name = translate('commonDownloading');
+				} else
+				if (downloadable.length == 1) {
+					name = translate('commonDownload');
+				} else {
+					name = U.String.sprintf(translate('commonDownloadFile'), U.String.shorten(U.File.name(target), J.Constant.limit.string.fileName));
+				};
+
+				options.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name, disabled: isFileDownloading });
 			};
 
 			// With many files, also offer to download all of them at once.

@@ -72,6 +72,7 @@ export default {
 
 		string: {
 			mention:					 300,
+			fileName:					 24,
 		},
 	},
 
