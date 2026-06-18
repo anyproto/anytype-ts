@@ -369,11 +369,25 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			});
 		};
 
+		// Live-render fenced code blocks as monospace (inline-code markup) so they look the
+		// same way single-line code does while typing. The ``` fences stay in the text, so the
+		// send path (U.Chat.fenceToBlocks) still produces real code blocks (which drop these marks).
+		const codeRanges = U.Chat.getSegments(parsed.text)
+			.filter(s => (s.type == 'code') && s.text.trim().length)
+			.map(s => ({ from: s.from, to: s.to }));
+
+		if (codeRanges.length) {
+			const inCodeRange = (r: I.TextRange) => codeRanges.some(cr => (r.from >= cr.from) && (r.to <= cr.to));
+
+			cleanedMarks = cleanedMarks.filter(it => !((it.type == I.MarkType.Code) && inCodeRange(it.range)));
+			cleanedMarks = Mark.checkRanges(parsed.text, cleanedMarks.concat(codeRanges.map(r => ({ type: I.MarkType.Code, range: r }))));
+		};
+
 		setMarks(cleanedMarks);
 
 		let adjustMarks = false;
 
-		if (cleanedMarks.length < parsed.marks.length) {
+		if (cleanedMarks.length !== parsed.marks.length) {
 			updateMarkup(parsed.text, range.current);
 		} else
 		if (value !== parsed.text) {
