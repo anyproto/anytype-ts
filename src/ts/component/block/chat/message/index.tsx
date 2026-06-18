@@ -269,7 +269,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 			return <pre key={i} className="codeBlock">{bt.text}</pre>;
 		};
 
-		const html = U.String.sanitize(U.String.lbBr(Mark.toHtml(bt.text, bt.marks))).replace(/​/g, '');
+		const html = U.String.sanitize(U.String.lbBr(Mark.toHtml(bt.text, bt.marks))).replace(/\u200B/g, '');
 		return <div key={i} className="text" dangerouslySetInnerHTML={{ __html: html }} />;
 	});
 
