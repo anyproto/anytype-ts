@@ -614,6 +614,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const linkEl = isRightClick ? (e.target as HTMLElement)?.closest('a.markuplink') as HTMLElement : null;
 		const url = linkEl ? String(linkEl.getAttribute('href') || '') : '';
 
+		// Resolve the file the user right-clicked on, so a single attachment can be downloaded on its own.
+		let targetId = '';
+		if (isRightClick) {
+			const attachmentEl = (e.target as HTMLElement)?.closest('.attachment');
+			targetId = attachmentEl?.getAttribute('data-id') || '';
+		};
+
 		let satellite = null;
 
 		if (isRightClick && canAddReaction(item)) {
@@ -661,7 +668,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				U.Dom.removeClass(messageEl, 'hover');
 			},
 			data: {
-				options: getMessageMenuOptions(item, onMore, url),
+				options: getMessageMenuOptions(item, onMore, url, targetId),
 				satellite,
 				onSelect: (e, option) => {
 					switch (option.id) {
@@ -721,11 +728,18 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 						case 'download': {
 							const files = getDownloadableAttachments(item);
+							const file = targetId ? files.find(it => it.id == targetId) : files[0];
 
-							if (files.length) {
-								const file = files[0];
+							if (file) {
 								Action.downloadFile(file.id, analytics.route.chat, file.layout == I.ObjectLayout.Image);
 							};
+							break;
+						};
+
+						case 'downloadAll': {
+							const files = getDownloadableAttachments(item).map(it => ({ id: it.id, isImage: it.layout == I.ObjectLayout.Image }));
+
+							Action.downloadFiles(files, analytics.route.chat);
 							break;
 						};
 					};
@@ -925,7 +939,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		return ret;
 	};
 
-	const getMessageMenuOptions = (message: I.ChatMessage, noControls: boolean, url?: string): I.Option[] => {
+	const getMessageMenuOptions = (message: I.ChatMessage, noControls: boolean, url?: string, targetId?: string): I.Option[] => {
 		const isSelf = message.creator == S.Auth.account.id;
 		const downloadable = getDownloadableAttachments(message);
 		const options: any[] = [];
@@ -943,10 +957,31 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			options.push({ id: 'copyLink', iconParam: { name: 'menu/action/copyLink' }, name: translate('blockChatCopyLink') });
 		};
 
-		if (downloadable.length == 1) {
-			const isFileDownloading = S.Common.isDownloading(downloadable[0].id);
+		if (downloadable.length) {
+			// With one file, or one right-clicked among many, offer to download just that file.
+			const target = (downloadable.length == 1) ? downloadable[0] : downloadable.find(it => it.id == targetId);
 
-			options.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name: isFileDownloading ? translate('commonDownloading') : translate('commonDownload'), disabled: isFileDownloading });
+			if (target) {
+				const isFileDownloading = S.Common.isDownloading(target.id);
+
+				// With a single file the name is obvious; only spell it out to disambiguate one file among many.
+				let name = '';
+				if (isFileDownloading) {
+					name = translate('commonDownloading');
+				} else
+				if (downloadable.length == 1) {
+					name = translate('commonDownload');
+				} else {
+					name = U.String.sprintf(translate('commonDownloadFile'), U.String.shorten(U.File.name(target), J.Constant.limit.string.fileName));
+				};
+
+				options.push({ id: 'download', iconParam: { name: 'menu/action/download' }, name, disabled: isFileDownloading });
+			};
+
+			// With many files, also offer to download all of them at once.
+			if (downloadable.length > 1) {
+				options.push({ id: 'downloadAll', iconParam: { name: 'menu/action/download' }, name: translate('commonDownloadAll') });
+			};
 		};
 
 		if (!U.Space.getSpaceview().isOneToOne) {

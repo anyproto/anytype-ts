@@ -435,9 +435,10 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 	}));
 
 	return (
-		<div 
+		<div
 			ref={nodeRef}
 			className={cn.join(' ')}
+			{...U.Common.dataProps({ id: object.id })}
 		>
 			{content}
 			<Icon name="chat/buttons/remove" className="remove" size={8} onClick={onRemoveHandler} />
