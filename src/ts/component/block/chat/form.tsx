@@ -1683,6 +1683,15 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		renderObjects(rootId, node, marks.current, getValue, props, param);
 		renderLinks(rootId, node, marks.current, getValue, props, param);
 		renderEmoji(node);
+
+		// Multiline inline-code marks are fenced code blocks: render them as one unified
+		// block surface instead of per-line pills (box-decoration-break: clone).
+		if (node) {
+			U.Dom.selectAll('markupcode', node).forEach((el: HTMLElement) => {
+				const multiline = (el.textContent || '').includes('\n') || !!el.querySelector('br');
+				U.Dom.toggleClass(el, 'codeBlockLive', multiline);
+			});
+		};
 	};
 
 	const renderReply = () => {

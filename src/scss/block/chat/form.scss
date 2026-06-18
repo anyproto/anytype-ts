@@ -104,6 +104,11 @@
 	}
 	.editableWrap.isRtl { text-align: right; }
 
+	.editable markupcode.codeBlockLive {
+		display: block; background: var(--color-shape-highlight-light-solid); box-shadow: none; border-radius: 8px;
+		padding: 8px 12px; margin: 4px 0px; white-space: pre-wrap; tab-size: 4; box-decoration-break: slice;
+	}
+
 	.attachments { margin: 6px 0px; padding: 0px 8px; max-height: 360px; overflow: visible; max-width: unset; }
 	.attachments {
 		.swiper { width: 100%; overflow: visible; }
