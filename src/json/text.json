@@ -140,6 +140,8 @@
 	"commonUploadComputer": "Upload from computer",
 	"commonLoad": "Load",
 	"commonDownload": "Download",
+	"commonDownloadFile": "Download %s",
+	"commonDownloadAll": "Download all",
 	"commonDownloading": "Downloading...",
 	"commonAscending": "Ascending",
 	"commonDescending": "Descending",
