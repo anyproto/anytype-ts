@@ -389,12 +389,19 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 		let adjustMarks = false;
 
-		if (cleanedMarks.length !== parsed.marks.length) {
-			updateMarkup(parsed.text, range.current);
-		} else
+		// Re-render when the marks actually changed (not just their count): a growing code-fence
+		// region keeps the same mark count but a larger range, so a length check misses it.
+		const normalizeMarks = (list: I.Mark[]) => [ ...list ]
+			.map(it => ({ t: it.type, f: it.range.from, e: it.range.to, p: it.param || '' }))
+			.sort((a, b) => (a.f - b.f) || (a.t - b.t));
+		const marksChanged = !U.Common.compareJSON(normalizeMarks(cleanedMarks), normalizeMarks(parsed.marks));
+
 		if (value !== parsed.text) {
 			const diff = value.length - parsed.text.length;
 			updateMarkup(parsed.text, { from: to - diff, to: to - diff });
+		} else
+		if (marksChanged) {
+			updateMarkup(parsed.text, range.current);
 		};
 
 		if (canOpenMenuMention) {
