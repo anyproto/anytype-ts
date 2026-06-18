@@ -37,6 +37,9 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const expandedRef = useRef<ExpandedState>({ toggles: [] });
 	const activeMatchRef = useRef<ActiveMatch>({ toggleId: '', position: null });
+	const isSearchingRef = useRef(false);
+	const observerRef = useRef<MutationObserver | null>(null);
+	const mutationTimeoutRef = useRef(0);
 
 	const getRootId = () => keyboard.getRootId(isPopup);
 	const getContainer = () => U.Dom.getScrollContainer(isPopup);
@@ -87,11 +90,28 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 	};
 
+	const disconnectObserver = () => {
+		observerRef.current?.disconnect();
+	};
+
+	const connectObserver = () => {
+		const containerEl = getContainer();
+		if (containerEl && observerRef.current) {
+			observerRef.current.observe(containerEl, {
+				childList: true,
+				subtree: true,
+				characterData: true,
+			});
+		};
+	};
+
 	const clearSearch = (keepToggleId?: string) => {
+		disconnectObserver();
 		removeHighlights();
 		collapseExpanded(keepToggleId);
 
 		U.Dom.removeClass(U.Dom.select('#switcher', nodeRef.current), 'active');
+		connectObserver();
 	};
 
 	const isElementVisible = (el: HTMLElement): boolean => {
@@ -251,11 +271,13 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		U.Dom.removeClass(switcher, 'active');
 
 		n.current = 0;
+		isSearchingRef.current = true;
 		clearSearch();
 		lastSearchRef.current = value;
 		storageSet({ search: value });
 
 		if (!value || !containerEl) {
+			isSearchingRef.current = false;
 			return;
 		};
 
@@ -276,6 +298,7 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 		updateMatchCounter();
 		focusCurrentMatch();
+		isSearchingRef.current = false;
 	};
 
 	const onReplace = () => {
@@ -285,19 +308,60 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const rootId = getRootId();
+		const searchValue = inputRef.current?.getValue() || '';
 		const replaceValue = replaceInputRef.current?.getValue() || '';
 
-		U.Data.blockInsertText(rootId, pos.blockId, replaceValue, pos.range.from, pos.range.to, () => {
-			lastSearchRef.current = '';
-			window.setTimeout(() => {
+		if (!searchValue) {
+			return;
+		};
+
+		// Verify position against the store's actual text to prevent wrong-place replacements.
+		// After a previous replace, the DOM may be stale (block components don't auto-re-render
+		// from MobX store changes since they aren't wrapped in observer), so the cached
+		// position from updateActivePosition may point to the wrong offset.
+		const block = S.Block.getLeaf(rootId, pos.blockId);
+		if (!block?.content) {
+			return;
+		};
+
+		const blockText = block.content.text || '';
+		const matchedText = blockText.substring(pos.range.from, pos.range.to);
+
+		let actualFrom = pos.range.from;
+		let actualTo = pos.range.to;
+
+		if (matchedText.toLowerCase() !== searchValue.toLowerCase()) {
+			// Position is stale — find the correct occurrence in the block's store text.
+			// Search near the original position first, then fall back to any occurrence.
+			const lowerText = blockText.toLowerCase();
+			const lowerSearch = searchValue.toLowerCase();
+			let idx = lowerText.indexOf(lowerSearch, Math.max(0, pos.range.from - searchValue.length));
+
+			if (idx < 0) {
+				idx = lowerText.indexOf(lowerSearch);
+			};
+
+			if (idx < 0) {
+				// Search term not found in this block at all — re-search to update state
+				lastSearchRef.current = '';
 				search();
-				if (matchElementsRef.current?.length) {
-					if (n.current >= matchElementsRef.current.length) {
-						n.current = 0;
-					};
-					focusCurrentMatch();
-				};
-			}, 50);
+				return;
+			};
+
+			actualFrom = idx;
+			actualTo = idx + searchValue.length;
+		};
+
+		U.Data.blockInsertText(rootId, pos.blockId, replaceValue, actualFrom, actualTo, () => {
+			lastSearchRef.current = '';
+			// Use rAF chaining to ensure the DOM has been updated by the contentEditable
+			// before re-searching. setTimeout(50) is unreliable because block text
+			// components don't re-render from MobX store changes automatically.
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					search();
+				});
+			});
 		});
 	};
 
@@ -452,6 +516,23 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	useEffect(() => {
 		position();
+
+		// Set up MutationObserver to detect content changes (undo/redo/external edits)
+		// and re-run the search so the match counter stays in sync.
+		observerRef.current = new MutationObserver(() => {
+			if (isSearchingRef.current) {
+				return;
+			};
+
+			window.clearTimeout(mutationTimeoutRef.current);
+			mutationTimeoutRef.current = window.setTimeout(() => {
+				const value = inputRef.current?.getValue() || '';
+				if (value) {
+					lastSearchRef.current = '';
+					search();
+				};
+			}, 200);
+		});
 		
 		const initTimeout = window.setTimeout(() => {
 			const value = String(data.value || storageGet().search || '');
@@ -459,11 +540,15 @@ const MenuSearchText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			inputRef.current?.setRange({ from: 0, to: value.length });
 			inputRef.current?.focus();
 			search();
+			connectObserver();
 		}, 100);
 
 		return () => {
 			window.clearTimeout(initTimeout);
 			window.clearTimeout(searchTimeoutRef.current);
+			window.clearTimeout(mutationTimeoutRef.current);
+			disconnectObserver();
+			observerRef.current = null;
 
 			const { toggleId } = activeMatchRef.current;
 			clearSearch(toggleId);
