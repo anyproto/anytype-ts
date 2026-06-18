@@ -102,6 +102,10 @@ class UtilChat {
 			flushText();
 		};
 
+		if (text.includes(FENCE)) {
+			console.log('[cb] getSegments in=', JSON.stringify(text), 'out=', segments.map(s => `${s.type}:${JSON.stringify(s.text)}`));
+		};
+
 		return segments;
 	};
 

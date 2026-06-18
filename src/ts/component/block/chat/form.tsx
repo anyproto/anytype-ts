@@ -1019,6 +1019,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			const diff = match ? match[0].length : 0;
 			const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
 			const { blocks, hasCode } = U.Chat.fenceToBlocks(text, marks);
+			console.log('[cb] onSend text=', JSON.stringify(text), 'hasCode=', hasCode, 'blocks=', JSON.stringify(blocks));
 
 			if (editingId.current) {
 				const message = S.Chat.getMessageById(subId, editingId.current);
