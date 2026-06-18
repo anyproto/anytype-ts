@@ -10,6 +10,8 @@ import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
 
+console.log('[cb] BUILD MARKER: chat/form.tsx (codeblock branch) module loaded');
+
 interface Props extends I.BlockComponent {
 	blockId: string;
 	subId: string;

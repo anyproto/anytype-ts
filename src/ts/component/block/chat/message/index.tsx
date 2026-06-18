@@ -10,6 +10,8 @@ import CodeBlock from 'Component/util/codeBlock';
 import Storage from 'Lib/storage';
 import * as I from 'Interface';
 
+console.log('[cb] BUILD MARKER: chat/message (codeblock branch) module loaded');
+
 interface ChatMessageRefProps {
 	highlight: () => void;
 	onReactionAdd: () => void;
