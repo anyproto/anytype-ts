@@ -45,7 +45,7 @@ Messaging interface:
 - `form.tsx` - Message input form (authors multiline code blocks via triple-backtick fences)
 - `empty.tsx` - Empty state
 - `attachment/index.tsx` - File attachments
-- `message/index.tsx` - Message display (renders `message.blocks`, incl. monospace code blocks)
+- `message/index.tsx` - Message display (renders `message.blocks`; code blocks via the shared `util/codeBlock` with syntax highlighting + language label, same as discussions)
 - `message/date.tsx` - Date separator
 - `message/reaction.tsx` - Message reactions
 - `message/reply.tsx` - Reply threading

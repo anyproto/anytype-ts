@@ -47,7 +47,15 @@
 		.codeBlock {
 			display: block; padding: 16px 12px; margin: 8px 0px; border-radius: 8px; background: var(--color-shape-highlight-light);
 			color: var(--color-text-primary); font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
-			white-space: pre-wrap; tab-size: 4; overflow-wrap: anywhere; user-select: text !important;
+			white-space: pre-wrap; tab-size: 4; overflow-wrap: anywhere; user-select: text !important; position: relative;
+		}
+		.codeBlock {
+			code { font-family: inherit; font-size: inherit; }
+			.codeLang {
+				position: absolute; top: 4px; right: 4px; padding: 2px 8px; @include text-very-small;
+				color: var(--color-text-secondary); font-family: var(--fontFamily); background: var(--color-shape-highlight-medium);
+				border-radius: 4px; user-select: none;
+			}
 		}
 		.textWrapper > .codeBlock:first-child { margin-top: 0px; }
 		.time {

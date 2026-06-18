@@ -6,6 +6,7 @@ import { IconObject, Icon, ObjectName, Label } from 'Component';
 import Attachment from '../attachment';
 import Reply from './reply';
 import Reaction from './reaction';
+import CodeBlock from 'Component/util/codeBlock';
 import Storage from 'Lib/storage';
 import * as I from 'Interface';
 
@@ -266,7 +267,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 		};
 
 		if (bt.style == I.TextStyle.Code) {
-			return <pre key={i} className="codeBlock">{bt.text}</pre>;
+			return <CodeBlock key={i} text={bt.text} lang={bt.lang} />;
 		};
 
 		const html = U.String.sanitize(U.String.lbBr(Mark.toHtml(bt.text, bt.marks))).replace(/\u200B/g, '');

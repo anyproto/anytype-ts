@@ -18,7 +18,7 @@ whitespace-preserving, monospace region visually distinct from normal text.
 |---|----------|--------|
 | Backend | Where code blocks live on the wire | **Frontend-only.** anytype-heart already persists `ChatMessageBlockText` with `style=Code` + `lang`; the gRPC mapper already round-trips it. No heart change. |
 | Authoring | How the user creates a code block | **Triple-backtick + Enter** (markdown fences), Discord-style. No toolbar button, no paste-to-codeblock in v1. |
-| Richness | Rendered appearance | **Plain monospace only.** No syntax highlighting, no language picker, no copy button in v1. |
+| Richness | Rendered appearance | ~~Plain monospace only.~~ **REVISED 2026-06-18 → parity with object discussions:** Prism **syntax highlighting + language label** on render, via a shared `Component/util/codeBlock` component reused by chat *and* the discussion renderer (`comment/render.tsx`). Language is set via the ` ```lang ` fence (no separate picker; the flat-fence composer has no per-block UI). Reason: discussions already shipped rich code blocks (Lexical `commentEditor` + `comment/render`) over the same `ChatMessageBlock` model; a plainer parallel version was inconsistent. |
 | Scope | Message shapes | **Mixed** — one message may interleave paragraphs and code blocks. |
 | Composer model | Behaviour while typing | **Raw fences in a single contenteditable.** The fence markers stay as literal text while typing; the message is split into blocks only on send. Lowest risk — the existing flat text+marks model is untouched. |
 
