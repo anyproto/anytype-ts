@@ -10,8 +10,6 @@ import CodeBlock from 'Component/util/codeBlock';
 import Storage from 'Lib/storage';
 import * as I from 'Interface';
 
-console.log('[cb] BUILD MARKER: chat/message (codeblock branch) module loaded');
-
 interface ChatMessageRefProps {
 	highlight: () => void;
 	onReactionAdd: () => void;
@@ -262,7 +260,6 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	const cns = [ 'status', 'syncing' ];
 	const textBlocks = (message.blocks || []).filter(it => it.text);
 	const hasBlocks = textBlocks.length > 0;
-	console.log('[cb] render id=', id, 'hasBlocks=', hasBlocks, 'blocks=', JSON.stringify(message.blocks), 'content.text=', JSON.stringify(content.text));
 	const renderBlocks = () => textBlocks.map((b, i) => {
 		const bt = b.text;
 		if (!bt) {

@@ -1,8 +1,6 @@
 import * as I from 'Interface';
 import Mark from 'Lib/mark';
 
-console.log('[cb] BUILD MARKER: U.Chat (codeblock branch) module loaded');
-
 const FENCE = '```';
 
 interface Segment {

@@ -10,8 +10,6 @@ import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
 
-console.log('[cb] BUILD MARKER: chat/form.tsx (codeblock branch) module loaded');
-
 interface Props extends I.BlockComponent {
 	blockId: string;
 	subId: string;
@@ -371,37 +369,16 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			});
 		};
 
-		// Live-render fenced code blocks as monospace (inline-code markup) so they look the
-		// same way single-line code does while typing. The ``` fences stay in the text, so the
-		// send path (U.Chat.fenceToBlocks) still produces real code blocks (which drop these marks).
-		const codeRanges = U.Chat.getSegments(parsed.text)
-			.filter(s => (s.type == 'code') && s.text.trim().length)
-			.map(s => ({ from: s.from, to: s.to }));
-
-		if (codeRanges.length) {
-			const inCodeRange = (r: I.TextRange) => codeRanges.some(cr => (r.from >= cr.from) && (r.to <= cr.to));
-
-			cleanedMarks = cleanedMarks.filter(it => !((it.type == I.MarkType.Code) && inCodeRange(it.range)));
-			cleanedMarks = Mark.checkRanges(parsed.text, cleanedMarks.concat(codeRanges.map(r => ({ type: I.MarkType.Code, range: r }))));
-		};
-
 		setMarks(cleanedMarks);
 
 		let adjustMarks = false;
 
-		// Re-render when the marks actually changed (not just their count): a growing code-fence
-		// region keeps the same mark count but a larger range, so a length check misses it.
-		const normalizeMarks = (list: I.Mark[]) => [ ...list ]
-			.map(it => ({ t: it.type, f: it.range.from, e: it.range.to, p: it.param || '' }))
-			.sort((a, b) => (a.f - b.f) || (a.t - b.t));
-		const marksChanged = !U.Common.compareJSON(normalizeMarks(cleanedMarks), normalizeMarks(parsed.marks));
-
+		if (cleanedMarks.length < parsed.marks.length) {
+			updateMarkup(parsed.text, range.current);
+		} else
 		if (value !== parsed.text) {
 			const diff = value.length - parsed.text.length;
 			updateMarkup(parsed.text, { from: to - diff, to: to - diff });
-		} else
-		if (marksChanged) {
-			updateMarkup(parsed.text, range.current);
 		};
 
 		if (canOpenMenuMention) {
@@ -1028,7 +1005,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			const diff = match ? match[0].length : 0;
 			const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
 			const { blocks, hasCode } = U.Chat.fenceToBlocks(text, marks);
-			console.log('[cb] onSend text=', JSON.stringify(text), 'hasCode=', hasCode, 'blocks=', JSON.stringify(blocks));
 
 			if (editingId.current) {
 				const message = S.Chat.getMessageById(subId, editingId.current);
@@ -1683,15 +1659,6 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		renderObjects(rootId, node, marks.current, getValue, props, param);
 		renderLinks(rootId, node, marks.current, getValue, props, param);
 		renderEmoji(node);
-
-		// Multiline inline-code marks are fenced code blocks: render them as one unified
-		// block surface instead of per-line pills (box-decoration-break: clone).
-		if (node) {
-			U.Dom.selectAll('markupcode', node).forEach((el: HTMLElement) => {
-				const multiline = (el.textContent || '').includes('\n') || !!el.querySelector('br');
-				U.Dom.toggleClass(el, 'codeBlockLive', multiline);
-			});
-		};
 	};
 
 	const renderReply = () => {
