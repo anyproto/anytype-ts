@@ -45,7 +45,7 @@
 		.textWrapper { line-height: 20px; padding: 6px 12px; }
 		.text { user-select: text !important; display: inline; }
 		.codeBlock {
-			display: block; padding: 16px 12px; margin: 8px 0px; border-radius: 8px; background: var(--color-shape-highlight-light);
+			display: block; padding: 16px 12px; margin: 8px 0px; border-radius: 8px; background: var(--color-shape-highlight-light-solid);
 			color: var(--color-text-primary); font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
 			white-space: pre-wrap; tab-size: 4; overflow-wrap: anywhere; user-select: text !important; position: relative;
 		}
@@ -163,8 +163,6 @@
 			markupmention {
 				name { color: var(--color-text-white); }
 			}
-
-			.codeBlock { color: var(--color-text-white); background: rgba(0,0,0,0.2); }
 		}
 
 		.reactions { justify-content: flex-end; }
