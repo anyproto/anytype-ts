@@ -3013,7 +3013,8 @@
 	"commentDelete": "Delete",
 	"commentSend": "Send",
 	"commentCopyText": "Copy text",
-	"commentCopyLink": "Copy link to comment",
+	"commentCopyLink": "Copy link",
+	"commentCopyMessageLink": "Copy message link",
 	"commentRepliesCount": "%s replies",
 	"commentReplyCount": "%s reply",
 
