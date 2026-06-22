@@ -60,7 +60,7 @@
 		.textWrapper > .codeBlock:first-child { margin-top: 0px; }
 		.time {
 			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding: 4px 0px 0px 4px;
-			display: flex; align-items: center; gap: 0px 4px; white-space: nowrap;
+			display: flex; align-items: center; gap: 0px 4px; white-space: nowrap; user-select: none !important;
 		}
 
 		.attachments { padding: 4px; }
