@@ -520,9 +520,10 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		const html = String(clipboard.getData('text/html') || '').replace(/<meta[^>]*>/gi, '');
 		const text = U.String.normalizeLineEndings(String(clipboard.getData('text/plain') || ''));
 
-		// If pasted content is a pure URL and there's a selection, create a link mark
+		// If pasted content is a pure URL and there's a selection (outside any code), create a link mark
 		const urls = U.String.getUrlsFromText(text);
-		if (urls.length && (urls[0].value == text) && (from != to)) {
+		const inCode = U.Chat.isInCode(current, from, to) || U.Chat.isInInlineCode(current, from) || Mark.getInRange(marks.current, I.MarkType.Code, { from, to });
+		if (urls.length && (urls[0].value == text) && (from != to) && !inCode) {
 			const url = urls[0].value;
 			const currentMark = Mark.getInRange(marks.current, I.MarkType.Link, { from, to });
 
@@ -641,6 +642,11 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			const { from, to, isLocal, isUrl } = url;
 
 			if (isLocal) {
+				continue;
+			};
+
+			// Skip URLs inside a code block or inline code — don't auto-link or create a bookmark.
+			if (U.Chat.isInCode(text, from, to) || U.Chat.isInInlineCode(text, from) || Mark.getInRange(marks.current, I.MarkType.Code, { from, to })) {
 				continue;
 			};
 
@@ -1004,7 +1010,9 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			const match = parsed.text.match(/^\r?\n+/);
 			const diff = match ? match[0].length : 0;
 			const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
-			const { blocks, hasCode } = U.Chat.fenceToBlocks(text, marks);
+			// Code: store the body as a Code mark over the (fence-less) text in content.text — no blocks.
+			// Keeps it in content.text + marks so every client renders monospace (mobile ignores blocks).
+			const coded = U.Chat.fenceToCodeMarks(text, marks);
 
 			if (editingId.current) {
 				const message = S.Chat.getMessageById(subId, editingId.current);
@@ -1012,9 +1020,9 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 					const update = U.Common.objectCopy(message);
 
 					update.attachments = newAttachments;
-					update.content.text = text;
-					update.content.marks = marks;
-					update.blocks = hasCode ? blocks : [];
+					update.content.text = coded.text;
+					update.content.marks = coded.marks;
+					update.blocks = [];
 
 					C.ChatEditMessageContent(rootId, editingId.current, update, () => {
 						scrollToMessage(editingId.current, true);
@@ -1032,13 +1040,13 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 				const message = {
 					replyToMessageId: replyingId,
 					content: {
-						marks,
-						text,
+						marks: coded.marks,
+						text: coded.text,
 						style: I.TextStyle.Paragraph,
 					},
 					attachments: newAttachments,
 					reactions: [],
-					blocks: hasCode ? blocks : [],
+					blocks: [],
 				};
 
 				let messageType = 'Text';
@@ -1117,13 +1125,15 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 	};
 
 	const onEdit = (message: I.ChatMessage) => {
-		const { text } = message.content;
+		// A multiline Code mark is shown back in the composer as raw ``` fences (no live parse);
+		// inline code and other marks pass through unchanged.
+		const { text, marks } = U.Chat.codeMarksToFence(message.content.text, message.content.marks);
 		const l = text.length;
 		const attachments = (message.attachments || []).map(it => it.target).map(id => S.Detail.get(subId, id));
 
 		editingId.current = message.id;
 
-		setMarks(message.content.marks);
+		setMarks(marks);
 		setReplyingId('');
 		updateMarkup(text, { from: l, to: l });
 		updateCounter();
