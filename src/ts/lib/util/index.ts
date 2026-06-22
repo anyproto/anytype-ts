@@ -1,3 +1,4 @@
+import Chat from './chat';
 import Common from './common';
 import Data from './data';
 import Date from './date';
@@ -17,6 +18,7 @@ import StickyScrollbar from './stickyScrollbar';
 import Comment from './comment';
 
 export {
+	Chat,
 	Common,
 	Data,
 	Date,

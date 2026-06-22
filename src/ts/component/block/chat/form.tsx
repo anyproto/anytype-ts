@@ -173,6 +173,20 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		updateMarkup(value, { from: range.current.from + length, to: range.current.from + length });
 	};
 
+	const insertNewLine = () => {
+		let value = getTextValue();
+		const atEnd = range.current.from >= value.length;
+
+		// The trailing-newline append only makes a newline visible at the very end of the
+		// contentEditable; appending it when the caret is mid-text leaves a stray blank line.
+		if (atEnd && !value.match(/\r?\n$/)) {
+			value += '\n';
+		};
+
+		insert('\n', value);
+		scrollToBottom();
+	};
+
 	const onKeyDownInput = (e: any) => {
 		const { chatCmdSend } = S.Common;
 		const cmd = keyboard.cmdKey();
@@ -189,18 +203,17 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			} else {
 				keyboard.shortcut(`enter`, e, () => {
 					e.preventDefault();
-					onSend();
+
+					if (U.Chat.isInOpenCodeFence(value, range.current.from)) {
+						insertNewLine();
+					} else {
+						onSend();
+					};
 				});
 
 				keyboard.shortcut(`${cmd}+enter`, e, () => {
 					e.preventDefault();
-
-					if (!value.match(/\r?\n$/)) {
-						value += '\n';
-					};
-
-					insert('\n', value);
-					scrollToBottom();
+					insertNewLine();
 				});
 			};
 		};
@@ -991,6 +1004,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			const match = parsed.text.match(/^\r?\n+/);
 			const diff = match ? match[0].length : 0;
 			const marks = Mark.checkRanges(text, Mark.adjust(parsed.marks, 0, -diff));
+			const { blocks, hasCode } = U.Chat.fenceToBlocks(text, marks);
 
 			if (editingId.current) {
 				const message = S.Chat.getMessageById(subId, editingId.current);
@@ -1000,6 +1014,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 					update.attachments = newAttachments;
 					update.content.text = text;
 					update.content.marks = marks;
+					update.blocks = hasCode ? blocks : [];
 
 					C.ChatEditMessageContent(rootId, editingId.current, update, () => {
 						scrollToMessage(editingId.current, true);
@@ -1023,6 +1038,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 					},
 					attachments: newAttachments,
 					reactions: [],
+					blocks: hasCode ? blocks : [],
 				};
 
 				let messageType = 'Text';

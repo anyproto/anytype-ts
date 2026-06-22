@@ -1,6 +1,6 @@
 # util/ - Reusable Utility Components
 
-~940 files (excluding stories). 32 top-level components plus subdirectories for icons, media, objects, menus, upsell, and share.
+~940 files (excluding stories). 33 top-level components plus subdirectories for icons, media, objects, menus, upsell, and share.
 
 ## Top-Level Components
 
@@ -18,6 +18,7 @@
 
 ### Display
 - `tag.tsx` - Colored tag/chip
+- `codeBlock.tsx` - Read-only code block with Prism highlighting + language label (shared by chat messages and discussions)
 - `label.tsx` - Text label
 - `title.tsx` - Section title
 - `marker.tsx` - List markers (bullets, numbers, checkboxes)
