@@ -48,8 +48,8 @@
 		// so no empty lines and no selection strip. Inline code (single-line) stays a markupcode pill.
 		.text .codeMark {
 			display: block; margin: 8px 0px; padding: 16px 12px; border-radius: 8px;
-			background: color-mix(in srgb, var(--color-shape-highlight-light-solid) 80%, transparent);
-			color: var(--color-text-primary); font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
+			background: var(--color-shape-highlight-medium); box-shadow: 0px 0px 0px 1px var(--color-shape-highlight-dark) inset;
+			font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
 			white-space: pre-wrap; tab-size: 4; overflow-wrap: anywhere;
 		}
 		.codeBlock {
