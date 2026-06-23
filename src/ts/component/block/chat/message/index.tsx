@@ -274,6 +274,9 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 		return <div key={i} className="text" dangerouslySetInnerHTML={{ __html: html }} />;
 	});
 
+	const codeRuns = U.Chat.splitCodeRuns(content.text, content.marks);
+	const hasCodeMark = codeRuns.some(r => r.code);
+
 	if (!text && !hasAttachments) {
 		return null;
 	};
@@ -400,13 +403,21 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 							<div className="bubbleInner">
 								<div ref={bubbleRef} className={cnBubble.join(' ')}>
 									<div className={ct.join(' ')}>
-										{hasBlocks ? renderBlocks() : (
+										{hasBlocks ? renderBlocks() : (hasCodeMark ? (
+											<div ref={textRef} className="text">
+												{codeRuns.map((r, i) => (r.code ? (
+													<div key={i} className="codeMark">{r.text}</div>
+												) : (
+													<span key={i} dangerouslySetInnerHTML={{ __html: U.String.sanitize(U.String.lbBr(Mark.toHtml(r.text, r.marks))).replace(/​/g, '') }} />
+												)))}
+											</div>
+										) : (
 											<div
 												ref={textRef}
 												className="text"
 												dangerouslySetInnerHTML={{ __html: text }}
 											/>
-										)}
+										))}
 										<div className="time">
 											<Icon name="chat/messageStatus/syncing" size={12} className={cns.join(' ')} />
 											{editedLabel} {U.Date.date('H:i', createdAt)}

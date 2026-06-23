@@ -825,12 +825,9 @@ class Mark {
 				};
 			};
 
-			// Skip replacement inside unmatched backtick context (inline code being typed)
-			if (check) {
-				const backtickCount = (html.substring(0, o).match(/`/g) || []).length;
-				if (backtickCount % 2 === 1) {
-					check = false;
-				};
+			// Skip replacement inside a fenced code block or inline code (typography must not corrupt code).
+			if (check && (U.Chat.isInCode(html, o, o) || U.Chat.isInInlineCode(html, o))) {
+				check = false;
 			};
 
 			if (check && Patterns[p]) {
