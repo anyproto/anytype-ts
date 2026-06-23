@@ -381,16 +381,17 @@ class Storage {
 	 * Gets the last opened objects from storage.
 	 * @returns {any} The last opened objects.
 	 */
-	getLastOpened () {
-		return this.get('lastOpenedSimple', this.isLocal('lastOpenedSimple')) || {};
+	getLastOpened (spaceId?: string) {
+		return this.getSpaceKey('lastOpenedSimple', this.isLocal('lastOpenedSimple'), spaceId) || {};
 	};
 
 	/**
 	 * Sets the last opened object for a window.
 	 * @param {any} param - The parameters to set.
+	 * @param {string} [spaceId] - The space the object belongs to (defaults to the current space).
 	 */
-	setLastOpened (param: any) {
-		this.set('lastOpenedSimple', param, this.isLocal('lastOpenedSimple'));
+	setLastOpened (param: any, spaceId?: string) {
+		this.setSpaceKey('lastOpenedSimple', param, this.isLocal('lastOpenedSimple'), spaceId);
 	};
 
 	/**

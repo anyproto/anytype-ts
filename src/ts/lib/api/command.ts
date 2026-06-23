@@ -1183,11 +1183,15 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView, true);
 
-			// Save last opened object
+			// Save last opened object.
+			// Key it by the space the object actually belongs to (not the globally-current
+			// space, which may have already changed if this is a late response after a
+			// space switch) so it never pollutes another space's bucket (JS-9815).
 			const object = S.Detail.get(objectId, objectId, []);
+			const lastSpaceId = object.spaceId || spaceId;
 
 			if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
-				Storage.setLastOpened({ id: object.id, layout: object.layout });
+				Storage.setLastOpened({ id: object.id, layout: object.layout, spaceId: lastSpaceId }, lastSpaceId);
 			};
 		};
 
