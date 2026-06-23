@@ -512,11 +512,14 @@ class UtilCommon {
 		};
 
 		// Self-heal: if the object that failed to open is the stored last-opened for the
-		// current space, clear it so switching back to this space doesn't keep replaying
-		// the bad open. Recovers buckets polluted before the write-side fix (JS-9815).
-		const last = Storage.getLastOpened(S.Common.space);
-		if (last && (last.id == rootId)) {
-			Storage.setLastOpened({}, S.Common.space);
+		// current space AND that entry is stale — a legacy entry without a spaceId, or one
+		// belonging to another space — clear it so switching back doesn't keep replaying
+		// the bad open. A valid same-space entry is kept: a transient open failure should
+		// not drop the user's restore point (JS-9815).
+		const space = S.Common.space;
+		const last = Storage.getLastOpened(space);
+		if (last && (last.id == rootId) && (!last.spaceId || (last.spaceId != space))) {
+			Storage.setLastOpened({}, space);
 		};
 
 		S.Popup.open('confirm', {

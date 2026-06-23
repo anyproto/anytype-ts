@@ -57,4 +57,18 @@ describe('UtilSpace.getLastObject (per-space validation)', () => {
 		expect(UtilSpace.getLastObject()).toBeNull();
 	});
 
+	// Legacy entries (written before the fix) have no spaceId. They live in the
+	// correct space bucket, so they are still trusted for backward compat — and the
+	// self-heal in checkErrorOnOpen recovers the rare poisoned legacy entry.
+	it('accepts a legacy entry that has no spaceId field', () => {
+		(globalThis as any).S.Common.space = 'spaceA';
+		Storage.setLastOpened({ id: 'objLegacy', layout: 0 }, 'spaceA');
+
+		const home = UtilSpace.getLastObject();
+
+		expect(home).not.toBeNull();
+		expect(home.id).toBe('objLegacy');
+		expect(home.spaceId).toBe('spaceA');
+	});
+
 });
