@@ -511,6 +511,14 @@ class UtilCommon {
 			return false;
 		};
 
+		// Self-heal: if the object that failed to open is the stored last-opened for the
+		// current space, clear it so switching back to this space doesn't keep replaying
+		// the bad open. Recovers buckets polluted before the write-side fix (JS-9815).
+		const last = Storage.getLastOpened(S.Common.space);
+		if (last && (last.id == rootId)) {
+			Storage.setLastOpened({}, S.Common.space);
+		};
+
 		S.Popup.open('confirm', {
 			data: {
 				iconParam: { name: 'popup/header/error', color: 'orange' },

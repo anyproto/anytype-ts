@@ -237,15 +237,19 @@ class UtilSpace {
 	 * @returns {any|null} The last opened object or null if not found.
 	 */
 	getLastObject () {
-		let home = Storage.getLastOpened();
+		const space = S.Common.space;
 
-		// Invalid data protection
-		if (!home || !home.id) {
+		let home = Storage.getLastOpened(space);
+
+		// Invalid data protection: ignore empty entries and entries that belong to a
+		// different space (stale/polluted bucket) to avoid opening a foreign object
+		// in the current space (JS-9815).
+		if (!home || !home.id || (home.spaceId && (home.spaceId != space))) {
 			home = null;
 		};
 
 		if (home) {
-			home.spaceId = S.Common.space;
+			home.spaceId = space;
 		};
 
 		return home;
