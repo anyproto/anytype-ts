@@ -16,6 +16,29 @@ class Server {
 	isRunning: boolean = false;
 	stopTriggered: boolean = false;
 	lastErrors: string[] = [];
+	readyResolve: ((address: string) => void) | null = null;
+	readyReject: ((err: Error) => void) | null = null;
+	readyPromise: Promise<string>;
+
+	constructor () {
+		this.readyPromise = new Promise<string>((resolve, reject) => {
+			this.readyResolve = resolve;
+			this.readyReject = reject;
+		});
+
+		// Prevent unhandled rejection warning when the server fails before any
+		// renderer has requested the address
+		this.readyPromise.catch(() => null);
+	};
+
+	/**
+	 * Resolves with the gRPC web proxy address once the middleware is up.
+	 * Allows windows to be created before the server finishes starting —
+	 * the renderer awaits this via Api.getServerAddress.
+	 */
+	whenReady (): Promise<string> {
+		return this.readyPromise;
+	};
 
 	start (binPath: string, workingDir: string): Promise<boolean> {
 		console.log('[Server]: start', binPath, workingDir);
@@ -37,12 +60,14 @@ class Server {
 					this.cp = childProcess.spawn(binPath, [ '127.0.0.1:0', '127.0.0.1:0' ], { windowsHide: false, env });
 				} catch (err: any) {
 					console.error('[Server] Process start error: ', err.toString());
+					this.readyReject?.(err);
 					reject(err);
 				};
 
 				this.cp.on('error', (err: any) => {
 					this.isRunning = false;
 					console.error('[Server] Failed to start server: ', err.toString());
+					this.readyReject?.(err);
 					reject(err);
 				});
 
@@ -55,6 +80,7 @@ class Server {
 						this.address = 'http://' + regex.exec(str)[1];
 						this.isRunning = true;
 
+						this.readyResolve?.(this.address);
 						resolve(true);
 					};
 
@@ -139,6 +165,7 @@ class Server {
 
 	setAddress (address: string): void {
 		this.address = address;
+		this.readyResolve?.(address);
 	};
 
 };
