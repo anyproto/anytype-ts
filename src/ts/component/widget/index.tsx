@@ -498,7 +498,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onSetPreview = () => {
-		if (!child) {
+		if (!child || !setPreview) {
 			return;
 		};
 
@@ -723,7 +723,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	let content = null;
 	let targetTop = null;
 	let targetBot = null;
-	let isDraggable = canWrite;
+	let isDraggable = canWrite && !props.rootId;
 	let collapse = null;
 	let icon = null;
 

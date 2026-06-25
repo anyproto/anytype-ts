@@ -1312,7 +1312,12 @@ class CommonStore {
 	};
 
 	updateWidgetSection (param: Partial<I.WidgetSectionParam>) {
-		set(this.getWidgetSection(param.id), param);
+		const section = this.getWidgetSection(param.id);
+		if (!section) {
+			return;
+		};
+
+		set(section, param);
 		this.widgetSectionsSet([ ...this.widgetSections ]);
 	};
 

@@ -34,9 +34,15 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		return S.Block.getChildrenIds(personalRootId, personalRootId)
 			.map(widgetId => {
 				const wb = S.Block.getLeaf(personalRootId, widgetId);
-				if (!wb?.isWidget()) return null;
+				if (!wb?.isWidget()) {
+					return null;
+				};
+
 				const innerIds = S.Block.getChildrenIds(personalRootId, wb.id);
-				if (!innerIds.length) return null;
+				if (!innerIds.length) {
+					return null;
+				};
+
 				const inner = S.Block.getLeaf(personalRootId, innerIds[0]);
 				return inner?.getTargetObjectId() || null;
 			})

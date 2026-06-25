@@ -1918,7 +1918,7 @@ class UtilMenu {
 
 						case 'viewList':
 						case 'viewWidgets': {
-							S.Common.updateWidgetSection({ id: sectionId, view: element.id === 'viewWidgets' ? 'widgets' : 'list' });
+							S.Common.updateWidgetSection({ id: sectionId, view: element.id == 'viewWidgets' ? 'widgets' : 'list' });
 							break;
 						};
 
