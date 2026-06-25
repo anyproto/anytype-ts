@@ -81,13 +81,14 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			return;
 		};
 
-		U.Subscription.destroyList([ personalSubId ]);
-		U.Subscription.subscribe({
-			subId: personalSubId,
-			filters: [ { relationKey: 'id', condition: I.FilterCondition.In, value: ids } ],
-			keys: J.Relation.sidebar,
-			noDeps: true,
-		}, forceUpdate);
+		U.Subscription.destroyList([ personalSubId ], false, () => {
+			U.Subscription.subscribe({
+				subId: personalSubId,
+				filters: [ { relationKey: 'id', condition: I.FilterCondition.In, value: ids } ],
+				keys: J.Relation.sidebar,
+				noDeps: true,
+			}, forceUpdate);
+		});
 	};
 
 	useImperativeHandle(ref, () => ({ updateData }));

@@ -530,6 +530,13 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 							return false;
 						};
 
+						// Allow not-yet-loaded objects (_empty_) so the section doesn't vanish on cold render,
+						// but hide ones that have resolved as archived or deleted.
+						const object = S.Detail.get(personalRootId, targetId);
+						if (object && !object._empty_ && (object.isArchived || object.isDeleted)) {
+							return false;
+						};
+
 						return true;
 					});
 				} else {
