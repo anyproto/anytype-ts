@@ -1857,13 +1857,25 @@ class UtilMenu {
 		let options: any[] = [];
 		let value = '';
 
+		if ((sectionId == I.WidgetSection.MyFavorites) && (S.Common.sidebarView != I.SidebarView.Links)) {
+			const section = S.Common.getWidgetSection(I.WidgetSection.MyFavorites);
+
+			options.push({ name: translate('widgetFavoritesViewTitle'), isSection: true });
+			options = options.concat([
+				{ id: 'viewList', name: translate('widgetFavoritesViewList') },
+				{ id: 'viewWidgets', name: translate('widgetFavoritesViewWidgets') },
+			]);
+			options.push({ isDiv: true });
+
+			value = (section?.view == 'widgets') ? 'viewWidgets' : 'viewList';
+		} else
 		if (spaceview.isShared && (sectionId == I.WidgetSection.RecentEdit)) {
 			options.push({ name: translate('widgetRecentModeTitle'), isSection: true });
 			options = options.concat(this.recentModeOptions());
 			options.push({ isDiv: true });
 
 			value = String(recentEditMode);
-		} else 
+		} else
 		if (sectionId == I.WidgetSection.Bin) {
 			options.push({ id: 'openBin', name: translate('commonOpen') });
 
@@ -1901,6 +1913,12 @@ class UtilMenu {
 							S.Common.widgetSectionsSet([ ...widgetSections ]);
 
 							analytics.event('HideSection');
+							break;
+						};
+
+						case 'viewList':
+						case 'viewWidgets': {
+							S.Common.updateWidgetSection({ id: sectionId, view: element.id == 'viewWidgets' ? 'widgets' : 'list' });
 							break;
 						};
 

@@ -493,15 +493,12 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			case I.WidgetSection.Unread:
 			case I.WidgetSection.Type:
 			case I.WidgetSection.RecentEdit:
-			case I.WidgetSection.Bin:
-			case I.WidgetSection.MyFavorites: {
-
+			case I.WidgetSection.Bin: {
 				const idMap = {
 					[I.WidgetSection.Unread]: J.Constant.widgetId.unread,
 					[I.WidgetSection.Type]: J.Constant.widgetId.type,
 					[I.WidgetSection.RecentEdit]: J.Constant.widgetId.recentEdit,
 					[I.WidgetSection.Bin]: J.Constant.widgetId.bin,
-					[I.WidgetSection.MyFavorites]: J.Constant.widgetId.personalWidgets,
 				};
 
 				blocks.push(new M.Block({
@@ -509,6 +506,46 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					type: I.BlockType.Widget,
 					content: { layout: I.WidgetLayout.Object }
 				}));
+				break;
+			};
+
+			case I.WidgetSection.MyFavorites: {
+				const ws = widgetSections.find(it => it.id == I.WidgetSection.MyFavorites);
+
+				if ((ws?.view == 'widgets') && !isLinksView) {
+					const personalRootId = U.Object.getPersonalWidgetsId();
+					blocks = S.Block.getChildren(personalRootId, personalRootId, (block: I.Block) => {
+						if (!block.isWidget()) {
+							return false;
+						};
+
+						const innerIds = S.Block.getChildrenIds(personalRootId, block.id);
+						if (!innerIds.length) {
+							return false;
+						};
+
+						const inner = S.Block.getLeaf(personalRootId, innerIds[0]);
+						const targetId = inner?.getTargetObjectId();
+						if (!targetId) {
+							return false;
+						};
+
+						// Allow not-yet-loaded objects (_empty_) so the section doesn't vanish on cold render,
+						// but hide ones that have resolved as archived or deleted.
+						const object = S.Detail.get(personalRootId, targetId);
+						if (object && !object._empty_ && (object.isArchived || object.isDeleted)) {
+							return false;
+						};
+
+						return true;
+					});
+				} else {
+					blocks.push(new M.Block({
+						id: [ space, J.Constant.widgetId.personalWidgets ].join('-'),
+						type: I.BlockType.Widget,
+						content: { layout: I.WidgetLayout.Object }
+					}));
+				};
 				break;
 			};
 
@@ -714,6 +751,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
 					const list = getWidgets(section.id);
 					const ws: any = widgetSections.find(it => it.id == section.id) || {};
+					const isFavWidgets = (section.id == I.WidgetSection.MyFavorites) && (ws.view == 'widgets') && !isLinksView;
+					const personalRootId = U.Object.getPersonalWidgetsId();
 
 					if (ws.isHidden) {
 						return null;
@@ -774,14 +813,23 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 												key={`widget-${block.id}`}
 												block={block}
 												index={i}
+												rootId={isFavWidgets ? personalRootId : undefined}
 												canEdit={canWrite}
 												canRemove={isSectionPin}
-												onDragStart={onDragStart}
-												onDragOver={onDragOver}
-												onDrag={onDrag}
-												setPreview={setPreviewId}
+												onDragStart={isFavWidgets ? undefined : onDragStart}
+												onDragOver={isFavWidgets ? undefined : onDragOver}
+												onDrag={isFavWidgets ? undefined : onDrag}
+												setPreview={isFavWidgets ? undefined : setPreviewId}
 												sidebarDirection={sidebarDirection}
-												getObject={id => getObject(block, id)}
+												getObject={id => {
+													if (isFavWidgets) {
+														if (U.Menu.isSystemWidget(id)) {
+															return U.Menu.getSystemWidgets().find(it => it.id == id);
+														};
+														return S.Detail.get(personalRootId, id);
+													};
+													return getObject(block, id);
+												}}
 											/>
 										))}
 									</div>
