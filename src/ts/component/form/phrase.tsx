@@ -201,7 +201,10 @@ const Phrase = forwardRef<PhraseRefProps, Props>(({
 	};
 
 	const getValue = () => {
-		return phrase.current.join(' ').trim().toLowerCase();
+		const entry = getEntryValue();
+		const list = checkValue(phrase.current.concat(entry ? entry.split(' ') : []));
+
+		return list.join(' ').trim().toLowerCase();
 	};
 
 	const placeholderCheck = () => {
