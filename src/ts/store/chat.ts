@@ -390,6 +390,8 @@ class ChatStore {
 		this.stateMap.clear();
 		this.attachmentsMap.clear();
 		this.discussionParentMap.clear();
+		this.atChatStartMap.clear();
+		this.atChatEndMap.clear();
 	};
 
 	/**

@@ -20,14 +20,6 @@ export const reachedEdge = (pageLength: number, limit: number): boolean => {
 };
 
 /**
- * Edge flags after rebuilding the window around an orderId (jump / deeplink / unread divider),
- * derived from the actual before/after page lengths so the flags are not guessed.
- */
-export const edgesAfterJump = (beforeLength: number, afterLength: number, limit: number): { atChatStart: boolean; atChatEnd: boolean } => {
-	return { atChatStart: reachedEdge(beforeLength, limit), atChatEnd: reachedEdge(afterLength, limit) };
-};
-
-/**
  * Whether scrolling down should fetch newer messages to refill an evicted tail.
  */
 export const shouldRefetchForward = (atChatEnd: boolean, isBottom: boolean, isLoadingNext: boolean): boolean => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { evictedCount, reachedEdge, edgesAfterJump, shouldRefetchForward, shouldSuppressLiveAdd } from './chatWindow';
+import { evictedCount, reachedEdge, shouldRefetchForward, shouldSuppressLiveAdd } from './chatWindow';
 
 describe('chatWindow', () => {
 	it('evictedCount returns overflow past max, else 0', () => {
@@ -12,12 +12,6 @@ describe('chatWindow', () => {
 		expect(reachedEdge(49, 50)).toBe(true);
 		expect(reachedEdge(50, 50)).toBe(false);
 		expect(reachedEdge(0, 50)).toBe(true);
-	});
-
-	it('edgesAfterJump derives both edges from before/after page lengths', () => {
-		expect(edgesAfterJump(25, 25, 50)).toEqual({ atChatStart: true, atChatEnd: true });
-		expect(edgesAfterJump(50, 10, 50)).toEqual({ atChatStart: false, atChatEnd: true });
-		expect(edgesAfterJump(50, 50, 50)).toEqual({ atChatStart: false, atChatEnd: false });
 	});
 
 	it('shouldRefetchForward only when not at end, at window bottom, and not already loading', () => {

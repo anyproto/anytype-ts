@@ -9,7 +9,7 @@ import { Icon, IconObject } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
-import { edgesAfterJump, reachedEdge, shouldRefetchForward } from 'Lib/util/chatWindow';
+import { reachedEdge, shouldRefetchForward } from 'Lib/util/chatWindow';
 
 interface RefProps {
 	forceUpdate: () => void;
@@ -121,6 +121,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
+
+		// Drop any pending coalesced scroll frame so it can't run against a switched chat.
+		raf.cancel(scrollRafRef.current);
+		scrollRafRef.current = 0;
 	};
 
 	const rebind = () => {
@@ -236,7 +240,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				if (messages.length < J.Constant.limit.chat.messages) {
 					setLoaded(true);
 				} else {
-					setDummy(dummy + 1);
+					setDummy(v => v + 1);
 				};
 
 				callBack?.();
@@ -283,17 +287,20 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			// Guard older-batch loads: skip if one is already in flight (the prefetch threshold
 			// widens the trigger band, so onScroll can fire many times) or we already hit the
 			// oldest message. Without this the prefetch would spam duplicate requests.
+			// Only one pagination fetch in flight at a time, in EITHER direction: a backward and
+			// a forward load overlapping (e.g. a fling from top to bottom within one round-trip)
+			// could evict one end before the other's response stitches in, punching a gap.
+			if (isLoadingPrev.current || isLoadingNext.current) {
+				return;
+			};
+
 			if (dir < 0) {
-				if (isLoadingPrev.current || S.Chat.isAtChatStart(subId)) {
+				if (S.Chat.isAtChatStart(subId)) {
 					return;
 				};
 
 				isLoadingPrev.current = true;
 			} else {
-				if (isLoadingNext.current) {
-					return;
-				};
-
 				isLoadingNext.current = true;
 			};
 
@@ -336,15 +343,18 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				loadDepsAndReplies(messages, () => {
 					if (messages.length) {
 						const lengthBefore = S.Chat.getList(subId).length;
-
-						S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
+						const evicted = S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
+						const grew = S.Chat.getList(subId).length > lengthBefore;
 
 						// Force a re-render so the new rows commit (either direction) — the
-						// component is not a MobX observer. We deliberately do NOT touch
-						// scrollTop: native scroll anchoring (overflow-anchor) keeps the viewport
-						// static when content is inserted above and preserves momentum; setting
-						// scrollTop ourselves would jump the view (~1 viewport) at load time.
-						if (S.Chat.getList(subId).length > lengthBefore) {
+						// component is not a MobX observer. At the MAX_MESSAGES cap a prepend/append
+						// inserts and evicts the same count, so the length is unchanged even though
+						// the content changed — repaint on `evicted` too, otherwise older history
+						// freezes at the cap. We deliberately do NOT touch scrollTop: native scroll
+						// anchoring (overflow-anchor) keeps the viewport static when content is
+						// inserted above and preserves momentum; setting scrollTop ourselves would
+						// jump the view (~1 viewport) at load time.
+						if (grew || evicted) {
 							setDummy(v => v + 1);
 						};
 					};
@@ -378,27 +388,37 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		isLoadingNext.current = false;
 
 		let list = [];
+		let beforeOk = false;
+		let afterOk = false;
 		let beforeLength = 0;
 		let afterLength = 0;
 
 		C.ChatGetMessages(chatId, orderId, '', limit, true, (message: any) => {
-			if (!message.error.code && message.messages.length) {
+			if (!message.error.code) {
+				beforeOk = true;
 				beforeLength = message.messages.length;
-				list = list.concat(message.messages);
+				if (beforeLength) {
+					list = list.concat(message.messages);
+				};
 			};
 
 			C.ChatGetMessages(chatId, '', orderId, limit, false, (message: any) => {
-				if (!message.error.code && message.messages.length) {
+				if (!message.error.code) {
+					afterOk = true;
 					afterLength = message.messages.length;
-					list = list.concat(message.messages);
+					if (afterLength) {
+						list = list.concat(message.messages);
+					};
 				};
 
 				loadDepsAndReplies(list, () => {
 					S.Chat.set(subId, list);
 
-					const edges = edgesAfterJump(beforeLength, afterLength, limit);
-					S.Chat.setAtChatStart(subId, edges.atChatStart);
-					S.Chat.setAtChatEnd(subId, edges.atChatEnd);
+					// Derive edges from the actual page lengths, but only for a fetch that
+					// SUCCEEDED — a transient error (length 0) must not be read as "reached the
+					// edge", which would permanently short-circuit pagination in that direction.
+					S.Chat.setAtChatStart(subId, beforeOk && reachedEdge(beforeLength, limit));
+					S.Chat.setAtChatEnd(subId, afterOk && reachedEdge(afterLength, limit));
 
 					callBack?.();
 				});
@@ -878,7 +898,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			// chat end or a fetch is already in flight.
 			const threshold = container?.offsetHeight ?? 0;
 
-			if (st <= threshold) {
+			if ((max > 0) && (st <= threshold)) {
 				loadMessages(-1, false);
 			};
 
