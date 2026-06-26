@@ -3,7 +3,7 @@ import * as I from 'Interface';
 import * as M from 'Model';
 import { evictedCount, shouldSuppressLiveAdd } from 'Lib/util/chatWindow';
 
-const MAX_MESSAGES = 500;
+const MAX_MESSAGES = 1000;
 
 class ChatStore {
 
