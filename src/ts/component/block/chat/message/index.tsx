@@ -30,6 +30,13 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	const bubbleRef = useRef(null);
 	const message = S.Chat.getMessageById(subId, id);
 
+	// Memoized so re-rendering for a non-content reason (reaction / read-status / grouping)
+	// does not re-run Mark.toHtml + sanitize. Hoisted above the null guard to satisfy rules-of-hooks.
+	const text = React.useMemo(() => {
+		const content = message?.content;
+		return content ? U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks))).replace(/​/g, '') : '';
+	}, [ message?.content?.text, message?.content?.marks ]);
+
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver((entries) => {
 			const width = (entries[0]?.target as HTMLElement)?.offsetWidth ?? 0;
@@ -256,7 +263,6 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
 	const hasMore = !!getMessageMenuOptions(message, true).length;
 	const controls = [];
-	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks))).replace(/\u200B/g, '');
 	const cns = [ 'status', 'syncing' ];
 	const textBlocks = (message.blocks || []).filter(it => it.text);
 	const hasBlocks = textBlocks.length > 0;
