@@ -859,43 +859,22 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		S.Menu.open('select', menuParam);
 	};
 
+	// Date headers float via CSS `position: sticky` (see chat.scss .sectionDate). This only
+	// updates the sticky offset CSS variable when the header / pinned-banner height changes —
+	// no per-frame layout reads/writes (the previous JS reposition forced a full relayout of the
+	// whole message DOM on every scroll frame). Called from resize() and the pinned-banner effect,
+	// NOT from onScroll.
 	const renderDates = () => {
 		const node = nodeRef.current;
-		if (!node) return;
+		if (!node) {
+			return;
+		};
 
-		const dates = U.Dom.selectAll('.sectionDate', node);
 		const pinned = U.Dom.select('.pinnedMessage', node) as HTMLElement | null;
 		const pinnedHeight = pinned ? pinned.offsetHeight : 0;
 		const offset = J.Size.header + 8 + pinnedHeight;
-		const container = U.Dom.getScrollContainer(isPopup);
-		const top = container?.getBoundingClientRect().top ?? 0;
 
-		raf.cancel(frameRef.current);
-		frameRef.current = raf(() => {
-			dates.forEach((item: HTMLElement) => {
-				U.Dom.css(item, { position: 'static', left: '', top: '', width: '' });
-			});
-
-			let last: HTMLElement = null;
-
-			dates.forEach((item: HTMLElement) => {
-				const rect = item.getBoundingClientRect();
-				if (rect.top <= offset) {
-					last = item;
-				};
-			});
-
-			if (!last && dates.length) {
-				last = dates[0];
-			};
-
-			if (last) {
-				const width = last.offsetWidth;
-				const rect = last.getBoundingClientRect();
-
-				U.Dom.css(last, { position: 'fixed', width: width + 'px', left: rect.left + 'px', top: (top + offset) + 'px' });
-			};
-		});
+		node.style.setProperty('--chat-sticky-top', `${offset}px`);
 	};
 
 	const onScroll = (e: any) => {
@@ -925,8 +904,6 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				loadMessages(1, false);
 			};
 		};
-
-		renderDates();
 
 		if (S.Common.windowIsFocused && list.length) {
 			list.forEach(it => {

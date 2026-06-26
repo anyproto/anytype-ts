@@ -27,7 +27,7 @@
 			.buttons { display: flex; justify-content: center; margin-top: 8px; }
 		}
 
-		.sectionDate { display: flex; justify-content: center; z-index: 10; pointer-events: none; }
+		.sectionDate { display: flex; justify-content: center; position: sticky; top: var(--chat-sticky-top, 0px); z-index: 10; pointer-events: none; }
 		.sectionDate {
 			.label { 
 				@include text-small; padding: 3px 10px; background: var(--color-bg-primary-90); border-radius: 13px; color: var(--color-text-secondary); 
