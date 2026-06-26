@@ -9,7 +9,7 @@ import { Icon, IconObject } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
-import { edgesAfterJump, reachedEdge } from 'Lib/util/chatWindow';
+import { edgesAfterJump, reachedEdge, shouldRefetchForward } from 'Lib/util/chatWindow';
 
 interface RefProps {
 	forceUpdate: () => void;
@@ -288,12 +288,20 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				};
 
 				isLoadingPrev.current = true;
+			} else {
+				if (isLoadingNext.current) {
+					return;
+				};
+
+				isLoadingNext.current = true;
 			};
 
 			C.ChatGetMessages(chatId, before, after, J.Constant.limit.chat.messages, false, (message: any) => {
 				if (message.error.code) {
 					if (dir < 0) {
 						isLoadingPrev.current = false;
+					} else {
+						isLoadingNext.current = false;
 					};
 
 					setLoaded(true);
@@ -330,21 +338,22 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 						S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
 
-						// Force a re-render so the prepended rows commit — the component is not a
-						// MobX observer. We deliberately do NOT touch scrollTop: the browser's
-						// native scroll anchoring (overflow-anchor) keeps the viewport visually
-						// static when content is inserted above and preserves scroll momentum.
-						// Setting scrollTop ourselves would interrupt the momentum and make the
-						// view jump (~1 viewport) at the moment the batch loads.
-						if ((dir < 0) && (S.Chat.getList(subId).length > lengthBefore)) {
+						// Force a re-render so the new rows commit (either direction) — the
+						// component is not a MobX observer. We deliberately do NOT touch
+						// scrollTop: native scroll anchoring (overflow-anchor) keeps the viewport
+						// static when content is inserted above and preserves momentum; setting
+						// scrollTop ourselves would jump the view (~1 viewport) at load time.
+						if (S.Chat.getList(subId).length > lengthBefore) {
 							setDummy(v => v + 1);
 						};
 					};
 
-					// Release the in-flight guard only after the prepend, so the wider prefetch
-					// band can't fire a duplicate request for the same batch mid-flight.
+					// Release the in-flight guard only after the store mutation, so the wider
+					// prefetch band can't fire a duplicate request for the same batch mid-flight.
 					if (dir < 0) {
 						isLoadingPrev.current = false;
+					} else {
+						isLoadingNext.current = false;
 					};
 
 					callBack?.();
@@ -862,15 +871,17 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setIsBottom(isBottom);
 
 		if (!isAutoLoadDisabled.current) {
-			// Prefetch the previous batch one viewport before the top is reached, so scrolling
-			// into the past doesn't stall waiting for the network round-trip.
+			// Prefetch one viewport before each edge so scrolling doesn't stall on the network
+			// round-trip — into the past (older), and into the present (newer) when the window's
+			// tail was evicted. shouldRefetchForward keeps the newer-fetch off once we're at the
+			// chat end or a fetch is already in flight.
 			const threshold = container?.offsetHeight ?? 0;
 
 			if (st <= threshold) {
 				loadMessages(-1, false);
 			};
 
-			if (isBottom) {
+			if ((max > 0) && (st >= (max - threshold)) && shouldRefetchForward(S.Chat.isAtChatEnd(subId), true, isLoadingNext.current)) {
 				loadMessages(1, false);
 			};
 		};
