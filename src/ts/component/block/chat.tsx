@@ -9,6 +9,7 @@ import { Icon, IconObject } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
+import { edgesAfterJump, reachedEdge } from 'Lib/util/chatWindow';
 
 interface RefProps {
 	forceUpdate: () => void;
@@ -58,7 +59,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const pendingScrollToBottom = useRef(false);
 	const pendingScrollToMessageId = useRef('');
 	const isLoadingPrev = useRef(false);
-	const isLoadedPrev = useRef(false);
+	const isLoadingNext = useRef(false);
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -227,6 +228,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			loadDepsAndReplies(messages, () => {
 				if (clear) {
 					S.Chat.set(subId, messages);
+					S.Chat.setAtChatEnd(subId, true);
+					S.Chat.setAtChatStart(subId, reachedEdge(messages.length, J.Constant.limit.chat.messages));
 				};
 
 				if (messages.length < J.Constant.limit.chat.messages) {
@@ -248,7 +251,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		if (!clear && (dir > 0) && isLoaded) {
+		if (!clear && (dir > 0) && S.Chat.isAtChatEnd(subId)) {
 			setIsBottom(true);
 			return;
 		};
@@ -257,7 +260,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			// Re-subscribing to the latest messages resets the window, so older history is
 			// reachable again — clear the prefetch guards.
 			isLoadingPrev.current = false;
-			isLoadedPrev.current = false;
+			isLoadingNext.current = false;
 
 			subscribeMessages(clear, () => {
 				setIsBottom(true);
@@ -280,7 +283,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			// widens the trigger band, so onScroll can fire many times) or we already hit the
 			// oldest message. Without this the prefetch would spam duplicate requests.
 			if (dir < 0) {
-				if (isLoadingPrev.current || isLoadedPrev.current) {
+				if (isLoadingPrev.current || S.Chat.isAtChatStart(subId)) {
 					return;
 				};
 
@@ -301,7 +304,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				const messages = message.messages || [];
 
 				if (dir > 0) {
-					if (messages.length < J.Constant.limit.chat.messages) {
+					if (reachedEdge(messages.length, J.Constant.limit.chat.messages)) {
+						S.Chat.setAtChatEnd(subId, true);
 						setLoaded(true);
 						setIsBottom(true);
 						subscribeMessages(false);
@@ -313,8 +317,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 					const top = U.Dom.getScrollContainerTop(isPopup);
 
 					// Fewer than a full page means there are no older messages left to fetch.
-					if (messages.length < J.Constant.limit.chat.messages) {
-						isLoadedPrev.current = true;
+					if (reachedEdge(messages.length, J.Constant.limit.chat.messages)) {
+						S.Chat.setAtChatStart(subId, true);
 					};
 
 					setIsBottom(!(top < y));
@@ -358,24 +362,34 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const subId = getSubId();
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
 
-		// The list is rebuilt around orderId, so older history is reachable again.
+		// The list is rebuilt around orderId. Reset the in-flight guards; the window edges are
+		// derived below from the actual before/after page lengths (not guessed).
 		isLoadingPrev.current = false;
-		isLoadedPrev.current = false;
+		isLoadingNext.current = false;
 
 		let list = [];
+		let beforeLength = 0;
+		let afterLength = 0;
 
 		C.ChatGetMessages(chatId, orderId, '', limit, true, (message: any) => {
 			if (!message.error.code && message.messages.length) {
+				beforeLength = message.messages.length;
 				list = list.concat(message.messages);
 			};
 
 			C.ChatGetMessages(chatId, '', orderId, limit, false, (message: any) => {
 				if (!message.error.code && message.messages.length) {
+					afterLength = message.messages.length;
 					list = list.concat(message.messages);
 				};
 
 				loadDepsAndReplies(list, () => {
 					S.Chat.set(subId, list);
+
+					const edges = edgesAfterJump(beforeLength, afterLength, limit);
+					S.Chat.setAtChatStart(subId, edges.atChatStart);
+					S.Chat.setAtChatEnd(subId, edges.atChatEnd);
+
 					callBack?.();
 				});
 			});
@@ -1404,7 +1418,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setIsBottom(false);
 		setFirstUnreadOrderId('');
 		isLoadingPrev.current = false;
-		isLoadedPrev.current = false;
+		isLoadingNext.current = false;
 		loadState(() => {
 			loadPinnedMessages();
 			const subId = getSubId();
