@@ -427,7 +427,13 @@ class ChatStore {
 	 * @returns {I.ChatMessage} The chat message.
 	 */
 	getMessageById (subId: string, id: string): I.ChatMessage {
-		return this.messageByIdMap.get(subId)?.get(id) || this.getList(subId).find(it => it.id == id);
+		// Read the observable list FIRST so observer callers (Message rows) keep a MobX dependency
+		// on the message map key. set()/add()/delete() replace the array with freshly-wrapped
+		// M.ChatMessage instances; without this read a memoized observer row bound to a now-detached
+		// instance would stop reflecting reactions/edits/read-status/grouping. The map is the O(1)
+		// accelerator for the actual lookup.
+		const list = this.getList(subId);
+		return this.messageByIdMap.get(subId)?.get(id) || list.find(it => it.id == id);
 	};
 
 	/**

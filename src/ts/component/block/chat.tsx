@@ -51,10 +51,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const [ pinnedMessages, setPinnedMessages ] = useState<I.ChatMessage[]>([]);
 	const [ pinnedIndex, setPinnedIndex ] = useState(-1);
-	const frameRef = useRef(0);
 	const scrollRafRef = useRef(0);
 	const visibleIds = useRef<Set<string>>(new Set());
 	const viewportObserver = useRef<IntersectionObserver | null>(null);
+	const formResizeObserver = useRef<ResizeObserver | null>(null);
 	const refSetters = useRef<Map<string, (r: any) => void>>(new Map());
 	const namespace = U.Dom.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
@@ -93,7 +93,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	// Stable handler identities so <Message>'s memo holds across BlockChat's setDummy re-renders
 	// (inline closures recreated every render were defeating it → full-list repaint on each prepend).
-	// They resolve the message live via the O(1) store and call the latest body handlers.
+	// They resolve the message live via the O(1) store; the body handlers are recaptured when
+	// subId/readonly/analyticsChatId change (add any newly-read render state to the deps below).
 	const onContextMenuCb = useCallback((e: any, id: string) => onContextMenu(e, S.Chat.getMessageById(getSubId(), id)), [ subId, readonly, analyticsChatId ]);
 	const onMoreCb = useCallback((e: any, id: string) => onContextMenu(e, S.Chat.getMessageById(getSubId(), id), true), [ subId, readonly, analyticsChatId ]);
 	const onReplyEditCb = useCallback((e: any, id: string) => onReplyEdit(e, S.Chat.getMessageById(getSubId(), id)), [ subId ]);
@@ -122,6 +123,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 						viewportObserver.current?.unobserve(node);
 					};
 					delete messageRefs.current[id];
+					refSetters.current.delete(id);
 				};
 			};
 			refSetters.current.set(id, fn);
@@ -166,6 +168,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 		viewportObserver.current?.disconnect();
 		viewportObserver.current = null;
+		formResizeObserver.current?.disconnect();
+		formResizeObserver.current = null;
 		visibleIds.current.clear();
 
 		// Drop any pending coalesced scroll frame so it can't run against a switched chat.
@@ -227,6 +231,15 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		};
 
 		bindViewportObserver();
+
+		// The composer auto-grows as the user types; its height feeds the observer's bottom band.
+		// Rebuild the observer when the form height changes so the read band never extends behind
+		// the grown composer and marks hidden messages read (C.ChatReadMessages is irreversible).
+		const formNode = formRef.current?.getNode() as HTMLElement;
+		if (formNode) {
+			formResizeObserver.current = new ResizeObserver(() => bindViewportObserver());
+			formResizeObserver.current.observe(formNode);
+		};
 	};
 
 	// Maintains visibleIds via an IntersectionObserver instead of a per-frame getBoundingClientRect
@@ -259,7 +272,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 					visibleIds.current.delete(id);
 				};
 			});
-		}, { root: container, rootMargin: `0px 0px -${formHeight}px 0px`, threshold: [ 0, 1 ] });
+		// Dense thresholds so the callback re-fires as a message taller than the band scrolls
+		// through it (its ratio never reaches 1, so [0,1] alone would miss the bottom-edge crossing).
+		}, { root: container, rootMargin: `0px 0px -${formHeight}px 0px`, threshold: Array.from({ length: 21 }, (_, i) => i / 20) });
 
 		// Rows mount during commit, before this runs (and the ref callback won't re-fire for
 		// already-mounted rows), so observe everything currently mounted now.
@@ -1682,7 +1697,6 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			window.clearTimeout(timeoutInterface.current);
 			window.clearTimeout(timeoutScrollStop.current);
 			window.clearTimeout(timeoutResize.current);
-			raf.cancel(frameRef.current);
 			raf.cancel(scrollRafRef.current);
 			messageRefs.current = {};
 			refSetters.current.clear();
