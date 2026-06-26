@@ -9,6 +9,7 @@ import { Icon, IconObject } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
+import { reachedEdge, shouldRefetchForward } from 'Lib/util/chatWindow';
 
 interface RefProps {
 	forceUpdate: () => void;
@@ -51,12 +52,16 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const [ pinnedMessages, setPinnedMessages ] = useState<I.ChatMessage[]>([]);
 	const [ pinnedIndex, setPinnedIndex ] = useState(-1);
 	const frameRef = useRef(0);
+	const scrollRafRef = useRef(0);
 	const namespace = U.Dom.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
 	const prevDepsKey = useRef('');
 	const prevReplyKey = useRef('');
 	const pendingScrollToBottom = useRef(false);
 	const pendingScrollToMessageId = useRef('');
+	const isLoadingPrev = useRef(false);
+	const isLoadingNext = useRef(false);
+	const loadEpoch = useRef(0);
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -117,6 +122,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
+
+		// Drop any pending coalesced scroll frame so it can't run against a switched chat.
+		raf.cancel(scrollRafRef.current);
+		scrollRafRef.current = 0;
 	};
 
 	const rebind = () => {
@@ -168,7 +177,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 		const container = U.Dom.getScrollContainer(isPopup);
 		if (container) {
-			scrollHandlerRef.current = (e: Event) => onScroll(e);
+			scrollHandlerRef.current = (e: Event) => onScrollRaf(e);
 			U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 		};
 	};
@@ -225,12 +234,14 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			loadDepsAndReplies(messages, () => {
 				if (clear) {
 					S.Chat.set(subId, messages);
+					S.Chat.setAtChatEnd(subId, true);
+					S.Chat.setAtChatStart(subId, reachedEdge(messages.length, J.Constant.limit.chat.messages));
 				};
 
 				if (messages.length < J.Constant.limit.chat.messages) {
 					setLoaded(true);
 				} else {
-					setDummy(dummy + 1);
+					setDummy(v => v + 1);
 				};
 
 				callBack?.();
@@ -246,12 +257,18 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		if (!clear && (dir > 0) && isLoaded) {
+		if (!clear && (dir > 0) && S.Chat.isAtChatEnd(subId)) {
 			setIsBottom(true);
 			return;
 		};
 
 		if (clear) {
+			// Re-subscribing to the latest messages resets the window, so older history is
+			// reachable again — clear the prefetch guards and invalidate in-flight responses.
+			isLoadingPrev.current = false;
+			isLoadingNext.current = false;
+			loadEpoch.current++;
+
 			subscribeMessages(clear, () => {
 				setIsBottom(true);
 				callBack?.();
@@ -262,7 +279,6 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				return;
 			};
 
-			const first = messages[0];
 			const before = dir < 0 ? messages[0].orderId : '';
 			const after = dir > 0 ? messages[messages.length - 1].orderId : '';
 
@@ -270,8 +286,44 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				return;
 			};
 
+			// Guard older-batch loads: skip if one is already in flight (the prefetch threshold
+			// widens the trigger band, so onScroll can fire many times) or we already hit the
+			// oldest message. Without this the prefetch would spam duplicate requests.
+			// Only one pagination fetch in flight at a time, in EITHER direction: a backward and
+			// a forward load overlapping (e.g. a fling from top to bottom within one round-trip)
+			// could evict one end before the other's response stitches in, punching a gap.
+			if (isLoadingPrev.current || isLoadingNext.current) {
+				return;
+			};
+
+			if (dir < 0) {
+				if (S.Chat.isAtChatStart(subId)) {
+					return;
+				};
+
+				isLoadingPrev.current = true;
+			} else {
+				isLoadingNext.current = true;
+			};
+
+			// Snapshot the window generation. If the window is reset (jump-to-bottom, deeplink,
+			// reload, chat switch) while this request is in flight, the response is stale and must
+			// be dropped — otherwise it would prepend/append into a freshly-rebuilt window, punching
+			// a gap and corrupting the edge flags. Reset paths bump loadEpoch and clear the guards.
+			const epoch = loadEpoch.current;
+
 			C.ChatGetMessages(chatId, before, after, J.Constant.limit.chat.messages, false, (message: any) => {
+				if (loadEpoch.current != epoch) {
+					return;
+				};
+
 				if (message.error.code) {
+					if (dir < 0) {
+						isLoadingPrev.current = false;
+					} else {
+						isLoadingNext.current = false;
+					};
+
 					setLoaded(true);
 					callBack?.();
 					return;
@@ -280,7 +332,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				const messages = message.messages || [];
 
 				if (dir > 0) {
-					if (messages.length < J.Constant.limit.chat.messages) {
+					if (reachedEdge(messages.length, J.Constant.limit.chat.messages)) {
+						S.Chat.setAtChatEnd(subId, true);
 						setLoaded(true);
 						setIsBottom(true);
 						subscribeMessages(false);
@@ -291,20 +344,45 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 					const y = U.Dom.getMaxScrollHeight(isPopup);
 					const top = U.Dom.getScrollContainerTop(isPopup);
 
+					// Fewer than a full page means there are no older messages left to fetch.
+					if (reachedEdge(messages.length, J.Constant.limit.chat.messages)) {
+						S.Chat.setAtChatStart(subId, true);
+					};
+
 					setIsBottom(!(top < y));
 				};
 
 				loadDepsAndReplies(messages, () => {
+					// The window may have been reset during the async dep/reply fetch — re-check
+					// before mutating the store so a stale page can't stitch into a new window.
+					if (loadEpoch.current != epoch) {
+						return;
+					};
+
 					if (messages.length) {
-						if (dir < 0) {
-							setAutoLoadDisabled(true);
-						};
+						const lengthBefore = S.Chat.getList(subId).length;
+						const evicted = S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
+						const grew = S.Chat.getList(subId).length > lengthBefore;
 
-						S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
-
-						if (first && (dir < 0)) {
-							scrollToMessage(first.id);
+						// Force a re-render so the new rows commit (either direction) — the
+						// component is not a MobX observer. At the MAX_MESSAGES cap a prepend/append
+						// inserts and evicts the same count, so the length is unchanged even though
+						// the content changed — repaint on `evicted` too, otherwise older history
+						// freezes at the cap. We deliberately do NOT touch scrollTop: native scroll
+						// anchoring (overflow-anchor) keeps the viewport static when content is
+						// inserted above and preserves momentum; setting scrollTop ourselves would
+						// jump the view (~1 viewport) at load time.
+						if (grew || evicted) {
+							setDummy(v => v + 1);
 						};
+					};
+
+					// Release the in-flight guard only after the store mutation, so the wider
+					// prefetch band can't fire a duplicate request for the same batch mid-flight.
+					if (dir < 0) {
+						isLoadingPrev.current = false;
+					} else {
+						isLoadingNext.current = false;
 					};
 
 					callBack?.();
@@ -322,20 +400,45 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const subId = getSubId();
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
 
+		// The list is rebuilt around orderId. Reset the in-flight guards and invalidate in-flight
+		// responses; the window edges are derived below from the actual before/after page lengths.
+		isLoadingPrev.current = false;
+		isLoadingNext.current = false;
+		loadEpoch.current++;
+
 		let list = [];
+		let beforeOk = false;
+		let afterOk = false;
+		let beforeLength = 0;
+		let afterLength = 0;
 
 		C.ChatGetMessages(chatId, orderId, '', limit, true, (message: any) => {
-			if (!message.error.code && message.messages.length) {
-				list = list.concat(message.messages);
+			if (!message.error.code) {
+				beforeOk = true;
+				beforeLength = message.messages.length;
+				if (beforeLength) {
+					list = list.concat(message.messages);
+				};
 			};
 
 			C.ChatGetMessages(chatId, '', orderId, limit, false, (message: any) => {
-				if (!message.error.code && message.messages.length) {
-					list = list.concat(message.messages);
+				if (!message.error.code) {
+					afterOk = true;
+					afterLength = message.messages.length;
+					if (afterLength) {
+						list = list.concat(message.messages);
+					};
 				};
 
 				loadDepsAndReplies(list, () => {
 					S.Chat.set(subId, list);
+
+					// Derive edges from the actual page lengths, but only for a fetch that
+					// SUCCEEDED — a transient error (length 0) must not be read as "reached the
+					// edge", which would permanently short-circuit pagination in that direction.
+					S.Chat.setAtChatStart(subId, beforeOk && reachedEdge(beforeLength, limit));
+					S.Chat.setAtChatEnd(subId, afterOk && reachedEdge(afterLength, limit));
+
 					callBack?.();
 				});
 			});
@@ -808,11 +911,17 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setIsBottom(isBottom);
 
 		if (!isAutoLoadDisabled.current) {
-			if (st <= 0) {
+			// Prefetch one viewport before each edge so scrolling doesn't stall on the network
+			// round-trip — into the past (older), and into the present (newer) when the window's
+			// tail was evicted. shouldRefetchForward keeps the newer-fetch off once we're at the
+			// chat end or a fetch is already in flight.
+			const threshold = container?.offsetHeight ?? 0;
+
+			if ((max > 0) && (st <= threshold)) {
 				loadMessages(-1, false);
 			};
 
-			if (isBottom) {
+			if ((max > 0) && (st >= (max - threshold)) && shouldRefetchForward(S.Chat.isAtChatEnd(subId), true, isLoadingNext.current)) {
 				loadMessages(1, false);
 			};
 		};
@@ -839,6 +948,20 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 		Preview.tooltipHide(true);
 		Preview.previewHide(true);
+	};
+
+	// Coalesce scroll events to one onScroll run per animation frame. onScroll does an
+	// O(n) viewport scan (getBoundingClientRect per message); without this, a single
+	// gesture fires it many times per frame, and that cost doubles at the larger window.
+	const onScrollRaf = (e: Event) => {
+		if (scrollRafRef.current) {
+			return;
+		};
+
+		scrollRafRef.current = raf(() => {
+			scrollRafRef.current = 0;
+			onScroll(e);
+		});
 	};
 
 	const readMessage = (id: string, orderId: string, lastStateId: string, type: I.ChatReadType) => {
@@ -1322,7 +1445,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		};
 
 		if (btn) {
-			U.Dom.toggleClass(btn, 'active', !v);
+			// Show the jump-to-bottom / new-messages button when the user is not at the window
+			// bottom, OR when the window bottom is not the chat's newest (tail was evicted) —
+			// otherwise a suppressed live message would have no affordance.
+			const showNav = (!v) || (!S.Chat.isAtChatEnd(getSubId()));
+			U.Dom.toggleClass(btn, 'active', showNav);
 		};
 	};
 
@@ -1359,6 +1486,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setLoaded(false);
 		setIsBottom(false);
 		setFirstUnreadOrderId('');
+		isLoadingPrev.current = false;
+		isLoadingNext.current = false;
+		loadEpoch.current++;
 		loadState(() => {
 			loadPinnedMessages();
 			const subId = getSubId();
@@ -1420,7 +1550,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		window.clearTimeout(timeoutResize.current);
 		timeoutResize.current = window.setTimeout(() => {
 			if (container) {
-				scrollHandlerRef.current = (e: Event) => onScroll(e);
+				scrollHandlerRef.current = (e: Event) => onScrollRaf(e);
 				U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 			};
 		}, 50);
@@ -1487,6 +1617,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			window.clearTimeout(timeoutScrollStop.current);
 			window.clearTimeout(timeoutResize.current);
 			raf.cancel(frameRef.current);
+			raf.cancel(scrollRafRef.current);
 			messageRefs.current = {};
 		};
 	}, []);

@@ -1995,7 +1995,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 				<div className="navigation">
 					{reactionCounter ? <Button type={I.ChatReadType.Reaction} name="chat/navigation/reaction" icon="reaction" className="active" cnt={reactionCounter} /> : ''}
 					{mentionCounter && !spaceview.isOneToOne ? <Button type={I.ChatReadType.Mention} name="chat/navigation/mention" icon="mention" className="active" cnt={mentionCounter} /> : ''}
-					<Button type={I.ChatReadType.Message} name="chat/navigation/arrow" icon="arrow" className={(!isBottom.current || messageCounter) ? 'active' : ''} cnt={messageCounter} />
+					<Button type={I.ChatReadType.Message} name="chat/navigation/arrow" icon="arrow" className={((!isBottom.current) || messageCounter || (!S.Chat.isAtChatEnd(subId))) ? 'active' : ''} cnt={messageCounter} />
 				</div>
 
 				{form}
