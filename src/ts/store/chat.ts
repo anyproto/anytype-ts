@@ -1,7 +1,7 @@
 import { observable, action, makeObservable, set, autorun } from 'mobx';
 import * as I from 'Interface';
 import * as M from 'Model';
-import { evictedCount } from 'Lib/util/chatWindow';
+import { evictedCount, shouldSuppressLiveAdd } from 'Lib/util/chatWindow';
 
 const MAX_MESSAGES = 500;
 
@@ -98,12 +98,34 @@ class ChatStore {
 	add (subId: string, idx: number, param: I.ChatMessage): void {
 		const list = this.getList(subId);
 		const item = this.getMessageById(subId, param.id);
-		
+
 		if (item) {
 			return;
 		};
 
+		const isTail = idx >= list.length;
+
+		// A genuinely-newer live message while the window is not at the chat end would land
+		// after an evicted tail (out of order). Suppress it; it is fetched on scroll-down /
+		// jump-to-bottom. Non-open and preview subIds keep atChatEnd === true (default).
+		if (isTail) {
+			const last = list.length ? list[list.length - 1] : null;
+			if (shouldSuppressLiveAdd(this.isAtChatEnd(subId), param.orderId, last ? last.orderId : '')) {
+				return;
+			};
+		};
+
 		list.splice(idx, 0, param);
+
+		// Tail insert behaves like append: trim the oldest head if over the cap.
+		if (isTail) {
+			const evicted = evictedCount(list.length, MAX_MESSAGES);
+			if (evicted) {
+				list.splice(0, evicted);
+				this.setAtChatStart(subId, false);
+			};
+		};
+
 		this.set(subId, list);
 	};
 
