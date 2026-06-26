@@ -35,7 +35,7 @@ const ChatMessageReply = forwardRef<{}, I.ChatMessageComponent>((props, ref) => 
 	};
 
 	return (
-		<div className={cn.join(' ')} onClick={onReplyClick}>
+		<div className={cn.join(' ')} onClick={e => onReplyClick(e, id)}>
 			<ObjectName object={author} />
 			<div className="bubble">
 				{icon}

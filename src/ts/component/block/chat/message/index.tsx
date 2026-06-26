@@ -19,8 +19,8 @@ interface ChatMessageRefProps {
 const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const {
-		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
-		renderLinks, renderMentions, renderObjects, renderEmoji, analyticsChatId,
+		rootId, id, isNew, readonly, subId, isPopup, style, onContextMenu, onMore, onReplyEdit, onReplyClick,
+		renderLinks, renderMentions, renderObjects, renderEmoji, analyticsChatId, getMessageMenuOptions,
 	} = props;
 	const { space, theme } = S.Common;
 	const { account } = S.Auth;
@@ -216,7 +216,6 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	};
 
 	const canAddReaction = (): boolean => {
-		const message = S.Chat.getMessageById(subId, id);
 		const reactions = message.reactions || [];
 		const { self, all } = J.Constant.limit.chat.reactions;
 
@@ -255,6 +254,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	const ct = [ 'textWrapper' ];
 	const cnBubble = [ 'bubble' ];
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
+	const hasMore = !!getMessageMenuOptions(message, true).length;
 	const controls = [];
 	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks))).replace(/\u200B/g, '');
 	const cns = [ 'status', 'syncing' ];
@@ -298,10 +298,10 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 			controls.push({ id: 'reaction-add', name: 'chat/buttons/reaction', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: onReactionAdd });
 		};
 
-		controls.push({ id: 'message-reply', name: 'chat/buttons/reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
+		controls.push({ id: 'message-reply', name: 'chat/buttons/reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: (e: any) => onReplyEdit(e, id) });
 
 		if (hasMore) {
-			controls.push({ name: 'common/more', onClick: onMore, tooltip: translate('commonOptions') });
+			controls.push({ name: 'common/more', onClick: (e: any) => onMore(e, id), tooltip: translate('commonOptions') });
 		};
 	};
 
@@ -376,7 +376,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 				ref={nodeRef}
 				id={`item-${id}`}
 				className={cn.join(' ')}
-				onContextMenu={onContextMenu}
+				onContextMenu={e => onContextMenu(e, id)}
 				style={style}
 				{...U.Common.dataProps({ 'order-id': message.orderId })}
 				{...U.Common.animationProps({
@@ -395,7 +395,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 					</div>
 
 					<div className="side right">
-						<Reply {...props} id={replyToMessageId} />
+						<Reply {...props} id={replyToMessageId} onReplyClick={e => onReplyClick(e, id)} />
 
 						{authorNode}
 

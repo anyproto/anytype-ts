@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useState, useLayoutEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useCallback, DragEvent, MouseEvent, useState, useLayoutEffect, useImperativeHandle } from 'react';
 import raf from 'raf';
 
 import Form from './chat/form';
@@ -55,6 +55,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const scrollRafRef = useRef(0);
 	const visibleIds = useRef<Set<string>>(new Set());
 	const viewportObserver = useRef<IntersectionObserver | null>(null);
+	const refSetters = useRef<Map<string, (r: any) => void>>(new Map());
 	const namespace = U.Dom.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
 	const prevDepsKey = useRef('');
@@ -89,6 +90,44 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const subId = getSubId();
 	const messages = S.Chat.getList(subId);
 	const analyticsChatId = getAnalyticsChatId();
+
+	// Stable handler identities so <Message>'s memo holds across BlockChat's setDummy re-renders
+	// (inline closures recreated every render were defeating it → full-list repaint on each prepend).
+	// They resolve the message live via the O(1) store and call the latest body handlers.
+	const onContextMenuCb = useCallback((e: any, id: string) => onContextMenu(e, S.Chat.getMessageById(getSubId(), id)), [ subId, readonly, analyticsChatId ]);
+	const onMoreCb = useCallback((e: any, id: string) => onContextMenu(e, S.Chat.getMessageById(getSubId(), id), true), [ subId, readonly, analyticsChatId ]);
+	const onReplyEditCb = useCallback((e: any, id: string) => onReplyEdit(e, S.Chat.getMessageById(getSubId(), id)), [ subId ]);
+	const onReplyClickCb = useCallback((e: any, id: string) => onReplyClick(e, S.Chat.getMessageById(getSubId(), id)), [ subId, analyticsChatId ]);
+	const getReplyContentCb = useCallback((m: any) => getReplyContent(m), [ subId ]);
+	const scrollToBottomCb = useCallback(() => scrollToBottomCheck(), []);
+	const getMessageMenuOptionsCb = useCallback((m: any, noControls: boolean, url?: string, targetId?: string) => getMessageMenuOptions(m, noControls, url, targetId), [ subId, readonly, analyticsChatId ]);
+
+	// Stable per-id ref-setter so the ref prop identity doesn't churn every render (which also
+	// defeated memo and thrashed observe/unobserve). Wires the viewport observer (Phase 2).
+	const getRefSetter = (id: string) => {
+		let fn = refSetters.current.get(id);
+		if (!fn) {
+			fn = (r: any) => {
+				if (r) {
+					messageRefs.current[id] = r;
+
+					const node = r.getNode?.() as HTMLElement;
+					if (node) {
+						node.setAttribute('data-viewport-id', id);
+						viewportObserver.current?.observe(node);
+					};
+				} else {
+					const node = messageRefs.current[id]?.getNode?.() as HTMLElement;
+					if (node) {
+						viewportObserver.current?.unobserve(node);
+					};
+					delete messageRefs.current[id];
+				};
+			};
+			refSetters.current.set(id, fn);
+		};
+		return fn;
+	};
 
 	const scrollHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const messageAddHandlerRef = useRef<((e: Event) => void) | null>(null);
@@ -1604,29 +1643,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	} else {
 		content = (
 			<div className="scroll">
-				{items.map((item, i) => {
+				{items.map((item) => {
 					if (item.isSection) {
 						return <SectionDate key={item.key} date={item.createdAt} />;
 					} else {
 						return (
 							<Message
-								ref={ref => {
-									if (ref) {
-										messageRefs.current[item.id] = ref;
-
-										const node = ref.getNode?.() as HTMLElement;
-										if (node) {
-											node.setAttribute('data-viewport-id', item.id);
-											viewportObserver.current?.observe(node);
-										};
-									} else {
-										const node = messageRefs.current[item.id]?.getNode?.() as HTMLElement;
-										if (node) {
-											viewportObserver.current?.unobserve(node);
-										};
-										delete messageRefs.current[item.id];
-									};
-								}}
+								ref={getRefSetter(item.id)}
 								key={item.id}
 								{...props}
 								id={item.id}
@@ -1634,15 +1657,14 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 								blockId={block.id}
 								subId={subId}
 								analyticsChatId={analyticsChatId}
-								index={i}
 								isNew={item.orderId == firstUnreadOrderId}
-								hasMore={!!getMessageMenuOptions(item, true).length}
-								onContextMenu={e => onContextMenu(e, item)}
-								onMore={e => onContextMenu(e, item, true)}
-								onReplyEdit={e => onReplyEdit(e, item)}
-								onReplyClick={e => onReplyClick(e, item)}
-								getReplyContent={getReplyContent}
-								scrollToBottom={scrollToBottomCheck}
+								onContextMenu={onContextMenuCb}
+								onMore={onMoreCb}
+								onReplyEdit={onReplyEditCb}
+								onReplyClick={onReplyClickCb}
+								getReplyContent={getReplyContentCb}
+								scrollToBottom={scrollToBottomCb}
+								getMessageMenuOptions={getMessageMenuOptionsCb}
 							/>
 						);
 					};
@@ -1663,6 +1685,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			raf.cancel(frameRef.current);
 			raf.cancel(scrollRafRef.current);
 			messageRefs.current = {};
+			refSetters.current.clear();
 		};
 	}, []);
 
