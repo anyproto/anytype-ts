@@ -53,6 +53,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const [ pinnedIndex, setPinnedIndex ] = useState(-1);
 	const frameRef = useRef(0);
 	const scrollRafRef = useRef(0);
+	const visibleIds = useRef<Set<string>>(new Set());
+	const viewportObserver = useRef<IntersectionObserver | null>(null);
 	const namespace = U.Dom.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
 	const prevDepsKey = useRef('');
@@ -123,6 +125,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			scrollHandlerRef.current = null;
 		};
 
+		viewportObserver.current?.disconnect();
+		viewportObserver.current = null;
+		visibleIds.current.clear();
+
 		// Drop any pending coalesced scroll frame so it can't run against a switched chat.
 		raf.cancel(scrollRafRef.current);
 		scrollRafRef.current = 0;
@@ -180,6 +186,51 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			scrollHandlerRef.current = (e: Event) => onScrollRaf(e);
 			U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 		};
+
+		bindViewportObserver();
+	};
+
+	// Maintains visibleIds via an IntersectionObserver instead of a per-frame getBoundingClientRect
+	// scan over the whole list (the legacy scan forced layout every scroll frame). A message counts
+	// as "visible" (for read receipts) only when its BOTTOM edge sits inside the root bounds — the
+	// rootMargin trims the form height off the bottom, reproducing the legacy band [0, ch - formHeight].
+	const bindViewportObserver = () => {
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (!container) {
+			return;
+		};
+
+		const formNode = formRef.current?.getNode() as HTMLElement;
+		const formHeight = formNode ? formNode.offsetHeight : 0;
+
+		viewportObserver.current?.disconnect();
+		viewportObserver.current = new IntersectionObserver((entries) => {
+			entries.forEach((e) => {
+				const id = (e.target as HTMLElement).getAttribute('data-viewport-id') || '';
+				if (!id) {
+					return;
+				};
+
+				const rb = e.rootBounds;
+				const visible = (!!rb) && (e.boundingClientRect.bottom >= rb.top) && (e.boundingClientRect.bottom <= rb.bottom);
+
+				if (visible) {
+					visibleIds.current.add(id);
+				} else {
+					visibleIds.current.delete(id);
+				};
+			});
+		}, { root: container, rootMargin: `0px 0px -${formHeight}px 0px`, threshold: [ 0, 1 ] });
+
+		// Rows mount during commit, before this runs (and the ref callback won't re-fire for
+		// already-mounted rows), so observe everything currently mounted now.
+		Object.keys(messageRefs.current).forEach((id) => {
+			const node = messageRefs.current[id]?.getNode?.() as HTMLElement;
+			if (node) {
+				node.setAttribute('data-viewport-id', id);
+				viewportObserver.current.observe(node);
+			};
+		});
 	};
 
 	const loadDepsAndReplies = (list: I.ChatMessage[], callBack?: () => void) => {
@@ -882,7 +933,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const container = U.Dom.getScrollContainer(isPopup);
 		const st = Math.ceil(container?.scrollTop ?? 0);
 		const max = U.Dom.getMaxScrollHeight(isPopup);
-		const list = getMessagesInViewport();
+		// Per-frame read-receipt set comes from the IntersectionObserver (no layout read).
+		// readScrolledMessages keeps the synchronous getMessagesInViewport scan for post-jump accuracy.
+		const list = getMessages().filter((it: any) => visibleIds.current.has(it.id));
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
 		const isBottom = (max > 0) && (st >= max);
@@ -1530,6 +1583,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				scrollHandlerRef.current = (e: Event) => onScrollRaf(e);
 				U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 			};
+
+			// Rebuild the observer so its bottom rootMargin tracks the current form height
+			// (multi-line input / attachment preview changes it).
+			bindViewportObserver();
 		}, 50);
 	};
 
@@ -1556,7 +1613,17 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 								ref={ref => {
 									if (ref) {
 										messageRefs.current[item.id] = ref;
+
+										const node = ref.getNode?.() as HTMLElement;
+										if (node) {
+											node.setAttribute('data-viewport-id', item.id);
+											viewportObserver.current?.observe(node);
+										};
 									} else {
+										const node = messageRefs.current[item.id]?.getNode?.() as HTMLElement;
+										if (node) {
+											viewportObserver.current?.unobserve(node);
+										};
 										delete messageRefs.current[item.id];
 									};
 								}}
