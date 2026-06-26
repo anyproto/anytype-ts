@@ -57,6 +57,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const prevReplyKey = useRef('');
 	const pendingScrollToBottom = useRef(false);
 	const pendingScrollToMessageId = useRef('');
+	const isLoadingPrev = useRef(false);
+	const isLoadedPrev = useRef(false);
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -252,6 +254,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		};
 
 		if (clear) {
+			// Re-subscribing to the latest messages resets the window, so older history is
+			// reachable again — clear the prefetch guards.
+			isLoadingPrev.current = false;
+			isLoadedPrev.current = false;
+
 			subscribeMessages(clear, () => {
 				setIsBottom(true);
 				callBack?.();
@@ -262,7 +269,6 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				return;
 			};
 
-			const first = messages[0];
 			const before = dir < 0 ? messages[0].orderId : '';
 			const after = dir > 0 ? messages[messages.length - 1].orderId : '';
 
@@ -270,8 +276,23 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				return;
 			};
 
+			// Guard older-batch loads: skip if one is already in flight (the prefetch threshold
+			// widens the trigger band, so onScroll can fire many times) or we already hit the
+			// oldest message. Without this the prefetch would spam duplicate requests.
+			if (dir < 0) {
+				if (isLoadingPrev.current || isLoadedPrev.current) {
+					return;
+				};
+
+				isLoadingPrev.current = true;
+			};
+
 			C.ChatGetMessages(chatId, before, after, J.Constant.limit.chat.messages, false, (message: any) => {
 				if (message.error.code) {
+					if (dir < 0) {
+						isLoadingPrev.current = false;
+					};
+
 					setLoaded(true);
 					callBack?.();
 					return;
@@ -291,20 +312,35 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 					const y = U.Dom.getMaxScrollHeight(isPopup);
 					const top = U.Dom.getScrollContainerTop(isPopup);
 
+					// Fewer than a full page means there are no older messages left to fetch.
+					if (messages.length < J.Constant.limit.chat.messages) {
+						isLoadedPrev.current = true;
+					};
+
 					setIsBottom(!(top < y));
 				};
 
 				loadDepsAndReplies(messages, () => {
 					if (messages.length) {
-						if (dir < 0) {
-							setAutoLoadDisabled(true);
-						};
+						const lengthBefore = S.Chat.getList(subId).length;
 
 						S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
 
-						if (first && (dir < 0)) {
-							scrollToMessage(first.id);
+						// Force a re-render so the prepended rows commit — the component is not a
+						// MobX observer. We deliberately do NOT touch scrollTop: the browser's
+						// native scroll anchoring (overflow-anchor) keeps the viewport visually
+						// static when content is inserted above and preserves scroll momentum.
+						// Setting scrollTop ourselves would interrupt the momentum and make the
+						// view jump (~1 viewport) at the moment the batch loads.
+						if ((dir < 0) && (S.Chat.getList(subId).length > lengthBefore)) {
+							setDummy(v => v + 1);
 						};
+					};
+
+					// Release the in-flight guard only after the prepend, so the wider prefetch
+					// band can't fire a duplicate request for the same batch mid-flight.
+					if (dir < 0) {
+						isLoadingPrev.current = false;
 					};
 
 					callBack?.();
@@ -321,6 +357,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 		const subId = getSubId();
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
+
+		// The list is rebuilt around orderId, so older history is reachable again.
+		isLoadingPrev.current = false;
+		isLoadedPrev.current = false;
 
 		let list = [];
 
@@ -808,7 +848,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setIsBottom(isBottom);
 
 		if (!isAutoLoadDisabled.current) {
-			if (st <= 0) {
+			// Prefetch the previous batch one viewport before the top is reached, so scrolling
+			// into the past doesn't stall waiting for the network round-trip.
+			const threshold = container?.offsetHeight ?? 0;
+
+			if (st <= threshold) {
 				loadMessages(-1, false);
 			};
 
@@ -1359,6 +1403,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setLoaded(false);
 		setIsBottom(false);
 		setFirstUnreadOrderId('');
+		isLoadingPrev.current = false;
+		isLoadedPrev.current = false;
 		loadState(() => {
 			loadPinnedMessages();
 			const subId = getSubId();
