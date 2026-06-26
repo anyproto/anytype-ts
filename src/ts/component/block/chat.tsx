@@ -61,6 +61,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const pendingScrollToMessageId = useRef('');
 	const isLoadingPrev = useRef(false);
 	const isLoadingNext = useRef(false);
+	const loadEpoch = useRef(0);
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -263,9 +264,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 		if (clear) {
 			// Re-subscribing to the latest messages resets the window, so older history is
-			// reachable again — clear the prefetch guards.
+			// reachable again — clear the prefetch guards and invalidate in-flight responses.
 			isLoadingPrev.current = false;
 			isLoadingNext.current = false;
+			loadEpoch.current++;
 
 			subscribeMessages(clear, () => {
 				setIsBottom(true);
@@ -304,7 +306,17 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				isLoadingNext.current = true;
 			};
 
+			// Snapshot the window generation. If the window is reset (jump-to-bottom, deeplink,
+			// reload, chat switch) while this request is in flight, the response is stale and must
+			// be dropped — otherwise it would prepend/append into a freshly-rebuilt window, punching
+			// a gap and corrupting the edge flags. Reset paths bump loadEpoch and clear the guards.
+			const epoch = loadEpoch.current;
+
 			C.ChatGetMessages(chatId, before, after, J.Constant.limit.chat.messages, false, (message: any) => {
+				if (loadEpoch.current != epoch) {
+					return;
+				};
+
 				if (message.error.code) {
 					if (dir < 0) {
 						isLoadingPrev.current = false;
@@ -341,6 +353,12 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				};
 
 				loadDepsAndReplies(messages, () => {
+					// The window may have been reset during the async dep/reply fetch — re-check
+					// before mutating the store so a stale page can't stitch into a new window.
+					if (loadEpoch.current != epoch) {
+						return;
+					};
+
 					if (messages.length) {
 						const lengthBefore = S.Chat.getList(subId).length;
 						const evicted = S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
@@ -382,10 +400,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const subId = getSubId();
 		const limit = Math.ceil(J.Constant.limit.chat.messages / 2);
 
-		// The list is rebuilt around orderId. Reset the in-flight guards; the window edges are
-		// derived below from the actual before/after page lengths (not guessed).
+		// The list is rebuilt around orderId. Reset the in-flight guards and invalidate in-flight
+		// responses; the window edges are derived below from the actual before/after page lengths.
 		isLoadingPrev.current = false;
 		isLoadingNext.current = false;
+		loadEpoch.current++;
 
 		let list = [];
 		let beforeOk = false;
@@ -1469,6 +1488,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setFirstUnreadOrderId('');
 		isLoadingPrev.current = false;
 		isLoadingNext.current = false;
+		loadEpoch.current++;
 		loadState(() => {
 			loadPinnedMessages();
 			const subId = getSubId();
