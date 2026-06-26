@@ -1,6 +1,7 @@
 import { observable, action, makeObservable, set, autorun } from 'mobx';
 import * as I from 'Interface';
 import * as M from 'Model';
+import { evictedCount } from 'Lib/util/chatWindow';
 
 const MAX_MESSAGES = 500;
 
@@ -12,6 +13,8 @@ class ChatStore {
 	public attachmentsMap: Map<string, any[]> = observable(new Map());
 	public discussionParentMap: Map<string, Map<string, string>> = observable.map(new Map());
 	private badgeValue = '';
+	private atChatStartMap: Map<string, boolean> = new Map();
+	private atChatEndMap: Map<string, boolean> = new Map();
 
 	constructor () {
 		makeObservable(this, {
@@ -45,7 +48,7 @@ class ChatStore {
 	 * @param {string} subId - The subscription ID.
 	 * @param {I.ChatMessage[]} add - The chat messages to prepend.
 	 */
-	prepend (subId: string, add: I.ChatMessage[]): void {
+	prepend (subId: string, add: I.ChatMessage[]): boolean {
 		const list = this.getList(subId);
 		const ids = new Set(list.map(it => it.id));
 
@@ -54,9 +57,13 @@ class ChatStore {
 
 		list.unshift(...add);
 
-		if (list.length > MAX_MESSAGES) {
+		const evicted = evictedCount(list.length, MAX_MESSAGES);
+		if (evicted) {
 			list.splice(MAX_MESSAGES);
+			this.setAtChatEnd(subId, false);
 		};
+
+		return evicted > 0;
 	};
 
 	/**
@@ -64,7 +71,7 @@ class ChatStore {
 	 * @param {string} subId - The subscription ID.
 	 * @param {I.ChatMessage[]} add - The chat messages to append.
 	 */
-	append (subId: string, add: I.ChatMessage[]): void {
+	append (subId: string, add: I.ChatMessage[]): boolean {
 		const list = this.getList(subId);
 		const ids = new Set(list.map(it => it.id));
 
@@ -73,9 +80,13 @@ class ChatStore {
 
 		list.push(...add);
 
-		if (list.length > MAX_MESSAGES) {
-			list.splice(0, list.length - MAX_MESSAGES);
+		const evicted = evictedCount(list.length, MAX_MESSAGES);
+		if (evicted) {
+			list.splice(0, evicted);
+			this.setAtChatStart(subId, false);
 		};
+
+		return evicted > 0;
 	};
 
 	/**
@@ -308,6 +319,44 @@ class ChatStore {
 		this.messageMap.delete(subId);
 		this.replyMap.delete(subId);
 		this.attachmentsMap.delete(subId);
+		this.atChatStartMap.delete(subId);
+		this.atChatEndMap.delete(subId);
+	};
+
+	/**
+	 * Whether the window's first message is the chat's oldest. Default true (untracked subId).
+	 * @param {string} subId - The subscription ID.
+	 */
+	isAtChatStart (subId: string): boolean {
+		const v = this.atChatStartMap.get(subId);
+		return v === undefined ? true : v;
+	};
+
+	/**
+	 * Whether the window's last message is the chat's newest. Default true (untracked subId).
+	 * @param {string} subId - The subscription ID.
+	 */
+	isAtChatEnd (subId: string): boolean {
+		const v = this.atChatEndMap.get(subId);
+		return v === undefined ? true : v;
+	};
+
+	/**
+	 * Sets whether the window is anchored at the chat's oldest message.
+	 * @param {string} subId - The subscription ID.
+	 * @param {boolean} v - The value.
+	 */
+	setAtChatStart (subId: string, v: boolean): void {
+		this.atChatStartMap.set(subId, v);
+	};
+
+	/**
+	 * Sets whether the window is anchored at the chat's newest message.
+	 * @param {string} subId - The subscription ID.
+	 * @param {boolean} v - The value.
+	 */
+	setAtChatEnd (subId: string, v: boolean): void {
+		this.atChatEndMap.set(subId, v);
 	};
 
 	/**
