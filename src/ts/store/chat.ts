@@ -15,6 +15,7 @@ class ChatStore {
 	private badgeValue = '';
 	private atChatStartMap: Map<string, boolean> = new Map();
 	private atChatEndMap: Map<string, boolean> = new Map();
+	private messageByIdMap: Map<string, Map<string, any>> = new Map();
 
 	constructor () {
 		makeObservable(this, {
@@ -39,8 +40,20 @@ class ChatStore {
 	set (subId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
 		list = U.Common.arrayUniqueObjects(list, 'id');
-		
+
 		this.messageMap.set(subId, observable.array(list));
+		this.rebuildIndex(subId);
+	};
+
+	/**
+	 * Rebuilds the per-subId id→message index from the current list, for O(1) getMessageById.
+	 * Cheap (≤ MAX_MESSAGES) and only runs on list-changing operations (set / prepend / append),
+	 * never per render or per scroll frame.
+	 * @param {string} subId - The subscription ID.
+	 */
+	private rebuildIndex (subId: string): void {
+		const list = this.getList(subId);
+		this.messageByIdMap.set(subId, new Map(list.map((it: any) => [ it.id, it ])));
 	};
 
 	/**
@@ -63,6 +76,7 @@ class ChatStore {
 			this.setAtChatEnd(subId, false);
 		};
 
+		this.rebuildIndex(subId);
 		return evicted > 0;
 	};
 
@@ -86,6 +100,7 @@ class ChatStore {
 			this.setAtChatStart(subId, false);
 		};
 
+		this.rebuildIndex(subId);
 		return evicted > 0;
 	};
 
@@ -343,6 +358,7 @@ class ChatStore {
 		this.attachmentsMap.delete(subId);
 		this.atChatStartMap.delete(subId);
 		this.atChatEndMap.delete(subId);
+		this.messageByIdMap.delete(subId);
 	};
 
 	/**
@@ -392,6 +408,7 @@ class ChatStore {
 		this.discussionParentMap.clear();
 		this.atChatStartMap.clear();
 		this.atChatEndMap.clear();
+		this.messageByIdMap.clear();
 	};
 
 	/**
@@ -410,7 +427,7 @@ class ChatStore {
 	 * @returns {I.ChatMessage} The chat message.
 	 */
 	getMessageById (subId: string, id: string): I.ChatMessage {
-		return this.getList(subId).find(it => it.id == id);
+		return this.messageByIdMap.get(subId)?.get(id) || this.getList(subId).find(it => it.id == id);
 	};
 
 	/**
