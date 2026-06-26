@@ -1391,7 +1391,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		};
 
 		if (btn) {
-			U.Dom.toggleClass(btn, 'active', !v);
+			// Show the jump-to-bottom / new-messages button when the user is not at the window
+			// bottom, OR when the window bottom is not the chat's newest (tail was evicted) —
+			// otherwise a suppressed live message would have no affordance.
+			const showNav = (!v) || (!S.Chat.isAtChatEnd(getSubId()));
+			U.Dom.toggleClass(btn, 'active', showNav);
 		};
 	};
 
