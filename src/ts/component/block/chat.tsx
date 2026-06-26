@@ -52,6 +52,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const [ pinnedMessages, setPinnedMessages ] = useState<I.ChatMessage[]>([]);
 	const [ pinnedIndex, setPinnedIndex ] = useState(-1);
 	const frameRef = useRef(0);
+	const scrollRafRef = useRef(0);
 	const namespace = U.Dom.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
 	const prevDepsKey = useRef('');
@@ -171,7 +172,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 		const container = U.Dom.getScrollContainer(isPopup);
 		if (container) {
-			scrollHandlerRef.current = (e: Event) => onScroll(e);
+			scrollHandlerRef.current = (e: Event) => onScrollRaf(e);
 			U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 		};
 	};
@@ -910,6 +911,20 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		Preview.previewHide(true);
 	};
 
+	// Coalesce scroll events to one onScroll run per animation frame. onScroll does an
+	// O(n) viewport scan (getBoundingClientRect per message); without this, a single
+	// gesture fires it many times per frame, and that cost doubles at the larger window.
+	const onScrollRaf = (e: Event) => {
+		if (scrollRafRef.current) {
+			return;
+		};
+
+		scrollRafRef.current = raf(() => {
+			scrollRafRef.current = 0;
+			onScroll(e);
+		});
+	};
+
 	const readMessage = (id: string, orderId: string, lastStateId: string, type: I.ChatReadType) => {
 		const chatId = getChatId();
 		const subId = getSubId();
@@ -1495,7 +1510,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		window.clearTimeout(timeoutResize.current);
 		timeoutResize.current = window.setTimeout(() => {
 			if (container) {
-				scrollHandlerRef.current = (e: Event) => onScroll(e);
+				scrollHandlerRef.current = (e: Event) => onScrollRaf(e);
 				U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 			};
 		}, 50);
@@ -1562,6 +1577,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			window.clearTimeout(timeoutScrollStop.current);
 			window.clearTimeout(timeoutResize.current);
 			raf.cancel(frameRef.current);
+			raf.cancel(scrollRafRef.current);
 			messageRefs.current = {};
 		};
 	}, []);
