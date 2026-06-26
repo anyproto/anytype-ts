@@ -170,6 +170,25 @@ describe('UtilString', () => {
 		it('should match URLs with ports', () => {
 			expect(UtilString.matchUrl('http://localhost:8080')).toBe('http://localhost:8080');
 		});
+
+		it('should not match scheme-less prose with an unapproved TLD', () => {
+			expect(UtilString.matchUrl('hey.how')).toBe('');
+			expect(UtilString.matchUrl('Mr.Smith')).toBe('');
+			expect(UtilString.matchUrl('readme.md')).toBe('');
+		});
+
+		it('should match scheme-less domains with an approved TLD', () => {
+			expect(UtilString.matchUrl('example.com')).toBe('example.com');
+			expect(UtilString.matchUrl('sub.example.io')).toBe('sub.example.io');
+		});
+
+		it('should match any TLD when an explicit scheme is present', () => {
+			expect(UtilString.matchUrl('https://hey.how')).toBe('https://hey.how');
+		});
+
+		it('should still match IP hosts', () => {
+			expect(UtilString.matchUrl('192.168.1.1')).toBe('192.168.1.1');
+		});
 	});
 
 	describe('matchEmail', () => {
@@ -188,6 +207,16 @@ describe('UtilString', () => {
 		it('should match valid domains', () => {
 			expect(UtilString.matchDomain('example.com')).toBe('example.com');
 			expect(UtilString.matchDomain('sub.example.com')).toBe('sub.example.com');
+		});
+
+		it('should match domains with multi-part country-code TLDs', () => {
+			expect(UtilString.matchDomain('example.co.uk')).toBe('example.co.uk');
+		});
+
+		it('should reject prose that looks like a domain but has an unapproved TLD', () => {
+			expect(UtilString.matchDomain('hey.how')).toBe('');
+			expect(UtilString.matchDomain('test.code')).toBe('');
+			expect(UtilString.matchDomain('node.go')).toBe('');
 		});
 
 		it('should return empty string for invalid input', () => {
