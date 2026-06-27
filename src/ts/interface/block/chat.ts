@@ -138,17 +138,16 @@ export interface ChatMessageComponent extends I.BlockComponent {
 	blockId: string;
 	id: string;
 	isNew: boolean;
-	hasMore: boolean;
 	subId: string;
 	analyticsChatId?: string;
 	style?: any;
-	index?: number;
-	onContextMenu: (e: any) => void;
-	onMore: (e: any) => void;
-	onReplyEdit: (e: any) => void;
-	onReplyClick: (e: any) => void;
+	onContextMenu: (e: any, id: string) => void;
+	onMore: (e: any, id: string) => void;
+	onReplyEdit: (e: any, id: string) => void;
+	onReplyClick: (e: any, id: string) => void;
 	getReplyContent: (message: any) => any;
 	scrollToBottom: () => void;
+	getMessageMenuOptions: (message: I.ChatMessage, noControls: boolean, url?: string, targetId?: string) => I.Option[];
 };
 
 export interface BlockChat extends I.Block {};

@@ -15,6 +15,7 @@ class ChatStore {
 	private badgeValue = '';
 	private atChatStartMap: Map<string, boolean> = new Map();
 	private atChatEndMap: Map<string, boolean> = new Map();
+	private messageByIdMap: Map<string, Map<string, any>> = new Map();
 
 	constructor () {
 		makeObservable(this, {
@@ -39,8 +40,20 @@ class ChatStore {
 	set (subId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
 		list = U.Common.arrayUniqueObjects(list, 'id');
-		
+
 		this.messageMap.set(subId, observable.array(list));
+		this.rebuildIndex(subId);
+	};
+
+	/**
+	 * Rebuilds the per-subId id→message index from the current list, for O(1) getMessageById.
+	 * Cheap (≤ MAX_MESSAGES) and only runs on list-changing operations (set / prepend / append),
+	 * never per render or per scroll frame.
+	 * @param {string} subId - The subscription ID.
+	 */
+	private rebuildIndex (subId: string): void {
+		const list = this.getList(subId);
+		this.messageByIdMap.set(subId, new Map(list.map((it: any) => [ it.id, it ])));
 	};
 
 	/**
@@ -63,6 +76,7 @@ class ChatStore {
 			this.setAtChatEnd(subId, false);
 		};
 
+		this.rebuildIndex(subId);
 		return evicted > 0;
 	};
 
@@ -86,6 +100,7 @@ class ChatStore {
 			this.setAtChatStart(subId, false);
 		};
 
+		this.rebuildIndex(subId);
 		return evicted > 0;
 	};
 
@@ -343,6 +358,7 @@ class ChatStore {
 		this.attachmentsMap.delete(subId);
 		this.atChatStartMap.delete(subId);
 		this.atChatEndMap.delete(subId);
+		this.messageByIdMap.delete(subId);
 	};
 
 	/**
@@ -392,6 +408,7 @@ class ChatStore {
 		this.discussionParentMap.clear();
 		this.atChatStartMap.clear();
 		this.atChatEndMap.clear();
+		this.messageByIdMap.clear();
 	};
 
 	/**
@@ -410,7 +427,13 @@ class ChatStore {
 	 * @returns {I.ChatMessage} The chat message.
 	 */
 	getMessageById (subId: string, id: string): I.ChatMessage {
-		return this.getList(subId).find(it => it.id == id);
+		// Read the observable list FIRST so observer callers (Message rows) keep a MobX dependency
+		// on the message map key. set()/add()/delete() replace the array with freshly-wrapped
+		// M.ChatMessage instances; without this read a memoized observer row bound to a now-detached
+		// instance would stop reflecting reactions/edits/read-status/grouping. The map is the O(1)
+		// accelerator for the actual lookup.
+		const list = this.getList(subId);
+		return this.messageByIdMap.get(subId)?.get(id) || list.find(it => it.id == id);
 	};
 
 	/**

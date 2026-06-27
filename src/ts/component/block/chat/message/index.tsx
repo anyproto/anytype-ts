@@ -19,8 +19,8 @@ interface ChatMessageRefProps {
 const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const {
-		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
-		renderLinks, renderMentions, renderObjects, renderEmoji, analyticsChatId,
+		rootId, id, isNew, readonly, subId, isPopup, style, onContextMenu, onMore, onReplyEdit, onReplyClick,
+		renderLinks, renderMentions, renderObjects, renderEmoji, analyticsChatId, getMessageMenuOptions,
 	} = props;
 	const { space, theme } = S.Common;
 	const { account } = S.Auth;
@@ -30,9 +30,19 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	const bubbleRef = useRef(null);
 	const message = S.Chat.getMessageById(subId, id);
 
+	// Memoized so re-rendering for a non-content reason (reaction / read-status / grouping)
+	// does not re-run Mark.toHtml + sanitize. Hoisted above the null guard to satisfy rules-of-hooks.
+	const text = React.useMemo(() => {
+		const content = message?.content;
+		return content ? U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks))).replace(/​/g, '') : '';
+	}, [ message?.content?.text, message?.content?.marks ]);
+
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver((entries) => {
-			const width = (entries[0]?.target as HTMLElement)?.offsetWidth ?? 0;
+			// Use the size the observer already provides (border-box, == offsetWidth) rather than
+			// reading .offsetWidth, which would force a synchronous layout on every callback.
+			const entry = entries[0];
+			const width = entry?.borderBoxSize?.[0]?.inlineSize ?? entry?.contentRect?.width ?? 0;
 
 			raf(() => {
 				if (!nodeRef.current) {
@@ -56,15 +66,10 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	}, []);
 
 	useEffect(() => {
+		// .isWide on bookmark attachments is owned by the ResizeObserver above (its initial callback
+		// on observe() covers mount), so we no longer read offsetWidth synchronously here — that
+		// per-mount read + class write forced a relayout on each mounting row (~1s in traces).
 		init();
-
-		if (bubbleRef.current && nodeRef.current) {
-			const width = bubbleRef.current.offsetWidth;
-
-			U.Dom.selectAll('.attachment.isBookmark', nodeRef.current).forEach((el: HTMLElement) => {
-				U.Dom.toggleClass(el, 'isWide', width > 360);
-			});
-		};
 	});
 
 	useImperativeHandle(ref, () => ({
@@ -216,7 +221,6 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	};
 
 	const canAddReaction = (): boolean => {
-		const message = S.Chat.getMessageById(subId, id);
 		const reactions = message.reactions || [];
 		const { self, all } = J.Constant.limit.chat.reactions;
 
@@ -255,8 +259,8 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	const ct = [ 'textWrapper' ];
 	const cnBubble = [ 'bubble' ];
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
+	const hasMore = !!getMessageMenuOptions(message, true).length;
 	const controls = [];
-	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks))).replace(/\u200B/g, '');
 	const cns = [ 'status', 'syncing' ];
 	const textBlocks = (message.blocks || []).filter(it => it.text);
 	const hasBlocks = textBlocks.length > 0;
@@ -298,10 +302,10 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 			controls.push({ id: 'reaction-add', name: 'chat/buttons/reaction', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: onReactionAdd });
 		};
 
-		controls.push({ id: 'message-reply', name: 'chat/buttons/reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
+		controls.push({ id: 'message-reply', name: 'chat/buttons/reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: (e: any) => onReplyEdit(e, id) });
 
 		if (hasMore) {
-			controls.push({ name: 'common/more', onClick: onMore, tooltip: translate('commonOptions') });
+			controls.push({ name: 'common/more', onClick: (e: any) => onMore(e, id), tooltip: translate('commonOptions') });
 		};
 	};
 
@@ -376,7 +380,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 				ref={nodeRef}
 				id={`item-${id}`}
 				className={cn.join(' ')}
-				onContextMenu={onContextMenu}
+				onContextMenu={e => onContextMenu(e, id)}
 				style={style}
 				{...U.Common.dataProps({ 'order-id': message.orderId })}
 				{...U.Common.animationProps({
@@ -395,7 +399,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 					</div>
 
 					<div className="side right">
-						<Reply {...props} id={replyToMessageId} />
+						<Reply {...props} id={replyToMessageId} onReplyClick={e => onReplyClick(e, id)} />
 
 						{authorNode}
 

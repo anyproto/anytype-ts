@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, DragEvent, MouseEvent, useState, useLayoutEffect, useImperativeHandle } from 'react';
+import React, { forwardRef, useRef, useEffect, useCallback, DragEvent, MouseEvent, useState, useLayoutEffect, useImperativeHandle } from 'react';
 import raf from 'raf';
 
 import Form from './chat/form';
@@ -51,8 +51,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const [ isLoaded, setIsLoaded ] = useState(false);
 	const [ pinnedMessages, setPinnedMessages ] = useState<I.ChatMessage[]>([]);
 	const [ pinnedIndex, setPinnedIndex ] = useState(-1);
-	const frameRef = useRef(0);
 	const scrollRafRef = useRef(0);
+	const visibleIds = useRef<Set<string>>(new Set());
+	const viewportObserver = useRef<IntersectionObserver | null>(null);
+	const formResizeObserver = useRef<ResizeObserver | null>(null);
+	const refSetters = useRef<Map<string, (r: any) => void>>(new Map());
 	const namespace = U.Dom.getEventNamespace(isPopup);
 	const jumpIds = useRef([]);
 	const prevDepsKey = useRef('');
@@ -88,6 +91,46 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const messages = S.Chat.getList(subId);
 	const analyticsChatId = getAnalyticsChatId();
 
+	// Stable handler identities so <Message>'s memo holds across BlockChat's setDummy re-renders
+	// (inline closures recreated every render were defeating it → full-list repaint on each prepend).
+	// They resolve the message live via the O(1) store; the body handlers are recaptured when
+	// subId/readonly/analyticsChatId change (add any newly-read render state to the deps below).
+	const onContextMenuCb = useCallback((e: any, id: string) => onContextMenu(e, S.Chat.getMessageById(getSubId(), id)), [ subId, readonly, analyticsChatId ]);
+	const onMoreCb = useCallback((e: any, id: string) => onContextMenu(e, S.Chat.getMessageById(getSubId(), id), true), [ subId, readonly, analyticsChatId ]);
+	const onReplyEditCb = useCallback((e: any, id: string) => onReplyEdit(e, S.Chat.getMessageById(getSubId(), id)), [ subId ]);
+	const onReplyClickCb = useCallback((e: any, id: string) => onReplyClick(e, S.Chat.getMessageById(getSubId(), id)), [ subId, analyticsChatId ]);
+	const getReplyContentCb = useCallback((m: any) => getReplyContent(m), [ subId ]);
+	const scrollToBottomCb = useCallback(() => scrollToBottomCheck(), []);
+	const getMessageMenuOptionsCb = useCallback((m: any, noControls: boolean, url?: string, targetId?: string) => getMessageMenuOptions(m, noControls, url, targetId), [ subId, readonly, analyticsChatId ]);
+
+	// Stable per-id ref-setter so the ref prop identity doesn't churn every render (which also
+	// defeated memo and thrashed observe/unobserve). Wires the viewport observer (Phase 2).
+	const getRefSetter = (id: string) => {
+		let fn = refSetters.current.get(id);
+		if (!fn) {
+			fn = (r: any) => {
+				if (r) {
+					messageRefs.current[id] = r;
+
+					const node = r.getNode?.() as HTMLElement;
+					if (node) {
+						node.setAttribute('data-viewport-id', id);
+						viewportObserver.current?.observe(node);
+					};
+				} else {
+					const node = messageRefs.current[id]?.getNode?.() as HTMLElement;
+					if (node) {
+						viewportObserver.current?.unobserve(node);
+					};
+					delete messageRefs.current[id];
+					refSetters.current.delete(id);
+				};
+			};
+			refSetters.current.set(id, fn);
+		};
+		return fn;
+	};
+
 	const scrollHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const messageAddHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const messageUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
@@ -122,6 +165,12 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			U.Dom.removeEvent(container, 'scroll', scrollHandlerRef.current);
 			scrollHandlerRef.current = null;
 		};
+
+		viewportObserver.current?.disconnect();
+		viewportObserver.current = null;
+		formResizeObserver.current?.disconnect();
+		formResizeObserver.current = null;
+		visibleIds.current.clear();
 
 		// Drop any pending coalesced scroll frame so it can't run against a switched chat.
 		raf.cancel(scrollRafRef.current);
@@ -180,6 +229,62 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			scrollHandlerRef.current = (e: Event) => onScrollRaf(e);
 			U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 		};
+
+		bindViewportObserver();
+
+		// The composer auto-grows as the user types; its height feeds the observer's bottom band.
+		// Rebuild the observer when the form height changes so the read band never extends behind
+		// the grown composer and marks hidden messages read (C.ChatReadMessages is irreversible).
+		const formNode = formRef.current?.getNode() as HTMLElement;
+		if (formNode) {
+			formResizeObserver.current = new ResizeObserver(() => bindViewportObserver());
+			formResizeObserver.current.observe(formNode);
+		};
+	};
+
+	// Maintains visibleIds via an IntersectionObserver instead of a per-frame getBoundingClientRect
+	// scan over the whole list (the legacy scan forced layout every scroll frame). A message counts
+	// as "visible" (for read receipts) only when its BOTTOM edge sits inside the root bounds — the
+	// rootMargin trims the form height off the bottom, reproducing the legacy band [0, ch - formHeight].
+	const bindViewportObserver = () => {
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (!container) {
+			return;
+		};
+
+		const formNode = formRef.current?.getNode() as HTMLElement;
+		const formHeight = formNode ? formNode.offsetHeight : 0;
+
+		viewportObserver.current?.disconnect();
+		viewportObserver.current = new IntersectionObserver((entries) => {
+			entries.forEach((e) => {
+				const id = (e.target as HTMLElement).getAttribute('data-viewport-id') || '';
+				if (!id) {
+					return;
+				};
+
+				const rb = e.rootBounds;
+				const visible = (!!rb) && (e.boundingClientRect.bottom >= rb.top) && (e.boundingClientRect.bottom <= rb.bottom);
+
+				if (visible) {
+					visibleIds.current.add(id);
+				} else {
+					visibleIds.current.delete(id);
+				};
+			});
+		// Dense thresholds so the callback re-fires as a message taller than the band scrolls
+		// through it (its ratio never reaches 1, so [0,1] alone would miss the bottom-edge crossing).
+		}, { root: container, rootMargin: `0px 0px -${formHeight}px 0px`, threshold: Array.from({ length: 21 }, (_, i) => i / 20) });
+
+		// Rows mount during commit, before this runs (and the ref callback won't re-fire for
+		// already-mounted rows), so observe everything currently mounted now.
+		Object.keys(messageRefs.current).forEach((id) => {
+			const node = messageRefs.current[id]?.getNode?.() as HTMLElement;
+			if (node) {
+				node.setAttribute('data-viewport-id', id);
+				viewportObserver.current.observe(node);
+			};
+		});
 	};
 
 	const loadDepsAndReplies = (list: I.ChatMessage[], callBack?: () => void) => {
@@ -587,15 +692,6 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		return sections;
 	};
 
-	const getItems = () => {
-		let items = [];
-		for (const section of sections) {
-			items.push({ key: section.key, createdAt: section.createdAt, isSection: true });
-			items = items.concat(section.list);
-		};
-		return items;
-	};
-
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
 		subIds = subIds || [];
 
@@ -859,43 +955,22 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		S.Menu.open('select', menuParam);
 	};
 
+	// Date headers float via CSS `position: sticky` (see chat.scss .sectionDate). This only
+	// updates the sticky offset CSS variable when the header / pinned-banner height changes —
+	// no per-frame layout reads/writes (the previous JS reposition forced a full relayout of the
+	// whole message DOM on every scroll frame). Called from resize() and the pinned-banner effect,
+	// NOT from onScroll.
 	const renderDates = () => {
 		const node = nodeRef.current;
-		if (!node) return;
+		if (!node) {
+			return;
+		};
 
-		const dates = U.Dom.selectAll('.sectionDate', node);
 		const pinned = U.Dom.select('.pinnedMessage', node) as HTMLElement | null;
 		const pinnedHeight = pinned ? pinned.offsetHeight : 0;
 		const offset = J.Size.header + 8 + pinnedHeight;
-		const container = U.Dom.getScrollContainer(isPopup);
-		const top = container?.getBoundingClientRect().top ?? 0;
 
-		raf.cancel(frameRef.current);
-		frameRef.current = raf(() => {
-			dates.forEach((item: HTMLElement) => {
-				U.Dom.css(item, { position: 'static', left: '', top: '', width: '' });
-			});
-
-			let last: HTMLElement = null;
-
-			dates.forEach((item: HTMLElement) => {
-				const rect = item.getBoundingClientRect();
-				if (rect.top <= offset) {
-					last = item;
-				};
-			});
-
-			if (!last && dates.length) {
-				last = dates[0];
-			};
-
-			if (last) {
-				const width = last.offsetWidth;
-				const rect = last.getBoundingClientRect();
-
-				U.Dom.css(last, { position: 'fixed', width: width + 'px', left: rect.left + 'px', top: (top + offset) + 'px' });
-			};
-		});
+		node.style.setProperty('--chat-sticky-top', `${offset}px`);
 	};
 
 	const onScroll = (e: any) => {
@@ -903,7 +978,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const container = U.Dom.getScrollContainer(isPopup);
 		const st = Math.ceil(container?.scrollTop ?? 0);
 		const max = U.Dom.getMaxScrollHeight(isPopup);
-		const list = getMessagesInViewport();
+		// Per-frame read-receipt set comes from the IntersectionObserver (no layout read).
+		// readScrolledMessages keeps the synchronous getMessagesInViewport scan for post-jump accuracy.
+		const list = getMessages().filter((it: any) => visibleIds.current.has(it.id));
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
 		const isBottom = (max > 0) && (st >= max);
@@ -925,8 +1002,6 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				loadMessages(1, false);
 			};
 		};
-
-		renderDates();
 
 		if (S.Common.windowIsFocused && list.length) {
 			list.forEach(it => {
@@ -1553,6 +1628,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				scrollHandlerRef.current = (e: Event) => onScrollRaf(e);
 				U.Dom.addEvent(container, 'scroll', scrollHandlerRef.current);
 			};
+
+			// Rebuild the observer so its bottom rootMargin tracks the current form height
+			// (multi-line input / attachment preview changes it).
+			bindViewportObserver();
 		}, 50);
 	};
 
@@ -1562,7 +1641,6 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const sections = getSections();
 	const isEmpty = isLoaded && !messages.length;
-	const items = getItems();
 
 	let content = null;
 	if (isEmpty) {
@@ -1570,19 +1648,16 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	} else {
 		content = (
 			<div className="scroll">
-				{items.map((item, i) => {
-					if (item.isSection) {
-						return <SectionDate key={item.key} date={item.createdAt} />;
-					} else {
-						return (
+				{sections.map(section => (
+					// Each section is its own sticky containing block, so its date header sticks only
+					// within its own day and is pushed out by the next — exactly one floating date, no
+					// flat-sibling pile-up. .section stays position:static so message offsetTop (used by
+					// scrollToMessage) is unchanged.
+					<div className="section" key={section.key}>
+						<SectionDate date={section.createdAt} />
+						{section.list.map(item => (
 							<Message
-								ref={ref => {
-									if (ref) {
-										messageRefs.current[item.id] = ref;
-									} else {
-										delete messageRefs.current[item.id];
-									};
-								}}
+								ref={getRefSetter(item.id)}
 								key={item.id}
 								{...props}
 								id={item.id}
@@ -1590,19 +1665,18 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 								blockId={block.id}
 								subId={subId}
 								analyticsChatId={analyticsChatId}
-								index={i}
 								isNew={item.orderId == firstUnreadOrderId}
-								hasMore={!!getMessageMenuOptions(item, true).length}
-								onContextMenu={e => onContextMenu(e, item)}
-								onMore={e => onContextMenu(e, item, true)}
-								onReplyEdit={e => onReplyEdit(e, item)}
-								onReplyClick={e => onReplyClick(e, item)}
-								getReplyContent={getReplyContent}
-								scrollToBottom={scrollToBottomCheck}
+								onContextMenu={onContextMenuCb}
+								onMore={onMoreCb}
+								onReplyEdit={onReplyEditCb}
+								onReplyClick={onReplyClickCb}
+								getReplyContent={getReplyContentCb}
+								scrollToBottom={scrollToBottomCb}
+								getMessageMenuOptions={getMessageMenuOptionsCb}
 							/>
-						);
-					};
-				})}
+						))}
+					</div>
+				))}
 			</div>
 		);
 	};
@@ -1616,9 +1690,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			window.clearTimeout(timeoutInterface.current);
 			window.clearTimeout(timeoutScrollStop.current);
 			window.clearTimeout(timeoutResize.current);
-			raf.cancel(frameRef.current);
 			raf.cancel(scrollRafRef.current);
 			messageRefs.current = {};
+			refSetters.current.clear();
 		};
 	}, []);
 
