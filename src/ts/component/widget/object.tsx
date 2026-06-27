@@ -6,6 +6,93 @@ import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, ChatCounter, Icon } from 'Component';
 import * as I from 'Interface';
 
+interface WidgetObjectItemProps {
+	item: any;
+	canDrag: boolean;
+	canWrite: boolean;
+	realId: string;
+	isUnread: boolean;
+	hasUnreadSection: boolean;
+	isAllowedObject: (type: any) => boolean;
+	onCreate: (e: any, type: any) => void;
+	onContextHandler: (e: any, item: any, withElement: boolean) => void;
+};
+
+/**
+ * Module-level row component. Kept out of WidgetObject's body so its component
+ * identity stays stable across re-renders — otherwise every WidgetObject render
+ * would remount all rows (and their IconObjects), forcing icon images to refetch.
+ */
+const WidgetObjectItem = (props: WidgetObjectItemProps) => {
+	const { item, canDrag, canWrite, realId, isUnread, hasUnreadSection, isAllowedObject, onCreate, onContextHandler } = props;
+	const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: item._isDisabled || !canDrag });
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
+	const isChat = U.Object.isChatLayout(item.layout);
+	const hasDiscussion = !isChat && !!item.discussionId;
+	const counterTargetId = isChat ? item.id : (hasDiscussion ? item.discussionId : '');
+	const showCounter = !!counterTargetId && (!hasUnreadSection || isUnread);
+	const canAdd = canWrite && (realId == J.Constant.widgetId.type) && isAllowedObject(item);
+	const spaceview = U.Space.getSpaceview();
+	const itemCn = [ 'item' ];
+
+	if (isChat && (U.Object.getChatNotificationMode(spaceview, item.id) == I.NotificationMode.Nothing)) {
+		itemCn.push('isMuted');
+	};
+
+	let icon = null;
+	if (item.iconParam) {
+		icon = <Icon {...item.iconParam} />;
+	} else {
+		icon = (
+			<IconObject
+				object={item}
+				canEdit={!item.isReadonly && U.Object.isTaskLayout(item.layout)}
+				iconSize={20}
+			/>
+		);
+	};
+
+	return (
+		<div
+			id={`item-${item.id}`}
+			className={itemCn.join(' ')}
+			ref={setNodeRef}
+			{...attributes}
+			{...listeners}
+			style={style}
+			onClick={e => U.Object.openEvent(e, item)}
+			onAuxClick={e => U.Object.openEvent(e, item)}
+			onContextMenu={e => onContextHandler(e, item, false)}
+		>
+			<div className="side left">
+				{icon}
+				<ObjectName object={item} withPlural={true} />
+			</div>
+			<div className="side right">
+				{showCounter ? (
+					<ChatCounter
+						chatId={counterTargetId}
+						mode={hasDiscussion ? U.Object.getDiscussionNotificationMode(spaceview, item.id) : undefined}
+					/>
+				) : ''}
+				{canAdd ? (
+					<div className="buttons">
+						<Icon
+							name="plus/menu"
+							className="plus"
+							tooltipParam={{ text: translate('commonCreateNewObject') }}
+							onClick={e => onCreate(e, item)}
+						/>
+					</div>
+				) : ''}
+			</div>
+		</div>
+	);
+};
+
 const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const { parent, onContext } = props;
@@ -313,75 +400,6 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 		};
 	};
 
-	const Item = (item: any) => {
-		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: item._isDisabled || !canDrag });
-		const style = {
-			transform: CSS.Transform.toString(transform),
-			transition,
-		};
-		const isChat = U.Object.isChatLayout(item.layout);
-		const hasDiscussion = !isChat && !!item.discussionId;
-		const counterTargetId = isChat ? item.id : (hasDiscussion ? item.discussionId : '');
-		const showCounter = !!counterTargetId && (!hasUnreadSection || isUnread);
-		const canAdd = canWrite && (realId == J.Constant.widgetId.type) && isAllowedObject(item);
-		const spaceview = U.Space.getSpaceview();
-		const itemCn = [ 'item' ];
-
-		if (isChat && (U.Object.getChatNotificationMode(spaceview, item.id) == I.NotificationMode.Nothing)) {
-			itemCn.push('isMuted');
-		};
-
-		let icon = null;
-		if (item.iconParam) {
-			icon = <Icon {...item.iconParam} />;
-		} else {
-			icon = (
-				<IconObject
-					object={item}
-					canEdit={!item.isReadonly && U.Object.isTaskLayout(item.layout)}
-					iconSize={20}
-				/>
-			);
-		};
-
-		return (
-			<div
-				id={`item-${item.id}`}
-				className={itemCn.join(' ')}
-				ref={setNodeRef}
-				{...attributes}
-				{...listeners}
-				style={style}
-				onClick={e => U.Object.openEvent(e, item)}
-				onAuxClick={e => U.Object.openEvent(e, item)}
-				onContextMenu={e => onContextHandler(e, item, false)}
-			>
-				<div className="side left">
-					{icon}
-					<ObjectName object={item} withPlural={true} />
-				</div>
-				<div className="side right">
-					{showCounter ? (
-						<ChatCounter
-							chatId={counterTargetId}
-							mode={hasDiscussion ? U.Object.getDiscussionNotificationMode(spaceview, item.id) : undefined}
-						/>
-					) : ''}
-					{canAdd ? (
-						<div className="buttons">
-							<Icon
-								name="plus/menu"
-								className="plus"
-								tooltipParam={{ text: translate('commonCreateNewObject') }}
-								onClick={e => onCreate(e, item)}
-							/>
-						</div>
-					) : ''}
-				</div>
-			</div>
-		);
-	};
-
 	const items = getItems();
 
 	return (
@@ -399,7 +417,20 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 						strategy={verticalListSortingStrategy}
 					>
 						<div ref={nodeRef} className="items">
-							{items.map(item => <Item key={item.id} {...item} />)}
+							{items.map(item => (
+								<WidgetObjectItem
+									key={item.id}
+									item={item}
+									canDrag={canDrag}
+									canWrite={canWrite}
+									realId={realId}
+									isUnread={isUnread}
+									hasUnreadSection={hasUnreadSection}
+									isAllowedObject={isAllowedObject}
+									onCreate={onCreate}
+									onContextHandler={onContextHandler}
+								/>
+							))}
 						</div>
 					</SortableContext>
 				</DndContext>

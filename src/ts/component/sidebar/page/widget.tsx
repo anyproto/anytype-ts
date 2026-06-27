@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useCallback, DragEvent } from 'react';
 import raf from 'raf';
 import { reaction } from 'mobx';
 import { motion, AnimatePresence } from 'motion/react';
@@ -197,6 +197,21 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			U.Dom.addClass(target, `isOver ${positionRef.current == I.BlockPosition.Top ? 'top' : 'bottom'}`);
 		});
 	};
+
+	/*
+	 * Stable identities for the drag handlers passed to each <Widget>. The handlers
+	 * themselves are recreated every render; without these wrappers a re-render of
+	 * this page (e.g. chat counters churning on a reaction toggle) would hand every
+	 * widget new function props, breaking their observer/memo and re-rendering
+	 * unrelated widgets like "Last edited". The ref always points at the latest
+	 * handler, so behavior is unchanged.
+	 */
+	const dragHandlersRef = useRef({ onDragStart, onDragOver, onDrag });
+	dragHandlersRef.current = { onDragStart, onDragOver, onDrag };
+
+	const onDragStartStable = useCallback((e: DragEvent, block: I.Block) => dragHandlersRef.current.onDragStart(e, block), []);
+	const onDragOverStable = useCallback((e: DragEvent, block: I.Block) => dragHandlersRef.current.onDragOver(e, block), []);
+	const onDragStable = useCallback((e: DragEvent, block: I.Block) => dragHandlersRef.current.onDrag(e, block), []);
 
 	const onDrop = (e: DragEvent): void => {
 		if (!isDraggingRef.current) {
@@ -607,13 +622,42 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		let object = null;
 		if (U.Menu.isSystemWidget(id)) {
 			object = U.Menu.getSystemWidgets().find(it => it.id == id);
-		} else 
+		} else
 		if (block.content.section == I.WidgetSection.Type) {
 			object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.type), id);
 		} else {
 			object = S.Detail.get(widgets, id);
 		};
 		return object;
+	};
+
+	/*
+	 * Returns a getObject callback with a stable identity per (widget block, isFavorites),
+	 * so passing it to <Widget> doesn't break the child's observer/memo on unrelated
+	 * re-renders. getObjectRef always points at the latest helper; the cached closures
+	 * only capture stable values, so behavior is unchanged.
+	 */
+	const getObjectRef = useRef(getObject);
+	getObjectRef.current = getObject;
+	const getObjectCacheRef = useRef<Map<string, (id: string) => any>>(new Map());
+
+	const getWidgetGetObject = (block: I.Block, isFav: boolean, favRootId: string) => {
+		const key = `${block.id}:${isFav ? 1 : 0}`;
+		const cache = getObjectCacheRef.current;
+
+		if (!cache.has(key)) {
+			cache.set(key, (id: string) => {
+				if (isFav) {
+					if (U.Menu.isSystemWidget(id)) {
+						return U.Menu.getSystemWidgets().find(it => it.id == id);
+					};
+					return S.Detail.get(favRootId, id);
+				};
+				return getObjectRef.current(block, id);
+			});
+		};
+
+		return cache.get(key);
 	};
 
 	if (previewId) {
@@ -816,20 +860,12 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 												rootId={isFavWidgets ? personalRootId : undefined}
 												canEdit={canWrite}
 												canRemove={isSectionPin}
-												onDragStart={isFavWidgets ? undefined : onDragStart}
-												onDragOver={isFavWidgets ? undefined : onDragOver}
-												onDrag={isFavWidgets ? undefined : onDrag}
+												onDragStart={isFavWidgets ? undefined : onDragStartStable}
+												onDragOver={isFavWidgets ? undefined : onDragOverStable}
+												onDrag={isFavWidgets ? undefined : onDragStable}
 												setPreview={isFavWidgets ? undefined : setPreviewId}
 												sidebarDirection={sidebarDirection}
-												getObject={id => {
-													if (isFavWidgets) {
-														if (U.Menu.isSystemWidget(id)) {
-															return U.Menu.getSystemWidgets().find(it => it.id == id);
-														};
-														return S.Detail.get(personalRootId, id);
-													};
-													return getObject(block, id);
-												}}
+												getObject={getWidgetGetObject(block, isFavWidgets, personalRootId)}
 											/>
 										))}
 									</div>
@@ -844,12 +880,13 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 
 	useEffect(() => {
 		initSections();
-		initScroll();
 	});
 
 	useEffect(() => {
 		setPreviewId('');
 		initSections();
+		initScroll();
+		getObjectCacheRef.current.clear();
 	}, [ space ]);
 
 	useEffect(() => reaction(() => S.Common.sidebarView, () => forceUpdate()), []);
