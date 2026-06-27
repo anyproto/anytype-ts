@@ -39,7 +39,10 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver((entries) => {
-			const width = (entries[0]?.target as HTMLElement)?.offsetWidth ?? 0;
+			// Use the size the observer already provides (border-box, == offsetWidth) rather than
+			// reading .offsetWidth, which would force a synchronous layout on every callback.
+			const entry = entries[0];
+			const width = entry?.borderBoxSize?.[0]?.inlineSize ?? entry?.contentRect?.width ?? 0;
 
 			raf(() => {
 				if (!nodeRef.current) {
@@ -63,15 +66,10 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	}, []);
 
 	useEffect(() => {
+		// .isWide on bookmark attachments is owned by the ResizeObserver above (its initial callback
+		// on observe() covers mount), so we no longer read offsetWidth synchronously here — that
+		// per-mount read + class write forced a relayout on each mounting row (~1s in traces).
 		init();
-
-		if (bubbleRef.current && nodeRef.current) {
-			const width = bubbleRef.current.offsetWidth;
-
-			U.Dom.selectAll('.attachment.isBookmark', nodeRef.current).forEach((el: HTMLElement) => {
-				U.Dom.toggleClass(el, 'isWide', width > 360);
-			});
-		};
 	});
 
 	useImperativeHandle(ref, () => ({
