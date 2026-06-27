@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect, useState, DragEvent } from 'react';
+import React, { forwardRef, useRef, useEffect, useLayoutEffect, useState, useCallback, DragEvent } from 'react';
 import raf from 'raf';
 import { reaction } from 'mobx';
 import { motion, AnimatePresence } from 'motion/react';
@@ -26,6 +26,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const isDraggingRef = useRef<boolean>(false);
 	const frameRef = useRef<number>(0);
 	const dragEndHandlerRef = useRef<(() => void) | null>(null);
+	const syntheticBlockCacheRef = useRef<Map<string, I.Block>>(new Map());
 
 	if (isLinksView) {
 		cnb.push('isLinksView');
@@ -197,6 +198,21 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			U.Dom.addClass(target, `isOver ${positionRef.current == I.BlockPosition.Top ? 'top' : 'bottom'}`);
 		});
 	};
+
+	/*
+	 * Stable identities for the drag handlers passed to each <Widget>. The handlers
+	 * themselves are recreated every render; without these wrappers a re-render of
+	 * this page (e.g. chat counters churning on a reaction toggle) would hand every
+	 * widget new function props, breaking their observer/memo and re-rendering
+	 * unrelated widgets like "Last edited". The ref always points at the latest
+	 * handler, so behavior is unchanged.
+	 */
+	const dragHandlersRef = useRef({ onDragStart, onDragOver, onDrag });
+	dragHandlersRef.current = { onDragStart, onDragOver, onDrag };
+
+	const onDragStartStable = useCallback((e: DragEvent, block: I.Block) => dragHandlersRef.current.onDragStart(e, block), []);
+	const onDragOverStable = useCallback((e: DragEvent, block: I.Block) => dragHandlersRef.current.onDragOver(e, block), []);
+	const onDragStable = useCallback((e: DragEvent, block: I.Block) => dragHandlersRef.current.onDrag(e, block), []);
 
 	const onDrop = (e: DragEvent): void => {
 		if (!isDraggingRef.current) {
@@ -476,14 +492,31 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		raf.cancel(frameRef.current);
 	};
 
+	/*
+	 * System sections (Unread/Type/RecentEdit/Bin/personalWidgets/pinned-links) have
+	 * no stored widget block, so one is synthesized. Cache by id so the <Widget>
+	 * `block` prop keeps a stable reference across re-renders — otherwise the child
+	 * observer/memo always breaks and the widget re-renders on every parent render
+	 * (e.g. chat-counter churn). Cleared on space change.
+	 */
+	const getSyntheticWidgetBlock = (id: string): I.Block => {
+		const cache = syntheticBlockCacheRef.current;
+
+		if (!cache.has(id)) {
+			cache.set(id, new M.Block({
+				id,
+				type: I.BlockType.Widget,
+				content: { layout: I.WidgetLayout.Object },
+			}));
+		};
+
+		return cache.get(id);
+	};
+
 	const getWidgets = (sectionId: I.WidgetSection) => {
 		if ((sectionId == I.WidgetSection.Pin) && isLinksView) {
 			return [
-				new M.Block({
-					id: [ space, J.Constant.widgetId.pinned ].join('-'),
-					type: I.BlockType.Widget,
-					content: { layout: I.WidgetLayout.Object }
-				}),
+				getSyntheticWidgetBlock([ space, J.Constant.widgetId.pinned ].join('-')),
 			];
 		};
 
@@ -501,11 +534,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					[I.WidgetSection.Bin]: J.Constant.widgetId.bin,
 				};
 
-				blocks.push(new M.Block({
-					id: [ space, idMap[sectionId] ].join('-'),
-					type: I.BlockType.Widget,
-					content: { layout: I.WidgetLayout.Object }
-				}));
+				blocks.push(getSyntheticWidgetBlock([ space, idMap[sectionId] ].join('-')));
 				break;
 			};
 
@@ -540,11 +569,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 						return true;
 					});
 				} else {
-					blocks.push(new M.Block({
-						id: [ space, J.Constant.widgetId.personalWidgets ].join('-'),
-						type: I.BlockType.Widget,
-						content: { layout: I.WidgetLayout.Object }
-					}));
+					blocks.push(getSyntheticWidgetBlock([ space, J.Constant.widgetId.personalWidgets ].join('-')));
 				};
 				break;
 			};
@@ -607,13 +632,42 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 		let object = null;
 		if (U.Menu.isSystemWidget(id)) {
 			object = U.Menu.getSystemWidgets().find(it => it.id == id);
-		} else 
+		} else
 		if (block.content.section == I.WidgetSection.Type) {
 			object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.type), id);
 		} else {
 			object = S.Detail.get(widgets, id);
 		};
 		return object;
+	};
+
+	/*
+	 * Returns a getObject callback with a stable identity per (widget block, isFavorites),
+	 * so passing it to <Widget> doesn't break the child's observer/memo on unrelated
+	 * re-renders. getObjectRef always points at the latest helper; the cached closures
+	 * only capture stable values, so behavior is unchanged.
+	 */
+	const getObjectRef = useRef(getObject);
+	getObjectRef.current = getObject;
+	const getObjectCacheRef = useRef<Map<string, (id: string) => any>>(new Map());
+
+	const getWidgetGetObject = (block: I.Block, isFav: boolean, favRootId: string) => {
+		const key = `${block.id}:${isFav ? 1 : 0}`;
+		const cache = getObjectCacheRef.current;
+
+		if (!cache.has(key)) {
+			cache.set(key, (id: string) => {
+				if (isFav) {
+					if (U.Menu.isSystemWidget(id)) {
+						return U.Menu.getSystemWidgets().find(it => it.id == id);
+					};
+					return S.Detail.get(favRootId, id);
+				};
+				return getObjectRef.current(block, id);
+			});
+		};
+
+		return cache.get(key);
 	};
 
 	if (previewId) {
@@ -816,20 +870,12 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 												rootId={isFavWidgets ? personalRootId : undefined}
 												canEdit={canWrite}
 												canRemove={isSectionPin}
-												onDragStart={isFavWidgets ? undefined : onDragStart}
-												onDragOver={isFavWidgets ? undefined : onDragOver}
-												onDrag={isFavWidgets ? undefined : onDrag}
+												onDragStart={isFavWidgets ? undefined : onDragStartStable}
+												onDragOver={isFavWidgets ? undefined : onDragOverStable}
+												onDrag={isFavWidgets ? undefined : onDragStable}
 												setPreview={isFavWidgets ? undefined : setPreviewId}
 												sidebarDirection={sidebarDirection}
-												getObject={id => {
-													if (isFavWidgets) {
-														if (U.Menu.isSystemWidget(id)) {
-															return U.Menu.getSystemWidgets().find(it => it.id == id);
-														};
-														return S.Detail.get(personalRootId, id);
-													};
-													return getObject(block, id);
-												}}
+												getObject={getWidgetGetObject(block, isFavWidgets, personalRootId)}
 											/>
 										))}
 									</div>
@@ -844,13 +890,56 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 
 	useEffect(() => {
 		initSections();
-		initScroll();
 	});
 
 	useEffect(() => {
 		setPreviewId('');
 		initSections();
+		getObjectCacheRef.current.clear();
+		syntheticBlockCacheRef.current.clear();
 	}, [ space ]);
+
+	/*
+	 * Restore the persisted scroll position on mount, space switch, and when leaving
+	 * preview (the list and preview reuse the same #body, so without this the list
+	 * snaps to top and onScroll then persists the wrong value). useLayoutEffect runs
+	 * before the post-swap scroll event, so the restore isn't clobbered. Skipped in
+	 * preview. A ResizeObserver re-applies the position while widget content is still
+	 * loading (async), then disconnects once the stored offset becomes reachable.
+	 */
+	useLayoutEffect(() => {
+		if (previewId) {
+			return;
+		};
+
+		const body = bodyRef.current;
+		if (!body) {
+			return;
+		};
+
+		initScroll();
+
+		// Observe the inner content element (not the scroll container, whose own box
+		// doesn't change as content grows) so we catch async widget load.
+		const contentEl = body.firstElementChild;
+		if (!contentEl) {
+			return;
+		};
+
+		const observer = new ResizeObserver(() => {
+			const top = Storage.getScroll('sidebarWidget', '', isPopup);
+
+			if (!top || ((body.scrollHeight - body.clientHeight) >= top)) {
+				if (top) {
+					body.scrollTop = top;
+				};
+				observer.disconnect();
+			};
+		});
+		observer.observe(contentEl);
+
+		return () => observer.disconnect();
+	}, [ space, previewId ]);
 
 	useEffect(() => reaction(() => S.Common.sidebarView, () => forceUpdate()), []);
 
