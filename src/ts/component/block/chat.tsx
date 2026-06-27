@@ -692,15 +692,6 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		return sections;
 	};
 
-	const getItems = () => {
-		let items = [];
-		for (const section of sections) {
-			items.push({ key: section.key, createdAt: section.createdAt, isSection: true });
-			items = items.concat(section.list);
-		};
-		return items;
-	};
-
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
 		subIds = subIds || [];
 
@@ -1650,7 +1641,6 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const sections = getSections();
 	const isEmpty = isLoaded && !messages.length;
-	const items = getItems();
 
 	let content = null;
 	if (isEmpty) {
@@ -1658,11 +1648,14 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	} else {
 		content = (
 			<div className="scroll">
-				{items.map((item) => {
-					if (item.isSection) {
-						return <SectionDate key={item.key} date={item.createdAt} />;
-					} else {
-						return (
+				{sections.map(section => (
+					// Each section is its own sticky containing block, so its date header sticks only
+					// within its own day and is pushed out by the next — exactly one floating date, no
+					// flat-sibling pile-up. .section stays position:static so message offsetTop (used by
+					// scrollToMessage) is unchanged.
+					<div className="section" key={section.key}>
+						<SectionDate date={section.createdAt} />
+						{section.list.map(item => (
 							<Message
 								ref={getRefSetter(item.id)}
 								key={item.id}
@@ -1681,9 +1674,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 								scrollToBottom={scrollToBottomCb}
 								getMessageMenuOptions={getMessageMenuOptionsCb}
 							/>
-						);
-					};
-				})}
+						))}
+					</div>
+				))}
 			</div>
 		);
 	};
