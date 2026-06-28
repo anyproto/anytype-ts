@@ -256,6 +256,38 @@ class UtilSpace {
 	};
 
 	/**
+	 * Records `object` as the space's last-opened object, so switching away from
+	 * the space and back reopens it (the write side of getLastObject).
+	 *
+	 * Skipped when:
+	 * - there is no real object (empty/blank detail);
+	 * - it is opened in a popup (transient, not the space's main view);
+	 * - it is the Dashboard/home layout, which is the fallback target itself and
+	 *   not a restorable object.
+	 *
+	 * Keyed by the object's own space (falling back to an explicit spaceId, then
+	 * the current space) so a late open arriving after a space switch can never
+	 * write into another space's bucket (JS-9815).
+	 */
+	setLastObject (object: any, spaceId?: string): void {
+		if (!object || object._empty_) {
+			return;
+		};
+
+		if (keyboard.isPopup()) {
+			return;
+		};
+
+		if ([ I.ObjectLayout.Dashboard ].includes(object.layout)) {
+			return;
+		};
+
+		const space = object.spaceId || spaceId || S.Common.space;
+
+		Storage.setLastOpened({ id: object.id, layout: object.layout, spaceId: space }, space);
+	};
+
+	/**
 	 * Gets the chat dashboard object.
 	 * @returns {I.DashboardObject} The chat dashboard object.
 	 */

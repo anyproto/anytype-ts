@@ -63,6 +63,11 @@ const PageMainChat = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 			if (object.layout == I.ObjectLayout.Space) {
 				C.ObjectOpen(rootId, '', S.Common.space);
+			} else {
+				// Chat-layout objects skip ObjectOpen (which is what records the last-opened
+				// object), so record here — otherwise switching spaces and back forgets the
+				// open chat and reopens the previously opened page (JS-9821).
+				U.Space.setLastObject(object, S.Common.space);
 			};
 
 			S.Common.setRightSidebarState(isPopup, { rootId });
