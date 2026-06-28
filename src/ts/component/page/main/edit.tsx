@@ -1,5 +1,4 @@
 import React, { forwardRef, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { Header, Footer, EditorPage } from 'Component';
 import * as I from 'Interface';
 
@@ -41,25 +40,20 @@ const PageMainEdit = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				rootId={rootId}
 			/>
 
-			<AnimatePresence mode="wait">
-				<motion.div
-					key={rootId}
-					id="bodyWrapper"
-					className="wrapper"
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1, transition: { duration: 0.12 } }}
-					exit={{ opacity: 0, transition: { duration: 0.08 } }}
-				>
-					<EditorPage
-						key="editorPage"
-						ref={ref => S.Common.refSet(`editor${ns}`, ref)}
-						{...props}
-						isPopup={isPopup}
-						rootId={rootId}
-						onOpen={onOpen}
-					/>
-				</motion.div>
-			</AnimatePresence>
+			<div
+				key={rootId}
+				id="bodyWrapper"
+				className="wrapper"
+			>
+				<EditorPage
+					key="editorPage"
+					ref={ref => S.Common.refSet(`editor${ns}`, ref)}
+					{...props}
+					isPopup={isPopup}
+					rootId={rootId}
+					onOpen={onOpen}
+				/>
+			</div>
 
 			<Footer component="mainObject" {...props} />
 		</>
