@@ -185,7 +185,9 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		getAnchor: getScrollAnchor,
 		getRestoreTop: getScrollRestoreTop,
 		beforeRestore: applyLastBlockHeight,
-		getObserveTarget: () => container.current,
+		// Read .editor live from nodeRef (attached before this hook's pre-paint layout
+		// effect); container.current is only set later in initNodes' post-paint effect.
+		getObserveTarget: () => U.Dom.select('.editor', nodeRef.current),
 	});
 
 	const getWrapperWidth = (): number => {
