@@ -160,7 +160,7 @@ const PageMainSet = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		keyboard.shortcut('searchText', e, () => {
 			e.preventDefault();
 
-			const searchIcon = U.Dom.select('#dataviewControls .filter .icon.search', bodyRef.current) as HTMLElement;
+			const searchIcon = U.Dom.select('#dataviewControls .filter .icon.commonSearch', bodyRef.current) as HTMLElement;
 			searchIcon?.click();
 		});
 

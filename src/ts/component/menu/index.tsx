@@ -31,6 +31,7 @@ import MenuBlockAdd from './block/add';
 import MenuBlockColor from './block/color';
 import MenuBlockBackground from './block/background';
 import MenuBlockCover from './block/cover';
+import MenuBlockMedia from './block/media';
 import MenuBlockAction from './block/action';
 import MenuBlockHAlign from './block/align';
 import MenuBlockLink from './block/link';
@@ -128,6 +129,7 @@ const Components: any = {
 	blockAlign:				 MenuBlockHAlign,
 	blockLink:				 MenuBlockLink,
 	blockCover:				 MenuBlockCover,
+	blockMedia:				 MenuBlockMedia,
 	blockMention:			 MenuBlockMention,
 	blockEmoji:				 MenuBlockEmoji,
 	blockLayout:			 MenuBlockLayout,
@@ -209,6 +211,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	const polyRef = useRef(null);
 	const isAnimating = useRef(false);
 	const isMounted = useRef(false);
+	const isUnmountedRef = useRef(false);
 	const framePosition = useRef(0);
 
 	const getContext = () => ({
@@ -249,6 +252,8 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 		return () => {
 			const el = getElement();
 
+			isUnmountedRef.current = true;
+
 			unbind();
 
 			if (el) {
@@ -287,11 +292,20 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	}, [ param.menuKey ]);
 
 	const rebindPrevious = () => {
-		const canRebind = parentId ? S.Menu.isOpen(parentId) : true;
-
 		childRef.current?.unbind?.();
 
-		if (!canRebind) {
+		// Without parentId we can't verify that the menu owning param.rebind
+		// is still mounted — calling rebind() on an unmounted owner re-adds
+		// its window keydown listener with nobody left to remove it, which
+		// silently leaks an `e.preventDefault()` on space across the whole tab.
+		if (!parentId) {
+			if (param.rebind) {
+				console.error(`[Menu].rebindPrevious: param.rebind passed without parentId in ${id}, skipping to avoid keydown leak`);
+			};
+			return;
+		};
+
+		if (!S.Menu.isOpen(parentId)) {
 			return;
 		};
 
@@ -697,7 +711,11 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDown = (e: any) => {
-		if (!childRef.current || !childRef.current.getItems || keyboard.isComposition) {
+		// Defense-in-depth: a leaked window keydown listener (e.g. one a
+		// child menu added but never removed in its cleanup) would still
+		// hold this closure after the menu unmounts. Bail out immediately
+		// so no preventDefault on space ever fires for a dead menu.
+		if (isUnmountedRef.current || !childRef.current || !childRef.current.getItems || keyboard.isComposition) {
 			return;
 		};
 

@@ -8,6 +8,8 @@ import TableOfContents from 'Component/page/elements/tableOfContents';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { useScrollRestore } from 'Hook';
+import { computeRestoreScrollTop } from 'Lib/util/scrollAnchor';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
@@ -37,7 +39,6 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const buttonAdd = useRef<any>(null);
 	const blockFeatured = useRef<any>(null);
 	const container = useRef<any>(null);
-	const scrollTopRef = useRef(0);
 	const isEnterProcessing = useRef(false);
 	const scrollHandlerRef = useRef<(() => void) | null>(null);
 	const windowHandlersRef = useRef<Map<string, (e: any) => void>>(new Map());
@@ -74,15 +75,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		checkDeleted();
 		initNodes();
 		rebind();
-		resizePage(() => {
-			if (scrollTopRef.current) {
-				const sc = U.Dom.getScrollContainer(isPopup);
-				if (sc) {
-					sc.scrollTop = scrollTopRef.current;
-				};
-				scrollTopRef.current = 0;
-			};
-		});
+		resizePage();
 
 		tocRef.current?.onScroll();
 		Preview.previewHide(false);
@@ -102,6 +95,101 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		blockFeatured.current = U.Dom.select(`#block-${U.Common.esc(J.Constant.blockId.featured)}`, node);
 	};
 
+	// Sizes the trailing #blockLast filler so the document is tall enough for a
+	// near-bottom scroll target to be reachable. Hoisted out of resizePage's raf so it
+	// can also run synchronously, pre-paint, before scroll restore (see useScrollRestore).
+	const applyLastBlockHeight = () => {
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
+		const blocks = U.Dom.select('.blocks', node);
+		const last = U.Dom.select('#blockLast', node);
+		const scrollContainer = U.Dom.getScrollContainer(isPopup);
+
+		if (!blocks || !last || !scrollContainer) {
+			return;
+		};
+
+		U.Dom.css(last, { height: '' });
+
+		const commentSection = U.Dom.select('.commentSection', node);
+		const csh = commentSection ? commentSection.offsetHeight : 0;
+		const counter = U.Dom.select('.commentCounter', node);
+
+		if (!csh) {
+			const ct = scrollContainer.getBoundingClientRect().top;
+			const ch = scrollContainer.clientHeight;
+			const bt = blocks.getBoundingClientRect().top + window.scrollY;
+			const bh = blocks.offsetHeight;
+
+			let height = ch - ct - bt - bh - 8;
+			height = Math.max(J.Size.lastBlock, height);
+
+			U.Dom.css(last, { height: `${height}px` });
+			U.Dom.addClass(counter, 'isFixed');
+		} else {
+			U.Dom.removeClass(counter, 'isFixed');
+		};
+	};
+
+	// Topmost-visible block at the scroll container's top edge (O(1) hit-test): its id +
+	// on-screen offset, persisted on scroll for flash-free restore on the next open.
+	const getScrollAnchor = (): { id: string; offset: number } | null => {
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (!container) {
+			return null;
+		};
+
+		const cr = container.getBoundingClientRect();
+		const x = cr.left + Math.min(40, cr.width / 2);
+		const y = cr.top + 1;
+
+		let el = U.Dom.elementFromPoint(x, y);
+		while (el && (el !== container) && !((el.id || '').startsWith('block-'))) {
+			el = el.parentElement;
+		};
+
+		if (!el || !(el.id || '').startsWith('block-')) {
+			return null;
+		};
+
+		const id = el.id.replace(/^block-/, '');
+		const r = el.getBoundingClientRect();
+
+		return { id, offset: (r.top - cr.top) };
+	};
+
+	// Where to scroll so the saved anchor block lands back at its saved on-screen offset.
+	const getScrollRestoreTop = (anchor: { id: string; offset: number }): number | null => {
+		const container = U.Dom.getScrollContainer(isPopup);
+		const el = U.Dom.get(`block-${U.Common.esc(anchor.id)}`);
+
+		if (!container || !el) {
+			return null;
+		};
+
+		const cr = container.getBoundingClientRect();
+		const r = el.getBoundingClientRect();
+		const contentTop = (r.top - cr.top) + container.scrollTop;
+
+		return computeRestoreScrollTop(contentTop, anchor.offset);
+	};
+
+	const { saveScroll } = useScrollRestore({
+		rootId,
+		isPopup,
+		storageKey: 'editor',
+		ready: !!root,
+		getAnchor: getScrollAnchor,
+		getRestoreTop: getScrollRestoreTop,
+		beforeRestore: applyLastBlockHeight,
+		// Read .editor live from nodeRef (attached before this hook's pre-paint layout
+		// effect); container.current is only set later in initNodes' post-paint effect.
+		getObserveTarget: () => U.Dom.select('.editor', nodeRef.current),
+	});
+
 	const getWrapperWidth = (): number => {
 		return getWidth(U.Data.getLayoutWidth(rootId));
 	};
@@ -119,7 +207,6 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const open = () => {
-		scrollTopRef.current = Storage.getScroll('editor', rootId, isPopup);
 		setIsDeleted(false);
 		idRef.current = rootId;
 
@@ -222,9 +309,14 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
+		const hasSavedScroll = !!Storage.getScrollAnchor('editor', rootId, isPopup) || !!Storage.getScroll('editor', rootId, isPopup);
+
 		focus.set(block.id, { from, to });
 		focus.apply();
-		focus.scroll(isPopup, block.id);
+
+		if (!hasSavedScroll) {
+			focus.scroll(isPopup, block.id);
+		};
 	};
 	
 	const unbind = () => {
@@ -273,6 +365,24 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			if ((e.target as HTMLElement)?.closest?.('.commentSection')) {
 				return;
 			};
+
+			// Paste replaces the cross-block text selection
+			const textSel = selection?.getTextSelection();
+			if (textSel) {
+				if (isReadonly()) {
+					return;
+				};
+
+				const data = getClipboardData(e);
+				if (!data.text && !data.html) {
+					return;
+				};
+
+				e.preventDefault();
+				deleteTextSelection('', () => onPaste(data));
+				return;
+			};
+
 			onPasteEvent(e, props);
 		});
 
@@ -282,7 +392,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			const ids = selection?.get(I.SelectType.Block, true) || [];
 			const top = Storage.getScroll('editor', rootId, isPopup);
 
-			if (!ids.length && !menuOpen && !popupOpen) {
+			if (!ids.length && !menuOpen && !popupOpen && !selection?.getTextSelection()) {
 				focus.restore();
 				raf(() => focus.apply());
 			};
@@ -509,6 +619,75 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const styleParam = getStyleParam();
 
 		let ret = false;
+
+		// Cross-block text selection
+		const textSel = selection.getTextSelection();
+		if (textSel) {
+			let handled = false;
+
+			keyboard.shortcut(`${cmd}+c, ${cmd}+x`, e, (pressed: string) => {
+				onCopy(e, pressed.match('x') ? I.ClipboardMode.Cut : I.ClipboardMode.Copy);
+				handled = true;
+			});
+
+			keyboard.shortcut('escape', e, () => {
+				if (!menuOpen) {
+					selection.clear();
+				};
+				handled = true;
+			});
+
+			keyboard.shortcut('backspace, delete', e, () => {
+				if (!readonly) {
+					e.preventDefault();
+					deleteTextSelection();
+				};
+				handled = true;
+			});
+
+			keyboard.shortcut('arrowleft, arrowup', e, () => {
+				e.preventDefault();
+				selection.clear();
+				focusSet(textSel.from.id, textSel.from.range.from, textSel.from.range.from, true);
+				handled = true;
+			});
+
+			keyboard.shortcut('arrowright, arrowdown', e, () => {
+				e.preventDefault();
+				selection.clear();
+				focusSet(textSel.to.id, textSel.to.range.to, textSel.to.range.to, true);
+				handled = true;
+			});
+
+			// Shift+Arrow extends the native selection, state is remapped on selectionchange
+			keyboard.shortcut('shift+arrowleft, shift+arrowright, shift+arrowup, shift+arrowdown', e, () => {
+				handled = true;
+			});
+
+			keyboard.shortcut('enter', e, () => {
+				if (!menuOpen && !popupOpen && !readonly) {
+					e.preventDefault();
+					deleteTextSelection();
+				};
+				handled = true;
+			});
+
+			// Clear the text selection and let the default handling run
+			keyboard.shortcut('selectAll, undo, redo, history', e, () => {
+				selection.clearTextSelection();
+			});
+
+			// Typing replaces the selection
+			if (!handled && !readonly && !keyboard.isSpecial(e) && !e.metaKey && !e.ctrlKey && !e.altKey && (e.key.length == 1)) {
+				e.preventDefault();
+				deleteTextSelection(e.key);
+				handled = true;
+			};
+
+			if (handled) {
+				return;
+			};
+		};
 
 		// Select all
 		keyboard.shortcut('selectAll', e, () => {
@@ -1975,11 +2154,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const onScroll = () => {
-		const { rootId, isPopup } = props;
-		const container = U.Dom.getScrollContainer(isPopup);
-		const top = container?.scrollTop ?? 0;
-
-		Storage.setScroll('editor', rootId, top, isPopup);
+		saveScroll();
 		tocRef.current?.onScroll();
 		Preview.previewHide(false);
 	};
@@ -1992,6 +2167,13 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { focused, range } = focus.state;
 		const isCut = mode == I.ClipboardMode.Cut;
 		if (!root || (readonly && isCut)) {
+			return;
+		};
+
+		// Cross-block text selection: the middleware trims/cuts the partially selected edge blocks
+		if (selection?.getTextSelection()) {
+			e.preventDefault();
+			Action.copyTextSelection(rootId, mode);
 			return;
 		};
 
@@ -2604,6 +2786,102 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 	};
 	
+	// Removes the content covered by a cross-block text selection, merging the edge blocks like a native editor
+	const deleteTextSelection = (insert?: string, callBack?: () => void) => {
+		const selection = S.Common.getRef('selectionProvider');
+		const textSel = selection?.getTextSelection();
+
+		if (!textSel || isReadonly()) {
+			return;
+		};
+
+		const list = selection.getTextSelectionIds();
+		if (!list.length) {
+			selection?.clearTextSelection();
+			return;
+		};
+
+		const first = S.Block.getLeaf(rootId, textSel.from.id);
+		const last = S.Block.getLeaf(rootId, textSel.to.id);
+
+		if (!first || !last) {
+			selection?.clearTextSelection();
+			return;
+		};
+
+		insert = String(insert || '');
+
+		const sameBlock = first.id == last.id;
+
+		let deleteIds = [];
+		let text = insert;
+		let marks: I.Mark[] = [];
+		let focusId = '';
+		let caret = 0;
+
+		if (first.isText()) {
+			const ft = String(first.content.text || '');
+
+			text = ft.slice(0, textSel.from.range.from) + insert;
+			marks = Mark.cutRange(first.content.marks || [], 0, textSel.from.range.from);
+			focusId = first.id;
+			caret = text.length;
+			deleteIds = list.filter(id => id != first.id);
+
+			const tailSource = sameBlock ? first : (last.isText() ? last : null);
+			if (tailSource) {
+				const lt = String(tailSource.content.text || '');
+				const tailMarks = Mark.cutRange(tailSource.content.marks || [], textSel.to.range.to, lt.length);
+
+				text += lt.slice(textSel.to.range.to);
+				marks = marks.concat(Mark.adjust(tailMarks, 0, caret));
+			};
+		} else
+		if (last.isText() && !sameBlock) {
+			// The first block is removed entirely, the tail of the last text block is kept
+			const lt = String(last.content.text || '');
+
+			text = insert + lt.slice(textSel.to.range.to);
+			marks = Mark.adjust(Mark.cutRange(last.content.marks || [], textSel.to.range.to, lt.length), 0, insert.length);
+			focusId = last.id;
+			caret = insert.length;
+			deleteIds = list.filter(id => id != last.id);
+		} else {
+			deleteIds = [ ...list ];
+		};
+
+		deleteIds = deleteIds.filter(id => {
+			const block = S.Block.getLeaf(rootId, id);
+			return block && block.isDeletable();
+		});
+
+		selection?.clear();
+		S.Menu.closeAll();
+
+		const done = () => {
+			if (focusId) {
+				focusSet(focusId, caret, caret, true);
+			};
+			callBack?.();
+		};
+
+		const remove = () => {
+			if (deleteIds.length) {
+				C.BlockListDelete(rootId, deleteIds, () => done());
+			} else {
+				done();
+			};
+		};
+
+		if (focusId) {
+			U.Data.blockSetText(rootId, focusId, text, marks, true, () => remove());
+		} else {
+			remove();
+		};
+
+		analytics.event('DeleteBlock', { count: deleteIds.length });
+	};
+
 	const onLastClick = (e: any) => {
 		const readonly = isReadonly();
 
@@ -2651,33 +2929,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
-			const blocks = U.Dom.select('.blocks', node);
-			const last = U.Dom.select('#blockLast', node);
-			const scrollContainer = U.Dom.getScrollContainer(isPopup);
-
 			setLayoutWidth(U.Data.getLayoutWidth(rootId));
-
-			if (blocks && last && scrollContainer) {
-				U.Dom.css(last, { height: '' });
-
-				const commentSection = U.Dom.select('.commentSection', node);
-				const csh = commentSection ? commentSection.offsetHeight : 0;
-				const counter = U.Dom.select('.commentCounter', node);
-
-				if (!csh) {
-					const ct = scrollContainer.getBoundingClientRect().top;
-					const ch = scrollContainer.clientHeight;
-					const bt = blocks.getBoundingClientRect().top + window.scrollY;
-					const bh = blocks.offsetHeight;
-
-					let height = ch - ct - bt - bh - 8;
-					height = Math.max(J.Size.lastBlock, height);
-					U.Dom.css(last, { height: `${height}px` });
-					U.Dom.addClass(counter, 'isFixed');
-				} else {
-					U.Dom.removeClass(counter, 'isFixed');
-				};
-			};
+			applyLastBlockHeight();
 
 			tocRef.current?.resize?.();
 			callBack?.();

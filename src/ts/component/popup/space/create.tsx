@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback, useImperativeHandle } from 'react';
 import { AutoSizer, List } from 'react-virtualized';
-import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon } from 'Component';
+import { IconObject, ObjectName, Button, Loader, Error, Input, Filter, Icon, Label } from 'Component';
 import { I, C, S, U, J, translate, keyboard, analytics, Action } from 'Lib';
 import raf from 'raf';
 
@@ -10,11 +10,12 @@ const LABEL_HEIGHT = 28;
 const SAFE_AREA = 120;
 const GRAD_HEIGHT = 32;
 
-const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position }, ref) => {
+const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, position }, ref) => {
 
 	const nameRef = useRef(null);
 	const iconRef = useRef(null);
 	const filterRef = useRef(null);
+	const joinInputRef = useRef(null);
 	const fileInputRef = useRef(null);
 	const listRef = useRef(null);
 	const selectedListRef = useRef(null);
@@ -24,13 +25,16 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 	const [ iconOption, setIconOption ] = useState(U.Common.rand(1, J.Constant.count.icon));
 	const iconImagePathRef = useRef('');
 	const [ iconPreviewUrl, setIconPreviewUrl ] = useState('');
-	const [ step, setStep ] = useState(0);
-	const [ ready, setReady ] = useState(false);
+	const { data } = param;
+	const { type } = data;
+	const isGroup = type == I.SpaceCreateType.Group;
+	const isJoin = type == I.SpaceCreateType.Join;
+	const [ step, setStep ] = useState(isGroup ? 0 : 1);
+	const [ ready, setReady ] = useState(!isGroup);
 	const [ search, setSearch ] = useState('');
 	const [ name, setName ] = useState('');
 	const [ selectedMembers, setSelectedMembers ] = useState<string[]>([]);
 	const [ isScrolledTop, setIsScrolledTop ] = useState(false);
-	const { data } = param;
 	const { name: limit } = J.Constant.limit.space;
 
 	const onKeyDown = (e: any) => {
@@ -155,7 +159,11 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 		});
 
 		if (search) {
-			return unique.filter(it => it.name.toLowerCase().includes(search.toLowerCase()));
+			const s = search.toLowerCase();
+
+			return unique.filter(it => {
+				return it.name?.toLowerCase().includes(s) || it.globalName?.toLowerCase().includes(s);
+			});
 		};
 
 		return unique;
@@ -339,6 +347,25 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 		});
 	};
 
+	const onJoinSubmit = (e: any) => {
+		e.preventDefault();
+
+		const route = U.Common.getRouteFromUrl(joinInputRef.current?.getValue());
+
+		if (route) {
+			close(() => U.Router.go(route, {}));
+		} else {
+			setError(translate('popupSpaceJoinByLinkError'));
+		};
+	};
+
+	const onJoinKeyUp = () => {
+		const v = joinInputRef.current?.getValue();
+
+		U.Dom.toggleClass(U.Dom.select(`#${getId()} .button`), 'disabled', !v?.length);
+		setError('');
+	};
+
 	const onIcon = () => {
 		fileInputRef.current?.click();
 	};
@@ -367,7 +394,9 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 	const object = getObject();
 
 	useEffect(() => {
-		loadMembers();
+		if (isGroup) {
+			loadMembers();
+		};
 
 		analytics.event('ScreenSettingsSpaceCreate', { status: S.Common.isOnline ? 'Online' : 'Offline' });
 		position();
@@ -436,7 +465,9 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 			setSearch('');
 			filterRef.current?.setValue('');
 
-			analytics.event('ScreenAddMember');
+			if (isGroup) {
+				analytics.event('ScreenAddMember');
+			};
 		};
 
 		position();
@@ -450,7 +481,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 	const selectedMemberObjects = S.Record.getRecords(SUB_ID).filter(it => selectedMembers.includes(it.id));
 	const selectedCount = selectedMembers.length;
 	const selectedObjectsCount = selectedMemberObjects.length;
-	const hasMembers = (members.length > 0) || (selectedObjectsCount > 0);
+	const hasMembers = isGroup && ((members.length > 0) || (selectedObjectsCount > 0));
 
 	const rowRenderer = ({ index, key, style }) => {
 		const item = members[index];
@@ -467,28 +498,52 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 				onClick={() => onToggleMember(item.id)}
 			>
 				<IconObject size={32} object={item} />
-				<ObjectName object={item} withBadge={true} />
+				<div className="info">
+					<ObjectName object={item} withBadge={true} />
+					{item.globalName ? <Label text={item.globalName} /> : ''}
+				</div>
 				<Icon name={selectedMembers.includes(item.id) ? 'marker/checkbox2' : 'marker/checkbox0'} className="checkbox" />
 			</div>
 		);
 	};
 
-	const title = translate(selectedCount > 0 ? 'popupSpaceCreateTitleGroup' : 'popupSpaceCreateTitlePersonal');
+	const title = translate(isGroup ? 'popupSpaceCreateTitleGroup' : 'popupSpaceCreateTitlePersonal');
 
 	let stepContent = null;
 
+	if (isJoin) {
+		stepContent = (
+			<div className="step stepJoin">
+				<div className="wrapper">
+					<div className="stepTitle">{translate('popupSpaceJoinByLinkLabel')}</div>
+					<form onSubmit={onJoinSubmit}>
+						<Input
+							type="text"
+							ref={joinInputRef}
+							size={40}
+							onKeyUp={onJoinKeyUp}
+							placeholder={translate('popupSpaceJoinByLinkInputPlaceholder')}
+							focusOnMount={true}
+						/>
+						<Button className="disabled" color="accent" text={translate('popupInviteRequestRequestToJoin')} onClick={onJoinSubmit} />
+					</form>
+				</div>
+			</div>
+		);
+	} else
 	if (!ready) {
 		stepContent = null;
 	} else
-	if (step == 0) {
+	if (isGroup && (step == 0)) {
 		const { writersLimit, readersLimit, writersCount, readersCount } = getSeatCounters();
+		const showSeatCounters = (writersLimit > 0) && (selectedCount >= writersLimit);
 
 		stepContent = (
 			<div className="step step0">
 				<div className="wrapper">
 					<div className="head">
 						<div className="stepTitle">{translate('popupSpaceCreateStep1Title')}</div>
-						{(writersLimit > 0) ? (
+						{showSeatCounters ? (
 							<div className="seatCounters">
 								{U.String.sprintf(translate('popupSpaceCreateSeatCounters'), writersCount, writersLimit, readersCount, readersLimit)}
 							</div>
@@ -544,7 +599,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 			</div>
 		);
 	} else {
-		const showOfflinePill = (selectedCount > 0) && !S.Common.isOnline;
+		const showOfflinePill = isGroup && (selectedCount > 0) && !S.Common.isOnline;
 
 		stepContent = (
 			<div className="step step1">
@@ -609,29 +664,43 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, close, position 
 											rowRenderer={({ index, key, style }) => {
 												const row = rows[index];
 
-												if (row.type == 'label') {
-													return (
-														<div key={key} style={style} className="sectionLabel">
-															{translate('popupSpaceCreateMembersLabel')}
-														</div>
-													);
+												let content = null;
+
+												switch (row.type) {
+													case 'label': {
+														content = (
+															<div key={key} style={style} className="sectionLabel">
+																{translate('popupSpaceCreateMembersLabel')}
+															</div>
+														);
+														break;
+													};
+
+													case 'add': {
+														content = (
+															<div key={key} style={style} className="item add" onClick={() => setStep(0)}>
+																<Icon name="menu/spaceCreate/group" />
+																<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
+															</div>
+														);
+														break;
+													};
+
+													default: {
+														content = (
+															<div key={key} style={style} id={`member-${row.id}`} className="item" onContextMenu={e => onMemberContext(e, row.id)}>
+																<IconObject size={32} object={row} />
+																<div className="info">
+																	<ObjectName object={row} withBadge={true} />
+																	{row.globalName ? <Label text={row.globalName} /> : ''}
+																</div>
+															</div>
+														);
+														break;
+													};
 												};
 
-												if (row.type == 'add') {
-													return (
-														<div key={key} style={style} className="item add" onClick={() => setStep(0)}>
-															<Icon name="menu/spaceCreate/group" />
-															<div className="name">{translate('popupSpaceCreateAddMembers')}</div>
-														</div>
-													);
-												};
-
-												return (
-													<div key={key} style={style} id={`member-${row.id}`} className="item" onContextMenu={e => onMemberContext(e, row.id)}>
-														<IconObject size={32} object={row} />
-														<ObjectName object={row} withBadge={true} />
-													</div>
-												);
+												return content;
 											}}
 											overscanRowCount={10}
 											onScroll={onScroll}

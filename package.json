@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.55.3",
+	"version": "0.55.21-alpha",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -86,7 +86,7 @@
 		"@vitejs/plugin-react-swc": "^4.2.0",
 		"ajv": "^7.2.4",
 		"cross-env": "^10.1.0",
-		"electron": "^41.0.4",
+		"electron": "^41.9.0",
 		"electron-builder": "^26.8.1",
 		"eslint": "^9.26.0",
 		"eslint-plugin-react": "^7.37.5",
@@ -159,7 +159,7 @@
 		"linux-distro": "^4.0.1",
 		"lodash": "^4.17.20",
 		"lodash.isequal": "^4.5.0",
-		"mermaid": "^11.12.2",
+		"mermaid": "^11.15.0",
 		"mime-types": "^3.0.1",
 		"mobx": "^6.15.0",
 		"mobx-logger": "^0.7.1",
@@ -197,6 +197,7 @@
 		"jsonfile": "^6.1.0",
 		"lodash-es": "^4.17.23",
 		"micromatch": "^4.0.8",
+		"node-gyp": "^12.1.0",
 		"tar": "^7.5.7",
 		"tmp": "^0.2.4",
 		"trim-newlines": "^3.0.1"
@@ -1205,6 +1206,7 @@
 	},
 	"trustedDependencies": [
 		"@sentry/cli",
-		"@swc/core"
+		"@swc/core",
+		"electron"
 	]
 }

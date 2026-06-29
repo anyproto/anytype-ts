@@ -65,7 +65,7 @@ const PopupInviteConfirm = forwardRef<{}, I.Popup>((props, ref) => {
 			const records = (message.records || []).filter(it => it.isActive);
 
 			readerLimt.current = spaceview?.readersLimit - records.length;
-			writerLimit.current = spaceview?.writersLimit - records.filter(it => it.isWriter || it.isOwner).length;
+			writerLimit.current = spaceview?.writersLimit - records.filter(it => it.isWriter || it.isAdmin || it.isOwner).length;
 
 			setIsLoading(false);
 		});

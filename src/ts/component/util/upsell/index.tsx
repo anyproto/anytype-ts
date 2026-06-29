@@ -52,7 +52,7 @@ const UpsellBanner = forwardRef<{}, Props>(({
 					return { isShown, isRed };
 				};
 
-				const editors = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isOwner);
+				const editors = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isAdmin || it.isOwner);
 				const limit = space.writersLimit;
 
 				isShown = editors.length >= Math.round(limit / 2);

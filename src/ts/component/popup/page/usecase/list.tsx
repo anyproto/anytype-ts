@@ -10,10 +10,11 @@ const LIMIT = 2;
 
 const PopupUsecasePageList = forwardRef<{}, I.PopupUsecase>((props, ref) => {
 
-	const { getAuthor, onAuthor, position, onPage } = props;
+	const { getAuthor, onAuthor, position, onPage, getId } = props;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ category, setCategory ] = useState(null);
 	const [ dummy, setDummy ] = useState(0);
+	const [ scrollElement, setScrollElement ] = useState<HTMLElement>(null);
 
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -118,6 +119,7 @@ const PopupUsecasePageList = forwardRef<{}, I.PopupUsecase>((props, ref) => {
 			load();
 		};
 
+		setScrollElement(U.Dom.get(`${getId()}-innerWrap`));
 		analytics.event('ScreenGallery');
 	}, [load]);
 
@@ -244,8 +246,8 @@ const PopupUsecasePageList = forwardRef<{}, I.PopupUsecase>((props, ref) => {
 			<div className="items">
 				{!items.length ? (
 					<EmptySearch text={textEmpty} />
-				) : (
-					<WindowScroller scrollElement={U.Dom.get('popupUsecase-innerWrap')}>
+				) : !scrollElement ? null : (
+					<WindowScroller scrollElement={scrollElement}>
 						{({ height, isScrolling, registerChild, scrollTop }) => (
 							<AutoSizer disableHeight={true} className="scrollArea" onResize={onResize}>
 								{({ width }) => (

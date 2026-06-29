@@ -1,5 +1,5 @@
-import React, { forwardRef, useRef, useImperativeHandle } from 'react';
-import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio } from 'Component';
+import React, { forwardRef, useRef, useImperativeHandle, useState } from 'react';
+import { IconObject, Icon, ObjectName, ObjectDescription, ObjectType, MediaVideo, MediaAudio, Loader } from 'Component';
 import * as I from 'Interface';
 
 interface Props {
@@ -43,6 +43,7 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 	const nodeRef = useRef(null);
 	const syncIconName = (syncStatus != I.SyncStatusObject.Synced) ? `chat/syncStatus/${I.SyncStatusObject[syncStatus].toLowerCase()}` : '';
 	const src = useRef('');
+	const [ isImageLoaded, setIsImageLoaded ] = useState(false);
 
 	if (isDownloadingFile) {
 		cn.push('isDownloadingFile');
@@ -187,11 +188,13 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 		return (
 			<div className="mediaWrapper" onClick={onPreviewHandler}>
 				{blur}
+				{!isImageLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
 				<img
 					id="image"
 					className="image"
 					src={src.current}
 					onDragStart={e => e.preventDefault()}
+					onLoad={() => setIsImageLoaded(true)}
 					style={style}
 				/>
 
@@ -432,9 +435,10 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 	}));
 
 	return (
-		<div 
+		<div
 			ref={nodeRef}
 			className={cn.join(' ')}
+			{...U.Common.dataProps({ id: object.id })}
 		>
 			{content}
 			<Icon name="chat/buttons/remove" className="remove" size={8} onClick={onRemoveHandler} />

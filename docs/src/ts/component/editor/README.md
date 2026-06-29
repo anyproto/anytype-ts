@@ -27,6 +27,8 @@ Functional component using `forwardRef` with hooks (`useRef`, `useEffect`, `useS
 - `onPaste` - Multi-format paste (HTML/text/files/URLs)
 - `onBackspace` / `onDelete` - Block merging logic
 - `onEnter` - Block splitting / new block creation
+- `deleteTextSelection` - Removes a cross-block text selection: trims the edge blocks, deletes the blocks in between, merges the kept head/tail (optionally inserting typed text); used by Backspace/Delete, typing replacement and paste-over-selection
+- `onCopy` - Copies/cuts block selection or cross-block text selection (`Action.copyTextSelection`; the middleware trims/cuts the edge blocks via `selectedTextRange` + `selectedTextRangeLastBlock`)
 
 ## Integration
 

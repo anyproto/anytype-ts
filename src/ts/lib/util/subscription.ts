@@ -508,6 +508,10 @@ class UtilSubscription {
 				U.Space.getParticipantId(space.targetSpaceId, account.id),
 			];
 
+			if (space.isOneToOne && space.oneToOneIdentity) {
+				ids.push(U.Space.getParticipantId(space.targetSpaceId, space.oneToOneIdentity));
+			};
+
 			if (!skipIds.includes(space.homepage)) {
 				ids.push(space.homepage);
 			};

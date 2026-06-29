@@ -1,6 +1,7 @@
 import { observable, action, makeObservable, set, autorun } from 'mobx';
 import * as I from 'Interface';
 import * as M from 'Model';
+import { evictedCount, shouldSuppressLiveAdd } from 'Lib/util/chatWindow';
 
 const MAX_MESSAGES = 500;
 
@@ -12,6 +13,9 @@ class ChatStore {
 	public attachmentsMap: Map<string, any[]> = observable(new Map());
 	public discussionParentMap: Map<string, Map<string, string>> = observable.map(new Map());
 	private badgeValue = '';
+	private atChatStartMap: Map<string, boolean> = new Map();
+	private atChatEndMap: Map<string, boolean> = new Map();
+	private messageByIdMap: Map<string, Map<string, any>> = new Map();
 
 	constructor () {
 		makeObservable(this, {
@@ -36,8 +40,20 @@ class ChatStore {
 	set (subId: string, list: I.ChatMessage[]): void {
 		list = list.map(it => new M.ChatMessage(it));
 		list = U.Common.arrayUniqueObjects(list, 'id');
-		
+
 		this.messageMap.set(subId, observable.array(list));
+		this.rebuildIndex(subId);
+	};
+
+	/**
+	 * Rebuilds the per-subId id→message index from the current list, for O(1) getMessageById.
+	 * Cheap (≤ MAX_MESSAGES) and only runs on list-changing operations (set / prepend / append),
+	 * never per render or per scroll frame.
+	 * @param {string} subId - The subscription ID.
+	 */
+	private rebuildIndex (subId: string): void {
+		const list = this.getList(subId);
+		this.messageByIdMap.set(subId, new Map(list.map((it: any) => [ it.id, it ])));
 	};
 
 	/**
@@ -45,7 +61,7 @@ class ChatStore {
 	 * @param {string} subId - The subscription ID.
 	 * @param {I.ChatMessage[]} add - The chat messages to prepend.
 	 */
-	prepend (subId: string, add: I.ChatMessage[]): void {
+	prepend (subId: string, add: I.ChatMessage[]): boolean {
 		const list = this.getList(subId);
 		const ids = new Set(list.map(it => it.id));
 
@@ -54,9 +70,14 @@ class ChatStore {
 
 		list.unshift(...add);
 
-		if (list.length > MAX_MESSAGES) {
+		const evicted = evictedCount(list.length, MAX_MESSAGES);
+		if (evicted) {
 			list.splice(MAX_MESSAGES);
+			this.setAtChatEnd(subId, false);
 		};
+
+		this.rebuildIndex(subId);
+		return evicted > 0;
 	};
 
 	/**
@@ -64,7 +85,7 @@ class ChatStore {
 	 * @param {string} subId - The subscription ID.
 	 * @param {I.ChatMessage[]} add - The chat messages to append.
 	 */
-	append (subId: string, add: I.ChatMessage[]): void {
+	append (subId: string, add: I.ChatMessage[]): boolean {
 		const list = this.getList(subId);
 		const ids = new Set(list.map(it => it.id));
 
@@ -73,9 +94,14 @@ class ChatStore {
 
 		list.push(...add);
 
-		if (list.length > MAX_MESSAGES) {
-			list.splice(0, list.length - MAX_MESSAGES);
+		const evicted = evictedCount(list.length, MAX_MESSAGES);
+		if (evicted) {
+			list.splice(0, evicted);
+			this.setAtChatStart(subId, false);
 		};
+
+		this.rebuildIndex(subId);
+		return evicted > 0;
 	};
 
 	/**
@@ -87,12 +113,34 @@ class ChatStore {
 	add (subId: string, idx: number, param: I.ChatMessage): void {
 		const list = this.getList(subId);
 		const item = this.getMessageById(subId, param.id);
-		
+
 		if (item) {
 			return;
 		};
 
+		const isTail = idx >= list.length;
+
+		// A genuinely-newer live message while the window is not at the chat end would land
+		// after an evicted tail (out of order). Suppress it; it is fetched on scroll-down /
+		// jump-to-bottom. Non-open and preview subIds keep atChatEnd === true (default).
+		if (isTail) {
+			const last = list.length ? list[list.length - 1] : null;
+			if (shouldSuppressLiveAdd(this.isAtChatEnd(subId), param.orderId, last ? last.orderId : '')) {
+				return;
+			};
+		};
+
 		list.splice(idx, 0, param);
+
+		// Tail insert behaves like append: trim the oldest head if over the cap.
+		if (isTail) {
+			const evicted = evictedCount(list.length, MAX_MESSAGES);
+			if (evicted) {
+				list.splice(0, evicted);
+				this.setAtChatStart(subId, false);
+			};
+		};
+
 		this.set(subId, list);
 	};
 
@@ -308,6 +356,45 @@ class ChatStore {
 		this.messageMap.delete(subId);
 		this.replyMap.delete(subId);
 		this.attachmentsMap.delete(subId);
+		this.atChatStartMap.delete(subId);
+		this.atChatEndMap.delete(subId);
+		this.messageByIdMap.delete(subId);
+	};
+
+	/**
+	 * Whether the window's first message is the chat's oldest. Default true (untracked subId).
+	 * @param {string} subId - The subscription ID.
+	 */
+	isAtChatStart (subId: string): boolean {
+		const v = this.atChatStartMap.get(subId);
+		return v === undefined ? true : v;
+	};
+
+	/**
+	 * Whether the window's last message is the chat's newest. Default true (untracked subId).
+	 * @param {string} subId - The subscription ID.
+	 */
+	isAtChatEnd (subId: string): boolean {
+		const v = this.atChatEndMap.get(subId);
+		return v === undefined ? true : v;
+	};
+
+	/**
+	 * Sets whether the window is anchored at the chat's oldest message.
+	 * @param {string} subId - The subscription ID.
+	 * @param {boolean} v - The value.
+	 */
+	setAtChatStart (subId: string, v: boolean): void {
+		this.atChatStartMap.set(subId, v);
+	};
+
+	/**
+	 * Sets whether the window is anchored at the chat's newest message.
+	 * @param {string} subId - The subscription ID.
+	 * @param {boolean} v - The value.
+	 */
+	setAtChatEnd (subId: string, v: boolean): void {
+		this.atChatEndMap.set(subId, v);
 	};
 
 	/**
@@ -319,6 +406,9 @@ class ChatStore {
 		this.stateMap.clear();
 		this.attachmentsMap.clear();
 		this.discussionParentMap.clear();
+		this.atChatStartMap.clear();
+		this.atChatEndMap.clear();
+		this.messageByIdMap.clear();
 	};
 
 	/**
@@ -337,7 +427,13 @@ class ChatStore {
 	 * @returns {I.ChatMessage} The chat message.
 	 */
 	getMessageById (subId: string, id: string): I.ChatMessage {
-		return this.getList(subId).find(it => it.id == id);
+		// Read the observable list FIRST so observer callers (Message rows) keep a MobX dependency
+		// on the message map key. set()/add()/delete() replace the array with freshly-wrapped
+		// M.ChatMessage instances; without this read a memoized observer row bound to a now-detached
+		// instance would stop reflecting reactions/edits/read-status/grouping. The map is the O(1)
+		// accelerator for the actual lookup.
+		const list = this.getList(subId);
+		return this.messageByIdMap.get(subId)?.get(id) || list.find(it => it.id == id);
 	};
 
 	/**

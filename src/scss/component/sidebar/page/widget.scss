@@ -8,9 +8,14 @@ $gradient: linear-gradient(90deg, rgba(247, 247, 247, 0) 0%, var(--color-shape-h
 	}
 
 	> .head {
-		&::after {
+		&.isDefault::after {
 			content: ""; position: absolute; background: $gradient; height: 100%; width: 100%; left: 0px; top: 0px;
 			transition: opacity 0.2s $easeDecelerate; pointer-events: none;
+		}
+
+		&.isPreview { justify-content: flex-start; }
+		&.isPreview {
+			.side.left { flex-grow: 0; flex-shrink: 0; }
 		}
 	}
 

@@ -79,6 +79,9 @@
 			&.align1 .flex { justify-content: center; }
 			&.align2 .flex { justify-content: flex-end; }
 
+			// Last cell only mirrors the add-property column for layout — it is not interactive
+			&.last:hover::after { display: none; }
+
 			.result { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; max-width: 100%; }
 			.result {
 				.value { @include text-overflow-nw; }

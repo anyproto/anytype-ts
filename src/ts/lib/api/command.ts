@@ -1,5 +1,4 @@
 import * as I from 'Interface';
-import Storage from 'Lib/storage';
 
 export const InitialSetParameters = (platform: I.Platform, version: string, workDir: string, logLevel: string, doNotSendLogs: boolean, doNotSaveLogs: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('InitialSetParameters', {
@@ -152,7 +151,7 @@ export const AccountRecover = (callBack?: (message: any) => void) => {
 	dispatcher.request('AccountRecover', {}, callBack);
 };
 
-export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
+export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, preferredSpaceId: string, callBack?: (message: any) => void) => {
 	dispatcher.request('AccountSelect', {
 		id,
 		rootPath: path,
@@ -160,7 +159,12 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 		networkCustomConfigFilePath: networkConfigPath,
 		jsonApiListenAddr: J.Url.api,
 		enableMembershipV2: true,
+		preferredSpaceId,
 	}, callBack);
+};
+
+export const AccountPreloadRemainingSpaces = (callBack?: (message: any) => void) => {
+	dispatcher.request('AccountPreloadRemainingSpaces', {}, callBack);
 };
 
 export const AccountMigrate = (id: string, path: string, callBack?: (message: any) => void) => {
@@ -457,23 +461,25 @@ export const BlockUpload = (contextId: string, blockId: string, url: string, pat
 	}, callBack);
 };
 
-export const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
+export const BlockCopy = (contextId: string, blocks: I.Block[], range: I.TextRange, rangeLastBlock?: I.TextRange, callBack?: (message: any) => void) => {
 	blocks = U.Common.objectCopy(blocks);
 
 	dispatcher.request('BlockCopy', {
 		contextId,
 		blocks: blocks.map(Mapper.To.Block),
 		selectedTextRange: Mapper.To.Range(range),
+		selectedTextRangeLastBlock: rangeLastBlock ? Mapper.To.Range(rangeLastBlock) : undefined,
 	}, callBack);
 };
 
-export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, callBack?: (message: any) => void) => {
+export const BlockCut = (contextId: string, blocks: I.Block[], range: I.TextRange, rangeLastBlock?: I.TextRange, callBack?: (message: any) => void) => {
 	blocks = U.Common.objectCopy(blocks);
 
 	dispatcher.request('BlockCut', {
 		contextId,
 		blocks: blocks.map(Mapper.To.Block),
 		selectedTextRange: Mapper.To.Range(range),
+		selectedTextRangeLastBlock: rangeLastBlock ? Mapper.To.Range(rangeLastBlock) : undefined,
 	}, callBack);
 };
 
@@ -1176,12 +1182,10 @@ export const ObjectOpen = (objectId: string, traceId: string, spaceId: string, c
 		if (!message.error.code) {
 			dispatcher.onObjectView(objectId, traceId, message.objectView, true);
 
-			// Save last opened object
-			const object = S.Detail.get(objectId, objectId, []);
-
-			if (!object._empty_ && ![ I.ObjectLayout.Dashboard ].includes(object.layout) && !keyboard.isPopup()) {
-				Storage.setLastOpened({ id: object.id, layout: object.layout });
-			};
+			// Record the last-opened object (popup / empty / dashboard guards and the
+			// per-space keying that avoids polluting another space's bucket after a late
+			// open all live in U.Space.setLastObject — see JS-9815).
+			U.Space.setLastObject(S.Detail.get(objectId, objectId, []), spaceId);
 		};
 
 		callBack?.(message);

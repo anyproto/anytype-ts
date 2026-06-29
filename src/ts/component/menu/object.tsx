@@ -74,6 +74,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		let pageDeeplink = { id: 'pageDeeplink', iconParam: { name: 'menu/block/common/linkto' }, name: translate('commonCopyDeeplink') };
 		let pageReload = { id: 'pageReload', iconParam: { name: 'menu/action/reload' }, name: translate('menuObjectReloadFromSource') };
 		let pageExport = { id: 'pageExport', iconParam: { name: 'menu/action/export' }, name: translate('menuObjectExport') };
+		let exportSet = { id: 'exportSet', iconParam: { name: 'menu/action/export' }, name: translate('menuObjectExport') };
 		let downloadFile = { id: 'downloadFile', iconParam: { name: 'menu/action/download' }, name: translate('commonDownload') };
 		let openFile = { id: 'openFile', iconParam: { name: 'common/expand' }, name: translate('menuObjectDownloadOpen') };
 		let openObject = { id: 'openAsObject', iconParam: { name: 'common/expand' }, name: translate('commonOpenObject') };
@@ -121,7 +122,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const allowedSearchText = !isFilePreview && !isInSet && !isChat;
 		const allowedHistory = !object.isArchived && !isInFileOrSystem && !isParticipant && !isDate && !isChat && !object.templateIsBundled;
 		const allowedLock = canWrite && !object.isArchived && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Details ]) && !isInFileOrSystem;
-		const allowedPinToChannel = canWrite && !isRelation && !isTemplate && !object.isArchived && U.Space.isMyOwner();
+		const allowedPinToChannel = canWrite && !isRelation && !isTemplate && !object.isArchived && U.Space.canMyParticipantModerate();
 		const allowedFavorite = canWrite && !isRelation && !isTemplate && !object.isArchived;
 		const allowedLinkTo = canWrite && !isRelation && !object.isArchived;
 		const allowedAddCollection = canWrite && !isRelation && !object.isArchived && !isTemplate;
@@ -130,6 +131,8 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const allowedReload = canWrite && object.source && isBookmark;
 		const allowedTemplate = canWrite && !U.Object.getLayoutsWithoutTemplates().includes(object.layout) && S.Block.checkFlags(rootId, rootId, [ I.RestrictionObject.Template ]);
 		const allowedExport = !isFilePreview && !isChat && !isDate;
+		const dataviewId = J.Constant.blockId.dataview;
+		const allowedExportSet = isInSet && !object.isArchived && !!S.Block.getLeaf(rootId, dataviewId) && !!Dataview.getView(rootId, dataviewId);
 		const allowedPrint = !isFilePreview && !isChat && !isVideoOrAudio;
 		const allowedDownloadFile = isInFile;
 		const allowedOpenFile = isInFile;
@@ -164,12 +167,14 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		if (!allowedLinkTo)			 linkTo = null;
 		if (!allowedAddCollection)	 addCollection = null;
 		if (!allowedExport)			 pageExport = null;
+		if (!allowedExportSet)		 exportSet = null;
 		if (!allowedPrint)			 print = null;
 		if (!allowedDownloadFile)	 downloadFile = null;
 		if (!allowedOpenFile)		 openFile = null;
 		if (!allowedOpenObject)		 openObject = null;
 		if (!allowedEditType) 		 editType = null;
 		if (!allowedEditChat) 		 editChat = null;
+		if (!allowedCopyMedia)		 copyMedia = null;
 		if (!allowedNotification) {
 			notification = null;
 		} else
@@ -183,7 +188,6 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				notification = { id: 'mute', name: translate('commonMute'), iconParam: { name: 'menu/action/mute' } };
 			};
 		};
-		if (!allowedCopyMedia)		 copyMedia = null;
 		if (!canWrite) {
 			template = null;
 			setDefaultTemplate = null;
@@ -217,9 +221,9 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			sections = sections.concat([
 				{ children: [ openObject ] },
-				{ children: [ pageLink, favorite, pinToChannel, linkTo, addCollection, pageCopy, archive, remove ] },
+				{ children: [ pageLink, favorite, pinToChannel, linkTo, addCollection, pageCopy, archive, remove, template ] },
 				{ children: [ pageLock, history ] },
-				{ children: [ downloadFile, copyMedia, print ] },
+				{ children: [ downloadFile, copyMedia, print, exportSet ] },
 			]);
 		} else {
 			if (isTemplate) {
@@ -291,6 +295,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			className,
 			classNameWrap,
 			rebind,
+			parentId: getId(),
 			data: {
 				rootId,
 				blockId: rootId,
@@ -470,6 +475,13 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'pageExport': {
 				S.Popup.open('export', { data: { objectIds: [ rootId ], allowHtml: true, route } });
+				break;
+			};
+
+			case 'exportSet': {
+				Dataview.loadExportIds(rootId, J.Constant.blockId.dataview, (ids: string[]) => {
+					S.Popup.open('export', { data: { objectIds: ids, allowHtml: true, route } });
+				});
 				break;
 			};
 

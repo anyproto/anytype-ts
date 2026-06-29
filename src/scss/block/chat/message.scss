@@ -44,9 +44,31 @@
 	.bubble {
 		.textWrapper { line-height: 20px; padding: 6px 12px; }
 		.text { user-select: text !important; display: inline; }
-		.time { 
+		// A multiline code mark renders as its own block element (see U.Chat.splitCodeRuns) — no bordering <br>s,
+		// so no empty lines and no selection strip. Inline code (single-line) stays a markupcode pill.
+		.text .codeMark {
+			display: block; margin: 8px 0px; padding: 16px 12px; border-radius: 8px;
+			background: var(--color-shape-highlight-medium); box-shadow: 0px 0px 0px 1px var(--color-shape-highlight-dark) inset;
+			font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
+			white-space: pre-wrap; tab-size: 4; overflow-wrap: anywhere;
+		}
+		.codeBlock {
+			display: block; padding: 16px 12px; margin: 8px 0px; border-radius: 8px; background: var(--color-shape-highlight-light-solid);
+			color: var(--color-text-primary); font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px;
+			white-space: pre-wrap; tab-size: 4; overflow-wrap: anywhere; user-select: text !important; position: relative;
+		}
+		.codeBlock {
+			code { font-family: inherit; font-size: inherit; }
+			.codeLang {
+				position: absolute; top: 4px; right: 4px; padding: 2px 8px; @include text-very-small;
+				color: var(--color-text-secondary); font-family: var(--fontFamily); background: var(--color-shape-highlight-medium);
+				border-radius: 4px; user-select: none;
+			}
+		}
+		.textWrapper > .codeBlock:first-child { margin-top: 0px; }
+		.time {
 			@include text-very-small; line-height: 14px; letter-spacing: -0.07px; color: var(--color-text-secondary); float: right; padding: 4px 0px 0px 4px;
-			display: flex; align-items: center; gap: 0px 4px; white-space: nowrap;
+			display: flex; align-items: center; gap: 0px 4px; white-space: nowrap; user-select: none !important;
 		}
 
 		.attachments { padding: 4px; }
@@ -214,7 +236,7 @@
 	&.highlight {
 		.bubbleInner {
 			.bubble { 
-				background-color: var(--color-very-light-ice) !important; color: #252525 !important;
+				background-color: var(--color-very-light-ice) !important; color: var(--color-text-primary) !important;
 			}
 		}
 	}

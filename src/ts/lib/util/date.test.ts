@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import * as I from 'Interface';
 import UtilDate from './date';
 
 describe('UtilDate', () => {
@@ -362,6 +363,33 @@ describe('UtilDate', () => {
 
 			const d = new Date(ts * 1000);
 			expect(d.getDate()).toBeLessThanOrEqual(29);
+		});
+	});
+
+	describe('dateWithFormat (picker sample distinguishability)', () => {
+		// Regression guard for #2208. The settings date-format picker labels every
+		// option with `dateWithFormat(id, sample)`. With a symmetric sample (day == month,
+		// e.g. 05.05 or 12.12) Short (d/m/Y) and ShortUS (m/d/Y) collapse to the same
+		// string, so the user cannot tell the two options apart in the picker. The
+		// picker now uses Jul 30, 2020 as a fixed asymmetric sample — this test pins
+		// the property that fix relies on.
+		it('Short and ShortUS produce distinguishable labels at an asymmetric sample (Jul 30, 2020)', () => {
+			const sample = UtilDate.timestamp(2020, 7, 30);
+			const short = UtilDate.dateWithFormat(I.DateFormat.Short, sample);
+			const shortUS = UtilDate.dateWithFormat(I.DateFormat.ShortUS, sample);
+
+			expect(short).not.toBe(shortUS);
+		});
+
+		it('Short and ShortUS collapse on a symmetric date (the bug reported in #2208)', () => {
+			const symmetric = UtilDate.timestamp(2026, 5, 5);
+			const short = UtilDate.dateWithFormat(I.DateFormat.Short, symmetric);
+			const shortUS = UtilDate.dateWithFormat(I.DateFormat.ShortUS, symmetric);
+
+			// This is the bug — documenting it as the negative case so any future
+			// change that picks a symmetric sample for the picker would trip the
+			// distinguishability test above.
+			expect(short).toBe(shortUS);
 		});
 	});
 

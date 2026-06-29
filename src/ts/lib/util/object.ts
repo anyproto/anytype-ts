@@ -149,6 +149,10 @@ class UtilObject {
 			return;
 		};
 
+		if (e && (e.button == 2)) {
+			return;
+		};
+
 		param = this.checkParam(param);
 
 		if (!e) {

@@ -54,9 +54,11 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const [ isShowing, setIsShowing ] = useState(false);
 	const [ isEditing, setIsEditing ] = useState(false);
 	const [ isFullScreen, setIsFullScreen ] = useState(false);
-	const { rootId, block, readonly, isPopup, onKeyDown, onKeyUp } = props;
+	const { rootId, block, isPopup, onKeyDown, onKeyUp } = props;
 	const { content, fields, hAlign } = block;
 	const { processor } = content;
+	const isExcalidrawProcessor = processor == I.EmbedProcessor.Excalidraw;
+	const readonly = props.readonly || isExcalidrawProcessor;
 	const { width, type, height: fieldHeight } = fields || {};
 	const cn = [ 'wrap', 'focusable', `c${block.id}` ];
 	const menuItem: any = U.Menu.getBlockEmbed().find(it => it.id == processor) || { name: '' };
@@ -80,6 +82,28 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const mouseMoveHandlerRef = useRef<((e: globalThis.MouseEvent) => void) | null>(null);
 	const messageHandlerRef = useRef<((e: MessageEvent) => void) | null>(null);
 	const isExcalidraw = block.isEmbedExcalidraw();
+
+	let appHtmlContent = '';
+	let appStateText = '';
+	let appStateBlockId = '';
+	if (processor === I.EmbedProcessor.AnytypeMiniApp) {
+		const parent = S.Block.getParentLeaf(rootId, block.id);
+		if (parent) {
+			const codeSiblings = S.Block.getChildren(rootId, parent.id, (b: I.Block) => {
+				return b && (b.id !== block.id) && b.isTextCode();
+			});
+			const htmlBlock = codeSiblings.find((b: any) => {
+				const lang = String(b.fields?.lang || '').toLowerCase();
+				return (lang === 'html') || (lang === 'markup');
+			});
+			const jsonBlock = codeSiblings.find((b: any) => {
+				return String(b.fields?.lang || '').toLowerCase() === 'json';
+			});
+			appHtmlContent = String(htmlBlock?.content?.text || '');
+			appStateText = String(jsonBlock?.content?.text || '');
+			appStateBlockId = String(jsonBlock?.id || '');
+		};
+	};
 
 	const excalidrawCss: any = {};
 
@@ -155,7 +179,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 		if (node) {
 			const receiver = U.Dom.select('#receiver', node);
-			if (receiver) {
+			if (receiver && processor !== I.EmbedProcessor.AnytypeMiniApp) {
 				receiver.remove();
 			};
 		};
@@ -589,6 +613,21 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						sanitizeParam.ADD_TAGS.push('script');
 					};
 
+					if (processor === I.EmbedProcessor.AnytypeMiniApp) {
+						let parsedState: any = null;
+						if (appStateText) {
+							try {
+								parsedState = JSON.parse(appStateText);
+							} catch (e) {
+								console.warn('AnytypeMiniApp: invalid JSON state', e);
+							};
+						};
+
+						data.anytypeMiniApp = {
+							html: appHtmlContent,
+							state: parsedState,
+						};
+					} else
 					if (U.Embed.allowJs(processor)) {
 						data.js = text;
 					} else {
@@ -620,6 +659,22 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 							case 'openUrl': {
 								Action.openUrl(url);
+								break;
+							};
+
+							case 'anytypeMiniAppState': {
+								if (!appStateBlockId) {
+									break;
+								};
+								let serialized = '';
+								try {
+									serialized = JSON.stringify(e.data.state, null, 2);
+								} catch (err) {
+									console.warn('AnytypeMiniApp: failed to serialize state', err);
+									break;
+								};
+								S.Block.updateContent(rootId, appStateBlockId, { text: serialized });
+								C.BlockTextSetText(rootId, appStateBlockId, serialized, [], { from: 0, to: 0 });
 								break;
 							};
 						};
@@ -753,6 +808,13 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	};
 
 	const onEdit = (e: any) => {
+		if (isExcalidrawProcessor) {
+			e.preventDefault();
+			e.stopPropagation();
+			Preview.toastShow({ text: translate('blockEmbedExcalidrawReadonly') });
+			return;
+		};
+
 		if (readonly) {
 			return;
 		};
@@ -760,9 +822,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (processor != I.EmbedProcessor.Excalidraw) {
-			setIsEditing(true);
-		};
+		setIsEditing(true);
 	};
 
 	const save = (update: boolean, callBack?: (message: any) => void) => {
@@ -1001,7 +1061,7 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	useEffect(() => {
 		init();
-	}, [ block.content.text, isEditing, isShowing ]);
+	}, [ block.content.text, isEditing, isShowing, appHtmlContent, appStateText ]);
 
 	useEffect(() => {
 		if (isEditing) {

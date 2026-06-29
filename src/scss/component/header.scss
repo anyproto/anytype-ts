@@ -154,11 +154,17 @@ html.bodyAuthSelect {
 }
 
 .header.mainSettings {
-	.identity { 
-		-webkit-app-region: no-drag; display: flex; gap: 0px 6px; align-items: center; height: 22px; width: 100%; 
-		overflow: hidden; justify-content: center;
+	&:has(.identity) {
+		.side.left, .side.right { flex: 1 1 0px; min-width: 0; }
+	}
+
+	.identity {
+		-webkit-app-region: no-drag; display: flex; flex-direction: row; align-items: center; gap: 0px 4px;
+		min-width: 0; height: 24px; padding: 0px 6px; border-radius: 100px; transition: background $transitionCommon;
 	}
 	.identity {
-		.label { color: var(--color-text-primary); @include text-overflow-nw; }
+		.label { @include text-overflow-nw; @include text-common; color: var(--color-text-secondary); font-weight: 500; }
+		.badge { flex-shrink: 0; }
+		&:hover { background: var(--color-shape-highlight-medium); }
 	}
 }

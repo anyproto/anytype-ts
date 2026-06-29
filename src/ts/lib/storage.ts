@@ -11,6 +11,7 @@ const SPACE_KEYS = new Set([
 	'toggle',
 	'lastOpenedSimple',
 	'scroll',
+	'scrollAnchor',
 	'defaultType',
 	'chat',
 	'comment',
@@ -29,6 +30,7 @@ const SPACE_KEYS = new Set([
 const LOCAL_KEYS = new Set([
 	'toggle',
 	'scroll',
+	'scrollAnchor',
 	'focus',
 	'graphData',
 	'updateBanner',
@@ -307,27 +309,29 @@ class Storage {
 	/**
 	 * Gets an account key value for the current account.
 	 * @param {string} key - The account key.
+	 * @param {string} [accountId] - The account ID (defaults to the current account).
 	 * @returns {any} The value for the account key.
 	 */
-	getAccountKey (key: string, isLocal: boolean) {
-		const accountId = this.getAccountId();
+	getAccountKey (key: string, isLocal: boolean, accountId?: string) {
+		accountId = accountId || this.getAccountId();
 		if (!accountId) {
 			return;
 		};
 
-		const obj = this.getAccount(isLocal);
+		const obj = this.getAccount(isLocal, accountId);
 
 		return obj[accountId]?.[key];
 	};
 
 	/**
 	 * Gets the account object from storage.
+	 * @param {string} [accountId] - The account ID (defaults to the current account).
 	 * @returns {any} The account object.
 	 */
-	getAccount (isLocal: boolean) {
+	getAccount (isLocal: boolean, accountId?: string) {
 		const obj = this.get('account', isLocal) || {};
-		const accountId = this.getAccountId();
 
+		accountId = accountId || this.getAccountId();
 		obj[accountId] = obj[accountId] || {};
 
 		return obj;
@@ -379,16 +383,17 @@ class Storage {
 	 * Gets the last opened objects from storage.
 	 * @returns {any} The last opened objects.
 	 */
-	getLastOpened () {
-		return this.get('lastOpenedSimple', this.isLocal('lastOpenedSimple')) || {};
+	getLastOpened (spaceId?: string) {
+		return this.getSpaceKey('lastOpenedSimple', this.isLocal('lastOpenedSimple'), spaceId) || {};
 	};
 
 	/**
 	 * Sets the last opened object for a window.
 	 * @param {any} param - The parameters to set.
+	 * @param {string} [spaceId] - The space the object belongs to (defaults to the current space).
 	 */
-	setLastOpened (param: any) {
-		this.set('lastOpenedSimple', param, this.isLocal('lastOpenedSimple'));
+	setLastOpened (param: any, spaceId?: string) {
+		this.setSpaceKey('lastOpenedSimple', param, this.isLocal('lastOpenedSimple'), spaceId);
 	};
 
 	/**
@@ -504,6 +509,47 @@ class Storage {
 	 */
 	getScrollKey (key: string, isPopup: boolean) {
 		return isPopup ? `${key}Popup` : key;
+	};
+
+	/**
+	 * Sets the element-anchored scroll position for a root object.
+	 * @param {string} key - The scroll key.
+	 * @param {string} rootId - The root object ID.
+	 * @param {{ id: string; offset: number } | null} anchor - Topmost element id + viewport offset, or null to clear.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 */
+	setScrollAnchor (key: string, rootId: string, anchor: { id: string; offset: number } | null, isPopup: boolean) {
+		key = this.getScrollKey(key, isPopup);
+
+		const obj = this.get('scrollAnchor', this.isLocal('scrollAnchor')) || {};
+		try {
+			obj[key] = obj[key] || {};
+
+			if (anchor && anchor.id) {
+				obj[key][rootId] = { id: String(anchor.id), offset: Number(anchor.offset) || 0 };
+			} else {
+				delete obj[key][rootId];
+			};
+
+			this.set('scrollAnchor', obj, this.isLocal('scrollAnchor'));
+		} catch (e) { console.warn('[Storage] scroll anchor save failed:', e); };
+		return obj;
+	};
+
+	/**
+	 * Gets the element-anchored scroll position for a root object.
+	 * @param {string} key - The scroll key.
+	 * @param {string} rootId - The root object ID.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {{ id: string; offset: number } | null} The saved anchor, or null.
+	 */
+	getScrollAnchor (key: string, rootId: string, isPopup: boolean): { id: string; offset: number } | null {
+		key = this.getScrollKey(key, isPopup);
+
+		const obj = this.get('scrollAnchor', this.isLocal('scrollAnchor')) || {};
+		const v = (obj[key] || {})[rootId];
+
+		return (v && v.id) ? { id: String(v.id), offset: Number(v.offset) || 0 } : null;
 	};
 
 	/**

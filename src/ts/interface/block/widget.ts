@@ -18,6 +18,7 @@ export interface WidgetSectionParam {
 	id: I.WidgetSection;
 	isClosed: boolean;
 	isHidden: boolean;
+	view?: string;
 };
 
 export enum WidgetLayout {
@@ -39,6 +40,7 @@ export enum SidebarView {
 export interface WidgetComponent {
 	parent?: I.Block;
 	block?: I.Block;
+	rootId?: string;
 	isPreview?: boolean;
 	canCreate?: boolean;
 	canEdit?: boolean;

@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useImperativeHandle, useCallback, useEffect, createContext, useContext } from 'react';
+import raf from 'raf';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -4331,11 +4332,31 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 
 			const sourceBlockId = part.editorQuote?.blockId || '';
 			const sourceMessageId = part.messageQuote?.messageId || '';
+			// Clamp text length to the form's maxLength so the MaxLengthPlugin's
+			// transform doesn't fire mid-insert and trim our own quote text.
+			const limit = (maxLength && maxLength > 0) ? maxLength : Number.MAX_SAFE_INTEGER;
+			const rawText = String(part.text || '');
+			const text = rawText.length > limit ? rawText.slice(0, limit) : rawText;
+			const length = text.length;
+			// Filter marks defensively: must have a valid range strictly inside
+			// the (clamped) quoted text — Lexical's createFormattedNodes uses
+			// mark boundaries as segmentation points and gets confused by
+			// negative, zero-width, or out-of-range ranges.
+			const marks = (part.marks || []).filter(m => {
+				if (!m || !m.range) {
+					return false;
+				};
+				const { from, to } = m.range;
+				return (from >= 0) && (to > from) && (from < length);
+			}).map(m => ({
+				...m,
+				range: { from: m.range.from, to: Math.min(length, m.range.to) },
+			}));
 
 			editor.update(() => {
 				const root = $getRoot();
 				const quote = $createSourceQuoteNode(sourceBlockId, sourceMessageId);
-				quote.append(...createFormattedNodes(part.text || '', part.marks || []));
+				quote.append(...createFormattedNodes(text, marks));
 
 				// Prepend the quote at the top of the document.
 				const first = root.getFirstChild();
@@ -4362,7 +4383,7 @@ const CommentEditor = forwardRef<RefProps, Props>((props, ref) => {
 			// Wait for the DOM to commit before focusing — otherwise focus()
 			// can fire before the new paragraph exists in the contenteditable
 			// and the cursor lands at the previous (now-stale) selection.
-			window.requestAnimationFrame(() => editor.focus());
+			raf(() => editor.focus());
 		},
 
 		removeAttachment: (key: string) => {

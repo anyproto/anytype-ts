@@ -6,6 +6,7 @@ class Util {
 		return new Promise(function(resolve, reject) {
 			exec(command, (error, stdout, stderr) => {
 				console.log('Error: ', error, stderr);
+				console.log('Stdout: ', stdout);
 
 				if (error || stderr) {
 					reject(error || stderr);

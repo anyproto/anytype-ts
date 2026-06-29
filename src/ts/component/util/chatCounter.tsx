@@ -33,6 +33,9 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 		if (spaceview) {
 			const spaceMap = S.Chat.stateMap.get(spaceId);
 			const discussionMap = S.Chat.discussionParentMap.get(spaceId);
+			const promote = (current: I.NotificationMode, candidate: I.NotificationMode): I.NotificationMode => {
+				return (current == I.NotificationMode.All) ? current : candidate;
+			};
 
 			if (spaceMap) {
 				for (const [ chatId, state ] of spaceMap) {
@@ -49,17 +52,17 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
 					if (state.mentionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
 						counters.mentionCounter += Number(state.mentionCounter) || 0;
-						modeMention = chatMode;
+						modeMention = promote(modeMention, chatMode);
 					};
 
 					if (state.messageCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
 						counters.messageCounter += Number(state.messageCounter) || 0;
-						modeMessage = chatMode;
+						modeMessage = promote(modeMessage, chatMode);
 					};
 
 					if (state.reactionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
 						counters.reactionCounter += Number(state.reactionCounter) || 0;
-						modeReaction = chatMode;
+						modeReaction = promote(modeReaction, chatMode);
 					};
 				};
 			};
@@ -77,12 +80,12 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
 					if (mentionCount && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
 						counters.mentionCounter += mentionCount;
-						modeMention = chatMode;
+						modeMention = promote(modeMention, chatMode);
 					};
 
 					if (messageCount && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
 						counters.messageCounter += messageCount;
-						modeMessage = chatMode;
+						modeMessage = promote(modeMessage, chatMode);
 					};
 				};
 			};

@@ -8,6 +8,85 @@ interface SidebarData {
 	savedClosed: boolean;
 };
 
+interface AutoHideInput {
+	x: number;
+	leftClosed: boolean;
+	leftWidth: number;
+	subLeftClosed: boolean;
+	subLeftWidth: number;
+	leftMinWidth: number;
+	armed: boolean;
+	popupOpen: boolean;
+	menuOpen: boolean;
+};
+
+interface AutoHideDecision {
+	show: boolean;
+	hide: boolean;
+	armed: boolean;
+};
+
+/**
+ * Pure decision for the auto-hide (hover) behaviour of the left sidebar panels.
+ *
+ * The `armed` latch is the fix for panels collapsing the instant they are opened:
+ * auto-hide is only allowed once the pointer has actually been over a visible open
+ * panel since it was shown (the latch is reset on every open). Opening a panel
+ * explicitly (header icon or keyboard shortcut) while the cursor is parked in the
+ * content area therefore keeps it open until the user moves into the panel and back
+ * out — instead of the next mouse move immediately satisfying the hide boundary.
+ *
+ * @returns whether to show/hide the panels and the next value of the `armed` latch.
+ */
+const getAutoHideDecision = (input: AutoHideInput): AutoHideDecision => {
+	const { x, leftClosed, leftWidth, subLeftClosed, subLeftWidth, leftMinWidth, armed, popupOpen, menuOpen } = input;
+	const vw = leftClosed ? 0 : leftMinWidth;
+	const boundary = leftWidth + subLeftWidth + vw + 30;
+	const visibleRight = (leftClosed ? 0 : leftWidth) + (subLeftClosed ? 0 : subLeftWidth);
+	const anyOpen = (!leftClosed) || (!subLeftClosed);
+
+	let show = false;
+	let hide = false;
+
+	if (x <= 10) {
+		show = true;
+	} else
+	if (x >= boundary) {
+		hide = true;
+	};
+
+	if (popupOpen) {
+		show = false;
+	};
+
+	if (menuOpen) {
+		show = false;
+		hide = false;
+	};
+
+	// Arm auto-hide only once the pointer is actually over a visible open panel
+	// (not the slack between the panel edge and the hide boundary). The latch is
+	// also reset to false whenever a panel is opened (see leftPanelOpen /
+	// leftPanelSubPageOpen), so an explicit open never inherits a stale armed state.
+	let nextArmed = armed;
+	if (!anyOpen) {
+		nextArmed = false;
+	} else
+	if (x < visibleRight) {
+		nextArmed = true;
+	};
+
+	// Suppress the hide until the pointer has been over the sidebar at least once.
+	if (hide && !nextArmed) {
+		hide = false;
+	};
+
+	return { show, hide, armed: nextArmed };
+};
+
+export { getAutoHideDecision };
+export type { AutoHideInput, AutoHideDecision };
+
 /**
  * Sidebar manages the left and right sidebar panels in the application.
  *
@@ -39,6 +118,7 @@ class Sidebar {
 	timeoutHover = 0;
 	timeoutSubPage = 0;
 	subPageOpId = 0;
+	autoHideArmed = false;
 
 	/**
 	 * Initializes sidebar objects and state from storage.
@@ -194,6 +274,9 @@ class Sidebar {
 		if (!pageWrapperLeft) {
 			return;
 		};
+
+		// Reset auto-hide latch: a freshly opened panel must be re-entered before it can auto-hide.
+		this.autoHideArmed = false;
 
 		if (animate) {
 			U.Dom.addClass(pageWrapperLeft, 'sidebarAnimation');
@@ -408,6 +491,9 @@ class Sidebar {
 			return;
 		};
 
+		// Reset auto-hide latch: a freshly opened panel must be re-entered before it can auto-hide.
+		this.autoHideArmed = false;
+
 		this.subPageOpId++;
 		window.clearTimeout(this.timeoutSubPage);
 
@@ -564,28 +650,22 @@ class Sidebar {
 		const dataSubLeft = this.getData(I.SidebarPanel.SubLeft);
 		const leftState = S.Common.getLeftSidebarState();
 		const param = this.getSizeParam(I.SidebarPanel.Left);
-		const vw = dataLeft.isClosed ? 0 : param.min;
 		const menuOpen = S.Menu.isOpenList([ 'objectContext', 'widget', 'selectSidebarToggle', 'typeSuggest' ]);
 		const popupOpen = S.Popup.isOpen();
 
-		let show = false;
-		let hide = false;
+		const { show, hide, armed } = getAutoHideDecision({
+			x,
+			leftClosed: dataLeft.isClosed,
+			leftWidth: dataLeft.width,
+			subLeftClosed: dataSubLeft.isClosed,
+			subLeftWidth: dataSubLeft.width,
+			leftMinWidth: param.min,
+			armed: this.autoHideArmed,
+			popupOpen,
+			menuOpen,
+		});
 
-		if (x <= 10) {
-			show = true;
-		} else
-		if (x >= dataLeft.width + dataSubLeft.width + vw + 30) {
-			hide = true;
-		};
-
-		if (popupOpen) {
-			show = false;
-		};
-
-		if (menuOpen) {
-			show = false;
-			hide = false;
-		};
+		this.autoHideArmed = armed;
 
 		if (show) {
 			if (!this.timeoutHover && dataLeft.isClosed) {
@@ -601,6 +681,7 @@ class Sidebar {
 
 			if (hide) {
 				this.autoHidePanels(dataLeft, dataSubLeft);
+				this.autoHideArmed = false;
 			};
 		};
 	};

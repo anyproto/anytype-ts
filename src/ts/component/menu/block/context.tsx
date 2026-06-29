@@ -153,7 +153,7 @@ const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 				const canQuoteInComment = !U.Object.isTemplateType(object?.type);
 				const quoteInComment = canQuoteInComment
-					? { id: 'quoteInComment', iconParam: { name: 'menu/block/text/quote' }, name: translate('commonQuoteInComment') }
+					? { id: 'quoteInComment', iconParam: { name: 'menu/action/quote' }, name: translate('commonQuoteInComment') }
 					: null;
 
 				menuParam.data = Object.assign(menuParam.data, {
@@ -192,15 +192,15 @@ const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 							case 'quoteInComment': {
 								const fullText = block.getText();
 								const text = fullText.substring(from, to);
+								const length = text.length;
 								const sliced: I.Mark[] = (block.content?.marks || [])
 									.filter(m => m.range && (m.range.from < to) && (m.range.to > from))
-									.map(m => ({
-										...m,
-										range: {
-											from: Math.max(0, m.range.from - from),
-											to: Math.min(to - from, m.range.to - from),
-										},
-									}));
+									.map(m => {
+										const mappedFrom = Math.max(0, m.range.from - from);
+										const mappedTo = Math.min(length, m.range.to - from);
+										return { ...m, range: { from: mappedFrom, to: mappedTo } };
+									})
+									.filter(m => (m.range.to > m.range.from));
 
 								const part: I.CommentContentPart = {
 									style: I.TextStyle.Quote,
@@ -210,8 +210,13 @@ const MenuBlockContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 									editorQuote: { blockId },
 								};
 
-								window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
 								close();
+								// Defer dispatch so the menu close stack unwinds before
+								// the section reacts — otherwise React state updates from
+								// close() and the form mount can collide.
+								window.setTimeout(() => {
+									window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
+								}, 0);
 								break;
 							};
 						};

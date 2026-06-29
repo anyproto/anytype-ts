@@ -4,7 +4,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter, Sync } from 'Component';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
 import * as I from 'Interface';
 import Highlight from 'Lib/highlight';
 import Storage from 'Lib/storage';
@@ -340,6 +340,16 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		return U.Dom.get(getId());
 	};
 
+	const updateBottomGradient = (scrollTop: number, scrollHeight: number, clientHeight: number) => {
+		const bottom = U.Dom.select('.bottom', getNode());
+		if (!bottom) {
+			return;
+		};
+
+		const atBottom = (scrollHeight <= clientHeight) || (scrollTop + clientHeight >= scrollHeight - 1);
+		U.Dom.toggleClass(bottom, 'isBottom', atBottom);
+	};
+
 	const setHover = (item: any) => {
 		if (item) {
 			U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(item.id)}`, getNode()), 'hover');
@@ -522,14 +532,11 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		Action.openSettings('account', analytics.route.vault);
 	};
 
-	const onSync = () => {
-		S.Menu.closeAllForced(null, () => {
-			S.Menu.open('syncStatus', {
-				element: `#${getId()} #headerSync`,
-				offsetY: 4,
-				classNameWrap: 'fixed fromSidebar',
-				subIds: J.Menu.syncStatus,
-			});
+	const onGallery = () => {
+		S.Popup.open('usecase', {
+			data: {
+				route: analytics.route.usecaseApp,
+			},
 		});
 	};
 
@@ -554,7 +561,20 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		Storage.setHighlight('createSpace', false);
 		Highlight.hide('createSpace');
 
-		Action.createSpace(analytics.route.vault);
+		let param: I.MenuParam = {
+			element: '#button-create-space',
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+		};
+
+		if (vaultIsMinimal) {
+			param = Object.assign(param, {
+				vertical: I.MenuDirection.Center,
+				offsetX: VAULT_MINIMAL_OFFSET,
+			});
+		};
+
+		U.Menu.spaceCreate(param, analytics.route.vault);
 	};
 
 	const getRowHeight = (item: any) => {
@@ -599,6 +619,11 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		};
 
 		prevItemsRef.current = items.map(it => ({ id: it.id, height: getRowHeight(it) }));
+
+		const grid = U.Dom.select('.ReactVirtualized__Grid', getNode());
+		if (grid) {
+			updateBottomGradient(grid.scrollTop, grid.scrollHeight, grid.clientHeight);
+		};
 	}, [ itemIds ]);
 
 	return (
@@ -688,7 +713,10 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 											onRowsRendered={onRowsRendered}
 											overscanRowCount={10}
 											scrollToAlignment="center"
-											onScroll={({ scrollTop }) => scrollTopRef.current = scrollTop}
+											onScroll={({ scrollTop, scrollHeight, clientHeight }) => {
+												scrollTopRef.current = scrollTop;
+												updateBottomGradient(scrollTop, scrollHeight, clientHeight);
+											}}
 										/>
 									</SortableContext>
 								</DndContext>
@@ -719,10 +747,11 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 					</div>
 
 					<div className="side right">
-						<Sync 
-							id="headerSync" 
-							onClick={onSync} 
-							tooltipParam={{ typeY: I.MenuDirection.Top }}
+						<Icon
+							name="vault/gallery"
+							className="gallery"
+							tooltipParam={{ text: translate('popupUsecaseListTitle') }}
+							onClick={onGallery}
 						/>
 						<Button
 							id="button-help"

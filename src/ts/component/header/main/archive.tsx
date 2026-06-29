@@ -5,12 +5,12 @@ import * as I from 'Interface';
 const HeaderMainArchive = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { renderLeftIcons, menuOpen, isPopup } = props;
-	const isOwner = U.Space.isMyOwner();
+	const canModerate = U.Space.canMyParticipantModerate();
 
 	const onMore = () => {
 		const options: any[] = [];
 
-		if (isOwner) {
+		if (canModerate) {
 			options.push({ id: 'emptyBin', name: translate('commonEmptyBin'), iconParam: { name: 'menu/action/remove' } });
 		};
 
@@ -41,7 +41,7 @@ const HeaderMainArchive = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 			<div className="side left">{renderLeftIcons(true, true)}</div>
 			<div className="side center" />
 			<div className="side right">
-				{isOwner ? (
+				{canModerate ? (
 					<Icon
 						id="button-header-more"
 						tooltipParam={{ text: translate('commonMenu'), typeY: I.MenuDirection.Bottom }}

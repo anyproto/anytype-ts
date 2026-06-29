@@ -121,6 +121,21 @@ export default defineConfig(({ mode }) => {
 						return 'assets/[name]-[hash][extname]';
 					},
 					manualChunks(id) {
+						// Vite/Rollup virtual helper modules (preload helper, commonjs helpers).
+						// Left unassigned, Rollup colocates them into an arbitrary chunk — the
+						// preload helper landed inside vendor-mermaid, so main.js statically
+						// imported it and dragged the whole 4.6MB chunk into every startup
+						if (id.includes('vite/preload-helper') || id.includes('commonjsHelpers')) {
+							return 'helpers';
+						}
+						// Lazy-only packages: imported exclusively via dynamic import() (embed
+						// block, pdf block, latex menus). Return undefined so Rollup keeps them
+						// in their own lazy chunks — the blanket 'vendor' rule below would merge
+						// them into the statically-loaded vendor chunk, defeating the import()
+						// and parsing them at every startup
+						if (/node_modules\/(katex|@viz-js|react-pdf|pdfjs-dist|pako)\//.test(id)) {
+							return;
+						}
 						if (id.includes('dist/lib/pb/') || id.includes('/middleware/')) {
 							return 'protobuf';
 						}

@@ -237,18 +237,54 @@ class UtilSpace {
 	 * @returns {any|null} The last opened object or null if not found.
 	 */
 	getLastObject () {
-		let home = Storage.getLastOpened();
+		const space = S.Common.space;
 
-		// Invalid data protection
-		if (!home || !home.id) {
+		let home = Storage.getLastOpened(space);
+
+		// Invalid data protection: ignore empty entries and entries that belong to a
+		// different space (stale/polluted bucket) to avoid opening a foreign object
+		// in the current space (JS-9815).
+		if (!home || !home.id || (home.spaceId && (home.spaceId != space))) {
 			home = null;
 		};
 
 		if (home) {
-			home.spaceId = S.Common.space;
+			home.spaceId = space;
 		};
 
 		return home;
+	};
+
+	/**
+	 * Records `object` as the space's last-opened object, so switching away from
+	 * the space and back reopens it (the write side of getLastObject).
+	 *
+	 * Skipped when:
+	 * - there is no real object (empty/blank detail);
+	 * - it is opened in a popup (transient, not the space's main view);
+	 * - it is the Dashboard/home layout, which is the fallback target itself and
+	 *   not a restorable object.
+	 *
+	 * Keyed by the object's own space (falling back to an explicit spaceId, then
+	 * the current space) so a late open arriving after a space switch can never
+	 * write into another space's bucket (JS-9815).
+	 */
+	setLastObject (object: any, spaceId?: string): void {
+		if (!object || object._empty_) {
+			return;
+		};
+
+		if (keyboard.isPopup()) {
+			return;
+		};
+
+		if ([ I.ObjectLayout.Dashboard ].includes(object.layout)) {
+			return;
+		};
+
+		const space = object.spaceId || spaceId || S.Common.space;
+
+		Storage.setLastOpened({ id: object.id, layout: object.layout, spaceId: space }, space);
 	};
 
 	/**
@@ -404,13 +440,29 @@ class UtilSpace {
 	};
 
 	/**
+	 * Gets the other participant for a 1-1 chat space.
+	 * @param {any} space - The spaceview object.
+	 * @returns {any|null} The other participant or null if not found.
+	 */
+	getOneToOneParticipant (space: any) {
+		if (!space || !space.isOneToOne || !space.oneToOneIdentity) {
+			return null;
+		};
+
+		const participantId = this.getParticipantId(space.targetSpaceId, space.oneToOneIdentity);
+		const object = S.Detail.get(this.getSubSpaceSubId(space.targetSpaceId), participantId);
+
+		return object._empty_ ? null : object;
+	};
+
+	/**
 	 * Checks if the current user can write in a given space.
 	 * @param {string} [spaceId] - The space ID.
 	 * @returns {boolean} True if the user can write, false otherwise.
 	 */
 	canMyParticipantWrite (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId);
-		return participant ? (participant.isWriter || participant.isOwner) : true;
+		return participant ? (participant.isWriter || participant.isAdmin || participant.isOwner) : true;
 	};
 
 	/**
@@ -421,6 +473,53 @@ class UtilSpace {
 	isMyOwner (spaceId?: string): boolean {
 		const participant = this.getMyParticipant(spaceId || S.Common.space);
 		return participant ? participant.isOwner : false;
+	};
+
+	/**
+	 * Checks if the current user is an admin of a given space.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the user is an admin, false otherwise.
+	 */
+	isMyAdmin (spaceId?: string): boolean {
+		const participant = this.getMyParticipant(spaceId || S.Common.space);
+		return participant ? participant.isAdmin : false;
+	};
+
+	/**
+	 * Checks if the current user can moderate a given space (owner or admin).
+	 * Moderators can delete any chat message and remove members.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the user can moderate, false otherwise.
+	 */
+	canMyParticipantModerate (spaceId?: string): boolean {
+		const participant = this.getMyParticipant(spaceId || S.Common.space);
+		return participant ? (participant.isOwner || participant.isAdmin) : false;
+	};
+
+	/**
+	 * Checks if the current user can manage (change role / remove) a target participant.
+	 * Owner can manage Admins, Editors and Viewers; Admin can manage Editors and Viewers only.
+	 * Nobody can manage themselves or another Owner.
+	 * @param {any} target - The target participant object.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the current user can manage the target, false otherwise.
+	 */
+	canManageParticipant (target: any, spaceId?: string): boolean {
+		const me = this.getMyParticipant(spaceId || S.Common.space);
+
+		if (!me || !target || (me.id == target.id) || (me.identity && (me.identity == target.identity)) || target.isOwner) {
+			return false;
+		};
+
+		if (me.isOwner) {
+			return true;
+		};
+
+		if (me.isAdmin) {
+			return target.isWriter || target.isReader;
+		};
+
+		return false;
 	};
 
 	/**
@@ -455,7 +554,7 @@ class UtilSpace {
 			return 0;
 		};
 
-		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isOwner);
+		const participants = this.getParticipantsList([ I.ParticipantStatus.Active ]).filter(it => it.isWriter || it.isAdmin || it.isOwner);
 		return space.writersLimit - participants.length;
 	};
 

@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useState, MouseEvent } from 'react';
 import { Icon, Label } from 'Component';
 import * as I from 'Interface';
 
@@ -11,7 +11,7 @@ const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const participant = U.Space.getParticipant() || profile;
 	const globalName = Relation.getStringValue(participant?.globalName);
 	const space = U.Space.getSpaceview();
-	const isOwner = U.Space.isMyOwner();
+	const canModerate = U.Space.canMyParticipantModerate();
 	const showTransfer = (id == 'spaceShare') && U.Space.canTransferOwnership();
 
 	const init = () => {
@@ -55,6 +55,36 @@ const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	};
 
 	const renderIdentity = () => {
+		if (space.isOneToOne && (id == 'spaceIndex')) {
+			const otherParticipant = U.Space.getOneToOneParticipant(space);
+			const otherGlobalName = otherParticipant?.globalName || '';
+			const otherIdentity = space.oneToOneIdentity || '';
+			const otherAnyName = otherGlobalName || (otherIdentity ? U.String.shortMask(otherIdentity, 6) : '');
+
+			if (!otherAnyName) {
+				return null;
+			};
+
+			const onAnyNameClick = (e: MouseEvent) => {
+				e.preventDefault();
+				e.stopPropagation();
+
+				if (otherGlobalName) {
+					U.Common.copyToast(translate('commonAnyName'), otherGlobalName);
+				} else
+				if (otherIdentity) {
+					U.Common.copyToast(translate('blockFeaturedIdentity'), otherIdentity);
+				};
+			};
+
+			return (
+				<div className="identity" onClick={onAnyNameClick}>
+					{otherGlobalName ? <Icon name="membership/badge" className="badge" size={18} color="accent100" /> : ''}
+					<Label text={otherAnyName} />
+				</div>
+			);
+		};
+
 		if (![ 'account', 'index' ].includes(id) || !globalName) {
 			return null;
 		};
@@ -69,7 +99,7 @@ const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const renderMore = () => {
 		const hasLink = invite.cid && invite.key;
-		const spaceShareShowButton = hasLink || (isOwner && space.isShared);
+		const spaceShareShowButton = hasLink || (canModerate && space.isShared);
 
 		if (id == 'account') {
 			return <Icon id="button-share-one-to-one" name="header/oneToOne" withBackground={true} onClick={onOneToOne} />;

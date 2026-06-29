@@ -42,6 +42,7 @@ const MenuSearchObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		load(true);
 
 		return () => {
+			unbind();
 			window.clearTimeout(timeout.current);
 		};
 	}, []);

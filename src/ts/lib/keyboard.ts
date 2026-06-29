@@ -260,7 +260,7 @@ class Keyboard {
 		const cmd = this.cmdKey();
 		const isMain = this.isMain();
 		const canWrite = U.Space.canMyParticipantWrite();
-		const isOwner = U.Space.isMyOwner();
+		const canModerate = U.Space.canMyParticipantModerate();
 		const selection = S.Common.getRef('selectionProvider');
 		const rootId = this.getRootId();
 		const object = S.Detail.get(rootId, rootId);
@@ -492,7 +492,7 @@ class Keyboard {
 				};
 
 				// Pin/Unpin
-				if (isOwner) {
+				if (canModerate) {
 					this.shortcut('pin', e, () => {
 						e.preventDefault();
 						Action.toggleWidgetsForObject(rootId, analytics.route.header);
@@ -553,10 +553,31 @@ class Keyboard {
 	};
 
 	/**
-	 * Opens the space creation popup.
+	 * Calls spaceCreate menu.
 	 */
 	createSpace () {
-		Action.createSpace(analytics.route.shortcut);
+		const element = `#button-create-space`;
+
+		let rect = null;
+		let horizontal = I.MenuDirection.Left;
+		let vertical = I.MenuDirection.Top;
+
+		if (!U.Dom.select(element)) {
+			const { ww, wh } = U.Dom.getWindowDimensions();
+
+			rect = { x: ww / 2, y: wh / 2, width: 0, height: 0 };
+			horizontal = I.MenuDirection.Center;
+			vertical = I.MenuDirection.Center;
+		};
+
+		U.Menu.spaceCreate({
+			element,
+			rect,
+			className: 'spaceCreate fixed',
+			classNameWrap: 'fromSidebar',
+			horizontal,
+			vertical,
+		}, analytics.route.shortcut);
 	};
 
 	/**

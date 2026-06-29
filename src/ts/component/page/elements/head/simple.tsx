@@ -50,7 +50,7 @@ const HeadSimple = forwardRef<PropsRef, Props>((props, ref) => {
 	const isRelation = U.Object.isRelationLayout(check.layout);
 	const cn = [ 'headSimple', check.className ];
 	const canEditIcon = allowDetails && !isRelation && !isType;
-	const isOwner = U.Space.isMyOwner();
+	const canModerate = U.Space.canMyParticipantModerate();
 	const total = S.Record.getMeta(SUB_ID_CHECK, '').total;
 	const placeholder = {
 		title: String(props.placeholder || ''),
@@ -310,7 +310,7 @@ const HeadSimple = forwardRef<PropsRef, Props>((props, ref) => {
 			const allowEdit = allowDetails && !isTemplate && !U.Object.isParticipantLayout(object.recommendedLayout);
 			const allowedReset = allowEdit && !U.Object.isChatLayout(object.recommendedLayout);
 
-			if (isOwner && total && allowedReset) {
+			if (canModerate && total && allowedReset) {
 				buttonLayout = (
 					<Button
 						id="button-layout"

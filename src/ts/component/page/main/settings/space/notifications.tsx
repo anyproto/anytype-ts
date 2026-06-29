@@ -133,7 +133,7 @@ const PageMainSettingsNotifications = forwardRef<I.PageRef, I.PageSettingsCompon
 									</div>
 								</div>
 								<div className="side right">
-									<Icon onClick={() => onChatModeClick(el)} className="more" withBackground={true} />
+									<Icon name="common/more" className="more" withBackground={true} onClick={() => onChatModeClick(el)} />
 								</div>
 							</div>
 						))}

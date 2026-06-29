@@ -5,7 +5,7 @@ import * as I from 'Interface';
 const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 
 	const {
-		id = '', iconParam, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withPlural, withPronoun,
+		id = '', iconParam, object, inner, name, description, caption, color, arrow, checkbox, isActive, withDescription, withSwitch, withSelect, withMore, withCopy, withPlural, withPronoun,
 		className, style, iconSize, switchValue, selectValue, options, readonly, selectMenuParam, subComponent, note, sortArrow, isDiv, isSection, index,
 		onClick, onSwitch, onSelect, onMouseEnter, onMouseLeave, onMore, onContextMenu, tooltipParam = {},
 	} = props;
@@ -65,6 +65,9 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 	};
 	if (withMore) {
 		cn.push('withMore');
+	};
+	if (withCopy) {
+		cn.push('withCopy');
 	};
 	if (isActive) {
 		cn.push('active');
@@ -167,6 +170,7 @@ const MenuItemVertical = forwardRef<{}, I.MenuItem>((props, ref) => {
 						<div className="caption">{caption}</div>
 					)}
 					{withMore ? <Icon name="common/more" className="more" withBackground={true} onMouseDown={onMore} /> : ''}
+					{withCopy ? <Icon name="menu/action/copy" className="copy" withBackground={true} /> : ''}
 				</>
 			);
 		};

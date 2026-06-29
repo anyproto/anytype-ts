@@ -92,7 +92,7 @@ Sentry.init({
 	release: electron.version.app,
 	environment: isPackaged ? 'production' : 'development',
 	dsn: SENTRY_DSN,
-	maxBreadcrumbs: 0,
+	maxBreadcrumbs: 20,
 	beforeSend: (e: any) => {
 		e.request.url = '';
 		return e;
@@ -124,6 +124,8 @@ const App: FC = () => {
 	const init = () => {
 		const { version, arch, getGlobal, tabId } = electron;
 
+		U.Perf.step('boot:init', 'boot:entry');
+
 		U.Router.init(history);
 		U.Smile.init();
 
@@ -136,12 +138,35 @@ const App: FC = () => {
 			import('./lib/web/routeSync').then(({ initRouteSync }) => initRouteSync(history, U.Router));
 		}
 
-		console.log('[App] Init', getGlobal('serverAddress'));
-
-		dispatcher.init(getGlobal('serverAddress'));
 		keyboard.init();
 		registerIpcEvents();
-		Renderer.send('getInitData', tabId()).then((data: any) => onInit(data));
+
+		const startWithAddress = (address: string) => {
+			console.log('[App] Init', address);
+
+			U.Perf.step('boot:server', 'boot:init');
+
+			dispatcher.init(address);
+			Renderer.send('getInitData', tabId()).then((data: any) => {
+				U.Perf.step('boot:init-data', 'boot:init');
+				onInit(data);
+			});
+		};
+
+		// Windows are created in parallel with middleware startup: use the
+		// address directly when the server is already up (also covers web
+		// mode), otherwise await it from the main process
+		const address = getGlobal('serverAddress');
+
+		if (address) {
+			startWithAddress(address);
+		} else {
+			// Rejection means the middleware failed to start — the main process
+			// shows an error dialog in that case
+			Renderer.send('getServerAddress').then(startWithAddress).catch((err: any) => {
+				console.error('[App] Server failed to start:', err);
+			});
+		};
 
 		console.log('[Process] os version:', version.system, 'arch:', arch);
 		console.log('[App] version:', version.app, 'isPackaged', isPackaged);
@@ -329,6 +354,8 @@ const App: FC = () => {
 		sidebar.init(false);
 		analytics.init();
 
+		U.Perf.step('boot:stores', 'boot:init-data');
+
 		const lastAppVersion = Storage.get('lastAppVersion');
 		const currentAppVersion = electron.version?.app;
 
@@ -350,7 +377,13 @@ const App: FC = () => {
 
 		U.Dom.addClass(body, 'over');
 
+		let measured = false;
 		const hide = () => {
+			if (!measured) {
+				measured = true;
+				U.Perf.step('boot:ready', 'boot:entry');
+			};
+
 			rootLoader?.remove();
 			bubbleLoader?.remove();
 			U.Dom.removeClass(body, 'over');
@@ -391,9 +424,11 @@ const App: FC = () => {
 			const { dataPath } = S.Common;
 			const { networkConfig } = S.Auth;
 			const { mode, path: networkPath } = networkConfig;
+			const param = route ? U.Router.getParam(route) : {};
+			const spaceId = param.spaceId || data.spaceId || Storage.getAccountKey('spaceId', false, accountId) || '';
 
 			S.Auth.tokenSet(token);
-			C.AccountSelect(accountId, dataPath, mode, networkPath, (message: any) => {
+			C.AccountSelect(accountId, dataPath, mode, networkPath, spaceId, (message: any) => {
 				if (message.error.code) {
 					console.error('[App.onInit]:', message.error.description);
 					S.Common.redirectSet(route);
@@ -410,6 +445,8 @@ const App: FC = () => {
 					return;
 				};
 
+				U.Perf.step('boot:account', 'boot:init');
+
 				keyboard.setPinChecked(isPinChecked);
 				S.Auth.accountSet(account);
 				S.Common.redirectSet(route);
@@ -418,9 +455,6 @@ const App: FC = () => {
 				U.Data.onInfo(account.info);
 				S.Common.spaceSet('');
 				U.Data.onAuthOnce();
-
-				const param = route ? U.Router.getParam(route) : {};
-				const spaceId = param.spaceId || data.spaceId || Storage.get('spaceId');
 
 				if (spaceId) {
 					U.Router.switchSpace(spaceId, route, false, routeParam, true);

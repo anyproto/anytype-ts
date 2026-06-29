@@ -594,6 +594,7 @@ class DetailStore {
 
 			// Permission flags
 		object.isOwner = object.participantPermissions == I.ParticipantPermissions.Owner;
+		object.isAdmin = object.participantPermissions == I.ParticipantPermissions.Admin;
 		object.isWriter = object.participantPermissions == I.ParticipantPermissions.Writer;
 		object.isReader = object.participantPermissions == I.ParticipantPermissions.Reader;
 

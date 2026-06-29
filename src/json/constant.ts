@@ -72,6 +72,7 @@ export default {
 
 		string: {
 			mention:					 300,
+			fileName:					 24,
 		},
 	},
 
@@ -97,6 +98,7 @@ export default {
 		highlight:  	 1000,
 		chatHistory:	 500,
 		chatMessage:	 200,
+		spacePreload:	 2000,
 	},
 
 	fileExtension: {
@@ -120,7 +122,6 @@ export default {
 	},
 
 	subId: {
-		search:			 		'search',
 		profile:		 		'profile',
 		deleted:		 		'deleted',
 		archived:		 		'archived',

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react';
+import React, { forwardRef, useRef, useEffect, useState, useImperativeHandle } from 'react';
 import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, KeyboardSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from '@dnd-kit/modifiers';
@@ -6,11 +6,100 @@ import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, ChatCounter, Icon } from 'Component';
 import * as I from 'Interface';
 
+interface WidgetObjectItemProps {
+	item: any;
+	canDrag: boolean;
+	canWrite: boolean;
+	realId: string;
+	isUnread: boolean;
+	hasUnreadSection: boolean;
+	isAllowedObject: (type: any) => boolean;
+	onCreate: (e: any, type: any) => void;
+	onContextHandler: (e: any, item: any, withElement: boolean) => void;
+};
+
+/**
+ * Module-level row component. Kept out of WidgetObject's body so its component
+ * identity stays stable across re-renders — otherwise every WidgetObject render
+ * would remount all rows (and their IconObjects), forcing icon images to refetch.
+ */
+const WidgetObjectItem = (props: WidgetObjectItemProps) => {
+	const { item, canDrag, canWrite, realId, isUnread, hasUnreadSection, isAllowedObject, onCreate, onContextHandler } = props;
+	const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: item._isDisabled || !canDrag });
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+	};
+	const isChat = U.Object.isChatLayout(item.layout);
+	const hasDiscussion = !isChat && !!item.discussionId;
+	const counterTargetId = isChat ? item.id : (hasDiscussion ? item.discussionId : '');
+	const showCounter = !!counterTargetId && (!hasUnreadSection || isUnread);
+	const canAdd = canWrite && (realId == J.Constant.widgetId.type) && isAllowedObject(item);
+	const spaceview = U.Space.getSpaceview();
+	const itemCn = [ 'item' ];
+
+	if (isChat && (U.Object.getChatNotificationMode(spaceview, item.id) == I.NotificationMode.Nothing)) {
+		itemCn.push('isMuted');
+	};
+
+	let icon = null;
+	if (item.iconParam) {
+		icon = <Icon {...item.iconParam} />;
+	} else {
+		icon = (
+			<IconObject
+				object={item}
+				canEdit={!item.isReadonly && U.Object.isTaskLayout(item.layout)}
+				iconSize={20}
+			/>
+		);
+	};
+
+	return (
+		<div
+			id={`item-${item.id}`}
+			className={itemCn.join(' ')}
+			ref={setNodeRef}
+			{...attributes}
+			{...listeners}
+			style={style}
+			onClick={e => U.Object.openEvent(e, item)}
+			onAuxClick={e => U.Object.openEvent(e, item)}
+			onContextMenu={e => onContextHandler(e, item, false)}
+		>
+			<div className="side left">
+				{icon}
+				<ObjectName object={item} withPlural={true} />
+			</div>
+			<div className="side right">
+				{showCounter ? (
+					<ChatCounter
+						chatId={counterTargetId}
+						mode={hasDiscussion ? U.Object.getDiscussionNotificationMode(spaceview, item.id) : undefined}
+					/>
+				) : ''}
+				{canAdd ? (
+					<div className="buttons">
+						<Icon
+							name="plus/menu"
+							className="plus"
+							tooltipParam={{ text: translate('commonCreateNewObject') }}
+							onClick={e => onCreate(e, item)}
+						/>
+					</div>
+				) : ''}
+			</div>
+		</div>
+	);
+};
+
 const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 	const { parent, onContext } = props;
 	const { space, sidebarView } = S.Common;
 	const isLinksView = sidebarView == I.SidebarView.Links;
+	const [ , setDummy ] = useState(0);
+	const forceUpdate = () => setDummy(v => v + 1);
 	const nodeRef = useRef(null);
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
 	const sensors = useSensors(
@@ -21,8 +110,31 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 	const realId = parent.id.replace(`${space}-`, '');
 	const isUnread = realId == J.Constant.widgetId.unread;
 	const isBin = realId == J.Constant.widgetId.bin;
+	const isRecent = realId == J.Constant.widgetId.recentEdit;
+	const isPersonalWidgets = realId == J.Constant.widgetId.personalWidgets;
+	const personalSubId = `${parent.id}-objects`;
 	const canWrite = U.Space.canMyParticipantWrite();
 	const home = U.Space.getDashboard();
+
+	const getPersonalTargetIds = (): string[] => {
+		const personalRootId = U.Object.getPersonalWidgetsId();
+		return S.Block.getChildrenIds(personalRootId, personalRootId)
+			.map(widgetId => {
+				const wb = S.Block.getLeaf(personalRootId, widgetId);
+				if (!wb?.isWidget()) {
+					return null;
+				};
+
+				const innerIds = S.Block.getChildrenIds(personalRootId, wb.id);
+				if (!innerIds.length) {
+					return null;
+				};
+
+				const inner = S.Block.getLeaf(personalRootId, innerIds[0]);
+				return inner?.getTargetObjectId() || null;
+			})
+			.filter(Boolean);
+	};
 
 	const getSubId = () => {
 		let subId = '';
@@ -42,10 +154,45 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				subId = U.Subscription.getRecentSubId();
 				break;
 			};
+
+			case J.Constant.widgetId.personalWidgets: {
+				subId = personalSubId;
+				break;
+			};
 		};
 
 		return subId;
 	};
+
+	const updateData = () => {
+		if (!isPersonalWidgets) {
+			return;
+		};
+
+		const ids = getPersonalTargetIds();
+		if (!ids.length) {
+			return;
+		};
+
+		U.Subscription.destroyList([ personalSubId ], false, () => {
+			U.Subscription.subscribe({
+				subId: personalSubId,
+				filters: [ { relationKey: 'id', condition: I.FilterCondition.In, value: ids } ],
+				keys: J.Relation.sidebar,
+				noDeps: true,
+			}, forceUpdate);
+		});
+	};
+
+	useImperativeHandle(ref, () => ({ updateData }));
+
+	useEffect(() => {
+		updateData();
+
+		return () => {
+			U.Subscription.destroyList([ personalSubId ]);
+		};
+	}, []);
 
 	const isAllowedObject = (type: any): boolean => {
 		const skipLayouts = [ I.ObjectLayout.Participant ].concat(U.Object.getSystemLayouts());
@@ -137,7 +284,16 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 			};
 
 			case J.Constant.widgetId.personalWidgets: {
-				items = U.Data.getWidgetObjects(U.Object.getPersonalWidgetsId(), false);
+				const personalRootId = U.Object.getPersonalWidgetsId();
+				const subscribedMap = new Map(S.Record.getRecords(personalSubId).map(it => [ it.id, it ]));
+
+				getPersonalTargetIds().forEach(targetId => {
+					const object = subscribedMap.get(targetId) || S.Detail.get(personalRootId, targetId);
+					if (!object || object._empty_ || object.isArchived || object.isDeleted) {
+						return;
+					};
+					items.push(object);
+				});
 				break;
 			};
 
@@ -224,6 +380,11 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 
 		const element = U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current);
 		const more = element ? U.Dom.select('.buttons', element) : null;
+		const data: any = {};
+
+		if (isRecent) {
+			data.allowedType = true;
+		};
 
 		if (isBin) {
 			U.Menu.widgetSectionContext(I.WidgetSection.Bin, {
@@ -235,77 +396,8 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 				onClose: () => U.Dom.removeClass(element, 'active'),
 			});
 		} else {
-			onContext({ node: element, element: more, withElement, subId, objectId: item.id });
+			onContext({ node: element, element: more, withElement, subId, objectId: item.id, data });
 		};
-	};
-
-	const Item = (item: any) => {
-		const { attributes, listeners, transform, transition, setNodeRef } = useSortable({ id: item.id, disabled: item._isDisabled || !canDrag });
-		const style = {
-			transform: CSS.Transform.toString(transform),
-			transition,
-		};
-		const isChat = U.Object.isChatLayout(item.layout);
-		const hasDiscussion = !isChat && !!item.discussionId;
-		const counterTargetId = isChat ? item.id : (hasDiscussion ? item.discussionId : '');
-		const showCounter = !!counterTargetId && (!hasUnreadSection || isUnread);
-		const canAdd = canWrite && (realId == J.Constant.widgetId.type) && isAllowedObject(item);
-		const spaceview = U.Space.getSpaceview();
-		const itemCn = [ 'item' ];
-
-		if (isChat && (U.Object.getChatNotificationMode(spaceview, item.id) == I.NotificationMode.Nothing)) {
-			itemCn.push('isMuted');
-		};
-
-		let icon = null;
-		if (item.iconParam) {
-			icon = <Icon {...item.iconParam} />;
-		} else {
-			icon = (
-				<IconObject
-					object={item}
-					canEdit={!item.isReadonly && U.Object.isTaskLayout(item.layout)}
-					iconSize={20}
-				/>
-			);
-		};
-
-		return (
-			<div
-				id={`item-${item.id}`}
-				className={itemCn.join(' ')}
-				ref={setNodeRef}
-				{...attributes}
-				{...listeners}
-				style={style}
-				onClick={e => U.Object.openEvent(e, item)}
-				onAuxClick={e => U.Object.openEvent(e, item)}
-				onContextMenu={e => onContextHandler(e, item, false)}
-			>
-				<div className="side left">
-					{icon}
-					<ObjectName object={item} withPlural={true} />
-				</div>
-				<div className="side right">
-					{showCounter ? (
-						<ChatCounter
-							chatId={counterTargetId}
-							mode={hasDiscussion ? U.Object.getDiscussionNotificationMode(spaceview, item.id) : undefined}
-						/>
-					) : ''}
-					{canAdd ? (
-						<div className="buttons">
-							<Icon
-								name="plus/menu"
-								className="plus"
-								tooltipParam={{ text: translate('commonCreateNewObject') }}
-								onClick={e => onCreate(e, item)}
-							/>
-						</div>
-					) : ''}
-				</div>
-			</div>
-		);
 	};
 
 	const items = getItems();
@@ -325,7 +417,20 @@ const WidgetObject = forwardRef<{}, I.WidgetComponent>((props, ref) => {
 						strategy={verticalListSortingStrategy}
 					>
 						<div ref={nodeRef} className="items">
-							{items.map(item => <Item key={item.id} {...item} />)}
+							{items.map(item => (
+								<WidgetObjectItem
+									key={item.id}
+									item={item}
+									canDrag={canDrag}
+									canWrite={canWrite}
+									realId={realId}
+									isUnread={isUnread}
+									hasUnreadSection={hasUnreadSection}
+									isAllowedObject={isAllowedObject}
+									onCreate={onCreate}
+									onContextHandler={onContextHandler}
+								/>
+							))}
 						</div>
 					</SortableContext>
 				</DndContext>

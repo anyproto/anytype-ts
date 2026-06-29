@@ -72,6 +72,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const prevMarksRef = useRef<I.Mark[]>(marks || []);
 	const timeoutFilter = useRef(0);
 	const timeoutClick = useRef(0);
+	const timeoutText = useRef(0);
 	const preventMenu = useRef(false);
 	const clickCnt = useRef(0);
 	const prevStyleRef = useRef(style);
@@ -87,6 +88,19 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			S.Common.clearTimeout('blockContext');
 			window.clearTimeout(timeoutFilter.current);
 			window.clearTimeout(timeoutClick.current);
+
+			// Flush any pending debounced text save before unmount to prevent
+			// data loss when navigating away from the page while typing
+			if (timeoutText.current) {
+				window.clearTimeout(timeoutText.current);
+				timeoutText.current = 0;
+
+				// Force-save current text to middleware immediately
+				const value = String(editableRef.current?.getTextValue?.() || '');
+				if (value && (value !== textRef.current || value !== text)) {
+					U.Data.blockSetText(rootId, block.id, value, marksRef.current, true);
+				};
+			};
 
 			if (focused == block.id) {
 				focus.clear(true);
@@ -110,6 +124,10 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (textChanged || marksChanged) {
 			marksRef.current = marks || [];
 
+			// Only sync contenteditable from props when not focused or when content
+			// actually changed. When focused, the local editable state is the source
+			// of truth — skipping setValue prevents expensive DOM rebuilds that cause
+			// typing lag on every keystroke echo from middleware.
 			if (!isEcho) {
 				setValue(text);
 			};
@@ -121,13 +139,6 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			// Render markup even when text/marks haven't changed, to pick up
 			// newly loaded details for mentions/objects
 			renderMarkup();
-		};
-
-		// Only sync contenteditable from props when not focused or when content changed.
-		// When focused, the local editable state may be ahead of props during active editing
-		// (e.g. RTL flag change triggers re-render before text is saved to middleware).
-		if (!isEcho && ((focused != block.id) || textChanged || marksChanged)) {
-			setValue(text);
 		};
 
 		if (text) {
@@ -302,6 +313,10 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const onKeyDownHandler = (e: any) => {
 		e.persist();
+
+		// Flush any pending debounced text save to prevent stale overwrites
+		// when structural keys (Enter, Backspace, etc.) trigger their own save
+		window.clearTimeout(timeoutText.current);
 
 		if (S.Menu.isOpenList([ 'blockStyle', 'blockColor', 'blockBackground', 'object' ])) {
 			e.preventDefault();
@@ -1043,9 +1058,24 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			focus.set(focused, { from: range.from - diff, to: range.to - diff });
 			focus.apply();
+
+			// After markdown auto-conversion the caret lands on the closing tag
+			// boundary and the browser keeps typing inside the new mark — move it
+			// past the trailing ZWS anchor so continued typing stays unformatted
+			const editable = U.Dom.select('.editable', editableRef.current?.getNode());
+			if (editable) {
+				Mark.escapeMarkBoundary(editable);
+			};
 		};
 
-		setText(marksRef.current, false);
+		// Debounce the gRPC save so rapid typing doesn't saturate the main thread
+		// with synchronous middleware round-trips. The contenteditable DOM already
+		// reflects the user's input natively — we only need to persist periodically.
+		window.clearTimeout(timeoutText.current);
+		timeoutText.current = window.setTimeout(() => {
+			setText(marksRef.current, false);
+		}, 300);
+
 		onKeyUp(e, value, marksRef.current, range, props);
 
 		if (!keyboard.isSpecial(e) && !keyboard.withCommand(e)) {
@@ -1299,6 +1329,8 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			placeholderHide();
 		};
 
+		// Flush any pending debounced save before the immediate save on blur
+		window.clearTimeout(timeoutText.current);
 		setText(marksRef.current, true);
 		focus.clear(true);
 		onBlur?.(e);
@@ -1383,7 +1415,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onCopy = () => {
 		const length = block.getLength();
 
-		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, (message: any) => {
+		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, null, (message: any) => {
 			const text = String(message.textSlot || '').replace(/\n+$/, '');
 
 			U.Common.clipboardCopy({
@@ -1405,6 +1437,12 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const selection = S.Common.getRef('selectionProvider');
+
+		// Cross-block text selection is handled by the selection provider
+		if (selection?.isCrossSelecting() || selection?.getTextSelection()) {
+			return;
+		};
+
 		const ids = selection?.getForClick('', false, true) || [];
 		const range = getRange();
 		const value = getTextValue();
@@ -1453,6 +1491,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
+			window.clearTimeout(timeoutText.current);
 			setText(marksRef.current, false, () => {
 				S.Menu.open('blockContext', {
 					classNameWrap: 'fromBlock',

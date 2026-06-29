@@ -25,12 +25,22 @@ const CommentReply = (props: Props) => {
 	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
+	const emojiRootsRef = useRef<Map<HTMLElement, Root>>(new Map());
 	const { id, creator, createdAt, modifiedAt, reactions } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = message.content?.parts || [];
 	const editedLabel = modifiedAt ? ` (${translate('commentEdited')})` : '';
 	const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
+
+	// Unmount any remaining inline emoji roots when the reply itself unmounts.
+	useEffect(() => {
+		const roots = emojiRootsRef.current;
+		return () => {
+			roots.forEach(root => root.unmount());
+			roots.clear();
+		};
+	}, []);
 
 	// Bind click handlers for mentions and links
 	useEffect(() => {
@@ -123,33 +133,43 @@ const CommentReply = (props: Props) => {
 			};
 		});
 
-		// Emoji marks — render as cross-platform images
-		const roots: Root[] = [];
+		// Emoji marks — render as cross-platform images.
+		// Reconcile against a persistent per-reply Map<container, Root>;
+		// see the matching comment in post.tsx for the full rationale.
+		const roots = emojiRootsRef.current;
+		const seen = new Set<HTMLElement>();
 
 		U.Dom.selectAll(Mark.getTag(I.MarkType.Emoji), node).forEach((item: HTMLElement) => {
 			const emojiId = item.getAttribute('data-param');
-			const smile = U.Dom.select('smile', item);
+			const smile = U.Dom.select('smile', item) as HTMLElement | null;
 
-			if (smile) {
-				// Clear native emoji text, keep only the smile mount point
-				Array.from(item.childNodes).forEach(child => {
-					if (child.nodeType === 3) {
-						child.remove();
-					};
-				});
-
-				const container = smile as HTMLElement & { _reactRoot?: Root };
-				const root = container._reactRoot || createRoot(container);
-
-				container._reactRoot = root;
-				roots.push(root);
-				root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
+			if (!smile) {
+				return;
 			};
+
+			// Clear native emoji text, keep only the smile mount point
+			Array.from(item.childNodes).forEach(child => {
+				if (child.nodeType === 3) {
+					child.remove();
+				};
+			});
+
+			seen.add(smile);
+
+			let root = roots.get(smile);
+			if (!root) {
+				root = createRoot(smile);
+				roots.set(smile, root);
+			};
+			root.render(<IconObject size={20} iconSize={20} object={{ iconEmoji: emojiId }} />);
 		});
 
-		return () => {
-			roots.forEach(root => root.unmount());
-		};
+		roots.forEach((root, container) => {
+			if (!seen.has(container)) {
+				roots.delete(container);
+				root.unmount();
+			};
+		});
 	}, [ isEditing, parts, subId ]);
 
 	// Right-click on selected text in the rendered reply opens a small menu
@@ -183,7 +203,7 @@ const CommentReply = (props: Props) => {
 				offsetY: 4,
 				data: {
 					options: [
-						{ id: 'quoteInComment', iconParam: { name: 'menu/block/text/quote' }, name: translate('commonQuoteInComment') },
+						{ id: 'quoteInComment', iconParam: { name: 'menu/action/quote' }, name: translate('commonQuoteInComment') },
 						{ id: 'copyText', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopyText') },
 					],
 					onSelect: (_e: any, item: any) => {
@@ -197,8 +217,11 @@ const CommentReply = (props: Props) => {
 							};
 
 							// Reply lives inside a thread — route the quote to the
-							// parent post's reply form, not the main form.
-							window.dispatchEvent(new CustomEvent(`commentReplyQuote.${parentId}`, { detail: part }));
+							// parent post's reply form, not the main form. Defer so
+							// the select menu's close stack unwinds first.
+							window.setTimeout(() => {
+								window.dispatchEvent(new CustomEvent(`commentReplyQuote.${parentId}`, { detail: part }));
+							}, 0);
 						} else
 						if (item.id == 'copyText') {
 							U.Common.clipboardCopy({ text });
@@ -289,17 +312,25 @@ const CommentReply = (props: Props) => {
 		});
 	}, [ targetId, id, parentId ]);
 
-	const onCopyLink = useCallback(() => {
+	const onCopyMessageLink = useCallback(() => {
 		const object = S.Detail.get(rootId, rootId);
 		const spaceObject = U.Space.getSpaceview();
 
 		U.Object.copyLink(object, spaceObject, 'deeplink', '', `&messageId=${id}`);
 	}, [ rootId, id ]);
 
+	const onCopyUrl = useCallback((url: string) => {
+		if (!url) {
+			return;
+		};
+
+		U.Common.copyToast(translate('commonLink'), url);
+	}, []);
+
 	const onCopyText = useCallback(() => {
 		const blocks = U.Comment.partsToBlocks(parts);
 
-		C.BlockCopy(rootId, blocks, { from: 0, to: 0 }, (message: any) => {
+		C.BlockCopy(rootId, blocks, { from: 0, to: 0 }, null, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -353,7 +384,7 @@ const CommentReply = (props: Props) => {
 		openReactionPicker(e.currentTarget as HTMLElement);
 	}, [ openReactionPicker ]);
 
-	const buildMenuOptions = useCallback((withQuickActions: boolean) => {
+	const buildMenuOptions = useCallback((withQuickActions: boolean, url?: string) => {
 		const limit = J.Constant.limit.chat.reactions;
 		const self = (reactions || []).filter(it => it.authors?.includes(account.id));
 		const canReact = (self.length < limit.self) && ((reactions || []).length < limit.all);
@@ -371,9 +402,14 @@ const CommentReply = (props: Props) => {
 
 		items.push({ id: 'copyText', name: translate('commentCopyText'), iconParam: { name: 'menu/action/copy' } });
 
+		// Only offered when the menu was opened on a URL inside the message text
+		if (url) {
+			items.push({ id: 'copyLink', name: translate('commentCopyLink'), iconParam: { name: 'menu/action/copyLink' } });
+		};
+
 		if (withQuickActions) {
 			items.push({ isDiv: true });
-			items.push({ id: 'copyLink', name: translate('commentCopyLink'), iconParam: { name: 'menu/action/pageLink' } });
+			items.push({ id: 'copyMessageLink', name: translate('commentCopyMessageLink'), iconParam: { name: 'menu/action/pageLink' } });
 		};
 
 		if (isSelf) {
@@ -389,16 +425,17 @@ const CommentReply = (props: Props) => {
 		return items;
 	}, [ isSelf, reactions, account.id, onReply ]);
 
-	const onMenuSelect = useCallback((item: any, anchor: HTMLElement) => {
+	const onMenuSelect = useCallback((item: any, anchor: HTMLElement, url?: string) => {
 		switch (item.id) {
 			case 'reply': onReply?.(); break;
 			case 'reaction': openReactionPicker(anchor); break;
 			case 'copyText': onCopyText(); break;
-			case 'copyLink': onCopyLink(); break;
+			case 'copyLink': onCopyUrl(url); break;
+			case 'copyMessageLink': onCopyMessageLink(); break;
 			case 'edit': onEdit(); break;
 			case 'delete': onDelete(); break;
 		};
-	}, [ onReply, openReactionPicker, onCopyText, onCopyLink, onEdit, onDelete ]);
+	}, [ onReply, openReactionPicker, onCopyText, onCopyUrl, onCopyMessageLink, onEdit, onDelete ]);
 
 	const onMenuClick = useCallback((e: React.MouseEvent) => {
 		const element = e.currentTarget as HTMLElement;
@@ -430,6 +467,8 @@ const CommentReply = (props: Props) => {
 		const x = e.pageX;
 		const y = e.pageY;
 		const anchor = contentWrapRef.current;
+		const link = (e.target as HTMLElement)?.closest(Mark.getTag(I.MarkType.Link)) as HTMLElement;
+		const url = link ? String(link.getAttribute('href') || '') : '';
 
 		setHover(true);
 
@@ -440,8 +479,8 @@ const CommentReply = (props: Props) => {
 			horizontal: I.MenuDirection.Right,
 			onClose: () => setHover(false),
 			data: {
-				options: buildMenuOptions(true),
-				onSelect: (e: any, item: any) => onMenuSelect(item, anchor),
+				options: buildMenuOptions(true, url),
+				onSelect: (e: any, item: any) => onMenuSelect(item, anchor, url),
 			},
 		});
 	}, [ readonly, isEditing, buildMenuOptions, onMenuSelect, setHover ]);

@@ -4,7 +4,9 @@
 	.block.blockDataview { @include text-common; padding: 6px 0px; }
 	.block.blockDataview {
 		.wrap { position: relative; }
-		.wrapContent { z-index: 1; }
+
+		> .wrapContent { z-index: 1; }
+		> .wrapContent.bgColor > .selectionTarget > .dropTarget { padding: 8px; }
 
 		#set-loader { margin: 24px auto; }
 		.icon.plus { width: 20px; height: 20px; }
@@ -349,7 +351,7 @@
 	}
 
 	.block.blockDataview.isInline {
-		.dataviewControls > .sides > .side.right { position: absolute; right: 0px; background-color: var(--color-bg-primary); }
+		.dataviewControls > .sides > .side.right { position: absolute; right: 0px; background-color: inherit; }
 	}
 
 	.block.blockDataview.isInline.isNarrow {

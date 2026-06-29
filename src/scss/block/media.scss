@@ -48,6 +48,7 @@
 		.wrap { max-width: 100%; position: relative; display: inline-block; overflow: hidden; }
 		.wrap {
 			> .loader { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 1; }
+			> .loaderWrapper { position: absolute; inset: 0; z-index: 1; width: auto; height: auto; margin: 0; background: var(--color-shape-highlight-light); border-radius: 8px; }
 		}
 		.mediaImage { width: 100%; display: block; cursor: zoom-in; }
 		.mediaVideo {

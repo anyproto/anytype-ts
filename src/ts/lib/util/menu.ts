@@ -2,7 +2,8 @@ import raf from 'raf';
 import { observable } from 'mobx';
 import { setRange } from 'selection-ranges';
 import Locale from 'dist/lib/json/locale.json';
-import { MouseEvent } from 'react';
+import React, { MouseEvent } from 'react';
+import { Icon } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { focus } from 'Lib/focus';
@@ -173,7 +174,8 @@ class UtilMenu {
 			{ id: I.EmbedProcessor.Graphviz, name: 'Graphviz' },
 			{ id: I.EmbedProcessor.Sketchfab, name: 'Sketchfab' },
 			{ id: I.EmbedProcessor.Drawio, name: 'Draw.io' },
-			{ id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
+			// disabled because of possible performance issues
+			// { id: I.EmbedProcessor.Excalidraw, name: 'Excalidraw' },
 			{ id: I.EmbedProcessor.Spotify, name: 'Spotify' },
 			{ id: I.EmbedProcessor.AppleMusic, name: 'Apple Music' },
 			{ id: I.EmbedProcessor.Bandcamp, name: 'Bandcamp' },
@@ -183,6 +185,7 @@ class UtilMenu {
 		if (config.experimental) {
 			ret = ret.concat([
 				{ id: I.EmbedProcessor.Image, name: translate('blockEmbedExternalImage') },
+				{ id: I.EmbedProcessor.AnytypeMiniApp, name: 'Anytype Mini App' },
 			]);
 		};
 
@@ -839,7 +842,12 @@ class UtilMenu {
 		const { isSharePage, noManage, noMembers, withPin, withDelete, withOpenNewTab, noShare, route } = param;
 		const isLoading = space.isAccountLoading || space.isLocalLoading;
 		const isOwner = U.Space.isMyOwner(targetSpaceId);
+		const canModerate = U.Space.canMyParticipantModerate(targetSpaceId);
 		const participants = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+		const oneToOneParticipant = space.isOneToOne ? U.Space.getOneToOneParticipant(space) : null;
+		const oneToOneGlobalName = oneToOneParticipant?.globalName || '';
+		const oneToOneIdentity = space.oneToOneIdentity || '';
+		const oneToOneAnyName = oneToOneGlobalName || (oneToOneIdentity ? U.String.shortMask(oneToOneIdentity, 6) : '');
 
 		const onClick = (itemId: string, inviteLink: string) => {
 			switch (itemId) {
@@ -958,11 +966,22 @@ class UtilMenu {
 					break;
 				};
 
+				case 'copyAnyName': {
+					if (oneToOneGlobalName) {
+						U.Common.copyToast(translate('commonAnyName'), oneToOneGlobalName);
+					} else
+					if (oneToOneIdentity) {
+						U.Common.copyToast(translate('blockFeaturedIdentity'), oneToOneIdentity);
+					};
+					break;
+				};
+
 			};
 		};
 
 		const getOptions = (inviteLink: string) => {
 			const sections = {
+				anyName: [],
 				general: [],
 				actions: [],
 				delete: [],
@@ -976,7 +995,7 @@ class UtilMenu {
 					];
 				};
 
-				if (isOwner && space.isShared) {
+				if (canModerate && space.isShared) {
 					const isDisabled = participants.length > 1;
 					sections.actions.push({
 						id: 'stopSharing',
@@ -986,6 +1005,15 @@ class UtilMenu {
 					});
 				};
 			} else {
+				if (space.isOneToOne && oneToOneAnyName) {
+					sections.anyName.push({
+						id: 'copyAnyName',
+						iconParam: oneToOneGlobalName ? { name: 'membership/badge', className: 'badge', size: 18, color: 'accent100' } : undefined,
+						name: oneToOneAnyName,
+						withCopy: true,
+					});
+				};
+
 				if (!isLoading) {
 					sections.general.push({ id: 'settings', iconParam: { name: 'menu/action/settings' }, name: translate('menuSpaceContextSpaceSettings') });
 				};
@@ -1320,6 +1348,12 @@ class UtilMenu {
 	};
 
 	dateFormatOptions () {
+		// Use a fixed, asymmetric sample date (Jul 30, 2020) so Short (30/07/2020)
+		// and ShortUS (07/30/2020) stay visually distinct year-round. Using today's
+		// date collapsed both labels to the same string on symmetric dates
+		// (01/01, 02/02, ..., 12/12) — see issue #2208.
+		const sample = U.Date.timestamp(2020, 7, 30);
+
 		return ([
 			{ id: I.DateFormat.Default },
 			{ id: I.DateFormat.MonthAbbrBeforeDay },
@@ -1331,7 +1365,7 @@ class UtilMenu {
 			{ id: I.DateFormat.Nordic },
 			{ id: I.DateFormat.European },
 		] as { id: I.DateFormat; name: string }[]).map(it => {
-			it.name = U.Date.dateWithFormat(it.id, U.Date.now());
+			it.name = U.Date.dateWithFormat(it.id, sample);
 			return it;
 		});
 	};
@@ -1701,6 +1735,58 @@ class UtilMenu {
 		this.menuContext = context;
 	};
 
+	spaceCreate (param: I.MenuParam, route: string) {
+		const analyticsName = {
+			[I.SpaceCreateType.Personal]: 'Space',
+			[I.SpaceCreateType.Group]: 'Chat',
+			[I.SpaceCreateType.Join]: 'Join',
+		};
+
+		const mySharedSpaces = U.Space.getMySharedSpacesList();
+		const { sharedSpacesLimit } = U.Space.getProfile();
+		const isLimitReached = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
+
+		const groupOption: any = { id: I.SpaceCreateType.Group, iconParam: { name: 'menu/spaceCreate/group' }, name: translate('sidebarMenuSpaceCreateTitleGroup') };
+
+		if (isLimitReached) {
+			groupOption.caption = React.createElement(Icon, { name: 'common/alert', className: 'spaceLimit', color: 'grey' });
+		};
+
+		const options = [
+			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
+			groupOption,
+			{ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
+		];
+
+		let prefix = '';
+		switch (route) {
+			case analytics.route.void: {
+				prefix = 'Void';
+				break;
+			};
+
+			case analytics.route.vault: {
+				prefix = 'Vault';
+				break;
+			};
+		};
+
+		S.Menu.open('select', {
+			...param,
+			data: {
+				options,
+				noVirtualisation: true,
+				onSelect: (e: any, item: any) => {
+					Action.createSpace(item.id, route);
+
+					analytics.event(`Click${prefix}CreateMenu${analyticsName[item.id]}`);
+				},
+			}
+		});
+
+		analytics.event(`Screen${prefix}CreateMenu`);
+	};
+
 	spaceTypeOptions (): I.Option[] {
 		return [
 			{ id: I.SpaceType.Data },
@@ -1771,17 +1857,29 @@ class UtilMenu {
 		let options: any[] = [];
 		let value = '';
 
+		if ((sectionId == I.WidgetSection.MyFavorites) && (S.Common.sidebarView != I.SidebarView.Links)) {
+			const section = S.Common.getWidgetSection(I.WidgetSection.MyFavorites);
+
+			options.push({ name: translate('widgetFavoritesViewTitle'), isSection: true });
+			options = options.concat([
+				{ id: 'viewList', name: translate('widgetFavoritesViewList') },
+				{ id: 'viewWidgets', name: translate('widgetFavoritesViewWidgets') },
+			]);
+			options.push({ isDiv: true });
+
+			value = (section?.view == 'widgets') ? 'viewWidgets' : 'viewList';
+		} else
 		if (spaceview.isShared && (sectionId == I.WidgetSection.RecentEdit)) {
 			options.push({ name: translate('widgetRecentModeTitle'), isSection: true });
 			options = options.concat(this.recentModeOptions());
 			options.push({ isDiv: true });
 
 			value = String(recentEditMode);
-		} else 
+		} else
 		if (sectionId == I.WidgetSection.Bin) {
 			options.push({ id: 'openBin', name: translate('commonOpen') });
 
-			if (U.Space.isMyOwner()) {
+			if (U.Space.canMyParticipantModerate()) {
 				options.push({ id: 'emptyBin', name: translate('commonEmptyBin') });
 			};
 
@@ -1815,6 +1913,12 @@ class UtilMenu {
 							S.Common.widgetSectionsSet([ ...widgetSections ]);
 
 							analytics.event('HideSection');
+							break;
+						};
+
+						case 'viewList':
+						case 'viewWidgets': {
+							S.Common.updateWidgetSection({ id: sectionId, view: element.id == 'viewWidgets' ? 'widgets' : 'list' });
 							break;
 						};
 

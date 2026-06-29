@@ -176,7 +176,7 @@ const MenuObjectContext = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			allowedEditChat = false;
 		};
 
-		if (!U.Space.isMyOwner()) {
+		if (!U.Space.canMyParticipantModerate()) {
 			allowedPin = false;
 		};
 

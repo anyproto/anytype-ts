@@ -1,5 +1,5 @@
 import React, { forwardRef, KeyboardEvent } from 'react';
-import { InputWithFile, IconObject, Error, ObjectName, Icon, MediaState } from 'Component';
+import { MediaPlaceholder, IconObject, Error, ObjectName, Icon, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 
@@ -27,12 +27,17 @@ const BlockFile = forwardRef<{}, I.BlockComponent>((props, ref) => {
 		focus.set(block.id, { from: 0, to: 0 });
 	};
 	
-	const onChangeUrl = (e: any, url: string) => {
-		Action.upload(I.FileType.File, rootId, block.id, url, '');
-	};
-	
-	const onChangeFile = (e: any, path: string) => {
-		Action.upload(I.FileType.File, rootId, block.id, '', path);
+	const onPlaceholderClick = (e: any) => {
+		e.stopPropagation();
+
+		S.Menu.open('blockMedia', {
+			element: `#block-${block.id}`,
+			data: {
+				rootId,
+				blockId: block.id,
+				type: I.FileType.File,
+			},
+		});
 	};
 	
 	const onClick = (e: any) => {
@@ -54,12 +59,10 @@ const BlockFile = forwardRef<{}, I.BlockComponent>((props, ref) => {
 				element = (
 					<>
 						{state == I.FileState.Error ? <Error text={translate('blockFileError')} /> : ''}
-						<InputWithFile
-							block={block}
+						<MediaPlaceholder
 							iconParam={{ name: 'menu/block/media/file' }}
-							textFile={translate('blockFileUpload')}
-							onChangeUrl={onChangeUrl}
-							onChangeFile={onChangeFile}
+							text={translate('blockFileAdd')}
+							onClick={onPlaceholderClick}
 							readonly={readonly}
 						/>
 					</>

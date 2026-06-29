@@ -117,6 +117,70 @@ const PageHeadEditor = forwardRef<RefProps, Props>((props, ref) => {
 		relations = relations.filter(it => it);
 		relations = S.Record.checkHiddenObjects(relations);
 
+		const onSourceContextMenu = (e: any) => {
+			e.preventDefault();
+
+			const relation = S.Record.getRelationByKey('source');
+			if (!relation) {
+				return;
+			};
+
+			const canEdit = allowedDetails && !readonly && !relation.isReadonlyValue;
+			const actions = source ? [
+				{ id: 'go', iconParam: { name: 'menu/action/browse' }, name: translate(`menuDataviewUrlActionGo${I.RelationType.Url}`) },
+				{ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy') },
+				{ id: 'reload', iconParam: { name: 'menu/action/reload' }, name: translate('menuDataviewUrlActionGoReload') },
+			] : [];
+
+			S.Menu.open('dataviewText', {
+				title: relation.name,
+				className: 'withTitle',
+				width: J.Size.menu.value,
+				recalcRect: () => ({ x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 }),
+				data: {
+					value: String(source || ''),
+					relationKey: relation.relationKey,
+					placeholder: relation.name,
+					canEdit,
+					noResize: true,
+					actions,
+					onChange: (v: any) => {
+						if (!canEdit) {
+							return;
+						};
+
+						const value = Relation.formatValue(relation, v, true);
+						if (value == source) {
+							return;
+						};
+
+						C.ObjectListSetDetails([ rootId ], [ { key: 'source', value } ]);
+						analytics.changeRelationValue(relation, value, { type: 'menu', id: 'Single' });
+					},
+					onSelect: (e: any, item: any) => {
+						switch (item.id) {
+							case 'go': {
+								Action.openUrl(Relation.checkUrlScheme(I.RelationType.Url, source));
+								analytics.event('RelationUrlOpen');
+								break;
+							};
+
+							case 'copy': {
+								U.Common.copyToast(translate('commonLink'), source);
+								analytics.event('RelationUrlCopy');
+								break;
+							};
+
+							case 'reload': {
+								C.ObjectBookmarkFetch(rootId, String(source).trim(), () => analytics.event('ReloadSourceData'));
+								break;
+							};
+						};
+					},
+				},
+			});
+		};
+
 		bookmarkHead = (
 			<>
 				{picture ? (
@@ -126,7 +190,7 @@ const PageHeadEditor = forwardRef<RefProps, Props>((props, ref) => {
 				) : ''}
 
 				{source ? (
-					<div className="bookmarkLink" onClick={() => Action.openUrl(source)}>
+					<div className="bookmarkLink" onClick={() => Action.openUrl(source)} onContextMenu={onSourceContextMenu}>
 						{iconImage ? <img className="fav" src={S.Common.imageUrl(iconImage, I.ImageSize.Small)} /> : ''}
 						<div className="url">{U.String.shortUrl(source)}</div>
 					</div>

@@ -257,7 +257,7 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				};
 
 				if (canQuoteInComment && hasText && hasCommon) {
-					const quoteInComment = { id: 'quoteInComment', iconParam: { name: 'menu/block/text/quote' }, name: translate('commonQuoteInComment') };
+					const quoteInComment = { id: 'quoteInComment', iconParam: { name: 'menu/action/quote' }, name: translate('commonQuoteInComment') };
 					actionSections = [ { children: [ quoteInComment ] }, ...actionSections ];
 				};
 			};
@@ -666,7 +666,8 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 			case 'quoteInComment': {
 				const text = block.content?.text || '';
-				const marks = block.content?.marks || [];
+				const length = text.length;
+				const marks = (block.content?.marks || []).filter(m => m.range && (m.range.to > m.range.from) && (m.range.from < length));
 				const part: I.CommentContentPart = {
 					style: I.TextStyle.Quote,
 					type: I.BlockType.Text,
@@ -675,7 +676,12 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					editorQuote: { blockId },
 				};
 
-				window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
+				// Defer dispatch until after the menu close at the end of
+				// onClick — otherwise React state updates from close() and the
+				// section's form mount can race.
+				window.setTimeout(() => {
+					window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
+				}, 0);
 				break;
 			};
 			

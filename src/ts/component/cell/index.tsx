@@ -314,16 +314,27 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			case I.RelationType.Url:
 			case I.RelationType.Email:
 			case I.RelationType.Phone: {
+				const goIcons = {
+					[I.RelationType.Url]: 'browse',
+					[I.RelationType.Email]: 'email',
+					[I.RelationType.Phone]: 'phone',
+				};
 				const options = [
-					{ id: 'go', iconParam: { name: `go-${I.RelationType[relation.format].toLowerCase()}` }, name: translate(`menuDataviewUrlActionGo${relation.format}`) },
-					{ id: 'copy', iconParam: { name: 'copy' }, name: translate('commonCopy') },
+					{ id: 'go', iconParam: { name: `menu/action/${goIcons[relation.format]}` }, name: translate(`menuDataviewUrlActionGo${relation.format}`) },
+					{ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy') },
 				];
 				if (relation.relationKey == 'source') {
-					options.push({ id: 'reload', iconParam: { name: 'reload' }, name: translate('menuDataviewUrlActionGoReload') });
+					options.push({ id: 'reload', iconParam: { name: 'menu/action/reload' }, name: translate('menuDataviewUrlActionGoReload') });
 				};
 
 				const onSelect = (event: any, item: any) => {
-					const value = childRef.current.getValue();
+					// Always read from the underlying record value, never from a child
+					// cell that may expose a display-only (truncated) representation.
+					// Fixes #2163: when the featured-relations header renders a URL
+					// with `shortUrl`/`textLimit`, the visible string can be a form
+					// like "github.com/an...issues"; the Open/Copy/Reload actions
+					// must operate on the full target URL stored on the record.
+					const value = String(record[relation.relationKey] || '');
 					if (!value) {
 						return;
 					};

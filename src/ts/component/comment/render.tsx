@@ -1,7 +1,7 @@
 import React from 'react';
-import * as Prism from 'prismjs';
 import { Icon } from 'Component';
 import Attachment from 'Component/block/chat/attachment';
+import CodeBlock from 'Component/util/codeBlock';
 import EmbedPreview from './embedPreview';
 import * as I from 'Interface';
 
@@ -82,22 +82,8 @@ const renderPart = (part: I.CommentContentPart, index: number, subId?: string): 
 			);
 		};
 
-		case I.TextStyle.Code: {
-			const lang = part.lang || 'plain';
-			const grammar = Prism.languages[lang];
-			const text = part.text || '';
-			const highlighted = grammar ? Prism.highlight(text, grammar, lang) : U.String.sanitize(text);
-			const titles = U.Prism.getTitles();
-			const langTitle = titles.find((t: any) => t.id === lang);
-			const langLabel = langTitle ? langTitle.name : (lang !== 'plain' ? lang : '');
-
-			return (
-				<pre key={key} className="commentCodeBlock">
-					{langLabel ? <div className="codeLang">{langLabel}</div> : null}
-					<code dangerouslySetInnerHTML={{ __html: highlighted }} />
-				</pre>
-			);
-		}
+		case I.TextStyle.Code:
+			return <CodeBlock key={key} text={part.text || ''} lang={part.lang} className="commentCodeBlock" />;
 
 		case I.TextStyle.Bulleted:
 			return <div key={key} className="commentListItem commentBulleted" dangerouslySetInnerHTML={{ __html: html }} />;
