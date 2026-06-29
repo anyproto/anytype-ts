@@ -47,6 +47,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
 	const lastSubIdRef = useRef('');
+	const topAnchorRef = useRef<{ id: string; vp: number } | null>(null);
 	const [ firstUnreadOrderId, setFirstUnreadOrderId ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
 	const [ isLoaded, setIsLoaded ] = useState(false);
@@ -474,6 +475,23 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 					if (messages.length) {
 						const lengthBefore = S.Chat.getList(subId).length;
+
+						// overflow-anchor is suppressed by the browser at scrollTop 0, so a prepend
+						// while pinned at the hard top would leave the view stuck at 0 — and since the
+						// prefetch is scroll-event-driven, it can't re-fire there, so loading stalls.
+						// Capture the current top message; the [dummy] layout effect restores its
+						// position pre-paint, keeping the view off 0 so loads keep flowing. The head
+						// is never evicted by a prepend (only the tail is), so this anchor survives.
+						if (dir < 0) {
+							const container = U.Dom.getScrollContainer(isPopup);
+							const firstId = S.Chat.getList(subId)[0]?.id || '';
+							const node = firstId ? (messageRefs.current[firstId]?.getNode() as HTMLElement) : null;
+
+							if (container && node && (Math.ceil(container.scrollTop) <= 0)) {
+								topAnchorRef.current = { id: firstId, vp: node.getBoundingClientRect().top - container.getBoundingClientRect().top };
+							};
+						};
+
 						const evicted = S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
 						const grew = S.Chat.getList(subId).length > lengthBefore;
 
@@ -1754,6 +1772,24 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	useLayoutEffect(() => {
 		scrollToBottomCheck();
 	}, [ messages.length ]);
+
+	// Restore the captured top message's position after a prepend-at-top (pre-paint, so no
+	// flash), since overflow-anchor can't hold position at scrollTop 0. This lands the view
+	// just below the newly-loaded batch — off 0 — so the prefetch can keep firing as you scroll.
+	useLayoutEffect(() => {
+		const anchor = topAnchorRef.current;
+		if (!anchor) {
+			return;
+		};
+		topAnchorRef.current = null;
+
+		const container = U.Dom.getScrollContainer(isPopup);
+		const node = messageRefs.current[anchor.id]?.getNode() as HTMLElement;
+
+		if (container && node) {
+			container.scrollTop = Math.max(0, node.offsetTop - anchor.vp);
+		};
+	}, [ dummy ]);
 
 	useLayoutEffect(() => {
 		const target = S.Chat.getMessageByOrderId(subId, firstUnreadOrderId);
