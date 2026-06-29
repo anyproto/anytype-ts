@@ -337,7 +337,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				return;
 			};
 
-			loadDepsAndReplies(messages, () => {
+			// On the initial (clear) load `messages` IS the whole window; otherwise subscribe
+			// deps for the full window + latest so loadDeps' destroy-and-resubscribe can't drop
+			// already-loaded messages' attachments (see loadMessages / onMessageAdd).
+			loadDepsAndReplies(clear ? messages : S.Chat.getList(subId).concat(messages), () => {
 				if (clear) {
 					S.Chat.set(subId, messages);
 					S.Chat.setAtChatEnd(subId, true);
@@ -458,7 +461,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 					setIsBottom(!(top < y));
 				};
 
-				loadDepsAndReplies(messages, () => {
+				// Subscribe deps for the FULL window (existing + new batch), not just the new
+				// batch — loadDeps destroys and re-subscribes the whole deps subscription, so
+				// passing only the new page would drop the already-loaded messages' attachments
+				// from S.Detail and make their images vanish on batch load. (matches onMessageAdd.)
+				loadDepsAndReplies(S.Chat.getList(subId).concat(messages), () => {
 					// The window may have been reset during the async dep/reply fetch — re-check
 					// before mutating the store so a stale page can't stitch into a new window.
 					if (loadEpoch.current != epoch) {
