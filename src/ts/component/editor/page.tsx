@@ -8,6 +8,8 @@ import TableOfContents from 'Component/page/elements/tableOfContents';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { useScrollRestore } from 'Hook';
+import { computeRestoreScrollTop } from 'Lib/util/scrollAnchor';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
@@ -37,7 +39,6 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const buttonAdd = useRef<any>(null);
 	const blockFeatured = useRef<any>(null);
 	const container = useRef<any>(null);
-	const scrollTopRef = useRef(0);
 	const isEnterProcessing = useRef(false);
 	const scrollHandlerRef = useRef<(() => void) | null>(null);
 	const windowHandlersRef = useRef<Map<string, (e: any) => void>>(new Map());
@@ -74,15 +75,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		checkDeleted();
 		initNodes();
 		rebind();
-		resizePage(() => {
-			if (scrollTopRef.current) {
-				const sc = U.Dom.getScrollContainer(isPopup);
-				if (sc) {
-					sc.scrollTop = scrollTopRef.current;
-				};
-				scrollTopRef.current = 0;
-			};
-		});
+		resizePage();
 
 		tocRef.current?.onScroll();
 		Preview.previewHide(false);
@@ -102,6 +95,101 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		blockFeatured.current = U.Dom.select(`#block-${U.Common.esc(J.Constant.blockId.featured)}`, node);
 	};
 
+	// Sizes the trailing #blockLast filler so the document is tall enough for a
+	// near-bottom scroll target to be reachable. Hoisted out of resizePage's raf so it
+	// can also run synchronously, pre-paint, before scroll restore (see useScrollRestore).
+	const applyLastBlockHeight = () => {
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+
+		const blocks = U.Dom.select('.blocks', node);
+		const last = U.Dom.select('#blockLast', node);
+		const scrollContainer = U.Dom.getScrollContainer(isPopup);
+
+		if (!blocks || !last || !scrollContainer) {
+			return;
+		};
+
+		U.Dom.css(last, { height: '' });
+
+		const commentSection = U.Dom.select('.commentSection', node);
+		const csh = commentSection ? commentSection.offsetHeight : 0;
+		const counter = U.Dom.select('.commentCounter', node);
+
+		if (!csh) {
+			const ct = scrollContainer.getBoundingClientRect().top;
+			const ch = scrollContainer.clientHeight;
+			const bt = blocks.getBoundingClientRect().top + window.scrollY;
+			const bh = blocks.offsetHeight;
+
+			let height = ch - ct - bt - bh - 8;
+			height = Math.max(J.Size.lastBlock, height);
+
+			U.Dom.css(last, { height: `${height}px` });
+			U.Dom.addClass(counter, 'isFixed');
+		} else {
+			U.Dom.removeClass(counter, 'isFixed');
+		};
+	};
+
+	// Topmost-visible block at the scroll container's top edge (O(1) hit-test): its id +
+	// on-screen offset, persisted on scroll for flash-free restore on the next open.
+	const getScrollAnchor = (): { id: string; offset: number } | null => {
+		const container = U.Dom.getScrollContainer(isPopup);
+		if (!container) {
+			return null;
+		};
+
+		const cr = container.getBoundingClientRect();
+		const x = cr.left + Math.min(40, cr.width / 2);
+		const y = cr.top + 1;
+
+		let el = U.Dom.elementFromPoint(x, y);
+		while (el && (el !== container) && !((el.id || '').startsWith('block-'))) {
+			el = el.parentElement;
+		};
+
+		if (!el || !(el.id || '').startsWith('block-')) {
+			return null;
+		};
+
+		const id = el.id.replace(/^block-/, '');
+		const r = el.getBoundingClientRect();
+
+		return { id, offset: (r.top - cr.top) };
+	};
+
+	// Where to scroll so the saved anchor block lands back at its saved on-screen offset.
+	const getScrollRestoreTop = (anchor: { id: string; offset: number }): number | null => {
+		const container = U.Dom.getScrollContainer(isPopup);
+		const el = U.Dom.get(`block-${U.Common.esc(anchor.id)}`);
+
+		if (!container || !el) {
+			return null;
+		};
+
+		const cr = container.getBoundingClientRect();
+		const r = el.getBoundingClientRect();
+		const contentTop = (r.top - cr.top) + container.scrollTop;
+
+		return computeRestoreScrollTop(contentTop, anchor.offset);
+	};
+
+	const { saveScroll } = useScrollRestore({
+		rootId,
+		isPopup,
+		storageKey: 'editor',
+		ready: !!root,
+		getAnchor: getScrollAnchor,
+		getRestoreTop: getScrollRestoreTop,
+		beforeRestore: applyLastBlockHeight,
+		// Read .editor live from nodeRef (attached before this hook's pre-paint layout
+		// effect); container.current is only set later in initNodes' post-paint effect.
+		getObserveTarget: () => U.Dom.select('.editor', nodeRef.current),
+	});
+
 	const getWrapperWidth = (): number => {
 		return getWidth(U.Data.getLayoutWidth(rootId));
 	};
@@ -119,7 +207,6 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const open = () => {
-		scrollTopRef.current = Storage.getScroll('editor', rootId, isPopup);
 		setIsDeleted(false);
 		idRef.current = rootId;
 
@@ -222,9 +309,14 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
+		const hasSavedScroll = !!Storage.getScrollAnchor('editor', rootId, isPopup) || !!Storage.getScroll('editor', rootId, isPopup);
+
 		focus.set(block.id, { from, to });
 		focus.apply();
-		focus.scroll(isPopup, block.id);
+
+		if (!hasSavedScroll) {
+			focus.scroll(isPopup, block.id);
+		};
 	};
 	
 	const unbind = () => {
@@ -2062,11 +2154,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 	
 	const onScroll = () => {
-		const { rootId, isPopup } = props;
-		const container = U.Dom.getScrollContainer(isPopup);
-		const top = container?.scrollTop ?? 0;
-
-		Storage.setScroll('editor', rootId, top, isPopup);
+		saveScroll();
 		tocRef.current?.onScroll();
 		Preview.previewHide(false);
 	};
@@ -2841,33 +2929,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
-			const blocks = U.Dom.select('.blocks', node);
-			const last = U.Dom.select('#blockLast', node);
-			const scrollContainer = U.Dom.getScrollContainer(isPopup);
-
 			setLayoutWidth(U.Data.getLayoutWidth(rootId));
-
-			if (blocks && last && scrollContainer) {
-				U.Dom.css(last, { height: '' });
-
-				const commentSection = U.Dom.select('.commentSection', node);
-				const csh = commentSection ? commentSection.offsetHeight : 0;
-				const counter = U.Dom.select('.commentCounter', node);
-
-				if (!csh) {
-					const ct = scrollContainer.getBoundingClientRect().top;
-					const ch = scrollContainer.clientHeight;
-					const bt = blocks.getBoundingClientRect().top + window.scrollY;
-					const bh = blocks.offsetHeight;
-
-					let height = ch - ct - bt - bh - 8;
-					height = Math.max(J.Size.lastBlock, height);
-					U.Dom.css(last, { height: `${height}px` });
-					U.Dom.addClass(counter, 'isFixed');
-				} else {
-					U.Dom.removeClass(counter, 'isFixed');
-				};
-			};
+			applyLastBlockHeight();
 
 			tocRef.current?.resize?.();
 			callBack?.();

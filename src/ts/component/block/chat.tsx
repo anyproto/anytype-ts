@@ -46,6 +46,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const scrolledItems = useRef(new Set());
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
+	const lastSubIdRef = useRef('');
+	const topAnchorRef = useRef<{ id: string; vp: number } | null>(null);
 	const [ firstUnreadOrderId, setFirstUnreadOrderId ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
 	const [ isLoaded, setIsLoaded ] = useState(false);
@@ -336,7 +338,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				return;
 			};
 
-			loadDepsAndReplies(messages, () => {
+			// On the initial (clear) load `messages` IS the whole window; otherwise subscribe
+			// deps for the full window + latest so loadDeps' destroy-and-resubscribe can't drop
+			// already-loaded messages' attachments (see loadMessages / onMessageAdd).
+			loadDepsAndReplies(clear ? messages : S.Chat.getList(subId).concat(messages), () => {
 				if (clear) {
 					S.Chat.set(subId, messages);
 					S.Chat.setAtChatEnd(subId, true);
@@ -457,7 +462,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 					setIsBottom(!(top < y));
 				};
 
-				loadDepsAndReplies(messages, () => {
+				// Subscribe deps for the FULL window (existing + new batch), not just the new
+				// batch — loadDeps destroys and re-subscribes the whole deps subscription, so
+				// passing only the new page would drop the already-loaded messages' attachments
+				// from S.Detail and make their images vanish on batch load. (matches onMessageAdd.)
+				loadDepsAndReplies(S.Chat.getList(subId).concat(messages), () => {
 					// The window may have been reset during the async dep/reply fetch — re-check
 					// before mutating the store so a stale page can't stitch into a new window.
 					if (loadEpoch.current != epoch) {
@@ -466,6 +475,23 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 					if (messages.length) {
 						const lengthBefore = S.Chat.getList(subId).length;
+
+						// overflow-anchor is suppressed by the browser at scrollTop 0, so a prepend
+						// while pinned at the hard top would leave the view stuck at 0 — and since the
+						// prefetch is scroll-event-driven, it can't re-fire there, so loading stalls.
+						// Capture the current top message; the [dummy] layout effect restores its
+						// position pre-paint, keeping the view off 0 so loads keep flowing. The head
+						// is never evicted by a prepend (only the tail is), so this anchor survives.
+						if (dir < 0) {
+							const container = U.Dom.getScrollContainer(isPopup);
+							const firstId = S.Chat.getList(subId)[0]?.id || '';
+							const node = firstId ? (messageRefs.current[firstId]?.getNode() as HTMLElement) : null;
+
+							if (container && node && (Math.ceil(container.scrollTop) <= 0)) {
+								topAnchorRef.current = { id: firstId, vp: node.getBoundingClientRect().top - container.getBoundingClientRect().top };
+							};
+						};
+
 						const evicted = S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
 						const grew = S.Chat.getList(subId).length > lengthBefore;
 
@@ -988,11 +1014,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setIsBottom(isBottom);
 
 		if (!isAutoLoadDisabled.current) {
-			// Prefetch one viewport before each edge so scrolling doesn't stall on the network
+			// Prefetch TWO viewports before each edge so scrolling doesn't stall on the network
 			// round-trip — into the past (older), and into the present (newer) when the window's
-			// tail was evicted. shouldRefetchForward keeps the newer-fetch off once we're at the
-			// chat end or a fetch is already in flight.
-			const threshold = container?.offsetHeight ?? 0;
+			// tail was evicted. A 2-viewport lead gives a fast scroll more time to load the next
+			// batch before reaching the hard edge (complements the scrollTop-0 anchor fix below).
+			// shouldRefetchForward keeps the newer-fetch off once we're at the chat end or a fetch
+			// is already in flight.
+			const threshold = (container?.offsetHeight ?? 0) * 2;
 
 			if ((max > 0) && (st <= threshold)) {
 				loadMessages(-1, false);
@@ -1700,6 +1728,44 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const match = keyboard.getMatch(isPopup);
 	});
 
+	// Position the chat synchronously BEFORE the first paint on re-open. On re-open the
+	// previous messages are still cached in the store and are already rendered by the
+	// time this layout effect runs, so we can scroll straight to the target (last-read
+	// message, else the bottom) here — the first painted frame is already correct, with
+	// no stale "past" position and no jump. init() then refreshes asynchronously and
+	// re-confirms the same target; Chromium's overflow-anchor keeps the viewport stable
+	// across that refresh.
+	//
+	// Keyed to the chat subId so it runs once per chat (covering in-place chat -> chat
+	// switches via the reused BlockChat instance) and ignores same-chat dependency churn
+	// (e.g. analyticsChatId resolving). Cold opens (no cache yet) fall through to init()'s
+	// normal async positioning — there is no cached content to mis-position there.
+	useLayoutEffect(() => {
+		const subId = getSubId();
+
+		if (lastSubIdRef.current == subId) {
+			return;
+		};
+		lastSubIdRef.current = subId;
+
+		// Only act when cached content actually overflows: a chat that fits needs no
+		// opening scroll (scrollTop 0 is already the bottom), so there is nothing to fix.
+		if (!S.Chat.getList(subId).length || !hasScroll()) {
+			return;
+		};
+
+		const state = S.Chat.getState(subId);
+		const target = state.messageOrderId ? S.Chat.getMessageByOrderId(subId, state.messageOrderId) : null;
+
+		// scrollToBottom/scrollToMessage apply synchronously here because the cached
+		// messages are already laid out (hasScroll() is true), so no post-paint retry runs.
+		if (target && messageRefs.current[target.id]) {
+			scrollToMessage(target.id, false);
+		} else {
+			scrollToBottom(false);
+		};
+	}, [ rootId, space, chatId, analyticsChatId ]);
+
 	useEffect(() => {
 		rebind();
 		init();
@@ -1708,6 +1774,24 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	useLayoutEffect(() => {
 		scrollToBottomCheck();
 	}, [ messages.length ]);
+
+	// Restore the captured top message's position after a prepend-at-top (pre-paint, so no
+	// flash), since overflow-anchor can't hold position at scrollTop 0. This lands the view
+	// just below the newly-loaded batch — off 0 — so the prefetch can keep firing as you scroll.
+	useLayoutEffect(() => {
+		const anchor = topAnchorRef.current;
+		if (!anchor) {
+			return;
+		};
+		topAnchorRef.current = null;
+
+		const container = U.Dom.getScrollContainer(isPopup);
+		const node = messageRefs.current[anchor.id]?.getNode() as HTMLElement;
+
+		if (container && node) {
+			container.scrollTop = Math.max(0, node.offsetTop - anchor.vp);
+		};
+	}, [ dummy ]);
 
 	useLayoutEffect(() => {
 		const target = S.Chat.getMessageByOrderId(subId, firstUnreadOrderId);

@@ -11,6 +11,7 @@ const SPACE_KEYS = new Set([
 	'toggle',
 	'lastOpenedSimple',
 	'scroll',
+	'scrollAnchor',
 	'defaultType',
 	'chat',
 	'comment',
@@ -29,6 +30,7 @@ const SPACE_KEYS = new Set([
 const LOCAL_KEYS = new Set([
 	'toggle',
 	'scroll',
+	'scrollAnchor',
 	'focus',
 	'graphData',
 	'updateBanner',
@@ -507,6 +509,47 @@ class Storage {
 	 */
 	getScrollKey (key: string, isPopup: boolean) {
 		return isPopup ? `${key}Popup` : key;
+	};
+
+	/**
+	 * Sets the element-anchored scroll position for a root object.
+	 * @param {string} key - The scroll key.
+	 * @param {string} rootId - The root object ID.
+	 * @param {{ id: string; offset: number } | null} anchor - Topmost element id + viewport offset, or null to clear.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 */
+	setScrollAnchor (key: string, rootId: string, anchor: { id: string; offset: number } | null, isPopup: boolean) {
+		key = this.getScrollKey(key, isPopup);
+
+		const obj = this.get('scrollAnchor', this.isLocal('scrollAnchor')) || {};
+		try {
+			obj[key] = obj[key] || {};
+
+			if (anchor && anchor.id) {
+				obj[key][rootId] = { id: String(anchor.id), offset: Number(anchor.offset) || 0 };
+			} else {
+				delete obj[key][rootId];
+			};
+
+			this.set('scrollAnchor', obj, this.isLocal('scrollAnchor'));
+		} catch (e) { console.warn('[Storage] scroll anchor save failed:', e); };
+		return obj;
+	};
+
+	/**
+	 * Gets the element-anchored scroll position for a root object.
+	 * @param {string} key - The scroll key.
+	 * @param {string} rootId - The root object ID.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 * @returns {{ id: string; offset: number } | null} The saved anchor, or null.
+	 */
+	getScrollAnchor (key: string, rootId: string, isPopup: boolean): { id: string; offset: number } | null {
+		key = this.getScrollKey(key, isPopup);
+
+		const obj = this.get('scrollAnchor', this.isLocal('scrollAnchor')) || {};
+		const v = (obj[key] || {})[rootId];
+
+		return (v && v.id) ? { id: String(v.id), offset: Number(v.offset) || 0 } : null;
 	};
 
 	/**
