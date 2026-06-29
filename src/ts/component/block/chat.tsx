@@ -1014,11 +1014,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setIsBottom(isBottom);
 
 		if (!isAutoLoadDisabled.current) {
-			// Prefetch one viewport before each edge so scrolling doesn't stall on the network
+			// Prefetch TWO viewports before each edge so scrolling doesn't stall on the network
 			// round-trip — into the past (older), and into the present (newer) when the window's
-			// tail was evicted. shouldRefetchForward keeps the newer-fetch off once we're at the
-			// chat end or a fetch is already in flight.
-			const threshold = container?.offsetHeight ?? 0;
+			// tail was evicted. A 2-viewport lead gives a fast scroll more time to load the next
+			// batch before reaching the hard edge (complements the scrollTop-0 anchor fix below).
+			// shouldRefetchForward keeps the newer-fetch off once we're at the chat end or a fetch
+			// is already in flight.
+			const threshold = (container?.offsetHeight ?? 0) * 2;
 
 			if ((max > 0) && (st <= threshold)) {
 				loadMessages(-1, false);
