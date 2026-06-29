@@ -46,6 +46,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const scrolledItems = useRef(new Set());
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
+	const lastSubIdRef = useRef('');
 	const [ firstUnreadOrderId, setFirstUnreadOrderId ] = useState('');
 	const [ dummy, setDummy ] = useState(0);
 	const [ isLoaded, setIsLoaded ] = useState(false);
@@ -1699,6 +1700,44 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	useEffect(() => {
 		const match = keyboard.getMatch(isPopup);
 	});
+
+	// Position the chat synchronously BEFORE the first paint on re-open. On re-open the
+	// previous messages are still cached in the store and are already rendered by the
+	// time this layout effect runs, so we can scroll straight to the target (last-read
+	// message, else the bottom) here — the first painted frame is already correct, with
+	// no stale "past" position and no jump. init() then refreshes asynchronously and
+	// re-confirms the same target; Chromium's overflow-anchor keeps the viewport stable
+	// across that refresh.
+	//
+	// Keyed to the chat subId so it runs once per chat (covering in-place chat -> chat
+	// switches via the reused BlockChat instance) and ignores same-chat dependency churn
+	// (e.g. analyticsChatId resolving). Cold opens (no cache yet) fall through to init()'s
+	// normal async positioning — there is no cached content to mis-position there.
+	useLayoutEffect(() => {
+		const subId = getSubId();
+
+		if (lastSubIdRef.current == subId) {
+			return;
+		};
+		lastSubIdRef.current = subId;
+
+		// Only act when cached content actually overflows: a chat that fits needs no
+		// opening scroll (scrollTop 0 is already the bottom), so there is nothing to fix.
+		if (!S.Chat.getList(subId).length || !hasScroll()) {
+			return;
+		};
+
+		const state = S.Chat.getState(subId);
+		const target = state.messageOrderId ? S.Chat.getMessageByOrderId(subId, state.messageOrderId) : null;
+
+		// scrollToBottom/scrollToMessage apply synchronously here because the cached
+		// messages are already laid out (hasScroll() is true), so no post-paint retry runs.
+		if (target && messageRefs.current[target.id]) {
+			scrollToMessage(target.id, false);
+		} else {
+			scrollToBottom(false);
+		};
+	}, [ rootId, space, chatId, analyticsChatId ]);
 
 	useEffect(() => {
 		rebind();
