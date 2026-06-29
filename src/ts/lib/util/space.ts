@@ -237,18 +237,54 @@ class UtilSpace {
 	 * @returns {any|null} The last opened object or null if not found.
 	 */
 	getLastObject () {
-		let home = Storage.getLastOpened();
+		const space = S.Common.space;
 
-		// Invalid data protection
-		if (!home || !home.id) {
+		let home = Storage.getLastOpened(space);
+
+		// Invalid data protection: ignore empty entries and entries that belong to a
+		// different space (stale/polluted bucket) to avoid opening a foreign object
+		// in the current space (JS-9815).
+		if (!home || !home.id || (home.spaceId && (home.spaceId != space))) {
 			home = null;
 		};
 
 		if (home) {
-			home.spaceId = S.Common.space;
+			home.spaceId = space;
 		};
 
 		return home;
+	};
+
+	/**
+	 * Records `object` as the space's last-opened object, so switching away from
+	 * the space and back reopens it (the write side of getLastObject).
+	 *
+	 * Skipped when:
+	 * - there is no real object (empty/blank detail);
+	 * - it is opened in a popup (transient, not the space's main view);
+	 * - it is the Dashboard/home layout, which is the fallback target itself and
+	 *   not a restorable object.
+	 *
+	 * Keyed by the object's own space (falling back to an explicit spaceId, then
+	 * the current space) so a late open arriving after a space switch can never
+	 * write into another space's bucket (JS-9815).
+	 */
+	setLastObject (object: any, spaceId?: string): void {
+		if (!object || object._empty_) {
+			return;
+		};
+
+		if (keyboard.isPopup()) {
+			return;
+		};
+
+		if ([ I.ObjectLayout.Dashboard ].includes(object.layout)) {
+			return;
+		};
+
+		const space = object.spaceId || spaceId || S.Common.space;
+
+		Storage.setLastOpened({ id: object.id, layout: object.layout, spaceId: space }, space);
 	};
 
 	/**

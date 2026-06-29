@@ -157,6 +157,15 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 			return;
 		};
 
+		// Cross-block text selection gets its own minimal context menu
+		if (selection?.getTextSelection()) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			onContextMenuTextSelection();
+			return;
+		};
+
 		// Allow native context menu (spellcheck) when clicking on links
 		if ((e.target as HTMLElement)?.closest('.markupLink')) {
 			return;
@@ -200,6 +209,111 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 				data: { range: U.Common.objectCopy(range) },
 			});
 		});
+	};
+
+	// Minimal context menu for a cross-block text selection: copy / cut / quote in discussion
+	const onContextMenuTextSelection = () => {
+		const selection = S.Common.getRef('selectionProvider');
+		const textSel = selection?.getTextSelection();
+
+		if (!textSel) {
+			return;
+		};
+
+		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+		const canQuote = !U.Object.isTemplateType(object?.type);
+		const cmd = keyboard.cmdSymbol();
+		const options: any[] = [
+			{ id: 'copy', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopy'), caption: `${cmd} + C` },
+			(!readonly ? { id: 'cut', iconParam: { name: 'menu/action/cut' }, name: translate('commonCut'), caption: `${cmd} + X` } : null),
+			(canQuote ? { id: 'quote', iconParam: { name: 'menu/action/quote' }, name: translate('commonQuoteInComment') } : null),
+		].filter(it => it);
+
+		S.Menu.closeAll([], () => {
+			S.Menu.open('select', {
+				rect: { x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 },
+				classNameWrap: 'fromBlock',
+				data: {
+					options,
+					onSelect: (e: any, item: any) => {
+						switch (item.id) {
+							case 'copy': {
+								Action.copyTextSelection(rootId, I.ClipboardMode.Copy);
+								break;
+							};
+
+							case 'cut': {
+								Action.copyTextSelection(rootId, I.ClipboardMode.Cut);
+								break;
+							};
+
+							case 'quote': {
+								quoteTextSelection(textSel);
+								break;
+							};
+						};
+					},
+				},
+			});
+		});
+	};
+
+	// Sends the selected text (with marks) to the discussion composer as a quote
+	const quoteTextSelection = (textSel: any) => {
+		const selection = S.Common.getRef('selectionProvider');
+		const ids = selection?.getTextSelectionIds() || [];
+		const parts = [];
+
+		ids.forEach((id: string) => {
+			const b = S.Block.getLeaf(rootId, id);
+			if (!b || !b.isText()) {
+				return;
+			};
+
+			const bt = String(b.content.text || '');
+			const r = { from: 0, to: bt.length };
+
+			if (id == textSel.from.id) {
+				r.from = Math.min(textSel.from.range.from, bt.length);
+			};
+			if (id == textSel.to.id) {
+				r.to = Math.min(textSel.to.range.to, bt.length);
+			};
+
+			parts.push({
+				text: bt.slice(r.from, r.to),
+				marks: Mark.cutRange(b.content.marks || [], r.from, r.to),
+			});
+		});
+
+		if (!parts.length) {
+			return;
+		};
+
+		let text = '';
+		let marks: I.Mark[] = [];
+
+		parts.forEach((it, i) => {
+			if (i) {
+				text += '\n';
+			};
+
+			marks = marks.concat(Mark.adjust(it.marks, 0, text.length));
+			text += it.text;
+		});
+
+		const part: I.CommentContentPart = {
+			style: I.TextStyle.Quote,
+			type: I.BlockType.Text,
+			text,
+			marks,
+			editorQuote: { blockId: textSel.from.id },
+		};
+
+		// Defer dispatch so the menu close stack unwinds before the section reacts
+		window.setTimeout(() => {
+			window.dispatchEvent(new CustomEvent(`commentQuote.${rootId}`, { detail: part }));
+		}, 0);
 	};
 
 	const menuOpen = (param?: Partial<I.MenuParam>) => {

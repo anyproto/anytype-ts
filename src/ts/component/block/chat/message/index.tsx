@@ -6,6 +6,7 @@ import { IconObject, Icon, ObjectName, Label } from 'Component';
 import Attachment from '../attachment';
 import Reply from './reply';
 import Reaction from './reaction';
+import CodeBlock from 'Component/util/codeBlock';
 import Storage from 'Lib/storage';
 import * as I from 'Interface';
 
@@ -18,8 +19,8 @@ interface ChatMessageRefProps {
 const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((props, ref) => {
 
 	const {
-		rootId, id, isNew, readonly, subId, hasMore, isPopup, style, onContextMenu, onMore, onReplyEdit,
-		renderLinks, renderMentions, renderObjects, renderEmoji, analyticsChatId,
+		rootId, id, isNew, readonly, subId, isPopup, style, onContextMenu, onMore, onReplyEdit, onReplyClick,
+		renderLinks, renderMentions, renderObjects, renderEmoji, analyticsChatId, getMessageMenuOptions,
 	} = props;
 	const { space, theme } = S.Common;
 	const { account } = S.Auth;
@@ -29,9 +30,19 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	const bubbleRef = useRef(null);
 	const message = S.Chat.getMessageById(subId, id);
 
+	// Memoized so re-rendering for a non-content reason (reaction / read-status / grouping)
+	// does not re-run Mark.toHtml + sanitize. Hoisted above the null guard to satisfy rules-of-hooks.
+	const text = React.useMemo(() => {
+		const content = message?.content;
+		return content ? U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks))).replace(/​/g, '') : '';
+	}, [ message?.content?.text, message?.content?.marks ]);
+
 	useEffect(() => {
 		const resizeObserver = new ResizeObserver((entries) => {
-			const width = (entries[0]?.target as HTMLElement)?.offsetWidth ?? 0;
+			// Use the size the observer already provides (border-box, == offsetWidth) rather than
+			// reading .offsetWidth, which would force a synchronous layout on every callback.
+			const entry = entries[0];
+			const width = entry?.borderBoxSize?.[0]?.inlineSize ?? entry?.contentRect?.width ?? 0;
 
 			raf(() => {
 				if (!nodeRef.current) {
@@ -55,15 +66,10 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	}, []);
 
 	useEffect(() => {
+		// .isWide on bookmark attachments is owned by the ResizeObserver above (its initial callback
+		// on observe() covers mount), so we no longer read offsetWidth synchronously here — that
+		// per-mount read + class write forced a relayout on each mounting row (~1s in traces).
 		init();
-
-		if (bubbleRef.current && nodeRef.current) {
-			const width = bubbleRef.current.offsetWidth;
-
-			U.Dom.selectAll('.attachment.isBookmark', nodeRef.current).forEach((el: HTMLElement) => {
-				U.Dom.toggleClass(el, 'isWide', width > 360);
-			});
-		};
 	});
 
 	useImperativeHandle(ref, () => ({
@@ -85,13 +91,29 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 		const node = nodeRef.current;
 		if (!node) return;
 
-		const et = U.Dom.select('.bubbleOuter .text', node);
 		const er = U.Dom.select('.reply .text', node);
+		const paragraphBlocks = (message.blocks || []).filter(it => it.text && (it.text.style != I.TextStyle.Code));
 
-		renderMentions(rootId, et, marks, () => text, { subId, withPreview: false });
-		renderObjects(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
-		renderLinks(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
-		renderEmoji(et);
+		if (paragraphBlocks.length) {
+			U.Dom.selectAll('.bubbleOuter .text', node).forEach((el: HTMLElement, i: number) => {
+				const bt = paragraphBlocks[i]?.text;
+				if (!bt) {
+					return;
+				};
+
+				renderMentions(rootId, el, bt.marks, () => bt.text, { subId, withPreview: false });
+				renderObjects(rootId, el, bt.marks, () => bt.text, { readonly: isReadonly }, { subId });
+				renderLinks(rootId, el, bt.marks, () => bt.text, { readonly: isReadonly }, { subId });
+				renderEmoji(el);
+			});
+		} else {
+			const et = U.Dom.select('.bubbleOuter .text', node);
+
+			renderMentions(rootId, et, marks, () => text, { subId, withPreview: false });
+			renderObjects(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
+			renderLinks(rootId, et, marks, () => text, { readonly: isReadonly }, { subId });
+			renderEmoji(et);
+		};
 
 		renderMentions(rootId, er, marks, () => text, { subId, iconSize: 16, withPreview: false });
 		renderObjects(rootId, er, marks, () => text, { readonly: isReadonly }, { subId, iconSize: 16 });
@@ -199,7 +221,6 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	};
 
 	const canAddReaction = (): boolean => {
-		const message = S.Chat.getMessageById(subId, id);
 		const reactions = message.reactions || [];
 		const { self, all } = J.Constant.limit.chat.reactions;
 
@@ -238,9 +259,27 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	const ct = [ 'textWrapper' ];
 	const cnBubble = [ 'bubble' ];
 	const editedLabel = modifiedAt ? translate('blockChatMessageEdited') : '';
+	const hasMore = !!getMessageMenuOptions(message, true).length;
 	const controls = [];
-	const text = U.String.sanitize(U.String.lbBr(Mark.toHtml(content.text, content.marks))).replace(/\u200B/g, '');
 	const cns = [ 'status', 'syncing' ];
+	const textBlocks = (message.blocks || []).filter(it => it.text);
+	const hasBlocks = textBlocks.length > 0;
+	const renderBlocks = () => textBlocks.map((b, i) => {
+		const bt = b.text;
+		if (!bt) {
+			return null;
+		};
+
+		if (bt.style == I.TextStyle.Code) {
+			return <CodeBlock key={i} text={bt.text} lang={bt.lang} />;
+		};
+
+		const html = U.String.sanitize(U.String.lbBr(Mark.toHtml(bt.text, bt.marks))).replace(/\u200B/g, '');
+		return <div key={i} className="text" dangerouslySetInnerHTML={{ __html: html }} />;
+	});
+
+	const codeRuns = U.Chat.splitCodeRuns(content.text, content.marks);
+	const hasCodeMark = codeRuns.some(r => r.code);
 
 	if (!text && !hasAttachments) {
 		return null;
@@ -263,10 +302,10 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 			controls.push({ id: 'reaction-add', name: 'chat/buttons/reaction', className: 'reactionAdd', tooltip: translate('blockChatReactionAdd'), onClick: onReactionAdd });
 		};
 
-		controls.push({ id: 'message-reply', name: 'chat/buttons/reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: onReplyEdit });
+		controls.push({ id: 'message-reply', name: 'chat/buttons/reply', className: 'messageReply', tooltip: translate('blockChatReply'), onClick: (e: any) => onReplyEdit(e, id) });
 
 		if (hasMore) {
-			controls.push({ name: 'common/more', onClick: onMore, tooltip: translate('commonOptions') });
+			controls.push({ name: 'common/more', onClick: (e: any) => onMore(e, id), tooltip: translate('commonOptions') });
 		};
 	};
 
@@ -293,7 +332,10 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 	if (text) {
 		cn.push('withText');
 	};
-	if (U.String.checkRtl(text)) {
+	// For blocks-based messages, base RTL on the actual paragraph text, not the fenced source
+	// (which would start with the LTR ``` marker for a code-led message).
+	const rtlSource = hasBlocks ? textBlocks.map(it => it.text?.text || '').join(' ') : text;
+	if (U.String.checkRtl(rtlSource)) {
 		ct.push('isRtl');
 	};
 	if (!isReadMessage || !isReadMention) {
@@ -338,7 +380,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 				ref={nodeRef}
 				id={`item-${id}`}
 				className={cn.join(' ')}
-				onContextMenu={onContextMenu}
+				onContextMenu={e => onContextMenu(e, id)}
 				style={style}
 				{...U.Common.dataProps({ 'order-id': message.orderId })}
 				{...U.Common.animationProps({
@@ -357,7 +399,7 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 					</div>
 
 					<div className="side right">
-						<Reply {...props} id={replyToMessageId} />
+						<Reply {...props} id={replyToMessageId} onReplyClick={e => onReplyClick(e, id)} />
 
 						{authorNode}
 
@@ -365,11 +407,21 @@ const ChatMessage = forwardRef<ChatMessageRefProps, I.ChatMessageComponent>((pro
 							<div className="bubbleInner">
 								<div ref={bubbleRef} className={cnBubble.join(' ')}>
 									<div className={ct.join(' ')}>
-										<div
-											ref={textRef}
-											className="text"
-											dangerouslySetInnerHTML={{ __html: text }}
-										/>
+										{hasBlocks ? renderBlocks() : (hasCodeMark ? (
+											<div ref={textRef} className="text">
+												{codeRuns.map((r, i) => (r.code ? (
+													<div key={i} className="codeMark">{r.text}</div>
+												) : (
+													<span key={i} dangerouslySetInnerHTML={{ __html: U.String.sanitize(U.String.lbBr(Mark.toHtml(r.text, r.marks))).replace(/​/g, '') }} />
+												)))}
+											</div>
+										) : (
+											<div
+												ref={textRef}
+												className="text"
+												dangerouslySetInnerHTML={{ __html: text }}
+											/>
+										))}
 										<div className="time">
 											<Icon name="chat/messageStatus/syncing" size={12} className={cns.join(' ')} />
 											{editedLabel} {U.Date.date('H:i', createdAt)}

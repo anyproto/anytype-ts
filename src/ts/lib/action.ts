@@ -325,21 +325,34 @@ class Action {
 	 * @param {boolean} isImage - Whether to treat the file as an image.
 	 */
 	downloadFile (id: string, route: string, isImage: boolean) {
-		if (!id || S.Common.isDownloading(id)) {
+		this.downloadFiles([ { id, isImage } ], route);
+	};
+
+	/**
+	 * Downloads multiple files into a single chosen directory using one dialog.
+	 * @param {{ id: string, isImage: boolean }[]} files - The files to download.
+	 * @param {string} route - The route context for analytics.
+	 */
+	downloadFiles (files: { id: string, isImage: boolean }[], route: string) {
+		files = (files || []).filter(it => it.id && !S.Common.isDownloading(it.id));
+
+		if (!files.length) {
 			return;
 		};
 
-		const url = isImage ? S.Common.imageUrl(id, 0) : S.Common.fileUrl(id);
-
 		this.openDirectoryDialog({ buttonLabel: translate('commonDownload') }, paths => {
-			S.Common.downloadStart(id);
+			files.forEach(file => {
+				const url = file.isImage ? S.Common.imageUrl(file.id, 0) : S.Common.fileUrl(file.id);
 
-			const promise = Renderer.send('download', url, { directory: paths[0] });
-			if (promise && promise.then) {
-				promise.then(() => S.Common.downloadDone(id));
-			} else {
-				S.Common.downloadDone(id);
-			};
+				S.Common.downloadStart(file.id);
+
+				const promise = Renderer.send('download', url, { directory: paths[0] });
+				if (promise && promise.then) {
+					promise.then(() => S.Common.downloadDone(file.id));
+				} else {
+					S.Common.downloadDone(file.id);
+				};
+			});
 
 			analytics.event('DownloadMedia', { route });
 		});
@@ -617,8 +630,9 @@ class Action {
 	 * @param {string} rootId - The root object ID.
 	 * @param {string[]} ids - The block IDs to copy or cut.
 	 * @param {I.ClipboardMode} mode - Whether to copy or cut.
+	 * @param {Map<string, I.TextRange>} ranges - Per-block partial text ranges (cross-block text selection); the middleware applies them to the first and last block of the request.
 	 */
-	copyBlocks (rootId: string, ids: string[], mode: I.ClipboardMode) {
+	copyBlocks (rootId: string, ids: string[], mode: I.ClipboardMode, ranges?: Map<string, I.TextRange>) {
 		const root = S.Block.getLeaf(rootId, rootId);
 		if (!root) {
 			return;
@@ -630,7 +644,7 @@ class Action {
 			return;
 		};
 
-		const range = U.Common.objectCopy(focus.state.range);
+		const range = ranges ? { from: 0, to: 0 } : U.Common.objectCopy(focus.state.range);
 		const isCut = mode == I.ClipboardMode.Cut;
 		const cmd = isCut ? 'BlockCut' : 'BlockCopy';
 		const tree = S.Block.wrapTree(rootId, rootId);
@@ -660,7 +674,7 @@ class Action {
 			return it;
 		}).filter(it => it);
 
-		if (isCut && (blocks.length > 1)) {
+		if (isCut && !ranges && (blocks.length > 1)) {
 			next = S.Block.getNextBlock(rootId, blocks[0].id, -1, it => it.isFocusable());
 		};
 
@@ -668,7 +682,20 @@ class Action {
 			return;
 		};
 
-		C[cmd](rootId, blocks, range, (message: any) => {
+		// The middleware applies rangeFirst/rangeLast positionally to the first/last block of the request
+		let rangeFirst = range;
+		let rangeLast = null;
+
+		if (ranges && blocks.length) {
+			rangeFirst = ranges.get(blocks[0].id) || { from: 0, to: 0 };
+			rangeLast = ranges.get(blocks[blocks.length - 1].id) || { from: 0, to: 0 };
+		};
+
+		C[cmd](rootId, blocks, rangeFirst, rangeLast, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
 			U.Common.clipboardCopy({
 				text: message.textSlot,
 				html: message.htmlSlot,
@@ -681,18 +708,69 @@ class Action {
 			if (isCut) {
 				S.Menu.closeAll([ 'blockContext', 'blockAction' ]);
 
-				if (next) {
-					const l = next.getLength();
-					focus.set(next.id, { from: l, to: l });
+				if (ranges) {
+					// Partially cut edge blocks keep the unselected part of their text: collapse the caret there
+					const first = blocks[0];
+					const last = blocks[blocks.length - 1];
+
+					if (first.isText() && rangeFirst.from > 0) {
+						focus.set(first.id, { from: rangeFirst.from, to: rangeFirst.from });
+					} else
+					if (last.isText() && rangeLast && (rangeLast.to > 0) && (rangeLast.to < last.getLength())) {
+						focus.set(last.id, { from: 0, to: 0 });
+					} else {
+						const prev = S.Block.getNextBlock(rootId, first.id, -1, it => it.isFocusable());
+						if (prev) {
+							const l = prev.getLength();
+							focus.set(prev.id, { from: l, to: l });
+						};
+					};
+
+					focus.apply();
 				} else {
-					focus.set(focused, { from: range.from, to: range.from });
+					if (next) {
+						const l = next.getLength();
+						focus.set(next.id, { from: l, to: l });
+					} else {
+						focus.set(focused, { from: range.from, to: range.from });
+					};
+
+					focus.apply();
 				};
-				
-				focus.apply();
 			};
 		});
 
 		analytics.event(isCut ? 'CutBlock' : 'CopyBlock', { count: blocks.length });
+	};
+
+	/**
+	 * Copies or cuts the current cross-block text selection to the clipboard.
+	 * @param {string} rootId - The root object ID.
+	 * @param {I.ClipboardMode} mode - Whether to copy or cut.
+	 */
+	copyTextSelection (rootId: string, mode: I.ClipboardMode) {
+		const selection = S.Common.getRef('selectionProvider');
+		const textSel = selection?.getTextSelection();
+
+		if (!textSel) {
+			return;
+		};
+
+		const ids = selection.getTextSelectionIds();
+		if (!ids.length) {
+			return;
+		};
+
+		const ranges = new Map([
+			[ textSel.from.id, textSel.from.range ],
+			[ textSel.to.id, textSel.to.range ],
+		]);
+
+		this.copyBlocks(rootId, ids, mode, ranges);
+
+		if (mode == I.ClipboardMode.Cut) {
+			selection.clear();
+		};
 	};
 
 	/**

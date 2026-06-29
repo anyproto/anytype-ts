@@ -1,3 +1,4 @@
+import Chat from './chat';
 import Common from './common';
 import Data from './data';
 import Date from './date';
@@ -15,8 +16,10 @@ import Subscription from './subscription';
 import String from './string';
 import StickyScrollbar from './stickyScrollbar';
 import Comment from './comment';
+import Perf from './perf';
 
 export {
+	Chat,
 	Common,
 	Data,
 	Date,
@@ -34,4 +37,5 @@ export {
 	String,
 	StickyScrollbar,
 	Comment,
+	Perf,
 };

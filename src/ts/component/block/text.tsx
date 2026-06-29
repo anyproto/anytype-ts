@@ -1058,6 +1058,14 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			focus.set(focused, { from: range.from - diff, to: range.to - diff });
 			focus.apply();
+
+			// After markdown auto-conversion the caret lands on the closing tag
+			// boundary and the browser keeps typing inside the new mark — move it
+			// past the trailing ZWS anchor so continued typing stays unformatted
+			const editable = U.Dom.select('.editable', editableRef.current?.getNode());
+			if (editable) {
+				Mark.escapeMarkBoundary(editable);
+			};
 		};
 
 		// Debounce the gRPC save so rapid typing doesn't saturate the main thread
@@ -1407,7 +1415,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onCopy = () => {
 		const length = block.getLength();
 
-		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, (message: any) => {
+		C.BlockCopy(rootId, [ block ], { from: 0, to: length }, null, (message: any) => {
 			const text = String(message.textSlot || '').replace(/\n+$/, '');
 
 			U.Common.clipboardCopy({
@@ -1429,6 +1437,12 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const selection = S.Common.getRef('selectionProvider');
+
+		// Cross-block text selection is handled by the selection provider
+		if (selection?.isCrossSelecting() || selection?.getTextSelection()) {
+			return;
+		};
+
 		const ids = selection?.getForClick('', false, true) || [];
 		const range = getRange();
 		const value = getTextValue();

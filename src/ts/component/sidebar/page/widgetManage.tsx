@@ -120,9 +120,9 @@ const SidebarPageWidgetManage = forwardRef<{}, I.SidebarPageComponent>((props, r
 
 	const sectionOptions = U.Menu.widgetSections();
 	const members = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
-	const isOwner = U.Space.isMyOwner();
+	const canModerate = U.Space.canMyParticipantModerate();
 	const hasMembers = members.length > 1;
-	const showMembers = !spaceview.isOneToOne && !spaceview.isPersonal && (hasMembers || isOwner);
+	const showMembers = !spaceview.isOneToOne && !spaceview.isPersonal && (hasMembers || canModerate);
 
 	useEffect(() => {
 		S.Common.widgetSectionsInit();

@@ -17,7 +17,7 @@ jobs:
         os:
           - macos-15
           - ubuntu-22.04
-          - windows-latest
+          - windows-2025
 
     steps:
       - name: Setup
@@ -56,7 +56,7 @@ jobs:
 
       - name: Install AzureSignTool
         if: ${{ startsWith(matrix.os, 'windows-') }}
-        run: dotnet tool install --global AzureSignTool --version 6.0.1
+        run: dotnet tool install --global AzureSignTool --version 7.0.1
 
       - name: Check out Git repository
         uses: actions/checkout@v1

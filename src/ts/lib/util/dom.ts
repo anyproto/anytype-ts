@@ -172,6 +172,10 @@ class UtilDom {
 		return Math.ceil(this.getScrollContainer(isPopup)?.scrollTop ?? 0);
 	};
 
+	elementFromPoint (x: number, y: number): HTMLElement | null {
+		return document.elementFromPoint(x, y) as HTMLElement | null;
+	};
+
 	getPageFlexContainer (isPopup: boolean): HTMLElement | null {
 		return this.select(`#pageFlex.${this.getContainerClassName(isPopup)}`);
 	};

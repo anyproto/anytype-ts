@@ -42,10 +42,10 @@ Spreadsheet-style tables with `cell.tsx` and `row.tsx`.
 
 ### Chat (`chat/`)
 Messaging interface:
-- `form.tsx` - Message input form
+- `form.tsx` - Message input form (authors multiline code blocks via triple-backtick fences)
 - `empty.tsx` - Empty state
 - `attachment/index.tsx` - File attachments
-- `message/index.tsx` - Message display
+- `message/index.tsx` - Message display (renders `message.blocks`; code blocks via the shared `util/codeBlock` with syntax highlighting + language label, same as discussions)
 - `message/date.tsx` - Date separator
 - `message/reaction.tsx` - Message reactions
 - `message/reply.tsx` - Reply threading

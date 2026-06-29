@@ -65,6 +65,15 @@ class Api {
 		};
 	};
 
+	/**
+	 * Resolves with the gRPC web proxy address once the middleware is up.
+	 * Windows are created in parallel with server startup, so the renderer
+	 * awaits this before initializing the dispatcher.
+	 */
+	getServerAddress (win: AppWindow): Promise<string> {
+		return Server.whenReady();
+	};
+
 	logout (win: AppWindow): void {
 		WindowManager.sendToAllTabs('logout');
 	};
@@ -691,12 +700,13 @@ class Api {
 	getTabs (win: AppWindow): { tabs: { id: string; data: TabData }[]; id: string; isVisible: boolean } {
 
 		const alwaysShow = ConfigManager.config.alwaysShowTabs;
-		const hasMultipleTabs = win.views && win.views.length > 1;
+		const hasMultipleTabs = win.views && (win.views.length > 1);
+		const hasPinnedTab = win.views && win.views.some((it: TabView) => it.data && it.data.isPinned);
 
 		return {
 			tabs: (win.views || []).map((it: TabView) => ({ id: it.id, data: it.data })),
 			id: win.activeTabId || win.views?.[0]?.id,
-			isVisible: alwaysShow || hasMultipleTabs,
+			isVisible: alwaysShow || hasPinnedTab || hasMultipleTabs,
 		};
 	};
 

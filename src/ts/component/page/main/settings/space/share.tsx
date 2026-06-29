@@ -17,7 +17,7 @@ const PageMainSettingsSpaceShare = forwardRef<I.PageRef, I.PageSettingsComponent
 	const limitReached = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
 	const { isOnline } = S.Common;
 	const isLocalNetwork = U.Data.isLocalNetwork();
-	const canEdit = U.Space.isMyOwner() && (!limitReached || spaceview.isShared);
+	const canEdit = U.Space.canMyParticipantModerate() && (!limitReached || spaceview.isShared);
 
 	const init = () => {
 		if (spaceview.isShared && (!invite.cid || !invite.key)) {

@@ -7,6 +7,25 @@ const UNSAFE_HTML_PATTERN = /<\s*(script|iframe|svg|img|math|object|embed|style|
 const DOMAIN_REGEX = /^(?:[a-zA-Z][a-zA-Z0-9+.-]*:\/\/)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?$/;
 const URL_REGEX = /^(?:([a-zA-Z][a-zA-Z0-9+.-]*):([^\s]+)|(?:(?:[^:@\s]+(?::[^@\s]*)?@)?(?:localhost|(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)|(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}))(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?)$/i;
 const ALLOWED_PROTOCOLS = [ 'mailto', 'tel', 'anytype' ];
+const SCHEME_REGEX = /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//;
+
+// Intentionally tight allowlist of TLDs eligible for auto-linking bare (scheme-less)
+// domains. Kept small on purpose so prose like "hey.how" or "readme.md" is not turned
+// into a link. URLs with an explicit scheme (https://…) bypass this list entirely.
+// Word-like ccTLDs (it, in, is, no, be, at, as, so, to, by, us, am) are deliberately
+// omitted to avoid linking sentences glued by a period.
+const AUTO_LINK_TLD = new Set([
+	// Generic
+	'com', 'org', 'net', 'edu', 'gov', 'mil', 'int', 'info', 'biz',
+	'io', 'ai', 'app', 'dev', 'xyz', 'co', 'me', 'tv', 'cc',
+	'online', 'site', 'shop', 'store', 'tech', 'cloud', 'pro',
+
+	// Country-code
+	'uk', 'de', 'fr', 'ru', 'jp', 'cn', 'br', 'au', 'ca', 'nl', 'se', 'ch',
+	'es', 'eu', 'pl', 'pt', 'cz', 'dk', 'fi', 'ie', 'nz', 'kr', 'tw', 'hk',
+	'sg', 'mx', 'ar', 'cl', 'za', 'ua', 'ro', 'hu', 'tr', 'il', 'ae', 'id',
+	'th', 'vn', 'ph', 'my', 'gr',
+]);
 const ALPHABET = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
 class UtilString {
@@ -302,6 +321,10 @@ class UtilString {
 		const m = String(s || '').match(URL_REGEX);
 		const ret = String(((m && m.length) ? m[0] : '') || '').trim();
 
+		if (!ret || !this.canAutoLink(ret)) {
+			return '';
+		};
+
 		try {
 			const url = new URL(ret);
 
@@ -341,7 +364,55 @@ class UtilString {
 	 */
 	matchDomain(s: string): string {
 		const m = String(s || '').trim().match(DOMAIN_REGEX);
-		return m ? m[0] : '';
+		const ret = m ? m[0] : '';
+		return (ret && this.canAutoLink(ret)) ? ret : '';
+	};
+
+	/**
+	 * Extracts the bare host (no scheme, credentials, port, path, query or hash)
+	 * from a URL-like string, lowercased.
+	 * @param {string} s - The URL-like string.
+	 * @returns {string} The host or empty string.
+	 */
+	getHost (s: string): string {
+		let host = String(s || '').trim();
+
+		host = host.replace(SCHEME_REGEX, '');	// scheme://
+		host = host.replace(/^[^@/]*@/, '');	// user:pass@
+		host = host.split(/[\/?#]/)[0];			// path / query / hash
+		host = host.split(':')[0];				// port
+
+		return host.toLowerCase();
+	};
+
+	/**
+	 * Decides whether a URL-like token should be auto-converted into a link.
+	 * Bare (scheme-less) domains must end with an approved TLD so that prose like
+	 * "hey.how" or "readme.md" is left as plain text. Tokens with an explicit scheme,
+	 * or pointing at localhost / an IP address, are always allowed.
+	 * @param {string} s - The URL-like token.
+	 * @returns {boolean} True if the token may be auto-linked.
+	 */
+	canAutoLink (s: string): boolean {
+		s = String(s || '');
+
+		// Explicit scheme — user intent is clear, link as-is.
+		if (SCHEME_REGEX.test(s) || ALLOWED_PROTOCOLS.some(p => s.toLowerCase().startsWith(`${p}:`))) {
+			return true;
+		};
+
+		const host = this.getHost(s);
+		if (!host) {
+			return false;
+		};
+
+		// localhost and IPv4 hosts are unambiguous targets.
+		if ((host == 'localhost') || /^\d{1,3}(?:\.\d{1,3}){3}$/.test(host)) {
+			return true;
+		};
+
+		const parts = host.split('.');
+		return (parts.length > 1) && AUTO_LINK_TLD.has(parts[parts.length - 1]);
 	};
 
 	/**

@@ -42,14 +42,32 @@ const PageMainChat = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const open = () => {
 		idRef.current = rootId;
-		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
+
+		// A chat object's change-tree IS its full message history, so ObjectOpen would build and
+		// validate the entire CRDT tree before anything renders — seconds of blocking for a big chat.
+		// The chat <Block> renders messages on its own via ChatSubscribeLastMessages (served from the
+		// backend's materialized store, no tree needed), so here we only need the object's details.
+		// Load them with a lightweight subscription instead of opening the object. Space-layout objects
+		// also route to this page and still need the full open (small tree; lifecycle relies on it).
+		const keys = J.Relation.default.concat([ 'chatId', 'analyticsChatId' ]);
+
+		U.Subscription.subscribeIds({ subId: rootId, ids: [ rootId ], keys, noDeps: false }, (message: any) => {
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
 			};
 
-			const object = S.Detail.get(rootId, rootId, [ 'analyticsChatId' ]);
+			const object = S.Detail.get(rootId, rootId, [ 'analyticsChatId', 'layout' ]);
 			if (object.isDeleted) {
 				return;
+			};
+
+			if (object.layout == I.ObjectLayout.Space) {
+				C.ObjectOpen(rootId, '', S.Common.space);
+			} else {
+				// Chat-layout objects skip ObjectOpen (which is what records the last-opened
+				// object), so record here — otherwise switching spaces and back forgets the
+				// open chat and reopens the previously opened page (JS-9821).
+				U.Space.setLastObject(object, S.Common.space);
 			};
 
 			S.Common.setRightSidebarState(isPopup, { rootId });
@@ -63,7 +81,11 @@ const PageMainChat = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	};
 
 	const close = () => {
-		Action.pageClose(isPopup, idRef.current, true);
+		// Only send ObjectClose for objects we actually opened (Space layout); chat objects were
+		// never opened, only subscribed — pageClose still tears down that subscription via destroyList.
+		const object = S.Detail.get(idRef.current, idRef.current, [ 'layout' ]);
+
+		Action.pageClose(isPopup, idRef.current, object.layout == I.ObjectLayout.Space);
 		idRef.current = '';
 	};
 

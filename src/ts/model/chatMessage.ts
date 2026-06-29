@@ -116,6 +116,8 @@ class ChatMessage implements I.ChatMessage {
 			dependencies: observable,
 			reactions: observable,
 			blocks: observable,
+			isFirst: observable,
+			isLast: observable,
 			isReadMessage: observable,
 			isReadMention: observable,
 			isReadReaction: observable,

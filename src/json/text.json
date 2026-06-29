@@ -143,6 +143,8 @@
 	"commonUploadComputer": "Upload from computer",
 	"commonLoad": "Load",
 	"commonDownload": "Download",
+	"commonDownloadFile": "Download %s",
+	"commonDownloadAll": "Download all",
 	"commonDownloading": "Downloading...",
 	"commonAscending": "Ascending",
 	"commonDescending": "Descending",
@@ -928,6 +930,8 @@
 	"blockChatReplying": "Replying to %s",
 	"blockChatFormReadonly": "Only editors can send messages. Contact the owner to request access.",
 	"blockChatCopyText": "Copy Text",
+	"blockChatCopyLink": "Copy link",
+	"blockChatCopyMessageLink": "Copy message link",
 	"blockChatDownloadFiles": "Download %s files",
 	"blockChatMarkAsUnread": "Mark as unread",
 	"blockChatAddAttachment": "Add attachment",
@@ -2408,6 +2412,10 @@
 	"widgetRecentEditMode0": "Anyone",
 	"widgetRecentEditMode1": "Only me",
 
+	"widgetFavoritesViewTitle": "Show as",
+	"widgetFavoritesViewList": "List",
+	"widgetFavoritesViewWidgets": "Widgets",
+
 	"widgetManageSections": "Manage Sections",
 	"widgetHideSection": "Hide section",
 	"widgetShowSection": "Show section",
@@ -3013,7 +3021,8 @@
 	"commentDelete": "Delete",
 	"commentSend": "Send",
 	"commentCopyText": "Copy text",
-	"commentCopyLink": "Copy link to comment",
+	"commentCopyLink": "Copy link",
+	"commentCopyMessageLink": "Copy message link",
 	"commentRepliesCount": "%s replies",
 	"commentReplyCount": "%s reply",
 
