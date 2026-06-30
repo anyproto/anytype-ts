@@ -112,7 +112,53 @@ class Keyboard {
 		Renderer.remove('analyticsEvent');
 		Renderer.on('analyticsEvent', (e: any, code: string, data: any) => analytics.event(code, data));
 
+		this.imeDebug();
+
 		this.onResize();
+	};
+
+	/**
+	 * TEMPORARY IME/Wayland input diagnostic (JS-9823).
+	 * Logs the keydown/keyup/composition/input event sequence so we can confirm whether
+	 * plain ASCII (/ * _) is being routed through IME composition on KDE/Wayland.
+	 * Open DevTools (Alt+Ctrl+I), type `/ * _`, then read `[IME]` lines or run
+	 * `copy(JSON.stringify(window.__imeTrace, null, 2))`. Remove once diagnosed.
+	 */
+	imeDebug () {
+		const w = window as any;
+
+		if (w.__imeDebugAttached) {
+			return;
+		};
+		w.__imeDebugAttached = true;
+
+		const trace: any[] = w.__imeTrace = [];
+		const events = [ 'keydown', 'keyup', 'compositionstart', 'compositionupdate', 'compositionend', 'beforeinput', 'input' ];
+
+		const handler = (e: any) => {
+			const rec = {
+				type: e.type,
+				key: e.key,
+				code: e.code,
+				keyCode: e.keyCode,
+				isComposing: e.isComposing,
+				data: e.data,
+				inputType: e.inputType,
+				kbComposition: this.isComposition,
+			};
+
+			trace.push(rec);
+
+			if (trace.length > 500) {
+				trace.shift();
+			};
+
+			console.log('[IME]', e.type, JSON.stringify(rec));
+		};
+
+		events.forEach(t => document.addEventListener(t, handler, true));
+
+		console.log(`[IME] diagnostic attached. Type / * _ then read [IME] lines (or run: copy(JSON.stringify(window.__imeTrace, null, 2)))`);
 	};
 
 	onResize () {
