@@ -54,6 +54,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const [ pinnedMessages, setPinnedMessages ] = useState<I.ChatMessage[]>([]);
 	const [ pinnedIndex, setPinnedIndex ] = useState(-1);
 	const scrollRafRef = useRef(0);
+	const chainRafRef = useRef(0);
 	const visibleIds = useRef<Set<string>>(new Set());
 	const viewportObserver = useRef<IntersectionObserver | null>(null);
 	const formResizeObserver = useRef<ResizeObserver | null>(null);
@@ -473,6 +474,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 						return;
 					};
 
+					let added = false;
+
 					if (messages.length) {
 						const lengthBefore = S.Chat.getList(subId).length;
 
@@ -495,6 +498,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 						const evicted = S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
 						const grew = S.Chat.getList(subId).length > lengthBefore;
 
+						added = grew || evicted;
+
 						// Force a re-render so the new rows commit (either direction) — the
 						// component is not a MobX observer. At the MAX_MESSAGES cap a prepend/append
 						// inserts and evicts the same count, so the length is unchanged even though
@@ -503,7 +508,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 						// anchoring (overflow-anchor) keeps the viewport static when content is
 						// inserted above and preserves momentum; setting scrollTop ourselves would
 						// jump the view (~1 viewport) at load time.
-						if (grew || evicted) {
+						if (added) {
 							setDummy(v => v + 1);
 						};
 					};
@@ -514,6 +519,38 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 						isLoadingPrev.current = false;
 					} else {
 						isLoadingNext.current = false;
+					};
+
+					// Forward analogue of the top-edge fix: a fast scroll (PageDown) can reach the hard
+					// bottom before the network responds, and since the prefetch is scroll-event driven it
+					// won't re-fire once the user stops there — so newer batches stall. Re-check post-render
+					// (raf, so the appended rows are laid out): if we're still within the prefetch band of
+					// the new bottom and the chat end isn't reached, chain the next forward load. Bounded —
+					// each append pushes the bottom ~one batch further, so it stops once ~2 viewports of
+					// newer history are buffered below, or at the chat end, or once the user scrolls away.
+					// Only chain when this page actually added rows (`added`) so a no-progress page can't
+					// spin. The raf carries the epoch guard (drop after a window reset) and is cancelled on
+					// unmount (chainRafRef), since the page container outlives the chat.
+					if ((dir > 0) && added && !S.Chat.isAtChatEnd(subId)) {
+						raf.cancel(chainRafRef.current);
+						chainRafRef.current = raf(() => {
+							if ((loadEpoch.current != epoch) || isLoadingNext.current || S.Chat.isAtChatEnd(subId)) {
+								return;
+							};
+
+							const c = U.Dom.getScrollContainer(isPopup);
+							if (!c) {
+								return;
+							};
+
+							const st = Math.ceil(c.scrollTop ?? 0);
+							const mx = c.scrollHeight - c.clientHeight;
+							const th = c.offsetHeight * 2;
+
+							if ((mx > 0) && (st >= (mx - th))) {
+								loadMessages(1, false);
+							};
+						});
 					};
 
 					callBack?.();
@@ -1719,6 +1756,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			window.clearTimeout(timeoutScrollStop.current);
 			window.clearTimeout(timeoutResize.current);
 			raf.cancel(scrollRafRef.current);
+			raf.cancel(chainRafRef.current);
 			messageRefs.current = {};
 			refSetters.current.clear();
 		};
