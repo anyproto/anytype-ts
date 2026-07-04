@@ -1462,7 +1462,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	};
 
 	const scrollToBottomCheck = () => {
-		if (isBottom.current) {
+		// Stick to the bottom only when we're actually at the chat's newest (the live tail).
+		// During FORWARD pagination (loading newer batches after the tail was evicted,
+		// isAtChatEnd=false) this must NOT fire — otherwise each appended batch snaps the view to
+		// the batch end, dumping the user at the bottom with nothing below to scroll into, so
+		// pagination can't continue. Keeping it off lets the appended rows sit below the current
+		// position; the view stays put and the user scrolls down through them to load the next page.
+		if (isBottom.current && S.Chat.isAtChatEnd(getSubId())) {
 			scrollToBottom(false);
 		};
 	};
