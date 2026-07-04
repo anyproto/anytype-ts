@@ -41,6 +41,10 @@ Just want to try it? Grab the latest installer from the [releases page](https://
 
 On ARM systems, node package `keytar` needs to be rebuilt during installation, so make sure that your system has a C++ compiler, Python3 and Python package `setuptools`. E.g. on Debian/Ubuntu: `sudo apt install python3-setuptools`. Alternatively, on any system, create a Python virtual environment (venv) and inside the venv: `pip install setuptools`. Then build from source inside the venv.
 
+**Linux** also needs the protobuf compiler **with** the well-known `.proto` files (used to generate the gRPC bindings in step 5):
+- **Fedora:** `sudo dnf install protobuf-compiler protobuf-devel jq`
+- **Debian / Ubuntu:** `sudo apt install protobuf-compiler libprotobuf-dev jq`
+
 ```bash
 # 1 – Clone & open this repository
 git clone https://github.com/anyproto/anytype-ts.git && cd anytype-ts
@@ -48,19 +52,27 @@ git clone https://github.com/anyproto/anytype-ts.git && cd anytype-ts
 # 2 - Install JavaScript dependencies
 bun install
 
-# 3 – Fetch / build middleware & protobuf bindings
+# 3 – Fetch the prebuilt middleware binary + proto/JSON assets into dist/
 ./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd>
 
 # 4 – Build the core engine
 cd .. && git clone https://github.com/anyproto/anytype-heart.git && cd anytype-heart
 make install-dev-js CLIENT_DESKTOP_PATH=../anytype-ts && cd ../anytype-ts
 
-# 5 - Update locale
+# 5 – Generate protobuf bindings (middleware/) + service registry (src/ts/lib/api/service.ts)
+#     From the anytype-heart checkout built in step 4:
+bun run generate:protos
+#     …or, to skip the anytype-heart checkout entirely, generate from the assets fetched in step 3:
+#     bash scripts/generate-protos.sh --from-dist
+
+# 6 - Update locale
 bun run update:locale
 
-# 6 – Build the Electron desktop app (see package.json for more options)
+# 7 – Build the Electron desktop app (see package.json for more options)
 bun run dist:<linux|win|mac>
 ```
+
+> Steps 3–5 produce `middleware/` and `src/ts/lib/api/service.ts`, which are git-ignored. Skipping step 5 causes `Failed to resolve import "./service" from src/ts/lib/api/dispatcher.ts`. See [Updating Protobuf Bindings](#updating-protobuf-bindings) and [`scripts/README.md`](scripts/README.md#protobuf-generation) for details.
 
 ### Environment flags
 
@@ -140,15 +152,28 @@ For CI environments (requires GitHub credentials):
 
 ### Updating Protobuf Bindings
 
-To regenerate TypeScript protobuf bindings from a local [anytype-heart](https://github.com/anyproto/anytype-heart) checkout (expected at `../anytype-heart`):
+The TypeScript protobuf bindings (`middleware/`) and the gRPC service registry (`src/ts/lib/api/service.ts`) are **generated and git-ignored** — a fresh checkout has neither, and the dev/build will fail with `Failed to resolve import "./service" from src/ts/lib/api/dispatcher.ts` until you generate them.
+
+**From a local [anytype-heart](https://github.com/anyproto/anytype-heart) checkout** (expected at `../anytype-heart`, requires the Go toolchain):
 
 ```bash
 bun run generate:protos
 ```
 
-**Prerequisites:** `protoc` (protobuf compiler) must be installed, and `bun install` must have been run (for `ts-proto`).
+**Without an anytype-heart checkout** (uses the `.proto` files downloaded by `./update.sh` into `dist/lib/protos/`):
 
-This reads `.proto` files from `../anytype-heart`, generates TypeScript bindings into `middleware/`, and creates a service registry.
+```bash
+./update.sh <macos-latest|ubuntu-latest|windows-latest> <arm|amd>
+bash scripts/generate-protos.sh --from-dist
+```
+
+**Prerequisites:** `bun install` must have been run (for `ts-proto`), and `protoc` **plus the well-known `google/protobuf/*.proto` files** must be installed:
+
+- **Fedora:** `sudo dnf install protobuf-compiler protobuf-devel`
+- **Debian / Ubuntu:** `sudo apt install protobuf-compiler libprotobuf-dev`
+- **macOS:** `brew install protobuf`
+
+> The `-devel` / `-dev` package is required on Linux — without it `protoc` reports `google/protobuf/struct.proto: File not found`. See [`scripts/README.md`](scripts/README.md#protobuf-generation) for the full Linux first-time setup and troubleshooting.
 
 ## 🌍 Localisation
 

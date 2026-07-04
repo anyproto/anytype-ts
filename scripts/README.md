@@ -16,6 +16,65 @@ Starts anytypeHelper + Vite for browser-only development (no Electron). See `bun
 
 ---
 
+# Protobuf Generation
+
+## generate-protos.sh
+
+Generates the TypeScript protobuf bindings (into `middleware/`) and the gRPC service registry (`src/ts/lib/api/service.ts`) from the `.proto` definitions.
+
+**Both outputs are git-ignored and must be generated before the first build.** A fresh checkout has neither, so Vite fails with `Failed to resolve import "./service" from src/ts/lib/api/dispatcher.ts` until you run this.
+
+Two modes:
+
+| Command | Source of `.proto` files | Requires |
+|---------|--------------------------|----------|
+| `bash scripts/generate-protos.sh` (or `bun run generate:protos`) | local `../anytype-heart` checkout (runs `make install-dev-js`) | Go toolchain **and** the `anytype-heart` repo at `../anytype-heart` |
+| `bash scripts/generate-protos.sh --from-dist` | `dist/lib/protos/` (populated by `./update.sh`) | just `protoc` — **use this if you don't develop the middleware** |
+
+### Linux first-time setup (Fedora / Ubuntu)
+
+From a clean clone, the `--from-dist` path needs no Go toolchain or `anytype-heart` checkout:
+
+```bash
+# 1. JS deps (provides ts-proto, used by the generator)
+bun install
+
+# 2. protoc + the well-known google/protobuf/*.proto files + jq (used by update.sh)
+#    Fedora:
+sudo dnf install protobuf-compiler protobuf-devel jq
+#    Debian / Ubuntu:
+sudo apt install protobuf-compiler libprotobuf-dev jq
+
+# 3. Download the middleware binary + proto/JSON assets into dist/
+#    (use `arm` instead of `amd` on ARM machines)
+./update.sh ubuntu-latest amd
+
+# 4. Generate middleware/ bindings + src/ts/lib/api/service.ts
+bash scripts/generate-protos.sh --from-dist
+
+# 5. Run
+bun run start:dev
+```
+
+> **Why `protobuf-devel` / `libprotobuf-dev`?** The `.proto` files import well-known types such as `google/protobuf/struct.proto`. The `protobuf-compiler` package ships only the `protoc` binary — the well-known `.proto` definitions live in the `-devel` / `-dev` package. Without it you get `google/protobuf/struct.proto: File not found`. `protoc` auto-searches `/usr/include`, where these packages install the files, so no extra `--proto_path` is needed. (On macOS, Homebrew's `protobuf` bundles both, which is why this step is invisible there.)
+
+### Troubleshooting
+
+| Error | Fix |
+|-------|-----|
+| `Failed to resolve import "./service" from src/ts/lib/api/dispatcher.ts` | `service.ts` was never generated — run the generate step above |
+| `google/protobuf/struct.proto: File not found` | Install `protobuf-devel` (Fedora) / `libprotobuf-dev` (Debian/Ubuntu) |
+| `protoc not found` | Install `protobuf-compiler` |
+| `ts-proto not found at .../protoc-gen-ts_proto` | Run `bun install` first |
+| `dist/lib/protos not found` (with `--from-dist`) | Run `./update.sh <platform> <arch>` first |
+| `anytype-heart repo not found at ../anytype-heart` (local mode) | Clone it to `../anytype-heart`, or use `--from-dist` instead |
+
+## generate-service-registry.js
+
+Invoked by `generate-protos.sh` — never run directly. Generates `src/ts/lib/api/service.ts`, a registry mapping every gRPC method name to its ts-proto request/response `MessageFns`. Pass `--from-dist` to read protos from `dist/lib/protos/` instead of `../anytype-heart`.
+
+---
+
 # Release Notes Generator
 
 This script automatically generates release notes by extracting Linear task IDs from Git commit messages and fetching their details from the Linear API.
