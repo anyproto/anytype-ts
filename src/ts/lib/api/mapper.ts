@@ -1052,11 +1052,13 @@ export const Mapper = {
 
 		Block: (obj: any) => {
 			obj = obj || {};
-			obj.type = String(obj.type || I.BlockType.Empty);
-			obj.content = U.Common.objectCopy(obj.content || {});
 
-			const fm = U.String.toUpperCamelCase(`block-${obj.type}`);
-			const contentKey = BLOCK_TYPE_TO_PROP[obj.type];
+			// The To.Block* content mappers build fresh objects from the input,
+			// so no defensive deep copy of the content is needed here.
+			const type = String(obj.type || I.BlockType.Empty);
+			const content = obj.content || {};
+			const fm = U.String.toUpperCamelCase(`block-${type}`);
+			const contentKey = BLOCK_TYPE_TO_PROP[type];
 
 			const block: any = {
 				id: String(obj.id || ''),
@@ -1068,7 +1070,7 @@ export const Mapper = {
 			};
 
 			if (contentKey && Mapper.To[fm]) {
-				block[contentKey] = Mapper.To[fm](obj.content);
+				block[contentKey] = Mapper.To[fm](content);
 			} else {
 				console.log('[Mapper] Block content key or To method do not exist: ', contentKey, fm);
 			};
@@ -1113,7 +1115,9 @@ export const Mapper = {
 		},
 
 		View: (obj: I.View) => {
-			obj = new M.View(U.Common.objectCopy(obj));
+			// M.View's constructor only reads from props (coerces scalars, rebuilds
+			// arrays through model constructors), so no defensive deep copy is needed.
+			obj = new M.View(obj);
 
 			return {
 				id: obj.id,

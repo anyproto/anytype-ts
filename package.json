@@ -278,6 +278,9 @@
 			"dist/embed/**/*",
 			"dist/challenge/**/*",
 			"dist/lib/**/*",
+			"!dist/lib/pb/**/*",
+			"!dist/lib/pkg/**/*",
+			"!dist/lib/protos/**/*",
 			"dist/img/**/*",
 			"dist/css/**/*",
 			"dist/js/**/*",
@@ -535,16 +538,8 @@
 				"to": "node_modules/glob"
 			},
 			{
-				"from": "node_modules/google-protobuf",
-				"to": "node_modules/google-protobuf"
-			},
-			{
 				"from": "node_modules/graceful-fs",
 				"to": "node_modules/graceful-fs"
-			},
-			{
-				"from": "node_modules/grpc-web",
-				"to": "node_modules/grpc-web"
 			},
 			{
 				"from": "node_modules/has-flag",

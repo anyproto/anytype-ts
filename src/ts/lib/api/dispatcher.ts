@@ -227,12 +227,21 @@ class Dispatcher {
 		let updateNumbers = false;
 		let updateMarkup = false;
 
-		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
+		// Precompute type/data once per message: Mapper.Event.Data scans the message keys,
+		// so doing it inside the sort comparator would repeat the scan O(n log n) times.
+		// Events in SORT_IDS are processed in array order to ensure dependent operations
+		// (e.g., BlockAdd before BlockSetChildrenIds) work correctly; events not listed
+		// there keep their relative order before them (stable sort, index -1).
+		const items = messages.map((message: any) => {
+			const { type, data } = Mapper.Event.Data(message);
+			return { type, data, spaceId: message.spaceId || '', sortIdx: SORT_IDS.indexOf(type) };
+		});
+
+		items.sort((c1, c2) => c1.sortIdx - c2.sortIdx);
 
 		runInAction(() => {
-		for (const message of messages) {
-			const { type, data } = Mapper.Event.Data(message);
-			const spaceId = message.spaceId || '';
+		for (const item of items) {
+			const { type, data, spaceId } = item;
 			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
 
 			if (!mapped) {
@@ -1652,26 +1661,6 @@ class Dispatcher {
 		};
 
 		S.Record.recordsSet(sid, '', records);
-	};
-
-	/**
-	 * Comparator function for sorting events by their type priority.
-	 * Events in SORT_IDS are processed in array order to ensure
-	 * dependent operations (e.g., BlockAdd before BlockSetChildrenIds) work correctly.
-	 *
-	 * @param c1 - First event message
-	 * @param c2 - Second event message
-	 * @returns Negative if c1 should come first, positive if c2 should come first
-	 */
-	sort (c1: any, c2: any) {
-		const t1 = Mapper.Event.Type(c1);
-		const t2 = Mapper.Event.Type(c2);
-		const idx1 = SORT_IDS.findIndex(it => it == t1);
-		const idx2 = SORT_IDS.findIndex(it => it == t2);
-
-		if (idx1 > idx2) return 1;
-		if (idx1 < idx2) return -1;
-		return 0;
 	};
 
 	/**

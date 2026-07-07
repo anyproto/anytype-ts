@@ -99,10 +99,17 @@ rm -rf "$MIDDLEWARE_DIR/pb" "$MIDDLEWARE_DIR/pkg" "$MIDDLEWARE_DIR/google"
 # Ensure middleware directory exists
 mkdir -p "$MIDDLEWARE_DIR"
 
-# Run protoc with ts-proto
+# Run protoc with ts-proto.
+# outputJsonMethods=false — fromJSON/toJSON are never called by the app; skipping them
+# cuts roughly a third of the generated method surface (parse time + memory at startup).
+# initializeFieldsAsUndefined=false — do not pre-fill optional/oneof fields with `undefined`
+# in createBase*: decoded messages only carry fields present on the wire, which shrinks
+# per-message allocations (Event_Message has ~90 oneof members) and makes Object.keys()
+# scans over decoded events cheap.
 protoc \
 	--plugin="protoc-gen-ts_proto=$WRAPPER" \
 	--ts_proto_out="$MIDDLEWARE_DIR" \
+	--ts_proto_opt=outputJsonMethods=false,initializeFieldsAsUndefined=false \
 	--proto_path="$PROTO_ROOT" \
 	"$PROTO_ROOT/pb/protos/commands.proto" \
 	"$PROTO_ROOT/pb/protos/events.proto" \
@@ -110,6 +117,12 @@ protoc \
 	"$PROTO_ROOT/pb/protos/snapshot.proto" \
 	"$PROTO_ROOT/pkg/lib/pb/model/protos/models.proto" \
 	"$PROTO_ROOT/pkg/lib/pb/model/protos/localstore.proto"
+
+# Replace the generated Struct/Value codec with the hand-optimized override
+# (decodes google.protobuf.Struct/Value straight into plain JS objects without
+# transient wrapper allocations — the hottest decode path for object details).
+echo "Applying struct.ts override..."
+cp "$ROOT_DIR/scripts/proto-overrides/struct.ts" "$MIDDLEWARE_DIR/google/protobuf/struct.ts"
 
 echo "Generated TypeScript files:"
 find "$MIDDLEWARE_DIR/pb" "$MIDDLEWARE_DIR/pkg" "$MIDDLEWARE_DIR/google" -name '*.ts' 2>/dev/null | sort
