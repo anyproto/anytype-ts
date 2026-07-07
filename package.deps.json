@@ -12,6 +12,9 @@
 	"dist/embed/**/*",
 	"dist/challenge/**/*",
 	"dist/lib/**/*",
+	"!dist/lib/pb/**/*",
+	"!dist/lib/pkg/**/*",
+	"!dist/lib/protos/**/*",
 	"dist/img/**/*",
 	"dist/css/**/*",
 	"dist/js/**/*",
@@ -28,14 +31,6 @@
 	"dist/font/**/*",
 	"dist/workers/**/*",
 	"!node_modules/**/*",
-	{
-		"from": "node_modules/google-protobuf",
-		"to": "node_modules/google-protobuf"
-	},
-	{
-		"from": "node_modules/grpc-web",
-		"to": "node_modules/grpc-web"
-	},
 	{
 		"from": "node_modules/lodash.isequal",
 		"to": "node_modules/lodash.isequal"

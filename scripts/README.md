@@ -22,6 +22,8 @@ Starts anytypeHelper + Vite for browser-only development (no Electron). See `bun
 
 Generates the TypeScript protobuf bindings (into `middleware/`) and the gRPC service registry (`src/ts/lib/api/service.ts`) from the `.proto` definitions.
 
+Runs ts-proto with `outputJsonMethods=false,initializeFieldsAsUndefined=false` (no unused `fromJSON`/`toJSON` methods; decoded messages only carry fields present on the wire), then replaces the generated `middleware/google/protobuf/struct.ts` with the hand-optimized codec from `scripts/proto-overrides/struct.ts`.
+
 **Both outputs are git-ignored and must be generated before the first build.** A fresh checkout has neither, so Vite fails with `Failed to resolve import "./service" from src/ts/lib/api/dispatcher.ts` until you run this.
 
 Two modes:
@@ -72,6 +74,10 @@ bun run start:dev
 ## generate-service-registry.js
 
 Invoked by `generate-protos.sh` — never run directly. Generates `src/ts/lib/api/service.ts`, a registry mapping every gRPC method name to its ts-proto request/response `MessageFns`. Pass `--from-dist` to read protos from `dist/lib/protos/` instead of `../anytype-heart`.
+
+## proto-overrides/struct.ts
+
+Hand-optimized replacement for the ts-proto generated `google/protobuf/struct.ts` codec, copied over the generated file by `generate-protos.sh`. Decodes/encodes `Struct`/`Value` straight to/from plain JS objects without transient wrapper allocations, and makes `wrap`/`unwrap` zero-copy — the hottest decode path (object details in search/subscription/show responses). Wire format is unchanged; keep it in sync if the pinned ts-proto version changes its calling convention for well-known wrapper types.
 
 ---
 
