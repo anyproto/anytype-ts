@@ -265,10 +265,18 @@ class DetailStore {
 			return this.build(rootId, id, withKeys, forceKeys, skipLayoutFormat);
 		};
 
-		const cacheKey = [ rootId, id, (withKeys ? withKeys.join(',') : '*'), Number(forceKeys), (skipLayoutFormat || []).join(',') ].join('\n');
+		const cacheKey = [ rootId, id, (withKeys ? withKeys.join(',') : '*'), (forceKeys ? 1 : 0), (skipLayoutFormat || []).join(',') ].join('\n');
 
 		let entry = this.getCache.get(cacheKey);
 		if (!entry) {
+			// Safety bound: entries created inside a suspended computed (evaluated in a
+			// batch with no observers) never fire onBecomeUnobserved and would accumulate.
+			// Clearing is safe — live observers keep their computed instances working,
+			// and the next get() simply creates a fresh entry.
+			if (this.getCache.size >= 10000) {
+				this.getCache.clear();
+			};
+
 			entry = computed(() => this.build(rootId, id, withKeys, forceKeys, skipLayoutFormat));
 			onBecomeUnobserved(entry, () => this.getCache.delete(cacheKey));
 			this.getCache.set(cacheKey, entry);
