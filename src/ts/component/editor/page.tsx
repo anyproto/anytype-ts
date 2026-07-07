@@ -1,13 +1,14 @@
 import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import raf from 'raf';
 import { throttle } from 'lodash';
-import { Icon, DropTarget, EditorControls, CommentSection } from 'Component';
+import { Icon, DropTarget, EditorControls, CommentSection, Block } from 'Component';
 import PageHeadEditor from 'Component/page/elements/head/editor';
 import Children from 'Component/page/elements/children';
 import TableOfContents from 'Component/page/elements/tableOfContents';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { virtualBlock } from 'Lib/virtualBlock';
 import { useScrollRestore } from 'Hook';
 import { computeRestoreScrollTop } from 'Lib/util/scrollAnchor';
 
@@ -226,6 +227,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const close = () => {
+		virtualBlock.deactivate();
 		Action.pageClose(isPopup, idRef.current, true);
 		Storage.setFocus(idRef.current, focus.state);
 		idRef.current = '';
@@ -938,19 +940,20 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 
 		if (!ret && ids.length && !keyboard.isSpecial(e) && !e.metaKey && !e.ctrlKey && !readonly) {
+			// Carry the typed character in the create itself — the block must never
+			// exist in an empty state (empty synced blocks are shared last-writer-wins
+			// registers, see Lib/virtualBlock)
+			const key = e.key;
 			const param = {
 				type: I.BlockType.Text,
-				style: I.TextStyle.Paragraph,
+				content: { style: I.TextStyle.Paragraph, text: key },
 			};
 
 			C.BlockCreate(rootId, ids[ids.length - 1], I.BlockPosition.Bottom, param, (message: any) => {
-				const key = e.key;
 				const blockId = message.blockId;
+				const length = key.length;
 
-				C.BlockListDelete(rootId, ids);
-				U.Data.blockSetText(rootId, blockId, key, [], true, () => {
-					const length = key.length;
-
+				C.BlockListDelete(rootId, ids, () => {
 					focus.set(blockId, { from: length, to: length });
 					focus.apply();
 					focus.scroll(isPopup, blockId);
@@ -968,6 +971,11 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const block = S.Block.getLeaf(rootId, focused);
 
 		if (!block) {
+			// The trailing virtual placeholder has no store block — handle the few
+			// keys that must act on an empty placeholder explicitly, ignore the rest
+			if (virtualBlock.isVirginFocused(rootId)) {
+				onVirtualKeyDown(e);
+			};
 			return;
 		};
 
@@ -2114,6 +2122,11 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	
 	const onMenuAdd = (blockId: string, text: string, range: I.TextRange, marks: I.Mark[]) => {
 		const { rootId } = props;
+
+		// A "/" typed as the first character of the virtual placeholder queues this
+		// call until the block is materialized — resolve to the real id
+		blockId = virtualBlock.resolve(blockId);
+
 		const block = S.Block.getLeaf(rootId, blockId);
 		const rect = U.Dom.getSelectionRect();
 
@@ -2254,7 +2267,18 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		data.anytype = data.anytype || {};
 		data.anytype.range = data.anytype.range || { from: 0, to: 0 };
 
-		const { focused, range } = focus.state;
+		let { focused, range } = focus.state;
+
+		// Pasting into the virgin virtual placeholder: no block exists yet — paste
+		// at the document bottom (empty target id appends), same as dropping onto
+		// the trailing drop zone. The pasted blocks carry their content, so no
+		// empty block is ever created
+		if (virtualBlock.isVirtualId(focused)) {
+			focused = '';
+			range = { from: 0, to: 0 };
+			virtualBlock.deactivate();
+		};
+
 		const block = S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
 		const trimmedText = data.text.trim();
@@ -2890,8 +2914,6 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		let last = S.Block.getFirstBlock(rootId, -1, it => it.canCreateBlock());
-		let create = false;
-		let length = 0;
 
 		if (last) {
 			const parent = S.Block.getParentLeaf(rootId, last.id);
@@ -2901,24 +2923,77 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 
-		if (!last) {
-			create = true;
-		} else {
-			if (!last.isText() || last.isTextCode() || last.isTextCallout()) {
-				create = true;
-			} else {
-				length = last.getLength();
-				if (length) {
-					create = true;
-				};
-			};
-		};
+		// Only focus-reuse a trailing empty text block created by this session.
+		// Converging into a foreign empty block (from an old client or another
+		// user) makes concurrent typing collide on the same block id and lose
+		// text — render the client-side virtual placeholder below it instead.
+		const reuse = last && last.isText() && !last.isTextCode() && !last.isTextCallout() && !last.getLength() && S.Block.isSessionCreated(last.id);
 
-		if (create) {
-			blockCreate('', I.BlockPosition.Bottom, { type: I.BlockType.Text });
+		if (reuse) {
+			focusSet(last.id, 0, 0, true);
 		} else {
-			focusSet(last.id, length, length, true);
+			virtualBlock.activate(rootId, isPopup);
+			focusSet(J.Constant.blockId.virtualLast, 0, 0, true);
 		};
+	};
+
+	// Key handling for the empty (not yet materialized) virtual placeholder —
+	// it has no store block, so the regular block flows can't act on it
+	const onVirtualKeyDown = (e: any) => {
+		// Enter on the empty placeholder creates a real empty block above it,
+		// mirroring Enter on a real empty trailing block (explicit editing action)
+		keyboard.shortcut('enter', e, () => {
+			if (isEnterProcessing.current) {
+				return;
+			};
+
+			isEnterProcessing.current = true;
+
+			C.BlockCreate(rootId, '', I.BlockPosition.Bottom, { type: I.BlockType.Text, content: { style: I.TextStyle.Paragraph } }, (message: any) => {
+				window.setTimeout(() => { isEnterProcessing.current = false; }, 30);
+
+				if (message.error.code) {
+					return;
+				};
+
+				analytics.event('CreateBlock', { middleTime: message.middleTime, type: I.BlockType.Text, style: I.TextStyle.Paragraph });
+				focusSet(J.Constant.blockId.virtualLast, 0, 0, true);
+			});
+		});
+
+		// Nothing was created — leaving the placeholder just stops rendering it
+		keyboard.shortcut('backspace, arrowup, arrowleft', e, () => {
+			if (virtualBlock.isCreating) {
+				return;
+			};
+
+			const last = S.Block.getFirstBlock(rootId, -1, it => it.isFocusable());
+
+			virtualBlock.deactivate();
+
+			if (last) {
+				const length = last.getLength();
+				focusSet(last.id, length, length, true);
+			} else {
+				focus.clear(true);
+			};
+		});
+
+		keyboard.shortcut('selectAll', e, () => {
+			onSelectAll();
+		});
+	};
+
+	const onVirtualBlur = () => {
+		// Focus left the placeholder with nothing typed: nothing was created,
+		// nothing to clean up. A materialized placeholder finishes its swap on its own
+		if (!virtualBlock.realId && !virtualBlock.isCreating) {
+			virtualBlock.deactivate();
+		};
+	};
+
+	const onVirtualUpdate = () => {
+		virtualBlock.checkMaterialize();
 	};
 	
 	const resizePage = (callBack?: () => void) => {
@@ -3049,10 +3124,10 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 						getWrapperWidth={getWrapperWidth}
 					/>
 
-					<Children 
+					<Children
 						{...props}
 						onKeyDown={onKeyDownBlock}
-						onKeyUp={onKeyUpBlock}  
+						onKeyUp={onKeyUpBlock}
 						onMenuAdd={onMenuAdd}
 						onCopy={onCopy}
 						onPaste={onPasteEvent}
@@ -3060,6 +3135,26 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 						blockRemove={blockRemove}
 						getWrapperWidth={getWrapperWidth}
 					/>
+
+					{virtualBlock.isRendered(rootId, isPopup) && !readonly ? (
+						<Block
+							key="block-virtualLast"
+							{...props}
+							block={virtualBlock.getBlock()}
+							onKeyDown={onKeyDownBlock}
+							onKeyUp={onKeyUpBlock}
+							onMenuAdd={onMenuAdd}
+							onCopy={onCopy}
+							onPaste={onPasteEvent}
+							onUpdate={onVirtualUpdate}
+							onBlur={onVirtualBlur}
+							readonly={readonly}
+							blockRemove={blockRemove}
+							getWrapperWidth={getWrapperWidth}
+							isSelectionDisabled={true}
+							isContextMenuDisabled={true}
+						/>
+					) : ''}
 				</div>
 
 				<DropTarget rootId={rootId} id="blockLast" dropType={I.DropType.Block} canDropMiddle={false}>

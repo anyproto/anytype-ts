@@ -309,7 +309,27 @@ export const BlockCreate = (contextId: string, targetId: string, position: I.Blo
 		targetId,
 		position: position as number,
 		block: Mapper.To.Block(block),
-	}, callBack);
+	}, (message: any) => {
+		if (!message.error.code && message.blockId) {
+			S.Block.addSessionCreated(message.blockId);
+		};
+
+		callBack?.(message);
+	});
+};
+
+export const BlockReplace = (contextId: string, blockId: string, block: any, callBack?: (message: any) => void) => {
+	dispatcher.request('BlockReplace', {
+		contextId,
+		blockId,
+		block: Mapper.To.Block(block),
+	}, (message: any) => {
+		if (!message.error.code && message.blockId) {
+			S.Block.addSessionCreated(message.blockId);
+		};
+
+		callBack?.(message);
+	});
 };
 
 export const BlockDataviewCreateFromExistingObject = (contextId: string, blockId: string, targetObjectId: string, callBack?: (message: any) => void) => {
@@ -430,7 +450,13 @@ export const BlockSplit = (contextId: string, blockId: string, range: I.TextRang
 		range: Mapper.To.Range(range),
 		style: style as number,
 		mode: mode as number,
-	}, callBack);
+	}, (message: any) => {
+		if (!message.error.code && message.blockId) {
+			S.Block.addSessionCreated(message.blockId);
+		};
+
+		callBack?.(message);
+	});
 };
 
 export const BlockBookmarkFetch = (contextId: string, blockId: string, url: string, templateId: string, callBack?: (message: any) => void) => {

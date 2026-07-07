@@ -4,6 +4,7 @@ import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { virtualBlock } from 'Lib/virtualBlock';
 
 const TYPE_KEYS = {
 	default: [
@@ -498,13 +499,50 @@ class UtilData {
 	 * @param {(message: any) => void} [callBack] - Optional callback after setting text.
 	 */
 	blockSetText(rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
+		text = String(text || '');
+		marks = marks || [];
+
+		// The virtual trailing placeholder is not in the store and has no
+		// middleware-side block: the first non-empty write materializes it via a
+		// single BlockCreate carrying the content, later writes are redirected to
+		// the created block
+		if (virtualBlock.isVirtualId(blockId)) {
+			virtualBlock.setText(rootId, text, marks, update, callBack);
+			return;
+		};
+
+		// Stale callbacks may still write to an id whose identity was forked
+		blockId = virtualBlock.resolve(blockId);
+
+		// A fork for this block is in flight — buffer the write, it lands on the
+		// new id when the fork completes
+		if (virtualBlock.isForkPending(blockId)) {
+			virtualBlock.forkSetText(blockId, text, marks, callBack);
+			return;
+		};
+
 		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
 		};
 
-		text = String(text || '');
-		marks = marks || [];
+		// First content into an empty text block forks the block identity: one
+		// BlockReplace carries the content on a fresh id, so two clients filling
+		// the same empty block concurrently end up with two blocks (both texts
+		// survive) instead of one block with one text lost to last-writer-wins
+		if (virtualBlock.shouldFork(rootId, block, text)) {
+			virtualBlock.fork(rootId, block, text, marks, callBack);
+			return;
+		};
+
+		// Skip no-op writes: merely placing or removing the cursor (blur flushes,
+		// shortcut save-keys) must not emit a text write — block text is
+		// whole-value last-writer-wins, so re-sending unchanged content can still
+		// destroy a concurrent peer edit on merge
+		if ((String(block.content.text || '') === text) && U.Common.compareJSON(block.content.marks || [], marks)) {
+			callBack?.({ error: { code: 0 } });
+			return;
+		};
 
 		if (update) {
 			S.Block.updateContent(rootId, blockId, { text, marks });
@@ -523,6 +561,8 @@ class UtilData {
 	 * @param {(message: any) => void} [callBack] - Optional callback after insertion.
 	 */
 	blockInsertText(rootId: string, blockId: string, needle: string, from: number, to: number, callBack?: (message: any) => void) {
+		blockId = virtualBlock.resolve(blockId);
+
 		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
@@ -1264,7 +1304,7 @@ class UtilData {
 	 * @param {I.Block} block - The block.
 	 */
 	setRtl(rootId: string, block: I.Block, value: boolean, callBack?: (message: any) => void) {
-		if (!block) {
+		if (!block || virtualBlock.isVirtualId(block.id)) {
 			callBack?.({});
 			return;
 		};

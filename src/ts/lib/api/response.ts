@@ -403,6 +403,12 @@ export const BlockSplit = (response: any) => {
 	};
 };
 
+export const BlockReplace = (response: any) => {
+	return {
+		blockId: response.blockId,
+	};
+};
+
 export const BlockCopy = (response: any) => {
 	return {
 		textSlot: response.textSlot,

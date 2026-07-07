@@ -6,6 +6,7 @@ import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { virtualBlock } from 'Lib/virtualBlock';
 
 // Prism language plugins expect `Prism` on the global scope
 (window as any).Prism = Prism;
@@ -397,9 +398,9 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 
 		if (newBlock.type && (!isInsideTable && !block.isTextCode())) {
-			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
+			C.BlockCreate(rootId, virtualBlock.resolve(id), I.BlockPosition.Top, newBlock, () => {
 				setValue('');
-				
+
 				focus.set(block.id, { from: 0, to: 0 });
 				focus.apply();
 			});
@@ -428,11 +429,14 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 						setValue('');
 
 						U.Data.blockSetText(rootId, block.id, '', [], true, () => {
+							// Runs after a queued materialization of the virtual placeholder — resolve the id
+							const blockId = virtualBlock.resolve(block.id);
+
 							C.BlockListSetFields(rootId, [
-								{ blockId: block.id, fields: { ...block.fields, lang } }
+								{ blockId, fields: { ...block.fields, lang } }
 							], () => {
-								C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Code, () => {
-									focus.set(block.id, { from: 0, to: 0 });
+								C.BlockListTurnInto(rootId, [ blockId ], I.TextStyle.Code, () => {
+									focus.set(blockId, { from: 0, to: 0 });
 									focus.apply();
 								});
 							});
@@ -983,14 +987,17 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				setValue(value);
 
 				U.Data.blockSetText(rootId, id, value, marksRef.current, true, () => {
+					// Runs after a queued materialization of the virtual placeholder — resolve the id
+					const blockId = virtualBlock.resolve(id);
+
 					const finishTurnInto = () => {
-						C.BlockListTurnInto(rootId, [ id ], newStyle, () => {
-							focus.set(block.id, { from: 0, to: 0 });
+						C.BlockListTurnInto(rootId, [ blockId ], newStyle, () => {
+							focus.set(blockId, { from: 0, to: 0 });
 							focus.apply();
 						});
 
 						if ([ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ].includes(newStyle)) {
-							S.Block.toggle(rootId, id, true);
+							S.Block.toggle(rootId, blockId, true);
 						};
 					};
 
@@ -998,7 +1005,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 						const lang = match[2] || Storage.get('codeLang') || J.Constant.default.codeLang;
 
 						C.BlockListSetFields(rootId, [
-							{ blockId: block.id, fields: { ...block.fields, lang } }
+							{ blockId, fields: { ...block.fields, lang } }
 						], finishTurnInto);
 					} else {
 						finishTurnInto();
@@ -1068,13 +1075,21 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 
-		// Debounce the gRPC save so rapid typing doesn't saturate the main thread
-		// with synchronous middleware round-trips. The contenteditable DOM already
-		// reflects the user's input natively — we only need to persist periodically.
 		window.clearTimeout(timeoutText.current);
-		timeoutText.current = window.setTimeout(() => {
+
+		if (!keyboard.isComposition && virtualBlock.shouldFork(rootId, block, value)) {
+			// First content into an empty block forks the block identity via
+			// BlockReplace — fire the save immediately so the fork happens on the
+			// first keystroke; further keyups are buffered against the fork
 			setText(marksRef.current, false);
-		}, 300);
+		} else {
+			// Debounce the gRPC save so rapid typing doesn't saturate the main thread
+			// with synchronous middleware round-trips. The contenteditable DOM already
+			// reflects the user's input natively — we only need to persist periodically.
+			timeoutText.current = window.setTimeout(() => {
+				setText(marksRef.current, false);
+			}, 300);
+		};
 
 		onKeyUp(e, value, marksRef.current, range, props);
 
@@ -1084,12 +1099,17 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onMention = (d: number) => {
-		const range = getRange();
+		// This instance may already be unmounted when a queued trigger runs after
+		// an id fork/materialization — the swap left the correct range in the
+		// focus state
+		const range = getRange() || focus.state.range;
 		if (!range) {
 			return;
 		};
 
-		const element = `#block-${U.Common.esc(block.id)}`;
+		// May run after a queued materialization of the virtual placeholder
+		const blockId = virtualBlock.resolve(block.id);
+		const element = `#block-${U.Common.esc(blockId)}`;
 
 		let value = getTextValue();
 
@@ -1118,7 +1138,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				noFlipY: false,
 				data: {
 					rootId,
-					blockId: block.id,
+					blockId,
 					marks: marksRef.current,
 					skipIds: [ rootId ],
 					canAdd: true,
@@ -1141,10 +1161,14 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onEmojiSearch = () => {
-		const range = getRange();
+		// See onMention: the instance may be unmounted when a queued trigger runs
+		const range = getRange() || focus.state.range;
 		if (!range) {
 			return;
 		};
+
+		// May run after a queued materialization of the virtual placeholder
+		const blockId = virtualBlock.resolve(block.id);
 
 		let value = getTextValue();
 
@@ -1155,7 +1179,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		S.Menu.open('blockEmoji', {
 			classNameWrap: 'fromBlock',
-			element: `#block-${U.Common.esc(block.id)}`,
+			element: `#block-${U.Common.esc(blockId)}`,
 			recalcRect: () => {
 				const rect = U.Dom.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + window.scrollY } : null;
@@ -1168,7 +1192,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			noFlipY: false,
 			data: {
 				rootId,
-				blockId: block.id,
+				blockId,
 				marks: marksRef.current,
 				onChange: (native: string, marks: I.Mark[], from: number, to: number) => {
 					if (S.Menu.isAnimating('blockEmoji')) {
@@ -1188,11 +1212,12 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const onSmile = () => {
 		const range = getRange();
+		const blockId = virtualBlock.resolve(block.id);
 
 		let value = getTextValue();
 
 		S.Menu.open('smile', {
-			element: `#block-${U.Common.esc(block.id)}`,
+			element: `#block-${U.Common.esc(blockId)}`,
 			classNameWrap: 'fromBlock',
 			recalcRect: () => {
 				const rect = U.Dom.getSelectionRect();
@@ -1206,7 +1231,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				value: (iconEmoji || iconImage || ''),
 				noHead: true,
 				rootId,
-				blockId: block.id,
+				blockId,
 				onSelect: (icon: string) => {
 					const to = range.from + 1;
 
