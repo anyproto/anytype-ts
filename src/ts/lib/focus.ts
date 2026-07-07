@@ -1,5 +1,6 @@
 import { setRange } from 'selection-ranges';
 import * as I from 'Interface';
+import { virtualBlock } from './virtualBlock';
 
 /**
  * Focus manages the focus state and text selection within the application.
@@ -37,8 +38,12 @@ class Focus {
 			return;
 		};
 
+		// Stale callbacks may still reference the virtual trailing placeholder
+		// after it has been materialized — resolve to the real block id
+		id = virtualBlock.resolve(String(id || ''));
+
 		this.state = {
-			focused: String(id || ''),
+			focused: id,
 			range: {
 				from: Math.max(0, Number(range.from) || 0),
 				to: Math.max(0, Number(range.to) || 0),
@@ -46,7 +51,11 @@ class Focus {
 		};
 		this.backup = U.Common.objectCopy(this.state);
 
-		C.BlockSetCarriage(keyboard.getRootId(), id, range);
+		// The virtual placeholder has no middleware-side block — focusing it must
+		// not produce any middleware calls
+		if (!virtualBlock.isVirtualId(id)) {
+			C.BlockSetCarriage(keyboard.getRootId(), id, range);
+		};
 		return this;
 	};
 

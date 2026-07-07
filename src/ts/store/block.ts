@@ -40,6 +40,12 @@ class BlockStore {
 	public deferredNumberUpdates: Set<string> = new Set();
 	public deferredMarkupUpdates: Set<string> = new Set();
 
+	// Ids of blocks created by this session (BlockCreate/BlockSplit initiated
+	// locally). The trailing "click to type" flow only focus-reuses an empty
+	// last block from this set — converging into a foreign empty block loses
+	// text when two clients type into it concurrently (last-writer-wins)
+	public sessionCreatedIds: Set<string> = new Set();
+
 	constructor() {
 		makeObservable(this, {
 			profileId: observable,
@@ -132,6 +138,25 @@ class BlockStore {
 		});
 
 		this.blockMap.set(rootId, map);
+	};
+
+	/**
+	 * Marks a block id as created by this session.
+	 * @param {string} id - The block ID.
+	 */
+	addSessionCreated (id: string) {
+		if (id) {
+			this.sessionCreatedIds.add(id);
+		};
+	};
+
+	/**
+	 * Checks whether a block id was created by this session.
+	 * @param {string} id - The block ID.
+	 * @returns {boolean} Whether the block was created locally.
+	 */
+	isSessionCreated (id: string): boolean {
+		return this.sessionCreatedIds.has(id);
 	};
 
 	/**

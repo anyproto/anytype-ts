@@ -190,6 +190,7 @@ export default {
 		type:			 'type',
 		header:			 'header',
 		chat:			 'chat',
+		virtualLast:	 'virtualLastBlock',
 	},
 
 	widgetId: {
