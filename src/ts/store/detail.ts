@@ -1,12 +1,6 @@
-import { observable, action, makeObservable, set } from 'mobx';
+import { observable, action, computed, makeObservable, onBecomeUnobserved, _isComputingDerivation, IComputedValue } from 'mobx';
 import { memoize } from 'lodash';
 import * as I from 'Interface';
-
-interface Detail {
-	relationKey: string;
-	value: unknown;
-	isDeleted: boolean;
-};
 
 interface Item {
 	id: string;
@@ -50,11 +44,21 @@ keyMap[I.ObjectLayout.Space] = keyMap[I.ObjectLayout.SpaceView];
  * relations, etc. The store provides layout-aware mappers that add convenience
  * properties (e.g., isOwner, isWriter for Participants).
  *
- * Structure: Map<rootId, Map<objectId, Map<relationKey, Detail>>>
+ * Structure: Map<rootId, Map<objectId, ObservableMap<relationKey, value>>>
+ * The per-object detail map is a shallow observable map: values are stored raw
+ * (per-key reactivity comes from the map entries), so a write allocates one map
+ * entry per relation instead of a makeObservable-instrumented wrapper object.
  */
 class DetailStore {
 
-	private map: Map<string, Map<string, Map<string, Detail>>> = new Map();
+	private map: Map<string, Map<string, Map<string, any>>> = new Map();
+
+	/**
+	 * Per-(rootId, id, args) computed cache for get(): inside reactive contexts the
+	 * built + mapped object is cached between renders and recomputed only when the
+	 * underlying observables change. Entries evict themselves when unobserved.
+	 */
+	private getCache: Map<string, IComputedValue<any>> = new Map();
 
 	constructor() {
 		makeObservable<DetailStore, 'map'>(this, {
@@ -86,16 +90,15 @@ class DetailStore {
 		return v;
 	};
 
-	private createListItem (k: string, v: any): Detail {
-		const el = { relationKey: k, value: this.sanitizeValue(v), isDeleted: false };
+	private createDetailMap (details: any): Map<string, any> {
+		const detailMap = observable.map(new Map(), { deep: false });
 
-		makeObservable(el, { 
-			value: observable, 
-			isDeleted: observable,
-		});
+		for (const k in details) {
+			detailMap.set(k, this.sanitizeValue(details[k]));
+		};
 
-		return el;
-	}; 
+		return detailMap;
+	};
 
 	/**
 	 * Adds details to the detail store.
@@ -111,13 +114,7 @@ class DetailStore {
 		const map = observable.map(new Map());
 
 		for (const item of items) {
-			const detailMap = new Map<string, Detail>();
-
-			for (const k in item.details) {
-				detailMap.set(k, this.createListItem(k, item.details[k]));
-			};
-
-			map.set(item.id, detailMap);
+			map.set(item.id, this.createDetailMap(item.details));
 		};
 
 		this.map.set(rootId, map);
@@ -155,22 +152,12 @@ class DetailStore {
 
 		let detailMap = map.get(item.id);
 		if (!detailMap) {
-			detailMap = new Map<string, Detail>();
+			detailMap = observable.map(new Map(), { deep: false });
 			createList = true;
 		};
 
 		for (const k in item.details) {
-			if (clear) {
-				detailMap.set(k, this.createListItem(k, item.details[k]));
-				continue;
-			};
-
-			const el = detailMap.get(k);
-			if (el) {
-				set(el, { value: this.sanitizeValue(item.details[k]), isDeleted: false });
-			} else {
-				detailMap.set(k, this.createListItem(k, item.details[k]));
-			};
+			detailMap.set(k, this.sanitizeValue(item.details[k]));
 		};
 
 		if (createList) {
@@ -272,21 +259,52 @@ class DetailStore {
 	 * @returns {any} The object.
 	 */
 	public get (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean, skipLayoutFormat?: I.ObjectLayout[]): any {
+		// Outside a reactive context a computed would not cache between calls anyway,
+		// so build directly (also avoids cache entries nothing would ever evict).
+		if (!_isComputingDerivation()) {
+			return this.build(rootId, id, withKeys, forceKeys, skipLayoutFormat);
+		};
+
+		const cacheKey = [ rootId, id, (withKeys ? withKeys.join(',') : '*'), Number(forceKeys), (skipLayoutFormat || []).join(',') ].join('\n');
+
+		let entry = this.getCache.get(cacheKey);
+		if (!entry) {
+			entry = computed(() => this.build(rootId, id, withKeys, forceKeys, skipLayoutFormat));
+			onBecomeUnobserved(entry, () => this.getCache.delete(cacheKey));
+			this.getCache.set(cacheKey, entry);
+		};
+
+		// Shallow copy: callers can safely overwrite top-level properties of the
+		// result, same as with the previously returned per-call fresh object.
+		return Object.assign({}, entry.get());
+	};
+
+	/**
+	 * Builds the mapped object from stored details. Reads only the requested keys,
+	 * so reactive callers subscribe to exactly the relation entries they use.
+	 * @private
+	 */
+	private build (rootId: string, id: string, withKeys?: string[], forceKeys?: boolean, skipLayoutFormat?: I.ObjectLayout[]): any {
 		const detailMap = this.map.get(rootId)?.get(id);
 
-		if (!detailMap || detailMap.size == 0) {
+		if (!detailMap || (detailMap.size == 0)) {
 			return { id, _empty_: true };
 		};
-		
+
 		const object = { id };
-		const keys = withKeys ? this.computeKeySet(withKeys, forceKeys) : null;
 
-		for (const [ relationKey, item ] of detailMap.entries()) {
-			if (item.isDeleted || (withKeys && !keys.has(item.relationKey))) {
-				continue;
+		if (withKeys) {
+			const keys = this.computeKeySet(withKeys, forceKeys);
+
+			for (const key of keys) {
+				if (detailMap.has(key)) {
+					object[key] = detailMap.get(key);
+				};
 			};
-
-			object[item.relationKey] = item.value;
+		} else {
+			for (const [ key, value ] of detailMap.entries()) {
+				object[key] = value;
+			};
 		};
 
 		return this.mapper(object, skipLayoutFormat);
