@@ -59,8 +59,7 @@ export interface Toast {
 	count?: number;
 	value?: boolean;
 	ids?: string[];
-	autoArchivedIds?: string[];
-	autoRestoredIds?: string[];
+	cleanupIds?: string[];
 	icon?: string;
 	uploadCounts?: { [key: string]: number };
 };
@@ -77,8 +76,24 @@ export enum ToastAction {
 	Widget			 = 8,
 	Restore			 = 9,
 	Upload			 = 10,
-	AutoArchive		 = 11,
-	AutoRestore		 = 12,
+	Cleanup			 = 11,
+};
+
+/**
+ * Why a cleanup-suggestion root is orphaned. Meaningful on forest roots only —
+ * descendants inherit their root's reason and carry None.
+ */
+export enum CleanupReason {
+	None			 = 0,
+	ContextArchived	 = 1,
+	ContextDeleted	 = 2,
+	ContextUnlinked	 = 3,
+};
+
+export interface CleanupSuggestion {
+	details: any;
+	isRoot: boolean;
+	reason: CleanupReason;
 };
 
 export interface Option {

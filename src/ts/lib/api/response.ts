@@ -252,6 +252,16 @@ export const ObjectSearch = (response: any) => {
 	};
 };
 
+export const ObjectCleanupSuggestions = (response: any) => {
+	return {
+		items: (response.items || []).map((it: any) => ({
+			details: S.Detail.mapper(Decode.struct(it.details)),
+			isRoot: Boolean(it.isRoot),
+			reason: Number(it.reason) || 0,
+		})),
+	};
+};
+
 export const ObjectSearchWithMeta = (response: any) => {
 	return {
 		records: (response.results || []).map(Mapper.From.ObjectSearchWithMeta),

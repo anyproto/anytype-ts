@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback, MouseEvent } from 'react';
 import { Footer, Header, Icon, Title, Filter } from 'Component';
 import ArchiveListTree from './archiveListTree';
+import ArchiveSuggested from './archiveSuggested';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
@@ -277,6 +278,8 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 					isAllSelected={isAllSelected}
 					onVisibleIdsChange={setVisibleIds}
 				/>
+
+				<ArchiveSuggested canWrite={canWrite} />
 			</div>
 
 			<Footer {...props} component="mainObject" />

@@ -14,6 +14,7 @@ import PopupExport from './export';
 import PopupPin from './pin';
 import PopupPhrase from './phrase';
 import PopupObjectManager from './objectManager';
+import PopupCleanup from './cleanup';
 import PopupUsecase from './usecase';
 import PopupAbout from './about';
 import PopupRelation from './relation';
@@ -175,6 +176,7 @@ const Popup = forwardRef<{}, I.Popup>((props, ref) => {
 		pin:					 PopupPin,
 		phrase:					 PopupPhrase,
 		objectManager:			 PopupObjectManager,
+		cleanup:				 PopupCleanup,
 		usecase:				 PopupUsecase,
 		about:					 PopupAbout,
 		relation:				 PopupRelation,

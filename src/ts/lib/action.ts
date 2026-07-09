@@ -441,8 +441,10 @@ class Action {
 				title: U.String.sprintf(translate('popupConfirmDeleteWarningTitle'), count, U.Common.plural(count, translate('pluralObject'))),
 				text: translate('popupConfirmDeleteWarningText'),
 				textConfirm: translate('commonDelete'),
-				onConfirm: () => { 
-					C.ObjectListDelete(ids); 
+				onConfirm: () => {
+					// Callers refresh their lists from this callback, so it has to run once the
+					// delete has landed rather than once it has merely been sent.
+					C.ObjectListDelete(ids, () => callBack?.());
 
 					const isPopup = keyboard.isPopup();
 					const match = keyboard.getMatch();
@@ -462,7 +464,6 @@ class Action {
 						};
 					};
 
-					callBack?.();
 					analytics.event('RemoveCompletely', { count, route });
 				},
 				onCancel: callBack,
@@ -475,9 +476,12 @@ class Action {
 	 * @param {string[]} ids - The object IDs to archive.
 	 * @param {string} route - The route context for analytics.
 	 * @param {function} [callBack] - Optional callback after archiving.
+	 * @param {boolean} [skipCascade] - When true, archives exactly the given ids without
+	 * cascading (no file auto-archive, no orphan detection). Used by the orphan-confirmation
+	 * popup so confirming the user-chosen ids does not re-trigger orphan detection.
 	 */
-	archive (ids: string[], route: string, callBack?: () => void) {
-		C.ObjectListSetIsArchived(ids, true, (message: any) => {
+	archive (ids: string[], route: string, callBack?: () => void, skipCascade?: boolean) {
+		C.ObjectListSetIsArchived(ids, true, skipCascade, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -486,7 +490,9 @@ class Action {
 				S.Detail.update(id, { id, details: { isArchived: true } }, false);
 			});
 
-			Preview.toastShow({ action: I.ToastAction.Archive, ids, autoArchivedIds: message.autoArchivedIds || [] });
+			// Fold any orphans the backend reported into this toast rather than letting the
+			// dispatcher's standalone Cleanup toast be overwritten by this one.
+			Preview.toastShow({ action: I.ToastAction.Archive, ids, cleanupIds: message.cleanupIds || [] });
 			analytics.event('MoveToBin', { route, count: ids.length });
 			callBack?.();
 		});
@@ -544,7 +550,7 @@ class Action {
 	restore (ids: string[], route: string, callBack?: () => void) {
 		ids = ids || [];
 
-		C.ObjectListSetIsArchived(ids, false, (message: any) => {
+		C.ObjectListSetIsArchived(ids, false, false, (message: any) => {
 			if (message.error.code) {
 				return;
 			};
@@ -553,7 +559,7 @@ class Action {
 				S.Detail.update(id, { id, details: { isArchived: false } }, false);
 			});
 
-			Preview.toastShow({ action: I.ToastAction.Restore, ids, autoRestoredIds: message.autoRestoredIds || [] });
+			Preview.toastShow({ action: I.ToastAction.Restore, ids });
 			callBack?.();
 			analytics.event('RestoreFromBin', { route, count: ids.length });
 		});

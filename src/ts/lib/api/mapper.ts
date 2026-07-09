@@ -1718,15 +1718,11 @@ export const Mapper = {
 			};
 		},
 
-		ObjectAutoArchive: (obj: any) => {
+		ObjectCleanupSuggestion: (obj: any) => {
 			return {
 				objectIds: obj.objectIds || [],
-			};
-		},
-
-		ObjectAutoRestore: (obj: any) => {
-			return {
-				objectIds: obj.objectIds || [],
+				contextId: String(obj.contextId || ''),
+				trigger: Number(obj.trigger) || 0,
 			};
 		},
 

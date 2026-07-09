@@ -42,6 +42,40 @@
 			}
 		}
 
+		// Reuses the Bin table's own structure (.listObject > .table > .row > .cell), so row
+		// height, the -36px checkbox gutter, hover highlight and the icon/name gap all match.
+		// Only the bits the Bin table has no concept of are defined here.
+		.listObject.archiveSuggested { flex-grow: 0; }
+		.listObject.archiveSuggested {
+			.table {
+				.row.isTitle:hover::before,
+				.row.isGroup:hover::before { display: none; }
+
+				.row.isTitle {
+					.title { @include text-paragraph; font-weight: 600; color: var(--color-text-primary); }
+					.cell.cellAction { display: flex; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px; }
+					.cell.cellAction {
+						.button { flex-shrink: 0; white-space: nowrap; }
+					}
+				}
+
+				// A group row has no .cellCheck, so its name cell is :first-child and misses the
+				// .cell:nth-child(2) padding-left reset that item rows get — zero it explicitly,
+				// otherwise the section header sits indented past its own children.
+				.row.isGroup > .cell { padding: 16px 14px 4px 0px; }
+				.row.isGroup {
+					// The ghost icon is inline SVG using fill=currentColor and, unlike other
+					// icons, is not wrapped in <Icon> — so it inherits the row's text colour
+					// unless we dim it here. Default icons are <img> and ignore this.
+					.iconObject { flex-shrink: 0; color: var(--color-text-tertiary); }
+					.prefix { @include text-small; color: var(--color-text-secondary); flex-shrink: 0; }
+					.name { font-weight: 600; }
+					.name.isMissing { color: var(--color-text-secondary); }
+				}
+
+			}
+		}
+
 		.listObject { flex-grow: 1; margin-left: -36px; }
 		.listObject {
 			.table {

@@ -43,6 +43,7 @@ Navigation uses `U.Router.go(path, options)`. Authentication guards redirect una
 | `history.tsx` | Version history with `history/left.tsx`, `history/right.tsx` |
 | `archive.tsx` | Trash/deleted objects |
 | `archiveListTree.tsx` | Archive tree list view |
+| `archiveSuggested.tsx` | Inline "Suggested" cleanup section in the Bin, from `ObjectCleanupSuggestions`; roots grouped by `reason`, per-item `ObjectCleanupSuggestionIgnore` |
 | `invite.tsx` | Space invitation handler |
 | `import.tsx` | Import handler |
 | `membership.tsx` | Membership page |

@@ -47,6 +47,33 @@ export interface TreeNode {
 class UtilData {
 
 	private spacesPreloaded = false;
+	private cleanupSuggestionsTimeout = 0;
+
+	/**
+	 * Probes the space once for cleanup suggestions so the Bin widget can surface even
+	 * when nothing is archived. Deferred to keep it off the space-open critical path;
+	 * afterwards the flag is maintained by CleanupSuggestion events and the Bin itself.
+	 */
+	checkCleanupSuggestions () {
+		const { space } = S.Common;
+
+		window.clearTimeout(this.cleanupSuggestionsTimeout);
+		S.Common.hasCleanupSuggestionsSet(false);
+
+		this.cleanupSuggestionsTimeout = window.setTimeout(() => {
+			// A space switch during the delay reschedules its own probe; drop this one.
+			if (space != S.Common.space) {
+				return;
+			};
+
+			// Only the count matters here, so ask for the cheapest projection.
+			C.ObjectCleanupSuggestions(space, [ 'id' ], (message: any) => {
+				if (!message.error.code && (space == S.Common.space)) {
+					S.Common.hasCleanupSuggestionsSet(!!(message.items || []).length);
+				};
+			});
+		}, J.Constant.delay.cleanupSuggestions);
+	};
 
 	/**
 	 * Returns the CSS class for a text block style.
@@ -331,6 +358,8 @@ class UtilData {
 		C.ObjectOpen(U.Object.getPersonalWidgetsId(space), '', space);
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
+				this.checkCleanupSuggestions();
+
 				this.initPin(() => {
 					if (S.Common.pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);

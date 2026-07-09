@@ -1533,6 +1533,29 @@ export const ObjectDateByTimestamp = (spaceId: string, timestamp: number, callBa
 	}, callBack);
 };
 
+/**
+ * Returns every orphan in the space as a forest, sorted by id. Join each item's
+ * details.createdInContext to its parent's details.id; items with isRoot are the roots.
+ * id, createdInContext and resolvedLayout are always returned regardless of keys.
+ */
+export const ObjectCleanupSuggestions = (spaceId: string, keys: string[], callBack?: (message: any) => void) => {
+	dispatcher.request('ObjectCleanupSuggestions', {
+		spaceId,
+		keys: (keys || []).filter(it => it),
+	}, callBack);
+};
+
+/**
+ * Permanently excludes objects from cleanup suggestions (both the list and the event).
+ * Ignoring an object also drops its descendants. Reversible via ignored=false.
+ */
+export const ObjectCleanupSuggestionIgnore = (objectIds: string[], ignored: boolean, callBack?: (message: any) => void) => {
+	dispatcher.request('ObjectCleanupSuggestionIgnore', {
+		objectIds,
+		ignored,
+	}, callBack);
+};
+
 // ---------------------- OBJECT LIST ---------------------- //
 
 export const ObjectListDuplicate = (ids: string[], callBack?: (message: any) => void) => {
@@ -1543,10 +1566,11 @@ export const ObjectListDelete = (ids: string[], callBack?: (message: any) => voi
 	dispatcher.request('ObjectListDelete', { objectIds: ids }, callBack);
 };
 
-export const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, callBack?: (message: any) => void) => {
+export const ObjectListSetIsArchived = (ids: string[], isArchived: boolean, skipCascade?: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('ObjectListSetIsArchived', {
 		objectIds: ids,
 		isArchived,
+		skipCascade: !!skipCascade,
 	}, callBack);
 };
 
