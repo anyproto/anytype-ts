@@ -130,6 +130,12 @@ html.themeDark {
 		.inner {
 			.buttons {
 				.button { color: var(--color-text-primary); }
+
+				// Toast buttons are underline-only. The dark .button.black hover rule below
+				// carries an extra element (html) and so outranks toast.scss's transparent
+				// rule, painting a pill-shaped background behind the label. Restore it.
+				.button:not(.disabled):hover,
+				.button:not(.disabled).hover { background: transparent; }
 			}
 		}
 	}
