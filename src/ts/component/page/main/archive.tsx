@@ -21,8 +21,12 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	});
 	const [ sortId, setSortId ] = useState('lastModifiedDate');
 	const [ sortType, setSortType ] = useState(I.SortType.Desc);
-	const [ activeTab, setActiveTab ] = useState<Tab>('bin');
-	const [ suggestionCount, setSuggestionCount ] = useState(0);
+	// Restore from this history entry's state (see onTab) — set only via back/forward, so a
+	// fresh Bin open from the sidebar (a new entry with no tab) starts on Bin.
+	const [ activeTab, setActiveTab ] = useState<Tab>(() => (U.Router.history?.location?.state?.tab == 'suggested' ? 'suggested' : 'bin'));
+	// null = not loaded yet, so the auto-return effect can tell "no suggestions" from
+	// "count unknown" and not bounce a restored Suggestions tab back to Bin on mount.
+	const [ suggestionCount, setSuggestionCount ] = useState<number | null>(null);
 	const [ suggestedSel, setSuggestedSel ] = useState<{ count: number; canDelete: boolean }>({ count: 0, canDelete: true });
 	const suggestedRef = useRef(null);
 	const filterTimeout = useRef(0);
@@ -81,6 +85,24 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		const next = nextViewMode[viewMode];
 		setViewMode(next);
 		Storage.set('binViewMode', next);
+	};
+
+	// Record the tab on the current history entry rather than globally: back/forward
+	// restores it (same pathname, so no page remount), while a fresh Bin open is a new
+	// entry with no tab. Writing state before setActiveTab keeps them in agreement even
+	// if the replace happened to remount and re-read the initial value.
+	const onTab = (tab: Tab) => {
+		setActiveTab(tab);
+
+		const h = U.Router.history;
+		if (h?.location) {
+			h.replace({
+				pathname: h.location.pathname,
+				search: h.location.search,
+				hash: h.location.hash,
+				state: Object.assign({}, h.location.state, { tab }),
+			});
+		};
 	};
 
 	const onSelectTree = (ids: string[], e: MouseEvent) => {
@@ -204,10 +226,11 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	}, []);
 
 	// The Suggestions tab disappears once its last item is cleared, so fall back to Bin
-	// rather than leaving the user on an empty, hidden tab.
+	// rather than leaving the user on an empty, hidden tab. Guard on an explicit 0 (not
+	// the null "still loading" state) so a restored tab isn't bounced on mount.
 	useEffect(() => {
-		if ((activeTab === 'suggested') && !suggestionCount) {
-			setActiveTab('bin');
+		if ((activeTab === 'suggested') && (suggestionCount === 0)) {
+			onTab('bin');
 		};
 	}, [ suggestionCount, activeTab ]);
 
@@ -234,19 +257,19 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						<Icon name="common/bin" size={32} color="default" />
 
 						<div className="tabs">
-							<div className={cnBinTab.join(' ')} onClick={() => setActiveTab('bin')}>
+							<div className={cnBinTab.join(' ')} onClick={() => onTab('bin')}>
 								{translate('commonBin')}
 							</div>
 
-							{suggestionCount ? (
+							{(suggestionCount || !isBin) ? (
 								<div
 									className={cnSuggestedTab.join(' ')}
-									onClick={() => setActiveTab('suggested')}
+									onClick={() => onTab('suggested')}
 									onMouseEnter={e => Preview.tooltipShow({ text: translate('binCleanupDescription'), element: e.currentTarget as HTMLElement, typeY: I.MenuDirection.Bottom })}
 									onMouseLeave={() => Preview.tooltipHide(false)}
 								>
 									{translate('binCleanupTab')}
-									<span className="cnt">{suggestionCount}</span>
+									{suggestionCount ? <span className="cnt">{suggestionCount}</span> : ''}
 								</div>
 							) : ''}
 						</div>

@@ -10,6 +10,8 @@ const INDENT = 14;
 // never occupies a grid track. Group rows omit it entirely and are therefore uncheckable.
 const cssRow: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)' };
 
+const groupKey = (group: Group): string => group.contextId || 'none';
+
 // 'creator' backs the same shared-space rule the Bin enforces: only moderators, or the
 // object's creator, may delete permanently. Passing any keys replaces the RPC's default
 // set, so it has to be listed explicitly.
@@ -61,6 +63,7 @@ const ArchiveSuggested = forwardRef<ArchiveSuggestedRef, Props>(({ canWrite, isA
 	const [ contextMap, setContextMap ] = useState<Map<string, any>>(new Map());
 	const [ selectedIds, setSelectedIds ] = useState<string[]>([]);
 	const [ expandedIds, setExpandedIds ] = useState<string[]>([]);
+	const [ collapsedGroups, setCollapsedGroups ] = useState<string[]>([]);
 	const space = S.Common.space;
 	const requestRef = useRef(0);
 	const contextRequestRef = useRef(0);
@@ -171,6 +174,17 @@ const ArchiveSuggested = forwardRef<ArchiveSuggestedRef, Props>(({ canWrite, isA
 		setExpandedIds(prev => prev.includes(id) ? prev.filter(it => it != id) : [ ...prev, id ]);
 	};
 
+	const toggleGroup = (key: string) => {
+		setCollapsedGroups(prev => prev.includes(key) ? prev.filter(it => it != key) : [ ...prev, key ]);
+	};
+
+	const groupKeys = groups.map(groupKey);
+	const allCollapsed = (groupKeys.length > 0) && groupKeys.every(k => collapsedGroups.includes(k));
+
+	const onToggleAll = () => {
+		setCollapsedGroups(allCollapsed ? [] : groupKeys);
+	};
+
 	const onSelect = (ids: string[]) => {
 		setSelectedIds(prev => {
 			const allPresent = ids.every(id => prev.includes(id));
@@ -182,7 +196,15 @@ const ArchiveSuggested = forwardRef<ArchiveSuggestedRef, Props>(({ canWrite, isA
 	};
 
 	const onSelectAll = () => {
-		setSelectedIds(isAllSelected ? [] : visibleIds);
+		if (isAllSelected) {
+			setSelectedIds([]);
+			return;
+		};
+
+		// Reveal what is being selected — expand every group so the user isn't ticking
+		// rows hidden inside collapsed sections.
+		setSelectedIds(visibleIds);
+		setCollapsedGroups([]);
 	};
 
 	// Same rule as the Bin: in a shared space, a non-moderator may only permanently
@@ -322,7 +344,9 @@ const ArchiveSuggested = forwardRef<ArchiveSuggestedRef, Props>(({ canWrite, isA
 	// The source object heads its group and is never selectable — it is not a
 	// candidate, it is the reason the candidates below it are orphaned. It therefore
 	// renders as a row without a .cellCheck, which is what stops us reusing the Bin table.
-	const renderGroupHead = (group: Group) => {
+	// The whole header toggles the group so huge spaces can be folded down; the source
+	// object's own icon/name still open it (they stopPropagation).
+	const renderGroupHead = (group: Group, isCollapsed: boolean) => {
 		const object = contextMap.get(group.contextId);
 		const isMissing = (group.reason == I.CleanupReason.ContextDeleted) || !object || object._empty_;
 		const badge = isMissing ? '' : BADGE_BY_REASON[group.reason];
@@ -331,11 +355,17 @@ const ArchiveSuggested = forwardRef<ArchiveSuggestedRef, Props>(({ canWrite, isA
 		const isUnlinked = !isMissing && (group.reason == I.CleanupReason.ContextUnlinked);
 		const prefix = isUnlinked ? 'binCleanupLinkRemovedFrom' : 'binCleanupCreatedIn';
 
+		const caretCn = [ 'groupArrow' ];
+		if (!isCollapsed) {
+			caretCn.push('isExpanded');
+		};
+
 		return (
-			<div className="row isGroup" style={cssRow}>
+			<div className="row isGroup" style={cssRow} onClick={() => toggleGroup(groupKey(group))}>
 				<div className="cell">
 					<div className="cellContent isName">
 						<div className="flex">
+							<Icon name="arrow/button" size={8} className={caretCn.join(' ')} />
 							<span className="prefix">{translate(prefix)}</span>
 
 							{isMissing ? (
@@ -379,16 +409,22 @@ const ArchiveSuggested = forwardRef<ArchiveSuggestedRef, Props>(({ canWrite, isA
 					</div>
 
 					<div className="cell">
-						<Label text={translate(isAllSelected ? 'commonDeselectAll' : 'commonSelectAll')} onClick={onSelectAll} />
+						<div className="titleActions">
+							<Label text={translate(isAllSelected ? 'commonDeselectAll' : 'commonSelectAll')} onClick={onSelectAll} />
+							<Label text={translate(allCollapsed ? 'commonExpandAll' : 'commonCollapseAll')} onClick={onToggleAll} />
+						</div>
 					</div>
 				</div>
 
-				{groups.map(group => (
-					<React.Fragment key={group.contextId || 'none'}>
-						{renderGroupHead(group)}
-						{flattenVisible(group.roots, 0, []).map(renderRow)}
-					</React.Fragment>
-				))}
+				{groups.map(group => {
+					const isCollapsed = collapsedGroups.includes(groupKey(group));
+					return (
+						<React.Fragment key={groupKey(group)}>
+							{renderGroupHead(group, isCollapsed)}
+							{isCollapsed ? null : flattenVisible(group.roots, 0, []).map(renderRow)}
+						</React.Fragment>
+					);
+				})}
 			</div>
 		</div>
 	);

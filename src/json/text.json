@@ -73,6 +73,8 @@
 	"commonHelp": "Help",
 	"commonSelectAll": "Select all",
 	"commonDeselectAll": "Deselect all",
+	"commonCollapseAll": "Collapse all",
+	"commonExpandAll": "Expand all",
 	"commonAdd": "Add",
 	"commonDone": "Done",
 	"commonUnlink": "Unlink",
