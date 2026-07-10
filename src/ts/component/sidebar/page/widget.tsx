@@ -67,7 +67,8 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			ret.push(I.WidgetSection.Type);
 		};
 
-		if (total > 0) {
+		// Orphans live outside the Bin, so the widget has to appear for them too.
+		if ((total > 0) || S.Common.hasCleanupSuggestions) {
 			ret.push(I.WidgetSection.Bin);
 		};
 

@@ -43,6 +43,7 @@ class CommonStore {
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
+	public hasCleanupSuggestionsValue = false;
 	public chatCmdSendValue = null;
 	public commentCmdSendValue = null;
 	public updateVersionValue = '';
@@ -149,6 +150,7 @@ class CommonStore {
 			linkStyleValue: observable,
 			fileStyleValue: observable,
 			isOnlineValue: observable,
+			hasCleanupSuggestionsValue: observable,
 			hideSidebarValue: observable,
 			hideFileObjectsInTreeValue: observable,
 			autoDownloadValue: observable,
@@ -211,6 +213,7 @@ class CommonStore {
 			dateFormatSet: action,
 			timeFormatSet: action,
 			isOnlineSet: action,
+			hasCleanupSuggestionsSet: action,
 			setLeftSidebarState: action,
 			setRightSidebarState: action,
 			clearRightSidebarState: action,
@@ -451,6 +454,15 @@ class CommonStore {
 
 	get isOnline (): boolean {
 		return Boolean(this.isOnlineValue);
+	};
+
+	/**
+	 * Whether the current space has orphans worth cleaning up. Kept in memory only —
+	 * seeded by a delayed probe on space open, raised by CleanupSuggestion events, and
+	 * cleared when the Bin's suggestions list comes back empty.
+	 */
+	get hasCleanupSuggestions (): boolean {
+		return Boolean(this.hasCleanupSuggestionsValue);
 	};
 
 	get diff (): I.Diff[] {
@@ -1034,6 +1046,14 @@ class CommonStore {
 	isOnlineSet (v: boolean) {
 		this.isOnlineValue = Boolean(v);
 		console.log('[Online status]:', v);
+	};
+
+	/**
+	 * Sets whether the current space has cleanup suggestions.
+	 * @param {boolean} v - The value.
+	 */
+	hasCleanupSuggestionsSet (v: boolean) {
+		this.hasCleanupSuggestionsValue = Boolean(v);
 	};
 
 	/**

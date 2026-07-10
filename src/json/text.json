@@ -73,6 +73,8 @@
 	"commonHelp": "Help",
 	"commonSelectAll": "Select all",
 	"commonDeselectAll": "Deselect all",
+	"commonCollapseAll": "Collapse all",
+	"commonExpandAll": "Expand all",
 	"commonAdd": "Add",
 	"commonDone": "Done",
 	"commonUnlink": "Unlink",
@@ -133,6 +135,7 @@
 	"commonAddToCollection": "Add to Collection",
 	"commonLinkTo": "Add Link to Object",
 	"commonRestore": "Restore",
+	"commonReview": "Review",
 	"commonRestoreFromBin": "Restore from Bin",
 	"commonMoveToBin": "Move to Bin",
 	"commonMoveTo": "Move to",
@@ -1507,6 +1510,9 @@
 	"popupObjectManagerArchiveTypeTextPlural": "Some objects use these types. Select the ones you also want to delete. Objects you don’t select will remain but lose their type.",
 	"popupObjectManagerArchiveTypeEmptyText": "There are no objects of this type",
 
+	"popupCleanupTitle": "Move nested items to Bin?",
+	"popupCleanupText": "Select the objects and files you’d like to move to Bin.",
+
 
 	"popupInviteRequestAccessTitle": "Access required",
 	"popupInviteRequestAccessTextData": "This space requires owner approval. Send a request and you'll be notified once it's approved.",
@@ -2244,9 +2250,8 @@
 	"toastIsUnlocked": "is unlocked",
 	"toastMovedTo": "%s moved to",
 	"toastMovedToBin": "%s moved to Bin",
-	"toastAutoArchivedToBin": "%s automatically moved to Bin",
 	"toastMovedFromBin": "%s restored",
-	"toastAutoRestoredFromBin": "%s automatically restored",
+	"toastCleanup": "%s can also be moved to Bin",
 	"toastMovedFrom": "%s moved from",
 	"toastAddedToCollection": "has been added to Collection",
 	"toastLinkedTo": "has been linked to",
@@ -3073,6 +3078,12 @@
 	"binSwitchToCompact": "Switch to compact view",
 	"binSwitchToDetailed": "Switch to detailed view",
 	"binStackCount": "+%d",
+	"binCleanupTab": "Suggestions",
+	"binCleanupDescription": "Objects and files no longer linked to the object they were created in, and not used in any other object.",
+	"binCleanupCreatedIn": "Created in",
+	"binCleanupLinkRemovedFrom": "Link removed from",
+	"binCleanupContextDeleted": "Deleted object",
+	"binCleanupIgnore": "Don’t suggest again",
 	"binDeleteDisabledTooltip": "You can only delete objects you created"
 
 }

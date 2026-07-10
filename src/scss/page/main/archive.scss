@@ -13,7 +13,22 @@
 		.titleWrapper {
 			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; flex-grow: 1; }
 			.side.left {
-				.title { @include text-header1; font-weight: 700; }
+				.tabs { display: flex; flex-direction: row; align-items: center; gap: 0px 20px; }
+				.tabs {
+					.tab { @include text-header1; display: flex; align-items: center; gap: 0px 8px; font-weight: 700; color: var(--color-text-tertiary); transition: color 0.15s ease; }
+					.tab:hover,
+					.tab.active { color: var(--color-text-primary); }
+					.tab {
+						.cnt {
+							@include text-common; display: flex; align-items: center; justify-content: center; height: 24px;
+							min-width: 24px; padding: 0px 7px; border-radius: 12px; font-weight: 500;
+							color: var(--color-text-secondary); background-color: var(--color-shape-highlight-medium);
+							// Nudge down: the 32px header line-box centres higher than the text's
+							// optical centre, so a badge aligned to it reads a couple px high.
+							position: relative; top: 2px;
+						}
+					}
+				}
 			}
 
 			.side.right { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-shrink: 0; }
@@ -39,6 +54,57 @@
 				.inner > .icon:hover { background-color: unset; }
 				.icon.commonClear { display: block; }
 				.filterInputWrap { width: 168px; }
+			}
+		}
+
+		// Reuses the Bin table's own structure (.listObject > .table > .row > .cell), so row
+		// height, the -36px checkbox gutter, hover highlight and the icon/name gap all match.
+		// Only the bits the Bin table has no concept of are defined here.
+		.listObject.archiveSuggested { flex-grow: 0; }
+		.listObject.archiveSuggested {
+			.table {
+				// No hover-fill on the header rows (title + group toggle); the caret is the cue.
+				.row.isTitle:hover::before,
+				.row.isGroup:hover::before { display: none; }
+
+				// Match the Bin's "Name" head row (12px/500, 6px vertical padding) so this first
+				// row is the same height and the list doesn't jump when switching tabs.
+				.row.isTitle { font-size: 12px; font-weight: 500; }
+				.row.isTitle > .cell { padding-top: 6px; padding-bottom: 6px; }
+				.row.isTitle {
+					.titleActions { display: flex; align-items: center; gap: 0px 16px; }
+					.titleActions {
+						.label { color: var(--color-text-secondary); line-height: 20px; white-space: nowrap; }
+						.label:hover { color: var(--color-text-primary); }
+					}
+				}
+
+				// A group row has no .cellCheck, so its name cell is :first-child and misses the
+				// .cell:nth-child(2) padding-left reset that item rows get — zero it explicitly,
+				// otherwise the section header sits indented past its own children.
+				.row.isGroup > .cell { padding: 16px 14px 4px 0px; }
+				.row.isGroup {
+					// Tighter than the item rows' 12px so the caret hugs the label and the source
+					// icon hugs its name.
+					.cellContent.isName .flex { gap: 0px 8px; }
+
+					// gap is uniform, so pull the source name back toward its icon (4px) while the
+					// caret/prefix keep the 8px gap — icon + name then read as one unit.
+					.iconObject + span { margin-left: -4px; }
+
+					// The ghost icon is inline SVG using fill=currentColor and, unlike other
+					// icons, is not wrapped in <Icon> — so it inherits the row's text colour
+					// unless we dim it here. Default icons are <img> and ignore this.
+					.iconObject { flex-shrink: 0; color: var(--color-text-tertiary); }
+					.prefix { @include text-small; color: var(--color-text-secondary); flex-shrink: 0; }
+					.name { font-weight: 600; }
+					.name.isMissing { color: var(--color-text-secondary); }
+
+					// Small disclosure chevron (arrow/button, 8px), rotated for collapse state.
+					.icon.groupArrow { flex-shrink: 0; color: var(--color-text-tertiary); transform: rotate(-90deg); transition: transform 0.15s ease; }
+					.icon.groupArrow.isExpanded { transform: rotate(0deg); }
+				}
+
 			}
 		}
 
@@ -149,7 +215,9 @@
 		}
 
 		&.isDetailed {
-			.listObject {
+			// Detailed view is a Bin-only mode; the Suggestions section stays compact and has
+			// no view toggle, so keep its sizing out of here (it also carries .listObject).
+			.listObject:not(.archiveSuggested) {
 				.cell { padding-top: 16px !important; padding-bottom: 16px !important; }
 				.row.isHead > .cell { padding-top: 6px !important; padding-bottom: 6px !important; }
 

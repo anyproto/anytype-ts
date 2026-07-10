@@ -336,26 +336,26 @@ class Dispatcher {
 					break;
 				};
 
-				case 'ObjectAutoArchive': {
-					// For RPC responses (isSync=true) auto-archived IDs are merged into the
-					// Archive toast by the calling action via message.autoArchivedIds.
-					// For stream events (isSync=false) show a standalone AutoArchive toast.
-					if (!isSync) {
-						const { objectIds } = mapped;
-						if (objectIds.length) {
-							Preview.toastShow({ action: I.ToastAction.AutoArchive, ids: objectIds });
-						};
-					};
-					break;
-				};
+				case 'ObjectCleanupSuggestion': {
+					// The backend archives nothing on its own: every orphan created inside the
+					// acted-on object — objects and files, at any depth — arrives here. Surface
+					// them non-invasively via a toast; "Review" opens the confirmation popup.
+					// Rides the initiating session for archive/linkRemoval (isSync=true) and is
+					// broadcast for delete (isSync=false), so handle both.
+					const { objectIds } = mapped;
 
-				case 'ObjectAutoRestore': {
-					// Same pattern as ObjectAutoArchive but for the Restore toast.
-					if (!isSync) {
-						const { objectIds } = mapped;
-						if (objectIds.length) {
-							Preview.toastShow({ action: I.ToastAction.AutoRestore, ids: objectIds });
-						};
+					if (objectIds.length) {
+						// The space now has orphans, so the Bin widget must surface even if
+						// nothing is archived yet.
+						S.Common.hasCleanupSuggestionsSet(true);
+
+						// A batch archive where one object is an ancestor of another can emit the
+						// same candidate under two contextIds. Dedup by accumulating into the toast
+						// that is still showing rather than replacing its count.
+						const current = S.Common.toast;
+						const existing = (current?.action == I.ToastAction.Cleanup) ? (current.ids || []) : [];
+
+						Preview.toastShow({ action: I.ToastAction.Cleanup, ids: U.Common.arrayUnique([ ...existing, ...objectIds ]) });
 					};
 					break;
 				};
@@ -1792,13 +1792,15 @@ class Dispatcher {
 				};
 
 				if (message.event) {
-					message.autoArchivedIds = (message.event.messages || [])
-						.filter((msg: any) => msg.objectAutoArchive?.objectIds?.length)
-						.flatMap((msg: any) => msg.objectAutoArchive.objectIds);
-
-					message.autoRestoredIds = (message.event.messages || [])
-						.filter((msg: any) => msg.objectAutoRestore?.objectIds?.length)
-						.flatMap((msg: any) => msg.objectAutoRestore.objectIds);
+					// CleanupSuggestion rides the initiating command's response, so the calling
+					// action can fold it into its own toast instead of racing the standalone one
+					// this event raises (events are drained before callBack, so a toast shown
+					// there would be overwritten by the action's).
+					message.cleanupIds = U.Common.arrayUnique(
+						(message.event.messages || [])
+							.filter((msg: any) => msg.objectCleanupSuggestion?.objectIds?.length)
+							.flatMap((msg: any) => msg.objectCleanupSuggestion.objectIds)
+					);
 
 					runInAction(() => this.event(message.event, true, true));
 				};

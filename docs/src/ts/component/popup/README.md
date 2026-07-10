@@ -1,6 +1,6 @@
 # popup/ - Modal Dialogs
 
-Modal popup system with **33 TSX files** (plus 10 Storybook story files). Managed by the `PopupStore` in `src/ts/store/popup.ts`.
+Modal popup system with **34 TSX files** (plus 10 Storybook story files). Managed by the `PopupStore` in `src/ts/store/popup.ts`.
 
 ## Architecture
 
@@ -27,6 +27,7 @@ Open a popup: `S.Popup.open('confirm', { data: { ... } })`
 ### Pages & Objects
 - `page.tsx` - Full-page object viewer/editor in modal
 - `objectManager.tsx` - Object management interface
+- `cleanup.tsx` - Cascade-deletion confirmation: checkbox tree of orphan candidates (objects and files, nested by `createdInContext`) offered for archival. Opened from the `CleanupSuggestion` toast's "Review" action (`I.ToastAction.Cleanup`); confirms with `skipCascade=true`
 - `relation.tsx` - Batch relation editor for multiple objects
 
 ### Auth & Security

@@ -1,10 +1,12 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback, MouseEvent } from 'react';
-import { Footer, Header, Icon, Title, Filter } from 'Component';
+import { Footer, Header, Icon, Filter } from 'Component';
 import ArchiveListTree from './archiveListTree';
+import ArchiveSuggested from './archiveSuggested';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
 type ViewMode = 'compact' | 'detailed';
+type Tab = 'bin' | 'suggested';
 
 const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -19,6 +21,14 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	});
 	const [ sortId, setSortId ] = useState('lastModifiedDate');
 	const [ sortType, setSortType ] = useState(I.SortType.Desc);
+	// Restore from this history entry's state (see onTab) — set only via back/forward, so a
+	// fresh Bin open from the sidebar (a new entry with no tab) starts on Bin.
+	const [ activeTab, setActiveTab ] = useState<Tab>(() => (U.Router.history?.location?.state?.tab == 'suggested' ? 'suggested' : 'bin'));
+	// null = not loaded yet, so the auto-return effect can tell "no suggestions" from
+	// "count unknown" and not bounce a restored Suggestions tab back to Bin on mount.
+	const [ suggestionCount, setSuggestionCount ] = useState<number | null>(null);
+	const [ suggestedSel, setSuggestedSel ] = useState<{ count: number; canDelete: boolean }>({ count: 0, canDelete: true });
+	const suggestedRef = useRef(null);
 	const filterTimeout = useRef(0);
 	const subId = J.Constant.subId.archive;
 	const spaceview = U.Space.getSpaceview();
@@ -75,6 +85,24 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		const next = nextViewMode[viewMode];
 		setViewMode(next);
 		Storage.set('binViewMode', next);
+	};
+
+	// Record the tab on the current history entry rather than globally: back/forward
+	// restores it (same pathname, so no page remount), while a fresh Bin open is a new
+	// entry with no tab. Writing state before setActiveTab keeps them in agreement even
+	// if the replace happened to remount and re-read the initial value.
+	const onTab = (tab: Tab) => {
+		setActiveTab(tab);
+
+		const h = U.Router.history;
+		if (h?.location) {
+			h.replace({
+				pathname: h.location.pathname,
+				search: h.location.search,
+				hash: h.location.hash,
+				state: Object.assign({}, h.location.state, { tab }),
+			});
+		};
 	};
 
 	const onSelectTree = (ids: string[], e: MouseEvent) => {
@@ -197,12 +225,24 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		};
 	}, []);
 
+	// The Suggestions tab disappears once its last item is cleared, so fall back to Bin
+	// rather than leaving the user on an empty, hidden tab. Guard on an explicit 0 (not
+	// the null "still loading" state) so a restored tab isn't bounced on mount.
+	useEffect(() => {
+		if ((activeTab === 'suggested') && (suggestionCount === 0)) {
+			onTab('bin');
+		};
+	}, [ suggestionCount, activeTab ]);
+
 	const isAllSelected = hasSelection && (visibleIds.length > 0) && (selectedIds.length >= visibleIds.length);
 	const canDelete = canDeleteSelection();
 	const isDetailed = viewMode === 'detailed';
 	const switchIconMap = { compact: 'common/switchView', detailed: 'common/switchViewDetailed' };
 	const switchTooltipMap = { compact: 'binSwitchToDetailed', detailed: 'binSwitchToCompact' };
 	const cnWrapper = [ 'wrapper', ...(isDetailed ? [ 'isDetailed' ] : []) ];
+	const isBin = activeTab === 'bin';
+	const cnBinTab = [ 'tab', (isBin ? 'active' : '') ];
+	const cnSuggestedTab = [ 'tab', (!isBin ? 'active' : '') ];
 
 	return (
 		<>
@@ -215,10 +255,27 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				<div className="titleWrapper">
 					<div className="side left">
 						<Icon name="common/bin" size={32} color="default" />
-						<Title text={translate('commonBin')} />
+
+						<div className="tabs">
+							<div className={cnBinTab.join(' ')} onClick={() => onTab('bin')}>
+								{translate('commonBin')}
+							</div>
+
+							{(suggestionCount || !isBin) ? (
+								<div
+									className={cnSuggestedTab.join(' ')}
+									onClick={() => onTab('suggested')}
+									onMouseEnter={e => Preview.tooltipShow({ text: translate('binCleanupDescription'), element: e.currentTarget as HTMLElement, typeY: I.MenuDirection.Bottom })}
+									onMouseLeave={() => Preview.tooltipHide(false)}
+								>
+									{translate('binCleanupTab')}
+									{suggestionCount ? <span className="cnt">{suggestionCount}</span> : ''}
+								</div>
+							) : ''}
+						</div>
 					</div>
 					<div className="side right">
-						{canWrite ? (
+						{(isBin && canWrite) ? (
 							<>
 								{hasSelection ? (
 									<>
@@ -258,24 +315,55 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 								/>
 							</>
 						) : ''}
+
+						{/* Same toolbar shape as the Bin, but its actions target the suggestions
+							and live in ArchiveSuggested — reached through the ref. */}
+						{(!isBin && canWrite && suggestedSel.count) ? (
+							<>
+								<Icon
+									className="archiveAction"
+									name="menu/action/minus"
+									withBackground={true}
+									tooltipParam={{ text: translate('binCleanupIgnore') }}
+									onClick={() => suggestedRef.current?.onIgnore()}
+								/>
+								<Icon
+									className={[ 'archiveAction', (!suggestedSel.canDelete ? 'isDisabled' : '') ].join(' ')}
+									name="menu/action/remove"
+									withBackground={true}
+									tooltipParam={{ text: translate(suggestedSel.canDelete ? 'commonDeleteImmediately' : 'binDeleteDisabledTooltip') }}
+									onClick={() => suggestedRef.current?.onDelete()}
+								/>
+							</>
+						) : ''}
 					</div>
 				</div>
 
-				<ArchiveListTree
-					subId={subId}
+				{isBin ? (
+					<ArchiveListTree
+						subId={subId}
+						canWrite={canWrite}
+						isShared={isShared}
+						isPopup={isPopup}
+						isDetailed={isDetailed}
+						selectedIds={selectedIds}
+						filterText={filterText}
+						sortId={sortId}
+						sortType={sortType}
+						onSort={onSortChange}
+						onSelectChange={onSelectTree}
+						onSelectAll={onSelectAll}
+						isAllSelected={isAllSelected}
+						onVisibleIdsChange={setVisibleIds}
+					/>
+				) : ''}
+
+				<ArchiveSuggested
+					ref={suggestedRef}
 					canWrite={canWrite}
-					isShared={isShared}
-					isPopup={isPopup}
-					isDetailed={isDetailed}
-					selectedIds={selectedIds}
-					filterText={filterText}
-					sortId={sortId}
-					sortType={sortType}
-					onSort={onSortChange}
-					onSelectChange={onSelectTree}
-					onSelectAll={onSelectAll}
-					isAllSelected={isAllSelected}
-					onVisibleIdsChange={setVisibleIds}
+					isActive={!isBin}
+					onCountChange={setSuggestionCount}
+					onSelectionChange={(count, canDelete) => setSuggestedSel({ count, canDelete })}
 				/>
 			</div>
 
