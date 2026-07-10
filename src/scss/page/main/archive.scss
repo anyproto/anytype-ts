@@ -13,7 +13,22 @@
 		.titleWrapper {
 			.side.left { display: flex; flex-direction: row; align-items: center; gap: 0px 10px; flex-grow: 1; }
 			.side.left {
-				.title { @include text-header1; font-weight: 700; }
+				.tabs { display: flex; flex-direction: row; align-items: center; gap: 0px 20px; }
+				.tabs {
+					.tab { @include text-header1; display: flex; align-items: center; gap: 0px 8px; font-weight: 700; color: var(--color-text-tertiary); transition: color 0.15s ease; }
+					.tab:hover,
+					.tab.active { color: var(--color-text-primary); }
+					.tab {
+						.cnt {
+							@include text-common; display: flex; align-items: center; justify-content: center; height: 24px;
+							min-width: 24px; padding: 0px 7px; border-radius: 12px; font-weight: 500;
+							color: var(--color-text-secondary); background-color: var(--color-shape-highlight-medium);
+							// Nudge down: the 32px header line-box centres higher than the text's
+							// optical centre, so a badge aligned to it reads a couple px high.
+							position: relative; top: 2px;
+						}
+					}
+				}
 			}
 
 			.side.right { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; flex-shrink: 0; }
@@ -51,12 +66,12 @@
 				.row.isTitle:hover::before,
 				.row.isGroup:hover::before { display: none; }
 
+				// Match the Bin's "Name" head row (12px/500, 6px vertical padding) so this first
+				// row is the same height and the list doesn't jump when switching tabs.
+				.row.isTitle { font-size: 12px; font-weight: 500; }
+				.row.isTitle > .cell { padding-top: 6px; padding-bottom: 6px; }
 				.row.isTitle {
-					.title { @include text-paragraph; font-weight: 600; color: var(--color-text-primary); }
-					.cell.cellAction { display: flex; align-items: center; justify-content: flex-end; gap: 0px 8px; padding: 0px; }
-					.cell.cellAction {
-						.button { flex-shrink: 0; white-space: nowrap; }
-					}
+					.label { color: var(--color-text-secondary); line-height: 20px; }
 				}
 
 				// A group row has no .cellCheck, so its name cell is :first-child and misses the
@@ -183,7 +198,9 @@
 		}
 
 		&.isDetailed {
-			.listObject {
+			// Detailed view is a Bin-only mode; the Suggestions section stays compact and has
+			// no view toggle, so keep its sizing out of here (it also carries .listObject).
+			.listObject:not(.archiveSuggested) {
 				.cell { padding-top: 16px !important; padding-bottom: 16px !important; }
 				.row.isHead > .cell { padding-top: 6px !important; padding-bottom: 6px !important; }
 

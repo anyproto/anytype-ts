@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, MouseEvent } from 'react';
-import { Icon, IconObject, ObjectName, Checkbox, Button } from 'Component';
+import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle, MouseEvent } from 'react';
+import { Icon, IconObject, ObjectName, Checkbox, Label } from 'Component';
 import { TreeNode } from 'Lib/util/data';
 import * as I from 'Interface';
 
@@ -8,7 +8,6 @@ const INDENT = 14;
 
 // Mirrors the Bin table: .cellCheck is absolutely positioned in the -36px gutter, so it
 // never occupies a grid track. Group rows omit it entirely and are therefore uncheckable.
-const cssTitle: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto' };
 const cssRow: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)' };
 
 // 'creator' backs the same shared-space rule the Bin enforces: only moderators, or the
@@ -28,6 +27,19 @@ const BADGE_BY_REASON: Record<number, string> = {
 
 interface Props {
 	canWrite: boolean;
+	// Whether the Suggestions tab is selected. The component stays mounted on either tab
+	// so it can keep the count current (via onCountChange); it only renders its body when
+	// active.
+	isActive: boolean;
+	onCountChange: (count: number) => void;
+	// Selection lives here, but the action toolbar lives in the page header, so report
+	// enough for the header to render and enable/disable its buttons.
+	onSelectionChange: (count: number, canDelete: boolean) => void;
+};
+
+export interface ArchiveSuggestedRef {
+	onDelete: () => void;
+	onIgnore: () => void;
 };
 
 interface FlatRow {
@@ -43,7 +55,7 @@ interface Group {
 	roots: TreeNode[];
 };
 
-const ArchiveSuggested = ({ canWrite }: Props) => {
+const ArchiveSuggested = forwardRef<ArchiveSuggestedRef, Props>(({ canWrite, isActive, onCountChange, onSelectionChange }, ref) => {
 
 	const [ items, setItems ] = useState<I.CleanupSuggestion[]>([]);
 	const [ contextMap, setContextMap ] = useState<Map<string, any>>(new Map());
@@ -72,9 +84,9 @@ const ArchiveSuggested = ({ canWrite }: Props) => {
 			const list: I.CleanupSuggestion[] = message.items || [];
 			const ids = new Set<string>(list.map(it => it.details.id));
 
-			// This is the authoritative count for the space, so it both raises and clears
-			// the flag the Bin widget keys off.
+			// Authoritative count for the space: drives the Bin widget flag and the tab badge.
 			S.Common.hasCleanupSuggestionsSet(!!list.length);
+			onCountChange(list.length);
 			setItems(list);
 
 			// Keep ticks and expanded rows that survived the refresh; drop what's gone.
@@ -83,7 +95,15 @@ const ArchiveSuggested = ({ canWrite }: Props) => {
 		});
 	};
 
-	useEffect(() => load(), [ space, archiveKey ]);
+	useEffect(() => {
+		// Read-only participants can't act on suggestions, so don't surface the tab for them.
+		if (!canWrite) {
+			onCountChange(0);
+			return;
+		};
+
+		load();
+	}, [ space, archiveKey, canWrite ]);
 
 	const detailsMap = new Map<string, any>(items.map(it => [ it.details.id, it.details ]));
 	const reasonMap = new Map<string, I.CleanupReason>(items.map(it => [ it.details.id, it.reason ]));
@@ -122,6 +142,9 @@ const ArchiveSuggested = ({ canWrite }: Props) => {
 	const contextKey = contextIds.join(',');
 
 	useEffect(() => {
+		// Resolve source objects even while on the Bin tab: it rides along with the count
+		// load, so switching to Suggestions shows real headers immediately rather than
+		// flashing the "Deleted object" placeholder until this returns.
 		if (!contextIds.length) {
 			setContextMap(new Map());
 			return;
@@ -173,9 +196,7 @@ const ArchiveSuggested = ({ canWrite }: Props) => {
 		return selectedIds.every(id => detailsMap.get(id)?.creator === participantId);
 	};
 
-	const onDelete = (e: MouseEvent) => {
-		e.stopPropagation();
-
+	const onDelete = () => {
 		if (!selectedIds.length || !canDeleteSelection()) {
 			return;
 		};
@@ -187,9 +208,7 @@ const ArchiveSuggested = ({ canWrite }: Props) => {
 		Action.delete(selectedIds, analytics.route.archive, () => load());
 	};
 
-	const onIgnore = (e: MouseEvent) => {
-		e.stopPropagation();
-
+	const onIgnore = () => {
 		if (!selectedIds.length) {
 			return;
 		};
@@ -202,6 +221,13 @@ const ArchiveSuggested = ({ canWrite }: Props) => {
 			};
 		});
 	};
+
+	// The header toolbar drives the actions and reflects the selection.
+	useImperativeHandle(ref, () => ({ onDelete, onIgnore }));
+
+	useEffect(() => {
+		onSelectionChange(selectedIds.length, canDeleteSelection());
+	}, [ selectedIds, items ]);
 
 	// Same open affordance as the Bin table: icon and name open the object.
 	const onOpen = (e: MouseEvent, object: any) => {
@@ -335,7 +361,7 @@ const ArchiveSuggested = ({ canWrite }: Props) => {
 		);
 	};
 
-	if (!canWrite || !visibleIds.length) {
+	if (!canWrite || !isActive || !visibleIds.length) {
 		return null;
 	};
 
@@ -344,36 +370,16 @@ const ArchiveSuggested = ({ canWrite }: Props) => {
 		titleCheckCn.push('isChecked');
 	};
 
-	const canDelete = canDeleteSelection();
-	const cnDelete = canDelete ? '' : 'disabled';
-	const deleteTooltip = canDelete ? '' : translate('binDeleteDisabledTooltip');
-
 	return (
 		<div className="listObject archiveTree archiveSuggested">
 			<div className="table">
-				<div className="row isTitle" style={cssTitle}>
+				<div className="row isTitle" style={cssRow}>
 					<div className={titleCheckCn.join(' ')}>
 						<Checkbox value={isAllSelected} onChange={onSelectAll} />
 					</div>
 
 					<div className="cell">
-						<div className="title">{U.String.sprintf(translate('binCleanupTitle'), visibleIds.length)}</div>
-					</div>
-
-					<div className="cell cellAction">
-						{selectedIds.length ? (
-							<>
-								<Button text={translate('binCleanupIgnore')} color="blank" size={28} onClick={onIgnore} />
-								<Button
-									text={translate('commonDeleteImmediately')}
-									color="red"
-									className={cnDelete}
-									tooltipParam={{ text: deleteTooltip }}
-									size={28}
-									onClick={onDelete}
-								/>
-							</>
-						) : ''}
+						<Label text={translate(isAllSelected ? 'commonDeselectAll' : 'commonSelectAll')} onClick={onSelectAll} />
 					</div>
 				</div>
 
@@ -387,6 +393,6 @@ const ArchiveSuggested = ({ canWrite }: Props) => {
 		</div>
 	);
 
-};
+});
 
 export default ArchiveSuggested;
