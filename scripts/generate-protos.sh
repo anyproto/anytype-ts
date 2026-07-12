@@ -67,16 +67,17 @@ if [[ "$FROM_DIST" == true ]]; then
 	cp "$PROTO_SRC/models.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
 	cp "$PROTO_SRC/localstore.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
 else
-	# Local mode: use anytype-heart repo
-	HEART_DIR="$ROOT_DIR/../anytype-heart"
+	# Local mode: use anytype-heart repo (override with ANYTYPE_HEART_PATH for
+	# worktrees / non-standard checkouts)
+	HEART_DIR="${ANYTYPE_HEART_PATH:-$ROOT_DIR/../anytype-heart}"
 	if [[ ! -d "$HEART_DIR" ]]; then
 		echo "Error: anytype-heart repo not found at $HEART_DIR"
 		exit 1
 	fi
 
-	# Rebuild the JS dev binary from anytype-heart
+	# Rebuild the JS dev binary from anytype-heart, installing into this checkout
 	echo "Building anytype-heart JS dev binary..."
-	(cd "$HEART_DIR" && make install-dev-js)
+	(cd "$HEART_DIR" && make install-dev-js CLIENT_DESKTOP_PATH="$ROOT_DIR")
 
 	# pb/protos/ — commands, events, changes, snapshot
 	mkdir -p "$PROTO_ROOT/pb/protos"

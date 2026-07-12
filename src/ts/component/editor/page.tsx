@@ -8,6 +8,7 @@ import TableOfContents from 'Component/page/elements/tableOfContents';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { presence } from 'Lib/presence';
 import { virtualBlock } from 'Lib/virtualBlock';
 import { useScrollRestore } from 'Hook';
 import { computeRestoreScrollTop } from 'Lib/util/scrollAnchor';
@@ -223,10 +224,16 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			controlsRef.current?.forceUpdate();
 			tocRef.current?.forceUpdate();
 			setDummy(dummy + 1);
+
+			// guard against a quick close/switch while ObjectOpen was in flight
+			if (idRef.current == rootId) {
+				presence.subscribe(S.Common.space, rootId);
+			};
 		});
 	};
 
 	const close = () => {
+		presence.unsubscribe(idRef.current);
 		virtualBlock.deactivate();
 		Action.pageClose(isPopup, idRef.current, true);
 		Storage.setFocus(idRef.current, focus.state);

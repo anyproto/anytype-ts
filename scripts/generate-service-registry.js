@@ -10,7 +10,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
-const HEART_DIR = path.resolve(ROOT_DIR, '..', 'anytype-heart');
+const HEART_DIR = process.env.ANYTYPE_HEART_PATH || path.resolve(ROOT_DIR, '..', 'anytype-heart');
 const SERVICE_TS = path.join(ROOT_DIR, 'src/ts/lib/api/service.ts');
 
 const fromDist = process.argv.includes('--from-dist');

@@ -151,3 +151,44 @@
 @import "./text";
 @import "./embed";
 @import "./chat";
+/* live presence: pubsub-driven "is typing / has focus" state (see Lib/presence) */
+
+.blocks {
+	.block.isPresenceLocked {
+		> .wrapContent {
+			pointer-events: none; user-select: none; border-radius: 6px;
+			box-shadow: 0 0 0 1px var(--color-system-accent-50);
+			transition: box-shadow 0.15s ease-out;
+		}
+	}
+
+	.block {
+		> .blockPresence {
+			position: absolute; right: 4px; top: -10px; z-index: 30; display: flex; gap: 4px; pointer-events: none;
+
+			.chip {
+				display: flex; align-items: center; gap: 5px; height: 22px; padding: 0px 8px 0px 3px; border-radius: 12px;
+				background: var(--color-system-accent-100); color: var(--color-text-inversion);
+				font-size: 11px; line-height: 22px; font-weight: 500; letter-spacing: 0.01em;
+				box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+				animation: blockPresenceIn 0.15s ease-out;
+			}
+			.chip .iconObject { flex-shrink: 0; background-color: var(--color-bg-primary); border-radius: 50%; }
+			.chip .name { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+			.chip .dots { display: flex; gap: 2px; align-items: center; }
+			.chip .dots span { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-inversion); animation: blockPresenceDot 1.2s infinite ease-in-out; }
+			.chip .dots span:nth-child(2) { animation-delay: 0.2s; }
+			.chip .dots span:nth-child(3) { animation-delay: 0.4s; }
+		}
+	}
+}
+
+@keyframes blockPresenceIn {
+	from { opacity: 0; transform: translateY(3px) scale(0.96); }
+	to { opacity: 1; transform: none; }
+}
+
+@keyframes blockPresenceDot {
+	0%, 60%, 100% { opacity: 0.35; transform: none; }
+	30% { opacity: 1; transform: translateY(-1px); }
+}

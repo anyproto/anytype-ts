@@ -100,3 +100,29 @@
 		}
 	}
 }
+
+/* live typing indicator (pubsub presence, see Lib/presence) */
+
+.block.blockChat {
+	.typingIndicator {
+		display: flex; align-items: center; gap: 6px; height: 24px; padding: 0px 16px; flex-shrink: 0;
+		font-size: 12px; line-height: 24px; color: var(--color-text-secondary);
+		animation: chatTypingIn 0.15s ease-out;
+
+		.icons { display: flex; align-items: center; }
+		.icons .iconObject { margin-left: -4px; border: 2px solid var(--color-bg-primary); border-radius: 50%; box-sizing: content-box; }
+		.icons .iconObject:first-child { margin-left: 0px; }
+
+		.label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+		.dots { display: flex; gap: 2px; align-items: center; }
+		.dots span { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); animation: blockPresenceDot 1.2s infinite ease-in-out; }
+		.dots span:nth-child(2) { animation-delay: 0.2s; }
+		.dots span:nth-child(3) { animation-delay: 0.4s; }
+	}
+}
+
+@keyframes chatTypingIn {
+	from { opacity: 0; transform: translateY(2px); }
+	to { opacity: 1; transform: none; }
+}

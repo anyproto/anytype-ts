@@ -9,6 +9,7 @@ import { ServiceClient } from './service';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
 import * as I from 'Interface';
 import * as M from 'Model';
+import { presence } from '../presence';
 
 const SORT_IDS = [
 	'BlockAdd',
@@ -1087,6 +1088,11 @@ class Dispatcher {
 
 				case 'NotificationUpdate': {
 					S.Notification.update(mapped.notification);
+					break;
+				};
+
+				case 'PubsubMessage': {
+					presence.onMessage(mapped);
 					break;
 				};
 

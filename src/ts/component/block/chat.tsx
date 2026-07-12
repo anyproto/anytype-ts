@@ -9,6 +9,7 @@ import { Icon, IconObject } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
+import { presence } from 'Lib/presence';
 import { reachedEdge, shouldRefetchForward } from 'Lib/util/chatWindow';
 
 interface RefProps {
@@ -1815,6 +1816,12 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		init();
 	}, [ rootId, space, chatId, analyticsChatId ]);
 
+	// live typing indicator over pubsub, keyed to the chat object
+	useEffect(() => {
+		presence.subscribe(space, chatId);
+		return () => presence.unsubscribe(chatId);
+	}, [ space, chatId ]);
+
 	useLayoutEffect(() => {
 		scrollToBottomCheck();
 	}, [ messages.length ]);
@@ -1912,6 +1919,35 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		);
 	};
 
+	const typers = S.Presence.getTypers(chatId).map(it => {
+		return U.Space.getParticipant(U.Space.getParticipantId(space, it.identity));
+	}).filter(it => it && !it._empty_);
+
+	let typingIndicator = null;
+	if (typers.length) {
+		const names = typers.map(it => U.String.shorten(it.name, 24));
+
+		let label = '';
+		if (typers.length == 1) {
+			label = U.String.sprintf(translate('blockChatTypingOne'), names[0]);
+		} else
+		if (typers.length == 2) {
+			label = U.String.sprintf(translate('blockChatTypingTwo'), names[0], names[1]);
+		} else {
+			label = U.String.sprintf(translate('blockChatTypingMany'), names[0], typers.length - 1);
+		};
+
+		typingIndicator = (
+			<div className="typingIndicator">
+				<div className="icons">
+					{typers.slice(0, 3).map((it: any) => <IconObject key={it.id} object={it} size={18} iconSize={14} />)}
+				</div>
+				<div className="label">{label}</div>
+				<div className="dots"><span /><span /><span /></div>
+			</div>
+		);
+	};
+
 	return (
 		<div
 			ref={nodeRef}
@@ -1925,6 +1961,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			<div id="scrollWrapper" ref={scrollWrapperRef} className="scrollWrapper">
 				{content}
 			</div>
+
+			{typingIndicator}
 
 			{!object.isArchived ? (
 				<Form 

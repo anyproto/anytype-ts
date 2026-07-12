@@ -2063,3 +2063,27 @@ export const PushNotificationResetIds = (spaceId: string, ids: string[], callBac
 		chatIds: ids,
 	}, callBack);
 };
+
+// ---------------------- PUBSUB ---------------------- //
+
+export const PubsubPublish = (spaceId: string, topic: string, payload: Uint8Array, callBack?: (message: any) => void) => {
+	dispatcher.request('PubsubPublish', {
+		spaceId,
+		topic,
+		payload,
+	}, callBack);
+};
+
+export const PubsubSubscribe = (spaceId: string, topics: string[], subId: string, callBack?: (message: any) => void) => {
+	dispatcher.request('PubsubSubscribe', {
+		spaceId,
+		topics,
+		subId,
+	}, callBack);
+};
+
+export const PubsubUnsubscribe = (subId: string, callBack?: (message: any) => void) => {
+	dispatcher.request('PubsubUnsubscribe', {
+		subId,
+	}, callBack);
+};

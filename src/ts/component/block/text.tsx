@@ -6,6 +6,7 @@ import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { presence } from 'Lib/presence';
 import { virtualBlock } from 'Lib/virtualBlock';
 
 // Prism language plugins expect `Prism` on the global scope
@@ -1285,6 +1286,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		placeholderCheck();
 		keyboard.setFocus(true);
+		presence.focusBlock(rootId, block.id);
 		onFocus?.(e);
 
 		// Calculate correct caret position accounting for rendered LaTeX elements
@@ -1358,6 +1360,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		window.clearTimeout(timeoutText.current);
 		setText(marksRef.current, true);
 		focus.clear(true);
+		presence.blurBlock(rootId, block.id);
 		onBlur?.(e);
 
 		let key = '';
