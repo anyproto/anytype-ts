@@ -446,7 +446,9 @@ class UtilData {
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
 				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
 
-				S.Chat.setState(chatSubId, state);
+				if (state) {
+					S.Chat.setState(chatSubId, state);
+				};
 
 				if (message) {
 					message.chatId = chatId;
