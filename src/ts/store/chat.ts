@@ -147,18 +147,28 @@ class ChatStore {
 		// (makeObservable per message), which turns reconnect catch-up bursts — one add event
 		// per message at up to MAX_MESSAGES window size — into main-thread jank. Mirrors
 		// prepend/append, which also mutate in place.
-		list.splice(idx, 0, new M.ChatMessage(param));
+		const added = new M.ChatMessage(param);
+
+		list.splice(idx, 0, added);
+
+		// Patch the id index incrementally — a full rebuild is O(window) per add event,
+		// so bursts would pay O(n²) and a discarded Map per event.
+		let index = this.messageByIdMap.get(subId);
+		if (index) {
+			index.set(added.id, added);
+		} else {
+			this.rebuildIndex(subId);
+			index = this.messageByIdMap.get(subId);
+		};
 
 		// Tail insert behaves like append: trim the oldest head if over the cap.
 		if (isTail) {
 			const evicted = evictedCount(list.length, MAX_MESSAGES);
 			if (evicted) {
-				list.splice(0, evicted);
+				list.splice(0, evicted).forEach(it => index.delete(it.id));
 				this.setAtChatStart(subId, false);
 			};
 		};
-
-		this.rebuildIndex(subId);
 	};
 
 	/**
@@ -202,19 +212,38 @@ class ChatStore {
 	/**
 	 * Records an id into a per-subId journal with the current timestamp.
 	 * @private
+	 * @param {Map<string, Map<string, number>>} map - The journal map (deletedMap or touchedMap).
+	 * @param {string} subId - The subscription ID.
+	 * @param {string} id - The chat message ID.
 	 */
 	private journalAdd (map: Map<string, Map<string, number>>, subId: string, id: string): void {
 		const journal = map.get(subId) || new Map();
+		const now = Date.now();
 
-		journal.set(id, Date.now());
+		journal.set(id, now);
+
+		// Journals of subIds that never snapshot-merge (previews, space, comments) have no
+		// other prune point — drop expired entries once the journal outgrows a burst-sized
+		// batch, so they stay bounded by the event rate within one TTL.
+		if (journal.size > 128) {
+			for (const [ key, ts ] of journal) {
+				if (now - ts > JOURNAL_TTL) {
+					journal.delete(key);
+				};
+			};
+		};
+
 		map.set(subId, journal);
 	};
 
 	/**
 	 * Ids journaled within JOURNAL_TTL for a subId; prunes expired entries in place.
 	 * @private
+	 * @param {Map<string, Map<string, number>>} map - The journal map (deletedMap or touchedMap).
+	 * @param {string} subId - The subscription ID.
+	 * @returns {Set<string>} The ids still within TTL.
 	 */
-	private journalRecent (map: Map<string, Map<string, number>>, subId: string): Set<string> {
+	private getRecentJournalIds (map: Map<string, Map<string, number>>, subId: string): Set<string> {
 		const journal = map.get(subId);
 		const ret = new Set<string>();
 
@@ -247,8 +276,8 @@ class ChatStore {
 	 * (only when the snapshot represents the chat tail).
 	 */
 	setFromSnapshot (subId: string, list: I.ChatMessage[], keepTrailing: boolean): void {
-		const deleted = this.journalRecent(this.deletedMap, subId);
-		const touched = this.journalRecent(this.touchedMap, subId);
+		const deleted = this.getRecentJournalIds(this.deletedMap, subId);
+		const touched = this.getRecentJournalIds(this.touchedMap, subId);
 
 		this.set(subId, mergeWindowSnapshot(this.getList(subId), list, deleted, touched, keepTrailing));
 	};

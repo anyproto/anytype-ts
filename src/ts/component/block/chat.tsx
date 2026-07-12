@@ -56,6 +56,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const [ pinnedIndex, setPinnedIndex ] = useState(-1);
 	const scrollRafRef = useRef(0);
 	const chainRafRef = useRef(0);
+	const messageAddRafRef = useRef(0);
 	const visibleIds = useRef<Set<string>>(new Set());
 	const viewportObserver = useRef<IntersectionObserver | null>(null);
 	const formResizeObserver = useRef<ResizeObserver | null>(null);
@@ -621,6 +622,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		isLoadingNext.current = false;
 		loadEpoch.current++;
 
+		// Guards the two-fetch chain: a second jump (or any window reset) while these are in
+		// flight bumps loadEpoch, and the stale pair must not rebuild the window afterwards —
+		// the LAST response would win regardless of which jump the user actually made.
+		const epoch = loadEpoch.current;
+
 		let list = [];
 		let beforeOk = false;
 		let afterOk = false;
@@ -628,6 +634,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		let afterLength = 0;
 
 		C.ChatGetMessages(chatId, orderId, '', limit, true, (message: any) => {
+			if (loadEpoch.current != epoch) {
+				return;
+			};
+
 			if (!message.error.code) {
 				beforeOk = true;
 				beforeLength = message.messages.length;
@@ -637,6 +647,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			};
 
 			C.ChatGetMessages(chatId, '', orderId, limit, false, (message: any) => {
+				if (loadEpoch.current != epoch) {
+					return;
+				};
+
 				if (!message.error.code) {
 					afterOk = true;
 					afterLength = message.messages.length;
@@ -646,6 +660,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				};
 
 				loadDepsAndReplies(list, () => {
+					if (loadEpoch.current != epoch) {
+						return;
+					};
+
 					// Merge so status events seen during the fetch survive; no trailing keep —
 					// this is a jump into history, the window must stay contiguous around orderId.
 					S.Chat.setFromSnapshot(subId, list, false);
@@ -810,11 +828,22 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
 		subIds = subIds || [];
 
-		const subId = getSubId();
-
-		if (subIds.includes(subId)) {
-			loadDepsAndReplies(S.Chat.getList(subId).concat(message), () => scrollToBottomCheck());
+		if (!subIds.includes(getSubId())) {
+			return;
 		};
+
+		// Coalesce to one pass per frame: catch-up bursts fire one event per message, and an
+		// uncoalesced pass re-scans the whole window (O(events × window)) and can re-subscribe
+		// deps per event. The store already holds every added message when the frame runs,
+		// so a single pass over the current list covers the burst.
+		if (messageAddRafRef.current) {
+			return;
+		};
+
+		messageAddRafRef.current = raf(() => {
+			messageAddRafRef.current = 0;
+			loadDepsAndReplies(S.Chat.getList(getSubId()), () => scrollToBottomCheck());
+		});
 	};
 
 	const onMessageDelete = (id: string, subIds: string[]) => {
@@ -1898,6 +1927,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			window.clearTimeout(timeoutResize.current);
 			raf.cancel(scrollRafRef.current);
 			raf.cancel(chainRafRef.current);
+			raf.cancel(messageAddRafRef.current);
 			messageRefs.current = {};
 			refSetters.current.clear();
 		};
@@ -1964,10 +1994,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		};
 	}, [ space, chatId ]);
 
+	// analyticsChatId is deliberately NOT a dependency: it resolves asynchronously after a
+	// cold open and nothing in rebind()/init() reads it (analytics events capture it at
+	// call time) — keying on it re-ran a full second init per cold open.
 	useEffect(() => {
 		rebind();
 		init();
-	}, [ rootId, space, chatId, analyticsChatId ]);
+	}, [ rootId, space, chatId ]);
 
 	useLayoutEffect(() => {
 		scrollToBottomCheck();

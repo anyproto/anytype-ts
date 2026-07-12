@@ -1130,7 +1130,6 @@ class Dispatcher {
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
-					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview?.isOneToOne);
 					const discussionParentId = S.Chat.getDiscussionParentId(spaceId, rootId);
 					const isDiscussion = !!discussionParentId;
 
@@ -1189,9 +1188,13 @@ class Dispatcher {
 						};
 					});
 
-					if (showNotification && notification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
+					if (showNotification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
+						// Built only on the notification path: sanitize + emoji-insert over
+						// text/marks is pure waste for the focused-window case — i.e. every
+						// live message while the user is in the chat.
+						const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview?.isOneToOne);
 						const title = [];
-						let canNotify = true;
+						let canNotify = !!notification;
 						let openPayload: any = { id: rootId, layout: I.ObjectLayout.Chat, spaceId };
 
 						if (spaceview) {
@@ -1823,6 +1826,12 @@ class Dispatcher {
 							.filter((msg: any) => msg.objectCleanupSuggestion?.objectIds?.length)
 							.flatMap((msg: any) => msg.objectCleanupSuggestion.objectIds)
 					);
+
+					// Drain buffered stream events first: they arrived BEFORE this response, so
+					// applying the embedded events ahead of them would invert causal order (e.g.
+					// an update for a message whose ChatAdd is still buffered would be dropped,
+					// and the add would then land without it).
+					this.flushEvents();
 
 					runInAction(() => this.event(message.event, true, true));
 				};

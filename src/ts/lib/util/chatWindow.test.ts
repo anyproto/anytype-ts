@@ -98,6 +98,17 @@ describe('chatWindow', () => {
 			expect(merged.text).toBe('edited live');
 		});
 
+		it('touched messages still gain monotonic flags from the snapshot', () => {
+			const current = [ { ...msg('1', '!a'), text: 'edited live' } ];
+			const snapshot = [ { ...msg('1', '!a', { isReadMessage: true, isSynced: true }), text: 'stale' } ];
+			const touched = new Set([ '1' ]);
+			const [ merged ] = mergeWindowSnapshot(current, snapshot, none, touched, true);
+
+			expect(merged.text).toBe('edited live');
+			expect(merged.isReadMessage).toBe(true);
+			expect(merged.isSynced).toBe(true);
+		});
+
 		it('ignores touched ids that are not in the current window', () => {
 			const snapshot = [ msg('1', '!a') ];
 			const touched = new Set([ '1' ]);

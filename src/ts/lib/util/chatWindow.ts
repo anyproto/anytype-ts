@@ -61,8 +61,16 @@ export const mergeWindowSnapshot = (current: any[], snapshot: any[], deletedIds:
 			return it;
 		};
 
+		// Touched: current content is fresher, but the snapshot can still carry newer
+		// monotonic flags (e.g. read on another device while the edit event was local).
 		if (touchedIds.has(it.id)) {
-			return cur;
+			return {
+				...cur,
+				isReadMessage: cur.isReadMessage || it.isReadMessage,
+				isReadMention: cur.isReadMention || it.isReadMention,
+				isReadReaction: cur.isReadReaction || it.isReadReaction,
+				isSynced: cur.isSynced || it.isSynced,
+			};
 		};
 
 		return {
@@ -101,15 +109,28 @@ export const liveAddIndex = (list: { orderId: string }[], messageOrderId: string
 		return 0;
 	};
 
-	const idx = list.findIndex(it => it.orderId > messageOrderId);
-
-	if (idx < 0) {
+	// Tail fast-path: live traffic is almost always newest-last (O(1)); the binary search
+	// below covers late-arriving older messages — the window is sorted by orderId.
+	if (list[list.length - 1].orderId < messageOrderId) {
 		return list.length;
 	};
 
-	if ((idx == 0) && (!atChatStart)) {
+	let lo = 0;
+	let hi = list.length;
+
+	while (lo < hi) {
+		const mid = (lo + hi) >> 1;
+
+		if (list[mid].orderId > messageOrderId) {
+			hi = mid;
+		} else {
+			lo = mid + 1;
+		};
+	};
+
+	if ((lo == 0) && (!atChatStart)) {
 		return -1;
 	};
 
-	return idx;
+	return lo;
 };
