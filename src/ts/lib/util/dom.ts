@@ -148,7 +148,8 @@ class UtilDom {
 	 * Returns the caret rectangle at a character offset inside an element, without
 	 * touching the document selection (used to draw remote carriages). The offset is
 	 * a DOM offset — convert model offsets with Mark.modelToDom first if the element
-	 * carries ZWS anchors. Falls back to the element's own rect for empty content.
+	 * carries ZWS anchors. Offsets past the end of the text clamp to the end; empty
+	 * content falls back to the element's own rect.
 	 */
 	getCarriageRect (element: HTMLElement, offset: number): DOMRect | null {
 		if (!element) {
@@ -161,6 +162,7 @@ class UtilDom {
 		let node = null;
 		let passed = 0;
 		let found = false;
+		let last = null;
 
 		while (node = walker.nextNode()) {
 			if (node.nodeType == Node.ELEMENT_NODE) {
@@ -188,16 +190,25 @@ class UtilDom {
 			};
 
 			passed += length;
+			last = node;
 		};
 
-		if (!found) {
-			range.selectNodeContents(element);
+		// The carriage sits past the end of the text we hold: the sender's edit and their carriage
+		// travel on different flows, so the position can arrive before the text does. Clamp to the
+		// end of the last text node — a range collapsed on the element itself measures as an empty
+		// rect in Blink, which would send the carriage back to the start of the block.
+		if (!found && last) {
+			range.setStart(last, last.textContent.length);
+			found = true;
 		};
-		range.collapse(true);
 
-		const rect = (range.getBoundingClientRect() || range.getClientRects()[0]) as DOMRect;
-		if (rect && rect.height) {
-			return rect;
+		if (found) {
+			range.collapse(true);
+
+			const rect = range.getBoundingClientRect() as DOMRect;
+			if (rect && rect.height) {
+				return rect;
+			};
 		};
 
 		// empty block, or a range the engine cannot measure: fall back to the element itself
