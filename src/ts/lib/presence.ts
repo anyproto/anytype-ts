@@ -1,6 +1,7 @@
 import * as I from 'Interface';
 import * as S from 'Store';
 import * as C from './api/command';
+import { focus } from './focus';
 
 const TOPIC_PREFIX = 'typing/';
 const SUB_PREFIX = 'typing-';
@@ -306,6 +307,22 @@ class Presence {
 		this.idleTimers.set(objectId, window.setTimeout(() => this.stop(objectId), IDLE_TIMEOUT));
 	};
 
+	/**
+	 * A remote carriage lands in the block we still hold the caret in, while we have gone
+	 * idle (our own heartbeat lapsed, so we are publishing nothing): let the block go. The
+	 * other side is actively editing it, and a caret we left behind — up to 30s ago, or on
+	 * a window we walked away from — must not keep us typing into the same block as them.
+	 * We stay put if we are active: two people typing at once is theirs to resolve, not
+	 * something to settle by yanking the caret out from under a working user.
+	 */
+	private releaseFocus (objectId: string, blockId: string): void {
+		if (!blockId || this.held.has(objectId) || (focus.state.focused != blockId)) {
+			return;
+		};
+
+		focus.clear(true);
+	};
+
 	private publish (objectId: string, blockId: string, active: boolean): void {
 		const sub = this.subs.get(objectId);
 		if (!sub) {
@@ -352,11 +369,15 @@ class Presence {
 
 		if (payload.active) {
 			const range = payload.range;
+			const blockId = String(payload.blockId || '');
+
+			// before the store update, so the re-render it triggers already sees the released focus
+			this.releaseFocus(objectId, blockId);
 
 			S.Presence.setTyping(objectId, {
 				identity: data.identity,
 				sessionId: String(payload.sessionId),
-				blockId: String(payload.blockId || ''),
+				blockId,
 				range: range ? { from: Math.max(0, Number(range.from) || 0), to: Math.max(0, Number(range.to) || 0) } : null,
 				lastSeen: Date.now(),
 			});

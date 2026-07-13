@@ -173,7 +173,7 @@
 	.block.blockTable {
 		.cell:has(.block.isPresenceLocked) { z-index: 2; cursor: default; user-select: none; }
 		.cell:has(.block.isPresenceLocked)::before {
-			opacity: 0.5;
+			opacity: 0.5; border-radius: 4px;
 			box-shadow: 0px 0px 0px 1px var(--color-system-accent-100) inset, 0px 0px 6px 0px var(--color-system-accent-100);
 		}
 
