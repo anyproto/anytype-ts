@@ -1005,6 +1005,12 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		keyboard.disableSelection(false);
 	};
 
+	// A cell someone else is editing right now is soft-locked (see Lib/presence): clicking it
+	// must not place our carriage in it, the way the block itself is locked outside tables.
+	const isPresenceLocked = (cellId: string): boolean => {
+		return !!S.Presence.getBlockTypers(rootId, cellId).length && (focus.state.focused != cellId);
+	};
+
 	const onCellClick = (e: any, rowId: string, columnId: string, cellId: string) => {
 		if (keyboard.isCmd(e) || e.shiftKey) {
 			return;
@@ -1014,7 +1020,7 @@ const BlockTable = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			clearTableSelection();
 		};
 
-		if (!readonly) {
+		if (!readonly && !isPresenceLocked(cellId)) {
 			onCellFocus(e, rowId, columnId, cellId);
 		};
 	};

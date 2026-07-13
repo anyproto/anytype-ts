@@ -211,9 +211,19 @@ class UtilDom {
 			};
 		};
 
-		// empty block, or a range the engine cannot measure: fall back to the element itself
+		// Empty block, or a range the engine cannot measure: sit at the start of the content box.
+		// The element's own height is no guide to the caret height — inside a table cell the
+		// editable is stretched to the full cell — so take one line from the computed style.
 		const er = element.getBoundingClientRect();
-		return new DOMRect(er.left, er.top, 0, er.height);
+		const style = window.getComputedStyle(element);
+		const line = parseFloat(style.lineHeight) || (parseFloat(style.fontSize) * 1.4);
+
+		return new DOMRect(
+			er.left + (parseFloat(style.paddingLeft) || 0),
+			er.top + (parseFloat(style.paddingTop) || 0),
+			0,
+			Math.min(line || er.height, er.height),
+		);
 	};
 
 	/**

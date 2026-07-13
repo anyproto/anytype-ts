@@ -168,6 +168,20 @@
 		}
 	}
 
+	/* in a table the block fills the cell, so an offset rounded glow spills across the grid:
+	   light up the cell's own border instead (drawn by .cell::before, see table.scss) */
+	.block.blockTable {
+		.cell:has(.block.isPresenceLocked) { z-index: 2; cursor: default; user-select: none; }
+		.cell:has(.block.isPresenceLocked)::before {
+			opacity: 0.5;
+			box-shadow: 0px 0px 0px 1px var(--color-system-accent-100) inset, 0px 0px 6px 0px var(--color-system-accent-100);
+		}
+
+		.block.isPresenceLocked {
+			> .wrapContent::after { display: none; }
+		}
+	}
+
 	/* remote carriage: accent-coloured and steady, so it never reads as the local caret */
 	.block.blockText {
 		.flex.withPresence { position: relative; }
