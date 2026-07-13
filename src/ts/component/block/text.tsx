@@ -832,7 +832,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { filter } = S.Common;
 		const range = getRange();
 
-		presence.carriage(rootId, block.id, range);
+		publishPresence(range);
 		const langCodes = Object.keys(Prism.languages).join('|');
 		const langKey = '```(' + langCodes + ')?';
 
@@ -1330,12 +1330,32 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 	};
 	
+	// An empty block is not worth announcing: the first keystroke can replace it (the
+	// trailing placeholder materializes into a real block), so a chip and a carriage
+	// would point at a block that is about to stop existing. Presence starts with the
+	// first character instead — presence.carriage arms it.
+	const canPublishPresence = (): boolean => {
+		return !virtualBlock.isVirtualId(block.id) && !!String(getTextValue() || '').length;
+	};
+
+	const publishPresence = (range: I.TextRange) => {
+		if (canPublishPresence()) {
+			presence.carriage(rootId, block.id, range);
+		} else {
+			presence.blurBlock(rootId, block.id);
+		};
+	};
+
 	const onFocusHandler = (e: any) => {
 		e.persist();
 
 		placeholderCheck();
 		keyboard.setFocus(true);
-		presence.focusBlock(rootId, block.id, getRange());
+
+		if (canPublishPresence()) {
+			presence.focusBlock(rootId, block.id, getRange());
+		};
+
 		onFocus?.(e);
 
 		// Calculate correct caret position accounting for rendered LaTeX elements
@@ -1525,7 +1545,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const value = getTextValue();
 
 		focus.set(block.id, range);
-		presence.carriage(rootId, block.id, range);
+		publishPresence(range);
 
 		if (readonly || S.Menu.isOpen('selectPasteUrl')) {
 			return;

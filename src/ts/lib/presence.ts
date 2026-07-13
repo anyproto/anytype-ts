@@ -8,6 +8,7 @@ const SUB_PREFIX = 'typing-';
 const REFRESH_INTERVAL = 2000;	// republish while typing/focus continues; never faster
 const CARRIAGE_INTERVAL = 300;	// caret moves are published faster than the heartbeat, but still throttled
 const IDLE_TIMEOUT = 3000;		// publish a stop after this long without keystrokes
+const FOCUS_IDLE_TIMEOUT = 30000;	// stop the focus heartbeat after this long without any local activity
 const EXPIRE_TTL = 5000;		// drop remote entries without refresh (≥ 2x refresh, survives one lost message)
 const SWEEP_INTERVAL = 1000;
 
@@ -37,6 +38,7 @@ class Presence {
 	private subs: Map<string, { spaceId: string; refs: number }> = new Map();
 	private sent: Map<string, { blockId: string; at: number }> = new Map();
 	private ranges: Map<string, I.TextRange> = new Map();
+	private activity: Map<string, number> = new Map();
 	private idleTimers: Map<string, number> = new Map();
 	private carriageTimers: Map<string, number> = new Map();
 	private held: Map<string, { blockId: string; timer: number }> = new Map();
@@ -129,9 +131,12 @@ class Presence {
 	};
 
 	/**
-	 * Reports that the local user focused an editor block: publishes
-	 * immediately (presence must be snappy) and keeps refreshing on a
-	 * heartbeat for as long as the focus is held, independent of keystrokes.
+	 * Reports that the local user focused an editor block: publishes immediately
+	 * (presence must be snappy) and keeps refreshing on a heartbeat while the focus
+	 * is held, independent of keystrokes — but only up to FOCUS_IDLE_TIMEOUT of
+	 * inactivity. A held caret is not proof the user is still there: they may have
+	 * walked away, or moved on to another device, and a block frozen behind a stale
+	 * presence lock is far worse than one released a little early.
 	 */
 	focusBlock (objectId: string, blockId: string, range?: I.TextRange): void {
 		const sub = this.subs.get(objectId);
@@ -148,10 +153,18 @@ class Presence {
 		};
 
 		this.setRange(objectId, range);
+		this.activity.set(objectId, Date.now());
 		this.sent.set(objectId, { blockId, at: Date.now() });
 		this.publish(objectId, blockId, true);
 
 		const timer = window.setInterval(() => {
+			const last = this.activity.get(objectId) || 0;
+
+			if (Date.now() - last > FOCUS_IDLE_TIMEOUT) {
+				this.stop(objectId);
+				return;
+			};
+
 			this.sent.set(objectId, { blockId, at: Date.now() });
 			this.publish(objectId, blockId, true);
 		}, REFRESH_INTERVAL);
@@ -163,12 +176,27 @@ class Presence {
 	 * Reports the local carriage (caret) position inside the block we hold focus
 	 * in, so others can draw it. Published on its own throttle — caret moves must
 	 * feel live, but a keystroke or arrow key must not mean a message each.
+	 *
+	 * Doubles as the activity signal: it re-arms the heartbeat when focus was let
+	 * go (idle timeout, or an empty block that only now got content), which is why
+	 * callers may drive it without a preceding focusBlock.
 	 */
 	carriage (objectId: string, blockId: string, range: I.TextRange): void {
-		const held = this.held.get(objectId);
-		if (!held || !range || (held.blockId != blockId)) {
+		if (!blockId || !range) {
 			return;
 		};
+
+		const held = this.held.get(objectId);
+		if (!held) {
+			this.focusBlock(objectId, blockId, range);
+			return;
+		};
+
+		if (held.blockId != blockId) {
+			return;
+		};
+
+		this.activity.set(objectId, Date.now());
 
 		const current = this.ranges.get(objectId);
 		if (current && (current.from == range.from) && (current.to == range.to)) {
@@ -239,6 +267,7 @@ class Presence {
 		};
 
 		this.ranges.delete(objectId);
+		this.activity.delete(objectId);
 
 		if (!this.sent.has(objectId)) {
 			return;
