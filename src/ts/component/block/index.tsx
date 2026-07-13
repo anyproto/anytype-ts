@@ -1301,9 +1301,7 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 				<div className="blockPresence">
 					{blockTypers.map((p: any) => (
 						<div className="chip" key={p.id}>
-							<IconObject object={p} size={18} iconSize={14} />
 							<div className="name">{U.String.shorten(p.name, 24)}</div>
-							<div className="dots"><span /><span /><span /></div>
 						</div>
 					))}
 				</div>

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import * as Prism from 'prismjs';
 
 import raf from 'raf';
@@ -80,6 +80,12 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const prevStyleRef = useRef(style);
 	const phantomNewlineRef = useRef(false);
 
+	// live presence: carriages of the people editing this block right now (see Lib/presence).
+	// The parent Block observes S.Presence and re-renders us, so plain reads stay fresh here.
+	const [ carriages, setCarriages ] = useState([]);
+	const remote = S.Presence.getBlockTypers(rootId, id).filter(it => it.range);
+	const remoteKey = remote.map(it => [ it.identity, it.sessionId, it.range.from ].join(':')).join(',');
+
 	useEffect(() => {
 		setValue(text);
 		renderLatex();
@@ -109,6 +115,47 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 	}, []);
+
+	// Measures where every remote carriage lands in our DOM. Runs after the text is
+	// in place, so an incoming edit and the caret that follows it stay in sync.
+	useEffect(() => {
+		if (!remote.length) {
+			setCarriages(list => (list.length ? [] : list));
+			return;
+		};
+
+		const frame = raf(() => {
+			const node = nodeRef.current;
+			const el = node ? U.Dom.select('.editable', node) : null;
+
+			if (!el) {
+				return;
+			};
+
+			const nodeRect = node.getBoundingClientRect();
+			const hasZws = Mark.hasZws(el);
+
+			setCarriages(remote.map(it => {
+				const offset = hasZws ? Mark.modelToDom(it.range.from, el) : it.range.from;
+				const rect = U.Dom.getCarriageRect(el, offset);
+
+				if (!rect) {
+					return null;
+				};
+
+				return {
+					id: [ it.identity, it.sessionId ].join(':'),
+					style: {
+						left: rect.left - nodeRect.left,
+						top: rect.top - nodeRect.top,
+						height: rect.height,
+					},
+				};
+			}).filter(it => it));
+		});
+
+		return () => raf.cancel(frame);
+	}, [ remoteKey, text ]);
 
 	useEffect(() => {
 		const { focused } = focus.state;
@@ -784,6 +831,8 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const { filter } = S.Common;
 		const range = getRange();
+
+		presence.carriage(rootId, block.id, range);
 		const langCodes = Object.keys(Prism.languages).join('|');
 		const langKey = '```(' + langCodes + ')?';
 
@@ -1286,7 +1335,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		placeholderCheck();
 		keyboard.setFocus(true);
-		presence.focusBlock(rootId, block.id);
+		presence.focusBlock(rootId, block.id, getRange());
 		onFocus?.(e);
 
 		// Calculate correct caret position accounting for rendered LaTeX elements
@@ -1476,6 +1525,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const value = getTextValue();
 
 		focus.set(block.id, range);
+		presence.carriage(rootId, block.id, range);
 
 		if (readonly || S.Menu.isOpen('selectPasteUrl')) {
 			return;
@@ -1774,8 +1824,12 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	};
 
+	if (carriages.length) {
+		cn.push('withPresence');
+	};
+
 	return (
-		<div 
+		<div
 			ref={nodeRef}
 			className={cn.join(' ')}
 		>
@@ -1785,6 +1839,10 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			</div>
 
 			{additional ? <div className="additional">{additional}</div> : ''}
+
+			{carriages.map((it: any) => (
+				<div key={it.id} className="presenceCarriage" style={it.style} />
+			))}
 
 			<Editable 
 				ref={editableRef}

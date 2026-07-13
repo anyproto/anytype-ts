@@ -1,3 +1,4 @@
+import * as I from 'Interface';
 import * as S from 'Store';
 import * as C from './api/command';
 
@@ -5,6 +6,7 @@ const TOPIC_PREFIX = 'typing/';
 const SUB_PREFIX = 'typing-';
 
 const REFRESH_INTERVAL = 2000;	// republish while typing/focus continues; never faster
+const CARRIAGE_INTERVAL = 300;	// caret moves are published faster than the heartbeat, but still throttled
 const IDLE_TIMEOUT = 3000;		// publish a stop after this long without keystrokes
 const EXPIRE_TTL = 5000;		// drop remote entries without refresh (≥ 2x refresh, survives one lost message)
 const SWEEP_INTERVAL = 1000;
@@ -12,6 +14,7 @@ const SWEEP_INTERVAL = 1000;
 interface TypingPayload {
 	sessionId: string;
 	blockId?: string;
+	range?: I.TextRange;
 	active: boolean;
 };
 
@@ -33,7 +36,9 @@ class Presence {
 	private sessionId = Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);
 	private subs: Map<string, { spaceId: string; refs: number }> = new Map();
 	private sent: Map<string, { blockId: string; at: number }> = new Map();
+	private ranges: Map<string, I.TextRange> = new Map();
 	private idleTimers: Map<string, number> = new Map();
+	private carriageTimers: Map<string, number> = new Map();
 	private held: Map<string, { blockId: string; timer: number }> = new Map();
 	private sweepTimer = 0;
 
@@ -128,7 +133,7 @@ class Presence {
 	 * immediately (presence must be snappy) and keeps refreshing on a
 	 * heartbeat for as long as the focus is held, independent of keystrokes.
 	 */
-	focusBlock (objectId: string, blockId: string): void {
+	focusBlock (objectId: string, blockId: string, range?: I.TextRange): void {
 		const sub = this.subs.get(objectId);
 		if (!sub || !blockId) {
 			return;
@@ -142,6 +147,7 @@ class Presence {
 			window.clearInterval(held.timer);
 		};
 
+		this.setRange(objectId, range);
 		this.sent.set(objectId, { blockId, at: Date.now() });
 		this.publish(objectId, blockId, true);
 
@@ -151,6 +157,47 @@ class Presence {
 		}, REFRESH_INTERVAL);
 
 		this.held.set(objectId, { blockId, timer });
+	};
+
+	/**
+	 * Reports the local carriage (caret) position inside the block we hold focus
+	 * in, so others can draw it. Published on its own throttle — caret moves must
+	 * feel live, but a keystroke or arrow key must not mean a message each.
+	 */
+	carriage (objectId: string, blockId: string, range: I.TextRange): void {
+		const held = this.held.get(objectId);
+		if (!held || !range || (held.blockId != blockId)) {
+			return;
+		};
+
+		const current = this.ranges.get(objectId);
+		if (current && (current.from == range.from) && (current.to == range.to)) {
+			return;
+		};
+
+		this.setRange(objectId, range);
+
+		const now = Date.now();
+		const last = this.sent.get(objectId);
+		const elapsed = last ? now - last.at : CARRIAGE_INTERVAL;
+
+		if (elapsed >= CARRIAGE_INTERVAL) {
+			this.sent.set(objectId, { blockId, at: now });
+			this.publish(objectId, blockId, true);
+			return;
+		};
+
+		// inside the throttle window: make sure the latest position still goes out
+		if (!this.carriageTimers.has(objectId)) {
+			this.carriageTimers.set(objectId, window.setTimeout(() => {
+				this.carriageTimers.delete(objectId);
+
+				if (this.held.get(objectId)?.blockId == blockId) {
+					this.sent.set(objectId, { blockId, at: Date.now() });
+					this.publish(objectId, blockId, true);
+				};
+			}, CARRIAGE_INTERVAL - elapsed));
+		};
 	};
 
 	/**
@@ -179,11 +226,19 @@ class Presence {
 			this.idleTimers.delete(objectId);
 		};
 
+		const carriageTimer = this.carriageTimers.get(objectId);
+		if (carriageTimer) {
+			window.clearTimeout(carriageTimer);
+			this.carriageTimers.delete(objectId);
+		};
+
 		const held = this.held.get(objectId);
 		if (held) {
 			window.clearInterval(held.timer);
 			this.held.delete(objectId);
 		};
+
+		this.ranges.delete(objectId);
 
 		if (!this.sent.has(objectId)) {
 			return;
@@ -200,6 +255,18 @@ class Presence {
 		for (const objectId of Array.from(this.sent.keys())) {
 			this.stop(objectId);
 		};
+	};
+
+	private setRange (objectId: string, range: I.TextRange): void {
+		if (!range) {
+			this.ranges.delete(objectId);
+			return;
+		};
+
+		this.ranges.set(objectId, {
+			from: Math.max(0, Number(range.from) || 0),
+			to: Math.max(0, Number(range.to) || 0),
+		});
 	};
 
 	private setIdleTimer (objectId: string): void {
@@ -219,6 +286,11 @@ class Presence {
 		const payload: TypingPayload = { sessionId: this.sessionId, active };
 		if (blockId) {
 			payload.blockId = blockId;
+
+			const range = this.ranges.get(objectId);
+			if (range) {
+				payload.range = range;
+			};
 		};
 
 		C.PubsubPublish(sub.spaceId, this.getTopic(objectId), new TextEncoder().encode(JSON.stringify(payload)));
@@ -250,10 +322,13 @@ class Presence {
 		};
 
 		if (payload.active) {
+			const range = payload.range;
+
 			S.Presence.setTyping(objectId, {
 				identity: data.identity,
 				sessionId: String(payload.sessionId),
 				blockId: String(payload.blockId || ''),
+				range: range ? { from: Math.max(0, Number(range.from) || 0), to: Math.max(0, Number(range.to) || 0) } : null,
 				lastSeen: Date.now(),
 			});
 		} else {

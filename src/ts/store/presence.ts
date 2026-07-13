@@ -1,9 +1,11 @@
 import { observable, action, makeObservable } from 'mobx';
+import * as I from 'Interface';
 
 export interface PresenceTyping {
 	identity: string;	// verified account id of the sender (from the pubsub event, never the payload)
 	sessionId: string;	// sender app-session id, distinguishes devices/windows of one account
 	blockId: string;	// block being typed in; '' means the chat input of the object
+	range?: I.TextRange;	// sender carriage position in that block; absent for the chat input
 	lastSeen: number;	// receiver-local receipt timestamp, drives TTL expiry
 };
 

@@ -145,6 +145,67 @@ class UtilDom {
 	};
 
 	/**
+	 * Returns the caret rectangle at a character offset inside an element, without
+	 * touching the document selection (used to draw remote carriages). The offset is
+	 * a DOM offset — convert model offsets with Mark.modelToDom first if the element
+	 * carries ZWS anchors. Falls back to the element's own rect for empty content.
+	 */
+	getCarriageRect (element: HTMLElement, offset: number): DOMRect | null {
+		if (!element) {
+			return null;
+		};
+
+		const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+		const range = document.createRange();
+
+		let node = null;
+		let passed = 0;
+		let found = false;
+
+		while (node = walker.nextNode()) {
+			if (node.nodeType == Node.ELEMENT_NODE) {
+				// a BR counts as one character of the DOM text, same as in Mark.getDomText
+				if ((node as HTMLElement).tagName != 'BR') {
+					continue;
+				};
+
+				if (passed >= offset) {
+					range.setStartBefore(node);
+					found = true;
+					break;
+				};
+
+				passed++;
+				continue;
+			};
+
+			const length = node.textContent.length;
+
+			if (passed + length >= offset) {
+				range.setStart(node, offset - passed);
+				found = true;
+				break;
+			};
+
+			passed += length;
+		};
+
+		if (!found) {
+			range.selectNodeContents(element);
+		};
+		range.collapse(true);
+
+		const rect = (range.getBoundingClientRect() || range.getClientRects()[0]) as DOMRect;
+		if (rect && rect.height) {
+			return rect;
+		};
+
+		// empty block, or a range the engine cannot measure: fall back to the element itself
+		const er = element.getBoundingClientRect();
+		return new DOMRect(er.left, er.top, 0, er.height);
+	};
+
+	/**
 	 * Clears the current selection in the document.
 	 */
 	clearSelection () {
