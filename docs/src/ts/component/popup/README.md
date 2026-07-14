@@ -1,6 +1,6 @@
 # popup/ - Modal Dialogs
 
-Modal popup system with **34 TSX files** (plus 10 Storybook story files). Managed by the `PopupStore` in `src/ts/store/popup.ts`.
+Modal popup system with **36 TSX files** (plus 10 Storybook story files). Managed by the `PopupStore` in `src/ts/store/popup.ts`.
 
 ## Architecture
 
@@ -40,6 +40,8 @@ Open a popup: `S.Popup.open('confirm', { data: { ... } })`
 - `invite/request.tsx` - Space join request display
 - `invite/confirm.tsx` - Invitation confirmation
 - `invite/qr.tsx` - QR code invitation
+- `invite/manage.tsx` - Manage the space invite: auto-approval, permissions, share-within-space, reset (owner only)
+- `invite/add.tsx` - Add members directly by picking people you already share a space with
 
 ### Membership
 - `membership/activation.tsx` - Activation flow

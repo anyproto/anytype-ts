@@ -6,7 +6,7 @@ Reactive state stores using MobX. Each store manages a specific domain. Accessed
 
 | File | Alias | Purpose |
 |------|-------|---------|
-| `common.ts` | `S.Common` | Global app state: space, theme, language, config, sidebar states, date format |
+| `common.ts` | `S.Common` | Global app state: space, theme, language, config, sidebar states, date format, current invite per space (`inviteGet`/`inviteSet`/`inviteClear`) |
 | `auth.ts` | `S.Auth` | Authentication: account, wallet phrase, membership, PIN |
 | `block.ts` | `S.Block` | Document block trees: block CRUD, tree traversal, children management |
 | `detail.ts` | `S.Detail` | Object details/properties: get/set details, relations, layout info. Stores raw values in shallow observable maps (per-relation-key reactivity); `get()` results are cached per-args in reactive contexts via self-evicting computeds |
