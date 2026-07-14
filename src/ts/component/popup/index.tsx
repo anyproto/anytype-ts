@@ -21,6 +21,8 @@ import PopupRelation from './relation';
 import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
 import PopupInviteQr from './invite/qr';
+import PopupInviteManage from './invite/manage';
+import PopupInviteAdd from './invite/add';
 import PopupMembershipActivation from './membership/activation';
 import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
@@ -183,6 +185,8 @@ const Popup = forwardRef<{}, I.Popup>((props, ref) => {
 		inviteRequest:			 PopupInviteRequest,
 		inviteConfirm:			 PopupInviteConfirm,
 		inviteQr:				 PopupInviteQr,
+		inviteManage:			 PopupInviteManage,
+		inviteAdd:				 PopupInviteAdd,
 		membershipActivation: 	 PopupMembershipActivation,
 		membershipFinalization:  PopupMembershipFinalization,
 		share:					 PopupShare,

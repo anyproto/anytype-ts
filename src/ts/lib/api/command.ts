@@ -1770,11 +1770,12 @@ export const MembershipV2SubscribeToUpdates = (email: string, callBack?: (messag
 
 // ---------------------- SPACE ---------------------- //
 
-export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, callBack?: (message: any) => void) => {
+export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, shareWithinSpace?: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('SpaceInviteGenerate', {
 		spaceId,
 		inviteType: inviteType as number || 0,
 		permissions: permissions as number || 0,
+		shareWithinSpace: Boolean(shareWithinSpace),
 	}, callBack);
 };
 

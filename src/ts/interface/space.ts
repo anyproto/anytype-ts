@@ -62,6 +62,26 @@ export enum InviteLinkType {
 	Manual 					 = 3,
 };
 
+export enum MemberTab {
+	All						 = 0,
+	Request					 = 1,
+	Editor					 = 2,
+	Viewer					 = 3,
+};
+
+/**
+ * The space's current invite, as returned by SpaceInviteGetCurrent.
+ * When heldByOwner is true the invite lives in the owner's account: everyone else
+ * gets a success response with an empty cid and key, and must not render a link.
+ */
+export interface Invite {
+	cid: string;
+	key: string;
+	inviteType: InviteType;
+	permissions: ParticipantPermissions;
+	heldByOwner: boolean;
+};
+
 export enum NotificationMode {
 	All						 = 0,
 	Mentions				 = 1,

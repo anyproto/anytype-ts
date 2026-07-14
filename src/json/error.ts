@@ -40,6 +40,19 @@ export default {
 			SPACE_IS_DELETED:		103,
 		},
 
+		SpaceInviteGenerate: {
+			INVITE_ALREADY_SHARED:	106,
+			INVITE_NOT_SHAREABLE:	107,
+		},
+
+		SpaceInviteChange: {
+			INVITE_NOT_SHAREABLE:	107,
+		},
+
+		SpaceMakeShareable: {
+			LIMIT_REACHED:			104,
+		},
+
 		SpaceJoin: {
 			SPACE_LIMIT_REACHED:	106,
 		},
