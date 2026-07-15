@@ -168,12 +168,17 @@ const PopupInviteManage = forwardRef<{}, I.Popup>((props, ref) => {
 		Action.inviteReset(spaceId);
 	};
 
-	let calloutText = '';
+	const notes = [];
 	if (isUnsafe) {
-		calloutText = translate('inviteUnsafeText');
+		notes.push(translate('inviteUnsafeText'));
 	} else
 	if (isAutoApprove) {
-		calloutText = translate('popupInviteManageAutoApproveWarning');
+		notes.push(translate('popupInviteManageAutoApproveWarning'));
+
+		// An anyoneCanJoin editor link lets a current viewer promote themselves by opening it.
+		if (permissions == I.ParticipantPermissions.Writer) {
+			notes.push(translate('popupInviteManageEditorUpgradeNote'));
+		};
 	};
 
 	let shareHint = '';
@@ -202,12 +207,12 @@ const PopupInviteManage = forwardRef<{}, I.Popup>((props, ref) => {
 
 			<Title text={translate('popupInviteManageTitle')} />
 
-			{calloutText ? (
-				<div className={[ 'callout', isUnsafe ? 'isUnsafe' : '' ].join(' ')}>
+			{notes.map((text: string, i: number) => (
+				<div key={i} className={[ 'callout', isUnsafe ? 'isUnsafe' : '' ].join(' ')}>
 					<Icon name="popup/header/warning" className="warning" />
-					<Label text={calloutText} />
+					<Label text={text} />
 				</div>
-			) : ''}
+			))}
 
 			<div className="items">
 				<div className="item">
