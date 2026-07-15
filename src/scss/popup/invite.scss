@@ -102,13 +102,14 @@
             }
         }
 
-        .role { display: flex; align-items: center; justify-content: space-between; gap: 0px 16px; padding: 12px 0px; }
+        .role { display: flex; flex-direction: column; gap: 6px 0px; padding: 12px 0px; }
         .role {
             .label.sectionName { @include text-small; color: var(--color-text-secondary); }
 
-            .select { display: flex; align-items: center; gap: 0px 4px; }
-            .select {
+            .select.round { width: 100%; justify-content: space-between; }
+            .select.round {
                 .name { @include text-common; color: var(--color-text-primary); }
+                .icon.arrow { width: 8px; height: 8px; }
             }
         }
 

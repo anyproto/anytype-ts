@@ -133,25 +133,29 @@ const PopupInviteAdd = forwardRef<{}, I.Popup>((props, ref) => {
 				) : <EmptySearch text={translate('popupInviteAddEmpty')} />}
 			</div>
 
-			<div className="role">
-				<Label className="sectionName" text={translate('popupInviteAddSelectRole')} />
+			{members.length ? (
+				<>
+					<div className="role">
+						<Label className="sectionName" text={translate('popupInviteAddSelectRole')} />
 
-				<div id="inviteAddRoleSelect" className="select" onClick={onPermissions}>
-					<div className="item">
-						<div className="name">{translate(`participantPermissions${permissions}`)}</div>
+						<div id="inviteAddRoleSelect" className="select round size36" onClick={onPermissions}>
+							<div className="item">
+								<div className="name">{translate(`participantPermissions${permissions}`)}</div>
+							</div>
+							<Icon name="arrow/small" className="arrow dark" />
+						</div>
 					</div>
-					<Icon className="arrow dark" />
-				</div>
-			</div>
 
-			<div className="buttons">
-				<Button
-					className={[ 'c36', selected.length ? '' : 'disabled' ].join(' ')}
-					color="accent"
-					text={buttonText}
-					onClick={onSubmit}
-				/>
-			</div>
+					<div className="buttons">
+						<Button
+							className={[ 'c36', selected.length ? '' : 'disabled' ].join(' ')}
+							color="accent"
+							text={buttonText}
+							onClick={onSubmit}
+						/>
+					</div>
+				</>
+			) : ''}
 
 			<Error text={error} />
 		</>
