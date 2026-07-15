@@ -697,7 +697,9 @@ export const ChatGetMessagesByIds = (response: any) => {
 export const ChatSubscribeLastMessages = (response: any) => {
 	return {
 		messages: (response.messages || []).map(Mapper.From.ChatMessage),
-		state: Mapper.From.ChatState(response.chatState || {}),
+		// null when absent so `if (message.state)` guards actually work — a state mapped
+		// from {} carries zeroed counters and no order, which would clobber real state.
+		state: response.chatState ? Mapper.From.ChatState(response.chatState) : null,
 	};
 };
 

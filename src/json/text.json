@@ -2273,6 +2273,8 @@
 	"toastFileLimitReached": "Your local storage exceeds syncing limit. Locally stored files won't be synced",
 
 	"toastChatAttachmentsLimitReached": "You can upload only %s %s at a time",
+	"toastChatUploadFailed": "Some attachments failed to upload. The message was not sent",
+	"toastChatSendFailed": "The message could not be sent. Please try again",
 	"toastWidget": "Widget <b>%s</b> has been added",
 	"toastJoinSpace": "You have joined <b>%s</b>",
 

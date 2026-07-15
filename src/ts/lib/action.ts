@@ -23,19 +23,12 @@ class Action {
 		};
 
 		const blocks = S.Block.getBlocks(rootId);
-		const object = S.Detail.get(rootId, rootId);
 
-		if (object.layout == I.ObjectLayout.Space) {
-			this.dbClearChat(object.chatId, J.Constant.blockId.chat);
-		};
-
+		// Chat message subscriptions are NOT torn down here: BlockChat owns its subscription
+		// lifecycle (refcounted retainSub/releaseSub + ChatUnsubscribe on unmount).
 		for (const block of blocks) {
 			if (block.isDataview()) {
 				this.dbClearBlock(rootId, block.id);
-			} else 
-			if (block.isChat()) {
-				this.dbClearChat(object.chatId, block.id);
-				this.dbClearChat(object.id, block.id);
 			};
 		};
 
@@ -91,22 +84,6 @@ class Action {
 		S.Detail.clear(subId);
 
 		U.Subscription.destroyList(groupIds.concat([ subId ]), true);
-	};
-
-	/**
-	 * Clears all data related to a chat block.
-	 * @param {string} chatId - The chat object ID.
-	 * @param {string} blockId - The block ID.
-	 */
-	dbClearChat (chatId: string, blockId: string) {	
-		if (!chatId || !blockId) {
-			return;
-		};
-
-		const subId = S.Record.getSubId(chatId, blockId);
-
-		C.ChatUnsubscribe(chatId, subId);
-		S.Chat.clear(subId);
 	};
 
 	/**

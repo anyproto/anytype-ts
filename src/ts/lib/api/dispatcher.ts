@@ -9,6 +9,7 @@ import { ServiceClient } from './service';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
 import * as I from 'Interface';
 import * as M from 'Model';
+import { liveAddIndex } from 'Lib/util/chatWindow';
 
 const SORT_IDS = [
 	'BlockAdd',
@@ -94,8 +95,13 @@ class Dispatcher {
 			if (!this.flushScheduled) {
 				this.flushScheduled = true;
 
-				if (S.Common.isActiveTab) {
+				if (S.Common.isActiveTab && (document.visibilityState == 'visible')) {
 					this.rafId = requestAnimationFrame(() => this.flushEvents());
+
+					// Backstop: rAF stalls in hidden/occluded windows (isActiveTab tracks the
+					// tab strip, not window visibility) — without it, buffered events pile up
+					// until restore, freezing notifications and the badge while minimized.
+					this.flushTimerId = window.setTimeout(() => this.flushEvents(), 250);
 				} else {
 					this.flushTimerId = window.setTimeout(() => this.flushEvents(), 100);
 				};
@@ -167,6 +173,14 @@ class Dispatcher {
 	 * so MobX reactions fire only once at the end of the batch.
 	 */
 	flushEvents () {
+		// Both a rAF and a backstop timeout can be armed at once — cancel the one that didn't fire.
+		if (this.rafId) {
+			cancelAnimationFrame(this.rafId);
+		};
+		if (this.flushTimerId) {
+			window.clearTimeout(this.flushTimerId);
+		};
+
 		this.flushScheduled = false;
 		this.rafId = 0;
 		this.flushTimerId = 0;
@@ -1116,7 +1130,6 @@ class Dispatcher {
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
-					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview?.isOneToOne);
 					const discussionParentId = S.Chat.getDiscussionParentId(spaceId, rootId);
 					const isDiscussion = !!discussionParentId;
 
@@ -1142,9 +1155,12 @@ class Dispatcher {
 					chatSubIds.forEach(subId => {
 						const list = S.Chat.getList(subId);
 
-						let idx = list.findIndex(it => it.orderId == orderId);
+						// Sorted insertion by orderId (lexicographic): a late-arriving older message
+						// (offline peer sync) must land at its ordered position, not at the tail.
+						// -1 means it belongs before the loaded window — backward pagination owns it.
+						const idx = liveAddIndex(list, orderId, S.Chat.isAtChatStart(subId));
 						if (idx < 0) {
-							idx = list.length;
+							return;
 						};
 
 						S.Chat.add(subId, idx, message);
@@ -1172,9 +1188,13 @@ class Dispatcher {
 						};
 					});
 
-					if (showNotification && notification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
+					if (showNotification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
+						// Built only on the notification path: sanitize + emoji-insert over
+						// text/marks is pure waste for the focused-window case — i.e. every
+						// live message while the user is in the chat.
+						const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview?.isOneToOne);
 						const title = [];
-						let canNotify = true;
+						let canNotify = !!notification;
 						let openPayload: any = { id: rootId, layout: I.ObjectLayout.Chat, spaceId };
 
 						if (spaceview) {
@@ -1238,6 +1258,7 @@ class Dispatcher {
 							};
 						} else {
 							S.Chat.update(subId, mapped.message);
+							S.Chat.markTouched(subId, mapped.message.id);
 						};
 					});
 
@@ -1328,6 +1349,8 @@ class Dispatcher {
 							S.Chat.delete(subId, mapped.id);
 						};
 					});
+
+					U.Dom.eventDispatch(window, 'messageDelete', { id: mapped.id, subIds: mapped.subIds });
 					break;
 				};
 
@@ -1362,6 +1385,7 @@ class Dispatcher {
 									notificationMessage = message;
 								};
 								set(message, { reactions: mapped.reactions });
+								S.Chat.markTouched(subId, mapped.id);
 							};
 						};
 					});
@@ -1427,6 +1451,7 @@ class Dispatcher {
 						const message = S.Chat.getMessageById(subId, mapped.message?.id);
 						if (message) {
 							set(message, { isPinned: mapped.isPinned });
+							S.Chat.markTouched(subId, mapped.message?.id);
 						};
 					});
 
@@ -1801,6 +1826,12 @@ class Dispatcher {
 							.filter((msg: any) => msg.objectCleanupSuggestion?.objectIds?.length)
 							.flatMap((msg: any) => msg.objectCleanupSuggestion.objectIds)
 					);
+
+					// Drain buffered stream events first: they arrived BEFORE this response, so
+					// applying the embedded events ahead of them would invert causal order (e.g.
+					// an update for a message whose ChatAdd is still buffered would be dropped,
+					// and the add would then land without it).
+					this.flushEvents();
 
 					runInAction(() => this.event(message.event, true, true));
 				};

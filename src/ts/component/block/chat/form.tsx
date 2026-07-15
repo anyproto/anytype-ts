@@ -996,15 +996,41 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		const bl = bookmarks.length;
 		const bookmark = S.Record.getBookmarkType();
 
+		// tmp attachment id → created object id. Results are collected here instead of
+		// mutating the attachments array in place: the user can remove attachments while
+		// uploads are in flight, so the final list is resolved from the CURRENT store
+		// state in callBack, not from a stale send-time snapshot.
+		const created = new Map<string, string>();
+
+		let failed = false;
+
 		U.Dom.addClass(send, 'isLoading');
 		isSending.current = true;
 
 		raf(() => {
 			U.Dom.addClass(send, 'anim');
 		});
-		
+
+		// Abort without clear(): the composer keeps its text and attachments so the user can retry.
+		const abort = (text: string) => {
+			isSending.current = false;
+			U.Dom.removeClass(send, 'isLoading');
+			U.Dom.removeClass(send, 'anim');
+
+			Preview.toastShow({ icon: 'notice', text });
+		};
+
 		const callBack = () => {
-			const newAttachments = attachments.filter(it => !it.isTmp).map(it => ({ target: it.id, type: getAttachmentType(it.layout) }));
+			if (failed) {
+				abort(translate('toastChatUploadFailed'));
+				return;
+			};
+
+			// Resolve against the current store list so attachments removed during the
+			// upload don't come back into the message.
+			const newAttachments = S.Chat.getAttachments(attachmentsSubId)
+				.map(it => ({ target: (it.isTmp ? created.get(it.id) : it.id), type: getAttachmentType(it.layout) }))
+				.filter(it => it.target);
 			const parsed = getMarksFromHtml();
 			const text = trim(parsed.text);
 			const match = parsed.text.match(/^\r?\n+/);
@@ -1024,7 +1050,12 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 					update.content.marks = coded.marks;
 					update.blocks = [];
 
-					C.ChatEditMessageContent(rootId, editingId.current, update, () => {
+					C.ChatEditMessageContent(rootId, editingId.current, update, (response: any) => {
+						if (response.error.code) {
+							abort(translate('toastChatSendFailed'));
+							return;
+						};
+
 						scrollToMessage(editingId.current, true);
 						clear();
 					});
@@ -1054,7 +1085,12 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 					messageType = message.content?.text.length ? 'Mixed' : 'Attachment';
 				};
 
-				C.ChatAddMessage(rootId, message, () => {
+				C.ChatAddMessage(rootId, message, (response: any) => {
+					if (response.error.code) {
+						abort(translate('toastChatSendFailed'));
+						return;
+					};
+
 					reloadAndScrollToBottom();
 					clear();
 
@@ -1074,15 +1110,10 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, '', 0, rootId, '', (message: any) => {
 					n++;
 
-					if (message.objectId) {
-						const idx = attachments.findIndex(it => it.id == item.id);
-						const newItem = { id: message.objectId, type: getAttachmentType(item.layout) };
-
-						if (idx >= 0) {
-							attachments[idx] = newItem;
-						} else {
-							attachments.push(newItem);
-						};
+					if (message.error.code || !message.objectId) {
+						failed = true;
+					} else {
+						created.set(item.id, message.objectId);
 					};
 
 					if (n == fl) {
@@ -1103,15 +1134,10 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 				C.ObjectCreateBookmark({ source: item.source, createdInContext: rootId, createdInContextRef: '' }, S.Common.space, bookmark.defaultTemplateId, (message: any) => {
 					n++;
 
-					if (message.objectId) {
-						const idx = attachments.findIndex(it => it.id == item.id);
-						const newItem = { id: message.objectId, type: getAttachmentType(item.layout) };
-
-						if (idx >= 0) {
-							attachments[idx] = newItem;
-						} else {
-							attachments.push(newItem);
-						};
+					if (message.error.code || !message.objectId) {
+						failed = true;
+					} else {
+						created.set(item.id, message.objectId);
 					};
 
 					if (n == bl) {
