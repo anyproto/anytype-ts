@@ -224,11 +224,9 @@ const PopupInviteManage = forwardRef<{}, I.Popup>((props, ref) => {
 							<Label className="name" text={translate('popupInviteManagePermissions')} />
 						</div>
 
-						<div id="invitePermissionsSelect" className="select" onClick={onPermissions}>
-							<div className="item">
-								<div className="name">{translate(`participantPermissions${permissions}`)}</div>
-							</div>
-							<Icon className="arrow dark" />
+						<div id="invitePermissionsSelect" className="value" onClick={onPermissions}>
+							<div className="name">{translate(`participantPermissions${permissions}`)}</div>
+							<Icon name="arrow/button" className="arrow" width={6} height={10} />
 						</div>
 					</div>
 				) : ''}

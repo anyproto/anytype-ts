@@ -64,8 +64,8 @@
 
                 .switch { flex-shrink: 0; }
 
-                .select { display: flex; align-items: center; gap: 0px 4px; flex-shrink: 0; }
-                .select {
+                .value { display: flex; align-items: center; gap: 0px 6px; flex-shrink: 0; }
+                .value {
                     .name { @include text-common; color: var(--color-text-secondary); }
                 }
             }
