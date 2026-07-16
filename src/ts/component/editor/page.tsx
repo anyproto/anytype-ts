@@ -368,6 +368,13 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 
+			// A dataview cell is in inline edit mode (e.g. a newly created record's
+			// name box that has not received focus yet): the paste belongs to the
+			// cell input, not to the block editor (JS-9181)
+			if (U.Dom.select('.cell.isEditing, .cellContent.isEditing')) {
+				return;
+			};
+
 			// Paste replaces the cross-block text selection
 			const textSel = selection?.getTextSelection();
 			if (textSel) {
