@@ -88,6 +88,10 @@ class Keyboard {
 			S.Common.windowIsFocusedSet(false);
 			S.Menu.closeAll([ 'blockContext' ]);
 			S.Common.getRef('dragProvider')?.clearStyle();
+
+			// Window blur aborts any in-flight IME composition, but the compositionend event can get
+			// lost (Alt+Tab, switching windows/tabs), leaving the flag stuck and swallowing keys
+			this.setComposition(false);
 		};
 
 		U.Dom.addEvents(window, [

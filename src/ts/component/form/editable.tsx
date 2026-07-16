@@ -207,9 +207,26 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		};
 	};
 
+	// Returns true while a genuine IME composition is in progress. If the composition flag is set
+	// but a regular key arrives (compositionend was lost, e.g. after Alt+Tab or a window/tab switch),
+	// recovers from the stale state so keys like Backspace/Delete are not swallowed
+	const checkComposition = (e: any): boolean => {
+		if (!keyboard.isComposition) {
+			return false;
+		};
+
+		if ((e.which == 229) || (e.key == 'Process') || e.nativeEvent?.isComposing) {
+			return true;
+		};
+
+		isComposing.current = false;
+		keyboard.setComposition(false);
+		return false;
+	};
+
 	const onKeyDownHandler = (e: any): void => {
 		// Chinese IME is open
-		if (keyboard.isComposition) {
+		if (checkComposition(e)) {
 			return;
 		};
 
@@ -228,7 +245,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 
 	const onKeyUpHandler = (e: any): void => {
 		// Chinese IME is open
-		if (keyboard.isComposition) {
+		if (checkComposition(e)) {
 			return;
 		};
 
