@@ -412,11 +412,36 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			return;
 		};
 
+		// Swallows the click that follows a menu-dismissing mousedown, so dismissing
+		// an open cell menu by clicking another cell only closes the menu instead of
+		// immediately opening that cell's editor (JS-8540)
+		const swallowNextClick = () => {
+			let timeout = 0;
+
+			const clear = () => {
+				window.clearTimeout(timeout);
+				U.Dom.removeEvent(window, 'click', swallow, true);
+			};
+
+			const swallow = (e: globalThis.MouseEvent) => {
+				e.preventDefault();
+				e.stopPropagation();
+				clear();
+			};
+
+			timeout = window.setTimeout(clear, 500);
+			U.Dom.addEvent(window, 'click', swallow, true);
+		};
+
 		const bindContainerClick = () => {
 			const handler = (e: any) => {
 				const target = e.target as HTMLElement;
 
 				if (!target.closest(`#${U.Common.esc(cellId)}`) && !target.closest('.menus')) {
+					if (menuId && S.Menu.isOpenList(J.Menu.cell) && target.closest('.cell, .cellContent')) {
+						swallowNextClick();
+					};
+
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
 
