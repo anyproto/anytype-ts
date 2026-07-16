@@ -189,6 +189,7 @@ export interface ViewComponent {
 	getIdPrefix?(): string;
 	getLimit?(): number;
 	getVisibleRelations?(): I.ViewRelation[];
+	getWrapperWidth?(): number;
 	getTypeId?(): string;
 	getTemplateId?(): string;
 	getEmpty?(type: string): any;

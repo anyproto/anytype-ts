@@ -14,18 +14,22 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => 
 	const isSyncing = useRef(false);
 	const scrollHandler = useRef<(() => void) | null>(null);
 
+	const toPx = (v: any): any => {
+		return typeof v == 'number' ? `${v}px` : v;
+	};
+
 	const resize = (config) => {
 		if (!nodeRef.current || !trackRef.current) {
 			return;
 		};
 
 		U.Dom.css(nodeRef.current, {
-			width: config.width,
-			left: config.left,
-			paddingLeft: config.paddingLeft,
+			width: toPx(config.width),
+			left: toPx(config.left),
+			paddingLeft: toPx(config.paddingLeft),
 			display: config.display,
 		});
-		U.Dom.css(trackRef.current, { width: config.trackWidth });
+		U.Dom.css(trackRef.current, { width: toPx(config.trackWidth) });
 	};
 
 	const bind = (scrollElement, status) => {
