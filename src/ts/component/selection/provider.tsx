@@ -997,6 +997,17 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 
 	// Used to click and set selection automatically in block menu for example
 	const getForClick = (id: string, withChildren: boolean, save: boolean): string[] => {
+		// The children cache is rebuilt only on selection mousedown, which gripper clicks and
+		// context menus bypass — recompute it from the block store so cut/copy from the block
+		// menu never loses or gets stale descendants (JS-8599)
+		if (withChildren) {
+			get(I.SelectType.Block, false).forEach(it => cacheChildrenIds(it));
+
+			if (id) {
+				cacheChildrenIds(id);
+			};
+		};
+
 		let ids: string[] = get(I.SelectType.Block, withChildren);
 
 		if (id && !ids.includes(id)) {
@@ -1036,7 +1047,9 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 	};
 
 	const getChildrenIds = (id: string) => {
-		return cacheChildrenMap.current.get(id) || [];
+		// The cache is only built on selection mousedown — gripper clicks and context menus
+		// bypass it, so fall back to computing from the block store (JS-8599)
+		return cacheChildrenMap.current.get(id) || cacheChildrenIds(id);
 	};
 
 	const getPageContainer = () => {
