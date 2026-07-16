@@ -522,8 +522,11 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
-			if (!isViewBoard && !isViewCalendar) {
-				let records = getRecords(groupId);
+			if (!isViewCalendar && (!isViewBoard || groupId)) {
+				// Board columns render from the group subscription record list as is:
+				// use the raw list, getRecords would apply the object order of the
+				// first matching group (JS-9747, JS-9764)
+				let records = isViewBoard ? [ ...S.Record.getRecordIds(subId, '') ] : getRecords(groupId);
 
 				const oldIndex = records.indexOf(message.objectId);
 
@@ -534,12 +537,30 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 					} else {
 						dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
 					};
-				} else {	
+				} else {
 					const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
 					records = arrayMove(records, oldIndex, newIndex);
 				};
 
 				S.Record.recordsSet(subId, '', records);
+
+				// Insert the new record into the group's custom order (if any), so the
+				// card keeps its position and stays visible after the column
+				// re-subscribes with a limited window (JS-9747, JS-9764)
+				if (isViewBoard) {
+					const order = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
+					const objectIds = [ ...(order?.objectIds || []) ];
+
+					if (order && !objectIds.includes(message.objectId)) {
+						if (idx >= 0) {
+							objectIds.splice(idx, 0, message.objectId);
+						} else {
+							dir > 0 ? objectIds.push(message.objectId) : objectIds.unshift(message.objectId);
+						};
+
+						objectOrderUpdate([ { viewId: view.id, groupId, objectIds } ], records);
+					};
+				};
 			};
 
 			if (isCollection) {
