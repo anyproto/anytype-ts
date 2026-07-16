@@ -478,6 +478,58 @@ describe('Mark', () => {
 		});
 	});
 
+	describe('fromMarkdown', () => {
+		it('should not italicize intra-word underscores like _physics_process() (JS-7786)', () => {
+			const result = Mark.fromMarkdown('tilde _physics_process() tilde', [], [], false, false);
+
+			expect(result.text).toBe('tilde _physics_process() tilde');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not italicize across a code-marked snake_case identifier (JS-7786)', () => {
+			// First snippet already converted to a Code mark, second one still being typed
+			const text = 'tilde _progress() tilde and `_physics_';
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 6, to: 17 }, param: '' },
+			];
+
+			const result = Mark.fromMarkdown(text, marks, [], false, false);
+
+			expect(result.text).toBe(text);
+			expect(result.marks).toEqual(marks);
+		});
+
+		it('should still convert _italic_ followed by a boundary', () => {
+			const result = Mark.fromMarkdown('word _italic_ word', [], [], false, false);
+
+			expect(result.text).toBe('word italic word');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+			expect(result.marks[0].range).toEqual({ from: 5, to: 11 });
+		});
+
+		it('should still convert _italic_ followed by punctuation', () => {
+			const result = Mark.fromMarkdown('word _italic_, word', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+
+		it('should not bold intra-word double underscores (JS-7786)', () => {
+			const result = Mark.fromMarkdown('name __dunder__method here', [], [], false, false);
+
+			expect(result.text).toBe('name __dunder__method here');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should still convert *italic* with asterisks', () => {
+			const result = Mark.fromMarkdown('word *italic* word', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+	});
+
 	describe('fromHtml', () => {
 		it('should keep user-typed <a> as literal text (JS-7238)', () => {
 			const result = Mark.fromHtml('typed &lt;a&gt; tag', []);
