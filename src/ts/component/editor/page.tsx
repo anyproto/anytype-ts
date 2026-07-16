@@ -43,6 +43,9 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const isEnterProcessing = useRef(false);
 	const scrollHandlerRef = useRef<(() => void) | null>(null);
 	const windowHandlersRef = useRef<Map<string, (e: any) => void>>(new Map());
+	const blocksResizeObserver = useRef<ResizeObserver | null>(null);
+	const blocksResizeTarget = useRef<Element | null>(null);
+	const resizePageRef = useRef<(callBack?: () => void) => void>(null);
 
 	useEffect(() => {
 		open();
@@ -52,6 +55,10 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			close();
 
 			focus.clear(false);
+
+			blocksResizeObserver.current?.disconnect();
+			blocksResizeObserver.current = null;
+			blocksResizeTarget.current = null;
 
 			raf.cancel(frameMove.current);
 			raf.cancel(frameResize.current);
@@ -69,6 +76,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	}, [ rootId ]);
 
 	useEffect(() => {
+		resizePageRef.current = resizePage;
+
 		if (!root) {
 			return;
 		};
@@ -94,6 +103,22 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		container.current = U.Dom.select('.editor', node);
 		buttonAdd.current = U.Dom.select('#button-block-add', node);
 		blockFeatured.current = U.Dom.select(`#block-${U.Common.esc(J.Constant.blockId.featured)}`, node);
+
+		// Recompute the trailing #blockLast filler when the content height changes without a
+		// page re-render — e.g. dataview records loading or being added in an inline set —
+		// otherwise a stale filler leaves extra space and scroll length at the bottom (JS-8898).
+		// #blockLast sits outside .blocks, so resizing it does not re-trigger the observer
+		const blocks = U.Dom.select('.blocks', node);
+
+		if (blocks && (blocksResizeTarget.current !== blocks)) {
+			if (!blocksResizeObserver.current) {
+				blocksResizeObserver.current = new ResizeObserver(() => resizePageRef.current?.());
+			};
+
+			blocksResizeObserver.current.disconnect();
+			blocksResizeObserver.current.observe(blocks);
+			blocksResizeTarget.current = blocks;
+		};
 	};
 
 	// Sizes the trailing #blockLast filler so the document is tall enough for a
