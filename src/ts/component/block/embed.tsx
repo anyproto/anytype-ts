@@ -768,9 +768,13 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						<MediaExcalidraw
 							data={data}
 							onChange={(elements, appState, files) => {
+								if (readonly) {
+									return;
+								};
+
 								window.clearTimeout(timeoutSaveRef.current);
 								timeoutSaveRef.current = window.setTimeout(() => {
-									C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState }));
+									C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState, files }));
 								}, 1000);
 							}}
 							readonly={readonly}

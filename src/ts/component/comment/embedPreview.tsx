@@ -174,14 +174,14 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove, onChange }: Props) =>
 				<Suspense fallback={<Loader />}>
 					<MediaExcalidraw
 						data={data}
-						onChange={(elements, appState) => {
+						onChange={(elements, appState, files) => {
 							if (!onChange) {
 								return;
 							};
 
 							window.clearTimeout(saveTimeoutRef.current);
 							saveTimeoutRef.current = window.setTimeout(() => {
-								onChange(JSON.stringify({ elements, appState }));
+								onChange(JSON.stringify({ elements, appState, files }));
 							}, 1000);
 						}}
 					/>
