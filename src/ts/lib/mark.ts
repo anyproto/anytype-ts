@@ -616,16 +616,32 @@ class Mark {
 			const type = Number(key) as I.MarkType;
 
 			if (end) {
+				let found = false;
+
 				for (let i = 0; i < marks.length; ++i) {
 					const m = marks[i];
 					if ((m.type == type) && !m.range.to) {
 						marks[i].range.to = offset;
+						found = true;
 						break;
 					};
+				};
+
+				// A closing </a> without a matching link markup opening is user-typed
+				// literal text — keep it instead of stripping it (JS-7238)
+				if (!found && (type == I.MarkType.Link)) {
+					return;
 				};
 			} else {
 				const pm = p3.match(rp);
 				const param = pm ? pm[1] : '';
+
+				// Link markup rendered by toHtml always carries data-param, so a bare
+				// <a>/<a ...> is user-typed literal text (e.g. inside inline code) —
+				// keep it instead of swallowing it as a Link mark (JS-7238)
+				if ((type == I.MarkType.Link) && !param) {
+					return;
+				};
 
 				marks.push({
 					type,

@@ -1,6 +1,37 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import Mark from './mark';
 import * as I from 'Interface';
+import { U, S } from 'Lib';
+
+beforeAll(() => {
+	const g = globalThis as any;
+	const u = U as any;
+
+	// mark.ts uses auto-imported globals (U, S) that the vite plugin injects at
+	// build time — expose the mocked Lib barrel on globalThis for the tests
+	g.U = U;
+	g.S = S;
+
+	// Realistic entity decoding (the Lib mock stubs it as identity)
+	u.String.fromHtmlSpecialChars = (s: string) => {
+		return String(s || '').replace(/(&lt;|&gt;|&amp;)/g, (m: string, p: string) => {
+			if (p == '&lt;') p = '<';
+			if (p == '&gt;') p = '>';
+			if (p == '&amp;') p = '&';
+			return p;
+		});
+	};
+
+	// Minimal DOM plumbing so cleanHtml/fromHtml can run in the node environment
+	u.Dom = {
+		select: () => null,
+		selectAll: () => [],
+	};
+
+	g.document = {
+		createElement: () => ({ innerHTML: '' }),
+	};
+});
 
 describe('Mark', () => {
 
@@ -422,6 +453,48 @@ describe('Mark', () => {
 
 			expect(result.text).toBe(' world');
 			expect(result.marks).toHaveLength(0);
+		});
+	});
+
+	describe('fromHtml', () => {
+		it('should keep user-typed <a> as literal text (JS-7238)', () => {
+			const result = Mark.fromHtml('typed &lt;a&gt; tag', []);
+
+			expect(result.text).toBe('typed <a> tag');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should keep user-typed <a> inside inline code (JS-7238)', () => {
+			const result = Mark.fromHtml('<markupcode spellcheck="false">&lt;a&gt;</markupcode>', []);
+
+			expect(result.text).toBe('<a>');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 0, to: 3 });
+		});
+
+		it('should keep user-typed <area> as literal text (JS-7238)', () => {
+			const result = Mark.fromHtml('&lt;area&gt;', []);
+
+			expect(result.text).toBe('<area>');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should keep user-typed closing </a> as literal text (JS-7238)', () => {
+			const result = Mark.fromHtml('hello &lt;/a&gt; world', []);
+
+			expect(result.text).toBe('hello </a> world');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should still parse real link markup with data-param (JS-7238)', () => {
+			const result = Mark.fromHtml('<a href="https://x.com" class="markuplink" data-param="https://x.com" data-range="0-4">link</a>', []);
+
+			expect(result.text).toBe('link');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Link);
+			expect(result.marks[0].param).toBe('https://x.com');
+			expect(result.marks[0].range).toEqual({ from: 0, to: 4 });
 		});
 	});
 
