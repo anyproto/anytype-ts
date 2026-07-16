@@ -528,6 +528,42 @@ describe('Mark', () => {
 			expect(result.marks).toHaveLength(1);
 			expect(result.marks[0].type).toBe(I.MarkType.Italic);
 		});
+
+		it('should convert a plain backtick code span', () => {
+			const result = Mark.fromMarkdown('Hello `World`', [], [], false, false);
+
+			expect(result.text).toBe('Hello World');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 6, to: 11 });
+		});
+
+		it('should keep a leading space inside backticks out of the code mark (JS-9071)', () => {
+			// Dead-key layouts can commit the space next to the backtick inside the span
+			const result = Mark.fromMarkdown('Hello ` World`', [], [], false, false);
+
+			expect(result.text).toBe('Hello  World');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 7, to: 12 });
+		});
+
+		it('should keep a leading nbsp inside backticks out of the code mark (JS-9071)', () => {
+			const result = Mark.fromMarkdown('Hello `\u00A0World`', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 7, to: 12 });
+		});
+
+		it('should convert a code span after an nbsp boundary (JS-9071)', () => {
+			const result = Mark.fromMarkdown('Hello\u00A0`World`', [], [], false, false);
+
+			expect(result.text).toBe('Hello\u00A0World');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 6, to: 11 });
+		});
 	});
 
 	describe('fromHtml', () => {
