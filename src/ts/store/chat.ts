@@ -16,6 +16,7 @@ class ChatStore {
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
 	public attachmentsMap: Map<string, any[]> = observable(new Map());
 	public discussionParentMap: Map<string, Map<string, string>> = observable.map(new Map());
+	private activeReadChat: { spaceId: string; chatId: string } = observable({ spaceId: '', chatId: '' });
 	private badgeValue = '';
 	private atChatStartMap: Map<string, boolean> = new Map();
 	private atChatEndMap: Map<string, boolean> = new Map();
@@ -31,6 +32,8 @@ class ChatStore {
 			delete: action,
 			setReply: action,
 			setState: action,
+			setActiveReadChat: action,
+			clearActiveReadChat: action,
 			setAttachments: action,
 			discussionParentMapSet: action,
 			discussionParentMapDelete: action,
@@ -610,6 +613,49 @@ class ChatStore {
 	};
 
 	/**
+	 * Marks a chat as actively read: shown in a focused window and anchored to the live
+	 * tail, so incoming messages are read in place. Counter aggregates (vault, widgets,
+	 * app badge) exclude this chat via isActiveReadChat — otherwise every incoming
+	 * message would blink the unread badge for the duration of the read round-trip.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} chatId - The chat ID.
+	 */
+	setActiveReadChat (spaceId: string, chatId: string): void {
+		if (!spaceId || !chatId) {
+			return;
+		};
+
+		set(this.activeReadChat, { spaceId, chatId });
+	};
+
+	/**
+	 * Releases the actively read chat, but only if it still points at the given pair —
+	 * another chat view may have claimed it in the meantime.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} chatId - The chat ID.
+	 */
+	clearActiveReadChat (spaceId: string, chatId: string): void {
+		if ((this.activeReadChat.spaceId == spaceId) && (this.activeReadChat.chatId == chatId)) {
+			set(this.activeReadChat, { spaceId: '', chatId: '' });
+		};
+	};
+
+	/**
+	 * Whether the chat is being actively read (see setActiveReadChat), meaning its unread
+	 * counters are excluded from aggregates and badges. Counters are server-authoritative,
+	 * so the exclusion is presentational only — the underlying state stays intact and
+	 * resurfaces the moment the claim is released (scroll up, blur, close). Gated on
+	 * isActiveTab (observable): a claim left by a chat in a deactivated tab lifts
+	 * reactively, since a hidden tab's rAF-driven read flow stalls.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} chatId - The chat ID.
+	 * @returns {boolean} Whether the chat is actively read.
+	 */
+	isActiveReadChat (spaceId: string, chatId: string): boolean {
+		return !!chatId && (this.activeReadChat.spaceId == spaceId) && (this.activeReadChat.chatId == chatId) && S.Common.isActiveTab;
+	};
+
+	/**
 	 * Gets the total mention and message counters for all spaces.
 	 * @returns {Counter} The total counters.
 	 */
@@ -652,6 +698,12 @@ class ChatStore {
 					continue;
 				};
 
+				// The actively read chat contributes nothing: its messages are being read
+				// on screen, so counting them would only blink the badge (see setActiveReadChat).
+				if (this.isActiveReadChat(spaceId, chatId)) {
+					continue;
+				};
+
 				const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
 
 				if (state.mentionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
@@ -669,7 +721,11 @@ class ChatStore {
 		};
 
 		if (discussionMap) {
-			for (const [ , parentId ] of discussionMap) {
+			for (const [ discussionId, parentId ] of discussionMap) {
+				if (this.isActiveReadChat(spaceId, discussionId)) {
+					continue;
+				};
+
 				const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
 				if (parent._empty_ || parent.isArchived) {
 					continue;
@@ -733,6 +789,12 @@ class ChatStore {
 		const ret = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
 
 		if (!spaceId || !chatId) {
+			return ret;
+		};
+
+		// The actively read chat reports zero: its unread state is being consumed on
+		// screen and would only blink until the server confirms the read (see setActiveReadChat).
+		if (this.isActiveReadChat(spaceId, chatId)) {
 			return ret;
 		};
 
