@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import Mark from './mark';
 import * as I from 'Interface';
 
@@ -455,6 +455,66 @@ describe('Mark', () => {
 			const attr = Mark.paramToAttr(I.MarkType.Code, '');
 
 			expect(attr).toContain('spellcheck="false"');
+		});
+	});
+
+	describe('fromHtml', () => {
+		// fromHtml needs DOM and Lib globals that the node test environment does not provide
+		beforeAll(() => {
+			const g = globalThis as any;
+
+			g.document = g.document || {
+				createElement: () => ({ innerHTML: '' }),
+			};
+
+			g.S = g.S || { Common: {} };
+			g.U = g.U || {
+				Common: {
+					getKeyByValue: (o: any, v: any) => Object.keys(o || {}).find(k => o[k] === v),
+				},
+				String: {
+					fromHtmlSpecialChars: (s: string) => String(s || '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'),
+					regexEscape: (v: string) => String(v || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+					insert: (haystack: string, needle: string, from: number, to: number) => {
+						haystack = String(haystack || '');
+						return haystack.substring(0, from) + needle + haystack.substring(to);
+					},
+				},
+				Dom: {
+					selectAll: () => [],
+					select: () => null,
+				},
+			};
+		});
+
+		it('should keep user-typed <a> as text instead of stripping it as a Link mark', () => {
+			const result = Mark.fromHtml('typed &lt;a&gt; tag', []);
+
+			expect(result.text).toBe('typed <a> tag');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should keep user-typed </a> as text', () => {
+			const result = Mark.fromHtml('typed &lt;/a&gt; tag', []);
+
+			expect(result.text).toBe('typed </a> tag');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should keep a pasted anchor without data-param as text', () => {
+			const result = Mark.fromHtml('typed &lt;a href="https://example.com"&gt; tag', []);
+
+			expect(result.text).toBe('typed <a href="https://example.com"> tag');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should still parse serialized Link marks with data-param', () => {
+			const result = Mark.fromHtml('Text <a href="https://example.com" data-param="https://example.com" data-range="5-9">link</a>', []);
+
+			expect(result.text).toBe('Text link');
+			expect(result.marks).toEqual([
+				{ type: I.MarkType.Link, range: { from: 5, to: 9 }, param: 'https://example.com' },
+			]);
 		});
 	});
 
