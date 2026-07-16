@@ -35,6 +35,7 @@ class Keyboard {
 	isComposition = false;
 	isCommonDropDisabled = false;
 	isShortcutEditing = false;
+	isShiftPressed = false;
 
 	/**
 	 * Initializes keyboard event listeners and shortcuts.
@@ -92,7 +93,15 @@ class Keyboard {
 			// Window blur aborts any in-flight IME composition, but the compositionend event can get
 			// lost (Alt+Tab, switching windows/tabs), leaving the flag stuck and swallowing keys
 			this.setComposition(false);
+
+			// Modifier keyups can be lost while the window is unfocused — reset the tracked state
+			this.isShiftPressed = false;
 		};
+
+		// Track the physical Shift key in capture phase, before any handler can stop propagation
+		this._handlers.shiftTracker = (e: any) => this.trackShift(e);
+		U.Dom.addEvent(window, 'keydown', this._handlers.shiftTracker, true);
+		U.Dom.addEvent(window, 'keyup', this._handlers.shiftTracker, true);
 
 		U.Dom.addEvents(window, [
 			[ 'keydown', this._handlers.keydown ],
@@ -198,6 +207,12 @@ class Keyboard {
 		].filter(event => this._handlers[event]).map(event => [ event, this._handlers[event] ]);
 
 		U.Dom.removeEvents(window, events);
+
+		if (this._handlers.shiftTracker) {
+			U.Dom.removeEvent(window, 'keydown', this._handlers.shiftTracker, true);
+			U.Dom.removeEvent(window, 'keyup', this._handlers.shiftTracker, true);
+		};
+
 		this._handlers = {};
 		U.Dom.removeEvent(document, 'copy', this.onCopyEvent);
 	};
@@ -2011,13 +2026,31 @@ class Keyboard {
 	};
 
 	/**
+	 * Tracks the physical Shift key state from capture-phase key events. The browser keeps
+	 * reporting a stale e.shiftKey when the Shift keyup is lost (Alt+Tab, window switch),
+	 * which makes plain Enter behave as Shift+Enter until Shift is pressed again.
+	 * @param {any} e - The keyboard event.
+	 */
+	trackShift (e: any) {
+		if (this.eventKey(e) == Key.shift) {
+			this.isShiftPressed = (e.type == 'keydown');
+		} else
+		if (!e.shiftKey) {
+			this.isShiftPressed = false;
+		};
+	};
+
+	/**
 	 * Gets the meta keys from the event object.
 	 * @param {any} e - The event object.
 	 * @returns {string[]} The meta keys.
 	 */
 	metaKeys (e: any): string[] {
 		const ret = [];
-		if (e.shiftKey) {
+
+		// Cross-check e.shiftKey against the tracked physical state to ignore a phantom
+		// modifier left behind by a lost Shift keyup
+		if (e.shiftKey && (this.isShiftPressed || (this.eventKey(e) == Key.shift))) {
 			ret.push(Key.shift);
 		};
 		if (e.altKey) {
