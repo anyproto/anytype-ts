@@ -9,6 +9,7 @@ interface Props {
 };
 
 const OFFSET = 100;
+const COLUMN_LATCH_TIMEOUT = 1000;
 
 const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any) => {
 
@@ -26,7 +27,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 	const timeoutDragOver = useRef(0);
 	const prevTargetKey = useRef<string | null>(null);
 	const lastKnownCoords = useRef({ x: 0, y: 0 });
-	const lastValidTarget = useRef<{ data: any, position: I.BlockPosition } | null>(null);
+	const lastValidTarget = useRef<{ data: any, position: I.BlockPosition, time: number } | null>(null);
 	const dragData = useRef<any>(null);
 
 	const dragHandler = useRef<((e: any) => void) | null>(null);
@@ -142,6 +143,17 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 
 		if (hoverData.current && (position.current != I.BlockPosition.None)) {
 			data = hoverData.current;
+
+			// On Linux the drop event carries no coordinates — if a late dragover
+			// flipped a freshly shown column indicator to Top/Bottom for the same
+			// target, restore the column position the user saw (JS-9377)
+			const hasCoords = e.pageX || e.pageY || e.clientX || e.clientY;
+			if (!hasCoords) {
+				const latched = getLatchedColumnPosition(data);
+				if (latched != I.BlockPosition.None) {
+					position.current = latched;
+				};
+			};
 		} else
 		if (lastValidTarget.current) {
 			data = lastValidTarget.current.data;
@@ -452,6 +464,16 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		try {
 			let target = hoverData.current || lastValidTarget.current?.data;
 			let pos = (position.current != I.BlockPosition.None) ? position.current : (lastValidTarget.current?.position ?? I.BlockPosition.None);
+
+			// This fallback drop only runs when the drop event never fired (Linux) —
+			// if a late dragover flipped a freshly shown column indicator to
+			// Top/Bottom for the same target, restore the column position (JS-9377)
+			if (target) {
+				const latched = getLatchedColumnPosition(target);
+				if (latched != I.BlockPosition.None) {
+					pos = latched;
+				};
+			};
 
 			// DOM-based fallback using last known coordinates when coordinate tracking failed
 			if (!target && dragData.current) {
@@ -927,7 +949,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 			// (e.g. text block bottom-hover). The final save after adjustments
 			// will overwrite this with the fully-adjusted position when valid.
 			if ((position.current != I.BlockPosition.None) && canDrop.current) {
-				lastValidTarget.current = { data: hd, position: position.current };
+				saveValidTarget(hd, position.current);
 			};
 
 			// canDropMiddle flag for restricted objects
@@ -1016,7 +1038,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		};
 
 		if (hd && (position.current != I.BlockPosition.None) && canDrop.current) {
-			lastValidTarget.current = { data: hd, position: position.current };
+			saveValidTarget(hd, position.current);
 		};
 
 		if (frame.current) {
@@ -1144,6 +1166,44 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 
 	const setPosition = (v: I.BlockPosition) => {
 		position.current = v;
+	};
+
+	const isColumnPosition = (v: I.BlockPosition): boolean => {
+		return [ I.BlockPosition.Left, I.BlockPosition.Right ].includes(v);
+	};
+
+	const saveValidTarget = (data: any, v: I.BlockPosition) => {
+		const prev = lastValidTarget.current;
+
+		// Keep a shown column (Left/Right) indicator latched for the same target:
+		// on Linux a late dragover recomputed from unreliable coordinates can flip
+		// it to Top/Bottom right before the drop lands, making new columns
+		// impossible to create (JS-9377)
+		if (prev && data && (prev.data?.id == data.id) && isColumnPosition(prev.position) && !isColumnPosition(v)) {
+			return;
+		};
+
+		lastValidTarget.current = { data, position: v, time: performance.now() };
+	};
+
+	// Returns the latched column (Left/Right) position for the given target when
+	// it was shown recently and the live position disagrees — used by the drop
+	// fallbacks to restore the column indicator the user saw (JS-9377)
+	const getLatchedColumnPosition = (data: any): I.BlockPosition => {
+		const lvt = lastValidTarget.current;
+
+		if (!lvt || !data) {
+			return I.BlockPosition.None;
+		};
+
+		const isFresh = (performance.now() - lvt.time) <= COLUMN_LATCH_TIMEOUT;
+		const isSameTarget = lvt.data?.id == data.id;
+
+		if (isFresh && isSameTarget && isColumnPosition(lvt.position) && !isColumnPosition(position.current)) {
+			return lvt.position;
+		};
+
+		return I.BlockPosition.None;
 	};
 
 	const unbind = () => {
