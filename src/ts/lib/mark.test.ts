@@ -154,6 +154,28 @@ describe('Mark', () => {
 
 			expect(adjusted[0].range.from).toBe(0);
 		});
+
+		it('should push a mention fully right when text is inserted exactly at its start (JS-7510)', () => {
+			// IME commit in front of an @-reference: the committed text is placed
+			// at the caret and the object mark must shift right by the full diff
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Mention, range: { from: 5, to: 6 }, param: 'objectId' },
+			];
+
+			const adjusted = Mark.adjust(marks, 5, 2);
+
+			expect(adjusted[0].range).toEqual({ from: 7, to: 8 });
+		});
+
+		it('should not move a mention when text is inserted exactly at its end (JS-7510)', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Mention, range: { from: 5, to: 6 }, param: 'objectId' },
+			];
+
+			const adjusted = Mark.adjust(marks, 6, 2);
+
+			expect(adjusted[0].range).toEqual({ from: 5, to: 6 });
+		});
 	});
 
 	describe('checkRanges', () => {
