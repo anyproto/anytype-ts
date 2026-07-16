@@ -2669,6 +2669,30 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 
+		// Backspace on an empty first child of a toggle: when the toggle has more children,
+		// delete the empty block and keep the caret inside on the next child instead of
+		// merging into the toggle header
+		if ((dir < 0) && !length) {
+			const parent = S.Block.getParentLeaf(rootId, focused.id);
+
+			if (parent && parent.canToggle() && (next.id == parent.id)) {
+				const childrenIds = S.Block.getChildrenIds(rootId, parent.id);
+				const idx = childrenIds.indexOf(focused.id);
+				const nextChild = childrenIds.slice(idx + 1).map(id => S.Block.getLeaf(rootId, id)).find(it => it && it.isFocusable());
+
+				if (nextChild) {
+					focus.clear(true);
+					C.BlockListDelete(rootId, [ focused.id ], (message: any) => {
+						if (!message.error.code) {
+							focusSet(nextChild.id, 0, 0, true);
+							analytics.event('DeleteBlock', { count: 1 });
+						};
+					});
+					return;
+				};
+			};
+		};
+
 		// When deleting at end of a closed toggle, skip its descendants
 		if ((dir > 0) && focused.canToggle() && !Storage.checkToggle(rootId, focused.id)) {
 			next = S.Block.getNextBlock(rootId, focused.id, dir, it => {
