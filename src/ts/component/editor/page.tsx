@@ -1892,6 +1892,24 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
+		// Moving down from an open empty toggle header materializes the first child, mirroring click on the placeholder
+		if (
+			(dir > 0) &&
+			!readonly &&
+			block.canToggle() &&
+			Storage.checkToggle(rootId, block.id) &&
+			!S.Block.getChildrenIds(rootId, block.id).length
+		) {
+			e.preventDefault();
+
+			C.BlockCreate(rootId, block.id, I.BlockPosition.Inner, { type: I.BlockType.Text }, (message: any) => {
+				if (!message.error.code) {
+					focusSet(message.blockId, 0, 0, true);
+				};
+			});
+			return;
+		};
+
 		let next: I.Block = null;
 
 		const cb = () => {
@@ -2597,6 +2615,20 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { rootId } = props;
 		let next = S.Block.getNextBlock(rootId, focused.id, dir, it => it.isFocusable());
 		if (!next) {
+			return;
+		};
+
+		// When backspacing below an open empty toggle, move the block inside it instead of merging into the header
+		if (
+			(dir < 0) &&
+			next.canToggle() &&
+			Storage.checkToggle(rootId, next.id) &&
+			!S.Block.getChildrenIds(rootId, next.id).length &&
+			focused.isIndentable()
+		) {
+			Action.move(rootId, rootId, next.id, [ focused.id ], I.BlockPosition.Inner, () => {
+				focus.setWithTimeout(focused.id, { from: 0, to: 0 }, 50);
+			});
 			return;
 		};
 
