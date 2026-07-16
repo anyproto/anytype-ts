@@ -606,9 +606,17 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'clipboardPaste': {
+				// Range is missing when the block was selected via its gripper (no text caret) —
+				// fall back to a caret at the end of the block, so the synthetic paste targets
+				// the selected block instead of appending at the document bottom. A stale range
+				// from another block is clamped to this block's length
+				const length = block.getLength();
+				const to = range ? Math.min(range.to, length) : length;
+				const from = range ? Math.min(range.from, to) : length;
+
 				close();
 				window.setTimeout(() => {
-					focus.set(blockId, range);
+					focus.set(blockId, { from, to });
 					focus.apply();
 					window.setTimeout(() => Renderer.send('paste'), 50);
 				}, J.Constant.delay.menu);
