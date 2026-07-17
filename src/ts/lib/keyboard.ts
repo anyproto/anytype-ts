@@ -2058,6 +2058,16 @@ class Keyboard {
 	};
 
 	/**
+	 * Cross-checks e.shiftKey against the tracked physical Shift state, to ignore a
+	 * phantom modifier left behind by a lost Shift keyup (e.g. after Alt+Tab).
+	 * @param {any} e - The keyboard event.
+	 * @returns {boolean} Whether Shift is genuinely held.
+	 */
+	isRealShift (e: any): boolean {
+		return e.shiftKey && (this.isShiftPressed || (this.eventKey(e) == Key.shift));
+	};
+
+	/**
 	 * Gets the meta keys from the event object.
 	 * @param {any} e - The event object.
 	 * @returns {string[]} The meta keys.
@@ -2065,9 +2075,7 @@ class Keyboard {
 	metaKeys (e: any): string[] {
 		const ret = [];
 
-		// Cross-check e.shiftKey against the tracked physical state to ignore a phantom
-		// modifier left behind by a lost Shift keyup
-		if (e.shiftKey && (this.isShiftPressed || (this.eventKey(e) == Key.shift))) {
+		if (this.isRealShift(e)) {
 			ret.push(Key.shift);
 		};
 		if (e.altKey) {

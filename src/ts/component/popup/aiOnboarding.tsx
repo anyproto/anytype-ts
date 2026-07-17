@@ -738,7 +738,7 @@ const PopupAIOnboarding = forwardRef<{}, I.Popup>(({ param = {}, getId, close },
 								value={inputValue}
 								onChange={(e) => setInputValue(e.target.value)}
 								onKeyDown={(e) => {
-									if (e.key === 'Enter' && !e.shiftKey) {
+									if ((e.key === 'Enter') && !keyboard.isRealShift(e)) {
 										e.preventDefault();
 										handleSubmit();
 									};
