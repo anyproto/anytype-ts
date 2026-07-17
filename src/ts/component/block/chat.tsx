@@ -1746,6 +1746,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		// read-confirmation round-trip (JS-9298). Scrolled up, blurred (see the blur
 		// handler in rebind) or closed, the claim is released and unread state surfaces
 		// normally. Counters are server-authoritative, so this is presentational only.
+		//
+		// Accepted trade-off: releasing on scroll-up is immediate, so messages read at the
+		// bottom whose ChatReadMessages confirmation is still in flight briefly surface as
+		// unread until the state event lands. Fixing that would mean optimistically mutating
+		// the server-owned stateMap counters and reconciling them against absolute-value
+		// state events — a stuck-wrong badge from a missed reconciliation is worse than
+		// this short-lived blink, so the counters stay untouched.
 		if (v && S.Common.windowIsFocused && S.Chat.isAtChatEnd(getSubId())) {
 			S.Chat.setActiveReadChat(activeReadToken, space, getChatId());
 		} else {
