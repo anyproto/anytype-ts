@@ -86,6 +86,7 @@ class Analytics {
 
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
+		inviteSecurity: 'InviteSecurity',
 
 		authSetup: 'ScreenAuthSetup',
 

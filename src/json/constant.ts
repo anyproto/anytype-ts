@@ -100,6 +100,7 @@ export default {
 		chatMessage:	 200,
 		spacePreload:	 2000,
 		cleanupSuggestions: 3000,
+		inviteSecurity:	 3000,
 	},
 
 	fileExtension: {

@@ -688,7 +688,8 @@ class UtilSpace {
 
 	/**
 	 * Warns the owner, once per space and per device, that the invite lets any current viewer
-	 * upgrade themselves to editor. Fire-and-forget: called on space open, off the routing path.
+	 * upgrade themselves to editor. Called on space open; the popup itself is deferred well past
+	 * the space-switch routing, whose closeAll() calls would otherwise race it off screen.
 	 * @param {string} spaceId - The space ID.
 	 */
 	checkInviteSecurity (spaceId: string) {
@@ -696,29 +697,39 @@ class UtilSpace {
 			return;
 		};
 
-		// The invite is loaded lazily by the sharing screens, so fetch it before judging.
-		this.getInvite(spaceId, () => {
-			// A switch away during the fetch: the participant list read below would be another space's.
-			if ((spaceId != S.Common.space) || !this.hasInviteSecurityRisk(spaceId)) {
+		window.setTimeout(() => {
+			// A switch away during the delay: re-open on the space that's actually current instead.
+			if (spaceId != S.Common.space) {
 				return;
 			};
 
-			// Every close path counts as seen: the warning is a one-time nudge, not a recurring gate.
-			Storage.setSpaceKey('inviteSecurityDismissed', true, true, spaceId);
+			// The invite is loaded lazily by the sharing screens, so fetch it before judging.
+			this.getInvite(spaceId, () => {
+				// A switch away during the fetch: the participant list read below would be another space's.
+				if ((spaceId != S.Common.space) || !this.hasInviteSecurityRisk(spaceId)) {
+					return;
+				};
 
-			S.Popup.open('confirm', {
-				data: {
-					iconParam: { name: 'popup/header/warning', color: 'grey' },
-					title: translate('popupInviteSecurityTitle'),
-					text: translate('popupInviteSecurityText'),
-					textConfirm: translate('popupInviteSecurityConfirm'),
-					textCancel: translate('popupInviteSecurityCancel'),
-					onConfirm: () => S.Popup.open('inviteManage', { data: { spaceId } }),
-				},
+				// Every close path counts as seen: the warning is a one-time nudge, not a recurring gate.
+				Storage.setSpaceKey('inviteSecurityDismissed', true, true, spaceId);
+
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'popup/header/warning', color: 'grey' },
+						title: translate('popupInviteSecurityTitle'),
+						text: translate('popupInviteSecurityText'),
+						textConfirm: translate('popupInviteSecurityConfirm'),
+						textCancel: translate('popupInviteSecurityCancel'),
+						// Route rather than stack another popup on top of this one: PopupStore.close()
+						// removes 'confirm' from popupList on a delay, computed before this callback
+						// runs, so opening a popup here races that delayed write and gets clobbered.
+						onConfirm: () => Action.openSpaceShare(analytics.route.inviteSecurity),
+					},
+				});
+
+				analytics.event('ScreenInviteSecurityWarning');
 			});
-
-			analytics.event('ScreenInviteSecurityWarning');
-		});
+		}, J.Constant.delay.inviteSecurity);
 	};
 
 	/**
