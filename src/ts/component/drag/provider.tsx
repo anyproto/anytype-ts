@@ -29,6 +29,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 	const lastKnownCoords = useRef({ x: 0, y: 0 });
 	const lastValidTarget = useRef<{ data: any, position: I.BlockPosition } | null>(null);
 	const lastColumnTarget = useRef<{ data: any, position: I.BlockPosition, time: number } | null>(null);
+	const positionFromRealCoords = useRef(false);
 	const dragData = useRef<any>(null);
 
 	const dragHandler = useRef<((e: any) => void) | null>(null);
@@ -390,8 +391,10 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		let x = e.pageX || e.clientX || 0;
 		let y = e.pageY || e.clientY || 0;
 
+		const hasRealCoords = Boolean(x || y);
+
 		// Save last known good coordinates for Linux fallback
-		if (x || y) {
+		if (hasRealCoords) {
 			lastKnownCoords.current = { x, y };
 		} else
 		if (lastKnownCoords.current.x || lastKnownCoords.current.y) {
@@ -406,6 +409,9 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		// On Linux, dragover events may report (0, 0) — calling checkNodes
 		// with bad coords clears hoverData without finding a replacement.
 		if (x || y) {
+			// Recomputations from fallback coordinates are untrusted — the column
+			// latch only overrides those (JS-9377)
+			positionFromRealCoords.current = hasRealCoords;
 			checkNodes(e, x, y);
 		};
 
@@ -447,6 +453,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		// On Linux, drag events report (0, 0) — using stale fallback coords
 		// causes checkNodes to clear hoverData without finding a valid replacement.
 		if (hasRealCoords) {
+			positionFromRealCoords.current = true;
 			checkNodes(e, x, y);
 		};
 
@@ -1168,6 +1175,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		lastKnownCoords.current = { x: 0, y: 0 };
 		lastValidTarget.current = null;
 		lastColumnTarget.current = null;
+		positionFromRealCoords.current = false;
 		canDrop.current = false;
 		dragActive.current = false;
 	};
@@ -1200,11 +1208,14 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 
 	// Returns the latched column (Left/Right) position for the given target when
 	// it was shown recently and the candidate position disagrees — used by the
-	// drop fallbacks to restore the column indicator the user saw (JS-9377)
+	// drop fallbacks to restore the column indicator the user saw (JS-9377).
+	// A live position recomputed from real event coordinates reflects a
+	// deliberate user move to another drop zone and is never overridden — the
+	// latch only counters bogus flips recomputed from stale fallback coordinates
 	const getLatchedColumnPosition = (data: any, v: I.BlockPosition): I.BlockPosition => {
 		const lct = lastColumnTarget.current;
 
-		if (!lct || !data) {
+		if (!lct || !data || positionFromRealCoords.current) {
 			return I.BlockPosition.None;
 		};
 
