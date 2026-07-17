@@ -231,6 +231,38 @@ describe('UtilSpace invite predicates', () => {
 		});
 	});
 
+	describe('hasInviteSecurityRisk', () => {
+		const UNSAFE = { heldByOwner: false, inviteType: I.InviteType.WithoutApprove, permissions: I.ParticipantPermissions.Writer };
+
+		const withParticipants = (list: any[]) => {
+			vi.spyOn(UtilSpace, 'getParticipantsList').mockReturnValue(list);
+		};
+
+		it('is true for the owner of an unsafe invite when an active viewer exists', () => {
+			setup(OWNER, invite(UNSAFE));
+			withParticipants([ { isReader: false }, { isReader: true } ]);
+			expect(UtilSpace.hasInviteSecurityRisk('space1')).toBe(true);
+		});
+
+		it('is false for a non-owner, even with an unsafe invite and viewers present', () => {
+			setup(MEMBER, invite(UNSAFE));
+			withParticipants([ { isReader: true } ]);
+			expect(UtilSpace.hasInviteSecurityRisk('space1')).toBe(false);
+		});
+
+		it('is false when the invite is safe (held by the owner), viewers or not', () => {
+			setup(OWNER, invite({ ...UNSAFE, heldByOwner: true }));
+			withParticipants([ { isReader: true } ]);
+			expect(UtilSpace.hasInviteSecurityRisk('space1')).toBe(false);
+		});
+
+		it('is false when nobody in the space is a viewer — no one to escalate', () => {
+			setup(OWNER, invite(UNSAFE));
+			withParticipants([ { isReader: false }, { isReader: false } ]);
+			expect(UtilSpace.hasInviteSecurityRisk('space1')).toBe(false);
+		});
+	});
+
 	describe('isInviteUnsafe', () => {
 		it('is true for a shared anyone-can-join invite granting Writer', () => {
 			setup(OWNER, invite({ heldByOwner: false, inviteType: I.InviteType.WithoutApprove, permissions: I.ParticipantPermissions.Writer }));

@@ -360,6 +360,7 @@ class UtilData {
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
 				this.checkCleanupSuggestions();
+				U.Space.checkInviteSecurity(space);
 
 				this.initPin(() => {
 					if (S.Common.pin && !keyboard.isPinChecked) {
