@@ -2029,14 +2029,31 @@ class Keyboard {
 	 * Tracks the physical Shift key state from capture-phase key events. The browser keeps
 	 * reporting a stale e.shiftKey when the Shift keyup is lost (Alt+Tab, window switch),
 	 * which makes plain Enter behave as Shift+Enter until Shift is pressed again.
+	 *
+	 * Known tradeoff: the state resets on window blur, and re-focusing while physically
+	 * holding Shift fires no Shift keydown to re-arm it, so the first shifted shortcut
+	 * after re-focus can be treated as unshifted. Partially self-heals below: a shifted
+	 * printable character (uppercase with e.shiftKey, CapsLock off) proves a physical Shift.
 	 * @param {any} e - The keyboard event.
 	 */
 	trackShift (e: any) {
+		const key = String(e.key || '');
+
 		if (this.eventKey(e) == Key.shift) {
 			this.isShiftPressed = (e.type == 'keydown');
 		} else
 		if (!e.shiftKey) {
 			this.isShiftPressed = false;
+		} else
+		if (
+			(e.type == 'keydown') &&
+			(key.length == 1) &&
+			(key != key.toLowerCase()) &&
+			!e.getModifierState?.('CapsLock')
+		) {
+			// An uppercase printable character cannot come from a phantom modifier alone —
+			// the OS shifted it, so a physical Shift is being held: re-arm the tracker
+			this.isShiftPressed = true;
 		};
 	};
 
