@@ -17,7 +17,7 @@ const ViewBoard = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 	const cn = [ 'viewContent', className ];
 	const nodeRef = useRef(null);
 	const scrollRef = useRef(null);
-	const stickyScrollRef = useRef(null);
+	const stickyScrollRef = useRef<I.StickyScrollbarRef>(null);
 	const isSyncingScroll = useRef(false);
 	const hoverId = useRef('');
 	const newIndex = useRef(-1);
