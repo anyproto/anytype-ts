@@ -597,6 +597,25 @@ describe('Mark', () => {
 			expect(result.marks).toHaveLength(0);
 		});
 
+		it('should not let a kept literal </a> shadow a later real closing </a> (JS-7238)', () => {
+			const result = Mark.fromHtml('hi &lt;/a&gt; <a href="u" class="markuplink" data-param="u" data-range="8-12">link</a> end', []);
+
+			expect(result.text).toBe('hi </a> link end');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Link);
+			expect(result.marks[0].param).toBe('u');
+			expect(result.marks[0].range).toEqual({ from: 8, to: 12 });
+		});
+
+		it('should not let a kept literal <a> shadow a later real link opening (JS-7238)', () => {
+			const result = Mark.fromHtml('&lt;a&gt; <a href="u" class="markuplink" data-param="u" data-range="4-8">link</a>', []);
+
+			expect(result.text).toBe('<a> link');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Link);
+			expect(result.marks[0].range).toEqual({ from: 4, to: 8 });
+		});
+
 		it('should still parse real link markup with data-param (JS-7238)', () => {
 			const result = Mark.fromHtml('<a href="https://x.com" class="markuplink" data-param="https://x.com" data-range="0-4">link</a>', []);
 
