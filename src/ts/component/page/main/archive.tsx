@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback, MouseEvent } from 'react';
-import { Footer, Header, Icon, Filter } from 'Component';
+import { Footer, Header, Icon, Filter, Label } from 'Component';
 import ArchiveListTree from './archiveListTree';
 import ArchiveSuggested from './archiveSuggested';
 import * as I from 'Interface';
@@ -28,6 +28,8 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	// "count unknown" and not bounce a restored Suggestions tab back to Bin on mount.
 	const [ suggestionCount, setSuggestionCount ] = useState<number | null>(null);
 	const [ suggestedSel, setSuggestedSel ] = useState<{ count: number; canDelete: boolean }>({ count: 0, canDelete: true });
+	// Shown once ever, across every space (a plain, non-space Storage key).
+	const [ isCleanupNoteClosed, setIsCleanupNoteClosed ] = useState(() => Storage.getOnboarding('binCleanup'));
 	const suggestedRef = useRef(null);
 	const filterTimeout = useRef(0);
 	const subId = J.Constant.subId.archive;
@@ -103,6 +105,11 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				state: Object.assign({}, h.location.state, { tab }),
 			});
 		};
+	};
+
+	const onCleanupNoteClose = () => {
+		Storage.setOnboarding('binCleanup');
+		setIsCleanupNoteClosed(true);
 	};
 
 	const onSelectTree = (ids: string[], e: MouseEvent) => {
@@ -338,6 +345,13 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 						) : ''}
 					</div>
 				</div>
+
+				{(!isBin && !isCleanupNoteClosed) ? (
+					<div className="cleanupNote">
+						<Label text={translate('binCleanupDescription')} />
+						<Icon name="common/close" className="close" onClick={onCleanupNoteClose} />
+					</div>
+				) : ''}
 
 				{isBin ? (
 					<ArchiveListTree
