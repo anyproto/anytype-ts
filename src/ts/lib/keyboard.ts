@@ -35,6 +35,7 @@ class Keyboard {
 	isComposition = false;
 	isCommonDropDisabled = false;
 	isShortcutEditing = false;
+	isShiftPressed = false;
 
 	/**
 	 * Initializes keyboard event listeners and shortcuts.
@@ -88,7 +89,19 @@ class Keyboard {
 			S.Common.windowIsFocusedSet(false);
 			S.Menu.closeAll([ 'blockContext' ]);
 			S.Common.getRef('dragProvider')?.clearStyle();
+
+			// Window blur aborts any in-flight IME composition, but the compositionend event can get
+			// lost (Alt+Tab, switching windows/tabs), leaving the flag stuck and swallowing keys
+			this.setComposition(false);
+
+			// Modifier keyups can be lost while the window is unfocused — reset the tracked state
+			this.isShiftPressed = false;
 		};
+
+		// Track the physical Shift key in capture phase, before any handler can stop propagation
+		this._handlers.shiftTracker = (e: any) => this.trackShift(e);
+		U.Dom.addEvent(window, 'keydown', this._handlers.shiftTracker, true);
+		U.Dom.addEvent(window, 'keyup', this._handlers.shiftTracker, true);
 
 		U.Dom.addEvents(window, [
 			[ 'keydown', this._handlers.keydown ],
@@ -194,6 +207,12 @@ class Keyboard {
 		].filter(event => this._handlers[event]).map(event => [ event, this._handlers[event] ]);
 
 		U.Dom.removeEvents(window, events);
+
+		if (this._handlers.shiftTracker) {
+			U.Dom.removeEvent(window, 'keydown', this._handlers.shiftTracker, true);
+			U.Dom.removeEvent(window, 'keyup', this._handlers.shiftTracker, true);
+		};
+
 		this._handlers = {};
 		U.Dom.removeEvent(document, 'copy', this.onCopyEvent);
 	};
@@ -2007,13 +2026,56 @@ class Keyboard {
 	};
 
 	/**
+	 * Tracks the physical Shift key state from capture-phase key events. The browser keeps
+	 * reporting a stale e.shiftKey when the Shift keyup is lost (Alt+Tab, window switch),
+	 * which makes plain Enter behave as Shift+Enter until Shift is pressed again.
+	 *
+	 * Known tradeoff: the state resets on window blur, and re-focusing while physically
+	 * holding Shift fires no Shift keydown to re-arm it, so the first shifted shortcut
+	 * after re-focus can be treated as unshifted. Partially self-heals below: a shifted
+	 * printable character (uppercase with e.shiftKey, CapsLock off) proves a physical Shift.
+	 * @param {any} e - The keyboard event.
+	 */
+	trackShift (e: any) {
+		const key = String(e.key || '');
+
+		if (this.eventKey(e) == Key.shift) {
+			this.isShiftPressed = (e.type == 'keydown');
+		} else
+		if (!e.shiftKey) {
+			this.isShiftPressed = false;
+		} else
+		if (
+			(e.type == 'keydown') &&
+			(key.length == 1) &&
+			(key != key.toLowerCase()) &&
+			!e.getModifierState?.('CapsLock')
+		) {
+			// An uppercase printable character cannot come from a phantom modifier alone —
+			// the OS shifted it, so a physical Shift is being held: re-arm the tracker
+			this.isShiftPressed = true;
+		};
+	};
+
+	/**
+	 * Cross-checks e.shiftKey against the tracked physical Shift state, to ignore a
+	 * phantom modifier left behind by a lost Shift keyup (e.g. after Alt+Tab).
+	 * @param {any} e - The keyboard event.
+	 * @returns {boolean} Whether Shift is genuinely held.
+	 */
+	isRealShift (e: any): boolean {
+		return e.shiftKey && (this.isShiftPressed || (this.eventKey(e) == Key.shift));
+	};
+
+	/**
 	 * Gets the meta keys from the event object.
 	 * @param {any} e - The event object.
 	 * @returns {string[]} The meta keys.
 	 */
 	metaKeys (e: any): string[] {
 		const ret = [];
-		if (e.shiftKey) {
+
+		if (this.isRealShift(e)) {
 			ret.push(Key.shift);
 		};
 		if (e.altKey) {

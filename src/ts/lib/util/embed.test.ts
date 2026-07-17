@@ -314,4 +314,28 @@ describe('UtilEmbed', () => {
 		});
 	});
 
+	describe('pruneExcalidrawFiles', () => {
+		it('should keep only files referenced by non-deleted elements', () => {
+			const elements = [
+				{ type: 'image', fileId: 'kept', isDeleted: false },
+				{ type: 'image', fileId: 'deleted', isDeleted: true },
+				{ type: 'rectangle', isDeleted: false },
+			];
+			const files = {
+				kept: { dataURL: 'data:image/png;base64,AAA' },
+				deleted: { dataURL: 'data:image/png;base64,BBB' },
+				orphan: { dataURL: 'data:image/png;base64,CCC' },
+			};
+
+			expect(UtilEmbed.pruneExcalidrawFiles(elements, files)).toEqual({
+				kept: { dataURL: 'data:image/png;base64,AAA' },
+			});
+		});
+
+		it('should handle empty or missing inputs', () => {
+			expect(UtilEmbed.pruneExcalidrawFiles([], null)).toEqual({});
+			expect(UtilEmbed.pruneExcalidrawFiles(null, { a: {} })).toEqual({});
+		});
+	});
+
 });
