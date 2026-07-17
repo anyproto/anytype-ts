@@ -473,6 +473,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const isViewGraph = view.type == I.ViewType.Graph;
 		const isViewCalendar = view.type == I.ViewType.Calendar;
+		const isViewBoard = view.type == I.ViewType.Board;
 
 		if (isCollection) {
 			details.createdInContext = objectId;
@@ -521,7 +522,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
-			if (!isViewCalendar) {
+			if (!isViewBoard && !isViewCalendar) {
 				let records = getRecords(groupId);
 
 				const oldIndex = records.indexOf(message.objectId);
@@ -536,21 +537,6 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 				} else {
 					const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
 					records = arrayMove(records, oldIndex, newIndex);
-				};
-
-				// In manually ordered groups the render-time order sort would place an unknown
-				// id on top, so add it to the group order to keep the optimistic position
-				if (groupId) {
-					const order = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
-
-					if (order) {
-						const objectIds = order.objectIds || [];
-
-						if (!objectIds.includes(message.objectId)) {
-							dir > 0 ? objectIds.push(message.objectId) : objectIds.unshift(message.objectId);
-							order.objectIds = objectIds;
-						};
-					};
 				};
 
 				S.Record.recordsSet(subId, '', records);
