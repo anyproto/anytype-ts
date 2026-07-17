@@ -550,11 +550,12 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 					records = arrayMove(records, oldIndex, newIndex);
 				};
 
-				S.Record.recordsSet(subId, '', records);
-
 				// Insert the new record into the group's custom order (if any), so the
 				// card keeps its position and stays visible after the column
-				// re-subscribes with a limited window (JS-9747, JS-9764)
+				// re-subscribes with a limited window. The local order is updated
+				// optimistically before recordsSet triggers a re-render — otherwise
+				// applyObjectOrder sorts the unknown id to the top of the column
+				// until the RPC round-trip completes (JS-9747, JS-9764)
 				if (isViewBoard) {
 					const order = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
 					const objectIds = [ ...(order?.objectIds || []) ];
@@ -566,9 +567,12 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 							dir > 0 ? objectIds.push(message.objectId) : objectIds.unshift(message.objectId);
 						};
 
+						set(order, { objectIds });
 						objectOrderUpdate([ { viewId: view.id, groupId, objectIds } ], records);
 					};
 				};
+
+				S.Record.recordsSet(subId, '', records);
 			};
 
 			if (isCollection) {
