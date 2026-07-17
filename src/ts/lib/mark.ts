@@ -625,12 +625,26 @@ class Mark {
 					};
 				};
 
+				let removed = false;
 				for (let i = 0; i < marks.length; ++i) {
 					const m = marks[i];
 					if ((m.type == type) && !m.range.to) {
-						marks[i].range.to = offset;
+						// Locate the closing tag at or after the opening position, not the first
+						// occurrence — an identical user-typed tag kept as text may precede it
+						const idx = text.indexOf(s, m.range.from);
+						if (idx >= 0) {
+							m.range.to = idx;
+							text = text.substring(0, idx) + text.substring(idx + s.length);
+							removed = true;
+						} else {
+							m.range.to = offset;
+						};
 						break;
 					};
+				};
+
+				if (removed) {
+					return '';
 				};
 			} else {
 				const pm = p3.match(rp);

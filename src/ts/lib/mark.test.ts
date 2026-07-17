@@ -516,6 +516,24 @@ describe('Mark', () => {
 				{ type: I.MarkType.Link, range: { from: 5, to: 9 }, param: 'https://example.com' },
 			]);
 		});
+
+		it('should keep user-typed </a> preceding a serialized Link mark', () => {
+			const result = Mark.fromHtml('typed &lt;/a&gt; here <a href="https://x.com" data-param="https://x.com" data-range="16-20">link</a> end', []);
+
+			expect(result.text).toBe('typed </a> here link end');
+			expect(result.marks).toEqual([
+				{ type: I.MarkType.Link, range: { from: 16, to: 20 }, param: 'https://x.com' },
+			]);
+		});
+
+		it('should keep user-typed </a> following a serialized Link mark', () => {
+			const result = Mark.fromHtml('Text <a href="https://example.com" data-param="https://example.com" data-range="5-9">link</a> then &lt;/a&gt; end', []);
+
+			expect(result.text).toBe('Text link then </a> end');
+			expect(result.marks).toEqual([
+				{ type: I.MarkType.Link, range: { from: 5, to: 9 }, param: 'https://example.com' },
+			]);
+		});
 	});
 
 });
