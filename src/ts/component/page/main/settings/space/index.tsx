@@ -6,12 +6,13 @@ import * as I from 'Interface';
 const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ isEditing, setIsEditing ] = useState(false);
-	const [ invite, setInvite ] = useState({ cid: '', key: '' });
 	const [ dummy, setDummy ] = useState(0);
 	const { getId } = props;
 	const { space, sidebarView } = S.Common;
 	const sidebarViewName = sidebarView == I.SidebarView.Links ? translate('menuSidebarViewLinks') : translate('menuSidebarViewWidgets');
 	const spaceview = U.Space.getSpaceview();
+	const invite = S.Common.inviteGet(space);
+	const hasLink = U.Space.hasVisibleInvite();
 	const home = U.Space.getDashboard();
 	const type = S.Record.getTypeById(S.Common.type);
 	const participant = U.Space.getParticipant();
@@ -36,12 +37,8 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 	};
 
 	const init = () => {
-		if (spaceview.isShared && !invite.cid && !invite.key) {
-			U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
-				if (cid && key) {
-					setInvite({ cid, key });
-				};
-			});
+		if (spaceview.isShared && !invite) {
+			U.Space.getInvite(space);
 		};
 
 		if (keydownHandlerRef.current) {
@@ -180,14 +177,21 @@ const PageMainSettingsSpaceIndex = forwardRef<I.PageRef, I.PageSettingsComponent
 			return [];
 		};
 
-		return [
-			{ id: 'invite', iconParam: { name: 'publish/member' }, name: translate('commonInvite') },
-			{ id: 'copyLink', iconParam: { name: 'menu/action/copyLink' }, name: translate('pageSettingsSpaceIndexCopyLink') },
-			{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('pageSettingsSpaceIndexQRCode') },
-		].map((el: any) => {
-			el.isDisabled = !invite.cid || !invite.key;
-			return el;
-		});
+		// There is nothing to copy or show when the invite is held by the owner and we are not them.
+		if (hasLink) {
+			return [
+				{ id: 'copyLink', iconParam: { name: 'menu/action/copyLink' }, name: translate('pageSettingsSpaceIndexCopyLink') },
+				{ id: 'qr', iconParam: { name: 'common/qr' }, name: translate('pageSettingsSpaceIndexQRCode') },
+			];
+		};
+
+		if (canModerate) {
+			return [
+				{ id: 'invite', iconParam: { name: 'publish/member' }, name: translate('commonInviteMembers') },
+			];
+		};
+
+		return [];
 	};
 
 	const updateCounters = () => {

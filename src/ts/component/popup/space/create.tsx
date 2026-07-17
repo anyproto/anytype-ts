@@ -276,14 +276,14 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 									return;
 								};
 
-								C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+								C.SpaceInviteGenerate(spaceId, I.InviteType.WithApprove, I.ParticipantPermissions.Reader, false, (message) => {
 									if (message.error.code) {
 										openPicker();
 										return;
 									};
 
 									analytics.event('ShareSpace');
-									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Editor });
+									analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Manual });
 
 									const writerIdentities = identities.slice(0, writersLimit);
 									const readerIdentities = identities.slice(writersLimit);

@@ -1064,7 +1064,7 @@ class Action {
 					return;
 				};
 
-				C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+				C.SpaceInviteGenerate(spaceId, I.InviteType.WithApprove, I.ParticipantPermissions.Reader, false, (message) => {
 					if (message.error.code) {
 						failed.push({ spaceId, identities });
 						onProcessed();
@@ -1118,8 +1118,9 @@ class Action {
 	 * Opens a confirmation popup to revoke a space invite link.
 	 * @param {string} spaceId - The space ID.
 	 * @param {function} [callBack] - Optional callback after revocation.
+	 * @param {function} [onCancel] - Optional callback when the confirmation is dismissed.
 	 */
-	inviteRevoke (spaceId: string, callBack?: () => void) {
+	inviteRevoke (spaceId: string, callBack?: () => void, onCancel?: () => void) {
 		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupConfirmRevokeLinkTitle'),
@@ -1127,12 +1128,15 @@ class Action {
 				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
 				colorConfirm: 'red',
 				noCloseOnConfirm: true,
+				onCancel,
 				onConfirm: () => {
 					C.SpaceInviteRevoke(spaceId, (message: any) => {
 						if (message.error.code) {
 							S.Popup.updateData('confirm', { error: message.error.description });
 							return;
 						};
+
+						S.Common.inviteClear(spaceId);
 
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
 						S.Popup.close('confirm');
@@ -1144,6 +1148,70 @@ class Action {
 		});
 
 		analytics.event('ScreenRevokeShareLink');
+	};
+
+	/**
+	 * Revokes the current invite and generates a new one of the same kind, held by the owner.
+	 *
+	 * This is the only way out of an invite that is shared within the space: its cid and key are
+	 * already in the workspace's change history, which every member has synced, so removing them
+	 * today takes nothing back. It costs the old link — everyone holding it loses access,
+	 * including the people the owner meant to invite.
+	 *
+	 * @param {string} spaceId - The space ID.
+	 * @param {function} [callBack] - Optional callback after the new invite is generated.
+	 */
+	inviteReset (spaceId: string, callBack?: () => void) {
+		const invite = S.Common.inviteGet(spaceId);
+
+		if (!invite) {
+			return;
+		};
+
+		const { inviteType, permissions } = invite;
+
+		S.Popup.open('confirm', {
+			data: {
+				iconParam: { name: 'popup/header/warning', color: 'red' },
+				title: translate('popupConfirmInviteResetTitle'),
+				text: translate('popupConfirmInviteResetText'),
+				textConfirm: translate('popupConfirmInviteResetConfirm'),
+				colorConfirm: 'red',
+				noCloseOnConfirm: true,
+				onConfirm: () => {
+					C.SpaceInviteRevoke(spaceId, (message: any) => {
+						if (message.error.code) {
+							S.Popup.updateData('confirm', { error: message.error.description });
+							return;
+						};
+
+						S.Common.inviteClear(spaceId);
+
+						C.SpaceInviteGenerate(spaceId, inviteType, permissions, false, (message: any) => {
+							if (message.error.code) {
+								S.Popup.updateData('confirm', { error: message.error.description });
+								return;
+							};
+
+							S.Common.inviteSet(spaceId, {
+								cid: message.inviteCid,
+								key: message.inviteKey,
+								inviteType: message.inviteType,
+								permissions: message.permissions,
+								heldByOwner: true,
+							});
+
+							Preview.toastShow({ text: translate('toastInviteGenerate') });
+							S.Popup.close('confirm');
+							analytics.event('ResetShareLink');
+							callBack?.();
+						});
+					});
+				},
+			},
+		});
+
+		analytics.event('ScreenResetShareLink');
 	};
 
 	/**

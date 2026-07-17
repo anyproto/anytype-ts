@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import UtilSpace from './space';
 import Storage from '../storage';
+import * as I from 'Interface';
 
 /**
  * Regression coverage for JS-9815 (read side).
@@ -147,6 +148,114 @@ describe('UtilSpace.setLastObject (per-space recording)', () => {
 		UtilSpace.setLastObject({ _empty_: true, id: 'x', layout: 22, spaceId: 'spaceF' });
 
 		expect(Storage.getLastOpened('spaceF').id).toBeUndefined();
+	});
+
+});
+
+/**
+ * Invite visibility (GO-7222).
+ *
+ * After the invite moved into the owner's account, InviteGetCurrent answers a member with a
+ * *success* response carrying an empty cid — so anything that reads `cid` without first reading
+ * `heldByOwner` renders an empty link. These predicates are the single gate every Copy / QR /
+ * Manage affordance goes through.
+ */
+describe('UtilSpace invite predicates', () => {
+
+	const OWNER = { permissions: I.ParticipantPermissions.Owner, isOwner: true };
+	const MEMBER = { permissions: I.ParticipantPermissions.Reader, isOwner: false };
+
+	const setup = (participant: any, invite: any) => {
+		vi.stubGlobal('S', {
+			Common: {
+				space: 'space1',
+				inviteGet: () => invite,
+			},
+			Auth: { account: { id: 'me' } },
+			Detail: { get: () => participant },
+		});
+
+		// isMyOwner reads the participant through getMyParticipant, which walks the detail store.
+		vi.spyOn(UtilSpace, 'getMyParticipant').mockReturnValue(participant);
+	};
+
+	const invite = (over: any = {}) => Object.assign({
+		cid: 'cid1',
+		key: 'key1',
+		inviteType: I.InviteType.WithApprove,
+		permissions: I.ParticipantPermissions.Reader,
+		heldByOwner: true,
+	}, over);
+
+	describe('canManageInvite', () => {
+		it('is true for the owner', () => {
+			setup(OWNER, invite());
+			expect(UtilSpace.canManageInvite('space1')).toBe(true);
+		});
+
+		it('is false for an admin — invite rights are the owner\'s alone', () => {
+			setup({ permissions: I.ParticipantPermissions.Admin, isOwner: false }, invite());
+			expect(UtilSpace.canManageInvite('space1')).toBe(false);
+		});
+
+		it('is false for a member', () => {
+			setup(MEMBER, invite());
+			expect(UtilSpace.canManageInvite('space1')).toBe(false);
+		});
+	});
+
+	describe('hasVisibleInvite', () => {
+		it('is true for the owner of an owner-held invite', () => {
+			setup(OWNER, invite({ heldByOwner: true }));
+			expect(UtilSpace.hasVisibleInvite('space1')).toBe(true);
+		});
+
+		it('is false for a member of an owner-held invite, even though the call succeeded', () => {
+			setup(MEMBER, invite({ heldByOwner: true, cid: '', key: '' }));
+			expect(UtilSpace.hasVisibleInvite('space1')).toBe(false);
+		});
+
+		it('is true for a member when the invite is shared within the space', () => {
+			setup(MEMBER, invite({ heldByOwner: false }));
+			expect(UtilSpace.hasVisibleInvite('space1')).toBe(true);
+		});
+
+		it('is false when there is no invite at all', () => {
+			setup(OWNER, null);
+			expect(UtilSpace.hasVisibleInvite('space1')).toBe(false);
+		});
+
+		it('is false when heldByOwner is false but the cid is empty', () => {
+			setup(MEMBER, invite({ heldByOwner: false, cid: '', key: '' }));
+			expect(UtilSpace.hasVisibleInvite('space1')).toBe(false);
+		});
+	});
+
+	describe('isInviteUnsafe', () => {
+		it('is true for a shared anyone-can-join invite granting Writer', () => {
+			setup(OWNER, invite({ heldByOwner: false, inviteType: I.InviteType.WithoutApprove, permissions: I.ParticipantPermissions.Writer }));
+			expect(UtilSpace.isInviteUnsafe('space1')).toBe(true);
+		});
+
+		it('is false when the same invite is held by the owner', () => {
+			setup(OWNER, invite({ heldByOwner: true, inviteType: I.InviteType.WithoutApprove, permissions: I.ParticipantPermissions.Writer }));
+			expect(UtilSpace.isInviteUnsafe('space1')).toBe(false);
+		});
+
+		it('is false for a shared anyone-can-join invite granting Reader', () => {
+			setup(OWNER, invite({ heldByOwner: false, inviteType: I.InviteType.WithoutApprove, permissions: I.ParticipantPermissions.Reader }));
+			expect(UtilSpace.isInviteUnsafe('space1')).toBe(false);
+		});
+
+		it('is false for a shared request-to-join invite, whatever it grants', () => {
+			setup(OWNER, invite({ heldByOwner: false, inviteType: I.InviteType.WithApprove, permissions: I.ParticipantPermissions.Writer }));
+			expect(UtilSpace.isInviteUnsafe('space1')).toBe(false);
+		});
+
+		it('is false when there is no invite', () => {
+			setup(OWNER, null);
+			expect(UtilSpace.isInviteUnsafe('space1')).toBe(false);
+		});
 	});
 
 });

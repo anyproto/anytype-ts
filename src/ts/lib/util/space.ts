@@ -582,14 +582,91 @@ class UtilSpace {
 	};
 
 	/**
-	 * Gets an invite by ID and calls a callback with the result.
-	 * @param {string} id - The invite ID.
-	 * @param {(cid: string, key: string, inviteType: I.InviteType) => void} callBack - Callback function.
+	 * Fetches the current invite of a space, stores it in S.Common and calls back with it.
+	 * @param {string} id - The space ID.
+	 * @param {(cid: string, key: string, inviteType: I.InviteType, permissions: I.ParticipantPermissions) => void} callBack - Callback function.
 	 */
-	getInvite (id: string, callBack: (cid: string, key: string, inviteType: I.InviteType, permissions: I.ParticipantPermissions) => void) {
+	getInvite (id: string, callBack?: (cid: string, key: string, inviteType: I.InviteType, permissions: I.ParticipantPermissions) => void) {
 		C.SpaceInviteGetCurrent(id, (message: any) => {
-			callBack(message.inviteCid, message.inviteKey, message.inviteType, message.permissions);
+			const { inviteCid, inviteKey, inviteType, permissions, heldByOwner } = message;
+
+			if (message.error.code) {
+				S.Common.inviteClear(id);
+			} else {
+				S.Common.inviteSet(id, {
+					cid: String(inviteCid || ''),
+					key: String(inviteKey || ''),
+					inviteType,
+					permissions,
+					heldByOwner: Boolean(heldByOwner),
+				});
+			};
+
+			if (callBack) {
+				callBack(inviteCid, inviteKey, inviteType, permissions);
+			};
 		});
+	};
+
+	/**
+	 * Maps an invite to the link type the analytics pipeline reports.
+	 * @param {I.InviteType} inviteType - The invite type.
+	 * @param {I.ParticipantPermissions} permissions - The permissions the invite grants.
+	 * @returns {I.InviteLinkType} The link type.
+	 */
+	getInviteLinkType (inviteType: I.InviteType, permissions: I.ParticipantPermissions): I.InviteLinkType {
+		if (inviteType != I.InviteType.WithoutApprove) {
+			return I.InviteLinkType.Manual;
+		};
+
+		return permissions == I.ParticipantPermissions.Writer ? I.InviteLinkType.Editor : I.InviteLinkType.Viewer;
+	};
+
+	/**
+	 * Checks if the current user can create or revoke the invite of a space.
+	 * Invite rights belong to the owner only: admins can add members and approve
+	 * requests, but never see or change the link.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the current user can manage the invite.
+	 */
+	canManageInvite (spaceId?: string): boolean {
+		return this.isMyOwner(spaceId || S.Common.space);
+	};
+
+	/**
+	 * Checks if the current user may see the invite link of a space. An owner-held invite
+	 * comes back to a member with an empty cid, so there is nothing to copy or render.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if there is a link the current user can see.
+	 */
+	hasVisibleInvite (spaceId?: string): boolean {
+		const id = spaceId || S.Common.space;
+		const invite = S.Common.inviteGet(id);
+
+		if (!invite || !invite.cid || !invite.key) {
+			return false;
+		};
+
+		return !invite.heldByOwner || this.isMyOwner(id);
+	};
+
+	/**
+	 * Checks if the invite of a space grants editor access without approval while every member
+	 * can already read it: any viewer can then use the link to get editor access. Only invites
+	 * created before the invite was moved into the owner's account can be in this state.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the invite is unsafe.
+	 */
+	isInviteUnsafe (spaceId?: string): boolean {
+		const invite = S.Common.inviteGet(spaceId || S.Common.space);
+
+		if (!invite || !invite.cid || invite.heldByOwner) {
+			return false;
+		};
+
+		const elevated = [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Admin ];
+
+		return (invite.inviteType == I.InviteType.WithoutApprove) && elevated.includes(invite.permissions);
 	};
 
 	/**

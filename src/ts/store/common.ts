@@ -65,6 +65,7 @@ class CommonStore {
 		list: [],
 	};
 	public diffValue: I.Diff[] = [];
+	public inviteMap: Map<string, I.Invite> = new Map();
 	public refs: Map<string, any> = new Map();
 	public windowId = '';
 	public tabId = '';
@@ -173,6 +174,7 @@ class CommonStore {
 			downloadingIdsValue: observable,
 			recentEditModeValue: observable,
 			sidebarViewValue: observable,
+			inviteMap: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -208,6 +210,8 @@ class CommonStore {
 			nativeThemeSet: action,
 			spaceSet: action,
 			spaceStorageSet: action,
+			inviteSet: action,
+			inviteClear: action,
 			linkStyleSet: action,
 			fileStyleSet: action,
 			dateFormatSet: action,
@@ -1117,6 +1121,32 @@ class CommonStore {
 	 */
 	spaceStorageSet (value: Partial<SpaceStorage>) {
 		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, value));
+	};
+
+	/**
+	 * Stores the current invite of a space.
+	 * @param {string} spaceId - The space ID.
+	 * @param {I.Invite} invite - The invite.
+	 */
+	inviteSet (spaceId: string, invite: I.Invite) {
+		this.inviteMap.set(spaceId, invite);
+	};
+
+	/**
+	 * Gets the current invite of a space, or null when it has not been fetched or does not exist.
+	 * @param {string} spaceId - The space ID.
+	 * @returns {I.Invite} The invite.
+	 */
+	inviteGet (spaceId: string): I.Invite {
+		return this.inviteMap.get(spaceId) || null;
+	};
+
+	/**
+	 * Removes the stored invite of a space.
+	 * @param {string} spaceId - The space ID.
+	 */
+	inviteClear (spaceId: string) {
+		this.inviteMap.delete(spaceId);
 	};
 
 	/**

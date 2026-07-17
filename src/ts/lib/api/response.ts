@@ -644,6 +644,8 @@ export const SpaceInviteGenerate = (response: any) => {
 	return {
 		inviteCid: response.inviteCid,
 		inviteKey: response.inviteFileKey,
+		inviteType: response.inviteType,
+		permissions: response.permissions,
 	};
 };
 
@@ -653,6 +655,7 @@ export const SpaceInviteGetCurrent = (response: any) => {
 		inviteKey: response.inviteFileKey,
 		inviteType: response.inviteType,
 		permissions: response.permissions,
+		heldByOwner: response.heldByOwner,
 	};
 };
 

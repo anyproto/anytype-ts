@@ -1151,7 +1151,20 @@
 
 	"popupSettingsSpaceShareOffline": "Waiting for connection to add members",
 	"popupSettingsSpaceShareTitle": "Members",
-	"popupSettingsSpaceShareInviteLinkTitle": "Invite link",
+	"popupSettingsSpaceShareInviteLinkTitle": "Add members via link",
+	"popupSettingsSpaceShareAddMembers": "Add members",
+	"popupSettingsSpaceShareSearchPlaceholder": "Search members...",
+	"popupSettingsSpaceShareCopyLink": "Copy link",
+	"popupSettingsSpaceShareManageLink": "Manage link",
+	"popupSettingsSpaceShareTabRequests": "Requests",
+	"popupSettingsSpaceShareTabEditors": "Editors",
+	"popupSettingsSpaceShareTabViewers": "Viewers",
+	"popupSettingsSpaceShareLinkDescriptionOff": "Turn on to let people join with a link.",
+	"popupSettingsSpaceShareLinkDescriptionApprove": "You must approve join requests.",
+	"popupSettingsSpaceShareLinkDescriptionEditor": "Anyone with the link can edit, without approval.",
+	"popupSettingsSpaceShareLinkDescriptionViewer": "Anyone with the link can view, without approval.",
+	"popupSettingsSpaceShareLinkDescriptionOwner": "Only you can see this link.",
+	"popupSettingsSpaceShareLinkDescriptionShared": "Everyone in the space can see and share this link.",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedLabel": "You can't add more members",
 	"popupSettingsSpaceShareInvitesReaderLimitReachedButton": "✦ Upgrade to add more members",
 	"popupSettingsSpaceShareInvitesWriterLimitReachedLabel": "You can't add more editors",
@@ -1407,6 +1420,10 @@
 	"popupConfirmRevokeLinkText": "New members won't be able to join the space. You can enable a new link anytime.",
 	"popupConfirmRevokeLinkConfirm": "Disable link",
 
+	"popupConfirmInviteResetTitle": "Reset invite link",
+	"popupConfirmInviteResetText": "The current link stops working for everyone who has it, including the people you meant to invite. A new link is created in its place.",
+	"popupConfirmInviteResetConfirm": "Reset link",
+
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 	"popupConfirmSpaceDeleted": "The space you try to access has been deleted",
 
@@ -1534,6 +1551,28 @@
 	"popupInviteConfirmButtonWriter": "Editor access",
 	"popupInviteConfirmButtonWriterLimit": "✦ Add more editors",
 	"popupInviteConfirmButtonReject": "Reject",
+
+	"popupInviteManageTitle": "Manage invite link",
+	"popupInviteManageAutoApprove": "Enable auto approval",
+	"popupInviteManageAutoApproveDescription": "If enabled, people can join with this link without approval",
+	"popupInviteManageAutoApproveWarning": "Anyone who gains access to this invitation link will be able to join this space at any time, until you reset the link.",
+	"popupInviteManageEditorUpgradeNote": "Any existing Viewer who gains access to this invitation link can use it to upgrade themselves to Editor.",
+	"popupInviteManagePermissions": "Anyone with the link can",
+	"popupInviteManageShare": "Everyone in the space can share this invite",
+	"popupInviteManageShareDisabled": "Anyone with this link joins as an editor, without approval. Only you can share it.",
+	"popupInviteManageShareLocked": "This invite is already shared. To take it back, reset the link.",
+	"popupInviteManageShareConfirmTitle": "Share this invite with the space?",
+	"popupInviteManageShareConfirmText": "All space members will be able to see this invite link and share it with anyone. To make it private again, you'll need to reset the link.",
+	"popupInviteManageShareConfirmButton": "Share invite",
+	"popupInviteManageCopy": "Copy link",
+	"popupInviteManageReset": "Reset link",
+
+	"popupInviteAddTitle": "Add members",
+	"popupInviteAddSelectRole": "Select role",
+	"popupInviteAddEmpty": "No people found",
+	"popupInviteAddButton": "Invite %s %s",
+
+	"inviteUnsafeText": "Anyone with this link joins as an editor without approval, and everyone in the space can see it — including viewers. Reset the link to make a safe one.",
 
 	"popupInviteQrTitle": "QR code for joining a Space",
 
@@ -2718,6 +2757,9 @@
 	"errorSpaceInviteGenerate103": "Oops! The request failed. Please check your Internet connection and try again.",
 	"errorSpaceInviteGenerate104": "Limit reached for this space. Please upgrade your membership or contact support for assistance.",
 	"errorSpaceInviteGenerate105": "It looks like the space is no longer shared. Please ensure that your devices are synchronized.",
+	"errorSpaceInviteGenerate106": "This invite is already shared with the space and can't be taken back. Reset the link to create a new one.",
+	"errorSpaceInviteGenerate107": "An invite that lets anyone join as an editor can't be shared with the space. Change it to viewer access first.",
+	"errorSpaceInviteChange107": "A shared invite can't grant editor access. Reset the link to create one only you can share.",
 
 	"errorSpaceInviteView101": "The invitation does not exist. Please ensure that your devices are synchronized.",
 	"errorSpaceInviteView102": "The invitation link could not be parsed. It may contain errors in the format or invalid data.",
