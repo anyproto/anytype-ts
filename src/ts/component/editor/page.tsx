@@ -495,9 +495,23 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		// Keep the current state while hovering the floating add button itself:
 		// it overlays the block menu strip, so the target-based hit test below
-		// would otherwise resolve no block and hide the button under the cursor
+		// would otherwise resolve no block and hide the button under the cursor.
+		// Still re-derive the insertion side from the cached hovered block, so a
+		// cursor drifting across the block midline while on the button keeps the
+		// Top/Bottom decision in sync with where the cursor visually is
 		if (target && buttonAdd.current.contains(target)) {
 			window.clearTimeout(timeoutMove.current);
+
+			if (hoverId.current && (hoverPosition.current != I.BlockPosition.None)) {
+				const block = S.Block.getLeaf(rootId, hoverId.current);
+				const rect = block ? U.Dom.getElementRect(U.Dom.select(`#block-${U.Common.esc(hoverId.current)}`, node)) : null;
+
+				if (rect) {
+					const height = block.isDataview() ? 88 : rect.height;
+
+					hoverPosition.current = (pageY < (rect.y + st + height / 2)) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+				};
+			};
 			return;
 		};
 
