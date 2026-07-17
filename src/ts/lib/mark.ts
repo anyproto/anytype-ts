@@ -616,45 +616,16 @@ class Mark {
 			const type = Number(key) as I.MarkType;
 
 			if (end) {
-				// A closing anchor is only a serialized Link mark when a matching opening one
-				// was seen — otherwise it is user-typed text like `</a>`, keep it
-				if (type == I.MarkType.Link) {
-					const found = marks.some(m => (m.type == type) && !m.range.to);
-					if (!found) {
-						return;
-					};
-				};
-
-				let removed = false;
 				for (let i = 0; i < marks.length; ++i) {
 					const m = marks[i];
 					if ((m.type == type) && !m.range.to) {
-						// Locate the closing tag at or after the opening position, not the first
-						// occurrence — an identical user-typed tag kept as text may precede it
-						const idx = text.indexOf(s, m.range.from);
-						if (idx >= 0) {
-							m.range.to = idx;
-							text = text.substring(0, idx) + text.substring(idx + s.length);
-							removed = true;
-						} else {
-							m.range.to = offset;
-						};
+						marks[i].range.to = offset;
 						break;
 					};
-				};
-
-				if (removed) {
-					return '';
 				};
 			} else {
 				const pm = p3.match(rp);
 				const param = pm ? pm[1] : '';
-
-				// Serialized Link marks (Mark.toHtml) always carry data-param — an anchor
-				// without it is user-typed text like `<a>` or a pasted `<a href>`, keep it
-				if ((type == I.MarkType.Link) && !pm) {
-					return;
-				};
 
 				marks.push({
 					type,
