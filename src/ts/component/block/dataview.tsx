@@ -364,7 +364,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const subId = getSubId(groupId);
 		const records = S.Record.getRecordIds(subId, '');
 
-		return applyObjectOrder('', [ ...records ]);
+		return applyObjectOrder(groupId || '', [ ...records ]);
 	};
 
 	const getRecord = (id: string) => {

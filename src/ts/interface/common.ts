@@ -459,7 +459,7 @@ export interface ImageParam {
 };
 
 export interface StickyScrollbarRef {
-	resize: (config: { width: number; left: number; paddingLeft: number; display: string; trackWidth: number }) => void;
+	resize: (config: Partial<{ width: number; left: number; paddingLeft: number; display: string; trackWidth: number }>) => void;
 	bind: (element: HTMLElement, isSyncing: boolean) => void;
 	unbind: () => void;
 	sync: (element: HTMLElement, isSyncing: boolean) => boolean;

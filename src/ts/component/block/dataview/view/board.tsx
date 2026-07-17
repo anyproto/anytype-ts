@@ -11,13 +11,13 @@ const PADDING = 46;
 
 const ViewBoard = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
-	const { rootId, block, getView, getTarget, className, onViewSettings, isInline, isPopup, readonly, objectOrderUpdate } = props;
+	const { rootId, block, getView, getTarget, className, onViewSettings, isInline, isPopup, readonly, objectOrderUpdate, getWrapperWidth } = props;
 	const view = getView();
 	const relation = S.Record.getRelationByKey(view.groupRelationKey);
 	const cn = [ 'viewContent', className ];
 	const nodeRef = useRef(null);
 	const scrollRef = useRef(null);
-	const stickyScrollRef = useRef(null);
+	const stickyScrollRef = useRef<I.StickyScrollbarRef>(null);
 	const isSyncingScroll = useRef(false);
 	const hoverId = useRef('');
 	const newIndex = useRef(-1);
@@ -73,9 +73,7 @@ const ViewBoard = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			U.Dom.addEvent(pageContainer, 'scroll', scrollViewHandlerRef.current);
 		};
 
-		if (!isInline) {
-			stickyScrollRef.current?.bind(scroll, isSyncingScroll.current);
-		};
+		stickyScrollRef.current?.bind(scroll, isSyncingScroll.current);
 	};
 
 	const unbind = () => {
@@ -660,16 +658,27 @@ const ViewBoard = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			});
 		} else
 		if (parent && (parent.isPage() || parent.isLayoutDiv())) {
-			const wrapper = U.Dom.get('editorWrapper');
-			const ww = U.Dom.contentWidth(wrapper);
-			const margin = (cw - ww) / 2;
+			const wrapper = U.Dom.select('#editorWrapper', container);
+			const ww = getWrapperWidth ? getWrapperWidth() : U.Dom.contentWidth(wrapper);
+			const margin = Math.max(0, (cw - ww) / 2);
+			const vw = width + margin + 2;
 
 			if (scroll) {
 				U.Dom.css(scroll, { width: `${cw}px`, marginLeft: `${-margin}px`, paddingLeft: `${margin}px` });
 			};
 			if (viewEl) {
-				U.Dom.css(viewEl, { width: `${width + margin + 2}px` });
+				U.Dom.css(viewEl, { width: `${vw}px` });
 			};
+
+			stickyScrollRef.current?.resize({
+				width: ww,
+				left: 0,
+				paddingLeft: 0,
+				display: (vw + margin) <= cw ? 'none' : '',
+				trackWidth: vw,
+			});
+		} else {
+			stickyScrollRef.current?.resize({ display: 'none' });
 		};
 	};
 
@@ -717,7 +726,7 @@ const ViewBoard = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 					</div>
 				</div>
 			</div>
-			{!isInline ? <StickyScrollbar ref={stickyScrollRef} /> : ''}
+			<StickyScrollbar ref={stickyScrollRef} />
 		</div>
 	);	
 
