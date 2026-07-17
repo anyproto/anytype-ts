@@ -16,7 +16,7 @@ class ChatStore {
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
 	public attachmentsMap: Map<string, any[]> = observable(new Map());
 	public discussionParentMap: Map<string, Map<string, string>> = observable.map(new Map());
-	private activeReadChat: { spaceId: string; chatId: string } = observable({ spaceId: '', chatId: '' });
+	private activeReadChats: Map<string, { spaceId: string; chatId: string }> = observable.map(new Map());
 	private badgeValue = '';
 	private atChatStartMap: Map<string, boolean> = new Map();
 	private atChatEndMap: Map<string, boolean> = new Map();
@@ -613,46 +613,63 @@ class ChatStore {
 	};
 
 	/**
-	 * Marks a chat as actively read: shown in a focused window and anchored to the live
-	 * tail, so incoming messages are read in place. Counter aggregates (vault, widgets,
-	 * app badge) exclude this chat via isActiveReadChat — otherwise every incoming
-	 * message would blink the unread badge for the duration of the read round-trip.
+	 * Marks a chat as actively read by the given claimant: shown in a focused window and
+	 * anchored to the live tail, so incoming messages are read in place. Counter aggregates
+	 * (vault, widgets, app badge) exclude this chat via isActiveReadChat — otherwise every
+	 * incoming message would blink the unread badge for the duration of the read round-trip.
+	 * Claims are keyed per claimant (one token per chat view instance), because several
+	 * views can be reading in parallel — e.g. a chat popup stacked over a chat page: both
+	 * keep issuing read receipts, so both pairs stay excluded, and closing one view never
+	 * drops the other view's claim.
+	 * @param {string} token - The claimant token (stable per view instance).
 	 * @param {string} spaceId - The space ID.
 	 * @param {string} chatId - The chat ID.
 	 */
-	setActiveReadChat (spaceId: string, chatId: string): void {
-		if (!spaceId || !chatId) {
+	setActiveReadChat (token: string, spaceId: string, chatId: string): void {
+		if (!token || !spaceId || !chatId) {
 			return;
 		};
 
-		set(this.activeReadChat, { spaceId, chatId });
-	};
-
-	/**
-	 * Releases the actively read chat, but only if it still points at the given pair —
-	 * another chat view may have claimed it in the meantime.
-	 * @param {string} spaceId - The space ID.
-	 * @param {string} chatId - The chat ID.
-	 */
-	clearActiveReadChat (spaceId: string, chatId: string): void {
-		if ((this.activeReadChat.spaceId == spaceId) && (this.activeReadChat.chatId == chatId)) {
-			set(this.activeReadChat, { spaceId: '', chatId: '' });
+		const current = this.activeReadChats.get(token);
+		if (current && (current.spaceId == spaceId) && (current.chatId == chatId)) {
+			return;
 		};
+
+		this.activeReadChats.set(token, { spaceId, chatId });
 	};
 
 	/**
-	 * Whether the chat is being actively read (see setActiveReadChat), meaning its unread
-	 * counters are excluded from aggregates and badges. Counters are server-authoritative,
-	 * so the exclusion is presentational only — the underlying state stays intact and
-	 * resurfaces the moment the claim is released (scroll up, blur, close). Gated on
-	 * isActiveTab (observable): a claim left by a chat in a deactivated tab lifts
-	 * reactively, since a hidden tab's rAF-driven read flow stalls.
+	 * Releases the claimant's active-read claim. Other claimants' claims (e.g. the same
+	 * chat open in another view) are untouched.
+	 * @param {string} token - The claimant token.
+	 */
+	clearActiveReadChat (token: string): void {
+		this.activeReadChats.delete(token);
+	};
+
+	/**
+	 * Whether the chat is being actively read by any claimant (see setActiveReadChat),
+	 * meaning its unread counters are excluded from aggregates and badges. Counters are
+	 * server-authoritative, so the exclusion is presentational only — the underlying state
+	 * stays intact and resurfaces the moment the last claim is released (scroll up, blur,
+	 * close). Gated on isActiveTab (observable): claims left by chats in a deactivated tab
+	 * lift reactively, since a hidden tab's rAF-driven read flow stalls.
 	 * @param {string} spaceId - The space ID.
 	 * @param {string} chatId - The chat ID.
 	 * @returns {boolean} Whether the chat is actively read.
 	 */
 	isActiveReadChat (spaceId: string, chatId: string): boolean {
-		return !!chatId && (this.activeReadChat.spaceId == spaceId) && (this.activeReadChat.chatId == chatId) && S.Common.isActiveTab;
+		if (!chatId || !S.Common.isActiveTab) {
+			return false;
+		};
+
+		for (const claim of this.activeReadChats.values()) {
+			if ((claim.spaceId == spaceId) && (claim.chatId == chatId)) {
+				return true;
+			};
+		};
+
+		return false;
 	};
 
 	/**
