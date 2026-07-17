@@ -113,6 +113,20 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	useEffect(() => {
 		const { focused } = focus.state;
+
+		// Never touch the composing editable's DOM or its selection while an IME
+		// composition is in progress: replacing innerHTML or re-applying the
+		// (stale) focus range aborts the composition and commits the candidate
+		// text at the old caret position — e.g. wedged between the caret and an
+		// adjacent mention/object mark (JS-7510). Scoped to the focused block so
+		// a composition elsewhere (chat input, search filter) doesn't stop other
+		// visible blocks from syncing store updates to their DOM. Skip without
+		// updating prevTextRef / prevMarksRef so the store change is re-applied
+		// on the next render; onCompositionEnd reconciles value, marks and range
+		// once the composition settles.
+		if (keyboard.isComposition && (focused == block.id)) {
+			return;
+		};
 		const textChanged = prevTextRef.current !== text;
 		const marksChanged = !U.Common.compareJSON(prevMarksRef.current, marks || []);
 
@@ -309,7 +323,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		return editableRef.current?.getRange();
 	};
 	
-	const getMarksFromHtml = (): { marks: I.Mark[], text: string } => {
+	const getMarksFromHtml = (): I.FromHtmlResult => {
 		let value = getHtmlValue();
 
 		// Strip phantom <br/> that was added to make trailing newlines visible in contenteditable
@@ -1650,6 +1664,32 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		setValue(v, r);
+
+		// Dead-key layouts commit markdown symbols (e.g. the closing backtick)
+		// through an IME composition, so the keyup-driven markdown conversion can
+		// miss the commit or run with a stale focus range. Re-run the conversion
+		// on the settled value, using the fresh composition range for the caret
+		// math (JS-9071)
+		if (block.canHaveMarks() && r) {
+			const parsed = getMarksFromHtml();
+
+			marksRef.current = parsed.marks;
+
+			if (parsed.adjustMarks || (parsed.text != v)) {
+				const diff = v.length - parsed.text.length;
+				const next = { from: Math.max(0, r.from - diff), to: Math.max(0, r.to - diff) };
+
+				setValue(parsed.text, next);
+				focus.set(block.id, next);
+
+				// Move the caret past the trailing ZWS anchor so continued typing
+				// stays unformatted (same as the keyup conversion path)
+				const editable = U.Dom.select('.editable', editableRef.current?.getNode());
+				if (editable) {
+					Mark.escapeMarkBoundary(editable);
+				};
+			};
+		};
 	};
 
 	const onBeforeInput = (e: any) => {

@@ -616,32 +616,64 @@ class Mark {
 		text = U.String.fromHtmlSpecialChars(text);
 
 		const newHtml = text;
+
+		// Tags are processed in scan order and stripping only ever shortens the
+		// part of `text` after the previous occurrence, so the occurrence that
+		// belongs to the current match always sits at or after searchFrom.
+		// Searching from there — and advancing past kept literals — keeps
+		// identical strings (e.g. a kept user-typed </a> before a real closing
+		// </a>) from shadowing each other and corrupting offsets (JS-7238)
+		let searchFrom = 0;
+
 		newHtml.replace(rh, (s: string, p1: string, p2: string, p3: string) => {
 			p1 = String(p1 || '').trim();
 			p2 = String(p2 || '').trim();
 			p3 = String(p3 || '').trim();
 
 			const end = p1 == '/';
-			const offset = Number(text.indexOf(s)) || 0;
+			const offset = text.indexOf(s, searchFrom);
+
+			if (offset < 0) {
+				return '';
+			};
 
 			const key = U.Common.getKeyByValue(Tags, p2);
 			if (undefined === key) {
-				return;
+				searchFrom = offset + s.length;
+				return '';
 			};
 
 			const type = Number(key) as I.MarkType;
 
 			if (end) {
+				let found = false;
+
 				for (let i = 0; i < marks.length; ++i) {
 					const m = marks[i];
 					if ((m.type == type) && !m.range.to) {
 						marks[i].range.to = offset;
+						found = true;
 						break;
 					};
+				};
+
+				// A closing </a> without a matching link markup opening is user-typed
+				// literal text — keep it instead of stripping it (JS-7238)
+				if (!found && (type == I.MarkType.Link)) {
+					searchFrom = offset + s.length;
+					return '';
 				};
 			} else {
 				const pm = p3.match(rp);
 				const param = pm ? pm[1] : '';
+
+				// Link markup rendered by toHtml always carries data-param, so a bare
+				// <a>/<a ...> is user-typed literal text (e.g. inside inline code) —
+				// keep it instead of swallowing it as a Link mark (JS-7238)
+				if ((type == I.MarkType.Link) && !param) {
+					searchFrom = offset + s.length;
+					return '';
+				};
 
 				marks.push({
 					type,
@@ -650,7 +682,10 @@ class Mark {
 				});
 			};
 
-			text = text.replace(s, '');
+			// Strip exactly the occurrence at offset (not the first match of an
+			// identical string elsewhere in the text)
+			text = text.slice(0, offset) + text.slice(offset + s.length);
+			searchFrom = offset;
 			return '';
 		});
 
@@ -668,7 +703,11 @@ class Mark {
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
 	fromMarkdown(html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean, updatedValue: boolean): I.FromHtmlResult {
-		const reg1 = /(^|[\s\(\[\{]|[^\x00-\x7F])(`[^`]+`|\*\*[^*]+\*\*|__[^_]+__|\*[^*]+\*|_[^_]+_|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/;
+		// Underscore emphasis requires a Unicode word boundary on both sides of
+		// the _/__ pair so identifiers like _physics_process() and non-Latin
+		// text like слово_физика_процесс never get italicized/bolded mid-word
+		// (JS-7786). Asterisks intentionally stay intra-word (CommonMark rule)
+		const reg1 = /(^|[\s\(\[\{]|[^\x00-\x7F])(`[^`]+`|\*\*[^*]+\*\*|(?<![\p{L}\p{N}_])__[^_]+__(?![\p{L}\p{N}_])|\*[^*]+\*|(?<![\p{L}\p{N}_])_[^_]+_(?![\p{L}\p{N}_])|~~[^~]+~~|\[[^\]]+\]\([^\)]+\)\s|$)/u;
 		const reg2 = /^(`{1}|\*+|_+|\[|~{2})/;
 		const test = reg1.test(html);
 		const checked = marks.filter(it => [I.MarkType.Code].includes(it.type));

@@ -1,6 +1,37 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import Mark from './mark';
 import * as I from 'Interface';
+import { U, S } from 'Lib';
+
+beforeAll(() => {
+	const g = globalThis as any;
+	const u = U as any;
+
+	// mark.ts uses auto-imported globals (U, S) that the vite plugin injects at
+	// build time — expose the mocked Lib barrel on globalThis for the tests
+	g.U = U;
+	g.S = S;
+
+	// Realistic entity decoding (the Lib mock stubs it as identity)
+	u.String.fromHtmlSpecialChars = (s: string) => {
+		return String(s || '').replace(/(&lt;|&gt;|&amp;)/g, (m: string, p: string) => {
+			if (p == '&lt;') p = '<';
+			if (p == '&gt;') p = '>';
+			if (p == '&amp;') p = '&';
+			return p;
+		});
+	};
+
+	// Minimal DOM plumbing so cleanHtml/fromHtml can run in the node environment
+	u.Dom = {
+		select: () => null,
+		selectAll: () => [],
+	};
+
+	g.document = {
+		createElement: () => ({ innerHTML: '' }),
+	};
+});
 
 describe('Mark', () => {
 
@@ -122,6 +153,28 @@ describe('Mark', () => {
 			const adjusted = Mark.adjust(marks, 0, -5);
 
 			expect(adjusted[0].range.from).toBe(0);
+		});
+
+		it('should push a mention fully right when text is inserted exactly at its start (JS-7510)', () => {
+			// IME commit in front of an @-reference: the committed text is placed
+			// at the caret and the object mark must shift right by the full diff
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Mention, range: { from: 5, to: 6 }, param: 'objectId' },
+			];
+
+			const adjusted = Mark.adjust(marks, 5, 2);
+
+			expect(adjusted[0].range).toEqual({ from: 7, to: 8 });
+		});
+
+		it('should not move a mention when text is inserted exactly at its end (JS-7510)', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Mention, range: { from: 5, to: 6 }, param: 'objectId' },
+			];
+
+			const adjusted = Mark.adjust(marks, 6, 2);
+
+			expect(adjusted[0].range).toEqual({ from: 5, to: 6 });
 		});
 	});
 
@@ -480,6 +533,183 @@ describe('Mark', () => {
 
 			expect(result.text).toBe(' world');
 			expect(result.marks).toHaveLength(0);
+		});
+	});
+
+	describe('fromMarkdown', () => {
+		it('should not italicize intra-word underscores like _physics_process() (JS-7786)', () => {
+			const result = Mark.fromMarkdown('tilde _physics_process() tilde', [], [], false, false);
+
+			expect(result.text).toBe('tilde _physics_process() tilde');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not italicize across a code-marked snake_case identifier (JS-7786)', () => {
+			// First snippet already converted to a Code mark, second one still being typed
+			const text = 'tilde _progress() tilde and `_physics_';
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 6, to: 17 }, param: '' },
+			];
+
+			const result = Mark.fromMarkdown(text, marks, [], false, false);
+
+			expect(result.text).toBe(text);
+			expect(result.marks).toEqual(marks);
+		});
+
+		it('should still convert _italic_ followed by a boundary', () => {
+			const result = Mark.fromMarkdown('word _italic_ word', [], [], false, false);
+
+			expect(result.text).toBe('word italic word');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+			expect(result.marks[0].range).toEqual({ from: 5, to: 11 });
+		});
+
+		it('should still convert _italic_ followed by punctuation', () => {
+			const result = Mark.fromMarkdown('word _italic_, word', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+
+		it('should not bold intra-word double underscores (JS-7786)', () => {
+			const result = Mark.fromMarkdown('name __dunder__method here', [], [], false, false);
+
+			expect(result.text).toBe('name __dunder__method here');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not italicize intra-word underscores in Cyrillic text (JS-7786)', () => {
+			const result = Mark.fromMarkdown('слово _физика_процесс конец', [], [], false, false);
+
+			expect(result.text).toBe('слово _физика_процесс конец');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not italicize underscores opened right after a non-Latin letter (JS-7786)', () => {
+			const result = Mark.fromMarkdown('слово_физика_ конец', [], [], false, false);
+
+			expect(result.text).toBe('слово_физика_ конец');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not bold intra-word double underscores in Cyrillic text (JS-7786)', () => {
+			const result = Mark.fromMarkdown('слово __жирный__метод конец', [], [], false, false);
+
+			expect(result.text).toBe('слово __жирный__метод конец');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should still convert _курсив_ at word boundaries in Cyrillic text', () => {
+			const result = Mark.fromMarkdown('слово _курсив_ конец', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+
+		it('should still convert *italic* with asterisks', () => {
+			const result = Mark.fromMarkdown('word *italic* word', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+
+		it('should convert a plain backtick code span', () => {
+			const result = Mark.fromMarkdown('Hello `World`', [], [], false, false);
+
+			expect(result.text).toBe('Hello World');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 6, to: 11 });
+		});
+
+		it('should keep a leading space inside backticks out of the code mark (JS-9071)', () => {
+			// Dead-key layouts can commit the space next to the backtick inside the span
+			const result = Mark.fromMarkdown('Hello ` World`', [], [], false, false);
+
+			expect(result.text).toBe('Hello  World');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 7, to: 12 });
+		});
+
+		it('should keep a leading nbsp inside backticks out of the code mark (JS-9071)', () => {
+			const result = Mark.fromMarkdown('Hello `\u00A0World`', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 7, to: 12 });
+		});
+
+		it('should convert a code span after an nbsp boundary (JS-9071)', () => {
+			const result = Mark.fromMarkdown('Hello\u00A0`World`', [], [], false, false);
+
+			expect(result.text).toBe('Hello\u00A0World');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 6, to: 11 });
+		});
+	});
+
+	describe('fromHtml', () => {
+		it('should keep user-typed <a> as literal text (JS-7238)', () => {
+			const result = Mark.fromHtml('typed &lt;a&gt; tag', []);
+
+			expect(result.text).toBe('typed <a> tag');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should keep user-typed <a> inside inline code (JS-7238)', () => {
+			const result = Mark.fromHtml('<markupcode spellcheck="false">&lt;a&gt;</markupcode>', []);
+
+			expect(result.text).toBe('<a>');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 0, to: 3 });
+		});
+
+		it('should keep user-typed <area> as literal text (JS-7238)', () => {
+			const result = Mark.fromHtml('&lt;area&gt;', []);
+
+			expect(result.text).toBe('<area>');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should keep user-typed closing </a> as literal text (JS-7238)', () => {
+			const result = Mark.fromHtml('hello &lt;/a&gt; world', []);
+
+			expect(result.text).toBe('hello </a> world');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not let a kept literal </a> shadow a later real closing </a> (JS-7238)', () => {
+			const result = Mark.fromHtml('hi &lt;/a&gt; <a href="u" class="markuplink" data-param="u" data-range="8-12">link</a> end', []);
+
+			expect(result.text).toBe('hi </a> link end');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Link);
+			expect(result.marks[0].param).toBe('u');
+			expect(result.marks[0].range).toEqual({ from: 8, to: 12 });
+		});
+
+		it('should not let a kept literal <a> shadow a later real link opening (JS-7238)', () => {
+			const result = Mark.fromHtml('&lt;a&gt; <a href="u" class="markuplink" data-param="u" data-range="4-8">link</a>', []);
+
+			expect(result.text).toBe('<a> link');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Link);
+			expect(result.marks[0].range).toEqual({ from: 4, to: 8 });
+		});
+
+		it('should still parse real link markup with data-param (JS-7238)', () => {
+			const result = Mark.fromHtml('<a href="https://x.com" class="markuplink" data-param="https://x.com" data-range="0-4">link</a>', []);
+
+			expect(result.text).toBe('link');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Link);
+			expect(result.marks[0].param).toBe('https://x.com');
+			expect(result.marks[0].range).toEqual({ from: 0, to: 4 });
 		});
 	});
 
