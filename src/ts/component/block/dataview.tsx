@@ -462,18 +462,26 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const recordCreate = (e: any, template: any, dir: number, groupId?: string, idx?: number) => {
 		const objectId = getObjectId();
-		const subId = getSubId(groupId);
 		const view = getView();
 
 		if (!view || isCreating.current) {
 			return;
 		};
 
-		const details = getDetails(groupId);
-		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const isViewGraph = view.type == I.ViewType.Graph;
 		const isViewCalendar = view.type == I.ViewType.Calendar;
 		const isViewBoard = view.type == I.ViewType.Board;
+
+		// Board creation paths without an explicit group (toolbar New button,
+		// template menu) target the "empty" group like onRecordAdd does, so the
+		// optimistic insert below works for them as well (JS-9764)
+		if (isViewBoard && !groupId) {
+			groupId = 'empty';
+		};
+
+		const subId = getSubId(groupId);
+		const details = getDetails(groupId);
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 
 		if (isCollection) {
 			details.createdInContext = objectId;
@@ -522,7 +530,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
-			if (!isViewCalendar && (!isViewBoard || groupId)) {
+			if (!isViewCalendar) {
 				// Board columns render from the group subscription record list as is:
 				// use the raw list, getRecords would apply the object order of the
 				// first matching group (JS-9747, JS-9764)
