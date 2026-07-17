@@ -71,6 +71,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const isLoadingNext = useRef(false);
 	const loadEpoch = useRef(0);
 	const initSeq = useRef(0);
+	// Stable claimant token for the active-read claim (see S.Chat.setActiveReadChat):
+	// claims are per view instance, so a chat popup stacked over a chat page holds its
+	// own claim without stealing the page's one.
+	const activeReadToken = useRef(`blockChat-${Math.random().toString(36).slice(2, 10)}`).current;
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -144,6 +148,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const reactionUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const pinnedStatusUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const focusHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const blurHandlerRef = useRef<((e: Event) => void) | null>(null);
 
 	const unbind = () => {
 		// Flush pending read receipts before teardown (chat switch / unmount) — the debounced
@@ -175,6 +180,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		if (focusHandlerRef.current) {
 			U.Dom.removeEvent(window, 'focus', focusHandlerRef.current);
 			focusHandlerRef.current = null;
+		};
+		if (blurHandlerRef.current) {
+			U.Dom.removeEvent(window, 'blur', blurHandlerRef.current);
+			blurHandlerRef.current = null;
 		};
 
 		const container = U.Dom.getScrollContainer(isPopup);
@@ -236,6 +245,12 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				readScrolledMessages();
 			});
 		};
+		blurHandlerRef.current = () => {
+			// The active-read claim (unread badge suppression, see setIsBottom) only holds
+			// while the user can actually see the messages — release it on blur so unread
+			// counters surface again. The focus handler restores it via scrollToBottom.
+			S.Chat.clearActiveReadChat(activeReadToken);
+		};
 
 		U.Dom.addEvents(window, [
 			['messageAdd', messageAddHandlerRef.current],
@@ -244,6 +259,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			['reactionUpdate', reactionUpdateHandlerRef.current],
 			['pinnedStatusUpdate', pinnedStatusUpdateHandlerRef.current],
 			['focus', focusHandlerRef.current],
+			['blur', blurHandlerRef.current],
 		]);
 
 		const container = U.Dom.getScrollContainer(isPopup);
@@ -1724,6 +1740,25 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const setIsBottom = (v: boolean) => {
 		isBottom.current = v;
 
+		// Claim / release the active-read flag: anchored to the live tail of a focused
+		// window, incoming messages are read in place, so unread aggregates (vault,
+		// widgets, app badge) skip this chat instead of blinking the counter for the
+		// read-confirmation round-trip (JS-9298). Scrolled up, blurred (see the blur
+		// handler in rebind) or closed, the claim is released and unread state surfaces
+		// normally. Counters are server-authoritative, so this is presentational only.
+		//
+		// Accepted trade-off: releasing on scroll-up is immediate, so messages read at the
+		// bottom whose ChatReadMessages confirmation is still in flight briefly surface as
+		// unread until the state event lands. Fixing that would mean optimistically mutating
+		// the server-owned stateMap counters and reconciling them against absolute-value
+		// state events — a stuck-wrong badge from a missed reconciliation is worse than
+		// this short-lived blink, so the counters stay untouched.
+		if (v && S.Common.windowIsFocused && S.Chat.isAtChatEnd(getSubId())) {
+			S.Chat.setActiveReadChat(activeReadToken, space, getChatId());
+		} else {
+			S.Chat.clearActiveReadChat(activeReadToken);
+		};
+
 		const formNode = formRef.current?.getNode() as HTMLElement;
 		const btn = formNode ? U.Dom.select(`#navigation-${I.ChatReadType.Message}`, formNode) : null;
 
@@ -1988,6 +2023,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		S.Chat.retainSub(subId);
 
 		return () => {
+			// Release this view's active-read claim — a closed chat must not keep its
+			// badge suppressed. Claims held by other views of the same chat are untouched.
+			S.Chat.clearActiveReadChat(activeReadToken);
+
 			if (!S.Chat.releaseSub(subId)) {
 				C.ChatUnsubscribe(chatId, subId);
 			};
