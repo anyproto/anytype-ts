@@ -522,6 +522,34 @@ describe('Mark', () => {
 			expect(result.marks).toHaveLength(0);
 		});
 
+		it('should not italicize intra-word underscores in Cyrillic text (JS-7786)', () => {
+			const result = Mark.fromMarkdown('слово _физика_процесс конец', [], [], false, false);
+
+			expect(result.text).toBe('слово _физика_процесс конец');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not italicize underscores opened right after a non-Latin letter (JS-7786)', () => {
+			const result = Mark.fromMarkdown('слово_физика_ конец', [], [], false, false);
+
+			expect(result.text).toBe('слово_физика_ конец');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not bold intra-word double underscores in Cyrillic text (JS-7786)', () => {
+			const result = Mark.fromMarkdown('слово __жирный__метод конец', [], [], false, false);
+
+			expect(result.text).toBe('слово __жирный__метод конец');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should still convert _курсив_ at word boundaries in Cyrillic text', () => {
+			const result = Mark.fromMarkdown('слово _курсив_ конец', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+
 		it('should still convert *italic* with asterisks', () => {
 			const result = Mark.fromMarkdown('word *italic* word', [], [], false, false);
 
