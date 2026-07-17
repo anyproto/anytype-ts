@@ -46,6 +46,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const blocksResizeObserver = useRef<ResizeObserver | null>(null);
 	const blocksResizeTarget = useRef<Element | null>(null);
 	const resizePageRef = useRef<(callBack?: () => void) => void>(null);
+	// Block materialized by arrow-entry into an open empty toggle (JS-8420) — ephemeral until the user interacts with it
+	const emptyToggleEntry = useRef({ pending: false, blockId: '' });
 
 	useEffect(() => {
 		open();
@@ -59,6 +61,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			blocksResizeObserver.current?.disconnect();
 			blocksResizeObserver.current = null;
 			blocksResizeTarget.current = null;
+			emptyToggleEntry.current = { pending: false, blockId: '' };
 
 			raf.cancel(frameMove.current);
 			raf.cancel(frameResize.current);
@@ -70,6 +73,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	useEffect(() => {
 		if (idRef.current != rootId) {
+			emptyToggleEntry.current = { pending: false, blockId: '' };
+
 			close();
 			open();
 		};
@@ -1007,6 +1012,25 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const styleParam = getStyleParam();
 		const cmd = keyboard.cmdKey();
 
+		// A block materialized by arrow-entry into an empty toggle stays ephemeral only while the
+		// user merely navigates — any other interaction makes it permanent (JS-8420)
+		if (emptyToggleEntry.current.blockId) {
+			const nav = [
+				'arrowup', 'arrowdown', 'arrowleft', 'arrowright',
+				'pageup', 'pagedown', 'prevBlock', 'nextBlock',
+				`${cmd}+arrowup`, `${cmd}+arrowdown`, `${cmd}+home`, `${cmd}+end`,
+				'ctrl+home', 'ctrl+end', 'ctrl+p', 'ctrl+n',
+			];
+
+			let isNav = false;
+
+			keyboard.shortcut(nav.join(', '), e, () => isNav = true);
+
+			if (!isNav || (focused != emptyToggleEntry.current.blockId)) {
+				emptyToggleEntry.current.blockId = '';
+			};
+		};
+
 		// Last line break doesn't expand range.to
 		let length = String(text || '').length;
 		if (length && (text[length - 1] == '\n')) {
@@ -1917,7 +1941,9 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		// Moving down from an open empty toggle header materializes the first child, mirroring click on the placeholder
+		// Moving down from an open empty toggle header materializes the first child, mirroring click on
+		// the placeholder. The block stays ephemeral: navigating away while it is still empty deletes it
+		// again (checkEphemeralToggleChild), so pass-through navigation never permanently mutates the document
 		if (
 			(dir > 0) &&
 			!readonly &&
@@ -1927,8 +1953,18 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		) {
 			e.preventDefault();
 
+			// Key repeat can fire again before the create lands — never materialize twice
+			if (emptyToggleEntry.current.pending) {
+				return;
+			};
+
+			emptyToggleEntry.current.pending = true;
+
 			C.BlockCreate(rootId, block.id, I.BlockPosition.Inner, { type: I.BlockType.Text }, (message: any) => {
+				emptyToggleEntry.current.pending = false;
+
 				if (!message.error.code) {
+					emptyToggleEntry.current.blockId = message.blockId;
 					focusSet(message.blockId, 0, 0, true);
 				};
 			});
@@ -3107,10 +3143,38 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		}, 15);
 	};
 
+	// A block materialized by arrow-entry into an open empty toggle (onArrowVertical) is ephemeral:
+	// when keyboard navigation moves the caret away while it is still empty, delete it again, so
+	// passing through open empty toggles never permanently mutates the document (JS-8420)
+	const checkEphemeralToggleChild = (nextId: string) => {
+		const id = emptyToggleEntry.current.blockId;
+
+		if (!id || (id == nextId)) {
+			return;
+		};
+
+		emptyToggleEntry.current.blockId = '';
+
+		// The caret left the block through some other interaction — leave it alone
+		if (focus.state.focused != id) {
+			return;
+		};
+
+		const block = S.Block.getLeaf(rootId, id);
+
+		if (!block || block.getLength() || S.Block.getChildrenIds(rootId, id).length) {
+			return;
+		};
+
+		C.BlockListDelete(rootId, [ id ]);
+	};
+
 	const focusNextBlock = (next: I.Block, dir: number) => {
 		if (!next) {
 			return;
 		};
+
+		checkEphemeralToggleChild(next.id);
 
 		const from = dir > 0 ? 0 : next.getLength();
 		focusSet(next.id, from, from, true);
