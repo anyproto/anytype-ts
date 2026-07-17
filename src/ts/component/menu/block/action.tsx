@@ -606,10 +606,12 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'clipboardPaste': {
-				// Range is missing when the block was selected via its gripper (no text caret) —
-				// fall back to a caret at the end of the block, so the synthetic paste targets
-				// the selected block instead of appending at the document bottom. A stale range
-				// from another block is clamped to this block's length
+				// Range is missing when the block was selected via its gripper or right-clicked
+				// without holding the caret (block/index.tsx only forwards the range when this
+				// block is the focused one) — fall back to a caret at the end of the block, so
+				// the synthetic paste targets the selected block instead of appending at the
+				// document bottom. Clamping guards against the text having changed since the
+				// range was captured
 				const length = block.getLength();
 				const to = range ? Math.min(range.to, length) : length;
 				const from = range ? Math.min(range.from, to) : length;
