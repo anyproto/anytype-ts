@@ -1567,6 +1567,11 @@
 	"popupInviteManageCopy": "Copy link",
 	"popupInviteManageReset": "Reset link",
 
+	"popupInviteSecurityTitle": "Review your invite link",
+	"popupInviteSecurityText": "This space's invitation link grants Editor access without approval, and everyone in the space can see it — including Viewers, who can use it to upgrade themselves to Editor. Review the link and reset it if this is not what you intend.",
+	"popupInviteSecurityConfirm": "Review link",
+	"popupInviteSecurityCancel": "Dismiss",
+
 	"popupInviteAddTitle": "Add members",
 	"popupInviteAddSelectRole": "Select role",
 	"popupInviteAddEmpty": "No people found",

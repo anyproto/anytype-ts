@@ -670,6 +670,58 @@ class UtilSpace {
 	};
 
 	/**
+	 * Checks if the owner should be proactively warned about the invite of a space: the invite is
+	 * unsafe (shared, anyone-can-join, grants editor) and at least one active viewer exists who
+	 * could use it to upgrade themselves. The local "already warned" flag is the caller's concern.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the warning applies.
+	 */
+	hasInviteSecurityRisk (spaceId?: string): boolean {
+		const id = spaceId || S.Common.space;
+
+		if (!this.isMyOwner(id) || !this.isInviteUnsafe(id)) {
+			return false;
+		};
+
+		return this.getParticipantsList([ I.ParticipantStatus.Active ]).some(it => it.isReader);
+	};
+
+	/**
+	 * Warns the owner, once per space and per device, that the invite lets any current viewer
+	 * upgrade themselves to editor. Fire-and-forget: called on space open, off the routing path.
+	 * @param {string} spaceId - The space ID.
+	 */
+	checkInviteSecurity (spaceId: string) {
+		if (!this.isMyOwner(spaceId) || Storage.getSpaceKey('inviteSecurityDismissed', true, spaceId)) {
+			return;
+		};
+
+		// The invite is loaded lazily by the sharing screens, so fetch it before judging.
+		this.getInvite(spaceId, () => {
+			// A switch away during the fetch: the participant list read below would be another space's.
+			if ((spaceId != S.Common.space) || !this.hasInviteSecurityRisk(spaceId)) {
+				return;
+			};
+
+			// Every close path counts as seen: the warning is a one-time nudge, not a recurring gate.
+			Storage.setSpaceKey('inviteSecurityDismissed', true, true, spaceId);
+
+			S.Popup.open('confirm', {
+				data: {
+					iconParam: { name: 'popup/header/warning', color: 'grey' },
+					title: translate('popupInviteSecurityTitle'),
+					text: translate('popupInviteSecurityText'),
+					textConfirm: translate('popupInviteSecurityConfirm'),
+					textCancel: translate('popupInviteSecurityCancel'),
+					onConfirm: () => S.Popup.open('inviteManage', { data: { spaceId } }),
+				},
+			});
+
+			analytics.event('ScreenInviteSecurityWarning');
+		});
+	};
+
+	/**
 	 * Gets the publish domain for the current space.
 	 * @returns {string} The publish domain.
 	 */

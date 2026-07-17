@@ -25,6 +25,7 @@ const SPACE_KEYS = new Set([
 	'widgetSections',
 	'binViewMode',
 	'pendingMembers',
+	'inviteSecurityDismissed',
 ]);
 
 const LOCAL_KEYS = new Set([
@@ -35,6 +36,7 @@ const LOCAL_KEYS = new Set([
 	'graphData',
 	'updateBanner',
 	'lastOpenedSimple',
+	'inviteSecurityDismissed',
 ]);
 
 const cache: Map<string, any> = new Map();
