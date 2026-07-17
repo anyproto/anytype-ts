@@ -462,18 +462,26 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const recordCreate = (e: any, template: any, dir: number, groupId?: string, idx?: number) => {
 		const objectId = getObjectId();
-		const subId = getSubId(groupId);
 		const view = getView();
 
 		if (!view || isCreating.current) {
 			return;
 		};
 
-		const details = getDetails(groupId);
-		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const isViewGraph = view.type == I.ViewType.Graph;
 		const isViewCalendar = view.type == I.ViewType.Calendar;
 		const isViewBoard = view.type == I.ViewType.Board;
+
+		// Board creation paths without an explicit group (toolbar New button,
+		// template menu) target the "empty" group like onRecordAdd does, so the
+		// optimistic insert below works for them as well (JS-9764)
+		if (isViewBoard && !groupId) {
+			groupId = 'empty';
+		};
+
+		const subId = getSubId(groupId);
+		const details = getDetails(groupId);
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 
 		if (isCollection) {
 			details.createdInContext = objectId;
@@ -522,8 +530,11 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
-			if (!isViewBoard && !isViewCalendar) {
-				let records = getRecords(groupId);
+			if (!isViewCalendar) {
+				// Board columns render from the group subscription record list as is:
+				// use the raw list, getRecords would apply the object order of the
+				// first matching group (JS-9747, JS-9764)
+				let records = isViewBoard ? [ ...S.Record.getRecordIds(subId, '') ] : getRecords(groupId);
 
 				const oldIndex = records.indexOf(message.objectId);
 
@@ -534,9 +545,31 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 					} else {
 						dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
 					};
-				} else {	
+				} else {
 					const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
 					records = arrayMove(records, oldIndex, newIndex);
+				};
+
+				// Insert the new record into the group's custom order (if any), so the
+				// card keeps its position and stays visible after the column
+				// re-subscribes with a limited window. The local order is updated
+				// optimistically before recordsSet triggers a re-render — otherwise
+				// applyObjectOrder sorts the unknown id to the top of the column
+				// until the RPC round-trip completes (JS-9747, JS-9764)
+				if (isViewBoard) {
+					const order = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
+					const objectIds = [ ...(order?.objectIds || []) ];
+
+					if (order && !objectIds.includes(message.objectId)) {
+						if (idx >= 0) {
+							objectIds.splice(idx, 0, message.objectId);
+						} else {
+							dir > 0 ? objectIds.push(message.objectId) : objectIds.unshift(message.objectId);
+						};
+
+						set(order, { objectIds });
+						objectOrderUpdate([ { viewId: view.id, groupId, objectIds } ], records);
+					};
 				};
 
 				S.Record.recordsSet(subId, '', records);

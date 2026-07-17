@@ -37,16 +37,22 @@ const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	};
 
 	const onPaste = (e: any, v: any) => {
+		range.current = inputRef.current.getRange();
+
+		// Do not save immediately on paste: the resulting record update re-renders
+		// the cell and remounts the input mid-edit, blurring and closing the editor
+		// (JS-9181). The value is saved on blur/enter/unmount instead. Date cells
+		// keep the immediate save to sync the calendar menu with the parsed value.
 		if (isDate) {
 			v = fixDateValue(v);
-		};
+			setValue(v);
+			save(v);
 
-		range.current = inputRef.current.getRange();
-		setValue(v);
-		save(v);
-
-		if (isDate && !relation.includeTime) {
-			S.Menu.close('calendar');
+			if (!relation.includeTime) {
+				S.Menu.close('calendar');
+			};
+		} else {
+			setValue(v);
 		};
 	};
 
