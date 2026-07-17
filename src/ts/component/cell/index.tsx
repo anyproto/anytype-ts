@@ -424,8 +424,15 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 
 			const swallow = (e: globalThis.MouseEvent) => {
-				e.preventDefault();
-				e.stopPropagation();
+				const target = e.target as HTMLElement;
+
+				// Only clicks landing on a cell are swallowed — clicks on menus
+				// and other UI pass through untouched
+				if (target.closest('.cell, .cellContent')) {
+					e.preventDefault();
+					e.stopPropagation();
+				};
+
 				clear();
 			};
 
@@ -438,7 +445,9 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 				const target = e.target as HTMLElement;
 
 				if (!target.closest(`#${U.Common.esc(cellId)}`) && !target.closest('.menus')) {
-					if (menuId && S.Menu.isOpenList(J.Menu.cell) && target.closest('.cell, .cellContent')) {
+					// Only a primary-button mousedown produces a follow-up click event —
+					// arming on other buttons would eat an unrelated later click
+					if (menuId && S.Menu.isOpenList(J.Menu.cell) && (e.button == 0) && target.closest('.cell, .cellContent')) {
 						swallowNextClick();
 					};
 
