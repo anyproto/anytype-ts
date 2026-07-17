@@ -554,6 +554,10 @@ class UtilData {
 
 		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
+			// Still invoke the callback: callers (e.g. block/text pending-save
+			// accounting, JS-9285) rely on every save eventually completing —
+			// silently dropping it would leak their in-flight counters
+			callBack?.({ error: { code: 1, description: 'Block not found' } });
 			return;
 		};
 

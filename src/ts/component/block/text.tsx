@@ -74,6 +74,8 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const timeoutFilter = useRef(0);
 	const timeoutClick = useRef(0);
 	const timeoutText = useRef(0);
+	const pendingSavesRef = useRef(0);
+	const sentTextsRef = useRef<string[]>([]);
 	const preventMenu = useRef(false);
 	const clickCnt = useRef(0);
 	const prevStyleRef = useRef(style);
@@ -120,10 +122,22 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		// overwrites the user's latest keystrokes (e.g. code block text reverting).
 		// Only suppress when text hasn't changed AND marks haven't changed — mark
 		// toggles (bold, italic, etc.) need setValue to re-render markup.
-		const isEcho = (focused == block.id) && (text === textRef.current) && !marksChanged;
+		const isOwnEcho = (focused == block.id) && (text === textRef.current) && !marksChanged;
+
+		// A store text matching an earlier in-flight save (but not the latest one)
+		// is a stale echo arriving late — e.g. the debounced save racing the
+		// immediate save on blur. Suppress it independent of focus: after
+		// focus.clear() the guard above no longer applies and the stale echo would
+		// revert the just-typed content (JS-9285)
+		const sent = sentTextsRef.current;
+		const isStaleEcho = (pendingSavesRef.current > 0) && sent.includes(text) && (text !== sent[sent.length - 1]);
+		const isEcho = isOwnEcho || isStaleEcho;
 
 		if (textChanged || marksChanged) {
-			marksRef.current = marks || [];
+			// Don't absorb marks from a stale echo — they belong to the older save
+			if (!isStaleEcho) {
+				marksRef.current = marks || [];
+			};
 
 			// Only sync contenteditable from props when not focused or when content
 			// actually changed. When focused, the local editable state is the source
@@ -1267,16 +1281,31 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		textRef.current = value;
 
+		// Track in-flight saves and their values so the store-echo suppression in
+		// the render effect can tell a stale echo of an earlier save from a genuine
+		// remote change (JS-9285). Echoes are always applied by the dispatcher
+		// before the command callback fires, so clearing on the last callback is safe
+		sentTextsRef.current.push(value);
+		pendingSavesRef.current++;
+
+		const onSave = () => {
+			pendingSavesRef.current = Math.max(0, pendingSavesRef.current - 1);
+			if (!pendingSavesRef.current) {
+				sentTextsRef.current = [];
+			};
+			callBack?.();
+		};
+
 		const isRtl = U.String.checkRtl(value);
 
 		if (isRtl != checkRtl) {
 			// Save text first so intermediate re-renders from setRtl have the correct text in store,
 			// preventing character loss and stale CSS direction
 			U.Data.blockSetText(rootId, block.id, value, marks, update, () => {
-				U.Data.setRtl(rootId, block, isRtl, callBack);
+				U.Data.setRtl(rootId, block, isRtl, onSave);
 			});
 		} else {
-			U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
+			U.Data.blockSetText(rootId, block.id, value, marks, update, onSave);
 		};
 	};
 	

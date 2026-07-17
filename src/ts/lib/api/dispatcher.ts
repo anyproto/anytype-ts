@@ -1782,6 +1782,11 @@ class Dispatcher {
 				};
 
 				if (!response) {
+					// Still invoke the callback: callers rely on every request
+					// eventually completing (e.g. in-flight save accounting) —
+					// silently dropping it would leak their pending state
+					console.error('Empty response', type);
+					callBack?.({ error: { code: 1, description: 'Empty response' } });
 					return;
 				};
 

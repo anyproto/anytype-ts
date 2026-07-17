@@ -178,6 +178,64 @@ describe('Mark', () => {
 
 			expect(result).toHaveLength(0);
 		});
+
+		it('should trim leading newline out of code mark range', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 5, to: 11 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\nworld', marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].range.from).toBe(6);
+			expect(result[0].range.to).toBe(11);
+		});
+
+		it('should trim trailing newline out of code mark range', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 0, to: 6 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\nworld', marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].range.from).toBe(0);
+			expect(result[0].range.to).toBe(5);
+		});
+
+		it('should keep inner newlines of code mark range', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 0, to: 11 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\nworld', marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].range.from).toBe(0);
+			expect(result[0].range.to).toBe(11);
+		});
+
+		it('should remove code mark consisting only of newlines', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 5, to: 7 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\n\nworld', marks);
+
+			expect(result).toHaveLength(0);
+		});
+
+		it('should not trim newlines from non-code marks', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Bold, range: { from: 5, to: 11 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\nworld', marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].range.from).toBe(5);
+			expect(result[0].range.to).toBe(11);
+		});
 	});
 
 	describe('toggle', () => {

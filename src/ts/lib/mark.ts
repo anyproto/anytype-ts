@@ -245,6 +245,22 @@ class Mark {
 			const mark = marks[i];
 			const prev = marks[(i - 1)];
 
+			// Inline code renders as a padded pill (box-decoration-break: clone): a
+			// range that starts or ends on a soft line break ('\n' → <br/>) opens or
+			// closes the pill on the adjacent line, leaving an empty code fragment
+			// there — trim boundary newlines out of the range (JS-9825)
+			if (mark.type == I.MarkType.Code) {
+				mark.range.to = Math.min(mark.range.to, text.length);
+
+				while ((mark.range.from < mark.range.to) && (text[mark.range.from] == '\n')) {
+					mark.range.from++;
+				};
+
+				while ((mark.range.to > mark.range.from) && (text[mark.range.to - 1] == '\n')) {
+					mark.range.to--;
+				};
+			};
+
 			let del = false;
 			if (mark.range.from >= text.length) {
 				del = true;
