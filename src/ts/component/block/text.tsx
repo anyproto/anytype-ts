@@ -110,19 +110,21 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	}, []);
 
 	useEffect(() => {
-		// Never touch the editable DOM or its selection while an IME composition
-		// is in progress: replacing innerHTML or re-applying the (stale) focus
-		// range aborts the composition and commits the candidate text at the old
-		// caret position — e.g. wedged between the caret and an adjacent
-		// mention/object mark (JS-7510). Skip without updating prevTextRef /
-		// prevMarksRef so the store change is re-applied on the next render;
-		// onCompositionEnd reconciles value, marks and range once the
-		// composition settles.
-		if (keyboard.isComposition) {
+		const { focused } = focus.state;
+
+		// Never touch the composing editable's DOM or its selection while an IME
+		// composition is in progress: replacing innerHTML or re-applying the
+		// (stale) focus range aborts the composition and commits the candidate
+		// text at the old caret position — e.g. wedged between the caret and an
+		// adjacent mention/object mark (JS-7510). Scoped to the focused block so
+		// a composition elsewhere (chat input, search filter) doesn't stop other
+		// visible blocks from syncing store updates to their DOM. Skip without
+		// updating prevTextRef / prevMarksRef so the store change is re-applied
+		// on the next render; onCompositionEnd reconciles value, marks and range
+		// once the composition settles.
+		if (keyboard.isComposition && (focused == block.id)) {
 			return;
 		};
-
-		const { focused } = focus.state;
 		const textChanged = prevTextRef.current !== text;
 		const marksChanged = !U.Common.compareJSON(prevMarksRef.current, marks || []);
 
