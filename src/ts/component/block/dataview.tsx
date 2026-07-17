@@ -364,7 +364,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const subId = getSubId(groupId);
 		const records = S.Record.getRecordIds(subId, '');
 
-		return applyObjectOrder('', [ ...records ]);
+		return applyObjectOrder(groupId || '', [ ...records ]);
 	};
 
 	const getRecord = (id: string) => {
@@ -533,9 +533,24 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 					} else {
 						dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
 					};
-				} else {	
+				} else {
 					const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
 					records = arrayMove(records, oldIndex, newIndex);
+				};
+
+				// In manually ordered groups the render-time order sort would place an unknown
+				// id on top, so add it to the group order to keep the optimistic position
+				if (groupId) {
+					const order = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
+
+					if (order) {
+						const objectIds = order.objectIds || [];
+
+						if (!objectIds.includes(message.objectId)) {
+							dir > 0 ? objectIds.push(message.objectId) : objectIds.unshift(message.objectId);
+							order.objectIds = objectIds;
+						};
+					};
 				};
 
 				S.Record.recordsSet(subId, '', records);
