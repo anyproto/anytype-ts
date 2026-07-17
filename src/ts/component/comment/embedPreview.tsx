@@ -181,7 +181,9 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove, onChange }: Props) =>
 
 							window.clearTimeout(saveTimeoutRef.current);
 							saveTimeoutRef.current = window.setTimeout(() => {
-								onChange(JSON.stringify({ elements, appState, files }));
+								const prunedFiles = U.Embed.pruneExcalidrawFiles(elements, files);
+
+								onChange(JSON.stringify({ elements, appState, files: prunedFiles }));
 							}, 1000);
 						}}
 					/>

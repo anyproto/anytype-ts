@@ -774,7 +774,9 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 								window.clearTimeout(timeoutSaveRef.current);
 								timeoutSaveRef.current = window.setTimeout(() => {
-									C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState, files }));
+									const prunedFiles = U.Embed.pruneExcalidrawFiles(elements, files);
+
+									C.BlockLatexSetText(rootId, block.id, JSON.stringify({ elements, appState, files: prunedFiles }));
 								}, 1000);
 							}}
 							readonly={readonly}
