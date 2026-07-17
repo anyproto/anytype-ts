@@ -196,11 +196,14 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const relation = data.relation.get();
 		const addParam = data.addParam || {};
 
-		// Read the live filter from menu data before the cell clears it: this
-		// handler can be invoked through the imperative menu ref (Enter key),
-		// whose closure may have captured the mount-time empty filter — the
-		// typed name would be lost and the object created as Unknown (JS-9762)
-		const name = String(data.filter || filter || '');
+		// Read the live filter before the cell clears it: this handler can be
+		// invoked through the imperative menu ref (Enter key), whose closure may
+		// have captured the mount-time empty filter — the typed name would be
+		// lost and the object created as Unknown. Prefer the cell's live entry
+		// text: data.filter lags behind it by the cell's keyup debounce, so a
+		// fast type → arrow → Enter sequence would otherwise create the object
+		// with a truncated or stale name (JS-9762)
+		const name = String(cellRef?.getEntryValue?.() || data.filter || filter || '');
 
 		e.preventDefault();
 		e.stopPropagation();
