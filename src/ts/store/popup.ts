@@ -196,7 +196,7 @@ class PopupStore {
 
 				callBack?.();
 				U.Data.updateTabsDimmer();
-				U.Dom.eventDispatch(window, 'resize');
+				window.setTimeout(() => U.Dom.eventDispatch(window, 'resize'));
 
 				this.setIsAnimating(id, false);
 			}, J.Constant.delay.popup);
