@@ -1108,7 +1108,7 @@
 	"upsellBannerStorageFullUpsellText": "Upgrade to resume. ",
 
 	"upsellBannerStorageNonOwnerIncentive": "Storage is full in this Channel. ",
-	"upsellBannerStorageNonOwnerUpsell": "New files stay local. You can remove your files to free up space or ask the Space owner to upgrade storage. ",
+	"upsellBannerStorageNonOwnerUpsell": "New files stay local. You can remove your files to free up space or ask the Channel owner to upgrade storage. ",
 
 	"upsellBannerSpaceUsageText": "You have reached the limit of %s shared channels. ",
 	"upsellBannerSpaceUpsellText": "Upgrade to increase the limit. ",
@@ -1141,7 +1141,7 @@
 	"popupSettingsExportOk": "Export data",
 
 	"popupSettingsExportMarkdownTitle": "Export Channel to Markdown",
-	"popupSettingsExportMarkdownText1": "All your workspace data except columns and text color styling will be exported to markdown. It's a free and readable format that can be opened and edited with many free and beautiful applications.",
+	"popupSettingsExportMarkdownText1": "All your channel data except columns and text color styling will be exported to markdown. It's a free and readable format that can be opened and edited with many free and beautiful applications.",
 	"popupSettingsExportMarkdownText2": "If you want to add all your data back in Anytype, use the <b>Import<\/b> section.",
 
 	"popupSettingsExportProtobufTitle": "Export Channel to Any-Block",
@@ -2566,7 +2566,7 @@
 	"selectTemplateBannerWithNumber": "This type has %s %s",
 
 	"onboardingMainGraph": "Onboarding",
-	"onboardingMainGraph11": "<b>Channel is essentially a graph</b>, and Anytype aims to provide a natural way of thinking where everything is represented as objects with specific relationships, just like in the real world.",
+	"onboardingMainGraph11": "<b>A Channel is essentially a graph</b>, and Anytype aims to provide a natural way of thinking where everything is represented as objects with specific relationships, just like in the real world.",
 
 	"onboardingMainObject": "Description now exists in every object;<br/>you can hide or show it whenever you want.",
 	"onboardingMainType": "You can match the object settings to the Type settings with just one click.",
@@ -2586,7 +2586,7 @@
 	"onboardingTypeDeleted1Description": "If you want to keep using this Object, change this Object Type.",
 
 	"onboardingSourceDeleted1Title": "Please check your Installed Types & Properties",
-	"onboardingSourceDeleted1Description": "Some Objects in this Query use Types or Properties that have been removed from your Channel. Visit the Library to re-install these entities and continue using your Set.",
+	"onboardingSourceDeleted1Description": "Some Objects in this Query use Types or Properties that have been removed from your Channel. Visit the Library to re-install these entities and continue using your Query.",
 
 	"onboardingInlineSet1Title": "This is Inline Query",
 	"onboardingInlineSet1Description": "Congratulations! You can embed a Query or Collection and modify it using Filters and Views without altering the original instance.",
