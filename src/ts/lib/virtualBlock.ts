@@ -10,6 +10,7 @@ interface Fork {
 	newId: string;
 	sentText: string;
 	sentMarks: I.Mark[];
+	domAtSend: { text: string; marks: I.Mark[]; };
 	pending: { text: string; marks: I.Mark[]; };
 	cbQueue: ((message: any) => void)[];
 };
@@ -60,6 +61,7 @@ class VirtualBlock {
 	private block: I.Block = null;
 	private sentText = '';
 	private sentMarks: I.Mark[] = [];
+	private domAtSend: { text: string; marks: I.Mark[]; } = null;
 	private pending: { text: string; marks: I.Mark[]; } = null;
 	private cbQueue: ((message: any) => void)[] = [];
 	private orphans: Map<number, { text: string; marks: I.Mark[]; }> = new Map();
@@ -152,6 +154,7 @@ class VirtualBlock {
 		this.isCreating = false;
 		this.sentText = '';
 		this.sentMarks = [];
+		this.domAtSend = null;
 		this.pending = null;
 		this.cbQueue = [];
 		this.unbindComposition();
@@ -178,6 +181,7 @@ class VirtualBlock {
 		this.isCreating = false;
 		this.sentText = '';
 		this.sentMarks = [];
+		this.domAtSend = null;
 		this.pending = null;
 		this.cbQueue = [];
 		this.block = null;
@@ -255,6 +259,7 @@ class VirtualBlock {
 		this.isCreating = true;
 		this.sentText = text;
 		this.sentMarks = marks;
+		this.domAtSend = this.readDom(this.id);
 
 		C.BlockCreate(rootId, '', I.BlockPosition.Bottom, param, (message: any) => {
 			// The placeholder was re-activated or closed while the request was in
@@ -313,7 +318,7 @@ class VirtualBlock {
 		};
 
 		const dom = this.readDom(this.id);
-		const latest = dom || this.pending;
+		const latest = this.domChangedSince(dom, this.domAtSend) ? dom : this.pending;
 
 		this.pending = null;
 
@@ -424,6 +429,7 @@ class VirtualBlock {
 			newId: '',
 			sentText: text,
 			sentMarks: marks || [],
+			domAtSend: null,
 			pending: null,
 			cbQueue: callBack ? [ callBack ] : [],
 		};
@@ -460,6 +466,8 @@ class VirtualBlock {
 			this.runQueue(fork.cbQueue, { error: { code: 0 } });
 			return;
 		};
+
+		fork.domAtSend = this.readDom(oldId);
 
 		const param = {
 			type: I.BlockType.Text,
@@ -510,7 +518,7 @@ class VirtualBlock {
 	 */
 	private finishFork (oldId: string, fork: Fork) {
 		const dom = this.readDom(oldId);
-		const latest = dom || fork.pending;
+		const latest = this.domChangedSince(dom, fork.domAtSend) ? dom : fork.pending;
 
 		fork.pending = null;
 
@@ -580,6 +588,21 @@ class VirtualBlock {
 				console.error('[VirtualBlock] queued callback error', e);
 			};
 		};
+	};
+
+	/**
+	 * Whether the editable's DOM changed after the request was sent. The DOM is
+	 * only authoritative for input made while the request was in flight:
+	 * programmatic writes (e.g. paste as URL) never enter the editable, so an
+	 * unchanged — typically still empty — DOM must not override the sent content.
+	 */
+	private domChangedSince (dom: { text: string; marks: I.Mark[]; }, snapshot: { text: string; marks: I.Mark[]; }): boolean {
+		if (!dom) {
+			return false;
+		};
+
+		const prev = snapshot || { text: '', marks: [] };
+		return (dom.text !== prev.text) || !U.Common.compareJSON(dom.marks, prev.marks);
 	};
 
 	private getNode (id: string): HTMLElement {
