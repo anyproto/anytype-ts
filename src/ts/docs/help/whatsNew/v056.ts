@@ -64,10 +64,11 @@ export default (h: Helpers): Block[] => {
 		h2(`Bug Fixes`),
 		text(``),
 
-		toggle(`<b>Chat & Messaging (6)</b>`, [
+		toggle(`<b>Chat & Messaging (7)</b>`, [
 			bullet(`Double-clicking the last word of a message no longer also selects the timestamp.`),
 			bullet(`The unread notification no longer blinks for the chat you're actively reading.`),
 			bullet(`The Last Edited widget no longer reloads all of its icons when you react to a chat message.`),
+			bullet(`Searching within a chat now finds all matching messages, including ones it used to miss.`),
 			bullet(`Unread message counts are now accurate.`),
 			bullet(`Message previews no longer show up blank.`),
 			bullet(`Names and messages are no longer lost after the app rebuilds data in the background.`),
