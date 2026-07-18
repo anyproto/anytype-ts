@@ -2355,24 +2355,27 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let { focused, range } = focus.state;
 
-		// Pasting into the virgin virtual placeholder: no block exists yet — paste
-		// at the document bottom (empty target id appends), same as dropping onto
-		// the trailing drop zone. The pasted blocks carry their content, so no
-		// empty block is ever created
-		if (virtualBlock.isVirtualId(focused)) {
-			focused = '';
-			range = { from: 0, to: 0 };
-			virtualBlock.deactivate();
-		};
-
-		const block = S.Block.getLeaf(rootId, focused);
+		const isVirtual = virtualBlock.isVirtualId(focused);
+		const block = isVirtual ? virtualBlock.getBlock() : S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
 		const trimmedText = data.text.trim();
 		const urls = U.String.getUrlsFromText(trimmedText);
 
+		// A single pasted URL gets the "Paste as" menu in the virtual placeholder
+		// too — the chosen option materializes the placeholder with the content
 		if (urls.length && (urls[0].value == trimmedText) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
 			onPasteUrl(urls[0]);
 			return;
+		};
+
+		// Pasting into the virgin virtual placeholder: no block exists yet — paste
+		// at the document bottom (empty target id appends), same as dropping onto
+		// the trailing drop zone. The pasted blocks carry their content, so no
+		// empty block is ever created
+		if (isVirtual) {
+			focused = '';
+			range = { from: 0, to: 0 };
+			virtualBlock.deactivate();
 		};
 
 		let id = '';
@@ -2430,7 +2433,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { focused, range } = focus.state;
 		const currentFrom = range.from;
 		const currentTo = range.to;
-		const block = S.Block.getLeaf(rootId, focused);
+		const isVirtual = virtualBlock.isVirtualId(focused);
+		const block = isVirtual ? virtualBlock.getBlock() : S.Block.getLeaf(rootId, focused);
 
 		if (!block) {
 			return;
@@ -2461,7 +2465,11 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const isInsideTable = S.Block.checkIsInsideTable(rootId, block.id);
 		const length = block.getLength();
-		const position = (!length && block.isText()) ? I.BlockPosition.Replace : I.BlockPosition.Bottom;
+
+		// The virtual placeholder has no middleware-side block to replace —
+		// block-creating options append at the document bottom instead
+		const targetId = isVirtual ? '' : focused;
+		const position = isVirtual ? I.BlockPosition.Bottom : ((!length && block.isText()) ? I.BlockPosition.Replace : I.BlockPosition.Bottom);
 		const processor = U.Embed.getProcessorByUrl(url);
 		const canBookmark = !isInsideTable && !isLocal;
 		const isSameSpace = !linkParam.spaceId || (linkParam.spaceId == S.Common.space);
@@ -2530,6 +2538,17 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 					});
 				};
 			},
+			onClose: () => {
+				// Deferred one tick: onClose fires right before onSelect, a selected
+				// option has started materializing by the time the check runs.
+				// Dismissed without materializing: release the placeholder if focus
+				// already left it (blur deactivation is suppressed while the menu is open)
+				window.setTimeout(() => {
+					if (isVirtual && !virtualBlock.realId && !virtualBlock.isCreating && (focus.state.focused != virtualBlock.id)) {
+						virtualBlock.deactivate();
+					};
+				});
+			},
 			data: {
 				value: '',
 				options,
@@ -2539,22 +2558,27 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 					order.unshift(item.id);
 					Storage.set('pasteOptionOrder', order);
 
+					// Block-creating options append at the document bottom in the
+					// virtual context — the placeholder is no longer the target
+					if (isVirtual && [ 'object', 'bookmark', 'embed' ].includes(item.id)) {
+						virtualBlock.deactivate();
+					};
+
 					let marks = U.Common.objectCopy(block.content.marks || []);
 					let value = block.content.text;
 					let to = 0;
 
 					switch (item.id) {
 						case 'object': {
-							const targetId = linkParam.target;
 							const newBlock = {
 								type: I.BlockType.Link,
 								content: {
 									...U.Data.defaultLinkSettings(),
-									targetBlockId: targetId,
+									targetBlockId: linkParam.target,
 								},
 							};
 
-							C.BlockCreate(rootId, focused, position, newBlock, (message: any) => {
+							C.BlockCreate(rootId, targetId, position, newBlock, (message: any) => {
 								if (!message.error.code) {
 									blockCreate(message.blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 
@@ -2576,8 +2600,10 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param: url });
 
-							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
-								focus.set(block.id, { from: to + 1, to: to + 1 });
+							// An empty block forks its identity on first content (BlockReplace),
+							// the write then lands on the new id from the callback message
+							U.Data.blockSetText(rootId, block.id, value, marks, true, (message: any) => {
+								focus.set(message.blockId || block.id, { from: to + 1, to: to + 1 });
 								focus.apply();
 							});
 							break;
@@ -2586,7 +2612,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 						case 'bookmark': {
 							const bookmark = S.Record.getBookmarkType();
 
-							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, bookmark?.defaultTemplateId, (message: any) => {
+							C.BlockBookmarkCreateAndFetch(rootId, targetId, position, url, bookmark?.defaultTemplateId, (message: any) => {
 								if (!message.error.code) {
 									blockCreate(message.blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 
@@ -2600,8 +2626,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 							value = U.String.insert(block.content.text, url + ' ', currentFrom, currentFrom);
 							to = currentFrom + url.length;
 
-							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
-								focus.set(block.id, { from: to + 1, to: to + 1 });
+							U.Data.blockSetText(rootId, block.id, value, marks, true, (message: any) => {
+								focus.set(message.blockId || block.id, { from: to + 1, to: to + 1 });
 								focus.apply();
 							});
 							break;
@@ -2609,7 +2635,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 						case 'embed': {
 							if (processor !== null) {
-								blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
+								blockCreate(targetId, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
 									blockCreate(blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 									const previewEl = U.Dom.select(`.preview`, U.Dom.get(`block-${blockId}`));
 									if (previewEl) {
@@ -3109,6 +3135,12 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onVirtualBlur = () => {
+		// The "Paste as" menu blurs the placeholder on item mousedown but its
+		// options still target it — the menu releases the placeholder on close
+		if (S.Menu.isOpen('selectPasteUrl')) {
+			return;
+		};
+
 		// Focus left the placeholder with nothing typed: nothing was created,
 		// nothing to clean up. A materialized placeholder finishes its swap on its own
 		if (!virtualBlock.realId && !virtualBlock.isCreating) {
