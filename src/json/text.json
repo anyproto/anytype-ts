@@ -1090,7 +1090,7 @@
 	"popupSettingsSpaceIndexPushText2": "You won't receive any notifications",
 	"popupSettingsSpaceIndexPushText3": "Custom notification settings",
 	"popupSettingsSpaceIndexUxTypeTitle": "Channel Type",
-	"popupSettingsSpaceIndexUxTypeText": "Convert channels into chats and vise versa",
+	"popupSettingsSpaceIndexUxTypeText": "Convert a Channel between Data and Chat",
 	"popupSettingsSpaceIndexUxTypeTooltip": "You reached a limit of %d channels. Upgrade to create more.",
 
 	"popupSettingsSpaceStorageEmptyLabel": "Your storage is empty",
@@ -1513,7 +1513,7 @@
 	"popupConfirmSystemWidgetRemoveFavoriteText": "Before removing this widget, re-pin your items to the new Pinned section. Deleting this widget can't be undone.",
 
 	"popupConfirmUxTypeChangeTitle": "Convert Channel Type?",
-	"popupConfirmUxTypeChangeText": "Switching between Channel and Chat will significantly change the experience.",
+	"popupConfirmUxTypeChangeText": "Switching between Data and Chat will significantly change the experience.",
 	"popupConfirmUxTypeChangeConfirm": "Yes, convert",
 
 	"popupConfirmMembershipSurveyTitle": "Welcome to the network,<br/>%s!",

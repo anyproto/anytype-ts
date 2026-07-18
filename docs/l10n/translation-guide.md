@@ -202,6 +202,14 @@ for translations. `id-ID` has a stale plural (`widgetSet = "Daftar"` = "List") �
 | zh-CN | 查询 | ✓ |
 | zh-TW | 查詢 | ✓ |
 
+### 4d. Channel type labels: **Data** vs **Chat**
+
+A Channel has a UX *type* — either **Data** or **Chat** (`popupConfirmUxTypeChangeText`,
+`popupSettingsSpaceIndexUxTypeText`, `popupSettingsSpaceIndexUxTypeTitle` "Channel Type"). Here
+**Data** and **Chat** are short *type-label* nouns for the toggle — translate them as concise UI
+labels, and don't confuse "Data" with the generic word for data/content elsewhere. Keep them
+consistent with each language's existing "Chat" translation.
+
 ---
 
 ## 5. Glossary — core terms (keep consistent)
