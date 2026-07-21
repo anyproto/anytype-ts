@@ -109,6 +109,10 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 			window.clearTimeout(timeoutFilter.current);
 			cellRefs.current.clear();
 			recordRefs.current.clear();
+
+			// A dangling lock would keep deferring subscription events after the view
+			// is gone; the record order re-syncs on the next subscribe (GO-7387)
+			S.Record.positionLockClear(getSubId(), '');
 		};
 	}, []);
 
@@ -530,6 +534,8 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
+			const isSorted = !isViewBoard && S.Record.getMeta(subId, '').isSorted;
+
 			if (!isViewCalendar) {
 				// Board columns render from the group subscription record list as is:
 				// use the raw list, getRecords would apply the object order of the
@@ -591,6 +597,14 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 			if (isViewGraph || isViewCalendar || (U.Object.isNoteLayout(object.layout))) {
 				U.Object.openConfig(e, object);
 			} else {
+				// On sorted subscriptions the middleware repositions the new record right
+				// away (an empty name sorts to the top under Name Asc), which would move
+				// the row while its name is being typed: hold the reposition until editing
+				// ends — setRecordEditingOff applies the stashed position (GO-7387)
+				if (isSorted) {
+					S.Record.positionLockSet(subId, '', object.id);
+				};
+
 				window.setTimeout(() => setRecordEditingOn(e, object.id), 15);
 			};
 
@@ -1599,6 +1613,9 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		nameRef?.onBlur();
+
+		// Apply any subscription reposition stashed while the name was being edited (GO-7387)
+		U.Subscription.applyPendingPosition(getSubId());
 	};
 
 	const multiSelectAction = (id: string) => {

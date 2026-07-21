@@ -13,7 +13,7 @@
 | `space.ts` | `U.Space` | Dashboard, space list, participants, sharing, publishing |
 | `menu.ts` | `U.Menu` | Menu item builders, vault items, color lists, turnTo options |
 | `embed.ts` | `U.Embed` | Embed HTML generators (YouTube, Vimeo, Google Maps, Figma, etc.) |
-| `subscription.ts` | `U.Subscription` | Data subscription management for real-time updates |
+| `subscription.ts` | `U.Subscription` | Data subscription management for real-time updates; exports pure `applySubscriptionPosition` (record reorder reducer for SubscriptionAdd/Position events, unit-tested in `subscription.test.ts`) |
 | `date.ts` | `U.Date` | Date formatting, calendar helpers |
 | `string.ts` | `U.String` | String manipulation (camelCase, truncate, URL parsing) |
 | `file.ts` | `U.File` | File upload, download, type detection |

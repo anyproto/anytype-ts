@@ -166,6 +166,14 @@ class Dataview {
 		]);
 		let sorts = U.Common.objectCopy(view.sorts).concat(param.sorts || []);
 
+		const order = block ? block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == '')) : null;
+		const orderIds = order ? order.objectIds || [] : [];
+
+		// The record order is defined by explicit view sorts only when no manual order
+		// overrides them: for such subscriptions the dispatcher lets SubscriptionAdd
+		// reposition optimistically inserted records to the middleware position (GO-7387)
+		meta.isSorted = !orderIds.length && (this.getFilteredSorts(sorts).length > 0);
+
 		if (viewChange) {
 			meta.viewId = newViewId;
 		};
@@ -180,13 +188,8 @@ class Dataview {
 
 		S.Record.metaSet(subId, '', meta);
 
-		if (block) {
-			const el = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == ''));
-			const objectIds = el ? el.objectIds || [] : [];
-
-			if (objectIds.length) {
-				sorts.unshift({ relationKey: 'id', type: I.SortType.Custom, customOrder: objectIds });
-			};
+		if (orderIds.length) {
+			sorts.unshift({ relationKey: 'id', type: I.SortType.Custom, customOrder: orderIds });
 		};
 
 		filters = this.getFilteredFilters(filters).map(it => this.filterMapper({ ...it, includeTime: false }, { rootId }));

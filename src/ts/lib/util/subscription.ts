@@ -2,6 +2,52 @@ import sha1 from 'sha1';
 import * as I from 'Interface';
 
 /**
+ * Computes the next record id list for a SubscriptionAdd / SubscriptionPosition event.
+ * Returns null when the list must not change.
+ *
+ * A SubscriptionAdd for an id that is already in the list keeps the client's position:
+ * optimistic inserts pick the index the user chose, and in manually ordered views the
+ * middleware position must not override it. Sorted subscriptions are the exception —
+ * there the middleware position is authoritative, and keeping the optimistic position
+ * desyncs the client from the subscription window permanently, because follow-up
+ * SubscriptionPosition events are only sent when the order changes middleware-side (GO-7387).
+ *
+ * @param {string[]} records - The current record id list.
+ * @param {string} id - The record id from the event.
+ * @param {string} afterId - The id to place the record after; empty string means head.
+ * @param {boolean} isAdding - Whether the event is a SubscriptionAdd (vs SubscriptionPosition).
+ * @param {boolean} isSorted - Whether the subscription order is defined by explicit view sorts.
+ * @returns {string[] | null} The new record id list, or null when no change should be applied.
+ */
+export const applySubscriptionPosition = (records: string[], id: string, afterId: string, isAdding: boolean, isSorted: boolean): string[] | null => {
+	const oldIndex = records.indexOf(id);
+
+	if (isAdding && (oldIndex >= 0) && !isSorted) {
+		return null;
+	};
+
+	records = [ ...records ];
+
+	let newIndex = records.indexOf(afterId);
+
+	if (!afterId) {
+		newIndex = 0;
+	} else
+	if ((newIndex >= 0) && (newIndex < oldIndex)) {
+		newIndex++;
+	};
+
+	if (oldIndex < 0) {
+		records.splice(afterId ? newIndex + 1 : 0, 0, id);
+	} else
+	if (oldIndex !== newIndex) {
+		records.splice(newIndex < 0 ? records.length + newIndex : newIndex, 0, records.splice(oldIndex, 1)[0]);
+	};
+
+	return records;
+};
+
+/**
  * Utility class for managing subscriptions, search, and data synchronization in the application.
  * Provides methods for subscribing to object changes, searching, and managing subscription state.
  */
@@ -66,6 +112,28 @@ class UtilSubscription {
 		};
 
 		S.Record.recordsSet(subId, '', message.records.map(it => it[idField]).filter(it => it));
+	};
+
+	/**
+	 * Applies the position stashed for a position-locked record and releases the lock.
+	 * Called when inline name editing of a freshly created record ends, moving the row
+	 * to the position the middleware reported while the lock was held (GO-7387).
+	 * @param {string} subId - The subscription ID.
+	 */
+	applyPendingPosition (subId: string) {
+		const lock = S.Record.getPositionLock(subId, '');
+
+		S.Record.positionLockClear(subId, '');
+
+		if (!lock || !lock.hasPending) {
+			return;
+		};
+
+		const records = applySubscriptionPosition(S.Record.getRecordIds(subId, ''), lock.id, lock.afterId, false, true);
+
+		if (records) {
+			S.Record.recordsSet(subId, '', records);
+		};
 	};
 
 	/**
