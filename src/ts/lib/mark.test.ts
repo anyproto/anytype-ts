@@ -222,6 +222,19 @@ describe('Mark', () => {
 			expect(result[0].range.to).toBe(10);
 		});
 
+		it('should merge adjacent marks when one param is undefined and the other is empty string', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Italic, range: { from: 0, to: 5 } },
+				{ type: I.MarkType.Italic, range: { from: 5, to: 11 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello world', marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].range.from).toBe(0);
+			expect(result[0].range.to).toBe(11);
+		});
+
 		it('should remove marks with negative ranges', () => {
 			const marks: I.Mark[] = [
 				{ type: I.MarkType.Bold, range: { from: -1, to: 5 }, param: '' },
