@@ -1,0 +1,116 @@
+import { describe, it, expect } from 'vitest';
+import { applySubscriptionPosition } from './subscription';
+
+/**
+ * Regression coverage for GO-7387: in a collection with an explicit sort (e.g. Name Asc),
+ * an object created via "+ New object" stayed at the bottom of the list instead of moving
+ * to its sorted position.
+ *
+ * The client optimistically appends the created id to the record list before the
+ * middleware processes ObjectCollectionAdd. The middleware then emits SubscriptionAdd
+ * with the correct sorted position (afterId), but the reducer skipped every
+ * SubscriptionAdd whose id was already present, so the optimistic tail position stuck.
+ * Follow-up SubscriptionPosition events are only emitted when the record's relative
+ * order changes middleware-side — renaming the object to a name that keeps its slot
+ * (empty names sort first under Name Asc, so e.g. "a" never moves) produced no event,
+ * and the record was stranded at the bottom permanently.
+ *
+ * The fix: on sorted subscriptions a SubscriptionAdd for an already present id is
+ * applied as a move to the middleware position. Unsorted (manually ordered)
+ * subscriptions keep the old behavior — there the optimistic index is the user's
+ * chosen insert position and must win. While the record's name is being
+ * inline-edited the dispatcher stashes the position via a position lock instead
+ * (so the row does not move mid-typing) and the dataview replays it through this
+ * function when editing ends.
+ */
+describe('applySubscriptionPosition', () => {
+
+	const base = [ 'r1', 'r2', 'r3' ];
+
+	describe('SubscriptionAdd, id not in the list', () => {
+
+		it('inserts at head when afterId is empty', () => {
+			expect(applySubscriptionPosition(base, 'x', '', true, false)).toEqual([ 'x', 'r1', 'r2', 'r3' ]);
+		});
+
+		it('inserts after afterId', () => {
+			expect(applySubscriptionPosition(base, 'x', 'r2', true, false)).toEqual([ 'r1', 'r2', 'x', 'r3' ]);
+		});
+
+	});
+
+	describe('SubscriptionAdd, id already in the list (optimistic insert)', () => {
+
+		it('keeps the optimistic position on unsorted subscriptions', () => {
+			expect(applySubscriptionPosition([ ...base, 'x' ], 'x', '', true, false)).toBeNull();
+		});
+
+		it('moves an optimistically appended record to the head on sorted subscriptions (GO-7387)', () => {
+			expect(applySubscriptionPosition([ ...base, 'x' ], 'x', '', true, true)).toEqual([ 'x', 'r1', 'r2', 'r3' ]);
+		});
+
+		it('moves an optimistically appended record after afterId on sorted subscriptions', () => {
+			expect(applySubscriptionPosition([ ...base, 'x' ], 'x', 'r1', true, true)).toEqual([ 'r1', 'x', 'r2', 'r3' ]);
+		});
+
+		it('keeps the list unchanged when the record is already at the middleware position', () => {
+			expect(applySubscriptionPosition([ 'x', ...base ], 'x', '', true, true)).toEqual([ 'x', 'r1', 'r2', 'r3' ]);
+		});
+
+	});
+
+	describe('SubscriptionPosition', () => {
+
+		it('moves a record towards the head, placing it after afterId', () => {
+			expect(applySubscriptionPosition([ ...base, 'x' ], 'x', 'r1', false, false)).toEqual([ 'r1', 'x', 'r2', 'r3' ]);
+		});
+
+		it('moves a record towards the tail, placing it after afterId', () => {
+			expect(applySubscriptionPosition([ 'x', ...base ], 'x', 'r2', false, false)).toEqual([ 'r1', 'r2', 'x', 'r3' ]);
+		});
+
+		it('moves a record to the head when afterId is empty', () => {
+			expect(applySubscriptionPosition([ ...base, 'x' ], 'x', '', false, false)).toEqual([ 'x', 'r1', 'r2', 'r3' ]);
+		});
+
+		it('inserts a missing record after afterId', () => {
+			expect(applySubscriptionPosition(base, 'x', 'r3', false, false)).toEqual([ 'r1', 'r2', 'r3', 'x' ]);
+		});
+
+	});
+
+	describe('GO-7387 scenario replay', () => {
+
+		// Name Asc collection of bookmarks; B1 sorts before "b", B2..B7 after "c" and before "z".
+		// Objects are created unnamed (sorting to the head middleware-side), optimistically
+		// appended at the tail client-side, then renamed to a, z, b, c.
+		it('places every created object correctly once SubscriptionAdd is applied as a move', () => {
+			const apply = (records: string[], id: string, afterId: string, isAdding: boolean) => {
+				return applySubscriptionPosition(records, id, afterId, isAdding, true) || records;
+			};
+
+			let records = [ 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7' ];
+
+			// create "a": optimistic append, then SubscriptionAdd(head); the rename to "a"
+			// keeps the head slot middleware-side, so no SubscriptionPosition ever follows
+			records = apply([ ...records, 'a' ], 'a', '', true);
+			expect(records[0]).toBe('a');
+
+			// create "z": optimistic append, SubscriptionAdd(head), rename moves it after B7
+			records = apply([ ...records, 'z' ], 'z', '', true);
+			records = apply(records, 'z', 'B7', false);
+
+			// create "b": same flow, rename moves it after B1
+			records = apply([ ...records, 'b' ], 'b', '', true);
+			records = apply(records, 'b', 'B1', false);
+
+			// create "c": same flow, rename moves it after "b"
+			records = apply([ ...records, 'c' ], 'c', '', true);
+			records = apply(records, 'c', 'b', false);
+
+			expect(records).toEqual([ 'a', 'B1', 'b', 'c', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'z' ]);
+		});
+
+	});
+
+});

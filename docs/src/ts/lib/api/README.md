@@ -40,6 +40,7 @@ The dispatcher manages:
 - Event stream subscription (`listenEvents`) with ordered event processing
 - MobX store updates from server events (block changes, detail updates, subscription counters)
 - Event sorting to ensure correct processing order (e.g., `BlockSetChildrenIds` before `BlockAdd`); event type/data are precomputed once per message before the sort (`SORT_IDS` priority order)
+- Subscription record ordering: `SubscriptionAdd`/`SubscriptionPosition` events apply via the pure `applySubscriptionPosition` (`Lib/util/subscription`); on sorted subscriptions (`getMeta().isSorted`) a `SubscriptionAdd` repositions an optimistically inserted record instead of being skipped. While a freshly created record's name is inline-edited, a position lock (`S.Record.positionLockSet`) stashes reposition events; the dataview applies the stash when editing ends (GO-7387)
 
 ## Protobuf Bindings
 

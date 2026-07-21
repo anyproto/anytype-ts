@@ -35,6 +35,7 @@ class RecordStore {
 	public metaMap: Map<string, any> = observable.map(new Map());
 	public groupMap: Map<string, any> = observable.map(new Map());
 	public spaceMap: Map<string, string> = new Map();
+	public positionLockMap: Map<string, { id: string; afterId: string; hasPending: boolean }> = new Map();
 
 	constructor() {
 		makeObservable(this, {
@@ -71,6 +72,7 @@ class RecordStore {
 		this.metaMap.clear();
 		this.groupMap.clear();
 		this.spaceMap.clear();
+		this.positionLockMap.clear();
 	};
 
 	/**
@@ -289,6 +291,52 @@ class RecordStore {
 	 */
 	metaClear (rootId: string, blockId: string) {
 		this.metaMap.delete(this.getId(rootId, blockId));
+	};
+
+	/**
+	 * Locks the subscription position of a record: reposition events for it are
+	 * stashed instead of applied until the lock is cleared. Used while the record's
+	 * name is being inline-edited, so the row does not move mid-typing (GO-7387).
+	 * @param {string} rootId - The root ID (subscription ID).
+	 * @param {string} blockId - The block ID.
+	 * @param {string} id - The record ID to lock.
+	 */
+	positionLockSet (rootId: string, blockId: string, id: string) {
+		this.positionLockMap.set(this.getId(rootId, blockId), { id, afterId: '', hasPending: false });
+	};
+
+	/**
+	 * Stashes the latest deferred position for a locked record.
+	 * @param {string} rootId - The root ID (subscription ID).
+	 * @param {string} blockId - The block ID.
+	 * @param {string} afterId - The record ID to place the locked record after; empty string means head.
+	 */
+	positionLockStash (rootId: string, blockId: string, afterId: string) {
+		const lock = this.positionLockMap.get(this.getId(rootId, blockId));
+
+		if (lock) {
+			lock.afterId = afterId;
+			lock.hasPending = true;
+		};
+	};
+
+	/**
+	 * Gets the position lock for a subscription, if any.
+	 * @param {string} rootId - The root ID (subscription ID).
+	 * @param {string} blockId - The block ID.
+	 * @returns {object|null} The lock, or null when the subscription is not locked.
+	 */
+	getPositionLock (rootId: string, blockId: string): { id: string; afterId: string; hasPending: boolean } | null {
+		return this.positionLockMap.get(this.getId(rootId, blockId)) || null;
+	};
+
+	/**
+	 * Clears the position lock for a subscription.
+	 * @param {string} rootId - The root ID (subscription ID).
+	 * @param {string} blockId - The block ID.
+	 */
+	positionLockClear (rootId: string, blockId: string) {
+		this.positionLockMap.delete(this.getId(rootId, blockId));
 	};
 
 	/**
@@ -731,6 +779,7 @@ class RecordStore {
 			offset: Number(map.offset) || 0,
 			viewId: String(map.viewId || ''),
 			keys: map.keys || [],
+			isSorted: Boolean(map.isSorted),
 		};
 	};
 

@@ -10,6 +10,7 @@ import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { liveAddIndex } from 'Lib/util/chatWindow';
+import { applySubscriptionPosition } from 'Lib/util/subscription';
 
 const SORT_IDS = [
 	'BlockAdd',
@@ -1639,15 +1640,6 @@ class Dispatcher {
 		};
 	};
 
-	/**
-	 * Update the position of a record within a subscription's ordered list.
-	 * Used for maintaining correct sort order when items are added or moved.
-	 *
-	 * @param subId - Subscription ID containing the record list
-	 * @param id - ID of the record to position
-	 * @param afterId - ID of the record after which to place the item (empty for start)
-	 * @param isAdding - Whether this is a new addition (skip if already exists)
-	 */
 	parseSubId (subId: string): [string, string] {
 		const idx = subId.indexOf('/');
 		if (idx === -1) {
@@ -1656,36 +1648,36 @@ class Dispatcher {
 		return [ subId.slice(0, idx), subId.slice(idx + 1) ];
 	};
 
+	/**
+	 * Update the position of a record within a subscription's ordered list.
+	 * Used for maintaining correct sort order when items are added or moved.
+	 *
+	 * @param subId - Subscription ID containing the record list
+	 * @param id - ID of the record to position
+	 * @param afterId - ID of the record after which to place the item (empty for start)
+	 * @param isAdding - Whether this is a new addition (repositions an already present record only on sorted subscriptions)
+	 */
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
 		const [ sid, dep ] = this.parseSubId(subId);
 		if (dep) {
 			return;
 		};
 
-		let records = S.Record.getRecordIds(sid, '');
-		let newIndex = records.indexOf(afterId);
-
-		const oldIndex = records.indexOf(id);
-
-		if (isAdding && (oldIndex >= 0)) {
+		// While the record's name is being inline-edited, stash the position instead
+		// of applying it — moving the row would remount the editor mid-typing. The
+		// stash is applied when editing ends (GO-7387)
+		const lock = S.Record.getPositionLock(sid, '');
+		if (lock && (lock.id == id)) {
+			S.Record.positionLockStash(sid, '', afterId);
 			return;
 		};
 
-		if (!afterId) {
-			newIndex = 0;
-		} else
-		if ((newIndex >= 0) && (newIndex < oldIndex)) {
-			newIndex++;
-		};
+		const { isSorted } = S.Record.getMeta(sid, '');
+		const records = applySubscriptionPosition(S.Record.getRecordIds(sid, ''), id, afterId, isAdding, isSorted);
 
-		if (oldIndex < 0) {
-			records.splice(afterId ? newIndex + 1 : 0, 0, id);
-		} else
-		if (oldIndex !== newIndex) {
-			records = arrayMove(records, oldIndex, newIndex);
+		if (records) {
+			S.Record.recordsSet(sid, '', records);
 		};
-
-		S.Record.recordsSet(sid, '', records);
 	};
 
 	/**
