@@ -1912,7 +1912,10 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			}, releaseEnterGuard);
 		} else
 		if (block.isTextParagraph() && !length && parent && (parent.canToggle() || parent.isTextCallout() || parent.isTextQuote())) {
-			Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom, releaseEnterGuard);
+			Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom, () => {
+				focusSet(block.id, 0, 0, true);
+				releaseEnterGuard();
+			});
 		} else {
 			blockSplit(block, range, isShift, releaseEnterGuard);
 		};
