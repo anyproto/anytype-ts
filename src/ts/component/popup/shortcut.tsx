@@ -449,6 +449,15 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 		U.Dom.addEvent(window, 'keydown', keydownHandler.current);
 
+		// This handler preventDefaults EVERY key while recording — it must be
+		// torn down by this effect itself, not rely on a sibling effect's cleanup,
+		// or a leak would eat all keys app-wide until restart
+		return () => {
+			if (keydownHandler.current) {
+				U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
+				keydownHandler.current = null;
+			};
+		};
 	}, [ editingId ]);
 
 	useEffect(() => {

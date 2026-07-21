@@ -417,7 +417,7 @@ const MenuDataviewFilterValues = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		className,
 		classNameWrap,
 		rebind,
-		parentId: getId(),
+		parentId: props.id,
 	};
 
 	let wrapValue = false;

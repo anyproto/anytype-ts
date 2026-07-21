@@ -14,6 +14,7 @@ const MenuTemplateList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const nodeRef = useRef(null);
 	const n = useRef(0);
 	const keydownHandler = useRef(null);
+	const isUnmountedRef = useRef(false);
 	const subId = [ getId(), 'data' ].join('-');
 
 	const rebind = () => {
@@ -30,6 +31,12 @@ const MenuTemplateList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDownHandler = (e: any) => {
+		// A leaked window listener must never act for a dead menu — bail before
+		// any preventDefault or it silently eats the key app-wide until restart
+		if (isUnmountedRef.current) {
+			return;
+		};
+
 		let ret = false;
 
 		keyboard.shortcut('arrowup, arrowleft, arrowdown, arrowright', e, (pressed: string) => {
@@ -232,6 +239,8 @@ const MenuTemplateList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		load();
 
 		return () => {
+			isUnmountedRef.current = true;
+
 			U.Subscription.destroyList([ subId ]);
 			unbind();
 		};

@@ -17,6 +17,13 @@ Each menu component exposes a `MenuRef` interface via `useImperativeHandle`:
 { rebind, unbind, getItems, getIndex, setIndex, onClick, onOver, getListRef, ... }
 ```
 
+### Window keydown lifecycle
+
+Child menus bind their own `window` keydown listener in `rebind()`/`unbind()`. Invariants (a leaked listener otherwise `preventDefault`s its keys app-wide until restart):
+- `unbind()` in the unmount cleanup, and cancel any deferred bind timers
+- Handlers that call `e.preventDefault()` bail on an `isUnmountedRef` guard first
+- Submenus restore the parent's keydown via `{ rebind, parentId }` in `S.Menu.open` — `parentId` must be the **store id** (`props.id`), not the DOM id from `getId()`. On submenu close, `rebindPrevious` resolves the live parent instance through the `S.Menu` ref registry (`setRef`/`getRef`); the `rebind` closure captured at open time is treated as intent only and never called, so a closed-and-reopened parent can't resurrect a dead listener
+
 ## Menu Categories
 
 ### Block Menus (`block/`)

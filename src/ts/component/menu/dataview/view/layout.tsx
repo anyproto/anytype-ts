@@ -15,6 +15,7 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const saveParam = useRef<any>({});
 	const { type } = saveParam.current;
 	const [ dummy, setDummy ] = useState(0);
+	const isUnmountedRef = useRef(false);
 
 	useEffect(() => {
 		saveParam.current = U.Common.objectCopy(data.view.get());
@@ -23,6 +24,8 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		position();
 
 		return () => {
+			isUnmountedRef.current = true;
+
 			unbind();
 			save();
 			menuClose();
@@ -46,6 +49,12 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 	
 	const onKeyDownHandler = (e: any) => {
+		// A leaked window listener must never act for a dead menu — bail before
+		// any preventDefault or it silently eats the key app-wide until restart
+		if (isUnmountedRef.current) {
+			return;
+		};
+
 		const item = getItems()[n.current];
 
 		let ret = false;
