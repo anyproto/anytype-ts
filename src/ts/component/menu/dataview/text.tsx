@@ -13,8 +13,16 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const inputRef = useRef(null);
 	const n = useRef(-1);
 	const keydownHandler = useRef(null);
+	const isUnmountedRef = useRef(false);
+	const timeoutBind = useRef(0);
 	const length = value.length;
 	const valueRef = useRef(value);
+
+	useEffect(() => {
+		return () => {
+			isUnmountedRef.current = true;
+		};
+	}, []);
 
 	useEffect(() => {
 		rebind();
@@ -27,7 +35,7 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const rebind = () => {
 		unbind();
-		
+
 		if (inputRef.current) {
 			inputRef.current.setValue(U.String.htmlSpecialChars(value));
 			inputRef.current.setRange({ from: length, to: length });
@@ -35,7 +43,7 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			inputRef.current.setFocus();
 		};
 
-		window.setTimeout(() => {
+		timeoutBind.current = window.setTimeout(() => {
 			setActive();
 			keydownHandler.current = (e: any) => onKeyDownHandler(e);
 			U.Dom.addEvent(window, 'keydown', keydownHandler.current);
@@ -43,6 +51,10 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const unbind = () => {
+		// The add runs on a timer — cancel a pending one or it re-adds the
+		// listener after unmount with nobody left to remove it
+		window.clearTimeout(timeoutBind.current);
+
 		if (keydownHandler.current) {
 			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
@@ -55,6 +67,12 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDownHandler = (e: any) => {
+		// A leaked window listener must never act for a dead menu — bail before
+		// any preventDefault or it silently eats the key app-wide until restart
+		if (isUnmountedRef.current) {
+			return;
+		};
+
 		let ret = false;
 		const hasActions = actions.length > 0;
 

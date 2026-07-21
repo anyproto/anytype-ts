@@ -69,6 +69,8 @@ const MenuSmile = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		analytics.event('ScreenEmoji', { route: data?.route });
 
 		return () => {
+			isUnmountedRef.current = true;
+
 			window.clearTimeout(timeoutMenu.current);
 			window.clearTimeout(timeoutFilter.current);
 
@@ -102,6 +104,7 @@ const MenuSmile = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	}, [ tab, filter ]);
 
 	const keydownHandler = useRef<(e: any) => void>(() => {});
+	const isUnmountedRef = useRef(false);
 
 	const rebind = () => {
 		unbind();
@@ -380,6 +383,12 @@ const MenuSmile = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDown = (e: any) => {
+		// A leaked window listener must never act for a dead menu — bail before
+		// any preventDefault or it silently eats the key app-wide until restart
+		if (isUnmountedRef.current) {
+			return;
+		};
+
 		if (S.Menu.isOpen('smileColor')) {
 			return;
 		};

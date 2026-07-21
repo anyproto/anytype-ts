@@ -20,6 +20,8 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 
 		return () => {
+			isUnmountedRef.current = true;
+
 			unbind();
 			keyboard.setFocus(false);
 			S.Menu.closeAll(J.Menu.action);
@@ -42,6 +44,7 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 	
 	const keydownHandler = useRef(null);
+	const isUnmountedRef = useRef(false);
 
 	const rebind = () => {
 		unbind();
@@ -58,6 +61,13 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDownHandler = (e: any) => {
+		// A leaked window listener must never act for a dead menu — bail before
+		// any preventDefault/blockRemove or it silently eats the key (or deletes
+		// blocks) app-wide until restart
+		if (isUnmountedRef.current) {
+			return;
+		};
+
 		const cmd = keyboard.cmdKey();
 
 		let ret = false;

@@ -11,7 +11,7 @@ Reactive state stores using MobX. Each store manages a specific domain. Accessed
 | `block.ts` | `S.Block` | Document block trees: block CRUD, tree traversal, children management |
 | `detail.ts` | `S.Detail` | Object details/properties: get/set details, relations, layout info. Stores raw values in shallow observable maps (per-relation-key reactivity); `get()` results are cached per-args in reactive contexts via self-evicting computeds |
 | `record.ts` | `S.Record` | Dataview records: views, sorts, filters, groups, types, relations |
-| `menu.ts` | `S.Menu` | Menu state: open/close/update menus, sub-menu management |
+| `menu.ts` | `S.Menu` | Menu state: open/close/update menus, sub-menu management, live-instance ref registry (`setRef`/`getRef`/`deleteRef`) for safe keydown rebinding |
 | `popup.ts` | `S.Popup` | Popup state: open/close/update popups, dimmer control |
 | `chat.ts` | `S.Chat` | Chat messages: message CRUD, reactions, threads, counters |
 | `comment.ts` | `S.Comment` | Comment posts and replies: CRUD for posts/replies, pagination (hasMore) |
