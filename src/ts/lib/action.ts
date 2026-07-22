@@ -1445,6 +1445,76 @@ class Action {
 		analytics.event('AddTab', { route: analyticsRoute, spaceType });
 	};
 
+	/**
+	 * Resolves the localized message for an unsafe vault location, adapting to network mode.
+	 * @param {any} check - Result of U.Common.checkVaultPath.
+	 * @param {boolean} isLocalOnly - Whether the account/config is local-only.
+	 */
+	vaultLocationWarningText (check: any, isLocalOnly: boolean): string {
+		const provider = check.provider || translate('vaultLocationWarningGeneric');
+		const key = isLocalOnly ? 'vaultLocationWarningTextLocal' : 'vaultLocationWarningTextNetwork';
+
+		return U.String.sprintf(translate(key), provider);
+	};
+
+	/**
+	 * Opens the explanation popup for an unsafe vault location.
+	 * @param {any} [check] - Result of U.Common.checkVaultPath; if omitted, checks the current data path.
+	 * @param {any} [param] - { isLocalOnly?, route?, onConfirm?, onCancel? }.
+	 */
+	vaultLocationWarning (check?: any, param?: any) {
+		check = check || U.Common.checkVaultPath('');
+		if (!check || !check.unsafe) {
+			return;
+		};
+
+		param = param || {};
+
+		// Post-login the account network is authoritative; pre-login (no account) use the selected network mode.
+		// U.Data.isLocalNetwork() returns true when there is no account, so it can't be used alone.
+		const isLocalOnly = (undefined !== param.isLocalOnly) ? param.isLocalOnly :
+			(S.Auth.account ? U.Data.isLocalNetwork() : (S.Auth.networkConfig.mode == I.NetworkMode.Local));
+
+		analytics.event('ScreenVaultLocationWarning', { type: check.kind, route: param.route });
+
+		S.Popup.open('confirm', {
+			className: 'vaultLocationWarning',
+			data: {
+				iconParam: { name: 'popup/header/warning', color: isLocalOnly ? 'red' : 'orange' },
+				title: translate('vaultLocationWarningTitle'),
+				text: this.vaultLocationWarningText(check, isLocalOnly),
+				textConfirm: translate('commonOk'),
+				colorConfirm: 'blank',
+				canCancel: false,
+				onConfirm: param.onConfirm,
+				onCancel: param.onCancel,
+			},
+		});
+	};
+
+	/**
+	 * One-time-per-location startup check. Shows the popup once, remembers the acknowledged path.
+	 * Re-warns if the user later moves data to a different unsafe location.
+	 */
+	vaultLocationWarningOnStart () {
+		const check = U.Common.checkVaultPath('');
+		if (!check.unsafe) {
+			return;
+		};
+
+		const ack = () => Storage.set('vaultLocationWarned', check.path);
+
+		if (Storage.get('vaultLocationWarned') == check.path) {
+			return;
+		};
+
+		this.vaultLocationWarning(check, {
+			route: analytics.route.app,
+			onConfirm: ack,
+			onCancel: ack,
+		});
+	};
+
 };
 
 export default new Action();

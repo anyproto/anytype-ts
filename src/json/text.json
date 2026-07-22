@@ -1254,6 +1254,12 @@
 	"popupSettingsOnboardingLocalOnlyConfirmConfirm": "Yes, I accept risks",
 	"popupSettingsOnboardingLocalOnlyConfirmCancel": "No, don't use it",
 
+	"vaultLocationWarningTitle": "Risky data location",
+	"vaultLocationWarningLabel": "Your data is in a synced or network folder",
+	"vaultLocationWarningGeneric": "a synced or network folder",
+	"vaultLocationWarningTextLocal": "Your Vault is stored in %s. In local-only mode there is no backup, and databases in cloud-synced or network folders get corrupted when more than one device writes at the same time — this can permanently destroy your Vault and break search. The data folder also contains local indexes that are not encrypted and are not supposed to be synced, so a third-party sync tool leaks your data to the sync provider. Move the data to a regular local folder on this device.",
+	"vaultLocationWarningTextNetwork": "Your Vault is stored in %s. Anytype already syncs your objects securely via any-sync with end-to-end encryption — layering a second sync (cloud or network drive) on top can corrupt objects, cause inconsistencies, and in some cases lose data. The data folder also contains local indexes that are not encrypted and are not supposed to be synced, so a third-party sync tool leaks your data to the sync provider. Move the data to a regular local folder on this device.",
+
 	"popupSettingsDataLocalFiles": "Local files",
 	"popupSettingsDataOffloadWarningText": "All media files stored <b>in Anytype</b> will be deleted from your current device. They can be downloaded again from a backup node or another device.",
 	"popupSettingsDataOffloadWarningTextLocalOnly": "Be careful: your client is in local-only mode, and data is not backing up to external nodes. Ensure that your files are synced to your other devices before removing them.",
