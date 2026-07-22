@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
+import * as I from 'Interface';
 
 interface Props {
 	id?: string;
@@ -6,6 +7,7 @@ interface Props {
 	color?: 'grey' | 'yellow' | 'orange' | 'red' | 'pink' | 'purple' | 'blue' | 'ice' | 'teal' | 'lime';
 	className?: string;
 	readonly?: boolean;
+	tooltipParam?: Partial<I.TooltipParam>;
 	onChange?(e: any, value: boolean): void;
 };
 
@@ -20,9 +22,10 @@ const Switch = forwardRef<SwitchRefProps, Props>(({
 	color = 'blue',
 	className = '',
 	readonly = false,
+	tooltipParam = {},
 	onChange,
 }, ref: any) => {
-	
+
 	const nodeRef = useRef(null);
 	const [ value, setValue ] = useState(initialValue);
 	const cn = [ 'switch', color, className ];
@@ -46,19 +49,38 @@ const Switch = forwardRef<SwitchRefProps, Props>(({
 		};
 	};
 
+	const onMouseEnterHandler = () => {
+		const { text = '', caption = '' } = tooltipParam;
+		const t = Preview.tooltipCaption(text, caption);
+
+		if (t) {
+			Preview.tooltipShow({ ...tooltipParam, text: t, element: nodeRef.current });
+		};
+	};
+
+	const onMouseLeaveHandler = () => {
+		Preview.tooltipHide(false);
+	};
+
 	useEffect(() => setValue(initialValue), []);
+
+	useEffect(() => {
+		return () => Preview.tooltipHide(false);
+	}, []);
 
 	useImperativeHandle(ref, () => ({
 		getValue: () => value,
 		setValue: (value: boolean) => setValue(value),
 	}));
-	
+
 	return (
-		<div 
+		<div
 			ref={nodeRef}
-			id={id} 
-			className={cn.join(' ')} 
+			id={id}
+			className={cn.join(' ')}
 			onClick={onChangeHandler}
+			onMouseEnter={onMouseEnterHandler}
+			onMouseLeave={onMouseLeaveHandler}
 		>
 			<div className="inner" />
 		</div>

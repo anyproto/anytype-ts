@@ -109,7 +109,12 @@ const PopupInviteManage = forwardRef<{}, I.Popup>((props, ref) => {
 	const onPermissions = () => {
 		const options = [
 			{ id: String(I.ParticipantPermissions.Reader), name: translate('participantPermissions0') },
-			{ id: String(I.ParticipantPermissions.Writer), name: translate('participantPermissions1'), disabled: isShared },
+			{
+				id: String(I.ParticipantPermissions.Writer),
+				name: translate('participantPermissions1'),
+				disabled: isShared,
+				tooltipParam: isShared ? { text: translate('popupInviteManageEditorDisabled'), className: 'menuNote' } : undefined,
+			},
 		];
 
 		S.Menu.open('select', {
@@ -241,7 +246,14 @@ const PopupInviteManage = forwardRef<{}, I.Popup>((props, ref) => {
 						<Label className="name" text={translate('popupInviteManageShare')} />
 						{shareHint ? <Label className="descr" text={shareHint} /> : ''}
 					</div>
-					<Switch ref={shareRef} className="big" value={isShared} readonly={isShared || !canShare} onChange={onShareWithinSpace} />
+					<Switch
+						ref={shareRef}
+						className="big"
+						value={isShared}
+						readonly={isShared || !canShare}
+						tooltipParam={shareHint ? { text: shareHint } : {}}
+						onChange={onShareWithinSpace}
+					/>
 				</div>
 			</div>
 

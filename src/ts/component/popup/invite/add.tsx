@@ -142,7 +142,7 @@ const PopupInviteAdd = forwardRef<{}, I.Popup>((props, ref) => {
 							<div className="item">
 								<div className="name">{translate(`participantPermissions${permissions}`)}</div>
 							</div>
-							<Icon name="arrow/small" className="arrow dark" />
+							<Icon name="arrow/small" className="arrow dark" size={8} />
 						</div>
 					</div>
 
