@@ -1567,6 +1567,7 @@
 	"popupInviteManageShare": "Everyone in the channel can share this invite",
 	"popupInviteManageShareDisabled": "Anyone with this link joins as an editor, without approval. Only you can share it.",
 	"popupInviteManageShareLocked": "This invite is already shared. To take it back, reset the link.",
+	"popupInviteManageEditorDisabled": "This invite is shared with the channel, so it can only grant viewer access.",
 	"popupInviteManageShareConfirmTitle": "Share this invite with the channel?",
 	"popupInviteManageShareConfirmText": "All channel members will be able to see this invite link and share it with anyone. To make it private again, you'll need to reset the link.",
 	"popupInviteManageShareConfirmButton": "Share invite",
