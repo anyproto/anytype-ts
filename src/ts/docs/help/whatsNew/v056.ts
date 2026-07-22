@@ -96,7 +96,7 @@ export default (h: Helpers): Block[] => {
 			bullet(`ChartJS and other embeds can now be edited when placed side by side in columns. Thanks to @${link('https://community.anytype.io/t/30550', 'e1sordo')}!`),
 			bullet(`Copying and pasting is more reliable across the app.`),
 			bullet(`Fixed extra space and scrollbar glitches at the very bottom of a page.`),
-			bullet(`Breaking out of a toggle block with ${hl('Enter')} now lets you keep typing right away.`),
+			bullet(`Breaking out of a toggle block with ${hl('Enter')} now lets you keep typing right away. Thanks to @${link('https://github.com/anyproto/anytype-ts/pull/2305', 'psalmsdove')}!`),
 		]),
 
 		toggle(`<b>Objects & Views (8)</b>`, [
@@ -120,7 +120,7 @@ export default (h: Helpers): Block[] => {
 			bullet(`The tab name now updates right away when you switch channels, instead of waiting until you open an object.`),
 			bullet(`Dragging an object into a new side column now works on Linux. Thanks to @${link('https://community.anytype.io/t/30401', 'firegerbil')}!`),
 			bullet(`The sidebar no longer hides a panel immediately after you open it.`),
-			bullet(`Jumping to a page with the ${hl(`${cmd}+K`)} switcher no longer leaves it displayed at the wrong width.`),
+			bullet(`Jumping to a page with the ${hl(`${cmd}+K`)} switcher no longer leaves it displayed at the wrong width. Thanks to @${link('https://github.com/anyproto/anytype-ts/pull/2306', 'psalmsdove')}!`),
 		]),
 
 		toggle(`<b>Miscellaneous (4)</b>`, [
