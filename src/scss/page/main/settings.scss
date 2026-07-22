@@ -360,6 +360,8 @@
                 .name { @include text-common; }
                 .type { @include text-small; color: var(--color-text-secondary); }
             }
+
+            .dataLocationWarning { @include dataLocationWarning; margin-top: 12px; }
         }
 
         .iconObject { background-color: var(--color-shape-tertiary); border-radius: 4px; }

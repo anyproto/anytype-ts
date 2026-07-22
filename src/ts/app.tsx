@@ -346,6 +346,11 @@ const App: FC = () => {
 		S.Common.isPinnedSet(isPinned || false);
 		S.Common.singleTabSet(isSingleTab);
 
+		// One-time unsafe data location popup: gate on active tab (onInit runs per tab), delay past the boot loader
+		if (S.Common.isActiveTab) {
+			window.setTimeout(() => Action.vaultLocationWarningOnStart(), 3000);
+		};
+
 		U.Data.updateTabsDimmer();
 
 		Action.checkDefaultSpellingLang();

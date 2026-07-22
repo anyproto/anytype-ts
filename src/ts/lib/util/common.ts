@@ -40,6 +40,26 @@ class UtilCommon {
 	};
 
 	/**
+	 * Classifies a filesystem path as a cloud-synced or network location.
+	 * @param {string} [p] - The path to check; empty defaults to the current userData dir.
+	 * @returns {object} { unsafe, kind: ''|'cloud'|'network', provider, path }.
+	 */
+	checkVaultPath (p?: string) {
+		const fallback = { unsafe: false, kind: '', provider: '', path: String(p || '') };
+		const electron = this.getElectron();
+
+		if (!electron.checkVaultPath) {
+			return fallback; // web mode / non-electron
+		};
+
+		try {
+			return electron.checkVaultPath(p || '') || fallback;
+		} catch (e) {
+			return fallback;
+		};
+	};
+
+	/**
 	 * Returns the global configuration object from the window.
 	 */
 	getGlobalConfig () {

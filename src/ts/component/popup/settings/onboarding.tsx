@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState } from 'react';
-import { Title, Label, Select, Button, Error } from 'Component';
+import { Title, Label, Select, Button, Error, Icon } from 'Component';
 import * as I from 'Interface';
 
 const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
@@ -74,6 +74,11 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 				onChange('userPath', paths[0]);
 
 				analytics.event('ChangeStorageLocation', { type: 'Change', route: analytics.route.onboarding });
+
+				const check = U.Common.checkVaultPath(paths[0]);
+				if (check.unsafe) {
+					Action.vaultLocationWarning(check, { isLocalOnly: config.mode == I.NetworkMode.Local, route: analytics.route.onboarding });
+				};
 			});
 		};
 
@@ -158,6 +163,8 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const isDefault = config.path == U.Common.getElectron().defaultPath();
 	const networkModes = getNetworkModes();
+	const storageCheck = U.Common.checkVaultPath(config.userPath);
+	const isLocalOnly = config.mode == I.NetworkMode.Local;
 
 	return (
 		<div className="mainSides">
@@ -204,6 +211,13 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 							{!isDefault ? <Button size={28} text={translate('commonReset')} onClick={onResetStorage} /> : ''}
 						</div>
 					</div>
+
+					{storageCheck.unsafe ? (
+						<div className="dataLocationWarning" onClick={() => Action.vaultLocationWarning(storageCheck, { isLocalOnly, route: analytics.route.onboarding })}>
+							<Icon name="popup/header/warning" className="warning" />
+							<Label text={translate('vaultLocationWarningLabel')} />
+						</div>
+					) : ''}
 
 					</div>
 
