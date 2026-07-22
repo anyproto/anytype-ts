@@ -2,7 +2,7 @@ import { Block, Helpers } from './common';
 
 // TODO: add screenshots (56/N.png on the help CDN) to the feature sections once available.
 export default (h: Helpers): Block[] => {
-	const { shift, hl, icon, title, h2, h4, text, bullet, toggle, link } = h;
+	const { cmd, shift, hl, icon, title, h2, h4, text, bullet, toggle, link } = h;
 	return [
 		icon('⏩'),
 
@@ -41,6 +41,10 @@ export default (h: Helpers): Block[] => {
 		h2(`Quality of Life Improvements`),
 		text(``),
 
+		text(`<b>Vault Location Safety Warning</b>`),
+		text(`Anytype now warns you if your vault is in a cloud-synced folder (Dropbox, iCloud Drive, OneDrive, and others) or on a network drive, since that can silently corrupt your data.`),
+		text(``),
+
 		text(`<b>Download Files from a Chat Message</b>`),
 		text(`A message's menu now lets you download a single file or all of its files at once. When there's just one file, the menu even shows its name so you know exactly what you're saving.`),
 		text(``),
@@ -74,7 +78,7 @@ export default (h: Helpers): Block[] => {
 			bullet(`Names and messages are no longer lost after the app rebuilds data in the background.`),
 		]),
 
-		toggle(`<b>Editor & Blocks (17)</b>`, [
+		toggle(`<b>Editor & Blocks (18)</b>`, [
 			bullet(`Pressing ${hl('Enter')} now reliably creates a new line instead of sometimes behaving like ${hl(`${shift}+Enter`)}. Thanks to @${link('https://community.anytype.io/t/2402', 'Tim-Luca')}!`),
 			bullet(`Typing angle brackets like ${hl('&lt;a&gt;')} in a code block no longer makes your text disappear. Thanks to @${link('https://community.anytype.io/t/30353', 'V_Cassel')}!`),
 			bullet(`Values in a code block no longer disappear when you click outside the block. Thanks to @${link('https://community.anytype.io/t/30411', 'nozense')}!`),
@@ -92,9 +96,10 @@ export default (h: Helpers): Block[] => {
 			bullet(`ChartJS and other embeds can now be edited when placed side by side in columns. Thanks to @${link('https://community.anytype.io/t/30550', 'e1sordo')}!`),
 			bullet(`Copying and pasting is more reliable across the app.`),
 			bullet(`Fixed extra space and scrollbar glitches at the very bottom of a page.`),
+			bullet(`Breaking out of a toggle block with ${hl('Enter')} now lets you keep typing right away.`),
 		]),
 
-		toggle(`<b>Objects & Views (7)</b>`, [
+		toggle(`<b>Objects & Views (8)</b>`, [
 			bullet(`Newly created cards now appear immediately in Kanban and Board views, including inline collections and when "show more objects" is active. Thanks to @${link('https://community.anytype.io/t/30574', 'bodo_freutlin')}!`),
 			bullet(`Grid views – Queries, Types, Collections, and inline queries – now show a horizontal scrollbar for content that is wider than the window. Thanks to @${link('https://community.anytype.io/t/30943', 'Astro-L')}!`),
 			bullet(`Creating an object from a property field now keeps the title you typed.`),
@@ -102,6 +107,7 @@ export default (h: Helpers): Block[] => {
 			bullet(`Clicking in and out of property fields in grid view now behaves correctly.`),
 			bullet(`Bookmarks now appear in links and in the graph.`),
 			bullet(`Widget settings are now remembered.`),
+			bullet(`New objects in a sorted Collection or Query now land in the right place right away, instead of getting stuck at the bottom.`),
 		]),
 
 		toggle(`<b>Sync & Files (2)</b>`, [
@@ -109,17 +115,19 @@ export default (h: Helpers): Block[] => {
 			bullet(`Files that could get stuck on "Syncing" now resolve, and a rare upload freeze has been fixed.`),
 		]),
 
-		toggle(`<b>Navigation & Window Management (4)</b>`, [
+		toggle(`<b>Navigation & Window Management (5)</b>`, [
 			bullet(`Switching spaces no longer briefly opens the wrong object from the previous space.`),
 			bullet(`The tab name now updates right away when you switch channels, instead of waiting until you open an object.`),
 			bullet(`Dragging an object into a new side column now works on Linux. Thanks to @${link('https://community.anytype.io/t/30401', 'firegerbil')}!`),
 			bullet(`The sidebar no longer hides a panel immediately after you open it.`),
+			bullet(`Jumping to a page with the ${hl(`${cmd}+K`)} switcher no longer leaves it displayed at the wrong width.`),
 		]),
 
-		toggle(`<b>Miscellaneous (3)</b>`, [
+		toggle(`<b>Miscellaneous (4)</b>`, [
 			bullet(`Toast buttons no longer show a dark background box in dark mode.`),
 			bullet(`A trailing space at the end of your login phrase no longer prevents you from logging in. Thanks to @${link('https://github.com/anyproto/anytype-ts/pull/2268', 'jmpnop')}!`),
 			bullet(`Various security hardening improvements.`),
+			bullet(`The ${hl('Space')} bar (and occasionally other keys) could stop working across the whole app until you restarted it – fixed.`),
 		]),
 	];
 };
