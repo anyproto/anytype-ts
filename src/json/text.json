@@ -3134,12 +3134,12 @@
 	"binSwitchToCompact": "Switch to compact view",
 	"binSwitchToDetailed": "Switch to detailed view",
 	"binStackCount": "+%d",
-	"binCleanupTab": "Cleanup suggestions",
+	"binCleanupTab": "Cleanup",
 	"binCleanupDescription": "Objects and files no longer linked to the object they were created in, and not used in any other object.",
 	"binCleanupCreatedIn": "Created in",
 	"binCleanupLinkRemovedFrom": "Link removed from",
 	"binCleanupContextDeleted": "Deleted object",
-	"binCleanupIgnore": "Keep it",
+	"binCleanupIgnore": "Dismiss suggestion",
 	"binDeleteDisabledTooltip": "You can only delete objects you created"
 
 }
