@@ -602,6 +602,11 @@ class Api {
 	};
 
 	setUserDataPath (win: AppWindow, p: string): void {
+		if (!ConfigManager.isWritablePath(p)) {
+			console.warn('[Api] Ignoring unavailable userDataPath:', p);
+			return;
+		};
+
 		this.setConfig(win, { userDataPath: p });
 		app.setPath('userData', p);
 		WindowManager.sendToAllTabs('data-path', Util.dataPath());
