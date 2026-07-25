@@ -1,26 +1,63 @@
 (() => {
 
 	const allowedOrigins = [ new URL(chrome.runtime.getURL('/')).origin ];
-	const body = document.querySelector('body');
-	const container = document.createElement('div');
-	const dimmer = document.createElement('div');
-	const iframe = document.createElement('iframe');
+	const containerId = [ 'anytypeWebclipper', 'container' ].join('-');
+	const iframeId = [ 'anytypeWebclipper', 'iframe' ].join('-');
+	let container = null;
+	let iframe = null;
+	let iframeReady = false;
+	let pendingMenu = null;
 
-	if (body && !document.getElementById(iframe.id)) {
-		body.appendChild(container);
+	const hide = () => {
+		if (container) {
+			container.style.display = 'none';
+		};
 	};
 
-	container.id = [ 'anytypeWebclipper', 'container' ].join('-');
-	container.appendChild(iframe);
-	container.appendChild(dimmer);
+	const forwardMenu = () => {
+		if (!iframe || !iframeReady || !pendingMenu || !iframe.contentWindow) {
+			return;
+		};
 
-	iframe.id = [ 'anytypeWebclipper', 'iframe' ].join('-');
-	iframe.src = chrome.runtime.getURL('iframe/index.html');
+		iframe.contentWindow.postMessage(pendingMenu, allowedOrigins[0]);
+		pendingMenu = null;
+	};
 
-	dimmer.className = 'dimmer';
-	dimmer.addEventListener('click', () => {
-		container.style.display = 'none';
-	});
+	const ensureClipper = () => {
+		if (container && iframe) {
+			return true;
+		};
+
+		const body = document.querySelector('body');
+		if (!body) {
+			return false;
+		};
+
+		container = document.getElementById(containerId);
+		iframe = document.getElementById(iframeId);
+		if (container && iframe) {
+			return true;
+		};
+
+		container = document.createElement('div');
+		const dimmer = document.createElement('div');
+		iframe = document.createElement('iframe');
+
+		container.id = containerId;
+		iframe.id = iframeId;
+		iframe.src = chrome.runtime.getURL('iframe/index.html');
+		dimmer.className = 'dimmer';
+		dimmer.addEventListener('click', hide);
+		iframe.addEventListener('load', () => {
+			iframeReady = true;
+			forwardMenu();
+		}, { once: true });
+
+		container.appendChild(iframe);
+		container.appendChild(dimmer);
+		body.appendChild(container);
+		return true;
+	};
 
 	chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		if (sender.id !== chrome.runtime.id) {
@@ -32,14 +69,13 @@
 				let html = '';
 				const sel = window.getSelection();
 				if (sel && sel.rangeCount) {
-					const container = document.createElement('div');
+					const selectionContainer = document.createElement('div');
 					for (let i = 0, len = sel.rangeCount; i < len; ++i) {
-						container.appendChild(sel.getRangeAt(i).cloneContents());
+						selectionContainer.appendChild(sel.getRangeAt(i).cloneContents());
 					};
-					html = container.innerHTML;
+					html = selectionContainer.innerHTML;
 				};
 
-				// Avoid sending an empty html back to the background script
 				if (!html) {
 					return false;
 				};
@@ -49,12 +85,16 @@
 			};
 
 			case 'clickMenu': {
-				container.style.display = 'block';
+				pendingMenu = { type: 'clickMenu', source: 'foreground', html: msg.html, url: msg.url };
+				if (ensureClipper()) {
+					container.style.display = 'block';
+					forwardMenu();
+				};
 				break;
 			};
 
 			case 'hide': {
-				container.style.display = 'none';
+				hide();
 				break;
 			};
 		};
@@ -68,10 +108,9 @@
 			return;
 		};
 
-		const { data } = e;
-		switch (data.type) {
+		switch (e.data.type) {
 			case 'clickClose':
-				container.style.display = 'none';
+				hide();
 				break;
 		};
 	});
