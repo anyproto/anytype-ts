@@ -209,6 +209,7 @@ const App: FC = () => {
 
 			S.Common.redirectSet('');
 		});
+		Renderer.on('link-approval-decision', onLinkApprovalDecision);
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
@@ -673,6 +674,24 @@ const App: FC = () => {
 		} else {
 			S.Common.redirectSet(route);
 		};
+	};
+
+	/**
+	 * The approval window has no session of its own, so main relays the user's Allow/Deny here:
+	 * only a full-scope session may answer a pairing request. The code comes back to this session
+	 * alone and is handed to main, which shows it in the window.
+	 */
+	const onLinkApprovalDecision = (e: any, param: any) => {
+		const { processPath, origin, allow } = param || {};
+
+		C.AccountLocalLinkApproveChallenge(processPath, origin, allow, (message: any) => {
+			Renderer.send('linkApprovalResult', {
+				processPath,
+				origin,
+				challenge: message.challenge || '',
+				error: message.error && message.error.code ? message.error : null,
+			});
+		});
 	};
 
 	const onSpellcheck = (e: any, misspelledWord: string, dictionarySuggestions: string[], x: number, y: number, rect: any) => {

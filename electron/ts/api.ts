@@ -14,9 +14,23 @@ import UpdateManager from './update';
 import Server from './server';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
+import LinkApprovalManager from './linkApproval';
 import { AppWindow, TabView, TabData, CreateTabOptions, AppConfig, Bounds } from './types';
 
 const KEYTAR_SERVICE = 'Anytype';
+
+/**
+ * Local-link pairing prompts. Main owns them because Event.Account.LinkApprovalRequest reaches every
+ * session, so dedup cannot live in a renderer, and because the queue has to outlive any one window.
+ * The approve RPC itself belongs to a renderer: main holds no middleware session.
+ */
+const LinkApproval = new LinkApprovalManager({
+	open: payload => { WindowManager.createApprovalWindow(payload); },
+	close: key => WindowManager.closeApprovalWindow(key),
+	code: (key, challenge) => WindowManager.showApprovalCode(key, challenge),
+	liveTargets: () => WindowManager.getAppWindowIds(),
+	sendDecision: (id, payload) => WindowManager.sendToWindowTab(id, 'link-approval-decision', payload),
+});
 
 class Api {
 
@@ -630,12 +644,22 @@ class Api {
 		WindowManager.sendToAllTabs('data-path', Util.dataPath());
 	};
 
-	showChallenge (win: AppWindow, param: Record<string, any>): void {
-		WindowManager.createChallenge(param as { challenge: string } & Record<string, any>);
+	showLinkApproval (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.request(param as any, win.id);
 	};
 
-	hideChallenge (win: AppWindow, param: Record<string, any>): void {
-		WindowManager.closeChallenge(param as { challenge: string });
+	hideLinkApproval (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.hide(param.clientInfo);
+	};
+
+	/** Response of AccountLocalLinkApproveChallenge, relayed back by the renderer that sent it. */
+	linkApprovalResult (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.result(param as any);
+	};
+
+	/** Allow or Deny pressed in the approval window, which has no session to send the RPC itself. */
+	linkApprovalDecision (param: Record<string, any>): void {
+		LinkApproval.decide(param as any);
 	};
 
 	reload (win: AppWindow, route: string): void {
@@ -898,7 +922,7 @@ class Api {
 	 */
 	getWindowAtPoint (x: number, y: number, excludeWin: AppWindow): AppWindow | null {
 		for (const win of WindowManager.list) {
-			if (win === excludeWin || win.isDestroyed() || win.isChallenge) {
+			if (win === excludeWin || win.isDestroyed() || win.isApproval) {
 				continue;
 			};
 

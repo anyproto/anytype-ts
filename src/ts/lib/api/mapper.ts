@@ -972,6 +972,20 @@ export const Mapper = {
 			};
 		},
 
+		/**
+		 * Identity of a local-link caller. processPath and origin are echoed back to middleware
+		 * verbatim to address the pending request, so they are never trimmed or normalized here.
+		 */
+		AccountLinkClientInfo: (obj: any): I.LinkClientInfo => {
+			return {
+				processName: String(obj.processName || ''),
+				processPath: String(obj.processPath || ''),
+				name: String(obj.name || ''),
+				origin: String(obj.origin || ''),
+				signatureVerified: Boolean(obj.signatureVerified),
+			};
+		},
+
 		AppInfo: (obj: any): I.AppInfo => {
 			return {
 				hash: obj.appHash,
@@ -1468,15 +1482,16 @@ export const Mapper = {
 			};
 		},
 
-		AccountLinkChallenge: (obj: any) => {
+		AccountLinkApprovalRequest: (obj: any) => {
 			return {
-				challenge: obj.challenge,
+				clientInfo: Mapper.From.AccountLinkClientInfo(obj.clientInfo || {}),
+				scope: Number(obj.scope) || 0,
 			};
 		},
 
-		AccountLinkChallengeHide: (obj: any) => {
+		AccountLinkApprovalHide: (obj: any) => {
 			return {
-				challenge: obj.challenge,
+				clientInfo: Mapper.From.AccountLinkClientInfo(obj.clientInfo || {}),
 			};
 		},
 

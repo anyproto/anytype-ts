@@ -4,9 +4,9 @@ import { BrowserWindow, WebContentsView } from 'electron';
 export interface AppWindow extends BrowserWindow {
 	windowId: number;
 	isChild: boolean;
-	isChallenge?: boolean;
+	isApproval?: boolean;
 	isQuickSearch?: boolean;
-	challenge?: string;
+	approvalKey?: string;
 	route?: string;
 	activeTabId?: string;
 	views?: TabView[];

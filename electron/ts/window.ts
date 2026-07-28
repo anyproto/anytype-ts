@@ -59,7 +59,7 @@ class WindowManager {
 
 		win.on('focus', () => {
 			// Auxiliary windows must not become the target for menu/update actions
-			if (!win.isQuickSearch && !win.isChallenge) {
+			if (!win.isQuickSearch && !win.isApproval) {
 				UpdateManager.setWindow(win);
 				MenuManager.setWindow(win);
 			};
@@ -236,7 +236,7 @@ class WindowManager {
 
 	/** Number of real (non-auxiliary) app windows */
 	mainWindowCount (): number {
-		return Array.from(this.list).filter(w => w && !w.isDestroyed() && !w.isQuickSearch && !w.isChallenge).length;
+		return Array.from(this.list).filter(w => w && !w.isDestroyed() && !w.isQuickSearch && !w.isApproval).length;
 	};
 
 	getQuickSearch (): AppWindow | null {
@@ -361,25 +361,25 @@ class WindowManager {
 		};
 	};
 
-	createChallenge (options: { challenge: string } & Record<string, any>): AppWindow {
-		console.log('[WindowManager] createChallenge called', options);
-		// Check if challenge window already exists
-		for (const win of this.list) {
-			if (win && win.isChallenge && (win.challenge == options.challenge) && !win.isDestroyed()) {
-				console.log('[WindowManager] Challenge window already exists');
-				return win;
-			};
+	/**
+	 * Opens the local-link approval prompt. Keyed by caller (LinkApprovalManager owns the queue and
+	 * makes sure only one is up at a time), always on top so the request is answerable while the app
+	 * itself is hidden.
+	 */
+	createApprovalWindow (options: { key: string } & Record<string, any>): AppWindow {
+		const existing = this.getApprovalWindow(options.key);
+		if (existing) {
+			return existing;
 		};
 
-		console.log('[WindowManager] Creating new challenge window');
 		const { width, height } = this.getScreenSize();
 
-		const win = this.create({ ...options, isChallenge: true }, {
+		const win = this.create({ ...options, isApproval: true, approvalKey: options.key }, {
 			backgroundColor: '',
 			width: 424,
-			height: 232,
+			height: 288,
 			x: Math.floor(width / 2 - 212),
-			y: Math.floor(height - 282),
+			y: Math.floor(height - 338),
 			titleBarStyle: 'hidden',
 			alwaysOnTop: true,
 			focusable: true,
@@ -387,16 +387,34 @@ class WindowManager {
 		});
 
 		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-		win.loadURL(`file://${path.join(Util.appPath, 'dist', 'challenge', 'index.html')}`);
+		win.loadURL(`file://${path.join(Util.appPath, 'dist', 'linkApproval', 'index.html')}`);
 		win.setMenu(null);
 		win.showInactive(); // show inactive to prevent focus loose from other app
 
 		win.webContents.once('did-finish-load', () => {
-			win.webContents.send('challenge', options);
+			win.webContents.send('linkApproval', options);
 		});
 
-		setTimeout(() => this.closeChallenge(options), 30000);
 		return win;
+	};
+
+	/** Swaps the prompt for the code middleware minted after the user allowed the request. */
+	showApprovalCode (key: string, challenge: string): void {
+		const win = this.getApprovalWindow(key);
+
+		if (win) {
+			win.webContents.send('linkApprovalCode', { key, challenge });
+		};
+	};
+
+	getApprovalWindow (key: string): AppWindow | null {
+		for (const win of this.list) {
+			if (win && win.isApproval && (win.approvalKey == key) && !win.isDestroyed()) {
+				return win;
+			};
+		};
+
+		return null;
 	};
 
 	getScreenSize (): { width: number; height: number } {
@@ -414,11 +432,11 @@ class WindowManager {
 		return ret;
 	};
 
-	closeChallenge (options: { challenge: string }): void {
-		for (const win of this.list) {
-			if (win && win.isChallenge && (win.challenge == options.challenge) && !win.isDestroyed()) {
-				win.close();
-			};
+	closeApprovalWindow (key: string): void {
+		const win = this.getApprovalWindow(key);
+
+		if (win) {
+			win.close();
 		};
 	};
 
@@ -1013,12 +1031,44 @@ class WindowManager {
 		this.sendToAllTabs('reload');
 	};
 
+	/** Ids of the app windows that can carry a middleware session — approval windows have none. */
+	getAppWindowIds (): number[] {
+		const ret: number[] = [];
+
+		this.list.forEach((it: AppWindow) => {
+			if (it && !it.isApproval && !it.isDestroyed()) {
+				ret.push(it.id);
+			};
+		});
+
+		return ret;
+	};
+
+	/** Sends to a window's active tab. Returns false when the window or its tab is already gone. */
+	sendToWindowTab (id: number, ...args: [string, ...any[]]): boolean {
+		for (const win of this.list) {
+			if (!win || (win.id != id) || win.isDestroyed() || win.isApproval) {
+				continue;
+			};
+
+			const view = Util.getActiveView(win);
+			if (!view || !view.webContents) {
+				return false;
+			};
+
+			view.webContents.send(...args);
+			return true;
+		};
+
+		return false;
+	};
+
 	getFirstWindow (): AppWindow | undefined {
 		return this.list.values().next().value;
 	};
 
 	private serializeWindow (win: AppWindow): SavedTabState | null {
-		if (!win || !win.views || win.isDestroyed() || win.isChallenge) {
+		if (!win || !win.views || win.isDestroyed() || win.isApproval) {
 			return null;
 		};
 
@@ -1052,7 +1102,7 @@ class WindowManager {
 
 		const push = (w: AppWindow) => {
 			// Auxiliary windows (quick search, challenge) are never restored on start
-			if (!w || seen.has(w.id) || w.isQuickSearch || w.isChallenge) {
+			if (!w || seen.has(w.id) || w.isQuickSearch || w.isApproval) {
 				return;
 			};
 			const state = this.serializeWindow(w);

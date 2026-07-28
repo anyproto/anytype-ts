@@ -300,8 +300,11 @@ class Dispatcher {
 					break;
 				};
 
-				case 'AccountLinkChallenge': {
-					Renderer.send('showChallenge', {
+				case 'AccountLinkApprovalRequest': {
+					// no code exists yet: the user has to approve first, and only then does
+					// AccountLocalLinkApproveChallenge mint one. Main dedupes the request, since
+					// every session receives this event
+					Renderer.send('showLinkApproval', {
 						...mapped,
 						theme: S.Common.getThemeClass(),
 						lang: S.Common.interfaceLang,
@@ -352,8 +355,8 @@ class Dispatcher {
 					break;
 				};
 
-				case 'AccountLinkChallengeHide': {
-					Renderer.send('hideChallenge', mapped);
+				case 'AccountLinkApprovalHide': {
+					Renderer.send('hideLinkApproval', mapped);
 					break;
 				};
 

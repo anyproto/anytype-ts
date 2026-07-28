@@ -326,6 +326,11 @@ function createWindow () {
 	installNativeMessagingHost();
 	Util.registerLinuxProtocolHandler();
 
+	// The approval window has no session and no Api id, so it reports the user's decision directly
+	ipcMain.on('linkApprovalDecision', (e: Electron.IpcMainEvent, param: any) => {
+		Api.linkApprovalDecision(param);
+	});
+
 	//ipcMain.removeHandler('Api');
 	ipcMain.handle('Api', (e: Electron.IpcMainInvokeEvent, id: number, cmd: string, args: any[]) => {
 		const win = BrowserWindow.fromId(id) as AppWindow | null;

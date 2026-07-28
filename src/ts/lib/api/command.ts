@@ -219,6 +219,19 @@ export const AccountLocalLinkNewChallenge = (name: string, callBack?: (message: 
 	dispatcher.request('AccountLocalLinkNewChallenge', { appName: name }, callBack);
 };
 
+/**
+ * Answers a pending local-link pairing request. processPath and origin address the request and must
+ * be passed back exactly as they arrived in Event.Account.LinkApprovalRequest. On allow the response
+ * carries the freshly minted code, which middleware sends to this session only.
+ */
+export const AccountLocalLinkApproveChallenge = (processPath: string, origin: string, allow: boolean, callBack?: (message: any) => void) => {
+	dispatcher.request('AccountLocalLinkApproveChallenge', {
+		processPath,
+		origin,
+		allow,
+	}, callBack);
+};
+
 export const AccountLocalLinkSolveChallenge = (id: string, answer: string, callBack?: (message: any) => void) => {
 	dispatcher.request('AccountLocalLinkSolveChallenge', {
 		challengeId: id,
