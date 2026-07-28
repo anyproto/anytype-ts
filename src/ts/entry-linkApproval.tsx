@@ -53,6 +53,9 @@ const LinkApproval = () => {
 		electron.on?.('linkApprovalCode', (e: any, data: { challenge: string }) => {
 			setChallenge(String(data.challenge || ''));
 		});
+
+		// ask for the payload rather than relying on the push landing after this subscription
+		electron.send?.('linkApprovalReady');
 	}, []);
 
 	const fill = (text: string, value: string): string => text.replace('%s', value);

@@ -331,6 +331,10 @@ function createWindow () {
 		Api.linkApprovalDecision(param);
 	});
 
+	ipcMain.on('linkApprovalReady', (e: Electron.IpcMainEvent) => {
+		WindowManager.sendApprovalPayloadTo(e.sender.id);
+	});
+
 	//ipcMain.removeHandler('Api');
 	ipcMain.handle('Api', (e: Electron.IpcMainInvokeEvent, id: number, cmd: string, args: any[]) => {
 		const win = BrowserWindow.fromId(id) as AppWindow | null;

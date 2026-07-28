@@ -374,7 +374,7 @@ class WindowManager {
 
 		const { width, height } = this.getScreenSize();
 
-		const win = this.create({ ...options, isApproval: true, approvalKey: options.key }, {
+		const win = this.create({ ...options, isApproval: true, approvalKey: options.key, approvalPayload: options }, {
 			backgroundColor: '',
 			width: 424,
 			height: 288,
@@ -387,7 +387,7 @@ class WindowManager {
 		});
 
 		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-		win.loadURL(`file://${path.join(Util.appPath, 'dist', 'linkApproval', 'index.html')}`);
+		win.loadURL(this.getUrlForApprovalWindow());
 		win.setMenu(null);
 		win.showInactive(); // show inactive to prevent focus loose from other app
 
@@ -396,6 +396,20 @@ class WindowManager {
 		});
 
 		return win;
+	};
+
+	/**
+	 * Answers the window's own request for its payload. The push on did-finish-load can land before
+	 * the page has subscribed — the script is a module, so it runs after load — and then the prompt
+	 * would stay empty.
+	 */
+	sendApprovalPayloadTo (webContentsId: number): void {
+		for (const win of this.list) {
+			if (win && win.isApproval && !win.isDestroyed() && (win.webContents.id == webContentsId)) {
+				win.webContents.send('linkApproval', win.approvalPayload);
+				return;
+			};
+		};
 	};
 
 	/** Swaps the prompt for the code middleware minted after the user allowed the request. */
@@ -922,6 +936,10 @@ class WindowManager {
 
 	getUrlForNewWindow (): string {
 		return is.development ? `http://localhost:${port}/tabs.html` : 'file://' + path.join(Util.appPath, 'dist', 'tabs.html');
+	};
+
+	getUrlForApprovalWindow (): string {
+		return is.development ? `http://localhost:${port}/src/html/linkApproval.html` : 'file://' + path.join(Util.appPath, 'dist', 'linkApproval', 'index.html');
 	};
 
 	getUrlForNewTab (): string {

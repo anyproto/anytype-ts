@@ -7,6 +7,7 @@ export interface AppWindow extends BrowserWindow {
 	isApproval?: boolean;
 	isQuickSearch?: boolean;
 	approvalKey?: string;
+	approvalPayload?: Record<string, any>;
 	route?: string;
 	activeTabId?: string;
 	views?: TabView[];
