@@ -11,7 +11,8 @@ Electron main process files for desktop app integration. TypeScript source in `t
 - `server.ts` - Local gRPC server management (anytypeHelper)
 - `update.ts` - Auto-update logic
 - `util.ts` - Utility functions (paths, platform detection, logging)
-- `window.ts` - Window management (create, close, focus, tabs)
+- `window.ts` - Window management (create, close, focus, tabs, local-link approval window)
+- `linkApproval.ts` - Local-link pairing prompts: dedupes the request event across sessions, queues one prompt at a time, relays the user's decision to a renderer that holds a middleware session
 - `safeStorage.ts` - Electron safe storage wrapper
 - `types.ts` - TypeScript type definitions
 

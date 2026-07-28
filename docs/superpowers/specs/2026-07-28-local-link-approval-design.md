@@ -192,15 +192,22 @@ claimed for this feature.
 
 ## Prerequisites
 
-The approval RPC and the new events do not exist in the currently shipped generated protobuf. Before
-this branch can typecheck or run:
+The approval RPC and the new events do not exist in the shipped bindings. `develop` generates them
+with ts-proto into `middleware/`, so regenerate from the heart branch:
 
 ```
-cd ../anytpe-heart-locallink
-make protos-js
-make install-dev-js CLIENT_DESKTOP_PATH=/Users/roman/anytype/anytype-ts_local-link-approval
+HEART_DIR=/Users/roman/anytype/anytpe-heart-locallink bun run generate:protos
 ```
 
-The worktree also needs `dist/lib/pb` and `dist/lib/json/generated` (both untracked, normally
-produced by `update.sh` / the heart install target), plus a locally built `anytypeHelper` from the
-heart branch to test against.
+That also builds `dist/anytypeHelper` from the same branch, which is what the app must run against.
+
+`scripts/generate-service-registry.js` hardcoded `../anytype-heart` and ignored `HEART_DIR`, so the
+registry was silently generated from the wrong checkout; it now honours the same override as
+`generate-protos.sh`.
+
+## Notes on test scope
+
+The repo has no jsdom or testing-library, so the approval window component is not render-tested. The
+logic worth pinning — which parts of a caller's identity may be shown and in what order, and the name
+clamp — lives in `src/ts/lib/linkApproval.ts` and is unit-tested there; the component is thin markup
+over it.

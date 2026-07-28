@@ -36,6 +36,7 @@ Application infrastructure: API communication, constants, services, utilities, a
 | `sound.ts` | `Sound`, `SYSTEM_SOUND_ID` | Audio playback (bongo, clave, chimes) |
 | `scrollOnMove.ts` | `scrollOnMove` | Auto-scroll when dragging near viewport edges |
 | `reactionScheduler.ts` | `scheduleReaction`, `setReactionsPaused` | Pauses MobX observer re-renders in inactive Electron tabs |
+| `linkApproval.ts` | `approvalName`, `approvalLabel` | Presentation rules for local-link pairing prompts: attributable identity first, caller-supplied name clamped |
 
 ## Index Exports
 
@@ -49,3 +50,4 @@ The `index.ts` re-exports everything above plus:
 - `history.test.ts` - History navigation tests
 - `mark.test.ts` - Mark parsing/serialization tests
 - `reactionScheduler.test.ts` - Reaction scheduler pause/resume tests
+- `linkApproval.test.ts` - Local-link caller label and name-clamping tests
