@@ -11,7 +11,7 @@ import { focus } from 'Lib/focus';
 import { virtualBlock } from 'Lib/virtualBlock';
 import { useScrollRestore } from 'Hook';
 import { computeRestoreScrollTop } from 'Lib/util/scrollAnchor';
-import { getTopLevelIds } from 'Lib/util/blockSelection';
+import { getTopLevelIds, getIndentTargetId } from 'Lib/util/blockSelection';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
@@ -1351,9 +1351,10 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const idx = parentElement.childrenIds.indexOf(first.id);
-		const nextId = parentElement.childrenIds[idx - 1];
-		const next = nextId ? S.Block.getLeaf(rootId, nextId) : S.Block.getNextBlock(rootId, first.id, -1);
+		// Indent nests under the previous sibling only, so a first child is a no-op (JS-9844).
+		// Outdent ignores this and targets the parent, which a first child always has.
+		const nextId = getIndentTargetId(parentElement.childrenIds, first.id);
+		const next = nextId ? S.Block.getLeaf(rootId, nextId) : null;
 		const obj = shift ? parent : next;
 		const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 		
