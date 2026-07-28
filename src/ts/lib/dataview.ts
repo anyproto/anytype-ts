@@ -1239,11 +1239,11 @@ class Dataview {
 	};
 
 	getFilteredFilters (filters: I.Filter[]): I.Filter[] {
-		return (filters || []).filter(it => it.relationKey ? this.checkDeletedRelation(it.relationKey) : true);	
+		return (filters || []).filter(it => it && (this.isAdvancedFilter(it) || this.checkDeletedRelation(it.relationKey)));
 	};
 
 	getFilteredSorts (sorts: I.Sort[]): I.Sort[] {
-		return (sorts || []).filter(it => this.checkDeletedRelation(it.relationKey));	
+		return (sorts || []).filter(it => it && this.checkDeletedRelation(it.relationKey));
 	};
 
 	/**

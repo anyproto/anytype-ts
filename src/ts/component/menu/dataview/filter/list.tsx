@@ -375,6 +375,12 @@ const MenuFilterList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			);
 		} else {
 			const isAdvanced = Dataview.isAdvancedFilter(item);
+
+			// Advanced filters carry no relation, any other filter without one is corrupt
+			if (!isAdvanced && !item.relation) {
+				return null;
+			};
+
 			const cn = [ 'item', 'filterItem' ];
 
 			if (isAdvanced) {
