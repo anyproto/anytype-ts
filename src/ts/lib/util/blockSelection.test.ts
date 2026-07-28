@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getTopLevelIds } from './blockSelection';
+import { getTopLevelIds, getIndentTargetId } from './blockSelection';
 
 // parentOf helper built from a flat { child: parent } map
 const parentOf = (map: any) => (id: string) => String(map[id] || '');
@@ -58,6 +58,45 @@ describe('getTopLevelIds', () => {
 		const map = { a: 'b', b: 'a', c: 'root' };
 
 		expect(getTopLevelIds([ 'a', 'c' ], parentOf(map))).toEqual([ 'a', 'c' ]);
+	});
+
+});
+
+describe('getIndentTargetId', () => {
+
+	it('returns the previous sibling for a middle child', () => {
+		expect(getIndentTargetId([ 'a', 'b', 'c' ], 'b')).toEqual('a');
+	});
+
+	it('returns the previous sibling for the last child', () => {
+		expect(getIndentTargetId([ 'a', 'b', 'c' ], 'c')).toEqual('b');
+	});
+
+	// JS-9844: a first child has no previous sibling, so Tab must do nothing.
+	// Falling back to the previous block in document order resolved to the parent,
+	// and re-inserting into the parent the blocks already sat in appended them at its end.
+	it('returns nothing for a first child', () => {
+		expect(getIndentTargetId([ 'a', 'b', 'c' ], 'a')).toEqual('');
+	});
+
+	it('returns nothing for an only child', () => {
+		expect(getIndentTargetId([ 'a' ], 'a')).toEqual('');
+	});
+
+	it('returns nothing when the block is not among the children', () => {
+		expect(getIndentTargetId([ 'a', 'b' ], 'z')).toEqual('');
+	});
+
+	it('returns nothing for an empty children list', () => {
+		expect(getIndentTargetId([], 'a')).toEqual('');
+	});
+
+	it('tolerates a missing children list', () => {
+		expect(getIndentTargetId(null, 'a')).toEqual('');
+	});
+
+	it('returns nothing when the previous sibling id is empty', () => {
+		expect(getIndentTargetId([ '', 'b' ], 'b')).toEqual('');
 	});
 
 });
