@@ -11,6 +11,7 @@ import { focus } from 'Lib/focus';
 import { virtualBlock } from 'Lib/virtualBlock';
 import { useScrollRestore } from 'Hook';
 import { computeRestoreScrollTop } from 'Lib/util/scrollAnchor';
+import { getTopLevelIds } from 'Lib/util/blockSelection';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
@@ -711,6 +712,25 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 				handled = true;
 			});
 
+			// Tab/Shift+Tab indents every block the selection covers (JS-9843). A cross-block text
+			// selection leaves the block selection empty, so it is converted into a block selection
+			// first — which is also what dragging across blocks produced before 0.56
+			keyboard.shortcut('indent, outdent', e, (pressed: string) => {
+				e.preventDefault();
+
+				if (!readonly) {
+					const list = getTextSelectionBlockIds();
+
+					if (list.length) {
+						selection.clearTextSelection();
+						selection.set(I.SelectType.Block, list);
+						onTabEditor(e, list, pressed);
+					};
+				};
+
+				handled = true;
+			});
+
 			// Clear the text selection and let the default handling run
 			keyboard.shortcut('selectAll, undo, redo, history', e, () => {
 				selection.clearTextSelection();
@@ -1294,6 +1314,15 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onKeyUpBlock = (e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => {
+	};
+
+	// Blocks covered by a cross-block text selection, reduced to the topmost ids: the raw list is a
+	// document-order slice, so it can contain both a parent and its children (JS-9843)
+	const getTextSelectionBlockIds = (): string[] => {
+		const selection = S.Common.getRef('selectionProvider');
+		const list = selection?.getTextSelectionIds() || [];
+
+		return getTopLevelIds(list, (id: string) => S.Block.getParentLeaf(rootId, id)?.id || '');
 	};
 
 	// Indentation
