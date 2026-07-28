@@ -139,13 +139,13 @@ jobs:
       #  run: bun run build:deps
 
       - name: Update Addon only AMD
-        if: ${{ startsWith(matrix.os, 'windows-') }}
+        if: ${{ startsWith(matrix.os, 'windows-') || startsWith(matrix.os, 'ubuntu-') }}
         shell: bash
         run: |
-          ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="$( cat middleware.version )"
+          ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="$( cat middleware.version )" ${{ startsWith(matrix.os, 'ubuntu-') && '--arch=amd' || '' }}
 
       - name: Update Addon AMD and ARM
-        if: ${{ !startsWith(matrix.os, 'windows-') }}
+        if: ${{ startsWith(matrix.os, 'macos-') }}
         shell: bash
         run: |
           ./update-ci.sh --user="${{secrets.USER}}" --token="${{secrets.TOKEN}}" --os="${{matrix.os}}" --middleware-version="$( cat middleware.version )" --arch="arm"
