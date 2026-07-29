@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { approvalLabel, approvalName, NAME_MAX_LENGTH } from './linkApproval';
+import { approvalLabel, approvalName, approvalSource, NAME_MAX_LENGTH } from './linkApproval';
 
 const info = (param: any) => Object.assign({
 	processName: '',
@@ -20,6 +20,25 @@ describe('approvalName', () => {
 
 	test('keeps a normal name as it arrived', () => {
 		expect(approvalName(info({ name: '  My Notes Sync  ' }))).toBe('  My Notes Sync  ');
+	});
+
+});
+
+describe('approvalSource', () => {
+
+	test('joins process name and path for a native caller', () => {
+		expect(approvalSource(info({ processName: 'curl', processPath: '/usr/bin/curl' }))).toBe('curl — /usr/bin/curl');
+	});
+
+	test('appends the browser origin when there is one', () => {
+		expect(approvalSource(info({
+			processName: 'Google Chrome',
+			origin: 'chrome-extension://abcdef',
+		}))).toBe('Google Chrome — chrome-extension://abcdef');
+	});
+
+	test('never shows the caller-supplied name, which is not attributable', () => {
+		expect(approvalSource(info({ name: 'My Notes Sync' }))).toBe('');
 	});
 
 });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { approvalLabel, approvalName } from 'Lib/linkApproval';
+import { approvalLabel, approvalName, approvalSource } from 'Lib/linkApproval';
 import * as I from 'Interface';
 import defaultLang from 'json/text.json';
 
@@ -67,6 +67,9 @@ const LinkApproval = () => {
 	const { clientInfo, scope } = payload;
 	const name = approvalName(clientInfo);
 	const label = approvalLabel(clientInfo) || t('linkApprovalUnknownApp');
+	const title = name ? fill(t('linkApprovalTitle'), name) : t('linkApprovalTitleUnknown');
+	// only what the OS resolved or the browser set: the name above is the caller's own claim
+	const source = approvalSource(clientInfo) || t('linkApprovalUnknownApp');
 	const scopeText = scope == I.LocalApiScope.Limited ? t('linkApprovalScopeLimited') : t('linkApprovalScopeJson');
 
 	const onDecide = (allow: boolean) => {
@@ -96,22 +99,11 @@ const LinkApproval = () => {
 		);
 	};
 
-	// origin and processName/processPath are set by the browser or resolved from the OS, so they are
-	// the only attributable parts; name is whatever the caller sent
-	const attribution = [ clientInfo.processName, clientInfo.processPath, clientInfo.origin ].filter(it => !!it);
-
 	return (
 		<div className="linkApproval request">
-			<div className="title">{t('linkApprovalTitle')}</div>
+			<div className="title">{title}</div>
 
-			{name ? <div className="name">{fill(t('linkApprovalName'), name)}</div> : ''}
-
-			<div className="attribution">
-				{attribution.length ? attribution.map((it, i) => <div key={i} className="line">{it}</div>) : (
-					<div className="line">{t('linkApprovalUnknownApp')}</div>
-				)}
-			</div>
-
+			<div className="source">{source}</div>
 			<div className="scope">{scopeText}</div>
 
 			<div className="buttons">

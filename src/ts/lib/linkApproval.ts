@@ -15,6 +15,15 @@ export const approvalName = (clientInfo: I.LinkClientInfo): string => {
 };
 
 /**
+ * The one identity line of the prompt: everything about the caller that is attributable, in one
+ * string. The OS resolves the process, the browser sets the origin; the name is left out, since the
+ * caller chose it. Empty when middleware could resolve nothing at all.
+ */
+export const approvalSource = (clientInfo: I.LinkClientInfo): string => {
+	return [ clientInfo?.processName, clientInfo?.processPath, clientInfo?.origin ].filter(it => !!it).join(' — ');
+};
+
+/**
  * A single label for the caller, attributable parts first: the OS process for native callers, the
  * browser-set origin for extensions, and only then the name the caller made up. Empty when nothing
  * at all was sent — the prompt shows a generic label in that case.

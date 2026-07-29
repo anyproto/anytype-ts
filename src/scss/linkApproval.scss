@@ -11,13 +11,9 @@ body.linkApprovalWindow { font-family: 'Inter'; @include text-common; height: 10
 
 .linkApproval { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 16px; text-align: center; }
 .linkApproval {
-	.title { @include text-paragraph; font-weight: 700; }
-	.name { @include text-small; color: var(--color-text-secondary); margin: 4px 0px 0px 0px; }
-	.attribution { margin: 8px 0px 0px 0px; max-width: 100%; }
-	.attribution {
-		.line { @include text-small; color: var(--color-text-primary); @include text-overflow-nw; }
-	}
-	.scope { @include text-small; color: var(--color-text-secondary); margin: 4px 0px 0px 0px; }
+	.title { @include text-paragraph; font-weight: 700; max-width: 320px; }
+	.source { @include text-small; color: var(--color-text-primary); margin: 16px 0px 0px 0px; max-width: 100%; @include text-overflow-nw; }
+	.scope { @include text-small; color: var(--color-text-secondary); margin: 2px 0px 0px 0px; }
 	.buttons { display: flex; flex-direction: row; gap: 0px 8px; margin: 16px 0px 0px 0px; -webkit-app-region: no-drag; }
 	.note { @include text-very-small; color: var(--color-text-tertiary); margin: 12px 0px 0px 0px; }
 	.description { @include text-small; color: var(--color-text-secondary); margin: 4px 0px 16px 0px; }
