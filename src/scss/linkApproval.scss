@@ -1,10 +1,13 @@
+/* Standalone window: it does not boot the app, so it pulls in the pieces of the design system it
+uses itself. The dev server serves only what this entry imports, while the production build merges
+every entry into one stylesheet — importing them keeps the two identical. */
 @import "~scss/_vars";
 @import "~scss/_mixins";
+@import "~scss/font";
+@import "~scss/form/button";
+@import "~scss/theme/dark/common.scss";
 
-/* Both entries share one stylesheet (cssCodeSplit is off), so the window already gets the app's
-fonts, buttons, colour variables and dark theme from common.scss — only the rules specific to this
-window live here, scoped to the body class rather than relying on merge order */
-body.linkApprovalWindow { height: 100%; -webkit-app-region: drag; }
+body.linkApprovalWindow { font-family: 'Inter'; @include text-common; height: 100%; -webkit-app-region: drag; color: var(--color-text-primary); background: var(--color-bg-primary); overflow: hidden; }
 
 .linkApproval { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 16px; text-align: center; }
 .linkApproval {
