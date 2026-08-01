@@ -12,7 +12,9 @@ const WidgetHome: FC = () => {
 	};
 
 	const spaceview = U.Space.getSpaceview();
-	const canChangeHome = spaceview && !spaceview.isOneToOne;
+
+	// canModerate matches the gate on the same control in Space settings.
+	const canChangeHome = spaceview && !spaceview.isOneToOne && U.Space.canMyParticipantModerate();
 
 	const onClick = (e: MouseEvent) => {
 		e.preventDefault();

@@ -210,6 +210,32 @@ class UtilSpace {
 	};
 
 	/**
+	 * Gets the homepage when it points at a real object, otherwise null.
+	 * The isOneToOne check is not redundant with isSystemDashboard: in 1-on-1 spaces
+	 * getDashboard returns the chat, whose id is the workspace id — a real object id.
+	 * @returns {I.DashboardObject|null} The homepage object or null.
+	 */
+	getHomeObject (): I.DashboardObject | null {
+		const spaceview = this.getSpaceview();
+		if (!spaceview || spaceview.isOneToOne) {
+			return null;
+		};
+
+		const home = this.getDashboard();
+		return (home && !this.isSystemDashboard(home.id)) ? home : null;
+	};
+
+	/**
+	 * Checks whether the given object is the space homepage.
+	 * @param {string} id - The object id.
+	 * @returns {boolean} True if the object is the homepage.
+	 */
+	isHomeObject (id: string): boolean {
+		const home = this.getHomeObject();
+		return !!id && !!home && (home.id == id);
+	};
+
+	/**
 	 * Gets the graph dashboard object.
 	 * @returns {I.DashboardObject} The graph dashboard object.
 	 */

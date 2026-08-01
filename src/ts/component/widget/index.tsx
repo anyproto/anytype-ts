@@ -14,6 +14,7 @@ import Storage from 'Lib/storage';
 interface Props extends I.WidgetComponent {
 	name?: string;
 	icon?: string;
+	homeId?: string;
 	disableContextMenu?: boolean;
 	className?: string;
 	onDragStart?: (e: MouseEvent, block: I.Block) => void;
@@ -42,6 +43,13 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	const object = getObject(targetId);
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
 	const isChat = U.Object.isChatLayout(object?.layout);
+	/*
+	 * homeId is resolved once by the sidebar and passed down. Reading the spaceview here
+	 * instead would make every widget observe the whole spaceview record, so any detail
+	 * write on it (sync status, order, push settings) would re-render the entire list —
+	 * defeating the stable-block/stable-getObject memo caching the sidebar sets up.
+	 */
+	const isHome = !props.rootId && !!props.homeId && (props.homeId == targetId);
 	const hasDiscussion = !isChat && !!object?.discussionId;
 	const counterTargetId = isChat ? object?.id : (hasDiscussion ? object?.discussionId : '');
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
@@ -746,6 +754,9 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasChild) {
+		if (isHome) {
+			icon = <Icon name="settings/home" color="red" className="headerIcon" />;
+		} else
 		if (object?.isSystem) {
 			icon = <Icon name={object.iconName} className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {

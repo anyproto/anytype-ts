@@ -688,7 +688,11 @@ class UtilMenu {
 		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
-	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
+	/**
+	 * Builds the searchObject menu data for picking a new space homepage.
+	 * Split out of dashboardSelect so it can also be used as a submenu.
+	 */
+	dashboardSelectData (openRoute?: boolean) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 
@@ -712,36 +716,40 @@ class UtilMenu {
 			});
 		};
 
+		return {
+			withPlural: true,
+			filters: [
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
+				{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+			],
+			dataChange: (_ctx: any, items: any) => {
+				const head: any[] = [
+					{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
+				];
+
+				if (items.length) {
+					head.push({ isDiv: true });
+				};
+
+				return head.concat(items);
+			},
+			onSelect: el => {
+				onSelect(el, true);
+
+				const type = U.Space.isSystemDashboard(el.id) ? el.id : I.HomePredefinedId.Existing;
+				analytics.event('ChangeSpaceDashboard', { type });
+			},
+		};
+	};
+
+	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
 		analytics.event('ClickChangeSpaceDashboard');
 
 		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
 			...menuParam,
-			data: {
-				withPlural: true,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
-					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-				],
-				dataChange: (_ctx: any, items: any) => {
-					const head: any[] = [
-						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
-					];
-
-					if (items.length) {
-						head.push({ isDiv: true });
-					};
-
-					return head.concat(items);
-				},
-				onSelect: el => {
-					onSelect(el, true);
-
-					const type = U.Space.isSystemDashboard(el.id) ? el.id : I.HomePredefinedId.Existing;
-					analytics.event('ChangeSpaceDashboard', { type });
-				},
-			}
+			data: this.dashboardSelectData(openRoute),
 		});
 	};
 
