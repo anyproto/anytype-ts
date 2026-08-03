@@ -68,11 +68,21 @@ isEnabled = props.autoHide ?? (U.Common.isPlatformMac() && U.Common.hasOverlaySc
 
 visible = !isEnabled                                  // Win/Linux, or "Always" chosen
         || !hasScrolledOnce                           // suspend until first use
-        || isHoveringHost || isHoveringBar
+        || isHovering                                 // see host below
         || isRecentlyScrolled                         // see timer below
 ```
 
+**Hover host.** In both `grid.tsx:577-603` and `board.tsx`, the bar is rendered as a *sibling* of the scrolling element, under a shared view-root wrapper. That wrapper — reachable as `nodeRef.current.parentElement` — is used as the hover target, because it spans the block content *and* the bar. A single `isHovering` flag therefore covers hovering the bar itself, with no second listener pair and no gap when the pointer crosses from content onto the bar.
+
+Listeners are `mouseover` (rather than `mouseenter`) and `mouseleave`. `mouseover` bubbles from descendants, so hover state self-heals on the next pointer movement if listeners are re-attached while the pointer is already inside — which happens when `rebind()` fires on a column add.
+
+`unbind()` deliberately does **not** clear `isHovering`. Because `bind()` calls `unbind()` first, clearing it there would hide the bar out from under a resting pointer on every column add, until the pointer moved again. Leaving it set fails visible, which is the safe direction; the unbound window between `unbind()` and `bind()` is a few microseconds inside one effect, so a missed `mouseleave` is not reachable in practice.
+
 `isRecentlyScrolled` is **timer-driven, not polled**: every scroll event sets it true and restarts a single 1300ms `setTimeout` that sets it false. Reusing one timer handle means rapid scrolling does not accumulate timers.
+
+**Programmatic scrolls must not count as activity.** `grid.tsx:48-61` calls `onScrollHorizontal()` directly from a `useEffect` keyed on `[ relations.length, view?.id ]`, so `sync()` fires on mount and on every view or column-count change with no user involvement. Treating that as a scroll sets `hasScrolledOnce` at mount and silently deletes the entire suspend clause — the bar would fade ~1300ms after open, having never been scrolled, reintroducing the JS-9811 discoverability bug on grid while board (whose `onScrollHorizontal` is only ever a real listener) kept the intended behavior.
+
+Activity is therefore gated on the scroll position actually moving. The component tracks `lastScrollLeft`; the first observation after `bind()` only establishes a baseline and returns, and an unchanged position is ignored. Real user scrolls change `scrollLeft` and register normally. `lastScrollLeft` resets in `unbind()` so each bind re-establishes its own baseline.
 
 `isEnabled` accepts an optional `autoHide` prop that overrides platform detection. Call sites omit it and get the detected default; Storybook sets it explicitly to exercise both states. This follows the CLAUDE.md rule that component variations are separate props rather than implicit behavior.
 
@@ -162,8 +172,10 @@ One `setTimeout` handle and two hover listeners, all torn down in `unbind()` and
 | File | Change |
 | --- | --- |
 | `src/ts/component/util/stickyScrollbar.tsx` | Optional `autoHide` prop, visibility state, hover listeners, idle timer, motion-driven opacity |
+| `src/ts/lib/util/stickyScrollbar.ts` | Add `StickyScrollbarState` and the pure `isVisible()` predicate |
+| `src/ts/lib/util/stickyScrollbar.test.ts` | New — unit tests for the visibility truth table |
 | `src/ts/lib/util/common.ts` | Add memoized `hasOverlayScrollbars()` |
-| `src/scss/component/stickyScrollbar.scss` | Add `pointer-events` handling for the hidden state |
-| `src/ts/component/util/stickyScrollbar.stories.tsx` | Story exercising `autoHide` in both states |
+| `src/scss/component/stickyScrollbar.scss` | Add `.isHidden { pointer-events: none; }` |
+| `src/ts/component/util/stickyScrollbar.stories.tsx` | Stories exercising `autoHide` in both states |
 
 `grid.tsx` and `board.tsx` are untouched.

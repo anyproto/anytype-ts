@@ -1,10 +1,35 @@
 
 
 /**
+ * Inputs to the auto-hide visibility rule
+ */
+export interface StickyScrollbarState {
+	isEnabled: boolean;
+	hasScrolledOnce: boolean;
+	isHovering: boolean;
+	isRecentlyScrolled: boolean;
+};
+
+/**
  * Utility class for managing sticky horizontal scrollbar synchronization
  * Used in dataview grid and board views
  */
 class UtilStickyScrollbar {
+
+	/**
+	 * Decides whether the sticky scrollbar should be visible.
+	 * Auto-hide only applies where it is enabled (macOS with overlay scrollbars);
+	 * everywhere else the bar stays permanently visible.
+	 * The bar also stays visible until the first scroll, so wide views keep
+	 * an initial affordance that they scroll horizontally.
+	 * @param {StickyScrollbarState} state - Current auto-hide inputs.
+	 * @returns {boolean} True if the bar should be visible.
+	 */
+	isVisible (state: StickyScrollbarState): boolean {
+		const { isEnabled, hasScrolledOnce, isHovering, isRecentlyScrolled } = state;
+
+		return !isEnabled || !hasScrolledOnce || isHovering || isRecentlyScrolled;
+	};
 
 	/**
 	 * Synchronizes the sticky scrollbar position based on the main scroll position
