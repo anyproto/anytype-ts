@@ -22,7 +22,6 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => 
 	const lastScrollLeft = useRef<number | null>(null);
 	const timeout = useRef(0);
 
-	const [ hasScrolledOnce, setHasScrolledOnce ] = useState(false);
 	const [ isHovering, setIsHovering ] = useState(false);
 	const [ isRecentlyScrolled, setIsRecentlyScrolled ] = useState(false);
 
@@ -33,7 +32,7 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => 
 
 	isEnabledRef.current = isEnabled;
 
-	const isVisible = U.StickyScrollbar.isVisible({ isEnabled, hasScrolledOnce, isHovering, isRecentlyScrolled });
+	const isVisible = U.StickyScrollbar.isVisible({ isEnabled, isHovering, isRecentlyScrolled });
 
 	const toPx = (v: any): any => {
 		return typeof v == 'number' ? `${v}px` : v;
@@ -41,8 +40,8 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => 
 
 	// Reveals the bar on scroll and restarts the idle countdown.
 	// Only a real change of position counts: grid calls onScrollHorizontal()
-	// programmatically on mount and on view/column changes, and that must not
-	// consume the initial reveal that makes the bar discoverable
+	// programmatically on mount and on view/column changes, which would
+	// otherwise flash the bar open every time an object is opened
 	const onActivity = () => {
 		if (!isEnabledRef.current) {
 			return;
@@ -62,7 +61,6 @@ const StickyScrollbar = forwardRef<I.StickyScrollbarRef, Props>((props, ref) => 
 			return;
 		};
 
-		setHasScrolledOnce(true);
 		setIsRecentlyScrolled(true);
 
 		window.clearTimeout(timeout.current);

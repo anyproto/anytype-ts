@@ -3,7 +3,6 @@ import U, { StickyScrollbarState } from './stickyScrollbar';
 
 const state = (param?: Partial<StickyScrollbarState>): StickyScrollbarState => ({
 	isEnabled: true,
-	hasScrolledOnce: true,
 	isHovering: false,
 	isRecentlyScrolled: false,
 	...param,
@@ -11,16 +10,12 @@ const state = (param?: Partial<StickyScrollbarState>): StickyScrollbarState => (
 
 describe('UtilStickyScrollbar.isVisible', () => {
 
-	it('hides when auto-hide is enabled and nothing is active', () => {
+	it('starts hidden when auto-hide is enabled and nothing is active', () => {
 		expect(U.isVisible(state())).toBe(false);
 	});
 
 	it('always shows when auto-hide is disabled, whatever else is false', () => {
 		expect(U.isVisible(state({ isEnabled: false }))).toBe(true);
-	});
-
-	it('shows before the first scroll, so the bar stays discoverable', () => {
-		expect(U.isVisible(state({ hasScrolledOnce: false }))).toBe(true);
 	});
 
 	it('shows while the pointer is over the block', () => {
@@ -38,8 +33,8 @@ describe('UtilStickyScrollbar.isVisible', () => {
 		expect(U.isVisible(state({ isHovering: false, isRecentlyScrolled: false }))).toBe(false);
 	});
 
-	it('keeps the bar visible on non-mac even when idle after scrolling', () => {
-		expect(U.isVisible(state({ isEnabled: false, hasScrolledOnce: true }))).toBe(true);
+	it('keeps the bar visible on non-mac even when idle and unhovered', () => {
+		expect(U.isVisible(state({ isEnabled: false, isHovering: false, isRecentlyScrolled: false }))).toBe(true);
 	});
 
 });

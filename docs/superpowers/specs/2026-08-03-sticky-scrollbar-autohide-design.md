@@ -43,7 +43,7 @@ JS-9811's message states the problem it solved: wide inline queries "could only 
 Two conclusions shaped the design:
 
 1. **Roselli's objection is answerable here.** In Chromium the preference *is* detectable: an offscreen `overflow: scroll` probe reports `offsetWidth - clientWidth == 0` under macOS overlay scrollbars, and ~15px when the user has set **Show scroll bars: Always**. Respecting that turns this from an author-preference override into preference-respecting behavior.
-2. **`autoHideSuspend` resolves the NN/g conflict.** Keeping the bar visible until first use retains JS-9811's discoverability fix while still decluttering afterwards.
+2. **`autoHideSuspend` looked like it resolved the NN/g conflict.** Keeping the bar visible until first use should have retained JS-9811's discoverability fix while still decluttering afterwards. It was implemented and shipped, then removed — see the revision note under *Visibility rule*. The theory did not survive contact with the actual interaction: a bar that disappears the first time you use it reads as breakage, not as a hint.
 
 ## Design
 
@@ -67,10 +67,13 @@ The component therefore owns its auto-hide state entirely, and both call sites i
 isEnabled = props.autoHide ?? (U.Common.isPlatformMac() && U.Common.hasOverlayScrollbars())
 
 visible = !isEnabled                                  // Win/Linux, or "Always" chosen
-        || !hasScrolledOnce                           // suspend until first use
         || isHovering                                 // see host below
         || isRecentlyScrolled                         // see timer below
 ```
+
+> **Revised 2026-08-03, after the first version shipped.** The original rule carried a fourth clause, `|| !hasScrolledOnce` — the bar stayed visible until the user's first real scroll, following OverlayScrollbars' `autoHideSuspend`. In use this read as a bug rather than an affordance: a freshly opened object showed a bar that then vanished the first time you scrolled and moved away, which looks like a glitch rather than a deliberate hint. The clause was removed; the bar now starts hidden.
+>
+> The cost is real and accepted: a wide grid no longer advertises that it scrolls until hovered. That is a partial walk-back of JS-9811, mitigated by the fact that hovering a table is the normal precondition to interacting with it, so the reveal happens before anyone needs the bar.
 
 **Hover host.** In both `grid.tsx:577-603` and `board.tsx`, the bar is rendered as a *sibling* of the scrolling element, under a shared view-root wrapper. That wrapper — reachable as `nodeRef.current.parentElement` — is used as the hover target, because it spans the block content *and* the bar. A single `isHovering` flag therefore covers hovering the bar itself, with no second listener pair and no gap when the pointer crosses from content onto the bar.
 
@@ -80,7 +83,9 @@ Listeners are `mouseover` (rather than `mouseenter`) and `mouseleave`. `mouseove
 
 `isRecentlyScrolled` is **timer-driven, not polled**: every scroll event sets it true and restarts a single 1300ms `setTimeout` that sets it false. Reusing one timer handle means rapid scrolling does not accumulate timers.
 
-**Programmatic scrolls must not count as activity.** `grid.tsx:48-61` calls `onScrollHorizontal()` directly from a `useEffect` keyed on `[ relations.length, view?.id ]`, so `sync()` fires on mount and on every view or column-count change with no user involvement. Treating that as a scroll sets `hasScrolledOnce` at mount and silently deletes the entire suspend clause — the bar would fade ~1300ms after open, having never been scrolled, reintroducing the JS-9811 discoverability bug on grid while board (whose `onScrollHorizontal` is only ever a real listener) kept the intended behavior.
+**Programmatic scrolls must not count as activity.** `grid.tsx:48-61` calls `onScrollHorizontal()` directly from a `useEffect` keyed on `[ relations.length, view?.id ]`, so `sync()` fires on mount and on every view or column-count change with no user involvement. Without a guard, opening any object with a wide grid would flash the bar visible for 1300ms and then fade it — and board, whose `onScrollHorizontal` is only ever a real listener, would not flash, so the two views would visibly disagree.
+
+(Under the original suspend rule this same defect had a different symptom: it set `hasScrolledOnce` at mount and deleted the suspend clause outright. The guard is what makes both rules behave, and it matters more now that the bar starts hidden.)
 
 Activity is therefore gated on the scroll position actually moving. The component tracks `lastScrollLeft`; the first observation after `bind()` only establishes a baseline and returns, and an unchanged position is ignored. Real user scrolls change `scrollLeft` and register normally. `lastScrollLeft` resets in `unbind()` so each bind re-establishes its own baseline.
 
@@ -89,13 +94,11 @@ Activity is therefore gated on the scroll position actually moving. The componen
 | State | Bar |
 | --- | --- |
 | Not macOS, or user chose "Show scroll bars: Always" | Visible — today's behavior exactly |
-| Before the first horizontal scroll of that view | Visible (suspend) |
+| Freshly opened, pointer elsewhere | Hidden |
 | Pointer over the dataview block, or over the bar | Visible |
 | Scrolling, or within 1300ms of the last scroll | Visible |
-| Idle, unhovered, after first scroll | Faded out |
+| Idle and unhovered | Faded out |
 | No overflow | `display: none` via existing `resize()` |
-
-`hasScrolledOnce` is per-instance and flips on the first `sync()` or first scroll of the bar itself.
 
 Non-macOS users and macOS users who chose "Always" short-circuit on the first clause, so they see no behavior change at all. Regression risk is confined to the target platform.
 
@@ -103,7 +106,7 @@ Non-macOS users and macOS users who chose "Always" short-circuit on the first cl
 
 `resize()` already writes `display` to hide the bar when content does not overflow (`grid.tsx:426`, `:437`, `:440`, `:466`). Auto-hide **must not** reuse `display`, or the two mechanisms will overwrite each other on every resize — and `resize()` is called on every column drag and scroll.
 
-Auto-hide therefore uses **opacity only**. `display` stays exclusively owned by `resize()`. The two compose correctly: `display: none` wins regardless of opacity, and when a view becomes overflowing again the suspend clause makes the bar visible.
+Auto-hide therefore uses **opacity only**. `display` stays exclusively owned by `resize()`. The two compose correctly: `display: none` wins regardless of opacity, and when a view becomes overflowing again the bar returns to whatever the hover/scroll rule says.
 
 ### Fade mechanism
 
@@ -153,15 +156,18 @@ One `setTimeout` handle and two hover listeners, all torn down in `unbind()` and
 
 ## Testing
 
-**Automated** — unit-testable pure logic: extract the visibility rule as a pure predicate over `(isEnabled, hasScrolledOnce, isHoveringHost, isHoveringBar, msSinceScroll)` so the truth table above can be asserted directly without DOM or timers.
+**Automated** — unit-testable pure logic: the visibility rule is a pure predicate over `(isEnabled, isHovering, isRecentlyScrolled)`, so the truth table above is asserted directly without DOM or timers.
+
+Note what the unit tests do **not** reach: the `lastScrollLeft` baseline guard lives in component state, and this repo has no React component test setup (vitest runs in `node` with no jsdom). Step 1 below is the only coverage it has.
 
 **Manual, macOS with Show scroll bars: When scrolling** (the default):
-1. Wide inline grid — bar visible on first render; scroll horizontally; bar remains while the pointer is over the block; move the pointer away; bar fades after ~1300ms.
-2. Return the pointer to the block — bar fades back in immediately.
-3. Hover the bar itself and drag the thumb — grabbable, and stays visible for the whole drag.
-4. Narrow the view so columns fit — bar `display: none`; widen again — bar returns visible.
-5. Resize a column with the pointer inside the block — bar stays visible throughout.
-6. Repeat 1-5 on a wide inline board and on a full-page grid.
+1. Open an object with a wide inline grid, pointer away from the block — **no bar appears at any point**, including no brief flash on open. Repeat by switching views and by adding a column, which also trigger the programmatic scroll path.
+2. Move the pointer over the block — bar fades in; move it away — bar fades out after ~1300ms.
+3. Scroll horizontally, then move the pointer off the block — bar stays for ~1300ms, then fades.
+4. Hover the bar itself and drag the thumb — grabbable, and stays visible for the whole drag.
+5. Narrow the view so columns fit — bar `display: none`; widen again — bar returns, still hidden until hovered.
+6. Resize a column with the pointer inside the block — bar stays visible throughout.
+7. Repeat 1-6 on a wide inline board and on a full-page grid; grid and board must behave identically.
 
 **Manual, macOS with Show scroll bars: Always** — bar is permanently visible in every case above; no fading at any point.
 
