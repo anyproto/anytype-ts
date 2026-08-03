@@ -20,6 +20,10 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
 	const canModerate = U.Space.canMyParticipantModerate();
+	const home = U.Space.getHomeObject();
+
+	// When the homepage is also pinned, the pinned widget carries the home icon instead.
+	const isHomePinned = !!home && (S.Block.getWidgetsForTarget(home.id).length > 0);
 	const bodyRef = useRef<HTMLDivElement>(null);
 	const dropTargetIdRef = useRef<string>('');
 	const positionRef = useRef<I.BlockPosition>(null);
@@ -51,7 +55,9 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			};
 		};
 
-		if (pinned.length) {
+		// The standalone home widget is the section's content when nothing is pinned,
+		// so it has to keep the section alive on its own.
+		if (pinned.length || (home && !isHomePinned)) {
 			ret.push(I.WidgetSection.Pin);
 		};
 
@@ -860,7 +866,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 											};
 										}}
 									>
-										{isSectionPin && !isLinksView ? <WidgetHome /> : ''}
+										{isSectionPin && !isLinksView && !isHomePinned ? <WidgetHome /> : ''}
 
 										{list.map((block, i) => (
 											<Widget
@@ -869,6 +875,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 												block={block}
 												index={i}
 												rootId={isFavWidgets ? personalRootId : undefined}
+												homeId={isSectionPin ? home?.id : undefined}
 												canEdit={canWrite}
 												canRemove={isSectionPin}
 												onDragStart={isFavWidgets ? undefined : onDragStartStable}
