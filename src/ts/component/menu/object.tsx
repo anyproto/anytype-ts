@@ -555,6 +555,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'openAsObject': {
+				S.Popup.close('preview');
 				U.Object.openAuto(object);
 				break;
 			};
