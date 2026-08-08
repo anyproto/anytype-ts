@@ -529,6 +529,9 @@
 
 	"authPinCheckTitle": "Enter Pin",
 	"authPinCheckError": "Incorrect Pin",
+	"authPinCheckForgot": "I forgot my Pin",
+	"authPinCheckForgotTitle": "Reset your Pin?",
+	"authPinCheckForgotText": "You will be logged out on this device and your Pin will be removed. To log back in you will need your Key. Your data stays on this device.",
 
 	"authOnboardPhraseTitle": "This is your Key",
 	"authOnboardPhraseLabel": "It replaces login and password. Keep it safe — only you are responsible for your data. You can find this Key later in app settings.",
