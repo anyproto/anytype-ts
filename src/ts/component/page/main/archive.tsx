@@ -112,6 +112,14 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		setIsCleanupNoteClosed(true);
 	};
 
+	// The route is reported here rather than passed through openSettings: that helper puts
+	// it in _routeParam_.additional, which U.Router.build serialises as [it.key, it.value] —
+	// both undefined for a bare { route }, so it never reaches the page.
+	const onDeletionAudit = () => {
+		analytics.event('ClickDeletionAudit', { route: analytics.route.archive });
+		Action.openSettings('spaceDeletionAudit', analytics.route.archive);
+	};
+
 	const onSelectTree = (ids: string[], e: MouseEvent) => {
 		e.stopPropagation();
 		let next = [ ...selectedIds ];
@@ -343,6 +351,17 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 								/>
 							</>
 						) : ''}
+
+						{/* Navigates away rather than switching tabs, so it stays out of .tabs —
+							sitting beside Bin/Cleanup would misrepresent it as a third tab.
+							No canWrite guard: the audit is read-only and ships to everyone. */}
+						<Icon
+							className="archiveAction"
+							name="common/clock"
+							withBackground={true}
+							tooltipParam={{ text: translate('pageSettingsSpaceDeletionAudit') }}
+							onClick={onDeletionAudit}
+						/>
 					</div>
 				</div>
 

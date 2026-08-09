@@ -1,0 +1,104 @@
+@import "~scss/_mixins";
+
+// Full-width settings page, following the Bin (.pageSettingsArchive in archive.scss):
+// registered as a settings page but listed in SKIP_CONTAINER, so it renders its own
+// Header/Footer and escapes .settingsPageContainer's 640px column. Four resolved
+// columns and a kind badge do not fit there.
+//
+// The table structure is the Bin's (.listObject > .table > .row > .cell) and the values
+// below are copied from it so both lists read as one component. It is redeclared rather
+// than shared because the Bin's table carries a -36px checkbox gutter this page has no
+// concept of — the page is read-only and has no selection.
+.pageSettingsSpaceDeletionAudit {
+	.wrapper {
+		width: calc(100% - 96px); margin: 0px auto; padding: 52px 0px 80px 0px; user-select: none;
+		display: flex; flex-direction: column; gap: 24px 0px;
+	}
+	.wrapper {
+		.titleWrapper { display: flex; flex-direction: column; gap: 4px 0px; flex-shrink: 0; }
+		.titleWrapper {
+			.title { @include text-header1; font-weight: 700; margin: 0px; }
+			.label.description { @include text-small; color: var(--color-text-secondary); margin: 0px; max-width: 640px; }
+		}
+
+		.listObject.deletionAudit { flex-grow: 1; }
+		.listObject.deletionAudit {
+			// react-virtualized clips the hover pill (which bleeds 8px either side) without this.
+			.ReactVirtualized__List { overflow: visible !important; }
+			.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
+
+			.loaderWrapper { position: relative; height: 120px; }
+			.emptySearch { padding: 40px 0px; }
+
+			.table {
+				.row { position: relative; gap: 0px 6px; border: 0px; }
+				.row {
+					.cell { padding: 11px 14px; align-content: center; overflow: hidden; }
+					.cell:first-child { padding-left: 0px; }
+					.cell:last-child { padding-right: 0px; }
+				}
+
+				.row.isHead { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); }
+				.row.isHead > .cell { padding-top: 6px; padding-bottom: 6px; }
+
+				// The hover pill is the only affordance on a read-only row, so the header and
+				// the not-yet-loaded placeholders must not claim one.
+				.row:not(.isHead):not(.isPlaceholder):hover {
+					&::before {
+						content: ''; position: absolute; top: 0px; bottom: -1px; left: -8px; right: -8px;
+						background-color: var(--color-shape-highlight-medium); border-radius: 8px; pointer-events: none;
+					}
+				}
+
+				.cell.c-removedBy,
+				.cell.c-removed,
+				.cell.c-createdBy {
+					.cellContent { height: 18px; @include text-small; }
+				}
+
+				.cell.c-removedBy,
+				.cell.c-createdBy {
+					.flex { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
+					.iconObject { width: 18px; height: 18px; flex-shrink: 0; }
+					.iconObject .iconImage { width: 18px; height: 18px; margin: -9px 0px 0px -9px; }
+					.name { @include text-overflow-nw; }
+				}
+
+				.cellContent.isName { height: auto; }
+				.cellContent.isName {
+					.flex { display: flex; align-items: center; gap: 0px 12px; overflow: hidden; }
+					.name { font-weight: 500; @include text-overflow-nw; min-width: 0; }
+					.size { @include text-small; color: var(--color-text-secondary); flex-shrink: 0; }
+				}
+
+				.iconWrap { display: flex; flex-shrink: 0; }
+				// Ghost icon for an unknown layout: inline SVG on fill=currentColor, so it
+				// inherits the row's text colour unless dimmed here.
+				.iconWrap {
+					.iconObject { color: var(--color-text-tertiary); }
+				}
+
+				// Identity of last resort — a deleted row with no name, type or layout. Also
+				// stands in for a participant who has left the space, deliberately sharing the
+				// same grammar so both read as "an id, not a name".
+				.idChip {
+					@include text-small; font-family: 'Plex Mono', monospace; color: var(--color-text-secondary);
+					background-color: var(--color-shape-highlight-light); padding: 1px 6px; border-radius: 4px;
+					flex-shrink: 0; white-space: nowrap;
+				}
+				.idChip:hover { background-color: var(--color-shape-highlight-medium); color: var(--color-text-primary); }
+
+				// Every missing value explains itself on hover rather than reading as a bug.
+				.dash { color: var(--color-text-tertiary); }
+
+				// Marks the row reversible. Deleted rows carry no badge: the page frames
+				// everything as a removal, and mislabelling an uninstall is the one direction
+				// that actually misleads.
+				.stackBadge {
+					@include text-small; color: var(--color-text-secondary); background-color: var(--color-shape-highlight-medium);
+					border-radius: 15px; padding: 0px 6px; flex-shrink: 0; white-space: nowrap;
+				}
+			}
+		}
+	}
+}

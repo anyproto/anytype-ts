@@ -65,6 +65,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 					spaceview.isOneToOne ? null : { id: 'spaceNotifications', iconParam: { name: 'settings/pushOn' } },
 					{ id: 'spaceStorage', iconParam: { name: 'settings/storage' }, alert: notSyncedCounter },
 					{ id: 'archive', iconParam: { name: 'common/bin' } },
+					{ id: 'spaceDeletionAudit', iconParam: { name: 'common/bin' } },
 				],
 			},
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [

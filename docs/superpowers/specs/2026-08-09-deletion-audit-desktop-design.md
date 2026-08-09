@@ -176,15 +176,22 @@ by `scripts/generate-service-registry.js`, which the proto script invokes as its
 heart's `pb/protos/service/service.proto` and writing `src/ts/lib/api/service.ts` wholesale (:185).
 Hand-editing it would be overwritten on the next regeneration.
 
-`ObjectDeletionAudit` is already declared at `service.proto:132`, so §4.1 produces the entry for free.
+**Corrected 2026-08-09, after actually running it:** `src/ts/lib/api/service.ts` **already contained**
+`ObjectDeletionAudit` (:245) — and `SpaceBotAccountEnsure` (:311) — from an earlier commit. Running
+`generate-protos.sh` produced a **zero-line diff** to tracked files.
 
-Two consequences worth knowing before running it:
+An earlier draft of this section predicted both entries would be added by the regeneration. That was
+wrong: it rested on a grep that never executed (`--include=*.ts` unquoted, rejected by zsh as
+`no matches found`), whose empty output was misread as "absent".
 
-- Regenerating also picks up **`SpaceBotAccountEnsure`**, an unrelated RPC present on
-  `go-7431-delegated-identity-signing` but not in `dist/lib/protos/service.proto`. Its registry entry
-  will appear in the diff. That is expected, not a mistake to revert.
-- The generated protobuf bindings themselves land in `middleware/`, which is **gitignored** — so the
-  only tracked file the regeneration changes is `service.ts`.
+What remains true and is the point of this section:
+
+- `service.ts` is **generated output** and must not be hand-edited — `generate-service-registry.js:185`
+  rewrites it wholesale from `service.proto`. The plan's Step 2 says to hand-edit it; do not.
+- Running the script is still **required**, just not for `service.ts`: it produces the TypeScript
+  bindings under `middleware/` (`Rpc_Object_DeletionAudit_Request`/`_Response`, `commands.ts:3521`),
+  which `service.ts` references and `typecheck` needs. `middleware/` is **gitignored**, so this step
+  leaves no trace in the diff — which is exactly why it is easy to skip and then see typecheck fail.
 - The script's local mode runs `make install-dev-js` inside the heart checkout first, which needs a Go
   toolchain and takes minutes. `--from-dist` skips that but reads the released protos, which do **not**
   contain `DeletionAudit` — so it is not an option here.
@@ -276,9 +283,8 @@ Two deliberate differences from the backend's default set:
   back to a generic type glyph — the same loss of identity that §2.3 warns about for names. Deleted
   rows simply have none of these, and fall through to `U.Object.defaultIcon` as before.
 
-  This is additive and cheap, but it is the one part of the key set not validated against a running
-  backend. Confirm during implementation that uninstalled records really do carry `iconName`; if they
-  do not, drop the four keys rather than working around it.
+  **Confirmed 2026-08-09:** uninstalled records do carry the `icon*` keys. This was the one open
+  backend assumption in the key set; it is now settled and the keys stay.
 
 ---
 
@@ -573,7 +579,7 @@ this spec and that plan disagree, **this spec wins**:
 | Step 5 copies `archiveListTree`'s `loadMoreRows` | Copies its JSX only | That loader is subscription-backed; ours is offset/limit — §6 |
 | Row shows icon + type, degrading to bare dates | Degraded rows show an id chip | Requested during review: a row with nothing to name it still needs a handle |
 | Missing values render blank/dash | Every dash carries an explanatory tooltip | Requested during review — §5.4 |
-| Step 2 hand-edits `src/ts/lib/api/service.ts` | Regenerated — the file is generated output | `scripts/generate-service-registry.js:185` writes it wholesale; a hand edit is lost on the next run — §4.2 |
+| Step 2 hand-edits `src/ts/lib/api/service.ts` | Left alone — generated, and already correct | `generate-service-registry.js:185` writes it wholesale; the entry was already committed at :245 — §4.2 |
 | Step 3's `KEYS` has no icon keys | Adds `iconName`, `iconEmoji`, `iconOption`, `iconImage` | Uninstalled rows keep their real icon and lose it otherwise — §4.5 |
 | Step 9 uses `...Deleted` for a column header *and* a verb | Headers prefixed `...Column*` | The two collide in one namespace — §8.1 |
 | Title "Deletion history" | "Removal history" proposed | The page lists uninstalls too; calling them deletions is the error §5.5 prevents. Flagged as a copy call, not decided |
