@@ -136,6 +136,7 @@ html.bodyAuthDeleted {
 
 .pageAuthPinCheck {
 	.title { @include text-header1; font-weight: 600; margin: 0px 0px 24px 0px; }
+	.buttons { margin: 24px 0px 0px 0px; }
 	.pin { display: flex; gap: 0px 8px; flex-direction: row; }
 	.pin {
 		.input { 

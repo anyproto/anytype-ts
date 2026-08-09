@@ -725,6 +725,22 @@ class CommonStore {
 	};
 
 	/**
+	 * Drops the pin along with the session it locks, on logout.
+	 * Unlike pinRemove it leaves the checked state alone: the session is going away, so there is
+	 * nothing left to unlock, and marking it checked would broadcast pin-unlocked to every tab.
+	 */
+	pinClear () {
+		const id = this.pinId();
+
+		if (id) {
+			Renderer.send('keytarDelete', id);
+		};
+
+		Renderer.send('setHasPinSet', false);
+		this.pinValue = null;
+	};
+
+	/**
 	 * Initializes the pin value, optionally calling a callback.
 	 * @param {() => void} callBack - The callback function to call after initialization.
 	 */

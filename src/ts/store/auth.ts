@@ -261,6 +261,13 @@ class AuthStore {
 			analytics.profile('', '');
 			analytics.removeContext();
 
+			// The pin only locks the signed-in session on this device, so it goes with the session.
+			// Otherwise the keychain entry outlives the logout and locks the account out on re-login.
+			// Secondary tabs log out through the same path, so only the initiator touches the keychain
+			if (mainWindow && S.Common.pin) {
+				S.Common.pinClear();
+			};
+
 			keyboard.setPinChecked(false);
 
 			S.Common.spaceSet('');
