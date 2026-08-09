@@ -56,6 +56,12 @@
 					.cellContent { height: 18px; @include text-small; }
 				}
 
+				// Dates must never wrap or clip mid-word: a date broken after the comma
+				// ("February 25,") reads as corrupt data rather than as truncation.
+				.cell.c-removed {
+					.cellContent { @include text-overflow-nw; }
+				}
+
 				.cell.c-removedBy,
 				.cell.c-createdBy {
 					.flex { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
@@ -69,6 +75,13 @@
 					.flex { display: flex; align-items: center; gap: 0px 12px; overflow: hidden; }
 					.name { font-weight: 500; @include text-overflow-nw; min-width: 0; }
 					.size { @include text-small; color: var(--color-text-secondary); flex-shrink: 0; }
+
+					// Name and its kind read as one label, so they sit inside a wrapper
+					// rather than picking up the row's 12px inter-element gap.
+					.nameWrap { display: flex; align-items: baseline; gap: 0px 5px; min-width: 0; overflow: hidden; }
+					.nameWrap {
+						.typeName { @include text-small; color: var(--color-text-secondary); flex-shrink: 0; }
+					}
 				}
 
 				.iconWrap { display: flex; flex-shrink: 0; }
@@ -90,14 +103,6 @@
 
 				// Every missing value explains itself on hover rather than reading as a bug.
 				.dash { color: var(--color-text-tertiary); }
-
-				// Marks the row reversible. Deleted rows carry no badge: the page frames
-				// everything as a removal, and mislabelling an uninstall is the one direction
-				// that actually misleads.
-				.stackBadge {
-					@include text-small; color: var(--color-text-secondary); background-color: var(--color-shape-highlight-medium);
-					border-radius: 15px; padding: 0px 6px; flex-shrink: 0; white-space: nowrap;
-				}
 			}
 		}
 	}

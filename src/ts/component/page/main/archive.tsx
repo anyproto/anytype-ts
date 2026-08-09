@@ -354,14 +354,17 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 						{/* Navigates away rather than switching tabs, so it stays out of .tabs —
 							sitting beside Bin/Cleanup would misrepresent it as a third tab.
-							No canWrite guard: the audit is read-only and ships to everyone. */}
-						<Icon
-							className="archiveAction"
-							name="common/clock"
-							withBackground={true}
-							tooltipParam={{ text: translate('pageSettingsSpaceDeletionAudit') }}
-							onClick={onDeletionAudit}
-						/>
+							Gated on the same predicate as the page itself, so this button and
+							the page it opens can never disagree about who may see it. */}
+						{U.Space.canMyParticipantSeeDeletionAudit() ? (
+							<Icon
+								className="archiveAction"
+								name="common/clock"
+								withBackground={true}
+								tooltipParam={{ text: translate('pageSettingsSpaceDeletionAudit') }}
+								onClick={onDeletionAudit}
+							/>
+						) : ''}
 					</div>
 				</div>
 

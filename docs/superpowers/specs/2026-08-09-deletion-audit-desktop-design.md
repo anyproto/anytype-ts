@@ -21,18 +21,20 @@ Neither is the Bin. The Bin shows what is *about to* disappear and can still be 
 what already went.
 
 **Placement:** a dedicated page under Settings → Channel, plus an entry point from the Bin.
-**Visibility:** everywhere, including personal channels. No role gating — the data is not privileged,
-since every member already syncs the settings tree the backend reads it from.
+**Visibility:** moderators (owner or admin), plus **either side of a one-to-one channel** — those have
+no owner/admin distinction to moderate with, and both members are equally entitled to it. See
+[§13.2](#132-2026-08-09--review-round-role-gating-no-recoverability-claims); an earlier draft shipped
+this ungated.
 
-Renderer-only work. The middleware side is complete on the anytype-heart branch
-`go-7431-delegated-identity-signing`; no Go work is required.
+Renderer-only work. The middleware side merged as
+[anytype-heart#3237](https://github.com/anyproto/anytype-heart/pull/3237) (GO-7433) into heart
+`develop` on 2026-08-09; no Go work is required. Tracked on the desktop side as **JS-9851**.
 
 ---
 
 ## 2. Backend contract (verified)
 
-Verified against `../anytype-heart` on `go-7431-delegated-identity-signing`,
-`pb/protos/commands.proto:3053`:
+Verified against `../anytype-heart`, `pb/protos/commands.proto:3053` (merged as #3237, §13.2):
 
 ```
 Rpc.Object.DeletionAudit
@@ -133,8 +135,8 @@ ones. Do not assume sub-100ms.
 The page renders **full-width**, not in the 640px settings column.
 
 `.settingsPageContainer` is `max-width: 640px` (`src/scss/page/main/settings.scss:10`), which cannot
-comfortably carry four resolved columns plus a kind badge — the more so because deleted rows have no
-title to anchor them and lean entirely on those columns. The Bin already solves this: it
+comfortably carry four resolved columns — the more so because deleted rows have no title to anchor
+them and lean entirely on those columns. The Bin already solves this: it
 is registered as the settings page `archive` but listed in `SKIP_CONTAINER`
 (`src/ts/component/page/main/settings/index.tsx:78`), so it renders its own chrome. `.pageSettingsArchive`
 in `src/scss/page/main/archive.scss` exists for exactly this reason.
@@ -405,22 +407,25 @@ rather than a copy path to design for.
 ### 5.5 Distinguishing the two kinds
 
 The plan calls mis-labelling an uninstall a **correctness bug, not a wording nit** — a member reading
-"Alice deleted the Task type" concludes work was destroyed when it is one click from restored. Two
-mechanisms, both required:
+"Alice deleted the Task type" concludes work was destroyed when the type was not.
 
-**A badge on uninstalled rows**, following the existing `.stackBadge` convention already used for the
-"In Bin" badge in `archiveListTree`/`archiveSuggested` — so no new visual vocabulary. Deleted rows
-carry no badge: the page frames everything as a removal, and badging both makes every row noisy while
-doing nothing for the one direction that actually misleads.
+**The client makes no claim of recoverability, in either direction.** Uninstalled types and properties
+*are* reinstallable in principle, but there is no reinstall path in the client yet (§12), so telling a
+member something "can be added back" would promise an action they cannot take. The earlier draft's
+"Uninstalled" badge and its reversible-wording verb are **both removed**.
 
-This satisfies "distinguishable without hovering" through presence/absence. The symmetric alternative
-— badging both kinds — is the obvious variant if design prefers it, and is a pure render change.
+What remains is honest and sufficient:
 
-**A kind-branched verb** wherever prose names the action, driven off `isUninstalled`, never hardcoded.
-Uninstalled rows must read as reversible; deleted rows as permanent. The verb keys are in §8.1.
+- **The kind is visible without hovering**, because an uninstalled row renders its name with its kind
+  trailing it — "Crypto (Object Type)", "Due date (Property)". A deleted row shows the kind alone.
+  §5.2's label rule produces this; nothing extra is needed.
+- **Only deleted rows claim permanence**, via the icon tooltip
+  (`pageSettingsSpaceDeletionAuditDeleted`). Uninstalled rows carry no icon tooltip at all.
+- **The page description is kind-neutral** and states no outcome for either.
 
-Both the badge's exact wording and whether "deleted" rows should also be badged are **design
-questions**, flagged the same way as the placeholder sidebar icon in §7.
+The trade-off is deliberate: the two kinds are now distinguished by *what a row is* rather than by a
+badge asserting what can be done about it. Restoring a badge is a pure render change if a reinstall
+path later makes the claim true.
 
 ---
 
@@ -670,7 +675,7 @@ the row renderer will then treat as a degraded record.
 
 ## 13. Amendment log
 
-### 2026-08-09 — two kinds of record
+### 13.1 2026-08-09 — two kinds of record
 
 The backend stopped returning deletions only. `ObjectDeletionAudit` now merges **deleted** and
 **uninstalled** records into one chronological list, discriminated by `isUninstalled`. Amended against
@@ -712,3 +717,55 @@ hand. Corrected in §4.2 and §9.
 **Still open, unchanged by this amendment:** the placeholder sidebar icon (§7), the missing-value
 tooltip copy (§5.4), the badge wording and whether deleted rows should be badged too (§5.5), and now
 the page title (§8.1). All are product/design calls, flagged rather than decided.
+
+---
+
+### 13.2 2026-08-09 — review round: role gating, no recoverability claims
+
+Changes from reviewing the page against a live backend. Several corrected things this spec had
+asserted from the plan rather than observed.
+
+**Access is now gated.** §1 previously said "everywhere, including personal channels. No role gating."
+That is reversed: moderators, plus either side of a one-to-one. Three surfaces enforce it — the sidebar
+entry, the Bin button and the page's own guard — all reading one predicate,
+`U.Space.canMyParticipantSeeDeletionAudit()` (`src/ts/lib/util/space.ts`), so a hidden entry point and
+a reachable page cannot drift apart. The page redirects via `U.Space.openDashboard()` **before** any
+request is issued and renders `null` meanwhile, so a hand-typed route discloses nothing. `isOneToOne`
+lives only on the spaceview, which is why the predicate reads it there — every other call site in
+`space.ts` does the same.
+
+**No recoverability claims** — the badge and reversible verb are gone. See §5.5.
+
+**The icon bug, and what caused it.** Uninstalled types rendered a generic document glyph. The cause
+was in this client, not the backend: `Number(record.resolvedLayout) || I.ObjectLayout.Page` collapsed a
+missing layout to `Page` (0). Diagnosed from the glyph itself — `U.Object.defaultIcon` returns
+`default/type` for a Type layout, so a `default/page` glyph proved the value never arrived as `Type`.
+Now falls back to `layout` before giving up, and renders the ghost icon when neither exists. Separately,
+`relationKey` and `relationFormat` were added to `KEYS`: `IconObject`'s Relation branch
+(`iconObject.tsx:374`) renders off those, not the `icon*` keys, so uninstalled properties were falling
+back to a generic glyph.
+
+**Type moved inline, not into a column.** A "Type" column was built and then reverted — for uninstalled
+rows the type is a qualifier on the name, not an independent axis. It now trails the name in
+parentheses. Layout-derived names (`layoutName()`) take precedence over the type object's own name for
+the Type/Relation/Option layouts, because the bundled types still carry pre-rename wording ("Relation",
+"Relation option") that would otherwise leak into the UI as it is renamed to Property.
+
+**Smaller corrections:**
+
+- Date column widened 16% → 19% with `text-overflow-nw`; it was clipping mid-string ("February 25,"),
+  which reads as corrupt data rather than truncation. Hovering shows date + time from `S.Common.timeFormat`.
+- The id fragment gained a leading ellipsis, marking it a tail rather than a whole id.
+- Sidebar icon changed from `common/bin` — which made the nav row indistinguishable from the Bin's —
+  to `common/clock`, matching the Bin entry point.
+- `List` uses `rowCount={total}`, not `records.length` as §6 originally said, rendering a placeholder
+  for unloaded indices. With `records.length` the list can only render the first page, so scrolling
+  never reaches the threshold that triggers `loadMoreRows` and pagination silently never fires.
+- New l10n key `pluralPropertyOption`; `pageSettingsSpaceDeletionAuditUninstalled` and
+  `...UninstalledBadge` removed.
+
+**Backend reference corrected.** The middleware work merged as
+[anytype-heart#3237](https://github.com/anyproto/anytype-heart/pull/3237) (GO-**7433**) into heart
+`develop` on 2026-08-09. This spec and the plan both cited the branch
+`go-7431-delegated-identity-signing`, which is a different branch that also carried the code. Tracked
+on the desktop side as **JS-9851**.

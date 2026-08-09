@@ -20,21 +20,49 @@ const ID_TAIL = 5;
 // Deleted objects carry none of them and fall through to U.Object.defaultIcon.
 const KEYS = [
 	'name', 'creator', 'createdDate', 'addedDate', 'createdInContext', 'createdInContextRef',
-	'lastModifiedBy', 'lastModifiedDate', 'type', 'resolvedLayout', 'sizeInBytes',
+	'lastModifiedBy', 'lastModifiedDate', 'type', 'resolvedLayout', 'layout', 'sizeInBytes',
 	'sourceObject', 'deletionChangeId',
 	'iconName', 'iconEmoji', 'iconOption', 'iconImage',
+	// IconObject's Relation branch renders off these two rather than the icon* keys
+	// (iconObject.tsx:374). Without them an uninstalled property falls back to the
+	// generic relation glyph instead of one matching its format.
+	'relationKey', 'relationFormat',
 ];
 
-const css: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 20% 16% 20%' };
+// The date column is the widest of the three fixed ones: a long-form date like
+// "February 25, 2026" is the longest value any of them holds, and 16% clipped it.
+const css: React.CSSProperties = { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 19% 19% 19%' };
+
+// What kind of thing a row was, named from its layout.
+//
+// This takes precedence over the type object's own name for these three layouts: the
+// bundled types still carry their pre-rename names ("Relation", "Relation option"), and
+// reading them straight would leak that vocabulary back into the UI. It also keeps the
+// row honest when the type object cannot be resolved at all, which happens whenever the
+// type was itself removed.
+const layoutName = (layout: I.ObjectLayout): string => {
+	switch (layout) {
+		case I.ObjectLayout.Type: return U.Common.plural(1, translate('pluralObjectType'));
+		case I.ObjectLayout.Relation: return U.Common.plural(1, translate('pluralProperty'));
+		case I.ObjectLayout.Option: return U.Common.plural(1, translate('pluralPropertyOption'));
+		default: return '';
+	};
+};
 
 const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { isPopup } = props;
-	const { space, dateFormat } = S.Common;
+	const { space, dateFormat, timeFormat } = S.Common;
 	const [ records, setRecords ] = useState<any[]>([]);
 	const [ total, setTotal ] = useState(0);
 	const [ isLoading, setIsLoading ] = useState(true);
 	const listRef = useRef(null);
+
+	// Moderators, or either side of a one-to-one. The sidebar entry and the Bin button are
+	// hidden for everyone else, but neither is a control: the route is reachable by hand,
+	// and the settings router only checks that the page id is known. So the gate lives here
+	// as well, and this one is the one that counts — nothing is requested before it passes.
+	const canView = U.Space.canMyParticipantSeeDeletionAudit();
 
 	// Bumped only when the space changes. Concurrent pagination requests for the current
 	// space all stay valid; everything still in flight from a previous space is dropped.
@@ -69,6 +97,13 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 	};
 
 	useEffect(() => {
+		// Bounce a hand-typed route rather than rendering an empty shell, and do it
+		// before any request goes out.
+		if (!canView) {
+			U.Space.openDashboard();
+			return;
+		};
+
 		generationRef.current++;
 
 		setRecords([]);
@@ -76,10 +111,12 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 		setIsLoading(true);
 
 		load(0, LIMIT);
-	}, [ space ]);
+	}, [ space, canView ]);
 
 	useEffect(() => {
-		analytics.event('ScreenSettingsSpaceDeletionAudit');
+		if (canView) {
+			analytics.event('ScreenSettingsSpaceDeletionAudit');
+		};
 	}, []);
 
 	useImperativeHandle(ref, () => ({
@@ -98,7 +135,8 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 		Preview.tooltipHide(false);
 	};
 
-	const shortId = (id: string): string => String(id || '').slice(-ID_TAIL);
+	// Leading ellipsis marks it as a tail, not a whole id.
+	const shortId = (id: string): string => `…${String(id || '').slice(-ID_TAIL)}`;
 
 	// Every absent value explains itself, so an empty cell never reads as a bug.
 	// Uninstalled rows keep their whole creation half and never reach this.
@@ -162,42 +200,78 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 			return <div className="row isPlaceholder" style={{ ...css, ...style }} />;
 		};
 
-		// Two different questions. isUninstalled decides the verb, the badge and whether a
-		// name may be shown; isDegraded decides whether the row can describe itself at all.
-		// §2.1 of the spec guarantees uninstalled rows are never degraded — the guard states
-		// that invariant rather than relying on it.
+		// Two different questions. isUninstalled decides whether a name may be shown and
+		// whether the row may claim permanence; isDegraded decides whether the row can
+		// describe itself at all. §2.1 of the spec guarantees uninstalled rows are never
+		// degraded — the guard states that invariant rather than relying on it.
 		const isUninstalled = Boolean(record.isUninstalled);
-		const isDegraded = !isUninstalled && (undefined === record.resolvedLayout);
 
-		const type = isDegraded ? null : S.Record.getTypeById(record.type);
-		const typeName = type ? type.name : '';
+		// resolvedLayout is the authority, but fall back to layout before giving up:
+		// collapsing a missing value straight to Page (0) is silent and wrong — it renders
+		// a document glyph for something that was a type or a property.
+		let layout = undefined;
+		if (undefined !== record.resolvedLayout) {
+			layout = Number(record.resolvedLayout);
+		} else
+		if (undefined !== record.layout) {
+			layout = Number(record.layout);
+		};
 
-		// Show the real name when there is one. Only uninstalled records carry one, and
-		// falling back to a generic "Type" when "Task" is available throws away the point
-		// of the row.
-		const label = (isUninstalled && record.name) ? record.name : typeName;
+		const isDegraded = !isUninstalled && (undefined === layout);
+
+		const type = S.Record.getTypeById(record.type);
+		const typeName = layoutName(layout) || (type ? type.name : '');
+
+		// Only uninstalled records keep a name. A deleted row has nothing but its kind.
+		const label = (isUninstalled && record.name) ? record.name : '';
 
 		const size = record.sizeInBytes ? U.File.size(Number(record.sizeInBytes)) : '';
-		const removed = record.deletedDate ? U.Date.dateWithFormat(dateFormat, Number(record.deletedDate)) : '';
-		const verb = translate(isUninstalled ? 'pageSettingsSpaceDeletionAuditUninstalled' : 'pageSettingsSpaceDeletionAuditDeleted');
+		const removedDate = Number(record.deletedDate) || 0;
+		const removed = removedDate ? U.Date.dateWithFormat(dateFormat, removedDate) : '';
+		// The cell shows the date alone; the time only matters when you are reconstructing
+		// the order of a single day's removals, so it lives on hover.
+		const removedFull = removedDate ? [ removed, U.Date.timeWithFormat(timeFormat, removedDate) ].join(', ') : '';
+		// Only a deleted row makes a claim about permanence. An uninstalled type or property
+		// makes none: there is no reinstall path in the client yet, so promising one would
+		// be worse than saying nothing. Its kind is already visible next to its name.
+		let iconTooltip = '';
+		if (isDegraded) {
+			iconTooltip = translate('pageSettingsSpaceDeletionAuditMissingTooltip');
+		} else
+		if (!isUninstalled) {
+			iconTooltip = translate('pageSettingsSpaceDeletionAuditDeleted');
+		};
 
 		// IconObject renders the ghost icon off isDeleted, which is the honest icon for a
 		// row whose layout is unknown — anything else would assert a type we do not have.
-		const iconObject: any = isDegraded ? { id: record.id, isDeleted: true } : {
+		const iconObject: any = (undefined === layout) ? { id: record.id, isDeleted: true } : {
 			id: record.id,
-			layout: Number(record.resolvedLayout) || I.ObjectLayout.Page,
+			layout,
 			type: record.type,
 			iconName: record.iconName,
 			iconEmoji: record.iconEmoji,
 			iconOption: record.iconOption,
 			iconImage: record.iconImage,
+			relationKey: record.relationKey,
+			relationFormat: Number(record.relationFormat) || I.RelationType.LongText,
 		};
 
 		const cn = [ 'row', (isUninstalled ? 'isUninstalled' : 'isDeleted') ];
 
+		// A named row still has to say what kind of thing it was, so the type trails the
+		// name in parentheses rather than taking a column of its own — "Crypto (Object
+		// Type)". Unnamed rows have only the kind, and show it alone.
 		let name = null;
 		if (label) {
-			name = <span className="name">{label}</span>;
+			name = (
+				<span className="nameWrap">
+					<span className="name">{label}</span>
+					{typeName ? <span className="typeName">({typeName})</span> : ''}
+				</span>
+			);
+		} else
+		if (typeName) {
+			name = <span className="name">{typeName}</span>;
 		} else
 		if (isDegraded) {
 			name = renderIdChip(record.id);
@@ -212,8 +286,8 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 						<div className="flex">
 							<div
 								className="iconWrap"
-								onMouseEnter={e => onTooltipShow(e, isDegraded ? translate('pageSettingsSpaceDeletionAuditMissingTooltip') : verb)}
-								onMouseLeave={onTooltipHide}
+								onMouseEnter={iconTooltip ? (e => onTooltipShow(e, iconTooltip)) : undefined}
+								onMouseLeave={iconTooltip ? onTooltipHide : undefined}
 							>
 								<IconObject object={iconObject} size={20} />
 							</div>
@@ -221,16 +295,6 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 							{name}
 
 							{size ? <span className="size">{size}</span> : ''}
-
-							{isUninstalled ? (
-								<span
-									className="stackBadge"
-									onMouseEnter={e => onTooltipShow(e, verb)}
-									onMouseLeave={onTooltipHide}
-								>
-									{translate('pageSettingsSpaceDeletionAuditUninstalledBadge')}
-								</span>
-							) : ''}
 						</div>
 					</div>
 				</div>
@@ -240,7 +304,16 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 				</div>
 
 				<div className="cell c-removed">
-					<div className="cellContent">{removed ? removed : renderDash()}</div>
+					<div className="cellContent">
+						{removed ? (
+							<span
+								onMouseEnter={e => onTooltipShow(e, removedFull)}
+								onMouseLeave={onTooltipHide}
+							>
+								{removed}
+							</span>
+						) : renderDash()}
+					</div>
 				</div>
 
 				<div className="cell c-createdBy">
@@ -248,6 +321,12 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 				</div>
 			</div>
 		);
+	};
+
+	// The effect above is already navigating away; render nothing in the meantime so no
+	// part of the audit is ever painted for someone who may not see it.
+	if (!canView) {
+		return null;
 	};
 
 	const scrollContainer = U.Dom.getScrollContainer(isPopup);

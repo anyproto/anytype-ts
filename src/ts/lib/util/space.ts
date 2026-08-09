@@ -523,6 +523,20 @@ class UtilSpace {
 	};
 
 	/**
+	 * Checks if the current user can see the space's removal history.
+	 * Moderators anywhere, plus either side of a one-to-one — those have no owner/admin
+	 * distinction to moderate with, and both members are equally entitled to it.
+	 *
+	 * Single source of truth on purpose: the sidebar entry, the Bin button and the page's
+	 * own guard all read this, so a hidden entry point and an unreachable page cannot
+	 * drift apart.
+	 * @returns {boolean} True if the user can see the removal history.
+	 */
+	canMyParticipantSeeDeletionAudit (): boolean {
+		return this.canMyParticipantModerate() || Boolean(this.getSpaceview().isOneToOne);
+	};
+
+	/**
 	 * Checks if the current user can manage (change role / remove) a target participant.
 	 * Owner can manage Admins, Editors and Viewers; Admin can manage Editors and Viewers only.
 	 * Nobody can manage themselves or another Owner.

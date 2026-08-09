@@ -24,6 +24,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 	const isSpace = page == 'settingsSpace';
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
+	const canSeeDeletionAudit = U.Space.canMyParticipantSeeDeletionAudit();
 	const withMembership = isOnline && U.Data.isAnytypeNetwork();
 	const listRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
@@ -65,7 +66,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 					spaceview.isOneToOne ? null : { id: 'spaceNotifications', iconParam: { name: 'settings/pushOn' } },
 					{ id: 'spaceStorage', iconParam: { name: 'settings/storage' }, alert: notSyncedCounter },
 					{ id: 'archive', iconParam: { name: 'common/bin' } },
-					{ id: 'spaceDeletionAudit', iconParam: { name: 'common/bin' } },
+					canSeeDeletionAudit ? { id: 'spaceDeletionAudit', iconParam: { name: 'common/clock' } } : null,
 				],
 			},
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
