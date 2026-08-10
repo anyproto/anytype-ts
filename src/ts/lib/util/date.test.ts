@@ -204,6 +204,71 @@ describe('UtilDate', () => {
 		});
 	});
 
+	describe('parseTime', () => {
+		it('should parse a 24h hh:mm string', () => {
+			expect(UtilDate.parseTime('14:30')).toEqual({ h: 14, i: 30 });
+			expect(UtilDate.parseTime('00:00')).toEqual({ h: 0, i: 0 });
+			expect(UtilDate.parseTime('23:59')).toEqual({ h: 23, i: 59 });
+		});
+
+		it('should parse single digit components', () => {
+			expect(UtilDate.parseTime('9:5')).toEqual({ h: 9, i: 5 });
+		});
+
+		it('should ignore inputmask placeholders and whitespace', () => {
+			expect(UtilDate.parseTime(' 14:30 ')).toEqual({ h: 14, i: 30 });
+			expect(UtilDate.parseTime('14:3_')).toEqual({ h: 14, i: 3 });
+		});
+
+		it('should parse 12h strings with a meridiem suffix', () => {
+			expect(UtilDate.parseTime('2:30 PM')).toEqual({ h: 14, i: 30 });
+			expect(UtilDate.parseTime('2:30am')).toEqual({ h: 2, i: 30 });
+			expect(UtilDate.parseTime('12:15 AM')).toEqual({ h: 0, i: 15 });
+			expect(UtilDate.parseTime('12:15 PM')).toEqual({ h: 12, i: 15 });
+		});
+
+		it('should return null for incomplete or invalid values', () => {
+			expect(UtilDate.parseTime('')).toBe(null);
+			expect(UtilDate.parseTime(null)).toBe(null);
+			expect(UtilDate.parseTime('__:__')).toBe(null);
+			expect(UtilDate.parseTime('14:')).toBe(null);
+			expect(UtilDate.parseTime('1430')).toBe(null);
+			expect(UtilDate.parseTime('24:00')).toBe(null);
+			expect(UtilDate.parseTime('12:60')).toBe(null);
+			expect(UtilDate.parseTime('13:00 PM')).toBe(null);
+		});
+	});
+
+	describe('withTime', () => {
+		it('should apply a time string to the date part of a timestamp', () => {
+			const ts = Math.floor(new Date(2024, 6, 15, 8, 0, 0).getTime() / 1000);
+			const d = new Date(UtilDate.withTime(ts, '14:30') * 1000);
+
+			expect(d.getFullYear()).toBe(2024);
+			expect(d.getMonth()).toBe(6);
+			expect(d.getDate()).toBe(15);
+			expect(d.getHours()).toBe(14);
+			expect(d.getMinutes()).toBe(30);
+			expect(d.getSeconds()).toBe(0);
+		});
+
+		it('should keep the date when the time is midnight', () => {
+			const ts = Math.floor(new Date(2024, 6, 15, 23, 45, 0).getTime() / 1000);
+			const d = new Date(UtilDate.withTime(ts, '00:00') * 1000);
+
+			expect(d.getDate()).toBe(15);
+			expect(d.getHours()).toBe(0);
+			expect(d.getMinutes()).toBe(0);
+		});
+
+		it('should return null for an invalid time string', () => {
+			const ts = Math.floor(new Date(2024, 6, 15).getTime() / 1000);
+
+			expect(UtilDate.withTime(ts, '__:__')).toBe(null);
+			expect(UtilDate.withTime(ts, '25:00')).toBe(null);
+		});
+	});
+
 	describe('getCalendarDateParam', () => {
 		it('should extract day, month, year from timestamp', () => {
 			const ts = Math.floor(new Date(2024, 6, 15).getTime() / 1000);

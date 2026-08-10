@@ -204,6 +204,11 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 				param.data = Object.assign(param.data, {
 					value: param.data.value || U.Date.now(),
 					noKeyboard: true,
+
+					// Without inplace editing the calendar menu is the only editor available,
+					// so it has to offer the time input as well (JS-9841). With inplace
+					// editing the masked input in component/cell/text.tsx already handles time.
+					includeTime: !!noInplace && !!relation.includeTime,
 				});
 					
 				menuId = 'calendar';
