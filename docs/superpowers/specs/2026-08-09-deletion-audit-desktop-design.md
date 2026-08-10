@@ -431,6 +431,11 @@ path later makes the claim true.
 
 ## 6. Pagination and lifecycle
 
+> **Superseded 2026-08-10 (§13.3).** Infinite scroll was replaced by an explicit "Show more"
+> button loading 100 rows at a time, and `react-virtualized` was dropped from this page entirely.
+> The lifecycle, race-guard and loading/empty rules below still hold; the virtualization
+> mechanics do not.
+
 `InfiniteLoader` + `WindowScroller` + `AutoSizer` + `List`, with the JSX shape copied from
 `archiveListTree.tsx:295-328`:
 
@@ -769,3 +774,34 @@ the Type/Relation/Option layouts, because the bundled types still carry pre-rena
 `develop` on 2026-08-09. This spec and the plan both cited the branch
 `go-7431-delegated-identity-signing`, which is a different branch that also carried the code. Tracked
 on the desktop side as **JS-9851**.
+
+---
+
+### 13.3 2026-08-10 — "Show more" replaces infinite scroll
+
+Reported from a channel with a long removal history: scroll-driven loading was unusable there. The
+list kept fetching as you scrolled, and the bottom kept moving away.
+
+**Paging is now an explicit action.** 100 rows per request, a "Show more" button below the table
+(`commonShowMore`, already in `text.json`), disabled while a page is in flight. The button appears only
+while `records.length < total`.
+
+**`react-virtualized` is gone from this page.** `InfiniteLoader`, `WindowScroller`, `AutoSizer` and
+`List` all existed to serve scroll-driven loading; with paging on request they earn nothing and cost a
+lot. Removing them also removes the sparse-array bookkeeping, the placeholder rows, the fixed
+`ROW_HEIGHT`, the `rowCount` subtlety §13.2 had to correct, and the `overflow: visible !important`
+overrides the hover pill needed to escape the virtualized container. Rows are now plain DOM at their
+natural height, and `resize()` on the page ref is a no-op because there is nothing left to recompute.
+
+The trade-off is accepted deliberately: the DOM now grows by 100 rows per click with no recycling.
+That is bounded by an explicit user action rather than by scroll position, which is the property that
+was missing before.
+
+**Appends are deduplicated by id.** Offsets are only stable while nothing is being removed; if a
+removal lands between two pages the window shifts and the next page repeats a row. Under virtualization
+that was an invisible duplicate — with keyed rows it is a React key collision and the same removal
+rendered twice. `load()` drops ids already held, which is cheaper than re-fetching from zero and
+self-corrects the offset drift on the following page.
+
+The race guard still uses the generation counter, but now only for space changes: with the button
+disabled while loading there is at most one request in flight per space.

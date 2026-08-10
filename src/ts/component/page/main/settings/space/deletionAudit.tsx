@@ -1,10 +1,12 @@
 import React, { forwardRef, useState, useEffect, useRef, useImperativeHandle, MouseEvent } from 'react';
-import { AutoSizer, WindowScroller, List, InfiniteLoader } from 'react-virtualized';
-import { Header, Footer, IconObject, ObjectName, Title, Label, Loader, EmptySearch } from 'Component';
+import { Header, Footer, Button, IconObject, ObjectName, Title, Label, Loader, EmptySearch } from 'Component';
 import * as I from 'Interface';
 
-const LIMIT = 50;
-const ROW_HEIGHT = 42;
+// Paged behind an explicit "Show more" rather than infinite scroll. A channel with a long
+// removal history made scroll-driven loading unusable — the list kept fetching as you
+// scrolled through it, and there was no way to reach the bottom. Loading on request keeps
+// the page a fixed size until the user asks for more.
+const LIMIT = 100;
 
 // How much of an id identifies a row that cannot name itself. Long enough to be
 // distinguishing in a list, short enough to read; the full id is a hover away.
@@ -51,12 +53,10 @@ const layoutName = (layout: I.ObjectLayout): string => {
 
 const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
-	const { isPopup } = props;
 	const { space, dateFormat, timeFormat } = S.Common;
 	const [ records, setRecords ] = useState<any[]>([]);
 	const [ total, setTotal ] = useState(0);
 	const [ isLoading, setIsLoading ] = useState(true);
-	const listRef = useRef(null);
 
 	// Moderators, or either side of a one-to-one. The sidebar entry and the Bin button are
 	// hidden for everyone else, but neither is a control: the route is reachable by hand,
@@ -64,14 +64,18 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 	// as well, and this one is the one that counts — nothing is requested before it passes.
 	const canView = U.Space.canMyParticipantSeeDeletionAudit();
 
-	// Bumped only when the space changes. Concurrent pagination requests for the current
-	// space all stay valid; everything still in flight from a previous space is dropped.
+	// Bumped when the space changes, so a reply still in flight from the previous space is
+	// dropped instead of appending its rows onto this one's list.
 	const generationRef = useRef(0);
 
-	const load = (offset: number, limit: number, callBack?: () => void) => {
+	// Always appends: the offset is whatever we already hold, so a page can only ever
+	// extend the list. Nothing reads by index, so there are no holes to leave.
+	const load = (offset: number) => {
 		const generation = generationRef.current;
 
-		C.ObjectDeletionAudit(space, KEYS, offset, limit, (message: any) => {
+		setIsLoading(true);
+
+		C.ObjectDeletionAudit(space, KEYS, offset, LIMIT, (message: any) => {
 			if (generation != generationRef.current) {
 				return;
 			};
@@ -79,7 +83,6 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 			setIsLoading(false);
 
 			if (message.error.code) {
-				callBack?.();
 				return;
 			};
 
@@ -87,12 +90,17 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 
 			setTotal(message.total);
 			setRecords(prev => {
-				const next = [ ...prev ];
-				list.forEach((it: any, i: number) => next[offset + i] = it);
-				return next;
-			});
+				if (!offset) {
+					return list;
+				};
 
-			callBack?.();
+				// Offsets are only stable while nothing is being removed. If a removal lands
+				// between two pages the window shifts by one and the next page repeats a row —
+				// which would collide on the React key and render the same removal twice.
+				// Dropping ids we already hold is cheaper than re-fetching from zero.
+				const seen = new Set(prev.map(it => it.id));
+				return prev.concat(list.filter((it: any) => !seen.has(it.id)));
+			});
 		});
 	};
 
@@ -108,9 +116,8 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 
 		setRecords([]);
 		setTotal(0);
-		setIsLoading(true);
 
-		load(0, LIMIT);
+		load(0);
 	}, [ space, canView ]);
 
 	useEffect(() => {
@@ -119,13 +126,10 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 		};
 	}, []);
 
+	// Rows are plain DOM at their natural height, so there is nothing to recompute.
 	useImperativeHandle(ref, () => ({
-		resize: () => listRef.current?.recomputeRowHeights(),
+		resize: () => {},
 	}));
-
-	const loadMoreRows = ({ startIndex, stopIndex }): Promise<void> => {
-		return new Promise<void>(resolve => load(startIndex, stopIndex - startIndex + 1, () => resolve()));
-	};
 
 	const onTooltipShow = (e: MouseEvent, text: string) => {
 		Preview.tooltipShow({ text, element: e.currentTarget as HTMLElement, typeY: I.MenuDirection.Bottom });
@@ -193,13 +197,7 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 		);
 	};
 
-	const renderRow = (index: number, style: React.CSSProperties) => {
-		const record = records[index];
-
-		if (!record) {
-			return <div className="row isPlaceholder" style={{ ...css, ...style }} />;
-		};
-
+	const renderRow = (record: any) => {
 		// Two different questions. isUninstalled decides whether a name may be shown and
 		// whether the row may claim permanence; isDegraded decides whether the row can
 		// describe itself at all. §2.1 of the spec guarantees uninstalled rows are never
@@ -280,7 +278,7 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 		};
 
 		return (
-			<div className={cn.join(' ')} style={{ ...css, ...style }}>
+			<div key={record.id} className={cn.join(' ')} style={css}>
 				<div className="cell">
 					<div className="cellContent isName">
 						<div className="flex">
@@ -329,7 +327,6 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 		return null;
 	};
 
-	const scrollContainer = U.Dom.getScrollContainer(isPopup);
 	const columns = [
 		translate('pageSettingsSpaceDeletionAuditColumnObject'),
 		translate('pageSettingsSpaceDeletionAuditColumnRemovedBy'),
@@ -337,52 +334,20 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 		translate('pageSettingsSpaceDeletionAuditColumnCreatedBy'),
 	];
 
+	const hasMore = records.length < total;
+
 	let body = null;
 
 	// The first call in a space walks the whole settings tree and every uninstalled
-	// object's tree, so this is a real state rather than a formality.
+	// object's tree, so this is a real state rather than a formality. Later pages keep
+	// the rows on screen and put the wait on the button instead.
 	if (isLoading && !records.length) {
 		body = <Loader />;
 	} else
 	if (!total) {
 		body = <EmptySearch text={translate('pageSettingsSpaceDeletionAuditEmpty')} />;
 	} else {
-		body = (
-			<InfiniteLoader
-				isRowLoaded={({ index }) => !!records[index]}
-				loadMoreRows={loadMoreRows}
-				rowCount={total}
-				threshold={10}
-			>
-				{({ onRowsRendered }) => (
-					<WindowScroller scrollElement={scrollContainer}>
-						{({ height, isScrolling, scrollTop }) => (
-							<AutoSizer disableHeight={true}>
-								{({ width }) => (
-									<List
-										ref={listRef}
-										autoHeight={true}
-										height={Number(height) || 0}
-										width={Number(width) || 0}
-										isScrolling={isScrolling}
-										rowCount={total}
-										rowHeight={ROW_HEIGHT}
-										onRowsRendered={onRowsRendered}
-										overscanRowCount={10}
-										scrollTop={scrollTop}
-										rowRenderer={({ key, index, style }) => (
-											<div key={key}>
-												{renderRow(index, style)}
-											</div>
-										)}
-									/>
-								)}
-							</AutoSizer>
-						)}
-					</WindowScroller>
-				)}
-			</InfiniteLoader>
-		);
+		body = records.map(renderRow);
 	};
 
 	return (
@@ -407,6 +372,17 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 
 						{body}
 					</div>
+
+					{hasMore ? (
+						<div className="showMore">
+							<Button
+								text={translate('commonShowMore')}
+								color="blank"
+								className={isLoading ? 'isDisabled' : ''}
+								onClick={() => load(records.length)}
+							/>
+						</div>
+					) : ''}
 				</div>
 			</div>
 

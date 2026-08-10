@@ -23,12 +23,15 @@
 
 		.listObject.deletionAudit { flex-grow: 1; }
 		.listObject.deletionAudit {
-			// react-virtualized clips the hover pill (which bleeds 8px either side) without this.
-			.ReactVirtualized__List { overflow: visible !important; }
-			.ReactVirtualized__Grid__innerScrollContainer { overflow: visible !important; }
-
 			.loaderWrapper { position: relative; height: 120px; }
 			.emptySearch { padding: 40px 0px; }
+
+			// Paging is an explicit action, so the affordance sits below the table rather
+			// than the list loading itself as you scroll.
+			.showMore { display: flex; justify-content: center; padding: 16px 0px 0px 0px; }
+			.showMore {
+				.button.isDisabled { opacity: 0.4; pointer-events: none; }
+			}
 
 			.table {
 				.row { position: relative; gap: 0px 6px; border: 0px; }
