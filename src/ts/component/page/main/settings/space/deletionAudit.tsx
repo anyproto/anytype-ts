@@ -189,8 +189,29 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 			);
 		};
 
+		// Display names are not unique and can be changed at will, which is a poor basis for
+		// an audit trail. resolvedName is the globalName when there is one, falling back to
+		// the raw identity — either way, the thing that actually identifies the account.
+		const identity = participant.resolvedName;
+
+		// What gets copied carries all three: the display name so a human reading it knows
+		// who is meant, the globalName to address the account, and the raw identity because
+		// that is the only part that is stable and unique. Accounts without a globalName
+		// drop the parentheses rather than showing an empty pair.
+		const copyText = participant.globalName
+			? `${participant.name}. ${participant.globalName} (${participant.identity})`
+			: `${participant.name}. ${participant.identity}`;
+
 		return (
-			<div className="flex">
+			<div
+				className="flex"
+				onMouseEnter={identity ? (e => onTooltipShow(e, identity)) : undefined}
+				onMouseLeave={identity ? onTooltipHide : undefined}
+				onClick={() => {
+					onTooltipHide();
+					U.Common.copyToast(participant.name, copyText);
+				}}
+			>
 				<IconObject object={participant} size={18} />
 				<ObjectName object={participant} />
 			</div>
