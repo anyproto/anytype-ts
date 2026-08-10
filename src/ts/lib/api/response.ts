@@ -262,6 +262,19 @@ export const ObjectCleanupSuggestions = (response: any) => {
 	};
 };
 
+/**
+ * Deliberately bare Decode.struct, not S.Detail.mapper: mapper fabricates
+ * name = "Untitled" for every record and defaults a missing layout to Page.
+ * Only uninstalled records carry a real name, so `name` has to keep meaning
+ * "the real name, or nothing" for the row renderer to branch correctly.
+ */
+export const ObjectDeletionAudit = (response: any) => {
+	return {
+		records: (response.records || []).map(Decode.struct),
+		total: Number(response.total) || 0,
+	};
+};
+
 export const ObjectSearchWithMeta = (response: any) => {
 	return {
 		records: (response.results || []).map(Mapper.From.ObjectSearchWithMeta),

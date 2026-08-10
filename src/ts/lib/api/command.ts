@@ -1572,6 +1572,23 @@ export const ObjectCleanupSuggestions = (spaceId: string, keys: string[], callBa
 };
 
 /**
+ * Lists what was removed from the space, newest first: objects deleted outright, and
+ * types/properties uninstalled. Branch on isUninstalled — only the latter is reversible,
+ * and only the latter carries a name.
+ * id, deletedBy, deletedDate and isUninstalled are always returned regardless of keys.
+ * Passing keys replaces the backend's default set rather than extending it.
+ * Creation-side keys are absent for objects deleted by older builds.
+ */
+export const ObjectDeletionAudit = (spaceId: string, keys: string[], offset: number, limit: number, callBack?: (message: any) => void) => {
+	dispatcher.request('ObjectDeletionAudit', {
+		spaceId,
+		keys: (keys || []).filter(it => it),
+		offset,
+		limit,
+	}, callBack);
+};
+
+/**
  * Permanently excludes objects from cleanup suggestions (both the list and the event).
  * Ignoring an object also drops its descendants. Reversible via ignored=false.
  */

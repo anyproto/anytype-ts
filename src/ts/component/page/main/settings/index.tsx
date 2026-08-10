@@ -30,6 +30,7 @@ import PageSpaceStorage from './space/storage';
 import PageSpaceShare from './space/share';
 import PageSpaceList from './space/list';
 import PageSpaceNotifications from './space/notifications';
+import PageSpaceDeletionAudit from './space/deletionAudit';
 
 import PageMainSet from '../set';
 import PageMainRelation from '../relation';
@@ -71,13 +72,16 @@ const Components: any = {
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
 	spaceNotifications:	 PageSpaceNotifications,
+	spaceDeletionAudit:	 PageSpaceDeletionAudit,
 
 	set:				 PageMainSet,
 	relation:			 PageMainRelation,
 	archive: 			 PageMainArchive,
 };
 
-const SKIP_CONTAINER = [ 'set', 'relation', 'archive' ];
+// These render their own Header/Footer and full-width wrapper instead of sitting in
+// .settingsPageContainer's 640px column.
+const SKIP_CONTAINER = [ 'set', 'relation', 'archive', 'spaceDeletionAudit' ];
 
 const PageMainSettingsIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 

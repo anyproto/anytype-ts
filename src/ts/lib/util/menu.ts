@@ -1968,6 +1968,7 @@ class UtilMenu {
 			spaceNotifications: translate('commonNotifications'),
 			spaceStorage: translate('pageSettingsSpaceRemoteStorage'),
 			archive: translate('commonBin'),
+			spaceDeletionAudit: translate('pageSettingsSpaceDeletionAudit'),
 			types,
 			relations,
 			integrations: translate('pageSettingsSpaceIntegrations'),

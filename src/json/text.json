@@ -163,6 +163,7 @@
 	"commonUpdated": "Updated",
 	"commonCreated": "Created",
 	"commonCreatedBy": "Created by",
+	"commonId": "ID",
 	"commonDeleted": "Deleted",
 	"commonUndo": "Undo",
 	"commonRedo": "Redo",
@@ -316,6 +317,7 @@
 	"pluralYear": "year|years",
 	"pluralDevice": "device|devices",
 	"pluralOption": "Option|Options",
+	"pluralPropertyOption": "Property option|Property options",
 	"pluralImage": "Image|Images",
 	"pluralVideo": "Video|Videos",
 	"pluralAudio": "Audio|Audios",
@@ -711,6 +713,18 @@
 	"pageSettingsSpaceIndexEntrySpaceTooltip": "Entry Channel cannot be shared.<br/>Create a new one to invite members.",
 
 	"pageSettingsSpaceDeleteSpace": "Delete Channel",
+
+	"pageSettingsSpaceDeletionAudit": "Removal history",
+	"pageSettingsSpaceDeletionAuditDescription": "Everything that was removed from this channel, by whom and when.",
+	"pageSettingsSpaceDeletionAuditEmpty": "Nothing has been removed from this channel yet",
+	"pageSettingsSpaceDeletionAuditColumnObject": "Object",
+	"pageSettingsSpaceDeletionAuditColumnRemovedBy": "Removed by",
+	"pageSettingsSpaceDeletionAuditColumnRemoved": "Removed",
+	"pageSettingsSpaceDeletionAuditColumnCreatedBy": "Created by",
+	"pageSettingsSpaceDeletionAuditDeleted": "Deleted permanently. This object cannot be restored.",
+	"pageSettingsSpaceDeletionAuditUnknownObject": "Unknown object",
+	"pageSettingsSpaceDeletionAuditMissingTooltip": "This information isn't available — the object was deleted before version 0.56.2, or the account was re-initialised after the deletion.",
+
 	"pageSettingsSpaceNotificationsNotifyMeAbout": "Notify me about",
 
 	"pageSettingsSpaceNotificationsChatSpecificNotifications": "Chat specific notifications",
