@@ -178,25 +178,27 @@ by `scripts/generate-service-registry.js`, which the proto script invokes as its
 heart's `pb/protos/service/service.proto` and writing `src/ts/lib/api/service.ts` wholesale (:185).
 Hand-editing it would be overwritten on the next regeneration.
 
-**Corrected 2026-08-09, after actually running it:** `src/ts/lib/api/service.ts` **already contained**
-`ObjectDeletionAudit` (:245) — and `SpaceBotAccountEnsure` (:311) — from an earlier commit. Running
-`generate-protos.sh` produced a **zero-line diff** to tracked files.
+**`src/ts/lib/api/service.ts` is generated *and untracked*.** `.gitignore:33` ignores it, and
+`generate-service-registry.js:185` rewrites it wholesale from `service.proto`. Two consequences:
 
-An earlier draft of this section predicted both entries would be added by the regeneration. That was
-wrong: it rested on a grep that never executed (`--include=*.ts` unquoted, rejected by zsh as
-`no matches found`), whose empty output was misread as "absent".
+- **Do not hand-edit it** — the plan's Step 2 says to, and that edit would be lost on the next run.
+- **It never appears in the diff.** The RPC registration is invisible to a reviewer, and that is
+  expected, not an omission. Anyone building must run the proto script first or `typecheck` fails on
+  the missing `Rpc_Object_DeletionAudit_*` types. The generated bindings under `middleware/` are
+  likewise gitignored.
 
-What remains true and is the point of this section:
+This section was wrong twice, and both errors are worth recording because each looked like evidence:
 
-- `service.ts` is **generated output** and must not be hand-edited — `generate-service-registry.js:185`
-  rewrites it wholesale from `service.proto`. The plan's Step 2 says to hand-edit it; do not.
-- Running the script is still **required**, just not for `service.ts`: it produces the TypeScript
-  bindings under `middleware/` (`Rpc_Object_DeletionAudit_Request`/`_Response`, `commands.ts:3521`),
-  which `service.ts` references and `typecheck` needs. `middleware/` is **gitignored**, so this step
-  leaves no trace in the diff — which is exactly why it is easy to skip and then see typecheck fail.
-- The script's local mode runs `make install-dev-js` inside the heart checkout first, which needs a Go
-  toolchain and takes minutes. `--from-dist` skips that but reads the released protos, which do **not**
-  contain `DeletionAudit` — so it is not an option here.
+1. A first draft predicted the regeneration would *add* `ObjectDeletionAudit` and `SpaceBotAccountEnsure`
+   to the registry. That rested on a grep that never executed — `--include=*.ts` unquoted, which zsh
+   rejects with `no matches found` — whose empty output was read as "absent".
+2. The correction then claimed the entries were "already committed at :245/:311", because
+   `git diff`/`git status` on the file came back clean after regenerating. They came back clean because
+   **git does not track the file at all**, not because its contents matched anything. `git show
+   HEAD:src/ts/lib/api/service.ts` fails outright.
+
+Running the script is required either way, and it is the step most easily skipped precisely because it
+leaves no trace in `git status`.
 
 ### 4.3 `src/ts/lib/api/command.ts`
 
@@ -589,7 +591,7 @@ this spec and that plan disagree, **this spec wins**:
 | Step 5 copies `archiveListTree`'s `loadMoreRows` | Copies its JSX only | That loader is subscription-backed; ours is offset/limit — §6 |
 | Row shows icon + type, degrading to bare dates | Degraded rows show an id chip | Requested during review: a row with nothing to name it still needs a handle |
 | Missing values render blank/dash | Every dash carries an explanatory tooltip | Requested during review — §5.4 |
-| Step 2 hand-edits `src/ts/lib/api/service.ts` | Left alone — generated, and already correct | `generate-service-registry.js:185` writes it wholesale; the entry was already committed at :245 — §4.2 |
+| Step 2 hand-edits `src/ts/lib/api/service.ts` | Left alone — generated and gitignored | `generate-service-registry.js:185` writes it wholesale; `.gitignore:33` means it never reaches the diff — §4.2 |
 | Step 3's `KEYS` has no icon keys | Adds `iconName`, `iconEmoji`, `iconOption`, `iconImage` | Uninstalled rows keep their real icon and lose it otherwise — §4.5 |
 | Step 9 uses `...Deleted` for a column header *and* a verb | Headers prefixed `...Column*` | The two collide in one namespace — §8.1 |
 | Title "Deletion history" | "Removal history" proposed | The page lists uninstalls too; calling them deletions is the error §5.5 prevents. Flagged as a copy call, not decided |
@@ -805,3 +807,29 @@ self-corrects the offset drift on the following page.
 
 The race guard still uses the generation counter, but now only for space changes: with the button
 disabled while loading there is at most one request in flight per space.
+
+---
+
+### 13.4 2026-08-10 — middleware pinned to a release; id reachable from every row
+
+**`middleware.version` 0.50.18 → 0.50.20.** The audit RPC shipped in that release
+(verified: `ObjectDeletionAudit` in `service.proto`, `message DeletionAudit` in `commands.proto` at tag
+`v0.50.20`), so the page no longer needs a heart built from a branch. `update.sh macos-latest arm64`
+refreshes `dist/lib/protos`, after which `generate-protos.sh --from-dist` regenerates the bindings
+without a Go toolchain — the local mode's `make install-dev-js` is no longer needed for this work.
+
+§2 and §10 previously required a heart built from `go-7431-delegated-identity-signing`. A released
+build is now sufficient, which also makes the manual verification list runnable by anyone.
+
+One RPC differs between that branch and the release: `SpaceBotAccountEnsure` exists on the branch and
+not in 0.50.20. Nothing in this client references it, so regenerating from the release simply drops it.
+
+**The object id is now reachable from every row**, not only degraded ones. Hovering a row's label shows
+the full id and clicking copies it, via the same handlers the id chip uses — so uninstalled
+types/properties/options and freshly deleted objects that *do* have a visible type are no worse off
+than a row with nothing to show. The visible `…xxxxx` chip is still reserved for rows that cannot name
+themselves, so the id occupies space only when it is the sole identity available.
+
+Also in this round: hovering either participant shows `resolvedName` (`globalName` falling back to
+`identity`), and clicking copies `Name. Globalname (identity)` — display names are neither unique nor
+stable, which makes them a poor handle for an audit trail.

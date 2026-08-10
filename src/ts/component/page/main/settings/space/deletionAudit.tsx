@@ -154,19 +154,22 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 		</span>
 	);
 
+	// The object id is reachable from every row, whatever else the row can say about
+	// itself: it is the only handle that survives into a support ticket or a query. Rows
+	// that can name themselves carry it on their label rather than showing it, so the
+	// affordance is uniform while the id only occupies space when nothing else can.
+	const idHandlers = (id: string) => ({
+		onMouseEnter: (e: MouseEvent) => onTooltipShow(e, id),
+		onMouseLeave: onTooltipHide,
+		onClick: () => {
+			onTooltipHide();
+			U.Common.copyToast(translate('commonId'), id);
+		},
+	});
+
 	// The only truthful identity a degraded row has: no name, no type, no layout.
 	const renderIdChip = (id: string) => (
-		<span
-			className="idChip"
-			onMouseEnter={e => onTooltipShow(e, id)}
-			onMouseLeave={onTooltipHide}
-			onClick={() => {
-				onTooltipHide();
-				U.Common.copyToast(translate('commonId'), id);
-			}}
-		>
-			{shortId(id)}
-		</span>
+		<span className="idChip" {...idHandlers(id)}>{shortId(id)}</span>
 	);
 
 	const renderParticipant = (id: string) => {
@@ -283,14 +286,14 @@ const PageMainSettingsSpaceDeletionAudit = forwardRef<I.PageRef, I.PageSettingsC
 		let name = null;
 		if (label) {
 			name = (
-				<span className="nameWrap">
+				<span className="nameWrap" {...idHandlers(record.id)}>
 					<span className="name">{label}</span>
 					{typeName ? <span className="typeName">({typeName})</span> : ''}
 				</span>
 			);
 		} else
 		if (typeName) {
-			name = <span className="name">{typeName}</span>;
+			name = <span className="name" {...idHandlers(record.id)}>{typeName}</span>;
 		} else
 		if (isDegraded) {
 			name = renderIdChip(record.id);
