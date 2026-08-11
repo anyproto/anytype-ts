@@ -26,6 +26,7 @@ const SPACE_KEYS = new Set([
 	'binViewMode',
 	'pendingMembers',
 	'inviteSecurityDismissed',
+	'splitView',
 ]);
 
 const LOCAL_KEYS = new Set([
@@ -37,6 +38,7 @@ const LOCAL_KEYS = new Set([
 	'updateBanner',
 	'lastOpenedSimple',
 	'inviteSecurityDismissed',
+	'splitView',
 ]);
 
 const cache: Map<string, any> = new Map();
@@ -711,6 +713,45 @@ class Storage {
 	getChat (id: string) {
 		const map = this.get('chat', this.isLocal('chat')) || {};
 		return map[id] || {};
+	};
+
+	/**
+	 * Sets local UI state for a Split view (panel width, last selected object).
+	 * Stored locally because the middleware view schema has no fields for it.
+	 * @param {string} key - The view key, from Storage.getSplitViewKey.
+	 * @param {any} obj - The partial state to merge in.
+	 */
+	setSplitView (key: string, obj: any) {
+		if (!key) {
+			return;
+		};
+
+		const map = this.get('splitView', this.isLocal('splitView')) || {};
+
+		map[key] = Object.assign(map[key] || {}, obj);
+		this.set('splitView', map, this.isLocal('splitView'));
+	};
+
+	/**
+	 * Gets local UI state for a Split view.
+	 * @param {string} key - The view key, from Storage.getSplitViewKey.
+	 * @returns {any} The stored state, or an empty object.
+	 */
+	getSplitView (key: string) {
+		const map = this.get('splitView', this.isLocal('splitView')) || {};
+		return map[key] || {};
+	};
+
+	/**
+	 * Builds the storage key for a Split view. State is per dataview block per view, so
+	 * two views of the same collection keep independent widths and selections.
+	 * @param {string} rootId - The root object ID.
+	 * @param {string} blockId - The dataview block ID.
+	 * @param {string} viewId - The view ID.
+	 * @returns {string} The storage key.
+	 */
+	getSplitViewKey (rootId: string, blockId: string, viewId: string): string {
+		return [ rootId, blockId, viewId ].join('-');
 	};
 
 	/**

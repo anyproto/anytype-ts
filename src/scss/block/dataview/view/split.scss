@@ -1,0 +1,65 @@
+@import "~scss/_mixins";
+
+.blocks {
+	.block.blockDataview {
+		.viewContent.viewSplit { position: relative; height: 100%; display: flex; align-items: stretch; }
+		.viewContent.viewSplit {
+			.splitMaster { position: relative; flex-shrink: 0; height: 100%; overflow-x: hidden; overflow-y: auto; }
+			.splitMaster {
+				.wrap { height: 100%; }
+				#scroll { height: 100%; }
+			}
+
+			.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: relative; }
+			.resize-h {
+				.resize-handle { position: absolute; left: 0px; top: 50%; margin: -16px 0px 0px 0px; width: 100%; height: 32px; transition: $transitionAllCommon; }
+				.resize-handle::after {
+					content: ''; position: absolute; left: 50%; top: 0px; width: 6px; height: 100%; margin-left: -3px;
+					background-color: var(--color-shape-secondary); border-radius: 3px; opacity: 0; transition: $transitionAllCommon;
+				}
+
+				&:hover, &:active {
+					.resize-handle::after { opacity: 1; }
+				}
+
+				&:active {
+					.resize-handle { height: 64px; margin-top: -32px; }
+				}
+
+				.resize-handle:hover::after, .resize-handle:active::after { background-color: var(--color-shape-primary); }
+			}
+
+			.splitDetail { position: relative; flex-grow: 1; height: 100%; display: flex; flex-direction: column; min-width: 0px; border-left: 1px solid var(--color-shape-secondary); }
+			.splitDetail {
+				.splitDetailHead { display: flex; align-items: center; justify-content: space-between; gap: 0px 8px; padding: 8px 12px; flex-shrink: 0; }
+				.splitDetailHead {
+					.side { display: flex; align-items: center; gap: 0px 8px; min-width: 0px; }
+					.side.left { flex-grow: 1; }
+					.name { @include text-common; @include text-overflow-nw; color: var(--color-text-primary); }
+				}
+
+				.splitDetailBody { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: auto; min-height: 0px; }
+				.splitDetailBody {
+					/*
+					 * EditorPage.getWidth measures the page container, not this pane, and writes
+					 * the result as an inline width. max-width beats an inline width, so this keeps
+					 * the embedded editor inside the pane at any resizer position.
+					 */
+					.editorWrapper { max-width: 100%; }
+					.editorWrapper {
+						.editor { max-width: 100%; }
+					}
+				}
+
+				.splitDetailEmpty { display: flex; align-items: center; justify-content: center; height: 100%; }
+				.splitDetailEmpty {
+					.label { @include text-common; color: var(--color-text-secondary); text-align: center; }
+				}
+			}
+		}
+	}
+
+	.block.blockDataview.isInline {
+		.viewContent.viewSplit { height: 500px; }
+	}
+}

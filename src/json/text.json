@@ -470,6 +470,7 @@
 	"viewName4": "Calendar",
 	"viewName5": "Graph",
 	"viewName6": "Timeline",
+	"viewName7": "Split",
 
 	"progressDropFiles": "Copying files...",
 	"progressImport": "Import in progress...",
@@ -843,6 +844,8 @@
 	"blockDataviewEmptyTargetButton": "Select Source",
 
 	"blockDataviewEmptyViewDescription": "Create your first one to begin",
+
+	"blockDataviewSplitEmptyDetail": "Select an object to open it here",
 
 	"blockDataviewControlsFilters": "Filters",
 	"blockDataviewControlsSorts": "Sorts",

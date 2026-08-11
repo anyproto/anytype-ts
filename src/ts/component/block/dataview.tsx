@@ -18,6 +18,7 @@ import ViewList from './dataview/view/list';
 import ViewCalendar from './dataview/view/calendar';
 import ViewGraph from './dataview/view/graph';
 import ViewTimeline from './dataview/view/timeline';
+import ViewSplit from './dataview/view/split';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
@@ -1342,7 +1343,8 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		let inner: any = null;
 
 		switch (type) {
-			case I.ViewType.List: {
+			case I.ViewType.List:
+			case I.ViewType.Split: {
 				inner = <AddRow onClick={onAdd} />;
 				break;
 			};
@@ -1725,6 +1727,10 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		case I.ViewType.Timeline:
 			ViewComponent = ViewTimeline;
+			break;
+
+		case I.ViewType.Split:
+			ViewComponent = ViewSplit;
 			break;
 	};
 

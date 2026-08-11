@@ -37,6 +37,7 @@ export enum ViewType {
 	Calendar		 = 4,
 	Graph			 = 5,
 	Timeline		 = 6,
+	Split			 = 7,
 };
 
 export enum SortType { 
@@ -261,6 +262,7 @@ export interface View {
 	isList?(): boolean;
 	isGallery?(): boolean;
 	isBoard?(): boolean;
+	isSplit?(): boolean;
 };
 
 export interface Cell {
