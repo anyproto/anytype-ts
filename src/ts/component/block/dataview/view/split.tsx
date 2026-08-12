@@ -83,7 +83,14 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			// open() never records the host, so this only ever closes objects the panel itself
 			// opened. Kept as a belt-and-braces guard against closing the host out from under
 			// the page rendering it.
-			if (!isHostRecord(openedRef.current)) {
+			//
+			// The route check is what makes the expand control work from an inline collection:
+			// navigating unmounts the host page's whole block tree, so this runs *after* the
+			// route already points at the record the panel had open. PageMainEdit takes its
+			// rootId from the route and keys its EditorPage with a constant, so that editor is
+			// already rendering this object from the store — and pageClose would clear the
+			// blocks and destroy the subscription out from under it, leaving a blank page.
+			if (!isHostRecord(openedRef.current) && (keyboard.getRootId(isPopup) != openedRef.current)) {
 				Action.pageClose(isPopup, openedRef.current, false);
 			};
 			openedRef.current = '';
