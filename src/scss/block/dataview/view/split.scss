@@ -57,10 +57,39 @@
 			.splitDetail {
 				/* Floats over the top-right of the pane, level with the editor's title and
 				 * aligned to the same 16px gutter as the content below it. */
-				.icon.splitDetailExpand { position: absolute; right: 16px; top: 12px; z-index: 2; width: 24px; height: 24px; }
+				.splitDetailControls { position: absolute; right: 16px; top: 12px; z-index: 2; display: flex; align-items: center; gap: 0px 4px; }
+				.splitDetailControls {
+					.icon { width: 24px; height: 24px; }
+				}
 
-				.splitDetailBody { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: auto; min-height: 0px; }
+				/* z-index makes this a stacking context, containing the embedded editor's own
+				 * positioned descendants — text blocks give #value position: relative; z-index: 2
+				 * (block/text.scss), so the title's editable would otherwise stack directly
+				 * against .splitDetailControls here and, being a later sibling at equal z-index,
+				 * paint over the controls and take their clicks. */
+				.splitDetailBody { position: relative; z-index: 1; flex-grow: 1; overflow-x: hidden; overflow-y: auto; min-height: 0px; }
 				.splitDetailBody {
+					/*
+					 * The right sidebar's properties page, rendered as a section between the
+					 * object's title and its content (the editor's afterHead slot). It keeps its
+					 * own .sidebarPage classes because that is where all of its styling is scoped —
+					 * what has to be undone here is the panel geometry: .sidebarPage is a
+					 * full-height flex column whose body owns the scroll, while here it is one
+					 * block inside a pane that scrolls as a whole.
+					 */
+					.splitDetailProperties { border-bottom: 1px solid var(--color-shape-secondary); }
+					.splitDetailProperties {
+						.sidebarPage { height: auto; flex-grow: 0; overflow: visible; }
+						.sidebarPage {
+							/* The panel header carries a "Properties" title and an Edit Type button.
+							 * The control that opened this section already names it, and Edit Type
+							 * drives the right sidebar — which belongs to the host page, not the pane. */
+							> .head { display: none; }
+
+							> .body { padding: 0px 0px 12px 0px; overflow: visible; flex-grow: 0; }
+						}
+					}
+
 					/*
 					 * EditorPage.getWidth measures the page container, not this pane, and caps the
 					 * result at J.Size.editor (704px), writing it as an inline width. In a pane wider

@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import raf from 'raf';
 import { EditorPage, Icon, Loader } from 'Component';
+import SidebarPageObjectRelation from 'Component/sidebar/page/object/relation';
 import ViewList from './list';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -36,8 +37,13 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 	const [ selectedId, setSelectedId ] = useState(() => String(Storage.getSplitView(storageKey).selectedId || ''));
 	const [ width, setWidth ] = useState(() => Number(Storage.getSplitView(storageKey).width) || J.Size.dataview.split.master.default);
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ isPropertiesOpen, setIsPropertiesOpen ] = useState(() => !!Storage.getSplitView(storageKey).isPropertiesOpen);
 	// className from the dataview root is already viewSplit — don't repeat it in the list.
 	const cn = [ 'viewContent', 'viewSplit' ].concat((className && (className != 'viewSplit')) ? [ className ] : []);
+	// Id of the properties wrapper, handed to the panel as getId so its DOM lookups stay
+	// inside this pane. Scoped by block and namespace, since the same block can be mounted
+	// in the page and in a popup at once.
+	const propertiesId = U.String.toCamelCase(`splitProperties-${block.id}${isPopup ? '-popup' : ''}`);
 
 	// A collection can contain itself — a page whose inline collection lists every page, or a
 	// collection added to its own records. The host is selectable: the detail panel renders it
@@ -151,6 +157,15 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		} else {
 			U.Object.openRoute(object);
 		};
+	};
+
+	const onPropertiesToggle = (e: any) => {
+		e.stopPropagation();
+
+		const v = !isPropertiesOpen;
+
+		setIsPropertiesOpen(v);
+		Storage.setSplitView(storageKey, { isPropertiesOpen: v });
 	};
 
 	const onKeyDown = (e: any) => {
@@ -312,6 +327,41 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			</div>
 		);
 	} else {
+		// Chats render a placeholder, so there is no object in the store to read properties from.
+		// The toggle survives loading — hiding it would make it flicker on every selection —
+		// but the section itself waits, since it reads the object's own subscription.
+		const withProperties = !isChatRecord(activeId);
+		const isOpen = withProperties && isPropertiesOpen && !isLoading;
+		const cni = [ 'splitDetailPropertiesToggle' ].concat(isPropertiesOpen ? [ 'active' ] : []);
+
+		let properties = null;
+		if (isOpen) {
+			properties = (
+				/*
+				 * The right sidebar's own properties page, rendered in place. Only its content is
+				 * reusable: the sidebar chrome around it is driven by S.Common.getRightSidebarState,
+				 * a singleton keyed only by isPopup, so opening the real panel here would retarget
+				 * the host page's sidebar at the panel's object. This component takes rootId as a
+				 * prop, so it needs none of that. What it does need is the .sidebarPage classes —
+				 * all of its styling is scoped under them, which is why the outer wrapper is a
+				 * shared parent of that stylesheet — and getId, so its section toggles resolve
+				 * against this instance instead of #sidebarRight.
+				 */
+				<div className="splitDetailProperties">
+					<div id={propertiesId} className="sidebarPage pageObjectRelation">
+						<SidebarPageObjectRelation
+							key={`splitProperties-${activeId}`}
+							rootId={activeId}
+							isPopup={isPopup}
+							page="object/relation"
+							sidebarDirection={I.SidebarDirection.Right}
+							getId={() => propertiesId}
+						/>
+					</div>
+				</div>
+			);
+		};
+
 		let body = null;
 		if (isChatRecord(activeId)) {
 			// The expand control above stays available, so the chat is one click from opening
@@ -337,6 +387,7 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 					isPopup={isPopup}
 					isInsideSplit={true}
 					isSecondaryView={isHostRecord(activeId)}
+					afterHead={properties}
 				/>
 			);
 		};
@@ -345,17 +396,29 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			<>
 				{/*
 				 * No name header: the embedded editor already renders the object's title, and a
-				 * second copy of it read as a stray "Untitled" row. The expand control instead
-				 * floats over the top-right of the pane, level with that title, and stays put
-				 * while the pane scrolls.
+				 * second copy of it read as a stray "Untitled" row. The controls instead float
+				 * over the top-right of the pane, level with that title, and stay put while the
+				 * pane scrolls.
 				 */}
-				<Icon
-					className="splitDetailExpand"
-					name="common/expand"
-					withBackground={true}
-					onClick={onExpand}
-					tooltipParam={{ text: translate('commonOpenObject'), typeY: I.MenuDirection.Bottom }}
-				/>
+				<div className="splitDetailControls">
+					{withProperties ? (
+						<Icon
+							className={cni.join(' ')}
+							name="header/relation"
+							withBackground={true}
+							onClick={onPropertiesToggle}
+							tooltipParam={{ text: translate('commonRelations'), typeY: I.MenuDirection.Bottom }}
+						/>
+					) : ''}
+
+					<Icon
+						className="splitDetailExpand"
+						name="common/expand"
+						withBackground={true}
+						onClick={onExpand}
+						tooltipParam={{ text: translate('commonOpenObject'), typeY: I.MenuDirection.Bottom }}
+					/>
+				</div>
 
 				<div className="splitDetailBody">
 					{body}
