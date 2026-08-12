@@ -39,14 +39,17 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 	// className from the dataview root is already viewSplit — don't repeat it in the list.
 	const cn = [ 'viewContent', 'viewSplit' ].concat((className && (className != 'viewSplit')) ? [ className ] : []);
 
-	// A collection can contain itself. Opening the host in its own detail panel would mount an
-	// editor for the page already rendering it, so it is excluded from selection entirely.
-	const selectable = records.filter(it => it != rootId);
+	// A collection can contain itself — a page whose inline collection lists every page, or a
+	// collection added to its own records. The host is selectable: the detail panel renders it
+	// from the store data the host page already has open, and the dataview nested inside the
+	// panel is masked out (the isInsideSplit gate in Block). What neither side may do is open or
+	// close that object a second time — see open() below and EditorPage's own lifecycle guard.
+	const isHostRecord = (id: string): boolean => id == rootId;
 
 	// A record can vanish from the view while selected — filtered out, deleted, or the
 	// stored id predating a change of filters. Fall back to the first record instead of
 	// asking the middleware to open something that is no longer listed.
-	const activeId = selectable.includes(selectedId) ? selectedId : String(selectable[0] || '');
+	const activeId = records.includes(selectedId) ? selectedId : String(records[0] || '');
 	const object = activeId ? S.Detail.get(activeId, activeId, [ 'layout' ], true) : null;
 
 	const checkWidth = (v: number): number => {
@@ -56,8 +59,10 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const close = () => {
 		if (openedRef.current) {
-			// Guarded: the host collection may hold the same object open.
-			if (openedRef.current != rootId) {
+			// open() never records the host, so this only ever closes objects the panel itself
+			// opened. Kept as a belt-and-braces guard against closing the host out from under
+			// the page rendering it.
+			if (!isHostRecord(openedRef.current)) {
 				Action.pageClose(isPopup, openedRef.current, false);
 			};
 			openedRef.current = '';
@@ -70,6 +75,14 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		};
 
 		close();
+
+		// The host page already has this object open; opening it again would hand its
+		// subscription a second owner, and the matching close would tear it down under the
+		// page still rendering it. Its blocks are already in the store, so the panel just renders.
+		if (isHostRecord(id)) {
+			return;
+		};
+
 		setIsLoading(true);
 
 		C.ObjectOpen(id, '', S.Common.space, (message: any) => {
@@ -121,17 +134,17 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const onKeyDown = (e: any) => {
 		// Never steal keys from the editor in the detail panel.
-		if (keyboard.isFocused || !selectable.length) {
+		if (keyboard.isFocused || !records.length) {
 			return;
 		};
 
-		const idx = selectable.indexOf(activeId);
+		const idx = records.indexOf(activeId);
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			e.preventDefault();
 
 			const dir = pressed == 'arrowup' ? -1 : 1;
-			const next = selectable[Math.min(selectable.length - 1, Math.max(0, idx + dir))];
+			const next = records[Math.min(records.length - 1, Math.max(0, idx + dir))];
 
 			onSelect(next);
 		});
@@ -306,6 +319,7 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 							rootId={activeId}
 							isPopup={isPopup}
 							isInsideSplit={true}
+							isSecondaryView={isHostRecord(activeId)}
 						/>
 					)}
 				</div>
