@@ -8,7 +8,8 @@
 			 * resize() breaks the container out to the full page width with a -48px left
 			 * margin (the ViewGraph technique). The detail pane wants that extra width, but
 			 * the master pane's rows would then start 48px left of where a regular List
-			 * layout puts them — so give it back here.
+			 * layout puts them — so give it back here. Paired with resize(), so the inline
+			 * branch below drops it: inline never breaks out, so there is nothing to pay back.
 			 */
 			.splitMaster { position: relative; flex-shrink: 0; height: 100%; overflow-x: hidden; overflow-y: auto; padding-left: 48px; }
 			.splitMaster {
@@ -75,11 +76,16 @@
 						}
 
 						.blockLast { margin-left: 0px; height: 60px; }
-
-						/* The discussion section sits outside .blocks, so it needs the same
-						 * gutter applied to it directly or it renders flush to both edges. */
-						.commentSection { padding-left: 16px; padding-right: 16px; }
 					}
+				}
+
+				/* Stands in for a dataview that is not mounted inside the panel. */
+				.dataviewNested {
+					display: flex; align-items: center; justify-content: center; padding: 24px 0px;
+					border-top: 1px solid var(--color-shape-secondary); border-bottom: 1px solid var(--color-shape-secondary);
+				}
+				.dataviewNested {
+					.label { @include text-common; color: var(--color-text-secondary); text-align: center; }
 				}
 
 				.splitDetailEmpty { display: flex; align-items: center; justify-content: center; height: 100%; }
@@ -92,5 +98,11 @@
 
 	.block.blockDataview.isInline {
 		.viewContent.viewSplit { height: 500px; }
+		.viewContent.viewSplit {
+			/* resize() bails out when inline, so the container never breaks out of the block
+			 * and there is no negative margin to compensate for. Keeping the 48px would push
+			 * the rows right of where an inline List puts them. */
+			.splitMaster { padding-left: 0px; }
+		}
 	}
 }

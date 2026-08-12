@@ -846,6 +846,7 @@
 	"blockDataviewEmptyViewDescription": "Create your first one to begin",
 
 	"blockDataviewSplitEmptyDetail": "Select an object to open it here",
+	"blockDataviewNestedInSplit": "This collection can only be viewed in full screen mode",
 
 	"blockDataviewControlsFilters": "Filters",
 	"blockDataviewControlsSorts": "Sorts",

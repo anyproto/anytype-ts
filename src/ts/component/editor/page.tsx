@@ -15,6 +15,9 @@ import { getTopLevelIds, getIndentTargetId } from 'Lib/util/blockSelection';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
+	// Set when this editor is embedded in a Split view's detail panel. Inherited by every
+	// block below, so a dataview at any depth can refuse to mount another live view.
+	isInsideSplit?: boolean;
 };
 
 const THROTTLE = 40;
@@ -22,7 +25,7 @@ const BUTTON_OFFSET = 10;
 
 const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	
-	const { rootId, isPopup, onOpen } = props;
+	const { rootId, isPopup, onOpen, isInsideSplit } = props;
 	const root = S.Block.getLeaf(rootId, rootId);
 	const nodeRef = useRef(null);
 	const tocRef = useRef(null);
@@ -3380,7 +3383,12 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 				<TableOfContents ref={tocRef} {...props} />
 
-				{!isTemplate ? (
+				{/*
+				 * Suppressed inside a Split detail panel: the host page already renders its own
+				 * discussion, so a second "start discussion" affordance appeared alongside it.
+				 * The object's discussion is still reachable via the expand control.
+				 */}
+				{(!isTemplate && !isInsideSplit) ? (
 					<CommentSection
 						rootId={rootId}
 						targetId={rootId}

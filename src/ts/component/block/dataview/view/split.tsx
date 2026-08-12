@@ -39,10 +39,14 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 	// className from the dataview root is already viewSplit — don't repeat it in the list.
 	const cn = [ 'viewContent', 'viewSplit' ].concat((className && (className != 'viewSplit')) ? [ className ] : []);
 
+	// A collection can contain itself. Opening the host in its own detail panel would mount an
+	// editor for the page already rendering it, so it is excluded from selection entirely.
+	const selectable = records.filter(it => it != rootId);
+
 	// A record can vanish from the view while selected — filtered out, deleted, or the
 	// stored id predating a change of filters. Fall back to the first record instead of
 	// asking the middleware to open something that is no longer listed.
-	const activeId = records.includes(selectedId) ? selectedId : String(records[0] || '');
+	const activeId = selectable.includes(selectedId) ? selectedId : String(selectable[0] || '');
 	const object = activeId ? S.Detail.get(activeId, activeId, [ 'layout' ], true) : null;
 
 	const checkWidth = (v: number): number => {
@@ -117,17 +121,17 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 	const onKeyDown = (e: any) => {
 		// Never steal keys from the editor in the detail panel.
-		if (keyboard.isFocused || !records.length) {
+		if (keyboard.isFocused || !selectable.length) {
 			return;
 		};
 
-		const idx = records.indexOf(activeId);
+		const idx = selectable.indexOf(activeId);
 
 		keyboard.shortcut('arrowup, arrowdown', e, (pressed: string) => {
 			e.preventDefault();
 
 			const dir = pressed == 'arrowup' ? -1 : 1;
-			const next = records[Math.min(records.length - 1, Math.max(0, idx + dir))];
+			const next = selectable[Math.min(selectable.length - 1, Math.max(0, idx + dir))];
 
 			onSelect(next);
 		});
@@ -243,7 +247,10 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		};
 	});
 
-	useEffect(() => resize());
+	// Deliberately not on every render: resize() writes layout, and every mounted EditorPage
+	// answers the global window resize that a re-render can trigger. Width is the only prop it
+	// reads that changes after mount; drag-time sizing is applied straight to the node instead.
+	useEffect(() => resize(), [ width ]);
 
 	useEffect(() => {
 		if (activeId) {
@@ -298,6 +305,7 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 							key={`splitDetail-${activeId}`}
 							rootId={activeId}
 							isPopup={isPopup}
+							isInsideSplit={true}
 						/>
 					)}
 				</div>
