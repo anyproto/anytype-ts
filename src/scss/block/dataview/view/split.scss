@@ -104,6 +104,12 @@
 				.splitDetailEmpty {
 					.label { @include text-common; color: var(--color-text-secondary); text-align: center; }
 				}
+
+				/* Stands in for an object whose page cannot render inside the panel (chats). */
+				.splitDetailUnsupported { display: flex; align-items: center; justify-content: center; height: 100%; }
+				.splitDetailUnsupported {
+					.label { @include text-common; color: var(--color-text-secondary); text-align: center; }
+				}
 			}
 		}
 	}

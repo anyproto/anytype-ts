@@ -22,7 +22,7 @@ const MIN_HEIGHT = 480;
  */
 const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
-	const { rootId, block, className, isPopup, isInline, getView, getRecords, loadData } = props;
+	const { rootId, block, className, isPopup, isInline, getView, getRecord, getRecords, loadData } = props;
 	const nodeRef = useRef(null);
 	const masterRef = useRef(null);
 	const frame = useRef(0);
@@ -50,7 +50,22 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 	// stored id predating a change of filters. Fall back to the first record instead of
 	// asking the middleware to open something that is no longer listed.
 	const activeId = records.includes(selectedId) ? selectedId : String(records[0] || '');
-	const object = activeId ? S.Detail.get(activeId, activeId, [ 'layout' ], true) : null;
+
+	// Read the record from the dataview's own subscription rather than from the object's, which
+	// only holds details once the panel has opened it. The row is already rendered from this
+	// data, so layout is available before (and without) any open — which is what the chat
+	// branch below depends on.
+	const object = activeId ? getRecord(activeId) : null;
+	const hasObject = !!object && !object._empty_;
+
+	// Chat objects cannot render in the panel. They route to page/main/chat.tsx, never to
+	// EditorPage, and their content is a synthetic BlockType.Chat block that page constructs
+	// client-side — it exists in no store, so an embedded editor has nothing to draw. Beyond
+	// that, BlockChat drives U.Dom.getScrollContainer, which resolves to the single global
+	// page scroller and would fight the host collection for it. Show a placeholder and, more
+	// importantly, never call ObjectOpen: for a chat the change-tree IS the message history,
+	// which is why page/main/chat.tsx dropped that call in 8446cde734 (seconds of blocking).
+	const isChatRecord = (id: string): boolean => U.Object.isChatLayout(getRecord(id).layout);
 
 	const checkWidth = (v: number): number => {
 		const { min, max } = J.Size.dataview.split.master;
@@ -80,6 +95,12 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		// subscription a second owner, and the matching close would tear it down under the
 		// page still rendering it. Its blocks are already in the store, so the panel just renders.
 		if (isHostRecord(id)) {
+			return;
+		};
+
+		// The panel renders a placeholder for chats, so there is nothing to open — and opening
+		// one would build its entire message CRDT tree just to throw the result away.
+		if (isChatRecord(id)) {
 			return;
 		};
 
@@ -121,7 +142,7 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 	};
 
 	const onExpand = (e: any) => {
-		if (!object) {
+		if (!hasObject) {
 			return;
 		};
 
@@ -291,6 +312,35 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			</div>
 		);
 	} else {
+		let body = null;
+		if (isChatRecord(activeId)) {
+			// The expand control above stays available, so the chat is one click from opening
+			// as a full page — which is the only place its messages can render.
+			body = (
+				<div className="splitDetailUnsupported">
+					<div className="label">{translate('blockDataviewSplitChatDetail')}</div>
+				</div>
+			);
+		} else
+		if (isLoading) {
+			body = <Loader />;
+		} else {
+			body = (
+				/*
+				 * Only the PageComponent contract is passed — spreading the dataview props would
+				 * leak view-level props into the editor. Deliberately no S.Common.refSet('editor' + ns)
+				 * either: that ref is keyed only by isPopup and belongs to the host page's editor.
+				 */
+				<EditorPage
+					key={`splitDetail-${activeId}`}
+					rootId={activeId}
+					isPopup={isPopup}
+					isInsideSplit={true}
+					isSecondaryView={isHostRecord(activeId)}
+				/>
+			);
+		};
+
 		detail = (
 			<>
 				{/*
@@ -308,20 +358,7 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 				/>
 
 				<div className="splitDetailBody">
-					{isLoading ? <Loader /> : (
-						/*
-						 * Only the PageComponent contract is passed — spreading the dataview props would
-						 * leak view-level props into the editor. Deliberately no S.Common.refSet('editor' + ns)
-						 * either: that ref is keyed only by isPopup and belongs to the host page's editor.
-						 */
-						<EditorPage
-							key={`splitDetail-${activeId}`}
-							rootId={activeId}
-							isPopup={isPopup}
-							isInsideSplit={true}
-							isSecondaryView={isHostRecord(activeId)}
-						/>
-					)}
+					{body}
 				</div>
 			</>
 		);
