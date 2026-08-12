@@ -14,7 +14,7 @@ import UpdateManager from './update';
 import Server from './server';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
-import { AppWindow, TabView, TabData, CreateTabOptions, AppConfig, Bounds } from './types';
+import { AppWindow, TabView, TabData, TabUpdateData, CreateTabOptions, AppConfig, Bounds } from './types';
 
 const KEYTAR_SERVICE = 'Anytype';
 
@@ -714,12 +714,12 @@ class Api {
 		WindowManager.setActiveTab(win, id);
 	};
 
-	getTab (win: AppWindow, id: string): { id: string; data: TabData } | null {
+	getTab (win: AppWindow, id: string): { id: string; data: TabData; token?: string } | null {
 		const view = (win.views || []).find((it: TabView) => it.id == id);
-		return view ? { id: view.id, data: view.data } : null;
+		return view ? { id: view.id, data: view.data, token: view.token } : null;
 	};
 
-	updateTab (win: AppWindow, id: string, data: Partial<TabData>): void {
+	updateTab (win: AppWindow, id: string, data: TabUpdateData): void {
 		WindowManager.updateTab(win, id, data);
 	};
 

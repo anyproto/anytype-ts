@@ -16,6 +16,7 @@ export interface AppWindow extends BrowserWindow {
 export interface TabView extends WebContentsView {
 	id: string;
 	data: TabData;
+	token?: string;
 	isLoaded: boolean;
 };
 
@@ -26,6 +27,9 @@ export interface TabData {
 	spaceType?: number;
 	isPinned?: boolean;
 };
+
+/** Runtime update for a tab. Authentication tokens are not persisted with tab data. */
+export type TabUpdateData = Partial<TabData> & { token?: string };
 
 /** Options for creating a new main window */
 export interface CreateMainOptions {
