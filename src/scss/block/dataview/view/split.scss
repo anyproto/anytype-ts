@@ -20,6 +20,18 @@
 				 * the same distance below the controls bar as it does in a plain List view. */
 				.viewContent.viewList { padding: 8px 0px 0px 0px; }
 				.viewContent.viewList.isRegular { padding: 9px 0px 0px 0px; }
+
+				/* The inline row markup skips the DropTarget / SelectionTarget wrappers, and
+				 * those are what carry the regular List layout's flex centering — so the row
+				 * content sat at the top of the box behind the inline top padding, which also
+				 * made the hover highlight read as offset from the title. Centering the row
+				 * itself is the treatment the inline branch already uses at Regular size. */
+				.viewContent.viewList {
+					.row { display: flex; align-items: center; padding-top: 0px; }
+					.row.add {
+						.btn { padding-top: 0px; }
+					}
+				}
 			}
 
 			.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: relative; }
