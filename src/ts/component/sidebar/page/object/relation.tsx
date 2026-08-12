@@ -7,7 +7,7 @@ import Storage from 'Lib/storage';
 const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
 	const [ dummy, setDummy ] = useState(0);
-	const { rootId, readonly, page, isPopup } = props;
+	const { rootId, readonly, page, isPopup, getId } = props;
 	const object = S.Detail.get(rootId, rootId);
 	const isReadonly = readonly || !S.Block.isAllowed(object.restrictions, [ I.RestrictionObject.Details ]);
 	const type = S.Record.getTypeById(object.type);
@@ -126,8 +126,19 @@ const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props,
 		});
 	};
 
+	// Scope group lookups to this instance's own container. getId() is the id the host puts on
+	// the element wrapping this page, so the same component can render outside the right sidebar
+	// (the Split detail panel does) without its toggles reaching into another copy — or, when
+	// #sidebarRight is closed, finding nothing and silently doing nothing.
+	const getGroupNode = (id: string): HTMLElement | null => {
+		const containerId = getId?.();
+		const container = containerId ? U.Dom.get(containerId) : null;
+
+		return container ? U.Dom.select(`#relationGroup-${id}`, container) : null;
+	};
+
 	const initToggle = (id: string, isOpen: boolean) => {
-		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
+		const obj = getGroupNode(id);
 		if (!obj) return;
 
 		const title = U.Dom.select('.titleWrap', obj);
@@ -139,7 +150,7 @@ const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props,
 	};
 
 	const onToggle = (id: string) => {
-		const obj = U.Dom.select(`#sidebarRight #relationGroup-${id}`);
+		const obj = getGroupNode(id);
 		if (!obj) return;
 
 		const title = U.Dom.select('.titleWrap', obj);

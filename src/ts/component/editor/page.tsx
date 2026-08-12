@@ -22,6 +22,10 @@ interface Props extends I.PageComponent {
 	// contains itself, selected in its own Split panel. The object's lifecycle (ObjectOpen /
 	// ObjectClose, focus, the virtual last block) then belongs to that page, not to this editor.
 	isSecondaryView?: boolean;
+	// Rendered between the object's head (icon, cover, title) and its content blocks. The Split
+	// detail panel puts its properties section here, which is the only place a host can sit
+	// something below the title without owning the head's own markup.
+	afterHead?: React.ReactNode;
 };
 
 const THROTTLE = 40;
@@ -29,7 +33,7 @@ const BUTTON_OFFSET = 10;
 
 const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	
-	const { rootId, isPopup, onOpen, isInsideSplit, isSecondaryView } = props;
+	const { rootId, isPopup, onOpen, isInsideSplit, isSecondaryView, afterHead } = props;
 	const root = S.Block.getLeaf(rootId, rootId);
 	const nodeRef = useRef(null);
 	const tocRef = useRef(null);
@@ -3364,6 +3368,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 						readonly={readonly}
 						getWrapperWidth={getWrapperWidth}
 					/>
+
+					{afterHead}
 
 					<Children
 						{...props}
