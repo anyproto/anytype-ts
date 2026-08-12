@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
 import raf from 'raf';
-import { EditorPage, Icon, IconObject, Loader } from 'Component';
+import { EditorPage, Icon, Loader } from 'Component';
 import ViewList from './list';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
@@ -93,6 +93,14 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 
 		setSelectedId(id);
 		Storage.setSplitView(storageKey, { selectedId: id });
+	};
+
+	// Claims a row click for the detail panel. Returning true tells ListRow to skip its
+	// default U.Object.openConfig navigation — this is what makes clicking anywhere on the
+	// row, including the empty space right of the title, select rather than navigate.
+	const onRecordClick = (e: any, id: string): boolean => {
+		onSelect(id);
+		return true;
 	};
 
 	const onExpand = (e: any) => {
@@ -265,21 +273,19 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 	} else {
 		detail = (
 			<>
-				<div className="splitDetailHead">
-					<div className="side left">
-						<IconObject object={object} size={20} />
-						<div className="name">{U.Object.name(object)}</div>
-					</div>
-
-					<div className="side right">
-						<Icon
-							name="common/expand"
-							withBackground={true}
-							onClick={onExpand}
-							tooltipParam={{ text: translate('commonOpenObject'), typeY: I.MenuDirection.Bottom }}
-						/>
-					</div>
-				</div>
+				{/*
+				 * No name header: the embedded editor already renders the object's title, and a
+				 * second copy of it read as a stray "Untitled" row. The expand control instead
+				 * floats over the top-right of the pane, level with that title, and stays put
+				 * while the pane scrolls.
+				 */}
+				<Icon
+					className="splitDetailExpand"
+					name="common/expand"
+					withBackground={true}
+					onClick={onExpand}
+					tooltipParam={{ text: translate('commonOpenObject'), typeY: I.MenuDirection.Bottom }}
+				/>
 
 				<div className="splitDetailBody">
 					{isLoading ? <Loader /> : (
@@ -307,7 +313,7 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 						{...props}
 						isInline={true}
 						className="viewList splitMasterList"
-						onCellClick={(e: any, key: string, id: string) => onSelect(id)}
+						onRecordClick={onRecordClick}
 					/>
 				</div>
 

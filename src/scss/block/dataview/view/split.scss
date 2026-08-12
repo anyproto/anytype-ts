@@ -4,10 +4,21 @@
 	.block.blockDataview {
 		.viewContent.viewSplit { position: relative; height: 100%; display: flex; align-items: stretch; }
 		.viewContent.viewSplit {
-			.splitMaster { position: relative; flex-shrink: 0; height: 100%; overflow-x: hidden; overflow-y: auto; }
+			/*
+			 * resize() breaks the container out to the full page width with a -48px left
+			 * margin (the ViewGraph technique). The detail pane wants that extra width, but
+			 * the master pane's rows would then start 48px left of where a regular List
+			 * layout puts them — so give it back here.
+			 */
+			.splitMaster { position: relative; flex-shrink: 0; height: 100%; overflow-x: hidden; overflow-y: auto; padding-left: 48px; }
 			.splitMaster {
 				.wrap { height: 100%; }
 				#scroll { height: 100%; }
+
+				/* Match the regular (non-inline) List layout's top offset, so the first row sits
+				 * the same distance below the controls bar as it does in a plain List view. */
+				.viewContent.viewList { padding: 8px 0px 0px 0px; }
+				.viewContent.viewList.isRegular { padding: 9px 0px 0px 0px; }
 			}
 
 			.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: relative; }
@@ -31,23 +42,43 @@
 
 			.splitDetail { position: relative; flex-grow: 1; height: 100%; display: flex; flex-direction: column; min-width: 0px; border-left: 1px solid var(--color-shape-secondary); }
 			.splitDetail {
-				.splitDetailHead { display: flex; align-items: center; justify-content: space-between; gap: 0px 8px; padding: 8px 12px; flex-shrink: 0; }
-				.splitDetailHead {
-					.side { display: flex; align-items: center; gap: 0px 8px; min-width: 0px; }
-					.side.left { flex-grow: 1; }
-					.name { @include text-common; @include text-overflow-nw; color: var(--color-text-primary); }
-				}
+				/* Floats over the top-right of the pane, level with the editor's title and
+				 * aligned to the same 16px gutter as the content below it. */
+				.icon.splitDetailExpand { position: absolute; right: 16px; top: 12px; z-index: 2; width: 24px; height: 24px; }
 
 				.splitDetailBody { position: relative; flex-grow: 1; overflow-x: hidden; overflow-y: auto; min-height: 0px; }
 				.splitDetailBody {
 					/*
-					 * EditorPage.getWidth measures the page container, not this pane, and writes
-					 * the result as an inline width. max-width beats an inline width, so this keeps
-					 * the embedded editor inside the pane at any resizer position.
+					 * EditorPage.getWidth measures the page container, not this pane, and caps the
+					 * result at J.Size.editor (704px), writing it as an inline width. In a pane wider
+					 * than that it left a dead column beside the text, so let the editor fill the
+					 * pane instead — !important is the only way to beat an inline style.
 					 */
-					.editorWrapper { max-width: 100%; }
+					.editorWrapper { width: 100% !important; max-width: 100%; }
 					.editorWrapper {
+						/* The add-cover / show-description toolbar is redundant here — the object
+						 * is reachable as a full page via the expand control. */
+						.editorControls { display: none; }
+
 						.editor { max-width: 100%; }
+
+						/* Pulls the title to the top of the pane: the 48px gutter the full page
+						 * reserves for block drag handles is dead space at this width. The
+						 * horizontal padding keeps content off the panel divider and the
+						 * pane's right edge. */
+						.blocks { margin-left: 0px; padding: 12px 16px 0px 16px; }
+						.blocks {
+							.block {
+								.wrapMenu { display: none; }
+								.wrapContent { width: 100%; }
+							}
+						}
+
+						.blockLast { margin-left: 0px; height: 60px; }
+
+						/* The discussion section sits outside .blocks, so it needs the same
+						 * gutter applied to it directly or it renders flush to both edges. */
+						.commentSection { padding-left: 16px; padding-right: 16px; }
 					}
 				}
 
