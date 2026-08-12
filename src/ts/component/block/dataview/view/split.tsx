@@ -434,8 +434,28 @@ const ViewSplit = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 		);
 	};
 
+	/*
+	 * Keeps clicks inside this view from handing the app's focus state to the host block.
+	 *
+	 * An inline dataview's root carries tabIndex={0} and .focusable, and its onFocus runs
+	 * focus.set(block.id) — inline only, which is why this is an inline-only problem. Clicking
+	 * something that is not itself focusable (the detail controls, a master row) focuses the
+	 * nearest focusable ancestor, i.e. that root. The next focus.apply() then resolves .focusable
+	 * to it and, since it is not a text value, paints isKeyboardFocused on its selectionTarget —
+	 * the same full-size overlay as block selection, over the whole inline collection, and there
+	 * it stays until focus moves. Toggling the properties section re-renders the embedded editor,
+	 * whose mount/update effect calls focus.apply(), so the click that sets it also shows it.
+	 *
+	 * tabIndex makes this wrapper the nearer focusable ancestor, so the fallback stops here, and
+	 * stopping the focus event keeps it out of the host's handler. Elements that are focusable in
+	 * their own right — the detail editor's text blocks, property inputs — are unaffected.
+	 */
+	const onFocus = (e: React.FocusEvent) => {
+		e.stopPropagation();
+	};
+
 	return (
-		<div ref={nodeRef} className="wrap">
+		<div ref={nodeRef} className="wrap" tabIndex={-1} onFocus={onFocus}>
 			<div className={cn.join(' ')}>
 				<div ref={masterRef} className="splitMaster" style={{ width }}>
 					<ViewList
