@@ -289,6 +289,44 @@ describe('Mark', () => {
 			expect(result[0].range.from).toBe(5);
 			expect(result[0].range.to).toBe(11);
 		});
+
+		// toHtml runs checkRanges on every render with the block's stored marks:
+		// rewriting their ranges in place corrupts the store (JS-9853)
+		it('should not mutate the input marks when merging adjacent marks', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Bold, range: { from: 0, to: 5 }, param: '' },
+				{ type: I.MarkType.Bold, range: { from: 5, to: 10 }, param: '' },
+			];
+			const before = JSON.stringify(marks);
+
+			const result = Mark.checkRanges('hello world', marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].range).toEqual({ from: 0, to: 10 });
+			expect(JSON.stringify(marks)).toBe(before);
+		});
+
+		it('should not mutate the input marks when clamping to text length', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Bold, range: { from: 0, to: 50 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello', marks);
+
+			expect(result[0].range.to).toBe(5);
+			expect(marks[0].range.to).toBe(50);
+		});
+
+		it('should not mutate the input marks when trimming code newlines', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 0, to: 6 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\nworld', marks);
+
+			expect(result[0].range.to).toBe(5);
+			expect(marks[0].range.to).toBe(6);
+		});
 	});
 
 	describe('toggle', () => {
@@ -414,6 +452,144 @@ describe('Mark', () => {
 			});
 
 			expect(result).toHaveLength(2);
+		});
+
+		// The input list is the block's stored marks: mutating it in place makes the
+		// store look already-updated, so the save is skipped as a no-op (JS-9853)
+		it('should not mutate the input marks on Equal overlap with param', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Color, range: { from: 0, to: 5 }, param: 'red' },
+			];
+
+			const result = Mark.toggle(marks, {
+				type: I.MarkType.Color,
+				range: { from: 0, to: 5 },
+				param: 'blue',
+			});
+
+			expect(result[0].param).toBe('blue');
+			expect(marks[0].param).toBe('red');
+			expect(result[0]).not.toBe(marks[0]);
+		});
+
+		it('should not mutate the input marks when shrinking ranges', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Bold, range: { from: 0, to: 10 }, param: '' },
+			];
+
+			Mark.toggle(marks, {
+				type: I.MarkType.Bold,
+				range: { from: 0, to: 5 },
+				param: '',
+			});
+
+			expect(marks[0].range).toEqual({ from: 0, to: 10 });
+		});
+	});
+
+	// U.Data.blockSetText drops a write when the text is unchanged and the new marks
+	// still compare equal to the block's stored marks. Callers hand it the store's own
+	// array, so a mark helper that edits that array in place makes the store look
+	// already-updated and the change never reaches middleware. These cases assert the
+	// write survives the guard — the failure mode the mutation tests above only imply
+	describe('guard: mark change must remain visible to blockSetText', () => {
+		const cases = [
+			{
+				name: 'recolour the same selection again',
+				stored: { type: I.MarkType.Color, range: { from: 0, to: 5 }, param: 'red' },
+				toggled: { type: I.MarkType.Color, range: { from: 0, to: 5 }, param: 'blue' },
+			},
+			{
+				name: 'change the background colour of the same selection',
+				stored: { type: I.MarkType.BgColor, range: { from: 0, to: 5 }, param: 'red' },
+				toggled: { type: I.MarkType.BgColor, range: { from: 0, to: 5 }, param: 'blue' },
+			},
+			{
+				name: 'un-bold the left edge of a bold run',
+				stored: { type: I.MarkType.Bold, range: { from: 0, to: 11 }, param: '' },
+				toggled: { type: I.MarkType.Bold, range: { from: 0, to: 5 }, param: '' },
+			},
+			{
+				name: 'un-bold the right edge of a bold run',
+				stored: { type: I.MarkType.Bold, range: { from: 0, to: 11 }, param: '' },
+				toggled: { type: I.MarkType.Bold, range: { from: 6, to: 11 }, param: '' },
+			},
+			{
+				name: 'un-bold the middle of a bold run',
+				stored: { type: I.MarkType.Bold, range: { from: 0, to: 11 }, param: '' },
+				toggled: { type: I.MarkType.Bold, range: { from: 3, to: 7 }, param: '' },
+			},
+			{
+				name: 'extend a colour run leftwards with the same colour',
+				stored: { type: I.MarkType.Color, range: { from: 5, to: 11 }, param: 'red' },
+				toggled: { type: I.MarkType.Color, range: { from: 0, to: 7 }, param: 'red' },
+			},
+			{
+				name: 'extend a colour run rightwards with the same colour',
+				stored: { type: I.MarkType.Color, range: { from: 0, to: 6 }, param: 'red' },
+				toggled: { type: I.MarkType.Color, range: { from: 3, to: 11 }, param: 'red' },
+			},
+			{
+				name: 'recolour a superset of an existing run',
+				stored: { type: I.MarkType.Color, range: { from: 3, to: 7 }, param: 'red' },
+				toggled: { type: I.MarkType.Color, range: { from: 0, to: 11 }, param: 'blue' },
+			},
+		];
+
+		for (const c of cases) {
+			it(`should send a write when the user does: ${c.name}`, () => {
+				const stored: I.Mark[] = [ c.stored ];
+				const result = Mark.toggle(stored, c.toggled);
+
+				expect(U.Common.compareJSON(stored, result)).toBe(false);
+			});
+		};
+
+		it('should send a write when changing an existing link url', () => {
+			const stored: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://a.com' },
+			];
+
+			const result = Mark.toggleLink({ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://b.com' }, stored);
+
+			expect(U.Common.compareJSON(stored, result)).toBe(false);
+		});
+
+		// The guard exists to stop no-op writes destroying a concurrent peer edit
+		// (JS-9826): a fix that simply removed it would break this
+		it('should not send a write when nothing actually changed', () => {
+			const stored: I.Mark[] = [
+				{ type: I.MarkType.Color, range: { from: 0, to: 5 }, param: 'red' },
+			];
+
+			const result = Mark.toggle(stored, { type: I.MarkType.Color, range: { from: 0, to: 5 }, param: 'red' });
+
+			expect(U.Common.compareJSON(stored, result)).toBe(true);
+		});
+	});
+
+	describe('toggleLink', () => {
+		it('should replace the param of an existing link', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://a.com' },
+			];
+
+			const result = Mark.toggleLink({ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://b.com' }, marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].param).toBe('http://b.com');
+		});
+
+		it('should not mutate the input marks', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://a.com' },
+			];
+
+			Mark.toggleLink({ type: I.MarkType.Link, range: { from: 0, to: 10 }, param: 'http://a.com' }, marks);
+
+			expect(marks).toHaveLength(1);
+			expect(marks[0].param).toBe('http://a.com');
+			expect(marks[0].range).toEqual({ from: 0, to: 5 });
 		});
 	});
 
