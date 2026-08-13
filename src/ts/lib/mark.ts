@@ -242,7 +242,11 @@ class Mark {
 	 * @returns {I.Mark[]} The updated list of marks.
 	 */
 	checkRanges(text: string, marks: I.Mark[]) {
-		marks = (marks || []).slice().sort(this.sort);
+		// slice() copied the array but not the marks inside it, and the loop below
+		// edits mark.range in place. toHtml runs this on every render with the
+		// block's stored marks, so the ranges were rewritten in the store, which
+		// then defeats the save's no-op guard the same way toggle did (JS-9853)
+		marks = (marks || []).map(m => ({ ...m, range: { ...m.range } })).sort(this.sort);
 
 		for (let i = 0; i < marks.length; ++i) {
 			const mark = marks[i];
