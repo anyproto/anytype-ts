@@ -123,7 +123,10 @@ class Mark {
 			return marks;
 		};
 
-		const map = U.Common.mapToArray(marks, 'type');
+		// Copy before mutating: callers pass the block's stored marks, so editing
+		// them in place makes the store look already-updated and the write is
+		// then dropped as a no-op, never reaching middleware (JS-9853)
+		const map = U.Common.mapToArray((marks || []).map(m => ({ ...m, range: { ...m.range } })), 'type');
 		const type = mark.type;
 
 		let add = true;
@@ -975,19 +978,16 @@ class Mark {
 	 * @returns {I.Mark[]} The updated marks.
 	 */
 	toggleLink(newMark: I.Mark, marks: I.Mark[]) {
-		for (let i = 0; i < marks.length; ++i) {
-			const mark = marks[i];
-			if ([I.MarkType.Link, I.MarkType.Object].includes(mark.type) &&
+		// Filter into a new list rather than splicing the caller's: the input is the
+		// block's stored marks and must not be edited in place (JS-9853)
+		const list = (marks || []).filter(mark => {
+			return !([ I.MarkType.Link, I.MarkType.Object ].includes(mark.type) &&
 				(mark.range.from >= newMark.range.from) &&
 				(mark.range.to <= newMark.range.to) &&
-				(mark.param == newMark.param)
-			) {
-				marks.splice(i, 1);
-				i--;
-			};
-		};
+				(mark.param == newMark.param));
+		});
 
-		return this.toggle(marks, newMark);
+		return this.toggle(list, newMark);
 	};
 
 	/**

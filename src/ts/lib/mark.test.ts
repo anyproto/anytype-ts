@@ -415,6 +415,63 @@ describe('Mark', () => {
 
 			expect(result).toHaveLength(2);
 		});
+
+		// The input list is the block's stored marks: mutating it in place makes the
+		// store look already-updated, so the save is skipped as a no-op (JS-9853)
+		it('should not mutate the input marks on Equal overlap with param', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Color, range: { from: 0, to: 5 }, param: 'red' },
+			];
+
+			const result = Mark.toggle(marks, {
+				type: I.MarkType.Color,
+				range: { from: 0, to: 5 },
+				param: 'blue',
+			});
+
+			expect(result[0].param).toBe('blue');
+			expect(marks[0].param).toBe('red');
+			expect(result[0]).not.toBe(marks[0]);
+		});
+
+		it('should not mutate the input marks when shrinking ranges', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Bold, range: { from: 0, to: 10 }, param: '' },
+			];
+
+			Mark.toggle(marks, {
+				type: I.MarkType.Bold,
+				range: { from: 0, to: 5 },
+				param: '',
+			});
+
+			expect(marks[0].range).toEqual({ from: 0, to: 10 });
+		});
+	});
+
+	describe('toggleLink', () => {
+		it('should replace the param of an existing link', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://a.com' },
+			];
+
+			const result = Mark.toggleLink({ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://b.com' }, marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].param).toBe('http://b.com');
+		});
+
+		it('should not mutate the input marks', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://a.com' },
+			];
+
+			Mark.toggleLink({ type: I.MarkType.Link, range: { from: 0, to: 10 }, param: 'http://a.com' }, marks);
+
+			expect(marks).toHaveLength(1);
+			expect(marks[0].param).toBe('http://a.com');
+			expect(marks[0].range).toEqual({ from: 0, to: 5 });
+		});
 	});
 
 	describe('trimRange', () => {
