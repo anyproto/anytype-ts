@@ -216,6 +216,12 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			const lang = U.Prism.aliasMap[fields.lang] || 'plain';
 			const grammar = Prism.languages[lang];
 
+			// Zero-width spaces ride along with pasted text (AI answers are full of them).
+			// The model never keeps them — getTextValue strips them on read — so leaving
+			// them in the DOM creates characters the user cannot see but the browser can:
+			// Backspace silently eats one instead of deleting a visible character (JS-9857)
+			html = Mark.stripZws(html);
+
 			html = grammar ? Prism.highlight(html, grammar, lang) : Prism.util.encode(html) as string;
 			langRef.current?.setValue(lang);
 		} else {
