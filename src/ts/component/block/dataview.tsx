@@ -613,12 +613,13 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onEmpty = (e: any) => {
-		let element = '';
 		if (isInline) {
-			element = `#block-${U.Common.esc(block.id)} #head-source-select`;
-			onSourceSelect(element, { horizontal: I.MenuDirection.Center });
+			onSourceSelect(`#block-${U.Common.esc(block.id)} #head-source-select`, { horizontal: I.MenuDirection.Center });
 		} else {
-			element = `#${U.Common.esc(Relation.cellId('blockFeatured', 'setOf', rootId))}`;
+			// The featured setOf cell is not rendered on an empty Query page, so the menu is anchored
+			// to the clicked placeholder and only falls back to the cell when there is no event (JS-9856)
+			const element = e?.currentTarget || U.Dom.select(`#${U.Common.esc(Relation.cellId('blockFeatured', 'setOf', rootId))}`);
+
 			onSourceTypeSelect(element);
 		};
 	};
