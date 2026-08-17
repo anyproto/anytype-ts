@@ -145,6 +145,30 @@ class UtilDom {
 	};
 
 	/**
+	 * Returns the rectangle to anchor floating UI to. A missing rectangle, or one which is entirely
+	 * zero - a node hidden with display: none, or detached from the document - carries no usable
+	 * geometry, so it falls back to the centre of the window instead of the window origin.
+	 * @param {object|null} rect - The anchor rectangle.
+	 * @param {object} winSize - The window dimensions.
+	 * @returns {object} The rectangle to position against, isFallback is set when it was replaced.
+	 */
+	getAnchorRect (rect: any, winSize: { ww: number; wh: number }): I.MenuPosition & { isFallback: boolean } {
+		const x = Number(rect?.x) || 0;
+		const y = Number(rect?.y) || 0;
+		const width = Number(rect?.width) || 0;
+		const height = Number(rect?.height) || 0;
+
+		if (!rect || (!x && !y && !width && !height)) {
+			const ww = Number(winSize?.ww) || 0;
+			const wh = Number(winSize?.wh) || 0;
+
+			return { x: ww / 2, y: wh / 2, width: 0, height: 0, isFallback: true };
+		};
+
+		return { x, y, width, height, isFallback: false };
+	};
+
+	/**
 	 * Clears the current selection in the document.
 	 */
 	clearSelection () {

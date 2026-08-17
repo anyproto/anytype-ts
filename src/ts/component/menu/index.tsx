@@ -479,17 +479,32 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 				oy = Number(rect.y) || 0;
 			} else {
 				const el = getElement();
-				if (!el) {
-					console.log('[Menu].position', id, 'element not found', element);
-					return;
+				const elRect = el ? el.getBoundingClientRect() : null;
+
+				// An absent or zero-area anchor - a node which is missing, detached, or hidden with
+				// display: none - carries no geometry, so the menu falls back to the centre of the
+				// window instead of painting at the window origin (JS-9856)
+				const anchor = U.Dom.getAnchorRect(el ? {
+					x: elRect.left,
+					y: elRect.top,
+					width: el.offsetWidth,
+					height: el.offsetHeight,
+				} : null, winSize);
+
+				if (anchor.isFallback) {
+					console.log('[Menu].position', id, 'element not found or not visible', element);
+
+					// A menu which was already placed against a live anchor keeps its position
+					// instead of jumping, only the initial placement uses the fallback
+					if (menuEl.style.left) {
+						return;
+					};
 				};
 
-				const elRect = el.getBoundingClientRect();
-
-				ew = el.offsetWidth;
-				eh = el.offsetHeight;
-				ox = elRect.left + window.scrollX;
-				oy = elRect.top + window.scrollY;
+				ew = anchor.width;
+				eh = anchor.height;
+				ox = anchor.x + window.scrollX;
+				oy = anchor.y + window.scrollY;
 			};
 
 			let x = ox;
