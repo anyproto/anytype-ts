@@ -80,7 +80,7 @@ const PageMainVoid = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				animate={{ opacity: 1, transition: { duration: 0.12 } }}
 				exit={{ opacity: 0, transition: { duration: 0.08 } }}
 			>
-				{id != 'empty' ? (
+				<div className="side left">
 					<Icon
 						name="widget/vaultToggle" className="vaultToggle" withBackground={true}
 						onClick={() => sidebar.leftPanelToggle(true, true)}
@@ -89,7 +89,19 @@ const PageMainVoid = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 							typeY: I.MenuDirection.Bottom,
 						}}
 					/>
-				) : ''}
+
+					{id == 'empty' ? (
+						<Icon
+							name="header/widget" withBackground={true}
+							onClick={() => sidebar.leftPanelSubPageToggle('widget', true, true)}
+							tooltipParam={{
+								text: translate('commonWidgets'),
+								caption: keyboard.getCaption('widget'),
+								typeY: I.MenuDirection.Bottom,
+							}}
+						/>
+					) : ''}
+				</div>
 
 				<Frame>
 					{icon ? (
