@@ -92,6 +92,7 @@ const Order = [
  */
 const ZWS = '\u200B';
 const ZWS_TYPES = [ ...Order ];
+const RE_ZWS = new RegExp(ZWS, 'g');
 
 class Mark {
 
@@ -1218,6 +1219,20 @@ class Mark {
 	hasZws (el: HTMLElement): boolean {
 		const text = el.textContent || '';
 		return text.includes(ZWS);
+	};
+
+	/**
+	 * Remove ZWS characters from plain text before it is rendered into the DOM.
+	 * ZWS is the editor's own cursor anchor around inline markup, never content:
+	 * the model drops it on read (Editable.getTextValue). A ZWS that arrives with
+	 * pasted text is not an anchor, so rendering it leaves a character the model
+	 * does not have — the caret can sit behind it and Backspace deletes it without
+	 * changing a single visible character (JS-9857).
+	 * @param {string} text - The plain text to render.
+	 * @returns {string} The text without ZWS characters.
+	 */
+	stripZws (text: string): string {
+		return String(text || '').replace(RE_ZWS, '');
 	};
 
 	/**

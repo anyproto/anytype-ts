@@ -922,4 +922,52 @@ describe('Mark', () => {
 		});
 	});
 
+	describe('stripZws', () => {
+
+		// Minimal element-like node: a single text node, the way a code block renders
+		const element = (text: string): any => {
+			return {
+				textContent: text,
+				childNodes: [ { nodeType: 3, textContent: text, childNodes: [] } ],
+			};
+		};
+
+		beforeAll(() => {
+			const g = globalThis as any;
+
+			if (typeof g.Node === 'undefined') {
+				g.Node = { TEXT_NODE: 3, ELEMENT_NODE: 1 };
+			};
+		});
+
+		it('should remove zero-width spaces that came in with pasted text', () => {
+			expect(Mark.stripZws('const a\u200B = 1;')).toBe('const a = 1;');
+		});
+
+		it('should remove a run of zero-width spaces', () => {
+			expect(Mark.stripZws('\u200Bconst\u200B\u200B a = 1;\u200B')).toBe('const a = 1;');
+		});
+
+		it('should leave text without zero-width spaces untouched', () => {
+			expect(Mark.stripZws('const a = 1;')).toBe('const a = 1;');
+		});
+
+		it('should keep DOM and model offsets aligned for the rendered text', () => {
+			const el = element(Mark.stripZws('const a\u200B = 1;'));
+
+			expect(Mark.hasZws(el)).toBe(false);
+			expect(Mark.domToModel(8, el)).toBe(8);
+			expect(Mark.modelToDom(8, el)).toBe(8);
+		});
+
+		it('should document the drift when a stray zero-width space reaches the DOM', () => {
+			const el = element('const a\u200B = 1;');
+
+			// The character is in the DOM but not in the model: every offset past it
+			// shifts, and Backspace on it deletes nothing the user can see
+			expect(Mark.hasZws(el)).toBe(true);
+			expect(Mark.domToModel(8, el)).toBe(7);
+		});
+	});
+
 });
