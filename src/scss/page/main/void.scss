@@ -9,7 +9,7 @@
 .pageMainVoid {
 	.wrapper { width: var(--editor-width); margin: 0px auto; padding: 48px 0px; display: flex; flex-direction: row; align-items: center; justify-content: center; }
 	.wrapper {
-		.icon.vaultToggle { position: absolute; left: 12px; top: 12px; }
+		> .side.left { position: absolute; left: 12px; top: 12px; display: flex; flex-direction: row; align-items: center; gap: 0px 8px; }
 
 		.frame { text-align: center; position: absolute; }
 		.iconWrapper { display: flex; align-items: center; justify-content: space-around; }
