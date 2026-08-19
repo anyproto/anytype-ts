@@ -19,6 +19,7 @@ Imperative ref API (`SelectionRefProps`):
 - `rebind()` - Re-attach mouse/keyboard event listeners
 - `setContextMenuHandler(handler)` - Register context menu callback
 - `getTextSelection()` - Cross-block text selection state (`{ from, to }` endpoints with per-block `I.TextRange`), or `null`
+- `getTextSelectionIds()` - Ordered block ids covered by the cross-block text selection (slice of `S.Block.getTreeList(rootId)`, the depth-first document order, so nested children between the endpoints are included)
 - `clearTextSelection()` - Dissolve the cross-block text selection and restore the blocks wrapper
 - `isCrossSelecting()` - Whether a cross-block text drag is in progress
 
