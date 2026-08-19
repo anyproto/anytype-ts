@@ -1,6 +1,6 @@
 {
 	"name": "anytype",
-	"version": "0.56.4",
+	"version": "0.56.5",
 	"description": "Anytype",
 	"main": "electron.js",
 	"scripts": {
@@ -86,7 +86,7 @@
 		"@vitejs/plugin-react-swc": "^4.2.0",
 		"ajv": "^7.2.4",
 		"cross-env": "^10.1.0",
-		"electron": "^41.9.0",
+		"electron": "^41.10.6",
 		"electron-builder": "^26.8.1",
 		"eslint": "^9.26.0",
 		"eslint-plugin-react": "^7.37.5",
