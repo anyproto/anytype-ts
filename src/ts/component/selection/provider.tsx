@@ -337,8 +337,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 					const first = (currentIds.length && currentIds[0]) ? currentIds[0] : focusedId.current;
 
 					if (first && id && (first !== id)) {
-						const tree = S.Block.getTree(rootId, S.Block.getBlocks(rootId));
-						const list = S.Block.unwrapTree(tree);
+						const list = S.Block.getTreeList(rootId);
 						const idxStart = list.findIndex(it => it.id == first);
 						const idxEnd = list.findIndex(it => it.id == id);
 
@@ -908,8 +907,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 		};
 
 		const { from, to } = crossState.current;
-		const rootId = keyboard.getRootId();
-		const list = S.Block.unwrapTree(S.Block.getTree(rootId, S.Block.getBlocks(rootId)));
+		const list = S.Block.getTreeList(keyboard.getRootId());
 		const idxStart = list.findIndex(it => it.id == from.id);
 		const idxEnd = list.findIndex(it => it.id == to.id);
 
@@ -960,9 +958,7 @@ const SelectionProvider = forwardRef<SelectionRefProps, Props>((props, ref) => {
 		};
 
 		// Sort blocks by their document tree order
-		const rootId = keyboard.getRootId();
-		const tree = S.Block.getTree(rootId, S.Block.getChildren(rootId, rootId));
-		const treeOrder = S.Block.unwrapTree(tree).map(it => it.id);
+		const treeOrder = S.Block.getTreeList(keyboard.getRootId()).map(it => it.id);
 		const orderMap = new Map(treeOrder.map((id, idx) => [ id, idx ]));
 
 		list.sort((a, b) => {

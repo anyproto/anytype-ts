@@ -801,6 +801,7 @@ class BlockStore {
 
 	/**
 	 * Gets the tree structure for a root ID and list of blocks.
+	 * Each item is a copy of the block with a recursive `childBlocks` array; the live store objects are not touched.
 	 * @param {string} rootId - The root ID.
 	 * @param {any[]} list - The list of blocks.
 	 * @returns {any[]} The tree structure.
@@ -808,9 +809,19 @@ class BlockStore {
 	getTree (rootId: string, list: any[]): any[] {
 		list = U.Common.objectCopy(list || []);
 		for (const item of list) {
-			item.childBlocks = this.getTree(item.id, this.getChildren(rootId, item.id));
+			// The structure map is keyed by rootId at every depth, so the recursion must keep the real rootId
+			item.childBlocks = this.getTree(rootId, this.getChildren(rootId, item.id));
 		};
 		return list;
+	};
+
+	/**
+	 * Gets all blocks of a root in document (depth-first) order.
+	 * @param {string} rootId - The root ID.
+	 * @returns {any[]} Flat list of block copies in document order, excluding the root block itself.
+	 */
+	getTreeList (rootId: string): any[] {
+		return this.unwrapTree(this.getTree(rootId, this.getChildren(rootId, rootId)));
 	};
 
 	/**
