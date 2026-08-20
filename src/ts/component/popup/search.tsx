@@ -551,7 +551,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		storageSet({ [drillKey]: { kind, id: object.id, back: drillBackRef.current } });
-		setDrillState(kind, object, 'Empty', () => reload());
+		setDrillState(kind, object, 'Empty', () => reload(true));
 	};
 
 	const onDrill = (e: any, item: any) => {
@@ -605,7 +605,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			filterInputRef.current?.setValue('');
 			filterValueRef.current = '';
 			storageSet({ [filterKey]: '' });
-			reload();
+			reload(true);
 			return;
 		};
 
@@ -640,7 +640,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			});
 		};
 
-		load(true, step);
+		load(true, step, true);
 	};
 
 	// The Messages scope searches chats and discussions - offer it only when there is at least
@@ -1885,7 +1885,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			storageSet({ [filterKey]: '' });
 
 			if (searchTypeRef.current == item.chipId) {
-				reload();
+				reload(true);
 				scrollToActiveChip();
 			} else {
 				onSearchTypeSwitch(item.chipId);
@@ -2519,15 +2519,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				</div>
 			) : ''}
 
-			{!items.length && !isLoading ? (
-				<EmptySearch
-					filter={filterValueRef.current}
-					text={(searchType == SEARCH_TYPE_MESSAGE) ? translate('menuSearchChatEmptySearch') : ''}
-				/>
-			) : ''}
+			{/* Always mounted: the popup height is fixed - the middle zone holding its
+			space keeps the footer and chips from jumping while a load swaps the content */}
+			<div className="items">
+				{!items.length && !isLoading ? (
+					<EmptySearch
+						filter={filterValueRef.current}
+						text={(searchType == SEARCH_TYPE_MESSAGE) ? translate('menuSearchChatEmptySearch') : ''}
+					/>
+				) : ''}
 
-			{cacheRef.current && items.length && !isLoading ? (
-				<div key="items" className="items">
+				{cacheRef.current && items.length && !isLoading ? (
 					<InfiniteLoader
 						rowCount={items.length + (hasMoreRef.current ? 1 : 0)}
 						loadMoreRows={loadMoreRows}
@@ -2554,8 +2556,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 							</AutoSizer>
 						)}
 					</InfiniteLoader>
-				</div>
-			) : ''}
+				) : ''}
+			</div>
 
 			{Footer()}
 		</div>
