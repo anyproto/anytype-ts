@@ -2149,7 +2149,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					<div className="sides">
 						<div className="side left">
 							<div className="nameWrapper">
-								<ObjectName object={author} />
+								{author ? (
+									<ObjectName
+										object={author}
+										className="name drillLink"
+										onClick={e => { e.stopPropagation(); startDrill('creator', author); }}
+									/>
+								) : (
+									<ObjectName object={author} />
+								)}
 								<div className="time">{date}</div>
 							</div>
 							<div className="text" dangerouslySetInnerHTML={{ __html: U.Chat.getSearchResultHtml(item) }} />
