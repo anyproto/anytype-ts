@@ -637,6 +637,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Whether the row should carry a "by ..." caption: multi-member spaces attribute every
 	// row (own objects read "by You"); single-member spaces show nothing
 	const wantsCreator = (item: any): boolean => {
+		// Derived objects (types, chat containers) are created implicitly with the space and
+		// always resolve to the space creator - attribution is meaningless there
+		if (U.Object.isTypeLayout(item.layout) || U.Object.isChatLayout(item.layout) || (item.layout == I.ObjectLayout.ChatOld)) {
+			return false;
+		};
+
 		return Boolean(item.creator && S.Auth.account && spaceHasMembers(item.spaceId || S.Common.space));
 	};
 
