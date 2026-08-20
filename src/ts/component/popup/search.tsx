@@ -1660,7 +1660,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 									{chat && spaceview ? <div className="at">@</div> : ''}
 									{spaceview ? (
 										<>
-											<IconObject object={spaceview} size={16} />
+											<IconObject object={spaceview} size={14} />
 											<ObjectName object={spaceview} />
 										</>
 									) : ''}
@@ -1763,7 +1763,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 							{spaceview ? (
 								<>
 									<div className="at">@</div>
-									<IconObject object={spaceview} size={16} />
+									<IconObject object={spaceview} size={14} />
 									<ObjectName object={spaceview} />
 								</>
 							) : ''}
