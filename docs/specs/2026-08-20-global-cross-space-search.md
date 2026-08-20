@@ -79,7 +79,7 @@ flicker-free rendering, footer hints) is inherited unchanged.
 | chip id | filter |
 |---|---|
 | `all` | base filters only (system layouts + template exclusion, as in-space) |
-| `mine` | `Or(creator In [...], lastModifiedBy In [...])` — the account's participant id in **every** space (participant ids are per-space) |
+| `mine` | `creator In [...]` — the account's participant id in **every** space (participant ids are per-space); lastModifiedBy dropped as noisy (automatic changes) |
 | `message` | `ChatSearch('', '', …)` |
 | `file` | `resolvedLayout In [ File, Pdf, Audio, Video ]` |
 | `image` | `resolvedLayout In [ Image ]` |

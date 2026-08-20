@@ -55,8 +55,8 @@ nothing (heart filtered all hits before this PR). The popup degrades to the empt
 - Rendered inside the popup, directly under the `.head` filter row, above `.items`.
 - Items, in order:
   1. `all` — `translate('popupSearchTypeAll')` ("All objects") — default.
-  1b. `mine` — "My objects" (added later): objects created by or last edited by the current
-     account — `Or(creator In [participantId], lastModifiedBy In [participantId])`. Same
+  1b. `mine` — "My objects" (added later): objects created by the current account —
+     `creator In [participantId]` (lastModifiedBy was dropped: noisy due to automatic changes). Same
      Actions section as All ("Create Object" + "Add file"), plain "Recent Objects" title.
   2. `message` — `translate('popupSearchTypeMessages')` ("Messages"). Shown only when the
      space has at least one chat or discussion (checked against the always-on per-space

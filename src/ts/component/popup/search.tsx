@@ -643,22 +643,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
-	// Objects created or last edited by the current account. creator/lastModifiedBy hold
-	// participant ids, which are per-space - global mode matches against the account's
-	// participant id in every space
+	// Objects created by the current account (creator only - lastModifiedBy is noisy because
+	// of automatic changes). creator holds participant ids, which are per-space - global mode
+	// matches against the account's participant id in every space
 	const getMineFilter = (): any => {
 		const { account } = S.Auth;
 		const ids = isGlobal ?
 			U.Space.getList().map(it => U.Space.getParticipantId(it.targetSpaceId, account.id)) :
 			[ U.Space.getCurrentParticipantId() ];
 
-		return {
-			operator: I.FilterOperator.Or,
-			nestedFilters: [
-				{ relationKey: 'creator', condition: I.FilterCondition.In, value: ids },
-				{ relationKey: 'lastModifiedBy', condition: I.FilterCondition.In, value: ids },
-			],
-		};
+		return { relationKey: 'creator', condition: I.FilterCondition.In, value: ids };
 	};
 
 	const loadMessages = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
