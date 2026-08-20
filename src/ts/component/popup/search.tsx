@@ -641,6 +641,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return applyDrillGating(ret.concat(types));
 	};
 
+	// Keep the active chip visible when the row overflows - selection, restore and "/" mode
+	// can land on a chip that is scrolled out of view
+	const scrollToActiveChip = () => {
+		window.setTimeout(() => {
+			const active = U.Dom.select('.typeItem.active', typeSelectRef.current) as HTMLElement;
+			active?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+		});
+	};
+
 	const onSearchTypeSwitch = (id: string) => {
 		if (searchTypeRef.current == id) {
 			return;
@@ -660,11 +669,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		filterInputRef.current?.focus();
 		reload(true);
 
-		// Keep the newly active chip visible when the row overflows
-		window.setTimeout(() => {
-			const active = U.Dom.select('.typeItem.active', typeSelectRef.current) as HTMLElement;
-			active?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-		});
+		scrollToActiveChip();
 
 		const known = [
 			SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_PAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_MEMBER, SEARCH_TYPE_BOOKMARK,
@@ -1707,6 +1712,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			if (searchTypeRef.current == item.chipId) {
 				reload();
+				scrollToActiveChip();
 			} else {
 				onSearchTypeSwitch(item.chipId);
 			};
@@ -1871,6 +1877,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			filterInputRef.current.setRange(rangeRef.current);
 
 			reload();
+			scrollToActiveChip();
 		};
 
 		focus.clear(true);
