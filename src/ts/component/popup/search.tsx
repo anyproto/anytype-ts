@@ -207,9 +207,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const chatsSubId = [ getId(), 'chats' ].join('-');
 
 	const onScroll = ({ scrollTop }) => {
-		if (scrollTop) {
-			topRef.current = scrollTop;
-		};
+		topRef.current = scrollTop;
 	};
 
 	const keydownHandler = useRef<(e: any) => void>(null);
@@ -307,6 +305,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		keyboard.shortcut(`${shortcutPrev}, ${shortcutNext}` , e, (pressed: string) => {
+			e.preventDefault();
+
 			const dir = [ 'arrowup', 'ctrl+p' ].includes(pressed) ? -1 : 1;
 			onArrow(dir);
 		});
@@ -428,6 +428,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		setActive(item);
 	};
 
+	// Minimal scrolling: only move when the active row is outside the viewport, and only
+	// just enough to reveal it. Re-centering on every press fought the async re-renders
+	// (lazy-load appends, cell re-measure) and read as the scroll jumping back and forth
 	const scrollToRow = (items: any[], index: number) => {
 		if (!listRef.current || !items.length) {
 			return;
@@ -437,25 +440,21 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const rowH = getRowHeight(items[index], index);
 
 		let offset = 0;
-		let total = 0;
-
-		for (let i = 0; i < items.length; ++i) {
-			const h = getRowHeight(items[i], i);
-
-			if (i < index) {
-				offset += h;
-			};
-			total += h;
+		for (let i = 0; i < index; ++i) {
+			offset += getRowHeight(items[i], i);
 		};
 
-		if (offset + rowH < listHeight) {
-			offset = 0;
-		} else {
-			offset -= listHeight / 2 - rowH / 2;
-		};
+		// When the row sits right under its section header, keep the header in view too
+		const prev = items[index - 1];
+		const headH = (prev && prev.isSection) ? getRowHeight(prev, index - 1) : 0;
+		const top = topRef.current;
 
-		offset = Math.min(offset, total - listHeight + 16);
-		listRef.current.scrollToPosition(offset);
+		if (offset - headH < top) {
+			listRef.current.scrollToPosition(Math.max(0, offset - headH));
+		} else
+		if (offset + rowH > top + listHeight) {
+			listRef.current.scrollToPosition(offset + rowH - listHeight);
+		};
 	};
 
 	const setActive = (item: any) => {
