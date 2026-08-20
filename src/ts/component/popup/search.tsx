@@ -764,7 +764,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			sorts = [ { relationKey: 'lastMessageDate', type: I.SortType.Desc } ];
 		} else
 		if ((searchType == SEARCH_TYPE_TYPE) && !fullText) {
-			sorts = [ { relationKey: 'lastUsedDate', type: I.SortType.Desc } ];
+			// lastUsedDate is a local detail - unset on a freshly pulled account, so fall
+			// back to the synced lastModifiedDate
+			sorts = [
+				{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
+				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+			];
 		};
 
 		sorts = sorts.map(U.Subscription.sortMapper);

@@ -99,7 +99,8 @@ flicker-free rendering, footer hints) is inherited unchanged.
 - `C.ObjectCrossSpaceSearch(filters, sorts, fullText, offset, limit, keys)` with
   `keys = J.Relation.default` (covers `spaceId`, name, icons, layout) and per-chip client sorts
   (revised after review): Chats always `lastMessageDate desc` (chats never have an FT score -
-  their text path filters by name), Types `lastUsedDate desc` for empty queries; every other
+  their text path filters by name), Types `lastUsedDate desc, lastModifiedDate desc` for empty queries (lastUsedDate is a
+  local detail - unset on a freshly pulled account); every other
   chip sends no sorts and relies on the backend defaults - `QueryCrossSpaceNoWait` injects
   `lastModifiedDate desc` for empty queries and score-first for text queries, both applied
   across the merge with a deterministic tiebreak. Generic client sorts like `lastOpenedDate`
