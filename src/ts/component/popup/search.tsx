@@ -505,8 +505,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		filterInputRef.current?.setValue('');
 		drillRef.current = { kind, object: item };
 
-		// A specific type is narrower than any chip - force All while type-drilled
-		if (kind == 'type') {
+		// A specific type is narrower than any chip - force All while type-drilled.
+		// A creator drill replaces the My objects chip (also a creator filter)
+		if ((kind == 'type') || ((kind == 'creator') && (searchTypeRef.current == SEARCH_TYPE_MINE))) {
 			searchTypeRef.current = SEARCH_TYPE_ALL;
 		};
 
@@ -567,8 +568,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const getTypeItems = () => {
 		const ret: any[] = [
 			{ id: SEARCH_TYPE_ALL, name: translate('popupSearchTypeAll') },
-			{ id: SEARCH_TYPE_MINE, name: translate('popupSearchTypeMine') },
 		];
+
+		// My objects is a creator filter itself - hidden while a creator drill is active
+		if (drillRef.current?.kind != 'creator') {
+			ret.push({ id: SEARCH_TYPE_MINE, name: translate('popupSearchTypeMine') });
+		};
 
 		if (hasMessageContainers()) {
 			ret.push({ id: SEARCH_TYPE_MESSAGE, name: translate('popupSearchTypeMessages') });
