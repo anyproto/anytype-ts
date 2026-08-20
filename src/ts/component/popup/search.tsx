@@ -762,6 +762,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			filters.push(getMineFilter());
 		};
 
+		// Type objects are noise in the empty (recent) browse of All/My objects - every space
+		// ships a full set of bundled types; they stay searchable by text and via the Types chip
+		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE ].includes(searchType) && !filterValueRef.current) {
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Type ] });
+		};
+
 		let fullText = filterValueRef.current;
 
 		// Chat objects are not in the fulltext index - a text query through fullText finds
@@ -868,6 +874,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: layouts },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		]);
+
+		// Type objects are noise in the empty (recent) browse of All/My objects; they stay
+		// searchable by text
+		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE ].includes(searchType) && !filterValueRef.current) {
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Type ] });
+		};
 
 		if (searchType == SEARCH_TYPE_MINE) {
 			filters.push(getMineFilter());
