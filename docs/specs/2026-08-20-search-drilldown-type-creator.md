@@ -102,9 +102,11 @@ Reuses the Related section row (name + right-side Clear, same `withClear` machin
 
 The section renders in every mode while the drill is active (including on top of chip-filtered
 lists for the creator drill) and always precedes the order-toggle recent section (drill active
-⇒ recent section hidden, as with backlink today). Clear (or Escape) drops the drill, restores
-the chip row to normal, keeps the filter text — exactly the current `onClearSearch` contract,
-extended to reset `drillRef`.
+⇒ recent section hidden, as with backlink today). Entering a drill snapshots the pre-drill
+state (chip, query, loaded depth, scroll offset, active row - persisted with the drill);
+Clear / Escape / left-arrow drops the drill and restores that snapshot, refilling pages to the
+saved depth so the exact row is highlighted again. A fresh drill starts with an empty query;
+switching chips while drilled discards the snapshot.
 
 ### Sorting
 

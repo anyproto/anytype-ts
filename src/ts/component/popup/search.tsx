@@ -174,6 +174,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Active drill: pivot the whole search around one row - related objects (backlink),
 	// instances of a type, or objects created by a person
 	const drillRef = useRef<{ kind: string; object: any } | null>(null);
+	// Where the user was when the drill started - Back (left arrow / Escape / Clear)
+	// restores chip, query, loaded depth, scroll offset and the active row
+	const drillBackRef = useRef<{ searchType: string; filter: string; itemId: string; top: number; count: number } | null>(null);
 	const nodeRef = useRef(null);
 	const filterInputRef = useRef(null);
 	const listRef = useRef(null);
@@ -536,7 +539,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		storageSet({ [drillKey]: { kind, id: object.id } });
+		// A chained drill keeps the original snapshot: Back always returns to the pre-drill list
+		if (!drillRef.current) {
+			drillBackRef.current = {
+				searchType: searchTypeRef.current,
+				filter: filterValueRef.current,
+				itemId: getItems()[nRef.current]?.id || '',
+				top: topRef.current,
+				count: itemsRef.current.length,
+			};
+		};
+
+		storageSet({ [drillKey]: { kind, id: object.id, back: drillBackRef.current } });
 		setDrillState(kind, object, 'Empty', () => reload());
 	};
 
@@ -554,6 +568,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const setDrillState = (kind: string, item: any, type: string, callBack?: () => void) => {
 		window.clearTimeout(timeoutRef.current);
 		filterInputRef.current?.setValue('');
+
+		// A fresh drill starts with an empty query - setValue alone leaves the ref and
+		// storage stale, and the next load would silently keep filtering by the old text
+		if (type != 'Saved') {
+			filterValueRef.current = '';
+			storageSet({ [filterKey]: '' });
+		};
+
 		drillRef.current = { kind, object: item };
 
 		// A specific type is narrower than any chip - force All while type-drilled.
@@ -573,11 +595,52 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const onClearSearch = () => {
 		window.clearTimeout(timeoutRef.current);
 		offsetRef.current = 0;
-		filterInputRef.current?.setValue('');
 		drillRef.current = null;
-
 		storageSet({ [drillKey]: null, backlink: '' });
-		reload();
+
+		const back = drillBackRef.current;
+		drillBackRef.current = null;
+
+		if (!back) {
+			filterInputRef.current?.setValue('');
+			filterValueRef.current = '';
+			storageSet({ [filterKey]: '' });
+			reload();
+			return;
+		};
+
+		// Back restores the pre-drill spot: chip, query, loaded depth, scroll, active row
+		searchTypeRef.current = back.searchType;
+		filterValueRef.current = back.filter;
+		filterInputRef.current?.setValue(back.filter);
+		filterInputRef.current?.setRange({ from: back.filter.length, to: back.filter.length });
+		storageSet({ [searchTypeKey]: back.searchType, [filterKey]: back.filter });
+
+		nRef.current = 0;
+		topRef.current = 0;
+
+		const step = () => {
+			const items = getItems();
+			const idx = items.findIndex(it => it.id == back.itemId);
+
+			// Refill page by page to the pre-drill depth so the saved row exists again
+			if ((idx < 0) && hasMoreRef.current && (itemsRef.current.length < back.count)) {
+				offsetRef.current = itemsRef.current.length;
+				load(false, step);
+				return;
+			};
+
+			nRef.current = Math.max(0, (idx >= 0) ? idx : items.findIndex(it => !it.isSection));
+
+			window.setTimeout(() => {
+				listRef.current?.scrollToPosition(back.top);
+				topRef.current = back.top;
+				setActive(getItems()[nRef.current]);
+				scrollToActiveChip();
+			});
+		};
+
+		load(true, step);
 	};
 
 	// The Messages scope searches chats and discussions - offer it only when there is at least
@@ -736,6 +799,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// would contradict); type/backlink drills clear on any chip switch
 		if (drillRef.current && ((drillRef.current.kind != 'creator') || (id == SEARCH_TYPE_MINE))) {
 			drillRef.current = null;
+			drillBackRef.current = null;
 			storageSet({ [drillKey]: null, backlink: '' });
 		};
 
@@ -2013,6 +2077,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (saved && !isGlobal) {
+			drillBackRef.current = saved.back || null;
 			U.Object.getById(saved.id, {}, item => setDrillState(saved.kind, item, 'Saved', () => setFilter()));
 		} else
 		if (saved && isGlobal) {
@@ -2020,6 +2085,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const object = (saved.kind == 'type') ? GLOBAL_DEPS.types.get(saved.id) : GLOBAL_DEPS.participants.get(saved.id);
 
 			if (object) {
+				drillBackRef.current = saved.back || null;
 				setDrillState(saved.kind, object, 'Saved', () => setFilter());
 			} else {
 				setFilter();
