@@ -187,7 +187,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const timeoutRef = useRef(0);
 	const rebindTimeoutRef = useRef(0);
 	const delayRef = useRef(0);
-	const cacheRef = useRef(new CellMeasurerCache({ fixedWidth: true, defaultHeight: HEIGHT_SECTION }));
+	// The measurement cache is keyed by stable row identity, not index: appends shift
+	// the trailing rows (Actions section) and row removals remap indexes - index keys
+	// would re-apply a neighbour's measured height to the wrong row
+	const renderItemsRef = useRef<any[]>([]);
+	const cacheRef = useRef(new CellMeasurerCache({
+		fixedWidth: true,
+		defaultHeight: HEIGHT_SECTION,
+		keyMapper: (index: number) => {
+			const it = renderItemsRef.current[index];
+			return it ? (it.isSection ? `section-${it.name}` : it.id) : `sentinel-${index}`;
+		},
+	}));
 	const itemsRef = useRef([]);
 	const nRef = useRef(0);
 	const topRef = useRef(0);
@@ -430,7 +441,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		nRef.current += dir;
 
 		if ((dir > 0) && (nRef.current > l - 1)) {
-			nRef.current = 0;
+			// While more pages are loading the end is not the end - stay on the last
+			// row instead of a surprising jump to the top
+			nRef.current = hasMoreRef.current ? l - 1 : 0;
 		};
 
 		if ((dir < 0) && (nRef.current < 0)) {
@@ -475,11 +488,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const headH = (prev && prev.isSection) ? getRowHeight(prev, index - 1) : 0;
 		const top = topRef.current;
 
+		// The List renders with 8px vertical padding - without it the active row's
+		// bottom edge stays clipped at the container edge
+		const pad = 8;
+
 		if (offset - headH < top) {
 			listRef.current.scrollToPosition(Math.max(0, offset - headH));
 		} else
-		if (offset + rowH > top + listHeight) {
-			listRef.current.scrollToPosition(offset + rowH - listHeight);
+		if (offset + rowH + pad > top + listHeight) {
+			listRef.current.scrollToPosition(offset + rowH + pad - listHeight);
 		};
 	};
 
@@ -643,7 +660,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		nRef.current = 0;
 		topRef.current = 0;
 
+		let restoreGen = 0;
+
 		const step = () => {
+			// The restore load was superseded (user typed / switched) - stop refilling
+			if (restoreGen != loadGenRef.current) {
+				return;
+			};
+
 			const items = getItems();
 			const idx = items.findIndex(it => it.id == back.itemId);
 
@@ -665,6 +689,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		load(true, step, true);
+		restoreGen = loadGenRef.current;
 	};
 
 	// The Messages scope searches chats and discussions - offer it only when there is at least
@@ -946,6 +971,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		chatsSubActiveRef.current = true;
 
 		U.Subscription.subscribeIds({ subId: chatsSubId, ids: chatIdsRef.current, noDeps: true }, () => {
+			// Chat captions render only once the chats resolve - row heights change
+			listEpochRef.current++;
 			setDummy(prev => prev + 1);
 		});
 	};
@@ -1186,6 +1213,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		C.ChatSearch(isGlobal ? '' : space, '', text, offsetRef.current, J.Constant.limit.menuRecords, sorts, creators, (message: any) => {
 			// A newer query started while this one was in flight - drop the stale response
 			if (gen != loadGenRef.current) {
+				// Release the loader this request engaged - the superseding load may be
+				// quiet and would never clear it
+				if (clear && !quiet) {
+					setIsLoading(false);
+				};
+
 				callBack?.();
 				return;
 			};
@@ -1410,6 +1443,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		C.ObjectCrossSpaceSearch(filters, sorts, J.Relation.default.concat([ 'pluralName', 'creator' ]), fullText, offsetRef.current, limit, (message: any) => {
 			// A newer query started while this one was in flight - drop the stale response
 			if (gen != loadGenRef.current) {
+				// Release the loader this request engaged - the superseding load may be
+				// quiet and would never clear it
+				if (clear && !quiet) {
+					setIsLoading(false);
+				};
+
 				callBack?.();
 				return;
 			};
@@ -1560,6 +1599,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', 'creator', '_final_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
 			// A newer query started while this one was in flight - drop the stale response
 			if (gen != loadGenRef.current) {
+				// Release the loader this request engaged - the superseding load may be
+				// quiet and would never clear it
+				if (clear && !quiet) {
+					setIsLoading(false);
+				};
+
 				callBack?.();
 				return;
 			};
@@ -1571,6 +1616,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				};
 
 				done();
+				callBack?.();
 				return;
 			};
 
@@ -2209,6 +2255,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	}, [ isLoading, dummy ]);
 
 	const items = getItems();
+
+	renderItemsRef.current = items;
+
 	const shift = keyboard.shiftSymbol();
 	const typeItems = getTypeItems();
 	const searchType = getSearchType();
@@ -2485,11 +2534,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const rowRenderer = ({ index, key, style, parent }) => {
 		const item = items[index];
 
-		let content = null;
+		// Sentinel row past the loaded set - InfiniteLoader fetches the next page for it.
+		// Rendered outside CellMeasurer: measuring the empty div would cache height 0
 		if (!item) {
-			// Sentinel row past the loaded set - InfiniteLoader fetches the next page for it
-			content = <div className="row" style={style} />;
-		} else
+			return <div key={key} className="row" style={style} />;
+		};
+
+		let content = null;
 		if (item.isSection) {
 			content = (
 				<div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>

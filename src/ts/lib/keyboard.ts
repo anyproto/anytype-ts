@@ -404,19 +404,25 @@ class Keyboard {
 					return;
 				};
 
-				// Chat and comment inputs bind their own link-insertion on this combo
-				// and never write focus.state - any editable target outside an editor
-				// text block keeps the key
+				// The combo doubles as "insert link" - yield it to whoever consumes it:
+				// any editable with a real text selection (editor and chat bind the link
+				// action on selections only), and the comment editor, which binds it even
+				// at a collapsed caret. A collapsed caret elsewhere falls through here
 				const ae = document.activeElement as HTMLElement;
 				const tag = String(ae?.tagName || '').toLowerCase();
-				const editable = [ 'input', 'textarea' ].includes(tag) || Boolean(ae?.isContentEditable);
 
-				if (editable && !ae?.closest('.block.blockText')) {
-					return;
+				let ownsCombo = false;
+
+				if ([ 'input', 'textarea' ].includes(tag)) {
+					const input = ae as HTMLInputElement;
+					ownsCombo = input.selectionStart !== input.selectionEnd;
+				} else
+				if (ae?.isContentEditable) {
+					const sel = window.getSelection();
+					ownsCombo = Boolean(sel && !sel.isCollapsed) || Boolean(ae.closest('.commentEditorWrap'));
 				};
 
-				const { range } = focus.state;
-				if ((this.isFocused && range && (range.from != range.to)) || selectedBlockIds.length) {
+				if (ownsCombo || selectedBlockIds.length) {
 					return;
 				};
 
