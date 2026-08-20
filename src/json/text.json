@@ -1639,8 +1639,6 @@
 	"popupSearchTypeAll": "All objects",
 	"popupSearchTypeMine": "My objects",
 	"popupSearchTypeMessages": "Messages",
-	"popupSearchTypeFiles": "Files",
-	"popupSearchTypeImages": "Images",
 	"popupSearchTypeBookmarks": "Bookmarks",
 	"popupSearchTypeCollections": "Collections",
 	"popupSearchTypeQueries": "Queries",

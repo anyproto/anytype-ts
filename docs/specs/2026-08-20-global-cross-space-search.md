@@ -81,14 +81,13 @@ flicker-free rendering, footer hints) is inherited unchanged.
 | `all` | base filters only (system layouts + template exclusion, as in-space) |
 | `mine` | `creator In [...]` — the account's participant id in **every** space (participant ids are per-space); lastModifiedBy dropped as noisy (automatic changes) |
 | `message` | `ChatSearch('', '', …)` |
-| `file` | `resolvedLayout In [ File, Pdf, Audio, Video ]` |
-| `image` | `resolvedLayout In [ Image ]` |
+| `media` | `resolvedLayout In [ File, Pdf, Audio, Video, Image ]` (revised: Files/Images merged into Media, matching in-space, but via layouts) |
 | `bookmark` | `resolvedLayout In [ Bookmark ]` |
 | `collection` | `resolvedLayout In [ Collection ]` |
 | `query` | `resolvedLayout In [ Set ]` |
 | `chat` | `resolvedLayout In [ Chat ]` (find a chat object by name) |
 
-- No per-type chips, no Media chip (Files/Images replace it).
+- No per-type chips; Media groups all file layouts (revised - initially split as Files/Images).
 - Messages chip gating mirrors in-space, but against the **global** stores: shown when
   `subId.chatGlobal` or `subId.discussionGlobal` has records.
 - Labels via new translate keys (`popupSearchTypeFiles`, `popupSearchTypeImages`,

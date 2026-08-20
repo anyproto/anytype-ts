@@ -15,8 +15,6 @@ const SEARCH_TYPE_ALL = 'all';
 const SEARCH_TYPE_MINE = 'mine';
 const SEARCH_TYPE_MESSAGE = 'message';
 const SEARCH_TYPE_MEDIA = 'media';
-const SEARCH_TYPE_FILE = 'file';
-const SEARCH_TYPE_IMAGE = 'image';
 const SEARCH_TYPE_BOOKMARK = 'bookmark';
 const SEARCH_TYPE_COLLECTION = 'collection';
 const SEARCH_TYPE_QUERY = 'query';
@@ -25,8 +23,7 @@ const SEARCH_TYPE_TYPE = 'type';
 
 // Global (cross-space) mode filters by resolvedLayout - types can't be merged across spaces
 const GLOBAL_LAYOUTS: { [key: string]: I.ObjectLayout[] } = {
-	[SEARCH_TYPE_FILE]: [ I.ObjectLayout.File, I.ObjectLayout.Pdf, I.ObjectLayout.Audio, I.ObjectLayout.Video ],
-	[SEARCH_TYPE_IMAGE]: [ I.ObjectLayout.Image ],
+	[SEARCH_TYPE_MEDIA]: [ I.ObjectLayout.File, I.ObjectLayout.Pdf, I.ObjectLayout.Audio, I.ObjectLayout.Video, I.ObjectLayout.Image ],
 	[SEARCH_TYPE_BOOKMARK]: [ I.ObjectLayout.Bookmark ],
 	[SEARCH_TYPE_COLLECTION]: [ I.ObjectLayout.Collection ],
 	[SEARCH_TYPE_QUERY]: [ I.ObjectLayout.Set ],
@@ -441,8 +438,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (isGlobal) {
 			return ret.concat([
-				{ id: SEARCH_TYPE_FILE, name: translate('popupSearchTypeFiles') },
-				{ id: SEARCH_TYPE_IMAGE, name: translate('popupSearchTypeImages') },
+				{ id: SEARCH_TYPE_MEDIA, name: translate('commonMedia') },
 				{ id: SEARCH_TYPE_BOOKMARK, name: translate('popupSearchTypeBookmarks') },
 				{ id: SEARCH_TYPE_COLLECTION, name: translate('popupSearchTypeCollections') },
 				{ id: SEARCH_TYPE_QUERY, name: translate('popupSearchTypeQueries') },
@@ -485,9 +481,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		const known = [
-			SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_FILE,
-			SEARCH_TYPE_IMAGE, SEARCH_TYPE_BOOKMARK, SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT,
-			SEARCH_TYPE_TYPE,
+			SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_BOOKMARK,
+			SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT, SEARCH_TYPE_TYPE,
 		];
 		const type = known.includes(id) ? U.String.ucFirst(id) : 'Type';
 
@@ -662,7 +657,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// chips have a single meaningful order - the date the file was added to the vault
 	// (createdDate carries the original file date from exif/meta, edits are rare)
 	const getRecentOrders = (searchType: string): { primary: { label: string; sorts: any[] }; secondary: { label: string; sorts: any[] } | null } => {
-		if ([ SEARCH_TYPE_MEDIA, SEARCH_TYPE_FILE, SEARCH_TYPE_IMAGE ].includes(searchType)) {
+		if (searchType == SEARCH_TYPE_MEDIA) {
 			return {
 				primary: { label: 'popupSearchRecentAdded', sorts: [ { relationKey: 'addedDate', type: I.SortType.Desc } ] },
 				secondary: null,
