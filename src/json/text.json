@@ -1622,6 +1622,7 @@
 	"popupSearchEmptyFilterReadonly": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try to search for something else",
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchRecentMessages": "Recent Messages",
+	"popupSearchRecentType": "Recent %s",
 	"popupSearchCreateType": "Create %s",
 	"popupSearchCreateTypeWithName": "Create %s \"%s\"",
 	"popupSearchTypeAll": "All objects",

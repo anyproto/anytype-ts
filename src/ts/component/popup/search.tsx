@@ -703,7 +703,21 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			items.unshift({ name: U.String.sprintf(translate('popupSearchBacklinksFrom'), backlinkRef.current.name), isSection: true, withClear: true });
 		} else
 		if (!filter && items.length) {
-			items.unshift({ name: translate('popupSearchRecentObjects'), isSection: true });
+			// Name the recent section after the selected chip: Recent Media / Recent <Type>
+			let sectionName = translate('popupSearchRecentObjects');
+
+			if (searchType == SEARCH_TYPE_MEDIA) {
+				sectionName = U.String.sprintf(translate('popupSearchRecentType'), translate('commonMedia'));
+			} else
+			if (!isAll) {
+				const type = S.Record.getTypeById(searchType);
+
+				if (type) {
+					sectionName = U.String.sprintf(translate('popupSearchRecentType'), U.Object.name(type, true));
+				};
+			};
+
+			items.unshift({ name: sectionName, isSection: true });
 		};
 
 		items = items.map(it => {
@@ -861,6 +875,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						const { ww, wh } = U.Dom.getWindowDimensions();
 						return { width: 0, height: 0, x: ww / 2, y: wh / 2 };
 					},
+					className: 'fixed',
+					classNameWrap: 'fromPopup',
 					vertical: I.MenuDirection.Center,
 					horizontal: I.MenuDirection.Center,
 					data: { details: {} },
