@@ -8,7 +8,9 @@ const HEIGHT_SECTION = 28;
 const HEIGHT_SMALL = 38;
 const HEIGHT_ITEM = 60;
 const HEIGHT_MESSAGE = 76;
-const LIMIT_HEIGHT = 15;
+// Prefetch when within this many rows of the sentinel - must stay below RECENT_LIMIT minus
+// the visible row count, or the second page loads immediately on open
+const LOAD_THRESHOLD = 5;
 const RECENT_LIMIT = 20;
 
 const SEARCH_TYPE_ALL = 'all';
@@ -672,44 +674,30 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return participantsRef.current.get(participantId) || null;
 	};
 
-	// Batch-resolve type objects of cross-space results - the type store only holds the
-	// current space's types, so captions of results from other spaces need a lookup
-	const resolveObjectTypes = (records: any[]) => {
-		const ids = U.Common.arrayUnique(records.map(it => it.type)).filter(id => {
-			return id && !S.Record.getTypeById(id) && !depsRef.current.has(id);
-		});
-
-		if (!ids.length) {
-			return;
-		};
-
+	// One unary snapshot of all participants AND types in all spaces (global mode), fetched
+	// on popup open - participants serve every creator/author lookup, types the row captions.
+	// A single request replaces the per-load type fetches
+	const loadGlobalDeps = () => {
 		const filters: any[] = [
-			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Participant, I.ObjectLayout.Type ] },
 		];
+		const keys = U.Common.arrayUnique(U.Subscription.participantRelationKeys().concat(U.Subscription.typeRelationKeys(false)));
 
-		C.ObjectCrossSpaceSearch(filters, [], U.Subscription.typeRelationKeys(false), '', 0, ids.length, (message: any) => {
+		C.ObjectCrossSpaceSearch(filters, [], keys, '', 0, 0, (message: any) => {
 			if (message.error.code || !message.records.length) {
 				return;
 			};
 
-			message.records.forEach(it => depsRef.current.set(it.id, S.Detail.mapper(it)));
-			setDummy(prev => prev + 1);
-		});
-	};
+			message.records.forEach(it => {
+				it = S.Detail.mapper(it);
 
-	// One unary snapshot of all participants in all spaces (global mode) - the map serves
-	// every creator/author lookup of this popup instance
-	const loadParticipants = () => {
-		const filters: any[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
-		];
+				if (it.layout == I.ObjectLayout.Participant) {
+					participantsRef.current.set(it.id, it);
+				} else {
+					depsRef.current.set(it.id, it);
+				};
+			});
 
-		C.ObjectCrossSpaceSearch(filters, [], U.Subscription.participantRelationKeys(), '', 0, 0, (message: any) => {
-			if (message.error.code || !message.records.length) {
-				return;
-			};
-
-			message.records.forEach(it => participantsRef.current.set(it.id, S.Detail.mapper(it)));
 			setDummy(prev => prev + 1);
 		});
 	};
@@ -957,7 +945,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			itemsRef.current = itemsRef.current.concat(records);
 			itemsModeRef.current = searchType;
 			hasMoreRef.current = records.length == limit;
-			resolveObjectTypes(records);
 
 
 			if (!clear) {
@@ -1531,7 +1518,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		rebindTimeoutRef.current = window.setTimeout(() => rebind(), J.Constant.delay.popup);
 
 		if (isGlobal) {
-			loadParticipants();
+			loadGlobalDeps();
 		};
 
 		if (storage.backlink && !isGlobal) {
@@ -1938,7 +1925,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						rowCount={items.length + (hasMoreRef.current ? 1 : 0)}
 						loadMoreRows={loadMoreRows}
 						isRowLoaded={({ index }) => index < items.length}
-						threshold={LIMIT_HEIGHT}
+						threshold={LOAD_THRESHOLD}
 					>
 						{({ onRowsRendered }) => (
 							<AutoSizer className="scrollArea">
