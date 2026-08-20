@@ -6,7 +6,7 @@ Collapsible sidebars for navigation, object properties, and type configuration. 
 
 Main navigation sidebar with sub-pages:
 - `page/widget.tsx` - Widget dashboard (default view)
-- `page/vault.tsx` - Space/vault browser
+- `page/vault.tsx` - Space/vault browser; header search icon opens the search popup in global (cross-space) mode
 - `page/settings/index.tsx` - Settings panel
 - `page/settings/library.tsx` - Library panel (types, relations)
 - `page/type.tsx` - Type management page (used in right sidebar routing)

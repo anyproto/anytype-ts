@@ -16,7 +16,7 @@ Open a popup: `S.Popup.open('confirm', { data: { ... } })`
 ## Popup Types
 
 ### Core
-- `search.tsx` - Object search with virtualized results, filters, import (~967 lines)
+- `search.tsx` - Space & global search with virtualized results (~1700 lines): type-selector chips (All/Messages/Media/types in-space; layout buckets + Types cross-space via `isGlobal`), cross-chat message search (`ChatSearch`), per-chip create actions, Tab cycles chips
 - `confirm.tsx` - Confirmation dialog with optional checkbox/input
 - `preview.tsx` - Image/video gallery with Swiper carousel, zoom, thumbnails
 - `export.tsx` - Export options (Markdown, Protobuf, PDF, HTML)
