@@ -1261,6 +1261,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (searchType == SEARCH_TYPE_MESSAGE) {
 			const items: any[] = [].concat(itemsRef.current).map(it => ({ ...it, isMessage: true, shortcut: [] }));
 
+			// The creator drill composes with the Messages chip - keep its header visible
+			if (drillRef.current?.kind == 'creator') {
+				items.unshift({
+					name: U.String.sprintf(translate('popupSearchDrillCreator'), U.Object.name(drillRef.current.object)),
+					isSection: true,
+					withClear: true,
+					shortcut: [],
+				});
+			} else
 			if (!filter && items.length) {
 				items.unshift({ name: translate('popupSearchRecentMessages'), isSection: true, shortcut: [] });
 			};
