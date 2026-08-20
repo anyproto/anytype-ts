@@ -634,7 +634,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).length > 1;
 		};
 
-		return Boolean(U.Space.getSpaceviewBySpaceId(spaceId)?.isShared);
+		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+
+		if (!spaceview) {
+			return false;
+		};
+
+		// spaceAccessType may be absent on the stored record - attribute rather than hide
+		if (undefined === spaceview.spaceAccessType) {
+			return true;
+		};
+
+		// 1:1 spaces are multi-member but not "Shared" access type
+		return Boolean(spaceview.isShared || spaceview.isOneToOne);
 	};
 
 	// Whether the row should carry a "by ..." caption: multi-member spaces attribute every
