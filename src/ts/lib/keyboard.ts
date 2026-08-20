@@ -393,18 +393,14 @@ class Keyboard {
 				if (popup) {
 					const data = popup.param.data || {};
 
-					// Object pickers (link insertion etc.) keep their popup
-					if (data.onObjectSelect) {
+					// The in-space popup owns the pivot (it carries the query and maps
+					// the chip over); object pickers keep their popup untouched
+					if (!data.isGlobal) {
 						return;
 					};
 
 					e.preventDefault();
-
-					if (data.isGlobal) {
-						S.Popup.close('search');
-					} else {
-						S.Popup.close('search', () => openGlobal());
-					};
+					S.Popup.close('search');
 					return;
 				};
 

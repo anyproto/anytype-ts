@@ -379,8 +379,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
-		// Cmd+K closes; Cmd+Shift+K (pivot to global / toggle) is handled app-wide in keyboard.ts
 		keyboard.shortcut('search', e, () => close());
+
+		// Cmd+Shift+K pivots to global, carrying the query and chip over; keyboard.ts
+		// yields the combo while the in-space popup is open (global mode toggles there)
+		if (!isGlobal && !onObjectSelect) {
+			keyboard.shortcut(`${cmd}+shift+k`, e, () => {
+				e.preventDefault();
+
+				close();
+				onSearchGlobal();
+			});
+		};
 	};
 
 	const onArrow = (dir: number) => {
@@ -638,6 +648,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return S.Record.getTypeById(type) ? type : SEARCH_TYPE_ALL;
 	};
 
+	// The in-space chip's global counterpart: fixed chips map 1:1, type chips bucket by
+	// the layout their objects get (recommendedLayout -> the global layout chips)
+	const getGlobalSearchType = (): string => {
+		const type = getSearchType();
+
+		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_MEMBER ].includes(type)) {
+			return type;
+		};
+
+		const object = S.Record.getTypeById(type);
+		const layout = object ? object.recommendedLayout : null;
+
+		if (layout == I.ObjectLayout.Participant) {
+			return SEARCH_TYPE_MEMBER;
+		};
+
+		return Object.keys(GLOBAL_LAYOUTS).find(key => GLOBAL_LAYOUTS[key].includes(layout)) || SEARCH_TYPE_ALL;
+	};
+
 	const getTypeItems = () => {
 		// The creator drill replaces the creator-flavored chips (My objects, Members)
 		const applyDrillGating = (list: any[]) => {
@@ -726,8 +755,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		analytics.event('SwitchSearchType', { route, type, isGlobal: Boolean(isGlobal) });
 	};
 
-	// Reopen the popup in global (cross-space) mode; callers close the current popup first
+	// Reopen the popup in global (cross-space) mode; callers close the current popup first.
+	// The pivot carries the typed query over, maps the active chip to its global
+	// counterpart and clears any drill filters - a fresh, widened take on the same search
 	const onSearchGlobal = () => {
+		const query = filterValueRef.current.startsWith('/') ? '' : filterValueRef.current;
+
+		storageSet({
+			filterGlobal: query,
+			searchTypeGlobal: getGlobalSearchType(),
+			drillGlobal: null,
+			lastUsedGlobal: Date.now(),
+		});
+
 		window.setTimeout(() => keyboard.onSearchPopup(route, { data: { isGlobal: true } }), S.Popup.getTimeout());
 	};
 
