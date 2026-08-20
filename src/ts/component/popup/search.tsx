@@ -79,6 +79,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const filter = String(storage[filterKey] || '');
 	const filterValueRef = useRef(filter);
 	const searchTypeRef = useRef(String(storage[searchTypeKey] || SEARCH_TYPE_ALL));
+	// Empty-browse order of All/My objects: 'edited' (lastModifiedDate) or 'created' (createdDate)
+	const recentSortKey = isGlobal ? 'recentSortGlobal' : 'recentSort';
+	const recentSortRef = useRef(String(storage[recentSortKey] || 'edited'));
 	// The mode the currently held items were loaded for. During a quiet reload the previous
 	// list stays on screen - render it by its own mode, not by the freshly selected chip
 	const itemsModeRef = useRef('');
@@ -493,6 +496,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		window.setTimeout(() => keyboard.onSearchPopup(route, { data: { isGlobal: true } }), S.Popup.getTimeout());
 	};
 
+	// Toggle the empty-browse order of All/My objects between recently edited and created
+	const onRecentSortToggle = () => {
+		recentSortRef.current = (recentSortRef.current == 'created') ? 'edited' : 'created';
+		storageSet({ [recentSortKey]: recentSortRef.current });
+		reload(true);
+	};
+
 	const onSearchTypeCycle = (dir: number) => {
 		const items = getTypeItems();
 		const idx = items.findIndex(it => it.id == getSearchType());
@@ -795,6 +805,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
 				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			];
+		} else
+		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE ].includes(searchType) && !fullText) {
+			// Empty browse follows the explicit toggle order shown in the section title
+			sorts = [ { relationKey: (recentSortRef.current == 'created') ? 'createdDate' : 'lastModifiedDate', type: I.SortType.Desc } ];
 		};
 
 		sorts = sorts.map(U.Subscription.sortMapper);
@@ -894,12 +908,20 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				filters.push({ relationKey: 'type.uniqueKey', condition: I.FilterCondition.Equal, value: type.uniqueKey });
 			};
 		};
-		const sorts = [
+		let sorts: any[] = [
 			{ relationKey: '_final_score', type: I.SortType.Desc },
 			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
 			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
 			{ relationKey: 'type', type: I.SortType.Asc },
-		].map(U.Subscription.sortMapper);
+		];
+
+		// Empty browse of All/My objects follows the explicit toggle order shown in the
+		// section title
+		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE ].includes(searchType) && !filterValueRef.current) {
+			sorts = [ { relationKey: (recentSortRef.current == 'created') ? 'createdDate' : 'lastModifiedDate', type: I.SortType.Desc } ];
+		};
+
+		sorts = sorts.map(U.Subscription.sortMapper);
 
 		let limit = J.Constant.limit.menuRecords;
 
@@ -1000,7 +1022,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (!filter && items.length) {
 			// Name the recent section after the selected chip: Recent Media / Recent <Type>
 			let sectionName = translate('popupSearchRecentObjects');
+			let withSort = false;
 
+			if (isAll || (searchType == SEARCH_TYPE_MINE)) {
+				// State the browse order explicitly; the right-side action switches it
+				sectionName = translate((recentSortRef.current == 'created') ? 'popupSearchRecentCreated' : 'popupSearchRecentEdited');
+				withSort = true;
+			} else
 			if (searchType == SEARCH_TYPE_MEDIA) {
 				sectionName = U.String.sprintf(translate('popupSearchRecentType'), translate('commonMedia'));
 			} else
@@ -1020,7 +1048,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				};
 			};
 
-			items.unshift({ name: sectionName, isSection: true });
+			items.unshift({ name: sectionName, isSection: true, withSort });
 		};
 
 		items = items.map(it => {
@@ -1655,6 +1683,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				<div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>
 					{item.name}
 					{item.withClear ? <div onClick={onClearSearch} className="clear">{translate('commonClear')}</div> : ''}
+					{item.withSort ? (
+						<div onClick={onRecentSortToggle} className="clear">
+							{translate((recentSortRef.current == 'created') ? 'popupSearchRecentEdited' : 'popupSearchRecentCreated')}
+						</div>
+					) : ''}
 				</div>
 			);
 		} else {

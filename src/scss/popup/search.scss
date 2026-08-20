@@ -59,6 +59,9 @@
 			.pad { height: 12px; }
 
 			.sectionName { @include text-small; display: flex; justify-content: space-between; height: 26px; line-height: 18px; padding: 5px 16px; font-weight: 500; color: var(--color-text-secondary); }
+			.sectionName {
+				.clear { color: var(--color-text-primary); flex-shrink: 0; }
+			}
 
 			.item { position: relative; line-height: 22px; padding: 8px 8px 8px 12px; white-space: nowrap; display: flex; gap: 0px 12px; border-radius: 8px; }
 

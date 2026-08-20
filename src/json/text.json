@@ -1624,6 +1624,8 @@
 	"popupSearchRecentObjects": "Recent Objects",
 	"popupSearchRecentMessages": "Recent Messages",
 	"popupSearchRecentType": "Recent %s",
+	"popupSearchRecentEdited": "Recently edited",
+	"popupSearchRecentCreated": "Recently created",
 	"popupSearchCreateType": "Create %s",
 	"popupSearchCreateTypeWithName": "Create %s \"%s\"",
 	"popupSearchTypeAll": "All objects",
