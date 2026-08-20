@@ -143,13 +143,16 @@ const subscribeGlobalDeps = (onLoad: () => void) => {
 
 // Module-level so its identity is stable across renders - a component re-created inside the
 // render body reads as a new type to React and remounts its DOM every render (visible blink)
-const Shortcut = (props: { keys: string[]; label: string }) => {
+const Shortcut = (props: { keys: string[]; label: string; separator?: string }) => {
 	const symbols = keyboard.getSymbolsFromKeys(props.keys);
 	return (
 		<div className="item">
 			<div className="keys">
 				{symbols.map((s, i) => (
-					<Label key={i} text={s} />
+					<React.Fragment key={i}>
+						{props.separator && (i > 0) ? <div className="sep">{props.separator}</div> : ''}
+						<Label text={s} />
+					</React.Fragment>
 				))}
 			</div>
 			<div className="label">{props.label}</div>
@@ -2301,9 +2304,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		return (
 			<div className="foot">
-				<Shortcut keys={[ 'arrowup', 'arrowdown' ]} label={translate('popupSearchShortcutNavigate')} />
+				<Shortcut keys={[ 'arrowup', 'arrowdown', 'arrowright' ]} label={translate('popupSearchShortcutNavigate')} />
 				{!onObjectSelect ? (
-					<Shortcut keys={[ 'tab', '/' ]} label={translate('popupSearchShortcutSwitchType')} />
+					<Shortcut keys={[ 'tab', '/' ]} separator={translate('commonOr')} label={translate('popupSearchShortcutSwitchType')} />
 				) : ''}
 				<Shortcut keys={[ 'escape' ]} label={translate('popupSearchShortcutClose')} />
 				{isObject ? (
