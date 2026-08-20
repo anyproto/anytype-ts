@@ -1636,6 +1636,7 @@
 	"popupSearchTypeChats": "Chats",
 	"popupSearchTypeTypes": "Types",
 	"popupSearchGlobalTooltip": "Search in all Channels",
+	"popupSearchSearchGlobal": "Search across all Channels",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
 	"popupSearchBacklinksFrom": "Related to: %s",
 	"popupSearchShortcutNavigate": "Navigate",

@@ -236,6 +236,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		keyboard.shortcut('search', e, () => close());
+
+		// Widened-scope search (Cmd+K -> Cmd+Shift+K, the VS Code/Obsidian shift convention)
+		if (!isGlobal && !onObjectSelect) {
+			keyboard.shortcut(`${cmd}+shift+k`, e, () => {
+				e.preventDefault();
+
+				close();
+				onSearchGlobal();
+			});
+		};
 	};
 
 	const onArrow = (dir: number) => {
@@ -473,6 +483,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const type = known.includes(id) ? U.String.ucFirst(id) : 'Type';
 
 		analytics.event('SwitchSearchType', { route, type, isGlobal: Boolean(isGlobal) });
+	};
+
+	// Reopen the popup in global (cross-space) mode; callers close the current popup first
+	const onSearchGlobal = () => {
+		window.setTimeout(() => keyboard.onSearchPopup(route, { data: { isGlobal: true } }), S.Popup.getTimeout());
 	};
 
 	const onSearchTypeCycle = (dir: number) => {
@@ -1039,28 +1054,37 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
-		// Global mode has no create actions in v1 (creation targets a specific space)
-		if (canWrite && !isGlobal) {
+		// Global mode has no actions in v1 (creation targets a specific space)
+		if (!isGlobal) {
 			const actions: any[] = [];
 
-			if (isAll) {
-				actions.push({ id: 'add', name, iconParam: { name: 'plus/menu' }, shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')) });
-				actions.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' } });
-			} else
-			if (searchType == SEARCH_TYPE_MEDIA) {
-				actions.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' }, shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')) });
-			} else {
-				const type = S.Record.getTypeById(searchType);
+			if (canWrite) {
+				if (isAll) {
+					actions.push({ id: 'add', name, iconParam: { name: 'plus/menu' }, shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')) });
+					actions.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' } });
+				} else
+				if (searchType == SEARCH_TYPE_MEDIA) {
+					actions.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' }, shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')) });
+				} else {
+					const type = S.Record.getTypeById(searchType);
 
-				if (type) {
-					const typeName = U.Object.name(type);
-					const label = filter ?
-						U.String.sprintf(translate('popupSearchCreateTypeWithName'), typeName, filter) :
-						U.String.sprintf(translate('popupSearchCreateType'), typeName);
+					if (type) {
+						const typeName = U.Object.name(type);
+						const label = filter ?
+							U.String.sprintf(translate('popupSearchCreateTypeWithName'), typeName, filter) :
+							U.String.sprintf(translate('popupSearchCreateType'), typeName);
 
-					actions.push({ id: 'addType', typeId: type.id, name: label, iconParam: { name: 'plus/menu' }, shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')) });
+						actions.push({ id: 'addType', typeId: type.id, name: label, iconParam: { name: 'plus/menu' }, shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')) });
+					};
 				};
 			};
+
+			actions.push({
+				id: 'searchGlobal',
+				name: translate('popupSearchSearchGlobal'),
+				iconParam: { name: 'common/search' },
+				shortcut: keyboard.getSymbolsFromKeys([ keyboard.cmdKey(), 'shift', 'k' ]),
+			});
 
 			if (actions.length) {
 				items.push({ name: translate('commonActions'), isSection: true });
@@ -1202,6 +1226,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						window.setTimeout(() => {
 							U.Menu.onFileUploadPopup(I.ObjectLayout.File, '', {}, undefined, analytics.route.uploadGlobalMenu);
 						}, S.Popup.getTimeout());
+						break;
+					};
+
+					case 'searchGlobal': {
+						onSearchGlobal();
 						break;
 					};
 
@@ -1584,7 +1613,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		const isObject = item && item.isObject;
 		const isMessage = item && item.isMessage;
-		const isAction = item && (item.isSettings || item.isImport || [ 'add', 'addType', 'upload', 'graph', 'navigation' ].includes(item.id));
+		const isAction = item && (item.isSettings || item.isImport || [ 'add', 'addType', 'upload', 'graph', 'navigation', 'searchGlobal' ].includes(item.id));
 
 		return (
 			<div className="foot">
