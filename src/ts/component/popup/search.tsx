@@ -213,7 +213,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Bumped on every clear-load: responses stamped with an older generation are dropped,
 	// so a slow superseded query can never clobber the current list
 	const loadGenRef = useRef(0);
-	// Last generation the measurement cache was reset for - appends must NOT wipe it
+	// Bumped when a clear-load actually swaps the list data; the measurement cache is
+	// reset exactly then. Request-time signals fire too early (an unrelated re-render
+	// would wipe and re-measure the OLD rows) and appends must never wipe it
+	const listEpochRef = useRef(0);
+	// Last epoch the measurement cache was reset for
 	const cacheGenRef = useRef(0);
 	// Whether the per-open chats subscription was ever created (teardown gate)
 	const chatsSubActiveRef = useRef(false);
@@ -1158,6 +1162,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				return;
 			};
 
+			listEpochRef.current++;
+
 			if (quiet) {
 				setDummy(prev => prev + 1);
 			} else {
@@ -1317,6 +1323,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		itemsRef.current = list.map(({ object, spaceCount }) => ({ ...object, metaList: [], links: [], backlinks: [], isMemberAgg: true, spaceCount }));
 		itemsModeRef.current = SEARCH_TYPE_MEMBER;
 		hasMoreRef.current = false;
+		listEpochRef.current++;
 
 		setIsLoading(false);
 		setDummy(prev => prev + 1);
@@ -1387,6 +1394,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				return;
 			};
 
+			listEpochRef.current++;
+
 			if (quiet) {
 				setDummy(prev => prev + 1);
 			} else {
@@ -1454,6 +1463,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (filterValueRef.current.startsWith('/')) {
 			itemsRef.current = [];
 			hasMoreRef.current = false;
+			listEpochRef.current++;
 			setDummy(prev => prev + 1);
 			callBack?.();
 			return;
@@ -1537,6 +1547,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (!clear) {
 				return;
 			};
+
+			listEpochRef.current++;
 
 			if (quiet) {
 				setDummy(prev => prev + 1);
@@ -2189,8 +2201,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Reset measured heights only when a new list replaced the old one; wiping the
 		// cache on infinite-scroll appends collapsed every off-screen row to its estimate
 		// and made the list jump under the cursor
-		if (listRef.current && (cacheGenRef.current != loadGenRef.current)) {
-			cacheGenRef.current = loadGenRef.current;
+		if (listRef.current && (cacheGenRef.current != listEpochRef.current)) {
+			cacheGenRef.current = listEpochRef.current;
 			cacheRef.current.clearAll();
 			listRef.current.recomputeRowHeights(0);
 		};
@@ -2609,7 +2621,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 										ref={listRef}
 										width={width}
 										height={height}
-										deferredMeasurmentCache={cacheRef.current}
+										deferredMeasurementCache={cacheRef.current}
 										rowCount={items.length + (hasMoreRef.current ? 1 : 0)}
 										rowHeight={param => getRowHeight(items[param.index], param.index)}
 										rowRenderer={rowRenderer}
