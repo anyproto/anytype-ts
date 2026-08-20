@@ -12,6 +12,9 @@ const HEIGHT_MESSAGE = 76;
 // the visible row count, or the second page loads immediately on open
 const LOAD_THRESHOLD = 5;
 const RECENT_LIMIT = 20;
+// Restore chip/query on quick reopen; treat the popup as a fresh task after this long
+// (the Raycast pop-to-root / Alfred latest-query-window pattern)
+const STATE_RESET_TIMEOUT = 5 * 60 * 1000;
 
 const SEARCH_TYPE_ALL = 'all';
 const SEARCH_TYPE_MINE = 'mine';
@@ -76,9 +79,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const offsetRef = useRef(0);
 	const rangeRef = useRef<I.TextRange>({ from: 0, to: 0 });
 	const storage = storageGet();
-	const filter = String(storage[filterKey] || '');
+	const lastUsedKey = isGlobal ? 'lastUsedGlobal' : 'lastUsed';
+	// Stale session: reset chip, query and drill to defaults instead of restoring
+	const isStale = Boolean(storage[lastUsedKey] && (Date.now() - storage[lastUsedKey] > STATE_RESET_TIMEOUT));
+	const filter = isStale ? '' : String(storage[filterKey] || '');
 	const filterValueRef = useRef(filter);
-	const searchTypeRef = useRef(String(storage[searchTypeKey] || SEARCH_TYPE_ALL));
+	const searchTypeRef = useRef(isStale ? SEARCH_TYPE_ALL : String(storage[searchTypeKey] || SEARCH_TYPE_ALL));
 	// Empty-browse order of All/My objects: 'edited' (lastModifiedDate) or 'created' (createdDate)
 	const recentSortKey = isGlobal ? 'recentSortGlobal' : 'recentSort';
 	const recentSortRef = useRef(String(storage[recentSortKey] || 'edited'));
@@ -1509,7 +1515,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	useEffect(() => {
 		const storage = storageGet();
-		const filter = String(storage[filterKey] || '');
+		const filter = isStale ? '' : String(storage[filterKey] || '');
 
 		const setFilter = () => {
 			if (!filterInputRef.current) {
@@ -1530,7 +1536,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			loadGlobalDeps();
 		};
 
-		if (storage.backlink && !isGlobal) {
+		if (storage.backlink && !isGlobal && !isStale) {
 			U.Object.getById(storage.backlink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
 		} else {
 			setFilter();
@@ -1546,6 +1552,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (chatIdsRef.current.length) {
 				U.Subscription.destroyList([ chatsSubId ], true);
 			};
+
+			// Closing stamps the session - the next open compares against it
+			storageSet({ [lastUsedKey]: Date.now() });
 		};
 	}, []);
 
