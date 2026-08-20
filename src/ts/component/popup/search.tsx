@@ -88,9 +88,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Whether the last page came back full - drives the infinite-scroll sentinel row
 	const hasMoreRef = useRef(false);
 	const chatsSubId = [ getId(), 'chats' ].join('-');
-	// Cross-space dependencies (message authors, object types) resolved via one-shot search
-	// and cached per popup - no store subscription
+	// Cross-space object types resolved via one-shot search and cached per popup
 	const depsRef = useRef(new Map<string, any>());
+	// All participants of all spaces: one unary snapshot fetched on popup open, held for the
+	// popup's lifetime (fresh on reopen, evicted on close). Staleness is acceptable
+	const participantsRef = useRef(new Map<string, any>());
 
 	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
@@ -592,38 +594,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return U.Space.getParticipant(participantId);
 		};
 
-		// Other spaces: the per-space subSpace subscription only holds the creator and self
-		const object = S.Detail.get(U.Space.getSubSpaceSubId(spaceId), participantId, []);
-		if (!object._empty_) {
-			return object;
-		};
-
-		return depsRef.current.get(participantId) || null;
-	};
-
-	// Batch-resolve message authors from other spaces via the one-shot cross-space search
-	const resolveMessageAuthors = (records: any[]) => {
-		const ids = U.Common.arrayUnique(
-			records.filter(it => !getMessageAuthor(it)).
-				map(it => U.Space.getParticipantId(it.spaceId || S.Common.space, it.message?.creator))
-		).filter(it => it && !depsRef.current.has(it));
-
-		if (!ids.length) {
-			return;
-		};
-
-		const filters: any[] = [
-			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
-		];
-
-		C.ObjectCrossSpaceSearch(filters, [], U.Subscription.participantRelationKeys(), '', 0, ids.length, (message: any) => {
-			if (message.error.code || !message.records.length) {
-				return;
-			};
-
-			message.records.forEach(it => depsRef.current.set(it.id, S.Detail.mapper(it)));
-			setDummy(prev => prev + 1);
-		});
+		return participantsRef.current.get(participantId) || null;
 	};
 
 	// Creator attribution only makes sense in spaces with more than one member. The exact
@@ -679,41 +650,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return null;
 		};
 
-		let object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.participant), item.creator, []);
+		const object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.participant), item.creator, []);
 
-		if (object._empty_ && isGlobal) {
-			object = S.Detail.get(U.Space.getSubSpaceSubId(spaceId), item.creator, []);
-
-			if (object._empty_) {
-				return depsRef.current.get(item.creator) || null;
-			};
+		if (!object._empty_) {
+			return object;
 		};
 
-		return object._empty_ ? null : object;
-	};
-
-	// Batch-resolve creators of cross-space results not covered by any store
-	const resolveObjectCreators = (records: any[]) => {
-		const ids = U.Common.arrayUnique(
-			records.filter(it => wantsCreator(it) && !getObjectCreator(it)).map(it => it.creator)
-		).filter(it => it && !depsRef.current.has(it));
-
-		if (!ids.length) {
-			return;
-		};
-
-		const filters: any[] = [
-			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
-		];
-
-		C.ObjectCrossSpaceSearch(filters, [], U.Subscription.participantRelationKeys(), '', 0, ids.length, (message: any) => {
-			if (message.error.code || !message.records.length) {
-				return;
-			};
-
-			message.records.forEach(it => depsRef.current.set(it.id, S.Detail.mapper(it)));
-			setDummy(prev => prev + 1);
-		});
+		return participantsRef.current.get(item.creator) || null;
 	};
 
 	// Batch-resolve type objects of cross-space results - the type store only holds the
@@ -737,6 +680,23 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			message.records.forEach(it => depsRef.current.set(it.id, S.Detail.mapper(it)));
+			setDummy(prev => prev + 1);
+		});
+	};
+
+	// One unary snapshot of all participants in all spaces (global mode) - the map serves
+	// every creator/author lookup of this popup instance
+	const loadParticipants = () => {
+		const filters: any[] = [
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+		];
+
+		C.ObjectCrossSpaceSearch(filters, [], U.Subscription.participantRelationKeys(), '', 0, 0, (message: any) => {
+			if (message.error.code || !message.records.length) {
+				return;
+			};
+
+			message.records.forEach(it => participantsRef.current.set(it.id, S.Detail.mapper(it)));
 			setDummy(prev => prev + 1);
 		});
 	};
@@ -849,11 +809,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				setDummy(prev => prev + 1);
 			};
 
-			if (isGlobal) {
-				// Containers come from the chatGlobal/discussionGlobal stores; only authors
-				// from other spaces need resolution
-				resolveMessageAuthors(records);
-			} else {
+			if (!isGlobal) {
 				resolveMessageChats(records);
 			};
 
@@ -989,7 +945,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			itemsModeRef.current = searchType;
 			hasMoreRef.current = records.length == limit;
 			resolveObjectTypes(records);
-			resolveObjectCreators(records);
 
 			if (!clear) {
 				setDummy(prev => prev + 1);
@@ -1560,6 +1515,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		focus.clear(true);
 		rebindTimeoutRef.current = window.setTimeout(() => rebind(), J.Constant.delay.popup);
+
+		if (isGlobal) {
+			loadParticipants();
+		};
 
 		if (storage.backlink && !isGlobal) {
 			U.Object.getById(storage.backlink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
