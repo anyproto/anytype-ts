@@ -355,6 +355,36 @@ class UtilChat {
 		return ((before.match(/`/g) || []).length % 2) == 1;
 	};
 
+	/**
+	 * Builds sanitized HTML for a ChatSearch result: the highlight snippet with
+	 * `<span class="highlight">` around the matched ranges, falling back to the raw message text.
+	 */
+	getSearchResultHtml (result: { highlight: string; highlightRanges: I.TextRange[]; message?: I.ChatMessage }): string {
+		const { highlight, highlightRanges } = result;
+
+		if (!highlight) {
+			return U.String.sanitize(result.message?.content?.text || '');
+		};
+
+		if (!highlightRanges || !highlightRanges.length) {
+			return U.String.sanitize(highlight);
+		};
+
+		const sorted = [ ...highlightRanges ].sort((a, b) => a.from - b.from);
+
+		let ret = '';
+		let last = 0;
+
+		for (const range of sorted) {
+			ret += U.String.sanitize(highlight.substring(last, range.from));
+			ret += `<span class="highlight">${U.String.sanitize(highlight.substring(range.from, range.to))}</span>`;
+			last = range.to;
+		};
+
+		ret += U.String.sanitize(highlight.substring(last));
+		return ret;
+	};
+
 };
 
 export default new UtilChat();

@@ -34,11 +34,34 @@
 			}
 		}
 
+		.typeSelectWrap { position: relative; flex-shrink: 0; border-bottom: 1px solid var(--color-shape-secondary); }
+		.typeSelectWrap::after {
+			content: ""; position: absolute; top: 0px; right: 0px; bottom: 0px; width: 40px; pointer-events: none; opacity: 0;
+			background: linear-gradient(to right, transparent, var(--color-bg-primary)); transition: opacity $transitionCommon;
+		}
+		.typeSelectWrap.withFade::after { opacity: 1; }
+		.typeSelectWrap {
+			.typeSelect { display: flex; flex-direction: row; gap: 0px 8px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; }
+			.typeSelect::-webkit-scrollbar { display: none; }
+			.typeSelect {
+				.typeItem {
+					flex-shrink: 0; padding: 2px 10px; border-radius: 14px; @include text-small; color: var(--color-text-secondary);
+					transition: $transitionAllCommon;
+				}
+				.typeItem:last-child { margin-right: 20px; }
+				.typeItem:hover { background: var(--color-shape-highlight-medium); }
+				.typeItem.active { background: var(--color-shape-highlight-medium); color: var(--color-text-primary); }
+			}
+		}
+
 		.items { height: 100%; flex-grow: 1; }
 		.items {
 			.pad { height: 12px; }
 
 			.sectionName { @include text-small; display: flex; justify-content: space-between; height: 26px; line-height: 18px; padding: 5px 16px; font-weight: 500; color: var(--color-text-secondary); }
+			.sectionName {
+				.clear { color: var(--color-text-primary); flex-shrink: 0; }
+			}
 
 			.item { position: relative; line-height: 22px; padding: 8px 8px 8px 12px; white-space: nowrap; display: flex; gap: 0px 12px; border-radius: 8px; }
 
@@ -49,7 +72,7 @@
 
 			.item {
 				.icon { width: 20px; height: 20px; }
-				.icon.advanced { opacity: 0; }
+				.icon.advanced { opacity: 0; transition: none; }
 
 				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-grow: 0; }
 				.iconObject:not(.isHuman),
@@ -69,6 +92,8 @@
 					}
 				}
 				.name { @include text-overflow-nw; font-weight: 500; }
+				.caption .bullet { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); flex-shrink: 0; }
+				.caption .prep { color: var(--color-text-secondary); flex-shrink: 0; }
 				.context { @include text-small; padding: 2px 0px; white-space: normal; display: flex; gap: 0 4px; }
 
 				.context {
@@ -83,6 +108,42 @@
 			.item.active { background-color: var(--color-shape-highlight-medium); }
 			.item.active {
 				.icon.advanced { opacity: 1; }
+			}
+
+			.item {
+				.drillLink:hover { text-decoration: underline; }
+
+				.side.left .caption { display: flex; align-items: center; gap: 0px 6px; }
+				.side.left .caption {
+					.iconObject { flex-shrink: 0; background: none; border-radius: 0px; }
+					.name { @include text-overflow-nw; font-weight: 400; }
+					.creator { @include text-overflow-nw; flex-shrink: 2; }
+				}
+			}
+
+			.item.isMessage {
+				.iconObject { flex-shrink: 0; }
+
+				.sides {
+					.side.left { display: flex; flex-direction: column; gap: 2px 0px; }
+				}
+
+				.nameWrapper { display: flex; align-items: baseline; gap: 0px 8px; overflow: hidden; }
+				.nameWrapper {
+					.name { @include text-overflow-nw; font-weight: 500; }
+					.time { @include text-small; color: var(--color-text-secondary); flex-shrink: 0; }
+				}
+
+				.text { @include text-small; @include clamp2; white-space: normal; color: var(--color-text-secondary); }
+				.text {
+					.highlight { color: var(--color-system-accent-100); }
+				}
+
+				.caption { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
+				.caption {
+					.iconObject { flex-shrink: 0; background: none; border-radius: 0px; }
+					.name { @include text-overflow-nw; }
+				}
 			}
 		}
 
@@ -99,6 +160,7 @@
 						@include text-small; padding: 0px 4px; border-radius: 4px; height: 18px; line-height: 18px;
 						background: var(--color-shape-tertiary); min-width: 18px; text-align: center;
 					}
+					.sep { @include text-small; color: var(--color-text-secondary); }
 				}
 				.label { @include text-small; color: var(--color-text-secondary); }
 			}

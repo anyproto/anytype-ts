@@ -23,7 +23,7 @@
 | `prism.ts` | `U.Prism` | PrismJS language map, alias resolution, dependency loading |
 | `stickyScrollbar.ts` | `U.StickyScrollbar` | Sticky horizontal scrollbar sync for dataview grid/board views |
 | `comment.ts` | `U.Comment` | Comment content part conversion (parts to/from chat message blocks) |
-| `chat.ts` | `U.Chat` | Chat message fence parsing: triple-backtick code blocks ↔ `ChatMessageBlock`, open-fence caret detection |
+| `chat.ts` | `U.Chat` | Chat message fence parsing: triple-backtick code blocks ↔ `ChatMessageBlock`, open-fence caret detection; `getSearchResultHtml` builds sanitized highlight HTML for `ChatSearch` results |
 
 ## Non-exported Utility Files
 

@@ -379,6 +379,57 @@ class Keyboard {
 				this.onSearchPopup(route);
 			});
 
+			// Global (cross-space) search: Cmd+K widened by Shift. Raw combo on purpose -
+			// the named cmd+shift+k belongs to textLink, which owns the key while a text
+			// or block selection is active; without a selection it falls through to search
+			this.shortcut(`${cmd}+shift+k`, e, () => {
+				if (pin && !this.isPinChecked) {
+					return;
+				};
+
+				const popup = S.Popup.get('search');
+				const openGlobal = () => this.onSearchPopup(route, { data: { isGlobal: true } });
+
+				if (popup) {
+					const data = popup.param.data || {};
+
+					// The in-space popup owns the pivot (it carries the query and maps
+					// the chip over); object pickers keep their popup untouched
+					if (!data.isGlobal) {
+						return;
+					};
+
+					e.preventDefault();
+					S.Popup.close('search');
+					return;
+				};
+
+				// The combo doubles as "insert link" - yield it to whoever consumes it:
+				// any editable with a real text selection (editor and chat bind the link
+				// action on selections only), and the comment editor, which binds it even
+				// at a collapsed caret. A collapsed caret elsewhere falls through here
+				const ae = document.activeElement as HTMLElement;
+				const tag = String(ae?.tagName || '').toLowerCase();
+
+				let ownsCombo = false;
+
+				if ([ 'input', 'textarea' ].includes(tag)) {
+					const input = ae as HTMLInputElement;
+					ownsCombo = input.selectionStart !== input.selectionEnd;
+				} else
+				if (ae?.isContentEditable) {
+					const sel = window.getSelection();
+					ownsCombo = Boolean(sel && !sel.isCollapsed) || Boolean(ae.closest('.commentEditorWrap'));
+				};
+
+				if (ownsCombo || selectedBlockIds.length) {
+					return;
+				};
+
+				e.preventDefault();
+				openGlobal();
+			});
+
 			// Navigation links
 			this.shortcut('navigation', e, () => {
 				e.preventDefault();

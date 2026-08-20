@@ -103,7 +103,7 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		C.ChatSearch(space, chatId, text, offset.current, J.Constant.limit.menuRecords, sorts, (message: any) => {
+		C.ChatSearch(space, chatId, text, offset.current, J.Constant.limit.menuRecords, sorts, [], (message: any) => {
 			if (message.error.code) {
 				callBack?.(message);
 				return;
@@ -202,33 +202,6 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		U.Dom.css(content, { height: `${height}px` });
 	};
 
-	const getHighlightedText = (item: ChatSearchResult) => {
-		const { highlight, highlightRanges } = item;
-
-		if (!highlight) {
-			return item.message?.content?.text || '';
-		};
-
-		if (!highlightRanges || !highlightRanges.length) {
-			return highlight;
-		};
-
-		let result = '';
-		let lastIndex = 0;
-
-		const sortedRanges = [ ...highlightRanges ].sort((a, b) => a.from - b.from);
-
-		for (const range of sortedRanges) {
-			result += U.String.sanitize(highlight.substring(lastIndex, range.from));
-			result += `<span class="highlight">${U.String.sanitize(highlight.substring(range.from, range.to))}</span>`;
-			lastIndex = range.to;
-		};
-
-		result += U.String.sanitize(highlight.substring(lastIndex));
-
-		return result;
-	};
-
 	const scrollToRow = (items: any[], index: number) => {
 		if (!listRef.current || !items.length) {
 			return;
@@ -265,7 +238,7 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const { message } = item;
 		const { creator, createdAt } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(S.Common.space, creator));
-		const highlightedText = getHighlightedText(item);
+		const highlightedText = U.Chat.getSearchResultHtml(item);
 		const day = showRelativeDates ? U.Date.dayString(createdAt) : null;
 		const date = day ? day : U.Date.dateWithFormat(dateFormat, createdAt);
 

@@ -1380,6 +1380,19 @@ export const ObjectSearch = (spaceId: string, filters: I.Filter[], sorts: I.Sort
 	}, callBack);
 };
 
+export const ObjectCrossSpaceSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
+	dispatcher.request('ObjectCrossSpaceSearch', {
+		filters: filters.map(Mapper.To.Filter),
+		sorts: sorts.map(Mapper.To.Sort),
+		fullText,
+		offset,
+		limit,
+		keys,
+	}, callBack);
+};
+
 export const ObjectSearchWithMeta = (spaceId: string, filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
 	keys = (keys || []).filter(it => it);
 
@@ -1995,7 +2008,7 @@ export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?:
 	}, callBack);
 };
 
-export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, sorts: { key: I.SearchSortKey, type: I.SortType }[], callBack?: (message: any) => void) => {
+export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, sorts: { key: I.SearchSortKey, type: I.SortType }[], creators: string[], callBack?: (message: any) => void) => {
 	dispatcher.request('ChatSearch', {
 		spaceId,
 		chatId,
@@ -2003,6 +2016,7 @@ export const ChatSearch = (spaceId: string, chatId: string, fullText: string, of
 		offset,
 		limit,
 		sorts: sorts.map(Mapper.To.SearchSort),
+		creators: creators || [],
 	}, callBack);
 };
 

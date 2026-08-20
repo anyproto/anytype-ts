@@ -867,6 +867,7 @@ export const Mapper = {
 
 		ChatSearchResult: (obj: any): any => {
 			return {
+				spaceId: obj.spaceId,
 				chatId: obj.chatId,
 				messageId: obj.messageId,
 				score: obj.score,
