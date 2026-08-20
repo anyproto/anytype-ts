@@ -26,6 +26,7 @@ const SEARCH_TYPE_COLLECTION = 'collection';
 const SEARCH_TYPE_QUERY = 'query';
 const SEARCH_TYPE_CHAT = 'chat';
 const SEARCH_TYPE_TYPE = 'type';
+const SEARCH_TYPE_MEMBER = 'member';
 
 // Global (cross-space) mode filters by resolvedLayout - types can't be merged across spaces
 const GLOBAL_LAYOUTS: { [key: string]: I.ObjectLayout[] } = {
@@ -36,6 +37,7 @@ const GLOBAL_LAYOUTS: { [key: string]: I.ObjectLayout[] } = {
 	[SEARCH_TYPE_QUERY]: [ I.ObjectLayout.Set ],
 	[SEARCH_TYPE_CHAT]: [ I.ObjectLayout.Chat ],
 	[SEARCH_TYPE_TYPE]: [ I.ObjectLayout.Type ],
+	[SEARCH_TYPE_MEMBER]: [ I.ObjectLayout.Participant ],
 };
 
 const isMac = U.Common.isPlatformMac();
@@ -575,7 +577,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return hasMessageContainers() ? type : SEARCH_TYPE_ALL;
 		};
 
-		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MEDIA ].includes(type)) {
+		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_MEMBER ].includes(type)) {
 			return type;
 		};
 
@@ -604,6 +606,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				{ id: SEARCH_TYPE_COLLECTION, name: translate('popupSearchTypeCollections') },
 				{ id: SEARCH_TYPE_QUERY, name: translate('popupSearchTypeQueries') },
 				{ id: SEARCH_TYPE_CHAT, name: translate('popupSearchTypeChats') },
+				{ id: SEARCH_TYPE_MEMBER, name: translate('popupSearchTypeMembers') },
 				{ id: SEARCH_TYPE_TYPE, name: translate('popupSearchTypeTypes') },
 			]);
 		};
@@ -614,6 +617,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			map(it => ({ id: it.id, name: U.Object.name(it, true) }));
 
 		ret.push({ id: SEARCH_TYPE_MEDIA, name: translate('commonMedia') });
+		ret.push({ id: SEARCH_TYPE_MEMBER, name: translate('popupSearchTypeMembers') });
 
 		return ret.concat(types);
 	};
@@ -644,7 +648,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		const known = [
-			SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_PAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_BOOKMARK,
+			SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_PAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_MEMBER, SEARCH_TYPE_BOOKMARK,
 			SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT, SEARCH_TYPE_TYPE,
 		];
 		const type = known.includes(id) ? U.String.ucFirst(id) : 'Type';
@@ -796,7 +800,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const wantsCreator = (item: any): boolean => {
 		// Derived objects (types, chat containers) are created implicitly with the space and
 		// always resolve to the space creator - attribution is meaningless there
-		if (U.Object.isTypeLayout(item.layout) || U.Object.isChatLayout(item.layout) || (item.layout == I.ObjectLayout.ChatOld)) {
+		if (U.Object.isTypeLayout(item.layout) || U.Object.isChatLayout(item.layout) || (item.layout == I.ObjectLayout.ChatOld) || U.Object.isParticipantLayout(item.layout)) {
 			return false;
 		};
 
@@ -1153,6 +1157,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const load = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
+		// "/" command mode searches chips/actions locally - no backend query
+		if (filterValueRef.current.startsWith('/')) {
+			itemsRef.current = [];
+			hasMoreRef.current = false;
+			setDummy(prev => prev + 1);
+			callBack?.();
+			return;
+		};
+
 		const searchType = getSearchType();
 
 		if (searchType == SEARCH_TYPE_MESSAGE) {
@@ -1183,6 +1196,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		} else
 		if (searchType == SEARCH_TYPE_MEDIA) {
 			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() });
+		} else
+		if (searchType == SEARCH_TYPE_MEMBER) {
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Participant ] });
 		} else
 		if (searchType != SEARCH_TYPE_ALL) {
 			const type = S.Record.getTypeById(searchType);
@@ -1271,8 +1287,42 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
+	// "/" command mode: search the chips and actions themselves; selecting a chip switches
+	// to it (single match + Enter selects it via the auto-active first row)
+	const getCommandItems = (query: string) => {
+		const reg = query ? new RegExp(U.String.regexEscape(query), 'gi') : null;
+		const canWrite = U.Space.canMyParticipantWrite();
+
+		let items: any[] = getTypeItems().map(it => ({
+			id: `chip-${it.id}`,
+			chipId: it.id,
+			name: it.name,
+			iconParam: { name: 'common/search' },
+			isChip: true,
+		}));
+
+		if (!isGlobal) {
+			if (canWrite) {
+				items.push({ id: 'add', name: translate('commonCreateObject'), iconParam: { name: 'plus/menu' } });
+				items.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' } });
+			};
+
+			items.push({ id: 'searchGlobal', name: translate('popupSearchSearchGlobal'), iconParam: { name: 'common/search' } });
+		};
+
+		if (reg) {
+			items = items.filter(it => String(it.name || '').match(reg));
+		};
+
+		return items.map(it => ({ ...it, isSmall: true, shortcut: [] }));
+	};
+
 	const getItems = () => {
 		const filter = getFilter();
+
+		if (filter.startsWith('/')) {
+			return getCommandItems(filter.substring(1).trim());
+		};
 		const lang = J.Constant.default.interfaceLang;
 		const canWrite = U.Space.canMyParticipantWrite();
 		// Present the items by the mode they were loaded for - during a quiet reload the
@@ -1564,6 +1614,21 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const rootId = keyboard.getRootId();
 		const metaList = item.metaList || [];
 		const meta = metaList.length ? metaList[0] : {};
+
+		// Chip picked from "/" command mode: switch to it, clear the query, keep the popup
+		if (item.isChip) {
+			filterInputRef.current?.setValue('');
+			filterValueRef.current = '';
+			storageSet({ [filterKey]: '' });
+
+			if (searchTypeRef.current == item.chipId) {
+				reload();
+			} else {
+				onSearchTypeSwitch(item.chipId);
+			};
+
+			return;
+		};
 
 		if (item.isMessage) {
 			const chat = getMessageChat(item);
@@ -2094,7 +2159,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		const isObject = item && item.isObject;
 		const isMessage = item && item.isMessage;
-		const isAction = item && (item.isSettings || item.isImport || [ 'add', 'addType', 'upload', 'graph', 'navigation', 'searchGlobal' ].includes(item.id));
+		const isAction = item && (item.isSettings || item.isImport || item.isChip || [ 'add', 'addType', 'upload', 'graph', 'navigation', 'searchGlobal' ].includes(item.id));
 
 		return (
 			<div className="foot">

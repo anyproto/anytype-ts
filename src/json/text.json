@@ -1644,6 +1644,7 @@
 	"popupSearchTypeCollections": "Collections",
 	"popupSearchTypeQueries": "Queries",
 	"popupSearchTypeChats": "Chats",
+	"popupSearchTypeMembers": "Members",
 	"popupSearchTypeTypes": "Types",
 	"popupSearchDirectChat": "Direct",
 	"popupSearchByCreator": "by %s",
