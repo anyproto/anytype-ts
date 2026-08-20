@@ -1389,7 +1389,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const getItems = () => {
-		const filter = getFilter();
+		// filterValueRef, not the input handle: Input keeps its value in React state, so
+		// getValue() lags one commit behind programmatic setValue('') - deriving the mode
+		// from it left the list stuck in "/" command mode after selecting a chip
+		const filter = filterValueRef.current;
 
 		if (filter.startsWith('/')) {
 			return getCommandItems(filter.substring(1).trim());
