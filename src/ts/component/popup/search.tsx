@@ -1437,6 +1437,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const author = getMessageAuthor(item);
 			const chat = getMessageChat(item);
 			const spaceview = isGlobal ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
+			// A 1:1 space's chat is always named "General" - label it "Direct" instead (the
+			// person is already visible: space caption in global mode, the space itself in-space)
+			const isOneToOne = Boolean((isGlobal ? spaceview : U.Space.getSpaceview())?.isOneToOne);
 			const day = showRelativeDates ? U.Date.dayString(message.createdAt) : null;
 			const date = [ (day ? day : U.Date.dateWithFormat(dateFormat, message.createdAt)), U.Date.timeWithFormat(timeFormat, message.createdAt) ].join(', ');
 
@@ -1464,7 +1467,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 									{chat ? (
 										<>
 											<IconObject object={chat} size={16} />
-											<ObjectName object={chat} />
+											{isOneToOne ? <div className="name">{translate('popupSearchDirectChat')}</div> : <ObjectName object={chat} />}
 										</>
 									) : ''}
 									{chat && spaceview ? <div className="bullet" /> : ''}
@@ -1532,7 +1535,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				);
 			};
 
+			const spaceview = isGlobal ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
+
 			let name = U.Object.name(item, true);
+
+			// A 1:1 space's chat is always named "General" - show the person (the 1:1
+			// spaceview is named after the other participant, same as the vault list)
+			if (spaceview?.isOneToOne && U.Object.isChatLayout(item.layout)) {
+				name = U.Object.name(spaceview);
+			};
 
 			if (meta.highlight && [ 'name', 'pluralName' ].includes(meta.relationKey)) {
 				name = Mark.toHtml(meta.highlight, meta.ranges.map(it => ({ type: I.MarkType.Highlight, range: it })));
@@ -1543,8 +1554,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			} else {
 				name = U.String.htmlSpecialChars(name);
 			};
-
-			const spaceview = isGlobal ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
 
 			if (isGlobal) {
 				cn.push('isGlobal');

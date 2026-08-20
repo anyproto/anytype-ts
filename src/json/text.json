@@ -1635,6 +1635,7 @@
 	"popupSearchTypeQueries": "Queries",
 	"popupSearchTypeChats": "Chats",
 	"popupSearchTypeTypes": "Types",
+	"popupSearchDirectChat": "Direct",
 	"popupSearchGlobalTooltip": "Search in all Channels",
 	"popupSearchSearchGlobal": "Search across all Channels",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
