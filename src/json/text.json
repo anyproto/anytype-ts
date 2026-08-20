@@ -1647,6 +1647,7 @@
 	"popupSearchDirectChat": "Direct",
 	"popupSearchByCreator": "by %s",
 	"popupSearchByYou": "by You",
+	"popupSearchInSpace": "in",
 	"popupSearchGlobalTooltip": "Search in all Channels",
 	"popupSearchSearchGlobal": "Search across all Channels",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",

@@ -1657,9 +1657,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 											{isOneToOne ? <div className="name">{translate('popupSearchDirectChat')}</div> : <ObjectName object={chat} />}
 										</>
 									) : ''}
-									{chat && spaceview ? <div className="at">@</div> : ''}
+									{chat && spaceview ? <div className="bullet" /> : ''}
 									{spaceview ? (
 										<>
+											<div className="prep">{translate('popupSearchInSpace')}</div>
 											<IconObject object={spaceview} size={14} />
 											<ObjectName object={spaceview} />
 										</>
@@ -1762,7 +1763,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 							) : ''}
 							{spaceview ? (
 								<>
-									<div className="at">@</div>
+									<div className="bullet" />
+									<div className="prep">{translate('popupSearchInSpace')}</div>
 									<IconObject object={spaceview} size={14} />
 									<ObjectName object={spaceview} />
 								</>

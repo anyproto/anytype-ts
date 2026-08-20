@@ -93,7 +93,7 @@
 				}
 				.name { @include text-overflow-nw; font-weight: 500; }
 				.caption .bullet { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); flex-shrink: 0; }
-				.caption .at { color: var(--color-text-secondary); flex-shrink: 0; font-weight: 500; }
+				.caption .prep { color: var(--color-text-secondary); flex-shrink: 0; }
 				.context { @include text-small; padding: 2px 0px; white-space: normal; display: flex; gap: 0 4px; }
 
 				.context {
