@@ -653,6 +653,34 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
+	// Both browse orders of a chip. label is the bare translate key; appending "Type" gives
+	// the "%s"-noun variant. Primary: chats live by activity, types by usage, everything else
+	// by edit date. Secondary: file chips by the date the file was added to the vault (their
+	// createdDate carries the original file date from exif/meta), everything else by
+	// creation date
+	const getRecentOrders = (searchType: string): { primary: { label: string; sorts: any[] }; secondary: { label: string; sorts: any[] } } => {
+		let primary = { label: 'popupSearchRecentEdited', sorts: [ { relationKey: 'lastModifiedDate', type: I.SortType.Desc } ] };
+
+		if (searchType == SEARCH_TYPE_CHAT) {
+			primary = { label: 'popupSearchRecentActive', sorts: [ { relationKey: 'lastMessageDate', type: I.SortType.Desc } ] };
+		} else
+		if (searchType == SEARCH_TYPE_TYPE) {
+			primary = {
+				label: 'popupSearchRecentUsed',
+				sorts: [
+					{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
+					{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+				],
+			};
+		};
+
+		const secondary = [ SEARCH_TYPE_MEDIA, SEARCH_TYPE_FILE, SEARCH_TYPE_IMAGE ].includes(searchType) ?
+			{ label: 'popupSearchRecentAdded', sorts: [ { relationKey: 'addedDate', type: I.SortType.Desc } ] } :
+			{ label: 'popupSearchRecentCreated', sorts: [ { relationKey: 'createdDate', type: I.SortType.Desc } ] };
+
+		return { primary, secondary };
+	};
+
 	// Objects created by the current account (creator only - lastModifiedBy is noisy because
 	// of automatic changes). creator holds participant ids, which are per-space - global mode
 	// matches against the account's participant id in every space
@@ -792,28 +820,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			fullText = '';
 		};
 
-		// Per-chip browse sorts, sent client-side by design (not hardcoded in heart):
-		// chats by activity, types by usage. Everything else sends no sorts and relies on the
-		// backend defaults - lastModifiedDate desc for empty queries, score-first for text.
-		// Generic client sorts would hurt here: lastOpenedDate is only set for objects opened
-		// locally (mostly the current space), skewing the merged recency order
+		// Browse follows the toggle order shown in the section title: the chip's primary
+		// recency order or createdDate. Text queries keep FT relevance, except chats which
+		// never have an FT score (their text path filters by name)
 		let sorts: any[] = [];
 
-		if (searchType == SEARCH_TYPE_CHAT) {
-			// Chats never have an FT score (the text path filters by name) - always by activity
-			sorts = [ { relationKey: 'lastMessageDate', type: I.SortType.Desc } ];
-		} else
-		if ((searchType == SEARCH_TYPE_TYPE) && !fullText) {
-			// lastUsedDate is a local detail - unset on a freshly pulled account, so fall
-			// back to the synced lastModifiedDate
-			sorts = [
-				{ relationKey: 'lastUsedDate', type: I.SortType.Desc },
-				{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
-			];
-		} else
-		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE ].includes(searchType) && !fullText) {
-			// Empty browse follows the explicit toggle order shown in the section title
-			sorts = [ { relationKey: (recentSortRef.current == 'created') ? 'createdDate' : 'lastModifiedDate', type: I.SortType.Desc } ];
+		if ((searchType == SEARCH_TYPE_CHAT) || !fullText) {
+			const orders = getRecentOrders(searchType);
+			sorts = (recentSortRef.current == 'created') ? orders.secondary.sorts : orders.primary.sorts;
 		};
 
 		sorts = sorts.map(U.Subscription.sortMapper);
@@ -920,10 +934,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			{ relationKey: 'type', type: I.SortType.Asc },
 		];
 
-		// Empty browse of All/My objects follows the explicit toggle order shown in the
-		// section title
-		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE ].includes(searchType) && !filterValueRef.current) {
-			sorts = [ { relationKey: (recentSortRef.current == 'created') ? 'createdDate' : 'lastModifiedDate', type: I.SortType.Desc } ];
+		// Empty browse follows the toggle order shown in the section title
+		if (!filterValueRef.current) {
+			const orders = getRecentOrders(searchType);
+			sorts = (recentSortRef.current == 'created') ? orders.secondary.sorts : orders.primary.sorts;
 		};
 
 		sorts = sorts.map(U.Subscription.sortMapper);
@@ -1025,35 +1039,37 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			items.unshift({ name: U.String.sprintf(translate('popupSearchBacklinksFrom'), backlinkRef.current.name), isSection: true, withClear: true });
 		} else
 		if (!filter && items.length) {
-			// Name the recent section after the selected chip: Recent Media / Recent <Type>
-			let sectionName = translate('popupSearchRecentObjects');
-			let withSort = false;
+			// Every object chip states its browse order in the title; the right-side action
+			// switches between the chip's primary recency order and recently created
+			const created = recentSortRef.current == 'created';
+			const { primary, secondary } = getRecentOrders(searchType);
 
-			if (isAll || (searchType == SEARCH_TYPE_MINE)) {
-				// State the browse order explicitly; the right-side action switches it
-				sectionName = translate((recentSortRef.current == 'created') ? 'popupSearchRecentCreated' : 'popupSearchRecentEdited');
-				withSort = true;
-			} else
+			let noun = '';
+
 			if (searchType == SEARCH_TYPE_MEDIA) {
-				sectionName = U.String.sprintf(translate('popupSearchRecentType'), translate('commonMedia'));
+				noun = translate('commonMedia');
 			} else
 			if (!isAll && (searchType != SEARCH_TYPE_MINE)) {
 				if (isGlobal) {
-					const chip = getTypeItems().find(it => it.id == searchType);
-
-					if (chip) {
-						sectionName = U.String.sprintf(translate('popupSearchRecentType'), chip.name);
-					};
+					noun = getTypeItems().find(it => it.id == searchType)?.name || '';
 				} else {
 					const type = S.Record.getTypeById(searchType);
-
-					if (type) {
-						sectionName = U.String.sprintf(translate('popupSearchRecentType'), U.Object.name(type, true));
-					};
+					noun = type ? U.Object.name(type, true) : '';
 				};
 			};
 
-			items.unshift({ name: sectionName, isSection: true, withSort });
+			const current = created ? secondary : primary;
+			const other = created ? primary : secondary;
+			const sectionName = noun ?
+				U.String.sprintf(translate(`${current.label}Type`), noun) :
+				translate(current.label);
+
+			items.unshift({
+				name: sectionName,
+				isSection: true,
+				withSort: true,
+				sortSwitchText: translate(other.label),
+			});
 		};
 
 		items = items.map(it => {
@@ -1690,7 +1706,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					{item.withClear ? <div onClick={onClearSearch} className="clear">{translate('commonClear')}</div> : ''}
 					{item.withSort ? (
 						<div onClick={onRecentSortToggle} className="clear">
-							{`→ ${translate((recentSortRef.current == 'created') ? 'popupSearchRecentEdited' : 'popupSearchRecentCreated')}`}
+							{`→ ${item.sortSwitchText}`}
 						</div>
 					) : ''}
 				</div>
