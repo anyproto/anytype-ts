@@ -9,6 +9,7 @@ const HEIGHT_SMALL = 38;
 const HEIGHT_ITEM = 60;
 const HEIGHT_MESSAGE = 76;
 const LIMIT_HEIGHT = 15;
+const RECENT_LIMIT = 20;
 
 const SEARCH_TYPE_ALL = 'all';
 const SEARCH_TYPE_MINE = 'mine';
@@ -87,6 +88,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const itemsModeRef = useRef('');
 	const typeSelectRef = useRef(null);
 	const chatIdsRef = useRef<string[]>([]);
+	// Whether the last page came back full - drives the infinite-scroll sentinel row
+	const hasMoreRef = useRef(false);
 	const chatsSubId = [ getId(), 'chats' ].join('-');
 	// Cross-space dependencies (message authors, object types) resolved via one-shot search
 	// and cached per popup - no store subscription
@@ -749,6 +752,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			itemsRef.current = itemsRef.current.concat(records);
 			itemsModeRef.current = SEARCH_TYPE_MESSAGE;
+			hasMoreRef.current = records.length == J.Constant.limit.menuRecords;
+
+			if (!clear) {
+				setDummy(prev => prev + 1);
+			};
 
 			if (isGlobal) {
 				// Containers come from the chatGlobal/discussionGlobal stores; only authors
@@ -765,7 +773,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const loadMoreRows = ({ startIndex, stopIndex }) => {
 		return new Promise((resolve, reject) => {
-			offsetRef.current += J.Constant.limit.menuRecords;
+			if (!hasMoreRef.current) {
+				resolve(null);
+				return;
+			};
+
+			// Continue from the loaded count - the first browse page is smaller than the
+			// regular page size
+			offsetRef.current = itemsRef.current.length;
 			load(false, () => resolve(null));
 		});
 	};
@@ -835,7 +850,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		let limit = J.Constant.limit.menuRecords;
 
 		if (!filterValueRef.current && clear) {
-			limit = 9;
+			limit = RECENT_LIMIT;
 		};
 
 		const done = () => {
@@ -881,7 +896,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			itemsRef.current = itemsRef.current.concat(records);
 			itemsModeRef.current = searchType;
+			hasMoreRef.current = records.length == limit;
 			resolveObjectTypes(records);
+
+			if (!clear) {
+				setDummy(prev => prev + 1);
+			};
 
 			done();
 			callBack?.();
@@ -945,7 +965,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		let limit = J.Constant.limit.menuRecords;
 
 		if (!filterValueRef.current && clear && !backlinkRef.current) {
-			limit = 9;
+			limit = RECENT_LIMIT;
 		};
 
 		if (backlinkRef.current) {
@@ -1001,6 +1021,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			itemsRef.current = itemsRef.current.concat(records);
 			itemsModeRef.current = searchType;
+			hasMoreRef.current = records.length == limit;
+
+			if (!clear) {
+				setDummy(prev => prev + 1);
+			};
 
 			done();
 			callBack?.();
@@ -1387,6 +1412,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const getRowHeight = (item: any, index: number) => {
+		if (!item) {
+			return HEIGHT_SMALL;
+		};
+
 		let h = HEIGHT_ITEM;
 		if (item.isSection) {
 			h = HEIGHT_SECTION;
@@ -1699,6 +1728,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const item = items[index];
 
 		let content = null;
+		if (!item) {
+			// Sentinel row past the loaded set - InfiniteLoader fetches the next page for it
+			content = <div className="row" style={style} />;
+		} else
 		if (item.isSection) {
 			content = (
 				<div className={[ 'sectionName', (index == 0 ? 'first' : '') ].join(' ')} style={style}>
@@ -1816,9 +1849,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			{cacheRef.current && items.length && !isLoading ? (
 				<div key="items" className="items">
 					<InfiniteLoader
-						rowCount={items.length}
+						rowCount={items.length + (hasMoreRef.current ? 1 : 0)}
 						loadMoreRows={loadMoreRows}
-						isRowLoaded={({ index }) => !!items[index]}
+						isRowLoaded={({ index }) => index < items.length}
 						threshold={LIMIT_HEIGHT}
 					>
 						{({ onRowsRendered }) => (
@@ -1829,7 +1862,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 										width={width}
 										height={height}
 										deferredMeasurmentCache={cacheRef.current}
-										rowCount={items.length}
+										rowCount={items.length + (hasMoreRef.current ? 1 : 0)}
 										rowHeight={param => getRowHeight(items[param.index], param.index)}
 										rowRenderer={rowRenderer}
 										onRowsRendered={onRowsRendered}
