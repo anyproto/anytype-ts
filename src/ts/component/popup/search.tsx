@@ -658,8 +658,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	// The object's creator participant, for the "by <name>" caption
 	const getObjectCreator = (item: any): any => {
-		const spaceId = item.spaceId || S.Common.space;
-
 		if (!wantsCreator(item)) {
 			return null;
 		};
