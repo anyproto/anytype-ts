@@ -637,15 +637,26 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return Boolean(U.Space.getSpaceviewBySpaceId(spaceId)?.isShared);
 	};
 
-	// Whether the row should carry a "by <name>" caption: multi-member space, created by
-	// someone else (single-author spaces would stamp it on every row)
+	// Whether the row should carry a "by ..." caption: multi-member spaces attribute every
+	// row (own objects read "by You"); single-member spaces show nothing
 	const wantsCreator = (item: any): boolean => {
-		const { account } = S.Auth;
+		return Boolean(item.creator && S.Auth.account && spaceHasMembers(item.spaceId || S.Common.space));
+	};
+
+	// "by You" / "by <name>"; empty when attribution is off for the row
+	const getObjectCreatorLabel = (item: any): string => {
+		if (!wantsCreator(item)) {
+			return '';
+		};
+
 		const spaceId = item.spaceId || S.Common.space;
 
-		return Boolean(item.creator && account &&
-			(item.creator != U.Space.getParticipantId(spaceId, account.id)) &&
-			spaceHasMembers(spaceId));
+		if (item.creator == U.Space.getParticipantId(spaceId, S.Auth.account.id)) {
+			return translate('popupSearchByYou');
+		};
+
+		const creator = getObjectCreator(item);
+		return creator ? U.String.sprintf(translate('popupSearchByCreator'), U.Object.name(creator)) : '';
 	};
 
 	// The object's creator participant, for the "by <name>" caption
@@ -1731,7 +1742,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			const spaceview = isGlobal ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
-			const creator = getObjectCreator(item);
+			const creatorLabel = getObjectCreatorLabel(item);
 
 			let name = U.Object.name(item, true);
 
@@ -1762,10 +1773,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						{Context(meta)}
 						<div className="caption">
 							<ObjectType object={type} />
-							{creator ? (
+							{creatorLabel ? (
 								<>
 									<div className="bullet" />
-									<div className="creator">{U.String.sprintf(translate('popupSearchByCreator'), U.Object.name(creator))}</div>
+									<div className="creator">{creatorLabel}</div>
 								</>
 							) : ''}
 							{spaceview ? (
