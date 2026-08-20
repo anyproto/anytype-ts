@@ -1685,7 +1685,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					{item.withClear ? <div onClick={onClearSearch} className="clear">{translate('commonClear')}</div> : ''}
 					{item.withSort ? (
 						<div onClick={onRecentSortToggle} className="clear">
-							{translate((recentSortRef.current == 'created') ? 'popupSearchRecentEdited' : 'popupSearchRecentCreated')}
+							{`→ ${translate((recentSortRef.current == 'created') ? 'popupSearchRecentEdited' : 'popupSearchRecentCreated')}`}
 						</div>
 					) : ''}
 				</div>
