@@ -578,6 +578,32 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
+	// Members chip only makes sense with someone besides you: globally >1 distinct
+	// identities in the participants map, in-space >1 active members. The global answer is
+	// cached once it turns true (data only grows within a popup's lifetime)
+	const globalMembersRef = useRef(false);
+
+	const hasMembers = (): boolean => {
+		if (!isGlobal) {
+			return spaceHasMembers(S.Common.space);
+		};
+
+		if (globalMembersRef.current) {
+			return true;
+		};
+
+		const identities = new Set<string>();
+
+		GLOBAL_DEPS.participants.forEach((it: any, id: string) => {
+			if (it.participantStatus == I.ParticipantStatus.Active) {
+				identities.add(U.Space.getAccountFromParticipantId(id));
+			};
+		});
+
+		globalMembersRef.current = identities.size > 1;
+		return globalMembersRef.current;
+	};
+
 	const getSearchType = (): string => {
 		const type = searchTypeRef.current;
 
@@ -594,7 +620,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return hasMessageContainers() ? type : SEARCH_TYPE_ALL;
 		};
 
-		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_MEMBER ].includes(type)) {
+		if (type == SEARCH_TYPE_MEMBER) {
+			return hasMembers() ? type : SEARCH_TYPE_ALL;
+		};
+
+		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MEDIA ].includes(type)) {
 			return type;
 		};
 
@@ -618,14 +648,20 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (isGlobal) {
-			return applyDrillGating(ret.concat([
+			const list: any[] = [
 				{ id: SEARCH_TYPE_PAGE, name: translate('popupSearchTypePages') },
+			];
+
+			if (hasMembers()) {
+				list.push({ id: SEARCH_TYPE_MEMBER, name: translate('popupSearchTypeMembers') });
+			};
+
+			return applyDrillGating(ret.concat(list, [
 				{ id: SEARCH_TYPE_MEDIA, name: translate('commonMedia') },
 				{ id: SEARCH_TYPE_BOOKMARK, name: translate('popupSearchTypeBookmarks') },
 				{ id: SEARCH_TYPE_COLLECTION, name: translate('popupSearchTypeCollections') },
 				{ id: SEARCH_TYPE_QUERY, name: translate('popupSearchTypeQueries') },
 				{ id: SEARCH_TYPE_CHAT, name: translate('popupSearchTypeChats') },
-				{ id: SEARCH_TYPE_MEMBER, name: translate('popupSearchTypeMembers') },
 				{ id: SEARCH_TYPE_TYPE, name: translate('popupSearchTypeTypes') },
 			]));
 		};
@@ -636,7 +672,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			map(it => ({ id: it.id, name: U.Object.name(it, true) }));
 
 		ret.push({ id: SEARCH_TYPE_MEDIA, name: translate('commonMedia') });
-		ret.push({ id: SEARCH_TYPE_MEMBER, name: translate('popupSearchTypeMembers') });
+
+		if (hasMembers()) {
+			ret.push({ id: SEARCH_TYPE_MEMBER, name: translate('popupSearchTypeMembers') });
+		};
 
 		return applyDrillGating(ret.concat(types));
 	};
