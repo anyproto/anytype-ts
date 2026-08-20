@@ -269,6 +269,23 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
+		// Right arrow drills like shift+enter - but only when the caret sits at the end of
+		// the query, so arrows keep editing text otherwise
+		keyboard.shortcut('arrowright', e, () => {
+			if (!item || !getDrillKind(item)) {
+				return;
+			};
+
+			const range = filterInputRef.current?.getRange();
+
+			if (range && (range.to < filter.length)) {
+				return;
+			};
+
+			e.preventDefault();
+			onDrill(e, item);
+		});
+
 		keyboard.shortcut(`${shortcutPrev}, ${shortcutNext}` , e, (pressed: string) => {
 			const dir = [ 'arrowup', 'ctrl+p' ].includes(pressed) ? -1 : 1;
 			onArrow(dir);
@@ -1758,7 +1775,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	useEffect(() => {
 		const items = getItems();
 
-		setActive(items[nRef.current]);
+		// nRef often points at a section header after a reload (no id, nothing to highlight)
+		// - fall to the first real row
+		let active = items[nRef.current];
+
+		if (!active || active.isSection) {
+			active = items.find(it => !it.isSection);
+		};
+
+		setActive(active);
 		checkTypeSelectFade();
 
 		if (listRef.current) {
