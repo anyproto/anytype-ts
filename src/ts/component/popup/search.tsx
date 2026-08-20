@@ -681,7 +681,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const filters: any[] = [
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Participant, I.ObjectLayout.Type ] },
 		];
-		const keys = U.Common.arrayUnique(U.Subscription.participantRelationKeys().concat(U.Subscription.typeRelationKeys(false)));
+		// Only what rendering reads: ObjectName (name, globalName, isDeleted), the participant
+		// avatar (iconImage, spaceId), ObjectType (name, isDeleted), plus id and layouts for
+		// the map split - keeps the big snapshot payload small
+		const keys = [ 'id', 'spaceId', 'name', 'pluralName', 'globalName', 'iconImage', 'layout', 'resolvedLayout', 'isDeleted' ];
 
 		C.ObjectCrossSpaceSearch(filters, [], keys, '', 0, 0, (message: any) => {
 			if (message.error.code || !message.records.length) {
