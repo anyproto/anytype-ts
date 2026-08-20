@@ -38,6 +38,106 @@ const GLOBAL_LAYOUTS: { [key: string]: I.ObjectLayout[] } = {
 
 const isMac = U.Common.isPlatformMac();
 
+// Cross-space search dependencies, shared across popup instances for the app session.
+// Two live subscriptions (participants, types) started on first global-search use; rows read
+// these compact plain maps - never the detail store on the hot path. Reopens ingest new ids
+// incrementally from the stores, so results render attributed on first paint with no redraw
+const GLOBAL_DEPS = {
+	accountId: '',
+	subscribed: false,
+	participants: new Map<string, any>(),
+	participantCounts: new Map<string, number>(),
+	types: new Map<string, any>(),
+};
+
+const SUB_GLOBAL_PARTICIPANTS = 'searchGlobalParticipants';
+const SUB_GLOBAL_TYPES = 'searchGlobalTypes';
+// Only what rendering reads - keeps the payload and the maps compact
+const KEYS_GLOBAL_PARTICIPANT = [ 'id', 'spaceId', 'name', 'globalName', 'iconImage', 'layout', 'resolvedLayout', 'isDeleted', 'participantStatus' ];
+const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'layout', 'resolvedLayout', 'isDeleted' ];
+
+const ingestGlobalParticipant = (it: any) => {
+	if (GLOBAL_DEPS.participants.has(it.id)) {
+		return;
+	};
+
+	GLOBAL_DEPS.participants.set(it.id, it);
+
+	if (it.spaceId && (it.participantStatus == I.ParticipantStatus.Active)) {
+		GLOBAL_DEPS.participantCounts.set(it.spaceId, (GLOBAL_DEPS.participantCounts.get(it.spaceId) || 0) + 1);
+	};
+};
+
+const ingestGlobalType = (it: any) => {
+	if (!GLOBAL_DEPS.types.has(it.id)) {
+		GLOBAL_DEPS.types.set(it.id, it);
+	};
+};
+
+// Pick up records that streamed in while no popup was open - subscription events land in
+// the stores; the maps ingest only ids they have not seen
+const syncGlobalDeps = () => {
+	S.Record.getRecordIds(SUB_GLOBAL_PARTICIPANTS, '').forEach(id => {
+		if (!GLOBAL_DEPS.participants.has(id)) {
+			ingestGlobalParticipant(S.Detail.get(SUB_GLOBAL_PARTICIPANTS, id, KEYS_GLOBAL_PARTICIPANT));
+		};
+	});
+
+	S.Record.getRecordIds(SUB_GLOBAL_TYPES, '').forEach(id => {
+		if (!GLOBAL_DEPS.types.has(id)) {
+			ingestGlobalType(S.Detail.get(SUB_GLOBAL_TYPES, id, KEYS_GLOBAL_TYPE));
+		};
+	});
+};
+
+const subscribeGlobalDeps = (onLoad: () => void) => {
+	const accountId = S.Auth.account?.id || '';
+
+	// Account switch invalidates everything
+	if (GLOBAL_DEPS.subscribed && (GLOBAL_DEPS.accountId != accountId)) {
+		GLOBAL_DEPS.subscribed = false;
+		GLOBAL_DEPS.participants.clear();
+		GLOBAL_DEPS.participantCounts.clear();
+		GLOBAL_DEPS.types.clear();
+	};
+
+	if (GLOBAL_DEPS.subscribed) {
+		syncGlobalDeps();
+		return;
+	};
+
+	GLOBAL_DEPS.subscribed = true;
+	GLOBAL_DEPS.accountId = accountId;
+
+	U.Subscription.subscribe({
+		subId: SUB_GLOBAL_PARTICIPANTS,
+		filters: [
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Participant },
+		],
+		keys: KEYS_GLOBAL_PARTICIPANT,
+		ignoreHidden: false,
+		noDeps: true,
+		crossSpace: true,
+	}, (message: any) => {
+		(message.records || []).forEach(it => ingestGlobalParticipant(S.Detail.mapper(it)));
+		onLoad();
+	});
+
+	U.Subscription.subscribe({
+		subId: SUB_GLOBAL_TYPES,
+		filters: [
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.Equal, value: I.ObjectLayout.Type },
+		],
+		keys: KEYS_GLOBAL_TYPE,
+		ignoreHidden: false,
+		noDeps: true,
+		crossSpace: true,
+	}, (message: any) => {
+		(message.records || []).forEach(it => ingestGlobalType(S.Detail.mapper(it)));
+		onLoad();
+	});
+};
+
 // Module-level so its identity is stable across renders - a component re-created inside the
 // render body reads as a new type to React and remounts its DOM every render (visible blink)
 const Shortcut = (props: { keys: string[]; label: string }) => {
@@ -96,13 +196,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Whether the last page came back full - drives the infinite-scroll sentinel row
 	const hasMoreRef = useRef(false);
 	const chatsSubId = [ getId(), 'chats' ].join('-');
-	// Cross-space object types resolved via one-shot search and cached per popup
-	const depsRef = useRef(new Map<string, any>());
-	// All participants of all spaces: one unary snapshot fetched on popup open, held for the
-	// popup's lifetime (fresh on reopen, evicted on close). Staleness is acceptable
-	const participantsRef = useRef(new Map<string, any>());
-	// Active members per space, counted from the snapshot - the ground truth the gate uses
-	const participantCountsRef = useRef(new Map<string, number>());
 
 	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
@@ -604,7 +697,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return U.Space.getParticipant(participantId);
 		};
 
-		return participantsRef.current.get(participantId) || null;
+		return GLOBAL_DEPS.participants.get(participantId) || null;
 	};
 
 	// Creator attribution only makes sense in spaces with more than one member. The exact
@@ -625,7 +718,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		// Other spaces: count actual active members from the participants snapshot -
 		// spaceview heuristics (isShared etc.) are unreliable for joined spaces
-		return (participantCountsRef.current.get(spaceId) || 0) > 1;
+		return (GLOBAL_DEPS.participantCounts.get(spaceId) || 0) > 1;
 	};
 
 	// creator may hold a participant id or (on older objects) the bare identity -
@@ -679,42 +772,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return object;
 		};
 
-		return participantsRef.current.get(participantId) || null;
-	};
-
-	// One unary snapshot of all participants AND types in all spaces (global mode), fetched
-	// on popup open - participants serve every creator/author lookup, types the row captions.
-	// A single request replaces the per-load type fetches
-	const loadGlobalDeps = () => {
-		const filters: any[] = [
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Participant, I.ObjectLayout.Type ] },
-		];
-		// Only what rendering reads: ObjectName (name, globalName, isDeleted), the participant
-		// avatar (iconImage, spaceId), ObjectType (name, isDeleted), plus id and layouts for
-		// the map split - keeps the big snapshot payload small
-		const keys = [ 'id', 'spaceId', 'name', 'pluralName', 'globalName', 'iconImage', 'layout', 'resolvedLayout', 'isDeleted', 'participantStatus' ];
-
-		C.ObjectCrossSpaceSearch(filters, [], keys, '', 0, 0, (message: any) => {
-			if (message.error.code || !message.records.length) {
-				return;
-			};
-
-			message.records.forEach(it => {
-				it = S.Detail.mapper(it);
-
-				if (it.layout == I.ObjectLayout.Participant) {
-					participantsRef.current.set(it.id, it);
-
-					if (it.spaceId && (it.participantStatus == I.ParticipantStatus.Active)) {
-						participantCountsRef.current.set(it.spaceId, (participantCountsRef.current.get(it.spaceId) || 0) + 1);
-					};
-				} else {
-					depsRef.current.set(it.id, it);
-				};
-			});
-
-			setDummy(prev => prev + 1);
-		});
+		return GLOBAL_DEPS.participants.get(participantId) || null;
 	};
 
 	// Browse orders of a chip. label is the bare translate key; appending "Type" gives the
@@ -1533,7 +1591,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		rebindTimeoutRef.current = window.setTimeout(() => rebind(), J.Constant.delay.popup);
 
 		if (isGlobal) {
-			loadGlobalDeps();
+			// First-ever use starts the app-lifetime subscriptions (one redraw when the
+			// initial data lands); later opens sync from memory - no redraw
+			subscribeGlobalDeps(() => setDummy(prev => prev + 1));
 		};
 
 		if (storage.backlink && !isGlobal && !isStale) {
@@ -1713,7 +1773,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const meta = metaList[0] || {};
 			// Types of other spaces are not in the current space's type store - fall back to
 			// the batch-resolved cross-space cache
-			const type = S.Record.getTypeById(item.type) || (isGlobal ? depsRef.current.get(item.type) : null);
+			const type = S.Record.getTypeById(item.type) || (isGlobal ? GLOBAL_DEPS.types.get(item.type) : null);
 
 			let advanced = null;
 
