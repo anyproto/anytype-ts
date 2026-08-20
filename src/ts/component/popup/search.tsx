@@ -656,13 +656,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Objects created by the current account (creator only - lastModifiedBy is noisy because
 	// of automatic changes). creator holds participant ids, which are per-space - global mode
 	// matches against the account's participant id in every space
-	const getMineFilter = (): any => {
+	const getMineFilter = (): any[] => {
 		const { account } = S.Auth;
 		const ids = isGlobal ?
 			U.Space.getList().map(it => U.Space.getParticipantId(it.targetSpaceId, account.id)) :
 			[ U.Space.getCurrentParticipantId() ];
 
-		return { relationKey: 'creator', condition: I.FilterCondition.In, value: ids };
+		return [
+			{ relationKey: 'creator', condition: I.FilterCondition.In, value: ids },
+			// Chat containers are created implicitly with their space and all carry the space
+			// creator - noise in My objects; they have their own chips
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ] },
+		];
 	};
 
 	const loadMessages = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
@@ -769,7 +774,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (searchType == SEARCH_TYPE_MINE) {
-			filters.push(getMineFilter());
+			filters.push(...getMineFilter());
 		};
 
 		// Type objects are noise in the empty (recent) browse of All/My objects - every space
@@ -896,7 +901,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (searchType == SEARCH_TYPE_MINE) {
-			filters.push(getMineFilter());
+			filters.push(...getMineFilter());
 		} else
 		if (searchType == SEARCH_TYPE_MEDIA) {
 			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() });
