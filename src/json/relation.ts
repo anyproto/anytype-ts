@@ -189,6 +189,12 @@ export default {
 		'name',
 		'spaceId',
 		'isArchived',
+		'layout',
+		'resolvedLayout',
+		'iconEmoji',
+		'iconImage',
+		'iconOption',
+		'iconName',
 	],
 
 	pageCover: 'pageCover',

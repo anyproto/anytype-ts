@@ -89,6 +89,7 @@
 					}
 				}
 				.name { @include text-overflow-nw; font-weight: 500; }
+				.caption .bullet { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); flex-shrink: 0; }
 				.context { @include text-small; padding: 2px 0px; white-space: normal; display: flex; gap: 0 4px; }
 
 				.context {
@@ -103,6 +104,14 @@
 			.item.active { background-color: var(--color-shape-highlight-medium); }
 			.item.active {
 				.icon.advanced { opacity: 1; }
+			}
+
+			.item.isGlobal {
+				.caption { display: flex; align-items: center; gap: 0px 6px; }
+				.caption {
+					.iconObject { flex-shrink: 0; background: none; border-radius: 0px; }
+					.name { @include text-overflow-nw; font-weight: 400; }
+				}
 			}
 
 			.item.isMessage {

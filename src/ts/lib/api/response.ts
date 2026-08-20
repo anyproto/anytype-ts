@@ -252,6 +252,13 @@ export const ObjectSearch = (response: any) => {
 	};
 };
 
+export const ObjectCrossSpaceSearch = (response: any) => {
+	return {
+		records: (response.records || []).map(Decode.struct),
+		allStoresLoaded: Boolean(response.allStoresLoaded),
+	};
+};
+
 export const ObjectCleanupSuggestions = (response: any) => {
 	return {
 		items: (response.items || []).map((it: any) => ({

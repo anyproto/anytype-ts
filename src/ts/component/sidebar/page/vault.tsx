@@ -643,6 +643,18 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 				<div className="side right">
 					{!vaultIsMinimal ? (
 						<>
+							<Icon
+								id="button-vault-search"
+								name="common/search"
+								className="search"
+								withBackground={true}
+								tooltipParam={{
+									text: translate('popupSearchGlobalTooltip'),
+									typeY: I.MenuDirection.Bottom,
+								}}
+								onClick={() => keyboard.onSearchPopup(analytics.route.vault, { data: { isGlobal: true } })}
+								onMouseDown={e => e.stopPropagation()}
+							/>
 							{iconCreate()}
 							<Icon
 								id="button-vault-toggle"

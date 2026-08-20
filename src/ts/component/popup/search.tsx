@@ -13,6 +13,22 @@ const LIMIT_HEIGHT = 15;
 const SEARCH_TYPE_ALL = 'all';
 const SEARCH_TYPE_MESSAGE = 'message';
 const SEARCH_TYPE_MEDIA = 'media';
+const SEARCH_TYPE_FILE = 'file';
+const SEARCH_TYPE_IMAGE = 'image';
+const SEARCH_TYPE_BOOKMARK = 'bookmark';
+const SEARCH_TYPE_COLLECTION = 'collection';
+const SEARCH_TYPE_QUERY = 'query';
+const SEARCH_TYPE_CHAT = 'chat';
+
+// Global (cross-space) mode filters by resolvedLayout - types can't be merged across spaces
+const GLOBAL_LAYOUTS: { [key: string]: I.ObjectLayout[] } = {
+	[SEARCH_TYPE_FILE]: [ I.ObjectLayout.File, I.ObjectLayout.Pdf, I.ObjectLayout.Audio, I.ObjectLayout.Video ],
+	[SEARCH_TYPE_IMAGE]: [ I.ObjectLayout.Image ],
+	[SEARCH_TYPE_BOOKMARK]: [ I.ObjectLayout.Bookmark ],
+	[SEARCH_TYPE_COLLECTION]: [ I.ObjectLayout.Collection ],
+	[SEARCH_TYPE_QUERY]: [ I.ObjectLayout.Set ],
+	[SEARCH_TYPE_CHAT]: [ I.ObjectLayout.Chat ],
+};
 
 const isMac = U.Common.isPlatformMac();
 
@@ -36,7 +52,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, storageGet, storageSet, getId, close } = props;
 	const { data } = param;
-	const { route, onObjectSelect, skipIds } = data;
+	const { route, onObjectSelect, skipIds, isGlobal } = data;
+	// Global mode persists its state under separate keys so the two popups don't clobber each other
+	const filterKey = isGlobal ? 'filterGlobal' : 'filter';
+	const searchTypeKey = isGlobal ? 'searchTypeGlobal' : 'searchType';
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
 	const backlinkRef = useRef(null);
@@ -54,15 +73,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const offsetRef = useRef(0);
 	const rangeRef = useRef<I.TextRange>({ from: 0, to: 0 });
 	const storage = storageGet();
-	const filter = String(storage.filter || '');
+	const filter = String(storage[filterKey] || '');
 	const filterValueRef = useRef(filter);
-	const searchTypeRef = useRef(String(storage.searchType || SEARCH_TYPE_ALL));
+	const searchTypeRef = useRef(String(storage[searchTypeKey] || SEARCH_TYPE_ALL));
 	// The mode the currently held items were loaded for. During a quiet reload the previous
 	// list stays on screen - render it by its own mode, not by the freshly selected chip
 	const itemsModeRef = useRef('');
 	const typeSelectRef = useRef(null);
 	const chatIdsRef = useRef<string[]>([]);
 	const chatsSubId = [ getId(), 'chats' ].join('-');
+	// Cross-space message authors resolved via one-shot search (no store subscription)
+	const authorsRef = useRef(new Map<string, any>());
 
 	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
@@ -183,7 +204,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			const item = items[nRef.current];
 			if (item && item.isObject) {
-				U.Object.copyLink(item, S.Common.space, 'web', route);
+				U.Object.copyLink(item, item.spaceId || S.Common.space, 'web', route);
 			};
 		});
 
@@ -194,6 +215,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			const searchType = getSearchType();
 
+			// Global mode has no per-chip create actions - fall back to the default create
+			if (isGlobal) {
+				close(() => pageCreate(filter));
+			} else
 			if (searchType == SEARCH_TYPE_MEDIA) {
 				close();
 				window.setTimeout(() => {
@@ -291,7 +316,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		timeoutRef.current = window.setTimeout(() => {
-			storageSet({ filter: v });
+			storageSet({ [filterKey]: v });
 
 			if (filterValueRef.current != v) {
 				analytics.event('SearchInput', { route });
@@ -312,13 +337,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onFilterClear = () => {
-		storageSet({ filter: '' });
+		storageSet({ [filterKey]: '' });
 		analytics.event('SearchInput', { route });
 	};
 
 	const onBacklink = (e: MouseEvent, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
+
+		// Backlink search is per-space (object graph)
+		if (isGlobal) {
+			return;
+		};
 
 		storageSet({ backlink: item.id });
 		filterInputRef.current?.setValue('');
@@ -342,9 +372,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		reload();
 	};
 
-	// The Messages scope searches chats and discussions - offer it only when the space has at
-	// least one of either (both space subscriptions are always on)
+	// The Messages scope searches chats and discussions - offer it only when there is at least
+	// one of either: in the space (space subscriptions) or anywhere (global subscriptions)
 	const hasMessageContainers = (): boolean => {
+		if (isGlobal) {
+			return [ J.Constant.subId.chatGlobal, J.Constant.subId.discussionGlobal ].some(it => {
+				return S.Record.getRecordIds(it, '').length > 0;
+			});
+		};
+
 		return [ J.Constant.subId.chat, J.Constant.subId.discussion ].some(it => {
 			return S.Record.getRecordIds(U.Subscription.spaceSubId(it), '').length > 0;
 		});
@@ -356,6 +392,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Object select mode is a plain object picker - no type selector
 		if (onObjectSelect) {
 			return SEARCH_TYPE_ALL;
+		};
+
+		if (isGlobal) {
+			return getTypeItems().map(it => it.id).includes(type) ? type : SEARCH_TYPE_ALL;
 		};
 
 		if (type == SEARCH_TYPE_MESSAGE) {
@@ -370,11 +410,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const getTypeItems = () => {
-		const skip = U.Object.getFileLayouts().concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ]);
-		const types = U.Data.getWidgetTypes().
-			filter(it => !skip.includes(it.recommendedLayout)).
-			map(it => ({ id: it.id, name: U.Object.name(it, true) }));
-
 		const ret: any[] = [
 			{ id: SEARCH_TYPE_ALL, name: translate('popupSearchTypeAll') },
 		];
@@ -382,6 +417,22 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (hasMessageContainers()) {
 			ret.push({ id: SEARCH_TYPE_MESSAGE, name: translate('popupSearchTypeMessages') });
 		};
+
+		if (isGlobal) {
+			return ret.concat([
+				{ id: SEARCH_TYPE_FILE, name: translate('popupSearchTypeFiles') },
+				{ id: SEARCH_TYPE_IMAGE, name: translate('popupSearchTypeImages') },
+				{ id: SEARCH_TYPE_BOOKMARK, name: translate('popupSearchTypeBookmarks') },
+				{ id: SEARCH_TYPE_COLLECTION, name: translate('popupSearchTypeCollections') },
+				{ id: SEARCH_TYPE_QUERY, name: translate('popupSearchTypeQueries') },
+				{ id: SEARCH_TYPE_CHAT, name: translate('popupSearchTypeChats') },
+			]);
+		};
+
+		const skip = U.Object.getFileLayouts().concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ]);
+		const types = U.Data.getWidgetTypes().
+			filter(it => !skip.includes(it.recommendedLayout)).
+			map(it => ({ id: it.id, name: U.Object.name(it, true) }));
 
 		ret.push({ id: SEARCH_TYPE_MEDIA, name: translate('commonMedia') });
 
@@ -394,7 +445,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		searchTypeRef.current = id;
-		storageSet({ searchType: id });
+		storageSet({ [searchTypeKey]: id });
 
 		if (backlinkRef.current) {
 			backlinkRef.current = null;
@@ -411,12 +462,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			active?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 		});
 
-		let type = 'Type';
-		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_MEDIA ].includes(id)) {
-			type = U.String.ucFirst(id);
-		};
+		const known = [
+			SEARCH_TYPE_ALL, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_FILE, SEARCH_TYPE_IMAGE,
+			SEARCH_TYPE_BOOKMARK, SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT,
+		];
+		const type = known.includes(id) ? U.String.ucFirst(id) : 'Type';
 
-		analytics.event('SwitchSearchType', { route, type });
+		analytics.event('SwitchSearchType', { route, type, isGlobal: Boolean(isGlobal) });
 	};
 
 	const onSearchTypeCycle = (dir: number) => {
@@ -453,24 +505,29 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
-	const getMessageChat = (chatId: string): any => {
-		const { space } = S.Common;
+	const getMessageChat = (item: any): any => {
+		const chatId = item.chatId;
+		const spaceId = item.spaceId || S.Common.space;
 
-		let object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.chat), chatId, []);
+		// Global mode: the chatGlobal cross-space subscription holds every chat object
+		let object = isGlobal ?
+			S.Detail.get(J.Constant.subId.chatGlobal, chatId, []) :
+			S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.chat), chatId, []);
 
 		if (object._empty_) {
-			const parentId = S.Chat.discussionParentMap.get(space)?.get(chatId);
+			// The discussion parent map is fed by the cross-space discussionGlobal subscription
+			const parentId = S.Chat.discussionParentMap.get(spaceId)?.get(chatId);
 
 			if (parentId) {
-				object = S.Chat.getDiscussionParentDetail(space, parentId, []);
+				object = S.Chat.getDiscussionParentDetail(spaceId, parentId, []);
 
-				if (object._empty_) {
+				if (object._empty_ && !isGlobal) {
 					object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.discussion), parentId, []);
 				};
 			};
 		};
 
-		if (object._empty_) {
+		if (object._empty_ && !isGlobal) {
 			object = S.Detail.get(chatsSubId, chatId, []);
 
 			// A discussion object itself is not openable and carries no display name - without
@@ -484,7 +541,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const resolveMessageChats = (records: any[]) => {
-		const ids = U.Common.arrayUnique(records.map(it => it.chatId)).filter(id => id && !getMessageChat(id));
+		const ids = U.Common.arrayUnique(records.filter(it => !getMessageChat(it)).map(it => it.chatId)).filter(it => it);
 
 		if (!ids.length) {
 			return;
@@ -493,6 +550,48 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		chatIdsRef.current = U.Common.arrayUnique(chatIdsRef.current.concat(ids));
 
 		U.Subscription.subscribeIds({ subId: chatsSubId, ids: chatIdsRef.current, noDeps: true }, () => {
+			setDummy(prev => prev + 1);
+		});
+	};
+
+	const getMessageAuthor = (item: any): any => {
+		const spaceId = item.spaceId || S.Common.space;
+		const participantId = U.Space.getParticipantId(spaceId, item.message?.creator);
+
+		if (!isGlobal || (spaceId == S.Common.space)) {
+			return U.Space.getParticipant(participantId);
+		};
+
+		// Other spaces: the per-space subSpace subscription only holds the creator and self
+		const object = S.Detail.get(U.Space.getSubSpaceSubId(spaceId), participantId, []);
+		if (!object._empty_) {
+			return object;
+		};
+
+		return authorsRef.current.get(participantId) || null;
+	};
+
+	// Batch-resolve message authors from other spaces via the one-shot cross-space search
+	const resolveMessageAuthors = (records: any[]) => {
+		const ids = U.Common.arrayUnique(
+			records.filter(it => !getMessageAuthor(it)).
+				map(it => U.Space.getParticipantId(it.spaceId || S.Common.space, it.message?.creator))
+		).filter(it => it && !authorsRef.current.has(it));
+
+		if (!ids.length) {
+			return;
+		};
+
+		const filters: any[] = [
+			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
+		];
+
+		C.ObjectCrossSpaceSearch(filters, [], U.Subscription.participantRelationKeys(), '', 0, ids.length, (message: any) => {
+			if (message.error.code || !message.records.length) {
+				return;
+			};
+
+			message.records.forEach(it => authorsRef.current.set(it.id, S.Detail.mapper(it)));
 			setDummy(prev => prev + 1);
 		});
 	};
@@ -527,7 +626,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
-		C.ChatSearch(space, '', text, offsetRef.current, J.Constant.limit.menuRecords, sorts, (message: any) => {
+		// Empty spaceId + empty chatId = all chats in all spaces (global mode)
+		C.ChatSearch(isGlobal ? '' : space, '', text, offsetRef.current, J.Constant.limit.menuRecords, sorts, (message: any) => {
 			if (message.error.code) {
 				if (clear) {
 					itemsRef.current = [];
@@ -547,7 +647,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			itemsRef.current = itemsRef.current.concat(records);
 			itemsModeRef.current = SEARCH_TYPE_MESSAGE;
-			resolveMessageChats(records);
+
+			if (isGlobal) {
+				// Containers come from the chatGlobal/discussionGlobal stores; only authors
+				// from other spaces need resolution
+				resolveMessageAuthors(records);
+			} else {
+				resolveMessageChats(records);
+			};
 
 			done();
 			callBack?.();
@@ -574,11 +681,90 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		}, quiet);
 	};
 
+	// Global mode: one-shot cross-space search, no subscription. allStoresLoaded=false means
+	// the sequential per-space store warm-up is still running and the view is partial - no
+	// auto-retry in v1, the next keystroke/chip switch re-queries anyway
+	const loadGlobalObjects = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
+		const searchType = getSearchType();
+		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
+		const filters: any[] = U.Subscription.getBaseFilters().concat([
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: layouts },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+		]);
+
+		if (GLOBAL_LAYOUTS[searchType]) {
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: GLOBAL_LAYOUTS[searchType] });
+		};
+
+		const sorts = [
+			{ relationKey: '_final_score', type: I.SortType.Desc },
+			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
+			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
+		].map(U.Subscription.sortMapper);
+
+		let limit = J.Constant.limit.menuRecords;
+
+		if (!filterValueRef.current && clear) {
+			limit = 9;
+		};
+
+		const done = () => {
+			if (!clear) {
+				return;
+			};
+
+			if (quiet) {
+				setDummy(prev => prev + 1);
+			} else {
+				setIsLoading(false);
+			};
+		};
+
+		if (clear && !quiet) {
+			setIsLoading(true);
+		};
+
+		C.ObjectCrossSpaceSearch(filters, sorts, J.Relation.default.concat([ 'pluralName' ]), filterValueRef.current, offsetRef.current, limit, (message: any) => {
+			if (message.error.code) {
+				if (clear) {
+					itemsRef.current = [];
+					itemsModeRef.current = searchType;
+				};
+
+				done();
+				callBack?.();
+				return;
+			};
+
+			if (clear) {
+				itemsRef.current = [];
+			};
+
+			const records = (message.records || []).map(it => {
+				it = S.Detail.mapper(it);
+				it.links = [];
+				it.backlinks = [];
+				return it;
+			});
+
+			itemsRef.current = itemsRef.current.concat(records);
+			itemsModeRef.current = searchType;
+
+			done();
+			callBack?.();
+		});
+	};
+
 	const load = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
 		const searchType = getSearchType();
 
 		if (searchType == SEARCH_TYPE_MESSAGE) {
 			loadMessages(clear, callBack, quiet);
+			return;
+		};
+
+		if (isGlobal) {
+			loadGlobalObjects(clear, callBack, quiet);
 			return;
 		};
 
@@ -710,10 +896,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				sectionName = U.String.sprintf(translate('popupSearchRecentType'), translate('commonMedia'));
 			} else
 			if (!isAll) {
-				const type = S.Record.getTypeById(searchType);
+				if (isGlobal) {
+					const chip = getTypeItems().find(it => it.id == searchType);
 
-				if (type) {
-					sectionName = U.String.sprintf(translate('popupSearchRecentType'), U.Object.name(type, true));
+					if (chip) {
+						sectionName = U.String.sprintf(translate('popupSearchRecentType'), chip.name);
+					};
+				} else {
+					const type = S.Record.getTypeById(searchType);
+
+					if (type) {
+						sectionName = U.String.sprintf(translate('popupSearchRecentType'), U.Object.name(type, true));
+					};
 				};
 			};
 
@@ -731,7 +925,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		/* Settings and pages */
 
-		if (filter && isAll) {
+		if (filter && isAll && !isGlobal) {
 			const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 
 			let itemsImport: any[] = [];
@@ -813,7 +1007,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
-		if (canWrite) {
+		// Global mode has no create actions in v1 (creation targets a specific space)
+		if (canWrite && !isGlobal) {
 			const actions: any[] = [];
 
 			if (isAll) {
@@ -921,7 +1116,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const meta = metaList.length ? metaList[0] : {};
 
 		if (item.isMessage) {
-			const chat = getMessageChat(item.chatId);
+			const chat = getMessageChat(item);
 
 			close(() => {
 				if (chat) {
@@ -996,6 +1191,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onContext = (e: any, item: any) => {
+		// The object context menu acts within the current space - skip for cross-space results
+		if (isGlobal) {
+			return;
+		};
+
 		S.Menu.open('objectContext', {
 			element: `#${getId()} #item-${U.Common.esc(item.id)}`,
 			recalcRect: () => {
@@ -1037,7 +1237,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	useEffect(() => {
 		const storage = storageGet();
-		const filter = String(storage.filter || '');
+		const filter = String(storage[filterKey] || '');
 
 		const setFilter = () => {
 			if (!filterInputRef.current) {
@@ -1054,7 +1254,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		focus.clear(true);
 		rebindTimeoutRef.current = window.setTimeout(() => rebind(), J.Constant.delay.popup);
 
-		if (storage.backlink) {
+		if (storage.backlink && !isGlobal) {
 			U.Object.getById(storage.backlink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
 		} else {
 			setFilter();
@@ -1143,10 +1343,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (item.isMessage) {
-			const { space, showRelativeDates, dateFormat, timeFormat } = S.Common;
+			const { showRelativeDates, dateFormat, timeFormat } = S.Common;
 			const message = item.message || {};
-			const author = U.Space.getParticipant(U.Space.getParticipantId(space, message.creator));
-			const chat = getMessageChat(item.chatId);
+			const author = getMessageAuthor(item);
+			const chat = getMessageChat(item);
+			const spaceview = isGlobal ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
 			const day = showRelativeDates ? U.Date.dayString(message.createdAt) : null;
 			const date = [ (day ? day : U.Date.dateWithFormat(dateFormat, message.createdAt)), U.Date.timeWithFormat(timeFormat, message.createdAt) ].join(', ');
 
@@ -1169,10 +1370,21 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 								<div className="time">{date}</div>
 							</div>
 							<div className="text" dangerouslySetInnerHTML={{ __html: U.Chat.getSearchResultHtml(item) }} />
-							{chat ? (
+							{chat || spaceview ? (
 								<div className="caption">
-									<IconObject object={chat} size={16} />
-									<ObjectName object={chat} />
+									{chat ? (
+										<>
+											<IconObject object={chat} size={16} />
+											<ObjectName object={chat} />
+										</>
+									) : ''}
+									{chat && spaceview ? <div className="bullet" /> : ''}
+									{spaceview ? (
+										<>
+											<IconObject object={spaceview} size={16} />
+											<ObjectName object={spaceview} />
+										</>
+									) : ''}
 								</div>
 							) : ''}
 						</div>
@@ -1240,6 +1452,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				name = U.String.htmlSpecialChars(name);
 			};
 
+			const spaceview = isGlobal ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
+
+			if (isGlobal) {
+				cn.push('isGlobal');
+			};
+
 			content = (
 				<div className="sides" onContextMenu={e => onContext(e, item)}>
 					<div className="side left">
@@ -1247,6 +1465,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						{Context(meta)}
 						<div className="caption">
 							<ObjectType object={type} />
+							{spaceview ? (
+								<>
+									<div className="bullet" />
+									<IconObject object={spaceview} size={16} />
+									<ObjectName object={spaceview} />
+								</>
+							) : ''}
 						</div>
 					</div>
 					<div className="side right">

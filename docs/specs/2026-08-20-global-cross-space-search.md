@@ -101,14 +101,11 @@ flicker-free rendering, footer hints) is inherited unchanged.
   minus `_final_score` if the merged path doesn't support it (verify against the worktree;
   fallback: `lastModifiedDate desc`).
 - Same pagination flow (`offset += limit` via `InfiniteLoader`).
-- **`allStoresLoaded: false` handling**: results received so far are rendered immediately; the
-  popup keeps a visible loading indicator and re-runs the same query every 3 s (replacing
-  results) until `allStoresLoaded: true` or the popup closes / query changes. Timer lives in a
-  ref; cleared on unmount, filter change, and chip switch. First load without any results yet
-  shows the standard popup loader.
-  - Decision note: the ask said "show loader and retry every 3 s" — rendering the partial set
-    under the loader is strictly more useful than a blank loader; flagged here in case the
-    literal blank-until-complete behavior is preferred.
+- **`allStoresLoaded: false` handling (revised)**: no auto-retry in the first iteration — a
+  timer-driven reload was judged a dangerous re-render flow. The partial results are rendered
+  as-is; `allStoresLoaded` is mapped through the response layer for future use. Every keystroke
+  and chip switch issues a fresh query anyway, so a store set still warming up self-heals on
+  the next user interaction.
 
 ### Loading — messages
 
