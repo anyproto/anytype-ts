@@ -604,9 +604,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Creator attribution only makes sense in spaces with more than one member. The exact
 	// member list only exists for the current space; other spaces use isShared as the proxy
 	// (a non-shared space cannot have a second member)
+	// Computed once per popup open: getParticipantsList maps every participant record
+	// through the detail store - calling it per row was 87% of scroll CPU (perf trace)
+	const currentSpaceMembersRef = useRef<boolean | null>(null);
+
 	const spaceHasMembers = (spaceId: string): boolean => {
 		if (spaceId == S.Common.space) {
-			return U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).length > 1;
+			if (currentSpaceMembersRef.current === null) {
+				currentSpaceMembersRef.current = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).length > 1;
+			};
+
+			return currentSpaceMembersRef.current;
 		};
 
 		// Other spaces: count actual active members from the participants snapshot -
@@ -648,12 +656,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return creator ? U.String.sprintf(translate('popupSearchByCreator'), U.Object.name(creator)) : '';
 	};
 
-	// The object's creator participant, for the "by <name>" caption
+	// The object's creator participant, for the "by <name>" caption.
+	// Contract: the caller has already checked wantsCreator - re-checking here doubled the
+	// per-row cost (perf trace)
 	const getObjectCreator = (item: any): any => {
-		if (!wantsCreator(item)) {
-			return null;
-		};
-
 		const participantId = getCreatorParticipantId(item);
 		const object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.participant), participantId, []);
 
@@ -1938,7 +1944,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 										onRowsRendered={onRowsRendered}
 										onScroll={onScroll}
 										scrollToAlignment="center"
-										overscanRowCount={20}
+										overscanRowCount={10}
 									/>
 								)}
 							</AutoSizer>
