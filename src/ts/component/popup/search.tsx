@@ -626,13 +626,33 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
-	// The object's creator participant, for the "by <name>" caption. Hidden when it is the
-	// current account - single-author spaces would stamp it on every row
-	const getObjectCreator = (item: any): any => {
+	// Creator attribution only makes sense in spaces with more than one member. The exact
+	// member list only exists for the current space; other spaces use isShared as the proxy
+	// (a non-shared space cannot have a second member)
+	const spaceHasMembers = (spaceId: string): boolean => {
+		if (spaceId == S.Common.space) {
+			return U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).length > 1;
+		};
+
+		return Boolean(U.Space.getSpaceviewBySpaceId(spaceId)?.isShared);
+	};
+
+	// Whether the row should carry a "by <name>" caption: multi-member space, created by
+	// someone else (single-author spaces would stamp it on every row)
+	const wantsCreator = (item: any): boolean => {
 		const { account } = S.Auth;
 		const spaceId = item.spaceId || S.Common.space;
 
-		if (!item.creator || !account || (item.creator == U.Space.getParticipantId(spaceId, account.id))) {
+		return Boolean(item.creator && account &&
+			(item.creator != U.Space.getParticipantId(spaceId, account.id)) &&
+			spaceHasMembers(spaceId));
+	};
+
+	// The object's creator participant, for the "by <name>" caption
+	const getObjectCreator = (item: any): any => {
+		const spaceId = item.spaceId || S.Common.space;
+
+		if (!wantsCreator(item)) {
 			return null;
 		};
 
@@ -651,15 +671,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	// Batch-resolve creators of cross-space results not covered by any store
 	const resolveObjectCreators = (records: any[]) => {
-		const { account } = S.Auth;
-
-		if (!account) {
-			return;
-		};
-
 		const ids = U.Common.arrayUnique(
-			records.filter(it => it.creator && !getObjectCreator(it) && (it.creator != U.Space.getParticipantId(it.spaceId || S.Common.space, account.id))).
-				map(it => it.creator)
+			records.filter(it => wantsCreator(it) && !getObjectCreator(it)).map(it => it.creator)
 		).filter(it => it && !depsRef.current.has(it));
 
 		if (!ids.length) {
