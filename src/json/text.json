@@ -325,6 +325,7 @@
 	"pluralLCFile": "file|files",
 	"pluralPdf": "Pdf|Pdfs",
 	"pluralBookmark": "Bookmark|Bookmarks",
+	"pluralChannel": "Channel|Channels",
 	"pluralAttachment": "Attachment|Attachments",
 	"pluralRule": "rule|rules",
 	"pluralSort": "sort|sorts",

@@ -37,7 +37,6 @@ const GLOBAL_LAYOUTS: { [key: string]: I.ObjectLayout[] } = {
 	[SEARCH_TYPE_QUERY]: [ I.ObjectLayout.Set ],
 	[SEARCH_TYPE_CHAT]: [ I.ObjectLayout.Chat ],
 	[SEARCH_TYPE_TYPE]: [ I.ObjectLayout.Type ],
-	[SEARCH_TYPE_MEMBER]: [ I.ObjectLayout.Participant ],
 };
 
 const isMac = U.Common.isPlatformMac();
@@ -1065,8 +1064,60 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Global mode: one-shot cross-space search, no subscription. allStoresLoaded=false means
 	// the sequential per-space store warm-up is still running and the view is partial - no
 	// auto-retry in v1, the next keystroke/chip switch re-queries anyway
+	// Global Members: a local view over the participants map - deduplicated by identity with
+	// a per-person space count; name matching is a substring test, no fulltext roundtrip
+	const loadGlobalMembers = (callBack?: () => void) => {
+		const text = filterValueRef.current.toLowerCase();
+		const byIdentity = new Map<string, { object: any; spaceCount: number }>();
+
+		GLOBAL_DEPS.participants.forEach((it: any, id: string) => {
+			if ((it.participantStatus != I.ParticipantStatus.Active) || it.isDeleted) {
+				return;
+			};
+
+			const identity = U.Space.getAccountFromParticipantId(id);
+
+			let entry = byIdentity.get(identity);
+
+			if (!entry) {
+				entry = { object: it, spaceCount: 0 };
+				byIdentity.set(identity, entry);
+			};
+
+			entry.spaceCount++;
+
+			// Prefer the current space's participant object as the representative
+			if (it.spaceId == S.Common.space) {
+				entry.object = it;
+			};
+		});
+
+		let list = [ ...byIdentity.values() ];
+
+		if (text) {
+			list = list.filter(({ object }) => {
+				return [ object.name, object.globalName ].some(n => String(n || '').toLowerCase().includes(text));
+			});
+		};
+
+		list.sort((a, b) => String(a.object.name || '').localeCompare(String(b.object.name || '')));
+
+		itemsRef.current = list.map(({ object, spaceCount }) => ({ ...object, metaList: [], links: [], backlinks: [], isMemberAgg: true, spaceCount }));
+		itemsModeRef.current = SEARCH_TYPE_MEMBER;
+		hasMoreRef.current = false;
+
+		setIsLoading(false);
+		setDummy(prev => prev + 1);
+		callBack?.();
+	};
+
 	const loadGlobalObjects = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
 		const searchType = getSearchType();
+
+		if (searchType == SEARCH_TYPE_MEMBER) {
+			loadGlobalMembers(callBack);
+			return;
+		};
 		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
 		// ignoreChat defaults to the CURRENT spaceview's isOneToOne, which would inject
 		// resolvedLayout/recommendedLayout NotIn [Chat, ChatOld, Discussion] and hide every
@@ -1390,6 +1441,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			items.unshift({ name, isSection: true, withClear: true });
 		} else
 		if (!filter && items.length) {
+			// The global Members list is a local alphabetical aggregate - plain title, no order
+			if (isGlobal && (searchType == SEARCH_TYPE_MEMBER)) {
+				items.unshift({ name: translate('popupSearchTypeMembers'), isSection: true });
+			} else {
+
 			// Every object chip states its browse order in the title; the right-side action
 			// switches between the chip's primary recency order and recently created
 			const { primary, secondary } = getRecentOrders(searchType);
@@ -1421,6 +1477,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				withSort: Boolean(secondary),
 				sortSwitchText: other ? translate(other.label) : '',
 			});
+
+			};
 		};
 
 		items = items.map(it => {
@@ -1813,7 +1871,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (isGlobal) {
 			// First-ever use starts the app-lifetime subscriptions (one redraw when the
 			// initial data lands); later opens sync from memory - no redraw
-			subscribeGlobalDeps(() => setDummy(prev => prev + 1));
+			subscribeGlobalDeps(() => {
+				if (getSearchType() == SEARCH_TYPE_MEMBER) {
+					reload(true);
+				} else {
+					setDummy(prev => prev + 1);
+				};
+			});
 		};
 
 		// Restore a saved drill (legacy storage.backlink migrates to the backlink kind)
@@ -2045,8 +2109,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				);
 			};
 
-			const spaceview = isGlobal ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
+			const spaceview = (isGlobal && !item.isMemberAgg) ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
 			const creatorLabel = getObjectCreatorLabel(item);
+			const memberSpaces = item.isMemberAgg ?
+				`${translate('popupSearchInSpace')} ${item.spaceCount} ${U.Common.plural(item.spaceCount, translate('pluralChannel'))}` : '';
 
 			let name = U.Object.name(item, true);
 
@@ -2076,7 +2142,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
 						{Context(meta)}
 						<div className="caption">
-							<ObjectType object={type} />
+							{memberSpaces ? <div className="prep">{memberSpaces}</div> : <ObjectType object={type} />}
 							{creatorLabel ? (
 								<>
 									<div className="bullet" />
