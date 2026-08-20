@@ -1317,7 +1317,21 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const chat = getMessageChat(item);
 
 			close(() => {
-				if (chat) {
+				if (!chat) {
+					return;
+				};
+
+				// The container is already open: navigating to the same route does not
+				// remount the page, and messageId is only read on mount - scroll directly
+				// (the same event the in-chat search menu uses, which also loads around
+				// messages that are not in the current window)
+				if (chat.id == rootId) {
+					if (U.Object.isChatLayout(chat.layout)) {
+						U.Dom.eventDispatch(window, 'scrollToMessage', { id: item.messageId });
+					} else {
+						U.Comment.scrollToMessage(item.messageId);
+					};
+				} else {
 					U.Object.openEvent(e, { ...chat, _routeParam_: { messageId: item.messageId } });
 				};
 			});
