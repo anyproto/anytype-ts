@@ -626,6 +626,60 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
+	// The object's creator participant, for the "by <name>" caption. Hidden when it is the
+	// current account - single-author spaces would stamp it on every row
+	const getObjectCreator = (item: any): any => {
+		const { account } = S.Auth;
+		const spaceId = item.spaceId || S.Common.space;
+
+		if (!item.creator || !account || (item.creator == U.Space.getParticipantId(spaceId, account.id))) {
+			return null;
+		};
+
+		let object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.participant), item.creator, []);
+
+		if (object._empty_ && isGlobal) {
+			object = S.Detail.get(U.Space.getSubSpaceSubId(spaceId), item.creator, []);
+
+			if (object._empty_) {
+				return depsRef.current.get(item.creator) || null;
+			};
+		};
+
+		return object._empty_ ? null : object;
+	};
+
+	// Batch-resolve creators of cross-space results not covered by any store
+	const resolveObjectCreators = (records: any[]) => {
+		const { account } = S.Auth;
+
+		if (!account) {
+			return;
+		};
+
+		const ids = U.Common.arrayUnique(
+			records.filter(it => it.creator && !getObjectCreator(it) && (it.creator != U.Space.getParticipantId(it.spaceId || S.Common.space, account.id))).
+				map(it => it.creator)
+		).filter(it => it && !depsRef.current.has(it));
+
+		if (!ids.length) {
+			return;
+		};
+
+		const filters: any[] = [
+			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
+		];
+
+		C.ObjectCrossSpaceSearch(filters, [], U.Subscription.participantRelationKeys(), '', 0, ids.length, (message: any) => {
+			if (message.error.code || !message.records.length) {
+				return;
+			};
+
+			message.records.forEach(it => depsRef.current.set(it.id, S.Detail.mapper(it)));
+			setDummy(prev => prev + 1);
+		});
+	};
+
 	// Batch-resolve type objects of cross-space results - the type store only holds the
 	// current space's types, so captions of results from other spaces need a lookup
 	const resolveObjectTypes = (records: any[]) => {
@@ -899,6 +953,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			itemsModeRef.current = searchType;
 			hasMoreRef.current = records.length == limit;
 			resolveObjectTypes(records);
+			resolveObjectCreators(records);
 
 			if (!clear) {
 				setDummy(prev => prev + 1);
@@ -1663,6 +1718,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			const spaceview = isGlobal ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
+			const creator = getObjectCreator(item);
 
 			let name = U.Object.name(item, true);
 
@@ -1693,6 +1749,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						{Context(meta)}
 						<div className="caption">
 							<ObjectType object={type} />
+							{creator ? (
+								<>
+									<div className="bullet" />
+									<div className="creator">{U.String.sprintf(translate('popupSearchByCreator'), U.Object.name(creator))}</div>
+								</>
+							) : ''}
 							{spaceview ? (
 								<>
 									<div className="bullet" />

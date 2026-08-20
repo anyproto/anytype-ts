@@ -109,11 +109,12 @@
 				.icon.advanced { opacity: 1; }
 			}
 
-			.item.isGlobal {
-				.caption { display: flex; align-items: center; gap: 0px 6px; }
-				.caption {
+			.item {
+				.side.left .caption { display: flex; align-items: center; gap: 0px 6px; }
+				.side.left .caption {
 					.iconObject { flex-shrink: 0; background: none; border-radius: 0px; }
 					.name { @include text-overflow-nw; font-weight: 400; }
+					.creator { @include text-overflow-nw; flex-shrink: 2; }
 				}
 			}
 
