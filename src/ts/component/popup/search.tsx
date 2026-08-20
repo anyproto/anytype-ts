@@ -524,18 +524,24 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return '';
 	};
 
+	const startDrill = (kind: string, object: any) => {
+		if (!object) {
+			return;
+		};
+
+		storageSet({ [drillKey]: { kind, id: object.id } });
+		setDrillState(kind, object, 'Empty', () => reload());
+	};
+
 	const onDrill = (e: any, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
 		const kind = getDrillKind(item);
 
-		if (!kind) {
-			return;
+		if (kind) {
+			startDrill(kind, item);
 		};
-
-		storageSet({ [drillKey]: { kind, id: item.id } });
-		setDrillState(kind, item, 'Empty', () => reload());
 	};
 
 	const setDrillState = (kind: string, item: any, type: string, callBack?: () => void) => {
@@ -2193,6 +2199,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			const spaceview = (isGlobal && !item.isMemberAgg) ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
 			const creatorLabel = getObjectCreatorLabel(item);
+			const creatorObject = creatorLabel ? getObjectCreator(item) : null;
 			const memberSpaces = item.isMemberAgg ?
 				`${translate('popupSearchInSpace')} ${item.spaceCount} ${U.Common.plural(item.spaceCount, translate('pluralChannel'))}` : '';
 
@@ -2224,11 +2231,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
 						{Context(meta)}
 						<div className="caption">
-							{memberSpaces ? <div className="prep">{memberSpaces}</div> : <ObjectType object={type} />}
+							{memberSpaces ? <div className="prep">{memberSpaces}</div> : (
+								<div className="drillLink" onClick={e => { e.stopPropagation(); startDrill('type', type); }}>
+									<ObjectType object={type} />
+								</div>
+							)}
 							{creatorLabel ? (
 								<>
 									<div className="bullet" />
-									<div className="creator">{creatorLabel}</div>
+									{creatorObject ? (
+										<div className="creator drillLink" onClick={e => { e.stopPropagation(); startDrill('creator', creatorObject); }}>{creatorLabel}</div>
+									) : (
+										<div className="creator">{creatorLabel}</div>
+									)}
 								</>
 							) : ''}
 							{spaceview ? (

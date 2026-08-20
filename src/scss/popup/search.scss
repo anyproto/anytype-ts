@@ -116,6 +116,7 @@
 					.iconObject { flex-shrink: 0; background: none; border-radius: 0px; }
 					.name { @include text-overflow-nw; font-weight: 400; }
 					.creator { @include text-overflow-nw; flex-shrink: 2; }
+					.drillLink:hover { text-decoration: underline; }
 				}
 			}
 
@@ -158,6 +159,7 @@
 						@include text-small; padding: 0px 4px; border-radius: 4px; height: 18px; line-height: 18px;
 						background: var(--color-shape-tertiary); min-width: 18px; text-align: center;
 					}
+					.sep { @include text-small; color: var(--color-text-secondary); }
 				}
 				.label { @include text-small; color: var(--color-text-secondary); }
 			}
