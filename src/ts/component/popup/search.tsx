@@ -656,12 +656,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
-	// Both browse orders of a chip. label is the bare translate key; appending "Type" gives
-	// the "%s"-noun variant. Primary: chats live by activity, types by usage, everything else
-	// by edit date. Secondary: file chips by the date the file was added to the vault (their
-	// createdDate carries the original file date from exif/meta), everything else by
-	// creation date
-	const getRecentOrders = (searchType: string): { primary: { label: string; sorts: any[] }; secondary: { label: string; sorts: any[] } } => {
+	// Browse orders of a chip. label is the bare translate key; appending "Type" gives the
+	// "%s"-noun variant. Primary: chats live by activity, types by usage, everything else by
+	// edit date. Secondary (the -> switch target): creation date; null = no switch. File
+	// chips have a single meaningful order - the date the file was added to the vault
+	// (createdDate carries the original file date from exif/meta, edits are rare)
+	const getRecentOrders = (searchType: string): { primary: { label: string; sorts: any[] }; secondary: { label: string; sorts: any[] } | null } => {
+		if ([ SEARCH_TYPE_MEDIA, SEARCH_TYPE_FILE, SEARCH_TYPE_IMAGE ].includes(searchType)) {
+			return {
+				primary: { label: 'popupSearchRecentAdded', sorts: [ { relationKey: 'addedDate', type: I.SortType.Desc } ] },
+				secondary: null,
+			};
+		};
+
 		let primary = { label: 'popupSearchRecentEdited', sorts: [ { relationKey: 'lastModifiedDate', type: I.SortType.Desc } ] };
 
 		if (searchType == SEARCH_TYPE_CHAT) {
@@ -677,11 +684,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
-		const secondary = [ SEARCH_TYPE_MEDIA, SEARCH_TYPE_FILE, SEARCH_TYPE_IMAGE ].includes(searchType) ?
-			{ label: 'popupSearchRecentAdded', sorts: [ { relationKey: 'addedDate', type: I.SortType.Desc } ] } :
-			{ label: 'popupSearchRecentCreated', sorts: [ { relationKey: 'createdDate', type: I.SortType.Desc } ] };
-
-		return { primary, secondary };
+		return {
+			primary,
+			secondary: { label: 'popupSearchRecentCreated', sorts: [ { relationKey: 'createdDate', type: I.SortType.Desc } ] },
+		};
 	};
 
 	// Objects created by the current account (creator only - lastModifiedBy is noisy because
@@ -842,7 +848,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		if ((searchType == SEARCH_TYPE_CHAT) || !fullText) {
 			const orders = getRecentOrders(searchType);
-			sorts = (recentSortRef.current == 'created') ? orders.secondary.sorts : orders.primary.sorts;
+			sorts = ((recentSortRef.current == 'created') && orders.secondary) ? orders.secondary.sorts : orders.primary.sorts;
 		};
 
 		sorts = sorts.map(U.Subscription.sortMapper);
@@ -957,7 +963,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Empty browse follows the toggle order shown in the section title
 		if (!filterValueRef.current) {
 			const orders = getRecentOrders(searchType);
-			sorts = (recentSortRef.current == 'created') ? orders.secondary.sorts : orders.primary.sorts;
+			sorts = ((recentSortRef.current == 'created') && orders.secondary) ? orders.secondary.sorts : orders.primary.sorts;
 		};
 
 		sorts = sorts.map(U.Subscription.sortMapper);
@@ -1066,8 +1072,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (!filter && items.length) {
 			// Every object chip states its browse order in the title; the right-side action
 			// switches between the chip's primary recency order and recently created
-			const created = recentSortRef.current == 'created';
 			const { primary, secondary } = getRecentOrders(searchType);
+			const created = (recentSortRef.current == 'created') && Boolean(secondary);
 
 			let noun = '';
 
@@ -1092,8 +1098,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			items.unshift({
 				name: sectionName,
 				isSection: true,
-				withSort: true,
-				sortSwitchText: translate(other.label),
+				withSort: Boolean(secondary),
+				sortSwitchText: other ? translate(other.label) : '',
 			});
 		};
 
