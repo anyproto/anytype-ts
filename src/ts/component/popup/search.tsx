@@ -271,6 +271,22 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
+		// Left arrow at the query start clears the active drill, mirroring Escape
+		keyboard.shortcut('arrowleft', e, () => {
+			if (!drillRef.current) {
+				return;
+			};
+
+			const range = filterInputRef.current?.getRange();
+
+			if (range && (range.from || range.to)) {
+				return;
+			};
+
+			e.preventDefault();
+			onClearSearch();
+		});
+
 		// Right arrow drills like shift+enter - but only when the caret sits at the end of
 		// the query, so arrows keep editing text otherwise
 		keyboard.shortcut('arrowright', e, () => {
@@ -525,8 +541,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		drillRef.current = { kind, object: item };
 
 		// A specific type is narrower than any chip - force All while type-drilled.
-		// A creator drill replaces the My objects chip (also a creator filter)
-		if ((kind == 'type') || ((kind == 'creator') && (searchTypeRef.current == SEARCH_TYPE_MINE))) {
+		// A creator drill replaces the creator-flavored chips (My objects, Members)
+		if ((kind == 'type') || ((kind == 'creator') && [ SEARCH_TYPE_MINE, SEARCH_TYPE_MEMBER ].includes(searchTypeRef.current))) {
 			searchTypeRef.current = SEARCH_TYPE_ALL;
 		};
 
@@ -585,21 +601,23 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const getTypeItems = () => {
+		// The creator drill replaces the creator-flavored chips (My objects, Members)
+		const applyDrillGating = (list: any[]) => {
+			return (drillRef.current?.kind == 'creator') ?
+				list.filter(it => ![ SEARCH_TYPE_MINE, SEARCH_TYPE_MEMBER ].includes(it.id)) : list;
+		};
+
 		const ret: any[] = [
 			{ id: SEARCH_TYPE_ALL, name: translate('popupSearchTypeAll') },
+			{ id: SEARCH_TYPE_MINE, name: translate('popupSearchTypeMine') },
 		];
-
-		// My objects is a creator filter itself - hidden while a creator drill is active
-		if (drillRef.current?.kind != 'creator') {
-			ret.push({ id: SEARCH_TYPE_MINE, name: translate('popupSearchTypeMine') });
-		};
 
 		if (hasMessageContainers()) {
 			ret.push({ id: SEARCH_TYPE_MESSAGE, name: translate('popupSearchTypeMessages') });
 		};
 
 		if (isGlobal) {
-			return ret.concat([
+			return applyDrillGating(ret.concat([
 				{ id: SEARCH_TYPE_PAGE, name: translate('popupSearchTypePages') },
 				{ id: SEARCH_TYPE_MEDIA, name: translate('commonMedia') },
 				{ id: SEARCH_TYPE_BOOKMARK, name: translate('popupSearchTypeBookmarks') },
@@ -608,7 +626,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				{ id: SEARCH_TYPE_CHAT, name: translate('popupSearchTypeChats') },
 				{ id: SEARCH_TYPE_MEMBER, name: translate('popupSearchTypeMembers') },
 				{ id: SEARCH_TYPE_TYPE, name: translate('popupSearchTypeTypes') },
-			]);
+			]));
 		};
 
 		const skip = U.Object.getFileLayouts().concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ]);
@@ -619,7 +637,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		ret.push({ id: SEARCH_TYPE_MEDIA, name: translate('commonMedia') });
 		ret.push({ id: SEARCH_TYPE_MEMBER, name: translate('popupSearchTypeMembers') });
 
-		return ret.concat(types);
+		return applyDrillGating(ret.concat(types));
 	};
 
 	const onSearchTypeSwitch = (id: string) => {
