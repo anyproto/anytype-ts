@@ -407,7 +407,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if ((dir < 0) && (nRef.current < 0)) {
-			nRef.current = l - 1;
+			// No wrap-around upwards: with lazy loading the "last" row is just the last
+			// loaded one, so jumping there reads as random - stay on the first entry
+			const first = items.findIndex(it => !it.isSection);
+
+			nRef.current = first >= 0 ? first : 0;
+			scrollToRow(items, nRef.current);
+			setActive(items[nRef.current]);
+			return;
 		};
 
 		const item = items[nRef.current];
