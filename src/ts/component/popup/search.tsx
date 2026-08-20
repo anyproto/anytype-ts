@@ -620,6 +620,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return Boolean(spaceview.isShared || spaceview.isOneToOne);
 	};
 
+	// creator may hold a participant id or (on older objects) the bare identity -
+	// normalize to the participant id of the object's space
+	const getCreatorParticipantId = (item: any): string => {
+		const creator = String(item.creator || '');
+
+		if (!creator || creator.startsWith('_participant_')) {
+			return creator;
+		};
+
+		return U.Space.getParticipantId(item.spaceId || S.Common.space, creator);
+	};
+
 	// Whether the row should carry a "by ..." caption: multi-member spaces attribute every
 	// row (own objects read "by You"); single-member spaces show nothing
 	const wantsCreator = (item: any): boolean => {
@@ -634,7 +646,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		const spaceId = item.spaceId || S.Common.space;
 
-		if (item.creator == U.Space.getParticipantId(spaceId, S.Auth.account.id)) {
+		if (getCreatorParticipantId(item) == U.Space.getParticipantId(spaceId, S.Auth.account.id)) {
 			return translate('popupSearchByYou');
 		};
 
@@ -650,13 +662,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return null;
 		};
 
-		const object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.participant), item.creator, []);
+		const participantId = getCreatorParticipantId(item);
+		const object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.participant), participantId, []);
 
 		if (!object._empty_) {
 			return object;
 		};
 
-		return participantsRef.current.get(item.creator) || null;
+		return participantsRef.current.get(participantId) || null;
 	};
 
 	// Batch-resolve type objects of cross-space results - the type store only holds the
@@ -945,6 +958,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			itemsModeRef.current = searchType;
 			hasMoreRef.current = records.length == limit;
 			resolveObjectTypes(records);
+
 
 			if (!clear) {
 				setDummy(prev => prev + 1);
