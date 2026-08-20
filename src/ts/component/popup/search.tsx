@@ -1117,7 +1117,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// a per-person space count; name matching is a substring test, no fulltext roundtrip
 	const loadGlobalMembers = (callBack?: () => void) => {
 		const text = filterValueRef.current.toLowerCase();
-		const byIdentity = new Map<string, { object: any; spaceCount: number }>();
+		const byIdentity = new Map<string, { identity: string; object: any; spaceCount: number }>();
 
 		GLOBAL_DEPS.participants.forEach((it: any, id: string) => {
 			if ((it.participantStatus != I.ParticipantStatus.Active) || it.isDeleted) {
@@ -1129,7 +1129,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			let entry = byIdentity.get(identity);
 
 			if (!entry) {
-				entry = { object: it, spaceCount: 0 };
+				entry = { identity, object: it, spaceCount: 0 };
 				byIdentity.set(identity, entry);
 			};
 
@@ -1149,7 +1149,32 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			});
 		};
 
-		list.sort((a, b) => String(a.object.name || '').localeCompare(String(b.object.name || '')));
+		// People you have 1:1 Channels with come first, in the Vault sidebar's own order
+		// (the 1:1 spaceview carries the other person's identity); the rest alphabetically
+		const oneToOneOrder = new Map<string, number>();
+
+		U.Menu.getVaultItems().forEach((it: any) => {
+			if (it.isOneToOne && it.oneToOneIdentity && !oneToOneOrder.has(it.oneToOneIdentity)) {
+				oneToOneOrder.set(it.oneToOneIdentity, oneToOneOrder.size);
+			};
+		});
+
+		list.sort((a: any, b: any) => {
+			const oa = oneToOneOrder.has(a.identity) ? oneToOneOrder.get(a.identity) : -1;
+			const ob = oneToOneOrder.has(b.identity) ? oneToOneOrder.get(b.identity) : -1;
+
+			if ((oa >= 0) && (ob >= 0)) {
+				return oa - ob;
+			};
+			if (oa >= 0) {
+				return -1;
+			};
+			if (ob >= 0) {
+				return 1;
+			};
+
+			return String(a.object.name || '').localeCompare(String(b.object.name || ''));
+		});
 
 		itemsRef.current = list.map(({ object, spaceCount }) => ({ ...object, metaList: [], links: [], backlinks: [], isMemberAgg: true, spaceCount }));
 		itemsModeRef.current = SEARCH_TYPE_MEMBER;
