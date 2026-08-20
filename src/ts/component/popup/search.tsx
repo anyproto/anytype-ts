@@ -11,6 +11,7 @@ const HEIGHT_MESSAGE = 76;
 const LIMIT_HEIGHT = 15;
 
 const SEARCH_TYPE_ALL = 'all';
+const SEARCH_TYPE_MINE = 'mine';
 const SEARCH_TYPE_MESSAGE = 'message';
 const SEARCH_TYPE_MEDIA = 'media';
 const SEARCH_TYPE_FILE = 'file';
@@ -228,7 +229,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					U.Menu.onFileUploadPopup(I.ObjectLayout.File, '', {}, undefined, analytics.route.uploadGlobalMenu);
 				}, S.Popup.getTimeout());
 			} else
-			if (![ SEARCH_TYPE_ALL, SEARCH_TYPE_MESSAGE ].includes(searchType)) {
+			if (![ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MESSAGE ].includes(searchType)) {
 				close(() => createTypedObject(searchType, filter));
 			} else {
 				close(() => pageCreate(filter));
@@ -415,7 +416,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return hasMessageContainers() ? type : SEARCH_TYPE_ALL;
 		};
 
-		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MEDIA ].includes(type)) {
+		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MEDIA ].includes(type)) {
 			return type;
 		};
 
@@ -425,6 +426,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const getTypeItems = () => {
 		const ret: any[] = [
 			{ id: SEARCH_TYPE_ALL, name: translate('popupSearchTypeAll') },
+			{ id: SEARCH_TYPE_MINE, name: translate('popupSearchTypeMine') },
 		];
 
 		if (hasMessageContainers()) {
@@ -477,8 +479,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		const known = [
-			SEARCH_TYPE_ALL, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_FILE, SEARCH_TYPE_IMAGE,
-			SEARCH_TYPE_BOOKMARK, SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT, SEARCH_TYPE_TYPE,
+			SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_FILE,
+			SEARCH_TYPE_IMAGE, SEARCH_TYPE_BOOKMARK, SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT,
+			SEARCH_TYPE_TYPE,
 		];
 		const type = known.includes(id) ? U.String.ucFirst(id) : 'Type';
 
@@ -640,6 +643,24 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
+	// Objects created or last edited by the current account. creator/lastModifiedBy hold
+	// participant ids, which are per-space - global mode matches against the account's
+	// participant id in every space
+	const getMineFilter = (): any => {
+		const { account } = S.Auth;
+		const ids = isGlobal ?
+			U.Space.getList().map(it => U.Space.getParticipantId(it.targetSpaceId, account.id)) :
+			[ U.Space.getCurrentParticipantId() ];
+
+		return {
+			operator: I.FilterOperator.Or,
+			nestedFilters: [
+				{ relationKey: 'creator', condition: I.FilterCondition.In, value: ids },
+				{ relationKey: 'lastModifiedBy', condition: I.FilterCondition.In, value: ids },
+			],
+		};
+	};
+
 	const loadMessages = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
 		const { space } = S.Common;
 		const text = filterValueRef.current;
@@ -741,6 +762,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (GLOBAL_LAYOUTS[searchType]) {
 			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: GLOBAL_LAYOUTS[searchType] });
+		};
+
+		if (searchType == SEARCH_TYPE_MINE) {
+			filters.push(getMineFilter());
 		};
 
 		let fullText = filterValueRef.current;
@@ -850,6 +875,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		]);
 
+		if (searchType == SEARCH_TYPE_MINE) {
+			filters.push(getMineFilter());
+		} else
 		if (searchType == SEARCH_TYPE_MEDIA) {
 			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: U.Object.getFileLayouts() });
 		} else
@@ -970,7 +998,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (searchType == SEARCH_TYPE_MEDIA) {
 				sectionName = U.String.sprintf(translate('popupSearchRecentType'), translate('commonMedia'));
 			} else
-			if (!isAll) {
+			if (!isAll && (searchType != SEARCH_TYPE_MINE)) {
 				if (isGlobal) {
 					const chip = getTypeItems().find(it => it.id == searchType);
 
@@ -1087,7 +1115,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const actions: any[] = [];
 
 			if (canWrite) {
-				if (isAll) {
+				if (isAll || (searchType == SEARCH_TYPE_MINE)) {
 					actions.push({ id: 'add', name, iconParam: { name: 'plus/menu' }, shortcut: keyboard.getSymbolsFromKeys(keyboard.getKeys('createObject')) });
 					actions.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' } });
 				} else
