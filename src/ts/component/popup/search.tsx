@@ -19,6 +19,7 @@ const SEARCH_TYPE_BOOKMARK = 'bookmark';
 const SEARCH_TYPE_COLLECTION = 'collection';
 const SEARCH_TYPE_QUERY = 'query';
 const SEARCH_TYPE_CHAT = 'chat';
+const SEARCH_TYPE_TYPE = 'type';
 
 // Global (cross-space) mode filters by resolvedLayout - types can't be merged across spaces
 const GLOBAL_LAYOUTS: { [key: string]: I.ObjectLayout[] } = {
@@ -28,6 +29,7 @@ const GLOBAL_LAYOUTS: { [key: string]: I.ObjectLayout[] } = {
 	[SEARCH_TYPE_COLLECTION]: [ I.ObjectLayout.Collection ],
 	[SEARCH_TYPE_QUERY]: [ I.ObjectLayout.Set ],
 	[SEARCH_TYPE_CHAT]: [ I.ObjectLayout.Chat ],
+	[SEARCH_TYPE_TYPE]: [ I.ObjectLayout.Type ],
 };
 
 const isMac = U.Common.isPlatformMac();
@@ -82,8 +84,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const typeSelectRef = useRef(null);
 	const chatIdsRef = useRef<string[]>([]);
 	const chatsSubId = [ getId(), 'chats' ].join('-');
-	// Cross-space message authors resolved via one-shot search (no store subscription)
-	const authorsRef = useRef(new Map<string, any>());
+	// Cross-space dependencies (message authors, object types) resolved via one-shot search
+	// and cached per popup - no store subscription
+	const depsRef = useRef(new Map<string, any>());
 
 	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
@@ -426,6 +429,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				{ id: SEARCH_TYPE_COLLECTION, name: translate('popupSearchTypeCollections') },
 				{ id: SEARCH_TYPE_QUERY, name: translate('popupSearchTypeQueries') },
 				{ id: SEARCH_TYPE_CHAT, name: translate('popupSearchTypeChats') },
+				{ id: SEARCH_TYPE_TYPE, name: translate('popupSearchTypeTypes') },
 			]);
 		};
 
@@ -464,7 +468,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		const known = [
 			SEARCH_TYPE_ALL, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_FILE, SEARCH_TYPE_IMAGE,
-			SEARCH_TYPE_BOOKMARK, SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT,
+			SEARCH_TYPE_BOOKMARK, SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT, SEARCH_TYPE_TYPE,
 		];
 		const type = known.includes(id) ? U.String.ucFirst(id) : 'Type';
 
@@ -568,7 +572,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return object;
 		};
 
-		return authorsRef.current.get(participantId) || null;
+		return depsRef.current.get(participantId) || null;
 	};
 
 	// Batch-resolve message authors from other spaces via the one-shot cross-space search
@@ -576,7 +580,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const ids = U.Common.arrayUnique(
 			records.filter(it => !getMessageAuthor(it)).
 				map(it => U.Space.getParticipantId(it.spaceId || S.Common.space, it.message?.creator))
-		).filter(it => it && !authorsRef.current.has(it));
+		).filter(it => it && !depsRef.current.has(it));
 
 		if (!ids.length) {
 			return;
@@ -591,7 +595,32 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				return;
 			};
 
-			message.records.forEach(it => authorsRef.current.set(it.id, S.Detail.mapper(it)));
+			message.records.forEach(it => depsRef.current.set(it.id, S.Detail.mapper(it)));
+			setDummy(prev => prev + 1);
+		});
+	};
+
+	// Batch-resolve type objects of cross-space results - the type store only holds the
+	// current space's types, so captions of results from other spaces need a lookup
+	const resolveObjectTypes = (records: any[]) => {
+		const ids = U.Common.arrayUnique(records.map(it => it.type)).filter(id => {
+			return id && !S.Record.getTypeById(id) && !depsRef.current.has(id);
+		});
+
+		if (!ids.length) {
+			return;
+		};
+
+		const filters: any[] = [
+			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
+		];
+
+		C.ObjectCrossSpaceSearch(filters, [], U.Subscription.typeRelationKeys(false), '', 0, ids.length, (message: any) => {
+			if (message.error.code || !message.records.length) {
+				return;
+			};
+
+			message.records.forEach(it => depsRef.current.set(it.id, S.Detail.mapper(it)));
 			setDummy(prev => prev + 1);
 		});
 	};
@@ -742,6 +771,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			const records = (message.records || []).map(it => {
 				it = S.Detail.mapper(it);
+				// Match the ObjectSearchWithMeta record shape - the one-shot RPC carries no meta
+				it.metaList = [];
 				it.links = [];
 				it.backlinks = [];
 				return it;
@@ -749,6 +780,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			itemsRef.current = itemsRef.current.concat(records);
 			itemsModeRef.current = searchType;
+			resolveObjectTypes(records);
 
 			done();
 			callBack?.();
@@ -1419,9 +1451,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (item.isObject) {
-			const { metaList } = item;
+			// Global (cross-space) results carry no meta - the one-shot RPC has no highlights
+			const metaList = item.metaList || [];
 			const meta = metaList[0] || {};
-			const type = S.Record.getTypeById(item.type);
+			// Types of other spaces are not in the current space's type store - fall back to
+			// the batch-resolved cross-space cache
+			const type = S.Record.getTypeById(item.type) || (isGlobal ? depsRef.current.get(item.type) : null);
 
 			let advanced = null;
 
@@ -1587,7 +1622,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					iconParam={{ name: 'common/search' }}
 					value={filterValueRef.current}
 					ref={filterInputRef}
-					placeholder={translate('popupSearchPlaceholder')}
+					placeholder={translate(searchType == SEARCH_TYPE_MESSAGE ? 'popupSearchPlaceholderMessage' : 'popupSearchPlaceholder')}
 					onSelect={onFilterSelect}
 					onChange={v => onFilterChange(v)}
 					onKeyUp={(e, v) => onFilterChange(v)}

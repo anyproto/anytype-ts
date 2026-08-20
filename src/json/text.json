@@ -1616,6 +1616,7 @@
 	"popupNavigationEmptyFrom": "No links to other Objects",
 
 	"popupSearchPlaceholder": "Search for an object...",
+	"popupSearchPlaceholderMessage": "Search for a message...",
 	"popupSearchEmpty": "No Objects found",
 	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
 	"popupSearchEmptyFilter": "<b>There are no Objects named <span>\"%s\"<\/span><\/b>Try creating a new one or search for something else",
@@ -1633,6 +1634,7 @@
 	"popupSearchTypeCollections": "Collections",
 	"popupSearchTypeQueries": "Queries",
 	"popupSearchTypeChats": "Chats",
+	"popupSearchTypeTypes": "Types",
 	"popupSearchGlobalTooltip": "Search in all Channels",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
 	"popupSearchBacklinksFrom": "Related to: %s",
