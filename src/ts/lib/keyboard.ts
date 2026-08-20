@@ -404,6 +404,17 @@ class Keyboard {
 					return;
 				};
 
+				// Chat and comment inputs bind their own link-insertion on this combo
+				// and never write focus.state - any editable target outside an editor
+				// text block keeps the key
+				const ae = document.activeElement as HTMLElement;
+				const tag = String(ae?.tagName || '').toLowerCase();
+				const editable = [ 'input', 'textarea' ].includes(tag) || Boolean(ae?.isContentEditable);
+
+				if (editable && !ae?.closest('.block.blockText')) {
+					return;
+				};
+
 				const { range } = focus.state;
 				if ((this.isFocused && range && (range.from != range.to)) || selectedBlockIds.length) {
 					return;

@@ -95,9 +95,12 @@ const syncGlobalDeps = () => {
 
 const subscribeGlobalDeps = (onLoad: () => void) => {
 	const accountId = S.Auth.account?.id || '';
+	// Logout destroys all subscriptions and wipes the record store; a live participants
+	// subscription always holds at least your own participant - empty means "dead"
+	const dead = !S.Record.getRecordIds(SUB_GLOBAL_PARTICIPANTS, '').length;
 
-	// Account switch invalidates everything
-	if (GLOBAL_DEPS.subscribed && (GLOBAL_DEPS.accountId != accountId)) {
+	// Account switch or logout/login invalidates everything
+	if (GLOBAL_DEPS.subscribed && ((GLOBAL_DEPS.accountId != accountId) || dead)) {
 		GLOBAL_DEPS.subscribed = false;
 		GLOBAL_DEPS.participants.clear();
 		GLOBAL_DEPS.participantCounts.clear();
@@ -207,6 +210,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const chatIdsRef = useRef<string[]>([]);
 	// Whether the last page came back full - drives the infinite-scroll sentinel row
 	const hasMoreRef = useRef(false);
+	// Bumped on every clear-load: responses stamped with an older generation are dropped,
+	// so a slow superseded query can never clobber the current list
+	const loadGenRef = useRef(0);
+	// Last generation the measurement cache was reset for - appends must NOT wipe it
+	const cacheGenRef = useRef(0);
+	// Whether the per-open chats subscription was ever created (teardown gate)
+	const chatsSubActiveRef = useRef(false);
 	const chatsSubId = [ getId(), 'chats' ].join('-');
 
 	const onScroll = ({ scrollTop }) => {
@@ -354,7 +364,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			const item = items[nRef.current];
 			if (item && item.isObject) {
-				U.Object.copyLink(item, item.spaceId || S.Common.space, 'web', route);
+				const spaceview = U.Space.getSpaceviewBySpaceId(item.spaceId || S.Common.space);
+
+				if (spaceview) {
+					U.Object.copyLink(item, spaceview, 'web', route);
+				};
 			};
 		});
 
@@ -403,6 +417,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		const items = getItems();
 		const l = items.length;
+
+		// Nothing selectable (e.g. a drill with zero results renders only its header)
+		if (!items.some(it => !it.isSection)) {
+			return;
+		};
 
 		nRef.current += dir;
 
@@ -568,6 +587,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const setDrillState = (kind: string, item: any, type: string, callBack?: () => void) => {
 		window.clearTimeout(timeoutRef.current);
 		filterInputRef.current?.setValue('');
+		filterInputRef.current?.focus();
 
 		// A fresh drill starts with an empty query - setValue alone leaves the ref and
 		// storage stale, and the next load would silently keep filtering by the old text
@@ -919,6 +939,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		chatIdsRef.current = U.Common.arrayUnique(chatIdsRef.current.concat(ids));
 
+		chatsSubActiveRef.current = true;
+
 		U.Subscription.subscribeIds({ subId: chatsSubId, ids: chatIdsRef.current, noDeps: true }, () => {
 			setDummy(prev => prev + 1);
 		});
@@ -1121,7 +1143,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return [];
 	};
 
-	const loadMessages = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
+	const loadMessages = (clear: boolean, gen: number, callBack?: () => void, quiet?: boolean) => {
 		const { space } = S.Common;
 		const text = filterValueRef.current;
 		// Date desc for text searches too: the backend's score sort groups equal-score hits
@@ -1156,6 +1178,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		// Empty spaceId + empty chatId = all chats in all spaces (global mode)
 		C.ChatSearch(isGlobal ? '' : space, '', text, offsetRef.current, J.Constant.limit.menuRecords, sorts, creators, (message: any) => {
+			// A newer query started while this one was in flight - drop the stale response
+			if (gen != loadGenRef.current) {
+				callBack?.();
+				return;
+			};
+
 			if (message.error.code) {
 				if (clear) {
 					itemsRef.current = [];
@@ -1209,6 +1237,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		offsetRef.current = 0;
 		topRef.current = 0;
 		load(true, () => {
+			// New list: back to the top (quiet reloads keep the List mounted mid-scroll)
+			listRef.current?.scrollToPosition(0);
+
 			const items = getItems().filter(it => !it.isSection);
 
 			if (items.length) {
@@ -1292,7 +1323,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		callBack?.();
 	};
 
-	const loadGlobalObjects = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
+	const loadGlobalObjects = (clear: boolean, gen: number, callBack?: () => void, quiet?: boolean) => {
 		const searchType = getSearchType();
 
 		if (searchType == SEARCH_TYPE_MEMBER) {
@@ -1368,6 +1399,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		C.ObjectCrossSpaceSearch(filters, sorts, J.Relation.default.concat([ 'pluralName', 'creator' ]), fullText, offsetRef.current, limit, (message: any) => {
+			// A newer query started while this one was in flight - drop the stale response
+			if (gen != loadGenRef.current) {
+				callBack?.();
+				return;
+			};
+
 			if (message.error.code) {
 				if (clear) {
 					itemsRef.current = [];
@@ -1407,6 +1444,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const load = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
+		if (clear) {
+			loadGenRef.current++;
+		};
+
+		const gen = loadGenRef.current;
+
 		// "/" command mode searches chips/actions locally - no backend query
 		if (filterValueRef.current.startsWith('/')) {
 			itemsRef.current = [];
@@ -1419,12 +1462,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const searchType = getSearchType();
 
 		if (searchType == SEARCH_TYPE_MESSAGE) {
-			loadMessages(clear, callBack, quiet);
+			loadMessages(clear, gen, callBack, quiet);
 			return;
 		};
 
 		if (isGlobal) {
-			loadGlobalObjects(clear, callBack, quiet);
+			loadGlobalObjects(clear, gen, callBack, quiet);
 			return;
 		};
 
@@ -1503,6 +1546,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', 'creator', '_final_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
+			// A newer query started while this one was in flight - drop the stale response
+			if (gen != loadGenRef.current) {
+				callBack?.();
+				return;
+			};
+
 			if (message.error.code) {
 				if (clear) {
 					itemsRef.current = [];
@@ -2078,7 +2127,20 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (saved && !isGlobal) {
 			drillBackRef.current = saved.back || null;
-			U.Object.getById(saved.id, {}, item => setDrillState(saved.kind, item, 'Saved', () => setFilter()));
+
+			// getByIds always fires; getById drops the callback on a miss (deleted target)
+			// and the popup would never run its initial load
+			U.Object.getByIds([ saved.id ], {}, records => {
+				const item = (records || [])[0];
+
+				if (item) {
+					setDrillState(saved.kind, item, 'Saved', () => setFilter());
+				} else {
+					drillBackRef.current = null;
+					storageSet({ [drillKey]: null, backlink: '' });
+					setFilter();
+				};
+			});
 		} else
 		if (saved && isGlobal) {
 			// Global drills restore from the in-memory maps; a miss drops the drill
@@ -2101,7 +2163,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			window.clearTimeout(timeoutRef.current);
 			window.clearTimeout(rebindTimeoutRef.current);
 
-			if (chatIdsRef.current.length) {
+			if (chatsSubActiveRef.current) {
 				U.Subscription.destroyList([ chatsSubId ], true);
 			};
 
@@ -2124,7 +2186,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		setActive(active);
 		checkTypeSelectFade();
 
-		if (listRef.current) {
+		// Reset measured heights only when a new list replaced the old one; wiping the
+		// cache on infinite-scroll appends collapsed every off-screen row to its estimate
+		// and made the list jump under the cursor
+		if (listRef.current && (cacheGenRef.current != loadGenRef.current)) {
+			cacheGenRef.current = loadGenRef.current;
 			cacheRef.current.clearAll();
 			listRef.current.recomputeRowHeights(0);
 		};
