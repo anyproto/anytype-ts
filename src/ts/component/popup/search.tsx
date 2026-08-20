@@ -2303,7 +2303,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			<div className="foot">
 				<Shortcut keys={[ 'arrowup', 'arrowdown' ]} label={translate('popupSearchShortcutNavigate')} />
 				{!onObjectSelect ? (
-					<Shortcut keys={[ 'tab' ]} label={translate('popupSearchShortcutSwitchType')} />
+					<Shortcut keys={[ 'tab', '/' ]} label={translate('popupSearchShortcutSwitchType')} />
 				) : ''}
 				<Shortcut keys={[ 'escape' ]} label={translate('popupSearchShortcutClose')} />
 				{isObject ? (
