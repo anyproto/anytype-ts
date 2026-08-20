@@ -2184,7 +2184,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						size={28}
 						tooltipParam={{ 
 							text: translate(tooltips[drillKind]), 
-							caption: `${shift} + Enter`
+							caption: `${shift} + Enter ${translate('commonOr')} →`
 						}}
 						onClick={e => onDrill(e, item)}
 					/>
