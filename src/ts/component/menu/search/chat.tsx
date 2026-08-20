@@ -103,7 +103,7 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		C.ChatSearch(space, chatId, text, offset.current, J.Constant.limit.menuRecords, sorts, (message: any) => {
+		C.ChatSearch(space, chatId, text, offset.current, J.Constant.limit.menuRecords, sorts, [], (message: any) => {
 			if (message.error.code) {
 				callBack?.(message);
 				return;

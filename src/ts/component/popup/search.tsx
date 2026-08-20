@@ -56,7 +56,7 @@ const SUB_GLOBAL_PARTICIPANTS = 'searchGlobalParticipants';
 const SUB_GLOBAL_TYPES = 'searchGlobalTypes';
 // Only what rendering reads - keeps the payload and the maps compact
 const KEYS_GLOBAL_PARTICIPANT = [ 'id', 'spaceId', 'name', 'globalName', 'iconImage', 'layout', 'resolvedLayout', 'isDeleted', 'participantStatus' ];
-const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'layout', 'resolvedLayout', 'isDeleted' ];
+const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'uniqueKey', 'layout', 'resolvedLayout', 'isDeleted' ];
 
 const ingestGlobalParticipant = (it: any) => {
 	if (GLOBAL_DEPS.participants.has(it.id)) {
@@ -164,9 +164,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Global mode persists its state under separate keys so the two popups don't clobber each other
 	const filterKey = isGlobal ? 'filterGlobal' : 'filter';
 	const searchTypeKey = isGlobal ? 'searchTypeGlobal' : 'searchType';
+	const drillKey = isGlobal ? 'drillGlobal' : 'drill';
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
-	const backlinkRef = useRef(null);
+	// Active drill: pivot the whole search around one row - related objects (backlink),
+	// instances of a type, or objects created by a person
+	const drillRef = useRef<{ kind: string; object: any } | null>(null);
 	const nodeRef = useRef(null);
 	const filterInputRef = useRef(null);
 	const listRef = useRef(null);
@@ -253,7 +256,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		keyboard.disableMouse(true);
 		keyboard.shortcut('escape', e, () => {
-			if (backlinkRef.current) {
+			if (drillRef.current) {
 				onClearSearch();
 			} else {
 				close();
@@ -261,15 +264,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		keyboard.shortcut('shift+enter', e, () => {
-			if (!item) {
-				return;
-			};
-
-			const links = Relation.getArrayValue(item.links);
-			const backlinks = Relation.getArrayValue(item.backlinks);
-
-			if (links.length || backlinks.length) {
-				onBacklink(e, item);
+			if (item && getDrillKind(item)) {
+				onDrill(e, item);
 			};
 		});
 
@@ -465,34 +461,69 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		analytics.event('SearchInput', { route });
 	};
 
-	const onBacklink = (e: MouseEvent, item: any) => {
+	// Drill kind of a row: type rows search the type's instances, participant rows search
+	// objects created by the person, rows with links search related objects (in-space only -
+	// the object graph is per-space)
+	const getDrillKind = (item: any): string => {
+		if (!item || !item.isObject) {
+			return '';
+		};
+
+		if (U.Object.isTypeLayout(item.layout)) {
+			return 'type';
+		};
+
+		if (U.Object.isParticipantLayout(item.layout)) {
+			return 'creator';
+		};
+
+		const links = Relation.getArrayValue(item.links);
+		const backlinks = Relation.getArrayValue(item.backlinks);
+
+		if (!isGlobal && (links.length || backlinks.length)) {
+			return 'backlink';
+		};
+
+		return '';
+	};
+
+	const onDrill = (e: any, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		// Backlink search is per-space (object graph)
-		if (isGlobal) {
+		const kind = getDrillKind(item);
+
+		if (!kind) {
 			return;
 		};
 
-		storageSet({ backlink: item.id });
-		filterInputRef.current?.setValue('');
-		setBacklinkState(item, 'Empty', () => reload());
+		storageSet({ [drillKey]: { kind, id: item.id } });
+		setDrillState(kind, item, 'Empty', () => reload());
 	};
 
-	const setBacklinkState = (item: any, type: string, callBack?: () => void) => {
+	const setDrillState = (kind: string, item: any, type: string, callBack?: () => void) => {
 		filterInputRef.current?.setValue('');
-		backlinkRef.current = item;
+		drillRef.current = { kind, object: item };
 
-		analytics.event('SearchBacklink', { route, type });
+		// A specific type is narrower than any chip - force All while type-drilled
+		if (kind == 'type') {
+			searchTypeRef.current = SEARCH_TYPE_ALL;
+		};
+
+		if (kind == 'backlink') {
+			analytics.event('SearchBacklink', { route, type });
+		};
+
+		analytics.event('SearchDrill', { route, type, drillType: kind, isGlobal: Boolean(isGlobal) });
 		callBack?.();
 	};
 
 	const onClearSearch = () => {
 		offsetRef.current = 0;
 		filterInputRef.current?.setValue('');
-		backlinkRef.current = null;
+		drillRef.current = null;
 
-		storageSet({ backlink: '' });
+		storageSet({ [drillKey]: null, backlink: '' });
 		reload();
 	};
 
@@ -573,9 +604,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		searchTypeRef.current = id;
 		storageSet({ [searchTypeKey]: id });
 
-		if (backlinkRef.current) {
-			backlinkRef.current = null;
-			storageSet({ backlink: '' });
+		// The creator drill composes with chips (except My objects - two creator filters
+		// would contradict); type/backlink drills clear on any chip switch
+		if (drillRef.current && ((drillRef.current.kind != 'creator') || (id == SEARCH_TYPE_MINE))) {
+			drillRef.current = null;
+			storageSet({ [drillKey]: null, backlink: '' });
 		};
 
 		setDummy(prev => prev + 1);
@@ -829,6 +862,66 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		];
 	};
 
+	// Drill filters. Type: uniqueKey matches the same-named type in every space; creator:
+	// every per-space participant id of the person (+ the bare identity for legacy records)
+	const getDrillTypeFilter = (object: any): any => {
+		const type = S.Record.getTypeById(object.id) || (isGlobal ? GLOBAL_DEPS.types.get(object.id) : null);
+		const uniqueKey = object.uniqueKey || type?.uniqueKey;
+
+		return uniqueKey ?
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.Equal, value: uniqueKey } :
+			{ relationKey: 'type', condition: I.FilterCondition.Equal, value: object.id };
+	};
+
+	const getDrillIdentity = (object: any): string => {
+		return object.identity || U.Space.getAccountFromParticipantId(object.id);
+	};
+
+	const getDrillCreatorFilter = (object: any): any => {
+		const identity = getDrillIdentity(object);
+		const ids: string[] = [ identity ];
+
+		if (isGlobal) {
+			GLOBAL_DEPS.participants.forEach((v: any, id: string) => {
+				if (U.Space.getAccountFromParticipantId(id) == identity) {
+					ids.push(id);
+				};
+			});
+		} else {
+			ids.push(U.Space.getParticipantId(S.Common.space, identity));
+		};
+
+		return { relationKey: 'creator', condition: I.FilterCondition.In, value: ids };
+	};
+
+	// The active drill's filter for object searches; backlink stays in-space only
+	const getDrillFilters = (): any[] => {
+		const drill = drillRef.current;
+
+		if (!drill) {
+			return [];
+		};
+
+		switch (drill.kind) {
+			case 'backlink': {
+				const links = Relation.getArrayValue(drill.object.links);
+				const backlinks = Relation.getArrayValue(drill.object.backlinks);
+
+				return [ { relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(links, backlinks) } ];
+			};
+
+			case 'type': {
+				return [ getDrillTypeFilter(drill.object) ];
+			};
+
+			case 'creator': {
+				return [ getDrillCreatorFilter(drill.object) ];
+			};
+		};
+
+		return [];
+	};
+
 	const loadMessages = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
 		const { space } = S.Common;
 		const text = filterValueRef.current;
@@ -859,8 +952,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
+		// Creator drill narrows messages to the person's identity (heart PR #3246)
+		const creators = (drillRef.current?.kind == 'creator') ? [ getDrillIdentity(drillRef.current.object) ] : [];
+
 		// Empty spaceId + empty chatId = all chats in all spaces (global mode)
-		C.ChatSearch(isGlobal ? '' : space, '', text, offsetRef.current, J.Constant.limit.menuRecords, sorts, (message: any) => {
+		C.ChatSearch(isGlobal ? '' : space, '', text, offsetRef.current, J.Constant.limit.menuRecords, sorts, creators, (message: any) => {
 			if (message.error.code) {
 				if (clear) {
 					itemsRef.current = [];
@@ -944,9 +1040,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			filters.push(...getMineFilter());
 		};
 
+		getDrillFilters().forEach(it => filters.push(it));
+
 		// Type objects are noise in the empty (recent) browse of All/My objects - every space
 		// ships a full set of bundled types; they stay searchable by text and via the Types chip
-		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE ].includes(searchType) && !filterValueRef.current) {
+		if ([ SEARCH_TYPE_ALL, SEARCH_TYPE_MINE ].includes(searchType) && !filterValueRef.current && !drillRef.current) {
 			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Type ] });
 		};
 
@@ -1088,16 +1186,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let limit = J.Constant.limit.menuRecords;
 
-		if (!filterValueRef.current && clear && !backlinkRef.current) {
+		if (!filterValueRef.current && clear && !drillRef.current) {
 			limit = RECENT_LIMIT;
 		};
 
-		if (backlinkRef.current) {
-			const links = Relation.getArrayValue(backlinkRef.current.links);
-			const backlinks = Relation.getArrayValue(backlinkRef.current.backlinks);
-
-			filters.push({ relationKey: 'id', condition: I.FilterCondition.In, value: [].concat(links, backlinks) });
-		};
+		getDrillFilters().forEach(it => filters.push(it));
 
 		if (skipIds && skipIds.length) {
 			filters.push({ relationKey: 'id', condition: I.FilterCondition.NotIn, value: skipIds });
@@ -1184,8 +1277,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let items = S.Record.checkHiddenObjects(itemsRef.current);
 
-		if (backlinkRef.current) {
-			items.unshift({ name: U.String.sprintf(translate('popupSearchBacklinksFrom'), backlinkRef.current.name), isSection: true, withClear: true });
+		if (drillRef.current) {
+			const { kind, object } = drillRef.current;
+
+			let name = '';
+
+			switch (kind) {
+				case 'backlink': name = U.String.sprintf(translate('popupSearchBacklinksFrom'), object.name); break;
+				case 'type': name = U.String.sprintf(translate('popupSearchDrillType'), U.Object.name(object, true)); break;
+				case 'creator': name = U.String.sprintf(translate('popupSearchDrillCreator'), U.Object.name(object)); break;
+			};
+
+			items.unshift({ name, isSection: true, withClear: true });
 		} else
 		if (!filter && items.length) {
 			// Every object chip states its browse order in the title; the right-side action
@@ -1599,8 +1702,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			subscribeGlobalDeps(() => setDummy(prev => prev + 1));
 		};
 
-		if (storage.backlink && !isGlobal && !isStale) {
-			U.Object.getById(storage.backlink, {}, item => setBacklinkState(item, 'Saved', () => setFilter()));
+		// Restore a saved drill (legacy storage.backlink migrates to the backlink kind)
+		let saved: any = !isStale ? storage[drillKey] : null;
+
+		if (!saved && !isStale && !isGlobal && storage.backlink) {
+			saved = { kind: 'backlink', id: storage.backlink };
+		};
+
+		if (saved && !isGlobal) {
+			U.Object.getById(saved.id, {}, item => setDrillState(saved.kind, item, 'Saved', () => setFilter()));
+		} else
+		if (saved && isGlobal) {
+			// Global drills restore from the in-memory maps; a miss drops the drill
+			const object = (saved.kind == 'type') ? GLOBAL_DEPS.types.get(saved.id) : GLOBAL_DEPS.participants.get(saved.id);
+
+			if (object) {
+				setDrillState(saved.kind, object, 'Saved', () => setFilter());
+			} else {
+				setFilter();
+			};
 		} else {
 			setFilter();
 		};
@@ -1778,19 +1898,27 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			// the batch-resolved cross-space cache
 			const type = S.Record.getTypeById(item.type) || (isGlobal ? GLOBAL_DEPS.types.get(item.type) : null);
 
+			const drillKind = getDrillKind(item);
+
 			let advanced = null;
 
-			if (item.links.length || item.backlinks.length) {
+			if (drillKind) {
+				const tooltips = {
+					backlink: 'popupSearchTooltipSearchByBacklinks',
+					type: 'popupSearchTooltipSearchByType',
+					creator: 'popupSearchTooltipSearchByCreator',
+				};
+
 				advanced = (
 					<Icon
 						name="arrow/forward" 
 						className="advanced"
 						size={28}
 						tooltipParam={{ 
-							text: translate('popupSearchTooltipSearchByBacklinks'), 
+							text: translate(tooltips[drillKind]), 
 							caption: `${shift} + Enter`
 						}}
-						onClick={e => onBacklink(e, item)}
+						onClick={e => onDrill(e, item)}
 					/>
 				);
 			};

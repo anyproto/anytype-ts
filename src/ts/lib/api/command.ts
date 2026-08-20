@@ -2008,7 +2008,7 @@ export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?:
 	}, callBack);
 };
 
-export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, sorts: { key: I.SearchSortKey, type: I.SortType }[], callBack?: (message: any) => void) => {
+export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, sorts: { key: I.SearchSortKey, type: I.SortType }[], creators: string[], callBack?: (message: any) => void) => {
 	dispatcher.request('ChatSearch', {
 		spaceId,
 		chatId,
@@ -2016,6 +2016,7 @@ export const ChatSearch = (spaceId: string, chatId: string, fullText: string, of
 		offset,
 		limit,
 		sorts: sorts.map(Mapper.To.SearchSort),
+		creators: creators || [],
 	}, callBack);
 };
 
