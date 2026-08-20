@@ -815,7 +815,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			setIsLoading(true);
 		};
 
-		C.ObjectCrossSpaceSearch(filters, sorts, J.Relation.default.concat([ 'pluralName' ]), fullText, offsetRef.current, limit, (message: any) => {
+		C.ObjectCrossSpaceSearch(filters, sorts, J.Relation.default.concat([ 'pluralName', 'creator' ]), fullText, offsetRef.current, limit, (message: any) => {
 			if (message.error.code) {
 				if (clear) {
 					itemsRef.current = [];
