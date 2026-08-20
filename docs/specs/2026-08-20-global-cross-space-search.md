@@ -97,9 +97,16 @@ flicker-free rendering, footer hints) is inherited unchanged.
 ### Loading — objects
 
 - `C.ObjectCrossSpaceSearch(filters, sorts, fullText, offset, limit, keys)` with
-  `keys = J.Relation.default` (covers `spaceId`, name, icons, layout) and the in-space sorts
-  minus `_final_score` if the merged path doesn't support it (verify against the worktree;
-  fallback: `lastModifiedDate desc`).
+  `keys = J.Relation.default` (covers `spaceId`, name, icons, layout) and **no client sorts**
+  (revised after review): `QueryCrossSpaceNoWait` defaults to `lastModifiedDate desc` for empty
+  queries and score-first for text queries, both applied across the merge with a deterministic
+  tiebreak; client-side `lastOpenedDate` would skew the merged order (only locally-opened
+  objects carry it).
+- Base filters pass `ignoreChat: false` (revised after review): the default keys off the
+  *current* spaceview's `isOneToOne` and would inject `resolvedLayout/recommendedLayout NotIn
+  [Chat, ChatOld, Discussion]`, hiding every chat object from the vault-wide search.
+- Chats chip + text query filters by `name Like` instead of `fullText` (revised after review):
+  chat objects are not in the fulltext index, so an FT query finds nothing.
 - Same pagination flow (`offset += limit` via `InfiniteLoader`).
 - **`allStoresLoaded: false` handling (revised)**: no auto-retry in the first iteration — a
   timer-driven reload was judged a dangerous re-render flow. The partial results are rendered

@@ -731,7 +731,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const loadGlobalObjects = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
 		const searchType = getSearchType();
 		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
-		const filters: any[] = U.Subscription.getBaseFilters().concat([
+		// ignoreChat defaults to the CURRENT spaceview's isOneToOne, which would inject
+		// resolvedLayout/recommendedLayout NotIn [Chat, ChatOld, Discussion] and hide every
+		// chat object from the vault-wide search - chats are a first-class chip here
+		const filters: any[] = U.Subscription.getBaseFilters({ ignoreChat: false }).concat([
 			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: layouts },
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		]);
@@ -740,11 +743,20 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: GLOBAL_LAYOUTS[searchType] });
 		};
 
-		const sorts = [
-			{ relationKey: '_final_score', type: I.SortType.Desc },
-			{ relationKey: 'lastOpenedDate', type: I.SortType.Desc },
-			{ relationKey: 'lastModifiedDate', type: I.SortType.Desc },
-		].map(U.Subscription.sortMapper);
+		let fullText = filterValueRef.current;
+
+		// Chat objects are not in the fulltext index - a text query through fullText finds
+		// nothing, so filter by name instead (store query, not FT)
+		if ((searchType == SEARCH_TYPE_CHAT) && fullText) {
+			filters.push({ relationKey: 'name', condition: I.FilterCondition.Like, value: fullText });
+			fullText = '';
+		};
+
+		// No client sorts: QueryCrossSpaceNoWait defaults to lastModifiedDate desc for empty
+		// queries (browse) and score-first for text queries - both applied across the merge.
+		// Client sorts would hurt here: lastOpenedDate is only set for objects opened locally
+		// (mostly the current space), skewing the merged recency order
+		const sorts = [];
 
 		let limit = J.Constant.limit.menuRecords;
 
@@ -768,7 +780,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			setIsLoading(true);
 		};
 
-		C.ObjectCrossSpaceSearch(filters, sorts, J.Relation.default.concat([ 'pluralName' ]), filterValueRef.current, offsetRef.current, limit, (message: any) => {
+		C.ObjectCrossSpaceSearch(filters, sorts, J.Relation.default.concat([ 'pluralName' ]), fullText, offsetRef.current, limit, (message: any) => {
 			if (message.error.code) {
 				if (clear) {
 					itemsRef.current = [];
