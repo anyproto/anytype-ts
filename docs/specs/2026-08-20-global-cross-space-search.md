@@ -97,11 +97,14 @@ flicker-free rendering, footer hints) is inherited unchanged.
 ### Loading — objects
 
 - `C.ObjectCrossSpaceSearch(filters, sorts, fullText, offset, limit, keys)` with
-  `keys = J.Relation.default` (covers `spaceId`, name, icons, layout) and **no client sorts**
-  (revised after review): `QueryCrossSpaceNoWait` defaults to `lastModifiedDate desc` for empty
-  queries and score-first for text queries, both applied across the merge with a deterministic
-  tiebreak; client-side `lastOpenedDate` would skew the merged order (only locally-opened
-  objects carry it).
+  `keys = J.Relation.default` (covers `spaceId`, name, icons, layout) and per-chip client sorts
+  (revised after review): Chats always `lastMessageDate desc` (chats never have an FT score -
+  their text path filters by name), Types `lastUsedDate desc` for empty queries; every other
+  chip sends no sorts and relies on the backend defaults - `QueryCrossSpaceNoWait` injects
+  `lastModifiedDate desc` for empty queries and score-first for text queries, both applied
+  across the merge with a deterministic tiebreak. Generic client sorts like `lastOpenedDate`
+  would skew the merged order (only locally-opened objects carry it); chip-specific browse
+  orders are deliberately client-side, not hardcoded in heart.
 - Base filters pass `ignoreChat: false` (revised after review): the default keys off the
   *current* spaceview's `isOneToOne` and would inject `resolvedLayout/recommendedLayout NotIn
   [Chat, ChatOld, Discussion]`, hiding every chat object from the vault-wide search.

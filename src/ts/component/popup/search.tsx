@@ -752,11 +752,22 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			fullText = '';
 		};
 
-		// No client sorts: QueryCrossSpaceNoWait defaults to lastModifiedDate desc for empty
-		// queries (browse) and score-first for text queries - both applied across the merge.
-		// Client sorts would hurt here: lastOpenedDate is only set for objects opened locally
-		// (mostly the current space), skewing the merged recency order
-		const sorts = [];
+		// Per-chip browse sorts, sent client-side by design (not hardcoded in heart):
+		// chats by activity, types by usage. Everything else sends no sorts and relies on the
+		// backend defaults - lastModifiedDate desc for empty queries, score-first for text.
+		// Generic client sorts would hurt here: lastOpenedDate is only set for objects opened
+		// locally (mostly the current space), skewing the merged recency order
+		let sorts: any[] = [];
+
+		if (searchType == SEARCH_TYPE_CHAT) {
+			// Chats never have an FT score (the text path filters by name) - always by activity
+			sorts = [ { relationKey: 'lastMessageDate', type: I.SortType.Desc } ];
+		} else
+		if ((searchType == SEARCH_TYPE_TYPE) && !fullText) {
+			sorts = [ { relationKey: 'lastUsedDate', type: I.SortType.Desc } ];
+		};
+
+		sorts = sorts.map(U.Subscription.sortMapper);
 
 		let limit = J.Constant.limit.menuRecords;
 
