@@ -95,6 +95,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// All participants of all spaces: one unary snapshot fetched on popup open, held for the
 	// popup's lifetime (fresh on reopen, evicted on close). Staleness is acceptable
 	const participantsRef = useRef(new Map<string, any>());
+	// Active members per space, counted from the snapshot - the ground truth the gate uses
+	const participantCountsRef = useRef(new Map<string, number>());
 
 	const onScroll = ({ scrollTop }) => {
 		if (scrollTop) {
@@ -607,19 +609,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).length > 1;
 		};
 
-		const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
-
-		if (!spaceview) {
-			return false;
-		};
-
-		// spaceAccessType may be absent on the stored record - attribute rather than hide
-		if (undefined === spaceview.spaceAccessType) {
-			return true;
-		};
-
-		// 1:1 spaces are multi-member but not "Shared" access type
-		return Boolean(spaceview.isShared || spaceview.isOneToOne);
+		// Other spaces: count actual active members from the participants snapshot -
+		// spaceview heuristics (isShared etc.) are unreliable for joined spaces
+		return (participantCountsRef.current.get(spaceId) || 0) > 1;
 	};
 
 	// creator may hold a participant id or (on older objects) the bare identity -
@@ -682,7 +674,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Only what rendering reads: ObjectName (name, globalName, isDeleted), the participant
 		// avatar (iconImage, spaceId), ObjectType (name, isDeleted), plus id and layouts for
 		// the map split - keeps the big snapshot payload small
-		const keys = [ 'id', 'spaceId', 'name', 'pluralName', 'globalName', 'iconImage', 'layout', 'resolvedLayout', 'isDeleted' ];
+		const keys = [ 'id', 'spaceId', 'name', 'pluralName', 'globalName', 'iconImage', 'layout', 'resolvedLayout', 'isDeleted', 'participantStatus' ];
 
 		C.ObjectCrossSpaceSearch(filters, [], keys, '', 0, 0, (message: any) => {
 			if (message.error.code || !message.records.length) {
@@ -694,6 +686,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 				if (it.layout == I.ObjectLayout.Participant) {
 					participantsRef.current.set(it.id, it);
+
+					if (it.spaceId && (it.participantStatus == I.ParticipantStatus.Active)) {
+						participantCountsRef.current.set(it.spaceId, (participantCountsRef.current.get(it.spaceId) || 0) + 1);
+					};
 				} else {
 					depsRef.current.set(it.id, it);
 				};
