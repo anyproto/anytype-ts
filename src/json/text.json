@@ -1639,6 +1639,7 @@
 	"popupSearchTypeAll": "All objects",
 	"popupSearchTypeMine": "My objects",
 	"popupSearchTypeMessages": "Messages",
+	"popupSearchTypePages": "Pages",
 	"popupSearchTypeBookmarks": "Bookmarks",
 	"popupSearchTypeCollections": "Collections",
 	"popupSearchTypeQueries": "Queries",

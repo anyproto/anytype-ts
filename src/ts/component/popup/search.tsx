@@ -19,6 +19,7 @@ const STATE_RESET_TIMEOUT = 5 * 60 * 1000;
 const SEARCH_TYPE_ALL = 'all';
 const SEARCH_TYPE_MINE = 'mine';
 const SEARCH_TYPE_MESSAGE = 'message';
+const SEARCH_TYPE_PAGE = 'page';
 const SEARCH_TYPE_MEDIA = 'media';
 const SEARCH_TYPE_BOOKMARK = 'bookmark';
 const SEARCH_TYPE_COLLECTION = 'collection';
@@ -28,6 +29,7 @@ const SEARCH_TYPE_TYPE = 'type';
 
 // Global (cross-space) mode filters by resolvedLayout - types can't be merged across spaces
 const GLOBAL_LAYOUTS: { [key: string]: I.ObjectLayout[] } = {
+	[SEARCH_TYPE_PAGE]: [ I.ObjectLayout.Page, I.ObjectLayout.Note ],
 	[SEARCH_TYPE_MEDIA]: [ I.ObjectLayout.File, I.ObjectLayout.Pdf, I.ObjectLayout.Audio, I.ObjectLayout.Video, I.ObjectLayout.Image ],
 	[SEARCH_TYPE_BOOKMARK]: [ I.ObjectLayout.Bookmark ],
 	[SEARCH_TYPE_COLLECTION]: [ I.ObjectLayout.Collection ],
@@ -543,6 +545,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (isGlobal) {
 			return ret.concat([
+				{ id: SEARCH_TYPE_PAGE, name: translate('popupSearchTypePages') },
 				{ id: SEARCH_TYPE_MEDIA, name: translate('commonMedia') },
 				{ id: SEARCH_TYPE_BOOKMARK, name: translate('popupSearchTypeBookmarks') },
 				{ id: SEARCH_TYPE_COLLECTION, name: translate('popupSearchTypeCollections') },
@@ -586,7 +589,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		const known = [
-			SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_BOOKMARK,
+			SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_PAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_BOOKMARK,
 			SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT, SEARCH_TYPE_TYPE,
 		];
 		const type = known.includes(id) ? U.String.ucFirst(id) : 'Type';
