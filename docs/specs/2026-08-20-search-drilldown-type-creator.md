@@ -1,7 +1,12 @@
 # Spec: search drill-downs — by Type and by Creator (Related-objects pattern)
 
 Date: 2026-08-20
-Status: spec for review; implementation deferred (perf work on `search.tsx` in flight)
+Status: implemented same day. Deviations: (1) drill-kind resolution order is type > creator >
+backlink (type objects often carry links - backlink-first would shadow the obvious action);
+(2) open question 1 resolved by heart PR
+[#3246](https://github.com/anyproto/anytype-heart/pull/3246): `ChatSearch` gained a repeated
+`creators` (identities) param, so the Messages chip DOES narrow by author during a creator
+drill; (3) global drills restore from the in-memory deps maps rather than getById
 Builds on: `2026-08-20-in-space-cross-chat-search.md`, `2026-08-20-global-cross-space-search.md`
 
 ## Product ask
