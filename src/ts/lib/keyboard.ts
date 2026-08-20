@@ -379,6 +379,44 @@ class Keyboard {
 				this.onSearchPopup(route);
 			});
 
+			// Global (cross-space) search: Cmd+K widened by Shift. Raw combo on purpose -
+			// the named cmd+shift+k belongs to textLink, which owns the key while a text
+			// or block selection is active; without a selection it falls through to search
+			this.shortcut(`${cmd}+shift+k`, e, () => {
+				if (pin && !this.isPinChecked) {
+					return;
+				};
+
+				const popup = S.Popup.get('search');
+				const openGlobal = () => this.onSearchPopup(route, { data: { isGlobal: true } });
+
+				if (popup) {
+					const data = popup.param.data || {};
+
+					// Object pickers (link insertion etc.) keep their popup
+					if (data.onObjectSelect) {
+						return;
+					};
+
+					e.preventDefault();
+
+					if (data.isGlobal) {
+						S.Popup.close('search');
+					} else {
+						S.Popup.close('search', () => openGlobal());
+					};
+					return;
+				};
+
+				const { range } = focus.state;
+				if ((this.isFocused && range && (range.from != range.to)) || selectedBlockIds.length) {
+					return;
+				};
+
+				e.preventDefault();
+				openGlobal();
+			});
+
 			// Navigation links
 			this.shortcut('navigation', e, () => {
 				e.preventDefault();

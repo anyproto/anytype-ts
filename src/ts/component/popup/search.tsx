@@ -379,17 +379,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
+		// Cmd+K closes; Cmd+Shift+K (pivot to global / toggle) is handled app-wide in keyboard.ts
 		keyboard.shortcut('search', e, () => close());
-
-		// Widened-scope search (Cmd+K -> Cmd+Shift+K, the VS Code/Obsidian shift convention)
-		if (!isGlobal && !onObjectSelect) {
-			keyboard.shortcut(`${cmd}+shift+k`, e, () => {
-				e.preventDefault();
-
-				close();
-				onSearchGlobal();
-			});
-		};
 	};
 
 	const onArrow = (dir: number) => {
