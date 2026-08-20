@@ -536,6 +536,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const setDrillState = (kind: string, item: any, type: string, callBack?: () => void) => {
+		window.clearTimeout(timeoutRef.current);
 		filterInputRef.current?.setValue('');
 		drillRef.current = { kind, object: item };
 
@@ -554,6 +555,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onClearSearch = () => {
+		window.clearTimeout(timeoutRef.current);
 		offsetRef.current = 0;
 		filterInputRef.current?.setValue('');
 		drillRef.current = null;
@@ -1691,8 +1693,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const metaList = item.metaList || [];
 		const meta = metaList.length ? metaList[0] : {};
 
-		// Chip picked from "/" command mode: switch to it, clear the query, keep the popup
+		// Chip picked from "/" command mode: switch to it, clear the query, keep the popup.
+		// Cancel the pending debounced filter change - it would re-apply the stale "/query"
+		// after the switch and empty the list
 		if (item.isChip) {
+			window.clearTimeout(timeoutRef.current);
 			filterInputRef.current?.setValue('');
 			filterValueRef.current = '';
 			storageSet({ [filterKey]: '' });
