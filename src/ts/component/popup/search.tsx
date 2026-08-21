@@ -12,6 +12,10 @@ const HEIGHT_MESSAGE = 76;
 // the visible row count, or the second page loads immediately on open
 const LOAD_THRESHOLD = 5;
 const RECENT_LIMIT = 20;
+// Cross-space fulltext page size: smaller than the in-space page (100) - the vault-wide
+// fulltext query is the slow path and time-to-first-results matters more than page depth
+// (infinite scroll fills the rest)
+const GLOBAL_QUERY_LIMIT = 50;
 // Restore chip/query on quick reopen; treat the popup as a fresh task after this long
 // (the Raycast pop-to-root / Alfred latest-query-window pattern)
 const STATE_RESET_TIMEOUT = 5 * 60 * 1000;
@@ -1416,7 +1420,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		sorts = sorts.map(U.Subscription.sortMapper);
 
-		let limit = J.Constant.limit.menuRecords;
+		let limit = GLOBAL_QUERY_LIMIT;
 
 		if (!filterValueRef.current && clear) {
 			limit = RECENT_LIMIT;
