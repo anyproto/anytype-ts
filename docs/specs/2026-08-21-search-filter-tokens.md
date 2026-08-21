@@ -1,7 +1,7 @@
 # Spec: search filter tokens — removable scope/filter chips inside the search input
 
-Date: 2026-08-21 (rev 2: chips reworked into token setters — Gmail search-chips model)
-Status: spec for review; implementation to follow
+Date: 2026-08-21 (rev 3: open questions decided by Roman — see Decisions)
+Status: approved; implementation to run in a fresh session
 Builds on: `2026-08-20-in-space-cross-chat-search.md`, `2026-08-20-global-cross-space-search.md`,
 `2026-08-20-search-drilldown-type-creator.md` (all shipped in v0.56.6-beta, PR #2349).
 Research basis: GitHub's in-input scope token (Backspace removes it → all of GitHub); GitLab's
@@ -62,7 +62,7 @@ The chips row keeps its place and look; its behavior changes:
 | Messages / Media / Pages / Bookmarks / Collections / Queries / Chats / Types (global buckets) | sets `kind` token (replacing any what-token) |
 | per-type chips (in-space, Types-widget order) | sets `type` token — **the same token a type drill from a row produces**; one system |
 | My objects | sets `creator: You` (replacing any creator token — the Kaye → You example) |
-| Members | **picker, not a filter**: shows the people list; choosing a person (→ / click / Enter) adds their `creator` token |
+| People (renamed from Members) | **picker, not a filter**: shows the people list; choosing a person (→ / click / Enter) adds their `creator` token |
 
 - Active chip = its token is present. Clicking an **active** chip removes its token (Gmail's
   toggle — also a discoverable removal path besides `×`/Backspace).
@@ -82,15 +82,18 @@ The chips row keeps its place and look; its behavior changes:
 |---|---|---|---|---|---|
 | = current space | **in-space** (today's default) | All / Mine / Messages / Media / Members + widget types | `ObjectSearchWithMeta(space)` | `ChatSearch(space, '')` | space participants |
 | none | **global** | All / Mine / Messages / Pages / Members / Media / Bookmarks / Collections / Queries / Chats / Types | `ObjectCrossSpaceSearch` | `ChatSearch('', '')` | GLOBAL_DEPS aggregate |
-| = another space | **global + space filter** (new) | global chips | `ObjectCrossSpaceSearch` + `spaceId Equal` | `ChatSearch(Y, '')` | GLOBAL_DEPS filtered to Y |
+| = another space | **channel-scoped** (new) | **that Channel's chips** — derived from `GLOBAL_DEPS.types` filtered by `spaceId` (name order; the Types-widget order only exists for the current space); Messages/People gates from the global subscriptions per that space | `ObjectCrossSpaceSearch` + `spaceId Equal` | `ChatSearch(Y, '')` | GLOBAL_DEPS filtered to Y |
 
-`isGlobal = !spaceToken || (spaceToken.id != S.Common.space)` — derived state, not a popup
-param. Only the current space gets the rich in-space mode (widget-type chips, highlights,
-settings rows, per-chip create actions); any other space is a filter on the cross-space path.
-Removing/adding the space token switches **in place** — no close+reopen, no storage handoff.
-On the in-space ⇄ global boundary the what-token maps: a `type` token maps to its layout
-bucket (`recommendedLayout` → `kind`, the shipped `getGlobalSearchType` logic); a `kind` token
-maps back to itself where the in-space row offers it, else clears.
+The framing (decided): a concrete Channel scope — current or another — always shows the
+**Channel token** and **that Channel's chips**; removing the token switches to the **global
+chips** in place. `isGlobal = !spaceToken` for the chips row; the data path additionally
+distinguishes the current space (local stores: `ObjectSearchWithMeta`, highlights, settings
+rows, per-chip create actions, Types-widget chip order) from another space (cross-space
+one-shot RPC — chips from `GLOBAL_DEPS.types` by `spaceId`, `type` tokens via `uniqueKey`, no
+fulltext highlights). No close+reopen, no storage handoff, in either direction.
+On the scoped ⇄ global boundary the what-token maps: a `type` token maps to its layout bucket
+(`recommendedLayout` → `kind`, the shipped `getGlobalSearchType` logic); a `kind` token maps
+back to itself where the scoped row offers it, else clears.
 
 ## Rendering (popup head)
 
@@ -145,8 +148,11 @@ Single-match + Enter auto-applies, as today. Gmail-style *adaptive* suggestions 
 | click `×` on a token | removes that token |
 | **Backspace, caret at 0, no selection** | removes the **rightmost** token |
 | click an active chip | removes that chip's token |
-| Escape | removes all *filter* tokens (what/who/relation) — never the scope; if none, closes |
 | Tab cycle to All | removes the what token |
+
+**Escape never touches tokens** (decided): it only closes the popup. The scope token in
+particular must never fall to a reflexive Escape; removal paths are ×, Backspace, and chip
+toggle only.
 
 Removing the space token = switch to global in place, same query re-run vault-wide.
 
@@ -174,7 +180,7 @@ model (← at 0 focuses tokens; ←/→ walk; Backspace/Delete/Enter remove the 
 Stack, as shipped, with one clarification: only tokens added **from a row** (drills, caption
 clicks, Members pick, space-caption click) push a snapshot (chip/query/depth/scroll/active
 row); chip- and entry-point-added tokens do not. Removing the most recently row-added token
-(×, Backspace, Escape-as-last) pops its snapshot; removing others just reloads.
+(× or Backspace) pops its snapshot; removing others just reloads.
 
 ## Mode switch in place (structural)
 
@@ -193,7 +199,7 @@ row); chip- and entry-point-added tokens do not. Removing the most recently row-
 | Backspace at 0 | remove rightmost token |
 | ← at 0 | (v1: nothing; fast-follow: token selection) |
 | → / Shift+Enter | drill → add token (as shipped, caret-at-end guard) |
-| Escape | remove all filter tokens, else close |
+| Escape | close the popup — never removes tokens |
 | Tab / Shift+Tab | cycle the what group |
 | Enter | open active row |
 | Cmd+Shift+K | toggle the space token |
@@ -201,7 +207,7 @@ row); chip- and entry-point-added tokens do not. Removing the most recently row-
 ## Analytics
 
 `SearchToken` `{ type: Space|Kind|Type|Creator|Backlink, action: Add|Remove|Replace,
-source: Chip|Row|Caption|Entry|Backspace|Escape|Command, isGlobal }`; `SearchDrill` and
+source: Chip|Row|Caption|Entry|Backspace|Command, isGlobal }`; `SearchDrill` and
 `SwitchSearchType` kept as alias emissions for continuity.
 
 ## Files (when implemented)
@@ -210,7 +216,7 @@ source: Chip|Row|Caption|Entry|Backspace|Escape|Command, isGlobal }`; `SearchDri
 |---|---|
 | `src/ts/component/popup/search.tsx` | token model replacing `drillRef` + `searchTypeRef`; head tokens; chips as setters; `isGlobal` as state; unified storage + migration; space caption click; `/` completions; stack Back-restore |
 | `src/scss/popup/search.scss` | `.head .tokens`, `.token`; drill-section styles removed |
-| `src/json/text.json` | token labels, `/by` `/type` `/in` command names, placeholder |
+| `src/json/text.json` | token labels, `/by` `/type` `/in` command names, placeholder, Members → "People" |
 | `src/ts/component/sidebar/page/vault.tsx` | scope param |
 | specs | this file; status lines of the three earlier specs |
 
@@ -221,19 +227,22 @@ source: Chip|Row|Caption|Entry|Backspace|Escape|Command, isGlobal }`; `SearchDri
    `searchType` migration, stack Back-restore, `/by` `/type` completions.
 2. **Space token + in-place mode switch** — `isGlobal` as derived state, unified storage,
    entry points, Cmd+Shift+K / action rewired, what-token mapping across the boundary.
-3. **Space as a filter** — clickable space captions, `spaceId Equal` on the cross-space path,
-   `ChatSearch(Y, '')`, Members filtered, `/in` `/here` `/channel`.
+3. **Other-Channel scope** — clickable space captions, `spaceId Equal` on the cross-space
+   path, that Channel's chips from `GLOBAL_DEPS.types`, `ChatSearch(Y, '')`, People filtered,
+   `/in` `/here` `/channel`.
 4. *(fast-follow)* full token-selection keyboard model.
 
-## Open questions (for review)
+## Decisions (Roman, 2026-08-21)
 
-1. Second click on an active kind chip toggles it off to All (Gmail behavior — spec default).
-   Confirm or make it a no-op.
-2. "Another space" mode = global + filter (layout chips, no highlights). Acceptable for v1?
-3. Escape removes all filter tokens at once vs. one per press (LIFO, mirroring Backspace).
-4. Token visuals: same pill as chips (spec default) or a distinct token style?
-5. Members chip as picker: keep the name "Members", or rename (e.g. "People") now that it
-   opens a picker rather than filtering?
+1. Active chip second click: **toggle off** (Gmail behavior).
+2. Other-Channel scope: **load that Channel's chips** (from `GLOBAL_DEPS.types` by spaceId) —
+   a concrete-Channel scope always shows the Channel token + that Channel's chips; removing
+   the token switches to global chips. Highlights remain current-space-only (one-shot RPC has
+   no meta).
+3. Escape: **never removes tokens** — it only closes the popup; the scope token especially
+   must not fall to Escape.
+4. Token visuals: **same pill as chips**.
+5. Members chip: **renamed to "People"** (it is a person picker now).
 
 ## Implementation handoff notes (for a fresh session)
 
