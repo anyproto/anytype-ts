@@ -1,7 +1,51 @@
 # Spec: search filter tokens — removable scope/filter chips inside the search input
 
 Date: 2026-08-21 (rev 3: open questions decided by Roman — see Decisions)
-Status: approved; implementation to run in a fresh session
+Status: phase 1 implemented on `feature/JS-9862-search-tokens` (token core + chips as token
+setters + `/by` `/type` completions, in-space; the popup's `isGlobal` param behavior is as
+shipped). Phases 2-3 pending.
+
+## Deviations (phase 1 implementation, 2026-08-21)
+
+Recorded where the spec and shipped behavior pulled apart; the reading that preserves the
+token model's coherence was chosen and each divergence is deliberate:
+
+1. **Back snapshots are session-only.** Tokens persist as `[{ kind, id }]` exactly as
+   specced; the shipped drill code additionally persisted its Back snapshot. A quick reopen
+   restores tokens but not the Back stack — removals after reopen just reload.
+2. **Token `×` analytics source is `Token`** — the spec's source enum (Chip|Row|Caption|
+   Entry|Backspace|Command) has no value for the pill's own remove affordance.
+3. **Empty-browse first page is RECENT_LIMIT (20) for every empty-query clear load**
+   in-space, tokens active or not. Shipped in-space drills loaded a full 100-row first page
+   (global already used 20); unified since chip- and drill-added tokens are now one system.
+4. **Type-object noise exclusion** in the empty browse keys off `!whatToken && !query` in
+   both loaders. Shipped had per-mode drill nuances (in-space applied it under backlink
+   drills; global skipped it under creator drills) that dissolve under tokens.
+5. **onSearchGlobal (phase-1 reopen pivot): creator tokens carry for any person**, not just
+   You (shipped carried the Mine chip and dropped creator drills). A type token whose
+   recommendedLayout is Participant is dropped (shipped mapped it to the Members chip, which
+   is now a picker and has no token). Backlink drops, as specced.
+6. **Settings rows** surface only with zero tokens (shipped keyed off chip == All, which
+   allowed them alongside a creator drill).
+7. **Restored-from-storage tokens emit `SearchDrill { type: 'Saved' }` aliases** per
+   non-kind token, mirroring the shipped single-drill restore emission.
+8. **`popupSearchPlaceholderMessage` is no longer reachable** — a Messages token means
+   tokens are present, so the placeholder shrinks to `commonSearch` per the spec. The key
+   stays in text.json for l10n continuity, as do the drill-header keys.
+9. **Re-adding an identical token from a row** (drill on a row whose token is already
+   active) clears the query and reloads — drill semantics — without pushing a snapshot or
+   re-emitting add analytics.
+10. **Chats bucket + creator token**: the any-creator chat-container exclusion is skipped
+   when the what token is the Chats bucket — the two filters would contradict and every
+   result set would be empty. (Review finding; the exclusion decision's rationale is
+   noise-hiding in generic browses, not defeating an explicit Chats scope.)
+11. **Explicit removals strip the token from remaining Back snapshots** (spec gap found in
+   review): with interleaved row-adds, popping a later snapshot must not resurrect a token
+   the user removed by hand in between. Restores (snapshot pops) still bring back what the
+   popped add had replaced — that is the undo semantics.
+12. **Global-mode resolution never persists away dropped tokens** — the cross-space maps
+   are cold on the first global use of a session; creator tokens additionally fall back to
+   the current-space participant store so the Cmd+Shift+K pivot resolves immediately.
 Builds on: `2026-08-20-in-space-cross-chat-search.md`, `2026-08-20-global-cross-space-search.md`,
 `2026-08-20-search-drilldown-type-creator.md` (all shipped in v0.56.6-beta, PR #2349).
 Research basis: GitHub's in-input scope token (Backspace removes it → all of GitHub); GitLab's

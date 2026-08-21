@@ -339,12 +339,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		// Backspace with the caret at position 0 and no selection removes the rightmost
-		// token (the GitHub in-input scope pattern)
+		// token (the GitHub in-input scope pattern). The live DOM selection, not the
+		// Input's cached range - the cache goes stale after programmatic setValue
 		keyboard.shortcut('backspace', e, () => {
 			const tokens = getTokens();
-			const range = filterInputRef.current?.getRange();
 
-			if (!tokens.length || !range || range.from || range.to) {
+			if (!tokens.length) {
+				return;
+			};
+
+			const node = filterInputRef.current?.getNode();
+
+			if (!node || node.selectionStart || node.selectionEnd) {
 				return;
 			};
 
@@ -671,9 +677,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const idx = tokens.findIndex(it => TOKEN_GROUPS[it.kind] == group);
 		const existing = (idx >= 0) ? tokens[idx] : null;
 
-		// Same token again - nothing to change, just get back to results
+		// Same token again - nothing to change; a row gesture still clears the query
+		// (drill semantics), then get back to results
 		if (existing && (existing.kind == kind) && (existing.id == object.id)) {
 			pickerRef.current = '';
+
+			if (fromRow) {
+				clearQuery();
+			};
+
 			afterTokenChange();
 			return;
 		};
@@ -744,6 +756,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (canRestore) {
 			restoreBack(token.back);
 		} else {
+			// An explicitly removed token must not resurrect from another token's Back
+			// snapshot later - strip it from every remaining snapshot (snapshots nest)
+			const strip = (list: SearchToken[]) => {
+				list.forEach(it => {
+					if (it.back?.tokens) {
+						it.back.tokens = it.back.tokens.filter(t => !((t.kind == token.kind) && (t.id == token.id)));
+						strip(it.back.tokens);
+					};
+				});
+			};
+
+			strip(tokens);
 			afterTokenChange();
 		};
 	};
@@ -767,8 +791,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		nRef.current = 0;
 		topRef.current = 0;
+		setDummy(prev => prev + 1);
 
-		let restoreGen = 0;
+		// load(clear) bumps the generation synchronously on entry - precompute it so a
+		// loader that answers synchronously (global members) passes the gen check too
+		const restoreGen = loadGenRef.current + 1;
 
 		const step = () => {
 			// The restore load was superseded (user typed / switched) - stop refilling
@@ -797,7 +824,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		load(true, step, true);
-		restoreGen = loadGenRef.current;
 	};
 
 	const onDrill = (e: any, item: any) => {
@@ -855,19 +881,21 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return KIND_NAME_KEYS[id] ? translate(KIND_NAME_KEYS[id]) : '';
 	};
 
-	// The mode the token set loads: the People picker, the Messages loader, or objects
+	// The mode the token set loads: the People picker, the Messages loader, or objects.
+	// tokens carries the count for presentation gates keyed to the loaded list
 	const getLoadMode = (): any => {
 		const what = getWhatToken();
+		const tokens = tokensRef.current.length;
 
 		if (!onObjectSelect && (pickerRef.current == 'people')) {
-			return { id: SEARCH_TYPE_MEMBER, what: null };
+			return { id: SEARCH_TYPE_MEMBER, what: null, tokens };
 		};
 
 		if (what && (what.kind == 'kind') && (what.id == SEARCH_TYPE_MESSAGE)) {
-			return { id: SEARCH_TYPE_MESSAGE, what };
+			return { id: SEARCH_TYPE_MESSAGE, what, tokens };
 		};
 
-		return { id: 'object', what };
+		return { id: 'object', what, tokens };
 	};
 
 	// Active chip = its token is present (All is the absence of a what token; People is
@@ -1022,7 +1050,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (what.kind == 'kind') {
 				tokens.push({ kind: 'kind', id: what.id });
 			} else {
-				const layout = what.object?.recommendedLayout;
+				// Row-drilled type tokens hold the raw search record, which lacks
+				// recommendedLayout - fall back to the type store
+				const typeObject = S.Record.getTypeById(what.id) || what.object;
+				const layout = typeObject?.recommendedLayout;
 				const bucket = Object.keys(GLOBAL_LAYOUTS).find(key => GLOBAL_LAYOUTS[key].includes(layout));
 
 				if (bucket) {
@@ -1303,10 +1334,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			ids.push(U.Space.getParticipantId(S.Common.space, identity));
 		};
 
-		return [
+		const ret: any[] = [
 			{ relationKey: 'creator', condition: I.FilterCondition.In, value: U.Common.arrayUnique(ids) },
-			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ] },
 		];
+
+		// ...except when the user explicitly asked for the Chats bucket - the two
+		// filters would contradict and every result set would be empty
+		const what = getWhatToken();
+
+		if (!what || (what.kind != 'kind') || (what.id != SEARCH_TYPE_CHAT)) {
+			ret.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ] });
+		};
+
+		return ret;
 	};
 
 	// The token filters for object searches (type + creator + backlink, ANDed); the kind
@@ -1619,7 +1659,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (message.error.code) {
 				if (clear) {
 					itemsRef.current = [];
-					itemsModeRef.current = { id: mode.id, what };
+					itemsModeRef.current = mode;
 				};
 
 				done();
@@ -1641,7 +1681,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			});
 
 			itemsRef.current = itemsRef.current.concat(records);
-			itemsModeRef.current = { id: mode.id, what };
+			itemsModeRef.current = mode;
 			hasMoreRef.current = records.length == limit;
 
 
@@ -1775,7 +1815,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (message.error.code) {
 				if (clear) {
 					itemsRef.current = [];
-					itemsModeRef.current = { id: mode.id, what };
+					itemsModeRef.current = mode;
 				};
 
 				done();
@@ -1795,7 +1835,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			});
 
 			itemsRef.current = itemsRef.current.concat(records);
-			itemsModeRef.current = { id: mode.id, what };
+			itemsModeRef.current = mode;
 			hasMoreRef.current = records.length == limit;
 
 			if (!clear) {
@@ -1996,7 +2036,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		/* Settings and pages */
 
-		if (filter && !isGlobal && (mode.id == 'object') && !getTokens().length) {
+		if (filter && !isGlobal && (mode.id == 'object') && !mode.tokens) {
 			const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 
 			let itemsImport: any[] = [];
@@ -2465,7 +2505,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					slot.object = S.Record.getTypeById(it.id) || (isGlobal ? GLOBAL_DEPS.types.get(it.id) : null);
 				} else
 				if (it.kind == 'creator') {
-					slot.object = isGlobal ? GLOBAL_DEPS.participants.get(it.id) : U.Space.getParticipant(it.id);
+					// The cross-space map is cold on the first global use of a session;
+					// the current-space participant store covers the common pivot case
+					slot.object = (isGlobal ? GLOBAL_DEPS.participants.get(it.id) : null) || U.Space.getParticipant(it.id);
 				};
 
 				slots.push(slot);
@@ -2523,8 +2565,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		resolveTokens(raw, tokens => {
 			tokensRef.current = tokens;
 
-			// Drop what failed to resolve from storage too
-			if (tokens.length != raw.length) {
+			// Drop what failed to resolve from storage too - but only in-space, where
+			// resolution is authoritative; the global maps may simply be cold on the
+			// first use of a session and the token must survive for the next open
+			if (!isGlobal && (tokens.length != raw.length)) {
 				persistTokens();
 			};
 
