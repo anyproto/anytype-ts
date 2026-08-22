@@ -19,6 +19,9 @@ const GLOBAL_QUERY_LIMIT = 50;
 // Person chips shown inline in the suggestion row besides "My objects"; the full people
 // list stays reachable via /by
 const PERSON_CHIP_LIMIT = 3;
+// More members fit in the row while the what group is filled and its chips are hidden
+// (the row scrolls with the edge fade on overflow)
+const PERSON_CHIP_LIMIT_FILLED = 10;
 // Restore chip/query on quick reopen; treat the popup as a fresh task after this long
 // (the Raycast pop-to-root / Alfred latest-query-window pattern)
 const STATE_RESET_TIMEOUT = 5 * 60 * 1000;
@@ -992,7 +995,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			people = people.filter(it => identity(it) != account.id);
 		};
 
-		return people.slice(0, PERSON_CHIP_LIMIT).map(it => ({
+		const limit = getWhatToken() ? PERSON_CHIP_LIMIT_FILLED : PERSON_CHIP_LIMIT;
+
+		return people.slice(0, limit).map(it => ({
 			id: it.id,
 			name: U.String.sprintf(translate('popupSearchChipByName'), U.Object.name(it)),
 			isPerson: true,
@@ -1918,17 +1923,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const reg = query ? new RegExp(U.String.regexEscape(query), 'gi') : null;
 		const canWrite = U.Space.canMyParticipantWrite();
 
-		let items: any[] = getSuggestionItems().map(it => ({
+		let items: any[] = [];
+
+		// The people entry leads the list (prefills "/by " - the mechanic teaches its own
+		// syntax); filled groups hide their entries like everywhere else
+		if (!getCreatorToken() && hasMembers()) {
+			items.push({ id: 'cmdBy', name: translate('popupSearchCommandBy'), iconParam: { name: 'common/search' }, isCommand: true, command: 'by' });
+		};
+
+		items = items.concat(getSuggestionItems().map(it => ({
 			...it,
 			id: `chip-${it.id}`,
 			chipId: it.id,
 			iconParam: { name: 'common/search' },
 			isChip: true,
-		}));
+		})));
 
-		// Typed-completion entry points: picking one prefills the command
-		items.push({ id: 'cmdBy', name: translate('popupSearchCommandBy'), iconParam: { name: 'common/search' }, isCommand: true, command: 'by' });
-		items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), iconParam: { name: 'common/search' }, isCommand: true, command: 'type' });
+		if (!getWhatToken()) {
+			items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), iconParam: { name: 'common/search' }, isCommand: true, command: 'type' });
+		};
 
 		if (!isGlobal) {
 			if (canWrite) {

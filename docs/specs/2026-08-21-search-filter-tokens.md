@@ -215,7 +215,15 @@ by the old query; the new search is about the drilled thing — today's drill be
 a token **from a chip** and adding/removing the **space** token keep the query (narrowing or
 widening the same search — the research's widen case).
 
-### `/` contextual completions (the typed path — Slack pattern)
+### `/` contextual completions (the typed path — Slack pattern; rev 4.1)
+
+Rev 4.1 (Roman, 2026-08-22): the bare "/" list leads with a single **"Filter by people…"**
+entry (first position; hidden while a creator token is present) — selecting it prefills
+`/by ` in the input, so the syntax teaches itself; NO direct member rows in the "/" list.
+The what chips are listed directly after it (types are the more useful direct entries),
+then a "Filter by type…" entry (hidden while a what token is present), then actions.
+Chips-row people cap: My objects + 3 members normally, ~10 members while the what group is
+filled and its chips are hidden (the freed space).
 
 `/` mode grows from "chips + actions" into completions that resolve to tokens:
 

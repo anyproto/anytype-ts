@@ -1656,7 +1656,7 @@
 	"popupSearchInSpace": "in",
 	"popupSearchGlobalTooltip": "Search in all Channels",
 	"popupSearchSearchGlobal": "Search across all Channels",
-	"popupSearchCommandBy": "Filter by person...",
+	"popupSearchCommandBy": "Filter by people...",
 	"popupSearchCommandType": "Filter by type...",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
 	"popupSearchTooltipSearchByType": "Search objects of this type",
