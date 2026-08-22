@@ -100,11 +100,11 @@ const KIND_NAME_KEYS_SINGULAR: { [key: string]: string } = {
 
 const isMac = U.Common.isPlatformMac();
 
-// Type lists order: most recently used-or-created first, then name (lastUsedDate is
-// often empty - creation is the fallback recency signal; aggregated groups carry the
-// most recent value across their spaces in aggLastUsed)
+// Type lists order: whichever recency signal is freshest - used, opened or created
+// (lastUsedDate is often empty); then name. Aggregated groups carry the most recent
+// value across their spaces in aggLastUsed
 const typeRecency = (it: any): number => {
-	return Math.max(Number(it.lastUsedDate) || 0, Number(it.createdDate) || 0);
+	return Math.max(Number(it.lastUsedDate) || 0, Number(it.lastOpenedDate) || 0, Number(it.createdDate) || 0);
 };
 
 const sortTypesByUsage = (a: any, b: any): number => {
@@ -137,7 +137,7 @@ const SUB_GLOBAL_PARTICIPANTS = 'searchGlobalParticipants';
 const SUB_GLOBAL_TYPES = 'searchGlobalTypes';
 // Only what rendering reads - keeps the payload and the maps compact
 const KEYS_GLOBAL_PARTICIPANT = [ 'id', 'spaceId', 'name', 'globalName', 'iconImage', 'layout', 'resolvedLayout', 'isDeleted', 'participantStatus' ];
-const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'uniqueKey', 'layout', 'recommendedLayout', 'resolvedLayout', 'isDeleted', 'isHidden', 'iconName', 'iconEmoji', 'iconImage', 'iconOption', 'lastUsedDate', 'createdDate' ];
+const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'uniqueKey', 'layout', 'recommendedLayout', 'resolvedLayout', 'isDeleted', 'isHidden', 'iconName', 'iconEmoji', 'iconImage', 'iconOption', 'lastUsedDate', 'lastOpenedDate', 'createdDate' ];
 
 const ingestGlobalParticipant = (it: any) => {
 	if (GLOBAL_DEPS.participants.has(it.id)) {
