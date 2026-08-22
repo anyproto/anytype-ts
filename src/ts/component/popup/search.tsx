@@ -3213,6 +3213,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			cacheGenRef.current = listEpochRef.current;
 			cacheRef.current.clearAll();
 			listRef.current.recomputeRowHeights(0);
+
+			// Re-pin the scroll AFTER the re-measure: with many rows the recompute can
+			// drift the preserved scrollTop, rendering a fresh list mid-scroll (topRef
+			// is 0 after a reload; a live re-measure - chat captions - keeps its spot)
+			listRef.current.scrollToPosition(topRef.current);
 		};
 	}, [ isLoading, dummy ]);
 
