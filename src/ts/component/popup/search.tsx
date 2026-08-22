@@ -100,11 +100,16 @@ const KIND_NAME_KEYS_SINGULAR: { [key: string]: string } = {
 
 const isMac = U.Common.isPlatformMac();
 
-// Type lists order: recently used first, then name (aggregated groups carry the most
-// recent lastUsedDate across their spaces in aggLastUsed)
+// Type lists order: most recently used-or-created first, then name (lastUsedDate is
+// often empty - creation is the fallback recency signal; aggregated groups carry the
+// most recent value across their spaces in aggLastUsed)
+const typeRecency = (it: any): number => {
+	return Math.max(Number(it.lastUsedDate) || 0, Number(it.createdDate) || 0);
+};
+
 const sortTypesByUsage = (a: any, b: any): number => {
-	const ua = Number(a.aggLastUsed || a.lastUsedDate) || 0;
-	const ub = Number(b.aggLastUsed || b.lastUsedDate) || 0;
+	const ua = Number(a.aggLastUsed) || typeRecency(a);
+	const ub = Number(b.aggLastUsed) || typeRecency(b);
 
 	return (ub - ua) || U.Data.sortByName(a, b);
 };
@@ -132,7 +137,7 @@ const SUB_GLOBAL_PARTICIPANTS = 'searchGlobalParticipants';
 const SUB_GLOBAL_TYPES = 'searchGlobalTypes';
 // Only what rendering reads - keeps the payload and the maps compact
 const KEYS_GLOBAL_PARTICIPANT = [ 'id', 'spaceId', 'name', 'globalName', 'iconImage', 'layout', 'resolvedLayout', 'isDeleted', 'participantStatus' ];
-const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'uniqueKey', 'layout', 'recommendedLayout', 'resolvedLayout', 'isDeleted', 'isHidden', 'iconName', 'iconEmoji', 'iconImage', 'iconOption', 'lastUsedDate' ];
+const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'uniqueKey', 'layout', 'recommendedLayout', 'resolvedLayout', 'isDeleted', 'isHidden', 'iconName', 'iconEmoji', 'iconImage', 'iconOption', 'lastUsedDate', 'createdDate' ];
 
 const ingestGlobalParticipant = (it: any) => {
 	if (GLOBAL_DEPS.participants.has(it.id)) {
@@ -2014,7 +2019,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			entry.spaces.add(it.spaceId);
-			entry.lastUsed = Math.max(entry.lastUsed, Number(it.lastUsedDate) || 0);
+			entry.lastUsed = Math.max(entry.lastUsed, typeRecency(it));
 
 			if ((it.spaceId == S.Common.space) || ((entry.object.spaceId != S.Common.space) && (it.spaceId < entry.object.spaceId))) {
 				entry.object = it;
