@@ -222,9 +222,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const tokensRef = useRef<SearchToken[]>([]);
 	// Monotonic insertion counter - identifies the most recently row-added token for Back
 	const tokenSeqRef = useRef(0);
-	// Transient Tab highlight over the suggestion chips (index into getSuggestionItems);
-	// dropped by typing, arrows, Escape and any token change
-	const chipHighlightRef = useRef(-1);
+	// Transient Tab highlight over the suggestion chips - keyed by chip id, not index, so
+	// the row recomputing under it (subscription events, member churn) can never shift the
+	// highlight onto a different chip; dropped by typing, arrows, Escape, any token change
+	const chipHighlightRef = useRef('');
 	const nodeRef = useRef(null);
 	const filterInputRef = useRef(null);
 	const listRef = useRef(null);
@@ -333,7 +334,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Escape only closes - tokens are never removed by it (removal is x and Backspace
 		// at the query start). A transient chip highlight absorbs the press first
 		keyboard.shortcut('escape', e, () => {
-			if (chipHighlightRef.current >= 0) {
+			if (chipHighlightRef.current) {
 				clearChipHighlight(true);
 				return;
 			};
@@ -409,12 +410,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			const dir = (pressed == 'tab') ? 1 : -1;
-			const current = chipHighlightRef.current;
-
-			chipHighlightRef.current = (current < 0) ?
+			const current = chips.findIndex(it => it.id == chipHighlightRef.current);
+			const next = (current < 0) ?
 				((dir > 0) ? 0 : chips.length - 1) :
 				(current + dir + chips.length) % chips.length;
 
+			chipHighlightRef.current = chips[next].id;
 			setDummy(prev => prev + 1);
 			scrollToActiveChip();
 		});
@@ -427,9 +428,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 
 		keyboard.shortcut(`enter, ${cmd}+enter`, e, (pressed: string) => {
-			// Enter applies the highlighted suggestion chip while the Tab highlight is up
-			if ((pressed == 'enter') && (chipHighlightRef.current >= 0)) {
-				const chip = getSuggestionItems()[chipHighlightRef.current];
+			// Enter applies the highlighted suggestion chip while the Tab highlight is up;
+			// matched by id - a vanished chip falls through to the list action
+			if ((pressed == 'enter') && chipHighlightRef.current) {
+				const chip = getSuggestionItems().find(it => it.id == chipHighlightRef.current);
 
 				clearChipHighlight(false);
 
@@ -696,11 +698,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const clearChipHighlight = (render?: boolean) => {
-		if (chipHighlightRef.current < 0) {
+		if (!chipHighlightRef.current) {
 			return;
 		};
 
-		chipHighlightRef.current = -1;
+		chipHighlightRef.current = '';
 
 		if (render) {
 			setDummy(prev => prev + 1);
@@ -710,7 +712,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Keep focus in the input after mouse-started token mutations (bare divs steal focus).
 	// Any token change recomputes the suggestion row, so the chip highlight drops
 	const afterTokenChange = () => {
-		chipHighlightRef.current = -1;
+		chipHighlightRef.current = '';
 		setDummy(prev => prev + 1);
 		filterInputRef.current?.focus();
 		reload(true);
@@ -839,11 +841,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		nRef.current = 0;
 		topRef.current = 0;
-		chipHighlightRef.current = -1;
+		chipHighlightRef.current = '';
 		setDummy(prev => prev + 1);
 
 		// load(clear) bumps the generation synchronously on entry - precompute it so a
-		// loader that answers synchronously (global members) passes the gen check too
+		// synchronously answering load path passes the gen check too
 		const restoreGen = loadGenRef.current + 1;
 
 		const step = () => {
@@ -929,8 +931,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return KIND_NAME_KEYS[id] ? translate(KIND_NAME_KEYS[id]) : '';
 	};
 
-	// The mode the token set loads: the People picker, the Messages loader, or objects.
-	// tokens carries the count for presentation gates keyed to the loaded list
+	// The mode the token set loads: the Messages loader or objects. tokens carries the
+	// count for presentation gates keyed to the loaded list
 	const getLoadMode = (): any => {
 		const what = getWhatToken();
 		const tokens = tokensRef.current.length;
@@ -1049,6 +1051,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// token. The group's chips are hidden while filled, so replace-within-group and
 	// toggle-off never apply here; removal is the token x and Backspace-at-0 only
 	const onChipAdd = (item: any) => {
+		// A chip add keeps a normal query (narrowing the same search) but never a "/"
+		// command query - reload() would re-enter command mode and the results would
+		// never appear
+		if (filterValueRef.current.startsWith('/')) {
+			clearQuery();
+		};
+
 		if (item.isPerson) {
 			addToken('creator', item.object, { source: 'Chip' });
 			return;
@@ -3000,8 +3009,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			{!onObjectSelect && suggestions.length ? (
 				<div className="typeSelectWrap">
 					<div ref={typeSelectRef} className="typeSelect" onWheel={onTypeWheel} onScroll={checkTypeSelectFade}>
-						{suggestions.map((item: any, i: number) => {
-							const cn = [ 'typeItem', (i == chipHighlightRef.current ? 'active' : '') ];
+						{suggestions.map((item: any) => {
+							const cn = [ 'typeItem', (item.id == chipHighlightRef.current ? 'active' : '') ];
 
 							return (
 								<div
