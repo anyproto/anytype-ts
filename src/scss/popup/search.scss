@@ -25,8 +25,11 @@
 
 			.tokens { display: flex; align-items: center; gap: 0px 6px; max-width: 60%; flex-shrink: 0; overflow: hidden; }
 			.tokens {
-				.token { display: flex; align-items: center; gap: 0px 6px; padding: 2px 6px 2px 8px; border-radius: 14px; background: var(--color-shape-highlight-medium); @include text-small; max-width: 200px; min-width: 0; flex-shrink: 1; }
-				.token {
+				.filterToken {
+					display: flex; align-items: center; gap: 0px 6px; padding: 2px 4px 2px 8px; border-radius: 14px; background: var(--color-shape-highlight-medium);
+					@include text-small; color: var(--color-text-primary); max-width: 200px; min-width: 0; flex-shrink: 1;
+				}
+				.filterToken {
 					.iconObject { margin-right: 0px; flex-shrink: 0; }
 					.name { @include text-overflow-nw; }
 					.icon { width: 16px; height: 16px; }

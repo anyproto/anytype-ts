@@ -3439,7 +3439,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	// Token pill in the head: the same pill family as the chips - 16px icon, name, x
 	const TokenItem = (token: SearchToken) => {
-		const cn = [ 'token', `token-${token.kind}` ];
+		// 'filterToken', not 'token' - Prism's syntax CSS styles .token globally
+		const cn = [ 'filterToken', `filterToken-${token.kind}` ];
 
 		let icon = null;
 		let name = '';
