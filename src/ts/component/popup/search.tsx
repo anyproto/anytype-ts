@@ -108,7 +108,7 @@ const SUB_GLOBAL_PARTICIPANTS = 'searchGlobalParticipants';
 const SUB_GLOBAL_TYPES = 'searchGlobalTypes';
 // Only what rendering reads - keeps the payload and the maps compact
 const KEYS_GLOBAL_PARTICIPANT = [ 'id', 'spaceId', 'name', 'globalName', 'iconImage', 'layout', 'resolvedLayout', 'isDeleted', 'participantStatus' ];
-const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'uniqueKey', 'layout', 'recommendedLayout', 'resolvedLayout', 'isDeleted', 'isHidden' ];
+const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'uniqueKey', 'layout', 'recommendedLayout', 'resolvedLayout', 'isDeleted', 'isHidden', 'iconName', 'iconEmoji', 'iconImage', 'iconOption' ];
 
 const ingestGlobalParticipant = (it: any) => {
 	if (GLOBAL_DEPS.participants.has(it.id)) {
