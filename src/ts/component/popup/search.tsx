@@ -98,6 +98,10 @@ const GLOBAL_DEPS = {
 	participants: new Map<string, any>(),
 	participantCounts: new Map<string, number>(),
 	types: new Map<string, any>(),
+	// The open popup's redraw hook - the newest registrant wins, so a subscription
+	// reply landing after a quick close+reopen notifies the live popup, not a dead
+	// closure (registered in subscribeGlobalDeps, cleared on unmount)
+	onLoad: null as (() => void) | null,
 };
 
 const SUB_GLOBAL_PARTICIPANTS = 'searchGlobalParticipants';
@@ -124,24 +128,30 @@ const ingestGlobalType = (it: any) => {
 	};
 };
 
-// Pick up records that streamed in while no popup was open - subscription events land in
-// the stores; the maps ingest only ids they have not seen
+// Rebuild the compact maps from the live subscription stores: subscription events
+// stream into the record store between (and during) popup opens, so entries refresh
+// (renames, deletions, left Channels evict) on every entry into cross-space mode -
+// the maps are a per-entry snapshot, not a live mirror
 const syncGlobalDeps = () => {
+	GLOBAL_DEPS.participants.clear();
+	GLOBAL_DEPS.participantCounts.clear();
+	GLOBAL_DEPS.types.clear();
+
 	S.Record.getRecordIds(SUB_GLOBAL_PARTICIPANTS, '').forEach(id => {
-		if (!GLOBAL_DEPS.participants.has(id)) {
-			ingestGlobalParticipant(S.Detail.get(SUB_GLOBAL_PARTICIPANTS, id, KEYS_GLOBAL_PARTICIPANT));
-		};
+		ingestGlobalParticipant(S.Detail.get(SUB_GLOBAL_PARTICIPANTS, id, KEYS_GLOBAL_PARTICIPANT));
 	});
 
 	S.Record.getRecordIds(SUB_GLOBAL_TYPES, '').forEach(id => {
-		if (!GLOBAL_DEPS.types.has(id)) {
-			ingestGlobalType(S.Detail.get(SUB_GLOBAL_TYPES, id, KEYS_GLOBAL_TYPE));
-		};
+		ingestGlobalType(S.Detail.get(SUB_GLOBAL_TYPES, id, KEYS_GLOBAL_TYPE));
 	});
 };
 
 const subscribeGlobalDeps = (onLoad: () => void) => {
 	const accountId = S.Auth.account?.id || '';
+
+	// Register before any early return: a popup opened while the first subscription
+	// reply is still in flight must get the redraw when it lands
+	GLOBAL_DEPS.onLoad = onLoad;
 	// Logout destroys all subscriptions and wipes the record store; a live participants
 	// subscription always holds at least your own participant - empty means "dead"
 	const dead = !S.Record.getRecordIds(SUB_GLOBAL_PARTICIPANTS, '').length;
@@ -173,7 +183,7 @@ const subscribeGlobalDeps = (onLoad: () => void) => {
 		crossSpace: true,
 	}, (message: any) => {
 		(message.records || []).forEach(it => ingestGlobalParticipant(S.Detail.mapper(it)));
-		onLoad();
+		GLOBAL_DEPS.onLoad?.();
 	});
 
 	U.Subscription.subscribe({
@@ -187,7 +197,7 @@ const subscribeGlobalDeps = (onLoad: () => void) => {
 		crossSpace: true,
 	}, (message: any) => {
 		(message.records || []).forEach(it => ingestGlobalType(S.Detail.mapper(it)));
-		onLoad();
+		GLOBAL_DEPS.onLoad?.();
 	});
 };
 
@@ -487,7 +497,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			e.preventDefault();
 
 			const item = items[nRef.current];
-			if (item && item.isObject) {
+			if (item && item.isObject && !item.isCommandSuggest) {
 				const spaceview = U.Space.getSpaceviewBySpaceId(item.spaceId || S.Common.space);
 
 				if (spaceview) {
@@ -1894,6 +1904,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const getGlobalTypeAggregate = (text: string, spaceId?: string): any[] => {
 		const t = String(text || '').toLowerCase();
 		const byKey = new Map<string, { object: any; spaces: Set<string> }>();
+		const instances: any[] = [];
 
 		GLOBAL_DEPS.types.forEach((it: any) => {
 			if (it.isDeleted || (it.uniqueKey == J.Constant.typeKey.template)) {
@@ -1904,6 +1915,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				return;
 			};
 
+			instances.push(it);
+		});
+
+		// Hidden instances drop BEFORE grouping - a hidden representative must not
+		// suppress a group that is visible elsewhere, and the counts stay honest
+		S.Record.checkHiddenObjects(instances).forEach((it: any) => {
 			const key = String(it.uniqueKey || it.id);
 
 			let entry = byKey.get(key);
@@ -1926,7 +1943,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			list = list.filter(({ object }) => [ object.name, object.pluralName ].some(n => String(n || '').toLowerCase().includes(t)));
 		};
 
-		return S.Record.checkHiddenObjects(list.map(({ object, spaces }) => {
+		return list.map(({ object, spaces }) => {
 			const spaceview = U.Space.getSpaceviewBySpaceId(object.spaceId);
 
 			return {
@@ -1938,7 +1955,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				spaceCount: spaces.size,
 				aggSpaceName: spaceview ? U.Object.name(spaceview) : '',
 			};
-		})).sort(U.Data.sortByName);
+		}).sort(U.Data.sortByName);
 	};
 
 	// Global mode: one-shot cross-space search, no subscription. allStoresLoaded=false means
@@ -2093,6 +2110,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			itemsModeRef.current = getLoadMode();
 			hasMoreRef.current = false;
 			clearLoadPendingRef.current = false;
+
+			// A synchronous swap leaves no load in flight - release a spinner an
+			// in-flight (now superseded) clear may have engaged
+			if (clear) {
+				setIsLoading(false);
+			};
+
 			listEpochRef.current++;
 			setDummy(prev => prev + 1);
 			callBack?.();
@@ -2115,6 +2139,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			itemsModeRef.current = { ...mode, isTypeAgg: true };
 			hasMoreRef.current = false;
 			clearLoadPendingRef.current = false;
+
+			// Same spinner release as the "/" branch above
+			if (clear) {
+				setIsLoading(false);
+			};
+
 			listEpochRef.current++;
 			setDummy(prev => prev + 1);
 			callBack?.();
@@ -2329,7 +2359,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		// creator/links stripped: a spaceview row must not render an attribution
 		// caption or a drill arrow
-		return list.map(it => ({ ...it, id: it.targetSpaceId, isObject: true, isCommandSuggest: true, tokenKind: 'space', metaList: [], links: [], backlinks: [], creator: '', shortcut: [] }));
+		return list.map(it => ({ ...it, id: it.targetSpaceId, isObject: true, isCommandSuggest: true, tokenKind: 'space', type: '', metaList: [], links: [], backlinks: [], creator: '', shortcut: [] }));
 	};
 
 	// "/" command mode: search the chips and actions themselves, plus typed completions
@@ -3078,6 +3108,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			unbind();
 			window.clearTimeout(timeoutRef.current);
 			window.clearTimeout(rebindTimeoutRef.current);
+
+			// Stop notifying a dead closure; the next popup re-registers on subscribe
+			GLOBAL_DEPS.onLoad = null;
 
 			if (chatsSubActiveRef.current) {
 				U.Subscription.destroyList([ chatsSubId ], true);
