@@ -1249,7 +1249,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (spaceview && !spaceview._empty_) {
 				ret.push({
 					id: `scope-${spaceview.targetSpaceId}`,
-					name: U.String.sprintf(translate('popupSearchChipInName'), U.Object.name(spaceview)),
+					name: translate('popupSearchChipInCurrent'),
 					isScope: true,
 					object: spaceview,
 				});
@@ -2489,7 +2489,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			let name = it.name;
 
 			if (it.isScope) {
-				name = U.Object.name(it.object || {});
+				name = translate('popupSearchCmdThisChannel');
 			} else
 			if (it.isPerson) {
 				name = (it.id == 'mine') ? translate('popupSearchCmdMe') : U.Object.name(it.object || {});
