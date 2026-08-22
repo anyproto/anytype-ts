@@ -2414,7 +2414,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// that resolve to tokens (/by <person>, /type <type>). Selecting a chip applies it as
 	// a chip click (single match + Enter selects it via the auto-active first row)
 	const getCommandItems = (query: string) => {
-		const match = query.match(/^(by|type|in)(\s+(.*))?$/i);
+		const match = query.match(/^(by|type|is|in)(\s+(.*))?$/i);
 
 		if (match) {
 			const command = match[1].toLowerCase();
@@ -2439,13 +2439,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// The people entry leads the list (prefills "/by " - the mechanic teaches its own
 		// syntax); filled groups hide their entries like everywhere else
 		if (!getCreatorToken() && hasMembers()) {
-			items.push({ id: 'cmdBy', name: translate('popupSearchCommandBy'), iconParam: { name: 'common/search' }, isCommand: true, command: 'by' });
+			items.push({ id: 'cmdBy', name: translate('popupSearchCommandBy'), prefix: '/by', iconParam: { name: 'common/search' }, isCommand: true, command: 'by' });
 		};
 
 		// The Channel entry follows the adaptive rule like every group: only while the
 		// scope group is empty (global mode); pickers pin the scope and never offer it
 		if (!getTokenByGroup('scope') && !onObjectSelect) {
-			items.push({ id: 'cmdIn', name: translate('popupSearchCommandIn'), iconParam: { name: 'common/search' }, isCommand: true, command: 'in' });
+			items.push({ id: 'cmdIn', name: translate('popupSearchCommandIn'), prefix: '/in', iconParam: { name: 'common/search' }, isCommand: true, command: 'in' });
 		};
 
 		items = items.concat(getSuggestionItems().map(it => ({
@@ -2457,7 +2457,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		})));
 
 		if (!getWhatToken()) {
-			items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), iconParam: { name: 'common/search' }, isCommand: true, command: 'type' });
+			items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), prefix: '/is', iconParam: { name: 'common/search' }, isCommand: true, command: 'is' });
 		};
 
 		// Creation acts in the current space - a foreign scope hides it like global
@@ -2472,7 +2472,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (reg) {
-			items = items.filter(it => String(it.name || '').match(reg));
+			items = items.filter(it => [ it.name, it.prefix ].some(m => String(m || '').match(reg)));
 		};
 
 		return items.map(it => ({ ...it, isSmall: true, shortcut: [] }));
@@ -3462,7 +3462,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			content = (
 				<div className="sides">
 					<div className="side left">
-						<div className="name">{item.name}</div>
+						<div className="name">
+							{item.prefix ? <span className="cmdPrefix">{item.prefix}</span> : ''}
+							{item.name}
+						</div>
 					</div>
 					<div className="side right">
 						<div className="caption">
