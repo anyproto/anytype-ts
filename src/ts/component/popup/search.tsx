@@ -86,6 +86,18 @@ const KIND_NAME_KEYS: { [key: string]: string } = {
 	[SEARCH_TYPE_TYPE]: 'popupSearchTypeTypes',
 };
 
+// Singular forms for the "/" list's command-argument grammar ("/is Page", not "/is Pages")
+const KIND_NAME_KEYS_SINGULAR: { [key: string]: string } = {
+	[SEARCH_TYPE_MESSAGE]: 'popupSearchKindMessage',
+	[SEARCH_TYPE_PAGE]: 'popupSearchKindPage',
+	[SEARCH_TYPE_MEDIA]: 'commonMedia',
+	[SEARCH_TYPE_BOOKMARK]: 'popupSearchKindBookmark',
+	[SEARCH_TYPE_COLLECTION]: 'popupSearchKindCollection',
+	[SEARCH_TYPE_QUERY]: 'popupSearchKindQuery',
+	[SEARCH_TYPE_CHAT]: 'popupSearchKindChat',
+	[SEARCH_TYPE_TYPE]: 'popupSearchKindType',
+};
+
 const isMac = U.Common.isPlatformMac();
 
 // Cross-space search dependencies, shared across popup instances for the app session.
@@ -2440,25 +2452,42 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// mechanic teaches its own syntax. Filled groups hide their entries like
 		// everywhere else; pickers pin the scope, so the Channel entry never shows there
 		if (!getCreatorToken() && hasMembers()) {
-			items.push({ id: 'cmdBy', name: translate('popupSearchCommandBy'), prefix: '/by', iconParam: { name: 'common/search' }, isCommand: true, command: 'by' });
+			items.push({ id: 'cmdBy', name: translate('popupSearchCommandBy'), arg: translate('popupSearchCmdArgPerson'), description: translate('popupSearchCommandBy'), prefix: '/by', iconParam: { name: 'common/search' }, isCommand: true, command: 'by' });
 		};
 
 		if (!getWhatToken()) {
-			items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), prefix: '/is', iconParam: { name: 'common/search' }, isCommand: true, command: 'is' });
+			items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), arg: translate('popupSearchCmdArgType'), description: translate('popupSearchCommandType'), prefix: '/is', iconParam: { name: 'common/search' }, isCommand: true, command: 'is' });
 		};
 
 		if (!getTokenByGroup('scope') && !onObjectSelect) {
-			items.push({ id: 'cmdIn', name: translate('popupSearchCommandIn'), prefix: '/in', iconParam: { name: 'common/search' }, isCommand: true, command: 'in' });
+			items.push({ id: 'cmdIn', name: translate('popupSearchCommandIn'), arg: translate('popupSearchCmdArgChannel'), description: translate('popupSearchCommandIn'), prefix: '/in', iconParam: { name: 'common/search' }, isCommand: true, command: 'in' });
 		};
 
-		items = items.concat(getSuggestionItems().map(it => ({
+		items = items.concat(getSuggestionItems().map(it => {
+			// Command-argument grammar: the row reads as what you would type after the
+			// command - singular kinds, bare person names, "me" for yourself
+			let name = it.name;
+
+			if (it.isPerson) {
+				name = (it.id == 'mine') ? translate('popupSearchCmdMe') : U.Object.name(it.object || {});
+			} else
+			if (it.isKind && KIND_NAME_KEYS_SINGULAR[it.id]) {
+				name = translate(KIND_NAME_KEYS_SINGULAR[it.id]);
+			} else
+			if (it.isType) {
+				name = U.Object.name(it.object || {});
+			};
+
+			return {
 			...it,
 			id: `chip-${it.id}`,
 			chipId: it.id,
+			name,
 			prefix: it.isPerson ? '/by' : '/is',
 			iconParam: { name: 'common/search' },
 			isChip: true,
-		})));
+			};
+		}));
 
 		// Creation acts in the current space - a foreign scope hides it like global
 		// does; the widen action shows for any concrete scope
@@ -2468,7 +2497,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (reg) {
-			items = items.filter(it => [ it.name, it.prefix ].some(m => String(m || '').match(reg)));
+			items = items.filter(it => [ it.name, it.prefix, it.arg ].some(m => String(m || '').match(reg)));
 		};
 
 		return items.map(it => ({ ...it, isSmall: true, shortcut: [] }));
@@ -3434,11 +3463,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					<div className="side left">
 						<div className="name">
 							{item.prefix ? <span className="cmdPrefix">{item.prefix}</span> : ''}
-							{item.name}
+							{item.arg ? <span className="cmdArg">{item.arg}</span> : item.name}
 						</div>
 					</div>
 					<div className="side right">
 						<div className="caption">
+							{item.description ? <div className="cmdDesc">{item.description}</div> : ''}
 							{item.shortcut.map((item, i) => (
 								<Label key={i} text={item} />
 							))}
