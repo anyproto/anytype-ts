@@ -3658,7 +3658,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					className="underlined"
 					value={filterValueRef.current}
 					ref={filterInputRef}
-					placeholder={tokens.length ? translate('commonSearch') : translate('popupSearchPlaceholder')}
+					placeholder={tokens.length ? translate('popupSearchPlaceholderShort') : translate('popupSearchPlaceholder')}
 					onSelect={onFilterSelect}
 					onChange={v => onFilterChange(v)}
 					onKeyUp={(e, v) => onFilterChange(v)}
