@@ -33,6 +33,8 @@
 					.iconObject { margin-right: 0px; flex-shrink: 0; }
 					.name { @include text-overflow-nw; }
 					.icon { width: 16px; height: 16px; }
+					.icon.clear { position: relative; }
+					.icon.clear::after { content: ""; position: absolute; top: -8px; bottom: -8px; left: -3px; right: -6px; }
 				}
 			}
 
