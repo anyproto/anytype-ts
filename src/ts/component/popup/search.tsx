@@ -95,6 +95,9 @@ const isMac = U.Common.isPlatformMac();
 const GLOBAL_DEPS = {
 	accountId: '',
 	subscribed: false,
+	// True from issuing the subscriptions until the first participants reply lands -
+	// the liveness ("dead") heuristic must not fire in that window
+	pending: false,
 	participants: new Map<string, any>(),
 	participantCounts: new Map<string, number>(),
 	types: new Map<string, any>(),
@@ -153,8 +156,10 @@ const subscribeGlobalDeps = (onLoad: () => void) => {
 	// reply is still in flight must get the redraw when it lands
 	GLOBAL_DEPS.onLoad = onLoad;
 	// Logout destroys all subscriptions and wipes the record store; a live participants
-	// subscription always holds at least your own participant - empty means "dead"
-	const dead = !S.Record.getRecordIds(SUB_GLOBAL_PARTICIPANTS, '').length;
+	// subscription always holds at least your own participant - empty means "dead".
+	// Not while the first replies are still in flight though: a second call in that
+	// window (mount effect + resolveTokens) must not wipe the maps and re-subscribe
+	const dead = !GLOBAL_DEPS.pending && !S.Record.getRecordIds(SUB_GLOBAL_PARTICIPANTS, '').length;
 
 	// Account switch or logout/login invalidates everything
 	if (GLOBAL_DEPS.subscribed && ((GLOBAL_DEPS.accountId != accountId) || dead)) {
@@ -170,6 +175,7 @@ const subscribeGlobalDeps = (onLoad: () => void) => {
 	};
 
 	GLOBAL_DEPS.subscribed = true;
+	GLOBAL_DEPS.pending = true;
 	GLOBAL_DEPS.accountId = accountId;
 
 	U.Subscription.subscribe({
@@ -182,6 +188,7 @@ const subscribeGlobalDeps = (onLoad: () => void) => {
 		noDeps: true,
 		crossSpace: true,
 	}, (message: any) => {
+		GLOBAL_DEPS.pending = false;
 		(message.records || []).forEach(it => ingestGlobalParticipant(S.Detail.mapper(it)));
 		GLOBAL_DEPS.onLoad?.();
 	});
@@ -290,6 +297,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const isStale = Boolean(lastUsed && (Date.now() - lastUsed > STATE_RESET_TIMEOUT));
 	const filter = isStale ? '' : String((legacyGlobalSide ? storage.filterGlobal : storage.filter) || '');
 	const filterValueRef = useRef(filter);
+	// The input value as of the last input event or programmatic write - onFilterChange
+	// compares against it to ignore no-change keyups during the debounce window
+	const pendingValueRef = useRef(filter);
 	// Empty-browse order of All/My objects: 'edited' (lastModifiedDate) or 'created' (createdDate)
 	const recentSortRef = useRef(String((legacyGlobalSide ? storage.recentSortGlobal : storage.recentSort) || 'edited'));
 	// The token signature the currently held items were loaded for ({ id, what }). During
@@ -396,7 +406,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			const node = filterInputRef.current?.getNode();
 
-			if (!node || node.selectionStart || node.selectionEnd) {
+			// A blurred input still reports selection offsets of 0 - only a focused
+			// input's caret position means anything (clicking e.g. the sort switch
+			// drops focus to body; Backspace then must not eat a token)
+			if (!node || (document.activeElement != node) || node.selectionStart || node.selectionEnd) {
 				return;
 			};
 
@@ -636,6 +649,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onFilterChange = (v: string) => {
+		// Keyups that did not change the text (Tab, arrows, modifiers) must not drop
+		// the chip highlight or push back the pending debounce - compare against the
+		// last SEEN input value, not the committed one (which lags by the debounce)
+		if (pendingValueRef.current == v) {
+			return;
+		};
+
+		pendingValueRef.current = v;
 		window.clearTimeout(timeoutRef.current);
 
 		if (filterValueRef.current == v) {
@@ -782,6 +803,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		window.clearTimeout(timeoutRef.current);
 		filterInputRef.current?.setValue('');
 		filterValueRef.current = '';
+		pendingValueRef.current = '';
 		storageSet({ filter: '' });
 	};
 
@@ -945,6 +967,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const filter = String(back.filter || '');
 
 		filterValueRef.current = filter;
+		pendingValueRef.current = filter;
 		filterInputRef.current?.setValue(filter);
 		filterInputRef.current?.setRange({ from: filter.length, to: filter.length });
 		filterInputRef.current?.focus();
@@ -1374,8 +1397,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				};
 			} else
 			if (scopeId == S.Common.space) {
+				// Row-drilled tokens can lack uniqueKey on the object - fall back to the
+				// cross-space cache, same as the toGlobal and foreign arms
+				const uniqueKey = what.object?.uniqueKey || GLOBAL_DEPS.types.get(what.id)?.uniqueKey;
 				const local = S.Record.getTypeById(what.id) ||
-					(what.object?.uniqueKey ? S.Record.getTypes().find(it => it.uniqueKey == what.object.uniqueKey) : null);
+					(uniqueKey ? S.Record.getTypes().find(it => it.uniqueKey == uniqueKey) : null);
 
 				if (local) {
 					what.id = local.id;
@@ -1748,7 +1774,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (quiet) {
 				setDummy(prev => prev + 1);
 			} else {
+				// A superseded non-quiet load already released the spinner; a same-value
+				// setState bails out of rendering, so bump the list explicitly too
 				setIsLoading(false);
+				setDummy(prev => prev + 1);
 			};
 		};
 
@@ -2041,7 +2070,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (quiet) {
 				setDummy(prev => prev + 1);
 			} else {
+				// A superseded non-quiet load already released the spinner; a same-value
+				// setState bails out of rendering, so bump the list explicitly too
 				setIsLoading(false);
+				setDummy(prev => prev + 1);
 			};
 		};
 
@@ -2236,7 +2268,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (quiet) {
 				setDummy(prev => prev + 1);
 			} else {
+				// A superseded non-quiet load already released the spinner; a same-value
+				// setState bails out of rendering, so bump the list explicitly too
 				setIsLoading(false);
+				setDummy(prev => prev + 1);
 			};
 		};
 
@@ -2744,6 +2779,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			filterInputRef.current?.setRange({ from: v.length, to: v.length });
 			filterInputRef.current?.focus();
 			filterValueRef.current = v;
+			pendingValueRef.current = v;
 			storageSet({ filter: v });
 			reload(true);
 			return;
@@ -3271,7 +3307,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 									{spaceview ? (
 										<>
 											<div className="prep">{translate('popupSearchInSpace')}</div>
-											<div className="drillLink" onClick={e => onSpaceCaption(e, spaceview)}>
+											<div className="drillLink spaceLink" onClick={e => onSpaceCaption(e, spaceview)}>
 												<IconObject object={spaceview} size={14} />
 												<ObjectName object={spaceview} />
 											</div>
@@ -3409,7 +3445,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 								<>
 									<div className="bullet" />
 									<div className="prep">{translate('popupSearchInSpace')}</div>
-									<div className="drillLink" onClick={e => onSpaceCaption(e, spaceview)}>
+									<div className="drillLink spaceLink" onClick={e => onSpaceCaption(e, spaceview)}>
 										<IconObject object={spaceview} size={14} />
 										<ObjectName object={spaceview} />
 									</div>
@@ -3498,7 +3534,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			<div key={`token-${token.kind}-${token.id}`} className={cn.join(' ')}>
 				{icon}
 				<div className="name">{name}</div>
-				<Icon className="clear" name="common/clear" onClick={() => removeToken(token, 'Token')} />
+				<Icon className="clear" name="common/clear" size={16} onClick={() => removeToken(token, 'Token')} />
 			</div>
 		);
 	};
