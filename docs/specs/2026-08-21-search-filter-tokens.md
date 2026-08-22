@@ -3,9 +3,9 @@
 Date: 2026-08-21 (rev 4, 2026-08-22: chips row reworked into an adaptive suggestion row
 after Roman's phase-1 testing — see "Adaptive suggestion row" and Decisions 6-8; supersedes
 Decisions 1 and 5 and the rev-2 "Chips = token setters" section)
-Status: phase 1 implemented on `feature/JS-9862-search-tokens` (token core + chips as token
-setters + `/by` `/type` completions, in-space; the popup's `isGlobal` param behavior is as
-shipped). Phases 2-3 pending.
+Status: phases 1-2 implemented on `feature/JS-9862-search-tokens` (phase 1: token core +
+suggestion row + `/by` `/type` completions, in-space; phase 2: space scope token + derived
+`isGlobal` + in-place mode switch + unified storage). Phase 3 pending.
 
 ## Deviations (phase 1 implementation, 2026-08-21)
 
@@ -73,6 +73,52 @@ Rev-4 (adaptive suggestion row) implementation notes:
    Messages is gated off), member chips read "By <name>" (`popupSearchChipByName`), and
    the applied creator token uses the same labels. `popupSearchTypeMine` stays in
    text.json (unused by the popup now); the unshipped `popupSearchTokenYou` was removed.
+## Deviations (phase 2 implementation, 2026-08-22)
+
+20. **Cmd+Shift+K while global toggles back to in-space in place** (re-adds the scope
+   token), instead of this spec's "close-when-global". The keyboard-summary row ("toggle
+   the space token") is the behavior that shipped; closing is Escape/Cmd+K.
+21. **keyboard.ts did change** (vs "keyboard.ts unchanged"): its Cmd+Shift+K popup-open
+   branch now always yields to the popup, which owns the combo (object pickers leave it
+   inert). The closed-popup path and its editable-target/selection guards are untouched.
+22. **Backlink tokens survive the flip into global mode** - object ids are vault-unique,
+   so the `id In links+backlinks` filter rides `ObjectCrossSpaceSearch` unchanged
+   (supersedes phase-1 deviation 5's "backlink drops"; needs one manual verification
+   against the middleware). Global rows still offer no backlink drills (their links data
+   is zeroed) - the tokens only arrive by crossing the boundary or restore.
+23. **Pickers (`onObjectSelect`) pin the scope**: the space token is seeded but hidden
+   from the token row (`getTokens` excludes it), Backspace can't pop it, the
+   searchGlobal "/" entry is hidden, `removeSpaceScope` refuses, and `data.isGlobal` is
+   ignored - attachment pickers must never return cross-space objects.
+24. **The space token's id is the spaceId** (`spaceview.targetSpaceId`), with the
+   spaceview (id-overridden) as the render object - the comparison and filter currency
+   phase 3 needs.
+25. **The entry point always overrides the scope slot on open**: the scope token
+   persists in `storage.tokens` like any token, but Cmd+K seeds it and Cmd+Shift+K/the
+   vault icon strip it regardless of what was stored. A reopen's mode is decided by its
+   entry, never by storage (phase 3 may relax this for other-Channel scopes).
+26. **Global -> in-space, a type token re-points at the space's own same-uniqueKey type**
+   when one exists (keeps the create action and browse noun); without a local
+   counterpart the foreign type object stays (the uniqueKey filter still applies).
+   In-session in-space -> global still maps type -> bucket as specced; a REOPEN via a
+   global entry point keeps a stored type token as-is (type tokens are first-class
+   globally via `/type` - mapping is an in-session-flip behavior only).
+27. **Storage merge is fresher-side-wins**: the one-shot `*Global`-key merge compares
+   `lastUsedGlobal` vs `lastUsed` and adopts the more recent side's
+   filter/tokens/recentSort/lastUsed, then drops the `*Global` keys (undefined values
+   fall out of JSON serialization). The migration runs even when the state is stale,
+   writing the reset - stale pre-token legacy no longer resurrects on a quick reopen.
+28. **`mode.tokens` counts non-scope tokens** - the scope is the in-space resting state,
+   so the settings/import rows (deviation 6: zero tokens) stay reachable in-space.
+29. **Snapshot restores may cross the mode boundary** (exact-undo semantics, no token
+   mapping): popping a row-add done before an in-session scope change restores the
+   pre-add mode too, wiring the global deps if needed.
+30. **In-space placeholder is always `commonSearch`** - the scope token counts as a
+   token, so `popupSearchPlaceholder` is only reachable in global mode with no tokens.
+31. **Infinite-scroll appends freeze while a clear-load is in flight**
+   (`clearLoadPendingRef`, new invariant 10): an append fired inside a quiet flip window
+   shares the clear's generation and would route by the new tokens onto the old list.
+
 Builds on: `2026-08-20-in-space-cross-chat-search.md`, `2026-08-20-global-cross-space-search.md`,
 `2026-08-20-search-drilldown-type-creator.md` (all shipped in v0.56.6-beta, PR #2349).
 Research basis: GitHub's in-input scope token (Backspace removes it → all of GitHub); GitLab's
@@ -282,8 +328,9 @@ row); chip- and entry-point-added tokens do not. Removing the most recently row-
   `searchType` become one-shot migrations.
 - `subscribeGlobalDeps` starts on first entry into global mode (open or in-session).
 - Entry points set the initial space token (`param.data.isGlobal` accepted as an alias).
-- `keyboard.ts` unchanged; the popup's Cmd+Shift+K binding becomes `removeToken('space')` /
-  close-when-global. `onSearchGlobal`'s reopen + storage handoff is deleted.
+- `keyboard.ts`'s popup-open branch always yields the combo; the popup's Cmd+Shift+K
+  binding toggles the scope token in place (deviations 20-21). `onSearchGlobal`'s
+  reopen + storage handoff is deleted.
 
 ## Keyboard summary (v1)
 
@@ -320,6 +367,7 @@ source: Chip|Row|Caption|Entry|Backspace|Command, isGlobal }`; `SearchDrill` and
    `searchType` migration, stack Back-restore, `/by` `/type` completions.
 2. **Space token + in-place mode switch** — `isGlobal` as derived state, unified storage,
    entry points, Cmd+Shift+K / action rewired, what-token mapping across the boundary.
+   *(implemented 2026-08-22; deviations 20-31)*
 3. **Other-Channel scope** — clickable space captions, `spaceId Equal` on the cross-space
    path, that Channel's chips from `GLOBAL_DEPS.types`, `ChatSearch(Y, '')`, People filtered,
    `/in` `/here` `/channel`.
@@ -346,11 +394,10 @@ source: Chip|Row|Caption|Entry|Backspace|Command, isGlobal }`; `SearchDrill` and
 
 ## Implementation handoff notes (for a fresh session)
 
-State: branch `feature/JS-9862-search-tokens` exists off develop, zero commits. The working
-tree carries one intentional uncommitted change — `GLOBAL_QUERY_LIMIT` 100→50 in search.tsx
-(user-approved value, explicitly not yet committed) — plus `src/json/text.json` /
-`account_stop.json` edits belonging to a CONCURRENT agent: always `git add` specific files,
-never `-A`, and eyeball `git diff` before staging. Commit each increment on this branch.
+State: branch `feature/JS-9862-search-tokens` carries phases 1-2 (phase 1 user-verified;
+phase 2 committed 2026-08-22, two review rounds applied). The working tree may carry
+`account_stop.json` / `src/json/text.json` edits belonging to a CONCURRENT agent: always
+`git add` specific files, never `-A`, and eyeball `git diff` before staging.
 
 Verification: `set -o pipefail; bun run typecheck 2>&1 | tail -2` (pipefail or tail swallows
 the exit code) + `bunx eslint` on changed files. ~101 pre-existing vitest failures on develop
@@ -380,6 +427,9 @@ regression, fixed in the two v0.56.6-beta review rounds):
    focus to body).
 9. Item/Footer are called as functions (`{Item({...})}`), not JSX components — keep it that
    way or rows remount and hover/measure state churns.
+10. `clearLoadPendingRef` freezes infinite-scroll appends while a clear-load is in flight
+   (set in `load(clear)`, lifted by the gen-matching clear response and the "/" branch) —
+   appends share the clear's generation and would otherwise race it across a mode flip.
 
 Edit discipline that worked: python heredoc scripts with `assert s.count(anchor) == 1` for
 every replacement, single write at the end (a failed assert must leave the file untouched).
