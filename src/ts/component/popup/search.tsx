@@ -1394,9 +1394,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// One redraw when the cross-space maps land; a creator filter built while they were
 	// cold misses the per-space participant ids - re-run the search with the full set
 	const onGlobalDepsLoad = () => {
+		const what = getWhatToken();
+		const typeAgg = Boolean(what) && (what.kind == 'kind') && (what.id == SEARCH_TYPE_TYPE);
+
 		// The "/" command list does no backend query - a reload would only reset it.
-		// Global mode and a foreign scope both build the creator filter off the maps
-		if (!isCurrentSpace() && getCreatorToken() && !filterValueRef.current.startsWith('/')) {
+		// Global mode and a foreign scope build the creator filter and the Types
+		// aggregate off the maps - both need a re-run once the maps land
+		if (!isCurrentSpace() && (getCreatorToken() || typeAgg) && !filterValueRef.current.startsWith('/')) {
 			reload(true);
 		} else {
 			setDummy(prev => prev + 1);
@@ -1881,6 +1885,62 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
+	// The global Types aggregate: one row per uniqueKey across every Channel, with a
+	// per-type space count - the same in-memory view over the cross-space maps as the
+	// People aggregate (no round trip, no new subscriptions). The representative object
+	// is the current space's instance when one exists, else the lowest-spaceId instance
+	// (a stable pick); rows text-filter by name/pluralName. spaceId narrows to one
+	// Channel (a defensive arm - the Types bucket is only offered globally)
+	const getGlobalTypeAggregate = (text: string, spaceId?: string): any[] => {
+		const t = String(text || '').toLowerCase();
+		const byKey = new Map<string, { object: any; spaces: Set<string> }>();
+
+		GLOBAL_DEPS.types.forEach((it: any) => {
+			if (it.isDeleted || (it.uniqueKey == J.Constant.typeKey.template)) {
+				return;
+			};
+
+			if (spaceId && (it.spaceId != spaceId)) {
+				return;
+			};
+
+			const key = String(it.uniqueKey || it.id);
+
+			let entry = byKey.get(key);
+
+			if (!entry) {
+				entry = { object: it, spaces: new Set() };
+				byKey.set(key, entry);
+			};
+
+			entry.spaces.add(it.spaceId);
+
+			if ((it.spaceId == S.Common.space) || ((entry.object.spaceId != S.Common.space) && (it.spaceId < entry.object.spaceId))) {
+				entry.object = it;
+			};
+		});
+
+		let list = [ ...byKey.values() ];
+
+		if (t) {
+			list = list.filter(({ object }) => [ object.name, object.pluralName ].some(n => String(n || '').toLowerCase().includes(t)));
+		};
+
+		return S.Record.checkHiddenObjects(list.map(({ object, spaces }) => {
+			const spaceview = U.Space.getSpaceviewBySpaceId(object.spaceId);
+
+			return {
+				...object,
+				metaList: [],
+				links: [],
+				backlinks: [],
+				isTypeAgg: true,
+				spaceCount: spaces.size,
+				aggSpaceName: spaceview ? U.Object.name(spaceview) : '',
+			};
+		})).sort(U.Data.sortByName);
+	};
+
 	// Global mode: one-shot cross-space search, no subscription. allStoresLoaded=false means
 	// the sequential per-space store warm-up is still running and the view is partial - no
 	// auto-retry in v1, the next keystroke/chip switch re-queries anyway
@@ -2046,6 +2106,21 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
+		// The cross-space Types bucket is served from the in-memory types map - no
+		// round trip. Synchronous swap: lift the append freeze and bump the list epoch
+		// exactly like the "/" branch; the mode stamp carries the aggregate flag so
+		// the section header and captions render by what actually loaded
+		if (!isCurrentSpace() && mode.what && (mode.what.kind == 'kind') && (mode.what.id == SEARCH_TYPE_TYPE)) {
+			itemsRef.current = getGlobalTypeAggregate(filterValueRef.current, mode.spaceId);
+			itemsModeRef.current = { ...mode, isTypeAgg: true };
+			hasMoreRef.current = false;
+			clearLoadPendingRef.current = false;
+			listEpochRef.current++;
+			setDummy(prev => prev + 1);
+			callBack?.();
+			return;
+		};
+
 		// Global mode and a foreign Channel scope both ride the cross-space one-shot
 		if (!isCurrentSpace()) {
 			loadGlobalObjects(clear, gen, callBack, quiet);
@@ -2205,26 +2280,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const getTypeSuggestions = (text: string) => {
 		const t = text.toLowerCase();
 
+		// Global mode: grouped by uniqueKey with the space-count caption - the same
+		// aggregate the Types bucket renders
+		if (isGlobal()) {
+			return getGlobalTypeAggregate(text).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
+		};
+
 		let list: any[] = [];
 
-		if (isGlobal()) {
-			const byKey = new Map<string, any>();
-
-			GLOBAL_DEPS.types.forEach((it: any) => {
-				if (it.isDeleted) {
-					return;
-				};
-
-				const key = String(it.uniqueKey || it.id);
-
-				// Prefer the current space's type object as the representative
-				if (!byKey.has(key) || (it.spaceId == S.Common.space)) {
-					byKey.set(key, it);
-				};
-			});
-
-			list = [ ...byKey.values() ];
-		} else
 		if (isForeignScope()) {
 			// The scoped Channel's own types (the template exclusion below applies)
 			GLOBAL_DEPS.types.forEach((it: any) => {
@@ -2378,6 +2441,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let items = S.Record.checkHiddenObjects(itemsRef.current);
 
+		if (!filter && items.length && mode.isTypeAgg) {
+			// The cross-space Types aggregate lists by name - no recency toggle
+			items.unshift({ name: translate('popupSearchTypeTypes'), isSection: true });
+		} else
 		if (!filter && items.length) {
 			// Every browse states its order in the title; the right-side action switches
 			// between the primary recency order and recently created
@@ -3228,11 +3295,24 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				);
 			};
 
-			const spaceview = (isRenderCross() && !item.isMemberAgg) ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
+			const spaceview = (isRenderCross() && !item.isMemberAgg && !item.isTypeAgg) ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
 			const creatorLabel = getObjectCreatorLabel(item);
 			const creatorObject = creatorLabel ? getObjectCreator(item) : null;
-			const memberSpaces = item.isMemberAgg ?
-				`${translate('popupSearchInSpace')} ${item.spaceCount} ${U.Common.plural(item.spaceCount, translate('pluralChannel'))}` : '';
+			let aggSpaces = '';
+
+			if (item.isMemberAgg) {
+				aggSpaces = `${translate('popupSearchInSpace')} ${item.spaceCount} ${U.Common.plural(item.spaceCount, translate('pluralChannel'))}`;
+			} else
+			if (item.isTypeAgg && item.aggSpaceName) {
+				// "in <Channel>" - the representative's Channel; "+ N other Channels"
+				// when the same uniqueKey exists elsewhere too
+				aggSpaces = `${translate('popupSearchInSpace')} ${item.aggSpaceName}`;
+
+				if (item.spaceCount > 1) {
+					const n = item.spaceCount - 1;
+					aggSpaces += ` ${U.String.sprintf(translate('popupSearchAggOtherChannels'), n, U.Common.plural(n, translate('pluralChannel')))}`;
+				};
+			};
 
 			let name = U.Object.name(item, true);
 
@@ -3262,7 +3342,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
 						{Context(meta)}
 						<div className="caption">
-							{memberSpaces ? <div className="prep">{memberSpaces}</div> : (
+							{aggSpaces ? <div className="prep">{aggSpaces}</div> : (
 								<div className="drillLink" onClick={e => { e.stopPropagation(); addToken('type', type, { source: 'Caption', fromRow: true }); }}>
 									<ObjectType object={type} />
 								</div>

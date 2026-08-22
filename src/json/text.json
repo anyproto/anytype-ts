@@ -1659,6 +1659,7 @@
 	"popupSearchCommandBy": "Filter by people...",
 	"popupSearchCommandType": "Filter by type...",
 	"popupSearchCommandIn": "Filter by Channel...",
+	"popupSearchAggOtherChannels": "+ %s other %s",
 	"popupSearchTooltipSearchByBacklinks": "Show related objects",
 	"popupSearchTooltipSearchByType": "Search objects of this type",
 	"popupSearchTooltipSearchByCreator": "Search objects created by them",
