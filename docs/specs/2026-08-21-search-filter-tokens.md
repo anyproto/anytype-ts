@@ -51,7 +51,7 @@ token model's coherence was chosen and each divergence is deliberate:
 
 Rev-4 (adaptive suggestion row) implementation notes:
 
-13. **The >1-member gate covers the whole person section**, "My objects" included — a solo
+13. **The >1-member gate covers the whole person section**, "By me" included — a solo
    space shows no person chips (filtering by You there is a no-op; rule 5 read plainly).
 14. **Person chips are capped at "My objects" + 3 members** (spec says 3-5; 3 keeps one row
    with the kind chips at common widths). Overflow via `/by`.
@@ -68,6 +68,11 @@ Rev-4 (adaptive suggestion row) implementation notes:
 18. Footer Tab/`/` label uses a new key `popupSearchShortcutRefine` ("Refine search");
    `popupSearchShortcutSwitchType` and `popupSearchTypePeople` stay in text.json unused,
    for l10n continuity.
+19. **Person wording carries the operator** (Roman follow-up, Gmail convention): the
+   self chip is "By me" (`popupSearchChipByMe`, placed right after Messages — first when
+   Messages is gated off), member chips read "By <name>" (`popupSearchChipByName`), and
+   the applied creator token uses the same labels. `popupSearchTypeMine` stays in
+   text.json (unused by the popup now); the unshipped `popupSearchTokenYou` was removed.
 Builds on: `2026-08-20-in-space-cross-chat-search.md`, `2026-08-20-global-cross-space-search.md`,
 `2026-08-20-search-drilldown-type-creator.md` (all shipped in v0.56.6-beta, PR #2349).
 Research basis: GitHub's in-input scope token (Backspace removes it → all of GitHub); GitLab's
@@ -139,10 +144,12 @@ Rules:
 3. **No "All objects" chip** — it existed only as the tab bar's rest state. Empty what-group
    simply shows the what chips again.
 4. **No People pseudo-chip** (supersedes Decision 5): the row shows **inline person chips**
-   directly — "My objects" (creator: You) first, then a few members (in-space: the vault
-   1:1-first ordering, then alphabetical; global: the People aggregate's ordering), capped
-   (implementation picks 3-5 to fit one row with the kind chips). Overflow is reachable via
-   `/by`. The old person-browse list stays reachable via `/by` with an empty query.
+   directly — "By me" (creator: You) right after Messages, then a few members ("By Kaye",
+   …) at the end of the row (in-space: the vault 1:1-first ordering, then alphabetical;
+   global: the People aggregate's ordering), capped (implementation picks 3-5 to fit one
+   row with the kind chips). Overflow is reachable via `/by`. The old person-browse list
+   stays reachable via `/by` with an empty query. Person chips carry the relationship word
+   (Gmail convention); kind chips stay bare.
 5. Row order: what-group chips (Messages, Media, …types per mode) first, then person chips.
    Visibility gates stay (Messages needs chat containers; person chips need >1 member).
 6. Removal paths are ONLY token `×` and Backspace-at-0 (chip toggle-off — Decision 1 — is
@@ -185,8 +192,9 @@ back to itself where the scoped row offers it, else clears.
 - Token visuals: the chip-pill family (highlight-medium bg, 14px radius, text-small) with a
   16px icon (space icon / type icon / avatar / backlink arrow) and a trailing `×`. Exact
   values are a design call; the constraint is that tokens and chips read as one system.
-- Labels: space → Channel name; kind → bucket name; type → type name; creator → name
-  ("You" for self); backlink → `Related to: <name>`.
+- Labels: space → Channel name; kind → bucket name; type → type name; creator →
+  `By me` / `By <name>` (the operator stays in the applied state, Gmail-style — like the
+  backlink token's `Related to: <name>`); backlink → `Related to: <name>`.
 - Placeholder shrinks to `commonSearch` when tokens are present.
 
 ## Adding tokens

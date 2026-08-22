@@ -974,23 +974,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
-	// Inline person chips: "My objects" (creator: You) first, then a few members - the
-	// vault 1:1-first ordering (in-space) / the People aggregate's ordering (global),
+	// Member person chips ("By <name>", Gmail-style operator wording): a few members in
+	// the vault 1:1-first ordering (in-space) / the People aggregate's ordering (global),
 	// capped to keep one row together with the kind chips; the full list stays reachable
 	// via /by. Hidden while a creator token is set, gated on >1 member
-	const getPersonChips = (): any[] => {
+	const getMemberChips = (): any[] => {
 		if (getCreatorToken() || !hasMembers()) {
 			return [];
 		};
 
 		const { account } = S.Auth;
-		const ret: any[] = [];
-		const self = U.Space.getParticipant();
-
-		if (self) {
-			ret.push({ id: 'mine', name: translate('popupSearchTypeMine'), isPerson: true, object: self });
-		};
-
 		const identity = (it: any) => it.identity || U.Space.getAccountFromParticipantId(it.id);
 
 		let people: any[] = isGlobal ? getGlobalPeople().map(it => it.object) : getSpacePeople();
@@ -999,22 +992,37 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			people = people.filter(it => identity(it) != account.id);
 		};
 
-		return ret.concat(people.slice(0, PERSON_CHIP_LIMIT).map(it => ({ id: it.id, name: U.Object.name(it), isPerson: true, object: it })));
+		return people.slice(0, PERSON_CHIP_LIMIT).map(it => ({
+			id: it.id,
+			name: U.String.sprintf(translate('popupSearchChipByName'), U.Object.name(it)),
+			isPerson: true,
+			object: it,
+		}));
 	};
 
 	// The suggestion row (the Gmail model): only tokens you could still add - a filled
 	// group's chips are hidden until its token is removed. No selected state, no All chip.
-	// What-group chips first (Messages, Media, ...types per mode), then person chips
+	// Order: Messages, By me, the remaining what-group chips (Media, types / global
+	// buckets), then the member person chips
 	const getSuggestionItems = () => {
 		const ret: any[] = [];
+		const what = getWhatToken();
+		const withPeople = !getCreatorToken() && hasMembers();
+		const kindChip = (id: string) => ({ id, name: getKindName(id), isKind: true });
 
-		if (!getWhatToken()) {
-			const kindChip = (id: string) => ({ id, name: getKindName(id), isKind: true });
+		if (!what && hasMessageContainers()) {
+			ret.push(kindChip(SEARCH_TYPE_MESSAGE));
+		};
 
-			if (hasMessageContainers()) {
-				ret.push(kindChip(SEARCH_TYPE_MESSAGE));
+		if (withPeople) {
+			const self = U.Space.getParticipant();
+
+			if (self) {
+				ret.push({ id: 'mine', name: translate('popupSearchChipByMe'), isPerson: true, object: self });
 			};
+		};
 
+		if (!what) {
 			if (isGlobal) {
 				ret.push(
 					kindChip(SEARCH_TYPE_PAGE),
@@ -1036,7 +1044,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
-		return ret.concat(getPersonChips());
+		return ret.concat(getMemberChips());
 	};
 
 	// Keep the Tab-highlighted chip visible when the row overflows
@@ -2884,8 +2892,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			case 'creator': {
+				// The operator stays in the applied state (Gmail-style): "By me" / "By <name>"
 				icon = <IconObject object={{ ...(token.object || {}), layout: I.ObjectLayout.Participant }} size={16} />;
-				name = isSelfToken(token) ? translate('popupSearchTokenYou') : U.Object.name(token.object || {});
+				name = isSelfToken(token) ? translate('popupSearchChipByMe') : U.String.sprintf(translate('popupSearchChipByName'), U.Object.name(token.object || {}));
 				break;
 			};
 
