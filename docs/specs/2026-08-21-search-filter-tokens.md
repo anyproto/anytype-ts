@@ -1,6 +1,8 @@
 # Spec: search filter tokens — removable scope/filter chips inside the search input
 
-Date: 2026-08-21 (rev 3: open questions decided by Roman — see Decisions)
+Date: 2026-08-21 (rev 4, 2026-08-22: chips row reworked into an adaptive suggestion row
+after Roman's phase-1 testing — see "Adaptive suggestion row" and Decisions 6-8; supersedes
+Decisions 1 and 5 and the rev-2 "Chips = token setters" section)
 Status: phase 1 implemented on `feature/JS-9862-search-tokens` (token core + chips as token
 setters + `/by` `/type` completions, in-space; the popup's `isGlobal` param behavior is as
 shipped). Phases 2-3 pending.
@@ -96,29 +98,42 @@ interface Token { kind: TokenKind; id: string; object?: any; }
   store / `GLOBAL_DEPS.participants`; backlink → `U.Object.getByIds`). Unresolvable tokens are
   dropped silently. Legacy `searchType`/`drill` storage migrates once into tokens.
 
-## Chips = token setters (replaces the old chip-switch semantics)
+## Adaptive suggestion row (replaces "Chips = token setters", rev 4)
 
-The chips row keeps its place and look; its behavior changes:
+Phase-1 testing verdict: keeping the tab bar's visual grammar (persistent row, selected
+state) while changing semantics to token setters read as messy — some chips switched, some
+added, some highlighted. Rev 4 adopts the **pure Gmail search-chips model**: the row is a
+**refinement-suggestion row**, not a tab bar. Its one job: "what would usefully narrow this
+search further?" Applied filters live ONLY as tokens in the input; the row only ever shows
+tokens you could still add. This is also the foundation for v2 adaptive chips (result-aware
+suggestions like "by Kaye") — same row, smarter contents.
 
-| Chip | Action on click |
-|---|---|
-| All objects | removes the *what* token (the empty state — All is not a token) |
-| Messages / Media / Pages / Bookmarks / Collections / Queries / Chats / Types (global buckets) | sets `kind` token (replacing any what-token) |
-| per-type chips (in-space, Types-widget order) | sets `type` token — **the same token a type drill from a row produces**; one system |
-| My objects | sets `creator: You` (replacing any creator token — the Kaye → You example) |
-| People (renamed from Members) | **picker, not a filter**: shows the people list; choosing a person (→ / click / Enter) adds their `creator` token |
+Rules:
 
-- Active chip = its token is present. Clicking an **active** chip removes its token (Gmail's
-  toggle — also a discoverable removal path besides `×`/Backspace).
-- Chips never touch other groups: pressing Media keeps `[by Kaye]` and `[Channel]`.
-- Tab / Shift+Tab cycles the **what** group (All → … → All); the creator/member chips are
-  reachable by click, `/`, or their tokens — Tab stays a single-axis cycle.
-- The type drill and the per-type chip converge: `getSearchType`, chip gating and
-  `itemsModeRef`'s string mode collapse into token rules (`itemsModeRef` becomes the token
-  signature the current list was loaded for).
-- The "which chips are visible" gates stay: Messages needs chat containers, Members needs >1
-  member; a type chip for the active `type` token renders active even if that type is not in
-  the widget list (the token is the source of truth, the chip row highlights best-effort).
+1. **Chips show only addable tokens.** A filled group's chips disappear: type/kind token
+   present → no what-group chips; creator token present → no person chips. They return when
+   the token is removed.
+2. **No selected/active state in the row.** Every chip is the same kind of thing: click =
+   add its token (replacing within its group never applies — the group's chips are hidden
+   while filled).
+3. **No "All objects" chip** — it existed only as the tab bar's rest state. Empty what-group
+   simply shows the what chips again.
+4. **No People pseudo-chip** (supersedes Decision 5): the row shows **inline person chips**
+   directly — "My objects" (creator: You) first, then a few members (in-space: the vault
+   1:1-first ordering, then alphabetical; global: the People aggregate's ordering), capped
+   (implementation picks 3-5 to fit one row with the kind chips). Overflow is reachable via
+   `/by`. The old person-browse list stays reachable via `/by` with an empty query.
+5. Row order: what-group chips (Messages, Media, …types per mode) first, then person chips.
+   Visibility gates stay (Messages needs chat containers; person chips need >1 member).
+6. Removal paths are ONLY token `×` and Backspace-at-0 (chip toggle-off — Decision 1 — is
+   superseded: there are no active chips to toggle).
+
+### Tab (decided rev 4)
+
+Tab moves a **highlight** across the visible suggestion chips (Shift+Tab backwards); Enter
+applies the highlighted chip (adds its token). The highlight is transient: ArrowUp/Down,
+typing, or Escape drop it and return Enter to its list meaning (open the active row). Tab
+past the last chip wraps to the first. This replaces "Tab cycles the what group".
 
 ## The space token and the two modes
 
@@ -191,8 +206,6 @@ Single-match + Enter auto-applies, as today. Gmail-style *adaptive* suggestions 
 |---|---|
 | click `×` on a token | removes that token |
 | **Backspace, caret at 0, no selection** | removes the **rightmost** token |
-| click an active chip | removes that chip's token |
-| Tab cycle to All | removes the what token |
 
 **Escape never touches tokens** (decided): it only closes the popup. The scope token in
 particular must never fall to a reflexive Escape; removal paths are ×, Backspace, and chip
@@ -244,7 +257,7 @@ row); chip- and entry-point-added tokens do not. Removing the most recently row-
 | ← at 0 | (v1: nothing; fast-follow: token selection) |
 | → / Shift+Enter | drill → add token (as shipped, caret-at-end guard) |
 | Escape | close the popup — never removes tokens |
-| Tab / Shift+Tab | cycle the what group |
+| Tab / Shift+Tab | walk the suggestion chips (Enter applies; arrows/typing/Escape drop the highlight) |
 | Enter | open active row |
 | Cmd+Shift+K | toggle the space token |
 
@@ -278,7 +291,7 @@ source: Chip|Row|Caption|Entry|Backspace|Command, isGlobal }`; `SearchDrill` and
 
 ## Decisions (Roman, 2026-08-21)
 
-1. Active chip second click: **toggle off** (Gmail behavior).
+1. ~~Active chip second click: toggle off~~ — superseded by rev 4 (no active chips).
 2. Other-Channel scope: **load that Channel's chips** (from `GLOBAL_DEPS.types` by spaceId) —
    a concrete-Channel scope always shows the Channel token + that Channel's chips; removing
    the token switches to global chips. Highlights remain current-space-only (one-shot RPC has
@@ -286,7 +299,14 @@ source: Chip|Row|Caption|Entry|Backspace|Command, isGlobal }`; `SearchDrill` and
 3. Escape: **never removes tokens** — it only closes the popup; the scope token especially
    must not fall to Escape.
 4. Token visuals: **same pill as chips**.
-5. Members chip: **renamed to "People"** (it is a person picker now).
+5. ~~Members chip renamed to "People"~~ — superseded by rev 4 (no picker chip; inline
+   person chips instead).
+6. (rev 4) Chips row is an **adaptive suggestion row**: only addable tokens, no selected
+   state, no All chip; a filled group's chips are hidden until its token is removed.
+7. (rev 4) Tab **walks the suggestion chips**; Enter applies the highlighted one; the
+   highlight is transient.
+8. (rev 4) **Inline person chips** (My objects + a few members) instead of a People picker
+   chip; overflow via `/by`.
 
 ## Implementation handoff notes (for a fresh session)
 
