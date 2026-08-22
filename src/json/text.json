@@ -1651,6 +1651,7 @@
 	"popupSearchDirectChat": "Direct",
 	"popupSearchByCreator": "by %s",
 	"popupSearchByMe": "by me",
+	"popupSearchChipInName": "In %s",
 	"popupSearchChipByMe": "By me",
 	"popupSearchChipByName": "By %s",
 	"popupSearchInSpace": "in",

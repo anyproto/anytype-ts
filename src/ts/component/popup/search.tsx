@@ -1241,6 +1241,21 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const withPeople = !getCreatorToken() && hasMembers();
 		const kindChip = (id: string) => ({ id, name: getKindName(id), isKind: true });
 
+		// The way back after removing the Channel token: the scope group's own addable
+		// value, first in the row - "In <current Channel>" (the By-grammar for places)
+		if (!getTokenByGroup('scope') && !onObjectSelect) {
+			const spaceview = U.Space.getSpaceview();
+
+			if (spaceview && !spaceview._empty_) {
+				ret.push({
+					id: `scope-${spaceview.targetSpaceId}`,
+					name: U.String.sprintf(translate('popupSearchChipInName'), U.Object.name(spaceview)),
+					isScope: true,
+					object: spaceview,
+				});
+			};
+		};
+
 		if (!what && hasMessageContainers()) {
 			ret.push(kindChip(SEARCH_TYPE_MESSAGE));
 		};
@@ -1302,6 +1317,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// never appear
 		if (filterValueRef.current.startsWith('/')) {
 			clearQuery();
+		};
+
+		if (item.isScope) {
+			addSpaceScope('Chip');
+			return;
 		};
 
 		if (item.isPerson) {
@@ -2468,6 +2488,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			// command - singular kinds, bare person names, "me" for yourself
 			let name = it.name;
 
+			if (it.isScope) {
+				name = U.Object.name(it.object || {});
+			} else
 			if (it.isPerson) {
 				name = (it.id == 'mine') ? translate('popupSearchCmdMe') : U.Object.name(it.object || {});
 			} else
@@ -2483,7 +2506,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			id: `chip-${it.id}`,
 			chipId: it.id,
 			name,
-			prefix: it.isPerson ? '/by' : '/is',
+			prefix: it.isScope ? '/in' : (it.isPerson ? '/by' : '/is'),
 			iconParam: { name: 'common/search' },
 			isChip: true,
 			};
