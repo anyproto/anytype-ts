@@ -100,6 +100,15 @@ const KIND_NAME_KEYS_SINGULAR: { [key: string]: string } = {
 
 const isMac = U.Common.isPlatformMac();
 
+// Type lists order: recently used first, then name (aggregated groups carry the most
+// recent lastUsedDate across their spaces in aggLastUsed)
+const sortTypesByUsage = (a: any, b: any): number => {
+	const ua = Number(a.aggLastUsed || a.lastUsedDate) || 0;
+	const ub = Number(b.aggLastUsed || b.lastUsedDate) || 0;
+
+	return (ub - ua) || U.Data.sortByName(a, b);
+};
+
 // Cross-space search dependencies, shared across popup instances for the app session.
 // Two live subscriptions (participants, types) started on first global-search use; rows read
 // these compact plain maps - never the detail store on the hot path. Reopens ingest new ids
@@ -123,7 +132,7 @@ const SUB_GLOBAL_PARTICIPANTS = 'searchGlobalParticipants';
 const SUB_GLOBAL_TYPES = 'searchGlobalTypes';
 // Only what rendering reads - keeps the payload and the maps compact
 const KEYS_GLOBAL_PARTICIPANT = [ 'id', 'spaceId', 'name', 'globalName', 'iconImage', 'layout', 'resolvedLayout', 'isDeleted', 'participantStatus' ];
-const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'uniqueKey', 'layout', 'recommendedLayout', 'resolvedLayout', 'isDeleted', 'isHidden', 'iconName', 'iconEmoji', 'iconImage', 'iconOption' ];
+const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'uniqueKey', 'layout', 'recommendedLayout', 'resolvedLayout', 'isDeleted', 'isHidden', 'iconName', 'iconEmoji', 'iconImage', 'iconOption', 'lastUsedDate' ];
 
 const ingestGlobalParticipant = (it: any) => {
 	if (GLOBAL_DEPS.participants.has(it.id)) {
@@ -1189,7 +1198,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			ret.push(it);
 		});
 
-		return S.Record.checkHiddenObjects(ret).sort(U.Data.sortByName);
+		return S.Record.checkHiddenObjects(ret).sort(sortTypesByUsage);
 	};
 
 	// Member person chips ("By <name>", Gmail-style operator wording): a few members in
@@ -1977,7 +1986,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Channel (a defensive arm - the Types bucket is only offered globally)
 	const getGlobalTypeAggregate = (text: string, spaceId?: string): any[] => {
 		const t = String(text || '').toLowerCase();
-		const byKey = new Map<string, { object: any; spaces: Set<string> }>();
+		const byKey = new Map<string, { object: any; spaces: Set<string>; lastUsed: number }>();
 		const instances: any[] = [];
 
 		GLOBAL_DEPS.types.forEach((it: any) => {
@@ -2000,11 +2009,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			let entry = byKey.get(key);
 
 			if (!entry) {
-				entry = { object: it, spaces: new Set() };
+				entry = { object: it, spaces: new Set(), lastUsed: 0 };
 				byKey.set(key, entry);
 			};
 
 			entry.spaces.add(it.spaceId);
+			entry.lastUsed = Math.max(entry.lastUsed, Number(it.lastUsedDate) || 0);
 
 			if ((it.spaceId == S.Common.space) || ((entry.object.spaceId != S.Common.space) && (it.spaceId < entry.object.spaceId))) {
 				entry.object = it;
@@ -2017,7 +2027,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			list = list.filter(({ object }) => [ object.name, object.pluralName ].some(n => String(n || '').toLowerCase().includes(t)));
 		};
 
-		return list.map(({ object, spaces }) => {
+		return list.map(({ object, spaces, lastUsed }) => {
 			const spaceview = U.Space.getSpaceviewBySpaceId(object.spaceId);
 
 			return {
@@ -2028,8 +2038,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				isTypeAgg: true,
 				spaceCount: spaces.size,
 				aggSpaceName: spaceview ? U.Object.name(spaceview) : '',
+				aggLastUsed: lastUsed,
 			};
-		}).sort(U.Data.sortByName);
+		}).sort(sortTypesByUsage);
 	};
 
 	// Global mode: one-shot cross-space search, no subscription. allStoresLoaded=false means
@@ -2417,7 +2428,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			list = list.filter(it => [ it.name, it.pluralName ].some(n => String(n || '').toLowerCase().includes(t)));
 		};
 
-		return [ ...list ].sort(U.Data.sortByName).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
+		return [ ...list ].sort(sortTypesByUsage).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
 	};
 
 	// "/in" completions: every Channel in the vault sidebar's own order, 1:1 Channels
