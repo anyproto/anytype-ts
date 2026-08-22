@@ -104,7 +104,7 @@ const SUB_GLOBAL_PARTICIPANTS = 'searchGlobalParticipants';
 const SUB_GLOBAL_TYPES = 'searchGlobalTypes';
 // Only what rendering reads - keeps the payload and the maps compact
 const KEYS_GLOBAL_PARTICIPANT = [ 'id', 'spaceId', 'name', 'globalName', 'iconImage', 'layout', 'resolvedLayout', 'isDeleted', 'participantStatus' ];
-const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'uniqueKey', 'layout', 'resolvedLayout', 'isDeleted' ];
+const KEYS_GLOBAL_TYPE = [ 'id', 'spaceId', 'name', 'pluralName', 'uniqueKey', 'layout', 'recommendedLayout', 'resolvedLayout', 'isDeleted', 'isHidden' ];
 
 const ingestGlobalParticipant = (it: any) => {
 	if (GLOBAL_DEPS.participants.has(it.id)) {
@@ -504,8 +504,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			const what = getWhatToken();
 
-			// Global mode has no per-chip create actions - fall back to the default create
-			if (isGlobal()) {
+			// Global mode and a foreign Channel scope have no per-chip create actions
+			// (creation targets the current space) - fall back to the default create
+			if (!isCurrentSpace()) {
 				close(() => pageCreate(filter));
 			} else
 			if (what && (what.kind == 'kind') && (what.id == SEARCH_TYPE_MEDIA)) {
@@ -695,10 +696,41 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return !tokensRef.current.some(it => it.kind == 'space');
 	};
 
+	// The scope token's space id; '' = no scope (global mode)
+	const getScopeId = (): string => {
+		return tokensRef.current.find(it => it.kind == 'space')?.id || '';
+	};
+
+	// The scope is the current space - the local data path (space stores, fulltext
+	// highlights, settings rows, create actions). Not the inverse of isGlobal(): a scope
+	// on ANOTHER Channel shows the Channel token and its chips but rides the cross-space
+	// data path, so those gates must read this, not isGlobal()
+	const isCurrentSpace = (): boolean => {
+		return getScopeId() == S.Common.space;
+	};
+
+	// Scoped to another Channel (phase 3): the Channel token and that Channel's chips,
+	// with the cross-space one-shot loaders (no highlights, no create actions)
+	const isForeignScope = (): boolean => {
+		const scopeId = getScopeId();
+		return Boolean(scopeId) && (scopeId != S.Common.space);
+	};
+
 	// Row presentation during a quiet reload follows the mode the on-screen items were
 	// loaded for - the tokens may already be flipped while the previous list shows
 	const isRenderGlobal = (): boolean => {
 		return itemsModeRef.current ? Boolean(itemsModeRef.current.isGlobal) : isGlobal();
+	};
+
+	const isRenderForeign = (): boolean => {
+		const mode = itemsModeRef.current;
+		return mode ? Boolean(mode.spaceId) && (mode.spaceId != S.Common.space) : isForeignScope();
+	};
+
+	// Rows loaded by the cross-space path (global mode or another Channel's scope):
+	// space captions, cross-space chat/author resolution, no context menu
+	const isRenderCross = (): boolean => {
+		return isRenderGlobal() || isRenderForeign();
 	};
 
 	// Insertion order with the scope first: the space token renders leftmost, and
@@ -774,7 +806,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		const { source, fromRow } = param || {};
-		const wasGlobal = isGlobal();
+		const prevScopeId = getScopeId();
 		const tokens = tokensRef.current;
 		const group = TOKEN_GROUPS[kind];
 		const idx = tokens.findIndex(it => TOKEN_GROUPS[it.kind] == group);
@@ -813,8 +845,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			clearQuery();
 		};
 
-		// Adding a space token narrows a global search back to the space in place
-		if (wasGlobal != isGlobal()) {
+		// Any scope change - adding a scope to a global search, or re-pointing it at
+		// another Channel - crosses the mode boundary in place
+		if (prevScopeId != getScopeId()) {
 			onCrossBoundary();
 		};
 
@@ -848,7 +881,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		const wasGlobal = isGlobal();
+		const prevScopeId = getScopeId();
 		const maxRowSeq = Math.max(0, ...tokens.filter(it => it.back).map(it => it.seq || 0));
 		const canRestore = Boolean(token.back) && (token.seq == maxRowSeq) && [ 'Token', 'Backspace' ].includes(source);
 
@@ -857,7 +890,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Removing the space token widens to vault-wide search in place, mapping the
 		// what token across the boundary; a snapshot restore instead swaps the whole
 		// state (exact undo - no mapping)
-		if (!canRestore && (wasGlobal != isGlobal())) {
+		if (!canRestore && (prevScopeId != getScopeId())) {
 			onCrossBoundary();
 		};
 
@@ -868,8 +901,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (canRestore) {
 			restoreBack(token.back);
 
-			// The restored state may sit on the other side of the boundary
-			if (!wasGlobal && isGlobal()) {
+			// The restored state may sit on the other side of a scope boundary - global
+			// mode and a foreign scope both need the cross-space deps (idempotent)
+			if (!isCurrentSpace()) {
 				subscribeGlobalDeps(onGlobalDepsLoad);
 			};
 		} else {
@@ -957,14 +991,24 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// The Messages scope searches chats and discussions - offer it only when there is at least
 	// one of either: in the space (space subscriptions) or anywhere (global subscriptions)
 	const hasMessageContainers = (): boolean => {
-		if (isGlobal()) {
-			return [ J.Constant.subId.chatGlobal, J.Constant.subId.discussionGlobal ].some(it => {
-				return S.Record.getRecordIds(it, '').length > 0;
+		const scopeId = getScopeId();
+
+		if (scopeId == S.Common.space) {
+			return [ J.Constant.subId.chat, J.Constant.subId.discussion ].some(it => {
+				return S.Record.getRecordIds(U.Subscription.spaceSubId(it), '').length > 0;
 			});
 		};
 
-		return [ J.Constant.subId.chat, J.Constant.subId.discussion ].some(it => {
-			return S.Record.getRecordIds(U.Subscription.spaceSubId(it), '').length > 0;
+		// The app-lifetime cross-space chat subscriptions: any container anywhere
+		// (global mode) or any container of the scoped Channel (foreign scope)
+		return [ J.Constant.subId.chatGlobal, J.Constant.subId.discussionGlobal ].some(subId => {
+			const ids = S.Record.getRecordIds(subId, '');
+
+			if (!scopeId) {
+				return ids.length > 0;
+			};
+
+			return ids.some(id => S.Detail.get(subId, id, [ 'spaceId' ]).spaceId == scopeId);
 		});
 	};
 
@@ -974,8 +1018,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const globalMembersRef = useRef(false);
 
 	const hasMembers = (): boolean => {
-		if (!isGlobal()) {
-			return spaceHasMembers(S.Common.space);
+		const scopeId = getScopeId();
+
+		// Any concrete scope - the current space or another Channel (per-space counts
+		// from the cross-space participants map)
+		if (scopeId) {
+			return spaceHasMembers(scopeId);
 		};
 
 		if (globalMembersRef.current) {
@@ -1006,12 +1054,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// to "no tokens" (settings rows) must not count it
 		const tokens = tokensRef.current.filter(it => it.kind != 'space').length;
 		const global = isGlobal();
+		// The concrete scope ('' = global) - the row renderer and the cross-space
+		// loader read it off itemsModeRef so quiet-reload windows stay consistent
+		const spaceId = getScopeId();
 
 		if (what && (what.kind == 'kind') && (what.id == SEARCH_TYPE_MESSAGE)) {
-			return { id: SEARCH_TYPE_MESSAGE, what, tokens, isGlobal: global };
+			return { id: SEARCH_TYPE_MESSAGE, what, tokens, isGlobal: global, spaceId };
 		};
 
-		return { id: 'object', what, tokens, isGlobal: global };
+		return { id: 'object', what, tokens, isGlobal: global, spaceId };
 	};
 
 	// Space members in the vault's 1:1-first order, then alphabetical
@@ -1044,6 +1095,45 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
+	// Members of another Channel, from the cross-space participants map (the exact
+	// member list only exists for the current space), name order
+	const getForeignSpacePeople = (spaceId: string): any[] => {
+		const ret: any[] = [];
+
+		GLOBAL_DEPS.participants.forEach((it: any) => {
+			if ((it.spaceId == spaceId) && (it.participantStatus == I.ParticipantStatus.Active) && !it.isDeleted) {
+				ret.push(it);
+			};
+		});
+
+		return ret.sort(U.Data.sortByName);
+	};
+
+	// Another Channel's types, from the cross-space types map, name order - the
+	// Types-widget order (instance counts) only exists for the current space. The same
+	// noise gates as the in-space chip row, minus the instance-count gate (the per-type
+	// instance subscriptions are current-space-only)
+	const getForeignSpaceTypes = (spaceId: string): any[] => {
+		const skip = U.Object.getFileLayouts().concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ]);
+		const ret: any[] = [];
+
+		GLOBAL_DEPS.types.forEach((it: any) => {
+			if ((it.spaceId != spaceId) || it.isDeleted || (it.uniqueKey == J.Constant.typeKey.template)) {
+				return;
+			};
+
+			const layout = it.recommendedLayout;
+
+			if (skip.includes(layout) || U.Object.isInSystemLayouts(layout) || U.Object.isDateLayout(layout) || U.Object.isParticipantLayout(layout)) {
+				return;
+			};
+
+			ret.push(it);
+		});
+
+		return S.Record.checkHiddenObjects(ret).sort(U.Data.sortByName);
+	};
+
 	// Member person chips ("By <name>", Gmail-style operator wording): a few members in
 	// the vault 1:1-first ordering (in-space) / the People aggregate's ordering (global),
 	// capped to keep one row together with the kind chips; the full list stays reachable
@@ -1056,7 +1146,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const { account } = S.Auth;
 		const identity = (it: any) => it.identity || U.Space.getAccountFromParticipantId(it.id);
 
-		let people: any[] = isGlobal() ? getGlobalPeople().map(it => it.object) : getSpacePeople();
+		const scopeId = getScopeId();
+
+		let people: any[] = [];
+
+		if (!scopeId) {
+			people = getGlobalPeople().map(it => it.object);
+		} else
+		if (scopeId == S.Common.space) {
+			people = getSpacePeople();
+		} else {
+			people = getForeignSpacePeople(scopeId);
+		};
 
 		if (account) {
 			people = people.filter(it => identity(it) != account.id);
@@ -1105,6 +1206,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					kindChip(SEARCH_TYPE_CHAT),
 					kindChip(SEARCH_TYPE_TYPE),
 				);
+			} else
+			if (isForeignScope()) {
+				// That Channel's chips (Decision 2): Media plus its own types by name -
+				// the Types-widget order only exists for the current space
+				ret.push(kindChip(SEARCH_TYPE_MEDIA));
+
+				getForeignSpaceTypes(getScopeId()).forEach(it => ret.push({ id: it.id, name: U.Object.name(it, true), isType: true, object: it }));
 			} else {
 				ret.push(kindChip(SEARCH_TYPE_MEDIA));
 
@@ -1209,13 +1317,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
-	// Crossing the scoped <-> global boundary maps the what token: entering global, a
-	// specific type becomes its layout bucket (types can't merge across spaces in the
-	// bucket row); entering the space, a global-only bucket clears and a type re-points
-	// at the space's own same-key type. Creator and backlink tokens carry as-is - the
-	// identity and id filters work vault-wide
+	// Crossing a scope boundary (current space <-> another Channel <-> global) maps the
+	// what token: entering global, a specific type becomes its layout bucket (types
+	// can't merge across spaces in the bucket row); entering a concrete scope, a
+	// global-only bucket clears and a type re-points at that space's own same-key type
+	// where one exists. Creator and backlink tokens carry as-is - the identity and id
+	// filters work vault-wide
 	const mapTokensAcrossBoundary = () => {
-		const toGlobal = isGlobal();
+		const scopeId = getScopeId();
+		const toGlobal = !scopeId;
 		const what = getWhatToken();
 
 		if (!what) {
@@ -1229,8 +1339,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (what.kind == 'type') {
 			if (toGlobal) {
 				// Row-drilled type tokens hold the raw search record, which lacks
-				// recommendedLayout - fall back to the type store
-				const typeObject = S.Record.getTypeById(what.id) || what.object;
+				// recommendedLayout - fall back to the type stores
+				const typeObject = S.Record.getTypeById(what.id) || GLOBAL_DEPS.types.get(what.id) || what.object;
 				const layout = typeObject?.recommendedLayout;
 				const bucket = Object.keys(GLOBAL_LAYOUTS).find(key => GLOBAL_LAYOUTS[key].includes(layout));
 
@@ -1239,7 +1349,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				if (bucket) {
 					tokensRef.current.push({ kind: 'kind', id: bucket, seq: ++tokenSeqRef.current });
 				};
-			} else {
+			} else
+			if (scopeId == S.Common.space) {
 				const local = S.Record.getTypeById(what.id) ||
 					(what.object?.uniqueKey ? S.Record.getTypes().find(it => it.uniqueKey == what.object.uniqueKey) : null);
 
@@ -1247,10 +1358,35 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					what.id = local.id;
 					what.object = local;
 				};
+			} else {
+				// Another Channel: re-point at the target space's own same-uniqueKey
+				// type where it exists; else the token stays as-is (the uniqueKey
+				// filter still applies - deviation 26's rule, generalized)
+				const current = GLOBAL_DEPS.types.get(what.id) || S.Record.getTypeById(what.id) || what.object;
+				const uniqueKey = what.object?.uniqueKey || current?.uniqueKey;
+
+				if (current?.spaceId == scopeId) {
+					return;
+				};
+
+				let target = null;
+
+				if (uniqueKey) {
+					GLOBAL_DEPS.types.forEach((it: any) => {
+						if (!target && (it.spaceId == scopeId) && (it.uniqueKey == uniqueKey) && !it.isDeleted) {
+							target = it;
+						};
+					});
+				};
+
+				if (target) {
+					what.id = target.id;
+					what.object = target;
+				};
 			};
 		} else
 		if ((what.kind == 'kind') && !toGlobal && ![ SEARCH_TYPE_MESSAGE, SEARCH_TYPE_MEDIA ].includes(what.id)) {
-			// The global-only buckets have no in-space chip
+			// The global-only buckets have no chip in a concrete scope's row
 			drop();
 		};
 	};
@@ -1258,19 +1394,23 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// One redraw when the cross-space maps land; a creator filter built while they were
 	// cold misses the per-space participant ids - re-run the search with the full set
 	const onGlobalDepsLoad = () => {
-		// The "/" command list does no backend query - a reload would only reset it
-		if (isGlobal() && getCreatorToken() && !filterValueRef.current.startsWith('/')) {
+		// The "/" command list does no backend query - a reload would only reset it.
+		// Global mode and a foreign scope both build the creator filter off the maps
+		if (!isCurrentSpace() && getCreatorToken() && !filterValueRef.current.startsWith('/')) {
 			reload(true);
 		} else {
 			setDummy(prev => prev + 1);
 		};
 	};
 
+	// Any scope change (current space <-> another Channel <-> global) maps the what
+	// token and wires the cross-space deps where the new scope reads them
 	const onCrossBoundary = () => {
 		mapTokensAcrossBoundary();
 
-		// First entry into global mode starts the app-lifetime cross-space subscriptions
-		if (isGlobal()) {
+		// Global mode and a foreign scope both read the cross-space maps (chips, /by,
+		// /type, creator filters); the first use starts the app-lifetime subscriptions
+		if (!isCurrentSpace()) {
 			subscribeGlobalDeps(onGlobalDepsLoad);
 		};
 	};
@@ -1310,8 +1450,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const chatId = item.chatId;
 		const spaceId = item.spaceId || S.Common.space;
 
-		// Global mode: the chatGlobal cross-space subscription holds every chat object
-		let object = isRenderGlobal() ?
+		// Cross-space rows (global mode or a foreign scope): the app-lifetime
+		// chatGlobal subscription holds every chat object
+		let object = isRenderCross() ?
 			S.Detail.get(J.Constant.subId.chatGlobal, chatId, []) :
 			S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.chat), chatId, []);
 
@@ -1322,13 +1463,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (parentId) {
 				object = S.Chat.getDiscussionParentDetail(spaceId, parentId, []);
 
-				if (object._empty_ && !isRenderGlobal()) {
+				if (object._empty_ && !isRenderCross()) {
 					object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.discussion), parentId, []);
 				};
 			};
 		};
 
-		if (object._empty_ && !isRenderGlobal()) {
+		if (object._empty_ && !isRenderCross()) {
 			object = S.Detail.get(chatsSubId, chatId, []);
 
 			// A discussion object itself is not openable and carries no display name - without
@@ -1363,7 +1504,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const spaceId = item.spaceId || S.Common.space;
 		const participantId = U.Space.getParticipantId(spaceId, item.message?.creator);
 
-		if (!isRenderGlobal() || (spaceId == S.Common.space)) {
+		if (!isRenderCross() || (spaceId == S.Common.space)) {
 			return U.Space.getParticipant(participantId);
 		};
 
@@ -1497,7 +1638,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const identity = getTokenIdentity(token);
 		const ids: string[] = [ identity ];
 
-		if (isGlobal()) {
+		// Global mode and a foreign scope both collect every per-space participant id
+		// of the person - a spaceId filter (foreign) narrows the extra ids away
+		if (!isCurrentSpace()) {
 			GLOBAL_DEPS.participants.forEach((v: any, id: string) => {
 				if (U.Space.getAccountFromParticipantId(id) == identity) {
 					ids.push(id);
@@ -1556,8 +1699,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const loadMessages = (clear: boolean, gen: number, callBack?: () => void, quiet?: boolean) => {
-		const { space } = S.Common;
 		const global = isGlobal();
+		// '' = every chat in every space (global mode); otherwise the scoped Channel -
+		// the current space or another one
+		const scopeId = getScopeId();
 		const text = filterValueRef.current;
 		// Date desc for text searches too: the backend's score sort groups equal-score hits
 		// per chat, which reads as random grouping; recency is consistent with the empty-query
@@ -1594,8 +1739,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const creatorToken = getCreatorToken();
 		const creators = creatorToken ? [ getTokenIdentity(creatorToken) ] : [];
 
-		// Empty spaceId + empty chatId = all chats in all spaces (global mode)
-		C.ChatSearch(global ? '' : space, '', text, offsetRef.current, J.Constant.limit.menuRecords, sorts, creators, (message: any) => {
+		C.ChatSearch(scopeId, '', text, offsetRef.current, J.Constant.limit.menuRecords, sorts, creators, (message: any) => {
 			// A newer query started while this one was in flight - drop the stale response
 			if (gen != loadGenRef.current) {
 				// Release the loader this request engaged - the superseding load may be
@@ -1617,7 +1761,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (message.error.code) {
 				if (clear) {
 					itemsRef.current = [];
-					itemsModeRef.current = { id: SEARCH_TYPE_MESSAGE, isGlobal: global };
+					itemsModeRef.current = { id: SEARCH_TYPE_MESSAGE, isGlobal: global, spaceId: scopeId };
 				};
 
 				done();
@@ -1632,14 +1776,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const records = (message.list || []).map(it => ({ ...it, id: it.messageId, isMessage: true }));
 
 			itemsRef.current = itemsRef.current.concat(records);
-			itemsModeRef.current = { id: SEARCH_TYPE_MESSAGE, isGlobal: global };
+			itemsModeRef.current = { id: SEARCH_TYPE_MESSAGE, isGlobal: global, spaceId: scopeId };
 			hasMoreRef.current = records.length == J.Constant.limit.menuRecords;
 
 			if (!clear) {
 				setDummy(prev => prev + 1);
 			};
 
-			if (!global) {
+			// Only current-space chats need the per-open resolver; cross-space rows
+			// (global mode or a foreign scope) resolve via chatGlobal/discussionGlobal
+			if (scopeId == S.Common.space) {
 				resolveMessageChats(records);
 			};
 
@@ -1756,6 +1902,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		getTokenFilters().forEach(it => filters.push(it));
+
+		// A scope on another Channel narrows the cross-space search to it
+		if (mode.spaceId) {
+			filters.push({ relationKey: 'spaceId', condition: I.FilterCondition.Equal, value: mode.spaceId });
+		};
 
 		// Type objects are noise in the empty (recent) browse - every space ships a full
 		// set of bundled types; they stay searchable by text and via the Types chip
@@ -1895,7 +2046,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		if (isGlobal()) {
+		// Global mode and a foreign Channel scope both ride the cross-space one-shot
+		if (!isCurrentSpace()) {
 			loadGlobalObjects(clear, gen, callBack, quiet);
 			return;
 		};
@@ -2030,12 +2182,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const getPeopleSuggestions = (text: string) => {
 		const t = text.toLowerCase();
 
+		const scopeId = getScopeId();
+
 		let list: any[] = [];
 
-		if (isGlobal()) {
+		if (!scopeId) {
 			list = getGlobalPeople().map(({ object, spaceCount }) => ({ ...object, metaList: [], links: [], backlinks: [], isMemberAgg: true, spaceCount }));
-		} else {
+		} else
+		if (scopeId == S.Common.space) {
 			list = getSpacePeople();
+		} else {
+			list = getForeignSpacePeople(scopeId);
 		};
 
 		if (t) {
@@ -2067,6 +2224,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			});
 
 			list = [ ...byKey.values() ];
+		} else
+		if (isForeignScope()) {
+			// The scoped Channel's own types (the template exclusion below applies)
+			GLOBAL_DEPS.types.forEach((it: any) => {
+				if ((it.spaceId == getScopeId()) && !it.isDeleted) {
+					list.push(it);
+				};
+			});
+
+			list = S.Record.checkHiddenObjects(list);
 		} else {
 			list = S.Record.checkHiddenObjects(S.Record.getTypes());
 		};
@@ -2114,15 +2281,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), iconParam: { name: 'common/search' }, isCommand: true, command: 'type' });
 		};
 
-		if (!isGlobal()) {
-			if (canWrite) {
-				items.push({ id: 'add', name: translate('commonCreateObject'), iconParam: { name: 'plus/menu' } });
-				items.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' } });
-			};
+		// Creation acts in the current space - a foreign scope hides it like global
+		// does; the widen action shows for any concrete scope
+		if (isCurrentSpace() && canWrite) {
+			items.push({ id: 'add', name: translate('commonCreateObject'), iconParam: { name: 'plus/menu' } });
+			items.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' } });
+		};
 
-			if (!onObjectSelect) {
-				items.push({ id: 'searchGlobal', name: translate('popupSearchSearchGlobal'), iconParam: { name: 'common/search' } });
-			};
+		if (!isGlobal() && !onObjectSelect) {
+			items.push({ id: 'searchGlobal', name: translate('popupSearchSearchGlobal'), iconParam: { name: 'common/search' } });
 		};
 
 		if (reg) {
@@ -2150,6 +2317,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Present by the mode the on-screen items were loaded for - during a quiet
 		// reload the previous list stays up while the tokens are already flipped
 		const modeGlobal = Boolean(mode.isGlobal);
+		// A scope on another Channel rides the cross-space data path - like global for
+		// the settings/actions gates (settings and creation act in the current space)
+		const modeForeign = Boolean(mode.spaceId) && (mode.spaceId != S.Common.space);
 
 		if (mode.id == SEARCH_TYPE_MESSAGE) {
 			const items: any[] = [].concat(itemsRef.current).map(it => ({ ...it, isMessage: true, shortcut: [] }));
@@ -2207,7 +2377,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		/* Settings and pages */
 
-		if (filter && !modeGlobal && (mode.id == 'object') && !mode.tokens) {
+		if (filter && !modeGlobal && !modeForeign && (mode.id == 'object') && !mode.tokens) {
 			const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 
 			let itemsImport: any[] = [];
@@ -2289,11 +2459,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
-		// Global mode has no actions in v1 (creation targets a specific space)
+		// Global mode has no actions in v1 (creation targets a specific space); a
+		// foreign scope keeps only the widen action
 		if (!modeGlobal) {
 			const actions: any[] = [];
 
-			if (canWrite) {
+			if (canWrite && !modeForeign) {
 				if (what && (what.kind == 'type')) {
 					const type = S.Record.getTypeById(what.id);
 
@@ -2546,8 +2717,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onContext = (e: any, item: any) => {
-		// The object context menu acts within the current space - skip for cross-space results
-		if (isRenderGlobal()) {
+		// The object context menu acts within the current space - skip for cross-space
+		// results (global mode or a foreign scope)
+		if (isRenderCross()) {
 			return;
 		};
 
@@ -2774,8 +2946,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			tokensRef.current = tokens;
 
 			// A scoped open can still land global (unresolvable spaceview drops the
-			// scope slot) - global mode always needs the cross-space deps
-			if (isGlobal()) {
+			// scope slot) - any non-current scope needs the cross-space deps
+			if (!isCurrentSpace()) {
 				subscribeGlobalDeps(onGlobalDepsLoad);
 			};
 
@@ -2900,10 +3072,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const message = item.message || {};
 			const author = getMessageAuthor(item);
 			const chat = getMessageChat(item);
-			const spaceview = isRenderGlobal() ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
+			// The space caption shows whenever the user looks from outside the space -
+			// global mode or a scope on another Channel
+			const spaceview = isRenderCross() ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
 			// A 1:1 space's chat is always named "General" - label it "Direct" instead (the
 			// person is already visible: space caption in global mode, the space itself in-space)
-			const isOneToOne = Boolean((isRenderGlobal() ? spaceview : U.Space.getSpaceview())?.isOneToOne);
+			const isOneToOne = Boolean((isRenderCross() ? spaceview : U.Space.getSpaceview())?.isOneToOne);
 			const day = showRelativeDates ? U.Date.dayString(message.createdAt) : null;
 			const date = [ (day ? day : U.Date.dateWithFormat(dateFormat, message.createdAt)), U.Date.timeWithFormat(timeFormat, message.createdAt) ].join(', ');
 
@@ -3016,7 +3190,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				);
 			};
 
-			const spaceview = (isRenderGlobal() && !item.isMemberAgg) ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
+			const spaceview = (isRenderCross() && !item.isMemberAgg) ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
 			const creatorLabel = getObjectCreatorLabel(item);
 			const creatorObject = creatorLabel ? getObjectCreator(item) : null;
 			const memberSpaces = item.isMemberAgg ?
@@ -3040,7 +3214,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				name = U.String.htmlSpecialChars(name);
 			};
 
-			if (isRenderGlobal()) {
+			if (isRenderCross()) {
 				cn.push('isGlobal');
 			};
 
