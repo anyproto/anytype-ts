@@ -2352,7 +2352,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			list = list.filter(it => [ it.name, it.globalName ].some(n => String(n || '').toLowerCase().includes(t)));
 		};
 
-		return list.map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'creator', prefix: '/by', shortcut: [] }));
+		return list.map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'creator', shortcut: [] }));
 	};
 
 	const getTypeSuggestions = (text: string) => {
@@ -2361,7 +2361,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Global mode: grouped by uniqueKey with the space-count caption - the same
 		// aggregate the Types bucket renders
 		if (isGlobal()) {
-			return getGlobalTypeAggregate(text).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', prefix: '/is', shortcut: [] }));
+			return getGlobalTypeAggregate(text).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
 		};
 
 		let list: any[] = [];
@@ -2385,7 +2385,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			list = list.filter(it => [ it.name, it.pluralName ].some(n => String(n || '').toLowerCase().includes(t)));
 		};
 
-		return [ ...list ].sort(U.Data.sortByName).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', prefix: '/is', shortcut: [] }));
+		return [ ...list ].sort(U.Data.sortByName).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
 	};
 
 	// "/in" completions: every Channel in the vault sidebar's own order, 1:1 Channels
@@ -2407,7 +2407,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		// creator/links stripped: a spaceview row must not render an attribution
 		// caption or a drill arrow
-		return list.map(it => ({ ...it, id: it.targetSpaceId, isObject: true, isCommandSuggest: true, tokenKind: 'space', prefix: '/in', type: '', metaList: [], links: [], backlinks: [], creator: '', shortcut: [] }));
+		return list.map(it => ({ ...it, id: it.targetSpaceId, isObject: true, isCommandSuggest: true, tokenKind: 'space', type: '', metaList: [], links: [], backlinks: [], creator: '', shortcut: [] }));
 	};
 
 	// "/" command mode: search the chips and actions themselves, plus typed completions
@@ -2436,14 +2436,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let items: any[] = [];
 
-		// The people entry leads the list (prefills "/by " - the mechanic teaches its own
-		// syntax); filled groups hide their entries like everywhere else
+		// The Filter entries lead the list as one group, prefilling "/by " etc. - the
+		// mechanic teaches its own syntax. Filled groups hide their entries like
+		// everywhere else; pickers pin the scope, so the Channel entry never shows there
 		if (!getCreatorToken() && hasMembers()) {
 			items.push({ id: 'cmdBy', name: translate('popupSearchCommandBy'), prefix: '/by', iconParam: { name: 'common/search' }, isCommand: true, command: 'by' });
 		};
 
-		// The Channel entry follows the adaptive rule like every group: only while the
-		// scope group is empty (global mode); pickers pin the scope and never offer it
+		if (!getWhatToken()) {
+			items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), prefix: '/is', iconParam: { name: 'common/search' }, isCommand: true, command: 'is' });
+		};
+
 		if (!getTokenByGroup('scope') && !onObjectSelect) {
 			items.push({ id: 'cmdIn', name: translate('popupSearchCommandIn'), prefix: '/in', iconParam: { name: 'common/search' }, isCommand: true, command: 'in' });
 		};
@@ -2452,23 +2455,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			...it,
 			id: `chip-${it.id}`,
 			chipId: it.id,
+			prefix: it.isPerson ? '/by' : '/is',
 			iconParam: { name: 'common/search' },
 			isChip: true,
 		})));
-
-		if (!getWhatToken()) {
-			items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), prefix: '/is', iconParam: { name: 'common/search' }, isCommand: true, command: 'is' });
-		};
 
 		// Creation acts in the current space - a foreign scope hides it like global
 		// does; the widen action shows for any concrete scope
 		if (isCurrentSpace() && canWrite) {
 			items.push({ id: 'add', name: translate('commonCreateObject'), iconParam: { name: 'plus/menu' } });
 			items.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' } });
-		};
-
-		if (!isGlobal() && !onObjectSelect) {
-			items.push({ id: 'searchGlobal', name: translate('popupSearchSearchGlobal'), iconParam: { name: 'common/search' } });
 		};
 
 		if (reg) {
@@ -2669,13 +2665,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				};
 			};
 
-			actions.push({
-				id: 'searchGlobal',
-				name: translate('popupSearchSearchGlobal'),
-				iconParam: { name: 'common/search' },
-				shortcut: keyboard.getSymbolsFromKeys([ keyboard.cmdKey(), 'shift', 'k' ]),
-			});
-
 			if (actions.length) {
 				items.push({ name: translate('commonActions'), isSection: true });
 				actions.forEach(it => items.push({ ...it, isSmall: true }));
@@ -2789,25 +2778,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (item.isCommandSuggest) {
 			clearQuery();
 			addToken(item.tokenKind, item, { source: 'Command' });
-			return;
-		};
-
-		// "Search across all Channels" (the action row and its "/" command): drop the
-		// space scope in place - global chips and loaders take over. A real query stays
-		// (the widen case); a "/" command query clears so the flip lands on results
-		if (item.id == 'searchGlobal') {
-			// The row can outlive the scope for a beat (a quiet flip keeps the old
-			// list up) - a scope-less click only returns focus to the input
-			if (onObjectSelect || !getTokenByGroup('scope')) {
-				filterInputRef.current?.focus();
-				return;
-			};
-
-			if (filterValueRef.current.startsWith('/')) {
-				clearQuery();
-			};
-
-			removeSpaceScope('Entry');
 			return;
 		};
 
@@ -3423,14 +3393,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			content = (
 				<div className="sides" onContextMenu={e => onContext(e, item)}>
 					<div className="side left">
-						{item.prefix ? (
-							<div className="nameWithPrefix">
-								<span className="cmdPrefix">{item.prefix}</span>
-								<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
-							</div>
-						) : (
-							<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
-						)}
+						<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
 						{Context(meta)}
 						<div className="caption">
 							{aggSpaces ? <div className="prep">{aggSpaces}</div> : (
@@ -3597,7 +3560,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		const isObject = item && item.isObject && !item.isCommandSuggest;
 		const isMessage = item && item.isMessage;
-		const isAction = item && (item.isSettings || item.isImport || item.isChip || item.isCommand || item.isCommandSuggest || [ 'add', 'addType', 'upload', 'graph', 'navigation', 'searchGlobal' ].includes(item.id));
+		const isAction = item && (item.isSettings || item.isImport || item.isChip || item.isCommand || item.isCommandSuggest || [ 'add', 'addType', 'upload', 'graph', 'navigation' ].includes(item.id));
 
 		return (
 			<div className="foot">

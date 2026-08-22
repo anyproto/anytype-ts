@@ -105,12 +105,7 @@
 					}
 				}
 				.name { @include text-overflow-nw; font-weight: 500; }
-				.cmdPrefix { color: var(--color-text-secondary); font-weight: 400; }
-				.name .cmdPrefix { margin-right: 8px; }
-				.nameWithPrefix { display: flex; align-items: baseline; gap: 0px 8px; }
-				.nameWithPrefix {
-					.name { min-width: 0; }
-				}
+				.name .cmdPrefix { color: var(--color-text-secondary); font-weight: 400; margin-right: 8px; }
 				.caption .bullet { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); flex-shrink: 0; }
 				.caption .prep { color: var(--color-text-secondary); flex-shrink: 0; }
 				.context { @include text-small; padding: 2px 0px; white-space: normal; display: flex; gap: 0 4px; }
