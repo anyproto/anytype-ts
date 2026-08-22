@@ -1650,7 +1650,7 @@
 	"popupSearchTypePeople": "People",
 	"popupSearchDirectChat": "Direct",
 	"popupSearchByCreator": "by %s",
-	"popupSearchByYou": "by You",
+	"popupSearchByMe": "by me",
 	"popupSearchChipByMe": "By me",
 	"popupSearchChipByName": "By %s",
 	"popupSearchInSpace": "in",

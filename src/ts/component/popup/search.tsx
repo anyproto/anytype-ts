@@ -1592,7 +1592,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const spaceId = item.spaceId || S.Common.space;
 
 		if (getCreatorParticipantId(item) == U.Space.getParticipantId(spaceId, S.Auth.account.id)) {
-			return translate('popupSearchByYou');
+			return translate('popupSearchByMe');
 		};
 
 		const creator = getObjectCreator(item);
