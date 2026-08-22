@@ -48,6 +48,26 @@ token model's coherence was chosen and each divergence is deliberate:
 12. **Global-mode resolution never persists away dropped tokens** — the cross-space maps
    are cold on the first global use of a session; creator tokens additionally fall back to
    the current-space participant store so the Cmd+Shift+K pivot resolves immediately.
+
+Rev-4 (adaptive suggestion row) implementation notes:
+
+13. **The >1-member gate covers the whole person section**, "My objects" included — a solo
+   space shows no person chips (filtering by You there is a no-op; rule 5 read plainly).
+14. **Person chips are capped at "My objects" + 3 members** (spec says 3-5; 3 keeps one row
+   with the kind chips at common widths). Overflow via `/by`.
+15. **Escape absorbs the Tab highlight only while the query is empty.** With text present
+   the Filter component's built-in Escape (clear text) runs first on the input's own
+   keydown and the popup then closes per Decision 3 — the highlight cannot intercept
+   without restructuring Filter. Empty-query Tab browsing (the common case) behaves as
+   rev 4 specifies.
+16. **`/by` browse order** is the person-browse order (1:1-first, then alphabetical),
+   replacing phase-1's alphabetical sort; global `/by` rows carry the old aggregate
+   space-count captions ("in N Channels").
+17. **SwitchSearchType alias** is now emitted only for what-group chip adds; person chip
+   adds emit `SearchToken` only (there is no legacy chip-switch they correspond to).
+18. Footer Tab/`/` label uses a new key `popupSearchShortcutRefine` ("Refine search");
+   `popupSearchShortcutSwitchType` and `popupSearchTypePeople` stay in text.json unused,
+   for l10n continuity.
 Builds on: `2026-08-20-in-space-cross-chat-search.md`, `2026-08-20-global-cross-space-search.md`,
 `2026-08-20-search-drilldown-type-creator.md` (all shipped in v0.56.6-beta, PR #2349).
 Research basis: GitHub's in-input scope token (Backspace removes it → all of GitHub); GitLab's

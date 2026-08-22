@@ -16,6 +16,9 @@ const RECENT_LIMIT = 20;
 // fulltext query is the slow path and time-to-first-results matters more than page depth
 // (infinite scroll fills the rest)
 const GLOBAL_QUERY_LIMIT = 50;
+// Person chips shown inline in the suggestion row besides "My objects"; the full people
+// list stays reachable via /by
+const PERSON_CHIP_LIMIT = 3;
 // Restore chip/query on quick reopen; treat the popup as a fresh task after this long
 // (the Raycast pop-to-root / Alfred latest-query-window pattern)
 const STATE_RESET_TIMEOUT = 5 * 60 * 1000;
@@ -79,7 +82,6 @@ const KIND_NAME_KEYS: { [key: string]: string } = {
 	[SEARCH_TYPE_CHAT]: 'popupSearchTypeChats',
 	[SEARCH_TYPE_TYPE]: 'popupSearchTypeTypes',
 };
-
 
 const isMac = U.Common.isPlatformMac();
 
@@ -220,9 +222,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const tokensRef = useRef<SearchToken[]>([]);
 	// Monotonic insertion counter - identifies the most recently row-added token for Back
 	const tokenSeqRef = useRef(0);
-	// Transient People picker: the People chip shows the people list; a pick adds a
-	// creator token. Not persisted
-	const pickerRef = useRef('');
+	// Transient Tab highlight over the suggestion chips (index into getSuggestionItems);
+	// dropped by typing, arrows, Escape and any token change
+	const chipHighlightRef = useRef(-1);
 	const nodeRef = useRef(null);
 	const filterInputRef = useRef(null);
 	const listRef = useRef(null);
@@ -328,9 +330,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const shortcutNext = isMac ? 'arrowdown, ctrl+n' : 'arrowdown';
 
 		keyboard.disableMouse(true);
-		// Escape only closes - tokens are never removed by it (removal is x, Backspace at
-		// the query start, or a chip toggle)
-		keyboard.shortcut('escape', e, () => close());
+		// Escape only closes - tokens are never removed by it (removal is x and Backspace
+		// at the query start). A transient chip highlight absorbs the press first
+		keyboard.shortcut('escape', e, () => {
+			if (chipHighlightRef.current >= 0) {
+				clearChipHighlight(true);
+				return;
+			};
+
+			close();
+		});
 
 		keyboard.shortcut('shift+enter', e, () => {
 			if (item && getDrillKind(item)) {
@@ -377,20 +386,37 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		keyboard.shortcut(`${shortcutPrev}, ${shortcutNext}` , e, (pressed: string) => {
 			e.preventDefault();
+			clearChipHighlight(true);
 
 			const dir = [ 'arrowup', 'ctrl+p' ].includes(pressed) ? -1 : 1;
 			onArrow(dir);
 		});
 
-		// Focus stays in the input (command palette convention) - Tab cycles the search type
-		// chips instead of moving focus, matching Linear/GitHub-style palettes
+		// Focus stays in the input (command palette convention) - Tab walks a highlight
+		// across the suggestion chips (wrapping); Enter applies the highlighted one. The
+		// highlight is transient: typing, arrows and Escape drop it
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
 			if (onObjectSelect) {
 				return;
 			};
 
 			e.preventDefault();
-			onWhatCycle(pressed == 'tab' ? 1 : -1);
+
+			const chips = getSuggestionItems();
+
+			if (!chips.length) {
+				return;
+			};
+
+			const dir = (pressed == 'tab') ? 1 : -1;
+			const current = chipHighlightRef.current;
+
+			chipHighlightRef.current = (current < 0) ?
+				((dir > 0) ? 0 : chips.length - 1) :
+				(current + dir + chips.length) % chips.length;
+
+			setDummy(prev => prev + 1);
+			scrollToActiveChip();
 		});
 
 		keyboard.shortcut(`${cmd}+shift+enter`, e, () => {
@@ -400,7 +426,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
-		keyboard.shortcut(`enter, ${cmd}+enter`, e, () => {
+		keyboard.shortcut(`enter, ${cmd}+enter`, e, (pressed: string) => {
+			// Enter applies the highlighted suggestion chip while the Tab highlight is up
+			if ((pressed == 'enter') && (chipHighlightRef.current >= 0)) {
+				const chip = getSuggestionItems()[chipHighlightRef.current];
+
+				clearChipHighlight(false);
+
+				if (chip) {
+					onChipAdd(chip);
+					return;
+				};
+			};
+
 			// Only try to parse the filter as a URL when it actually looks like one -
 			// getRouteFromUrl logs a warning on arbitrary text otherwise
 			const isUrl = U.String.matchUrl(filter) || filter.startsWith(`${J.Constant.protocol}://`);
@@ -566,6 +604,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
+		// Typing drops the transient chip highlight
+		clearChipHighlight(true);
+
 		timeoutRef.current = window.setTimeout(() => {
 			storageSet({ [filterKey]: v });
 
@@ -654,12 +695,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		storageSet({ [filterKey]: '' });
 	};
 
-	// Keep focus in the input after mouse-started token mutations (bare divs steal focus)
+	const clearChipHighlight = (render?: boolean) => {
+		if (chipHighlightRef.current < 0) {
+			return;
+		};
+
+		chipHighlightRef.current = -1;
+
+		if (render) {
+			setDummy(prev => prev + 1);
+		};
+	};
+
+	// Keep focus in the input after mouse-started token mutations (bare divs steal focus).
+	// Any token change recomputes the suggestion row, so the chip highlight drops
 	const afterTokenChange = () => {
+		chipHighlightRef.current = -1;
 		setDummy(prev => prev + 1);
 		filterInputRef.current?.focus();
 		reload(true);
-		scrollToActiveChip();
 	};
 
 	// Add a token, replacing any token in the same exclusivity group. fromRow: the token
@@ -680,8 +734,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Same token again - nothing to change; a row gesture still clears the query
 		// (drill semantics), then get back to results
 		if (existing && (existing.kind == kind) && (existing.id == object.id)) {
-			pickerRef.current = '';
-
 			if (fromRow) {
 				clearQuery();
 			};
@@ -695,7 +747,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (fromRow) {
 			token.back = {
 				tokens: tokens.map(it => ({ ...it })),
-				picker: pickerRef.current,
 				filter: filterValueRef.current,
 				itemId: getItems()[nRef.current]?.id || '',
 				top: topRef.current,
@@ -708,8 +759,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		} else {
 			tokens.push(token);
 		};
-
-		pickerRef.current = '';
 
 		if (fromRow) {
 			clearQuery();
@@ -778,7 +827,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		offsetRef.current = 0;
 
 		tokensRef.current = (back.tokens || []).map(it => ({ ...it }));
-		pickerRef.current = String(back.picker || '');
 		persistTokens();
 
 		const filter = String(back.filter || '');
@@ -791,6 +839,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		nRef.current = 0;
 		topRef.current = 0;
+		chipHighlightRef.current = -1;
 		setDummy(prev => prev + 1);
 
 		// load(clear) bumps the generation synchronously on entry - precompute it so a
@@ -819,7 +868,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				listRef.current?.scrollToPosition(back.top);
 				topRef.current = back.top;
 				setActive(getItems()[nRef.current]);
-				scrollToActiveChip();
 			});
 		};
 
@@ -887,10 +935,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const what = getWhatToken();
 		const tokens = tokensRef.current.length;
 
-		if (!onObjectSelect && (pickerRef.current == 'people')) {
-			return { id: SEARCH_TYPE_MEMBER, what: null, tokens };
-		};
-
 		if (what && (what.kind == 'kind') && (what.id == SEARCH_TYPE_MESSAGE)) {
 			return { id: SEARCH_TYPE_MESSAGE, what, tokens };
 		};
@@ -898,89 +942,102 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return { id: 'object', what, tokens };
 	};
 
-	// Active chip = its token is present (All is the absence of a what token; People is
-	// the transient picker)
-	const isChipActive = (item: any): boolean => {
-		const what = getWhatToken();
+	// Space members in the vault's 1:1-first order, then alphabetical
+	const getSpacePeople = (): any[] => {
+		const oneToOneOrder = new Map<string, number>();
 
-		if (item.id == SEARCH_TYPE_ALL) {
-			return !what && (pickerRef.current != 'people');
-		};
+		U.Menu.getVaultItems().forEach((it: any) => {
+			if (it.isOneToOne && it.oneToOneIdentity && !oneToOneOrder.has(it.oneToOneIdentity)) {
+				oneToOneOrder.set(it.oneToOneIdentity, oneToOneOrder.size);
+			};
+		});
 
-		if (item.id == SEARCH_TYPE_MINE) {
-			const creator = getCreatorToken();
-			return Boolean(creator) && isSelfToken(creator);
-		};
+		const identity = (it: any) => it.identity || U.Space.getAccountFromParticipantId(it.id);
 
-		if (item.id == SEARCH_TYPE_MEMBER) {
-			return pickerRef.current == 'people';
-		};
+		return [ ...U.Space.getParticipantsList([ I.ParticipantStatus.Active ]) ].sort((a: any, b: any) => {
+			const oa = oneToOneOrder.has(identity(a)) ? oneToOneOrder.get(identity(a)) : -1;
+			const ob = oneToOneOrder.has(identity(b)) ? oneToOneOrder.get(identity(b)) : -1;
 
-		if (!what) {
-			return false;
-		};
-
-		return (item.isType ? (what.kind == 'type') : (what.kind == 'kind')) && (what.id == item.id);
-	};
-
-	const getTypeItems = () => {
-		const what = getWhatToken();
-		const kindChip = (id: string) => ({ id, name: getKindName(id), isKind: true });
-		// An active kind keeps its chip even when its gate is currently closed - the token
-		// is the source of truth, the chip row highlights best-effort
-		const isActiveKind = (id: string) => Boolean(what) && (what.kind == 'kind') && (what.id == id);
-		// Same for a type token drilled from a row: it renders its own chip (active) -
-		// one system with the per-type chips
-		const typeTokenChip = (list: any[]) => {
-			if (what && (what.kind == 'type') && !list.some(it => it.id == what.id)) {
-				list.push({ id: what.id, name: U.Object.name(what.object || {}, true), isType: true, object: what.object });
+			if ((oa >= 0) && (ob >= 0)) {
+				return oa - ob;
+			};
+			if (oa >= 0) {
+				return -1;
+			};
+			if (ob >= 0) {
+				return 1;
 			};
 
-			return list;
-		};
-
-		const ret: any[] = [
-			{ id: SEARCH_TYPE_ALL, name: translate('popupSearchTypeAll') },
-			{ id: SEARCH_TYPE_MINE, name: translate('popupSearchTypeMine') },
-		];
-
-		if (hasMessageContainers() || isActiveKind(SEARCH_TYPE_MESSAGE)) {
-			ret.push(kindChip(SEARCH_TYPE_MESSAGE));
-		};
-
-		if (isGlobal) {
-			const list: any[] = [ kindChip(SEARCH_TYPE_PAGE) ];
-
-			if (hasMembers()) {
-				list.push({ id: SEARCH_TYPE_MEMBER, name: translate('popupSearchTypePeople') });
-			};
-
-			return typeTokenChip(ret.concat(list, [
-				kindChip(SEARCH_TYPE_MEDIA),
-				kindChip(SEARCH_TYPE_BOOKMARK),
-				kindChip(SEARCH_TYPE_COLLECTION),
-				kindChip(SEARCH_TYPE_QUERY),
-				kindChip(SEARCH_TYPE_CHAT),
-				kindChip(SEARCH_TYPE_TYPE),
-			]));
-		};
-
-		ret.push(kindChip(SEARCH_TYPE_MEDIA));
-
-		if (hasMembers()) {
-			ret.push({ id: SEARCH_TYPE_MEMBER, name: translate('popupSearchTypePeople') });
-		};
-
-		const skip = U.Object.getFileLayouts().concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ]);
-		const types = U.Data.getWidgetTypes().
-			filter(it => !skip.includes(it.recommendedLayout)).
-			map(it => ({ id: it.id, name: U.Object.name(it, true), isType: true, object: it }));
-
-		return ret.concat(typeTokenChip(types));
+			return String(a.name || '').localeCompare(String(b.name || ''));
+		});
 	};
 
-	// Keep the active chip visible when the row overflows - selection, restore and "/" mode
-	// can land on a chip that is scrolled out of view
+	// Inline person chips: "My objects" (creator: You) first, then a few members - the
+	// vault 1:1-first ordering (in-space) / the People aggregate's ordering (global),
+	// capped to keep one row together with the kind chips; the full list stays reachable
+	// via /by. Hidden while a creator token is set, gated on >1 member
+	const getPersonChips = (): any[] => {
+		if (getCreatorToken() || !hasMembers()) {
+			return [];
+		};
+
+		const { account } = S.Auth;
+		const ret: any[] = [];
+		const self = U.Space.getParticipant();
+
+		if (self) {
+			ret.push({ id: 'mine', name: translate('popupSearchTypeMine'), isPerson: true, object: self });
+		};
+
+		const identity = (it: any) => it.identity || U.Space.getAccountFromParticipantId(it.id);
+
+		let people: any[] = isGlobal ? getGlobalPeople().map(it => it.object) : getSpacePeople();
+
+		if (account) {
+			people = people.filter(it => identity(it) != account.id);
+		};
+
+		return ret.concat(people.slice(0, PERSON_CHIP_LIMIT).map(it => ({ id: it.id, name: U.Object.name(it), isPerson: true, object: it })));
+	};
+
+	// The suggestion row (the Gmail model): only tokens you could still add - a filled
+	// group's chips are hidden until its token is removed. No selected state, no All chip.
+	// What-group chips first (Messages, Media, ...types per mode), then person chips
+	const getSuggestionItems = () => {
+		const ret: any[] = [];
+
+		if (!getWhatToken()) {
+			const kindChip = (id: string) => ({ id, name: getKindName(id), isKind: true });
+
+			if (hasMessageContainers()) {
+				ret.push(kindChip(SEARCH_TYPE_MESSAGE));
+			};
+
+			if (isGlobal) {
+				ret.push(
+					kindChip(SEARCH_TYPE_PAGE),
+					kindChip(SEARCH_TYPE_MEDIA),
+					kindChip(SEARCH_TYPE_BOOKMARK),
+					kindChip(SEARCH_TYPE_COLLECTION),
+					kindChip(SEARCH_TYPE_QUERY),
+					kindChip(SEARCH_TYPE_CHAT),
+					kindChip(SEARCH_TYPE_TYPE),
+				);
+			} else {
+				ret.push(kindChip(SEARCH_TYPE_MEDIA));
+
+				const skip = U.Object.getFileLayouts().concat([ I.ObjectLayout.Chat, I.ObjectLayout.ChatOld, I.ObjectLayout.Discussion ]);
+
+				U.Data.getWidgetTypes().
+					filter(it => !skip.includes(it.recommendedLayout)).
+					forEach(it => ret.push({ id: it.id, name: U.Object.name(it, true), isType: true, object: it }));
+			};
+		};
+
+		return ret.concat(getPersonChips());
+	};
+
+	// Keep the Tab-highlighted chip visible when the row overflows
 	const scrollToActiveChip = () => {
 		window.setTimeout(() => {
 			const active = U.Dom.select('.typeItem.active', typeSelectRef.current) as HTMLElement;
@@ -988,47 +1045,24 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
-	// Chips are token setters (the Gmail model): a chip click sets/replaces its token, a
-	// second click on an active chip removes it. Chips never touch other groups and keep
-	// the typed query
-	const onChipClick = (item: any) => {
-		const active = isChipActive(item);
-		const what = getWhatToken();
+	// A suggestion chip has exactly one verb: click (or Enter on the highlight) adds its
+	// token. The group's chips are hidden while filled, so replace-within-group and
+	// toggle-off never apply here; removal is the token x and Backspace-at-0 only
+	const onChipAdd = (item: any) => {
+		if (item.isPerson) {
+			addToken('creator', item.object, { source: 'Chip' });
+			return;
+		};
 
-		if (item.id == SEARCH_TYPE_ALL) {
-			pickerRef.current = '';
-
-			if (what) {
-				removeToken(what, 'Chip');
-			} else {
-				afterTokenChange();
-			};
-		} else
-		if (item.id == SEARCH_TYPE_MINE) {
-			if (active) {
-				removeToken(getCreatorToken(), 'Chip');
-			} else {
-				addToken('creator', U.Space.getParticipant(), { source: 'Chip' });
-			};
-		} else
-		if (item.id == SEARCH_TYPE_MEMBER) {
-			// People is a picker, not a filter: it shows the people list; a pick adds a
-			// creator token
-			pickerRef.current = active ? '' : 'people';
-			afterTokenChange();
-		} else
-		if (active) {
-			removeToken(what, 'Chip');
-		} else
 		if (item.isType) {
 			addToken('type', item.object || { id: item.id, name: item.name }, { source: 'Chip' });
 		} else {
 			addToken('kind', { id: item.id, name: item.name }, { source: 'Chip' });
 		};
 
-		// Alias emission for continuity with the chip-switch-era analytics
+		// Alias emission for continuity with the chip-switch-era analytics (what-group)
 		const known = [
-			SEARCH_TYPE_ALL, SEARCH_TYPE_MINE, SEARCH_TYPE_MESSAGE, SEARCH_TYPE_PAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_MEMBER, SEARCH_TYPE_BOOKMARK,
+			SEARCH_TYPE_MESSAGE, SEARCH_TYPE_PAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_BOOKMARK,
 			SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT, SEARCH_TYPE_TYPE,
 		];
 		const type = known.includes(item.id) ? U.String.ucFirst(item.id) : 'Type';
@@ -1082,26 +1116,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		recentSortRef.current = (recentSortRef.current == 'created') ? 'edited' : 'created';
 		storageSet({ [recentSortKey]: recentSortRef.current });
 		reload(true);
-	};
-
-	// Tab cycles the what group only (All -> kinds -> types -> All) - a single-axis cycle;
-	// the creator and People chips are reachable by click, "/" or their tokens
-	const onWhatCycle = (dir: number) => {
-		const items = getTypeItems().filter(it => (it.id == SEARCH_TYPE_ALL) || it.isKind || it.isType);
-		const what = getWhatToken();
-		const activeId = what ? what.id : SEARCH_TYPE_ALL;
-
-		let idx = items.findIndex(it => it.id == activeId);
-
-		if (idx < 0) {
-			idx = 0;
-		};
-
-		const next = items[(idx + dir + items.length) % items.length];
-
-		if (next && (next.id != activeId)) {
-			onChipClick(next);
-		};
 	};
 
 	const onTypeWheel = (e: any) => {
@@ -1491,13 +1505,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		}, quiet);
 	};
 
-	// Global mode: one-shot cross-space search, no subscription. allStoresLoaded=false means
-	// the sequential per-space store warm-up is still running and the view is partial - no
-	// auto-retry in v1, the next keystroke/chip switch re-queries anyway
-	// Global Members: a local view over the participants map - deduplicated by identity with
-	// a per-person space count; name matching is a substring test, no fulltext roundtrip
-	const loadGlobalMembers = (callBack?: () => void) => {
-		const text = filterValueRef.current.toLowerCase();
+	// The global People aggregate: a local view over the participants map - deduplicated
+	// by identity with a per-person space count. People you have 1:1 Channels with come
+	// first, in the Vault sidebar's own order (the 1:1 spaceview carries the other
+	// person's identity); the rest alphabetically
+	const getGlobalPeople = (): any[] => {
 		const byIdentity = new Map<string, { identity: string; object: any; spaceCount: number }>();
 
 		GLOBAL_DEPS.participants.forEach((it: any, id: string) => {
@@ -1522,16 +1534,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
-		let list = [ ...byIdentity.values() ];
-
-		if (text) {
-			list = list.filter(({ object }) => {
-				return [ object.name, object.globalName ].some(n => String(n || '').toLowerCase().includes(text));
-			});
-		};
-
-		// People you have 1:1 Channels with come first, in the Vault sidebar's own order
-		// (the 1:1 spaceview carries the other person's identity); the rest alphabetically
 		const oneToOneOrder = new Map<string, number>();
 
 		U.Menu.getVaultItems().forEach((it: any) => {
@@ -1540,7 +1542,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
-		list.sort((a: any, b: any) => {
+		return [ ...byIdentity.values() ].sort((a: any, b: any) => {
 			const oa = oneToOneOrder.has(a.identity) ? oneToOneOrder.get(a.identity) : -1;
 			const ob = oneToOneOrder.has(b.identity) ? oneToOneOrder.get(b.identity) : -1;
 
@@ -1556,25 +1558,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			return String(a.object.name || '').localeCompare(String(b.object.name || ''));
 		});
-
-		itemsRef.current = list.map(({ object, spaceCount }) => ({ ...object, metaList: [], links: [], backlinks: [], isMemberAgg: true, spaceCount }));
-		itemsModeRef.current = { id: SEARCH_TYPE_MEMBER };
-		hasMoreRef.current = false;
-		listEpochRef.current++;
-
-		setIsLoading(false);
-		setDummy(prev => prev + 1);
-		callBack?.();
 	};
 
+	// Global mode: one-shot cross-space search, no subscription. allStoresLoaded=false means
+	// the sequential per-space store warm-up is still running and the view is partial - no
+	// auto-retry in v1, the next keystroke/chip switch re-queries anyway
 	const loadGlobalObjects = (clear: boolean, gen: number, callBack?: () => void, quiet?: boolean) => {
 		const mode = getLoadMode();
-
-		if (mode.id == SEARCH_TYPE_MEMBER) {
-			loadGlobalMembers(callBack);
-			return;
-		};
-
 		const what = mode.what;
 		const isChatKind = Boolean(what) && (what.kind == 'kind') && (what.id == SEARCH_TYPE_CHAT);
 		const layouts = U.Object.getSystemLayouts().filter(it => !U.Object.isTypeLayout(it));
@@ -1731,25 +1721,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
 		]);
 
-		if (mode.id == SEARCH_TYPE_MEMBER) {
-			// The People picker lists the space members; token filters do not apply to it
-			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: [ I.ObjectLayout.Participant ] });
-		} else {
-			if (what && (what.kind == 'kind')) {
-				const kindLayouts = (what.id == SEARCH_TYPE_MEDIA) ? U.Object.getFileLayouts() : GLOBAL_LAYOUTS[what.id];
+		if (what && (what.kind == 'kind')) {
+			const kindLayouts = (what.id == SEARCH_TYPE_MEDIA) ? U.Object.getFileLayouts() : GLOBAL_LAYOUTS[what.id];
 
-				if (kindLayouts) {
-					filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: kindLayouts });
-				};
+			if (kindLayouts) {
+				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.In, value: kindLayouts });
 			};
+		};
 
-			getTokenFilters().forEach(it => filters.push(it));
+		getTokenFilters().forEach(it => filters.push(it));
 
-			// Type objects are noise in the empty (recent) browse; they stay searchable
-			// by text
-			if (!what && !filterValueRef.current) {
-				filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Type ] });
-			};
+		// Type objects are noise in the empty (recent) browse; they stay searchable by text
+		if (!what && !filterValueRef.current) {
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Type ] });
 		};
 
 		let sorts: any[] = [
@@ -1847,39 +1831,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
-	// Typed completions that resolve to tokens ("/by kay" - the Slack pattern): people
-	// from the participant store (in-space) or the cross-space maps (global)
+	// Typed completions that resolve to tokens ("/by kay" - the Slack pattern). An empty
+	// query is the person-browse list: 1:1-first order, the global rows with their
+	// space-count captions
 	const getPeopleSuggestions = (text: string) => {
 		const t = text.toLowerCase();
 
 		let list: any[] = [];
 
 		if (isGlobal) {
-			const byIdentity = new Map<string, any>();
-
-			GLOBAL_DEPS.participants.forEach((it: any, id: string) => {
-				if ((it.participantStatus != I.ParticipantStatus.Active) || it.isDeleted) {
-					return;
-				};
-
-				const identity = U.Space.getAccountFromParticipantId(id);
-
-				// Prefer the current space's participant object as the representative
-				if (!byIdentity.has(identity) || (it.spaceId == S.Common.space)) {
-					byIdentity.set(identity, it);
-				};
-			});
-
-			list = [ ...byIdentity.values() ];
+			list = getGlobalPeople().map(({ object, spaceCount }) => ({ ...object, metaList: [], links: [], backlinks: [], isMemberAgg: true, spaceCount }));
 		} else {
-			list = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]);
+			list = getSpacePeople();
 		};
 
 		if (t) {
 			list = list.filter(it => [ it.name, it.globalName ].some(n => String(n || '').toLowerCase().includes(t)));
 		};
 
-		return [ ...list ].sort(U.Data.sortByName).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'creator', shortcut: [] }));
+		return list.map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'creator', shortcut: [] }));
 	};
 
 	const getTypeSuggestions = (text: string) => {
@@ -1931,7 +1901,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const reg = query ? new RegExp(U.String.regexEscape(query), 'gi') : null;
 		const canWrite = U.Space.canMyParticipantWrite();
 
-		let items: any[] = getTypeItems().map(it => ({
+		let items: any[] = getSuggestionItems().map(it => ({
 			...it,
 			id: `chip-${it.id}`,
 			chipId: it.id,
@@ -1995,34 +1965,29 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		let items = S.Record.checkHiddenObjects(itemsRef.current);
 
 		if (!filter && items.length) {
-			if (mode.id == SEARCH_TYPE_MEMBER) {
-				// The People picker is a local list - plain title, no order switch
-				items.unshift({ name: translate('popupSearchTypePeople'), isSection: true });
-			} else {
-				// Every browse states its order in the title; the right-side action
-				// switches between the primary recency order and recently created
-				const { primary, secondary } = getRecentOrders((what && (what.kind == 'kind')) ? what.id : '');
-				const created = (recentSortRef.current == 'created') && Boolean(secondary);
+			// Every browse states its order in the title; the right-side action switches
+			// between the primary recency order and recently created
+			const { primary, secondary } = getRecentOrders((what && (what.kind == 'kind')) ? what.id : '');
+			const created = (recentSortRef.current == 'created') && Boolean(secondary);
 
-				let noun = '';
+			let noun = '';
 
-				if (what) {
-					noun = (what.kind == 'kind') ? getKindName(what.id) : U.Object.name(what.object || {}, true);
-				};
-
-				const current = created ? secondary : primary;
-				const other = created ? primary : secondary;
-				const sectionName = noun ?
-					U.String.sprintf(translate(`${current.label}Type`), noun) :
-					translate(current.label);
-
-				items.unshift({
-					name: sectionName,
-					isSection: true,
-					withSort: Boolean(secondary),
-					sortSwitchText: other ? translate(other.label) : '',
-				});
+			if (what) {
+				noun = (what.kind == 'kind') ? getKindName(what.id) : U.Object.name(what.object || {}, true);
 			};
+
+			const current = created ? secondary : primary;
+			const other = created ? primary : secondary;
+			const sectionName = noun ?
+				U.String.sprintf(translate(`${current.label}Type`), noun) :
+				translate(current.label);
+
+			items.unshift({
+				name: sectionName,
+				isSection: true,
+				withSort: Boolean(secondary),
+				sortSwitchText: other ? translate(other.label) : '',
+			});
 		};
 
 		items = items.map(it => {
@@ -2122,7 +2087,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (!isGlobal) {
 			const actions: any[] = [];
 
-			if (canWrite && (mode.id != SEARCH_TYPE_MEMBER)) {
+			if (canWrite) {
 				if (what && (what.kind == 'type')) {
 					const type = S.Record.getTypeById(what.id);
 
@@ -2236,12 +2201,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const metaList = item.metaList || [];
 		const meta = metaList.length ? metaList[0] : {};
 
-		// Chip picked from "/" command mode: apply it as a chip click, clear the command
-		// query, keep the popup. Cancel the pending debounced filter change - it would
-		// re-apply the stale "/query" after the switch and empty the list
+		// Chip picked from "/" command mode: add its token, clear the command query, keep
+		// the popup. Cancel the pending debounced filter change - it would re-apply the
+		// stale "/query" after the switch and empty the list
 		if (item.isChip) {
 			clearQuery();
-			onChipClick({ ...item, id: item.chipId });
+			onChipAdd({ ...item, id: item.chipId });
 			return;
 		};
 
@@ -2263,12 +2228,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (item.isCommandSuggest) {
 			clearQuery();
 			addToken(item.tokenKind, item, { source: 'Command' });
-			return;
-		};
-
-		// The People picker: choosing a person adds their creator token
-		if ((itemsModeRef.current?.id == SEARCH_TYPE_MEMBER) && item.isObject) {
-			addToken('creator', item, { source: 'Row', fromRow: true });
 			return;
 		};
 
@@ -2429,7 +2388,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			filterInputRef.current.setRange(rangeRef.current);
 
 			reload();
-			scrollToActiveChip();
 		};
 
 		focus.clear(true);
@@ -2438,13 +2396,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (isGlobal) {
 			// First-ever use starts the app-lifetime subscriptions (one redraw when the
 			// initial data lands); later opens sync from memory - no redraw
-			subscribeGlobalDeps(() => {
-				if (getLoadMode().id == SEARCH_TYPE_MEMBER) {
-					reload(true);
-				} else {
-					setDummy(prev => prev + 1);
-				};
-			});
+			subscribeGlobalDeps(() => setDummy(prev => prev + 1));
 		};
 
 		// Restore tokens; the legacy searchType/drill/backlink keys migrate once
@@ -2625,7 +2577,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	renderItemsRef.current = items;
 
 	const shift = keyboard.shiftSymbol();
-	const typeItems = getTypeItems();
+	const suggestions = getSuggestionItems();
 	const tokens = getTokens();
 
 	const Context = (meta: any): any => {
@@ -2998,7 +2950,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			<div className="foot">
 				<Shortcut keys={[ 'arrowup', 'arrowdown', 'arrowright' ]} label={translate('popupSearchShortcutNavigate')} />
 				{!onObjectSelect ? (
-					<Shortcut keys={[ 'tab', '/' ]} separator={translate('commonOr')} label={translate('popupSearchShortcutSwitchType')} />
+					<Shortcut keys={[ 'tab', '/' ]} separator={translate('commonOr')} label={translate('popupSearchShortcutRefine')} />
 				) : ''}
 				<Shortcut keys={[ 'escape' ]} label={translate('popupSearchShortcutClose')} />
 				{isObject ? (
@@ -3045,20 +2997,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				/>
 			</div>
 
-			{!onObjectSelect ? (
+			{!onObjectSelect && suggestions.length ? (
 				<div className="typeSelectWrap">
-					<div ref={typeSelectRef} className="typeSelect" role="tablist" onWheel={onTypeWheel} onScroll={checkTypeSelectFade}>
-						{typeItems.map((item: any) => {
-							const active = isChipActive(item);
-							const cnt = [ 'typeItem', (active ? 'active' : '') ];
+					<div ref={typeSelectRef} className="typeSelect" onWheel={onTypeWheel} onScroll={checkTypeSelectFade}>
+						{suggestions.map((item: any, i: number) => {
+							const cn = [ 'typeItem', (i == chipHighlightRef.current ? 'active' : '') ];
 
 							return (
 								<div
 									key={item.id}
-									role="tab"
-									aria-selected={active}
-									className={cnt.join(' ')}
-									onClick={() => onChipClick(item)}
+									role="button"
+									className={cn.join(' ')}
+									onClick={() => onChipAdd(item)}
 								>
 									{item.name}
 								</div>
