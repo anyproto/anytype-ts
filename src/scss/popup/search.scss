@@ -15,15 +15,30 @@
 		#loader { top: 55px; height: calc(100% - 55px); }
 
 		.head { 
-			border-bottom: 1px solid var(--color-shape-secondary); padding: 0px 20px; display: flex; align-items: center; flex-direction: row; gap: 0px 12px;
+			border-bottom: 1px solid var(--color-shape-secondary); padding: 0px 20px; display: flex; align-items: center; flex-direction: row; gap: 0px 8px;
 			flex-shrink: 0;
 		}
 		.head {
 			.iconObject { margin-right: 6px; }
 
-			.icon { width: 18px; height: 18px; }
+			.icon { width: 18px; height: 18px; flex-shrink: 0; }
 
-			.filter { width: 100%; padding: 0px; }
+			.tokens { display: flex; align-items: center; gap: 0px 6px; max-width: 60%; flex-shrink: 0; overflow: hidden; }
+			.tokens {
+				.filterToken {
+					display: flex; align-items: center; gap: 0px 6px; padding: 2px 4px 2px 8px; border-radius: 14px; background: var(--color-shape-highlight-medium);
+					@include text-small; color: var(--color-text-primary); max-width: 200px; min-width: 0; flex-shrink: 1;
+				}
+				.filterToken {
+					.iconObject { margin-right: 0px; flex-shrink: 0; }
+					.name { @include text-overflow-nw; }
+					.icon { width: 16px; height: 16px; }
+					.icon.clear { position: relative; }
+					.icon.clear::after { content: ""; position: absolute; top: -8px; bottom: -8px; left: -3px; right: -6px; }
+				}
+			}
+
+			.filter { width: 100%; min-width: 120px; padding: 0px; }
 			.filter {
 				.inner { height: auto; gap: 0px 8px; }
 				.input { 
@@ -92,6 +107,9 @@
 					}
 				}
 				.name { @include text-overflow-nw; font-weight: 500; }
+				.name .cmdPrefix { color: var(--color-text-secondary); font-weight: 400; margin-right: 8px; }
+				.name .cmdArg { color: var(--color-text-tertiary); font-weight: 400; }
+				.caption .cmdDesc { color: var(--color-text-secondary); }
 				.caption .bullet { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); flex-shrink: 0; }
 				.caption .prep { color: var(--color-text-secondary); flex-shrink: 0; }
 				.context { @include text-small; padding: 2px 0px; white-space: normal; display: flex; gap: 0 4px; }
@@ -112,6 +130,7 @@
 
 			.item {
 				.drillLink:hover { text-decoration: underline; }
+				.caption .spaceLink { display: flex; align-items: center; gap: 0px 6px; min-width: 0; }
 
 				.side.left .caption { display: flex; align-items: center; gap: 0px 6px; }
 				.side.left .caption {

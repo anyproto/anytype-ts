@@ -387,20 +387,11 @@ class Keyboard {
 					return;
 				};
 
-				const popup = S.Popup.get('search');
 				const openGlobal = () => this.onSearchPopup(route, { data: { isGlobal: true } });
 
-				if (popup) {
-					const data = popup.param.data || {};
-
-					// The in-space popup owns the pivot (it carries the query and maps
-					// the chip over); object pickers keep their popup untouched
-					if (!data.isGlobal) {
-						return;
-					};
-
-					e.preventDefault();
-					S.Popup.close('search');
+				// The open popup owns the combo - it toggles its space scope token in
+				// place (object pickers ignore it, leaving the combo inert)
+				if (S.Popup.isOpen('search')) {
 					return;
 				};
 
