@@ -214,10 +214,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, storageGet, storageSet, getId, close } = props;
 	const { data } = param;
-	const { route, onObjectSelect, skipIds, isGlobal } = data;
-	// Global mode persists its state under separate keys so the two popups don't clobber each other
-	const filterKey = isGlobal ? 'filterGlobal' : 'filter';
-	const tokensKey = isGlobal ? 'tokensGlobal' : 'tokens';
+	const { route, onObjectSelect, skipIds } = data;
+	// data.isGlobal is an entry-point alias: Cmd+Shift+K and the vault icon open without
+	// the space scope token, everything else opens scoped to the current space. The live
+	// mode derives from the tokens (isGlobal()), not from this param
+	const initialGlobal = Boolean(data.isGlobal) && !data.onObjectSelect;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
 	// Filter tokens shown inside the search input: what (kind bucket / specific type),
@@ -225,6 +226,23 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const tokensRef = useRef<SearchToken[]>([]);
 	// Monotonic insertion counter - identifies the most recently row-added token for Back
 	const tokenSeqRef = useRef(0);
+	// Seed the scope slot synchronously so the very first paint renders the right mode -
+	// the full token restore (storage, resolution) is async in the mount effect
+	const seededRef = useRef(false);
+
+	if (!seededRef.current) {
+		seededRef.current = true;
+
+		if (!initialGlobal) {
+			const spaceview = U.Space.getSpaceview();
+
+			if (spaceview && !spaceview._empty_) {
+				// The token id is the spaceId (the filter and comparison currency); the
+				// object renders the pill
+				tokensRef.current.push({ kind: 'space', id: spaceview.targetSpaceId, object: { ...spaceview, id: spaceview.targetSpaceId }, seq: ++tokenSeqRef.current });
+			};
+		};
+	};
 	// Transient Tab highlight over the suggestion chips - keyed by chip id, not index, so
 	// the row recomputing under it (subscription events, member churn) can never shift the
 	// highlight onto a different chip; dropped by typing, arrows, Escape, any token change
@@ -254,14 +272,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const offsetRef = useRef(0);
 	const rangeRef = useRef<I.TextRange>({ from: 0, to: 0 });
 	const storage = storageGet();
-	const lastUsedKey = isGlobal ? 'lastUsedGlobal' : 'lastUsed';
-	// Stale session: reset chip, query and drill to defaults instead of restoring
-	const isStale = Boolean(storage[lastUsedKey] && (Date.now() - storage[lastUsedKey] > STATE_RESET_TIMEOUT));
-	const filter = isStale ? '' : String(storage[filterKey] || '');
+	// Phase 1 of the token work kept a second key set for the global popup; until the
+	// one-shot merge in the mount effect clears it, the side used more recently wins
+	const legacyGlobalSide = (Number(storage.lastUsedGlobal) || 0) > (Number(storage.lastUsed) || 0);
+	const lastUsed = Math.max(Number(storage.lastUsed) || 0, Number(storage.lastUsedGlobal) || 0);
+	// Stale session: reset query and tokens to defaults instead of restoring
+	const isStale = Boolean(lastUsed && (Date.now() - lastUsed > STATE_RESET_TIMEOUT));
+	const filter = isStale ? '' : String((legacyGlobalSide ? storage.filterGlobal : storage.filter) || '');
 	const filterValueRef = useRef(filter);
 	// Empty-browse order of All/My objects: 'edited' (lastModifiedDate) or 'created' (createdDate)
-	const recentSortKey = isGlobal ? 'recentSortGlobal' : 'recentSort';
-	const recentSortRef = useRef(String(storage[recentSortKey] || 'edited'));
+	const recentSortRef = useRef(String((legacyGlobalSide ? storage.recentSortGlobal : storage.recentSort) || 'edited'));
 	// The token signature the currently held items were loaded for ({ id, what }). During
 	// a quiet reload the previous list stays on screen - render it by its own mode, not by
 	// the freshly changed tokens
@@ -355,7 +375,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// token (the GitHub in-input scope pattern). The live DOM selection, not the
 		// Input's cached range - the cache goes stale after programmatic setValue
 		keyboard.shortcut('backspace', e, () => {
-			const tokens = getTokens();
+			// Pickers stay pinned to the current space - their scope is not removable
+			const tokens = onObjectSelect ? getTokens().filter(it => it.kind != 'space') : getTokens();
 
 			if (!tokens.length) {
 				return;
@@ -482,7 +503,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const what = getWhatToken();
 
 			// Global mode has no per-chip create actions - fall back to the default create
-			if (isGlobal) {
+			if (isGlobal()) {
 				close(() => pageCreate(filter));
 			} else
 			if (what && (what.kind == 'kind') && (what.id == SEARCH_TYPE_MEDIA)) {
@@ -500,14 +521,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		keyboard.shortcut('search', e, () => close());
 
-		// Cmd+Shift+K pivots to global, carrying the query and chip over; keyboard.ts
-		// yields the combo while the in-space popup is open (global mode toggles there)
-		if (!isGlobal && !onObjectSelect) {
+		// Cmd+Shift+K toggles the space scope token in place: removing it widens the
+		// same query vault-wide, re-adding narrows back. keyboard.ts always yields the
+		// combo while the popup is open
+		if (!onObjectSelect) {
 			keyboard.shortcut(`${cmd}+shift+k`, e, () => {
 				e.preventDefault();
-
-				close();
-				onSearchGlobal();
+				onScopeToggle();
 			});
 		};
 	};
@@ -613,7 +633,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		clearChipHighlight(true);
 
 		timeoutRef.current = window.setTimeout(() => {
-			storageSet({ [filterKey]: v });
+			storageSet({ filter: v });
 
 			if (filterValueRef.current != v) {
 				analytics.event('SearchInput', { route });
@@ -634,7 +654,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onFilterClear = () => {
-		storageSet({ [filterKey]: '' });
+		storageSet({ filter: '' });
 		analytics.event('SearchInput', { route });
 	};
 
@@ -657,15 +677,33 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const links = Relation.getArrayValue(item.links);
 		const backlinks = Relation.getArrayValue(item.backlinks);
 
-		if (!isGlobal && (links.length || backlinks.length)) {
+		// Global rows carry no links data (the one-shot RPC zeroes them) - the data
+		// gate alone decides in both modes
+		if (links.length || backlinks.length) {
 			return 'backlink';
 		};
 
 		return '';
 	};
 
+	// Derived, never stored: no space scope token = vault-wide (global) search. A
+	// function, not a render const - closures bound once at mount (the window keydown
+	// handler) must read the live value
+	const isGlobal = (): boolean => {
+		return !tokensRef.current.some(it => it.kind == 'space');
+	};
+
+	// Row presentation during a quiet reload follows the mode the on-screen items were
+	// loaded for - the tokens may already be flipped while the previous list shows
+	const isRenderGlobal = (): boolean => {
+		return itemsModeRef.current ? Boolean(itemsModeRef.current.isGlobal) : isGlobal();
+	};
+
+	// Insertion order with the scope first: the space token renders leftmost, and
+	// Backspace-at-0 pops from the right of the rendered order (the scope falls last)
 	const getTokens = (): SearchToken[] => {
-		return tokensRef.current;
+		const tokens = tokensRef.current;
+		return [ ...tokens.filter(it => it.kind == 'space'), ...tokens.filter(it => it.kind != 'space') ];
 	};
 
 	const getTokenByGroup = (group: string): SearchToken | null => {
@@ -688,7 +726,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	// Tokens persist as bare { kind, id } and resolve on open; Back snapshots are session-only
 	const persistTokens = () => {
-		storageSet({ [tokensKey]: tokensRef.current.map(it => ({ kind: it.kind, id: it.id })) });
+		storageSet({ tokens: tokensRef.current.map(it => ({ kind: it.kind, id: it.id })) });
 	};
 
 	// Programmatic query changes must also write the ref and storage - the Input keeps its
@@ -697,7 +735,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		window.clearTimeout(timeoutRef.current);
 		filterInputRef.current?.setValue('');
 		filterValueRef.current = '';
-		storageSet({ [filterKey]: '' });
+		storageSet({ filter: '' });
 	};
 
 	const clearChipHighlight = (render?: boolean) => {
@@ -731,6 +769,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		const { source, fromRow } = param || {};
+		const wasGlobal = isGlobal();
 		const tokens = tokensRef.current;
 		const group = TOKEN_GROUPS[kind];
 		const idx = tokens.findIndex(it => TOKEN_GROUPS[it.kind] == group);
@@ -769,6 +808,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			clearQuery();
 		};
 
+		// Adding a space token narrows a global search back to the space in place
+		if (wasGlobal != isGlobal()) {
+			onCrossBoundary();
+		};
+
 		persistTokens();
 		afterTokenChange();
 
@@ -778,10 +822,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (fromRow) {
-			analytics.event('SearchDrill', { route, type: 'Empty', drillType: kind, isGlobal: Boolean(isGlobal) });
+			analytics.event('SearchDrill', { route, type: 'Empty', drillType: kind, isGlobal: isGlobal() });
 		};
 
-		analytics.event('SearchToken', { type: U.String.ucFirst(kind), action: (existing ? 'Replace' : 'Add'), source: source || '', isGlobal: Boolean(isGlobal) });
+		analytics.event('SearchToken', { type: U.String.ucFirst(kind), action: (existing ? 'Replace' : 'Add'), source: source || '', isGlobal: isGlobal() });
 	};
 
 	// Removing the most recently row-added token via its x or Backspace pops its Back
@@ -799,16 +843,30 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
+		const wasGlobal = isGlobal();
 		const maxRowSeq = Math.max(0, ...tokens.filter(it => it.back).map(it => it.seq || 0));
 		const canRestore = Boolean(token.back) && (token.seq == maxRowSeq) && [ 'Token', 'Backspace' ].includes(source);
 
 		tokens.splice(idx, 1);
+
+		// Removing the space token widens to vault-wide search in place, mapping the
+		// what token across the boundary; a snapshot restore instead swaps the whole
+		// state (exact undo - no mapping)
+		if (!canRestore && (wasGlobal != isGlobal())) {
+			onCrossBoundary();
+		};
+
 		persistTokens();
 
-		analytics.event('SearchToken', { type: U.String.ucFirst(token.kind), action: 'Remove', source: source || '', isGlobal: Boolean(isGlobal) });
+		analytics.event('SearchToken', { type: U.String.ucFirst(token.kind), action: 'Remove', source: source || '', isGlobal: isGlobal() });
 
 		if (canRestore) {
 			restoreBack(token.back);
+
+			// The restored state may sit on the other side of the boundary
+			if (!wasGlobal && isGlobal()) {
+				subscribeGlobalDeps(onGlobalDepsLoad);
+			};
 		} else {
 			// An explicitly removed token must not resurrect from another token's Back
 			// snapshot later - strip it from every remaining snapshot (snapshots nest)
@@ -821,7 +879,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				});
 			};
 
-			strip(tokens);
+			// The live array - a boundary crossing may have replaced its identity
+			strip(tokensRef.current);
 			afterTokenChange();
 		};
 	};
@@ -840,7 +899,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		filterInputRef.current?.setValue(filter);
 		filterInputRef.current?.setRange({ from: filter.length, to: filter.length });
 		filterInputRef.current?.focus();
-		storageSet({ [filterKey]: filter });
+		storageSet({ filter });
 
 		nRef.current = 0;
 		topRef.current = 0;
@@ -893,7 +952,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// The Messages scope searches chats and discussions - offer it only when there is at least
 	// one of either: in the space (space subscriptions) or anywhere (global subscriptions)
 	const hasMessageContainers = (): boolean => {
-		if (isGlobal) {
+		if (isGlobal()) {
 			return [ J.Constant.subId.chatGlobal, J.Constant.subId.discussionGlobal ].some(it => {
 				return S.Record.getRecordIds(it, '').length > 0;
 			});
@@ -910,7 +969,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const globalMembersRef = useRef(false);
 
 	const hasMembers = (): boolean => {
-		if (!isGlobal) {
+		if (!isGlobal()) {
 			return spaceHasMembers(S.Common.space);
 		};
 
@@ -938,13 +997,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// count for presentation gates keyed to the loaded list
 	const getLoadMode = (): any => {
 		const what = getWhatToken();
-		const tokens = tokensRef.current.length;
+		// The scope token is the resting state, not a filter - presentation gates keyed
+		// to "no tokens" (settings rows) must not count it
+		const tokens = tokensRef.current.filter(it => it.kind != 'space').length;
+		const global = isGlobal();
 
 		if (what && (what.kind == 'kind') && (what.id == SEARCH_TYPE_MESSAGE)) {
-			return { id: SEARCH_TYPE_MESSAGE, what, tokens };
+			return { id: SEARCH_TYPE_MESSAGE, what, tokens, isGlobal: global };
 		};
 
-		return { id: 'object', what, tokens };
+		return { id: 'object', what, tokens, isGlobal: global };
 	};
 
 	// Space members in the vault's 1:1-first order, then alphabetical
@@ -989,7 +1051,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const { account } = S.Auth;
 		const identity = (it: any) => it.identity || U.Space.getAccountFromParticipantId(it.id);
 
-		let people: any[] = isGlobal ? getGlobalPeople().map(it => it.object) : getSpacePeople();
+		let people: any[] = isGlobal() ? getGlobalPeople().map(it => it.object) : getSpacePeople();
 
 		if (account) {
 			people = people.filter(it => identity(it) != account.id);
@@ -1028,7 +1090,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		if (!what) {
-			if (isGlobal) {
+			if (isGlobal()) {
 				ret.push(
 					kindChip(SEARCH_TYPE_PAGE),
 					kindChip(SEARCH_TYPE_MEDIA),
@@ -1089,54 +1151,116 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		];
 		const type = known.includes(item.id) ? U.String.ucFirst(item.id) : 'Type';
 
-		analytics.event('SwitchSearchType', { route, type, isGlobal: Boolean(isGlobal) });
+		analytics.event('SwitchSearchType', { route, type, isGlobal: isGlobal() });
 	};
 
-	// Reopen the popup in global (cross-space) mode; callers close the current popup first.
-	// The pivot carries the typed query over and maps the tokens: a type token maps to its
-	// layout bucket, a kind token carries over, a creator token carries (identity filters
-	// work vault-wide), backlink stays in-space
-	const onSearchGlobal = () => {
-		const query = filterValueRef.current.startsWith('/') ? '' : filterValueRef.current;
-		const what = getWhatToken();
-		const creator = getCreatorToken();
-		const tokens: any[] = [];
+	// The scope half of the token model: removing the space token switches to vault-wide
+	// (global) search IN PLACE - global chips, global loaders, space captions - keeping
+	// the typed query; re-adding narrows back. No close+reopen, no storage handoff
+	const removeSpaceScope = (source: string) => {
+		// Pickers stay pinned to the current space (attachments are per-space)
+		if (onObjectSelect) {
+			return;
+		};
 
-		if (what) {
-			if (what.kind == 'kind') {
-				tokens.push({ kind: 'kind', id: what.id });
-			} else {
+		const scope = getTokenByGroup('scope');
+
+		if (scope) {
+			removeToken(scope, source);
+		};
+	};
+
+	const addSpaceScope = (source: string) => {
+		const spaceview = U.Space.getSpaceview();
+
+		if (spaceview && !spaceview._empty_) {
+			addToken('space', { ...spaceview, id: spaceview.targetSpaceId }, { source });
+		};
+	};
+
+	// Cmd+Shift+K: toggle the scope in place. A "/" command query clears first - the
+	// flip must land on results, not the command list
+	const onScopeToggle = () => {
+		if (filterValueRef.current.startsWith('/')) {
+			clearQuery();
+		};
+
+		if (getTokenByGroup('scope')) {
+			removeSpaceScope('Command');
+		} else {
+			addSpaceScope('Command');
+		};
+	};
+
+	// Crossing the scoped <-> global boundary maps the what token: entering global, a
+	// specific type becomes its layout bucket (types can't merge across spaces in the
+	// bucket row); entering the space, a global-only bucket clears and a type re-points
+	// at the space's own same-key type. Creator and backlink tokens carry as-is - the
+	// identity and id filters work vault-wide
+	const mapTokensAcrossBoundary = () => {
+		const toGlobal = isGlobal();
+		const what = getWhatToken();
+
+		if (!what) {
+			return;
+		};
+
+		const drop = () => {
+			tokensRef.current = tokensRef.current.filter(it => it != what);
+		};
+
+		if (what.kind == 'type') {
+			if (toGlobal) {
 				// Row-drilled type tokens hold the raw search record, which lacks
 				// recommendedLayout - fall back to the type store
 				const typeObject = S.Record.getTypeById(what.id) || what.object;
 				const layout = typeObject?.recommendedLayout;
 				const bucket = Object.keys(GLOBAL_LAYOUTS).find(key => GLOBAL_LAYOUTS[key].includes(layout));
 
+				drop();
+
 				if (bucket) {
-					tokens.push({ kind: 'kind', id: bucket });
+					tokensRef.current.push({ kind: 'kind', id: bucket, seq: ++tokenSeqRef.current });
+				};
+			} else {
+				const local = S.Record.getTypeById(what.id) ||
+					(what.object?.uniqueKey ? S.Record.getTypes().find(it => it.uniqueKey == what.object.uniqueKey) : null);
+
+				if (local) {
+					what.id = local.id;
+					what.object = local;
 				};
 			};
+		} else
+		if ((what.kind == 'kind') && !toGlobal && ![ SEARCH_TYPE_MESSAGE, SEARCH_TYPE_MEDIA ].includes(what.id)) {
+			// The global-only buckets have no in-space chip
+			drop();
 		};
+	};
 
-		if (creator) {
-			tokens.push({ kind: 'creator', id: creator.id });
+	// One redraw when the cross-space maps land; a creator filter built while they were
+	// cold misses the per-space participant ids - re-run the search with the full set
+	const onGlobalDepsLoad = () => {
+		if (isGlobal() && getCreatorToken()) {
+			reload(true);
+		} else {
+			setDummy(prev => prev + 1);
 		};
+	};
 
-		storageSet({
-			filterGlobal: query,
-			tokensGlobal: tokens,
-			searchTypeGlobal: null,
-			drillGlobal: null,
-			lastUsedGlobal: Date.now(),
-		});
+	const onCrossBoundary = () => {
+		mapTokensAcrossBoundary();
 
-		window.setTimeout(() => keyboard.onSearchPopup(route, { data: { isGlobal: true } }), S.Popup.getTimeout());
+		// First entry into global mode starts the app-lifetime cross-space subscriptions
+		if (isGlobal()) {
+			subscribeGlobalDeps(onGlobalDepsLoad);
+		};
 	};
 
 	// Toggle the empty-browse order of All/My objects between recently edited and created
 	const onRecentSortToggle = () => {
 		recentSortRef.current = (recentSortRef.current == 'created') ? 'edited' : 'created';
-		storageSet({ [recentSortKey]: recentSortRef.current });
+		storageSet({ recentSort: recentSortRef.current });
 		reload(true);
 	};
 
@@ -1169,7 +1293,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const spaceId = item.spaceId || S.Common.space;
 
 		// Global mode: the chatGlobal cross-space subscription holds every chat object
-		let object = isGlobal ?
+		let object = isRenderGlobal() ?
 			S.Detail.get(J.Constant.subId.chatGlobal, chatId, []) :
 			S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.chat), chatId, []);
 
@@ -1180,13 +1304,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (parentId) {
 				object = S.Chat.getDiscussionParentDetail(spaceId, parentId, []);
 
-				if (object._empty_ && !isGlobal) {
+				if (object._empty_ && !isRenderGlobal()) {
 					object = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.discussion), parentId, []);
 				};
 			};
 		};
 
-		if (object._empty_ && !isGlobal) {
+		if (object._empty_ && !isRenderGlobal()) {
 			object = S.Detail.get(chatsSubId, chatId, []);
 
 			// A discussion object itself is not openable and carries no display name - without
@@ -1221,7 +1345,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const spaceId = item.spaceId || S.Common.space;
 		const participantId = U.Space.getParticipantId(spaceId, item.message?.creator);
 
-		if (!isGlobal || (spaceId == S.Common.space)) {
+		if (!isRenderGlobal() || (spaceId == S.Common.space)) {
 			return U.Space.getParticipant(participantId);
 		};
 
@@ -1339,7 +1463,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	// Type token: uniqueKey matches the same-named type in every space
 	const getTypeTokenFilter = (object: any): any => {
-		const type = S.Record.getTypeById(object.id) || (isGlobal ? GLOBAL_DEPS.types.get(object.id) : null);
+		const type = S.Record.getTypeById(object.id) || GLOBAL_DEPS.types.get(object.id) || null;
 		const uniqueKey = object.uniqueKey || type?.uniqueKey;
 
 		return uniqueKey ?
@@ -1355,7 +1479,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const identity = getTokenIdentity(token);
 		const ids: string[] = [ identity ];
 
-		if (isGlobal) {
+		if (isGlobal()) {
 			GLOBAL_DEPS.participants.forEach((v: any, id: string) => {
 				if (U.Space.getAccountFromParticipantId(id) == identity) {
 					ids.push(id);
@@ -1401,7 +1525,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			getCreatorTokenFilters(creator).forEach(it => ret.push(it));
 		};
 
-		if (backlink && !isGlobal) {
+		// Object ids are vault-unique - the id filter works on the cross-space path too,
+		// so a backlink token survives the mode flip
+		if (backlink) {
 			const links = Relation.getArrayValue(backlink.object?.links);
 			const backlinks = Relation.getArrayValue(backlink.object?.backlinks);
 
@@ -1413,6 +1539,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const loadMessages = (clear: boolean, gen: number, callBack?: () => void, quiet?: boolean) => {
 		const { space } = S.Common;
+		const global = isGlobal();
 		const text = filterValueRef.current;
 		// Date desc for text searches too: the backend's score sort groups equal-score hits
 		// per chat, which reads as random grouping; recency is consistent with the empty-query
@@ -1450,7 +1577,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const creators = creatorToken ? [ getTokenIdentity(creatorToken) ] : [];
 
 		// Empty spaceId + empty chatId = all chats in all spaces (global mode)
-		C.ChatSearch(isGlobal ? '' : space, '', text, offsetRef.current, J.Constant.limit.menuRecords, sorts, creators, (message: any) => {
+		C.ChatSearch(global ? '' : space, '', text, offsetRef.current, J.Constant.limit.menuRecords, sorts, creators, (message: any) => {
 			// A newer query started while this one was in flight - drop the stale response
 			if (gen != loadGenRef.current) {
 				// Release the loader this request engaged - the superseding load may be
@@ -1466,7 +1593,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			if (message.error.code) {
 				if (clear) {
 					itemsRef.current = [];
-					itemsModeRef.current = { id: SEARCH_TYPE_MESSAGE };
+					itemsModeRef.current = { id: SEARCH_TYPE_MESSAGE, isGlobal: global };
 				};
 
 				done();
@@ -1481,14 +1608,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const records = (message.list || []).map(it => ({ ...it, id: it.messageId, isMessage: true }));
 
 			itemsRef.current = itemsRef.current.concat(records);
-			itemsModeRef.current = { id: SEARCH_TYPE_MESSAGE };
+			itemsModeRef.current = { id: SEARCH_TYPE_MESSAGE, isGlobal: global };
 			hasMoreRef.current = records.length == J.Constant.limit.menuRecords;
 
 			if (!clear) {
 				setDummy(prev => prev + 1);
 			};
 
-			if (!isGlobal) {
+			if (!global) {
 				resolveMessageChats(records);
 			};
 
@@ -1730,7 +1857,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		if (isGlobal) {
+		if (isGlobal()) {
 			loadGlobalObjects(clear, gen, callBack, quiet);
 			return;
 		};
@@ -1861,7 +1988,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let list: any[] = [];
 
-		if (isGlobal) {
+		if (isGlobal()) {
 			list = getGlobalPeople().map(({ object, spaceCount }) => ({ ...object, metaList: [], links: [], backlinks: [], isMemberAgg: true, spaceCount }));
 		} else {
 			list = getSpacePeople();
@@ -1879,7 +2006,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let list: any[] = [];
 
-		if (isGlobal) {
+		if (isGlobal()) {
 			const byKey = new Map<string, any>();
 
 			GLOBAL_DEPS.types.forEach((it: any) => {
@@ -1943,13 +2070,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), iconParam: { name: 'common/search' }, isCommand: true, command: 'type' });
 		};
 
-		if (!isGlobal) {
+		if (!isGlobal()) {
 			if (canWrite) {
 				items.push({ id: 'add', name: translate('commonCreateObject'), iconParam: { name: 'plus/menu' } });
 				items.push({ id: 'upload', name: translate('popupSearchUploadFile'), iconParam: { name: 'plus/menu' } });
 			};
 
-			items.push({ id: 'searchGlobal', name: translate('popupSearchSearchGlobal'), iconParam: { name: 'common/search' } });
+			if (!onObjectSelect) {
+				items.push({ id: 'searchGlobal', name: translate('popupSearchSearchGlobal'), iconParam: { name: 'common/search' } });
+			};
 		};
 
 		if (reg) {
@@ -1974,6 +2103,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// previous list stays on screen while the tokens already changed
 		const mode = itemsModeRef.current || getLoadMode();
 		const what = mode.what || null;
+		// Present by the mode the on-screen items were loaded for - during a quiet
+		// reload the previous list stays up while the tokens are already flipped
+		const modeGlobal = Boolean(mode.isGlobal);
 
 		if (mode.id == SEARCH_TYPE_MESSAGE) {
 			const items: any[] = [].concat(itemsRef.current).map(it => ({ ...it, isMessage: true, shortcut: [] }));
@@ -2031,7 +2163,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		/* Settings and pages */
 
-		if (filter && !isGlobal && (mode.id == 'object') && !mode.tokens) {
+		if (filter && !modeGlobal && (mode.id == 'object') && !mode.tokens) {
 			const reg = new RegExp(U.String.regexEscape(filter), 'gi');
 
 			let itemsImport: any[] = [];
@@ -2114,7 +2246,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		// Global mode has no actions in v1 (creation targets a specific space)
-		if (!isGlobal) {
+		if (!modeGlobal) {
 			const actions: any[] = [];
 
 			if (canWrite) {
@@ -2249,7 +2381,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			filterInputRef.current?.setRange({ from: v.length, to: v.length });
 			filterInputRef.current?.focus();
 			filterValueRef.current = v;
-			storageSet({ [filterKey]: v });
+			storageSet({ filter: v });
 			reload(true);
 			return;
 		};
@@ -2258,6 +2390,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (item.isCommandSuggest) {
 			clearQuery();
 			addToken(item.tokenKind, item, { source: 'Command' });
+			return;
+		};
+
+		// "Search across all Channels" (the action row and its "/" command): drop the
+		// space scope in place - global chips and loaders take over. A real query stays
+		// (the widen case); a "/" command query clears so the flip lands on results
+		if (item.id == 'searchGlobal') {
+			if (filterValueRef.current.startsWith('/')) {
+				clearQuery();
+			};
+
+			removeSpaceScope('Entry');
 			return;
 		};
 
@@ -2333,11 +2477,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						break;
 					};
 
-					case 'searchGlobal': {
-						onSearchGlobal();
-						break;
-					};
-
 					case 'addType': {
 						createTypedObject(item.typeId, filter);
 						break;
@@ -2357,7 +2496,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const onContext = (e: any, item: any) => {
 		// The object context menu acts within the current space - skip for cross-space results
-		if (isGlobal) {
+		if (isRenderGlobal()) {
 			return;
 		};
 
@@ -2406,7 +2545,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	useEffect(() => {
 		const storage = storageGet();
-		const filter = isStale ? '' : String(storage[filterKey] || '');
 
 		const setFilter = () => {
 			if (!filterInputRef.current) {
@@ -2423,25 +2561,22 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		focus.clear(true);
 		rebindTimeoutRef.current = window.setTimeout(() => rebind(), J.Constant.delay.popup);
 
-		if (isGlobal) {
+		if (initialGlobal) {
 			// First-ever use starts the app-lifetime subscriptions (one redraw when the
 			// initial data lands); later opens sync from memory - no redraw
-			subscribeGlobalDeps(() => setDummy(prev => prev + 1));
+			subscribeGlobalDeps(onGlobalDepsLoad);
 		};
 
-		// Restore tokens; the legacy searchType/drill/backlink keys migrate once
-		const legacySearchTypeKey = isGlobal ? 'searchTypeGlobal' : 'searchType';
-		const legacyDrillKey = isGlobal ? 'drillGlobal' : 'drill';
-
-		const migrateLegacyTokens = (): any[] => {
+		// Pre-token releases stored the active chip and drill separately - migrate once
+		const migrateLegacyTokens = (global: boolean): any[] => {
 			const ret: any[] = [];
-			const legacyType = String(storage[legacySearchTypeKey] || '');
-			const legacyDrill = storage[legacyDrillKey];
+			const legacyType = String(storage[global ? 'searchTypeGlobal' : 'searchType'] || '');
+			const legacyDrill = storage[global ? 'drillGlobal' : 'drill'];
 
 			if (legacyDrill && legacyDrill.kind && legacyDrill.id) {
 				ret.push({ kind: legacyDrill.kind, id: legacyDrill.id });
 			} else
-			if (!isGlobal && storage.backlink) {
+			if (!global && storage.backlink) {
 				ret.push({ kind: 'backlink', id: storage.backlink });
 			};
 
@@ -2460,7 +2595,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			} else
 			if (legacyType && ![ SEARCH_TYPE_ALL, SEARCH_TYPE_MEMBER ].includes(legacyType)) {
 				// In-space per-type chips stored the type object id
-				if (!hasWhat && !isGlobal) {
+				if (!hasWhat && !global) {
 					ret.push({ kind: 'type', id: legacyType });
 				};
 			};
@@ -2483,13 +2618,20 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 				const slot: any = { kind: it.kind, id: it.id, object: null };
 
+				if (it.kind == 'space') {
+					const spaceview = U.Space.getSpaceviewBySpaceId(it.id);
+
+					// The token id is the spaceId (the filter and comparison currency);
+					// the object renders the pill
+					slot.object = (spaceview && !spaceview._empty_) ? { ...spaceview, id: it.id } : null;
+				} else
 				if (it.kind == 'type') {
-					slot.object = S.Record.getTypeById(it.id) || (isGlobal ? GLOBAL_DEPS.types.get(it.id) : null);
+					slot.object = S.Record.getTypeById(it.id) || GLOBAL_DEPS.types.get(it.id) || null;
 				} else
 				if (it.kind == 'creator') {
 					// The cross-space map is cold on the first global use of a session;
 					// the current-space participant store covers the common pivot case
-					slot.object = (isGlobal ? GLOBAL_DEPS.participants.get(it.id) : null) || U.Space.getParticipant(it.id);
+					slot.object = GLOBAL_DEPS.participants.get(it.id) || U.Space.getParticipant(it.id);
 				};
 
 				slots.push(slot);
@@ -2502,7 +2644,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 			// In-space misses (and backlink tokens, which need links/backlinks) resolve by
 			// search; global misses drop - the in-memory maps are the source there
-			const pendingIds = isGlobal ? [] : slots.filter(it => (it.kind != 'kind') && !it.object).map(it => it.id);
+			const pendingIds = initialGlobal ? [] : slots.filter(it => ![ 'kind', 'space' ].includes(it.kind) && !it.object).map(it => it.id);
 
 			if (!pendingIds.length) {
 				done();
@@ -2524,24 +2666,49 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			});
 		};
 
+		// Restore tokens from the unified key set. Two legacy generations chain into it,
+		// one-shot each: the phase-1 split global keys (*Global - the side used more
+		// recently wins the merge) and the pre-token chip/drill/backlink keys
+		const legacyGlobalKeys = [ 'filterGlobal', 'tokensGlobal', 'recentSortGlobal', 'lastUsedGlobal', 'searchTypeGlobal', 'drillGlobal' ];
+		const hasLegacyGlobal = legacyGlobalKeys.some(key => (storage[key] !== undefined) && (storage[key] !== null));
+
 		let raw: any[] = [];
 
 		if (!isStale) {
-			if (storage[tokensKey] !== undefined) {
-				raw = U.Common.objectCopy(storage[tokensKey] || []);
+			if (legacyGlobalSide && (storage.tokensGlobal !== undefined) && (storage.tokensGlobal !== null)) {
+				raw = U.Common.objectCopy(storage.tokensGlobal || []);
+			} else
+			if (legacyGlobalSide) {
+				raw = migrateLegacyTokens(true);
+			} else
+			if (storage.tokens !== undefined) {
+				raw = U.Common.objectCopy(storage.tokens || []);
 			} else {
-				raw = migrateLegacyTokens();
-
-				const cleanup: any = { [tokensKey]: raw, [legacySearchTypeKey]: null, [legacyDrillKey]: null };
-
-				// The legacy backlink key belongs to the in-space popup - the global one
-				// must not wipe it before its owner migrates
-				if (!isGlobal) {
-					cleanup.backlink = '';
-				};
-
-				storageSet(cleanup);
+				raw = migrateLegacyTokens(false);
 			};
+		};
+
+		if (hasLegacyGlobal || (storage.tokens === undefined)) {
+			const cleanup: any = { tokens: raw, searchType: null, drill: null, backlink: '' };
+
+			// undefined drops the key entirely on serialization - the merge stays one-shot
+			legacyGlobalKeys.forEach(key => cleanup[key] = undefined);
+
+			if (hasLegacyGlobal) {
+				cleanup.lastUsed = lastUsed;
+				cleanup.filter = filter;
+				cleanup.recentSort = recentSortRef.current;
+			};
+
+			storageSet(cleanup);
+		};
+
+		// The entry point owns the scope slot: Cmd+K and in-editor searches open scoped
+		// to the current space, Cmd+Shift+K and the vault icon open vault-wide
+		raw = raw.filter(it => it && (it.kind != 'space'));
+
+		if (!initialGlobal) {
+			raw.unshift({ kind: 'space', id: S.Common.space });
 		};
 
 		resolveTokens(raw, tokens => {
@@ -2550,13 +2717,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			// Drop what failed to resolve from storage too - but only in-space, where
 			// resolution is authoritative; the global maps may simply be cold on the
 			// first use of a session and the token must survive for the next open
-			if (!isGlobal && (tokens.length != raw.length)) {
+			if (!initialGlobal && (tokens.length != raw.length)) {
 				persistTokens();
 			};
 
-			// Alias emissions for continuity with the drill-era analytics
-			tokens.filter(it => it.kind != 'kind').forEach(it => {
-				analytics.event('SearchDrill', { route, type: 'Saved', drillType: it.kind, isGlobal: Boolean(isGlobal) });
+			// Alias emissions for continuity with the drill-era analytics; the scope
+			// token is entry-point state, not a saved drill
+			tokens.filter(it => ![ 'kind', 'space' ].includes(it.kind)).forEach(it => {
+				analytics.event('SearchDrill', { route, type: 'Saved', drillType: it.kind, isGlobal: isGlobal() });
 			});
 
 			setFilter();
@@ -2574,7 +2742,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			// Closing stamps the session - the next open compares against it
-			storageSet({ [lastUsedKey]: Date.now() });
+			storageSet({ lastUsed: Date.now() });
 		};
 	}, []);
 
@@ -2667,10 +2835,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const message = item.message || {};
 			const author = getMessageAuthor(item);
 			const chat = getMessageChat(item);
-			const spaceview = isGlobal ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
+			const spaceview = isRenderGlobal() ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
 			// A 1:1 space's chat is always named "General" - label it "Direct" instead (the
 			// person is already visible: space caption in global mode, the space itself in-space)
-			const isOneToOne = Boolean((isGlobal ? spaceview : U.Space.getSpaceview())?.isOneToOne);
+			const isOneToOne = Boolean((isRenderGlobal() ? spaceview : U.Space.getSpaceview())?.isOneToOne);
 			const day = showRelativeDates ? U.Date.dayString(message.createdAt) : null;
 			const date = [ (day ? day : U.Date.dateWithFormat(dateFormat, message.createdAt)), U.Date.timeWithFormat(timeFormat, message.createdAt) ].join(', ');
 
@@ -2756,7 +2924,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const meta = metaList[0] || {};
 			// Types of other spaces are not in the current space's type store - fall back to
 			// the batch-resolved cross-space cache
-			const type = S.Record.getTypeById(item.type) || (isGlobal ? GLOBAL_DEPS.types.get(item.type) : null);
+			const type = S.Record.getTypeById(item.type) || GLOBAL_DEPS.types.get(item.type) || null;
 
 			const drillKind = getDrillKind(item);
 
@@ -2783,7 +2951,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				);
 			};
 
-			const spaceview = (isGlobal && !item.isMemberAgg) ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
+			const spaceview = (isRenderGlobal() && !item.isMemberAgg) ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
 			const creatorLabel = getObjectCreatorLabel(item);
 			const creatorObject = creatorLabel ? getObjectCreator(item) : null;
 			const memberSpaces = item.isMemberAgg ?
@@ -2807,7 +2975,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				name = U.String.htmlSpecialChars(name);
 			};
 
-			if (isGlobal) {
+			if (isRenderGlobal()) {
 				cn.push('isGlobal');
 			};
 
@@ -2879,9 +3047,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		);
 	};
 
-	// Token pill in the head: the same pill family as the chips - 16px icon, name, x
+	// Token pill in the head: the same pill family as the chips - 16px icon, name, x.
+	// Pickers pin the scope token (no x) - they must never flip to cross-space results
 	const TokenItem = (token: SearchToken) => {
 		const cn = [ 'token', `token-${token.kind}` ];
+		const canRemove = !onObjectSelect || (token.kind != 'space');
 
 		let icon = null;
 		let name = '';
@@ -2922,7 +3092,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			<div key={`token-${token.kind}-${token.id}`} className={cn.join(' ')}>
 				{icon}
 				<div className="name">{name}</div>
-				<Icon className="clear" name="common/clear" onClick={() => removeToken(token, 'Token')} />
+				{canRemove ? <Icon className="clear" name="common/clear" onClick={() => removeToken(token, 'Token')} /> : ''}
 			</div>
 		);
 	};
