@@ -3,9 +3,11 @@
 Date: 2026-08-21 (rev 4, 2026-08-22: chips row reworked into an adaptive suggestion row
 after Roman's phase-1 testing — see "Adaptive suggestion row" and Decisions 6-8; supersedes
 Decisions 1 and 5 and the rev-2 "Chips = token setters" section)
-Status: phases 1-2 implemented on `feature/JS-9862-search-tokens` (phase 1: token core +
+Status: phases 1-3 implemented on `feature/JS-9862-search-tokens` (phase 1: token core +
 suggestion row + `/by` `/type` completions, in-space; phase 2: space scope token + derived
-`isGlobal` + in-place mode switch + unified storage). Phase 3 pending.
+`isGlobal` + in-place mode switch + unified storage; phase 3: `/in` + other-Channel scope +
+the cross-Channel Types aggregate - clickable space captions and `/here`/`/channel`
+deferred, deviations 32-40). Phase 4 (token-selection keyboard) pending.
 
 ## Deviations (phase 1 implementation, 2026-08-21)
 
@@ -118,6 +120,58 @@ Rev-4 (adaptive suggestion row) implementation notes:
 31. **Infinite-scroll appends freeze while a clear-load is in flight**
    (`clearLoadPendingRef`, new invariant 10): an append fired inside a quiet flip window
    shares the clear's generation and would route by the new tokens onto the old list.
+
+## Deviations (phase 3 implementation, 2026-08-22)
+
+32. **Phase 3 shipped as the `/in` arm.** Clickable space captions on rows and the
+   `/here`/`/channel` typed aliases are deferred to a later slice - `/in` (with its
+   "Filter by Channel..." entry) is the only gesture into an other-Channel scope. The
+   searchGlobal row/action and Cmd+Shift+K cover `/channel`'s semantics.
+33. **Foreign scope is within-session only** - deviation 25 upheld: the mount effect
+   still strips and re-seeds the scope slot from the entry point, so a reopen never
+   lands scoped to another Channel (Back snapshots may restore one in-session).
+34. **Cmd+Shift+K from a foreign scope removes the scope (-> global)** - the toggle
+   never jumps foreign -> current; the current space is a second press away
+   (deviation 20's re-add). Same for the token's x and Backspace-at-0.
+35. **The "/" Channel entry is global-only** - the scope group is filled in ANY scoped
+   mode (adaptive rule read plainly), so the entry shows only with no scope token.
+   Typing `/in <text>` manually still re-points an existing scope, matching `/by` and
+   `/type` while their groups are filled. Pickers: entry hidden, completions empty.
+36. **Foreign chips**: Messages / By me / Media + that Channel's types by NAME from
+   `GLOBAL_DEPS.types` (no instance-count gate - the per-type instance subscriptions
+   are current-space-only) + member chips per that space's participants.
+   `KEYS_GLOBAL_TYPE` gained `recommendedLayout` and `isHidden` for the noise gates.
+37. **Entering a foreign scope maps the what token like entering the current space**:
+   kind buckets other than Messages/Media drop; a type token re-points at the
+   target's same-uniqueKey type where one exists, else stays (deviation 26
+   generalized). With cold maps the re-point silently no-ops - results stay correct
+   via the uniqueKey + spaceId filters; only the token object stays "wrong-space"
+   for the session.
+38. **`isCurrentSpace()`/`isForeignScope()` joined `isGlobal()`** - every gate picked
+   its predicate: create actions/shortcut, settings/import rows, highlights, context
+   menu and per-chip creates key on "scope == current space"; the chips row on which
+   concrete scope; space captions and cross-space chat/author resolution on
+   `isRenderCross` (via an `itemsModeRef.spaceId` stamp, so quiet-reload windows
+   render by the mode the on-screen list was loaded for).
+39. **The global Types bucket and global `/type` are an in-memory aggregate** over
+   `GLOBAL_DEPS.types` (the People-aggregate pattern; no RPC, no new subscriptions):
+   grouped by uniqueKey with "in <Channel> + N other Channels" captions,
+   representative = the current space's instance else the lowest-spaceId one, name
+   order under a plain "Types" header (no recency toggle - the recency titles would
+   lie about an in-memory order), template + hidden excluded (the old RPC path did
+   not exclude hidden), text filtering by name/pluralName. Row click opens the
+   representative; the drill/`/type` pick adds the uniqueKey-filtered type token.
+   Foreign-scope `/type` stays a single-Channel list without captions (redundant).
+40. **`syncGlobalDeps` is a rebuild** - every entry into a cross-space mode refreshes
+   the maps from the live subscription stores (renames and deletions refresh, left
+   Channels evict); the maps are a per-entry snapshot, not a live mirror. The
+   `onLoad` redraw hook moved onto `GLOBAL_DEPS` (newest popup wins), so a first
+   subscription reply landing after a quick close+reopen notifies the live popup
+   instead of a dead closure.
+
+Needs one manual verification against the middleware (like deviation 22):
+`ChatSearch(<otherSpaceId>, '')` accepting a non-current space and
+`ObjectCrossSpaceSearch` honouring a `spaceId Equal` filter.
 
 Builds on: `2026-08-20-in-space-cross-chat-search.md`, `2026-08-20-global-cross-space-search.md`,
 `2026-08-20-search-drilldown-type-creator.md` (all shipped in v0.56.6-beta, PR #2349).
@@ -371,6 +425,8 @@ source: Chip|Row|Caption|Entry|Backspace|Command, isGlobal }`; `SearchDrill` and
 3. **Other-Channel scope** — clickable space captions, `spaceId Equal` on the cross-space
    path, that Channel's chips from `GLOBAL_DEPS.types`, `ChatSearch(Y, '')`, People filtered,
    `/in` `/here` `/channel`.
+   *(implemented 2026-08-22 minus clickable captions and `/here`/`/channel` - deviations
+   32-40; includes the cross-Channel Types aggregate, deviation 39)*
 4. *(fast-follow)* full token-selection keyboard model.
 
 ## Decisions (Roman, 2026-08-21)
