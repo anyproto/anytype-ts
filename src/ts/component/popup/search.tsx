@@ -293,6 +293,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Bumped on every clear-load: responses stamped with an older generation are dropped,
 	// so a slow superseded query can never clobber the current list
 	const loadGenRef = useRef(0);
+	// True while a clear-load is in flight; infinite-scroll appends hold off (they would
+	// share the clear's generation and race it across a token/mode change)
+	const clearLoadPendingRef = useRef(false);
 	// Bumped when a clear-load actually swaps the list data; the measurement cache is
 	// reset exactly then. Request-time signals fire too early (an unrelated re-render
 	// would wipe and re-measure the OLD rows) and appends must never wipe it
@@ -1183,11 +1186,23 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Cmd+Shift+K: toggle the scope in place. A "/" command query clears first - the
 	// flip must land on results, not the command list
 	const onScopeToggle = () => {
+		const scope = getTokenByGroup('scope');
+
+		// Nothing to toggle: no scope to remove and no spaceview to add - don't
+		// half-apply (the query clear must ride an actual flip)
+		if (!scope) {
+			const spaceview = U.Space.getSpaceview();
+
+			if (!spaceview || spaceview._empty_) {
+				return;
+			};
+		};
+
 		if (filterValueRef.current.startsWith('/')) {
 			clearQuery();
 		};
 
-		if (getTokenByGroup('scope')) {
+		if (scope) {
 			removeSpaceScope('Command');
 		} else {
 			addSpaceScope('Command');
@@ -1243,7 +1258,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// One redraw when the cross-space maps land; a creator filter built while they were
 	// cold misses the per-space participant ids - re-run the search with the full set
 	const onGlobalDepsLoad = () => {
-		if (isGlobal() && getCreatorToken()) {
+		// The "/" command list does no backend query - a reload would only reset it
+		if (isGlobal() && getCreatorToken() && !filterValueRef.current.startsWith('/')) {
 			reload(true);
 		} else {
 			setDummy(prev => prev + 1);
@@ -1583,13 +1599,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			// A newer query started while this one was in flight - drop the stale response
 			if (gen != loadGenRef.current) {
 				// Release the loader this request engaged - the superseding load may be
-				// quiet and would never clear it
+				// quiet and would never clear it (the append freeze stays with the newer
+				// clear, which lifts it on landing)
 				if (clear && !quiet) {
 					setIsLoading(false);
 				};
 
 				callBack?.();
 				return;
+			};
+
+			// The current clear landed - appends may flow again
+			if (clear) {
+				clearLoadPendingRef.current = false;
 			};
 
 			if (message.error.code) {
@@ -1628,7 +1650,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const loadMoreRows = ({ startIndex, stopIndex }) => {
 		return new Promise((resolve, reject) => {
-			if (!hasMoreRef.current) {
+			// No appends while a clear-load is in flight (see load) - the sentinel
+			// belongs to the outgoing list
+			if (!hasMoreRef.current || clearLoadPendingRef.current) {
 				resolve(null);
 				return;
 			};
@@ -1788,13 +1812,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			// A newer query started while this one was in flight - drop the stale response
 			if (gen != loadGenRef.current) {
 				// Release the loader this request engaged - the superseding load may be
-				// quiet and would never clear it
+				// quiet and would never clear it (the append freeze stays with the newer
+				// clear, which lifts it on landing)
 				if (clear && !quiet) {
 					setIsLoading(false);
 				};
 
 				callBack?.();
 				return;
+			};
+
+			// The current clear landed - appends may flow again
+			if (clear) {
+				clearLoadPendingRef.current = false;
 			};
 
 			if (message.error.code) {
@@ -1838,6 +1868,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const load = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
 		if (clear) {
 			loadGenRef.current++;
+			// Freeze infinite-scroll appends until this clear lands - the old list (and
+			// its sentinel) stays mounted through a quiet reload, and an append fired in
+			// that window would route by the NEW tokens yet share the clear's generation
+			clearLoadPendingRef.current = true;
 		};
 
 		const gen = loadGenRef.current;
@@ -1845,7 +1879,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// "/" command mode searches chips/actions locally - no backend query
 		if (filterValueRef.current.startsWith('/')) {
 			itemsRef.current = [];
+			itemsModeRef.current = getLoadMode();
 			hasMoreRef.current = false;
+			clearLoadPendingRef.current = false;
 			listEpochRef.current++;
 			setDummy(prev => prev + 1);
 			callBack?.();
@@ -1938,13 +1974,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			// A newer query started while this one was in flight - drop the stale response
 			if (gen != loadGenRef.current) {
 				// Release the loader this request engaged - the superseding load may be
-				// quiet and would never clear it
+				// quiet and would never clear it (the append freeze stays with the newer
+				// clear, which lifts it on landing)
 				if (clear && !quiet) {
 					setIsLoading(false);
 				};
 
 				callBack?.();
 				return;
+			};
+
+			// The current clear landed - appends may flow again
+			if (clear) {
+				clearLoadPendingRef.current = false;
 			};
 
 			if (message.error.code) {
@@ -2399,6 +2441,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// space scope in place - global chips and loaders take over. A real query stays
 		// (the widen case); a "/" command query clears so the flip lands on results
 		if (item.id == 'searchGlobal') {
+			// The row can outlive the scope for a beat (a quiet flip keeps the old
+			// list up) - a scope-less click only returns focus to the input
+			if (onObjectSelect || !getTokenByGroup('scope')) {
+				filterInputRef.current?.focus();
+				return;
+			};
+
 			if (filterValueRef.current.startsWith('/')) {
 				clearQuery();
 			};
@@ -2713,8 +2762,22 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			raw.unshift({ kind: 'space', id: S.Common.space });
 		};
 
+		// Interactions during the async resolve (typing, a scope toggle) supersede the
+		// restore - each of them runs a reload, so the generation is the signal
+		const openGen = loadGenRef.current;
+
 		resolveTokens(raw, tokens => {
+			if (loadGenRef.current != openGen) {
+				return;
+			};
+
 			tokensRef.current = tokens;
+
+			// A scoped open can still land global (unresolvable spaceview drops the
+			// scope slot) - global mode always needs the cross-space deps
+			if (isGlobal()) {
+				subscribeGlobalDeps(onGlobalDepsLoad);
+			};
 
 			// Drop what failed to resolve from storage too - but only in-space, where
 			// resolution is authoritative; the global maps may simply be cold on the
