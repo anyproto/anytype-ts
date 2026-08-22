@@ -6,8 +6,10 @@ Decisions 1 and 5 and the rev-2 "Chips = token setters" section)
 Status: phases 1-3 implemented on `feature/JS-9862-search-tokens` (phase 1: token core +
 suggestion row + `/by` `/type` completions, in-space; phase 2: space scope token + derived
 `isGlobal` + in-place mode switch + unified storage; phase 3: `/in` + other-Channel scope +
-the cross-Channel Types aggregate - clickable space captions and `/here`/`/channel`
-deferred, deviations 32-40). Phase 4 (token-selection keyboard) pending.
+the cross-Channel Types aggregate, deviations 32-40; clickable space captions added
+2026-08-22 - object and message rows scope to the clicked Channel via addToken source
+Caption, query kept, picker-guarded, no Back snapshot for scope tokens - `/here`/`/channel`
+still deferred). Phase 4 (token-selection keyboard) pending.
 
 ## Deviations (phase 1 implementation, 2026-08-21)
 

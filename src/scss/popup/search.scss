@@ -125,6 +125,7 @@
 
 			.item {
 				.drillLink:hover { text-decoration: underline; }
+				.caption .drillLink { display: flex; align-items: center; gap: 0px 6px; min-width: 0; }
 
 				.side.left .caption { display: flex; align-items: center; gap: 0px 6px; }
 				.side.left .caption {

@@ -987,6 +987,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		load(true, step, true);
 	};
 
+	// Space caption on a cross-space row: clicking scopes the search to that Channel
+	// (the /in construction - token id is the spaceId, spaceview as the object). The
+	// query stays: scope changes widen or narrow the same search
+	const onSpaceCaption = (e: any, spaceview: any) => {
+		e.stopPropagation();
+
+		if (onObjectSelect || !spaceview) {
+			return;
+		};
+
+		addToken('space', { ...spaceview, id: spaceview.targetSpaceId }, { source: 'Caption' });
+	};
+
 	const onDrill = (e: any, item: any) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -3258,8 +3271,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 									{spaceview ? (
 										<>
 											<div className="prep">{translate('popupSearchInSpace')}</div>
-											<IconObject object={spaceview} size={14} />
-											<ObjectName object={spaceview} />
+											<div className="drillLink" onClick={e => onSpaceCaption(e, spaceview)}>
+												<IconObject object={spaceview} size={14} />
+												<ObjectName object={spaceview} />
+											</div>
 										</>
 									) : ''}
 								</div>
@@ -3394,8 +3409,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 								<>
 									<div className="bullet" />
 									<div className="prep">{translate('popupSearchInSpace')}</div>
-									<IconObject object={spaceview} size={14} />
-									<ObjectName object={spaceview} />
+									<div className="drillLink" onClick={e => onSpaceCaption(e, spaceview)}>
+										<IconObject object={spaceview} size={14} />
+										<ObjectName object={spaceview} />
+									</div>
 								</>
 							) : ''}
 						</div>
