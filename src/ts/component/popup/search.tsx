@@ -2352,7 +2352,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			list = list.filter(it => [ it.name, it.globalName ].some(n => String(n || '').toLowerCase().includes(t)));
 		};
 
-		return list.map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'creator', shortcut: [] }));
+		return list.map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'creator', prefix: '/by', shortcut: [] }));
 	};
 
 	const getTypeSuggestions = (text: string) => {
@@ -2361,7 +2361,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Global mode: grouped by uniqueKey with the space-count caption - the same
 		// aggregate the Types bucket renders
 		if (isGlobal()) {
-			return getGlobalTypeAggregate(text).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
+			return getGlobalTypeAggregate(text).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', prefix: '/is', shortcut: [] }));
 		};
 
 		let list: any[] = [];
@@ -2385,7 +2385,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			list = list.filter(it => [ it.name, it.pluralName ].some(n => String(n || '').toLowerCase().includes(t)));
 		};
 
-		return [ ...list ].sort(U.Data.sortByName).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
+		return [ ...list ].sort(U.Data.sortByName).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', prefix: '/is', shortcut: [] }));
 	};
 
 	// "/in" completions: every Channel in the vault sidebar's own order, 1:1 Channels
@@ -2407,7 +2407,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		// creator/links stripped: a spaceview row must not render an attribution
 		// caption or a drill arrow
-		return list.map(it => ({ ...it, id: it.targetSpaceId, isObject: true, isCommandSuggest: true, tokenKind: 'space', type: '', metaList: [], links: [], backlinks: [], creator: '', shortcut: [] }));
+		return list.map(it => ({ ...it, id: it.targetSpaceId, isObject: true, isCommandSuggest: true, tokenKind: 'space', prefix: '/in', type: '', metaList: [], links: [], backlinks: [], creator: '', shortcut: [] }));
 	};
 
 	// "/" command mode: search the chips and actions themselves, plus typed completions
@@ -3423,7 +3423,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			content = (
 				<div className="sides" onContextMenu={e => onContext(e, item)}>
 					<div className="side left">
-						<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
+						{item.prefix ? (
+							<div className="nameWithPrefix">
+								<span className="cmdPrefix">{item.prefix}</span>
+								<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
+							</div>
+						) : (
+							<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
+						)}
 						{Context(meta)}
 						<div className="caption">
 							{aggSpaces ? <div className="prep">{aggSpaces}</div> : (
