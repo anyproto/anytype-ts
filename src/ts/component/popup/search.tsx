@@ -2247,15 +2247,47 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return [ ...list ].sort(U.Data.sortByName).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
 	};
 
+	// "/in" completions: every Channel in the vault sidebar's own order, 1:1 Channels
+	// included; picking one scopes the search to it. The token id is the spaceId with
+	// the spaceview as the render object - the same construction as the seeded scope
+	const getSpaceSuggestions = (text: string) => {
+		// Pickers pin the scope to the current space - never offer another one
+		if (onObjectSelect) {
+			return [];
+		};
+
+		const t = text.toLowerCase();
+
+		let list: any[] = U.Menu.getVaultItems().filter(it => it.targetSpaceId);
+
+		if (t) {
+			list = list.filter(it => String(it.name || '').toLowerCase().includes(t));
+		};
+
+		// creator/links stripped: a spaceview row must not render an attribution
+		// caption or a drill arrow
+		return list.map(it => ({ ...it, id: it.targetSpaceId, isObject: true, isCommandSuggest: true, tokenKind: 'space', metaList: [], links: [], backlinks: [], creator: '', shortcut: [] }));
+	};
+
 	// "/" command mode: search the chips and actions themselves, plus typed completions
 	// that resolve to tokens (/by <person>, /type <type>). Selecting a chip applies it as
 	// a chip click (single match + Enter selects it via the auto-active first row)
 	const getCommandItems = (query: string) => {
-		const match = query.match(/^(by|type)(\s+(.*))?$/i);
+		const match = query.match(/^(by|type|in)(\s+(.*))?$/i);
 
 		if (match) {
+			const command = match[1].toLowerCase();
 			const text = String(match[3] || '').trim();
-			return (match[1].toLowerCase() == 'by') ? getPeopleSuggestions(text) : getTypeSuggestions(text);
+
+			if (command == 'by') {
+				return getPeopleSuggestions(text);
+			};
+
+			if (command == 'in') {
+				return getSpaceSuggestions(text);
+			};
+
+			return getTypeSuggestions(text);
 		};
 
 		const reg = query ? new RegExp(U.String.regexEscape(query), 'gi') : null;
@@ -2267,6 +2299,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// syntax); filled groups hide their entries like everywhere else
 		if (!getCreatorToken() && hasMembers()) {
 			items.push({ id: 'cmdBy', name: translate('popupSearchCommandBy'), iconParam: { name: 'common/search' }, isCommand: true, command: 'by' });
+		};
+
+		// The Channel entry follows the adaptive rule like every group: only while the
+		// scope group is empty (global mode); pickers pin the scope and never offer it
+		if (!getTokenByGroup('scope') && !onObjectSelect) {
+			items.push({ id: 'cmdIn', name: translate('popupSearchCommandIn'), iconParam: { name: 'common/search' }, isCommand: true, command: 'in' });
 		};
 
 		items = items.concat(getSuggestionItems().map(it => ({
