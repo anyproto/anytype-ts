@@ -375,8 +375,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// token (the GitHub in-input scope pattern). The live DOM selection, not the
 		// Input's cached range - the cache goes stale after programmatic setValue
 		keyboard.shortcut('backspace', e, () => {
-			// Pickers stay pinned to the current space - their scope is not removable
-			const tokens = onObjectSelect ? getTokens().filter(it => it.kind != 'space') : getTokens();
+			const tokens = getTokens();
 
 			if (!tokens.length) {
 				return;
@@ -700,10 +699,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	// Insertion order with the scope first: the space token renders leftmost, and
-	// Backspace-at-0 pops from the right of the rendered order (the scope falls last)
+	// Backspace-at-0 pops from the right of the rendered order (the scope falls last).
+	// Pickers pin the scope to the current space - not rendered, not removable
 	const getTokens = (): SearchToken[] => {
 		const tokens = tokensRef.current;
-		return [ ...tokens.filter(it => it.kind == 'space'), ...tokens.filter(it => it.kind != 'space') ];
+		const scope = onObjectSelect ? [] : tokens.filter(it => it.kind == 'space');
+
+		return [ ...scope, ...tokens.filter(it => it.kind != 'space') ];
 	};
 
 	const getTokenByGroup = (group: string): SearchToken | null => {
@@ -3047,11 +3049,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		);
 	};
 
-	// Token pill in the head: the same pill family as the chips - 16px icon, name, x.
-	// Pickers pin the scope token (no x) - they must never flip to cross-space results
+	// Token pill in the head: the same pill family as the chips - 16px icon, name, x
 	const TokenItem = (token: SearchToken) => {
 		const cn = [ 'token', `token-${token.kind}` ];
-		const canRemove = !onObjectSelect || (token.kind != 'space');
 
 		let icon = null;
 		let name = '';
@@ -3092,7 +3092,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			<div key={`token-${token.kind}-${token.id}`} className={cn.join(' ')}>
 				{icon}
 				<div className="name">{name}</div>
-				{canRemove ? <Icon className="clear" name="common/clear" onClick={() => removeToken(token, 'Token')} /> : ''}
+				<Icon className="clear" name="common/clear" onClick={() => removeToken(token, 'Token')} />
 			</div>
 		);
 	};
