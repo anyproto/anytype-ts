@@ -1161,6 +1161,31 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return !getCreatorToken() && hasMembers() && isAuthoredKind(getWhatToken());
 	};
 
+	// A Channel is not inside a Channel, and people belong to the vault rather than to any
+	// one of them - "in <Channel>" has no answer for either. Everything else does live in a
+	// Channel and can be narrowed to one
+	const isScopableKind = (what: any): boolean => {
+		if (!what) {
+			return true;
+		};
+
+		if (what.kind == 'kind') {
+			return what.id != SEARCH_TYPE_CHANNEL;
+		};
+
+		// The member type reaches the what group as a type token ("/is Space member") -
+		// the kind bucket for it is legacy storage only
+		const type = S.Record.getTypeById(what.id) || GLOBAL_DEPS.types.get(what.id) || what.object;
+
+		return !U.Object.isParticipantLayout(type?.recommendedLayout);
+	};
+
+	// The scope chip and "/in": offerable while no scope is set (pickers pin it to the
+	// current space) and the search is about something that lives in a Channel
+	const canAddSpaceScope = (): boolean => {
+		return !getTokenByGroup('scope') && !onObjectSelect && isScopableKind(getWhatToken());
+	};
+
 	const getKindName = (id: string): string => {
 		return KIND_NAME_KEYS[id] ? translate(KIND_NAME_KEYS[id]) : '';
 	};
@@ -1305,7 +1330,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		// The way back after removing the Channel token: the scope group's own addable
 		// value, first in the row - "In <current Channel>" (the By-grammar for places)
-		if (!getTokenByGroup('scope') && !onObjectSelect) {
+		if (canAddSpaceScope()) {
 			const spaceview = U.Space.getSpaceview();
 
 			if (spaceview && !spaceview._empty_) {
@@ -2600,7 +2625,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			if (command == 'in') {
-				return getSpaceSuggestions(text);
+				// Typed past the hidden entry - same answer. A scope already set still
+				// lists Channels; picking one re-points it
+				return isScopableKind(getWhatToken()) ? getSpaceSuggestions(text) : [];
 			};
 
 			return getTypeSuggestions(text);
@@ -2622,7 +2649,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), arg: translate('popupSearchCmdArgType'), description: translate('popupSearchCommandType'), prefix: '/is', iconParam: { name: 'common/search' }, isCommand: true, command: 'is' });
 		};
 
-		if (!getTokenByGroup('scope') && !onObjectSelect) {
+		if (canAddSpaceScope()) {
 			items.push({ id: 'cmdIn', name: translate('popupSearchCommandIn'), arg: translate('popupSearchCmdArgChannel'), description: translate('popupSearchCommandIn'), prefix: '/in', iconParam: { name: 'common/search' }, isCommand: true, command: 'in' });
 		};
 
