@@ -3,6 +3,7 @@ import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from
 import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType, ObjectName } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
+import { matchSpaces, matchPeople } from 'Lib/searchMatch';
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_SMALL = 38;
@@ -22,6 +23,10 @@ const PERSON_CHIP_LIMIT = 3;
 // More members fit in the row while the what group is filled and its chips are hidden
 // (the row scrolls with the edge fade on overflow)
 const PERSON_CHIP_LIMIT_FILLED = 10;
+// Channel rows mixed into the global result list: enough to surface the Channel you
+// meant without pushing the objects you were actually searching for off the screen.
+// The full list stays one click away behind the Channels chip
+const SPACE_MATCH_LIMIT = 3;
 // Restore chip/query on quick reopen; treat the popup as a fresh task after this long
 // (the Raycast pop-to-root / Alfred latest-query-window pattern)
 const STATE_RESET_TIMEOUT = 5 * 60 * 1000;
@@ -37,6 +42,10 @@ const SEARCH_TYPE_QUERY = 'query';
 const SEARCH_TYPE_CHAT = 'chat';
 const SEARCH_TYPE_TYPE = 'type';
 const SEARCH_TYPE_MEMBER = 'member';
+// The Channels bucket: a what-kind whose rows are Channels rather than objects, served
+// entirely from the in-memory vault list. Offered globally only - inside a Channel the
+// scope token already answers "which Channel"
+const SEARCH_TYPE_CHANNEL = 'channel';
 
 // Global (cross-space) mode filters by resolvedLayout - types can't be merged across spaces
 const GLOBAL_LAYOUTS: { [key: string]: I.ObjectLayout[] } = {
@@ -84,6 +93,7 @@ const KIND_NAME_KEYS: { [key: string]: string } = {
 	[SEARCH_TYPE_QUERY]: 'popupSearchTypeQueries',
 	[SEARCH_TYPE_CHAT]: 'popupSearchTypeChats',
 	[SEARCH_TYPE_TYPE]: 'popupSearchTypeTypes',
+	[SEARCH_TYPE_CHANNEL]: 'popupSearchTypeChannels',
 };
 
 // Singular forms for the "/" list's command-argument grammar ("/is Page", not "/is Pages")
@@ -96,6 +106,7 @@ const KIND_NAME_KEYS_SINGULAR: { [key: string]: string } = {
 	[SEARCH_TYPE_QUERY]: 'popupSearchKindQuery',
 	[SEARCH_TYPE_CHAT]: 'popupSearchKindChat',
 	[SEARCH_TYPE_TYPE]: 'popupSearchKindType',
+	[SEARCH_TYPE_CHANNEL]: 'popupSearchKindChannel',
 };
 
 const isMac = U.Common.isPlatformMac();
@@ -536,7 +547,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			e.preventDefault();
 
 			const item = items[nRef.current];
-			if (item && item.isObject && !item.isCommandSuggest) {
+			if (item && item.isObject && !item.isCommandSuggest && !item.isSpaceRow) {
 				const spaceview = U.Space.getSpaceviewBySpaceId(item.spaceId || S.Common.space);
 
 				if (spaceview) {
@@ -718,12 +729,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		analytics.event('SearchInput', { route });
 	};
 
-	// Drill kind of a row: type rows search the type's instances, participant rows search
-	// objects created by the person, rows with links search related objects (in-space only -
-	// the object graph is per-space)
+	// Drill kind of a row: Channel rows scope the search to the Channel, type rows search
+	// the type's instances, participant rows search objects created by the person, rows
+	// with links search related objects (in-space only - the object graph is per-space)
 	const getDrillKind = (item: any): string => {
 		if (!item || !item.isObject || item.isCommandSuggest) {
 			return '';
+		};
+
+		// Enter opens the Channel, so the arrow carries the other verb: search inside it.
+		// The same token the "in <Channel>" caption adds
+		if (item.isSpaceRow) {
+			return 'space';
 		};
 
 		if (U.Object.isTypeLayout(item.layout)) {
@@ -807,6 +824,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const getWhatToken = () => getTokenByGroup('what');
 	const getCreatorToken = () => getTokenByGroup('who');
 	const getBacklinkToken = () => getTokenByGroup('relation');
+
+	// The Channels bucket: rows are Channels, served from the vault list rather than any
+	// backend query - a distinct enough path that several gates ask for it by name
+	const isChannelKind = (what: any): boolean => Boolean(what) && (what.kind == 'kind') && (what.id == SEARCH_TYPE_CHANNEL);
 
 	// creator tokens hold a participant id; the identity is encoded in it (or carried on
 	// the resolved object)
@@ -1247,8 +1268,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	// The suggestion row (the Gmail model): only tokens you could still add - a filled
 	// group's chips are hidden until its token is removed. No selected state, no All chip.
-	// Order: Messages, By me, the remaining what-group chips (Media, types / global
-	// buckets), then the member person chips
+	// Order: Channels (vault-wide only), Messages, By me, the remaining what-group chips
+	// (Media, types / global buckets), then the member person chips
 	const getSuggestionItems = () => {
 		const ret: any[] = [];
 		const what = getWhatToken();
@@ -1268,6 +1289,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					object: spaceview,
 				});
 			};
+		};
+
+		// Channels are the one bucket that only exists vault-wide: inside a Channel the
+		// scope token already answers "which Channel". Leads the what group, right behind
+		// the scope chip - the two are the same question at different altitudes
+		if (!what && !onObjectSelect && isGlobal()) {
+			ret.push(kindChip(SEARCH_TYPE_CHANNEL));
 		};
 
 		if (!what && hasMessageContainers()) {
@@ -1353,6 +1381,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const known = [
 			SEARCH_TYPE_MESSAGE, SEARCH_TYPE_PAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_BOOKMARK,
 			SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT, SEARCH_TYPE_TYPE,
+			SEARCH_TYPE_CHANNEL,
 		];
 		const type = known.includes(item.id) ? U.String.ucFirst(item.id) : 'Type';
 
@@ -2223,6 +2252,24 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
+		// The Channels bucket IS the vault list - no round trip, no pagination. Same
+		// synchronous swap as the Types aggregate below
+		if (isChannelKind(mode.what)) {
+			itemsRef.current = getSpaceBrowse(filterValueRef.current);
+			itemsModeRef.current = { ...mode, isSpaceList: true };
+			hasMoreRef.current = false;
+			clearLoadPendingRef.current = false;
+
+			if (clear) {
+				setIsLoading(false);
+			};
+
+			listEpochRef.current++;
+			setDummy(prev => prev + 1);
+			callBack?.();
+			return;
+		};
+
 		// The cross-space Types bucket is served from the in-memory types map - no
 		// round trip. Synchronous swap: lift the append freeze and bump the list epoch
 		// exactly like the "/" branch; the mode stamp carries the aggregate flag so
@@ -2381,8 +2428,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// query is the person-browse list: 1:1-first order, the global rows with their
 	// space-count captions
 	const getPeopleSuggestions = (text: string) => {
-		const t = text.toLowerCase();
-
 		const scopeId = getScopeId();
 
 		let list: any[] = [];
@@ -2396,9 +2441,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			list = getForeignSpacePeople(scopeId);
 		};
 
-		if (t) {
-			list = list.filter(it => [ it.name, it.globalName ].some(n => String(n || '').toLowerCase().includes(t)));
-		};
+		// "me" is the word the "/" list advertises for yourself - without the alias arm
+		// it only matched people whose name happens to contain those letters
+		list = matchPeople(list, text, {
+			selfIdentity: S.Auth.account?.id || '',
+			meAlias: translate('popupSearchCmdMe'),
+			getIdentity: it => it.identity || U.Space.getAccountFromParticipantId(it.id),
+		});
 
 		return list.map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'creator', shortcut: [] }));
 	};
@@ -2436,26 +2485,49 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return [ ...list ].sort(sortTypesByUsage).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
 	};
 
-	// "/in" completions: every Channel in the vault sidebar's own order, 1:1 Channels
-	// included; picking one scopes the search to it. The token id is the spaceId with
-	// the spaceview as the render object - the same construction as the seeded scope
-	const getSpaceSuggestions = (text: string) => {
-		// Pickers pin the scope to the current space - never offer another one
+	// A Channel as a result row: the spaceview is the render object, addressed by the
+	// space it points at (spaceview ids are not space ids). type/creator/links stripped -
+	// a Channel has no attribution caption and no object-graph drill
+	const spaceRow = (it: any) => ({
+		...it,
+		id: it.targetSpaceId,
+		isObject: true,
+		isSpaceRow: true,
+		type: '',
+		metaList: [],
+		links: [],
+		backlinks: [],
+		creator: '',
+		shortcut: [],
+	});
+
+	// Every Channel in the vault sidebar's own order, 1:1 Channels included, name-filtered.
+	// Backs the Channels bucket and the "/in" completions. Pickers pin the scope to the
+	// current space, so a Channel row would be a dead end there
+	const getSpaceBrowse = (text: string): any[] => {
 		if (onObjectSelect) {
 			return [];
 		};
 
-		const t = text.toLowerCase();
+		const items = U.Menu.getVaultItems().filter(it => it.targetSpaceId);
 
-		let list: any[] = U.Menu.getVaultItems().filter(it => it.targetSpaceId);
+		return (text ? matchSpaces(items, text, 0) : items).map(spaceRow);
+	};
 
-		if (t) {
-			list = list.filter(it => String(it.name || '').toLowerCase().includes(t));
+	// The Channel rows that lead the global result list: a few name matches, so typing a
+	// Channel's name reaches the Channel and not only the objects inside it
+	const getSpaceMatches = (text: string): any[] => {
+		if (onObjectSelect) {
+			return [];
 		};
 
-		// creator/links stripped: a spaceview row must not render an attribution
-		// caption or a drill arrow
-		return list.map(it => ({ ...it, id: it.targetSpaceId, isObject: true, isCommandSuggest: true, tokenKind: 'space', type: '', metaList: [], links: [], backlinks: [], creator: '', shortcut: [] }));
+		return matchSpaces(U.Menu.getVaultItems(), text, SPACE_MATCH_LIMIT).map(spaceRow);
+	};
+
+	// "/in" completions: picking one scopes the search to it. Command rows, so they carry
+	// no drill arrow of their own - the pick itself is the scope gesture
+	const getSpaceSuggestions = (text: string) => {
+		return getSpaceBrowse(text).map(it => ({ ...it, isCommandSuggest: true, tokenKind: 'space' }));
 	};
 
 	// "/" command mode: search the chips and actions themselves, plus typed completions
@@ -2583,6 +2655,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let items = S.Record.checkHiddenObjects(itemsRef.current);
 
+		if (!filter && items.length && mode.isSpaceList) {
+			// The vault's own order - no recency toggle to offer
+			items.unshift({ name: translate('popupSearchTypeChannels'), isSection: true });
+		} else
 		if (!filter && items.length && mode.isTypeAgg) {
 			// The cross-space Types aggregate lists by name - no recency toggle
 			items.unshift({ name: translate('popupSearchTypeTypes'), isSection: true });
@@ -2620,6 +2696,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (onObjectSelect) {
 			return items;
+		};
+
+		/* Channels */
+
+		// Typing a Channel's name should reach the Channel itself, not only the objects
+		// inside it - a few name matches lead the vault-wide list. Only for a plain text
+		// search: any filter token means the query is already about something narrower,
+		// and the Channels bucket lists them all anyway
+		if (filter && modeGlobal && !mode.tokens) {
+			items = getSpaceMatches(filter).concat(items);
 		};
 
 		/* Settings and pages */
@@ -2706,6 +2792,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
+		// The Channels bucket keeps exactly one action - creating the thing it lists. The
+		// only action that survives global mode, where object creation has no target space
+		if (isChannelKind(what)) {
+			items.push({ name: translate('commonActions'), isSection: true });
+			items.push({ id: 'createSpace', name: translate('commonCreateSpace'), iconParam: { name: 'plus/menu' }, isSmall: true });
+		} else
 		// Global mode has no actions in v1 (creation targets a specific space); a
 		// foreign scope keeps only the widen action
 		if (!modeGlobal) {
@@ -2877,6 +2969,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		close(() => {
+			// Channel row: Enter goes to the Channel. The arrow carries the other verb
+			// (search inside it) - see getDrillKind
+			if (item.isSpaceRow) {
+				if (item.targetSpaceId != S.Common.space) {
+					U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
+				} else {
+					U.Space.openDashboard();
+				};
+				return;
+			};
+
 			// Object
 			if (item.isObject) {
 				if (onObjectSelect) {
@@ -2923,6 +3026,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 					case 'addType': {
 						createTypedObject(item.typeId, filter);
+						break;
+					};
+
+					// The search popup is already closing, so the create menu has no row
+					// to hang off - centre it, the same anchor createTypedObject's
+					// bookmark menu uses
+					case 'createSpace': {
+						window.setTimeout(() => {
+							U.Menu.spaceCreate({
+								recalcRect: () => {
+									const { ww, wh } = U.Dom.getWindowDimensions();
+									return { width: 0, height: 0, x: ww / 2, y: wh / 2 };
+								},
+								className: 'spaceCreate fixed',
+								classNameWrap: 'fromPopup',
+								vertical: I.MenuDirection.Center,
+								horizontal: I.MenuDirection.Center,
+							}, route);
+						}, S.Popup.getTimeout());
 						break;
 					};
 
@@ -3406,6 +3528,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					backlink: 'popupSearchTooltipSearchByBacklinks',
 					type: 'popupSearchTooltipSearchByType',
 					creator: 'popupSearchTooltipSearchByCreator',
+					space: 'popupSearchTooltipSearchInChannel',
 				};
 
 				advanced = (
