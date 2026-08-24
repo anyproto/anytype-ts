@@ -1679,6 +1679,8 @@
 	"popupSearchTooltipSearchByType": "Search objects of this type",
 	"popupSearchTooltipSearchByCreator": "Search objects created by them",
 	"popupSearchTooltipSearchInChannel": "Search in this Channel",
+	"popupSearchChannelOnlyYou": "Only you",
+	"popupSearchChannelOneToOne": "1-1 Channel",
 	"popupSearchDrillType": "Type: %s",
 	"popupSearchDrillCreator": "Created by: %s",
 	"popupSearchBacklinksFrom": "Related to: %s",

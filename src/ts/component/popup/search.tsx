@@ -1644,20 +1644,45 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// (a non-shared space cannot have a second member)
 	// Computed once per popup open: getParticipantsList maps every participant record
 	// through the detail store - calling it per row was 87% of scroll CPU (perf trace)
-	const currentSpaceMembersRef = useRef<boolean | null>(null);
+	const currentSpaceCountRef = useRef<number | null>(null);
 
-	const spaceHasMembers = (spaceId: string): boolean => {
+	// Active members of a space. Other spaces come from the participants snapshot -
+	// spaceview heuristics (isShared etc.) are unreliable for joined spaces. 0 means
+	// "not known yet" for them: the cross-space map is cold until its subscription lands
+	const getSpaceMemberCount = (spaceId: string): number => {
 		if (spaceId == S.Common.space) {
-			if (currentSpaceMembersRef.current === null) {
-				currentSpaceMembersRef.current = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).length > 1;
+			if (currentSpaceCountRef.current === null) {
+				currentSpaceCountRef.current = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).length;
 			};
 
-			return currentSpaceMembersRef.current;
+			return currentSpaceCountRef.current;
 		};
 
-		// Other spaces: count actual active members from the participants snapshot -
-		// spaceview heuristics (isShared etc.) are unreliable for joined spaces
-		return (GLOBAL_DEPS.participantCounts.get(spaceId) || 0) > 1;
+		return GLOBAL_DEPS.participantCounts.get(spaceId) || 0;
+	};
+
+	const spaceHasMembers = (spaceId: string): boolean => getSpaceMemberCount(spaceId) > 1;
+
+	// A Channel row's caption answers "who else is in here": 1:1 Channels say what they
+	// are, a Channel with nobody else says so, the rest count their members. Empty while
+	// the cross-space count is still cold - no caption beats a wrong one ("Only you" on a
+	// Channel full of people)
+	const getSpaceRowInfo = (item: any): string => {
+		if (item.isOneToOne) {
+			return translate('popupSearchChannelOneToOne');
+		};
+
+		const count = getSpaceMemberCount(item.targetSpaceId);
+
+		if (!count) {
+			return '';
+		};
+
+		if (count == 1) {
+			return translate('popupSearchChannelOnlyYou');
+		};
+
+		return `${count} ${U.Common.plural(count, translate('pluralMember'))}`;
 	};
 
 	// creator may hold a participant id or (on older objects) the bare identity -
@@ -3564,6 +3589,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				};
 			};
 
+			// The caption's leading element. A Channel row states who is in it and never
+			// carries the type drill-link - a Channel has no type
+			let captionLead = null;
+
+			if (item.isSpaceRow) {
+				const info = getSpaceRowInfo(item);
+
+				captionLead = info ? <div className="prep">{info}</div> : null;
+			} else
+			if (aggSpaces) {
+				captionLead = <div className="prep">{aggSpaces}</div>;
+			} else {
+				captionLead = (
+					<div className="drillLink" onClick={e => { e.stopPropagation(); addToken('type', type, { source: 'Caption', fromRow: true }); }}>
+						<ObjectType object={type} />
+					</div>
+				);
+			};
+
 			let name = U.Object.name(item, true);
 
 			// A 1:1 space's chat is always named "General" - show the person (the 1:1
@@ -3592,11 +3636,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
 						{Context(meta)}
 						<div className="caption">
-							{aggSpaces ? <div className="prep">{aggSpaces}</div> : (
-								<div className="drillLink" onClick={e => { e.stopPropagation(); addToken('type', type, { source: 'Caption', fromRow: true }); }}>
-									<ObjectType object={type} />
-								</div>
-							)}
+							{captionLead}
 							{creatorLabel ? (
 								<>
 									<div className="bullet" />
