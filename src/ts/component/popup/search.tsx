@@ -1135,6 +1135,32 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return globalMembersRef.current;
 	};
 
+	// Not everything is authored: a Channel, a member, a type, a chat container all take
+	// their creator implicitly from the space, so "by <person>" answers a question nobody
+	// asked. The same class wantsCreator refuses to attribute
+	const isAuthoredKind = (what: any): boolean => {
+		if (!what) {
+			return true;
+		};
+
+		if (what.kind == 'kind') {
+			return ![ SEARCH_TYPE_CHANNEL, SEARCH_TYPE_TYPE, SEARCH_TYPE_CHAT ].includes(what.id);
+		};
+
+		// A type token answers by its own layout - a row-drilled token can lack
+		// recommendedLayout, so fall back to the type stores like the boundary mapper
+		const type = S.Record.getTypeById(what.id) || GLOBAL_DEPS.types.get(what.id) || what.object;
+		const layout = type?.recommendedLayout;
+
+		return !(U.Object.isParticipantLayout(layout) || U.Object.isTypeLayout(layout) || U.Object.isChatLayout(layout) || (layout == I.ObjectLayout.ChatOld));
+	};
+
+	// The person chips and "/by" are offerable while no creator token is set, the Channel
+	// holds someone besides you, and the thing being searched is authored at all
+	const canAddCreatorToken = (): boolean => {
+		return !getCreatorToken() && hasMembers() && isAuthoredKind(getWhatToken());
+	};
+
 	const getKindName = (id: string): string => {
 		return KIND_NAME_KEYS[id] ? translate(KIND_NAME_KEYS[id]) : '';
 	};
@@ -1230,9 +1256,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Member person chips ("By <name>", Gmail-style operator wording): a few members in
 	// the vault 1:1-first ordering (in-space) / the People aggregate's ordering (global),
 	// capped to keep one row together with the kind chips; the full list stays reachable
-	// via /by. Hidden while a creator token is set, gated on >1 member
+	// via /by. Hidden while a creator token is set, gated on >1 member and on the search
+	// being about something authored at all
 	const getMemberChips = (): any[] => {
-		if (getCreatorToken() || !hasMembers()) {
+		if (!canAddCreatorToken()) {
 			return [];
 		};
 
@@ -1273,7 +1300,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const getSuggestionItems = () => {
 		const ret: any[] = [];
 		const what = getWhatToken();
-		const withPeople = !getCreatorToken() && hasMembers();
+		const withPeople = canAddCreatorToken();
 		const kindChip = (id: string) => ({ id, name: getKindName(id), isKind: true });
 
 		// The way back after removing the Channel token: the scope group's own addable
@@ -2566,7 +2593,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const text = String(match[3] || '').trim();
 
 			if (command == 'by') {
-				return getPeopleSuggestions(text);
+				// Typed by hand, past the hidden entry - the same answer: nothing here is
+				// authored, so there is no person to filter by. A creator token already
+				// set still lists people; picking one replaces it
+				return isAuthoredKind(getWhatToken()) ? getPeopleSuggestions(text) : [];
 			};
 
 			if (command == 'in') {
@@ -2584,7 +2614,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// The Filter entries lead the list as one group, prefilling "/by " etc. - the
 		// mechanic teaches its own syntax. Filled groups hide their entries like
 		// everywhere else; pickers pin the scope, so the Channel entry never shows there
-		if (!getCreatorToken() && hasMembers()) {
+		if (canAddCreatorToken()) {
 			items.push({ id: 'cmdBy', name: translate('popupSearchCommandBy'), arg: translate('popupSearchCmdArgPerson'), description: translate('popupSearchCommandBy'), prefix: '/by', iconParam: { name: 'common/search' }, isCommand: true, command: 'by' });
 		};
 
