@@ -107,7 +107,11 @@
 					}
 				}
 				.name { @include text-overflow-nw; font-weight: 500; }
-				.name .cmdPrefix { color: var(--color-text-secondary); font-weight: 400; margin-right: 8px; }
+				// Fixed column, not a flat margin: "/by" renders 21.1px against "/in" 16.3px and
+				// "/is" 15.5px in Inter 14px, so a shared margin left every argument starting at
+				// a different x - "/by" pushed 5px past the rest. The column is the widest prefix
+				// plus a gutter; arguments all start at 24px
+				.name .cmdPrefix { color: var(--color-text-secondary); font-weight: 400; display: inline-block; min-width: 22px; margin-right: 2px; }
 				.name .cmdArg { color: var(--color-text-tertiary); font-weight: 400; }
 				.caption .cmdDesc { color: var(--color-text-secondary); }
 				.caption .bullet { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); flex-shrink: 0; }
