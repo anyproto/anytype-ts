@@ -22,10 +22,9 @@ const ObjectCreatedIn: FC<Props> = ({
 
 	const nodeRef = useRef(null);
 	const object = S.Detail.get(rootId, rootId, [ 'createdInContext', 'createdInContextRef' ]);
-	const contextId = Relation.getStringValue(object.createdInContext);
-	const context = contextId ? S.Detail.get(rootId, contextId, []) : null;
+	const context = U.Object.getCreatedInContext(object, rootId);
 
-	if (!context || context._empty_ || context.isDeleted) {
+	if (!context) {
 		return null;
 	};
 

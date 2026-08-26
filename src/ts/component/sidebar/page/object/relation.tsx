@@ -19,9 +19,18 @@ const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props,
 	const getSections = (): any[] => {
 		const isTemplate = U.Object.isTemplateType(object.type);
 		const type = S.Record.getTypeById(isTemplate ? object.targetObjectType : object.type) || {};
+		// "Created in" is pinned to the top of the properties list on every layout, whenever it
+		// resolves to a real object. It is the only pointer back to where the object came from and
+		// it produces no backlink, so leaving it in Local would bury the one place it is visible.
+		// A dangling id (details never resolved) or a deleted/archived target renders nothing.
+		const createdIn = U.Object.getCreatedInContext(object, rootId)
+			? S.Record.getRelationByKey('createdInContext')
+			: null;
+		const isCreatedIn = it => it && (it.relationKey == 'createdInContext');
 		const local = S.Record
 			.getConflictRelations(rootId, rootId, type.id)
 			.sort(U.Data.sortByName)
+			.filter(it => !(createdIn && isCreatedIn(it)))
 			.map(it => ({ ...it, onMore: onLocal }));
 		const featuredIds = Relation.getArrayValue(type.recommendedFeaturedRelations);
 		const recommendedIds = Relation.getArrayValue(type.recommendedRelations);
@@ -30,19 +39,19 @@ const SidebarPageObjectRelation = forwardRef<{}, I.SidebarPageComponent>((props,
 		const filterMapper = it => it && it.relationKey && !it.isArchived && !skipKeys.includes(it.relationKey);
 
 		let items = recommendedIds.map(it => S.Record.getRelationById(it));
-		items = items.filter(filterMapper);
+		items = items.filter(it => filterMapper(it) && !(createdIn && isCreatedIn(it)));
 		items = S.Record.checkHiddenObjects(items);
 
 		let featured = featuredIds.map(it => S.Record.getRelationById(it));
-		featured = featured.filter(filterMapper);
+		featured = featured.filter(it => filterMapper(it) && !(createdIn && isCreatedIn(it)));
 		featured = S.Record.checkHiddenObjects(featured);
 
 		let hidden = hiddenIds.map(it => S.Record.getRelationById(it));
 		hidden = S.Record.checkHiddenObjects(hidden);
-		hidden = hidden.filter(it => filterMapper(it) && !(it.isReadonlyValue && Relation.isEmpty(object[it.relationKey])));
+		hidden = hidden.filter(it => filterMapper(it) && !(createdIn && isCreatedIn(it)) && !(it.isReadonlyValue && Relation.isEmpty(object[it.relationKey])));
 
 		return [
-			{ id: 'object', children: featured.concat(items), withEmpty: true },
+			{ id: 'object', children: (createdIn ? [ createdIn ] : []).concat(featured, items), withEmpty: true },
 			{ id: 'hidden', name: translate('sidebarTypeRelationHidden'), children: hidden, withToggle: true },
 			{ id: 'local', name: translate('sidebarRelationLocal'), children: local, description: translate('sidebarObjectRelationLocalDescription'), withToggle: true }
 		].filter(it => it.children.length || it.withEmpty);

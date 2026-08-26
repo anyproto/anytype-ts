@@ -67,7 +67,7 @@ Adds an origin affordance to media and bookmark object pages, plus a shared navi
 **Out of scope**
 
 - **Chat message refs.** Chat attachments pass `''` (`block/chat/form.tsx:1110`) because the messageId does not exist at upload time, and nothing stamps it when the message is sent. A file from a chat therefore resolves to the chat object but not to the message. This degrades gracefully — you land in the right chat — so it is deferred. §3 still specifies the message branch so that stamping the ref later is the only work needed.
-- **Always-on display for normal objects.** See §4.
+- ~~**Always-on display for normal objects.**~~ Reversed 2026-08-26 — see §4a.
 - **One-step featuring.** `addToType` writes `recommendedRelations`, not `recommendedFeaturedRelations` (`sidebar/page/object/relation.tsx:88`), so featuring the property is two user operations. Accepted as-is.
 - Adding `createdInContext` to `J.Relation.default` (`src/json/relation.ts:2-28`). A key there widens the dep set of *every* subscription in the app — each row's context object gets subscribed via `core/subscription/deps.go:53-66` — for no benefit, since nothing in those surfaces renders it. Dataview columns already request the view's own relation keys, so a user-added `createdInContext` column resolves automatically. Add the key per-surface, if and when a surface renders it.
 
@@ -142,6 +142,23 @@ Media pages qualify structurally: `media.tsx` renders its own layout (`HeadSimpl
 The bookmark eyebrow is kept anyway, as an explicit product decision rather than a derived rule: bookmarks were named in the original request alongside media. The cost is that if someone features `createdInContext` on the Bookmark type, the origin appears twice — once as the eyebrow, once as a featured chip. That requires a deliberate act by the user and both affordances deep-link identically via §5, so it is accepted.
 
 Normal objects **do** have a featured row, which is the app's designed, type-controlled answer to "which properties appear at the top of an object". Hard-coding an always-on row there would bypass both the type system and the user, and would stand up a second mechanism competing with the first. So normal objects surface it through the existing path: the **Local** group in the Properties panel (`sidebar/page/object/relation.tsx:22,47`) → *Add to type* (`:81`) → feature it on the type.
+
+### 4a. Pinned to the top of Properties, on every layout
+
+**Revised 2026-08-26.** The original design left normal objects alone: the property stayed in the Properties panel's **Local** group, promotable to the type by the user. That is reversed — on every layout, whenever `createdInContext` resolves, it renders as a normal property **pinned to the top of the Properties list**, not in Local.
+
+The reasoning that produced the original decision was that the featured-relations row is the type-controlled mechanism for "what appears at the top of an object", and a hard-coded row bypasses it. That holds in general but not for this property, because the origin link produces **no backlink in either direction** (`relationsToSkipLinksIndexing`). Every other property duplicates information reachable some other way; this one does not. Burying the only pointer behind a collapsed Local toggle — which the user must know to open, and then must promote to the type — hides it from everyone who does not already know it exists.
+
+Implementation (`sidebar/page/object/relation.tsx`):
+
+- gated on `U.Object.getCreatedInContext`, so a dangling id whose details never resolved, a deleted or archived target, or a target in another space renders nothing at all
+- prepended to the `object` section's children, ahead of featured and recommended relations
+- filtered out of the `local`, `hidden`, `featured` and `items` lists, so promoting it can never produce a duplicate row
+- no `onMore` handler: it renders as a normal readonly property, not a Local one with an Add-to-type / Remove menu
+
+Clicking it deep-links exactly as the eyebrow does, via the §5 cell intercept — readonly object-format cells fall through the `canEdit` guard to reach it, so no special casing was needed for the readonly flag.
+
+**The resolver is shared.** `U.Object.getCreatedInContext` is the single gate used by both the eyebrow and the panel, and by `openCreatedInContext` itself. A surface can therefore never render a row that only reports "unavailable" once clicked — which was a real risk while the eyebrow carried its own weaker check (it tested `_empty_` and `isDeleted` but not `isArchived` or cross-space).
 
 ### 5. Deep-linking cell
 

@@ -202,3 +202,88 @@ describe('UtilObject.openCreatedInContext', () => {
 	});
 
 });
+
+describe('UtilObject.getCreatedInContext', () => {
+
+	afterEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	// Gates whether the property renders at all, on the eyebrow and at the top of Properties.
+	// A row must never appear that only reports "unavailable" once clicked.
+	const cases: [ string, any, any, boolean ][] = [
+		[
+			'resolved context → returned',
+			{ id: 'obj1', createdInContext: 'ctx1' },
+			{ ctx1: { id: 'ctx1', name: 'Notes', spaceId: 'space1' } },
+			true,
+		],
+		[
+			'empty property → null',
+			{ id: 'obj1', createdInContext: '' },
+			{},
+			false,
+		],
+		[
+			'missing property → null',
+			{ id: 'obj1' },
+			{},
+			false,
+		],
+		[
+			'dangling id whose details never resolved → null',
+			{ id: 'obj1', createdInContext: 'ctx-gone' },
+			{},
+			false,
+		],
+		[
+			'deleted context → null',
+			{ id: 'obj1', createdInContext: 'ctx1' },
+			{ ctx1: { id: 'ctx1', spaceId: 'space1', isDeleted: true } },
+			false,
+		],
+		[
+			'archived context → null',
+			{ id: 'obj1', createdInContext: 'ctx1' },
+			{ ctx1: { id: 'ctx1', spaceId: 'space1', isArchived: true } },
+			false,
+		],
+		[
+			'context in another space → null',
+			{ id: 'obj1', createdInContext: 'ctx1' },
+			{ ctx1: { id: 'ctx1', spaceId: 'space2' } },
+			false,
+		],
+	];
+
+	for (const [ name, object, details, resolves ] of cases) {
+		it(name, () => {
+			setGlobals(details, 'root1');
+
+			const result = UtilObject.getCreatedInContext(object, object.id);
+
+			if (resolves) {
+				expect(result).not.toBeNull();
+				expect(result.id).toBe('ctx1');
+			} else {
+				expect(result).toBeNull();
+			};
+		});
+	};
+
+	it('a null object resolves to null rather than throwing', () => {
+		setGlobals({}, 'root1');
+		expect(UtilObject.getCreatedInContext(null)).toBeNull();
+	});
+
+	it('an empty property stays silent, an unresolvable one warns', () => {
+		setGlobals({}, 'root1');
+
+		UtilObject.openCreatedInContext({ id: 'obj1', createdInContext: '' });
+		expect((globalThis as any).Preview.toastShow).not.toHaveBeenCalled();
+
+		UtilObject.openCreatedInContext({ id: 'obj1', createdInContext: 'ctx-gone' });
+		expect((globalThis as any).Preview.toastShow).toHaveBeenCalled();
+	});
+
+});

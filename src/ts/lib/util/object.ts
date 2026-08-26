@@ -889,6 +889,33 @@ class UtilObject {
 	};
 
 	/**
+	 * Resolves the object's origin context to a usable object, or null when there is nothing to
+	 * navigate to — the property is empty, or it holds an id whose details never resolved (a
+	 * dangling reference), or the target is deleted, archived or in another space.
+	 *
+	 * Every surface that renders the property must gate on this, so a row can never be shown that
+	 * only reports "unavailable" once clicked.
+	 * @param object - The object carrying createdInContext
+	 * @param subId - Subscription id the context object's details were delivered under (defaults to object.id)
+	 */
+	getCreatedInContext (object: any, subId?: string): any {
+		if (!object) {
+			return null;
+		};
+
+		const contextId = Relation.getStringValue(object.createdInContext);
+		if (!contextId) {
+			return null;
+		};
+
+		const context = S.Detail.get(subId || object.id, contextId, []);
+		const isMissing = context._empty_ || context.isDeleted || context.isArchived;
+		const isOtherSpace = context.spaceId && (context.spaceId != S.Common.space);
+
+		return (isMissing || isOtherSpace) ? null : context;
+	};
+
+	/**
 	 * Navigates back to the object's origin context (createdInContext), deep-linking into the
 	 * exact place it was created in via createdInContextRef (a block, a relation or a message).
 	 * Single entry point for every surface that renders the property.
@@ -897,24 +924,19 @@ class UtilObject {
 	 * @param subId - Subscription id the context object's details were delivered under (defaults to object.id)
 	 */
 	openCreatedInContext (object: any, route?: string, subId?: string) {
-		if (!object) {
+		const context = this.getCreatedInContext(object, subId);
+
+		if (!context) {
+			// Nothing to open: either the property is empty, or the object it points at is gone.
+			// Only warn in the latter case, so an empty property stays silent.
+			if (object && Relation.getStringValue(object.createdInContext)) {
+				Preview.toastShow({ text: translate('toastCreatedInContextUnavailable') });
+			};
 			return;
 		};
 
-		const contextId = Relation.getStringValue(object.createdInContext);
-		if (!contextId) {
-			return;
-		};
-
+		const contextId = context.id;
 		const ref = Relation.getStringValue(object.createdInContextRef);
-		const context = S.Detail.get(subId || object.id, contextId, []);
-		const isMissing = context._empty_ || context.isDeleted || context.isArchived;
-		const isOtherSpace = context.spaceId && (context.spaceId != S.Common.space);
-
-		if (isMissing || isOtherSpace) {
-			Preview.toastShow({ text: translate('toastCreatedInContextUnavailable') });
-			return;
-		};
 
 		analytics.event('ClickCreatedInContext', { route });
 
