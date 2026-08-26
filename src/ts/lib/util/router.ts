@@ -31,10 +31,6 @@ class UtilRouter {
 
 	history: any = null;
 
-	// True while the current history entry is a placeholder (see isPlaceholderRoute), so the next
-	// real navigation replaces it instead of stacking on top of it.
-	placeholderEntry = false;
-
 	/**
 	 * Initializes the router with a history object.
 	 * @param {any} history - The history object to use for navigation.
@@ -185,18 +181,7 @@ class UtilRouter {
 				this.history.index = -1;
 			};
 
-			// Keep placeholders out of history: replace the current entry for the placeholder itself,
-			// and again for the first real navigation after it, so it leaves no trace. After a reset
-			// above there is nothing to replace, so push.
-			const isPlaceholder = this.isPlaceholderRoute(routeParam.page, routeParam.action);
-
-			if (!replace && (isPlaceholder || this.placeholderEntry)) {
-				this.history.replace(newRoute);
-			} else {
-				this.history.push(newRoute);
-			};
-
-			this.placeholderEntry = isPlaceholder;
+			this.history.push(newRoute);
 
 			const isTransientMain = (routeParam.page == 'main') && [ 'blank', 'void' ].includes(routeParam.action);
 
@@ -330,19 +315,6 @@ class UtilRouter {
 	 */
 	getSearch (): string {
 		return String(this.history?.location?.search || '');
-	};
-
-	/**
-	 * Whether the route is a transient placeholder rather than a destination. /main/blank is shown
-	 * while a space loads and is immediately navigated away from.
-	 *
-	 * It must never become a walkable history entry: isDoubleRedirect classifies it as a redirect,
-	 * and keyboard.onBack reacts to a redirect predecessor by slicing history down to the entry
-	 * before it — so walking back into a blank left over from a space switch wipes everything the
-	 * user could return to.
-	 */
-	isPlaceholderRoute (page: string, action: string): boolean {
-		return (page == 'main') && (action == 'blank');
 	};
 
 	isDoubleRedirect (page: string, action: string): boolean {
