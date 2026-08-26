@@ -146,12 +146,34 @@ class UtilObject {
 	 * @param object - The object to open
 	 * @param param - Optional parameters for route/menu customization
 	 */
+	/**
+	 * The quick search window never navigates itself - every open is handed to the
+	 * main window via the main process (which also hides the panel).
+	 * @returns {boolean} true when the open was redirected.
+	 */
+	quickSearchRedirect (object: any): boolean {
+		if (!S.Common.isQuickSearchWindow) {
+			return false;
+		};
+
+		Renderer.send('quickSearchOpen', this.route(object));
+
+		// Close the popup so the next panel invocation starts fresh; its onClose
+		// hides the (already hidden) window - harmless
+		S.Popup.close('search');
+		return true;
+	};
+
 	openEvent (e: any, object: any, param?: any) {
 		if (!object) {
 			return;
 		};
 
 		if (e && (e.button == 2)) {
+			return;
+		};
+
+		if (this.quickSearchRedirect(object)) {
 			return;
 		};
 
@@ -193,6 +215,10 @@ class UtilObject {
 			return;
 		};
 
+		if (this.quickSearchRedirect(object)) {
+			return;
+		};
+
 		param = this.checkParam(param);
 
 		if (this.isParticipantLayout(object.layout)) {
@@ -211,6 +237,10 @@ class UtilObject {
 	
 	async openRoute (object: any, param?: Partial<I.RouteParam>) {
 		if (!object) {
+			return;
+		};
+
+		if (this.quickSearchRedirect(object)) {
 			return;
 		};
 
@@ -330,6 +360,10 @@ class UtilObject {
 	Opens object based on user setting 'Open objects in fullscreen mode'
 	*/
 	openConfig (e: any, object: any, param?: any) {
+		if (this.quickSearchRedirect(object)) {
+			return;
+		};
+
 		if (e && e.shiftKey && (e.metaKey || e.ctrlKey)) {
 			this.openWindow(object);
 			return;

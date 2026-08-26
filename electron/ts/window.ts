@@ -29,6 +29,7 @@ const MENU_BAR_HEIGHT = 28;
 class WindowManager {
 
 	list: Set<AppWindow> = new Set();
+	quickSearchShownAt = 0;
 
 	create (options: Partial<CreateMainOptions> & Record<string, any>, param: Record<string, any>): AppWindow {
 
@@ -57,8 +58,11 @@ class WindowManager {
 		});
 
 		win.on('focus', () => {
-			UpdateManager.setWindow(win);
-			MenuManager.setWindow(win);
+			// Auxiliary windows must not become the target for menu/update actions
+			if (!win.isQuickSearch && !win.isChallenge) {
+				UpdateManager.setWindow(win);
+				MenuManager.setWindow(win);
+			};
 
 			// Restore focus to active tab's webContents when window regains focus
 			// Use setImmediate to avoid focus race conditions when multiple windows exist
@@ -228,6 +232,133 @@ class WindowManager {
 		};
 
 		return win;
+	};
+
+	/** Number of real (non-auxiliary) app windows */
+	mainWindowCount (): number {
+		return Array.from(this.list).filter(w => w && !w.isDestroyed() && !w.isQuickSearch && !w.isChallenge).length;
+	};
+
+	getQuickSearch (): AppWindow | null {
+		for (const win of this.list) {
+			if (win && win.isQuickSearch && !win.isDestroyed()) {
+				return win;
+			};
+		};
+		return null;
+	};
+
+	/**
+	 * Spotlight-style search panel: a small frameless always-on-top window hosting a
+	 * single tab routed to the quick search page - the main window stays hidden.
+	 */
+	createQuickSearch (): AppWindow {
+		const existing = this.getQuickSearch();
+		if (existing) {
+			return existing;
+		};
+
+		const { width, height } = this.getScreenSize();
+		const w = 684;
+		const h = 520;
+
+		const win = this.create({ isChild: true, isQuickSearch: true }, {
+			width: w,
+			height: h,
+			x: Math.floor(width / 2 - w / 2),
+			y: Math.floor(height * 0.18),
+			// Fully frameless: the default 'hidden-inset' would still render the macOS
+			// traffic lights on a frameless window
+			frame: false,
+			titleBarStyle: 'default',
+			alwaysOnTop: true,
+			skipTaskbar: true,
+			resizable: false,
+			minimizable: false,
+			maximizable: false,
+			fullscreenable: false,
+		});
+
+		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+		win.setMenuBarVisibility(false);
+		win.setAutoHideMenuBar(true);
+		win.loadURL(this.getUrlForNewWindow());
+
+		const view = this.createTab(win, { route: '/main/quickSearch' }, { setActive: true });
+
+		// Dev: the panel is hard to inspect any other way (frameless, auxiliary,
+		// excluded from menu targeting) - open its devtools detached right away
+		if (is.development) {
+			view.webContents.openDevTools({ mode: 'detach' });
+		};
+
+		// Spotlight behavior: clicking elsewhere dismisses the panel. Not in dev
+		// builds (blocks inspecting the panel), not during the focus churn right
+		// after showing (app activation can briefly blur the panel), and not while
+		// devtools are attached to it (their window taking focus is also a blur)
+		win.on('blur', () => {
+			if (is.development) {
+				return;
+			};
+
+			if (Date.now() - this.quickSearchShownAt < 500) {
+				return;
+			};
+
+			const views = win.views || [];
+			const hasDevTools = win.webContents.isDevToolsOpened()
+				|| views.some(it => it.webContents && !it.webContents.isDestroyed() && it.webContents.isDevToolsOpened());
+
+			if (!hasDevTools) {
+				this.hideQuickSearch();
+			};
+		});
+
+		return win;
+	};
+
+	showQuickSearch (): void {
+		const existing = this.getQuickSearch();
+
+		// Spotlight semantics: the hotkey toggles the panel
+		if (existing && existing.isVisible() && existing.isFocused()) {
+			this.hideQuickSearch();
+			return;
+		};
+
+		const win = existing || this.createQuickSearch();
+
+		const show = () => {
+			if (win.isDestroyed()) {
+				return;
+			};
+
+			// Activate the app BEFORE focusing the panel: the other order lets macOS
+			// hand focus to the main window, which blurs (and hides) the panel
+			if (is.macos) {
+				app.focus({ steal: true });
+			};
+
+			this.quickSearchShownAt = Date.now();
+
+			win.show();
+			win.focus();
+
+			Util.send(win, 'commandGlobal', 'quickSearchShow');
+		};
+
+		if (existing) {
+			show();
+		} else {
+			win.once('ready-to-show', show);
+		};
+	};
+
+	hideQuickSearch (): void {
+		const win = this.getQuickSearch();
+		if (win && win.isVisible()) {
+			win.hide();
+		};
 	};
 
 	createChallenge (options: { challenge: string } & Record<string, any>): AppWindow {
@@ -805,7 +936,10 @@ class WindowManager {
 
 	getTabBarHeight (win: AppWindow): number {
 
-
+		// The quick search panel never shows tabs or the menu bar
+		if (win.isQuickSearch) {
+			return 0;
+		};
 
 		// Hide tabs when PIN check is required
 		if (Api.hasPinSet && !Api.isPinChecked) {
@@ -917,7 +1051,8 @@ class WindowManager {
 		const windows: SavedTabState[] = [];
 
 		const push = (w: AppWindow) => {
-			if (!w || seen.has(w.id)) {
+			// Auxiliary windows (quick search, challenge) are never restored on start
+			if (!w || seen.has(w.id) || w.isQuickSearch || w.isChallenge) {
 				return;
 			};
 			const state = this.serializeWindow(w);

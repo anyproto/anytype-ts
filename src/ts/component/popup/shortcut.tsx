@@ -12,6 +12,7 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 	const [ editingId, setEditingId ] = useState('');
 	const [ errorId, setErrorId ] = useState('');
 	const [ editingKeys, setEditingKeys ] = useState([]);
+	const [ globalStatus, setGlobalStatus ] = useState(null);
 	const filterRef = useRef(null);
 	const bodyRef = useRef(null);
 	const sections = J.Shortcut.getSections();
@@ -187,7 +188,13 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const Item = (item: any) => {
 		const cn = [ 'item' ];
-		const canEdit = item.id && !item.noEdit;
+
+		// The OS owns global shortcut registration: on Wayland it is not available at
+		// all, and a combo taken by another app fails silently - surface both here
+		const isGlobal = (item.id == 'globalSearch');
+		const isUnavailable = isGlobal && globalStatus?.unavailable;
+		const hasOsConflict = isGlobal && !isUnavailable && globalStatus && !globalStatus.registered && (item.keys || []).length;
+		const canEdit = item.id && !item.noEdit && !isUnavailable;
 		const isEditing = editingId && (editingId == item.id);
 
 		let symbols = item.symbols || [];
@@ -207,12 +214,18 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			if (errorId == item.id) {
 				cn.push('hasError');
 				alert = <Icon name="common/alert" color="red" />;
+			} else
+			if (hasOsConflict) {
+				alert = <Icon name="common/alert" color="red" tooltipParam={{ text: translate('popupShortcutGlobalSearchConflict') }} />;
 			};
 
 			onClickHandler = () => onClick(item);
 			onContextHandler = () => onContext(item);
 		};
 
+		if (isUnavailable) {
+			buttons = <Label className="text grey" text={translate('popupShortcutGlobalSearchUnavailable')} />;
+		} else
 		if (isEditing && !symbols.length) {
 			buttons = <Label className="text" text={translate('popupShortcutPress')} />;
 		} else
@@ -306,6 +319,13 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			timeout.current = window.setTimeout(() => {
 				checkConflicts(editingId, pressed, (conflict) => {
 					if (!conflict) {
+						// A bare key registered with the OS would swallow typing system-wide
+						if ((editingId == 'globalSearch') && !pressed.some(k => [ 'cmd', 'ctrl', 'alt', 'shift' ].includes(k))) {
+							Preview.toastShow({ text: translate('popupShortcutGlobalSearchModifier') });
+							clear();
+							return;
+						};
+
 						Storage.updateShortcuts(editingId, pressed);
 						clear();
 
@@ -465,6 +485,21 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			bodyRef.current.scrollTop = 0;
 		};
 	}, [ page ]);
+
+	// OS-level registration state for the global search shortcut. Re-pulled after
+	// every edit (clear() sends initMenu which re-registers); the delay lets the
+	// main process finish re-registration before we read the result
+	useEffect(() => {
+		if (editingId) {
+			return;
+		};
+
+		const t = window.setTimeout(() => {
+			Renderer.send('getGlobalShortcutStatus').then((status: any) => setGlobalStatus(status || null));
+		}, 100);
+
+		return () => window.clearTimeout(t);
+	}, [ editingId, dummy ]);
 
 	if (filter) {
 		const reg = new RegExp(U.String.regexEscape(filter), 'gi');

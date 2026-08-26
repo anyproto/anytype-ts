@@ -1,8 +1,10 @@
 import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType, ObjectName } from 'Component';
+import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType, ObjectName, Button } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
+import Storage from 'Lib/storage';
+import { matchSpaces, matchPeople } from 'Lib/searchMatch';
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_SMALL = 38;
@@ -22,6 +24,10 @@ const PERSON_CHIP_LIMIT = 3;
 // More members fit in the row while the what group is filled and its chips are hidden
 // (the row scrolls with the edge fade on overflow)
 const PERSON_CHIP_LIMIT_FILLED = 10;
+// Channel rows mixed into the global result list: enough to surface the Channel you
+// meant without pushing the objects you were actually searching for off the screen.
+// The full list stays one click away behind the Channels chip
+const SPACE_MATCH_LIMIT = 3;
 // Restore chip/query on quick reopen; treat the popup as a fresh task after this long
 // (the Raycast pop-to-root / Alfred latest-query-window pattern)
 const STATE_RESET_TIMEOUT = 5 * 60 * 1000;
@@ -37,6 +43,10 @@ const SEARCH_TYPE_QUERY = 'query';
 const SEARCH_TYPE_CHAT = 'chat';
 const SEARCH_TYPE_TYPE = 'type';
 const SEARCH_TYPE_MEMBER = 'member';
+// The Channels bucket: a what-kind whose rows are Channels rather than objects, served
+// entirely from the in-memory vault list. Offered globally only - inside a Channel the
+// scope token already answers "which Channel"
+const SEARCH_TYPE_CHANNEL = 'channel';
 
 // Global (cross-space) mode filters by resolvedLayout - types can't be merged across spaces
 const GLOBAL_LAYOUTS: { [key: string]: I.ObjectLayout[] } = {
@@ -84,6 +94,7 @@ const KIND_NAME_KEYS: { [key: string]: string } = {
 	[SEARCH_TYPE_QUERY]: 'popupSearchTypeQueries',
 	[SEARCH_TYPE_CHAT]: 'popupSearchTypeChats',
 	[SEARCH_TYPE_TYPE]: 'popupSearchTypeTypes',
+	[SEARCH_TYPE_CHANNEL]: 'popupSearchTypeChannels',
 };
 
 // Singular forms for the "/" list's command-argument grammar ("/is Page", not "/is Pages")
@@ -96,6 +107,7 @@ const KIND_NAME_KEYS_SINGULAR: { [key: string]: string } = {
 	[SEARCH_TYPE_QUERY]: 'popupSearchKindQuery',
 	[SEARCH_TYPE_CHAT]: 'popupSearchKindChat',
 	[SEARCH_TYPE_TYPE]: 'popupSearchKindType',
+	[SEARCH_TYPE_CHANNEL]: 'popupSearchKindChannel',
 };
 
 const isMac = U.Common.isPlatformMac();
@@ -264,6 +276,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const initialGlobal = Boolean(data.isGlobal) && !data.onObjectSelect;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
+	// One-time hint about the OS-level global shortcut; null = nothing to show
+	// (already dismissed, or web mode). Holds { registered, unavailable } otherwise
+	const [ shortcutHint, setShortcutHint ] = useState(null);
 	// Filter tokens shown inside the search input: what (kind bucket / specific type),
 	// who (creator) and relation (backlink) combine across groups and replace within one
 	const tokensRef = useRef<SearchToken[]>([]);
@@ -536,7 +551,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			e.preventDefault();
 
 			const item = items[nRef.current];
-			if (item && item.isObject && !item.isCommandSuggest) {
+			if (item && item.isObject && !item.isCommandSuggest && !item.isSpaceRow) {
 				const spaceview = U.Space.getSpaceviewBySpaceId(item.spaceId || S.Common.space);
 
 				if (spaceview) {
@@ -718,12 +733,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		analytics.event('SearchInput', { route });
 	};
 
-	// Drill kind of a row: type rows search the type's instances, participant rows search
-	// objects created by the person, rows with links search related objects (in-space only -
-	// the object graph is per-space)
+	// Drill kind of a row: Channel rows scope the search to the Channel, type rows search
+	// the type's instances, participant rows search objects created by the person, rows
+	// with links search related objects (in-space only - the object graph is per-space)
 	const getDrillKind = (item: any): string => {
 		if (!item || !item.isObject || item.isCommandSuggest) {
 			return '';
+		};
+
+		// Enter opens the Channel, so the arrow carries the other verb: search inside it.
+		// The same token the "in <Channel>" caption adds
+		if (item.isSpaceRow) {
+			return 'space';
 		};
 
 		if (U.Object.isTypeLayout(item.layout)) {
@@ -763,7 +784,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// on ANOTHER Channel shows the Channel token and its chips but rides the cross-space
 	// data path, so those gates must read this, not isGlobal()
 	const isCurrentSpace = (): boolean => {
-		return getScopeId() == S.Common.space;
+		// The quick search panel boots spaceless - with no space open nothing is
+		// "current", otherwise '' == '' would route loads to the in-space RPC
+		return Boolean(S.Common.space) && (getScopeId() == S.Common.space);
 	};
 
 	// Scoped to another Channel (phase 3): the Channel token and that Channel's chips,
@@ -807,6 +830,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const getWhatToken = () => getTokenByGroup('what');
 	const getCreatorToken = () => getTokenByGroup('who');
 	const getBacklinkToken = () => getTokenByGroup('relation');
+
+	// The Channels bucket: rows are Channels, served from the vault list rather than any
+	// backend query - a distinct enough path that several gates ask for it by name
+	const isChannelKind = (what: any): boolean => Boolean(what) && (what.kind == 'kind') && (what.id == SEARCH_TYPE_CHANNEL);
 
 	// creator tokens hold a participant id; the identity is encoded in it (or carried on
 	// the resolved object)
@@ -1114,6 +1141,57 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return globalMembersRef.current;
 	};
 
+	// Not everything is authored: a Channel, a member, a type, a chat container all take
+	// their creator implicitly from the space, so "by <person>" answers a question nobody
+	// asked. The same class wantsCreator refuses to attribute
+	const isAuthoredKind = (what: any): boolean => {
+		if (!what) {
+			return true;
+		};
+
+		if (what.kind == 'kind') {
+			return ![ SEARCH_TYPE_CHANNEL, SEARCH_TYPE_TYPE, SEARCH_TYPE_CHAT ].includes(what.id);
+		};
+
+		// A type token answers by its own layout - a row-drilled token can lack
+		// recommendedLayout, so fall back to the type stores like the boundary mapper
+		const type = S.Record.getTypeById(what.id) || GLOBAL_DEPS.types.get(what.id) || what.object;
+		const layout = type?.recommendedLayout;
+
+		return !(U.Object.isParticipantLayout(layout) || U.Object.isTypeLayout(layout) || U.Object.isChatLayout(layout) || (layout == I.ObjectLayout.ChatOld));
+	};
+
+	// The person chips and "/by" are offerable while no creator token is set, the Channel
+	// holds someone besides you, and the thing being searched is authored at all
+	const canAddCreatorToken = (): boolean => {
+		return !getCreatorToken() && hasMembers() && isAuthoredKind(getWhatToken());
+	};
+
+	// A Channel is not inside a Channel, and people belong to the vault rather than to any
+	// one of them - "in <Channel>" has no answer for either. Everything else does live in a
+	// Channel and can be narrowed to one
+	const isScopableKind = (what: any): boolean => {
+		if (!what) {
+			return true;
+		};
+
+		if (what.kind == 'kind') {
+			return what.id != SEARCH_TYPE_CHANNEL;
+		};
+
+		// The member type reaches the what group as a type token ("/is Space member") -
+		// the kind bucket for it is legacy storage only
+		const type = S.Record.getTypeById(what.id) || GLOBAL_DEPS.types.get(what.id) || what.object;
+
+		return !U.Object.isParticipantLayout(type?.recommendedLayout);
+	};
+
+	// The scope chip and "/in": offerable while no scope is set (pickers pin it to the
+	// current space) and the search is about something that lives in a Channel
+	const canAddSpaceScope = (): boolean => {
+		return !getTokenByGroup('scope') && !onObjectSelect && isScopableKind(getWhatToken());
+	};
+
 	const getKindName = (id: string): string => {
 		return KIND_NAME_KEYS[id] ? translate(KIND_NAME_KEYS[id]) : '';
 	};
@@ -1209,9 +1287,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// Member person chips ("By <name>", Gmail-style operator wording): a few members in
 	// the vault 1:1-first ordering (in-space) / the People aggregate's ordering (global),
 	// capped to keep one row together with the kind chips; the full list stays reachable
-	// via /by. Hidden while a creator token is set, gated on >1 member
+	// via /by. Hidden while a creator token is set, gated on >1 member and on the search
+	// being about something authored at all
 	const getMemberChips = (): any[] => {
-		if (getCreatorToken() || !hasMembers()) {
+		if (!canAddCreatorToken()) {
 			return [];
 		};
 
@@ -1247,17 +1326,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	// The suggestion row (the Gmail model): only tokens you could still add - a filled
 	// group's chips are hidden until its token is removed. No selected state, no All chip.
-	// Order: Messages, By me, the remaining what-group chips (Media, types / global
-	// buckets), then the member person chips
+	// Order: Channels (vault-wide only), Messages, By me, the remaining what-group chips
+	// (Media, types / global buckets), then the member person chips
 	const getSuggestionItems = () => {
 		const ret: any[] = [];
 		const what = getWhatToken();
-		const withPeople = !getCreatorToken() && hasMembers();
+		const withPeople = canAddCreatorToken();
 		const kindChip = (id: string) => ({ id, name: getKindName(id), isKind: true });
 
 		// The way back after removing the Channel token: the scope group's own addable
 		// value, first in the row - "In <current Channel>" (the By-grammar for places)
-		if (!getTokenByGroup('scope') && !onObjectSelect) {
+		if (canAddSpaceScope()) {
 			const spaceview = U.Space.getSpaceview();
 
 			if (spaceview && !spaceview._empty_) {
@@ -1268,6 +1347,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					object: spaceview,
 				});
 			};
+		};
+
+		// Channels are the one bucket that only exists vault-wide: inside a Channel the
+		// scope token already answers "which Channel". Leads the what group, right behind
+		// the scope chip - the two are the same question at different altitudes
+		if (!what && !onObjectSelect && isGlobal()) {
+			ret.push(kindChip(SEARCH_TYPE_CHANNEL));
 		};
 
 		if (!what && hasMessageContainers()) {
@@ -1353,6 +1439,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const known = [
 			SEARCH_TYPE_MESSAGE, SEARCH_TYPE_PAGE, SEARCH_TYPE_MEDIA, SEARCH_TYPE_BOOKMARK,
 			SEARCH_TYPE_COLLECTION, SEARCH_TYPE_QUERY, SEARCH_TYPE_CHAT, SEARCH_TYPE_TYPE,
+			SEARCH_TYPE_CHANNEL,
 		];
 		const type = known.includes(item.id) ? U.String.ucFirst(item.id) : 'Type';
 
@@ -1615,20 +1702,45 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// (a non-shared space cannot have a second member)
 	// Computed once per popup open: getParticipantsList maps every participant record
 	// through the detail store - calling it per row was 87% of scroll CPU (perf trace)
-	const currentSpaceMembersRef = useRef<boolean | null>(null);
+	const currentSpaceCountRef = useRef<number | null>(null);
 
-	const spaceHasMembers = (spaceId: string): boolean => {
+	// Active members of a space. Other spaces come from the participants snapshot -
+	// spaceview heuristics (isShared etc.) are unreliable for joined spaces. 0 means
+	// "not known yet" for them: the cross-space map is cold until its subscription lands
+	const getSpaceMemberCount = (spaceId: string): number => {
 		if (spaceId == S.Common.space) {
-			if (currentSpaceMembersRef.current === null) {
-				currentSpaceMembersRef.current = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).length > 1;
+			if (currentSpaceCountRef.current === null) {
+				currentSpaceCountRef.current = U.Space.getParticipantsList([ I.ParticipantStatus.Active ]).length;
 			};
 
-			return currentSpaceMembersRef.current;
+			return currentSpaceCountRef.current;
 		};
 
-		// Other spaces: count actual active members from the participants snapshot -
-		// spaceview heuristics (isShared etc.) are unreliable for joined spaces
-		return (GLOBAL_DEPS.participantCounts.get(spaceId) || 0) > 1;
+		return GLOBAL_DEPS.participantCounts.get(spaceId) || 0;
+	};
+
+	const spaceHasMembers = (spaceId: string): boolean => getSpaceMemberCount(spaceId) > 1;
+
+	// A Channel row's caption answers "who else is in here": 1:1 Channels say what they
+	// are, a Channel with nobody else says so, the rest count their members. Empty while
+	// the cross-space count is still cold - no caption beats a wrong one ("Only you" on a
+	// Channel full of people)
+	const getSpaceRowInfo = (item: any): string => {
+		if (item.isOneToOne) {
+			return translate('popupSearchChannelOneToOne');
+		};
+
+		const count = getSpaceMemberCount(item.targetSpaceId);
+
+		if (!count) {
+			return '';
+		};
+
+		if (count == 1) {
+			return translate('popupSearchChannelOnlyYou');
+		};
+
+		return `${count} ${U.Common.plural(count, translate('pluralMember'))}`;
 	};
 
 	// creator may hold a participant id or (on older objects) the bare identity -
@@ -2223,6 +2335,24 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
+		// The Channels bucket IS the vault list - no round trip, no pagination. Same
+		// synchronous swap as the Types aggregate below
+		if (isChannelKind(mode.what)) {
+			itemsRef.current = getSpaceBrowse(filterValueRef.current);
+			itemsModeRef.current = { ...mode, isSpaceList: true };
+			hasMoreRef.current = false;
+			clearLoadPendingRef.current = false;
+
+			if (clear) {
+				setIsLoading(false);
+			};
+
+			listEpochRef.current++;
+			setDummy(prev => prev + 1);
+			callBack?.();
+			return;
+		};
+
 		// The cross-space Types bucket is served from the in-memory types map - no
 		// round trip. Synchronous swap: lift the append freeze and bump the list epoch
 		// exactly like the "/" branch; the mode stamp carries the aggregate flag so
@@ -2381,8 +2511,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// query is the person-browse list: 1:1-first order, the global rows with their
 	// space-count captions
 	const getPeopleSuggestions = (text: string) => {
-		const t = text.toLowerCase();
-
 		const scopeId = getScopeId();
 
 		let list: any[] = [];
@@ -2396,9 +2524,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			list = getForeignSpacePeople(scopeId);
 		};
 
-		if (t) {
-			list = list.filter(it => [ it.name, it.globalName ].some(n => String(n || '').toLowerCase().includes(t)));
-		};
+		// "me" is the word the "/" list advertises for yourself - without the alias arm
+		// it only matched people whose name happens to contain those letters
+		list = matchPeople(list, text, {
+			selfIdentity: S.Auth.account?.id || '',
+			meAlias: translate('popupSearchCmdMe'),
+			getIdentity: it => it.identity || U.Space.getAccountFromParticipantId(it.id),
+		});
 
 		return list.map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'creator', shortcut: [] }));
 	};
@@ -2436,26 +2568,49 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return [ ...list ].sort(sortTypesByUsage).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
 	};
 
-	// "/in" completions: every Channel in the vault sidebar's own order, 1:1 Channels
-	// included; picking one scopes the search to it. The token id is the spaceId with
-	// the spaceview as the render object - the same construction as the seeded scope
-	const getSpaceSuggestions = (text: string) => {
-		// Pickers pin the scope to the current space - never offer another one
+	// A Channel as a result row: the spaceview is the render object, addressed by the
+	// space it points at (spaceview ids are not space ids). type/creator/links stripped -
+	// a Channel has no attribution caption and no object-graph drill
+	const spaceRow = (it: any) => ({
+		...it,
+		id: it.targetSpaceId,
+		isObject: true,
+		isSpaceRow: true,
+		type: '',
+		metaList: [],
+		links: [],
+		backlinks: [],
+		creator: '',
+		shortcut: [],
+	});
+
+	// Every Channel in the vault sidebar's own order, 1:1 Channels included, name-filtered.
+	// Backs the Channels bucket and the "/in" completions. Pickers pin the scope to the
+	// current space, so a Channel row would be a dead end there
+	const getSpaceBrowse = (text: string): any[] => {
 		if (onObjectSelect) {
 			return [];
 		};
 
-		const t = text.toLowerCase();
+		const items = U.Menu.getVaultItems().filter(it => it.targetSpaceId);
 
-		let list: any[] = U.Menu.getVaultItems().filter(it => it.targetSpaceId);
+		return (text ? matchSpaces(items, text, 0) : items).map(spaceRow);
+	};
 
-		if (t) {
-			list = list.filter(it => String(it.name || '').toLowerCase().includes(t));
+	// The Channel rows that lead the global result list: a few name matches, so typing a
+	// Channel's name reaches the Channel and not only the objects inside it
+	const getSpaceMatches = (text: string): any[] => {
+		if (onObjectSelect) {
+			return [];
 		};
 
-		// creator/links stripped: a spaceview row must not render an attribution
-		// caption or a drill arrow
-		return list.map(it => ({ ...it, id: it.targetSpaceId, isObject: true, isCommandSuggest: true, tokenKind: 'space', type: '', metaList: [], links: [], backlinks: [], creator: '', shortcut: [] }));
+		return matchSpaces(U.Menu.getVaultItems(), text, SPACE_MATCH_LIMIT).map(spaceRow);
+	};
+
+	// "/in" completions: picking one scopes the search to it. Command rows, so they carry
+	// no drill arrow of their own - the pick itself is the scope gesture
+	const getSpaceSuggestions = (text: string) => {
+		return getSpaceBrowse(text).map(it => ({ ...it, isCommandSuggest: true, tokenKind: 'space' }));
 	};
 
 	// "/" command mode: search the chips and actions themselves, plus typed completions
@@ -2469,11 +2624,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const text = String(match[3] || '').trim();
 
 			if (command == 'by') {
-				return getPeopleSuggestions(text);
+				// Typed by hand, past the hidden entry - the same answer: nothing here is
+				// authored, so there is no person to filter by. A creator token already
+				// set still lists people; picking one replaces it
+				return isAuthoredKind(getWhatToken()) ? getPeopleSuggestions(text) : [];
 			};
 
 			if (command == 'in') {
-				return getSpaceSuggestions(text);
+				// Typed past the hidden entry - same answer. A scope already set still
+				// lists Channels; picking one re-points it
+				return isScopableKind(getWhatToken()) ? getSpaceSuggestions(text) : [];
 			};
 
 			return getTypeSuggestions(text);
@@ -2487,7 +2647,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// The Filter entries lead the list as one group, prefilling "/by " etc. - the
 		// mechanic teaches its own syntax. Filled groups hide their entries like
 		// everywhere else; pickers pin the scope, so the Channel entry never shows there
-		if (!getCreatorToken() && hasMembers()) {
+		if (canAddCreatorToken()) {
 			items.push({ id: 'cmdBy', name: translate('popupSearchCommandBy'), arg: translate('popupSearchCmdArgPerson'), description: translate('popupSearchCommandBy'), prefix: '/by', iconParam: { name: 'common/search' }, isCommand: true, command: 'by' });
 		};
 
@@ -2495,7 +2655,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			items.push({ id: 'cmdType', name: translate('popupSearchCommandType'), arg: translate('popupSearchCmdArgType'), description: translate('popupSearchCommandType'), prefix: '/is', iconParam: { name: 'common/search' }, isCommand: true, command: 'is' });
 		};
 
-		if (!getTokenByGroup('scope') && !onObjectSelect) {
+		if (canAddSpaceScope()) {
 			items.push({ id: 'cmdIn', name: translate('popupSearchCommandIn'), arg: translate('popupSearchCmdArgChannel'), description: translate('popupSearchCommandIn'), prefix: '/in', iconParam: { name: 'common/search' }, isCommand: true, command: 'in' });
 		};
 
@@ -2583,6 +2743,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		let items = S.Record.checkHiddenObjects(itemsRef.current);
 
+		if (!filter && items.length && mode.isSpaceList) {
+			// The vault's own order - no recency toggle to offer
+			items.unshift({ name: translate('popupSearchTypeChannels'), isSection: true });
+		} else
 		if (!filter && items.length && mode.isTypeAgg) {
 			// The cross-space Types aggregate lists by name - no recency toggle
 			items.unshift({ name: translate('popupSearchTypeTypes'), isSection: true });
@@ -2620,6 +2784,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (onObjectSelect) {
 			return items;
+		};
+
+		/* Channels */
+
+		// Typing a Channel's name should reach the Channel itself, not only the objects
+		// inside it - a few name matches lead the vault-wide list. Only for a plain text
+		// search: any filter token means the query is already about something narrower,
+		// and the Channels bucket lists them all anyway
+		if (filter && modeGlobal && !mode.tokens) {
+			items = getSpaceMatches(filter).concat(items);
 		};
 
 		/* Settings and pages */
@@ -2706,6 +2880,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
+		// The Channels bucket keeps exactly one action - creating the thing it lists. The
+		// only action that survives global mode, where object creation has no target space
+		if (isChannelKind(what)) {
+			items.push({ name: translate('commonActions'), isSection: true });
+			items.push({ id: 'createSpace', name: translate('commonCreateSpace'), iconParam: { name: 'plus/menu' }, isSmall: true });
+		} else
 		// Global mode has no actions in v1 (creation targets a specific space); a
 		// foreign scope keeps only the widen action
 		if (!modeGlobal) {
@@ -2877,6 +3057,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		close(() => {
+			// Channel row: Enter goes to the Channel. The arrow carries the other verb
+			// (search inside it) - see getDrillKind
+			if (item.isSpaceRow) {
+				if (item.targetSpaceId != S.Common.space) {
+					U.Router.switchSpace(item.targetSpaceId, '', true, {}, false);
+				} else {
+					U.Space.openDashboard();
+				};
+				return;
+			};
+
 			// Object
 			if (item.isObject) {
 				if (onObjectSelect) {
@@ -2923,6 +3114,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 					case 'addType': {
 						createTypedObject(item.typeId, filter);
+						break;
+					};
+
+					// The search popup is already closing, so the create menu has no row
+					// to hang off - centre it, the same anchor createTypedObject's
+					// bookmark menu uses
+					case 'createSpace': {
+						window.setTimeout(() => {
+							U.Menu.spaceCreate({
+								recalcRect: () => {
+									const { ww, wh } = U.Dom.getWindowDimensions();
+									return { width: 0, height: 0, x: ww / 2, y: wh / 2 };
+								},
+								className: 'spaceCreate fixed',
+								classNameWrap: 'fromPopup',
+								vertical: I.MenuDirection.Center,
+								horizontal: I.MenuDirection.Center,
+							}, route);
+						}, S.Popup.getTimeout());
 						break;
 					};
 
@@ -3010,6 +3220,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			// First-ever use starts the app-lifetime subscriptions (one redraw when the
 			// initial data lands); later opens sync from memory - no redraw
 			subscribeGlobalDeps(onGlobalDepsLoad);
+		};
+
+		// One-time inline hint that the OS-level search shortcut exists; status is pulled
+		// fresh so the hint matches reality (the combo may be taken by another app).
+		// Web mode has no OS registration and returns null - nothing to announce
+		if (!Storage.getOnboarding('globalSearch')) {
+			Renderer.send('getGlobalShortcutStatus').then((status: any) => {
+				if (status) {
+					S.Common.globalShortcutStatusSet(status);
+					setShortcutHint(status);
+				};
+			});
 		};
 
 		// Pre-token releases stored the active chip and drill separately - migrate once
@@ -3406,6 +3628,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					backlink: 'popupSearchTooltipSearchByBacklinks',
 					type: 'popupSearchTooltipSearchByType',
 					creator: 'popupSearchTooltipSearchByCreator',
+					space: 'popupSearchTooltipSearchInChannel',
 				};
 
 				advanced = (
@@ -3441,6 +3664,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				};
 			};
 
+			// The caption's leading element. A Channel row states who is in it and never
+			// carries the type drill-link - a Channel has no type
+			let captionLead = null;
+
+			if (item.isSpaceRow) {
+				const info = getSpaceRowInfo(item);
+
+				captionLead = info ? <div className="prep">{info}</div> : null;
+			} else
+			if (aggSpaces) {
+				captionLead = <div className="prep">{aggSpaces}</div>;
+			} else {
+				captionLead = (
+					<div className="drillLink" onClick={e => { e.stopPropagation(); addToken('type', type, { source: 'Caption', fromRow: true }); }}>
+						<ObjectType object={type} />
+					</div>
+				);
+			};
+
 			let name = U.Object.name(item, true);
 
 			// A 1:1 space's chat is always named "General" - show the person (the 1:1
@@ -3469,11 +3711,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
 						{Context(meta)}
 						<div className="caption">
-							{aggSpaces ? <div className="prep">{aggSpaces}</div> : (
-								<div className="drillLink" onClick={e => { e.stopPropagation(); addToken('type', type, { source: 'Caption', fromRow: true }); }}>
-									<ObjectType object={type} />
-								</div>
-							)}
+							{captionLead}
 							{creatorLabel ? (
 								<>
 									<div className="bullet" />
@@ -3628,6 +3866,35 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		);
 	};
 
+	const onShortcutHintClose = () => {
+		Storage.setOnboarding('globalSearch');
+		setShortcutHint(null);
+	};
+
+	// The full-view onboarding dissolves on any real keypress - the key still lands
+	// in the focused filter input (no preventDefault). Displaying it once counts as
+	// seen: the effect cleanup (dismiss or popup close) stamps the flag either way
+	useEffect(() => {
+		if (!shortcutHint || shortcutHint.unavailable) {
+			return;
+		};
+
+		const onKeyDown = (e: any) => {
+			if ([ 'shift', 'control', 'alt', 'meta' ].includes(String(e.key || '').toLowerCase())) {
+				return;
+			};
+
+			setShortcutHint(null);
+		};
+
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
+
+		return () => {
+			U.Dom.removeEvent(window, 'keydown', onKeyDown);
+			Storage.setOnboarding('globalSearch');
+		};
+	}, [ shortcutHint ]);
+
 	const Footer = () => {
 		const item = items[nRef.current];
 		const cmd = keyboard.cmdKey();
@@ -3747,6 +4014,60 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					</InfiniteLoader>
 				) : ''}
 			</div>
+
+			{shortcutHint && !shortcutHint.unavailable ? (
+				<div className="searchOnboarding" onClick={onShortcutHintClose}>
+					{/* Transparent zone: the real result list underneath shows through and
+					fades into the panel background */}
+					<div className="fade" />
+
+					<div className="inner">
+						<div className="title">{translate('popupSearchOnboardingTitle')}</div>
+
+						<div className="point">
+							<div className="chips">
+								{[
+									translate('popupSearchTypeMessages'),
+									translate('popupSearchTypePages'),
+									translate('onboardingPrimitivesTypesTasks'),
+									translate('commonMedia'),
+								].map((name: string, i: number) => (
+									<div key={i} className="chip">{name}</div>
+								))}
+							</div>
+							<Label className="text" text={translate('popupSearchOnboardingSearchText')} />
+						</div>
+
+						<div className="point">
+							{shortcutHint.registered ? (
+								<>
+									<div className="keys">
+										{keyboard.getSymbolsFromKeys(keyboard.getKeys('globalSearch')).map((s: string, i: number) => (
+											<Label key={i} text={s} />
+										))}
+									</div>
+									<Label className="text" text={translate('popupSearchOnboardingText')} />
+								</>
+							) : (
+								<>
+									<Label className="text" text={translate('onboardingGlobalSearchConflictText')} />
+									<Button
+										text={translate('onboardingGlobalSearchConflictButton')}
+										color="blank"
+										onClick={(e: any) => {
+											e.stopPropagation();
+											onShortcutHintClose();
+											keyboard.onShortcut();
+										}}
+									/>
+								</>
+							)}
+						</div>
+
+						<Label className="continue" text={translate('popupSearchOnboardingContinue')} />
+					</div>
+				</div>
+			) : ''}
 
 			{Footer()}
 		</div>

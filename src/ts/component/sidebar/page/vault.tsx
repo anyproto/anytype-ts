@@ -227,7 +227,9 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 				items = pinned.concat([ { isDiv: true } ]).concat(notPinned);
 			};
 
-			items.unshift({ id: 'createSpace' });
+			// Search leads the rail - the thing you reach for most. Creating a Channel is
+			// rare by comparison and lives in the bottom bar with the other chrome
+			items.unshift({ id: 'search' });
 		} else
 		if (!skipUi && !filter && (items.length == 1)) {
 			items.push({ id: 'createSpaceInline' });
@@ -285,6 +287,21 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			param.typeY = I.MenuDirection.Bottom;
 		};
 		return param;
+	};
+
+	const iconSearch = () => {
+		return (
+			<Icon
+				id="button-vault-search-minimal"
+				name="common/search" className="search"
+				tooltipParam={{
+					...tooltipParam(),
+					text: translate('popupSearchGlobalTooltip'),
+				}}
+				onClick={() => keyboard.onSearchPopup(analytics.route.vault, { data: { isGlobal: true } })}
+				onMouseDown={e => e.stopPropagation()}
+			/>
+		);
 	};
 
 	const iconCreate = () => {
@@ -382,10 +399,10 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			);
 		};
 
-		if (item.id == 'createSpace') {
+		if (item.id == 'search') {
 			return (
 				<div ref={forwardedRef} className="item add" style={item.style}>
-					{iconCreate()}
+					{iconSearch()}
 				</div>
 			);
 		};
@@ -759,6 +776,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 					</div>
 
 					<div className="side right">
+						{vaultIsMinimal ? iconCreate() : ''}
 						<Icon
 							name="vault/gallery"
 							className="gallery"
