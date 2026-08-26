@@ -287,3 +287,55 @@ describe('UtilObject.getCreatedInContext', () => {
 	});
 
 });
+
+describe('UtilObject.getCreatedInContextRef', () => {
+
+	// Regression: the Properties panel builds its cell record as
+	// S.Detail.get(rootId, rootId, [ relation.relationKey ]), and neither createdInContext nor
+	// createdInContextRef is in J.Relation.default — so the record carries the context id but
+	// never the locator. Reading the locator off that record made the deep link degrade to a
+	// plain open (no scroll), while the eyebrow worked because it requests both keys.
+	it('falls back to the store when the record omits the locator', () => {
+		setGlobals({
+			obj1: { id: 'obj1', createdInContext: 'ctx1', createdInContextRef: 'msg-7' },
+		}, 'root1');
+
+		const projected = { id: 'obj1', createdInContext: 'ctx1' };
+
+		expect(UtilObject.getCreatedInContextRef(projected, 'obj1')).toBe('msg-7');
+	});
+
+	it('prefers the locator already on the record', () => {
+		setGlobals({
+			obj1: { id: 'obj1', createdInContextRef: 'from-store' },
+		}, 'root1');
+
+		expect(UtilObject.getCreatedInContextRef({ id: 'obj1', createdInContextRef: 'from-record' }, 'obj1')).toBe('from-record');
+	});
+
+	it('returns empty when neither the record nor the store has one', () => {
+		setGlobals({ obj1: { id: 'obj1' } }, 'root1');
+		expect(UtilObject.getCreatedInContextRef({ id: 'obj1' }, 'obj1')).toBe('');
+	});
+
+	it('handles a null object and a record with no id', () => {
+		setGlobals({}, 'root1');
+		expect(UtilObject.getCreatedInContextRef(null)).toBe('');
+		expect(UtilObject.getCreatedInContextRef({ createdInContextRef: 'r' })).toBe('r');
+	});
+
+	it('a projected record still deep-links into a chat message', () => {
+		setGlobals({
+			obj1: { id: 'obj1', createdInContext: 'ctx1', createdInContextRef: 'msg-7' },
+			ctx1: { id: 'ctx1', spaceId: 'space1', layout: L.Chat },
+		}, 'root1');
+
+		const spy = vi.spyOn(UtilObject, 'openAuto').mockImplementation(() => {});
+
+		UtilObject.openCreatedInContext({ id: 'obj1', createdInContext: 'ctx1' }, '', 'obj1');
+
+		expect(spy).toHaveBeenCalled();
+		expect(spy.mock.calls[0][0]._routeParam_).toEqual({ messageId: 'msg-7' });
+	});
+
+});

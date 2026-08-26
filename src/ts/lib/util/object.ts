@@ -923,6 +923,33 @@ class UtilObject {
 	};
 
 	/**
+	 * Reads the origin locator (createdInContextRef), falling back to the detail store when the
+	 * record we were handed does not carry it.
+	 *
+	 * Cells project their record down to the relation's own key plus J.Relation.default — see
+	 * sidebar/section/object/relation.tsx, which builds it as
+	 * S.Detail.get(rootId, rootId, [ relation.relationKey ]) — and neither createdInContext nor
+	 * createdInContextRef is in that default set. So a caller cannot be trusted to have fetched
+	 * the locator, and without this the deep link silently degrades to plain-opening the context.
+	 * @param object - The object carrying createdInContextRef
+	 * @param subId - Subscription id the object's details were delivered under (defaults to object.id)
+	 */
+	getCreatedInContextRef (object: any, subId?: string): string {
+		if (!object) {
+			return '';
+		};
+
+		const ref = Relation.getStringValue(object.createdInContextRef);
+
+		if (ref || !object.id) {
+			return ref;
+		};
+
+		const source = S.Detail.get(subId || object.id, object.id, [ 'createdInContextRef' ]);
+		return Relation.getStringValue(source.createdInContextRef);
+	};
+
+	/**
 	 * Resolves the object's origin context to a usable object, or null when there is nothing to
 	 * navigate to — the property is empty, or it holds an id whose details never resolved (a
 	 * dangling reference), or the target is deleted, archived or in another space.
@@ -970,7 +997,7 @@ class UtilObject {
 		};
 
 		const contextId = context.id;
-		const ref = Relation.getStringValue(object.createdInContextRef);
+		const ref = this.getCreatedInContextRef(object, subId);
 
 		analytics.event('ClickCreatedInContext', { route });
 
