@@ -459,6 +459,16 @@ const App: FC = () => {
 
 				U.Data.onInfo(account.info);
 				S.Common.spaceSet('');
+
+				// The quick search panel boots spaceless: global search is cross-space by
+				// design and results open in the main window, so WorkspaceOpen, the
+				// per-space subscriptions and the chat/notification side loads would only
+				// pay for UI this window never renders
+				if ((param.page == 'main') && (param.action == 'quickSearch')) {
+					U.Data.onAuthQuickSearch(route, routeParam);
+					return;
+				};
+
 				U.Data.onAuthOnce();
 
 				if (spaceId) {

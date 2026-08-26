@@ -63,6 +63,8 @@ class Analytics {
 		screenRelation: 'ScreenRelation',
 		screenType: 'ScreenType',
 
+		globalShortcut: 'GlobalShortcut',
+
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
 		menuSystem: 'MenuSystem',
