@@ -19,7 +19,7 @@
 | `file.ts` | `U.File` | File upload, download, type detection |
 | `graph.ts` | `U.Graph` | Graph data preparation and filtering |
 | `smile.ts` | `U.Smile` | Emoji utilities and search |
-| `dom.ts` | `U.Dom` | DOM helpers: `get()`, `select()`, `selectAll()`, `addClass()`, `removeClass()`, `hasClass()` — replaces raw `document.getElementById` / `querySelector` |
+| `dom.ts` | `U.Dom` | DOM helpers: `get()`, `select()`, `selectAll()`, `addClass()`, `removeClass()`, `hasClass()`, `waitForElement()` — replaces raw `document.getElementById` / `querySelector` |
 | `prism.ts` | `U.Prism` | PrismJS language map, alias resolution, dependency loading |
 | `stickyScrollbar.ts` | `U.StickyScrollbar` | Sticky horizontal scrollbar sync for dataview grid/board views |
 | `comment.ts` | `U.Comment` | Comment content part conversion (parts to/from chat message blocks) |

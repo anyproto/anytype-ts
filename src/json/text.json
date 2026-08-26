@@ -641,6 +641,8 @@
 
 	"pageMainMediaNotFound": "File not found",
 
+	"objectCreatedInLabel": "Created in",
+
 	"pageMainBookmarkOpenWebsite": "Open Website",
 	"pageMainBookmarkLinkInfo": "Link Information",
 
@@ -2382,6 +2384,7 @@
 
 	"inputWithFileTextUrl": "Paste a link",
 
+	"toastCreatedInContextUnavailable": "The object it was created in is no longer available",
 	"toastTemplateCreate": "is saved as a Template!",
 	"toastCopy": "%s has been copied to clipboard",
 	"toastCopyBlock": "Block has been copied to clipboard",

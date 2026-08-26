@@ -212,6 +212,14 @@ class UtilSubscription {
 			keys.push('resolvedLayout');
 		};
 
+		// createdInContext is only half the story: the locator is what lets "Created in" deep-link
+		// to the block, message or relation rather than just opening the context object. A view's
+		// relation list never names it (it is a hidden relation), so pair it here — otherwise a
+		// dataview column, widget or list renders the property but degrades to a plain open.
+		if (keys.includes('createdInContext')) {
+			keys.push('createdInContextRef');
+		};
+
 		return keys;
 	};
 

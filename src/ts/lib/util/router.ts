@@ -10,6 +10,7 @@ interface RouteParam {
 	viewId?: string;
 	relationKey?: string;
 	messageId?: string;
+	revealRef?: string;
 	objectId?: string;
 	additional?: { key: string, value: string }[];
 };

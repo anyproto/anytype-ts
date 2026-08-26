@@ -2,6 +2,8 @@ import { history as historyPopup } from 'Lib/history';
 import { getIconSvg } from 'Component/util/icons';
 import * as I from 'Interface';
 
+export type CreatedInContextRefKind = 'root' | 'block' | 'relation' | 'message';
+
 
 /**
  * UtilObject provides utilities for working with Anytype objects.
@@ -638,6 +640,15 @@ class UtilObject {
 		return [ I.ObjectLayout.Chat, I.ObjectLayout.Discussion ].includes(layout);
 	};
 
+	/**
+	 * Whether the object renders through the chat page, and so locates by message id rather than
+	 * by block id. Wider than isChatLayout: page/main/chat.tsx also serves Space-layout objects
+	 * (see its ObjectLayout.Space branches), whose content is a chat even though the layout is not.
+	 */
+	rendersAsChat (layout: I.ObjectLayout): boolean {
+		return this.isChatLayout(layout) || this.isSpaceLayout(layout) || (layout == I.ObjectLayout.ChatOld);
+	};
+
 	isImageLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Image;
 	};
@@ -776,6 +787,254 @@ class UtilObject {
 				};
 			};
 		});
+	};
+
+	/**
+	 * Derives the meaning of createdInContextRef from the context object's layout:
+	 * - context layout is a chat → the ref is a message id
+	 * - the ref resolves to a known relation → a relation key
+	 * - otherwise → a block id
+	 * - empty ref → the context root itself
+	 * @param contextLayout - Layout of the context object
+	 * @param ref - The createdInContextRef value
+	 */
+	getCreatedInContextRefKind (contextLayout: I.ObjectLayout, ref: string): CreatedInContextRefKind {
+		ref = String(ref || '');
+
+		if (!ref) {
+			return 'root';
+		};
+
+		// A chat or discussion holds nothing but messages, so a ref is always a message id there —
+		// even one that happens to look like a relation key.
+		if (this.isChatLayout(contextLayout)) {
+			return 'message';
+		};
+
+		if (S.Record.getRelationByKey(ref)) {
+			return 'relation';
+		};
+
+		// A Space renders as a chat page too, but unlike a chat it also carries relations (its icon
+		// and cover), which is why the relation check above comes first.
+		return this.rendersAsChat(contextLayout) ? 'message' : 'block';
+	};
+
+	/**
+	 * Checks whether a relation key is rendered in the object's featured relations row.
+	 * Mirrors the source list of Component/block/featured getItems: the object's own
+	 * featuredRelations when set, the type's recommended featured relations otherwise.
+	 */
+	isFeaturedRelationKey (object: any, relationKey: string): boolean {
+		const keys = Relation.getArrayValue(object.featuredRelations).filter(it => it != 'description');
+
+		if (keys.length) {
+			return keys.includes(relationKey);
+		};
+
+		const type = S.Record.getTypeById(object.targetObjectType || object.type);
+		if (!type || type.isDeleted) {
+			return false;
+		};
+
+		return S.Record.getTypeFeaturedRelations(type.id).some(it => it && (it.relationKey == relationKey));
+	};
+
+	/**
+	 * Reveals the createdInContextRef locator inside the already open context object:
+	 * scrolls to and briefly highlights a block, a chat message or a relation.
+	 * Waits for the target to render, so it is safe to call right after navigation.
+	 * A ref that no longer resolves is a silent no-op — never a dead click.
+	 */
+	revealCreatedInContextRef (rootId: string, ref: string, isPopup: boolean) {
+		const context = S.Detail.get(rootId, rootId, []);
+		const kind = this.getCreatedInContextRefKind(context.layout, ref);
+
+		switch (kind) {
+			case 'message': {
+				if (this.rendersAsChat(context.layout)) {
+					U.Dom.eventDispatch(window, 'scrollToMessage', { id: ref });
+				} else {
+					U.Comment.scrollToMessage(ref);
+				};
+				break;
+			};
+
+			case 'block': {
+				U.Dom.waitForElement(() => U.Dom.get(`block-${ref}`), () => U.Comment.scrollToBlock(ref));
+				break;
+			};
+
+			case 'relation': {
+				this.revealCreatedInContextRelation(rootId, ref, isPopup);
+				break;
+			};
+		};
+	};
+
+	/**
+	 * Reveals a relation on the context object: highlights its featured chip when featured,
+	 * otherwise opens the right panel with the relation list and highlights the row.
+	 */
+	revealCreatedInContextRelation (rootId: string, relationKey: string, isPopup: boolean) {
+		const relation = S.Record.getRelationByKey(relationKey);
+		if (!relation) {
+			return;
+		};
+
+		const highlight = (el: HTMLElement) => {
+			el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+			U.Dom.addClass(el, 'isHighlighted');
+			window.setTimeout(() => U.Dom.removeClass(el, 'isHighlighted'), 2000);
+		};
+
+		const object = S.Detail.get(rootId, rootId, []);
+
+		if (this.isFeaturedRelationKey(object, relationKey)) {
+			U.Dom.waitForElement(() => U.Dom.get(Relation.cellId('blockFeatured', relationKey, rootId)), highlight);
+			return;
+		};
+
+		const state = { page: 'object/relation', rootId };
+
+		let opened = false;
+
+		U.Dom.waitForElement(() => {
+			// rightPanelToggle no-ops while the sidebar is animating — wait the animation out first
+			if (sidebar.isAnimating) {
+				return null;
+			};
+
+			if (!opened) {
+				opened = true;
+
+				const data = sidebar.getData(I.SidebarPanel.Right, isPopup);
+
+				if (data.isClosed) {
+					sidebar.rightPanelToggle(isPopup, state);
+				} else {
+					S.Common.setRightSidebarState(isPopup, state);
+				};
+			};
+
+			const node = sidebar.rightPanelGetNode(isPopup);
+			return node ? U.Dom.select(`#${U.Common.esc(`section-object-relation-${relation.id}`)}`, node) : null;
+		}, el => {
+			// The row can sit inside a collapsed group (Hidden / Local) — expand it first
+			const list = el.closest('.list.withToggle') as HTMLElement;
+
+			if (list && !U.Dom.hasClass(list, 'isOpen')) {
+				const group = list.closest('.group');
+				const title = group ? U.Dom.select('.titleWrap', group) : null;
+
+				U.Dom.addClass(list, 'isOpen');
+				U.Dom.css(list, { height: 'auto' });
+
+				if (title) {
+					U.Dom.addClass(title, 'isOpen');
+				};
+			};
+
+			highlight(el);
+		});
+	};
+
+	/**
+	 * Reads the origin locator (createdInContextRef), falling back to the detail store when the
+	 * record we were handed does not carry it.
+	 *
+	 * Cells project their record down to the relation's own key plus J.Relation.default — see
+	 * sidebar/section/object/relation.tsx, which builds it as
+	 * S.Detail.get(rootId, rootId, [ relation.relationKey ]) — and neither createdInContext nor
+	 * createdInContextRef is in that default set. So a caller cannot be trusted to have fetched
+	 * the locator, and without this the deep link silently degrades to plain-opening the context.
+	 * @param object - The object carrying createdInContextRef
+	 * @param subId - Subscription id the object's details were delivered under (defaults to object.id)
+	 */
+	getCreatedInContextRef (object: any, subId?: string): string {
+		if (!object) {
+			return '';
+		};
+
+		const ref = Relation.getStringValue(object.createdInContextRef);
+
+		if (ref || !object.id) {
+			return ref;
+		};
+
+		const source = S.Detail.get(subId || object.id, object.id, [ 'createdInContextRef' ]);
+		return Relation.getStringValue(source.createdInContextRef);
+	};
+
+	/**
+	 * Resolves the object's origin context to a usable object, or null when there is nothing to
+	 * navigate to — the property is empty, or it holds an id whose details never resolved (a
+	 * dangling reference), or the target is deleted, archived or in another space.
+	 *
+	 * Every surface that renders the property must gate on this, so a row can never be shown that
+	 * only reports "unavailable" once clicked.
+	 * @param object - The object carrying createdInContext
+	 * @param subId - Subscription id the context object's details were delivered under (defaults to object.id)
+	 */
+	getCreatedInContext (object: any, subId?: string): any {
+		if (!object) {
+			return null;
+		};
+
+		const contextId = Relation.getStringValue(object.createdInContext);
+		if (!contextId) {
+			return null;
+		};
+
+		const context = S.Detail.get(subId || object.id, contextId, []);
+		const isMissing = context._empty_ || context.isDeleted || context.isArchived;
+		const isOtherSpace = context.spaceId && (context.spaceId != S.Common.space);
+
+		return (isMissing || isOtherSpace) ? null : context;
+	};
+
+	/**
+	 * Navigates back to the object's origin context (createdInContext), deep-linking into the
+	 * exact place it was created in via createdInContextRef (a block, a relation or a message).
+	 * Single entry point for every surface that renders the property.
+	 * @param object - The object carrying createdInContext / createdInContextRef
+	 * @param route - Analytics route
+	 * @param subId - Subscription id the context object's details were delivered under (defaults to object.id)
+	 */
+	openCreatedInContext (object: any, route?: string, subId?: string) {
+		const context = this.getCreatedInContext(object, subId);
+
+		if (!context) {
+			// Nothing to open: either the property is empty, or the object it points at is gone.
+			// Only warn in the latter case, so an empty property stays silent.
+			if (object && Relation.getStringValue(object.createdInContext)) {
+				Preview.toastShow({ text: translate('toastCreatedInContextUnavailable') });
+			};
+			return;
+		};
+
+		const contextId = context.id;
+		const ref = this.getCreatedInContextRef(object, subId);
+
+		analytics.event('ClickCreatedInContext', { route });
+
+		const isPopup = keyboard.isPopup();
+		const rootId = keyboard.getRootId(isPopup);
+
+		// The context is already the open object — reveal in place, without navigating
+		if (contextId == rootId) {
+			this.revealCreatedInContextRef(rootId, ref, isPopup);
+			return;
+		};
+
+		const open: any = { ...context };
+
+		if (ref) {
+			const kind = this.getCreatedInContextRefKind(context.layout, ref);
+			open._routeParam_ = (kind == 'message') ? { messageId: ref } : { revealRef: ref };
+		};
+
+		this.openAuto(open);
 	};
 
 	hasEqualLayoutAlign (object: any, type: any): boolean {

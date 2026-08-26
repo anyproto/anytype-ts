@@ -61,6 +61,7 @@
 - `object/type.tsx` - Object type badge
 - `object/description.tsx` - Object description
 - `object/cover.tsx` - Object cover image
+- `object/createdIn.tsx` - "Created in" eyebrow linking back to the object's origin context (media/bookmark pages)
 
 ### `menu/`
 - `menu/calendarSelect.tsx` - Calendar date picker with month/year navigation
