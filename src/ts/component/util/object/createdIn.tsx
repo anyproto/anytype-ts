@@ -60,7 +60,7 @@ const ObjectCreatedIn: FC<Props> = ({
 			>
 				<IconObject object={context} size={18} noClick={true} />
 				<ObjectName object={context} withPlural={true} />
-				<Icon name="common/expand" className="arrow" size={16} />
+				<Icon name="arrow/upRight" className="arrow" size={16} />
 			</div>
 		</div>
 	);
