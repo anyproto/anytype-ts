@@ -102,6 +102,33 @@ class UtilDom {
 	};
 
 	/**
+	 * Polls once per animation frame until getElement returns a node, then invokes the callback with it.
+	 * Gives up silently after maxFrames frames (default 120, ~2s) — callers treat a target that never
+	 * appears as a no-op.
+	 */
+	waitForElement (getElement: () => HTMLElement | null, callBack: (el: HTMLElement) => void, maxFrames?: number) {
+		maxFrames = Number(maxFrames) || 120;
+
+		let frame = 0;
+
+		const check = () => {
+			const el = getElement();
+
+			if (el) {
+				callBack(el);
+				return;
+			};
+
+			frame++;
+			if (frame < maxFrames) {
+				raf(check);
+			};
+		};
+
+		check();
+	};
+
+	/**
 	 * Returns the current selection range in the window.
 	 * @returns {Range|null} The selection range or null if none.
 	 */

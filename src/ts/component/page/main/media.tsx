@@ -1,5 +1,5 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { Header, Footer, Loader, Block, Button, IconObject, Deleted, HeadSimple } from 'Component';
+import { Header, Footer, Loader, Block, Button, IconObject, Deleted, HeadSimple, ObjectCreatedIn } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 
@@ -243,7 +243,9 @@ const PageMainMedia = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 						<div className="side right">
 							<div className="head">
-								<HeadSimple 
+								<ObjectCreatedIn rootId={rootId} route={analytics.route.media} />
+
+								<HeadSimple
 									{...props} 
 									ref={headRef} 
 									placeholder={translate('defaultNamePage')} 

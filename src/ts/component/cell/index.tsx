@@ -83,6 +83,14 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 		};
 
+		// "Created in" deep-links back into the origin context instead of plain-opening it
+		if (relation.relationKey == 'createdInContext') {
+			if (check) {
+				U.Object.openCreatedInContext(record, analytics.route.relation, subId);
+			};
+			return;
+		};
+
 		const { config } = S.Common;
 		const cell = U.Dom.get(cellId);
 		const className = [];

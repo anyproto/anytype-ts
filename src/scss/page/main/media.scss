@@ -2,6 +2,7 @@
 
 .pageMainMedia {
 	.headSimple { margin: 0px; }
+	.objectCreatedIn { margin: 0px 0px 8px 0px; }
 
 	.section {
 		.title { @include text-paragraph; font-weight: 600; margin-bottom: 4px; position: relative; }

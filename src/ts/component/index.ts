@@ -101,6 +101,7 @@ import ObjectName from './util/object/name';
 import ObjectDescription from './util/object/description';
 import ObjectType from './util/object/type';
 import ObjectCover from './util/object/cover';
+import ObjectCreatedIn from './util/object/createdIn';
 
 import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
@@ -214,6 +215,7 @@ export {
 	ObjectDescription,
 	ObjectType,
 	ObjectCover,
+	ObjectCreatedIn,
 
 	Menu,
 	MenuItemVertical,
