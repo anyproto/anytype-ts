@@ -8,7 +8,7 @@ declare global {
 process.stdout?.on?.('error', () => {});
 process.stderr?.on?.('error', () => {});
 
-import { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog, contentTracing } from 'electron';
+import { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog, contentTracing, globalShortcut } from 'electron';
 import { is, fixPathForAsarUnpack } from 'electron-util';
 import path from 'path';
 import storage from 'electron-json-storage';
@@ -298,7 +298,7 @@ function createWindow () {
 		const onClose = () => {
 			const { config } = ConfigManager;
 
-			if (config.hideTray && (WindowManager.list.size <= 1)) {
+			if (config.hideTray && (WindowManager.mainWindowCount() <= 1)) {
 				Api.exit(mainWindow, '', false, false);
 			} else {
 				mainWindow.hide();
@@ -321,6 +321,7 @@ function createWindow () {
 	MenuManager.initMenu();
 	MenuManager.initTray();
 	MenuManager.initDock();
+	MenuManager.initGlobalShortcuts();
 
 	installNativeMessagingHost();
 	Util.registerLinuxProtocolHandler();
@@ -436,6 +437,10 @@ app.on('second-instance', (event, argv) => {
 	if (is.macos) {
 		app.focus({ steal: true });
 	};
+});
+
+app.on('will-quit', () => {
+	globalShortcut.unregisterAll();
 });
 
 app.on('before-quit', (e) => {

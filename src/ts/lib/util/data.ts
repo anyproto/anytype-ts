@@ -482,6 +482,37 @@ class UtilData {
 	};
 
 	/**
+	 * Minimal boot for the quick search panel window. No space is opened (the panel
+	 * renders no space UI and the global search RPC is cross-space) and none of the
+	 * heavy side loads run - only the global subscriptions (profile, spaceviews)
+	 * that power the search rows, plus the pin gate.
+	 * @param {string} route - The quick search route to open after boot.
+	 * @param {Partial<I.RouteParam>} [param] - Optional route parameters.
+	 */
+	onAuthQuickSearch(route: string, param?: Partial<I.RouteParam>) {
+		let pending = 2;
+
+		const done = () => {
+			if (--pending) {
+				return;
+			};
+
+			if (S.Common.pin && !keyboard.isPinChecked) {
+				// S.Common.redirect already points at the quick search route - the
+				// pin screen returns here after unlock
+				U.Router.go('/auth/pin-check', param || {});
+			} else {
+				U.Router.go(route, param || {});
+			};
+		};
+
+		// In parallel: the two lite subscriptions (profile + spaceviews) feed the
+		// first row paint (Channel captions), the pin gate decides where to route
+		U.Subscription.createGlobal(done, true);
+		this.initPin(done);
+	};
+
+	/**
 	 * Creates a new session with the given phrase and key.
 	 * @param {string} phrase - The mnemonic phrase.
 	 * @param {string} key - The key.

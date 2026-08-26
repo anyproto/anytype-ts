@@ -476,9 +476,9 @@ class UtilSubscription {
 	 * Creates global subscriptions for the current account.
 	 * @param {() => void} [callBack] - Optional callback after creation.
 	 */
-	createGlobal (callBack?: () => void) {
+	createGlobal (callBack?: () => void, lite?: boolean) {
 		const { account } = S.Auth;
-	
+
 		if (!account) {
 			callBack?.();
 			return;
@@ -539,8 +539,23 @@ class UtilSubscription {
 			},
 		];
 		
-		this.destroyList(list.map(it => it.subId), true, () => {
-			this.createList(list, () => this.createSubSpace(null, callBack));
+		// Lite (quick search panel boot): only profile + spaceviews - the chat
+		// machinery and the per-space subSpace fan-out (one subscription per space)
+		// serve vault UI that window never renders
+		let create = list;
+		if (lite) {
+			const keep: string[] = [ J.Constant.subId.profile, J.Constant.subId.space ];
+			create = list.filter(it => keep.includes(it.subId));
+		};
+
+		this.destroyList(create.map(it => it.subId), true, () => {
+			this.createList(create, () => {
+				if (lite) {
+					callBack?.();
+				} else {
+					this.createSubSpace(null, callBack);
+				};
+			});
 		});
 	};
 

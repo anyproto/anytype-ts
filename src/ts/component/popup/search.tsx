@@ -1,8 +1,9 @@
 import React, { forwardRef, useEffect, useRef, useState, MouseEvent } from 'react';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
-import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType, ObjectName } from 'Component';
+import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType, ObjectName, Button } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
+import Storage from 'Lib/storage';
 import { matchSpaces, matchPeople } from 'Lib/searchMatch';
 
 const HEIGHT_SECTION = 28;
@@ -275,6 +276,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const initialGlobal = Boolean(data.isGlobal) && !data.onObjectSelect;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
+	// One-time hint about the OS-level global shortcut; null = nothing to show
+	// (already dismissed, or web mode). Holds { registered, unavailable } otherwise
+	const [ shortcutHint, setShortcutHint ] = useState(null);
 	// Filter tokens shown inside the search input: what (kind bucket / specific type),
 	// who (creator) and relation (backlink) combine across groups and replace within one
 	const tokensRef = useRef<SearchToken[]>([]);
@@ -780,7 +784,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// on ANOTHER Channel shows the Channel token and its chips but rides the cross-space
 	// data path, so those gates must read this, not isGlobal()
 	const isCurrentSpace = (): boolean => {
-		return getScopeId() == S.Common.space;
+		// The quick search panel boots spaceless - with no space open nothing is
+		// "current", otherwise '' == '' would route loads to the in-space RPC
+		return Boolean(S.Common.space) && (getScopeId() == S.Common.space);
 	};
 
 	// Scoped to another Channel (phase 3): the Channel token and that Channel's chips,
@@ -3216,6 +3222,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			subscribeGlobalDeps(onGlobalDepsLoad);
 		};
 
+		// One-time inline hint that the OS-level search shortcut exists; status is pulled
+		// fresh so the hint matches reality (the combo may be taken by another app).
+		// Web mode has no OS registration and returns null - nothing to announce
+		if (!Storage.getOnboarding('globalSearch')) {
+			Renderer.send('getGlobalShortcutStatus').then((status: any) => {
+				if (status) {
+					S.Common.globalShortcutStatusSet(status);
+					setShortcutHint(status);
+				};
+			});
+		};
+
 		// Pre-token releases stored the active chip and drill separately - migrate once
 		const migrateLegacyTokens = (global: boolean): any[] => {
 			const ret: any[] = [];
@@ -3848,6 +3866,35 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		);
 	};
 
+	const onShortcutHintClose = () => {
+		Storage.setOnboarding('globalSearch');
+		setShortcutHint(null);
+	};
+
+	// The full-view onboarding dissolves on any real keypress - the key still lands
+	// in the focused filter input (no preventDefault). Displaying it once counts as
+	// seen: the effect cleanup (dismiss or popup close) stamps the flag either way
+	useEffect(() => {
+		if (!shortcutHint || shortcutHint.unavailable) {
+			return;
+		};
+
+		const onKeyDown = (e: any) => {
+			if ([ 'shift', 'control', 'alt', 'meta' ].includes(String(e.key || '').toLowerCase())) {
+				return;
+			};
+
+			setShortcutHint(null);
+		};
+
+		U.Dom.addEvent(window, 'keydown', onKeyDown);
+
+		return () => {
+			U.Dom.removeEvent(window, 'keydown', onKeyDown);
+			Storage.setOnboarding('globalSearch');
+		};
+	}, [ shortcutHint ]);
+
 	const Footer = () => {
 		const item = items[nRef.current];
 		const cmd = keyboard.cmdKey();
@@ -3967,6 +4014,60 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					</InfiniteLoader>
 				) : ''}
 			</div>
+
+			{shortcutHint && !shortcutHint.unavailable ? (
+				<div className="searchOnboarding" onClick={onShortcutHintClose}>
+					{/* Transparent zone: the real result list underneath shows through and
+					fades into the panel background */}
+					<div className="fade" />
+
+					<div className="inner">
+						<div className="title">{translate('popupSearchOnboardingTitle')}</div>
+
+						<div className="point">
+							<div className="chips">
+								{[
+									translate('popupSearchTypeMessages'),
+									translate('popupSearchTypePages'),
+									translate('onboardingPrimitivesTypesTasks'),
+									translate('commonMedia'),
+								].map((name: string, i: number) => (
+									<div key={i} className="chip">{name}</div>
+								))}
+							</div>
+							<Label className="text" text={translate('popupSearchOnboardingSearchText')} />
+						</div>
+
+						<div className="point">
+							{shortcutHint.registered ? (
+								<>
+									<div className="keys">
+										{keyboard.getSymbolsFromKeys(keyboard.getKeys('globalSearch')).map((s: string, i: number) => (
+											<Label key={i} text={s} />
+										))}
+									</div>
+									<Label className="text" text={translate('popupSearchOnboardingText')} />
+								</>
+							) : (
+								<>
+									<Label className="text" text={translate('onboardingGlobalSearchConflictText')} />
+									<Button
+										text={translate('onboardingGlobalSearchConflictButton')}
+										color="blank"
+										onClick={(e: any) => {
+											e.stopPropagation();
+											onShortcutHintClose();
+											keyboard.onShortcut();
+										}}
+									/>
+								</>
+							)}
+						</div>
+
+						<Label className="continue" text={translate('popupSearchOnboardingContinue')} />
+					</div>
+				</div>
+			) : ''}
 
 			{Footer()}
 		</div>

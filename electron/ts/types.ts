@@ -5,6 +5,7 @@ export interface AppWindow extends BrowserWindow {
 	windowId: number;
 	isChild: boolean;
 	isChallenge?: boolean;
+	isQuickSearch?: boolean;
 	challenge?: string;
 	route?: string;
 	activeTabId?: string;

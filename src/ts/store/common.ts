@@ -43,6 +43,11 @@ class CommonStore {
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
+	public globalShortcutStatusValue: { registered: boolean; unavailable: boolean } | null = null;
+
+	// Set once when this renderer boots as the Spotlight-style quick search panel;
+	// U.Object open calls then redirect to the main window instead of navigating here
+	public isQuickSearchWindow = false;
 	public hasCleanupSuggestionsValue = false;
 	public chatCmdSendValue = null;
 	public commentCmdSendValue = null;
@@ -151,6 +156,7 @@ class CommonStore {
 			linkStyleValue: observable,
 			fileStyleValue: observable,
 			isOnlineValue: observable,
+			globalShortcutStatusValue: observable,
 			hasCleanupSuggestionsValue: observable,
 			hideSidebarValue: observable,
 			hideFileObjectsInTreeValue: observable,
@@ -217,6 +223,7 @@ class CommonStore {
 			dateFormatSet: action,
 			timeFormatSet: action,
 			isOnlineSet: action,
+			globalShortcutStatusSet: action,
 			hasCleanupSuggestionsSet: action,
 			setLeftSidebarState: action,
 			setRightSidebarState: action,
@@ -1066,6 +1073,14 @@ class CommonStore {
 	isOnlineSet (v: boolean) {
 		this.isOnlineValue = Boolean(v);
 		console.log('[Online status]:', v);
+	};
+
+	get globalShortcutStatus (): { registered: boolean; unavailable: boolean } | null {
+		return this.globalShortcutStatusValue;
+	};
+
+	globalShortcutStatusSet (v: { registered: boolean; unavailable: boolean } | null) {
+		this.globalShortcutStatusValue = v || null;
 	};
 
 	/**

@@ -584,6 +584,21 @@ class Api {
 	initMenu (win: AppWindow): void {
 		MenuManager.initMenu();
 		MenuManager.initTray();
+		MenuManager.initGlobalShortcuts();
+	};
+
+	getGlobalShortcutStatus (win: AppWindow): { registered: boolean; unavailable: boolean } {
+		return MenuManager.getGlobalShortcutStatus();
+	};
+
+	quickSearchClose (win: AppWindow): void {
+		WindowManager.hideQuickSearch();
+	};
+
+	// A result picked in the quick search panel opens in the main window
+	quickSearchOpen (win: AppWindow, route: string): void {
+		WindowManager.hideQuickSearch();
+		MenuManager.winShowForce(target => Util.send(target, 'route', route));
 	};
 
 	setSpellingLang (win: AppWindow, languages: string[]): void {
