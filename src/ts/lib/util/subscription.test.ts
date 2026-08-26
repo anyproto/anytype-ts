@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { applySubscriptionPosition } from './subscription';
+import UtilSubscription from './subscription';
 
 /**
  * Regression coverage for GO-7387: in a collection with an explicit sort (e.g. Name Asc),
@@ -111,6 +112,35 @@ describe('applySubscriptionPosition', () => {
 			expect(records).toEqual([ 'a', 'B1', 'b', 'c', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'z' ]);
 		});
 
+	});
+
+});
+
+/**
+ * "Created in" deep-links via createdInContextRef, which locates the block, message or relation
+ * inside the context object. That key is hidden and never appears in a view's relation list, so a
+ * subscription asked only for createdInContext (a dataview column, a widget, a list) would render
+ * the property but resolve no locator — degrading the click to a plain open with no scroll.
+ * mapKeys pairs them, the same way it pairs name/pluralName and layout/resolvedLayout.
+ */
+describe('mapKeys — createdInContext pairing', () => {
+
+	it('adds the locator whenever the context key is requested', () => {
+		const keys = UtilSubscription.mapKeys({ idField: 'id', keys: [ 'name', 'createdInContext' ] });
+
+		expect(keys).toContain('createdInContextRef');
+	});
+
+	it('does not add the locator when the context key is absent', () => {
+		const keys = UtilSubscription.mapKeys({ idField: 'id', keys: [ 'name', 'lastModifiedDate' ] });
+
+		expect(keys).not.toContain('createdInContextRef');
+	});
+
+	it('keeps the existing companion pairings intact', () => {
+		const keys = UtilSubscription.mapKeys({ idField: 'id', keys: [ 'name', 'layout', 'createdInContext' ] });
+
+		expect(keys).toEqual(expect.arrayContaining([ 'id', 'pluralName', 'resolvedLayout', 'createdInContextRef' ]));
 	});
 
 });
