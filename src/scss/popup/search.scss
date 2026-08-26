@@ -9,6 +9,18 @@
 		@media (max-width: 700px) {
 			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
 		}
+	}
+
+	/* Quick search window: the popup IS the window - fill it completely */
+	.popup.popupSearch.isQuickSearch {
+		.innerWrap {
+			width: 100% !important; height: 100% !important; max-height: 100%; left: 0px !important; top: 0px !important;
+			margin: 0px !important; transform: none !important; border-radius: 0px; box-shadow: none;
+		}
+		.dimmer { display: none; }
+	}
+
+	.popup.popupSearch {
 
 		.content { overflow: visible; transition: none; transform: translate3d(0px,0px,0px); height: 100%; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
@@ -107,7 +119,7 @@
 					}
 				}
 				.name { @include text-overflow-nw; font-weight: 500; }
-				.name .cmdPrefix { color: var(--color-text-secondary); font-weight: 400; margin-right: 8px; }
+				.name .cmdPrefix { color: var(--color-text-secondary); font-weight: 400; margin-right: 6px; }
 				.name .cmdArg { color: var(--color-text-tertiary); font-weight: 400; }
 				.caption .cmdDesc { color: var(--color-text-secondary); }
 				.caption .bullet { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); flex-shrink: 0; }
@@ -164,6 +176,58 @@
 					.name { @include text-overflow-nw; }
 				}
 			}
+		}
+
+		/* Full-view first-open onboarding: covers everything below the search input.
+		The top zone stays transparent so the first real result rows show through
+		and fade into the panel background */
+		.searchOnboarding {
+			position: absolute; left: 0px; top: 55px; right: 0px; bottom: 0px; z-index: 30;
+			display: flex; flex-direction: column;
+		}
+		.searchOnboarding {
+			/* Eased (smoothstep-like) fade - a plain linear ramp reads as a hard edge */
+			.fade {
+				height: 240px; min-height: 120px; flex-shrink: 1;
+				background: linear-gradient(
+					to bottom,
+					transparent 0%,
+					color-mix(in srgb, var(--color-bg-primary) 8%, transparent) 40%,
+					color-mix(in srgb, var(--color-bg-primary) 30%, transparent) 60%,
+					color-mix(in srgb, var(--color-bg-primary) 65%, transparent) 78%,
+					color-mix(in srgb, var(--color-bg-primary) 90%, transparent) 92%,
+					var(--color-bg-primary) 100%
+				);
+			}
+
+			.inner {
+				flex: 1 0 auto; background: var(--color-bg-primary); display: flex; flex-direction: column;
+				align-items: center; justify-content: flex-start; gap: 24px 0px; padding: 8px 24px 24px;
+			}
+
+			.title { @include text-header2; }
+
+			.point { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
+
+			/* Echo of the real kind chips (.typeItem) shown in the head of the search */
+			.chips { display: flex; gap: 0px 8px; }
+			.chips {
+				.chip {
+					flex-shrink: 0; padding: 2px 10px; border-radius: 14px; @include text-small;
+					color: var(--color-text-secondary); background: var(--color-shape-highlight-medium);
+				}
+			}
+
+			.keys { display: flex; gap: 0px 8px; }
+			.keys {
+				.label {
+					@include text-header3; padding: 8px 14px; border-radius: 8px; background: var(--color-shape-tertiary);
+					min-width: 44px; text-align: center;
+				}
+			}
+
+			.text { @include text-paragraph; color: var(--color-text-secondary); text-align: center; max-width: 420px; }
+			.continue { @include text-small; color: var(--color-text-tertiary); margin-top: 8px; }
 		}
 
 		.foot {

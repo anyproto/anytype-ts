@@ -844,7 +844,7 @@ class Keyboard {
 	 * @param {any} arg - The command argument.
 	 */
 	onCommand (cmd: string, arg: any) {
-		if (!this.isMain() && [ 'search', 'print' ].includes(cmd) || this.isShortcutEditing) {
+		if (!this.isMain() && [ 'search', 'print', 'quickSearchShow' ].includes(cmd) || this.isShortcutEditing) {
 			return;
 		};
 
@@ -859,6 +859,13 @@ class Keyboard {
 		switch (cmd) {
 			case 'search': {
 				this.onSearchText('', route);
+				break;
+			};
+
+			// The quick search panel was re-shown - make sure its popup is up
+			// (the very first open is handled by the quick search page mount)
+			case 'quickSearchShow': {
+				this.onQuickSearchPopup();
 				break;
 			};
 
@@ -1520,6 +1527,27 @@ class Keyboard {
 				data: { ...param.data, isPopup: this.isPopup(), route },
 			});
 		};
+	};
+
+	/**
+	 * Opens the search popup inside the quick search window. The popup fills the
+	 * whole panel; closing it (Esc) dismisses the panel itself.
+	 */
+	onQuickSearchPopup () {
+		if (S.Popup.isOpen('search')) {
+			return;
+		};
+
+		S.Popup.open('search', {
+			className: 'isQuickSearch',
+			preventCloseByEscape: true,
+			onClose: () => Renderer.send('quickSearchClose'),
+			data: {
+				isPopup: false,
+				isGlobal: true,
+				route: analytics.route.globalShortcut,
+			},
+		});
 	};
 
 	/**
