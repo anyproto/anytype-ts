@@ -9,7 +9,7 @@ import UtilObject from './object';
 
 // Enum values matching src/ts/interface/object.ts
 const L = {
-	Page: 0, Task: 2, Set: 3, File: 6, Image: 8, Collection: 14, Chat: 22, Discussion: 27,
+	Page: 0, Task: 2, Set: 3, File: 6, Image: 8, Space: 10, ChatOld: 21, Collection: 14, Chat: 22, Discussion: 27,
 };
 
 const relations: any = {
@@ -74,6 +74,12 @@ describe('UtilObject.getCreatedInContextRefKind', () => {
 		[ 'known relation key on a task → relation', L.Task, 'iconImage', 'relation' ],
 		[ 'unknown ref on a page → block', L.Page, 'block-abc', 'block' ],
 		[ 'relation-like ref on a chat is still a message', L.Chat, 'coverId', 'message' ],
+		// A Space renders through the chat page (page/main/chat.tsx serves ObjectLayout.Space), so
+		// an unknown ref there is a message id — reading it as a block id meant no scroll at all.
+		[ 'empty ref on a space → root', L.Space, '', 'root' ],
+		[ 'unknown ref on a space → message', L.Space, 'msg-1', 'message' ],
+		[ 'known relation key on a space → relation', L.Space, 'iconImage', 'relation' ],
+		[ 'unknown ref on a legacy chat → message', L.ChatOld, 'msg-1', 'message' ],
 	];
 
 	for (const [ name, layout, ref, kind ] of table) {

@@ -640,6 +640,15 @@ class UtilObject {
 		return [ I.ObjectLayout.Chat, I.ObjectLayout.Discussion ].includes(layout);
 	};
 
+	/**
+	 * Whether the object renders through the chat page, and so locates by message id rather than
+	 * by block id. Wider than isChatLayout: page/main/chat.tsx also serves Space-layout objects
+	 * (see its ObjectLayout.Space branches), whose content is a chat even though the layout is not.
+	 */
+	rendersAsChat (layout: I.ObjectLayout): boolean {
+		return this.isChatLayout(layout) || this.isSpaceLayout(layout) || (layout == I.ObjectLayout.ChatOld);
+	};
+
 	isImageLayout (layout: I.ObjectLayout): boolean {
 		return layout == I.ObjectLayout.Image;
 	};
@@ -796,11 +805,19 @@ class UtilObject {
 			return 'root';
 		};
 
+		// A chat or discussion holds nothing but messages, so a ref is always a message id there —
+		// even one that happens to look like a relation key.
 		if (this.isChatLayout(contextLayout)) {
 			return 'message';
 		};
 
-		return S.Record.getRelationByKey(ref) ? 'relation' : 'block';
+		if (S.Record.getRelationByKey(ref)) {
+			return 'relation';
+		};
+
+		// A Space renders as a chat page too, but unlike a chat it also carries relations (its icon
+		// and cover), which is why the relation check above comes first.
+		return this.rendersAsChat(contextLayout) ? 'message' : 'block';
 	};
 
 	/**
@@ -835,7 +852,7 @@ class UtilObject {
 
 		switch (kind) {
 			case 'message': {
-				if (this.isChatLayout(context.layout)) {
+				if (this.rendersAsChat(context.layout)) {
 					U.Dom.eventDispatch(window, 'scrollToMessage', { id: ref });
 				} else {
 					U.Comment.scrollToMessage(ref);
