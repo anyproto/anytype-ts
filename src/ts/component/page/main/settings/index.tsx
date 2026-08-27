@@ -8,6 +8,7 @@ import PagePhrase from './phrase';
 import PageLanguage from './language';
 import PageApi from './api';
 import PageNetworkConfig from './networkConfig';
+import PageThemeCustomizer from './themeCustomizer';
 
 import PageDataIndex from './data/index';
 import PageDataPublish from './data/publish';
@@ -51,6 +52,7 @@ const Components: any = {
 	language:			 PageLanguage,
 	api:				 PageApi,
 	networkConfig:		 PageNetworkConfig,
+	themeCustomizer:	 PageThemeCustomizer,
 
 	pinIndex:			 PagePinIndex,
 	pinSelect:			 PagePinSelect,

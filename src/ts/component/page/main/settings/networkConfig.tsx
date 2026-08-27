@@ -250,9 +250,9 @@ const PeerTable = ({
 								<div
 									className="deletePeerBtn"
 									onClick={() => removePeer(peerIdx)}
-									title="Remove Peer"
+									title="Delete Entire Peer Entry"
 								>
-									<Icon name="menu/action/remove" size={16} />
+									<Icon name="menu/action/remove" size={16} color="red" />
 								</div>
 							</div>
 						</div>
@@ -336,6 +336,19 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 				});
 			} else {
 				Preview.toastShow({ text: 'Network configuration saved' });
+
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'sync/globe' },
+						title: 'Restart Required',
+						text: 'Network configuration changes have been saved. You must restart Anytype for the new network listener and peer settings to take effect.',
+						textConfirm: 'Restart Now',
+						textCancel: 'Restart Later',
+						onConfirm: () => {
+							Renderer.send('exit', true);
+						},
+					},
+				});
 			};
 		});
 	};

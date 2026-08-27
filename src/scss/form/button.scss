@@ -2,9 +2,18 @@
 
 .button { 
 	display: inline-flex; border: 0px; font-weight: 500; text-decoration: none; text-align: center;
-	height: 40px; padding: 0px 16px; border-radius: 20px; transition: $transitionAllCommon;
+	height: 40px; padding: 0px 16px; border-radius: 20px;
+	transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, color 0.2s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 	vertical-align: middle; position: relative; overflow: hidden; align-items: center; justify-content: center; 
 	@include text-common; cursor: default; -webkit-app-region: no-drag;
+
+	&:hover:not(.disabled) {
+		transform: translateY(-1px);
+	}
+
+	&:not(.disabled):active {
+		transform: scale(0.96) translateY(0.5px);
+	}
 }
 
 .button > .loaderWrapper { 

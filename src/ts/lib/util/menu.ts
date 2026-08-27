@@ -1984,6 +1984,7 @@ class UtilMenu {
 			dataPublish: translate('popupSettingsDataManagementDataPublishTitle'),
 			api: translate('popupSettingsApiTitle'),
 			networkConfig: 'Network Config',
+			themeCustomizer: 'Theme Customizer',
 			set: types,
 			relation: relations,
 		};
