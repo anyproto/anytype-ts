@@ -20,6 +20,7 @@ import SidebarView from './sidebarView';
 import Sites from './sites';
 import Spaces from './spaces';
 import Storage from './storage';
+import Style from './style';
 import Type from './type';
 
 import './space';
@@ -45,4 +46,5 @@ registerIcon('settings/sidebarView', SidebarView);
 registerIcon('settings/sites', Sites);
 registerIcon('settings/spaces', Spaces);
 registerIcon('settings/storage', Storage);
+registerIcon('settings/style', Style);
 registerIcon('settings/type', Type);

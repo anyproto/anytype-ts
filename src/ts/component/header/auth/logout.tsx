@@ -19,7 +19,7 @@ const HeaderAuthLogout = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 			<div className="side right">
 				<Button 
 					iconParam={{ name: 'header/logout' }} 
-					color="simple" 
+					color="red" 
 					text={translate('commonLogout')} 
 					onClick={onLogout}
 				/>
