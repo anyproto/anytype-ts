@@ -49,11 +49,10 @@
 	.item { 
 		display: flex; align-items: center; gap: 0px 8px; padding: 6px 8px; border-radius: 8px; 
 		-webkit-app-region: no-drag; margin: 0px 0px 1px 0px; color: var(--color-text-primary-70);
-		transition: transform 0.2s $easeSmooth, color 0.2s $easeSmooth;
 		position: relative;
 	}
 	.item {
-		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; transition: transform 0.2s $easeSmooth; }
+		.iconWrap { flex-shrink: 0; position: relative; border-radius: 6px; }
 		.iconWrap {
 			.chatCounter { position: absolute; right: -4px; bottom: -4px; }
 		}
@@ -72,22 +71,16 @@
 		.chatWrapper,
 		.messageWrapper { display: flex; flex-direction: row; align-items: center; justify-content: space-between; overflow: hidden; gap: 0px 6px; }
 
-		.name { flex-grow: 1; @include text-overflow-nw; font-weight: 500; line-height: 20px; transition: color 0.18s ease; }
+		.name { flex-grow: 1; @include text-overflow-nw; font-weight: 500; line-height: 20px; }
 		.label { @include text-small; color: var(--color-text-secondary); flex-grow: 1; }
 		.label.lastMessage { @include text-overflow-nw; }
 		.label.chatName { font-weight: 500; @include text-overflow-nw; }
 
 		&::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1;
-			pointer-events: none; border-radius: inherit; opacity: 0; transition: opacity 0.2s $easeSmooth, background-color 0.2s $easeSmooth;
+			pointer-events: none; border-radius: inherit; opacity: 0; transition: opacity $transitionCommon;
 		}
 		&.hover::before { opacity: 1; }
-		&:hover:not(.isLoading):not(.isDragging) {
-			transform: translateX(2.5px);
-		}
-		&:active:not(.isLoading):not(.isDragging) {
-			transform: translateX(1px) scale(0.985);
-		}
 		&.active::before { 
 			opacity: 1; left: 1px; top: 1px; width: calc(100% - 2px); height: calc(100% - 2px); border-radius: 7px; 
 		}
@@ -143,68 +136,49 @@
 				margin: 0 !important;
 				padding: 0 !important;
 				border-radius: 24px;
-				transition: border-radius 0.2s cubic-bezier(0.2, 0, 0, 1), background-color 0.2s ease;
 				cursor: pointer;
 				position: relative;
 			}
 
 			.item {
-				&.hover, &:hover {
-					border-radius: 16px;
-					.iconWrap, .iconObject { border-radius: 16px; }
-				}
-
-				&.active {
-					border-radius: 16px;
-					.iconWrap, .iconObject { border-radius: 16px; }
-				}
-
 				.iconWrap {
 					width: 48px;
 					height: 48px;
-					border-radius: inherit;
+					border-radius: 24px;
 					display: flex;
 					align-items: center;
 					justify-content: center;
 					overflow: hidden;
-					transition: border-radius 0.2s cubic-bezier(0.2, 0, 0, 1);
 				}
 
 				.iconObject {
 					width: 48px;
 					height: 48px;
-					border-radius: inherit;
-					transition: border-radius 0.2s cubic-bezier(0.2, 0, 0, 1);
+					border-radius: 24px;
 				}
 
-				&.active::before {
-					content: "";
-					position: absolute;
-					left: -10px;
-					top: 50%;
-					transform: translateY(-50%);
-					width: 4px;
-					height: 36px;
-					border-radius: 0 4px 4px 0;
-					background-color: var(--color-text-primary, #fff);
+				// Outline-only selection ring around the logo (replaces the former left bar indicator)
+				// box-sizing is required: the global `* { box-sizing: border-box }` does not match
+				// pseudo-elements, so without it the 2px border inflates the box and breaks the circle
+				&::before {
+					box-sizing: border-box;
+					left: -4px;
+					top: -4px;
+					width: calc(100% + 8px);
+					height: calc(100% + 8px);
+					border-radius: 50%;
+					background: transparent;
+					border: 2px solid transparent;
+					transition: opacity $transitionCommon, border-color $transitionCommon;
+				}
+
+				&.hover::before, &:hover::before {
 					opacity: 1;
-					margin: 0;
-					transition: height 0.2s ease;
+					border-color: var(--color-text-secondary);
 				}
-
-				&:hover:not(.active)::before {
-					content: "";
-					position: absolute;
-					left: -10px;
-					top: 50%;
-					transform: translateY(-50%);
-					width: 4px;
-					height: 18px;
-					border-radius: 0 4px 4px 0;
-					background-color: var(--color-text-secondary);
-					opacity: 0.8;
-					margin: 0;
-					transition: height 0.15s ease;
+				&.active::before {
+					opacity: 1;
+					border-color: var(--color-text-primary);
 				}
 
 				&.isLoading {
@@ -228,7 +202,7 @@
 						display: flex;
 						align-items: center;
 						justify-content: center;
-						transition: border-radius 0.2s ease, background-color 0.2s ease;
+						transition: background-color 0.2s ease;
 					}
 
 					.search {
@@ -239,12 +213,11 @@
 						display: flex;
 						align-items: center;
 						justify-content: center;
-						transition: border-radius 0.2s ease, background-color 0.2s ease;
+						transition: background-color 0.2s ease;
 					}
 
 					&:hover {
 						.icon, .search {
-							border-radius: 16px;
 							background-color: var(--color-control-accent);
 							color: var(--color-bg-primary);
 						}
@@ -303,10 +276,6 @@
 				width: 48px;
 				height: 48px;
 				border-radius: 24px;
-				transition: border-radius 0.2s ease;
-			}
-			.side.left .appSettings:hover .iconObject {
-				border-radius: 16px;
 			}
 			.side.right {
 				flex-direction: column-reverse;

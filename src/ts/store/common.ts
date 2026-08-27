@@ -547,7 +547,11 @@ class CommonStore {
 	 * @returns {string} The file URL.
 	 */
 	fileUrl (id: string) {
-		return [ this.gateway, 'file', String(id || '') ].join('/');
+		const url = [ this.gateway, 'file', String(id || '') ].join('/');
+		if (url && typeof U !== 'undefined' && U.ImageCache) {
+			U.ImageCache.prefetchBackground([ url ]);
+		}
+		return url;
 	};
 
 	/**
@@ -572,7 +576,11 @@ class CommonStore {
 			width = I.ImageSize.Large;
 		};
 
-		return id ? [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${width}` : '';
+		const url = id ? [ this.gateway, 'image', String(id || '') ].join('/') + `?width=${width}` : '';
+		if (url && typeof U !== 'undefined' && U.ImageCache) {
+			U.ImageCache.prefetchBackground([ url ]);
+		}
+		return url;
 	};
 
 	/**

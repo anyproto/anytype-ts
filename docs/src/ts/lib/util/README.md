@@ -1,6 +1,6 @@
 # util/ - Utility Classes
 
-18 utility classes providing helper functions across the app. Accessed via `U.*` import alias.
+20 utility classes providing helper functions across the app. Accessed via `U.*` import alias.
 
 ## Utility Classes
 
@@ -24,6 +24,8 @@
 | `stickyScrollbar.ts` | `U.StickyScrollbar` | Sticky horizontal scrollbar sync for dataview grid/board views |
 | `comment.ts` | `U.Comment` | Comment content part conversion (parts to/from chat message blocks) |
 | `chat.ts` | `U.Chat` | Chat message fence parsing: triple-backtick code blocks ↔ `ChatMessageBlock`, open-fence caret detection; `getSearchResultHtml` builds sanitized highlight HTML for `ChatSearch` results |
+| `perf.ts` | `U.Perf` | Boot performance step timing |
+| `imageCache.ts` | `U.ImageCache` | Image caching engine: in-memory blob URL LRU, CacheStorage persistence, idle prefetch, and 12h TTL cleanup (`cleanupExpired()` removes entries not viewed for 12 hours; last-access times persisted to localStorage) |
 
 ## Non-exported Utility Files
 

@@ -7,7 +7,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
 import * as I from 'Interface';
 import Highlight from 'Lib/highlight';
-import Storage from 'Lib/storage';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 45;
@@ -561,10 +560,8 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		});
 	};
 
-	const onGallery = (e: MouseEvent<HTMLElement>) => {
-		S.Popup.open('usecaseList', {
-			element: e.currentTarget,
-		});
+	const onGallery = () => {
+		S.Popup.open('usecaseList', {});
 	};
 
 	const onCreate = () => {

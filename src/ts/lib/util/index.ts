@@ -17,6 +17,7 @@ import String from './string';
 import StickyScrollbar from './stickyScrollbar';
 import Comment from './comment';
 import Perf from './perf';
+import ImageCache from './imageCache';
 
 export {
 	Chat,
@@ -38,4 +39,5 @@ export {
 	StickyScrollbar,
 	Comment,
 	Perf,
+	ImageCache,
 };

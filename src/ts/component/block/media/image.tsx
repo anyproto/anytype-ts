@@ -1,4 +1,4 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { MediaPlaceholder, Icon, Error, Loader, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -12,6 +12,17 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const nodeRef = useRef(null);
 	const wrapRef = useRef(null);
 	const [ isLoaded, setIsLoaded ] = useState(false);
+
+	useEffect(() => {
+		if (targetObjectId) {
+			const url = S.Common.imageUrl(targetObjectId, I.ImageSize.Large);
+			if (url && typeof U !== 'undefined' && U.ImageCache) {
+				U.ImageCache.preload(url).then(() => {
+					setIsLoaded(true);
+				});
+			}
+		}
+	}, [targetObjectId]);
 
 	const handleKeyDown = (e: any) => {
 		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);

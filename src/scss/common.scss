@@ -34,7 +34,7 @@ textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus { transition: background-color 5000s linear 0s; }
-input, textarea, select { font-family: var(--font-family-base, 'Inter'), inherit; }
+input, textarea, select { font-family: var(--font-family-base, 'Inter'); }
 
 #root { height: 100%; }
 #appContainer { display: flex; flex-direction: column; height: 100%; }

@@ -1,5 +1,5 @@
 import React, { forwardRef, useState, useEffect, useRef } from 'react';
-import { Title, Button, Icon, Label, Input } from 'Component';
+import { Title, Button, Icon, Input } from 'Component';
 import * as I from 'Interface';
 
 interface ThemeColorVar {
@@ -339,8 +339,10 @@ const PageMainSettingsThemeCustomizer = forwardRef<I.PageRef, I.PageSettingsComp
 		if (matchedPreset) {
 			return matchedPreset.fontFamily;
 		}
-		const cleaned = currentFontProp.replace(/^['"]|['"]$/g, '').replace(/,\s*sans-serif/i, '').trim();
-		return cleaned;
+		// Extract the first family of a stack, e.g. "'Georgia', sans-serif" → "Georgia",
+		// so the value matches the option it was set from
+		const first = String(currentFontProp).split(',')[0].trim().replace(/^['"]|['"]$/g, '').trim();
+		return first || currentFontProp;
 	};
 
 	useEffect(() => {

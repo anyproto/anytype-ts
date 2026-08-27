@@ -251,7 +251,7 @@ const PeerTable = ({
 						icon="sync/globe"
 						text="Test Connectivity"
 						onClick={checkAllAddresses}
-						title="Test reachability for all peer addresses"
+						tooltipParam={{ text: 'Test reachability for all peer addresses' }}
 					/>
 					<Button
 						size={28}
