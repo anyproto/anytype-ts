@@ -23,6 +23,8 @@ const KNOWN_PROTOCOLS = [
 	{ id: 'yamux://', label: 'yamux://' },
 	{ id: 'quic://', label: 'quic://' },
 	{ id: 'tcp://', label: 'tcp://' },
+	{ id: 'ws://', label: 'ws://' },
+	{ id: 'wss://', label: 'wss://' },
 	{ id: 'none', label: '(none)' },
 ];
 
@@ -30,7 +32,7 @@ function parseAddress(addr: string): { protocol: string; hostPort: string } {
 	if (!addr) {
 		return { protocol: 'yamux://', hostPort: '' };
 	}
-	for (const p of ['yamux://', 'quic://', 'tcp://']) {
+	for (const p of ['yamux://', 'quic://', 'tcp://', 'ws://', 'wss://']) {
 		if (addr.startsWith(p)) {
 			return { protocol: p, hostPort: addr.slice(p.length) };
 		}
@@ -65,6 +67,49 @@ const PeerTable = ({
 	onChange: (peers: PeerEntry[]) => void;
 }) => {
 	const tableInputRef = React.useRef<HTMLInputElement>(null);
+	const [statusMap, setStatusMap] = React.useState<Record<string, { status: 'checking' | 'online' | 'offline' | 'unknown'; latencyMs?: number; error?: string; protocol?: string }>>({});
+
+	const checkAddress = React.useCallback(async (addr: string) => {
+		const trimmed = addr.trim();
+		if (!trimmed) {
+			setStatusMap(prev => ({ ...prev, [addr]: { status: 'unknown' } }));
+			return;
+		}
+		setStatusMap(prev => ({ ...prev, [addr]: { status: 'checking' } }));
+		try {
+			const res = await Renderer.send('checkAddressConnectivity', trimmed);
+			if (res && res.reachable) {
+				setStatusMap(prev => ({
+					...prev,
+					[addr]: { status: 'online', latencyMs: res.latencyMs, protocol: res.protocol || (trimmed.includes('yamux') ? 'yamux' : 'tcp') },
+				}));
+			} else {
+				setStatusMap(prev => ({
+					...prev,
+					[addr]: { status: 'offline', error: res?.error || 'Unreachable', protocol: res?.protocol || (trimmed.includes('yamux') ? 'yamux' : 'tcp') },
+				}));
+			}
+		} catch (e: any) {
+			setStatusMap(prev => ({
+				...prev,
+				[addr]: { status: 'offline', error: e?.message || 'Check failed' },
+			}));
+		}
+	}, []);
+
+	const checkAllAddresses = React.useCallback(() => {
+		peers.forEach(peer => {
+			peer.addresses.forEach(addr => {
+				if (addr && addr.trim()) {
+					checkAddress(addr);
+				}
+			});
+		});
+	}, [peers, checkAddress]);
+
+	React.useEffect(() => {
+		checkAllAddresses();
+	}, []);
 
 	const handleTableImport = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -203,6 +248,13 @@ const PeerTable = ({
 					/>
 					<Button
 						size={28}
+						icon="sync/globe"
+						text="Test Connectivity"
+						onClick={checkAllAddresses}
+						title="Test reachability for all peer addresses"
+					/>
+					<Button
+						size={28}
 						icon="menu/action/import"
 						text={`Import ${jsonFileName}`}
 						onClick={() => tableInputRef.current?.click()}
@@ -219,7 +271,7 @@ const PeerTable = ({
 				<div className="peerTable">
 					<div className="row isHead">
 						<div className="col colPeerId">Peer ID (Node Identity)</div>
-						<div className="col colAddresses">Transport Protocol & Listen Address</div>
+						<div className="col colAddresses">Transport Protocol & Listen Address (Live Status)</div>
 						<div className="col colAction" />
 					</div>
 
@@ -238,6 +290,7 @@ const PeerTable = ({
 								{peer.addresses.map((addr, addrIdx) => {
 									const { protocol, hostPort } = parseAddress(addr);
 									const isCustomProto = !KNOWN_PROTOCOLS.some(p => p.id === protocol);
+									const statusInfo = statusMap[addr] || { status: 'unknown' };
 
 									const onProtocolChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 										const newProto = e.target.value;
@@ -252,6 +305,24 @@ const PeerTable = ({
 
 									return (
 										<div key={addrIdx} className="addrRow">
+											<div
+												className={['connStatusBadge', statusInfo.status].join(' ')}
+												onClick={() => checkAddress(addr)}
+												title={
+													statusInfo.status === 'online'
+														? `Reachable (${statusInfo.latencyMs}ms) • Click to re-test`
+														: statusInfo.status === 'offline'
+														? `Unreachable (${statusInfo.error || 'Connection failed'}) • Click to re-test`
+														: statusInfo.status === 'checking'
+														? 'Testing network reachability...'
+														: 'Click to test network reachability'
+												}
+											>
+												<span className="statusDot" />
+												{statusInfo.status === 'online' && statusInfo.latencyMs !== undefined && (
+													<span className="latencyText">{statusInfo.latencyMs}ms</span>
+												)}
+											</div>
 											<select
 												className="protocolSelect"
 												value={protocol}

@@ -1177,6 +1177,102 @@ class Api {
 		return Array.from(fontSet).sort((a, b) => a.localeCompare(b));
 	};
 
+	/**
+	 * Tests TCP / Yamux / Socket connectivity to a target multiaddr or host:port
+	 */
+	checkAddressConnectivity (win: AppWindow, addrStr: string): Promise<{ reachable: boolean; latencyMs?: number; error?: string; host?: string; port?: number; protocol?: string }> {
+		return new Promise(resolve => {
+			if (!addrStr || typeof addrStr !== 'string') {
+				resolve({ reachable: false, error: 'Empty address' });
+				return;
+			}
+
+			const trimmed = addrStr.trim();
+			let host = '';
+			let port = 0;
+			let protocol = 'tcp';
+
+			if (trimmed.includes('yamux')) {
+				protocol = 'yamux';
+			} else if (trimmed.includes('quic')) {
+				protocol = 'quic';
+			} else if (trimmed.includes('ws') || trimmed.includes('wss')) {
+				protocol = 'ws';
+			}
+
+			// Parse Multiaddr format: /ip4/1.2.3.4/tcp/5000/yamux or /dns4/node.example.com/tcp/443/wss/yamux or /ip6/::1/tcp/5000
+			const ip4Match = trimmed.match(/\/ip4\/([^/]+)/);
+			const ip6Match = trimmed.match(/\/ip6\/([^/]+)/);
+			const dnsMatch = trimmed.match(/\/dns[46]?\/([^/]+)/);
+			const tcpMatch = trimmed.match(/\/tcp\/(\d+)/);
+			const udpMatch = trimmed.match(/\/udp\/(\d+)/);
+
+			if (ip4Match) {
+				host = ip4Match[1];
+			} else if (ip6Match) {
+				host = ip6Match[1];
+			} else if (dnsMatch) {
+				host = dnsMatch[1];
+			}
+
+			if (tcpMatch) {
+				port = parseInt(tcpMatch[1], 10);
+			} else if (udpMatch) {
+				port = parseInt(udpMatch[1], 10);
+			}
+
+			// Fallback: URI or standard host:port (e.g. yamux://192.168.1.50:5000, quic://10.0.0.1:4001, [::1]:5000)
+			if (!host || !port) {
+				const stripped = trimmed.replace(/^[a-z0-9+.-]+:\/\//i, '');
+				const ipv6BracketMatch = stripped.match(/^\[([^\]]+)\]:(\d+)$/);
+				if (ipv6BracketMatch) {
+					host = ipv6BracketMatch[1];
+					port = parseInt(ipv6BracketMatch[2], 10);
+				} else {
+					const standardMatch = stripped.match(/^([^:/]+):(\d+)$/);
+					if (standardMatch) {
+						host = standardMatch[1];
+						port = parseInt(standardMatch[2], 10);
+					}
+				}
+			}
+
+			if (!host || !port || isNaN(port)) {
+				resolve({ reachable: false, error: 'No reachable host:port parsed from address' });
+				return;
+			}
+
+			const net = require('net');
+			const start = Date.now();
+			const socket = new net.Socket();
+			let resolved = false;
+
+			const finish = (reachable: boolean, error?: string) => {
+				if (resolved) return;
+				resolved = true;
+				try {
+					socket.destroy();
+				} catch (e) {}
+				const latencyMs = Date.now() - start;
+				resolve({ reachable, latencyMs: reachable ? latencyMs : undefined, error, host, port, protocol });
+			};
+
+			socket.setTimeout(2500);
+
+			socket.connect(port, host, () => {
+				finish(true);
+			});
+
+			socket.on('timeout', () => {
+				finish(false, 'Timeout (2.5s)');
+			});
+
+			socket.on('error', (err: Error) => {
+				finish(false, err?.message || 'Connection refused');
+			});
+		});
+	};
+
 	payloadBroadcast (win: AppWindow, payload: { type: string; [key: string]: any }): void {
 		if (payload.type == 'openObject') {
 			this.focusWindow(win);
