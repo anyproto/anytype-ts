@@ -494,7 +494,24 @@ class Api {
 		};
 	};
 
-	exit (win: AppWindow | null, signal: string, relaunch: boolean, isUpdate?: boolean): void {
+	relaunch (win: AppWindow | null): void {
+		this.exit(win, '', true, false);
+	};
+
+	exit (win: AppWindow | null, signal?: string | boolean, relaunch?: boolean, isUpdate?: boolean): void {
+		let shouldRelaunch = false;
+		let sig = '';
+
+		if (typeof signal === 'boolean') {
+			shouldRelaunch = signal;
+		} else if (typeof signal === 'string') {
+			sig = signal;
+		}
+
+		if (typeof relaunch === 'boolean') {
+			shouldRelaunch = relaunch;
+		}
+
 		if ((app as any).isQuiting) {
 			return;
 		};
@@ -508,12 +525,12 @@ class Api {
 			win.hide();
 		};
 
-		Util.log('info', '[Api].exit, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
+		Util.log('info', '[Api].exit, relaunch: ' + shouldRelaunch + ', isUpdate: ' + isUpdate);
 
 		// Send shutdown start to all tabs and wait for them to close their sessions
 		this.closeAllTabSessions(win).then(() => {
 			Util.send(win, 'shutdownStart');
-			Server.stop(signal).then(() => this.shutdown(win, relaunch, isUpdate));
+			Server.stop(sig).then(() => this.shutdown(win, shouldRelaunch, Boolean(isUpdate)));
 		});
 	};
 

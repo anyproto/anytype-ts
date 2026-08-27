@@ -34,14 +34,15 @@
 	
 	.menu {
 		border-radius: 12px; position: absolute; z-index: inherit; text-align: left; backface-visibility: hidden;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2); background: var(--color-bg-primary); opacity: 0; transform: scale3d(0.95,0.95,1);
+		box-shadow: 0px 8px 28px rgba(0, 0, 0, 0.28); background: var(--color-bg-primary); opacity: 0; transform: scale3d(0.94,0.94,1) translateY(-4px);
+		border: 1px solid var(--color-shape-secondary);
 	}
 	.menu.fixed { position: fixed; }
 	.menu * { user-select: none; }
 
-	.menu.show { opacity: 1; transform: scale3d(1,1,1); }
+	.menu.show { opacity: 1; transform: scale3d(1,1,1) translateY(0px); }
 	.menu.show:not(.noAnimation) { 
-		transition-property: opacity, transform, height; transition-duration: $transitionMenuTime; transition-timing-function: $easeDecelerate;
+		transition-property: opacity, transform, height; transition-duration: $transitionMenuTime; transition-timing-function: $easeSmooth;
 	}
 	
 	.menu.v1.h3 { transform-origin: 0% 100%; } /* left top */

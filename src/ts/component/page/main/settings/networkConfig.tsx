@@ -77,32 +77,77 @@ const PeerTable = ({
 				let newPeers: PeerEntry[] = [];
 				if (Array.isArray(parsed)) {
 					newPeers = parsed.map((p: any) => ({
-						peerId: String(p.peerId || p.id || ''),
-						addresses: Array.isArray(p.addresses) ? p.addresses.map(String) : (p.address ? [String(p.address)] : []),
+						peerId: String(p.peerId || p.id || '').trim(),
+						addresses: Array.isArray(p.addresses) ? p.addresses.map(a => String(a).trim()).filter(Boolean) : (p.address ? [String(p.address).trim()] : []),
 					})).filter(p => p.peerId || p.addresses.length > 0);
 				} else if (parsed && typeof parsed === 'object') {
-					if (Array.isArray(parsed.staticPeers)) {
-						newPeers = parsed.staticPeers.map((p: any) => ({
-							peerId: String(p.peerId || p.id || ''),
-							addresses: Array.isArray(p.addresses) ? p.addresses.map(String) : (p.address ? [String(p.address)] : []),
-						}));
-					} else if (Array.isArray(parsed.ownAddresses)) {
-						newPeers = parsed.ownAddresses.map((p: any) => ({
-							peerId: String(p.peerId || p.id || ''),
-							addresses: Array.isArray(p.addresses) ? p.addresses.map(String) : (p.address ? [String(p.address)] : []),
-						}));
+					const list = parsed.staticPeers || parsed.ownAddresses || parsed.peers;
+					if (Array.isArray(list)) {
+						newPeers = list.map((p: any) => ({
+							peerId: String(p.peerId || p.id || '').trim(),
+							addresses: Array.isArray(p.addresses) ? p.addresses.map(a => String(a).trim()).filter(Boolean) : (p.address ? [String(p.address).trim()] : []),
+						})).filter(p => p.peerId || p.addresses.length > 0);
 					} else if (parsed.peerId || parsed.addresses || parsed.id) {
 						newPeers = [{
-							peerId: String(parsed.peerId || parsed.id || ''),
-							addresses: Array.isArray(parsed.addresses) ? parsed.addresses.map(String) : (parsed.address ? [String(parsed.address)] : []),
-						}];
+							peerId: String(parsed.peerId || parsed.id || '').trim(),
+							addresses: Array.isArray(parsed.addresses) ? parsed.addresses.map(a => String(a).trim()).filter(Boolean) : (parsed.address ? [String(parsed.address).trim()] : []),
+						}].filter(p => p.peerId || p.addresses.length > 0);
 					}
 				}
-				if (newPeers.length > 0) {
-					onChange([...peers, ...newPeers]);
-					Preview.toastShow({ text: `Imported ${newPeers.length} peer entry(ies) from ${file.name}` });
-				} else {
+
+				if (newPeers.length === 0) {
 					throw new Error('No valid peer entries found in JSON');
+				}
+
+				// Clean existing list and merge incoming without duplicates
+				const cleanExisting = peers.filter(p => p.peerId.trim() || p.addresses.some(a => a.trim()));
+				const resultMap = new Map<string, PeerEntry>();
+
+				cleanExisting.forEach((p, idx) => {
+					const key = p.peerId.trim() || `peer-${idx}`;
+					resultMap.set(key, {
+						peerId: p.peerId,
+						addresses: [...p.addresses],
+					});
+				});
+
+				let addedPeersCount = 0;
+				let addedAddrsCount = 0;
+
+				newPeers.forEach((np, nIdx) => {
+					const key = np.peerId.trim();
+					if (key && resultMap.has(key)) {
+						const existing = resultMap.get(key)!;
+						const addrSet = new Set(existing.addresses.map(a => a.trim()));
+						np.addresses.forEach(addr => {
+							const cleanAddr = addr.trim();
+							if (cleanAddr && !addrSet.has(cleanAddr)) {
+								existing.addresses.push(cleanAddr);
+								addrSet.add(cleanAddr);
+								addedAddrsCount++;
+							}
+						});
+					} else {
+						const newKey = key || `new-peer-${nIdx}`;
+						resultMap.set(newKey, {
+							peerId: np.peerId,
+							addresses: np.addresses.length > 0 ? np.addresses : [''],
+						});
+						addedPeersCount++;
+					}
+				});
+
+				const mergedPeers = Array.from(resultMap.values());
+				onChange(mergedPeers);
+
+				if (addedPeersCount > 0 || addedAddrsCount > 0) {
+					Preview.toastShow({
+						text: `Added ${addedPeersCount} new peer(s) & merged ${addedAddrsCount} new address(es)`,
+					});
+				} else {
+					Preview.toastShow({
+						text: 'All imported peers and addresses are already in your list',
+					});
 				}
 			} catch (err: any) {
 				Preview.toastShow({
@@ -345,7 +390,7 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 						textConfirm: 'Restart Now',
 						textCancel: 'Restart Later',
 						onConfirm: () => {
-							Renderer.send('exit', true);
+							Renderer.send('relaunch');
 						},
 					},
 				});
@@ -363,8 +408,18 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 				const parsed = JSON.parse(content);
 				const cfg = parsed.config || parsed;
 				if (cfg && typeof cfg === 'object') {
-					setConfig(prev => ({ ...prev, ...cfg }));
-					Preview.toastShow({ text: `Imported config from ${file.name}` });
+					let updatedCount = 0;
+					setConfig(prev => {
+						const merged = { ...prev };
+						Object.entries(cfg).forEach(([k, v]) => {
+							if (v !== undefined && v !== null && (merged as any)[k] !== v) {
+								(merged as any)[k] = v;
+								updatedCount++;
+							}
+						});
+						return merged;
+					});
+					Preview.toastShow({ text: `Imported and merged settings from ${file.name}` });
 				} else {
 					throw new Error('Invalid config format');
 				}

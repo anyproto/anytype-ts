@@ -461,9 +461,10 @@ const PageMainSettingsThemeCustomizer = forwardRef<I.PageRef, I.PageSettingsComp
 				const parsed = JSON.parse(content);
 				const imported = parsed.theme || parsed.colors || parsed;
 				if (imported && typeof imported === 'object') {
-					setThemeProps(imported);
-					applyThemeToDocument(imported);
-					Preview.toastShow({ text: `Imported theme from ${file.name}` });
+					const merged = { ...themeProps, ...imported };
+					setThemeProps(merged);
+					applyThemeToDocument(merged);
+					Preview.toastShow({ text: `Imported and merged theme from ${file.name}` });
 				} else {
 					throw new Error('Invalid theme format');
 				}

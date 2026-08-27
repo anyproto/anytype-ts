@@ -3,15 +3,19 @@
 .widget.widgetObject {
 	.contentWrapper { padding: 8px; }
 
-	.item { min-height: 28px; height: auto; padding: 4px 8px; display: flex; flex-direction: row; align-items: center; position: relative; line-height: 20px; }
+	.item { 
+		min-height: 28px; height: auto; padding: 4px 8px; display: flex; flex-direction: row; align-items: center; position: relative; line-height: 20px;
+		transition: transform 0.2s $easeSmooth, background-color 0.2s $easeSmooth, color 0.2s $easeSmooth;
+		border-radius: 6px;
+	}
 	.item {
 		.side.left { display: flex; flex-direction: row; align-items: center; flex-grow: 1; gap: 0px 6px; overflow: hidden; }
 		.side.right { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; flex-shrink: 0; }
 
 		.side.left {
-			.icon { width: 20px; height: 20px; flex-shrink: 0; }
-			.iconObject { flex-shrink: 0; }
-			.name { flex-grow: 1; font-weight: 500; white-space: normal; word-break: break-word; line-height: 1.4; }
+			.icon { width: 20px; height: 20px; flex-shrink: 0; transition: transform 0.2s $easeSmooth; }
+			.iconObject { flex-shrink: 0; transition: transform 0.2s $easeSmooth; }
+			.name { flex-grow: 1; font-weight: 500; white-space: normal; word-break: break-word; line-height: 1.4; transition: color 0.18s ease; }
 		}
 
 		&.isMuted {
@@ -20,17 +24,26 @@
 
 		&::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
-			opacity: 0; border-radius: 6px;
+			opacity: 0; border-radius: 6px; transition: opacity 0.2s $easeSmooth, background-color 0.2s $easeSmooth;
 		}
 		&:hover::before, &.active::before { opacity: 1; }
+		&:hover {
+			transform: translateX(3px);
+			.side.left .icon, .side.left .iconObject {
+				transform: scale(1.06);
+			}
+		}
+		&:active {
+			transform: translateX(1px) scale(0.985);
+		}
 		&:hover, &.active {
 			.buttons { display: flex; }
 		}
 
 		.buttons { flex-shrink: 0; display: flex; flex-direction: row; align-items: center; gap: 0px 6px; display: none; }
 		.buttons {
-			.icon { width: 24px; height: 24px; border-radius: 4px; z-index: 2; cursor: default; color: var(--color-text-secondary); }
-			.icon:hover { color: var(--color-text-primary); }
+			.icon { width: 24px; height: 24px; border-radius: 4px; z-index: 2; cursor: default; color: var(--color-text-secondary); transition: color 0.15s ease, transform 0.15s ease; }
+			.icon:hover { color: var(--color-text-primary); transform: scale(1.1); }
 		}
 	}
 

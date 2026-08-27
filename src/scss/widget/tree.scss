@@ -6,17 +6,26 @@
 
 	.head { padding-bottom: 0px; }
 
-	.item { position: relative; }
+	.item { position: relative; transition: transform 0.2s $easeSmooth; }
 	.item {
 		.inner {
 			display: flex; flex-direction: row; gap: 0px 2px; align-items: center; justify-content: space-between; position: relative;
-			min-height: 28px; height: auto; padding: 4px 4px;
+			min-height: 28px; height: auto; padding: 4px 4px; border-radius: 6px;
+			transition: transform 0.2s $easeSmooth, background-color 0.2s $easeSmooth;
 		}
 		.inner::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
-			border-radius: 6px; opacity: 0; transition: opacity $transitionCommon;
+			border-radius: 6px; opacity: 0; transition: opacity 0.2s $easeSmooth, background-color 0.2s $easeSmooth;
 		}
 		.inner:hover::before, .inner.hover::before { opacity: 1; }
+
+		&:hover:not(.isSection) {
+			.inner { transform: translateX(2.5px); }
+		}
+
+		&:active:not(.isSection) {
+			.inner { transform: translateX(1px) scale(0.985); }
+		}
 
 		&.isSection {
 			.inner { padding-left: 8px; }
@@ -24,7 +33,7 @@
 
 		.dropTarget { border-radius: 4px; }
 
-		.iconObject { flex-basis: 20px; margin-right: 6px; flex-shrink: 0; }
+		.iconObject { flex-basis: 20px; margin-right: 6px; flex-shrink: 0; transition: transform 0.2s $easeSmooth; }
 
 		.arrowWrap { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: default; }
 		.arrowWrap {
@@ -32,7 +41,7 @@
 				.icon.arrow { background-color: var(--color-shape-highlight-medium); }
 			}
 
-			.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background $transitionCommon; border-radius: 4px; cursor: default; color: var(--color-text-primary); }
+			.icon { width: 20px; height: 20px; flex-shrink: 0; transition: background-color 0.18s $easeSmooth, transform 0.24s $easeSmooth; border-radius: 4px; cursor: default; color: var(--color-text-primary); }
 			.icon.arrow { transform: rotate(-90deg); }
 		}
 
@@ -40,7 +49,7 @@
 			flex-grow: 1; display: flex; flex-direction: row; width: calc(100% - 30px); align-items: center; justify-content: space-between;
 			line-height: 1.4;
 		}
-		.name { flex-grow: 1; white-space: normal; word-break: break-word; line-height: 1.4; }
+		.name { flex-grow: 1; white-space: normal; word-break: break-word; line-height: 1.4; transition: color 0.18s ease; }
 	}
 
 	.item.hover, .item.active {
