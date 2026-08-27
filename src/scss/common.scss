@@ -5,7 +5,7 @@
 html, body { height: 100%; }
 
 body {
-	font-family: 'Inter'; @include text-common; color: var(--color-text-primary); overflow: hidden; background: var(--color-bg-primary);
+	font-family: var(--font-family-base, 'Inter'); @include text-common; color: var(--color-text-primary); overflow: hidden; background: var(--color-bg-primary);
 	-webkit-font-smoothing: antialiased; backface-visibility: hidden; transform-style: flat; overscroll-behavior: none;
 }
 body.colResize { cursor: col-resize !important; }
@@ -34,7 +34,7 @@ textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus { transition: background-color 5000s linear 0s; }
-input, textarea, select { font-family: 'Inter'; }
+input, textarea, select { font-family: var(--font-family-base, 'Inter'), inherit; }
 
 #root { height: 100%; }
 #appContainer { display: flex; flex-direction: column; height: 100%; }

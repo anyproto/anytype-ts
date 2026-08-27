@@ -1717,9 +1717,67 @@
 					flex-shrink: 0;
 				}
 
+				.presetFontSample {
+					font-size: 13px;
+					font-weight: 700;
+					line-height: 1;
+					color: var(--color-text-primary);
+					background: var(--color-shape-highlight-dark);
+					padding: 2px 5px;
+					border-radius: 4px;
+					border: 1px solid var(--color-shape-secondary);
+				}
+
 				.presetInfo {
+					display: flex;
+					align-items: center;
+					gap: 4px;
 					.presetName { font-size: 12.5px; color: var(--color-text-secondary); }
 				}
+			}
+		}
+
+		.systemFontSelectRow {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			flex-wrap: wrap;
+
+			.systemFontSelect {
+				height: 34px;
+				min-width: 280px;
+				max-width: 400px;
+				padding: 0 12px;
+				border-radius: 6px;
+				border: 1px solid var(--color-shape-secondary);
+				background-color: var(--color-shape-highlight-medium);
+				color: var(--color-text-primary);
+				font-size: 13px;
+				font-family: inherit;
+				outline: none;
+				cursor: pointer;
+				transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+
+				&:hover {
+					background-color: var(--color-shape-highlight-dark);
+					border-color: var(--color-shape-tertiary);
+				}
+
+				&:focus {
+					border-color: var(--color-control-active);
+					background-color: var(--color-shape-highlight-dark);
+				}
+
+				option {
+					background-color: #222222;
+					color: #e1e1e1;
+					padding: 6px 10px;
+				}
+			}
+
+			.fontSelectHint {
+				font-size: 12px;
+				color: var(--color-text-secondary);
 			}
 		}
 	}
@@ -1886,6 +1944,132 @@
 					gap: 6px;
 
 					.input { flex-grow: 1; font-family: monospace; font-size: 12.5px; }
+
+					.fontFamilySelectWrapper {
+						display: flex;
+						width: 100%;
+						align-items: center;
+						gap: 8px;
+
+						.systemFontSelect {
+							height: 32px;
+							flex-grow: 1;
+							padding: 0 10px;
+							border-radius: 6px;
+							border: 1px solid var(--color-shape-secondary);
+							background-color: var(--color-shape-highlight-medium);
+							color: var(--color-text-primary);
+							font-size: 13px;
+							font-family: inherit;
+							outline: none;
+							cursor: pointer;
+							transition: all 0.15s ease;
+
+							&:hover {
+								background-color: var(--color-shape-highlight-dark);
+								border-color: var(--color-shape-tertiary);
+							}
+
+							&:focus {
+								border-color: var(--color-control-active);
+								background-color: var(--color-shape-highlight-dark);
+							}
+
+							option {
+								background-color: #222222;
+								color: #e1e1e1;
+								padding: 6px 10px;
+							}
+						}
+					}
+
+					.sizeSliderContainer {
+						display: flex;
+						align-items: center;
+						gap: 8px;
+						width: 100%;
+
+						.stepBtn {
+							width: 28px;
+							height: 28px;
+							display: flex;
+							align-items: center;
+							justify-content: center;
+							border-radius: 6px;
+							background: var(--color-shape-highlight-medium);
+							border: 1px solid var(--color-shape-secondary);
+							color: var(--color-text-primary);
+							font-weight: 700;
+							font-size: 15px;
+							cursor: pointer;
+							user-select: none;
+							transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+							flex-shrink: 0;
+
+							&:hover:not(:disabled) {
+								background: var(--color-shape-highlight-dark);
+								border-color: var(--color-control-active);
+								transform: translateY(-1px);
+							}
+
+							&:active:not(:disabled) {
+								transform: scale(0.94);
+							}
+
+							&:disabled {
+								opacity: 0.3;
+								cursor: not-allowed;
+							}
+						}
+
+						.volumeSlider {
+							flex-grow: 1;
+							height: 6px;
+							-webkit-appearance: none;
+							appearance: none;
+							background: var(--color-shape-secondary);
+							border-radius: 3px;
+							outline: none;
+							cursor: pointer;
+							transition: background 0.15s ease;
+
+							&::-webkit-slider-thumb {
+								-webkit-appearance: none;
+								appearance: none;
+								width: 16px;
+								height: 16px;
+								border-radius: 50%;
+								background: var(--color-control-accent, #ffffff);
+								border: 2px solid var(--color-bg-primary);
+								box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+								cursor: pointer;
+								transition: transform 0.15s ease, background-color 0.15s ease;
+
+								&:hover {
+									transform: scale(1.2);
+								}
+
+								&:active {
+									transform: scale(1.1);
+									background: var(--color-blue, #3b82f6);
+								}
+							}
+						}
+
+						.sizeValueBadge {
+							min-width: 54px;
+							padding: 4px 8px;
+							text-align: center;
+							background: var(--color-shape-highlight-dark);
+							border: 1px solid var(--color-shape-secondary);
+							border-radius: 6px;
+							font-size: 12px;
+							font-weight: 600;
+							font-family: monospace;
+							color: var(--color-text-primary);
+							flex-shrink: 0;
+						}
+					}
 
 					.colorResetBtn {
 						cursor: pointer;

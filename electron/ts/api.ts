@@ -1066,6 +1066,100 @@ class Api {
 		};
 	};
 
+	/**
+	 * Enumerates system-installed font family names.
+	 */
+	getSystemFonts (win: AppWindow): string[] {
+		const os = require('os');
+		const platform = process.platform;
+		const fontSet = new Set<string>();
+
+		const defaultFonts = [
+			'Inter',
+			'SF Pro Display',
+			'SF Pro Text',
+			'Helvetica Neue',
+			'Helvetica',
+			'Arial',
+			'Avenir',
+			'Avenir Next',
+			'Futura',
+			'Optima',
+			'Palatino',
+			'Times New Roman',
+			'Georgia',
+			'Charter',
+			'Merriweather',
+			'Menlo',
+			'Monaco',
+			'Courier New',
+			'JetBrains Mono',
+			'Fira Code',
+			'Plex',
+			'Plex Mono',
+			'Segoe UI',
+			'Calibri',
+			'Cambria',
+			'Verdana',
+			'Tahoma',
+			'Trebuchet MS',
+			'Impact',
+			'Comic Sans MS',
+			'Roboto',
+			'Open Sans',
+			'Lato',
+			'Montserrat',
+			'Ubuntu',
+			'Noto Sans',
+			'Cascadia Code',
+			'Consolas',
+		];
+
+		defaultFonts.forEach(f => fontSet.add(f));
+
+		if (platform === 'darwin') {
+			try {
+				const fontDirs = [
+					'/System/Library/Fonts',
+					'/Library/Fonts',
+					path.join(os.homedir(), 'Library/Fonts'),
+				];
+				for (const dir of fontDirs) {
+					if (fs.existsSync(dir)) {
+						const files = fs.readdirSync(dir);
+						for (const file of files) {
+							const ext = path.extname(file).toLowerCase();
+							if (['.ttf', '.otf', '.ttc', '.dfont'].includes(ext)) {
+								const baseName = path.basename(file, ext).replace(/[-_](Regular|Bold|Italic|Medium|Light|SemiBold|Thin|Black|Heavy|Display|Text|Semibold)/i, '').trim();
+								if (baseName && !baseName.startsWith('.')) {
+									fontSet.add(baseName);
+								}
+							}
+						}
+					}
+				}
+			} catch (e) {
+				Util.log('warn', `[Api].getSystemFonts error: ${(e as Error).message}`);
+			}
+		} else if (platform === 'win32') {
+			try {
+				const winFontDir = path.join(process.env.WINDIR || 'C:\\Windows', 'Fonts');
+				if (fs.existsSync(winFontDir)) {
+					const files = fs.readdirSync(winFontDir);
+					for (const file of files) {
+						const ext = path.extname(file).toLowerCase();
+						if (['.ttf', '.otf', '.ttc', '.fon'].includes(ext)) {
+							const baseName = path.basename(file, ext).replace(/[-_](Regular|Bold|Italic|Medium|Light|SemiBold|Thin|Black|Heavy|Semibold)/i, '').trim();
+							if (baseName) fontSet.add(baseName);
+						}
+					}
+				}
+			} catch (e) {}
+		}
+
+		return Array.from(fontSet).sort((a, b) => a.localeCompare(b));
+	};
+
 	payloadBroadcast (win: AppWindow, payload: { type: string; [key: string]: any }): void {
 		if (payload.type == 'openObject') {
 			this.focusWindow(win);

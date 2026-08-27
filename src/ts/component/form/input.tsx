@@ -283,6 +283,10 @@ const Input = forwardRef<InputRef, Props>(({
 	};
 
 	useEffect(() => {
+		setValue(initialValue);
+	}, [initialValue]);
+
+	useEffect(() => {
 		if (maskOptions && inputRef.current) {
 			new Inputmask(maskOptions.mask, maskOptions).mask(inputRef.current);
 		};

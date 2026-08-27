@@ -7,6 +7,11 @@ interface ThemeColorVar {
 	label: string;
 	desc: string;
 	defaultValue: string;
+	type?: 'color' | 'text' | 'size' | 'font-family';
+	min?: number;
+	max?: number;
+	step?: number;
+	unit?: string;
 }
 
 interface ThemeCategory {
@@ -20,44 +25,133 @@ const THEME_CATEGORIES: ThemeCategory[] = [
 		title: 'App Surfaces & Backgrounds',
 		icon: 'settings/overview',
 		vars: [
-			{ key: '--color-bg-primary', label: 'Primary Background', desc: 'Main window and document background', defaultValue: '#171717' },
-			{ key: '--color-bg-secondary', label: 'Secondary Background', desc: 'Modal dialogs, popups and dropdowns', defaultValue: '#191919' },
-			{ key: '--color-shape-highlight-light-solid', label: 'Sidebar Solid Background', desc: 'Left navigation and vault rail background', defaultValue: '#1e1e1e' },
-			{ key: '--color-shape-highlight-light', label: 'Card Surface (Light)', desc: 'Background for cards, tables and panels', defaultValue: 'rgba(255, 255, 255, 0.03)' },
-			{ key: '--color-shape-highlight-medium', label: 'Card Surface (Medium)', desc: 'Hover states, chips and secondary surfaces', defaultValue: 'rgba(255, 255, 255, 0.05)' },
-			{ key: '--color-shape-highlight-dark', label: 'Card Surface (Dark)', desc: 'Active states, pressed cards and headers', defaultValue: 'rgba(255, 255, 255, 0.11)' },
+			{ key: '--color-bg-primary', label: 'Primary Background', desc: 'Main window and document background', defaultValue: '#171717', type: 'color' },
+			{ key: '--color-bg-secondary', label: 'Secondary Background', desc: 'Modal dialogs, popups and dropdowns', defaultValue: '#191919', type: 'color' },
+			{ key: '--color-shape-highlight-light-solid', label: 'Sidebar Solid Background', desc: 'Left navigation and vault rail background', defaultValue: '#1e1e1e', type: 'color' },
+			{ key: '--color-shape-highlight-light', label: 'Card Surface (Light)', desc: 'Background for cards, tables and panels', defaultValue: 'rgba(255, 255, 255, 0.03)', type: 'color' },
+			{ key: '--color-shape-highlight-medium', label: 'Card Surface (Medium)', desc: 'Hover states, chips and secondary surfaces', defaultValue: 'rgba(255, 255, 255, 0.05)', type: 'color' },
+			{ key: '--color-shape-highlight-dark', label: 'Card Surface (Dark)', desc: 'Active states, pressed cards and headers', defaultValue: 'rgba(255, 255, 255, 0.11)', type: 'color' },
 		],
 	},
 	{
 		title: 'Typography & Text Colors',
 		icon: 'settings/style',
 		vars: [
-			{ key: '--color-text-primary', label: 'Primary Text', desc: 'Main headings, body text and labels', defaultValue: '#e1e1e1' },
-			{ key: '--color-text-secondary', label: 'Secondary Text', desc: 'Subtitles, captions and secondary details', defaultValue: '#a3a3a3' },
-			{ key: '--color-text-tertiary', label: 'Tertiary / Muted Text', desc: 'Placeholders, timestamps and hints', defaultValue: '#5c5c5c' },
-			{ key: '--color-text-inversion', label: 'Inverted Text', desc: 'Text on contrasting buttons or highlights', defaultValue: '#171717' },
+			{ key: '--color-text-primary', label: 'Primary Text', desc: 'Main headings, body text and labels', defaultValue: '#e1e1e1', type: 'color' },
+			{ key: '--color-text-secondary', label: 'Secondary Text', desc: 'Subtitles, captions and secondary details', defaultValue: '#a3a3a3', type: 'color' },
+			{ key: '--color-text-tertiary', label: 'Tertiary / Muted Text', desc: 'Placeholders, timestamps and hints', defaultValue: '#5c5c5c', type: 'color' },
+			{ key: '--color-text-inversion', label: 'Inverted Text', desc: 'Text on contrasting buttons or highlights', defaultValue: '#171717', type: 'color' },
 		],
 	},
 	{
 		title: 'Borders & Outlines',
 		icon: 'settings/storage',
 		vars: [
-			{ key: '--color-shape-primary', label: 'Primary Border', desc: 'Main container outlines and separators', defaultValue: '#313131' },
-			{ key: '--color-shape-secondary', label: 'Secondary Border', desc: 'Card borders, table dividers and inputs', defaultValue: '#292929' },
-			{ key: '--color-shape-tertiary', label: 'Tertiary Border', desc: 'Subtle separators and inactive lines', defaultValue: '#232323' },
+			{ key: '--color-shape-primary', label: 'Primary Border', desc: 'Main container outlines and separators', defaultValue: '#313131', type: 'color' },
+			{ key: '--color-shape-secondary', label: 'Secondary Border', desc: 'Card borders, table dividers and inputs', defaultValue: '#292929', type: 'color' },
+			{ key: '--color-shape-tertiary', label: 'Tertiary Border', desc: 'Subtle separators and inactive lines', defaultValue: '#232323', type: 'color' },
 		],
 	},
 	{
 		title: 'Controls, Buttons & Accents',
 		icon: 'sync/globe',
 		vars: [
-			{ key: '--color-control-accent', label: 'Control Accent', desc: 'Action buttons, active highlights and focus rings', defaultValue: '#d4d4d4' },
-			{ key: '--color-control-active', label: 'Control Active', desc: 'Active switches, checkboxes and icons', defaultValue: '#737373' },
-			{ key: '--color-control-inactive', label: 'Control Inactive', desc: 'Disabled switches and muted icons', defaultValue: '#414141' },
-			{ key: '--color-red', label: 'Destructive / Red', desc: 'Delete buttons, error alerts and warnings', defaultValue: '#f25040' },
-			{ key: '--color-blue', label: 'Accent Blue', desc: 'Links and informational highlights', defaultValue: '#6878ee' },
-			{ key: '--color-purple', label: 'Accent Purple', desc: 'Tags and special badges', defaultValue: '#c870e8' },
+			{ key: '--color-control-accent', label: 'Control Accent', desc: 'Action buttons, active highlights and focus rings', defaultValue: '#d4d4d4', type: 'color' },
+			{ key: '--color-control-active', label: 'Control Active', desc: 'Active switches, checkboxes and icons', defaultValue: '#737373', type: 'color' },
+			{ key: '--color-control-inactive', label: 'Control Inactive', desc: 'Disabled switches and muted icons', defaultValue: '#414141', type: 'color' },
+			{ key: '--color-red', label: 'Destructive / Red', desc: 'Delete buttons, error alerts and warnings', defaultValue: '#f25040', type: 'color' },
+			{ key: '--color-blue', label: 'Accent Blue', desc: 'Links and informational highlights', defaultValue: '#6878ee', type: 'color' },
+			{ key: '--color-purple', label: 'Accent Purple', desc: 'Tags and special badges', defaultValue: '#c870e8', type: 'color' },
 		],
+	},
+	{
+		title: 'Fonts',
+		icon: 'settings/type',
+		vars: [
+			{ key: '--font-family-base', label: 'Main Font Family', desc: 'Select any installed system font or default Inter', defaultValue: "'Inter'", type: 'font-family' },
+			{ key: '--font-size-common', label: 'Base Body Size', desc: 'Standard body text across UI and sidebar', defaultValue: '15px', type: 'size', min: 11, max: 24, step: 0.5, unit: 'px' },
+			{ key: '--font-size-paragraph', label: 'Paragraph Size', desc: 'Document body paragraphs and notes', defaultValue: '16px', type: 'size', min: 12, max: 26, step: 0.5, unit: 'px' },
+			{ key: '--font-size-small', label: 'Small / Metadata Size', desc: 'Captions, hints, dates and badges', defaultValue: '13px', type: 'size', min: 9, max: 18, step: 0.5, unit: 'px' },
+			{ key: '--font-size-title', label: 'Document Title Size', desc: 'Main page and document title', defaultValue: '36px', type: 'size', min: 20, max: 56, step: 1, unit: 'px' },
+			{ key: '--font-size-header1', label: 'Header 1 Size', desc: 'Major section headings (H1)', defaultValue: '29px', type: 'size', min: 18, max: 44, step: 1, unit: 'px' },
+			{ key: '--font-size-header2', label: 'Header 2 Size', desc: 'Secondary section headings (H2)', defaultValue: '23px', type: 'size', min: 14, max: 34, step: 1, unit: 'px' },
+			{ key: '--font-size-header3', label: 'Header 3 Size', desc: 'Subsection headings (H3)', defaultValue: '19px', type: 'size', min: 12, max: 28, step: 1, unit: 'px' },
+			{ key: '--line-height-common', label: 'Base Line Height', desc: 'Line spacing for body text', defaultValue: '23px', type: 'size', min: 14, max: 36, step: 1, unit: 'px' },
+			{ key: '--line-height-paragraph', label: 'Paragraph Line Height', desc: 'Line spacing for paragraphs', defaultValue: '25px', type: 'size', min: 16, max: 40, step: 1, unit: 'px' },
+			{ key: '--letter-spacing-common', label: 'Letter Spacing', desc: 'Character tracking for body text', defaultValue: '-0.1px', type: 'size', min: -1, max: 2, step: 0.05, unit: 'px' },
+		],
+	},
+];
+
+const FONT_PRESETS: { name: string; desc: string; fontFamily: string }[] = [
+	{ name: 'Inter (Default)', desc: 'Original Anytype font', fontFamily: "'Inter'" },
+	{ name: 'System Native', desc: 'Apple San Francisco / Windows Segoe UI', fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" },
+	{ name: 'IBM Plex Sans', desc: 'Technical and engineered typography', fontFamily: "'Plex', 'IBM Plex Sans', sans-serif" },
+	{ name: 'Monospace Code', desc: 'Developer style monospaced font', fontFamily: "'JetBrains Mono', 'Fira Code', 'Plex Mono', monospace" },
+	{ name: 'Editorial Serif', desc: 'Warm book and article editorial style', fontFamily: "'Georgia', 'Merriweather', 'Charter', serif" },
+	{ name: 'Outfit / Geometric', desc: 'Friendly geometric rounded sans', fontFamily: "'Outfit', 'Plus Jakarta Sans', sans-serif" },
+];
+
+const FONT_SCALE_PRESETS: { name: string; desc: string; sizes: Record<string, string> }[] = [
+	{
+		name: 'Compact (Dense UI)',
+		desc: 'Smaller text for power users',
+		sizes: {
+			'--font-size-common': '13.5px',
+			'--font-size-paragraph': '14.5px',
+			'--font-size-small': '11.5px',
+			'--font-size-title': '30px',
+			'--font-size-header1': '24px',
+			'--font-size-header2': '20px',
+			'--font-size-header3': '16.5px',
+			'--line-height-common': '20px',
+			'--line-height-paragraph': '22px',
+		},
+	},
+	{
+		name: 'Standard (Default)',
+		desc: 'Balanced Anytype proportions',
+		sizes: {
+			'--font-size-common': '15px',
+			'--font-size-paragraph': '16px',
+			'--font-size-small': '13px',
+			'--font-size-title': '36px',
+			'--font-size-header1': '29px',
+			'--font-size-header2': '23px',
+			'--font-size-header3': '19px',
+			'--line-height-common': '23px',
+			'--line-height-paragraph': '25px',
+		},
+	},
+	{
+		name: 'Comfortable (+10%)',
+		desc: 'Spacious and relaxed reading',
+		sizes: {
+			'--font-size-common': '16.5px',
+			'--font-size-paragraph': '17.5px',
+			'--font-size-small': '14px',
+			'--font-size-title': '40px',
+			'--font-size-header1': '32px',
+			'--font-size-header2': '25px',
+			'--font-size-header3': '21px',
+			'--line-height-common': '25px',
+			'--line-height-paragraph': '28px',
+		},
+	},
+	{
+		name: 'Large (+20%)',
+		desc: 'High clarity and accessibility',
+		sizes: {
+			'--font-size-common': '18px',
+			'--font-size-paragraph': '19.5px',
+			'--font-size-small': '15px',
+			'--font-size-title': '44px',
+			'--font-size-header1': '35px',
+			'--font-size-header2': '28px',
+			'--font-size-header3': '23px',
+			'--line-height-common': '28px',
+			'--line-height-paragraph': '31px',
+		},
 	},
 ];
 
@@ -204,9 +298,9 @@ const PRESETS: { name: string; desc: string; colors: Record<string, string> }[] 
 
 const STORAGE_KEY = 'anytype_custom_theme';
 
-export const applyThemeToDocument = (colors: Record<string, string>) => {
+export const applyThemeToDocument = (themeProps: Record<string, string>) => {
 	const root = document.documentElement;
-	Object.entries(colors).forEach(([key, val]) => {
+	Object.entries(themeProps).forEach(([key, val]) => {
 		if (val) {
 			root.style.setProperty(key, val);
 		} else {
@@ -229,61 +323,132 @@ export const loadStoredTheme = (): Record<string, string> => {
 const PageMainSettingsThemeCustomizer = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
-	const [colors, setColors] = useState<Record<string, string>>(() => {
+	const [themeProps, setThemeProps] = useState<Record<string, string>>(() => {
 		return loadStoredTheme();
 	});
 
+	const [systemFonts, setSystemFonts] = useState<string[]>([]);
 	const [activeCategory, setActiveCategory] = useState<number>(0);
 	const [activePreset, setActivePreset] = useState<string>('');
 
-	useEffect(() => {
-		applyThemeToDocument(colors);
-	}, [colors]);
+	const getActiveFontValue = (currentFontProp?: string): string => {
+		if (!currentFontProp || currentFontProp === "'Inter'" || currentFontProp === 'Inter') {
+			return 'Inter';
+		}
+		const matchedPreset = FONT_PRESETS.find(p => p.fontFamily === currentFontProp);
+		if (matchedPreset) {
+			return matchedPreset.fontFamily;
+		}
+		const cleaned = currentFontProp.replace(/^['"]|['"]$/g, '').replace(/,\s*sans-serif/i, '').trim();
+		return cleaned;
+	};
 
-	const handleColorChange = (key: string, value: string) => {
-		const next = { ...colors, [key]: value };
-		setColors(next);
+	useEffect(() => {
+		const loadFonts = async () => {
+			const fontSet = new Set<string>();
+
+			if (typeof (window as any).queryLocalFonts === 'function') {
+				try {
+					const localFonts = await (window as any).queryLocalFonts();
+					localFonts.forEach((f: any) => {
+						if (f.family) fontSet.add(f.family);
+					});
+				} catch (e) {}
+			}
+
+			try {
+				const ipcFonts = await Renderer.send('getSystemFonts');
+				if (Array.isArray(ipcFonts)) {
+					ipcFonts.forEach((f: string) => fontSet.add(f));
+				}
+			} catch (e) {}
+
+			if (fontSet.size > 0) {
+				setSystemFonts(Array.from(fontSet).sort((a, b) => a.localeCompare(b)));
+			}
+		};
+
+		loadFonts();
+	}, []);
+
+	useEffect(() => {
+		applyThemeToDocument(themeProps);
+	}, [themeProps]);
+
+	const handlePropChange = (key: string, value: string) => {
+		const next = { ...themeProps, [key]: value };
+		setThemeProps(next);
 		applyThemeToDocument(next);
 	};
 
-	const applyPreset = (preset: typeof PRESETS[0]) => {
+	const applyColorPreset = (preset: typeof PRESETS[0]) => {
 		setActivePreset(preset.name);
-		setColors(preset.colors);
-		applyThemeToDocument(preset.colors);
-		Preview.toastShow({ text: `Applied "${preset.name}" theme preset` });
+		const next = { ...themeProps, ...preset.colors };
+		setThemeProps(next);
+		applyThemeToDocument(next);
+		Preview.toastShow({ text: `Applied "${preset.name}" theme palette` });
+	};
+
+	const applyFontFamily = (fontPreset: typeof FONT_PRESETS[0]) => {
+		if (fontPreset.name.includes('Default')) {
+			const next = { ...themeProps };
+			delete next['--font-family-base'];
+			setThemeProps(next);
+			document.documentElement.style.removeProperty('--font-family-base');
+			Preview.toastShow({ text: 'Restored default Anytype Inter font' });
+		} else {
+			handlePropChange('--font-family-base', fontPreset.fontFamily);
+			Preview.toastShow({ text: `Applied font family: ${fontPreset.name}` });
+		}
+	};
+
+	const applyFontScale = (scalePreset: typeof FONT_SCALE_PRESETS[0]) => {
+		if (scalePreset.name.includes('Default')) {
+			const next = { ...themeProps };
+			Object.keys(scalePreset.sizes).forEach(k => {
+				delete next[k];
+				document.documentElement.style.removeProperty(k);
+			});
+			setThemeProps(next);
+			Preview.toastShow({ text: 'Restored default Anytype typography scale' });
+		} else {
+			const next = { ...themeProps, ...scalePreset.sizes };
+			setThemeProps(next);
+			applyThemeToDocument(next);
+			Preview.toastShow({ text: `Applied font scale: ${scalePreset.name}` });
+		}
 	};
 
 	const saveTheme = () => {
 		try {
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(colors));
-			Preview.toastShow({ text: 'Theme customization saved successfully' });
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(themeProps));
+			Preview.toastShow({ text: 'Theme & Typography settings saved successfully' });
 		} catch (e: any) {
-			Preview.toastShow({ icon: 'notice', text: `Failed to save theme: ${e.message}` });
+			Preview.toastShow({ icon: 'notice', text: `Failed to save: ${e.message}` });
 		}
 	};
 
 	const resetToDefault = () => {
 		localStorage.removeItem(STORAGE_KEY);
-		setColors({});
+		setThemeProps({});
 		setActivePreset('');
-		// Remove inline style properties from root
 		const root = document.documentElement;
 		THEME_CATEGORIES.forEach(cat => {
 			cat.vars.forEach(v => {
 				root.style.removeProperty(v.key);
 			});
 		});
-		Preview.toastShow({ text: 'Reset all colors to Anytype default theme' });
+		Preview.toastShow({ text: 'Reset all colors and typography to defaults' });
 	};
 
 	const exportThemeJson = () => {
 		const payload = {
 			name: activePreset || 'Custom Anytype Theme',
-			version: '1.0',
-			colors,
+			version: '2.0',
+			theme: themeProps,
 		};
 		U.Common.clipboardCopy({ text: JSON.stringify(payload, null, 2) });
-		Preview.toastShow({ text: 'Theme JSON copied to clipboard' });
+		Preview.toastShow({ text: 'Theme & Typography JSON copied to clipboard' });
 	};
 
 	const importThemeJson = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -294,10 +459,10 @@ const PageMainSettingsThemeCustomizer = forwardRef<I.PageRef, I.PageSettingsComp
 			try {
 				const content = event.target?.result as string;
 				const parsed = JSON.parse(content);
-				const importedColors = parsed.colors || parsed;
-				if (importedColors && typeof importedColors === 'object') {
-					setColors(importedColors);
-					applyThemeToDocument(importedColors);
+				const imported = parsed.theme || parsed.colors || parsed;
+				if (imported && typeof imported === 'object') {
+					setThemeProps(imported);
+					applyThemeToDocument(imported);
 					Preview.toastShow({ text: `Imported theme from ${file.name}` });
 				} else {
 					throw new Error('Invalid theme format');
@@ -310,21 +475,22 @@ const PageMainSettingsThemeCustomizer = forwardRef<I.PageRef, I.PageSettingsComp
 		reader.readAsText(file);
 	};
 
-	// Convert rgba or complex value to a simple hex for input[type=color] if possible
 	const getDisplayColor = (key: string, defaultValue: string): string => {
-		const current = colors[key] || defaultValue;
+		const current = themeProps[key] || defaultValue;
 		if (current.startsWith('#') && (current.length === 7 || current.length === 4)) {
 			return current;
 		}
 		return '#222222';
 	};
 
+	const isFontTab = THEME_CATEGORIES[activeCategory]?.title === 'Fonts';
+
 	return (
 		<div className="pageSettingsThemeCustomizer">
 			<div className="titleWrapper">
 				<div>
 					<Title text="Theme Customizer" />
-					<div className="titleSub">Customize component colors, backgrounds, borders, and typography palette.</div>
+					<div className="titleSub">Customize component colors, backgrounds, borders, font families, and sizing scale.</div>
 				</div>
 				<div className="headerActions">
 					<input
@@ -364,14 +530,14 @@ const PageMainSettingsThemeCustomizer = forwardRef<I.PageRef, I.PageSettingsComp
 			<div className="presetsCard">
 				<div className="presetsHeader">
 					<Icon name="settings/style" size={16} />
-					<span>Quick Theme Presets</span>
+					<span>Quick Color Presets</span>
 				</div>
 				<div className="presetsList">
 					{PRESETS.map(preset => (
 						<div
 							key={preset.name}
 							className={['presetChip', activePreset === preset.name ? 'active' : ''].join(' ')}
-							onClick={() => applyPreset(preset)}
+							onClick={() => applyColorPreset(preset)}
 						>
 							<span
 								className="presetColorPreview"
@@ -392,12 +558,19 @@ const PageMainSettingsThemeCustomizer = forwardRef<I.PageRef, I.PageSettingsComp
 			<div className="themeLivePreview">
 				<div className="previewHeader">
 					<Icon name="sync/globe" size={16} />
-					<span>Live Component Preview</span>
+					<span>Live Component & Typography Preview</span>
 				</div>
 				<div className="previewBody">
 					<div className="previewCard">
-						<div className="previewCardTitle">Sample Component Card</div>
-						<div className="previewCardDesc">This is how your interface components, text, inputs and buttons render in real-time.</div>
+						<div className="previewCardTitle" style={{ fontSize: 'var(--font-size-header1, 24px)' }}>
+							Heading 1 Document Title
+						</div>
+						<div className="previewCardSubtitle" style={{ fontSize: 'var(--font-size-header3, 18px)', color: 'var(--color-text-secondary)' }}>
+							Heading 3 Subtitle & Metadata Section
+						</div>
+						<div className="previewCardDesc" style={{ fontSize: 'var(--font-size-paragraph, 16px)' }}>
+							This is a live paragraph showing how typography sizes, line-heights, letter spacing and theme colors render across your workspace.
+						</div>
 						<div className="previewRow">
 							<Input size={28} value="Sample text input field" onChange={() => {}} />
 							<Button size={28} color="accent" text="Accent Button" onClick={() => {}} />
@@ -421,12 +594,75 @@ const PageMainSettingsThemeCustomizer = forwardRef<I.PageRef, I.PageSettingsComp
 				))}
 			</div>
 
-			{/* Color Variable Controls */}
+			{/* Variable Controls Tab Content */}
 			<div className="tabContent">
+				{isFontTab && (
+					<div className="fontTabHeaderCards">
+						{/* Quick Font Presets */}
+						<div className="presetsCard fontPresetsSection" style={{ marginBottom: '12px' }}>
+							<div className="presetsHeader">
+								<Icon name="settings/style" size={16} />
+								<span>Quick Font Presets</span>
+							</div>
+							<div className="presetsList">
+								{FONT_PRESETS.map(fp => (
+									<div
+										key={fp.name}
+										className={['presetChip', (themeProps['--font-family-base'] === fp.fontFamily || (!themeProps['--font-family-base'] && fp.name.includes('Default'))) ? 'active' : ''].join(' ')}
+										onClick={() => applyFontFamily(fp)}
+									>
+										<span className="presetFontSample" style={{ fontFamily: fp.fontFamily }}>Aa</span>
+										<div className="presetInfo">
+											<span className="presetName">{fp.name}</span>
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+
+						{/* Typography Sizing Scales */}
+						<div className="presetsCard fontPresetsSection" style={{ marginBottom: '16px' }}>
+							<div className="presetsHeader">
+								<Icon name="settings/overview" size={16} />
+								<span>Typography Sizing Scales</span>
+							</div>
+							<div className="presetsList">
+								{FONT_SCALE_PRESETS.map(sp => (
+									<div
+										key={sp.name}
+										className="presetChip"
+										onClick={() => applyFontScale(sp)}
+									>
+										<div className="presetInfo">
+											<span className="presetName">{sp.name}</span>
+											<span className="presetDesc" style={{ fontSize: '11px', opacity: 0.6, marginLeft: '4px' }}>({sp.desc})</span>
+										</div>
+									</div>
+								))}
+							</div>
+						</div>
+					</div>
+				)}
+
 				<div className="colorGrid">
 					{THEME_CATEGORIES[activeCategory].vars.map(v => {
-						const currentValue = colors[v.key] !== undefined ? colors[v.key] : v.defaultValue;
-						const hexVal = getDisplayColor(v.key, v.defaultValue);
+						const currentValue = themeProps[v.key] !== undefined ? themeProps[v.key] : v.defaultValue;
+						const isColor = v.type === 'color';
+						const isFontFamily = v.type === 'font-family';
+						const isSize = v.type === 'size';
+
+						const hexVal = isColor ? getDisplayColor(v.key, v.defaultValue) : '#222222';
+						const numVal = isSize ? (parseFloat(currentValue) || parseFloat(v.defaultValue) || 15) : 0;
+						const unit = v.unit || 'px';
+						const min = v.min ?? 10;
+						const max = v.max ?? 30;
+						const step = v.step ?? 0.5;
+
+						const updateSize = (newVal: number) => {
+							const clamped = Math.min(max, Math.max(min, newVal));
+							const formatted = `${clamped}${unit}`;
+							handlePropChange(v.key, formatted);
+						};
 
 						return (
 							<div key={v.key} className="colorCard">
@@ -436,36 +672,129 @@ const PageMainSettingsThemeCustomizer = forwardRef<I.PageRef, I.PageSettingsComp
 										<div className="colorVarKey"><code>{v.key}</code></div>
 										<div className="colorDesc">{v.desc}</div>
 									</div>
-									<div className="colorPickerWrapper">
-										<input
-											type="color"
-											className="colorPicker"
-											value={hexVal}
-											onChange={e => handleColorChange(v.key, e.target.value)}
-										/>
-									</div>
+									{isColor && (
+										<div className="colorPickerWrapper">
+											<input
+												type="color"
+												className="colorPicker"
+												value={hexVal}
+												onChange={e => handlePropChange(v.key, e.target.value)}
+											/>
+										</div>
+									)}
 								</div>
 
 								<div className="colorInputRow">
-									<Input
-										size={28}
-										value={currentValue}
-										placeholder={v.defaultValue}
-										onChange={(e, val) => handleColorChange(v.key, val)}
-									/>
-									{colors[v.key] && (
-										<div
-											className="colorResetBtn"
-											onClick={() => {
-												const next = { ...colors };
-												delete next[v.key];
-												setColors(next);
-												document.documentElement.style.removeProperty(v.key);
-											}}
-											title="Reset this variable to default"
-										>
-											<Icon name="menu/action/remove" size={14} />
+									{isFontFamily ? (
+										<div className="fontFamilySelectWrapper" style={{ display: 'flex', width: '100%', alignItems: 'center', gap: '8px' }}>
+											<select
+												className="systemFontSelect"
+												value={getActiveFontValue(themeProps['--font-family-base'])}
+												onChange={e => {
+													const val = e.target.value;
+													if (val === 'Inter' || val === "'Inter'" || val === 'default') {
+														const next = { ...themeProps };
+														delete next['--font-family-base'];
+														setThemeProps(next);
+														document.documentElement.style.removeProperty('--font-family-base');
+														Preview.toastShow({ text: 'Restored default Anytype Inter font' });
+													} else {
+														const formatted = val.includes(',') ? val : `'${val}', sans-serif`;
+														handlePropChange('--font-family-base', formatted);
+														Preview.toastShow({ text: `Set font family: ${val.replace(/['",]/g, ' ').trim()}` });
+													}
+												}}
+											>
+												<option value="Inter">Inter (Default Anytype)</option>
+
+												<optgroup label="Popular Presets">
+													{FONT_PRESETS.filter(p => !p.name.includes('Default')).map(fp => (
+														<option key={fp.fontFamily} value={fp.fontFamily}>
+															{fp.name}
+														</option>
+													))}
+												</optgroup>
+
+												<optgroup label="System Installed Fonts">
+													{systemFonts.filter(f => f !== 'Inter').map(fontName => (
+														<option key={fontName} value={fontName}>
+															{fontName}
+														</option>
+													))}
+												</optgroup>
+											</select>
 										</div>
+									) : isSize ? (
+										<div className="sizeSliderContainer">
+											<button
+												type="button"
+												className="stepBtn"
+												onClick={() => updateSize(Number((numVal - step).toFixed(2)))}
+												disabled={numVal <= min}
+												title="Decrease"
+											>
+												-
+											</button>
+											<input
+												type="range"
+												className="volumeSlider"
+												min={min}
+												max={max}
+												step={step}
+												value={numVal}
+												onChange={e => updateSize(parseFloat(e.target.value))}
+											/>
+											<button
+												type="button"
+												className="stepBtn"
+												onClick={() => updateSize(Number((numVal + step).toFixed(2)))}
+												disabled={numVal >= max}
+												title="Increase"
+											>
+												+
+											</button>
+											<div className="sizeValueBadge">
+												{numVal}{unit}
+											</div>
+											{themeProps[v.key] && (
+												<div
+													className="colorResetBtn"
+													onClick={() => {
+														const next = { ...themeProps };
+														delete next[v.key];
+														setThemeProps(next);
+														document.documentElement.style.removeProperty(v.key);
+													}}
+													title="Reset size to default"
+												>
+													<Icon name="menu/action/remove" size={14} />
+												</div>
+											)}
+										</div>
+									) : (
+										<>
+											<Input
+												key={`${v.key}-${currentValue}`}
+												size={28}
+												value={currentValue}
+												placeholder={v.defaultValue}
+												onChange={(e, val) => handlePropChange(v.key, val)}
+											/>
+											{themeProps[v.key] && (
+												<div
+													className="colorResetBtn"
+													onClick={() => {
+														const next = { ...themeProps };
+														delete next[v.key];
+														setThemeProps(next);
+														document.documentElement.style.removeProperty(v.key);
+													}}
+													title="Reset this variable to default"
+												>
+													<Icon name="menu/action/remove" size={14} />
+												</div>
+											)}
+										</>
 									)}
 								</div>
 							</div>
