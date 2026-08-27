@@ -1000,6 +1000,72 @@ class Api {
 		shell.beep();
 	};
 
+	/**
+	 * Reads config.json, own-address.json and static-peers.json from the given account directory.
+	 * @param {AppWindow} win - The window (unused, for API consistency)
+	 * @param {string} accountPath - Absolute path to the account data directory (e.g. .../anytype/data/<accountId>)
+	 * @returns {{ config: object|null, ownAddresses: any[]|null, staticPeers: any[]|null, error?: string }}
+	 */
+	readNetworkFiles (win: AppWindow, accountPath: string): Record<string, any> {
+		if (!accountPath) {
+			return { error: 'accountPath is required' };
+		};
+
+		const readJson = (filePath: string): any => {
+			try {
+				if (fs.existsSync(filePath)) {
+					return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+				};
+			} catch (e: unknown) {
+				Util.log('warn', `[Api].readNetworkFiles: failed to read ${filePath}: ${(e as Error).message}`);
+			};
+			return null;
+		};
+
+		return {
+			config: readJson(path.join(accountPath, 'config.json')),
+			ownAddresses: readJson(path.join(accountPath, 'own-address.json')),
+			staticPeers: readJson(path.join(accountPath, 'static-peers.json')),
+		};
+	};
+
+	/**
+	 * Writes config.json, own-address.json and static-peers.json to the given account directory.
+	 * @param {AppWindow} win - The window (unused, for API consistency)
+	 * @param {object} data - { accountPath, config?, ownAddresses?, staticPeers? }
+	 * @returns {{ error?: string }}
+	 */
+	writeNetworkFiles (win: AppWindow, data: { accountPath: string; config?: object; ownAddresses?: any[]; staticPeers?: any[] }): Record<string, any> {
+		const { accountPath, config, ownAddresses, staticPeers } = data || {};
+
+		if (!accountPath) {
+			return { error: 'accountPath is required' };
+		};
+
+		const writeJson = (filePath: string, content: any): void => {
+			try {
+				fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
+			} catch (e: unknown) {
+				throw new Error(`Failed to write ${path.basename(filePath)}: ${(e as Error).message}`);
+			};
+		};
+
+		try {
+			if (config !== undefined) {
+				writeJson(path.join(accountPath, 'config.json'), config);
+			};
+			if (ownAddresses !== undefined) {
+				writeJson(path.join(accountPath, 'own-address.json'), ownAddresses);
+			};
+			if (staticPeers !== undefined) {
+				writeJson(path.join(accountPath, 'static-peers.json'), staticPeers);
+			};
+			return {};
+		} catch (e: unknown) {
+			return { error: (e as Error).message };
+		};
+	};
+
 	payloadBroadcast (win: AppWindow, payload: { type: string; [key: string]: any }): void {
 		if (payload.type == 'openObject') {
 			this.focusWindow(win);

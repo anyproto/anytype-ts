@@ -1983,9 +1983,11 @@ class UtilMenu {
 			spaceList: translate('popupSettingsSpacesListTitle'),
 			dataPublish: translate('popupSettingsDataManagementDataPublishTitle'),
 			api: translate('popupSettingsApiTitle'),
+			networkConfig: 'Network Config',
 			set: types,
 			relation: relations,
 		};
+
 	};
 
 	/**
