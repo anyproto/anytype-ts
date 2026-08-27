@@ -15,16 +15,29 @@
 	.txt, .icon { display: none; }
 }
 
-.button.accent { background: var(--color-system-accent-100); color: #fff; }
 .button.accent {
-	&.disabled { background-color: var(--color-shape-secondary); color: var(--color-text-tertiary); opacity: 1; }
+	background: var(--color-control-accent);
+	color: var(--color-bg-primary);
+	border-radius: 8px;
+	font-weight: 500;
+	transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+.button.accent {
+	&.disabled {
+		background-color: var(--color-shape-secondary);
+		color: var(--color-text-tertiary);
+		opacity: 0.6;
+		pointer-events: none;
+	}
 	&:not(.disabled) {
-		&:hover, &.hover { background: var(--color-system-accent-125); }
+		&:hover, &.hover {
+			opacity: 0.88;
+		}
 	}
 
 	.loaderWrapper {
 		.dots {
-			.dot { border-color: #fff; animation-name: dots-accent; }
+			.dot { border-color: var(--color-bg-primary); animation-name: dots-accent; }
 		}
 	}
 }
@@ -54,11 +67,11 @@
 	&:hover, &.hover, &.active { background: var(--color-shape-highlight-medium); }
 }
 
-.button.size48 { @include text-paragraph; height: 48px; border-radius: 24px; padding: 0px 16px; }
-.button.size36 { @include text-common; height: 36px; border-radius: 18px; padding: 0px 12px; }
-.button.size32 { @include text-small; height: 32px; border-radius: 16px; padding: 0px 10px; }
-.button.size28 { @include text-common; height: 28px; border-radius: 14px; padding: 0px 10px; }
-.button.size16 { @include text-9; height: 16px; border-radius: 8px; padding: 0px 4px; }
+.button.size48 { font-size: 15px; line-height: 22px; font-weight: 500; height: 48px; border-radius: 12px; padding: 0px 16px; }
+.button.size36 { font-size: 14px; line-height: 20px; font-weight: 500; height: 36px; border-radius: 8px; padding: 0px 12px; }
+.button.size32 { font-size: 13.5px; line-height: 18px; font-weight: 500; height: 32px; border-radius: 8px; padding: 0px 12px; }
+.button.size28 { font-size: 13px; line-height: 16px; font-weight: 500; height: 28px; border-radius: 6px; padding: 0px 10px; }
+.button.size16 { font-size: 11px; line-height: 14px; font-weight: 500; height: 16px; border-radius: 4px; padding: 0px 4px; }
 
 input.button { line-height: 1; }
 

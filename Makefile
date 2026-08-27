@@ -9,32 +9,40 @@
 #   make clean    — dist/ temizle
 # =============================================================================
 
-.PHONY: build install copy dev clean deps help
+.PHONY: build install copy dev clean deps help _ensure-bun
 
-# Paket yöneticisini otomatik tespit et
-PM := $(shell command -v bun 2>/dev/null && echo bun || echo npm)
-
-# Sentinel dosyası: node_modules en son npm install ne zaman çalıştı
+# Sentinel dosyası: node_modules en son install ne zaman çalıştı
 NODE_MODULES_STAMP := node_modules/.install-stamp
 
 # dist/ çıktısının var olup olmadığını kontrol et
 DIST_INDEX := dist/js
 
+BUN_BIN := $(shell command -v bun 2>/dev/null || echo $$HOME/.bun/bin/bun)
+
+# ─── Bun kurulumu ─────────────────────────────────────────────────────────────
+_ensure-bun:
+	@if ! command -v bun >/dev/null 2>&1 && [ ! -x "$(BUN_BIN)" ]; then \
+		echo "\033[1m\033[33m▶ bun bulunamadı, kuruluyor...\033[0m"; \
+		curl -fsSL https://bun.sh/install | bash; \
+		echo "\033[32m✅ bun kuruldu.\033[0m"; \
+	fi
+
 # ─── Bağımlılık kurulumu ──────────────────────────────────────────────────────
 # package.json değiştiyse veya node_modules yoksa otomatik çalışır
-$(NODE_MODULES_STAMP): package.json
-	@echo "\033[1m\033[33m▶ Bağımlılıklar kuruluyor ($(PM) install)...\033[0m"
-	$(PM) install
+$(NODE_MODULES_STAMP): package.json | _ensure-bun
+	@echo "\033[1m\033[33m▶ Bağımlılıklar kuruluyor (bun install)...\033[0m"
+	PATH="$$HOME/.bun/bin:$$PATH" $(BUN_BIN) install
 	@touch $(NODE_MODULES_STAMP)
 	@echo "\033[32m✅ Bağımlılıklar kuruldu.\033[0m"
+
 
 ## deps: Bağımlılıkları kur (npm/bun install)
 deps: $(NODE_MODULES_STAMP)
 
 ## build: Bağımlılıkları kur + UI'ı derle → dist/
 build: $(NODE_MODULES_STAMP)
-	@echo "\033[1m\033[36m▶ UI derleniyor ($(PM) run build)...\033[0m"
-	$(PM) run build
+	@echo "\033[1m\033[36m▶ UI derleniyor (bun run build)...\033[0m"
+	PATH="$$HOME/.bun/bin:$$PATH" $(BUN_BIN) run build
 	@echo "\033[32m✅ Derleme tamamlandı → dist/\033[0m"
 
 ## install: UI'ı derle ve kurulu Anytype'a kopyala
@@ -56,7 +64,9 @@ copy:
 ## dev: Geliştirme sunucusunu başlat
 dev: $(NODE_MODULES_STAMP)
 	@echo "\033[1m\033[36m▶ Geliştirme sunucusu başlatılıyor...\033[0m"
-	$(PM) run dev
+	PATH="$$HOME/.bun/bin:$$PATH" $(BUN_BIN) run dev
+
+
 
 ## clean: dist/ ve bağımlılık damgasını temizle
 clean:

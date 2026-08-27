@@ -216,7 +216,6 @@ func extractAsar(asarPath string) string {
 }
 
 // repackAsar, extract edilmiş dizinden yeni bir app.asar oluşturur.
-// Mevcut ASAR yedeklenir (.asar.bak).
 func repackAsar(srcDir, asarPath, unpackedDir string) {
 	info("ASAR yeniden paketleniyor...")
 
@@ -225,22 +224,27 @@ func repackAsar(srcDir, asarPath, unpackedDir string) {
 		return
 	}
 
-	// Yedek
-	backupPath := asarPath + ".bak"
-	if err := copyFile(asarPath, backupPath); err != nil {
-		warn("ASAR yedeği alınamadı: %v", err)
-	} else {
-		verbose("Yedek: %s", backupPath)
-	}
-
 	// Hangi klasörler unpacked kalmalı? Mevcut unpacked'ı tarayarak tespit et.
 	unpackGlob := buildUnpackGlob(unpackedDir)
 
-	args := []string{"asar", "pack", srcDir, asarPath}
+	tmpAsar := filepath.Join(os.TempDir(), fmt.Sprintf("anytype-app-%d.asar", time.Now().UnixNano()))
+	defer os.Remove(tmpAsar)
+
+	args := []string{"asar", "pack", srcDir, tmpAsar}
 	if unpackGlob != "" {
 		args = append(args, "--unpack", unpackGlob)
 	}
 	run("npx", args...)
+
+	// Yedek
+	backupPath := asarPath + ".bak"
+	_ = copyFile(asarPath, backupPath)
+
+	// Eski dosyayı silip yenisini kopyala (macOS yetki sorunlarını aşmak için)
+	_ = os.Remove(asarPath)
+	if err := copyFile(tmpAsar, asarPath); err != nil {
+		fatal("ASAR kopyalanamadı (%s): %v", asarPath, err)
+	}
 	ok("ASAR paketlendi → %s", asarPath)
 }
 

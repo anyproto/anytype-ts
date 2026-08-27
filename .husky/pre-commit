@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
+export PATH="$HOME/.bun/bin:/usr/local/bin:/opt/homebrew/bin:$PATH"
 . "$(dirname -- "$0")/_/husky.sh"
 
 npx lint-staged --concurrent false

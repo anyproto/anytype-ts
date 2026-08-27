@@ -1,39 +1,145 @@
 @import "~scss/_mixins";
 
 .toast {
-    position: fixed; left: 0px; top: 0px; border-radius: 8px; background: var(--color-control-accent); padding: 11px 16px; text-transform: none;
-    @include text-common; color: var(--color-bg-primary); display: none; z-index: 2000; white-space: nowrap; transition-duration: 0.25s;
-	transition-property: opacity, transform; transition-timing-function: $easeSpring; max-width: 50%;
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    left: auto !important;
+    top: auto !important;
+    border-radius: 10px;
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-shape-secondary);
+    box-shadow: 0px 8px 28px rgba(0, 0, 0, 0.35);
+    padding: 12px 14px;
+    text-transform: none;
+    @include text-common;
+    color: var(--color-text-primary);
+    display: none;
+    z-index: 2000;
+    white-space: normal;
+    word-break: break-word;
+    max-width: 440px;
+    min-width: 280px;
+    transition-duration: 0.2s;
+	transition-property: opacity, transform;
+    transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
 }
 
-.toast {
-	.inner { display: flex; justify-content: space-between; gap: 0px 8px; }
-}
 .toast {
 	.inner {
-		.icon { width: 20px; height: 20px; }
-		.icon.hasSvg { color: var(--color-bg-primary); }
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 
-		.message { display: flex; gap: 0px 4px; max-width: 100%; }
-		.message {
-			.chunk { @include text-overflow-nw; display: flex; align-items: center; gap: 0px 4px; }
-			.chunk {
-				.name { max-width: 140px; @include text-overflow-nw; }
+		.toastContent {
+			display: flex;
+			align-items: flex-start;
+			gap: 8px;
+			width: 100%;
+
+			.iconWrapper {
+				flex-shrink: 0;
+				margin-top: 1px;
+				.icon { width: 18px; height: 18px; }
+				.icon.hasSvg { color: var(--color-text-primary); }
 			}
 
-			span { @include text-overflow-nw; }
+			.message {
+				flex-grow: 1;
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+				font-size: 13px;
+				line-height: 1.45;
+				color: var(--color-text-primary);
+				user-select: text;
 
-			b { font-weight: 500; }
+				.chunk {
+					display: inline-flex;
+					align-items: center;
+					gap: 4px;
+					.name { max-width: 180px; @include text-overflow-nw; }
+				}
+
+				span {
+					white-space: normal;
+					word-break: break-word;
+				}
+
+				b { font-weight: 600; }
+			}
+
+			.closeBtn {
+				flex-shrink: 0;
+				cursor: pointer;
+				opacity: 0.5;
+				padding: 2px;
+				border-radius: 4px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: all 0.15s ease;
+
+				&:hover {
+					opacity: 1;
+					background: var(--color-shape-highlight-medium);
+				}
+			}
 		}
 
-		.buttons { display: flex; gap: 0px 12px; margin-left: 32px; }
-		.buttons {
-			.button { 
-				@include text-common; font-weight: 500; line-height: 20px; border: 0 solid; height: auto; padding: 0; background: none; color: var(--color-bg-primary); 
+		.toastFooter {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 8px;
+			padding-top: 6px;
+			border-top: 1px solid var(--color-shape-secondary);
+
+			.copyAction {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				font-size: 12px;
+				font-weight: 500;
+				padding: 3px 8px;
+				border-radius: 5px;
+				background: var(--color-shape-highlight-medium);
+				border: 1px solid var(--color-shape-secondary);
+				color: var(--color-text-secondary);
+				cursor: pointer;
+				transition: all 0.15s ease;
+
+				&:hover {
+					background: var(--color-shape-highlight-dark);
+					color: var(--color-text-primary);
+					border-color: var(--color-shape-tertiary);
+				}
+
+				.icon { width: 13px; height: 13px; }
 			}
-			.button:hover { background-color: transparent; }
-			.button:hover {
-				.txt { text-decoration: underline; }
+
+			.buttons {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+
+				.button {
+					font-size: 12px;
+					font-weight: 500;
+					height: 26px;
+					padding: 0 8px;
+					border-radius: 5px;
+					background: var(--color-shape-highlight-medium);
+					border: 1px solid var(--color-shape-secondary);
+					color: var(--color-text-primary);
+					cursor: pointer;
+					transition: all 0.15s ease;
+
+					&:hover {
+						background: var(--color-shape-highlight-dark);
+						border-color: var(--color-shape-tertiary);
+					}
+				}
 			}
 		}
 	}

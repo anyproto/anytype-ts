@@ -3,14 +3,15 @@
 .widget.widgetObject {
 	.contentWrapper { padding: 8px; }
 
-	.item { height: 28px; padding: 0px 8px; display: flex; flex-direction: row; align-items: center; position: relative; line-height: 20px; }
+	.item { min-height: 28px; height: auto; padding: 4px 8px; display: flex; flex-direction: row; align-items: center; position: relative; line-height: 20px; }
 	.item {
 		.side.left { display: flex; flex-direction: row; align-items: center; flex-grow: 1; gap: 0px 6px; overflow: hidden; }
-		.side.right { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; }
+		.side.right { display: flex; flex-direction: row; align-items: center; gap: 0px 4px; flex-shrink: 0; }
 
 		.side.left {
-			.icon { width: 20px; height: 20px; }
-			.name { flex-grow: 1; @include text-overflow-nw; font-weight: 600; }
+			.icon { width: 20px; height: 20px; flex-shrink: 0; }
+			.iconObject { flex-shrink: 0; }
+			.name { flex-grow: 1; font-weight: 500; white-space: normal; word-break: break-word; line-height: 1.4; }
 		}
 
 		&.isMuted {

@@ -10,7 +10,7 @@
 	.item {
 		.inner {
 			display: flex; flex-direction: row; gap: 0px 2px; align-items: center; justify-content: space-between; position: relative;
-			height: 28px; padding: 0px 4px;
+			min-height: 28px; height: auto; padding: 4px 4px;
 		}
 		.inner::before {
 			content: ""; position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; background: var(--color-shape-highlight-medium); z-index: 1; pointer-events: none;
@@ -24,7 +24,7 @@
 
 		.dropTarget { border-radius: 4px; }
 
-		.iconObject { flex-basis: 20px; margin-right: 6px; }
+		.iconObject { flex-basis: 20px; margin-right: 6px; flex-shrink: 0; }
 
 		.arrowWrap { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: default; }
 		.arrowWrap {
@@ -38,9 +38,9 @@
 
 		.clickable {
 			flex-grow: 1; display: flex; flex-direction: row; width: calc(100% - 30px); align-items: center; justify-content: space-between;
-			line-height: 20px;
+			line-height: 1.4;
 		}
-		.name { flex-grow: 1; @include text-overflow-nw; }
+		.name { flex-grow: 1; white-space: normal; word-break: break-word; line-height: 1.4; }
 	}
 
 	.item.hover, .item.active {
