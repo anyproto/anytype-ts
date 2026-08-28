@@ -88,8 +88,9 @@ class UtilImageCache {
 			}
 
 			// 2. Fetch from local Gateway / network
-			const response = await fetch(url, { cache: 'force-cache' });
+			const response = await fetch(url, { cache: 'default' });
 			if (!response.ok) {
+				// Don't cache failed response; return direct url for retry
 				return url;
 			}
 
@@ -146,6 +147,29 @@ class UtilImageCache {
 			}
 		}
 		this.memoryCache.set(key, value);
+	}
+
+	/**
+	 * Removes an image URL from memory and browser cache (e.g. on error or retry)
+	 */
+	async invalidate(url: string): Promise<void> {
+		if (!url) return;
+		if (this.memoryCache.has(url)) {
+			const blobUrl = this.memoryCache.get(url);
+			if (blobUrl && blobUrl.startsWith('blob:')) {
+				try {
+					URL.revokeObjectURL(blobUrl);
+				} catch (e) {}
+			}
+			this.memoryCache.delete(url);
+		}
+		this.lastAccess.delete(url);
+		if (typeof window !== 'undefined' && 'caches' in window) {
+			try {
+				const cache = await window.caches.open(CACHE_NAME);
+				await cache.delete(url);
+			} catch (e) {}
+		}
 	}
 
 	/**

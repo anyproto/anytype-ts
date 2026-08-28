@@ -85,6 +85,8 @@ const PopupPreview = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
+	const retryCountMap = useRef<Map<number, number>>(new Map());
+
 	const onError = (idx: number) => {
 		const node = U.Dom.get(`${getId()}-innerWrap`);
 		const wrap = node ? U.Dom.select(`#itemPreview-${idx}`, node) : null;
@@ -97,6 +99,19 @@ const PopupPreview = forwardRef<{}, I.Popup>((props, ref) => {
 		if (!obj) {
 			return;
 		};
+
+		const currentRetries = retryCountMap.current.get(idx) || 0;
+		if (currentRetries < 3) {
+			retryCountMap.current.set(idx, currentRetries + 1);
+			window.setTimeout(() => {
+				const img = U.Dom.select('img', wrap) as HTMLImageElement;
+				if (img && obj.src) {
+					const sep = obj.src.includes('?') ? '&' : '?';
+					img.src = `${obj.src}${sep}retry=${Date.now()}`;
+				}
+			}, 1200);
+			return;
+		}
 
 		U.Dom.addClass(wrap, 'brokenMedia');
 		const loader = U.Dom.select('.loader', wrap);

@@ -277,10 +277,10 @@ const PeerTable = ({
 													statusInfo.status === 'online'
 														? `Reachable (${statusInfo.latencyMs}ms) • Click to re-test`
 														: statusInfo.status === 'offline'
-														? `Unreachable (${statusInfo.error || 'Connection failed'}) • Click to re-test`
-														: statusInfo.status === 'checking'
-														? 'Testing network reachability...'
-														: 'Click to test network reachability'
+															? `Unreachable (${statusInfo.error || 'Connection failed'}) • Click to re-test`
+															: statusInfo.status === 'checking'
+																? 'Testing network reachability...'
+																: 'Click to test network reachability'
 												}
 											>
 												<span className="statusDot" />
@@ -363,6 +363,7 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 	});
 	const [ownAddresses, setOwnAddresses] = useState<PeerEntry[]>([]);
 	const [staticPeers, setStaticPeers] = useState<PeerEntry[]>([]);
+	const [maxImageRetries, setMaxImageRetries] = useState<number>(() => (typeof U !== 'undefined' && U.Common?.getMaxImageRetries) ? U.Common.getMaxImageRetries() : 2);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isSaving, setIsSaving] = useState(false);
 
@@ -404,7 +405,7 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 		const allAddrs: string[] = [];
 		staticPeers.forEach(p => p.addresses.forEach(a => a && a.trim() && allAddrs.push(a.trim())));
 		ownAddresses.forEach(p => p.addresses.forEach(a => a && a.trim() && allAddrs.push(a.trim())));
-		
+
 		await Promise.all(allAddrs.map(addr => checkAddress(addr)));
 		setIsProbingAll(false);
 	}, [staticPeers, ownAddresses, checkAddress]);
@@ -642,6 +643,29 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 										onChange={(e, v) => setConfig({ ...config, LocalPeerBanTtlSec: Number(v) || 0 })}
 									/>
 									<div className="fieldDesc">Cooldown period before retrying failed or disconnected peers.</div>
+								</div>
+							</div>
+
+							<div className="configCard">
+								<div className="cardTitle">
+									<Icon name="menu/block/media/image" size={16} />
+									Media & P2P Sync Resiliency
+								</div>
+								<div className="field">
+									<div className="fieldLabel">Max Image Sync Retries</div>
+									<Input
+										size={28}
+										value={String(maxImageRetries)}
+										placeholder="2"
+										onChange={(e, v) => {
+											const val = Math.max(0, Math.min(Number(v) || 0, 20));
+											setMaxImageRetries(val);
+											if (typeof U !== 'undefined' && U.Common?.setMaxImageRetries) {
+												U.Common.setMaxImageRetries(val);
+											}
+										}}
+									/>
+									<div className="fieldDesc">Number of auto-retry attempts when loading images still syncing from peers over P2P.</div>
 								</div>
 							</div>
 						</div>

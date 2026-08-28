@@ -126,6 +126,17 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 		);
 	};
 
+	const [imageRetryKey, setImageRetryKey] = useState(0);
+	const chatRetryTimerRef = useRef<any>(null);
+	const chatRetryCountRef = useRef(0);
+
+	useEffect(() => {
+		if (!isDownloadingFile && chatRetryCountRef.current > 0) {
+			chatRetryCountRef.current = 0;
+			setImageRetryKey(k => k + 1);
+		}
+	}, [isDownloadingFile]);
+
 	const renderImage = () => {
 		const { object } = props;
 		const ratio = object.widthInPixels / object.heightInPixels;
@@ -136,7 +147,7 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 			cn.push('withBlur');
 		};
 
-		if (!src.current) {
+		if (!src.current || imageRetryKey > 0) {
 			if (object.isTmp && object.file) {
 				U.File.loadPreviewBase64(object.file, { type: 'jpg', quality: 99, maxWidth: I.ImageSize.Large }, (image: string) => {
 					const node = nodeRef.current;
@@ -156,7 +167,8 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 
 				src.current = './img/space.svg';
 			} else {
-				src.current = S.Common.imageUrl(object.id, I.ImageSize.Large);
+				const base = S.Common.imageUrl(object.id, I.ImageSize.Large);
+				src.current = base ? (imageRetryKey > 0 ? `${base}${base.includes('?') ? '&' : '?'}r=${imageRetryKey}` : base) : '';
 			};
 		};
 
@@ -185,6 +197,24 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 			style.aspectRatio = `${width}/${height}`;
 		};
 
+		const handleImgError = () => {
+			const maxRetries = (typeof U !== 'undefined' && U.Common?.getMaxImageRetries) ? U.Common.getMaxImageRetries() : 2;
+			if (chatRetryCountRef.current < maxRetries || isDownloadingFile) {
+				chatRetryCountRef.current++;
+				const delay = chatRetryCountRef.current === 1 ? 500 : 1200;
+				if (chatRetryTimerRef.current) clearTimeout(chatRetryTimerRef.current);
+				chatRetryTimerRef.current = setTimeout(() => {
+					setImageRetryKey(k => k + 1);
+				}, delay);
+			}
+		};
+
+		const handleImgLoad = () => {
+			if (chatRetryTimerRef.current) clearTimeout(chatRetryTimerRef.current);
+			chatRetryCountRef.current = 0;
+			setIsImageLoaded(true);
+		};
+
 		return (
 			<div className="mediaWrapper" onClick={onPreviewHandler}>
 				{blur}
@@ -194,7 +224,8 @@ const ChatAttachment = forwardRef<RefProps, Props>((props, ref) => {
 					className="image"
 					src={src.current}
 					onDragStart={e => e.preventDefault()}
-					onLoad={() => setIsImageLoaded(true)}
+					onLoad={handleImgLoad}
+					onError={handleImgError}
 					style={style}
 				/>
 

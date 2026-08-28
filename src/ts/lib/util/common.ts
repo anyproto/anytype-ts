@@ -69,6 +69,33 @@ class UtilCommon {
 	};
 
 	/**
+	 * Gets configured maximum image auto-retry attempts for P2P sync.
+	 */
+	getMaxImageRetries (): number {
+		try {
+			if (typeof localStorage !== 'undefined') {
+				const val = localStorage.getItem('anytype_max_image_retries');
+				if (val !== null && val !== '') {
+					const n = parseInt(val, 10);
+					if (!isNaN(n) && n >= 0) return Math.min(n, 20);
+				}
+			}
+		} catch (e) {}
+		return 2;
+	};
+
+	/**
+	 * Sets configured maximum image auto-retry attempts for P2P sync.
+	 */
+	setMaxImageRetries (retries: number): void {
+		try {
+			if (typeof localStorage !== 'undefined') {
+				localStorage.setItem('anytype_max_image_retries', String(Math.max(0, Math.min(Number(retries) || 0, 20))));
+			}
+		} catch (e) {}
+	};
+
+	/**
 	 * Deep copies an object using JSON serialization.
 	 * @param {any} o - The object to copy.
 	 * @returns {any} The copied object.
