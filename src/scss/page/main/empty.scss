@@ -1,12 +1,12 @@
 @import "~scss/_mixins";
 
 .pageMainEmpty {
-	.wrapper { width: var(--editor-width); margin: 0px auto; padding: 48px 0px; }
+	.wrapper { width: var(--editor-width); margin: 0px auto; padding: 24px 0px; }
 	.wrapper {
 
-		.iconObject { margin: 0px 0px 24px 0px; }
-		.title { line-height: 40px; margin: 0px 0px 8px 0px; }
-		> .label { @include text-paragraph; margin: 0px 0px 44px 0px; }
+		.iconObject { margin: 0px 0px 14px 0px; }
+		.title { line-height: 40px; margin: 0px 0px 6px 0px; }
+		> .label { @include text-paragraph; margin: 0px 0px 24px 0px; }
 
 		.row { 
 			display: flex; flex-direction: row; align-items: center; padding: 14px 0px 13px 0px; border-bottom: 1px solid var(--color-shape-secondary); justify-content: space-between;

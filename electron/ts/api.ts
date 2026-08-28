@@ -494,7 +494,24 @@ class Api {
 		};
 	};
 
-	exit (win: AppWindow | null, signal: string, relaunch: boolean, isUpdate?: boolean): void {
+	relaunch (win: AppWindow | null): void {
+		this.exit(win, '', true, false);
+	};
+
+	exit (win: AppWindow | null, signal?: string | boolean, relaunch?: boolean, isUpdate?: boolean): void {
+		let shouldRelaunch = false;
+		let sig = '';
+
+		if (typeof signal === 'boolean') {
+			shouldRelaunch = signal;
+		} else if (typeof signal === 'string') {
+			sig = signal;
+		}
+
+		if (typeof relaunch === 'boolean') {
+			shouldRelaunch = relaunch;
+		}
+
 		if ((app as any).isQuiting) {
 			return;
 		};
@@ -508,12 +525,12 @@ class Api {
 			win.hide();
 		};
 
-		Util.log('info', '[Api].exit, relaunch: ' + relaunch + ', isUpdate: ' + isUpdate);
+		Util.log('info', '[Api].exit, relaunch: ' + shouldRelaunch + ', isUpdate: ' + isUpdate);
 
 		// Send shutdown start to all tabs and wait for them to close their sessions
 		this.closeAllTabSessions(win).then(() => {
 			Util.send(win, 'shutdownStart');
-			Server.stop(signal).then(() => this.shutdown(win, relaunch, isUpdate));
+			Server.stop(sig).then(() => this.shutdown(win, shouldRelaunch, Boolean(isUpdate)));
 		});
 	};
 
@@ -998,6 +1015,262 @@ class Api {
 
 	notificationSound (_win: AppWindow): void {
 		shell.beep();
+	};
+
+	/**
+	 * Reads config.json, own-address.json and static-peers.json from the given account directory.
+	 * @param {AppWindow} win - The window (unused, for API consistency)
+	 * @param {string} accountPath - Absolute path to the account data directory (e.g. .../anytype/data/<accountId>)
+	 * @returns {{ config: object|null, ownAddresses: any[]|null, staticPeers: any[]|null, error?: string }}
+	 */
+	readNetworkFiles (win: AppWindow, accountPath: string): Record<string, any> {
+		if (!accountPath) {
+			return { error: 'accountPath is required' };
+		};
+
+		const readJson = (filePath: string): any => {
+			try {
+				if (fs.existsSync(filePath)) {
+					return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+				};
+			} catch (e: unknown) {
+				Util.log('warn', `[Api].readNetworkFiles: failed to read ${filePath}: ${(e as Error).message}`);
+			};
+			return null;
+		};
+
+		return {
+			config: readJson(path.join(accountPath, 'config.json')),
+			ownAddresses: readJson(path.join(accountPath, 'own-address.json')),
+			staticPeers: readJson(path.join(accountPath, 'static-peers.json')),
+		};
+	};
+
+	/**
+	 * Writes config.json, own-address.json and static-peers.json to the given account directory.
+	 * @param {AppWindow} win - The window (unused, for API consistency)
+	 * @param {object} data - { accountPath, config?, ownAddresses?, staticPeers? }
+	 * @returns {{ error?: string }}
+	 */
+	writeNetworkFiles (win: AppWindow, data: { accountPath: string; config?: object; ownAddresses?: any[]; staticPeers?: any[] }): Record<string, any> {
+		const { accountPath, config, ownAddresses, staticPeers } = data || {};
+
+		if (!accountPath) {
+			return { error: 'accountPath is required' };
+		};
+
+		const writeJson = (filePath: string, content: any): void => {
+			try {
+				fs.writeFileSync(filePath, JSON.stringify(content, null, 2), 'utf8');
+			} catch (e: unknown) {
+				throw new Error(`Failed to write ${path.basename(filePath)}: ${(e as Error).message}`);
+			};
+		};
+
+		try {
+			if (config !== undefined) {
+				writeJson(path.join(accountPath, 'config.json'), config);
+			};
+			if (ownAddresses !== undefined) {
+				writeJson(path.join(accountPath, 'own-address.json'), ownAddresses);
+			};
+			if (staticPeers !== undefined) {
+				writeJson(path.join(accountPath, 'static-peers.json'), staticPeers);
+			};
+			return {};
+		} catch (e: unknown) {
+			return { error: (e as Error).message };
+		};
+	};
+
+	/**
+	 * Enumerates system-installed font family names.
+	 */
+	getSystemFonts (win: AppWindow): string[] {
+		const os = require('os');
+		const platform = process.platform;
+		const fontSet = new Set<string>();
+
+		const defaultFonts = [
+			'Inter',
+			'SF Pro Display',
+			'SF Pro Text',
+			'Helvetica Neue',
+			'Helvetica',
+			'Arial',
+			'Avenir',
+			'Avenir Next',
+			'Futura',
+			'Optima',
+			'Palatino',
+			'Times New Roman',
+			'Georgia',
+			'Charter',
+			'Merriweather',
+			'Menlo',
+			'Monaco',
+			'Courier New',
+			'JetBrains Mono',
+			'Fira Code',
+			'Plex',
+			'Plex Mono',
+			'Segoe UI',
+			'Calibri',
+			'Cambria',
+			'Verdana',
+			'Tahoma',
+			'Trebuchet MS',
+			'Impact',
+			'Comic Sans MS',
+			'Roboto',
+			'Open Sans',
+			'Lato',
+			'Montserrat',
+			'Ubuntu',
+			'Noto Sans',
+			'Cascadia Code',
+			'Consolas',
+		];
+
+		defaultFonts.forEach(f => fontSet.add(f));
+
+		if (platform === 'darwin') {
+			try {
+				const fontDirs = [
+					'/System/Library/Fonts',
+					'/Library/Fonts',
+					path.join(os.homedir(), 'Library/Fonts'),
+				];
+				for (const dir of fontDirs) {
+					if (fs.existsSync(dir)) {
+						const files = fs.readdirSync(dir);
+						for (const file of files) {
+							const ext = path.extname(file).toLowerCase();
+							if (['.ttf', '.otf', '.ttc', '.dfont'].includes(ext)) {
+								const baseName = path.basename(file, ext).replace(/[-_](Regular|Bold|Italic|Medium|Light|SemiBold|Thin|Black|Heavy|Display|Text|Semibold)/i, '').trim();
+								if (baseName && !baseName.startsWith('.')) {
+									fontSet.add(baseName);
+								}
+							}
+						}
+					}
+				}
+			} catch (e) {
+				Util.log('warn', `[Api].getSystemFonts error: ${(e as Error).message}`);
+			}
+		} else if (platform === 'win32') {
+			try {
+				const winFontDir = path.join(process.env.WINDIR || 'C:\\Windows', 'Fonts');
+				if (fs.existsSync(winFontDir)) {
+					const files = fs.readdirSync(winFontDir);
+					for (const file of files) {
+						const ext = path.extname(file).toLowerCase();
+						if (['.ttf', '.otf', '.ttc', '.fon'].includes(ext)) {
+							const baseName = path.basename(file, ext).replace(/[-_](Regular|Bold|Italic|Medium|Light|SemiBold|Thin|Black|Heavy|Semibold)/i, '').trim();
+							if (baseName) fontSet.add(baseName);
+						}
+					}
+				}
+			} catch (e) {}
+		}
+
+		return Array.from(fontSet).sort((a, b) => a.localeCompare(b));
+	};
+
+	/**
+	 * Tests TCP / Yamux / Socket connectivity to a target multiaddr or host:port
+	 */
+	checkAddressConnectivity (win: AppWindow, addrStr: string): Promise<{ reachable: boolean; latencyMs?: number; error?: string; host?: string; port?: number; protocol?: string }> {
+		return new Promise(resolve => {
+			if (!addrStr || typeof addrStr !== 'string') {
+				resolve({ reachable: false, error: 'Empty address' });
+				return;
+			}
+
+			const trimmed = addrStr.trim();
+			let host = '';
+			let port = 0;
+			let protocol = 'tcp';
+
+			if (trimmed.includes('yamux')) {
+				protocol = 'yamux';
+			} else if (trimmed.includes('quic')) {
+				protocol = 'quic';
+			} else if (trimmed.includes('ws') || trimmed.includes('wss')) {
+				protocol = 'ws';
+			}
+
+			// Parse Multiaddr format: /ip4/1.2.3.4/tcp/5000/yamux or /dns4/node.example.com/tcp/443/wss/yamux or /ip6/::1/tcp/5000
+			const ip4Match = trimmed.match(/\/ip4\/([^/]+)/);
+			const ip6Match = trimmed.match(/\/ip6\/([^/]+)/);
+			const dnsMatch = trimmed.match(/\/dns[46]?\/([^/]+)/);
+			const tcpMatch = trimmed.match(/\/tcp\/(\d+)/);
+			const udpMatch = trimmed.match(/\/udp\/(\d+)/);
+
+			if (ip4Match) {
+				host = ip4Match[1];
+			} else if (ip6Match) {
+				host = ip6Match[1];
+			} else if (dnsMatch) {
+				host = dnsMatch[1];
+			}
+
+			if (tcpMatch) {
+				port = parseInt(tcpMatch[1], 10);
+			} else if (udpMatch) {
+				port = parseInt(udpMatch[1], 10);
+			}
+
+			// Fallback: URI or standard host:port (e.g. yamux://192.168.1.50:5000, quic://10.0.0.1:4001, [::1]:5000)
+			if (!host || !port) {
+				const stripped = trimmed.replace(/^[a-z0-9+.-]+:\/\//i, '');
+				const ipv6BracketMatch = stripped.match(/^\[([^\]]+)\]:(\d+)$/);
+				if (ipv6BracketMatch) {
+					host = ipv6BracketMatch[1];
+					port = parseInt(ipv6BracketMatch[2], 10);
+				} else {
+					const standardMatch = stripped.match(/^([^:/]+):(\d+)$/);
+					if (standardMatch) {
+						host = standardMatch[1];
+						port = parseInt(standardMatch[2], 10);
+					}
+				}
+			}
+
+			if (!host || !port || isNaN(port)) {
+				resolve({ reachable: false, error: 'No reachable host:port parsed from address' });
+				return;
+			}
+
+			const net = require('net');
+			const start = Date.now();
+			const socket = new net.Socket();
+			let resolved = false;
+
+			const finish = (reachable: boolean, error?: string) => {
+				if (resolved) return;
+				resolved = true;
+				try {
+					socket.destroy();
+				} catch (e) {}
+				const latencyMs = Date.now() - start;
+				resolve({ reachable, latencyMs: reachable ? latencyMs : undefined, error, host, port, protocol });
+			};
+
+			socket.setTimeout(2500);
+
+			socket.connect(port, host, () => {
+				finish(true);
+			});
+
+			socket.on('timeout', () => {
+				finish(false, 'Timeout (2.5s)');
+			});
+
+			socket.on('error', (err: Error) => {
+				finish(false, err?.message || 'Connection refused');
+			});
+		});
 	};
 
 	payloadBroadcast (win: AppWindow, payload: { type: string; [key: string]: any }): void {

@@ -11,7 +11,7 @@
 
 		.sides::after { 
 			opacity: 0; content: ''; width: 100%; height: 100%; left: 0px; top: 0px; border-radius: 6px; z-index: 1;
-			pointer-events: none; position: absolute; transition: opacity $transitionCommon; background: var(--color-shape-highlight-medium);
+			pointer-events: none; position: absolute; transition: opacity 0.2s $easeSmooth, background-color 0.2s $easeSmooth; background: var(--color-shape-highlight-medium);
 		}
 		.sides:hover::after { opacity: 1; }
 
@@ -26,15 +26,16 @@
 			.headerIcon { opacity: 0; }
 		}
 
-		.iconWrap { width: 28px; height: 28px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+		.iconWrap { width: 28px; height: 28px; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: background-color 0.18s $easeSmooth; }
 		.iconWrap.collapse { opacity: 0; width: 20px; height: 20px; z-index: 2; }
 
 		.iconAnimationWrapper { position: relative; width: 20px; height: 20px; flex-shrink: 0; }
 		.iconWrap.collapse, .headerIcon { 
-			transition: opacity 0.1s $easeInQuint; position: absolute; left: 50%; top: 50%; transform: translate3d(-50%, -50%, 0px);
+			transition: opacity 0.18s $easeSmooth, transform 0.18s $easeSmooth; position: absolute; left: 50%; top: 50%; transform: translate3d(-50%, -50%, 0px);
 		}
 
 		.icon { width: 20px; height: 20px; }
+		.icon.collapse { transition: transform 0.24s $easeSmooth; }
 		.icon.collapse.isClosed { transform: rotateZ(-90deg); }
 
 		.buttons { flex-shrink: 0; flex-direction: row; align-items: center; display: none; position: relative; z-index: 2; }
@@ -70,8 +71,8 @@
 		}
 	}
 
-	.contentWrapper { transition: height 0.4s $easeInQuint; }
-	.innerWrap { transition: opacity 0.4s $easeInQuint; flex-direction: column; }
+	.contentWrapper { transition: height 0.3s $easeSmooth, opacity 0.22s $easeSmooth; }
+	.innerWrap { transition: opacity 0.24s $easeSmooth, transform 0.24s $easeSmooth; flex-direction: column; }
 
 	.emptyWrap { padding: 0px 16px; height: 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; flex-grow: 1; }
 	.emptyWrap {

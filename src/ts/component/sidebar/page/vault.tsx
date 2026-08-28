@@ -7,7 +7,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
 import * as I from 'Interface';
 import Highlight from 'Lib/highlight';
-import Storage from 'Lib/storage';
 
 const LIMIT = 20;
 const HEIGHT_ITEM = 45;
@@ -436,7 +435,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			...item.style,
 		};
 		const cn = [ 'item', U.Data.spaceClass(item.spaceType) ];
-		const iconSize = 32;
+		const iconSize = vaultIsMinimal ? 48 : 32;
 		const counter = <ChatCounter spaceId={targetSpaceId} isMinimal={vaultIsMinimal} />;
 		const icons = [];
 
@@ -549,34 +548,27 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		Action.openSettings('account', analytics.route.vault);
 	};
 
-	const onGallery = () => {
-		S.Popup.open('usecase', {
+	const onHelp = (e: any) => {
+		S.Menu.open('help', {
+			element: '#button-help',
+			vertical: I.MenuDirection.Bottom,
+			classNameWrap: 'fromSidebar',
+			offsetY: menuHelpOffset,
 			data: {
-				route: analytics.route.usecaseApp,
+				onSettings,
 			},
 		});
 	};
 
-	const onHelp = () => {
-		S.Menu.open('help', {
-			element: `#${getId()} #button-help`,
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			vertical: I.MenuDirection.Top,
-			offsetY: menuHelpOffset,
-			subIds: J.Menu.help,
-			onOpen: () => {
-				U.Dom.addClass(U.Dom.select(`#${getId()} .bottom`), 'hover');
-			},
-			onClose: () => {
-				U.Dom.removeClass(U.Dom.select(`#${getId()} .bottom`), 'hover');
-			},
-		});
+	const onGallery = () => {
+		S.Popup.open('usecaseList', {});
 	};
 
 	const onCreate = () => {
-		Storage.setHighlight('createSpace', false);
-		Highlight.hide('createSpace');
+		if (items.length >= J.Constant.limit.space.pin) {
+			Preview.toastShow({ text: translate('toastSpacesLimitReached') });
+			return;
+		};
 
 		let param: I.MenuParam = {
 			element: '#button-create-space',
@@ -598,7 +590,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		if (item.isDiv) {
 			return HEIGHT_DIV;
 		};
-		return HEIGHT_ITEM;
+		return vaultIsMinimal ? 58 : HEIGHT_ITEM;
 	};
 
 	useEffect(() => {
@@ -765,12 +757,12 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 							onMouseEnter={e => Preview.tooltipShow({ 
 								...tooltipParam(),
 								typeY: vaultIsMinimal ? I.MenuDirection.Center : I.MenuDirection.Top,
-								text: translate('popupSettingsAccountPersonalInformationTitle'),
+								text: 'Settings',
 								element: e.currentTarget as HTMLElement,
 							})}
 							onMouseLeave={() => Preview.tooltipHide(false)}
 						>
-							<IconObject object={settings} size={32} iconSize={32} />
+							<IconObject object={settings} size={vaultIsMinimal ? 48 : 32} iconSize={vaultIsMinimal ? 48 : 32} />
 							{!vaultIsMinimal ? <ObjectName object={settings} /> : ''}
 						</div>
 					</div>

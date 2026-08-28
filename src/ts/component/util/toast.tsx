@@ -1,4 +1,4 @@
-import React, { FC, useRef, useEffect, MouseEvent } from 'react';
+import React, { FC, useRef, useEffect, useState, MouseEvent } from 'react';
 import raf from 'raf';
 import { Button, IconObject, ObjectName, Icon } from 'Component';
 import * as I from 'Interface';
@@ -214,43 +214,45 @@ const Toast: FC = () => {
 		onCloseHandler();
 	};
 
+	const [copied, setCopied] = useState(false);
+
+	const getRawText = (): string => {
+		if (typeof textAction === 'string') {
+			return textAction.replace(/<[^>]*>/g, '').trim();
+		}
+		if (typeof text === 'string') return text.trim();
+		return '';
+	};
+
+	const onCopyHandler = (e: MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		const raw = getRawText();
+		if (raw) {
+			U.Common.clipboardCopy({ text: raw });
+			setCopied(true);
+			setTimeout(() => setCopied(false), 2000);
+		}
+	};
+
 	useEffect(() => {
 		const node = nodeRef.current;
 		if (!node) {
 			return;
 		};
 
+		setCopied(false);
+
 		U.Dom.css(node, {
 			display: 'block',
 			opacity: '0',
-			transform: 'scale3d(0.7,0.7,1)',
+			transform: 'translateY(16px)',
 		});
-
-		const isPopup = keyboard.isPopup();
-		const container = U.Dom.getScrollContainer(isPopup);
-
-		if (!container) {
-			return;
-		};
-
-		const rect = container.getBoundingClientRect();
-		const y = rect.top + 32;
-		let x = 0;
-
-		if (isPopup) {
-			x = rect.left + rect.width / 2 - node.offsetWidth / 2;
-		} else {
-			const { ww } = U.Dom.getWindowDimensions();
-			const sw = sidebar.getDummyWidth();
-			x = (ww - sw) / 2 - node.offsetWidth / 2 + sw;
-		};
 
 		raf(() => {
 			U.Dom.css(node, {
-				left: `${x}px`,
-				top: `${y}px`,
 				opacity: '1',
-				transform: 'scale3d(1,1,1)',
+				transform: 'translateY(0px)',
 			});
 		});
 
@@ -270,27 +272,47 @@ const Toast: FC = () => {
 		};
 	}, [ toast ]);
 
+	const rawText = getRawText();
+
 	return toast ? (
-		<div ref={nodeRef} id="toast" className="toast" onClick={onCloseHandler}>
+		<div ref={nodeRef} id="toast" className="toast" onClick={e => e.stopPropagation()}>
 			<div className="inner">
+				<div className="toastContent">
+					{icon ? (
+						<div className="iconWrapper">
+							<Icon name={({ check: 'common/tick', notice: 'common/alert' })[icon] || icon} color={icon == 'notice' ? 'red' : ''} />
+						</div>
+					) : ''}
 
-				{icon ? <Icon name={({ check: 'common/tick', notice: 'common/alert' })[icon] || icon} color={icon == 'notice' ? 'red' : ''} /> : ''}
+					<div className="message">
+						{textObject}
+						{textAction ? <span dangerouslySetInnerHTML={{ __html: U.String.sanitize(textAction) }} /> : ''}
+						{textOrigin}
+						{textActionTo ? <span dangerouslySetInnerHTML={{ __html: U.String.sanitize(textActionTo) }} /> : ''}
+						{textTarget}
+					</div>
 
-				<div className="message">
-					{textObject}
-					{textAction ? <span dangerouslySetInnerHTML={{ __html: U.String.sanitize(textAction) }} /> : ''}
-					{textOrigin}
-					{textActionTo ? <span dangerouslySetInnerHTML={{ __html: U.String.sanitize(textActionTo) }} /> : ''}
-					{textTarget}
+					<div className="closeBtn" onClick={onCloseHandler} title="Close">
+						<Icon name="menu/action/remove" size={14} />
+					</div>
 				</div>
 
-				{buttons.length ? (
-					<div className="buttons">
-						{buttons.map((item: any, i: number) => (
-							<Button key={i} text={item.label} onClick={e => onClickHandler(e, item)} />
-						))}
-					</div>
-				) : ''}
+				<div className="toastFooter">
+					{rawText ? (
+						<div className="copyAction" onClick={onCopyHandler} title="Copy text to clipboard">
+							<Icon name="menu/action/copy" size={13} />
+							<span>{copied ? 'Copied!' : 'Copy'}</span>
+						</div>
+					) : <div />}
+
+					{buttons.length ? (
+						<div className="buttons">
+							{buttons.map((item: any, i: number) => (
+								<Button key={i} size={28} text={item.label} onClick={e => onClickHandler(e, item)} />
+							))}
+						</div>
+					) : ''}
+				</div>
 			</div>
 		</div>
 	) : null;

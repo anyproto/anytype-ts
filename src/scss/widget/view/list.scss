@@ -27,7 +27,7 @@
 			.inner { display: flex; flex-direction: row; align-items: center; height: 100%; width: 100%; }
 			.iconObject.isTask { background: none !important; }
 
-			.name { @include text-overflow-nw; }
+			.name { white-space: normal; word-break: break-word; line-height: 1.4; }
 			.descr { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
 			.descr b { font-weight: 500; }
 
@@ -78,9 +78,9 @@
 	}
 
 	.body.isCompact {
-		.item { height: 28px; }
+		.item { min-height: 28px; height: auto; }
 		.item {
-			.inner { gap: 0px 6px; padding: 0px 8px; }
+			.inner { gap: 0px 6px; padding: 4px 8px; }
 		}
 	}
 }

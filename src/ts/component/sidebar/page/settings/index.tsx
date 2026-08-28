@@ -113,6 +113,8 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 					{ id: 'spaceList', iconParam: { name: 'settings/spaces' } },
 					{ id: 'dataPublish', iconParam: { name: 'settings/sites' } },
 					{ id: 'api', iconParam: { name: 'settings/api' } },
+					{ id: 'networkConfig', iconParam: { name: 'sync/globe' } },
+					{ id: 'themeCustomizer', iconParam: { name: 'settings/style' } },
 				],
 			},
 		].map(s => {

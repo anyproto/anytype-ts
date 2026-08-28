@@ -23,6 +23,33 @@ class ErrorBoundary extends Component<Props, State> {
 
 	componentDidCatch (error: Error, info: React.ErrorInfo) {
 		console.error('ErrorBoundary caught:', error, info);
+		this.hideLoaders();
+	};
+
+	componentDidMount () {
+		if (this.state.hasError) {
+			this.hideLoaders();
+		}
+	};
+
+	componentDidUpdate () {
+		if (this.state.hasError) {
+			this.hideLoaders();
+		}
+	};
+
+	hideLoaders = () => {
+		try {
+			const rootLoader = document.getElementById('root-loader');
+			if (rootLoader) rootLoader.style.display = 'none';
+			const loader = document.getElementById('loader');
+			if (loader) loader.style.display = 'none';
+			document.querySelectorAll('.loaderWrapper, .loader').forEach((el: any) => {
+				if (!el.closest('.errorBoundary')) {
+					el.style.display = 'none';
+				}
+			});
+		} catch (e) {}
 	};
 
 	onCopy = () => {

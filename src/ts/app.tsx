@@ -141,6 +141,18 @@ const App: FC = () => {
 		keyboard.init();
 		registerIpcEvents();
 
+		try {
+			const rawTheme = localStorage.getItem('anytype_custom_theme');
+			if (rawTheme) {
+				const themeColors = JSON.parse(rawTheme);
+				if (themeColors && typeof themeColors === 'object') {
+					Object.entries(themeColors).forEach(([k, v]) => {
+						if (v) document.documentElement.style.setProperty(k, String(v));
+					});
+				}
+			}
+		} catch (e) {}
+
 		const startWithAddress = (address: string) => {
 			console.log('[App] Init', address);
 

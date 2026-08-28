@@ -3,23 +3,25 @@
 .popups {
 	.popup { position: fixed; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 101; }
 	.popup.show {
-		.innerWrap { opacity: 1; transform: none; }
+		.innerWrap { opacity: 1; transform: scale(1, 1) translateY(0px); }
 		.dimmer { opacity: 1; }
 	}
 	.popup.showDimmer {
-		.dimmer { background: rgba(0,0,0,0.25); }
+		.dimmer { background: rgba(0,0,0,0.35); }
 	}
 
 	.popup * { user-select: none; }
 	
 	.popup {
 		.innerWrap { 
-			position: absolute; left: 0px; top: 50%; z-index: 1; background: var(--color-bg-primary); border-radius: 24px; box-shadow: 0px 2px 28px rgba(0, 0, 0, 0.2);
-			opacity: 0; transform: scale(0.95,0.95); transition: transform $transitionPopupTime $easeInQuint, opacity $transitionPopupTime $easeInQuint;
+			position: absolute; left: 0px; top: 50%; z-index: 1; background: var(--color-bg-primary); border-radius: 24px;
+			box-shadow: 0px 16px 48px rgba(0, 0, 0, 0.35);
+			opacity: 0; transform: scale(0.94, 0.94) translateY(12px);
+			transition: transform $transitionPopupTime $easeSmooth, opacity $transitionPopupTime $easeSmooth;
 			overflow-x: hidden; overflow-y: auto; overscroll-behavior: none;
 		}
 
-		.dimmer { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 0; transition: opacity $transitionPopupTime $easeInQuint; opacity: 0; }
+		.dimmer { position: absolute; left: 0px; top: 0px; width: 100%; height: 100%; z-index: 0; transition: opacity $transitionPopupTime $easeSmooth; opacity: 0; }
 		.dimmer {
 			/* Dimmer with Graph styles for AI onboarding */
 			&.withGraph {
