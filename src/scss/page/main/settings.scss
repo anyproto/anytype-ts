@@ -2176,7 +2176,7 @@
 
 @keyframes linkFlow {
 	0% {
-		stroke-dashoffset: 40;
+		stroke-dashoffset: 60;
 	}
 	100% {
 		stroke-dashoffset: 0;
@@ -2283,9 +2283,10 @@
 				}
 
 				&.active {
-					background: var(--color-control-accent, #3b82f6);
-					color: #ffffff;
-					border-color: var(--color-control-accent, #3b82f6);
+					background: var(--color-control-accent);
+					color: var(--color-text-inversion) !important;
+					border-color: var(--color-control-accent);
+					font-weight: 700;
 				}
 			}
 		}
@@ -2333,7 +2334,8 @@
 			}
 
 			.linkPulseStream {
-				animation: linkFlow 1.8s infinite linear;
+				animation: linkFlow 1.2s infinite linear;
+				will-change: stroke-dashoffset;
 			}
 
 			.topologyNode {
@@ -2444,11 +2446,11 @@
 				.protoBadge {
 					font-size: 10px;
 					font-weight: 700;
-					padding: 2px 6px;
+					padding: 2px 7px;
 					border-radius: 4px;
-					background: var(--color-shape-highlight-dark);
-					color: var(--color-control-accent, #3b82f6);
-					border: 1px solid var(--color-shape-secondary);
+					background: var(--color-shape-secondary);
+					color: var(--color-text-primary);
+					border: 1px solid var(--color-shape-tertiary);
 					text-transform: uppercase;
 				}
 			}
