@@ -5,7 +5,7 @@ node_modules/
 build.zip
 build/
 addon
-protobuf
+/protobuf
 .idea
 tools
 docs/local/*
