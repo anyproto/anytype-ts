@@ -176,15 +176,19 @@ bun install
 
 ### 3. Step-by-Step Installation Wizard (Next-Next-Finish)
 
-You can use the interactive terminal installation wizard to automatically detect/install Bun, install dependencies, build UI, create backups, close running Anytype instances, and hot-deploy into your installed Anytype automatically:
+You can use the interactive terminal installation wizard or double-click `install.bat` on Windows to automatically detect/install Bun, install dependencies, build UI, create backups, close running Anytype instances, and hot-deploy into your installed Anytype automatically:
 
 ```powershell
+# Run the 1-click batch installer (Double-click install.bat or run in terminal):
+.\install.bat
+
+# Or run the Go installer:
 go run scripts/install.go
 # or
 bun run install:wizard
 ```
 
-> **Note:** If `bun` is not installed on your system, `install.go` will automatically detect it and ask to install it via PowerShell in 1 click.
+> **Note:** If `bun` is not installed on your system, `install.bat` / `install.go` will automatically detect it and ask to install it via PowerShell in 1 click.
 
 ### 4. Non-Interactive Deploy to Installed Anytype
 
