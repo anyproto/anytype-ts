@@ -134,6 +134,25 @@ export enum ImportType {
 	Obsidian	 = 7,
 };
 
+// Values 0-3 mirror Rpc.AI.Provider; Anytype is client-side only and maps to OpenAi
+// with build-embedded endpoint/model/token when the request is built
+export enum AiProvider {
+	Ollama		 = 0,
+	OpenAi		 = 1,
+	LMStudio	 = 2,
+	LlamaCpp	 = 3,
+	Anytype		 = 100,
+};
+
+export interface ImportAiSettings {
+	enabled: boolean;
+	provider: AiProvider;
+	endpoint: string;
+	model: string;
+	token: string;
+	includeContentSamples: boolean;
+};
+
 export enum ExportType {
 	Markdown	 = 0,
 	Protobuf	 = 1,

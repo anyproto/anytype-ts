@@ -7,7 +7,7 @@
 | File | Alias | Purpose |
 |------|-------|---------|
 | `common.ts` | `U.Common` | Window dimensions, random, plural, date formatting, clipboard, deep copy |
-| `data.ts` | `U.Data` | Data loading, auth flow, subscription management, onboarding |
+| `data.ts` | `U.Data` | Data loading, auth flow, subscription management, onboarding, import AI enrichment settings + `aiParams` builder |
 | `object.ts` | `U.Object` | Object CRUD, opening, routing, layout detection, type helpers |
 | `router.ts` | `U.Router` | URL navigation, space switching (on the boot paths a "space is not ready" `WorkspaceOpen` falls through to the first ready channel), history management |
 | `space.ts` | `U.Space` | Dashboard, space list (`isReady` = the start-up run's per-space state, else the spaceview's local status), participants, sharing, publishing |

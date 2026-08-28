@@ -41,6 +41,8 @@ export interface NotificationPayloadImport {
 	importType: I.ImportType;
 	spaceId: string;
 	name: string;
+	reportObjectId: string;
+	issuesCount: number;
 };
 
 export interface NotificationComponent {

@@ -69,11 +69,13 @@ const PageMainSettingsImportCsv = forwardRef<I.PageRef, I.PageSettingsComponent>
 	};
 
 	const onImport = () => {
-		Action.import(I.ImportType.Csv, J.Constant.fileExtension.import[I.ImportType.Csv], data, (message: any) => {
+		const targetId = U.Space.getImportTargetId();
+
+		Action.import(targetId, I.ImportType.Csv, J.Constant.fileExtension.import[I.ImportType.Csv], data, (message: any) => {
 			if (message.error.code) {
 				setError(message.error.description);
 			} else {
-				U.Space.openDashboard();
+				U.Space.openImportTarget(targetId);
 			};
 		});
 	};

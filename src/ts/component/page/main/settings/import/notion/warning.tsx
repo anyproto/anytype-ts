@@ -5,12 +5,14 @@ import * as I from 'Interface';
 const PageMainSettingsImportNotionWarning = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const onImport = () => {
+		const targetId = U.Space.getImportTargetId();
+
 		Preview.toastShow({ text: translate('toastImportStart') });
 
-		C.ObjectImport(S.Common.space, { apiKey: S.Common.notionToken }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, false, false);
-		U.Space.openDashboard();
+		C.ObjectImport(targetId, { apiKey: S.Common.notionToken, aiParams: U.Data.getImportAiParams() }, [], true, I.ImportType.Notion, I.ImportMode.IgnoreErrors, false, false, false, false);
+		U.Space.openImportTarget(targetId);
 
-		analytics.event('ImportNotionProceed');
+		analytics.event('ImportNotionProceed', U.Data.getImportAiAnalytics(I.ImportType.Notion));
 	};
 
 	return (

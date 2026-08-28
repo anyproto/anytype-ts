@@ -7,11 +7,13 @@ const PageMainSettingsImportObsidian = forwardRef<I.PageRef, I.PageSettingsCompo
 	const [ error, setError ] = useState<string>('');
 
 	const onImport = () => {
-		Action.import(I.ImportType.Obsidian, J.Constant.fileExtension.import[I.ImportType.Markdown], {}, (message: any) => {
+		const targetId = U.Space.getImportTargetId();
+
+		Action.import(targetId, I.ImportType.Obsidian, J.Constant.fileExtension.import[I.ImportType.Markdown], {}, (message: any) => {
 			if (message.error.code) {
 				setError(message.error.description);
 			} else {
-				U.Space.openDashboard();
+				U.Space.openImportTarget(targetId);
 			};
 		});
 	};
