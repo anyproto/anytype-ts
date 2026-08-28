@@ -1,13 +1,13 @@
 @echo off
 chcp 65001 >nul
-title Anytype-ts Windows Kurulum Sihirbazı
+title Anytype-ts Windows Installation Wizard
 
 echo ================================================================
-echo  🚀 ANYTYPE-TS WINDOWS KURULUM SIHIRBAZI (Next-Next-Finish)
+echo  🚀 ANYTYPE-TS WINDOWS INSTALLATION WIZARD (Next-Next-Finish)
 echo ================================================================
 echo.
 
-:: 1. Go kurulu mu veya standart dizinlerde var mı kontrol et
+:: 1. Check if Go is installed or exists in standard directories
 where go >nul 2>&1
 if %errorlevel% equ 0 goto start_go_wizard
 
@@ -21,98 +21,98 @@ if exist "%ProgramFiles%\Go\bin\go.exe" (
     goto start_go_wizard
 )
 
-:: 2. Go bulunamadı — Otomatik indirme ve kurulum teklif et
-echo [!] Go (Golang) sisteminizde kurulu degil.
-set /p INSTALL_GO="Go otomatik olarak indirilip kurulsun mu? (E/h) [Enter = Evet]: "
-if /i "%INSTALL_GO%"=="h" goto skip_go_install
+:: 2. Go not found — Offer automatic download and installation
+echo [!] Go (Golang) is not installed on your system.
+set /p INSTALL_GO="Automatically download and install Go? (Y/n) [Enter = Yes]: "
+if /i "%INSTALL_GO%"=="n" goto skip_go_install
 
 echo.
-echo ▶ Go (Golang) indiriliyor ve kuruluyor...
+echo ▶ Downloading and installing Go (Golang)...
 
-:: Oncelikle winget dene
+:: Try winget first
 where winget >nul 2>&1
 if %errorlevel% equ 0 (
-    echo ▶ winget ile Go kurulumu baslatiliyor...
+    echo ▶ Installing Go via winget...
     winget install GoLang.Go --accept-source-agreements --accept-package-agreements --silent
 )
 
-:: Standart dizini PATH'e ekleyip tekrar kontrol et
+:: Add standard directory to PATH and check again
 if exist "C:\Program Files\Go\bin\go.exe" (
     set "PATH=C:\Program Files\Go\bin;%PATH%"
-    echo [✓] Go basariyla kuruldu!
+    echo [✓] Go successfully installed!
     echo.
     goto start_go_wizard
 )
 
-:: Winget basarisiz olduysa veya yoksa MSI indir ve kur
-echo ▶ Resmi Go yukleyicisi indiriliyor (go.dev)...
+:: If winget is not available or failed, download official MSI from go.dev
+echo ▶ Downloading official Go installer from go.dev...
 powershell -NoProfile -ExecutionPolicy Bypass -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $msi = Join-Path $env:TEMP 'go_setup.msi'; Invoke-WebRequest -Uri 'https://go.dev/dl/go1.22.6.windows-amd64.msi' -OutFile $msi; Start-Process msiexec.exe -ArgumentList '/i', $msi, '/quiet', '/norestart' -Wait; Remove-Item $msi -Force -ErrorAction SilentlyContinue"
 
 if exist "C:\Program Files\Go\bin\go.exe" (
     set "PATH=C:\Program Files\Go\bin;%PATH%"
-    echo [✓] Go basariyla kuruldu!
+    echo [✓] Go successfully installed!
     echo.
     goto start_go_wizard
 )
 
 :skip_go_install
-:: 3. Go olmadan dogrudan Batch / PowerShell tabanlı akıllı kurulumu calistir
+:: 3. Run native Windows batch installation mode without Go
 echo.
-echo [BILGI] Dogrudan Windows yerel kurulum modu calistiriliyor...
+echo [INFO] Running native Windows batch installation mode...
 echo.
 
-:: Anytype calisiyor mu kontrol et ve kapat
+:: Check if Anytype is running and ask to close
 tasklist /FI "IMAGENAME eq Anytype.exe" 2>NUL | find /I /N "Anytype.exe">NUL
 if "%ERRORLEVEL%"=="0" (
-    echo [!] Anytype su anda acik durumda.
-    set /p CLOSE_ANY="Anytype otomatik kapatilsin mi? (E/h) [Enter = Evet]: "
-    if /i not "%CLOSE_ANY%"=="h" (
+    echo [!] Anytype is currently running.
+    set /p CLOSE_ANY="Automatically close Anytype? (Y/n) [Enter = Yes]: "
+    if /i not "%CLOSE_ANY%"=="n" (
         taskkill /F /IM Anytype.exe >nul 2>&1
-        echo [✓] Anytype kapatildi.
+        echo [✓] Anytype closed.
     )
 )
 
-:: Bun kurulu mu kontrol et
+:: Check if Bun is installed
 where bun >nul 2>&1
 if %errorlevel% neq 0 (
     if exist "%USERPROFILE%\.bun\bin\bun.exe" (
         set "PATH=%USERPROFILE%\.bun\bin;%PATH%"
     ) else (
         echo.
-        echo [!] 'bun' paketi bulunamadi.
-        set /p INSTALL_BUN="Bun otomatik indirilip kurulsun mu? (E/h) [Enter = Evet]: "
-        if /i not "%INSTALL_BUN%"=="h" (
-            echo ▶ Bun indiriliyor ve kuruluyor...
+        echo [!] 'bun' package manager was not found.
+        set /p INSTALL_BUN="Automatically download and install Bun? (Y/n) [Enter = Yes]: "
+        if /i not "%INSTALL_BUN%"=="n" (
+            echo ▶ Downloading and installing Bun...
             powershell -NoProfile -ExecutionPolicy Bypass -Command "irm bun.sh/install.ps1 | iex"
             set "PATH=%USERPROFILE%\.bun\bin;%PATH%"
         ) else (
-            echo [HATA] Bun olmadan derleme yapilamaz.
+            echo [ERROR] Cannot build without Bun.
             goto error
         )
     )
 )
 
-:: Bağımlılıkları yükle
+:: Install dependencies if node_modules missing
 if not exist "node_modules" (
     echo.
-    echo ▶ Bagimliliklar yukleniyor (bun install)...
+    echo ▶ Installing dependencies (bun install)...
     call bun install
     if %errorlevel% neq 0 (
-        echo [HATA] Bagimliliklar yuklenemedi!
+        echo [ERROR] Failed to install dependencies!
         goto error
     )
 )
 
-:: UI derle
+:: Build UI
 echo.
-echo ▶ UI derleniyor (bun run build)...
+echo ▶ Building UI (bun run build)...
 call bun run build
 if %errorlevel% neq 0 (
-    echo [HATA] UI derleme basarisiz oldu!
+    echo [ERROR] UI build failed!
     goto error
 )
 
-:: Anytype resources dizinini bul
+:: Detect Anytype resources directory
 set "RESOURCES_DIR="
 if exist "%LOCALAPPDATA%\Programs\Anytype\resources\app.asar" (
     set "RESOURCES_DIR=%LOCALAPPDATA%\Programs\Anytype\resources"
@@ -124,70 +124,70 @@ if exist "%LOCALAPPDATA%\Programs\Anytype\resources\app.asar" (
 
 if "%RESOURCES_DIR%"=="" (
     echo.
-    echo [!] Kurulu Anytype dizini otomatik bulunamadi.
-    set /p RESOURCES_DIR="Lutfen Anytype 'resources' klasor yolunu girin: "
+    echo [!] Installed Anytype directory was not found automatically.
+    set /p RESOURCES_DIR="Please enter the Anytype 'resources' directory path: "
 )
 
 if not exist "%RESOURCES_DIR%\app.asar" (
-    echo [HATA] %RESOURCES_DIR%\app.asar bulunamadi!
+    echo [ERROR] %RESOURCES_DIR%\app.asar was not found!
     goto error
 )
 
 echo.
-echo ▶ Anytype guncelleniyor: %RESOURCES_DIR%
+echo ▶ Updating Anytype: %RESOURCES_DIR%
 
-:: Yedek al
+:: Create backup
 copy /y "%RESOURCES_DIR%\app.asar" "%RESOURCES_DIR%\app.asar.bak" >nul
-echo [✓] app.asar.bak yedegi alindi.
+echo [✓] Backed up original app.asar to app.asar.bak
 
-:: ASAR ac
+:: Extract ASAR
 set "TEMP_EXTRACT=%TEMP%\anytype-extract-%RANDOM%"
 mkdir "%TEMP_EXTRACT%" >nul 2>&1
 call npx -y asar extract "%RESOURCES_DIR%\app.asar" "%TEMP_EXTRACT%"
 
-:: Dosyaları aktar
-echo ▶ Guncel dosyalar aktariliyor...
+:: Copy updated files
+echo ▶ Copying updated files...
 xcopy /E /I /Y "dist" "%TEMP_EXTRACT%\dist" >nul
 copy /Y "electron.js" "%TEMP_EXTRACT%\electron.js" >nul
 xcopy /E /I /Y "electron" "%TEMP_EXTRACT%\electron" >nul
 
-:: ASAR paketle
-echo ▶ ASAR yeniden paketleniyor...
+:: Repack ASAR
+echo ▶ Repacking ASAR archive...
 set "TEMP_ASAR=%TEMP%\app-%RANDOM%.asar"
 call npx -y asar pack "%TEMP_EXTRACT%" "%TEMP_ASAR%"
 
-:: Yeni ASAR'ı yerine koy
+:: Replace active ASAR
 copy /Y "%TEMP_ASAR%" "%RESOURCES_DIR%\app.asar" >nul
 del /F /Q "%TEMP_ASAR%" >nul 2>&1
 rd /S /Q "%TEMP_EXTRACT%" >nul 2>&1
 
 echo.
 echo ================================================================
-echo  🎉 TEBRIKLER! ANYTYPE BASARIYLA GUNCELLENDI!
+echo  🎉 CONGRATULATIONS! ANYTYPE SUCCESSFULLY UPDATED!
 echo ================================================================
 echo.
-set /p LAUNCH="Anytype simdi baslatilsin mi? (E/h) [Enter = Evet]: "
-if /i not "%LAUNCH%"=="h" (
+set /p LAUNCH="Launch Anytype now? (Y/n) [Enter = Yes]: "
+if /i not "%LAUNCH%"=="n" (
     start "" "%LOCALAPPDATA%\Programs\Anytype\Anytype.exe" 2>nul
-    echo [✓] Anytype baslatildi.
+    echo [✓] Anytype launched.
 )
 goto end
 
 :start_go_wizard
-echo [OK] Go tespit edildi, gelismis sihirbaz baslatiliyor...
+echo [OK] Go detected, launching interactive installation wizard...
 echo.
 go run scripts\install.go
 goto end
 
 :end
 echo.
-echo Cikmak icin bir tusa basin...
+echo Press any key to exit...
 pause >nul
 exit /b 0
 
 :error
 echo.
-echo [HATA] Kurulum sirasinda bir hata olustu.
-echo Cikmak icin bir tusa basin...
+echo [ERROR] An error occurred during installation.
+echo Press any key to exit...
 pause >nul
 exit /b 1

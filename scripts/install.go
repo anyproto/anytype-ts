@@ -1,12 +1,12 @@
 //go:build ignore
 
-// scripts/install.go — Windows, macOS ve Linux için adım adım (Next-Next-Finish)
-// interaktif Anytype kurulum ve güncelleme sihirbazı.
+// scripts/install.go — Step-by-step (Next-Next-Finish) interactive installation
+// and deployment wizard for Windows, macOS, and Linux.
 //
-// Kullanım:
+// Usage:
 //   go run scripts/install.go
 //
-// veya derlenmiş ikili olarak:
+// or compile as a standalone binary:
 //   go build -o install.exe scripts/install.go
 //   ./install.exe
 package main
@@ -24,17 +24,17 @@ import (
 	"time"
 )
 
-// ─────────────────────────────── Renkler & Konsol ────────────────────────────
+// ─────────────────────────────── Colors & Console ────────────────────────────
 
 const (
-	colorReset  = "\033[0m"
-	colorGreen  = "\033[32m"
-	colorYellow = "\033[33m"
-	colorRed    = "\033[31m"
-	colorCyan   = "\033[36m"
-	colorBold   = "\033[1m"
-	colorBlue   = "\033[34m"
-	colorMagenta= "\033[35m"
+	colorReset   = "\033[0m"
+	colorGreen   = "\033[32m"
+	colorYellow  = "\033[33m"
+	colorRed     = "\033[31m"
+	colorCyan    = "\033[36m"
+	colorBold    = "\033[1m"
+	colorBlue    = "\033[34m"
+	colorMagenta = "\033[35m"
 )
 
 var reader = bufio.NewReader(os.Stdin)
@@ -50,10 +50,10 @@ func clearConsole() {
 }
 
 func printHeader(stepTitle string, stepNum, totalSteps int) {
-	fmt.Printf("\n"+colorBold+colorCyan+"================================================================"+colorReset+"\n")
-	fmt.Printf(colorBold+colorMagenta+" 🚀 ANYTYPE-TS KURULUM SİHİRBAZI (Next-Next-Finish)"+colorReset+"\n")
+	fmt.Printf("\n" + colorBold + colorCyan + "================================================================" + colorReset + "\n")
+	fmt.Printf(colorBold+colorMagenta+" 🚀 ANYTYPE-TS INSTALLATION WIZARD (Next-Next-Finish)"+colorReset+"\n")
 	fmt.Printf(colorBold+colorYellow+" [%d/%d] %s"+colorReset+"\n", stepNum, totalSteps, stepTitle)
-	fmt.Printf(colorBold+colorCyan+"================================================================"+colorReset+"\n\n")
+	fmt.Printf(colorBold + colorCyan + "================================================================" + colorReset + "\n\n")
 }
 
 func askPrompt(question, defaultValue string) string {
@@ -72,148 +72,147 @@ func askPrompt(question, defaultValue string) string {
 }
 
 func askYesNo(question string, defaultYes bool) bool {
-	defStr := "E/h"
+	defStr := "Y/n"
 	if !defaultYes {
-		defStr = "e/H"
+		defStr = "y/N"
 	}
-	fmt.Printf(colorBold+colorGreen+"▶ %s "+colorYellow+"(%s) [Enter = %s]: "+colorReset, question, defStr, func() string {
-		if defaultYes {
-			return "Evet"
-		}
-		return "Hayır"
-	}())
+	defWord := "Yes"
+	if !defaultYes {
+		defWord = "No"
+	}
+	fmt.Printf(colorBold+colorGreen+"▶ %s "+colorYellow+"(%s) [Enter = %s]: "+colorReset, question, defStr, defWord)
 
 	input, _ := reader.ReadString('\n')
 	input = strings.TrimSpace(strings.ToLower(input))
 	if input == "" {
 		return defaultYes
 	}
-	return input == "e" || input == "evet" || input == "y" || input == "yes"
+	return input == "y" || input == "yes" || input == "e" || input == "evet"
 }
 
-// ─────────────────────────────── Main Sihirbaz ───────────────────────────────
+// ─────────────────────────────── Main Wizard ─────────────────────────────────
 
 func main() {
 	repoRoot, err := findRepoRoot()
 	if err != nil {
-		fmt.Printf(colorRed+"[HATA] Proje kök dizini bulunamadı: %v\n"+colorReset, err)
+		fmt.Printf(colorRed+"[ERROR] Project root directory not found: %v\n"+colorReset, err)
 		os.Exit(1)
 	}
 
 	clearConsole()
-	printHeader("Hoş Geldiniz & Dizin Tespiti", 1, 5)
-	fmt.Println("Bu sihirbaz, geliştirdiğiniz güncel Anytype arayüzünü ve arka plan")
-	fmt.Println("servislerini bilgisayarınızda kurulu olan Anytype üzerine kuracaktır.")
+	printHeader("Welcome & Installation Detection", 1, 5)
+	fmt.Println("This wizard will build and hot-deploy the latest Anytype UI")
+	fmt.Println("and background services directly into your installed Anytype app.")
 	fmt.Printf("Platform: %s (%s)\n\n", runtime.GOOS, runtime.GOARCH)
 
-	// ADIM 1: Kurulu Anytype dizini bul
+	// STEP 1: Detect installed Anytype directory
 	detectedDir := findInstalledResourcesDir()
 	var targetResourcesDir string
 
 	if detectedDir != "" {
-		fmt.Printf(colorGreen+"[✓] Kurulu Anytype bulundu:\n    %s\n\n"+colorReset, detectedDir)
-		if askYesNo("Bu konuma kurulum yapılsın mı?", true) {
+		fmt.Printf(colorGreen+"[✓] Found installed Anytype directory:\n    %s\n\n"+colorReset, detectedDir)
+		if askYesNo("Install to this location?", true) {
 			targetResourcesDir = detectedDir
 		} else {
-			targetResourcesDir = askPrompt("Lütfen Anytype 'resources' dizin yolunu girin", "")
+			targetResourcesDir = askPrompt("Please enter Anytype 'resources' directory path", "")
 		}
 	} else {
-		fmt.Println(colorYellow + "[!] Otomatik Anytype kurulumu bulunamadı." + colorReset)
-		targetResourcesDir = askPrompt("Lütfen Anytype 'resources' dizin yolunu girin", "")
+		fmt.Println(colorYellow + "[!] Installed Anytype directory was not found automatically." + colorReset)
+		targetResourcesDir = askPrompt("Please enter Anytype 'resources' directory path", "")
 	}
 
 	if targetResourcesDir == "" || !dirExists(targetResourcesDir) {
-		fmt.Printf(colorRed+"\n[HATA] Belirtilen dizin bulunamadı: %s\n"+colorReset, targetResourcesDir)
+		fmt.Printf(colorRed+"\n[ERROR] Specified directory does not exist: %s\n"+colorReset, targetResourcesDir)
 		os.Exit(1)
 	}
 
-	// ADIM 2: Çalışan Anytype uygulamasını kontrol et ve kapat
-	printHeader("Çalışan Uygulama Kontrolü", 2, 5)
+	// STEP 2: Process check & graceful termination
+	printHeader("Running Application Check", 2, 5)
 	if isProcessRunning("Anytype") || isProcessRunning("anytype") {
-		fmt.Println(colorYellow + "[!] Anytype şu anda arka planda veya açık durumda çalışıyor." + colorReset)
-		fmt.Println("Dosyaların kilitlenmemesi için uygulamanın kapatılması gerekiyor.")
+		fmt.Println(colorYellow + "[!] Anytype is currently running in the background." + colorReset)
+		fmt.Println("To prevent file access conflicts, Anytype needs to be closed.")
 		fmt.Println()
-		if askYesNo("Anytype şimdi otomatik olarak kapatılsın mı?", true) {
+		if askYesNo("Automatically close Anytype now?", true) {
 			killProcess("Anytype")
 			time.Sleep(1 * time.Second)
-			fmt.Println(colorGreen + "[✓] Anytype kapatıldı." + colorReset)
+			fmt.Println(colorGreen + "[✓] Anytype closed successfully." + colorReset)
 		} else {
-			fmt.Println(colorYellow + "[!] Lütfen Anytype'ı manuel olarak kapatıp Enter'a basın..." + colorReset)
+			fmt.Println(colorYellow + "[!] Please close Anytype manually and press [Enter] to continue..." + colorReset)
 			_, _ = reader.ReadString('\n')
 		}
 	} else {
-		fmt.Println(colorGreen + "[✓] Anytype açık değil, kuruluma devam edilebilir." + colorReset)
+		fmt.Println(colorGreen + "[✓] Anytype is not running, ready to proceed." + colorReset)
 	}
 
-	// ADIM 3: UI Derleme Seçeneği
-	printHeader("UI Derleme Seçimi (Build)", 3, 5)
+	// STEP 3: UI Build Option
+	printHeader("UI Build Selection", 3, 5)
 	hasDist := dirExists(filepath.Join(repoRoot, "dist"))
 	var doBuild bool
 
 	if hasDist {
-		fmt.Println("Önceden derlenmiş 'dist/' klasörü mevcut.")
-		fmt.Println("  [1] Yeniden baştan derle (Tavsiye edilen / En güncel kodlar)")
-		fmt.Println("  [2] Mevcut derlemeyi kullan (Hızlı kurulum)")
+		fmt.Println("Pre-existing 'dist/' build directory detected.")
+		fmt.Println("  [1] Rebuild from source (Recommended / Latest code)")
+		fmt.Println("  [2] Use existing build (Fast deploy)")
 		fmt.Println()
-		choice := askPrompt("Seçiminiz", "1")
+		choice := askPrompt("Your choice", "1")
 		doBuild = (choice == "1")
 	} else {
-		fmt.Println(colorYellow + "'dist/' klasörü bulunamadı. Derleme yapılması zorunludur." + colorReset)
+		fmt.Println(colorYellow + "'dist/' directory not found. Building is required." + colorReset)
 		doBuild = true
 	}
 
 	if doBuild {
-		fmt.Printf("\n" + colorCyan + "▶ UI derleniyor (bun run build)... Lütfen bekleyin...\n" + colorReset)
+		fmt.Printf("\n" + colorCyan + "▶ Building UI (bun run build)... Please wait...\n" + colorReset)
 		if err := executeBuild(repoRoot); err != nil {
-			fmt.Printf(colorRed+"\n[HATA] Derleme başarısız oldu: %v\n"+colorReset, err)
+			fmt.Printf(colorRed+"\n[ERROR] Build failed: %v\n"+colorReset, err)
 			os.Exit(1)
 		}
-		fmt.Println(colorGreen + "\n[✓] Derleme başarıyla tamamlandı!" + colorReset)
+		fmt.Println(colorGreen + "\n[✓] UI build completed successfully!" + colorReset)
 	}
 
-	// ADIM 4: Yedekleme ve Kopyalama / ASAR Güncelleme
-	printHeader("Kurulum ve Paketleme", 4, 5)
-	fmt.Printf("Hedef: %s\n\n", targetResourcesDir)
+	// STEP 4: Backup, Extraction & ASAR Deployment
+	printHeader("Installation & Packaging", 4, 5)
+	fmt.Printf("Target: %s\n\n", targetResourcesDir)
 
 	asarPath := filepath.Join(targetResourcesDir, "app.asar")
 	asarUnpacked := filepath.Join(targetResourcesDir, "app.asar.unpacked")
 
 	if !fileExists(asarPath) {
-		fmt.Printf(colorRed+"[HATA] %s bulunamadı!\n"+colorReset, asarPath)
+		fmt.Printf(colorRed+"[ERROR] %s was not found!\n"+colorReset, asarPath)
 		os.Exit(1)
 	}
 
-	// Yedek oluştur
+	// Create backup
 	backupPath := asarPath + fmt.Sprintf(".backup_%d", time.Now().Unix())
-	fmt.Printf(colorCyan+"[1/4] Orijinal app.asar yedekleniyor... (%s)\n"+colorReset, filepath.Base(backupPath))
+	fmt.Printf(colorCyan+"[1/4] Backing up original app.asar... (%s)\n"+colorReset, filepath.Base(backupPath))
 	if err := copyFile(asarPath, backupPath); err != nil {
-		fmt.Printf(colorYellow+"[WARN] Yedek alınamadı: %v\n"+colorReset, err)
+		fmt.Printf(colorYellow+"[WARN] Failed to create backup: %v\n"+colorReset, err)
 	} else {
-		fmt.Println(colorGreen + "[✓] Güvenli yedek oluşturuldu." + colorReset)
+		fmt.Println(colorGreen + "[✓] Safe backup created." + colorReset)
 	}
 
-	// ASAR çıkart
-	fmt.Println(colorCyan + "[2/4] ASAR arşivi açılıyor..." + colorReset)
+	// Extract ASAR
+	fmt.Println(colorCyan + "[2/4] Extracting ASAR archive..." + colorReset)
 	tmpExtractDir, err := os.MkdirTemp("", "anytype-install-*")
 	if err != nil {
-		fmt.Printf(colorRed+"[HATA] Geçici dizin açılamadı: %v\n"+colorReset, err)
+		fmt.Printf(colorRed+"[ERROR] Failed to create temporary directory: %v\n"+colorReset, err)
 		os.Exit(1)
 	}
 	defer os.RemoveAll(tmpExtractDir)
 
 	if err := runCmd("npx", "-y", "asar", "extract", asarPath, tmpExtractDir); err != nil {
-		fmt.Printf(colorRed+"[HATA] ASAR çıkartılamadı: %v\n"+colorReset, err)
+		fmt.Printf(colorRed+"[ERROR] Failed to extract ASAR: %v\n"+colorReset, err)
 		os.Exit(1)
 	}
 
-	// Dosyaları enjekte et
-	fmt.Println(colorCyan + "[3/4] Güncel dist/, electron.js ve yapılandırmalar aktarılıyor..." + colorReset)
+	// Inject updated files
+	fmt.Println(colorCyan + "[3/4] Copying updated dist/, electron.js, and configuration files..." + colorReset)
 	_ = copyDir(filepath.Join(repoRoot, "dist"), filepath.Join(tmpExtractDir, "dist"))
 	_ = copyFile(filepath.Join(repoRoot, "electron.js"), filepath.Join(tmpExtractDir, "electron.js"))
 	_ = copyDir(filepath.Join(repoRoot, "electron"), filepath.Join(tmpExtractDir, "electron"))
 
-	// ASAR yeniden paketle
-	fmt.Println(colorCyan + "[4/4] ASAR arşivi yeniden paketleniyor..." + colorReset)
+	// Repack ASAR
+	fmt.Println(colorCyan + "[4/4] Repacking ASAR archive..." + colorReset)
 	tmpNewAsar := filepath.Join(os.TempDir(), fmt.Sprintf("new-app-%d.asar", time.Now().UnixNano()))
 	defer os.Remove(tmpNewAsar)
 
@@ -224,38 +223,38 @@ func main() {
 	}
 
 	if err := runCmd("npx", packArgs...); err != nil {
-		fmt.Printf(colorRed+"[HATA] ASAR paketlenemedi: %v\n"+colorReset, err)
+		fmt.Printf(colorRed+"[ERROR] Failed to pack ASAR: %v\n"+colorReset, err)
 		os.Exit(1)
 	}
 
-	// Eski asar'ı değiştir
+	// Replace active ASAR
 	_ = os.Remove(asarPath)
 	if err := copyFile(tmpNewAsar, asarPath); err != nil {
-		fmt.Printf(colorRed+"[HATA] Yeni app.asar kopyalanamadı: %v\n"+colorReset, err)
+		fmt.Printf(colorRed+"[ERROR] Failed to write new app.asar: %v\n"+colorReset, err)
 		os.Exit(1)
 	}
-	fmt.Println(colorGreen + "[✓] Yeni sürüm başarıyla kurulu Anytype'a uygulandı!" + colorReset)
+	fmt.Println(colorGreen + "[✓] Updated version successfully applied to installed Anytype!" + colorReset)
 
-	// ADIM 5: Bitiş & Başlatma (Finish)
-	printHeader("Tebrikler! Kurulum Tamamlandı", 5, 5)
-	fmt.Println(colorBold + colorGreen + "🎉 TÜM DEĞİŞİKLİKLER BAŞARIYLA YÜKLENDİ!" + colorReset)
-	fmt.Println("\nYüklenen Başlıca Yenilikler:")
+	// STEP 5: Completion & Launch (Finish)
+	printHeader("Congratulations! Installation Complete", 5, 5)
+	fmt.Println(colorBold + colorGreen + "🎉 ALL UPDATES HAVE BEEN INSTALLED SUCCESSFULLY!" + colorReset)
+	fmt.Println("\nInstalled Highlights:")
 	fmt.Println("  ✔ P2P Network Configuration (config.json, static-peers.json, own-addresses.json)")
-	fmt.Println("  ✔ Canlı Soket & Peer Bağlantı Testi (Yamux, QUIC, TCP, WebSocket)")
-	fmt.Println("  ✔ 12 Saatlik Otomatik Cache Temizleme (Auto-Eviction) & Ultra Hızlı Resim Önbelleği")
-	fmt.Println("  ✔ Dairesel Logolar & Temiz Dairesel Seçim Halkalı Sidebar Tasarımı")
-	fmt.Println("  ✔ Tema & Tipografi Özelleştirici (Volume Slider'lar, Sistem Fontları Listesi)")
+	fmt.Println("  ✔ Live Socket & Peer Connectivity Testing (Yamux, QUIC, TCP, WebSocket)")
+	fmt.Println("  ✔ 12-Hour Auto-Eviction & Ultra Fast Image Caching Engine")
+	fmt.Println("  ✔ Circular Space Icons & Round Selection Outline Sidebar Design")
+	fmt.Println("  ✔ Theme & Typography Customizer (Volume Sliders, System Fonts Listing)")
 	fmt.Println()
 
-	if askYesNo("Anytype şimdi başlatılsın mı?", true) {
+	if askYesNo("Launch Anytype now?", true) {
 		launchInstalledAnytype(targetResourcesDir)
 	}
 
-	fmt.Println(colorBold + colorCyan + "\nKurulum Sihirbazı tamamlandı. Çıkmak için [Enter]'a basın..." + colorReset)
+	fmt.Println(colorBold + colorCyan + "\nInstallation Wizard complete. Press [Enter] to exit..." + colorReset)
 	_, _ = reader.ReadString('\n')
 }
 
-// ─────────────────────────────── Yardımcı Fonksiyonlar ────────────────────────
+// ─────────────────────────────── Helper Functions ────────────────────────────
 
 func findRepoRoot() (string, error) {
 	dir, err := os.Getwd()
@@ -272,7 +271,7 @@ func findRepoRoot() (string, error) {
 		}
 		dir = parent
 	}
-	return "", fmt.Errorf("package.json bulunamadı")
+	return "", fmt.Errorf("package.json not found")
 }
 
 func findInstalledResourcesDir() string {
@@ -351,19 +350,19 @@ func launchInstalledAnytype(resourcesDir string) {
 		exePath := filepath.Join(appDir, "Anytype.exe")
 		if fileExists(exePath) {
 			_ = exec.Command("cmd", "/c", "start", "", exePath).Start()
-			fmt.Println(colorGreen + "[✓] Anytype başlatıldı." + colorReset)
+			fmt.Println(colorGreen + "[✓] Anytype launched." + colorReset)
 		}
 	case "darwin":
 		_ = exec.Command("open", "-a", "Anytype").Start()
-		fmt.Println(colorGreen + "[✓] Anytype başlatıldı." + colorReset)
+		fmt.Println(colorGreen + "[✓] Anytype launched." + colorReset)
 	case "linux":
 		_ = exec.Command("anytype").Start()
-		fmt.Println(colorGreen + "[✓] Anytype başlatıldı." + colorReset)
+		fmt.Println(colorGreen + "[✓] Anytype launched." + colorReset)
 	}
 }
 
 func ensureBun(repoRoot string) (string, error) {
-	// 1. PATH kontrolü
+	// 1. Check PATH
 	if p, err := exec.LookPath("bun"); err == nil {
 		return p, nil
 	}
@@ -371,7 +370,7 @@ func ensureBun(repoRoot string) (string, error) {
 		return p, nil
 	}
 
-	// 2. Varsayılan kurulum dizinleri kontrolü
+	// 2. Check default installation directories
 	home, _ := os.UserHomeDir()
 	userProfile := os.Getenv("USERPROFILE")
 	localAppData := os.Getenv("LOCALAPPDATA")
@@ -391,37 +390,37 @@ func ensureBun(repoRoot string) (string, error) {
 		}
 	}
 
-	// 3. Bulunamadı — Kullanıcı onayıyla otomatik indir ve kur
-	fmt.Printf(colorYellow + "\n[!] 'bun' paket yöneticisi sisteminizde bulunamadı.\n" + colorReset)
-	fmt.Println("Anytype arayüzünün derlenmesi için Bun gereklidir.")
-	if !askYesNo("Bun otomatik olarak indirilip kurulsun mu?", true) {
-		return "", fmt.Errorf("bun kurulumu kullanıcı tarafından iptal edildi")
+	// 3. Missing — Prompt user to automatically download and install
+	fmt.Printf(colorYellow + "\n[!] 'bun' package manager was not found on your system.\n" + colorReset)
+	fmt.Println("Bun is required to build the Anytype interface.")
+	if !askYesNo("Automatically download and install Bun?", true) {
+		return "", fmt.Errorf("bun installation was cancelled by the user")
 	}
 
-	fmt.Println(colorCyan + "\n▶ Bun indiriliyor ve kuruluyor..." + colorReset)
+	fmt.Println(colorCyan + "\n▶ Downloading and installing Bun..." + colorReset)
 
 	if runtime.GOOS == "windows" {
 		cmd := exec.Command("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "irm bun.sh/install.ps1 | iex")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
-			return "", fmt.Errorf("powershell üzerinden bun kurulumu başarısız: %v", err)
+			return "", fmt.Errorf("powershell bun installation failed: %v", err)
 		}
 	} else {
 		cmd := exec.Command("bash", "-c", "curl -fsSL https://bun.sh/install | bash")
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		if err := cmd.Run(); err != nil {
-			return "", fmt.Errorf("curl üzerinden bun kurulumu başarısız: %v", err)
+			return "", fmt.Errorf("curl bun installation failed: %v", err)
 		}
 	}
 
-	// Kurulum sonrası tekrar kontrol et
+	// Check installation paths again
 	for _, c := range candidates {
 		if fileExists(c) {
 			dir := filepath.Dir(c)
 			_ = os.Setenv("PATH", dir+string(os.PathListSeparator)+os.Getenv("PATH"))
-			fmt.Printf(colorGreen + "[✓] Bun başarıyla kuruldu: %s\n" + colorReset, c)
+			fmt.Printf(colorGreen+"[✓] Bun successfully installed: %s\n"+colorReset, c)
 			return c, nil
 		}
 	}
@@ -439,21 +438,21 @@ func executeBuild(repoRoot string) error {
 		return err
 	}
 
-	// node_modules yoksa önce bun install çalıştır
+	// If node_modules does not exist, run bun install first
 	nodeModules := filepath.Join(repoRoot, "node_modules")
 	if !dirExists(nodeModules) {
-		fmt.Println(colorCyan + "▶ Gerekli bağımlılıklar kuruluyor (bun install)..." + colorReset)
+		fmt.Println(colorCyan + "▶ Installing required dependencies (bun install)..." + colorReset)
 		cmdInstall := exec.Command(bunPath, "install")
 		cmdInstall.Dir = repoRoot
 		cmdInstall.Stdout = os.Stdout
 		cmdInstall.Stderr = os.Stderr
 		if err := cmdInstall.Run(); err != nil {
-			return fmt.Errorf("bun install başarısız: %v", err)
+			return fmt.Errorf("bun install failed: %v", err)
 		}
-		fmt.Println(colorGreen + "[✓] Bağımlılıklar kuruldu.\n" + colorReset)
+		fmt.Println(colorGreen + "[✓] Dependencies installed.\n" + colorReset)
 	}
 
-	fmt.Printf(colorCyan + "▶ UI derleniyor (%s run build)...\n" + colorReset, bunPath)
+	fmt.Printf(colorCyan+"▶ Building UI (%s run build)...\n"+colorReset, bunPath)
 	cmd := exec.Command(bunPath, "run", "build")
 	cmd.Dir = repoRoot
 	cmd.Stdout = os.Stdout
