@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef, useCallback } from 'react';
+import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { MediaPlaceholder, Icon, Error, Loader, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -10,104 +10,8 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const { state } = block.content;
 	const targetObjectId = block.getTargetObjectId();
 	const nodeRef = useRef(null);
-	const wrapRef = useRef<HTMLDivElement | null>(null);
-	const imgRef = useRef<HTMLImageElement | null>(null);
-	
+	const wrapRef = useRef(null);
 	const [ isLoaded, setIsLoaded ] = useState(false);
-	const [ isBroken, setIsBroken ] = useState(false);
-	const [ retryKey, setRetryKey ] = useState(0);
-	const retryCountRef = useRef(0);
-	const retryTimerRef = useRef<any>(null);
-
-	const isDownloading = S.Common.isDownloading(targetObjectId);
-
-	const clearRetryTimer = () => {
-		if (retryTimerRef.current) {
-			clearTimeout(retryTimerRef.current);
-			retryTimerRef.current = null;
-		}
-	};
-
-	// Reset state and attempt preloading when targetObjectId changes
-	useEffect(() => {
-		clearRetryTimer();
-		setIsLoaded(false);
-		setIsBroken(false);
-		setRetryKey(0);
-		retryCountRef.current = 0;
-		if (wrapRef.current) {
-			U.Dom.removeClass(wrapRef.current, 'brokenMedia');
-		}
-
-		if (targetObjectId) {
-			const url = S.Common.imageUrl(targetObjectId, I.ImageSize.Large);
-			if (url && typeof U !== 'undefined' && U.ImageCache) {
-				U.ImageCache.preload(url).then(() => {
-					setIsLoaded(true);
-				}).catch(() => {});
-			}
-		}
-
-		return () => {
-			clearRetryTimer();
-		};
-	}, [targetObjectId]);
-
-	// Fast detection if image was already in browser cache or completed
-	useEffect(() => {
-		if (imgRef.current && imgRef.current.complete && imgRef.current.naturalWidth > 0) {
-			setIsLoaded(true);
-			setIsBroken(false);
-		}
-	});
-
-	// When download completes in background, immediately retry loading
-	useEffect(() => {
-		if (!isDownloading && isBroken) {
-			setIsBroken(false);
-			retryCountRef.current = 0;
-			if (wrapRef.current) {
-				U.Dom.removeClass(wrapRef.current, 'brokenMedia');
-			}
-			setRetryKey(k => k + 1);
-		}
-	}, [isDownloading, isBroken]);
-
-	const handleImageError = useCallback(() => {
-		clearRetryTimer();
-
-		// Invalidate memory cache so retry requests fresh data from gateway
-		const baseImgUrl = S.Common.imageUrl(targetObjectId, I.ImageSize.Large);
-		if (typeof U !== 'undefined' && U.ImageCache?.invalidate) {
-			U.ImageCache.invalidate(baseImgUrl);
-		}
-
-		// Quick auto-retry for in-flight P2P chunk sync
-		const maxRetries = (typeof U !== 'undefined' && U.Common?.getMaxImageRetries) ? U.Common.getMaxImageRetries() : 2;
-		if (retryCountRef.current < maxRetries || isDownloading) {
-			retryCountRef.current++;
-			const delay = retryCountRef.current === 1 ? 500 : 1200;
-			retryTimerRef.current = setTimeout(() => {
-				setRetryKey(k => k + 1);
-			}, delay);
-		} else {
-			setIsBroken(true);
-			setIsLoaded(false);
-			if (wrapRef.current) {
-				U.Dom.addClass(wrapRef.current, 'brokenMedia');
-			}
-		}
-	}, [targetObjectId, isDownloading]);
-
-	const handleImageLoad = useCallback(() => {
-		clearRetryTimer();
-		retryCountRef.current = 0;
-		setIsBroken(false);
-		setIsLoaded(true);
-		if (wrapRef.current) {
-			U.Dom.removeClass(wrapRef.current, 'brokenMedia');
-		}
-	}, []);
 
 	const handleKeyDown = (e: any) => {
 		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
@@ -199,18 +103,11 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		C.BlockListSetFields(rootId, [ { blockId: block.id, fields: { width: w } } ]);
 	};
 
-	const handleClick = (e: any) => {
-		if (isBroken) {
-			// Click on broken image triggers immediate reload
-			e.stopPropagation();
-			setIsBroken(false);
-			setIsLoaded(false);
-			retryCountRef.current = 0;
-			handleDownload();
-			setRetryKey(k => k + 1);
-			return;
-		}
+	const handleError = () => {
+		U.Dom.addClass(wrapRef.current, 'brokenMedia');
+	};
 
+	const handleClick = (e: any) => {
 		if (keyboard.withCommand(e)) {
 			return;
 		};
@@ -254,6 +151,8 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 		});
 	};
 
+	const isDownloading = S.Common.isDownloading(targetObjectId);
+
 	const handleDownload = () => {
 		Action.downloadFile(targetObjectId, analytics.route.block, block.isFileImage());
 	};
@@ -294,23 +193,18 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const typeName = translate('blockNameImage');
 	const overlay = <MediaState object={object} rootId={rootId} typeName={typeName} />;
 
-	// Build image URL with retry query param for cache-busting on retry
-	const rawUrl = S.Common.imageUrl(targetObjectId, I.ImageSize.Large);
-	const finalSrc = rawUrl ? (retryKey > 0 ? `${rawUrl}${rawUrl.includes('?') ? '&' : '?'}retry=${retryKey}` : rawUrl) : '';
-
 	let element = null;
 
 	if (object.isArchived && (state == I.FileState.Done)) {
 		element = (
-			<div ref={wrapRef} className={['wrap', isBroken ? 'brokenMedia' : ''].join(' ')} style={{ ...css, ...wrapCss }}>
-				{!isLoaded && !isBroken ? <Loader type={I.LoaderType.Loader} /> : ''}
+			<div ref={wrapRef} className="wrap" style={{ ...css, ...wrapCss }}>
+				{!isLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
 				<img
-					ref={imgRef}
 					className="mediaImage"
-					src={finalSrc}
+					src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
 					onDragStart={e => e.preventDefault()}
-					onLoad={handleImageLoad}
-					onError={handleImageError}
+					onLoad={() => setIsLoaded(true)}
+					onError={handleError}
 				/>
 				{overlay}
 			</div>
@@ -337,16 +231,15 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 			case I.FileState.Done: {
 				element = (
-					<div ref={wrapRef} className={['wrap', isBroken ? 'brokenMedia' : ''].join(' ')} style={{ ...css, ...wrapCss }}>
-						{!isLoaded && !isBroken ? <Loader type={I.LoaderType.Loader} /> : ''}
+					<div ref={wrapRef} className="wrap" style={{ ...css, ...wrapCss }}>
+						{!isLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
 						<img
-							ref={imgRef}
 							className="mediaImage"
-							src={finalSrc}
+							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
 							onDragStart={e => e.preventDefault()}
 							onClick={handleClick}
-							onLoad={handleImageLoad}
-							onError={handleImageError}
+							onLoad={() => setIsLoaded(true)}
+							onError={handleError}
 						/>
 						{isDownloading ? <Icon className="downloading" /> : <Icon name="common/download" className="download" onClick={handleDownload} />}
 						<Icon name="common/resize" className="resize" onMouseDown={e => handleResizeStart(e, false)} />

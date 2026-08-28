@@ -236,6 +236,17 @@ func repackAsar(srcDir, asarPath, unpackedDir string) {
 	}
 	run("npx", args...)
 
+	// asar pack --unpack çıktısını /tmp'ye yazar; unpacked dosyaları
+	// (anytypeHelper, *.node) kurulu uygulamanın unpacked dizinine senkronize et,
+	// yoksa backend binary'si hiç güncellenmez.
+	if fileExists(tmpAsar + ".unpacked") {
+		info("app.asar.unpacked senkronize ediliyor...")
+		if err := copyDir(tmpAsar+".unpacked", unpackedDir); err != nil {
+			fatal("app.asar.unpacked güncellenemedi %s: %v", unpackedDir, err)
+		}
+		ok("app.asar.unpacked güncellendi → %s", unpackedDir)
+	}
+
 	// Yedek
 	backupPath := asarPath + ".bak"
 	_ = copyFile(asarPath, backupPath)

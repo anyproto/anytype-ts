@@ -696,15 +696,26 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 								</div>
 							</div>
 							<div className="shareBody">
-								<div className="shareItem">
-									<span className="shareLabel">Your Peer ID:</span>
-									<span className="shareValue mono">
-										{ownAddresses[0]?.peerId || config.NetworkId || account?.id || '—'}
-									</span>
+								<div className="shareRow">
+									<span className="shareLabel">Your Peer ID</span>
+									<div 
+										className="shareValue"
+										onClick={() => {
+											const peerId = ownAddresses[0]?.peerId || config.NetworkId || account?.id || '';
+											if (peerId) {
+												U.Common.clipboardCopy({ text: peerId });
+												Preview.toastShow({ text: 'Copied Peer ID' });
+											}
+										}}
+										title="Click to copy Peer ID"
+									>
+										<code>{ownAddresses[0]?.peerId || config.NetworkId || account?.id || '—'}</code>
+										<Icon name="menu/action/copy" size={12} />
+									</div>
 								</div>
-								<div className="shareItem">
-									<span className="shareLabel">Advertised Addresses:</span>
-									<div className="addrList">
+								<div className="shareRow">
+									<span className="shareLabel">Advertised Addresses</span>
+									<div className="shareValueList">
 										{(ownAddresses[0]?.addresses?.filter(Boolean) || []).length > 0 ? (
 											ownAddresses[0].addresses.filter(Boolean).map((addr, i) => (
 												<span
