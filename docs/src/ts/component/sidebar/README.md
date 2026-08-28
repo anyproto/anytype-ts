@@ -46,6 +46,8 @@ Layout preview panel for type configuration. Shows a live preview of type layout
 
 Progress indicator for long-running operations (import, export, update, etc.). Displays in the left sidebar footer. Auto-expands when new processes appear, collapsible via header click. Exports `ProgressItem` component for individual progress entries and `SidebarProgress` as the container. Has Storybook stories.
 
+Import v2 runs additionally carry `I.ImportStatistic` (from `Event.Import.Statistic`), which replaces the blended percentage with per-phase counters: a count-up while totals are unknown, page/file or object counts once known, ETA, a calm rate-limit or retry badge, the current item as a subtitle, and live warning/error counts. Cancelling past the creating boundary opens a confirm popup, since it deletes the objects already created. Runs without a statistic (import v1, other process types) keep the legacy percentage rendering.
+
 ## Patterns
 
 - Resize handle with drag state tracking via refs and `raf`

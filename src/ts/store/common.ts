@@ -35,6 +35,9 @@ class CommonStore {
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
+	// Space chosen on the Import screen. Lives here rather than in page state because the
+	// format sub-pages are separate routes; read it through U.Space.getImportTargetId().
+	public importSpaceId = '';
 	public notionToken = '';
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
@@ -162,6 +165,7 @@ class CommonStore {
 			hideFileObjectsInTreeValue: observable,
 			autoDownloadValue: observable,
 			spaceId: observable,
+			importSpaceId: observable,
 			leftSidebarStateValue: observable,
 			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
@@ -215,6 +219,7 @@ class CommonStore {
 			themeSet: action,
 			nativeThemeSet: action,
 			spaceSet: action,
+			importSpaceIdSet: action,
 			spaceStorageSet: action,
 			inviteSet: action,
 			inviteClear: action,
@@ -656,6 +661,17 @@ class CommonStore {
 	 */
 	spaceSet (id: string) {
 		this.spaceId = String(id || '');
+
+		// The import target is only meaningful next to the space it was chosen from.
+		this.importSpaceId = '';
+	};
+
+	/**
+	 * Sets the space chosen as the import target.
+	 * @param {string} id - The space ID, empty to fall back to the current space.
+	 */
+	importSpaceIdSet (id: string) {
+		this.importSpaceId = String(id || '');
 	};
 
 	/**

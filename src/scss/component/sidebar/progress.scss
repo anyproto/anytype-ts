@@ -46,9 +46,21 @@
 			.name { @include text-overflow-nw; @include text-common; font-weight: 500; color: var(--color-text-primary); }
 			.status { @include text-small; color: var(--color-text-secondary); }
 			.status {
-				> span { display: flex; align-items: center; gap: 6px; }
-				.dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); }
+				> span { display: flex; flex-wrap: wrap; align-items: center; gap: 0px 6px; }
+				.dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); flex-shrink: 0; }
 				.error { margin: 0px; @include text-small; }
+			}
+
+			// Counts and durations break as units: the thousands separator is a space,
+			// so a wrapping segment would split the number itself
+			.part { white-space: nowrap; max-width: 100%; @include text-overflow-nw; }
+
+			.subtitle { @include text-overflow-nw; @include text-small; color: var(--color-text-tertiary); }
+
+			.issues { display: flex; flex-wrap: wrap; align-items: center; gap: 0px 6px; @include text-small; color: var(--color-text-tertiary); }
+			.issues {
+				.dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-tertiary); flex-shrink: 0; }
+				.error { color: var(--color-red); }
 			}
 		}
 

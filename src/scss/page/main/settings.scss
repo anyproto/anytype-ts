@@ -815,6 +815,32 @@
 		.title { margin-bottom: 24px !important; }
 	}
 
+	> .pageSettingsImportIndex {
+		// The tile styling above dresses the format grid; rows inside .actionItems are
+		// settings rows, so they keep the container's own border instead of drawing one each.
+		.actionItems .item { height: auto; border: 0px; border-radius: 0px; border-bottom: 1px solid var(--color-shape-secondary); padding: 14px 16px; justify-content: space-between; }
+		.actionItems .item {
+			&:hover { background: none; }
+			&:last-child { border-bottom: 0px; }
+		}
+
+		// The sections wrapper already spaces this row from the ones below.
+		.actionItems.target { margin-bottom: 0px; }
+
+		.aiSettings {
+			.label.description { color: var(--color-text-secondary); margin: 0px 0px 12px 0px; }
+
+			.actionItems {
+				.item {
+					.input { max-width: 250px; min-height: 28px; border: 1px solid var(--color-shape-secondary); border-radius: 8px; padding: 3px 10px; }
+				}
+			}
+
+			.error { margin: 8px 0px 0px 0px; }
+			.label.disclosure { @include text-small; color: var(--color-text-secondary); margin: 12px 0px 0px 0px; }
+		}
+	}
+
 	.icon.logo { margin: 0px 0px 16px 0px; }
 
 	> .pageSettingsImportNotion {

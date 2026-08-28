@@ -1122,9 +1122,9 @@ class Dispatcher {
 						break;
 					};
 
-					const { count, type } = mapped;
+					const { count, type, issuesCount } = mapped;
 
-					analytics.event('Import', { type, count });
+					analytics.event('Import', { type, count, issuesCount });
 					break;
 				};
 
@@ -1496,6 +1496,23 @@ class Dispatcher {
 
 				case 'ProcessDone': {
 					S.Progress.delete(mapped.process.id);
+					break;
+				};
+
+				case 'ImportStatistic': {
+					// A noProgress run (migration, gallery install) reports an empty processId and
+					// stays invisible. Any other run creates its item on demand rather than only
+					// attaching to one: the statistic stream is what rebuilds the sidebar after a
+					// renderer reload, and after a restart the middleware resumes the run itself —
+					// in both cases ProcessNew fired before this renderer was listening.
+					if (mapped.processId) {
+						S.Progress.update({
+							id: mapped.processId,
+							type: I.ProgressType.Import,
+							canCancel: true,
+							statistic: mapped,
+						});
+					};
 					break;
 				};
 

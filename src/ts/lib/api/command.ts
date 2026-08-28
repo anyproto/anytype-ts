@@ -1288,6 +1288,11 @@ export const ObjectImport = (spaceId: string, options: any, snapshots: any[], ex
 
 	};
 
+	// Optional LLM structure enrichment, only for types served by the v2 import engine
+	if (options.aiParams && U.Data.canImportAi(type)) {
+		params.aiParams = options.aiParams;
+	};
+
 	dispatcher.request('ObjectImport', {
 		spaceId,
 		snapshots: (snapshots || []).map(Mapper.To.Snapshot),

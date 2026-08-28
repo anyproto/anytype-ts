@@ -30,7 +30,7 @@ class Notification implements I.Notification {
 	};
 
 	fillContent () {
-		const { importType, errorCode, name } = this.payload;
+		const { errorCode, name } = this.payload;
 		const lang = errorCode ? 'error' : 'success';
 		const et = U.Common.enumKey(I.NotificationType, this.type);
 		const identityName = U.String.shorten(String(this.payload.identityName || translate('defaultNamePage')), 32);
@@ -42,9 +42,14 @@ class Notification implements I.Notification {
 
 		switch (this.type) {
 			case I.NotificationType.Import: {
+				const issuesCount = Number(this.payload.issuesCount) || 0;
+
 				if (Object.values(J.Error.Code.Import).includes(errorCode)) {
 					this.title = translate('commonError');
 					this.text = translate(`notificationImportErrorText${errorCode}`);
+				} else
+				if (issuesCount) {
+					this.text = U.String.sprintf(translate('notificationImportSuccessIssuesText'), issuesCount, U.Common.plural(issuesCount, translate('pluralIssue')));
 				};
 				break;
 			};

@@ -334,6 +334,43 @@ class UtilSpace {
 	};
 
 	/**
+	 * Gets the list of spaces the import screen can write into.
+	 * @returns {any[]} The list of writable spaces.
+	 */
+	getImportTargetList () {
+		return this.getList().filter(it => this.canMyParticipantWrite(it.targetSpaceId));
+	};
+
+	/**
+	 * Gets the space the import screen is currently targeting, defaulting to the current
+	 * space. A choice that has since been deleted or become read-only falls back too.
+	 * @returns {string} The target space ID.
+	 */
+	getImportTargetId (): string {
+		const { space, importSpaceId } = S.Common;
+
+		if (!importSpaceId || !this.getSpaceviewBySpaceId(importSpaceId) || !this.canMyParticipantWrite(importSpaceId)) {
+			return space;
+		};
+
+		return importSpaceId;
+	};
+
+	/**
+	 * Opens the space that received an import, switching to it first when it is not the
+	 * current one.
+	 * @param {string} spaceId - The space that received the import.
+	 */
+	openImportTarget (spaceId: string) {
+		if (!spaceId || (spaceId == S.Common.space)) {
+			this.openDashboard();
+			return;
+		};
+
+		U.Router.switchSpace(spaceId, '', true, { onRouteChange: () => this.openDashboard() }, false);
+	};
+
+	/**
 	 * Gets the list of shared that user owns;
 	 * @returns {any[]} The list of active spaces.
 	 */

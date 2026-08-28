@@ -118,6 +118,14 @@ export default {
 		},
 	},
 
+	// Default endpoints per I.AiProvider; an empty endpoint in the request falls back to these middleware-side
+	importAiEndpoint: {
+		0:				 'http://localhost:11434/v1',
+		1:				 'https://api.openai.com/v1',
+		2:				 'http://localhost:1234/v1',
+		3:				 'http://localhost:8080/v1',
+	},
+
 	graphId: {
 		global:			 'graphGlobal',
 		dataview:		 'graphDataview'

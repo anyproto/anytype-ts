@@ -55,7 +55,7 @@ Navigation uses `U.Router.go(path, options)`. Authentication guards redirect una
 Hierarchical settings with `index.tsx` dispatcher:
 - **Account**: `account.tsx`, `delete.tsx`, `personal.tsx`, `phrase.tsx`, `language.tsx`, `api.tsx`
 - **PIN**: `pin/index.tsx` -> `pin/select.tsx` -> `pin/confirm.tsx`
-- **Import**: `import/index.tsx` -> `import/notion.tsx` (with `notion/help.tsx`, `notion/warning.tsx`), `import/csv.tsx`, `import/obsidian.tsx`
+- **Import**: `import/index.tsx` -> `import/notion.tsx` (with `notion/help.tsx`, `notion/warning.tsx`), `import/csv.tsx`, `import/obsidian.tsx`; `import/aiSettings.tsx` - AI structure enrichment settings section (provider/endpoint/model, data disclosure) rendered on the index page
 - **Export**: `export/index.tsx` -> `export/protobuf.tsx`, `export/markdown.tsx`
 - **Space**: `space/index.tsx` -> `space/home.tsx`, `space/list.tsx`, `space/storage.tsx`, `space/notifications.tsx`, `space/share.tsx` (with `share/members.tsx`)
 - **Data**: `data/index.tsx` -> `data/publish.tsx`

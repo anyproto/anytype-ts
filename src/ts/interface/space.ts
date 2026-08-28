@@ -32,6 +32,19 @@ export enum SpaceCreateType {
 	Join					 = 2,
 };
 
+// What the user asked for before the space existed. Carried through the create flow so the
+// last step can honour it instead of asking the home question again.
+export enum SpaceCreateIntent {
+	None					 = '',
+	Import					 = 'import',
+};
+
+export interface SpaceCreateOptions {
+	intent?: SpaceCreateIntent;
+	noJoin?: boolean;
+	onCreate?: (spaceId: string) => void;
+};
+
 export enum ParticipantPermissions {
 	Reader					 = 0,
 	Writer					 = 1,

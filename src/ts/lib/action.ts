@@ -543,13 +543,14 @@ class Action {
 	};
 
 	/**
-	 * Imports objects into the current space from selected files.
+	 * Imports objects into the given space from selected files.
+	 * @param {string} spaceId - The space receiving the import.
 	 * @param {I.ImportType} type - The import type.
 	 * @param {string[]} extensions - Allowed file extensions.
 	 * @param {any} [options] - Additional import options.
 	 * @param {function} [callBack] - Optional callback after import.
 	 */
-	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
+	import (spaceId: string, type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
 		const fileOptions: any = { 
 			properties: [ 'openFile', 'multiSelections' ],
 			filters: [
@@ -569,10 +570,10 @@ class Action {
 				return;
 			};
 
-			analytics.event('ClickImportFile', { type });
+			analytics.event('ClickImportFile', { type, ...U.Data.getImportAiAnalytics(type) });
 			Preview.toastShow({ text: translate('toastImportStart') });
 
-			C.ObjectImport(S.Common.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
+			C.ObjectImport(spaceId, Object.assign(options || {}, { paths, aiParams: U.Data.getImportAiParams() }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
 				if (!message.error.code) {
 					callBack?.(message);
 				};
@@ -760,8 +761,9 @@ class Action {
 	 * Opens the space creation popup with the selected create type.
 	 * @param {I.SpaceCreateType} type - The selected create type (Personal, Group, Join).
 	 * @param {string} route - The route context for analytics.
+	 * @param {I.SpaceCreateOptions} [options] - Intent the space is created for, and a callback receiving its ID.
 	 */
-	createSpace (type: I.SpaceCreateType, route: string) {
+	createSpace (type: I.SpaceCreateType, route: string, options?: I.SpaceCreateOptions) {
 		if (type == I.SpaceCreateType.Group) {
 			const mySharedSpaces = U.Space.getMySharedSpacesList();
 			const { sharedSpacesLimit } = U.Space.getProfile();
@@ -782,8 +784,10 @@ class Action {
 			};
 		};
 
+		const { intent, onCreate } = options || {};
+
 		S.Popup.closeAll(null, () => {
-			S.Popup.open('spaceCreate', { data: { type, route } });
+			S.Popup.open('spaceCreate', { data: { type, route, intent, onCreate } });
 		});
 	};
 

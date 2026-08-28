@@ -3094,7 +3094,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			} else
 			// Import action
 			if (item.isImport) {
-				Action.import(item.format, J.Constant.fileExtension.import[item.format]);
+				Action.import(S.Common.space, item.format, J.Constant.fileExtension.import[item.format]);
 
 			// Buttons
 			} else {

@@ -67,6 +67,9 @@ const config: StorybookConfig = {
 		config.define = {
 			...config.define,
 			'process.env': '{}',
+			'IMPORT_AI_ANYTYPE_ENDPOINT': JSON.stringify(process.env.IMPORT_AI_ANYTYPE_ENDPOINT || ''),
+			'IMPORT_AI_ANYTYPE_MODEL': JSON.stringify(process.env.IMPORT_AI_ANYTYPE_MODEL || ''),
+			'IMPORT_AI_ANYTYPE_TOKEN': JSON.stringify(process.env.IMPORT_AI_ANYTYPE_TOKEN || ''),
 		};
 
 		config.plugins = config.plugins || [];

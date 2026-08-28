@@ -178,7 +178,7 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 			return;
 		};
 
-		const { onCreate, route } = data;
+		const { onCreate, route, intent } = data;
 		const submittedName = checkName(name);
 		const usecase = I.Usecase.DataSpace;
 
@@ -238,6 +238,16 @@ const PopupSpaceCreate = forwardRef<{}, I.Popup>(({ param = {}, getId, close, po
 					};
 
 					const openPicker = () => {
+						// Created as an import target: the caller stays on the Import screen and
+						// only needs the new id, which onCreate delivers below. The home step is
+						// skipped rather than left half-answered — it would switch spaces, and
+						// the homepage is already Widget from the details above, the same value
+						// Not now writes.
+						if (intent == I.SpaceCreateIntent.Import) {
+							close();
+							return;
+						};
+
 						close(() => {
 							S.Popup.open('spaceHome', {
 								data: { spaceId },

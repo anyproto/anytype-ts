@@ -1624,6 +1624,101 @@ class UtilData {
 		return [ node.id, ...node.children.flatMap(c => this.flattenIds(c)) ];
 	};
 
+	/**
+	 * Returns whether the import type is eligible for AI structure enrichment (served by the v2 import engine).
+	 */
+	canImportAi (type: I.ImportType): boolean {
+		return [ I.ImportType.Notion, I.ImportType.Markdown, I.ImportType.Obsidian ].includes(type);
+	};
+
+	/**
+	 * Whether this build embeds the "Provided by Anytype" AI proxy (endpoint and model injected at build time).
+	 * The typeof guard covers environments without the build-time defines (unit tests).
+	 */
+	isImportAiAnytypeAvailable (): boolean {
+		return ('undefined' != typeof IMPORT_AI_ANYTYPE_ENDPOINT) && Boolean(IMPORT_AI_ANYTYPE_ENDPOINT && IMPORT_AI_ANYTYPE_MODEL);
+	};
+
+	/**
+	 * Returns persisted AI import settings with defaults applied.
+	 */
+	getImportAiSettings (): I.ImportAiSettings {
+		const obj = Storage.get('importAi') || {};
+		const dflt = this.isImportAiAnytypeAvailable() ? I.AiProvider.Anytype : I.AiProvider.Ollama;
+		const provider = (undefined === obj.provider) ? dflt : Number(obj.provider);
+
+		return {
+			enabled: Boolean(obj.enabled),
+			provider: (provider == I.AiProvider.Anytype) && !this.isImportAiAnytypeAvailable() ? I.AiProvider.Ollama : provider,
+			endpoint: String(obj.endpoint || ''),
+			model: String(obj.model || ''),
+			token: String(obj.token || ''),
+			includeContentSamples: Boolean(obj.includeContentSamples),
+		};
+	};
+
+	setImportAiSettings (settings: Partial<I.ImportAiSettings>): void {
+		Storage.set('importAi', Object.assign(this.getImportAiSettings(), settings));
+	};
+
+	/**
+	 * Builds the wire-format aiParams for ObjectImport, or null when the feature is off
+	 * or the config is incomplete. Never returns a half-filled config: a present-but-broken
+	 * config produces a visible llmPlanFailed warning middleware-side.
+	 */
+	getImportAiParams (): any {
+		const settings = this.getImportAiSettings();
+
+		if (!settings.enabled) {
+			return null;
+		};
+
+		if (settings.provider == I.AiProvider.Anytype) {
+			if (!this.isImportAiAnytypeAvailable()) {
+				return null;
+			};
+
+			return {
+				config: {
+					provider: I.AiProvider.OpenAi,
+					endpoint: IMPORT_AI_ANYTYPE_ENDPOINT,
+					model: IMPORT_AI_ANYTYPE_MODEL,
+					// OPENAI provider requires a non-empty token middleware-side; the proxy may not check it
+					token: IMPORT_AI_ANYTYPE_TOKEN || 'anytype',
+					temperature: 0,
+				},
+				includeContentSamples: settings.includeContentSamples,
+			};
+		};
+
+		if (!settings.model || ((settings.provider == I.AiProvider.OpenAi) && !settings.token)) {
+			return null;
+		};
+
+		return {
+			config: {
+				provider: settings.provider,
+				endpoint: settings.endpoint,
+				model: settings.model,
+				token: settings.token,
+				temperature: 0,
+			},
+			includeContentSamples: settings.includeContentSamples,
+		};
+	};
+
+	/**
+	 * Analytics dimensions for the AI import feature; no endpoint/model values (potentially identifying).
+	 */
+	getImportAiAnalytics (type: I.ImportType): { aiEnabled: boolean; aiProvider: string } {
+		const enabled = this.canImportAi(type) && !!this.getImportAiParams();
+
+		return {
+			aiEnabled: enabled,
+			aiProvider: enabled ? (this.getImportAiSettings().provider == I.AiProvider.Anytype ? 'anytype' : 'byok') : '',
+		};
+	};
+
 };
 
 export default new UtilData();

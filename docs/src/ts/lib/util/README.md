@@ -7,7 +7,7 @@
 | File | Alias | Purpose |
 |------|-------|---------|
 | `common.ts` | `U.Common` | Window dimensions, random, plural, date formatting, clipboard, deep copy |
-| `data.ts` | `U.Data` | Data loading, auth flow, subscription management, onboarding |
+| `data.ts` | `U.Data` | Data loading, auth flow, subscription management, onboarding, import AI enrichment settings + `aiParams` builder |
 | `object.ts` | `U.Object` | Object CRUD, opening, routing, layout detection, type helpers |
 | `router.ts` | `U.Router` | URL navigation, space switching, history management |
 | `space.ts` | `U.Space` | Dashboard, space list, participants, sharing, publishing |

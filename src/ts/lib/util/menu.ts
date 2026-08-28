@@ -1743,7 +1743,7 @@ class UtilMenu {
 		this.menuContext = context;
 	};
 
-	spaceCreate (param: I.MenuParam, route: string) {
+	spaceCreate (param: I.MenuParam, route: string, createOptions?: I.SpaceCreateOptions) {
 		const analyticsName = {
 			[I.SpaceCreateType.Personal]: 'Space',
 			[I.SpaceCreateType.Group]: 'Chat',
@@ -1760,11 +1760,15 @@ class UtilMenu {
 			groupOption.caption = React.createElement(Icon, { name: 'common/alert', className: 'spaceLimit', color: 'grey' });
 		};
 
-		const options = [
+		const options: any[] = [
 			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
 			groupOption,
-			{ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
 		];
+
+		// Joining produces no new space, so callers waiting on onCreate hide it.
+		if (!createOptions?.noJoin) {
+			options.push({ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') });
+		};
 
 		let prefix = '';
 		switch (route) {
@@ -1785,7 +1789,7 @@ class UtilMenu {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					Action.createSpace(item.id, route);
+					Action.createSpace(item.id, route, createOptions);
 
 					analytics.event(`Click${prefix}CreateMenu${analyticsName[item.id]}`);
 				},

@@ -539,6 +539,8 @@ export const Mapper = {
 
 						if (type === I.NotificationType.Import) {
 							payload.importType = field.importType;
+							payload.reportObjectId = field.reportObjectId;
+							payload.issuesCount = field.issuesCount;
 						};
 
 						if (type === I.NotificationType.Gallery) {
@@ -1829,6 +1831,38 @@ export const Mapper = {
 				collectionId: obj.rootCollectionID,
 				count: obj.objectsCount,
 				type: obj.importType,
+				reportObjectId: obj.reportObjectId,
+				issuesCount: obj.issuesCount,
+			};
+		},
+
+		ImportStatistic: (obj: any): I.ImportStatistic => {
+			return {
+				importId: String(obj.importId || ''),
+				processId: String(obj.processId || ''),
+				importType: Number(obj.importType) || 0,
+				phase: Number(obj.phase) || 0,
+				phaseStartedAt: Number(obj.phaseStartedAt) || 0,
+				totalsKnown: Boolean(obj.totalsKnown),
+				pagesTotal: Number(obj.pagesTotal) || 0,
+				pagesDone: Number(obj.pagesDone) || 0,
+				filesTotal: Number(obj.filesTotal) || 0,
+				filesDone: Number(obj.filesDone) || 0,
+				bytesTotal: Number(obj.bytesTotal) || 0,
+				bytesDone: Number(obj.bytesDone) || 0,
+				state: Number(obj.state) || 0,
+				resumesInMs: Number(obj.resumesInMs) || 0,
+				attempt: Number(obj.attempt) || 0,
+				attemptsMax: Number(obj.attemptsMax) || 0,
+				errorMessage: String(obj.errorMessage || ''),
+				itemsPerSecond: Number(obj.itemsPerSecond) || 0,
+				estimatedRemainingMs: Number(obj.estimatedRemainingMs) || 0,
+				cancelEffect: Number(obj.cancelEffect) || 0,
+				objectsCreated: Number(obj.objectsCreated) || 0,
+				safeToClose: Boolean(obj.safeToClose),
+				warningCount: Number(obj.warningCount) || 0,
+				errorCount: Number(obj.errorCount) || 0,
+				currentItem: String(obj.currentItem || ''),
 			};
 		},
 
