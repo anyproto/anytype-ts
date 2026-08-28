@@ -174,17 +174,23 @@ cd anytype-ts
 bun install
 ```
 
-### 3. Build the UI
+### 3. Step-by-Step Installation Wizard (Next-Next-Finish)
+
+You can use the interactive terminal installation wizard to build, backup, close running processes, and hot-deploy into your installed Anytype automatically:
 
 ```powershell
-bun run build
+go run scripts/install.go
+# or
+bun run install:wizard
 ```
 
-### 4. Deploy to Installed Windows Anytype
+### 4. Non-Interactive Deploy to Installed Anytype
 
 If Anytype Desktop is installed via the standard Windows installer (located at `%LOCALAPPDATA%\Programs\Anytype\resources`):
 
 ```powershell
+# Build and deploy automatically:
+bun run build
 go run scripts/deploy.go
 ```
 

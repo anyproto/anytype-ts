@@ -16,6 +16,7 @@
 		"start:watch": "cross-env-shell vite --config vite.config.ts --port ${SERVER_PORT:-8080}",
 		"start:electron-wait-vite": "cross-env-shell node scripts/wait-for-localhost.js ${SERVER_PORT:-8080} && bun run electron",
 		"start:electron-wait-vite-win": "cross-env-shell node scripts/wait-for-localhost.js ${SERVER_PORT:-8080} && bun run electron-win",
+		"install:wizard": "go run scripts/install.go",
 		"start:dev": "node scripts/build-electron.js && node scripts/start-dev.js",
 		"start:dev-win": "node scripts/build-electron.js && node scripts/start-dev.js",
 		"build:electron": "node scripts/build-electron.js",
