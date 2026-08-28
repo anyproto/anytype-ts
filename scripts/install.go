@@ -131,7 +131,8 @@ func main() {
 	printHeader("Çalışan Uygulama Kontrolü", 2, 5)
 	if isProcessRunning("Anytype") || isProcessRunning("anytype") {
 		fmt.Println(colorYellow + "[!] Anytype şu anda arka planda veya açık durumda çalışıyor." + colorReset)
-		fmt.Println("Dosyaların kilitlenmemesi için uygulamanın kapatılması gerekiyor.\n")
+		fmt.Println("Dosyaların kilitlenmemesi için uygulamanın kapatılması gerekiyor.")
+		fmt.Println()
 		if askYesNo("Anytype şimdi otomatik olarak kapatılsın mı?", true) {
 			killProcess("Anytype")
 			time.Sleep(1 * time.Second)
@@ -152,7 +153,8 @@ func main() {
 	if hasDist {
 		fmt.Println("Önceden derlenmiş 'dist/' klasörü mevcut.")
 		fmt.Println("  [1] Yeniden baştan derle (Tavsiye edilen / En güncel kodlar)")
-		fmt.Println("  [2] Mevcut derlemeyi kullan (Hızlı kurulum)\n")
+		fmt.Println("  [2] Mevcut derlemeyi kullan (Hızlı kurulum)")
+		fmt.Println()
 		choice := askPrompt("Seçiminiz", "1")
 		doBuild = (choice == "1")
 	} else {
@@ -242,7 +244,8 @@ func main() {
 	fmt.Println("  ✔ Canlı Soket & Peer Bağlantı Testi (Yamux, QUIC, TCP, WebSocket)")
 	fmt.Println("  ✔ 12 Saatlik Otomatik Cache Temizleme (Auto-Eviction) & Ultra Hızlı Resim Önbelleği")
 	fmt.Println("  ✔ Dairesel Logolar & Temiz Dairesel Seçim Halkalı Sidebar Tasarımı")
-	fmt.Println("  ✔ Tema & Tipografi Özelleştirici (Volume Slider'lar, Sistem Fontları Listesi)\n")
+	fmt.Println("  ✔ Tema & Tipografi Özelleştirici (Volume Slider'lar, Sistem Fontları Listesi)")
+	fmt.Println()
 
 	if askYesNo("Anytype şimdi başlatılsın mı?", true) {
 		launchInstalledAnytype(targetResourcesDir)
@@ -359,11 +362,98 @@ func launchInstalledAnytype(resourcesDir string) {
 	}
 }
 
-func executeBuild(repoRoot string) error {
-	bunPath := "bun"
-	if runtime.GOOS == "windows" {
-		bunPath = "bun.exe"
+func ensureBun(repoRoot string) (string, error) {
+	// 1. PATH kontrolü
+	if p, err := exec.LookPath("bun"); err == nil {
+		return p, nil
 	}
+	if p, err := exec.LookPath("bun.exe"); err == nil {
+		return p, nil
+	}
+
+	// 2. Varsayılan kurulum dizinleri kontrolü
+	home, _ := os.UserHomeDir()
+	userProfile := os.Getenv("USERPROFILE")
+	localAppData := os.Getenv("LOCALAPPDATA")
+
+	candidates := []string{
+		filepath.Join(userProfile, ".bun", "bin", "bun.exe"),
+		filepath.Join(localAppData, "bun", "bin", "bun.exe"),
+		filepath.Join(home, ".bun", "bin", "bun"),
+		filepath.Join(home, ".bun", "bin", "bun.exe"),
+	}
+
+	for _, c := range candidates {
+		if fileExists(c) {
+			dir := filepath.Dir(c)
+			_ = os.Setenv("PATH", dir+string(os.PathListSeparator)+os.Getenv("PATH"))
+			return c, nil
+		}
+	}
+
+	// 3. Bulunamadı — Kullanıcı onayıyla otomatik indir ve kur
+	fmt.Printf(colorYellow + "\n[!] 'bun' paket yöneticisi sisteminizde bulunamadı.\n" + colorReset)
+	fmt.Println("Anytype arayüzünün derlenmesi için Bun gereklidir.")
+	if !askYesNo("Bun otomatik olarak indirilip kurulsun mu?", true) {
+		return "", fmt.Errorf("bun kurulumu kullanıcı tarafından iptal edildi")
+	}
+
+	fmt.Println(colorCyan + "\n▶ Bun indiriliyor ve kuruluyor..." + colorReset)
+
+	if runtime.GOOS == "windows" {
+		cmd := exec.Command("powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", "irm bun.sh/install.ps1 | iex")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			return "", fmt.Errorf("powershell üzerinden bun kurulumu başarısız: %v", err)
+		}
+	} else {
+		cmd := exec.Command("bash", "-c", "curl -fsSL https://bun.sh/install | bash")
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			return "", fmt.Errorf("curl üzerinden bun kurulumu başarısız: %v", err)
+		}
+	}
+
+	// Kurulum sonrası tekrar kontrol et
+	for _, c := range candidates {
+		if fileExists(c) {
+			dir := filepath.Dir(c)
+			_ = os.Setenv("PATH", dir+string(os.PathListSeparator)+os.Getenv("PATH"))
+			fmt.Printf(colorGreen + "[✓] Bun başarıyla kuruldu: %s\n" + colorReset, c)
+			return c, nil
+		}
+	}
+
+	if p, err := exec.LookPath("bun"); err == nil {
+		return p, nil
+	}
+
+	return "bun", nil
+}
+
+func executeBuild(repoRoot string) error {
+	bunPath, err := ensureBun(repoRoot)
+	if err != nil {
+		return err
+	}
+
+	// node_modules yoksa önce bun install çalıştır
+	nodeModules := filepath.Join(repoRoot, "node_modules")
+	if !dirExists(nodeModules) {
+		fmt.Println(colorCyan + "▶ Gerekli bağımlılıklar kuruluyor (bun install)..." + colorReset)
+		cmdInstall := exec.Command(bunPath, "install")
+		cmdInstall.Dir = repoRoot
+		cmdInstall.Stdout = os.Stdout
+		cmdInstall.Stderr = os.Stderr
+		if err := cmdInstall.Run(); err != nil {
+			return fmt.Errorf("bun install başarısız: %v", err)
+		}
+		fmt.Println(colorGreen + "[✓] Bağımlılıklar kuruldu.\n" + colorReset)
+	}
+
+	fmt.Printf(colorCyan + "▶ UI derleniyor (%s run build)...\n" + colorReset, bunPath)
 	cmd := exec.Command(bunPath, "run", "build")
 	cmd.Dir = repoRoot
 	cmd.Stdout = os.Stdout

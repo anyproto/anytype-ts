@@ -176,13 +176,15 @@ bun install
 
 ### 3. Step-by-Step Installation Wizard (Next-Next-Finish)
 
-You can use the interactive terminal installation wizard to build, backup, close running processes, and hot-deploy into your installed Anytype automatically:
+You can use the interactive terminal installation wizard to automatically detect/install Bun, install dependencies, build UI, create backups, close running Anytype instances, and hot-deploy into your installed Anytype automatically:
 
 ```powershell
 go run scripts/install.go
 # or
 bun run install:wizard
 ```
+
+> **Note:** If `bun` is not installed on your system, `install.go` will automatically detect it and ask to install it via PowerShell in 1 click.
 
 ### 4. Non-Interactive Deploy to Installed Anytype
 
