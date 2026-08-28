@@ -1,0 +1,21 @@
+[
+  "file",
+  "image",
+  "video",
+  "audio",
+  "space",
+  "spaceView",
+  "participant",
+  "dashboard",
+  "objectType",
+  "relation",
+  "relationOption",
+  "date",
+  "template",
+  "page",
+  "collection",
+  "set",
+  "bookmark",
+  "chatDerived",
+  "discussion"
+]
