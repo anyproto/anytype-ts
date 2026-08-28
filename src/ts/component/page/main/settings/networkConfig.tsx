@@ -1,6 +1,8 @@
-import React, { forwardRef, useState, useEffect } from 'react';
+import React, { forwardRef, useState, useEffect, useCallback, useMemo } from 'react';
 import { Title, Label, Button, Input, Icon } from 'Component';
 import * as I from 'Interface';
+
+import { NetworkTopologyMap, NodeStatus } from './networkTopologyMap';
 
 interface NetworkConfig {
 	HostAddr: string;
@@ -15,7 +17,7 @@ interface PeerEntry {
 	addresses: string[];
 };
 
-type TabType = 'config' | 'own' | 'static';
+type TabType = 'config' | 'own' | 'static' | 'topology';
 
 const EMPTY_PEER = (): PeerEntry => ({ peerId: '', addresses: [''] });
 
@@ -59,57 +61,20 @@ const PeerTable = ({
 	peers,
 	jsonFileName,
 	onChange,
+	statusMap,
+	onCheckAddress,
+	onCheckAllAddresses,
 }: {
 	title: string;
 	subtitle: string;
 	peers: PeerEntry[];
 	jsonFileName: string;
 	onChange: (peers: PeerEntry[]) => void;
+	statusMap: Record<string, NodeStatus>;
+	onCheckAddress: (addr: string) => Promise<void>;
+	onCheckAllAddresses: () => void;
 }) => {
 	const tableInputRef = React.useRef<HTMLInputElement>(null);
-	const [statusMap, setStatusMap] = React.useState<Record<string, { status: 'checking' | 'online' | 'offline' | 'unknown'; latencyMs?: number; error?: string; protocol?: string }>>({});
-
-	const checkAddress = React.useCallback(async (addr: string) => {
-		const trimmed = addr.trim();
-		if (!trimmed) {
-			setStatusMap(prev => ({ ...prev, [addr]: { status: 'unknown' } }));
-			return;
-		}
-		setStatusMap(prev => ({ ...prev, [addr]: { status: 'checking' } }));
-		try {
-			const res = await Renderer.send('checkAddressConnectivity', trimmed);
-			if (res && res.reachable) {
-				setStatusMap(prev => ({
-					...prev,
-					[addr]: { status: 'online', latencyMs: res.latencyMs, protocol: res.protocol || (trimmed.includes('yamux') ? 'yamux' : 'tcp') },
-				}));
-			} else {
-				setStatusMap(prev => ({
-					...prev,
-					[addr]: { status: 'offline', error: res?.error || 'Unreachable', protocol: res?.protocol || (trimmed.includes('yamux') ? 'yamux' : 'tcp') },
-				}));
-			}
-		} catch (e: any) {
-			setStatusMap(prev => ({
-				...prev,
-				[addr]: { status: 'offline', error: e?.message || 'Check failed' },
-			}));
-		}
-	}, []);
-
-	const checkAllAddresses = React.useCallback(() => {
-		peers.forEach(peer => {
-			peer.addresses.forEach(addr => {
-				if (addr && addr.trim()) {
-					checkAddress(addr);
-				}
-			});
-		});
-	}, [peers, checkAddress]);
-
-	React.useEffect(() => {
-		checkAllAddresses();
-	}, []);
 
 	const handleTableImport = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -250,7 +215,7 @@ const PeerTable = ({
 						size={28}
 						icon="sync/globe"
 						text="Test Connectivity"
-						onClick={checkAllAddresses}
+						onClick={onCheckAllAddresses}
 						tooltipParam={{ text: 'Test reachability for all peer addresses' }}
 					/>
 					<Button
@@ -307,7 +272,7 @@ const PeerTable = ({
 										<div key={addrIdx} className="addrRow">
 											<div
 												className={['connStatusBadge', statusInfo.status].join(' ')}
-												onClick={() => checkAddress(addr)}
+												onClick={() => onCheckAddress(addr)}
 												title={
 													statusInfo.status === 'online'
 														? `Reachable (${statusInfo.latencyMs}ms) • Click to re-test`
@@ -402,6 +367,53 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 	const [isSaving, setIsSaving] = useState(false);
 
 	const accountPath = account?.id ? `${dataPath}/${account.id}` : '';
+
+	const [statusMap, setStatusMap] = useState<Record<string, NodeStatus>>({});
+	const [isProbingAll, setIsProbingAll] = useState<boolean>(false);
+
+	const checkAddress = useCallback(async (addr: string) => {
+		const trimmed = addr.trim();
+		if (!trimmed) {
+			setStatusMap(prev => ({ ...prev, [addr]: { status: 'unknown' } }));
+			return;
+		}
+		setStatusMap(prev => ({ ...prev, [addr]: { status: 'checking' } }));
+		try {
+			const res = await Renderer.send('checkAddressConnectivity', trimmed);
+			if (res && res.reachable) {
+				setStatusMap(prev => ({
+					...prev,
+					[addr]: { status: 'online', latencyMs: res.latencyMs, protocol: res.protocol || (trimmed.includes('yamux') ? 'yamux' : 'tcp') },
+				}));
+			} else {
+				setStatusMap(prev => ({
+					...prev,
+					[addr]: { status: 'offline', error: res?.error || 'Unreachable', protocol: res?.protocol || (trimmed.includes('yamux') ? 'yamux' : 'tcp') },
+				}));
+			}
+		} catch (e: any) {
+			setStatusMap(prev => ({
+				...prev,
+				[addr]: { status: 'offline', error: e?.message || 'Check failed' },
+			}));
+		}
+	}, []);
+
+	const checkAllAddresses = useCallback(async () => {
+		setIsProbingAll(true);
+		const allAddrs: string[] = [];
+		staticPeers.forEach(p => p.addresses.forEach(a => a && a.trim() && allAddrs.push(a.trim())));
+		ownAddresses.forEach(p => p.addresses.forEach(a => a && a.trim() && allAddrs.push(a.trim())));
+		
+		await Promise.all(allAddrs.map(addr => checkAddress(addr)));
+		setIsProbingAll(false);
+	}, [staticPeers, ownAddresses, checkAddress]);
+
+	useEffect(() => {
+		if (staticPeers.length > 0 || ownAddresses.length > 0) {
+			checkAllAddresses();
+		}
+	}, [staticPeers.length, ownAddresses.length]);
 
 	const load = () => {
 		if (!accountPath) {
@@ -522,6 +534,7 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 		{ id: 'config', name: 'Node Configuration' },
 		{ id: 'own', name: `Local Listen Addresses (${ownAddresses.length})` },
 		{ id: 'static', name: `Static Peers (${staticPeers.length})` },
+		{ id: 'topology', name: 'Topology Map' },
 	];
 
 	return (
@@ -648,37 +661,26 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 										onClick={() => {
 											const primaryPeerId = ownAddresses[0]?.peerId || config.NetworkId || account?.id || '';
 											const addrs = ownAddresses[0]?.addresses?.filter(Boolean) || (config.HostAddr ? [config.HostAddr] : []);
-											const payload = {
+											const payload = JSON.stringify({
 												peerId: primaryPeerId,
 												addresses: addrs,
-											};
-											U.Common.clipboardCopy({ text: JSON.stringify(payload, null, 2) });
-											Preview.toastShow({ text: 'Peer connection payload copied to clipboard' });
+											}, null, 2);
+											U.Common.clipboardCopy({ text: payload });
+											Preview.toastShow({ text: 'Copied Peer Connection JSON to clipboard' });
 										}}
 									/>
 								</div>
 							</div>
 							<div className="shareBody">
-								<div className="shareRow">
-									<div className="shareLabel">Your Peer ID</div>
-									<div
-										className="shareValue"
-										onClick={() => {
-											const pid = ownAddresses[0]?.peerId || config.NetworkId || account?.id || '';
-											if (pid) {
-												U.Common.clipboardCopy({ text: pid });
-												Preview.toastShow({ text: 'Peer ID copied to clipboard' });
-											}
-										}}
-										title="Click to copy Peer ID"
-									>
-										<code>{ownAddresses[0]?.peerId || config.NetworkId || account?.id || '(No peer ID configured)'}</code>
-										<Icon name="menu/action/copy" size={13} />
-									</div>
+								<div className="shareItem">
+									<span className="shareLabel">Your Peer ID:</span>
+									<span className="shareValue mono">
+										{ownAddresses[0]?.peerId || config.NetworkId || account?.id || '—'}
+									</span>
 								</div>
-								<div className="shareRow">
-									<div className="shareLabel">Advertised Listen Addresses</div>
-									<div className="shareValueList">
+								<div className="shareItem">
+									<span className="shareLabel">Advertised Addresses:</span>
+									<div className="addrList">
 										{(ownAddresses[0]?.addresses?.filter(Boolean) || []).length > 0 ? (
 											ownAddresses[0].addresses.filter(Boolean).map((addr, i) => (
 												<span
@@ -734,6 +736,9 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 						peers={ownAddresses}
 						jsonFileName="own-addresses.json"
 						onChange={setOwnAddresses}
+						statusMap={statusMap}
+						onCheckAddress={checkAddress}
+						onCheckAllAddresses={checkAllAddresses}
 					/>
 				)}
 
@@ -744,6 +749,21 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 						peers={staticPeers}
 						jsonFileName="static-peers.json"
 						onChange={setStaticPeers}
+						statusMap={statusMap}
+						onCheckAddress={checkAddress}
+						onCheckAllAddresses={checkAllAddresses}
+					/>
+				)}
+
+				{activeTab === 'topology' && (
+					<NetworkTopologyMap
+						config={config}
+						ownAddresses={ownAddresses}
+						staticPeers={staticPeers}
+						statusMap={statusMap}
+						onCheckAddress={checkAddress}
+						onCheckAll={checkAllAddresses}
+						isProbingAll={isProbingAll}
 					/>
 				)}
 			</div>
@@ -753,6 +773,3 @@ const PageMainSettingsNetworkConfig = forwardRef<I.PageRef, I.PageSettingsCompon
 });
 
 export default PageMainSettingsNetworkConfig;
-
-
-

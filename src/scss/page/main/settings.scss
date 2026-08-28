@@ -2173,3 +2173,387 @@
 		transform: scale(1.2);
 	}
 }
+
+@keyframes linkFlow {
+	0% {
+		stroke-dashoffset: 40;
+	}
+	100% {
+		stroke-dashoffset: 0;
+	}
+}
+
+@keyframes radarExpand {
+	0% {
+		r: 25;
+		opacity: 0.8;
+	}
+	100% {
+		r: 85;
+		opacity: 0;
+	}
+}
+
+.topologyMapContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin-top: 8px;
+
+	.topologyStatsBar {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+		gap: 12px;
+
+		.statItem {
+			background: var(--color-shape-tertiary);
+			border: 1px solid var(--color-shape-secondary);
+			border-radius: 10px;
+			padding: 10px 14px;
+			display: flex;
+			flex-direction: column;
+			gap: 4px;
+
+			.statLabel {
+				font-size: 11px;
+				font-weight: 500;
+				color: var(--color-text-secondary);
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+			}
+
+			.statValue {
+				font-size: 14px;
+				font-weight: 700;
+				color: var(--color-text-primary);
+
+				&.online {
+					color: #10b981;
+				}
+
+				&.highlight {
+					color: var(--color-control-accent, #3b82f6);
+				}
+
+				&.mono {
+					font-family: monospace;
+				}
+			}
+		}
+	}
+
+	.topologyToolbar {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 12px;
+		background: var(--color-shape-tertiary);
+		border: 1px solid var(--color-shape-secondary);
+		border-radius: 10px;
+		padding: 8px 14px;
+
+		.filterGroup {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			flex-wrap: wrap;
+
+			.filterLabel {
+				font-size: 12px;
+				font-weight: 600;
+				color: var(--color-text-secondary);
+				margin-right: 4px;
+			}
+
+			.filterChip {
+				background: var(--color-bg-primary);
+				border: 1px solid var(--color-shape-secondary);
+				border-radius: 6px;
+				padding: 3px 10px;
+				font-size: 11px;
+				font-weight: 600;
+				color: var(--color-text-secondary);
+				cursor: pointer;
+				transition: all 0.15s ease;
+
+				&:hover {
+					background: var(--color-shape-highlight-medium);
+					color: var(--color-text-primary);
+				}
+
+				&.active {
+					background: var(--color-control-accent, #3b82f6);
+					color: #ffffff;
+					border-color: var(--color-control-accent, #3b82f6);
+				}
+			}
+		}
+
+		.actionGroup {
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			flex-wrap: wrap;
+
+			.autoPingToggle {
+				display: flex;
+				align-items: center;
+				gap: 6px;
+				font-size: 12px;
+				font-weight: 500;
+				color: var(--color-text-secondary);
+				cursor: pointer;
+				user-select: none;
+
+				input {
+					cursor: pointer;
+				}
+			}
+		}
+	}
+
+	.topologyCanvasWrapper {
+		position: relative;
+		width: 100%;
+		background: radial-gradient(circle at 50% 50%, var(--color-shape-tertiary) 0%, var(--color-bg-primary) 100%);
+		border: 1px solid var(--color-shape-secondary);
+		border-radius: 14px;
+		overflow: hidden;
+		box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15);
+
+		.topologySvg {
+			width: 100%;
+			height: auto;
+			min-height: 400px;
+			display: block;
+
+			.meshLinkLine {
+				transition: stroke-width 0.2s ease, opacity 0.2s ease;
+			}
+
+			.linkPulseStream {
+				animation: linkFlow 1.8s infinite linear;
+			}
+
+			.topologyNode {
+				cursor: pointer;
+
+				.nodeCircle {
+					transition: stroke-width 0.15s ease, filter 0.15s ease;
+				}
+
+				.selectionRing {
+					animation: pulseDot 2s infinite ease-in-out;
+				}
+
+				&:hover {
+					.nodeCircle {
+						filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.45));
+					}
+				}
+
+				&.selected {
+					.nodeCircle {
+						filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));
+					}
+				}
+			}
+		}
+
+		.topologyEmptyOverlay {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			gap: 8px;
+			padding: 24px;
+			background: var(--color-shape-tertiary);
+			border: 1px dashed var(--color-shape-secondary);
+			border-radius: 12px;
+			max-width: 320px;
+			pointer-events: none;
+
+			.emptyTitle {
+				font-size: 14px;
+				font-weight: 700;
+				color: var(--color-text-primary);
+			}
+
+			.emptyDesc {
+				font-size: 12px;
+				color: var(--color-text-secondary);
+				line-height: 1.4;
+			}
+		}
+	}
+
+	.nodeInspectorCard {
+		background: var(--color-shape-tertiary);
+		border: 1px solid var(--color-shape-secondary);
+		border-radius: 12px;
+		padding: 16px;
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		animation: pageEntrance 0.16s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+
+		.inspectorHeader {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding-bottom: 10px;
+			border-bottom: 1px solid var(--color-shape-secondary);
+
+			.inspectorTitle {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+
+				.nodeDot {
+					width: 10px;
+					height: 10px;
+					border-radius: 50%;
+
+					&.online {
+						background: #10b981;
+						box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+					}
+					&.offline {
+						background: #ef4444;
+					}
+					&.checking {
+						background: #f59e0b;
+						animation: pulseDot 0.8s infinite alternate;
+					}
+					&.unknown {
+						background: #9ca3af;
+					}
+				}
+
+				.titleText {
+					font-size: 14px;
+					font-weight: 700;
+					color: var(--color-text-primary);
+				}
+
+				.protoBadge {
+					font-size: 10px;
+					font-weight: 700;
+					padding: 2px 6px;
+					border-radius: 4px;
+					background: var(--color-shape-highlight-dark);
+					color: var(--color-control-accent, #3b82f6);
+					border: 1px solid var(--color-shape-secondary);
+					text-transform: uppercase;
+				}
+			}
+		}
+
+		.inspectorGrid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+			gap: 12px;
+
+			.inspectorField {
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+
+				&.full {
+					grid-column: 1 / -1;
+				}
+
+				.fLabel {
+					font-size: 11px;
+					font-weight: 600;
+					color: var(--color-text-secondary);
+				}
+
+				.fValueRow {
+					display: flex;
+					align-items: center;
+					gap: 8px;
+
+					.fValue {
+						font-size: 12px;
+						color: var(--color-text-primary);
+						word-break: break-all;
+
+						&.mono {
+							font-family: monospace;
+							background: var(--color-bg-primary);
+							padding: 4px 8px;
+							border-radius: 6px;
+							border: 1px solid var(--color-shape-secondary);
+						}
+					}
+
+					.copyMiniBtn {
+						background: var(--color-bg-primary);
+						border: 1px solid var(--color-shape-secondary);
+						border-radius: 4px;
+						padding: 3px 8px;
+						font-size: 10px;
+						font-weight: 600;
+						color: var(--color-text-secondary);
+						cursor: pointer;
+						transition: all 0.15s ease;
+						flex-shrink: 0;
+
+						&:hover {
+							background: var(--color-shape-highlight-medium);
+							color: var(--color-text-primary);
+						}
+					}
+				}
+
+				.fStatus {
+					font-size: 12px;
+					font-weight: 600;
+
+					&.online {
+						color: #10b981;
+					}
+					&.offline {
+						color: #ef4444;
+					}
+					&.checking {
+						color: #f59e0b;
+					}
+					&.unknown {
+						color: var(--color-text-secondary);
+					}
+				}
+
+				.addrPills {
+					display: flex;
+					flex-wrap: wrap;
+					gap: 6px;
+					margin-top: 4px;
+
+					.addrPill {
+						font-size: 11px;
+						font-family: monospace;
+						padding: 3px 8px;
+						background: var(--color-bg-primary);
+						border: 1px solid var(--color-shape-secondary);
+						border-radius: 6px;
+						color: var(--color-text-primary);
+						cursor: pointer;
+						transition: all 0.15s ease;
+
+						&:hover {
+							border-color: var(--color-control-accent);
+							color: var(--color-control-accent);
+						}
+					}
+				}
+			}
+		}
+	}
+}
