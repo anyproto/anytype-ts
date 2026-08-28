@@ -7,24 +7,65 @@ echo  🚀 ANYTYPE-TS WINDOWS KURULUM SIHIRBAZI (Next-Next-Finish)
 echo ================================================================
 echo.
 
-:: 1. Go kurulu mu kontrol et
+:: 1. Go kurulu mu veya standart dizinlerde var mı kontrol et
 where go >nul 2>&1
-if %errorlevel% equ 0 (
-    echo [OK] Go tespit edildi, gelismis sihirbaz baslatiliyor...
-    echo.
-    go run scripts\install.go
-    goto end
+if %errorlevel% equ 0 goto start_go_wizard
+
+if exist "C:\Program Files\Go\bin\go.exe" (
+    set "PATH=C:\Program Files\Go\bin;%PATH%"
+    goto start_go_wizard
 )
 
-:: 2. Go yoksa yerel Batch / PowerShell tabanlı akıllı kurulumu calistir
-echo [BILGI] Go bulunamadi, dogrudan Windows kurulum modu calistiriliyor...
+if exist "%ProgramFiles%\Go\bin\go.exe" (
+    set "PATH=%ProgramFiles%\Go\bin;%PATH%"
+    goto start_go_wizard
+)
+
+:: 2. Go bulunamadı — Otomatik indirme ve kurulum teklif et
+echo [!] Go (Golang) sisteminizde kurulu degil.
+set /p INSTALL_GO="Go otomatik olarak indirilip kurulsun mu? (E/h) [Enter = Evet]: "
+if /i "%INSTALL_GO%"=="h" goto skip_go_install
+
+echo.
+echo ▶ Go (Golang) indiriliyor ve kuruluyor...
+
+:: Oncelikle winget dene
+where winget >nul 2>&1
+if %errorlevel% equ 0 (
+    echo ▶ winget ile Go kurulumu baslatiliyor...
+    winget install GoLang.Go --accept-source-agreements --accept-package-agreements --silent
+)
+
+:: Standart dizini PATH'e ekleyip tekrar kontrol et
+if exist "C:\Program Files\Go\bin\go.exe" (
+    set "PATH=C:\Program Files\Go\bin;%PATH%"
+    echo [✓] Go basariyla kuruldu!
+    echo.
+    goto start_go_wizard
+)
+
+:: Winget basarisiz olduysa veya yoksa MSI indir ve kur
+echo ▶ Resmi Go yukleyicisi indiriliyor (go.dev)...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $msi = Join-Path $env:TEMP 'go_setup.msi'; Invoke-WebRequest -Uri 'https://go.dev/dl/go1.22.6.windows-amd64.msi' -OutFile $msi; Start-Process msiexec.exe -ArgumentList '/i', $msi, '/quiet', '/norestart' -Wait; Remove-Item $msi -Force -ErrorAction SilentlyContinue"
+
+if exist "C:\Program Files\Go\bin\go.exe" (
+    set "PATH=C:\Program Files\Go\bin;%PATH%"
+    echo [✓] Go basariyla kuruldu!
+    echo.
+    goto start_go_wizard
+)
+
+:skip_go_install
+:: 3. Go olmadan dogrudan Batch / PowerShell tabanlı akıllı kurulumu calistir
+echo.
+echo [BILGI] Dogrudan Windows yerel kurulum modu calistiriliyor...
 echo.
 
 :: Anytype calisiyor mu kontrol et ve kapat
 tasklist /FI "IMAGENAME eq Anytype.exe" 2>NUL | find /I /N "Anytype.exe">NUL
 if "%ERRORLEVEL%"=="0" (
     echo [!] Anytype su anda acik durumda.
-    set /p CLOSE_ANY="Anytype otomatik kapatilsin mi? (E/h): "
+    set /p CLOSE_ANY="Anytype otomatik kapatilsin mi? (E/h) [Enter = Evet]: "
     if /i not "%CLOSE_ANY%"=="h" (
         taskkill /F /IM Anytype.exe >nul 2>&1
         echo [✓] Anytype kapatildi.
@@ -39,7 +80,7 @@ if %errorlevel% neq 0 (
     ) else (
         echo.
         echo [!] 'bun' paketi bulunamadi.
-        set /p INSTALL_BUN="Bun otomatik indirilip kurulsun mu? (E/h): "
+        set /p INSTALL_BUN="Bun otomatik indirilip kurulsun mu? (E/h) [Enter = Evet]: "
         if /i not "%INSTALL_BUN%"=="h" (
             echo ▶ Bun indiriliyor ve kuruluyor...
             powershell -NoProfile -ExecutionPolicy Bypass -Command "irm bun.sh/install.ps1 | iex"
@@ -125,11 +166,18 @@ echo ================================================================
 echo  🎉 TEBRIKLER! ANYTYPE BASARIYLA GUNCELLENDI!
 echo ================================================================
 echo.
-set /p LAUNCH="Anytype simdi baslatilsin mi? (E/h): "
+set /p LAUNCH="Anytype simdi baslatilsin mi? (E/h) [Enter = Evet]: "
 if /i not "%LAUNCH%"=="h" (
     start "" "%LOCALAPPDATA%\Programs\Anytype\Anytype.exe" 2>nul
     echo [✓] Anytype baslatildi.
 )
+goto end
+
+:start_go_wizard
+echo [OK] Go tespit edildi, gelismis sihirbaz baslatiliyor...
+echo.
+go run scripts\install.go
+goto end
 
 :end
 echo.
