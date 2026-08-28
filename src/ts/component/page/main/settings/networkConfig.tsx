@@ -25,7 +25,7 @@ const KNOWN_PROTOCOLS = [
 	{ id: 'tcp://', label: 'tcp://' },
 	{ id: 'ws://', label: 'ws://' },
 	{ id: 'wss://', label: 'wss://' },
-	{ id: 'none', label: '(none)' },
+	{ id: 'none', label: 'Automatic' },
 ];
 
 function parseAddress(addr: string): { protocol: string; hostPort: string } {
