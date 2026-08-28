@@ -33,6 +33,22 @@ const buildOptions = {
 	logLevel: 'info',
 };
 
+// Ensure src/ts/lib/api/service.ts exists before Vite/Rollup bundles
+const fs = require('fs');
+const serviceTs = path.join(__dirname, '..', 'src', 'ts', 'lib', 'api', 'service.ts');
+if (!fs.existsSync(serviceTs)) {
+	const serviceProto = path.join(__dirname, '..', 'dist', 'lib', 'protos', 'service.proto');
+	if (fs.existsSync(serviceProto)) {
+		try {
+			console.log('[build] Generating missing service.ts from dist/lib/protos/service.proto...');
+			const { execSync } = require('child_process');
+			execSync('node scripts/generate-service-registry.js --from-dist', { stdio: 'inherit' });
+		} catch (e) {
+			console.warn('[build] Failed to generate service.ts:', e.message);
+		}
+	}
+}
+
 async function build() {
 	if (watch) {
 		const ctx = await esbuild.context(buildOptions);

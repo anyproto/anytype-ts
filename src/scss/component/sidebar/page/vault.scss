@@ -135,7 +135,7 @@
 				transform: translateX(-50%);
 				margin: 0 !important;
 				padding: 0 !important;
-				border-radius: 24px;
+				border-radius: 50% !important;
 				cursor: pointer;
 				position: relative;
 			}
@@ -144,7 +144,7 @@
 				.iconWrap {
 					width: 48px;
 					height: 48px;
-					border-radius: 24px;
+					border-radius: 50% !important;
 					display: flex;
 					align-items: center;
 					justify-content: center;
@@ -154,35 +154,41 @@
 				.iconObject {
 					width: 48px;
 					height: 48px;
-					border-radius: 24px;
+					border-radius: 50% !important;
+					overflow: hidden;
+
+					img {
+						border-radius: 50% !important;
+					}
 				}
 
-				// Outline-only selection ring around the logo (replaces the former left bar indicator)
-				// box-sizing is required: the global `* { box-sizing: border-box }` does not match
-				// pseudo-elements, so without it the 2px border inflates the box and breaks the circle
+				// Circular outline selection ring around the logo
 				&::before {
 					box-sizing: border-box;
+					position: absolute;
 					left: -4px;
 					top: -4px;
 					width: calc(100% + 8px);
 					height: calc(100% + 8px);
-					border-radius: 50%;
-					background: transparent;
+					border-radius: 50% !important;
+					background: transparent !important;
 					border: 2px solid transparent;
-					transition: opacity $transitionCommon, border-color $transitionCommon;
+					transition: border-color $transitionCommon, opacity $transitionCommon;
+					pointer-events: none;
+					z-index: 2;
 				}
 
 				&.hover::before, &:hover::before {
-					opacity: 1;
-					border-color: var(--color-text-secondary);
+					opacity: 0.6;
+					border-color: var(--color-shape-secondary);
 				}
 				&.active::before {
 					opacity: 1;
-					border-color: var(--color-text-primary);
+					border-color: var(--color-control-accent, #ffffff);
 				}
 
 				&.isLoading {
-					.iconWrap { width: 48px; height: 48px; }
+					.iconWrap { width: 48px; height: 48px; border-radius: 50% !important; }
 				}
 
 				&.add {
@@ -191,13 +197,14 @@
 					justify-content: center;
 					width: 48px !important;
 					height: 48px !important;
+					border-radius: 50% !important;
 				}
 
 				&.add {
 					.icon {
 						width: 48px;
 						height: 48px;
-						border-radius: 24px;
+						border-radius: 50% !important;
 						background-color: var(--color-shape-highlight-medium);
 						display: flex;
 						align-items: center;
@@ -208,7 +215,7 @@
 					.search {
 						width: 48px;
 						height: 48px;
-						border-radius: 24px;
+						border-radius: 50% !important;
 						background-color: var(--color-shape-highlight-medium);
 						display: flex;
 						align-items: center;
@@ -271,11 +278,12 @@
 				align-items: center;
 				justify-content: center;
 				cursor: pointer;
+				border-radius: 50% !important;
 			}
 			.side.left .appSettings .iconObject {
 				width: 48px;
 				height: 48px;
-				border-radius: 24px;
+				border-radius: 50% !important;
 			}
 			.side.right {
 				flex-direction: column-reverse;
