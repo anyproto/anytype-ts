@@ -2819,10 +2819,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	// A focused person: their participant object in every shared space, vault order,
-	// exact by identity. Same Channel-name text filter as the type instances
+	// exact by identity. Same Channel-name text filter as the type instances. Their
+	// 1:1 Channel leads the listing as its own row (open it, search inside it) and
+	// replaces the participant record from within that space
 	const getGlobalPeopleInstances = (identity: string, text: string): any[] => {
 		const t = String(text || '').trim().toLowerCase();
 		const order = getVaultOrder();
+		const oneToOne = getOneToOneMap().get(identity);
 		const list: any[] = [];
 
 		GLOBAL_DEPS.participants.forEach((it: any, id: string) => {
@@ -2830,10 +2833,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				return;
 			};
 
+			if (oneToOne && (it.spaceId == oneToOne.targetSpaceId)) {
+				return;
+			};
+
 			list.push(it);
 		});
 
-		return list.
+		const rows = list.
 			filter((it: any) => {
 				if (!t) {
 					return true;
@@ -2845,6 +2852,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			}).
 			map((it: any) => ({ ...it, identity, metaList: [], links: [], backlinks: [], isObject: true })).
 			sort((a: any, b: any) => (order.get(a.spaceId) ?? Infinity) - (order.get(b.spaceId) ?? Infinity));
+
+		if (oneToOne && (!t || String(oneToOne.name || '').toLowerCase().includes(t))) {
+			rows.unshift(spaceRow(oneToOne));
+		};
+
+		return rows;
 	};
 
 	// "/in" completions: picking one scopes the search to it. Command rows, so they carry
@@ -4046,11 +4059,38 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			} else
 			if (aggSpaces) {
 				captionLead = prep(aggSpaces);
-			} else {
+			} else
+			if (type) {
+				// No type, no lead: the focused instance rows carry no resolvable type
+				// (the cross-space map keys omit it) and all share one anyway - the
+				// caption then starts at "in <Channel>" without an orphaned bullet
 				captionLead = (
 					<div className="drillLink" onClick={e => { e.stopPropagation(); addToken('type', type, { source: 'Caption', fromRow: true }); }}>
 						<ObjectType object={type} />
 					</div>
+				);
+			};
+
+			// The caption's segments, bullet-joined between non-empty parts only
+			const captionParts: any[] = [ captionLead, captionAgg ].filter(it => it);
+
+			if (creatorLabel) {
+				captionParts.push(creatorObject ? (
+					<div className="creator drillLink" onClick={e => { e.stopPropagation(); addToken('creator', creatorObject, { source: 'Caption', fromRow: true }); }}>{creatorLabel}</div>
+				) : (
+					<div className="creator">{creatorLabel}</div>
+				));
+			};
+
+			if (spaceview) {
+				captionParts.push(
+					<>
+						<div className="prep">{translate('popupSearchInSpace')}</div>
+						<div className="drillLink spaceLink" onClick={e => onSpaceCaption(e, spaceview)}>
+							<IconObject object={spaceview} size={14} />
+							<ObjectName object={spaceview} />
+						</div>
+					</>
 				);
 			};
 
@@ -4082,33 +4122,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						<div className="name" dangerouslySetInnerHTML={{ __html: U.String.sanitize(name) }} />
 						{Context(meta)}
 						<div className="caption">
-							{captionLead}
-							{captionAgg ? (
-								<>
-									<div className="bullet" />
-									{captionAgg}
-								</>
-							) : ''}
-							{creatorLabel ? (
-								<>
-									<div className="bullet" />
-									{creatorObject ? (
-										<div className="creator drillLink" onClick={e => { e.stopPropagation(); addToken('creator', creatorObject, { source: 'Caption', fromRow: true }); }}>{creatorLabel}</div>
-									) : (
-										<div className="creator">{creatorLabel}</div>
-									)}
-								</>
-							) : ''}
-							{spaceview ? (
-								<>
-									<div className="bullet" />
-									<div className="prep">{translate('popupSearchInSpace')}</div>
-									<div className="drillLink spaceLink" onClick={e => onSpaceCaption(e, spaceview)}>
-										<IconObject object={spaceview} size={14} />
-										<ObjectName object={spaceview} />
-									</div>
-								</>
-							) : ''}
+							{captionParts.map((part, i) => (
+								<React.Fragment key={i}>
+									{i > 0 ? <div className="bullet" /> : ''}
+									{part}
+								</React.Fragment>
+							))}
 						</div>
 					</div>
 					<div className="side right">
