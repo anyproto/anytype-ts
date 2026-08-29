@@ -99,7 +99,9 @@
 
 			.item {
 				.icon { width: 20px; height: 20px; }
-				.advancedWrap { display: flex; align-items: center; gap: 0px 6px; opacity: 0; transition: none; }
+				/* display, not opacity - a hidden hint must not reserve width and squeeze
+				the name column on every inactive row */
+				.advancedWrap { display: none; align-items: center; gap: 0px 6px; }
 				.advancedWrap:hover {
 					.advancedHint { color: var(--color-text-primary); }
 					.icon.advanced { color: var(--color-text-primary); }
@@ -107,7 +109,6 @@
 				.advancedHint { @include text-small; color: var(--color-text-secondary); white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; gap: 2px 0px; }
 				.advancedHint {
 					.keys { display: flex; align-items: center; gap: 0px 4px; }
-					.label { margin: 0px; }
 				}
 
 				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-grow: 0; }
@@ -125,6 +126,9 @@
 							text-align: center; margin-right: 4px;
 						}
 						.label:last-child { margin: 0px; }
+
+						/* the hint's flex gap spaces the keycaps - the margin above would double it */
+						.advancedHint .label { margin: 0px; }
 					}
 				}
 				.name { @include text-overflow-nw; font-weight: 500; }
@@ -146,7 +150,7 @@
 
 			.item.active { background-color: var(--color-shape-highlight-medium); }
 			.item.active {
-				.advancedWrap { opacity: 1; }
+				.advancedWrap { display: flex; }
 			}
 
 			.item {

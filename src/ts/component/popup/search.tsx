@@ -357,6 +357,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// True while a clear-load is in flight; infinite-scroll appends hold off (they would
 	// share the clear's generation and race it across a token/mode change)
 	const clearLoadPendingRef = useRef(false);
+	// The injected Channel + person rows per query: getItems() runs on every row
+	// hover, keydown and render, but the matches only change with the query or the
+	// underlying maps - recomputed on loads and when the cross-space deps land
+	// (getVaultItems walks every space's chat state; see the perf note on
+	// currentSpaceCountRef for how this class of walk bites)
+	const injectCacheRef = useRef<{ key: string; rows: any[] } | null>(null);
 	// Bumped when a clear-load actually swaps the list data; the measurement cache is
 	// reset exactly then. Request-time signals fire too early (an unrelated re-render
 	// would wipe and re-measure the OLD rows) and appends must never wipe it
@@ -850,34 +856,40 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		storageSet({ tokens: tokensRef.current.map(it => ({ kind: it.kind, id: it.id })) });
 	};
 
-	// Programmatic query changes must also write the ref and storage - the Input keeps its
-	// value in React state, so getValue() lags one commit behind setValue
-	const clearQuery = () => {
-		window.clearTimeout(timeoutRef.current);
-		filterInputRef.current?.setValue('');
-		filterValueRef.current = '';
-		pendingValueRef.current = '';
-		storageSet({ filter: '' });
-	};
-
-	// Leaving command mode: restore the query the command was typed after ("anton /in"
-	// resolves back to "anton"); a command typed from an empty input restores to empty.
-	// No-op while no command is active
-	const restoreCommandQuery = () => {
-		const parts = parseCommandQuery(filterValueRef.current);
-
-		if (!parts) {
-			return;
-		};
-
-		const v = parts.query.trimEnd();
-
+	// Every programmatic query change must write the input, BOTH refs and storage - the
+	// Input keeps its value in React state, so getValue() lags one commit behind
+	// setValue, and a copy that misses pendingValueRef reintroduces the stale-debounce
+	// class this helper exists to prevent
+	const setQuery = (v: string) => {
 		window.clearTimeout(timeoutRef.current);
 		filterInputRef.current?.setValue(v);
 		filterInputRef.current?.setRange({ from: v.length, to: v.length });
 		filterValueRef.current = v;
 		pendingValueRef.current = v;
 		storageSet({ filter: v });
+	};
+
+	const clearQuery = () => setQuery('');
+
+	// Leaving command mode: restore the query the command was typed after ("anton /in"
+	// resolves back to "anton"); a command typed from an empty input restores to empty.
+	// Strips repeatedly - the restored query may itself end in a command ("x /is /")
+	// and must not re-enter command mode. No-op while no command is active
+	const restoreCommandQuery = () => {
+		let parts = parseCommandQuery(filterValueRef.current);
+
+		if (!parts) {
+			return;
+		};
+
+		let v = '';
+
+		while (parts) {
+			v = parts.query.trimEnd();
+			parts = parseCommandQuery(v);
+		};
+
+		setQuery(v);
 	};
 
 	const clearChipHighlight = (render?: boolean) => {
@@ -1037,14 +1049,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		tokensRef.current = (back.tokens || []).map(it => ({ ...it }));
 		persistTokens();
 
-		const filter = String(back.filter || '');
-
-		filterValueRef.current = filter;
-		pendingValueRef.current = filter;
-		filterInputRef.current?.setValue(filter);
-		filterInputRef.current?.setRange({ from: filter.length, to: filter.length });
+		setQuery(String(back.filter || ''));
 		filterInputRef.current?.focus();
-		storageSet({ filter });
 
 		nRef.current = 0;
 		topRef.current = 0;
@@ -1163,6 +1169,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return globalMembersRef.current;
 	};
 
+	// A what-token's type object, from whichever store knows it - a row-drilled token
+	// can lack recommendedLayout, so fall back through the current space's type store,
+	// the cross-space map and the token's own payload, like the boundary mapper
+	const resolveWhatType = (what: any): any => {
+		return what ? (S.Record.getTypeById(what.id) || GLOBAL_DEPS.types.get(what.id) || what.object || null) : null;
+	};
+
+	// Whether the what-token explicitly targets members ("/is Space member") - the one
+	// query that must keep participant objects everywhere they are otherwise excluded
+	const isMemberWhat = (what: any): boolean => {
+		return Boolean(what) && (what.kind == 'type') && U.Object.isParticipantLayout(resolveWhatType(what)?.recommendedLayout);
+	};
+
 	// Not everything is authored: a Channel, a member, a type, a chat container all take
 	// their creator implicitly from the space, so "by <person>" answers a question nobody
 	// asked. The same class wantsCreator refuses to attribute
@@ -1175,10 +1194,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return ![ SEARCH_TYPE_CHANNEL, SEARCH_TYPE_TYPE, SEARCH_TYPE_CHAT ].includes(what.id);
 		};
 
-		// A type token answers by its own layout - a row-drilled token can lack
-		// recommendedLayout, so fall back to the type stores like the boundary mapper
-		const type = S.Record.getTypeById(what.id) || GLOBAL_DEPS.types.get(what.id) || what.object;
-		const layout = type?.recommendedLayout;
+		const layout = resolveWhatType(what)?.recommendedLayout;
 
 		return !(U.Object.isParticipantLayout(layout) || U.Object.isTypeLayout(layout) || U.Object.isChatLayout(layout) || (layout == I.ObjectLayout.ChatOld));
 	};
@@ -1203,9 +1219,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		// The member type reaches the what group as a type token ("/is Space member") -
 		// the kind bucket for it is legacy storage only
-		const type = S.Record.getTypeById(what.id) || GLOBAL_DEPS.types.get(what.id) || what.object;
-
-		return !U.Object.isParticipantLayout(type?.recommendedLayout);
+		return !isMemberWhat(what);
 	};
 
 	// The scope chip and "/in": offerable while no scope is set (pickers pin it to the
@@ -1490,8 +1504,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 	};
 
-	// Cmd+Shift+K: toggle the scope in place. A "/" command query clears first - the
-	// flip must land on results, not the command list
+	// Cmd+Shift+K: toggle the scope in place. A "/" command part resolves back to its
+	// query first - the flip must land on results, not the command list
 	const onScopeToggle = () => {
 		const scope = getTokenByGroup('scope');
 
@@ -1596,6 +1610,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const onGlobalDepsLoad = () => {
 		const what = getWhatToken();
 		const typeAgg = Boolean(what) && (what.kind == 'kind') && (what.id == SEARCH_TYPE_TYPE);
+
+		// The injected person rows read the participants map that just landed
+		injectCacheRef.current = null;
 
 		// The "/" command list does no backend query - a reload would only reset it.
 		// Global mode and a foreign scope build the creator filter and the Types
@@ -2058,12 +2075,34 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		}, quiet);
 	};
 
+	// The 1:1 spaceview per identity, first (vault-order) wins. Callers that already
+	// hold the vault list pass it in - getVaultItems walks every space's chat state
+	const getOneToOneMap = (vault?: any[]): Map<string, any> => {
+		const ret = new Map<string, any>();
+
+		(vault || U.Menu.getVaultItems()).forEach((it: any) => {
+			if (it.isOneToOne && it.oneToOneIdentity && it.targetSpaceId && !ret.has(it.oneToOneIdentity)) {
+				ret.set(it.oneToOneIdentity, it);
+			};
+		});
+
+		return ret;
+	};
+
+	// Shared-Channel count of a person: distinct spaces minus their 1:1 with you - the
+	// 1:1 is presented as its own fact ("1-1 Channel" row) and never counts as a
+	// Channel you share. One arithmetic for every caption that says "member in N"
+	const getPersonSpaceCount = (entry: { spaceIds: Set<string> }, oneToOne: any): number => {
+		const ids = entry.spaceIds || new Set();
+		return ids.size - ((oneToOne && ids.has(oneToOne.targetSpaceId)) ? 1 : 0);
+	};
+
 	// The global People aggregate: a local view over the participants map - deduplicated
-	// by identity with a per-person space count. People you have 1:1 Channels with come
-	// first, in the Vault sidebar's own order (the 1:1 spaceview carries the other
+	// by identity with the spaces each person is in. People you have 1:1 Channels with
+	// come first, in the Vault sidebar's own order (the 1:1 spaceview carries the other
 	// person's identity); the rest alphabetically
-	const getGlobalPeople = (): any[] => {
-		const byIdentity = new Map<string, { identity: string; object: any; spaceCount: number; spaceIds: Set<string> }>();
+	const getGlobalPeople = (vault?: any[]): any[] => {
+		const byIdentity = new Map<string, { identity: string; object: any; spaceIds: Set<string> }>();
 
 		GLOBAL_DEPS.participants.forEach((it: any, id: string) => {
 			if ((it.participantStatus != I.ParticipantStatus.Active) || it.isDeleted) {
@@ -2075,11 +2114,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			let entry = byIdentity.get(identity);
 
 			if (!entry) {
-				entry = { identity, object: it, spaceCount: 0, spaceIds: new Set() };
+				entry = { identity, object: it, spaceIds: new Set() };
 				byIdentity.set(identity, entry);
 			};
-
-			entry.spaceCount++;
 
 			if (it.spaceId) {
 				entry.spaceIds.add(it.spaceId);
@@ -2093,7 +2130,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		const oneToOneOrder = new Map<string, number>();
 
-		U.Menu.getVaultItems().forEach((it: any) => {
+		(vault || U.Menu.getVaultItems()).forEach((it: any) => {
 			if (it.isOneToOne && it.oneToOneIdentity && !oneToOneOrder.has(it.oneToOneIdentity)) {
 				oneToOneOrder.set(it.oneToOneIdentity, oneToOneOrder.size);
 			};
@@ -2218,11 +2255,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Person results are served locally from the participants subscription instead
 		// (deduplicated by identity, injected by getItems) - the per-space participant
 		// objects would list every person once per shared Channel. Kept when the query
-		// is explicitly about members (a member-type what token) and under a Channel
-		// scope (one space - nothing to deduplicate)
-		const whatType = (what && (what.kind == 'type')) ? (S.Record.getTypeById(what.id) || GLOBAL_DEPS.types.get(what.id) || what.object) : null;
-
-		if (!mode.spaceId && !(whatType && U.Object.isParticipantLayout(whatType.recommendedLayout))) {
+		// is explicitly about members and under a Channel scope (one space - nothing
+		// to deduplicate)
+		if (!mode.spaceId && !isMemberWhat(what)) {
 			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Participant ] });
 		};
 
@@ -2338,6 +2373,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			// its sentinel) stays mounted through a quiet reload, and an append fired in
 			// that window would route by the NEW tokens yet share the clear's generation
 			clearLoadPendingRef.current = true;
+			// Every clear rides a query/token/mode change - the injected rows recompute
+			injectCacheRef.current = null;
 		};
 
 		const gen = loadGenRef.current;
@@ -2550,7 +2587,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		let list: any[] = [];
 
 		if (!scopeId) {
-			list = getGlobalPeople().map(({ object, spaceCount }) => ({ ...object, metaList: [], links: [], backlinks: [], isMemberAgg: true, spaceCount }));
+			// The same shared-Channel arithmetic as the injected person rows - one
+			// person must read one count everywhere in the popup
+			const oneToOnes = getOneToOneMap();
+
+			list = getGlobalPeople().map(it => ({ ...it.object, identity: it.identity, metaList: [], links: [], backlinks: [], isMemberAgg: true, spaceCount: getPersonSpaceCount(it, oneToOnes.get(it.identity)) }));
 		} else
 		if (scopeId == S.Common.space) {
 			list = getSpacePeople();
@@ -2633,12 +2674,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	// The Channel rows that lead the global result list: a few name matches, so typing a
 	// Channel's name reaches the Channel and not only the objects inside it
-	const getSpaceMatches = (text: string): any[] => {
+	const getSpaceMatches = (text: string, vault?: any[]): any[] => {
 		if (onObjectSelect) {
 			return [];
 		};
 
-		return matchSpaces(U.Menu.getVaultItems(), text, SPACE_MATCH_LIMIT).map(spaceRow);
+		return matchSpaces(vault || U.Menu.getVaultItems(), text, SPACE_MATCH_LIMIT).map(spaceRow);
 	};
 
 	// The person rows that follow the Channel matches in the global result list:
@@ -2650,7 +2691,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// itself not counted) and a "Create 1-1 Channel" caption when none exists. A
 	// click opens the standard participant menu (participant layouts route there),
 	// whose Connect button creates the 1:1 - never auto-created from the row
-	const getPeopleMatches = (text: string): any[] => {
+	const getPeopleMatches = (text: string, vault?: any[]): any[] => {
 		// An empty query matches nothing, same as the Channel matches - a query-less
 		// browse must stay the recent-objects list (matchPeople returns everyone)
 		if (onObjectSelect || !String(text || '').trim()) {
@@ -2658,15 +2699,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		const { account } = S.Auth;
-		const oneToOnes = new Map<string, any>();
+		const oneToOnes = getOneToOneMap(vault);
 
-		U.Menu.getVaultItems().forEach((it: any) => {
-			if (it.isOneToOne && it.oneToOneIdentity && it.targetSpaceId && !oneToOnes.has(it.oneToOneIdentity)) {
-				oneToOnes.set(it.oneToOneIdentity, it);
-			};
-		});
-
-		let people = getGlobalPeople().map(it => ({ ...it.object, identity: it.identity, spaceCount: it.spaceCount, spaceIds: it.spaceIds }));
+		let people = getGlobalPeople(vault).map(it => ({ ...it.object, identity: it.identity, spaceIds: it.spaceIds }));
 
 		if (account) {
 			people = people.filter(it => it.identity != account.id);
@@ -2678,8 +2713,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return people.slice(0, peopleMatchLimit(text)).map(it => {
 			const { spaceIds, ...person } = it;
 			const oneToOne = oneToOnes.get(person.identity);
-			const ids: Set<string> = spaceIds || new Set();
-			const spaceCount = ids.size - ((oneToOne && ids.has(oneToOne.targetSpaceId)) ? 1 : 0);
+			const spaceCount = getPersonSpaceCount({ spaceIds }, oneToOne);
 
 			return { ...person, spaceCount, metaList: [], links: [], backlinks: [], isObject: true, isPersonMatch: true, hasOneToOne: Boolean(oneToOne) };
 		});
@@ -2872,12 +2906,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// itself, not only the objects inside - a few Channel name matches (1:1s
 		// included) and then the person rows lead the vault-wide list. Only for a
 		// plain text search: any filter token means the query is already about
-		// something narrower, and the Channels bucket lists them all anyway. A person
-		// and their 1:1 Channel are deliberately two rows - the Channel carries the
-		// "open / search inside" intent (its messages live there), the person the
-		// "created by" one
+		// something narrower, and the Channels bucket lists them all anyway
 		if (filter && modeGlobal && !mode.tokens) {
-			items = getSpaceMatches(filter).concat(getPeopleMatches(filter)).concat(items);
+			if (injectCacheRef.current?.key != filter) {
+				const vault = U.Menu.getVaultItems();
+
+				injectCacheRef.current = { key: filter, rows: getSpaceMatches(filter, vault).concat(getPeopleMatches(filter, vault)) };
+			};
+
+			items = injectCacheRef.current.rows.concat(items);
 		};
 
 		/* Settings and pages */
@@ -3085,8 +3122,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// Chip picked from "/" command mode: add its token, clear the command query, keep
 		// the popup. Cancel the pending debounced filter change - it would re-apply the
 		// stale "/query" after the switch and empty the list
+		// onChipAdd resolves an active "/" command part back to its query itself
 		if (item.isChip) {
-			restoreCommandQuery();
 			onChipAdd({ ...item, id: item.chipId });
 			return;
 		};
@@ -3728,9 +3765,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 							<div className="advancedHint">
 								<div className="txt">{tooltip}</div>
 								<div className="keys">
-									<Label text={`${shift} + Enter`} />
+									<Label text={keyboard.getSymbolsFromKeys([ 'shift', 'enter' ]).join(' + ')} />
 									<div className="txt">{translate('commonOr')}</div>
-									<Label text="→" />
+									<Label text={keyboard.getSymbolsFromKeys([ 'arrowright' ]).join('')} />
 								</div>
 							</div>
 						) : ''}
@@ -3749,10 +3786,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const spaceview = (isRenderCross() && !item.isMemberAgg && !item.isTypeAgg && !item.isPersonMatch) ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
 			const creatorLabel = getObjectCreatorLabel(item);
 			const creatorObject = creatorLabel ? getObjectCreator(item) : null;
+			const prep = (text: string) => text ? <div className="prep">{text}</div> : null;
 			let aggSpaces = '';
 
-			if (item.isMemberAgg || (item.isPersonMatch && item.spaceCount)) {
-				aggSpaces = `${translate('popupSearchMemberInSpace')} ${item.spaceCount} ${U.Common.plural(item.spaceCount, translate('pluralChannel'))}`;
+			if ((item.isMemberAgg || item.isPersonMatch) && item.spaceCount) {
+				aggSpaces = U.String.sprintf(translate('popupSearchMemberInSpace'), item.spaceCount, U.Common.plural(item.spaceCount, translate('pluralChannel')));
 			} else
 			if (item.isTypeAgg && item.aggSpaceName) {
 				// "in <Channel>" - the representative's Channel; "+ N other Channels"
@@ -3768,26 +3806,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			// The caption's leading element. A Channel row states who is in it and never
 			// carries the type drill-link - a Channel has no type. Person rows without a
 			// 1:1 Channel state the verb ("Create 1-1 Channel") with the shared-Channel
-			// count behind a bullet; with one, the 1:1 is its own row above and only the
-			// count remains to say
+			// count behind a bullet; otherwise the count leads, and a pure-DM contact
+			// (no shared group Channels) falls back to the global name so the caption
+			// still identifies the person
 			let captionLead = null;
 			let captionAgg = null;
 
 			if (item.isSpaceRow) {
-				const info = getSpaceRowInfo(item);
-
-				captionLead = info ? <div className="prep">{info}</div> : null;
+				captionLead = prep(getSpaceRowInfo(item));
 			} else
-			if (item.isPersonMatch) {
-				if (item.hasOneToOne) {
-					captionLead = aggSpaces ? <div className="prep">{aggSpaces}</div> : null;
+			if (item.isPersonMatch || item.isMemberAgg) {
+				if (item.isPersonMatch && !item.hasOneToOne) {
+					captionLead = prep(translate('popupSearchChannelCreateOneToOne'));
+					captionAgg = prep(aggSpaces);
 				} else {
-					captionLead = <div className="prep">{translate('popupSearchChannelCreateOneToOne')}</div>;
-					captionAgg = aggSpaces ? <div className="prep">{aggSpaces}</div> : null;
+					captionLead = prep(aggSpaces || item.globalName || U.String.shortMask(item.identity || '', 6));
 				};
 			} else
 			if (aggSpaces) {
-				captionLead = <div className="prep">{aggSpaces}</div>;
+				captionLead = prep(aggSpaces);
 			} else {
 				captionLead = (
 					<div className="drillLink" onClick={e => { e.stopPropagation(); addToken('type', type, { source: 'Caption', fromRow: true }); }}>

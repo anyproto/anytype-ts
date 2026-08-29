@@ -1,9 +1,11 @@
 /**
- * Pure matchers behind the global search popup's local (in-memory) lookups.
+ * Pure matchers and query policy behind the global search popup's local
+ * (in-memory) lookups: name matching for Channels and people, the injected
+ * person-row limit, and the "/" command-mode parsing.
  *
- * Both live outside the component so they can be unit-tested: the popup itself
- * pulls in the whole store/component graph, while the matching rules are the
- * part that actually carries behaviour worth pinning down.
+ * They live outside the component so they can be unit-tested: the popup itself
+ * pulls in the whole store/component graph, while these rules are the part
+ * that actually carries behaviour worth pinning down.
  */
 
 /**

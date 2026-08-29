@@ -202,7 +202,7 @@ class UtilChat {
 		return this.buildText(blocks, 'fenced');
 	};
 
-	/** Plain, fence-less text (+ paragraph marks) — blocks path, kept for later. */
+	/** Plain, fence-less text (+ paragraph marks) — backs the search-result preview of blocks-only (discussion) messages. */
 	blocksToText (blocks: I.ChatMessageBlock[]): { text: string; marks: I.Mark[] } {
 		return this.buildText(blocks, 'plain');
 	};

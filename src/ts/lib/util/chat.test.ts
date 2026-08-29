@@ -239,6 +239,19 @@ describe('Chat', () => {
 			expect(Chat.getSearchResultHtml({ highlight: '', highlightRanges: [], message: { content: { text: '' }, blocks: [] } as any })).toBe('');
 			expect(Chat.getSearchResultHtml({ highlight: '', highlightRanges: [] })).toBe('');
 		});
+
+		it('never lets the blocks fallback shadow a real highlight snippet', () => {
+			const result: any = {
+				highlight: 'matched snippet',
+				highlightRanges: [],
+				message: {
+					content: { text: '' },
+					blocks: [ { text: { text: 'block text', style: 0, marks: [] } } ],
+				},
+			};
+
+			expect(Chat.getSearchResultHtml(result)).toBe('matched snippet');
+		});
 	});
 
 	describe('fenceToCodeMarks', () => {

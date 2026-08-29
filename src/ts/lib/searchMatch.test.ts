@@ -155,6 +155,10 @@ describe('parseCommandQuery', () => {
 		expect(parseCommandQuery('anton /')).toEqual({ query: 'anton ', command: '' });
 	});
 
+	it('carries the command argument through mid-query', () => {
+		expect(parseCommandQuery('anton /by kay')).toEqual({ query: 'anton ', command: 'by kay' });
+	});
+
 	it('takes the last whitespace-preceded slash', () => {
 		expect(parseCommandQuery('a /b c /d')).toEqual({ query: 'a /b c ', command: 'd' });
 	});

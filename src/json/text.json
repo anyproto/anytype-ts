@@ -1660,7 +1660,7 @@
 	"popupSearchChipByMe": "By me",
 	"popupSearchChipByName": "By %s",
 	"popupSearchInSpace": "in",
-	"popupSearchMemberInSpace": "member in",
+	"popupSearchMemberInSpace": "member in %s %s",
 	"popupSearchGlobalTooltip": "Search in all Channels",
 	"popupSearchCommandBy": "Filter by person",
 	"popupSearchCommandType": "Filter by type",
