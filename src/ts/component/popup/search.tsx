@@ -4,7 +4,7 @@ import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType, Objec
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 import Storage from 'Lib/storage';
-import { matchSpaces, matchPeople, peopleMatchLimit, parseCommandQuery } from 'Lib/searchMatch';
+import { matchSpaces, matchPeople, groupMatchLimit, parseCommandQuery } from 'Lib/searchMatch';
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_SMALL = 38;
@@ -955,9 +955,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const idx = tokens.findIndex(it => TOKEN_GROUPS[it.kind] == group);
 		const existing = (idx >= 0) ? tokens[idx] : null;
 
+		// The group focus a token's object carries (a grouped Types/People row was
+		// clicked) - a differing focus makes the "same" token a replace, not a no-op:
+		// focusing from inside the unfocused bucket re-uses the same kind and id
+		const focusKey = (o: any): string => String(o?.focus?.uniqueKey || o?.focus?.identity || '');
+
 		// Same token again - nothing to change; a row gesture still clears the query
 		// (drill semantics), then get back to results
-		if (existing && (existing.kind == kind) && (existing.id == object.id)) {
+		if (existing && (existing.kind == kind) && (existing.id == object.id) && (focusKey(existing.object) == focusKey(object))) {
 			if (fromRow) {
 				clearQuery();
 			};
@@ -2287,6 +2292,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Participant ] });
 		};
 
+		// Type results are served from the injected Types group on the plain text
+		// search (grouped by uniqueKey) - the per-space instances would list every
+		// bundled type once per space. Tokened searches keep them (a backlink token
+		// may legitimately point at a type)
+		if (!mode.spaceId && !mode.tokens && filterValueRef.current) {
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Type ] });
+		};
+
 		let fullText = filterValueRef.current;
 
 		// Chat objects are not in the fulltext index - a text query through fullText finds
@@ -2392,6 +2405,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		});
 	};
 
+	// Synchronous list swap for the in-memory modes (command list, Channels bucket,
+	// Types aggregate, focused instances): no round trip, no pagination - lift the
+	// append freeze, release a spinner an in-flight (now superseded) clear may have
+	// engaged, and bump the list epoch exactly like a landed clear
+	const swapSync = (list: any[], modeStamp: any, clear: boolean, callBack?: () => void) => {
+		itemsRef.current = list;
+		itemsModeRef.current = modeStamp;
+		hasMoreRef.current = false;
+		clearLoadPendingRef.current = false;
+
+		if (clear) {
+			setIsLoading(false);
+		};
+
+		listEpochRef.current++;
+		setDummy(prev => prev + 1);
+		callBack?.();
+	};
+
 	const load = (clear: boolean, callBack?: () => void, quiet?: boolean) => {
 		if (clear) {
 			loadGenRef.current++;
@@ -2408,20 +2440,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// "/" command mode (leading, or whitespace-preceded mid-query) searches
 		// chips/actions locally - no backend query
 		if (parseCommandQuery(filterValueRef.current)) {
-			itemsRef.current = [];
-			itemsModeRef.current = getLoadMode();
-			hasMoreRef.current = false;
-			clearLoadPendingRef.current = false;
-
-			// A synchronous swap leaves no load in flight - release a spinner an
-			// in-flight (now superseded) clear may have engaged
-			if (clear) {
-				setIsLoading(false);
-			};
-
-			listEpochRef.current++;
-			setDummy(prev => prev + 1);
-			callBack?.();
+			swapSync([], getLoadMode(), clear, callBack);
 			return;
 		};
 
@@ -2432,42 +2451,32 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		// The Channels bucket IS the vault list - no round trip, no pagination. Same
-		// synchronous swap as the Types aggregate below
+		// The Channels bucket IS the vault list - no round trip, no pagination
 		if (isChannelKind(mode.what)) {
-			itemsRef.current = getSpaceBrowse(filterValueRef.current);
-			itemsModeRef.current = { ...mode, isSpaceList: true };
-			hasMoreRef.current = false;
-			clearLoadPendingRef.current = false;
-
-			if (clear) {
-				setIsLoading(false);
-			};
-
-			listEpochRef.current++;
-			setDummy(prev => prev + 1);
-			callBack?.();
+			swapSync(getSpaceBrowse(filterValueRef.current), { ...mode, isSpaceList: true }, clear, callBack);
 			return;
 		};
 
-		// The cross-space Types bucket is served from the in-memory types map - no
-		// round trip. Synchronous swap: lift the append freeze and bump the list epoch
-		// exactly like the "/" branch; the mode stamp carries the aggregate flag so
-		// the section header and captions render by what actually loaded
+		// The cross-space Types bucket is served from the in-memory types map. A
+		// focused token (a grouped row was clicked) lists that uniqueKey's per-space
+		// instances instead of the aggregate; the mode stamp carries which, so the
+		// section header and captions render by what actually loaded
 		if (!isCurrentSpace() && mode.what && (mode.what.kind == 'kind') && (mode.what.id == SEARCH_TYPE_TYPE)) {
-			itemsRef.current = getGlobalTypeAggregate(filterValueRef.current, mode.spaceId);
-			itemsModeRef.current = { ...mode, isTypeAgg: true };
-			hasMoreRef.current = false;
-			clearLoadPendingRef.current = false;
+			const focus = mode.what.object?.focus;
 
-			// Same spinner release as the "/" branch above
-			if (clear) {
-				setIsLoading(false);
+			if (focus?.uniqueKey) {
+				swapSync(getGlobalTypeInstances(focus.uniqueKey, filterValueRef.current), { ...mode, isTypeInstances: true }, clear, callBack);
+			} else {
+				swapSync(getGlobalTypeAggregate(filterValueRef.current, mode.spaceId), { ...mode, isTypeAgg: true }, clear, callBack);
 			};
+			return;
+		};
 
-			listEpochRef.current++;
-			setDummy(prev => prev + 1);
-			callBack?.();
+		// A focused person (their grouped row was clicked): their participant object
+		// in every shared space, from the cross-space participants map. An unfocused
+		// member-type token stays on the RPC path below
+		if (!isCurrentSpace() && mode.what && (mode.what.kind == 'type') && mode.what.object?.focus?.identity) {
+			swapSync(getGlobalPeopleInstances(mode.what.object.focus.identity, filterValueRef.current), { ...mode, isPeopleInstances: true }, clear, callBack);
 			return;
 		};
 
@@ -2736,13 +2745,98 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// No self/alias arm: you are filtered out above - a 1:1 with yourself is not a thing
 		people = matchPeople(people, text, {});
 
-		return people.slice(0, peopleMatchLimit(text)).map(it => {
+		return people.slice(0, groupMatchLimit(text)).map(it => {
 			const { spaceIds, ...person } = it;
 			const oneToOne = oneToOnes.get(person.identity);
 			const spaceCount = getPersonSpaceCount({ spaceIds }, oneToOne);
 
 			return { ...person, spaceCount, metaList: [], links: [], backlinks: [], isObject: true, isPersonMatch: true, hasOneToOne: Boolean(oneToOne) };
 		});
+	};
+
+	// The grouped type rows of the Types section: the cross-Channel aggregate (one row
+	// per uniqueKey, "in <Channel> + N other Channels" caption), name-matched and
+	// capped like the People section. Clicking one expands the results by adding the
+	// Types token; the drill icon filters objects of the type across every Channel
+	const getTypeMatches = (text: string): any[] => {
+		// An empty query matches nothing - the aggregate returns every type otherwise
+		if (onObjectSelect || !String(text || '').trim()) {
+			return [];
+		};
+
+		return getGlobalTypeAggregate(text).slice(0, groupMatchLimit(text)).map(it => ({ ...it, isObject: true }));
+	};
+
+	// Spaces in the vault sidebar's own order - the focused instance listings sort by it
+	const getVaultOrder = (): Map<string, number> => {
+		const ret = new Map<string, number>();
+
+		U.Menu.getVaultItems().forEach((it: any, i: number) => {
+			if (it.targetSpaceId) {
+				ret.set(it.targetSpaceId, i);
+			};
+		});
+
+		return ret;
+	};
+
+	// A focused type group: every space's instance of the uniqueKey, vault order. The
+	// instances all share the type's own name, so the text filter matches the Channel
+	// name too ("which space's Tasks" is the question being answered)
+	const getGlobalTypeInstances = (uniqueKey: string, text: string): any[] => {
+		const t = String(text || '').trim().toLowerCase();
+		const order = getVaultOrder();
+		const list: any[] = [];
+
+		GLOBAL_DEPS.types.forEach((it: any) => {
+			if ((String(it.uniqueKey || it.id) != uniqueKey) || it.isDeleted) {
+				return;
+			};
+
+			list.push(it);
+		});
+
+		return S.Record.checkHiddenObjects(list).
+			filter((it: any) => {
+				if (!t) {
+					return true;
+				};
+
+				const spaceview = U.Space.getSpaceviewBySpaceId(it.spaceId);
+
+				return [ it.name, it.pluralName, (spaceview ? U.Object.name(spaceview) : '') ].some(n => String(n || '').toLowerCase().includes(t));
+			}).
+			map((it: any) => ({ ...it, metaList: [], links: [], backlinks: [], isObject: true })).
+			sort((a: any, b: any) => (order.get(a.spaceId) ?? Infinity) - (order.get(b.spaceId) ?? Infinity));
+	};
+
+	// A focused person: their participant object in every shared space, vault order,
+	// exact by identity. Same Channel-name text filter as the type instances
+	const getGlobalPeopleInstances = (identity: string, text: string): any[] => {
+		const t = String(text || '').trim().toLowerCase();
+		const order = getVaultOrder();
+		const list: any[] = [];
+
+		GLOBAL_DEPS.participants.forEach((it: any, id: string) => {
+			if ((U.Space.getAccountFromParticipantId(id) != identity) || (it.participantStatus != I.ParticipantStatus.Active) || it.isDeleted) {
+				return;
+			};
+
+			list.push(it);
+		});
+
+		return list.
+			filter((it: any) => {
+				if (!t) {
+					return true;
+				};
+
+				const spaceview = U.Space.getSpaceviewBySpaceId(it.spaceId);
+
+				return [ it.name, it.globalName, (spaceview ? U.Object.name(spaceview) : '') ].some(n => String(n || '').toLowerCase().includes(t));
+			}).
+			map((it: any) => ({ ...it, identity, metaList: [], links: [], backlinks: [], isObject: true })).
+			sort((a: any, b: any) => (order.get(a.spaceId) ?? Infinity) - (order.get(b.spaceId) ?? Infinity));
 	};
 
 	// "/in" completions: picking one scopes the search to it. Command rows, so they carry
@@ -2891,6 +2985,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			// The cross-space Types aggregate lists by name - no recency toggle
 			items.unshift({ name: translate('popupSearchTypeTypes'), isSection: true });
 		} else
+		if (!filter && items.length && (mode.isTypeInstances || mode.isPeopleInstances)) {
+			// A focused group's per-space instances - titled by the focus itself
+			const focusName = String(mode.what?.object?.focus?.name || '');
+
+			if (focusName) {
+				items.unshift({ name: focusName, isSection: true });
+			};
+		} else
 		if (!filter && items.length) {
 			// Every browse states its order in the title; the right-side action switches
 			// between the primary recency order and recently created
@@ -2928,19 +3030,39 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		/* Channels and people */
 
-		// Typing a person's or a Channel's name should reach the person or the Channel
-		// itself, not only the objects inside - a few Channel name matches (1:1s
-		// included) and then the person rows lead the vault-wide list. Only for a
-		// plain text search: any filter token means the query is already about
-		// something narrower, and the Channels bucket lists them all anyway
+		// Typing a Channel's, a person's or a type's name should reach the thing
+		// itself, not only the objects inside - labeled groups of name matches lead
+		// the vault-wide list. Only for a plain text search: any filter token means
+		// the query is already about something narrower, and the buckets list each
+		// group in full anyway
 		if (filter && modeGlobal && !mode.tokens) {
 			if (injectCacheRef.current?.key != filter) {
 				const vault = U.Menu.getVaultItems();
+				const rows: any[] = [];
 
-				injectCacheRef.current = { key: filter, rows: getSpaceMatches(filter, vault).concat(getPeopleMatches(filter, vault)) };
+				[
+					{ name: translate('popupSearchTypeChannels'), rows: getSpaceMatches(filter, vault) },
+					{ name: translate('popupSearchTypePeople'), rows: getPeopleMatches(filter, vault) },
+					{ name: translate('popupSearchTypeTypes'), rows: getTypeMatches(filter) },
+				].forEach(group => {
+					if (group.rows.length) {
+						rows.push({ name: group.name, isSection: true }, ...group.rows);
+					};
+				});
+
+				injectCacheRef.current = { key: filter, rows };
 			};
 
-			items = injectCacheRef.current.rows.concat(items);
+			const injected = injectCacheRef.current.rows;
+
+			// The Objects header exists only in a mixed (sectioned) list - a flat list
+			// stays unlabeled as before. Outside the cache: it depends on the backend
+			// results being non-empty
+			if (injected.length && items.length) {
+				items = injected.concat([ { name: translate('commonObjects'), isSection: true } ], items);
+			} else {
+				items = injected.concat(items);
+			};
 		};
 
 		/* Settings and pages */
@@ -3177,6 +3299,34 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			restoreCommandQuery();
 			addToken(item.tokenKind, item, { source: 'Command' });
 			return;
+		};
+
+		// A grouped row's click focuses its group: the what-token gains the group as a
+		// session-transient focus payload and the listing becomes that group's
+		// per-space instances (drill-style - Back restores the view the row was found
+		// in, whether the mixed sections or the grouped bucket). The drill icon keeps
+		// the other verb: filter objects by the type / by the creator everywhere
+		if (item.isTypeAgg) {
+			addToken('kind', {
+				id: SEARCH_TYPE_TYPE,
+				name: getKindName(SEARCH_TYPE_TYPE),
+				focus: { uniqueKey: String(item.uniqueKey || item.id), name: U.Object.name(item, true), object: item },
+			}, { source: 'Group', fromRow: true });
+			return;
+		};
+
+		// A person focuses the same way: their participant object in every shared
+		// space, the participant menu one click deeper on a concrete row
+		if (item.isPersonMatch) {
+			const type = S.Record.getTypeByKey(J.Constant.typeKey.participant);
+
+			if (type) {
+				addToken('type', {
+					...type,
+					focus: { identity: item.identity, name: U.Object.name(item), object: item },
+				}, { source: 'Group', fromRow: true });
+				return;
+			};
 		};
 
 		if (item.isMessage) {
@@ -3973,13 +4123,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			case 'kind': {
-				name = getKindName(token.id);
+				// A focused Types token (a grouped row was clicked) names the focused
+				// type - the pill says what the instances listing shows
+				const focus = token.object?.focus;
+
+				if (focus) {
+					icon = focus.object ? <IconObject object={focus.object} size={16} /> : null;
+					name = focus.name;
+				} else {
+					name = getKindName(token.id);
+				};
 				break;
 			};
 
 			case 'type': {
-				icon = <IconObject object={token.object} size={16} />;
-				name = U.Object.name(token.object || {}, true);
+				// Same for a focused member-type token: the person, not "Space member"
+				const focus = token.object?.focus;
+
+				icon = <IconObject object={focus?.object || token.object} size={16} />;
+				name = focus ? focus.name : U.Object.name(token.object || {}, true);
 				break;
 			};
 

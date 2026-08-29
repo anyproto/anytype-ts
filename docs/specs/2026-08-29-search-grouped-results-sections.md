@@ -1,7 +1,11 @@
 # Spec: grouped Types in vault-wide search + sectioned mixed results
 
-Date: 2026-08-29
-Status: spec for review; implementation to follow on `feature/JS-9865-cross-space-search-people` (PR #2358)
+Date: 2026-08-29 (rev 3: grouped-row clicks focus the group — inside the Types chip too.
+A grouped row has exactly two verbs: **click** shows the actual type/person in every space
+(the focused per-space instance listing); the **drill icon** filters objects by that type /
+creator across every Channel. The focus rides as a session-transient payload on the
+what-token; rev-2's bare token-add click is superseded)
+Status: implementing on `feature/JS-9865-cross-space-search-people` (PR #2358)
 Builds on: `docs/specs/2026-08-20-global-cross-space-search.md`,
 `docs/specs/2026-08-21-search-filter-tokens.md`, and the JS-9865 branch state (person rows
 injected from the cross-space participants subscription, participants excluded from the
@@ -62,47 +66,52 @@ groups ahead of the object results, in this order:
   (searchMatch.ts, tests updated): trimmed query under 3 letters → 3, otherwise → 10.
   Channels keep their own cap of 3.
 
-### 3. Click = expand (Types)
+### 3. Click = focus the group (Types)
 
-Clicking a grouped type row is a drill-style gesture (Back snapshot, query replaced):
+A grouped type row — in the injected Types section *and* inside the Types chip — carries
+two verbs:
 
-- adds the **Types kind token** (`SEARCH_TYPE_TYPE`) and sets the query to the type's name.
-- **Types-bucket listing with a non-empty query renders expanded**: matching groups emit one
-  row per space instance (ordinary type object rows — the standard cross-space
-  "in \<Channel\>" caption identifies the space), group order preserved, instances within a
-  group in vault order. An empty query keeps today's grouped aggregate. `/type` command
-  completions stay grouped regardless (a completion pick wants one token, not an instance).
-- Each expanded group is led by one suggest row — **"Search \<Type\> objects in every
-  Channel"** — which adds the type token by `uniqueKey` (identical to the drill icon), so the
-  all-Channels option survives expansion.
-- Selecting a concrete instance opens that space's type object (existing object-row click).
-- The grouped row's **drill icon** keeps today's behavior: type token by `uniqueKey` →
-  objects of this type across every space.
+- **Click**: focus the group. A drill-style gesture (`fromRow`: Back snapshot, query
+  cleared) that sets the what-token to the Types kind carrying a **focus payload**
+  `{ uniqueKey, name, object }` in the token's object. The Types-bucket loader, when the
+  token is focused, lists that `uniqueKey`'s instances — one ordinary type-object row per
+  space, vault order, standard "Type · in \<Channel\>" caption — served synchronously from
+  `GLOBAL_DEPS.types` (the same in-memory path as the aggregate; no RPC). Unfocused, the
+  bucket keeps today's grouped aggregate; text search in the bucket stays grouped (browse
+  intact). Typing while focused filters the instances by Channel name. Clicking a concrete
+  instance opens that space's type object.
+- **Drill icon**: unchanged — type token by `uniqueKey` → objects of this type across every
+  Channel. The same drill sits on the focused instance rows, so "search it in all Channels"
+  stays one gesture away after focusing.
 
-### 4. Click = expand (People)
+Exit: token × or Backspace-at-0 pops the Back snapshot and restores the exact view the row
+was clicked in (mixed sections or the grouped bucket, query included). The focus payload is
+session-transient — tokens persist as bare `{ kind, id }`, so a reopen degrades to the
+grouped Types chip. The token pill renders the focused type's name.
 
-Mirrors Types, and **supersedes the 2026-08-29-morning decision** that a person-row click
-opens the participant menu:
+### 4. Click = focus the group (People)
 
-- Clicking a person row adds the **member type token** (the bundled participant type,
-  `S.Record.getTypeByKey(J.Constant.typeKey.participant)`, filtered by `uniqueKey` so it
-  works cross-space) and sets the query to the person's name — the member search keeps
-  participants in the RPC (`isMemberWhat`), so the list shows that person once per space.
-- The expanded view is led by **"Search objects created by \<person\> in every Channel"** —
-  adds the creator token (same as the person row's drill icon).
-- Clicking a concrete per-space participant row opens the participant menu (participant
-  layout routing) — the menu moves one level deeper rather than disappearing.
-- Known softness: the expansion query is the person's *name*, so same-named strangers can
-  appear in the expanded list. Accepted — the query stays visible and editable, and an exact
-  identity filter would be invisible state outside the token model.
-- The "Create 1-1 Channel" caption stays on person rows without a 1:1; creating one remains
-  the participant menu's Connect button (now reached via a concrete instance row).
-- The 1:1 Channel row (Channels section) is unaffected.
+Symmetric, and **supersedes the 2026-08-29-morning decision** that a person-row click opens
+the participant menu:
+
+- **Click** on a person row focuses the person: the what-token becomes the member type
+  (`S.Record.getTypeByKey(J.Constant.typeKey.participant)`) with a focus payload
+  `{ identity, name, object }`; the listing shows that person's participant object in every
+  shared space (from `GLOBAL_DEPS.participants`, synchronous, vault order, filtered by
+  identity — exact, no name-collision fuzziness). Clicking a concrete per-space row opens
+  the participant menu (participant layout routing) — Connect/create-1:1 lives there, one
+  click deeper. The pill renders the person's name.
+- **Drill icon**: unchanged — creator token → objects created by them across every Channel;
+  also present on the focused per-space rows.
+- An unfocused member-type token ("/is Space member") keeps today's RPC listing.
+- The "Create 1-1 Channel" caption stays on person rows without a 1:1 (the path is now
+  focus → concrete member → Connect). The 1:1 Channel row (Channels section) is unaffected.
 
 ### 5. Analytics
 
-Expand clicks emit the existing `SearchDrill`/`SearchToken` pair with a new source `Group`;
-the suggest rows emit source `Expanded`. `SearchResult` keeps firing on instance opens.
+Expand clicks emit the existing `SearchToken` add with a new source `Group` (plus the
+`SearchDrill` alias only for actual drills, which are unchanged). `SearchResult` keeps
+firing on opens.
 
 ## Decisions to confirm in review
 
@@ -116,15 +125,22 @@ the suggest rows emit source `Expanded`. `SearchResult` keeps firing on instance
 
 - `src/ts/lib/searchMatch.ts`: rename `peopleMatchLimit` → `groupMatchLimit` (+ tests).
 - `src/ts/component/popup/search.tsx`:
-  - `getTypeMatches(text)` = `getGlobalTypeAggregate(text).slice(0, groupMatchLimit(text))`;
-    injected block becomes Channels + People + Types with section rows, still under
-    `injectCacheRef`.
-  - RPC exclusion arm for `Type` next to the participant one.
-  - Types-bucket loader: non-empty query → new `getGlobalTypeInstances(text)` (expanded
-    per-space rows + leading suggest rows); empty query → aggregate as today.
-  - `onClick`: grouped type row (`isTypeAgg` outside the Types bucket) and person row
-    (`isPersonMatch`) become expand gestures via `addToken(..., { fromRow: true })` + query
-    set; suggest rows add their token.
-- No SCSS changes expected (sections and rows reuse existing styles).
+  - `getTypeMatches(text)` = `getGlobalTypeAggregate(text).slice(0, groupMatchLimit(text))`
+    marked `isObject`; the injected block becomes Channels + People + Types with section
+    rows, still under `injectCacheRef`; the Objects header is appended outside the cache
+    (it depends on the RPC list being non-empty).
+  - RPC exclusion arm for `Type` next to the participant one, gated on the injection
+    condition (global, no tokens, non-empty query).
+  - `onClick`, before the popup closes: `isTypeAgg` rows and `isPersonMatch` rows call
+    `addToken(..., { source: 'Group', fromRow: true })` with the focus payload on the
+    token's object. `addToken`'s same-token early return learns to treat a differing focus
+    as a replace (focusing from inside the unfocused bucket re-uses the same kind+id).
+  - Loader: new synchronous branches `getGlobalTypeInstances(uniqueKey, text)` and
+    `getGlobalPeopleInstances(identity, text)` over the cross-space maps, stamped
+    `isTypeInstances` / `isPeopleInstances` in the mode; the repeated synchronous-swap
+    boilerplate (command list, Channels bucket, Types aggregate) is extracted into one
+    `swapSync` helper. Focused listings get a section header named after the focus.
+  - `TokenItem` renders the focus name (and the person's icon) when a focus is present.
+- No SCSS changes; instance rows are ordinary object rows.
 - E2E: extend `specs/search/cross-space-people.md` in anytype-desktop-suite (sections render,
-  type grouping, expand flow) — multi-space scenarios stay manual.
+  type grouping, focus flow) — multi-space scenarios stay manual.

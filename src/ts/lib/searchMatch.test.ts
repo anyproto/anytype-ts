@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { matchSpaces, matchPeople, peopleMatchLimit, parseCommandQuery } from './searchMatch';
+import { matchSpaces, matchPeople, groupMatchLimit, parseCommandQuery } from './searchMatch';
 
 /**
  * JS-9863.
@@ -119,26 +119,26 @@ describe('matchPeople', () => {
 
 });
 
-describe('peopleMatchLimit', () => {
+describe('groupMatchLimit', () => {
 
 	it('keeps short queries to a taste', () => {
-		expect(peopleMatchLimit('a')).toBe(3);
-		expect(peopleMatchLimit('an')).toBe(3);
+		expect(groupMatchLimit('a')).toBe(3);
+		expect(groupMatchLimit('an')).toBe(3);
 	});
 
 	it('shows the full hand once the query can name a person', () => {
-		expect(peopleMatchLimit('ant')).toBe(10);
-		expect(peopleMatchLimit('anton')).toBe(10);
+		expect(groupMatchLimit('ant')).toBe(10);
+		expect(groupMatchLimit('anton')).toBe(10);
 	});
 
 	it('measures the trimmed query', () => {
-		expect(peopleMatchLimit('  an  ')).toBe(3);
-		expect(peopleMatchLimit(' ant ')).toBe(10);
+		expect(groupMatchLimit('  an  ')).toBe(3);
+		expect(groupMatchLimit(' ant ')).toBe(10);
 	});
 
 	it('treats empty and missing input as short', () => {
-		expect(peopleMatchLimit('')).toBe(3);
-		expect(peopleMatchLimit(null)).toBe(3);
+		expect(groupMatchLimit('')).toBe(3);
+		expect(groupMatchLimit(null)).toBe(3);
 	});
 
 });
