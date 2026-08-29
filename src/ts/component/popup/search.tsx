@@ -276,9 +276,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const initialGlobal = Boolean(data.isGlobal) && !data.onObjectSelect;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
-	// Alt is held right now - the footer's Copy link hint advertises its deeplink
-	// alternate while it is (same-value sets bail out, so key repeat is free)
+	// Alt / Shift are held right now - the footer hints advertise their alternates
+	// while they are: Copy link swaps to the deeplink under Alt, Open swaps to the
+	// Shift+Enter Filter on drillable rows under Shift (same-value sets bail out, so
+	// key repeat is free)
 	const [ altPressed, setAltPressed ] = useState(false);
+	const [ shiftPressed, setShiftPressed ] = useState(false);
+	// The active row carries a drill (search icon) - the footer's → and the
+	// Shift+Enter Filter swap must follow the selection live, and selection moves
+	// (arrows, hover) deliberately do not re-render the list; state instead of a ref,
+	// so only crossing a drillable boundary re-renders
+	const [ activeDrill, setActiveDrill ] = useState(false);
 	// One-time hint about the OS-level global shortcut; null = nothing to show
 	// (already dismissed, or web mode). Holds { registered, unavailable } otherwise
 	const [ shortcutHint, setShortcutHint ] = useState(null);
@@ -393,10 +401,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// self-corrects, and dropped on blur (Alt+Tab leaves keyup unseen)
 		keydownHandler.current = (e: any) => {
 			setAltPressed(Boolean(e.altKey));
+			setShiftPressed(Boolean(e.shiftKey));
 			onKeyDown(e);
 		};
-		keyupHandler.current = (e: any) => setAltPressed(Boolean(e.altKey));
-		blurHandler.current = () => setAltPressed(false);
+		keyupHandler.current = (e: any) => {
+			setAltPressed(Boolean(e.altKey));
+			setShiftPressed(Boolean(e.shiftKey));
+		};
+		blurHandler.current = () => {
+			setAltPressed(false);
+			setShiftPressed(false);
+		};
 		archiveHandler.current = (e: any) => {
 			const d = e.detail;
 			const ids = U.Common.objectCopy(d?.ids);
@@ -713,6 +728,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		nRef.current = getItems().findIndex(it => it.id == item.id);
 		unsetActive();
+		setActiveDrill(Boolean(getDrillKind(item)));
 
 		U.Dom.addClass(U.Dom.select(`#item-${U.Common.esc(item.id)}`, nodeRef.current), 'active');
 	};
@@ -4057,6 +4073,20 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			size = 20;
 		};
 
+		// Person rows read smaller than Channel rows: an 85% avatar centered on the
+		// member circle (the badge members without an icon get) tells a person from
+		// their 1-1 Channel at a glance. Inside the focused person listing EVERY row
+		// wears it, the 1:1 Channel row included - there they are all memberships to
+		// filter by, and mixed sizes would read as different kinds of rows
+		const isPersonRow = item.isPersonMatch || (Boolean(itemsModeRef.current?.isPeopleInstances) && item.isObject);
+
+		if (object && isPersonRow) {
+			icon = (
+				<div className="personBadge">
+					<IconObject object={object} size={34} />
+				</div>
+			);
+		} else
 		if (object) {
 			icon = <IconObject object={object} size={size} />;
 		} else {
@@ -4091,7 +4121,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 								<div className="txt">{tooltip}</div>
 								<div className="keys">
 									<Label text={keyboard.getSymbolsFromKeys([ 'shift', 'enter' ]).join(' + ')} />
-									<div className="txt">{translate('commonOr')}</div>
 									<Label text={keyboard.getSymbolsFromKeys([ 'arrowright' ]).join('')} />
 								</div>
 							</div>
@@ -4404,18 +4433,22 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		return (
 			<div className="foot">
-				<Shortcut keys={[ 'arrowup', 'arrowdown', 'arrowright' ]} label={translate('popupSearchShortcutNavigate')} />
+				<Shortcut keys={[ 'arrowup', 'arrowdown' ]} label={translate('popupSearchShortcutNavigate')} />
 				{!onObjectSelect ? (
-					<Shortcut keys={[ 'tab', '/' ]} separator={translate('commonOr')} label={translate('popupSearchShortcutRefine')} />
+					<Shortcut keys={activeDrill ? [ 'tab', '/', 'arrowright' ] : [ 'tab', '/' ]} label={translate('popupSearchShortcutRefine')} />
 				) : ''}
 				<Shortcut keys={[ 'escape' ]} label={translate('popupSearchShortcutClose')} />
 				{isObject ? (
 					<>
-						<Shortcut keys={[ 'enter' ]} label={translate('popupSearchShortcutOpen')} />
-						{altPressed ? (
-							<Shortcut keys={[ cmd, 'alt', 'l' ]} label={translate('popupSearchShortcutCopyDeeplink')} />
+						{shiftPressed && activeDrill ? (
+							<Shortcut keys={[ 'shift', 'enter' ]} separator="+" label={translate('popupSearchShortcutFilter')} />
 						) : (
-							<Shortcut keys={[ cmd, 'l' ]} label={translate('popupSearchShortcutCopyLink')} />
+							<Shortcut keys={[ 'enter' ]} label={translate('popupSearchShortcutOpen')} />
+						)}
+						{altPressed ? (
+							<Shortcut keys={[ cmd, 'alt', 'l' ]} separator="+" label={translate('popupSearchShortcutCopyDeeplink')} />
+						) : (
+							<Shortcut keys={[ cmd, 'l' ]} separator="+" label={translate('popupSearchShortcutCopyLink')} />
 						)}
 					</>
 				) : ''}
