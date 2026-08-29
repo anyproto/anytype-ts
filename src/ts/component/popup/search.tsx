@@ -3383,6 +3383,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 				if (spaceview) {
 					addToken('space', { ...spaceview, id: spaceview.targetSpaceId }, { source: 'Focus' });
+
+					// One gesture, one undo: both tokens came from a single row pick,
+					// so the Back snapshot rides the newest (rightmost, first-falling)
+					// pill - a single Backspace returns to the focused view instead of
+					// stranding a "by <person> everywhere" intermediate
+					const creatorToken = tokensRef.current.find(it => it.kind == 'creator');
+					const spaceToken = tokensRef.current.find(it => it.kind == 'space');
+
+					if (creatorToken?.back && spaceToken) {
+						spaceToken.back = creatorToken.back;
+						spaceToken.seq = ++tokenSeqRef.current;
+						delete creatorToken.back;
+					};
 				};
 
 				return;
