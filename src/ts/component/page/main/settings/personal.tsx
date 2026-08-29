@@ -48,6 +48,14 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 		});
 	};
 
+	const preferYamuxTooltipParam: Partial<I.TooltipParam> = {
+		text: translate('popupSettingsPersonalPreferYamuxHint'),
+		className: 'big',
+		typeY: I.MenuDirection.Bottom,
+		typeX: I.MenuDirection.Left,
+		delay: 0,
+	};
+
 	const themes: any[] = [
 		{ id: '', class: 'light', name: translate('pageSettingsColorModeButtonLight') },
 		{ id: 'dark', class: 'dark', name: translate('pageSettingsColorModeButtonDark') },
@@ -286,7 +294,10 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 				</div>
 
 				<div className="item">
-					<Label text={translate('popupSettingsPersonalPreferYamux')} />
+					<div className="flex">
+						<Label text={translate('popupSettingsPersonalPreferYamux')} />
+						<Icon name="common/info" className="info" tooltipParam={preferYamuxTooltipParam} />
+					</div>
 					<Switch
 						className="big"
 						value={preferYamux}

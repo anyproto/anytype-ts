@@ -166,6 +166,14 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 		Preview.tooltipHide();
 	};
 
+	const preferYamuxTooltipParam: Partial<I.TooltipParam> = {
+		text: translate('popupSettingsOnboardingPreferYamuxHint'),
+		className: 'big',
+		typeY: I.MenuDirection.Bottom,
+		typeX: I.MenuDirection.Left,
+		delay: 0,
+	};
+
 	const isDefault = config.path == U.Common.getElectron().defaultPath();
 	const networkModes = getNetworkModes();
 	const storageCheck = U.Common.checkVaultPath(config.userPath);
@@ -197,7 +205,10 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 					</div>
 
 					<div className="item">
-						<Label text={translate('popupSettingsOnboardingPreferYamuxTitle')} />
+						<div className="flex">
+							<Label text={translate('popupSettingsOnboardingPreferYamuxTitle')} />
+							<Icon name="common/info" className="info" tooltipParam={preferYamuxTooltipParam} />
+						</div>
 						<Switch
 							className="big"
 							value={config.preferYamux}

@@ -64,6 +64,7 @@
         > .item {
             .select { margin-right: -8px; }
             .button { border: 0px; margin-right: -8px; }
+            .flex { display: flex; align-items: center; gap: 0px 6px; }
         }
     }
     .actionItems:last-child { margin-bottom: 0px; }
