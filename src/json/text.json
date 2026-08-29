@@ -1694,6 +1694,7 @@
 	"popupSearchShortcutClose": "Close",
 	"popupSearchShortcutOpen": "Open",
 	"popupSearchShortcutCopyLink": "Copy link",
+	"popupSearchShortcutCopyDeeplink": "Copy deeplink",
 	"popupSearchShortcutNewTab": "New tab",
 	"popupSearchShortcutNewWindow": "Open in new window",
 	"popupSearchShortcutSelect": "Select",

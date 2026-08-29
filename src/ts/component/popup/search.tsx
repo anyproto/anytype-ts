@@ -276,6 +276,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const initialGlobal = Boolean(data.isGlobal) && !data.onObjectSelect;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
+	// Alt is held right now - the footer's Copy link hint advertises its deeplink
+	// alternate while it is (same-value sets bail out, so key repeat is free)
+	const [ altPressed, setAltPressed ] = useState(false);
 	// One-time hint about the OS-level global shortcut; null = nothing to show
 	// (already dismissed, or web mode). Holds { registered, unavailable } otherwise
 	const [ shortcutHint, setShortcutHint ] = useState(null);
@@ -378,12 +381,22 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const keydownHandler = useRef<(e: any) => void>(null);
+	const keyupHandler = useRef<(e: any) => void>(null);
+	const blurHandler = useRef<() => void>(null);
 	const archiveHandler = useRef<(e: any) => void>(null);
 
 	const rebind = () => {
 		unbind();
 
-		keydownHandler.current = (e: any) => onKeyDown(e);
+		// Held Alt swaps the footer's Copy link hint to its deeplink alternate (the
+		// macOS menu pattern); synced off every key event so a missed transition
+		// self-corrects, and dropped on blur (Alt+Tab leaves keyup unseen)
+		keydownHandler.current = (e: any) => {
+			setAltPressed(Boolean(e.altKey));
+			onKeyDown(e);
+		};
+		keyupHandler.current = (e: any) => setAltPressed(Boolean(e.altKey));
+		blurHandler.current = () => setAltPressed(false);
 		archiveHandler.current = (e: any) => {
 			const d = e.detail;
 			const ids = U.Common.objectCopy(d?.ids);
@@ -394,6 +407,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		U.Dom.addEvents(window, [
 			['keydown', keydownHandler.current],
+			['keyup', keyupHandler.current],
+			['blur', blurHandler.current],
 			['archiveObject', archiveHandler.current],
 		]);
 	};
@@ -402,6 +417,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (keydownHandler.current) {
 			U.Dom.removeEvent(window, 'keydown', keydownHandler.current);
 			keydownHandler.current = null;
+		};
+		if (keyupHandler.current) {
+			U.Dom.removeEvent(window, 'keyup', keyupHandler.current);
+			keyupHandler.current = null;
+		};
+		if (blurHandler.current) {
+			U.Dom.removeEvent(window, 'blur', blurHandler.current);
+			blurHandler.current = null;
 		};
 		if (archiveHandler.current) {
 			U.Dom.removeEvent(window, 'archiveObject', archiveHandler.current);
@@ -553,15 +576,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		});
 
-		keyboard.shortcut(`${cmd}+l`, e, () => {
+		// Cmd+L copies the web link; with Alt held it copies the app deeplink instead
+		// (the footer hint swaps to advertise the alternate while Alt is down)
+		keyboard.shortcut(`${cmd}+l, ${cmd}+alt+l`, e, (pressed: string) => {
 			e.preventDefault();
 
 			const item = items[nRef.current];
 			if (item && item.isObject && !item.isCommandSuggest && !item.isSpaceRow) {
-				const spaceview = U.Space.getSpaceviewBySpaceId(item.spaceId || S.Common.space);
+				const spaceId = item.spaceId || S.Common.space;
+				const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
 
 				if (spaceview) {
-					U.Object.copyLink(item, spaceview, 'web', route);
+					U.Object.copyLink({ ...item, spaceId }, spaceview, (pressed.includes('alt') ? 'deeplink' : 'web'), route);
 				};
 			};
 		});
@@ -4069,7 +4095,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				{isObject ? (
 					<>
 						<Shortcut keys={[ 'enter' ]} label={translate('popupSearchShortcutOpen')} />
-						<Shortcut keys={[ cmd, 'l' ]} label={translate('popupSearchShortcutCopyLink')} />
+						{altPressed ? (
+							<Shortcut keys={[ cmd, 'alt', 'l' ]} label={translate('popupSearchShortcutCopyDeeplink')} />
+						) : (
+							<Shortcut keys={[ cmd, 'l' ]} label={translate('popupSearchShortcutCopyLink')} />
+						)}
 					</>
 				) : ''}
 				{isAction ? (
