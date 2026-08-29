@@ -160,6 +160,12 @@
 			.side.right { flex-direction: column; gap: 12px; }
 
 			&:hover, &.hover { height: 178px; }
+
+			// Create Channel lives inline under the last channel instead of in this
+			// stack - one fewer icon, so the expanded height shrinks by its slot (icon + gap)
+			&.compact {
+				&:hover, &.hover { height: 134px; }
+			}
 		}
 	}
 }
