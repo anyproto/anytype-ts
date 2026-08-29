@@ -37,6 +37,9 @@
 					> .item { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px;  border-bottom: 1px solid var(--color-shape-secondary); }
 					> .item:last-child { border-bottom: 0; }
 					> .item.red { color: var(--color-red); }
+					> .item {
+						.flex { display: flex; align-items: center; gap: 0px 6px; }
+					}
 				}
 				.actionItems:last-child { margin-bottom: 0px; }
 

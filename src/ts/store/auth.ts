@@ -6,6 +6,7 @@ import Storage from 'Lib/storage';
 interface NetworkConfig {
 	mode: I.NetworkMode;
 	path: string;
+	preferYamux: boolean;
 };
 
 class AuthStore {
@@ -49,6 +50,7 @@ class AuthStore {
 		return {
 			mode: Number(obj.mode) || I.NetworkMode.Default,
 			path: String(obj.path || ''),
+			preferYamux: Boolean(obj.preferYamux),
 		};
 	};
 

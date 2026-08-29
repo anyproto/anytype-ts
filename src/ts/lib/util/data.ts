@@ -1185,7 +1185,7 @@ class UtilData {
 		onError = onError || (() => { });
 
 		const { networkConfig } = S.Auth;
-		const { mode, path } = networkConfig;
+		const { mode, path, preferYamux } = networkConfig;
 		const { dataPath } = S.Common;
 
 		let phrase = '';
@@ -1207,7 +1207,7 @@ class UtilData {
 						return;
 					};
 
-					C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.count.icon), mode, path, (message) => {
+					C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.count.icon), mode, path, preferYamux, (message) => {
 						if (message.error.code) {
 							onError(message.error.description);
 							return;
