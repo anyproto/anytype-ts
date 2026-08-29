@@ -64,7 +64,7 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 
 		isSelecting.current = true;
 
-		const { mode, path } = networkConfig;
+		const { mode, path, preferYamux } = networkConfig;
 		const account = accounts[0];
 
 		S.Auth.accountSet(account);
@@ -72,7 +72,7 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 
 		const preferredSpaceId = Storage.get('spaceId') || '';
 
-		C.AccountSelect(account.id, S.Common.dataPath, mode, path, preferredSpaceId, (message: any) => {
+		C.AccountSelect(account.id, S.Common.dataPath, mode, path, preferYamux, preferredSpaceId, (message: any) => {
 			if (setErrorHandler(message.error.code, message.error.description) || !message.account) {
 				isSelecting.current = false;
 				return;

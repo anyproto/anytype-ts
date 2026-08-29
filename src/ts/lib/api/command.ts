@@ -134,7 +134,7 @@ export const SpaceUnsetOrder = (id: string, callBack?: (message: any) => void) =
 
 // ---------------------- ACCOUNT ---------------------- //
 
-export const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
+export const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, preferYamux: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('AccountCreate', {
 		name,
 		avatarLocalPath: avatarPath,
@@ -142,6 +142,7 @@ export const AccountCreate = (name: string, avatarPath: string, storePath: strin
 		icon,
 		networkMode: mode as number,
 		networkCustomConfigFilePath: networkConfigPath,
+		preferYamuxTransport: preferYamux,
 		jsonApiListenAddr: J.Url.api,
 		enableMembershipV2: true,
 	}, callBack);
@@ -151,12 +152,13 @@ export const AccountRecover = (callBack?: (message: any) => void) => {
 	dispatcher.request('AccountRecover', {}, callBack);
 };
 
-export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, preferredSpaceId: string, callBack?: (message: any) => void) => {
+export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, preferYamux: boolean, preferredSpaceId: string, callBack?: (message: any) => void) => {
 	dispatcher.request('AccountSelect', {
 		id,
 		rootPath: path,
 		networkMode: mode as number,
 		networkCustomConfigFilePath: networkConfigPath,
+		preferYamuxTransport: preferYamux,
 		jsonApiListenAddr: J.Url.api,
 		enableMembershipV2: true,
 		preferredSpaceId,

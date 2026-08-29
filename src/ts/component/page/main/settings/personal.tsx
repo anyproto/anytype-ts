@@ -12,6 +12,8 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, gridTitleClick, notificationSound, hideFileObjectsInTree, unicodeReplace } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
 	const { theme, chatCmdSend, commentCmdSend } = S.Common;
+	const { networkConfig } = S.Auth;
+	const { preferYamux } = networkConfig;
 	const cmd = keyboard.cmdSymbol();
 
 	const onHardwareAccelerationChange = (v: boolean) => {
@@ -24,6 +26,23 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 				onConfirm: () => {
 					Renderer.send('setHardwareAcceleration', v);
 					Renderer.send('reload', '');
+				},
+			},
+		});
+	};
+
+	const onPreferYamuxChange = (v: boolean) => {
+		S.Popup.open('confirm', {
+			data: {
+				title: translate('popupConfirmPreferYamuxTitle'),
+				text: translate('popupConfirmPreferYamuxText'),
+				textConfirm: translate('commonRestart'),
+				textCancel: translate('commonCancel'),
+				onConfirm: () => {
+					S.Auth.networkConfigSet({ ...networkConfig, preferYamux: v });
+					analytics.event('ChangePreferYamux', { route: analytics.route.settings, type: v });
+
+					C.AccountStop(false, () => Renderer.send('reload', ''));
 				},
 			},
 		});
@@ -263,6 +282,15 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 						className="big"
 						value={hardwareAcceleration !== false}
 						onChange={(e: any, v: boolean) => onHardwareAccelerationChange(v)}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalPreferYamux')} />
+					<Switch
+						className="big"
+						value={preferYamux}
+						onChange={(e: any, v: boolean) => onPreferYamuxChange(v)}
 					/>
 				</div>
 			</div>
