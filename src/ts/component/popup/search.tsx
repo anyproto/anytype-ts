@@ -4,7 +4,7 @@ import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType, Objec
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 import Storage from 'Lib/storage';
-import { matchSpaces, matchPeople, peopleMatchLimit } from 'Lib/searchMatch';
+import { matchSpaces, matchPeople, peopleMatchLimit, parseCommandQuery } from 'Lib/searchMatch';
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_SMALL = 38;
@@ -860,6 +860,26 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		storageSet({ filter: '' });
 	};
 
+	// Leaving command mode: restore the query the command was typed after ("anton /in"
+	// resolves back to "anton"); a command typed from an empty input restores to empty.
+	// No-op while no command is active
+	const restoreCommandQuery = () => {
+		const parts = parseCommandQuery(filterValueRef.current);
+
+		if (!parts) {
+			return;
+		};
+
+		const v = parts.query.trimEnd();
+
+		window.clearTimeout(timeoutRef.current);
+		filterInputRef.current?.setValue(v);
+		filterInputRef.current?.setRange({ from: v.length, to: v.length });
+		filterValueRef.current = v;
+		pendingValueRef.current = v;
+		storageSet({ filter: v });
+	};
+
 	const clearChipHighlight = (render?: boolean) => {
 		if (!chipHighlightRef.current) {
 			return;
@@ -1415,11 +1435,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// toggle-off never apply here; removal is the token x and Backspace-at-0 only
 	const onChipAdd = (item: any) => {
 		// A chip add keeps a normal query (narrowing the same search) but never a "/"
-		// command query - reload() would re-enter command mode and the results would
-		// never appear
-		if (filterValueRef.current.startsWith('/')) {
-			clearQuery();
-		};
+		// command part - reload() would re-enter command mode and the results would
+		// never appear; the query the command was typed after survives
+		restoreCommandQuery();
 
 		if (item.isScope) {
 			addSpaceScope('Chip');
@@ -1487,9 +1505,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
-		if (filterValueRef.current.startsWith('/')) {
-			clearQuery();
-		};
+		restoreCommandQuery();
 
 		if (scope) {
 			removeSpaceScope('Command');
@@ -1584,7 +1600,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// The "/" command list does no backend query - a reload would only reset it.
 		// Global mode and a foreign scope build the creator filter and the Types
 		// aggregate off the maps - both need a re-run once the maps land
-		if (!isCurrentSpace() && (getCreatorToken() || typeAgg) && !filterValueRef.current.startsWith('/')) {
+		if (!isCurrentSpace() && (getCreatorToken() || typeAgg) && !parseCommandQuery(filterValueRef.current)) {
 			reload(true);
 		} else {
 			setDummy(prev => prev + 1);
@@ -2326,8 +2342,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		const gen = loadGenRef.current;
 
-		// "/" command mode searches chips/actions locally - no backend query
-		if (filterValueRef.current.startsWith('/')) {
+		// "/" command mode (leading, or whitespace-preceded mid-query) searches
+		// chips/actions locally - no backend query
+		if (parseCommandQuery(filterValueRef.current)) {
 			itemsRef.current = [];
 			itemsModeRef.current = getLoadMode();
 			hasMoreRef.current = false;
@@ -2769,8 +2786,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// from it left the list stuck in "/" command mode after selecting a chip
 		const filter = filterValueRef.current;
 
-		if (filter.startsWith('/')) {
-			return getCommandItems(filter.substring(1).trim());
+		const commandParts = parseCommandQuery(filter);
+
+		if (commandParts) {
+			return getCommandItems(commandParts.command.trim());
 		};
 		const lang = J.Constant.default.interfaceLang;
 		const canWrite = U.Space.canMyParticipantWrite();
@@ -3067,14 +3086,16 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// the popup. Cancel the pending debounced filter change - it would re-apply the
 		// stale "/query" after the switch and empty the list
 		if (item.isChip) {
-			clearQuery();
+			restoreCommandQuery();
 			onChipAdd({ ...item, id: item.chipId });
 			return;
 		};
 
-		// Typed completion entry ("/by", "/type"): prefill the command and keep typing
+		// Typed completion entry ("/by", "/type"): prefill the command and keep typing -
+		// after any query the command was typed behind ("anton /" + by -> "anton /by ")
 		if (item.isCommand) {
-			const v = `/${item.command} `;
+			const parts = parseCommandQuery(filterValueRef.current);
+			const v = `${parts ? parts.query : ''}/${item.command} `;
 
 			window.clearTimeout(timeoutRef.current);
 			filterInputRef.current?.setValue(v);
@@ -3087,9 +3108,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		// Typed completion pick ("/by kay" -> a person): resolve to its token
+		// Typed completion pick ("/by kay" -> a person): resolve to its token, keeping
+		// the query the command was typed after
 		if (item.isCommandSuggest) {
-			clearQuery();
+			restoreCommandQuery();
 			addToken(item.tokenKind, item, { source: 'Command' });
 			return;
 		};

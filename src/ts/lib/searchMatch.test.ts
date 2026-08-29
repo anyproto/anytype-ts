@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { matchSpaces, matchPeople, peopleMatchLimit } from './searchMatch';
+import { matchSpaces, matchPeople, peopleMatchLimit, parseCommandQuery } from './searchMatch';
 
 /**
  * JS-9863.
@@ -139,6 +139,36 @@ describe('peopleMatchLimit', () => {
 	it('treats empty and missing input as short', () => {
 		expect(peopleMatchLimit('')).toBe(3);
 		expect(peopleMatchLimit(null)).toBe(3);
+	});
+
+});
+
+describe('parseCommandQuery', () => {
+
+	it('enters command mode on a leading slash', () => {
+		expect(parseCommandQuery('/in team')).toEqual({ query: '', command: 'in team' });
+		expect(parseCommandQuery('/')).toEqual({ query: '', command: '' });
+	});
+
+	it('enters command mode on a whitespace-preceded slash mid-query, keeping the query', () => {
+		expect(parseCommandQuery('anton /in')).toEqual({ query: 'anton ', command: 'in' });
+		expect(parseCommandQuery('anton /')).toEqual({ query: 'anton ', command: '' });
+	});
+
+	it('takes the last whitespace-preceded slash', () => {
+		expect(parseCommandQuery('a /b c /d')).toEqual({ query: 'a /b c ', command: 'd' });
+	});
+
+	it('never triggers on a slash inside a word', () => {
+		expect(parseCommandQuery('1/2')).toBeNull();
+		expect(parseCommandQuery('http://example.com')).toBeNull();
+		expect(parseCommandQuery('a/b c')).toBeNull();
+	});
+
+	it('stays inactive without a slash', () => {
+		expect(parseCommandQuery('anton')).toBeNull();
+		expect(parseCommandQuery('')).toBeNull();
+		expect(parseCommandQuery(null)).toBeNull();
 	});
 
 });

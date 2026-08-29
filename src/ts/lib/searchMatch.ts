@@ -87,4 +87,24 @@ const peopleMatchLimit = (text: string): number => {
 	return (t.length >= PEOPLE_MATCH_FULL_LENGTH) ? PEOPLE_MATCH_LIMIT_FULL : PEOPLE_MATCH_LIMIT_SHORT;
 };
 
-export { matchSpaces, matchPeople, peopleMatchLimit };
+/**
+ * Split the search input into its query and "/" command parts. Command mode is a
+ * '/' at the very start, or one typed after whitespace mid-query - the footer
+ * advertises "Refine search" regardless of what is already typed, so "anton /in"
+ * must work like "/in" with the query kept. A slash inside a word ("1/2", URLs)
+ * never triggers; the last whitespace-preceded slash wins. Returns null while no
+ * command is active.
+ */
+const parseCommandQuery = (v: string): { query: string; command: string } | null => {
+	const s = String(v || '');
+
+	if (s.startsWith('/')) {
+		return { query: '', command: s.substring(1) };
+	};
+
+	const m = s.match(/^([\s\S]*\s)\/([\s\S]*)$/);
+
+	return m ? { query: m[1], command: m[2] } : null;
+};
+
+export { matchSpaces, matchPeople, peopleMatchLimit, parseCommandQuery };
