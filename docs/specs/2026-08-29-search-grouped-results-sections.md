@@ -21,6 +21,14 @@ opens (a scoped open degrades it to the bare token) and its representative re-re
 when the cross-space maps land; a scope add makes ANY focused what-token yield; the
 focused people pick lands creator + scope in one mutation (one RPC, snapshot-chain-safe);
 a 400ms hold-the-top guard pushes back late native scroll deliveries after list swaps.
+
+Rev 5 addendum (2026-08-29): the in-chat search menu gains an Expand button that opens
+the full popup with a CHAT-FOCUSED Messages token (focus.chatId) + the typed query via
+new presetTokens/presetFilter popup params - the full popup adds what the inline search
+lacks (the /by people filter feeds ChatSearch creators). A chat focus is the inverse of
+group focuses: bound to its Channel, it restores only into scoped opens and dies on any
+scope change; the empty object-search state teaches the Messages filter with a tutorial
+button, and /is completions offer "/is Message" first.
 Builds on: `docs/specs/2026-08-20-global-cross-space-search.md`,
 `docs/specs/2026-08-21-search-filter-tokens.md`, and the JS-9865 branch state (person rows
 injected from the cross-space participants subscription, participants excluded from the
