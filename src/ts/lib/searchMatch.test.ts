@@ -121,19 +121,20 @@ describe('matchPeople', () => {
 
 describe('groupMatchLimit', () => {
 
-	it('keeps short queries to a taste', () => {
+	it('keeps short queries (3 letters or fewer) to a taste', () => {
 		expect(groupMatchLimit('a')).toBe(3);
 		expect(groupMatchLimit('an')).toBe(3);
+		expect(groupMatchLimit('ant')).toBe(3);
 	});
 
-	it('shows the full hand once the query can name a person', () => {
-		expect(groupMatchLimit('ant')).toBe(10);
+	it('shows the full hand from four letters', () => {
+		expect(groupMatchLimit('anto')).toBe(10);
 		expect(groupMatchLimit('anton')).toBe(10);
 	});
 
 	it('measures the trimmed query', () => {
-		expect(groupMatchLimit('  an  ')).toBe(3);
-		expect(groupMatchLimit(' ant ')).toBe(10);
+		expect(groupMatchLimit('  ant  ')).toBe(3);
+		expect(groupMatchLimit(' anto ')).toBe(10);
 	});
 
 	it('treats empty and missing input as short', () => {

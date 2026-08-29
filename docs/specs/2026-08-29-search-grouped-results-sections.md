@@ -33,7 +33,7 @@ space — the same per-space duplication people had before JS-9865. Group type r
 `uniqueKey` the way people are grouped by identity:
 
 1. Exclude type objects from the cross-space query; inject grouped type rows via substring
-   match instead. Under 3 query letters up to 3 type matches, 3+ letters up to 10.
+   match instead. Up to 3 type matches for queries of 3 letters or fewer, up to 10 from four letters.
 2. Clicking a grouped type row **expands** the search — switch to Types mode so the user
    sees this type in every space and can select the concrete instance. The expanded view
    keeps an option to search objects of this type in all Channels.
@@ -78,7 +78,7 @@ groups ahead of the object results, in this order:
   order) sliced by the shared limit rule. Row shape and caption are the aggregate's
   ("in \<Channel\> + N other Channels") — the same row the Types bucket renders.
 - **Limit rule shared with People:** `peopleMatchLimit` is renamed `groupMatchLimit`
-  (searchMatch.ts, tests updated): trimmed query under 3 letters → 3, otherwise → 10.
+  (searchMatch.ts, tests updated): trimmed query of 3 letters or fewer → 3, from four letters → 10.
   Channels keep their own cap of 3.
 
 ### 3. Click = focus the group (Types)

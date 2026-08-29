@@ -77,12 +77,13 @@ const matchPeople = (list: any[], text: string, param: { selfIdentity?: string; 
 
 /**
  * How many rows a grouped section (People, Types) of the global result list
- * injects for a query: a short query matches half the vault, so keep it to a
- * taste; three letters can usually name the thing - show the full hand.
+ * injects for a query: a short query (3 letters or fewer) matches half the
+ * vault, so keep it to a taste; from four letters the query names the thing -
+ * show the full hand.
  */
 const GROUP_MATCH_LIMIT_SHORT = 3;
 const GROUP_MATCH_LIMIT_FULL = 10;
-const GROUP_MATCH_FULL_LENGTH = 3;
+const GROUP_MATCH_FULL_LENGTH = 4;
 
 const groupMatchLimit = (text: string): number => {
 	const t = String(text || '').trim();
