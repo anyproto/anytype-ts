@@ -3019,8 +3019,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			// The cross-space Types aggregate lists by name - no recency toggle
 			items.unshift({ name: translate('popupSearchTypeTypes'), isSection: true });
 		} else
-		if (!filter && items.length && (mode.isTypeInstances || mode.isPeopleInstances)) {
-			// A focused group's per-space instances - titled by the focus itself
+		if (!filter && items.length && mode.isPeopleInstances) {
+			// The focused person's rows filter, not open - the title states the intent
+			items.unshift({ name: translate('popupSearchFocusPersonSection'), isSection: true });
+		} else
+		if (!filter && items.length && mode.isTypeInstances) {
+			// A focused type's per-space instances - titled by the focus itself
 			const focusName = String(mode.what?.object?.focus?.name || '');
 
 			if (focusName) {
@@ -3363,13 +3367,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return;
 		};
 
-		// A focused person's concrete row short-cuts to the filter: Enter/click apply
-		// the creator token like the drill does - the participant object is not the
-		// goal here, their objects are (the participant menu stays reachable wherever
-		// members appear outside this view)
-		if (item.isObject && U.Object.isParticipantLayout(item.layout) && itemsModeRef.current?.isPeopleInstances) {
-			addToken('creator', item, { source: 'Focus', fromRow: true });
-			return;
+		// A focused person's rows filter, never open: Enter/click apply the creator
+		// token PLUS that row's Channel scope - the listing is "pick the Channel to
+		// filter their objects in" (the top suggestion covers all Channels). The 1:1
+		// Channel row filters inside the 1:1 the same way; the participant menu stays
+		// reachable wherever members appear outside this view
+		if (itemsModeRef.current?.isPeopleInstances && item.isObject && (item.isSpaceRow || U.Object.isParticipantLayout(item.layout))) {
+			const creator = item.isSpaceRow ? itemsModeRef.current?.what?.object?.focus?.object : item;
+			const spaceId = item.isSpaceRow ? item.targetSpaceId : item.spaceId;
+			const spaceview = U.Space.getSpaceviewBySpaceId(spaceId);
+
+			if (creator) {
+				addToken('creator', creator, { source: 'Focus', fromRow: true });
+
+				if (spaceview) {
+					addToken('space', { ...spaceview, id: spaceview.targetSpaceId }, { source: 'Focus' });
+				};
+
+				return;
+			};
 		};
 
 		// A grouped row's click focuses its group: the what-token gains the group as a

@@ -114,12 +114,15 @@ the participant menu:
   row's drill, a space caption) makes the focused member token yield before the boundary
   crossing maps it — the intent is "search in this Channel", not "search members in it";
   an explicit unfocused "/is Space member" still combines with a scope.
-- **Enter/click on a concrete per-space row short-cuts to the filter** (added same day per
-  Roman): it applies the creator token like the drill does, not the participant object —
-  in this view the person's objects are the goal. The participant menu stays reachable
-  wherever members appear outside the focused listing. `addToken` makes a member-type
-  what-token yield whenever a creator token is added (they would AND into an empty set —
-  participants are not authored), which also fixes the focused rows' drill icon.
+- **Enter/click on a row filters, never opens** (iterated same day per Roman): each row
+  applies the creator token PLUS that row's Channel scope — the listing is "pick the
+  Channel to filter their objects in", titled by the section header **"Filter by objects
+  created in Channels"**; the top suggestion covers all Channels. The 1:1 Channel row
+  filters inside the 1:1 the same way (it no longer opens on Enter — its drill icon keeps
+  the scope-only "search in this Channel"). The participant menu stays reachable wherever
+  members appear outside the focused listing. `addToken` makes a member-type what-token
+  yield whenever a creator token is added (they would AND into an empty set — participants
+  are not authored), which also covers the focused rows' drill icon.
 - **Drill icon**: unchanged — creator token → objects created by them across every Channel;
   also present on the focused per-space rows.
 - An unfocused member-type token ("/is Space member") keeps today's RPC listing.
