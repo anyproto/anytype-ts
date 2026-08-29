@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import Chat from './chat';
 import * as I from 'Interface';
 
@@ -191,6 +191,53 @@ describe('Chat', () => {
 			// "x\nbold" — code "x" then paragraph "bold"; Bold re-offset onto the plain text
 			expect(plain.text).toBe('x\nbold');
 			expect(plain.marks).toContainEqual({ type: I.MarkType.Bold, range: { from: 2, to: 6 } });
+		});
+	});
+
+	describe('getSearchResultHtml', () => {
+		// getSearchResultHtml sanitizes via the U auto-import global, which vitest
+		// does not provide (the AutoImport plugin only runs in the Vite build)
+		beforeAll(() => {
+			(globalThis as any).U = { String: { sanitize: (s: string) => String(s || '') } };
+		});
+
+		afterAll(() => {
+			delete (globalThis as any).U;
+		});
+
+		it('falls back to block text when content.text is empty (discussion messages)', () => {
+			const result: any = {
+				highlight: '',
+				highlightRanges: [],
+				message: {
+					content: { text: '' },
+					blocks: [
+						{ link: { objectId: 'x' } },
+						{ text: { text: 'Cool, make sense.', style: 0, marks: [] } },
+						{ text: { text: 'Second paragraph.', style: 0, marks: [] } },
+					],
+				},
+			};
+
+			expect(Chat.getSearchResultHtml(result)).toBe('Cool, make sense.\nSecond paragraph.');
+		});
+
+		it('prefers content.text when present', () => {
+			const result: any = {
+				highlight: '',
+				highlightRanges: [],
+				message: {
+					content: { text: 'Plain chat message' },
+					blocks: [ { text: { text: 'ignored', style: 0, marks: [] } } ],
+				},
+			};
+
+			expect(Chat.getSearchResultHtml(result)).toBe('Plain chat message');
+		});
+
+		it('survives a message with neither text nor blocks', () => {
+			expect(Chat.getSearchResultHtml({ highlight: '', highlightRanges: [], message: { content: { text: '' }, blocks: [] } as any })).toBe('');
+			expect(Chat.getSearchResultHtml({ highlight: '', highlightRanges: [] })).toBe('');
 		});
 	});
 
