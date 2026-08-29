@@ -989,6 +989,14 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			tokens.push(token);
 		};
 
+		// A creator filter under a member-type what token (the focused-people view,
+		// "/is Space member") would AND into an empty set - participants are not
+		// authored. The member token yields in the same mutation; a Back snapshot
+		// taken above still restores it
+		if ((kind == 'creator') && isMemberWhat(getWhatToken())) {
+			tokensRef.current = tokensRef.current.filter(it => TOKEN_GROUPS[it.kind] != 'what');
+		};
+
 		if (fromRow) {
 			clearQuery();
 		};
@@ -3322,19 +3330,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		// The focused listing's top suggestion: apply the all-Channels filter the
 		// grouped row's drill icon offered before focusing. Drill-style, so Back
-		// restores the focused view
+		// restores the focused view (addToken makes a conflicting member what-token
+		// yield to a creator filter by itself)
 		if (item.isFocusAll) {
 			addToken(item.focusKind, item.focusObject, { source: 'Focus', fromRow: true });
+			return;
+		};
 
-			// The creator filter lands in the who group while the focused member
-			// token stays in the what group - together they AND into an empty set
-			// (participants are not authored). Strip the what group silently: the
-			// Back snapshot addToken just took still restores the focused view
-			if (item.focusKind == 'creator') {
-				tokensRef.current = tokensRef.current.filter(it => TOKEN_GROUPS[it.kind] != 'what');
-				persistTokens();
-				afterTokenChange();
-			};
+		// A focused person's concrete row short-cuts to the filter: Enter/click apply
+		// the creator token like the drill does - the participant object is not the
+		// goal here, their objects are (the participant menu stays reachable wherever
+		// members appear outside this view)
+		if (item.isObject && U.Object.isParticipantLayout(item.layout) && itemsModeRef.current?.isPeopleInstances) {
+			addToken('creator', item, { source: 'Focus', fromRow: true });
 			return;
 		};
 

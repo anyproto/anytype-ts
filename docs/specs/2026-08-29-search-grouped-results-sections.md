@@ -107,9 +107,13 @@ the participant menu:
   (`S.Record.getTypeByKey(J.Constant.typeKey.participant)`) with a focus payload
   `{ identity, name, object }`; the listing shows that person's participant object in every
   shared space (from `GLOBAL_DEPS.participants`, synchronous, vault order, filtered by
-  identity — exact, no name-collision fuzziness). Clicking a concrete per-space row opens
-  the participant menu (participant layout routing) — Connect/create-1:1 lives there, one
-  click deeper. The pill renders the person's name.
+  identity — exact, no name-collision fuzziness). The pill renders the person's name.
+- **Enter/click on a concrete per-space row short-cuts to the filter** (added same day per
+  Roman): it applies the creator token like the drill does, not the participant object —
+  in this view the person's objects are the goal. The participant menu stays reachable
+  wherever members appear outside the focused listing. `addToken` makes a member-type
+  what-token yield whenever a creator token is added (they would AND into an empty set —
+  participants are not authored), which also fixes the focused rows' drill icon.
 - **Drill icon**: unchanged — creator token → objects created by them across every Channel;
   also present on the focused per-space rows.
 - An unfocused member-type token ("/is Space member") keeps today's RPC listing.
