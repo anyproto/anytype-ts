@@ -845,14 +845,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return isRenderGlobal() || isRenderForeign();
 	};
 
-	// Insertion order with the scope first: the space token renders leftmost, and
-	// Backspace-at-0 pops from the right of the rendered order (the scope falls last).
-	// Pickers pin the scope to the current space - not rendered, not removable
+	// Pure insertion order - the pills read left to right in the order they were
+	// added, and Backspace-at-0 pops the rightmost, so what falls first is always the
+	// newest pill. The seeded scope is added first and still renders leftmost; a scope
+	// added later (a focused person row, "/in", a caption) sits rightmost and falls
+	// first. Pickers pin the scope to the current space - not rendered, not removable
 	const getTokens = (): SearchToken[] => {
 		const tokens = tokensRef.current;
-		const scope = onObjectSelect ? [] : tokens.filter(it => it.kind == 'space');
 
-		return [ ...scope, ...tokens.filter(it => it.kind != 'space') ];
+		return onObjectSelect ? tokens.filter(it => it.kind != 'space') : [ ...tokens ];
 	};
 
 	const getTokenByGroup = (group: string): SearchToken | null => {
