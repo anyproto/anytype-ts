@@ -3171,7 +3171,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					};
 
 					// The first header states the full logic like the old single title
-					// - "Pages edited Today" - later headers stay bare buckets. A
+					// - "Pages edited Today" - later headers stay bare buckets. Day
+					// and month buckets use SEPARATE whole-sentence templates (a
+					// month takes a preposition or a case ending where a day bucket
+					// does not - one %s cannot serve both shapes for translators). A
 					// leading no-field bucket has no date to state and falls back to
 					// the plain pre-sections title instead of a bare "Older"
 					if (!grouped.length) {
@@ -3179,12 +3182,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 							name = noun ?
 								U.String.sprintf(translate(`${current.label}Type`), noun) :
 								translate(current.label);
-						} else {
-							const bucket = key.month ? U.String.sprintf(translate('popupSearchSectionMonth'), translate(`month${key.month}`), key.year) : name;
-
+						} else
+						if (key.month) {
 							name = noun ?
-								U.String.sprintf(translate(`${current.label}DateType`), noun, bucket) :
-								U.String.sprintf(translate(`${current.label}Date`), bucket);
+								U.String.sprintf(translate(`${current.label}MonthType`), noun, translate(`month${key.month}`), key.year) :
+								U.String.sprintf(translate(`${current.label}Month`), translate(`month${key.month}`), key.year);
+						} else {
+							name = noun ?
+								U.String.sprintf(translate(`${current.label}DateType`), noun, name) :
+								U.String.sprintf(translate(`${current.label}Date`), name);
 						};
 					};
 

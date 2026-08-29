@@ -131,8 +131,9 @@ the participant menu:
   an explicit unfocused "/is Space member" still combines with a scope.
 - **Enter/click on a row filters, never opens** (iterated same day per Roman): each row
   applies the creator token PLUS that row's Channel scope — the listing is "pick the
-  Channel to filter their objects in", titled by the section header **"Filter by objects
-  created in Channels"**; the top suggestion covers all Channels. The 1:1 Channel row
+  Channel to filter their objects in", titled by the section header **"Search objects
+  created in Channels"** (verb unified with the suggestions, rev 4); the top suggestion
+  covers all Channels. The 1:1 Channel row
   filters inside the 1:1 the same way (it no longer opens on Enter — its drill icon keeps
   the scope-only "search in this Channel"). The participant menu stays reachable wherever
   members appear outside the focused listing. `addToken` makes a member-type what-token
