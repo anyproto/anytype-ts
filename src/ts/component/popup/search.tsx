@@ -4,7 +4,7 @@ import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType, Objec
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 import Storage from 'Lib/storage';
-import { matchSpaces, matchPeople, groupMatchLimit, parseCommandQuery } from 'Lib/searchMatch';
+import { matchSpaces, matchPeople, groupMatchLimit, parseCommandQuery, dateSectionKey } from 'Lib/searchMatch';
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_SMALL = 38;
@@ -2401,7 +2401,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			setIsLoading(true);
 		};
 
-		C.ObjectCrossSpaceSearch(filters, sorts, J.Relation.default.concat([ 'pluralName', 'creator' ]), fullText, offsetRef.current, limit, (message: any) => {
+		// The recency fields feed the browse's date sections (default carries only createdDate)
+		C.ObjectCrossSpaceSearch(filters, sorts, J.Relation.default.concat([ 'pluralName', 'creator', 'lastModifiedDate', 'addedDate', 'lastMessageDate', 'lastUsedDate' ]), fullText, offsetRef.current, limit, (message: any) => {
 			// A newer query started while this one was in flight - drop the stale response
 			if (gen != loadGenRef.current) {
 				// Release the loader this request engaged - the superseding load may be
@@ -2612,7 +2613,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
-		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', 'creator', '_final_score' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
+		// The recency fields feed the browse's date sections (default carries only createdDate)
+		C.ObjectSearchWithMeta(space, filters, sorts, J.Relation.default.concat([ 'pluralName', 'links', 'backlinks', 'creator', '_final_score', 'lastModifiedDate', 'addedDate', 'lastMessageDate', 'lastUsedDate' ]), filterValueRef.current, offsetRef.current, limit, (message) => {
 			// A newer query started while this one was in flight - drop the stale response
 			if (gen != loadGenRef.current) {
 				// Release the loader this request engaged - the superseding load may be
@@ -2803,7 +2805,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			const oneToOne = oneToOnes.get(person.identity);
 			const spaceCount = getPersonSpaceCount({ spaceIds }, oneToOne);
 
-			return { ...person, spaceCount, metaList: [], links: [], backlinks: [], isObject: true, isPersonMatch: true, hasOneToOne: Boolean(oneToOne) };
+			return { ...person, spaceCount, metaList: [], links: [], backlinks: [], isObject: true, isPersonMatch: true };
 		});
 	};
 
@@ -3064,10 +3066,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		} else
 		if (!filter && items.length) {
-			// Every browse states its order in the title; the right-side action switches
-			// between the primary recency order and recently created
+			// The recents browse groups by the active order's own date - Today,
+			// Yesterday, the previous 7/14 days, then month+year. The first section
+			// carries the order switch; the rows arrive sorted by that same field, so
+			// one walk interleaves the headers
 			const { primary, secondary } = getRecentOrders((what && (what.kind == 'kind')) ? what.id : '');
 			const created = (recentSortRef.current == 'created') && Boolean(secondary);
+			const current = created ? secondary : primary;
+			const other = created ? primary : secondary;
+			const dateKey = current.sorts[0].relationKey;
+			const now = U.Date.now();
+			const grouped: any[] = [];
 
 			let noun = '';
 
@@ -3075,18 +3084,50 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				noun = (what.kind == 'kind') ? getKindName(what.id) : U.Object.name(what.object || {}, true);
 			};
 
-			const current = created ? secondary : primary;
-			const other = created ? primary : secondary;
-			const sectionName = noun ?
-				U.String.sprintf(translate(`${current.label}Type`), noun) :
-				translate(current.label);
+			let lastGroup = '';
 
-			items.unshift({
-				name: sectionName,
-				isSection: true,
-				withSort: Boolean(secondary),
-				sortSwitchText: other ? translate(other.label) : '',
+			items.forEach(it => {
+				const key = dateSectionKey(Number(it[dateKey]) || 0, now);
+
+				if (key.id != lastGroup) {
+					lastGroup = key.id;
+
+					let name = '';
+
+					switch (key.id) {
+						case 'today': name = translate('commonToday'); break;
+						case 'yesterday': name = translate('commonYesterday'); break;
+						case 'week': name = translate('popupSearchSectionWeek'); break;
+						case 'fortnight': name = translate('popupSearchSectionFortnight'); break;
+						case 'older': name = translate('popupSearchSectionOlder'); break;
+						default: name = `${translate(`month${key.month}`)} ${key.year}`; break;
+					};
+
+					// The first header states the full logic like the old single title
+					// - "Pages edited Today" - later headers stay bare buckets; the
+					// no-field bucket has no date to state
+					if (!grouped.length && (key.id != 'older')) {
+						const bucket = key.month ? `${translate('popupSearchInSpace')} ${name}` : name;
+
+						name = noun ?
+							U.String.sprintf(translate(`${current.label}DateType`), noun, bucket) :
+							U.String.sprintf(translate(`${current.label}Date`), bucket);
+					};
+
+					grouped.push({
+						name,
+						isSection: true,
+						...(grouped.length ? {} : {
+							withSort: Boolean(secondary),
+							sortSwitchText: other ? translate(other.label) : '',
+						}),
+					});
+				};
+
+				grouped.push(it);
 			});
+
+			items = grouped;
 		};
 
 		items = items.map(it => {
@@ -3101,6 +3142,21 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if ((mode.isTypeInstances || mode.isPeopleInstances) && mode.what?.object?.focus) {
 			const focus = mode.what.object.focus;
 			const key = mode.isTypeInstances ? 'popupSearchFocusTypeAll' : 'popupSearchFocusCreatorAll';
+
+			// A focused person without a 1:1 Channel gets the create suggestion here -
+			// the person row's caption no longer promises it (the row expands). The
+			// click opens the direct-message popup (participant menu), whose Connect
+			// button creates - never auto-created
+			if (mode.isPeopleInstances && focus.identity && focus.object && !getOneToOneMap().has(focus.identity)) {
+				items.unshift({
+					id: 'focusCreateOneToOne',
+					name: translate('popupSearchChannelCreateOneToOne'),
+					iconParam: { name: 'plus/menu' },
+					isSmall: true,
+					isFocusCreate: true,
+					focusObject: focus.object,
+				});
+			};
 
 			items.unshift({
 				id: 'focusAll',
@@ -3396,6 +3452,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// yield to a creator filter by itself)
 		if (item.isFocusAll) {
 			addToken(item.focusKind, item.focusObject, { source: 'Focus', fromRow: true });
+			return;
+		};
+
+		// The focused person's create suggestion: the direct-message popup (the
+		// standard participant menu) confirms via its Connect button
+		if (item.isFocusCreate) {
+			close(() => U.Menu.participant(item.focusObject, {}));
 			return;
 		};
 
@@ -4158,24 +4221,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			// The caption's leading element. A Channel row states who is in it and never
-			// carries the type drill-link - a Channel has no type. Person rows without a
-			// 1:1 Channel state the verb ("Create 1-1 Channel") with the shared-Channel
-			// count behind a bullet; otherwise the count leads, and a pure-DM contact
-			// (no shared group Channels) falls back to the global name so the caption
-			// still identifies the person
+			// carries the type drill-link - a Channel has no type. Person rows lead
+			// with the shared-Channel count (the create verb lives in the focused
+			// listing's suggestion - the row itself expands); a pure-DM contact falls
+			// back to the global name so the caption still identifies the person
 			let captionLead = null;
-			let captionAgg = null;
 
 			if (item.isSpaceRow) {
 				captionLead = prep(getSpaceRowInfo(item));
 			} else
 			if (item.isPersonMatch || item.isMemberAgg) {
-				if (item.isPersonMatch && !item.hasOneToOne) {
-					captionLead = prep(translate('popupSearchChannelCreateOneToOne'));
-					captionAgg = prep(aggSpaces);
-				} else {
-					captionLead = prep(aggSpaces || item.globalName || U.String.shortMask(item.identity || '', 6));
-				};
+				captionLead = prep(aggSpaces || item.globalName || U.String.shortMask(item.identity || '', 6));
 			} else
 			if (aggSpaces) {
 				captionLead = prep(aggSpaces);
@@ -4192,7 +4248,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			// The caption's segments, bullet-joined between non-empty parts only
-			const captionParts: any[] = [ captionLead, captionAgg ].filter(it => it);
+			const captionParts: any[] = [ captionLead ].filter(it => it);
 
 			if (creatorLabel) {
 				captionParts.push(creatorObject ? (

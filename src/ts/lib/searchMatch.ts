@@ -109,4 +109,37 @@ const parseCommandQuery = (v: string): { query: string; command: string } | null
 	return m ? { query: m[1], command: m[2] } : null;
 };
 
-export { matchSpaces, matchPeople, groupMatchLimit, parseCommandQuery };
+/**
+ * Date-section bucket of a recents row (the empty-query browse groups by it):
+ * Today, Yesterday, the previous 7 days, the previous 14 days, then one bucket
+ * per month+year; a missing timestamp falls into 'older'. Calendar-local days
+ * (DST-safe via rounding); future timestamps fold into Today. Both arguments
+ * are unix seconds.
+ */
+const dateSectionKey = (ts: number, now: number): { id: string; month?: number; year?: number } => {
+	if (!ts) {
+		return { id: 'older' };
+	};
+
+	const d = new Date(ts * 1000);
+	const n = new Date(now * 1000);
+	const startOfDay = (x: Date) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+	const diffDays = Math.round((startOfDay(n) - startOfDay(d)) / 86400000);
+
+	if (diffDays <= 0) {
+		return { id: 'today' };
+	};
+	if (diffDays == 1) {
+		return { id: 'yesterday' };
+	};
+	if (diffDays <= 7) {
+		return { id: 'week' };
+	};
+	if (diffDays <= 14) {
+		return { id: 'fortnight' };
+	};
+
+	return { id: `month-${d.getFullYear()}-${d.getMonth() + 1}`, month: d.getMonth() + 1, year: d.getFullYear() };
+};
+
+export { matchSpaces, matchPeople, groupMatchLimit, parseCommandQuery, dateSectionKey };

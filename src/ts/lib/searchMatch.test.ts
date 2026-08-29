@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { matchSpaces, matchPeople, groupMatchLimit, parseCommandQuery } from './searchMatch';
+import { matchSpaces, matchPeople, groupMatchLimit, parseCommandQuery, dateSectionKey } from './searchMatch';
 
 /**
  * JS-9863.
@@ -173,6 +173,34 @@ describe('parseCommandQuery', () => {
 		expect(parseCommandQuery('anton')).toBeNull();
 		expect(parseCommandQuery('')).toBeNull();
 		expect(parseCommandQuery(null)).toBeNull();
+	});
+
+});
+
+describe('dateSectionKey', () => {
+
+	// A fixed local noon anchors the calendar-day arithmetic away from DST edges
+	const now = Math.floor(new Date(2026, 7, 29, 12, 0, 0).getTime() / 1000);
+	const daysAgo = (n: number, hour = 12) => Math.floor(new Date(2026, 7, 29 - n, hour).getTime() / 1000);
+
+	it('buckets today, yesterday, week and fortnight by calendar day', () => {
+		expect(dateSectionKey(now, now).id).toBe('today');
+		expect(dateSectionKey(daysAgo(0, 0), now).id).toBe('today');
+		expect(dateSectionKey(daysAgo(1), now).id).toBe('yesterday');
+		expect(dateSectionKey(daysAgo(2), now).id).toBe('week');
+		expect(dateSectionKey(daysAgo(7), now).id).toBe('week');
+		expect(dateSectionKey(daysAgo(8), now).id).toBe('fortnight');
+		expect(dateSectionKey(daysAgo(14), now).id).toBe('fortnight');
+	});
+
+	it('buckets anything older by its month and year', () => {
+		expect(dateSectionKey(daysAgo(15), now)).toEqual({ id: 'month-2026-8', month: 8, year: 2026 });
+		expect(dateSectionKey(Math.floor(new Date(2025, 11, 24).getTime() / 1000), now)).toEqual({ id: 'month-2025-12', month: 12, year: 2025 });
+	});
+
+	it('folds future timestamps into today and a missing one into older', () => {
+		expect(dateSectionKey(now + 86400 * 3, now).id).toBe('today');
+		expect(dateSectionKey(0, now).id).toBe('older');
 	});
 
 });
