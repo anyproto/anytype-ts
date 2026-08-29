@@ -269,7 +269,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { param, storageGet, storageSet, getId, close } = props;
 	const { data } = param;
-	const { route, onObjectSelect, skipIds } = data;
+	// presetTokens/presetFilter: an entry point supplies its own initial state (the
+	// in-chat search's Expand hands over a chat-focused Messages token + the typed
+	// query) - the storage restore steps aside for them
+	const { route, onObjectSelect, skipIds, presetTokens, presetFilter } = data;
 	// data.isGlobal is an entry-point alias: Cmd+Shift+K and the vault icon open without
 	// the space scope token, everything else opens scoped to the current space. The live
 	// mode derives from the tokens (isGlobal()), not from this param
@@ -347,7 +350,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const lastUsed = Math.max(Number(storage.lastUsed) || 0, Number(storage.lastUsedGlobal) || 0);
 	// Stale session: reset query and tokens to defaults instead of restoring
 	const isStale = Boolean(lastUsed && (Date.now() - lastUsed > STATE_RESET_TIMEOUT));
-	const filter = isStale ? '' : String((legacyGlobalSide ? storage.filterGlobal : storage.filter) || '');
+	// Pickers start with an empty query - the restored session's text (e.g. a message
+	// search) is about the OTHER popup's task, same as the Messages token drop below
+	const filter = ((presetFilter !== undefined) && (presetFilter !== null)) ? String(presetFilter) : ((isStale || onObjectSelect) ? '' : String((legacyGlobalSide ? storage.filterGlobal : storage.filter) || ''));
 	const filterValueRef = useRef(filter);
 	// The input value as of the last input event or programmatic write - onFilterChange
 	// compares against it to ignore no-change keyups during the debounce window
@@ -511,7 +516,23 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			e.preventDefault();
-			removeToken(tokens[tokens.length - 1], 'Backspace');
+
+			const last = tokens[tokens.length - 1];
+
+			// A chat-focused Messages token unwinds stepwise: the first Backspace
+			// drops the focus (all Messages in the Channel again), the next removes
+			// the token - mirroring how the state was built. Group focuses instead
+			// carry a Back snapshot and restore their pre-focus view via removeToken
+			if (getTokenFocus(last)?.chatId) {
+				delete last.object.focus;
+				persistTokens();
+				afterTokenChange();
+
+				analytics.event('SearchToken', { type: 'Kind', action: 'Defocus', source: 'Backspace', isGlobal: isGlobal() });
+				return;
+			};
+
+			removeToken(last, 'Backspace');
 		});
 
 		// Right arrow drills like shift+enter - but only when the caret sits at the end of
@@ -543,10 +564,6 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// across the suggestion chips (wrapping); Enter applies the highlighted one. The
 		// highlight is transient: typing, arrows and Escape drop it
 		keyboard.shortcut('tab, shift+tab', e, (pressed: string) => {
-			if (onObjectSelect) {
-				return;
-			};
-
 			e.preventDefault();
 
 			const chips = getSuggestionItems();
@@ -768,7 +785,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		clearChipHighlight(true);
 
 		timeoutRef.current = window.setTimeout(() => {
-			storageSet({ filter: v });
+			persistFilter(v);
 
 			if (filterValueRef.current != v) {
 				analytics.event('SearchInput', { route });
@@ -789,7 +806,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	const onFilterClear = () => {
-		storageSet({ filter: '' });
+		persistFilter('');
 		analytics.event('SearchInput', { route });
 	};
 
@@ -912,16 +929,31 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// (a grouped row's pick must survive a quick reopen); Back snapshots and resolved
 	// objects are session-only
 	const persistTokens = () => {
+		if (isEphemeral) {
+			return;
+		};
+
 		storageSet({ tokens: tokensRef.current.map(it => {
 			const ret: any = { kind: it.kind, id: it.id };
 			const focus = it.object?.focus;
 
-			if (focus && (focus.uniqueKey || focus.identity)) {
-				ret.focus = { uniqueKey: String(focus.uniqueKey || ''), identity: String(focus.identity || ''), name: String(focus.name || '') };
+			if (focus && (focus.uniqueKey || focus.identity || focus.chatId)) {
+				ret.focus = { uniqueKey: String(focus.uniqueKey || ''), identity: String(focus.identity || ''), chatId: String(focus.chatId || ''), name: String(focus.name || '') };
 			};
 
 			return ret;
 		}) });
+	};
+
+	// Ephemeral sessions (pickers, preset opens like the in-chat search's Expand)
+	// never write their query or tokens to storage - the next channel-level search
+	// open must not inherit a task that belongs to another surface
+	const isEphemeral = Boolean(onObjectSelect) || Boolean(presetTokens && presetTokens.length);
+
+	const persistFilter = (v: string) => {
+		if (!isEphemeral) {
+			storageSet({ filter: v });
+		};
 	};
 
 	// Every programmatic query change must write the input, BOTH refs and storage - the
@@ -934,7 +966,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		filterInputRef.current?.setRange({ from: v.length, to: v.length });
 		filterValueRef.current = v;
 		pendingValueRef.current = v;
-		storageSet({ filter: v });
+		persistFilter(v);
 	};
 
 	const clearQuery = () => setQuery('');
@@ -1288,6 +1320,22 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return null;
 		};
 
+		// A chat focus lives in the current space's subscriptions (it never survives
+		// a scope change); discussions resolve to their parent object, like the
+		// message row captions
+		if (focus.chatId) {
+			const chat = S.Detail.get(U.Subscription.spaceSubId(J.Constant.subId.chat), focus.chatId, []);
+
+			if (!chat._empty_) {
+				return chat;
+			};
+
+			const parentId = S.Chat.getDiscussionParentId(S.Common.space, focus.chatId);
+			const parent = parentId ? S.Chat.getDiscussionParentDetail(S.Common.space, parentId, []) : null;
+
+			return (parent && !parent._empty_) ? parent : null;
+		};
+
 		if (focus.uniqueKey) {
 			for (const it of GLOBAL_DEPS.types.values()) {
 				if ((String(it.uniqueKey || it.id) == focus.uniqueKey) && !it.isDeleted) {
@@ -1523,8 +1571,10 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			ret.push(kindChip(SEARCH_TYPE_CHANNEL));
 		};
 
-		if (!what && hasMessageContainers()) {
-			ret.push(kindChip(SEARCH_TYPE_MESSAGE));
+		// Not in pickers - a message is not an attachable object. The chat icon
+		// tells the messages surface apart from the object kinds at a glance
+		if (!what && !onObjectSelect && hasMessageContainers()) {
+			ret.push({ ...kindChip(SEARCH_TYPE_MESSAGE), icon: 'default/chat' });
 		};
 
 		if (withPeople) {
@@ -1565,6 +1615,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		};
 
 		return ret.concat(getMemberChips());
+	};
+
+	// Empty results teach the scope: the default search covers objects only, so a
+	// query that lives in a chat finds nothing here - offer the Messages filter as
+	// a tutorial (button applies it with the query kept). Only where the Messages
+	// chip itself would be offerable: no what-token, containers exist, no command
+	// query, and never in pickers
+	const canSuggestMessages = (): boolean => {
+		return !onObjectSelect && Boolean(filterValueRef.current) && !parseCommandQuery(filterValueRef.current) && !getWhatToken() && hasMessageContainers();
+	};
+
+	const onEmptyMessages = () => {
+		onChipAdd({ id: SEARCH_TYPE_MESSAGE, name: getKindName(SEARCH_TYPE_MESSAGE), isKind: true });
 	};
 
 	// Keep the Tab-highlighted chip visible when the row overflows
@@ -1672,6 +1735,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 		if (!what) {
 			return;
+		};
+
+		// A chat focus is bound to its Channel - any scope change (widening to
+		// global, re-pointing at another Channel) invalidates it; the token stays a
+		// plain Messages filter
+		if (getTokenFocus(what)?.chatId) {
+			delete what.object.focus;
 		};
 
 		const drop = () => {
@@ -2130,8 +2200,11 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// in the token bar)
 		const creatorToken = getCreatorToken();
 		const creators = creatorToken ? [ getTokenIdentity(creatorToken) ] : [];
+		// A chat-focused Messages token (the in-chat search's Expand) narrows to that
+		// one chat - '' keeps the whole scope
+		const chatId = String(getTokenFocus(getWhatToken())?.chatId || '');
 
-		C.ChatSearch(scopeId, '', text, offsetRef.current, J.Constant.limit.menuRecords, sorts, creators, (message: any) => {
+		C.ChatSearch(scopeId, chatId, text, offsetRef.current, J.Constant.limit.menuRecords, sorts, creators, (message: any) => {
 			// A newer query started while this one was in flight - drop the stale response
 			if (gen != loadGenRef.current) {
 				// Release the loader this request engaged - the superseding load may be
@@ -2765,10 +2838,24 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const getTypeSuggestions = (text: string) => {
 		const t = text.toLowerCase();
 
+		// The "/" root list advertises "/is Message" - the completion list must offer
+		// it too, first (the kind bucket is not a type and the type list alone never
+		// finds it). Rendered and picked exactly like the root list's chip entries
+		const kinds: any[] = [];
+
+		if (!onObjectSelect && hasMessageContainers()) {
+			const singular = translate(KIND_NAME_KEYS_SINGULAR[SEARCH_TYPE_MESSAGE]);
+			const plural = getKindName(SEARCH_TYPE_MESSAGE);
+
+			if (!t || [ singular, plural ].some(n => n.toLowerCase().includes(t))) {
+				kinds.push({ id: `chip-${SEARCH_TYPE_MESSAGE}`, chipId: SEARCH_TYPE_MESSAGE, name: singular, prefix: '/is', iconParam: { name: 'default/chat' }, isChip: true, isSmall: true, shortcut: [] });
+			};
+		};
+
 		// Global mode: grouped by uniqueKey with the space-count caption - the same
 		// aggregate the Types bucket renders
 		if (isGlobal()) {
-			return getGlobalTypeAggregate(text).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
+			return kinds.concat(getGlobalTypeAggregate(text).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] })));
 		};
 
 		let list: any[] = [];
@@ -2792,7 +2879,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			list = list.filter(it => [ it.name, it.pluralName ].some(n => String(n || '').toLowerCase().includes(t)));
 		};
 
-		return [ ...list ].sort(sortTypesByUsage).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] }));
+		return kinds.concat([ ...list ].sort(sortTypesByUsage).map(it => ({ ...it, isObject: true, isCommandSuggest: true, tokenKind: 'type', shortcut: [] })));
 	};
 
 	// A Channel as a result row: the spaceview is the render object, addressed by the
@@ -3047,7 +3134,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			chipId: it.id,
 			name,
 			prefix: it.isScope ? '/in' : (it.isPerson ? '/by' : '/is'),
-			iconParam: { name: 'common/search' },
+			iconParam: { name: ((it.isKind && (it.id == SEARCH_TYPE_MESSAGE)) ? 'default/chat' : 'common/search') },
 			isChip: true,
 			};
 		}));
@@ -3514,7 +3601,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			filterInputRef.current?.focus();
 			filterValueRef.current = v;
 			pendingValueRef.current = v;
-			storageSet({ filter: v });
+			persistFilter(v);
 			reload(true);
 			return;
 		};
@@ -3895,7 +3982,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				// object; the representative re-resolves from the cross-space maps -
 				// cold maps leave the pill name-only and onGlobalDepsLoad finishes
 				// the job when they land
-				if (it.focus && (it.focus.uniqueKey || it.focus.identity)) {
+				if (it.focus && (it.focus.uniqueKey || it.focus.identity || it.focus.chatId)) {
 					const focus: any = { ...it.focus, object: resolveFocusObject(it.focus) };
 
 					slot.object = { ...(slot.object || { id: it.id, name: ((it.kind == 'kind') ? getKindName(it.id) : '') }), focus };
@@ -3970,6 +4057,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			storageSet(cleanup);
 		};
 
+		// A preset open supplies its own token state - the storage restore steps
+		// aside; the preset then persists like any session (below, post-resolve)
+		if (presetTokens && presetTokens.length) {
+			raw = U.Common.objectCopy(presetTokens);
+		};
+
+		// Pickers always open fresh - the stored session (tokens and query alike)
+		// belongs to the search popup's own task, not to picking an object. The
+		// stored state itself survives untouched for the next real search open
+		if (onObjectSelect) {
+			raw = [];
+		};
+
 		// A saved scope survives a quick reopen ON ANY ENTRY (session restore) - a
 		// scoped pick (a focused person row, "/in", a caption) must come back intact.
 		// Without one the entry point owns the slot: Cmd+K and in-editor searches
@@ -3988,17 +4088,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 		};
 
-		// A focus is a global-mode construct (the focused listings ride the
-		// cross-space maps): restoring one into a scoped open would put a person's or
-		// type's name on a pill over an unrelated in-space listing - it degrades to
-		// the bare token instead
-		if (raw.some(it => it && (it.kind == 'space'))) {
-			raw.forEach(it => {
-				if (it && it.focus) {
-					delete it.focus;
-				};
-			});
-		};
+		// Group focuses (uniqueKey/identity) are global-mode constructs (their
+		// listings ride the cross-space maps): restoring one into a scoped open would
+		// put a person's or type's name on a pill over an unrelated in-space listing.
+		// A CHAT focus is the inverse - bound to its Channel, it cannot open
+		// scope-less. Either way the mismatch degrades to the bare token
+		const scoped = raw.some(it => it && (it.kind == 'space'));
+
+		raw.forEach(it => {
+			if (it && it.focus && (scoped != Boolean(it.focus.chatId))) {
+				delete it.focus;
+			};
+		});
 
 		// Interactions during the async resolve (typing, a scope toggle) supersede the
 		// restore - each of them runs a reload, so the generation is the signal
@@ -4476,8 +4577,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 
 				if (focus) {
 					icon = focus.object ? <IconObject object={focus.object} size={16} /> : null;
-					name = focus.name;
+
+					// A 1:1 space's chat carries no display name - label the chat
+					// focus "Direct", same as the message row captions
+					if (focus.chatId && U.Space.getSpaceview()?.isOneToOne) {
+						name = translate('popupSearchDirectChat');
+					} else {
+						name = focus.name || U.Object.name(focus.object || {}) || getKindName(token.id);
+					};
 				} else {
+					if (token.id == SEARCH_TYPE_MESSAGE) {
+						icon = <Icon name="default/chat" className="chipIcon" size={16} />;
+					};
+
 					name = getKindName(token.id);
 				};
 				break;
@@ -4597,9 +4709,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return (
 			<div className="foot">
 				<Shortcut keys={[ 'arrowup', 'arrowdown' ]} label={translate('popupSearchShortcutNavigate')} />
-				{!onObjectSelect ? (
-					<Shortcut keys={activeDrill ? [ 'tab', '/', 'arrowright' ] : [ 'tab', '/' ]} label={translate('popupSearchShortcutRefine')} />
-				) : ''}
+				<Shortcut keys={activeDrill ? [ 'tab', '/', 'arrowright' ] : [ 'tab', '/' ]} label={translate('popupSearchShortcutRefine')} />
 				<Shortcut keys={[ 'escape' ]} label={translate('popupSearchShortcutClose')} />
 				{isObject ? (
 					<>
@@ -4653,7 +4763,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				/>
 			</div>
 
-			{!onObjectSelect && suggestions.length ? (
+			{suggestions.length ? (
 				<div className="typeSelectWrap">
 					<div ref={typeSelectRef} className="typeSelect" onWheel={onTypeWheel} onScroll={checkTypeSelectFade}>
 						{suggestions.map((item: any) => {
@@ -4666,6 +4776,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 									className={cn.join(' ')}
 									onClick={() => onChipAdd(item)}
 								>
+									{item.icon ? <Icon name={item.icon} className="chipIcon" size={16} /> : ''}
 									{item.name}
 								</div>
 							);
@@ -4678,10 +4789,20 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			space keeps the footer and chips from jumping while a load swaps the content */}
 			<div className="items">
 				{!items.length && !isLoading ? (
-					<EmptySearch
-						filter={filterValueRef.current}
-						text={(getLoadMode().id == SEARCH_TYPE_MESSAGE) ? translate('menuSearchChatEmptySearch') : ''}
-					/>
+					canSuggestMessages() ? (
+						<div className="emptySearch">
+							<div className="txt" dangerouslySetInnerHTML={{ __html: U.String.sanitize(U.String.sprintf(translate('popupSearchEmptyFilter'), filterValueRef.current)) }} />
+							<div className="tutorial">
+								<Label text={translate('popupSearchEmptyMessagesHint')} />
+								<Button className="c28" color="blank" text={getKindName(SEARCH_TYPE_MESSAGE)} onClick={onEmptyMessages} />
+							</div>
+						</div>
+					) : (
+						<EmptySearch
+							filter={filterValueRef.current}
+							text={(getLoadMode().id == SEARCH_TYPE_MESSAGE) ? translate('menuSearchChatEmptySearch') : ''}
+						/>
+					)
 				) : ''}
 
 				{cacheRef.current && items.length && !isLoading ? (
