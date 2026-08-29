@@ -1712,6 +1712,7 @@
 	"popupSearchSectionWeek": "Previous 7 days",
 	"popupSearchSectionFortnight": "Previous 14 days",
 	"popupSearchSectionOlder": "Older",
+	"popupSearchSectionMonth": "in %s %s",
 	"popupSearchShortcutNewTab": "New tab",
 	"popupSearchShortcutNewWindow": "Open in new window",
 	"popupSearchShortcutSelect": "Select",

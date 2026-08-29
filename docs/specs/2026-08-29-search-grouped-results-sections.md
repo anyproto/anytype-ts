@@ -5,7 +5,22 @@ A grouped row has exactly two verbs: **click** shows the actual type/person in e
 (the focused per-space instance listing); the **drill icon** filters objects by that type /
 creator across every Channel. The focus rides as a session-transient payload on the
 what-token; rev-2's bare token-add click is superseded)
-Status: implementing on `feature/JS-9865-cross-space-search-people` (PR #2358)
+Status: implemented on `feature/JS-9865-cross-space-search-people` (PR #2358)
+
+Rev 4 addendum (2026-08-29, post-review): the "Create 1-1 Channel" caption moved off the
+person row into a focused-listing suggestion that opens the participant menu (Connect
+confirms); person rows wear an 85% avatar on the member circle badge (`.personBadge` —
+"No SCSS changes" below is superseded), every row of the focused people listing included;
+the recents browse groups by date (Today / Yesterday / Previous 7 and 14 days /
+month+year, keyed to the LOADED mode's order and query so quiet-reload windows never
+bucket text-ordered rows; first header states the full logic and carries the sort
+switch); footer shortcuts regrouped (→ selection-tracked in Refine, "+" combos, Shift
+swaps Open→Filter, Cmd+Alt+L deeplink with an Alt-held hint swap); the focus payload and
+a later-added scope persist across quick reopens — a focus restores only into scope-less
+opens (a scoped open degrades it to the bare token) and its representative re-resolves
+when the cross-space maps land; a scope add makes ANY focused what-token yield; the
+focused people pick lands creator + scope in one mutation (one RPC, snapshot-chain-safe);
+a 400ms hold-the-top guard pushes back late native scroll deliveries after list swaps.
 Builds on: `docs/specs/2026-08-20-global-cross-space-search.md`,
 `docs/specs/2026-08-21-search-filter-tokens.md`, and the JS-9865 branch state (person rows
 injected from the cross-space participants subscription, participants excluded from the

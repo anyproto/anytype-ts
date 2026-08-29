@@ -257,7 +257,8 @@
 						@include text-small; padding: 0px 4px; border-radius: 4px; height: 18px; line-height: 18px;
 						background: var(--color-shape-tertiary); min-width: 18px; text-align: center;
 					}
-					.sep { @include text-small; color: var(--color-text-secondary); }
+					/* pulls the "+" joiner tight against its keycaps (the 4px flex gap stays for bare alternatives) */
+					.sep { @include text-small; color: var(--color-text-secondary); margin: 0px -2px; }
 				}
 				.label { @include text-small; color: var(--color-text-secondary); }
 			}

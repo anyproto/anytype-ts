@@ -1,7 +1,8 @@
 /**
- * Pure matchers and query policy behind the global search popup's local
- * (in-memory) lookups: name matching for Channels and people, the injected
- * person-row limit, and the "/" command-mode parsing.
+ * Pure matchers and policy behind the global search popup's local (in-memory)
+ * behavior: name matching for Channels and people, the grouped-section (People,
+ * Types) result limit, the "/" command-mode parsing, and the recents browse's
+ * date-section bucketing.
  *
  * They live outside the component so they can be unit-tested: the popup itself
  * pulls in the whole store/component graph, while these rules are the part

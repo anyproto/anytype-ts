@@ -198,6 +198,20 @@ describe('dateSectionKey', () => {
 		expect(dateSectionKey(Math.floor(new Date(2025, 11, 24).getTime() / 1000), now)).toEqual({ id: 'month-2025-12', month: 12, year: 2025 });
 	});
 
+	it('crosses into the previous month right past the fortnight cutover', () => {
+		// 15 days before Aug 12 lands in July - the first month bucket may not be
+		// the current month
+		const midMonth = Math.floor(new Date(2026, 7, 12, 12).getTime() / 1000);
+		expect(dateSectionKey(Math.floor(new Date(2026, 6, 28, 12).getTime() / 1000), midMonth)).toEqual({ id: 'month-2026-7', month: 7, year: 2026 });
+	});
+
+	it('gives consecutive months distinct ids', () => {
+		const a = dateSectionKey(Math.floor(new Date(2026, 6, 31).getTime() / 1000), now).id;
+		const b = dateSectionKey(Math.floor(new Date(2026, 5, 30).getTime() / 1000), now).id;
+
+		expect(a).not.toBe(b);
+	});
+
 	it('folds future timestamps into today and a missing one into older', () => {
 		expect(dateSectionKey(now + 86400 * 3, now).id).toBe('today');
 		expect(dateSectionKey(0, now).id).toBe('older');
