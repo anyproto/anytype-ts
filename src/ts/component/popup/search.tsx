@@ -878,9 +878,20 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return Boolean(S.Auth.account) && (getTokenIdentity(token) == S.Auth.account.id);
 	};
 
-	// Tokens persist as bare { kind, id } and resolve on open; Back snapshots are session-only
+	// Tokens persist as bare { kind, id } plus the serializable half of a focus payload
+	// (a grouped row's pick must survive a quick reopen); Back snapshots and resolved
+	// objects are session-only
 	const persistTokens = () => {
-		storageSet({ tokens: tokensRef.current.map(it => ({ kind: it.kind, id: it.id })) });
+		storageSet({ tokens: tokensRef.current.map(it => {
+			const ret: any = { kind: it.kind, id: it.id };
+			const focus = it.object?.focus;
+
+			if (focus && (focus.uniqueKey || focus.identity)) {
+				ret.focus = { uniqueKey: String(focus.uniqueKey || ''), identity: String(focus.identity || ''), name: String(focus.name || '') };
+			};
+
+			return ret;
+		}) });
 	};
 
 	// Every programmatic query change must write the input, BOTH refs and storage - the
@@ -1663,14 +1674,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const onGlobalDepsLoad = () => {
 		const what = getWhatToken();
 		const typeAgg = Boolean(what) && (what.kind == 'kind') && (what.id == SEARCH_TYPE_TYPE);
+		// A restored focused token lists instances straight off the maps - cold at
+		// mount, filled now
+		const focused = Boolean(what?.object?.focus);
 
 		// The injected person rows read the participants map that just landed
 		injectCacheRef.current = null;
 
 		// The "/" command list does no backend query - a reload would only reset it.
-		// Global mode and a foreign scope build the creator filter and the Types
-		// aggregate off the maps - both need a re-run once the maps land
-		if (!isCurrentSpace() && (getCreatorToken() || typeAgg) && !parseCommandQuery(filterValueRef.current)) {
+		// Global mode and a foreign scope build the creator filter, the Types
+		// aggregate and the focused instance listings off the maps - all need a
+		// re-run once the maps land
+		if (!isCurrentSpace() && (getCreatorToken() || typeAgg || focused) && !parseCommandQuery(filterValueRef.current)) {
 			reload(true);
 		} else {
 			setDummy(prev => prev + 1);
@@ -3702,6 +3717,30 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					slot.object = GLOBAL_DEPS.participants.get(it.id) || U.Space.getParticipant(it.id);
 				};
 
+				// A persisted focus (a grouped row's pick) rebuilds onto the resolved
+				// object; the representative re-resolves from the cross-space maps -
+				// cold maps leave the pill name-only and the listing fills when the
+				// deps land (onGlobalDepsLoad reloads focused tokens)
+				if (it.focus && (it.focus.uniqueKey || it.focus.identity)) {
+					const focus: any = { ...it.focus };
+
+					if (focus.uniqueKey) {
+						GLOBAL_DEPS.types.forEach((t: any) => {
+							if (!focus.object && (String(t.uniqueKey || t.id) == focus.uniqueKey) && !t.isDeleted) {
+								focus.object = t;
+							};
+						});
+					} else {
+						GLOBAL_DEPS.participants.forEach((p: any, id: string) => {
+							if (!focus.object && (U.Space.getAccountFromParticipantId(id) == focus.identity)) {
+								focus.object = p;
+							};
+						});
+					};
+
+					slot.object = { ...(slot.object || { id: it.id, name: ((it.kind == 'kind') ? getKindName(it.id) : '') }), focus };
+				};
+
 				slots.push(slot);
 			});
 
@@ -3771,12 +3810,21 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			storageSet(cleanup);
 		};
 
-		// The entry point owns the scope slot: Cmd+K and in-editor searches open scoped
-		// to the current space, Cmd+Shift+K and the vault icon open vault-wide
-		raw = raw.filter(it => it && (it.kind != 'space'));
+		// A saved scope survives a quick reopen (session restore) - a scoped pick (a
+		// focused person row, "/in", a caption) must come back intact. Without one the
+		// entry point owns the slot: Cmd+K and in-editor searches open scoped to the
+		// current space, Cmd+Shift+K and the vault icon vault-wide. Pickers keep the
+		// scope pinned to the current space; the stale reset already cleared raw
+		const savedScope = onObjectSelect ? null : raw.find(it => it && (it.kind == 'space'));
 
-		if (!initialGlobal) {
-			raw.unshift({ kind: 'space', id: S.Common.space });
+		// A honored saved scope keeps its saved position too - the pill order equals
+		// the removal order
+		if (!savedScope) {
+			raw = raw.filter(it => it && (it.kind != 'space'));
+
+			if (!initialGlobal) {
+				raw.unshift({ kind: 'space', id: S.Common.space });
+			};
 		};
 
 		// Interactions during the async resolve (typing, a scope toggle) supersede the
