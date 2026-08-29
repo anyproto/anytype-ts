@@ -4794,7 +4794,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 							<div className="txt" dangerouslySetInnerHTML={{ __html: U.String.sanitize(U.String.sprintf(translate('popupSearchEmptyFilter'), filterValueRef.current)) }} />
 							<div className="tutorial">
 								<Label text={translate('popupSearchEmptyMessagesHint')} />
-								<Button className="c28" color="blank" text={getKindName(SEARCH_TYPE_MESSAGE)} onClick={onEmptyMessages} />
+								<Button className="c28" color="blank" iconParam={{ name: 'default/chat', size: 16 }} text={getKindName(SEARCH_TYPE_MESSAGE)} onClick={onEmptyMessages} />
 							</div>
 						</div>
 					) : (

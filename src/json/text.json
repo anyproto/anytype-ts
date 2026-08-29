@@ -1621,7 +1621,7 @@
 	"popupSearchPlaceholder": "Search for an object · / to filter...",
 	"popupSearchPlaceholderShort": "Search · / to filter...",
 	"popupSearchPlaceholderMessage": "Search for a message...",
-	"popupSearchEmptyMessagesHint": "The search covers objects by default. Looking for a message?",
+	"popupSearchEmptyMessagesHint": "Looking for a message?",
 	"menuSearchChatExpand": "Open in full search",
 	"popupSearchEmpty": "No Objects found",
 	"popupSearchNoObjects": "<b>There are no Objects named <span>\"%s\"</span></b>",
