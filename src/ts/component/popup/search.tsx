@@ -997,6 +997,19 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			tokensRef.current = tokensRef.current.filter(it => TOKEN_GROUPS[it.kind] != 'what');
 		};
 
+		// A space scope while a FOCUSED member token holds the what group means
+		// "search in this Channel", not "search members in it" - the person focus
+		// yields before the boundary crossing maps it (the 1:1 Channel row's drill in
+		// the focused listing is the main path). An explicit unfocused "/is Space
+		// member" keeps combining with a scope as before
+		if (kind == 'space') {
+			const what = getWhatToken();
+
+			if ((what?.kind == 'type') && what?.object?.focus?.identity) {
+				tokensRef.current = tokensRef.current.filter(it => TOKEN_GROUPS[it.kind] != 'what');
+			};
+		};
+
 		if (fromRow) {
 			clearQuery();
 		};

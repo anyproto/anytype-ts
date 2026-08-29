@@ -110,7 +110,10 @@ the participant menu:
   identity — exact, no name-collision fuzziness). The pill renders the person's name.
 - **The person's 1:1 Channel leads the focused listing** as its own Channel row (open it,
   search inside it via the space drill) and replaces the participant record from within
-  that space — the user may want to search in the 1:1 as well.
+  that space — the user may want to search in the 1:1 as well. Scoping from here (the 1:1
+  row's drill, a space caption) makes the focused member token yield before the boundary
+  crossing maps it — the intent is "search in this Channel", not "search members in it";
+  an explicit unfocused "/is Space member" still combines with a scope.
 - **Enter/click on a concrete per-space row short-cuts to the filter** (added same day per
   Roman): it applies the creator token like the drill does, not the participant object —
   in this view the person's objects are the goal. The participant menu stays reachable
