@@ -4,7 +4,7 @@ import { Icon, Loader, IconObject, EmptySearch, Label, Filter, ObjectType, Objec
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
 import Storage from 'Lib/storage';
-import { matchSpaces, matchPeople } from 'Lib/searchMatch';
+import { matchSpaces, matchPeople, peopleMatchLimit } from 'Lib/searchMatch';
 
 const HEIGHT_SECTION = 28;
 const HEIGHT_SMALL = 38;
@@ -1083,6 +1083,8 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		const kind = getDrillKind(item);
 
 		if (kind) {
+			// The feature is learned - the rows drop the inline hint next to the icon
+			Storage.setOnboarding('searchDrill');
 			addToken(kind as TokenKind, item, { source: 'Row', fromRow: true });
 		};
 	};
@@ -2045,7 +2047,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	// first, in the Vault sidebar's own order (the 1:1 spaceview carries the other
 	// person's identity); the rest alphabetically
 	const getGlobalPeople = (): any[] => {
-		const byIdentity = new Map<string, { identity: string; object: any; spaceCount: number }>();
+		const byIdentity = new Map<string, { identity: string; object: any; spaceCount: number; spaceIds: Set<string> }>();
 
 		GLOBAL_DEPS.participants.forEach((it: any, id: string) => {
 			if ((it.participantStatus != I.ParticipantStatus.Active) || it.isDeleted) {
@@ -2057,11 +2059,15 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			let entry = byIdentity.get(identity);
 
 			if (!entry) {
-				entry = { identity, object: it, spaceCount: 0 };
+				entry = { identity, object: it, spaceCount: 0, spaceIds: new Set() };
 				byIdentity.set(identity, entry);
 			};
 
 			entry.spaceCount++;
+
+			if (it.spaceId) {
+				entry.spaceIds.add(it.spaceId);
+			};
 
 			// Prefer the current space's participant object as the representative
 			if (it.spaceId == S.Common.space) {
@@ -2191,6 +2197,17 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		// set of bundled types; they stay searchable by text and via the Types chip
 		if (!what && !filterValueRef.current) {
 			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Type ] });
+		};
+
+		// Person results are served locally from the participants subscription instead
+		// (deduplicated by identity, injected by getItems) - the per-space participant
+		// objects would list every person once per shared Channel. Kept when the query
+		// is explicitly about members (a member-type what token) and under a Channel
+		// scope (one space - nothing to deduplicate)
+		const whatType = (what && (what.kind == 'type')) ? (S.Record.getTypeById(what.id) || GLOBAL_DEPS.types.get(what.id) || what.object) : null;
+
+		if (!mode.spaceId && !(whatType && U.Object.isParticipantLayout(whatType.recommendedLayout))) {
+			filters.push({ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: [ I.ObjectLayout.Participant ] });
 		};
 
 		let fullText = filterValueRef.current;
@@ -2607,6 +2624,50 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		return matchSpaces(U.Menu.getVaultItems(), text, SPACE_MATCH_LIMIT).map(spaceRow);
 	};
 
+	// The person rows that follow the Channel matches in the global result list:
+	// name matches over the cross-space participants subscription, deduplicated by
+	// identity (the cross-space RPC excludes participant objects - they would list
+	// every person once per shared Channel). A person's 1:1 Channel stays its own row
+	// among the Channel matches (open it, search its messages) - the person row
+	// carries the person verbs: the creator drill, the shared-Channel count (the 1:1
+	// itself not counted) and a "Create 1-1 Channel" caption when none exists. A
+	// click opens the standard participant menu (participant layouts route there),
+	// whose Connect button creates the 1:1 - never auto-created from the row
+	const getPeopleMatches = (text: string): any[] => {
+		// An empty query matches nothing, same as the Channel matches - a query-less
+		// browse must stay the recent-objects list (matchPeople returns everyone)
+		if (onObjectSelect || !String(text || '').trim()) {
+			return [];
+		};
+
+		const { account } = S.Auth;
+		const oneToOnes = new Map<string, any>();
+
+		U.Menu.getVaultItems().forEach((it: any) => {
+			if (it.isOneToOne && it.oneToOneIdentity && it.targetSpaceId && !oneToOnes.has(it.oneToOneIdentity)) {
+				oneToOnes.set(it.oneToOneIdentity, it);
+			};
+		});
+
+		let people = getGlobalPeople().map(it => ({ ...it.object, identity: it.identity, spaceCount: it.spaceCount, spaceIds: it.spaceIds }));
+
+		if (account) {
+			people = people.filter(it => it.identity != account.id);
+		};
+
+		// No self/alias arm: you are filtered out above - a 1:1 with yourself is not a thing
+		people = matchPeople(people, text, {});
+
+		return people.slice(0, peopleMatchLimit(text)).map(it => {
+			const { spaceIds, ...person } = it;
+			const oneToOne = oneToOnes.get(person.identity);
+			const ids: Set<string> = spaceIds || new Set();
+			const spaceCount = ids.size - ((oneToOne && ids.has(oneToOne.targetSpaceId)) ? 1 : 0);
+
+			return { ...person, spaceCount, metaList: [], links: [], backlinks: [], isObject: true, isPersonMatch: true, hasOneToOne: Boolean(oneToOne) };
+		});
+	};
+
 	// "/in" completions: picking one scopes the search to it. Command rows, so they carry
 	// no drill arrow of their own - the pick itself is the scope gesture
 	const getSpaceSuggestions = (text: string) => {
@@ -2786,14 +2847,18 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return items;
 		};
 
-		/* Channels */
+		/* Channels and people */
 
-		// Typing a Channel's name should reach the Channel itself, not only the objects
-		// inside it - a few name matches lead the vault-wide list. Only for a plain text
-		// search: any filter token means the query is already about something narrower,
-		// and the Channels bucket lists them all anyway
+		// Typing a person's or a Channel's name should reach the person or the Channel
+		// itself, not only the objects inside - a few Channel name matches (1:1s
+		// included) and then the person rows lead the vault-wide list. Only for a
+		// plain text search: any filter token means the query is already about
+		// something narrower, and the Channels bucket lists them all anyway. A person
+		// and their 1:1 Channel are deliberately two rows - the Channel carries the
+		// "open / search inside" intent (its messages live there), the person the
+		// "created by" one
 		if (filter && modeGlobal && !mode.tokens) {
-			items = getSpaceMatches(filter).concat(items);
+			items = getSpaceMatches(filter).concat(getPeopleMatches(filter)).concat(items);
 		};
 
 		/* Settings and pages */
@@ -3466,6 +3531,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	const shift = keyboard.shiftSymbol();
 	const suggestions = getSuggestionItems();
 	const tokens = getTokens();
+	// Until the first drill the row spells the icon's action out inline (the tooltip
+	// text, shown on the active row next to the icon); the first use dismisses it
+	const drillHint = !Storage.getOnboarding('searchDrill');
 
 	const Context = (meta: any): any => {
 		const { highlight, relationKey, ranges } = meta;
@@ -3630,28 +3698,39 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 					creator: 'popupSearchTooltipSearchByCreator',
 					space: 'popupSearchTooltipSearchInChannel',
 				};
+				const tooltip = translate(tooltips[drillKind]);
 
 				advanced = (
-					<Icon
-						name="arrow/forward" 
-						className="advanced"
-						size={28}
-						tooltipParam={{ 
-							text: translate(tooltips[drillKind]), 
-							caption: `${shift} + Enter ${translate('commonOr')} →`
-						}}
-						onClick={e => onDrill(e, item)}
-					/>
+					<div className="advancedWrap" onClick={e => onDrill(e, item)}>
+						{drillHint ? (
+							<div className="advancedHint">
+								<div className="txt">{tooltip}</div>
+								<div className="keys">
+									<Label text={`${shift} + Enter`} />
+									<div className="txt">{translate('commonOr')}</div>
+									<Label text="→" />
+								</div>
+							</div>
+						) : ''}
+						<Icon
+							name="common/search"
+							className="advanced"
+							tooltipParam={drillHint ? {} : {
+								text: tooltip,
+								caption: `${shift} + Enter ${translate('commonOr')} →`
+							}}
+						/>
+					</div>
 				);
 			};
 
-			const spaceview = (isRenderCross() && !item.isMemberAgg && !item.isTypeAgg) ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
+			const spaceview = (isRenderCross() && !item.isMemberAgg && !item.isTypeAgg && !item.isPersonMatch) ? U.Space.getSpaceviewBySpaceId(item.spaceId) : null;
 			const creatorLabel = getObjectCreatorLabel(item);
 			const creatorObject = creatorLabel ? getObjectCreator(item) : null;
 			let aggSpaces = '';
 
-			if (item.isMemberAgg) {
-				aggSpaces = `${translate('popupSearchInSpace')} ${item.spaceCount} ${U.Common.plural(item.spaceCount, translate('pluralChannel'))}`;
+			if (item.isMemberAgg || (item.isPersonMatch && item.spaceCount)) {
+				aggSpaces = `${translate('popupSearchMemberInSpace')} ${item.spaceCount} ${U.Common.plural(item.spaceCount, translate('pluralChannel'))}`;
 			} else
 			if (item.isTypeAgg && item.aggSpaceName) {
 				// "in <Channel>" - the representative's Channel; "+ N other Channels"
@@ -3665,13 +3744,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			// The caption's leading element. A Channel row states who is in it and never
-			// carries the type drill-link - a Channel has no type
+			// carries the type drill-link - a Channel has no type. Person rows without a
+			// 1:1 Channel state the verb ("Create 1-1 Channel") with the shared-Channel
+			// count behind a bullet; with one, the 1:1 is its own row above and only the
+			// count remains to say
 			let captionLead = null;
+			let captionAgg = null;
 
 			if (item.isSpaceRow) {
 				const info = getSpaceRowInfo(item);
 
 				captionLead = info ? <div className="prep">{info}</div> : null;
+			} else
+			if (item.isPersonMatch) {
+				if (item.hasOneToOne) {
+					captionLead = aggSpaces ? <div className="prep">{aggSpaces}</div> : null;
+				} else {
+					captionLead = <div className="prep">{translate('popupSearchChannelCreateOneToOne')}</div>;
+					captionAgg = aggSpaces ? <div className="prep">{aggSpaces}</div> : null;
+				};
 			} else
 			if (aggSpaces) {
 				captionLead = <div className="prep">{aggSpaces}</div>;
@@ -3712,6 +3803,12 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 						{Context(meta)}
 						<div className="caption">
 							{captionLead}
+							{captionAgg ? (
+								<>
+									<div className="bullet" />
+									{captionAgg}
+								</>
+							) : ''}
 							{creatorLabel ? (
 								<>
 									<div className="bullet" />

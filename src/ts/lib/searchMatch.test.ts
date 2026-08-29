@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { matchSpaces, matchPeople } from './searchMatch';
+import { matchSpaces, matchPeople, peopleMatchLimit } from './searchMatch';
 
 /**
  * JS-9863.
@@ -115,6 +115,30 @@ describe('matchPeople', () => {
 	it('survives empty and missing input', () => {
 		expect(matchPeople([], 'me', param)).toEqual([]);
 		expect(matchPeople(null, 'me', param)).toEqual([]);
+	});
+
+});
+
+describe('peopleMatchLimit', () => {
+
+	it('keeps short queries to a taste', () => {
+		expect(peopleMatchLimit('a')).toBe(3);
+		expect(peopleMatchLimit('an')).toBe(3);
+	});
+
+	it('shows the full hand once the query can name a person', () => {
+		expect(peopleMatchLimit('ant')).toBe(10);
+		expect(peopleMatchLimit('anton')).toBe(10);
+	});
+
+	it('measures the trimmed query', () => {
+		expect(peopleMatchLimit('  an  ')).toBe(3);
+		expect(peopleMatchLimit(' ant ')).toBe(10);
+	});
+
+	it('treats empty and missing input as short', () => {
+		expect(peopleMatchLimit('')).toBe(3);
+		expect(peopleMatchLimit(null)).toBe(3);
 	});
 
 });

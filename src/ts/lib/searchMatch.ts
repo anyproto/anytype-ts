@@ -72,4 +72,19 @@ const matchPeople = (list: any[], text: string, param: { selfIdentity?: string; 
 	return ret.concat(byName);
 };
 
-export { matchSpaces, matchPeople };
+/**
+ * How many person rows the global result list injects for a query: a short query
+ * matches half the vault, so keep it to a taste; three letters can usually name a
+ * person - show the full hand.
+ */
+const PEOPLE_MATCH_LIMIT_SHORT = 3;
+const PEOPLE_MATCH_LIMIT_FULL = 10;
+const PEOPLE_MATCH_FULL_LENGTH = 3;
+
+const peopleMatchLimit = (text: string): number => {
+	const t = String(text || '').trim();
+
+	return (t.length >= PEOPLE_MATCH_FULL_LENGTH) ? PEOPLE_MATCH_LIMIT_FULL : PEOPLE_MATCH_LIMIT_SHORT;
+};
+
+export { matchSpaces, matchPeople, peopleMatchLimit };

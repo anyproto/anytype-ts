@@ -99,7 +99,16 @@
 
 			.item {
 				.icon { width: 20px; height: 20px; }
-				.icon.advanced { opacity: 0; transition: none; }
+				.advancedWrap { display: flex; align-items: center; gap: 0px 6px; opacity: 0; transition: none; }
+				.advancedWrap:hover {
+					.advancedHint { color: var(--color-text-primary); }
+					.icon.advanced { color: var(--color-text-primary); }
+				}
+				.advancedHint { @include text-small; color: var(--color-text-secondary); white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; gap: 2px 0px; }
+				.advancedHint {
+					.keys { display: flex; align-items: center; gap: 0px 4px; }
+					.label { margin: 0px; }
+				}
 
 				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-grow: 0; }
 				.iconObject:not(.isHuman),
@@ -137,7 +146,7 @@
 
 			.item.active { background-color: var(--color-shape-highlight-medium); }
 			.item.active {
-				.icon.advanced { opacity: 1; }
+				.advancedWrap { opacity: 1; }
 			}
 
 			.item {
