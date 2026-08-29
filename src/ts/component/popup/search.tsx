@@ -3024,6 +3024,25 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			return it;
 		});
 
+		// The way back out wide from a focused listing: a top suggestion applies the
+		// all-Channels filter (objects of the type / created by the person) that the
+		// grouped row's drill icon offered before focusing - without it the user
+		// would have to Back out and re-drill
+		if ((mode.isTypeInstances || mode.isPeopleInstances) && mode.what?.object?.focus) {
+			const focus = mode.what.object.focus;
+			const key = mode.isTypeInstances ? 'popupSearchFocusTypeAll' : 'popupSearchFocusCreatorAll';
+
+			items.unshift({
+				id: 'focusAll',
+				name: U.String.sprintf(translate(key), focus.name),
+				iconParam: { name: 'common/search' },
+				isSmall: true,
+				isFocusAll: true,
+				focusKind: (mode.isTypeInstances ? 'type' : 'creator'),
+				focusObject: focus.object,
+			});
+		};
+
 		if (onObjectSelect) {
 			return items;
 		};
@@ -3298,6 +3317,24 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 		if (item.isCommandSuggest) {
 			restoreCommandQuery();
 			addToken(item.tokenKind, item, { source: 'Command' });
+			return;
+		};
+
+		// The focused listing's top suggestion: apply the all-Channels filter the
+		// grouped row's drill icon offered before focusing. Drill-style, so Back
+		// restores the focused view
+		if (item.isFocusAll) {
+			addToken(item.focusKind, item.focusObject, { source: 'Focus', fromRow: true });
+
+			// The creator filter lands in the who group while the focused member
+			// token stays in the what group - together they AND into an empty set
+			// (participants are not authored). Strip the what group silently: the
+			// Back snapshot addToken just took still restores the focused view
+			if (item.focusKind == 'creator') {
+				tokensRef.current = tokensRef.current.filter(it => TOKEN_GROUPS[it.kind] != 'what');
+				persistTokens();
+				afterTokenChange();
+			};
 			return;
 		};
 

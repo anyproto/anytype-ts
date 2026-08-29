@@ -89,6 +89,15 @@ was clicked in (mixed sections or the grouped bucket, query included). The focus
 session-transient — tokens persist as bare `{ kind, id }`, so a reopen degrades to the
 grouped Types chip. The token pill renders the focused type's name.
 
+**Top suggestion — the way back out wide** (added same day per Roman): the focused listing
+leads with a suggest row **"Search \<Type\> in all Channels"** that applies the very filter
+the grouped row's drill icon offered before focusing (type token by `uniqueKey` → objects
+across every Channel). Without it the user who focused but wanted the object filter would
+have to Back out and re-drill. Drill-style: Back from the filter restores the focused view.
+People mirror it with **"Search objects created by \<person\> in all Channels"** (creator
+token; the focused member token is stripped silently in the same step — the two would AND
+into an empty set, participants not being authored).
+
 ### 4. Click = focus the group (People)
 
 Symmetric, and **supersedes the 2026-08-29-morning decision** that a person-row click opens

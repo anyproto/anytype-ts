@@ -1685,6 +1685,8 @@
 	"popupSearchChannelOnlyYou": "Only you",
 	"popupSearchChannelOneToOne": "1-1 Channel",
 	"popupSearchChannelCreateOneToOne": "Create 1-1 Channel",
+	"popupSearchFocusTypeAll": "Search %s in all Channels",
+	"popupSearchFocusCreatorAll": "Search objects created by %s in all Channels",
 	"popupSearchDrillType": "Type: %s",
 	"popupSearchDrillCreator": "Created by: %s",
 	"popupSearchBacklinksFrom": "Related to: %s",
