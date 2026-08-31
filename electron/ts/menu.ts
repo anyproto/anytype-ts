@@ -61,6 +61,10 @@ class MenuManager {
 		keys = keys || [];
 
 		const arrowKeys: { [key: string]: string } = { arrowup: 'Up', arrowdown: 'Down', arrowleft: 'Left', arrowright: 'Right', up: 'Up', down: 'Down', left: 'Left', right: 'Right' };
+		// Canonical names the recorder persists that Electron cannot parse on its own:
+		// uppercasing them yields COMMA / SPACE, and ' ' is what pre-fix builds stored
+		// for Space. Both make register() throw
+		const namedKeys: { [key: string]: string } = { space: 'Space', ' ': 'Space', comma: ',' };
 		const ret: string[] = [];
 		for (const key of keys) {
 			const keyLower = key.toLowerCase();
@@ -79,10 +83,8 @@ class MenuManager {
 			if (arrowKeys[keyLower]) {
 				ret.push(arrowKeys[keyLower]);
 			} else
-			// ' ' is what pre-fix builds persisted for Space - Electron cannot parse it and
-			// register() throws, so heal it here as well as at the recorder
-			if ((keyLower == 'space') || (keyLower == ' ')) {
-				ret.push('Space');
+			if (namedKeys[keyLower]) {
+				ret.push(namedKeys[keyLower]);
 			} else {
 				ret.push(key.toUpperCase());
 			};

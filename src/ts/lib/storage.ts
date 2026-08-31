@@ -765,7 +765,7 @@ class Storage {
 		const ret: Record<string, string[]> = {};
 
 		for (const id in list) {
-			ret[id] = (list[id] || []).map((key: string) => (key == ' ') ? 'space' : key);
+			ret[id] = Array.isArray(list[id]) ? list[id].map((key: string) => (key == ' ') ? 'space' : key) : [];
 		};
 
 		return ret;
