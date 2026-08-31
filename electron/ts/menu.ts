@@ -61,6 +61,10 @@ class MenuManager {
 		keys = keys || [];
 
 		const arrowKeys: { [key: string]: string } = { arrowup: 'Up', arrowdown: 'Down', arrowleft: 'Left', arrowright: 'Right', up: 'Up', down: 'Down', left: 'Left', right: 'Right' };
+		// Canonical names the recorder persists that Electron cannot parse on its own:
+		// uppercasing them yields COMMA / SPACE, and ' ' is what pre-fix builds stored
+		// for Space. Both make register() throw
+		const namedKeys: { [key: string]: string } = { space: 'Space', ' ': 'Space', comma: ',' };
 		const ret: string[] = [];
 		for (const key of keys) {
 			const keyLower = key.toLowerCase();
@@ -78,6 +82,9 @@ class MenuManager {
 			} else
 			if (arrowKeys[keyLower]) {
 				ret.push(arrowKeys[keyLower]);
+			} else
+			if (namedKeys[keyLower]) {
+				ret.push(namedKeys[keyLower]);
 			} else {
 				ret.push(key.toUpperCase());
 			};
@@ -538,7 +545,10 @@ class MenuManager {
 			// does not say by whom. On Wayland without the portal it fails the same way.
 			try {
 				this.globalShortcutRegistered = globalShortcut.register(accelerator, () => this.onGlobalSearch());
-			} catch (e) {
+			} catch (e: any) {
+				// Invalid accelerator - never silently: a swallowed throw here is
+				// indistinguishable from a shortcut that simply never fires
+				Util.log('error', `[MenuManager].initGlobalShortcuts: failed to register "${accelerator}": ${e.message}`);
 				this.globalShortcutRegistered = false;
 			};
 		};
