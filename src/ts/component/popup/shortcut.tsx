@@ -419,7 +419,9 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			const key = keyboard.eventKey(e);
 			const which = e.which;
 			const code = String(e.code || '').toLowerCase();
-			const special = [ 'comma' ];
+			// Keys whose e.key is not the canonical name used by J.Shortcut: Space reports a
+			// literal ' ', which would persist an unregisterable accelerator
+			const special = [ 'comma', 'space' ];
 
 			if (key == Key.escape) {
 				clear();

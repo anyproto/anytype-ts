@@ -78,6 +78,11 @@ class MenuManager {
 			} else
 			if (arrowKeys[keyLower]) {
 				ret.push(arrowKeys[keyLower]);
+			} else
+			// ' ' is what pre-fix builds persisted for Space - Electron cannot parse it and
+			// register() throws, so heal it here as well as at the recorder
+			if ((keyLower == 'space') || (keyLower == ' ')) {
+				ret.push('Space');
 			} else {
 				ret.push(key.toUpperCase());
 			};
@@ -538,7 +543,10 @@ class MenuManager {
 			// does not say by whom. On Wayland without the portal it fails the same way.
 			try {
 				this.globalShortcutRegistered = globalShortcut.register(accelerator, () => this.onGlobalSearch());
-			} catch (e) {
+			} catch (e: any) {
+				// Invalid accelerator - never silently: a swallowed throw here is
+				// indistinguishable from a shortcut that simply never fires
+				Util.log('error', `[MenuManager].initGlobalShortcuts: failed to register "${accelerator}": ${e.message}`);
 				this.globalShortcutRegistered = false;
 			};
 		};
