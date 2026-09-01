@@ -178,6 +178,74 @@ describe('Mark', () => {
 		});
 	});
 
+	describe('adjustForReplace', () => {
+		it('should drop a link whose text was entirely replaced (JS-9869)', () => {
+			// Pasting over a selection deletes the selected text, so a link that
+			// lived inside it has no anchor left. A plain adjust() only shifts it,
+			// stranding it on unrelated words further down the message.
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 20, to: 38 }, param: 'https://example.com' },
+			];
+
+			const adjusted = Mark.adjustForReplace(marks, 10, 50, 12);
+
+			expect(adjusted).toHaveLength(0);
+		});
+
+		it('should drop every link inside the replaced range, not just the first', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 20, to: 38 }, param: 'https://example.com' },
+				{ type: I.MarkType.Link, range: { from: 40, to: 50 }, param: 'https://example.org' },
+			];
+
+			const adjusted = Mark.adjustForReplace(marks, 10, 60, 12);
+
+			expect(adjusted).toHaveLength(0);
+		});
+
+		it('should keep and shift marks that sit after the replaced range', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 100, to: 118 }, param: 'https://example.com' },
+			];
+
+			const adjusted = Mark.adjustForReplace(marks, 10, 50, 12);
+
+			expect(adjusted).toHaveLength(1);
+			expect(adjusted[0].range).toEqual({ from: 72, to: 90 });
+		});
+
+		it('should leave marks before the replaced range untouched', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'https://example.org' },
+			];
+
+			const adjusted = Mark.adjustForReplace(marks, 10, 50, 12);
+
+			expect(adjusted[0].range).toEqual({ from: 0, to: 5 });
+		});
+
+		it('should keep formatting marks, which are not anchored to a param', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Bold, range: { from: 20, to: 38 }, param: '' },
+			];
+
+			const adjusted = Mark.adjustForReplace(marks, 10, 50, 12);
+
+			expect(adjusted).toHaveLength(1);
+		});
+
+		it('should behave like adjust when nothing is selected', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 20, to: 38 }, param: 'https://example.org' },
+			];
+
+			const replaced = Mark.adjustForReplace(marks, 10, 10, 12);
+			const shifted = Mark.adjust(marks, 10, 12);
+
+			expect(replaced).toEqual(shifted);
+		});
+	});
+
 	describe('checkRanges', () => {
 		it('should remove marks with from >= text length', () => {
 			const marks: I.Mark[] = [

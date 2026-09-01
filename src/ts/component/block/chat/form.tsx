@@ -321,7 +321,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 				const res = U.String.insert(current, newText, from, to);
 
-				marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
+				marks.current = Mark.adjustForReplace(marks.current, from, to, newText.length);
 				marks.current = Mark.checkRanges(res, marks.current);
 				setMarks(marks.current);
 
@@ -587,7 +587,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 			newMarks = Mark.adjust(newMarks, 0, from);
 
-			marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
+			marks.current = Mark.adjustForReplace(marks.current, from, to, newText.length);
 			marks.current = marks.current.concat(newMarks);
 			marks.current = marks.current.filter(it => !skipMarks.includes(it.type));
 			marks.current = Mark.checkRanges(res, marks.current);

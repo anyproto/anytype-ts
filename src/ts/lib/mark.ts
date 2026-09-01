@@ -370,6 +370,32 @@ class Mark {
 	};
 
 	/**
+	 * Adjusts mark ranges for a replacement of text[from, to) with `length` new characters.
+	 * A mark whose whole range sat inside the replaced text is dropped rather than shifted:
+	 * its anchor text is gone, and adjust() alone would slide it down onto unrelated words
+	 * (a pasted-over link keeps pointing at its old URL from the middle of the new text,
+	 * and checkUrls then adds a second mark for the real one — JS-9869). Only param-carrying
+	 * marks are dropped, mirroring the guard onKeyUpInput applies when a character is typed
+	 * over a selection.
+	 * @param {I.Mark[]} marks - The list of marks.
+	 * @param {number} from - The start of the replaced range.
+	 * @param {number} to - The end of the replaced range.
+	 * @param {number} length - The length of the inserted text.
+	 * @returns {I.Mark[]} The updated list of marks.
+	 */
+	adjustForReplace(marks: I.Mark[], from: number, to: number, length: number): I.Mark[] {
+		const kept = (marks || []).filter(mark => {
+			if ((to <= from) || !this.needsBreak(mark.type)) {
+				return true;
+			};
+
+			return !((mark.range.from >= from) && (mark.range.to <= to));
+		});
+
+		return this.adjust(kept, from, length - (to - from));
+	};
+
+	/**
 	 * Extracts marks for a text slice, clamped to the slice and rebased to zero.
 	 * @param {I.Mark[]} marks - The list of marks.
 	 * @param {number} from - The start of the slice.
