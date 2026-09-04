@@ -74,6 +74,11 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 
 		C.AccountSelect(account.id, S.Common.dataPath, mode, path, preferYamux, preferredSpaceId, (message: any) => {
 			if (setErrorHandler(message.error.code, message.error.description) || !message.account) {
+				// Re-opening the guard while the list still holds the account would let the
+				// next render select it again. The two error codes that route away, and a
+				// success carrying no account, never clear the list on their own
+				S.Auth.accountListClear();
+
 				isSelecting.current = false;
 				return;
 			};
@@ -91,10 +96,12 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 			if (spaceId) {
 				U.Router.switchSpace(spaceId, '', false, routeParam, true);
 			} else {
-				Animation.from(() => {
-					U.Data.onAuthWithoutSpace(routeParam);
-					isSelecting.current = false;
-				});
+				// The guard stays closed for the rest of this mount: routing only happens once
+				// the global subscriptions answer (openFirstSpaceOrVoid), seconds later, and
+				// until then every re-render re-runs the effect below - re-opening it here
+				// fired a second AccountSelect on the same session, and each of those
+				// repeated the whole boot
+				Animation.from(() => U.Data.onAuthWithoutSpace(routeParam));
 			};
 
 			U.Data.onInfo(account.info);
@@ -158,8 +165,15 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 
 	useEffect(() => {
 		focus();
-		select();
 	});
+
+	// Accounts arrive as AccountShow events - AccountRecover's own response carries none - so
+	// the store is the trigger, and the list length is what actually changes. Without the key
+	// every render re-ran select(), leaving the isSelecting guard as the only thing between a
+	// re-render and a second AccountSelect on the same session
+	useEffect(() => {
+		select();
+	}, [ length ]);
 	
 	return (
 		<div ref={nodeRef}>
