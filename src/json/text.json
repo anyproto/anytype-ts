@@ -471,6 +471,7 @@
 	"viewName4": "Calendar",
 	"viewName5": "Graph",
 	"viewName6": "Timeline",
+	"viewName7": "Split",
 
 	"progressDropFiles": "Copying files...",
 	"progressImport": "Import in progress...",
@@ -846,6 +847,10 @@
 	"blockDataviewEmptyTargetButton": "Select Source",
 
 	"blockDataviewEmptyViewDescription": "Create your first one to begin",
+
+	"blockDataviewSplitEmptyDetail": "Select an object to open it here",
+	"blockDataviewSplitChatDetail": "Chats can only be opened as a full page",
+	"blockDataviewNestedInSplit": "This collection can only be viewed in full screen mode",
 
 	"blockDataviewControlsFilters": "Filters",
 	"blockDataviewControlsSorts": "Sorts",

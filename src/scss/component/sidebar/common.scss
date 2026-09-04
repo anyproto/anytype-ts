@@ -9,9 +9,15 @@
 	display: flex; flex-direction: column;
 }
 
-.sidebar {
+/* Sidebar pages are not exclusive to the sidebar: the Split dataview panel renders the
+ * object-properties page inline, so its styles have to be reachable from there too. Kept as a
+ * shared parent rather than a second copy of the import — the output is one extra selector,
+ * not a duplicate of the rules. */
+.sidebar, .splitDetailProperties {
 	@import "./page/common";
+}
 
+.sidebar {
 	.pageWrapper, .subPageWrapper { flex-shrink: 0; position: relative; flex-direction: column; }
 	.pageWrapper, .subPageWrapper {
 		&.sidebarAnimation {
