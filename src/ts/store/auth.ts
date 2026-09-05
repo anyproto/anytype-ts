@@ -238,6 +238,9 @@ class AuthStore {
 
 		this.accountListClear();
 		this.syncStatusMap.clear();
+
+		S.Recovery.clear();
+		U.Space.openErrorClear();
 	};
 
 	/**
@@ -281,8 +284,9 @@ class AuthStore {
 			S.Chat.clearAll();
 			S.Membership.clearAll();
 
-			this.clearAll();
+			// Storage first: the account-scoped keys it drops need the account still set
 			Storage.logout();
+			this.clearAll();
 
 			Renderer.send('setBadge', '');
 			Renderer.send('closeOtherTabs', S.Common.tabId, true);

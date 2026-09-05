@@ -17,6 +17,7 @@ Reactive state stores using MobX. Each store manages a specific domain. Accessed
 | `comment.ts` | `S.Comment` | Comment posts and replies: CRUD for posts/replies, pagination (hasMore) |
 | `notification.ts` | `S.Notification` | Notification management |
 | `progress.ts` | `S.Progress` | Background task progress tracking |
+| `recovery.ts` | `S.Recovery` | Account start-up status: folds `Event.Account.Recovery.Update` (id/runId gating, snapshot re-pull on gaps and stream re-attach, LAN headline from `LocalPeersStateChanged`) and keeps the loading-screen ticker lines |
 | `membership.ts` | `S.Membership` | Membership tier and features |
 | `extension.ts` | `S.Extension` | Browser extension state |
 | `sparkOnboarding.ts` | `S.SparkOnboarding` | Onboarding progress tracking |

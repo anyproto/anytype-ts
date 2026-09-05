@@ -362,10 +362,18 @@ class Storage {
 	/**
 	 * Deletes an account key for the current account.
 	 * @param {string} key - The account key to delete.
+	 * @param {string} [accountId] - The account ID (defaults to the current account).
 	 */
-	deleteAccountKey (key: string, isLocal: boolean) {
-		const obj = this.getAccount(isLocal);
-		const accountId = this.getAccountId();
+	deleteAccountKey (key: string, isLocal: boolean, accountId?: string) {
+		accountId = accountId || this.getAccountId();
+
+		// Without an id every account key would resolve under '', deleting nothing and
+		// persisting an empty bucket
+		if (!accountId) {
+			return;
+		};
+
+		const obj = this.getAccount(isLocal, accountId);
 
 		delete(obj[accountId][key]);
 
@@ -679,12 +687,13 @@ class Storage {
 	 * Logs out the current user and clears storage.
 	 */
 	logout () {
-		const keys = [ 
-			'accountId',
-			'pin',
-		];
+		// Logout can run before AccountSelect ever set an account (Cancel on the boot loader and
+		// the setup page), so the account-scoped keys take the id stored on this device
+		const accountId = this.getAccountId() || String(this.get('accountId', this.isLocal('accountId')) || '');
 
-		keys.forEach(key => this.delete(key, this.isLocal(key)));
+		this.deleteAccountKey('spaceId', this.isLocal('spaceId'), accountId);
+
+		[ 'accountId', 'pin' ].forEach(key => this.delete(key, this.isLocal(key)));
 	};
 
 	/**

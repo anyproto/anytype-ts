@@ -167,6 +167,10 @@ export const AccountPreloadRemainingSpaces = (callBack?: (message: any) => void)
 	dispatcher.request('AccountPreloadRemainingSpaces', {}, callBack);
 };
 
+export const AccountRecoveryState = (callBack?: (message: any) => void) => {
+	dispatcher.request('AccountRecoveryState', {}, callBack);
+};
+
 export const AccountMigrate = (id: string, path: string, callBack?: (message: any) => void) => {
 	dispatcher.request('AccountMigrate', {
 		id,

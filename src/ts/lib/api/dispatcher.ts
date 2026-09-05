@@ -28,7 +28,14 @@ const SORT_IDS = [
 ];
 
 const SKIP_IDS = [ 'BlockSetCarriage' ];
-const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose', 'AccountPreloadRemainingSpaces' ];
+const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose', 'AccountPreloadRemainingSpaces', 'AccountRecoveryState' ];
+
+// Errors a command answers with in the ordinary course of things: logged and reported for every
+// other code, silent for these. WorkspaceOpen 100 is "space is not ready", the expected answer
+// while a channel is still being pulled on a cold start
+const SKIP_ERROR_CODES = {
+	WorkspaceOpen: [ 100 ],
+};
 
 /**
  * Dispatcher class handles all communication between the Electron frontend
@@ -120,6 +127,15 @@ class Dispatcher {
 			console.error('[Dispatcher.stream] end, restarting');
 			this.reconnect();
 		});
+
+		// The start-up status stream carries deltas only and nothing is refetched after a
+		// reconnect, so a re-attach mid-run re-pulls the folded snapshot, and only while
+		// channels are still missing. The first attach happens before AccountSelect, when the
+		// live Started event is still ahead: no pull then. Both spare the middleware a snapshot
+		// on a warm start
+		if (S.Recovery.runId && S.Recovery.isRecoveryNeeded()) {
+			S.Recovery.pull();
+		};
 	};
 
 	/**
@@ -290,6 +306,11 @@ class Dispatcher {
 						theme: S.Common.getThemeClass(),
 						lang: S.Common.interfaceLang,
 					});
+					break;
+				};
+
+				case 'AccountRecoveryUpdate': {
+					S.Recovery.apply(mapped);
 					break;
 				};
 
@@ -1797,7 +1818,7 @@ class Dispatcher {
 				message.error = { code, description };
 
 				if (message.error.code) {
-					if (!SKIP_ERRORS.includes(type)) {
+					if (!SKIP_ERRORS.includes(type) && !(SKIP_ERROR_CODES[type] || []).includes(message.error.code)) {
 						console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
 
 						//Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
@@ -1891,7 +1912,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const { event, sync, file, subscribe } = config.flagsMw;
 		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
-		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2pStatusUpdate', 'ThreadStatus' ];
+		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2pStatusUpdate', 'ThreadStatus', 'AccountRecoveryUpdate' ];
 		const subscribeEvents = [ 'SubscriptionAdd', 'SubscriptionRemove', 'SubscriptionCounters', 'SubscriptionPosition' ];
 
 		let check = false;
