@@ -529,52 +529,87 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		const { pageX, pageY } = e;
-		const allBlocks = S.Block.getBlocks(rootId, it => it.canCreateBlock());
-		const layoutBlocks = [];
-		const nonLayoutBlocks = [];
+		const target = e.target as Element;
 
-		for (const b of allBlocks) {
-			if (b.isLayout()) {
-				layoutBlocks.push(b);
-			} else {
-				nonLayoutBlocks.push(b);
+		// Keep the current state while hovering the floating add button itself:
+		// it overlays the block menu strip, so the target-based hit test below
+		// would otherwise resolve no block and hide the button under the cursor.
+		// Still re-derive the insertion side from the cached hovered block, so a
+		// cursor drifting across the block midline while on the button keeps the
+		// Top/Bottom decision in sync with where the cursor visually is
+		if (target && buttonAdd.current.contains(target)) {
+			window.clearTimeout(timeoutMove.current);
+
+			if (hoverId.current && (hoverPosition.current != I.BlockPosition.None)) {
+				const block = S.Block.getLeaf(rootId, hoverId.current);
+				const rect = block ? U.Dom.getElementRect(U.Dom.select(`#block-${U.Common.esc(hoverId.current)}`, node)) : null;
+
+				if (rect) {
+					const height = block.isDataview() ? 88 : rect.height;
+
+					hoverPosition.current = (pageY < (rect.y + st + height / 2)) ? I.BlockPosition.Top : I.BlockPosition.Bottom;
+				};
 			};
+			return;
 		};
-
-		const blocks = layoutBlocks.concat(nonLayoutBlocks);
 
 		let offset = 140;
 		let hovered: any = null;
-		let hoveredRect = { x: 0, y: 0, height: 0 };
+		let hoveredRect: any = { x: 0, y: 0, height: 0 };
 
 		if (blockFeatured.current) {
 			const bfRect = blockFeatured.current.getBoundingClientRect();
 			offset = bfRect.top + window.scrollY + blockFeatured.current.offsetHeight - BUTTON_OFFSET;
 		};
 
-		for (const block of blocks) {
-			const obj = U.Dom.get(`block-${block.id}`);
-			if (!obj || U.Dom.hasClass(obj, 'noPlus')) {
-				continue;
-			};
+		// Resolve the hovered block from the event target instead of measuring every
+		// block on each move — calling getBoundingClientRect per block forces O(n)
+		// reflows and stalls the main thread on large documents.
+		// Walk up the ancestor chain: the innermost eligible non-layout block wins,
+		// the innermost eligible layout block is kept as a fallback (e.g. hovering
+		// the gap between columns resolves to the row, table internals resolve to
+		// the table block instead of the inner table layouts).
+		let el = (target && target.closest) ? target.closest('.block') as HTMLElement : null;
+		let layoutHovered = null;
+		let layoutRect = null;
+		let layoutId = '';
 
-			const rect = U.Dom.getElementRect(obj);
+		while (el) {
+			const elementId = String(el.id || '');
+			const blockId = elementId.startsWith('block-') ? elementId.substring(6) : '';
+			const block = blockId ? S.Block.getLeaf(rootId, blockId) : null;
 
-			rect.y += st;
+			if (block && block.canCreateBlock() && !U.Dom.hasClass(el, 'noPlus')) {
+				const rect = U.Dom.getElementRect(el);
 
-			if (block.isDataview()) {
-				rect.height = 88;
-			};
+				rect.y += st;
 
-			if ((pageX >= rect.x) && (pageX <= rect.x + rect.width) && (pageY >= rect.y) && (pageY <= rect.y + rect.height)) {
-				hoverId.current = block.id;
-				hovered = obj;
-				hoveredRect = rect;
+				if (block.isDataview()) {
+					rect.height = 88;
+				};
 
-				if (block.isLayout() && ((pageX < rect.x) || (pageX > rect.x + J.Size.blockMenu))) {
-					continue;
+				if ((pageY >= rect.y) && (pageY <= rect.y + rect.height)) {
+					if (!block.isLayout()) {
+						hoverId.current = block.id;
+						hovered = el;
+						hoveredRect = rect;
+						break;
+					} else
+					if (!layoutHovered) {
+						layoutHovered = el;
+						layoutRect = rect;
+						layoutId = block.id;
+					};
 				};
 			};
+
+			el = el.parentElement ? el.parentElement.closest('.block') as HTMLElement : null;
+		};
+
+		if (!hovered && layoutHovered) {
+			hoverId.current = layoutId;
+			hovered = layoutHovered;
+			hoveredRect = layoutRect;
 		};
 
 		const { x, y, height } = hoveredRect;
