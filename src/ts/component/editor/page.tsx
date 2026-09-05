@@ -1125,6 +1125,11 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 				keyboard.onSearchText(text.substring(range.from, range.to), 'editor');
 			});
 
+			// Search & Replace
+			keyboard.shortcut('replaceText', e, () => {
+				keyboard.onSearchText(text.substring(range.from, range.to), 'editor', true);
+			});
+
 			if (block.canToggle()) {
 				keyboard.shortcut(`${cmd}+shift+t`, e, () => {
 					S.Block.toggle(rootId, block.id, !Storage.checkToggle(rootId, block.id));
