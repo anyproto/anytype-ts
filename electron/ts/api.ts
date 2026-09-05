@@ -685,11 +685,16 @@ class Api {
 	};
 
 	async linuxDistro (win: AppWindow): Promise<{ name: string; version: string }> {
-		const load = require('linux-distro');
-		return await load().catch((err: Error) => {
-			Util.log('error', `[Api].linuxDistro: ${err.message}`);
+		try {
+			const linuxDistro = await import('linux-distro');
+			return await (linuxDistro.default || linuxDistro)().catch((err: Error) => {
+				Util.log('error', `[Api].linuxDistro: ${err.message}`);
+				return { name: 'Unknown', version: 'Unknown' };
+			});
+		} catch (e: any) {
+			Util.log('error', `[Api].linuxDistro: ${e.message}`);
 			return { name: 'Unknown', version: 'Unknown' };
-		});
+		}
 	};
 
 	menu (win: AppWindow): void {
