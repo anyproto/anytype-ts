@@ -1,5 +1,6 @@
 import { app } from 'electron';
 import storage from 'electron-json-storage';
+import fs from 'fs';
 import Util from './util';
 import { AppConfig } from './types';
 
@@ -24,6 +25,16 @@ class ConfigManager {
 		storage.get(CONFIG_NAME, (error: Error | null, data: AppConfig) => {
 			this.config = data || {};
 
+			if (this.config.userDataPath && !this.isWritablePath(this.config.userDataPath)) {
+				console.warn('[ConfigManager] Ignoring unavailable userDataPath:', this.config.userDataPath);
+				delete this.config.userDataPath;
+				storage.set(CONFIG_NAME, this.config as any, (storageError: Error) => {
+					if (storageError) {
+						console.error('[ConfigManager] Failed to clear unavailable userDataPath:', storageError);
+					};
+				});
+			};
+
 			if (undefined === this.config.showMenuBar) {
 				this.config.showMenuBar = true;
 			};
@@ -47,6 +58,20 @@ class ConfigManager {
 
 			callBack?.();
 		});
+	};
+
+	isWritablePath (path: string): boolean {
+		if (!path) {
+			return false;
+		};
+
+		try {
+			fs.mkdirSync(path, { recursive: true });
+			fs.accessSync(path, fs.constants.W_OK);
+			return true;
+		} catch (e) {
+			return false;
+		};
 	};
 
 	set (obj: Partial<AppConfig>, callBack?: (error?: Error) => void) {
