@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState, useImperativeHandle, MouseEvent } from 'react';
+import React, { forwardRef, useEffect, useLayoutEffect, useRef, useState, useImperativeHandle, MouseEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Cell, DropTarget, Icon, IconObject, SelectionTarget } from 'Component';
 import * as I from 'Interface';
@@ -15,7 +15,9 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 	} = props;
 	const [ isEditing, setIsEditing ] = useState(false);
 	const nodeRef = useRef(null);
+	const resizeRef = useRef(null);
 	const view = getView();
+	const record = getRecord(recordId);
 
 	const resize = () => {
 		const node = nodeRef.current;
@@ -30,9 +32,133 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 		if (first) {
 			U.Dom.addClass(first, 'first');
 		};
+
+		const rightSide = U.Dom.select('.side.right', node) as HTMLElement;
+		if (!rightSide) {
+			return;
+		};
+
+		const wrappers = Array.from(rightSide.children).filter(
+			el => (el as HTMLElement).classList.contains('cellWrapper') &&
+			      !(el as HTMLElement).classList.contains('isEmpty')
+		) as HTMLElement[];
+
+		if (wrappers.length < 2) {
+			return;
+		};
+
+		// Only clear previous water-fill flex when it was actually set.
+		// An unconditional clear changes layout and triggers a spurious second
+		// ResizeObserver callback on every tick.
+		if (wrappers.some(el => el.style.flex)) {
+			wrappers.forEach(el => { el.style.flex = ''; });
+		};
+
+		// Compute available space from the container, not from rightSide.offsetWidth.
+		// rightSide.offsetWidth is unreliable because inner elements have
+		// max-width:100% which creates a circular reference when the right side
+		// has no fixed width, causing it to collapse to near-zero.
+		const sidesEl = rightSide.parentElement as HTMLElement;
+		if (!sidesEl) {
+			return;
+		};
+		const leftSideEl = U.Dom.select('.side.left', sidesEl) as HTMLElement;
+		if (!leftSideEl) {
+			return;
+		};
+
+		const sidesWidth = sidesEl.offsetWidth;
+		const available = Math.max(0, sidesWidth - leftSideEl.offsetWidth - 12);
+		if (!available) {
+			return;
+		};
+
+		// Measure natural widths using an off-screen clone so we never mutate live
+		// elements. Mutating live widths mid-render interferes with concurrent
+		// getBoundingClientRect calls from menu/popup positioning code.
+		// .name is intentionally left constrained to max-width:300px so text cells
+		// (description) measure at their visual cap and don't receive excess space.
+		const clone = rightSide.cloneNode(true) as HTMLElement;
+		clone.style.cssText = 'position:absolute;left:-9999px;top:-9999px;visibility:hidden;';
+		document.body.appendChild(clone);
+
+		const cloneWrappers = Array.from(clone.children).filter(
+			el => el.classList.contains('cellWrapper') && !el.classList.contains('isEmpty')
+		) as HTMLElement[];
+
+		cloneWrappers.forEach(el => { el.style.flex = 'none'; el.style.width = 'max-content'; el.style.maxWidth = 'none'; });
+		Array.from(clone.querySelectorAll<HTMLElement>('.cellContent, .tagItem, .element, .over, .wrap')).forEach(el => {
+			el.style.width = 'max-content';
+			el.style.maxWidth = 'none';
+		});
+
+		const natural = cloneWrappers.map(el => el.offsetWidth);
+		clone.remove();
+
+		if (natural.length !== wrappers.length) {
+			return;
+		};
+
+		const naturalCapped = natural.map(w => Math.min(w, 300));
+		const total = naturalCapped.reduce((s, w) => s + w, 0);
+		if (total <= available) {
+			return;
+		};
+
+		// Water-fill: items that fit within their equal share keep their natural width;
+		// the remaining space is then split equally among items that need more.
+		const assigned: number[] = new Array(wrappers.length).fill(-1);
+		let remaining = available;
+		let slots = wrappers.length;
+
+		const sorted = naturalCapped.map((_, i) => i).sort((a, b) => naturalCapped[a] - naturalCapped[b]);
+
+		for (const idx of sorted) {
+			const share = remaining / slots;
+			if (naturalCapped[idx] <= share) {
+				assigned[idx] = naturalCapped[idx];
+				remaining -= naturalCapped[idx];
+				slots--;
+			} else {
+				break;
+			};
+		};
+
+		const equalShare = remaining / slots;
+		wrappers.forEach((el, i) => {
+			el.style.flex = `0 0 ${assigned[i] === -1 ? equalShare : assigned[i]}px`;
+		});
 	};
 
-	useEffect(() => resize());
+	useLayoutEffect(() => {
+		resizeRef.current = resize;
+	});
+
+	useEffect(() => {
+		const node = nodeRef.current;
+		if (!node) {
+			return;
+		};
+		const target = (U.Dom.select('.sides', node) as HTMLElement) || node;
+		const ro = new ResizeObserver(() => resizeRef.current?.());
+		ro.observe(target);
+		return () => ro.disconnect();
+	}, []);
+
+	// Re-run water-fill when right-side cell values change (e.g. after a
+	// relation value edit via popup). The ResizeObserver alone won't catch
+	// this because .sides width stays constant when only content changes.
+	const rightValueKey = view ? view.getVisibleRelations()
+		.filter(vr => vr.relationKey != 'name')
+		.map(vr => {
+			const v = record?.[vr.relationKey];
+			return Array.isArray(v) ? v.join(',') : String(v ?? '');
+		})
+		.join('|') : '';
+
+	useEffect(() => {
+		resizeRef.current?.();
+	}, [ rightValueKey ]);
 
 	useImperativeHandle(ref, () => ({
 		setIsEditing,
@@ -44,7 +170,6 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 
 	const idPrefix = getIdPrefix();
 	const subId = S.Record.getSubId(rootId, block.id);
-	const record = getRecord(recordId);
 	const cn = [ 'row' ];
 	const relations = view.getVisibleRelations();
 	const nameIndex = relations.findIndex(it => it.relationKey == 'name');
@@ -174,8 +299,6 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 		);
 	};
 
-	const lw = 50 + left.length * 5;
-
 	let content = null;
 
 	if (isRegular) {
@@ -218,7 +341,6 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 			<div className="sides">
 				<div
 					className={[ 'side', 'left', (left.length > 1 ? 's60' : '') ].join(' ')}
-					style={{ width: `${lw}%` }}
 				>
 					{left.map(mapper)}
 				</div>
