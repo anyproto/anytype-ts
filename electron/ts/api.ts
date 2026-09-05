@@ -684,12 +684,52 @@ class Api {
 		return await checkDiskSpace(app.getPath('userData'));
 	};
 
-	async linuxDistro (win: AppWindow): Promise<{ name: string; version: string }> {
-		const load = require('linux-distro');
-		return await load().catch((err: Error) => {
-			Util.log('error', `[Api].linuxDistro: ${err.message}`);
-			return { name: 'Unknown', version: 'Unknown' };
-		});
+	async linuxDistro (win: AppWindow): Promise<{ os: string; name: string; release: string; code: string }> {
+		try {
+			// Read /etc/os-release (standard on modern Linux) or /etc/lsb-release (older)
+			const paths = [ '/etc/os-release', '/usr/lib/os-release', '/etc/lsb-release' ];
+			let content = '';
+
+			for (const p of paths) {
+				try {
+					content = fs.readFileSync(p, 'utf-8');
+					break;
+				} catch (_) {};
+			};
+
+			if (!content) {
+				return { os: 'Linux', name: 'Unknown', release: '', code: '' };
+			};
+
+			const parse = (text: string): Map<string, string> => {
+				const map = new Map<string, string>();
+				for (const line of text.split('\n')) {
+					const trimmed = line.trim();
+					if (!trimmed || trimmed.startsWith('#')) continue;
+					const eq = trimmed.indexOf('=');
+					if (eq < 0) continue;
+					const key = trimmed.slice(0, eq).trim();
+					let val = trimmed.slice(eq + 1).trim();
+					if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+						val = val.slice(1, -1);
+					};
+					map.set(key.toLowerCase(), val);
+				};
+				return map;
+			};
+
+			const vars = parse(content);
+
+			return {
+				os: vars.get('id') || vars.get('distrib_id') || 'linux',
+				name: vars.get('pretty_name') || vars.get('name') || vars.get('distrib_description') || '',
+				release: vars.get('version_id') || vars.get('distrib_release') || '',
+				code: vars.get('version_codename') || vars.get('distrib_codename') || '',
+			};
+		} catch (e: any) {
+			Util.log('error', `[Api].linuxDistro: ${e.message}`);
+			return { os: 'Unknown', name: 'Unknown', release: '', code: '' };
+		}
 	};
 
 	menu (win: AppWindow): void {
