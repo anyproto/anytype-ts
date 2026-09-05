@@ -104,6 +104,9 @@ class ElectronMock {
 
 	constructor() {
 		this.config = this.storage.get('config') || this.getDefaultConfig();
+		// Cleanup corrupted config caused by previous Object.assign bug
+		for (let i = 0; i < 20; i++) { delete this.config[i.toString()]; }
+		console.log('[WebMock] constructor loaded config:', JSON.stringify(this.config));
 		this.apiHandlers = this.initApiHandlers();
 	}
 
@@ -131,24 +134,28 @@ class ElectronMock {
 		const handlers = new Map<string, ApiHandler>();
 
 		// Init & config handlers
-		handlers.set('getInitData', () => ({
-			id: this.windowId,
-			dataPath: this.userPath(),
-			config: this.config,
-			isDark: this.config.theme === 'dark' ||
-				(this.config.theme === '' && window.matchMedia('(prefers-color-scheme: dark)').matches),
-			isChild: false,
-			route: '',
-			isPinChecked: true,
-			languages: navigator.languages,
-			css: '',
-			activeIndex: 0,
-			isSingleTab: true,
-			activeTabId: this.tabId_,
-		}));
+		handlers.set('getInitData', () => {
+			console.log('[WebMock] getInitData called, config:', JSON.stringify(this.config));
+			return {
+				id: this.windowId,
+				dataPath: this.userPath(),
+				config: this.config,
+				isDark: this.config.theme === 'dark' ||
+					(this.config.theme === '' && window.matchMedia('(prefers-color-scheme: dark)').matches),
+				isChild: false,
+				route: '',
+				isPinChecked: true,
+				languages: navigator.languages,
+				css: '',
+				activeIndex: 0,
+				isSingleTab: true,
+				activeTabId: this.tabId_,
+			};
+		});
 
 		handlers.set('setConfig', (args) => {
 			Object.assign(this.config, args[0]);
+			console.log('[WebMock] setConfig called. new config:', JSON.stringify(this.config));
 			this.storage.set('config', this.config);
 			return true;
 		});
@@ -269,14 +276,22 @@ class ElectronMock {
 		});
 
 		// Config persistence handlers
-		const configHandler = (args: any[]) => {
-			this.config = { ...this.config, ...args[0] };
+		handlers.set('setUserDataPath', (args: any[]) => {
+			(this.config as any).userPath = args[0];
 			this.storage.set('config', this.config);
 			return true;
-		};
-		handlers.set('setUserDataPath', configHandler);
-		handlers.set('setChannel', configHandler);
-		handlers.set('setInterfaceLang', configHandler);
+		});
+		handlers.set('setChannel', (args: any[]) => {
+			(this.config as any).channel = args[0];
+			this.storage.set('config', this.config);
+			return true;
+		});
+		handlers.set('setInterfaceLang', (args: any[]) => {
+			this.config.interfaceLang = args[0];
+			this.storage.set('config', this.config);
+			window.location.reload();
+			return true;
+		});
 
 		// No-op handlers that return true
 		const noopTrue = () => true;
