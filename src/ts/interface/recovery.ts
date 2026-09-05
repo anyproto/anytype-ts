@@ -58,6 +58,12 @@ export enum RecoverySpaceState {
 	Loaded		 = 3,
 	Error		 = 4,
 	Removed		 = 5,
+	/**
+	 * The run settled around this space but it never published a load result. Not terminal - the
+	 * load may still complete - so Finished does not fire while a space is stalled. Render it as
+	 * a determinate stall, never as ongoing progress.
+	 */
+	Stalled		 = 6,
 };
 
 export enum RecoveryDiscoveryState {
@@ -176,6 +182,7 @@ export interface RecoveryLine {
 	attempt?: number;
 	loaded?: number;
 	total?: number;
+	stalled?: number;
 	viewsConfirmed?: boolean;
 	localPeers?: RecoveryLocalPeersState;
 };

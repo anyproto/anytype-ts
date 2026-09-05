@@ -67,6 +67,11 @@ const getText = (line: I.RecoveryLine, isLocalOnly: boolean): string => {
 		};
 
 		case I.RecoveryPhase.LoadingSpaces: {
+			// A stalled channel is a determinate stall, not progress: it gets its own wording
+			if (line.stalled) {
+				return U.String.sprintf(translate('recoveryStatusLoadingChannelsStalled'), line.loaded, line.total, line.stalled);
+			};
+
 			return line.total > 0 ? U.String.sprintf(translate('recoveryStatusLoadingChannelsCount'), line.loaded, line.total) : translate('recoveryStatusLoadingChannels');
 		};
 
@@ -125,7 +130,7 @@ const isProgress = (line: I.RecoveryLine): boolean => {
 const RecoveryStatus = forwardRef<{}, Props>(({ className = '', delay = 0, withDebug = true, inFlow = false, withLogo = false, onCancel }, ref) => {
 
 	const [ isVisible, setIsVisible ] = useState(!delay);
-	const { lines, isActive } = S.Recovery;
+	const { lines, isActive, isPending } = S.Recovery;
 	const isLocalOnly = S.Auth.networkConfig.mode == I.NetworkMode.Local;
 	const list = lines.filter(it => getText(it, isLocalOnly));
 	const cn = [ 'recoveryStatus', (inFlow ? 'inFlow' : ''), className ];
@@ -167,9 +172,11 @@ const RecoveryStatus = forwardRef<{}, Props>(({ className = '', delay = 0, withD
 					<AnimatePresence mode="popLayout">
 						{list.slice().reverse().map((line, n) => {
 							// n = 0 is the current line, on top right under the bubble; the rest recede downwards
-							const isCurrent = !n && isActive;
+							// The live treatment - pulse and ellipsis - only while something is
+							// actually moving; a run settled around a stalled channel is not progress
+							const isCurrent = !n && isActive && isPending && isProgress(line);
 							const cnl = [ 'line', `n${n}`, (isCurrent ? 'isActive' : '') ];
-							const text = getText(line, isLocalOnly) + (isCurrent && isProgress(line) ? '...' : '');
+							const text = getText(line, isLocalOnly) + (isCurrent ? '...' : '');
 							const opacity = DRUM_OPACITY[n] ?? DRUM_OPACITY[DRUM_OPACITY.length - 1];
 
 							return (

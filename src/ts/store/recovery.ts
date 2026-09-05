@@ -73,6 +73,7 @@ export class RecoveryStore {
 			localPeers: observable,
 			lines: observable,
 			isActive: computed,
+			isPending: computed,
 			isTerminal: computed,
 			apply: action,
 			applySnapshot: action,
@@ -89,6 +90,22 @@ export class RecoveryStore {
 	/** A run is known and still going: the ticker shows a live indicator */
 	get isActive (): boolean {
 		return !!this.runId && !this.isTerminal;
+	};
+
+	/**
+	 * Something is still moving: a channel is queued, being pulled or loading, or the run has not
+	 * reported any channel yet. A run whose channels all settled - loaded, failed or stalled -
+	 * stays technically alive (Finished does not fire while a channel is stalled), but nothing is
+	 * in flight, so it must not be rendered as ongoing progress.
+	 */
+	get isPending (): boolean {
+		if (!this.isActive) {
+			return false;
+		};
+
+		const { total, pending } = this.getChannelCounts();
+
+		return !total || !!pending;
 	};
 
 	/**
@@ -395,9 +412,11 @@ export class RecoveryStore {
 	 * Gets the user-facing channel counts: tech space and removed spaces excluded.
 	 * @returns {{ loaded: number; total: number }} The counts.
 	 */
-	getChannelCounts (): { loaded: number; total: number } {
+	getChannelCounts (): { loaded: number; total: number; stalled: number; pending: number } {
 		let loaded = 0;
 		let total = 0;
+		let stalled = 0;
+		let pending = 0;
 
 		for (const space of this.spaces.values()) {
 			if ((space.kind == I.RecoverySpaceKind.Tech) || (space.state == I.RecoverySpaceState.Removed)) {
@@ -406,12 +425,27 @@ export class RecoveryStore {
 
 			total++;
 
-			if (space.state == I.RecoverySpaceState.Loaded) {
-				loaded++;
+			switch (space.state) {
+				case I.RecoverySpaceState.Loaded: {
+					loaded++;
+					break;
+				};
+
+				case I.RecoverySpaceState.Stalled: {
+					stalled++;
+					break;
+				};
+
+				case I.RecoverySpaceState.Queued:
+				case I.RecoverySpaceState.Pulling:
+				case I.RecoverySpaceState.Loading: {
+					pending++;
+					break;
+				};
 			};
 		};
 
-		return { loaded, total };
+		return { loaded, total, stalled, pending };
 	};
 
 	private fold (update: I.RecoveryUpdate) {
@@ -720,11 +754,12 @@ export class RecoveryStore {
 			return;
 		};
 
-		const { loaded, total } = this.getChannelCounts();
+		const { loaded, total, stalled } = this.getChannelCounts();
 
 		this.pushLine({
 			type: I.RecoveryLineType.Phase,
 			phase,
+			stalled,
 			errorClass: errorClass || I.RecoveryErrorClass.None,
 			attempt: (phase == I.RecoveryPhase.FetchingAccount) ? this.accountFetchAttempt : 0,
 			loaded,
@@ -775,10 +810,11 @@ export class RecoveryStore {
 		const line = this.findPhaseLine(I.RecoveryPhase.LoadingSpaces);
 
 		if (line) {
-			const { loaded, total } = this.getChannelCounts();
+			const { loaded, total, stalled } = this.getChannelCounts();
 
 			line.loaded = loaded;
 			line.total = total;
+			line.stalled = stalled;
 		};
 	};
 

@@ -9,3 +9,8 @@
 	.icon.info:hover { opacity: 0.8; }
 }
 .recoveryProgress.isMinimal { justify-content: center; padding: 0px 0px 8px 0px; }
+
+/* Settled around a stalled channel: the spinner would read as progress that is not happening */
+.recoveryProgress.isStalled {
+	.spinner { animation: none; opacity: 0.4; }
+}

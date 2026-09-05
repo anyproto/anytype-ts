@@ -47,9 +47,10 @@ Facts that shape the desktop design (from the spec, not the guide):
 | Field 206 may be renumbered at merge | Harmless: our event dispatch is name-based (`accountRecoveryUpdate`) |
 | `debugMessage` is raw error text | Logs/Sentry only, never rendered |
 
-Middleware availability: everything is implemented on heart branch `go-7471-cold-sync-events`
-(7 commits on top of `go-7467-quic-degradation-fallback`), not merged into `develop`, not in any tag.
-Desktop pins `0.51.0-rc6` (`middleware.version`), which has no recovery surface.
+Middleware availability: shipped in `v0.51.0-rc7` (2026-09-05), which desktop now pins
+(`middleware.version`). That release also carries `SpaceState.Stalled` - a channel the run settled
+around without a load result, which is why `Finished` may never fire; the client counts it apart and
+renders it as a determinate stall, never as ongoing progress.
 
 ---
 
@@ -363,14 +364,12 @@ Details to verify in Stage 0:
 
 ### 4.4 Bindings and merge order
 
-- Local development now: check out `go-7471-cold-sync-events` in `../anytype-heart`, then
-  `bun run generate:protos` (uses `HEART_DIR=../anytype-heart` by default and rebuilds the dev JS binary
-  via `make install-dev-js`). Nothing generated is committed.
-- CI regenerates from the release tarball pinned by `middleware.version`, so the desktop PR can only
-  merge after the heart branch lands in `develop` and ships in an rc, followed by the usual
-  `middleware.version` bump. On an older middleware the event simply never arrives, but
-  `C.AccountRecoveryState` would hit a missing registry entry; the store tolerates the error, yet the
-  clean rule is: heart first, then desktop.
+- Bindings are generated from the protos in the pinned release: `./update.sh <platform> <arch>`
+  then `bash scripts/generate-protos.sh --from-dist`. Nothing generated is committed; CI does the
+  same from the tarball `middleware.version` names.
+- Against a middleware without the surface the event simply never arrives and
+  `C.AccountRecoveryState` answers with a missing registry entry, which the store tolerates - but
+  the rule stays: heart first, then the version bump here.
 - Field renumbering at merge does not affect desktop (name-based dispatch).
 
 ---

@@ -74,7 +74,10 @@ class UtilSpace {
 	 * @returns {boolean} True if the space is ready to open.
 	 */
 	isReady (spaceview: any): boolean {
-		const state = S.Recovery.isActive ? S.Recovery.spaces.get(spaceview.targetSpaceId) : null;
+		// Only while the run still has something in flight. Once it settles - including a run
+		// left open around a stalled channel, which never reports Finished - its map is a frozen
+		// snapshot and the spaceview's own status is the honest signal again
+		const state = S.Recovery.isPending ? S.Recovery.spaces.get(spaceview.targetSpaceId) : null;
 
 		return state ? (state.state == I.RecoverySpaceState.Loaded) : spaceview.isLocalOk;
 	};
@@ -126,9 +129,10 @@ class UtilSpace {
 		if (spaces.length) {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
-			// While the start-up run is still bringing channels in, "none" means "none yet":
-			// the loading void keeps the vault visible and moves on by itself
-			U.Router.go(S.Recovery.isActive ? '/main/void/loading' : '/main/void/error', param);
+			// While the start-up run is still bringing channels in, "none" means "none yet": the
+			// loading void keeps the vault visible and moves on by itself. A run that has settled
+			// with nothing openable is not going to produce one, so say so
+			U.Router.go(S.Recovery.isPending ? '/main/void/loading' : '/main/void/error', param);
 			sidebar.leftPanelSubPageClose(false, false);
 		};
 	};

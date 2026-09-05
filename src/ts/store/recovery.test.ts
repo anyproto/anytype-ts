@@ -162,12 +162,12 @@ describe('RecoveryStore', () => {
 
 			expect(store.spaces.size).toBe(2);
 			expect(store.spaces.get('s1')).toMatchObject({ spaceViewId: 'view1', state: I.RecoverySpaceState.Pulling, attempt: 2 });
-			expect(store.getChannelCounts()).toEqual({ loaded: 0, total: 2 });
+			expect(store.getChannelCounts()).toMatchObject({ loaded: 0, total: 2 });
 
 			store.apply(update(7, I.RecoveryUpdateType.SpaceStateChanged, { spaceId: 's2', state: I.RecoverySpaceState.Removed }));
 
 			expect(store.spaces.size).toBe(1);
-			expect(store.getChannelCounts()).toEqual({ loaded: 0, total: 1 });
+			expect(store.getChannelCounts()).toMatchObject({ loaded: 0, total: 1 });
 			expect(store.lines[store.lines.length - 1]).toMatchObject({ phase: I.RecoveryPhase.LoadingSpaces, loaded: 0, total: 1 });
 		});
 
@@ -269,7 +269,32 @@ describe('RecoveryStore', () => {
 			store.apply(update(4, I.RecoveryUpdateType.SpaceDiscovered, { spaceId: 's1' }));
 
 			expect(store.spaces.get('tech').kind).toBe(I.RecoverySpaceKind.Tech);
-			expect(store.getChannelCounts()).toEqual({ loaded: 0, total: 1 });
+			expect(store.getChannelCounts()).toMatchObject({ loaded: 0, total: 1 });
+		});
+
+		it('counts a stalled channel apart and stops reporting progress', () => {
+			store.apply(update(1, I.RecoveryUpdateType.Started, { mode: I.RecoveryMode.Cold }));
+			store.apply(phase(2, I.RecoveryPhase.LoadingSpaces));
+			store.apply(update(3, I.RecoveryUpdateType.SpaceDiscovered, { spaceId: 's1' }));
+			store.apply(update(4, I.RecoveryUpdateType.SpaceDiscovered, { spaceId: 's2' }));
+			store.apply(update(5, I.RecoveryUpdateType.SpaceStateChanged, { spaceId: 's1', state: I.RecoverySpaceState.Loaded }));
+
+			expect(store.isPending).toBe(true);
+
+			store.apply(update(6, I.RecoveryUpdateType.SpaceStateChanged, { spaceId: 's2', state: I.RecoverySpaceState.Stalled }));
+
+			// Finished never fires while a channel is stalled, so the run stays alive - but with
+			// nothing in flight it must not read as ongoing progress
+			expect(store.isActive).toBe(true);
+			expect(store.isPending).toBe(false);
+			expect(store.getChannelCounts()).toEqual({ loaded: 1, total: 2, stalled: 1, pending: 0 });
+			expect(store.lines[store.lines.length - 1]).toMatchObject({ phase: I.RecoveryPhase.LoadingSpaces, loaded: 1, total: 2, stalled: 1 });
+
+			// The load may still complete: the state changes again and progress resumes
+			store.apply(update(7, I.RecoveryUpdateType.SpaceStateChanged, { spaceId: 's2', state: I.RecoverySpaceState.Loading }));
+
+			expect(store.isPending).toBe(true);
+			expect(store.getChannelCounts()).toEqual({ loaded: 1, total: 2, stalled: 0, pending: 1 });
 		});
 
 		it('keeps the previous state on an unknown value', () => {

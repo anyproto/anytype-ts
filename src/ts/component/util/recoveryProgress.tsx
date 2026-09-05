@@ -26,9 +26,19 @@ const RecoveryProgress = forwardRef<{}, {}>((props, ref) => {
 		return null;
 	};
 
-	const { loaded, total } = S.Recovery.getChannelCounts();
-	const text = total ? U.String.sprintf(translate('vaultRecoveryProgressCount'), loaded, total) : translate('vaultRecoveryProgress');
-	const cn = [ 'recoveryProgress', (vaultIsMinimal ? 'isMinimal' : '') ];
+	const { isPending } = S.Recovery;
+	const { loaded, total, stalled } = S.Recovery.getChannelCounts();
+	const cn = [ 'recoveryProgress', (vaultIsMinimal ? 'isMinimal' : ''), (isPending ? '' : 'isStalled') ];
+
+	let text = translate('vaultRecoveryProgress');
+
+	if (stalled) {
+		// A determinate stall, not progress: no spinner, and the counts say where it stopped
+		text = U.String.sprintf(translate('vaultRecoveryProgressStalled'), loaded, total, stalled);
+	} else
+	if (total) {
+		text = U.String.sprintf(translate('vaultRecoveryProgressCount'), loaded, total);
+	};
 
 	const onInfo = (e: any) => {
 		e.preventDefault();
