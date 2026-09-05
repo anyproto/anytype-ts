@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { matchSpaces, matchPeople } from './searchMatch';
+import { matchSpaces, matchPeople, groupMatchLimit, parseCommandQuery, dateSectionKey } from './searchMatch';
 
 /**
  * JS-9863.
@@ -115,6 +115,107 @@ describe('matchPeople', () => {
 	it('survives empty and missing input', () => {
 		expect(matchPeople([], 'me', param)).toEqual([]);
 		expect(matchPeople(null, 'me', param)).toEqual([]);
+	});
+
+});
+
+describe('groupMatchLimit', () => {
+
+	it('keeps short queries (3 letters or fewer) to a taste', () => {
+		expect(groupMatchLimit('a')).toBe(3);
+		expect(groupMatchLimit('an')).toBe(3);
+		expect(groupMatchLimit('ant')).toBe(3);
+	});
+
+	it('shows the full hand from four letters', () => {
+		expect(groupMatchLimit('anto')).toBe(10);
+		expect(groupMatchLimit('anton')).toBe(10);
+	});
+
+	it('measures the trimmed query', () => {
+		expect(groupMatchLimit('  ant  ')).toBe(3);
+		expect(groupMatchLimit(' anto ')).toBe(10);
+	});
+
+	it('treats empty and missing input as short', () => {
+		expect(groupMatchLimit('')).toBe(3);
+		expect(groupMatchLimit(null)).toBe(3);
+	});
+
+});
+
+describe('parseCommandQuery', () => {
+
+	it('enters command mode on a leading slash', () => {
+		expect(parseCommandQuery('/in team')).toEqual({ query: '', command: 'in team' });
+		expect(parseCommandQuery('/')).toEqual({ query: '', command: '' });
+	});
+
+	it('enters command mode on a whitespace-preceded slash mid-query, keeping the query', () => {
+		expect(parseCommandQuery('anton /in')).toEqual({ query: 'anton ', command: 'in' });
+		expect(parseCommandQuery('anton /')).toEqual({ query: 'anton ', command: '' });
+	});
+
+	it('carries the command argument through mid-query', () => {
+		expect(parseCommandQuery('anton /by kay')).toEqual({ query: 'anton ', command: 'by kay' });
+	});
+
+	it('takes the last whitespace-preceded slash', () => {
+		expect(parseCommandQuery('a /b c /d')).toEqual({ query: 'a /b c ', command: 'd' });
+	});
+
+	it('never triggers on a slash inside a word', () => {
+		expect(parseCommandQuery('1/2')).toBeNull();
+		expect(parseCommandQuery('http://example.com')).toBeNull();
+		expect(parseCommandQuery('a/b c')).toBeNull();
+	});
+
+	it('stays inactive without a slash', () => {
+		expect(parseCommandQuery('anton')).toBeNull();
+		expect(parseCommandQuery('')).toBeNull();
+		expect(parseCommandQuery(null)).toBeNull();
+	});
+
+});
+
+describe('dateSectionKey', () => {
+
+	// A fixed local noon anchors the calendar-day arithmetic away from DST edges
+	const now = Math.floor(new Date(2026, 7, 29, 12, 0, 0).getTime() / 1000);
+	const daysAgo = (n: number, hour = 12) => Math.floor(new Date(2026, 7, 29 - n, hour).getTime() / 1000);
+
+	it('buckets today, yesterday, week and fortnight by calendar day', () => {
+		expect(dateSectionKey(now, now).id).toBe('today');
+		expect(dateSectionKey(daysAgo(0, 0), now).id).toBe('today');
+		expect(dateSectionKey(daysAgo(1), now).id).toBe('yesterday');
+		expect(dateSectionKey(daysAgo(2), now).id).toBe('week');
+		expect(dateSectionKey(daysAgo(7), now).id).toBe('week');
+		expect(dateSectionKey(daysAgo(8), now).id).toBe('fortnight');
+		expect(dateSectionKey(daysAgo(14), now).id).toBe('fortnight');
+	});
+
+	it('buckets anything older by its month and year', () => {
+		expect(dateSectionKey(daysAgo(15), now)).toEqual({ id: 'month-2026-8', month: 8, year: 2026 });
+		expect(dateSectionKey(Math.floor(new Date(2025, 11, 24).getTime() / 1000), now)).toEqual({ id: 'month-2025-12', month: 12, year: 2025 });
+	});
+
+	it('crosses into the previous month right past the fortnight cutover', () => {
+		// 15 days before Aug 12 lands in July - the first month bucket may not be
+		// the current month
+		const midMonth = Math.floor(new Date(2026, 7, 12, 12).getTime() / 1000);
+		expect(dateSectionKey(Math.floor(new Date(2026, 6, 28, 12).getTime() / 1000), midMonth)).toEqual({ id: 'month-2026-7', month: 7, year: 2026 });
+	});
+
+	it('gives consecutive months distinct ids', () => {
+		const a = dateSectionKey(Math.floor(new Date(2026, 6, 31).getTime() / 1000), now).id;
+		const b = dateSectionKey(Math.floor(new Date(2026, 5, 30).getTime() / 1000), now).id;
+
+		expect(a).not.toBe(b);
+	});
+
+	it('folds future timestamps into today and a missing one into older', () => {
+		expect(dateSectionKey(now + 86400 * 3, now).id).toBe('today');
+		expect(dateSectionKey(0, now).id).toBe('older');
 	});
 
 });

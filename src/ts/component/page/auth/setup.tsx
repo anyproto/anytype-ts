@@ -55,11 +55,11 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const select = (accountId: string) => {
 		const { networkConfig } = S.Auth;
 		const { dataPath, redirect } = S.Common;
-		const { mode, path } = networkConfig;
+		const { mode, path, preferYamux } = networkConfig;
 		const param = redirect ? U.Router.getParam(redirect) : {};
 		const preferredSpaceId = param.spaceId || Storage.getAccountKey('spaceId', false, accountId) || '';
 
-		C.AccountSelect(accountId, dataPath, mode, path, preferredSpaceId, (message: any) => {
+		C.AccountSelect(accountId, dataPath, mode, path, preferYamux, preferredSpaceId, (message: any) => {
 			const { account } = message;
 
 			// A logout from here on would strand the boot that is already under way (the pending

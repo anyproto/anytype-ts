@@ -220,6 +220,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		};
 
 		if (vaultIsMinimal && !skipUi) {
+			const spaceCount = items.length;
 			const pinned = items.filter(it => it.isPinned);
 			const notPinned = items.filter(it => !it.isPinned);
 
@@ -230,6 +231,12 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			// Search leads the rail - the thing you reach for most. Creating a Channel is
 			// rare by comparison and lives in the bottom bar with the other chrome
 			items.unshift({ id: 'search' });
+
+			// A short list has room to spare - put Create Channel right under the last one
+			// instead of leaving it as hover-only chrome at the bottom
+			if (!filter && (spaceCount <= 5)) {
+				items.push({ id: 'createSpaceMinimal' });
+			};
 		} else
 		if (!skipUi && !filter && (items.length == 1)) {
 			items.push({ id: 'createSpaceInline' });
@@ -259,6 +266,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 	};
 
 	const items = getItems();
+	const hasInlineCreate = items.some(it => it.id == 'createSpaceMinimal');
 	const listRef = useRef<List>(null);
 	const filterRef = useRef(null);
 	const timeout = useRef(0);
@@ -403,6 +411,14 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			return (
 				<div ref={forwardedRef} className="item add" style={item.style}>
 					{iconSearch()}
+				</div>
+			);
+		};
+
+		if (item.id == 'createSpaceMinimal') {
+			return (
+				<div ref={forwardedRef} className="item add" style={item.style}>
+					{iconCreate()}
 				</div>
 			);
 		};
@@ -643,6 +659,13 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		};
 	}, [ itemIds ]);
 
+	// When Create Channel moves inline under the last channel, the hover-out footer
+	// has one fewer icon - shrink its expanded height to match, or the remaining
+	// icons drift up and leave a gap above the profile icon
+	if (hasInlineCreate) {
+		cnf.push('compact');
+	};
+
 	return (
 		<>
 			<div 
@@ -779,7 +802,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 					</div>
 
 					<div className="side right">
-						{vaultIsMinimal ? iconCreate() : ''}
+						{vaultIsMinimal && !hasInlineCreate ? iconCreate() : ''}
 						<Icon
 							name="vault/gallery"
 							className="gallery"

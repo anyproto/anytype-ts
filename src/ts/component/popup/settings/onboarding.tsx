@@ -1,17 +1,18 @@
 import React, { forwardRef, useRef, useState } from 'react';
-import { Title, Label, Select, Button, Error, Icon } from 'Component';
+import { Title, Label, Select, Switch, Button, Error, Icon } from 'Component';
 import * as I from 'Interface';
 
 const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { close } = props;
 	const { networkConfig } = S.Auth;
-	const { mode, path } = networkConfig;
+	const { mode, path, preferYamux } = networkConfig;
 	const userPath = U.Common.getElectron().userPath();
 	const [ config, setConfig ] = useState({
 		userPath,
 		mode,
 		path: path || '',
+		preferYamux: Boolean(preferYamux),
 	});
 	const [ error, setError ] = useState('');
 	const refMode = useRef(null);
@@ -116,6 +117,10 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 				analytics.event('UploadNetworkConfiguration', { route: analytics.route.onboarding });
 			};
 
+			if (config.preferYamux !== networkConfig.preferYamux) {
+				analytics.event('ChangePreferYamux', { route: analytics.route.onboarding, type: config.preferYamux });
+			};
+
 			if (config.userPath !== userPath) {
 				Renderer.send('setUserDataPath', config.userPath);
 				S.Common.dataPathSet(config.userPath);
@@ -161,6 +166,14 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 		Preview.tooltipHide();
 	};
 
+	const preferYamuxTooltipParam: Partial<I.TooltipParam> = {
+		text: translate('popupSettingsOnboardingPreferYamuxHint'),
+		className: 'big',
+		typeY: I.MenuDirection.Bottom,
+		typeX: I.MenuDirection.Left,
+		delay: 0,
+	};
+
 	const isDefault = config.path == U.Common.getElectron().defaultPath();
 	const networkModes = getNetworkModes();
 	const storageCheck = U.Common.checkVaultPath(config.userPath);
@@ -188,6 +201,18 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 								className: 'fixed withFullDescripion',
 								data: { noVirtualisation: true, noScroll: true }
 							}}
+						/>
+					</div>
+
+					<div className="item">
+						<div className="flex">
+							<Label text={translate('popupSettingsOnboardingPreferYamuxTitle')} />
+							<Icon name="common/info" className="info" tooltipParam={preferYamuxTooltipParam} />
+						</div>
+						<Switch
+							className="big"
+							value={config.preferYamux}
+							onChange={(e: any, v: boolean) => onChange('preferYamux', v)}
 						/>
 					</div>
 

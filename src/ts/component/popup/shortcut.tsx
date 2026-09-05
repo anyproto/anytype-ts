@@ -419,7 +419,9 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			const key = keyboard.eventKey(e);
 			const which = e.which;
 			const code = String(e.code || '').toLowerCase();
-			const special = [ 'comma' ];
+			// Keys whose e.key is not the canonical name used by J.Shortcut: Space reports a
+			// literal ' ', which would persist an unregisterable accelerator
+			const special = [ 'comma', 'space' ];
 
 			if (key == Key.escape) {
 				clear();
@@ -433,8 +435,12 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 			if (!skip.includes(key)) {
 				let parsedCode = false;
 
+				// At most one non-modifier per chord - `codes` records that one was already
+				// captured. Without this a stray second tap (A then Space inside the 200ms
+				// save window) appends a key the OS happily binds but no in-app matcher can
+				// ever produce, since matching builds its chord from a single keydown
 				codeChecks.forEach(c => {
-					if (codes.has(c)) {
+					if (codes.size) {
 						parsedCode = true;
 						return;
 					};
@@ -447,14 +453,21 @@ const PopupShortcut = forwardRef<{}, I.Popup>((props, ref) => {
 				});
 
 				for (const s of special) {
+					if (codes.size) {
+						parsedCode = true;
+						break;
+					};
+
 					if (which == J.Key[s]) {
 						pressed.push(s);
+						codes.add(s);
 						parsedCode = true;
 					};
 				};
 
 				if (!parsedCode && key) {
 					pressed.push(key);
+					codes.add(key);
 				};
 			};
 

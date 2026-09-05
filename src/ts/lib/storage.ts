@@ -764,11 +764,20 @@ class Storage {
 	};
 
 	/**
-	 * Gets the list of keyboard shortcuts from storage.
+	 * Gets the list of keyboard shortcuts from storage. Values recorded by builds that
+	 * stored the raw e.key for Space carry a literal ' ' where J.Shortcut uses 'space' -
+	 * heal them on read so display, matching and the next write all agree.
 	 * @returns {any} The shortcuts data.
 	 */
 	getShortcuts () {
-		return this.get('shortcuts', this.isLocal('shortcuts')) || {};
+		const list = this.get('shortcuts', this.isLocal('shortcuts')) || {};
+		const ret: Record<string, string[]> = {};
+
+		for (const id in list) {
+			ret[id] = Array.isArray(list[id]) ? list[id].map((key: string) => (key == ' ') ? 'space' : key) : [];
+		};
+
+		return ret;
 	};
 
 	/**

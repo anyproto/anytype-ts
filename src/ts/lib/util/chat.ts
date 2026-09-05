@@ -202,7 +202,7 @@ class UtilChat {
 		return this.buildText(blocks, 'fenced');
 	};
 
-	/** Plain, fence-less text (+ paragraph marks) — blocks path, kept for later. */
+	/** Plain, fence-less text (+ paragraph marks) — backs the search-result preview of blocks-only (discussion) messages. */
 	blocksToText (blocks: I.ChatMessageBlock[]): { text: string; marks: I.Mark[] } {
 		return this.buildText(blocks, 'plain');
 	};
@@ -358,12 +358,17 @@ class UtilChat {
 	/**
 	 * Builds sanitized HTML for a ChatSearch result: the highlight snippet with
 	 * `<span class="highlight">` around the matched ranges, falling back to the raw message text.
+	 * Discussion messages carry their text in blocks with an empty content.text -
+	 * rebuild the preview from the text blocks then.
 	 */
 	getSearchResultHtml (result: { highlight: string; highlightRanges: I.TextRange[]; message?: I.ChatMessage }): string {
 		const { highlight, highlightRanges } = result;
 
 		if (!highlight) {
-			return U.String.sanitize(result.message?.content?.text || '');
+			const message = result.message;
+			const text = message?.content?.text || (message?.blocks?.length ? this.blocksToText(message.blocks).text : '');
+
+			return U.String.sanitize(text);
 		};
 
 		if (!highlightRanges || !highlightRanges.length) {

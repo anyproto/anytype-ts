@@ -452,12 +452,12 @@ const App: FC = () => {
 
 			const { dataPath } = S.Common;
 			const { networkConfig } = S.Auth;
-			const { mode, path: networkPath } = networkConfig;
+			const { mode, path: networkPath, preferYamux } = networkConfig;
 			const param = route ? U.Router.getParam(route) : {};
 			const spaceId = param.spaceId || data.spaceId || Storage.getAccountKey('spaceId', false, accountId) || '';
 
 			S.Auth.tokenSet(token);
-			C.AccountSelect(accountId, dataPath, mode, networkPath, spaceId, (message: any) => {
+			C.AccountSelect(accountId, dataPath, mode, networkPath, preferYamux, spaceId, (message: any) => {
 				// A logout from here on would strand the boot that is already under way; the rest
 				// of the run stays visible in the vault's progress block
 				isSelectDoneRef.current = true;

@@ -77,7 +77,7 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 		isSelecting.current = true;
 		setSelecting(true);
 
-		const { mode, path } = networkConfig;
+		const { mode, path, preferYamux } = networkConfig;
 		const account = accounts[0];
 
 		S.Auth.accountSet(account);
@@ -87,7 +87,7 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 		// this account on this device is from an earlier session and may not even exist any more
 		Storage.delete('spaceId');
 
-		C.AccountSelect(account.id, S.Common.dataPath, mode, path, '', (message: any) => {
+		C.AccountSelect(account.id, S.Common.dataPath, mode, path, preferYamux, '', (message: any) => {
 			// Stopping the account from here on would strand a boot that is already under way,
 			// with nothing to route back to: the run continues in the vault's progress block
 			isSelected.current = true;

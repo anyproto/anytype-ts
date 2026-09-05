@@ -50,7 +50,7 @@ class Preview {
 			const st = window.scrollY;
 			const ew = el.offsetWidth;
 			const eh = el.offsetHeight;
-			const { ww } = U.Dom.getWindowDimensions();
+			const { ww, wh } = U.Dom.getWindowDimensions();
 
 			const node = document.createElement('div');
 			node.className = 'tooltip anim';
@@ -75,6 +75,7 @@ class Preview {
 
 			let x = rect.left + offsetX;
 			let y = rect.top + st + offsetY;
+			const baseY = y;
 
 			switch (typeX) {
 				default:
@@ -96,17 +97,27 @@ class Preview {
 			switch (typeY) {
 				default:
 				case I.MenuDirection.Top: {
-					y -= oh + 6 + st;
+					y = baseY - oh - 6 - st;
+
+					// Not enough room above the anchor — flip to below it.
+					if (y < BORDER) {
+						y = baseY + eh + 6 - st;
+					};
 					break;
 				};
 
 				case I.MenuDirection.Bottom: {
-					y += eh + 6 - st;
+					y = baseY + eh + 6 - st;
+
+					// Not enough room below the anchor — flip to above it.
+					if (y + oh > wh - BORDER) {
+						y = baseY - oh - 6 - st;
+					};
 					break;
 				};
 
 				case I.MenuDirection.Center: {
-					y -= oh / 2 - eh / 2 + st;
+					y = baseY - oh / 2 + eh / 2 - st;
 					break;
 				};
 			};
@@ -115,6 +126,7 @@ class Preview {
 			x = Math.min(ww - ow - BORDER, x);
 
 			y = Math.max(BORDER, y);
+			y = Math.min(wh - oh - BORDER, y);
 
 			Object.assign(node.style, { left: `${x}px`, top: `${y}px` });
 			U.Dom.addClass(node, 'show');
