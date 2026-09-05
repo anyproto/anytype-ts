@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, Menu, Notification, ipcMain, session } from 'electron';
+import { app, shell, BrowserWindow, Menu, Notification, ipcMain, session, clipboard } from 'electron';
 import { is } from 'electron-util';
 import fs from 'fs';
 import path from 'path';
@@ -312,6 +312,14 @@ class Api {
 		if (key && value) {
 			keytar.setPassword(KEYTAR_SERVICE, key, value);
 		};
+	};
+
+	/**
+	 * Writes text to the system clipboard from the main process. The renderer's copy goes through
+	 * execCommand, which Chromium only honours inside a page gesture; an app-menu click is not one
+	 */
+	clipboardWrite (win: AppWindow, text: string): void {
+		clipboard.writeText(String(text || ''));
 	};
 
 	async keytarGet (win: AppWindow, key: string): Promise<string | null> {

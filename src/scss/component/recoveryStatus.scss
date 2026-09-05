@@ -1,0 +1,63 @@
+@import "~scss/_mixins";
+
+/*
+ * Monochrome pulse for the current line: opacity only, composited, no colour change.
+ * The trough stays above the 0.6 of the line behind it, so the current line never reads as the fainter one
+ */
+@keyframes recoveryStatusPulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.8; }
+}
+
+/*
+ * The auth header's wordmark, for the loader screens that carry no header (the boot loader and
+ * setup): same asset and size, sitting where the header would put it — the middle of its 52px band
+ */
+.recoveryLogo { position: fixed; left: 0px; right: 0px; top: 17px; height: 18px; z-index: 21; background: url('~img/logo/header.svg') no-repeat 50% 50%; background-size: 70px 18px; }
+
+/*
+ * The block covers its screen (the boot loader, or an auth frame sitting at the viewport centre)
+ * and places its two halves around the bubble from that centre: the title above, the lines and
+ * the button below. The cover itself ignores the pointer so only the button takes clicks.
+ */
+.recoveryStatus { position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; pointer-events: none; }
+.recoveryStatus {
+	.head { position: absolute; left: 0px; right: 0px; bottom: calc(50% + #{$recoveryBubbleRaise} + #{$recoveryBubbleHalf} + #{$recoveryBubbleGap}); }
+	.body { position: absolute; left: 0px; right: 0px; top: calc(50% - #{$recoveryBubbleRaise} + #{$recoveryBubbleHalf} + #{$recoveryBubbleGap}); display: flex; flex-direction: column; align-items: center; pointer-events: auto; }
+
+	.recoveryTitle { @include text-header1; color: var(--color-text-primary); text-align: center; }
+
+	/*
+	 * A drum seen from the bubble: the current line sits on the front edge, right under the
+	 * bubble, at full strength, and the ones before it step back downwards in even opacity
+	 * stops (1 -> 0.6 -> 0.3), which the enter animation drives. Fixed height for the three lines.
+	 */
+	/* Positioned, so it is the containing block for the line popLayout takes out of flow on exit -
+	   without that the clip below would not apply to it */
+	.lines { position: relative; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; gap: 4px 0px; height: 86px; overflow: hidden; }
+	.lines {
+		.line { display: flex; align-items: center; justify-content: center; color: var(--color-text-primary); white-space: nowrap; @include text-description; }
+		.line.isActive {
+			.text { animation: recoveryStatusPulse 2s ease-in-out infinite; }
+		}
+	}
+
+	/* Same quiet look as the auth pages' blank button and text link, so they hold on the root loader too */
+	.buttons { margin: 40px 0px 0px 0px; display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
+	.buttons {
+		.button { min-width: 224px; @include text-common; font-weight: 400; }
+		.button.blank { border: 0px; background: var(--color-shape-highlight-medium); }
+		.button.blank:not(.disabled):hover,
+		.button.blank:not(.disabled).hover { background: var(--color-shape-highlight-dark) !important; }
+
+		.small { @include text-common; color: var(--color-text-tertiary); }
+		.small:hover { color: var(--color-text-secondary); }
+	}
+}
+
+/* In the page flow (the loading void inside the main UI): no bubble to wrap around, so the halves just stack */
+.recoveryStatus.inFlow { position: static; pointer-events: auto; }
+.recoveryStatus.inFlow {
+	.head { position: static; }
+	.body { position: static; margin: 24px 0px 0px 0px; }
+}

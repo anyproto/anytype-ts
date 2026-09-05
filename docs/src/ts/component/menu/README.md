@@ -60,6 +60,7 @@ Child menus bind their own `window` keydown listener in `rebind()`/`unbind()`. I
 `color.tsx` - Color picker for emoji
 
 ### Other Top-Level Menus
+- `recoveryPeers.tsx` - Connected peers of the account start-up run as three counts (local peers, file nodes, sync nodes, the node rows split by QUIC / TCP) with a "Copy debug info" item; opened from the vault's `RecoveryProgress` block
 - `select.tsx` - Generic virtualized selection menu
 - `object.tsx` - Object context menu (top-level, with `object/context.tsx` for detailed context)
 - `help.tsx` - Help/documentation links

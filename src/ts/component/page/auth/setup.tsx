@@ -1,5 +1,5 @@
-import React, { forwardRef, useState, useEffect } from 'react';
-import { Frame, Button, Footer, Error } from 'Component';
+import React, { forwardRef, useState, useEffect, useRef } from 'react';
+import { Frame, Button, Footer, Error, RecoveryStatus } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import Animation from 'Lib/animation';
@@ -7,6 +7,11 @@ import Animation from 'Lib/animation';
 const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const [ error, setError ] = useState<I.Error>({ code: 0, description: '' });
+	const [ selected, setSelected ] = useState(false);
+	const isCancelling = useRef(false);
+	// Mirrors the `selected` state: the RPC callback runs before React commits it, and Cancel must
+	// already be refused in that window
+	const isSelected = useRef(false);
 	const { isPopup } = props;
 	const { account } = S.Auth;
 	const match = keyboard.getMatch(isPopup);
@@ -56,6 +61,17 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 		C.AccountSelect(accountId, dataPath, mode, path, preferYamux, preferredSpaceId, (message: any) => {
 			const { account } = message;
+
+			// A logout from here on would strand the boot that is already under way (the pending
+			// switchSpace would route into the main UI on a logged-out store)
+			isSelected.current = true;
+			setSelected(true);
+
+			// Cancelled from the status block: the logout already stopped the account and the
+			// page is on its way to the auth landing, so neither the error nor a success matters
+			if (isCancelling.current) {
+				return;
+			};
 
 			if (setErrorHandler(message.error) || !account) {
 				return;
@@ -131,7 +147,22 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
 	const onCancel = () => {
 		S.Auth.logout(true, false);
-		Animation.from(() => U.Router.go('/auth/select', { replace: true }));
+
+		// The routing does not ride Animation.from's callback: the helper drops it outright while
+		// another animation is running, which would leave a logged-out page with nowhere to go
+		Animation.from();
+		U.Router.go('/auth/select', { replace: true });
+	};
+
+	// Cancel while AccountSelect is pending: logout calls AccountStop, which makes the pending
+	// request return; the flag keeps that answer from being shown as an error
+	const onCancelSelect = () => {
+		if (isCancelling.current || isSelected.current) {
+			return;
+		};
+
+		isCancelling.current = true;
+		onCancel();
 	};
 	
 	useEffect(() => {
@@ -158,11 +189,15 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				<Error text={errorText} />
 
 				{!error.code ? (
-					<div className="bubbleWrapper">
-						<div className="bubble">
-							<div className="img" />
+					<>
+						<div className="bubbleWrapper">
+							<div className="bubble">
+								<div className="img" />
+							</div>
 						</div>
-					</div>
+
+						<RecoveryStatus delay={J.Constant.delay.recoveryStatus} withLogo={true} onCancel={selected ? undefined : onCancelSelect} />
+					</>
 				) : ''}
 
 				{error.code ? (

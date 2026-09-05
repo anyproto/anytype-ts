@@ -241,10 +241,17 @@ class UtilRouter {
 						});
 					}, J.Constant.delay.popup);
 				} else {
-					U.Space.openFirstSpaceOrVoid(it => (it.targetSpaceId != id) && it.isLocalOk, routeParam);
+					// The middleware already waited up to 10 s for this one ("space is not ready");
+					// rather than hold the user for it, open whichever channel is ready and let this
+					// one show up in the vault when it lands. Remembering the failure is what keeps
+					// two unopenable channels from picking each other in turn
+					U.Space.openErrorAdd(id);
+					U.Space.openFirstSpaceOrVoid(null, routeParam);
 				};
 				return;
 			};
+
+			U.Space.openErrorClear(id);
 
 			this.go('/main/blank', {
 				updateTabRoute: false,

@@ -39,6 +39,7 @@ The dispatcher manages:
 - Request queuing and execution via `ServiceClient`
 - Event stream subscription (`listenEvents`) with ordered event processing
 - MobX store updates from server events (block changes, detail updates, subscription counters)
+- Account start-up status: `AccountRecoveryUpdate` events go to `S.Recovery.apply`; a stream re-attach mid-run (`S.Recovery.runId` set, and `isRecoveryNeeded()`: channels still missing) in `startStream` re-pulls the folded snapshot via `C.AccountRecoveryState` because reconnects refetch nothing else. The first attach, before `AccountSelect`, does not pull: the live `Started` event is still ahead
 - Event sorting to ensure correct processing order (e.g., `BlockSetChildrenIds` before `BlockAdd`); event type/data are precomputed once per message before the sort (`SORT_IDS` priority order)
 - Subscription record ordering: `SubscriptionAdd`/`SubscriptionPosition` events apply via the pure `applySubscriptionPosition` (`Lib/util/subscription`); on sorted subscriptions (`getMeta().isSorted`) a `SubscriptionAdd` repositions an optimistically inserted record instead of being skipped. While a freshly created record's name is inline-edited, a position lock (`S.Record.positionLockSet`) stashes reposition events; the dataview applies the stash when editing ends (GO-7387)
 

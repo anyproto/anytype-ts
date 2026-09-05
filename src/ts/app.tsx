@@ -5,7 +5,7 @@ import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
 import { configure } from 'mobx';
-import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
+import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft, RecoveryStatus } from 'Component';
 import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
 import * as I from 'Interface';
 import * as M from 'Model';
@@ -120,6 +120,12 @@ const App: FC = () => {
 
 	const [ isLoading, setIsLoading ] = useState(true);
 	const nodeRef = useRef(null);
+	const cancelSelectRef = useRef<() => void>(null);
+	const isSelectCancelled = useRef(false);
+	// Mirrors the state below: the RPC callback runs before React commits it, and Cancel must
+	// already be refused in that window
+	const isSelectDoneRef = useRef(false);
+	const [ isSelectDone, setIsSelectDone ] = useState(false);
 
 	const init = () => {
 		const { version, arch, getGlobal, tabId } = electron;
@@ -389,11 +395,29 @@ const App: FC = () => {
 				U.Perf.step('boot:ready', 'boot:entry');
 			};
 
-			rootLoader?.remove();
+			// React owns #root-loader, so it must do the removal: detaching it here and letting the
+			// state update commit afterwards makes React remove a node that is no longer its
+			// child, which throws in the commit phase and takes the whole app to the error
+			// boundary. Unmounting also stops the status block's observer and timer
+			setIsLoading(false);
+
 			bubbleLoader?.remove();
 			U.Dom.removeClass(body, 'over');
 		};
 		const routeParam = { replace: true, onRouteChange: hide };
+
+		// Cancel on the start-up loader: the logout calls AccountStop, which makes the pending
+		// AccountSelect return, and the auth landing replaces the loader, the same path the setup
+		// page's Back button takes
+		cancelSelectRef.current = () => {
+			if (isSelectCancelled.current || isSelectDoneRef.current) {
+				return;
+			};
+
+			isSelectCancelled.current = true;
+			S.Auth.logout(true, false);
+			U.Router.go('/auth/select', routeParam);
+		};
 
 		const cb = () => {
 			const t = 300;
@@ -434,6 +458,15 @@ const App: FC = () => {
 
 			S.Auth.tokenSet(token);
 			C.AccountSelect(accountId, dataPath, mode, networkPath, preferYamux, spaceId, (message: any) => {
+				// A logout from here on would strand the boot that is already under way; the rest
+				// of the run stays visible in the vault's progress block
+				isSelectDoneRef.current = true;
+				setIsSelectDone(true);
+
+				if (isSelectCancelled.current) {
+					return;
+				};
+
 				if (message.error.code) {
 					console.error('[App.onInit]:', message.error.description);
 					S.Common.redirectSet(route);
@@ -665,6 +698,8 @@ const App: FC = () => {
 								<div className="logo anim from" />
 								<div className="version anim from">{electron.version.app}</div>
 							</div>
+
+							<RecoveryStatus delay={J.Constant.delay.recoveryStatus} withLogo={true} onCancel={isSelectDone ? undefined : () => cancelSelectRef.current?.()} />
 						</div>
 					) : ''}
 

@@ -1020,6 +1020,15 @@ class Keyboard {
 				break;
 			};
 
+			case 'debugNetLog': {
+				// The account start-up run: folded state, last snapshot and every update received.
+				// An app-menu click is no page gesture, so the renderer's execCommand copy would be
+				// a no-op here: the main process writes the clipboard instead
+				Renderer.send('clipboardWrite', JSON.stringify(S.Recovery.getDebugInfo(), null, 2));
+				Preview.toastShow({ text: U.String.sprintf(translate('toastCopy'), translate('recoveryStatusDebugLabel')) });
+				break;
+			};
+
 			case 'debugNet': {
 				const { networkConfig } = S.Auth;
 				const { path } = networkConfig;

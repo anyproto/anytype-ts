@@ -1,6 +1,8 @@
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
+const OPEN_ATTEMPTS_MAX = 2;
+
 /**
  * UtilSpace provides utilities for working with Anytype spaces.
  *
@@ -16,6 +18,9 @@ import Storage from 'Lib/storage';
  * (owner, writer, reader) in different spaces.
  */
 class UtilSpace {
+
+	/* Failed WorkspaceOpen attempts per space in this session; see canAutoOpen */
+	private openErrors: Map<string, number> = new Map();
 
 	/**
 	 * Opens the dashboard for the current space or the first available space.
@@ -61,14 +66,61 @@ class UtilSpace {
 	};
 
 	/**
-	 * Opens the first available space or a void page if none exist.
+	 * Whether a space can be opened right now. While the start-up run is live its per-space state
+	 * is the authority (Loaded means the controller finished with it); once the run is over its
+	 * map is a stale snapshot, so the spaceview's own local status decides again - as it does for
+	 * a space the run never reported (older middleware, created later in the session).
+	 * @param {any} spaceview - The spaceview record.
+	 * @returns {boolean} True if the space is ready to open.
+	 */
+	isReady (spaceview: any): boolean {
+		// Only while the run still has something in flight. Once it settles - including a run
+		// left open around a stalled channel, which never reports Finished - its map is a frozen
+		// snapshot and the spaceview's own status is the honest signal again
+		const state = S.Recovery.isPending ? S.Recovery.spaces.get(spaceview.targetSpaceId) : null;
+
+		return state ? (state.state == I.RecoverySpaceState.Loaded) : spaceview.isLocalOk;
+	};
+
+	/**
+	 * Whether a space may be picked without the user asking for it. Each attempt costs the
+	 * middleware's own wait, and picking a space that just refused is how two unopenable spaces
+	 * select each other in turn forever - so a space gets a bounded number of automatic attempts.
+	 * More than one, because the common refusal is "space is not ready", which stops being true
+	 * as the run brings the space in. An explicit click always goes through switchSpace.
+	 * @param {any} spaceview - The spaceview record.
+	 * @returns {boolean} True if the space may be opened automatically.
+	 */
+	canAutoOpen (spaceview: any): boolean {
+		return ((this.openErrors.get(spaceview.targetSpaceId) || 0) < OPEN_ATTEMPTS_MAX) && this.isReady(spaceview);
+	};
+
+	/**
+	 * Records that a space failed to open, so it is not picked automatically again.
+	 * @param {string} id - The space ID.
+	 */
+	openErrorAdd (id: string) {
+		id = String(id || '');
+		this.openErrors.set(id, (this.openErrors.get(id) || 0) + 1);
+	};
+
+	/**
+	 * Forgets a space's open error, e.g. once it has opened.
+	 * @param {string} [id] - The space ID; all of them when omitted.
+	 */
+	openErrorClear (id?: string) {
+		id ? this.openErrors.delete(String(id)) : this.openErrors.clear();
+	};
+
+	/**
+	 * Opens the first space that can be opened, or a void page if there is none.
 	 * @param {(it: any) => boolean} [filter] - Optional filter function for spaces.
 	 * @param {Partial<I.RouteParam>} [param] - Optional route parameters.
 	 */
 	openFirstSpaceOrVoid (filter?: (it: any) => boolean, param?: Partial<I.RouteParam>) {
 		param = param || {};
 
-		let spaces = U.Menu.getVaultItems();
+		let spaces = U.Menu.getVaultItems().filter(it => this.canAutoOpen(it));
 
 		if (filter) {
 			spaces = spaces.filter(filter);
@@ -77,7 +129,10 @@ class UtilSpace {
 		if (spaces.length) {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
-			U.Router.go('/main/void/error', param);
+			// While the start-up run is still bringing channels in, "none" means "none yet": the
+			// loading void keeps the vault visible and moves on by itself. A run that has settled
+			// with nothing openable is not going to produce one, so say so
+			U.Router.go(S.Recovery.isPending ? '/main/void/loading' : '/main/void/error', param);
 			sidebar.leftPanelSubPageClose(false, false);
 		};
 	};

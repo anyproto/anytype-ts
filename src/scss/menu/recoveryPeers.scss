@@ -1,0 +1,26 @@
+@import "~scss/_mixins";
+
+.menus {
+
+	.menu.menuRecoveryPeers { width: 288px; }
+	.menu.menuRecoveryPeers {
+		.content { padding: 8px 0px; }
+
+		.title { padding: 0px 16px; color: var(--color-text-primary); font-weight: 500; }
+
+		.rows { display: flex; flex-direction: column; gap: 2px 0px; padding: 4px 16px 0px 16px; }
+		.rows {
+			.row { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 12px; @include text-common; }
+			.row {
+				.name { color: var(--color-text-secondary); @include text-overflow-nw; }
+				.value { color: var(--color-text-primary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+			}
+		}
+
+		.items {
+			.item { padding: 4px 16px; }
+		}
+		.items:before { content: ''; display: block; height: 1px; margin: 8px 16px 6px; background-color: var(--color-shape-secondary); }
+	}
+
+}
