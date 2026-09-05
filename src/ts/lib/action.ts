@@ -679,9 +679,30 @@ class Action {
 				return;
 			};
 
+			let text = String(message.textSlot || '');
+			let html = String(message.htmlSlot || '');
+
+			// The middleware's textSlot/htmlSlot do not include content from
+			// non-text blocks (e.g. bookmarks). Append bookmark URLs so they
+			// appear in the clipboard when pasted into external apps.
+			const bookmarkBlocks = blocks.filter(it =>
+				(it.type == I.BlockType.Bookmark) && it.content?.url
+			);
+			if (bookmarkBlocks.length) {
+				const urls = bookmarkBlocks.map(it => it.content.url);
+				if (text) {
+					text += '\n';
+				};
+				text += urls.join('\n');
+				if (html) {
+					html += '<br/>';
+				};
+				html += urls.map(u => `<a href="${U.String.htmlSpecialChars(u)}">${U.String.htmlSpecialChars(u)}</a>`).join('<br/>');
+			};
+
 			U.Common.clipboardCopy({
-				text: message.textSlot,
-				html: message.htmlSlot,
+				text,
+				html,
 				anytype: {
 					range,
 					blocks: (message.anySlot || []).map(Mapper.From.Block),
