@@ -99,6 +99,7 @@ export default {
 		chatHistory:	 500,
 		chatMessage:	 200,
 		spacePreload:	 2000,
+		recoveryStatus:	 5000,
 		cleanupSuggestions: 3000,
 		inviteSecurity:	 3000,
 	},

@@ -9,8 +9,8 @@
 | `common.ts` | `U.Common` | Window dimensions, random, plural, date formatting, clipboard, deep copy |
 | `data.ts` | `U.Data` | Data loading, auth flow, subscription management, onboarding |
 | `object.ts` | `U.Object` | Object CRUD, opening, routing, layout detection, type helpers |
-| `router.ts` | `U.Router` | URL navigation, space switching, history management |
-| `space.ts` | `U.Space` | Dashboard, space list, participants, sharing, publishing |
+| `router.ts` | `U.Router` | URL navigation, space switching (on the boot paths a "space is not ready" `WorkspaceOpen` falls through to the first ready channel), history management |
+| `space.ts` | `U.Space` | Dashboard, space list (`isReady` = the start-up run's per-space state, else the spaceview's local status), participants, sharing, publishing |
 | `menu.ts` | `U.Menu` | Menu item builders, vault items, color lists, turnTo options |
 | `embed.ts` | `U.Embed` | Embed HTML generators (YouTube, Vimeo, Google Maps, Figma, etc.) |
 | `subscription.ts` | `U.Subscription` | Data subscription management for real-time updates; exports pure `applySubscriptionPosition` (record reorder reducer for SubscriptionAdd/Position events, unit-tested in `subscription.test.ts`) |

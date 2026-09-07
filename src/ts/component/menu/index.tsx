@@ -78,6 +78,7 @@ import MenuDataviewNew from './dataview/new';
 
 import MenuSyncStatus from './syncStatus';
 import MenuSyncStatusInfo from './syncStatus/info';
+import MenuRecoveryPeers from './recoveryPeers';
 
 import MenuIdentity from './identity';
 import MenuOneToOne from './oneToOne';
@@ -173,6 +174,7 @@ const Components: any = {
 
 	syncStatus:				 MenuSyncStatus,
 	syncStatusInfo:			 MenuSyncStatusInfo,
+	recoveryPeers:			 MenuRecoveryPeers,
 
 	identity:				 MenuIdentity,
 	oneToOne:				 MenuOneToOne,

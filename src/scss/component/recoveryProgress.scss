@@ -1,0 +1,16 @@
+@import "~scss/_mixins";
+
+/* Top of the vault, above the filter: spinner, count, info button */
+.recoveryProgress { display: flex; flex-direction: row; align-items: center; gap: 0px 8px; padding: 0px 12px 8px 12px; }
+.recoveryProgress {
+	.spinner { flex-shrink: 0; width: 20px; height: 20px; background: url('~img/icon/loader.svg') 50% 50% no-repeat; background-size: 20px; animation: rotate 0.8s infinite linear; }
+	.text { flex-grow: 1; @include text-common; color: var(--color-text-secondary); @include text-overflow-nw; }
+	.icon.info { flex-shrink: 0; opacity: 0.4; transition: opacity $transitionCommon; }
+	.icon.info:hover { opacity: 0.8; }
+}
+.recoveryProgress.isMinimal { justify-content: center; padding: 0px 0px 8px 0px; }
+
+/* Settled around a stalled channel: the spinner would read as progress that is not happening */
+.recoveryProgress.isStalled {
+	.spinner { animation: none; opacity: 0.4; }
+}

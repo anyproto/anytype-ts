@@ -13,6 +13,7 @@ export * from './notification';
 export * from './membership';
 export * from './history';
 export * from './syncStatus';
+export * from './recovery';
 export * from './publish';
 export * from './sidebar';
 export * from './sparkOnboarding';

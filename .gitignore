@@ -47,3 +47,8 @@ dist/lib/json/internalRelations.json
 dist/lib/json/internalTypes.json
 dist/lib/json/systemRelations.json
 dist/lib/json/systemTypes.json
+
+# profiling artifacts
+*.pprof
+trace_*.out
+coldsync*.log

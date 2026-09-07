@@ -15,6 +15,10 @@ export default {
 		INSUFFICIENT_PERMISSIONS:				9,
 		ACCOUNT_STORE_NOT_MIGRATED:				113,
 
+		AccountRecoveryState: {
+			ACCOUNT_IS_NOT_RUNNING:						101,
+		},
+
 		Import: {
 			INTERNAL_ERROR:								3,
 			NOTION_NO_OBJECTS_IN_INTEGRATION:			5,

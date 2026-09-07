@@ -6,6 +6,14 @@ $transitionMenuTime: 0.2s;
 $transitionPopupTime: 0.2s;
 $transitionSidebarTime: 0.2s;
 
+/* Start-up loader: the bubble sits where the sign-in screen's does, this far above the viewport
+   centre (mirrored in src/html/index.html for the pre-React bubble); title and status keep the
+   gap below from its edge */
+$recoveryBubbleSize: 154px;
+$recoveryBubbleRaise: 70px;
+$recoveryBubbleGap: 48px;
+$recoveryBubbleHalf: calc(#{$recoveryBubbleSize} / 2);
+
 $easeDecelerate: cubic-bezier(0.2, 0, 0, 1);
 $easeSpring: cubic-bezier(0.34, 1.56, 0.64, 1);
 $easeSmooth: cubic-bezier(0.4, 0, 0.2, 1);

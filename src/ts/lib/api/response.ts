@@ -35,6 +35,12 @@ export const AccountSelect = (response: any) => {
 	};
 };
 
+export const AccountRecoveryState = (response: any) => {
+	return {
+		snapshot: Mapper.From.RecoverySnapshot(response.snapshot || {}),
+	};
+};
+
 export const AccountDelete = (response: any) => {
 	return {
 		status: response.status ? Mapper.From.AccountStatus(response.status) : null,

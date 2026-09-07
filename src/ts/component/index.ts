@@ -108,6 +108,8 @@ import MediaVideo from './util/media/video';
 
 import ProgressBar from './util/progressBar';
 import ProgressText from './util/progressText';
+import RecoveryStatus from './util/recoveryStatus';
+import RecoveryProgress from './util/recoveryProgress';
 import ShareTooltip from './util/share/tooltip';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
@@ -225,6 +227,8 @@ export {
 
 	ProgressBar,
 	ProgressText,
+	RecoveryStatus,
+	RecoveryProgress,
 	ShareTooltip,
 	FooterAuthDisclaimer,
 

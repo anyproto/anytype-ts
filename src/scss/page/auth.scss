@@ -151,6 +151,8 @@ html.bodyAuthDeleted {
 .pageAuthSetup {
 	.wrapper { transition: opacity 0.5s $easeInQuint; }
 	.frame { width: 480px; }
+	/* The bubble sits where the sign-in screen's does; the status block wraps around it from the frame's centre */
+	.bubbleWrapper { top: calc(50% - #{$recoveryBubbleRaise}); }
 	.title.fromBackup { margin: 0px 0px 12px 0px; }
 	.title:not(.fromBackup) { @include text-header3; }
 
@@ -158,6 +160,18 @@ html.bodyAuthDeleted {
 	.button { min-width: 120px; }
 	.button.simple { font-weight: 400; }
 
+}
+
+.pageAuthLogin {
+	/* The two states (key input, then start-up status) swap with a fade, and the frame re-centres
+	   while the incoming one is still transparent - so the margin must not be transitioned here,
+	   or it would also animate on mount and lag every window resize */
+	.state { width: 100%; }
+
+	/* Same composition as the loader screens: everything hangs off the frame's centre, so the state itself has no height */
+	.stateStatus {
+		.bubbleWrapper { top: calc(50% - #{$recoveryBubbleRaise}); }
+	}
 }
 
 .pageAuthOnboard, .pageAuthInvite, .pageAuthLogin, .pageAuthDeleted, .pageAuthSetup {

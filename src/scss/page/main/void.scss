@@ -37,6 +37,15 @@
 		&.voidEmpty {
 			.label { width: 242px; color: var(--color-text-secondary); }
 		}
+
+		/* The debug link sits at the bottom of the page area, quiet, off the frame */
+		&.voidLoading {
+			.bottom { position: absolute; left: 0px; right: 0px; bottom: 24px; display: flex; justify-content: center; }
+			.bottom {
+				.small { @include text-common; color: var(--color-text-tertiary); }
+				.small:hover { color: var(--color-text-secondary); }
+			}
+		}
 	}
 
 	@media (max-width: 1128px) {

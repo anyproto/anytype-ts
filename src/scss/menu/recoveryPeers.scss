@@ -1,0 +1,30 @@
+@import "~scss/_mixins";
+
+.menus {
+
+	.menu.menuRecoveryPeers { width: 288px; }
+	.menu.menuRecoveryPeers {
+		.content { padding: 8px 0px; }
+
+		.title { padding: 0px 16px; color: var(--color-text-primary); font-weight: 500; }
+
+		/* Counts read under the title, not over it: its size, a step quieter in colour */
+		.rows { display: flex; flex-direction: column; gap: 2px 0px; padding: 4px 16px 0px 16px; }
+		.rows {
+			.row { display: flex; flex-direction: row; align-items: center; justify-content: space-between; gap: 0px 12px; @include text-small; }
+			.row {
+				.name { color: var(--color-text-tertiary); @include text-overflow-nw; }
+				.value { color: var(--color-text-secondary); white-space: nowrap; font-variant-numeric: tabular-nums; }
+			}
+		}
+
+		/* The action reads at the title's size too: base menu items are text-common, which made
+		   the one line here the loudest thing in a popup that is otherwise all detail */
+		.items {
+			.item { padding: 4px 16px; @include text-small; color: var(--color-text-secondary); }
+			.item:hover { color: var(--color-text-primary); }
+		}
+		.items:before { content: ''; display: block; height: 1px; margin: 8px 16px 6px; background-color: var(--color-shape-secondary); }
+	}
+
+}

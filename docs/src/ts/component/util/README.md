@@ -1,6 +1,6 @@
 # util/ - Reusable Utility Components
 
-~940 files (excluding stories). 33 top-level components plus subdirectories for icons, media, objects, menus, upsell, and share.
+~940 files (excluding stories). 34 top-level components plus subdirectories for icons, media, objects, menus, upsell, and share.
 
 ## Top-Level Components
 
@@ -13,6 +13,8 @@
 - `dotIndicator.tsx` - Colored dot indicator
 - `progressBar.tsx` - Progress bar
 - `progressText.tsx` - Text-based progress
+- `recoveryStatus.tsx` - Account start-up block: headline + explainer, then the last 3 lines of `S.Recovery`, older lines faded, the current one pulsing (opacity) while the run is active; mounted under the bubble in the root loader, auth setup and login pages. `delay` keeps it hidden for that long after mount (5 s on the root loader and setup page, so a warm start shows only the bubble, and it stays hidden if a channel has loaded by then). Props: `delay`, `withDebug` (the "Copy debug info" link under Cancel, copying `S.Recovery.getDebugInfo()`), `inFlow` (stack in the page flow instead of composing around the bubble), `withLogo` (the wordmark, for screens with no header)
+- `recoveryProgress.tsx` - Start-up progress at the top of the vault while channels are still being fetched: spinner, "Loading channels x of N", and an info button opening the `recoveryPeers` menu; collapses to the spinner in the icons-only vault
 - `sync.tsx` - Sync status display with network/status icons
 - `chatCounter.tsx` - Unread chat counter badge
 

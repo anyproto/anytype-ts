@@ -20,6 +20,7 @@ Type definitions for the entire application. Accessed via `I.*` import alias.
 | `preview.ts` | Preview component interfaces |
 | `history.ts` | Version history interfaces |
 | `progress.ts` | Progress tracking interfaces |
+| `recovery.ts` | Account start-up status (recovery events) enums, snapshot, update and ticker line interfaces |
 | `publish.ts` | Publishing interfaces |
 | `syncStatus.ts` | Sync status interfaces |
 | `animation.ts` | Animation interfaces |

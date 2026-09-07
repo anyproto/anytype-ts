@@ -984,6 +984,11 @@ class UtilMenu {
 					break;
 				};
 
+				case 'copyId': {
+					U.Common.copyToast(translate('popupSettingsSpaceIndexSpaceIdTitle'), targetSpaceId);
+					break;
+				};
+
 			};
 		};
 
@@ -993,6 +998,14 @@ class UtilMenu {
 				general: [],
 				actions: [],
 				delete: [],
+			};
+
+			// A channel still being fetched has nothing to manage yet; its id is what a support
+			// conversation or a debug log needs
+			if (isLoading) {
+				return [
+					{ id: 'copyId', iconParam: { name: 'menu/action/copy' }, name: translate('menuSpaceContextCopyId') },
+				];
 			};
 
 			if (isSharePage) {
