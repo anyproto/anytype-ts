@@ -8,7 +8,11 @@ const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const winShutdownStdinMessage = 'shutdown\n';
 const parentLifelineEnv = 'ANYTYPE_PARENT_LIFELINE';
 const parentLifelineStdin = 'stdin';
-const gracefulShutdownTimeoutMs = 10000;
+// Once the lifeline reports the owner is gone, the helper arms its own 10s
+// hard-exit deadline, so leave room for that path to win and keep SIGKILL a
+// last resort. The POSIX signal path has no deadline on the helper side,
+// which is what this timer really guards against.
+const gracefulShutdownTimeoutMs = 12000;
 const forceShutdownTimeoutMs = 5000;
 
 let maxStdErrChunksBuffer = 10;
@@ -20,6 +24,7 @@ export class Server {
 	isRunning: boolean = false;
 	stopTriggered: boolean = false;
 	stopPromise: Promise<boolean> | null = null;
+	startPromise: Promise<boolean> | null = null;
 	lastErrors: string[] = [];
 	readyResolve: ((address: string) => void) | null = null;
 	readyReject: ((err: Error) => void) | null = null;
@@ -46,6 +51,10 @@ export class Server {
 	};
 
 	start (binPath: string, workingDir: string): Promise<boolean> {
+		if (this.startPromise) {
+			return this.startPromise;
+		};
+
 		console.log('[Server]: start', binPath, workingDir);
 
 		const logPath = Util.logPath();
@@ -56,7 +65,9 @@ export class Server {
 			[parentLifelineEnv]: parentLifelineStdin,
 		};
 
-		return new Promise((resolve, reject) => {
+		let ready = false;
+
+		const startPromise = new Promise<boolean>((resolve, reject) => {
 
 			// stop will resolve immediately in case child process is not running
 			this.stop().then((stopped) => {
@@ -91,6 +102,10 @@ export class Server {
 				const cp = this.cp;
 
 				cp.on('error', (err: any) => {
+					if (this.cp !== cp) {
+						return;
+					};
+
 					this.isRunning = false;
 					console.error('[Server] Failed to start server: ', err.toString());
 					this.readyReject?.(err);
@@ -98,6 +113,12 @@ export class Server {
 				});
 
 				cp.stdout.on('data', (data: Buffer) => {
+					// Node flushes buffered output after exit; ignore a dead helper's
+					// late ready line so it cannot publish a stale address
+					if (this.cp !== cp) {
+						return;
+					};
+
 					const str = data.toString();
 
 					if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
@@ -106,6 +127,7 @@ export class Server {
 						this.address = 'http://' + regex.exec(str)[1];
 						this.isRunning = true;
 
+						ready = true;
 						this.readyResolve?.(this.address);
 						resolve(true);
 					};
@@ -115,6 +137,10 @@ export class Server {
 				});
 
 				cp.stderr.on('data', (data: Buffer) => {
+					if (this.cp !== cp) {
+						return;
+					};
+
 					const chunk = data.toString();
 
 					// max chunk size is 8192 bytes
@@ -138,9 +164,26 @@ export class Server {
 				});
 
 				cp.on('exit', () => {
+					if (this.cp !== cp) {
+						return;
+					};
+
+					this.cp = null;
 					this.isRunning = false;
-					if (this.cp === cp) {
-						this.cp = null;
+
+					// The helper died before it reported readiness: settle start() so
+					// callers awaiting it are never left pending
+					if (!ready) {
+						ready = true;
+
+						if (this.stopTriggered) {
+							resolve(false);
+						} else {
+							const err = new Error('Anytype helper exited before it was ready');
+
+							this.readyReject?.(err);
+							reject(err);
+						};
 					};
 
 					if (this.stopTriggered) {
@@ -161,6 +204,20 @@ export class Server {
 				});
 			});
 		});
+
+		this.startPromise = startPromise;
+
+		// Registered before the promise is handed out so the slot is released
+		// before any caller awaiting start() resumes
+		const release = () => {
+			if (this.startPromise === startPromise) {
+				this.startPromise = null;
+			};
+		};
+
+		void startPromise.then(release, release);
+
+		return startPromise;
 	};
 
 	stop (signal?: string): Promise<boolean> {
