@@ -8,6 +8,8 @@ const os = require('os');
 
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const winShutdownStdinMessage = 'shutdown\n';
+const parentLifelineEnv = 'ANYTYPE_PARENT_LIFELINE';
+const parentLifelineStdin = 'stdin';
 
 const webPort = process.env.WEB_PORT || 3030;
 const grpcWebAddr = process.env.ANYTYPE_GRPCWEB_ADDR || '127.0.0.1:31008';
@@ -78,7 +80,11 @@ function startHelper() {
 
 		helperProcess = childProcess.spawn(binPath, ['127.0.0.1:0', grpcWebAddr], {
 			windowsHide: false,
-			env: process.env,
+			env: {
+				...process.env,
+				[parentLifelineEnv]: parentLifelineStdin,
+			},
+			stdio: ['pipe', 'pipe', 'pipe'],
 		});
 
 		// Timeout if helper doesn't start in time
