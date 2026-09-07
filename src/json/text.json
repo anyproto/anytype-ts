@@ -1201,8 +1201,10 @@
 	"popupSettingsExportMarkdownText1": "All your channel data except columns and text color styling will be exported to markdown. It's a free and readable format that can be opened and edited with many free and beautiful applications.",
 	"popupSettingsExportMarkdownText2": "If you want to add all your data back in Anytype, use the <b>Import<\/b> section.",
 
-	"popupSettingsExportProtobufTitle": "Export Channel to Any-Block",
+	"popupSettingsExportProtobufTitle": "Export Channel to Any-Block v1",
 	"popupSettingsExportProtobufFormat": "File Format",
+
+	"popupSettingsExportAnyBlockV2Title": "Export Channel to Any-Block v2",
 
 	"popupSettingsSpaceHomepageText": "Select an Object to show when you login",
 
@@ -1795,6 +1797,8 @@
 	"popupExportBackgroundLight": "Light",
 	"popupExportBackgroundDark": "Dark",
 	"popupExportTitle": "Export Object",
+	"exportAnyBlockV2NoticeTitle": "Any-Block v2 (Preview)",
+	"exportAnyBlockV2NoticeText": "A new export format, more readable and more compact than Any-Block v1. See the <a href=\"https:\/\/github.com\/anyproto\/any-block\">format documentation<\/a>.<br\/>It's in preview while we gather feedback. If you run into any problems, please report them to <a href=\"mailto:support@anytype.io\">support@anytype.io<\/a>.",
 	"popupExportFormat": "Export format",
 	"popupExportOk": "Export",
 

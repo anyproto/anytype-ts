@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { Title, Select, Button, Switch } from 'Component';
+import { Title, Label, Select, Button, Switch } from 'Component';
 import * as I from 'Interface';
 
 const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
@@ -36,7 +36,8 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 	const getFormats = () => {
 		return [
 			{ id: I.ExportType.Markdown, name: 'Markdown' },
-			{ id: I.ExportType.Protobuf, name: 'Any-Block' },
+			{ id: I.ExportType.Protobuf, name: 'Any-Block v1' },
+			{ id: I.ExportType.AnyBlockV2, name: 'Any-Block v2 (Preview)' },
 			allowHtml ? { id: I.ExportType.Pdf, name: 'PDF' } : null,
 			allowHtml && config.experimental ? { id: I.ExportType.Html, name: 'HTML' } : null,
 		].filter(it => it);
@@ -143,6 +144,7 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 	switch (format) {
 		case I.ExportType.Markdown:
 		case I.ExportType.Protobuf:
+		case I.ExportType.AnyBlockV2:
 			if (format == I.ExportType.Protobuf) {
 				items.push({ id: 'json', name: translate('popupExportFileFormat'), control: 'select', options: formatOptions });
 			};
@@ -183,6 +185,11 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 	return (
 		<>
 			<Title text={translate('popupExportTitle')} />
+
+			<div className="notice">
+				<Label className="name" text={translate('exportAnyBlockV2NoticeTitle')} />
+				<Label className="descr" text={translate('exportAnyBlockV2NoticeText')} />
+			</div>
 
 			{items.map((item: any, i: number) => (
 				<Option key={i} {...item} />

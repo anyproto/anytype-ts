@@ -24,6 +24,7 @@ import PageImportObsidian from './import/obsidian';
 import PageExportIndex from './export/index';
 import PageExportProtobuf from './export/protobuf';
 import PageExportMarkdown from './export/markdown';
+import PageExportAnyBlockV2 from './export/anyBlockV2';
 
 import PageSpaceIndex from './space/index';
 import PageSpaceStorage from './space/storage';
@@ -66,6 +67,7 @@ const Components: any = {
 	exportIndex:		 PageExportIndex,
 	exportProtobuf:		 PageExportProtobuf,
 	exportMarkdown:		 PageExportMarkdown,
+	exportAnyBlockV2:	 PageExportAnyBlockV2,
 
 	spaceIndex:			 PageSpaceIndex,
 	spaceStorage:		 PageSpaceStorage,

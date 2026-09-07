@@ -1349,7 +1349,7 @@ class UtilCommon {
 		return [
 			'spaceIndex', 'spaceStorage', 'spaceShare', 'spaceNotifications', 'spaceDeletionAudit',
 			'importIndex', 'importNotion', 'importNotionWarning', 'importCsv', 'importObsidian',
-			'exportIndex', 'exportProtobuf', 'exportMarkdown',
+			'exportIndex', 'exportProtobuf', 'exportMarkdown', 'exportAnyBlockV2',
 			'set', 'relation', 'archive',
 		];
 	};

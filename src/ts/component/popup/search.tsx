@@ -3399,6 +3399,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				{ id: 'exportIndex', iconParam: { name: 'menu/action/export' }, icon: 'settings-export', name: translate('popupSettingsExportTitle') },
 				{ id: 'exportProtobuf', iconParam: { name: 'import/protobuf' }, name: translate('popupSettingsExportProtobufTitle') },
 				{ id: 'exportMarkdown', iconParam: { name: 'import/markdown' }, name: translate('popupSettingsExportMarkdownTitle') },
+				{ id: 'exportAnyBlockV2', iconParam: { name: 'import/protobuf' }, name: translate('popupSettingsExportAnyBlockV2Title') },
 			];
 
 			if (canWrite) {
