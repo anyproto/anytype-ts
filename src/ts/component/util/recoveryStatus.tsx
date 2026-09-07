@@ -194,21 +194,23 @@ const RecoveryStatus = forwardRef<{}, Props>(({ className = '', delay = 0, withD
 				</div>
 
 				<AnimatePresence>
-					{isActive && (onCancel || withDebug) ? (
+					{isActive && onCancel ? (
 						<motion.div key="buttons" className="buttons" {...U.Common.animationProps()}>
-							{onCancel ? (
-								<div className="animation">
-									<Button size={48} color="blank" text={translate('commonCancel')} onClick={onCancel} />
-								</div>
-							) : ''}
-
-							{withDebug ? (
-								<div className="small" onClick={() => S.Recovery.copyDebugInfo()}>{translate('recoveryStatusCopyDebug')}</div>
-							) : ''}
+							<div className="animation">
+								<Button size={48} color="blank" text={translate('commonCancel')} onClick={onCancel} />
+							</div>
 						</motion.div>
 					) : ''}
 				</AnimatePresence>
 			</div>
+
+			<AnimatePresence>
+				{isActive && withDebug ? (
+					<motion.div key="footer" className="footer" {...U.Common.animationProps()}>
+						<div className="small" onClick={() => S.Recovery.copyDebugInfo()}>{translate('recoveryStatusCopyDebug')}</div>
+					</motion.div>
+				) : ''}
+			</AnimatePresence>
 		</motion.div>
 	);
 

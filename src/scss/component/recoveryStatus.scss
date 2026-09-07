@@ -42,16 +42,24 @@
 		}
 	}
 
-	/* Same quiet look as the auth pages' blank button and text link, so they hold on the root loader too */
-	.buttons { margin: 40px 0px 0px 0px; display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
+	/* Same quiet look as the auth pages' blank button, so it holds on the root loader too */
+	.buttons { margin: 40px 0px 0px 0px; display: flex; flex-direction: column; align-items: center; }
 	.buttons {
 		.button { min-width: 224px; @include text-common; font-weight: 400; }
 		.button.blank { border: 0px; background: var(--color-shape-highlight-medium); }
 		.button.blank:not(.disabled):hover,
 		.button.blank:not(.disabled).hover { background: var(--color-shape-highlight-dark) !important; }
+	}
 
-		.small { @include text-common; color: var(--color-text-tertiary); }
-		.small:hover { color: var(--color-text-secondary); }
+	/*
+	 * Diagnostics belong out of the way: the foot of the screen, quiet until looked for.
+	 * Fixed, like the wordmark above - on the auth frames this block's own box is the zero-height
+	 * one centred in the viewport, so an absolute bottom would land mid-screen
+	 */
+	.footer { position: fixed; left: 0px; right: 0px; bottom: 24px; display: flex; justify-content: center; pointer-events: auto; }
+	.footer {
+		.small { @include text-common; color: var(--color-text-tertiary); opacity: 0.6; transition: opacity $transitionCommon; }
+		.small:hover { opacity: 1; }
 	}
 }
 
@@ -60,4 +68,5 @@
 .recoveryStatus.inFlow {
 	.head { position: static; }
 	.body { position: static; margin: 24px 0px 0px 0px; }
+	.footer { position: static; margin: 24px 0px 0px 0px; }
 }
