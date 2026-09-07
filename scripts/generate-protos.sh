@@ -79,7 +79,7 @@ else
 
 	# Rebuild the JS dev binary from anytype-heart
 	echo "Building anytype-heart JS dev binary..."
-	(cd "$HEART_DIR" && make install-dev-js)
+	(cd "$HEART_DIR" && make install-dev-js CLIENT_DESKTOP_PATH="$ROOT_DIR")
 
 	# pb/protos/ — commands, events, changes, snapshot
 	mkdir -p "$PROTO_ROOT/pb/protos"
