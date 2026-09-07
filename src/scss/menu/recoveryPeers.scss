@@ -18,8 +18,11 @@
 			}
 		}
 
+		/* The action reads at the title's size too: base menu items are text-common, which made
+		   the one line here the loudest thing in a popup that is otherwise all detail */
 		.items {
-			.item { padding: 4px 16px; }
+			.item { padding: 4px 16px; @include text-small; color: var(--color-text-secondary); }
+			.item:hover { color: var(--color-text-primary); }
 		}
 		.items:before { content: ''; display: block; height: 1px; margin: 8px 16px 6px; background-color: var(--color-shape-secondary); }
 	}
