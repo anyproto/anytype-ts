@@ -387,7 +387,7 @@ class UtilSubscription {
 	};
 
 	/**
-	 * Performs a search for objects matching the given parameters.
+	 * Performs a search for objects matching the given parameters without highlight metadata.
 	 * @param {Partial<I.SearchSubscribeParam> & { fullText?: string }} param - Search parameters.
 	 * @param {(message: any) => void} [callBack] - Optional callback for search results.
 	 */
@@ -425,9 +425,7 @@ class UtilSubscription {
 			return;
 		};
 
-		const cmd = fullText ? 'ObjectSearchWithMeta' : 'ObjectSearch';
-
-		C[cmd](spaceId, filters, sorts, keys, fullText, offset, limit, (message: any) => {
+		C.ObjectSearch(spaceId, filters, sorts, keys, fullText, offset, limit, (message: any) => {
 			if (message.records) {
 				message.records = message.records.map(it => S.Detail.mapper(it, skipLayoutFormat));
 			};
