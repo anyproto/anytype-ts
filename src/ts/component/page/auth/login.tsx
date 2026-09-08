@@ -57,7 +57,22 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 				};
 
 				S.Auth.accountListClear();
-				U.Data.createSession(phrase, '', '', () => {
+				U.Data.createSession(phrase, '', '', (message: any) => {
+					if (setErrorHandler(message.error.code, message.error.description)) {
+						return;
+					};
+
+					// The account comes back on the response itself. It used to arrive only as an
+					// accountShow event, which the middleware drops outright when this session's
+					// event stream has not attached yet - the two are independent requests, and the
+					// stream losing that race wedged login for good (GO-7494)
+					if (message.accountId) {
+						S.Auth.accountAdd({ id: message.accountId });
+						return;
+					};
+
+					// Middleware older than GO-7495 answers with an empty accountId and still needs
+					// the event. Remove once middleware.version is past it
 					C.AccountRecover(message => {
 						setErrorHandler(message.error.code, message.error.description);
 					});
@@ -260,9 +275,9 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 		focus();
 	});
 
-	// Accounts arrive as AccountShow events - AccountRecover's own response carries none - so
-	// the store is the trigger, and the list length is what actually changes. Without the key
-	// every render re-ran select(), leaving the isSelecting guard as the only thing between a
+	// The account is added to the store by onSubmit once WalletCreateSession answers, so the
+	// store is the trigger and the list length is what actually changes. Without the key every
+	// render re-ran select(), leaving the isSelecting guard as the only thing between a
 	// re-render and a second AccountSelect on the same session
 	useEffect(() => {
 		select();
