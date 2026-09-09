@@ -249,7 +249,7 @@ class CommonStore {
 	};
 
 	get config (): I.AppConfig {
-		const config = window.AnytypeGlobalConfig || this.configObj || {};
+		const config = Object.assign({}, this.configObj, window.AnytypeGlobalConfig || {});
 
 		return {
 			...config,
