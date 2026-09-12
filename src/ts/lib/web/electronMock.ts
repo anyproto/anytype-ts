@@ -208,9 +208,11 @@ class ElectronMock {
 		handlers.set('updateTab', (args) => {
 			const tabToUpdate = this.tabs.find(t => t.id === args[0]);
 			if (tabToUpdate) {
-				tabToUpdate.data = { ...tabToUpdate.data, ...args[1] };
-				if (args[1].token) {
-					tabToUpdate.token = args[1].token;
+				const { token, ...data } = args[1] || {};
+
+				tabToUpdate.data = { ...tabToUpdate.data, ...data };
+				if (token !== undefined) {
+					tabToUpdate.token = token;
 				}
 			}
 			return true;
