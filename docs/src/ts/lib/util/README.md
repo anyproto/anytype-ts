@@ -31,6 +31,8 @@ These files are not in the `index.ts` barrel export but live in the `util/` dire
 
 | File | Purpose |
 |------|---------|
+| `exportReport.ts` | Export status (warnings and informational notes remain successful; only errors make completion partial) and stable error-code translation keys |
+| `exportReportObjects.ts` | Resolve report object and type names in the export space, including archived objects |
 | `sparkOnboardingKeyboard.ts` | Enhanced keyboard event handler with IME composition support |
 | `sparkOnboardingWorker.ts` | Worker message type enums for spark onboarding graph visualization |
 

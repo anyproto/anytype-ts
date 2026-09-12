@@ -141,6 +141,7 @@ export enum ExportType {
 	Dot			 = 3,
 	Svg			 = 4,
 	GraphJson	 = 5,
+	AnyBlockV2	 = 6,
 
 	Html		 = 100,
 	Pdf			 = 110,

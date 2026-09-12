@@ -812,6 +812,10 @@
 		}
     }
 
+	> .pageSettingsExportIndex {
+		.item.anyBlockV2 .icon { color: #4f60e8 !important; }
+	}
+
 	> .pageSettingsImportIndex {
 		.title { margin-bottom: 24px !important; }
 	}
@@ -898,6 +902,20 @@
 
         .actionItems { margin: 32px 0px 24px 0px; }
     }
+
+	> .pageSettingsExportAnyBlockV2 {
+		.notice {
+			border-radius: 12px; padding: 12px 16px; background: var(--color-shape-highlight-medium);
+			display: flex; flex-direction: column; gap: 2px 0px;
+		}
+		.notice {
+			.label { @include text-small; color: var(--color-text-secondary); margin: 0px; }
+			.label.name { font-weight: 600; color: var(--color-text-primary); }
+			.label a { color: var(--color-text-primary); font-weight: 500; text-decoration: none; }
+		}
+
+		.actionItems { margin: 32px 0px 24px 0px; }
+	}
 
     > .pageSettingsMembership { display: flex; flex-direction: column; padding-bottom: 0px; min-height: 100%; }
     > .pageSettingsMembership {

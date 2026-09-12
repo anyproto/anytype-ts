@@ -4,6 +4,7 @@ import * as Diff from 'diff';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { getExportResultStatus } from 'Lib/util/exportReport';
 
 class Action {
 
@@ -596,11 +597,26 @@ class Action {
 			onSelectPath?.();
 
 			C.ObjectListExport(spaceId, paths[0], ids, type, zip, nested, files, archived, json, (message: any) => {
-				if (message.error.code) {
+				const status = getExportResultStatus(message.report, message.error.code);
+				if (status != 'Success') {
+					S.Popup.open('exportResult', {
+						data: {
+							report: message.report,
+							error: message.error,
+							path: message.path && !message.error.code ? paths[0] : '',
+							spaceId,
+							exportType: type,
+						},
+					});
+				};
+
+				if (message.error.code || [ 'Failed', 'Canceled' ].includes(status)) {
 					return;
 				};
 
-				this.openPath(paths[0]);
+				if (status == 'Success') {
+					this.openPath(paths[0]);
+				};
 				analytics.event('Export', { type, middleTime: message.middleTime, route });
 
 				callBack?.(message);

@@ -67,6 +67,9 @@ if [[ "$FROM_DIST" == true ]]; then
 	mkdir -p "$PROTO_ROOT/pkg/lib/pb/model/protos"
 	cp "$PROTO_SRC/models.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
 	cp "$PROTO_SRC/localstore.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+	if [[ -f "$PROTO_SRC/export_report.proto" ]]; then
+		cp "$PROTO_SRC/export_report.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+	fi
 else
 	# Local mode: use anytype-heart repo. HEART_DIR overrides the default checkout,
 	# so a feature branch in another worktree can be generated against.
@@ -88,10 +91,9 @@ else
 	cp "$HEART_DIR/pb/protos/changes.proto" "$PROTO_ROOT/pb/protos/"
 	cp "$HEART_DIR/pb/protos/snapshot.proto" "$PROTO_ROOT/pb/protos/"
 
-	# pkg/lib/pb/model/protos/ — models, localstore
+	# Copy all model definitions, including diagnostics imported by commands/events.
 	mkdir -p "$PROTO_ROOT/pkg/lib/pb/model/protos"
-	cp "$HEART_DIR/pkg/lib/pb/model/protos/models.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
-	cp "$HEART_DIR/pkg/lib/pb/model/protos/localstore.proto" "$PROTO_ROOT/pkg/lib/pb/model/protos/"
+	cp "$HEART_DIR/pkg/lib/pb/model/protos/"*.proto "$PROTO_ROOT/pkg/lib/pb/model/protos/"
 fi
 
 echo "Generating TypeScript protobuf bindings..."
@@ -118,8 +120,7 @@ protoc \
 	"$PROTO_ROOT/pb/protos/events.proto" \
 	"$PROTO_ROOT/pb/protos/changes.proto" \
 	"$PROTO_ROOT/pb/protos/snapshot.proto" \
-	"$PROTO_ROOT/pkg/lib/pb/model/protos/models.proto" \
-	"$PROTO_ROOT/pkg/lib/pb/model/protos/localstore.proto"
+	"$PROTO_ROOT/pkg/lib/pb/model/protos/"*.proto
 
 # Replace the generated Struct/Value codec with the hand-optimized override
 # (decodes google.protobuf.Struct/Value straight into plain JS objects without

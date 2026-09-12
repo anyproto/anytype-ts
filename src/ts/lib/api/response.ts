@@ -121,6 +121,17 @@ export const Export = (response: any) => {
 	};
 };
 
+export const ObjectListExport = (response: any) => ({
+	path: response.path,
+	succeed: response.succeed,
+	report: response.report,
+});
+
+export const ObjectExport = (response: any) => ({
+	result: response.result,
+	report: response.report,
+});
+
 export const LinkPreview = (response: any) => {
 	return {
 		previewLink: response.linkPreview ? Mapper.From.PreviewLink(response.linkPreview) : {},

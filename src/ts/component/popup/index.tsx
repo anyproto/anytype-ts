@@ -11,6 +11,7 @@ import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
 import PopupPage from './page';
 import PopupExport from './export';
+import PopupExportResult from './exportResult';
 import PopupPin from './pin';
 import PopupPhrase from './phrase';
 import PopupObjectManager from './objectManager';
@@ -175,6 +176,7 @@ const Popup = forwardRef<{}, I.Popup>((props, ref) => {
 		shortcut:				 PopupShortcut,
 		page:					 PopupPage,
 		export:					 PopupExport,
+		exportResult:			 PopupExportResult,
 		pin:					 PopupPin,
 		phrase:					 PopupPhrase,
 		objectManager:			 PopupObjectManager,

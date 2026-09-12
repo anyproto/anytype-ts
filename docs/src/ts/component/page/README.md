@@ -56,7 +56,7 @@ Hierarchical settings with `index.tsx` dispatcher:
 - **Account**: `account.tsx`, `delete.tsx`, `personal.tsx`, `phrase.tsx`, `language.tsx`, `api.tsx`
 - **PIN**: `pin/index.tsx` -> `pin/select.tsx` -> `pin/confirm.tsx`
 - **Import**: `import/index.tsx` -> `import/notion.tsx` (with `notion/help.tsx`, `notion/warning.tsx`), `import/csv.tsx`, `import/obsidian.tsx`
-- **Export**: `export/index.tsx` -> `export/protobuf.tsx`, `export/markdown.tsx`
+- **Export**: `export/index.tsx` -> `export/protobuf.tsx` (Any-Block v1), `export/markdown.tsx`, `export/anyBlockV2.tsx` (Any-Block v2, preview)
 - **Space**: `space/index.tsx` -> `space/home.tsx`, `space/list.tsx`, `space/storage.tsx`, `space/notifications.tsx`, `space/share.tsx` (with `share/members.tsx`)
 - **Data**: `data/index.tsx` -> `data/publish.tsx`
 - **Membership**: `membership/index.tsx` -> `membership/loader.tsx`, `membership/intro.tsx`, `membership/purchased.tsx`

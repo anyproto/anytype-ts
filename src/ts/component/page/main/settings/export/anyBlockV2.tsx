@@ -1,10 +1,10 @@
 import React, { forwardRef, useState } from 'react';
-import { Title, Label, Button, Switch, Select } from 'Component';
+import { Title, Label, Button, Switch } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import ExportFilesHelp from 'Component/util/exportFilesHelp';
 
-const PageMainSettingsExportProtobuf = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+const PageMainSettingsExportAnyBlockV2 = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { onExport } = props;
 	const [ data, setData ] = useState(Storage.get('popupExport') || {});
@@ -13,12 +13,6 @@ const PageMainSettingsExportProtobuf = forwardRef<I.PageRef, I.PageSettingsCompo
 		{ id: 'files', name: translate('popupExportIncludeFilesData'), control: 'switch' },
 		{ id: 'archived', name: translate('popupExportIncludeArchivedObjects'), control: 'switch' },
 	];
-	const formatOptios = [
-		{ id: 'json', name: 'JSON' },
-		{ id: 'pb', name: 'Protobuf' },
-	];
-
-	data.json = (undefined === data.json) ? true : Boolean(data.json);
 
 	const save = (newData) => {
 		setData(newData);
@@ -27,20 +21,14 @@ const PageMainSettingsExportProtobuf = forwardRef<I.PageRef, I.PageSettingsCompo
 
 	return (
 		<>
-			<Title text={translate('popupSettingsExportProtobufTitle')} />
+			<Title text={translate('popupSettingsExportAnyBlockV2Title')} />
+
+			<div className="notice">
+				<Label className="name" text={translate('exportAnyBlockV2NoticeTitle')} />
+				<Label className="descr" text={translate('exportAnyBlockV2NoticeText')} />
+			</div>
 
 			<div className="actionItems">
-				<div className="item">
-					<Label text={translate('popupSettingsExportProtobufFormat')} />
-
-					<Select 
-						id="file-format"
-						value={data.json ? 'json' : 'pb'}
-						options={formatOptios}
-						onChange={(v: string) => save({ ...data, json: v == 'json' })}
-					/>
-				</div>
-
 				{items.map((item: any, i: number) => (
 					<div key={i} className="item">
 						<div className="flex">
@@ -61,7 +49,7 @@ const PageMainSettingsExportProtobuf = forwardRef<I.PageRef, I.PageSettingsCompo
 				<Button 
 					text={translate('popupSettingsExportOk')} 
 					size={36}
-					onClick={() => onExport(I.ExportType.Protobuf, data)} 
+					onClick={() => onExport(I.ExportType.AnyBlockV2, data)} 
 				/>
 			</div>
 		</>
@@ -69,4 +57,4 @@ const PageMainSettingsExportProtobuf = forwardRef<I.PageRef, I.PageSettingsCompo
 
 });
 
-export default PageMainSettingsExportProtobuf;
+export default PageMainSettingsExportAnyBlockV2;

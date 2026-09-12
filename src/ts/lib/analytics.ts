@@ -800,6 +800,7 @@ class Analytics {
 			'main/settings/exportIndex':	 'ScreenSettingsExportIndex',
 			'main/settings/exportMarkdown':	 'ScreenSettingsExportMarkdown',
 			'main/settings/exportProtobuf':	 'ScreenSettingsExportProtobuf',
+			'main/settings/exportAnyBlockV2': 'ScreenSettingsExportAnyBlockV2',
 
 			'main/settings/dataIndex':		 'ScreenSettingsDataIndex',
 			'main/settings/dataPublish':	 'ScreenSettingsDataPublish',

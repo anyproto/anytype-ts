@@ -1810,7 +1810,8 @@ class Dispatcher {
 				const description = err ? err.description : '';
 
 				let message: any = {};
-				if (!code && Response[type]) {
+				// Export diagnostics are useful even when the RPC itself failed.
+				if (Response[type] && (!code || [ 'ObjectListExport', 'ObjectExport' ].includes(type))) {
 					message = Response[type](response);
 				};
 

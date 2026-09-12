@@ -565,6 +565,9 @@ export const Mapper = {
 						payload = Object.assign(payload, {
 							errorCode: field.errorCode,
 							exportType: field.exportType,
+							report: field.report,
+							path: field.path,
+							spaceId: obj.space,
 						});
 						break;
 					};
