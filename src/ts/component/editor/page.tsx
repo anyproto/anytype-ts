@@ -15,6 +15,17 @@ import { getTopLevelIds, getIndentTargetId } from 'Lib/util/blockSelection';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
+	// Set when this editor is embedded in a Split view's detail panel. Inherited by every
+	// block below, so a dataview at any depth can refuse to mount another live view.
+	isInsideSplit?: boolean;
+	// Set when the embedding page is already rendering this same object — a collection that
+	// contains itself, selected in its own Split panel. The object's lifecycle (ObjectOpen /
+	// ObjectClose, focus, the virtual last block) then belongs to that page, not to this editor.
+	isSecondaryView?: boolean;
+	// Rendered between the object's head (icon, cover, title) and its content blocks. The Split
+	// detail panel puts its properties section here, which is the only place a host can sit
+	// something below the title without owning the head's own markup.
+	afterHead?: React.ReactNode;
 };
 
 const THROTTLE = 40;
@@ -22,7 +33,7 @@ const BUTTON_OFFSET = 10;
 
 const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	
-	const { rootId, isPopup, onOpen } = props;
+	const { rootId, isPopup, onOpen, isInsideSplit, isSecondaryView, afterHead } = props;
 	const root = S.Block.getLeaf(rootId, rootId);
 	const nodeRef = useRef(null);
 	const tocRef = useRef(null);
@@ -242,6 +253,14 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		setIsDeleted(false);
 		idRef.current = rootId;
 
+		// A secondary view does not own the object — the page it is embedded in is already
+		// rendering the same one, so its blocks are in the store and an ObjectOpen here would
+		// give the subscription a second owner. Focus is skipped too: the carriage is per
+		// object, and claiming it would pull it away from the primary view.
+		if (isSecondaryView) {
+			return;
+		};
+
 		C.ObjectOpen(rootId, '', S.Common.space, (message: any) => {
 			if (!U.Common.checkErrorOnOpen(rootId, message.error.code)) {
 				return;
@@ -258,6 +277,15 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const close = () => {
+		// Symmetric with open(): a secondary view opened nothing, so it must close nothing.
+		// pageClose would run S.Block.clear + ObjectClose on an object the embedding page is
+		// still rendering (U.Data.checkPageClose only guards the popup case), blanking it.
+		// virtualBlock and the stored focus are per object and belong to the primary view.
+		if (isSecondaryView) {
+			idRef.current = '';
+			return;
+		};
+
 		virtualBlock.deactivate();
 		Action.pageClose(isPopup, idRef.current, true);
 		Storage.setFocus(idRef.current, focus.state);
@@ -3341,6 +3369,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 						getWrapperWidth={getWrapperWidth}
 					/>
 
+					{afterHead}
+
 					<Children
 						{...props}
 						onKeyDown={onKeyDownBlock}
@@ -3353,7 +3383,12 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 						getWrapperWidth={getWrapperWidth}
 					/>
 
-					{virtualBlock.isRendered(rootId, isPopup) && !readonly ? (
+					{/*
+					 * virtualBlock is a process-wide singleton keyed by (rootId, isPopup), so a
+					 * secondary view of the same object would render a second placeholder under
+					 * the same block id and both would answer the same focus.
+					 */}
+					{virtualBlock.isRendered(rootId, isPopup) && !readonly && !isSecondaryView ? (
 						<Block
 							key="block-virtualLast"
 							{...props}
@@ -3380,7 +3415,12 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 				<TableOfContents ref={tocRef} {...props} />
 
-				{!isTemplate ? (
+				{/*
+				 * Suppressed inside a Split detail panel: the host page already renders its own
+				 * discussion, so a second "start discussion" affordance appeared alongside it.
+				 * The object's discussion is still reachable via the expand control.
+				 */}
+				{(!isTemplate && !isInsideSplit) ? (
 					<CommentSection
 						rootId={rootId}
 						targetId={rootId}

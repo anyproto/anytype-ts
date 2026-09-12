@@ -36,6 +36,7 @@ Database-like component with multiple views. Supports filtering, sorting, groupi
 - `list.tsx` — List with `list/row.tsx`
 - `graph.tsx` — Graph view (uses GraphProvider)
 - `timeline.tsx` — Timeline view
+- `split.tsx` — Master-detail split: `list.tsx` in a resizable left pane, the selected record's `EditorPage` on the right. Sizes itself to the viewport so each pane scrolls internally; pane width and selection persist locally via `Lib/storage` (experimental)
 
 ### Table (`table/` — main file ~1,990 lines)
 Spreadsheet-style tables with `cell.tsx` and `row.tsx`.
