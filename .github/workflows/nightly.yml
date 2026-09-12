@@ -38,7 +38,8 @@ jobs:
         with:
           fetch-depth: 0
       - run: git fetch --tags --force --prune
-      - id: diff_check
+      - name: Check for changes since last nightly tag
+        id: diff_check
         run: |
           LAST_TAG=$(git describe --tags --match 'v*-nightly' --abbrev=0 2>/dev/null || echo "")
           if [ -z "$LAST_TAG" ]; then
