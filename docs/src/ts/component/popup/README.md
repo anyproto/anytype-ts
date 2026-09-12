@@ -20,6 +20,7 @@ Open a popup: `S.Popup.open('confirm', { data: { ... } })`
 - `confirm.tsx` - Confirmation dialog with optional checkbox/input
 - `preview.tsx` - Image/video gallery with Swiper carousel, zoom, thumbnails
 - `export.tsx` - Export options (Markdown, Any-Block v1/v2, PDF, HTML)
+- `exportResult.tsx` - Export results with translated error codes, archived object names, expandable diagnostics with full source block/property paths, non-blocking export notes, and an unchanged JSON report for support.
 - `help.tsx` - What's New / documentation viewer
 - `shortcut.tsx` - Keyboard shortcuts reference
 - `upload.tsx` - File upload dialog

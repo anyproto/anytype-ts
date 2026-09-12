@@ -1,5 +1,6 @@
 import { observable, makeObservable } from 'mobx';
 import * as I from 'Interface';
+import { getExportResultStatus } from 'Lib/util/exportReport';
 
 class Notification implements I.Notification {
 
@@ -41,6 +42,15 @@ class Notification implements I.Notification {
 		this.text = translate(U.String.toCamelCase(`notification-${et}-${lang}-text`));
 
 		switch (this.type) {
+			case I.NotificationType.Export: {
+				const status = getExportResultStatus(this.payload.report, errorCode);
+				if (status != 'Success') {
+					this.title = translate(`popupExportResultTitle${status}`);
+					this.text = translate(`popupExportResultText${status}`);
+				};
+				break;
+			};
+
 			case I.NotificationType.Import: {
 				if (Object.values(J.Error.Code.Import).includes(errorCode)) {
 					this.title = translate('commonError');

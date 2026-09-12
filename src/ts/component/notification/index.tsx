@@ -18,6 +18,13 @@ const Notification: FC<I.NotificationComponent> = (props) => {
 	let buttons = [];
 
 	switch (type) {
+		case I.NotificationType.Export: {
+			if (payload.report || errorCode) {
+				buttons.push({ id: 'exportResult', text: translate('popupExportResultViewDetails') });
+			};
+			break;
+		};
+
 		case I.NotificationType.Gallery:
 		case I.NotificationType.Import: {
 			if (!errorCode && (spaceId != space)) {
@@ -46,6 +53,19 @@ const Notification: FC<I.NotificationComponent> = (props) => {
 		e.stopPropagation();
 
 		switch (action) {
+			case 'exportResult': {
+				S.Popup.open('exportResult', {
+					data: {
+						report: payload.report,
+						path: payload.path,
+						error: { code: errorCode },
+						spaceId,
+						exportType: payload.exportType,
+					},
+				});
+				break;
+			};
+
 			case 'spaceSwitch': {
 				U.Router.switchSpace(payload.spaceId, '', true, {}, false);
 				break;

@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useState } from 'react';
 import { Title, Label, Select, Button, Switch } from 'Component';
 import * as I from 'Interface';
+import ExportFilesHelp from 'Component/util/exportFilesHelp';
 
 const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -10,6 +11,7 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 	const { config, space } = S.Common;
 	const [ stateData, setStateData ] = useState<any>({});
 	const format = Number(stateData.format) || I.ExportType.Markdown;
+	const isAnyBlock = [ I.ExportType.Protobuf, I.ExportType.AnyBlockV2 ].includes(format);
 
 	const init = () => {
 		const options = storageGet();
@@ -129,7 +131,10 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 
 		return (
 			<div className="row">
-				<div className="name">{item.name}</div>
+				<div className="name">
+					{item.name}
+					{(item.id == 'files') && isAnyBlock ? <ExportFilesHelp objectCount={objectIds?.length} /> : ''}
+				</div>
 				<div className="value">
 					{control}
 				</div>
@@ -152,7 +157,7 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 			items = items.concat([
 				{ id: 'zip', name: translate('popupExportZipArchive'), control: 'switch' },
 				{ id: 'nested', name: translate('popupExportIncludeLinkedObjects'), control: 'switch' },
-				{ id: 'files', name: translate('popupExportIncludeFiles'), control: 'switch' },
+				{ id: 'files', name: translate(isAnyBlock ? 'popupExportIncludeFilesData' : 'popupExportIncludeFiles'), control: 'switch' },
 				{ id: 'archived', name: translate('popupExportIncludeArchivedObjects'), control: 'switch' },
 			]);
 			break;
