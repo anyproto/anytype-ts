@@ -20,3 +20,25 @@ export const Default: Story = {
 		viewType: I.ViewType.Grid,
 	},
 };
+
+// An empty name falls back to "Untitled" and renders in the placeholder color.
+export const EmptyName: Story = {
+	args: {
+		relation: { relationKey: 'name', format: I.RelationType.ShortText },
+		recordId: 'record-2',
+		getRecord: () => ({ name: '' }),
+		placeholder: 'Enter text...',
+		viewType: I.ViewType.Grid,
+	},
+};
+
+// A name literally typed as "Untitled" is a real value and keeps the normal color.
+export const LiteralUntitledName: Story = {
+	args: {
+		relation: { relationKey: 'name', format: I.RelationType.ShortText },
+		recordId: 'record-3',
+		getRecord: () => ({ name: 'Untitled' }),
+		placeholder: 'Enter text...',
+		viewType: I.ViewType.Grid,
+	},
+};

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { applySubscriptionPosition } from './subscription';
+import { applySubscriptionPosition, placeCreatedRecord } from './subscription';
 import UtilSubscription from './subscription';
 
 /**
@@ -112,6 +112,80 @@ describe('applySubscriptionPosition', () => {
 			expect(records).toEqual([ 'a', 'B1', 'b', 'c', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'z' ]);
 		});
 
+	});
+
+});
+
+/**
+ * Regression coverage for the GO-7387 follow-up: on a sorted subscription the middleware often adds a
+ * newly created record at its sorted position before the ObjectCreate callback runs (a race). The
+ * callback then must move the record to the creation spot so the row stays put while its name is typed,
+ * and defer the sorted position so it is restored on commit - including for an unnamed record, which
+ * sorts to the head. Previously the callback dragged the already-placed record to the creation spot with
+ * no way back, so it never returned to its sorted position.
+ */
+describe('placeCreatedRecord', () => {
+
+	const base = [ 'r1', 'r2', 'r3' ];
+
+	describe('record not yet in the list', () => {
+
+		it('appends to the tail when dir is positive', () => {
+			const { records, deferAfterId } = placeCreatedRecord(base, 'x', 1, -1, false);
+			expect(records).toEqual([ 'r1', 'r2', 'r3', 'x' ]);
+			expect(deferAfterId).toBeNull();
+		});
+
+		it('prepends to the head when dir is negative', () => {
+			const { records, deferAfterId } = placeCreatedRecord(base, 'x', -1, -1, false);
+			expect(records).toEqual([ 'x', 'r1', 'r2', 'r3' ]);
+			expect(deferAfterId).toBeNull();
+		});
+
+		it('inserts at an explicit index', () => {
+			const { records, deferAfterId } = placeCreatedRecord(base, 'x', 1, 1, false);
+			expect(records).toEqual([ 'r1', 'x', 'r2', 'r3' ]);
+			expect(deferAfterId).toBeNull();
+		});
+
+	});
+
+	describe('record already placed by the subscription (race)', () => {
+
+		it('moves it to the creation spot and defers the head position on sorted subscriptions', () => {
+			const { records, deferAfterId } = placeCreatedRecord([ 'x', 'r1', 'r2', 'r3' ], 'x', 1, -1, true);
+			expect(records).toEqual([ 'r1', 'r2', 'r3', 'x' ]);
+			expect(deferAfterId).toBe('');
+		});
+
+		it('defers the predecessor position when placed mid-list', () => {
+			const { records, deferAfterId } = placeCreatedRecord([ 'r1', 'r2', 'x', 'r3' ], 'x', 1, -1, true);
+			expect(records).toEqual([ 'r1', 'r2', 'r3', 'x' ]);
+			expect(deferAfterId).toBe('r2');
+		});
+
+		it('moves without deferring on unsorted subscriptions', () => {
+			const { records, deferAfterId } = placeCreatedRecord([ 'x', 'r1', 'r2', 'r3' ], 'x', 1, -1, false);
+			expect(records).toEqual([ 'r1', 'r2', 'r3', 'x' ]);
+			expect(deferAfterId).toBeNull();
+		});
+
+	});
+
+	it('does not mutate the input list', () => {
+		const input = [ 'x', 'r1', 'r2' ];
+		placeCreatedRecord(input, 'x', 1, -1, true);
+		expect(input).toEqual([ 'x', 'r1', 'r2' ]);
+	});
+
+	// Full race flow: the row is moved to the creation spot for editing, then the deferred sorted
+	// position is replayed on commit - an unnamed record returns to the head (GO-7387)
+	it('restores the sorted position on commit via applySubscriptionPosition', () => {
+		const placement = placeCreatedRecord([ 'x', 'r1', 'r2', 'r3' ], 'x', 1, -1, true);
+		expect(placement.records).toEqual([ 'r1', 'r2', 'r3', 'x' ]);
+
+		const committed = applySubscriptionPosition(placement.records, 'x', placement.deferAfterId as string, false, true);
+		expect(committed).toEqual([ 'x', 'r1', 'r2', 'r3' ]);
 	});
 
 });
