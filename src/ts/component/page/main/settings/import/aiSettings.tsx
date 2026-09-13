@@ -193,12 +193,21 @@ const PageMainSettingsImportAiSettings: FC = () => {
 		};
 	};
 
-	let disclosureKey = 'popupSettingsImportAiDisclosure';
-	if (isAnytype) {
-		disclosureKey += 'Anytype';
-	};
-	if (includeContentSamples) {
-		disclosureKey += 'Samples';
+	// A local runtime is the one case where nothing leaves the machine, so the
+	// third-party egress warning would be both wrong and noisy. `custom` keeps the
+	// warning even when pointed at localhost: erring toward more warning is right
+	// when we cannot tell where the endpoint really goes.
+	let disclosureKey = 'popupSettingsImportAiLocalHint';
+
+	if (!item.isLocal) {
+		disclosureKey = 'popupSettingsImportAiDisclosure';
+
+		if (isAnytype) {
+			disclosureKey += 'Anytype';
+		};
+		if (includeContentSamples) {
+			disclosureKey += 'Samples';
+		};
 	};
 
 	return (
