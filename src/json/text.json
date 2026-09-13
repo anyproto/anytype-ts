@@ -1417,7 +1417,7 @@
 	"popupSettingsImportAiModelCustom": "Enter model name\u2026",
 	"popupSettingsImportAiModelPlaceholder": "Choose a model",
 	"popupSettingsImportAiModelMoreMemory": "more memory",
-	"popupSettingsImportAiModelSuggested": "Suggested models",
+	"popupSettingsImportAiModelRecommendedTitle": "Recommended models",
 	"popupSettingsImportAiModelsLoading": "Checking connection\u2026",
 	"popupSettingsImportAiEndpointWarning": "Enter an endpoint. AI enrichment stays off until it is set.",
 	"popupSettingsImportAiErrorUnreachable": "Can't reach this endpoint. Check the address, and that the server is running.",

@@ -856,10 +856,10 @@
 				}
 			}
 
-			// The suggestion list is several names long, so it wraps on its own side
-			// of the row instead of stretching it
-			.item.suggested { align-items: flex-start; }
-			.item.suggested {
+			// The list is several names long, so it wraps on its own side of the row
+			// instead of stretching it
+			.item.recommended { align-items: flex-start; }
+			.item.recommended {
 				.value { @include text-small; color: var(--color-text-secondary); text-align: right; max-width: 250px; }
 			}
 

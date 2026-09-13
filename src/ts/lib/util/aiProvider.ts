@@ -181,6 +181,16 @@ class UtilAiProvider {
 	};
 
 	/**
+	 * Drops embedding models from a fetched catalog. They cannot serve a chat
+	 * completion, so choosing one fails the plan step once the import is already
+	 * running. The OpenAI-compatible /v1/models the middleware reads carries no
+	 * capability field, so the id is the only signal available.
+	 */
+	filterChatModels (list: string[]): string[] {
+		return (list || []).filter(it => !String(it || '').toLowerCase().includes('embed'));
+	};
+
+	/**
 	 * Recommended models filtered down to what the provider actually serves, in
 	 * curated order. A retired model drops out on its own. With nothing fetched
 	 * yet the curated list stands in, so the menu is useful before the first

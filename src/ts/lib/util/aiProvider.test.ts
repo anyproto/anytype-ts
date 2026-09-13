@@ -357,3 +357,38 @@ describe('UtilAiProvider.applyDefaults normalisation', () => {
 	});
 
 });
+
+/**
+ * Local runtimes list whatever the user pulled, embedding models included, and
+ * the OpenAI-compatible /v1/models carries no capability field to filter on. An
+ * embedding model cannot serve a chat completion, so picking one fails at plan
+ * time - after the import has already started. Cheaper to keep them out of the
+ * picker entirely.
+ */
+describe('UtilAiProvider.filterChatModels', () => {
+
+	it('drops embedding models', () => {
+		const result = UtilAiProvider.filterChatModels([ 'gemma3:4b', 'embeddinggemma:latest', 'nomic-embed-text:latest' ]);
+
+		expect(result).toEqual([ 'gemma3:4b' ]);
+	});
+
+	it('drops them whatever the case', () => {
+		expect(UtilAiProvider.filterChatModels([ 'text-EMBEDDING-3-small' ])).toEqual([]);
+	});
+
+	it('matches anywhere in the id, including a namespaced one', () => {
+		expect(UtilAiProvider.filterChatModels([ 'nomic-ai/nomic-embed-text-v1.5-GGUF' ])).toEqual([]);
+	});
+
+	it('keeps a chat model whose name merely resembles one', () => {
+		const list = [ 'gemma4:e4b', 'qwen3.8:27b', 'gpt-6-astra' ];
+
+		expect(UtilAiProvider.filterChatModels(list)).toEqual(list);
+	});
+
+	it('handles an empty list', () => {
+		expect(UtilAiProvider.filterChatModels([])).toEqual([]);
+	});
+
+});

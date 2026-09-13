@@ -64,7 +64,7 @@ const PageMainSettingsImportAiSettings: FC = () => {
 
 				setIsLoading(false);
 				setErrorCode(code);
-				setModels(code ? [] : (message.models || []).map(it => it.id));
+				setModels(code ? [] : U.AiProvider.filterChatModels((message.models || []).map(it => it.id)));
 			});
 		}, DELAY);
 
@@ -137,7 +137,7 @@ const PageMainSettingsImportAiSettings: FC = () => {
 
 	// Shown above the selector rather than inside it: a model you do not have yet
 	// cannot be picked, but it is exactly what you need to be told about.
-	const getSuggestedText = (): string => {
+	const getRecommendedText = (): string => {
 		const list = U.AiProvider.getRecommended(providerId, models);
 
 		if (!item.isLocal || !list.length) {
@@ -172,7 +172,7 @@ const PageMainSettingsImportAiSettings: FC = () => {
 		};
 	};
 
-	const suggested = getSuggestedText();
+	const recommended = getRecommendedText();
 
 	let warning = '';
 	if (enabled && !isAnytype) {
@@ -262,10 +262,10 @@ const PageMainSettingsImportAiSettings: FC = () => {
 									</div>
 								) : ''}
 
-								{suggested ? (
-									<div className="item suggested">
-										<Label text={translate('popupSettingsImportAiModelSuggested')} />
-										<Label className="value" text={suggested} />
+								{recommended ? (
+									<div className="item recommended">
+										<Label text={translate('popupSettingsImportAiModelRecommendedTitle')} />
+										<Label className="value" text={recommended} />
 									</div>
 								) : ''}
 
