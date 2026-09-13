@@ -1,6 +1,7 @@
 import React, { forwardRef, useState } from 'react';
 import { Title, Button, Label, Icon, Error } from 'Component';
 import * as I from 'Interface';
+import Back from '../back';
 
 const PageMainSettingsImportObsidian = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -22,6 +23,7 @@ const PageMainSettingsImportObsidian = forwardRef<I.PageRef, I.PageSettingsCompo
 		<>
 			<Icon name="import/obsidian" className="logo" size={56} />
 			<Title text={U.Menu.getImportNames()[I.ImportType.Obsidian]} />
+			<Back page="importIndex" />
 			<Label className="description" text={translate('popupSettingsImportObsidianDescription')} />
 
 			<div className="inputWrapper flex">

@@ -37,14 +37,18 @@ const PageMainSettingsImportIndex = forwardRef<I.PageRef, Props>((props, ref) =>
 	};
 
 	const onTarget = () => {
-		const options: any[] = U.Space.getImportTargetList().map(it => ({
+		// Creating a channel leads the list: importing into a fresh one is a common
+		// intent, and it should not sit below an arbitrarily long list of existing ones
+		const options: any[] = [
+			{ id: ADD_ID, iconParam: { name: 'menu/action/add' }, name: translate('commonNewChannel') },
+			{ isDiv: true },
+		];
+
+		options.push(...U.Space.getImportTargetList().map(it => ({
 			...it,
 			id: it.targetSpaceId,
 			object: it,
-		}));
-
-		options.push({ isDiv: true });
-		options.push({ id: ADD_ID, iconParam: { name: 'menu/action/add' }, name: translate('commonNewChannel') });
+		})));
 
 		S.Menu.open('select', {
 			element: '#importTarget',

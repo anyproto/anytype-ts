@@ -28,7 +28,7 @@ const SORT_IDS = [
 ];
 
 const SKIP_IDS = [ 'BlockSetCarriage' ];
-const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose', 'AccountPreloadRemainingSpaces', 'AccountRecoveryState' ];
+const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose', 'AccountPreloadRemainingSpaces', 'AccountRecoveryState', 'AIListModels' ];
 
 // Errors a command answers with in the ordinary course of things: logged and reported for every
 // other code, silent for these. WorkspaceOpen 100 is "space is not ready", the expected answer

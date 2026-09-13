@@ -1,6 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
 import * as I from 'Interface';
+import Back from '../back';
 
 const PageMainSettingsImportCsv = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -116,6 +117,7 @@ const PageMainSettingsImportCsv = forwardRef<I.PageRef, I.PageSettingsComponent>
 		<div>
 			<Icon name="import/csv" className="logo" size={56} />
 			<Title text={translate('popupSettingsImportCsvTitle')} />
+			<Back page="importIndex" />
 			<Label text={translate('popupSettingsImportCsvText')} />
 
 			<div className="actionItems">

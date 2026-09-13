@@ -6,7 +6,7 @@ Handles all communication between the React frontend and the Go middleware (anyt
 
 | File | Purpose |
 |------|---------|
-| `command.ts` | All gRPC command wrappers (exported as `C.*`). Each function wraps a gRPC call with request construction and response handling. |
+| `command.ts` | All gRPC command wrappers (exported as `C.*`). Each function wraps a gRPC call with request construction and response handling. `AIListModels` doubles as provider validation — a successful model list proves the endpoint and token work, so there is no separate validate command. |
 | `dispatcher.ts` | Low-level gRPC request dispatching, event streaming, and MobX store updates from server events |
 | `mapper.ts` | Response mapping: converts gRPC protobuf responses to frontend-friendly objects |
 | `response.ts` | Response type definitions and error handling |

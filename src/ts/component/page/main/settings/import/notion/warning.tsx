@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Title, Button } from 'Component';
 import * as I from 'Interface';
+import Back from '../../back';
 
 const PageMainSettingsImportNotionWarning = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -18,6 +19,7 @@ const PageMainSettingsImportNotionWarning = forwardRef<I.PageRef, I.PageSettings
 	return (
 		<div>
 			<Title text={translate('popupSettingsImportNotionWarningTitle')} />
+			<Back page="importIndex" />
 
 			<div className="listWrapper">
 				<ol className="list">

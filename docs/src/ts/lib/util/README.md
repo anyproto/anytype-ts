@@ -1,13 +1,14 @@
 # util/ - Utility Classes
 
-18 utility classes providing helper functions across the app. Accessed via `U.*` import alias.
+19 utility classes providing helper functions across the app. Accessed via `U.*` import alias.
 
 ## Utility Classes
 
 | File | Alias | Purpose |
 |------|-------|---------|
+| `aiProvider.ts` | `U.AiProvider` | Import AI provider registry: dropdown entries (local/cloud/custom), legacy `provider` → `providerId` migration, the wire `ProviderConfig` builder, and model recommendations (one shared list for all local providers, loosely matched so the same model counts across differing ids; per-provider and exact-matched for cloud). Several entries share the `OpenAi` wire enum, so the registry — not the enum — identifies a choice |
 | `common.ts` | `U.Common` | Window dimensions, random, plural, date formatting, clipboard, deep copy |
-| `data.ts` | `U.Data` | Data loading, auth flow, subscription management, onboarding, import AI enrichment settings + `aiParams` builder |
+| `data.ts` | `U.Data` | Data loading, auth flow, subscription management, onboarding, import AI enrichment settings + `aiParams` builder (provider resolution delegated to `U.AiProvider`) |
 | `object.ts` | `U.Object` | Object CRUD, opening, routing, layout detection, type helpers |
 | `router.ts` | `U.Router` | URL navigation, space switching (on the boot paths a "space is not ready" `WorkspaceOpen` falls through to the first ready channel), history management |
 | `space.ts` | `U.Space` | Dashboard, space list (`isReady` = the start-up run's per-space state, else the spaceview's local status), participants, sharing, publishing |

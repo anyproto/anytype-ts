@@ -3,6 +3,7 @@ import { Title, Label, Button, Switch } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import ExportFilesHelp from 'Component/util/exportFilesHelp';
+import Back from '../back';
 
 const PageMainSettingsExportAnyBlockV2 = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -22,6 +23,7 @@ const PageMainSettingsExportAnyBlockV2 = forwardRef<I.PageRef, I.PageSettingsCom
 	return (
 		<>
 			<Title text={translate('popupSettingsExportAnyBlockV2Title')} />
+			<Back page="exportIndex" />
 
 			<div className="notice">
 				<Label className="name" text={translate('exportAnyBlockV2NoticeTitle')} />

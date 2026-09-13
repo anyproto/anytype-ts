@@ -23,6 +23,7 @@ export default {
 	invite:				 'https://invite.any.coop/%s#%s',
 	share: 				 'https://join.anytype.io/',
 	notionFAQ:			 'https://doc.anytype.io/anytype-docs/basics/space/import-export#notion-import-faq',
+	notionTokens:		 'https://app.notion.com/developers/tokens',
 	publishDomain:		 '%s.org',
 	publish:			 'any.coop/%s',
 	api:				 '127.0.0.1:31009',

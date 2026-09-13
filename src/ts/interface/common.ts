@@ -144,9 +144,58 @@ export enum AiProvider {
 	Anytype		 = 100,
 };
 
+/**
+ * Error codes from Rpc.AI.ListModels. The call doubles as config validation, so
+ * these are what tell the user which field to fix.
+ */
+export enum AiListModelsErrorCode {
+	None			 = 0,
+	Unknown			 = 1,
+	BadInput		 = 2,
+	RateLimit		 = 100,
+	NotReachable	 = 101,
+	ModelNotFound	 = 102,
+	AuthRequired	 = 103,
+};
+
+/**
+ * A model worth suggesting. `key` doubles as the match token and as the id shown
+ * when the user does not have it yet; `noteKey` is a translation key, not text.
+ */
+export interface AiRecommendedModel {
+	key: string;
+	name: string;
+	noteKey?: string;
+};
+
+/** A recommendation resolved against what the provider actually reported. */
+export interface AiRecommendedResult {
+	id: string;
+	name: string;
+	noteKey?: string;
+	isInstalled: boolean;
+};
+
+/**
+ * One entry in the provider dropdown. `provider` is the wire enum the middleware
+ * understands; several entries share one (every OpenAI-compatible service rides
+ * on OpenAi), which is why `id` — not `provider` — is what gets persisted.
+ */
+export interface AiProviderItem {
+	id: string;
+	name: string;
+	provider: AiProvider;
+	endpoint: string;
+	isLocal?: boolean;
+	isCustom?: boolean;
+	isAnytype?: boolean;
+	needsToken?: boolean;
+	recommended?: AiRecommendedModel[];
+};
+
 export interface ImportAiSettings {
 	enabled: boolean;
-	provider: AiProvider;
+	providerId: string;
 	endpoint: string;
 	model: string;
 	token: string;

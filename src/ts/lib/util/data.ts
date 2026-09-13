@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import object from './object';
+import aiProvider from './aiProvider';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
@@ -1643,18 +1644,7 @@ class UtilData {
 	 * Returns persisted AI import settings with defaults applied.
 	 */
 	getImportAiSettings (): I.ImportAiSettings {
-		const obj = Storage.get('importAi') || {};
-		const dflt = this.isImportAiAnytypeAvailable() ? I.AiProvider.Anytype : I.AiProvider.Ollama;
-		const provider = (undefined === obj.provider) ? dflt : Number(obj.provider);
-
-		return {
-			enabled: Boolean(obj.enabled),
-			provider: (provider == I.AiProvider.Anytype) && !this.isImportAiAnytypeAvailable() ? I.AiProvider.Ollama : provider,
-			endpoint: String(obj.endpoint || ''),
-			model: String(obj.model || ''),
-			token: String(obj.token || ''),
-			includeContentSamples: Boolean(obj.includeContentSamples),
-		};
+		return aiProvider.applyDefaults(Storage.get('importAi'), this.isImportAiAnytypeAvailable());
 	};
 
 	setImportAiSettings (settings: Partial<I.ImportAiSettings>): void {
@@ -1673,7 +1663,7 @@ class UtilData {
 			return null;
 		};
 
-		if (settings.provider == I.AiProvider.Anytype) {
+		if (settings.providerId == 'anytype') {
 			if (!this.isImportAiAnytypeAvailable()) {
 				return null;
 			};
@@ -1691,18 +1681,14 @@ class UtilData {
 			};
 		};
 
-		if (!settings.model || ((settings.provider == I.AiProvider.OpenAi) && !settings.token)) {
+		const config = aiProvider.resolveConfig(settings);
+
+		if (!config) {
 			return null;
 		};
 
 		return {
-			config: {
-				provider: settings.provider,
-				endpoint: settings.endpoint,
-				model: settings.model,
-				token: settings.token,
-				temperature: 0,
-			},
+			config,
 			includeContentSamples: settings.includeContentSamples,
 		};
 	};
@@ -1715,7 +1701,7 @@ class UtilData {
 
 		return {
 			aiEnabled: enabled,
-			aiProvider: enabled ? (this.getImportAiSettings().provider == I.AiProvider.Anytype ? 'anytype' : 'byok') : '',
+			aiProvider: enabled ? (this.getImportAiSettings().providerId == 'anytype' ? 'anytype' : 'byok') : '',
 		};
 	};
 
