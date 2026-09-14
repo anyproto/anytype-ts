@@ -11,6 +11,7 @@ import * as I from 'Interface';
 import * as M from 'Model';
 import { liveAddIndex } from 'Lib/util/chatWindow';
 import { applySubscriptionPosition } from 'Lib/util/subscription';
+import { approvalSpaces } from 'Lib/linkApproval';
 
 const SORT_IDS = [
 	'BlockAdd',
@@ -306,6 +307,7 @@ class Dispatcher {
 					// every session receives this event
 					Renderer.send('showLinkApproval', {
 						...mapped,
+						spaces: approvalSpaces(U.Menu.getVaultItems(), S.Auth.account?.info?.techSpaceId || ''),
 						theme: S.Common.getThemeClass(),
 						lang: S.Common.interfaceLang,
 					});

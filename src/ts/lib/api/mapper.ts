@@ -995,6 +995,11 @@ export const Mapper = {
 				expireAt: obj.expireAt,
 				scope: obj.scope as number,
 				isActive: obj.isActive,
+				grant: obj.grant ? {
+					spaceIds: [ ...(obj.grant.spaceIds || []) ],
+					allSpaces: obj.grant.allSpaces === true,
+					perm: Number(obj.grant.perm ?? I.LocalApiPermission.Read),
+				} : undefined,
 			};
 		},
 
@@ -1409,6 +1414,8 @@ export const Mapper = {
 			return {
 				appName: obj.name,
 				scope: obj.scope as number,
+				expireAt: obj.expireAt || 0,
+				grant: obj.grant ? { ...obj.grant, spaceIds: [ ...obj.grant.spaceIds ] } : undefined,
 			};
 		},
 
@@ -1486,6 +1493,7 @@ export const Mapper = {
 			return {
 				clientInfo: Mapper.From.AccountLinkClientInfo(obj.clientInfo || {}),
 				scope: Number(obj.scope) || 0,
+				requestedPerm: obj.requestedPerm == I.LocalApiPermission.ReadWrite ? I.LocalApiPermission.ReadWrite : I.LocalApiPermission.Read,
 			};
 		},
 

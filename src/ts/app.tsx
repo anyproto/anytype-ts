@@ -4,13 +4,14 @@ import * as Sentry from '@sentry/browser';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
-import { configure } from 'mobx';
+import { configure, reaction, comparer } from 'mobx';
 import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft, RecoveryStatus } from 'Component';
 import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
 import Animation from 'Lib/animation';
+import { approvalSpaces } from 'Lib/linkApproval';
 
 configure({ enforceActions: 'never', reactionScheduler: (f) => scheduleReaction(f) });
 
@@ -682,9 +683,9 @@ const App: FC = () => {
 	 * alone and is handed to main, which shows it in the window.
 	 */
 	const onLinkApprovalDecision = (e: any, param: any) => {
-		const { processPath, origin, allow } = param || {};
+		const { processPath, origin, allow, grant } = param || {};
 
-		C.AccountLocalLinkApproveChallenge(processPath, origin, allow, (message: any) => {
+		C.AccountLocalLinkApproveChallenge(processPath, origin, allow, grant, (message: any) => {
 			Renderer.send('linkApprovalResult', {
 				processPath,
 				origin,
@@ -700,8 +701,14 @@ const App: FC = () => {
 
 	useEffect(() => {
 		init();
+		const disposeApprovalSpaces = reaction(
+			() => approvalSpaces(U.Menu.getVaultItems(), S.Auth.account?.info?.techSpaceId || ''),
+			spaces => Renderer.send('linkApprovalSpaces', { spaces }),
+			{ equals: comparer.structural },
+		);
 
 		return () => {
+			disposeApprovalSpaces();
 			unregisterIpcEvents();
 		};
 	}, []);

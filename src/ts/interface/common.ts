@@ -484,19 +484,6 @@ export interface AppConfig {
 	[key: string]: any;
 };
 
-/**
- * Identity of an app asking to pair with the local API, as sent in
- * Event.Account.LinkApprovalRequest. Only origin and processPath/processName are attributable;
- * name is chosen by the caller and signatureVerified is not implemented by middleware yet.
- */
-export interface LinkClientInfo {
-	processName: string;
-	processPath: string;
-	name: string;
-	origin: string;
-	signatureVerified: boolean;
-};
-
 export interface AppInfo {
 	hash: string;
 	apiKey: string;
@@ -505,6 +492,7 @@ export interface AppInfo {
 	expireAt: number;
 	scope: LocalApiScope;
 	isActive: boolean;
+	grant?: I.LinkAppGrant;
 };
 
 export enum ImageSize {

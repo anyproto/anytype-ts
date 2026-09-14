@@ -418,10 +418,19 @@
 
 	> .pageSettingsApi {
 		.title { margin: 0px !important; }
-		.titleWrapper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+		.titleWrapper { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+		.apiKeyIntro { @include text-small; color: var(--color-text-secondary); margin: 0 0 24px; }
+		.keyMeta { display: block; @include text-small; color: var(--color-text-secondary); margin-top: 4px; white-space: normal; }
+		.appDetails { min-width: 0; }
+		.apiKeyAccess { display: block; width: 100%; min-width: 0; padding: 4px 0; border: 0; text-align: left; font: inherit; color: inherit; background: none; }
+		.apiKeyAccess:hover { color: var(--color-system-accent-100); }
+		.apiKeyAccess:focus-visible { outline: 2px solid var(--color-system-accent-100); outline-offset: 2px; border-radius: 4px; }
+		.colAccess .keyMeta { @include text-overflow-nw; }
 
 		.items {
-            .row { grid-template-columns: minmax(0, 1fr) 150px 150px 150px 28px; }
+            .row { grid-template-columns: minmax(0, 1fr) 70px 105px 105px minmax(0, 1fr) 28px; align-items: center; }
+			.col { min-width: 0; }
+			.col.colExpire { @include text-overflow-nw; }
 		}
 	}
 

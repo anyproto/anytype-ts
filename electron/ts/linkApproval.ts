@@ -1,23 +1,7 @@
-/** Caller identity as it arrived in Event.Account.LinkApprovalRequest. Fields are echoed back to
- * heart verbatim: never trim, lowercase or otherwise normalize them. */
-export interface ClientInfo {
-	processName?: string;
-	processPath?: string;
-	name?: string;
-	origin?: string;
-	signatureVerified?: boolean;
-};
+import type { LinkClientInfo as ClientInfo, LinkApprovalRequest as ApprovalRequest, LinkApprovalPayload as ApprovalPayload, LinkApprovalDecision, LinkApprovalSpace } from '../../src/ts/interface/linkApproval';
+import { isValidLinkGrant } from '../../src/ts/lib/linkApprovalGrant';
 
-export interface ApprovalRequest {
-	clientInfo: ClientInfo;
-	scope: number;
-	theme?: string;
-	lang?: string;
-};
-
-export interface ApprovalPayload extends ApprovalRequest {
-	key: string;
-};
+export type { ClientInfo, ApprovalRequest, ApprovalPayload };
 
 /** Everything the manager needs from the outside world, injected so the queue logic stays testable
  * without Electron. */
@@ -25,6 +9,8 @@ export interface LinkApprovalHandlers {
 	open (payload: ApprovalPayload): void;
 	close (key: string): void;
 	code (key: string, challenge: string): void;
+	error (key: string): void;
+	spaces (key: string, spaces: LinkApprovalSpace[]): void;
 	liveTargets (): number[];
 	sendDecision (targetId: number, payload: any): boolean;
 };
@@ -37,8 +23,8 @@ interface Entry {
 };
 
 /** Backstops only: dismissal is driven by Event.Account.LinkApprovalHide. They exist so a lost event
- * cannot strand an always-on-top window, and sit above heart's own 60s / 5min expiry. */
-export const PENDING_BACKSTOP_MS = 90 * 1000;
+ * cannot strand an always-on-top window, and sit above heart's own 180s / 5min expiry. */
+export const PENDING_BACKSTOP_MS = 210 * 1000;
 export const CODE_BACKSTOP_MS = 6 * 60 * 1000;
 
 export const approvalKey = (processPath?: string, origin?: string): string => {
@@ -77,16 +63,31 @@ class LinkApprovalManager {
 
 	/** The user pressed Allow or Deny in the approval window. The RPC lives in the renderer — main has
 	 * no gRPC session — so the decision is relayed to a full-scope session to be sent on. */
-	decide (param: { processPath?: string; origin?: string; allow: boolean }): void {
-		const { processPath, origin, allow } = param;
+	decide (param: LinkApprovalDecision): void {
+		const { processPath, origin, allow, grant } = param;
 		const key = approvalKey(processPath, origin);
 
 		if (!this.current || (this.current.key != key) || this.current.decided) {
 			return;
 		};
 
+		// JsonAPI grants are chosen in the desktop. Limited (clipper) requests carry no grant.
+		const isJson = this.current.request.scope == 1;
+		const available = new Set((this.current.request.spaces || []).map(space => space.id));
+		if (allow && (isJson ? (
+			!isValidLinkGrant(grant) || grant.spaceIds.some(id => !available.has(id))
+		) : (this.current.request.scope != 0 || !!grant))) {
+			this.handlers.error(key);
+			return;
+		};
+
+		const decision: LinkApprovalDecision = { processPath, origin, allow };
+		if (allow && isJson) {
+			decision.grant = { ...grant, spaceIds: [ ...grant.spaceIds ] };
+		};
+
 		const targets = this.relayTargets(this.current.sourceId);
-		const sent = targets.some(id => this.handlers.sendDecision(id, { processPath, origin, allow }));
+		const sent = targets.some(id => this.handlers.sendDecision(id, decision));
 
 		if (!sent) {
 			// nothing left to send through: heart expires the pending request on its own
@@ -106,6 +107,13 @@ class LinkApprovalManager {
 			return;
 		};
 
+		// BAD_INPUT leaves the challenge pending in Heart. Let the user correct the grant.
+		if (error?.code == 2) {
+			this.current.decided = false;
+			this.handlers.error(key);
+			return;
+		};
+
 		if (error || !challenge) {
 			this.drop(key);
 			return;
@@ -113,6 +121,23 @@ class LinkApprovalManager {
 
 		this.handlers.code(key, challenge);
 		this.setBackstop(key, CODE_BACKSTOP_MS);
+	};
+
+	/** Keep an open picker in sync with its reporting renderer's account catalog. */
+	updateSpaces (sourceId: number, spaces: LinkApprovalSpace[]): void {
+		const live = new Set(this.handlers.liveTargets());
+		[ this.current, ...this.queue ].filter(Boolean).forEach(entry => {
+			if (entry.sourceId != sourceId) {
+				if (live.has(entry.sourceId) || !live.has(sourceId)) {
+					return;
+				};
+				entry.sourceId = sourceId;
+			};
+			entry.request.spaces = spaces;
+			if (entry == this.current) {
+				this.handlers.spaces(entry.key, spaces);
+			};
+		});
 	};
 
 	/** Event.Account.LinkApprovalHide: the request was solved, denied or expired. */

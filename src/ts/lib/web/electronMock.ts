@@ -318,7 +318,7 @@ class ElectronMock {
 			});
 		});
 
-		['showLinkApproval', 'hideLinkApproval', 'linkApprovalResult'].forEach(cmd => {
+		['showLinkApproval', 'hideLinkApproval', 'linkApprovalResult', 'linkApprovalSpaces'].forEach(cmd => {
 			handlers.set(cmd, () => {
 				console.log('[Web] Link approval not supported:', cmd);
 				return true;

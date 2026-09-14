@@ -28,6 +28,8 @@ const LinkApproval = new LinkApprovalManager({
 	open: payload => { WindowManager.createApprovalWindow(payload); },
 	close: key => WindowManager.closeApprovalWindow(key),
 	code: (key, challenge) => WindowManager.showApprovalCode(key, challenge),
+	error: key => WindowManager.showApprovalError(key),
+	spaces: (key, spaces) => WindowManager.updateApprovalSpaces(key, spaces),
 	liveTargets: () => WindowManager.getAppWindowIds(),
 	sendDecision: (id, payload) => WindowManager.sendToWindowTab(id, 'link-approval-decision', payload),
 });
@@ -646,6 +648,10 @@ class Api {
 
 	showLinkApproval (win: AppWindow, param: Record<string, any>): void {
 		LinkApproval.request(param as any, win.id);
+	};
+
+	linkApprovalSpaces (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.updateSpaces(win.id, param.spaces || []);
 	};
 
 	hideLinkApproval (win: AppWindow, param: Record<string, any>): void {

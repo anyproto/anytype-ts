@@ -1,5 +1,8 @@
 import { describe, test, expect } from 'vitest';
-import { approvalLabel, approvalName, approvalSource, NAME_MAX_LENGTH } from './linkApproval';
+import { approvalLabel, approvalName, approvalSource, approvalSpaces, approvalThemeClass, NAME_MAX_LENGTH } from './linkApproval';
+import UString from './util/string';
+
+const U = { String: UString };
 
 const info = (param: any) => Object.assign({
 	processName: '',
@@ -68,6 +71,40 @@ describe('approvalLabel', () => {
 
 	test('returns an empty label when the caller is fully anonymous', () => {
 		expect(approvalLabel(info({}))).toBe('');
+	});
+
+});
+
+describe('approvalSpaces', () => {
+	test('offers only active user spaces, with real space IDs rather than space-view IDs', () => {
+		expect(approvalSpaces([
+			{ id: 'view-a', targetSpaceId: 'a', name: 'Work', iconEmoji: '📒', isAccountActive: true },
+			{ id: 'duplicate', targetSpaceId: 'a', name: 'Work', isAccountActive: true },
+			{ targetSpaceId: 'tech', name: 'Account data', isAccountActive: true },
+			{ targetSpaceId: 'left', name: 'Left space', isAccountActive: false },
+			{ name: 'Incomplete', isAccountActive: true },
+		], 'tech')).toEqual([ { id: 'a', name: 'Work', iconEmoji: '📒' } ]);
+	});
+});
+
+describe('approvalThemeClass', () => {
+
+	// The dark stylesheet is scoped to html.themeDark, but the event carries the raw theme id
+	// ('dark'). Setting that straight onto the element matches no rule, so the window renders
+	// light while the app is dark.
+	test('derives the class the stylesheet targets, not the raw theme id', () => {
+		expect(approvalThemeClass('dark')).toBe('themeDark');
+	});
+
+	test('treats an absent theme as the light default, with no class', () => {
+		expect(approvalThemeClass('')).toBe('');
+		expect(approvalThemeClass(undefined)).toBe('');
+	});
+
+	test('agrees with the derivation the main window uses', () => {
+		[ 'dark', 'light' ].forEach(id => {
+			expect(approvalThemeClass(id)).toBe(U.String.toCamelCase(`theme-${id}`));
+		});
 	});
 
 });

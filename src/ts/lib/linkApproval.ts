@@ -38,3 +38,31 @@ export const approvalLabel = (clientInfo: I.LinkClientInfo): string => {
 
 	return list.find(it => !!it) || '';
 };
+
+/** Preserve the vault's ordering while excluding spaces that cannot be granted to an app. */
+export const approvalSpaces = (spaces: any[], techSpaceId: string): I.LinkApprovalSpace[] => {
+	const seen = new Set<string>();
+
+	return spaces.filter(space => {
+		const id = space.targetSpaceId;
+		if (!id || (id == techSpaceId) || !space.isAccountActive || seen.has(id)) {
+			return false;
+		};
+		seen.add(id);
+		return true;
+	}).map(space => ({
+		id: space.targetSpaceId,
+		name: String(space.name || ''),
+		iconEmoji: String(space.iconEmoji || ''),
+	}));
+};
+
+/**
+ * The standalone window sets its own theme class, so it has to derive the same name the app does:
+ * addBodyClass('theme', id) camel-cases `theme-<id>`. The event carries the raw id, and an empty
+ * one means the light theme, which carries no class.
+ */
+export const approvalThemeClass = (theme?: string): string => {
+	const v = String(theme || '').trim();
+	return v ? `theme${v.charAt(0).toUpperCase()}${v.slice(1)}` : '';
+};

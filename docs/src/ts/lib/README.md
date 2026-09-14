@@ -36,7 +36,8 @@ Application infrastructure: API communication, constants, services, utilities, a
 | `sound.ts` | `Sound`, `SYSTEM_SOUND_ID` | Audio playback (bongo, clave, chimes) |
 | `scrollOnMove.ts` | `scrollOnMove` | Auto-scroll when dragging near viewport edges |
 | `reactionScheduler.ts` | `scheduleReaction`, `setReactionsPaused` | Pauses MobX observer re-renders in inactive Electron tabs |
-| `linkApproval.ts` | `approvalName`, `approvalLabel` | Presentation rules for local-link pairing prompts: attributable identity first, caller-supplied name clamped |
+| `linkApproval.ts` | `approvalName`, `approvalLabel`, `approvalSpaces` | Caller identity and active user-space catalog for local-link approval; excludes the technical space |
+| `linkApprovalGrant.ts` | `linkApprovalGrant`, `isValidLinkGrant` | Explicit space IDs or dynamic all-spaces access, with read/edit permission; shared with Electron main |
 
 ## Index Exports
 
@@ -50,4 +51,5 @@ The `index.ts` re-exports everything above plus:
 - `history.test.ts` - History navigation tests
 - `mark.test.ts` - Mark parsing/serialization tests
 - `reactionScheduler.test.ts` - Reaction scheduler pause/resume tests
-- `linkApproval.test.ts` - Local-link caller label and name-clamping tests
+- `linkApproval.test.ts` - Local-link caller identity and space-catalog filtering tests
+- `api/linkApproval.test.ts` - Approval RPC grant payloads and grant validation

@@ -12,6 +12,7 @@ import MenuManager from './menu';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
 import { AppWindow, TabView, TabData, CreateMainOptions, CreateTabOptions, SavedTabState, SavedWindowsState, Bounds } from './types';
+import type { LinkApprovalSpace } from '../../src/ts/interface/linkApproval';
 
 const port: string = Util.getPort();
 
@@ -375,18 +376,24 @@ class WindowManager {
 		const { width, height } = this.getScreenSize();
 
 		const win = this.create({ ...options, isApproval: true, approvalKey: options.key, approvalPayload: options }, {
-			backgroundColor: '',
 			width: 424,
-			height: 288,
+			// The heights below include the 34px the Anytype wordmark adds above the title.
+			height: options.scope == 1 ? Math.min(602, height - 40) : 322,
 			x: Math.floor(width / 2 - 212),
-			y: Math.floor(height - 338),
-			titleBarStyle: 'hidden',
+			y: Math.max(20, Math.floor(height - (options.scope == 1 ? 652 : 372))),
+			// Fully frameless: 'hidden' would still render the macOS traffic lights. Deny and the
+			// 180s expiry are the ways out, so the prompt needs no window controls.
+			frame: false,
+			titleBarStyle: 'default',
 			alwaysOnTop: true,
 			focusable: true,
 			skipTaskbar: true,
 		});
 
-		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+		// skipTransformProcessType: without it Electron flips the process to UIElementApplication to
+		// float over other apps' fullscreen Spaces, which drops the Dock icon and the menu bar for
+		// the whole app — and app.dock.show() does not bring them back (electron#26350).
+		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true });
 		win.loadURL(this.getUrlForApprovalWindow());
 		win.setMenu(null);
 		win.showInactive(); // show inactive to prevent focus loose from other app
@@ -418,6 +425,18 @@ class WindowManager {
 
 		if (win) {
 			win.webContents.send('linkApprovalCode', { key, challenge });
+		};
+	};
+
+	showApprovalError (key: string): void {
+		this.getApprovalWindow(key)?.webContents.send('linkApprovalError', { key });
+	};
+
+	updateApprovalSpaces (key: string, spaces: LinkApprovalSpace[]): void {
+		const win = this.getApprovalWindow(key);
+		if (win) {
+			win.approvalPayload = { ...win.approvalPayload, spaces };
+			win.webContents.send('linkApprovalSpaces', { key, spaces });
 		};
 	};
 

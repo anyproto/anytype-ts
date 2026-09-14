@@ -1,6 +1,6 @@
 # form/ - Reusable Form Controls
 
-Form input components used across auth flows, settings, and modals. **30 files** (15 components + 15 Storybook stories).
+Form input components used across auth flows, settings, and modals.
 
 ## Components
 
@@ -13,6 +13,8 @@ Form input components used across auth flows, settings, and modals. **30 files**
 | `switch.tsx` | Toggle switch |
 | `tabSwitch.tsx` | Tab-style toggle |
 | `select.tsx` | Dropdown selection (opens menu) |
+| `appGrantFields.tsx` | Shared space filter, multi-selection, explicit all-spaces access, and read/write permission controls |
+| `apiKeyEditor.tsx` | Create API v2 keys or edit grants in place, with optional creation-time expiry and legacy compatibility |
 | `filter.tsx` | Filter input for menus |
 | `pin.tsx` | PIN code entry (multiple digit inputs) |
 | `editable.tsx` | Inline contentEditable text |
@@ -25,7 +27,7 @@ Form input components used across auth flows, settings, and modals. **30 files**
 
 ## Storybook Stories
 
-Each component (except `inputWithFile.tsx`) has a corresponding `.stories.tsx` file for Storybook documentation and visual testing.
+Most components have a corresponding `.stories.tsx` file for Storybook documentation and visual testing. The shared grant picker is covered by API-key editor and LocalLink approval stories.
 
 ## Comment Editor (`commentEditor.tsx`)
 
