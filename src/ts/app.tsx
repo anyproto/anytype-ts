@@ -153,7 +153,10 @@ const App: FC = () => {
 
 			U.Perf.step('boot:server', 'boot:init');
 
-			dispatcher.init(address);
+			// The helper requires this on the account-bootstrap RPCs. The main
+			// process gave it to the helper on its stdin before it started serving,
+			// so it is published by the time any address exists
+			dispatcher.init(address, getGlobal('localApiSecret'));
 			Renderer.send('getInitData', tabId()).then((data: any) => {
 				U.Perf.step('boot:init-data', 'boot:init');
 				onInit(data);

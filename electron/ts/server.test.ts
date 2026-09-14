@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
 	showErrorBox: vi.fn(),
 	showItemInFolder: vi.fn(),
 	writeFileSync: vi.fn(),
+	log: vi.fn(),
 }));
 
 vi.mock('child_process', () => ({
@@ -41,6 +42,7 @@ vi.mock('./util', () => ({
 	default: {
 		dateForFile: () => 'test-date',
 		logPath: () => '/tmp',
+		log: mocks.log,
 	},
 }));
 
@@ -124,6 +126,101 @@ describe('Server.start', () => {
 		expect(server.isRunning).toBe(true);
 		expect(server.getAddress()).toBe('http://127.0.0.1:1234');
 		await expect(server.whenReady()).resolves.toBe('http://127.0.0.1:1234');
+	});
+
+	test('hands the helper a fresh local api secret before it can publish its address', async () => {
+		const cp = new FakeChildProcess();
+		const server = new Server();
+		const writes = vi.spyOn(cp.stdin, 'write');
+
+		mocks.spawn.mockReturnValueOnce(cp);
+
+		const started = server.start(binPath, workingDir);
+
+		await vi.waitFor(() => expect(mocks.spawn).toHaveBeenCalledOnce());
+
+		// The helper reads the secret before it serves, so nothing may precede it
+		// on the pipe: the first bootstrap call must never outrun it
+		expect(writes.mock.calls[0][0]).toBe(`secret ${server.getSecret()}\n`);
+
+		// 32 CSPRNG bytes, URL-safe base64, unpadded
+		expect(server.getSecret()).toMatch(/^[A-Za-z0-9_-]{43}$/);
+
+		cp.stdout.write(readyLine(1234));
+
+		await expect(started).resolves.toBe(true);
+		expect(cp.stdin.writableEnded).toBe(false);
+	});
+
+	test('starts anyway when the helper stdin is broken before the secret lands', async () => {
+		const cp = new FakeChildProcess();
+		const server = new Server();
+
+		vi.spyOn(console, 'error').mockImplementation(() => {});
+		vi.spyOn(cp.stdin, 'write').mockImplementation(() => {
+			throw new Error('EPIPE');
+		});
+
+		// An undelivered secret leaves the helper permissive today and unreachable
+		// once heart flips to fail-closed; either way a start() that never settles
+		// is worse, and the failure has to be diagnosable after the fact
+		await expect(startReady(server, cp)).resolves.toBe(true);
+		expect(mocks.log).toHaveBeenCalledWith('error', expect.stringContaining('local api secret'), expect.stringContaining('EPIPE'));
+	});
+
+	test('does not let a stdin error take down the main process', async () => {
+		const cp = new FakeChildProcess();
+		const server = new Server();
+
+		vi.spyOn(console, 'error').mockImplementation(() => {});
+
+		await startReady(server, cp);
+
+		expect(() => cp.stdin.emit('error', new Error('EPIPE'))).not.toThrow();
+	});
+
+	test('mints a new local api secret for every launch of the same server', async () => {
+		const server = new Server();
+		const first = new FakeChildProcess();
+
+		await startReady(server, first);
+
+		const previous = server.getSecret();
+
+		first.exitCode = 0;
+		await server.stop();
+		await startReady(server, new FakeChildProcess(), 1235);
+
+		expect(server.getSecret()).not.toBe(previous);
+	});
+
+	test('keeps the Windows shutdown command behind the secret on the shared pipe', async () => {
+		setPlatform('win32');
+
+		const cp = new FakeChildProcess();
+		const server = new Server();
+		const writes = vi.spyOn(cp.stdin, 'write');
+
+		await startReady(server, cp);
+
+		const stopped = server.stop();
+
+		cp.exit();
+		await expect(stopped).resolves.toBe(true);
+
+		// One ordered stream carries both: the helper reads the secret line first
+		// and only then sees the shutdown command
+		expect(writes.mock.calls.map(it => it[0])).toEqual([ `secret ${server.getSecret()}\n`, 'shutdown\n' ]);
+	});
+
+	test('has no local api secret for an externally started helper', () => {
+		// ANYTYPE_USE_SIDE_SERVER adopts a helper we never spawned: no parent pipe
+		// to prove ownership with, so there is nothing to attach to calls
+		const server = new Server();
+
+		server.setAddress('http://127.0.0.1:1234');
+
+		expect(server.getSecret()).toBe('');
 	});
 
 	test('does not leak GOLOG_FILE into the main process environment', async () => {

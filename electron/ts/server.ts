@@ -1,5 +1,6 @@
 import path from 'path';
 import childProcess from 'child_process';
+import crypto from 'crypto';
 import fs from 'fs';
 import { app, dialog, shell } from 'electron';
 import Util from './util';
@@ -8,6 +9,11 @@ const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const winShutdownStdinMessage = 'shutdown\n';
 const parentLifelineEnv = 'ANYTYPE_PARENT_LIFELINE';
 const parentLifelineStdin = 'stdin';
+// The helper requires this value on the account-bootstrap RPCs. It travels on
+// the stdin pipe, the one channel only its parent holds: not in the process
+// table like argv, not readable cross-user like an env var
+const localApiSecretStdinPrefix = 'secret ';
+const localApiSecretBytes = 32;
 // Once the lifeline reports the owner is gone, the helper arms its own 10s
 // hard-exit deadline, so leave room for that path to win and keep SIGKILL a
 // last resort. The POSIX signal path has no deadline on the helper side,
@@ -21,6 +27,7 @@ export class Server {
 
 	cp: childProcess.ChildProcess | null = null;
 	address: string = '';
+	secret: string = '';
 	isRunning: boolean = false;
 	stopTriggered: boolean = false;
 	stopPromise: Promise<boolean> | null = null;
@@ -56,6 +63,9 @@ export class Server {
 		};
 
 		console.log('[Server]: start', binPath, workingDir);
+
+		// Fresh per launch, never persisted and never logged
+		this.secret = crypto.randomBytes(localApiSecretBytes).toString('base64url');
 
 		const logPath = Util.logPath();
 		const env: NodeJS.ProcessEnv = {
@@ -100,6 +110,8 @@ export class Server {
 				};
 
 				const cp = this.cp;
+
+				this.sendSecret(cp);
 
 				cp.on('error', (err: any) => {
 					if (this.cp !== cp) {
@@ -334,6 +346,48 @@ export class Server {
 		});
 
 		return stopPromise;
+	};
+
+	/**
+	 * Hands the helper its per-launch local API secret, as the first line on
+	 * its stdin. Ordering is the point: the helper waits for this line before
+	 * it serves, so no bootstrap call of ours can outrun it.
+	 */
+	sendSecret (cp: childProcess.ChildProcess): void {
+		// Logged through Util so it survives a packaged launch, where console
+		// output goes nowhere: an undelivered secret leaves the helper permissive
+		// today and unreachable once heart flips the gate to fail-closed, and
+		// this is the only trace of why
+		const failed = (err?: Error) => {
+			Util.log('error', '[Server] Failed to deliver the local api secret:', err ? err.toString() : 'helper has no stdin');
+		};
+
+		if (!cp.stdin) {
+			failed();
+			return;
+		};
+
+		// A helper that died between spawn and this write leaves a broken pipe,
+		// which both throws here and emits 'error'. Unhandled, that error is
+		// fatal to the main process
+		cp.stdin.on('error', (err: Error) => {
+			Util.log('error', '[Server] Helper stdin error:', err.toString());
+		});
+
+		// Never log the value itself
+		try {
+			cp.stdin.write(`${localApiSecretStdinPrefix}${this.secret}\n`, (err) => {
+				if (err) {
+					failed(err);
+				};
+			});
+		} catch (err: any) {
+			failed(err);
+		};
+	};
+
+	getSecret (): string {
+		return this.secret;
 	};
 
 	getAddress (): string {
