@@ -11,7 +11,7 @@ import UpdateManager from './update';
 import MenuManager from './menu';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
-import { AppWindow, TabView, TabData, CreateMainOptions, CreateTabOptions, SavedTabState, SavedWindowsState, Bounds } from './types';
+import { AppWindow, TabView, TabData, TabUpdateData, CreateMainOptions, CreateTabOptions, SavedTabState, SavedWindowsState, Bounds } from './types';
 
 const port: string = Util.getPort();
 
@@ -605,7 +605,7 @@ class WindowManager {
 		Util.sendToAllTabs(win, 'set-active-tab', id);
 	};
 
-	updateTab (win: AppWindow, id: string, data: Partial<TabData>): void {
+	updateTab (win: AppWindow, id: string, update: TabUpdateData): void {
 		id = String(id || '');
 
 		if (!id || !win.views) {
@@ -617,7 +617,12 @@ class WindowManager {
 			return;
 		};
 
+		const { token, ...data } = update || {};
+
 		view.data = Object.assign(view.data || {}, data);
+		if (token !== undefined) {
+			view.token = token;
+		};
 		Util.send(win, 'update-tab', { id: view.id, data: view.data });
 	};
 
