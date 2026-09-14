@@ -12,6 +12,7 @@ Electron main process files for desktop app integration. TypeScript source in `t
 - `update.ts` - Auto-update logic
 - `util.ts` - Utility functions (paths, platform detection, logging)
 - `window.ts` - Window management (create, close, focus, tabs, local-link approval window)
+- `download.ts` - Gateway file downloads: queues transfers one at a time (electron-dl reports concurrent ones over each other), broadcasts per-file progress and one terminal event, and cancels a running or queued transfer by id
 - `linkApproval.ts` - Local-link pairing prompts: deduplicates requests, queues prompts, validates user-chosen space grants, updates the space catalog, and keeps BAD_INPUT responses open for correction
 - `safeStorage.ts` - Electron safe storage wrapper
 - `types.ts` - TypeScript type definitions

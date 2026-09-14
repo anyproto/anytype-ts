@@ -1,6 +1,7 @@
 import React, { FC, memo, useRef, useEffect, useState, useCallback } from 'react';
 import Icon from 'Component/util/icon';
 import Label from 'Component/util/label';
+import Download from 'Lib/download';
 import * as I from 'Interface';
 
 const AUTO_EXPAND = true;
@@ -128,6 +129,8 @@ export interface ProgressItemProps {
 	id: string;
 	type: I.ProgressType;
 	canCancel: boolean;
+	subtitle?: string;
+	tooltip?: string;
 	isError: boolean;
 	current?: number;
 	total?: number;
@@ -136,7 +139,8 @@ export interface ProgressItemProps {
 	onCancel?: (id: string) => void;
 };
 
-export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, isError, current, total, error, statistic, onCancel }: ProgressItemProps) => {
+export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, isError, current, total, error, statistic, subtitle, tooltip, onCancel }: ProgressItemProps) => {
+	const nodeRef = useRef<HTMLDivElement>(null);
 	const cn = [ 'item' ];
 	const iconName = getIconName(type);
 	const label = statistic ? translate(`importPhase${statistic.phase}`) : translate(U.String.toCamelCase(`progress-${type}`));
@@ -145,7 +149,7 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 	const hasIssues = Boolean(warningCount || errorCount);
 
 	// currentItem is user content: rendered as text, never logged or sent to analytics
-	const currentItem = statistic?.currentItem || '';
+	const currentItem = subtitle || statistic?.currentItem || '';
 
 	if (canCancel) {
 		cn.push('canCancel');
@@ -160,6 +164,19 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 			onCancel(id);
 		} else {
 			C.ProcessCancel(id);
+		};
+	};
+
+	// A row that stands for several files keeps their detail behind a hover
+	const handleMouseEnter = () => {
+		if (tooltip) {
+			Preview.tooltipShow({ text: tooltip, element: nodeRef.current });
+		};
+	};
+
+	const handleMouseLeave = () => {
+		if (tooltip) {
+			Preview.tooltipHide(false);
 		};
 	};
 
@@ -186,7 +203,7 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 	};
 
 	return (
-		<div className={cn.join(' ')}>
+		<div ref={nodeRef} className={cn.join(' ')} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
 			<div className="iconWrap">
 				<Icon name={iconName} className="progressType" />
 			</div>
@@ -264,6 +281,11 @@ const SidebarProgress: FC = () => {
 						const isError = item.state == I.ProgressState.Error;
 						const canCancel = item.canCancel && !isError;
 
+						// Client-owned rows cancel through their own manager: the
+						// middleware has no process behind a gateway download
+						const isLocal = Boolean(item.isLocal);
+						const parts = isLocal ? Download.getParts(item.id) : [];
+
 						return (
 							<ProgressItem
 								key={item.id}
@@ -275,6 +297,9 @@ const SidebarProgress: FC = () => {
 								total={item.total}
 								error={item.error}
 								statistic={item.statistic}
+								subtitle={isLocal ? Download.activeName(item.id) : ''}
+								tooltip={(parts.length > 1) ? Download.tooltip(item.id) : ''}
+								onCancel={isLocal ? (id: string) => Download.cancel(id) : undefined}
 							/>
 						);
 					})}

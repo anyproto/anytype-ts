@@ -80,6 +80,9 @@ export interface Progress {
 	total?: number;
 	state?: ProgressState;
 	canCancel?: boolean;
+	// Client-owned rows (gateway downloads) are cancelled by their own manager,
+	// not by ProcessCancel: the middleware has no process behind them
+	isLocal?: boolean;
 	error?: string;
 	statistic?: ImportStatistic;
 };

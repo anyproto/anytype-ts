@@ -154,7 +154,7 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const isDownloading = S.Common.isDownloading(targetObjectId);
 
 	const handleDownload = () => {
-		Action.downloadFile(targetObjectId, analytics.route.block, block.isFileImage());
+		Action.downloadFile(targetObjectId, analytics.route.block);
 	};
 
 	const getWidth = (checkMax: boolean, v: number): number => {

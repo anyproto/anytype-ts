@@ -15,6 +15,7 @@ import Server from './server';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
 import LinkApprovalManager from './linkApproval';
+import DownloadManager from './download';
 import { AppWindow, TabView, TabData, CreateTabOptions, AppConfig, Bounds } from './types';
 
 const KEYTAR_SERVICE = 'Anytype';
@@ -388,7 +389,21 @@ class Api {
 	};
 
 	async download (win: AppWindow, url: string, options: Record<string, any>): Promise<void> {
+		const id = String(options?.id || '');
+
+		// A tracked download carries an id: it reports progress to a sidebar row
+		// and can be cancelled. Untracked ones — the save-as dialogs for QR codes
+		// and cover images — go straight to the stack as before
+		if (id) {
+			DownloadManager.start(win, { id, url, directory: String(options.directory || '') });
+			return;
+		};
+
 		await download(win, url, options);
+	};
+
+	downloadCancel (win: AppWindow, id: string): void {
+		DownloadManager.cancel(String(id || ''));
 	};
 
 	winCommand (win: AppWindow, cmd: string, param: Record<string, any>): void {

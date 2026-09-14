@@ -12,6 +12,7 @@ import * as M from 'Model';
 import Storage from 'Lib/storage';
 import Animation from 'Lib/animation';
 import { approvalSpaces } from 'Lib/linkApproval';
+import Download from 'Lib/download';
 
 configure({ enforceActions: 'never', reactionScheduler: (f) => scheduleReaction(f) });
 
@@ -192,6 +193,12 @@ const App: FC = () => {
 		Renderer.on('update-error', onUpdateError);
 		Renderer.on('download-started', onDownloadStarted);
 		Renderer.on('download-progress', onUpdateProgress);
+
+		// Gateway file downloads: the middleware has no process behind them, so
+		// the renderer owns their progress rows. Events are broadcast to every
+		// tab; only the one holding the id has a row to update
+		Renderer.on('file-download-progress', (e: any, data: any) => Download.onProgress(data));
+		Renderer.on('file-download-done', (e: any, data: any) => Download.onDone(data));
 		Renderer.on('spellcheck', onSpellcheck);
 		Renderer.on('pin-set', () => S.Common.pinInit());
 		Renderer.on('pin-remove', () => S.Common.pinInit());
@@ -293,6 +300,8 @@ const App: FC = () => {
 		Renderer.remove('update-error');
 		Renderer.remove('download-started');
 		Renderer.remove('download-progress');
+		Renderer.remove('file-download-progress');
+		Renderer.remove('file-download-done');
 		Renderer.remove('spellcheck');
 		Renderer.remove('pin-set');
 		Renderer.remove('pin-remove');
