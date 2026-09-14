@@ -5,6 +5,7 @@ const electron = () => _electron || (_electron = U.Common.getElectron());
 
 const ACCOUNT_KEYS = new Set([
 	'spaceId',
+	'importAi',
 ]);
 
 const SPACE_KEYS = new Set([

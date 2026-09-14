@@ -3,6 +3,7 @@ import { Title, Label, Button, Switch, Select } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import ExportFilesHelp from 'Component/util/exportFilesHelp';
+import Back from '../back';
 
 const PageMainSettingsExportProtobuf = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -28,6 +29,7 @@ const PageMainSettingsExportProtobuf = forwardRef<I.PageRef, I.PageSettingsCompo
 	return (
 		<>
 			<Title text={translate('popupSettingsExportProtobufTitle')} />
+			<Back page="exportIndex" />
 
 			<div className="actionItems">
 				<div className="item">

@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import object from './object';
+import aiProvider from './aiProvider';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
@@ -1622,6 +1623,86 @@ class UtilData {
 
 	flattenIds (node: TreeNode): string[] {
 		return [ node.id, ...node.children.flatMap(c => this.flattenIds(c)) ];
+	};
+
+	/**
+	 * Returns whether the import type is eligible for AI structure enrichment (served by the v2 import engine).
+	 */
+	canImportAi (type: I.ImportType): boolean {
+		return [ I.ImportType.Notion, I.ImportType.Markdown, I.ImportType.Obsidian ].includes(type);
+	};
+
+	/**
+	 * Whether this build embeds the "Provided by Anytype" AI proxy (endpoint and model injected at build time).
+	 * The typeof guard covers environments without the build-time defines (unit tests).
+	 */
+	isImportAiAnytypeAvailable (): boolean {
+		return ('undefined' != typeof IMPORT_AI_ANYTYPE_ENDPOINT) && Boolean(IMPORT_AI_ANYTYPE_ENDPOINT && IMPORT_AI_ANYTYPE_MODEL);
+	};
+
+	/**
+	 * Returns persisted AI import settings with defaults applied.
+	 */
+	getImportAiSettings (): I.ImportAiSettings {
+		return aiProvider.applyDefaults(Storage.get('importAi'), this.isImportAiAnytypeAvailable());
+	};
+
+	setImportAiSettings (settings: Partial<I.ImportAiSettings>): void {
+		Storage.set('importAi', Object.assign(this.getImportAiSettings(), settings));
+	};
+
+	/**
+	 * Builds the wire-format aiParams for ObjectImport, or null when the feature is off
+	 * or the config is incomplete. Never returns a half-filled config: a present-but-broken
+	 * config produces a visible llmPlanFailed warning middleware-side.
+	 */
+	getImportAiParams (): any {
+		const settings = this.getImportAiSettings();
+
+		if (!settings.enabled) {
+			return null;
+		};
+
+		if (settings.providerId == 'anytype') {
+			if (!this.isImportAiAnytypeAvailable()) {
+				return null;
+			};
+
+			return {
+				config: {
+					provider: I.AiProvider.OpenAi,
+					endpoint: IMPORT_AI_ANYTYPE_ENDPOINT,
+					model: IMPORT_AI_ANYTYPE_MODEL,
+					// OPENAI provider requires a non-empty token middleware-side; the proxy may not check it
+					token: IMPORT_AI_ANYTYPE_TOKEN || 'anytype',
+					temperature: 0,
+				},
+				includeContentSamples: settings.includeContentSamples,
+			};
+		};
+
+		const config = aiProvider.resolveConfig(settings);
+
+		if (!config) {
+			return null;
+		};
+
+		return {
+			config,
+			includeContentSamples: settings.includeContentSamples,
+		};
+	};
+
+	/**
+	 * Analytics dimensions for the AI import feature; no endpoint/model values (potentially identifying).
+	 */
+	getImportAiAnalytics (type: I.ImportType): { aiEnabled: boolean; aiProvider: string } {
+		const enabled = this.canImportAi(type) && !!this.getImportAiParams();
+
+		return {
+			aiEnabled: enabled,
+			aiProvider: enabled ? (this.getImportAiSettings().providerId == 'anytype' ? 'anytype' : 'byok') : '',
+		};
 	};
 
 };

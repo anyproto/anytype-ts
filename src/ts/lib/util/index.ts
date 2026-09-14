@@ -1,3 +1,4 @@
+import AiProvider from './aiProvider';
 import Chat from './chat';
 import Common from './common';
 import Data from './data';
@@ -19,6 +20,7 @@ import Comment from './comment';
 import Perf from './perf';
 
 export {
+	AiProvider,
 	Chat,
 	Common,
 	Data,

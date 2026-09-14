@@ -19,6 +19,17 @@ export const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('LinkPreview', { url }, callBack);
 };
 
+// ---------------------- AI ---------------------- //
+
+/**
+ * Lists the models a provider serves. Doubles as config validation: a successful
+ * response proves the endpoint is reachable and the token works, which is why
+ * there is no separate "validate" command. config.model is ignored.
+ */
+export const AIListModels = (config: any, callBack?: (message: any) => void) => {
+	dispatcher.request('AIListModels', { config }, callBack);
+};
+
 // ---------------------- GALLERY ---------------------- //
 
 export const GalleryDownloadIndex = (callBack?: (message: any) => void) => {
@@ -1292,6 +1303,11 @@ export const ObjectImport = (spaceId: string, options: any, snapshots: any[], ex
 			break;
 		};
 
+	};
+
+	// Optional LLM structure enrichment, only for types served by the v2 import engine
+	if (options.aiParams && U.Data.canImportAi(type)) {
+		params.aiParams = options.aiParams;
 	};
 
 	dispatcher.request('ObjectImport', {

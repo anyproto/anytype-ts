@@ -1,6 +1,7 @@
 import React, { forwardRef, useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { Title, Label, Button, Icon, Select, Switch, Error } from 'Component';
 import * as I from 'Interface';
+import Back from '../back';
 
 const PageMainSettingsImportCsv = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -69,11 +70,13 @@ const PageMainSettingsImportCsv = forwardRef<I.PageRef, I.PageSettingsComponent>
 	};
 
 	const onImport = () => {
-		Action.import(I.ImportType.Csv, J.Constant.fileExtension.import[I.ImportType.Csv], data, (message: any) => {
+		const targetId = U.Space.getImportTargetId();
+
+		Action.import(targetId, I.ImportType.Csv, J.Constant.fileExtension.import[I.ImportType.Csv], data, (message: any) => {
 			if (message.error.code) {
 				setError(message.error.description);
 			} else {
-				U.Space.openDashboard();
+				U.Space.openImportTarget(targetId);
 			};
 		});
 	};
@@ -114,6 +117,7 @@ const PageMainSettingsImportCsv = forwardRef<I.PageRef, I.PageSettingsComponent>
 		<div>
 			<Icon name="import/csv" className="logo" size={56} />
 			<Title text={translate('popupSettingsImportCsvTitle')} />
+			<Back page="importIndex" />
 			<Label text={translate('popupSettingsImportCsvText')} />
 
 			<div className="actionItems">

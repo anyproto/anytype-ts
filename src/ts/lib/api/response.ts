@@ -641,6 +641,12 @@ export const GalleryDownloadIndex = (response: any) => {
 	};
 };
 
+export const AIListModels = (response: any) => {
+	return {
+		models: (response.models || []).map(it => ({ id: String(it.id || ''), ownedBy: String(it.ownedBy || '') })),
+	};
+};
+
 export const GalleryDownloadManifest = (response: any) => {
 	return {
 		info: Mapper.From.Manifest(response.info || {}),

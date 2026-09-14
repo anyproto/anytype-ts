@@ -9,6 +9,15 @@
 
 .settingsPageContainer { width: calc(100% - 64px); margin: 0 auto; min-width: 300px; max-width: 640px; }
 .settingsPageContainer {
+    // Sits under the page title, leading back to the index the format was picked
+    // from. The chevron's own left bearing is what lines it up with the title.
+    .settingsPage .back { display: inline-flex; align-items: center; gap: 0px 2px; margin: 0px 0px 16px -2px; color: var(--color-text-secondary); }
+    .settingsPage .back:hover { color: var(--color-text-primary); }
+    .settingsPage .back {
+        // No font-size of its own: inherits the body size the description uses
+        .label { font-weight: 600; }
+    }
+
     .title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }
     .title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
     .description { margin: 0px 0px 24px 0px; }
@@ -794,11 +803,14 @@
 
 		.title.sub { @include text-paragraph; font-weight: 600; padding: 8px 0px; margin: 0px !important; }
 
-        .item {
+        // Scoped to the format grid: these are the tiles. Unscoped, they also hit the
+        // .item a Select renders for its current value — the 40px !important icon in
+        // particular beat the size the component asks for.
+        .items > .item {
             height: 72px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; transition: $transitionAllCommon;
             position: relative; display: flex; flex-direction: row; align-items: center; padding: 16px; gap: 0px 12px;
         }
-		.item {
+		.items > .item {
 			&.isApp {
 				.icon { background-color: var(--color-shape-tertiary); border-radius: 8px; background-size: 18px; background-position: center; }
 			}
@@ -813,11 +825,47 @@
     }
 
 	> .pageSettingsExportIndex {
-		.item.anyBlockV2 .icon { color: #4f60e8 !important; }
+		.items > .item.anyBlockV2 .icon { color: #4f60e8 !important; }
 	}
 
 	> .pageSettingsImportIndex {
 		.title { margin-bottom: 24px !important; }
+	}
+
+	> .pageSettingsImportIndex {
+		// The tile styling above dresses the format grid; rows inside .actionItems are
+		// settings rows, so they keep the container's own border instead of drawing one each.
+		// Direct children only: a Select renders its own .item for the current value,
+		// and the row padding / space-between below would otherwise land on that too,
+		// pushing an option's icon and label to opposite ends.
+		.actionItems > .item { height: auto; border: 0px; border-radius: 0px; border-bottom: 1px solid var(--color-shape-secondary); padding: 14px 16px; justify-content: space-between; }
+		.actionItems > .item {
+			&:hover { background: none; }
+			&:last-child { border-bottom: 0px; }
+		}
+
+		// The sections wrapper already spaces this row from the ones below.
+		.actionItems.target { margin-bottom: 0px; }
+
+		.aiSettings {
+			.label.description { color: var(--color-text-secondary); margin: 0px 0px 12px 0px; }
+
+			.actionItems {
+				> .item {
+					.input { max-width: 250px; min-height: 28px; border: 1px solid var(--color-shape-secondary); border-radius: 8px; padding: 3px 10px; }
+				}
+			}
+
+			// The list is several names long, so it wraps on its own side of the row
+			// instead of stretching it
+			.item.recommended { align-items: flex-start; }
+			.item.recommended {
+				.value { @include text-small; color: var(--color-text-secondary); text-align: right; max-width: 250px; }
+			}
+
+			.error { margin: 8px 0px 0px 0px; }
+			.label.disclosure { @include text-small; color: var(--color-text-secondary); margin: 12px 0px 0px 0px; }
+		}
 	}
 
 	.icon.logo { margin: 0px 0px 16px 0px; }
@@ -825,6 +873,8 @@
 	> .pageSettingsImportNotion {
         .icon.importNotion { color: var(--color-control-accent); }
         a { font-weight: 600; text-decoration: none; color: var(--color-text-primary); }
+        // The step's link is shown as the bare URL, on its own line under the text
+        a.url { display: block; word-break: break-all; }
     }
 
 	> .pageSettingsImportObsidian,

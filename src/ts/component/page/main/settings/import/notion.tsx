@@ -1,6 +1,7 @@
 import React, { forwardRef, useState, useRef } from 'react';
 import { Title, Button, Input, Label, Icon, Error } from 'Component';
 import * as I from 'Interface';
+import Back from '../back';
 
 const PageMainSettingsImportNotion = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -25,12 +26,20 @@ const PageMainSettingsImportNotion = forwardRef<I.PageRef, I.PageSettingsCompone
 		});
 	};
 
-	const steps = [ 1, 2, 3, 4, 5, 6, 7 ];
+	// Only the two steps that happen on a Notion screen carry a shot; the first is a
+	// link and the last happens back here
+	const steps = [
+		{ id: 1, url: J.Url.notionTokens },
+		{ id: 2, image: 'tokens' },
+		{ id: 3, image: 'create' },
+		{ id: 4 },
+	];
 
 	return (
 		<>
 			<Icon name="import/notion" className="logo" size={56} />
 			<Title text={U.Menu.getImportNames()[I.ImportType.Notion]} />
+			<Back page="importIndex" />
 			<Label
 				className="description"
 				text={U.String.sprintf(translate('popupSettingsImportNotionDescription'), J.Url.notionFAQ)}
@@ -53,10 +62,11 @@ const PageMainSettingsImportNotion = forwardRef<I.PageRef, I.PageSettingsCompone
 			<Label className="step" text={U.String.sprintf(translate('popupSettingsImportNotionHelpStep'), 1)} />
 
 			<ol className="list">
-				{steps.map(n => (
-					<li key={n}>
-						<Label text={translate(`popupSettingsImportNotionHelpStep1${n}`)} />
-						<img src={`./img/help/notion/step${n}.png`} />
+				{steps.map(item => (
+					<li key={item.id}>
+						<Label text={translate(`popupSettingsImportNotionHelpStep1${item.id}`)} />
+						{item.url ? <a className="url" href={item.url}>{item.url}</a> : ''}
+						{item.image ? <img src={`./img/help/notion/${item.image}.jpg`} /> : ''}
 					</li>
 				))}
 			</ol>

@@ -291,3 +291,68 @@ describe('UtilSpace invite predicates', () => {
 	});
 
 });
+
+/**
+ * The import screen writes into a space the user picks, which is not necessarily the
+ * current one. The choice lives in the store (the format sub-pages are separate routes),
+ * so by the time it is read the space may have been deleted or demoted to read-only —
+ * every such case has to fall back to the current space rather than import into nothing.
+ */
+describe('UtilSpace.getImportTargetId (import target fallbacks)', () => {
+
+	beforeEach(() => {
+		vi.restoreAllMocks();
+		vi.stubGlobal('S', { Common: { space: 'current', importSpaceId: '' } });
+	});
+
+	const chosen = (id: string) => {
+		(globalThis as any).S.Common.importSpaceId = id;
+	};
+
+	it('falls back to the current space when nothing was chosen', () => {
+		expect(UtilSpace.getImportTargetId()).toBe('current');
+	});
+
+	it('returns the chosen space when it exists and is writable', () => {
+		vi.spyOn(UtilSpace, 'getSpaceviewBySpaceId').mockReturnValue({ targetSpaceId: 'other' });
+		vi.spyOn(UtilSpace, 'canMyParticipantWrite').mockReturnValue(true);
+		chosen('other');
+
+		expect(UtilSpace.getImportTargetId()).toBe('other');
+	});
+
+	it('falls back when the chosen space no longer exists', () => {
+		vi.spyOn(UtilSpace, 'getSpaceviewBySpaceId').mockReturnValue(null);
+		vi.spyOn(UtilSpace, 'canMyParticipantWrite').mockReturnValue(true);
+		chosen('deleted');
+
+		expect(UtilSpace.getImportTargetId()).toBe('current');
+	});
+
+	it('falls back when the chosen space became read-only', () => {
+		vi.spyOn(UtilSpace, 'getSpaceviewBySpaceId').mockReturnValue({ targetSpaceId: 'readonly' });
+		vi.spyOn(UtilSpace, 'canMyParticipantWrite').mockReturnValue(false);
+		chosen('readonly');
+
+		expect(UtilSpace.getImportTargetId()).toBe('current');
+	});
+
+});
+
+describe('UtilSpace.getImportTargetList (writable spaces only)', () => {
+
+	beforeEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	it('drops spaces the user cannot write into', () => {
+		vi.spyOn(UtilSpace, 'getList').mockReturnValue([
+			{ targetSpaceId: 'writable' },
+			{ targetSpaceId: 'readonly' },
+		] as any);
+		vi.spyOn(UtilSpace, 'canMyParticipantWrite').mockImplementation((id: string) => id == 'writable');
+
+		expect(UtilSpace.getImportTargetList().map(it => it.targetSpaceId)).toEqual([ 'writable' ]);
+	});
+
+});
