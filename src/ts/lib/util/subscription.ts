@@ -545,17 +545,13 @@ class UtilSubscription {
 			},
 		];
 		
-		// Lite (quick search panel boot): only profile + spaceviews - the chat
-		// machinery and the per-space subSpace fan-out (one subscription per space)
-		// serve vault UI that window never renders
-		let create = list;
-		if (lite) {
-			const keep: string[] = [ J.Constant.subId.profile, J.Constant.subId.space ];
-			create = list.filter(it => keep.includes(it.subId));
-		};
-
-		this.destroyList(create.map(it => it.subId), true, () => {
-			this.createList(create, () => {
+		// Lite (quick search panel boot) keeps this whole list: the search popup's Messages
+		// scope gates its chip on the cross-space chat subscriptions, and resolves the chat
+		// behind every message row through them. Lite drops only the per-space subSpace
+		// fan-out below (one subscription per space), which serves vault UI that window
+		// never renders
+		this.destroyList(list.map(it => it.subId), true, () => {
+			this.createList(list, () => {
 				if (lite) {
 					callBack?.();
 				} else {

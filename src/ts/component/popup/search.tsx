@@ -1241,11 +1241,13 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 	};
 
 	// The Messages scope searches chats and discussions - offer it only when there is at least
-	// one of either: in the space (space subscriptions) or anywhere (global subscriptions)
+	// one of either: in the space (space subscriptions) or anywhere (global subscriptions).
+	// isCurrentSpace, not a raw compare: the quick search panel is spaceless, and '' == ''
+	// would send it to space subscriptions that window never creates - no chip, ever
 	const hasMessageContainers = (): boolean => {
 		const scopeId = getScopeId();
 
-		if (scopeId == S.Common.space) {
+		if (isCurrentSpace()) {
 			return [ J.Constant.subId.chat, J.Constant.subId.discussion ].some(it => {
 				return S.Record.getRecordIds(U.Subscription.spaceSubId(it), '').length > 0;
 			});
@@ -2249,8 +2251,9 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 			};
 
 			// Only current-space chats need the per-open resolver; cross-space rows
-			// (global mode or a foreign scope) resolve via chatGlobal/discussionGlobal
-			if (scopeId == S.Common.space) {
+			// (global mode or a foreign scope) resolve via chatGlobal/discussionGlobal -
+			// including the spaceless quick search panel, which isCurrentSpace keeps out
+			if (isCurrentSpace()) {
 				resolveMessageChats(records);
 			};
 
