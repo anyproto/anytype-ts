@@ -15,7 +15,7 @@ import Server from './server';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
 import LinkApprovalManager from './linkApproval';
-import DownloadManager from './download';
+import DownloadManager, { DownloadRequest } from './download';
 import { AppWindow, TabView, TabData, CreateTabOptions, AppConfig, Bounds } from './types';
 
 const KEYTAR_SERVICE = 'Anytype';
@@ -395,7 +395,16 @@ class Api {
 		// and can be cancelled. Untracked ones — the save-as dialogs for QR codes
 		// and cover images — go straight to the stack as before
 		if (id) {
-			DownloadManager.start(win, { id, url, directory: String(options.directory || '') });
+			// Passed through whole rather than hand-picked: the queue reads more
+			// than an id and a directory — the file's identity is what lets it
+			// recognise a copy already on disk — and a field dropped here fails
+			// silently, costing a download nobody notices
+			DownloadManager.start(win, {
+				...options,
+				id,
+				url,
+				directory: String(options.directory || ''),
+			} as DownloadRequest);
 			return;
 		};
 

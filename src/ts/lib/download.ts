@@ -115,6 +115,9 @@ export class Download {
 			total: this.scale(parts),
 			canCancel: true,
 			isLocal: true,
+			// An opened file speaks for itself: only a plain save leaves a row
+			// behind afterwards, offering to reveal what it wrote
+			keepWhenDone: !openWhenDone,
 		});
 
 		parts.forEach(part => this.index.set(part.id, rowId));
@@ -316,10 +319,10 @@ export class Download {
 
 		S.Progress.update({ id: row.id, state, error: failed ? failed.error : '' });
 
-		// The row keeps its place in the sidebar after the transfer — offering to
-		// reveal the file, or showing why it failed — so its detail outlives the
-		// download and is dropped only when the row is dismissed
-		this.forget(row.id, true);
+		// A row that stays on screen — a plain save offering to reveal what it
+		// wrote, or any failure showing why — keeps its detail for as long. An
+		// opened file's row disappears and takes its detail along
+		this.forget(row.id, Boolean(failed) || !row.openWhenDone);
 	};
 
 	/**

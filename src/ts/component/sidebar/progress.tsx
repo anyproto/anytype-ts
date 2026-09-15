@@ -7,9 +7,12 @@ import * as I from 'Interface';
 const AUTO_EXPAND = true;
 const SKIP_STATE = [ I.ProgressState.Done, I.ProgressState.Canceled ];
 
-// A finished download keeps its place, offering to reveal what it wrote. Every
-// other kind of finished row disappears, as it always has
-const isFinishedDownload = (item: I.Progress): boolean => Boolean(item.isLocal) && (item.state == I.ProgressState.Done);
+// A download that only wrote a file keeps its place, offering to reveal it. One
+// that opened or revealed the file already did something with it, and disappears
+// like every other finished row
+const isFinishedDownload = (item: I.Progress): boolean => {
+	return Boolean(item.isLocal) && Boolean(item.keepWhenDone) && (item.state == I.ProgressState.Done);
+};
 
 const getIconName = (type: I.ProgressType): string => {
 	switch (type) {

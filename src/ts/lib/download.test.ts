@@ -239,6 +239,35 @@ describe('client-owned downloads', () => {
 		expect(row(id)).toMatchObject(settled);
 	});
 
+	it('leaves no row behind when the file was opened or revealed', () => {
+		const id = Download.start([ files[0] ], '/tmp/downloads', 'Test', { openWhenDone: true });
+
+		Download.onDone({ id: partIds()[0], path: '/tmp/downloads/one.pdf' });
+
+		// Something already happened with the file — it opened, or its folder came
+		// up — so a row offering to reveal it again is noise
+		expect(row(id).keepWhenDone).toBe(false);
+		expect(Download.getParts(id)).toEqual([]);
+	});
+
+	it('keeps the row of a plain save, which did nothing but write the file', () => {
+		const id = Download.start([ files[0] ], '/tmp/downloads', 'Test');
+
+		Download.onDone({ id: partIds()[0], path: '/tmp/downloads/one.pdf' });
+
+		expect(row(id).keepWhenDone).toBe(true);
+		expect(Download.getParts(id).length).toBe(1);
+	});
+
+	it('keeps a failed open around, since nothing was opened to speak for it', () => {
+		const id = Download.start([ files[0] ], '/tmp/downloads', 'Test', { openWhenDone: true });
+
+		Download.onDone({ id: partIds()[0], error: 'Disk full' });
+
+		expect(row(id)).toMatchObject({ state: I.ProgressState.Error, error: 'Disk full' });
+		expect(Download.getParts(id).map(it => it.error)).toEqual([ 'Disk full' ]);
+	});
+
 	it('keeps a finished row around, since it stays on screen until dismissed', () => {
 		const failed = Download.start([ files[0] ], '/tmp/downloads', 'Test');
 
