@@ -11,6 +11,7 @@ class Keyboard {
 		client: { x: 0, y: 0 },
 	};
 	timeoutSidebarHide = 0;
+	timeoutQuickSearchPopup = 0;
 	source: any = null;
 	selection: any = null;
 	shortcuts: any = {};
@@ -1544,8 +1545,23 @@ class Keyboard {
 	 */
 	onQuickSearchPopup () {
 		if (S.Popup.isOpen('search')) {
+			// Still up and settled - the panel was re-shown over its own popup, nothing to do
+			if (!S.Popup.isAnimating('search')) {
+				return;
+			};
+
+			// A fast panel close -> reopen lands inside the popup's close animation: onClose
+			// (which hides the panel) fired on the spot, but the popup only leaves the list
+			// J.Constant.delay.popup later, against the list as it looked when the close
+			// began. Opening now would be worse than not opening - that pending write would
+			// take the new popup with it and leave the panel an empty window. Let the close
+			// land and open behind it; a reopen has to remount anyway to replay its animation
+			window.clearTimeout(this.timeoutQuickSearchPopup);
+			this.timeoutQuickSearchPopup = window.setTimeout(() => this.onQuickSearchPopup(), J.Constant.delay.popup);
 			return;
 		};
+
+		window.clearTimeout(this.timeoutQuickSearchPopup);
 
 		S.Popup.open('search', {
 			className: 'isQuickSearch',

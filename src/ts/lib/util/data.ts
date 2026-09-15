@@ -485,8 +485,8 @@ class UtilData {
 	/**
 	 * Minimal boot for the quick search panel window. No space is opened (the panel
 	 * renders no space UI and the global search RPC is cross-space) and none of the
-	 * heavy side loads run - only the global subscriptions (profile, spaceviews)
-	 * that power the search rows, plus the pin gate.
+	 * heavy side loads run - only the global subscriptions (profile, spaceviews and the
+	 * cross-space chats the Messages scope reads), plus the pin gate.
 	 * @param {string} route - The quick search route to open after boot.
 	 * @param {Partial<I.RouteParam>} [param] - Optional route parameters.
 	 */
@@ -507,8 +507,8 @@ class UtilData {
 			};
 		};
 
-		// In parallel: the two lite subscriptions (profile + spaceviews) feed the
-		// first row paint (Channel captions), the pin gate decides where to route
+		// In parallel: the lite subscriptions feed the first row paint (Channel captions,
+		// the Messages chip and its chats), the pin gate decides where to route
 		U.Subscription.createGlobal(done, true);
 		this.initPin(done);
 	};

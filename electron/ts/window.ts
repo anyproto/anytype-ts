@@ -280,7 +280,11 @@ class WindowManager {
 			fullscreenable: false,
 		});
 
-		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+		// skipTransformProcessType: without it Electron flips the process to UIElementApplication to
+		// float over other apps' fullscreen Spaces, which drops the Dock icon and the menu bar for
+		// the whole app - and app.dock.show() does not bring them back (electron#26350). Same flag,
+		// same reason as the approval prompt below
+		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true });
 		win.setMenuBarVisibility(false);
 		win.setAutoHideMenuBar(true);
 		win.loadURL(this.getUrlForNewWindow());
@@ -293,15 +297,12 @@ class WindowManager {
 			view.webContents.openDevTools({ mode: 'detach' });
 		};
 
-		// Spotlight behavior: clicking elsewhere dismisses the panel. Not in dev
-		// builds (blocks inspecting the panel), not during the focus churn right
-		// after showing (app activation can briefly blur the panel), and not while
-		// devtools are attached to it (their window taking focus is also a blur)
+		// Spotlight behavior: clicking elsewhere dismisses the panel. Not during the focus
+		// churn right after showing (app activation can briefly blur the panel), and not
+		// while devtools are attached to it (their window taking focus is also a blur).
+		// That devtools check is what keeps the panel inspectable in dev, which opens them
+		// for it on create - close them and dismissal behaves as it does in a release
 		win.on('blur', () => {
-			if (is.development) {
-				return;
-			};
-
 			if (Date.now() - this.quickSearchShownAt < 500) {
 				return;
 			};
