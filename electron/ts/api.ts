@@ -480,6 +480,20 @@ class Api {
 		shell.openExternal(url);
 	};
 
+	/**
+	 * Reveals a file in the system file manager with the file itself selected —
+	 * Finder, Explorer or whatever the desktop provides. This is where a
+	 * download lands when opening it would do something other than view it.
+	 */
+	showInFolder (win: AppWindow, fp: string): void {
+		if (!fp || !fs.existsSync(fp)) {
+			Util.log('error', '[Api].showInFolder: Invalid path:', fp);
+			return;
+		};
+
+		shell.showItemInFolder(path.normalize(fp));
+	};
+
 	openPath (win: AppWindow, fp: string): void {
 		if (!fp || !fs.existsSync(fp)) {
 			Util.log('error', '[Api].openPath: Invalid path:', fp);

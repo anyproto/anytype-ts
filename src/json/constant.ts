@@ -110,6 +110,21 @@ export default {
 		cover:			 [ 'jpg', 'jpeg', 'png', 'gif', 'webp' ],
 		audio:			 [ 'mp3', 'm4a', 'flac', 'ogg', 'wav' ],
 		pdf:			 [ 'pdf' ],
+
+		// Handed to the system handler after a download. Everything outside this
+		// list is revealed in the file manager instead: opening an archive
+		// extracts it, opening a script or an installer runs it, and neither is
+		// what a click on a file block asks for
+		autoOpen: [
+			'pdf', 'epub',
+			'doc', 'docx', 'odt', 'rtf', 'txt', 'md',
+			'xls', 'xlsx', 'ods', 'csv',
+			'ppt', 'pptx', 'odp',
+			'jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'bmp', 'tiff',
+			'mp4', 'm4v', 'mov', 'mkv', 'webm',
+			'mp3', 'm4a', 'flac', 'ogg', 'wav', 'aac', 'opus',
+		],
+
 		import: {
 			1:			 [ 'zip', 'md' ],
 			3:			 [ 'zip', 'pb', 'json' ],

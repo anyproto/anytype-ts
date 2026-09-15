@@ -47,6 +47,8 @@
 			.status { @include text-small; color: var(--color-text-secondary); }
 			.status {
 				> span { display: flex; flex-wrap: wrap; align-items: center; gap: 0px 6px; }
+				.action { text-decoration: underline; }
+				.action:hover { color: var(--color-text-primary); }
 				.dot { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); flex-shrink: 0; }
 				.error { margin: 0px; @include text-small; }
 			}
@@ -67,6 +69,13 @@
 		.spinnerWrap {
 			width: 28px; height: 28px; flex-shrink: 0; position: relative;
 		}
+		.spinnerWrap {
+			.icon.commonClear {
+				@include pos-abs-mid; margin: -10px 0px 0px -10px; z-index: 2;
+				width: 20px; height: 20px; opacity: 0; transition: opacity 0.15s ease;
+			}
+			.icon.commonClear:hover { color: var(--color-text-primary); }
+		}
 		.spinnerWrap.withSpinner {
 			&::after {
 				content: ''; position: absolute; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
@@ -75,19 +84,13 @@
 				animation: rotate 0.8s infinite linear;
 				transition: opacity 0.15s ease;
 			}
-
-			.icon.commonClear {
-				@include pos-abs-mid; margin: -10px 0px 0px -10px; z-index: 2;
-				width: 20px; height: 20px; opacity: 0; transition: opacity 0.15s ease;
-			}
-			.icon.commonClear:hover { color: var(--color-text-primary); }
 		}
 
-		&.canCancel { transition: $transitionAllCommon; }
+		&.canCancel, &.isDone { transition: $transitionAllCommon; }
 
-		&.canCancel:hover { background: var(--color-shape-highlight-medium); }
-		&.canCancel:hover {
-			.spinnerWrap.withSpinner {
+		&.canCancel:hover, &.isDone:hover { background: var(--color-shape-highlight-medium); }
+		&.canCancel:hover, &.isDone:hover {
+			.spinnerWrap {
 				&::after { opacity: 0; }
 				.icon.commonClear { opacity: 1; }
 			}

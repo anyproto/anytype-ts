@@ -9,6 +9,7 @@ export interface DownloadPart {
 	id: string;
 	fileId: string;
 	name: string;
+	path: string;
 	current: number;
 	total: number;
 	percent: number;
@@ -19,6 +20,7 @@ export interface DownloadPart {
 interface DownloadRow {
 	id: string;
 	route: string;
+	directory: string;
 	// "Open file" downloads to the user's folder and then hands the result to
 	// the OS handler; a plain save stops at the folder
 	openWhenDone: boolean;
@@ -38,6 +40,25 @@ let seq = 0;
 const nextId = (prefix: string): string => `${prefix}-${salt}-${++seq}`;
 
 const isSettled = (part: DownloadPart): boolean => part.state != I.ProgressState.Running;
+
+/**
+ * Whether a downloaded file may be handed to the system handler.
+ *
+ * Opening is for things the system *views*. Opening an archive extracts it, an
+ * installer installs it, a script runs it — so anything the allowlist does not
+ * name is revealed in the file manager instead, which is what a click on a file
+ * block actually asks for.
+ */
+const canAutoOpen = (path: string): boolean => {
+	const name = String(path || '').split(/[\\/]/).pop() || '';
+	const parts = name.split('.');
+
+	if (parts.length < 2) {
+		return false;
+	};
+
+	return J.Constant.fileExtension.autoOpen.includes(parts.pop().toLowerCase());
+};
 
 /**
  * Client-owned file downloads.
@@ -65,9 +86,10 @@ export class Download {
 		const parts: DownloadPart[] = (files || []).map(file => ({
 			id: nextId('file'),
 			fileId: file.id,
-			// Filled in from the download stack, which knows what the file is
-			// actually saved as; a queued file has no name yet
+			// Both filled in from the download stack, which knows what the file is
+			// actually saved as; a queued file has neither yet
 			name: '',
+			path: '',
 			current: 0,
 			total: 0,
 			percent: 0,
@@ -77,7 +99,7 @@ export class Download {
 
 		const openWhenDone = Boolean(param?.openWhenDone);
 
-		this.rows.set(rowId, { id: rowId, route, openWhenDone, parts });
+		this.rows.set(rowId, { id: rowId, route, directory, openWhenDone, parts });
 
 		S.Progress.add({
 			id: rowId,
@@ -169,11 +191,12 @@ export class Download {
 			} else {
 				part.state = I.ProgressState.Done;
 				part.current = part.total || part.current;
+				part.path = String(path || '');
 
 				if (row.openWhenDone && path) {
 					// Renderer directly rather than Action.openPath: Action already
 					// imports this module, and the pair would be a cycle
-					Renderer.send('openPath', path);
+					Renderer.send(canAutoOpen(path) ? 'openPath' : 'showInFolder', path);
 					analytics.event('OpenMedia', { route: row.route });
 				};
 			};
@@ -249,14 +272,57 @@ export class Download {
 
 		S.Progress.update({ id: row.id, state, error: failed ? failed.error : '' });
 
-		// A failed row keeps its place in the sidebar, so its per-file detail has
-		// to outlive the download; a finished one disappears and takes it along
-		this.forget(row.id, Boolean(failed));
+		// The row keeps its place in the sidebar after the transfer — offering to
+		// reveal the file, or showing why it failed — so its detail outlives the
+		// download and is dropped only when the row is dismissed
+		this.forget(row.id, true);
 	};
 
 	/**
-	 * Stops a closed row from taking any further events. Its detail is kept only
-	 * while the row is still on screen.
+	 * Reveals what the row produced: the file itself when there is exactly one,
+	 * otherwise the folder, where no single file is the answer.
+	 */
+	reveal (rowId: string): void {
+		const row = this.rows.get(rowId);
+
+		if (!row) {
+			return;
+		};
+
+		const done = row.parts.filter(it => it.path);
+
+		if ((row.parts.length == 1) && done.length) {
+			Renderer.send('showInFolder', done[0].path);
+		} else
+		if (row.directory) {
+			Renderer.send('openPath', row.directory);
+		};
+	};
+
+	/**
+	 * The label for that action, in the words of the platform's file manager.
+	 */
+	revealLabel (): string {
+		if (U.Common.isPlatformMac()) {
+			return translate('commonShowInFinder');
+		};
+		if (U.Common.isPlatformWindows()) {
+			return translate('commonShowInExplorer');
+		};
+		return translate('commonShowInFolder');
+	};
+
+	/**
+	 * Drops a dismissed row's bookkeeping.
+	 */
+	drop (rowId: string): void {
+		this.forget(rowId);
+		this.rows.delete(rowId);
+	};
+
+	/**
+	 * Stops a closed row from taking any further events. Its detail is kept while
+	 * the row is still on screen.
 	 */
 	forget (rowId: string, keepDetail: boolean = false): void {
 		const row = this.rows.get(rowId);

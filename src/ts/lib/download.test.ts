@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as I from 'Interface';
+import Constant from 'json/constant';
 
 const mocks = vi.hoisted(() => ({
 	send: vi.fn(),
@@ -49,6 +50,8 @@ beforeEach(() => {
 		},
 	});
 	vi.stubGlobal('translate', (key: string) => key);
+	// The real allowlist, so these tests move with the policy
+	vi.stubGlobal('J', { Constant });
 	vi.stubGlobal('analytics', { event: mocks.analytics });
 });
 
@@ -201,12 +204,11 @@ describe('client-owned downloads', () => {
 		expect(row(id)).toMatchObject(settled);
 	});
 
-	it('keeps the per-file detail of a failed row, and only of a failed one', () => {
+	it('keeps a finished row around, since it stays on screen until dismissed', () => {
 		const failed = Download.start([ files[0] ], '/tmp/downloads', 'Test');
 
 		Download.onDone({ id: partIds()[0], error: 'Disk full' });
 
-		// The failed row stays in the sidebar, so its hover detail has to survive
 		expect(Download.getParts(failed).map(it => it.error)).toEqual([ 'Disk full' ]);
 
 		mocks.send.mockReset();
@@ -215,11 +217,38 @@ describe('client-owned downloads', () => {
 
 		Download.onDone({ id: partIds()[0], path: '/tmp/downloads/two.png' });
 
-		// A finished row vanishes from the sidebar: nothing left to hover
+		// Both rows stay: a finished one offers to reveal the file, a failed one
+		// shows why. Only dismissing drops them
+		expect(Download.getParts(succeeded).length).toBe(1);
+
+		Download.drop(succeeded);
+
 		expect(Download.getParts(succeeded)).toEqual([]);
 	});
 
-	it('hands a file to the OS handler when the row was opened, not saved', () => {
+	it('reveals the file itself for a single download', () => {
+		const id = Download.start([ files[0] ], '/tmp/downloads', 'Test');
+
+		Download.onDone({ id: partIds()[0], path: '/tmp/downloads/one.pdf' });
+		mocks.send.mockReset();
+
+		Download.reveal(id);
+
+		expect(mocks.send).toHaveBeenCalledWith('showInFolder', '/tmp/downloads/one.pdf');
+	});
+
+	it('reveals the folder for a batch, where no single file is the answer', () => {
+		const id = Download.start(files, '/tmp/downloads', 'Test');
+
+		partIds().forEach((it, i) => Download.onDone({ id: it, path: `/tmp/downloads/file${i}` }));
+		mocks.send.mockReset();
+
+		Download.reveal(id);
+
+		expect(mocks.send).toHaveBeenCalledWith('openPath', '/tmp/downloads');
+	});
+
+	it('hands a file the system can view to the OS handler', () => {
 		Download.start([ files[0] ], '/downloads', 'Test', { openWhenDone: true });
 
 		Download.onDone({ id: partIds()[0], path: '/downloads/one.pdf' });
@@ -229,6 +258,27 @@ describe('client-owned downloads', () => {
 		// Reported on the open, the way it was before the file went through the
 		// gateway: a download that never landed opened nothing
 		expect(mocks.analytics).toHaveBeenCalledWith('OpenMedia', { route: 'Test' });
+	});
+
+	it('reveals an archive instead of opening it, which would extract it', () => {
+		Download.start([ files[0] ], '/downloads', 'Test', { openWhenDone: true });
+
+		Download.onDone({ id: partIds()[0], path: '/downloads/x86_64-linux-musl.tgz' });
+
+		expect(mocks.send).toHaveBeenCalledWith('showInFolder', '/downloads/x86_64-linux-musl.tgz');
+		expect(mocks.send).not.toHaveBeenCalledWith('openPath', expect.anything());
+	});
+
+	it('reveals anything the allowlist does not name, extensionless files included', () => {
+		for (const name of [ 'installer.dmg', 'script.sh', 'notes', 'page.html' ]) {
+			mocks.send.mockReset();
+
+			Download.start([ files[0] ], '/downloads', 'Test', { openWhenDone: true });
+			Download.onDone({ id: partIds()[0], path: `/downloads/${name}` });
+
+			expect(mocks.send).toHaveBeenCalledWith('showInFolder', `/downloads/${name}`);
+			expect(mocks.send).not.toHaveBeenCalledWith('openPath', expect.anything());
+		};
 	});
 
 	it('opens nothing for a plain save, and reports it as a download', () => {

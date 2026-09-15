@@ -100,6 +100,21 @@ export const DownloadingSeveralFiles: Story = {
 	},
 };
 
+export const DownloadFinished: Story = {
+	args: {
+		id: '1c',
+		type: ProgressType.Save,
+		canCancel: false,
+		isDone: true,
+		isError: false,
+		current: 100,
+		total: 100,
+		subtitle: 'Quarterly report.pdf',
+		action: { text: 'Show in Finder', onClick: () => {} },
+		onDismiss: () => {},
+	},
+};
+
 export const Importing: Story = {
 	args: {
 		id: '2',
