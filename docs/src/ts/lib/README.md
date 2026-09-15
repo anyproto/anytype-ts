@@ -24,7 +24,7 @@ Application infrastructure: API communication, constants, services, utilities, a
 | `focus.ts` | `focus` | Focus/cursor management |
 | `mark.ts` | `Mark` | Rich text mark handling (bold, italic, links, etc.) |
 | `action.ts` | `Action` | Common user actions (delete, archive, duplicate, etc.) |
-| `download.ts` | `Download` | Client-owned gateway file downloads: the bytes bypass the RPC layer, so no `Event.Process.*` arrives and the renderer owns the progress. One sidebar row per user action, combining its files; each file keeps its own name, bytes and state for the row's hover detail |
+| `download.ts` | `Download` | Client-owned gateway file downloads: the bytes bypass the RPC layer, so no `Event.Process.*` arrives and the renderer owns the progress. One sidebar row per user action, combining its files; each file keeps its own name, bytes and state for the row's hover detail. `openWhenDone` downloads to the user's folder and hands the result to the system handler, which is how "Open file" works |
 | `relation.ts` | `Relation` | Relation formatting and utilities |
 | `translate.ts` | `translate` | i18n translation function |
 | `preview.ts` | `Preview` | Preview tooltip management |

@@ -3,6 +3,7 @@ import * as I from 'Interface';
 
 const mocks = vi.hoisted(() => ({
 	send: vi.fn(),
+	analytics: vi.fn(),
 }));
 
 vi.mock('Lib/renderer', () => ({ default: { send: mocks.send } }));
@@ -48,13 +49,14 @@ beforeEach(() => {
 		},
 	});
 	vi.stubGlobal('translate', (key: string) => key);
-	vi.stubGlobal('analytics', { event: vi.fn() });
+	vi.stubGlobal('analytics', { event: mocks.analytics });
 });
 
 afterEach(() => {
 	vi.restoreAllMocks();
 	vi.unstubAllGlobals();
 	mocks.send.mockReset();
+	mocks.analytics.mockReset();
 });
 
 describe('client-owned downloads', () => {
@@ -215,6 +217,36 @@ describe('client-owned downloads', () => {
 
 		// A finished row vanishes from the sidebar: nothing left to hover
 		expect(Download.getParts(succeeded)).toEqual([]);
+	});
+
+	it('hands a file to the OS handler when the row was opened, not saved', () => {
+		Download.start([ files[0] ], '/downloads', 'Test', { openWhenDone: true });
+
+		Download.onDone({ id: partIds()[0], path: '/downloads/one.pdf' });
+
+		expect(mocks.send).toHaveBeenCalledWith('openPath', '/downloads/one.pdf');
+
+		// Reported on the open, the way it was before the file went through the
+		// gateway: a download that never landed opened nothing
+		expect(mocks.analytics).toHaveBeenCalledWith('OpenMedia', { route: 'Test' });
+	});
+
+	it('opens nothing for a plain save, and reports it as a download', () => {
+		Download.start([ files[0] ], '/downloads', 'Test');
+
+		Download.onDone({ id: partIds()[0], path: '/downloads/one.pdf' });
+
+		expect(mocks.send).not.toHaveBeenCalledWith('openPath', expect.anything());
+		expect(mocks.analytics).toHaveBeenCalledWith('DownloadMedia', { route: 'Test' });
+	});
+
+	it('opens nothing when the file never landed', () => {
+		Download.start([ files[0] ], '/downloads', 'Test', { openWhenDone: true });
+
+		Download.onDone({ id: partIds()[0], error: 'Disk full' });
+
+		expect(mocks.send).not.toHaveBeenCalledWith('openPath', expect.anything());
+		expect(mocks.analytics).not.toHaveBeenCalledWith('OpenMedia', expect.anything());
 	});
 
 	it('ignores events for downloads another window owns', () => {

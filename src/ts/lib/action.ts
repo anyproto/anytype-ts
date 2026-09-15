@@ -257,8 +257,11 @@ class Action {
 	};
 
 	/**
-	 * Opens a file by ID and route, downloading it if necessary.
-	 * @param {string} id - The file ID.
+	 * Downloads a file to the user's download folder and hands it to the system
+	 * handler. Same gateway path as saving one: the middleware's FileDownload
+	 * writes only inside its own temp scope now, and an opened file belongs
+	 * where the user can find it again.
+	 * @param {any} object - The file object.
 	 * @param {string} route - The route context for analytics.
 	 */
 	openFile (object: any, route: string) {
@@ -268,17 +271,7 @@ class Action {
 
 		const ext = String(object.fileExt || '').toLowerCase();
 		const cb = () => {
-			S.Common.downloadStart(object.id);
-
-			// An empty path lands in the middleware's own temp scope, which is the
-			// only place it writes now — a caller-chosen path is refused
-			C.FileDownload(object.id, '', (message: any) => {
-				S.Common.downloadDone(object.id);
-				if (message.path) {
-					this.openPath(message.path);
-					analytics.event('OpenMedia', { route });
-				};
-			});
+			Download.start([ { id: object.id } ], U.Common.getElectron().downloadPath(), route, { openWhenDone: true });
 		};
 		const isDangerous = !ext || [
 			'exe', 'bat', 'cmd', 'com', 'cpl', 'scr', 'msi', 'msp', 'pif', 'reg', 'vbs', 'vbe', 'ws', 'wsf', 'wsh', 'ps1', 'jar',

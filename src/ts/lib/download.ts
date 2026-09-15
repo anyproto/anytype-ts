@@ -18,7 +18,15 @@ export interface DownloadPart {
 
 interface DownloadRow {
 	id: string;
+	route: string;
+	// "Open file" downloads to the user's folder and then hands the result to
+	// the OS handler; a plain save stops at the folder
+	openWhenDone: boolean;
 	parts: DownloadPart[];
+};
+
+export interface DownloadParam {
+	openWhenDone?: boolean;
 };
 
 // Unique per renderer: main broadcasts download events to every tab, and two
@@ -52,7 +60,7 @@ export class Download {
 	 * Starts a download per file and opens the row that represents them all.
 	 * @returns the row id, which is also the progress item id.
 	 */
-	start (files: DownloadFile[], directory: string, route: string): string {
+	start (files: DownloadFile[], directory: string, route: string, param?: DownloadParam): string {
 		const rowId = nextId('download');
 		const parts: DownloadPart[] = (files || []).map(file => ({
 			id: nextId('file'),
@@ -67,7 +75,9 @@ export class Download {
 			error: '',
 		}));
 
-		this.rows.set(rowId, { id: rowId, parts });
+		const openWhenDone = Boolean(param?.openWhenDone);
+
+		this.rows.set(rowId, { id: rowId, route, openWhenDone, parts });
 
 		S.Progress.add({
 			id: rowId,
@@ -97,7 +107,12 @@ export class Download {
 			});
 		});
 
-		analytics.event('DownloadMedia', { route });
+		// An opened file reports itself when it opens, which is how it read before
+		// the bytes moved to the gateway: a transfer that never landed opened
+		// nothing and counted as nothing
+		if (!openWhenDone) {
+			analytics.event('DownloadMedia', { route });
+		};
 
 		return rowId;
 	};
@@ -141,7 +156,7 @@ export class Download {
 		});
 	};
 
-	onDone ({ id, error, isCancelled }: { id: string; path?: string; error?: string; isCancelled?: boolean }): void {
+	onDone ({ id, path, error, isCancelled }: { id: string; path?: string; error?: string; isCancelled?: boolean }): void {
 		this.withPart(id, (row, part) => {
 			part.percent = 100;
 			part.error = String(error || '');
@@ -154,6 +169,13 @@ export class Download {
 			} else {
 				part.state = I.ProgressState.Done;
 				part.current = part.total || part.current;
+
+				if (row.openWhenDone && path) {
+					// Renderer directly rather than Action.openPath: Action already
+					// imports this module, and the pair would be a cycle
+					Renderer.send('openPath', path);
+					analytics.event('OpenMedia', { route: row.route });
+				};
 			};
 
 			S.Common.downloadDone(part.fileId);
