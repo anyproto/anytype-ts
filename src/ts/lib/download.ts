@@ -31,6 +31,12 @@ export interface DownloadParam {
 	openWhenDone?: boolean;
 };
 
+interface FileIdentity {
+	name: string;
+	size: number;
+	checksums: string[];
+};
+
 // Unique per renderer: main broadcasts download events to every tab, and two
 // tabs must never mint the same id
 const salt = Math.random().toString(36).slice(2, 8);
@@ -111,21 +117,29 @@ export class Download {
 			isLocal: true,
 		});
 
-		parts.forEach((part, i) => {
-			const file = files[i];
+		parts.forEach(part => this.index.set(part.id, rowId));
+		files.forEach(file => S.Common.downloadStart(file.id));
 
-			this.index.set(part.id, rowId);
-			S.Common.downloadStart(file.id);
+		// The identity of each file first: with it, a copy already on disk is
+		// recognised and no bytes move at all
+		this.lookup(files.map(it => it.id), (meta: Record<string, FileIdentity>) => {
+			parts.forEach(part => {
+				const identity = meta[part.fileId] || { name: '', size: 0, checksums: [] };
 
-			// Always /file/, even for images: /image/ resizes, and a width of 0
-			// answers with the smallest variant rather than what was uploaded.
-			// attachment=1 makes the gateway send a Content-Disposition the
-			// download stack can take the file name from
-			const url = S.Common.fileUrl(file.id);
+				// Always /file/, even for images: /image/ resizes, and a width of 0
+				// answers with the smallest variant rather than what was uploaded.
+				// attachment=1 makes the gateway send a Content-Disposition the
+				// download stack can take the file name from
+				const url = S.Common.fileUrl(part.fileId);
 
-			Renderer.send('download', url + (url.includes('?') ? '&' : '?') + 'attachment=1', {
-				id: part.id,
-				directory,
+				Renderer.send('download', url + (url.includes('?') ? '&' : '?') + 'attachment=1', {
+					id: part.id,
+					directory,
+					objectId: part.fileId,
+					name: identity.name,
+					size: identity.size,
+					checksums: identity.checksums,
+				});
 			});
 		});
 
@@ -137,6 +151,36 @@ export class Download {
 		};
 
 		return rowId;
+	};
+
+	/**
+	 * Fetches what identifies each file: the checksums the middleware stored for
+	 * its variants, its size, and the name it goes by. `fileVariantChecksums` is
+	 * a hidden relation and does not travel with the default keys, so it is asked
+	 * for here rather than widening every subscription.
+	 *
+	 * A failed or empty lookup is not fatal: the download simply proceeds without
+	 * anything to compare a local copy against.
+	 */
+	lookup (ids: string[], callBack: (meta: Record<string, FileIdentity>) => void): void {
+		const keys = [ 'id', 'name', 'fileExt', 'sizeInBytes', 'fileVariantChecksums' ];
+		const filters: any[] = [
+			{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
+		];
+
+		C.ObjectSearch(S.Common.space, filters, [], keys, '', 0, ids.length, (message: any) => {
+			const meta: Record<string, FileIdentity> = {};
+
+			(message.records || []).forEach((record: any) => {
+				meta[record.id] = {
+					name: U.File.name(record),
+					size: Number(record.sizeInBytes) || 0,
+					checksums: (record.fileVariantChecksums || []).map(String),
+				};
+			});
+
+			callBack(meta);
+		});
 	};
 
 	/**

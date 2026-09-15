@@ -1,3 +1,6 @@
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
@@ -5,6 +8,22 @@ const mocks = vi.hoisted(() => ({
 	sendToAllTabs: vi.fn(),
 	log: vi.fn(),
 }));
+
+// An in-memory stand-in for the persisted ledger. What it stores is asserted in
+// downloadLedger.test.ts; here it only has to answer lookups
+const ledger = vi.hoisted(() => {
+	const data: Record<string, any> = {};
+
+	return {
+		data,
+		get: vi.fn(async (objectId: string, directory: string) => data[`${objectId}|${directory}`] || null),
+		set: vi.fn(async (objectId: string, directory: string, entry: any) => {
+			data[`${objectId}|${directory}`] = entry;
+		}),
+	};
+});
+
+vi.mock('./downloadLedger', () => ({ default: ledger }));
 
 vi.mock('electron-dl', () => ({
 	download: mocks.download,
@@ -25,7 +44,11 @@ vi.mock('./util', () => ({
 import { DownloadManager } from './download';
 
 const win = {} as any;
-const directory = '/tmp/downloads';
+
+// The real checksum for "hello", as the middleware would have stored it
+const helloChecksum = 'UENFSOKMBA8P0DGGU3H3PI56JLDOFJL6QA77AI4R1KMA0BMNJ4U0';
+
+let directory = '';
 
 class FakeItem {
 	cancel = vi.fn();
@@ -62,16 +85,26 @@ const deferDownload = () => {
 	return deferred;
 };
 
+// A transfer now starts a tick after start(), since the queue first looks for a
+// copy already on disk
+const started = (count: number) => vi.waitFor(() => expect(mocks.download).toHaveBeenCalledTimes(count));
+
 const events = (channel: string): any[] => mocks.sendToAllTabs.mock.calls.filter(it => it[0] == channel).map(it => it[1]);
 
 let manager: DownloadManager;
 
 beforeEach(() => {
 	manager = new DownloadManager();
+	directory = fs.mkdtempSync(path.join(os.tmpdir(), 'anytype-reuse-'));
+
+	Object.keys(ledger.data).forEach(key => delete ledger.data[key]);
+	ledger.get.mockClear();
+	ledger.set.mockClear();
 });
 
 afterEach(() => {
 	vi.resetAllMocks();
+	fs.rmSync(directory, { recursive: true, force: true });
 });
 
 describe('DownloadManager', () => {
@@ -84,11 +117,11 @@ describe('DownloadManager', () => {
 
 		// electron-dl attaches a will-download listener per call, so concurrent
 		// downloads would report each other's bytes
-		expect(mocks.download).toHaveBeenCalledOnce();
+		await started(1);
 		expect(first.url).toBe('http://gateway/file/a');
 
 		first.complete('/tmp/downloads/file.pdf');
-		await vi.waitFor(() => expect(mocks.download).toHaveBeenCalledTimes(2));
+		await started(2);
 
 		expect(second.url).toBe('http://gateway/file/b');
 	});
@@ -97,6 +130,7 @@ describe('DownloadManager', () => {
 		const first = deferDownload();
 
 		manager.start(win, { id: 'a', url: 'http://gateway/file/a', directory });
+		await started(1);
 
 		first.options.onStarted(new FakeItem());
 		first.options.onProgress({ percent: 0.4, transferredBytes: 40, totalBytes: 100 });
@@ -117,6 +151,7 @@ describe('DownloadManager', () => {
 		const first = deferDownload();
 
 		manager.start(win, { id: 'a', url: 'http://gateway/file/a', directory });
+		await started(1);
 
 		const item = new FakeItem();
 
@@ -143,6 +178,7 @@ describe('DownloadManager', () => {
 
 		expect(events('file-download-done')).toEqual([ { id: 'b', isCancelled: true } ]);
 
+		await started(1);
 		first.complete('/tmp/downloads/file.pdf');
 		await vi.waitFor(() => expect(events('file-download-done').length).toBe(2));
 
@@ -156,18 +192,131 @@ describe('DownloadManager', () => {
 		manager.start(win, { id: 'a', url: 'http://gateway/file/a', directory });
 		manager.start(win, { id: 'b', url: 'http://gateway/file/b', directory });
 
+		await started(1);
 		first.fail(new Error('Disk full'));
 
-		await vi.waitFor(() => expect(mocks.download).toHaveBeenCalledTimes(2));
+		await started(2);
 
 		expect(events('file-download-done')[0]).toEqual({ id: 'a', error: 'Disk full' });
 		expect(second.url).toBe('http://gateway/file/b');
+	});
+
+	test('reuses the file it wrote before, untouched, without transferring again', async () => {
+		const target = path.join(directory, 'hello.txt');
+
+		fs.writeFileSync(target, 'hello');
+
+		const stat = fs.statSync(target);
+
+		ledger.data[`object|${directory}`] = { path: target, size: stat.size, mtimeMs: stat.mtimeMs };
+
+		manager.start(win, { id: 'a', url: 'http://gateway/file/object', directory, objectId: 'object', name: 'hello.txt' });
+
+		await vi.waitFor(() => expect(events('file-download-done').length).toBe(1));
+
+		expect(events('file-download-done')[0]).toEqual({ id: 'a', path: target });
+		expect(mocks.download).not.toHaveBeenCalled();
+	});
+
+	test('checks the content when the file was touched since, and reuses it if it still matches', async () => {
+		const target = path.join(directory, 'hello.txt');
+
+		fs.writeFileSync(target, 'hello');
+
+		// A mtime that no longer matches what we recorded: touched, but the bytes
+		// are the object's own, which the checksum is what proves
+		ledger.data[`object|${directory}`] = { path: target, size: 5, mtimeMs: 1 };
+
+		manager.start(win, {
+			id: 'a', url: 'http://gateway/file/object', directory,
+			objectId: 'object', name: 'hello.txt', size: 5, checksums: [ helloChecksum ],
+		});
+
+		await vi.waitFor(() => expect(events('file-download-done').length).toBe(1));
+
+		expect(events('file-download-done')[0]).toEqual({ id: 'a', path: target });
+		expect(mocks.download).not.toHaveBeenCalled();
+	});
+
+	test('downloads again when the file on disk is no longer the object it names', async () => {
+		const target = path.join(directory, 'hello.txt');
+
+		fs.writeFileSync(target, 'edited by the user');
+
+		ledger.data[`object|${directory}`] = { path: target, size: 5, mtimeMs: 1 };
+
+		const first = deferDownload();
+
+		manager.start(win, {
+			id: 'a', url: 'http://gateway/file/object', directory,
+			objectId: 'object', name: 'hello.txt', size: 5, checksums: [ helloChecksum ],
+		});
+
+		await started(1);
+
+		// Never overwritten: the stack uniquifies, and the user's edit survives
+		expect(fs.readFileSync(target, 'utf8')).toBe('edited by the user');
+
+		first.complete(path.join(directory, 'hello (1).txt'));
+		await vi.waitFor(() => expect(events('file-download-done').length).toBe(1));
+	});
+
+	test('recognises a copy it never wrote, by content alone', async () => {
+		const target = path.join(directory, 'hello.txt');
+
+		fs.writeFileSync(target, 'hello');
+
+		// No ledger entry at all — a fresh install, or a file the user already had
+		manager.start(win, {
+			id: 'a', url: 'http://gateway/file/object', directory,
+			objectId: 'object', name: 'hello.txt', size: 5, checksums: [ helloChecksum ],
+		});
+
+		await vi.waitFor(() => expect(events('file-download-done').length).toBe(1));
+
+		expect(events('file-download-done')[0]).toEqual({ id: 'a', path: target });
+		expect(mocks.download).not.toHaveBeenCalled();
+
+		// Recorded, so the next time costs a stat rather than a hash
+		expect(ledger.set).toHaveBeenCalledWith('object', directory, expect.objectContaining({ path: target, size: 5 }));
+	});
+
+	test('leaves a same-named stranger of a different size alone', async () => {
+		const target = path.join(directory, 'hello.txt');
+
+		fs.writeFileSync(target, 'a completely different file');
+
+		deferDownload();
+
+		manager.start(win, {
+			id: 'a', url: 'http://gateway/file/object', directory,
+			objectId: 'object', name: 'hello.txt', size: 5, checksums: [ helloChecksum ],
+		});
+
+		await started(1);
+	});
+
+	test('records where a completed download landed', async () => {
+		const target = path.join(directory, 'hello.txt');
+		const first = deferDownload();
+
+		manager.start(win, { id: 'a', url: 'http://gateway/file/object', directory, objectId: 'object' });
+
+		await started(1);
+
+		fs.writeFileSync(target, 'hello');
+		first.complete(target);
+
+		await vi.waitFor(() => expect(ledger.set).toHaveBeenCalled());
+
+		expect(ledger.set).toHaveBeenCalledWith('object', directory, expect.objectContaining({ path: target, size: 5 }));
 	});
 
 	test('forgets a finished download, so a late cancel is a no-op', async () => {
 		const first = deferDownload();
 
 		manager.start(win, { id: 'a', url: 'http://gateway/file/a', directory });
+		await started(1);
 
 		const item = new FakeItem();
 

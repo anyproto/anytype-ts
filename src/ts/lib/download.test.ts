@@ -5,6 +5,7 @@ import Constant from 'json/constant';
 const mocks = vi.hoisted(() => ({
 	send: vi.fn(),
 	analytics: vi.fn(),
+	search: vi.fn(),
 }));
 
 vi.mock('Lib/renderer', () => ({ default: { send: mocks.send } }));
@@ -30,9 +31,12 @@ const percent = (id: string): number => {
 	return it.total ? Math.round(it.current / it.total * 100) : 0;
 };
 
+const records = (list: any[]) => mocks.search.mockImplementation((...args: any[]) => args[7]({ records: list }));
+
 beforeEach(() => {
 	rows = [];
 	Download = new DownloadManager();
+	records([]);
 
 	vi.stubGlobal('S', {
 		Progress: {
@@ -50,6 +54,8 @@ beforeEach(() => {
 		},
 	});
 	vi.stubGlobal('translate', (key: string) => key);
+	vi.stubGlobal('C', { ObjectSearch: mocks.search });
+	vi.stubGlobal('U', { File: { name: (it: any) => [ it.name, it.fileExt ].filter(v => v).join('.') } });
 	// The real allowlist, so these tests move with the policy
 	vi.stubGlobal('J', { Constant });
 	vi.stubGlobal('analytics', { event: mocks.analytics });
@@ -60,6 +66,7 @@ afterEach(() => {
 	vi.unstubAllGlobals();
 	mocks.send.mockReset();
 	mocks.analytics.mockReset();
+	mocks.search.mockReset();
 });
 
 describe('client-owned downloads', () => {
@@ -117,6 +124,34 @@ describe('client-owned downloads', () => {
 			'two.png · 30%',
 			'Disk full',
 		]);
+	});
+
+	it('asks for what it takes to recognise a copy already on disk', () => {
+		records([ { id: 'f1', name: 'one', fileExt: 'pdf', sizeInBytes: 1200, fileVariantChecksums: [ 'CHECKSUM1' ] } ]);
+
+		Download.start([ files[0] ], '/tmp/downloads', 'Test');
+
+		const keys = mocks.search.mock.calls[0][3];
+
+		// Hidden relation: it does not travel with the default keys
+		expect(keys).toContain('fileVariantChecksums');
+		expect(keys).toContain('sizeInBytes');
+
+		const request = mocks.send.mock.calls.find((it: any[]) => it[0] == 'download')[2];
+
+		expect(request).toMatchObject({ objectId: 'f1', name: 'one.pdf', size: 1200, checksums: [ 'CHECKSUM1' ] });
+	});
+
+	it('downloads anyway when the lookup answers with nothing', () => {
+		records([]);
+
+		Download.start([ files[0] ], '/tmp/downloads', 'Test');
+
+		const request = mocks.send.mock.calls.find((it: any[]) => it[0] == 'download')[2];
+
+		// No identity to compare against: the transfer still has to happen
+		expect(request).toMatchObject({ objectId: 'f1' });
+		expect(request.checksums).toEqual([]);
 	});
 
 	it('saves the original file, never a resized image variant', () => {

@@ -1,5 +1,9 @@
+import fs from 'fs';
+import path from 'path';
 import { download } from 'electron-dl';
 import WindowManager from './window';
+import Ledger from './downloadLedger';
+import { fileChecksums } from './checksum';
 import Util from './util';
 import { AppWindow } from './types';
 
@@ -7,6 +11,26 @@ export interface DownloadRequest {
 	id: string;
 	url: string;
 	directory: string;
+	// Identity of what is being fetched, used to recognise a copy already on
+	// disk. Absent for untracked transfers, which always download
+	objectId?: string;
+	name?: string;
+	size?: number;
+	checksums?: string[];
+};
+
+interface ExistingFile {
+	path: string;
+	size: number;
+};
+
+const statOrNull = (filePath: string): fs.Stats | null => {
+	try {
+		const stat = fs.statSync(filePath);
+		return stat.isFile() ? stat : null;
+	} catch (e) {
+		return null;
+	};
 };
 
 interface QueueEntry {
@@ -85,6 +109,18 @@ export class DownloadManager {
 		};
 
 		try {
+			const existing = await this.existing(param);
+
+			if (existing) {
+				Util.log('info', '[Download] The file is already on disk, reusing it');
+
+				// Fills the row the way a finished transfer would, so the caller
+				// needs to know nothing about the shortcut
+				this.send('file-download-progress', { id, current: existing.size, total: existing.size, name: path.basename(existing.path) });
+				done({ id, path: existing.path });
+				return;
+			};
+
 			await download(win, url, {
 				directory,
 				onStarted: (item: Electron.DownloadItem) => {
@@ -98,7 +134,10 @@ export class DownloadManager {
 					this.send('file-download-progress', { id, current: transferredBytes, total: totalBytes });
 				},
 				onCancel: () => done({ id, isCancelled: true }),
-				onCompleted: (file: any) => done({ id, path: file.path }),
+				onCompleted: (file: any) => {
+					this.record(param, file.path);
+					done({ id, path: file.path });
+				},
 			});
 		} catch (err: any) {
 			// A cancel rejects too, and has already reported itself
@@ -111,6 +150,85 @@ export class DownloadManager {
 			this.active = '';
 			this.next();
 		};
+	};
+
+	/**
+	 * The copy already on disk, when there is one worth reusing.
+	 *
+	 * The ledger says where we put the file last time, and its recorded size and
+	 * mtime are a cheap way to see it has not been touched since. Anything else —
+	 * a touched file, or a candidate we never wrote — is decided by content: a
+	 * checksum matching one the middleware stored proves the bytes are this
+	 * object's own, which no name or size comparison can.
+	 */
+	async existing (param: DownloadRequest): Promise<ExistingFile | null> {
+		const { objectId, directory, name, size, checksums } = param;
+
+		if (!objectId || !directory) {
+			return null;
+		};
+
+		const entry = await Ledger.get(objectId, directory);
+		const candidates: { path: string; isOurs: boolean }[] = [];
+
+		if (entry?.path) {
+			candidates.push({ path: entry.path, isOurs: true });
+		};
+
+		// A file the user already had, or one we wrote before this ledger existed
+		if (name) {
+			const guess = path.join(directory, name);
+
+			if (!candidates.some(it => it.path == guess)) {
+				candidates.push({ path: guess, isOurs: false });
+			};
+		};
+
+		for (const candidate of candidates) {
+			const stat = statOrNull(candidate.path);
+
+			if (!stat) {
+				continue;
+			};
+
+			if (candidate.isOurs && entry && (stat.size == entry.size) && (stat.mtimeMs == entry.mtimeMs)) {
+				return { path: candidate.path, size: stat.size };
+			};
+
+			if (!checksums?.length) {
+				continue;
+			};
+
+			// Cheap reject before hashing, but only for a file we cannot vouch for:
+			// a variant we served may not weigh what the object reports
+			if (!candidate.isOurs && size && (stat.size != size)) {
+				continue;
+			};
+
+			const local = await fileChecksums(candidate.path);
+
+			if (local.some(it => checksums.includes(it))) {
+				await Ledger.set(objectId, directory, { path: candidate.path, size: stat.size, mtimeMs: stat.mtimeMs });
+				return { path: candidate.path, size: stat.size };
+			};
+		};
+
+		return null;
+	};
+
+	/**
+	 * Notes where a transfer landed, so the next one for the same object costs a
+	 * stat rather than a hash.
+	 */
+	record (param: DownloadRequest, filePath: string): void {
+		const { objectId, directory } = param;
+		const stat = objectId && filePath ? statOrNull(filePath) : null;
+
+		if (!stat) {
+			return;
+		};
+
+		void Ledger.set(objectId, directory, { path: filePath, size: stat.size, mtimeMs: stat.mtimeMs });
 	};
 
 };
