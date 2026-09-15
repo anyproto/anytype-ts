@@ -492,6 +492,7 @@ export interface AppInfo {
 	expireAt: number;
 	scope: LocalApiScope;
 	isActive: boolean;
+	grant?: I.LinkAppGrant;
 };
 
 export enum ImageSize {

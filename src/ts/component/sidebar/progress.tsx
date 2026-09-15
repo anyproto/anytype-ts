@@ -1,10 +1,18 @@
 import React, { FC, memo, useRef, useEffect, useState, useCallback } from 'react';
 import Icon from 'Component/util/icon';
 import Label from 'Component/util/label';
+import Download from 'Lib/download';
 import * as I from 'Interface';
 
 const AUTO_EXPAND = true;
 const SKIP_STATE = [ I.ProgressState.Done, I.ProgressState.Canceled ];
+
+// A download that only wrote a file keeps its place, offering to reveal it. One
+// that opened or revealed the file already did something with it, and disappears
+// like every other finished row
+const isFinishedDownload = (item: I.Progress): boolean => {
+	return Boolean(item.isLocal) && Boolean(item.keepWhenDone) && (item.state == I.ProgressState.Done);
+};
 
 const getIconName = (type: I.ProgressType): string => {
 	switch (type) {
@@ -128,6 +136,11 @@ export interface ProgressItemProps {
 	id: string;
 	type: I.ProgressType;
 	canCancel: boolean;
+	isDone?: boolean;
+	subtitle?: string;
+	tooltip?: string;
+	action?: { text: string; onClick: () => void };
+	onDismiss?: (id: string) => void;
 	isError: boolean;
 	current?: number;
 	total?: number;
@@ -136,19 +149,24 @@ export interface ProgressItemProps {
 	onCancel?: (id: string) => void;
 };
 
-export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, isError, current, total, error, statistic, onCancel }: ProgressItemProps) => {
+export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, isDone, isError, current, total, error, statistic, subtitle, tooltip, action, onCancel, onDismiss }: ProgressItemProps) => {
+	const nodeRef = useRef<HTMLDivElement>(null);
 	const cn = [ 'item' ];
 	const iconName = getIconName(type);
-	const label = statistic ? translate(`importPhase${statistic.phase}`) : translate(U.String.toCamelCase(`progress-${type}`));
+	const label = statistic ? translate(`importPhase${statistic.phase}`) : translate(U.String.toCamelCase(`progress-${type}${isDone ? '-done' : ''}`));
 	const warningCount = statistic?.warningCount || 0;
 	const errorCount = statistic?.errorCount || 0;
 	const hasIssues = Boolean(warningCount || errorCount);
 
 	// currentItem is user content: rendered as text, never logged or sent to analytics
-	const currentItem = statistic?.currentItem || '';
+	const currentItem = subtitle || statistic?.currentItem || '';
 
 	if (canCancel) {
 		cn.push('canCancel');
+	};
+
+	if (isDone) {
+		cn.push('isDone');
 	};
 
 	if (statistic) {
@@ -161,6 +179,29 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 		} else {
 			C.ProcessCancel(id);
 		};
+	};
+
+	// A row that stands for several files keeps their detail behind a hover
+	const handleMouseEnter = () => {
+		if (tooltip) {
+			Preview.tooltipShow({ text: tooltip, element: nodeRef.current });
+		};
+	};
+
+	const handleMouseLeave = () => {
+		if (tooltip) {
+			Preview.tooltipHide(false);
+		};
+	};
+
+	const handleAction = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		action?.onClick();
+	};
+
+	const handleDismiss = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		onDismiss?.(id);
 	};
 
 	const handleCancel = (e: React.MouseEvent) => {
@@ -186,7 +227,7 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 	};
 
 	return (
-		<div className={cn.join(' ')}>
+		<div ref={nodeRef} className={cn.join(' ')} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
 			<div className="iconWrap">
 				<Icon name={iconName} className="progressType" />
 			</div>
@@ -194,9 +235,9 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 			<div className="info">
 				<div className="name">{label}</div>
 				<div className="status">
-					{statistic
+					{action ? <span className="action" onClick={handleAction}>{action.text}</span> : (statistic
 						? <StatisticStatus statistic={statistic} />
-						: <ItemStatus type={type} current={current || 0} total={total || 0} error={error} />}
+						: <ItemStatus type={type} current={current || 0} total={total || 0} error={error} />)}
 				</div>
 
 				{currentItem ? <div className="subtitle">{currentItem}</div> : ''}
@@ -216,8 +257,9 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 				) : ''}
 			</div>
 
-			<div className={[ 'spinnerWrap', (!isError ? 'withSpinner' : '') ].join(' ')}>
+			<div className={[ 'spinnerWrap', (!isError && !isDone ? 'withSpinner' : '') ].join(' ')}>
 				{canCancel ? <Icon name="common/clear" onClick={handleCancel} /> : ''}
+				{!canCancel && onDismiss ? <Icon name="common/clear" onClick={handleDismiss} /> : ''}
 			</div>
 		</div>
 	);
@@ -225,7 +267,7 @@ export const ProgressItem: FC<ProgressItemProps> = memo(({ id, type, canCancel, 
 
 const SidebarProgress: FC = () => {
 
-	const list = S.Progress.getList(it => !SKIP_STATE.includes(it.state));
+	const list = S.Progress.getList(it => !SKIP_STATE.includes(it.state) || isFinishedDownload(it));
 	const [ isExpanded, setIsExpanded ] = useState(false);
 	const prevCount = useRef(0);
 
@@ -262,7 +304,18 @@ const SidebarProgress: FC = () => {
 				<div className="items">
 					{list.map(item => {
 						const isError = item.state == I.ProgressState.Error;
-						const canCancel = item.canCancel && !isError;
+						const isDone = isFinishedDownload(item);
+						const canCancel = item.canCancel && !isError && !isDone;
+
+						// Client-owned rows cancel through their own manager: the
+						// middleware has no process behind a gateway download
+						const isLocal = Boolean(item.isLocal);
+						const parts = isLocal ? Download.getParts(item.id) : [];
+						const action = isDone ? { text: Download.revealLabel(), onClick: () => Download.reveal(item.id) } : undefined;
+						const onDismiss = isDone ? (id: string) => {
+							Download.drop(id);
+							S.Progress.delete(id);
+						} : undefined;
 
 						return (
 							<ProgressItem
@@ -270,11 +323,17 @@ const SidebarProgress: FC = () => {
 								id={item.id}
 								type={item.type}
 								canCancel={canCancel}
+								isDone={isDone}
 								isError={isError}
 								current={item.current}
 								total={item.total}
 								error={item.error}
 								statistic={item.statistic}
+								subtitle={isLocal ? Download.activeName(item.id) : ''}
+								tooltip={(parts.length > 1) ? Download.tooltip(item.id) : ''}
+								action={action}
+								onCancel={isLocal ? (id: string) => Download.cancel(id) : undefined}
+								onDismiss={onDismiss}
 							/>
 						);
 					})}

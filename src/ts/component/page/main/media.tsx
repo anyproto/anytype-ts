@@ -121,7 +121,7 @@ const PageMainMedia = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				return;
 			};
 
-			Action.downloadFile(targetObjectId, analytics.route.media, block.isFileImage());
+			Action.downloadFile(targetObjectId, analytics.route.media);
 		};
 	};
 

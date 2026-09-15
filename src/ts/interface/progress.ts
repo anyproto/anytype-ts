@@ -80,6 +80,12 @@ export interface Progress {
 	total?: number;
 	state?: ProgressState;
 	canCancel?: boolean;
+	// Client-owned rows (gateway downloads) are cancelled by their own manager,
+	// not by ProcessCancel: the middleware has no process behind them
+	isLocal?: boolean;
+	// Whether a finished row stays on screen. A download that only wrote a file
+	// offers to reveal it; one that opened the file has nothing left to say
+	keepWhenDone?: boolean;
 	error?: string;
 	statistic?: ImportStatistic;
 };

@@ -60,6 +60,12 @@ export const AccountLocalLinkNewChallenge = (response: any) => {
 	};
 };
 
+export const AccountLocalLinkApproveChallenge = (response: any) => {
+	return {
+		challenge: String(response.challenge || ''),
+	};
+};
+
 export const AccountLocalLinkSolveChallenge = (response: any) => {
 	return {
 		token: response.sessionToken,

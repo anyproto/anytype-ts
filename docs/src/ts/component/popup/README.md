@@ -62,4 +62,4 @@ Open a popup: `S.Popup.open('confirm', { data: { ... } })`
 ### Other
 - `about.tsx` - About/info popup
 - `share.tsx` - App sharing link
-- `api/create.tsx` - API token management
+- `api/create.tsx` - Creates API v2 keys or edits an existing key's grant in place through the shared `form/apiKeyEditor` (space access, permission, creation-time expiry, legacy compatibility).

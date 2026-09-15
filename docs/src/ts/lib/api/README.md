@@ -37,6 +37,7 @@ All mutations go through this command layer. The middleware handles persistence,
 
 The dispatcher manages:
 - Request queuing and execution via `ServiceClient`
+- Call metadata (`metadata()`): the session token plus the local API secret when the main process supplied one at `init(address, secret)`. Heart requires the secret on the account-bootstrap RPCs (wallet/account create, recover and migrate, `InitialSetParameters`, `DebugAccountSelectTrace`, and the `WalletCreateSession` self-mint branches) and ignores it elsewhere, so it rides every call. Empty in web mode and against an externally started helper, where the header is omitted
 - Event stream subscription (`listenEvents`) with ordered event processing
 - MobX store updates from server events (block changes, detail updates, subscription counters)
 - Account start-up status: `AccountRecoveryUpdate` events go to `S.Recovery.apply`; a stream re-attach mid-run (`S.Recovery.runId` set, and `isRecoveryNeeded()`: channels still missing) in `startStream` re-pulls the folded snapshot via `C.AccountRecoveryState` because reconnects refetch nothing else. The first attach, before `AccountSelect`, does not pull: the live `Started` event is still ahead

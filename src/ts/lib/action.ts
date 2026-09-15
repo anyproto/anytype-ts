@@ -3,6 +3,7 @@
 import * as Diff from 'diff';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import Download from 'Lib/download';
 import { focus } from 'Lib/focus';
 import { getExportResultStatus } from 'Lib/util/exportReport';
 
@@ -256,8 +257,11 @@ class Action {
 	};
 
 	/**
-	 * Opens a file by ID and route, downloading it if necessary.
-	 * @param {string} id - The file ID.
+	 * Downloads a file to the user's download folder and hands it to the system
+	 * handler. Same gateway path as saving one: the middleware's FileDownload
+	 * writes only inside its own temp scope now, and an opened file belongs
+	 * where the user can find it again.
+	 * @param {any} object - The file object.
 	 * @param {string} route - The route context for analytics.
 	 */
 	openFile (object: any, route: string) {
@@ -267,14 +271,7 @@ class Action {
 
 		const ext = String(object.fileExt || '').toLowerCase();
 		const cb = () => {
-			S.Common.downloadStart(object.id);
-			C.FileDownload(object.id, U.Common.getElectron().downloadPath(), (message: any) => {
-				S.Common.downloadDone(object.id);
-				if (message.path) {
-					this.openPath(message.path);
-					analytics.event('OpenMedia', { route });
-				};
-			});
+			Download.start([ { id: object.id } ], U.Common.getElectron().downloadPath(), route, { openWhenDone: true });
 		};
 		const isDangerous = !ext || [
 			'exe', 'bat', 'cmd', 'com', 'cpl', 'scr', 'msi', 'msp', 'pif', 'reg', 'vbs', 'vbe', 'ws', 'wsf', 'wsh', 'ps1', 'jar',
@@ -300,18 +297,17 @@ class Action {
 	 * Downloads a file by ID and route, optionally as an image.
 	 * @param {string} id - The file ID.
 	 * @param {string} route - The route context for analytics.
-	 * @param {boolean} isImage - Whether to treat the file as an image.
 	 */
-	downloadFile (id: string, route: string, isImage: boolean) {
-		this.downloadFiles([ { id, isImage } ], route);
+	downloadFile (id: string, route: string) {
+		this.downloadFiles([ { id } ], route);
 	};
 
 	/**
 	 * Downloads multiple files into a single chosen directory using one dialog.
-	 * @param {{ id: string, isImage: boolean }[]} files - The files to download.
+	 * @param {{ id: string }[]} files - The files to download.
 	 * @param {string} route - The route context for analytics.
 	 */
-	downloadFiles (files: { id: string, isImage: boolean }[], route: string) {
+	downloadFiles (files: { id: string }[], route: string) {
 		files = (files || []).filter(it => it.id && !S.Common.isDownloading(it.id));
 
 		if (!files.length) {
@@ -319,20 +315,7 @@ class Action {
 		};
 
 		this.openDirectoryDialog({ buttonLabel: translate('commonDownload') }, paths => {
-			files.forEach(file => {
-				const url = file.isImage ? S.Common.imageUrl(file.id, 0) : S.Common.fileUrl(file.id);
-
-				S.Common.downloadStart(file.id);
-
-				const promise = Renderer.send('download', url, { directory: paths[0] });
-				if (promise && promise.then) {
-					promise.then(() => S.Common.downloadDone(file.id));
-				} else {
-					S.Common.downloadDone(file.id);
-				};
-			});
-
-			analytics.event('DownloadMedia', { route });
+			Download.start(files, paths[0], route);
 		});
 	};
 

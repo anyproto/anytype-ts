@@ -8,8 +8,6 @@ const os = require('os');
 
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const winShutdownStdinMessage = 'shutdown\n';
-const parentLifelineEnv = 'ANYTYPE_PARENT_LIFELINE';
-const parentLifelineStdin = 'stdin';
 
 const webPort = process.env.WEB_PORT || 3030;
 const grpcWebAddr = process.env.ANYTYPE_GRPCWEB_ADDR || '127.0.0.1:31008';
@@ -78,12 +76,13 @@ function startHelper() {
 			}
 		};
 
+		// No ANYTYPE_PARENT_LIFELINE here: a browser page can never hold the parent
+		// secret that opting in makes the helper wait for, so web mode would pay the
+		// wait on every start and stay permissive anyway. The cost is that the helper
+		// no longer dies on EOF, which is what cleanup() below has to make up for.
+		// Windows still gets the stdin shutdown command, which it watches for regardless
 		helperProcess = childProcess.spawn(binPath, ['127.0.0.1:0', grpcWebAddr], {
 			windowsHide: false,
-			env: {
-				...process.env,
-				[parentLifelineEnv]: parentLifelineStdin,
-			},
 			stdio: ['pipe', 'pipe', 'pipe'],
 		});
 
@@ -217,7 +216,14 @@ function startVite(serverAddress) {
 	});
 }
 
+let cleanedUp = false;
+
 function cleanup() {
+	if (cleanedUp) {
+		return;
+	}
+	cleanedUp = true;
+
 	console.log('\n[Web] Shutting down...');
 
 	if (viteProcess) {
@@ -243,6 +249,15 @@ process.on('SIGTERM', () => {
 	process.exit(0);
 });
 
+process.on('SIGHUP', () => {
+	cleanup();
+	process.exit(0);
+});
+
+// The helper no longer watches for our EOF, so it outlives us unless we kill it
+// on the way out. This covers every exit we can still observe; SIGKILL we cannot
+process.on('exit', cleanup);
+
 async function main() {
 	try {
 		console.log('[Web] Anytype Web Mode');
@@ -250,6 +265,9 @@ async function main() {
 
 		const serverAddress = await startHelper();
 		await startVite(serverAddress);
+
+		// vite exited on its own: take the helper with us
+		cleanup();
 	} catch (err) {
 		console.error('[Web] Error:', err);
 		cleanup();

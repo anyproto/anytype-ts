@@ -2,6 +2,7 @@
 
 declare global {
 	var serverAddress: string;
+	var localApiSecret: string;
 }
 
 // Suppress EPIPE errors when parent pipe closes during shutdown
@@ -231,6 +232,15 @@ function waitForLibraryAndCreateWindows () {
 		waitLibraryPromise = Server.start(binPath, currentPath);
 	};
 
+	// Read through to the Server rather than snapshotted: start() mints a fresh
+	// secret per launch, so a snapshot taken here could hand a renderer a value
+	// the running helper never registered. Published before the first window
+	// exists; empty for an externally started helper, which has no parent pipe
+	Object.defineProperty(global, 'localApiSecret', {
+		configurable: true,
+		get: () => Server.getSecret(),
+	});
+
 	Util.mkDir(Util.logPath());
 
 	// Create windows immediately so renderer boot (process spawn, bundle
@@ -325,6 +335,15 @@ function createWindow () {
 
 	installNativeMessagingHost();
 	Util.registerLinuxProtocolHandler();
+
+	// The approval window has no session and no Api id, so it reports the user's decision directly
+	ipcMain.on('linkApprovalDecision', (e: Electron.IpcMainEvent, param: any) => {
+		Api.linkApprovalDecision(param);
+	});
+
+	ipcMain.on('linkApprovalReady', (e: Electron.IpcMainEvent) => {
+		WindowManager.sendApprovalPayloadTo(e.sender.id);
+	});
 
 	//ipcMain.removeHandler('Api');
 	ipcMain.handle('Api', (e: Electron.IpcMainInvokeEvent, id: number, cmd: string, args: any[]) => {

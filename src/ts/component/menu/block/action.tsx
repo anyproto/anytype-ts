@@ -636,7 +636,7 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'download': {
-				Action.downloadFile(targetObjectId, analytics.route.menuAction, block.isFileImage());
+				Action.downloadFile(targetObjectId, analytics.route.menuAction);
 				break;
 			};
 

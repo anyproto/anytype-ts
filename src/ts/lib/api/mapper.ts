@@ -972,6 +972,20 @@ export const Mapper = {
 			};
 		},
 
+		/**
+		 * Identity of a local-link caller. processPath and origin are echoed back to middleware
+		 * verbatim to address the pending request, so they are never trimmed or normalized here.
+		 */
+		AccountLinkClientInfo: (obj: any): I.LinkClientInfo => {
+			return {
+				processName: String(obj.processName || ''),
+				processPath: String(obj.processPath || ''),
+				name: String(obj.name || ''),
+				origin: String(obj.origin || ''),
+				signatureVerified: Boolean(obj.signatureVerified),
+			};
+		},
+
 		AppInfo: (obj: any): I.AppInfo => {
 			return {
 				hash: obj.appHash,
@@ -981,6 +995,11 @@ export const Mapper = {
 				expireAt: obj.expireAt,
 				scope: obj.scope as number,
 				isActive: obj.isActive,
+				grant: obj.grant ? {
+					spaceIds: [ ...(obj.grant.spaceIds || []) ],
+					allSpaces: obj.grant.allSpaces === true,
+					perm: Number(obj.grant.perm ?? I.LocalApiPermission.Read),
+				} : undefined,
 			};
 		},
 
@@ -1395,6 +1414,8 @@ export const Mapper = {
 			return {
 				appName: obj.name,
 				scope: obj.scope as number,
+				expireAt: obj.expireAt || 0,
+				grant: obj.grant ? { ...obj.grant, spaceIds: [ ...obj.grant.spaceIds ] } : undefined,
 			};
 		},
 
@@ -1468,15 +1489,17 @@ export const Mapper = {
 			};
 		},
 
-		AccountLinkChallenge: (obj: any) => {
+		AccountLinkApprovalRequest: (obj: any) => {
 			return {
-				challenge: obj.challenge,
+				clientInfo: Mapper.From.AccountLinkClientInfo(obj.clientInfo || {}),
+				scope: Number(obj.scope) || 0,
+				requestedPerm: obj.requestedPerm == I.LocalApiPermission.ReadWrite ? I.LocalApiPermission.ReadWrite : I.LocalApiPermission.Read,
 			};
 		},
 
-		AccountLinkChallengeHide: (obj: any) => {
+		AccountLinkApprovalHide: (obj: any) => {
 			return {
-				challenge: obj.challenge,
+				clientInfo: Mapper.From.AccountLinkClientInfo(obj.clientInfo || {}),
 			};
 		},
 

@@ -545,7 +545,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'downloadFile': {
-				Action.downloadFile(object.id, route, U.Object.isImageLayout(object.layout));
+				Action.downloadFile(object.id, route);
 				break;
 			};
 

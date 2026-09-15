@@ -14,9 +14,26 @@ import UpdateManager from './update';
 import Server from './server';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
+import LinkApprovalManager from './linkApproval';
+import DownloadManager, { DownloadRequest } from './download';
 import { AppWindow, TabView, TabData, CreateTabOptions, AppConfig, Bounds } from './types';
 
 const KEYTAR_SERVICE = 'Anytype';
+
+/**
+ * Local-link pairing prompts. Main owns them because Event.Account.LinkApprovalRequest reaches every
+ * session, so dedup cannot live in a renderer, and because the queue has to outlive any one window.
+ * The approve RPC itself belongs to a renderer: main holds no middleware session.
+ */
+const LinkApproval = new LinkApprovalManager({
+	open: payload => { WindowManager.createApprovalWindow(payload); },
+	close: key => WindowManager.closeApprovalWindow(key),
+	code: (key, challenge) => WindowManager.showApprovalCode(key, challenge),
+	error: key => WindowManager.showApprovalError(key),
+	spaces: (key, spaces) => WindowManager.updateApprovalSpaces(key, spaces),
+	liveTargets: () => WindowManager.getAppWindowIds(),
+	sendDecision: (id, payload) => WindowManager.sendToWindowTab(id, 'link-approval-decision', payload),
+});
 
 class Api {
 
@@ -372,7 +389,30 @@ class Api {
 	};
 
 	async download (win: AppWindow, url: string, options: Record<string, any>): Promise<void> {
+		const id = String(options?.id || '');
+
+		// A tracked download carries an id: it reports progress to a sidebar row
+		// and can be cancelled. Untracked ones — the save-as dialogs for QR codes
+		// and cover images — go straight to the stack as before
+		if (id) {
+			// Passed through whole rather than hand-picked: the queue reads more
+			// than an id and a directory — the file's identity is what lets it
+			// recognise a copy already on disk — and a field dropped here fails
+			// silently, costing a download nobody notices
+			DownloadManager.start(win, {
+				...options,
+				id,
+				url,
+				directory: String(options.directory || ''),
+			} as DownloadRequest);
+			return;
+		};
+
 		await download(win, url, options);
+	};
+
+	downloadCancel (win: AppWindow, id: string): void {
+		DownloadManager.cancel(String(id || ''));
 	};
 
 	winCommand (win: AppWindow, cmd: string, param: Record<string, any>): void {
@@ -447,6 +487,20 @@ class Api {
 
 	openUrl (win: AppWindow, url: string): void {
 		shell.openExternal(url);
+	};
+
+	/**
+	 * Reveals a file in the system file manager with the file itself selected —
+	 * Finder, Explorer or whatever the desktop provides. This is where a
+	 * download lands when opening it would do something other than view it.
+	 */
+	showInFolder (win: AppWindow, fp: string): void {
+		if (!fp || !fs.existsSync(fp)) {
+			Util.log('error', '[Api].showInFolder: Invalid path:', fp);
+			return;
+		};
+
+		shell.showItemInFolder(path.normalize(fp));
 	};
 
 	openPath (win: AppWindow, fp: string): void {
@@ -630,12 +684,26 @@ class Api {
 		WindowManager.sendToAllTabs('data-path', Util.dataPath());
 	};
 
-	showChallenge (win: AppWindow, param: Record<string, any>): void {
-		WindowManager.createChallenge(param as { challenge: string } & Record<string, any>);
+	showLinkApproval (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.request(param as any, win.id);
 	};
 
-	hideChallenge (win: AppWindow, param: Record<string, any>): void {
-		WindowManager.closeChallenge(param as { challenge: string });
+	linkApprovalSpaces (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.updateSpaces(win.id, param.spaces || []);
+	};
+
+	hideLinkApproval (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.hide(param.clientInfo);
+	};
+
+	/** Response of AccountLocalLinkApproveChallenge, relayed back by the renderer that sent it. */
+	linkApprovalResult (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.result(param as any);
+	};
+
+	/** Allow or Deny pressed in the approval window, which has no session to send the RPC itself. */
+	linkApprovalDecision (param: Record<string, any>): void {
+		LinkApproval.decide(param as any);
 	};
 
 	reload (win: AppWindow, route: string): void {
@@ -898,7 +966,7 @@ class Api {
 	 */
 	getWindowAtPoint (x: number, y: number, excludeWin: AppWindow): AppWindow | null {
 		for (const win of WindowManager.list) {
-			if (win === excludeWin || win.isDestroyed() || win.isChallenge) {
+			if (win === excludeWin || win.isDestroyed() || win.isApproval) {
 				continue;
 			};
 

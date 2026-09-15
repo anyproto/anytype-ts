@@ -12,6 +12,7 @@ import MenuManager from './menu';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
 import { AppWindow, TabView, TabData, CreateMainOptions, CreateTabOptions, SavedTabState, SavedWindowsState, Bounds } from './types';
+import type { LinkApprovalSpace } from '../../src/ts/interface/linkApproval';
 
 const port: string = Util.getPort();
 
@@ -59,7 +60,7 @@ class WindowManager {
 
 		win.on('focus', () => {
 			// Auxiliary windows must not become the target for menu/update actions
-			if (!win.isQuickSearch && !win.isChallenge) {
+			if (!win.isQuickSearch && !win.isApproval) {
 				UpdateManager.setWindow(win);
 				MenuManager.setWindow(win);
 			};
@@ -236,7 +237,7 @@ class WindowManager {
 
 	/** Number of real (non-auxiliary) app windows */
 	mainWindowCount (): number {
-		return Array.from(this.list).filter(w => w && !w.isDestroyed() && !w.isQuickSearch && !w.isChallenge).length;
+		return Array.from(this.list).filter(w => w && !w.isDestroyed() && !w.isQuickSearch && !w.isApproval).length;
 	};
 
 	getQuickSearch (): AppWindow | null {
@@ -361,42 +362,92 @@ class WindowManager {
 		};
 	};
 
-	createChallenge (options: { challenge: string } & Record<string, any>): AppWindow {
-		console.log('[WindowManager] createChallenge called', options);
-		// Check if challenge window already exists
-		for (const win of this.list) {
-			if (win && win.isChallenge && (win.challenge == options.challenge) && !win.isDestroyed()) {
-				console.log('[WindowManager] Challenge window already exists');
-				return win;
-			};
+	/**
+	 * Opens the local-link approval prompt. Keyed by caller (LinkApprovalManager owns the queue and
+	 * makes sure only one is up at a time), always on top so the request is answerable while the app
+	 * itself is hidden.
+	 */
+	createApprovalWindow (options: { key: string } & Record<string, any>): AppWindow {
+		const existing = this.getApprovalWindow(options.key);
+		if (existing) {
+			return existing;
 		};
 
-		console.log('[WindowManager] Creating new challenge window');
 		const { width, height } = this.getScreenSize();
 
-		const win = this.create({ ...options, isChallenge: true }, {
-			backgroundColor: '',
+		const win = this.create({ ...options, isApproval: true, approvalKey: options.key, approvalPayload: options }, {
 			width: 424,
-			height: 232,
+			// The heights below include the 34px the Anytype wordmark adds above the title.
+			height: options.scope == 1 ? Math.min(602, height - 40) : 322,
 			x: Math.floor(width / 2 - 212),
-			y: Math.floor(height - 282),
-			titleBarStyle: 'hidden',
+			y: Math.max(20, Math.floor(height - (options.scope == 1 ? 652 : 372))),
+			// Fully frameless: 'hidden' would still render the macOS traffic lights. Deny and the
+			// 180s expiry are the ways out, so the prompt needs no window controls.
+			frame: false,
+			titleBarStyle: 'default',
 			alwaysOnTop: true,
 			focusable: true,
 			skipTaskbar: true,
 		});
 
-		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-		win.loadURL(`file://${path.join(Util.appPath, 'dist', 'challenge', 'index.html')}`);
+		// skipTransformProcessType: without it Electron flips the process to UIElementApplication to
+		// float over other apps' fullscreen Spaces, which drops the Dock icon and the menu bar for
+		// the whole app — and app.dock.show() does not bring them back (electron#26350).
+		win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true });
+		win.loadURL(this.getUrlForApprovalWindow());
 		win.setMenu(null);
 		win.showInactive(); // show inactive to prevent focus loose from other app
 
 		win.webContents.once('did-finish-load', () => {
-			win.webContents.send('challenge', options);
+			win.webContents.send('linkApproval', options);
 		});
 
-		setTimeout(() => this.closeChallenge(options), 30000);
 		return win;
+	};
+
+	/**
+	 * Answers the window's own request for its payload. The push on did-finish-load can land before
+	 * the page has subscribed — the script is a module, so it runs after load — and then the prompt
+	 * would stay empty.
+	 */
+	sendApprovalPayloadTo (webContentsId: number): void {
+		for (const win of this.list) {
+			if (win && win.isApproval && !win.isDestroyed() && (win.webContents.id == webContentsId)) {
+				win.webContents.send('linkApproval', win.approvalPayload);
+				return;
+			};
+		};
+	};
+
+	/** Swaps the prompt for the code middleware minted after the user allowed the request. */
+	showApprovalCode (key: string, challenge: string): void {
+		const win = this.getApprovalWindow(key);
+
+		if (win) {
+			win.webContents.send('linkApprovalCode', { key, challenge });
+		};
+	};
+
+	showApprovalError (key: string): void {
+		this.getApprovalWindow(key)?.webContents.send('linkApprovalError', { key });
+	};
+
+	updateApprovalSpaces (key: string, spaces: LinkApprovalSpace[]): void {
+		const win = this.getApprovalWindow(key);
+		if (win) {
+			win.approvalPayload = { ...win.approvalPayload, spaces };
+			win.webContents.send('linkApprovalSpaces', { key, spaces });
+		};
+	};
+
+	getApprovalWindow (key: string): AppWindow | null {
+		for (const win of this.list) {
+			if (win && win.isApproval && (win.approvalKey == key) && !win.isDestroyed()) {
+				return win;
+			};
+		};
+
+		return null;
 	};
 
 	getScreenSize (): { width: number; height: number } {
@@ -414,11 +465,11 @@ class WindowManager {
 		return ret;
 	};
 
-	closeChallenge (options: { challenge: string }): void {
-		for (const win of this.list) {
-			if (win && win.isChallenge && (win.challenge == options.challenge) && !win.isDestroyed()) {
-				win.close();
-			};
+	closeApprovalWindow (key: string): void {
+		const win = this.getApprovalWindow(key);
+
+		if (win) {
+			win.close();
 		};
 	};
 
@@ -906,6 +957,10 @@ class WindowManager {
 		return is.development ? `http://localhost:${port}/tabs.html` : 'file://' + path.join(Util.appPath, 'dist', 'tabs.html');
 	};
 
+	getUrlForApprovalWindow (): string {
+		return is.development ? `http://localhost:${port}/src/html/linkApproval.html` : 'file://' + path.join(Util.appPath, 'dist', 'linkApproval', 'index.html');
+	};
+
 	getUrlForNewTab (): string {
 		return this.getUrlForNewWindow().replace('tabs.html', 'index.html');
 	};
@@ -1013,12 +1068,44 @@ class WindowManager {
 		this.sendToAllTabs('reload');
 	};
 
+	/** Ids of the app windows that can carry a middleware session — approval windows have none. */
+	getAppWindowIds (): number[] {
+		const ret: number[] = [];
+
+		this.list.forEach((it: AppWindow) => {
+			if (it && !it.isApproval && !it.isDestroyed()) {
+				ret.push(it.id);
+			};
+		});
+
+		return ret;
+	};
+
+	/** Sends to a window's active tab. Returns false when the window or its tab is already gone. */
+	sendToWindowTab (id: number, ...args: [string, ...any[]]): boolean {
+		for (const win of this.list) {
+			if (!win || (win.id != id) || win.isDestroyed() || win.isApproval) {
+				continue;
+			};
+
+			const view = Util.getActiveView(win);
+			if (!view || !view.webContents) {
+				return false;
+			};
+
+			view.webContents.send(...args);
+			return true;
+		};
+
+		return false;
+	};
+
 	getFirstWindow (): AppWindow | undefined {
 		return this.list.values().next().value;
 	};
 
 	private serializeWindow (win: AppWindow): SavedTabState | null {
-		if (!win || !win.views || win.isDestroyed() || win.isChallenge) {
+		if (!win || !win.views || win.isDestroyed() || win.isApproval) {
 			return null;
 		};
 
@@ -1052,7 +1139,7 @@ class WindowManager {
 
 		const push = (w: AppWindow) => {
 			// Auxiliary windows (quick search, challenge) are never restored on start
-			if (!w || seen.has(w.id) || w.isQuickSearch || w.isChallenge) {
+			if (!w || seen.has(w.id) || w.isQuickSearch || w.isApproval) {
 				return;
 			};
 			const state = this.serializeWindow(w);

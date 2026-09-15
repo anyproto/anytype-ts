@@ -572,7 +572,7 @@ class MenuManager {
 		let win = this.win;
 
 		if (!win || win.isDestroyed()) {
-			win = Array.from(WindowManager.list.values()).find(it => it && !it.isDestroyed() && !it.isQuickSearch && !it.isChallenge) || null;
+			win = Array.from(WindowManager.list.values()).find(it => it && !it.isDestroyed() && !it.isQuickSearch && !it.isApproval) || null;
 		};
 
 		if (!win) {

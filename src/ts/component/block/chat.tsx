@@ -1110,13 +1110,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 							const file = targetId ? files.find(it => it.id == targetId) : files[0];
 
 							if (file) {
-								Action.downloadFile(file.id, analytics.route.chat, file.layout == I.ObjectLayout.Image);
+								Action.downloadFile(file.id, analytics.route.chat);
 							};
 							break;
 						};
 
 						case 'downloadAll': {
-							const files = getDownloadableAttachments(item).map(it => ({ id: it.id, isImage: it.layout == I.ObjectLayout.Image }));
+							const files = getDownloadableAttachments(item).map(it => ({ id: it.id }));
 
 							Action.downloadFiles(files, analytics.route.chat);
 							break;

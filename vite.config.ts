@@ -103,9 +103,11 @@ export default defineConfig(({ mode }) => {
 			rollupOptions: {
 				input: {
 					main: path.resolve(__dirname, 'src/html/index.html'),
+					// separate always-on-top window for local-link pairing approval
+					linkApproval: path.resolve(__dirname, 'src/html/linkApproval.html'),
 				},
 				output: {
-					entryFileNames: 'js/main.js',
+					entryFileNames: (chunk) => (chunk.name == 'main' ? 'js/main.js' : 'js/[name].js'),
 					chunkFileNames: 'js/chunks/[name].js',
 					assetFileNames: (assetInfo) => {
 						if (assetInfo.names?.[0]?.endsWith('.css')) {
@@ -221,21 +223,31 @@ export default defineConfig(({ mode }) => {
 				},
 			}),
 
-			// Move index.html from dist/src/html/index.html to dist/index.html and fix paths
+			// Move built html out of dist/src/html/ and fix paths: index.html to dist/index.html,
+			// linkApproval.html to dist/linkApproval/index.html (its own directory, since the
+			// approval window loads it by directory path)
 			{
 				name: 'move-html',
 				closeBundle() {
-					const src = path.resolve(__dirname, 'dist/src/html/index.html');
-					const dest = path.resolve(__dirname, 'dist/index.html');
-					if (fs.existsSync(src)) {
+					const move = (name: string, dest: string, prefix: string) => {
+						const src = path.resolve(__dirname, `dist/src/html/${name}`);
+						if (!fs.existsSync(src)) {
+							return;
+						}
+
 						let html = fs.readFileSync(src, 'utf8');
 						// Fix relative paths that were relative to src/html/
-						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, './');
-						fs.writeFileSync(dest, html);
+						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, prefix);
+						fs.mkdirSync(path.dirname(path.resolve(__dirname, dest)), { recursive: true });
+						fs.writeFileSync(path.resolve(__dirname, dest), html);
 						fs.unlinkSync(src);
-						try { fs.rmdirSync(path.resolve(__dirname, 'dist/src/html')); } catch {}
-						try { fs.rmdirSync(path.resolve(__dirname, 'dist/src')); } catch {}
-					}
+					};
+
+					move('index.html', 'dist/index.html', './');
+					move('linkApproval.html', 'dist/linkApproval/index.html', '../');
+
+					try { fs.rmdirSync(path.resolve(__dirname, 'dist/src/html')); } catch {}
+					try { fs.rmdirSync(path.resolve(__dirname, 'dist/src')); } catch {}
 				},
 			} as Plugin,
 

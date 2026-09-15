@@ -1,4 +1,6 @@
 import * as I from 'Interface';
+import { apiKeyCreateError } from 'Lib/apiKey';
+import { isValidLinkGrant } from 'Lib/linkApprovalGrant';
 
 export const InitialSetParameters = (platform: I.Platform, version: string, workDir: string, logLevel: string, doNotSendLogs: boolean, doNotSaveLogs: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('InitialSetParameters', {
@@ -219,6 +221,20 @@ export const AccountLocalLinkNewChallenge = (name: string, callBack?: (message: 
 	dispatcher.request('AccountLocalLinkNewChallenge', { appName: name }, callBack);
 };
 
+/**
+ * Answers a pending local-link pairing request. processPath and origin address the request and must
+ * be passed back exactly as they arrived in Event.Account.LinkApprovalRequest. On allow the response
+ * carries the freshly minted code, which middleware sends to this session only.
+ */
+export const AccountLocalLinkApproveChallenge = (processPath: string, origin: string, allow: boolean, grant: I.LinkAppGrant | undefined, callBack?: (message: any) => void) => {
+	dispatcher.request('AccountLocalLinkApproveChallenge', {
+		processPath,
+		origin,
+		allow,
+		grant: allow ? grant : undefined,
+	}, callBack);
+};
+
 export const AccountLocalLinkSolveChallenge = (id: string, answer: string, callBack?: (message: any) => void) => {
 	dispatcher.request('AccountLocalLinkSolveChallenge', {
 		challengeId: id,
@@ -230,10 +246,23 @@ export const AccountLocalLinkListApps = (callBack?: (message: any) => void) => {
 	dispatcher.request('AccountLocalLinkListApps', {}, callBack);
 };
 
-export const AccountLocalLinkCreateApp = (app: any, callBack?: (message: any) => void) => {
+export const AccountLocalLinkCreateApp = (app: { name: string; expireAt?: number; grant: I.LinkAppGrant }, callBack?: (message: any) => void) => {
+	const error = apiKeyCreateError(app.name, app.grant, app.expireAt);
+	if (error) {
+		callBack?.({ error: { code: 2, description: translate(error) } });
+		return;
+	};
 	dispatcher.request('AccountLocalLinkCreateApp', {
-		app: Mapper.To.AppInfo(app),
+		app: Mapper.To.AppInfo({ ...app, scope: I.LocalApiScope.Json }),
 	}, callBack);
+};
+
+export const AccountLocalLinkUpdateApp = (appHash: string, grant: I.LinkAppGrant, callBack?: (message: any) => void) => {
+	if (!appHash || !isValidLinkGrant(grant)) {
+		callBack?.({ error: { code: 2, description: translate('apiKeyGrantRequired') } });
+		return;
+	};
+	dispatcher.request('AccountLocalLinkUpdateApp', { appHash, grant: { ...grant, spaceIds: [ ...grant.spaceIds ] } }, callBack);
 };
 
 export const AccountLocalLinkRevokeApp = (hash: string, callBack?: (message: any) => void) => {

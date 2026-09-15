@@ -11,6 +11,7 @@ import * as I from 'Interface';
 import * as M from 'Model';
 import { liveAddIndex } from 'Lib/util/chatWindow';
 import { applySubscriptionPosition } from 'Lib/util/subscription';
+import { approvalSpaces } from 'Lib/linkApproval';
 
 const SORT_IDS = [
 	'BlockAdd',
@@ -53,6 +54,7 @@ class Dispatcher {
 
 	service: ServiceClient = null;
 	stream: ClientReadableStream<Event> = null;
+	secret = '';
 	timeoutStream = 0;
 	timeoutEvent: any = {};
 	reconnects = 0;
@@ -65,9 +67,15 @@ class Dispatcher {
 	 * Initialize the gRPC client with the middleware server address.
 	 * Must be called before any other dispatcher operations.
 	 * @param address - The gRPC server address (e.g., 'http://localhost:31007')
+	 * @param secret - The local API secret the main process handed the helper on
+	 * its stdin. Empty in web mode and against an externally started helper,
+	 * neither of which has a parent pipe to prove ownership with.
 	 */
-	init (address: string) {
+	init (address: string, secret?: string) {
 		address = String(address || '');
+
+		// Never logged: it is the proof that we are the helper's parent
+		this.secret = String(secret || '');
 
 		if (!address) {
 			console.error('[Dispatcher.init] No address');
@@ -78,6 +86,22 @@ class Dispatcher {
 			unaryInterceptors,
 			streamInterceptors,
 		});
+	};
+
+	/**
+	 * Build the gRPC metadata every call carries: the session token, plus the
+	 * local API secret when we have one. Heart requires the secret on the
+	 * account-bootstrap RPCs and ignores it everywhere else, so attaching it to
+	 * every call is both correct and the simplest rule.
+	 */
+	metadata (): any {
+		const ret: any = { token: S.Auth.token };
+
+		if (this.secret) {
+			ret['local-api-secret'] = this.secret;
+		};
+
+		return ret;
 	};
 
 	/**
@@ -95,7 +119,7 @@ class Dispatcher {
 
 		this.stopStream();
 
-		this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, null);
+		this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, this.metadata());
 
 		this.stream.on('data', (event) => {
 			this.eventBuffer.push({ event, skipDebug: false });
@@ -300,9 +324,13 @@ class Dispatcher {
 					break;
 				};
 
-				case 'AccountLinkChallenge': {
-					Renderer.send('showChallenge', {
+				case 'AccountLinkApprovalRequest': {
+					// no code exists yet: the user has to approve first, and only then does
+					// AccountLocalLinkApproveChallenge mint one. Main dedupes the request, since
+					// every session receives this event
+					Renderer.send('showLinkApproval', {
 						...mapped,
+						spaces: approvalSpaces(U.Menu.getVaultItems(), S.Auth.account?.info?.techSpaceId || ''),
 						theme: S.Common.getThemeClass(),
 						lang: S.Common.interfaceLang,
 					});
@@ -352,8 +380,8 @@ class Dispatcher {
 					break;
 				};
 
-				case 'AccountLinkChallengeHide': {
-					Renderer.send('hideChallenge', mapped);
+				case 'AccountLinkApprovalHide': {
+					Renderer.send('hideLinkApproval', mapped);
 					break;
 				};
 
@@ -1804,7 +1832,7 @@ class Dispatcher {
 		};
 
 		try {
-			this.service.request(type, data, { token: S.Auth.token }, (error: any, response: any) => {
+			this.service.request(type, data, this.metadata(), (error: any, response: any) => {
 				if (error) {
 					console.error('GRPC Error', type, error);
 					callBack?.({ error: { code: error.code, description: error.message } });

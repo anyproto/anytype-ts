@@ -74,6 +74,47 @@ export const Downloading: Story = {
 	},
 };
 
+export const DownloadingOneFile: Story = {
+	args: {
+		id: '1a',
+		type: ProgressType.Save,
+		canCancel: true,
+		isError: false,
+		current: 640000,
+		total: 2100000,
+		subtitle: 'Quarterly report.pdf',
+	},
+};
+
+export const DownloadingSeveralFiles: Story = {
+	args: {
+		id: '1b',
+		type: ProgressType.Save,
+		canCancel: true,
+		isError: false,
+		// Each file weighs 100: one done, one part way, one still queued
+		current: 145,
+		total: 300,
+		subtitle: 'Prüfung.pdf',
+		tooltip: 'Quarterly report.pdf · 100%\nPrüfung.pdf · 45%\n0%',
+	},
+};
+
+export const DownloadFinished: Story = {
+	args: {
+		id: '1c',
+		type: ProgressType.Save,
+		canCancel: false,
+		isDone: true,
+		isError: false,
+		current: 100,
+		total: 100,
+		subtitle: 'Quarterly report.pdf',
+		action: { text: 'Show in Finder', onClick: () => {} },
+		onDismiss: () => {},
+	},
+};
+
 export const Importing: Story = {
 	args: {
 		id: '2',
