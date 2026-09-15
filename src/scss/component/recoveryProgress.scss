@@ -8,7 +8,12 @@
 	.icon.info { flex-shrink: 0; opacity: 0.4; transition: opacity $transitionCommon; }
 	.icon.info:hover { opacity: 0.8; }
 }
-.recoveryProgress.isMinimal { justify-content: center; padding: 0px 0px 8px 0px; }
+/*
+ * Icons-only rail: the vault head above collapses to nothing, so the block carries its own top
+ * spacing - the same 8px the list below pads with - instead of sitting flush against the rail's
+ * top edge, which clips it. Underneath, that list padding already holds the spinner off the first icon
+ */
+.recoveryProgress.isMinimal { justify-content: center; padding: 8px 0px 0px 0px; }
 
 /* Settled around a stalled channel: the spinner would read as progress that is not happening */
 .recoveryProgress.isStalled {
