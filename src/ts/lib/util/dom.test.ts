@@ -45,4 +45,41 @@ describe('UtilDom', () => {
 
 	});
 
+	/**
+	 * Regression coverage for the Table of contents highlight being off by one: clicking an item
+	 * scrolled to the right header, but the menu highlighted its neighbour.
+	 *
+	 * Geometry: scrollToHeader parks the header J.Size.header (52) + 20 = 72px below the scroll
+	 * container's top, so it clears the sticky page header. Detection used to mark a header active
+	 * only once its top passed the container's top edge (0) — an offset the clicked header never
+	 * reaches — so the previous header stayed highlighted.
+	 *
+	 * Tops are offsets of the header blocks relative to the scroll container's top edge.
+	 */
+	describe('getActiveHeaderIndex', () => {
+
+		const ANCHOR = 72;
+
+		it('should activate the header parked at the scroll anchor', () => {
+			expect(UtilDom.getActiveHeaderIndex([ -320, -140, 72, 260, 520 ], ANCHOR)).toBe(2);
+		});
+
+		it('should activate the last header above the anchor', () => {
+			expect(UtilDom.getActiveHeaderIndex([ -320, -140, 30, 260 ], ANCHOR)).toBe(2);
+		});
+
+		it('should keep a header active until the next one reaches the anchor', () => {
+			expect(UtilDom.getActiveHeaderIndex([ -320, 73, 400 ], ANCHOR)).toBe(0);
+		});
+
+		it('should fall back to the first header when none of them reached the anchor', () => {
+			expect(UtilDom.getActiveHeaderIndex([ 240, 500 ], ANCHOR)).toBe(0);
+		});
+
+		it('should return -1 without headers', () => {
+			expect(UtilDom.getActiveHeaderIndex([], ANCHOR)).toBe(-1);
+		});
+
+	});
+
 });

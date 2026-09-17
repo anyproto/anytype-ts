@@ -1,6 +1,8 @@
 import raf from 'raf';
 import * as I from 'Interface';
 
+const HEADER_OFFSET = 20;
+
 class UtilDom {
 
 	esc (v: any): string {
@@ -540,6 +542,7 @@ class UtilDom {
 
 		if (item.block && item.block.isTextTitle()) {
 			container.scrollTop = 0;
+			this.setActiveHeader(item.id, isPopup);
 			return;
 		};
 
@@ -554,10 +557,51 @@ class UtilDom {
 		const no = node.getBoundingClientRect().top;
 		const co = container.getBoundingClientRect().top;
 		const st = container.scrollTop;
-		const offset = 20;
-		const y = Math.max(J.Size.header + offset, no - co + st - J.Size.header - offset);
+		const offset = this.getHeaderScrollOffset();
+		const y = Math.max(offset, no - co + st - offset);
 
 		container.scrollTop = y;
+		this.setActiveHeader(item.id, isPopup);
+	};
+
+	/**
+	 * Returns the offset a header is scrolled to, below the sticky page header.
+	 * @returns {number} The offset from the top of the scroll container.
+	 */
+	getHeaderScrollOffset (): number {
+		return J.Size.header + HEADER_OFFSET;
+	};
+
+	/**
+	 * Marks a header as the current one in Table of contents.
+	 * @param {string} id - The block ID of the header.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 */
+	setActiveHeader (id: string, isPopup: boolean) {
+		S.Common.getRef(`tableOfContents${this.getEventNamespace(isPopup)}`)?.setActive(id);
+	};
+
+	/**
+	 * Returns the index of the header the page is currently scrolled to: the last one which
+	 * reached the anchor headers are scrolled to, the first one if none of them did.
+	 * @param {number[]} tops - Header offsets from the top of the scroll container.
+	 * @param {number} anchor - The offset headers are scrolled to.
+	 * @returns {number} The index of the current header, -1 if there are no headers.
+	 */
+	getActiveHeaderIndex (tops: number[], anchor: number): number {
+		if (!tops.length) {
+			return -1;
+		};
+
+		let ret = 0;
+
+		for (let i = 0; i < tops.length; ++i) {
+			if (tops[i] <= anchor) {
+				ret = i;
+			};
+		};
+
+		return ret;
 	};
 
 };
