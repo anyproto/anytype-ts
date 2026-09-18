@@ -934,6 +934,7 @@
 
 	"blockImageUpload": "Upload a picture",
 	"blockImageAdd": "Add an image",
+	"blockImageBroken": "Image is broken",
 
 	"blockPdfUpload": "Upload a PDF",
 	"blockPdfAdd": "Add a PDF",

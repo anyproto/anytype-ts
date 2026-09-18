@@ -118,7 +118,7 @@ html.themeDark {
 	.cover.type2.black { background-color: #000 !important; }
 
 	.brokenMedia {
-		img:before { background: var(--color-bg-secondary); }
+		img:before, > .name { background: var(--color-bg-secondary); }
 	}
 
 	#root-loader {
