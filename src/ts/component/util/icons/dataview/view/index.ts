@@ -5,6 +5,7 @@ import Gallery from './gallery';
 import Kanban from './kanban';
 import Calendar from './calendar';
 import Graph from './graph';
+import Split from './split';
 
 registerIcon('dataview/view/grid', Grid);
 registerIcon('dataview/view/list', List);
@@ -12,3 +13,4 @@ registerIcon('dataview/view/gallery', Gallery);
 registerIcon('dataview/view/kanban', Kanban);
 registerIcon('dataview/view/calendar', Calendar);
 registerIcon('dataview/view/graph', Graph);
+registerIcon('dataview/view/split', Split);

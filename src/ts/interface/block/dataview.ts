@@ -37,6 +37,7 @@ export enum ViewType {
 	Calendar		 = 4,
 	Graph			 = 5,
 	Timeline		 = 6,
+	Split			 = 7,
 };
 
 export enum SortType { 
@@ -204,6 +205,9 @@ export interface ViewComponent {
 	closeFilters?: () => void;
 	onTemplateMenu?: (e: any, dur: number) => void;
 	onCellClick?(e: any, key: string, id?: string, record?: any): void;
+	// A host view (Split) claims a row click to select the record in place. Returning true
+	// suppresses the row's default navigation.
+	onRecordClick?(e: any, id: string): boolean;
 	onContext?(e: any, id: string, subId?: string): void;
 	onCellChange?: (id: string, key: string, value: any, callBack?: (message: any) => void) => void;
 	onDragRecordStart?: (e: any, id?: string) => void;
@@ -261,6 +265,7 @@ export interface View {
 	isList?(): boolean;
 	isGallery?(): boolean;
 	isBoard?(): boolean;
+	isSplit?(): boolean;
 };
 
 export interface Cell {

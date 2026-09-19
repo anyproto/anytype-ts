@@ -94,7 +94,7 @@
 
 		.dataviewControls { font-weight: 500; color: var(--color-control-active); position: relative; overflow: hidden; }
 		.dataviewControls::after { content: ''; display: none; height: 1px; width: 100%; background: var(--color-shape-secondary); position: absolute; bottom: 0px; }
-		.dataviewControls.viewGrid::after, .dataviewControls.viewList::after { display: block; }
+		.dataviewControls.viewGrid::after, .dataviewControls.viewList::after, .dataviewControls.viewSplit::after { display: block; }
 
 		.dataviewControls {
 			> .sides { gap: 0px 16px; display: flex; flex-direction: row; align-items: center; justify-content: stretch; width: 100%; }
