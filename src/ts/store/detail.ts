@@ -613,7 +613,8 @@ class DetailStore {
 	 */
 	private mapParticipant (object) {
 		object.participantPermissions = Number(object.participantPermissions) || I.ParticipantPermissions.Reader;
-		object.participantStatus = Number(object.participantStatus) || I.ParticipantStatus.Joining;
+		// A participant that never went through the space ACL has no status and is not a join request
+		object.participantStatus = (undefined === object.participantStatus) ? null : Number(object.participantStatus) || I.ParticipantStatus.Joining;
 		object.identity = Relation.getStringValue(object.identity);
 		object.globalName = Relation.getStringValue(object.globalName);
 		object.resolvedName = object.globalName || object.identity;
