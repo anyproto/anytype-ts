@@ -115,12 +115,13 @@ export default (h: Helpers): Block[] => {
 			bullet(`The app stays in the Dock and menu bar while global search is open. The panel now includes the Messages filter and reopens correctly if you open it again straight away.`),
 		]),
 
-		toggle(`<b>Miscellaneous (5)</b>`, [
+		toggle(`<b>Miscellaneous (6)</b>`, [
 			bullet(`Keyboard shortcuts containing ${hl('Space')} now work after recording.`),
 			bullet(`Mention and picker searches no longer do unnecessary work for results they don't display.`),
 			bullet(`Opening an object in a shared space no longer hangs indefinitely.`),
 			bullet(`Quitting Anytype no longer leaves a background process running.`),
 			bullet(`On Windows, log files are written again and a busy port no longer stops the app from starting.`),
+			bullet(`A member that never went through a space's approval no longer appears as a nameless join request, where Approve and Decline did nothing. Thanks to @${link('https://github.com/anyproto/anytype-ts/pull/2384', 'nrydanov')}!`),
 		]),
 	];
 };
