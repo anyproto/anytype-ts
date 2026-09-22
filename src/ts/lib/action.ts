@@ -257,10 +257,12 @@ class Action {
 	};
 
 	/**
-	 * Downloads a file to the user's download folder and hands it to the system
-	 * handler. Same gateway path as saving one: the middleware's FileDownload
-	 * writes only inside its own temp scope now, and an opened file belongs
-	 * where the user can find it again.
+	 * Fetches a file over the gateway and hands it to the system.
+	 *
+	 * What the system can view is opened from a temporary copy that keeps the
+	 * same path on every open, so opening the same file twice moves no bytes and
+	 * leaves no duplicate. Anything else is revealed in the file manager, and
+	 * lands in the download folder, where the user can find it again.
 	 * @param {any} object - The file object.
 	 * @param {string} route - The route context for analytics.
 	 */
@@ -271,7 +273,7 @@ class Action {
 
 		const ext = String(object.fileExt || '').toLowerCase();
 		const cb = () => {
-			Download.start([ { id: object.id } ], U.Common.getElectron().downloadPath(), route, { openWhenDone: true });
+			Download.open(object, route);
 		};
 		const isDangerous = !ext || [
 			'exe', 'bat', 'cmd', 'com', 'cpl', 'scr', 'msi', 'msp', 'pif', 'reg', 'vbs', 'vbe', 'ws', 'wsf', 'wsh', 'ps1', 'jar',

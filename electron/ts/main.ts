@@ -23,6 +23,7 @@ import UpdateManager from './update';
 import MenuManager from './menu';
 import WindowManager from './window';
 import Server from './server';
+import DownloadManager from './download';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
@@ -424,6 +425,10 @@ app.on('ready', async () => {
 			console.error('Failed to install gRPC DevTools extension:', e.message);
 		};
 	};
+
+	// Opened files keep their copy under the temp scope so a second open costs
+	// nothing. Sweeping the stale ones is the only maintenance that scope needs
+	DownloadManager.prune();
 
 	ConfigManager.init(waitForLibraryAndCreateWindows);
 });

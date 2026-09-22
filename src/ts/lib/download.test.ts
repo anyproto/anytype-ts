@@ -55,7 +55,10 @@ beforeEach(() => {
 	});
 	vi.stubGlobal('translate', (key: string) => key);
 	vi.stubGlobal('C', { ObjectSearch: mocks.search });
-	vi.stubGlobal('U', { File: { name: (it: any) => [ it.name, it.fileExt ].filter(v => v).join('.') } });
+	vi.stubGlobal('U', {
+		File: { name: (it: any) => [ it.name, it.fileExt ].filter(v => v).join('.') },
+		Common: { getElectron: () => ({ downloadPath: () => '/downloads' }) },
+	});
 	// The real allowlist, so these tests move with the policy
 	vi.stubGlobal('J', { Constant });
 	vi.stubGlobal('analytics', { event: mocks.analytics });
@@ -369,4 +372,40 @@ describe('client-owned downloads', () => {
 		expect(() => Download.onProgress({ id: 'someone-elses', current: 1, total: 2 })).not.toThrow();
 		expect(() => Download.onDone({ id: 'someone-elses', path: '/tmp/x' })).not.toThrow();
 	});
+});
+
+describe('opening a file', () => {
+
+	// What the renderer asked main to fetch: one message per file
+	const request = () => mocks.send.mock.calls.find((it: any[]) => it[0] == 'download')?.[2];
+
+	it('asks for a temporary copy, so every open of one file lands on the same path', () => {
+		Download.open({ id: 'f1', fileExt: 'pdf' }, 'Test');
+
+		// No directory of its own: main owns the temp layout, and a path it picks
+		// per object is what lets the copy already there be recognised
+		expect(request()).toMatchObject({ objectId: 'f1', temporary: true, directory: '' });
+	});
+
+	it('leaves a file the system cannot view in the download folder', () => {
+		Download.open({ id: 'f1', fileExt: 'tgz' }, 'Test');
+
+		// It gets revealed rather than opened, so it belongs somewhere the user
+		// can find it again, not in a temp scope the system may purge
+		expect(request()).toMatchObject({ objectId: 'f1', temporary: false, directory: '/downloads' });
+	});
+
+	it('treats a file with no extension as one to reveal', () => {
+		Download.open({ id: 'f1', fileExt: '' }, 'Test');
+
+		expect(request()).toMatchObject({ temporary: false, directory: '/downloads' });
+	});
+
+	it('opens a row that goes away with the file it opened', () => {
+		const id = Download.open({ id: 'f1', fileExt: 'pdf' }, 'Test');
+
+		expect(row(id)).toMatchObject({ keepWhenDone: false });
+		expect(mocks.analytics).not.toHaveBeenCalledWith('DownloadMedia', expect.anything());
+	});
+
 });
