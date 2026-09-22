@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
+import { apiKeyIsNew, apiKeyMarkSeen } from 'Lib/apiKey';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
@@ -168,6 +169,12 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 		if ([ 'types', 'relations' ].includes(item.id)) {
 			S.Common.setLeftSidebarState('vault', `settings/${item.id}`);
 		} else {
+			// Before the re-render below, so the "New" badge goes with the click
+			// rather than lingering until the page mounts and clears it
+			if (item.id == 'api') {
+				apiKeyMarkSeen();
+			};
+
 			setActiveId(item.id);
 			Action.openSettings(item.id, analytics.route.settings);
 		};
@@ -266,6 +273,10 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 			if (item.alert) {
 				caption = item.alert;
 				ccn.push('alert');
+			} else
+			if ((item.id == 'api') && apiKeyIsNew()) {
+				caption = translate('commonNew');
+				ccn.push('new');
 			};
 
 			content = (

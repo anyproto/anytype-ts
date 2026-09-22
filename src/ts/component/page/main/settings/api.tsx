@@ -1,7 +1,7 @@
 import React, { forwardRef, useState, useEffect } from 'react';
-import { Title, Icon, Button, EmptyState } from 'Component';
+import { Title, Icon, Button, EmptyState, Label } from 'Component';
 import * as I from 'Interface';
-import { apiKeySpaceTooltip, apiKeySupportsV1 } from 'Lib/apiKey';
+import { apiKeySpaceTooltip, apiKeySupportsV1, apiKeyMarkSeen } from 'Lib/apiKey';
 import { approvalSpaces } from 'Lib/linkApproval';
 
 const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
@@ -141,6 +141,9 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 
 	useEffect(() => {
 		load();
+
+		// Clears the "New" badge the settings sidebar shows on this entry
+		apiKeyMarkSeen();
 	}, []);
 
 	return (
@@ -149,7 +152,7 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 				<Title text={translate('popupSettingsApiTitle')} />
 				{list.length ? <Button size={28} text={translate('popupSettingsApiCreate')} onClick={onAdd} /> : ''}
 			</div>
-			<p className="apiKeyIntro">{translate('apiKeySettingsDescription')}</p>
+			<Label className="apiKeyIntro" text={U.String.sprintf(translate('apiKeySettingsDescription'), J.Url.developerPortal)} />
 
 			{list.length ? (
 				<div className="items">
