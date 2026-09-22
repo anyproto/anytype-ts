@@ -1111,7 +1111,7 @@
 	"apiKeyAppNamePlaceholder": "e.g. Notes sync",
 	"apiKeyCopyDescription": "Copy this key into your app to connect it to Anytype.",
 	"apiKeyClickToCopy": "Click to copy",
-	"apiKeySettingsDescription": "New keys use API v2 with explicit space access. API v1 endpoints also accept legacy keys without a grant, or keys with read and write access to all current and future spaces.",
+	"apiKeySettingsDescription": "New keys use API v2 with explicit space access. API v1 endpoints also accept legacy keys without a grant, or keys with read and write access to all current and future spaces. See the <a href=\"%s\">developer documentation</a>.",
 	"apiKeyLegacy": "Legacy · API v1 and v2",
 	"apiKeyLegacyEdit": "This legacy key currently has unrestricted access. Saving replaces it with the access you choose below.",
 	"apiKeyVersion2": "API v2",

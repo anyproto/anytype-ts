@@ -1,6 +1,22 @@
 import type * as I from 'Interface';
 import { LocalApiPermission } from '../interface/linkApproval';
 import { isValidLinkGrant } from './linkApprovalGrant';
+import Storage from './storage';
+
+/**
+ * The flag behind the "New" badge on the API keys entry in settings. Both the
+ * sidebar that reads it and the page that clears it go through here: a literal
+ * in each file is one typo away from a badge that never clears.
+ */
+const SEEN_KEY = 'settingsApi';
+
+/** Whether the API keys entry should still be badged as new. */
+export const apiKeyIsNew = (): boolean => !Storage.getOnboarding(SEEN_KEY);
+
+/** Clears the badge. Called when the API keys page is opened. */
+export const apiKeyMarkSeen = (): void => {
+	Storage.setOnboarding(SEEN_KEY);
+};
 
 export const API_KEY_NAME_MAX_BYTES = 128;
 
