@@ -25,7 +25,7 @@ export default (h: Helpers): Block[] => {
 
 		h2(`Approve Apps That Connect to Anytype`),
 		text(`Apps now need your approval to pair with Anytype on your computer. This also applies to scripts and editor plugins. The prompt shows which app or integration is asking and which spaces it wants to access. You approve access for each space, and nothing is issued before you agree. Unanswered requests expire automatically.`),
-		text(`The connection between Anytype and its background process now requires a secret generated at each launch, as well as the existing auth token. The secret is passed privately so other processes on your computer can't access the connection. Thanks to @${link('https://github.com/alicangnll', 'Ali Can Gönüllü')} for pointing out where this flow could be hardened!`),
+		text(`We've also hardened the local API that Anytype and its background process use to talk to each other. Thanks to @${link('https://github.com/alicangnll', 'Ali Can Gönüllü')} for pointing out where it could be stronger!`),
 		text(``),
 
 		h2(`Import, Reworked`),
