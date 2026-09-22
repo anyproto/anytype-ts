@@ -25,6 +25,11 @@ const ledger = vi.hoisted(() => {
 
 vi.mock('./downloadLedger', () => ({ default: ledger }));
 
+// The temp scope main hands opened files, swapped per test
+const electron = vi.hoisted(() => ({ tmp: '' }));
+
+vi.mock('electron', () => ({ app: { getPath: () => electron.tmp } }));
+
 vi.mock('electron-dl', () => ({
 	download: mocks.download,
 }));
@@ -41,7 +46,7 @@ vi.mock('./util', () => ({
 	},
 }));
 
-import { DownloadManager } from './download';
+import { DownloadManager, openedRoot } from './download';
 
 const win = {} as any;
 
@@ -96,6 +101,7 @@ let manager: DownloadManager;
 beforeEach(() => {
 	manager = new DownloadManager();
 	directory = fs.mkdtempSync(path.join(os.tmpdir(), 'anytype-reuse-'));
+	electron.tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'anytype-scope-'));
 
 	Object.keys(ledger.data).forEach(key => delete ledger.data[key]);
 	ledger.get.mockClear();
@@ -105,6 +111,7 @@ beforeEach(() => {
 afterEach(() => {
 	vi.resetAllMocks();
 	fs.rmSync(directory, { recursive: true, force: true });
+	fs.rmSync(electron.tmp, { recursive: true, force: true });
 });
 
 describe('DownloadManager', () => {
@@ -330,4 +337,101 @@ describe('DownloadManager', () => {
 		expect(item.cancel).not.toHaveBeenCalled();
 		expect(events('file-download-done').length).toBe(1);
 	});
+});
+
+describe('the temporary scope opened files live in', () => {
+
+	// What a click on a file block asks for: the same object, twice
+	const request = (id: string) => ({
+		id,
+		url: 'http://gateway/file/object',
+		directory: '',
+		objectId: 'object',
+		temporary: true,
+		name: 'hello.txt',
+		size: 5,
+		checksums: [ helloChecksum ],
+	});
+
+	test('gives a temporary download a folder of its own, and creates it', async () => {
+		const first = deferDownload();
+
+		manager.start(win, request('a'));
+		await started(1);
+
+		const dir = path.join(openedRoot(), 'object');
+
+		// The caller names no folder: main picks one per object, so the path is
+		// the same on every open and the copy already there is found
+		expect(first.options.directory).toBe(dir);
+		expect(fs.existsSync(dir)).toBe(true);
+	});
+
+	test('overwrites its own copy rather than leaving a second one beside it', async () => {
+		const first = deferDownload();
+
+		manager.start(win, request('a'));
+		await started(1);
+
+		// Without this the stack uniquifies, and a file whose bytes changed would
+		// land as "hello (1).txt", then "hello (2).txt"
+		expect(first.options.overwrite).toBe(true);
+	});
+
+	test('never overwrites anything in a folder the user chose', async () => {
+		const first = deferDownload();
+
+		manager.start(win, { id: 'a', url: 'http://gateway/file/object', directory, objectId: 'object' });
+		await started(1);
+
+		expect(first.options.overwrite).toBeFalsy();
+	});
+
+	test('opens the same file twice without transferring it again', async () => {
+		const first = deferDownload();
+
+		manager.start(win, request('a'));
+		await started(1);
+
+		const target = path.join(openedRoot(), 'object', 'hello.txt');
+
+		fs.writeFileSync(target, 'hello');
+		first.complete(target);
+		await vi.waitFor(() => expect(events('file-download-done').length).toBe(1));
+
+		manager.start(win, request('b'));
+		await vi.waitFor(() => expect(events('file-download-done').length).toBe(2));
+
+		expect(events('file-download-done')[1]).toEqual({ id: 'b', path: target });
+		expect(mocks.download).toHaveBeenCalledOnce();
+	});
+
+	test('sweeps out a folder nothing has landed in for a week', () => {
+		const dir = path.join(openedRoot(), 'stale');
+		const old = Date.now() / 1000 - (8 * 24 * 60 * 60);
+
+		fs.mkdirSync(dir, { recursive: true });
+		fs.writeFileSync(path.join(dir, 'hello.txt'), 'hello');
+		fs.utimesSync(dir, old, old);
+
+		manager.prune();
+
+		expect(fs.existsSync(dir)).toBe(false);
+	});
+
+	test('keeps a folder a file landed in recently', () => {
+		const dir = path.join(openedRoot(), 'fresh');
+
+		fs.mkdirSync(dir, { recursive: true });
+		fs.writeFileSync(path.join(dir, 'hello.txt'), 'hello');
+
+		manager.prune();
+
+		expect(fs.existsSync(dir)).toBe(true);
+	});
+
+	test('says nothing when nothing has ever been opened', () => {
+		expect(() => manager.prune()).not.toThrow();
+	});
+
 });

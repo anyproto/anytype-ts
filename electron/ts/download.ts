@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { app } from 'electron';
 import { download } from 'electron-dl';
 import WindowManager from './window';
 import Ledger from './downloadLedger';
@@ -17,6 +18,9 @@ export interface DownloadRequest {
 	name?: string;
 	size?: number;
 	checksums?: string[];
+	// A file being opened rather than saved: main picks where it goes, and it
+	// replaces itself there instead of landing beside the last copy
+	temporary?: boolean;
 };
 
 interface ExistingFile {
@@ -32,6 +36,16 @@ const statOrNull = (filePath: string): fs.Stats | null => {
 		return null;
 	};
 };
+
+/**
+ * Where opened files live: a scope of our own inside the system temp directory,
+ * a folder per object.
+ */
+export const openedRoot = (): string => path.join(app.getPath('temp'), 'anytype', 'open');
+
+// How long a folder there is kept once nothing has landed in it. macOS purges
+// its own temp scope; Windows and Linux leave it to whoever filled it
+const MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
 interface QueueEntry {
 	win: AppWindow;
@@ -58,8 +72,51 @@ export class DownloadManager {
 	active: string = '';
 
 	start (win: AppWindow, param: DownloadRequest): void {
-		this.queue.push({ win, param });
+		this.queue.push({ win, param: { ...param, directory: this.directory(param) } });
 		this.next();
+	};
+
+	/**
+	 * Where a transfer should land.
+	 *
+	 * A file being opened gets a folder of its own under the temp scope, so its
+	 * path is the same on every open and the copy already there is recognised.
+	 * A fresh folder each time would leave another copy behind for every open.
+	 * Everything else keeps the folder the caller chose.
+	 */
+	directory (param: DownloadRequest): string {
+		return (param.temporary && param.objectId) ? path.join(openedRoot(), param.objectId) : param.directory;
+	};
+
+	/**
+	 * Drops the folders of files opened long enough ago that holding them costs
+	 * more than fetching them again. A folder's mtime is when a file last landed
+	 * in it, which is the age of the copy it holds.
+	 */
+	prune (): void {
+		const root = openedRoot();
+
+		let names: string[] = [];
+
+		try {
+			names = fs.readdirSync(root);
+		} catch (e) {
+			return;
+		};
+
+		names.forEach(name => {
+			const dir = path.join(root, name);
+
+			try {
+				const stat = fs.statSync(dir);
+
+				if (stat.isDirectory() && ((Date.now() - stat.mtimeMs) > MAX_AGE)) {
+					fs.rmSync(dir, { recursive: true, force: true });
+				};
+			} catch (e: any) {
+				Util.log('info', '[Download] Cannot sweep:', dir, e.toString());
+			};
+		});
 	};
 
 	/**
@@ -99,7 +156,7 @@ export class DownloadManager {
 	};
 
 	async run (win: AppWindow, param: DownloadRequest): Promise<void> {
-		const { id, url, directory } = param;
+		const { id, url, directory, temporary } = param;
 
 		let finished = false;
 
@@ -121,8 +178,16 @@ export class DownloadManager {
 				return;
 			};
 
+			// electron-dl only joins the path; a folder of our own will not exist yet
+			if (directory) {
+				fs.mkdirSync(directory, { recursive: true });
+			};
+
 			await download(win, url, {
 				directory,
+				// A temporary copy replaces itself: its path has to stay the same,
+				// or the uniquifier leaves a "file (1)" behind on every open
+				overwrite: Boolean(temporary),
 				onStarted: (item: Electron.DownloadItem) => {
 					this.items.set(id, item);
 

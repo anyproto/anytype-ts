@@ -29,6 +29,9 @@ interface DownloadRow {
 
 export interface DownloadParam {
 	openWhenDone?: boolean;
+	// Written to a path main picks per object rather than a folder the user
+	// chose, and overwritten there rather than landing beside the last copy
+	temporary?: boolean;
 };
 
 interface FileIdentity {
@@ -47,6 +50,8 @@ const nextId = (prefix: string): string => `${prefix}-${salt}-${++seq}`;
 
 const isSettled = (part: DownloadPart): boolean => part.state != I.ProgressState.Running;
 
+const canOpenExt = (ext: string): boolean => J.Constant.fileExtension.autoOpen.includes(String(ext || '').toLowerCase());
+
 /**
  * Whether a downloaded file may be handed to the system handler.
  *
@@ -63,7 +68,7 @@ const canAutoOpen = (path: string): boolean => {
 		return false;
 	};
 
-	return J.Constant.fileExtension.autoOpen.includes(parts.pop().toLowerCase());
+	return canOpenExt(parts.pop());
 };
 
 /**
@@ -138,6 +143,7 @@ export class Download {
 				Renderer.send('download', url + (url.includes('?') ? '&' : '?') + 'attachment=1', {
 					id: part.id,
 					directory,
+					temporary: Boolean(param?.temporary),
 					objectId: part.fileId,
 					name: identity.name,
 					size: identity.size,
@@ -154,6 +160,23 @@ export class Download {
 		};
 
 		return rowId;
+	};
+
+	/**
+	 * Fetches a file and hands it to the system.
+	 *
+	 * What the system can view is opened, and travels as a temporary copy: main
+	 * gives it a path of its own and the same one every time, so opening a file
+	 * twice reuses what is already there instead of leaving a second copy
+	 * behind. Anything else is revealed in the file manager instead, and belongs
+	 * in the user's download folder, where it survives being looked at.
+	 * @returns the row id.
+	 */
+	open (object: any, route: string): string {
+		const temporary = canOpenExt(object.fileExt);
+		const directory = temporary ? '' : U.Common.getElectron().downloadPath();
+
+		return this.start([ { id: object.id } ], directory, route, { openWhenDone: true, temporary });
 	};
 
 	/**
