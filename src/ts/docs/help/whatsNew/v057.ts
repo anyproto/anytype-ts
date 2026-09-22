@@ -9,13 +9,33 @@ export default (h: Helpers): Block[] => {
 		title(`Search Everything`),
 		h4(`<span>Release 0.57.0</span>`),
 		text(``),
-		text(`Search is the headline of this release. One shortcut now opens a panel that looks across every space you're in – objects, channels, people and chat messages – with filter tokens to narrow it down as you type. Alongside it: copy and paste rebuilt from the ground up, a sync layer that recovers from bad networks on its own, a Removal History for channels, and an approval prompt for any app that wants to connect to Anytype on your machine.`),
+		text(`Search is the headline of this release. One shortcut now opens a panel that looks across every space you're in – objects, channels, people and chat messages – with filter tokens to narrow it down as you type. Alongside it: AnyBlock v2 and API v2 for moving content in and out and for building on top of Anytype, an approval prompt for any app that wants to connect on your machine, a reworked import, and downloads you can finally watch. Underneath, copy and paste has been rebuilt and sync now recovers from bad networks on its own.`),
 		text(``),
 
 		h2(`Search Across Every Space`),
 		text(`Press ${hl(`${cmd}+${shift}+Space`)} anywhere – even with no space open – and a quick search panel appears. It searches across all of your spaces at once: objects, channels, people and, for the first time, the contents of your chat messages.`),
 		text(`Chat search works at three levels. Inside one conversation, across every chat in a space, or across every space at once – so a half-remembered message is findable even when you can't recall where it was said.`),
 		text(`Type filter tokens straight into the input to narrow things down: ${hl('/by')} to search by who wrote it, ${hl('/in')} to limit it to a space or channel, and ${hl('/is')} to limit it to a kind of object. Suggestions adapt as you type, and matching people are grouped so the same person never appears twice. One-to-one conversations show up as their own rows, with a clear action for opening the chat versus opening the person.`),
+		text(``),
+
+		h2(`AnyBlock v2 and API v2`),
+		text(`A new export format, marked ${hl('Preview')}, writes your objects as AnyBlock JSON – a readable format that round-trips, built for moving content between tools and for handing to scripts and AI agents. Import understands it too, so a bundle can go out and come back with its tables, dataviews and inline formatting intact. Exports now end with a report of what was written and what was skipped.`),
+		text(`The same work brings API v2, a reworked interface for anything built on top of Anytype: creating and editing objects, starting them from templates, reading and writing object discussions, and managing sidebar widgets. Operations describe their own schemas and report back what actually happened, warnings included.`),
+		text(``),
+
+		h2(`Approve Apps That Connect to Anytype`),
+		text(`Anything that wants to pair with Anytype on your computer – an integration, a script, an editor plugin – now has to ask. A prompt shows you who is asking and which spaces they want, and nothing is issued until you approve it. You grant access per space rather than all at once, and a request you ignore expires on its own.`),
+		text(`On top of its existing auth token, the link between Anytype and its background process is now additionally keyed by a secret generated fresh at every launch and passed privately, so nothing else on your machine can reach it. Thanks to @${link('https://github.com/alicangnll', 'Ali Can Gönüllü')} for highlighting where this flow could be hardened!`),
+		text(``),
+
+		h2(`Import, Reworked`),
+		text(`Importing from Notion and other tools has been rebuilt. Long imports no longer break partway through, files come across reliably, pages that used to be skipped now arrive, and Select properties stay Select instead of turning into Multi-Select. Imported objects keep their names even when they arrive before their type does.`),
+		text(`The import screen itself is clearer, with a guide for finding your Notion token, a way back to the format list, and – if you use AI-assisted import – a dropdown for choosing your provider, with an explicit note about where your data goes.`),
+		text(``),
+
+		h2(`Downloads You Can Watch`),
+		text(`Downloading a file now shows its progress in the sidebar, alongside imports and exports, with a row you can cancel and a per-file breakdown on hover. When you download something you already have, Anytype recognises the copy on disk and skips the transfer entirely.`),
+		text(`Opening a file is smarter as well. Files the system can display are opened directly, while archives, installers and scripts are revealed in your file manager instead of being run – and opening the same file twice no longer leaves a second copy behind. Images that were saved at an older size now download correctly.`),
 		text(``),
 
 		h2(`Copy and Paste That Keeps Its Shape`),
@@ -35,25 +55,6 @@ export default (h: Helpers): Block[] => {
 
 		h2(`Removal History`),
 		text(`Channels now keep a record of what was removed, by whom and when. Open it to see the objects and messages that were deleted from a channel, so a surprise disappearance has an answer instead of a shrug.`),
-		text(``),
-
-		h2(`Approve Apps That Connect to Anytype`),
-		text(`Anything that wants to pair with Anytype on your computer – an integration, a script, an editor plugin – now has to ask. A prompt shows you who is asking and which spaces they want, and nothing is issued until you approve it. You grant access per space rather than all at once, and a request you ignore expires on its own.`),
-		text(`On top of its existing auth token, the link between Anytype and its background process is now additionally keyed by a secret generated fresh at every launch and passed privately, so nothing else on your machine can reach it. Thanks to @${link('https://github.com/alicangnll', 'Ali Can Gönüllü')} for highlighting where this flow could be hardened!`),
-		text(``),
-
-		h2(`Import, Reworked`),
-		text(`Importing from Notion and other tools has been rebuilt. Long imports no longer break partway through, files come across reliably, pages that used to be skipped now arrive, and Select properties stay Select instead of turning into Multi-Select. Imported objects keep their names even when they arrive before their type does.`),
-		text(`The import screen itself is clearer, with a guide for finding your Notion token, a way back to the format list, and – if you use AI-assisted import – a dropdown for choosing your provider, with an explicit note about where your data goes.`),
-		text(``),
-
-		h2(`AnyBlock Export`),
-		text(`A new export format, marked ${hl('Preview')}, writes your objects as AnyBlock JSON – a readable, round-trippable format meant for moving content between tools and for handing to scripts and AI agents. Exports now also finish with a detailed report of what was written and what was skipped.`),
-		text(``),
-
-		h2(`Downloads You Can Watch`),
-		text(`Downloading a file now shows its progress in the sidebar, alongside imports and exports, with a row you can cancel and a per-file breakdown on hover. When you download something you already have, Anytype recognises the copy on disk and skips the transfer entirely.`),
-		text(`Opening a file is smarter as well. Files the system can display are opened directly, while archives, installers and scripts are revealed in your file manager instead of being run – and opening the same file twice no longer leaves a second copy behind. Images that were saved at an older size now download correctly.`),
 		text(``),
 
 		h2(`Quality of Life Improvements`),
