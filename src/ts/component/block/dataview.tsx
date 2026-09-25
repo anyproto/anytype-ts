@@ -21,6 +21,7 @@ import ViewTimeline from './dataview/view/timeline';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { placeCreatedRecord } from 'Lib/util/subscription';
 
 interface Props extends I.BlockComponent {
 	isInline?: boolean;
@@ -41,6 +42,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
 	const editingRecordId = useRef('');
+	const nameSaveIssued = useRef(false);
 	const filterRef = useRef('');
 	const viewIdRef = useRef('');
 	const viewTypeRef = useRef<I.ViewType | null>(null);
@@ -536,25 +538,21 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			const isSorted = !isViewBoard && S.Record.getMeta(subId, '').isSorted;
 
+			// On a sorted subscription the middleware may add the new record at its sorted
+			// position before this callback runs (a race): the record is moved to the creation
+			// spot so the row stays put while its name is typed, and deferAfterId carries the
+			// sorted position to restore when editing ends (GO-7387)
+			let deferAfterId: string | null = null;
+
 			if (!isViewCalendar) {
 				// Board columns render from the group subscription record list as is:
 				// use the raw list, getRecords would apply the object order of the
 				// first matching group (JS-9747, JS-9764)
-				let records = isViewBoard ? [ ...S.Record.getRecordIds(subId, '') ] : getRecords(groupId);
+				const source = isViewBoard ? [ ...S.Record.getRecordIds(subId, '') ] : getRecords(groupId);
+				const placement = placeCreatedRecord(source, message.objectId, dir, idx ?? -1, isSorted);
+				const records = placement.records;
 
-				const oldIndex = records.indexOf(message.objectId);
-
-				// If idx present use idx otherwise use dir to add record to the beginning or end of the list
-				if (oldIndex < 0) {
-					if (idx >= 0) {
-						records.splice(idx, 0, message.objectId);
-					} else {
-						dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
-					};
-				} else {
-					const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
-					records = arrayMove(records, oldIndex, newIndex);
-				};
+				deferAfterId = placement.deferAfterId;
 
 				// Insert the new record into the group's custom order (if any), so the
 				// card keeps its position and stays visible after the column
@@ -603,6 +601,13 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 				// ends — setRecordEditingOff applies the stashed position (GO-7387)
 				if (isSorted) {
 					S.Record.positionLockSet(subId, '', object.id);
+
+					// The reposition already arrived and was applied before the lock existed
+					// (race): re-stash the sorted position so it is restored on commit, even
+					// when the record is left unnamed and sorts to the top (GO-7387)
+					if (deferAfterId !== null) {
+						S.Record.positionLockStash(subId, '', deferAfterId);
+					};
 				};
 
 				window.setTimeout(() => setRecordEditingOn(e, object.id), 15);
@@ -879,7 +884,26 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		details[relationKey] = value;
 		S.Detail.update(subId, { id, details }, false);
 
-		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], callBack);
+		// Record that a name save is in flight for a position-locked (freshly created) record, so
+		// editing-end defers to this save's callback to apply the sorted position instead of restoring
+		// the stashed head position itself (GO-7387)
+		const nameLock = S.Record.getPositionLock(subId, '');
+		if ((relationKey == 'name') && nameLock && (nameLock.id == id)) {
+			nameSaveIssued.current = true;
+		};
+
+		C.ObjectListSetDetails([ id ], [ { key: relationKey, value } ], (message: any) => {
+			// The name save is what commits the record's sorted position: apply the reposition
+			// stashed while the position lock was held, so the row moves to its sorted slot in a
+			// single step once the middleware order is known (GO-7387)
+			const lock = S.Record.getPositionLock(subId, '');
+
+			if (lock && (lock.id == id) && (relationKey == 'name')) {
+				U.Subscription.applyPendingPosition(subId);
+			};
+
+			callBack?.(message);
+		});
 
 		if ((undefined !== record[relationKey]) && !U.Common.compareJSON(record[relationKey], value)) {
 			analytics.changeRelationValue(relation, value, { type: 'dataview', id: 'Single' });
@@ -1564,6 +1588,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (ref && ref.setIsEditing) {
 			ref.setIsEditing(true);
 			editingRecordId.current = id;
+			nameSaveIssued.current = false;
 		};
 
 		nameRef?.onClick(e);
@@ -1584,7 +1609,9 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		recordKeyDownHandlerRef.current = (e: KeyboardEvent) => {
-			keyboard.shortcut('escape, enter', e, () => setRecordEditingOff(id));
+			keyboard.shortcut('escape, enter', e, () => {
+				setRecordEditingOff(id);
+			});
 		};
 
 		U.Dom.addEvents(window, [
@@ -1615,8 +1642,17 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		nameRef?.onBlur();
 
-		// Apply any subscription reposition stashed while the name was being edited (GO-7387)
-		U.Subscription.applyPendingPosition(getSubId());
+		const subId = getSubId();
+
+		// When the name changed, its save applies the stashed sorted position on RPC completion
+		// (onCellChange), moving the row once with no flash. Otherwise no name save fires, so release
+		// the lock and restore the stashed position here - covering unnamed and unedited records, so a
+		// held lock can never strand the row or swallow later repositions (GO-7387).
+		if (!nameSaveIssued.current) {
+			U.Subscription.applyPendingPosition(subId);
+		};
+
+		nameSaveIssued.current = false;
 	};
 
 	const multiSelectAction = (id: string) => {

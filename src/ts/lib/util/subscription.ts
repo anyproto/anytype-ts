@@ -48,6 +48,43 @@ export const applySubscriptionPosition = (records: string[], id: string, afterId
 };
 
 /**
+ * Computes the record id list after optimistically creating a record, and the position to defer.
+ *
+ * On a sorted subscription the middleware often adds the new record at its sorted position before the
+ * ObjectCreate callback runs (a race). Moving that record to the creation spot keeps the row where the
+ * user clicked while its name is typed, and the returned deferAfterId lets the caller stash the sorted
+ * position so it is restored on commit - including for an unnamed record, which sorts to the top (GO-7387).
+ *
+ * @param {string[]} records - The current record id list.
+ * @param {string} id - The created record id.
+ * @param {number} dir - Creation direction: > 0 appends to the end, otherwise prepends to the start.
+ * @param {number} [idx] - Explicit creation index; takes precedence over dir when >= 0.
+ * @param {boolean} isSorted - Whether the subscription order is defined by explicit view sorts.
+ * @returns {{ records: string[], deferAfterId: string | null }} The next id list and, when the record was
+ *   already present on a sorted subscription, the sorted afterId to defer (empty string means head); otherwise null.
+ */
+export const placeCreatedRecord = (records: string[], id: string, dir: number, idx: number, isSorted: boolean): { records: string[], deferAfterId: string | null } => {
+	records = [ ...records ];
+
+	const oldIndex = records.indexOf(id);
+	const to = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
+
+	let deferAfterId: string | null = null;
+
+	if (oldIndex < 0) {
+		records.splice(to, 0, id);
+	} else {
+		if (isSorted) {
+			deferAfterId = oldIndex > 0 ? records[oldIndex - 1] : '';
+		};
+
+		records.splice(to, 0, records.splice(oldIndex, 1)[0]);
+	};
+
+	return { records, deferAfterId };
+};
+
+/**
  * Utility class for managing subscriptions, search, and data synchronization in the application.
  * Provides methods for subscribing to object changes, searching, and managing subscription state.
  */
@@ -124,6 +161,7 @@ class UtilSubscription {
 		const lock = S.Record.getPositionLock(subId, '');
 
 		S.Record.positionLockClear(subId, '');
+
 
 		if (!lock || !lock.hasPending) {
 			return;
