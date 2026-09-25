@@ -234,18 +234,30 @@ class Api {
 
 		Util.setNativeThemeSource();
 
-		const resolvedTheme = Util.getTheme();
-		this.setBackground(win, resolvedTheme);
+		this.setBackground(win);
 
 		WindowManager.sendToAll('set-theme', theme);
 		WindowManager.sendToAllTabs('set-theme', theme);
 	};
 
-	setBackground (win: AppWindow | null, theme: string): void {
+	setBackground (win: AppWindow | null): void {
 		const useTransparent = Util.isWayland() && !Util.isKDE();
-		const bgColor = useTransparent ? '#00000000' : Util.getBgColor(theme);
+		// A renderer can still have stale theme state while starting or receiving a theme change.
+		const viewBgColor = Util.getBgColor(Util.getTheme());
+		const bgColor = useTransparent ? '#00000000' : viewBgColor;
 
-		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(bgColor));
+		BrowserWindow.getAllWindows().forEach((win: AppWindow) => {
+			if (!win || win.isDestroyed()) {
+				return;
+			};
+
+			win.setBackgroundColor(bgColor);
+			for (const view of win.views || []) {
+				if (view.webContents && !view.webContents.isDestroyed()) {
+					view.setBackgroundColor(viewBgColor);
+				};
+			};
+		});
 	};
 
 	setZoom (win: AppWindow, zoom: number): void {

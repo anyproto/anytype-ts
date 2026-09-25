@@ -351,12 +351,14 @@ const App: FC = () => {
 			};
 		};
 
+		// Resolve the system theme before themeSet updates CSS and the native background.
+		S.Common.nativeThemeSet(isDark);
+
 		if (config) {
 			S.Common.configSet(config, true);
 			S.Common.themeSet(config.theme);
 		};
 
-		S.Common.nativeThemeSet(isDark);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);

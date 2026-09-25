@@ -1014,7 +1014,7 @@ class CommonStore {
 		const c = this.getThemeClass();
 
 		U.Dom.addBodyClass('theme', c);
-		Renderer.send('setBackground', c);
+		Renderer.send('setBackground');
 	};
 
 	/**
