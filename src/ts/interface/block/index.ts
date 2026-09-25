@@ -73,6 +73,7 @@ export interface BlockComponent {
 	isPopup?: boolean;
 	isInsideTable?: boolean;
 	isInsidePreview?: boolean;
+	isInsideSplit?: boolean;
 	isSelectionDisabled?: boolean;
 	isContextMenuDisabled?: boolean;
 	index?: any;

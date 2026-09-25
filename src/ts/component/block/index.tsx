@@ -1,6 +1,6 @@
 import React, { forwardRef, useRef, useEffect, useImperativeHandle } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject, Loader } from 'Component';
+import { DropTarget, ListChildren, Icon, SelectionTarget, IconObject, Label, Loader } from 'Component';
 
 import BlockDataview from './dataview';
 import BlockText from './text';
@@ -43,7 +43,7 @@ const SNAP = 0.01;
 const Block = forwardRef<Ref, Props>((props, ref) => {
 
 	const { 
-		rootId, css, className, block, index, readonly, isInsideTable, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
+		rootId, css, className, block, index, readonly, isInsideTable, isInsideSplit, isSelectionDisabled, contextParam, onMouseEnter, onMouseLeave,
 		isContextMenuDisabled, blockRemove, getWrapperWidth,
 	} = props;
 	const nodeRef = useRef(null);
@@ -1104,6 +1104,20 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 
 			if (isInline) {
 				cn.push('isInline');
+			};
+
+			// Inside a Split detail panel the dataview is not mounted at all. Mounting it would
+			// open a second record subscription and broadcast global editor resizes from within
+			// a panel that ViewSplit is concurrently sizing, which exhausted the heap. Guarding
+			// here rather than in the render keeps BlockDataview's mount effect from running.
+			// isInsideSplit is inherited by every block below the panel, so this holds at any depth.
+			if (isInsideSplit) {
+				blockComponent = (
+					<div className="dataviewNested">
+						<Label text={translate('blockDataviewNestedInSplit')} />
+					</div>
+				);
+				break;
 			};
 
 			blockComponent = <BlockDataview key={key} ref={childRef} isInline={isInline} {...props} />;

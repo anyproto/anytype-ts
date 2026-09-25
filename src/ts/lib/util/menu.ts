@@ -445,6 +445,7 @@ class UtilMenu {
 			{ id: I.ViewType.Calendar },
 			{ id: I.ViewType.Graph },
 			config.experimental ? { id: I.ViewType.Timeline } : null,
+			config.experimental ? { id: I.ViewType.Split } : null,
 		].filter(it => it).map(it => ({ ...it, name: translate(`viewName${it.id}`) }));
 	};
 

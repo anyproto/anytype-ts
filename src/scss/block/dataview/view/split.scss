@@ -1,0 +1,155 @@
+@import "~scss/_mixins";
+
+.blocks {
+	.block.blockDataview {
+		.viewContent.viewSplit { position: relative; height: 100%; display: flex; align-items: stretch; }
+		.viewContent.viewSplit {
+			/*
+			 * resize() breaks the container out to the full page width with a -48px left
+			 * margin (the ViewGraph technique). The detail pane wants that extra width, but
+			 * the master pane's rows would then start 48px left of where a regular List
+			 * layout puts them — so give it back here. Paired with resize(), so the inline
+			 * branch below drops it: inline never breaks out, so there is nothing to pay back.
+			 */
+			.splitMaster { position: relative; flex-shrink: 0; height: 100%; overflow-x: hidden; overflow-y: auto; padding-left: 48px; }
+			.splitMaster {
+				.wrap { height: 100%; }
+				#scroll { height: 100%; }
+
+				/* Match the regular (non-inline) List layout's top offset, so the first row sits
+				 * the same distance below the controls bar as it does in a plain List view. */
+				.viewContent.viewList { padding: 8px 0px 0px 0px; }
+				.viewContent.viewList.isRegular { padding: 9px 0px 0px 0px; }
+
+				/* The inline row markup skips the DropTarget / SelectionTarget wrappers, and
+				 * those are what carry the regular List layout's flex centering — so the row
+				 * content sat at the top of the box behind the inline top padding, which also
+				 * made the hover highlight read as offset from the title. Centering the row
+				 * itself is the treatment the inline branch already uses at Regular size. */
+				.viewContent.viewList {
+					.row { display: flex; align-items: center; padding-top: 0px; }
+					.row.add {
+						.btn { padding-top: 0px; }
+					}
+				}
+			}
+
+			.resize-h { width: 12px; height: 100%; cursor: col-resize; z-index: 2; flex-shrink: 0; position: relative; }
+			.resize-h {
+				.resize-handle { position: absolute; left: 0px; top: 50%; margin: -16px 0px 0px 0px; width: 100%; height: 32px; transition: $transitionAllCommon; }
+				.resize-handle::after {
+					content: ''; position: absolute; left: 50%; top: 0px; width: 6px; height: 100%; margin-left: -3px;
+					background-color: var(--color-shape-secondary); border-radius: 3px; opacity: 0; transition: $transitionAllCommon;
+				}
+
+				&:hover, &:active {
+					.resize-handle::after { opacity: 1; }
+				}
+
+				&:active {
+					.resize-handle { height: 64px; margin-top: -32px; }
+				}
+
+				.resize-handle:hover::after, .resize-handle:active::after { background-color: var(--color-shape-primary); }
+			}
+
+			.splitDetail { position: relative; flex-grow: 1; height: 100%; display: flex; flex-direction: column; min-width: 0px; border-left: 1px solid var(--color-shape-secondary); }
+			.splitDetail {
+				/* Floats over the top-right of the pane, level with the editor's title and
+				 * aligned to the same 16px gutter as the content below it. */
+				.splitDetailControls { position: absolute; right: 16px; top: 12px; z-index: 2; display: flex; align-items: center; gap: 0px 4px; }
+				.splitDetailControls {
+					.icon { width: 24px; height: 24px; }
+				}
+
+				/* z-index makes this a stacking context, containing the embedded editor's own
+				 * positioned descendants — text blocks give #value position: relative; z-index: 2
+				 * (block/text.scss), so the title's editable would otherwise stack directly
+				 * against .splitDetailControls here and, being a later sibling at equal z-index,
+				 * paint over the controls and take their clicks. */
+				.splitDetailBody { position: relative; z-index: 1; flex-grow: 1; overflow-x: hidden; overflow-y: auto; min-height: 0px; }
+				.splitDetailBody {
+					/*
+					 * The right sidebar's properties page, rendered as a section between the
+					 * object's title and its content (the editor's afterHead slot). It keeps its
+					 * own .sidebarPage classes because that is where all of its styling is scoped —
+					 * what has to be undone here is the panel geometry: .sidebarPage is a
+					 * full-height flex column whose body owns the scroll, while here it is one
+					 * block inside a pane that scrolls as a whole.
+					 */
+					.splitDetailProperties { border-bottom: 1px solid var(--color-shape-secondary); }
+					.splitDetailProperties {
+						.sidebarPage { height: auto; flex-grow: 0; overflow: visible; }
+						.sidebarPage {
+							/* The panel header carries a "Properties" title and an Edit Type button.
+							 * The control that opened this section already names it, and Edit Type
+							 * drives the right sidebar — which belongs to the host page, not the pane. */
+							> .head { display: none; }
+
+							> .body { padding: 0px 0px 12px 0px; overflow: visible; flex-grow: 0; }
+						}
+					}
+
+					/*
+					 * EditorPage.getWidth measures the page container, not this pane, and caps the
+					 * result at J.Size.editor (704px), writing it as an inline width. In a pane wider
+					 * than that it left a dead column beside the text, so let the editor fill the
+					 * pane instead — !important is the only way to beat an inline style.
+					 */
+					.editorWrapper { width: 100% !important; max-width: 100%; }
+					.editorWrapper {
+						/* The add-cover / show-description toolbar is redundant here — the object
+						 * is reachable as a full page via the expand control. */
+						.editorControls { display: none; }
+
+						.editor { max-width: 100%; }
+
+						/* Pulls the title to the top of the pane: the 48px gutter the full page
+						 * reserves for block drag handles is dead space at this width. The
+						 * horizontal padding keeps content off the panel divider and the
+						 * pane's right edge. */
+						.blocks { margin-left: 0px; padding: 12px 16px 0px 16px; }
+						.blocks {
+							.block {
+								.wrapMenu { display: none; }
+								.wrapContent { width: 100%; }
+							}
+						}
+
+						.blockLast { margin-left: 0px; height: 60px; }
+					}
+				}
+
+				/* Stands in for a dataview that is not mounted inside the panel. */
+				.dataviewNested {
+					display: flex; align-items: center; justify-content: center; padding: 24px 0px;
+					border-top: 1px solid var(--color-shape-secondary); border-bottom: 1px solid var(--color-shape-secondary);
+				}
+				.dataviewNested {
+					.label { @include text-common; color: var(--color-text-secondary); text-align: center; }
+				}
+
+				.splitDetailEmpty { display: flex; align-items: center; justify-content: center; height: 100%; }
+				.splitDetailEmpty {
+					.label { @include text-common; color: var(--color-text-secondary); text-align: center; }
+				}
+
+				/* Stands in for an object whose page cannot render inside the panel (chats). */
+				.splitDetailUnsupported { display: flex; align-items: center; justify-content: center; height: 100%; }
+				.splitDetailUnsupported {
+					.label { @include text-common; color: var(--color-text-secondary); text-align: center; }
+				}
+			}
+		}
+	}
+
+	.block.blockDataview.isInline {
+		.viewContent.viewSplit { height: 500px; }
+		.viewContent.viewSplit {
+			/* resize() bails out when inline, so the container never breaks out of the block
+			 * and there is no negative margin to compensate for. Keeping the 48px would push
+			 * the rows right of where an inline List puts them. */
+			.splitMaster { padding-left: 0px; }
+		}
+	}
+}

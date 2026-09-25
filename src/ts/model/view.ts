@@ -13,6 +13,7 @@ import * as M from 'Model';
  * - List: Simple list view
  * - Gallery: Card-based gallery view
  * - Board: Kanban-style board view
+ * - Split: Master-detail — record list on the left, selected object's page on the right
  *
  * Configuration:
  * - filters: Which objects to show
@@ -109,6 +110,10 @@ class View implements I.View {
 
 	isBoard () {
 		return this.type == I.ViewType.Board;
+	};
+
+	isSplit () {
+		return this.type == I.ViewType.Split;
 	};
 
 	getRelations () {

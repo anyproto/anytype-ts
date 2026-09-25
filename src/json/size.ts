@@ -57,6 +57,10 @@ export default {
 			small: 70,
 			medium: 120,
 		},
+
+		split: {
+			master: { min: 240, max: 640, default: 320 },
+		},
 	},
 
 	store: {
