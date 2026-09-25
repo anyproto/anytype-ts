@@ -1,5 +1,5 @@
-import React, { forwardRef, useState, useEffect } from 'react';
-import { Title, Icon, Button, EmptyState, Label } from 'Component';
+import React, { forwardRef, useState, useEffect, useRef } from 'react';
+import { Title, Icon, Button, EmptyState, Label, Switch, Input } from 'Component';
 import * as I from 'Interface';
 import { apiKeySpaceTooltip, apiKeySupportsV1, apiKeyMarkSeen } from 'Lib/apiKey';
 import { approvalSpaces } from 'Lib/linkApproval';
@@ -8,7 +8,12 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 
 	const { getId } = props;
 	const { dateFormat } = S.Common;
+	const { jsonApiStatus } = S.Auth;
 	const [ list, setList ] = useState<I.AppInfo[]>([]);
+	const [ localApi, setLocalApi ] = useState(S.Auth.localApiConfig);
+	const portRef = useRef(null);
+	const statusPort = Number(String(jsonApiStatus?.listenAddr || '').split(':').pop());
+	const port = S.Auth.isValidLocalApiPort(statusPort) ? statusPort : localApi.port;
 	const spaces = approvalSpaces(U.Menu.getVaultItems(), S.Auth.account?.info?.techSpaceId || '');
 
 	// The date columns are too narrow for a full month name, so they render abbreviated (M is
@@ -24,6 +29,65 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 				setList(list);
 			};
 		});
+	};
+
+	// The RPC response is the authoritative outcome of our own call: the matching event
+	// may arrive before or after it. A null status with no error means we disabled the server
+	const changeAddr = (listenAddr: string, callBack?: (status: I.JsonApiStatus) => void) => {
+		C.AccountChangeJsonApiAddr(listenAddr, (message: any) => {
+			if (message.error.code) {
+				return;
+			};
+
+			S.Auth.jsonApiStatusSet(message.status);
+			callBack?.(message.status);
+		});
+	};
+
+	const onToggle = (v: boolean) => {
+		S.Auth.localApiConfigSet({ enabled: v });
+		setLocalApi(S.Auth.localApiConfig);
+		changeAddr(v ? S.Auth.localApiAddrByPort(localApi.port) : '');
+	};
+
+	const onPortChange = () => {
+		const v = Number(String(portRef.current?.getValue() || '').trim());
+
+		if (!S.Auth.isValidLocalApiPort(v)) {
+			portRef.current?.setValue(String(port));
+			Preview.toastShow({ text: translate('localApiPortInvalid') });
+			return;
+		};
+
+		// Same port only rebinds to retry after a failure
+		if ((v == port) && (jsonApiStatus?.success !== false)) {
+			return;
+		};
+
+		// Only a port that actually bound is remembered for the next account open
+		changeAddr(S.Auth.localApiAddrByPort(v), (status) => {
+			const bound = Number(String(status?.listenAddr || '').split(':').pop());
+
+			if (status?.success && S.Auth.isValidLocalApiPort(bound)) {
+				S.Auth.localApiConfigSet({ port: bound });
+				setLocalApi(S.Auth.localApiConfig);
+			};
+		});
+	};
+
+	const onStatusEnter = (e: React.MouseEvent) => {
+		const text = jsonApiStatus.success
+			? U.String.sprintf(translate('localApiStatusListening'), jsonApiStatus.listenAddr)
+			: U.String.sprintf(translate('localApiStatusError'), U.String.htmlSpecialChars(jsonApiStatus.error));
+
+		Preview.tooltipShow({ text, element: e.currentTarget as HTMLElement });
+	};
+
+	const onStatusClick = () => {
+		if (jsonApiStatus && !jsonApiStatus.success) {
+			Preview.tooltipHide();
+			U.Common.copyToast(translate('commonError'), jsonApiStatus.error);
+		};
 	};
 
 	const onAdd = () => {
@@ -72,7 +136,7 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 						};
 
 						case 'copyMcp': {
-							U.Common.copyToast(translate('popupSettingsApiMcpConfig'), U.String.sprintf(J.Constant.mcpConfig, item.apiKey));
+							U.Common.copyToast(translate('popupSettingsApiMcpConfig'), U.String.sprintf(J.Constant.mcpConfig, item.apiKey, port));
 							break;
 						};
 
@@ -140,11 +204,17 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 	};
 
 	useEffect(() => {
+		portRef.current?.setValue(String(port));
+	}, [ port ]);
+
+	useEffect(() => {
 		load();
 
 		// Clears the "New" badge the settings sidebar shows on this entry
 		apiKeyMarkSeen();
 	}, []);
+
+	const statusCn = [ 'localApiStatus', (jsonApiStatus?.success ? 'isSuccess' : 'isError') ];
 
 	return (
 		<>
@@ -153,6 +223,40 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 				{list.length ? <Button size={28} text={translate('popupSettingsApiCreate')} onClick={onAdd} /> : ''}
 			</div>
 			<Label className="apiKeyIntro" text={U.String.sprintf(translate('apiKeySettingsDescription'), J.Url.developerPortal)} />
+
+			<div className="actionItems">
+				<div className="item localApiServer">
+					<div className="flex">
+						<Label className="name" text={translate('localApiAddress')} />
+						{(localApi.enabled && jsonApiStatus) ? (
+							<div
+								className={statusCn.join(' ')}
+								onMouseEnter={onStatusEnter}
+								onMouseLeave={() => Preview.tooltipHide()}
+								onClick={onStatusClick}
+							/>
+						) : ''}
+						<Label className="host" text={`${S.Auth.localApiHost}:`} />
+						<Input
+							ref={portRef}
+							className="port"
+							value={String(port)}
+							maxLength={5}
+							readonly={!localApi.enabled}
+							onKeyUp={(e: any) => {
+								if (e.key == 'Enter') {
+									onPortChange();
+								};
+							}}
+						/>
+						{localApi.enabled ? <Button size={28} className="change" text={translate('commonChange')} onClick={onPortChange} /> : ''}
+					</div>
+					<div className="flex">
+						<Label className="name" text={translate('localApiEnable')} />
+						<Switch className="big" value={localApi.enabled} onChange={(e: any, v: boolean) => onToggle(v)} />
+					</div>
+				</div>
+			</div>
 
 			{list.length ? (
 				<div className="items">

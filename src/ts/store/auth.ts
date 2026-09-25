@@ -9,6 +9,15 @@ interface NetworkConfig {
 	preferYamux: boolean;
 };
 
+interface LocalApiConfig {
+	enabled: boolean;
+	port: number;
+};
+
+// The JSON API only ever listens on loopback, so the user picks just the port
+const LOCAL_API_HOST = '127.0.0.1';
+const localApiDefaultPort = (): number => Number(String(J.Url.api).split(':')[1]) || 31009;
+
 class AuthStore {
 	
 	public accountItem: I.Account = null;
@@ -18,10 +27,14 @@ class AuthStore {
 	public appKey = '';
 	public startingId: Map<string, string> = new Map();
 	public syncStatusMap: Map<string, I.SyncStatus> = new Map();
+	public jsonApiStatusItem: I.JsonApiStatus = null;
 	
 	constructor () {
 		makeObservable(this, {
 			accountItem: observable,
+			jsonApiStatusItem: observable,
+			jsonApiStatus: computed,
+			jsonApiStatusSet: action,
 			accountList: observable,
 			accounts: computed,
 			account: computed,
@@ -52,6 +65,56 @@ class AuthStore {
 			path: String(obj.path || ''),
 			preferYamux: Boolean(obj.preferYamux),
 		};
+	};
+
+	get jsonApiStatus (): I.JsonApiStatus {
+		return this.jsonApiStatusItem;
+	};
+
+	get localApiConfig (): LocalApiConfig {
+		const obj = Storage.get('localApi') || {};
+		const port = Number(obj.port);
+
+		return {
+			enabled: obj.enabled !== false,
+			port: this.isValidLocalApiPort(port) ? port : localApiDefaultPort(),
+		};
+	};
+
+	/**
+	 * Address passed to the middleware on account open, empty when the local API is disabled.
+	 */
+	get localApiAddr (): string {
+		const { enabled, port } = this.localApiConfig;
+		return enabled ? this.localApiAddrByPort(port) : '';
+	};
+
+	get localApiHost (): string {
+		return LOCAL_API_HOST;
+	};
+
+	localApiAddrByPort (port: number): string {
+		return `${LOCAL_API_HOST}:${port}`;
+	};
+
+	isValidLocalApiPort (port: number): boolean {
+		return Number.isInteger(port) && (port > 0) && (port <= 65535);
+	};
+
+	/**
+	 * Persists the local API settings, read again on the next account open.
+	 * @param {Partial<LocalApiConfig>} obj - The fields to update.
+	 */
+	localApiConfigSet (obj: Partial<LocalApiConfig>) {
+		Storage.set('localApi', { ...this.localApiConfig, ...obj });
+	};
+
+	/**
+	 * Sets the last known bind outcome of the local JSON API server.
+	 * @param {I.JsonApiStatus} status - The status, null when disabled or unknown.
+	 */
+	jsonApiStatusSet (status: I.JsonApiStatus) {
+		this.jsonApiStatusItem = status;
 	};
 
 	/**
@@ -237,6 +300,7 @@ class AuthStore {
 	 */
 	clearAll () {
 		this.accountItem = null;
+		this.jsonApiStatusItem = null;
 
 		this.accountListClear();
 		this.syncStatusMap.clear();

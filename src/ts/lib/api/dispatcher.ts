@@ -324,6 +324,13 @@ class Dispatcher {
 					break;
 				};
 
+				// Every bind attempt, whichever session triggered it. The outcome of our own
+				// AccountChangeJsonApiAddr is taken from its response, the event only mirrors it
+				case 'AccountJsonApiStatus': {
+					S.Auth.jsonApiStatusSet(mapped.status);
+					break;
+				};
+
 				case 'AccountLinkApprovalRequest': {
 					// no code exists yet: the user has to approve first, and only then does
 					// AccountLocalLinkApproveChallenge mint one. Main dedupes the request, since

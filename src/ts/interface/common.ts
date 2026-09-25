@@ -495,6 +495,14 @@ export interface AppInfo {
 	grant?: I.LinkAppGrant;
 };
 
+// Outcome of one bind attempt of the local JSON API server. listenAddr is the bound address on success
+// and the requested one on failure; error is raw OS text for debugging only
+export interface JsonApiStatus {
+	success: boolean;
+	listenAddr: string;
+	error: string;
+};
+
 export enum ImageSize {
 	Small		 = 100,
 	Medium		 = 320,
