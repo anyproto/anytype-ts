@@ -24,6 +24,7 @@ import MenuManager from './menu';
 import WindowManager from './window';
 import Server from './server';
 import DownloadManager from './download';
+import { registerChatStatus } from './chatStatus';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
@@ -31,6 +32,7 @@ import { AppWindow } from './types';
 const protocol = 'anytype';
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 const store = getSafeStorage();
+registerChatStatus();
 
 // gRPC DevTools extension ID
 const GRPC_DEVTOOLS_ID = 'fohdnlaeecihjiendkfhifhlgldpeopm';

@@ -10,6 +10,10 @@ import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
 import { presence } from 'Lib/presence';
+import { chatStatus } from 'Lib/chatStatus';
+import { activityGaps } from 'Lib/chatStatus/timeline';
+import { STATUS_TTL } from 'Lib/chatStatus/model';
+import { StatusGroup, StatusFooter } from './chat/status';
 import { reachedEdge, shouldRefetchForward } from 'Lib/util/chatWindow';
 
 interface RefProps {
@@ -100,6 +104,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const chatId = getChatId();
 	const subId = getSubId();
 	const messages = S.Chat.getList(subId);
+	const statusScope = { accountId: account?.id || '', spaceId: space, chatId };
+	const statusView = S.ChatStatus.get(statusScope);
+	const [ statusClock, setStatusNow ] = useState(Date.now);
+	const statusNow = Math.max(statusClock, Date.now());
+	const statusGaps = activityGaps(Array.from(statusView.groups.values()), messages, S.Chat.isAtChatStart(subId), S.Chat.isAtChatEnd(subId));
+	const hasFreshStatus = statusView.live.some(item => statusNow - item.lastSeenAt <= STATUS_TTL) ||
+		Array.from(statusView.items.values()).some(item => item.fresh && (item.lifecycle == 'in_progress') && (statusNow - item.lastSeenAt <= STATUS_TTL));
 	const analyticsChatId = getAnalyticsChatId();
 
 	// Stable handler identities so <Message>'s memo holds across BlockChat's setDummy re-renders
@@ -824,7 +835,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				item.isFirst = false;
 				item.isLast = false;
 
-				if (prev && ((item.creator != prev.creator) || (item.createdAt - prev.createdAt >= GROUP_TIME) || item.replyToMessageId)) {
+				if (prev && ((item.creator != prev.creator) || (item.createdAt - prev.createdAt >= GROUP_TIME) || item.replyToMessageId || statusGaps.has(item.id))) {
 					item.isFirst = true;
 
 					if (prev) {
@@ -1911,7 +1922,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	};
 
 	const sections = getSections();
-	const isEmpty = isLoaded && !messages.length;
+	const isEmpty = isLoaded && !messages.length && !statusView.groups.size;
+	const renderActivity = (beforeId: string) => (statusGaps.get(beforeId) || []).map(group => (
+		<StatusGroup key={group.id} scope={statusScope} groupId={group.id} now={statusNow} />
+	));
 
 	let content = null;
 	if (isEmpty) {
@@ -1927,6 +1941,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 					<div className="section" key={section.key}>
 						<SectionDate date={section.createdAt} />
 						{section.list.map(item => (
+							<React.Fragment key={item.id}>
+							{renderActivity(item.id)}
 							<Message
 								ref={getRefSetter(item.id)}
 								key={item.id}
@@ -1945,9 +1961,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 								scrollToBottom={scrollToBottomCb}
 								getMessageMenuOptions={getMessageMenuOptionsCb}
 							/>
+							</React.Fragment>
 						))}
 					</div>
 				))}
+				{renderActivity('')}
 			</div>
 		);
 	};
@@ -2048,9 +2066,16 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		return () => presence.unsubscribe(chatId);
 	}, [ space, chatId ]);
 
+	useEffect(() => chatStatus.retain(space, chatId), [ account?.id, space, chatId ]);
+	useEffect(() => {
+		if (!hasFreshStatus) return;
+		const timer = window.setInterval(() => setStatusNow(Date.now()), 1000);
+		return () => window.clearInterval(timer);
+	}, [ account?.id, space, chatId, hasFreshStatus ]);
+
 	useLayoutEffect(() => {
 		scrollToBottomCheck();
-	}, [ messages.length ]);
+	}, [ messages.length, statusView.contentRevision ]);
 
 	// Restore the captured top message's position after a prepend-at-top (pre-paint, so no
 	// flash), since overflow-anchor can't hold position at scrollTop 0. This lands the view
@@ -2145,7 +2170,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		);
 	};
 
-	const typers = S.Presence.getTypers(chatId).map(it => {
+	const richPublishers = new Set(statusView.live.filter(it => statusNow - it.lastSeenAt <= STATUS_TTL).map(it => it.publisherIdentity));
+	statusView.items.forEach(item => {
+		if (item.fresh && (item.lifecycle == 'in_progress') && (statusNow - item.lastSeenAt <= STATUS_TTL)) richPublishers.add(item.publisherIdentity);
+	});
+	const typers = S.Presence.getTypers(chatId).filter(it => !richPublishers.has(it.identity)).map(it => {
 		return U.Space.getParticipant(U.Space.getParticipantId(space, it.identity));
 	}).filter(it => it && !it._empty_);
 
@@ -2189,6 +2218,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			</div>
 
 			{typingIndicator}
+			<StatusFooter scope={statusScope} live={statusView.live} now={statusNow} />
 
 			{!object.isArchived ? (
 				<Form 

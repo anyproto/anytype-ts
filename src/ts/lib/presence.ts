@@ -25,9 +25,9 @@ interface TypingPayload {
  * middleware channel (topic `typing/<objectId>`), following the conventions in
  * anytype-heart docs/pubsub/CLIENTS.md:
  *
- * - full-state messages `{ sessionId, blockId, active }`, refreshed every 3s
+ * - full-state messages `{ sessionId, blockId, active }`, refreshed every 2s
  *   while typing, best-effort `active: false` on idle/blur/close;
- * - receiver expiry by local clock (8s TTL) — closing messages only shorten
+ * - receiver expiry by local clock (5s TTL) — closing messages only shorten
  *   the ghost period, expiry is the mechanism of truth;
  * - own session filtered out (local echo), own account filtered out (you never
  *   see yourself typing);

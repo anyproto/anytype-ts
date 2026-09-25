@@ -128,3 +128,70 @@
 	from { opacity: 0; transform: translateY(2px); }
 	to { opacity: 1; transform: none; }
 }
+
+.block.blockChat {
+	.chatStatusGroup {
+		border: 1px solid var(--color-shape-primary); border-radius: 10px; margin: 8px 0px;
+		background: var(--color-bg-primary); color: var(--color-text-primary); min-width: 0px;
+	}
+	.chatStatusGroup {
+		button { font: inherit; color: inherit; text-align: left; cursor: pointer; }
+		button:focus-visible, pre:focus-visible { outline: 2px solid var(--color-system-accent-100); outline-offset: 2px; }
+		.statusGroupToggle, .statusItemToggle { border: 0px; background: none; display: flex; align-items: flex-start; gap: 8px; width: 100%; }
+		.statusGroupToggle { padding: 12px; }
+		.statusItemToggle { padding: 0px; }
+		.statusChevron { width: 12px; flex-shrink: 0; color: var(--color-text-secondary); }
+		.statusGroupSummary, .statusItemLabels { display: flex; flex-direction: column; flex: 1; min-width: 0px; gap: 3px; }
+		.statusCounts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-weight: 500; }
+		.statusCounts > span { @include text-small; font-weight: 400; color: var(--color-text-secondary); }
+		.statusCounts > .statusFailedCount { color: var(--color-red); }
+		.statusLatest, .statusContext { @include text-small; color: var(--color-text-secondary); overflow-wrap: anywhere; }
+		.statusLatest { @include text-overflow-nw; }
+		.statusText { font-weight: 500; overflow-wrap: anywhere; }
+		.chatStatusItem { padding: 12px; border-top: 1px solid var(--color-shape-primary); }
+		.statusBadge { @include text-small; display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+		.statusBadge.complete { color: var(--color-green); }
+		.statusBadge.error { color: var(--color-red); }
+		.statusBadge.in_progress { color: var(--color-text-secondary); }
+		.statusSymbol { width: 12px; text-align: center; font-weight: 600; }
+		.statusSpinner { width: 12px; height: 12px; border: 1.5px solid currentColor; border-right-color: transparent; border-radius: 50%; font-size: 0px; animation: chatStatusSpin 1s linear infinite; }
+		.statusStale { @include text-small; margin: 6px 0px 0px 20px; color: var(--color-text-secondary); }
+		.statusChips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0px 0px 20px; min-width: 0px; }
+		.statusChip { @include text-small; @include text-overflow-nw; max-width: 100%; border: 0px; border-radius: 5px; padding: 4px 7px; background: var(--color-shape-highlight-medium); }
+		.statusChip:hover { background: var(--color-shape-highlight-dark); }
+		.statusDetails { margin: 12px 0px 0px 20px; }
+		.statusResultHeading, .statusDetailFooter { @include text-small; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px 12px; color: var(--color-text-secondary); }
+		.statusDetailFooter > span { overflow-wrap: anywhere; min-width: 0px; }
+		.statusResult { @include text-small; font-family: "Plex", monospace; white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto; max-height: 320px; margin: 6px 0px 10px; padding: 12px; border-radius: 6px; background: var(--color-shape-highlight-medium); }
+		.statusNoResult { @include text-small; padding: 10px 0px; color: var(--color-text-secondary); }
+		.statusCopyAction { @include text-small; display: flex; gap: 5px; align-items: center; border: 0px; background: none; padding: 4px 0px; }
+		.statusCopyAction .icon { flex-shrink: 0; }
+		.chatStatusCopy { display: inline-flex; position: relative; min-width: 0px; max-width: 100%; }
+		.copyFeedback { @include text-small; position: absolute; bottom: 100%; right: 0px; white-space: nowrap; background: var(--color-bg-primary); box-shadow: 0px 1px 6px var(--color-shape-primary); border-radius: 4px; z-index: 1; }
+		.copyFeedback:not(:empty) { padding: 3px 6px; }
+		.statusAnnouncement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+		[hidden] { display: none !important; }
+	}
+}
+
+.chatStatusInspector {
+	position: fixed; z-index: 10000; width: min(480px, calc(100vw - 16px)); max-height: calc(100vh - 16px);
+	background: var(--color-bg-primary); color: var(--color-text-primary); border: 1px solid var(--color-shape-primary);
+	border-radius: 8px; box-shadow: 0px 4px 20px var(--color-shape-primary); overflow: auto;
+	pre { @include text-small; font-family: "Plex", monospace; white-space: pre-wrap; overflow-wrap: anywhere; margin: 0px; padding: 12px; max-height: 360px; overflow: auto; }
+}
+
+@keyframes chatStatusSpin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+	.block.blockChat .chatStatusGroup .statusSpinner, .block.blockChat .typingIndicator, .block.blockChat .typingIndicator .dots span { animation: none; }
+}
+@media (max-width: 480px) {
+	.block.blockChat .chatStatusGroup {
+		.statusItemToggle { flex-wrap: wrap; }
+		.statusItemLabels { flex-basis: calc(100% - 20px); }
+		.statusBadge { margin-left: 20px; }
+	}
+}
+@media (pointer: coarse) {
+	.block.blockChat .chatStatusGroup button { min-height: 44px; }
+}

@@ -10,6 +10,7 @@ import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { presence } from '../presence';
+import { chatStatus } from '../chatStatus';
 import { liveAddIndex } from 'Lib/util/chatWindow';
 import { applySubscriptionPosition } from 'Lib/util/subscription';
 import { approvalSpaces } from 'Lib/linkApproval';
@@ -121,6 +122,7 @@ class Dispatcher {
 		this.stopStream();
 
 		this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, this.metadata());
+		chatStatus.reconnect();
 
 		this.stream.on('data', (event) => {
 			this.eventBuffer.push({ event, skipDebug: false });
@@ -168,6 +170,7 @@ class Dispatcher {
 	 * Cancels the stream and clears the reference.
 	 */
 	stopStream () {
+		chatStatus.disconnect();
 		window.clearTimeout(this.timeoutStream);
 		this.reconnects = 0;
 
@@ -193,6 +196,7 @@ class Dispatcher {
 	 * Counter resets after 40 attempts.
 	 */
 	reconnect () {
+		chatStatus.disconnect();
 		let t = 3;
 		if (this.reconnects == 20) {
 			t = 5;
@@ -1164,6 +1168,7 @@ class Dispatcher {
 
 				case 'PubsubMessage': {
 					presence.onMessage(mapped);
+					chatStatus.onMessage(spaceId, mapped);
 					break;
 				};
 
@@ -1193,6 +1198,7 @@ class Dispatcher {
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
+					chatStatus.onChatMessage(spaceId, rootId, { id: message.id, orderId: orderId || message.orderId, creator: message.creator });
 					const discussionParentId = S.Chat.getDiscussionParentId(spaceId, rootId);
 					const isDiscussion = !!discussionParentId;
 
@@ -1675,6 +1681,9 @@ class Dispatcher {
 		if (subIds.length) {
 			if (subIds.includes(J.Constant.subId.space)) {
 				const object = U.Space.getSpaceview(id);
+				if (object.isAccountDeleted && object.targetSpaceId) {
+					chatStatus.clear(S.Auth.account?.id, object.targetSpaceId);
+				};
 
 				if (intersection.length && object.targetSpaceId) {
 					U.Subscription.createSubSpace([ object.targetSpaceId ]);
