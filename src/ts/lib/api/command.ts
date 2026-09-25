@@ -156,7 +156,7 @@ export const AccountCreate = (name: string, avatarPath: string, storePath: strin
 		networkMode: mode as number,
 		networkCustomConfigFilePath: networkConfigPath,
 		preferYamuxTransport: preferYamux,
-		jsonApiListenAddr: J.Url.api,
+		jsonApiListenAddr: S.Auth.localApiAddr,
 		enableMembershipV2: true,
 	}, callBack);
 };
@@ -172,7 +172,7 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 		networkMode: mode as number,
 		networkCustomConfigFilePath: networkConfigPath,
 		preferYamuxTransport: preferYamux,
-		jsonApiListenAddr: J.Url.api,
+		jsonApiListenAddr: S.Auth.localApiAddr,
 		enableMembershipV2: true,
 		preferredSpaceId,
 	}, callBack);
@@ -240,6 +240,10 @@ export const AccountLocalLinkSolveChallenge = (id: string, answer: string, callB
 		challengeId: id,
 		answer,
 	}, callBack);
+};
+
+export const AccountChangeJsonApiAddr = (listenAddr: string, callBack?: (message: any) => void) => {
+	dispatcher.request('AccountChangeJsonApiAddr', { listenAddr }, callBack);
 };
 
 export const AccountLocalLinkListApps = (callBack?: (message: any) => void) => {

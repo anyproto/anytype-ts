@@ -73,6 +73,13 @@ export const AccountLocalLinkSolveChallenge = (response: any) => {
 	};
 };
 
+// status is null when the server was disabled (empty address) or the switch was never attempted
+export const AccountChangeJsonApiAddr = (response: any) => {
+	return {
+		status: response.status ? Mapper.From.JsonApiStatus(response.status) : null,
+	};
+};
+
 export const AccountLocalLinkListApps = (response: any) => {
 	return {
 		list: (response.app || []).map(Mapper.From.AppInfo),

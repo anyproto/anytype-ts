@@ -1085,7 +1085,7 @@
 	"popupSettingsPhraseTitle": "Login Key",
 	"popupSettingsPhraseText": "Your key protects your vault. You'll need it to sign in if you don't have access to your devices. Keep it in a safe place. Click to show:",
 
-	"popupSettingsApiTitle": "API Keys",
+	"popupSettingsApiTitle": "Local API",
 	"popupSettingsApiKey": "Key",
 	"popupSettingsApiCreated": "Created",
 	"popupSettingsApiScope": "Scope",
@@ -1096,6 +1096,13 @@
 	"popupSettingsApiMcpConfig": "MCP Config",
 
 	"popupSettingsApiEmpty": "You haven't created any API keys yet",
+	"localApiEnable": "Enabled",
+	"localApiAddress": "API address",
+	"popupConfirmLocalApiPortTitle": "Change API address?",
+	"popupConfirmLocalApiPortText": "Apps and MCP clients connected to the current address will lose access. After the change, copy a new MCP config or update the base URL in your API clients.",
+	"localApiPortInvalid": "Port must be a number between 1 and 65535",
+	"localApiStatusListening": "Listening on %s",
+	"localApiStatusError": "Failed to start: %s\nClick to copy",
 
 	"popupApiCreateTitle": "Create new API key",
 	"popupApiCreateSuccess": "API key successfully created",

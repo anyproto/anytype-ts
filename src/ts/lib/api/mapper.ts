@@ -1003,6 +1003,14 @@ export const Mapper = {
 			};
 		},
 
+		JsonApiStatus: (obj: any): I.JsonApiStatus => {
+			return {
+				success: Boolean(obj.success),
+				listenAddr: String(obj.listenAddr || ''),
+				error: String(obj.error || ''),
+			};
+		},
+
 	},
 
 	//------------------------------------------------------------
@@ -1486,6 +1494,12 @@ export const Mapper = {
 		AccountConfigUpdate: (obj: any) => {
 			return {
 				config: Mapper.From.AccountConfig(obj.config || {}),
+			};
+		},
+
+		AccountJsonApiStatus: (obj: any) => {
+			return {
+				status: Mapper.From.JsonApiStatus(obj),
 			};
 		},
 

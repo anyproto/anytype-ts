@@ -427,6 +427,22 @@
 		.apiKeyAccess:focus-visible { outline: 2px solid var(--color-system-accent-100); outline-offset: 2px; border-radius: 4px; }
 		.colAccess .keyMeta { @include text-overflow-nw; }
 
+		.localApiStatus { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+		.localApiStatus.isSuccess { background: var(--color-lime); }
+		.localApiStatus.isError { background: var(--color-red); }
+		.localApiServer {
+			> .flex { gap: 0px 8px; }
+			> .flex {
+				> * { flex-shrink: 0; }
+			}
+			.label { width: auto; white-space: nowrap; }
+			.name { margin-right: 8px; }
+			.host { color: var(--color-text-secondary); }
+			.input.port { width: 72px; height: 28px; padding: 0px 8px; border-radius: 6px; margin-left: -8px; }
+			.input.port.isReadonly { color: var(--color-text-secondary); }
+			.button.change { margin-right: 0px; }
+		}
+
 		.items {
             .row { grid-template-columns: minmax(0, 1fr) 70px 105px 105px minmax(0, 1fr) 28px; align-items: center; }
 			.col { min-width: 0; }

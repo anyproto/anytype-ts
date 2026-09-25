@@ -249,7 +249,8 @@ export default {
 					"command": "npx",
 					"args": ["-y", "@anyproto/anytype-mcp"],
 					"env": {
-						"OPENAPI_MCP_HEADERS": "{\\"Authorization\\":\\"Bearer %s\\", \\"Anytype-Version\\":\\"2025-11-08\\"}"
+						"OPENAPI_MCP_HEADERS": "{\\"Authorization\\":\\"Bearer %s\\"}",
+						"ANYTYPE_API_BASE_URL": "http://localhost:%s"
 					}
 				}
 			}
