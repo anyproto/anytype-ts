@@ -263,7 +263,7 @@ nativeTheme.on('updated', () => {
 	const isDark = Util.isDarkTheme();
 
 	MenuManager.updateTrayIcon();
-	Api.setBackground(null, Util.getTheme());
+	Api.setBackground(null);
 
 	WindowManager.sendToAll('native-theme', isDark);
 	WindowManager.sendToAllTabs('native-theme', isDark);

@@ -513,6 +513,8 @@ class WindowManager {
 				additionalArguments: [ `--tab-id=${id}`, `--win-id=${win.id}` ],
 			},
 		});
+		// Each tab has its own background, exposed while its renderer catches up during resize.
+		wcv.setBackgroundColor(Util.getBgColor(Util.getTheme()));
 
 		win.views = win.views || [];
 		const view = Object.assign(wcv, { id, data: { ...param }, isLoaded: false }) as TabView;
