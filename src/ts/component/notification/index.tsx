@@ -18,8 +18,28 @@ const Notification: FC<I.NotificationComponent> = (props) => {
 	let buttons = [];
 
 	switch (type) {
-		case I.NotificationType.Gallery:
+		case I.NotificationType.Export: {
+			if (payload.report || errorCode) {
+				buttons.push({ id: 'exportResult', text: translate('popupExportResultViewDetails') });
+			};
+			break;
+		};
+
 		case I.NotificationType.Import: {
+			if (payload.reportObjectId) {
+				buttons = buttons.concat([
+					{ id: 'report', text: translate('notificationButtonImportReport') }
+				]);
+			} else
+			if (!errorCode && (spaceId != space)) {
+				buttons = buttons.concat([
+					{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch') }
+				]);
+			};
+			break;
+		};
+
+		case I.NotificationType.Gallery: {
 			if (!errorCode && (spaceId != space)) {
 				buttons = buttons.concat([
 					{ id: 'spaceSwitch', text: translate('notificationButtonSpaceSwitch') }
@@ -39,15 +59,39 @@ const Notification: FC<I.NotificationComponent> = (props) => {
 
 	// Check that space is not removed
 	if (spaceCheck || participantCheck) {
-		buttons = buttons.filter(it => ![ 'spaceSwitch' ].includes(it.id));
+		buttons = buttons.filter(it => ![ 'spaceSwitch', 'report' ].includes(it.id));
 	};
 
 	const onButton = (e: any, action: string) => {
 		e.stopPropagation();
 
 		switch (action) {
+			case 'exportResult': {
+				S.Popup.open('exportResult', {
+					data: {
+						report: payload.report,
+						path: payload.path,
+						error: { code: errorCode },
+						spaceId,
+						exportType: payload.exportType,
+					},
+				});
+				break;
+			};
+
 			case 'spaceSwitch': {
 				U.Router.switchSpace(payload.spaceId, '', true, {}, false);
+				break;
+			};
+
+			case 'report': {
+				const object = { id: payload.reportObjectId, layout: I.ObjectLayout.Page, spaceId: payload.spaceId };
+
+				if (payload.spaceId == space) {
+					U.Object.openAuto(object);
+				} else {
+					U.Router.switchSpace(payload.spaceId, U.Object.route(object), true, {}, false);
+				};
 				break;
 			};
 

@@ -101,12 +101,15 @@ import ObjectName from './util/object/name';
 import ObjectDescription from './util/object/description';
 import ObjectType from './util/object/type';
 import ObjectCover from './util/object/cover';
+import ObjectCreatedIn from './util/object/createdIn';
 
 import MediaAudio from './util/media/audio';
 import MediaVideo from './util/media/video';
 
 import ProgressBar from './util/progressBar';
 import ProgressText from './util/progressText';
+import RecoveryStatus from './util/recoveryStatus';
+import RecoveryProgress from './util/recoveryProgress';
 import ShareTooltip from './util/share/tooltip';
 import FooterAuthDisclaimer from './footer/auth/disclaimer';
 
@@ -214,6 +217,7 @@ export {
 	ObjectDescription,
 	ObjectType,
 	ObjectCover,
+	ObjectCreatedIn,
 
 	Menu,
 	MenuItemVertical,
@@ -223,6 +227,8 @@ export {
 
 	ProgressBar,
 	ProgressText,
+	RecoveryStatus,
+	RecoveryProgress,
 	ShareTooltip,
 	FooterAuthDisclaimer,
 

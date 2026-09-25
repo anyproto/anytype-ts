@@ -204,9 +204,11 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 				};
 			};
 
+			// The focus range describes the caret in whichever block holds it — forward it only when
+			// that is this block, otherwise menu actions (e.g. paste) would land at a foreign offset (JS-8598)
 			menuOpen({
 				rect: { x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 },
-				data: { range: U.Common.objectCopy(range) },
+				data: { range: (focused == block.id) ? U.Common.objectCopy(range) : null },
 			});
 		});
 	};

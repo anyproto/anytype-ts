@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useCallback, MouseEvent } from 'react';
-import { Footer, Header, Icon, Filter } from 'Component';
+import { Footer, Header, Icon, Filter, Label } from 'Component';
 import ArchiveListTree from './archiveListTree';
 import ArchiveSuggested from './archiveSuggested';
 import * as I from 'Interface';
@@ -28,6 +28,8 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	// "count unknown" and not bounce a restored Suggestions tab back to Bin on mount.
 	const [ suggestionCount, setSuggestionCount ] = useState<number | null>(null);
 	const [ suggestedSel, setSuggestedSel ] = useState<{ count: number; canDelete: boolean }>({ count: 0, canDelete: true });
+	// Shown once ever, across every space (a plain, non-space Storage key).
+	const [ isCleanupNoteClosed, setIsCleanupNoteClosed ] = useState(() => Storage.getOnboarding('binCleanup'));
 	const suggestedRef = useRef(null);
 	const filterTimeout = useRef(0);
 	const subId = J.Constant.subId.archive;
@@ -103,6 +105,19 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				state: Object.assign({}, h.location.state, { tab }),
 			});
 		};
+	};
+
+	const onCleanupNoteClose = () => {
+		Storage.setOnboarding('binCleanup');
+		setIsCleanupNoteClosed(true);
+	};
+
+	// The route is reported here rather than passed through openSettings: that helper puts
+	// it in _routeParam_.additional, which U.Router.build serialises as [it.key, it.value] —
+	// both undefined for a bare { route }, so it never reaches the page.
+	const onDeletionAudit = () => {
+		analytics.event('ClickDeletionAudit', { route: analytics.route.archive });
+		Action.openSettings('spaceDeletionAudit', analytics.route.archive);
 	};
 
 	const onSelectTree = (ids: string[], e: MouseEvent) => {
@@ -336,8 +351,29 @@ const PageMainArchive = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 								/>
 							</>
 						) : ''}
+
+						{/* Navigates away rather than switching tabs, so it stays out of .tabs —
+							sitting beside Bin/Cleanup would misrepresent it as a third tab.
+							Gated on the same predicate as the page itself, so this button and
+							the page it opens can never disagree about who may see it. */}
+						{U.Space.canMyParticipantSeeDeletionAudit() ? (
+							<Icon
+								className="archiveAction"
+								name="common/clock"
+								withBackground={true}
+								tooltipParam={{ text: translate('pageSettingsSpaceDeletionAudit') }}
+								onClick={onDeletionAudit}
+							/>
+						) : ''}
 					</div>
 				</div>
+
+				{(!isBin && !isCleanupNoteClosed) ? (
+					<div className="cleanupNote">
+						<Label text={translate('binCleanupDescription')} />
+						<Icon name="common/close" className="close" onClick={onCleanupNoteClose} />
+					</div>
+				) : ''}
 
 				{isBin ? (
 					<ArchiveListTree

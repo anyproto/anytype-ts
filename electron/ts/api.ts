@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, Menu, Notification, ipcMain, session } from 'electron';
+import { app, shell, BrowserWindow, Menu, Notification, ipcMain, session, clipboard } from 'electron';
 import { is } from 'electron-util';
 import fs from 'fs';
 import path from 'path';
@@ -14,9 +14,26 @@ import UpdateManager from './update';
 import Server from './server';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
+import LinkApprovalManager from './linkApproval';
+import DownloadManager, { DownloadRequest } from './download';
 import { AppWindow, TabView, TabData, CreateTabOptions, AppConfig, Bounds } from './types';
 
 const KEYTAR_SERVICE = 'Anytype';
+
+/**
+ * Local-link pairing prompts. Main owns them because Event.Account.LinkApprovalRequest reaches every
+ * session, so dedup cannot live in a renderer, and because the queue has to outlive any one window.
+ * The approve RPC itself belongs to a renderer: main holds no middleware session.
+ */
+const LinkApproval = new LinkApprovalManager({
+	open: payload => { WindowManager.createApprovalWindow(payload); },
+	close: key => WindowManager.closeApprovalWindow(key),
+	code: (key, challenge) => WindowManager.showApprovalCode(key, challenge),
+	error: key => WindowManager.showApprovalError(key),
+	spaces: (key, spaces) => WindowManager.updateApprovalSpaces(key, spaces),
+	liveTargets: () => WindowManager.getAppWindowIds(),
+	sendDecision: (id, payload) => WindowManager.sendToWindowTab(id, 'link-approval-decision', payload),
+});
 
 class Api {
 
@@ -217,18 +234,30 @@ class Api {
 
 		Util.setNativeThemeSource();
 
-		const resolvedTheme = Util.getTheme();
-		this.setBackground(win, resolvedTheme);
+		this.setBackground(win);
 
 		WindowManager.sendToAll('set-theme', theme);
 		WindowManager.sendToAllTabs('set-theme', theme);
 	};
 
-	setBackground (win: AppWindow | null, theme: string): void {
+	setBackground (win: AppWindow | null): void {
 		const useTransparent = Util.isWayland() && !Util.isKDE();
-		const bgColor = useTransparent ? '#00000000' : Util.getBgColor(theme);
+		// A renderer can still have stale theme state while starting or receiving a theme change.
+		const viewBgColor = Util.getBgColor(Util.getTheme());
+		const bgColor = useTransparent ? '#00000000' : viewBgColor;
 
-		BrowserWindow.getAllWindows().forEach(win => win && !win.isDestroyed() && win.setBackgroundColor(bgColor));
+		BrowserWindow.getAllWindows().forEach((win: AppWindow) => {
+			if (!win || win.isDestroyed()) {
+				return;
+			};
+
+			win.setBackgroundColor(bgColor);
+			for (const view of win.views || []) {
+				if (view.webContents && !view.webContents.isDestroyed()) {
+					view.setBackgroundColor(viewBgColor);
+				};
+			};
+		});
 	};
 
 	setZoom (win: AppWindow, zoom: number): void {
@@ -314,6 +343,14 @@ class Api {
 		};
 	};
 
+	/**
+	 * Writes text to the system clipboard from the main process. The renderer's copy goes through
+	 * execCommand, which Chromium only honours inside a page gesture; an app-menu click is not one
+	 */
+	clipboardWrite (win: AppWindow, text: string): void {
+		clipboard.writeText(String(text || ''));
+	};
+
 	async keytarGet (win: AppWindow, key: string): Promise<string | null> {
 		const maxRetries = is.windows ? 3 : 1;
 		const retryDelay = 500; // ms
@@ -364,7 +401,30 @@ class Api {
 	};
 
 	async download (win: AppWindow, url: string, options: Record<string, any>): Promise<void> {
+		const id = String(options?.id || '');
+
+		// A tracked download carries an id: it reports progress to a sidebar row
+		// and can be cancelled. Untracked ones — the save-as dialogs for QR codes
+		// and cover images — go straight to the stack as before
+		if (id) {
+			// Passed through whole rather than hand-picked: the queue reads more
+			// than an id and a directory — the file's identity is what lets it
+			// recognise a copy already on disk — and a field dropped here fails
+			// silently, costing a download nobody notices
+			DownloadManager.start(win, {
+				...options,
+				id,
+				url,
+				directory: String(options.directory || ''),
+			} as DownloadRequest);
+			return;
+		};
+
 		await download(win, url, options);
+	};
+
+	downloadCancel (win: AppWindow, id: string): void {
+		DownloadManager.cancel(String(id || ''));
 	};
 
 	winCommand (win: AppWindow, cmd: string, param: Record<string, any>): void {
@@ -439,6 +499,20 @@ class Api {
 
 	openUrl (win: AppWindow, url: string): void {
 		shell.openExternal(url);
+	};
+
+	/**
+	 * Reveals a file in the system file manager with the file itself selected —
+	 * Finder, Explorer or whatever the desktop provides. This is where a
+	 * download lands when opening it would do something other than view it.
+	 */
+	showInFolder (win: AppWindow, fp: string): void {
+		if (!fp || !fs.existsSync(fp)) {
+			Util.log('error', '[Api].showInFolder: Invalid path:', fp);
+			return;
+		};
+
+		shell.showItemInFolder(path.normalize(fp));
 	};
 
 	openPath (win: AppWindow, fp: string): void {
@@ -584,6 +658,21 @@ class Api {
 	initMenu (win: AppWindow): void {
 		MenuManager.initMenu();
 		MenuManager.initTray();
+		MenuManager.initGlobalShortcuts();
+	};
+
+	getGlobalShortcutStatus (win: AppWindow): { registered: boolean; unavailable: boolean } {
+		return MenuManager.getGlobalShortcutStatus();
+	};
+
+	quickSearchClose (win: AppWindow): void {
+		WindowManager.hideQuickSearch();
+	};
+
+	// A result picked in the quick search panel opens in the main window
+	quickSearchOpen (win: AppWindow, route: string): void {
+		WindowManager.hideQuickSearch();
+		MenuManager.winShowForce(target => Util.send(target, 'route', route));
 	};
 
 	setSpellingLang (win: AppWindow, languages: string[]): void {
@@ -607,12 +696,26 @@ class Api {
 		WindowManager.sendToAllTabs('data-path', Util.dataPath());
 	};
 
-	showChallenge (win: AppWindow, param: Record<string, any>): void {
-		WindowManager.createChallenge(param as { challenge: string } & Record<string, any>);
+	showLinkApproval (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.request(param as any, win.id);
 	};
 
-	hideChallenge (win: AppWindow, param: Record<string, any>): void {
-		WindowManager.closeChallenge(param as { challenge: string });
+	linkApprovalSpaces (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.updateSpaces(win.id, param.spaces || []);
+	};
+
+	hideLinkApproval (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.hide(param.clientInfo);
+	};
+
+	/** Response of AccountLocalLinkApproveChallenge, relayed back by the renderer that sent it. */
+	linkApprovalResult (win: AppWindow, param: Record<string, any>): void {
+		LinkApproval.result(param as any);
+	};
+
+	/** Allow or Deny pressed in the approval window, which has no session to send the RPC itself. */
+	linkApprovalDecision (param: Record<string, any>): void {
+		LinkApproval.decide(param as any);
 	};
 
 	reload (win: AppWindow, route: string): void {
@@ -875,7 +978,7 @@ class Api {
 	 */
 	getWindowAtPoint (x: number, y: number, excludeWin: AppWindow): AppWindow | null {
 		for (const win of WindowManager.list) {
-			if (win === excludeWin || win.isDestroyed() || win.isChallenge) {
+			if (win === excludeWin || win.isDestroyed() || win.isApproval) {
 				continue;
 			};
 

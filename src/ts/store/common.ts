@@ -35,6 +35,9 @@ class CommonStore {
 	public redirect = '';
 	public languages: string[] = [];
 	public spaceId = '';
+	// Space chosen on the Import screen. Lives here rather than in page state because the
+	// format sub-pages are separate routes; read it through U.Space.getImportTargetId().
+	public importSpaceId = '';
 	public notionToken = '';
 	public showRelativeDatesValue = null;
 	public fullscreenObjectValue = null;
@@ -43,6 +46,11 @@ class CommonStore {
 	public dateFormatValue = null;
 	public timeFormatValue = null;
 	public isOnlineValue = false;
+	public globalShortcutStatusValue: { registered: boolean; unavailable: boolean } | null = null;
+
+	// Set once when this renderer boots as the Spotlight-style quick search panel;
+	// U.Object open calls then redirect to the main window instead of navigating here
+	public isQuickSearchWindow = false;
 	public hasCleanupSuggestionsValue = false;
 	public chatCmdSendValue = null;
 	public commentCmdSendValue = null;
@@ -65,6 +73,7 @@ class CommonStore {
 		list: [],
 	};
 	public diffValue: I.Diff[] = [];
+	public inviteMap: Map<string, I.Invite> = new Map();
 	public refs: Map<string, any> = new Map();
 	public windowId = '';
 	public tabId = '';
@@ -150,11 +159,13 @@ class CommonStore {
 			linkStyleValue: observable,
 			fileStyleValue: observable,
 			isOnlineValue: observable,
+			globalShortcutStatusValue: observable,
 			hasCleanupSuggestionsValue: observable,
 			hideSidebarValue: observable,
 			hideFileObjectsInTreeValue: observable,
 			autoDownloadValue: observable,
 			spaceId: observable,
+			importSpaceId: observable,
 			leftSidebarStateValue: observable,
 			rightSidebarStateValue: observable,
 			showRelativeDatesValue: observable,
@@ -173,6 +184,7 @@ class CommonStore {
 			downloadingIdsValue: observable,
 			recentEditModeValue: observable,
 			sidebarViewValue: observable,
+			inviteMap: observable,
 			config: computed,
 			preview: computed,
 			toast: computed,
@@ -207,12 +219,16 @@ class CommonStore {
 			themeSet: action,
 			nativeThemeSet: action,
 			spaceSet: action,
+			importSpaceIdSet: action,
 			spaceStorageSet: action,
+			inviteSet: action,
+			inviteClear: action,
 			linkStyleSet: action,
 			fileStyleSet: action,
 			dateFormatSet: action,
 			timeFormatSet: action,
 			isOnlineSet: action,
+			globalShortcutStatusSet: action,
 			hasCleanupSuggestionsSet: action,
 			setLeftSidebarState: action,
 			setRightSidebarState: action,
@@ -645,6 +661,17 @@ class CommonStore {
 	 */
 	spaceSet (id: string) {
 		this.spaceId = String(id || '');
+
+		// The import target is only meaningful next to the space it was chosen from.
+		this.importSpaceId = '';
+	};
+
+	/**
+	 * Sets the space chosen as the import target.
+	 * @param {string} id - The space ID, empty to fall back to the current space.
+	 */
+	importSpaceIdSet (id: string) {
+		this.importSpaceId = String(id || '');
 	};
 
 	/**
@@ -718,6 +745,22 @@ class CommonStore {
 		Renderer.send('keytarDelete', this.pinId());
 		Renderer.send('stopPinTimer');
 		Renderer.send('pinRemove');
+	};
+
+	/**
+	 * Drops the pin along with the session it locks, on logout.
+	 * Unlike pinRemove it leaves the checked state alone: the session is going away, so there is
+	 * nothing left to unlock, and marking it checked would broadcast pin-unlocked to every tab.
+	 */
+	pinClear () {
+		const id = this.pinId();
+
+		if (id) {
+			Renderer.send('keytarDelete', id);
+		};
+
+		Renderer.send('setHasPinSet', false);
+		this.pinValue = null;
 	};
 
 	/**
@@ -971,7 +1014,7 @@ class CommonStore {
 		const c = this.getThemeClass();
 
 		U.Dom.addBodyClass('theme', c);
-		Renderer.send('setBackground', c);
+		Renderer.send('setBackground');
 	};
 
 	/**
@@ -1048,6 +1091,14 @@ class CommonStore {
 		console.log('[Online status]:', v);
 	};
 
+	get globalShortcutStatus (): { registered: boolean; unavailable: boolean } | null {
+		return this.globalShortcutStatusValue;
+	};
+
+	globalShortcutStatusSet (v: { registered: boolean; unavailable: boolean } | null) {
+		this.globalShortcutStatusValue = v || null;
+	};
+
 	/**
 	 * Sets whether the current space has cleanup suggestions.
 	 * @param {boolean} v - The value.
@@ -1117,6 +1168,32 @@ class CommonStore {
 	 */
 	spaceStorageSet (value: Partial<SpaceStorage>) {
 		set(this.spaceStorageObj, Object.assign(this.spaceStorageObj, value));
+	};
+
+	/**
+	 * Stores the current invite of a space.
+	 * @param {string} spaceId - The space ID.
+	 * @param {I.Invite} invite - The invite.
+	 */
+	inviteSet (spaceId: string, invite: I.Invite) {
+		this.inviteMap.set(spaceId, invite);
+	};
+
+	/**
+	 * Gets the current invite of a space, or null when it has not been fetched or does not exist.
+	 * @param {string} spaceId - The space ID.
+	 * @returns {I.Invite} The invite.
+	 */
+	inviteGet (spaceId: string): I.Invite {
+		return this.inviteMap.get(spaceId) || null;
+	};
+
+	/**
+	 * Removes the stored invite of a space.
+	 * @param {string} spaceId - The space ID.
+	 */
+	inviteClear (spaceId: string) {
+		this.inviteMap.delete(spaceId);
 	};
 
 	/**

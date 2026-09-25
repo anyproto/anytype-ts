@@ -1604,8 +1604,9 @@ const SubmitPlugin = ({ onSubmit }: { onSubmit?: () => void }) => {
 				e.preventDefault();
 				onSubmit?.();
 			} else
-			if (!cmdSend && !hasCmd && !e.shiftKey) {
-				// Enter to send (Shift+Enter for newline)
+			if (!cmdSend && !hasCmd && !keyboard.isRealShift(e)) {
+				// Enter to send (Shift+Enter for newline). Cross-check against the
+				// tracked physical Shift state to ignore a phantom stuck Shift (JS-9702)
 				e.preventDefault();
 				onSubmit?.();
 			};

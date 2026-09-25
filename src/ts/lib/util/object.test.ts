@@ -1,4 +1,10 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+// The icons registry pulls in every icon component and breaks under node — stub it out
+vi.mock('Component/util/icons', () => ({
+	getIconSvg: () => '',
+}));
+
 import UtilObject from './object';
 
 // Enum values matching src/ts/interface/object.ts

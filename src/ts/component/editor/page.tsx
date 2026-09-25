@@ -12,6 +12,7 @@ import { presence } from 'Lib/presence';
 import { virtualBlock } from 'Lib/virtualBlock';
 import { useScrollRestore } from 'Hook';
 import { computeRestoreScrollTop } from 'Lib/util/scrollAnchor';
+import { getTopLevelIds, getIndentTargetId } from 'Lib/util/blockSelection';
 
 interface Props extends I.PageComponent {
 	onOpen?(): void;
@@ -44,6 +45,11 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const isEnterProcessing = useRef(false);
 	const scrollHandlerRef = useRef<(() => void) | null>(null);
 	const windowHandlersRef = useRef<Map<string, (e: any) => void>>(new Map());
+	const blocksResizeObserver = useRef<ResizeObserver | null>(null);
+	const blocksResizeTarget = useRef<Element | null>(null);
+	const resizePageRef = useRef<(callBack?: () => void) => void>(null);
+	// Block materialized by arrow-entry into an open empty toggle (JS-8420) — ephemeral until the user interacts with it
+	const emptyToggleEntry = useRef({ pending: false, blockId: '' });
 
 	useEffect(() => {
 		open();
@@ -53,6 +59,11 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			close();
 
 			focus.clear(false);
+
+			blocksResizeObserver.current?.disconnect();
+			blocksResizeObserver.current = null;
+			blocksResizeTarget.current = null;
+			emptyToggleEntry.current = { pending: false, blockId: '' };
 
 			raf.cancel(frameMove.current);
 			raf.cancel(frameResize.current);
@@ -64,12 +75,16 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	useEffect(() => {
 		if (idRef.current != rootId) {
+			emptyToggleEntry.current = { pending: false, blockId: '' };
+
 			close();
 			open();
 		};
 	}, [ rootId ]);
 
 	useEffect(() => {
+		resizePageRef.current = resizePage;
+
 		if (!root) {
 			return;
 		};
@@ -95,6 +110,22 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		container.current = U.Dom.select('.editor', node);
 		buttonAdd.current = U.Dom.select('#button-block-add', node);
 		blockFeatured.current = U.Dom.select(`#block-${U.Common.esc(J.Constant.blockId.featured)}`, node);
+
+		// Recompute the trailing #blockLast filler when the content height changes without a
+		// page re-render — e.g. dataview records loading or being added in an inline set —
+		// otherwise a stale filler leaves extra space and scroll length at the bottom (JS-8898).
+		// #blockLast sits outside .blocks, so resizing it does not re-trigger the observer
+		const blocks = U.Dom.select('.blocks', node);
+
+		if (blocks && (blocksResizeTarget.current !== blocks)) {
+			if (!blocksResizeObserver.current) {
+				blocksResizeObserver.current = new ResizeObserver(() => resizePageRef.current?.());
+			};
+
+			blocksResizeObserver.current.disconnect();
+			blocksResizeObserver.current.observe(blocks);
+			blocksResizeTarget.current = blocks;
+		};
 	};
 
 	// Sizes the trailing #blockLast filler so the document is tall enough for a
@@ -372,6 +403,13 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 				return;
 			};
 			if ((e.target as HTMLElement)?.closest?.('.commentSection')) {
+				return;
+			};
+
+			// A dataview cell is in inline edit mode (e.g. a newly created record's
+			// name box that has not received focus yet): the paste belongs to the
+			// cell input, not to the block editor (JS-9181)
+			if (U.Dom.select('.cell.isEditing, .cellContent.isEditing')) {
 				return;
 			};
 
@@ -678,6 +716,25 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 					e.preventDefault();
 					deleteTextSelection();
 				};
+				handled = true;
+			});
+
+			// Tab/Shift+Tab indents every block the selection covers (JS-9843). A cross-block text
+			// selection leaves the block selection empty, so it is converted into a block selection
+			// first — which is also what dragging across blocks produced before 0.56
+			keyboard.shortcut('indent, outdent', e, (pressed: string) => {
+				e.preventDefault();
+
+				if (!readonly) {
+					const list = getTextSelectionBlockIds();
+
+					if (list.length) {
+						selection.clearTextSelection();
+						selection.set(I.SelectType.Block, list);
+						onTabEditor(e, list, pressed);
+					};
+				};
+
 				handled = true;
 			});
 
@@ -989,6 +1046,25 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const styleParam = getStyleParam();
 		const cmd = keyboard.cmdKey();
 
+		// A block materialized by arrow-entry into an empty toggle stays ephemeral only while the
+		// user merely navigates — any other interaction makes it permanent (JS-8420)
+		if (emptyToggleEntry.current.blockId) {
+			const nav = [
+				'arrowup', 'arrowdown', 'arrowleft', 'arrowright',
+				'pageup', 'pagedown', 'prevBlock', 'nextBlock',
+				`${cmd}+arrowup`, `${cmd}+arrowdown`, `${cmd}+home`, `${cmd}+end`,
+				'ctrl+home', 'ctrl+end', 'ctrl+p', 'ctrl+n',
+			];
+
+			let isNav = false;
+
+			keyboard.shortcut(nav.join(', '), e, () => isNav = true);
+
+			if (!isNav || (focused != emptyToggleEntry.current.blockId)) {
+				emptyToggleEntry.current.blockId = '';
+			};
+		};
+
 		// Last line break doesn't expand range.to
 		let length = String(text || '').length;
 		if (length && (text[length - 1] == '\n')) {
@@ -1247,6 +1323,15 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const onKeyUpBlock = (e: any, text: string, marks: I.Mark[], range: I.TextRange, props: any) => {
 	};
 
+	// Blocks covered by a cross-block text selection, reduced to the topmost ids: the raw list is a
+	// document-order slice, so it can contain both a parent and its children (JS-9843)
+	const getTextSelectionBlockIds = (): string[] => {
+		const selection = S.Common.getRef('selectionProvider');
+		const list = selection?.getTextSelectionIds() || [];
+
+		return getTopLevelIds(list, (id: string) => S.Block.getParentLeaf(rootId, id)?.id || '');
+	};
+
 	// Indentation
 	const onTabEditor = (e: any, ids: string[], pressed: string) => {
 		e.preventDefault();
@@ -1273,9 +1358,10 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
-		const idx = parentElement.childrenIds.indexOf(first.id);
-		const nextId = parentElement.childrenIds[idx - 1];
-		const next = nextId ? S.Block.getLeaf(rootId, nextId) : S.Block.getNextBlock(rootId, first.id, -1);
+		// Indent nests under the previous sibling only, so a first child is a no-op (JS-9844).
+		// Outdent ignores this and targets the parent, which a first child always has.
+		const nextId = getIndentTargetId(parentElement.childrenIds, first.id);
+		const next = nextId ? S.Block.getLeaf(rootId, nextId) : null;
 		const obj = shift ? parent : next;
 		const canTab = obj && !first.isTextTitle() && !first.isTextDescription() && obj.canHaveChildren() && first.isIndentable();
 		
@@ -1863,7 +1949,10 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			}, releaseEnterGuard);
 		} else
 		if (block.isTextParagraph() && !length && parent && (parent.canToggle() || parent.isTextCallout() || parent.isTextQuote())) {
-			Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom, releaseEnterGuard);
+			Action.move(rootId, rootId, parent.id, [ block.id ], I.BlockPosition.Bottom, () => {
+				focusSet(block.id, 0, 0, true);
+				releaseEnterGuard();
+			});
 		} else {
 			blockSplit(block, range, isShift, releaseEnterGuard);
 		};
@@ -1896,6 +1985,36 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		if ((dir > 0) && (range.to != length)) {
+			return;
+		};
+
+		// Moving down from an open empty toggle header materializes the first child, mirroring click on
+		// the placeholder. The block stays ephemeral: navigating away while it is still empty deletes it
+		// again (checkEphemeralToggleChild), so pass-through navigation never permanently mutates the document
+		if (
+			(dir > 0) &&
+			!readonly &&
+			block.canToggle() &&
+			Storage.checkToggle(rootId, block.id) &&
+			!S.Block.getChildrenIds(rootId, block.id).length
+		) {
+			e.preventDefault();
+
+			// Key repeat can fire again before the create lands — never materialize twice
+			if (emptyToggleEntry.current.pending) {
+				return;
+			};
+
+			emptyToggleEntry.current.pending = true;
+
+			C.BlockCreate(rootId, block.id, I.BlockPosition.Inner, { type: I.BlockType.Text }, (message: any) => {
+				emptyToggleEntry.current.pending = false;
+
+				if (!message.error.code) {
+					emptyToggleEntry.current.blockId = message.blockId;
+					focusSet(message.blockId, 0, 0, true);
+				};
+			});
 			return;
 		};
 
@@ -2276,24 +2395,27 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		let { focused, range } = focus.state;
 
-		// Pasting into the virgin virtual placeholder: no block exists yet — paste
-		// at the document bottom (empty target id appends), same as dropping onto
-		// the trailing drop zone. The pasted blocks carry their content, so no
-		// empty block is ever created
-		if (virtualBlock.isVirtualId(focused)) {
-			focused = '';
-			range = { from: 0, to: 0 };
-			virtualBlock.deactivate();
-		};
-
-		const block = S.Block.getLeaf(rootId, focused);
+		const isVirtual = virtualBlock.isVirtualId(focused);
+		const block = isVirtual ? virtualBlock.getBlock() : S.Block.getLeaf(rootId, focused);
 		const selection = S.Common.getRef('selectionProvider');
 		const trimmedText = data.text.trim();
 		const urls = U.String.getUrlsFromText(trimmedText);
 
+		// A single pasted URL gets the "Paste as" menu in the virtual placeholder
+		// too — the chosen option materializes the placeholder with the content
 		if (urls.length && (urls[0].value == trimmedText) && block && !block.isTextTitle() && !block.isTextDescription() && !block.isTextCode()) {
 			onPasteUrl(urls[0]);
 			return;
+		};
+
+		// Pasting into the virgin virtual placeholder: no block exists yet — paste
+		// at the document bottom (empty target id appends), same as dropping onto
+		// the trailing drop zone. The pasted blocks carry their content, so no
+		// empty block is ever created
+		if (isVirtual) {
+			focused = '';
+			range = { from: 0, to: 0 };
+			virtualBlock.deactivate();
 		};
 
 		let id = '';
@@ -2351,7 +2473,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const { focused, range } = focus.state;
 		const currentFrom = range.from;
 		const currentTo = range.to;
-		const block = S.Block.getLeaf(rootId, focused);
+		const isVirtual = virtualBlock.isVirtualId(focused);
+		const block = isVirtual ? virtualBlock.getBlock() : S.Block.getLeaf(rootId, focused);
 
 		if (!block) {
 			return;
@@ -2382,7 +2505,11 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const isInsideTable = S.Block.checkIsInsideTable(rootId, block.id);
 		const length = block.getLength();
-		const position = (!length && block.isText()) ? I.BlockPosition.Replace : I.BlockPosition.Bottom;
+
+		// The virtual placeholder has no middleware-side block to replace —
+		// block-creating options append at the document bottom instead
+		const targetId = isVirtual ? '' : focused;
+		const position = isVirtual ? I.BlockPosition.Bottom : ((!length && block.isText()) ? I.BlockPosition.Replace : I.BlockPosition.Bottom);
 		const processor = U.Embed.getProcessorByUrl(url);
 		const canBookmark = !isInsideTable && !isLocal;
 		const isSameSpace = !linkParam.spaceId || (linkParam.spaceId == S.Common.space);
@@ -2451,6 +2578,17 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 					});
 				};
 			},
+			onClose: () => {
+				// Deferred one tick: onClose fires right before onSelect, a selected
+				// option has started materializing by the time the check runs.
+				// Dismissed without materializing: release the placeholder if focus
+				// already left it (blur deactivation is suppressed while the menu is open)
+				window.setTimeout(() => {
+					if (isVirtual && !virtualBlock.realId && !virtualBlock.isCreating && (focus.state.focused != virtualBlock.id)) {
+						virtualBlock.deactivate();
+					};
+				});
+			},
 			data: {
 				value: '',
 				options,
@@ -2460,22 +2598,27 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 					order.unshift(item.id);
 					Storage.set('pasteOptionOrder', order);
 
+					// Block-creating options append at the document bottom in the
+					// virtual context — the placeholder is no longer the target
+					if (isVirtual && [ 'object', 'bookmark', 'embed' ].includes(item.id)) {
+						virtualBlock.deactivate();
+					};
+
 					let marks = U.Common.objectCopy(block.content.marks || []);
 					let value = block.content.text;
 					let to = 0;
 
 					switch (item.id) {
 						case 'object': {
-							const targetId = linkParam.target;
 							const newBlock = {
 								type: I.BlockType.Link,
 								content: {
 									...U.Data.defaultLinkSettings(),
-									targetBlockId: targetId,
+									targetBlockId: linkParam.target,
 								},
 							};
 
-							C.BlockCreate(rootId, focused, position, newBlock, (message: any) => {
+							C.BlockCreate(rootId, targetId, position, newBlock, (message: any) => {
 								if (!message.error.code) {
 									blockCreate(message.blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 
@@ -2497,8 +2640,10 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 							marks.push({ type: I.MarkType.Link, range: { from: currentFrom, to }, param: url });
 
-							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
-								focus.set(block.id, { from: to + 1, to: to + 1 });
+							// An empty block forks its identity on first content (BlockReplace),
+							// the write then lands on the new id from the callback message
+							U.Data.blockSetText(rootId, block.id, value, marks, true, (message: any) => {
+								focus.set(message.blockId || block.id, { from: to + 1, to: to + 1 });
 								focus.apply();
 							});
 							break;
@@ -2507,7 +2652,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 						case 'bookmark': {
 							const bookmark = S.Record.getBookmarkType();
 
-							C.BlockBookmarkCreateAndFetch(rootId, focused, position, url, bookmark?.defaultTemplateId, (message: any) => {
+							C.BlockBookmarkCreateAndFetch(rootId, targetId, position, url, bookmark?.defaultTemplateId, (message: any) => {
 								if (!message.error.code) {
 									blockCreate(message.blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 
@@ -2521,8 +2666,8 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 							value = U.String.insert(block.content.text, url + ' ', currentFrom, currentFrom);
 							to = currentFrom + url.length;
 
-							U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
-								focus.set(block.id, { from: to + 1, to: to + 1 });
+							U.Data.blockSetText(rootId, block.id, value, marks, true, (message: any) => {
+								focus.set(message.blockId || block.id, { from: to + 1, to: to + 1 });
 								focus.apply();
 							});
 							break;
@@ -2530,7 +2675,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 						case 'embed': {
 							if (processor !== null) {
-								blockCreate(block.id, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
+								blockCreate(targetId, position, { type: I.BlockType.Embed, content: { processor, text: url } }, (blockId: string) => {
 									blockCreate(blockId, I.BlockPosition.Bottom, { type: I.BlockType.Text });
 									const previewEl = U.Dom.select(`.preview`, U.Dom.get(`block-${blockId}`));
 									if (previewEl) {
@@ -2607,6 +2752,20 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			return;
 		};
 
+		// When backspacing below an open empty toggle, move the block inside it instead of merging into the header
+		if (
+			(dir < 0) &&
+			next.canToggle() &&
+			Storage.checkToggle(rootId, next.id) &&
+			!S.Block.getChildrenIds(rootId, next.id).length &&
+			focused.isIndentable()
+		) {
+			Action.move(rootId, rootId, next.id, [ focused.id ], I.BlockPosition.Inner, () => {
+				focus.setWithTimeout(focused.id, { from: 0, to: 0 }, 50);
+			});
+			return;
+		};
+
 		// When backspacing, if the target is inside a closed toggle, redirect to the toggle header
 		if (dir < 0) {
 			let parent = S.Block.getParentLeaf(rootId, next.id);
@@ -2616,6 +2775,30 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 					break;
 				};
 				parent = S.Block.getParentLeaf(rootId, parent.id);
+			};
+		};
+
+		// Backspace on an empty first child of a toggle: when the toggle has more children,
+		// delete the empty block and keep the caret inside on the next child instead of
+		// merging into the toggle header
+		if ((dir < 0) && !length) {
+			const parent = S.Block.getParentLeaf(rootId, focused.id);
+
+			if (parent && parent.canToggle() && (next.id == parent.id)) {
+				const childrenIds = S.Block.getChildrenIds(rootId, parent.id);
+				const idx = childrenIds.indexOf(focused.id);
+				const nextChild = childrenIds.slice(idx + 1).map(id => S.Block.getLeaf(rootId, id)).find(it => it && it.isFocusable());
+
+				if (nextChild) {
+					focus.clear(true);
+					C.BlockListDelete(rootId, [ focused.id ], (message: any) => {
+						if (!message.error.code) {
+							focusSet(nextChild.id, 0, 0, true);
+							analytics.event('DeleteBlock', { count: 1 });
+						};
+					});
+					return;
+				};
 			};
 		};
 
@@ -2992,6 +3175,12 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onVirtualBlur = () => {
+		// The "Paste as" menu blurs the placeholder on item mousedown but its
+		// options still target it — the menu releases the placeholder on close
+		if (S.Menu.isOpen('selectPasteUrl')) {
+			return;
+		};
+
 		// Focus left the placeholder with nothing typed: nothing was created,
 		// nothing to clean up. A materialized placeholder finishes its swap on its own
 		if (!virtualBlock.realId && !virtualBlock.isCreating) {
@@ -3033,10 +3222,38 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 		}, 15);
 	};
 
+	// A block materialized by arrow-entry into an open empty toggle (onArrowVertical) is ephemeral:
+	// when keyboard navigation moves the caret away while it is still empty, delete it again, so
+	// passing through open empty toggles never permanently mutates the document (JS-8420)
+	const checkEphemeralToggleChild = (nextId: string) => {
+		const id = emptyToggleEntry.current.blockId;
+
+		if (!id || (id == nextId)) {
+			return;
+		};
+
+		emptyToggleEntry.current.blockId = '';
+
+		// The caret left the block through some other interaction — leave it alone
+		if (focus.state.focused != id) {
+			return;
+		};
+
+		const block = S.Block.getLeaf(rootId, id);
+
+		if (!block || block.getLength() || S.Block.getChildrenIds(rootId, id).length) {
+			return;
+		};
+
+		C.BlockListDelete(rootId, [ id ]);
+	};
+
 	const focusNextBlock = (next: I.Block, dir: number) => {
 		if (!next) {
 			return;
 		};
+
+		checkEphemeralToggleChild(next.id);
 
 		const from = dir > 0 ? 0 : next.getLength();
 		focusSet(next.id, from, from, true);

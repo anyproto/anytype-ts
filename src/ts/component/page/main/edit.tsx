@@ -12,8 +12,14 @@ const PageMainEdit = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 	const onOpen = () => {
 		const home = U.Space.getDashboard();
 		const object = S.Detail.get(rootId, rootId, [ 'type' ], true);
+		const revealRef = String(keyboard.getMatch(isPopup).params.revealRef || '');
 
 		headerRef.current?.forceUpdate();
+
+		// Deep link from "Created in": reveal the block or relation the object was created in
+		if (revealRef) {
+			U.Object.revealCreatedInContextRef(rootId, revealRef, isPopup);
+		};
 
 		if (home && (rootId != home.id)) {
 			let key = '';

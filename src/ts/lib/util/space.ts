@@ -1,6 +1,8 @@
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
+const OPEN_ATTEMPTS_MAX = 2;
+
 /**
  * UtilSpace provides utilities for working with Anytype spaces.
  *
@@ -16,6 +18,9 @@ import Storage from 'Lib/storage';
  * (owner, writer, reader) in different spaces.
  */
 class UtilSpace {
+
+	/* Failed WorkspaceOpen attempts per space in this session; see canAutoOpen */
+	private openErrors: Map<string, number> = new Map();
 
 	/**
 	 * Opens the dashboard for the current space or the first available space.
@@ -61,14 +66,61 @@ class UtilSpace {
 	};
 
 	/**
-	 * Opens the first available space or a void page if none exist.
+	 * Whether a space can be opened right now. While the start-up run is live its per-space state
+	 * is the authority (Loaded means the controller finished with it); once the run is over its
+	 * map is a stale snapshot, so the spaceview's own local status decides again - as it does for
+	 * a space the run never reported (older middleware, created later in the session).
+	 * @param {any} spaceview - The spaceview record.
+	 * @returns {boolean} True if the space is ready to open.
+	 */
+	isReady (spaceview: any): boolean {
+		// Only while the run still has something in flight. Once it settles - including a run
+		// left open around a stalled channel, which never reports Finished - its map is a frozen
+		// snapshot and the spaceview's own status is the honest signal again
+		const state = S.Recovery.isPending ? S.Recovery.spaces.get(spaceview.targetSpaceId) : null;
+
+		return state ? (state.state == I.RecoverySpaceState.Loaded) : spaceview.isLocalOk;
+	};
+
+	/**
+	 * Whether a space may be picked without the user asking for it. Each attempt costs the
+	 * middleware's own wait, and picking a space that just refused is how two unopenable spaces
+	 * select each other in turn forever - so a space gets a bounded number of automatic attempts.
+	 * More than one, because the common refusal is "space is not ready", which stops being true
+	 * as the run brings the space in. An explicit click always goes through switchSpace.
+	 * @param {any} spaceview - The spaceview record.
+	 * @returns {boolean} True if the space may be opened automatically.
+	 */
+	canAutoOpen (spaceview: any): boolean {
+		return ((this.openErrors.get(spaceview.targetSpaceId) || 0) < OPEN_ATTEMPTS_MAX) && this.isReady(spaceview);
+	};
+
+	/**
+	 * Records that a space failed to open, so it is not picked automatically again.
+	 * @param {string} id - The space ID.
+	 */
+	openErrorAdd (id: string) {
+		id = String(id || '');
+		this.openErrors.set(id, (this.openErrors.get(id) || 0) + 1);
+	};
+
+	/**
+	 * Forgets a space's open error, e.g. once it has opened.
+	 * @param {string} [id] - The space ID; all of them when omitted.
+	 */
+	openErrorClear (id?: string) {
+		id ? this.openErrors.delete(String(id)) : this.openErrors.clear();
+	};
+
+	/**
+	 * Opens the first space that can be opened, or a void page if there is none.
 	 * @param {(it: any) => boolean} [filter] - Optional filter function for spaces.
 	 * @param {Partial<I.RouteParam>} [param] - Optional route parameters.
 	 */
 	openFirstSpaceOrVoid (filter?: (it: any) => boolean, param?: Partial<I.RouteParam>) {
 		param = param || {};
 
-		let spaces = U.Menu.getVaultItems();
+		let spaces = U.Menu.getVaultItems().filter(it => this.canAutoOpen(it));
 
 		if (filter) {
 			spaces = spaces.filter(filter);
@@ -77,7 +129,10 @@ class UtilSpace {
 		if (spaces.length) {
 			U.Router.switchSpace(spaces[0].targetSpaceId, '', false, param, true);
 		} else {
-			U.Router.go('/main/void/error', param);
+			// While the start-up run is still bringing channels in, "none" means "none yet": the
+			// loading void keeps the vault visible and moves on by itself. A run that has settled
+			// with nothing openable is not going to produce one, so say so
+			U.Router.go(S.Recovery.isPending ? '/main/void/loading' : '/main/void/error', param);
 			sidebar.leftPanelSubPageClose(false, false);
 		};
 	};
@@ -210,6 +265,32 @@ class UtilSpace {
 	};
 
 	/**
+	 * Gets the homepage when it points at a real object, otherwise null.
+	 * The isOneToOne check is not redundant with isSystemDashboard: in 1-on-1 spaces
+	 * getDashboard returns the chat, whose id is the workspace id — a real object id.
+	 * @returns {I.DashboardObject|null} The homepage object or null.
+	 */
+	getHomeObject (): I.DashboardObject | null {
+		const spaceview = this.getSpaceview();
+		if (!spaceview || spaceview.isOneToOne) {
+			return null;
+		};
+
+		const home = this.getDashboard();
+		return (home && !this.isSystemDashboard(home.id)) ? home : null;
+	};
+
+	/**
+	 * Checks whether the given object is the space homepage.
+	 * @param {string} id - The object id.
+	 * @returns {boolean} True if the object is the homepage.
+	 */
+	isHomeObject (id: string): boolean {
+		const home = this.getHomeObject();
+		return !!id && !!home && (home.id == id);
+	};
+
+	/**
 	 * Gets the graph dashboard object.
 	 * @returns {I.DashboardObject} The graph dashboard object.
 	 */
@@ -305,6 +386,43 @@ class UtilSpace {
 	 */
 	getList () {
 		return S.Record.getRecords(J.Constant.subId.space, U.Subscription.spaceRelationKeys(true)).filter(it => it.isAccountActive);
+	};
+
+	/**
+	 * Gets the list of spaces the import screen can write into.
+	 * @returns {any[]} The list of writable spaces.
+	 */
+	getImportTargetList () {
+		return this.getList().filter(it => this.canMyParticipantWrite(it.targetSpaceId));
+	};
+
+	/**
+	 * Gets the space the import screen is currently targeting, defaulting to the current
+	 * space. A choice that has since been deleted or become read-only falls back too.
+	 * @returns {string} The target space ID.
+	 */
+	getImportTargetId (): string {
+		const { space, importSpaceId } = S.Common;
+
+		if (!importSpaceId || !this.getSpaceviewBySpaceId(importSpaceId) || !this.canMyParticipantWrite(importSpaceId)) {
+			return space;
+		};
+
+		return importSpaceId;
+	};
+
+	/**
+	 * Opens the space that received an import, switching to it first when it is not the
+	 * current one.
+	 * @param {string} spaceId - The space that received the import.
+	 */
+	openImportTarget (spaceId: string) {
+		if (!spaceId || (spaceId == S.Common.space)) {
+			this.openDashboard();
+			return;
+		};
+
+		U.Router.switchSpace(spaceId, '', true, { onRouteChange: () => this.openDashboard() }, false);
 	};
 
 	/**
@@ -497,6 +615,20 @@ class UtilSpace {
 	};
 
 	/**
+	 * Checks if the current user can see the space's removal history.
+	 * Moderators anywhere, plus either side of a one-to-one — those have no owner/admin
+	 * distinction to moderate with, and both members are equally entitled to it.
+	 *
+	 * Single source of truth on purpose: the sidebar entry, the Bin button and the page's
+	 * own guard all read this, so a hidden entry point and an unreachable page cannot
+	 * drift apart.
+	 * @returns {boolean} True if the user can see the removal history.
+	 */
+	canMyParticipantSeeDeletionAudit (): boolean {
+		return this.canMyParticipantModerate() || Boolean(this.getSpaceview().isOneToOne);
+	};
+
+	/**
 	 * Checks if the current user can manage (change role / remove) a target participant.
 	 * Owner can manage Admins, Editors and Viewers; Admin can manage Editors and Viewers only.
 	 * Nobody can manage themselves or another Owner.
@@ -582,14 +714,154 @@ class UtilSpace {
 	};
 
 	/**
-	 * Gets an invite by ID and calls a callback with the result.
-	 * @param {string} id - The invite ID.
-	 * @param {(cid: string, key: string, inviteType: I.InviteType) => void} callBack - Callback function.
+	 * Fetches the current invite of a space, stores it in S.Common and calls back with it.
+	 * @param {string} id - The space ID.
+	 * @param {(cid: string, key: string, inviteType: I.InviteType, permissions: I.ParticipantPermissions) => void} callBack - Callback function.
 	 */
-	getInvite (id: string, callBack: (cid: string, key: string, inviteType: I.InviteType, permissions: I.ParticipantPermissions) => void) {
+	getInvite (id: string, callBack?: (cid: string, key: string, inviteType: I.InviteType, permissions: I.ParticipantPermissions) => void) {
 		C.SpaceInviteGetCurrent(id, (message: any) => {
-			callBack(message.inviteCid, message.inviteKey, message.inviteType, message.permissions);
+			const { inviteCid, inviteKey, inviteType, permissions, heldByOwner } = message;
+
+			if (message.error.code) {
+				S.Common.inviteClear(id);
+			} else {
+				S.Common.inviteSet(id, {
+					cid: String(inviteCid || ''),
+					key: String(inviteKey || ''),
+					inviteType,
+					permissions,
+					heldByOwner: Boolean(heldByOwner),
+				});
+			};
+
+			if (callBack) {
+				callBack(inviteCid, inviteKey, inviteType, permissions);
+			};
 		});
+	};
+
+	/**
+	 * Maps an invite to the link type the analytics pipeline reports.
+	 * @param {I.InviteType} inviteType - The invite type.
+	 * @param {I.ParticipantPermissions} permissions - The permissions the invite grants.
+	 * @returns {I.InviteLinkType} The link type.
+	 */
+	getInviteLinkType (inviteType: I.InviteType, permissions: I.ParticipantPermissions): I.InviteLinkType {
+		if (inviteType != I.InviteType.WithoutApprove) {
+			return I.InviteLinkType.Manual;
+		};
+
+		return permissions == I.ParticipantPermissions.Writer ? I.InviteLinkType.Editor : I.InviteLinkType.Viewer;
+	};
+
+	/**
+	 * Checks if the current user can create or revoke the invite of a space.
+	 * Invite rights belong to the owner only: admins can add members and approve
+	 * requests, but never see or change the link.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the current user can manage the invite.
+	 */
+	canManageInvite (spaceId?: string): boolean {
+		return this.isMyOwner(spaceId || S.Common.space);
+	};
+
+	/**
+	 * Checks if the current user may see the invite link of a space. An owner-held invite
+	 * comes back to a member with an empty cid, so there is nothing to copy or render.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if there is a link the current user can see.
+	 */
+	hasVisibleInvite (spaceId?: string): boolean {
+		const id = spaceId || S.Common.space;
+		const invite = S.Common.inviteGet(id);
+
+		if (!invite || !invite.cid || !invite.key) {
+			return false;
+		};
+
+		return !invite.heldByOwner || this.isMyOwner(id);
+	};
+
+	/**
+	 * Checks if the invite of a space grants editor access without approval while every member
+	 * can already read it: any viewer can then use the link to get editor access. Only invites
+	 * created before the invite was moved into the owner's account can be in this state.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the invite is unsafe.
+	 */
+	isInviteUnsafe (spaceId?: string): boolean {
+		const invite = S.Common.inviteGet(spaceId || S.Common.space);
+
+		if (!invite || !invite.cid || invite.heldByOwner) {
+			return false;
+		};
+
+		const elevated = [ I.ParticipantPermissions.Writer, I.ParticipantPermissions.Admin ];
+
+		return (invite.inviteType == I.InviteType.WithoutApprove) && elevated.includes(invite.permissions);
+	};
+
+	/**
+	 * Checks if the owner should be proactively warned about the invite of a space: the invite is
+	 * unsafe (shared, anyone-can-join, grants editor) and at least one active viewer exists who
+	 * could use it to upgrade themselves. The local "already warned" flag is the caller's concern.
+	 * @param {string} [spaceId] - The space ID.
+	 * @returns {boolean} True if the warning applies.
+	 */
+	hasInviteSecurityRisk (spaceId?: string): boolean {
+		const id = spaceId || S.Common.space;
+
+		if (!this.isMyOwner(id) || !this.isInviteUnsafe(id)) {
+			return false;
+		};
+
+		return this.getParticipantsList([ I.ParticipantStatus.Active ]).some(it => it.isReader);
+	};
+
+	/**
+	 * Warns the owner, once per space and per device, that the invite lets any current viewer
+	 * upgrade themselves to editor. Called on space open; the popup itself is deferred well past
+	 * the space-switch routing, whose closeAll() calls would otherwise race it off screen.
+	 * @param {string} spaceId - The space ID.
+	 */
+	checkInviteSecurity (spaceId: string) {
+		if (!this.isMyOwner(spaceId) || Storage.getSpaceKey('inviteSecurityDismissed', true, spaceId)) {
+			return;
+		};
+
+		window.setTimeout(() => {
+			// A switch away during the delay: re-open on the space that's actually current instead.
+			if (spaceId != S.Common.space) {
+				return;
+			};
+
+			// The invite is loaded lazily by the sharing screens, so fetch it before judging.
+			this.getInvite(spaceId, () => {
+				// A switch away during the fetch: the participant list read below would be another space's.
+				if ((spaceId != S.Common.space) || !this.hasInviteSecurityRisk(spaceId)) {
+					return;
+				};
+
+				// Every close path counts as seen: the warning is a one-time nudge, not a recurring gate.
+				Storage.setSpaceKey('inviteSecurityDismissed', true, true, spaceId);
+
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'popup/header/warning', color: 'grey' },
+						title: translate('popupInviteSecurityTitle'),
+						text: translate('popupInviteSecurityText'),
+						textConfirm: translate('popupInviteSecurityConfirm'),
+						textCancel: translate('popupInviteSecurityCancel'),
+						// Route rather than stack another popup on top of this one: PopupStore.close()
+						// removes 'confirm' from popupList on a delay, computed before this callback
+						// runs, so opening a popup here races that delayed write and gets clobbered.
+						onConfirm: () => Action.openSpaceShare(analytics.route.inviteSecurity),
+					},
+				});
+
+				analytics.event('ScreenInviteSecurityWarning');
+			});
+		}, J.Constant.delay.inviteSecurity);
 	};
 
 	/**

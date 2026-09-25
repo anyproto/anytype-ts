@@ -17,6 +17,13 @@ Each menu component exposes a `MenuRef` interface via `useImperativeHandle`:
 { rebind, unbind, getItems, getIndex, setIndex, onClick, onOver, getListRef, ... }
 ```
 
+### Window keydown lifecycle
+
+Child menus bind their own `window` keydown listener in `rebind()`/`unbind()`. Invariants (a leaked listener otherwise `preventDefault`s its keys app-wide until restart):
+- `unbind()` in the unmount cleanup, and cancel any deferred bind timers
+- Handlers that call `e.preventDefault()` bail on an `isUnmountedRef` guard first
+- Submenus restore the parent's keydown via `{ rebind, parentId }` in `S.Menu.open` — `parentId` must be the **store id** (`props.id`), not the DOM id from `getId()`. On submenu close, `rebindPrevious` resolves the live parent instance through the `S.Menu` ref registry (`setRef`/`getRef`); the `rebind` closure captured at open time is treated as intent only and never called, so a closed-and-reopened parent can't resurrect a dead listener
+
 ## Menu Categories
 
 ### Block Menus (`block/`)
@@ -53,6 +60,7 @@ Each menu component exposes a `MenuRef` interface via `useImperativeHandle`:
 `color.tsx` - Color picker for emoji
 
 ### Other Top-Level Menus
+- `recoveryPeers.tsx` - Connected peers of the account start-up run as three counts (local peers, file nodes, sync nodes, the node rows split by QUIC / TCP) with a "Copy debug info" item; opened from the vault's `RecoveryProgress` block
 - `select.tsx` - Generic virtualized selection menu
 - `object.tsx` - Object context menu (top-level, with `object/context.tsx` for detailed context)
 - `help.tsx` - Help/documentation links

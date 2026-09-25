@@ -60,6 +60,9 @@ export default defineConfig(({ mode }) => {
 			'SPARK_ONBOARDING_TOKEN': JSON.stringify(process.env.SPARK_ONBOARDING_TOKEN || 'spark_92eabe0c7f006ff22b0d81f3974b355556756afd3262249e4a748076c4483869'),
 			'SPARK_ONBOARDING_NO_AUTH': JSON.stringify(process.env.SPARK_ONBOARDING_NO_AUTH || 'false'),
 			'SENTRY_DSN': JSON.stringify(process.env.SENTRY_DSN || 'https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3'),
+			'IMPORT_AI_ANYTYPE_ENDPOINT': JSON.stringify(process.env.IMPORT_AI_ANYTYPE_ENDPOINT || ''),
+			'IMPORT_AI_ANYTYPE_MODEL': JSON.stringify(process.env.IMPORT_AI_ANYTYPE_MODEL || ''),
+			'IMPORT_AI_ANYTYPE_TOKEN': JSON.stringify(process.env.IMPORT_AI_ANYTYPE_TOKEN || ''),
 			'process.env': '{}',
 		},
 
@@ -100,9 +103,11 @@ export default defineConfig(({ mode }) => {
 			rollupOptions: {
 				input: {
 					main: path.resolve(__dirname, 'src/html/index.html'),
+					// separate always-on-top window for local-link pairing approval
+					linkApproval: path.resolve(__dirname, 'src/html/linkApproval.html'),
 				},
 				output: {
-					entryFileNames: 'js/main.js',
+					entryFileNames: (chunk) => (chunk.name == 'main' ? 'js/main.js' : 'js/[name].js'),
 					chunkFileNames: 'js/chunks/[name].js',
 					assetFileNames: (assetInfo) => {
 						if (assetInfo.names?.[0]?.endsWith('.css')) {
@@ -218,21 +223,31 @@ export default defineConfig(({ mode }) => {
 				},
 			}),
 
-			// Move index.html from dist/src/html/index.html to dist/index.html and fix paths
+			// Move built html out of dist/src/html/ and fix paths: index.html to dist/index.html,
+			// linkApproval.html to dist/linkApproval/index.html (its own directory, since the
+			// approval window loads it by directory path)
 			{
 				name: 'move-html',
 				closeBundle() {
-					const src = path.resolve(__dirname, 'dist/src/html/index.html');
-					const dest = path.resolve(__dirname, 'dist/index.html');
-					if (fs.existsSync(src)) {
+					const move = (name: string, dest: string, prefix: string) => {
+						const src = path.resolve(__dirname, `dist/src/html/${name}`);
+						if (!fs.existsSync(src)) {
+							return;
+						}
+
 						let html = fs.readFileSync(src, 'utf8');
 						// Fix relative paths that were relative to src/html/
-						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, './');
-						fs.writeFileSync(dest, html);
+						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, prefix);
+						fs.mkdirSync(path.dirname(path.resolve(__dirname, dest)), { recursive: true });
+						fs.writeFileSync(path.resolve(__dirname, dest), html);
 						fs.unlinkSync(src);
-						try { fs.rmdirSync(path.resolve(__dirname, 'dist/src/html')); } catch {}
-						try { fs.rmdirSync(path.resolve(__dirname, 'dist/src')); } catch {}
-					}
+					};
+
+					move('index.html', 'dist/index.html', './');
+					move('linkApproval.html', 'dist/linkApproval/index.html', '../');
+
+					try { fs.rmdirSync(path.resolve(__dirname, 'dist/src/html')); } catch {}
+					try { fs.rmdirSync(path.resolve(__dirname, 'dist/src')); } catch {}
 				},
 			} as Plugin,
 

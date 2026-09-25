@@ -2,13 +2,14 @@
 
 declare global {
 	var serverAddress: string;
+	var localApiSecret: string;
 }
 
 // Suppress EPIPE errors when parent pipe closes during shutdown
 process.stdout?.on?.('error', () => {});
 process.stderr?.on?.('error', () => {});
 
-import { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog, contentTracing } from 'electron';
+import { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog, contentTracing, globalShortcut } from 'electron';
 import { is, fixPathForAsarUnpack } from 'electron-util';
 import path from 'path';
 import storage from 'electron-json-storage';
@@ -22,6 +23,7 @@ import UpdateManager from './update';
 import MenuManager from './menu';
 import WindowManager from './window';
 import Server from './server';
+import DownloadManager from './download';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
@@ -231,6 +233,15 @@ function waitForLibraryAndCreateWindows () {
 		waitLibraryPromise = Server.start(binPath, currentPath);
 	};
 
+	// Read through to the Server rather than snapshotted: start() mints a fresh
+	// secret per launch, so a snapshot taken here could hand a renderer a value
+	// the running helper never registered. Published before the first window
+	// exists; empty for an externally started helper, which has no parent pipe
+	Object.defineProperty(global, 'localApiSecret', {
+		configurable: true,
+		get: () => Server.getSecret(),
+	});
+
 	Util.mkDir(Util.logPath());
 
 	// Create windows immediately so renderer boot (process spawn, bundle
@@ -252,7 +263,7 @@ nativeTheme.on('updated', () => {
 	const isDark = Util.isDarkTheme();
 
 	MenuManager.updateTrayIcon();
-	Api.setBackground(null, Util.getTheme());
+	Api.setBackground(null);
 
 	WindowManager.sendToAll('native-theme', isDark);
 	WindowManager.sendToAllTabs('native-theme', isDark);
@@ -298,7 +309,7 @@ function createWindow () {
 		const onClose = () => {
 			const { config } = ConfigManager;
 
-			if (config.hideTray && (WindowManager.list.size <= 1)) {
+			if (config.hideTray && (WindowManager.mainWindowCount() <= 1)) {
 				Api.exit(mainWindow, '', false, false);
 			} else {
 				mainWindow.hide();
@@ -321,9 +332,19 @@ function createWindow () {
 	MenuManager.initMenu();
 	MenuManager.initTray();
 	MenuManager.initDock();
+	MenuManager.initGlobalShortcuts();
 
 	installNativeMessagingHost();
 	Util.registerLinuxProtocolHandler();
+
+	// The approval window has no session and no Api id, so it reports the user's decision directly
+	ipcMain.on('linkApprovalDecision', (e: Electron.IpcMainEvent, param: any) => {
+		Api.linkApprovalDecision(param);
+	});
+
+	ipcMain.on('linkApprovalReady', (e: Electron.IpcMainEvent) => {
+		WindowManager.sendApprovalPayloadTo(e.sender.id);
+	});
 
 	//ipcMain.removeHandler('Api');
 	ipcMain.handle('Api', (e: Electron.IpcMainInvokeEvent, id: number, cmd: string, args: any[]) => {
@@ -405,6 +426,10 @@ app.on('ready', async () => {
 		};
 	};
 
+	// Opened files keep their copy under the temp scope so a second open costs
+	// nothing. Sweeping the stale ones is the only maintenance that scope needs
+	DownloadManager.prune();
+
 	ConfigManager.init(waitForLibraryAndCreateWindows);
 });
 
@@ -436,6 +461,10 @@ app.on('second-instance', (event, argv) => {
 	if (is.macos) {
 		app.focus({ steal: true });
 	};
+});
+
+app.on('will-quit', () => {
+	globalShortcut.unregisterAll();
 });
 
 app.on('before-quit', (e) => {

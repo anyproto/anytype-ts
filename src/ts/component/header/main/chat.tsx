@@ -7,6 +7,11 @@ const HeaderMainChat = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const { rootId, isPopup, onSearch, menuOpen, renderLeftIcons } = props;
 	const [ dummy, setDummy ] = useState(0);
 	const spaceview = U.Space.getSpaceview();
+	// A one-to-one space is a single chat with nowhere to navigate, so it hides the back/forward
+	// arrows. But a chat can now be arrived at from elsewhere — "Created in" deep-links into the
+	// message an object was created in — and without the arrows there is no way back. Show them
+	// whenever there is somewhere to go; they disable themselves when there is not.
+	const canNavigate = !spaceview.isOneToOne || keyboard.checkBack(isPopup) || keyboard.checkForward(isPopup);
 	const canWrite = U.Space.canMyParticipantWrite();
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const hasWidget = !!S.Block.getWidgetsForTarget(rootId).length;
@@ -106,7 +111,7 @@ const HeaderMainChat = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	return (
 		<>
-			<div className="side left">{renderLeftIcons(!spaceview.isOneToOne, !spaceview.isOneToOne, onOpen)}</div>
+			<div className="side left">{renderLeftIcons(canNavigate, !spaceview.isOneToOne, onOpen)}</div>
 
 			<div className={cnc.join(' ')}>
 				{center}

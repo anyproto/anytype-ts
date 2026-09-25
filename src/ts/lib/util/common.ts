@@ -21,6 +21,8 @@ const getKatex = (): any => {
 getKatex();
 const iconCache: Map<string, string> = new Map();
 
+let _hasOverlayScrollbars: boolean | null = null;
+
 class UtilCommon {
 
 	/**
@@ -37,6 +39,26 @@ class UtilCommon {
 	 */
 	getElectron () {
 		return window.Electron || {};
+	};
+
+	/**
+	 * Classifies a filesystem path as a cloud-synced or network location.
+	 * @param {string} [p] - The path to check; empty defaults to the current userData dir.
+	 * @returns {object} { unsafe, kind: ''|'cloud'|'network', provider, path }.
+	 */
+	checkVaultPath (p?: string) {
+		const fallback = { unsafe: false, kind: '', provider: '', path: String(p || '') };
+		const electron = this.getElectron();
+
+		if (!electron.checkVaultPath) {
+			return fallback; // web mode / non-electron
+		};
+
+		try {
+			return electron.checkVaultPath(p || '') || fallback;
+		} catch (e) {
+			return fallback;
+		};
 	};
 
 	/**
@@ -467,6 +489,31 @@ class UtilCommon {
 	 */
 	isPlatformLinux (): boolean {
 		return this.getPlatform() == I.Platform.Linux;
+	};
+
+	/**
+	 * Checks whether the OS draws overlay scrollbars, which appear only while scrolling
+	 * and take up no layout space. True on macOS unless the user selected
+	 * "Show scroll bars: Always" in System Settings.
+	 * Measured once and cached; a preference change applies after restart.
+	 * @returns {boolean} True if scrollbars are overlaid, false if they reserve space.
+	 */
+	hasOverlayScrollbars (): boolean {
+		if (_hasOverlayScrollbars === null) {
+			if (typeof document == 'undefined') {
+				return false;
+			};
+
+			const el = document.createElement('div');
+
+			el.style.cssText = 'position:absolute;top:-9999px;width:100px;height:100px;overflow:scroll;';
+			document.body.appendChild(el);
+
+			_hasOverlayScrollbars = (el.offsetWidth - el.clientWidth) == 0;
+			el.remove();
+		};
+
+		return _hasOverlayScrollbars;
 	};
 
 	/**
@@ -1300,9 +1347,9 @@ class UtilCommon {
 
 	getSpaceSettingsPages (): string[] {
 		return [
-			'spaceIndex', 'spaceStorage', 'spaceShare', 'spaceNotifications',
+			'spaceIndex', 'spaceStorage', 'spaceShare', 'spaceNotifications', 'spaceDeletionAudit',
 			'importIndex', 'importNotion', 'importNotionWarning', 'importCsv', 'importObsidian',
-			'exportIndex', 'exportProtobuf', 'exportMarkdown',
+			'exportIndex', 'exportProtobuf', 'exportMarkdown', 'exportAnyBlockV2',
 			'set', 'relation', 'archive',
 		];
 	};

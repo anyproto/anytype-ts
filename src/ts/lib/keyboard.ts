@@ -11,6 +11,7 @@ class Keyboard {
 		client: { x: 0, y: 0 },
 	};
 	timeoutSidebarHide = 0;
+	timeoutQuickSearchPopup = 0;
 	source: any = null;
 	selection: any = null;
 	shortcuts: any = {};
@@ -35,6 +36,7 @@ class Keyboard {
 	isComposition = false;
 	isCommonDropDisabled = false;
 	isShortcutEditing = false;
+	isShiftPressed = false;
 
 	/**
 	 * Initializes keyboard event listeners and shortcuts.
@@ -88,7 +90,19 @@ class Keyboard {
 			S.Common.windowIsFocusedSet(false);
 			S.Menu.closeAll([ 'blockContext' ]);
 			S.Common.getRef('dragProvider')?.clearStyle();
+
+			// Window blur aborts any in-flight IME composition, but the compositionend event can get
+			// lost (Alt+Tab, switching windows/tabs), leaving the flag stuck and swallowing keys
+			this.setComposition(false);
+
+			// Modifier keyups can be lost while the window is unfocused — reset the tracked state
+			this.isShiftPressed = false;
 		};
+
+		// Track the physical Shift key in capture phase, before any handler can stop propagation
+		this._handlers.shiftTracker = (e: any) => this.trackShift(e);
+		U.Dom.addEvent(window, 'keydown', this._handlers.shiftTracker, true);
+		U.Dom.addEvent(window, 'keyup', this._handlers.shiftTracker, true);
 
 		U.Dom.addEvents(window, [
 			[ 'keydown', this._handlers.keydown ],
@@ -194,6 +208,12 @@ class Keyboard {
 		].filter(event => this._handlers[event]).map(event => [ event, this._handlers[event] ]);
 
 		U.Dom.removeEvents(window, events);
+
+		if (this._handlers.shiftTracker) {
+			U.Dom.removeEvent(window, 'keydown', this._handlers.shiftTracker, true);
+			U.Dom.removeEvent(window, 'keyup', this._handlers.shiftTracker, true);
+		};
+
 		this._handlers = {};
 		U.Dom.removeEvent(document, 'copy', this.onCopyEvent);
 	};
@@ -358,6 +378,48 @@ class Keyboard {
 				};
 
 				this.onSearchPopup(route);
+			});
+
+			// Global (cross-space) search: Cmd+K widened by Shift. Raw combo on purpose -
+			// the named cmd+shift+k belongs to textLink, which owns the key while a text
+			// or block selection is active; without a selection it falls through to search
+			this.shortcut(`${cmd}+shift+k`, e, () => {
+				if (pin && !this.isPinChecked) {
+					return;
+				};
+
+				const openGlobal = () => this.onSearchPopup(route, { data: { isGlobal: true } });
+
+				// The open popup owns the combo - it toggles its space scope token in
+				// place (object pickers ignore it, leaving the combo inert)
+				if (S.Popup.isOpen('search')) {
+					return;
+				};
+
+				// The combo doubles as "insert link" - yield it to whoever consumes it:
+				// any editable with a real text selection (editor and chat bind the link
+				// action on selections only), and the comment editor, which binds it even
+				// at a collapsed caret. A collapsed caret elsewhere falls through here
+				const ae = document.activeElement as HTMLElement;
+				const tag = String(ae?.tagName || '').toLowerCase();
+
+				let ownsCombo = false;
+
+				if ([ 'input', 'textarea' ].includes(tag)) {
+					const input = ae as HTMLInputElement;
+					ownsCombo = input.selectionStart !== input.selectionEnd;
+				} else
+				if (ae?.isContentEditable) {
+					const sel = window.getSelection();
+					ownsCombo = Boolean(sel && !sel.isCollapsed) || Boolean(ae.closest('.commentEditorWrap'));
+				};
+
+				if (ownsCombo || selectedBlockIds.length) {
+					return;
+				};
+
+				e.preventDefault();
+				openGlobal();
 			});
 
 			// Navigation links
@@ -783,7 +845,7 @@ class Keyboard {
 	 * @param {any} arg - The command argument.
 	 */
 	onCommand (cmd: string, arg: any) {
-		if (!this.isMain() && [ 'search', 'print' ].includes(cmd) || this.isShortcutEditing) {
+		if (!this.isMain() && [ 'search', 'print', 'quickSearchShow' ].includes(cmd) || this.isShortcutEditing) {
 			return;
 		};
 
@@ -798,6 +860,13 @@ class Keyboard {
 		switch (cmd) {
 			case 'search': {
 				this.onSearchText('', route);
+				break;
+			};
+
+			// The quick search panel was re-shown - make sure its popup is up
+			// (the very first open is handled by the quick search page mount)
+			case 'quickSearchShow': {
+				this.onQuickSearchPopup();
 				break;
 			};
 
@@ -949,6 +1018,15 @@ class Keyboard {
 						},
 					}
 				});
+				break;
+			};
+
+			case 'debugNetLog': {
+				// The account start-up run: folded state, last snapshot and every update received.
+				// An app-menu click is no page gesture, so the renderer's execCommand copy would be
+				// a no-op here: the main process writes the clipboard instead
+				Renderer.send('clipboardWrite', JSON.stringify(S.Recovery.getDebugInfo(), null, 2));
+				Preview.toastShow({ text: U.String.sprintf(translate('toastCopy'), translate('recoveryStatusDebugLabel')) });
 				break;
 			};
 
@@ -1459,6 +1537,42 @@ class Keyboard {
 				data: { ...param.data, isPopup: this.isPopup(), route },
 			});
 		};
+	};
+
+	/**
+	 * Opens the search popup inside the quick search window. The popup fills the
+	 * whole panel; closing it (Esc) dismisses the panel itself.
+	 */
+	onQuickSearchPopup () {
+		if (S.Popup.isOpen('search')) {
+			// Still up and settled - the panel was re-shown over its own popup, nothing to do
+			if (!S.Popup.isAnimating('search')) {
+				return;
+			};
+
+			// A fast panel close -> reopen lands inside the popup's close animation: onClose
+			// (which hides the panel) fired on the spot, but the popup only leaves the list
+			// J.Constant.delay.popup later, against the list as it looked when the close
+			// began. Opening now would be worse than not opening - that pending write would
+			// take the new popup with it and leave the panel an empty window. Let the close
+			// land and open behind it; a reopen has to remount anyway to replay its animation
+			window.clearTimeout(this.timeoutQuickSearchPopup);
+			this.timeoutQuickSearchPopup = window.setTimeout(() => this.onQuickSearchPopup(), J.Constant.delay.popup);
+			return;
+		};
+
+		window.clearTimeout(this.timeoutQuickSearchPopup);
+
+		S.Popup.open('search', {
+			className: 'isQuickSearch',
+			preventCloseByEscape: true,
+			onClose: () => Renderer.send('quickSearchClose'),
+			data: {
+				isPopup: false,
+				isGlobal: true,
+				route: analytics.route.globalShortcut,
+			},
+		});
 	};
 
 	/**
@@ -2007,13 +2121,56 @@ class Keyboard {
 	};
 
 	/**
+	 * Tracks the physical Shift key state from capture-phase key events. The browser keeps
+	 * reporting a stale e.shiftKey when the Shift keyup is lost (Alt+Tab, window switch),
+	 * which makes plain Enter behave as Shift+Enter until Shift is pressed again.
+	 *
+	 * Known tradeoff: the state resets on window blur, and re-focusing while physically
+	 * holding Shift fires no Shift keydown to re-arm it, so the first shifted shortcut
+	 * after re-focus can be treated as unshifted. Partially self-heals below: a shifted
+	 * printable character (uppercase with e.shiftKey, CapsLock off) proves a physical Shift.
+	 * @param {any} e - The keyboard event.
+	 */
+	trackShift (e: any) {
+		const key = String(e.key || '');
+
+		if (this.eventKey(e) == Key.shift) {
+			this.isShiftPressed = (e.type == 'keydown');
+		} else
+		if (!e.shiftKey) {
+			this.isShiftPressed = false;
+		} else
+		if (
+			(e.type == 'keydown') &&
+			(key.length == 1) &&
+			(key != key.toLowerCase()) &&
+			!e.getModifierState?.('CapsLock')
+		) {
+			// An uppercase printable character cannot come from a phantom modifier alone —
+			// the OS shifted it, so a physical Shift is being held: re-arm the tracker
+			this.isShiftPressed = true;
+		};
+	};
+
+	/**
+	 * Cross-checks e.shiftKey against the tracked physical Shift state, to ignore a
+	 * phantom modifier left behind by a lost Shift keyup (e.g. after Alt+Tab).
+	 * @param {any} e - The keyboard event.
+	 * @returns {boolean} Whether Shift is genuinely held.
+	 */
+	isRealShift (e: any): boolean {
+		return e.shiftKey && (this.isShiftPressed || (this.eventKey(e) == Key.shift));
+	};
+
+	/**
 	 * Gets the meta keys from the event object.
 	 * @param {any} e - The event object.
 	 * @returns {string[]} The meta keys.
 	 */
 	metaKeys (e: any): string[] {
 		const ret = [];
-		if (e.shiftKey) {
+
+		if (this.isRealShift(e)) {
 			ret.push(Key.shift);
 		};
 		if (e.altKey) {

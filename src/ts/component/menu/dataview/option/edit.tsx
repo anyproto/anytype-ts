@@ -13,6 +13,7 @@ const MenuOptionEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const colorRef = useRef('');
 	const n = useRef(-1);
 	const keydownHandler = useRef(null);
+	const isUnmountedRef = useRef(false);
 
 	const rebind = () => {
 		unbind();
@@ -56,6 +57,12 @@ const MenuOptionEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDownHandler = (e: any) => {
+		// A leaked window listener must never act for a dead menu — bail before
+		// any preventDefault or it silently eats the key app-wide until restart
+		if (isUnmountedRef.current) {
+			return;
+		};
+
 		let ret = false;
 
 		keyboard.shortcut('enter', e, () => {
@@ -233,6 +240,8 @@ const MenuOptionEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		setDummy(dummy + 1);
 
 		return () => {
+			isUnmountedRef.current = true;
+
 			unbind();
 		};
 	}, []);

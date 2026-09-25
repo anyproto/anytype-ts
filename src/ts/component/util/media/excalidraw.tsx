@@ -42,19 +42,21 @@ const MediaExcalidraw = forwardRef<{}, Props>(({
 		<div
 			className="mediaExcalidraw"
 			ref={nodeRef}
-			onMouseDownCapture={() => { isActiveRef.current = true; }}
+			onMouseDownCapture={() => {
+				isActiveRef.current = true;
+				keyboard.setFocus(true);
+			}}
 		>
 			<Excalidraw
 				isCollaborating={false}
 				initialData={data}
 				viewModeEnabled={readonly}
 				onChange={(elements, appState, files) => {
+					// While the user is interacting with the canvas keep the app keyboard suppressed,
+					// otherwise Excalidraw tool shortcuts (v, r, o, delete, arrows, etc.) are consumed
+					// by the global handler in Lib/keyboard
 					if (isActiveRef.current) {
-						if ([ 'selection', 'text' ].includes(appState.activeTool.type)) {
-							keyboard.setFocus(true);
-						} else {
-							keyboard.setFocus(false);
-						};
+						keyboard.setFocus(true);
 					};
 
 					onChange(elements as any[], appState, files);
@@ -66,7 +68,7 @@ const MediaExcalidraw = forwardRef<{}, Props>(({
 				}}
 				UIOptions={{
 					tools: {
-						image: false,
+						image: true,
 					}
 				}}
 			/>

@@ -1,5 +1,6 @@
 import { observable, makeObservable } from 'mobx';
 import * as I from 'Interface';
+import { getExportResultStatus } from 'Lib/util/exportReport';
 
 class Notification implements I.Notification {
 
@@ -30,7 +31,7 @@ class Notification implements I.Notification {
 	};
 
 	fillContent () {
-		const { importType, errorCode, name } = this.payload;
+		const { errorCode, name } = this.payload;
 		const lang = errorCode ? 'error' : 'success';
 		const et = U.Common.enumKey(I.NotificationType, this.type);
 		const identityName = U.String.shorten(String(this.payload.identityName || translate('defaultNamePage')), 32);
@@ -41,10 +42,24 @@ class Notification implements I.Notification {
 		this.text = translate(U.String.toCamelCase(`notification-${et}-${lang}-text`));
 
 		switch (this.type) {
+			case I.NotificationType.Export: {
+				const status = getExportResultStatus(this.payload.report, errorCode);
+				if (status != 'Success') {
+					this.title = translate(`popupExportResultTitle${status}`);
+					this.text = translate(`popupExportResultText${status}`);
+				};
+				break;
+			};
+
 			case I.NotificationType.Import: {
+				const issuesCount = Number(this.payload.issuesCount) || 0;
+
 				if (Object.values(J.Error.Code.Import).includes(errorCode)) {
 					this.title = translate('commonError');
 					this.text = translate(`notificationImportErrorText${errorCode}`);
+				} else
+				if (issuesCount) {
+					this.text = U.String.sprintf(translate('notificationImportSuccessIssuesText'), issuesCount, U.Common.plural(issuesCount, translate('pluralIssue')));
 				};
 				break;
 			};

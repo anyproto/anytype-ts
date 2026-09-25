@@ -1,17 +1,18 @@
 import React, { forwardRef, useRef, useState } from 'react';
-import { Title, Label, Select, Button, Error } from 'Component';
+import { Title, Label, Select, Switch, Button, Error, Icon } from 'Component';
 import * as I from 'Interface';
 
 const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 
 	const { close } = props;
 	const { networkConfig } = S.Auth;
-	const { mode, path } = networkConfig;
+	const { mode, path, preferYamux } = networkConfig;
 	const userPath = U.Common.getElectron().userPath();
 	const [ config, setConfig ] = useState({
 		userPath,
 		mode,
 		path: path || '',
+		preferYamux: Boolean(preferYamux),
 	});
 	const [ error, setError ] = useState('');
 	const refMode = useRef(null);
@@ -74,6 +75,11 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 				onChange('userPath', paths[0]);
 
 				analytics.event('ChangeStorageLocation', { type: 'Change', route: analytics.route.onboarding });
+
+				const check = U.Common.checkVaultPath(paths[0]);
+				if (check.unsafe) {
+					Action.vaultLocationWarning(check, { isLocalOnly: config.mode == I.NetworkMode.Local, route: analytics.route.onboarding });
+				};
 			});
 		};
 
@@ -109,6 +115,10 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 
 			if (config.path !== networkConfig.path) {
 				analytics.event('UploadNetworkConfiguration', { route: analytics.route.onboarding });
+			};
+
+			if (config.preferYamux !== networkConfig.preferYamux) {
+				analytics.event('ChangePreferYamux', { route: analytics.route.onboarding, type: config.preferYamux });
 			};
 
 			if (config.userPath !== userPath) {
@@ -156,8 +166,18 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 		Preview.tooltipHide();
 	};
 
+	const preferYamuxTooltipParam: Partial<I.TooltipParam> = {
+		text: translate('popupSettingsOnboardingPreferYamuxHint'),
+		className: 'big',
+		typeY: I.MenuDirection.Bottom,
+		typeX: I.MenuDirection.Left,
+		delay: 0,
+	};
+
 	const isDefault = config.path == U.Common.getElectron().defaultPath();
 	const networkModes = getNetworkModes();
+	const storageCheck = U.Common.checkVaultPath(config.userPath);
+	const isLocalOnly = config.mode == I.NetworkMode.Local;
 
 	return (
 		<div className="mainSides">
@@ -184,6 +204,18 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 						/>
 					</div>
 
+					<div className="item">
+						<div className="flex">
+							<Label text={translate('popupSettingsOnboardingPreferYamuxTitle')} />
+							<Icon name="common/info" className="info" tooltipParam={preferYamuxTooltipParam} />
+						</div>
+						<Switch
+							className="big"
+							value={config.preferYamux}
+							onChange={(e: any, v: boolean) => onChange('preferYamux', v)}
+						/>
+					</div>
+
 					{config.mode == I.NetworkMode.Custom ? (
 						<div className="item" onMouseEnter={e => onTooltipShow(e, config.path)} onMouseLeave={onTooltipHide}>
 							<div onClick={() => onPathClick(config.path)}>
@@ -204,6 +236,13 @@ const PopupSettingsOnboarding = forwardRef<{}, I.Popup>((props, ref) => {
 							{!isDefault ? <Button size={28} text={translate('commonReset')} onClick={onResetStorage} /> : ''}
 						</div>
 					</div>
+
+					{storageCheck.unsafe ? (
+						<div className="dataLocationWarning" onClick={() => Action.vaultLocationWarning(storageCheck, { isLocalOnly, route: analytics.route.onboarding })}>
+							<Icon name="popup/header/warning" className="warning" />
+							<Label text={translate('vaultLocationWarningLabel')} />
+						</div>
+					) : ''}
 
 					</div>
 

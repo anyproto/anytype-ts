@@ -9,6 +9,15 @@
 
 .settingsPageContainer { width: calc(100% - 64px); margin: 0 auto; min-width: 300px; max-width: 640px; }
 .settingsPageContainer {
+    // Sits under the page title, leading back to the index the format was picked
+    // from. The chevron's own left bearing is what lines it up with the title.
+    .settingsPage .back { display: inline-flex; align-items: center; gap: 0px 2px; margin: 0px 0px 16px -2px; color: var(--color-text-secondary); }
+    .settingsPage .back:hover { color: var(--color-text-primary); }
+    .settingsPage .back {
+        // No font-size of its own: inherits the body size the description uses
+        .label { font-weight: 600; }
+    }
+
     .title { @include text-header1; font-weight: 700; margin: 0px 0px 12px 0px; }
     .title.sub { @include text-header3; margin: 0px 0px 4px 0px; font-weight: 700; }
     .description { margin: 0px 0px 24px 0px; }
@@ -64,6 +73,7 @@
         > .item {
             .select { margin-right: -8px; }
             .button { border: 0px; margin-right: -8px; }
+            .flex { display: flex; align-items: center; gap: 0px 6px; }
         }
     }
     .actionItems:last-child { margin-bottom: 0px; }
@@ -360,6 +370,8 @@
                 .name { @include text-common; }
                 .type { @include text-small; color: var(--color-text-secondary); }
             }
+
+            .dataLocationWarning { @include dataLocationWarning; margin-top: 12px; }
         }
 
         .iconObject { background-color: var(--color-shape-tertiary); border-radius: 4px; }
@@ -406,10 +418,35 @@
 
 	> .pageSettingsApi {
 		.title { margin: 0px !important; }
-		.titleWrapper { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+		.titleWrapper { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+		.apiKeyIntro { @include text-small; color: var(--color-text-secondary); margin: 0 0 24px; }
+		.keyMeta { display: block; @include text-small; color: var(--color-text-secondary); margin-top: 4px; white-space: normal; }
+		.appDetails { min-width: 0; }
+		.apiKeyAccess { display: block; width: 100%; min-width: 0; padding: 4px 0; border: 0; text-align: left; font: inherit; color: inherit; background: none; }
+		.apiKeyAccess:hover { color: var(--color-system-accent-100); }
+		.apiKeyAccess:focus-visible { outline: 2px solid var(--color-system-accent-100); outline-offset: 2px; border-radius: 4px; }
+		.colAccess .keyMeta { @include text-overflow-nw; }
+
+		.localApiStatus { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+		.localApiStatus.isSuccess { background: var(--color-lime); }
+		.localApiStatus.isError { background: var(--color-red); }
+		.localApiServer {
+			> .flex { gap: 0px 8px; }
+			> .flex {
+				> * { flex-shrink: 0; }
+			}
+			.label { width: auto; white-space: nowrap; }
+			.name { margin-right: 8px; }
+			.host { color: var(--color-text-secondary); }
+			.input.port { width: 72px; height: 28px; padding: 0px 8px; border-radius: 6px; margin-left: -8px; }
+			.input.port.isReadonly { color: var(--color-text-secondary); }
+			.button.change { margin-right: 0px; }
+		}
 
 		.items {
-            .row { grid-template-columns: minmax(0, 1fr) 150px 150px 150px 28px; }
+            .row { grid-template-columns: minmax(0, 1fr) 70px 105px 105px minmax(0, 1fr) 28px; align-items: center; }
+			.col { min-width: 0; }
+			.col.colExpire { @include text-overflow-nw; }
 		}
 	}
 
@@ -511,6 +548,13 @@
             .title { margin-bottom: 0px; }
 
             .icons { display: flex; align-items: center; gap: 0px 6px; flex-direction: row; }
+
+            .side.right { display: flex; align-items: center; gap: 0px 8px; }
+            .side.right {
+                .icon.search { width: 28px; height: 28px; }
+            }
+
+            .filter { width: 100%; }
         }
 
         .section { margin-bottom: 36px; }
@@ -519,52 +563,30 @@
             .title { @include text-header3; }
         }
 
+        .section.sectionInvite { margin-bottom: 24px; }
         .section.sectionInvite {
-            .title,
-            .label { margin-bottom: 8px; }
-            .label { @include text-common; color: var(--color-text-secondary); }
-
-            .linkTypeWrapper {
-                display: flex; justify-content: flex-start; align-items: center; height: 64px; width: calc(100% + 8px);
-                padding: 0px 8px; margin: 0px 0px 8px -8px; gap: 0px 12px; border-radius: 12px;
-            }
-            .linkTypeWrapper.canEdit:hover,
-            .linkTypeWrapper.canEdit.hover { background-color: var(--color-shape-highlight-medium); }
-            .linkTypeWrapper {
-                .icon {
-                    width: 48px; height: 48px; border-radius: 50%; background-size: 20px;
-                    background-position: 50% 50%; background-color: var(--color-shape-highlight-medium);
-                }
-                .icon.loading {
-                    &:before {
-                        content: ''; position: absolute; z-index: 2; left: 50%; top: 50%; margin: -10px 0px 0px -10px;
-                        width: 20px; height: 20px; background: url('~img/icon/loader.svg'); animation: rotate 0.8s infinite linear;
-                    }
-                }
-
+            .inviteToggle { display: flex; align-items: center; justify-content: space-between; gap: 0px 16px; }
+            .inviteToggle {
+                .info { display: flex; flex-direction: column; gap: 4px 0px; }
                 .info {
                     .title { @include text-common; font-weight: 500; margin: 0px; }
                     .label { @include text-small; color: var(--color-text-secondary); margin: 0px; }
                 }
 
-                &.canEdit {
-                    .info {
-                        .title { display: flex; align-items: center; }
-                        .title:after { content: ''; width: 20px; height: 20px; display: inline-block; }
-                    }
-                }
+                .switch { flex-shrink: 0; }
             }
 
-            .inviteLinkWrapper { display: flex; align-items: center; height: 36px; margin-bottom: 12px; gap: 0px 8px; }
-            .inviteLinkWrapper {
-                .inputWrapper {
-                    width: 100%; display: flex; align-items: center; background: var(--color-shape-highlight-light-solid); border-radius: 14px; padding: 0px 8px 0px 16px;
-                    gap: 0px 8px;
-                }
-                .input { height: 40px; padding: 0px; background: none; border: 0px; border-radius: 0px; }
-
+            .inviteWarning {
+                display: flex; align-items: center; gap: 0px 8px; margin-top: 12px; padding: 12px;
+                border-radius: 12px; background: var(--color-shape-highlight-medium);
+            }
+            .inviteWarning {
+                .icon.warning { width: 20px; height: 20px; flex-shrink: 0; }
+                .label { @include text-small; color: var(--color-text-primary); flex-grow: 1; margin: 0px; }
                 .button { flex-shrink: 0; }
             }
+
+            .inviteButtons { display: flex; align-items: center; gap: 0px 8px; margin-top: 12px; }
         }
 
         .section.sectionMembers { min-height: 236px; display: flex; flex-direction: column; }
@@ -578,10 +600,22 @@
                 .icon { width: 16px; height: 16px; color: var(--color-text-primary); }
             }
 
-            .membersTitle { display: flex; gap: 0px 8px; margin-bottom: 8px; align-items: baseline; padding: 7px 0px; }
-            .membersTitle {
-                .title { margin-bottom: 0px; }
-                .label { color: var(--color-text-secondary); @include text-paragraph; }
+            .tabs { display: flex; align-items: center; gap: 0px 4px; margin-bottom: 8px; padding: 7px 0px; }
+            .tabs {
+                .tab {
+                    position: relative; display: flex; align-items: center; gap: 0px 4px; height: 28px;
+                    padding: 0px 10px; border-radius: 8px;
+                }
+                .tab:hover { background: var(--color-shape-highlight-medium); }
+                .tab.active { background: var(--color-shape-highlight-medium); }
+                .tab {
+                    .label { @include text-common; color: var(--color-text-secondary); margin: 0px; }
+                    .label.cnt { color: var(--color-text-tertiary); }
+                    .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--color-system-accent-100); }
+                }
+                .tab.active {
+                    .label { color: var(--color-text-primary); }
+                }
             }
 
             .rows { flex-grow: 1; }
@@ -794,11 +828,14 @@
 
 		.title.sub { @include text-paragraph; font-weight: 600; padding: 8px 0px; margin: 0px !important; }
 
-        .item {
+        // Scoped to the format grid: these are the tiles. Unscoped, they also hit the
+        // .item a Select renders for its current value — the 40px !important icon in
+        // particular beat the size the component asks for.
+        .items > .item {
             height: 72px; border: 1px solid var(--color-shape-secondary); border-radius: 12px; transition: $transitionAllCommon;
             position: relative; display: flex; flex-direction: row; align-items: center; padding: 16px; gap: 0px 12px;
         }
-		.item {
+		.items > .item {
 			&.isApp {
 				.icon { background-color: var(--color-shape-tertiary); border-radius: 8px; background-size: 18px; background-position: center; }
 			}
@@ -812,8 +849,48 @@
 		}
     }
 
+	> .pageSettingsExportIndex {
+		.items > .item.anyBlockV2 .icon { color: #4f60e8 !important; }
+	}
+
 	> .pageSettingsImportIndex {
 		.title { margin-bottom: 24px !important; }
+	}
+
+	> .pageSettingsImportIndex {
+		// The tile styling above dresses the format grid; rows inside .actionItems are
+		// settings rows, so they keep the container's own border instead of drawing one each.
+		// Direct children only: a Select renders its own .item for the current value,
+		// and the row padding / space-between below would otherwise land on that too,
+		// pushing an option's icon and label to opposite ends.
+		.actionItems > .item { height: auto; border: 0px; border-radius: 0px; border-bottom: 1px solid var(--color-shape-secondary); padding: 14px 16px; justify-content: space-between; }
+		.actionItems > .item {
+			&:hover { background: none; }
+			&:last-child { border-bottom: 0px; }
+		}
+
+		// The sections wrapper already spaces this row from the ones below.
+		.actionItems.target { margin-bottom: 0px; }
+
+		.aiSettings {
+			.label.description { color: var(--color-text-secondary); margin: 0px 0px 12px 0px; }
+
+			.actionItems {
+				> .item {
+					.input { max-width: 250px; min-height: 28px; border: 1px solid var(--color-shape-secondary); border-radius: 8px; padding: 3px 10px; }
+				}
+			}
+
+			// The list is several names long, so it wraps on its own side of the row
+			// instead of stretching it
+			.item.recommended { align-items: flex-start; }
+			.item.recommended {
+				.value { @include text-small; color: var(--color-text-secondary); text-align: right; max-width: 250px; }
+			}
+
+			.error { margin: 8px 0px 0px 0px; }
+			.label.disclosure { @include text-small; color: var(--color-text-secondary); margin: 12px 0px 0px 0px; }
+		}
 	}
 
 	.icon.logo { margin: 0px 0px 16px 0px; }
@@ -821,6 +898,8 @@
 	> .pageSettingsImportNotion {
         .icon.importNotion { color: var(--color-control-accent); }
         a { font-weight: 600; text-decoration: none; color: var(--color-text-primary); }
+        // The step's link is shown as the bare URL, on its own line under the text
+        a.url { display: block; word-break: break-all; }
     }
 
 	> .pageSettingsImportObsidian,
@@ -898,6 +977,20 @@
 
         .actionItems { margin: 32px 0px 24px 0px; }
     }
+
+	> .pageSettingsExportAnyBlockV2 {
+		.notice {
+			border-radius: 12px; padding: 12px 16px; background: var(--color-shape-highlight-medium);
+			display: flex; flex-direction: column; gap: 2px 0px;
+		}
+		.notice {
+			.label { @include text-small; color: var(--color-text-secondary); margin: 0px; }
+			.label.name { font-weight: 600; color: var(--color-text-primary); }
+			.label a { color: var(--color-text-primary); font-weight: 500; text-decoration: none; }
+		}
+
+		.actionItems { margin: 32px 0px 24px 0px; }
+	}
 
     > .pageSettingsMembership { display: flex; flex-direction: column; padding-bottom: 0px; min-height: 100%; }
     > .pageSettingsMembership {

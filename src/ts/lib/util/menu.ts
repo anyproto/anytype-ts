@@ -688,7 +688,11 @@ class UtilMenu {
 		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
-	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
+	/**
+	 * Builds the searchObject menu data for picking a new space homepage.
+	 * Split out of dashboardSelect so it can also be used as a submenu.
+	 */
+	dashboardSelectData (openRoute?: boolean) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 
@@ -712,36 +716,40 @@ class UtilMenu {
 			});
 		};
 
+		return {
+			withPlural: true,
+			filters: [
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
+				{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+			],
+			dataChange: (_ctx: any, items: any) => {
+				const head: any[] = [
+					{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
+				];
+
+				if (items.length) {
+					head.push({ isDiv: true });
+				};
+
+				return head.concat(items);
+			},
+			onSelect: el => {
+				onSelect(el, true);
+
+				const type = U.Space.isSystemDashboard(el.id) ? el.id : I.HomePredefinedId.Existing;
+				analytics.event('ChangeSpaceDashboard', { type });
+			},
+		};
+	};
+
+	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
 		analytics.event('ClickChangeSpaceDashboard');
 
 		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
 			...menuParam,
-			data: {
-				withPlural: true,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
-					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-				],
-				dataChange: (_ctx: any, items: any) => {
-					const head: any[] = [
-						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
-					];
-
-					if (items.length) {
-						head.push({ isDiv: true });
-					};
-
-					return head.concat(items);
-				},
-				onSelect: el => {
-					onSelect(el, true);
-
-					const type = U.Space.isSystemDashboard(el.id) ? el.id : I.HomePredefinedId.Existing;
-					analytics.event('ChangeSpaceDashboard', { type });
-				},
-			}
+			data: this.dashboardSelectData(openRoute),
 		});
 	};
 
@@ -976,6 +984,11 @@ class UtilMenu {
 					break;
 				};
 
+				case 'copyId': {
+					U.Common.copyToast(translate('popupSettingsSpaceIndexSpaceIdTitle'), targetSpaceId);
+					break;
+				};
+
 			};
 		};
 
@@ -985,6 +998,14 @@ class UtilMenu {
 				general: [],
 				actions: [],
 				delete: [],
+			};
+
+			// A channel still being fetched has nothing to manage yet; its id is what a support
+			// conversation or a debug log needs
+			if (isLoading) {
+				return [
+					{ id: 'copyId', iconParam: { name: 'menu/action/copy' }, name: translate('menuSpaceContextCopyId') },
+				];
 			};
 
 			if (isSharePage) {
@@ -1735,7 +1756,7 @@ class UtilMenu {
 		this.menuContext = context;
 	};
 
-	spaceCreate (param: I.MenuParam, route: string) {
+	spaceCreate (param: I.MenuParam, route: string, createOptions?: I.SpaceCreateOptions) {
 		const analyticsName = {
 			[I.SpaceCreateType.Personal]: 'Space',
 			[I.SpaceCreateType.Group]: 'Chat',
@@ -1752,11 +1773,15 @@ class UtilMenu {
 			groupOption.caption = React.createElement(Icon, { name: 'common/alert', className: 'spaceLimit', color: 'grey' });
 		};
 
-		const options = [
+		const options: any[] = [
 			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
 			groupOption,
-			{ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
 		];
+
+		// Joining produces no new space, so callers waiting on onCreate hide it.
+		if (!createOptions?.noJoin) {
+			options.push({ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') });
+		};
 
 		let prefix = '';
 		switch (route) {
@@ -1777,7 +1802,7 @@ class UtilMenu {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					Action.createSpace(item.id, route);
+					Action.createSpace(item.id, route, createOptions);
 
 					analytics.event(`Click${prefix}CreateMenu${analyticsName[item.id]}`);
 				},
@@ -1960,6 +1985,7 @@ class UtilMenu {
 			spaceNotifications: translate('commonNotifications'),
 			spaceStorage: translate('pageSettingsSpaceRemoteStorage'),
 			archive: translate('commonBin'),
+			spaceDeletionAudit: translate('pageSettingsSpaceDeletionAudit'),
 			types,
 			relations,
 			integrations: translate('pageSettingsSpaceIntegrations'),

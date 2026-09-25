@@ -11,6 +11,7 @@ import PopupConfirm from './confirm';
 import PopupShortcut from './shortcut';
 import PopupPage from './page';
 import PopupExport from './export';
+import PopupExportResult from './exportResult';
 import PopupPin from './pin';
 import PopupPhrase from './phrase';
 import PopupObjectManager from './objectManager';
@@ -21,6 +22,8 @@ import PopupRelation from './relation';
 import PopupInviteRequest from './invite/request';
 import PopupInviteConfirm from './invite/confirm';
 import PopupInviteQr from './invite/qr';
+import PopupInviteManage from './invite/manage';
+import PopupInviteAdd from './invite/add';
 import PopupMembershipActivation from './membership/activation';
 import PopupMembershipFinalization from './membership/finalization';
 import PopupShare from './share';
@@ -173,6 +176,7 @@ const Popup = forwardRef<{}, I.Popup>((props, ref) => {
 		shortcut:				 PopupShortcut,
 		page:					 PopupPage,
 		export:					 PopupExport,
+		exportResult:			 PopupExportResult,
 		pin:					 PopupPin,
 		phrase:					 PopupPhrase,
 		objectManager:			 PopupObjectManager,
@@ -183,6 +187,8 @@ const Popup = forwardRef<{}, I.Popup>((props, ref) => {
 		inviteRequest:			 PopupInviteRequest,
 		inviteConfirm:			 PopupInviteConfirm,
 		inviteQr:				 PopupInviteQr,
+		inviteManage:			 PopupInviteManage,
+		inviteAdd:				 PopupInviteAdd,
 		membershipActivation: 	 PopupMembershipActivation,
 		membershipFinalization:  PopupMembershipFinalization,
 		share:					 PopupShare,

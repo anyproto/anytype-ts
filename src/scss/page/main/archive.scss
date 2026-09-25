@@ -57,6 +57,21 @@
 			}
 		}
 
+		// One-time hint between the title row and the Suggestions list; dismissed permanently
+		// (globally, not per-space) via its close icon.
+		.cleanupNote {
+			display: flex; flex-direction: row; align-items: flex-start; gap: 0px 8px;
+			// .wrapper's flex column stretches children full-width by default; opt this one out.
+			align-self: flex-start; width: var(--menu-width-set);
+			padding: 12px 14px; border-radius: 8px; background-color: var(--color-shape-highlight-light);
+		}
+		.cleanupNote {
+			// min-width: 0 overrides the flex item default of auto, which otherwise sizes to the
+			// unwrapped text and defeats the note's fixed width.
+			.label { @include text-small; font-weight: 400; color: var(--color-text-primary); flex-grow: 1; min-width: 0; }
+			.icon.close { flex-shrink: 0; width: 16px; height: 16px; margin-top: 1px; }
+		}
+
 		// Reuses the Bin table's own structure (.listObject > .table > .row > .cell), so row
 		// height, the -36px checkbox gutter, hover highlight and the icon/name gap all match.
 		// Only the bits the Bin table has no concept of are defined here.

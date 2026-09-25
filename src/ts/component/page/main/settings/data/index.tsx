@@ -8,6 +8,7 @@ const PageMainSettingsDataIndex = forwardRef<I.PageRef, I.PageSettingsComponent>
 	const { localUsage } = spaceStorage;
 	const isLocalNetwork = U.Data.isLocalNetwork();
 	const suffix = isLocalNetwork ? 'LocalOnly' : '';
+	const dataCheck = U.Common.checkVaultPath(dataPath);
 	const MiB = 1048576;
 	const autoDownloadOptions = [
 		{ id: '-1', name: translate('commonOff') },
@@ -115,6 +116,13 @@ const PageMainSettingsDataIndex = forwardRef<I.PageRef, I.PageSettingsComponent>
 						<Button color="blank" size={28} text={translate(`commonOpen`)} onClick={onOpenDataLocation} />
 					</div>
 				</div>
+
+				{dataCheck.unsafe ? (
+					<div className="dataLocationWarning" onClick={() => Action.vaultLocationWarning(dataCheck, { isLocalOnly: isLocalNetwork, route: analytics.route.settings })}>
+						<Icon name="popup/header/warning" className="warning" />
+						<Label text={translate('vaultLocationWarningLabel')} />
+					</div>
+				) : ''}
 			</div>
 		</>
 	);

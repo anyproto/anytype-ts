@@ -2,6 +2,8 @@ import React, { forwardRef, useState } from 'react';
 import { Title, Label, Button, Switch, Select } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import ExportFilesHelp from 'Component/util/exportFilesHelp';
+import Back from '../back';
 
 const PageMainSettingsExportProtobuf = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -9,7 +11,7 @@ const PageMainSettingsExportProtobuf = forwardRef<I.PageRef, I.PageSettingsCompo
 	const [ data, setData ] = useState(Storage.get('popupExport') || {});
 	const items = [
 		{ id: 'zip', name: translate('popupExportZipArchive'), control: 'switch' },
-		{ id: 'files', name: translate('popupExportIncludeFiles'), control: 'switch' },
+		{ id: 'files', name: translate('popupExportIncludeFilesData'), control: 'switch' },
 		{ id: 'archived', name: translate('popupExportIncludeArchivedObjects'), control: 'switch' },
 	];
 	const formatOptios = [
@@ -27,6 +29,7 @@ const PageMainSettingsExportProtobuf = forwardRef<I.PageRef, I.PageSettingsCompo
 	return (
 		<>
 			<Title text={translate('popupSettingsExportProtobufTitle')} />
+			<Back page="exportIndex" />
 
 			<div className="actionItems">
 				<div className="item">
@@ -42,7 +45,10 @@ const PageMainSettingsExportProtobuf = forwardRef<I.PageRef, I.PageSettingsCompo
 
 				{items.map((item: any, i: number) => (
 					<div key={i} className="item">
-						<Label text={item.name} />
+						<div className="flex">
+							<Label text={item.name} />
+							{item.id == 'files' ? <ExportFilesHelp /> : ''}
+						</div>
 
 						<Switch
 							className="big"

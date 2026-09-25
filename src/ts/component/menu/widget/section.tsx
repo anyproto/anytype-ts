@@ -16,6 +16,7 @@ const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { widgetSections } = S.Common;
 	const nodeRef = useRef(null);
 	const n = useRef(-1);
+	const isUnmountedRef = useRef(false);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -33,6 +34,12 @@ const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDownHandler = (e: any) => {
+		// A leaked window listener must never act for a dead menu — bail before
+		// any preventDefault or it silently eats the key app-wide until restart
+		if (isUnmountedRef.current) {
+			return;
+		};
+
 		const items = getItems();
 		const item = items[n.current];
 
@@ -174,6 +181,8 @@ const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 
 		return () => {
+			isUnmountedRef.current = true;
+
 			unbind();
 		};
 

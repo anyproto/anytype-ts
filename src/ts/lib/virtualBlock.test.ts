@@ -34,6 +34,15 @@ let storeBlocks: Map<string, any>;
 let storeChildren: Map<string, string[]>;
 let insideTable: Set<string>;
 
+// Simulates the mounted contenteditable of a block: readDom() parses its
+// innerHTML via the mocked Mark.fromHtml, so text == innerHTML
+const mountEditable = (id: string, html: string) => {
+	const node = { innerHTML: html };
+
+	g.U.Dom.select = (selector: string) => selector.includes(`c${id}`) ? node : null;
+	return node;
+};
+
 const completeCreate = (blockId: string, error?: number) => {
 	const call = createCalls[createCalls.length - 1];
 	call.cb({ blockId, middleTime: 1, error: { code: error || 0 } });
@@ -122,6 +131,12 @@ beforeEach(() => {
 		isComposition: false,
 		getRootId: () => ROOT_ID,
 		setFocus: () => {},
+	};
+
+	g.Mark = {
+		fromHtml: (html: string) => ({ text: html, marks: [] }),
+		hasZws: () => false,
+		domToModel: (n: number) => n,
 	};
 
 	g.analytics = { event: vi.fn() };
@@ -300,6 +315,19 @@ describe('virtualBlock', () => {
 		expect(g.C.BlockSetCarriage).toHaveBeenCalledWith(ROOT_ID, 'real1', { from: 1, to: 1 });
 	});
 
+	it('an editable left empty by a programmatic write does not overwrite the created content', () => {
+		virtualBlock.activate(ROOT_ID, false);
+
+		// Paste-as-URL etc.: the content goes straight to blockSetText, the
+		// mounted placeholder editable never receives it and stays empty
+		mountEditable(VIRTUAL_ID, '');
+
+		virtualBlock.setText(ROOT_ID, 'https://anytype.io ', [], true);
+		completeCreate('real1');
+
+		expect(g.U.Data.blockSetText).not.toHaveBeenCalled();
+	});
+
 	it('deactivation fully resets the placeholder state', () => {
 		virtualBlock.activate(ROOT_ID, false);
 		virtualBlock.setText(ROOT_ID, 'h', [], true);
@@ -428,6 +456,31 @@ describe('virtualBlock: empty-block identity fork (BlockReplace)', () => {
 
 		expect(replaceCalls.length).toBe(1);
 		expect(replaceCalls[0].param.content.text).toBe('かき');
+	});
+
+	it('an editable left empty by a programmatic write (paste as URL) does not overwrite the fork content', () => {
+		const block = makeBlock('f-old7');
+
+		// Paste-as-URL: the content goes straight to blockSetText, the mounted
+		// editable never receives it and stays empty
+		mountEditable('f-old7', '');
+
+		virtualBlock.fork(ROOT_ID, block, 'https://anytype.io ', [], undefined);
+		completeReplace('f-new7');
+
+		expect(g.U.Data.blockSetText).not.toHaveBeenCalled();
+	});
+
+	it('text typed into the editable while the fork is in flight still wins', () => {
+		const block = makeBlock('f-old8');
+		const node = mountEditable('f-old8', 'h');
+
+		virtualBlock.fork(ROOT_ID, block, 'h', [], undefined);
+
+		node.innerHTML = 'hello';
+		completeReplace('f-new8');
+
+		expect(g.U.Data.blockSetText).toHaveBeenCalledWith(ROOT_ID, 'f-new8', 'hello', [], true);
 	});
 
 	it('a fork emptied while held sends nothing', () => {

@@ -1,17 +1,20 @@
 import React, { forwardRef, useState } from 'react';
 import { Title, Button, Label, Icon, Error } from 'Component';
 import * as I from 'Interface';
+import Back from '../back';
 
 const PageMainSettingsImportObsidian = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const [ error, setError ] = useState<string>('');
 
 	const onImport = () => {
-		Action.import(I.ImportType.Obsidian, J.Constant.fileExtension.import[I.ImportType.Markdown], {}, (message: any) => {
+		const targetId = U.Space.getImportTargetId();
+
+		Action.import(targetId, I.ImportType.Obsidian, J.Constant.fileExtension.import[I.ImportType.Markdown], {}, (message: any) => {
 			if (message.error.code) {
 				setError(message.error.description);
 			} else {
-				U.Space.openDashboard();
+				U.Space.openImportTarget(targetId);
 			};
 		});
 	};
@@ -20,6 +23,7 @@ const PageMainSettingsImportObsidian = forwardRef<I.PageRef, I.PageSettingsCompo
 		<>
 			<Icon name="import/obsidian" className="logo" size={56} />
 			<Title text={U.Menu.getImportNames()[I.ImportType.Obsidian]} />
+			<Back page="importIndex" />
 			<Label className="description" text={translate('popupSettingsImportObsidianDescription')} />
 
 			<div className="inputWrapper flex">

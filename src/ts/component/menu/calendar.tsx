@@ -7,7 +7,7 @@ const MenuCalendar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const { param, position, getId, close } = props;
 	const { data, className, classNameWrap } = param;
-	const { value, isEmpty, relationKey, canEdit, canClear = true, noKeyboard, getDotMap, onChange } = data;
+	const { value, isEmpty, relationKey, canEdit, canClear = true, noKeyboard, includeTime, getDotMap, onChange } = data;
 	const calendarRef = useRef<CalendarSelectRefProps>(null);
 
 	const onDayClick = (item: CalendarDay, ts: number): boolean => {
@@ -29,6 +29,17 @@ const MenuCalendar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		S.Menu.updateData(props.id, { value: ts });
 		onChange?.(ts);
 		close();
+	};
+
+	// Unlike a day click, editing the time must not close the menu, the user is
+	// still typing into it
+	const onTimeChange = (ts: number): void => {
+		if (!canEdit) {
+			return;
+		};
+
+		S.Menu.updateData(props.id, { value: ts });
+		onChange?.(ts);
 	};
 
 	const onDayContextMenu = (e: MouseEvent, item: CalendarDay): void => {
@@ -64,6 +75,8 @@ const MenuCalendar = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			enableKeyboard={!noKeyboard}
 			enableHoverState={true}
 			showFooter={canEdit}
+			showTime={!!canEdit && !!includeTime}
+			onTimeChange={onTimeChange}
 			getDotMap={getDotMap}
 			onDayClick={onDayClick}
 			onDayContextMenu={onDayContextMenu}

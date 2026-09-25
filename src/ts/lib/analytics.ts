@@ -63,6 +63,8 @@ class Analytics {
 		screenRelation: 'ScreenRelation',
 		screenType: 'ScreenType',
 
+		globalShortcut: 'GlobalShortcut',
+
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
 		menuSystem: 'MenuSystem',
@@ -86,6 +88,7 @@ class Analytics {
 
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
+		inviteSecurity: 'InviteSecurity',
 
 		authSetup: 'ScreenAuthSetup',
 
@@ -797,6 +800,7 @@ class Analytics {
 			'main/settings/exportIndex':	 'ScreenSettingsExportIndex',
 			'main/settings/exportMarkdown':	 'ScreenSettingsExportMarkdown',
 			'main/settings/exportProtobuf':	 'ScreenSettingsExportProtobuf',
+			'main/settings/exportAnyBlockV2': 'ScreenSettingsExportAnyBlockV2',
 
 			'main/settings/dataIndex':		 'ScreenSettingsDataIndex',
 			'main/settings/dataPublish':	 'ScreenSettingsDataPublish',

@@ -11,6 +11,7 @@ import { Extension } from './extension';
 import { Chat } from './chat';
 import { Comment } from './comment';
 import { Progress } from './progress';
+import { Recovery } from './recovery';
 import { SparkOnboarding } from './sparkOnboarding';
 import { Presence } from './presence';
 
@@ -28,6 +29,7 @@ export {
 	Chat,
 	Comment,
 	Progress,
+	Recovery,
 	SparkOnboarding,
 	Presence,
 };

@@ -24,12 +24,14 @@ import PageImportObsidian from './import/obsidian';
 import PageExportIndex from './export/index';
 import PageExportProtobuf from './export/protobuf';
 import PageExportMarkdown from './export/markdown';
+import PageExportAnyBlockV2 from './export/anyBlockV2';
 
 import PageSpaceIndex from './space/index';
 import PageSpaceStorage from './space/storage';
 import PageSpaceShare from './space/share';
 import PageSpaceList from './space/list';
 import PageSpaceNotifications from './space/notifications';
+import PageSpaceDeletionAudit from './space/deletionAudit';
 
 import PageMainSet from '../set';
 import PageMainRelation from '../relation';
@@ -65,19 +67,23 @@ const Components: any = {
 	exportIndex:		 PageExportIndex,
 	exportProtobuf:		 PageExportProtobuf,
 	exportMarkdown:		 PageExportMarkdown,
+	exportAnyBlockV2:	 PageExportAnyBlockV2,
 
 	spaceIndex:			 PageSpaceIndex,
 	spaceStorage:		 PageSpaceStorage,
 	spaceShare:			 PageSpaceShare,
 	spaceList:			 PageSpaceList,
 	spaceNotifications:	 PageSpaceNotifications,
+	spaceDeletionAudit:	 PageSpaceDeletionAudit,
 
 	set:				 PageMainSet,
 	relation:			 PageMainRelation,
 	archive: 			 PageMainArchive,
 };
 
-const SKIP_CONTAINER = [ 'set', 'relation', 'archive' ];
+// These render their own Header/Footer and full-width wrapper instead of sitting in
+// .settingsPageContainer's 640px column.
+const SKIP_CONTAINER = [ 'set', 'relation', 'archive', 'spaceDeletionAudit' ];
 
 const PageMainSettingsIndex = forwardRef<{}, I.PageComponent>((props, ref) => {
 

@@ -1,4 +1,6 @@
 import * as I from 'Interface';
+import { apiKeyCreateError } from 'Lib/apiKey';
+import { isValidLinkGrant } from 'Lib/linkApprovalGrant';
 
 export const InitialSetParameters = (platform: I.Platform, version: string, workDir: string, logLevel: string, doNotSendLogs: boolean, doNotSaveLogs: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('InitialSetParameters', {
@@ -17,6 +19,17 @@ export const ProcessCancel = (id: string, callBack?: (message: any) => void) => 
 
 export const LinkPreview = (url: string, callBack?: (message: any) => void) => {
 	dispatcher.request('LinkPreview', { url }, callBack);
+};
+
+// ---------------------- AI ---------------------- //
+
+/**
+ * Lists the models a provider serves. Doubles as config validation: a successful
+ * response proves the endpoint is reachable and the token works, which is why
+ * there is no separate "validate" command. config.model is ignored.
+ */
+export const AIListModels = (config: any, callBack?: (message: any) => void) => {
+	dispatcher.request('AIListModels', { config }, callBack);
 };
 
 // ---------------------- GALLERY ---------------------- //
@@ -134,7 +147,7 @@ export const SpaceUnsetOrder = (id: string, callBack?: (message: any) => void) =
 
 // ---------------------- ACCOUNT ---------------------- //
 
-export const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, callBack?: (message: any) => void) => {
+export const AccountCreate = (name: string, avatarPath: string, storePath: string, icon: number, mode: I.NetworkMode, networkConfigPath: string, preferYamux: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('AccountCreate', {
 		name,
 		avatarLocalPath: avatarPath,
@@ -142,7 +155,8 @@ export const AccountCreate = (name: string, avatarPath: string, storePath: strin
 		icon,
 		networkMode: mode as number,
 		networkCustomConfigFilePath: networkConfigPath,
-		jsonApiListenAddr: J.Url.api,
+		preferYamuxTransport: preferYamux,
+		jsonApiListenAddr: S.Auth.localApiAddr,
 		enableMembershipV2: true,
 	}, callBack);
 };
@@ -151,13 +165,14 @@ export const AccountRecover = (callBack?: (message: any) => void) => {
 	dispatcher.request('AccountRecover', {}, callBack);
 };
 
-export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, preferredSpaceId: string, callBack?: (message: any) => void) => {
+export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, networkConfigPath: string, preferYamux: boolean, preferredSpaceId: string, callBack?: (message: any) => void) => {
 	dispatcher.request('AccountSelect', {
 		id,
 		rootPath: path,
 		networkMode: mode as number,
 		networkCustomConfigFilePath: networkConfigPath,
-		jsonApiListenAddr: J.Url.api,
+		preferYamuxTransport: preferYamux,
+		jsonApiListenAddr: S.Auth.localApiAddr,
 		enableMembershipV2: true,
 		preferredSpaceId,
 	}, callBack);
@@ -165,6 +180,10 @@ export const AccountSelect = (id: string, path: string, mode: I.NetworkMode, net
 
 export const AccountPreloadRemainingSpaces = (callBack?: (message: any) => void) => {
 	dispatcher.request('AccountPreloadRemainingSpaces', {}, callBack);
+};
+
+export const AccountRecoveryState = (callBack?: (message: any) => void) => {
+	dispatcher.request('AccountRecoveryState', {}, callBack);
 };
 
 export const AccountMigrate = (id: string, path: string, callBack?: (message: any) => void) => {
@@ -202,6 +221,20 @@ export const AccountLocalLinkNewChallenge = (name: string, callBack?: (message: 
 	dispatcher.request('AccountLocalLinkNewChallenge', { appName: name }, callBack);
 };
 
+/**
+ * Answers a pending local-link pairing request. processPath and origin address the request and must
+ * be passed back exactly as they arrived in Event.Account.LinkApprovalRequest. On allow the response
+ * carries the freshly minted code, which middleware sends to this session only.
+ */
+export const AccountLocalLinkApproveChallenge = (processPath: string, origin: string, allow: boolean, grant: I.LinkAppGrant | undefined, callBack?: (message: any) => void) => {
+	dispatcher.request('AccountLocalLinkApproveChallenge', {
+		processPath,
+		origin,
+		allow,
+		grant: allow ? grant : undefined,
+	}, callBack);
+};
+
 export const AccountLocalLinkSolveChallenge = (id: string, answer: string, callBack?: (message: any) => void) => {
 	dispatcher.request('AccountLocalLinkSolveChallenge', {
 		challengeId: id,
@@ -209,14 +242,31 @@ export const AccountLocalLinkSolveChallenge = (id: string, answer: string, callB
 	}, callBack);
 };
 
+export const AccountChangeJsonApiAddr = (listenAddr: string, callBack?: (message: any) => void) => {
+	dispatcher.request('AccountChangeJsonApiAddr', { listenAddr }, callBack);
+};
+
 export const AccountLocalLinkListApps = (callBack?: (message: any) => void) => {
 	dispatcher.request('AccountLocalLinkListApps', {}, callBack);
 };
 
-export const AccountLocalLinkCreateApp = (app: any, callBack?: (message: any) => void) => {
+export const AccountLocalLinkCreateApp = (app: { name: string; expireAt?: number; grant: I.LinkAppGrant }, callBack?: (message: any) => void) => {
+	const error = apiKeyCreateError(app.name, app.grant, app.expireAt);
+	if (error) {
+		callBack?.({ error: { code: 2, description: translate(error) } });
+		return;
+	};
 	dispatcher.request('AccountLocalLinkCreateApp', {
-		app: Mapper.To.AppInfo(app),
+		app: Mapper.To.AppInfo({ ...app, scope: I.LocalApiScope.Json }),
 	}, callBack);
+};
+
+export const AccountLocalLinkUpdateApp = (appHash: string, grant: I.LinkAppGrant, callBack?: (message: any) => void) => {
+	if (!appHash || !isValidLinkGrant(grant)) {
+		callBack?.({ error: { code: 2, description: translate('apiKeyGrantRequired') } });
+		return;
+	};
+	dispatcher.request('AccountLocalLinkUpdateApp', { appHash, grant: { ...grant, spaceIds: [ ...grant.spaceIds ] } }, callBack);
 };
 
 export const AccountLocalLinkRevokeApp = (hash: string, callBack?: (message: any) => void) => {
@@ -1288,6 +1338,11 @@ export const ObjectImport = (spaceId: string, options: any, snapshots: any[], ex
 
 	};
 
+	// Optional LLM structure enrichment, only for types served by the v2 import engine
+	if (options.aiParams && U.Data.canImportAi(type)) {
+		params.aiParams = options.aiParams;
+	};
+
 	dispatcher.request('ObjectImport', {
 		spaceId,
 		snapshots: (snapshots || []).map(Mapper.To.Snapshot),
@@ -1371,6 +1426,19 @@ export const ObjectSearch = (spaceId: string, filters: I.Filter[], sorts: I.Sort
 
 	dispatcher.request('ObjectSearch', {
 		spaceId,
+		filters: filters.map(Mapper.To.Filter),
+		sorts: sorts.map(Mapper.To.Sort),
+		fullText,
+		offset,
+		limit,
+		keys,
+	}, callBack);
+};
+
+export const ObjectCrossSpaceSearch = (filters: I.Filter[], sorts: I.Sort[], keys: string[], fullText: string, offset: number, limit: number, callBack?: (message: any) => void) => {
+	keys = (keys || []).filter(it => it);
+
+	dispatcher.request('ObjectCrossSpaceSearch', {
 		filters: filters.map(Mapper.To.Filter),
 		sorts: sorts.map(Mapper.To.Sort),
 		fullText,
@@ -1568,6 +1636,23 @@ export const ObjectCleanupSuggestions = (spaceId: string, keys: string[], callBa
 	dispatcher.request('ObjectCleanupSuggestions', {
 		spaceId,
 		keys: (keys || []).filter(it => it),
+	}, callBack);
+};
+
+/**
+ * Lists what was removed from the space, newest first: objects deleted outright, and
+ * types/properties uninstalled. Branch on isUninstalled — only the latter is reversible,
+ * and only the latter carries a name.
+ * id, deletedBy, deletedDate and isUninstalled are always returned regardless of keys.
+ * Passing keys replaces the backend's default set rather than extending it.
+ * Creation-side keys are absent for objects deleted by older builds.
+ */
+export const ObjectDeletionAudit = (spaceId: string, keys: string[], offset: number, limit: number, callBack?: (message: any) => void) => {
+	dispatcher.request('ObjectDeletionAudit', {
+		spaceId,
+		keys: (keys || []).filter(it => it),
+		offset,
+		limit,
 	}, callBack);
 };
 
@@ -1770,11 +1855,12 @@ export const MembershipV2SubscribeToUpdates = (email: string, callBack?: (messag
 
 // ---------------------- SPACE ---------------------- //
 
-export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, callBack?: (message: any) => void) => {
+export const SpaceInviteGenerate = (spaceId: string, inviteType?: I.InviteType, permissions?: I.ParticipantPermissions, shareWithinSpace?: boolean, callBack?: (message: any) => void) => {
 	dispatcher.request('SpaceInviteGenerate', {
 		spaceId,
 		inviteType: inviteType as number || 0,
 		permissions: permissions as number || 0,
+		shareWithinSpace: Boolean(shareWithinSpace),
 	}, callBack);
 };
 
@@ -1977,7 +2063,7 @@ export const ChatGetMessagesByIds = (objectId: string, ids: string[], callBack?:
 	}, callBack);
 };
 
-export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, sorts: { key: I.SearchSortKey, type: I.SortType }[], callBack?: (message: any) => void) => {
+export const ChatSearch = (spaceId: string, chatId: string, fullText: string, offset: number, limit: number, sorts: { key: I.SearchSortKey, type: I.SortType }[], creators: string[], callBack?: (message: any) => void) => {
 	dispatcher.request('ChatSearch', {
 		spaceId,
 		chatId,
@@ -1985,6 +2071,7 @@ export const ChatSearch = (spaceId: string, chatId: string, fullText: string, of
 		offset,
 		limit,
 		sorts: sorts.map(Mapper.To.SearchSort),
+		creators: creators || [],
 	}, callBack);
 };
 

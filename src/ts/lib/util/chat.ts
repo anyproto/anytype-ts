@@ -202,7 +202,7 @@ class UtilChat {
 		return this.buildText(blocks, 'fenced');
 	};
 
-	/** Plain, fence-less text (+ paragraph marks) — blocks path, kept for later. */
+	/** Plain, fence-less text (+ paragraph marks) — backs the search-result preview of blocks-only (discussion) messages. */
 	blocksToText (blocks: I.ChatMessageBlock[]): { text: string; marks: I.Mark[] } {
 		return this.buildText(blocks, 'plain');
 	};
@@ -353,6 +353,41 @@ class UtilChat {
 	isInInlineCode (value: string, pos: number): boolean {
 		const before = String(value || '').substring(0, Math.max(0, Number(pos) || 0));
 		return ((before.match(/`/g) || []).length % 2) == 1;
+	};
+
+	/**
+	 * Builds sanitized HTML for a ChatSearch result: the highlight snippet with
+	 * `<span class="highlight">` around the matched ranges, falling back to the raw message text.
+	 * Discussion messages carry their text in blocks with an empty content.text -
+	 * rebuild the preview from the text blocks then.
+	 */
+	getSearchResultHtml (result: { highlight: string; highlightRanges: I.TextRange[]; message?: I.ChatMessage }): string {
+		const { highlight, highlightRanges } = result;
+
+		if (!highlight) {
+			const message = result.message;
+			const text = message?.content?.text || (message?.blocks?.length ? this.blocksToText(message.blocks).text : '');
+
+			return U.String.sanitize(text);
+		};
+
+		if (!highlightRanges || !highlightRanges.length) {
+			return U.String.sanitize(highlight);
+		};
+
+		const sorted = [ ...highlightRanges ].sort((a, b) => a.from - b.from);
+
+		let ret = '';
+		let last = 0;
+
+		for (const range of sorted) {
+			ret += U.String.sanitize(highlight.substring(last, range.from));
+			ret += `<span class="highlight">${U.String.sanitize(highlight.substring(range.from, range.to))}</span>`;
+			last = range.to;
+		};
+
+		ret += U.String.sanitize(highlight.substring(last));
+		return ret;
 	};
 
 };

@@ -3,7 +3,9 @@
 import * as Diff from 'diff';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import Download from 'Lib/download';
 import { focus } from 'Lib/focus';
+import { getExportResultStatus } from 'Lib/util/exportReport';
 
 class Action {
 
@@ -23,19 +25,12 @@ class Action {
 		};
 
 		const blocks = S.Block.getBlocks(rootId);
-		const object = S.Detail.get(rootId, rootId);
 
-		if (object.layout == I.ObjectLayout.Space) {
-			this.dbClearChat(object.chatId, J.Constant.blockId.chat);
-		};
-
+		// Chat message subscriptions are NOT torn down here: BlockChat owns its subscription
+		// lifecycle (refcounted retainSub/releaseSub + ChatUnsubscribe on unmount).
 		for (const block of blocks) {
 			if (block.isDataview()) {
 				this.dbClearBlock(rootId, block.id);
-			} else 
-			if (block.isChat()) {
-				this.dbClearChat(object.chatId, block.id);
-				this.dbClearChat(object.id, block.id);
 			};
 		};
 
@@ -91,22 +86,6 @@ class Action {
 		S.Detail.clear(subId);
 
 		U.Subscription.destroyList(groupIds.concat([ subId ]), true);
-	};
-
-	/**
-	 * Clears all data related to a chat block.
-	 * @param {string} chatId - The chat object ID.
-	 * @param {string} blockId - The block ID.
-	 */
-	dbClearChat (chatId: string, blockId: string) {	
-		if (!chatId || !blockId) {
-			return;
-		};
-
-		const subId = S.Record.getSubId(chatId, blockId);
-
-		C.ChatUnsubscribe(chatId, subId);
-		S.Chat.clear(subId);
 	};
 
 	/**
@@ -278,8 +257,13 @@ class Action {
 	};
 
 	/**
-	 * Opens a file by ID and route, downloading it if necessary.
-	 * @param {string} id - The file ID.
+	 * Fetches a file over the gateway and hands it to the system.
+	 *
+	 * What the system can view is opened from a temporary copy that keeps the
+	 * same path on every open, so opening the same file twice moves no bytes and
+	 * leaves no duplicate. Anything else is revealed in the file manager, and
+	 * lands in the download folder, where the user can find it again.
+	 * @param {any} object - The file object.
 	 * @param {string} route - The route context for analytics.
 	 */
 	openFile (object: any, route: string) {
@@ -289,14 +273,7 @@ class Action {
 
 		const ext = String(object.fileExt || '').toLowerCase();
 		const cb = () => {
-			S.Common.downloadStart(object.id);
-			C.FileDownload(object.id, U.Common.getElectron().downloadPath(), (message: any) => {
-				S.Common.downloadDone(object.id);
-				if (message.path) {
-					this.openPath(message.path);
-					analytics.event('OpenMedia', { route });
-				};
-			});
+			Download.open(object, route);
 		};
 		const isDangerous = !ext || [
 			'exe', 'bat', 'cmd', 'com', 'cpl', 'scr', 'msi', 'msp', 'pif', 'reg', 'vbs', 'vbe', 'ws', 'wsf', 'wsh', 'ps1', 'jar',
@@ -322,18 +299,17 @@ class Action {
 	 * Downloads a file by ID and route, optionally as an image.
 	 * @param {string} id - The file ID.
 	 * @param {string} route - The route context for analytics.
-	 * @param {boolean} isImage - Whether to treat the file as an image.
 	 */
-	downloadFile (id: string, route: string, isImage: boolean) {
-		this.downloadFiles([ { id, isImage } ], route);
+	downloadFile (id: string, route: string) {
+		this.downloadFiles([ { id } ], route);
 	};
 
 	/**
 	 * Downloads multiple files into a single chosen directory using one dialog.
-	 * @param {{ id: string, isImage: boolean }[]} files - The files to download.
+	 * @param {{ id: string }[]} files - The files to download.
 	 * @param {string} route - The route context for analytics.
 	 */
-	downloadFiles (files: { id: string, isImage: boolean }[], route: string) {
+	downloadFiles (files: { id: string }[], route: string) {
 		files = (files || []).filter(it => it.id && !S.Common.isDownloading(it.id));
 
 		if (!files.length) {
@@ -341,20 +317,7 @@ class Action {
 		};
 
 		this.openDirectoryDialog({ buttonLabel: translate('commonDownload') }, paths => {
-			files.forEach(file => {
-				const url = file.isImage ? S.Common.imageUrl(file.id, 0) : S.Common.fileUrl(file.id);
-
-				S.Common.downloadStart(file.id);
-
-				const promise = Renderer.send('download', url, { directory: paths[0] });
-				if (promise && promise.then) {
-					promise.then(() => S.Common.downloadDone(file.id));
-				} else {
-					S.Common.downloadDone(file.id);
-				};
-			});
-
-			analytics.event('DownloadMedia', { route });
+			Download.start(files, paths[0], route);
 		});
 	};
 
@@ -566,13 +529,14 @@ class Action {
 	};
 
 	/**
-	 * Imports objects into the current space from selected files.
+	 * Imports objects into the given space from selected files.
+	 * @param {string} spaceId - The space receiving the import.
 	 * @param {I.ImportType} type - The import type.
 	 * @param {string[]} extensions - Allowed file extensions.
 	 * @param {any} [options] - Additional import options.
 	 * @param {function} [callBack] - Optional callback after import.
 	 */
-	import (type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
+	import (spaceId: string, type: I.ImportType, extensions: string[], options?: any, callBack?: (message: any) => void) {
 		const fileOptions: any = { 
 			properties: [ 'openFile', 'multiSelections' ],
 			filters: [
@@ -592,10 +556,10 @@ class Action {
 				return;
 			};
 
-			analytics.event('ClickImportFile', { type });
+			analytics.event('ClickImportFile', { type, ...U.Data.getImportAiAnalytics(type) });
 			Preview.toastShow({ text: translate('toastImportStart') });
 
-			C.ObjectImport(S.Common.space, Object.assign(options || {}, { paths }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
+			C.ObjectImport(spaceId, Object.assign(options || {}, { paths, aiParams: U.Data.getImportAiParams() }), [], true, type, I.ImportMode.IgnoreErrors, false, false, false, false, (message: any) => {
 				if (!message.error.code) {
 					callBack?.(message);
 				};
@@ -619,11 +583,26 @@ class Action {
 			onSelectPath?.();
 
 			C.ObjectListExport(spaceId, paths[0], ids, type, zip, nested, files, archived, json, (message: any) => {
-				if (message.error.code) {
+				const status = getExportResultStatus(message.report, message.error.code);
+				if (status != 'Success') {
+					S.Popup.open('exportResult', {
+						data: {
+							report: message.report,
+							error: message.error,
+							path: message.path && !message.error.code ? paths[0] : '',
+							spaceId,
+							exportType: type,
+						},
+					});
+				};
+
+				if (message.error.code || [ 'Failed', 'Canceled' ].includes(status)) {
 					return;
 				};
 
-				this.openPath(paths[0]);
+				if (status == 'Success') {
+					this.openPath(paths[0]);
+				};
 				analytics.event('Export', { type, middleTime: message.middleTime, route });
 
 				callBack?.(message);
@@ -783,8 +762,9 @@ class Action {
 	 * Opens the space creation popup with the selected create type.
 	 * @param {I.SpaceCreateType} type - The selected create type (Personal, Group, Join).
 	 * @param {string} route - The route context for analytics.
+	 * @param {I.SpaceCreateOptions} [options] - Intent the space is created for, and a callback receiving its ID.
 	 */
-	createSpace (type: I.SpaceCreateType, route: string) {
+	createSpace (type: I.SpaceCreateType, route: string, options?: I.SpaceCreateOptions) {
 		if (type == I.SpaceCreateType.Group) {
 			const mySharedSpaces = U.Space.getMySharedSpacesList();
 			const { sharedSpacesLimit } = U.Space.getProfile();
@@ -805,8 +785,10 @@ class Action {
 			};
 		};
 
+		const { intent, onCreate } = options || {};
+
 		S.Popup.closeAll(null, () => {
-			S.Popup.open('spaceCreate', { data: { type, route } });
+			S.Popup.open('spaceCreate', { data: { type, route, intent, onCreate } });
 		});
 	};
 
@@ -1087,7 +1069,7 @@ class Action {
 					return;
 				};
 
-				C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Writer, (message) => {
+				C.SpaceInviteGenerate(spaceId, I.InviteType.WithApprove, I.ParticipantPermissions.Reader, false, (message) => {
 					if (message.error.code) {
 						failed.push({ spaceId, identities });
 						onProcessed();
@@ -1141,8 +1123,9 @@ class Action {
 	 * Opens a confirmation popup to revoke a space invite link.
 	 * @param {string} spaceId - The space ID.
 	 * @param {function} [callBack] - Optional callback after revocation.
+	 * @param {function} [onCancel] - Optional callback when the confirmation is dismissed.
 	 */
-	inviteRevoke (spaceId: string, callBack?: () => void) {
+	inviteRevoke (spaceId: string, callBack?: () => void, onCancel?: () => void) {
 		S.Popup.open('confirm', {
 			data: {
 				title: translate('popupConfirmRevokeLinkTitle'),
@@ -1150,12 +1133,15 @@ class Action {
 				textConfirm: translate('popupConfirmRevokeLinkConfirm'),
 				colorConfirm: 'red',
 				noCloseOnConfirm: true,
+				onCancel,
 				onConfirm: () => {
 					C.SpaceInviteRevoke(spaceId, (message: any) => {
 						if (message.error.code) {
 							S.Popup.updateData('confirm', { error: message.error.description });
 							return;
 						};
+
+						S.Common.inviteClear(spaceId);
 
 						Preview.toastShow({ text: translate('toastInviteRevoke') });
 						S.Popup.close('confirm');
@@ -1167,6 +1153,70 @@ class Action {
 		});
 
 		analytics.event('ScreenRevokeShareLink');
+	};
+
+	/**
+	 * Revokes the current invite and generates a new one of the same kind, held by the owner.
+	 *
+	 * This is the only way out of an invite that is shared within the space: its cid and key are
+	 * already in the workspace's change history, which every member has synced, so removing them
+	 * today takes nothing back. It costs the old link — everyone holding it loses access,
+	 * including the people the owner meant to invite.
+	 *
+	 * @param {string} spaceId - The space ID.
+	 * @param {function} [callBack] - Optional callback after the new invite is generated.
+	 */
+	inviteReset (spaceId: string, callBack?: () => void) {
+		const invite = S.Common.inviteGet(spaceId);
+
+		if (!invite) {
+			return;
+		};
+
+		const { inviteType, permissions } = invite;
+
+		S.Popup.open('confirm', {
+			data: {
+				iconParam: { name: 'popup/header/warning', color: 'red' },
+				title: translate('popupConfirmInviteResetTitle'),
+				text: translate('popupConfirmInviteResetText'),
+				textConfirm: translate('popupConfirmInviteResetConfirm'),
+				colorConfirm: 'red',
+				noCloseOnConfirm: true,
+				onConfirm: () => {
+					C.SpaceInviteRevoke(spaceId, (message: any) => {
+						if (message.error.code) {
+							S.Popup.updateData('confirm', { error: message.error.description });
+							return;
+						};
+
+						S.Common.inviteClear(spaceId);
+
+						C.SpaceInviteGenerate(spaceId, inviteType, permissions, false, (message: any) => {
+							if (message.error.code) {
+								S.Popup.updateData('confirm', { error: message.error.description });
+								return;
+							};
+
+							S.Common.inviteSet(spaceId, {
+								cid: message.inviteCid,
+								key: message.inviteKey,
+								inviteType: message.inviteType,
+								permissions: message.permissions,
+								heldByOwner: true,
+							});
+
+							Preview.toastShow({ text: translate('toastInviteGenerate') });
+							S.Popup.close('confirm');
+							analytics.event('ResetShareLink');
+							callBack?.();
+						});
+					});
+				},
+			},
+		});
+
+		analytics.event('ScreenResetShareLink');
 	};
 
 	/**
@@ -1398,6 +1448,76 @@ class Action {
 	openSpaceTab (spaceId: string, spaceType: I.SpaceType, analyticsRoute?: string) {
 		Renderer.send('openTab', { spaceId, spaceType }, { setActive: false });
 		analytics.event('AddTab', { route: analyticsRoute, spaceType });
+	};
+
+	/**
+	 * Resolves the localized message for an unsafe vault location, adapting to network mode.
+	 * @param {any} check - Result of U.Common.checkVaultPath.
+	 * @param {boolean} isLocalOnly - Whether the account/config is local-only.
+	 */
+	vaultLocationWarningText (check: any, isLocalOnly: boolean): string {
+		const provider = check.provider || translate('vaultLocationWarningGeneric');
+		const key = isLocalOnly ? 'vaultLocationWarningTextLocal' : 'vaultLocationWarningTextNetwork';
+
+		return U.String.sprintf(translate(key), provider);
+	};
+
+	/**
+	 * Opens the explanation popup for an unsafe vault location.
+	 * @param {any} [check] - Result of U.Common.checkVaultPath; if omitted, checks the current data path.
+	 * @param {any} [param] - { isLocalOnly?, route?, onConfirm?, onCancel? }.
+	 */
+	vaultLocationWarning (check?: any, param?: any) {
+		check = check || U.Common.checkVaultPath('');
+		if (!check || !check.unsafe) {
+			return;
+		};
+
+		param = param || {};
+
+		// Post-login the account network is authoritative; pre-login (no account) use the selected network mode.
+		// U.Data.isLocalNetwork() returns true when there is no account, so it can't be used alone.
+		const isLocalOnly = (undefined !== param.isLocalOnly) ? param.isLocalOnly :
+			(S.Auth.account ? U.Data.isLocalNetwork() : (S.Auth.networkConfig.mode == I.NetworkMode.Local));
+
+		analytics.event('ScreenVaultLocationWarning', { type: check.kind, route: param.route });
+
+		S.Popup.open('confirm', {
+			className: 'vaultLocationWarning',
+			data: {
+				iconParam: { name: 'popup/header/warning', color: isLocalOnly ? 'red' : 'orange' },
+				title: translate('vaultLocationWarningTitle'),
+				text: this.vaultLocationWarningText(check, isLocalOnly),
+				textConfirm: translate('commonOk'),
+				colorConfirm: 'blank',
+				canCancel: false,
+				onConfirm: param.onConfirm,
+				onCancel: param.onCancel,
+			},
+		});
+	};
+
+	/**
+	 * One-time-per-location startup check. Shows the popup once, remembers the acknowledged path.
+	 * Re-warns if the user later moves data to a different unsafe location.
+	 */
+	vaultLocationWarningOnStart () {
+		const check = U.Common.checkVaultPath('');
+		if (!check.unsafe) {
+			return;
+		};
+
+		const ack = () => Storage.set('vaultLocationWarned', check.path);
+
+		if (Storage.get('vaultLocationWarned') == check.path) {
+			return;
+		};
+
+		this.vaultLocationWarning(check, {
+			route: analytics.route.app,
+			onConfirm: ack,
+			onCancel: ack,
+		});
 	};
 
 };

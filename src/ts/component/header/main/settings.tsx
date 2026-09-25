@@ -1,11 +1,10 @@
-import React, { forwardRef, useEffect, useState, MouseEvent } from 'react';
+import React, { forwardRef, useEffect, MouseEvent } from 'react';
 import { Icon, Label } from 'Component';
 import * as I from 'Interface';
 
 const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 
 	const { isPopup } = props;
-	const [ invite, setInvite ] = useState({ cid: '', key: '' });
 	const { id = 'account' } = keyboard.getMatch(isPopup).params;
 	const profile = U.Space.getProfile();
 	const participant = U.Space.getParticipant() || profile;
@@ -15,14 +14,10 @@ const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	const showTransfer = (id == 'spaceShare') && U.Space.canTransferOwnership();
 
 	const init = () => {
-		if (space.isShared && (!invite.cid || !invite.key)) {
-			U.Space.getInvite(S.Common.space, (cid: string, key: string) => {
-				if (cid && key) {
-					setInvite({ cid, key });
-				};
-			});
+		if (space.isShared) {
+			U.Space.getInvite(S.Common.space);
 		} else {
-			setInvite({ cid: '', key: '' });
+			S.Common.inviteClear(S.Common.space);
 		};
 	};
 
@@ -98,7 +93,7 @@ const HeaderMainSettings = forwardRef<{}, I.HeaderComponent>((props, ref) => {
 	};
 
 	const renderMore = () => {
-		const hasLink = invite.cid && invite.key;
+		const hasLink = U.Space.hasVisibleInvite();
 		const spaceShareShowButton = hasLink || (canModerate && space.isShared);
 
 		if (id == 'account') {

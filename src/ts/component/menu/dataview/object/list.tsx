@@ -196,6 +196,15 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const relation = data.relation.get();
 		const addParam = data.addParam || {};
 
+		// Read the live filter before the cell clears it: this handler can be
+		// invoked through the imperative menu ref (Enter key), whose closure may
+		// have captured the mount-time empty filter — the typed name would be
+		// lost and the object created as Unknown. Prefer the cell's live entry
+		// text: data.filter lags behind it by the cell's keyup debounce, so a
+		// fast type → arrow → Enter sequence would otherwise create the object
+		// with a truncated or stale name (JS-9762)
+		const name = String(cellRef?.getEntryValue?.() || data.filter || filter || '');
+
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -230,7 +239,7 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (item.id == 'add') {
-			const param = Relation.getParamForNewObject(filter, relation);
+			const param = Relation.getParamForNewObject(name, relation);
 			const details = Object.assign(param.details, addParam.details || {});
 
 			U.Object.create('', '', details, I.BlockPosition.Bottom, '', param.flags, analytics.route.relation, (message: any) => {
@@ -336,6 +345,8 @@ const MenuDataviewObjectList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		);
 	};
 
+	// NOTE: the empty deps freeze these closures at mount time — onClick reads
+	// the live filter via data.filter for this reason (JS-9762)
 	useImperativeHandle(ref, () => ({
 		rebind,
 		unbind,

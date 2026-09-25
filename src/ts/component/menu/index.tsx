@@ -78,6 +78,7 @@ import MenuDataviewNew from './dataview/new';
 
 import MenuSyncStatus from './syncStatus';
 import MenuSyncStatusInfo from './syncStatus/info';
+import MenuRecoveryPeers from './recoveryPeers';
 
 import MenuIdentity from './identity';
 import MenuOneToOne from './oneToOne';
@@ -173,6 +174,7 @@ const Components: any = {
 
 	syncStatus:				 MenuSyncStatus,
 	syncStatusInfo:			 MenuSyncStatusInfo,
+	recoveryPeers:			 MenuRecoveryPeers,
 
 	identity:				 MenuIdentity,
 	oneToOne:				 MenuOneToOne,
@@ -214,6 +216,11 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	const isUnmountedRef = useRef(false);
 	const framePosition = useRef(0);
 
+	// Stable per-instance handle registered in S.Menu.refs so a closing submenu
+	// can rebind the LIVE instance of its parent (see rebindPrevious) instead of
+	// whatever closure was captured when the submenu opened
+	const liveRef = useRef({ rebind: () => childRef.current?.rebind?.() });
+
 	const getContext = () => ({
 		getChildRef: () => childRef.current,
 		close,
@@ -225,6 +232,8 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	useImperativeHandle(ref, getContext);
 
 	useEffect(() => {
+		S.Menu.setRef(id, liveRef.current);
+
 		polyRef.current = U.Dom.get('menu-polygon');
 		setClass();
 		position();
@@ -254,6 +263,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 
 			isUnmountedRef.current = true;
 
+			S.Menu.deleteRef(id, liveRef.current);
 			unbind();
 
 			if (el) {
@@ -294,14 +304,21 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 	const rebindPrevious = () => {
 		childRef.current?.unbind?.();
 
-		// Without parentId we can't verify that the menu owning param.rebind
-		// is still mounted — calling rebind() on an unmounted owner re-adds
-		// its window keydown listener with nobody left to remove it, which
-		// silently leaks an `e.preventDefault()` on space across the whole tab.
+		// param.rebind/data.rebind only signal INTENT to restore the parent's
+		// keydown handling — the closures themselves are never called. They were
+		// captured when this submenu opened, so after the parent is closed and
+		// reopened under the same id they point at a DEAD instance; calling one
+		// re-adds a window keydown listener whose owner has already cleaned up,
+		// silently leaking an `e.preventDefault()` on its keys (e.g. space)
+		// across the whole tab until restart. Resolve the live instance through
+		// the S.Menu ref registry instead — a parent that hasn't mounted yet
+		// binds itself on mount anyway.
+		if (!param.rebind && !data.rebind) {
+			return;
+		};
+
 		if (!parentId) {
-			if (param.rebind) {
-				console.error(`[Menu].rebindPrevious: param.rebind passed without parentId in ${id}, skipping to avoid keydown leak`);
-			};
+			console.error(`[Menu].rebindPrevious: rebind passed without parentId in ${id}, skipping to avoid keydown leak`);
 			return;
 		};
 
@@ -309,13 +326,7 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 			return;
 		};
 
-		if (param.rebind) {
-			param.rebind();
-		} else
-		if (data.rebind) {
-			data.rebind();
-			console.error(`[Menu].rebindPrevious uses data.rebind in ${id}`);
-		};
+		S.Menu.getRef(parentId)?.rebind();
 	};
 
 	const setClass = () => {
@@ -470,17 +481,32 @@ const Menu = forwardRef<RefProps, I.Menu>((props, ref) => {
 				oy = Number(rect.y) || 0;
 			} else {
 				const el = getElement();
-				if (!el) {
-					console.log('[Menu].position', id, 'element not found', element);
-					return;
+				const elRect = el ? el.getBoundingClientRect() : null;
+
+				// An absent or zero-area anchor - a node which is missing, detached, or hidden with
+				// display: none - carries no geometry, so the menu falls back to the centre of the
+				// window instead of painting at the window origin (JS-9856)
+				const anchor = U.Dom.getAnchorRect(el ? {
+					x: elRect.left,
+					y: elRect.top,
+					width: el.offsetWidth,
+					height: el.offsetHeight,
+				} : null, winSize);
+
+				if (anchor.isFallback) {
+					console.log('[Menu].position', id, 'element not found or not visible', element);
+
+					// A menu which was already placed against a live anchor keeps its position
+					// instead of jumping, only the initial placement uses the fallback
+					if (menuEl.style.left) {
+						return;
+					};
 				};
 
-				const elRect = el.getBoundingClientRect();
-
-				ew = el.offsetWidth;
-				eh = el.offsetHeight;
-				ox = elRect.left + window.scrollX;
-				oy = elRect.top + window.scrollY;
+				ew = anchor.width;
+				eh = anchor.height;
+				ox = anchor.x + window.scrollX;
+				oy = anchor.y + window.scrollY;
 			};
 
 			let x = ox;

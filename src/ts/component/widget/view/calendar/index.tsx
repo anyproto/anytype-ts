@@ -199,26 +199,29 @@ const WidgetViewCalendar = forwardRef<WidgetViewCalendarRefProps, I.WidgetViewCo
 	const months = U.Date.getMonths();
 	const years = U.Date.getYears(0, 3000);
 	const dotMap = getDotMap();
+	const menuParam = { className: 'fixed', classNameWrap: 'fromSidebar' };
 
 	return (
 		<div className="body">
 			<div id="dateSelect" className="dateSelect">
 				<div className="side left">
-					<Select 
+					<Select
 						ref={monthRef}
-						id={`widget-${block.id}-calendar-month`} 
-						value={m} 
-						options={months} 
-						className="month" 
-						onChange={m => setValue(U.Date.timestamp(y, m, 1))} 
+						id={`widget-${block.id}-calendar-month`}
+						value={m}
+						options={months}
+						className="month"
+						menuParam={menuParam}
+						onChange={m => setValue(U.Date.timestamp(y, m, 1))}
 					/>
-					<Select 
+					<Select
 						ref={yearRef}
-						id={`widget-${block.id}-calendar-year`} 
-						value={y} 
-						options={years} 
-						className="year" 
-						onChange={y => setValue(U.Date.timestamp(y, m, 1))} 
+						id={`widget-${block.id}-calendar-year`}
+						value={y}
+						options={years}
+						className="year"
+						menuParam={menuParam}
+						onChange={y => setValue(U.Date.timestamp(y, m, 1))}
 					/>
 				</div>
 

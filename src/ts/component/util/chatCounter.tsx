@@ -48,6 +48,12 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 						continue;
 					};
 
+					// The actively read chat is excluded, same as in the store aggregates —
+					// its unread is being consumed on screen (see S.Chat.setActiveReadChat).
+					if (S.Chat.isActiveReadChat(spaceId, chatId)) {
+						continue;
+					};
+
 					const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
 
 					if (state.mentionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
@@ -68,7 +74,11 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 			};
 
 			if (discussionMap) {
-				for (const [ , parentId ] of discussionMap) {
+				for (const [ discussionId, parentId ] of discussionMap) {
+					if (S.Chat.isActiveReadChat(spaceId, discussionId)) {
+						continue;
+					};
+
 					const parent = S.Chat.getDiscussionParentDetail(spaceId, parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
 					if (parent._empty_ || parent.isArchived) {
 						continue;

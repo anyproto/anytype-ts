@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/browser';
 import object from './object';
+import aiProvider from './aiProvider';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
@@ -360,6 +361,7 @@ class UtilData {
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
 				this.checkCleanupSuggestions();
+				U.Space.checkInviteSecurity(space);
 
 				this.initPin(() => {
 					if (S.Common.pin && !keyboard.isPinChecked) {
@@ -446,7 +448,9 @@ class UtilData {
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
 				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
 
-				S.Chat.setState(chatSubId, state);
+				if (state) {
+					S.Chat.setState(chatSubId, state);
+				};
 
 				if (message) {
 					message.chatId = chatId;
@@ -476,6 +480,37 @@ class UtilData {
 	 */
 	onAuthWithoutSpace(param?: Partial<I.RouteParam>) {
 		U.Subscription.createGlobal(() => U.Space.openFirstSpaceOrVoid(null, param));
+	};
+
+	/**
+	 * Minimal boot for the quick search panel window. No space is opened (the panel
+	 * renders no space UI and the global search RPC is cross-space) and none of the
+	 * heavy side loads run - only the global subscriptions (profile, spaceviews and the
+	 * cross-space chats the Messages scope reads), plus the pin gate.
+	 * @param {string} route - The quick search route to open after boot.
+	 * @param {Partial<I.RouteParam>} [param] - Optional route parameters.
+	 */
+	onAuthQuickSearch(route: string, param?: Partial<I.RouteParam>) {
+		let pending = 2;
+
+		const done = () => {
+			if (--pending) {
+				return;
+			};
+
+			if (S.Common.pin && !keyboard.isPinChecked) {
+				// S.Common.redirect already points at the quick search route - the
+				// pin screen returns here after unlock
+				U.Router.go('/auth/pin-check', param || {});
+			} else {
+				U.Router.go(route, param || {});
+			};
+		};
+
+		// In parallel: the lite subscriptions feed the first row paint (Channel captions,
+		// the Messages chip and its chats), the pin gate decides where to route
+		U.Subscription.createGlobal(done, true);
+		this.initPin(done);
 	};
 
 	/**
@@ -552,6 +587,10 @@ class UtilData {
 
 		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
+			// Still invoke the callback: callers (e.g. block/text pending-save
+			// accounting, JS-9285) rely on every save eventually completing —
+			// silently dropping it would leak their in-flight counters
+			callBack?.({ error: { code: 1, description: 'Block not found' } });
 			return;
 		};
 
@@ -1147,7 +1186,7 @@ class UtilData {
 		onError = onError || (() => { });
 
 		const { networkConfig } = S.Auth;
-		const { mode, path } = networkConfig;
+		const { mode, path, preferYamux } = networkConfig;
 		const { dataPath } = S.Common;
 
 		let phrase = '';
@@ -1169,7 +1208,7 @@ class UtilData {
 						return;
 					};
 
-					C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.count.icon), mode, path, (message) => {
+					C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.count.icon), mode, path, preferYamux, (message) => {
 						if (message.error.code) {
 							onError(message.error.description);
 							return;
@@ -1584,6 +1623,86 @@ class UtilData {
 
 	flattenIds (node: TreeNode): string[] {
 		return [ node.id, ...node.children.flatMap(c => this.flattenIds(c)) ];
+	};
+
+	/**
+	 * Returns whether the import type is eligible for AI structure enrichment (served by the v2 import engine).
+	 */
+	canImportAi (type: I.ImportType): boolean {
+		return [ I.ImportType.Notion, I.ImportType.Markdown, I.ImportType.Obsidian ].includes(type);
+	};
+
+	/**
+	 * Whether this build embeds the "Provided by Anytype" AI proxy (endpoint and model injected at build time).
+	 * The typeof guard covers environments without the build-time defines (unit tests).
+	 */
+	isImportAiAnytypeAvailable (): boolean {
+		return ('undefined' != typeof IMPORT_AI_ANYTYPE_ENDPOINT) && Boolean(IMPORT_AI_ANYTYPE_ENDPOINT && IMPORT_AI_ANYTYPE_MODEL);
+	};
+
+	/**
+	 * Returns persisted AI import settings with defaults applied.
+	 */
+	getImportAiSettings (): I.ImportAiSettings {
+		return aiProvider.applyDefaults(Storage.get('importAi'), this.isImportAiAnytypeAvailable());
+	};
+
+	setImportAiSettings (settings: Partial<I.ImportAiSettings>): void {
+		Storage.set('importAi', Object.assign(this.getImportAiSettings(), settings));
+	};
+
+	/**
+	 * Builds the wire-format aiParams for ObjectImport, or null when the feature is off
+	 * or the config is incomplete. Never returns a half-filled config: a present-but-broken
+	 * config produces a visible llmPlanFailed warning middleware-side.
+	 */
+	getImportAiParams (): any {
+		const settings = this.getImportAiSettings();
+
+		if (!settings.enabled) {
+			return null;
+		};
+
+		if (settings.providerId == 'anytype') {
+			if (!this.isImportAiAnytypeAvailable()) {
+				return null;
+			};
+
+			return {
+				config: {
+					provider: I.AiProvider.OpenAi,
+					endpoint: IMPORT_AI_ANYTYPE_ENDPOINT,
+					model: IMPORT_AI_ANYTYPE_MODEL,
+					// OPENAI provider requires a non-empty token middleware-side; the proxy may not check it
+					token: IMPORT_AI_ANYTYPE_TOKEN || 'anytype',
+					temperature: 0,
+				},
+				includeContentSamples: settings.includeContentSamples,
+			};
+		};
+
+		const config = aiProvider.resolveConfig(settings);
+
+		if (!config) {
+			return null;
+		};
+
+		return {
+			config,
+			includeContentSamples: settings.includeContentSamples,
+		};
+	};
+
+	/**
+	 * Analytics dimensions for the AI import feature; no endpoint/model values (potentially identifying).
+	 */
+	getImportAiAnalytics (type: I.ImportType): { aiEnabled: boolean; aiProvider: string } {
+		const enabled = this.canImportAi(type) && !!this.getImportAiParams();
+
+		return {
+			aiEnabled: enabled,
+			aiProvider: enabled ? (this.getImportAiSettings().providerId == 'anytype' ? 'anytype' : 'byok') : '',
+		};
 	};
 
 };

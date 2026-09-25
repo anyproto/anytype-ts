@@ -1,9 +1,13 @@
 import { observable, action, makeObservable, set, autorun } from 'mobx';
 import * as I from 'Interface';
 import * as M from 'Model';
-import { evictedCount, shouldSuppressLiveAdd } from 'Lib/util/chatWindow';
+import { evictedCount, shouldSuppressLiveAdd, mergeWindowSnapshot } from 'Lib/util/chatWindow';
 
 const MAX_MESSAGES = 500;
+// How long a journaled message id (deleted, or touched by a content-bearing event) is
+// remembered so a stale window snapshot applied after async dependency loading cannot
+// resurrect a deleted message or revert a fresher edit (see setFromSnapshot).
+const JOURNAL_TTL = 60000;
 
 class ChatStore {
 
@@ -12,10 +16,14 @@ class ChatStore {
 	public stateMap: Map<string, Map<string, I.ChatStoreState>> = observable.map(new Map());
 	public attachmentsMap: Map<string, any[]> = observable(new Map());
 	public discussionParentMap: Map<string, Map<string, string>> = observable.map(new Map());
+	private activeReadChats: Map<string, { spaceId: string; chatId: string }> = observable.map(new Map());
 	private badgeValue = '';
 	private atChatStartMap: Map<string, boolean> = new Map();
 	private atChatEndMap: Map<string, boolean> = new Map();
 	private messageByIdMap: Map<string, Map<string, any>> = new Map();
+	private deletedMap: Map<string, Map<string, number>> = new Map();
+	private touchedMap: Map<string, Map<string, number>> = new Map();
+	private subRefs: Map<string, number> = new Map();
 
 	constructor () {
 		makeObservable(this, {
@@ -24,6 +32,8 @@ class ChatStore {
 			delete: action,
 			setReply: action,
 			setState: action,
+			setActiveReadChat: action,
+			clearActiveReadChat: action,
 			setAttachments: action,
 			discussionParentMapSet: action,
 			discussionParentMapDelete: action,
@@ -111,6 +121,12 @@ class ChatStore {
 	 * @param {I.ChatMessage} param - The chat message to add.
 	 */
 	add (subId: string, idx: number, param: I.ChatMessage): void {
+		// First message for a subId: set() creates the observable list in the map.
+		if (!this.messageMap.has(subId)) {
+			this.set(subId, [ param ]);
+			return;
+		};
+
 		const list = this.getList(subId);
 		const item = this.getMessageById(subId, param.id);
 
@@ -130,18 +146,32 @@ class ChatStore {
 			};
 		};
 
-		list.splice(idx, 0, param);
+		// Splice in place instead of set(): set() re-wraps the WHOLE window in M.ChatMessage
+		// (makeObservable per message), which turns reconnect catch-up bursts — one add event
+		// per message at up to MAX_MESSAGES window size — into main-thread jank. Mirrors
+		// prepend/append, which also mutate in place.
+		const added = new M.ChatMessage(param);
+
+		list.splice(idx, 0, added);
+
+		// Patch the id index incrementally — a full rebuild is O(window) per add event,
+		// so bursts would pay O(n²) and a discarded Map per event.
+		let index = this.messageByIdMap.get(subId);
+		if (index) {
+			index.set(added.id, added);
+		} else {
+			this.rebuildIndex(subId);
+			index = this.messageByIdMap.get(subId);
+		};
 
 		// Tail insert behaves like append: trim the oldest head if over the cap.
 		if (isTail) {
 			const evicted = evictedCount(list.length, MAX_MESSAGES);
 			if (evicted) {
-				list.splice(0, evicted);
+				list.splice(0, evicted).forEach(it => index.delete(it.id));
 				this.setAtChatStart(subId, false);
 			};
 		};
-
-		this.set(subId, list);
 	};
 
 	/**
@@ -158,12 +188,101 @@ class ChatStore {
 	};
 
 	/**
-	 * Deletes a chat message by ID.
+	 * Deletes a chat message by ID. The id is journaled so a window snapshot fetched
+	 * before the delete cannot resurrect the message (see setFromSnapshot).
 	 * @param {string} subId - The subscription ID.
 	 * @param {string} id - The chat message ID.
 	 */
 	delete (subId: string, id: string) {
+		this.journalAdd(this.deletedMap, subId, id);
 		this.set(subId, this.getList(subId).filter(it => it.id != id));
+	};
+
+	/**
+	 * Journals a content-bearing event update (edit / reactions / pin) for a message, so a
+	 * stale window snapshot applied after async dependency loading keeps the fresher
+	 * event-updated instance instead of reverting it (see setFromSnapshot). Read/sync
+	 * status updates are NOT journaled — those flags merge monotonically on their own.
+	 * @param {string} subId - The subscription ID.
+	 * @param {string} id - The chat message ID.
+	 */
+	markTouched (subId: string, id: string): void {
+		if (subId && id) {
+			this.journalAdd(this.touchedMap, subId, id);
+		};
+	};
+
+	/**
+	 * Records an id into a per-subId journal with the current timestamp.
+	 * @private
+	 * @param {Map<string, Map<string, number>>} map - The journal map (deletedMap or touchedMap).
+	 * @param {string} subId - The subscription ID.
+	 * @param {string} id - The chat message ID.
+	 */
+	private journalAdd (map: Map<string, Map<string, number>>, subId: string, id: string): void {
+		const journal = map.get(subId) || new Map();
+		const now = Date.now();
+
+		journal.set(id, now);
+
+		// Journals of subIds that never snapshot-merge (previews, space, comments) have no
+		// other prune point — drop expired entries once the journal outgrows a burst-sized
+		// batch, so they stay bounded by the event rate within one TTL.
+		if (journal.size > 128) {
+			for (const [ key, ts ] of journal) {
+				if (now - ts > JOURNAL_TTL) {
+					journal.delete(key);
+				};
+			};
+		};
+
+		map.set(subId, journal);
+	};
+
+	/**
+	 * Ids journaled within JOURNAL_TTL for a subId; prunes expired entries in place.
+	 * @private
+	 * @param {Map<string, Map<string, number>>} map - The journal map (deletedMap or touchedMap).
+	 * @param {string} subId - The subscription ID.
+	 * @returns {Set<string>} The ids still within TTL.
+	 */
+	private getRecentJournalIds (map: Map<string, Map<string, number>>, subId: string): Set<string> {
+		const journal = map.get(subId);
+		const ret = new Set<string>();
+
+		if (!journal) {
+			return ret;
+		};
+
+		const now = Date.now();
+
+		for (const [ id, ts ] of journal) {
+			if (now - ts > JOURNAL_TTL) {
+				journal.delete(id);
+			} else {
+				ret.add(id);
+			};
+		};
+
+		return ret;
+	};
+
+	/**
+	 * Applies a window snapshot fetched from the backend. The snapshot is stale relative to
+	 * events processed while it was in flight (dependency loading adds round-trips before it
+	 * can be applied) — merge instead of overwrite, so live adds, monotonic read/sync flags,
+	 * deletes and content-bearing updates (edits / reactions / pins) seen in the meantime
+	 * survive.
+	 * @param {string} subId - The subscription ID.
+	 * @param {I.ChatMessage[]} list - The snapshot messages, ascending by orderId.
+	 * @param {boolean} keepTrailing - Keep current messages newer than the snapshot tail
+	 * (only when the snapshot represents the chat tail).
+	 */
+	setFromSnapshot (subId: string, list: I.ChatMessage[], keepTrailing: boolean): void {
+		const deleted = this.getRecentJournalIds(this.deletedMap, subId);
+		const touched = this.getRecentJournalIds(this.touchedMap, subId);
+
+		this.set(subId, mergeWindowSnapshot(this.getList(subId), list, deleted, touched, keepTrailing));
 	};
 
 	/**
@@ -303,9 +422,14 @@ class ChatStore {
 
 		if (current) {
 			const { messages, mentions, reactionOrderId, lastStateId, order } = state;
+			const incoming = Number(order) || 0;
+			const existing = Number(current.order) || 0;
 
-			// Ignore outdated state
-			if (current.order && order && (order < current.order)) {
+			// Per proto, a state applies only if its order is GREATER than the stored one.
+			// A state without an order (e.g. a response snapshot mapped from a missing
+			// chatState) must never clobber an ordered state — that would zero the counters
+			// AND reset current.order, disabling this guard for all future updates.
+			if (existing && (incoming <= existing)) {
 				return;
 			};
 
@@ -349,6 +473,33 @@ class ChatStore {
 	};
 
 	/**
+	 * Reference-counts an active backend message subscription for a subId. Several
+	 * components can render the same chat (page, popup); only the last holder may
+	 * unsubscribe on teardown.
+	 * @param {string} subId - The subscription ID.
+	 */
+	retainSub (subId: string): void {
+		this.subRefs.set(subId, (this.subRefs.get(subId) || 0) + 1);
+	};
+
+	/**
+	 * Releases one subscription reference for a subId.
+	 * @param {string} subId - The subscription ID.
+	 * @returns {number} The remaining reference count — unsubscribe on 0.
+	 */
+	releaseSub (subId: string): number {
+		const n = Math.max(0, (this.subRefs.get(subId) || 0) - 1);
+
+		if (n) {
+			this.subRefs.set(subId, n);
+		} else {
+			this.subRefs.delete(subId);
+		};
+
+		return n;
+	};
+
+	/**
 	 * Clears all chat data for a subId.
 	 * @param {string} subId - The subscription ID.
 	 */
@@ -359,6 +510,8 @@ class ChatStore {
 		this.atChatStartMap.delete(subId);
 		this.atChatEndMap.delete(subId);
 		this.messageByIdMap.delete(subId);
+		this.deletedMap.delete(subId);
+		this.touchedMap.delete(subId);
 	};
 
 	/**
@@ -409,6 +562,9 @@ class ChatStore {
 		this.atChatStartMap.clear();
 		this.atChatEndMap.clear();
 		this.messageByIdMap.clear();
+		this.deletedMap.clear();
+		this.touchedMap.clear();
+		this.subRefs.clear();
 	};
 
 	/**
@@ -428,7 +584,7 @@ class ChatStore {
 	 */
 	getMessageById (subId: string, id: string): I.ChatMessage {
 		// Read the observable list FIRST so observer callers (Message rows) keep a MobX dependency
-		// on the message map key. set()/add()/delete() replace the array with freshly-wrapped
+		// on the message map key. set()/delete() replace the array with freshly-wrapped
 		// M.ChatMessage instances; without this read a memoized observer row bound to a now-detached
 		// instance would stop reflecting reactions/edits/read-status/grouping. The map is the O(1)
 		// accelerator for the actual lookup.
@@ -454,6 +610,66 @@ class ChatStore {
 	 */
 	getReply (subId: string, id: string): I.ChatMessage {
 		return this.replyMap.get(subId)?.get(id);
+	};
+
+	/**
+	 * Marks a chat as actively read by the given claimant: shown in a focused window and
+	 * anchored to the live tail, so incoming messages are read in place. Counter aggregates
+	 * (vault, widgets, app badge) exclude this chat via isActiveReadChat — otherwise every
+	 * incoming message would blink the unread badge for the duration of the read round-trip.
+	 * Claims are keyed per claimant (one token per chat view instance), because several
+	 * views can be reading in parallel — e.g. a chat popup stacked over a chat page: both
+	 * keep issuing read receipts, so both pairs stay excluded, and closing one view never
+	 * drops the other view's claim.
+	 * @param {string} token - The claimant token (stable per view instance).
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} chatId - The chat ID.
+	 */
+	setActiveReadChat (token: string, spaceId: string, chatId: string): void {
+		if (!token || !spaceId || !chatId) {
+			return;
+		};
+
+		const current = this.activeReadChats.get(token);
+		if (current && (current.spaceId == spaceId) && (current.chatId == chatId)) {
+			return;
+		};
+
+		this.activeReadChats.set(token, { spaceId, chatId });
+	};
+
+	/**
+	 * Releases the claimant's active-read claim. Other claimants' claims (e.g. the same
+	 * chat open in another view) are untouched.
+	 * @param {string} token - The claimant token.
+	 */
+	clearActiveReadChat (token: string): void {
+		this.activeReadChats.delete(token);
+	};
+
+	/**
+	 * Whether the chat is being actively read by any claimant (see setActiveReadChat),
+	 * meaning its unread counters are excluded from aggregates and badges. Counters are
+	 * server-authoritative, so the exclusion is presentational only — the underlying state
+	 * stays intact and resurfaces the moment the last claim is released (scroll up, blur,
+	 * close). Gated on isActiveTab (observable): claims left by chats in a deactivated tab
+	 * lift reactively, since a hidden tab's rAF-driven read flow stalls.
+	 * @param {string} spaceId - The space ID.
+	 * @param {string} chatId - The chat ID.
+	 * @returns {boolean} Whether the chat is actively read.
+	 */
+	isActiveReadChat (spaceId: string, chatId: string): boolean {
+		if (!chatId || !S.Common.isActiveTab) {
+			return false;
+		};
+
+		for (const claim of this.activeReadChats.values()) {
+			if ((claim.spaceId == spaceId) && (claim.chatId == chatId)) {
+				return true;
+			};
+		};
+
+		return false;
 	};
 
 	/**
@@ -499,6 +715,12 @@ class ChatStore {
 					continue;
 				};
 
+				// The actively read chat contributes nothing: its messages are being read
+				// on screen, so counting them would only blink the badge (see setActiveReadChat).
+				if (this.isActiveReadChat(spaceId, chatId)) {
+					continue;
+				};
+
 				const chatMode = U.Object.getChatNotificationMode(spaceview, chatId);
 
 				if (state.mentionCounter && (ignoreMute || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
@@ -516,7 +738,11 @@ class ChatStore {
 		};
 
 		if (discussionMap) {
-			for (const [ , parentId ] of discussionMap) {
+			for (const [ discussionId, parentId ] of discussionMap) {
+				if (this.isActiveReadChat(spaceId, discussionId)) {
+					continue;
+				};
+
 				const parent = this.getDiscussionParentDetail(spaceId, parentId, [ 'unreadMessageCount', 'unreadMentionCount', 'isArchived' ]);
 				if (parent._empty_ || parent.isArchived) {
 					continue;
@@ -580,6 +806,12 @@ class ChatStore {
 		const ret = { mentionCounter: 0, messageCounter: 0, reactionCounter: 0 };
 
 		if (!spaceId || !chatId) {
+			return ret;
+		};
+
+		// The actively read chat reports zero: its unread state is being consumed on
+		// screen and would only blink until the server confirms the read (see setActiveReadChat).
+		if (this.isActiveReadChat(spaceId, chatId)) {
 			return ret;
 		};
 

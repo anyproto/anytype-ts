@@ -20,6 +20,7 @@ Root of the frontend TypeScript/React codebase for Anytype desktop.
 
 - `entry.tsx` — Electron app bootstrap (renders `<App />` inside `<ErrorBoundary>`)
 - `entry.web.tsx` — Web/browser bootstrap (sets up Electron mock, server config, then dynamic-imports App)
+- `entry-linkApproval.tsx` — Local-link pairing approval IPC host; renders `component/util/linkApproval.tsx` with a searchable space picker, an explicit current-and-future-spaces option, and read/edit access
 - `app.tsx` — Main React application component
 
 ## Type Declarations

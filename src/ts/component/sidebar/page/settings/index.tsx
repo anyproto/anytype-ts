@@ -2,6 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
+import { apiKeyIsNew, apiKeyMarkSeen } from 'Lib/apiKey';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
@@ -24,6 +25,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 	const isSpace = page == 'settingsSpace';
 	const spaceview = U.Space.getSpaceview();
 	const canWrite = U.Space.canMyParticipantWrite();
+	const canSeeDeletionAudit = U.Space.canMyParticipantSeeDeletionAudit();
 	const withMembership = isOnline && U.Data.isAnytypeNetwork();
 	const listRef = useRef(null);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
@@ -42,7 +44,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 		const map = U.Menu.settingsSectionsMap();
 		const { notSyncedCounter } = S.Auth.getSyncStatus();
 		const importExport = [
-			{ id: 'exportIndex', iconParam: { name: 'menu/action/download' }, subPages: [ 'exportProtobuf', 'exportMarkdown' ] },
+			{ id: 'exportIndex', iconParam: { name: 'menu/action/download' }, subPages: [ 'exportProtobuf', 'exportMarkdown', 'exportAnyBlockV2' ] },
 		];
 
 		if (canWrite) {
@@ -65,6 +67,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 					spaceview.isOneToOne ? null : { id: 'spaceNotifications', iconParam: { name: 'settings/pushOn' } },
 					{ id: 'spaceStorage', iconParam: { name: 'settings/storage' }, alert: notSyncedCounter },
 					{ id: 'archive', iconParam: { name: 'common/bin' } },
+					canSeeDeletionAudit ? { id: 'spaceDeletionAudit', iconParam: { name: 'common/clock' } } : null,
 				],
 			},
 			{ id: 'contentModel', name: translate('pageSettingsSpaceManageContent'), children: [
@@ -166,6 +169,12 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 		if ([ 'types', 'relations' ].includes(item.id)) {
 			S.Common.setLeftSidebarState('vault', `settings/${item.id}`);
 		} else {
+			// Before the re-render below, so the "New" badge goes with the click
+			// rather than lingering until the page mounts and clears it
+			if (item.id == 'api') {
+				apiKeyMarkSeen();
+			};
+
 			setActiveId(item.id);
 			Action.openSettings(item.id, analytics.route.settings);
 		};
@@ -264,6 +273,10 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 			if (item.alert) {
 				caption = item.alert;
 				ccn.push('alert');
+			} else
+			if ((item.id == 'api') && apiKeyIsNew()) {
+				caption = translate('commonNew');
+				ccn.push('new');
 			};
 
 			content = (

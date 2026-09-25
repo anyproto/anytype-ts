@@ -27,6 +27,7 @@ const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	);
 	const keydownHandler = useRef<(e: any) => void>(null);
 	const keyHandlerRef = useRef<(e: any) => void>(null);
+	const isUnmountedRef = useRef(false);
 
 	const rebind = () => {
 		unbind();
@@ -44,6 +45,12 @@ const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDownHandler = (e: any) => {
+		// A leaked window listener must never act for a dead menu — bail before
+		// any preventDefault or it silently eats the key app-wide until restart
+		if (isUnmountedRef.current) {
+			return;
+		};
+
 		const items = getItems();
 		const item = items[n.current];
 
@@ -82,7 +89,7 @@ const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			noAnimation: true,
 			noFlipY: true,
 			rebind,
-			parentId: getId(),
+			parentId: props.id,
 			data: {
 				...data,
 				menuIdEdit: 'dataviewRelationEdit',
@@ -138,7 +145,7 @@ const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			horizontal: I.MenuDirection.Center,
 			noAnimation: true,
 			rebind,
-			parentId: getId(),
+			parentId: props.id,
 			data: {
 				...data,
 				relationId: relation.id,
@@ -297,6 +304,8 @@ const MenuRelationList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 
 		return () => {
+			isUnmountedRef.current = true;
+
 			unbind();
 			S.Menu.closeAll(J.Menu.cell);
 		};

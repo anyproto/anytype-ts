@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import UtilSpace from './space';
 import Storage from '../storage';
+import * as I from 'Interface';
 
 /**
  * Regression coverage for JS-9815 (read side).
@@ -147,6 +148,211 @@ describe('UtilSpace.setLastObject (per-space recording)', () => {
 		UtilSpace.setLastObject({ _empty_: true, id: 'x', layout: 22, spaceId: 'spaceF' });
 
 		expect(Storage.getLastOpened('spaceF').id).toBeUndefined();
+	});
+
+});
+
+/**
+ * Invite visibility (GO-7222).
+ *
+ * After the invite moved into the owner's account, InviteGetCurrent answers a member with a
+ * *success* response carrying an empty cid — so anything that reads `cid` without first reading
+ * `heldByOwner` renders an empty link. These predicates are the single gate every Copy / QR /
+ * Manage affordance goes through.
+ */
+describe('UtilSpace invite predicates', () => {
+
+	const OWNER = { permissions: I.ParticipantPermissions.Owner, isOwner: true };
+	const MEMBER = { permissions: I.ParticipantPermissions.Reader, isOwner: false };
+
+	const setup = (participant: any, invite: any) => {
+		vi.stubGlobal('S', {
+			Common: {
+				space: 'space1',
+				inviteGet: () => invite,
+			},
+			Auth: { account: { id: 'me' } },
+			Detail: { get: () => participant },
+		});
+
+		// isMyOwner reads the participant through getMyParticipant, which walks the detail store.
+		vi.spyOn(UtilSpace, 'getMyParticipant').mockReturnValue(participant);
+	};
+
+	const invite = (over: any = {}) => Object.assign({
+		cid: 'cid1',
+		key: 'key1',
+		inviteType: I.InviteType.WithApprove,
+		permissions: I.ParticipantPermissions.Reader,
+		heldByOwner: true,
+	}, over);
+
+	describe('canManageInvite', () => {
+		it('is true for the owner', () => {
+			setup(OWNER, invite());
+			expect(UtilSpace.canManageInvite('space1')).toBe(true);
+		});
+
+		it('is false for an admin — invite rights are the owner\'s alone', () => {
+			setup({ permissions: I.ParticipantPermissions.Admin, isOwner: false }, invite());
+			expect(UtilSpace.canManageInvite('space1')).toBe(false);
+		});
+
+		it('is false for a member', () => {
+			setup(MEMBER, invite());
+			expect(UtilSpace.canManageInvite('space1')).toBe(false);
+		});
+	});
+
+	describe('hasVisibleInvite', () => {
+		it('is true for the owner of an owner-held invite', () => {
+			setup(OWNER, invite({ heldByOwner: true }));
+			expect(UtilSpace.hasVisibleInvite('space1')).toBe(true);
+		});
+
+		it('is false for a member of an owner-held invite, even though the call succeeded', () => {
+			setup(MEMBER, invite({ heldByOwner: true, cid: '', key: '' }));
+			expect(UtilSpace.hasVisibleInvite('space1')).toBe(false);
+		});
+
+		it('is true for a member when the invite is shared within the space', () => {
+			setup(MEMBER, invite({ heldByOwner: false }));
+			expect(UtilSpace.hasVisibleInvite('space1')).toBe(true);
+		});
+
+		it('is false when there is no invite at all', () => {
+			setup(OWNER, null);
+			expect(UtilSpace.hasVisibleInvite('space1')).toBe(false);
+		});
+
+		it('is false when heldByOwner is false but the cid is empty', () => {
+			setup(MEMBER, invite({ heldByOwner: false, cid: '', key: '' }));
+			expect(UtilSpace.hasVisibleInvite('space1')).toBe(false);
+		});
+	});
+
+	describe('hasInviteSecurityRisk', () => {
+		const UNSAFE = { heldByOwner: false, inviteType: I.InviteType.WithoutApprove, permissions: I.ParticipantPermissions.Writer };
+
+		const withParticipants = (list: any[]) => {
+			vi.spyOn(UtilSpace, 'getParticipantsList').mockReturnValue(list);
+		};
+
+		it('is true for the owner of an unsafe invite when an active viewer exists', () => {
+			setup(OWNER, invite(UNSAFE));
+			withParticipants([ { isReader: false }, { isReader: true } ]);
+			expect(UtilSpace.hasInviteSecurityRisk('space1')).toBe(true);
+		});
+
+		it('is false for a non-owner, even with an unsafe invite and viewers present', () => {
+			setup(MEMBER, invite(UNSAFE));
+			withParticipants([ { isReader: true } ]);
+			expect(UtilSpace.hasInviteSecurityRisk('space1')).toBe(false);
+		});
+
+		it('is false when the invite is safe (held by the owner), viewers or not', () => {
+			setup(OWNER, invite({ ...UNSAFE, heldByOwner: true }));
+			withParticipants([ { isReader: true } ]);
+			expect(UtilSpace.hasInviteSecurityRisk('space1')).toBe(false);
+		});
+
+		it('is false when nobody in the space is a viewer — no one to escalate', () => {
+			setup(OWNER, invite(UNSAFE));
+			withParticipants([ { isReader: false }, { isReader: false } ]);
+			expect(UtilSpace.hasInviteSecurityRisk('space1')).toBe(false);
+		});
+	});
+
+	describe('isInviteUnsafe', () => {
+		it('is true for a shared anyone-can-join invite granting Writer', () => {
+			setup(OWNER, invite({ heldByOwner: false, inviteType: I.InviteType.WithoutApprove, permissions: I.ParticipantPermissions.Writer }));
+			expect(UtilSpace.isInviteUnsafe('space1')).toBe(true);
+		});
+
+		it('is false when the same invite is held by the owner', () => {
+			setup(OWNER, invite({ heldByOwner: true, inviteType: I.InviteType.WithoutApprove, permissions: I.ParticipantPermissions.Writer }));
+			expect(UtilSpace.isInviteUnsafe('space1')).toBe(false);
+		});
+
+		it('is false for a shared anyone-can-join invite granting Reader', () => {
+			setup(OWNER, invite({ heldByOwner: false, inviteType: I.InviteType.WithoutApprove, permissions: I.ParticipantPermissions.Reader }));
+			expect(UtilSpace.isInviteUnsafe('space1')).toBe(false);
+		});
+
+		it('is false for a shared request-to-join invite, whatever it grants', () => {
+			setup(OWNER, invite({ heldByOwner: false, inviteType: I.InviteType.WithApprove, permissions: I.ParticipantPermissions.Writer }));
+			expect(UtilSpace.isInviteUnsafe('space1')).toBe(false);
+		});
+
+		it('is false when there is no invite', () => {
+			setup(OWNER, null);
+			expect(UtilSpace.isInviteUnsafe('space1')).toBe(false);
+		});
+	});
+
+});
+
+/**
+ * The import screen writes into a space the user picks, which is not necessarily the
+ * current one. The choice lives in the store (the format sub-pages are separate routes),
+ * so by the time it is read the space may have been deleted or demoted to read-only —
+ * every such case has to fall back to the current space rather than import into nothing.
+ */
+describe('UtilSpace.getImportTargetId (import target fallbacks)', () => {
+
+	beforeEach(() => {
+		vi.restoreAllMocks();
+		vi.stubGlobal('S', { Common: { space: 'current', importSpaceId: '' } });
+	});
+
+	const chosen = (id: string) => {
+		(globalThis as any).S.Common.importSpaceId = id;
+	};
+
+	it('falls back to the current space when nothing was chosen', () => {
+		expect(UtilSpace.getImportTargetId()).toBe('current');
+	});
+
+	it('returns the chosen space when it exists and is writable', () => {
+		vi.spyOn(UtilSpace, 'getSpaceviewBySpaceId').mockReturnValue({ targetSpaceId: 'other' });
+		vi.spyOn(UtilSpace, 'canMyParticipantWrite').mockReturnValue(true);
+		chosen('other');
+
+		expect(UtilSpace.getImportTargetId()).toBe('other');
+	});
+
+	it('falls back when the chosen space no longer exists', () => {
+		vi.spyOn(UtilSpace, 'getSpaceviewBySpaceId').mockReturnValue(null);
+		vi.spyOn(UtilSpace, 'canMyParticipantWrite').mockReturnValue(true);
+		chosen('deleted');
+
+		expect(UtilSpace.getImportTargetId()).toBe('current');
+	});
+
+	it('falls back when the chosen space became read-only', () => {
+		vi.spyOn(UtilSpace, 'getSpaceviewBySpaceId').mockReturnValue({ targetSpaceId: 'readonly' });
+		vi.spyOn(UtilSpace, 'canMyParticipantWrite').mockReturnValue(false);
+		chosen('readonly');
+
+		expect(UtilSpace.getImportTargetId()).toBe('current');
+	});
+
+});
+
+describe('UtilSpace.getImportTargetList (writable spaces only)', () => {
+
+	beforeEach(() => {
+		vi.restoreAllMocks();
+	});
+
+	it('drops spaces the user cannot write into', () => {
+		vi.spyOn(UtilSpace, 'getList').mockReturnValue([
+			{ targetSpaceId: 'writable' },
+			{ targetSpaceId: 'readonly' },
+		] as any);
+		vi.spyOn(UtilSpace, 'canMyParticipantWrite').mockImplementation((id: string) => id == 'writable');
+
+		expect(UtilSpace.getImportTargetList().map(it => it.targetSpaceId)).toEqual([ 'writable' ]);
 	});
 
 });

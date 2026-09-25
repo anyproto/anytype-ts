@@ -1,0 +1,44 @@
+@import "~scss/_mixins";
+
+.appGrantFields { display: flex; flex-direction: column; flex: 1; min-height: min-content; text-align: left; }
+.appGrantFields {
+	*, *::before, *::after { box-sizing: border-box; }
+	.spacePicker { display: flex; flex-direction: column; flex: 1; min-height: 0; min-width: 0; margin: 16px 0 0; padding: 0; border: 1px solid var(--color-shape-primary); border-radius: 12px; overflow: hidden; -webkit-app-region: no-drag; }
+	/* Reuses the focus accent already used in this form rather than introducing an alert colour. */
+	.spacePicker.isHighlighted { animation: spacePickerPulse 0.3s ease-in-out 2; }
+	.pickerHeading { display: flex; flex-shrink: 0; align-items: center; gap: 8px; min-height: 38px; padding: 4px 12px; @include text-small; }
+	.spaceSearch { width: 100%; min-width: 0; border: 0; border-radius: 4px; padding: 5px 0; font: inherit; color: inherit; background: transparent; }
+	.spaceSearch::placeholder { color: var(--color-text-secondary); }
+	.selectionCount { margin-left: auto; white-space: nowrap; color: var(--color-text-secondary); }
+	/* Reserve two rows without letting the full catalog determine the picker's intrinsic height. */
+	.spaceList { overflow-y: auto; overscroll-behavior: contain; contain: size; flex: 1; min-height: 80px; padding: 0 4px 4px; }
+	.spaceRow { display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 8px; border-radius: 6px; @include text-common; }
+	.spaceRow:hover { background: var(--color-shape-highlight-medium); }
+	.spaceRow.disabled { color: var(--color-text-secondary); }
+	.spaceAvatar { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 24px; height: 24px; border-radius: 7px; background: var(--color-shape-highlight-medium); @include text-small; }
+	.spaceName { @include text-overflow-nw; }
+	input[type="checkbox"] { appearance: none; position: relative; flex-shrink: 0; width: 16px; height: 16px; margin: 0; border: 1px solid var(--color-control-active); border-radius: 4px; background: var(--color-bg-primary); }
+	input[type="checkbox"]:checked { background: var(--color-control-accent); border-color: var(--color-control-accent); }
+	input[type="checkbox"]:checked::after { content: ''; position: absolute; left: 5px; top: 2px; width: 4px; height: 8px; border: solid var(--color-bg-primary); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); }
+	input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--color-system-accent-100); outline-offset: 2px; }
+	.spaceRow:focus-within { background: var(--color-shape-highlight-medium); }
+	.allSpaces { display: flex; flex-shrink: 0; align-items: flex-start; gap: 10px; padding: 10px 12px; border-top: 1px solid var(--color-shape-secondary); }
+	.allSpaces input { margin-top: 2px; }
+	.allSpacesTitle { display: block; @include text-common; }
+	.allSpacesDescription { display: block; @include text-small; color: var(--color-text-secondary); margin-top: 2px; }
+	.emptySpaces { padding: 20px 8px; text-align: center; @include text-small; color: var(--color-text-secondary); }
+	.permissionRow { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; -webkit-app-region: no-drag; }
+	.permissionSelect { position: relative; max-width: 65%; }
+	.permissionSelect select { appearance: none; width: 100%; height: 32px; border: 1px solid var(--color-shape-primary); border-radius: 8px; padding: 0 32px 0 12px; font: inherit; color: inherit; background: var(--color-bg-primary); }
+	.permissionChevron { position: absolute; width: 20px; height: 20px; right: 6px; top: 50%; transform: translateY(-50%); pointer-events: none; }
+}
+
+@keyframes spacePickerPulse {
+	0%, 100% { border-color: var(--color-shape-primary); }
+	50% { border-color: var(--color-system-accent-100); }
+}
+
+/* A pulse is the whole signal here, so hold the accent border instead of animating it. */
+@media (prefers-reduced-motion: reduce) {
+	.appGrantFields .spacePicker.isHighlighted { animation: none; border-color: var(--color-system-accent-100); }
+}

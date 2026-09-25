@@ -6,7 +6,7 @@ Handles all communication between the React frontend and the Go middleware (anyt
 
 | File | Purpose |
 |------|---------|
-| `command.ts` | All gRPC command wrappers (exported as `C.*`). Each function wraps a gRPC call with request construction and response handling. |
+| `command.ts` | All gRPC command wrappers (exported as `C.*`). Each function wraps a gRPC call with request construction and response handling. `AIListModels` doubles as provider validation — a successful model list proves the endpoint and token work, so there is no separate validate command. |
 | `dispatcher.ts` | Low-level gRPC request dispatching, event streaming, and MobX store updates from server events |
 | `mapper.ts` | Response mapping: converts gRPC protobuf responses to frontend-friendly objects |
 | `response.ts` | Response type definitions and error handling |
@@ -37,9 +37,12 @@ All mutations go through this command layer. The middleware handles persistence,
 
 The dispatcher manages:
 - Request queuing and execution via `ServiceClient`
+- Call metadata (`metadata()`): the session token plus the local API secret when the main process supplied one at `init(address, secret)`. Heart requires the secret on the account-bootstrap RPCs (wallet/account create, recover and migrate, `InitialSetParameters`, `DebugAccountSelectTrace`, and the `WalletCreateSession` self-mint branches) and ignores it elsewhere, so it rides every call. Empty in web mode and against an externally started helper, where the header is omitted
 - Event stream subscription (`listenEvents`) with ordered event processing
 - MobX store updates from server events (block changes, detail updates, subscription counters)
+- Account start-up status: `AccountRecoveryUpdate` events go to `S.Recovery.apply`; a stream re-attach mid-run (`S.Recovery.runId` set, and `isRecoveryNeeded()`: channels still missing) in `startStream` re-pulls the folded snapshot via `C.AccountRecoveryState` because reconnects refetch nothing else. The first attach, before `AccountSelect`, does not pull: the live `Started` event is still ahead
 - Event sorting to ensure correct processing order (e.g., `BlockSetChildrenIds` before `BlockAdd`); event type/data are precomputed once per message before the sort (`SORT_IDS` priority order)
+- Subscription record ordering: `SubscriptionAdd`/`SubscriptionPosition` events apply via the pure `applySubscriptionPosition` (`Lib/util/subscription`); on sorted subscriptions (`getMeta().isSorted`) a `SubscriptionAdd` repositions an optimistically inserted record instead of being skipped. While a freshly created record's name is inline-edited, a position lock (`S.Record.positionLockSet`) stashes reposition events; the dataview applies the stash when editing ends (GO-7387)
 
 ## Protobuf Bindings
 

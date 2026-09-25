@@ -6,17 +6,18 @@ Reactive state stores using MobX. Each store manages a specific domain. Accessed
 
 | File | Alias | Purpose |
 |------|-------|---------|
-| `common.ts` | `S.Common` | Global app state: space, theme, language, config, sidebar states, date format |
+| `common.ts` | `S.Common` | Global app state: space, theme, language, config, sidebar states, date format, current invite per space (`inviteGet`/`inviteSet`/`inviteClear`) |
 | `auth.ts` | `S.Auth` | Authentication: account, wallet phrase, membership, PIN |
 | `block.ts` | `S.Block` | Document block trees: block CRUD, tree traversal, children management |
 | `detail.ts` | `S.Detail` | Object details/properties: get/set details, relations, layout info. Stores raw values in shallow observable maps (per-relation-key reactivity); `get()` results are cached per-args in reactive contexts via self-evicting computeds |
 | `record.ts` | `S.Record` | Dataview records: views, sorts, filters, groups, types, relations |
-| `menu.ts` | `S.Menu` | Menu state: open/close/update menus, sub-menu management |
+| `menu.ts` | `S.Menu` | Menu state: open/close/update menus, sub-menu management, live-instance ref registry (`setRef`/`getRef`/`deleteRef`) for safe keydown rebinding |
 | `popup.ts` | `S.Popup` | Popup state: open/close/update popups, dimmer control |
 | `chat.ts` | `S.Chat` | Chat messages: message CRUD, reactions, threads, counters |
 | `comment.ts` | `S.Comment` | Comment posts and replies: CRUD for posts/replies, pagination (hasMore) |
 | `notification.ts` | `S.Notification` | Notification management |
 | `progress.ts` | `S.Progress` | Background task progress tracking |
+| `recovery.ts` | `S.Recovery` | Account start-up status: folds `Event.Account.Recovery.Update` (id/runId gating, snapshot re-pull on gaps and stream re-attach, LAN headline from `LocalPeersStateChanged`) and keeps the loading-screen ticker lines |
 | `membership.ts` | `S.Membership` | Membership tier and features |
 | `extension.ts` | `S.Extension` | Browser extension state |
 | `sparkOnboarding.ts` | `S.SparkOnboarding` | Onboarding progress tracking |

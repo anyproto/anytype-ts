@@ -604,10 +604,23 @@ class UtilEmbed {
 	};
 
 	allowEmptyContent (p: I.EmbedProcessor) {
-		return [ 
+		return [
 			I.EmbedProcessor.Excalidraw,
 			I.EmbedProcessor.AnytypeMiniApp,
 		].includes(p);
+	};
+
+	/**
+	 * Prunes the Excalidraw files map down to entries referenced by non-deleted elements.
+	 * Excalidraw's onChange keeps files of deleted images for the whole session, and pasted
+	 * images are base64 dataURLs — persisting the full map bloats the block payload.
+	 * @param {any[]} elements - The Excalidraw elements.
+	 * @param {any} files - The BinaryFiles map.
+	 * @returns {any} The pruned files map.
+	 */
+	pruneExcalidrawFiles (elements: any[], files: any): any {
+		const used = new Set((elements || []).filter(el => el && !el.isDeleted && el.fileId).map(el => el.fileId));
+		return Object.fromEntries(Object.entries(files || {}).filter(([ id ]) => used.has(id)));
 	};
 
 };

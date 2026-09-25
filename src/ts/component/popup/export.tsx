@@ -1,6 +1,7 @@
 import React, { forwardRef, useEffect, useState } from 'react';
-import { Title, Select, Button, Switch } from 'Component';
+import { Title, Label, Select, Button, Switch } from 'Component';
 import * as I from 'Interface';
+import ExportFilesHelp from 'Component/util/exportFilesHelp';
 
 const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 
@@ -10,6 +11,7 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 	const { config, space } = S.Common;
 	const [ stateData, setStateData ] = useState<any>({});
 	const format = Number(stateData.format) || I.ExportType.Markdown;
+	const isAnyBlock = [ I.ExportType.Protobuf, I.ExportType.AnyBlockV2 ].includes(format);
 
 	const init = () => {
 		const options = storageGet();
@@ -36,7 +38,8 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 	const getFormats = () => {
 		return [
 			{ id: I.ExportType.Markdown, name: 'Markdown' },
-			{ id: I.ExportType.Protobuf, name: 'Any-Block' },
+			{ id: I.ExportType.Protobuf, name: 'Any-Block v1' },
+			{ id: I.ExportType.AnyBlockV2, name: 'Any-Block v2 (Preview)' },
 			allowHtml ? { id: I.ExportType.Pdf, name: 'PDF' } : null,
 			allowHtml && config.experimental ? { id: I.ExportType.Html, name: 'HTML' } : null,
 		].filter(it => it);
@@ -128,7 +131,10 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 
 		return (
 			<div className="row">
-				<div className="name">{item.name}</div>
+				<div className="name">
+					{item.name}
+					{(item.id == 'files') && isAnyBlock ? <ExportFilesHelp objectCount={objectIds?.length} /> : ''}
+				</div>
 				<div className="value">
 					{control}
 				</div>
@@ -143,6 +149,7 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 	switch (format) {
 		case I.ExportType.Markdown:
 		case I.ExportType.Protobuf:
+		case I.ExportType.AnyBlockV2:
 			if (format == I.ExportType.Protobuf) {
 				items.push({ id: 'json', name: translate('popupExportFileFormat'), control: 'select', options: formatOptions });
 			};
@@ -150,7 +157,7 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 			items = items.concat([
 				{ id: 'zip', name: translate('popupExportZipArchive'), control: 'switch' },
 				{ id: 'nested', name: translate('popupExportIncludeLinkedObjects'), control: 'switch' },
-				{ id: 'files', name: translate('popupExportIncludeFiles'), control: 'switch' },
+				{ id: 'files', name: translate(isAnyBlock ? 'popupExportIncludeFilesData' : 'popupExportIncludeFiles'), control: 'switch' },
 				{ id: 'archived', name: translate('popupExportIncludeArchivedObjects'), control: 'switch' },
 			]);
 			break;
@@ -183,6 +190,11 @@ const PopupExport = forwardRef<{}, I.Popup>((props, ref) => {
 	return (
 		<>
 			<Title text={translate('popupExportTitle')} />
+
+			<div className="notice">
+				<Label className="name" text={translate('exportAnyBlockV2NoticeTitle')} />
+				<Label className="descr" text={translate('exportAnyBlockV2NoticeText')} />
+			</div>
 
 			{items.map((item: any, i: number) => (
 				<Option key={i} {...item} />

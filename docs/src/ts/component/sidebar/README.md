@@ -6,7 +6,7 @@ Collapsible sidebars for navigation, object properties, and type configuration. 
 
 Main navigation sidebar with sub-pages:
 - `page/widget.tsx` - Widget dashboard (default view)
-- `page/vault.tsx` - Space/vault browser
+- `page/vault.tsx` - Space/vault browser; header search icon opens the search popup in global (cross-space) mode
 - `page/settings/index.tsx` - Settings panel
 - `page/settings/library.tsx` - Library panel (types, relations)
 - `page/type.tsx` - Type management page (used in right sidebar routing)
@@ -45,6 +45,10 @@ Layout preview panel for type configuration. Shows a live preview of type layout
 ## Progress (`progress.tsx`, `progress.stories.tsx`)
 
 Progress indicator for long-running operations (import, export, update, etc.). Displays in the left sidebar footer. Auto-expands when new processes appear, collapsible via header click. Exports `ProgressItem` component for individual progress entries and `SidebarProgress` as the container. Has Storybook stories.
+
+Rows come from two sources: middleware processes, and client-owned file downloads (`isLocal`), which cancel through `Lib/download` instead of `ProcessCancel` and fill `subtitle` with the file being written plus a `tooltip` listing every file in the row. A download that only wrote a file keeps its place (`keepWhenDone` → `isDone`) with a platform-named reveal action — Show in Finder / Explorer / folder — and is dropped only when dismissed. One that opened or revealed the file disappears like every other finished row, since it already acted on it.
+
+Import v2 runs additionally carry `I.ImportStatistic` (from `Event.Import.Statistic`), which replaces the blended percentage with per-phase counters: a count-up while totals are unknown, page/file or object counts once known, ETA, a calm rate-limit or retry badge, the current item as a subtitle, and live warning/error counts. Cancelling past the creating boundary opens a confirm popup, since it deletes the objects already created. Runs without a statistic (import v1, other process types) keep the legacy percentage rendering.
 
 ## Patterns
 

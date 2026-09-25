@@ -46,6 +46,20 @@ for (const [prop, blockType] of Object.entries(PROP_TO_BLOCK_TYPE)) {
  * Excluded keys that are not event properties on a ts-proto Event_Message.
  */
 const EVENT_SKIP_KEYS = new Set([ 'spaceId' ]);
+const RECOVERY_SKIP_KEYS = new Set([ 'runId', 'id', 'timestampMs' ]);
+
+/**
+ * Transport errors quote the endpoint they failed on ("dial tcp 192.168.1.42:4001", "/ip4/...").
+ * The start-up debug dump is copied by users into support threads, so the address goes and the
+ * reason stays.
+ */
+const scrubAddress = (s: string): string => {
+	return String(s || '')
+		.replace(/\/ip[46]\/[^\s"']+/gi, '[address]')
+		.replace(/\[[0-9a-fA-F]*:[0-9a-fA-F:]*\](?::\d+)?/g, '[address]')
+		.replace(/\b(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?\b/g, '[address]');
+};
+const RECOVERY_UPDATE_TYPES = new Set<string>(Object.values(I.RecoveryUpdateType));
 
 /**
  * Derive the event type from a ts-proto property name by capitalizing the first letter.
@@ -539,6 +553,8 @@ export const Mapper = {
 
 						if (type === I.NotificationType.Import) {
 							payload.importType = field.importType;
+							payload.reportObjectId = field.reportObjectId;
+							payload.issuesCount = field.issuesCount;
 						};
 
 						if (type === I.NotificationType.Gallery) {
@@ -551,6 +567,9 @@ export const Mapper = {
 						payload = Object.assign(payload, {
 							errorCode: field.errorCode,
 							exportType: field.exportType,
+							report: field.report,
+							path: field.path,
+							spaceId: obj.space,
 						});
 						break;
 					};
@@ -699,6 +718,68 @@ export const Mapper = {
 				done: obj.done,
 				total: obj.total,
 				message: obj.message,
+			};
+		},
+
+		RecoveryError: (obj: any): I.RecoveryError => {
+			return {
+				class: Number(obj.class) || I.RecoveryErrorClass.None,
+				retryable: Boolean(obj.retryable),
+				debugMessage: scrubAddress(obj.debugMessage),
+			};
+		},
+
+		RecoveryPeer: (obj: any): I.RecoveryPeer => {
+			return {
+				peerId: String(obj.peerId || ''),
+				kind: Number(obj.kind) || I.RecoveryPeerKind.Local,
+				nodeTypes: obj.nodeTypes || [],
+				openConnections: Number(obj.openConnections) || 0,
+				transport: String(obj.transport || ''),
+				protoVersion: Number(obj.protoVersion) || 0,
+				dialAttempts: Number(obj.dialAttempts) || 0,
+				lastError: obj.lastError ? Mapper.From.RecoveryError(obj.lastError) : null,
+				discoveredLocally: Boolean(obj.discoveredLocally),
+				exchanged: Boolean(obj.exchanged),
+				hasAccountSpace: Boolean(obj.hasAccountSpace),
+				sharedSpaceCount: Number(obj.sharedSpaceCount) || 0,
+			};
+		},
+
+		RecoverySpace: (obj: any): I.RecoverySpace => {
+			return {
+				spaceId: String(obj.spaceId || ''),
+				spaceViewId: String(obj.spaceViewId || ''),
+				kind: Number(obj.kind) || I.RecoverySpaceKind.Regular,
+				state: Number(obj.state) || I.RecoverySpaceState.Queued,
+				error: obj.error ? Mapper.From.RecoveryError(obj.error) : null,
+				attempt: Number(obj.attempt) || 0,
+			};
+		},
+
+		RecoverySnapshot: (obj: any): I.RecoverySnapshot => {
+			return {
+				runId: String(obj.runId || ''),
+				lastEventId: Number(obj.lastEventId) || 0,
+				mode: Number(obj.mode) || I.RecoveryMode.Unknown,
+				networkId: String(obj.networkId || ''),
+				startedAtMs: Number(obj.startedAtMs) || 0,
+				phase: Number(obj.phase) || I.RecoveryPhase.LookingForPeers,
+				phaseStartedAtMs: Number(obj.phaseStartedAtMs) || 0,
+				done: Boolean(obj.done),
+				error: obj.error ? Mapper.From.RecoveryError(obj.error) : null,
+				discovery: Number(obj.discovery) || I.RecoveryDiscoveryState.Possible,
+				accountFetchStarted: Boolean(obj.accountFetchStarted),
+				accountReady: Boolean(obj.accountReady),
+				peers: (obj.peers || []).map(Mapper.From.RecoveryPeer),
+				spaces: (obj.spaces || []).map(Mapper.From.RecoverySpace),
+				spacesTotal: Number(obj.spacesTotal) || 0,
+				spacesLoaded: Number(obj.spacesLoaded) || 0,
+				spacesFailed: Number(obj.spacesFailed) || 0,
+				viewsConfirmed: Boolean(obj.viewsConfirmed),
+				accountFetchAttempt: Number(obj.accountFetchAttempt) || 0,
+				accountFetchError: obj.accountFetchError ? Mapper.From.RecoveryError(obj.accountFetchError) : null,
+				localPeers: Number(obj.localPeers) || I.RecoveryLocalPeersState.NoLocalPeers,
 			};
 		},
 
@@ -867,6 +948,7 @@ export const Mapper = {
 
 		ChatSearchResult: (obj: any): any => {
 			return {
+				spaceId: obj.spaceId,
 				chatId: obj.chatId,
 				messageId: obj.messageId,
 				score: obj.score,
@@ -890,6 +972,20 @@ export const Mapper = {
 			};
 		},
 
+		/**
+		 * Identity of a local-link caller. processPath and origin are echoed back to middleware
+		 * verbatim to address the pending request, so they are never trimmed or normalized here.
+		 */
+		AccountLinkClientInfo: (obj: any): I.LinkClientInfo => {
+			return {
+				processName: String(obj.processName || ''),
+				processPath: String(obj.processPath || ''),
+				name: String(obj.name || ''),
+				origin: String(obj.origin || ''),
+				signatureVerified: Boolean(obj.signatureVerified),
+			};
+		},
+
 		AppInfo: (obj: any): I.AppInfo => {
 			return {
 				hash: obj.appHash,
@@ -899,6 +995,19 @@ export const Mapper = {
 				expireAt: obj.expireAt,
 				scope: obj.scope as number,
 				isActive: obj.isActive,
+				grant: obj.grant ? {
+					spaceIds: [ ...(obj.grant.spaceIds || []) ],
+					allSpaces: obj.grant.allSpaces === true,
+					perm: Number(obj.grant.perm ?? I.LocalApiPermission.Read),
+				} : undefined,
+			};
+		},
+
+		JsonApiStatus: (obj: any): I.JsonApiStatus => {
+			return {
+				success: Boolean(obj.success),
+				listenAddr: String(obj.listenAddr || ''),
+				error: String(obj.error || ''),
 			};
 		},
 
@@ -1313,6 +1422,8 @@ export const Mapper = {
 			return {
 				appName: obj.name,
 				scope: obj.scope as number,
+				expireAt: obj.expireAt || 0,
+				grant: obj.grant ? { ...obj.grant, spaceIds: [ ...obj.grant.spaceIds ] } : undefined,
 			};
 		},
 
@@ -1386,16 +1497,72 @@ export const Mapper = {
 			};
 		},
 
-		AccountLinkChallenge: (obj: any) => {
+		AccountJsonApiStatus: (obj: any) => {
 			return {
-				challenge: obj.challenge,
+				status: Mapper.From.JsonApiStatus(obj),
 			};
 		},
 
-		AccountLinkChallengeHide: (obj: any) => {
+		AccountLinkApprovalRequest: (obj: any) => {
 			return {
-				challenge: obj.challenge,
+				clientInfo: Mapper.From.AccountLinkClientInfo(obj.clientInfo || {}),
+				scope: Number(obj.scope) || 0,
+				requestedPerm: obj.requestedPerm == I.LocalApiPermission.ReadWrite ? I.LocalApiPermission.ReadWrite : I.LocalApiPermission.Read,
 			};
+		},
+
+		AccountLinkApprovalHide: (obj: any) => {
+			return {
+				clientInfo: Mapper.From.AccountLinkClientInfo(obj.clientInfo || {}),
+			};
+		},
+
+		/**
+		 * Event.Account.Recovery.Update: the payload oneof is the single object-valued property
+		 * besides runId/id/timestampMs. Unknown payload kinds pass through with their raw name
+		 * so the store can advance its id counter and ignore them.
+		 */
+		AccountRecoveryUpdate: (obj: any): I.RecoveryUpdate => {
+			const ret: I.RecoveryUpdate = {
+				runId: String(obj.runId || ''),
+				id: Number(obj.id) || 0,
+				timestampMs: Number(obj.timestampMs) || 0,
+				type: '',
+				data: {},
+			};
+
+			// A known payload kind wins; anything else object-valued is a kind added after this
+			// build, kept so the store still advances its id counter
+			for (const prop of Object.keys(obj)) {
+				const value = obj[prop];
+
+				if (RECOVERY_SKIP_KEYS.has(prop) || (value === undefined) || (value === null) || (typeof value != 'object')) {
+					continue;
+				};
+
+				ret.type = prop;
+				ret.data = value;
+
+				if (RECOVERY_UPDATE_TYPES.has(prop)) {
+					break;
+				};
+			};
+
+			if (ret.type == I.RecoveryUpdateType.Snapshot) {
+				ret.data = Mapper.From.RecoverySnapshot(ret.data);
+			} else {
+				// addr/addrs are display-only, and this payload is kept verbatim for the debug
+				// dump the user copies: peer endpoints have no place in it
+				const { addr, addrs, ...rest } = ret.data;
+
+				ret.data = rest;
+
+				if (ret.data.error) {
+					ret.data.error = Mapper.From.RecoveryError(ret.data.error);
+				};
+			};
+
+			return ret;
 		},
 
 		ObjectRelationsAmend: (obj: any) => {
@@ -1828,6 +1995,38 @@ export const Mapper = {
 				collectionId: obj.rootCollectionID,
 				count: obj.objectsCount,
 				type: obj.importType,
+				reportObjectId: obj.reportObjectId,
+				issuesCount: obj.issuesCount,
+			};
+		},
+
+		ImportStatistic: (obj: any): I.ImportStatistic => {
+			return {
+				importId: String(obj.importId || ''),
+				processId: String(obj.processId || ''),
+				importType: Number(obj.importType) || 0,
+				phase: Number(obj.phase) || 0,
+				phaseStartedAt: Number(obj.phaseStartedAt) || 0,
+				totalsKnown: Boolean(obj.totalsKnown),
+				pagesTotal: Number(obj.pagesTotal) || 0,
+				pagesDone: Number(obj.pagesDone) || 0,
+				filesTotal: Number(obj.filesTotal) || 0,
+				filesDone: Number(obj.filesDone) || 0,
+				bytesTotal: Number(obj.bytesTotal) || 0,
+				bytesDone: Number(obj.bytesDone) || 0,
+				state: Number(obj.state) || 0,
+				resumesInMs: Number(obj.resumesInMs) || 0,
+				attempt: Number(obj.attempt) || 0,
+				attemptsMax: Number(obj.attemptsMax) || 0,
+				errorMessage: String(obj.errorMessage || ''),
+				itemsPerSecond: Number(obj.itemsPerSecond) || 0,
+				estimatedRemainingMs: Number(obj.estimatedRemainingMs) || 0,
+				cancelEffect: Number(obj.cancelEffect) || 0,
+				objectsCreated: Number(obj.objectsCreated) || 0,
+				safeToClose: Boolean(obj.safeToClose),
+				warningCount: Number(obj.warningCount) || 0,
+				errorCount: Number(obj.errorCount) || 0,
+				currentItem: String(obj.currentItem || ''),
 			};
 		},
 

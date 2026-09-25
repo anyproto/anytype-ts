@@ -1,20 +1,37 @@
 import path from 'path';
 import childProcess from 'child_process';
+import crypto from 'crypto';
 import fs from 'fs';
 import { app, dialog, shell } from 'electron';
 import Util from './util';
 
 const stdoutWebProxyPrefix = 'gRPC Web proxy started at: ';
 const winShutdownStdinMessage = 'shutdown\n';
+const parentLifelineEnv = 'ANYTYPE_PARENT_LIFELINE';
+const parentLifelineStdin = 'stdin';
+// The helper requires this value on the account-bootstrap RPCs. It travels on
+// the stdin pipe, the one channel only its parent holds: not in the process
+// table like argv, not readable cross-user like an env var
+const localApiSecretStdinPrefix = 'secret ';
+const localApiSecretBytes = 32;
+// Once the lifeline reports the owner is gone, the helper arms its own 10s
+// hard-exit deadline, so leave room for that path to win and keep SIGKILL a
+// last resort. The POSIX signal path has no deadline on the helper side,
+// which is what this timer really guards against.
+const gracefulShutdownTimeoutMs = 12000;
+const forceShutdownTimeoutMs = 5000;
 
 let maxStdErrChunksBuffer = 10;
 
-class Server {
+export class Server {
 
 	cp: childProcess.ChildProcess | null = null;
 	address: string = '';
+	secret: string = '';
 	isRunning: boolean = false;
 	stopTriggered: boolean = false;
+	stopPromise: Promise<boolean> | null = null;
+	startPromise: Promise<boolean> | null = null;
 	lastErrors: string[] = [];
 	readyResolve: ((address: string) => void) | null = null;
 	readyReject: ((err: Error) => void) | null = null;
@@ -41,37 +58,79 @@ class Server {
 	};
 
 	start (binPath: string, workingDir: string): Promise<boolean> {
+		if (this.startPromise) {
+			return this.startPromise;
+		};
+
 		console.log('[Server]: start', binPath, workingDir);
 
-		const logPath = Util.logPath();
-		const env = process.env;
+		// Fresh per launch, never persisted and never logged
+		this.secret = crypto.randomBytes(localApiSecretBytes).toString('base64url');
 
-		return new Promise((resolve, reject) => {
+		const logPath = Util.logPath();
+		const env: NodeJS.ProcessEnv = {
+			...process.env,
+			// The helper treats EOF on stdin as proof that its Electron main-process
+			// owner disappeared. Keep this pipe open for the helper's whole lifetime.
+			[parentLifelineEnv]: parentLifelineStdin,
+		};
+
+		let ready = false;
+
+		const startPromise = new Promise<boolean>((resolve, reject) => {
 
 			// stop will resolve immediately in case child process is not running
-			this.stop().then(() => {
+			this.stop().then((stopped) => {
+				if (!stopped) {
+					const err = new Error('Failed to stop the previous Anytype helper process');
+
+					this.readyReject?.(err);
+					reject(err);
+					return;
+				};
+
 				this.isRunning = false;
+				this.stopTriggered = false;
 
 				try {
 					if (!process.stdout.isTTY) {
 						env['GOLOG_FILE'] = path.join(logPath, `anytype_${Util.dateForFile()}.log`);
 					};
 
-					this.cp = childProcess.spawn(binPath, [ '127.0.0.1:0', '127.0.0.1:0' ], { windowsHide: false, env });
+					this.cp = childProcess.spawn(binPath, [ '127.0.0.1:0', '127.0.0.1:0' ], {
+						windowsHide: false,
+						env,
+						stdio: [ 'pipe', 'pipe', 'pipe' ],
+					});
 				} catch (err: any) {
 					console.error('[Server] Process start error: ', err.toString());
 					this.readyReject?.(err);
 					reject(err);
+					return;
 				};
 
-				this.cp.on('error', (err: any) => {
+				const cp = this.cp;
+
+				this.sendSecret(cp);
+
+				cp.on('error', (err: any) => {
+					if (this.cp !== cp) {
+						return;
+					};
+
 					this.isRunning = false;
 					console.error('[Server] Failed to start server: ', err.toString());
 					this.readyReject?.(err);
 					reject(err);
 				});
 
-				this.cp.stdout.on('data', (data: Buffer) => {
+				cp.stdout.on('data', (data: Buffer) => {
+					// Node flushes buffered output after exit; ignore a dead helper's
+					// late ready line so it cannot publish a stale address
+					if (this.cp !== cp) {
+						return;
+					};
+
 					const str = data.toString();
 
 					if (!this.isRunning && str && (str.indexOf(stdoutWebProxyPrefix) >= 0)) {
@@ -80,6 +139,7 @@ class Server {
 						this.address = 'http://' + regex.exec(str)[1];
 						this.isRunning = true;
 
+						ready = true;
 						this.readyResolve?.(this.address);
 						resolve(true);
 					};
@@ -88,7 +148,11 @@ class Server {
 					console.log(str);
 				});
 
-				this.cp.stderr.on('data', (data: Buffer) => {
+				cp.stderr.on('data', (data: Buffer) => {
+					if (this.cp !== cp) {
+						return;
+					};
+
 					const chunk = data.toString();
 
 					// max chunk size is 8192 bytes
@@ -111,12 +175,32 @@ class Server {
 					console.log(chunk);
 				});
 
-				this.cp.on('exit', () => {
-					if (this.stopTriggered) {
+				cp.on('exit', () => {
+					if (this.cp !== cp) {
 						return;
 					};
 
+					this.cp = null;
 					this.isRunning = false;
+
+					// The helper died before it reported readiness: settle start() so
+					// callers awaiting it are never left pending
+					if (!ready) {
+						ready = true;
+
+						if (this.stopTriggered) {
+							resolve(false);
+						} else {
+							const err = new Error('Anytype helper exited before it was ready');
+
+							this.readyReject?.(err);
+							reject(err);
+						};
+					};
+
+					if (this.stopTriggered) {
+						return;
+					};
 
 					const log = path.join(logPath, `crash_${Util.dateForFile()}.log`);
 					try {
@@ -132,31 +216,178 @@ class Server {
 				});
 			});
 		});
+
+		this.startPromise = startPromise;
+
+		// Registered before the promise is handed out so the slot is released
+		// before any caller awaiting start() resumes
+		const release = () => {
+			if (this.startPromise === startPromise) {
+				this.startPromise = null;
+			};
+		};
+
+		void startPromise.then(release, release);
+
+		return startPromise;
 	};
 
 	stop (signal?: string): Promise<boolean> {
 		signal = String(signal || 'SIGTERM');
 
-		return new Promise((resolve, reject) => {
-			if (this.cp && this.isRunning) {
-				this.cp.on('exit', () => {
-					resolve(true);
+		if (this.stopPromise) {
+			return this.stopPromise;
+		};
 
-					this.isRunning = false;
-					this.cp = null;
-				});
+		const cp = this.cp;
+		if (!cp || (cp.exitCode !== null) || (cp.signalCode !== null)) {
+			this.isRunning = false;
+			if (this.cp === cp) {
+				this.cp = null;
+			};
+			return Promise.resolve(true);
+		};
 
-				this.stopTriggered = true;
- 				if (process.platform === 'win32') {
-					 // it is not possible to handle os signals on windows, so we can't do graceful shutdown on go side
-					this.cp.stdin.write(winShutdownStdinMessage);
-				} else {
-					this.cp.kill(signal as NodeJS.Signals);
+		this.stopTriggered = true;
+
+		const stopPromise = new Promise<boolean>((resolve) => {
+			let finished = false;
+			let forceTriggered = false;
+			let gracefulTimer: ReturnType<typeof setTimeout> | null = null;
+			let forceTimer: ReturnType<typeof setTimeout> | null = null;
+			let stdinErrorHandler: ((err: Error) => void) | null = null;
+
+			const finish = (stopped: boolean) => {
+				if (finished) {
+					return;
 				};
-			} else {
-				resolve(true);
+
+				finished = true;
+				if (gracefulTimer) {
+					clearTimeout(gracefulTimer);
+				};
+				if (forceTimer) {
+					clearTimeout(forceTimer);
+				};
+				if (cp.stdin && stdinErrorHandler) {
+					cp.stdin.removeListener('error', stdinErrorHandler);
+				};
+
+				cp.removeListener('exit', onExit);
+				if (stopped) {
+					this.isRunning = false;
+					if (this.cp === cp) {
+						this.cp = null;
+					};
+				};
+				resolve(stopped);
+			};
+
+			const onExit = () => finish(true);
+			const forceStop = () => {
+				if (finished || forceTriggered) {
+					return;
+				};
+
+				forceTriggered = true;
+				if (gracefulTimer) {
+					clearTimeout(gracefulTimer);
+				};
+
+				console.warn(`[Server] Helper did not stop within ${gracefulShutdownTimeoutMs}ms; killing it`);
+				try {
+					cp.kill('SIGKILL');
+				} catch (err: any) {
+					console.error('[Server] Failed to kill helper:', err.toString());
+				};
+
+				forceTimer = setTimeout(() => {
+					console.error(`[Server] Helper did not report exit within ${forceShutdownTimeoutMs}ms after SIGKILL`);
+					finish(false);
+				}, forceShutdownTimeoutMs);
+			};
+
+			cp.once('exit', onExit);
+			gracefulTimer = setTimeout(forceStop, gracefulShutdownTimeoutMs);
+
+			try {
+				if (process.platform === 'win32') {
+					// Windows does not support POSIX termination signals. The helper's
+					// stdin protocol requests a graceful shutdown instead.
+					if (!cp.stdin) {
+						forceStop();
+					} else {
+						stdinErrorHandler = (err: Error) => {
+							console.error('[Server] Failed to request helper shutdown:', err.toString());
+							forceStop();
+						};
+						cp.stdin.once('error', stdinErrorHandler);
+						cp.stdin.write(winShutdownStdinMessage, (err) => {
+							if (err) {
+								stdinErrorHandler?.(err);
+							};
+						});
+					};
+				} else
+				if (!cp.kill(signal as NodeJS.Signals)) {
+					forceStop();
+				};
+			} catch (err: any) {
+				console.error('[Server] Failed to request helper shutdown:', err.toString());
+				forceStop();
 			};
 		});
+
+		this.stopPromise = stopPromise;
+		void stopPromise.then(() => {
+			if (this.stopPromise === stopPromise) {
+				this.stopPromise = null;
+			};
+		});
+
+		return stopPromise;
+	};
+
+	/**
+	 * Hands the helper its per-launch local API secret, as the first line on
+	 * its stdin. Ordering is the point: the helper waits for this line before
+	 * it serves, so no bootstrap call of ours can outrun it.
+	 */
+	sendSecret (cp: childProcess.ChildProcess): void {
+		// Logged through Util so it survives a packaged launch, where console
+		// output goes nowhere: an undelivered secret leaves the helper permissive
+		// today and unreachable once heart flips the gate to fail-closed, and
+		// this is the only trace of why
+		const failed = (err?: Error) => {
+			Util.log('error', '[Server] Failed to deliver the local api secret:', err ? err.toString() : 'helper has no stdin');
+		};
+
+		if (!cp.stdin) {
+			failed();
+			return;
+		};
+
+		// A helper that died between spawn and this write leaves a broken pipe,
+		// which both throws here and emits 'error'. Unhandled, that error is
+		// fatal to the main process
+		cp.stdin.on('error', (err: Error) => {
+			Util.log('error', '[Server] Helper stdin error:', err.toString());
+		});
+
+		// Never log the value itself
+		try {
+			cp.stdin.write(`${localApiSecretStdinPrefix}${this.secret}\n`, (err) => {
+				if (err) {
+					failed(err);
+				};
+			});
+		} catch (err: any) {
+			failed(err);
+		};
+	};
+
+	getSecret (): string {
+		return this.secret;
 	};
 
 	getAddress (): string {

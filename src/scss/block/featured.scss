@@ -19,6 +19,7 @@
 		}
 		.listColumn {
 			.wrapMenu { display: none; }
+			> span.isHighlighted { background: var(--color-shape-highlight-medium); border-radius: 8px; }
 		}
 
 		.listInline { display: flex; flex-direction: row; align-items: center; gap: 0px 2px; flex-wrap: wrap; }
@@ -39,8 +40,9 @@
 			}
 			.cellContent.disabled { opacity: 1; }
 
-			.cellContent:not(.disabled):hover, 
+			.cellContent:not(.disabled):hover,
 			.cellContent:not(.disabled).hover { background: var(--color-shape-highlight-medium); }
+			.cellContent.isHighlighted { background: var(--color-shape-highlight-medium); }
 			.cellContent {
 				.element { line-height: inherit; background: none !important; cursor: default !important; }
 				.iconObject { display: none; margin: 0px; }

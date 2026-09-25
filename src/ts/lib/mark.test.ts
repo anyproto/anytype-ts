@@ -1,6 +1,37 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import Mark from './mark';
 import * as I from 'Interface';
+import { U, S } from 'Lib';
+
+beforeAll(() => {
+	const g = globalThis as any;
+	const u = U as any;
+
+	// mark.ts uses auto-imported globals (U, S) that the vite plugin injects at
+	// build time — expose the mocked Lib barrel on globalThis for the tests
+	g.U = U;
+	g.S = S;
+
+	// Realistic entity decoding (the Lib mock stubs it as identity)
+	u.String.fromHtmlSpecialChars = (s: string) => {
+		return String(s || '').replace(/(&lt;|&gt;|&amp;)/g, (m: string, p: string) => {
+			if (p == '&lt;') p = '<';
+			if (p == '&gt;') p = '>';
+			if (p == '&amp;') p = '&';
+			return p;
+		});
+	};
+
+	// Minimal DOM plumbing so cleanHtml/fromHtml can run in the node environment
+	u.Dom = {
+		select: () => null,
+		selectAll: () => [],
+	};
+
+	g.document = {
+		createElement: () => ({ innerHTML: '' }),
+	};
+});
 
 describe('Mark', () => {
 
@@ -123,6 +154,96 @@ describe('Mark', () => {
 
 			expect(adjusted[0].range.from).toBe(0);
 		});
+
+		it('should push a mention fully right when text is inserted exactly at its start (JS-7510)', () => {
+			// IME commit in front of an @-reference: the committed text is placed
+			// at the caret and the object mark must shift right by the full diff
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Mention, range: { from: 5, to: 6 }, param: 'objectId' },
+			];
+
+			const adjusted = Mark.adjust(marks, 5, 2);
+
+			expect(adjusted[0].range).toEqual({ from: 7, to: 8 });
+		});
+
+		it('should not move a mention when text is inserted exactly at its end (JS-7510)', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Mention, range: { from: 5, to: 6 }, param: 'objectId' },
+			];
+
+			const adjusted = Mark.adjust(marks, 6, 2);
+
+			expect(adjusted[0].range).toEqual({ from: 5, to: 6 });
+		});
+	});
+
+	describe('adjustForReplace', () => {
+		it('should drop a link whose text was entirely replaced (JS-9869)', () => {
+			// Pasting over a selection deletes the selected text, so a link that
+			// lived inside it has no anchor left. A plain adjust() only shifts it,
+			// stranding it on unrelated words further down the message.
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 20, to: 38 }, param: 'https://example.com' },
+			];
+
+			const adjusted = Mark.adjustForReplace(marks, 10, 50, 12);
+
+			expect(adjusted).toHaveLength(0);
+		});
+
+		it('should drop every link inside the replaced range, not just the first', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 20, to: 38 }, param: 'https://example.com' },
+				{ type: I.MarkType.Link, range: { from: 40, to: 50 }, param: 'https://example.org' },
+			];
+
+			const adjusted = Mark.adjustForReplace(marks, 10, 60, 12);
+
+			expect(adjusted).toHaveLength(0);
+		});
+
+		it('should keep and shift marks that sit after the replaced range', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 100, to: 118 }, param: 'https://example.com' },
+			];
+
+			const adjusted = Mark.adjustForReplace(marks, 10, 50, 12);
+
+			expect(adjusted).toHaveLength(1);
+			expect(adjusted[0].range).toEqual({ from: 72, to: 90 });
+		});
+
+		it('should leave marks before the replaced range untouched', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'https://example.org' },
+			];
+
+			const adjusted = Mark.adjustForReplace(marks, 10, 50, 12);
+
+			expect(adjusted[0].range).toEqual({ from: 0, to: 5 });
+		});
+
+		it('should keep formatting marks, which are not anchored to a param', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Bold, range: { from: 20, to: 38 }, param: '' },
+			];
+
+			const adjusted = Mark.adjustForReplace(marks, 10, 50, 12);
+
+			expect(adjusted).toHaveLength(1);
+		});
+
+		it('should behave like adjust when nothing is selected', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 20, to: 38 }, param: 'https://example.org' },
+			];
+
+			const replaced = Mark.adjustForReplace(marks, 10, 10, 12);
+			const shifted = Mark.adjust(marks, 10, 12);
+
+			expect(replaced).toEqual(shifted);
+		});
 	});
 
 	describe('checkRanges', () => {
@@ -177,6 +298,102 @@ describe('Mark', () => {
 			const result = Mark.checkRanges('hello world', marks);
 
 			expect(result).toHaveLength(0);
+		});
+
+		it('should trim leading newline out of code mark range', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 5, to: 11 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\nworld', marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].range.from).toBe(6);
+			expect(result[0].range.to).toBe(11);
+		});
+
+		it('should trim trailing newline out of code mark range', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 0, to: 6 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\nworld', marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].range.from).toBe(0);
+			expect(result[0].range.to).toBe(5);
+		});
+
+		it('should keep inner newlines of code mark range', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 0, to: 11 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\nworld', marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].range.from).toBe(0);
+			expect(result[0].range.to).toBe(11);
+		});
+
+		it('should remove code mark consisting only of newlines', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 5, to: 7 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\n\nworld', marks);
+
+			expect(result).toHaveLength(0);
+		});
+
+		it('should not trim newlines from non-code marks', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Bold, range: { from: 5, to: 11 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\nworld', marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].range.from).toBe(5);
+			expect(result[0].range.to).toBe(11);
+		});
+
+		// toHtml runs checkRanges on every render with the block's stored marks:
+		// rewriting their ranges in place corrupts the store (JS-9853)
+		it('should not mutate the input marks when merging adjacent marks', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Bold, range: { from: 0, to: 5 }, param: '' },
+				{ type: I.MarkType.Bold, range: { from: 5, to: 10 }, param: '' },
+			];
+			const before = JSON.stringify(marks);
+
+			const result = Mark.checkRanges('hello world', marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].range).toEqual({ from: 0, to: 10 });
+			expect(JSON.stringify(marks)).toBe(before);
+		});
+
+		it('should not mutate the input marks when clamping to text length', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Bold, range: { from: 0, to: 50 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello', marks);
+
+			expect(result[0].range.to).toBe(5);
+			expect(marks[0].range.to).toBe(50);
+		});
+
+		it('should not mutate the input marks when trimming code newlines', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 0, to: 6 }, param: '' },
+			];
+
+			const result = Mark.checkRanges('hello\nworld', marks);
+
+			expect(result[0].range.to).toBe(5);
+			expect(marks[0].range.to).toBe(6);
 		});
 	});
 
@@ -304,6 +521,144 @@ describe('Mark', () => {
 
 			expect(result).toHaveLength(2);
 		});
+
+		// The input list is the block's stored marks: mutating it in place makes the
+		// store look already-updated, so the save is skipped as a no-op (JS-9853)
+		it('should not mutate the input marks on Equal overlap with param', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Color, range: { from: 0, to: 5 }, param: 'red' },
+			];
+
+			const result = Mark.toggle(marks, {
+				type: I.MarkType.Color,
+				range: { from: 0, to: 5 },
+				param: 'blue',
+			});
+
+			expect(result[0].param).toBe('blue');
+			expect(marks[0].param).toBe('red');
+			expect(result[0]).not.toBe(marks[0]);
+		});
+
+		it('should not mutate the input marks when shrinking ranges', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Bold, range: { from: 0, to: 10 }, param: '' },
+			];
+
+			Mark.toggle(marks, {
+				type: I.MarkType.Bold,
+				range: { from: 0, to: 5 },
+				param: '',
+			});
+
+			expect(marks[0].range).toEqual({ from: 0, to: 10 });
+		});
+	});
+
+	// U.Data.blockSetText drops a write when the text is unchanged and the new marks
+	// still compare equal to the block's stored marks. Callers hand it the store's own
+	// array, so a mark helper that edits that array in place makes the store look
+	// already-updated and the change never reaches middleware. These cases assert the
+	// write survives the guard — the failure mode the mutation tests above only imply
+	describe('guard: mark change must remain visible to blockSetText', () => {
+		const cases = [
+			{
+				name: 'recolour the same selection again',
+				stored: { type: I.MarkType.Color, range: { from: 0, to: 5 }, param: 'red' },
+				toggled: { type: I.MarkType.Color, range: { from: 0, to: 5 }, param: 'blue' },
+			},
+			{
+				name: 'change the background colour of the same selection',
+				stored: { type: I.MarkType.BgColor, range: { from: 0, to: 5 }, param: 'red' },
+				toggled: { type: I.MarkType.BgColor, range: { from: 0, to: 5 }, param: 'blue' },
+			},
+			{
+				name: 'un-bold the left edge of a bold run',
+				stored: { type: I.MarkType.Bold, range: { from: 0, to: 11 }, param: '' },
+				toggled: { type: I.MarkType.Bold, range: { from: 0, to: 5 }, param: '' },
+			},
+			{
+				name: 'un-bold the right edge of a bold run',
+				stored: { type: I.MarkType.Bold, range: { from: 0, to: 11 }, param: '' },
+				toggled: { type: I.MarkType.Bold, range: { from: 6, to: 11 }, param: '' },
+			},
+			{
+				name: 'un-bold the middle of a bold run',
+				stored: { type: I.MarkType.Bold, range: { from: 0, to: 11 }, param: '' },
+				toggled: { type: I.MarkType.Bold, range: { from: 3, to: 7 }, param: '' },
+			},
+			{
+				name: 'extend a colour run leftwards with the same colour',
+				stored: { type: I.MarkType.Color, range: { from: 5, to: 11 }, param: 'red' },
+				toggled: { type: I.MarkType.Color, range: { from: 0, to: 7 }, param: 'red' },
+			},
+			{
+				name: 'extend a colour run rightwards with the same colour',
+				stored: { type: I.MarkType.Color, range: { from: 0, to: 6 }, param: 'red' },
+				toggled: { type: I.MarkType.Color, range: { from: 3, to: 11 }, param: 'red' },
+			},
+			{
+				name: 'recolour a superset of an existing run',
+				stored: { type: I.MarkType.Color, range: { from: 3, to: 7 }, param: 'red' },
+				toggled: { type: I.MarkType.Color, range: { from: 0, to: 11 }, param: 'blue' },
+			},
+		];
+
+		for (const c of cases) {
+			it(`should send a write when the user does: ${c.name}`, () => {
+				const stored: I.Mark[] = [ c.stored ];
+				const result = Mark.toggle(stored, c.toggled);
+
+				expect(U.Common.compareJSON(stored, result)).toBe(false);
+			});
+		};
+
+		it('should send a write when changing an existing link url', () => {
+			const stored: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://a.com' },
+			];
+
+			const result = Mark.toggleLink({ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://b.com' }, stored);
+
+			expect(U.Common.compareJSON(stored, result)).toBe(false);
+		});
+
+		// The guard exists to stop no-op writes destroying a concurrent peer edit
+		// (JS-9826): a fix that simply removed it would break this
+		it('should not send a write when nothing actually changed', () => {
+			const stored: I.Mark[] = [
+				{ type: I.MarkType.Color, range: { from: 0, to: 5 }, param: 'red' },
+			];
+
+			const result = Mark.toggle(stored, { type: I.MarkType.Color, range: { from: 0, to: 5 }, param: 'red' });
+
+			expect(U.Common.compareJSON(stored, result)).toBe(true);
+		});
+	});
+
+	describe('toggleLink', () => {
+		it('should replace the param of an existing link', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://a.com' },
+			];
+
+			const result = Mark.toggleLink({ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://b.com' }, marks);
+
+			expect(result).toHaveLength(1);
+			expect(result[0].param).toBe('http://b.com');
+		});
+
+		it('should not mutate the input marks', () => {
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Link, range: { from: 0, to: 5 }, param: 'http://a.com' },
+			];
+
+			Mark.toggleLink({ type: I.MarkType.Link, range: { from: 0, to: 10 }, param: 'http://a.com' }, marks);
+
+			expect(marks).toHaveLength(1);
+			expect(marks[0].param).toBe('http://a.com');
+			expect(marks[0].range).toEqual({ from: 0, to: 5 });
+		});
 	});
 
 	describe('trimRange', () => {
@@ -425,6 +780,183 @@ describe('Mark', () => {
 		});
 	});
 
+	describe('fromMarkdown', () => {
+		it('should not italicize intra-word underscores like _physics_process() (JS-7786)', () => {
+			const result = Mark.fromMarkdown('tilde _physics_process() tilde', [], [], false, false);
+
+			expect(result.text).toBe('tilde _physics_process() tilde');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not italicize across a code-marked snake_case identifier (JS-7786)', () => {
+			// First snippet already converted to a Code mark, second one still being typed
+			const text = 'tilde _progress() tilde and `_physics_';
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Code, range: { from: 6, to: 17 }, param: '' },
+			];
+
+			const result = Mark.fromMarkdown(text, marks, [], false, false);
+
+			expect(result.text).toBe(text);
+			expect(result.marks).toEqual(marks);
+		});
+
+		it('should still convert _italic_ followed by a boundary', () => {
+			const result = Mark.fromMarkdown('word _italic_ word', [], [], false, false);
+
+			expect(result.text).toBe('word italic word');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+			expect(result.marks[0].range).toEqual({ from: 5, to: 11 });
+		});
+
+		it('should still convert _italic_ followed by punctuation', () => {
+			const result = Mark.fromMarkdown('word _italic_, word', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+
+		it('should not bold intra-word double underscores (JS-7786)', () => {
+			const result = Mark.fromMarkdown('name __dunder__method here', [], [], false, false);
+
+			expect(result.text).toBe('name __dunder__method here');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not italicize intra-word underscores in Cyrillic text (JS-7786)', () => {
+			const result = Mark.fromMarkdown('слово _физика_процесс конец', [], [], false, false);
+
+			expect(result.text).toBe('слово _физика_процесс конец');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not italicize underscores opened right after a non-Latin letter (JS-7786)', () => {
+			const result = Mark.fromMarkdown('слово_физика_ конец', [], [], false, false);
+
+			expect(result.text).toBe('слово_физика_ конец');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not bold intra-word double underscores in Cyrillic text (JS-7786)', () => {
+			const result = Mark.fromMarkdown('слово __жирный__метод конец', [], [], false, false);
+
+			expect(result.text).toBe('слово __жирный__метод конец');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should still convert _курсив_ at word boundaries in Cyrillic text', () => {
+			const result = Mark.fromMarkdown('слово _курсив_ конец', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+
+		it('should still convert *italic* with asterisks', () => {
+			const result = Mark.fromMarkdown('word *italic* word', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+
+		it('should convert a plain backtick code span', () => {
+			const result = Mark.fromMarkdown('Hello `World`', [], [], false, false);
+
+			expect(result.text).toBe('Hello World');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 6, to: 11 });
+		});
+
+		it('should keep a leading space inside backticks out of the code mark (JS-9071)', () => {
+			// Dead-key layouts can commit the space next to the backtick inside the span
+			const result = Mark.fromMarkdown('Hello ` World`', [], [], false, false);
+
+			expect(result.text).toBe('Hello  World');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 7, to: 12 });
+		});
+
+		it('should keep a leading nbsp inside backticks out of the code mark (JS-9071)', () => {
+			const result = Mark.fromMarkdown('Hello `\u00A0World`', [], [], false, false);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 7, to: 12 });
+		});
+
+		it('should convert a code span after an nbsp boundary (JS-9071)', () => {
+			const result = Mark.fromMarkdown('Hello\u00A0`World`', [], [], false, false);
+
+			expect(result.text).toBe('Hello\u00A0World');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 6, to: 11 });
+		});
+	});
+
+	describe('fromHtml', () => {
+		it('should keep user-typed <a> as literal text (JS-7238)', () => {
+			const result = Mark.fromHtml('typed &lt;a&gt; tag', []);
+
+			expect(result.text).toBe('typed <a> tag');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should keep user-typed <a> inside inline code (JS-7238)', () => {
+			const result = Mark.fromHtml('<markupcode spellcheck="false">&lt;a&gt;</markupcode>', []);
+
+			expect(result.text).toBe('<a>');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Code);
+			expect(result.marks[0].range).toEqual({ from: 0, to: 3 });
+		});
+
+		it('should keep user-typed <area> as literal text (JS-7238)', () => {
+			const result = Mark.fromHtml('&lt;area&gt;', []);
+
+			expect(result.text).toBe('<area>');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should keep user-typed closing </a> as literal text (JS-7238)', () => {
+			const result = Mark.fromHtml('hello &lt;/a&gt; world', []);
+
+			expect(result.text).toBe('hello </a> world');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should not let a kept literal </a> shadow a later real closing </a> (JS-7238)', () => {
+			const result = Mark.fromHtml('hi &lt;/a&gt; <a href="u" class="markuplink" data-param="u" data-range="8-12">link</a> end', []);
+
+			expect(result.text).toBe('hi </a> link end');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Link);
+			expect(result.marks[0].param).toBe('u');
+			expect(result.marks[0].range).toEqual({ from: 8, to: 12 });
+		});
+
+		it('should not let a kept literal <a> shadow a later real link opening (JS-7238)', () => {
+			const result = Mark.fromHtml('&lt;a&gt; <a href="u" class="markuplink" data-param="u" data-range="4-8">link</a>', []);
+
+			expect(result.text).toBe('<a> link');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Link);
+			expect(result.marks[0].range).toEqual({ from: 4, to: 8 });
+		});
+
+		it('should still parse real link markup with data-param (JS-7238)', () => {
+			const result = Mark.fromHtml('<a href="https://x.com" class="markuplink" data-param="https://x.com" data-range="0-4">link</a>', []);
+
+			expect(result.text).toBe('link');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Link);
+			expect(result.marks[0].param).toBe('https://x.com');
+			expect(result.marks[0].range).toEqual({ from: 0, to: 4 });
+		});
+	});
+
 	describe('paramToAttr', () => {
 		it('should generate href for Link type', () => {
 			const attr = Mark.paramToAttr(I.MarkType.Link, 'https://example.com');
@@ -455,6 +987,54 @@ describe('Mark', () => {
 			const attr = Mark.paramToAttr(I.MarkType.Code, '');
 
 			expect(attr).toContain('spellcheck="false"');
+		});
+	});
+
+	describe('stripZws', () => {
+
+		// Minimal element-like node: a single text node, the way a code block renders
+		const element = (text: string): any => {
+			return {
+				textContent: text,
+				childNodes: [ { nodeType: 3, textContent: text, childNodes: [] } ],
+			};
+		};
+
+		beforeAll(() => {
+			const g = globalThis as any;
+
+			if (typeof g.Node === 'undefined') {
+				g.Node = { TEXT_NODE: 3, ELEMENT_NODE: 1 };
+			};
+		});
+
+		it('should remove zero-width spaces that came in with pasted text', () => {
+			expect(Mark.stripZws('const a\u200B = 1;')).toBe('const a = 1;');
+		});
+
+		it('should remove a run of zero-width spaces', () => {
+			expect(Mark.stripZws('\u200Bconst\u200B\u200B a = 1;\u200B')).toBe('const a = 1;');
+		});
+
+		it('should leave text without zero-width spaces untouched', () => {
+			expect(Mark.stripZws('const a = 1;')).toBe('const a = 1;');
+		});
+
+		it('should keep DOM and model offsets aligned for the rendered text', () => {
+			const el = element(Mark.stripZws('const a\u200B = 1;'));
+
+			expect(Mark.hasZws(el)).toBe(false);
+			expect(Mark.domToModel(8, el)).toBe(8);
+			expect(Mark.modelToDom(8, el)).toBe(8);
+		});
+
+		it('should document the drift when a stray zero-width space reaches the DOM', () => {
+			const el = element('const a\u200B = 1;');
+
+			// The character is in the DOM but not in the model: every offset past it
+			// shifts, and Backspace on it deletes nothing the user can see
+			expect(Mark.hasZws(el)).toBe(true);
+			expect(Mark.domToModel(8, el)).toBe(7);
 		});
 	});
 

@@ -57,6 +57,26 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		window.setTimeout(() => filterRef.current?.focus(), 15);
 	};
 
+	// Expand into the full search popup, scoped to this chat: a chat-focused
+	// Messages token rides along with the typed query - the full popup adds what
+	// this inline search lacks (the "/by" people filter, tokens). A "/" typed at
+	// the start expands too, carrying the "/" so the popup opens straight into its
+	// command list (the keystroke that asked for filters lands on them)
+	const onExpand = (preset?: string) => {
+		const presetFilter = (preset === undefined) ? filter.current : preset;
+
+		close();
+
+		window.setTimeout(() => {
+			keyboard.onSearchPopup(route || '', {
+				data: {
+					presetFilter,
+					presetTokens: [ { kind: 'kind', id: 'message', focus: { chatId } } ],
+				},
+			});
+		}, S.Menu.getTimeout());
+	};
+
 	const rebind = () => {
 		unbind();
 		keydownHandler.current = (e: any) => onKeyDown(e);
@@ -103,7 +123,7 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			return;
 		};
 
-		C.ChatSearch(space, chatId, text, offset.current, J.Constant.limit.menuRecords, sorts, (message: any) => {
+		C.ChatSearch(space, chatId, text, offset.current, J.Constant.limit.menuRecords, sorts, [], (message: any) => {
 			if (message.error.code) {
 				callBack?.(message);
 				return;
@@ -142,6 +162,13 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const onFilterChange = (v: string) => {
 		window.clearTimeout(timeout.current);
+
+		// "/" at the start asks for filters - only the full popup has them
+		if (v.startsWith('/')) {
+			onExpand(v);
+			return;
+		};
+
 		timeout.current = window.setTimeout(() => {
 			filter.current = filterRef.current?.getValue() || '';
 			reload();
@@ -202,33 +229,6 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		U.Dom.css(content, { height: `${height}px` });
 	};
 
-	const getHighlightedText = (item: ChatSearchResult) => {
-		const { highlight, highlightRanges } = item;
-
-		if (!highlight) {
-			return item.message?.content?.text || '';
-		};
-
-		if (!highlightRanges || !highlightRanges.length) {
-			return highlight;
-		};
-
-		let result = '';
-		let lastIndex = 0;
-
-		const sortedRanges = [ ...highlightRanges ].sort((a, b) => a.from - b.from);
-
-		for (const range of sortedRanges) {
-			result += U.String.sanitize(highlight.substring(lastIndex, range.from));
-			result += `<span class="highlight">${U.String.sanitize(highlight.substring(range.from, range.to))}</span>`;
-			lastIndex = range.to;
-		};
-
-		result += U.String.sanitize(highlight.substring(lastIndex));
-
-		return result;
-	};
-
 	const scrollToRow = (items: any[], index: number) => {
 		if (!listRef.current || !items.length) {
 			return;
@@ -265,7 +265,7 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const { message } = item;
 		const { creator, createdAt } = message;
 		const author = U.Space.getParticipant(U.Space.getParticipantId(S.Common.space, creator));
-		const highlightedText = getHighlightedText(item);
+		const highlightedText = U.Chat.getSearchResultHtml(item);
 		const day = showRelativeDates ? U.Date.dayString(createdAt) : null;
 		const date = day ? day : U.Date.dateWithFormat(dateFormat, createdAt);
 
@@ -324,15 +324,24 @@ const MenuSearchChat = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	return (
 		<div className="wrap">
 			<div className="filterWrapper">
-				<Filter
-					ref={filterRef}
-					placeholder={translate('commonSearch')}
-					value=""
-					iconParam={{ name: 'common/search' }}
-					onChange={onFilterChange}
-					focusOnMount={true}
-				/>
-				
+				<div className="filterInner">
+					<Filter
+						ref={filterRef}
+						placeholder={translate('popupSearchPlaceholderShort')}
+						value=""
+						iconParam={{ name: 'common/search' }}
+						onChange={onFilterChange}
+						focusOnMount={true}
+					/>
+
+					<Icon
+						name="common/expand"
+						className="expand"
+						tooltipParam={{ text: translate('menuSearchChatExpand') }}
+						onClick={() => onExpand()}
+					/>
+				</div>
+
 				<div className="arrowWrapper">
 					<Icon name="arrow/small" size={8} className={cnu.join(' ')} onClick={() => onArrow(1)} />
 					<Icon name="arrow/small" size={8} className={cnd.join(' ')} onClick={() => onArrow(-1)} />

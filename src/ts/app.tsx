@@ -4,13 +4,15 @@ import * as Sentry from '@sentry/browser';
 import raf from 'raf';
 import { RouteComponentProps } from 'react-router';
 import { Router, Route, Switch } from 'react-router-dom';
-import { configure } from 'mobx';
-import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft } from 'Component';
+import { configure, reaction, comparer } from 'mobx';
+import { Page, SelectionProvider, DragProvider, Toast, Preview as PreviewIndex, ListPopup, ListMenu, ListNotification, UpdateBanner, SidebarLeft, RecoveryStatus } from 'Component';
 import { scheduleReaction, clearReactionQueue } from 'Lib/reactionScheduler';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
 import Animation from 'Lib/animation';
+import { approvalSpaces } from 'Lib/linkApproval';
+import Download from 'Lib/download';
 
 configure({ enforceActions: 'never', reactionScheduler: (f) => scheduleReaction(f) });
 
@@ -120,6 +122,12 @@ const App: FC = () => {
 
 	const [ isLoading, setIsLoading ] = useState(true);
 	const nodeRef = useRef(null);
+	const cancelSelectRef = useRef<() => void>(null);
+	const isSelectCancelled = useRef(false);
+	// Mirrors the state below: the RPC callback runs before React commits it, and Cancel must
+	// already be refused in that window
+	const isSelectDoneRef = useRef(false);
+	const [ isSelectDone, setIsSelectDone ] = useState(false);
 
 	const init = () => {
 		const { version, arch, getGlobal, tabId } = electron;
@@ -146,7 +154,10 @@ const App: FC = () => {
 
 			U.Perf.step('boot:server', 'boot:init');
 
-			dispatcher.init(address);
+			// The helper requires this on the account-bootstrap RPCs. The main
+			// process gave it to the helper on its stdin before it started serving,
+			// so it is published by the time any address exists
+			dispatcher.init(address, getGlobal('localApiSecret'));
 			Renderer.send('getInitData', tabId()).then((data: any) => {
 				U.Perf.step('boot:init-data', 'boot:init');
 				onInit(data);
@@ -182,6 +193,12 @@ const App: FC = () => {
 		Renderer.on('update-error', onUpdateError);
 		Renderer.on('download-started', onDownloadStarted);
 		Renderer.on('download-progress', onUpdateProgress);
+
+		// Gateway file downloads: the middleware has no process behind them, so
+		// the renderer owns their progress rows. Events are broadcast to every
+		// tab; only the one holding the id has a row to update
+		Renderer.on('file-download-progress', (e: any, data: any) => Download.onProgress(data));
+		Renderer.on('file-download-done', (e: any, data: any) => Download.onDone(data));
 		Renderer.on('spellcheck', onSpellcheck);
 		Renderer.on('pin-set', () => S.Common.pinInit());
 		Renderer.on('pin-remove', () => S.Common.pinInit());
@@ -203,6 +220,7 @@ const App: FC = () => {
 
 			S.Common.redirectSet('');
 		});
+		Renderer.on('link-approval-decision', onLinkApprovalDecision);
 		Renderer.on('enter-full-screen', () => S.Common.fullscreenSet(true));
 		Renderer.on('leave-full-screen', () => S.Common.fullscreenSet(false));
 		Renderer.on('config', (e: any, config: any) => S.Common.configSet(config, true));
@@ -282,6 +300,8 @@ const App: FC = () => {
 		Renderer.remove('update-error');
 		Renderer.remove('download-started');
 		Renderer.remove('download-progress');
+		Renderer.remove('file-download-progress');
+		Renderer.remove('file-download-done');
 		Renderer.remove('spellcheck');
 		Renderer.remove('pin-set');
 		Renderer.remove('pin-remove');
@@ -331,12 +351,14 @@ const App: FC = () => {
 			};
 		};
 
+		// Resolve the system theme before themeSet updates CSS and the native background.
+		S.Common.nativeThemeSet(isDark);
+
 		if (config) {
 			S.Common.configSet(config, true);
 			S.Common.themeSet(config.theme);
 		};
 
-		S.Common.nativeThemeSet(isDark);
 		S.Common.languagesSet(languages);
 		S.Common.dataPathSet(dataPath);
 		S.Common.windowIdSet(id);
@@ -345,6 +367,11 @@ const App: FC = () => {
 		S.Common.setLeftSidebarState('vault', '');
 		S.Common.isPinnedSet(isPinned || false);
 		S.Common.singleTabSet(isSingleTab);
+
+		// One-time unsafe data location popup: gate on active tab (onInit runs per tab), delay past the boot loader
+		if (S.Common.isActiveTab) {
+			window.setTimeout(() => Action.vaultLocationWarningOnStart(), 3000);
+		};
 
 		U.Data.updateTabsDimmer();
 
@@ -384,11 +411,29 @@ const App: FC = () => {
 				U.Perf.step('boot:ready', 'boot:entry');
 			};
 
-			rootLoader?.remove();
+			// React owns #root-loader, so it must do the removal: detaching it here and letting the
+			// state update commit afterwards makes React remove a node that is no longer its
+			// child, which throws in the commit phase and takes the whole app to the error
+			// boundary. Unmounting also stops the status block's observer and timer
+			setIsLoading(false);
+
 			bubbleLoader?.remove();
 			U.Dom.removeClass(body, 'over');
 		};
 		const routeParam = { replace: true, onRouteChange: hide };
+
+		// Cancel on the start-up loader: the logout calls AccountStop, which makes the pending
+		// AccountSelect return, and the auth landing replaces the loader, the same path the setup
+		// page's Back button takes
+		cancelSelectRef.current = () => {
+			if (isSelectCancelled.current || isSelectDoneRef.current) {
+				return;
+			};
+
+			isSelectCancelled.current = true;
+			S.Auth.logout(true, false);
+			U.Router.go('/auth/select', routeParam);
+		};
 
 		const cb = () => {
 			const t = 300;
@@ -423,12 +468,21 @@ const App: FC = () => {
 
 			const { dataPath } = S.Common;
 			const { networkConfig } = S.Auth;
-			const { mode, path: networkPath } = networkConfig;
+			const { mode, path: networkPath, preferYamux } = networkConfig;
 			const param = route ? U.Router.getParam(route) : {};
 			const spaceId = param.spaceId || data.spaceId || Storage.getAccountKey('spaceId', false, accountId) || '';
 
 			S.Auth.tokenSet(token);
-			C.AccountSelect(accountId, dataPath, mode, networkPath, spaceId, (message: any) => {
+			C.AccountSelect(accountId, dataPath, mode, networkPath, preferYamux, spaceId, (message: any) => {
+				// A logout from here on would strand the boot that is already under way; the rest
+				// of the run stays visible in the vault's progress block
+				isSelectDoneRef.current = true;
+				setIsSelectDone(true);
+
+				if (isSelectCancelled.current) {
+					return;
+				};
+
 				if (message.error.code) {
 					console.error('[App.onInit]:', message.error.description);
 					S.Common.redirectSet(route);
@@ -454,6 +508,16 @@ const App: FC = () => {
 
 				U.Data.onInfo(account.info);
 				S.Common.spaceSet('');
+
+				// The quick search panel boots spaceless: global search is cross-space by
+				// design and results open in the main window, so WorkspaceOpen, the
+				// per-space subscriptions and the chat/notification side loads would only
+				// pay for UI this window never renders
+				if ((param.page == 'main') && (param.action == 'quickSearch')) {
+					U.Data.onAuthQuickSearch(route, routeParam);
+					return;
+				};
+
 				U.Data.onAuthOnce();
 
 				if (spaceId) {
@@ -627,14 +691,38 @@ const App: FC = () => {
 		};
 	};
 
+	/**
+	 * The approval window has no session of its own, so main relays the user's Allow/Deny here:
+	 * only a full-scope session may answer a pairing request. The code comes back to this session
+	 * alone and is handed to main, which shows it in the window.
+	 */
+	const onLinkApprovalDecision = (e: any, param: any) => {
+		const { processPath, origin, allow, grant } = param || {};
+
+		C.AccountLocalLinkApproveChallenge(processPath, origin, allow, grant, (message: any) => {
+			Renderer.send('linkApprovalResult', {
+				processPath,
+				origin,
+				challenge: message.challenge || '',
+				error: message.error && message.error.code ? message.error : null,
+			});
+		});
+	};
+
 	const onSpellcheck = (e: any, misspelledWord: string, dictionarySuggestions: string[], x: number, y: number, rect: any) => {
 		U.Menu.spellcheck(misspelledWord, dictionarySuggestions, x, y, rect);
 	};
 
 	useEffect(() => {
 		init();
+		const disposeApprovalSpaces = reaction(
+			() => approvalSpaces(U.Menu.getVaultItems(), S.Auth.account?.info?.techSpaceId || ''),
+			spaces => Renderer.send('linkApprovalSpaces', { spaces }),
+			{ equals: comparer.structural },
+		);
 
 		return () => {
+			disposeApprovalSpaces();
 			unregisterIpcEvents();
 		};
 	}, []);
@@ -650,6 +738,8 @@ const App: FC = () => {
 								<div className="logo anim from" />
 								<div className="version anim from">{electron.version.app}</div>
 							</div>
+
+							<RecoveryStatus delay={J.Constant.delay.recoveryStatus} withLogo={true} onCancel={isSelectDone ? undefined : () => cancelSelectRef.current?.()} />
 						</div>
 					) : ''}
 

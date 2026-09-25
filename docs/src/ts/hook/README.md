@@ -1,7 +1,8 @@
 # hook/ - Custom React Hooks
 
-Custom hooks directory. Accessed via `H` import alias.
+Custom hooks directory. Accessed via the `H` import alias. Contains **2 hooks**.
 
-## Current State
+## Hooks
 
-The barrel file `index.ts` exports an empty set — no hooks are currently defined. Previously contained `useKeyPress`, `usePrevious`, and `useElementMovement`, which have been removed.
+- `useScrollRestore.ts` - Restores scroll position across navigation, anchored to a stable element
+- `useParticipantCandidates.ts` - People the account already shares a space with: subscribes cross-space, deduplicates by identity, sorts by shared-space count, filters by search. Used by the space-create member picker and the Add Members popup

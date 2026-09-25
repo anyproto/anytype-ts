@@ -5,6 +5,7 @@ const electron = () => _electron || (_electron = U.Common.getElectron());
 
 const ACCOUNT_KEYS = new Set([
 	'spaceId',
+	'importAi',
 ]);
 
 const SPACE_KEYS = new Set([
@@ -25,6 +26,7 @@ const SPACE_KEYS = new Set([
 	'widgetSections',
 	'binViewMode',
 	'pendingMembers',
+	'inviteSecurityDismissed',
 ]);
 
 const LOCAL_KEYS = new Set([
@@ -35,6 +37,7 @@ const LOCAL_KEYS = new Set([
 	'graphData',
 	'updateBanner',
 	'lastOpenedSimple',
+	'inviteSecurityDismissed',
 ]);
 
 const cache: Map<string, any> = new Map();
@@ -360,10 +363,18 @@ class Storage {
 	/**
 	 * Deletes an account key for the current account.
 	 * @param {string} key - The account key to delete.
+	 * @param {string} [accountId] - The account ID (defaults to the current account).
 	 */
-	deleteAccountKey (key: string, isLocal: boolean) {
-		const obj = this.getAccount(isLocal);
-		const accountId = this.getAccountId();
+	deleteAccountKey (key: string, isLocal: boolean, accountId?: string) {
+		accountId = accountId || this.getAccountId();
+
+		// Without an id every account key would resolve under '', deleting nothing and
+		// persisting an empty bucket
+		if (!accountId) {
+			return;
+		};
+
+		const obj = this.getAccount(isLocal, accountId);
 
 		delete(obj[accountId][key]);
 
@@ -677,12 +688,13 @@ class Storage {
 	 * Logs out the current user and clears storage.
 	 */
 	logout () {
-		const keys = [ 
-			'accountId',
-			'pin',
-		];
+		// Logout can run before AccountSelect ever set an account (Cancel on the boot loader and
+		// the setup page), so the account-scoped keys take the id stored on this device
+		const accountId = this.getAccountId() || String(this.get('accountId', this.isLocal('accountId')) || '');
 
-		keys.forEach(key => this.delete(key, this.isLocal(key)));
+		this.deleteAccountKey('spaceId', this.isLocal('spaceId'), accountId);
+
+		[ 'accountId', 'pin' ].forEach(key => this.delete(key, this.isLocal(key)));
 	};
 
 	/**
@@ -753,11 +765,20 @@ class Storage {
 	};
 
 	/**
-	 * Gets the list of keyboard shortcuts from storage.
+	 * Gets the list of keyboard shortcuts from storage. Values recorded by builds that
+	 * stored the raw e.key for Space carry a literal ' ' where J.Shortcut uses 'space' -
+	 * heal them on read so display, matching and the next write all agree.
 	 * @returns {any} The shortcuts data.
 	 */
 	getShortcuts () {
-		return this.get('shortcuts', this.isLocal('shortcuts')) || {};
+		const list = this.get('shortcuts', this.isLocal('shortcuts')) || {};
+		const ret: Record<string, string[]> = {};
+
+		for (const id in list) {
+			ret[id] = Array.isArray(list[id]) ? list[id].map((key: string) => (key == ' ') ? 'space' : key) : [];
+		};
+
+		return ret;
 	};
 
 	/**

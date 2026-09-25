@@ -1,6 +1,8 @@
 import raf from 'raf';
 import * as I from 'Interface';
 
+const HEADER_OFFSET = 20;
+
 class UtilDom {
 
 	esc (v: any): string {
@@ -99,6 +101,33 @@ class UtilDom {
 
 	eventDispatch (target: EventTarget, name: string, detail?: any) {
 		target.dispatchEvent(detail !== undefined ? new CustomEvent(name, { detail }) : new CustomEvent(name));
+	};
+
+	/**
+	 * Polls once per animation frame until getElement returns a node, then invokes the callback with it.
+	 * Gives up silently after maxFrames frames (default 120, ~2s) — callers treat a target that never
+	 * appears as a no-op.
+	 */
+	waitForElement (getElement: () => HTMLElement | null, callBack: (el: HTMLElement) => void, maxFrames?: number) {
+		maxFrames = Number(maxFrames) || 120;
+
+		let frame = 0;
+
+		const check = () => {
+			const el = getElement();
+
+			if (el) {
+				callBack(el);
+				return;
+			};
+
+			frame++;
+			if (frame < maxFrames) {
+				raf(check);
+			};
+		};
+
+		check();
 	};
 
 	/**
@@ -224,6 +253,30 @@ class UtilDom {
 			0,
 			Math.min(line || er.height, er.height),
 		);
+	};
+
+	/**
+	 * Returns the rectangle to anchor floating UI to. A missing rectangle, or one which is entirely
+	 * zero - a node hidden with display: none, or detached from the document - carries no usable
+	 * geometry, so it falls back to the centre of the window instead of the window origin.
+	 * @param {object|null} rect - The anchor rectangle.
+	 * @param {object} winSize - The window dimensions.
+	 * @returns {object} The rectangle to position against, isFallback is set when it was replaced.
+	 */
+	getAnchorRect (rect: any, winSize: { ww: number; wh: number }): I.MenuPosition & { isFallback: boolean } {
+		const x = Number(rect?.x) || 0;
+		const y = Number(rect?.y) || 0;
+		const width = Number(rect?.width) || 0;
+		const height = Number(rect?.height) || 0;
+
+		if (!rect || (!x && !y && !width && !height)) {
+			const ww = Number(winSize?.ww) || 0;
+			const wh = Number(winSize?.wh) || 0;
+
+			return { x: ww / 2, y: wh / 2, width: 0, height: 0, isFallback: true };
+		};
+
+		return { x, y, width, height, isFallback: false };
 	};
 
 	/**
@@ -571,6 +624,7 @@ class UtilDom {
 
 		if (item.block && item.block.isTextTitle()) {
 			container.scrollTop = 0;
+			this.setActiveHeader(item.id, isPopup);
 			return;
 		};
 
@@ -585,10 +639,51 @@ class UtilDom {
 		const no = node.getBoundingClientRect().top;
 		const co = container.getBoundingClientRect().top;
 		const st = container.scrollTop;
-		const offset = 20;
-		const y = Math.max(J.Size.header + offset, no - co + st - J.Size.header - offset);
+		const offset = this.getHeaderScrollOffset();
+		const y = Math.max(offset, no - co + st - offset);
 
 		container.scrollTop = y;
+		this.setActiveHeader(item.id, isPopup);
+	};
+
+	/**
+	 * Returns the offset a header is scrolled to, below the sticky page header.
+	 * @returns {number} The offset from the top of the scroll container.
+	 */
+	getHeaderScrollOffset (): number {
+		return J.Size.header + HEADER_OFFSET;
+	};
+
+	/**
+	 * Marks a header as the current one in Table of contents.
+	 * @param {string} id - The block ID of the header.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 */
+	setActiveHeader (id: string, isPopup: boolean) {
+		S.Common.getRef(`tableOfContents${this.getEventNamespace(isPopup)}`)?.setActive(id);
+	};
+
+	/**
+	 * Returns the index of the header the page is currently scrolled to: the last one which
+	 * reached the anchor headers are scrolled to, the first one if none of them did.
+	 * @param {number[]} tops - Header offsets from the top of the scroll container.
+	 * @param {number} anchor - The offset headers are scrolled to.
+	 * @returns {number} The index of the current header, -1 if there are no headers.
+	 */
+	getActiveHeaderIndex (tops: number[], anchor: number): number {
+		if (!tops.length) {
+			return -1;
+		};
+
+		let ret = 0;
+
+		for (let i = 0; i < tops.length; ++i) {
+			if (tops[i] <= anchor) {
+				ret = i;
+			};
+		};
+
+		return ret;
 	};
 
 };

@@ -1,5 +1,6 @@
 .sidebarPage.pageObjectRelation {
 	.section.objectRelation { padding: 12px 16px; }
+	.section.objectRelation.isHighlighted { background: var(--color-shape-highlight-medium); border-radius: 12px; }
 	.section.objectRelation {
 		> .head { height: 52px; }
 

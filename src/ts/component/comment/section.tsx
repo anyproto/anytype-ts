@@ -35,6 +35,10 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	const isTypingRef = useRef(false);
 	const scrolledItems = useRef<Set<string>>(new Set());
 	const readVisibleMessagesRef = useRef<() => void>(() => {});
+	// Stable claimant token for the active-read claim (see S.Chat.setActiveReadChat):
+	// while the discussion tail is read in place here, its unread counters are excluded
+	// from aggregates instead of blinking for the read round-trip (JS-9298).
+	const activeReadToken = useRef(`commentSection-${Math.random().toString(36).slice(2, 10)}`).current;
 
 	const posts = S.Comment.getPosts(subId);
 	const postCount = posts.length;
@@ -154,7 +158,38 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		scrolledItems.current.clear();
 	}, [ targetType, findMessage ]);
 
+	// Claim / release the active-read flag for the discussion: with the window focused and
+	// the discussion's live tail (bottom-most rendered message) in the viewport, arriving
+	// comments are read in place, so counter aggregates skip this discussion instead of
+	// blinking for the read-confirmation round-trip (JS-9298) — mirrors the claim BlockChat
+	// holds for full chats. Presentational only, counters stay server-authoritative.
+	const updateActiveReadClaim = useCallback(() => {
+		const did = discussionIdRef.current;
+		const node = sectionRef.current;
+		const items = node ? U.Dom.selectAll('[data-message-id]', node) : [];
+		const last = items.length ? items[items.length - 1] : null;
+
+		let tailVisible = false;
+		if (last) {
+			const container = U.Dom.getScrollContainer(isPopup);
+			const containerRect = container ? container.getBoundingClientRect() : null;
+			const top = containerRect ? containerRect.top : 0;
+			const bottom = containerRect ? containerRect.bottom : window.innerHeight;
+			const rect = last.getBoundingClientRect();
+
+			tailVisible = (rect.bottom >= top) && (rect.top <= bottom);
+		};
+
+		if (did && tailVisible && S.Common.windowIsFocused && isSectionVisibleRef.current) {
+			S.Chat.setActiveReadChat(activeReadToken, S.Common.space, did);
+		} else {
+			S.Chat.clearActiveReadChat(activeReadToken);
+		};
+	}, [ isPopup ]);
+
 	const readVisibleMessages = useCallback(() => {
+		updateActiveReadClaim();
+
 		if (!discussionIdRef.current || !S.Common.windowIsFocused) {
 			return;
 		};
@@ -181,7 +216,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 		window.clearTimeout(readStopTimerRef.current);
 		readStopTimerRef.current = window.setTimeout(() => onReadStop(), 300);
-	}, [ getVisibleMessages, readMessage, onReadStop ]);
+	}, [ getVisibleMessages, readMessage, onReadStop, updateActiveReadClaim ]);
 
 	readVisibleMessagesRef.current = readVisibleMessages;
 
@@ -299,6 +334,9 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 			if (isSectionVisibleRef.current) {
 				readVisibleMessages();
+			} else {
+				// Scrolled out of view — the discussion is no longer being read in place.
+				S.Chat.clearActiveReadChat(activeReadToken);
 			};
 		}, { threshold: 0 });
 
@@ -352,6 +390,32 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			]);
 		};
 	}, [ onMessageAdd ]);
+
+	// The active-read claim only holds while the user can actually see the discussion
+	// tail — release it on blur so unread counters surface again; focus re-evaluates the
+	// claim (and marks the visible messages read) via readVisibleMessages.
+	useEffect(() => {
+		const onFocus = () => readVisibleMessages();
+		const onBlur = () => S.Chat.clearActiveReadChat(activeReadToken);
+
+		U.Dom.addEvents(window, [
+			['focus', onFocus],
+			['blur', onBlur],
+		]);
+
+		return () => {
+			U.Dom.removeEvents(window, [
+				['focus', onFocus],
+				['blur', onBlur],
+			]);
+		};
+	}, [ readVisibleMessages ]);
+
+	// A closed / unmounted section (or one switching discussions) must not keep the old
+	// discussion's badge suppressed — the next readVisibleMessages run re-claims if due.
+	useEffect(() => {
+		return () => S.Chat.clearActiveReadChat(activeReadToken);
+	}, [ discussionId ]);
 
 
 	const scrollToMessage = useCallback((msgId: string) => {

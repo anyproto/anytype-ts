@@ -2,6 +2,7 @@
 
 .pageMainMedia {
 	.headSimple { margin: 0px; }
+	.objectCreatedIn { margin: 0px 0px 8px 0px; }
 
 	.section {
 		.title { @include text-paragraph; font-weight: 600; margin-bottom: 4px; position: relative; }
@@ -57,6 +58,10 @@
 		.block.blockMedia { padding: 0px; width: 100%; }
 		.block.blockMedia {
 			.wrap { position: static; overflow: visible; width: 100%; height: 100%; display: block; line-height: 0px; }
+			.wrap.brokenMedia { border: 0px; line-height: 20px; }
+			.wrap.brokenMedia {
+				> .name { background: none; }
+			}
 			.selectionTarget, .dropTarget { height: 100%; }
 			.pdfWrapper { background: none; box-shadow: unset; padding: 0px; }
 			.video { aspect-ratio: 16/9; }

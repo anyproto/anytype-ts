@@ -392,7 +392,7 @@ const MenuBlockAdd = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			if (item.isAction) {
 				switch (item.itemId) {
 					case 'download':
-						Action.downloadFile(block.getTargetObjectId(), analytics.route.menuAdd, block.isFileImage());
+						Action.downloadFile(block.getTargetObjectId(), analytics.route.menuAdd);
 						break;
 
 					case 'copy':

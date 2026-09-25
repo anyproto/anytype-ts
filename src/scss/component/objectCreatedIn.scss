@@ -1,0 +1,13 @@
+@import "~scss/_mixins";
+
+.objectCreatedIn { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; max-width: 100%; @include text-common; }
+.objectCreatedIn {
+	.label { color: var(--color-text-secondary); flex-shrink: 0; }
+
+	.item { display: flex; flex-direction: row; align-items: center; gap: 0px 6px; min-width: 0px; }
+	.item {
+		.iconObject { flex-shrink: 0; }
+		.name { @include text-overflow-nw; }
+		.icon.arrow { flex-shrink: 0; width: 16px; height: 16px; }
+	}
+}

@@ -21,6 +21,17 @@
 			.icon.arrow.disabled { opacity: 0.3; pointer-events: none; }
 		}
 
+		.filterInner { position: relative; flex-grow: 1; display: flex; min-width: 0; }
+		.filterInner {
+			.filter { flex-grow: 1; }
+			.filter {
+				/* room for the expand icon sitting inside the field */
+				.inner { padding-right: 36px; }
+			}
+			.icon.expand { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--color-control-active); }
+			.icon.expand:hover { color: var(--color-text-primary); }
+		}
+
 		.filter { background-color: var(--color-bg-primary); flex-grow: 1; padding: 0px; }
 		.filter {
 			.inner { gap: 0px 6px; padding: 0px 12px; height: 32px; border-radius: 16px; }

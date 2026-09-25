@@ -83,6 +83,14 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			};
 		};
 
+		// "Created in" deep-links back into the origin context instead of plain-opening it
+		if (relation.relationKey == 'createdInContext') {
+			if (check) {
+				U.Object.openCreatedInContext(record, analytics.route.relation, subId);
+			};
+			return;
+		};
+
 		const { config } = S.Common;
 		const cell = U.Dom.get(cellId);
 		const className = [];
@@ -204,6 +212,11 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 				param.data = Object.assign(param.data, {
 					value: param.data.value || U.Date.now(),
 					noKeyboard: true,
+
+					// Without inplace editing the calendar menu is the only editor available,
+					// so it has to offer the time input as well (JS-9841). With inplace
+					// editing the masked input in component/cell/text.tsx already handles time.
+					includeTime: !!noInplace && !!relation.includeTime,
 				});
 					
 				menuId = 'calendar';
@@ -275,6 +288,9 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 				break;
 			};
 
+			// Without inplace editing the text menu is the only editor available (JS-9855),
+			// with inplace editing the input in component/cell/text.tsx handles both formats
+			case I.RelationType.ShortText:
 			case I.RelationType.Number: {
 				if (!noInplace) {
 					break;
@@ -412,11 +428,45 @@ const Cell = forwardRef<I.CellRef, Props>((props, ref) => {
 			return;
 		};
 
+		// Swallows the click that follows a menu-dismissing mousedown, so dismissing
+		// an open cell menu by clicking another cell only closes the menu instead of
+		// immediately opening that cell's editor (JS-8540)
+		const swallowNextClick = () => {
+			let timeout = 0;
+
+			const clear = () => {
+				window.clearTimeout(timeout);
+				U.Dom.removeEvent(window, 'click', swallow, true);
+			};
+
+			const swallow = (e: globalThis.MouseEvent) => {
+				const target = e.target as HTMLElement;
+
+				// Only clicks landing on a cell are swallowed — clicks on menus
+				// and other UI pass through untouched
+				if (target.closest('.cell, .cellContent')) {
+					e.preventDefault();
+					e.stopPropagation();
+				};
+
+				clear();
+			};
+
+			timeout = window.setTimeout(clear, 500);
+			U.Dom.addEvent(window, 'click', swallow, true);
+		};
+
 		const bindContainerClick = () => {
 			const handler = (e: any) => {
 				const target = e.target as HTMLElement;
 
 				if (!target.closest(`#${U.Common.esc(cellId)}`) && !target.closest('.menus')) {
+					// Only a primary-button mousedown produces a follow-up click event —
+					// arming on other buttons would eat an unrelated later click
+					if (menuId && S.Menu.isOpenList(J.Menu.cell) && (e.button == 0) && target.closest('.cell, .cellContent')) {
+						swallowNextClick();
+					};
+
 					S.Menu.closeAll(J.Menu.cell);
 					setOff();
 

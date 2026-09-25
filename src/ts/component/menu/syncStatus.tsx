@@ -4,6 +4,7 @@ import { Title, Icon, IconObject, ObjectName, EmptySearch, UpsellBanner, Label }
 import * as I from 'Interface';
 
 const HEIGHT = 28;
+const WARNING_HEIGHT = 52; // .dataLocationWarning: 44px padding box + 8px top margin
 const LIMIT = 12;
 const SUB_ID = 'syncStatusObjectsList';
 
@@ -341,10 +342,12 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		return { id, label, iconName, iconColor, title, message, buttons };
 	};
 
+	const vaultCheck = U.Common.checkVaultPath(S.Common.dataPath);
+
 	const beforePosition = () => {
 		const items = getItems().slice(0, LIMIT);
 		const content = U.Dom.select('.content', getContainer());
-		const height = items.length ? items.length * HEIGHT + 64 : 160;
+		const height = (items.length ? items.length * HEIGHT + 64 : 160) + (vaultCheck.unsafe ? WARNING_HEIGHT : 0);
 
 		U.Dom.css(content, { height: `${height}px` });
 	};
@@ -475,6 +478,13 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 					{icons.map((icon, idx) => <PanelIcon key={idx} {...icon} />)}
 				</div>
 			</div>
+
+			{vaultCheck.unsafe ? (
+				<div className="dataLocationWarning" onClick={() => Action.vaultLocationWarning(vaultCheck, { route: analytics.route.syncStatus })}>
+					<Icon name="popup/header/warning" className="warning" />
+					<Label text={translate('vaultLocationWarningLabel')} />
+				</div>
+			) : ''}
 
 			<UpsellBanner components={[ 'storage' ]} className="fromSyncMenu" route={analytics.route.syncStatus} />
 

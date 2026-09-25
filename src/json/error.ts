@@ -15,6 +15,10 @@ export default {
 		INSUFFICIENT_PERMISSIONS:				9,
 		ACCOUNT_STORE_NOT_MIGRATED:				113,
 
+		AccountRecoveryState: {
+			ACCOUNT_IS_NOT_RUNNING:						101,
+		},
+
 		Import: {
 			INTERNAL_ERROR:								3,
 			NOTION_NO_OBJECTS_IN_INTEGRATION:			5,
@@ -38,6 +42,19 @@ export default {
 		SpaceInviteView: {
 			INVITE_NOT_FOUND: 		101,
 			SPACE_IS_DELETED:		103,
+		},
+
+		SpaceInviteGenerate: {
+			INVITE_ALREADY_SHARED:	106,
+			INVITE_NOT_SHAREABLE:	107,
+		},
+
+		SpaceInviteChange: {
+			INVITE_NOT_SHAREABLE:	107,
+		},
+
+		SpaceMakeShareable: {
+			LIMIT_REACHED:			104,
 		},
 
 		SpaceJoin: {
