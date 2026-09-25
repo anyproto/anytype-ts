@@ -65,13 +65,32 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 		};
 
 		// Only a port that actually bound is remembered for the next account open
-		changeAddr(S.Auth.localApiAddrByPort(v), (status) => {
-			const bound = Number(String(status?.listenAddr || '').split(':').pop());
+		const apply = () => {
+			changeAddr(S.Auth.localApiAddrByPort(v), (status) => {
+				const bound = Number(String(status?.listenAddr || '').split(':').pop());
 
-			if (status?.success && S.Auth.isValidLocalApiPort(bound)) {
-				S.Auth.localApiConfigSet({ port: bound });
-				setLocalApi(S.Auth.localApiConfig);
-			};
+				if (status?.success && S.Auth.isValidLocalApiPort(bound)) {
+					S.Auth.localApiConfigSet({ port: bound });
+					setLocalApi(S.Auth.localApiConfig);
+				};
+			});
+		};
+
+		// A retry on the same port, or no keys issued yet, breaks no client, so it needs no warning
+		if ((v == port) || !list.length) {
+			apply();
+			return;
+		};
+
+		S.Popup.open('confirm', {
+			data: {
+				title: translate('popupConfirmLocalApiPortTitle'),
+				text: translate('popupConfirmLocalApiPortText'),
+				textConfirm: translate('commonChange'),
+				textCancel: translate('commonCancel'),
+				onConfirm: apply,
+				onCancel: () => portRef.current?.setValue(String(port)),
+			},
 		});
 	};
 
