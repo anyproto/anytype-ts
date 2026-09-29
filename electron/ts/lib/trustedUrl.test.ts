@@ -1,8 +1,12 @@
 import { describe, it, expect } from 'vitest';
+import path from 'path';
 import { isTrustedUrl } from './trustedUrl';
 
 const dev = { isDevelopment: true, port: '8080', appPath: '/app', isWindows: false };
-const prod = { isDevelopment: false, port: '8080', appPath: '/Applications/Anytype.app/Contents/Resources/app.asar', isWindows: false };
+const root = path.resolve(path.sep, 'Applications', 'Anytype.app', 'Contents', 'Resources');
+const appPath = path.join(root, 'app.asar');
+const prod = { isDevelopment: false, port: '8080', appPath, isWindows: false };
+const fileUrl = (...parts: string[]) => 'file://' + path.join(...parts);
 
 describe('isTrustedUrl', () => {
 
@@ -30,13 +34,26 @@ describe('isTrustedUrl', () => {
 
 	describe('production', () => {
 		it('accepts files inside dist', () => {
-			expect(isTrustedUrl('file:///Applications/Anytype.app/Contents/Resources/app.asar/dist/tabs.html', prod)).toBe(true);
+			expect(isTrustedUrl(fileUrl(appPath, 'dist', 'tabs.html') + '#/main/edit', prod)).toBe(true);
+		});
+
+		it('accepts install paths with a literal percent sign', () => {
+			const p = path.join(root, '100%', 'app.asar');
+
+			expect(isTrustedUrl(fileUrl(p, 'dist', 'index.html'), { ...prod, appPath: p })).toBe(true);
 		});
 
 		it('rejects files outside dist and traversal', () => {
-			expect(isTrustedUrl('file:///etc/passwd', prod)).toBe(false);
-			expect(isTrustedUrl('file:///Applications/Anytype.app/Contents/Resources/app.asar/dist/../../evil.html', prod)).toBe(false);
-			expect(isTrustedUrl('file:///Applications/Anytype.app/Contents/Resources/app.asar/distevil/x.html', prod)).toBe(false);
+			expect(isTrustedUrl(fileUrl(root, 'evil.html'), prod)).toBe(false);
+			expect(isTrustedUrl(fileUrl(appPath, 'dist') + '/../../evil.html', prod)).toBe(false);
+			expect(isTrustedUrl(fileUrl(appPath, 'distevil', 'x.html'), prod)).toBe(false);
+		});
+
+		it('ignores case on Windows only', () => {
+			const url = fileUrl(appPath, 'dist', 'tabs.html').toUpperCase();
+
+			expect(isTrustedUrl(url, { ...prod, isWindows: true })).toBe(true);
+			expect(isTrustedUrl(url, prod)).toBe(false);
 		});
 
 		it('rejects remote and empty urls', () => {

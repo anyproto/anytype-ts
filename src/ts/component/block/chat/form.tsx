@@ -1885,7 +1885,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 								{icon}
 								<div className="textWrapper">
 									<div className="name">{title}</div>
-									<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+									<div className="descr" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 								</div>
 							</div>
 							<div className="side right">

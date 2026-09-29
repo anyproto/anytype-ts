@@ -134,9 +134,12 @@ powerMonitor.on('resume', () => {
 	}, 1500);
 });
 
-ipcMain.on('storeGet', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = store.get(key); });
-ipcMain.on('storeSet', (e: Electron.IpcMainEvent, key: string, value: any) => { e.returnValue = store.set(key, value); });
-ipcMain.on('storeDelete', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = store.delete(key); });
+// Sync IPC entry points are only served to pages from the app bundle
+const isTrustedSender = (e: Electron.IpcMainEvent): boolean => Util.isTrustedUrl(e.senderFrame?.url);
+
+ipcMain.on('storeGet', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = isTrustedSender(e) ? store.get(key) : undefined; });
+ipcMain.on('storeSet', (e: Electron.IpcMainEvent, key: string, value: any) => { e.returnValue = isTrustedSender(e) ? store.set(key, value) : undefined; });
+ipcMain.on('storeDelete', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = isTrustedSender(e) ? store.delete(key) : undefined; });
 ipcMain.on('getTheme', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getTheme(); });
 ipcMain.on('getBgColor', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
 ipcMain.on('getConfig', (e: Electron.IpcMainEvent) => { e.returnValue = ConfigManager.config || {}; });
@@ -339,6 +342,11 @@ function createWindow () {
 
 	// The approval window has no session and no Api id, so it reports the user's decision directly
 	ipcMain.on('linkApprovalDecision', (e: Electron.IpcMainEvent, param: any) => {
+		if (!isTrustedSender(e)) {
+			Util.log('error', '[linkApprovalDecision] untrusted sender:', e.senderFrame?.url);
+			return;
+		};
+
 		Api.linkApprovalDecision(param);
 	});
 

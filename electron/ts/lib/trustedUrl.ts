@@ -1,5 +1,4 @@
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 interface TrustedUrlParam {
 	isDevelopment: boolean;
@@ -28,10 +27,11 @@ export const isTrustedUrl = (url: string, param: TrustedUrlParam): boolean => {
 			return false;
 		};
 
-		const fold = (s: string) => param.isWindows ? s.toLowerCase() : s;
-		const dist = fold(path.join(param.appPath, 'dist') + path.sep);
+		// Compare against the URL exactly as window.ts builds it, so the same normalization applies to both
+		const fold = (v: string) => param.isWindows ? v.toLowerCase() : v;
+		const dist = new URL('file://' + path.join(param.appPath, 'dist') + path.sep);
 
-		return fold(path.normalize(fileURLToPath(u))).startsWith(dist);
+		return fold(u.pathname).startsWith(fold(dist.pathname));
 	} catch (e) {
 		return false;
 	};

@@ -43,7 +43,7 @@ const MenuPreviewLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	return (
 		<div>
-			<div className="math" dangerouslySetInnerHTML={{ __html: U.String.sanitize(math) }} />
+			<div className="math" dangerouslySetInnerHTML={{ __html: U.String.sanitize(math, true) }} />
 			{example ? <div className="example">{U.String.sprintf(translate('menuPreviewLatexExample'), text)}</div> : ''}
 		</div>
 	);

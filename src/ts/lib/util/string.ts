@@ -2,6 +2,14 @@ import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import parsePhoneNumber from 'libphonenumber-js';
 
+// Tags that user content never needs. DOMPurify allows several of them by default (forms, media, canvas...),
+// and svg/math are intentionally kept because KaTeX output relies on them.
+const FORBIDDEN_TAGS = [
+	'meta', 'link', 'base', 'script', 'style', 'noscript', 'template', 'slot',
+	'iframe', 'frame', 'frameset', 'object', 'embed', 'applet', 'portal',
+	'form', 'input', 'button', 'select', 'option', 'textarea', 'label', 'fieldset',
+	'audio', 'video', 'source', 'track', 'picture', 'canvas', 'map', 'area', 'dialog', 'marquee',
+];
 const DOMAIN_REGEX = /^(?:[a-zA-Z][a-zA-Z0-9+.-]*:\/\/)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?$/;
 const URL_REGEX = /^(?:([a-zA-Z][a-zA-Z0-9+.-]*):([^\s]+)|(?:(?:[^:@\s]+(?::[^@\s]*)?@)?(?:localhost|(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)|(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}))(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?)$/i;
 const ALLOWED_PROTOCOLS = [ 'mailto', 'tel', 'anytype' ];
@@ -468,7 +476,7 @@ class UtilString {
 		const param: any = { 
 			ADD_TAGS: tags,
 			ADD_ATTR: [ 'contenteditable' ],
-			FORBID_TAGS: [ 'meta', 'link', 'base', 'script', 'iframe', 'object', 'embed', 'form' ],
+			FORBID_TAGS: FORBIDDEN_TAGS,
 			ALLOWED_URI_REGEXP: /^(?!\s*(?:javascript|vbscript|data):)(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
 			FORBID_ATTR: [],
 		};
