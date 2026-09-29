@@ -213,7 +213,7 @@ const MenuBlockLatex = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				>
 					{isTemplate ? (
 						<div className="inner">
-							<div className="math" dangerouslySetInnerHTML={{ __html: U.String.sanitize(math) }} />
+							<div className="math" dangerouslySetInnerHTML={{ __html: U.String.sanitize(math, true) }} />
 						</div>
 					) : (
 						<div className="name">{name}</div>

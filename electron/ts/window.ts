@@ -10,6 +10,7 @@ import ConfigManager from './config';
 import UpdateManager from './update';
 import MenuManager from './menu';
 import Util from './util';
+import { isExternalUrlAllowed } from './lib/trustedUrl';
 import { getSafeStorage } from './safeStorage';
 import { AppWindow, TabView, TabData, CreateMainOptions, CreateTabOptions, SavedTabState, SavedWindowsState, Bounds } from './types';
 import type { LinkApprovalSpace } from '../../src/ts/interface/linkApproval';
@@ -92,7 +93,9 @@ class WindowManager {
 		win.on('swipe', (e: Electron.Event, direction: string) => Util.send(win, 'commandGlobal', 'mouseNavigation', direction));
 
 		win.webContents.setWindowOpenHandler(({ url }: { url: string }) => {
-			Api.openUrl(win, url);
+			if (isExternalUrlAllowed(url)) {
+				Api.openUrl(win, url);
+			};
 			return { action: 'deny' as const };
 		});
 
@@ -522,7 +525,9 @@ class WindowManager {
 		win.activeTabId = win.activeTabId || id;
 
 		view.webContents.setWindowOpenHandler(({ url }: { url: string }) => {
-			Api.openUrl(win, url);
+			if (isExternalUrlAllowed(url)) {
+				Api.openUrl(win, url);
+			};
 			return { action: 'deny' as const };
 		});
 
