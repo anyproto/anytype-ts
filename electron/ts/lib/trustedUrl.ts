@@ -35,17 +35,20 @@ export const isTrustedUrl = (url: string, param: TrustedUrlParam): boolean => {
 		const fold = (v: string) => (param.isWindows ? v.toLowerCase() : v).replace(/[|^]/g, c => encodeURIComponent(c));
 		const dist = new URL('file://' + path.join(param.appPath, 'dist') + path.sep);
 
-		return fold(u.pathname).startsWith(fold(dist.pathname));
+		// UNC installs are parsed with the server as host by Chromium and as part of the path by Node, so compare both together
+		const key = (v: URL) => fold(v.host ? `//${v.host}${v.pathname}` : v.pathname);
+
+		return key(u).startsWith(key(dist));
 	} catch (e) {
 		return false;
 	};
 };
 
-const EXTERNAL_PROTOCOLS = [ 'http:', 'https:', 'mailto:' ];
+const EXTERNAL_PROTOCOLS = [ 'http:', 'https:', 'mailto:', 'anytype:' ];
 
 /**
  * Whether a URL requested by a page (window.open) may be handed to the OS.
- * Other schemes would invoke arbitrary native protocol handlers.
+ * The app's own deep links are allowed; other schemes would invoke arbitrary native protocol handlers.
  */
 export const isExternalUrlAllowed = (url: string): boolean => {
 	try {

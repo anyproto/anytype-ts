@@ -54,6 +54,17 @@ describe('isTrustedUrl', () => {
 			expect(isTrustedUrl(fileUrl(p, 'dist', 'index.html'), { ...prod, appPath: p })).toBe(true);
 		});
 
+		it('accepts UNC installs parsed with the server as host', () => {
+			const p = '\\\\server\\share\\Anytype\\app.asar';
+			const chromium = 'file://server/share/Anytype/app.asar/dist/tabs.html';
+
+			// Only meaningful with Windows path semantics
+			if (path.sep === '\\') {
+				expect(isTrustedUrl(chromium, { ...prod, appPath: p, isWindows: true })).toBe(true);
+				expect(isTrustedUrl('file://server/share/Other/x.html', { ...prod, appPath: p, isWindows: true })).toBe(false);
+			};
+		});
+
 		it('rejects files outside dist and traversal', () => {
 			expect(isTrustedUrl(fileUrl(root, 'evil.html'), prod)).toBe(false);
 			expect(isTrustedUrl(fileUrl(appPath, 'dist') + '/../../evil.html', prod)).toBe(false);
@@ -81,6 +92,7 @@ describe('isExternalUrlAllowed', () => {
 		expect(isExternalUrlAllowed('https://example.com/a?b=1')).toBe(true);
 		expect(isExternalUrlAllowed('http://example.com')).toBe(true);
 		expect(isExternalUrlAllowed('mailto:a@example.com')).toBe(true);
+		expect(isExternalUrlAllowed('anytype://object?objectId=1&spaceId=2')).toBe(true);
 	});
 
 	it('rejects native protocol handlers and garbage', () => {
