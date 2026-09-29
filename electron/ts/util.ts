@@ -3,11 +3,11 @@ import { is } from 'electron-util';
 import logger from 'electron-log';
 import path from 'path';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
 import sanitize from 'sanitize-filename';
 import ConfigManager from './config';
 import Constant from '../json/constant.json';
 import { AppWindow, TabView } from './types';
+import { isTrustedUrl } from './lib/trustedUrl';
 
 const protocol = 'anytype';
 
@@ -23,31 +23,13 @@ class Util {
 		this.appPath = value;
 	};
 
-	/**
-	 * Whether the URL belongs to the app's own bundle (dev server or packaged dist folder).
-	 * Anything else must never be navigated to inside a webContents that has the preload bridge attached.
-	 */
 	isTrustedUrl (url: string): boolean {
-		if (!url) {
-			return false;
-		};
-
-		try {
-			const u = new URL(url);
-
-			if (is.development) {
-				return (u.origin === `http://localhost:${this.getPort()}`);
-			};
-
-			if (u.protocol !== 'file:') {
-				return false;
-			};
-
-			const dist = path.join(this.appPath, 'dist') + path.sep;
-			return path.normalize(fileURLToPath(u)).startsWith(dist);
-		} catch (e) {
-			return false;
-		};
+		return isTrustedUrl(url, {
+			isDevelopment: is.development,
+			port: this.getPort(),
+			appPath: this.appPath,
+			isWindows: is.windows,
+		});
 	};
 
 	mkDir (value: string): void {

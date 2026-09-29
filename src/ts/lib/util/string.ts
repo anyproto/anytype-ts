@@ -2,7 +2,6 @@ import DOMPurify from 'dompurify';
 import slugify from '@sindresorhus/slugify';
 import parsePhoneNumber from 'libphonenumber-js';
 
-const TEST_HTML = /<[^>]*>/;
 const DOMAIN_REGEX = /^(?:[a-zA-Z][a-zA-Z0-9+.-]*:\/\/)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?$/;
 const URL_REGEX = /^(?:([a-zA-Z][a-zA-Z0-9+.-]*):([^\s]+)|(?:(?:[^:@\s]+(?::[^@\s]*)?@)?(?:localhost|(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)|(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}))(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?)$/i;
 const ALLOWED_PROTOCOLS = [ 'mailto', 'tel', 'anytype' ];
@@ -461,7 +460,7 @@ class UtilString {
 	sanitize (s: string, withStyles?: boolean): string {
 		s = String(s || '');
 
-		if (!TEST_HTML.test(s)) {
+		if (s.indexOf('<') < 0) {
 			return s;
 		};
 
@@ -470,7 +469,7 @@ class UtilString {
 			ADD_TAGS: tags,
 			ADD_ATTR: [ 'contenteditable' ],
 			FORBID_TAGS: [ 'meta', 'link', 'base', 'script', 'iframe', 'object', 'embed', 'form' ],
-			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
+			ALLOWED_URI_REGEXP: /^(?!\s*(?:javascript|vbscript|data):)(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
 			FORBID_ATTR: [],
 		};
 

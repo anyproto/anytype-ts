@@ -350,7 +350,7 @@ function createWindow () {
 	ipcMain.handle('Api', (e: Electron.IpcMainInvokeEvent, id: number, cmd: string, args: any[]) => {
 		// Only pages served from the app bundle may call into the main process
 		if (!Util.isTrustedUrl(e.senderFrame?.url)) {
-			console.error('[Api] untrusted sender', cmd, e.senderFrame?.url);
+			Util.log('error', '[Api] untrusted sender:', cmd, e.senderFrame?.url);
 			return;
 		};
 
@@ -394,7 +394,13 @@ app.on('web-contents-created', (e: Electron.Event, contents: Electron.WebContent
 	};
 
 	contents.on('will-navigate', (event: Electron.Event, url: string) => guard(event, url));
-	contents.on('will-redirect', (event: Electron.Event, url: string) => guard(event, url));
+
+	// Embeds (subframes) legitimately follow redirects, only the privileged main frame is restricted
+	contents.on('will-redirect', (event: Electron.Event, url: string, isInPlace: boolean, isMainFrame: boolean) => {
+		if (isMainFrame) {
+			guard(event, url);
+		};
+	});
 });
 
 app.on('ready', async () => {
