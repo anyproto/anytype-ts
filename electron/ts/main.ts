@@ -348,6 +348,12 @@ function createWindow () {
 
 	//ipcMain.removeHandler('Api');
 	ipcMain.handle('Api', (e: Electron.IpcMainInvokeEvent, id: number, cmd: string, args: any[]) => {
+		// Only pages served from the app bundle may call into the main process
+		if (!Util.isTrustedUrl(e.senderFrame?.url)) {
+			console.error('[Api] untrusted sender', cmd, e.senderFrame?.url);
+			return;
+		};
+
 		const win = BrowserWindow.fromId(id) as AppWindow | null;
 
 		if (!win) {
@@ -373,6 +379,23 @@ function createWindow () {
 		};
 	});
 };
+
+// The preload bridge (window.Electron.Api) stays attached across navigations, so a page
+// that was redirected away from the app bundle (e.g. via injected <meta http-equiv="refresh">)
+// would inherit full access to the main process. Never let a webContents leave the app bundle.
+app.on('web-contents-created', (e: Electron.Event, contents: Electron.WebContents) => {
+	const guard = (event: Electron.Event, url: string) => {
+		if (url.startsWith('devtools:') || Util.isTrustedUrl(url)) {
+			return;
+		};
+
+		event.preventDefault();
+		Util.log('error', '[Navigation] blocked:', url);
+	};
+
+	contents.on('will-navigate', (event: Electron.Event, url: string) => guard(event, url));
+	contents.on('will-redirect', (event: Electron.Event, url: string) => guard(event, url));
+});
 
 app.on('ready', async () => {
 	await maybeStartStartupTrace();

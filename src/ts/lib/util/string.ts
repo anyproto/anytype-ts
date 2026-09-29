@@ -3,7 +3,6 @@ import slugify from '@sindresorhus/slugify';
 import parsePhoneNumber from 'libphonenumber-js';
 
 const TEST_HTML = /<[^>]*>/;
-const UNSAFE_HTML_PATTERN = /<\s*(script|iframe|svg|img|math|object|embed|style|form|input|video|audio|source)\b|<[^>]+\s+on\w+\s*=|<[^>]+\s+style\s*=\s*["'][^"']*(?:javascript:|data:)|<[^>]+\s+(?:src|href|data|action)\s*=\s*["']?\s*(?:javascript:|data:)|<style[^>]*>[^<]*(?:javascript:|data:)/iu;
 const DOMAIN_REGEX = /^(?:[a-zA-Z][a-zA-Z0-9+.-]*:\/\/)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?$/;
 const URL_REGEX = /^(?:([a-zA-Z][a-zA-Z0-9+.-]*):([^\s]+)|(?:(?:[^:@\s]+(?::[^@\s]*)?@)?(?:localhost|(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)|(?=.{1,253}$)(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[A-Za-z]{2,}))(?::\d{1,5})?(?:\/[^\s?#]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?)$/i;
 const ALLOWED_PROTOCOLS = [ 'mailto', 'tel', 'anytype' ];
@@ -466,14 +465,11 @@ class UtilString {
 			return s;
 		};
 
-		if (!UNSAFE_HTML_PATTERN.test(s)) {
-			return s;
-		};
-
 		const tags = [ 'b', 'br', 'a', 'ul', 'li', 'h1', 'span', 'p', 'name', 'smile', 'img' ].concat(Object.values(Mark.getTags()));
 		const param: any = { 
 			ADD_TAGS: tags,
 			ADD_ATTR: [ 'contenteditable' ],
+			FORBID_TAGS: [ 'meta', 'link', 'base', 'script', 'iframe', 'object', 'embed', 'form' ],
 			ALLOWED_URI_REGEXP: /^(?:(?:[a-z]+):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i,
 			FORBID_ATTR: [],
 		};
