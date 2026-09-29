@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import path from 'path';
-import { isTrustedUrl } from './trustedUrl';
+import { isTrustedUrl, isExternalUrlAllowed } from './trustedUrl';
 
 const dev = { isDevelopment: true, port: '8080', appPath: '/app', isWindows: false };
 const root = path.resolve(path.sep, 'Applications', 'Anytype.app', 'Contents', 'Resources');
@@ -27,6 +27,10 @@ describe('isTrustedUrl', () => {
 			expect(isTrustedUrl('data:text/html,<b>x</b>', dev)).toBe(false);
 		});
 
+		it('normalizes the configured port', () => {
+			expect(isTrustedUrl('http://localhost:8080/tabs.html', { ...dev, port: '08080' })).toBe(true);
+		});
+
 		it('handles the default port', () => {
 			expect(isTrustedUrl('http://localhost/tabs.html', { ...dev, port: '80' })).toBe(true);
 		});
@@ -40,6 +44,13 @@ describe('isTrustedUrl', () => {
 		it('accepts install paths with a literal percent sign', () => {
 			const p = path.join(root, '100%', 'app.asar');
 
+			expect(isTrustedUrl(fileUrl(p, 'dist', 'index.html'), { ...prod, appPath: p })).toBe(true);
+		});
+
+		it('accepts install paths containing a pipe', () => {
+			const p = path.join(root, 'Anytype|Beta', 'app.asar');
+
+			expect(isTrustedUrl(fileUrl(p, 'dist', 'index.html').replace('|', '%7C'), { ...prod, appPath: p })).toBe(true);
 			expect(isTrustedUrl(fileUrl(p, 'dist', 'index.html'), { ...prod, appPath: p })).toBe(true);
 		});
 
@@ -63,4 +74,19 @@ describe('isTrustedUrl', () => {
 		});
 	});
 
+});
+
+describe('isExternalUrlAllowed', () => {
+	it('allows web and mail links', () => {
+		expect(isExternalUrlAllowed('https://example.com/a?b=1')).toBe(true);
+		expect(isExternalUrlAllowed('http://example.com')).toBe(true);
+		expect(isExternalUrlAllowed('mailto:a@example.com')).toBe(true);
+	});
+
+	it('rejects native protocol handlers and garbage', () => {
+		expect(isExternalUrlAllowed('search-ms:query=x')).toBe(false);
+		expect(isExternalUrlAllowed('file:///etc/passwd')).toBe(false);
+		expect(isExternalUrlAllowed('javascript:alert(1)')).toBe(false);
+		expect(isExternalUrlAllowed('not a url')).toBe(false);
+	});
 });

@@ -20,7 +20,10 @@ export const isTrustedUrl = (url: string, param: TrustedUrlParam): boolean => {
 		const u = new URL(url);
 
 		if (param.isDevelopment) {
-			return (u.protocol === 'http:') && (u.hostname === 'localhost') && ((u.port || '80') === (param.port || '80'));
+			// Normalize the configured port the same way the renderer's URL is normalized (default port, leading zeros)
+			const port = new URL(`http://localhost:${param.port || 80}`).port || '80';
+
+			return (u.protocol === 'http:') && (u.hostname === 'localhost') && ((u.port || '80') === port);
 		};
 
 		if (u.protocol !== 'file:') {
@@ -28,10 +31,25 @@ export const isTrustedUrl = (url: string, param: TrustedUrlParam): boolean => {
 		};
 
 		// Compare against the URL exactly as window.ts builds it, so the same normalization applies to both
-		const fold = (v: string) => param.isWindows ? v.toLowerCase() : v;
+		// Chromium and Node encode a few path characters differently (e.g. '|'), align both sides
+		const fold = (v: string) => (param.isWindows ? v.toLowerCase() : v).replace(/[|^]/g, c => encodeURIComponent(c));
 		const dist = new URL('file://' + path.join(param.appPath, 'dist') + path.sep);
 
 		return fold(u.pathname).startsWith(fold(dist.pathname));
+	} catch (e) {
+		return false;
+	};
+};
+
+const EXTERNAL_PROTOCOLS = [ 'http:', 'https:', 'mailto:' ];
+
+/**
+ * Whether a URL requested by a page (window.open) may be handed to the OS.
+ * Other schemes would invoke arbitrary native protocol handlers.
+ */
+export const isExternalUrlAllowed = (url: string): boolean => {
+	try {
+		return EXTERNAL_PROTOCOLS.includes(new URL(url).protocol);
 	} catch (e) {
 		return false;
 	};
