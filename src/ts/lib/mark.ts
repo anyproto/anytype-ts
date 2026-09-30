@@ -574,6 +574,19 @@ class Mark {
 		html = String(html || '');
 		html = html.replace(/\u200B/g, '');
 		html = html.replace(/&nbsp;/g, ' ');
+
+		// Native edits (e.g. macOS Writing Tools replace) insert lines as <div>/<p> blocks —
+		// convert them to newlines, otherwise the tags end up as literal text
+		const startsWithBlock = /^<(div|p)\b/i.test(html);
+
+		html = html.replace(/<(div|p)\b[^>]*>\s*<br\s*\/?>\s*<\/\1>/gi, '\n');
+		html = html.replace(/<(div|p)\b[^>]*>/gi, '\n');
+		html = html.replace(/<\/(div|p)>/gi, '');
+
+		if (startsWithBlock) {
+			html = html.replace(/^\n/, '');
+		};
+
 		html = html.replace(/<br\/?>/g, '\n');
 
 		// Remove inner tags from mentions and emoji
