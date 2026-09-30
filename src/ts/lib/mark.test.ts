@@ -946,6 +946,25 @@ describe('Mark', () => {
 			expect(result.marks[0].range).toEqual({ from: 4, to: 8 });
 		});
 
+		it('should convert native <div> lines to newlines (Writing Tools replace)', () => {
+			const result = Mark.fromHtml('- test<div>- test</div><div>- hallo</div>', []);
+
+			expect(result.text).toBe('- test\n- test\n- hallo');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should convert fully wrapped <div> lines and empty <div><br></div> lines', () => {
+			const result = Mark.fromHtml('<div>a</div><div><br></div><div>b</div>', []);
+
+			expect(result.text).toBe('a\n\nb');
+		});
+
+		it('should keep user-typed <div> as literal text', () => {
+			const result = Mark.fromHtml('&lt;div&gt;x&lt;/div&gt;', []);
+
+			expect(result.text).toBe('<div>x</div>');
+		});
+
 		it('should still parse real link markup with data-param (JS-7238)', () => {
 			const result = Mark.fromHtml('<a href="https://x.com" class="markuplink" data-param="https://x.com" data-range="0-4">link</a>', []);
 
