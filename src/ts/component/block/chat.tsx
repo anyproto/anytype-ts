@@ -11,7 +11,7 @@ import * as M from 'Model';
 import Storage from 'Lib/storage';
 import { presence } from 'Lib/presence';
 import { chatStatus } from 'Lib/chatStatus';
-import { activityGaps } from 'Lib/chatStatus/timeline';
+import { activityGaps, activityPublisher, chatRowGrouping, ChatRow, ChatRowGrouping } from 'Lib/chatStatus/timeline';
 import { STATUS_TTL } from 'Lib/chatStatus/model';
 import { StatusGroup, StatusFooter } from './chat/status';
 import { reachedEdge, shouldRefetchForward } from 'Lib/util/chatWindow';
@@ -26,7 +26,6 @@ interface RefProps {
 	loadAndScrollToMessage: (id: string) => void;
 };
 
-const GROUP_TIME = 300;
 const DOWNLOAD_LAYOUTS = [
 	I.ObjectLayout.File,
 	I.ObjectLayout.Image,
@@ -806,6 +805,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const getSections = () => {
 		const sections = [];
+		const activityGrouping = new Map<string, ChatRowGrouping>();
 
 		const sectionMap = new Map();
 		messages.forEach(item => {
@@ -820,37 +820,42 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			section.list.push(item);
 		});
 
-		// Message groups by author/time. Sort by orderId FIRST: grouping flags describe
-		// adjacency in display order, so computing them on an unsorted list would attach
-		// isFirst/isLast to the wrong neighbours.
-		sections.forEach(section => {
-			const length = section.list.length;
-
-			section.list.sort((c1, c2) => U.Data.sortByOrderId(c1, c2));
-
-			for (let i = 0; i < length; ++i) {
-				const prev = section.list[i - 1];
-				const item = section.list[i];
-
-				item.isFirst = false;
-				item.isLast = false;
-
-				if (prev && ((item.creator != prev.creator) || (item.createdAt - prev.createdAt >= GROUP_TIME) || item.replyToMessageId || statusGaps.has(item.id))) {
-					item.isFirst = true;
-
-					if (prev) {
-						prev.isLast = true;
-					};
-				};
-			};
-
-			section.list[0].isFirst = true;
-			section.list[length - 1].isLast = true;
-		});
-
 		sections.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Asc));
 
-		return sections;
+		// Group the actual display order, including activity, so the avatar follows the
+		// last row from an author whether that row is a message or a tool-call group.
+		const rows: (ChatRow & { message?: I.ChatMessage; groupId?: string })[] = [];
+		const addActivity = (beforeId: string, section?: string) => {
+			(statusGaps.get(beforeId) || []).forEach(group => {
+				const items = group.itemIds.map(id => statusView.items.get(id)).filter(Boolean);
+				if (!items.length) return;
+				rows.push({
+					groupId: group.id,
+					creator: activityPublisher(items),
+					createdAt: group.createdAt / 1000,
+					section: section || U.Date.dateWithFormat(I.DateFormat.ShortUS, group.createdAt / 1000),
+				});
+			});
+		};
+		sections.forEach(section => {
+			section.list.sort((c1, c2) => U.Data.sortByOrderId(c1, c2));
+			section.list.forEach(item => {
+				addActivity(item.id, section.key);
+				rows.push({ message: item, creator: item.creator, createdAt: item.createdAt, section: section.key, replyToMessageId: item.replyToMessageId });
+			});
+		});
+		addActivity('');
+		chatRowGrouping(rows).forEach((grouping, i) => {
+			const row = rows[i];
+			if (row.message) {
+				row.message.isFirst = grouping.isFirst;
+				row.message.isLast = grouping.isLast;
+			} else {
+				activityGrouping.set(row.groupId, grouping);
+			};
+		});
+
+		return { sections, activityGrouping };
 	};
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
@@ -1921,10 +1926,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setIsLoaded(v);
 	};
 
-	const sections = getSections();
+	const { sections, activityGrouping } = getSections();
 	const isEmpty = isLoaded && !messages.length && !statusView.groups.size;
 	const renderActivity = (beforeId: string) => (statusGaps.get(beforeId) || []).map(group => (
-		<StatusGroup key={group.id} scope={statusScope} groupId={group.id} now={statusNow} />
+		<StatusGroup key={group.id} scope={statusScope} groupId={group.id} now={statusNow} {...activityGrouping.get(group.id)} />
 	));
 
 	let content = null;

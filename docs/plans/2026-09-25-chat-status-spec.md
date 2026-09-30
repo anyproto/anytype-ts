@@ -292,6 +292,13 @@ Collapsed summary: count, latest activity text, and counts for running/failed
 items when applicable. Use localized singular/plural forms. Keep errors visible
 without opening the group; do not equate “nothing running” with success.
 
+Keep the collapsed summary on one line, truncating long text. Match message
+bubble padding, indentation, and the 480 px maximum width. Single-publisher
+activity participates in the adjacent author run using the same date, reply,
+and five-minute boundaries as messages: the avatar appears only beside the
+last message or activity group. Same-account activity aligns with outgoing
+messages. Mixed-publisher groups remain separate and show stacked avatars.
+
 Clicking the group header reveals individual items in first-seen order.
 Preserve this choice on updates and chat reopen. Expansion alone does not reveal
 any result. Keep each publisher's identity available per item, especially in

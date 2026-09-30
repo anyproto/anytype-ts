@@ -131,22 +131,34 @@
 
 .block.blockChat {
 	.chatStatusGroup {
-		border: 1px solid var(--color-shape-primary); border-radius: 10px; margin: 8px 0px;
-		background: var(--color-bg-primary); color: var(--color-text-primary); min-width: 0px;
+		@include text-common; display: flex; align-items: stretch; gap: 0px 8px; min-width: 0px;
+		color: var(--color-text-primary);
 	}
 	.chatStatusGroup {
+		&.isFirst { margin-top: 12px; }
+		&.isLast { margin-bottom: 12px; }
+		&.isSelf { justify-content: flex-end; }
+		.statusAvatarLane { flex-shrink: 0; width: 32px; display: flex; align-items: flex-end; }
+		.statusAvatars { position: relative; width: 32px; height: 32px; }
+		.statusAvatars.isMultiple {
+			.iconObject { position: absolute; top: 0px; left: 0px; }
+			.iconObject:last-child { top: 8px; left: 8px; box-shadow: 0px 0px 0px 2px var(--color-bg-primary); }
+		}
+		.statusBubble { min-width: 0px; max-width: 480px; border-radius: 16px; background: var(--color-shape-tertiary); }
+		&.isExpanded .statusBubble { width: 480px; }
 		button { font: inherit; color: inherit; text-align: left; cursor: pointer; }
 		button:focus-visible, pre:focus-visible { outline: 2px solid var(--color-system-accent-100); outline-offset: 2px; }
 		.statusGroupToggle, .statusItemToggle { border: 0px; background: none; display: flex; align-items: flex-start; gap: 8px; width: 100%; }
-		.statusGroupToggle { padding: 12px; }
+		.statusGroupToggle { padding: 6px 12px; line-height: 20px; align-items: center; border-radius: 16px; }
 		.statusItemToggle { padding: 0px; }
 		.statusChevron { width: 12px; flex-shrink: 0; color: var(--color-text-secondary); }
-		.statusGroupSummary, .statusItemLabels { display: flex; flex-direction: column; flex: 1; min-width: 0px; gap: 3px; }
-		.statusCounts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-weight: 500; }
-		.statusCounts > span { @include text-small; font-weight: 400; color: var(--color-text-secondary); }
+		.statusGroupSummary { display: flex; align-items: center; flex: 1; min-width: 0px; gap: 8px; overflow: hidden; }
+		.statusItemLabels { display: flex; flex-direction: column; flex: 1; min-width: 0px; gap: 3px; }
+		.statusCounts { @include text-overflow-nw; flex-shrink: 0; max-width: 100%; font-weight: 500; }
+		.statusCounts > span { @include text-small; margin-left: 8px; font-weight: 400; color: var(--color-text-secondary); }
 		.statusCounts > .statusFailedCount { color: var(--color-red); }
 		.statusLatest, .statusContext { @include text-small; color: var(--color-text-secondary); overflow-wrap: anywhere; }
-		.statusLatest { @include text-overflow-nw; }
+		.statusLatest { @include text-overflow-nw; min-width: 0px; }
 		.statusText { font-weight: 500; overflow-wrap: anywhere; }
 		.chatStatusItem { padding: 12px; border-top: 1px solid var(--color-shape-primary); }
 		.statusBadge { @include text-small; display: flex; align-items: center; gap: 5px; flex-shrink: 0; }

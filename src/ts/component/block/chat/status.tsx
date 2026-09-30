@@ -1,14 +1,18 @@
 import React, { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { observer } from 'mobx-react-lite';
-import { Icon } from 'Component';
+import { Icon, IconObject } from 'Component';
+import * as I from 'Interface';
 import { translate, U } from 'Lib';
 import Renderer from 'Lib/renderer';
 import { chatStatus } from 'Lib/chatStatus';
 import { ActivityItem, ChatStatusScope, LiveStatus, STATUS_TTL } from 'Lib/chatStatus/model';
 import { JsonValue, jsonField, jsonMetadata, jsonStringify, jsonText } from 'Lib/chatStatus/json';
+import { activityPublisher } from 'Lib/chatStatus/timeline';
 import { ChatStatus } from 'Store/chatStatus';
 
+// Pubsub strings stay in React text/attribute sinks, including inspectors. Never
+// route them through rich-text rendering or HTML tooltips; copy preserves raw JSON.
 const label = (text: string | null) => text || translate('blockChatStatusTyping');
 const fresh = (item: ActivityItem, now: number) => item.fresh && (now - item.lastSeenAt <= STATUS_TTL);
 const running = (item: ActivityItem, now: number) => (item.lifecycle == 'in_progress') && fresh(item, now);
@@ -172,8 +176,8 @@ const StatusItem = observer(({ scope, item, now, onDisclosure }: { scope: ChatSt
 	);
 });
 
-export const StatusGroup = observer(({ scope, groupId, now, onDisclosure = setDisclosure }: {
-	scope: ChatStatusScope; groupId: string; now: number; onDisclosure?: DisclosureHandler;
+export const StatusGroup = observer(({ scope, groupId, now, isFirst = true, isLast = true, onDisclosure = setDisclosure }: {
+	scope: ChatStatusScope; groupId: string; now: number; isFirst?: boolean; isLast?: boolean; onDisclosure?: DisclosureHandler;
 }) => {
 	const view = ChatStatus.get(scope);
 	const group = view.groups.get(groupId);
@@ -204,22 +208,40 @@ export const StatusGroup = observer(({ scope, groupId, now, onDisclosure = setDi
 	const active = items.filter(item => running(item, now)).length;
 	const failed = items.filter(item => item.lifecycle == 'error').length;
 	const latest = items.reduce((a, b) => a.lastSeenAt > b.lastSeenAt ? a : b);
+	const isSelf = activityPublisher(items) == scope.accountId;
+	const identities = Array.from(new Set(items.map(item => item.publisherIdentity)));
+	const cn = [ 'chatStatusGroup' ];
+	if (isFirst) cn.push('isFirst');
+	if (isLast) cn.push('isLast');
+	if (isSelf) cn.push('isSelf');
+	if (group.expanded) cn.push('isExpanded');
 	return (
-		<section className="chatStatusGroup" data-activity-id={groupId}>
+		<section className={cn.join(' ')} data-activity-id={groupId}>
 			<span className="statusAnnouncement" role="status" aria-live="polite">{announcement}</span>
-			<button ref={disclosure.button} type="button" className="statusGroupToggle" aria-expanded={group.expanded} aria-controls={id}
-				onClick={() => { disclosure.capture(); onDisclosure(scope, 'group', group.id, !group.expanded); }}>
-				<span className="statusChevron" aria-hidden="true">{group.expanded ? '▾' : '▸'}</span>
-				<span className="statusGroupSummary">
-					<span className="statusCounts">{count}
-						{!!active && <span>{U.String.sprintf(translate('blockChatStatusRunningCount'), active)}</span>}
-						{!!failed && <span className="statusFailedCount">{U.String.sprintf(translate('blockChatStatusFailedCount'), failed)}</span>}
+			{!isSelf && <div className="statusAvatarLane">
+				{isLast && <div className={`statusAvatars${identities.length > 1 ? ' isMultiple' : ''}`}>
+					{identities.slice(-2).map(identity => {
+						const author = U.Space.getParticipant(U.Space.getParticipantId(scope.spaceId, identity));
+						return <IconObject key={identity} object={{ ...author, layout: I.ObjectLayout.Participant }} size={identities.length > 1 ? 24 : 32}
+							onClick={e => U.Object.openConfig(e, author)} />;
+					})}
+				</div>}
+			</div>}
+			<div className="statusBubble">
+				<button ref={disclosure.button} type="button" className="statusGroupToggle" aria-expanded={group.expanded} aria-controls={id}
+					onClick={() => { disclosure.capture(); onDisclosure(scope, 'group', group.id, !group.expanded); }}>
+					<span className="statusChevron" aria-hidden="true">{group.expanded ? '▾' : '▸'}</span>
+					<span className="statusGroupSummary">
+						<span className="statusCounts">{count}
+							{!!active && <span>{U.String.sprintf(translate('blockChatStatusRunningCount'), active)}</span>}
+							{!!failed && <span className="statusFailedCount">{U.String.sprintf(translate('blockChatStatusFailedCount'), failed)}</span>}
+						</span>
+						<span className="statusLatest">{label(latest.text)}</span>
 					</span>
-					<span className="statusLatest">{label(latest.text)}</span>
-				</span>
-			</button>
-			<div id={id} hidden={!group.expanded}>
-				{group.expanded && items.map(item => <StatusItem key={item.id} scope={scope} item={item} now={now} onDisclosure={onDisclosure} />)}
+				</button>
+				<div id={id} hidden={!group.expanded}>
+					{group.expanded && items.map(item => <StatusItem key={item.id} scope={scope} item={item} now={now} onDisclosure={onDisclosure} />)}
+				</div>
 			</div>
 		</section>
 	);

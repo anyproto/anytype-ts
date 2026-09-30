@@ -1,4 +1,32 @@
-import { ActivityGroup, MessageAnchor } from './model';
+import { ActivityGroup, ActivityItem, MessageAnchor } from './model';
+
+export interface ChatRow {
+	creator?: string;
+	createdAt: number;
+	section: string;
+	replyToMessageId?: string;
+};
+
+export interface ChatRowGrouping {
+	isFirst: boolean;
+	isLast: boolean;
+};
+
+/** Mixed-publisher activity stays separate from any single author's message run. */
+export function activityPublisher (items: Pick<ActivityItem, 'publisherIdentity'>[]): string | undefined {
+	const identity = items[0]?.publisherIdentity;
+	return items.every(item => item.publisherIdentity == identity) ? identity : undefined;
+};
+
+/** Apply the same author/time boundaries to messages and the activity between them. */
+export function chatRowGrouping (rows: ChatRow[]): ChatRowGrouping[] {
+	const starts = rows.map((row, i) => {
+		const prev = rows[i - 1];
+		return !prev || !row.creator || (row.creator != prev.creator) || (row.section != prev.section) ||
+			(row.createdAt - prev.createdAt >= 300) || !!row.replyToMessageId;
+	});
+	return starts.map((isFirst, i) => ({ isFirst, isLast: starts[i + 1] ?? true }));
+};
 
 /** Assign retained groups to loaded message gaps without moving off-window history to the tail. */
 export function activityGaps (
