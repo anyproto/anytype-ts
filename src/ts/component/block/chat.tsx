@@ -9,6 +9,11 @@ import { Icon, IconObject } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
+import { presence } from 'Lib/presence';
+import { chatStatus } from 'Lib/chatStatus';
+import { activityGaps, activityPublisher, chatRowGrouping, ChatRow, ChatRowGrouping } from 'Lib/chatStatus/timeline';
+import { STATUS_TTL } from 'Lib/chatStatus/model';
+import { StatusGroup, StatusFooter } from './chat/status';
 import { reachedEdge, shouldRefetchForward } from 'Lib/util/chatWindow';
 
 interface RefProps {
@@ -21,7 +26,6 @@ interface RefProps {
 	loadAndScrollToMessage: (id: string) => void;
 };
 
-const GROUP_TIME = 300;
 const DOWNLOAD_LAYOUTS = [
 	I.ObjectLayout.File,
 	I.ObjectLayout.Image,
@@ -99,6 +103,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const chatId = getChatId();
 	const subId = getSubId();
 	const messages = S.Chat.getList(subId);
+	const statusScope = { accountId: account?.id || '', spaceId: space, chatId };
+	const statusView = S.ChatStatus.get(statusScope);
+	const [ statusClock, setStatusNow ] = useState(Date.now);
+	const statusNow = Math.max(statusClock, Date.now());
+	const statusGaps = activityGaps(Array.from(statusView.groups.values()), messages, S.Chat.isAtChatStart(subId), S.Chat.isAtChatEnd(subId));
+	const hasFreshStatus = statusView.live.some(item => statusNow - item.lastSeenAt <= STATUS_TTL) ||
+		Array.from(statusView.items.values()).some(item => item.fresh && (item.lifecycle == 'in_progress') && (statusNow - item.lastSeenAt <= STATUS_TTL));
 	const analyticsChatId = getAnalyticsChatId();
 
 	// Stable handler identities so <Message>'s memo holds across BlockChat's setDummy re-renders
@@ -794,6 +805,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const getSections = () => {
 		const sections = [];
+		const activityGrouping = new Map<string, ChatRowGrouping>();
 
 		const sectionMap = new Map();
 		messages.forEach(item => {
@@ -808,37 +820,42 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			section.list.push(item);
 		});
 
-		// Message groups by author/time. Sort by orderId FIRST: grouping flags describe
-		// adjacency in display order, so computing them on an unsorted list would attach
-		// isFirst/isLast to the wrong neighbours.
-		sections.forEach(section => {
-			const length = section.list.length;
-
-			section.list.sort((c1, c2) => U.Data.sortByOrderId(c1, c2));
-
-			for (let i = 0; i < length; ++i) {
-				const prev = section.list[i - 1];
-				const item = section.list[i];
-
-				item.isFirst = false;
-				item.isLast = false;
-
-				if (prev && ((item.creator != prev.creator) || (item.createdAt - prev.createdAt >= GROUP_TIME) || item.replyToMessageId)) {
-					item.isFirst = true;
-
-					if (prev) {
-						prev.isLast = true;
-					};
-				};
-			};
-
-			section.list[0].isFirst = true;
-			section.list[length - 1].isLast = true;
-		});
-
 		sections.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Asc));
 
-		return sections;
+		// Group the actual display order, including activity, so the avatar follows the
+		// last row from an author whether that row is a message or a tool-call group.
+		const rows: (ChatRow & { message?: I.ChatMessage; groupId?: string })[] = [];
+		const addActivity = (beforeId: string, section?: string) => {
+			(statusGaps.get(beforeId) || []).forEach(group => {
+				const items = group.itemIds.map(id => statusView.items.get(id)).filter(Boolean);
+				if (!items.length) return;
+				rows.push({
+					groupId: group.id,
+					creator: activityPublisher(items),
+					createdAt: group.createdAt / 1000,
+					section: section || U.Date.dateWithFormat(I.DateFormat.ShortUS, group.createdAt / 1000),
+				});
+			});
+		};
+		sections.forEach(section => {
+			section.list.sort((c1, c2) => U.Data.sortByOrderId(c1, c2));
+			section.list.forEach(item => {
+				addActivity(item.id, section.key);
+				rows.push({ message: item, creator: item.creator, createdAt: item.createdAt, section: section.key, replyToMessageId: item.replyToMessageId });
+			});
+		});
+		addActivity('');
+		chatRowGrouping(rows).forEach((grouping, i) => {
+			const row = rows[i];
+			if (row.message) {
+				row.message.isFirst = grouping.isFirst;
+				row.message.isLast = grouping.isLast;
+			} else {
+				activityGrouping.set(row.groupId, grouping);
+			};
+		});
+
+		return { sections, activityGrouping };
 	};
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
@@ -1909,8 +1926,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setIsLoaded(v);
 	};
 
-	const sections = getSections();
-	const isEmpty = isLoaded && !messages.length;
+	const { sections, activityGrouping } = getSections();
+	const isEmpty = isLoaded && !messages.length && !statusView.groups.size;
+	const renderActivity = (beforeId: string) => (statusGaps.get(beforeId) || []).map(group => (
+		<StatusGroup key={group.id} scope={statusScope} groupId={group.id} now={statusNow} {...activityGrouping.get(group.id)} />
+	));
 
 	let content = null;
 	if (isEmpty) {
@@ -1926,6 +1946,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 					<div className="section" key={section.key}>
 						<SectionDate date={section.createdAt} />
 						{section.list.map(item => (
+							<React.Fragment key={item.id}>
+							{renderActivity(item.id)}
 							<Message
 								ref={getRefSetter(item.id)}
 								key={item.id}
@@ -1944,9 +1966,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 								scrollToBottom={scrollToBottomCb}
 								getMessageMenuOptions={getMessageMenuOptionsCb}
 							/>
+							</React.Fragment>
 						))}
 					</div>
 				))}
+				{renderActivity('')}
 			</div>
 		);
 	};
@@ -2041,9 +2065,22 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		init();
 	}, [ rootId, space, chatId ]);
 
+	// live typing indicator over pubsub, keyed to the chat object
+	useEffect(() => {
+		presence.subscribe(space, chatId);
+		return () => presence.unsubscribe(chatId);
+	}, [ space, chatId ]);
+
+	useEffect(() => chatStatus.retain(space, chatId), [ account?.id, space, chatId ]);
+	useEffect(() => {
+		if (!hasFreshStatus) return;
+		const timer = window.setInterval(() => setStatusNow(Date.now()), 1000);
+		return () => window.clearInterval(timer);
+	}, [ account?.id, space, chatId, hasFreshStatus ]);
+
 	useLayoutEffect(() => {
 		scrollToBottomCheck();
-	}, [ messages.length ]);
+	}, [ messages.length, statusView.contentRevision ]);
 
 	// Restore the captured top message's position after a prepend-at-top (pre-paint, so no
 	// flash), since overflow-anchor can't hold position at scrollTop 0. This lands the view
@@ -2138,6 +2175,39 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		);
 	};
 
+	const richPublishers = new Set(statusView.live.filter(it => statusNow - it.lastSeenAt <= STATUS_TTL).map(it => it.publisherIdentity));
+	statusView.items.forEach(item => {
+		if (item.fresh && (item.lifecycle == 'in_progress') && (statusNow - item.lastSeenAt <= STATUS_TTL)) richPublishers.add(item.publisherIdentity);
+	});
+	const typers = S.Presence.getTypers(chatId).filter(it => !richPublishers.has(it.identity)).map(it => {
+		return U.Space.getParticipant(U.Space.getParticipantId(space, it.identity));
+	}).filter(it => it && !it._empty_);
+
+	let typingIndicator = null;
+	if (typers.length) {
+		const names = typers.map(it => U.String.shorten(it.name, 24));
+
+		let label = '';
+		if (typers.length == 1) {
+			label = U.String.sprintf(translate('blockChatTypingOne'), names[0]);
+		} else
+		if (typers.length == 2) {
+			label = U.String.sprintf(translate('blockChatTypingTwo'), names[0], names[1]);
+		} else {
+			label = U.String.sprintf(translate('blockChatTypingMany'), names[0], typers.length - 1);
+		};
+
+		typingIndicator = (
+			<div className="typingIndicator">
+				<div className="icons">
+					{typers.slice(0, 3).map((it: any) => <IconObject key={it.id} object={it} size={18} iconSize={14} />)}
+				</div>
+				<div className="label">{label}</div>
+				<div className="dots"><span /><span /><span /></div>
+			</div>
+		);
+	};
+
 	return (
 		<div
 			ref={nodeRef}
@@ -2151,6 +2221,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			<div id="scrollWrapper" ref={scrollWrapperRef} className="scrollWrapper">
 				{content}
 			</div>
+
+			{typingIndicator}
+			<StatusFooter scope={statusScope} live={statusView.live} now={statusNow} />
 
 			{!object.isArchived ? (
 				<Form 

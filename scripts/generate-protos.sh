@@ -72,15 +72,15 @@ if [[ "$FROM_DIST" == true ]]; then
 	fi
 else
 	# Local mode: use anytype-heart repo. HEART_DIR overrides the default checkout,
-	# so a feature branch in another worktree can be generated against.
-	HEART_DIR="${HEART_DIR:-$ROOT_DIR/../anytype-heart}"
+	# with ANYTYPE_HEART_PATH supported as a fallback for existing worktrees.
+	HEART_DIR="${HEART_DIR:-${ANYTYPE_HEART_PATH:-$ROOT_DIR/../anytype-heart}}"
 	if [[ ! -d "$HEART_DIR" ]]; then
 		echo "Error: anytype-heart repo not found at $HEART_DIR"
 		exit 1
 	fi
 	echo "Using anytype-heart at $HEART_DIR"
 
-	# Rebuild the JS dev binary from anytype-heart
+	# Rebuild the JS dev binary from anytype-heart, installing into this checkout
 	echo "Building anytype-heart JS dev binary..."
 	(cd "$HEART_DIR" && make install-dev-js CLIENT_DESKTOP_PATH="$ROOT_DIR")
 

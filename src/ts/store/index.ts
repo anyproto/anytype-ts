@@ -13,6 +13,8 @@ import { Comment } from './comment';
 import { Progress } from './progress';
 import { Recovery } from './recovery';
 import { SparkOnboarding } from './sparkOnboarding';
+import { Presence } from './presence';
+import { ChatStatus } from './chatStatus';
 
 export {
 	Common,
@@ -30,4 +32,6 @@ export {
 	Progress,
 	Recovery,
 	SparkOnboarding,
+	Presence,
+	ChatStatus,
 };

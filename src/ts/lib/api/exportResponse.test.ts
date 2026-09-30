@@ -3,6 +3,7 @@ import { ExportReport, ExportReport_Status } from 'Proto/pkg/lib/pb/model/protos
 
 vi.mock('./service', () => ({ ServiceClient: class {} }));
 vi.mock('./grpc-devtools', () => ({ unaryInterceptors: [], streamInterceptors: [] }));
+vi.mock('../presence', () => ({ presence: { onMessage: vi.fn() } }));
 vi.mock('Model', () => ({}));
 
 import { dispatcher } from './dispatcher';

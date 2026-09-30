@@ -9,6 +9,7 @@ import Attachment from './attachment';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
+import { presence } from 'Lib/presence';
 
 interface Props extends I.BlockComponent {
 	blockId: string;
@@ -160,6 +161,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 	const onBlurInput = () => {
 		keyboard.disableSelection(false);
 		editableRef.current?.placeholderCheck();
+		presence.stop(rootId);
 
 		saveState(attachments);
 	};
@@ -482,6 +484,10 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 		if (editNode) {
 			U.Dom.toggleClass(editNode, 'isRtl', checkRtl);
+		};
+
+		if (value) {
+			presence.typing(rootId, '');
 		};
 	};
 
@@ -988,6 +994,9 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		if (isSending.current || !canSend() || S.Menu.isOpen('blockMention')) {
 			return;
 		};
+
+		// the message itself supersedes the typing signal
+		presence.stop(rootId);
 
 		const send = sendRef.current;
 		const files = attachments.filter(it => it.isTmp && (U.Object.isFileLayout(it.layout) || U.Object.isImageLayout(it.layout)));

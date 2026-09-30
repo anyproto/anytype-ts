@@ -151,3 +151,83 @@
 @import "./text";
 @import "./embed";
 @import "./chat";
+
+/* live presence: pubsub-driven "is typing / has focus" state (see Lib/presence) */
+
+.blocks {
+	.block.isPresenceLocked {
+		> .wrapContent { pointer-events: none; user-select: none; }
+
+		/* outer glow, offset horizontally and flush vertically: an outer box-shadow is clipped to the
+		   outside of its own border box, so the inner edge stays sharp and nothing bleeds over the text */
+		> .wrapContent::after {
+			content: ''; position: absolute; inset: 0px -5px 0px -12px; pointer-events: none;
+			border-radius: 6px; opacity: 0.35;
+			box-shadow: 0px 0px 6px 0px var(--color-system-accent-100);
+			animation: blockPresenceGlowIn 0.2s ease-out;
+		}
+	}
+
+	/* in a table the block fills the cell, so an offset rounded glow spills across the grid:
+	   light up the cell's own border instead (drawn by .cell::before, see table.scss) */
+	.block.blockTable {
+		.cell:has(.block.isPresenceLocked) { z-index: 2; cursor: default; user-select: none; }
+		.cell:has(.block.isPresenceLocked)::before {
+			opacity: 0.5; border-radius: 4px;
+			box-shadow: 0px 0px 0px 1px var(--color-system-accent-100) inset, 0px 0px 6px 0px var(--color-system-accent-100);
+		}
+
+		.block.isPresenceLocked {
+			> .wrapContent::after { display: none; }
+		}
+	}
+
+	/* remote carriage: accent-coloured and steady, so it never reads as the local caret */
+	.block.blockText {
+		.flex.withPresence { position: relative; }
+
+		.presenceCarriage {
+			position: absolute; width: 2px; margin-left: -1px; z-index: 1; pointer-events: none;
+			border-radius: 1px; background: var(--color-system-accent-50); opacity: 0.6;
+			transition: left 0.08s ease-out, top 0.08s ease-out;
+		}
+	}
+
+	.block {
+		> .blockPresence { position: absolute; right: 0px; top: -8px; z-index: 30; display: flex; gap: 0px 4px; pointer-events: none; }
+		> .blockPresence {
+			.chip {
+				position: relative; display: flex; align-items: center; height: 16px; padding: 0px 6px; border-radius: 2px;
+				background: linear-gradient(var(--color-system-highlight), var(--color-system-highlight)), var(--color-bg-primary);
+				color: var(--color-system-accent-50);
+				font-size: 10px; line-height: 16px; font-weight: 500; letter-spacing: 0.01em;
+				animation: blockPresenceIn 0.15s ease-out;
+			}
+			.chip {
+				/* the same outer glow the locked block carries, so the badge merges into it */
+				&::before {
+					content: ''; position: absolute; inset: 0px; pointer-events: none;
+					border-radius: inherit; opacity: 0.35;
+					box-shadow: 0px 0px 6px 0px var(--color-system-accent-100);
+				}
+
+				.name { max-width: 160px; @include text-overflow-nw; }
+			}
+		}
+	}
+}
+
+@keyframes blockPresenceIn {
+	from { opacity: 0; transform: translateY(2px); }
+	to { opacity: 1; transform: none; }
+}
+
+@keyframes blockPresenceGlowIn {
+	from { opacity: 0; }
+	to { opacity: 0.35; }
+}
+
+@keyframes blockPresenceDot {
+	0%, 60%, 100% { opacity: 0.35; transform: none; }
+	30% { opacity: 1; transform: translateY(-1px); }
+}

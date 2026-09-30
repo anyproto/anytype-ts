@@ -10,10 +10,10 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
-// Honor HEART_DIR like generate-protos.sh does, so a feature-branch worktree
-// generates a matching registry
-const HEART_DIR = process.env.HEART_DIR
-	? path.resolve(process.env.HEART_DIR)
+// Honor the same checkout overrides as generate-protos.sh.
+const heartPath = process.env.HEART_DIR || process.env.ANYTYPE_HEART_PATH;
+const HEART_DIR = heartPath
+	? path.resolve(heartPath)
 	: path.resolve(ROOT_DIR, '..', 'anytype-heart');
 const SERVICE_TS = path.join(ROOT_DIR, 'src/ts/lib/api/service.ts');
 

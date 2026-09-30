@@ -2,6 +2,7 @@ import { observable, action, computed, set, makeObservable } from 'mobx';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
+import { chatStatus } from 'Lib/chatStatus';
 
 interface NetworkConfig {
 	mode: I.NetworkMode;
@@ -315,6 +316,7 @@ class AuthStore {
 	 * @param {boolean} removeData - Whether to remove data.
 	 */
 	logout (mainWindow: boolean, removeData: boolean) {
+		chatStatus.clear(this.account?.id);
 		Storage.clearOldKeys();
 
 		U.Subscription.destroyAll(() => {

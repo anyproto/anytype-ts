@@ -2075,6 +2075,15 @@ export const Mapper = {
 			};
 		},
 
+		PubsubMessage: (obj: any) => {
+			return {
+				topic: String(obj.topic || ''),
+				payload: obj.payload || new Uint8Array(),
+				identity: String(obj.identity || ''),
+				subIds: obj.subIds || [],
+			};
+		},
+
 		ChatUpdateMessageReadStatus: (obj: any) => {
 			return {
 				ids: obj.ids || [],
