@@ -132,6 +132,10 @@ class Api {
 		});
 	};
 
+	setNativeTextMenu (win: AppWindow, v: boolean): void {
+		this.setConfig(win, { nativeTextMenu: v });
+	};
+
 	setPinChecked (win: AppWindow, isPinChecked: boolean, pinTimeout: number, hasPinSet?: boolean): void {
 		this.isPinChecked = isPinChecked;
 		if (hasPinSet !== undefined) {
