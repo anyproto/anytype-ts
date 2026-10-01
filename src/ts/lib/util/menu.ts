@@ -865,7 +865,7 @@ class UtilMenu {
 					if (itemId == 'unmute') {
 						mode = I.NotificationMode.All;
 					} else {
-						mode = space.isOneToOne ? I.NotificationMode.Nothing : I.NotificationMode.Mentions;
+						mode = I.NotificationMode.Mentions;
 					};
 
 					C.PushNotificationSetSpaceMode(targetSpaceId, mode);
@@ -1822,7 +1822,7 @@ class UtilMenu {
 	notificationModeOptions (forSettings?: boolean): I.Option[] {
 		const spaceview = U.Space.getSpaceview();
 
-		let ret = [
+		return [
 			{ id: I.NotificationMode.All },
 			{ id: I.NotificationMode.Mentions },
 			{ id: I.NotificationMode.Nothing },
@@ -1831,14 +1831,11 @@ class UtilMenu {
 			if (forSettings && (it.id == I.NotificationMode.Nothing)) {
 				name = translate('notificationModeDisabled');
 			};
+			if (spaceview.isOneToOne && (it.id == I.NotificationMode.Mentions)) {
+				name = translate('commonMute');
+			};
 			return { ...it, name };
 		});
-
-		if (spaceview.isOneToOne) {
-			ret = ret.filter(it => it.id != I.NotificationMode.Mentions);
-		};
-
-		return ret;
 	};
 
 	discussionNotificationModeOptions (): I.Option[] {

@@ -75,6 +75,16 @@ const PageMainSettingsNotifications = forwardRef<I.PageRef, I.PageSettingsCompon
 		});
 	};
 
+	const getChatModeName = (id: string): string => {
+		const mode = U.Object.getChatNotificationMode(spaceview, id);
+
+		if (spaceview.isOneToOne && (mode == I.NotificationMode.Mentions)) {
+			return translate('commonMute');
+		};
+
+		return translate(`pageSettingsSpaceNotificationsChatSpecificMode${mode}`);
+	};
+
 	useEffect(() => {
 		load();
 	}, []);
@@ -129,7 +139,7 @@ const PageMainSettingsNotifications = forwardRef<I.PageRef, I.PageSettingsCompon
 									<IconObject object={el} size={40} iconSize={20} />
 									<div className="info">
 										<Title text={el.name} />
-										<Label text={translate(`pageSettingsSpaceNotificationsChatSpecificMode${U.Object.getChatNotificationMode(spaceview, el.id)}`)} />
+										<Label text={getChatModeName(el.id)} />
 									</div>
 								</div>
 								<div className="side right">
