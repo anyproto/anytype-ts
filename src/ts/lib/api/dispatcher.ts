@@ -1212,7 +1212,7 @@ class Dispatcher {
 							showNotification = true;
 						} else
 						if (notificationMode == I.NotificationMode.Mentions) {
-							showNotification = S.Chat.isMention(message, U.Space.getParticipantId(spaceId, account.id));
+							showNotification = !spaceview.isOneToOne && S.Chat.isMention(message, U.Space.getParticipantId(spaceId, account.id));
 						};
 					};
 
@@ -1469,7 +1469,7 @@ class Dispatcher {
 					) {
 						const notificationMode = U.Object.getChatNotificationMode(spaceview, rootId);
 
-						if (notificationMode != I.NotificationMode.Nothing) {
+						if (notificationMode == I.NotificationMode.All) {
 							// Find newly added reactions by diffing old and new
 							const newReactions = mapped.reactions as I.ChatMessageReaction[];
 							const addedEmojis: { icon: string; author: string }[] = [];

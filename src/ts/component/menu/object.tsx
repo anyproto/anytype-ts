@@ -584,7 +584,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			case 'unmute': {
 				let mode = I.NotificationMode.All;
 				if (item.id == 'mute') {
-					mode = spaceview.isOneToOne ? I.NotificationMode.Nothing : I.NotificationMode.Mentions;
+					mode = I.NotificationMode.Mentions;
 				};
 				Action.setChatNotificationMode(space, [ object.id ], mode, route);
 				break;
