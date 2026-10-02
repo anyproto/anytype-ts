@@ -356,3 +356,18 @@ describe('UtilSpace.getImportTargetList (writable spaces only)', () => {
 	});
 
 });
+
+describe('UtilSpace.getTierLimits', () => {
+
+	const product = { features: { spaceWriters: 10, spaceReaders: 5 } };
+
+	it('gives no slots while the membership status is unknown', () => {
+		vi.stubGlobal('S', { Membership: { isStatusKnown: false, data: { getTopProduct: () => product } } });
+		expect(UtilSpace.getTierLimits()).toEqual({ writersLimit: 0, readersLimit: 0 });
+	});
+
+	it('uses the top product of a known status, the owner taking one writer seat', () => {
+		vi.stubGlobal('S', { Membership: { isStatusKnown: true, data: { getTopProduct: () => product } } });
+		expect(UtilSpace.getTierLimits()).toEqual({ writersLimit: 9, readersLimit: 5 });
+	});
+});

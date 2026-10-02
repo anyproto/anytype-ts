@@ -6,6 +6,8 @@ import * as M from 'Model';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
 import { virtualBlock } from 'Lib/virtualBlock';
+import { membership } from 'Lib/membership';
+import { powerState } from 'Lib/powerState';
 
 const TYPE_KEYS = {
 	default: [
@@ -464,7 +466,8 @@ class UtilData {
 
 		U.Common.applyAutoDownload(S.Common.autoDownload);
 
-		this.getMembershipData();
+		this.getMembershipData('auth');
+		powerState.onAccountReady();
 
 		U.Subscription.createGlobal(() => {
 			if (S.Record.spaceMap.size) {
@@ -1110,47 +1113,30 @@ class UtilData {
 		});
 	};
 
-	getMembershipData() {
-		this.getMembershipProducts(() => this.getMembershipStatus());
+	/**
+	 * Loads membership status and products in parallel, skipping the middleware cache.
+	 * Every path settles, see Lib/membership.
+	 * @param {string} [reason] - What triggered the load (logged).
+	 * @param {() => void} [callBack] - Called once both resources have settled.
+	 */
+	getMembershipData(reason?: string, callBack?: () => void) {
+		membership.load(reason || 'load', callBack);
 	};
 
 	/**
 	 * Gets the membership status for the current account.
-	 * @param {boolean} [noCache] - Whether to skip cache (default: false).
-	 * @param {(membership: I.Membership) => void} [callBack] - Optional callback with the membership object.
+	 * @param {() => void} [callBack] - Called once the request has settled (on every path).
 	 */
 	getMembershipStatus(callBack?: () => void) {
-		if (!this.isAnytypeNetwork() || !S.Common.isOnline) {
-			return;
-		};
-
-		C.MembershipV2GetStatus(true, (message: any) => {
-			if (!message.error.code) {
-				S.Membership.dataSet(message.data);
-				analytics.setProduct();
-			};
-
-			callBack?.();
-		});
+		membership.fetch(I.MembershipResource.Status, 'status', callBack);
 	};
 
 	/**
-	 * Gets the available membership tiers.
-	 * @param {boolean} noCache - Whether to skip cache.
-	 * @param {() => void} [callBack] - Optional callback after fetching tiers.
+	 * Gets the available membership products.
+	 * @param {() => void} [callBack] - Called once the request has settled (on every path).
 	 */
 	getMembershipProducts(callBack?: () => void) {
-		if (!S.Common.isOnline || !this.isAnytypeNetwork()) {
-			return;
-		};
-
-		C.MembershipV2GetProducts(true, (message) => {
-			if (!message.error.code) {
-				S.Membership.productsSet(message.products);
-			};
-
-			callBack?.();
-		});
+		membership.fetch(I.MembershipResource.Products, 'products', callBack);
 	};
 
 	/**
@@ -1459,7 +1445,8 @@ class UtilData {
 	};
 
 	isFreeMember(): boolean {
-		return this.isAnytypeNetwork() && S.Membership.data?.getTopProduct()?.isIntro;
+		// An unknown status is not the free tier
+		return this.isAnytypeNetwork() && S.Membership.isStatusKnown && !!S.Membership.data?.getTopProduct()?.isIntro;
 	};
 
 	checkIsArchived(id: string): boolean {

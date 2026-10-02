@@ -224,6 +224,8 @@ const PageMainSettingsMembershipIntro = forwardRef<I.PageRef, I.PageSettingsComp
 					))}
 				</div>
 
+				{!products.length ? <Label className="empty" text={translate('popupSettingsMembershipNoPlans')} /> : ''}
+
 				<div className="tiers">
 					<Swiper
 						slidesPerView={'auto'}

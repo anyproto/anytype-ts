@@ -684,15 +684,20 @@ export const MembershipV2GetPortalLink = (response: any) => {
 	};
 };
 
+// Membership V2 responses are mapped on errors too (see Dispatcher.request): the middleware
+// keeps its fetch metadata on the error envelope, and a missing payload stays null (unknown)
+
 export const MembershipV2GetProducts = (response: any) => {
 	return {
-		products: (response.products || []).map(Mapper.From.MembershipProduct),
+		products: Array.isArray(response.products) ? response.products.map(Mapper.From.MembershipProduct) : null,
+		fetchState: Mapper.From.MembershipFetchState(response.fetchState),
 	};
 };
 
 export const MembershipV2GetStatus = (response: any) => {
 	return {
-		data: Mapper.From.MembershipData(response.data || {}),
+		data: Mapper.From.MembershipData(response.data),
+		fetchState: Mapper.From.MembershipFetchState(response.fetchState),
 	};
 };
 

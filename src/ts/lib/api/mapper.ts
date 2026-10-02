@@ -668,7 +668,37 @@ export const Mapper = {
 			};
 		},
 
-		MembershipData: (obj: any): I.MembershipData => {
+		/**
+		 * Freshness metadata of a membership resource. Missing metadata (an older middleware)
+		 * maps to null, never to an invented state.
+		 */
+		MembershipFetchState: (obj: any): I.MembershipFetchState | null => {
+			if (!obj) {
+				return null;
+			};
+
+			const revision = obj.revision;
+			const epoch = String(revision?.epoch ?? '0');
+			const freshness = Number(obj.freshness) || I.MembershipFreshness.Fresh;
+			const lastRefreshError = Number(obj.lastRefreshError) || I.MembershipRefreshError.Null;
+
+			return {
+				freshness: Object.values(I.MembershipFreshness).includes(freshness) ? freshness : I.MembershipFreshness.None,
+				lastSuccessfulFetchAt: Number(obj.lastSuccessfulFetchAt) || 0,
+				lastRefreshError: Object.values(I.MembershipRefreshError).includes(lastRefreshError) ? lastRefreshError : I.MembershipRefreshError.Unknown,
+				// a zero epoch means the middleware gave no revision (an error before any outcome)
+				revision: (revision && (epoch != '0')) ? { epoch, counter: Number(revision.counter) || 0 } : null,
+			};
+		},
+
+		/**
+		 * Membership status. A missing payload stays null: it is unknown, not "no purchases".
+		 */
+		MembershipData: (obj: any): I.MembershipData | null => {
+			if (!obj) {
+				return null;
+			};
+
 			const invoice = obj.nextInvoice;
 
 			const ret: any = {
@@ -676,7 +706,7 @@ export const Mapper = {
 					const info = it.purchaseInfo || {};
 
 					return {
-						product: Mapper.From.MembershipProduct(it.product || {}),
+						product: it.product ? Mapper.From.MembershipProduct(it.product) : null,
 						info: {
 							dateStarted: info.dateStarted,
 							dateEnds: info.dateEnds,
@@ -2126,13 +2156,15 @@ export const Mapper = {
 
 		MembershipV2Update: (obj: any) => {
 			return {
-				data: Mapper.From.MembershipData(obj.data || {}),
+				data: Mapper.From.MembershipData(obj.data),
+				fetchState: Mapper.From.MembershipFetchState(obj.fetchState),
 			};
 		},
 
 		MembershipV2ProductsUpdate: (obj: any) => {
 			return {
 				products: (obj.products || []).map(Mapper.From.MembershipProduct),
+				fetchState: Mapper.From.MembershipFetchState(obj.fetchState),
 			};
 		},
 

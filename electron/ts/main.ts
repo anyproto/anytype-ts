@@ -25,6 +25,7 @@ import WindowManager from './window';
 import Server from './server';
 import DownloadManager from './download';
 import { registerChatStatus } from './chatStatus';
+import { powerState, parseDropList, PowerEvent } from './lib/powerState';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
@@ -49,7 +50,6 @@ const csp: string[] = [];
 let deeplinkingUrl: string = '';
 let waitLibraryPromise: Promise<any> | null = null;
 let mainWindow: AppWindow | null = null;
-let lastPowerEvent: string = 'suspend';
 let isReady: boolean = false;
 
 for (const i in Cors) {
@@ -93,35 +93,42 @@ if (!is.macos && (process.argv.length >= 2)) {
 	deeplinkingUrl = process.argv.find(arg => arg.startsWith(`${protocol}://`));
 };
 
-powerMonitor.on('suspend', () => {
-	if (lastPowerEvent == 'suspend') {
+powerState.setDropList(parseDropList(process.env, process.argv, app.isPackaged));
+
+if (powerState.getDropList().length) {
+	Util.log('warn', '[PowerMonitor] debug drop hook active, dropping:', powerState.getDropList().join(','));
+};
+
+/**
+ * Forwards every power event to the first main window (it reports AppSetDeviceState to the middleware).
+ * The latest state is kept so renderers replay it after a reload and after account init.
+ */
+const onPowerEvent = (event: PowerEvent) => {
+	const snapshot = powerState.onEvent(event);
+
+	if (!snapshot) {
+		Util.log('warn', `[PowerMonitor] ${event} dropped by the debug hook`);
 		return;
 	};
 
-	const firstWindow = WindowManager.getFirstWindow();
-	if (firstWindow) {
-		Util.send(firstWindow, 'power-event', 'suspend');
-		lastPowerEvent = 'suspend';
-	};
-});
+	// The quick search panel and approval windows never report device state
+	const target = WindowManager.getFirstMainWindow();
 
-powerMonitor.on('resume', () => {
-	if (lastPowerEvent == 'resume') {
+	Util.log('info', `[PowerMonitor] ${event} seq: ${snapshot.seq} sent: ${Boolean(target)}`);
+
+	if (target) {
+		Util.send(target, 'power-event', event, snapshot.seq);
+	};
+
+	if (event != 'resume') {
 		return;
-	};
-
-	lastPowerEvent = 'resume';
-	Util.log('info', '[PowerMonitor] resume');
-
-	// Notify middleware immediately so it can transition to foreground state
-	const firstWindow = WindowManager.getFirstWindow();
-	if (firstWindow) {
-		Util.send(firstWindow, 'power-event', 'resume');
 	};
 
 	// Delay reload to give GPU process time to recover from suspend.
 	// Directly reload all tabs — route is preserved in view.data from initial load.
 	setTimeout(() => {
+		Util.log('info', '[PowerMonitor] reloading tabs after resume, seq:', snapshot.seq);
+
 		for (const win of WindowManager.list) {
 			if (!win || win.isDestroyed() || !win.views) {
 				continue;
@@ -134,7 +141,10 @@ powerMonitor.on('resume', () => {
 			};
 		};
 	}, 1500);
-});
+};
+
+powerMonitor.on('suspend', () => onPowerEvent('suspend'));
+powerMonitor.on('resume', () => onPowerEvent('resume'));
 
 // Sync IPC entry points are only served to pages from the app bundle
 const isTrustedSender = (e: Electron.IpcMainEvent): boolean => Util.isTrustedUrl(e.senderFrame?.url);

@@ -3,6 +3,7 @@ import * as I from 'Interface';
 import * as Sentry from '@sentry/browser';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { membership } from 'Lib/membership';
 
 class Keyboard {
 
@@ -56,17 +57,20 @@ class Keyboard {
 		this._handlers.resize = () => this.onResize();
 		this._handlers.online = () => {
 			S.Common.isOnlineSet(navigator.onLine);
-			if (!S.Membership.products.length) {
-				U.Data.getMembershipData();
-			};
+
 			if (navigator.onLine) {
+				// Any resource still unknown, STALE or failed, not only an empty catalog
+				membership.trigger('online');
 				Action.processPendingMembers();
+			} else {
+				membership.pause();
 			};
 		};
 		
 		this._handlers.offline = this._handlers.online;
 		this._handlers.focus = () => {
 			S.Common.windowIsFocusedSet(true);
+			membership.trigger('focus');
 
 			// Restore editor focus when window regains focus with a from-block menu open
 			// (e.g., OS keyboard layout popup on Linux temporarily steals focus)
@@ -88,6 +92,7 @@ class Keyboard {
 			Preview.previewHide(true);
 
 			S.Common.windowIsFocusedSet(false);
+			membership.pause();
 			S.Menu.closeAll([ 'blockContext' ]);
 			S.Common.getRef('dragProvider')?.clearStyle();
 

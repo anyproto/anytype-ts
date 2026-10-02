@@ -1829,8 +1829,12 @@ export const MembershipV2CartUpdate = (productIds: string[], isYearly: boolean, 
 	}, callBack);
 };
 
-export const MembershipV2GetStatus = (noCache: boolean, callBack?: (message: any) => void) => {
-	dispatcher.request('MembershipV2GetStatus', { noCache }, callBack);
+/**
+ * @param {number} forceRefreshSec - > 0 (Refresh button) also asks the middleware for a short forced poll,
+ * delivered as update events. The middleware caps the window and rate-limits these requests.
+ */
+export const MembershipV2GetStatus = (noCache: boolean, forceRefreshSec: number, callBack?: (message: any) => void) => {
+	dispatcher.request('MembershipV2GetStatus', { noCache, forceRefreshSec: Math.max(0, Number(forceRefreshSec) || 0) }, callBack);
 };
 
 export const MembershipV2GetProducts = (noCache: boolean, callBack?: (message: any) => void) => {

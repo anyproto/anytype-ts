@@ -91,6 +91,7 @@ class Analytics {
 		inviteSecurity: 'InviteSecurity',
 
 		authSetup: 'ScreenAuthSetup',
+		authLogin: 'ScreenAuthLogin',
 
 		addWidgetMain: 'Main',
 		addWidgetEditor: 'Editor',
@@ -274,11 +275,11 @@ class Analytics {
 	 */
 	setProduct () {
 		const { data } = S.Membership;
-		if (!data) {
+		if (!data || !S.Membership.isStatusKnown) {
 			return;
 		};
 
-		const products = (data.products || []).map(it => S.Membership.getProduct(it.product.id)).filter(it => it);
+		const products = (data.products || []).map(it => data.resolveProduct(it)).filter(it => it);
 		const extraPurchase = products.filter(it => it.isTopLevel);
 		const extraStorage = products.reduce((sum, it) => sum + (it.features.storageBytes || 0), 0) / 1024 / 1024;
 		const extraSeat = products.reduce((sum, it) => sum + (it.features.teamSeats || 0), 0);

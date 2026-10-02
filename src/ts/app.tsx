@@ -13,6 +13,8 @@ import Storage from 'Lib/storage';
 import Animation from 'Lib/animation';
 import { approvalSpaces } from 'Lib/linkApproval';
 import Download from 'Lib/download';
+import { powerState } from 'Lib/powerState';
+import { membership } from 'Lib/membership';
 
 configure({ enforceActions: 'never', reactionScheduler: (f) => scheduleReaction(f) });
 
@@ -282,8 +284,12 @@ const App: FC = () => {
 			Renderer.send('reload', U.Router.getRoute());
 		});
 
-		Renderer.on('power-event', (e: any, state: string) => {
-			C.AppSetDeviceState(state == 'suspend' ? I.AppDeviceState.Background : I.AppDeviceState.Foreground);
+		Renderer.on('power-event', (e: any, state: string, seq: number) => {
+			powerState.onEvent(state, seq, 'live');
+
+			if (state == 'resume') {
+				membership.trigger('resume');
+			};
 		});
 
 		Renderer.on('tab-show-tooltip', (e: any, data: any) => U.Common.tabTooltipShow(data));

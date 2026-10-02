@@ -1096,10 +1096,14 @@ class Action {
 
 	membershipUpgrade (event?: any) {
 		const product = S.Membership.data?.getTopProduct();
+
+		// Unknown status: the membership page loads it and shows what is known
+		if (!S.Membership.isStatusKnown) {
+			this.openSettings('membership', '');
+		} else
 		if (!product) {
 			return;
-		};
-
+		} else
 		if (!product.isUpgradeable) {
 			S.Popup.open('confirm', {
 				data: {
