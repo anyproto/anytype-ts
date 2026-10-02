@@ -49,6 +49,18 @@
 	.item.isOpen {
 		.icon.arrow { transform: rotate(0deg); }
 	}
+	.item.isMore {
+		.name { color: var(--color-text-tertiary); }
+	}
+}
+
+.widget.widgetTree.isSidebarSection {
+	.contentWrapper { padding-top: 8px; }
+
+	.emptyWrap { height: auto; }
+	.emptyWrap {
+		.label { @include clamp5; }
+	}
 }
 
 .widget.widgetTree.isPreview {

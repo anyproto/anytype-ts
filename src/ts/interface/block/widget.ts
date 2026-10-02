@@ -7,6 +7,7 @@ export enum WidgetSection {
 	RecentEdit	 = 3,
 	Bin			 = 4,
 	MyFavorites	 = 5,
+	Tree		 = 6,
 };
 
 export const FIXED_WIDGET_SECTIONS: WidgetSection[] = [
@@ -81,12 +82,28 @@ export interface WidgetTreeItem extends I.WidgetComponent {
 	depth: number; // the depth of the node in the tree
 	numChildren: number; // the number of children of the node
 	isSection?: boolean;
+	isMore?: boolean; // the "Show more" row closing a paged list of children
 	branch: string;
+};
+
+/**
+ * Where a tree widget takes its nodes from: the links of its target object by default,
+ * or the created-in hierarchy for the Tree sidebar section.
+ * Sorted levels are loaded with a regular subscription, which leaves out hidden, archived and
+ * deleted objects, so a source returning sorts must only return ids that pass those filters.
+ */
+export interface WidgetTreeSource {
+	isLoading: boolean;
+	getRootIds: () => string[];
+	getChildIds: (node: I.WidgetTreeDetails) => string[];
+	getSorts: (depth: number) => I.Sort[]; // empty keeps the id order
+	getPageSize: (depth: number) => number; // 0 shows all children without "Show more"
 };
 
 export interface WidgetTreeDetails { 
 	id: string; 
 	type: string; 
+	layout?: I.ObjectLayout;
 	links: string[];
 	isSection?: boolean;
 };

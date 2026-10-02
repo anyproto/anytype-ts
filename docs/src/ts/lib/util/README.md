@@ -8,13 +8,13 @@
 |------|-------|---------|
 | `aiProvider.ts` | `U.AiProvider` | Import AI provider registry: dropdown entries (local/cloud/custom), legacy `provider` → `providerId` migration, the wire `ProviderConfig` builder, and model recommendations (one shared list for all local providers, loosely matched so the same model counts across differing ids; per-provider and exact-matched for cloud). Several entries share the `OpenAi` wire enum, so the registry — not the enum — identifies a choice |
 | `common.ts` | `U.Common` | Window dimensions, random, plural, date formatting, clipboard, deep copy |
-| `data.ts` | `U.Data` | Data loading, auth flow, subscription management, onboarding, import AI enrichment settings + `aiParams` builder (provider resolution delegated to `U.AiProvider`) |
+| `data.ts` | `U.Data` | Data loading, auth flow, subscription management, onboarding, import AI enrichment settings + `aiParams` builder (provider resolution delegated to `U.AiProvider`), space-open probes for the Bin (`checkCleanupSuggestions`) and Tree (`checkTreeSection`) sections |
 | `object.ts` | `U.Object` | Object CRUD, opening, routing, layout detection, type helpers |
 | `router.ts` | `U.Router` | URL navigation, space switching (on the boot paths a "space is not ready" `WorkspaceOpen` falls through to the first ready channel), history management |
 | `space.ts` | `U.Space` | Dashboard, space list (`isReady` = the start-up run's per-space state, else the spaceview's local status), participants, sharing, publishing |
-| `menu.ts` | `U.Menu` | Menu item builders, vault items, color lists, turnTo options |
+| `menu.ts` | `U.Menu` | Menu item builders, vault items, color lists, turnTo options, widget section menus (incl. Tree sort options) and widget object context menu |
 | `embed.ts` | `U.Embed` | Embed HTML generators (YouTube, Vimeo, Google Maps, Figma, etc.) |
-| `subscription.ts` | `U.Subscription` | Data subscription management for real-time updates; exports pure `applySubscriptionPosition` (record reorder reducer for SubscriptionAdd/Position events, unit-tested in `subscription.test.ts`) |
+| `subscription.ts` | `U.Subscription` | Data subscription management for real-time updates; exports pure `applySubscriptionPosition` (record reorder reducer for SubscriptionAdd/Position events, unit-tested in `subscription.test.ts`); `createdTreeFilters` shared by the Tree section queries |
 | `date.ts` | `U.Date` | Date formatting, calendar helpers |
 | `string.ts` | `U.String` | String manipulation (camelCase, truncate, URL parsing) |
 | `file.ts` | `U.File` | File upload, download, type detection |
@@ -32,6 +32,7 @@ These files are not in the `index.ts` barrel export but live in the `util/` dire
 
 | File | Purpose |
 |------|---------|
+| `createdTree.ts` | Pure created-in forest builder (`buildCreatedForest`, `isSameForest`): child of A iff created in A and still linked by A; cycles broken at the lowest id |
 | `exportReport.ts` | Export status (warnings and informational notes remain successful; only errors make completion partial) and stable error-code translation keys |
 | `exportReportObjects.ts` | Resolve report object and type names in the export space, including archived objects |
 | `sparkOnboardingKeyboard.ts` | Enhanced keyboard event handler with IME composition support |
@@ -42,6 +43,7 @@ These files are not in the `index.ts` barrel export but live in the `util/` dire
 | File | Tests |
 |------|-------|
 | `common.test.ts` | Common utility tests |
+| `createdTree.test.ts` | Created-in forest rules, cycles, ordering |
 | `comment.test.ts` | Comment part conversion tests |
 | `commentPaste.test.ts` | Comment paste/clipboard handling tests |
 | `date.test.ts` | Date formatting tests |

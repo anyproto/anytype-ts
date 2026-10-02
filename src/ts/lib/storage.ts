@@ -23,6 +23,8 @@ const SPACE_KEYS = new Set([
 	'graphGlobal',
 	'graphDataview',
 	'recentEditMode',
+	'treeSortMode',
+	'treeShowBookmarks',
 	'widgetSections',
 	'binViewMode',
 	'pendingMembers',

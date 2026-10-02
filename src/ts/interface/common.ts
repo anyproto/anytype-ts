@@ -519,6 +519,13 @@ export enum RecentEditMode {
 	Me			 = 1,
 };
 
+export enum TreeSortMode {
+	Custom		 = 0,
+	Name		 = 1,
+	LastEdited	 = 2,
+	Created		 = 3,
+};
+
 export interface DragProviderRefProps {
 	onDragStart: (e: any, dropType: I.DropType, ids: string[], component: any) => void;
 	onScroll: () => void;

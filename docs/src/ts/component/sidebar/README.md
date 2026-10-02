@@ -5,7 +5,7 @@ Collapsible sidebars for navigation, object properties, and type configuration. 
 ## Left Sidebar (`left.tsx`)
 
 Main navigation sidebar with sub-pages:
-- `page/widget.tsx` - Widget dashboard (default view)
+- `page/widget.tsx` - Widget dashboard (default view); the Tree section (listed once `S.Common.hasTreeSection`) renders `widget/tree/section.tsx` instead of `Widget`
 - `page/vault.tsx` - Space/vault browser; header search icon opens the search popup in global (cross-space) mode
 - `page/settings/index.tsx` - Settings panel
 - `page/settings/library.tsx` - Library panel (types, relations)

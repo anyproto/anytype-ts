@@ -949,6 +949,26 @@ class UtilSubscription {
 		return J.Relation.default.concat([ 'snippet', 'lastMessageDate', 'unreadMessageCount', 'unreadMentionCount', 'notificationSubscribers' ]);
 	};
 
+	/**
+	 * Filters every created-in tree query shares: excluded layouts and templates never enter the
+	 * tree, neither as nodes nor as parents. Bookmarks are excluded too unless asked for, as
+	 * pasted links would bury the structure.
+	 * @param {boolean} showBookmarks - Whether bookmark objects take part.
+	 * @returns {I.Filter[]} The filters.
+	 */
+	createdTreeFilters (showBookmarks: boolean): I.Filter[] {
+		const skipLayouts = U.Object.getFileAndSystemLayouts().concat([ I.ObjectLayout.Participant ]);
+
+		if (!showBookmarks) {
+			skipLayouts.push(I.ObjectLayout.Bookmark);
+		};
+
+		return [
+			{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: skipLayouts },
+			{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+		];
+	};
+
 	getRecentSubId (): string {
 		let subId = '';
 		switch (S.Common.recentEditMode) {

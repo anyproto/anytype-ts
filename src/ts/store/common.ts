@@ -52,6 +52,7 @@ class CommonStore {
 	// U.Object open calls then redirect to the main window instead of navigating here
 	public isQuickSearchWindow = false;
 	public hasCleanupSuggestionsValue = false;
+	public hasTreeSectionValue = false;
 	public chatCmdSendValue = null;
 	public commentCmdSendValue = null;
 	public updateVersionValue = '';
@@ -61,6 +62,8 @@ class CommonStore {
 	public leftSidebarStateValue = { page: '', subPage: '' };
 
 	public recentEditModeValue: I.RecentEditMode = null;
+	public treeSortModeValue: I.TreeSortMode = null;
+	public treeShowBookmarksValue: boolean = null;
 	public sidebarViewValue: I.SidebarView = null;
 	public hideSidebarValue = null;
 	public hideFileObjectsInTreeValue = null;
@@ -161,6 +164,7 @@ class CommonStore {
 			isOnlineValue: observable,
 			globalShortcutStatusValue: observable,
 			hasCleanupSuggestionsValue: observable,
+			hasTreeSectionValue: observable,
 			hideSidebarValue: observable,
 			hideFileObjectsInTreeValue: observable,
 			autoDownloadValue: observable,
@@ -183,6 +187,8 @@ class CommonStore {
 			widgetSectionsValue: observable,
 			downloadingIdsValue: observable,
 			recentEditModeValue: observable,
+			treeSortModeValue: observable,
+			treeShowBookmarksValue: observable,
 			sidebarViewValue: observable,
 			inviteMap: observable,
 			config: computed,
@@ -205,6 +211,8 @@ class CommonStore {
 			notificationSound: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
+			treeSortMode: computed,
+			treeShowBookmarks: computed,
 			sidebarView: computed,
 			isPinned: computed,
 			singleTab: computed,
@@ -230,6 +238,7 @@ class CommonStore {
 			isOnlineSet: action,
 			globalShortcutStatusSet: action,
 			hasCleanupSuggestionsSet: action,
+			hasTreeSectionSet: action,
 			setLeftSidebarState: action,
 			setRightSidebarState: action,
 			clearRightSidebarState: action,
@@ -243,6 +252,8 @@ class CommonStore {
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
 			recentEditModeSet: action,
+			treeSortModeSet: action,
+			treeShowBookmarksSet: action,
 			sidebarViewSet: action,
 			isActiveTabSet: action,
 			isPinnedSet: action,
@@ -331,6 +342,22 @@ class CommonStore {
 			ret = Storage.get('recentEditMode');
 		};
 		return Number(ret) || I.RecentEditMode.All;
+	};
+
+	get treeSortMode (): I.TreeSortMode {
+		let ret = this.treeSortModeValue;
+		if (ret === null) {
+			ret = Storage.get('treeSortMode');
+		};
+		return Number(ret) || I.TreeSortMode.Custom;
+	};
+
+	get treeShowBookmarks (): boolean {
+		let ret = this.treeShowBookmarksValue;
+		if (ret === null) {
+			ret = Storage.get('treeShowBookmarks');
+		};
+		return Boolean(ret);
 	};
 
 	get sidebarView (): I.SidebarView {
@@ -479,6 +506,10 @@ class CommonStore {
 	 */
 	get hasCleanupSuggestions (): boolean {
 		return Boolean(this.hasCleanupSuggestionsValue);
+	};
+
+	get hasTreeSection (): boolean {
+		return Boolean(this.hasTreeSectionValue);
 	};
 
 	get diff (): I.Diff[] {
@@ -1107,6 +1138,10 @@ class CommonStore {
 		this.hasCleanupSuggestionsValue = Boolean(v);
 	};
 
+	hasTreeSectionSet (v: boolean) {
+		this.hasTreeSectionValue = Boolean(v);
+	};
+
 	/**
 	 * Sets the first day value.
 	 * @param {number} v - The first day value.
@@ -1344,6 +1379,16 @@ class CommonStore {
 		Storage.set('recentEditMode', this.recentEditModeValue);
 	};
 
+	treeSortModeSet (v: I.TreeSortMode) {
+		this.treeSortModeValue = Number(v) || I.TreeSortMode.Custom;
+		Storage.set('treeSortMode', this.treeSortModeValue);
+	};
+
+	treeShowBookmarksSet (v: boolean) {
+		this.treeShowBookmarksValue = Boolean(v);
+		Storage.set('treeShowBookmarks', this.treeShowBookmarksValue);
+	};
+
 	sidebarViewSet (v: I.SidebarView) {
 		this.sidebarViewValue = v || I.SidebarView.Widgets;
 		Storage.setSpaceKey('sidebarView', this.sidebarViewValue, false);
@@ -1352,6 +1397,9 @@ class CommonStore {
 	nullifySpaceKeys () {
 		this.defaultType = null;
 		this.sidebarViewValue = null;
+		this.recentEditModeValue = null;
+		this.treeSortModeValue = null;
+		this.treeShowBookmarksValue = null;
 		this.widgetSectionsInit();
 	};
 
@@ -1361,6 +1409,7 @@ class CommonStore {
 			I.WidgetSection.Unread,
 			I.WidgetSection.MyFavorites,
 			I.WidgetSection.RecentEdit,
+			I.WidgetSection.Tree,
 			I.WidgetSection.Type,
 			I.WidgetSection.Bin,
 		];
@@ -1369,7 +1418,8 @@ class CommonStore {
 
 		const makeParam = (id: I.WidgetSection): I.WidgetSectionParam => {
 			const prev = savedMap.get(id);
-			const isClosed = (id == I.WidgetSection.Pin) ? false : (prev?.isClosed ?? false);
+			// Tree starts collapsed: it subscribes to the whole space hierarchy only once opened
+			const isClosed = (id == I.WidgetSection.Pin) ? false : (prev?.isClosed ?? (id == I.WidgetSection.Tree));
 			return { id, isClosed, isHidden: prev?.isHidden ?? false, view: prev?.view ?? 'list' };
 		};
 
@@ -1382,11 +1432,21 @@ class CommonStore {
 				seen.add(item.id);
 			};
 		};
+		// Sections missing from the saved order are appended, except Tree which goes after Recently edited
 		for (const id of allIds) {
-			if (!seen.has(id)) {
-				full.push(makeParam(id));
-				seen.add(id);
+			if (seen.has(id)) {
+				continue;
 			};
+
+			const anchorIdx = (id == I.WidgetSection.Tree) ? full.findIndex(it => it.id == I.WidgetSection.RecentEdit) : -1;
+
+			if (anchorIdx >= 0) {
+				full.splice(anchorIdx + 1, 0, makeParam(id));
+			} else {
+				full.push(makeParam(id));
+			};
+
+			seen.add(id);
 		};
 
 		if (!U.Common.compareJSON(full, this.widgetSectionsValue)) {

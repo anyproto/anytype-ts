@@ -3,12 +3,25 @@ import sha1 from 'sha1';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, InfiniteLoader, List } from 'react-virtualized';
 import { Label, Filter, Button } from 'Component';
 import Item from './item';
+import ItemMore from './more';
+import createLinksTreeSource from './source/links';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 
 const MAX_DEPTH = 15; // Maximum depth of the tree
 const LIMIT = 20; // Number of nodes to load at a time
 const HEIGHT = 28; // Height of each row
+
+/**
+ * Rendered by WidgetIndex for a widget in Tree layout, or directly as a sidebar section. A section
+ * passes a synthetic widget block as both block and parent (its id keys toggles and subscriptions),
+ * its own source and onContext, and no onSetPreview, which hides "See all".
+ */
+interface Props extends I.WidgetComponent {
+	source?: I.WidgetTreeSource; // where nodes come from, the target object's links by default
+	isSidebarSection?: boolean; // always shown, no drop targets or set icons, node subscriptions destroyed on unmount
+	emptyText?: string;
+};
 
 interface WidgetTreeRefProps {
 	updateData: () => void;
@@ -19,9 +32,9 @@ interface WidgetTreeRefProps {
 	getFilter: () => string;
 };
 
-const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref) => {
+const WidgetTree = forwardRef<WidgetTreeRefProps, Props>((props, ref) => {
 
-	const { block, parent, isPreview, isSystemTarget, canCreate, getLimit, getData, addGroupLabels, checkShowAllButton, onCreate, onSetPreview } = props;
+	const { block, parent, isPreview, isSystemTarget, isSidebarSection, emptyText, canCreate, getLimit, getData, addGroupLabels, checkShowAllButton, onCreate, onSetPreview } = props;
 	const targetId = block?.getTargetObjectId();
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
@@ -29,20 +42,26 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 	const archivedIds = new Set(S.Record.getRecordIds(U.Subscription.spaceSubId(J.Constant.subId.archived), ''));
 	const dl = deletedIds.size;
 	const al = archivedIds.size;
-	const object = S.Detail.get(S.Block.widgets, targetId);
+	const object = targetId ? S.Detail.get(S.Block.widgets, targetId) : null;
+	const source = props.source || createLinksTreeSource(object);
+	const rootNodeId = targetId || block?.id; // first-level nodes are subscribed under this id
 	const subKey = block ? `widget${block.id}` : '';
 	const links = useRef([]);
 	const top = useRef(0);
-	const branches = useRef([]);
+	const branches = useRef(new Set<string>());
 	const [ searchIds, setSearchIds ] = useState([]);
+	const [ pageLimits, setPageLimits ] = useState<{ [ nodeId: string ]: number }>({});
 	const filterRef = useRef(null);
 	const filter = useRef('');
 	const filterTimeout = useRef(0);
 	const subscriptionHashes = useRef({});
+	const subIds = useRef(new Set<string>());
+	const isUnmounted = useRef(false);
+	const [ isRootLoaded, setIsRootLoaded ] = useState(false);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT }));
 	const [ dummy, setDummy ] = useState(0);
 	const isRecent = [ J.Constant.widgetId.recentOpen, J.Constant.widgetId.recentEdit ].includes(targetId);
-	const isOpen = Storage.checkToggle('widget', parent.id);
+	const isOpen = isSidebarSection || Storage.checkToggle('widget', parent?.id);
 	const isShown = isOpen || isPreview;
 
 	const clearSubscriptionHashes = () => {
@@ -60,28 +79,30 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 	};
 
 	const loadTree = (): I.WidgetTreeItem[] => {
-		if (!object) {
+		branches.current.clear();
+
+		if (!rootNodeId || source.isLoading) {
 			return [];
 		};
 
-		branches.current = [];
-
 		let children = [];
+		let total = 0;
+
 		if (isSystemTarget) {
 			const subId = getSubId(targetId);
 			const records = S.Record.getRecordIds(subId, '');
 
-			children = records.map(id => {
-				mapper(S.Detail.get(subId, id, J.Relation.sidebar));
-			});
+			children = records.map(id => S.Detail.get(subId, id, J.Relation.sidebar)).filter(it => !S.Common.hideFileObjectsInTree || !U.Object.isInFileLayouts(it.layout));
+			total = children.length;
 		} else {
-			let links = object.links;
+			let ids = source.getRootIds();
 			if (filter.current) {
-				links = links.filter(it => searchIds.includes(it));
+				ids = ids.filter(it => searchIds.includes(it));
 			};
 
-			children = getChildNodesDetails(object.id);
-			subscribeToChildNodes(object.id, Relation.getArrayValue(links), !isPreview);
+			subscribeToChildNodes(rootNodeId, ids, 1);
+			children = getChildNodesDetails(rootNodeId);
+			total = filterDeletedLinks(ids).length;
 		};
 
 		if (filter.current) {
@@ -93,11 +114,11 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 			children = addGroupLabels(children, targetId);
 		};
 
-		return loadTreeRecursive(object.id, object.id, [], children, 1, '');
+		return loadTreeRecursive(rootNodeId, rootNodeId, [], children, 1, '', total);
 	};
 
 	// Recursive function which returns the tree structure
-	const loadTreeRecursive = (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number, branch: string): I.WidgetTreeItem[] => {
+	const loadTreeRecursive = (rootId: string, parentId: string, treeNodeList: I.WidgetTreeItem[], childNodeList: I.WidgetTreeDetails[], depth: number, branch: string, total: number): I.WidgetTreeItem[] => {
 		if (!childNodeList.length || (depth >= MAX_DEPTH)) {
 			return treeNodeList;
 		};
@@ -108,18 +129,19 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 			};
 
 			const childBranch = [ branch, childNode.id ].join('-');
+			const childIds = filterDeletedLinks(source.getChildIds(childNode));
 
-			const links = filterDeletedLinks(Relation.getArrayValue(childNode.links)).filter(nodeId => {
+			const visibleIds = childIds.filter(nodeId => {
 				const branchId = [ childBranch, nodeId ].join('-');
-				if (branches.current.includes(branchId)) {
+				if (branches.current.has(branchId)) {
 					return false;
 				} else {
-					branches.current.push(branchId);
+					branches.current.add(branchId);
 					return true;
 				};
 			});
 
-			const numChildren = links.length;
+			const numChildren = visibleIds.length;
 			const node: I.WidgetTreeItem = {
 				id: childNode.id,
 				depth,
@@ -137,9 +159,22 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 
 			const isOpen = Storage.checkToggle(subKey, getTreeKey(node));
 			if (isOpen) {
-				subscribeToChildNodes(childNode.id, childNode.links, false);
-				treeNodeList = loadTreeRecursive(rootId, childNode.id, treeNodeList, getChildNodesDetails(childNode.id), depth + 1, childBranch);
+				subscribeToChildNodes(childNode.id, childIds, depth + 1);
+				treeNodeList = loadTreeRecursive(rootId, childNode.id, treeNodeList, getChildNodesDetails(childNode.id), depth + 1, childBranch, childIds.length);
 			};
+		};
+
+		const limit = getPageLimit(parentId, depth);
+		if (limit && (total > limit)) {
+			treeNodeList.push({
+				id: [ parentId, 'more' ].join('-'),
+				depth,
+				numChildren: 0,
+				parentId,
+				rootId,
+				isMore: true,
+				branch: [ branch, 'more' ].join('-'),
+			});
 		};
 
 		return treeNodeList;
@@ -152,44 +187,78 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 	// return the child nodes details for the given subId
 	const getChildNodesDetails = (nodeId: string): I.WidgetTreeDetails[] => {
 		return S.Record.getRecords(getSubId(nodeId), [ 'id', 'layout', 'links' ], true)
-			.filter(it => !S.Common.hideFileObjectsInTree || !U.Object.isInFileLayouts(it.layout))
-			.map(it => mapper(it));
+			.filter(it => !S.Common.hideFileObjectsInTree || !U.Object.isInFileLayouts(it.layout));
 	};
 
-	const mapper = (o) => {
-		if (U.Object.isSetLayout(o.layout) || (S.Common.hideFileObjectsInTree && U.Object.isInFileLayouts(o.layout))) {
-			o.links = [];
-		} else {
-			o.links = filterDeletedLinks(Relation.getArrayValue(o.links));
-		};
-		return o;
+	// How many children of a node are shown, 0 when the source doesn't page them
+	const getPageLimit = (nodeId: string, depth: number): number => {
+		const size = source.getPageSize(depth);
+		return size ? (pageLimits[nodeId] || size) : 0;
 	};
 
-	// Subscribe to changes to child nodes for a given node Id and its links
-	const subscribeToChildNodes = (nodeId: string, links: string[], withLimit: boolean): void => {
-		links = filterDeletedLinks(links);
+	// Subscribe to changes to child nodes for a given node Id and its child ids
+	const subscribeToChildNodes = (nodeId: string, ids: string[], depth: number): void => {
+		ids = filterDeletedLinks(ids);
 
-		if (withLimit) {
-			links = links.slice(0, getLimit());
+		const sorts = source.getSorts(depth);
+
+		let limit = getPageLimit(nodeId, depth);
+
+		// Without paging only the first level of a sidebar widget is capped, by the widget limit
+		if (!limit && (depth == 1) && !isPreview && getLimit) {
+			limit = getLimit();
 		};
 
-		const hash = sha1(U.Common.arrayUnique(links).join('-'));
+		if (limit && !sorts.length) {
+			ids = ids.slice(0, limit);
+		};
+
+		const hash = sha1(JSON.stringify([ U.Common.arrayUnique(ids), sorts, (sorts.length ? limit : 0) ]));
 		const subId = getSubId(nodeId);
 
-		// if already subscribed to the same links, dont subscribe again
+		// if already subscribed to the same ids, dont subscribe again
 		if (subscriptionHashes.current[nodeId] && (subscriptionHashes.current[nodeId] == hash)) {
 			return;
 		};
 
 		subscriptionHashes.current[nodeId] = hash;
+		subIds.current.add(subId);
+
+		// Nothing left: drop the old records too, an empty subscribeIds would keep showing them
+		if (!ids.length) {
+			U.Subscription.destroyList([ subId ], true);
+			return;
+		};
+
+		const callBack = () => {
+			if (!isUnmounted.current && (nodeId == rootNodeId)) {
+				setIsRootLoaded(true);
+			};
+		};
 
 		U.Subscription.destroyList([ subId ], false, () => {
-			U.Subscription.subscribeIds({
-				subId,
-				ids: links,
-				keys: J.Relation.sidebar,
-				noDeps: true,
-			});
+			// Unmounted while unsubscribing: subscribing now would leave a subscription nobody owns
+			if (isUnmounted.current) {
+				return;
+			};
+
+			if (sorts.length) {
+				U.Subscription.subscribe({
+					subId,
+					filters: [ { relationKey: 'id', condition: I.FilterCondition.In, value: ids } ],
+					sorts,
+					limit,
+					keys: J.Relation.sidebar,
+					noDeps: true,
+				}, callBack);
+			} else {
+				U.Subscription.subscribeIds({
+					subId,
+					ids,
+					keys: J.Relation.sidebar,
+					noDeps: true,
+				}, callBack);
+			};
 		});
 	};
 
@@ -216,6 +285,15 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 		analytics.event(!isOpen ? 'OpenSidebarObjectToggle' : 'CloseSidebarObjectToggle');
 
 		setDummy(dummy + 1);
+	};
+
+	const onMore = (e: MouseEvent, node: I.WidgetTreeItem): void => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const limit = getPageLimit(node.parentId, node.depth) + source.getPageSize(node.depth);
+
+		setPageLimits(prev => ({ ...prev, [node.parentId]: limit }));
 	};
 
 	const onScroll = ({ scrollTop }): void => {
@@ -297,7 +375,9 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 
 		if (!length) {
 			css.paddingBottom = '8px';
-			css.height = `${20 + 8}px`;
+
+			// The section explains itself in its empty state, which takes several lines
+			css.height = isSidebarSection ? '' : `${20 + 8}px`;
 		};
 
 		U.Dom.css(node, css);
@@ -306,6 +386,9 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 	const nodes = loadTree();
 	const length = nodes.length;
 	const subId = getSubId();
+
+	// Until the first level arrives there is nothing to show, yet the tree isn't known to be empty
+	const isRootPending = !isSystemTarget && !isRootLoaded && (filterDeletedLinks(source.getRootIds()).length > 0);
 
 	let content = null;
 	let head = null;
@@ -345,13 +428,15 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 	};
 	
 	if (!length) {
-		const label = targetId == J.Constant.widgetId.favorite ? translate('widgetEmptyFavoriteLabel') : translate('widgetEmptyLabel');
+		if (!source.isLoading && !isRootPending) {
+			const label = emptyText || ((targetId == J.Constant.widgetId.favorite) ? translate('widgetEmptyFavoriteLabel') : translate('widgetEmptyLabel'));
 
-		content = (
-			<div className="emptyWrap">
-				<Label className="empty" text={label} />
-			</div>
-		);
+			content = (
+				<div className="emptyWrap">
+					<Label className="empty" text={label} />
+				</div>
+			);
+		};
 	} else
 	if (isPreview) {
 		const rowRenderer = ({ index, parent, style }) => {
@@ -367,17 +452,28 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 					rowIndex={index}
 					fixedWidth
 				>
-					<Item
-						{...props}
-						{...node}
-						index={index}
-						treeKey={key}
-						style={style}
-						onClick={onClick}
-						onToggle={onToggle}
-						getSubId={getSubId}
-						getSubKey={() => subKey}
-					/>
+					{node.isMore ? (
+						<ItemMore
+							{...node}
+							treeKey={key}
+							style={style}
+							onMore={onMore}
+						/>
+					) : (
+						<Item
+							{...props}
+							{...node}
+							index={index}
+							treeKey={key}
+							style={style}
+							canDrop={!isSidebarSection}
+							withSetIcon={!isSidebarSection}
+							onClick={onClick}
+							onToggle={onToggle}
+							getSubId={getSubId}
+							getSubKey={() => subKey}
+						/>
+					)}
 				</CellMeasurer>
 			);
 		};
@@ -416,6 +512,17 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 				{nodes.map((node, i: number) => {
 					const key = getTreeKey(node);
 
+					if (node.isMore) {
+						return (
+							<ItemMore
+								key={key}
+								{...node}
+								treeKey={key}
+								onMore={onMore}
+							/>
+						);
+					};
+
 					return (
 						<Item
 							key={key}
@@ -423,6 +530,8 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 							{...node}
 							index={i}
 							treeKey={key}
+							canDrop={!isSidebarSection}
+							withSetIcon={!isSidebarSection}
 							onClick={onClick}
 							onToggle={onToggle}
 							getSubId={getSubId}
@@ -435,17 +544,28 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 	};
 
 	useEffect(() => {
-		links.current = object.links;
+		links.current = object?.links;
 
 		updateData();
 		resize();
+
+		return () => {
+			isUnmounted.current = true;
+
+			// A section unmounts when it is collapsed, so its node subscriptions and records go with
+			// it. Widgets keep theirs: a remount under a new key re-subscribes the same ids while
+			// rendering, and a late unsubscribe here would race it
+			if (isSidebarSection) {
+				U.Subscription.destroyList([ ...subIds.current ], true);
+			};
+		};
 	}, []);
 
 	useEffect(() => {
-		// Reload the tree if the links have changed
-		if (!U.Common.compareJSON(links.current, object.links)) {
+		// Reload the tree if the links of the target object have changed (links source only)
+		if (!U.Common.compareJSON(links.current, object?.links)) {
 			clearSubscriptionHashes();
-			links.current = object.links;
+			links.current = object?.links;
 		};
 
 		listRef.current?.recomputeRowHeights(0);
@@ -453,10 +573,10 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 	});
 
 	useEffect(() => {
-		checkShowAllButton(getSubId());
+		checkShowAllButton?.(getSubId());
 		resize();
 
-		U.Dom.toggleClass(U.Dom.get(`widget-${parent.id}`), 'isEmpty', !length);
+		U.Dom.toggleClass(U.Dom.get(`widget-${parent?.id}`), 'isEmpty', !length);
 	}, [ length ]);
 
 	useImperativeHandle(ref, () => ({
@@ -478,14 +598,16 @@ const WidgetTree = forwardRef<WidgetTreeRefProps, I.WidgetComponent>((props, ref
 			{head}
 			{content}
 
-			<Button
-				id="button-show-all"
-				onClick={onSetPreview}
-				text={translate('widgetSeeAll')}
-				size={28}
-				color="blank"
-				arrow={true}
-			/>
+			{onSetPreview ? (
+				<Button
+					id="button-show-all"
+					onClick={onSetPreview}
+					text={translate('widgetSeeAll')}
+					size={28}
+					color="blank"
+					arrow={true}
+				/>
+			) : ''}
 		</div>
 	);
 
