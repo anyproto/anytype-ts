@@ -4,6 +4,7 @@ import { reaction } from 'mobx';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button, Icon, Widget, WidgetHome, ObjectName, Label, SpaceName, Sync } from 'Component';
 import { I, C, M, S, U, J, keyboard, analytics, translate, scrollOnMove, Storage, Dataview, sidebar, Action } from 'Lib';
+import WidgetTreeSection from 'Component/widget/tree/section';
 
 const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) => {
 
@@ -67,6 +68,11 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 
 		if (recent.length) {
 			ret.push(I.WidgetSection.RecentEdit);
+		};
+
+		// Listed once the space has something created inside another object (see U.Data.checkTreeSection)
+		if (S.Common.hasTreeSection) {
+			ret.push(I.WidgetSection.Tree);
 		};
 
 		if (types.length) {
@@ -533,11 +539,13 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 			case I.WidgetSection.Unread:
 			case I.WidgetSection.Type:
 			case I.WidgetSection.RecentEdit:
+			case I.WidgetSection.Tree:
 			case I.WidgetSection.Bin: {
 				const idMap = {
 					[I.WidgetSection.Unread]: J.Constant.widgetId.unread,
 					[I.WidgetSection.Type]: J.Constant.widgetId.type,
 					[I.WidgetSection.RecentEdit]: J.Constant.widgetId.recentEdit,
+					[I.WidgetSection.Tree]: J.Constant.widgetId.tree,
 					[I.WidgetSection.Bin]: J.Constant.widgetId.bin,
 				};
 
@@ -809,6 +817,7 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 					const isSectionType = section.id == I.WidgetSection.Type;
 					const isSectionUnread = section.id == I.WidgetSection.Unread;
 					const isSectionBin = section.id == I.WidgetSection.Bin;
+					const isSectionTree = section.id == I.WidgetSection.Tree;
 					const cns = [ 'widgetSection', `section-${I.WidgetSection[section.id].toLowerCase()}` ];
 					const list = getWidgets(section.id);
 					const ws: any = widgetSections.find(it => it.id == section.id) || {};
@@ -868,7 +877,13 @@ const SidebarPageWidget = forwardRef<{}, I.SidebarPageComponent>((props, ref) =>
 									>
 										{isSectionPin && !isLinksView && !isHomePinned ? <WidgetHome /> : ''}
 
-										{list.map((block, i) => (
+										{list.map((block, i) => isSectionTree ? (
+											<WidgetTreeSection
+												key={`widget-${block.id}`}
+												block={block}
+												sidebarDirection={sidebarDirection}
+											/>
+										) : (
 											<Widget
 												{...props}
 												key={`widget-${block.id}`}

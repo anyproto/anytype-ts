@@ -1855,6 +1855,15 @@ class UtilMenu {
 		].map(it => ({ ...it, name: translate(`widgetRecentEditMode${it.id}`) }));
 	};
 
+	treeSortOptions (): I.Option[] {
+		return [
+			{ id: I.TreeSortMode.Custom },
+			{ id: I.TreeSortMode.Name },
+			{ id: I.TreeSortMode.LastEdited },
+			{ id: I.TreeSortMode.Created },
+		].map(it => ({ ...it, name: translate(`widgetTreeSortMode${it.id}`) }));
+	};
+
 	widgetSections (): I.Option[] {
 		const { widgetSections } = S.Common;
 
@@ -1863,6 +1872,7 @@ class UtilMenu {
 			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.MyFavorites },
 			{ id: I.WidgetSection.RecentEdit },
+			{ id: I.WidgetSection.Tree },
 			{ id: I.WidgetSection.Type },
 			{ id: I.WidgetSection.Bin },
 		].sort((c1, c2) => {
@@ -1874,10 +1884,12 @@ class UtilMenu {
 	};
 
 	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
-		const { recentEditMode } = S.Common;
+		const { recentEditMode, treeSortMode, treeShowBookmarks } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 		const toggle = { id: 'hide', iconParam: { name: 'common/eye0' }, name: translate('widgetHideSection') };
 		const manage = { id: 'manage', iconParam: { name: 'common/edit' }, name: translate('widgetManageSections') };
+		const className = [ menuParam.className ];
+		const data: any = {};
 
 		let options: any[] = [];
 		let value = '';
@@ -1901,6 +1913,22 @@ class UtilMenu {
 
 			value = String(recentEditMode);
 		} else
+		if (sectionId == I.WidgetSection.Tree) {
+			options.push({ name: translate('widgetTreeHint'), isSection: true });
+			options.push({ isDiv: true });
+			options.push({ name: translate('commonSort'), isSection: true });
+			options = options.concat(this.treeSortOptions());
+			options.push({ isDiv: true });
+			options.push({ id: 'treeShowBookmarks', name: translate('widgetTreeShowBookmarks'), checkbox: treeShowBookmarks });
+			options.push({ isDiv: true });
+
+			value = String(treeSortMode);
+
+			// The explanation wraps over several lines, which fixed-height virtualised rows can't fit
+			className.push('menuWidgetTree');
+			data.noVirtualisation = true;
+			data.noScroll = true;
+		} else
 		if (sectionId == I.WidgetSection.Bin) {
 			options.push({ id: 'openBin', name: translate('commonOpen') });
 
@@ -1916,11 +1944,13 @@ class UtilMenu {
 
 		S.Menu.open('select', {
 			...menuParam,
+			className: className.filter(it => it).join(' '),
 			onOpen: context => {
 				this.setContext(context);
 				menuParam.onOpen?.(context);
 			},
 			data: {
+				...data,
 				options,
 				value,
 				onSelect: (e: any, element: any) => {
@@ -1952,6 +1982,11 @@ class UtilMenu {
 							break;
 						};
 
+						case 'treeShowBookmarks': {
+							S.Common.treeShowBookmarksSet(!treeShowBookmarks);
+							break;
+						};
+
 						case 'openBin': {
 							U.Object.openRoute({ layout: I.ObjectLayout.Archive });
 							break;
@@ -1963,13 +1998,57 @@ class UtilMenu {
 						};
 
 						default: {
-							S.Common.recentEditModeSet(Number(element.id));
+							if (sectionId == I.WidgetSection.Tree) {
+								S.Common.treeSortModeSet(Number(element.id));
+							} else {
+								S.Common.recentEditModeSet(Number(element.id));
+							};
 							break;
 						};
 					};
 				},
 			},
 		});
+	};
+
+	/**
+	 * Opens the object context menu for an object row in a sidebar widget.
+	 * @param param.node - Row element, marked active while the menu is open
+	 * @param param.element - Element to anchor the menu to when withElement is set
+	 * @param param.withElement - Anchor to the element instead of the mouse position
+	 * @param param.subId - Subscription the object details come from
+	 * @param param.objectId - Object the menu acts on
+	 * @param param.data - Extra menu data, merged over the defaults
+	 */
+	widgetObjectContext (param: { node: any; element?: any; withElement?: boolean; subId: string; objectId: string; data?: any; }) {
+		const { node, element, withElement, subId, objectId, data } = param;
+		const menuParam: any = {
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			onOpen: () => U.Dom.addClass(node, 'active'),
+			onClose: () => U.Dom.removeClass(node, 'active'),
+			data: {
+				route: analytics.route.widget,
+				objectIds: [ objectId ],
+				subId,
+				allowedNewTab: true,
+				openAfterDuplicate: true,
+				allowedCollection: true,
+			},
+		};
+
+		menuParam.data = Object.assign(menuParam.data, data || {});
+
+		if (withElement) {
+			menuParam.element = element;
+			menuParam.vertical = I.MenuDirection.Center;
+			menuParam.offsetX = 32;
+		} else {
+			const { x, y } = keyboard.mouse.page;
+			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
+		};
+
+		S.Menu.open('objectContext', menuParam);
 	};
 
 	settingsSectionsMap () {

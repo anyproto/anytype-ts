@@ -8,6 +8,8 @@ interface Props extends I.WidgetTreeItem {
 	treeKey: string;
 	style?: any;
 	isSection?: boolean;
+	canDrop?: boolean;
+	withSetIcon?: boolean; // mark sets and collections that can't expand, as their results aren't shown in the tree
 	onClick?(e: MouseEvent, props): void;
 	onToggle?(e: MouseEvent, props): void;
 	setActive?(id: string): void;
@@ -16,9 +18,14 @@ interface Props extends I.WidgetTreeItem {
 	onContext?(param: any): void;
 };
 
+// Left indent of a row at the given depth, shared by every row type so they line up
+export const getTreePaddingLeft = (depth: number): number => {
+	return (depth > 1) ? ((depth - 1) * 8) : 4;
+};
+
 const TreeItem = forwardRef<{}, Props>((props, ref) => {
 
-	const { id, parentId, treeKey, depth, style, numChildren, isSection, getSubKey, getSubId, onContext, onClick, onToggle } = props;
+	const { id, parentId, treeKey, depth, style, numChildren, isSection, canDrop = true, withSetIcon = true, getSubKey, getSubId, onContext, onClick, onToggle } = props;
 	const { space } = S.Common;
 	const nodeRef = useRef(null);
 	const subKey = getSubKey();
@@ -28,9 +35,9 @@ const TreeItem = forwardRef<{}, Props>((props, ref) => {
 	const { isReadonly, isArchived, isHidden, type, restrictions, done, layout } = object;
 	const cn = [ 'item', `c${id}`, `depth${depth}` ];
 	const rootId = keyboard.getRootId();
-	const canDrop = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
+	const isDroppable = canDrop && S.Block.isAllowed(restrictions, [ I.RestrictionObject.Block ]);
 	const allowedDetails = S.Block.isAllowed(restrictions, [ I.RestrictionObject.Details ]);
-	const paddingLeft = depth > 1 ? (depth - 1) * 8 : 4;
+	const paddingLeft = getTreePaddingLeft(depth);
 	const isChat = U.Object.isChatLayout(object.layout);
 	const hasDiscussion = !isChat && !!object.discussionId;
 	const counterTargetId = isChat ? id : (hasDiscussion ? object.discussionId : '');
@@ -55,7 +62,7 @@ const TreeItem = forwardRef<{}, Props>((props, ref) => {
 
 		const node = nodeRef.current;
 
-		onContext({
+		onContext?.({
 			node,
 			element: node,
 			withElement,
@@ -81,7 +88,7 @@ const TreeItem = forwardRef<{}, Props>((props, ref) => {
 	let onContextMenu = null;
 	let inner = null;
 
-	if (U.Object.isSetLayout(layout) || (U.Object.isCollectionLayout(layout) && !numChildren)) {
+	if (withSetIcon && (U.Object.isSetLayout(layout) || U.Object.isCollectionLayout(layout)) && !numChildren) {
 		arrow = <Icon name="menu/action/set" className="set" />;
 	} else
 	if (numChildren > 0) {
@@ -133,7 +140,7 @@ const TreeItem = forwardRef<{}, Props>((props, ref) => {
 			</div>
 		);
 
-		if (canDrop) {
+		if (isDroppable) {
 			inner = (
 				<DropTarget
 					cacheKey={treeKey}

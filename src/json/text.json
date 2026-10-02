@@ -2766,6 +2766,7 @@
 	"widgetSection3": "Recently edited",
 	"widgetSection4": "Bin",
 	"widgetSection5": "My Favorites",
+	"widgetSection6": "Tree",
 	"widgetSectionNewType": "New Type",
 	"widgetHomeChange": "Change Home",
 
@@ -2793,6 +2794,14 @@
 	"widgetRecentModeTitle": "Edited by",
 	"widgetRecentEditMode0": "Anyone",
 	"widgetRecentEditMode1": "Only me",
+
+	"widgetTreeHint": "Objects appear inside the object they were created in, as long as it still links to them.",
+	"widgetTreeEmpty": "Nothing here yet. Objects you create inside other objects — through links, mentions or collections — will appear here.",
+	"widgetTreeSortMode0": "Custom",
+	"widgetTreeSortMode1": "Name",
+	"widgetTreeSortMode2": "Last edited",
+	"widgetTreeSortMode3": "Created",
+	"widgetTreeShowBookmarks": "Show bookmarks",
 
 	"widgetFavoritesViewTitle": "Show as",
 	"widgetFavoritesViewList": "List",

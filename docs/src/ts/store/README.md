@@ -6,10 +6,10 @@ Reactive state stores using MobX. Each store manages a specific domain. Accessed
 
 | File | Alias | Purpose |
 |------|-------|---------|
-| `common.ts` | `S.Common` | Global app state: space, theme, language, config, sidebar states, date format, current invite per space (`inviteGet`/`inviteSet`/`inviteClear`) |
+| `common.ts` | `S.Common` | Global app state: space, theme, language, config, sidebar states, date format, current invite per space (`inviteGet`/`inviteSet`/`inviteClear`), Tree section visibility (`hasTreeSection`), sort and bookmark visibility (`treeSortMode`, `treeShowBookmarks`, per-space keys), widget sections (Tree collapsed by default, inserted after Recently edited) |
 | `auth.ts` | `S.Auth` | Authentication: account, wallet phrase, membership, PIN |
 | `block.ts` | `S.Block` | Document block trees: block CRUD, tree traversal, children management |
-| `detail.ts` | `S.Detail` | Object details/properties: get/set details, relations, layout info. Stores raw values in shallow observable maps (per-relation-key reactivity); `get()` results are cached per-args in reactive contexts via self-evicting computeds |
+| `detail.ts` | `S.Detail` | Object details/properties: get/set details, relations, layout info. Stores raw values in shallow observable maps (per-relation-key reactivity); `get()` results are cached per-args in reactive contexts via self-evicting computeds; `getRaw()` reads stored values without mapping or caching for bulk reads |
 | `record.ts` | `S.Record` | Dataview records: views, sorts, filters, groups, types, relations |
 | `menu.ts` | `S.Menu` | Menu state: open/close/update menus, sub-menu management, live-instance ref registry (`setRef`/`getRef`/`deleteRef`) for safe keydown rebinding |
 | `popup.ts` | `S.Popup` | Popup state: open/close/update popups, dimmer control |

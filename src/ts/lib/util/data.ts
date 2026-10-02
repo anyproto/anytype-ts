@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/browser';
+import { reaction, IReactionDisposer } from 'mobx';
 import object from './object';
 import aiProvider from './aiProvider';
 import * as I from 'Interface';
@@ -50,6 +51,8 @@ class UtilData {
 
 	private spacesPreloaded = false;
 	private cleanupSuggestionsTimeout = 0;
+	private treeProbeSubId = '';
+	private treeProbeDisposer: IReactionDisposer = null;
 
 	/**
 	 * Probes the space once for cleanup suggestions so the Bin widget can surface even
@@ -75,6 +78,66 @@ class UtilData {
 				};
 			});
 		}, J.Constant.delay.cleanupSuggestions);
+	};
+
+	/**
+	 * Shows the Tree section once the space has an object created inside another one. On space open a
+	 * one-record subscription answers that; in a space without such objects it stays to catch the
+	 * first one and is dropped as soon as it does. Once shown, the section stays for the session.
+	 */
+	checkTreeSection () {
+		const { space } = S.Common;
+		const subId = U.Subscription.spaceSubId(J.Constant.subId.treeProbe);
+		const prevSubId = this.treeProbeSubId;
+
+		const stop = () => {
+			this.treeProbeDisposer?.();
+			this.treeProbeDisposer = null;
+			this.treeProbeSubId = '';
+		};
+
+		const onFound = () => {
+			stop();
+			S.Common.hasTreeSectionSet(true);
+			U.Subscription.destroyList([ subId ], true);
+		};
+
+		stop();
+		S.Common.hasTreeSectionSet(false);
+
+		// The previous space may still be waiting for its first object
+		U.Subscription.destroyList(U.Common.arrayUnique([ prevSubId, subId ].filter(it => it)), true, () => {
+			if (space != S.Common.space) {
+				return;
+			};
+
+			this.treeProbeSubId = subId;
+
+			U.Subscription.subscribe({
+				subId,
+				filters: U.Subscription.createdTreeFilters(S.Common.treeShowBookmarks).concat([
+					{ relationKey: 'createdInContext', condition: I.FilterCondition.NotEmpty, value: null },
+				]),
+				keys: [ 'id' ],
+				limit: 1,
+				noDeps: true,
+			}, () => {
+				if ((space != S.Common.space) || (this.treeProbeSubId != subId)) {
+					return;
+				};
+
+				if (S.Record.getRecordIds(subId, '').length) {
+					onFound();
+					return;
+				};
+
+				this.treeProbeDisposer = reaction(() => S.Record.getRecordIds(subId, '').length, length => {
+					if (length) {
+						onFound();
+					};
+				});
+			});
+		});
 	};
 
 	/**
@@ -361,6 +424,7 @@ class UtilData {
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
 				this.checkCleanupSuggestions();
+				this.checkTreeSection();
 				U.Space.checkInviteSecurity(space);
 
 				this.initPin(() => {

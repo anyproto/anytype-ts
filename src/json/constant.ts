@@ -166,6 +166,9 @@ export default {
 		discussionGlobal:		'discussionGlobal',
 		recentEditMe:	 		'recentEditMe',
 		recentEditAll:	 		'recentEditAll',
+		treeEdges:		 		'treeEdges',
+		treeParents:	 		'treeParents',
+		treeProbe:		 		'treeProbe',
 	},
 
 	typeKey: {
@@ -221,6 +224,7 @@ export default {
 		unread:				 'unread',
 		type:				 'type',
 		bin:				 'bin',
+		tree:				 'tree',
 		chat:				 'chat',
 		pinned:				 'pinned',
 		personalWidgets:	 'personalWidgets',
