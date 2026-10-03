@@ -14,6 +14,7 @@ import { chatStatus } from '../chatStatus';
 import { liveAddIndex } from 'Lib/util/chatWindow';
 import { applySubscriptionPosition } from 'Lib/util/subscription';
 import { approvalSpaces } from 'Lib/linkApproval';
+import { membership } from 'Lib/membership';
 
 const SORT_IDS = [
 	'BlockAdd',
@@ -39,6 +40,9 @@ const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'Spac
 const SKIP_ERROR_CODES = {
 	WorkspaceOpen: [ 100 ],
 };
+
+// Commands whose response mapper also runs when the RPC returned an error
+const MAP_ON_ERROR = [ 'ObjectListExport', 'ObjectExport', 'MembershipV2GetStatus', 'MembershipV2GetProducts' ];
 
 /**
  * Dispatcher class handles all communication between the Electron frontend
@@ -1591,24 +1595,12 @@ class Dispatcher {
 				};
 
 				case 'MembershipV2Update': {
-					S.Membership.dataUpdate(mapped.data);
-
-					const { data } = S.Membership;
-					const purchased = data?.getTopPurchasedProduct();
-					const product = data?.getTopProduct();
-
-					if (!purchased || !product) {
-						break;
-					};
-
-					if (purchased.isFinalization) {
-						Action.finalizeMembership(product, analytics.route.settingsMembership);
-					};
+					membership.onStatusEvent(mapped.data, mapped.fetchState);
 					break;
 				};
 
 				case 'MembershipV2ProductsUpdate': {
-					S.Membership.productsUpdate(mapped.products);
+					membership.onProductsEvent(mapped.products, mapped.fetchState);
 					break;
 				};
 
@@ -1877,8 +1869,9 @@ class Dispatcher {
 				const description = err ? err.description : '';
 
 				let message: any = {};
-				// Export diagnostics are useful even when the RPC itself failed.
-				if (Response[type] && (!code || [ 'ObjectListExport', 'ObjectExport' ].includes(type))) {
+				// Export diagnostics are useful even when the RPC itself failed. Membership V2 keeps its
+				// fetch metadata (freshness, revision, NONE) on errors, the store needs it.
+				if (Response[type] && (!code || MAP_ON_ERROR.includes(type))) {
 					message = Response[type](response);
 				};
 

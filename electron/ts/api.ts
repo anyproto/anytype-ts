@@ -15,6 +15,7 @@ import Server from './server';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
 import LinkApprovalManager from './linkApproval';
+import { powerState, PowerSnapshot } from './lib/powerState';
 import DownloadManager, { DownloadRequest } from './download';
 import { AppWindow, TabView, TabData, CreateTabOptions, AppConfig, Bounds } from './types';
 
@@ -83,6 +84,20 @@ class Api {
 	};
 
 	/**
+	 * Latest power state, replayed by a renderer after a reload and after account init.
+	 */
+	getPowerState (win: AppWindow): PowerSnapshot {
+		return powerState.getSnapshot();
+	};
+
+	/**
+	 * A renderer delivered a power state to the middleware.
+	 */
+	powerStateDelivered (win: AppWindow, seq: number): void {
+		powerState.ack(seq);
+	};
+
+	/**
 	 * Resolves with the gRPC web proxy address once the middleware is up.
 	 * Windows are created in parallel with server startup, so the renderer
 	 * awaits this before initializing the dispatcher.
@@ -92,6 +107,8 @@ class Api {
 	};
 
 	logout (win: AppWindow): void {
+		// Nothing recorded so far is replayed into the next account
+		powerState.ackAll();
 		WindowManager.sendToAllTabs('logout');
 	};
 

@@ -1007,6 +1007,20 @@
             &.longWait {
                 .label.wait { opacity: 1; }
             }
+
+            &.isState {
+                .label { color: var(--color-text-primary); }
+                .label.hint { @include text-small; color: var(--color-text-secondary); }
+            }
+        }
+
+        > .membershipRefresh { display: flex; justify-content: center; align-items: center; gap: 0px 8px; margin: 8px 0px 0px 0px; }
+        > .membershipRefresh {
+            .label.updating { @include text-small; color: var(--color-text-secondary); }
+        }
+
+        .membershipIntro {
+            > .content > .label.empty { text-align: center; color: var(--color-text-secondary); margin: 24px 0px; }
         }
 
         .membershipIntro { padding-top: 8px; flex: 1 1 0; display: flex; flex-direction: column; }

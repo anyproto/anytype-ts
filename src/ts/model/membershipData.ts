@@ -1,9 +1,10 @@
 import { observable, makeObservable } from 'mobx';
 import * as I from 'Interface';
+import MembershipProduct from './membershipProduct';
 
 class MembershipPurchasedProduct implements I.MembershipPurchasedProduct {
 
-	product: { id: string; } = null;
+	product: I.MembershipProduct | null = null;
 	info = {
 		dateStarted: 0,
 		dateEnds: 0,
@@ -14,7 +15,9 @@ class MembershipPurchasedProduct implements I.MembershipPurchasedProduct {
 
 	constructor (props: I.MembershipPurchasedProduct) {
 
-		this.product = props.product ? { id: props.product.id } : null;
+		// Keep the whole embedded product: status alone can then render the purchased plan,
+		// including hidden products and products missing from the catalog
+		this.product = props.product?.id ? new MembershipProduct(props.product) : null;
 		this.info = {
 			dateStarted: Number(props.info?.dateStarted) || 0,
 			dateEnds: Number(props.info?.dateEnds) || 0,
@@ -46,6 +49,13 @@ class MembershipPurchasedProduct implements I.MembershipPurchasedProduct {
 
 	get isFinalization (): boolean {
 		return this.status === I.MembershipStatus.Finalization;
+	};
+
+	/**
+	 * The paid period has ended (products without an end date never elapse).
+	 */
+	get isElapsed (): boolean {
+		return (this.info.dateEnds > 0) && (this.info.dateEnds * 1000 <= Date.now());
 	};
 
 };
@@ -87,14 +97,35 @@ class MembershipData implements I.MembershipData {
 		return this;
 	};
 
+	/**
+	 * Resolves a purchased product against the full catalog (hidden products included), falling
+	 * back to the product embedded in the status.
+	 */
+	resolveProduct (item: I.MembershipPurchasedProduct): I.MembershipProduct | null {
+		const id = item?.product?.id;
+		if (!id) {
+			return null;
+		};
+
+		return S.Membership.getProduct(id) || item.product || null;
+	};
+
 	getTopProduct (): I.MembershipProduct | null {
-		const list = this.products.map(it => S.Membership.getProduct(it.product?.id)).filter(it => it && it.isTopLevel);
+		const list = this.products.map(it => this.resolveProduct(it)).filter(it => it && it.isTopLevel);
 		return list.length ? list[0] : null;
 	};
 
 	getTopPurchasedProduct (): I.MembershipPurchasedProduct | null {
-		const list = this.products.filter(it => S.Membership.getProduct(it.product?.id)?.isTopLevel);
+		const list = this.products.filter(it => this.resolveProduct(it)?.isTopLevel);
 		return list.length ? list[0] : null;
+	};
+
+	/**
+	 * Purchased entries whose product can not be resolved at all. Screens show a fallback for
+	 * them, never "no membership".
+	 */
+	getUnresolvedProducts (): I.MembershipPurchasedProduct[] {
+		return this.products.filter(it => !this.resolveProduct(it));
 	};
 
 };

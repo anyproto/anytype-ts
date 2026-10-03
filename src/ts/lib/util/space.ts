@@ -693,10 +693,11 @@ class UtilSpace {
 	/**
 	 * Gets writer/reader slots available to invitees from the current membership tier.
 	 * writersLimit subtracts 1 because the owner occupies one writer seat in the middleware's count.
+	 * An unknown status gives no slots (as before): it is never read as the free tier's limits.
 	 * @returns {{ writersLimit: number, readersLimit: number }} Tier-level slots for new members.
 	 */
 	getTierLimits () {
-		const product = S.Membership.data?.getTopProduct();
+		const product = S.Membership.isStatusKnown ? S.Membership.data?.getTopProduct() : null;
 		return {
 			writersLimit: Math.max(0, (product?.features?.spaceWriters || 0) - 1),
 			readersLimit: product?.features?.spaceReaders || 0,

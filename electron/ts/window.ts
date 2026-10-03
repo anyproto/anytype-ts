@@ -1112,6 +1112,13 @@ class WindowManager {
 		return this.list.values().next().value;
 	};
 
+	/**
+	 * First window that is not the quick search panel or an approval window.
+	 */
+	getFirstMainWindow (): AppWindow | undefined {
+		return Array.from(this.list).find(it => it && !it.isDestroyed() && !it.isQuickSearch && !it.isApproval);
+	};
+
 	private serializeWindow (win: AppWindow): SavedTabState | null {
 		if (!win || !win.views || win.isDestroyed() || win.isApproval) {
 			return null;

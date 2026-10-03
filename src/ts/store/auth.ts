@@ -3,6 +3,8 @@ import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
 import { chatStatus } from 'Lib/chatStatus';
+import { membership } from 'Lib/membership';
+import { powerState } from 'Lib/powerState';
 
 interface NetworkConfig {
 	mode: I.NetworkMode;
@@ -316,6 +318,8 @@ class AuthStore {
 	 * @param {boolean} removeData - Whether to remove data.
 	 */
 	logout (mainWindow: boolean, removeData: boolean) {
+		// Before AccountStop: a power event sent from here on would be acked by a stopping account
+		powerState.onLogout();
 		chatStatus.clear(this.account?.id);
 		Storage.clearOldKeys();
 
@@ -351,6 +355,7 @@ class AuthStore {
 			S.Notification.clear();
 			S.Chat.clearAll();
 			S.Membership.clearAll();
+			membership.reset();
 
 			// Storage first: the account-scoped keys it drops need the account still set
 			Storage.logout();

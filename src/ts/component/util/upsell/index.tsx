@@ -120,7 +120,8 @@ const UpsellBanner = forwardRef<{}, Props>(({
 		&& U.Data.isAnytypeNetwork()
 		&& isShown;
 
-	if (!Component || !canShow || (product && !product.isUpgradeable)) {
+	// An unknown status (never fetched, or the middleware has nothing) is not the free tier: no upsell
+	if (!Component || !canShow || !S.Membership.isStatusKnown || (product && !product.isUpgradeable)) {
 		return null;
 	};
 

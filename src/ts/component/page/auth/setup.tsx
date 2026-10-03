@@ -3,6 +3,7 @@ import { Frame, Button, Footer, Error, RecoveryStatus } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import Animation from 'Lib/animation';
+import { membership } from 'Lib/membership';
 
 const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 
@@ -86,21 +87,9 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			const onRouteChange = () => {
 				const whatsNew = Storage.get('whatsNew');
 
-				const cb1 = () => {
-					const { data } = S.Membership;
-					const purchased = data?.getTopPurchasedProduct();
-					const product = data?.getTopProduct();
-
-					if (!purchased) {
-						cb2();
-					} else {
-						if (purchased.isFinalization) {
-							Action.finalizeMembership(product, analytics.route.authSetup, cb2);
-						} else {
-							cb2();
-						};
-					};
-				};
+				// Offers name finalization for the account's status once it is FRESH: STALE status never
+				// confirms a purchase, and the status often arrives after this point
+				const cb1 = () => membership.finalizeOnLogin(analytics.route.authSetup, cb2);
 
 				const cb2 = () => {
 					if (whatsNew) {

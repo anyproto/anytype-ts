@@ -4,6 +4,7 @@ import { Frame, Error, Button, Header, Phrase, Title, Label, RecoveryStatus } fr
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import Animation from 'Lib/animation';
+import { membership } from 'Lib/membership';
 
 const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) => {
 
@@ -146,6 +147,9 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 
 			U.Data.onInfo(account.info);
 			U.Data.onAuthOnce();
+
+			// A purchase made on another device may wait for name finalization
+			membership.finalizeOnLogin(analytics.route.authLogin, () => {});
 
 			analytics.event('SelectAccount', { middleTime: message.middleTime });
 		});
