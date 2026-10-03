@@ -165,6 +165,7 @@ const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 	let val = record[relation.relationKey];
 	let icon = null;
 	let counter = null;
+	let isNamePlaceholder = false;
 
 	if (isDate || isNumber) {
 		val = Relation.formatValue(relation, val, true);
@@ -271,7 +272,13 @@ const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 				if (textLimit) {
 					name = U.String.shorten(name, textLimit);
 				};
-				content = <div className="name">{name}</div>;
+
+				const cn = [ 'name' ];
+				if (isNamePlaceholder) {
+					cn.push('isPlaceholder');
+				};
+
+				content = <div className={cn.join(' ')}>{name}</div>;
 			} else {
 				if (isName && U.Object.isNoteLayout(record.layout)) {
 					content = <span className="emptyText">{translate('commonEmpty')}</span>;
@@ -337,6 +344,9 @@ const CellText = forwardRef<I.CellRef, I.Cell>((props, ref: any) => {
 			} else {
 				val = val || translate('defaultNamePage');
 			};
+
+			// Grey the fallback for an empty name; a name literally typed as "Untitled" stays normal.
+			isNamePlaceholder = !record.name && (val == translate('defaultNamePage'));
 
 			if (U.Object.isChatLayout(record.layout)) {
 				counter = <ChatCounter chatId={record.id} />;
