@@ -54,6 +54,8 @@ const forceProps = {
 	},
 	link: {
 		distance: 100,
+		// Pulls objects close to the object they were created in, so the structure reads as clusters
+		createdInDistance: 40,
 	},
 	forceX: {
 		strength: 0.01,
@@ -366,8 +368,8 @@ initForcesOnly = () => {
 
 	simulation.force('link')
 	.links(edges)
-	.distance(link.distance)
-	.strength(d => d.source.type == d.target.type ? 1 : 0.5);
+	.distance(d => d.isCreatedIn ? link.createdInDistance : link.distance)
+	.strength(d => (d.isCreatedIn || (d.source.type == d.target.type)) ? 1 : 0.5);
 
 	simulation.force('forceX')
 	.strength(d => !d.isOrphan ? forceX.strength : 0)
@@ -414,8 +416,8 @@ initForces = () => {
 
 	simulation.force('link')
 	.links(edges)
-	.distance(link.distance)
-	.strength(d => d.source.type == d.target.type ? 1 : 0.5);
+	.distance(d => d.isCreatedIn ? link.createdInDistance : link.distance)
+	.strength(d => (d.isCreatedIn || (d.source.type == d.target.type)) ? 1 : 0.5);
 
 	simulation.force('forceX')
 	.strength(d => !d.isOrphan ? forceX.strength : 0)
@@ -1076,23 +1078,34 @@ draw = (t) => {
 		};
 	};
 
-	// Normal edges (full alpha, link color)
-	if (normalEdges.length) {
-		buildEdgePaths(normalEdges);
-		edgesGraphics.stroke({ width: lineWidth, color: _colorLink, alpha: 1 });
+	// Strokes a batch in two passes: edges between an object and the one it was created in are thicker
+	const strokeEdges = (list, color, alpha) => {
+		const thin = [];
+		const thick = [];
+
+		for (let i = 0; i < list.length; i++) {
+			(list[i].isCreatedIn ? thick : thin).push(list[i]);
+		};
+
+		if (thin.length) {
+			buildEdgePaths(thin);
+			edgesGraphics.stroke({ width: lineWidth, color, alpha });
+		};
+
+		if (thick.length) {
+			buildEdgePaths(thick);
+			edgesGraphics.stroke({ width: lineWidth3, color, alpha });
+		};
 	};
+
+	// Normal edges (full alpha, link color)
+	strokeEdges(normalEdges, _colorLink, 1);
 
 	// Dimmed edges (reduced alpha when hovering, link color)
-	if (dimmedEdges.length) {
-		buildEdgePaths(dimmedEdges);
-		edgesGraphics.stroke({ width: lineWidth, color: _colorLink, alpha: hoverAlpha });
-	};
+	strokeEdges(dimmedEdges, _colorLink, hoverAlpha);
 
 	// Highlighted edges (full alpha, highlight color)
-	if (highlightEdges.length) {
-		buildEdgePaths(highlightEdges);
-		edgesGraphics.stroke({ width: lineWidth, color: _colorHighlight, alpha: 1 });
-	};
+	strokeEdges(highlightEdges, _colorHighlight, 1);
 
 	// Draw arrows (per-edge handling needed for geometry)
 	if (settings.marker) {

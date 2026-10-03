@@ -139,6 +139,7 @@ export default {
 		'restrictions',
 		'timestamp',
 		'createdDate',
+		'createdInContext',
 	],
 
 	template: [
