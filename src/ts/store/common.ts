@@ -509,7 +509,7 @@ class CommonStore {
 	};
 
 	get hasTreeSection (): boolean {
-		return Boolean(this.hasTreeSectionValue);
+		return Boolean(this.config.experimental && this.hasTreeSectionValue);
 	};
 
 	get diff (): I.Diff[] {

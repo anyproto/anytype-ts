@@ -107,7 +107,8 @@ class UtilData {
 
 		// The previous space may still be waiting for its first object
 		U.Subscription.destroyList(U.Common.arrayUnique([ prevSubId, subId ].filter(it => it)), true, () => {
-			if (space != S.Common.space) {
+			// The Tree section is experimental, without the flag there is nothing to probe for
+			if ((space != S.Common.space) || !S.Common.config.experimental) {
 				return;
 			};
 

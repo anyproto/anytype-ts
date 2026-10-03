@@ -1865,17 +1865,17 @@ class UtilMenu {
 	};
 
 	widgetSections (): I.Option[] {
-		const { widgetSections } = S.Common;
+		const { widgetSections, config } = S.Common;
 
 		return [
 			{ id: I.WidgetSection.Pin },
 			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.MyFavorites },
 			{ id: I.WidgetSection.RecentEdit },
-			{ id: I.WidgetSection.Tree },
+			config.experimental ? { id: I.WidgetSection.Tree } : null,
 			{ id: I.WidgetSection.Type },
 			{ id: I.WidgetSection.Bin },
-		].sort((c1, c2) => {
+		].filter(it => it).sort((c1, c2) => {
 			const idx1 = widgetSections.findIndex(it => it.id == c1.id);
 			const idx2 = widgetSections.findIndex(it => it.id == c2.id);
 

@@ -364,9 +364,10 @@ export const ObjectGraph = (response: any) => {
 	const seen = new Set<string>();
 	const edgeMap = new Map<string, any>();
 	const edges: any[] = [];
+	const createdInMap = new Map<string, string>(nodes.filter(it => it.createdInContext).map(it => [ it.id, it.createdInContext ]));
 
 	for (let i = 0; i < edgesRaw.length; i++) {
-		const edge = Mapper.From.GraphEdge(edgesRaw[i]);
+		const edge: any = Mapper.From.GraphEdge(edgesRaw[i]);
 
 		if (edge.source == edge.target) {
 			continue;
@@ -387,6 +388,8 @@ export const ObjectGraph = (response: any) => {
 
 		if (!seen.has(key)) {
 			seen.add(key);
+			// One end was created inside the other: drawn thicker in the graph
+			edge.isCreatedIn = (createdInMap.get(edge.source) == edge.target) || (createdInMap.get(edge.target) == edge.source);
 			edgeMap.set(key, edge);
 			edges.push(edge);
 		};
