@@ -54,6 +54,8 @@ const forceProps = {
 	},
 	link: {
 		distance: 100,
+		// Pulls objects close to the object they were created in, so the structure reads as clusters
+		createdInDistance: 40,
 	},
 	forceX: {
 		strength: 0.01,
@@ -366,8 +368,8 @@ initForcesOnly = () => {
 
 	simulation.force('link')
 	.links(edges)
-	.distance(link.distance)
-	.strength(d => d.source.type == d.target.type ? 1 : 0.5);
+	.distance(d => d.isCreatedIn ? link.createdInDistance : link.distance)
+	.strength(d => (d.isCreatedIn || (d.source.type == d.target.type)) ? 1 : 0.5);
 
 	simulation.force('forceX')
 	.strength(d => !d.isOrphan ? forceX.strength : 0)
@@ -414,8 +416,8 @@ initForces = () => {
 
 	simulation.force('link')
 	.links(edges)
-	.distance(link.distance)
-	.strength(d => d.source.type == d.target.type ? 1 : 0.5);
+	.distance(d => d.isCreatedIn ? link.createdInDistance : link.distance)
+	.strength(d => (d.isCreatedIn || (d.source.type == d.target.type)) ? 1 : 0.5);
 
 	simulation.force('forceX')
 	.strength(d => !d.isOrphan ? forceX.strength : 0)
