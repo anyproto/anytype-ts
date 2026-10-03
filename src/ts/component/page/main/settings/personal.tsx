@@ -10,7 +10,7 @@ enum ChatKey {
 const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, gridTitleClick, notificationSound, hideFileObjectsInTree, unicodeReplace } = S.Common;
-	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
+	const { hideTray, showMenuBar, alwaysShowTabs, nativeTextMenu, hardwareAcceleration } = config;
 	const { theme, chatCmdSend, commentCmdSend } = S.Common;
 	const { networkConfig } = S.Auth;
 	const { preferYamux } = networkConfig;
@@ -63,6 +63,7 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 	];
 
 	const canHideMenu = U.Common.isPlatformWindows() || U.Common.isPlatformLinux();
+	const canNativeTextMenu = U.Common.isPlatformMac();
 	const linkStyles: I.Option[] = [
 		{ id: I.LinkDefaultStyle.Text, name: translate('popupSettingsPersonalLinkStyleText') },
 		{ id: I.LinkDefaultStyle.Card, name: translate('popupSettingsPersonalLinkStyleCard') },
@@ -168,6 +169,19 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 							value={showMenuBar}
 							onChange={(e: any, v: boolean) => {
 								Renderer.send('setMenuBarVisibility', v);
+							}}
+						/>
+					</div>
+				) : ''}
+
+				{canNativeTextMenu ? (
+					<div className="item">
+						<Label text={translate('popupSettingsPersonalNativeTextMenu')} />
+						<Switch
+							className="big"
+							value={nativeTextMenu}
+							onChange={(e: any, v: boolean) => {
+								Renderer.send('setNativeTextMenu', v);
 							}}
 						/>
 					</div>

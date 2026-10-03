@@ -59,6 +59,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 	const timeoutFilter = useRef(0);
 	const timeoutDrag = useRef(0);
 	const timeoutHistory = useRef(0);
+	const timeoutInput = useRef(0);
 	const isLoading = useRef<string[]>([]);
 	const isSending = useRef(false);
 	const range = useRef<I.TextRange>({ from: 0, to: 0 });
@@ -489,6 +490,25 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		if (value) {
 			presence.typing(rootId, '');
 		};
+
+		// Edits made by the OS (e.g. macOS Writing Tools) change the DOM without a keyup,
+		// so marks and the send button are re-synced once the input settles
+		if (U.Common.isPlatformMac()) {
+			window.clearTimeout(timeoutInput.current);
+			timeoutInput.current = window.setTimeout(() => onInputSettle(), J.Constant.delay.keyboard);
+		};
+	};
+
+	const onInputSettle = () => {
+		if (keyboard.isComposition) {
+			return;
+		};
+
+		const parsed = getMarksFromHtml();
+
+		setMarks(Mark.checkRanges(parsed.text, parsed.marks));
+		checkSendButton();
+		updateCounter();
 	};
 
 	const onCopy = () => {
@@ -1968,6 +1988,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		return () => {
 			window.clearTimeout(timeoutFilter.current);
 			window.clearTimeout(timeoutHistory.current);
+			window.clearTimeout(timeoutInput.current);
 			window.clearTimeout(timeoutDrag.current);
 			keyboard.disableSelection(false);
 		};
