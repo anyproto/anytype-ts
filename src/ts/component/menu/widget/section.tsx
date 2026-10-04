@@ -166,7 +166,7 @@ const MenuWidgetSection = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						<div className="name">{item.name}</div>
 					</span>
 					<Icon
-						name={item.isHidden ? 'common/eye1' : 'common/eye0'}
+						name={item.isHidden ? 'common/eye0' : 'common/eye1'}
 						className="eye"
 						onClick={e => onSwitch(item)}
 					/>
