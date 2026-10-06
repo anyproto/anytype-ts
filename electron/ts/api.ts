@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, Menu, Notification, ipcMain, session, clipboard } from 'electron';
+import { app, shell, BrowserWindow, Menu, Notification, ipcMain, session, clipboard, systemPreferences } from 'electron';
 import { is } from 'electron-util';
 import fs from 'fs';
 import path from 'path';
@@ -45,12 +45,14 @@ class Api {
 	shownNotificationIds: Set<string> = new Set();
 	pinTimer: ReturnType<typeof setTimeout> | null = null;
 	pinTimeValue: number = 0;
+	touchIdPending: boolean = false;
+	touchIdVersion: number = 0;
 
 	// Commands that should only be processed from the active tab.
 	// Each tab has its own gRPC session/stream, so events like PayloadBroadcast
 	// and notifications arrive in every tab independently. Without this guard,
 	// the active tab would receive duplicate IPC messages (once per tab).
-	activeTabOnly: Set<string> = new Set([ 'payloadBroadcast', 'notification', 'setTabsDimmer' ]);
+	activeTabOnly: Set<string> = new Set([ 'payloadBroadcast', 'notification', 'setTabsDimmer', 'touchIdUnlock' ]);
 
 	getInitData (win: AppWindow, tabId: string): Record<string, any> {
 		let route = win.route || '';
@@ -107,12 +109,14 @@ class Api {
 	};
 
 	logout (win: AppWindow): void {
+		this.touchIdVersion++;
 		// Nothing recorded so far is replayed into the next account
 		powerState.ackAll();
 		WindowManager.sendToAllTabs('logout');
 	};
 
 	pinCheck (win?: AppWindow): void {
+		this.touchIdVersion++;
 		WindowManager.sendToAllTabs('pin-check');
 		WindowManager.list.forEach((w: AppWindow) => WindowManager.updateTabBarVisibility(w));
 	};
@@ -150,6 +154,7 @@ class Api {
 	};
 
 	setPinChecked (win: AppWindow, isPinChecked: boolean, pinTimeout: number, hasPinSet?: boolean): void {
+		this.touchIdVersion++;
 		this.isPinChecked = isPinChecked;
 		if (hasPinSet !== undefined) {
 			this.hasPinSet = hasPinSet;
@@ -170,6 +175,7 @@ class Api {
 	};
 
 	setHasPinSet (win: AppWindow, hasPinSet: boolean): void {
+		this.touchIdVersion++;
 		this.hasPinSet = hasPinSet;
 
 		// Update tab bar visibility for all windows when PIN state changes
@@ -356,6 +362,10 @@ class Api {
 
 	keytarSet (win: AppWindow, key: string, value: string): void {
 		if (key && value) {
+			if (key.endsWith('-pin')) {
+				this.touchIdVersion++;
+				getSafeStorage().delete(`touchId-${key}`);
+			};
 			keytar.setPassword(KEYTAR_SERVICE, key, value);
 		};
 	};
@@ -396,7 +406,69 @@ class Api {
 	};
 
 	keytarDelete (win: AppWindow, key: string): void {
+		if (key?.endsWith('-pin')) {
+			this.touchIdVersion++;
+			getSafeStorage().delete(`touchId-${key}`);
+		};
 		keytar.deletePassword(KEYTAR_SERVICE, key);
+	};
+
+	getTouchIdState (win: AppWindow, key: string): { available: boolean; enabled: boolean } {
+		let available = false;
+
+		try {
+			available = is.macos && systemPreferences.canPromptTouchID();
+		} catch (e) {};
+
+		return { available, enabled: !!key && (getSafeStorage().get(`touchId-${key}`) === true) };
+	};
+
+	setTouchIdEnabled (win: AppWindow, key: string, enabled: boolean): boolean {
+		if (!this.isPinChecked || !this.hasPinSet || !key?.endsWith('-pin')) {
+			return false;
+		};
+		if (enabled && !this.getTouchIdState(win, key).available) {
+			return false;
+		};
+
+		this.touchIdVersion++;
+		getSafeStorage().set(`touchId-${key}`, !!enabled);
+		return true;
+	};
+
+	async touchIdUnlock (win: AppWindow, key: string, pinTimeout: number): Promise<boolean> {
+		const { available, enabled } = this.getTouchIdState(win, key);
+
+		if (!available || !enabled || this.isPinChecked || this.touchIdPending || !win.isFocused()) {
+			return false;
+		};
+
+		const version = this.touchIdVersion;
+		const powerSeq = powerState.getSnapshot().seq;
+		const view = Util.getActiveView(win);
+		const isCurrent = () => (version == this.touchIdVersion) && (powerSeq == powerState.getSnapshot().seq) &&
+			!win.isDestroyed() && !!view && !view.webContents.isDestroyed() && (Util.getActiveView(win) == view);
+
+		this.touchIdPending = true;
+
+		try {
+			if (!await this.keytarGet(win, key) || !isCurrent() || !win.isFocused()) {
+				return false;
+			};
+
+			await systemPreferences.promptTouchID(Util.translate('authPinCheckTouchIdReason'));
+
+			if (!isCurrent()) {
+				return false;
+			};
+
+			this.setPinChecked(win, true, pinTimeout, true);
+			return true;
+		} catch (e) {
+			return false;
+		} finally {
+			this.touchIdPending = false;
+		};
 	};
 
 	updateCheck (win: AppWindow): void {
