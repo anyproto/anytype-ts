@@ -1,4 +1,4 @@
-import { app, BrowserWindow, WebContentsView, nativeImage, dialog, ipcMain } from 'electron';
+import { app, BrowserWindow, WebContentsView, Menu, nativeImage, dialog, ipcMain } from 'electron';
 import { is, fixPathForAsarUnpack } from 'electron-util';
 import path from 'path';
 import windowStateKeeper from 'electron-window-state';
@@ -532,6 +532,10 @@ class WindowManager {
 		});
 
 		view.webContents.on('context-menu', (e: Electron.Event, param: Electron.ContextMenuParams) => {
+			if (this.showTextContextMenu(win, param)) {
+				return;
+			};
+
 			Util.sendToTab(win, view.id, 'spellcheck', param.misspelledWord, param.dictionarySuggestions, param.x, param.y, param.selectionRect);
 		});
 
@@ -617,6 +621,26 @@ class WindowManager {
 		this.updateTabBarVisibility(win);
 
 		return view;
+	};
+
+	// Native menu for selected editable text on macOS. Passing the frame lets the system
+	// append its own items (Writing Tools), which cannot be rendered in the custom HTML menus.
+	// Returns true when the menu was shown
+	showTextContextMenu (win: AppWindow, param: Electron.ContextMenuParams): boolean {
+		const { frame, isEditable, selectionText, misspelledWord, editFlags } = param;
+
+		if (!is.macos || !ConfigManager.config.nativeTextMenu || !frame || !isEditable || misspelledWord || !String(selectionText || '').trim()) {
+			return false;
+		};
+
+		const menu = Menu.buildFromTemplate([
+			{ label: Util.translate('electronMenuCut'), role: 'cut', enabled: editFlags.canCut },
+			{ label: Util.translate('electronMenuCopy'), role: 'copy', enabled: editFlags.canCopy },
+			{ label: Util.translate('electronMenuPaste'), role: 'paste', enabled: editFlags.canPaste },
+		]);
+
+		menu.popup({ window: win, frame });
+		return true;
 	};
 
 	getBounds (win: AppWindow): Bounds | null {

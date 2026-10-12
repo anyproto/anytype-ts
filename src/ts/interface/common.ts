@@ -468,6 +468,7 @@ export interface AppConfig {
 	theme?: string;
 	showMenuBar?: boolean;
 	alwaysShowTabs?: boolean;
+	nativeTextMenu?: boolean;
 	hardwareAcceleration?: boolean;
 	hideTray?: boolean;
 	sudo?: boolean;

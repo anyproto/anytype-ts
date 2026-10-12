@@ -75,6 +75,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const timeoutFilter = useRef(0);
 	const timeoutClick = useRef(0);
 	const timeoutText = useRef(0);
+	const timeoutInput = useRef(0);
 	const pendingSavesRef = useRef(0);
 	const sentTextsRef = useRef<string[]>([]);
 	const preventMenu = useRef(false);
@@ -98,6 +99,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			S.Common.clearTimeout('blockContext');
 			window.clearTimeout(timeoutFilter.current);
 			window.clearTimeout(timeoutClick.current);
+			window.clearTimeout(timeoutInput.current);
 
 			// Flush any pending debounced text save before unmount to prevent
 			// data loss when navigating away from the page while typing
@@ -392,6 +394,26 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const onInput = () => {
 		onUpdate?.();
+
+		// Edits made by the OS (e.g. macOS Writing Tools) change the DOM without a keyup,
+		// so the keyup-driven save never runs. Check once the input settles: for regular
+		// typing the debounced keyup save has already run by then and this is a no-op
+		if (U.Common.isPlatformMac()) {
+			window.clearTimeout(timeoutInput.current);
+			timeoutInput.current = window.setTimeout(() => onInputSettle(), J.Constant.delay.keyboard);
+		};
+	};
+
+	const onInputSettle = () => {
+		if (keyboard.isComposition || (getTextValue() === textRef.current)) {
+			return;
+		};
+
+		if (block.canHaveMarks()) {
+			marksRef.current = getMarksFromHtml().marks;
+		};
+
+		setText(marksRef.current, false);
 	};
 	
 	const onKeyDownHandler = (e: any) => {

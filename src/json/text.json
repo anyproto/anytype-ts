@@ -1074,6 +1074,7 @@
 	"popupSettingsPersonalFileStyle": "File block default style",
 	"popupSettingsPersonalSidebar": "Automatically show and hide sidebar",
 	"popupSettingsPersonalAlwaysShowTabbar": "Always show tab bar",
+	"popupSettingsPersonalNativeTextMenu": "Native macOS menu for selected text",
 	"popupSettingsPersonalHardwareAcceleration": "Hardware Acceleration",
 	"popupSettingsPersonalHideFileObjectsInTree": "Hide media files in page tree",
 	"popupConfirmHardwareAccelerationTitle": "Restart Required",
