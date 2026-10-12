@@ -144,9 +144,10 @@ Methods:
     are removed: everything is loaded before `handleMessageId` runs, so a deep link is a
     `getById` and a scroll (nothing to do if the message is not there).
   - `findMessage` becomes `S.Comment.getById`.
-  - The read range sent on scroll-stop spans the seen messages' smallest and largest
-    `orderId`, skipping an own message that has none yet (an empty bound would mark every
-    message from the start of the discussion read).
+  - Scroll-stop no longer sends an `orderId` range read: every visible message is already
+    read by itself, and threads are laid out by post, so a range between seen messages
+    also covers unseen replies of other threads (and an own message without an `orderId`
+    made the range start at the beginning of the discussion).
   - `onSubmitPost` inserts the optimistic post with `S.Comment.insert`.
   - The counter label counts live (not deleted) top-level posts.
 - `list.tsx`: the "Load more comments" control goes away, with its text keys and styles.

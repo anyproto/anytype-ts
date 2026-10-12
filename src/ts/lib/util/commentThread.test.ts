@@ -64,6 +64,14 @@ describe('buildThreads', () => {
 		expect(layout(got)).toEqual(want);
 	});
 
+	it('lays out an own message without an orderId last, as a live insert does', () => {
+		const want = { posts: [ 'p1', 'p2', 'mine' ], replies: { p1: [ 'r1', 'reply' ] } };
+
+		const got = buildThreads([ msg('mine', ''), msg('p1', '01'), msg('reply', '', 'p1'), msg('r1', '02', 'p1'), msg('p2', '03') ]);
+
+		expect(layout(got)).toEqual(want);
+	});
+
 	it('places a duplicate id once', () => {
 		const want = { posts: [ 'p1' ], replies: { p1: [ 'r1' ] } };
 

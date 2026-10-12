@@ -215,6 +215,18 @@ describe('CommentStore', () => {
 			expect(ids(Comment.getReplies('p1'))).toEqual([ 'r1', 'r2' ]);
 		});
 
+		it('keeps an own message without an orderId last until its ChatAdd event', () => {
+			const token = Comment.startLoad(SUB);
+			Comment.insert(SUB, msg('mine', ''));
+
+			Comment.load(SUB, [ msg('p1', '01'), msg('p2', '02') ], token);
+			expect(ids(Comment.getPosts(SUB))).toEqual([ 'p1', 'p2', 'mine' ]);
+
+			Comment.insert(SUB, msg('mine', '03'));
+			expect(ids(Comment.getPosts(SUB))).toEqual([ 'p1', 'p2', 'mine' ]);
+			expect(Comment.getById(SUB, 'mine').orderId).toBe('03');
+		});
+
 		it('applies a deletion of a message the pages hold in an older state', () => {
 			const token = Comment.startLoad(SUB);
 			Comment.update(SUB, { id: 'p1', isDeleted: true, content: { text: '', style: I.TextStyle.Paragraph, marks: [], parts: [] } });

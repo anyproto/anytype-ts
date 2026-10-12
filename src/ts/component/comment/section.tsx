@@ -127,26 +127,19 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			return;
 		};
 
+		// Every seen message was read by itself in readVisibleMessages. No orderId range read here:
+		// threads are laid out by post, so a range between seen messages also spans unseen replies
+		// of other threads.
 		const sid = U.Comment.getSubId(targetType, did);
 		const ids: string[] = [ ...scrolledItems.current ];
-		// The read range spans the seen messages by order. An own message before its ChatAdd event
-		// has no orderId yet, and an empty bound would read everything from the start.
-		const orderIds = ids.map(id => findMessage(sid, id)?.orderId).filter(it => it).sort();
-		const first = orderIds[0];
-		const last = orderIds[orderIds.length - 1];
-		const chatPreviewSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, S.Common.space, did);
-		const { lastStateId } = S.Chat.getState(chatPreviewSubId);
 
-		if (S.Common.windowIsFocused && first && last) {
-			C.ChatReadMessages(did, first, last, lastStateId, I.ChatReadType.Message);
-			C.ChatReadMessages(did, first, last, lastStateId, I.ChatReadType.Mention);
-
+		if (S.Common.windowIsFocused) {
 			S.Comment.setReadMessageStatus(sid, ids, true);
 			S.Comment.setReadMentionStatus(sid, ids, true);
 		};
 
 		scrolledItems.current.clear();
-	}, [ targetType, findMessage ]);
+	}, [ targetType ]);
 
 	// Claim / release the active-read flag for the discussion: with the window focused and
 	// the discussion's live tail (bottom-most rendered message) in the viewport, arriving
@@ -458,12 +451,11 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		const PAGE_SIZE = 100;
 		const all: I.CommentMessage[] = [];
 
-		// A load for a discussion closed or reopened meanwhile is dropped by the store
+		// The store drops a load for a discussion closed or reopened meanwhile
 		const done = () => {
 			loadDeps(all, () => {
-				if (S.Comment.load(sid, all, token)) {
-					callBack?.();
-				};
+				S.Comment.load(sid, all, token);
+				callBack?.();
 			});
 		};
 
@@ -518,6 +510,12 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			};
 
 			fetchAllMessages(id, sid, token, () => {
+				// Closed or switched to another discussion meanwhile. A section still subscribed
+				// finishes even when another section on the same object loaded it last.
+				if (subscribedId.current != id) {
+					return;
+				};
+
 				isLoaded.current = true;
 				updateSocialVisibility();
 				handleMessageId(id);

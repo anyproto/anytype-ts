@@ -103,12 +103,20 @@ export const insertByOrder = <T extends { orderId: string }>(list: T[], item: T)
 	list.splice(liveAddIndex(list, item.orderId, true), 0, item);
 };
 
+/** orderId order, with an own message that has no orderId yet last, as insertByOrder puts it. */
+const compareOrder = (a: ThreadMessage, b: ThreadMessage): number => {
+	if (!a.orderId || !b.orderId) {
+		return Number(!a.orderId) - Number(!b.orderId);
+	};
+	return (a.orderId < b.orderId) ? -1 : ((a.orderId > b.orderId) ? 1 : 0);
+};
+
 /** Lays out a fully loaded discussion: posts and per-post reply lists, each in orderId order. */
 export const buildThreads = <T extends ThreadMessage>(messages: T[]): ThreadLayout<T> => {
 	const index = newThreadIndex<T>();
 	const posts: T[] = [];
 	const replies = new Map<string, T[]>();
-	const sorted = [ ...messages ].sort((a, b) => (a.orderId < b.orderId ? -1 : (a.orderId > b.orderId ? 1 : 0)));
+	const sorted = [ ...messages ].sort(compareOrder);
 
 	for (const message of sorted) {
 		for (const { message: placed, rootId } of placeMessage(index, message)) {

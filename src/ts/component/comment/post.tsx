@@ -21,7 +21,7 @@ const CommentPost = (props: Props) => {
 	const { rootId, targetId, message, readonly, isLast } = props;
 	const { space } = S.Common;
 	const { account } = S.Auth;
-	const [ isEditing, setIsEditing ] = useState(false);
+	const [ editState, setIsEditing ] = useState(false);
 	const [ isReplying, setIsReplying ] = useState(false);
 	const replyFormRef = useRef<any>(null);
 	const postRef = useRef<HTMLDivElement>(null);
@@ -30,20 +30,15 @@ const CommentPost = (props: Props) => {
 	const attachmentRefs = useRef<any[]>([]);
 	const emojiRootsRef = useRef<Map<HTMLElement, Root>>(new Map());
 	const { id, creator, createdAt, modifiedAt, reactions, isDeleted } = message;
+	// Read from the model on every render: a menu opened before the comment was deleted
+	// elsewhere still calls onEdit with the closure of that render
+	const isEditing = editState && !isDeleted;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = message.content?.parts || [];
 	const editedLabel = modifiedAt ? ` (${translate('commentEdited')})` : '';
 	const replies = S.Comment.getReplies(id);
 	const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
-
-	// A comment deleted elsewhere while it is being edited or replied to drops those modes
-	useEffect(() => {
-		if (isDeleted) {
-			setIsEditing(false);
-			setIsReplying(false);
-		};
-	}, [ isDeleted ]);
 
 	// Unmount any remaining inline emoji roots when the post itself unmounts.
 	useEffect(() => {
@@ -292,12 +287,9 @@ const CommentPost = (props: Props) => {
 		}, callBack);
 	}, [ subId ]);
 
-	// A menu opened before the comment was deleted elsewhere can still offer these
 	const onEdit = useCallback(() => {
-		if (!isDeleted) {
-			setIsEditing(true);
-		};
-	}, [ isDeleted ]);
+		setIsEditing(true);
+	}, []);
 
 	const onCancelEdit = useCallback(() => {
 		setIsEditing(false);
@@ -365,13 +357,9 @@ const CommentPost = (props: Props) => {
 	}, [ targetId, id, subId ]);
 
 	const onReply = useCallback(() => {
-		if (isDeleted) {
-			return;
-		};
-
 		setIsReplying(true);
 		window.setTimeout(() => replyFormRef.current?.focus(), 50);
-	}, [ isDeleted ]);
+	}, []);
 
 	const onCancelReply = useCallback(() => {
 		setIsReplying(false);

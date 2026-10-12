@@ -21,24 +21,20 @@ const CommentReply = (props: Props) => {
 	const { rootId, targetId, parentId, message, readonly, onReply } = props;
 	const { space } = S.Common;
 	const { account } = S.Auth;
-	const [ isEditing, setIsEditing ] = useState(false);
+	const [ editState, setIsEditing ] = useState(false);
 	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
 	const emojiRootsRef = useRef<Map<HTMLElement, Root>>(new Map());
 	const { id, creator, createdAt, modifiedAt, reactions, isDeleted } = message;
+	// Read from the model on every render: a menu opened before the comment was deleted
+	// elsewhere still calls onEdit with the closure of that render
+	const isEditing = editState && !isDeleted;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = message.content?.parts || [];
 	const editedLabel = modifiedAt ? ` (${translate('commentEdited')})` : '';
 	const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
-
-	// A comment deleted elsewhere while it is being edited drops edit mode
-	useEffect(() => {
-		if (isDeleted) {
-			setIsEditing(false);
-		};
-	}, [ isDeleted ]);
 
 	// Unmount any remaining inline emoji roots when the reply itself unmounts.
 	useEffect(() => {
@@ -243,12 +239,9 @@ const CommentReply = (props: Props) => {
 		return () => node.removeEventListener('contextmenu', onContextMenu);
 	}, [ parentId, id, onReply ]);
 
-	// A menu opened before the comment was deleted elsewhere can still offer it
 	const onEdit = useCallback(() => {
-		if (!isDeleted) {
-			setIsEditing(true);
-		};
-	}, [ isDeleted ]);
+		setIsEditing(true);
+	}, []);
 
 	const onCancelEdit = useCallback(() => {
 		setIsEditing(false);
