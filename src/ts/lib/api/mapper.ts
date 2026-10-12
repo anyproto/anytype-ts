@@ -851,6 +851,7 @@ export const Mapper = {
 				hasMention: obj.hasMention,
 				isSynced: obj.synced,
 				isPinned: obj.pinned,
+				isDeleted: Boolean(obj.deleted),
 			};
 		},
 

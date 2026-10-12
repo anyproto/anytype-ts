@@ -54,3 +54,20 @@ describe('Mapper.Event link approval', () => {
 	});
 
 });
+
+describe('Mapper.From.ChatMessage', () => {
+
+	test('maps a discussion tombstone as deleted', () => {
+		const got = Mapper.From.ChatMessage({ id: 'm1', orderId: '!!a', replyToMessageId: 'p1', deleted: true });
+
+		expect(got.isDeleted).toBe(true);
+		expect(got.replyToMessageId).toBe('p1');
+	});
+
+	test('maps a message without the field as not deleted', () => {
+		const got = Mapper.From.ChatMessage({ id: 'm1', orderId: '!!a' });
+
+		expect(got.isDeleted).toBe(false);
+	});
+
+});
