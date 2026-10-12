@@ -292,9 +292,12 @@ const CommentPost = (props: Props) => {
 		}, callBack);
 	}, [ subId ]);
 
+	// A menu opened before the comment was deleted elsewhere can still offer these
 	const onEdit = useCallback(() => {
-		setIsEditing(true);
-	}, []);
+		if (!isDeleted) {
+			setIsEditing(true);
+		};
+	}, [ isDeleted ]);
 
 	const onCancelEdit = useCallback(() => {
 		setIsEditing(false);
@@ -362,9 +365,13 @@ const CommentPost = (props: Props) => {
 	}, [ targetId, id, subId ]);
 
 	const onReply = useCallback(() => {
+		if (isDeleted) {
+			return;
+		};
+
 		setIsReplying(true);
 		window.setTimeout(() => replyFormRef.current?.focus(), 50);
-	}, []);
+	}, [ isDeleted ]);
 
 	const onCancelReply = useCallback(() => {
 		setIsReplying(false);

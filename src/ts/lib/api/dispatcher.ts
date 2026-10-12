@@ -1313,6 +1313,8 @@ class Dispatcher {
 								attachments: mapped.message.attachments || [],
 								reactions: mapped.message.reactions || [],
 								isDeleted: Boolean(mapped.message.isDeleted),
+								// Heart marks a tombstone read with no read-status event of its own
+								...(mapped.message.isDeleted ? { isReadMessage: true, isReadMention: true } : {}),
 							});
 						} else {
 							S.Chat.update(subId, mapped.message);

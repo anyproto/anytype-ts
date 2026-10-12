@@ -243,9 +243,12 @@ const CommentReply = (props: Props) => {
 		return () => node.removeEventListener('contextmenu', onContextMenu);
 	}, [ parentId, id, onReply ]);
 
+	// A menu opened before the comment was deleted elsewhere can still offer it
 	const onEdit = useCallback(() => {
-		setIsEditing(true);
-	}, []);
+		if (!isDeleted) {
+			setIsEditing(true);
+		};
+	}, [ isDeleted ]);
 
 	const onCancelEdit = useCallback(() => {
 		setIsEditing(false);

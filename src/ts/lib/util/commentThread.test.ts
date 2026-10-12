@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildThreads, newThreadIndex, placeMessage, ThreadMessage } from './commentThread';
+import { buildThreads, insertByOrder, newThreadIndex, placeMessage, ThreadMessage } from './commentThread';
 
 const msg = (id: string, orderId: string, replyToMessageId = ''): ThreadMessage => ({ id, orderId, replyToMessageId });
 
@@ -112,5 +112,43 @@ describe('placeMessage', () => {
 		const got = placeMessage(index, msg('r2', '03', 'r1'));
 
 		expect(got[0].rootId).toBe('p1');
+	});
+});
+
+describe('insertByOrder', () => {
+	const list = () => [ { id: 'a', orderId: '02' }, { id: 'b', orderId: '04' } ];
+
+	it('inserts into an empty list', () => {
+		const got: { id: string, orderId: string }[] = [];
+
+		insertByOrder(got, { id: 'x', orderId: '01' });
+
+		expect(got.map(it => it.id)).toEqual([ 'x' ]);
+	});
+
+	it('appends the newest, and inserts an older one at its position', () => {
+		const got = list();
+
+		insertByOrder(got, { id: 'x', orderId: '05' });
+		insertByOrder(got, { id: 'y', orderId: '03' });
+		insertByOrder(got, { id: 'z', orderId: '01' });
+
+		expect(got.map(it => it.id)).toEqual([ 'z', 'a', 'y', 'b', 'x' ]);
+	});
+
+	it('puts an equal orderId after the existing one', () => {
+		const got = list();
+
+		insertByOrder(got, { id: 'x', orderId: '02' });
+
+		expect(got.map(it => it.id)).toEqual([ 'a', 'x', 'b' ]);
+	});
+
+	it('appends a message without an orderId (own message before its ChatAdd event)', () => {
+		const got = list();
+
+		insertByOrder(got, { id: 'x', orderId: '' });
+
+		expect(got.map(it => it.id)).toEqual([ 'a', 'b', 'x' ]);
 	});
 });

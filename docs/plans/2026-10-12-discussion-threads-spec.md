@@ -77,9 +77,10 @@ no store access, so it is unit-testable:
   on it, when the parent arrives. After the pass, whatever is still in `pending` has no
   reachable parent (a pre-GO-7167 hard delete) and stays hidden. A visited set stops a
   malformed `replyToMessageId` cycle.
-- `insertIndex(list, orderId)`: the position for a live message, appending when its
-  `orderId` is the largest (the usual case) and binary-searching otherwise (a late message
-  from a peer that was offline).
+- `insertByOrder(list, item)`: inserts a live message at its position, appending when its
+  `orderId` is the largest (the usual case) or empty (an own message before its `ChatAdd`
+  event) and binary-searching otherwise (a late message from a peer that was offline). It
+  reuses `liveAddIndex` from the chat window helpers.
 
 ### 3. Store (`store/comment.ts`)
 
@@ -93,15 +94,26 @@ indices, per discussion subscription:
 
 Methods:
 
-- `load(subId, messages)` replaces `setPosts` + `setReplies` + `buildTree`: runs
-  `buildThreads`, then sets the posts array once and each thread's reply array once. A
-  message inserted live while the pages were being fetched, and missing from them, is kept
-  (the loaded copy wins for a message in both); unsubscribing clears the discussion first.
+- `startLoad(subId)` opens the discussion when the section subscribes, before the pages are
+  fetched, and returns a load token. Until `clear` (on unsubscribe) the store keeps the
+  discussion's live events; events for a discussion that is not open are dropped.
+- `load(subId, messages, token)` replaces `setPosts` + `setReplies` + `buildTree`: runs
+  `buildThreads`, then sets the posts array once and each thread's reply array once.
+  - A load whose token is not the discussion's current one (closed, or opened again, since
+    its `startLoad`) is dropped, so a slow load never resurrects a closed discussion.
+  - A message inserted live while the pages were being fetched, and missing from them, is
+    kept; one instance per id is stored, the loaded copy first.
+  - Updates and removals made while loading are journaled and replayed over the loaded
+    copies, so a comment deleted or edited while the discussion opens is not shown in its
+    older page state.
 - `insert(subId, message)` replaces `addPost` / `addReply` for every live path (dispatcher
   `ChatAdd`, own post, own reply). It resolves the root, splices into the existing
   observable array at `insertIndex` (never replaces the array, so one new comment
   re-renders one list, not the whole discussion), indexes the message and releases any
-  messages pending on it. A message already in `byId` is ignored, as today.
+  messages pending on it. For a message already in `byId` only a missing `orderId` is taken
+  and the message moved to its place: the `ChatAddMessage` response carries no `orderId`, so
+  an own message is inserted without one (last in its list) and gets it from its `ChatAdd`
+  event, which can arrive before or after the response.
 - `update(subId, param)` looks the message up in `byId` and `set`s it. Used by `ChatUpdate`,
   own edits, reactions, read / mention / sync status.
 - `remove(subId, id)` for `ChatDelete` (a hard delete still arrives from space chats and
@@ -118,7 +130,8 @@ Methods:
 - `ChatAdd` (comment subscriptions): `S.Comment.insert(subId, commentMsg)`. No desktop
   notification for a message that arrives already deleted.
 - `ChatUpdate`: `S.Comment.update(subId, { id, content, attachments, reactions,
-  modifiedAt, isDeleted })` — no routing by `replyToMessageId`.
+  modifiedAt, isDeleted })` — no routing by `replyToMessageId`. A tombstone also sets
+  `isReadMessage` / `isReadMention` (heart marks it read without a read-status event).
 - `ChatDelete`, `ChatUpdateReactions`, read / mention / sync status: through `getById` /
   `update` / `remove`.
 
@@ -131,6 +144,9 @@ Methods:
     are removed: everything is loaded before `handleMessageId` runs, so a deep link is a
     `getById` and a scroll (nothing to do if the message is not there).
   - `findMessage` becomes `S.Comment.getById`.
+  - The read range sent on scroll-stop spans the seen messages' smallest and largest
+    `orderId`, skipping an own message that has none yet (an empty bound would mark every
+    message from the start of the discussion read).
   - `onSubmitPost` inserts the optimistic post with `S.Comment.insert`.
   - The counter label counts live (not deleted) top-level posts.
 - `list.tsx`: the "Load more comments" control goes away, with its text keys and styles.

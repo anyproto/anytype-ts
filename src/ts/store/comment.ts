@@ -3,23 +3,33 @@ import * as I from 'Interface';
 import * as M from 'Model';
 import { buildThreads, insertByOrder, newThreadIndex, placeMessage, ThreadIndex } from 'Lib/util/commentThread';
 
-/** Per-discussion lookups. Not observable: components read the post and reply lists. */
+type JournalEntry = { update: Partial<I.CommentMessage> } | { remove: string };
+
+/** A subscribed discussion's lookups. Not observable: components read the post and reply lists. */
 interface DiscussionIndex {
 	/** Every message the store holds for the discussion, including ones waiting for their parent. */
 	byId: Map<string, M.CommentMessage>;
 	thread: ThreadIndex<M.CommentMessage>;
+	/** The pending load's token, 0 once loaded. */
+	loadToken: number;
+	/** Updates and removals made while the pages were loading, replayed over the loaded copies. */
+	journal: JournalEntry[];
 };
 
 /**
  * Object discussions: top-level posts per discussion subscription, and each post's thread
  * (replies flat, in orderId order) keyed by the post id. A reply to a reply sits in the
  * thread of the top-level post it leads to (see Lib/util/commentThread).
+ *
+ * A discussion exists from startLoad (on subscribe) until clear (on unsubscribe); events for
+ * one that is not subscribed are dropped.
  */
 class CommentStore {
 
 	public postMap: Map<string, IObservableArray<M.CommentMessage>> = observable(new Map());
 	public replyMap: Map<string, IObservableArray<M.CommentMessage>> = observable(new Map());
 	private indexMap: Map<string, DiscussionIndex> = new Map();
+	private loadSeq = 0;
 
 	constructor () {
 		makeObservable(this, {
@@ -37,32 +47,86 @@ class CommentStore {
 	};
 
 	/**
-	 * Replaces the discussion with a fully loaded message list. A message inserted live while the
-	 * list was being fetched, and missing from it, is kept.
+	 * Opens a discussion before its pages are fetched, so live events are kept from now on.
+	 * Returns the token the matching load must pass.
 	 */
-	load (subId: string, list: I.CommentMessage[]): void {
-		const loaded = new Set((list || []).map(it => it.id));
-		const live = [ ...(this.indexMap.get(subId)?.byId.values() || []) ].filter(it => !loaded.has(it.id));
+	startLoad (subId: string): number {
+		let index = this.indexMap.get(subId);
 
-		this.clear(subId);
+		if (!index) {
+			index = { byId: new Map(), thread: newThreadIndex(), loadToken: 0, journal: [] };
+			this.indexMap.set(subId, index);
+		};
 
-		const index = this.getIndex(subId);
-		const models = (list || []).concat(live).map(it => new M.CommentMessage(it));
-
-		models.forEach(it => index.byId.set(it.id, it));
-
-		const { posts, replies, index: thread } = buildThreads(models);
-
-		index.thread = thread;
-		this.postMap.set(subId, observable.array(posts, { deep: false }));
-		replies.forEach((list, rootId) => this.replyMap.set(rootId, observable.array(list, { deep: false })));
+		index.loadToken = ++this.loadSeq;
+		index.journal = [];
+		return index.loadToken;
 	};
 
-	/** Adds a live message to its list in order; a message the store already holds is ignored. */
-	insert (subId: string, message: I.CommentMessage): void {
-		const index = this.getIndex(subId);
+	/**
+	 * Lays out the fully loaded message list. A load for a discussion that was closed or opened
+	 * again since its startLoad is dropped. A message inserted live and missing from the pages
+	 * is kept; updates and removals made while loading are replayed over the loaded copies.
+	 * Returns whether the load was applied.
+	 */
+	load (subId: string, list: I.CommentMessage[], token: number): boolean {
+		const index = this.indexMap.get(subId);
 
-		if (index.byId.has(message.id)) {
+		if (!index || !token || (index.loadToken != token)) {
+			return false;
+		};
+
+		// One instance per id, the loaded copy first, so lookups and lists share it
+		const byId = new Map<string, M.CommentMessage>();
+		for (const it of (list || [])) {
+			if (!byId.has(it.id)) {
+				byId.set(it.id, new M.CommentMessage(it));
+			};
+		};
+		index.byId.forEach((it, id) => {
+			if (!byId.has(id)) {
+				byId.set(id, it);
+			};
+		});
+
+		this.dropLists(subId, index);
+
+		const { posts, replies, index: thread } = buildThreads([ ...byId.values() ]);
+		const journal = index.journal;
+
+		this.indexMap.set(subId, { byId, thread, loadToken: 0, journal: [] });
+		this.postMap.set(subId, observable.array(posts, { deep: false }));
+		replies.forEach((list, rootId) => this.replyMap.set(rootId, observable.array(list, { deep: false })));
+
+		journal.forEach(entry => {
+			if ('update' in entry) {
+				this.update(subId, entry.update);
+			} else {
+				this.remove(subId, entry.remove);
+			};
+		});
+
+		return true;
+	};
+
+	/**
+	 * Adds a live message to its list in order. For a message the store already holds, only an
+	 * order id it lacked is taken: an own message is inserted before its ChatAdd event, and the
+	 * ChatAddMessage response carries no order id.
+	 */
+	insert (subId: string, message: I.CommentMessage): void {
+		const index = this.indexMap.get(subId);
+
+		if (!index) {
+			return;
+		};
+
+		const existing = index.byId.get(message.id);
+		if (existing) {
+			if (!existing.orderId && message.orderId) {
+				set(existing, { orderId: message.orderId });
+				this.reposition(subId, index, existing);
+			};
 			return;
 		};
 
@@ -85,8 +149,17 @@ class CommentStore {
 	};
 
 	update (subId: string, param: Partial<I.CommentMessage>): void {
-		const item = this.getById(subId, param.id);
+		const index = this.indexMap.get(subId);
 
+		if (!index) {
+			return;
+		};
+
+		if (index.loadToken) {
+			index.journal.push({ update: param });
+		};
+
+		const item = index.byId.get(param.id);
 		if (item) {
 			set(item, param);
 		};
@@ -97,6 +170,8 @@ class CommentStore {
 		this.update(subId, {
 			id,
 			isDeleted: true,
+			isReadMessage: true,
+			isReadMention: true,
 			modifiedAt: 0,
 			content: { text: '', style: I.TextStyle.Paragraph, marks: [], parts: [] },
 			attachments: [],
@@ -110,8 +185,16 @@ class CommentStore {
 	 */
 	remove (subId: string, id: string): void {
 		const index = this.indexMap.get(subId);
-		const item = index?.byId.get(id);
 
+		if (!index) {
+			return;
+		};
+
+		if (index.loadToken) {
+			index.journal.push({ remove: id });
+		};
+
+		const item = index.byId.get(id);
 		if (!item) {
 			return;
 		};
@@ -129,8 +212,7 @@ class CommentStore {
 			return;
 		};
 
-		const list = (rootId == id) ? this.postMap.get(subId) : this.replyMap.get(rootId);
-		list?.remove(item);
+		this.getList(subId, rootId, id)?.remove(item);
 	};
 
 	getPosts (subId: string): M.CommentMessage[] {
@@ -161,7 +243,7 @@ class CommentStore {
 		const index = this.indexMap.get(subId);
 
 		if (index) {
-			new Set(index.thread.roots.values()).forEach(rootId => this.replyMap.delete(rootId));
+			this.dropLists(subId, index);
 		};
 
 		this.postMap.delete(subId);
@@ -174,15 +256,23 @@ class CommentStore {
 		this.indexMap.clear();
 	};
 
-	private getIndex (subId: string): DiscussionIndex {
-		let index = this.indexMap.get(subId);
+	/** The list a placed message sits in: the posts, or its thread's replies. */
+	private getList (subId: string, rootId: string, id: string): IObservableArray<M.CommentMessage> | undefined {
+		return (rootId == id) ? this.postMap.get(subId) : this.replyMap.get(rootId);
+	};
 
-		if (!index) {
-			index = { byId: new Map(), thread: newThreadIndex() };
-			this.indexMap.set(subId, index);
+	private reposition (subId: string, index: DiscussionIndex, item: M.CommentMessage): void {
+		const rootId = index.thread.roots.get(item.id);
+		const list = (rootId === undefined) ? undefined : this.getList(subId, rootId, item.id);
+
+		if (list && list.remove(item)) {
+			insertByOrder(list, item);
 		};
+	};
 
-		return index;
+	private dropLists (subId: string, index: DiscussionIndex): void {
+		new Set(index.thread.roots.values()).forEach(rootId => this.replyMap.delete(rootId));
+		this.postMap.delete(subId);
 	};
 
 };

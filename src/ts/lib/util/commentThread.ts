@@ -89,8 +89,17 @@ export const placeMessage = <T extends ThreadMessage>(index: ThreadIndex<T>, mes
 	return placed;
 };
 
-/** Inserts an item into a list sorted by orderId. The whole discussion is loaded, so there is no window edge. */
+/**
+ * Inserts an item into a list sorted by orderId. The whole discussion is loaded, so there is no
+ * window edge. An item without an orderId is an own message inserted before its ChatAdd event
+ * (the ChatAddMessage response carries no orderId): it is the newest, so it goes last.
+ */
 export const insertByOrder = <T extends { orderId: string }>(list: T[], item: T): void => {
+	if (!item.orderId) {
+		list.push(item);
+		return;
+	};
+
 	list.splice(liveAddIndex(list, item.orderId, true), 0, item);
 };
 

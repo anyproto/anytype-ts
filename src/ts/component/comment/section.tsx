@@ -100,7 +100,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 	const readMessage = useCallback((id: string, orderId: string, lastStateId: string, type: I.ChatReadType) => {
 		const did = discussionIdRef.current;
-		if (!did) {
+		if (!did || !orderId) {
 			return;
 		};
 
@@ -129,14 +129,17 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 		const sid = U.Comment.getSubId(targetType, did);
 		const ids: string[] = [ ...scrolledItems.current ];
-		const first = findMessage(sid, ids[0]);
-		const last = findMessage(sid, ids[ids.length - 1]);
+		// The read range spans the seen messages by order. An own message before its ChatAdd event
+		// has no orderId yet, and an empty bound would read everything from the start.
+		const orderIds = ids.map(id => findMessage(sid, id)?.orderId).filter(it => it).sort();
+		const first = orderIds[0];
+		const last = orderIds[orderIds.length - 1];
 		const chatPreviewSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, S.Common.space, did);
 		const { lastStateId } = S.Chat.getState(chatPreviewSubId);
 
 		if (S.Common.windowIsFocused && first && last) {
-			C.ChatReadMessages(did, first.orderId, last.orderId, lastStateId, I.ChatReadType.Message);
-			C.ChatReadMessages(did, first.orderId, last.orderId, lastStateId, I.ChatReadType.Mention);
+			C.ChatReadMessages(did, first, last, lastStateId, I.ChatReadType.Message);
+			C.ChatReadMessages(did, first, last, lastStateId, I.ChatReadType.Mention);
 
 			S.Comment.setReadMessageStatus(sid, ids, true);
 			S.Comment.setReadMentionStatus(sid, ids, true);
@@ -451,14 +454,16 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 	// Loads the whole discussion: replies to replies are placed by following their parents, so a
 	// thread can only be laid out with every message at hand
-	const fetchAllMessages = useCallback((discId: string, sid: string, callBack?: () => void) => {
+	const fetchAllMessages = useCallback((discId: string, sid: string, token: number, callBack?: () => void) => {
 		const PAGE_SIZE = 100;
 		const all: I.CommentMessage[] = [];
 
+		// A load for a discussion closed or reopened meanwhile is dropped by the store
 		const done = () => {
 			loadDeps(all, () => {
-				S.Comment.load(sid, all);
-				callBack?.();
+				if (S.Comment.load(sid, all, token)) {
+					callBack?.();
+				};
 			});
 		};
 
@@ -497,6 +502,9 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 		subscribedId.current = id;
 
+		// Opened before subscribing, so the events that follow are kept while the pages load
+		const token = S.Comment.startLoad(sid);
+
 		C.ChatSubscribeLastMessages(id, POST_LIMIT, sid, (message: any) => {
 			if (message.error.code) {
 				isLoaded.current = true;
@@ -509,7 +517,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				S.Chat.setState(chatPreviewSubId, message.state);
 			};
 
-			fetchAllMessages(id, sid, () => {
+			fetchAllMessages(id, sid, token, () => {
 				isLoaded.current = true;
 				updateSocialVisibility();
 				handleMessageId(id);
