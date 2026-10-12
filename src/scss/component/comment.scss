@@ -80,6 +80,12 @@
 	.commentReply .reactions,
 	.commentReply .commentAttachments { margin-left: 28px; }
 
+	/* A deleted comment keeps its place (and its thread) with a muted placeholder body */
+	.commentPost, .commentReply {
+		.content.isDeleted, .content.isDeleted * { user-select: none !important; }
+		.content.isDeleted { color: var(--color-text-secondary); font-style: italic; }
+	}
+
 /* ==========================================================================
    Top-level post
    ========================================================================== */
@@ -245,10 +251,6 @@
 			.button.blank { color: var(--color-text-secondary); border: 0px; }
 		}
 	}
-
-	.loadMore { @include text-small; color: var(--color-text-secondary); padding: 4px 0px; user-select: none; }
-	.loadMore:hover { color: var(--color-text-primary); }
-	.loadMore.isLoading { opacity: 0.5; pointer-events: none; }
 
 	/* ---- Lexical Editor ---- */
 

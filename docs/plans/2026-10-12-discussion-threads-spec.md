@@ -1,7 +1,7 @@
 # Discussion threads: reply chains and deleted comments
 
-Desktop side of GO-7167 (heart soft delete, merged to heart develop on 2026-10-12, PR #3324),
-plus the reply-chain bug that hides replies to replies.
+GO-7584. Desktop side of GO-7167 (heart soft delete, merged to heart develop on 2026-10-12,
+PR #3324), plus the reply-chain bug that hides replies to replies.
 
 ## Problem
 
@@ -94,7 +94,9 @@ indices, per discussion subscription:
 Methods:
 
 - `load(subId, messages)` replaces `setPosts` + `setReplies` + `buildTree`: runs
-  `buildThreads`, then sets the posts array once and each thread's reply array once.
+  `buildThreads`, then sets the posts array once and each thread's reply array once. A
+  message inserted live while the pages were being fetched, and missing from them, is kept
+  (the loaded copy wins for a message in both); unsubscribing clears the discussion first.
 - `insert(subId, message)` replaces `addPost` / `addReply` for every live path (dispatcher
   `ChatAdd`, own post, own reply). It resolves the root, splices into the existing
   observable array at `insertIndex` (never replaces the array, so one new comment
@@ -131,7 +133,7 @@ Methods:
   - `findMessage` becomes `S.Comment.getById`.
   - `onSubmitPost` inserts the optimistic post with `S.Comment.insert`.
   - The counter label counts live (not deleted) top-level posts.
-- `list.tsx`: the "Load more comments" control goes away.
+- `list.tsx`: the "Load more comments" control goes away, with its text keys and styles.
 - `post.tsx`
   - `loadReplies`, `loadOlderReplies`, the `replyCount` effect and the load-more /
     load-previous controls are removed; replies are `S.Comment.getReplies(id)`.

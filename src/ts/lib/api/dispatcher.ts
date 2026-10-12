@@ -1240,28 +1240,17 @@ class Dispatcher {
 					});
 
 					commentSubIds.forEach(subId => {
-						const commentMsg: I.CommentMessage = {
+						S.Comment.insert(subId, {
 							...mapped.message,
 							content: {
 								...mapped.message.content,
 								parts: U.Comment.blocksToParts(mapped.message.blocks, mapped.message.content),
 							},
-							replyCount: 0,
-						};
-
-						if (mapped.message.replyToMessageId) {
-							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg);
-
-							const post = S.Comment.getPostById(subId, mapped.message.replyToMessageId);
-							if (post) {
-								set(post, { replyCount: (post.replyCount || 0) + 1 });
-							};
-						} else {
-							S.Comment.addPost(subId, commentMsg);
-						};
+						});
 					});
 
-					if (showNotification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
+					// A discussion comment created and deleted before the event was sent arrives already deleted
+					if (showNotification && !mapped.message.isDeleted && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
 						// Built only on the notification path: sanitize + emoji-insert over
 						// text/marks is pure waste for the focused-window case — i.e. every
 						// live message while the user is in the chat.
@@ -1314,21 +1303,17 @@ class Dispatcher {
 
 					mapped.subIds.forEach(subId => {
 						if (subId.startsWith('comment-')) {
-							const commentMsg: Partial<I.CommentMessage> = {
+							S.Comment.update(subId, {
 								id: mapped.message.id,
+								modifiedAt: mapped.message.modifiedAt || 0,
 								content: {
 									...mapped.message.content,
 									parts: U.Comment.blocksToParts(mapped.message.blocks, mapped.message.content),
 								},
 								attachments: mapped.message.attachments || [],
 								reactions: mapped.message.reactions || [],
-							};
-
-							if (mapped.message.replyToMessageId) {
-								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg);
-							} else {
-								S.Comment.updatePost(subId, commentMsg);
-							};
+								isDeleted: Boolean(mapped.message.isDeleted),
+							});
 						} else {
 							S.Chat.update(subId, mapped.message);
 							S.Chat.markTouched(subId, mapped.message.id);
@@ -1401,23 +1386,7 @@ class Dispatcher {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
 						if (subId.startsWith('comment-')) {
-							const post = S.Comment.getPostById(subId, mapped.id);
-
-							if (post) {
-								S.Comment.deletePost(subId, mapped.id);
-							} else {
-								const posts = S.Comment.getPosts(subId);
-								for (const p of posts) {
-									const replies = S.Comment.getReplies(p.id);
-									const reply = replies.find(r => r.id == mapped.id);
-
-									if (reply) {
-										S.Comment.deleteReply(p.id, mapped.id);
-										set(p, { replyCount: Math.max(0, (p.replyCount || 0) - 1) });
-										break;
-									};
-								};
-							};
+							S.Comment.remove(subId, mapped.id);
 						} else {
 							S.Chat.delete(subId, mapped.id);
 						};
@@ -1435,21 +1404,7 @@ class Dispatcher {
 
 					mapped.subIds.forEach((subId) => {
 						if (subId.startsWith('comment-')) {
-							const post = S.Comment.getPostById(subId, mapped.id);
-							if (post) {
-								set(post, { reactions: mapped.reactions });
-							} else {
-								// Search in replies
-								const posts = S.Comment.getPosts(subId);
-								for (const p of posts) {
-									const replies = S.Comment.getReplies(p.id);
-									const reply = replies.find(r => r.id == mapped.id);
-									if (reply) {
-										set(reply, { reactions: mapped.reactions });
-										break;
-									};
-								};
-							};
+							S.Comment.update(subId, { id: mapped.id, reactions: mapped.reactions });
 						} else {
 							const message = S.Chat.getMessageById(subId, mapped.id);
 							if (message) {

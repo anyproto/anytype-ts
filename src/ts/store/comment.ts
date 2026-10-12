@@ -1,221 +1,188 @@
-import { observable, action, makeObservable, set } from 'mobx';
+import { observable, action, makeObservable, set, IObservableArray } from 'mobx';
 import * as I from 'Interface';
 import * as M from 'Model';
+import { buildThreads, insertByOrder, newThreadIndex, placeMessage, ThreadIndex } from 'Lib/util/commentThread';
 
+/** Per-discussion lookups. Not observable: components read the post and reply lists. */
+interface DiscussionIndex {
+	/** Every message the store holds for the discussion, including ones waiting for their parent. */
+	byId: Map<string, M.CommentMessage>;
+	thread: ThreadIndex<M.CommentMessage>;
+};
+
+/**
+ * Object discussions: top-level posts per discussion subscription, and each post's thread
+ * (replies flat, in orderId order) keyed by the post id. A reply to a reply sits in the
+ * thread of the top-level post it leads to (see Lib/util/commentThread).
+ */
 class CommentStore {
 
-	public postMap: Map<string, I.CommentMessage[]> = observable(new Map());
-	public replyMap: Map<string, I.CommentMessage[]> = observable(new Map());
-	private hasMorePostsMap: Map<string, boolean> = observable(new Map());
-	private hasMoreRepliesMap: Map<string, boolean> = observable(new Map());
-	private hasOlderRepliesMap: Map<string, boolean> = observable(new Map());
+	public postMap: Map<string, IObservableArray<M.CommentMessage>> = observable(new Map());
+	public replyMap: Map<string, IObservableArray<M.CommentMessage>> = observable(new Map());
+	private indexMap: Map<string, DiscussionIndex> = new Map();
 
 	constructor () {
 		makeObservable(this, {
-			setPosts: action,
-			prependPosts: action,
-			appendPosts: action,
-			addPost: action,
-			updatePost: action,
-			deletePost: action,
-			setReplies: action,
-			prependReplies: action,
-			appendReplies: action,
-			addReply: action,
-			updateReply: action,
-			deleteReply: action,
+			load: action,
+			insert: action,
+			update: action,
+			markDeleted: action,
+			remove: action,
 			setReadMessageStatus: action,
 			setReadMentionStatus: action,
 			setSyncStatus: action,
-			setHasMorePosts: action,
-			setHasMoreReplies: action,
-			setHasOlderReplies: action,
 			clear: action,
 			clearAll: action,
 		});
 	};
 
-	setPosts (subId: string, list: I.CommentMessage[]): void {
-		list = list.map(it => new M.CommentMessage(it));
-		list = U.Common.arrayUniqueObjects(list, 'id');
+	/**
+	 * Replaces the discussion with a fully loaded message list. A message inserted live while the
+	 * list was being fetched, and missing from it, is kept.
+	 */
+	load (subId: string, list: I.CommentMessage[]): void {
+		const loaded = new Set((list || []).map(it => it.id));
+		const live = [ ...(this.indexMap.get(subId)?.byId.values() || []) ].filter(it => !loaded.has(it.id));
 
-		this.postMap.set(subId, observable.array(list));
+		this.clear(subId);
+
+		const index = this.getIndex(subId);
+		const models = (list || []).concat(live).map(it => new M.CommentMessage(it));
+
+		models.forEach(it => index.byId.set(it.id, it));
+
+		const { posts, replies, index: thread } = buildThreads(models);
+
+		index.thread = thread;
+		this.postMap.set(subId, observable.array(posts, { deep: false }));
+		replies.forEach((list, rootId) => this.replyMap.set(rootId, observable.array(list, { deep: false })));
 	};
 
-	prependPosts (subId: string, add: I.CommentMessage[]): void {
-		const ids = new Set(this.getPosts(subId).map(it => it.id));
+	/** Adds a live message to its list in order; a message the store already holds is ignored. */
+	insert (subId: string, message: I.CommentMessage): void {
+		const index = this.getIndex(subId);
 
-		add = (add || []).filter(it => !ids.has(it.id));
-		add = add.map(it => new M.CommentMessage(it));
-
-		this.getPosts(subId).unshift(...add);
-	};
-
-	appendPosts (subId: string, add: I.CommentMessage[]): void {
-		const ids = new Set(this.getPosts(subId).map(it => it.id));
-
-		add = (add || []).filter(it => !ids.has(it.id));
-		add = add.map(it => new M.CommentMessage(it));
-
-		this.getPosts(subId).push(...add);
-	};
-
-	addPost (subId: string, post: I.CommentMessage): void {
-		const list = this.getPosts(subId);
-		const existing = list.find(it => it.id == post.id);
-
-		if (existing) {
+		if (index.byId.has(message.id)) {
 			return;
 		};
 
-		list.push(new M.CommentMessage(post));
-		this.postMap.set(subId, observable.array(list));
-	};
+		const model = new M.CommentMessage(message);
+		index.byId.set(model.id, model);
 
-	updatePost (subId: string, param: Partial<I.CommentMessage>): void {
-		const item = this.getPostById(subId, param.id);
+		for (const { message: placed, rootId } of placeMessage(index.thread, model)) {
+			const isPost = rootId == placed.id;
+			const map = isPost ? this.postMap : this.replyMap;
+			const key = isPost ? subId : rootId;
 
-		if (item) {
-			set(item, param);
-		};
-	};
-
-	deletePost (subId: string, id: string): void {
-		this.replyMap.delete(id);
-		this.hasMoreRepliesMap.delete(id);
-		this.setPosts(subId, this.getPosts(subId).filter(it => it.id != id));
-	};
-
-	getPosts (subId: string): I.CommentMessage[] {
-		return this.postMap.get(subId) || [];
-	};
-
-	getPostById (subId: string, id: string): I.CommentMessage {
-		return this.getPosts(subId).find(it => it.id == id);
-	};
-
-	setReplies (parentId: string, list: I.CommentMessage[]): void {
-		list = list.map(it => new M.CommentMessage(it));
-		list = U.Common.arrayUniqueObjects(list, 'id');
-
-		this.replyMap.set(parentId, observable.array(list));
-	};
-
-	prependReplies (parentId: string, add: I.CommentMessage[]): void {
-		const ids = new Set(this.getReplies(parentId).map(it => it.id));
-
-		add = (add || []).filter(it => !ids.has(it.id));
-		add = add.map(it => new M.CommentMessage(it));
-
-		this.getReplies(parentId).unshift(...add);
-	};
-
-	appendReplies (parentId: string, add: I.CommentMessage[]): void {
-		const ids = new Set(this.getReplies(parentId).map(it => it.id));
-
-		add = (add || []).filter(it => !ids.has(it.id));
-		add = add.map(it => new M.CommentMessage(it));
-
-		this.getReplies(parentId).push(...add);
-	};
-
-	addReply (parentId: string, reply: I.CommentMessage): void {
-		const list = this.getReplies(parentId);
-		const existing = list.find(it => it.id == reply.id);
-
-		if (existing) {
-			return;
-		};
-
-		list.push(new M.CommentMessage(reply));
-		this.replyMap.set(parentId, observable.array(list));
-	};
-
-	updateReply (parentId: string, param: Partial<I.CommentMessage>): void {
-		const item = this.getReplies(parentId).find(it => it.id == param.id);
-
-		if (item) {
-			set(item, param);
-		};
-	};
-
-	deleteReply (parentId: string, id: string): void {
-		this.setReplies(parentId, this.getReplies(parentId).filter(it => it.id != id));
-	};
-
-	private updateInPostOrReply (subId: string, id: string, param: Partial<I.CommentMessage>): void {
-		const post = this.getPostById(subId, id);
-		if (post) {
-			set(post, param);
-			return;
-		};
-
-		this.replyMap.forEach((list, parentId) => {
-			const reply = list.find(it => it.id == id);
-			if (reply) {
-				set(reply, param);
+			let list = map.get(key);
+			if (!list) {
+				list = observable.array([], { deep: false });
+				map.set(key, list);
 			};
+
+			insertByOrder(list, placed);
+		};
+	};
+
+	update (subId: string, param: Partial<I.CommentMessage>): void {
+		const item = this.getById(subId, param.id);
+
+		if (item) {
+			set(item, param);
+		};
+	};
+
+	/** Turns a comment into a tombstone in place, the way heart stores a deleted discussion comment. */
+	markDeleted (subId: string, id: string): void {
+		this.update(subId, {
+			id,
+			isDeleted: true,
+			modifiedAt: 0,
+			content: { text: '', style: I.TextStyle.Paragraph, marks: [], parts: [] },
+			attachments: [],
+			reactions: [],
 		});
 	};
 
+	/**
+	 * Drops a hard-deleted message (space chats, or a heart without discussion tombstones). It
+	 * stays in the thread index, so a later reply to it still lands in its thread.
+	 */
+	remove (subId: string, id: string): void {
+		const index = this.indexMap.get(subId);
+		const item = index?.byId.get(id);
+
+		if (!item) {
+			return;
+		};
+
+		index.byId.delete(id);
+
+		const rootId = index.thread.roots.get(id);
+		if (rootId === undefined) {
+			index.thread.pending.forEach(list => {
+				const idx = list.indexOf(item);
+				if (idx >= 0) {
+					list.splice(idx, 1);
+				};
+			});
+			return;
+		};
+
+		const list = (rootId == id) ? this.postMap.get(subId) : this.replyMap.get(rootId);
+		list?.remove(item);
+	};
+
+	getPosts (subId: string): M.CommentMessage[] {
+		return this.postMap.get(subId) || [];
+	};
+
+	getReplies (rootId: string): M.CommentMessage[] {
+		return this.replyMap.get(rootId) || [];
+	};
+
+	getById (subId: string, id: string): M.CommentMessage | undefined {
+		return this.indexMap.get(subId)?.byId.get(id);
+	};
+
 	setReadMessageStatus (subId: string, ids: string[], value: boolean): void {
-		(ids || []).forEach(id => this.updateInPostOrReply(subId, id, { isReadMessage: value }));
+		(ids || []).forEach(id => this.update(subId, { id, isReadMessage: value }));
 	};
 
 	setReadMentionStatus (subId: string, ids: string[], value: boolean): void {
-		(ids || []).forEach(id => this.updateInPostOrReply(subId, id, { isReadMention: value }));
+		(ids || []).forEach(id => this.update(subId, { id, isReadMention: value }));
 	};
 
 	setSyncStatus (subId: string, ids: string[], value: boolean): void {
-		(ids || []).forEach(id => this.updateInPostOrReply(subId, id, { isSynced: value }));
-	};
-
-	getReplies (parentId: string): I.CommentMessage[] {
-		return this.replyMap.get(parentId) || [];
-	};
-
-	setHasMorePosts (subId: string, value: boolean): void {
-		this.hasMorePostsMap.set(subId, value);
-	};
-
-	getHasMorePosts (subId: string): boolean {
-		return this.hasMorePostsMap.get(subId) || false;
-	};
-
-	setHasMoreReplies (parentId: string, value: boolean): void {
-		this.hasMoreRepliesMap.set(parentId, value);
-	};
-
-	getHasMoreReplies (parentId: string): boolean {
-		return this.hasMoreRepliesMap.get(parentId) || false;
-	};
-
-	setHasOlderReplies (parentId: string, value: boolean): void {
-		this.hasOlderRepliesMap.set(parentId, value);
-	};
-
-	getHasOlderReplies (parentId: string): boolean {
-		return this.hasOlderRepliesMap.get(parentId) || false;
+		(ids || []).forEach(id => this.update(subId, { id, isSynced: value }));
 	};
 
 	clear (subId: string): void {
-		const posts = this.getPosts(subId);
-		for (const post of posts) {
-			this.replyMap.delete(post.id);
-			this.hasMoreRepliesMap.delete(post.id);
-			this.hasOlderRepliesMap.delete(post.id);
+		const index = this.indexMap.get(subId);
+
+		if (index) {
+			new Set(index.thread.roots.values()).forEach(rootId => this.replyMap.delete(rootId));
 		};
 
 		this.postMap.delete(subId);
-		this.hasMorePostsMap.delete(subId);
+		this.indexMap.delete(subId);
 	};
 
 	clearAll (): void {
 		this.postMap.clear();
 		this.replyMap.clear();
-		this.hasMorePostsMap.clear();
-		this.hasMoreRepliesMap.clear();
-		this.hasOlderRepliesMap.clear();
+		this.indexMap.clear();
+	};
+
+	private getIndex (subId: string): DiscussionIndex {
+		let index = this.indexMap.get(subId);
+
+		if (!index) {
+			index = { byId: new Map(), thread: newThreadIndex() };
+			this.indexMap.set(subId, index);
+		};
+
+		return index;
 	};
 
 };

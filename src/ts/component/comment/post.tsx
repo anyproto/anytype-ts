@@ -16,8 +16,6 @@ interface Props {
 	isLast?: boolean;
 };
 
-const REPLY_LIMIT = 10;
-
 const CommentPost = (props: Props) => {
 
 	const { rootId, targetId, message, readonly, isLast } = props;
@@ -25,23 +23,27 @@ const CommentPost = (props: Props) => {
 	const { account } = S.Auth;
 	const [ isEditing, setIsEditing ] = useState(false);
 	const [ isReplying, setIsReplying ] = useState(false);
-	const [ isLoadingReplies, setIsLoadingReplies ] = useState(false);
 	const replyFormRef = useRef<any>(null);
 	const postRef = useRef<HTMLDivElement>(null);
 	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
 	const emojiRootsRef = useRef<Map<HTMLElement, Root>>(new Map());
-	const { id, creator, createdAt, modifiedAt, replyCount, reactions } = message;
+	const { id, creator, createdAt, modifiedAt, reactions, isDeleted } = message;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = message.content?.parts || [];
 	const editedLabel = modifiedAt ? ` (${translate('commentEdited')})` : '';
 	const replies = S.Comment.getReplies(id);
-	const hasMoreReplies = S.Comment.getHasMoreReplies(id);
-	const hasOlderReplies = S.Comment.getHasOlderReplies(id);
-	const [ isLoadingOlderReplies, setIsLoadingOlderReplies ] = useState(false);
 	const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
+
+	// A comment deleted elsewhere while it is being edited or replied to drops those modes
+	useEffect(() => {
+		if (isDeleted) {
+			setIsEditing(false);
+			setIsReplying(false);
+		};
+	}, [ isDeleted ]);
 
 	// Unmount any remaining inline emoji roots when the post itself unmounts.
 	useEffect(() => {
@@ -51,14 +53,6 @@ const CommentPost = (props: Props) => {
 			roots.clear();
 		};
 	}, []);
-
-	useEffect(() => {
-		const existing = S.Comment.getReplies(id);
-
-		if ((replyCount > 0) && !existing.length) {
-			loadReplies(true);
-		};
-	}, [ id, replyCount ]);
 
 	// Bind click handlers for mentions and links in rendered content
 	useEffect(() => {
@@ -256,7 +250,7 @@ const CommentPost = (props: Props) => {
 	useEffect(() => {
 		const onReplyQuote = (e: Event) => {
 			const part = (e as CustomEvent).detail as I.CommentContentPart;
-			if (!part) {
+			if (!part || isDeleted) {
 				return;
 			};
 
@@ -275,7 +269,7 @@ const CommentPost = (props: Props) => {
 		const eventName = `commentReplyQuote.${id}`;
 		window.addEventListener(eventName, onReplyQuote);
 		return () => window.removeEventListener(eventName, onReplyQuote);
-	}, [ id ]);
+	}, [ id, isDeleted ]);
 
 	const loadDeps = useCallback((messages: any[], callBack?: () => void) => {
 		const ids = U.Comment.getDepsIds(messages);
@@ -297,83 +291,6 @@ const CommentPost = (props: Props) => {
 			updateDetails: true,
 		}, callBack);
 	}, [ subId ]);
-
-	const loadReplies = useCallback((initial?: boolean) => {
-		if (!initial && isLoadingReplies) {
-			return;
-		};
-
-		if (!initial) {
-			setIsLoadingReplies(true);
-		};
-
-		const existing = S.Comment.getReplies(id);
-		const afterOrderId = initial ? '' : (existing.length ? existing[existing.length - 1].orderId : '');
-
-		C.ChatGetMessages(targetId, '', afterOrderId, REPLY_LIMIT, false, (message: any) => {
-			setIsLoadingReplies(false);
-
-			if (message.error.code) {
-				return;
-			};
-
-			const messages = (message.messages || [])
-				.filter((it: any) => it.replyToMessageId == id)
-				.map((it: any) => ({
-					...it,
-					content: {
-						...it.content,
-						parts: U.Comment.blocksToParts(it.blocks, it.content),
-					},
-					replyCount: 0,
-				}));
-
-			loadDeps(messages, () => {
-				if (initial) {
-					S.Comment.setReplies(id, messages);
-				} else {
-					S.Comment.appendReplies(id, messages);
-				};
-
-				S.Comment.setHasMoreReplies(id, messages.length >= REPLY_LIMIT);
-			});
-		});
-	}, [ id, targetId, isLoadingReplies, loadDeps ]);
-
-	const loadOlderReplies = useCallback(() => {
-		if (isLoadingOlderReplies) {
-			return;
-		};
-
-		setIsLoadingOlderReplies(true);
-
-		const existing = S.Comment.getReplies(id);
-		const beforeOrderId = existing.length ? existing[0].orderId : '';
-
-		C.ChatGetMessages(targetId, beforeOrderId, '', REPLY_LIMIT, false, (message: any) => {
-			setIsLoadingOlderReplies(false);
-
-			if (message.error.code) {
-				return;
-			};
-
-			const messages = (message.messages || [])
-				.filter((it: any) => it.replyToMessageId == id)
-				.map((it: any) => ({
-					...it,
-					content: {
-						...it.content,
-						parts: U.Comment.blocksToParts(it.blocks, it.content),
-					},
-					replyCount: 0,
-				}));
-
-			loadDeps(messages, () => {
-				S.Comment.prependReplies(id, messages);
-				S.Comment.setHasOlderReplies(id, messages.length >= REPLY_LIMIT);
-			});
-		});
-	}, [ id, targetId, isLoadingOlderReplies, loadDeps ]);
 
 	const onEdit = useCallback(() => {
 		setIsEditing(true);
@@ -409,7 +326,7 @@ const CommentPost = (props: Props) => {
 
 			setIsEditing(false);
 
-			S.Comment.updatePost(subId, {
+			S.Comment.update(subId, {
 				id,
 				modifiedAt: U.Date.now(),
 				content: {
@@ -436,7 +353,8 @@ const CommentPost = (props: Props) => {
 							return;
 						};
 
-						S.Comment.deletePost(subId, id);
+						// Heart keeps a deleted discussion comment as a tombstone; its Event.Chat.Update confirms this
+						S.Comment.markDeleted(subId, id);
 					});
 				},
 			},
@@ -500,21 +418,18 @@ const CommentPost = (props: Props) => {
 				attachments: messageAttachments || [],
 				reactions: [],
 				isSynced: false,
-				replyCount: 0,
+				isReadMessage: true,
+				isReadMention: true,
+				isDeleted: false,
 			};
 
-			S.Comment.addReply(id, newReply as any);
+			S.Comment.insert(subId, newReply);
 			loadDeps([ newReply as any ]);
-
-			S.Comment.updatePost(subId, {
-				id,
-				replyCount: (replyCount || 0) + 1,
-			} as any);
 
 			setIsReplying(false);
 			replyFormRef.current?.clear();
 		});
-	}, [ targetId, id, subId, replyCount, loadDeps ]);
+	}, [ targetId, id, subId, loadDeps ]);
 
 	const onCopyText = useCallback(() => {
 		const blocks = U.Comment.partsToBlocks(parts);
@@ -660,7 +575,7 @@ const CommentPost = (props: Props) => {
 	}, [ buildMenuOptions, onMenuSelect, setHover ]);
 
 	const onContextMenu = useCallback((e: React.MouseEvent) => {
-		if (readonly || isEditing) {
+		if (readonly || isEditing || isDeleted) {
 			return;
 		};
 
@@ -686,7 +601,7 @@ const CommentPost = (props: Props) => {
 				onSelect: (e: any, item: any) => onMenuSelect(item, anchor, url),
 			},
 		});
-	}, [ readonly, isEditing, buildMenuOptions, onMenuSelect, setHover ]);
+	}, [ readonly, isEditing, isDeleted, buildMenuOptions, onMenuSelect, setHover ]);
 
 	const getAttachments = useCallback((): any[] => {
 		const linkTargets = new Set(
@@ -746,6 +661,10 @@ const CommentPost = (props: Props) => {
 	};
 
 	const renderContent = () => {
+		if (isDeleted) {
+			return <div className="content isDeleted">{translate('commentDeleted')}</div>;
+		};
+
 		if (isEditing) {
 			const editParts = parts.map(part => {
 				if ((part.type === I.BlockType.Link) && part.link) {
@@ -798,7 +717,7 @@ const CommentPost = (props: Props) => {
 	};
 
 	const renderHoverActions = () => {
-		if (isEditing || readonly) {
+		if (isEditing || readonly || isDeleted) {
 			return null;
 		};
 
@@ -815,8 +734,11 @@ const CommentPost = (props: Props) => {
 		);
 	};
 
-	const cn = [ 'commentPost', (isEditing ? 'isEditing' : '') ];
-	const showReplyInput = !isEditing && !isReplying && !readonly;
+	// Heart refuses a reply to a deleted comment, and replies go to the top-level post, so a
+	// deleted post closes its thread
+	const canReply = !readonly && !isDeleted;
+	const cn = [ 'commentPost', (isEditing ? 'isEditing' : ''), (isDeleted ? 'isDeleted' : '') ];
+	const showReplyInput = !isEditing && !isReplying && canReply;
 
 	return (
 		<div ref={postRef} className={cn.join(' ')} data-message-id={id}>
@@ -848,15 +770,6 @@ const CommentPost = (props: Props) => {
 
 			{replies.length ? (
 				<div className="replyList">
-					{hasOlderReplies ? (
-						<div
-							className={[ 'loadMore', (isLoadingOlderReplies ? 'isLoading' : '') ].join(' ')}
-							onClick={loadOlderReplies}
-						>
-							{isLoadingOlderReplies ? translate('commentLoading') : translate('commentLoadPreviousReplies')}
-						</div>
-					) : null}
-
 					{replies.map(reply => (
 						<CommentReply
 							key={reply.id}
@@ -865,22 +778,13 @@ const CommentPost = (props: Props) => {
 							parentId={id}
 							message={reply}
 							readonly={readonly}
-							onReply={onReply}
+							onReply={canReply ? onReply : undefined}
 						/>
 					))}
-
-					{hasMoreReplies ? (
-						<div
-							className={[ 'loadMore', (isLoadingReplies ? 'isLoading' : '') ].join(' ')}
-							onClick={() => loadReplies()}
-						>
-							{isLoadingReplies ? translate('commentLoading') : translate('commentLoadMoreReplies')}
-						</div>
-					) : null}
 				</div>
 			) : null}
 
-			{isReplying ? (
+			{(isReplying && canReply) ? (
 				<div className="replyFormWrap">
 					<CommentForm
 						ref={replyFormRef}

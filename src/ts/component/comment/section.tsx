@@ -8,7 +8,6 @@ import * as I from 'Interface';
 const HIGHLIGHT_DURATION = 2000;
 
 const POST_LIMIT = 20;
-const REPLY_LIMIT = 10;
 const SCROLL_THRESHOLD = 16;
 
 const CommentSection = (props: I.CommentSectionProps) => {
@@ -67,19 +66,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	}, [ updateSocialVisibility ]);
 
 	const findMessage = useCallback((sid: string, id: string): I.CommentMessage | null => {
-		const post = S.Comment.getPostById(sid, id);
-		if (post) {
-			return post;
-		};
-
-		for (const p of S.Comment.getPosts(sid)) {
-			const reply = S.Comment.getReplies(p.id).find(it => it.id == id);
-			if (reply) {
-				return reply;
-			};
-		};
-
-		return null;
+		return S.Comment.getById(sid, id) || null;
 	}, []);
 
 	const getVisibleMessages = useCallback((): I.CommentMessage[] => {
@@ -448,6 +435,8 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		}, 100);
 	}, [ isPopup, resize ]);
 
+	// Runs after the whole discussion is loaded, so the linked message is either in the store or
+	// not shown (a reply whose thread is gone)
 	const handleMessageId = useCallback((discId: string) => {
 		if (!messageId || messageIdHandled.current) {
 			return;
@@ -455,187 +444,53 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 		messageIdHandled.current = true;
 
-		C.ChatGetMessagesByIds(discId, [ messageId ], (message: any) => {
-			if (message.error.code || !message.messages?.length) {
-				return;
-			};
-
-			const msg = message.messages[0];
-			const sid = U.Comment.getSubId(targetType, discId);
-			const isReply = !!msg.replyToMessageId;
-
-			if (isReply) {
-				// For a reply, check if the parent post is loaded
-				const parentId = msg.replyToMessageId;
-				const posts = S.Comment.getPosts(sid);
-				const parentLoaded = posts.find(it => it.id == parentId);
-
-				if (!parentLoaded) {
-					// Load the parent post first
-					C.ChatGetMessagesByIds(discId, [ parentId ], (parentMessage: any) => {
-						if (parentMessage.error.code || !parentMessage.messages?.length) {
-							return;
-						};
-
-						const parentPost = parentMessage.messages[0];
-
-						// Load posts around the parent
-						loadPostsAroundMessage(discId, sid, parentPost, () => {
-							// Load replies around the target reply
-							loadRepliesAroundMessage(discId, parentId, msg, () => {
-								scrollToMessage(messageId);
-							});
-						});
-					});
-				} else {
-					// Parent is loaded, load replies around the target
-					loadRepliesAroundMessage(discId, parentId, msg, () => {
-						scrollToMessage(messageId);
-					});
-				};
-			} else {
-				// It's a top-level post — check if it's already loaded
-				const posts = S.Comment.getPosts(sid);
-				const postLoaded = posts.find(it => it.id == msg.id);
-
-				if (postLoaded) {
-					scrollToMessage(messageId);
-				} else {
-					loadPostsAroundMessage(discId, sid, msg, () => {
-						scrollToMessage(messageId);
-					});
-				};
-			};
-		});
+		if (S.Comment.getById(U.Comment.getSubId(targetType, discId), messageId)) {
+			scrollToMessage(messageId);
+		};
 	}, [ messageId, targetType, scrollToMessage ]);
 
-	const loadPostsAroundMessage = useCallback((discId: string, sid: string, msg: any, callBack?: () => void) => {
-		// Load posts before the target (older)
-		C.ChatGetMessages(discId, msg.orderId, '', POST_LIMIT, false, (beforeMsg: any) => {
-			if (!beforeMsg.error.code) {
-				const beforePosts = (beforeMsg.messages || [])
-					.filter((it: any) => !it.replyToMessageId)
-					.map((it: any) => ({
-						...it,
-						content: { ...it.content, parts: U.Comment.blocksToParts(it.blocks, it.content) },
-						replyCount: 0,
-					}));
-
-				loadDeps(beforePosts, () => {
-					S.Comment.prependPosts(sid, beforePosts);
-					S.Comment.setHasMorePosts(sid, beforePosts.length >= POST_LIMIT);
-					callBack?.();
-				});
-			} else {
-				callBack?.();
-			};
-		});
-	}, [ loadDeps ]);
-
-	const loadRepliesAroundMessage = useCallback((discId: string, parentId: string, msg: any, callBack?: () => void) => {
-		// Load replies before the target (older)
-		C.ChatGetMessages(discId, msg.orderId, '', REPLY_LIMIT, false, (beforeMsg: any) => {
-			const beforeReplies = (!beforeMsg.error.code ? beforeMsg.messages || [] : [])
-				.filter((it: any) => it.replyToMessageId == parentId)
-				.map((it: any) => ({
-					...it,
-					content: { ...it.content, parts: U.Comment.blocksToParts(it.blocks, it.content) },
-					replyCount: 0,
-				}));
-
-			// Load replies after the target (newer)
-			C.ChatGetMessages(discId, '', msg.orderId, REPLY_LIMIT, false, (afterMsg: any) => {
-				const afterReplies = (!afterMsg.error.code ? afterMsg.messages || [] : [])
-					.filter((it: any) => it.replyToMessageId == parentId)
-					.map((it: any) => ({
-						...it,
-						content: { ...it.content, parts: U.Comment.blocksToParts(it.blocks, it.content) },
-						replyCount: 0,
-					}));
-
-				// Combine: before + target + after
-				const targetReply = {
-					...msg,
-					content: { ...msg.content, parts: U.Comment.blocksToParts(msg.blocks, msg.content) },
-					replyCount: 0,
-				};
-
-				const allReplies = [ ...beforeReplies, targetReply, ...afterReplies ];
-
-				loadDeps(allReplies, () => {
-					S.Comment.setReplies(parentId, allReplies);
-					S.Comment.setHasMoreReplies(parentId, afterReplies.length >= REPLY_LIMIT);
-					S.Comment.setHasOlderReplies(parentId, beforeReplies.length >= REPLY_LIMIT);
-					callBack?.();
-				});
-			});
-		});
-	}, [ loadDeps ]);
-
-	const buildTree = useCallback((messages: any[], sid: string, callBack?: () => void) => {
-		const posts = messages.filter((it: any) => !it.replyToMessageId);
-		const replies = messages.filter((it: any) => it.replyToMessageId);
-
-		const replyCountMap: Record<string, number> = {};
-		const replyGroups: Record<string, any[]> = {};
-
-		for (const reply of replies) {
-			const pid = reply.replyToMessageId;
-
-			replyCountMap[pid] = (replyCountMap[pid] || 0) + 1;
-
-			if (!replyGroups[pid]) {
-				replyGroups[pid] = [];
-			};
-			replyGroups[pid].push(reply);
-		};
-
-		for (const post of posts) {
-			post.replyCount = replyCountMap[post.id] || 0;
-		};
-
-		loadDeps(messages, () => {
-			S.Comment.setPosts(sid, posts);
-			S.Comment.setHasMorePosts(sid, false);
-
-			for (const [ parentId, groupReplies ] of Object.entries(replyGroups)) {
-				S.Comment.setReplies(parentId, groupReplies);
-			};
-
-			callBack?.();
-		});
-	}, [ loadDeps ]);
-
+	// Loads the whole discussion: replies to replies are placed by following their parents, so a
+	// thread can only be laid out with every message at hand
 	const fetchAllMessages = useCallback((discId: string, sid: string, callBack?: () => void) => {
 		const PAGE_SIZE = 100;
+		const all: I.CommentMessage[] = [];
 
-		const fetchPage = (afterOrderId: string, accumulated: any[]) => {
+		const done = () => {
+			loadDeps(all, () => {
+				S.Comment.load(sid, all);
+				callBack?.();
+			});
+		};
+
+		const fetchPage = (afterOrderId: string) => {
 			C.ChatGetMessages(discId, '', afterOrderId, PAGE_SIZE, false, (message: any) => {
 				if (message.error.code) {
-					buildTree(accumulated, sid, callBack);
+					done();
 					return;
 				};
 
-				const batch = (message.messages || []).map((it: any) => ({
-					...it,
-					content: {
-						...it.content,
-						parts: U.Comment.blocksToParts(it.blocks, it.content),
-					},
-				}));
+				const batch = message.messages || [];
 
-				const all = [ ...accumulated, ...batch ];
+				for (const it of batch) {
+					all.push({
+						...it,
+						content: {
+							...it.content,
+							parts: U.Comment.blocksToParts(it.blocks, it.content),
+						},
+					});
+				};
 
 				if (batch.length >= PAGE_SIZE) {
-					fetchPage(batch[batch.length - 1].orderId, all);
+					fetchPage(batch[batch.length - 1].orderId);
 				} else {
-					buildTree(all, sid, callBack);
+					done();
 				};
 			});
 		};
 
-		fetchPage('', []);
-	}, [ loadDeps, buildTree ]);
+		fetchPage('');
+	}, [ loadDeps ]);
 
 	const subscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
@@ -722,45 +577,6 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		window.addEventListener(eventName, onQuote);
 		return () => window.removeEventListener(eventName, onQuote);
 	}, [ rootId, scrollToBottom, updateSocialVisibility ]);
-
-	const onLoadMore = useCallback((callBack?: () => void) => {
-		if (!discussionId) {
-			callBack?.();
-			return;
-		};
-
-		const posts = S.Comment.getPosts(subId);
-		if (!posts.length) {
-			callBack?.();
-			return;
-		};
-
-		const firstPost = posts[0];
-
-		C.ChatGetMessages(discussionId, firstPost.orderId, '', POST_LIMIT, false, (message: any) => {
-			if (message.error.code) {
-				callBack?.();
-				return;
-			};
-
-			const messages = (message.messages || [])
-				.filter((it: any) => !it.replyToMessageId)
-				.map((it: any) => ({
-					...it,
-					content: {
-						...it.content,
-						parts: U.Comment.blocksToParts(it.blocks, it.content),
-					},
-					replyCount: 0,
-				}));
-
-			loadDeps(messages, () => {
-				S.Comment.prependPosts(subId, messages);
-				S.Comment.setHasMorePosts(subId, messages.length >= POST_LIMIT);
-				callBack?.();
-			});
-		});
-	}, [ discussionId, subId, loadDeps ]);
 
 	const ensureDiscussion = useCallback((callBack: (id: string) => void) => {
 		if (discussionId) {
@@ -858,10 +674,12 @@ const CommentSection = (props: I.CommentSectionProps) => {
 					attachments: messageAttachments || [],
 					reactions: [],
 					isSynced: false,
-					replyCount: 0,
+					isReadMessage: true,
+					isReadMention: true,
+					isDeleted: false,
 				};
 
-				S.Comment.addPost(sid, newPost as any);
+				S.Comment.insert(sid, newPost);
 				loadDeps([ newPost as any ]);
 				formRef.current?.clear();
 				window.setTimeout(() => scrollToBottom(), 50);
@@ -893,8 +711,9 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		}, 50);
 	}, [ isPopup, resize ]);
 
-	const counterLabel = postCount > 0
-		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`
+	const liveCount = posts.filter(it => !it.isDeleted).length;
+	const counterLabel = liveCount > 0
+		? `${liveCount} ${U.Common.plural(liveCount, translate('pluralComment'))}`
 		: translate(object.isArchived ? 'commentDiscussion' : 'commentLeaveComment');
 
 	const hasUnread = !!discussionId && U.Object.discussionHasUnread(S.Common.space, discussionId);
@@ -912,7 +731,6 @@ const CommentSection = (props: I.CommentSectionProps) => {
 							targetId={discussionId || targetId}
 							targetType={targetType}
 							readonly={readonly}
-							onLoadMore={onLoadMore}
 						/>
 					</div>
 				) : null}
