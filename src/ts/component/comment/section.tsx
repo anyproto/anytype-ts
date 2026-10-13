@@ -3,7 +3,10 @@ import raf from 'raf';
 import { Icon } from 'Component';
 import CommentList from './list';
 import CommentForm from './form';
+import CommentActivity from './activity';
 import * as I from 'Interface';
+import { presence } from 'Lib/presence';
+import { chatStatus } from 'Lib/chatStatus';
 
 const HIGHLIGHT_DURATION = 2000;
 
@@ -215,6 +218,23 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		const id = raf(() => readVisibleMessages());
 		return () => raf.cancel(id);
 	}, [ postCount, readVisibleMessages ]);
+
+	// Typing and agent activity over pubsub, while the discussion is shown
+	useEffect(() => {
+		if (!isOpen || !discussionId) {
+			return;
+		};
+
+		const { space } = S.Common;
+		const release = chatStatus.retain(space, discussionId, 'discussion');
+
+		presence.subscribe(space, discussionId);
+
+		return () => {
+			release();
+			presence.unsubscribe(discussionId);
+		};
+	}, [ isOpen, discussionId ]);
 
 	useEffect(() => {
 		if (discussionId && (subscribedId.current != discussionId)) {
@@ -742,11 +762,20 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				) : null}
 
 				{isOpen ? (
+					<CommentActivity
+						discussionId={discussionId}
+						subId={subId}
+						onResize={scrollToBottomCheck}
+					/>
+				) : null}
+
+				{isOpen ? (
 					<div className="commentFormWrap">
 						<CommentForm
 							ref={formRef}
 							rootId={rootId}
 							subId={subId}
+							discussionId={discussionId}
 							readonly={readonly}
 							onSubmit={onSubmitPost}
 							onResize={scrollToBottomCheck}

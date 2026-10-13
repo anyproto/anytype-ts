@@ -176,8 +176,13 @@ const StatusItem = observer(({ scope, item, now, onDisclosure }: { scope: ChatSt
 	);
 });
 
-export const StatusGroup = observer(({ scope, groupId, now, isFirst = true, isLast = true, onDisclosure = setDisclosure }: {
-	scope: ChatStatusScope; groupId: string; now: number; isFirst?: boolean; isLast?: boolean; onDisclosure?: DisclosureHandler;
+export const StatusGroup = observer(({ scope, groupId, now, isFirst = true, isLast = true, isCompact = false, withAuthor = true, onDisclosure = setDisclosure }: {
+	scope: ChatStatusScope; groupId: string; now: number; isFirst?: boolean; isLast?: boolean;
+	/** One typing-row line while collapsed, for discussions. */
+	isCompact?: boolean;
+	/** Compact only: avatar and name of the publisher; off inside the publisher's own comment. */
+	withAuthor?: boolean;
+	onDisclosure?: DisclosureHandler;
 }) => {
 	const view = ChatStatus.get(scope);
 	const group = view.groups.get(groupId);
@@ -210,14 +215,61 @@ export const StatusGroup = observer(({ scope, groupId, now, isFirst = true, isLa
 	const latest = items.reduce((a, b) => a.lastSeenAt > b.lastSeenAt ? a : b);
 	const isSelf = activityPublisher(items) == scope.accountId;
 	const identities = Array.from(new Set(items.map(item => item.publisherIdentity)));
+	const toggle = () => { disclosure.capture(); onDisclosure(scope, 'group', group.id, !group.expanded); };
+	const list = (
+		<div id={id} className={isCompact ? 'statusBubble' : undefined} hidden={!group.expanded}>
+			{group.expanded && items.map(item => <StatusItem key={item.id} scope={scope} item={item} now={now} onDisclosure={onDisclosure} />)}
+		</div>
+	);
+	const announcer = <span className="statusAnnouncement" role="status" aria-live="polite">{announcement}</span>;
 	const cn = [ 'chatStatusGroup' ];
+
+	if (group.expanded) cn.push('isExpanded');
+
+	if (isCompact) {
+		const done = !active && !failed && items.every(item => item.lifecycle == 'complete');
+		const parts = [ count ];
+		if (withAuthor) parts.unshift(identities.map(identity => publisher(scope, identity)).join(', '));
+		if (active) parts.push(U.String.sprintf(translate('blockChatStatusRunningCount'), active));
+		if (failed) parts.push(U.String.sprintf(translate('blockChatStatusFailedCount'), failed));
+		if (active || !done) parts.push(label(latest.text));
+
+		let state = null;
+		if (active) {
+			state = <div className="dots" aria-hidden="true"><span /><span /><span /></div>;
+		} else
+		if (failed || done) {
+			state = <span className={`statusBadge ${failed ? 'error' : 'complete'}`} aria-hidden="true"><span className="statusSymbol">{failed ? '!' : '✓'}</span></span>;
+		};
+
+		cn.push('isCompact');
+		return (
+			<section className={cn.join(' ')} data-activity-id={groupId}>
+				{announcer}
+				<div className="typingIndicator">
+					{withAuthor && <div className="icons">
+						{identities.slice(-3).map(identity => {
+							const author = U.Space.getParticipant(U.Space.getParticipantId(scope.spaceId, identity));
+							return <IconObject key={identity} object={{ ...author, layout: I.ObjectLayout.Participant }} size={18} iconSize={14} />;
+						})}
+					</div>}
+					<button ref={disclosure.button} type="button" className="statusCompactToggle" aria-expanded={group.expanded} aria-controls={id} onClick={toggle}>
+						<span className="statusChevron" aria-hidden="true">{group.expanded ? '▾' : '▸'}</span>
+						<span className="label">{parts.join(' · ')}</span>
+					</button>
+					{state}
+				</div>
+				{list}
+			</section>
+		);
+	};
+
 	if (isFirst) cn.push('isFirst');
 	if (isLast) cn.push('isLast');
 	if (isSelf) cn.push('isSelf');
-	if (group.expanded) cn.push('isExpanded');
 	return (
 		<section className={cn.join(' ')} data-activity-id={groupId}>
-			<span className="statusAnnouncement" role="status" aria-live="polite">{announcement}</span>
+			{announcer}
 			{!isSelf && <div className="statusAvatarLane">
 				{isLast && <div className={`statusAvatars${identities.length > 1 ? ' isMultiple' : ''}`}>
 					{identities.slice(-2).map(identity => {
@@ -228,8 +280,7 @@ export const StatusGroup = observer(({ scope, groupId, now, isFirst = true, isLa
 				</div>}
 			</div>}
 			<div className="statusBubble">
-				<button ref={disclosure.button} type="button" className="statusGroupToggle" aria-expanded={group.expanded} aria-controls={id}
-					onClick={() => { disclosure.capture(); onDisclosure(scope, 'group', group.id, !group.expanded); }}>
+				<button ref={disclosure.button} type="button" className="statusGroupToggle" aria-expanded={group.expanded} aria-controls={id} onClick={toggle}>
 					<span className="statusChevron" aria-hidden="true">{group.expanded ? '▾' : '▸'}</span>
 					<span className="statusGroupSummary">
 						<span className="statusCounts">{count}
@@ -239,11 +290,46 @@ export const StatusGroup = observer(({ scope, groupId, now, isFirst = true, isLa
 						<span className="statusLatest">{label(latest.text)}</span>
 					</span>
 				</button>
-				<div id={id} hidden={!group.expanded}>
-					{group.expanded && items.map(item => <StatusItem key={item.id} scope={scope} item={item} now={now} onDisclosure={onDisclosure} />)}
-				</div>
+				{list}
 			</div>
 		</section>
+	);
+});
+
+/** Publishers whose fresh rich activity replaces their plain typing row. */
+export const activePublishers = (live: LiveStatus[], items: Iterable<ActivityItem>, now: number): Set<string> => {
+	const result = new Set(live.filter(it => now - it.lastSeenAt <= STATUS_TTL).map(it => it.publisherIdentity));
+	for (const item of items) {
+		if (running(item, now)) result.add(item.publisherIdentity);
+	};
+	return result;
+};
+
+/** "X is typing" for chats and discussions; identities are verified account ids. */
+export const TypingIndicator = observer(({ spaceId, identities }: { spaceId: string; identities: string[] }) => {
+	const typers = identities.map(identity => U.Space.getParticipant(U.Space.getParticipantId(spaceId, identity))).filter(it => it && !it._empty_);
+	if (!typers.length) return null;
+
+	const names = typers.map(it => U.String.shorten(it.name, 24));
+
+	let text = '';
+	if (typers.length == 1) {
+		text = U.String.sprintf(translate('blockChatTypingOne'), names[0]);
+	} else
+	if (typers.length == 2) {
+		text = U.String.sprintf(translate('blockChatTypingTwo'), names[0], names[1]);
+	} else {
+		text = U.String.sprintf(translate('blockChatTypingMany'), names[0], typers.length - 1);
+	};
+
+	return (
+		<div className="typingIndicator">
+			<div className="icons">
+				{typers.slice(0, 3).map((it: any) => <IconObject key={it.id} object={it} size={18} iconSize={14} />)}
+			</div>
+			<div className="label">{text}</div>
+			<div className="dots"><span /><span /><span /></div>
+		</div>
 	);
 });
 

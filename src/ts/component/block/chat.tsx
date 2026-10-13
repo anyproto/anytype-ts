@@ -13,7 +13,7 @@ import { presence } from 'Lib/presence';
 import { chatStatus } from 'Lib/chatStatus';
 import { activityGaps, activityPublisher, chatRowGrouping, ChatRow, ChatRowGrouping } from 'Lib/chatStatus/timeline';
 import { STATUS_TTL } from 'Lib/chatStatus/model';
-import { StatusGroup, StatusFooter } from './chat/status';
+import { StatusGroup, StatusFooter, TypingIndicator, activePublishers } from './chat/status';
 import { reachedEdge, shouldRefetchForward } from 'Lib/util/chatWindow';
 
 interface RefProps {
@@ -2175,38 +2175,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		);
 	};
 
-	const richPublishers = new Set(statusView.live.filter(it => statusNow - it.lastSeenAt <= STATUS_TTL).map(it => it.publisherIdentity));
-	statusView.items.forEach(item => {
-		if (item.fresh && (item.lifecycle == 'in_progress') && (statusNow - item.lastSeenAt <= STATUS_TTL)) richPublishers.add(item.publisherIdentity);
-	});
-	const typers = S.Presence.getTypers(chatId).filter(it => !richPublishers.has(it.identity)).map(it => {
-		return U.Space.getParticipant(U.Space.getParticipantId(space, it.identity));
-	}).filter(it => it && !it._empty_);
-
-	let typingIndicator = null;
-	if (typers.length) {
-		const names = typers.map(it => U.String.shorten(it.name, 24));
-
-		let label = '';
-		if (typers.length == 1) {
-			label = U.String.sprintf(translate('blockChatTypingOne'), names[0]);
-		} else
-		if (typers.length == 2) {
-			label = U.String.sprintf(translate('blockChatTypingTwo'), names[0], names[1]);
-		} else {
-			label = U.String.sprintf(translate('blockChatTypingMany'), names[0], typers.length - 1);
-		};
-
-		typingIndicator = (
-			<div className="typingIndicator">
-				<div className="icons">
-					{typers.slice(0, 3).map((it: any) => <IconObject key={it.id} object={it} size={18} iconSize={14} />)}
-				</div>
-				<div className="label">{label}</div>
-				<div className="dots"><span /><span /><span /></div>
-			</div>
-		);
-	};
+	const richPublishers = activePublishers(statusView.live, statusView.items.values(), statusNow);
+	const typingIdentities = S.Presence.getTypers(chatId).map(it => it.identity).filter(it => !richPublishers.has(it));
 
 	return (
 		<div
@@ -2222,7 +2192,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				{content}
 			</div>
 
-			{typingIndicator}
+			<TypingIndicator spaceId={space} identities={typingIdentities} />
 			<StatusFooter scope={statusScope} live={statusView.live} now={statusNow} />
 
 			{!object.isArchived ? (
