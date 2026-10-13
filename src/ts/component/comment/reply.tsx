@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { Icon, IconObject, ObjectName } from 'Component';
 import CommentForm from './form';
+import { CommentActivityAttached } from './activity';
 import Attachment from 'Component/block/chat/attachment';
 import Reaction from 'Component/block/chat/message/reaction';
 import { renderParts } from './render';
@@ -622,6 +623,8 @@ const CommentReply = (props: Props) => {
 						</div>
 					</div>
 				) : null}
+
+				{!isEditing ? <CommentActivityAttached discussionId={targetId} subId={subId} messageId={id} /> : null}
 
 				{renderContent()}
 				{renderReactions()}

@@ -3,10 +3,15 @@ import { Icon, Button, Label, IconObject } from 'Component';
 import CommentEditor from 'Component/form/commentEditor';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import { presence } from 'Lib/presence';
 
 interface Props {
 	rootId: string;
 	subId?: string;
+	/** Discussion the form posts to, for typing; empty before the first comment creates it. */
+	discussionId?: string;
+	/** Message a reply form answers, sent with typing. */
+	replyTo?: string;
 	placeholder?: string;
 	initialParts?: I.CommentContentPart[];
 	isEdit?: boolean;
@@ -25,7 +30,7 @@ interface RefProps {
 
 const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 
-	const { rootId, subId, placeholder, initialParts, isEdit, isReply, readonly, onSubmit, onCancel, onResize } = props;
+	const { rootId, subId, discussionId, replyTo, placeholder, initialParts, isEdit, isReply, readonly, onSubmit, onCancel, onResize } = props;
 	const editorRef = useRef<any>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const formRef = useRef<HTMLDivElement>(null);
@@ -36,6 +41,9 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const [ isLoading, setIsLoading ] = useState(false);
 	const isSubmittingRef = useRef(false);
 	const draftLoadedRef = useRef(false);
+	const isFocusedRef = useRef(false);
+	const isTypingRef = useRef(false);
+	const typedRef = useRef('');
 	const electron = U.Common.getElectron();
 	const isDraft = !isEdit && !isReply;
 
@@ -47,6 +55,39 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 		const parts = (editorRef.current?.getParts() || []).filter(p => !p.attachmentData?.isTmp);
 		Storage.setComment(rootId, { parts });
 	}, [ isDraft, rootId ]);
+
+	const canType = !!discussionId && !isEdit && !readonly;
+
+	const stopTyping = useCallback(() => {
+		if (isTypingRef.current) {
+			isTypingRef.current = false;
+			presence.stop(discussionId);
+		};
+	}, [ discussionId ]);
+
+	// The editor reports selection changes as changes too: only edited content while focused is typing
+	const onTyping = useCallback(() => {
+		if (!canType) {
+			return;
+		};
+
+		const content = JSON.stringify(editorRef.current?.getParts() || []);
+		if (!isFocusedRef.current || (content == typedRef.current)) {
+			return;
+		};
+
+		typedRef.current = content;
+
+		if (editorRef.current?.isEmpty()) {
+			stopTyping();
+			return;
+		};
+
+		isTypingRef.current = true;
+		presence.typing(discussionId, '', replyTo);
+	}, [ canType, discussionId, replyTo, stopTyping ]);
+
+	useEffect(() => stopTyping, [ stopTyping ]);
 
 	const clearDraft = useCallback(() => {
 		if (isDraft) {
@@ -136,6 +177,7 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 
 		isSubmittingRef.current = true;
 		setIsLoading(true);
+		stopTyping();
 
 		// Collect tmp files that need uploading
 		const tmpFiles = parts
@@ -229,9 +271,13 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 	const handleChange = useCallback(() => {
 		setHasAttachments((editorRef.current?.getAttachments().length || 0) > 0);
 		saveDraft();
-	}, [ saveDraft ]);
+		onTyping();
+	}, [ saveDraft, onTyping ]);
 
 	const handleFocus = useCallback(() => {
+		// What is already there (a restored draft) was not typed now
+		isFocusedRef.current = true;
+		typedRef.current = JSON.stringify(editorRef.current?.getParts() || []);
 		setIsFocused(true);
 	}, []);
 
@@ -242,9 +288,11 @@ const CommentForm = forwardRef<RefProps, Props>((props, ref) => {
 			if (S.Menu.isOpen()) {
 				return;
 			};
+			isFocusedRef.current = false;
+			stopTyping();
 			setIsFocused(false);
 		}, 200);
-	}, [ saveDraft ]);
+	}, [ saveDraft, stopTyping ]);
 
 	const checkMultiline = useCallback(() => {
 		const lineCount = editorRef.current?.getLineCount() || 0;

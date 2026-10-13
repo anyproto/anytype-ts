@@ -1093,6 +1093,7 @@
 	"popupSettingsPersonalSectionMessaging": "Messaging",
 	"popupSettingsPersonalChatSend": "Send objects in chats with",
 	"popupSettingsPersonalCommentSend": "Send comments with",
+	"popupSettingsPersonalSendTyping": "Show others when I'm typing",
 	"popupSettingsPersonalSectionLists": "Lists",
 	"popupSettingsPersonalGridTitleClick": "Click to edit title in Grid view",
 	"popupSettingsPersonalUnicodeReplace": "Replace typed sequences with unicode symbols",

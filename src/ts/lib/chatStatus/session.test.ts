@@ -9,7 +9,7 @@ describe('application-memory status session', () => {
 	it('elects one ingestion owner and transfers it while retaining history and expansion', () => {
 		const sent: [number, StatusDelta][] = [];
 		const session = new ChatStatusSession((id, delta) => sent.push([ id, structuredClone(delta) ]));
-		const latest = (id: number) => sent.filter(([ client ]) => client == id).at(-1)[1];
+		const latest = (id: number) => sent.filter(([ client ]) => client == id).slice(-1)[0][1];
 		session.receive(1, scope, { type: 'attach' });
 		session.receive(2, scope, { type: 'attach' });
 		expect(latest(1).owner).toBe(true);
@@ -40,10 +40,19 @@ describe('application-memory status session', () => {
 		session.receive(1, other, { type: 'attach' });
 		session.receive(1, other, update);
 		session.receive(1, scope, { type: 'clearSpace' });
-		expect(sent.at(-1)).toMatchObject({ reset: true, items: [], owner: false });
+		expect(sent[sent.length - 1]).toMatchObject({ reset: true, items: [], owner: false });
 		session.receive(2, other, { type: 'attach' });
-		expect(sent.at(-1).items).toHaveLength(1);
+		expect(sent[sent.length - 1].items).toHaveLength(1);
 		session.receive(2, scope, { type: 'attach' });
-		expect(sent.at(-1).items).toHaveLength(0);
+		expect(sent[sent.length - 1].items).toHaveLength(0);
+	});
+
+	it('takes the mode from the attach that opens the session', () => {
+		const sent: StatusDelta[] = [];
+		const session = new ChatStatusSession((_id, delta) => sent.push(structuredClone(delta)));
+		session.receive(1, scope, { type: 'attach', mode: 'discussion' });
+		session.receive(2, scope, { type: 'attach' });
+		session.receive(1, scope, { ...update, payload: '{"reply_to":"m1","data":{"tool_call_id":"call"}}' });
+		expect(sent[sent.length - 1].groups[0]).toMatchObject({ publisherIdentity: 'p', replyTo: 'm1' });
 	});
 });

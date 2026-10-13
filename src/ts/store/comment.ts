@@ -28,6 +28,8 @@ class CommentStore {
 
 	public postMap: Map<string, IObservableArray<M.CommentMessage>> = observable(new Map());
 	public replyMap: Map<string, IObservableArray<M.CommentMessage>> = observable(new Map());
+	/** Bumped whenever messages are placed or dropped, so getThreadRoot callers re-resolve. */
+	private layoutMap: Map<string, number> = observable(new Map());
 	private indexMap: Map<string, DiscussionIndex> = new Map();
 	private loadSeq = 0;
 
@@ -106,6 +108,7 @@ class CommentStore {
 			};
 		});
 
+		this.bumpLayout(subId);
 		return true;
 	};
 
@@ -146,6 +149,8 @@ class CommentStore {
 
 			insertByOrder(list, placed);
 		};
+
+		this.bumpLayout(subId);
 	};
 
 	update (subId: string, param: Partial<I.CommentMessage>): void {
@@ -200,6 +205,7 @@ class CommentStore {
 		};
 
 		index.byId.delete(id);
+		this.bumpLayout(subId);
 
 		const rootId = index.thread.roots.get(id);
 		if (rootId === undefined) {
@@ -227,6 +233,21 @@ class CommentStore {
 		return this.indexMap.get(subId)?.byId.get(id);
 	};
 
+	/**
+	 * Id of the top-level post whose thread holds a stored, placed message (a post's own id),
+	 * or undefined. Observable: callers re-run when messages are placed or dropped.
+	 */
+	getThreadRoot (subId: string, id: string): string | undefined {
+		this.layoutMap.get(subId);
+
+		const index = this.indexMap.get(subId);
+		if (!id || !index?.byId.has(id)) {
+			return undefined;
+		};
+
+		return index.thread.roots.get(id);
+	};
+
 	setReadMessageStatus (subId: string, ids: string[], value: boolean): void {
 		(ids || []).forEach(id => this.update(subId, { id, isReadMessage: value }));
 	};
@@ -248,12 +269,18 @@ class CommentStore {
 
 		this.postMap.delete(subId);
 		this.indexMap.delete(subId);
+		this.layoutMap.delete(subId);
 	};
 
 	clearAll (): void {
 		this.postMap.clear();
 		this.replyMap.clear();
 		this.indexMap.clear();
+		this.layoutMap.clear();
+	};
+
+	private bumpLayout (subId: string): void {
+		this.layoutMap.set(subId, (this.layoutMap.get(subId) || 0) + 1);
 	};
 
 	/** The list a placed message sits in: the posts, or its thread's replies. */

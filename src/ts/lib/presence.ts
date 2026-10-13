@@ -17,6 +17,7 @@ interface TypingPayload {
 	sessionId: string;
 	blockId?: string;
 	range?: I.TextRange;
+	replyTo?: string;
 	active: boolean;
 };
 
@@ -25,7 +26,7 @@ interface TypingPayload {
  * middleware channel (topic `typing/<objectId>`), following the conventions in
  * anytype-heart docs/pubsub/CLIENTS.md:
  *
- * - full-state messages `{ sessionId, blockId, active }`, refreshed every 2s
+ * - full-state messages `{ sessionId, blockId, replyTo, active }`, refreshed every 2s
  *   while typing, best-effort `active: false` on idle/blur/close;
  * - receiver expiry by local clock (5s TTL) — closing messages only shorten
  *   the ghost period, expiry is the mechanism of truth;
@@ -37,7 +38,7 @@ class Presence {
 
 	private sessionId = Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);
 	private subs: Map<string, { spaceId: string; refs: number }> = new Map();
-	private sent: Map<string, { blockId: string; at: number }> = new Map();
+	private sent: Map<string, { blockId: string; replyTo?: string; at: number }> = new Map();
 	private ranges: Map<string, I.TextRange> = new Map();
 	private activity: Map<string, number> = new Map();
 	private idleTimers: Map<string, number> = new Map();
@@ -109,23 +110,27 @@ class Presence {
 
 	/**
 	 * Reports local typing activity in an object (blockId '' = chat input).
-	 * Throttled to one publish per REFRESH_INTERVAL unless the block changed;
-	 * (re)arms the idle timer that publishes the stop.
+	 * In a discussion, replyTo is the message a reply form answers ('' = the
+	 * main composer). Throttled to one publish per REFRESH_INTERVAL unless the
+	 * block or reply target changed; (re)arms the idle timer that publishes the stop.
+	 * Nothing is published while the user has turned typing off in settings; a stop
+	 * still owed from before goes out with the idle timer already armed.
 	 */
-	typing (objectId: string, blockId: string): void {
+	typing (objectId: string, blockId: string, replyTo?: string): void {
 		const sub = this.subs.get(objectId);
-		if (!sub) {
+		if (!sub || !S.Common.sendTyping) {
 			return;
 		};
 
 		blockId = String(blockId || '');
+		replyTo = String(replyTo || '');
 
 		const now = Date.now();
 		const last = this.sent.get(objectId);
 
-		if (!last || (last.blockId != blockId) || (now - last.at >= REFRESH_INTERVAL)) {
-			this.sent.set(objectId, { blockId, at: now });
-			this.publish(objectId, blockId, true);
+		if (!last || (last.blockId != blockId) || ((last.replyTo || '') != replyTo) || (now - last.at >= REFRESH_INTERVAL)) {
+			this.sent.set(objectId, { blockId, replyTo, at: now });
+			this.publish(objectId, blockId, true, replyTo);
 		};
 
 		this.setIdleTimer(objectId);
@@ -323,13 +328,16 @@ class Presence {
 		focus.clear(true);
 	};
 
-	private publish (objectId: string, blockId: string, active: boolean): void {
+	private publish (objectId: string, blockId: string, active: boolean, replyTo?: string): void {
 		const sub = this.subs.get(objectId);
 		if (!sub) {
 			return;
 		};
 
 		const payload: TypingPayload = { sessionId: this.sessionId, active };
+		if (replyTo) {
+			payload.replyTo = replyTo;
+		};
 		if (blockId) {
 			payload.blockId = blockId;
 
@@ -379,6 +387,7 @@ class Presence {
 				sessionId: String(payload.sessionId),
 				blockId,
 				range: range ? { from: Math.max(0, Number(range.from) || 0), to: Math.max(0, Number(range.to) || 0) } : null,
+				replyTo: (typeof payload.replyTo == 'string') ? payload.replyTo : '',
 				lastSeen: Date.now(),
 			});
 		} else {

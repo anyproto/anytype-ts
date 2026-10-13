@@ -1,4 +1,5 @@
 import { describe, expect, it, beforeEach } from 'vitest';
+import { autorun } from 'mobx';
 import * as I from 'Interface';
 import { Comment } from './comment';
 
@@ -202,6 +203,28 @@ describe('CommentStore', () => {
 		expect(Comment.getPosts(SUB)).toEqual([]);
 		expect(Comment.getReplies('p1')).toEqual([]);
 		expect(Comment.getById(SUB, 'p1')).toBeUndefined();
+	});
+
+	it('resolves a message to its thread root, and re-runs observers when the layout changes', () => {
+		loaded([ msg('p1', '01'), msg('r1', '02', 'p1'), msg('r2', '03', 'r1') ]);
+
+		const roots: (string | undefined)[] = [];
+		const dispose = autorun(() => roots.push(Comment.getThreadRoot(SUB, 'r4')));
+
+		expect(Comment.getThreadRoot(SUB, 'p1')).toBe('p1');
+		expect(Comment.getThreadRoot(SUB, 'r2')).toBe('p1');
+		expect(Comment.getThreadRoot(SUB, 'missing')).toBeUndefined();
+		expect(Comment.getThreadRoot(SUB, '')).toBeUndefined();
+
+		// A reply whose parent has not arrived yet is stored but not placed
+		Comment.insert(SUB, msg('r4', '05', 'r3'));
+		expect(roots[roots.length - 1]).toBeUndefined();
+		Comment.insert(SUB, msg('r3', '04', 'r2'));
+		expect(roots[roots.length - 1]).toBe('p1');
+
+		Comment.remove(SUB, 'r4');
+		expect(roots[roots.length - 1]).toBeUndefined();
+		dispose();
 	});
 
 	describe('while the pages are loading', () => {

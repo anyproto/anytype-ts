@@ -270,6 +270,11 @@ const App: FC = () => {
 			sidebar.init(false);
 		});
 
+		// every tab publishes its own typing, so the setting has to reach all of them
+		Renderer.on('set-send-typing', (e: any, v: boolean) => {
+			S.Common.sendTypingSet(v);
+		});
+
 		Renderer.on('pin-check', () => {
 			if (!S.Common.pin) {
 				return;

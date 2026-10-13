@@ -6,9 +6,11 @@ export const STATUS_CHANNEL = 'chat-status-session';
 export const STATUS_UPDATE_CHANNEL = 'chat-status-update';
 
 export type ToolStatus = 'in_progress' | 'complete' | 'error';
+/** A chat is one timeline; a discussion groups each publisher's run and places it by reply_to. */
+export type StatusMode = 'chat' | 'discussion';
 export interface ChatStatusScope { accountId: string; spaceId: string; chatId: string; }
 export interface MessageAnchor { id: string; orderId: string; }
-export interface StatusPayload { text: string | null; data?: JsonValue; }
+export interface StatusPayload { text: string | null; replyTo?: string; data?: JsonValue; }
 export interface ActivityItem {
 	id: string;
 	groupId: string;
@@ -28,6 +30,9 @@ export interface ActivityGroup {
 	id: string;
 	before?: MessageAnchor;
 	after?: MessageAnchor;
+	/** Discussion mode: the group's only publisher, and the message its run answers. */
+	publisherIdentity?: string;
+	replyTo?: string;
 	sealed: boolean;
 	itemIds: string[];
 	createdAt: number;
@@ -38,6 +43,7 @@ export interface LiveStatus {
 	text: string | null;
 	lastSeenAt: number;
 	itemId?: string;
+	replyTo?: string;
 }
 export interface StatusDelta {
 	scope: ChatStatusScope;
@@ -52,7 +58,8 @@ export interface StatusDelta {
 	reason?: StatusCommand['type'];
 }
 export type StatusCommand =
-	| { type: 'attach' | 'detach' | 'disconnect' }
+	| { type: 'attach'; mode?: StatusMode }
+	| { type: 'detach' | 'disconnect' }
 	| { type: 'tail'; tail?: MessageAnchor }
 	| { type: 'status'; publisherIdentity: string; payload: string }
 	| { type: 'message'; message: MessageAnchor; publisherIdentity: string }
@@ -69,7 +76,10 @@ export function decodeStatus (source: string): StatusPayload | null {
 		const value = parseJson(source);
 		if (value.kind != 'object') return null;
 		const text = jsonText(jsonField(value, 'text'));
-		return { text: text.trim() ? text : null, data: jsonField(value, 'data') };
+		const replyTo = jsonText(jsonField(value, 'reply_to'));
+		const payload: StatusPayload = { text: text.trim() ? text : null, data: jsonField(value, 'data') };
+		if (replyTo) payload.replyTo = replyTo;
+		return payload;
 	} catch {
 		return null;
 	};
@@ -89,20 +99,43 @@ export class ChatStatusJournal {
 	private generic = new Map<string, { fingerprint: string; itemId?: string; at: number; interval: number }>();
 	private changedItems = new Set<string>();
 	private changedGroups = new Set<string>();
-	private openGroupId = '';
+	/** Open group and message interval per lane, see lane(). */
+	private openGroupIds = new Map<string, string>();
+	private intervals = new Map<string, number>();
 	private sequence = 0;
-	private interval = 0;
 	revision = 0;
 	tail?: MessageAnchor;
 
-	constructor (readonly scope: ChatStatusScope) {};
+	constructor (readonly scope: ChatStatusScope, readonly mode: StatusMode = 'chat') {};
 
-	private group (now: number): ActivityGroup {
-		let group = this.groups.get(this.openGroupId);
+	/**
+	 * A chat has one lane: any message seals the open group. A discussion has one per
+	 * publisher, so a comment elsewhere does not split an agent's run.
+	 */
+	private lane (publisherIdentity: string): string {
+		return (this.mode == 'discussion') ? publisherIdentity : '';
+	};
+
+	private interval (lane: string): number {
+		return this.intervals.get(lane) || 0;
+	};
+
+	private group (now: number, publisherIdentity: string, replyTo: string): ActivityGroup {
+		const lane = this.lane(publisherIdentity);
+		let group = this.groups.get(this.openGroupIds.get(lane));
+		// A run that moves to another thread starts a new group there
+		if (group && (this.mode == 'discussion') && ((group.replyTo || '') != replyTo)) {
+			this.seal(lane);
+			group = undefined;
+		};
 		if (!group) {
 			group = { id: `group-${++this.sequence}`, before: this.tail, sealed: false, itemIds: [], createdAt: now, expanded: false };
+			if (this.mode == 'discussion') {
+				group.publisherIdentity = publisherIdentity;
+				if (replyTo) group.replyTo = replyTo;
+			};
 			this.groups.set(group.id, group);
-			this.openGroupId = group.id;
+			this.openGroupIds.set(lane, group.id);
 		};
 		this.changedGroups.add(group.id);
 		return group;
@@ -111,6 +144,8 @@ export class ChatStatusJournal {
 	status (publisherIdentity: string, payload: StatusPayload, now: number): boolean {
 		if (!publisherIdentity) return false;
 		const { text, data } = payload;
+		const replyTo = (this.mode == 'discussion') ? (payload.replyTo || '') : '';
+		const lane = this.lane(publisherIdentity);
 		const toolCallId = jsonText(jsonField(data, 'tool_call_id'));
 		const key = JSON.stringify([ publisherIdentity, toolCallId ]);
 		const existing = toolCallId ? this.items.get(this.calls.get(key)) : undefined;
@@ -129,9 +164,9 @@ export class ChatStatusJournal {
 
 		let item: ActivityItem;
 		if (!toolCallId) {
-			const fingerprint = JSON.stringify(text) + ':' + (data ? jsonStringify(data, false, true) : '');
+			const fingerprint = JSON.stringify(text) + ':' + JSON.stringify(replyTo) + ':' + (data ? jsonStringify(data, false, true) : '');
 			const previous = this.generic.get(publisherIdentity);
-			if (previous && (previous.fingerprint == fingerprint) && (previous.interval == this.interval) && (now - previous.at <= STATUS_TTL)) {
+			if (previous && (previous.fingerprint == fingerprint) && (previous.interval == this.interval(lane)) && (now - previous.at <= STATUS_TTL)) {
 				item = this.items.get(previous.itemId);
 				if (item) {
 					item.lastSeenAt = now;
@@ -139,17 +174,17 @@ export class ChatStatusJournal {
 					this.changedItems.add(item.id);
 				};
 				previous.at = now;
-				this.live.set(publisherIdentity, { publisherIdentity, text, lastSeenAt: now, itemId: item?.id });
+				this.setLive(publisherIdentity, text, now, replyTo, item?.id);
 				return true;
 			};
 			// A changed generic/text status supersedes only the prior generic live item.
 			const old = this.items.get(this.live.get(publisherIdentity)?.itemId);
 			if (old) { old.fresh = false; this.changedItems.add(old.id); };
-			this.generic.set(publisherIdentity, { fingerprint, at: now, interval: this.interval });
+			this.generic.set(publisherIdentity, { fingerprint, at: now, interval: this.interval(lane) });
 		};
 
 		if (jsonHasData(data)) {
-			const group = this.group(now);
+			const group = this.group(now, publisherIdentity, replyTo);
 			item = {
 				id: `item-${++this.sequence}`, groupId: group.id, publisherIdentity,
 				kind: toolCallId ? 'tool' : 'generic', toolCallId: toolCallId || undefined,
@@ -162,10 +197,21 @@ export class ChatStatusJournal {
 			group.itemIds.push(item.id);
 			this.changedItems.add(item.id);
 			if (toolCallId) this.calls.set(key, item.id);
-			else this.generic.get(publisherIdentity).itemId = item.id;
+			else {
+				// Opening a group in a new thread seals the old one, moving the interval on
+				const generic = this.generic.get(publisherIdentity);
+				generic.itemId = item.id;
+				generic.interval = this.interval(lane);
+			};
 		};
-		if (!toolCallId) this.live.set(publisherIdentity, { publisherIdentity, text, lastSeenAt: now, itemId: item?.id });
+		if (!toolCallId) this.setLive(publisherIdentity, text, now, replyTo, item?.id);
 		return true;
+	};
+
+	private setLive (publisherIdentity: string, text: string | null, now: number, replyTo: string, itemId?: string): void {
+		const live: LiveStatus = { publisherIdentity, text, lastSeenAt: now, itemId };
+		if (replyTo) live.replyTo = replyTo;
+		this.live.set(publisherIdentity, live);
 	};
 
 	setTail (tail?: MessageAnchor): boolean {
@@ -176,7 +222,7 @@ export class ChatStatusJournal {
 
 	message (message: MessageAnchor, publisherIdentity: string): boolean {
 		if (!message?.id || !message.orderId || (this.tail && (message.orderId <= this.tail.orderId))) return false;
-		this.seal(message);
+		this.seal(this.lane(publisherIdentity), message);
 		this.tail = { ...message };
 		const old = this.items.get(this.live.get(publisherIdentity)?.itemId);
 		if (old) { old.fresh = false; this.changedItems.add(old.id); };
@@ -184,19 +230,19 @@ export class ChatStatusJournal {
 		return true;
 	};
 
-	private seal (after?: MessageAnchor): void {
-		const group = this.groups.get(this.openGroupId);
+	private seal (lane: string, after?: MessageAnchor): void {
+		const group = this.groups.get(this.openGroupIds.get(lane));
 		if (group) {
 			group.sealed = true;
 			group.after = after;
 			this.changedGroups.add(group.id);
 		};
-		this.openGroupId = '';
-		this.interval++;
+		this.openGroupIds.delete(lane);
+		this.intervals.set(lane, this.interval(lane) + 1);
 	};
 
 	disconnect (): void {
-		this.seal();
+		new Set([ '', ...this.openGroupIds.keys() ]).forEach(lane => this.seal(lane));
 		this.generic.clear();
 		this.live.clear();
 		this.items.forEach(item => {

@@ -8,7 +8,13 @@ import { ChatStatus } from 'Store/chatStatus';
 
 const scope = { accountId: 'storybook', spaceId: 'status-demo', chatId: 'tool-activity' };
 
-const ToolActivityExample = observer(() => {
+interface Props {
+	isCompact?: boolean;
+	withAuthor?: boolean;
+	isFinished?: boolean;
+};
+
+const ToolActivityExample = observer(({ isCompact = false, withAuthor = true, isFinished = false }: Props) => {
 	const journal = useRef<ChatStatusJournal>();
 	const view = ChatStatus.get(scope);
 	const apply = () => view.apply(structuredClone(journal.current.delta(true)));
@@ -20,9 +26,13 @@ const ToolActivityExample = observer(() => {
 		journal.current = new ChatStatusJournal(scope);
 		publish({ tool_call_id: 'call_123', tool_name: 'web_search', status: 'in_progress', query: 'tickets berlin amsterdam' }, 'Searching documents');
 		publish({ tool_call_id: 'call_124', tool_name: 'read_document', status: 'complete', document: 'train-options.pdf', result: { pages: 4 } }, 'Read the timetable');
-		publish({ tool_call_id: 'call_125', tool_name: 'fetch_page', status: 'error', result: { error: 'The request timed out' } }, 'Could not load the operator page');
+		if (isFinished) {
+			publish({ tool_call_id: 'call_123', status: 'complete', result: { matches: 3 } }, 'Found 3 matching documents');
+		} else {
+			publish({ tool_call_id: 'call_125', tool_name: 'fetch_page', status: 'error', result: { error: 'The request timed out' } }, 'Could not load the operator page');
+		};
 	};
-	useEffect(() => { reset(); return () => ChatStatus.clear(scope.accountId); }, []);
+	useEffect(() => { reset(); return () => ChatStatus.clear(scope.accountId); }, [ isFinished ]);
 	return <div style={{ maxWidth: 720 }}>
 		<div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
 			<button type="button" onClick={() => publish({ tool_call_id: 'call_123', status: 'complete' }, 'Found 3 matching documents')}>Complete search</button>
@@ -30,6 +40,7 @@ const ToolActivityExample = observer(() => {
 			<button type="button" onClick={reset}>Reset example</button>
 		</div>
 		{Array.from(view.groups.keys()).map(groupId => <StatusGroup key={groupId} scope={scope} groupId={groupId} now={Date.now()}
+			isCompact={isCompact} withAuthor={withAuthor}
 			onDisclosure={(_scope, kind, id, expanded) => { journal.current.expand(kind, id, expanded); apply(); }} />)}
 	</div>;
 });
@@ -38,8 +49,13 @@ const meta: Meta<typeof ToolActivityExample> = {
 	title: 'Block/Chat/Tool activity',
 	component: ToolActivityExample,
 	decorators: [ withBlock('blockChat') ],
+	args: { isCompact: false, withAuthor: true, isFinished: false },
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const LifecycleAndResults: Story = {};
+/** A discussion thread's running agent, one line until expanded. */
+export const CompactRunning: Story = { args: { isCompact: true } };
+/** A finished run under the comment it produced: no author, it is the comment's own. */
+export const CompactFinished: Story = { args: { isCompact: true, withAuthor: false, isFinished: true } };

@@ -11,7 +11,7 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 
 	const { config, linkStyle, fileStyle, fullscreenObject, hideSidebar, gridTitleClick, notificationSound, hideFileObjectsInTree, unicodeReplace } = S.Common;
 	const { hideTray, showMenuBar, alwaysShowTabs, hardwareAcceleration } = config;
-	const { theme, chatCmdSend, commentCmdSend } = S.Common;
+	const { theme, chatCmdSend, commentCmdSend, sendTyping } = S.Common;
 	const { networkConfig } = S.Auth;
 	const { preferYamux } = networkConfig;
 	const cmd = keyboard.cmdSymbol();
@@ -277,6 +277,18 @@ const PageMainSettingsPersonal = forwardRef<I.PageRef, I.PageSettingsComponent>(
 						options={chatKeys}
 						onChange={(v: string) => S.Common.commentCmdSendSet(v == ChatKey.CmdEnter)}
 						menuParam={{ horizontal: I.MenuDirection.Right }}
+					/>
+				</div>
+
+				<div className="item">
+					<Label text={translate('popupSettingsPersonalSendTyping')} />
+					<Switch
+						className="big"
+						value={sendTyping}
+						onChange={(e: any, v: boolean) => {
+							S.Common.sendTypingSet(v);
+							Renderer.send('setSendTyping', v);
+						}}
 					/>
 				</div>
 			</div>

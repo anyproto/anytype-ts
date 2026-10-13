@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { Icon, IconObject, ObjectName } from 'Component';
 import CommentForm from './form';
+import CommentActivity, { CommentActivityAttached } from './activity';
 import CommentReply from './reply';
 import Attachment from 'Component/block/chat/attachment';
 import Reaction from 'Component/block/chat/message/reaction';
@@ -759,6 +760,8 @@ const CommentPost = (props: Props) => {
 					</div>
 				) : null}
 
+				{!isEditing ? <CommentActivityAttached discussionId={targetId} subId={subId} messageId={id} /> : null}
+
 				{renderContent()}
 				{renderReactions()}
 			</div>
@@ -779,12 +782,16 @@ const CommentPost = (props: Props) => {
 				</div>
 			) : null}
 
+			<CommentActivity discussionId={targetId} subId={subId} threadId={id} />
+
 			{(isReplying && canReply) ? (
 				<div className="replyFormWrap">
 					<CommentForm
 						ref={replyFormRef}
 						rootId={rootId}
 						subId={subId}
+						discussionId={targetId}
+						replyTo={id}
 						isReply={true}
 						placeholder={translate('commentReplyPlaceholder')}
 						onSubmit={onSubmitReply}
