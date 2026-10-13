@@ -113,10 +113,12 @@ class Presence {
 	 * In a discussion, replyTo is the message a reply form answers ('' = the
 	 * main composer). Throttled to one publish per REFRESH_INTERVAL unless the
 	 * block or reply target changed; (re)arms the idle timer that publishes the stop.
+	 * Nothing is published while the user has turned typing off in settings; a stop
+	 * still owed from before goes out with the idle timer already armed.
 	 */
 	typing (objectId: string, blockId: string, replyTo?: string): void {
 		const sub = this.subs.get(objectId);
-		if (!sub) {
+		if (!sub || !S.Common.sendTyping) {
 			return;
 		};
 

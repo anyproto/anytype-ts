@@ -82,6 +82,10 @@ can adopt it; a client that ignores it shows the typing at the discussion level.
 - `presence.typing(objectId, blockId, replyTo?)` publishes immediately when `replyTo` changes,
   as it already does for a `blockId` change.
 - `PresenceTyping` gains `replyTo`; the receiver keeps it as received.
+- Settings → Personal → Messaging gains "Show others when I'm typing" (on by default,
+  `S.Common.sendTyping`). Off, `presence.typing` publishes nothing, so chats and comments stay
+  silent; a stop already owed still goes out. The switch is broadcast to all tabs, since each
+  publishes its own typing. Receiving others' typing and editor carets are unaffected.
 
 ### 4. Placement (renderer)
 

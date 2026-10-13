@@ -59,6 +59,7 @@ class CommonStore {
 	public vaultIsMinimalValue = null;
 	public gridTitleClickValue = null;
 	public unicodeReplaceValue = null;
+	public sendTypingValue = null;
 	public leftSidebarStateValue = { page: '', subPage: '' };
 
 	public recentEditModeValue: I.RecentEditMode = null;
@@ -181,6 +182,7 @@ class CommonStore {
 			vaultIsMinimalValue: observable,
 			gridTitleClickValue: observable,
 			unicodeReplaceValue: observable,
+			sendTypingValue: observable,
 			notificationSoundValue: observable,
 			isActiveTab: observable,
 			isPinnedValue: observable,
@@ -208,6 +210,7 @@ class CommonStore {
 			vaultIsMinimal: computed,
 			gridTitleClick: computed,
 			unicodeReplace: computed,
+			sendTyping: computed,
 			notificationSound: computed,
 			widgetSections: computed,
 			recentEditMode: computed,
@@ -248,6 +251,7 @@ class CommonStore {
 			vaultIsMinimalSet: action,
 			gridTitleClickSet: action,
 			unicodeReplaceSet: action,
+			sendTypingSet: action,
 			notificationSoundSet: action,
 			widgetSectionsInit: action,
 			widgetSectionsSet: action,
@@ -556,6 +560,15 @@ class CommonStore {
 			ret = true;
 		};
 		return ret;
+	};
+
+	/** Whether typing in chats and comments is published to others; on unless turned off. */
+	get sendTyping (): boolean {
+		let ret = this.sendTypingValue;
+		if (ret === null) {
+			ret = Storage.get('sendTyping');
+		};
+		return (ret !== false);
 	};
 
 	get notificationSound (): string {
@@ -1165,6 +1178,10 @@ class CommonStore {
 
 	unicodeReplaceSet (v: boolean) {
 		this.boolSet('unicodeReplace', v);
+	};
+
+	sendTypingSet (v: boolean) {
+		this.boolSet('sendTyping', v);
 	};
 
 	notificationSoundSet (v: string) {

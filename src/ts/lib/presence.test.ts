@@ -4,6 +4,7 @@ const rpc = vi.hoisted(() => ({ PubsubSubscribe: vi.fn(), PubsubUnsubscribe: vi.
 const store = vi.hoisted(() => ({
 	Presence: { setTyping: vi.fn(), clearTyping: vi.fn(), clearObject: vi.fn(), prune: vi.fn() },
 	Auth: { account: { id: 'self' } },
+	Common: { sendTyping: true },
 }));
 vi.mock('./api/command', () => rpc);
 vi.mock('Store', () => store);
@@ -18,6 +19,7 @@ describe('typing replyTo', () => {
 	beforeEach(async () => {
 		vi.useFakeTimers();
 		vi.clearAllMocks();
+		store.Common.sendTyping = true;
 		(window as any).addEventListener = vi.fn();
 		(window as any).setInterval = (...args: any[]) => (globalThis as any).setInterval(...args);
 		(window as any).clearInterval = (...args: any[]) => (globalThis as any).clearInterval(...args);
@@ -39,6 +41,23 @@ describe('typing replyTo', () => {
 
 		expect(sent().map(it => it.replyTo)).toEqual([ 'post1', 'post2', undefined ]);
 		expect(sent().every(it => it.active && !('blockId' in it))).toBe(true);
+	});
+
+	it('publishes nothing while typing is turned off, but still sends the stop it owes', () => {
+		presence.typing('discussion', '', 'post1');
+		store.Common.sendTyping = false;
+		vi.advanceTimersByTime(2500);
+		presence.typing('discussion', '', 'post1');
+		presence.typing('discussion', '', 'post2');
+
+		expect(sent().map(it => it.active)).toEqual([ true ]);
+
+		vi.advanceTimersByTime(3000);
+		expect(sent().map(it => it.active)).toEqual([ true, false ]);
+
+		presence.typing('discussion', '');
+		vi.advanceTimersByTime(5000);
+		expect(sent()).toHaveLength(2);
 	});
 
 	it('keeps a received replyTo, and reads a missing or malformed one as the main composer', () => {

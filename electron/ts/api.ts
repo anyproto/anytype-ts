@@ -337,6 +337,10 @@ class Api {
 		WindowManager.sendToAllTabs('set-hide-sidebar', v);
 	};
 
+	setSendTyping (win: AppWindow, v: boolean): void {
+		WindowManager.sendToAllTabs('set-send-typing', v);
+	};
+
 	setAlwaysShowTabs (win: AppWindow, show: boolean): void {
 		this.setConfig(win, { alwaysShowTabs: show }, () => {
 			WindowManager.updateTabBarVisibility(win);
