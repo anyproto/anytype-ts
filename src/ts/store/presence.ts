@@ -6,6 +6,7 @@ export interface PresenceTyping {
 	sessionId: string;	// sender app-session id, distinguishes devices/windows of one account
 	blockId: string;	// block being typed in; '' means the chat input of the object
 	range?: I.TextRange;	// sender carriage position in that block; absent for the chat input
+	replyTo?: string;	// discussion: the message the sender's reply form answers; '' for the main composer
 	lastSeen: number;	// receiver-local receipt timestamp, drives TTL expiry
 };
 
