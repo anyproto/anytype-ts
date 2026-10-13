@@ -1,7 +1,7 @@
 import * as C from './api/command';
 import { Auth } from '../store/auth';
 import { ChatStatus } from '../store/chatStatus';
-import { ChatStatusScope, StatusCommand, StatusDelta, MessageAnchor, scopeKey, STATUS_CHANNEL, STATUS_UPDATE_CHANNEL, MAX_STATUS_BYTES } from './chatStatus/model';
+import { ChatStatusScope, StatusCommand, StatusDelta, StatusMode, MessageAnchor, scopeKey, STATUS_CHANNEL, STATUS_UPDATE_CHANNEL, MAX_STATUS_BYTES } from './chatStatus/model';
 import { ChatStatusSession } from './chatStatus/session';
 
 interface Subscription {
@@ -38,7 +38,8 @@ export class ChatStatusReceiver {
 		return { accountId: Auth.account?.id || '', spaceId, chatId };
 	};
 
-	retain (spaceId: string, chatId: string): () => void {
+	/** The first view of a chat sets its mode: a discussion groups and places activity per publisher. */
+	retain (spaceId: string, chatId: string, mode: StatusMode = 'chat'): () => void {
 		const scope = this.scope(spaceId, chatId);
 		if (!scope.accountId || !spaceId || !chatId) return () => {};
 		this.init();
@@ -49,7 +50,7 @@ export class ChatStatusReceiver {
 		} else {
 			sub = { scope, refs: 1, owner: false, active: false, epoch: 0, subId: '' };
 			this.subs.set(key, sub);
-			this.send(scope, { type: 'attach' });
+			this.send(scope, { type: 'attach', mode });
 		};
 		return () => {
 			if ((this.subs.get(key) != sub) || (--sub.refs > 0)) return;

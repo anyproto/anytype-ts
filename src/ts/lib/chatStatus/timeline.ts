@@ -1,4 +1,4 @@
-import { ActivityGroup, ActivityItem, MessageAnchor } from './model';
+import { ActivityGroup, ActivityItem, LiveStatus, MessageAnchor } from './model';
 
 export interface ChatRow {
 	creator?: string;
@@ -62,4 +62,57 @@ export function activityGaps (
 		};
 	};
 	return gaps;
+};
+
+export interface DiscussionBucket<T> {
+	groups: ActivityGroup[];
+	live: LiveStatus[];
+	typers: T[];
+};
+
+export interface DiscussionActivity<T> {
+	/** Comment id → the finished runs that produced it. */
+	attached: Map<string, ActivityGroup[]>;
+	/** Thread root (top-level post) id → activity in that thread. */
+	threads: Map<string, DiscussionBucket<T>>;
+	/** The discussion level: no reply target, or one this client has not placed. */
+	root: DiscussionBucket<T>;
+};
+
+export interface DiscussionLookup {
+	/** The thread root of a placed comment, undefined when it is not placed. */
+	threadOf: (messageId: string) => string | undefined;
+	isDeleted: (messageId: string) => boolean;
+};
+
+/**
+ * Places discussion activity: a finished run on the comment it produced, everything else at
+ * the end of the thread its reply target leads to, or at the discussion level when it has
+ * none or the target is not here (yet). A run whose comment was deleted is not shown.
+ */
+export function discussionActivity<T extends { replyTo?: string }> (
+	groups: ActivityGroup[], live: LiveStatus[], typers: T[], lookup: DiscussionLookup,
+): DiscussionActivity<T> {
+	const empty = (): DiscussionBucket<T> => ({ groups: [], live: [], typers: [] });
+	const result: DiscussionActivity<T> = { attached: new Map(), threads: new Map(), root: empty() };
+	const bucket = (replyTo?: string): DiscussionBucket<T> => {
+		const rootId = replyTo ? lookup.threadOf(replyTo) : undefined;
+		if (rootId === undefined) return result.root;
+		if (!result.threads.has(rootId)) result.threads.set(rootId, empty());
+		return result.threads.get(rootId);
+	};
+
+	for (const group of [ ...groups ].sort((a, b) => a.createdAt - b.createdAt)) {
+		const after = group.sealed ? group.after?.id : '';
+		if (after && (lookup.threadOf(after) !== undefined)) {
+			if (lookup.isDeleted(after)) continue;
+			if (!result.attached.has(after)) result.attached.set(after, []);
+			result.attached.get(after).push(group);
+			continue;
+		};
+		bucket(group.replyTo).groups.push(group);
+	};
+	live.forEach(it => bucket(it.replyTo).live.push(it));
+	typers.forEach(it => bucket(it.replyTo).typers.push(it));
+	return result;
 };

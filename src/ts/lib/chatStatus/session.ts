@@ -21,7 +21,7 @@ export class ChatStatusSession {
 		let session = this.sessions.get(key);
 		if (command.type == 'attach') {
 			if (!session) {
-				session = { journal: new ChatStatusJournal(scope), clients: new Set() };
+				session = { journal: new ChatStatusJournal(scope, command.mode), clients: new Set() };
 				this.sessions.set(key, session);
 			};
 			session.clients.add(clientId);

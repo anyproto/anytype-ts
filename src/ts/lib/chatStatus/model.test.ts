@@ -96,6 +96,91 @@ describe('chat activity journal', () => {
 	});
 });
 
+describe('discussion activity journal', () => {
+	const discussion = () => new ChatStatusJournal(scope, 'discussion');
+	const reply = (journal: ChatStatusJournal, data: unknown, replyTo?: string, identity = 'agent', text = 'Working', now = 100) => {
+		return journal.status(identity, decodeStatus(JSON.stringify({ text, data, reply_to: replyTo })), now);
+	};
+	const groupOf = (journal: ChatStatusJournal, id: string) => {
+		const item = Array.from(journal.items.values()).find(it => it.toolCallId == id);
+		return journal.groups.get(item.groupId);
+	};
+
+	it('decodes reply_to only as a non-empty string', () => {
+		expect(decodeStatus('{"reply_to":"m1"}').replyTo).toBe('m1');
+		expect(decodeStatus('{"reply_to":""}')).not.toHaveProperty('replyTo');
+		expect(decodeStatus('{"reply_to":1}')).not.toHaveProperty('replyTo');
+	});
+
+	it('keeps one open group per publisher, sealed only by that publisher\'s comment', () => {
+		const journal = discussion();
+		reply(journal, call('a'), 'm1');
+		reply(journal, call('x'), undefined, 'other');
+		journal.message({ id: 'm2', orderId: '002' }, 'person');
+		reply(journal, call('b'), 'm1');
+		expect(groupOf(journal, 'a')).toBe(groupOf(journal, 'b'));
+		expect(groupOf(journal, 'a')).toMatchObject({ sealed: false, publisherIdentity: 'agent', replyTo: 'm1' });
+		expect(groupOf(journal, 'x')).toMatchObject({ publisherIdentity: 'other' });
+		expect(groupOf(journal, 'x')).not.toHaveProperty('replyTo');
+
+		journal.message({ id: 'm3', orderId: '003' }, 'agent');
+		expect(groupOf(journal, 'a')).toMatchObject({ sealed: true, after: { id: 'm3' } });
+		expect(groupOf(journal, 'x')).toMatchObject({ sealed: false });
+
+		reply(journal, call('c'), 'm1');
+		expect(groupOf(journal, 'c')).not.toBe(groupOf(journal, 'a'));
+	});
+
+	it('seals a run that moves to another thread without an anchor, and updates known calls in place', () => {
+		const journal = discussion();
+		reply(journal, call('a'), 'm1');
+		reply(journal, call('b'), 'm9');
+		expect(groupOf(journal, 'a')).toMatchObject({ sealed: true, replyTo: 'm1' });
+		expect(groupOf(journal, 'a').after).toBeUndefined();
+		expect(groupOf(journal, 'b')).toMatchObject({ sealed: false, replyTo: 'm9' });
+		reply(journal, call('a', 'complete'), 'm9');
+		expect(groupOf(journal, 'a').itemIds).toHaveLength(1);
+		expect(groupOf(journal, 'b').itemIds).toHaveLength(1);
+	});
+
+	it('keeps generic snapshots apart per thread and coalesces their heartbeats', () => {
+		const journal = discussion();
+		reply(journal, { step: 1 }, 'm1');
+		reply(journal, { step: 1 }, 'm9');
+		reply(journal, { step: 1 }, 'm9', 'agent', 'Working', 101);
+		expect(journal.items.size).toBe(2);
+		expect(journal.groups.size).toBe(2);
+	});
+
+	it('places live text by reply_to', () => {
+		const journal = discussion();
+		reply(journal, undefined, 'm1');
+		expect(journal.live.get('agent')).toMatchObject({ text: 'Working', replyTo: 'm1' });
+		reply(journal, undefined);
+		expect(journal.live.get('agent')).not.toHaveProperty('replyTo');
+	});
+
+	it('ignores reply_to in a chat', () => {
+		const journal = new ChatStatusJournal(scope);
+		reply(journal, call('a'), 'm1');
+		reply(journal, call('b'), 'm9', 'other');
+		expect(groupOf(journal, 'a')).toBe(groupOf(journal, 'b'));
+		expect(groupOf(journal, 'a')).not.toHaveProperty('replyTo');
+		expect(journal.live.size).toBe(0);
+		journal.message({ id: 'm2', orderId: '002' }, 'person');
+		expect(groupOf(journal, 'a')).toMatchObject({ sealed: true, after: { id: 'm2' } });
+	});
+
+	it('seals every open run on disconnect', () => {
+		const journal = discussion();
+		reply(journal, call('a'));
+		reply(journal, call('b'), undefined, 'other');
+		journal.disconnect();
+		expect(groupOf(journal, 'a').sealed).toBe(true);
+		expect(groupOf(journal, 'b').sealed).toBe(true);
+	});
+});
+
 describe('lossless status JSON', () => {
 	it('preserves nested numeric tokens and string contents during merge, inspect and copy', () => {
 		const source = '{"text":"Found", "data":{"tool_call_id":"a","result":{"large":9007199254740993123,"decimal":1.0000000000000001,"exponent":1e400,"text":"line\\nzero\u200bwidth"}}}';
