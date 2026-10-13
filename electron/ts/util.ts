@@ -64,8 +64,14 @@ class Util {
 		return nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
 	};
 
+	/**
+	 * Converts a deeplink to an in-app route. A bare `anytype://` would route to '/', a blank page
+	 * without any controls, so it opens the void "select" page: the vault sidebar only.
+	 */
 	getRouteFromUrl (url: string): string {
-		return String(url || '').replace(`${protocol}://`, '/');
+		const route = String(url || '').replace(`${protocol}://`, '/');
+
+		return route.replace(/^\/+/, '').length ? route : '/main/void/select';
 	};
 
 	getTheme (): string {
