@@ -61,12 +61,12 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 						modeMention = promote(modeMention, chatMode);
 					};
 
-					if (state.messageCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
+					if (state.messageCounter && (spaceview.isOneToOne || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
 						counters.messageCounter += Number(state.messageCounter) || 0;
 						modeMessage = promote(modeMessage, chatMode);
 					};
 
-					if (state.reactionCounter && [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode)) {
+					if (state.reactionCounter && (spaceview.isOneToOne || [ I.NotificationMode.All, I.NotificationMode.Mentions ].includes(chatMode))) {
 						counters.reactionCounter += Number(state.reactionCounter) || 0;
 						modeReaction = promote(modeReaction, chatMode);
 					};
@@ -108,7 +108,7 @@ const ChatCounter = forwardRef<HTMLDivElement, Props>((props, ref) => {
 	const cnMessage = [ 'message' ];
 	const cnReaction = [ 'reaction' ];
 	const showMention = mentionCounter && !spaceview?.isOneToOne;
-	const showMessage = messageCounter && (modeMessage != I.NotificationMode.Nothing);
+	const showMessage = messageCounter && (spaceview?.isOneToOne || (modeMessage != I.NotificationMode.Nothing));
 	const showReaction = reactionCounter;
 
 	if (modeMention == I.NotificationMode.Nothing) {
