@@ -761,26 +761,18 @@ class UtilCommon {
 			};
 		};
 
-		const timestamp = Date.now();
-
-		for (let i = 0; i < items.length; i++) {
-			const item = items[i];
-
+		for (const item of items) {
 			if (item.path) {
 				ret.push(item);
 				cb();
 			} else {
 				const reader = new FileReader();
 				reader.onload = () => {
-					// Generate unique filename to avoid collisions when multiple files have the same name
-					const parts = String(item.name || 'file').split('.');
-					const ext = parts.length > 1 ? parts.pop() : '';
-					const base = parts.join('.');
-					const uniqueName = ext ? `${base}_${timestamp}_${i}.${ext}` : `${base}_${timestamp}_${i}`;
-
+					// Each file gets its own temp folder, so files with the same name do not collide
+					// and the uploaded file keeps its original name
 					ret.push({
 						...item,
-						path: this.getElectron().fileWrite(uniqueName, reader.result, { encoding: 'binary' }),
+						path: this.getElectron().fileWrite(item.name || 'file', reader.result, { encoding: 'binary', unique: true }),
 					});
 					cb();
 				};
