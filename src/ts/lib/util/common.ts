@@ -770,10 +770,15 @@ class UtilCommon {
 				reader.onload = () => {
 					// Each file gets its own temp folder, so files with the same name do not collide
 					// and the uploaded file keeps its original name
-					ret.push({
-						...item,
-						path: this.getElectron().fileWrite(item.name || 'file', reader.result, { encoding: 'binary', unique: true }),
-					});
+					try {
+						ret.push({
+							...item,
+							path: this.getElectron().fileWrite(item.name || 'file', reader.result, { encoding: 'binary', unique: true }),
+						});
+					} catch (e) {
+						// A file that cannot be written is skipped, so the rest of the paste still completes
+						console.warn('[Common] saving clipboard file failed:', e);
+					};
 					cb();
 				};
 				reader.onerror = cb;
