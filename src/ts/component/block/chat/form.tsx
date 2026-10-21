@@ -626,7 +626,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		if (list.length) {
-			U.Common.saveClipboardFiles(list, {}, data => addAttachments(data.files));
+			saveFiles(list);
 		};
 
 		updateCounter();
@@ -767,7 +767,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 		keyboard.disableCommonDrop(true);
 
-		addAttachments(list);
+		saveFiles(list);
 
 		keyboard.disableCommonDrop(false);
 		clearDragState();
@@ -915,6 +915,12 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 		saveState([ ...attachments, ...list ]);
 		historySaveState();
+	};
+
+	// Files without a disk path (pasted, dragged from a browser) are written to temp first, since upload needs a path.
+	// Their id is taken again from that unique path, so different files of the same size pasted together stay apart
+	const saveFiles = (list: any[]) => {
+		U.Common.saveClipboardFiles(list, {}, data => addAttachments(data.files.map(it => ({ ...it, id: getAttachmentId(it.path, it.file) }))));
 	};
 
 	const addBookmark = (url: string, fromText?: boolean) => {
@@ -1497,6 +1503,8 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		editableRef.current?.setRange(newRange);
 	};
 
+	const getAttachmentId = (path: string, file: File) => sha1(path + file.lastModified + file.size);
+
 	const getObjectFromFile = (file: File) => {
 		const path = electron.webFilePath(file);
 		const mime = file.type || electron.fileMime(path);
@@ -1513,7 +1521,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		return {
-			id: sha1(path + file.lastModified + file.size),
+			id: getAttachmentId(path, file),
 			name: file.name,
 			layout,
 			type: type?.id,
