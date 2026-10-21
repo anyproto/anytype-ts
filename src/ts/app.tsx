@@ -690,6 +690,11 @@ const App: FC = () => {
 	};
 
 	const onRoute = (route: string) => {
+		// A route without a page (e.g. a bare `anytype://?spaceId=...`) would open a blank page
+		if (U.Router.getParam(route).page == 'index') {
+			return;
+		};
+
 		if (keyboard.isMain()) {
 			U.Router.go(route, {});
 		} else {
