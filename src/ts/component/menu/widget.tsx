@@ -96,6 +96,16 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		// Section 2: Actions
 		const actionChildren: any[] = [];
 
+		// canModerate matches the gate on the same control in Space settings.
+		if (isPinned && canModerate && U.Space.isHomeObject(target?.id)) {
+			actionChildren.push({
+				id: 'changeHome',
+				iconParam: { name: 'settings/home' },
+				name: translate('widgetHomeChange'),
+				arrow: true,
+			});
+		};
+
 		if (!isSystem) {
 			actionChildren.push({ id: 'pageLink', iconParam: { name: 'menu/action/pageLink' }, name: translate('commonCopyLink') });
 		};
@@ -306,6 +316,20 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				break;
 			};
 
+			case 'changeHome': {
+				const data = U.Menu.dashboardSelectData(false);
+
+				menuId = 'searchObject';
+				menuParam.data = {
+					...data,
+					onSelect: (el: any) => {
+						data.onSelect(el);
+						close();
+					},
+				};
+				break;
+			};
+
 			case 'linkTo': {
 				if (!target) {
 					break;
@@ -368,6 +392,11 @@ const MenuWidget = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (menuId && !S.Menu.isOpen(menuId, item.id) && !S.Menu.isAnimating(menuId)) {
+			// Fires once per open, unlike the onOver body above, which runs on every hover.
+			if (item.id == 'changeHome') {
+				analytics.event('ClickChangeSpaceDashboard');
+			};
+
 			S.Menu.closeAll(J.Menu.widget, () => {
 				S.Menu.open(menuId, menuParam);
 			});

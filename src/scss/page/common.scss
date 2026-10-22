@@ -18,10 +18,22 @@
 		#page { border-top-left-radius: 0px; border-bottom-left-radius: 0px; }
 	}
 
-	&.withSidebarLeft {
+	&.withSidebarTotalLeft {
 		.pageMainVoid {
 			.wrapper {
-				> .icon.vaultToggle { display: none; }
+				> .side.left {
+					.icon.vaultToggle { display: none; }
+				}
+			}
+		}
+	}
+
+	&.withSidebarSubLeft {
+		.pageMainVoid {
+			.wrapper {
+				> .side.left {
+					.icon.headerWidget { display: none; }
+				}
 			}
 		}
 	}
@@ -46,4 +58,5 @@
 @import "./main/void";
 @import "./main/date";
 @import "./main/settings";
+@import "./main/deletionAudit";
 @import "./main/relation";

@@ -5,7 +5,6 @@ import AutoImport from 'unplugin-auto-import/vite';
 import { autoObserverPlugin } from './vite.auto-observer';
 import path from 'path';
 import fs from 'fs';
-import { build as esbuild } from 'esbuild';
 
 const pdfjsDistPath = path.dirname(require.resolve('pdfjs-dist/package.json'));
 const cMapsDir = path.join(pdfjsDistPath, 'cmaps');
@@ -25,7 +24,6 @@ export default defineConfig(({ mode }) => {
 			extensions: ['.ts', '.tsx', '.js', '.jsx'],
 			alias: [
 				{ find: 'dist', replacement: path.resolve(__dirname, 'dist') },
-				{ find: 'protobuf', replacement: path.resolve(__dirname, 'dist/lib') },
 				{ find: 'json', replacement: path.resolve(__dirname, 'src/json') },
 				{ find: 'Lib', replacement: path.resolve(__dirname, 'src/ts/lib') },
 				{ find: 'Store', replacement: path.resolve(__dirname, 'src/ts/store') },
@@ -62,6 +60,9 @@ export default defineConfig(({ mode }) => {
 			'SPARK_ONBOARDING_TOKEN': JSON.stringify(process.env.SPARK_ONBOARDING_TOKEN || 'spark_92eabe0c7f006ff22b0d81f3974b355556756afd3262249e4a748076c4483869'),
 			'SPARK_ONBOARDING_NO_AUTH': JSON.stringify(process.env.SPARK_ONBOARDING_NO_AUTH || 'false'),
 			'SENTRY_DSN': JSON.stringify(process.env.SENTRY_DSN || 'https://44e6df81644c4e36b21b1dbea62b8a1a@sentry.anytype.io/3'),
+			'IMPORT_AI_ANYTYPE_ENDPOINT': JSON.stringify(process.env.IMPORT_AI_ANYTYPE_ENDPOINT || ''),
+			'IMPORT_AI_ANYTYPE_MODEL': JSON.stringify(process.env.IMPORT_AI_ANYTYPE_MODEL || ''),
+			'IMPORT_AI_ANYTYPE_TOKEN': JSON.stringify(process.env.IMPORT_AI_ANYTYPE_TOKEN || ''),
 			'process.env': '{}',
 		},
 
@@ -96,15 +97,17 @@ export default defineConfig(({ mode }) => {
 			cssCodeSplit: false,
 			assetsInlineLimit: 10000, // Inline small assets; fonts stay as URLs
 			commonjsOptions: {
-				include: [/dist\/lib\//, /node_modules\//],
+				include: [/node_modules\//],
 				transformMixedEsModules: true,
 			},
 			rollupOptions: {
 				input: {
 					main: path.resolve(__dirname, 'src/html/index.html'),
+					// separate always-on-top window for local-link pairing approval
+					linkApproval: path.resolve(__dirname, 'src/html/linkApproval.html'),
 				},
 				output: {
-					entryFileNames: 'js/main.js',
+					entryFileNames: (chunk) => (chunk.name == 'main' ? 'js/main.js' : 'js/[name].js'),
 					chunkFileNames: 'js/chunks/[name].js',
 					assetFileNames: (assetInfo) => {
 						if (assetInfo.names?.[0]?.endsWith('.css')) {
@@ -136,7 +139,7 @@ export default defineConfig(({ mode }) => {
 						if (/node_modules\/(katex|@viz-js|react-pdf|pdfjs-dist|pako)\//.test(id)) {
 							return;
 						}
-						if (id.includes('dist/lib/pb/') || id.includes('/middleware/')) {
+						if (id.includes('/middleware/')) {
 							return 'protobuf';
 						}
 						if (/node_modules\/(react|react-dom|scheduler|mobx|mobx-react-lite|use-sync-external-store|prop-types|hoist-non-react-statics|react-is|object-assign|loose-envify|js-tokens)\//.test(id)) {
@@ -170,7 +173,6 @@ export default defineConfig(({ mode }) => {
 		plugins: [
 			react(),
 			autoObserverPlugin(),
-			protobufCjsPlugin(),
 			devServerPlugin(),
 
 			AutoImport({
@@ -221,21 +223,31 @@ export default defineConfig(({ mode }) => {
 				},
 			}),
 
-			// Move index.html from dist/src/html/index.html to dist/index.html and fix paths
+			// Move built html out of dist/src/html/ and fix paths: index.html to dist/index.html,
+			// linkApproval.html to dist/linkApproval/index.html (its own directory, since the
+			// approval window loads it by directory path)
 			{
 				name: 'move-html',
 				closeBundle() {
-					const src = path.resolve(__dirname, 'dist/src/html/index.html');
-					const dest = path.resolve(__dirname, 'dist/index.html');
-					if (fs.existsSync(src)) {
+					const move = (name: string, dest: string, prefix: string) => {
+						const src = path.resolve(__dirname, `dist/src/html/${name}`);
+						if (!fs.existsSync(src)) {
+							return;
+						}
+
 						let html = fs.readFileSync(src, 'utf8');
 						// Fix relative paths that were relative to src/html/
-						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, './');
-						fs.writeFileSync(dest, html);
+						html = html.replace(/(?:\.\.\/)+(?=js\/|css\/|assets\/)/g, prefix);
+						fs.mkdirSync(path.dirname(path.resolve(__dirname, dest)), { recursive: true });
+						fs.writeFileSync(path.resolve(__dirname, dest), html);
 						fs.unlinkSync(src);
-						try { fs.rmdirSync(path.resolve(__dirname, 'dist/src/html')); } catch {}
-						try { fs.rmdirSync(path.resolve(__dirname, 'dist/src')); } catch {}
-					}
+					};
+
+					move('index.html', 'dist/index.html', './');
+					move('linkApproval.html', 'dist/linkApproval/index.html', '../');
+
+					try { fs.rmdirSync(path.resolve(__dirname, 'dist/src/html')); } catch {}
+					try { fs.rmdirSync(path.resolve(__dirname, 'dist/src')); } catch {}
 				},
 			} as Plugin,
 
@@ -257,75 +269,6 @@ export default defineConfig(({ mode }) => {
 
 const srcImgDir = path.resolve(__dirname, 'src/img');
 const distImgDir = path.resolve(__dirname, 'dist/img');
-
-/**
- * Transforms CJS protobuf files (dist/lib/pb/) to ESM in dev mode using esbuild.
- * Production builds use Rollup's commonjsOptions instead.
- */
-function protobufCjsPlugin(): Plugin {
-	const cache = new Map<string, { code: string; mtime: number }>();
-
-	return {
-		name: 'protobuf-cjs',
-		enforce: 'pre',
-		apply: 'serve',
-		async load(id) {
-			if (!id.includes('/dist/lib/') || !id.endsWith('.js')) return null;
-
-			const stat = fs.statSync(id, { throwIfNoEntry: false });
-			if (!stat) return null;
-
-			const cached = cache.get(id);
-			if (cached && cached.mtime === stat.mtimeMs) {
-				return cached.code;
-			}
-
-			const code = fs.readFileSync(id, 'utf-8');
-			if (!code.includes('require(') && !code.includes('module.exports') && !code.includes('exports.')) {
-				return null;
-			}
-
-			const result = await esbuild({
-				stdin: { contents: code, resolveDir: path.dirname(id), loader: 'js' },
-				bundle: true,
-				format: 'esm',
-				write: false,
-				platform: 'browser',
-				logLevel: 'silent',
-			});
-
-			let esm = result.outputFiles[0].text;
-
-			// esbuild outputs `export default require_xxx();` for CJS modules.
-			// Replace with individual named exports so both default and named imports work.
-			const defaultMatch = esm.match(/export\s+default\s+(require_\w+)\(\);/);
-			if (defaultMatch) {
-				const factory = defaultMatch[1];
-				// Execute the factory to discover exported property names
-				const wrappedCode = esm.replace(defaultMatch[0], `return ${factory}();`);
-				try {
-					const fn = new Function(wrappedCode);
-					const cjsExports = fn();
-					const keys = Object.keys(cjsExports || {});
-					const namedExports = keys.map(k => `export var ${k} = __cjs_exports__.${k};`).join('\n');
-					esm = esm.replace(
-						defaultMatch[0],
-						`var __cjs_exports__ = ${factory}();\nexport default __cjs_exports__;\n${namedExports}`
-					);
-				} catch {
-					// Fallback: just keep the default export
-					esm = esm.replace(
-						defaultMatch[0],
-						`var __cjs_exports__ = ${factory}();\nexport default __cjs_exports__;`
-					);
-				}
-			}
-
-			cache.set(id, { code: esm, mtime: stat.mtimeMs });
-			return esm;
-		},
-	};
-}
 
 const mimeTypes: Record<string, string> = {
 	'.html': 'text/html',

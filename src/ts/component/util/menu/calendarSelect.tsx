@@ -1,7 +1,13 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle, MouseEvent } from 'react';
 
-import { Select, Icon } from 'Component';
+import { Select, Icon, Input } from 'Component';
 import * as I from 'Interface';
+
+// The time editor reads and writes 24h values, matching the inline date cell editor
+// in component/cell/text.tsx, which masks and parses the time part as H:i as well.
+const TIME_FORMAT = 'H:i';
+const TIME_MASK = '99:99';
+const TIME_PLACEHOLDER = 'hh:mm';
 
 export interface CalendarDay {
 	d: number;
@@ -25,6 +31,8 @@ interface Props {
 	enableKeyboard?: boolean;
 	enableHoverState?: boolean;
 	showFooter?: boolean;
+	showTime?: boolean;
+	onTimeChange?: (value: number) => void;
 	getDotMap?: (start: number, end: number, cb: (map: Map<string, boolean>) => void) => void;
 	onDayClick?: (item: CalendarDay, ts: number) => boolean | void;
 	onDayContextMenu?: (e: MouseEvent, item: CalendarDay) => void;
@@ -44,7 +52,8 @@ const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) =>
 
 	const {
 		value, onChange, isReadonly, canClear = true, position, menuClassNameWrap, className,
-		isEmpty, enableKeyboard, enableHoverState, showFooter, getDotMap, onDayClick, onDayContextMenu, rebind, unbind,
+		isEmpty, enableKeyboard, enableHoverState, showFooter, showTime, onTimeChange,
+		getDotMap, onDayClick, onDayContextMenu, rebind, unbind,
 	} = props;
 
 	const [ displayValue, setDisplayValue ] = useState(value || U.Date.now());
@@ -53,6 +62,7 @@ const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) =>
 	const selectedDateRef = useRef<CalendarDay | null>(null);
 	const monthRef = useRef(null);
 	const yearRef = useRef(null);
+	const timeRef = useRef(null);
 
 	const { m, y } = U.Date.getCalendarDateParam(displayValue);
 	const valueParam = value ? U.Date.getCalendarDateParam(value) : null;
@@ -110,6 +120,14 @@ const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) =>
 			setDisplayValue(value);
 		};
 	}, [ value ]);
+
+	useEffect(() => {
+		// Keep the time input in sync with external value changes (day click, today/tomorrow),
+		// but never overwrite what the user is currently typing
+		if (showTime && timeRef.current && !timeRef.current.isFocused()) {
+			timeRef.current.setValue(getTimeValue());
+		};
+	}, [ value, showTime ]);
 
 	const keydownHandler = useRef(null);
 
@@ -193,12 +211,62 @@ const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) =>
 		setDisplayValue(U.Date.timestamp(nY, nM, 1));
 	};
 
+	const getTimeValue = (): string => {
+		return value ? U.Date.date(TIME_FORMAT, value) : '';
+	};
+
+	const applyTime = (v: string): void => {
+		const ts = U.Date.withTime(value || U.Date.now(), v);
+
+		if ((ts !== null) && (ts != value)) {
+			onTimeChange?.(ts);
+		};
+	};
+
+	const onTimeKeyDown = (e: any): void => {
+		// The calendar menu binds window level keyboard handlers, they must not
+		// react to keys typed into the time input
+		e.stopPropagation();
+
+		keyboard.shortcut('enter', e, () => {
+			e.preventDefault();
+			timeRef.current?.blur();
+		});
+	};
+
+	const onTimeKeyUp = (e: any, v: string): void => {
+		// Only save once the mask is completely filled, otherwise every keystroke
+		// would write a half typed time to the record
+		if (isReadonly || String(v || '').match(/_/)) {
+			return;
+		};
+
+		applyTime(v);
+	};
+
+	const onTimeBlur = (e: any, v: string): void => {
+		if (isReadonly) {
+			return;
+		};
+
+		if (U.Date.parseTime(v) === null) {
+			timeRef.current?.setValue(getTimeValue());
+			return;
+		};
+
+		applyTime(v);
+	};
+
 	const onClick = (item: CalendarDay): void => {
 		if (!item) {
 			return;
 		};
 
-		const ts = U.Date.timestamp(item.y, item.m, item.d);
+		const day = U.Date.timestamp(item.y, item.m, item.d);
+
+		// With time editing enabled a day click must keep the time part instead of
+		// resetting the value to midnight
+		const ts = (showTime && value) ? U.Date.mergeTimeWithDate(day, value) : day;
 
 		if (onDayClick) {
 			const shouldContinue = onDayClick(item, ts);
@@ -370,6 +438,28 @@ const CalendarSelect = forwardRef<CalendarSelectRefProps, Props>((props, ref) =>
 					);
 				})}
 			</div>
+
+			{showTime ? (
+				<div className="time">
+					<div className="label">{translate('commonTime')}</div>
+					<Input
+						ref={timeRef}
+						id="calendar-time"
+						value={getTimeValue()}
+						placeholder={TIME_PLACEHOLDER}
+						maskOptions={{
+							mask: TIME_MASK,
+							separator: ':',
+							hourFormat: 24,
+							alias: 'datetime',
+						}}
+						readonly={isReadonly}
+						onKeyDown={onTimeKeyDown}
+						onKeyUp={onTimeKeyUp}
+						onBlur={onTimeBlur}
+					/>
+				</div>
+			) : ''}
 
 			{(showFooter ?? !isReadonly) ? (
 				<div className="foot">

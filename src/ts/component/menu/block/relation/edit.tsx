@@ -36,6 +36,8 @@ const MenuBlockRelationEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 
 		return () => {
+			isUnmountedRef.current = true;
+
 			menuClose();
 			unbind();
 		};
@@ -49,6 +51,7 @@ const MenuBlockRelationEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	});
 
 	const keydownHandler = useRef(null);
+	const isUnmountedRef = useRef(false);
 
 	const rebind = () => {
 		unbind();
@@ -148,6 +151,12 @@ const MenuBlockRelationEdit = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDown = (e: any) => {
+		// A leaked window listener must never act for a dead menu — bail before
+		// any preventDefault or it silently eats the key app-wide until restart
+		if (isUnmountedRef.current) {
+			return;
+		};
+
 		keyboard.shortcut('enter', e, () => onSubmit(e));
 	};
 

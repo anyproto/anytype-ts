@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import { Icon, IconObject, ObjectName } from 'Component';
 import CommentForm from './form';
+import { CommentActivityAttached } from './activity';
 import Attachment from 'Component/block/chat/attachment';
 import Reaction from 'Component/block/chat/message/reaction';
 import { renderParts } from './render';
@@ -21,12 +22,15 @@ const CommentReply = (props: Props) => {
 	const { rootId, targetId, parentId, message, readonly, onReply } = props;
 	const { space } = S.Common;
 	const { account } = S.Auth;
-	const [ isEditing, setIsEditing ] = useState(false);
+	const [ editState, setIsEditing ] = useState(false);
 	const contentWrapRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const attachmentRefs = useRef<any[]>([]);
 	const emojiRootsRef = useRef<Map<HTMLElement, Root>>(new Map());
-	const { id, creator, createdAt, modifiedAt, reactions } = message;
+	const { id, creator, createdAt, modifiedAt, reactions, isDeleted } = message;
+	// Read from the model on every render: a menu opened before the comment was deleted
+	// elsewhere still calls onEdit with the closure of that render
+	const isEditing = editState && !isDeleted;
 	const author = U.Space.getParticipant(U.Space.getParticipantId(space, creator));
 	const isSelf = creator == account.id;
 	const parts = message.content?.parts || [];
@@ -203,9 +207,10 @@ const CommentReply = (props: Props) => {
 				offsetY: 4,
 				data: {
 					options: [
-						{ id: 'quoteInComment', iconParam: { name: 'menu/action/quote' }, name: translate('commonQuoteInComment') },
+						// Quoting opens a reply in this thread, which a deleted post closes
+						onReply ? { id: 'quoteInComment', iconParam: { name: 'menu/action/quote' }, name: translate('commonQuoteInComment') } : null,
 						{ id: 'copyText', iconParam: { name: 'menu/action/copy' }, name: translate('commonCopyText') },
-					],
+					].filter(it => it),
 					onSelect: (_e: any, item: any) => {
 						if (item.id == 'quoteInComment') {
 							const part: I.CommentContentPart = {
@@ -233,7 +238,7 @@ const CommentReply = (props: Props) => {
 
 		node.addEventListener('contextmenu', onContextMenu);
 		return () => node.removeEventListener('contextmenu', onContextMenu);
-	}, [ parentId, id ]);
+	}, [ parentId, id, onReply ]);
 
 	const onEdit = useCallback(() => {
 		setIsEditing(true);
@@ -269,7 +274,7 @@ const CommentReply = (props: Props) => {
 
 			setIsEditing(false);
 
-			S.Comment.updateReply(parentId, {
+			S.Comment.update(subId, {
 				id,
 				modifiedAt: U.Date.now(),
 				content: {
@@ -281,7 +286,7 @@ const CommentReply = (props: Props) => {
 				attachments: newAttachments,
 			} as any);
 		});
-	}, [ targetId, id, parentId, subId, message.reactions ]);
+	}, [ targetId, id, subId, message.reactions ]);
 
 	const onDelete = useCallback(() => {
 		S.Popup.open('confirm', {
@@ -296,21 +301,13 @@ const CommentReply = (props: Props) => {
 							return;
 						};
 
-						S.Comment.deleteReply(parentId, id);
-
-						const subId = U.Comment.getSubId(I.CommentTargetType.Object, targetId);
-						const post = S.Comment.getPostById(subId, parentId);
-						if (post) {
-							S.Comment.updatePost(subId, {
-								id: parentId,
-								replyCount: Math.max(0, post.replyCount - 1),
-							} as any);
-						};
+						// Heart keeps a deleted discussion comment as a tombstone; its Event.Chat.Update confirms this
+						S.Comment.markDeleted(subId, id);
 					});
 				},
 			},
 		});
-	}, [ targetId, id, parentId ]);
+	}, [ targetId, id, subId ]);
 
 	const onCopyMessageLink = useCallback(() => {
 		const object = S.Detail.get(rootId, rootId);
@@ -457,7 +454,7 @@ const CommentReply = (props: Props) => {
 	}, [ buildMenuOptions, onMenuSelect, setHover ]);
 
 	const onContextMenu = useCallback((e: React.MouseEvent) => {
-		if (readonly || isEditing) {
+		if (readonly || isEditing || isDeleted) {
 			return;
 		};
 
@@ -483,7 +480,7 @@ const CommentReply = (props: Props) => {
 				onSelect: (e: any, item: any) => onMenuSelect(item, anchor, url),
 			},
 		});
-	}, [ readonly, isEditing, buildMenuOptions, onMenuSelect, setHover ]);
+	}, [ readonly, isEditing, isDeleted, buildMenuOptions, onMenuSelect, setHover ]);
 
 	const onAttachmentPreview = useCallback((preview: any) => {
 		const data: any = { ...preview };
@@ -539,6 +536,10 @@ const CommentReply = (props: Props) => {
 	};
 
 	const renderContent = () => {
+		if (isDeleted) {
+			return <div className="content isDeleted">{translate('commentDeleted')}</div>;
+		};
+
 		if (isEditing) {
 			return (
 				<CommentForm
@@ -580,7 +581,7 @@ const CommentReply = (props: Props) => {
 	};
 
 	const renderHoverActions = () => {
-		if (isEditing || readonly) {
+		if (isEditing || readonly || isDeleted) {
 			return null;
 		};
 
@@ -597,7 +598,7 @@ const CommentReply = (props: Props) => {
 		);
 	};
 
-	const cn = [ 'commentReply', (isEditing ? 'isEditing' : '') ];
+	const cn = [ 'commentReply', (isEditing ? 'isEditing' : ''), (isDeleted ? 'isDeleted' : '') ];
 
 	return (
 		<div className={cn.join(' ')} data-message-id={id}>
@@ -622,6 +623,8 @@ const CommentReply = (props: Props) => {
 						</div>
 					</div>
 				) : null}
+
+				{!isEditing ? <CommentActivityAttached discussionId={targetId} subId={subId} messageId={id} /> : null}
 
 				{renderContent()}
 				{renderReactions()}

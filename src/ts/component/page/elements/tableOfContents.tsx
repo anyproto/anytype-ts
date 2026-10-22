@@ -19,6 +19,9 @@ const TableOfContents = forwardRef<TableOfContentsRefProps, I.BlockComponent>((p
 	const frameResize = useRef(0);
 	const frameScroll = useRef(0);
 	const listRef = useRef([]);
+	const pinRef = useRef(null);
+	const setActiveRef = useRef(null);
+	const ns = U.Dom.getEventNamespace(isPopup);
 	const rightSidebar = S.Common.getRightSidebarState(isPopup);
 	const isOpen = rightSidebar.page == 'object/tableOfContents';
 
@@ -56,6 +59,17 @@ const TableOfContents = forwardRef<TableOfContentsRefProps, I.BlockComponent>((p
 	const list = useMemo(() => getList(), [ tree ]);
 	listRef.current = list;
 
+	// Set from Table of contents itself: the clicked header stays current until the page is scrolled
+	// away from it, because at the bottom of the page several headers share the same scroll position
+	const setActive = (id: string) => {
+		const container = U.Dom.getScrollContainer(isPopup);
+
+		pinRef.current = container ? { id, top: container.scrollTop } : null;
+		setBlock(id);
+	};
+
+	setActiveRef.current = setActive;
+
 	const onScroll = () => {
 		raf.cancel(frameScroll.current);
 		frameScroll.current = raf(() => {
@@ -66,29 +80,31 @@ const TableOfContents = forwardRef<TableOfContentsRefProps, I.BlockComponent>((p
 
 			const top = container.scrollTop;
 			const co = container.getBoundingClientRect().top;
+			const pin = pinRef.current;
+
+			if (pin) {
+				if (Math.abs(top - pin.top) <= 1) {
+					setBlock(pin.id);
+					return;
+				};
+
+				pinRef.current = null;
+			};
+
 			const currentList = listRef.current;
+			const headers = [];
 
-			let blockId = '';
-
-			for (let i = 0; i < currentList.length; ++i) {
-				const block = currentList[i];
+			for (const block of currentList) {
 				const el = U.Dom.get(`block-${block.id}`);
 
-				if (!el) {
-					continue;
-				};
-
-				const elTop = el.getBoundingClientRect().top - co;
-
-				if (elTop <= 0) {
-					blockId = block.id;
-				} else {
-					if (!blockId) {
-						blockId = block.id;
-					};
-					break;
+				if (el) {
+					headers.push({ id: block.id, top: el.getBoundingClientRect().top - co });
 				};
 			};
+
+			const index = U.Dom.getActiveHeaderIndex(headers.map(it => it.top), U.Dom.getHeaderScrollOffset());
+
+			let blockId = (index >= 0) ? headers[index].id : '';
 
 			if ((top >= U.Dom.getMaxScrollHeight(isPopup)) && currentList.length) {
 				blockId = currentList[currentList.length - 1].id;
@@ -153,7 +169,11 @@ const TableOfContents = forwardRef<TableOfContentsRefProps, I.BlockComponent>((p
 	useEffect(() => {
 		resize();
 
+		S.Common.refSet(`tableOfContents${ns}`, { setActive: (id: string) => setActiveRef.current?.(id) });
+
 		return () => {
+			S.Common.refDelete(`tableOfContents${ns}`);
+
 			raf.cancel(frameResize.current);
 			raf.cancel(frameScroll.current);
 		};

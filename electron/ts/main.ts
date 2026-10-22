@@ -2,13 +2,14 @@
 
 declare global {
 	var serverAddress: string;
+	var localApiSecret: string;
 }
 
 // Suppress EPIPE errors when parent pipe closes during shutdown
 process.stdout?.on?.('error', () => {});
 process.stderr?.on?.('error', () => {});
 
-import { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog, contentTracing } from 'electron';
+import { app, BrowserWindow, session, nativeTheme, ipcMain, powerMonitor, dialog, contentTracing, globalShortcut } from 'electron';
 import { is, fixPathForAsarUnpack } from 'electron-util';
 import path from 'path';
 import storage from 'electron-json-storage';
@@ -22,6 +23,9 @@ import UpdateManager from './update';
 import MenuManager from './menu';
 import WindowManager from './window';
 import Server from './server';
+import DownloadManager from './download';
+import { registerChatStatus } from './chatStatus';
+import { powerState, parseDropList, PowerEvent } from './lib/powerState';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
@@ -29,6 +33,7 @@ import { AppWindow } from './types';
 const protocol = 'anytype';
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
 const store = getSafeStorage();
+registerChatStatus();
 
 // gRPC DevTools extension ID
 const GRPC_DEVTOOLS_ID = 'fohdnlaeecihjiendkfhifhlgldpeopm';
@@ -45,7 +50,6 @@ const csp: string[] = [];
 let deeplinkingUrl: string = '';
 let waitLibraryPromise: Promise<any> | null = null;
 let mainWindow: AppWindow | null = null;
-let lastPowerEvent: string = 'suspend';
 let isReady: boolean = false;
 
 for (const i in Cors) {
@@ -89,35 +93,42 @@ if (!is.macos && (process.argv.length >= 2)) {
 	deeplinkingUrl = process.argv.find(arg => arg.startsWith(`${protocol}://`));
 };
 
-powerMonitor.on('suspend', () => {
-	if (lastPowerEvent == 'suspend') {
+powerState.setDropList(parseDropList(process.env, process.argv, app.isPackaged));
+
+if (powerState.getDropList().length) {
+	Util.log('warn', '[PowerMonitor] debug drop hook active, dropping:', powerState.getDropList().join(','));
+};
+
+/**
+ * Forwards every power event to the first main window (it reports AppSetDeviceState to the middleware).
+ * The latest state is kept so renderers replay it after a reload and after account init.
+ */
+const onPowerEvent = (event: PowerEvent) => {
+	const snapshot = powerState.onEvent(event);
+
+	if (!snapshot) {
+		Util.log('warn', `[PowerMonitor] ${event} dropped by the debug hook`);
 		return;
 	};
 
-	const firstWindow = WindowManager.getFirstWindow();
-	if (firstWindow) {
-		Util.send(firstWindow, 'power-event', 'suspend');
-		lastPowerEvent = 'suspend';
-	};
-});
+	// The quick search panel and approval windows never report device state
+	const target = WindowManager.getFirstMainWindow();
 
-powerMonitor.on('resume', () => {
-	if (lastPowerEvent == 'resume') {
+	Util.log('info', `[PowerMonitor] ${event} seq: ${snapshot.seq} sent: ${Boolean(target)}`);
+
+	if (target) {
+		Util.send(target, 'power-event', event, snapshot.seq);
+	};
+
+	if (event != 'resume') {
 		return;
-	};
-
-	lastPowerEvent = 'resume';
-	Util.log('info', '[PowerMonitor] resume');
-
-	// Notify middleware immediately so it can transition to foreground state
-	const firstWindow = WindowManager.getFirstWindow();
-	if (firstWindow) {
-		Util.send(firstWindow, 'power-event', 'resume');
 	};
 
 	// Delay reload to give GPU process time to recover from suspend.
 	// Directly reload all tabs — route is preserved in view.data from initial load.
 	setTimeout(() => {
+		Util.log('info', '[PowerMonitor] reloading tabs after resume, seq:', snapshot.seq);
+
 		for (const win of WindowManager.list) {
 			if (!win || win.isDestroyed() || !win.views) {
 				continue;
@@ -130,11 +141,17 @@ powerMonitor.on('resume', () => {
 			};
 		};
 	}, 1500);
-});
+};
 
-ipcMain.on('storeGet', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = store.get(key); });
-ipcMain.on('storeSet', (e: Electron.IpcMainEvent, key: string, value: any) => { e.returnValue = store.set(key, value); });
-ipcMain.on('storeDelete', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = store.delete(key); });
+powerMonitor.on('suspend', () => onPowerEvent('suspend'));
+powerMonitor.on('resume', () => onPowerEvent('resume'));
+
+// Sync IPC entry points are only served to pages from the app bundle
+const isTrustedSender = (e: Electron.IpcMainEvent): boolean => Util.isTrustedUrl(e.senderFrame?.url);
+
+ipcMain.on('storeGet', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = isTrustedSender(e) ? store.get(key) : undefined; });
+ipcMain.on('storeSet', (e: Electron.IpcMainEvent, key: string, value: any) => { e.returnValue = isTrustedSender(e) ? store.set(key, value) : undefined; });
+ipcMain.on('storeDelete', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = isTrustedSender(e) ? store.delete(key) : undefined; });
 ipcMain.on('getTheme', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getTheme(); });
 ipcMain.on('getBgColor', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
 ipcMain.on('getConfig', (e: Electron.IpcMainEvent) => { e.returnValue = ConfigManager.config || {}; });
@@ -231,6 +248,15 @@ function waitForLibraryAndCreateWindows () {
 		waitLibraryPromise = Server.start(binPath, currentPath);
 	};
 
+	// Read through to the Server rather than snapshotted: start() mints a fresh
+	// secret per launch, so a snapshot taken here could hand a renderer a value
+	// the running helper never registered. Published before the first window
+	// exists; empty for an externally started helper, which has no parent pipe
+	Object.defineProperty(global, 'localApiSecret', {
+		configurable: true,
+		get: () => Server.getSecret(),
+	});
+
 	Util.mkDir(Util.logPath());
 
 	// Create windows immediately so renderer boot (process spawn, bundle
@@ -252,7 +278,7 @@ nativeTheme.on('updated', () => {
 	const isDark = Util.isDarkTheme();
 
 	MenuManager.updateTrayIcon();
-	Api.setBackground(null, Util.getTheme());
+	Api.setBackground(null);
 
 	WindowManager.sendToAll('native-theme', isDark);
 	WindowManager.sendToAllTabs('native-theme', isDark);
@@ -298,7 +324,7 @@ function createWindow () {
 		const onClose = () => {
 			const { config } = ConfigManager;
 
-			if (config.hideTray && (WindowManager.list.size <= 1)) {
+			if (config.hideTray && (WindowManager.mainWindowCount() <= 1)) {
 				Api.exit(mainWindow, '', false, false);
 			} else {
 				mainWindow.hide();
@@ -321,12 +347,33 @@ function createWindow () {
 	MenuManager.initMenu();
 	MenuManager.initTray();
 	MenuManager.initDock();
+	MenuManager.initGlobalShortcuts();
 
 	installNativeMessagingHost();
 	Util.registerLinuxProtocolHandler();
 
+	// The approval window has no session and no Api id, so it reports the user's decision directly
+	ipcMain.on('linkApprovalDecision', (e: Electron.IpcMainEvent, param: any) => {
+		if (!isTrustedSender(e)) {
+			Util.log('error', '[linkApprovalDecision] untrusted sender:', e.senderFrame?.url);
+			return;
+		};
+
+		Api.linkApprovalDecision(param);
+	});
+
+	ipcMain.on('linkApprovalReady', (e: Electron.IpcMainEvent) => {
+		WindowManager.sendApprovalPayloadTo(e.sender.id);
+	});
+
 	//ipcMain.removeHandler('Api');
 	ipcMain.handle('Api', (e: Electron.IpcMainInvokeEvent, id: number, cmd: string, args: any[]) => {
+		// Only pages served from the app bundle may call into the main process
+		if (!Util.isTrustedUrl(e.senderFrame?.url)) {
+			Util.log('error', '[Api] untrusted sender:', cmd, e.senderFrame?.url);
+			return;
+		};
+
 		const win = BrowserWindow.fromId(id) as AppWindow | null;
 
 		if (!win) {
@@ -352,6 +399,29 @@ function createWindow () {
 		};
 	});
 };
+
+// The preload bridge (window.Electron.Api) stays attached across navigations, so a page
+// that was redirected away from the app bundle (e.g. via injected <meta http-equiv="refresh">)
+// would inherit full access to the main process. Never let a webContents leave the app bundle.
+app.on('web-contents-created', (e: Electron.Event, contents: Electron.WebContents) => {
+	const guard = (event: Electron.Event, url: string) => {
+		if (url.startsWith('devtools:') || Util.isTrustedUrl(url)) {
+			return;
+		};
+
+		event.preventDefault();
+		Util.log('error', '[Navigation] blocked:', url);
+	};
+
+	contents.on('will-navigate', (event: Electron.Event, url: string) => guard(event, url));
+
+	// Embeds (subframes) legitimately follow redirects, only the privileged main frame is restricted
+	contents.on('will-redirect', (event: Electron.Event, url: string, isInPlace: boolean, isMainFrame: boolean) => {
+		if (isMainFrame) {
+			guard(event, url);
+		};
+	});
+});
 
 app.on('ready', async () => {
 	await maybeStartStartupTrace();
@@ -405,6 +475,10 @@ app.on('ready', async () => {
 		};
 	};
 
+	// Opened files keep their copy under the temp scope so a second open costs
+	// nothing. Sweeping the stale ones is the only maintenance that scope needs
+	DownloadManager.prune();
+
 	ConfigManager.init(waitForLibraryAndCreateWindows);
 });
 
@@ -436,6 +510,10 @@ app.on('second-instance', (event, argv) => {
 	if (is.macos) {
 		app.focus({ steal: true });
 	};
+});
+
+app.on('will-quit', () => {
+	globalShortcut.unregisterAll();
 });
 
 app.on('before-quit', (e) => {

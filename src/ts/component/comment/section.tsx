@@ -3,12 +3,14 @@ import raf from 'raf';
 import { Icon } from 'Component';
 import CommentList from './list';
 import CommentForm from './form';
+import CommentActivity from './activity';
 import * as I from 'Interface';
+import { presence } from 'Lib/presence';
+import { chatStatus } from 'Lib/chatStatus';
 
 const HIGHLIGHT_DURATION = 2000;
 
 const POST_LIMIT = 20;
-const REPLY_LIMIT = 10;
 const SCROLL_THRESHOLD = 16;
 
 const CommentSection = (props: I.CommentSectionProps) => {
@@ -35,6 +37,10 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	const isTypingRef = useRef(false);
 	const scrolledItems = useRef<Set<string>>(new Set());
 	const readVisibleMessagesRef = useRef<() => void>(() => {});
+	// Stable claimant token for the active-read claim (see S.Chat.setActiveReadChat):
+	// while the discussion tail is read in place here, its unread counters are excluded
+	// from aggregates instead of blinking for the read round-trip (JS-9298).
+	const activeReadToken = useRef(`commentSection-${Math.random().toString(36).slice(2, 10)}`).current;
 
 	const posts = S.Comment.getPosts(subId);
 	const postCount = posts.length;
@@ -63,19 +69,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 	}, [ updateSocialVisibility ]);
 
 	const findMessage = useCallback((sid: string, id: string): I.CommentMessage | null => {
-		const post = S.Comment.getPostById(sid, id);
-		if (post) {
-			return post;
-		};
-
-		for (const p of S.Comment.getPosts(sid)) {
-			const reply = S.Comment.getReplies(p.id).find(it => it.id == id);
-			if (reply) {
-				return reply;
-			};
-		};
-
-		return null;
+		return S.Comment.getById(sid, id) || null;
 	}, []);
 
 	const getVisibleMessages = useCallback((): I.CommentMessage[] => {
@@ -109,7 +103,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 	const readMessage = useCallback((id: string, orderId: string, lastStateId: string, type: I.ChatReadType) => {
 		const did = discussionIdRef.current;
-		if (!did) {
+		if (!did || !orderId) {
 			return;
 		};
 
@@ -136,25 +130,52 @@ const CommentSection = (props: I.CommentSectionProps) => {
 			return;
 		};
 
+		// Every seen message was read by itself in readVisibleMessages. No orderId range read here:
+		// threads are laid out by post, so a range between seen messages also spans unseen replies
+		// of other threads.
 		const sid = U.Comment.getSubId(targetType, did);
 		const ids: string[] = [ ...scrolledItems.current ];
-		const first = findMessage(sid, ids[0]);
-		const last = findMessage(sid, ids[ids.length - 1]);
-		const chatPreviewSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, S.Common.space, did);
-		const { lastStateId } = S.Chat.getState(chatPreviewSubId);
 
-		if (S.Common.windowIsFocused && first && last) {
-			C.ChatReadMessages(did, first.orderId, last.orderId, lastStateId, I.ChatReadType.Message);
-			C.ChatReadMessages(did, first.orderId, last.orderId, lastStateId, I.ChatReadType.Mention);
-
+		if (S.Common.windowIsFocused) {
 			S.Comment.setReadMessageStatus(sid, ids, true);
 			S.Comment.setReadMentionStatus(sid, ids, true);
 		};
 
 		scrolledItems.current.clear();
-	}, [ targetType, findMessage ]);
+	}, [ targetType ]);
+
+	// Claim / release the active-read flag for the discussion: with the window focused and
+	// the discussion's live tail (bottom-most rendered message) in the viewport, arriving
+	// comments are read in place, so counter aggregates skip this discussion instead of
+	// blinking for the read-confirmation round-trip (JS-9298) — mirrors the claim BlockChat
+	// holds for full chats. Presentational only, counters stay server-authoritative.
+	const updateActiveReadClaim = useCallback(() => {
+		const did = discussionIdRef.current;
+		const node = sectionRef.current;
+		const items = node ? U.Dom.selectAll('[data-message-id]', node) : [];
+		const last = items.length ? items[items.length - 1] : null;
+
+		let tailVisible = false;
+		if (last) {
+			const container = U.Dom.getScrollContainer(isPopup);
+			const containerRect = container ? container.getBoundingClientRect() : null;
+			const top = containerRect ? containerRect.top : 0;
+			const bottom = containerRect ? containerRect.bottom : window.innerHeight;
+			const rect = last.getBoundingClientRect();
+
+			tailVisible = (rect.bottom >= top) && (rect.top <= bottom);
+		};
+
+		if (did && tailVisible && S.Common.windowIsFocused && isSectionVisibleRef.current) {
+			S.Chat.setActiveReadChat(activeReadToken, S.Common.space, did);
+		} else {
+			S.Chat.clearActiveReadChat(activeReadToken);
+		};
+	}, [ isPopup ]);
 
 	const readVisibleMessages = useCallback(() => {
+		updateActiveReadClaim();
+
 		if (!discussionIdRef.current || !S.Common.windowIsFocused) {
 			return;
 		};
@@ -181,7 +202,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 		window.clearTimeout(readStopTimerRef.current);
 		readStopTimerRef.current = window.setTimeout(() => onReadStop(), 300);
-	}, [ getVisibleMessages, readMessage, onReadStop ]);
+	}, [ getVisibleMessages, readMessage, onReadStop, updateActiveReadClaim ]);
 
 	readVisibleMessagesRef.current = readVisibleMessages;
 
@@ -197,6 +218,23 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		const id = raf(() => readVisibleMessages());
 		return () => raf.cancel(id);
 	}, [ postCount, readVisibleMessages ]);
+
+	// Typing and agent activity over pubsub, while the discussion is shown
+	useEffect(() => {
+		if (!isOpen || !discussionId) {
+			return;
+		};
+
+		const { space } = S.Common;
+		const release = chatStatus.retain(space, discussionId, 'discussion');
+
+		presence.subscribe(space, discussionId);
+
+		return () => {
+			release();
+			presence.unsubscribe(discussionId);
+		};
+	}, [ isOpen, discussionId ]);
 
 	useEffect(() => {
 		if (discussionId && (subscribedId.current != discussionId)) {
@@ -299,6 +337,9 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 			if (isSectionVisibleRef.current) {
 				readVisibleMessages();
+			} else {
+				// Scrolled out of view — the discussion is no longer being read in place.
+				S.Chat.clearActiveReadChat(activeReadToken);
 			};
 		}, { threshold: 0 });
 
@@ -353,6 +394,32 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		};
 	}, [ onMessageAdd ]);
 
+	// The active-read claim only holds while the user can actually see the discussion
+	// tail — release it on blur so unread counters surface again; focus re-evaluates the
+	// claim (and marks the visible messages read) via readVisibleMessages.
+	useEffect(() => {
+		const onFocus = () => readVisibleMessages();
+		const onBlur = () => S.Chat.clearActiveReadChat(activeReadToken);
+
+		U.Dom.addEvents(window, [
+			['focus', onFocus],
+			['blur', onBlur],
+		]);
+
+		return () => {
+			U.Dom.removeEvents(window, [
+				['focus', onFocus],
+				['blur', onBlur],
+			]);
+		};
+	}, [ readVisibleMessages ]);
+
+	// A closed / unmounted section (or one switching discussions) must not keep the old
+	// discussion's badge suppressed — the next readVisibleMessages run re-claims if due.
+	useEffect(() => {
+		return () => S.Chat.clearActiveReadChat(activeReadToken);
+	}, [ discussionId ]);
+
 
 	const scrollToMessage = useCallback((msgId: string) => {
 		window.setTimeout(() => {
@@ -384,6 +451,8 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		}, 100);
 	}, [ isPopup, resize ]);
 
+	// Runs after the whole discussion is loaded, so the linked message is either in the store or
+	// not shown (a reply whose thread is gone)
 	const handleMessageId = useCallback((discId: string) => {
 		if (!messageId || messageIdHandled.current) {
 			return;
@@ -391,192 +460,62 @@ const CommentSection = (props: I.CommentSectionProps) => {
 
 		messageIdHandled.current = true;
 
-		C.ChatGetMessagesByIds(discId, [ messageId ], (message: any) => {
-			if (message.error.code || !message.messages?.length) {
-				return;
-			};
-
-			const msg = message.messages[0];
-			const sid = U.Comment.getSubId(targetType, discId);
-			const isReply = !!msg.replyToMessageId;
-
-			if (isReply) {
-				// For a reply, check if the parent post is loaded
-				const parentId = msg.replyToMessageId;
-				const posts = S.Comment.getPosts(sid);
-				const parentLoaded = posts.find(it => it.id == parentId);
-
-				if (!parentLoaded) {
-					// Load the parent post first
-					C.ChatGetMessagesByIds(discId, [ parentId ], (parentMessage: any) => {
-						if (parentMessage.error.code || !parentMessage.messages?.length) {
-							return;
-						};
-
-						const parentPost = parentMessage.messages[0];
-
-						// Load posts around the parent
-						loadPostsAroundMessage(discId, sid, parentPost, () => {
-							// Load replies around the target reply
-							loadRepliesAroundMessage(discId, parentId, msg, () => {
-								scrollToMessage(messageId);
-							});
-						});
-					});
-				} else {
-					// Parent is loaded, load replies around the target
-					loadRepliesAroundMessage(discId, parentId, msg, () => {
-						scrollToMessage(messageId);
-					});
-				};
-			} else {
-				// It's a top-level post — check if it's already loaded
-				const posts = S.Comment.getPosts(sid);
-				const postLoaded = posts.find(it => it.id == msg.id);
-
-				if (postLoaded) {
-					scrollToMessage(messageId);
-				} else {
-					loadPostsAroundMessage(discId, sid, msg, () => {
-						scrollToMessage(messageId);
-					});
-				};
-			};
-		});
+		if (S.Comment.getById(U.Comment.getSubId(targetType, discId), messageId)) {
+			scrollToMessage(messageId);
+		};
 	}, [ messageId, targetType, scrollToMessage ]);
 
-	const loadPostsAroundMessage = useCallback((discId: string, sid: string, msg: any, callBack?: () => void) => {
-		// Load posts before the target (older)
-		C.ChatGetMessages(discId, msg.orderId, '', POST_LIMIT, false, (beforeMsg: any) => {
-			if (!beforeMsg.error.code) {
-				const beforePosts = (beforeMsg.messages || [])
-					.filter((it: any) => !it.replyToMessageId)
-					.map((it: any) => ({
-						...it,
-						content: { ...it.content, parts: U.Comment.blocksToParts(it.blocks, it.content) },
-						replyCount: 0,
-					}));
-
-				loadDeps(beforePosts, () => {
-					S.Comment.prependPosts(sid, beforePosts);
-					S.Comment.setHasMorePosts(sid, beforePosts.length >= POST_LIMIT);
-					callBack?.();
-				});
-			} else {
-				callBack?.();
-			};
-		});
-	}, [ loadDeps ]);
-
-	const loadRepliesAroundMessage = useCallback((discId: string, parentId: string, msg: any, callBack?: () => void) => {
-		// Load replies before the target (older)
-		C.ChatGetMessages(discId, msg.orderId, '', REPLY_LIMIT, false, (beforeMsg: any) => {
-			const beforeReplies = (!beforeMsg.error.code ? beforeMsg.messages || [] : [])
-				.filter((it: any) => it.replyToMessageId == parentId)
-				.map((it: any) => ({
-					...it,
-					content: { ...it.content, parts: U.Comment.blocksToParts(it.blocks, it.content) },
-					replyCount: 0,
-				}));
-
-			// Load replies after the target (newer)
-			C.ChatGetMessages(discId, '', msg.orderId, REPLY_LIMIT, false, (afterMsg: any) => {
-				const afterReplies = (!afterMsg.error.code ? afterMsg.messages || [] : [])
-					.filter((it: any) => it.replyToMessageId == parentId)
-					.map((it: any) => ({
-						...it,
-						content: { ...it.content, parts: U.Comment.blocksToParts(it.blocks, it.content) },
-						replyCount: 0,
-					}));
-
-				// Combine: before + target + after
-				const targetReply = {
-					...msg,
-					content: { ...msg.content, parts: U.Comment.blocksToParts(msg.blocks, msg.content) },
-					replyCount: 0,
-				};
-
-				const allReplies = [ ...beforeReplies, targetReply, ...afterReplies ];
-
-				loadDeps(allReplies, () => {
-					S.Comment.setReplies(parentId, allReplies);
-					S.Comment.setHasMoreReplies(parentId, afterReplies.length >= REPLY_LIMIT);
-					S.Comment.setHasOlderReplies(parentId, beforeReplies.length >= REPLY_LIMIT);
-					callBack?.();
-				});
-			});
-		});
-	}, [ loadDeps ]);
-
-	const buildTree = useCallback((messages: any[], sid: string, callBack?: () => void) => {
-		const posts = messages.filter((it: any) => !it.replyToMessageId);
-		const replies = messages.filter((it: any) => it.replyToMessageId);
-
-		const replyCountMap: Record<string, number> = {};
-		const replyGroups: Record<string, any[]> = {};
-
-		for (const reply of replies) {
-			const pid = reply.replyToMessageId;
-
-			replyCountMap[pid] = (replyCountMap[pid] || 0) + 1;
-
-			if (!replyGroups[pid]) {
-				replyGroups[pid] = [];
-			};
-			replyGroups[pid].push(reply);
-		};
-
-		for (const post of posts) {
-			post.replyCount = replyCountMap[post.id] || 0;
-		};
-
-		loadDeps(messages, () => {
-			S.Comment.setPosts(sid, posts);
-			S.Comment.setHasMorePosts(sid, false);
-
-			for (const [ parentId, groupReplies ] of Object.entries(replyGroups)) {
-				S.Comment.setReplies(parentId, groupReplies);
-			};
-
-			callBack?.();
-		});
-	}, [ loadDeps ]);
-
-	const fetchAllMessages = useCallback((discId: string, sid: string, callBack?: () => void) => {
+	// Loads the whole discussion: replies to replies are placed by following their parents, so a
+	// thread can only be laid out with every message at hand
+	const fetchAllMessages = useCallback((discId: string, sid: string, token: number, callBack?: () => void) => {
 		const PAGE_SIZE = 100;
+		const all: I.CommentMessage[] = [];
 
-		const fetchPage = (afterOrderId: string, accumulated: any[]) => {
+		// The store drops a load for a discussion closed or reopened meanwhile
+		const done = () => {
+			loadDeps(all, () => {
+				S.Comment.load(sid, all, token);
+				callBack?.();
+			});
+		};
+
+		const fetchPage = (afterOrderId: string) => {
 			C.ChatGetMessages(discId, '', afterOrderId, PAGE_SIZE, false, (message: any) => {
 				if (message.error.code) {
-					buildTree(accumulated, sid, callBack);
+					done();
 					return;
 				};
 
-				const batch = (message.messages || []).map((it: any) => ({
-					...it,
-					content: {
-						...it.content,
-						parts: U.Comment.blocksToParts(it.blocks, it.content),
-					},
-				}));
+				const batch = message.messages || [];
 
-				const all = [ ...accumulated, ...batch ];
+				for (const it of batch) {
+					all.push({
+						...it,
+						content: {
+							...it.content,
+							parts: U.Comment.blocksToParts(it.blocks, it.content),
+						},
+					});
+				};
 
 				if (batch.length >= PAGE_SIZE) {
-					fetchPage(batch[batch.length - 1].orderId, all);
+					fetchPage(batch[batch.length - 1].orderId);
 				} else {
-					buildTree(all, sid, callBack);
+					done();
 				};
 			});
 		};
 
-		fetchPage('', []);
-	}, [ loadDeps, buildTree ]);
+		fetchPage('');
+	}, [ loadDeps ]);
 
 	const subscribe = useCallback((id: string) => {
 		const sid = U.Comment.getSubId(targetType, id);
 
 		subscribedId.current = id;
+
+		// Opened before subscribing, so the events that follow are kept while the pages load
+		const token = S.Comment.startLoad(sid);
 
 		C.ChatSubscribeLastMessages(id, POST_LIMIT, sid, (message: any) => {
 			if (message.error.code) {
@@ -590,7 +529,13 @@ const CommentSection = (props: I.CommentSectionProps) => {
 				S.Chat.setState(chatPreviewSubId, message.state);
 			};
 
-			fetchAllMessages(id, sid, () => {
+			fetchAllMessages(id, sid, token, () => {
+				// Closed or switched to another discussion meanwhile. A section still subscribed
+				// finishes even when another section on the same object loaded it last.
+				if (subscribedId.current != id) {
+					return;
+				};
+
 				isLoaded.current = true;
 				updateSocialVisibility();
 				handleMessageId(id);
@@ -658,45 +603,6 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		window.addEventListener(eventName, onQuote);
 		return () => window.removeEventListener(eventName, onQuote);
 	}, [ rootId, scrollToBottom, updateSocialVisibility ]);
-
-	const onLoadMore = useCallback((callBack?: () => void) => {
-		if (!discussionId) {
-			callBack?.();
-			return;
-		};
-
-		const posts = S.Comment.getPosts(subId);
-		if (!posts.length) {
-			callBack?.();
-			return;
-		};
-
-		const firstPost = posts[0];
-
-		C.ChatGetMessages(discussionId, firstPost.orderId, '', POST_LIMIT, false, (message: any) => {
-			if (message.error.code) {
-				callBack?.();
-				return;
-			};
-
-			const messages = (message.messages || [])
-				.filter((it: any) => !it.replyToMessageId)
-				.map((it: any) => ({
-					...it,
-					content: {
-						...it.content,
-						parts: U.Comment.blocksToParts(it.blocks, it.content),
-					},
-					replyCount: 0,
-				}));
-
-			loadDeps(messages, () => {
-				S.Comment.prependPosts(subId, messages);
-				S.Comment.setHasMorePosts(subId, messages.length >= POST_LIMIT);
-				callBack?.();
-			});
-		});
-	}, [ discussionId, subId, loadDeps ]);
 
 	const ensureDiscussion = useCallback((callBack: (id: string) => void) => {
 		if (discussionId) {
@@ -794,10 +700,12 @@ const CommentSection = (props: I.CommentSectionProps) => {
 					attachments: messageAttachments || [],
 					reactions: [],
 					isSynced: false,
-					replyCount: 0,
+					isReadMessage: true,
+					isReadMention: true,
+					isDeleted: false,
 				};
 
-				S.Comment.addPost(sid, newPost as any);
+				S.Comment.insert(sid, newPost);
 				loadDeps([ newPost as any ]);
 				formRef.current?.clear();
 				window.setTimeout(() => scrollToBottom(), 50);
@@ -829,8 +737,9 @@ const CommentSection = (props: I.CommentSectionProps) => {
 		}, 50);
 	}, [ isPopup, resize ]);
 
-	const counterLabel = postCount > 0
-		? `${postCount} ${U.Common.plural(postCount, translate('pluralComment'))}`
+	const liveCount = posts.filter(it => !it.isDeleted).length;
+	const counterLabel = liveCount > 0
+		? `${liveCount} ${U.Common.plural(liveCount, translate('pluralComment'))}`
 		: translate(object.isArchived ? 'commentDiscussion' : 'commentLeaveComment');
 
 	const hasUnread = !!discussionId && U.Object.discussionHasUnread(S.Common.space, discussionId);
@@ -848,9 +757,16 @@ const CommentSection = (props: I.CommentSectionProps) => {
 							targetId={discussionId || targetId}
 							targetType={targetType}
 							readonly={readonly}
-							onLoadMore={onLoadMore}
 						/>
 					</div>
+				) : null}
+
+				{isOpen ? (
+					<CommentActivity
+						discussionId={discussionId}
+						subId={subId}
+						onResize={scrollToBottomCheck}
+					/>
 				) : null}
 
 				{isOpen ? (
@@ -859,6 +775,7 @@ const CommentSection = (props: I.CommentSectionProps) => {
 							ref={formRef}
 							rootId={rootId}
 							subId={subId}
+							discussionId={discussionId}
 							readonly={readonly}
 							onSubmit={onSubmitPost}
 							onResize={scrollToBottomCheck}

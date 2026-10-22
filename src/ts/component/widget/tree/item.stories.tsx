@@ -52,3 +52,17 @@ export const Section: Story = {
 		isSection: true,
 	},
 };
+
+export const NoDrop: Story = {
+	args: {
+		...Default.args,
+		canDrop: false,
+	},
+};
+
+export const NoSetIcon: Story = {
+	args: {
+		...Default.args,
+		withSetIcon: false,
+	},
+};

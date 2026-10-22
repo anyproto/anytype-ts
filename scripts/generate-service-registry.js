@@ -10,7 +10,11 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
-const HEART_DIR = path.resolve(ROOT_DIR, '..', 'anytype-heart');
+// Honor the same checkout overrides as generate-protos.sh.
+const heartPath = process.env.HEART_DIR || process.env.ANYTYPE_HEART_PATH;
+const HEART_DIR = heartPath
+	? path.resolve(heartPath)
+	: path.resolve(ROOT_DIR, '..', 'anytype-heart');
 const SERVICE_TS = path.join(ROOT_DIR, 'src/ts/lib/api/service.ts');
 
 const fromDist = process.argv.includes('--from-dist');
@@ -83,12 +87,18 @@ ${registryLines.join('\n')}
 export class ServiceClient {
 
 \tprivate client: GrpcWebClientBase;
+\tprivate streamClient: GrpcWebClientBase;
 \tprivate hostname: string;
 \tprivate descriptorCache = new Map<string, MethodDescriptor<any, any>>();
 
 \tconstructor (hostname: string, credentials: any, options: any) {
 \t\tthis.hostname = hostname;
-\t\tthis.client = new GrpcWebClientBase(options);
+\t\t// Unary calls use binary proto framing (application/grpc-web+proto), skipping the
+\t\t// base64 encode/decode and ~33% payload overhead of the default 'text' mode.
+\t\t// The event stream must stay in text mode: grpc-web reads streaming responses
+\t\t// incrementally from XHR responseText, which binary (arraybuffer) mode cannot do.
+\t\tthis.client = new GrpcWebClientBase({ ...options, format: 'binary' });
+\t\tthis.streamClient = new GrpcWebClientBase({ ...options, format: 'text' });
 \t};
 
 \tgetDescriptor (commandName: string): MethodDescriptor<any, any> | null {
@@ -165,7 +175,7 @@ export class ServiceClient {
 \t\t\t(request as any).toObject = function () { return this; };
 \t\t};
 
-\t\treturn this.client.serverStreaming(
+\t\treturn this.streamClient.serverStreaming(
 \t\t\tthis.hostname + '/anytype.ClientCommands/ListenSessionEvents',
 \t\t\trequest,
 \t\t\tmetadata || {},

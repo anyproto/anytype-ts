@@ -130,6 +130,15 @@
 		.icon.source, .icon.resize, .icon.expand { opacity: 1; }
 	}
 
+	/* Inside columns the -28px gutter position is covered by the column resize handle and the
+	   neighbor column, leaving iframe embeds (e.g. Chart.js) with no way to enter edit mode —
+	   keep the icons inside the block instead */
+	.block.blockLayout.layoutColumn {
+		.block.blockEmbed {
+			.icon.source, .icon.expand { right: 0px; z-index: 2; }
+		}
+	}
+
 	.block.blockEmbed.isLatex {
 		> .wrapContent { border-radius: 0px; }
 		> .wrapContent {

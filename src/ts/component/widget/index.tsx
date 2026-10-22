@@ -14,6 +14,7 @@ import Storage from 'Lib/storage';
 interface Props extends I.WidgetComponent {
 	name?: string;
 	icon?: string;
+	homeId?: string;
 	disableContextMenu?: boolean;
 	className?: string;
 	onDragStart?: (e: MouseEvent, block: I.Block) => void;
@@ -42,6 +43,13 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	const object = getObject(targetId);
 	const isSystemTarget = U.Menu.isSystemWidget(targetId);
 	const isChat = U.Object.isChatLayout(object?.layout);
+	/*
+	 * homeId is resolved once by the sidebar and passed down. Reading the spaceview here
+	 * instead would make every widget observe the whole spaceview record, so any detail
+	 * write on it (sync status, order, push settings) would re-render the entire list —
+	 * defeating the stable-block/stable-getObject memo caching the sidebar sets up.
+	 */
+	const isHome = !props.rootId && !!props.homeId && (props.homeId == targetId);
 	const hasDiscussion = !isChat && !!object?.discussionId;
 	const counterTargetId = isChat ? object?.id : (hasDiscussion ? object?.discussionId : '');
 	const hasUnreadSection = S.Common.checkWidgetSection(I.WidgetSection.Unread);
@@ -178,7 +186,10 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 			};
 		};
 
-		if ((layout == I.WidgetLayout.Tree) && !U.Object.isSetLayout(object.layout)) {
+		// A system widget (e.g. favorites) is not an object, so it can't be a context or hold a link
+		const isTreeTarget = (layout == I.WidgetLayout.Tree) && !isSystemTarget;
+
+		if (isTreeTarget && !U.Object.isSetLayout(object.layout)) {
 			details.createdInContext = object.id;
 		};
 
@@ -202,7 +213,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 			U.Object.openEvent(e, newObject);
 			analytics.createObject(newObject.type, newObject.layout, route, 0);
 
-			if (layout == I.WidgetLayout.Tree) {
+			if (isTreeTarget) {
 				C.BlockCreate(object.id, '', I.BlockPosition.Bottom, U.Data.getLinkBlockParam(newObject.id, newObject.layout, true), (message: any) => {
 					if (!message.error.code) {
 						analytics.event('CreateLink');
@@ -632,35 +643,7 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	const onContext = (param: any) => {
-		const { node, element, withElement, subId, objectId, data } = param;
-
-		const menuParam: any = {
-			className: 'fixed',
-			classNameWrap: 'fromSidebar',
-			onOpen: () => U.Dom.addClass(node, 'active'),
-			onClose: () => U.Dom.removeClass(node, 'active'),
-			data: {
-				route: analytics.route.widget,
-				objectIds: [ objectId ],
-				subId,
-				allowedNewTab: true,
-				openAfterDuplicate: true,
-				allowedCollection: true,
-			},
-		};
-
-		menuParam.data = Object.assign(menuParam.data, data || {});
-
-		if (withElement) {
-			menuParam.element = element;
-			menuParam.vertical = I.MenuDirection.Center;
-			menuParam.offsetX = 32;
-		} else {
-			const { x, y } = keyboard.mouse.page;
-			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
-		};
-
-		S.Menu.open('objectContext', menuParam);
+		U.Menu.widgetObjectContext(param);
 	};
 
 	const onClickHandler = (e: MouseEvent) => {
@@ -746,6 +729,9 @@ const WidgetIndex = forwardRef<{}, Props>((props, ref) => {
 	};
 
 	if (hasChild) {
+		if (isHome) {
+			icon = <Icon name="settings/home" color="red" className="headerIcon" />;
+		} else
 		if (object?.isSystem) {
 			icon = <Icon name={object.iconName} className={[ 'headerIcon', object.icon ].join(' ')} />;
 		} else {

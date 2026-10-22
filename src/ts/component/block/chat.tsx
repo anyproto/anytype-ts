@@ -9,6 +9,11 @@ import { Icon, IconObject } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
+import { presence } from 'Lib/presence';
+import { chatStatus } from 'Lib/chatStatus';
+import { activityGaps, activityPublisher, chatRowGrouping, ChatRow, ChatRowGrouping } from 'Lib/chatStatus/timeline';
+import { STATUS_TTL } from 'Lib/chatStatus/model';
+import { StatusGroup, StatusFooter, TypingIndicator, activePublishers } from './chat/status';
 import { reachedEdge, shouldRefetchForward } from 'Lib/util/chatWindow';
 
 interface RefProps {
@@ -21,7 +26,6 @@ interface RefProps {
 	loadAndScrollToMessage: (id: string) => void;
 };
 
-const GROUP_TIME = 300;
 const DOWNLOAD_LAYOUTS = [
 	I.ObjectLayout.File,
 	I.ObjectLayout.Image,
@@ -44,6 +48,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const timeoutResize = useRef(0);
 	const top = useRef(0);
 	const scrolledItems = useRef(new Set());
+	const readTarget = useRef<{ chatId: string; subId: string } | null>(null);
 	const isBottom = useRef(false);
 	const isAutoLoadDisabled = useRef(false);
 	const lastSubIdRef = useRef('');
@@ -54,6 +59,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const [ pinnedMessages, setPinnedMessages ] = useState<I.ChatMessage[]>([]);
 	const [ pinnedIndex, setPinnedIndex ] = useState(-1);
 	const scrollRafRef = useRef(0);
+	const chainRafRef = useRef(0);
+	const messageAddRafRef = useRef(0);
 	const visibleIds = useRef<Set<string>>(new Set());
 	const viewportObserver = useRef<IntersectionObserver | null>(null);
 	const formResizeObserver = useRef<ResizeObserver | null>(null);
@@ -67,6 +74,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const isLoadingPrev = useRef(false);
 	const isLoadingNext = useRef(false);
 	const loadEpoch = useRef(0);
+	const initSeq = useRef(0);
+	// Stable claimant token for the active-read claim (see S.Chat.setActiveReadChat):
+	// claims are per view instance, so a chat popup stacked over a chat page holds its
+	// own claim without stealing the page's one.
+	const activeReadToken = useRef(`blockChat-${Math.random().toString(36).slice(2, 10)}`).current;
 	const object = S.Detail.get(rootId, rootId, []);
 
 	const getChatId = () => {
@@ -91,6 +103,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const chatId = getChatId();
 	const subId = getSubId();
 	const messages = S.Chat.getList(subId);
+	const statusScope = { accountId: account?.id || '', spaceId: space, chatId };
+	const statusView = S.ChatStatus.get(statusScope);
+	const [ statusClock, setStatusNow ] = useState(Date.now);
+	const statusNow = Math.max(statusClock, Date.now());
+	const statusGaps = activityGaps(Array.from(statusView.groups.values()), messages, S.Chat.isAtChatStart(subId), S.Chat.isAtChatEnd(subId));
+	const hasFreshStatus = statusView.live.some(item => statusNow - item.lastSeenAt <= STATUS_TTL) ||
+		Array.from(statusView.items.values()).some(item => item.fresh && (item.lifecycle == 'in_progress') && (statusNow - item.lastSeenAt <= STATUS_TTL));
 	const analyticsChatId = getAnalyticsChatId();
 
 	// Stable handler identities so <Message>'s memo holds across BlockChat's setDummy re-renders
@@ -136,11 +155,19 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const scrollHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const messageAddHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const messageUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const messageDeleteHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const reactionUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const pinnedStatusUpdateHandlerRef = useRef<((e: Event) => void) | null>(null);
 	const focusHandlerRef = useRef<((e: Event) => void) | null>(null);
+	const blurHandlerRef = useRef<((e: Event) => void) | null>(null);
 
 	const unbind = () => {
+		// Flush pending read receipts before teardown (chat switch / unmount) — the debounced
+		// range request is the only server-side read, so it must fire before the items detach.
+		// onReadStop targets readTarget, so the flush hits the chat the items belong to.
+		window.clearTimeout(timeoutScrollStop.current);
+		onReadStop();
+
 		if (messageAddHandlerRef.current) {
 			U.Dom.removeEvent(window, 'messageAdd', messageAddHandlerRef.current);
 			messageAddHandlerRef.current = null;
@@ -148,6 +175,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		if (messageUpdateHandlerRef.current) {
 			U.Dom.removeEvent(window, 'messageUpdate', messageUpdateHandlerRef.current);
 			messageUpdateHandlerRef.current = null;
+		};
+		if (messageDeleteHandlerRef.current) {
+			U.Dom.removeEvent(window, 'messageDelete', messageDeleteHandlerRef.current);
+			messageDeleteHandlerRef.current = null;
 		};
 		if (reactionUpdateHandlerRef.current) {
 			U.Dom.removeEvent(window, 'reactionUpdate', reactionUpdateHandlerRef.current);
@@ -160,6 +191,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		if (focusHandlerRef.current) {
 			U.Dom.removeEvent(window, 'focus', focusHandlerRef.current);
 			focusHandlerRef.current = null;
+		};
+		if (blurHandlerRef.current) {
+			U.Dom.removeEvent(window, 'blur', blurHandlerRef.current);
+			blurHandlerRef.current = null;
 		};
 
 		const container = U.Dom.getScrollContainer(isPopup);
@@ -190,6 +225,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			const detail = (e as CustomEvent).detail || {};
 			onMessageAdd(detail.message, detail.subIds);
 		};
+		messageDeleteHandlerRef.current = (e: Event) => {
+			const detail = (e as CustomEvent).detail || {};
+			onMessageDelete(detail.id, detail.subIds);
+		};
 		reactionUpdateHandlerRef.current = () => scrollToBottomCheck();
 		pinnedStatusUpdateHandlerRef.current = (e: Event) => {
 			const detail = (e as CustomEvent).detail || {};
@@ -217,13 +256,21 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				readScrolledMessages();
 			});
 		};
+		blurHandlerRef.current = () => {
+			// The active-read claim (unread badge suppression, see setIsBottom) only holds
+			// while the user can actually see the messages — release it on blur so unread
+			// counters surface again. The focus handler restores it via scrollToBottom.
+			S.Chat.clearActiveReadChat(activeReadToken);
+		};
 
 		U.Dom.addEvents(window, [
 			['messageAdd', messageAddHandlerRef.current],
 			['messageUpdate', messageUpdateHandlerRef.current],
+			['messageDelete', messageDeleteHandlerRef.current],
 			['reactionUpdate', reactionUpdateHandlerRef.current],
 			['pinnedStatusUpdate', pinnedStatusUpdateHandlerRef.current],
 			['focus', focusHandlerRef.current],
+			['blur', blurHandlerRef.current],
 		]);
 
 		const container = U.Dom.getScrollContainer(isPopup);
@@ -317,6 +364,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		const chatId = getChatId();
 		const subId = getSubId();
 
+		// Store writes below target the captured subId (correct for that chat's cache even
+		// after a switch), but component state (setLoaded/setDummy) belongs to the chat the
+		// component currently shows — skip it when a newer init() superseded this flow.
+		const seq = initSeq.current;
+
 		if (!chatId) {
 			return;
 		};
@@ -333,7 +385,18 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 			const messages = message.messages || [];
 			if (!messages.length) {
-				setLoaded(true);
+				// An empty snapshot on a clear load must still drop a stale cached window
+				// (e.g. every message was deleted while the chat was closed).
+				if (clear && S.Chat.getList(subId).length) {
+					S.Chat.set(subId, []);
+					S.Chat.setAtChatStart(subId, true);
+					S.Chat.setAtChatEnd(subId, true);
+				};
+
+				if (seq == initSeq.current) {
+					setLoaded(true);
+				};
+
 				callBack?.();
 				return;
 			};
@@ -343,15 +406,19 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			// already-loaded messages' attachments (see loadMessages / onMessageAdd).
 			loadDepsAndReplies(clear ? messages : S.Chat.getList(subId).concat(messages), () => {
 				if (clear) {
-					S.Chat.set(subId, messages);
+					// Merge, not overwrite: events processed while deps were loading (live adds,
+					// read/sync status, deletes) are newer than this snapshot and must survive.
+					S.Chat.setFromSnapshot(subId, messages, true);
 					S.Chat.setAtChatEnd(subId, true);
 					S.Chat.setAtChatStart(subId, reachedEdge(messages.length, J.Constant.limit.chat.messages));
 				};
 
-				if (messages.length < J.Constant.limit.chat.messages) {
-					setLoaded(true);
-				} else {
-					setDummy(v => v + 1);
+				if (seq == initSeq.current) {
+					if (messages.length < J.Constant.limit.chat.messages) {
+						setLoaded(true);
+					} else {
+						setDummy(v => v + 1);
+					};
 				};
 
 				callBack?.();
@@ -379,7 +446,15 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			isLoadingNext.current = false;
 			loadEpoch.current++;
 
+			// A newer init() means this reset belongs to a superseded chat context: applying
+			// setIsBottom/scroll callbacks now would hijack the newly-shown chat's viewport.
+			const seq = initSeq.current;
+
 			subscribeMessages(clear, () => {
+				if (seq != initSeq.current) {
+					return;
+				};
+
 				setIsBottom(true);
 				callBack?.();
 			});
@@ -473,6 +548,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 						return;
 					};
 
+					let added = false;
+
 					if (messages.length) {
 						const lengthBefore = S.Chat.getList(subId).length;
 
@@ -495,15 +572,18 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 						const evicted = S.Chat[(dir < 0 ? 'prepend' : 'append')](subId, messages);
 						const grew = S.Chat.getList(subId).length > lengthBefore;
 
-						// Force a re-render so the new rows commit (either direction) — the
-						// component is not a MobX observer. At the MAX_MESSAGES cap a prepend/append
-						// inserts and evicts the same count, so the length is unchanged even though
-						// the content changed — repaint on `evicted` too, otherwise older history
-						// freezes at the cap. We deliberately do NOT touch scrollTop: native scroll
+						added = grew || evicted;
+
+						// Bump `dummy` so the [dummy] layout effect restores the captured top anchor
+						// after a prepend-at-top. (The component IS reactive — vite.auto-observer
+						// wraps default exports in observer() — but the anchor restore is keyed to
+						// `dummy`.) At the MAX_MESSAGES cap a prepend/append inserts and evicts the
+						// same count, so repaint on `evicted` too, otherwise older history freezes
+						// at the cap. We deliberately do NOT touch scrollTop: native scroll
 						// anchoring (overflow-anchor) keeps the viewport static when content is
 						// inserted above and preserves momentum; setting scrollTop ourselves would
 						// jump the view (~1 viewport) at load time.
-						if (grew || evicted) {
+						if (added) {
 							setDummy(v => v + 1);
 						};
 					};
@@ -514,6 +594,38 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 						isLoadingPrev.current = false;
 					} else {
 						isLoadingNext.current = false;
+					};
+
+					// Forward analogue of the top-edge fix: a fast scroll (PageDown) can reach the hard
+					// bottom before the network responds, and since the prefetch is scroll-event driven it
+					// won't re-fire once the user stops there — so newer batches stall. Re-check post-render
+					// (raf, so the appended rows are laid out): if we're still within the prefetch band of
+					// the new bottom and the chat end isn't reached, chain the next forward load. Bounded —
+					// each append pushes the bottom ~one batch further, so it stops once ~2 viewports of
+					// newer history are buffered below, or at the chat end, or once the user scrolls away.
+					// Only chain when this page actually added rows (`added`) so a no-progress page can't
+					// spin. The raf carries the epoch guard (drop after a window reset) and is cancelled on
+					// unmount (chainRafRef), since the page container outlives the chat.
+					if ((dir > 0) && added && !S.Chat.isAtChatEnd(subId)) {
+						raf.cancel(chainRafRef.current);
+						chainRafRef.current = raf(() => {
+							if ((loadEpoch.current != epoch) || isLoadingNext.current || S.Chat.isAtChatEnd(subId)) {
+								return;
+							};
+
+							const c = U.Dom.getScrollContainer(isPopup);
+							if (!c) {
+								return;
+							};
+
+							const st = Math.ceil(c.scrollTop ?? 0);
+							const mx = c.scrollHeight - c.clientHeight;
+							const th = c.offsetHeight * 2;
+
+							if ((mx > 0) && (st >= (mx - th))) {
+								loadMessages(1, false);
+							};
+						});
 					};
 
 					callBack?.();
@@ -537,6 +649,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		isLoadingNext.current = false;
 		loadEpoch.current++;
 
+		// Guards the two-fetch chain: a second jump (or any window reset) while these are in
+		// flight bumps loadEpoch, and the stale pair must not rebuild the window afterwards —
+		// the LAST response would win regardless of which jump the user actually made.
+		const epoch = loadEpoch.current;
+
 		let list = [];
 		let beforeOk = false;
 		let afterOk = false;
@@ -544,6 +661,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		let afterLength = 0;
 
 		C.ChatGetMessages(chatId, orderId, '', limit, true, (message: any) => {
+			if (loadEpoch.current != epoch) {
+				return;
+			};
+
 			if (!message.error.code) {
 				beforeOk = true;
 				beforeLength = message.messages.length;
@@ -553,6 +674,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			};
 
 			C.ChatGetMessages(chatId, '', orderId, limit, false, (message: any) => {
+				if (loadEpoch.current != epoch) {
+					return;
+				};
+
 				if (!message.error.code) {
 					afterOk = true;
 					afterLength = message.messages.length;
@@ -562,7 +687,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				};
 
 				loadDepsAndReplies(list, () => {
-					S.Chat.set(subId, list);
+					if (loadEpoch.current != epoch) {
+						return;
+					};
+
+					// Merge so status events seen during the fetch survive; no trailing keep —
+					// this is a jump into history, the window must stay contiguous around orderId.
+					S.Chat.setFromSnapshot(subId, list, false);
 
 					// Derive edges from the actual page lengths, but only for a fetch that
 					// SUCCEEDED — a transient error (length 0) must not be read as "reached the
@@ -674,6 +805,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const getSections = () => {
 		const sections = [];
+		const activityGrouping = new Map<string, ChatRowGrouping>();
 
 		const sectionMap = new Map();
 		messages.forEach(item => {
@@ -688,44 +820,75 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			section.list.push(item);
 		});
 
-		// Message groups by author/time
-		sections.forEach(section => {
-			const length = section.list.length;
-
-			for (let i = 0; i < length; ++i) {
-				const prev = section.list[i - 1];
-				const item = section.list[i];
-
-				item.isFirst = false;
-				item.isLast = false;
-
-				if (prev && ((item.creator != prev.creator) || (item.createdAt - prev.createdAt >= GROUP_TIME) || item.replyToMessageId)) {
-					item.isFirst = true;
-
-					if (prev) {
-						prev.isLast = true;
-					};
-				};
-			};
-
-			section.list[0].isFirst = true;
-			section.list[length - 1].isLast = true;
-			section.list.sort((c1, c2) => U.Data.sortByOrderId(c1, c2));
-		});
-
 		sections.sort((c1, c2) => U.Data.sortByNumericKey('createdAt', c1, c2, I.SortType.Asc));
 
-		return sections;
+		// Group the actual display order, including activity, so the avatar follows the
+		// last row from an author whether that row is a message or a tool-call group.
+		const rows: (ChatRow & { message?: I.ChatMessage; groupId?: string })[] = [];
+		const addActivity = (beforeId: string, section?: string) => {
+			(statusGaps.get(beforeId) || []).forEach(group => {
+				const items = group.itemIds.map(id => statusView.items.get(id)).filter(Boolean);
+				if (!items.length) return;
+				rows.push({
+					groupId: group.id,
+					creator: activityPublisher(items),
+					createdAt: group.createdAt / 1000,
+					section: section || U.Date.dateWithFormat(I.DateFormat.ShortUS, group.createdAt / 1000),
+				});
+			});
+		};
+		sections.forEach(section => {
+			section.list.sort((c1, c2) => U.Data.sortByOrderId(c1, c2));
+			section.list.forEach(item => {
+				addActivity(item.id, section.key);
+				rows.push({ message: item, creator: item.creator, createdAt: item.createdAt, section: section.key, replyToMessageId: item.replyToMessageId });
+			});
+		});
+		addActivity('');
+		chatRowGrouping(rows).forEach((grouping, i) => {
+			const row = rows[i];
+			if (row.message) {
+				row.message.isFirst = grouping.isFirst;
+				row.message.isLast = grouping.isLast;
+			} else {
+				activityGrouping.set(row.groupId, grouping);
+			};
+		});
+
+		return { sections, activityGrouping };
 	};
 
 	const onMessageAdd = (message: I.ChatMessage, subIds: string[]) => {
 		subIds = subIds || [];
 
-		const subId = getSubId();
-
-		if (subIds.includes(subId)) {
-			loadDepsAndReplies(S.Chat.getList(subId).concat(message), () => scrollToBottomCheck());
+		if (!subIds.includes(getSubId())) {
+			return;
 		};
+
+		// Coalesce to one pass per frame: catch-up bursts fire one event per message, and an
+		// uncoalesced pass re-scans the whole window (O(events × window)) and can re-subscribe
+		// deps per event. The store already holds every added message when the frame runs,
+		// so a single pass over the current list covers the burst.
+		if (messageAddRafRef.current) {
+			return;
+		};
+
+		messageAddRafRef.current = raf(() => {
+			messageAddRafRef.current = 0;
+			loadDepsAndReplies(S.Chat.getList(getSubId()), () => scrollToBottomCheck());
+		});
+	};
+
+	const onMessageDelete = (id: string, subIds: string[]) => {
+		if (!id || !(subIds || []).includes(getSubId())) {
+			return;
+		};
+
+		// pinnedMessages is component state fed by pin events and loadPinnedMessages —
+		// without this, a deleted pinned message would linger in the banner. Keep the
+		// previous reference when the id isn't pinned so the state update is a no-op.
+		setPinnedMessages(prev => (prev.some(it => it.id == id) ? prev.filter(it => it.id != id) : prev));
+		jumpIds.current = jumpIds.current.filter(it => it != id);
 	};
 
 	const onPinnedStatusUpdate = (message: I.ChatMessage, isPinned: boolean, subIds: string[]) => {
@@ -745,11 +908,19 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	};
 
 	const loadPinnedMessages = () => {
+		// init() resets pinnedMessages before this runs, so early returns and errors leave
+		// the banner empty instead of showing the previous chat's pins.
+		const seq = initSeq.current;
+
 		if (!chatId || U.Space.getSpaceview().isOneToOne) {
 			return;
 		};
 
 		C.ChatGetPinnedMessages(chatId, (message: any) => {
+			if (seq != initSeq.current) {
+				return;
+			};
+
 			if (!message.error.code) {
 				setPinnedMessages(message.messages || []);
 			};
@@ -904,7 +1075,7 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 							});
 
 							U.Common.clipboardCopy({
-								text: U.String.sanitize(Mark.insertEmoji(item.content.text, item.content.marks)),
+								text: Mark.insertEmoji(item.content.text, item.content.marks),
 								html: Mark.toStandardHtml(Mark.toHtml(item.content.text, item.content.marks)),
 								anytype: {
 									range: { from: 0, to: item.content.text.length },
@@ -956,13 +1127,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 							const file = targetId ? files.find(it => it.id == targetId) : files[0];
 
 							if (file) {
-								Action.downloadFile(file.id, analytics.route.chat, file.layout == I.ObjectLayout.Image);
+								Action.downloadFile(file.id, analytics.route.chat);
 							};
 							break;
 						};
 
 						case 'downloadAll': {
-							const files = getDownloadableAttachments(item).map(it => ({ id: it.id, isImage: it.layout == I.ObjectLayout.Image }));
+							const files = getDownloadableAttachments(item).map(it => ({ id: it.id }));
 
 							Action.downloadFiles(files, analytics.route.chat);
 							break;
@@ -1007,8 +1178,6 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		// Per-frame read-receipt set comes from the IntersectionObserver (no layout read).
 		// readScrolledMessages keeps the synchronous getMessagesInViewport scan for post-jump accuracy.
 		const list = getMessages().filter((it: any) => visibleIds.current.has(it.id));
-		const state = S.Chat.getState(subId);
-		const { lastStateId } = state;
 		const isBottom = (max > 0) && (st >= max);
 
 		setIsBottom(isBottom);
@@ -1032,16 +1201,32 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		};
 
 		if (S.Common.windowIsFocused && list.length) {
+			// Record the target with the collected ids: the debounced onReadStop can fire after
+			// a chat switch (flush in unbind), when getChatId() already resolves to the NEW chat.
+			readTarget.current = { chatId: getChatId(), subId };
+
+			// Local marks only (instant unread indicators); the debounced onReadStop sends ONE
+			// consolidated range request instead of one RPC per message per scroll frame.
+			const unreadMessageIds = [];
+			const unreadMentionIds = [];
+
 			list.forEach(it => {
 				scrolledItems.current.add(it.id);
 
 				if (!it.isReadMessage) {
-					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Message);
+					unreadMessageIds.push(it.id);
 				};
 				if (!it.isReadMention && it.hasMention) {
-					readMessage(it.id, it.orderId, lastStateId, I.ChatReadType.Mention);
+					unreadMentionIds.push(it.id);
 				};
 			});
+
+			if (unreadMessageIds.length) {
+				S.Chat.setReadMessageStatus(subId, unreadMessageIds, true);
+			};
+			if (unreadMentionIds.length) {
+				S.Chat.setReadMentionStatus(subId, unreadMentionIds, true);
+			};
 		};
 
 		window.clearTimeout(timeoutScrollStop.current);
@@ -1086,40 +1271,50 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			return;
 		};
 
-		const chatId = getChatId();
-		const subId = getSubId();
+		// Use the target captured when the items were collected — on a chat switch the
+		// flush from unbind() runs after getChatId() already resolves to the new chat.
+		const target = readTarget.current;
+		const chatId = target?.chatId || getChatId();
+		const subId = target?.subId || getSubId();
 		const ids: string[] = [ ...scrolledItems.current ] as string[];
-		const first = S.Chat.getMessageById(subId, ids[0]);
-		const last = S.Chat.getMessageById(subId, ids[ids.length - 1]);
 		const state = S.Chat.getState(subId);
 		const { lastStateId } = state;
 
-		if (S.Common.windowIsFocused) {
-			if (first && last) {
-				C.ChatReadMessages(chatId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Message);
-				C.ChatReadMessages(chatId, first.orderId, last.orderId, lastStateId, I.ChatReadType.Mention);
+		// No focus check here: collection already gates on windowIsFocused, so every id was
+		// legitimately seen — a blur inside the debounce window must not drop the receipts.
+
+		// scrolledItems insertion order follows viewport visitation (descending on an upward
+		// scroll) and ids may have been evicted — derive the range as min/max orderId over
+		// the messages still in the window; an inverted range would read nothing.
+		let minOrderId = '';
+		let maxOrderId = '';
+
+		ids.forEach(id => {
+			const message = S.Chat.getMessageById(subId, id);
+			if (!message) {
+				return;
 			};
+
+			if (!minOrderId || (message.orderId < minOrderId)) {
+				minOrderId = message.orderId;
+			};
+			if (message.orderId > maxOrderId) {
+				maxOrderId = message.orderId;
+			};
+		});
+
+		if (minOrderId && maxOrderId) {
+			C.ChatReadMessages(chatId, minOrderId, maxOrderId, lastStateId, I.ChatReadType.Message);
+			C.ChatReadMessages(chatId, minOrderId, maxOrderId, lastStateId, I.ChatReadType.Mention);
 
 			// Read reactions: only if the message with the unread reaction is within the visible range
-			if (state.reactionOrderId && first && last) {
-				const minOrderId = ids.reduce((min, id) => {
-					const msg = S.Chat.getMessageById(subId, id);
-					return (msg && (!min || (msg.orderId <= min))) ? msg.orderId : min;
-				}, '');
-
-				const maxOrderId = ids.reduce((max, id) => {
-					const msg = S.Chat.getMessageById(subId, id);
-					return (msg && (msg.orderId >= max)) ? msg.orderId : max;
-				}, '');
-
-				if ((state.reactionOrderId >= minOrderId) && (state.reactionOrderId <= maxOrderId)) {
-					C.ChatReadReactions(chatId, maxOrderId);
-				};
+			if (state.reactionOrderId && (state.reactionOrderId >= minOrderId) && (state.reactionOrderId <= maxOrderId)) {
+				C.ChatReadReactions(chatId, maxOrderId);
 			};
-
-			S.Chat.setReadMessageStatus(subId, ids, true);
-			S.Chat.setReadMentionStatus(subId, ids, true);
 		};
+
+		S.Chat.setReadMessageStatus(subId, ids, true);
+		S.Chat.setReadMentionStatus(subId, ids, true);
 
 		scrolledItems.current.clear();
 	};
@@ -1240,7 +1435,14 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	};
 
 	const readScrolledMessages = () => {
+		// Collection is the single focus gate: messages count as seen only while the window
+		// is focused. onReadStop then always flushes whatever was collected.
+		if (!S.Common.windowIsFocused) {
+			return;
+		};
+
 		scrolledItems.current = new Set(getMessagesInViewport().map(it => it.id));
+		readTarget.current = { chatId: getChatId(), subId: getSubId() };
 		onReadStop();
 	};
 
@@ -1425,7 +1627,13 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	};
 
 	const scrollToBottomCheck = () => {
-		if (isBottom.current) {
+		// Stick to the bottom only when we're actually at the chat's newest (the live tail).
+		// During FORWARD pagination (loading newer batches after the tail was evicted,
+		// isAtChatEnd=false) this must NOT fire — otherwise each appended batch snaps the view to
+		// the batch end, dumping the user at the bottom with nothing below to scroll into, so
+		// pagination can't continue. Keeping it off lets the appended rows sit below the current
+		// position; the view stays put and the user scrolls down through them to load the next page.
+		if (isBottom.current && S.Chat.isAtChatEnd(getSubId())) {
 			scrollToBottom(false);
 		};
 	};
@@ -1458,6 +1666,15 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 	const reloadAndScrollToBottom = () => {
 		jumpIds.current = [];
+
+		// With the live tail already in the window the sent message arrives via its own
+		// ChatAdd event — a full re-subscribe would only race a stale snapshot against
+		// fresher events (and cost two extra round-trips per send).
+		if (S.Chat.isAtChatEnd(getSubId())) {
+			scrollToBottom(true);
+			return;
+		};
+
 		loadMessages(1, true, () => scrollToBottom(true));
 	};
 
@@ -1540,6 +1757,25 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	const setIsBottom = (v: boolean) => {
 		isBottom.current = v;
 
+		// Claim / release the active-read flag: anchored to the live tail of a focused
+		// window, incoming messages are read in place, so unread aggregates (vault,
+		// widgets, app badge) skip this chat instead of blinking the counter for the
+		// read-confirmation round-trip (JS-9298). Scrolled up, blurred (see the blur
+		// handler in rebind) or closed, the claim is released and unread state surfaces
+		// normally. Counters are server-authoritative, so this is presentational only.
+		//
+		// Accepted trade-off: releasing on scroll-up is immediate, so messages read at the
+		// bottom whose ChatReadMessages confirmation is still in flight briefly surface as
+		// unread until the state event lands. Fixing that would mean optimistically mutating
+		// the server-owned stateMap counters and reconciling them against absolute-value
+		// state events — a stuck-wrong badge from a missed reconciliation is worse than
+		// this short-lived blink, so the counters stay untouched.
+		if (v && S.Common.windowIsFocused && S.Chat.isAtChatEnd(getSubId())) {
+			S.Chat.setActiveReadChat(activeReadToken, space, getChatId());
+		} else {
+			S.Chat.clearActiveReadChat(activeReadToken);
+		};
+
 		const formNode = formRef.current?.getNode() as HTMLElement;
 		const btn = formNode ? U.Dom.select(`#navigation-${I.ChatReadType.Message}`, formNode) : null;
 
@@ -1586,13 +1822,24 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 	};
 
 	const init = () => {
+		// Guards the async chain below: a rapid chat switch re-runs init() and the stale
+		// flow must stop — otherwise two flows double-subscribe, fight over the scroll
+		// position and race setFirstUnreadOrderId (loadEpoch only covers pagination).
+		const seq = ++initSeq.current;
+
 		setLoaded(false);
 		setIsBottom(false);
 		setFirstUnreadOrderId('');
+		setPinnedMessages([]);
+		setPinnedIndex(-1);
 		isLoadingPrev.current = false;
 		isLoadingNext.current = false;
 		loadEpoch.current++;
 		loadState(() => {
+			if (seq != initSeq.current) {
+				return;
+			};
+
 			loadPinnedMessages();
 			const subId = getSubId();
 			const match = keyboard.getMatch(isPopup);
@@ -1601,6 +1848,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			const cb1 = (orderId: string) => {
 				if (orderId) {
 					loadMessagesByOrderId(orderId, () => {
+						if (seq != initSeq.current) {
+							return;
+						};
+
 						const target = S.Chat.getMessageByOrderId(subId, orderId);
 						if (target) {
 							setFirstUnreadOrderId(target.orderId);
@@ -1613,6 +1864,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 				};
 			};
 			const cb2 = () => {
+				if (seq != initSeq.current) {
+					return;
+				};
+
 				scrollToBottom(false);
 			};
 
@@ -1625,6 +1880,10 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 
 			if (initialMessageId) {
 				C.ChatGetMessagesByIds(chatId, [ initialMessageId ], (message: any) => {
+					if (seq != initSeq.current) {
+						return;
+					};
+
 					if (message.error.code) {
 						return;
 					};
@@ -1667,8 +1926,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		setIsLoaded(v);
 	};
 
-	const sections = getSections();
-	const isEmpty = isLoaded && !messages.length;
+	const { sections, activityGrouping } = getSections();
+	const isEmpty = isLoaded && !messages.length && !statusView.groups.size;
+	const renderActivity = (beforeId: string) => (statusGaps.get(beforeId) || []).map(group => (
+		<StatusGroup key={group.id} scope={statusScope} groupId={group.id} now={statusNow} {...activityGrouping.get(group.id)} />
+	));
 
 	let content = null;
 	if (isEmpty) {
@@ -1684,6 +1946,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 					<div className="section" key={section.key}>
 						<SectionDate date={section.createdAt} />
 						{section.list.map(item => (
+							<React.Fragment key={item.id}>
+							{renderActivity(item.id)}
 							<Message
 								ref={getRefSetter(item.id)}
 								key={item.id}
@@ -1702,9 +1966,11 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 								scrollToBottom={scrollToBottomCb}
 								getMessageMenuOptions={getMessageMenuOptionsCb}
 							/>
+							</React.Fragment>
 						))}
 					</div>
 				))}
+				{renderActivity('')}
 			</div>
 		);
 	};
@@ -1719,6 +1985,8 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			window.clearTimeout(timeoutScrollStop.current);
 			window.clearTimeout(timeoutResize.current);
 			raf.cancel(scrollRafRef.current);
+			raf.cancel(chainRafRef.current);
+			raf.cancel(messageAddRafRef.current);
 			messageRefs.current = {};
 			refSetters.current.clear();
 		};
@@ -1766,14 +2034,53 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		};
 	}, [ rootId, space, chatId, analyticsChatId ]);
 
+	// Own the backend message subscription: the last holder of the subId unsubscribes on
+	// teardown (chat switch / unmount). The local message cache is intentionally KEPT for
+	// instant re-open — init() re-subscribes and merges a fresh snapshot over it.
+	useEffect(() => {
+		if (!chatId) {
+			return;
+		};
+
+		const subId = getSubId();
+
+		S.Chat.retainSub(subId);
+
+		return () => {
+			// Release this view's active-read claim — a closed chat must not keep its
+			// badge suppressed. Claims held by other views of the same chat are untouched.
+			S.Chat.clearActiveReadChat(activeReadToken);
+
+			if (!S.Chat.releaseSub(subId)) {
+				C.ChatUnsubscribe(chatId, subId);
+			};
+		};
+	}, [ space, chatId ]);
+
+	// analyticsChatId is deliberately NOT a dependency: it resolves asynchronously after a
+	// cold open and nothing in rebind()/init() reads it (analytics events capture it at
+	// call time) — keying on it re-ran a full second init per cold open.
 	useEffect(() => {
 		rebind();
 		init();
-	}, [ rootId, space, chatId, analyticsChatId ]);
+	}, [ rootId, space, chatId ]);
+
+	// live typing indicator over pubsub, keyed to the chat object
+	useEffect(() => {
+		presence.subscribe(space, chatId);
+		return () => presence.unsubscribe(chatId);
+	}, [ space, chatId ]);
+
+	useEffect(() => chatStatus.retain(space, chatId), [ account?.id, space, chatId ]);
+	useEffect(() => {
+		if (!hasFreshStatus) return;
+		const timer = window.setInterval(() => setStatusNow(Date.now()), 1000);
+		return () => window.clearInterval(timer);
+	}, [ account?.id, space, chatId, hasFreshStatus ]);
 
 	useLayoutEffect(() => {
 		scrollToBottomCheck();
-	}, [ messages.length ]);
+	}, [ messages.length, statusView.contentRevision ]);
 
 	// Restore the captured top message's position after a prepend-at-top (pre-paint, so no
 	// flash), since overflow-anchor can't hold position at scrollTop 0. This lands the view
@@ -1868,6 +2175,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 		);
 	};
 
+	const richPublishers = activePublishers(statusView.live, statusView.items.values(), statusNow);
+	const typingIdentities = S.Presence.getTypers(chatId).map(it => it.identity).filter(it => !richPublishers.has(it));
+
 	return (
 		<div
 			ref={nodeRef}
@@ -1881,6 +2191,9 @@ const BlockChat = forwardRef<RefProps, I.BlockComponent>((props, ref) => {
 			<div id="scrollWrapper" ref={scrollWrapperRef} className="scrollWrapper">
 				{content}
 			</div>
+
+			<TypingIndicator spaceId={space} identities={typingIdentities} />
+			<StatusFooter scope={statusScope} live={statusView.live} now={statusNow} />
 
 			{!object.isArchived ? (
 				<Form 

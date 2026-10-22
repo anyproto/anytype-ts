@@ -118,18 +118,27 @@ html.themeDark {
 	.cover.type2.black { background-color: #000 !important; }
 
 	.brokenMedia {
-		img:before { background: var(--color-bg-secondary); }
+		img:before, > .name { background: var(--color-bg-secondary); }
 	}
 
 	#root-loader {
 		.logo { background-image: url('~img/logo/white.svg'); }
 	}
 
+	.recoveryLogo { background-image: url('~img/theme/dark/logo/header.svg'); }
+	.linkApproval .logo { background-image: url('~img/theme/dark/logo/header.svg'); }
+
 	.toast { background: var(--color-shape-tertiary); color: var(--color-text-primary); }
 	.toast {
 		.inner {
 			.buttons {
 				.button { color: var(--color-text-primary); }
+
+				// Toast buttons are underline-only. The dark .button.black hover rule below
+				// carries an extra element (html) and so outranks toast.scss's transparent
+				// rule, painting a pill-shaped background behind the label. Restore it.
+				.button:not(.disabled):hover,
+				.button:not(.disabled).hover { background: transparent; }
 			}
 		}
 	}

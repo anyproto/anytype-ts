@@ -410,7 +410,7 @@ class Relation {
 			case I.RelationType.MultiSelect:
 			case I.RelationType.Object:
 			case I.RelationType.Relations: {
-				value = this.getArrayValue(U.Common.objectCopy(value));
+				value = this.getArrayValue(value);
 
 				if (maxCount && relation.maxCount) {
 					value = value.slice(value.length - relation.maxCount, value.length);

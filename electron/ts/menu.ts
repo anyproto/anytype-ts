@@ -1,4 +1,4 @@
-import { app, shell, Menu, Tray, BrowserWindow, dialog, nativeImage } from 'electron';
+import { app, shell, Menu, Tray, BrowserWindow, dialog, nativeImage, globalShortcut } from 'electron';
 import { is, fixPathForAsarUnpack } from 'electron-util';
 import fs from 'fs';
 import path from 'path';
@@ -31,6 +31,7 @@ const DEFAULT_SHORTCUTS: { [key: string]: string[] } = {
 	closeTab: [ 'CmdOrCtrl', 'W' ],
 	nextTab: [ 'CmdOrCtrl', 'Alt', 'Right' ],
 	prevTab: [ 'CmdOrCtrl', 'Alt', 'Left' ],
+	globalSearch: [ 'CmdOrCtrl', 'Shift', 'Space' ],
 };
 
 class MenuManager {
@@ -39,6 +40,8 @@ class MenuManager {
 	menu: Electron.Menu | null = null;
 	tray: Tray | null = null;
 	shortcuts: { [key: string]: string[] } = {};
+	globalShortcutRegistered = false;
+	globalShortcutUnavailable = false;
 
 	setWindow (win: AppWindow): void {
 		this.win = win;
@@ -58,6 +61,10 @@ class MenuManager {
 		keys = keys || [];
 
 		const arrowKeys: { [key: string]: string } = { arrowup: 'Up', arrowdown: 'Down', arrowleft: 'Left', arrowright: 'Right', up: 'Up', down: 'Down', left: 'Left', right: 'Right' };
+		// Canonical names the recorder persists that Electron cannot parse on its own:
+		// uppercasing them yields COMMA / SPACE, and ' ' is what pre-fix builds stored
+		// for Space. Both make register() throw
+		const namedKeys: { [key: string]: string } = { space: 'Space', ' ': 'Space', comma: ',' };
 		const ret: string[] = [];
 		for (const key of keys) {
 			const keyLower = key.toLowerCase();
@@ -75,6 +82,9 @@ class MenuManager {
 			} else
 			if (arrowKeys[keyLower]) {
 				ret.push(arrowKeys[keyLower]);
+			} else
+			if (namedKeys[keyLower]) {
+				ret.push(namedKeys[keyLower]);
 			} else {
 				ret.push(key.toUpperCase());
 			};
@@ -387,6 +397,7 @@ class MenuManager {
 				{ label: Util.translate('electronMenuDebugStat'), click: () => Util.send(this.win, 'commandGlobal', 'debugStat') },
 				{ label: Util.translate('electronMenuDebugReconcile'), click: () => Util.send(this.win, 'commandGlobal', 'debugReconcile') },
 				{ label: Util.translate('electronMenuDebugNet'), click: () => Util.send(this.win, 'commandGlobal', 'debugNet') },
+				{ label: Util.translate('electronMenuDebugNetLog'), click: () => Util.send(this.win, 'commandGlobal', 'debugNetLog') },
 				{ label: Util.translate('electronMenuDebugLog'), click: () => Util.send(this.win, 'commandGlobal', 'debugLog') },
 				{ label: Util.translate('electronMenuDebugProfiler'), click: () => Util.send(this.win, 'commandGlobal', 'debugProfiler') },
 				{ label: Util.translate('electronMenuDebugReport'), click: (item: Electron.MenuItem, window: BrowserWindow | undefined, event: Electron.KeyboardEvent) => {
@@ -396,7 +407,14 @@ class MenuManager {
 
 				Separator,
 
-				{ label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => this.getView()?.webContents.toggleDevTools() },
+				{
+					// Target the focused window, not the tracked main one - so devtools
+					// open for the quick search panel too when it has focus
+					label: Util.translate('electronMenuDevTools'), accelerator: 'Alt+CmdOrCtrl+I', click: () => {
+						const win = (BrowserWindow.getFocusedWindow() as AppWindow) || this.win;
+						Util.getActiveView(win)?.webContents.toggleDevTools();
+					},
+				},
 			]
 		});
 
@@ -483,6 +501,7 @@ class MenuManager {
 		this.tray.setToolTip('Anytype');
 		this.tray.setContextMenu(Menu.buildFromTemplate([
 			{ label: Util.translate('electronMenuOpenApp'), click: () => this.winShow() },
+			{ label: Util.translate('electronMenuSearch'), accelerator: this.getAccelerator('globalSearch'), click: () => this.onGlobalSearch() },
 
 			Separator,
 
@@ -499,19 +518,93 @@ class MenuManager {
 		]));
 
 		// Force on top and focus because in some case Electron fail with this.winShow()
-		this.tray.on('double-click', () => {
-			if (this.win && !this.win.isDestroyed()) {
-				this.win.setAlwaysOnTop(true);
-				this.winShow();
-				this.win.setAlwaysOnTop(false);
-			};
-		});
+		this.tray.on('double-click', () => this.winShowForce());
 	};
 
 	winShow (): void {
 		if (this.win && !this.win.isDestroyed()) {
 			this.win.show();
 		};
+	};
+
+	/**
+	 * Registers the OS-level global shortcut for search. Re-run after every shortcut
+	 * change (initMenu IPC) - unregisters the previous binding first.
+	 */
+	initGlobalShortcuts (): void {
+		this.initShortcuts();
+
+		globalShortcut.unregisterAll();
+
+		this.globalShortcutRegistered = false;
+		this.globalShortcutUnavailable = false;
+
+		const accelerator = this.getAccelerator('globalSearch');
+
+		if (accelerator) {
+			// register() returns false when the combo is owned by another app - the OS
+			// does not say by whom. On Wayland without the portal it fails the same way.
+			try {
+				this.globalShortcutRegistered = globalShortcut.register(accelerator, () => this.onGlobalSearch());
+			} catch (e: any) {
+				// Invalid accelerator - never silently: a swallowed throw here is
+				// indistinguishable from a shortcut that simply never fires
+				Util.log('error', `[MenuManager].initGlobalShortcuts: failed to register "${accelerator}": ${e.message}`);
+				this.globalShortcutRegistered = false;
+			};
+		};
+
+		if (!this.globalShortcutRegistered && is.linux && (process.env.XDG_SESSION_TYPE == 'wayland')) {
+			this.globalShortcutUnavailable = true;
+		};
+	};
+
+	getGlobalShortcutStatus (): { registered: boolean; unavailable: boolean } {
+		return { registered: this.globalShortcutRegistered, unavailable: this.globalShortcutUnavailable };
+	};
+
+	/**
+	 * Brings a window to the front reliably: Windows refuses foreground steals from
+	 * background processes (taskbar flash only) and macOS needs explicit app
+	 * activation, so plain show() is not enough.
+	 */
+	winShowForce (callBack?: (win: AppWindow) => void): void {
+		let win = this.win;
+
+		if (!win || win.isDestroyed()) {
+			win = Array.from(WindowManager.list.values()).find(it => it && !it.isDestroyed() && !it.isQuickSearch && !it.isApproval) || null;
+		};
+
+		if (!win) {
+			win = WindowManager.createMain({ isChild: false });
+			this.setWindow(win);
+
+			if (callBack) {
+				win.webContents.once('did-finish-load', () => callBack(win));
+			};
+			return;
+		};
+
+		if (win.isMinimized()) {
+			win.restore();
+		};
+
+		win.setAlwaysOnTop(true);
+		win.show();
+		win.focus();
+		win.setAlwaysOnTop(false);
+
+		if (is.macos) {
+			app.focus({ steal: true });
+		};
+
+		if (callBack) {
+			callBack(win);
+		};
+	};
+
+	onGlobalSearch (): void {
+		WindowManager.showQuickSearch();
 	};
 
 	winHide (): void {

@@ -84,12 +84,18 @@ const PageMainSet = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			};
 
 			const object = S.Detail.get(rootId, rootId, []);
+			const revealRef = String(keyboard.getMatch(isPopup).params.revealRef || '');
 
 			headerRef.current?.forceUpdate();
 			headRef.current?.forceUpdate();
 			controlsRef.current?.forceUpdate();
 			S.Common.setRightSidebarState(isPopup, { rootId });
 			setDummy(dummy + 1);
+
+			// Deep link from "Created in": reveal the relation the object was created in
+			if (revealRef) {
+				U.Object.revealCreatedInContextRef(rootId, revealRef, isPopup);
+			};
 
 			resize();
 

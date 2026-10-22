@@ -106,7 +106,7 @@
 
 	/* Type layout conflict */
 	.menu.menuSelect.menuTypeLayout { width: var(--menu-width-icon); }
-	.menu.menuSelect.menuTypeLayout {
+	.menu.menuSelect.menuTypeLayout, .menu.menuSelect.menuWidgetTree {
 		.sectionName > .name { overflow: visible; white-space: normal; height: auto; }
 	}
 

@@ -22,6 +22,7 @@ const MenuGroupList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const listRef = useRef(null);
 	const top = useRef(0);
 	const n = useRef(-1);
+	const isUnmountedRef = useRef(false);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 10 } }),
 		useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -42,6 +43,12 @@ const MenuGroupList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDownHandler = (e: any) => {
+		// A leaked window listener must never act for a dead menu — bail before
+		// any preventDefault or it silently eats the key app-wide until restart
+		if (isUnmountedRef.current) {
+			return;
+		};
+
 		const items = getItems();
 		const item = items[n.current];
 
@@ -50,7 +57,9 @@ const MenuGroupList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		keyboard.shortcut('space', e, (pressed: string) => {
 			e.preventDefault();
 
-			onSwitch(e, item, !item.isVisible);
+			if (item) {
+				onSwitch(e, item, !item.isVisible);
+			};
 			ret = true;
 		});
 
@@ -218,6 +227,8 @@ const MenuGroupList = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		});
 
 		return () => {
+			isUnmountedRef.current = true;
+
 			unbind();
 			S.Menu.closeAll(J.Menu.cell);
 		};

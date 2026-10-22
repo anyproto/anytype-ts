@@ -241,7 +241,7 @@ const PageAuthOnboard = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 					return;
 				};
 
-				C.SpaceInviteGenerate(spaceId, I.InviteType.WithoutApprove, I.ParticipantPermissions.Reader, (message: any) => {
+				C.SpaceInviteGenerate(spaceId, I.InviteType.WithApprove, I.ParticipantPermissions.Reader, false, (message: any) => {
 					if (message.error.code) {
 						return;
 					};

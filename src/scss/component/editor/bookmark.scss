@@ -21,6 +21,8 @@
 
 	.block.blockFeatured { padding-bottom: 0px; }
 
+	.objectCreatedIn { margin: 16px 0px 0px 0px; padding-left: 48px; }
+
 	.bookmarkButtons { margin: 12px 0px 32px 0px; display: flex; flex-direction: row; gap: 0px 16px; padding-left: 48px; }
 
 	.bookmarkSection { padding-top: 28px; border-top: 1px solid var(--color-shape-highlight-medium); padding-left: 48px; }
@@ -45,10 +47,12 @@
 	&.align1 {
 		.bookmarkLink { justify-content: center; padding-left: 0px; }
 		.bookmarkButtons { justify-content: center; padding-left: 0px; }
+		.objectCreatedIn { justify-content: center; padding-left: 0px; }
 	}
 
 	&.align2 {
 		.bookmarkLink { justify-content: flex-end; padding-left: 0px; margin-right: 48px; }
 		.bookmarkButtons { justify-content: flex-end; padding-left: 0px; margin-right: 48px; }
+		.objectCreatedIn { justify-content: flex-end; padding-left: 0px; margin-right: 48px; }
 	}
 }

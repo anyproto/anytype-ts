@@ -70,6 +70,8 @@ export interface ChatMessage {
 	blocks: ChatMessageBlock[];
 	isSynced: boolean;
 	isPinned: boolean;
+	/** Only discussions produce it: a soft-deleted comment kept in place (tombstone). */
+	isDeleted?: boolean;
 
 	// Internal
 	isFirst: boolean;

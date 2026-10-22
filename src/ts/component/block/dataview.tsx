@@ -109,6 +109,10 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 			window.clearTimeout(timeoutFilter.current);
 			cellRefs.current.clear();
 			recordRefs.current.clear();
+
+			// A dangling lock would keep deferring subscription events after the view
+			// is gone; the record order re-syncs on the next subscribe (GO-7387)
+			S.Record.positionLockClear(getSubId(), '');
 		};
 	}, []);
 
@@ -364,7 +368,7 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const subId = getSubId(groupId);
 		const records = S.Record.getRecordIds(subId, '');
 
-		return applyObjectOrder('', [ ...records ]);
+		return applyObjectOrder(groupId || '', [ ...records ]);
 	};
 
 	const getRecord = (id: string) => {
@@ -462,18 +466,26 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const recordCreate = (e: any, template: any, dir: number, groupId?: string, idx?: number) => {
 		const objectId = getObjectId();
-		const subId = getSubId(groupId);
 		const view = getView();
 
 		if (!view || isCreating.current) {
 			return;
 		};
 
-		const details = getDetails(groupId);
-		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 		const isViewGraph = view.type == I.ViewType.Graph;
 		const isViewCalendar = view.type == I.ViewType.Calendar;
 		const isViewBoard = view.type == I.ViewType.Board;
+
+		// Board creation paths without an explicit group (toolbar New button,
+		// template menu) target the "empty" group like onRecordAdd does, so the
+		// optimistic insert below works for them as well (JS-9764)
+		if (isViewBoard && !groupId) {
+			groupId = 'empty';
+		};
+
+		const subId = getSubId(groupId);
+		const details = getDetails(groupId);
+		const flags: I.ObjectFlag[] = [ I.ObjectFlag.SelectTemplate ];
 
 		if (isCollection) {
 			details.createdInContext = objectId;
@@ -522,8 +534,13 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 			S.Detail.update(subId, { id: object.id, details: object }, true);
 
-			if (!isViewBoard && !isViewCalendar) {
-				let records = getRecords(groupId);
+			const isSorted = !isViewBoard && S.Record.getMeta(subId, '').isSorted;
+
+			if (!isViewCalendar) {
+				// Board columns render from the group subscription record list as is:
+				// use the raw list, getRecords would apply the object order of the
+				// first matching group (JS-9747, JS-9764)
+				let records = isViewBoard ? [ ...S.Record.getRecordIds(subId, '') ] : getRecords(groupId);
 
 				const oldIndex = records.indexOf(message.objectId);
 
@@ -534,9 +551,31 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 					} else {
 						dir > 0 ? records.push(message.objectId) : records.unshift(message.objectId);
 					};
-				} else {	
+				} else {
 					const newIndex = idx >= 0 ? idx : (dir > 0 ? records.length : 0);
 					records = arrayMove(records, oldIndex, newIndex);
+				};
+
+				// Insert the new record into the group's custom order (if any), so the
+				// card keeps its position and stays visible after the column
+				// re-subscribes with a limited window. The local order is updated
+				// optimistically before recordsSet triggers a re-render — otherwise
+				// applyObjectOrder sorts the unknown id to the top of the column
+				// until the RPC round-trip completes (JS-9747, JS-9764)
+				if (isViewBoard) {
+					const order = block.content.objectOrder.find(it => (it.viewId == view.id) && (it.groupId == groupId));
+					const objectIds = [ ...(order?.objectIds || []) ];
+
+					if (order && !objectIds.includes(message.objectId)) {
+						if (idx >= 0) {
+							objectIds.splice(idx, 0, message.objectId);
+						} else {
+							dir > 0 ? objectIds.push(message.objectId) : objectIds.unshift(message.objectId);
+						};
+
+						set(order, { objectIds });
+						objectOrderUpdate([ { viewId: view.id, groupId, objectIds } ], records);
+					};
 				};
 
 				S.Record.recordsSet(subId, '', records);
@@ -558,6 +597,14 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 			if (isViewGraph || isViewCalendar || (U.Object.isNoteLayout(object.layout))) {
 				U.Object.openConfig(e, object);
 			} else {
+				// On sorted subscriptions the middleware repositions the new record right
+				// away (an empty name sorts to the top under Name Asc), which would move
+				// the row while its name is being typed: hold the reposition until editing
+				// ends — setRecordEditingOff applies the stashed position (GO-7387)
+				if (isSorted) {
+					S.Record.positionLockSet(subId, '', object.id);
+				};
+
 				window.setTimeout(() => setRecordEditingOn(e, object.id), 15);
 			};
 
@@ -566,12 +613,13 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onEmpty = (e: any) => {
-		let element = '';
 		if (isInline) {
-			element = `#block-${U.Common.esc(block.id)} #head-source-select`;
-			onSourceSelect(element, { horizontal: I.MenuDirection.Center });
+			onSourceSelect(`#block-${U.Common.esc(block.id)} #head-source-select`, { horizontal: I.MenuDirection.Center });
 		} else {
-			element = `#${U.Common.esc(Relation.cellId('blockFeatured', 'setOf', rootId))}`;
+			// The featured setOf cell is not rendered on an empty Query page, so the menu is anchored
+			// to the clicked placeholder and only falls back to the cell when there is no event (JS-9856)
+			const element = e?.currentTarget || U.Dom.select(`#${U.Common.esc(Relation.cellId('blockFeatured', 'setOf', rootId))}`);
+
 			onSourceTypeSelect(element);
 		};
 	};
@@ -1566,6 +1614,9 @@ const BlockDataview = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		nameRef?.onBlur();
+
+		// Apply any subscription reposition stashed while the name was being edited (GO-7387)
+		U.Subscription.applyPendingPosition(getSubId());
 	};
 
 	const multiSelectAction = (id: string) => {

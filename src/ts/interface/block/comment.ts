@@ -35,7 +35,8 @@ export interface CommentMessage {
 	isSynced: boolean;
 	isReadMessage: boolean;
 	isReadMention: boolean;
-	replyCount: number;
+	/** A soft-deleted comment (tombstone): empty content, kept in place so its replies keep their thread. */
+	isDeleted: boolean;
 };
 
 export interface CommentMessageContent {

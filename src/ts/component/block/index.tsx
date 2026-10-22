@@ -204,9 +204,11 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 				};
 			};
 
+			// The focus range describes the caret in whichever block holds it — forward it only when
+			// that is this block, otherwise menu actions (e.g. paste) would land at a foreign offset (JS-8598)
 			menuOpen({
 				rect: { x: keyboard.mouse.page.x, y: keyboard.mouse.page.y, width: 0, height: 0 },
-				data: { range: U.Common.objectCopy(range) },
+				data: { range: (focused == block.id) ? U.Common.objectCopy(range) : null },
 			});
 		});
 	};
@@ -965,6 +967,13 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 		participant = U.Space.getParticipant(participantId);
 	};
 
+	// live presence: who is typing / holds focus in this block right now (via pubsub);
+	// the block is soft-locked for everyone but the one editing it
+	const blockTypers = S.Presence.getBlockTypers(rootId, block.id).map(it => {
+		return U.Space.getParticipant(U.Space.getParticipantId(S.Common.space, it.identity));
+	}).filter(it => it && !it._empty_);
+	const isPresenceLocked = !!blockTypers.length && (focus.state.focused != block.id);
+
 	let canSelect = !isInsideTable && !isSelectionDisabled;
 	let canDrop = !readonly && !isInsideTable;
 	let canDropMiddle = false;
@@ -980,6 +989,9 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 	};
 	if (readonly) {
 		cn.push('isReadonly');
+	};
+	if (isPresenceLocked) {
+		cn.push('isPresenceLocked');
 	};
 
 	if (bgColor && !block.isLink() && !block.isBookmark()) {
@@ -1008,6 +1020,7 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 					key={key}
 					ref={childRef}
 					{...props}
+					readonly={readonly || isPresenceLocked}
 					onToggle={onToggle}
 					renderLinks={renderLinks}
 					renderMentions={renderMentions}
@@ -1285,6 +1298,16 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 				/>
 				{participant ? <IconObject object={participant} size={24} iconSize={18} /> : ''}
 			</div>
+
+			{blockTypers.length ? (
+				<div className="blockPresence">
+					{blockTypers.map((p: any) => (
+						<div className="chip" key={p.id}>
+							<div className="name">{U.String.shorten(p.name, 24)}</div>
+						</div>
+					))}
+				</div>
+			) : ''}
 			
 			<div className={cd.join(' ')}>
 				{targetTop}

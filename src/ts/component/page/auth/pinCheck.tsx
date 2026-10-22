@@ -28,6 +28,20 @@ const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
 		setError(translate('authPinCheckError'));
 	};
 
+	const onForgot = () => {
+		S.Popup.open('confirm', {
+			data: {
+				title: translate('authPinCheckForgotTitle'),
+				text: translate('authPinCheckForgotText'),
+				textConfirm: translate('commonLogout'),
+				onConfirm: () => {
+					S.Auth.logout(true, false);
+					U.Router.go('/auth/select', { replace: true });
+				},
+			},
+		});
+	};
+
 	const onSuccess = () => {
 		const { account } = S.Auth;
 		const { redirect } = S.Common;
@@ -60,6 +74,10 @@ const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
 					onError={onError} 
 				/>
 				<Error text={error} />
+
+				<div className="buttons">
+					<div className="small" onClick={onForgot}>{translate('authPinCheckForgot')}</div>
+				</div>
 			</Frame>
 		</>
 	);

@@ -2,6 +2,7 @@ import React, { forwardRef, useState } from 'react';
 import { Title, Label, Button, Switch } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import Back from '../back';
 
 const PageMainSettingsExportMarkdown = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -21,6 +22,7 @@ const PageMainSettingsExportMarkdown = forwardRef<I.PageRef, I.PageSettingsCompo
 	return (
 		<>
 			<Title text={translate('popupSettingsExportMarkdownTitle')} />
+			<Back page="exportIndex" />
 
 			<div className="labels">
 				<Label text={translate('popupSettingsExportMarkdownText1')} />

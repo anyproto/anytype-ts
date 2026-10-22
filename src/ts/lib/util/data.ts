@@ -1,9 +1,14 @@
 import * as Sentry from '@sentry/browser';
+import { reaction, IReactionDisposer } from 'mobx';
 import object from './object';
+import aiProvider from './aiProvider';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { virtualBlock } from 'Lib/virtualBlock';
+import { membership } from 'Lib/membership';
+import { powerState } from 'Lib/powerState';
 
 const TYPE_KEYS = {
 	default: [
@@ -47,6 +52,96 @@ export interface TreeNode {
 class UtilData {
 
 	private spacesPreloaded = false;
+	private cleanupSuggestionsTimeout = 0;
+	private treeProbeSubId = '';
+	private treeProbeDisposer: IReactionDisposer = null;
+
+	/**
+	 * Probes the space once for cleanup suggestions so the Bin widget can surface even
+	 * when nothing is archived. Deferred to keep it off the space-open critical path;
+	 * afterwards the flag is maintained by CleanupSuggestion events and the Bin itself.
+	 */
+	checkCleanupSuggestions () {
+		const { space } = S.Common;
+
+		window.clearTimeout(this.cleanupSuggestionsTimeout);
+		S.Common.hasCleanupSuggestionsSet(false);
+
+		this.cleanupSuggestionsTimeout = window.setTimeout(() => {
+			// A space switch during the delay reschedules its own probe; drop this one.
+			if (space != S.Common.space) {
+				return;
+			};
+
+			// Only the count matters here, so ask for the cheapest projection.
+			C.ObjectCleanupSuggestions(space, [ 'id' ], (message: any) => {
+				if (!message.error.code && (space == S.Common.space)) {
+					S.Common.hasCleanupSuggestionsSet(!!(message.items || []).length);
+				};
+			});
+		}, J.Constant.delay.cleanupSuggestions);
+	};
+
+	/**
+	 * Shows the Tree section once the space has an object created inside another one. On space open a
+	 * one-record subscription answers that; in a space without such objects it stays to catch the
+	 * first one and is dropped as soon as it does. Once shown, the section stays for the session.
+	 */
+	checkTreeSection () {
+		const { space } = S.Common;
+		const subId = U.Subscription.spaceSubId(J.Constant.subId.treeProbe);
+		const prevSubId = this.treeProbeSubId;
+
+		const stop = () => {
+			this.treeProbeDisposer?.();
+			this.treeProbeDisposer = null;
+			this.treeProbeSubId = '';
+		};
+
+		const onFound = () => {
+			stop();
+			S.Common.hasTreeSectionSet(true);
+			U.Subscription.destroyList([ subId ], true);
+		};
+
+		stop();
+		S.Common.hasTreeSectionSet(false);
+
+		// The previous space may still be waiting for its first object
+		U.Subscription.destroyList(U.Common.arrayUnique([ prevSubId, subId ].filter(it => it)), true, () => {
+			// The Tree section is experimental, without the flag there is nothing to probe for
+			if ((space != S.Common.space) || !S.Common.config.experimental) {
+				return;
+			};
+
+			this.treeProbeSubId = subId;
+
+			U.Subscription.subscribe({
+				subId,
+				filters: U.Subscription.createdTreeFilters(S.Common.treeShowBookmarks).concat([
+					{ relationKey: 'createdInContext', condition: I.FilterCondition.NotEmpty, value: null },
+				]),
+				keys: [ 'id' ],
+				limit: 1,
+				noDeps: true,
+			}, () => {
+				if ((space != S.Common.space) || (this.treeProbeSubId != subId)) {
+					return;
+				};
+
+				if (S.Record.getRecordIds(subId, '').length) {
+					onFound();
+					return;
+				};
+
+				this.treeProbeDisposer = reaction(() => S.Record.getRecordIds(subId, '').length, length => {
+					if (length) {
+						onFound();
+					};
+				});
+			});
+		});
+	};
 
 	/**
 	 * Returns the CSS class for a text block style.
@@ -331,6 +426,10 @@ class UtilData {
 		C.ObjectOpen(U.Object.getPersonalWidgetsId(space), '', space);
 		C.ObjectOpen(widgets, '', space, () => {
 			U.Subscription.createSpace(() => {
+				this.checkCleanupSuggestions();
+				this.checkTreeSection();
+				U.Space.checkInviteSecurity(space);
+
 				this.initPin(() => {
 					if (S.Common.pin && !keyboard.isPinChecked) {
 						U.Router.go('/auth/pin-check', routeParam);
@@ -416,7 +515,9 @@ class UtilData {
 				const spaceSubId = S.Chat.getSpaceSubId(spaceId);
 				const chatSubId = S.Chat.getChatSubId(J.Constant.subId.chatPreview, spaceId, chatId);
 
-				S.Chat.setState(chatSubId, state);
+				if (state) {
+					S.Chat.setState(chatSubId, state);
+				};
 
 				if (message) {
 					message.chatId = chatId;
@@ -430,7 +531,8 @@ class UtilData {
 
 		U.Common.applyAutoDownload(S.Common.autoDownload);
 
-		this.getMembershipData();
+		this.getMembershipData('auth');
+		powerState.onAccountReady();
 
 		U.Subscription.createGlobal(() => {
 			if (S.Record.spaceMap.size) {
@@ -446,6 +548,37 @@ class UtilData {
 	 */
 	onAuthWithoutSpace(param?: Partial<I.RouteParam>) {
 		U.Subscription.createGlobal(() => U.Space.openFirstSpaceOrVoid(null, param));
+	};
+
+	/**
+	 * Minimal boot for the quick search panel window. No space is opened (the panel
+	 * renders no space UI and the global search RPC is cross-space) and none of the
+	 * heavy side loads run - only the global subscriptions (profile, spaceviews and the
+	 * cross-space chats the Messages scope reads), plus the pin gate.
+	 * @param {string} route - The quick search route to open after boot.
+	 * @param {Partial<I.RouteParam>} [param] - Optional route parameters.
+	 */
+	onAuthQuickSearch(route: string, param?: Partial<I.RouteParam>) {
+		let pending = 2;
+
+		const done = () => {
+			if (--pending) {
+				return;
+			};
+
+			if (S.Common.pin && !keyboard.isPinChecked) {
+				// S.Common.redirect already points at the quick search route - the
+				// pin screen returns here after unlock
+				U.Router.go('/auth/pin-check', param || {});
+			} else {
+				U.Router.go(route, param || {});
+			};
+		};
+
+		// In parallel: the lite subscriptions feed the first row paint (Channel captions,
+		// the Messages chip and its chats), the pin gate decides where to route
+		U.Subscription.createGlobal(done, true);
+		this.initPin(done);
 	};
 
 	/**
@@ -498,13 +631,54 @@ class UtilData {
 	 * @param {(message: any) => void} [callBack] - Optional callback after setting text.
 	 */
 	blockSetText(rootId: string, blockId: string, text: string, marks: I.Mark[], update: boolean, callBack?: (message: any) => void) {
-		const block = S.Block.getLeaf(rootId, blockId);
-		if (!block) {
+		text = String(text || '');
+		marks = marks || [];
+
+		// The virtual trailing placeholder is not in the store and has no
+		// middleware-side block: the first non-empty write materializes it via a
+		// single BlockCreate carrying the content, later writes are redirected to
+		// the created block
+		if (virtualBlock.isVirtualId(blockId)) {
+			virtualBlock.setText(rootId, text, marks, update, callBack);
 			return;
 		};
 
-		text = String(text || '');
-		marks = marks || [];
+		// Stale callbacks may still write to an id whose identity was forked
+		blockId = virtualBlock.resolve(blockId);
+
+		// A fork for this block is in flight — buffer the write, it lands on the
+		// new id when the fork completes
+		if (virtualBlock.isForkPending(blockId)) {
+			virtualBlock.forkSetText(blockId, text, marks, callBack);
+			return;
+		};
+
+		const block = S.Block.getLeaf(rootId, blockId);
+		if (!block) {
+			// Still invoke the callback: callers (e.g. block/text pending-save
+			// accounting, JS-9285) rely on every save eventually completing —
+			// silently dropping it would leak their in-flight counters
+			callBack?.({ error: { code: 1, description: 'Block not found' } });
+			return;
+		};
+
+		// First content into an empty text block forks the block identity: one
+		// BlockReplace carries the content on a fresh id, so two clients filling
+		// the same empty block concurrently end up with two blocks (both texts
+		// survive) instead of one block with one text lost to last-writer-wins
+		if (virtualBlock.shouldFork(rootId, block, text)) {
+			virtualBlock.fork(rootId, block, text, marks, callBack);
+			return;
+		};
+
+		// Skip no-op writes: merely placing or removing the cursor (blur flushes,
+		// shortcut save-keys) must not emit a text write — block text is
+		// whole-value last-writer-wins, so re-sending unchanged content can still
+		// destroy a concurrent peer edit on merge
+		if ((String(block.content.text || '') === text) && U.Common.compareJSON(block.content.marks || [], marks)) {
+			callBack?.({ error: { code: 0 } });
+			return;
+		};
 
 		if (update) {
 			S.Block.updateContent(rootId, blockId, { text, marks });
@@ -523,6 +697,8 @@ class UtilData {
 	 * @param {(message: any) => void} [callBack] - Optional callback after insertion.
 	 */
 	blockInsertText(rootId: string, blockId: string, needle: string, from: number, to: number, callBack?: (message: any) => void) {
+		blockId = virtualBlock.resolve(blockId);
+
 		const block = S.Block.getLeaf(rootId, blockId);
 		if (!block) {
 			return;
@@ -1002,47 +1178,30 @@ class UtilData {
 		});
 	};
 
-	getMembershipData() {
-		this.getMembershipProducts(() => this.getMembershipStatus());
+	/**
+	 * Loads membership status and products in parallel, skipping the middleware cache.
+	 * Every path settles, see Lib/membership.
+	 * @param {string} [reason] - What triggered the load (logged).
+	 * @param {() => void} [callBack] - Called once both resources have settled.
+	 */
+	getMembershipData(reason?: string, callBack?: () => void) {
+		membership.load(reason || 'load', callBack);
 	};
 
 	/**
 	 * Gets the membership status for the current account.
-	 * @param {boolean} [noCache] - Whether to skip cache (default: false).
-	 * @param {(membership: I.Membership) => void} [callBack] - Optional callback with the membership object.
+	 * @param {() => void} [callBack] - Called once the request has settled (on every path).
 	 */
 	getMembershipStatus(callBack?: () => void) {
-		if (!this.isAnytypeNetwork() || !S.Common.isOnline) {
-			return;
-		};
-
-		C.MembershipV2GetStatus(true, (message: any) => {
-			if (!message.error.code) {
-				S.Membership.dataSet(message.data);
-				analytics.setProduct();
-			};
-
-			callBack?.();
-		});
+		membership.fetch(I.MembershipResource.Status, 'status', callBack);
 	};
 
 	/**
-	 * Gets the available membership tiers.
-	 * @param {boolean} noCache - Whether to skip cache.
-	 * @param {() => void} [callBack] - Optional callback after fetching tiers.
+	 * Gets the available membership products.
+	 * @param {() => void} [callBack] - Called once the request has settled (on every path).
 	 */
 	getMembershipProducts(callBack?: () => void) {
-		if (!S.Common.isOnline || !this.isAnytypeNetwork()) {
-			return;
-		};
-
-		C.MembershipV2GetProducts(true, (message) => {
-			if (!message.error.code) {
-				S.Membership.productsSet(message.products);
-			};
-
-			callBack?.();
-		});
+		membership.fetch(I.MembershipResource.Products, 'products', callBack);
 	};
 
 	/**
@@ -1078,7 +1237,7 @@ class UtilData {
 		onError = onError || (() => { });
 
 		const { networkConfig } = S.Auth;
-		const { mode, path } = networkConfig;
+		const { mode, path, preferYamux } = networkConfig;
 		const { dataPath } = S.Common;
 
 		let phrase = '';
@@ -1100,7 +1259,7 @@ class UtilData {
 						return;
 					};
 
-					C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.count.icon), mode, path, (message) => {
+					C.AccountCreate('', '', dataPath, U.Common.rand(1, J.Constant.count.icon), mode, path, preferYamux, (message) => {
 						if (message.error.code) {
 							onError(message.error.description);
 							return;
@@ -1264,7 +1423,7 @@ class UtilData {
 	 * @param {I.Block} block - The block.
 	 */
 	setRtl(rootId: string, block: I.Block, value: boolean, callBack?: (message: any) => void) {
-		if (!block) {
+		if (!block || virtualBlock.isVirtualId(block.id)) {
 			callBack?.({});
 			return;
 		};
@@ -1351,7 +1510,8 @@ class UtilData {
 	};
 
 	isFreeMember(): boolean {
-		return this.isAnytypeNetwork() && S.Membership.data?.getTopProduct()?.isIntro;
+		// An unknown status is not the free tier
+		return this.isAnytypeNetwork() && S.Membership.isStatusKnown && !!S.Membership.data?.getTopProduct()?.isIntro;
 	};
 
 	checkIsArchived(id: string): boolean {
@@ -1515,6 +1675,86 @@ class UtilData {
 
 	flattenIds (node: TreeNode): string[] {
 		return [ node.id, ...node.children.flatMap(c => this.flattenIds(c)) ];
+	};
+
+	/**
+	 * Returns whether the import type is eligible for AI structure enrichment (served by the v2 import engine).
+	 */
+	canImportAi (type: I.ImportType): boolean {
+		return [ I.ImportType.Notion, I.ImportType.Markdown, I.ImportType.Obsidian ].includes(type);
+	};
+
+	/**
+	 * Whether this build embeds the "Provided by Anytype" AI proxy (endpoint and model injected at build time).
+	 * The typeof guard covers environments without the build-time defines (unit tests).
+	 */
+	isImportAiAnytypeAvailable (): boolean {
+		return ('undefined' != typeof IMPORT_AI_ANYTYPE_ENDPOINT) && Boolean(IMPORT_AI_ANYTYPE_ENDPOINT && IMPORT_AI_ANYTYPE_MODEL);
+	};
+
+	/**
+	 * Returns persisted AI import settings with defaults applied.
+	 */
+	getImportAiSettings (): I.ImportAiSettings {
+		return aiProvider.applyDefaults(Storage.get('importAi'), this.isImportAiAnytypeAvailable());
+	};
+
+	setImportAiSettings (settings: Partial<I.ImportAiSettings>): void {
+		Storage.set('importAi', Object.assign(this.getImportAiSettings(), settings));
+	};
+
+	/**
+	 * Builds the wire-format aiParams for ObjectImport, or null when the feature is off
+	 * or the config is incomplete. Never returns a half-filled config: a present-but-broken
+	 * config produces a visible llmPlanFailed warning middleware-side.
+	 */
+	getImportAiParams (): any {
+		const settings = this.getImportAiSettings();
+
+		if (!settings.enabled) {
+			return null;
+		};
+
+		if (settings.providerId == 'anytype') {
+			if (!this.isImportAiAnytypeAvailable()) {
+				return null;
+			};
+
+			return {
+				config: {
+					provider: I.AiProvider.OpenAi,
+					endpoint: IMPORT_AI_ANYTYPE_ENDPOINT,
+					model: IMPORT_AI_ANYTYPE_MODEL,
+					// OPENAI provider requires a non-empty token middleware-side; the proxy may not check it
+					token: IMPORT_AI_ANYTYPE_TOKEN || 'anytype',
+					temperature: 0,
+				},
+				includeContentSamples: settings.includeContentSamples,
+			};
+		};
+
+		const config = aiProvider.resolveConfig(settings);
+
+		if (!config) {
+			return null;
+		};
+
+		return {
+			config,
+			includeContentSamples: settings.includeContentSamples,
+		};
+	};
+
+	/**
+	 * Analytics dimensions for the AI import feature; no endpoint/model values (potentially identifying).
+	 */
+	getImportAiAnalytics (type: I.ImportType): { aiEnabled: boolean; aiProvider: string } {
+		const enabled = this.canImportAi(type) && !!this.getImportAiParams();
+
+		return {
+			aiEnabled: enabled,
+			aiProvider: enabled ? (this.getImportAiSettings().providerId == 'anytype' ? 'anytype' : 'byok') : '',
+		};
 	};
 
 };

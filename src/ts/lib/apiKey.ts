@@ -1,0 +1,47 @@
+import type * as I from 'Interface';
+import { LocalApiPermission } from '../interface/linkApproval';
+import { isValidLinkGrant } from './linkApprovalGrant';
+import Storage from './storage';
+
+/**
+ * The flag behind the "New" badge on the API keys entry in settings. Both the
+ * sidebar that reads it and the page that clears it go through here: a literal
+ * in each file is one typo away from a badge that never clears.
+ */
+const SEEN_KEY = 'settingsApi';
+
+/** Whether the API keys entry should still be badged as new. */
+export const apiKeyIsNew = (): boolean => !Storage.getOnboarding(SEEN_KEY);
+
+/** Clears the badge. Called when the API keys page is opened. */
+export const apiKeyMarkSeen = (): void => {
+	Storage.setOnboarding(SEEN_KEY);
+};
+
+export const API_KEY_NAME_MAX_BYTES = 128;
+
+/** Grant presence, not the key's string format, determines legacy status and API-v1 compatibility. */
+export const apiKeySupportsV1 = (grant?: I.LinkAppGrant): boolean => !grant || (
+	isValidLinkGrant(grant) && grant.allSpaces && (grant.perm == LocalApiPermission.ReadWrite)
+);
+
+export const apiKeyCreateError = (name: string, grant: I.LinkAppGrant, expireAt = 0, now = Math.floor(Date.now() / 1000)): string => {
+	if (!String(name || '').trim()) return 'apiKeyNameRequired';
+	if (new TextEncoder().encode(name).length > API_KEY_NAME_MAX_BYTES) return 'apiKeyNameTooLong';
+	if (!isValidLinkGrant(grant)) return 'apiKeyGrantRequired';
+	if (!Number.isSafeInteger(expireAt) || ((expireAt != 0) && (expireAt <= now))) return 'apiKeyExpiryInvalid';
+	return '';
+};
+
+export const sameLinkGrant = (a?: I.LinkAppGrant, b?: I.LinkAppGrant): boolean => !!a && !!b && (
+	(a.allSpaces == b.allSpaces) && (a.perm == b.perm) &&
+	(a.spaceIds.length == b.spaceIds.length) && a.spaceIds.every(id => b.spaceIds.includes(id))
+);
+
+export const API_KEY_TOOLTIP_MAX_SPACES = 10;
+
+/** Space names for the grant tooltip, capped so a grant over many spaces cannot build an unbounded string. */
+export const apiKeySpaceTooltip = (names: string[], max = API_KEY_TOOLTIP_MAX_SPACES): string => {
+	const list = names.slice(0, max).join(', ');
+	return names.length > max ? `${list}, …` : list;
+};

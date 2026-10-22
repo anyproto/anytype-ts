@@ -27,3 +27,17 @@ export const Inline: Story = {
 		isInline: true,
 	},
 };
+
+// Always visible, as on Windows/Linux or with macOS "Show scroll bars: Always"
+export const AutoHideOff: Story = {
+	args: {
+		autoHide: false,
+	},
+};
+
+// Hides once idle, as on macOS with overlay scrollbars
+export const AutoHideOn: Story = {
+	args: {
+		autoHide: true,
+	},
+};

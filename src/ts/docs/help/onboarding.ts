@@ -216,8 +216,6 @@ const Data = {
 	}),
 
 	syncStatus: () => {
-		const theme = S.Common.getThemeClass();
-
 		return {
 			showDimmer: true,
 			param: {
@@ -231,9 +229,9 @@ const Data = {
 					description: translate('onboardingSyncStatusText'),
 					cloneElementClassName: 'onboardingHeaderSync',
 					param: {
-						element: '#header #headerSync',
+						element: '#sidebarPageWidget #headerSync',
 						horizontal: I.MenuDirection.Right,
-						highlightElements: [ '#header #headerSync' ],
+						highlightElements: [ '#sidebarPageWidget #headerSync' ],
 						offsetY: 14,
 					}
 				},

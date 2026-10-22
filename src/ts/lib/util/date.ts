@@ -421,6 +421,66 @@ class UtilDate {
 	};
 
 	/**
+	 * Parses a time string into hour and minute components.
+	 * Accepts 24h values (14:30) and 12h values with a meridiem suffix (2:30 PM).
+	 * Inputmask placeholders (_) are stripped, so partially typed values simply fail to parse.
+	 * @param {string} value - The time string.
+	 * @returns {{ h: number, i: number } | null} The parsed components, or null when the value is not a complete valid time.
+	 */
+	parseTime (value: string): { h: number, i: number } | null {
+		const v = String(value || '').replace(/_/g, '').trim();
+		const match = v.match(/^(\d{1,2}):(\d{1,2})\s*(am|pm)?$/i);
+
+		if (!match) {
+			return null;
+		};
+
+		const meridiem = String(match[3] || '').toLowerCase();
+		const i = Number(match[2]);
+
+		let h = Number(match[1]);
+
+		if ((i < 0) || (i > 59)) {
+			return null;
+		};
+
+		if (meridiem) {
+			if ((h < 1) || (h > 12)) {
+				return null;
+			};
+
+			h = h % 12;
+
+			if (meridiem == 'pm') {
+				h += 12;
+			};
+		} else
+		if ((h < 0) || (h > 23)) {
+			return null;
+		};
+
+		return { h, i };
+	};
+
+	/**
+	 * Applies a time string to the date part of a timestamp, dropping seconds.
+	 * @param {number} t - The base Unix timestamp.
+	 * @param {string} value - The time string, see parseTime.
+	 * @returns {number | null} The new Unix timestamp, or null when the time string is invalid.
+	 */
+	withTime (t: number, value: string): number | null {
+		const time = this.parseTime(value);
+
+		if (!time) {
+			return null;
+		};
+
+		const { d, m, y } = this.getCalendarDateParam(t);
+
+		return this.timestamp(y, m, d, time.h, time.i, 0);
+	};
+
+	/**
 	 * Returns the calendar date parameters (day, month, year) for a timestamp.
 	 * @param {number} t - The Unix timestamp.
 	 * @returns {{ d: number, m: number, y: number }} The date parameters.

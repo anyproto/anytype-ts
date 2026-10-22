@@ -9,6 +9,7 @@ interface Props {
 };
 
 const OFFSET = 100;
+const COLUMN_LATCH_TIMEOUT = 1000;
 
 const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any) => {
 
@@ -27,6 +28,8 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 	const prevTargetKey = useRef<string | null>(null);
 	const lastKnownCoords = useRef({ x: 0, y: 0 });
 	const lastValidTarget = useRef<{ data: any, position: I.BlockPosition } | null>(null);
+	const lastColumnTarget = useRef<{ data: any, position: I.BlockPosition, time: number } | null>(null);
+	const positionFromRealCoords = useRef(false);
 	const dragData = useRef<any>(null);
 
 	const dragHandler = useRef<((e: any) => void) | null>(null);
@@ -140,12 +143,33 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		let targetId = '';
 		let target: any = null;
 
+		const hasCoords = e.pageX || e.pageY || e.clientX || e.clientY;
+
 		if (hoverData.current && (position.current != I.BlockPosition.None)) {
 			data = hoverData.current;
+
+			// On Linux the drop event carries no coordinates — if a late dragover
+			// flipped a freshly shown column indicator to Top/Bottom for the same
+			// target, restore the column position the user saw (JS-9377)
+			if (!hasCoords) {
+				const latched = getLatchedColumnPosition(data, position.current);
+				if (latched != I.BlockPosition.None) {
+					position.current = latched;
+				};
+			};
 		} else
 		if (lastValidTarget.current) {
 			data = lastValidTarget.current.data;
 			position.current = lastValidTarget.current.position;
+
+			// Same restoration for the fallback path: hoverData was cleared by a
+			// late bogus dragover right before the drop (JS-9377)
+			if (!hasCoords) {
+				const latched = getLatchedColumnPosition(data, position.current);
+				if (latched != I.BlockPosition.None) {
+					position.current = latched;
+				};
+			};
 		} else
 		if (last && isFileDrop) {
 			data = objectData.current.get([ I.DropType.Block, last.id ].join('-'));
@@ -367,8 +391,10 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		let x = e.pageX || e.clientX || 0;
 		let y = e.pageY || e.clientY || 0;
 
+		const hasRealCoords = Boolean(x || y);
+
 		// Save last known good coordinates for Linux fallback
-		if (x || y) {
+		if (hasRealCoords) {
 			lastKnownCoords.current = { x, y };
 		} else
 		if (lastKnownCoords.current.x || lastKnownCoords.current.y) {
@@ -383,6 +409,9 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		// On Linux, dragover events may report (0, 0) — calling checkNodes
 		// with bad coords clears hoverData without finding a replacement.
 		if (x || y) {
+			// Recomputations from fallback coordinates are untrusted — the column
+			// latch only overrides those (JS-9377)
+			positionFromRealCoords.current = hasRealCoords;
 			checkNodes(e, x, y);
 		};
 
@@ -424,6 +453,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		// On Linux, drag events report (0, 0) — using stale fallback coords
 		// causes checkNodes to clear hoverData without finding a valid replacement.
 		if (hasRealCoords) {
+			positionFromRealCoords.current = true;
 			checkNodes(e, x, y);
 		};
 
@@ -452,6 +482,16 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		try {
 			let target = hoverData.current || lastValidTarget.current?.data;
 			let pos = (position.current != I.BlockPosition.None) ? position.current : (lastValidTarget.current?.position ?? I.BlockPosition.None);
+
+			// This fallback drop only runs when the drop event never fired (Linux) —
+			// if a late dragover flipped a freshly shown column indicator to
+			// Top/Bottom for the same target, restore the column position (JS-9377)
+			if (target) {
+				const latched = getLatchedColumnPosition(target, pos);
+				if (latched != I.BlockPosition.None) {
+					pos = latched;
+				};
+			};
 
 			// DOM-based fallback using last known coordinates when coordinate tracking failed
 			if (!target && dragData.current) {
@@ -927,7 +967,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 			// (e.g. text block bottom-hover). The final save after adjustments
 			// will overwrite this with the fully-adjusted position when valid.
 			if ((position.current != I.BlockPosition.None) && canDrop.current) {
-				lastValidTarget.current = { data: hd, position: position.current };
+				saveValidTarget(hd, position.current);
 			};
 
 			// canDropMiddle flag for restricted objects
@@ -1016,7 +1056,7 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		};
 
 		if (hd && (position.current != I.BlockPosition.None) && canDrop.current) {
-			lastValidTarget.current = { data: hd, position: position.current };
+			saveValidTarget(hd, position.current);
 		};
 
 		if (frame.current) {
@@ -1134,6 +1174,8 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 		prevTargetKey.current = null;
 		lastKnownCoords.current = { x: 0, y: 0 };
 		lastValidTarget.current = null;
+		lastColumnTarget.current = null;
+		positionFromRealCoords.current = false;
 		canDrop.current = false;
 		dragActive.current = false;
 	};
@@ -1144,6 +1186,47 @@ const DragProvider = forwardRef<I.DragProviderRefProps, Props>((props, ref: any)
 
 	const setPosition = (v: I.BlockPosition) => {
 		position.current = v;
+	};
+
+	const isColumnPosition = (v: I.BlockPosition): boolean => {
+		return [ I.BlockPosition.Left, I.BlockPosition.Right ].includes(v);
+	};
+
+	const saveValidTarget = (data: any, v: I.BlockPosition) => {
+		lastValidTarget.current = { data, position: v };
+
+		// Remember the last shown column (Left/Right) indicator separately: on
+		// Linux a late dragover recomputed from unreliable coordinates can flip
+		// it to Top/Bottom right before the drop lands, making new columns
+		// impossible to create (JS-9377). The latch is only consulted inside
+		// getLatchedColumnPosition, where the freshness window applies —
+		// lastValidTarget itself always tracks the latest valid position
+		if (isColumnPosition(v)) {
+			lastColumnTarget.current = { data, position: v, time: performance.now() };
+		};
+	};
+
+	// Returns the latched column (Left/Right) position for the given target when
+	// it was shown recently and the candidate position disagrees — used by the
+	// drop fallbacks to restore the column indicator the user saw (JS-9377).
+	// A live position recomputed from real event coordinates reflects a
+	// deliberate user move to another drop zone and is never overridden — the
+	// latch only counters bogus flips recomputed from stale fallback coordinates
+	const getLatchedColumnPosition = (data: any, v: I.BlockPosition): I.BlockPosition => {
+		const lct = lastColumnTarget.current;
+
+		if (!lct || !data || positionFromRealCoords.current) {
+			return I.BlockPosition.None;
+		};
+
+		const isFresh = (performance.now() - lct.time) <= COLUMN_LATCH_TIMEOUT;
+		const isSameTarget = lct.data?.id == data.id;
+
+		if (isFresh && isSameTarget && !isColumnPosition(v)) {
+			return lct.position;
+		};
+
+		return I.BlockPosition.None;
 	};
 
 	const unbind = () => {

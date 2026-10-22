@@ -1,6 +1,8 @@
 import raf from 'raf';
 import * as I from 'Interface';
 
+const HEADER_OFFSET = 20;
+
 class UtilDom {
 
 	esc (v: any): string {
@@ -102,6 +104,33 @@ class UtilDom {
 	};
 
 	/**
+	 * Polls once per animation frame until getElement returns a node, then invokes the callback with it.
+	 * Gives up silently after maxFrames frames (default 120, ~2s) — callers treat a target that never
+	 * appears as a no-op.
+	 */
+	waitForElement (getElement: () => HTMLElement | null, callBack: (el: HTMLElement) => void, maxFrames?: number) {
+		maxFrames = Number(maxFrames) || 120;
+
+		let frame = 0;
+
+		const check = () => {
+			const el = getElement();
+
+			if (el) {
+				callBack(el);
+				return;
+			};
+
+			frame++;
+			if (frame < maxFrames) {
+				raf(check);
+			};
+		};
+
+		check();
+	};
+
+	/**
 	 * Returns the current selection range in the window.
 	 * @returns {Range|null} The selection range or null if none.
 	 */
@@ -142,6 +171,112 @@ class UtilDom {
 	 */
 	getElementRect (element: any): DOMRect | null {
 		return element ? (element.getBoundingClientRect() as DOMRect) : null;
+	};
+
+	/**
+	 * Returns the caret rectangle at a character offset inside an element, without
+	 * touching the document selection (used to draw remote carriages). The offset is
+	 * a DOM offset — convert model offsets with Mark.modelToDom first if the element
+	 * carries ZWS anchors. Offsets past the end of the text clamp to the end; empty
+	 * content falls back to the element's own rect.
+	 */
+	getCarriageRect (element: HTMLElement, offset: number): DOMRect | null {
+		if (!element) {
+			return null;
+		};
+
+		const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+		const range = document.createRange();
+
+		let node = null;
+		let passed = 0;
+		let found = false;
+		let last = null;
+
+		while (node = walker.nextNode()) {
+			if (node.nodeType == Node.ELEMENT_NODE) {
+				// a BR counts as one character of the DOM text, same as in Mark.getDomText
+				if ((node as HTMLElement).tagName != 'BR') {
+					continue;
+				};
+
+				if (passed >= offset) {
+					range.setStartBefore(node);
+					found = true;
+					break;
+				};
+
+				passed++;
+				continue;
+			};
+
+			const length = node.textContent.length;
+
+			if (passed + length >= offset) {
+				range.setStart(node, offset - passed);
+				found = true;
+				break;
+			};
+
+			passed += length;
+			last = node;
+		};
+
+		// The carriage sits past the end of the text we hold: the sender's edit and their carriage
+		// travel on different flows, so the position can arrive before the text does. Clamp to the
+		// end of the last text node — a range collapsed on the element itself measures as an empty
+		// rect in Blink, which would send the carriage back to the start of the block.
+		if (!found && last) {
+			range.setStart(last, last.textContent.length);
+			found = true;
+		};
+
+		if (found) {
+			range.collapse(true);
+
+			const rect = range.getBoundingClientRect() as DOMRect;
+			if (rect && rect.height) {
+				return rect;
+			};
+		};
+
+		// Empty block, or a range the engine cannot measure: sit at the start of the content box.
+		// The element's own height is no guide to the caret height — inside a table cell the
+		// editable is stretched to the full cell — so take one line from the computed style.
+		const er = element.getBoundingClientRect();
+		const style = window.getComputedStyle(element);
+		const line = parseFloat(style.lineHeight) || (parseFloat(style.fontSize) * 1.4);
+
+		return new DOMRect(
+			er.left + (parseFloat(style.paddingLeft) || 0),
+			er.top + (parseFloat(style.paddingTop) || 0),
+			0,
+			Math.min(line || er.height, er.height),
+		);
+	};
+
+	/**
+	 * Returns the rectangle to anchor floating UI to. A missing rectangle, or one which is entirely
+	 * zero - a node hidden with display: none, or detached from the document - carries no usable
+	 * geometry, so it falls back to the centre of the window instead of the window origin.
+	 * @param {object|null} rect - The anchor rectangle.
+	 * @param {object} winSize - The window dimensions.
+	 * @returns {object} The rectangle to position against, isFallback is set when it was replaced.
+	 */
+	getAnchorRect (rect: any, winSize: { ww: number; wh: number }): I.MenuPosition & { isFallback: boolean } {
+		const x = Number(rect?.x) || 0;
+		const y = Number(rect?.y) || 0;
+		const width = Number(rect?.width) || 0;
+		const height = Number(rect?.height) || 0;
+
+		if (!rect || (!x && !y && !width && !height)) {
+			const ww = Number(winSize?.ww) || 0;
+			const wh = Number(winSize?.wh) || 0;
+
+			return { x: ww / 2, y: wh / 2, width: 0, height: 0, isFallback: true };
+		};
+
+		return { x, y, width, height, isFallback: false };
 	};
 
 	/**
@@ -489,6 +624,7 @@ class UtilDom {
 
 		if (item.block && item.block.isTextTitle()) {
 			container.scrollTop = 0;
+			this.setActiveHeader(item.id, isPopup);
 			return;
 		};
 
@@ -503,10 +639,51 @@ class UtilDom {
 		const no = node.getBoundingClientRect().top;
 		const co = container.getBoundingClientRect().top;
 		const st = container.scrollTop;
-		const offset = 20;
-		const y = Math.max(J.Size.header + offset, no - co + st - J.Size.header - offset);
+		const offset = this.getHeaderScrollOffset();
+		const y = Math.max(offset, no - co + st - offset);
 
 		container.scrollTop = y;
+		this.setActiveHeader(item.id, isPopup);
+	};
+
+	/**
+	 * Returns the offset a header is scrolled to, below the sticky page header.
+	 * @returns {number} The offset from the top of the scroll container.
+	 */
+	getHeaderScrollOffset (): number {
+		return J.Size.header + HEADER_OFFSET;
+	};
+
+	/**
+	 * Marks a header as the current one in Table of contents.
+	 * @param {string} id - The block ID of the header.
+	 * @param {boolean} isPopup - Whether the context is a popup.
+	 */
+	setActiveHeader (id: string, isPopup: boolean) {
+		S.Common.getRef(`tableOfContents${this.getEventNamespace(isPopup)}`)?.setActive(id);
+	};
+
+	/**
+	 * Returns the index of the header the page is currently scrolled to: the last one which
+	 * reached the anchor headers are scrolled to, the first one if none of them did.
+	 * @param {number[]} tops - Header offsets from the top of the scroll container.
+	 * @param {number} anchor - The offset headers are scrolled to.
+	 * @returns {number} The index of the current header, -1 if there are no headers.
+	 */
+	getActiveHeaderIndex (tops: number[], anchor: number): number {
+		if (!tops.length) {
+			return -1;
+		};
+
+		let ret = 0;
+
+		for (let i = 0; i < tops.length; ++i) {
+			if (tops[i] <= anchor) {
+				ret = i;
+			};
+		};
+
+		return ret;
 	};
 
 };

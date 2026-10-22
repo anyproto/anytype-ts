@@ -5,9 +5,22 @@
 		.innerWrap { width: 672px; padding: 48px 48px 32px 48px; }
 		.title { @include text-header1; margin-bottom: 20px; }
 
+		.notice {
+			border-radius: 12px; padding: 12px 16px; background: var(--color-shape-highlight-medium);
+			display: flex; flex-direction: column; gap: 2px 0px;
+		}
+		.notice {
+			.label { @include text-small; color: var(--color-text-secondary); }
+			.label.name { font-weight: 600; color: var(--color-text-primary); }
+			.label a { color: var(--color-text-primary); font-weight: 500; text-decoration: none; }
+		}
+
 		.row { 
 			display: flex; flex-direction: row; align-items: center; padding: 20px 0px;
 			border-bottom: 1px solid var(--color-shape-secondary); justify-content: space-between;
+		}
+		.row {
+			.name { display: flex; align-items: center; gap: 0px 6px; }
 		}
 
 		.buttons { margin-top: 30px; }

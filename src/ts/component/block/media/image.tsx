@@ -1,4 +1,4 @@
-import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
+import React, { useState, useRef, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { MediaPlaceholder, Icon, Error, Loader, MediaState } from 'Component';
 import * as I from 'Interface';
 import { focus } from 'Lib/focus';
@@ -12,6 +12,7 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const nodeRef = useRef(null);
 	const wrapRef = useRef(null);
 	const [ isLoaded, setIsLoaded ] = useState(false);
+	const [ hasError, setHasError ] = useState(false);
 
 	const handleKeyDown = (e: any) => {
 		onKeyDown?.(e, '', [], { from: 0, to: 0 }, props);
@@ -104,7 +105,25 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	};
 
 	const handleError = () => {
-		U.Dom.addClass(wrapRef.current, 'brokenMedia');
+		setHasError(true);
+	};
+
+	// A backstop for a failure that never reached the handler: an image that is
+	// already complete with no intrinsic width has failed, whenever that happened.
+	// Without it the block sits behind its loader for good
+	const handleImageRef = (node: HTMLImageElement) => {
+		if (node && node.complete && !node.naturalWidth) {
+			setHasError(true);
+		};
+	};
+
+	// The file object stays reachable when its bytes do not: opening it is the only
+	// action that always works on a broken image, and its name, size and sync state
+	// are what explain the failure
+	const handleOpenObject = (e: any) => {
+		U.Object.openConfig(e, S.Detail.get(rootId, targetObjectId));
+
+		analytics.event('OpenAsObject', { type: block.type, params: { fileType: block.content.type } });
 	};
 
 	const handleClick = (e: any) => {
@@ -154,7 +173,7 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 	const isDownloading = S.Common.isDownloading(targetObjectId);
 
 	const handleDownload = () => {
-		Action.downloadFile(targetObjectId, analytics.route.block, block.isFileImage());
+		Action.downloadFile(targetObjectId, analytics.route.block);
 	};
 
 	const getWidth = (checkMax: boolean, v: number): number => {
@@ -195,11 +214,29 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 
 	let element = null;
 
+	if (hasError && !object.isDeleted && (state == I.FileState.Done)) {
+		// On the file object's own page the block is the object: there is nothing left
+		// to open, and the page already carries its own download button
+		const isSelf = rootId == targetObjectId;
+		const brokenCss: any = { ...css, ...wrapCss };
+
+		// The 80px is the loader's placeholder height, and nothing is loading any more
+		delete brokenCss.height;
+
+		element = (
+			<div ref={wrapRef} className="wrap brokenMedia" style={brokenCss}>
+				<div className="name" onClick={isSelf ? null : handleOpenObject}>{`\u{1F517} ${translate('blockImageBroken')}`}</div>
+				{isSelf ? '' : (isDownloading ? <Icon className="downloading" /> : <Icon name="common/download" className="download" onClick={handleDownload} />)}
+				{overlay}
+			</div>
+		);
+	} else
 	if (object.isArchived && (state == I.FileState.Done)) {
 		element = (
 			<div ref={wrapRef} className="wrap" style={{ ...css, ...wrapCss }}>
 				{!isLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
 				<img
+					ref={handleImageRef}
 					className="mediaImage"
 					src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
 					onDragStart={e => e.preventDefault()}
@@ -234,6 +271,7 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 					<div ref={wrapRef} className="wrap" style={{ ...css, ...wrapCss }}>
 						{!isLoaded ? <Loader type={I.LoaderType.Loader} /> : ''}
 						<img
+							ref={handleImageRef}
 							className="mediaImage"
 							src={S.Common.imageUrl(targetObjectId, I.ImageSize.Large)}
 							onDragStart={e => e.preventDefault()}
@@ -249,6 +287,18 @@ const BlockImage = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 			};
 		};
 	};
+
+	const targetRef = useRef(targetObjectId);
+
+	// A new target means a new url, so let it try to load instead of staying broken.
+	// Only on an actual change: on mount this would discard an error that already
+	// landed during the commit
+	useEffect(() => {
+		if (targetRef.current != targetObjectId) {
+			targetRef.current = targetObjectId;
+			setHasError(false);
+		};
+	}, [ targetObjectId ]);
 
 	useImperativeHandle(ref, () => ({}));
 

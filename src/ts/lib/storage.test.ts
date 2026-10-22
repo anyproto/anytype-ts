@@ -68,3 +68,84 @@ describe('Storage last-opened (per-space isolation)', () => {
 	});
 
 });
+
+/**
+ * Regression coverage for JS-9868.
+ *
+ * The shortcut recorder derived the stored key name from `keyboard.eventKey()`
+ * (= `e.key.toLowerCase()`). For Space `e.key` is a literal ' ', not the canonical
+ * 'space' the J.Shortcut defaults use, so recording any Space combo persisted ' '.
+ * `MenuManager.getAccelerator()` then emitted "CmdOrCtrl+Shift+ ",
+ * `globalShortcut.register()` threw, and a try/catch swallowed it - the settings
+ * panel showed a blank chip for a shortcut never registered with the OS.
+ *
+ * The recorder now stores 'space'; this covers the read-side heal that recovers
+ * configs already written by 0.56.8-beta.
+ */
+describe('Storage shortcuts (Space key normalization)', () => {
+
+	let store: Record<string, string>;
+
+	beforeEach(() => {
+		store = {};
+
+		vi.stubGlobal('localStorage', {
+			getItem: (k: string) => (k in store ? store[k] : null),
+			setItem: (k: string, v: string) => { store[k] = v; },
+			removeItem: (k: string) => { delete store[k]; },
+		});
+
+		vi.stubGlobal('U', { Common: { getElectron: () => ({}) } });
+		vi.stubGlobal('S', { Common: { space: '' }, Auth: { account: null } });
+
+		Storage.set('shortcuts', {}, false);
+	});
+
+	it('heals a legacy literal space into the canonical name', () => {
+		Storage.set('shortcuts', { globalSearch: [ 'cmd', 'shift', ' ' ] }, false);
+
+		expect(Storage.getShortcuts().globalSearch).toEqual([ 'cmd', 'shift', 'space' ]);
+	});
+
+	it('leaves every other key untouched', () => {
+		Storage.set('shortcuts', {
+			globalSearch: [ 'cmd', 'shift', 'k' ],
+			settings: [ 'cmd', 'comma' ],
+			newTab: [ 'cmd', 'arrowup' ],
+		}, false);
+
+		const list = Storage.getShortcuts();
+
+		expect(list.globalSearch).toEqual([ 'cmd', 'shift', 'k' ]);
+		expect(list.settings).toEqual([ 'cmd', 'comma' ]);
+		expect(list.newTab).toEqual([ 'cmd', 'arrowup' ]);
+	});
+
+	it('heals every entry, not just the first', () => {
+		Storage.set('shortcuts', {
+			globalSearch: [ 'cmd', 'shift', ' ' ],
+			shortcut: [ 'ctrl', ' ' ],
+		}, false);
+
+		const list = Storage.getShortcuts();
+
+		expect(list.globalSearch).toEqual([ 'cmd', 'shift', 'space' ]);
+		expect(list.shortcut).toEqual([ 'ctrl', 'space' ]);
+	});
+
+	it('does not throw on a non-array value from an unvalidated import', () => {
+		Storage.set('shortcuts', { newTab: 'cmd+t' } as any, false);
+
+		expect(() => Storage.getShortcuts()).not.toThrow();
+		expect(Storage.getShortcuts().newTab).toEqual([]);
+	});
+
+	it('returns a fresh copy so in-place sorts cannot leak into the cache', () => {
+		Storage.set('shortcuts', { globalSearch: [ 'cmd', 'shift', 'k' ] }, false);
+
+		Storage.getShortcuts().globalSearch.sort();
+
+		expect(Storage.getShortcuts().globalSearch).toEqual([ 'cmd', 'shift', 'k' ]);
+	});
+
+});
