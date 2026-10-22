@@ -9,21 +9,49 @@
 		@media (max-width: 700px) {
 			.innerWrap { width: calc(100% - 32px); left: 16px; margin-left: 0px !important; }
 		}
+	}
+
+	/* Quick search window: the popup IS the window - fill it completely */
+	.popup.popupSearch.isQuickSearch {
+		.innerWrap {
+			width: 100% !important; height: 100% !important; max-height: 100%; left: 0px !important; top: 0px !important;
+			margin: 0px !important; transform: none !important; border-radius: 0px; box-shadow: none;
+		}
+		.dimmer { display: none; }
+	}
+
+	.popup.popupSearch {
 
 		.content { overflow: visible; transition: none; transform: translate3d(0px,0px,0px); height: 100%; }
 		.wrap { height: 100%; display: flex; flex-direction: column; }
 		#loader { top: 55px; height: calc(100% - 55px); }
 
 		.head { 
-			border-bottom: 1px solid var(--color-shape-secondary); padding: 0px 20px; display: flex; align-items: center; flex-direction: row; gap: 0px 12px;
+			border-bottom: 1px solid var(--color-shape-secondary); padding: 0px 20px; display: flex; align-items: center; flex-direction: row; gap: 0px 8px;
 			flex-shrink: 0;
 		}
 		.head {
 			.iconObject { margin-right: 6px; }
 
-			.icon { width: 18px; height: 18px; }
+			.icon { width: 18px; height: 18px; flex-shrink: 0; }
 
-			.filter { width: 100%; padding: 0px; }
+			.tokens { display: flex; align-items: center; gap: 0px 6px; max-width: 60%; flex-shrink: 0; overflow: hidden; }
+			.tokens {
+				.filterToken {
+					display: flex; align-items: center; gap: 0px 6px; padding: 2px 4px 2px 8px; border-radius: 14px; background: var(--color-shape-highlight-medium);
+					@include text-small; color: var(--color-text-primary); max-width: 200px; min-width: 0; flex-shrink: 1;
+				}
+				.filterToken {
+					.iconObject { margin-right: 0px; flex-shrink: 0; }
+					.icon.chipIcon { flex-shrink: 0; }
+					.name { @include text-overflow-nw; }
+					.icon { width: 16px; height: 16px; }
+					.icon.clear { position: relative; }
+					.icon.clear::after { content: ""; position: absolute; top: -8px; bottom: -8px; left: -3px; right: -6px; }
+				}
+			}
+
+			.filter { width: 100%; min-width: 120px; padding: 0px; }
 			.filter {
 				.inner { height: auto; gap: 0px 8px; }
 				.input { 
@@ -34,11 +62,37 @@
 			}
 		}
 
+		.typeSelectWrap { position: relative; flex-shrink: 0; border-bottom: 1px solid var(--color-shape-secondary); }
+		.typeSelectWrap::after {
+			content: ""; position: absolute; top: 0px; right: 0px; bottom: 0px; width: 40px; pointer-events: none; opacity: 0;
+			background: linear-gradient(to right, transparent, var(--color-bg-primary)); transition: opacity $transitionCommon;
+		}
+		.typeSelectWrap.withFade::after { opacity: 1; }
+		.typeSelectWrap {
+			.typeSelect { display: flex; flex-direction: row; gap: 0px 8px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; }
+			.typeSelect::-webkit-scrollbar { display: none; }
+			.typeSelect {
+				.typeItem {
+					flex-shrink: 0; padding: 2px 10px; border-radius: 14px; @include text-small; color: var(--color-text-secondary);
+					transition: $transitionAllCommon; display: flex; align-items: center; gap: 0px 6px;
+				}
+				.typeItem {
+					.chipIcon { width: 16px; height: 16px; flex-shrink: 0; }
+				}
+				.typeItem:last-child { margin-right: 20px; }
+				.typeItem:hover { background: var(--color-shape-highlight-medium); }
+				.typeItem.active { background: var(--color-shape-highlight-medium); color: var(--color-text-primary); }
+			}
+		}
+
 		.items { height: 100%; flex-grow: 1; }
 		.items {
 			.pad { height: 12px; }
 
 			.sectionName { @include text-small; display: flex; justify-content: space-between; height: 26px; line-height: 18px; padding: 5px 16px; font-weight: 500; color: var(--color-text-secondary); }
+			.sectionName {
+				.clear { color: var(--color-text-primary); flex-shrink: 0; }
+			}
 
 			.item { position: relative; line-height: 22px; padding: 8px 8px 8px 12px; white-space: nowrap; display: flex; gap: 0px 12px; border-radius: 8px; }
 
@@ -49,7 +103,18 @@
 
 			.item {
 				.icon { width: 20px; height: 20px; }
-				.icon.advanced { opacity: 0; }
+				.personBadge { width: 40px; height: 40px; border-radius: 100%; background: var(--color-shape-tertiary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+				/* display, not opacity - a hidden hint must not reserve width and squeeze
+				the name column on every inactive row */
+				.advancedWrap { display: none; align-items: center; gap: 0px 6px; }
+				.advancedWrap:hover {
+					.advancedHint { color: var(--color-text-primary); }
+					.icon.advanced { color: var(--color-text-primary); }
+				}
+				.advancedHint { @include text-small; color: var(--color-text-secondary); white-space: nowrap; display: flex; flex-direction: column; align-items: flex-end; gap: 2px 0px; }
+				.advancedHint {
+					.keys { display: flex; align-items: center; gap: 0px 4px; }
+				}
 
 				.iconObject { transition: $transitionAllCommon; vertical-align: top; flex-grow: 0; }
 				.iconObject:not(.isHuman),
@@ -66,9 +131,17 @@
 							text-align: center; margin-right: 4px;
 						}
 						.label:last-child { margin: 0px; }
+
+						/* the hint's flex gap spaces the keycaps - the margin above would double it */
+						.advancedHint .label { margin: 0px; }
 					}
 				}
 				.name { @include text-overflow-nw; font-weight: 500; }
+				.name .cmdPrefix { color: var(--color-text-secondary); font-weight: 400; margin-right: 6px; }
+				.name .cmdArg { color: var(--color-text-tertiary); font-weight: 400; }
+				.caption .cmdDesc { color: var(--color-text-secondary); }
+				.caption .bullet { width: 3px; height: 3px; border-radius: 50%; background: var(--color-text-secondary); flex-shrink: 0; }
+				.caption .prep { color: var(--color-text-secondary); flex-shrink: 0; }
 				.context { @include text-small; padding: 2px 0px; white-space: normal; display: flex; gap: 0 4px; }
 
 				.context {
@@ -80,10 +153,107 @@
 				.caption { @include text-small; @include text-overflow-nw; color: var(--color-text-secondary); }
 			}
 
+			.emptySearch {
+				.tutorial { display: flex; flex-direction: column; align-items: center; gap: 8px 0px; }
+				.tutorial {
+					/* same face as the "Try creating..." line above (.txt) */
+					.label { line-height: 24px; color: var(--color-control-active); }
+				}
+			}
+
 			.item.active { background-color: var(--color-shape-highlight-medium); }
 			.item.active {
-				.icon.advanced { opacity: 1; }
+				.advancedWrap { display: flex; }
 			}
+
+			.item {
+				.drillLink:hover { text-decoration: underline; }
+				.caption .spaceLink { display: flex; align-items: center; gap: 0px 6px; min-width: 0; }
+
+				.side.left .caption { display: flex; align-items: center; gap: 0px 6px; }
+				.side.left .caption {
+					.iconObject { flex-shrink: 0; background: none; border-radius: 0px; }
+					.name { @include text-overflow-nw; font-weight: 400; }
+					.creator { @include text-overflow-nw; flex-shrink: 2; }
+				}
+			}
+
+			.item.isMessage {
+				.iconObject { flex-shrink: 0; }
+
+				.sides {
+					.side.left { display: flex; flex-direction: column; gap: 2px 0px; }
+				}
+
+				.nameWrapper { display: flex; align-items: baseline; gap: 0px 8px; overflow: hidden; }
+				.nameWrapper {
+					.name { @include text-overflow-nw; font-weight: 500; }
+					.time { @include text-small; color: var(--color-text-secondary); flex-shrink: 0; }
+				}
+
+				.text { @include text-small; @include clamp2; white-space: normal; color: var(--color-text-secondary); }
+				.text {
+					.highlight { color: var(--color-system-accent-100); }
+				}
+
+				.caption { display: flex; align-items: center; gap: 0px 6px; overflow: hidden; }
+				.caption {
+					.iconObject { flex-shrink: 0; background: none; border-radius: 0px; }
+					.name { @include text-overflow-nw; }
+				}
+			}
+		}
+
+		/* Full-view first-open onboarding: covers everything below the search input.
+		The top zone stays transparent so the first real result rows show through
+		and fade into the panel background */
+		.searchOnboarding {
+			position: absolute; left: 0px; top: 55px; right: 0px; bottom: 0px; z-index: 30;
+			display: flex; flex-direction: column;
+		}
+		.searchOnboarding {
+			/* Eased (smoothstep-like) fade - a plain linear ramp reads as a hard edge */
+			.fade {
+				height: 240px; min-height: 120px; flex-shrink: 1;
+				background: linear-gradient(
+					to bottom,
+					transparent 0%,
+					color-mix(in srgb, var(--color-bg-primary) 8%, transparent) 40%,
+					color-mix(in srgb, var(--color-bg-primary) 30%, transparent) 60%,
+					color-mix(in srgb, var(--color-bg-primary) 65%, transparent) 78%,
+					color-mix(in srgb, var(--color-bg-primary) 90%, transparent) 92%,
+					var(--color-bg-primary) 100%
+				);
+			}
+
+			.inner {
+				flex: 1 0 auto; background: var(--color-bg-primary); display: flex; flex-direction: column;
+				align-items: center; justify-content: flex-start; gap: 24px 0px; padding: 8px 24px 24px;
+			}
+
+			.title { @include text-header2; }
+
+			.point { display: flex; flex-direction: column; align-items: center; gap: 12px 0px; }
+
+			/* Echo of the real kind chips (.typeItem) shown in the head of the search */
+			.chips { display: flex; gap: 0px 8px; }
+			.chips {
+				.chip {
+					flex-shrink: 0; padding: 2px 10px; border-radius: 14px; @include text-small;
+					color: var(--color-text-secondary); background: var(--color-shape-highlight-medium);
+				}
+			}
+
+			.keys { display: flex; gap: 0px 8px; }
+			.keys {
+				.label {
+					@include text-header3; padding: 8px 14px; border-radius: 8px; background: var(--color-shape-tertiary);
+					min-width: 44px; text-align: center;
+				}
+			}
+
+			.text { @include text-paragraph; color: var(--color-text-secondary); text-align: center; max-width: 420px; }
+			.continue { @include text-small; color: var(--color-text-tertiary); margin-top: 8px; }
 		}
 
 		.foot {
@@ -99,6 +269,8 @@
 						@include text-small; padding: 0px 4px; border-radius: 4px; height: 18px; line-height: 18px;
 						background: var(--color-shape-tertiary); min-width: 18px; text-align: center;
 					}
+					/* pulls the "+" joiner tight against its keycaps (the 4px flex gap stays for bare alternatives) */
+					.sep { @include text-small; color: var(--color-text-secondary); margin: 0px -2px; }
 				}
 				.label { @include text-small; color: var(--color-text-secondary); }
 			}

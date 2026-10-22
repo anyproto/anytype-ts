@@ -7,6 +7,7 @@ class MenuStore {
 
 	timeout = 0;
 	isAnimatingFlag: Map<string, boolean> = new Map();
+	refs: Map<string, any> = new Map();
 
 	constructor () {
 		makeObservable(this, {
@@ -113,6 +114,37 @@ class MenuStore {
 	 */
 	get (id: string): I.Menu {
 		return this.menuList.find(it => it.id == id);
+	};
+
+	/**
+	 * Registers the live component instance for a menu ID.
+	 * @param {string} id - The menu ID.
+	 * @param {any} ref - The instance handle.
+	 */
+	setRef (id: string, ref: any) {
+		this.refs.set(id, ref);
+	};
+
+	/**
+	 * Gets the live component instance for a menu ID.
+	 * @param {string} id - The menu ID.
+	 * @returns {any} The instance handle, if mounted.
+	 */
+	getRef (id: string): any {
+		return this.refs.get(id);
+	};
+
+	/**
+	 * Removes a registered instance. When ref is passed, only removes if it is
+	 * still the registered one — an unmounting instance must not evict a newer
+	 * instance that reopened under the same ID.
+	 * @param {string} id - The menu ID.
+	 * @param {any} [ref] - The instance handle to match.
+	 */
+	deleteRef (id: string, ref?: any) {
+		if (!ref || (this.refs.get(id) === ref)) {
+			this.refs.delete(id);
+		};
 	};
 
 	/**

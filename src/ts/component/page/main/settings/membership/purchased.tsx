@@ -2,18 +2,28 @@ import React, { forwardRef, useState } from 'react';
 import { Title, Label, Button, Icon } from 'Component';
 import * as I from 'Interface';
 
-const PageMainSettingsMembershipPurchased = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+interface Props extends I.PageSettingsComponent {
+	isUpdating?: boolean;
+};
 
+const PageMainSettingsMembershipPurchased = forwardRef<I.PageRef, Props>((props, ref) => {
+
+	const { isUpdating } = props;
 	const [ dummy, setDummy ] = useState(0);
 	const { data } = S.Membership;
 	const { account} = S.Auth;
 	const { dateFormat } = S.Common;
 	const { nextInvoice } = data;
-	const purchased = data?.getTopPurchasedProduct();
-	const product = data?.getTopProduct();
-	const { info } = purchased;
+
+	// A purchased product missing from the catalog and without an embedded product gets a fallback
+	const purchased = data.getTopPurchasedProduct() || data.getUnresolvedProducts()[0] || null;
+	const product = data.getTopProduct();
+	const info = purchased?.info || { isAutoRenew: false, dateEnds: 0, period: I.MembershipPeriod.Unlimited };
 	const { isAutoRenew, dateEnds, period } = info;
-	const { name, colorStr } = product;
+	const name = product?.name || translate('popupSettingsMembershipUnknownPlan');
+	const colorStr = product?.colorStr;
+	const iconName = product?.iconName || 'tier/purple';
+	const isElapsed = !!purchased?.isElapsed;
 	const currentCn = [ 'item', 'current', colorStr ? colorStr : 'default' ];
 	const participant = U.Space.getParticipant();
 	const globalName = participant?.globalName;
@@ -27,6 +37,14 @@ const PageMainSettingsMembershipPurchased = forwardRef<I.PageRef, I.PageSettings
 	let date = '';
 	let button = null;
 
+	if (purchased?.isPending) {
+		membershipText = translate('popupSettingsMembershipPending');
+	} else
+	if (isElapsed) {
+		// An elapsed end date is never shown as active: renewal is confirmed only by a newer status
+		date = U.Date.dateWithFormat(dateFormat, dateEnds);
+		membershipText = U.String.sprintf(translate(isUpdating ? 'popupSettingsMembershipEndedChecking' : 'popupSettingsMembershipEnded'), date);
+	} else
 	if (isAutoRenew && nextInvoice.date) {
 		const price = U.Common.getMembershipPriceString(nextInvoice.total);
 
@@ -49,7 +67,9 @@ const PageMainSettingsMembershipPurchased = forwardRef<I.PageRef, I.PageSettings
 	};
 
 	const onNameSelect = () => {
-		Action.finalizeMembership(product, analytics.route.settingsMembership, () => setDummy(dummy + 1));
+		if (product) {
+			Action.finalizeMembership(product, analytics.route.settingsMembership, () => setDummy(dummy + 1));
+		};
 	};
 
 	if (data.teamOwnerId && (data.teamOwnerId != account.id)) {
@@ -66,7 +86,7 @@ const PageMainSettingsMembershipPurchased = forwardRef<I.PageRef, I.PageSettings
 			<div className="section">
 				<div className={currentCn.join(' ')}>
 					<div className="top">
-						<Icon name={product.iconName} size={64} />
+						<Icon name={iconName} size={64} />
 						<Title text={U.String.sprintf(translate('popupSettingsMembershipCurrentTier'), name, translate(`membershipPeriod${period}`))} />
 						<Label text={membershipText} />
 					</div>
@@ -79,7 +99,7 @@ const PageMainSettingsMembershipPurchased = forwardRef<I.PageRef, I.PageSettings
 						<Title text={globalName ? globalName : translate('popupSettingsMembershipSelectAnyNameTitle')} />
 						<Label text={translate('popupSettingsMembershipSelectAnyNameText')} />
 					</div>
-					{globalName ? '' : <Button onClick={onNameSelect} text={translate('commonSelect')} color="accent" />}
+					{globalName || !product ? '' : <Button onClick={onNameSelect} text={translate('commonSelect')} color="accent" />}
 				</div>
 			</div>
 		</div>

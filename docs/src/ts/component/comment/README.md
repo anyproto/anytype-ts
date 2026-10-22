@@ -20,9 +20,20 @@ Object-level discussion system with threaded posts, replies, rich text editing, 
 | `post.tsx` | Top-level comment: author info, content, reactions, context menu, inline edit |
 | `reply.tsx` | Reply to a post: similar to post but simpler |
 | `list.tsx` | Container mapping posts with load-more |
-| `form.tsx` | Submission form: draft persistence, file uploads, toolbar, slash/emoji/mention menus |
+| `form.tsx` | Submission form: draft persistence, file uploads, toolbar, slash/emoji/mention menus, typing publish |
+| `activity.tsx` | Typing and agent activity: `CommentActivity` at a thread's end or the discussion level, `CommentActivityAttached` under the comment a run produced |
 | `render.tsx` | Converts `CommentContentPart[]` -> JSX (paragraphs, headings, lists, code, embeds) |
 | `embedPreview.tsx` | Embed previews: LaTeX, YouTube, Vimeo, Figma, etc. |
+
+### Typing and agent activity
+
+While the section is open, it subscribes `typing/<discussionId>` (`Lib/presence`) and `status/<discussionId>` (`chatStatus.retain(space, discussionId, 'discussion')`), the same pubsub channels as chats.
+
+- A reply form publishes typing with `replyTo` = its post; the main composer without it
+- Settings → Personal → Messaging "Show others when I'm typing" (`S.Common.sendTyping`, broadcast to all tabs) turns off publishing typing in chats and comments; editor carets are not affected
+- Agents send `reply_to` with their status; in discussion mode the journal keeps one open run per publisher, sealed by that publisher's comment
+- `discussionActivity()` (`Lib/chatStatus/timeline`) places everything: a finished run on its comment, the rest at the end of the thread its reply target resolves to (`S.Comment.getThreadRoot`), else at the discussion level
+- Rendering reuses the chat's `StatusGroup` (`isCompact`: one typing-row line until expanded) and `TypingIndicator` from `block/chat/status.tsx`
 
 ### Editor (`src/ts/component/form/commentEditor.tsx`)
 
@@ -43,6 +54,7 @@ Lexical-based rich text editor with custom nodes and plugins:
 MobX store with:
 - `postMap`: subscription ID -> posts
 - `replyMap`: post ID -> replies
+- `getThreadRoot(subId, id)`: thread root of a placed message, observable
 - Pagination flags: `hasMorePostsMap`, `hasMoreRepliesMap`, `hasOlderRepliesMap`
 
 ### Utilities (`src/ts/lib/util/comment.ts`)

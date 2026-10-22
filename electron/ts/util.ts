@@ -7,6 +7,7 @@ import sanitize from 'sanitize-filename';
 import ConfigManager from './config';
 import Constant from '../json/constant.json';
 import { AppWindow, TabView } from './types';
+import { isTrustedUrl } from './lib/trustedUrl';
 
 const protocol = 'anytype';
 
@@ -20,6 +21,15 @@ class Util {
 
 	setAppPath (value: string): void {
 		this.appPath = value;
+	};
+
+	isTrustedUrl (url: string): boolean {
+		return isTrustedUrl(url, {
+			isDevelopment: is.development,
+			port: this.getPort(),
+			appPath: this.appPath,
+			isWindows: is.windows,
+		});
 	};
 
 	mkDir (value: string): void {

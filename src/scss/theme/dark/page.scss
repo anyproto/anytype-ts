@@ -59,6 +59,12 @@
 		.item:hover { border-color: var(--color-shape-primary); }
 	}
 
+	.pageSettingsImportIndex {
+		// Rows inside .actionItems draw only a divider, so the tile hover border above
+		// must not recolour it.
+		.actionItems .item:hover { border-color: var(--color-shape-secondary); }
+	}
+
 	.pageSettingsMembership {
 		.membershipPurchased {
 			.section {

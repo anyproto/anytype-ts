@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
+import React, { forwardRef, useRef, useState, useEffect } from 'react';
 import * as Prism from 'prismjs';
 
 import raf from 'raf';
@@ -6,6 +6,8 @@ import { Select, Marker, IconObject, Icon, Editable } from 'Component';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { presence } from 'Lib/presence';
+import { virtualBlock } from 'Lib/virtualBlock';
 
 // Prism language plugins expect `Prism` on the global scope
 (window as any).Prism = Prism;
@@ -73,10 +75,18 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const timeoutFilter = useRef(0);
 	const timeoutClick = useRef(0);
 	const timeoutText = useRef(0);
+	const pendingSavesRef = useRef(0);
+	const sentTextsRef = useRef<string[]>([]);
 	const preventMenu = useRef(false);
 	const clickCnt = useRef(0);
 	const prevStyleRef = useRef(style);
 	const phantomNewlineRef = useRef(false);
+
+	// live presence: carriages of the people editing this block right now (see Lib/presence).
+	// The parent Block observes S.Presence and re-renders us, so plain reads stay fresh here.
+	const [ carriages, setCarriages ] = useState([]);
+	const remote = S.Presence.getBlockTypers(rootId, id).filter(it => it.range);
+	const remoteKey = remote.map(it => [ it.identity, it.sessionId, it.range.from ].join(':')).join(',');
 
 	useEffect(() => {
 		setValue(text);
@@ -108,8 +118,63 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 	}, []);
 
+	// Measures where every remote carriage lands in our DOM. Runs after the text is
+	// in place, so an incoming edit and the caret that follows it stay in sync.
+	useEffect(() => {
+		if (!remote.length) {
+			setCarriages(list => (list.length ? [] : list));
+			return;
+		};
+
+		const frame = raf(() => {
+			const node = nodeRef.current;
+			const el = node ? U.Dom.select('.editable', node) : null;
+
+			if (!el) {
+				return;
+			};
+
+			const nodeRect = node.getBoundingClientRect();
+			const hasZws = Mark.hasZws(el);
+
+			setCarriages(remote.map(it => {
+				const offset = hasZws ? Mark.modelToDom(it.range.from, el) : it.range.from;
+				const rect = U.Dom.getCarriageRect(el, offset);
+
+				if (!rect) {
+					return null;
+				};
+
+				return {
+					id: [ it.identity, it.sessionId ].join(':'),
+					style: {
+						left: rect.left - nodeRect.left,
+						top: rect.top - nodeRect.top,
+						height: rect.height,
+					},
+				};
+			}).filter(it => it));
+		});
+
+		return () => raf.cancel(frame);
+	}, [ remoteKey, text ]);
+
 	useEffect(() => {
 		const { focused } = focus.state;
+
+		// Never touch the composing editable's DOM or its selection while an IME
+		// composition is in progress: replacing innerHTML or re-applying the
+		// (stale) focus range aborts the composition and commits the candidate
+		// text at the old caret position — e.g. wedged between the caret and an
+		// adjacent mention/object mark (JS-7510). Scoped to the focused block so
+		// a composition elsewhere (chat input, search filter) doesn't stop other
+		// visible blocks from syncing store updates to their DOM. Skip without
+		// updating prevTextRef / prevMarksRef so the store change is re-applied
+		// on the next render; onCompositionEnd reconciles value, marks and range
+		// once the composition settles.
+		if (keyboard.isComposition && (focused == block.id)) {
+			return;
+		};
 		const textChanged = prevTextRef.current !== text;
 		const marksChanged = !U.Common.compareJSON(prevMarksRef.current, marks || []);
 
@@ -119,10 +184,22 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		// overwrites the user's latest keystrokes (e.g. code block text reverting).
 		// Only suppress when text hasn't changed AND marks haven't changed — mark
 		// toggles (bold, italic, etc.) need setValue to re-render markup.
-		const isEcho = (focused == block.id) && (text === textRef.current) && !marksChanged;
+		const isOwnEcho = (focused == block.id) && (text === textRef.current) && !marksChanged;
+
+		// A store text matching an earlier in-flight save (but not the latest one)
+		// is a stale echo arriving late — e.g. the debounced save racing the
+		// immediate save on blur. Suppress it independent of focus: after
+		// focus.clear() the guard above no longer applies and the stale echo would
+		// revert the just-typed content (JS-9285)
+		const sent = sentTextsRef.current;
+		const isStaleEcho = (pendingSavesRef.current > 0) && sent.includes(text) && (text !== sent[sent.length - 1]);
+		const isEcho = isOwnEcho || isStaleEcho;
 
 		if (textChanged || marksChanged) {
-			marksRef.current = marks || [];
+			// Don't absorb marks from a stale echo — they belong to the older save
+			if (!isStaleEcho) {
+				marksRef.current = marks || [];
+			};
 
 			// Only sync contenteditable from props when not focused or when content
 			// actually changed. When focused, the local editable state is the source
@@ -186,6 +263,12 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		if (block.isTextCode()) {
 			const lang = U.Prism.aliasMap[fields.lang] || 'plain';
 			const grammar = Prism.languages[lang];
+
+			// Zero-width spaces ride along with pasted text (AI answers are full of them).
+			// The model never keeps them — getTextValue strips them on read — so leaving
+			// them in the DOM creates characters the user cannot see but the browser can:
+			// Backspace silently eats one instead of deleting a visible character (JS-9857)
+			html = Mark.stripZws(html);
 
 			html = grammar ? Prism.highlight(html, grammar, lang) : Prism.util.encode(html) as string;
 			langRef.current?.setValue(lang);
@@ -294,7 +377,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		return editableRef.current?.getRange();
 	};
 	
-	const getMarksFromHtml = (): { marks: I.Mark[], text: string } => {
+	const getMarksFromHtml = (): I.FromHtmlResult => {
 		let value = getHtmlValue();
 
 		// Strip phantom <br/> that was added to make trailing newlines visible in contenteditable
@@ -397,9 +480,9 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		});
 
 		if (newBlock.type && (!isInsideTable && !block.isTextCode())) {
-			C.BlockCreate(rootId, id, I.BlockPosition.Top, newBlock, () => {
+			C.BlockCreate(rootId, virtualBlock.resolve(id), I.BlockPosition.Top, newBlock, () => {
 				setValue('');
-				
+
 				focus.set(block.id, { from: 0, to: 0 });
 				focus.apply();
 			});
@@ -428,11 +511,14 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 						setValue('');
 
 						U.Data.blockSetText(rootId, block.id, '', [], true, () => {
+							// Runs after a queued materialization of the virtual placeholder — resolve the id
+							const blockId = virtualBlock.resolve(block.id);
+
 							C.BlockListSetFields(rootId, [
-								{ blockId: block.id, fields: { ...block.fields, lang } }
+								{ blockId, fields: { ...block.fields, lang } }
 							], () => {
-								C.BlockListTurnInto(rootId, [ block.id ], I.TextStyle.Code, () => {
-									focus.set(block.id, { from: 0, to: 0 });
+								C.BlockListTurnInto(rootId, [ blockId ], I.TextStyle.Code, () => {
+									focus.set(blockId, { from: 0, to: 0 });
 									focus.apply();
 								});
 							});
@@ -779,6 +865,8 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const { filter } = S.Common;
 		const range = getRange();
+
+		publishPresence(range);
 		const langCodes = Object.keys(Prism.languages).join('|');
 		const langKey = '```(' + langCodes + ')?';
 
@@ -983,14 +1071,17 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				setValue(value);
 
 				U.Data.blockSetText(rootId, id, value, marksRef.current, true, () => {
+					// Runs after a queued materialization of the virtual placeholder — resolve the id
+					const blockId = virtualBlock.resolve(id);
+
 					const finishTurnInto = () => {
-						C.BlockListTurnInto(rootId, [ id ], newStyle, () => {
-							focus.set(block.id, { from: 0, to: 0 });
+						C.BlockListTurnInto(rootId, [ blockId ], newStyle, () => {
+							focus.set(blockId, { from: 0, to: 0 });
 							focus.apply();
 						});
 
 						if ([ I.TextStyle.Toggle, I.TextStyle.ToggleHeader1, I.TextStyle.ToggleHeader2, I.TextStyle.ToggleHeader3 ].includes(newStyle)) {
-							S.Block.toggle(rootId, id, true);
+							S.Block.toggle(rootId, blockId, true);
 						};
 					};
 
@@ -998,7 +1089,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 						const lang = match[2] || Storage.get('codeLang') || J.Constant.default.codeLang;
 
 						C.BlockListSetFields(rootId, [
-							{ blockId: block.id, fields: { ...block.fields, lang } }
+							{ blockId, fields: { ...block.fields, lang } }
 						], finishTurnInto);
 					} else {
 						finishTurnInto();
@@ -1068,13 +1159,21 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 		};
 
-		// Debounce the gRPC save so rapid typing doesn't saturate the main thread
-		// with synchronous middleware round-trips. The contenteditable DOM already
-		// reflects the user's input natively — we only need to persist periodically.
 		window.clearTimeout(timeoutText.current);
-		timeoutText.current = window.setTimeout(() => {
+
+		if (!keyboard.isComposition && virtualBlock.shouldFork(rootId, block, value)) {
+			// First content into an empty block forks the block identity via
+			// BlockReplace — fire the save immediately so the fork happens on the
+			// first keystroke; further keyups are buffered against the fork
 			setText(marksRef.current, false);
-		}, 300);
+		} else {
+			// Debounce the gRPC save so rapid typing doesn't saturate the main thread
+			// with synchronous middleware round-trips. The contenteditable DOM already
+			// reflects the user's input natively — we only need to persist periodically.
+			timeoutText.current = window.setTimeout(() => {
+				setText(marksRef.current, false);
+			}, 300);
+		};
 
 		onKeyUp(e, value, marksRef.current, range, props);
 
@@ -1084,12 +1183,17 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onMention = (d: number) => {
-		const range = getRange();
+		// This instance may already be unmounted when a queued trigger runs after
+		// an id fork/materialization — the swap left the correct range in the
+		// focus state
+		const range = getRange() || focus.state.range;
 		if (!range) {
 			return;
 		};
 
-		const element = `#block-${U.Common.esc(block.id)}`;
+		// May run after a queued materialization of the virtual placeholder
+		const blockId = virtualBlock.resolve(block.id);
+		const element = `#block-${U.Common.esc(blockId)}`;
 
 		let value = getTextValue();
 
@@ -1118,7 +1222,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				noFlipY: false,
 				data: {
 					rootId,
-					blockId: block.id,
+					blockId,
 					marks: marksRef.current,
 					skipIds: [ rootId ],
 					canAdd: true,
@@ -1141,10 +1245,14 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	};
 
 	const onEmojiSearch = () => {
-		const range = getRange();
+		// See onMention: the instance may be unmounted when a queued trigger runs
+		const range = getRange() || focus.state.range;
 		if (!range) {
 			return;
 		};
+
+		// May run after a queued materialization of the virtual placeholder
+		const blockId = virtualBlock.resolve(block.id);
 
 		let value = getTextValue();
 
@@ -1155,7 +1263,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		S.Menu.open('blockEmoji', {
 			classNameWrap: 'fromBlock',
-			element: `#block-${U.Common.esc(block.id)}`,
+			element: `#block-${U.Common.esc(blockId)}`,
 			recalcRect: () => {
 				const rect = U.Dom.getSelectionRect();
 				return rect ? { ...rect, y: rect.y + window.scrollY } : null;
@@ -1168,7 +1276,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			noFlipY: false,
 			data: {
 				rootId,
-				blockId: block.id,
+				blockId,
 				marks: marksRef.current,
 				onChange: (native: string, marks: I.Mark[], from: number, to: number) => {
 					if (S.Menu.isAnimating('blockEmoji')) {
@@ -1188,11 +1296,12 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	const onSmile = () => {
 		const range = getRange();
+		const blockId = virtualBlock.resolve(block.id);
 
 		let value = getTextValue();
 
 		S.Menu.open('smile', {
-			element: `#block-${U.Common.esc(block.id)}`,
+			element: `#block-${U.Common.esc(blockId)}`,
 			classNameWrap: 'fromBlock',
 			recalcRect: () => {
 				const rect = U.Dom.getSelectionRect();
@@ -1206,7 +1315,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				value: (iconEmoji || iconImage || ''),
 				noHead: true,
 				rootId,
-				blockId: block.id,
+				blockId,
 				onSelect: (icon: string) => {
 					const to = range.from + 1;
 
@@ -1242,24 +1351,60 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		textRef.current = value;
 
+		// Track in-flight saves and their values so the store-echo suppression in
+		// the render effect can tell a stale echo of an earlier save from a genuine
+		// remote change (JS-9285). Echoes are always applied by the dispatcher
+		// before the command callback fires, so clearing on the last callback is safe
+		sentTextsRef.current.push(value);
+		pendingSavesRef.current++;
+
+		const onSave = () => {
+			pendingSavesRef.current = Math.max(0, pendingSavesRef.current - 1);
+			if (!pendingSavesRef.current) {
+				sentTextsRef.current = [];
+			};
+			callBack?.();
+		};
+
 		const isRtl = U.String.checkRtl(value);
 
 		if (isRtl != checkRtl) {
 			// Save text first so intermediate re-renders from setRtl have the correct text in store,
 			// preventing character loss and stale CSS direction
 			U.Data.blockSetText(rootId, block.id, value, marks, update, () => {
-				U.Data.setRtl(rootId, block, isRtl, callBack);
+				U.Data.setRtl(rootId, block, isRtl, onSave);
 			});
 		} else {
-			U.Data.blockSetText(rootId, block.id, value, marks, update, callBack);
+			U.Data.blockSetText(rootId, block.id, value, marks, update, onSave);
 		};
 	};
 	
+	// An empty block is not worth announcing: the first keystroke can replace it (the
+	// trailing placeholder materializes into a real block), so a chip and a carriage
+	// would point at a block that is about to stop existing. Presence starts with the
+	// first character instead — presence.carriage arms it.
+	const canPublishPresence = (): boolean => {
+		return !virtualBlock.isVirtualId(block.id) && !!String(getTextValue() || '').length;
+	};
+
+	const publishPresence = (range: I.TextRange) => {
+		if (canPublishPresence()) {
+			presence.carriage(rootId, block.id, range);
+		} else {
+			presence.blurBlock(rootId, block.id);
+		};
+	};
+
 	const onFocusHandler = (e: any) => {
 		e.persist();
 
 		placeholderCheck();
 		keyboard.setFocus(true);
+
+		if (canPublishPresence()) {
+			presence.focusBlock(rootId, block.id, getRange());
+		};
+
 		onFocus?.(e);
 
 		// Calculate correct caret position accounting for rendered LaTeX elements
@@ -1333,6 +1478,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		window.clearTimeout(timeoutText.current);
 		setText(marksRef.current, true);
 		focus.clear(true);
+		presence.blurBlock(rootId, block.id);
 		onBlur?.(e);
 
 		let key = '';
@@ -1448,6 +1594,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const value = getTextValue();
 
 		focus.set(block.id, range);
+		publishPresence(range);
 
 		if (readonly || S.Menu.isOpen('selectPasteUrl')) {
 			return;
@@ -1596,6 +1743,32 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		setValue(v, r);
+
+		// Dead-key layouts commit markdown symbols (e.g. the closing backtick)
+		// through an IME composition, so the keyup-driven markdown conversion can
+		// miss the commit or run with a stale focus range. Re-run the conversion
+		// on the settled value, using the fresh composition range for the caret
+		// math (JS-9071)
+		if (block.canHaveMarks() && r) {
+			const parsed = getMarksFromHtml();
+
+			marksRef.current = parsed.marks;
+
+			if (parsed.adjustMarks || (parsed.text != v)) {
+				const diff = v.length - parsed.text.length;
+				const next = { from: Math.max(0, r.from - diff), to: Math.max(0, r.to - diff) };
+
+				setValue(parsed.text, next);
+				focus.set(block.id, next);
+
+				// Move the caret past the trailing ZWS anchor so continued typing
+				// stays unformatted (same as the keyup conversion path)
+				const editable = U.Dom.select('.editable', editableRef.current?.getNode());
+				if (editable) {
+					Mark.escapeMarkBoundary(editable);
+				};
+			};
+		};
 	};
 
 	const onBeforeInput = (e: any) => {
@@ -1746,8 +1919,12 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 	};
 
+	if (carriages.length) {
+		cn.push('withPresence');
+	};
+
 	return (
-		<div 
+		<div
 			ref={nodeRef}
 			className={cn.join(' ')}
 		>
@@ -1757,6 +1934,10 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			</div>
 
 			{additional ? <div className="additional">{additional}</div> : ''}
+
+			{carriages.map((it: any) => (
+				<div key={it.id} className="presenceCarriage" style={it.style} />
+			))}
 
 			<Editable 
 				ref={editableRef}

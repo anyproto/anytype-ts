@@ -9,6 +9,12 @@ import { ServiceClient } from './service';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
 import * as I from 'Interface';
 import * as M from 'Model';
+import { presence } from '../presence';
+import { chatStatus } from '../chatStatus';
+import { liveAddIndex } from 'Lib/util/chatWindow';
+import { applySubscriptionPosition } from 'Lib/util/subscription';
+import { approvalSpaces } from 'Lib/linkApproval';
+import { membership } from 'Lib/membership';
 
 const SORT_IDS = [
 	'BlockAdd',
@@ -26,7 +32,17 @@ const SORT_IDS = [
 ];
 
 const SKIP_IDS = [ 'BlockSetCarriage' ];
-const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose', 'AccountPreloadRemainingSpaces' ];
+const SKIP_ERRORS = [ 'LinkPreview', 'BlockTextSetText', 'FileSpaceUsage', 'SpaceInviteGetCurrent', 'ObjectClose', 'AccountPreloadRemainingSpaces', 'AccountRecoveryState', 'AIListModels' ];
+
+// Errors a command answers with in the ordinary course of things: logged and reported for every
+// other code, silent for these. WorkspaceOpen 100 is "space is not ready", the expected answer
+// while a channel is still being pulled on a cold start
+const SKIP_ERROR_CODES = {
+	WorkspaceOpen: [ 100 ],
+};
+
+// Commands whose response mapper also runs when the RPC returned an error
+const MAP_ON_ERROR = [ 'ObjectListExport', 'ObjectExport', 'MembershipV2GetStatus', 'MembershipV2GetProducts' ];
 
 /**
  * Dispatcher class handles all communication between the Electron frontend
@@ -44,6 +60,7 @@ class Dispatcher {
 
 	service: ServiceClient = null;
 	stream: ClientReadableStream<Event> = null;
+	secret = '';
 	timeoutStream = 0;
 	timeoutEvent: any = {};
 	reconnects = 0;
@@ -56,9 +73,15 @@ class Dispatcher {
 	 * Initialize the gRPC client with the middleware server address.
 	 * Must be called before any other dispatcher operations.
 	 * @param address - The gRPC server address (e.g., 'http://localhost:31007')
+	 * @param secret - The local API secret the main process handed the helper on
+	 * its stdin. Empty in web mode and against an externally started helper,
+	 * neither of which has a parent pipe to prove ownership with.
 	 */
-	init (address: string) {
+	init (address: string, secret?: string) {
 		address = String(address || '');
+
+		// Never logged: it is the proof that we are the helper's parent
+		this.secret = String(secret || '');
 
 		if (!address) {
 			console.error('[Dispatcher.init] No address');
@@ -69,6 +92,22 @@ class Dispatcher {
 			unaryInterceptors,
 			streamInterceptors,
 		});
+	};
+
+	/**
+	 * Build the gRPC metadata every call carries: the session token, plus the
+	 * local API secret when we have one. Heart requires the secret on the
+	 * account-bootstrap RPCs and ignores it everywhere else, so attaching it to
+	 * every call is both correct and the simplest rule.
+	 */
+	metadata (): any {
+		const ret: any = { token: S.Auth.token };
+
+		if (this.secret) {
+			ret['local-api-secret'] = this.secret;
+		};
+
+		return ret;
 	};
 
 	/**
@@ -86,7 +125,8 @@ class Dispatcher {
 
 		this.stopStream();
 
-		this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, null);
+		this.stream = this.service.listenSessionEvents({ token: S.Auth.token }, this.metadata());
+		chatStatus.reconnect();
 
 		this.stream.on('data', (event) => {
 			this.eventBuffer.push({ event, skipDebug: false });
@@ -94,8 +134,13 @@ class Dispatcher {
 			if (!this.flushScheduled) {
 				this.flushScheduled = true;
 
-				if (S.Common.isActiveTab) {
+				if (S.Common.isActiveTab && (document.visibilityState == 'visible')) {
 					this.rafId = requestAnimationFrame(() => this.flushEvents());
+
+					// Backstop: rAF stalls in hidden/occluded windows (isActiveTab tracks the
+					// tab strip, not window visibility) — without it, buffered events pile up
+					// until restore, freezing notifications and the badge while minimized.
+					this.flushTimerId = window.setTimeout(() => this.flushEvents(), 250);
 				} else {
 					this.flushTimerId = window.setTimeout(() => this.flushEvents(), 100);
 				};
@@ -113,6 +158,15 @@ class Dispatcher {
 			console.error('[Dispatcher.stream] end, restarting');
 			this.reconnect();
 		});
+
+		// The start-up status stream carries deltas only and nothing is refetched after a
+		// reconnect, so a re-attach mid-run re-pulls the folded snapshot, and only while
+		// channels are still missing. The first attach happens before AccountSelect, when the
+		// live Started event is still ahead: no pull then. Both spare the middleware a snapshot
+		// on a warm start
+		if (S.Recovery.runId && S.Recovery.isRecoveryNeeded()) {
+			S.Recovery.pull();
+		};
 	};
 
 	/**
@@ -120,6 +174,7 @@ class Dispatcher {
 	 * Cancels the stream and clears the reference.
 	 */
 	stopStream () {
+		chatStatus.disconnect();
 		window.clearTimeout(this.timeoutStream);
 		this.reconnects = 0;
 
@@ -145,6 +200,7 @@ class Dispatcher {
 	 * Counter resets after 40 attempts.
 	 */
 	reconnect () {
+		chatStatus.disconnect();
 		let t = 3;
 		if (this.reconnects == 20) {
 			t = 5;
@@ -167,6 +223,14 @@ class Dispatcher {
 	 * so MobX reactions fire only once at the end of the batch.
 	 */
 	flushEvents () {
+		// Both a rAF and a backstop timeout can be armed at once — cancel the one that didn't fire.
+		if (this.rafId) {
+			cancelAnimationFrame(this.rafId);
+		};
+		if (this.flushTimerId) {
+			window.clearTimeout(this.flushTimerId);
+		};
+
 		this.flushScheduled = false;
 		this.rafId = 0;
 		this.flushTimerId = 0;
@@ -227,12 +291,21 @@ class Dispatcher {
 		let updateNumbers = false;
 		let updateMarkup = false;
 
-		messages.sort((c1: any, c2: any) => this.sort(c1, c2));
+		// Precompute type/data once per message: Mapper.Event.Data scans the message keys,
+		// so doing it inside the sort comparator would repeat the scan O(n log n) times.
+		// Events in SORT_IDS are processed in array order to ensure dependent operations
+		// (e.g., BlockAdd before BlockSetChildrenIds) work correctly; events not listed
+		// there keep their relative order before them (stable sort, index -1).
+		const items = messages.map((message: any) => {
+			const { type, data } = Mapper.Event.Data(message);
+			return { type, data, spaceId: message.spaceId || '', sortIdx: SORT_IDS.indexOf(type) };
+		});
+
+		items.sort((c1, c2) => c1.sortIdx - c2.sortIdx);
 
 		runInAction(() => {
-		for (const message of messages) {
-			const { type, data } = Mapper.Event.Data(message);
-			const spaceId = message.spaceId || '';
+		for (const item of items) {
+			const { type, data, spaceId } = item;
 			const mapped = Mapper.Event[type] ? Mapper.Event[type](data) : null;
 
 			if (!mapped) {
@@ -260,12 +333,28 @@ class Dispatcher {
 					break;
 				};
 
-				case 'AccountLinkChallenge': {
-					Renderer.send('showChallenge', {
+				// Every bind attempt, whichever session triggered it. The outcome of our own
+				// AccountChangeJsonApiAddr is taken from its response, the event only mirrors it
+				case 'AccountJsonApiStatus': {
+					S.Auth.jsonApiStatusSet(mapped.status);
+					break;
+				};
+
+				case 'AccountLinkApprovalRequest': {
+					// no code exists yet: the user has to approve first, and only then does
+					// AccountLocalLinkApproveChallenge mint one. Main dedupes the request, since
+					// every session receives this event
+					Renderer.send('showLinkApproval', {
 						...mapped,
+						spaces: approvalSpaces(U.Menu.getVaultItems(), S.Auth.account?.info?.techSpaceId || ''),
 						theme: S.Common.getThemeClass(),
 						lang: S.Common.interfaceLang,
 					});
+					break;
+				};
+
+				case 'AccountRecoveryUpdate': {
+					S.Recovery.apply(mapped);
 					break;
 				};
 
@@ -307,8 +396,8 @@ class Dispatcher {
 					break;
 				};
 
-				case 'AccountLinkChallengeHide': {
-					Renderer.send('hideChallenge', mapped);
+				case 'AccountLinkApprovalHide': {
+					Renderer.send('hideLinkApproval', mapped);
 					break;
 				};
 
@@ -327,26 +416,26 @@ class Dispatcher {
 					break;
 				};
 
-				case 'ObjectAutoArchive': {
-					// For RPC responses (isSync=true) auto-archived IDs are merged into the
-					// Archive toast by the calling action via message.autoArchivedIds.
-					// For stream events (isSync=false) show a standalone AutoArchive toast.
-					if (!isSync) {
-						const { objectIds } = mapped;
-						if (objectIds.length) {
-							Preview.toastShow({ action: I.ToastAction.AutoArchive, ids: objectIds });
-						};
-					};
-					break;
-				};
+				case 'ObjectCleanupSuggestion': {
+					// The backend archives nothing on its own: every orphan created inside the
+					// acted-on object — objects and files, at any depth — arrives here. Surface
+					// them non-invasively via a toast; "Review" opens the confirmation popup.
+					// Rides the initiating session for archive/linkRemoval (isSync=true) and is
+					// broadcast for delete (isSync=false), so handle both.
+					const { objectIds } = mapped;
 
-				case 'ObjectAutoRestore': {
-					// Same pattern as ObjectAutoArchive but for the Restore toast.
-					if (!isSync) {
-						const { objectIds } = mapped;
-						if (objectIds.length) {
-							Preview.toastShow({ action: I.ToastAction.AutoRestore, ids: objectIds });
-						};
+					if (objectIds.length) {
+						// The space now has orphans, so the Bin widget must surface even if
+						// nothing is archived yet.
+						S.Common.hasCleanupSuggestionsSet(true);
+
+						// A batch archive where one object is an ancestor of another can emit the
+						// same candidate under two contextIds. Dedup by accumulating into the toast
+						// that is still showing rather than replacing its count.
+						const current = S.Common.toast;
+						const existing = (current?.action == I.ToastAction.Cleanup) ? (current.ids || []) : [];
+
+						Preview.toastShow({ action: I.ToastAction.Cleanup, ids: U.Common.arrayUnique([ ...existing, ...objectIds ]) });
 					};
 					break;
 				};
@@ -1081,6 +1170,12 @@ class Dispatcher {
 					break;
 				};
 
+				case 'PubsubMessage': {
+					presence.onMessage(mapped);
+					chatStatus.onMessage(spaceId, mapped);
+					break;
+				};
+
 				case 'PayloadBroadcast': {
 					if (!S.Common.isActiveTab) {
 						break;
@@ -1098,16 +1193,16 @@ class Dispatcher {
 						break;
 					};
 
-					const { count, type } = mapped;
+					const { count, type, issuesCount } = mapped;
 
-					analytics.event('Import', { type, count });
+					analytics.event('Import', { type, count, issuesCount });
 					break;
 				};
 
 				case 'ChatAdd': {
 					const { orderId, dependencies } = mapped;
 					const message = new M.ChatMessage({ ...mapped.message, dependencies, chatId: rootId });
-					const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview?.isOneToOne);
+					chatStatus.onChatMessage(spaceId, rootId, { id: message.id, orderId: orderId || message.orderId, creator: message.creator });
 					const discussionParentId = S.Chat.getDiscussionParentId(spaceId, rootId);
 					const isDiscussion = !!discussionParentId;
 
@@ -1133,39 +1228,35 @@ class Dispatcher {
 					chatSubIds.forEach(subId => {
 						const list = S.Chat.getList(subId);
 
-						let idx = list.findIndex(it => it.orderId == orderId);
+						// Sorted insertion by orderId (lexicographic): a late-arriving older message
+						// (offline peer sync) must land at its ordered position, not at the tail.
+						// -1 means it belongs before the loaded window — backward pagination owns it.
+						const idx = liveAddIndex(list, orderId, S.Chat.isAtChatStart(subId));
 						if (idx < 0) {
-							idx = list.length;
+							return;
 						};
 
 						S.Chat.add(subId, idx, message);
 					});
 
 					commentSubIds.forEach(subId => {
-						const commentMsg: I.CommentMessage = {
+						S.Comment.insert(subId, {
 							...mapped.message,
 							content: {
 								...mapped.message.content,
 								parts: U.Comment.blocksToParts(mapped.message.blocks, mapped.message.content),
 							},
-							replyCount: 0,
-						};
-
-						if (mapped.message.replyToMessageId) {
-							S.Comment.addReply(mapped.message.replyToMessageId, commentMsg);
-
-							const post = S.Comment.getPostById(subId, mapped.message.replyToMessageId);
-							if (post) {
-								set(post, { replyCount: (post.replyCount || 0) + 1 });
-							};
-						} else {
-							S.Comment.addPost(subId, commentMsg);
-						};
+						});
 					});
 
-					if (showNotification && notification && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
+					// A discussion comment created and deleted before the event was sent arrives already deleted
+					if (showNotification && !mapped.message.isDeleted && !windowIsFocused && S.Common.isActiveTab && (message.creator != account.id)) {
+						// Built only on the notification path: sanitize + emoji-insert over
+						// text/marks is pure waste for the focused-window case — i.e. every
+						// live message while the user is in the chat.
+						const notification = S.Chat.getMessageSimpleText(spaceId, message, !spaceview?.isOneToOne);
 						const title = [];
-						let canNotify = true;
+						let canNotify = !!notification;
 						let openPayload: any = { id: rootId, layout: I.ObjectLayout.Chat, spaceId };
 
 						if (spaceview) {
@@ -1212,23 +1303,22 @@ class Dispatcher {
 
 					mapped.subIds.forEach(subId => {
 						if (subId.startsWith('comment-')) {
-							const commentMsg: Partial<I.CommentMessage> = {
+							S.Comment.update(subId, {
 								id: mapped.message.id,
+								modifiedAt: mapped.message.modifiedAt || 0,
 								content: {
 									...mapped.message.content,
 									parts: U.Comment.blocksToParts(mapped.message.blocks, mapped.message.content),
 								},
 								attachments: mapped.message.attachments || [],
 								reactions: mapped.message.reactions || [],
-							};
-
-							if (mapped.message.replyToMessageId) {
-								S.Comment.updateReply(mapped.message.replyToMessageId, commentMsg);
-							} else {
-								S.Comment.updatePost(subId, commentMsg);
-							};
+								isDeleted: Boolean(mapped.message.isDeleted),
+								// Heart marks a tombstone read with no read-status event of its own
+								...(mapped.message.isDeleted ? { isReadMessage: true, isReadMention: true } : {}),
+							});
 						} else {
 							S.Chat.update(subId, mapped.message);
+							S.Chat.markTouched(subId, mapped.message.id);
 						};
 					});
 
@@ -1298,27 +1388,13 @@ class Dispatcher {
 					mapped.subIds = S.Chat.checkVaultSubscriptionIds(mapped.subIds, spaceId, rootId);
 					mapped.subIds.forEach(subId => {
 						if (subId.startsWith('comment-')) {
-							const post = S.Comment.getPostById(subId, mapped.id);
-
-							if (post) {
-								S.Comment.deletePost(subId, mapped.id);
-							} else {
-								const posts = S.Comment.getPosts(subId);
-								for (const p of posts) {
-									const replies = S.Comment.getReplies(p.id);
-									const reply = replies.find(r => r.id == mapped.id);
-
-									if (reply) {
-										S.Comment.deleteReply(p.id, mapped.id);
-										set(p, { replyCount: Math.max(0, (p.replyCount || 0) - 1) });
-										break;
-									};
-								};
-							};
+							S.Comment.remove(subId, mapped.id);
 						} else {
 							S.Chat.delete(subId, mapped.id);
 						};
 					});
+
+					U.Dom.eventDispatch(window, 'messageDelete', { id: mapped.id, subIds: mapped.subIds });
 					break;
 				};
 
@@ -1330,21 +1406,7 @@ class Dispatcher {
 
 					mapped.subIds.forEach((subId) => {
 						if (subId.startsWith('comment-')) {
-							const post = S.Comment.getPostById(subId, mapped.id);
-							if (post) {
-								set(post, { reactions: mapped.reactions });
-							} else {
-								// Search in replies
-								const posts = S.Comment.getPosts(subId);
-								for (const p of posts) {
-									const replies = S.Comment.getReplies(p.id);
-									const reply = replies.find(r => r.id == mapped.id);
-									if (reply) {
-										set(reply, { reactions: mapped.reactions });
-										break;
-									};
-								};
-							};
+							S.Comment.update(subId, { id: mapped.id, reactions: mapped.reactions });
 						} else {
 							const message = S.Chat.getMessageById(subId, mapped.id);
 							if (message) {
@@ -1353,6 +1415,7 @@ class Dispatcher {
 									notificationMessage = message;
 								};
 								set(message, { reactions: mapped.reactions });
+								S.Chat.markTouched(subId, mapped.id);
 							};
 						};
 					});
@@ -1418,6 +1481,7 @@ class Dispatcher {
 						const message = S.Chat.getMessageById(subId, mapped.message?.id);
 						if (message) {
 							set(message, { isPinned: mapped.isPinned });
+							S.Chat.markTouched(subId, mapped.message?.id);
 						};
 					});
 
@@ -1464,6 +1528,23 @@ class Dispatcher {
 					break;
 				};
 
+				case 'ImportStatistic': {
+					// A noProgress run (migration, gallery install) reports an empty processId and
+					// stays invisible. Any other run creates its item on demand rather than only
+					// attaching to one: the statistic stream is what rebuilds the sidebar after a
+					// renderer reload, and after a restart the middleware resumes the run itself —
+					// in both cases ProcessNew fired before this renderer was listening.
+					if (mapped.processId) {
+						S.Progress.update({
+							id: mapped.processId,
+							type: I.ProgressType.Import,
+							canCancel: true,
+							statistic: mapped,
+						});
+					};
+					break;
+				};
+
 				case 'SpaceSyncStatusUpdate':
 				case 'P2pStatusUpdate': {
 					S.Auth.syncStatusUpdate(mapped);
@@ -1471,24 +1552,12 @@ class Dispatcher {
 				};
 
 				case 'MembershipV2Update': {
-					S.Membership.dataUpdate(mapped.data);
-
-					const { data } = S.Membership;
-					const purchased = data?.getTopPurchasedProduct();
-					const product = data?.getTopProduct();
-
-					if (!purchased || !product) {
-						break;
-					};
-
-					if (purchased.isFinalization) {
-						Action.finalizeMembership(product, analytics.route.settingsMembership);
-					};
+					membership.onStatusEvent(mapped.data, mapped.fetchState);
 					break;
 				};
 
 				case 'MembershipV2ProductsUpdate': {
-					S.Membership.productsUpdate(mapped.products);
+					membership.onProductsEvent(mapped.products, mapped.fetchState);
 					break;
 				};
 
@@ -1561,6 +1630,9 @@ class Dispatcher {
 		if (subIds.length) {
 			if (subIds.includes(J.Constant.subId.space)) {
 				const object = U.Space.getSpaceview(id);
+				if (object.isAccountDeleted && object.targetSpaceId) {
+					chatStatus.clear(S.Auth.account?.id, object.targetSpaceId);
+				};
 
 				if (intersection.length && object.targetSpaceId) {
 					U.Subscription.createSubSpace([ object.targetSpaceId ]);
@@ -1605,15 +1677,6 @@ class Dispatcher {
 		};
 	};
 
-	/**
-	 * Update the position of a record within a subscription's ordered list.
-	 * Used for maintaining correct sort order when items are added or moved.
-	 *
-	 * @param subId - Subscription ID containing the record list
-	 * @param id - ID of the record to position
-	 * @param afterId - ID of the record after which to place the item (empty for start)
-	 * @param isAdding - Whether this is a new addition (skip if already exists)
-	 */
 	parseSubId (subId: string): [string, string] {
 		const idx = subId.indexOf('/');
 		if (idx === -1) {
@@ -1622,56 +1685,36 @@ class Dispatcher {
 		return [ subId.slice(0, idx), subId.slice(idx + 1) ];
 	};
 
+	/**
+	 * Update the position of a record within a subscription's ordered list.
+	 * Used for maintaining correct sort order when items are added or moved.
+	 *
+	 * @param subId - Subscription ID containing the record list
+	 * @param id - ID of the record to position
+	 * @param afterId - ID of the record after which to place the item (empty for start)
+	 * @param isAdding - Whether this is a new addition (repositions an already present record only on sorted subscriptions)
+	 */
 	subscriptionPosition (subId: string, id: string, afterId: string, isAdding: boolean): void {
 		const [ sid, dep ] = this.parseSubId(subId);
 		if (dep) {
 			return;
 		};
 
-		let records = S.Record.getRecordIds(sid, '');
-		let newIndex = records.indexOf(afterId);
-
-		const oldIndex = records.indexOf(id);
-
-		if (isAdding && (oldIndex >= 0)) {
+		// While the record's name is being inline-edited, stash the position instead
+		// of applying it — moving the row would remount the editor mid-typing. The
+		// stash is applied when editing ends (GO-7387)
+		const lock = S.Record.getPositionLock(sid, '');
+		if (lock && (lock.id == id)) {
+			S.Record.positionLockStash(sid, '', afterId);
 			return;
 		};
 
-		if (!afterId) {
-			newIndex = 0;
-		} else
-		if ((newIndex >= 0) && (newIndex < oldIndex)) {
-			newIndex++;
+		const { isSorted } = S.Record.getMeta(sid, '');
+		const records = applySubscriptionPosition(S.Record.getRecordIds(sid, ''), id, afterId, isAdding, isSorted);
+
+		if (records) {
+			S.Record.recordsSet(sid, '', records);
 		};
-
-		if (oldIndex < 0) {
-			records.splice(afterId ? newIndex + 1 : 0, 0, id);
-		} else
-		if (oldIndex !== newIndex) {
-			records = arrayMove(records, oldIndex, newIndex);
-		};
-
-		S.Record.recordsSet(sid, '', records);
-	};
-
-	/**
-	 * Comparator function for sorting events by their type priority.
-	 * Events in SORT_IDS are processed in array order to ensure
-	 * dependent operations (e.g., BlockAdd before BlockSetChildrenIds) work correctly.
-	 *
-	 * @param c1 - First event message
-	 * @param c2 - Second event message
-	 * @returns Negative if c1 should come first, positive if c2 should come first
-	 */
-	sort (c1: any, c2: any) {
-		const t1 = Mapper.Event.Type(c1);
-		const t2 = Mapper.Event.Type(c2);
-		const idx1 = SORT_IDS.findIndex(it => it == t1);
-		const idx2 = SORT_IDS.findIndex(it => it == t2);
-
-		if (idx1 > idx2) return 1;
-		if (idx1 < idx2) return -1;
-		return 0;
 	};
 
 	/**
@@ -1760,7 +1803,7 @@ class Dispatcher {
 		};
 
 		try {
-			this.service.request(type, data, { token: S.Auth.token }, (error: any, response: any) => {
+			this.service.request(type, data, this.metadata(), (error: any, response: any) => {
 				if (error) {
 					console.error('GRPC Error', type, error);
 					callBack?.({ error: { code: error.code, description: error.message } });
@@ -1768,6 +1811,11 @@ class Dispatcher {
 				};
 
 				if (!response) {
+					// Still invoke the callback: callers rely on every request
+					// eventually completing (e.g. in-flight save accounting) —
+					// silently dropping it would leak their pending state
+					console.error('Empty response', type);
+					callBack?.({ error: { code: 1, description: 'Empty response' } });
 					return;
 				};
 
@@ -1778,7 +1826,9 @@ class Dispatcher {
 				const description = err ? err.description : '';
 
 				let message: any = {};
-				if (!code && Response[type]) {
+				// Export diagnostics are useful even when the RPC itself failed. Membership V2 keeps its
+				// fetch metadata (freshness, revision, NONE) on errors, the store needs it.
+				if (Response[type] && (!code || MAP_ON_ERROR.includes(type))) {
 					message = Response[type](response);
 				};
 
@@ -1786,7 +1836,7 @@ class Dispatcher {
 				message.error = { code, description };
 
 				if (message.error.code) {
-					if (!SKIP_ERRORS.includes(type)) {
+					if (!SKIP_ERRORS.includes(type) && !(SKIP_ERROR_CODES[type] || []).includes(message.error.code)) {
 						console.error('Error', type, 'code:', message.error.code, 'description:', message.error.description);
 
 						//Sentry.captureMessage(`${type}: code: ${code} msg: ${message.error.description}`);
@@ -1803,13 +1853,21 @@ class Dispatcher {
 				};
 
 				if (message.event) {
-					message.autoArchivedIds = (message.event.messages || [])
-						.filter((msg: any) => msg.objectAutoArchive?.objectIds?.length)
-						.flatMap((msg: any) => msg.objectAutoArchive.objectIds);
+					// CleanupSuggestion rides the initiating command's response, so the calling
+					// action can fold it into its own toast instead of racing the standalone one
+					// this event raises (events are drained before callBack, so a toast shown
+					// there would be overwritten by the action's).
+					message.cleanupIds = U.Common.arrayUnique(
+						(message.event.messages || [])
+							.filter((msg: any) => msg.objectCleanupSuggestion?.objectIds?.length)
+							.flatMap((msg: any) => msg.objectCleanupSuggestion.objectIds)
+					);
 
-					message.autoRestoredIds = (message.event.messages || [])
-						.filter((msg: any) => msg.objectAutoRestore?.objectIds?.length)
-						.flatMap((msg: any) => msg.objectAutoRestore.objectIds);
+					// Drain buffered stream events first: they arrived BEFORE this response, so
+					// applying the embedded events ahead of them would invert causal order (e.g.
+					// an update for a message whose ChatAdd is still buffered would be dropped,
+					// and the add would then land without it).
+					this.flushEvents();
 
 					runInAction(() => this.event(message.event, true, true));
 				};
@@ -1872,7 +1930,7 @@ class Dispatcher {
 		const { config } = S.Common;
 		const { event, sync, file, subscribe } = config.flagsMw;
 		const fileEvents = [ 'FileLocalUsage', 'FileSpaceUsage' ];
-		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2pStatusUpdate', 'ThreadStatus' ];
+		const syncEvents = [ 'SpaceSyncStatusUpdate', 'P2pStatusUpdate', 'ThreadStatus', 'AccountRecoveryUpdate' ];
 		const subscribeEvents = [ 'SubscriptionAdd', 'SubscriptionRemove', 'SubscriptionCounters', 'SubscriptionPosition' ];
 
 		let check = false;

@@ -4,7 +4,7 @@ import { DndContext, closestCenter, useSensors, useSensor, PointerSensor, Keyboa
 import { SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis, restrictToParentElement } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter } from 'Component';
+import { IconObject, ObjectName, Filter, Label, Icon, Button, EmptySearch, ChatCounter, RecoveryProgress } from 'Component';
 import * as I from 'Interface';
 import Highlight from 'Lib/highlight';
 import Storage from 'Lib/storage';
@@ -220,6 +220,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		};
 
 		if (vaultIsMinimal && !skipUi) {
+			const spaceCount = items.length;
 			const pinned = items.filter(it => it.isPinned);
 			const notPinned = items.filter(it => !it.isPinned);
 
@@ -227,7 +228,15 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 				items = pinned.concat([ { isDiv: true } ]).concat(notPinned);
 			};
 
-			items.unshift({ id: 'createSpace' });
+			// Search leads the rail - the thing you reach for most. Creating a Channel is
+			// rare by comparison and lives in the bottom bar with the other chrome
+			items.unshift({ id: 'search' });
+
+			// A short list has room to spare - put Create Channel right under the last one
+			// instead of leaving it as hover-only chrome at the bottom
+			if (!filter && (spaceCount <= 5)) {
+				items.push({ id: 'createSpaceMinimal' });
+			};
 		} else
 		if (!skipUi && !filter && (items.length == 1)) {
 			items.push({ id: 'createSpaceInline' });
@@ -257,6 +266,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 	};
 
 	const items = getItems();
+	const hasInlineCreate = items.some(it => it.id == 'createSpaceMinimal');
 	const listRef = useRef<List>(null);
 	const filterRef = useRef(null);
 	const timeout = useRef(0);
@@ -285,6 +295,21 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			param.typeY = I.MenuDirection.Bottom;
 		};
 		return param;
+	};
+
+	const iconSearch = () => {
+		return (
+			<Icon
+				id="button-vault-search-minimal"
+				name="common/search" className="search"
+				tooltipParam={{
+					...tooltipParam(),
+					text: translate('popupSearchGlobalTooltip'),
+				}}
+				onClick={() => keyboard.onSearchPopup(analytics.route.vault, { data: { isGlobal: true } })}
+				onMouseDown={e => e.stopPropagation()}
+			/>
+		);
 	};
 
 	const iconCreate = () => {
@@ -382,7 +407,15 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 			);
 		};
 
-		if (item.id == 'createSpace') {
+		if (item.id == 'search') {
+			return (
+				<div ref={forwardedRef} className="item add" style={item.style}>
+					{iconSearch()}
+				</div>
+			);
+		};
+
+		if (item.id == 'createSpaceMinimal') {
 			return (
 				<div ref={forwardedRef} className="item add" style={item.style}>
 					{iconCreate()}
@@ -626,6 +659,13 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 		};
 	}, [ itemIds ]);
 
+	// When Create Channel moves inline under the last channel, the hover-out footer
+	// has one fewer icon - shrink its expanded height to match, or the remaining
+	// icons drift up and leave a gap above the profile icon
+	if (hasInlineCreate) {
+		cnf.push('compact');
+	};
+
 	return (
 		<>
 			<div 
@@ -643,6 +683,18 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 				<div className="side right">
 					{!vaultIsMinimal ? (
 						<>
+							<Icon
+								id="button-vault-search"
+								name="common/search"
+								className="search"
+								withBackground={true}
+								tooltipParam={{
+									text: translate('popupSearchGlobalTooltip'),
+									typeY: I.MenuDirection.Bottom,
+								}}
+								onClick={() => keyboard.onSearchPopup(analytics.route.vault, { data: { isGlobal: true } })}
+								onMouseDown={e => e.stopPropagation()}
+							/>
 							{iconCreate()}
 							<Icon
 								id="button-vault-toggle"
@@ -661,6 +713,9 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 					) : ''}
 				</div>
 			</div>
+
+			<RecoveryProgress />
+
 			{!vaultIsMinimal ? (
 				<div className="filterWrapper">
 					<Filter
@@ -747,6 +802,7 @@ const SidebarPageVault = forwardRef<{}, I.SidebarPageComponent>((props, ref) => 
 					</div>
 
 					<div className="side right">
+						{vaultIsMinimal && !hasInlineCreate ? iconCreate() : ''}
 						<Icon
 							name="vault/gallery"
 							className="gallery"

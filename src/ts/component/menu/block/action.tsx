@@ -20,6 +20,8 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		rebind();
 
 		return () => {
+			isUnmountedRef.current = true;
+
 			unbind();
 			keyboard.setFocus(false);
 			S.Menu.closeAll(J.Menu.action);
@@ -42,6 +44,7 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 	
 	const keydownHandler = useRef(null);
+	const isUnmountedRef = useRef(false);
 
 	const rebind = () => {
 		unbind();
@@ -58,6 +61,13 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onKeyDownHandler = (e: any) => {
+		// A leaked window listener must never act for a dead menu — bail before
+		// any preventDefault/blockRemove or it silently eats the key (or deletes
+		// blocks) app-wide until restart
+		if (isUnmountedRef.current) {
+			return;
+		};
+
 		const cmd = keyboard.cmdKey();
 
 		let ret = false;
@@ -606,9 +616,19 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'clipboardPaste': {
+				// Range is missing when the block was selected via its gripper or right-clicked
+				// without holding the caret (block/index.tsx only forwards the range when this
+				// block is the focused one) — fall back to a caret at the end of the block, so
+				// the synthetic paste targets the selected block instead of appending at the
+				// document bottom. Clamping guards against the text having changed since the
+				// range was captured
+				const length = block.getLength();
+				const to = range ? Math.min(range.to, length) : length;
+				const from = range ? Math.min(range.from, to) : length;
+
 				close();
 				window.setTimeout(() => {
-					focus.set(blockId, range);
+					focus.set(blockId, { from, to });
 					focus.apply();
 					window.setTimeout(() => Renderer.send('paste'), 50);
 				}, J.Constant.delay.menu);
@@ -616,7 +636,7 @@ const MenuBlockAction = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'download': {
-				Action.downloadFile(targetObjectId, analytics.route.menuAction, block.isFileImage());
+				Action.downloadFile(targetObjectId, analytics.route.menuAction);
 				break;
 			};
 

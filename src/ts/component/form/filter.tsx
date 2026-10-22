@@ -28,6 +28,7 @@ interface Props {
 interface FilterRefProps {
 	focus(): void;
 	blur(): void;
+	getNode(): HTMLInputElement | null;
 	setActive(v: boolean): void;
 	setValue(v: string): void;
 	getValue(): string;
@@ -202,6 +203,7 @@ const Filter = forwardRef<FilterRefProps, Props>(({
 		isFocused: () => isFocused,
 		setValue: (v: string) => inputRef.current.setValue(v),
 		getValue,
+		getNode: () => inputRef.current?.getNode() || null,
 		getRange,
 		setRange,
 	}));

@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect, useImperativeHandle } from 'react';
-import { Block, Button, DragHorizontal, Loader } from 'Component';
+import { Block, Button, DragHorizontal, Loader, ObjectCreatedIn } from 'Component';
 import * as I from 'Interface';
 import * as M from 'Model';
 
@@ -244,6 +244,8 @@ const PageHeadEditor = forwardRef<RefProps, Props>((props, ref) => {
 			{check.withCover ? <Block {...props} key={cover.id} block={cover} className="noPlus" /> : ''}
 
 			{bookmarkHead}
+
+			{isBookmark ? <ObjectCreatedIn rootId={rootId} route={analytics.route.bookmark} /> : ''}
 
 			<div
 				onMouseEnter={() => U.Dom.addClass(U.Dom.get(`editor-controls-${rootId}`), 'hover')}

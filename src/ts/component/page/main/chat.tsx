@@ -74,6 +74,11 @@ const PageMainChat = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			headerRef.current?.forceUpdate();
 			chatRef.current?.getChildNode()?.forceUpdate();
 
+			// Chat-layout objects skip ObjectOpen, so the tab/window title is never refreshed via
+			// onObjectView the way other pages are. Refresh it here once the object's details load,
+			// otherwise the tab name keeps the previous space's title after a space switch (JS-9828).
+			keyboard.setWindowTitle();
+
 			Onboarding.startChat(isPopup);
 			setDummy(dummy + 1);
 			analytics.event('ScreenChat', { chatId: object.analyticsChatId });

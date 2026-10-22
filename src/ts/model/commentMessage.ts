@@ -43,7 +43,7 @@ class CommentMessage implements I.CommentMessage {
 	isSynced = false;
 	isReadMessage = false;
 	isReadMention = false;
-	replyCount = 0;
+	isDeleted = false;
 
 	constructor (props: I.CommentMessage) {
 		this.id = String(props.id || '');
@@ -58,7 +58,7 @@ class CommentMessage implements I.CommentMessage {
 		this.isSynced = Boolean(props.isSynced);
 		this.isReadMessage = Boolean(props.isReadMessage);
 		this.isReadMention = Boolean(props.isReadMention);
-		this.replyCount = Number(props.replyCount) || 0;
+		this.isDeleted = Boolean(props.isDeleted);
 
 		makeObservable(this, {
 			id: observable,
@@ -72,7 +72,7 @@ class CommentMessage implements I.CommentMessage {
 			isSynced: observable,
 			isReadMessage: observable,
 			isReadMention: observable,
-			replyCount: observable,
+			isDeleted: observable,
 		});
 
 		return this;

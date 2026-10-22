@@ -295,7 +295,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			className,
 			classNameWrap,
 			rebind,
-			parentId: getId(),
+			parentId: props.id,
 			data: {
 				rootId,
 				blockId: rootId,
@@ -545,7 +545,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'downloadFile': {
-				Action.downloadFile(object.id, route, U.Object.isImageLayout(object.layout));
+				Action.downloadFile(object.id, route);
 				break;
 			};
 
@@ -555,6 +555,7 @@ const MenuObject = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			case 'openAsObject': {
+				S.Popup.close('preview');
 				U.Object.openAuto(object);
 				break;
 			};

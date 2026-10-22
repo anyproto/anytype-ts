@@ -22,7 +22,7 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 	} = props;
 	const nodeRef = useRef(null);
 	const listRef = useRef(null);
-	const stickyScrollbarRef = useRef(null);
+	const stickyScrollbarRef = useRef<I.StickyScrollbarRef>(null);
 	const isSyncingScroll = useRef(false);
 	const scrollRef = useRef(null);
 	const scrollWrapRef = useRef(null);
@@ -83,9 +83,7 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			U.Dom.addEvent(container, 'scroll', scrollVerticalHandlerRef.current);
 		};
 
-		if (!isInline) {
-			stickyScrollbarRef.current?.bind(scroll, isSyncingScroll.current);
-		};
+		stickyScrollbarRef.current?.bind(scroll, isSyncingScroll.current);
 	};
 
 	const unbind = () => {
@@ -110,21 +108,18 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 			resizeColumns('', 0);
 		};
 
-		if (isInline) {
-			return;
-		};
-
-		const node = nodeRef.current;
 		const scroll = scrollRef.current;
-		const clone = U.Dom.select('#rowHeadClone', node);
 
-		if (clone) {
-			U.Dom.css(clone, { transform: `translate3d(${-(scroll?.scrollLeft ?? 0)}px,0px,0px)` });
+		if (!isInline) {
+			const node = nodeRef.current;
+			const clone = U.Dom.select('#rowHeadClone', node);
+
+			if (clone) {
+				U.Dom.css(clone, { transform: `translate3d(${-(scroll?.scrollLeft ?? 0)}px,0px,0px)` });
+			};
 		};
 
-		if (stickyScrollbarRef) {
-			isSyncingScroll.current = stickyScrollbarRef.current?.sync(scroll, isSyncingScroll.current);
-		};
+		isSyncingScroll.current = stickyScrollbarRef.current?.sync(scroll, isSyncingScroll.current);
 	};
 
 	const onScrollVertical = () => {
@@ -423,6 +418,14 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 					if (wrap) {
 						U.Dom.css(wrap, { width: `${vw + margin - offset}px`, paddingLeft: `${margin}px`, paddingRight: `${offset * 2}px` });
 					};
+
+					stickyScrollbarRef.current?.resize({
+						width: ww,
+						left: 0,
+						paddingLeft: 0,
+						display: (vw + margin - offset) <= cw ? 'none' : '',
+						trackWidth: vw,
+					});
 				} else {
 					const parentObj = U.Dom.get(`block-${parent.id}`);
 					const vw = parentObj ? (U.Dom.contentWidth(parentObj) - J.Size.blockMenu) : 0;
@@ -430,7 +433,11 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 					if (wrap) {
 						U.Dom.css(wrap, { width: `${Math.max(vw, width)}px` });
 					};
+
+					stickyScrollbarRef.current?.resize({ display: 'none' });
 				};
+			} else {
+				stickyScrollbarRef.current?.resize({ display: 'none' });
 			};
 		} else {
 			const mw = cw - PADDING * 2;
@@ -593,7 +600,7 @@ const ViewGrid = forwardRef<I.ViewRef, I.ViewComponent>((props, ref) => {
 					</div>
 				</div>
 			</div>
-			{!isInline ? <StickyScrollbar ref={stickyScrollbarRef} /> : ''}
+			<StickyScrollbar ref={stickyScrollbarRef} />
 		</div>
 	);
 

@@ -32,6 +32,19 @@ export enum SpaceCreateType {
 	Join					 = 2,
 };
 
+// What the user asked for before the space existed. Carried through the create flow so the
+// last step can honour it instead of asking the home question again.
+export enum SpaceCreateIntent {
+	None					 = '',
+	Import					 = 'import',
+};
+
+export interface SpaceCreateOptions {
+	intent?: SpaceCreateIntent;
+	noJoin?: boolean;
+	onCreate?: (spaceId: string) => void;
+};
+
 export enum ParticipantPermissions {
 	Reader					 = 0,
 	Writer					 = 1,
@@ -60,6 +73,26 @@ export enum InviteLinkType {
 	Editor 					 = 1,
 	Viewer 					 = 2,
 	Manual 					 = 3,
+};
+
+export enum MemberTab {
+	All						 = 0,
+	Request					 = 1,
+	Editor					 = 2,
+	Viewer					 = 3,
+};
+
+/**
+ * The space's current invite, as returned by SpaceInviteGetCurrent.
+ * When heldByOwner is true the invite lives in the owner's account: everyone else
+ * gets a success response with an empty cid and key, and must not render a link.
+ */
+export interface Invite {
+	cid: string;
+	key: string;
+	inviteType: InviteType;
+	permissions: ParticipantPermissions;
+	heldByOwner: boolean;
 };
 
 export enum NotificationMode {

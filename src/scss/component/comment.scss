@@ -78,7 +78,14 @@
 	/* --- Shared: indented content (aligned with name, 20px avatar + 8px gap) --- */
 	.commentReply .content,
 	.commentReply .reactions,
-	.commentReply .commentAttachments { margin-left: 28px; }
+	.commentReply .commentAttachments,
+	.commentReply .commentActivity { margin-left: 28px; }
+
+	/* A deleted comment keeps its place (and its thread) with a muted placeholder body */
+	.commentPost, .commentReply {
+		.content.isDeleted, .content.isDeleted * { user-select: none !important; }
+		.content.isDeleted { color: var(--color-text-secondary); font-style: italic; }
+	}
 
 /* ==========================================================================
    Top-level post
@@ -174,6 +181,12 @@
 		}
 	}
 
+	/* ---- Activity: typing and agent runs (see Component/comment/activity) ---- */
+
+	.commentActivity { display: flex; flex-direction: column; min-width: 0px; }
+	.commentPost > .commentActivity { padding: 0px 16px 16px 16px; }
+	& > .commentActivity { padding: 0px 16px 12px 16px; }
+
 	/* ---- Comment Form ---- */
 
 	.commentFormWrap { padding: 0px 0px 12px 0px; border-radius: 16px; }
@@ -245,10 +258,6 @@
 			.button.blank { color: var(--color-text-secondary); border: 0px; }
 		}
 	}
-
-	.loadMore { @include text-small; color: var(--color-text-secondary); padding: 4px 0px; user-select: none; }
-	.loadMore:hover { color: var(--color-text-primary); }
-	.loadMore.isLoading { opacity: 0.5; pointer-events: none; }
 
 	/* ---- Lexical Editor ---- */
 

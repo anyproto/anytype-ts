@@ -9,6 +9,7 @@ import Attachment from './attachment';
 import * as I from 'Interface';
 import * as M from 'Model';
 import Storage from 'Lib/storage';
+import { presence } from 'Lib/presence';
 
 interface Props extends I.BlockComponent {
 	blockId: string;
@@ -160,6 +161,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 	const onBlurInput = () => {
 		keyboard.disableSelection(false);
 		editableRef.current?.placeholderCheck();
+		presence.stop(rootId);
 
 		saveState(attachments);
 	};
@@ -321,7 +323,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 				const res = U.String.insert(current, newText, from, to);
 
-				marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
+				marks.current = Mark.adjustForReplace(marks.current, from, to, newText.length);
 				marks.current = Mark.checkRanges(res, marks.current);
 				setMarks(marks.current);
 
@@ -483,6 +485,10 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		if (editNode) {
 			U.Dom.toggleClass(editNode, 'isRtl', checkRtl);
 		};
+
+		if (value) {
+			presence.typing(rootId, '');
+		};
 	};
 
 	const onCopy = () => {
@@ -587,7 +593,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 			newMarks = Mark.adjust(newMarks, 0, from);
 
-			marks.current = Mark.adjust(marks.current, from, newText.length - (to - from));
+			marks.current = Mark.adjustForReplace(marks.current, from, to, newText.length);
 			marks.current = marks.current.concat(newMarks);
 			marks.current = marks.current.filter(it => !skipMarks.includes(it.type));
 			marks.current = Mark.checkRanges(res, marks.current);
@@ -620,7 +626,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		if (list.length) {
-			U.Common.saveClipboardFiles(list, {}, data => addAttachments(data.files));
+			saveFiles(list);
 		};
 
 		updateCounter();
@@ -761,7 +767,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 
 		keyboard.disableCommonDrop(true);
 
-		addAttachments(list);
+		saveFiles(list);
 
 		keyboard.disableCommonDrop(false);
 		clearDragState();
@@ -911,6 +917,12 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		historySaveState();
 	};
 
+	// Files without a disk path (pasted, dragged from a browser) are written to temp first, since upload needs a path.
+	// Their id is taken again from that unique path, so different files of the same size pasted together stay apart
+	const saveFiles = (list: any[]) => {
+		U.Common.saveClipboardFiles(list, {}, data => addAttachments(data.files.map(it => ({ ...it, id: getAttachmentId(it.path, it.file) }))));
+	};
+
 	const addBookmark = (url: string, fromText?: boolean) => {
 		const add = (param: any) => {
 			const { title, description, url } = param;
@@ -989,6 +1001,9 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 			return;
 		};
 
+		// the message itself supersedes the typing signal
+		presence.stop(rootId);
+
 		const send = sendRef.current;
 		const files = attachments.filter(it => it.isTmp && (U.Object.isFileLayout(it.layout) || U.Object.isImageLayout(it.layout)));
 		const bookmarks = attachments.filter(it => it.isTmp && U.Object.isBookmarkLayout(it.layout));
@@ -996,15 +1011,41 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		const bl = bookmarks.length;
 		const bookmark = S.Record.getBookmarkType();
 
+		// tmp attachment id → created object id. Results are collected here instead of
+		// mutating the attachments array in place: the user can remove attachments while
+		// uploads are in flight, so the final list is resolved from the CURRENT store
+		// state in callBack, not from a stale send-time snapshot.
+		const created = new Map<string, string>();
+
+		let failed = false;
+
 		U.Dom.addClass(send, 'isLoading');
 		isSending.current = true;
 
 		raf(() => {
 			U.Dom.addClass(send, 'anim');
 		});
-		
+
+		// Abort without clear(): the composer keeps its text and attachments so the user can retry.
+		const abort = (text: string) => {
+			isSending.current = false;
+			U.Dom.removeClass(send, 'isLoading');
+			U.Dom.removeClass(send, 'anim');
+
+			Preview.toastShow({ icon: 'notice', text });
+		};
+
 		const callBack = () => {
-			const newAttachments = attachments.filter(it => !it.isTmp).map(it => ({ target: it.id, type: getAttachmentType(it.layout) }));
+			if (failed) {
+				abort(translate('toastChatUploadFailed'));
+				return;
+			};
+
+			// Resolve against the current store list so attachments removed during the
+			// upload don't come back into the message.
+			const newAttachments = S.Chat.getAttachments(attachmentsSubId)
+				.map(it => ({ target: (it.isTmp ? created.get(it.id) : it.id), type: getAttachmentType(it.layout) }))
+				.filter(it => it.target);
 			const parsed = getMarksFromHtml();
 			const text = trim(parsed.text);
 			const match = parsed.text.match(/^\r?\n+/);
@@ -1024,7 +1065,12 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 					update.content.marks = coded.marks;
 					update.blocks = [];
 
-					C.ChatEditMessageContent(rootId, editingId.current, update, () => {
+					C.ChatEditMessageContent(rootId, editingId.current, update, (response: any) => {
+						if (response.error.code) {
+							abort(translate('toastChatSendFailed'));
+							return;
+						};
+
 						scrollToMessage(editingId.current, true);
 						clear();
 					});
@@ -1054,7 +1100,12 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 					messageType = message.content?.text.length ? 'Mixed' : 'Attachment';
 				};
 
-				C.ChatAddMessage(rootId, message, () => {
+				C.ChatAddMessage(rootId, message, (response: any) => {
+					if (response.error.code) {
+						abort(translate('toastChatSendFailed'));
+						return;
+					};
+
 					reloadAndScrollToBottom();
 					clear();
 
@@ -1074,15 +1125,10 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 				C.FileUpload(S.Common.space, '', item.path, I.FileType.None, {}, false, '', 0, rootId, '', (message: any) => {
 					n++;
 
-					if (message.objectId) {
-						const idx = attachments.findIndex(it => it.id == item.id);
-						const newItem = { id: message.objectId, type: getAttachmentType(item.layout) };
-
-						if (idx >= 0) {
-							attachments[idx] = newItem;
-						} else {
-							attachments.push(newItem);
-						};
+					if (message.error.code || !message.objectId) {
+						failed = true;
+					} else {
+						created.set(item.id, message.objectId);
 					};
 
 					if (n == fl) {
@@ -1103,15 +1149,10 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 				C.ObjectCreateBookmark({ source: item.source, createdInContext: rootId, createdInContextRef: '' }, S.Common.space, bookmark.defaultTemplateId, (message: any) => {
 					n++;
 
-					if (message.objectId) {
-						const idx = attachments.findIndex(it => it.id == item.id);
-						const newItem = { id: message.objectId, type: getAttachmentType(item.layout) };
-
-						if (idx >= 0) {
-							attachments[idx] = newItem;
-						} else {
-							attachments.push(newItem);
-						};
+					if (message.error.code || !message.objectId) {
+						failed = true;
+					} else {
+						created.set(item.id, message.objectId);
 					};
 
 					if (n == bl) {
@@ -1462,6 +1503,8 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		editableRef.current?.setRange(newRange);
 	};
 
+	const getAttachmentId = (path: string, file: File) => sha1(path + file.lastModified + file.size);
+
 	const getObjectFromFile = (file: File) => {
 		const path = electron.webFilePath(file);
 		const mime = file.type || electron.fileMime(path);
@@ -1478,7 +1521,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 		};
 
 		return {
-			id: sha1(path + file.lastModified + file.size),
+			id: getAttachmentId(path, file),
 			name: file.name,
 			layout,
 			type: type?.id,
@@ -1859,7 +1902,7 @@ const ChatForm = forwardRef<RefProps, Props>((props, ref) => {
 								{icon}
 								<div className="textWrapper">
 									<div className="name">{title}</div>
-									<div className="descr" dangerouslySetInnerHTML={{ __html: text }} />
+									<div className="descr" dangerouslySetInnerHTML={{ __html: U.String.sanitize(text) }} />
 								</div>
 							</div>
 							<div className="side right">

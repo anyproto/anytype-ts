@@ -1,5 +1,5 @@
 import React, { forwardRef, useState, useRef, useEffect } from 'react';
-import { Title, Label, Icon, Input, Button, Error, UpsellBanner } from 'Component';
+import { Title, Label, Icon, Button, Switch, Filter, Error, UpsellBanner } from 'Component';
 import Members from './share/members';
 import * as I from 'Interface';
 
@@ -7,232 +7,179 @@ const PageMainSettingsSpaceShare = forwardRef<I.PageRef, I.PageSettingsComponent
 
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ error, setError ] = useState('');
-	const [ invite, setInvite ] = useState({ cid: '', key: '', type: I.InviteLinkType.None });
-	const inputRef = useRef<any>(null);
-	const hasLink = invite.cid && invite.key;
+	const [ search, setSearch ] = useState('');
+	const [ isSearching, setIsSearching ] = useState(false);
+	const filterRef = useRef<any>(null);
+	const switchRef = useRef<any>(null);
+	const { space, isOnline } = S.Common;
 	const spaceview = U.Space.getSpaceview();
+	const invite = S.Common.inviteGet(space);
 	const mySharedSpaces = U.Space.getMySharedSpacesList();
 	const { sharedSpacesLimit } = U.Space.getProfile();
-	const isWriterLimit = U.Space.getWriterLimit() <= 0;
 	const limitReached = sharedSpacesLimit && (mySharedSpaces.length >= sharedSpacesLimit);
-	const { isOnline } = S.Common;
 	const isLocalNetwork = U.Data.isLocalNetwork();
-	const canEdit = U.Space.canMyParticipantModerate() && (!limitReached || spaceview.isShared);
+
+	// Invite rights belong to the owner alone: admins add members and approve requests, but never
+	// see or change the link.
+	const canManageInvite = U.Space.canManageInvite() && (!limitReached || spaceview.isShared);
+	const canToggleInvite = canManageInvite && isOnline && !isLocalNetwork;
+	const canAddMembers = U.Space.canMyParticipantModerate() && (!limitReached || spaceview.isShared);
+	const hasLink = U.Space.hasVisibleInvite();
+	const isUnsafe = U.Space.isInviteUnsafe();
 
 	const init = () => {
-		if (spaceview.isShared && (!invite.cid || !invite.key)) {
-			U.Space.getInvite(S.Common.space, (cid: string, key: string, inviteType: I.InviteType, permissions: I.ParticipantPermissions) => {
-				if (cid && key) {
-					setInviteData(cid, key, inviteType, permissions);
-				};
-			});
+		if (spaceview.isShared) {
+			U.Space.getInvite(space);
 		} else {
-			setInviteData('', '', I.InviteType.WithoutApprove, I.ParticipantPermissions.None);
+			S.Common.inviteClear(space);
 		};
 	};
 
-	const setInviteData = (cid: string, key: string, inviteType: I.InviteType, permissions: I.ParticipantPermissions) => {
-		let type = I.InviteLinkType.None;
-
-		if (cid && key) {
-			if (inviteType == I.InviteType.WithApprove) {
-				type = I.InviteLinkType.Manual;
-			} else {
-				switch (permissions) {
-					case I.ParticipantPermissions.Writer: {
-						type = I.InviteLinkType.Editor;
-						break;
-					};
-
-					case I.ParticipantPermissions.Reader: {
-						type = I.InviteLinkType.Viewer;
-						break;
-					};
-				};
-			};
-		};
-
-		setInvite({ cid, key, type });
-		inputRef.current?.setValue(U.Space.getInviteLink(cid, key));
+	// Switch keeps its own state and only reads the prop on mount, so it has to be told when the
+	// invite it stands for changes underneath it — on load, and when a request fails after the click.
+	const syncSwitch = () => {
+		switchRef.current?.setValue(!!S.Common.inviteGet(space)?.cid);
 	};
 
-	const onInviteMenu = () => {
-		if (!canEdit) {
-			return;
-		};
+	const setErrorHandler = (error: { description: string, code: number }) => {
+		setIsLoading(false);
 
-		const noApproveIds: I.InviteLinkType[] = [
-			I.InviteLinkType.Editor,
-			I.InviteLinkType.Viewer
-		];
-		const ids: I.InviteLinkType[] = noApproveIds.concat([ I.InviteLinkType.Manual ]);
-
-		const options: any[] = ids.map((id: I.InviteLinkType) => getOptionById(id));
-
-		if (isOnline && !isLocalNetwork) {
-			if (options.length) {
-				options.push({ isDiv: true });
-			};
-			options.push(getOptionById(I.InviteLinkType.None));
-		};
-
-		S.Menu.open('select', {
-			element: '#linkTypeWrapper',
-			className: 'inviteLinkType',
-			classNameWrap: 'fromBlock',
-			offsetX: 60,
-			offsetY: -26,
-			data: {
-				options,
-				noVirtualisation: true,
-				onSelect: (e: any, item: any) => {
-					const id = Number(item.id);
-
-					if (id == invite.type) {
-						return;
-					};
-
-					let created = false;
-					let inviteType = I.InviteType.WithoutApprove;
-					let permissions = I.ParticipantPermissions.Reader;
-
-					if (id == I.InviteLinkType.None) {
-						Action.inviteRevoke(S.Common.space, () => {
-							setInviteData('', '', inviteType, permissions);
-						});
-						return;
-					};
-
-					setIsLoading(true);
-					setError('');
-
-					const callBack = () => {
-						switch (id) {
-							case I.InviteLinkType.Editor: {
-								permissions = I.ParticipantPermissions.Writer;
-								break;
-							};
-
-							case I.InviteLinkType.Manual: {
-								inviteType = I.InviteType.WithApprove;
-								break;
-							};
-						};
-
-						const isChange = noApproveIds.includes(invite.type) && noApproveIds.includes(id);
-
-						if (isChange) {
-							C.SpaceInviteChange(S.Common.space, permissions, (message: any) => {
-								setIsLoading(false);
-
-								if (setErrorHandler(message.error)) {
-									return;
-								};
-
-								setInviteData(invite.cid, invite.key, inviteType, permissions);
-								Preview.toastShow({ text: U.String.sprintf(translate('toastInviteUpdate'), item.name) });
-							});
-						} else {
-							C.SpaceInviteGenerate(S.Common.space, inviteType, permissions, (message: any) => {
-								setIsLoading(false);
-
-								if (setErrorHandler(message.error)) {
-									return;
-								};
-
-								let toast = '';
-								if (created) {
-									toast = translate('toastInviteGenerate');
-								} else {
-									toast = U.String.sprintf(translate('toastInviteUpdate'), item.name);
-								};
-
-								setInviteData(message.inviteCid, message.inviteKey, inviteType, permissions);
-								Preview.toastShow({ text: toast });
-
-								if (!spaceview.isShared) {
-									analytics.event('ShareSpace');
-								};
-							});
-						};
-
-						analytics.event('ClickShareSpaceNewLink', { type: id});
-					};
-
-					if (!spaceview.isShared) {
-						created = true;
-
-						C.SpaceMakeShareable(S.Common.space, (message: any) => {
-							if (message.error.code == 104) {
-								setIsLoading(false);
-
-								S.Popup.open('confirm', {
-									data: {
-										iconParam: { name: 'popup/header/warning', color: 'grey' },
-										title: translate('popupConfirmSharedSpaceLimitTitle'),
-										text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
-										textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
-										canCancel: false,
-										onConfirm: () => Action.membershipUpgrade(),
-									},
-								});
-								analytics.event('ScreenHitShareSpaceLimit');
-								return;
-							};
-
-							if (!setErrorHandler(message.error)) {
-								callBack();
-							};
-						});
-					} else {
-						callBack();
-					};
-				},
-			}
-		});
-
-		analytics.event('ScreenShareMenu');
-	};
-
-	const getOptionById = (id: I.InviteLinkType) => {
-		const isDisabled = (id == I.InviteLinkType.Editor) && isWriterLimit;
-		const suffix = I.InviteLinkType[id];
-
-		return {
-			id: String(id),
-			iconParam: { name: `menu/inviteLink/${suffix.toLowerCase()}` },
-			name: translate(`popupSettingsSpaceShareMenuInvite${suffix}Title`),
-			description: translate(`popupSettingsSpaceShareMenuInvite${suffix}Description`),
-			withDescription: true,
-			disabled: isDisabled
-		};
-	};
-
-	const onCopy = () => {
-		if (invite.cid && invite.key) {
-			U.Common.copyToast('', U.Space.getInviteLink(invite.cid, invite.key), translate('toastInviteCopy'));
-			analytics.event('ClickShareSpaceCopyLink', { route: analytics.route.settingsSpaceShare });
-		};
-	};
-
-	const setErrorHandler = (error: { description: string, code: number}) => {
 		if (!error.code) {
 			return false;
 		};
 
 		setError(error.description);
+		syncSwitch();
 		return true;
 	};
 
-	const { name, description, iconParam } = getOptionById(invite.type);
+	const generate = () => {
+		setIsLoading(true);
+		setError('');
 
-	useEffect(() => {
-		init();
-	}, []);
+		// The default invite asks the owner to approve every join, and is kept in their account.
+		C.SpaceInviteGenerate(space, I.InviteType.WithApprove, I.ParticipantPermissions.Reader, false, (message: any) => {
+			if (setErrorHandler(message.error)) {
+				return;
+			};
+
+			S.Common.inviteSet(space, {
+				cid: message.inviteCid,
+				key: message.inviteKey,
+				inviteType: message.inviteType,
+				permissions: message.permissions,
+				heldByOwner: true,
+			});
+
+			Preview.toastShow({ text: translate('toastInviteGenerate') });
+			analytics.event('ClickShareSpaceNewLink', { type: I.InviteLinkType.Manual });
+
+			if (!spaceview.isShared) {
+				analytics.event('ShareSpace');
+			};
+		});
+	};
+
+	const onLinkToggle = (e: any, v: boolean) => {
+		if (!v) {
+			// The confirm can be cancelled, and the switch has already flipped itself.
+			Action.inviteRevoke(space, syncSwitch, syncSwitch);
+			return;
+		};
+
+		if (spaceview.isShared) {
+			generate();
+			return;
+		};
+
+		setIsLoading(true);
+		setError('');
+
+		C.SpaceMakeShareable(space, (message: any) => {
+			if (message.error.code == J.Error.Code.SpaceMakeShareable.LIMIT_REACHED) {
+				setIsLoading(false);
+
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'popup/header/warning', color: 'grey' },
+						title: translate('popupConfirmSharedSpaceLimitTitle'),
+						text: U.String.sprintf(translate('popupConfirmSharedSpaceLimitText'), sharedSpacesLimit),
+						textConfirm: translate('popupConfirmSharedSpaceLimitButton'),
+						canCancel: false,
+						onConfirm: () => Action.membershipUpgrade(),
+					},
+				});
+				analytics.event('ScreenHitShareSpaceLimit');
+				return;
+			};
+
+			if (!setErrorHandler(message.error)) {
+				generate();
+			};
+		});
+	};
+
+	const onCopy = () => {
+		if (!hasLink) {
+			return;
+		};
+
+		U.Common.copyToast('', U.Space.getInviteLink(invite.cid, invite.key), translate('toastInviteCopy'));
+		analytics.event('ClickShareSpaceCopyLink', { route: analytics.route.settingsSpaceShare });
+	};
+
+	const onQr = () => {
+		if (!hasLink) {
+			return;
+		};
+
+		S.Popup.open('inviteQr', { data: { link: U.Space.getInviteLink(invite.cid, invite.key) } });
+		analytics.event('ClickSettingsSpaceShare', { type: 'Qr' });
+	};
+
+	const onManage = () => {
+		S.Popup.open('inviteManage', { data: { spaceId: space } });
+	};
+
+	const onAdd = () => {
+		S.Popup.open('inviteAdd', { data: { spaceId: space } });
+	};
+
+	const onSearch = () => {
+		if (isSearching) {
+			setSearch('');
+		};
+
+		setIsSearching(!isSearching);
+	};
+
+	// What the caption tells the owner depends on who can join, with what, and who holds the link.
+	const getLinkDescription = (): string => {
+		if (!invite || !invite.cid) {
+			return translate('popupSettingsSpaceShareLinkDescriptionOff');
+		};
+
+		const parts = [];
+
+		if (invite.inviteType == I.InviteType.WithoutApprove) {
+			parts.push(translate(invite.permissions == I.ParticipantPermissions.Writer ? 'popupSettingsSpaceShareLinkDescriptionEditor' : 'popupSettingsSpaceShareLinkDescriptionViewer'));
+		} else {
+			parts.push(translate('popupSettingsSpaceShareLinkDescriptionApprove'));
+		};
+
+		parts.push(translate(invite.heldByOwner ? 'popupSettingsSpaceShareLinkDescriptionOwner' : 'popupSettingsSpaceShareLinkDescriptionShared'));
+
+		return parts.join(' ');
+	};
 
 	useEffect(() => {
 		init();
 	}, [ spaceview.spaceAccessType ]);
+
+	// The invite arrives from the middleware after the first render.
+	useEffect(() => {
+		syncSwitch();
+	}, [ invite?.cid ]);
 
 	return (
 		<>
@@ -241,36 +188,58 @@ const PageMainSettingsSpaceShare = forwardRef<I.PageRef, I.PageSettingsComponent
 			</div>
 
 			<div id="titleWrapper" className="titleWrapper">
-				<Title text={translate('popupSettingsSpaceShareTitle')} />
-			</div>
+				{isSearching ? (
+					<Filter
+						ref={filterRef}
+						iconParam={{ name: 'common/search' }}
+						placeholder={translate('popupSettingsSpaceShareSearchPlaceholder')}
+						focusOnMount={true}
+						size={36}
+						onChange={v => setSearch(v)}
+						onClear={onSearch}
+					/>
+				) : (
+					<>
+						<Title text={translate('commonMembers')} />
 
-			<div id="sectionInvite" className="section sectionInvite">
-				<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
-
-				<div id="linkTypeWrapper" className={[ 'linkTypeWrapper', canEdit ? 'canEdit' : '' ].join(' ')} onClick={onInviteMenu}>
-					<Icon name={isLoading ? '' : iconParam.name} className={isLoading ? 'loading' : ''} />
-					<div className="info">
-						<Title text={name} />
-						<Label text={description} />
-					</div>
-				</div>
-
-				{hasLink ? (
-					<div className="inviteLinkWrapper">
-						<div className="inputWrapper">
-							<Input 
-								ref={inputRef} 
-								readonly={true} 
-								value={U.Space.getInviteLink(invite.cid, invite.key)} 
-								onClick={() => inputRef.current?.select()} 
-							/>
+						<div className="side right">
+							<Icon name="common/search" className="search" withBackground={true} onClick={onSearch} />
+							{canAddMembers ? <Button className="c28" color="accent" text={translate('popupSettingsSpaceShareAddMembers')} onClick={onAdd} /> : ''}
 						</div>
-						<Button onClick={onCopy} size={36} color="black" text={translate('commonCopy')} />
-					</div>
-				) : ''}
+					</>
+				)}
 			</div>
 
-			<Members {...props} />
+			{canManageInvite ? (
+				<div id="sectionInvite" className="section sectionInvite">
+					<div className="inviteToggle">
+						<div className="info">
+							<Title text={translate('popupSettingsSpaceShareInviteLinkTitle')} />
+							<Label text={getLinkDescription()} />
+						</div>
+
+						<Switch ref={switchRef} className="big" value={!!invite?.cid} readonly={isLoading || !canToggleInvite} onChange={onLinkToggle} />
+					</div>
+
+					{isUnsafe ? (
+						<div className="inviteWarning">
+							<Icon name="popup/header/warning" className="warning" />
+							<Label text={translate('inviteUnsafeText')} />
+							<Button className="c28" color="blank" text={translate('popupInviteManageReset')} onClick={() => Action.inviteReset(space)} />
+						</div>
+					) : ''}
+
+					{hasLink ? (
+						<div className="inviteButtons">
+							<Button className="c36" color="blank" iconParam={{ name: 'menu/action/copy' }} text={translate('popupSettingsSpaceShareCopyLink')} onClick={onCopy} />
+							<Button className="c36" color="blank" iconParam={{ name: 'common/qr' }} text={translate('popupSettingsSpaceShareQRCode')} onClick={onQr} />
+							<Button className="c36" color="blank" iconParam={{ name: 'menu/action/settings' }} text={translate('popupSettingsSpaceShareManageLink')} onClick={onManage} />
+						</div>
+					) : ''}
+				</div>
+			) : ''}
+
+			<Members {...props} search={isSearching ? search : ''} />
 			<Error text={error} />
 		</>
 	);

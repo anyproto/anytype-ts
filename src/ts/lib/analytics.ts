@@ -63,6 +63,8 @@ class Analytics {
 		screenRelation: 'ScreenRelation',
 		screenType: 'ScreenType',
 
+		globalShortcut: 'GlobalShortcut',
+
 		menuOnboarding: 'MenuOnboarding',
 		menuObject: 'MenuObject',
 		menuSystem: 'MenuSystem',
@@ -86,8 +88,10 @@ class Analytics {
 
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
+		inviteSecurity: 'InviteSecurity',
 
 		authSetup: 'ScreenAuthSetup',
+		authLogin: 'ScreenAuthLogin',
 
 		addWidgetMain: 'Main',
 		addWidgetEditor: 'Editor',
@@ -271,11 +275,11 @@ class Analytics {
 	 */
 	setProduct () {
 		const { data } = S.Membership;
-		if (!data) {
+		if (!data || !S.Membership.isStatusKnown) {
 			return;
 		};
 
-		const products = (data.products || []).map(it => S.Membership.getProduct(it.product.id)).filter(it => it);
+		const products = (data.products || []).map(it => data.resolveProduct(it)).filter(it => it);
 		const extraPurchase = products.filter(it => it.isTopLevel);
 		const extraStorage = products.reduce((sum, it) => sum + (it.features.storageBytes || 0), 0) / 1024 / 1024;
 		const extraSeat = products.reduce((sum, it) => sum + (it.features.teamSeats || 0), 0);
@@ -797,6 +801,7 @@ class Analytics {
 			'main/settings/exportIndex':	 'ScreenSettingsExportIndex',
 			'main/settings/exportMarkdown':	 'ScreenSettingsExportMarkdown',
 			'main/settings/exportProtobuf':	 'ScreenSettingsExportProtobuf',
+			'main/settings/exportAnyBlockV2': 'ScreenSettingsExportAnyBlockV2',
 
 			'main/settings/dataIndex':		 'ScreenSettingsDataIndex',
 			'main/settings/dataPublish':	 'ScreenSettingsDataPublish',

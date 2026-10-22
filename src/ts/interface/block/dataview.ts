@@ -189,6 +189,7 @@ export interface ViewComponent {
 	getIdPrefix?(): string;
 	getLimit?(): number;
 	getVisibleRelations?(): I.ViewRelation[];
+	getWrapperWidth?(): number;
 	getTypeId?(): string;
 	getTemplateId?(): string;
 	getEmpty?(type: string): any;
@@ -307,6 +308,7 @@ export interface CellRef {
 	isEditing?(): boolean;
 	onChange?(value: any): void;
 	getValue?(): any;
+	getEntryValue?(): string;
 	forceUpdate?(): void;
 	canEdit?(): boolean;
 };

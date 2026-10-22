@@ -21,6 +21,8 @@ const getKatex = (): any => {
 getKatex();
 const iconCache: Map<string, string> = new Map();
 
+let _hasOverlayScrollbars: boolean | null = null;
+
 class UtilCommon {
 
 	/**
@@ -37,6 +39,26 @@ class UtilCommon {
 	 */
 	getElectron () {
 		return window.Electron || {};
+	};
+
+	/**
+	 * Classifies a filesystem path as a cloud-synced or network location.
+	 * @param {string} [p] - The path to check; empty defaults to the current userData dir.
+	 * @returns {object} { unsafe, kind: ''|'cloud'|'network', provider, path }.
+	 */
+	checkVaultPath (p?: string) {
+		const fallback = { unsafe: false, kind: '', provider: '', path: String(p || '') };
+		const electron = this.getElectron();
+
+		if (!electron.checkVaultPath) {
+			return fallback; // web mode / non-electron
+		};
+
+		try {
+			return electron.checkVaultPath(p || '') || fallback;
+		} catch (e) {
+			return fallback;
+		};
 	};
 
 	/**
@@ -470,6 +492,31 @@ class UtilCommon {
 	};
 
 	/**
+	 * Checks whether the OS draws overlay scrollbars, which appear only while scrolling
+	 * and take up no layout space. True on macOS unless the user selected
+	 * "Show scroll bars: Always" in System Settings.
+	 * Measured once and cached; a preference change applies after restart.
+	 * @returns {boolean} True if scrollbars are overlaid, false if they reserve space.
+	 */
+	hasOverlayScrollbars (): boolean {
+		if (_hasOverlayScrollbars === null) {
+			if (typeof document == 'undefined') {
+				return false;
+			};
+
+			const el = document.createElement('div');
+
+			el.style.cssText = 'position:absolute;top:-9999px;width:100px;height:100px;overflow:scroll;';
+			document.body.appendChild(el);
+
+			_hasOverlayScrollbars = (el.offsetWidth - el.clientWidth) == 0;
+			el.remove();
+		};
+
+		return _hasOverlayScrollbars;
+	};
+
+	/**
 	 * Handles common error codes and shows alerts or popups as needed.
 	 * @param {number} code - The error code.
 	 * @returns {boolean} True if no critical error, false otherwise.
@@ -714,27 +761,24 @@ class UtilCommon {
 			};
 		};
 
-		const timestamp = Date.now();
-
-		for (let i = 0; i < items.length; i++) {
-			const item = items[i];
-
+		for (const item of items) {
 			if (item.path) {
 				ret.push(item);
 				cb();
 			} else {
 				const reader = new FileReader();
 				reader.onload = () => {
-					// Generate unique filename to avoid collisions when multiple files have the same name
-					const parts = String(item.name || 'file').split('.');
-					const ext = parts.length > 1 ? parts.pop() : '';
-					const base = parts.join('.');
-					const uniqueName = ext ? `${base}_${timestamp}_${i}.${ext}` : `${base}_${timestamp}_${i}`;
-
-					ret.push({
-						...item,
-						path: this.getElectron().fileWrite(uniqueName, reader.result, { encoding: 'binary' }),
-					});
+					// Each file gets its own temp folder, so files with the same name do not collide
+					// and the uploaded file keeps its original name
+					try {
+						ret.push({
+							...item,
+							path: this.getElectron().fileWrite(item.name || 'file', reader.result, { encoding: 'binary', unique: true }),
+						});
+					} catch (e) {
+						// A file that cannot be written is skipped, so the rest of the paste still completes
+						console.warn('[Common] saving clipboard file failed:', e);
+					};
 					cb();
 				};
 				reader.onerror = cb;
@@ -1300,9 +1344,9 @@ class UtilCommon {
 
 	getSpaceSettingsPages (): string[] {
 		return [
-			'spaceIndex', 'spaceStorage', 'spaceShare', 'spaceNotifications',
+			'spaceIndex', 'spaceStorage', 'spaceShare', 'spaceNotifications', 'spaceDeletionAudit',
 			'importIndex', 'importNotion', 'importNotionWarning', 'importCsv', 'importObsidian',
-			'exportIndex', 'exportProtobuf', 'exportMarkdown',
+			'exportIndex', 'exportProtobuf', 'exportMarkdown', 'exportAnyBlockV2',
 			'set', 'relation', 'archive',
 		];
 	};

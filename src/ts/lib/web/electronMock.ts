@@ -311,6 +311,9 @@ class ElectronMock {
 			});
 		});
 
+		// No OS-level global shortcuts in the browser - null tells callers to skip
+		handlers.set('getGlobalShortcutStatus', () => null);
+
 		['menu', 'initMenu', 'setHideTray', 'setMenuBarVisibility', 'setHardwareAcceleration'].forEach(cmd => {
 			handlers.set(cmd, () => {
 				console.log('[Web] Menu/system command not supported:', cmd);
@@ -330,9 +333,9 @@ class ElectronMock {
 			});
 		});
 
-		['showChallenge', 'hideChallenge'].forEach(cmd => {
+		['showLinkApproval', 'hideLinkApproval', 'linkApprovalResult', 'linkApprovalSpaces'].forEach(cmd => {
 			handlers.set(cmd, () => {
-				console.log('[Web] Challenge not supported:', cmd);
+				console.log('[Web] Link approval not supported:', cmd);
 				return true;
 			});
 		});

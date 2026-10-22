@@ -59,8 +59,7 @@ export interface Toast {
 	count?: number;
 	value?: boolean;
 	ids?: string[];
-	autoArchivedIds?: string[];
-	autoRestoredIds?: string[];
+	cleanupIds?: string[];
 	icon?: string;
 	uploadCounts?: { [key: string]: number };
 };
@@ -77,8 +76,24 @@ export enum ToastAction {
 	Widget			 = 8,
 	Restore			 = 9,
 	Upload			 = 10,
-	AutoArchive		 = 11,
-	AutoRestore		 = 12,
+	Cleanup			 = 11,
+};
+
+/**
+ * Why a cleanup-suggestion root is orphaned. Meaningful on forest roots only —
+ * descendants inherit their root's reason and carry None.
+ */
+export enum CleanupReason {
+	None			 = 0,
+	ContextArchived	 = 1,
+	ContextDeleted	 = 2,
+	ContextUnlinked	 = 3,
+};
+
+export interface CleanupSuggestion {
+	details: any;
+	isRoot: boolean;
+	reason: CleanupReason;
 };
 
 export interface Option {
@@ -119,6 +134,74 @@ export enum ImportType {
 	Obsidian	 = 7,
 };
 
+// Values 0-3 mirror Rpc.AI.Provider; Anytype is client-side only and maps to OpenAi
+// with build-embedded endpoint/model/token when the request is built
+export enum AiProvider {
+	Ollama		 = 0,
+	OpenAi		 = 1,
+	LMStudio	 = 2,
+	LlamaCpp	 = 3,
+	Anytype		 = 100,
+};
+
+/**
+ * Error codes from Rpc.AI.ListModels. The call doubles as config validation, so
+ * these are what tell the user which field to fix.
+ */
+export enum AiListModelsErrorCode {
+	None			 = 0,
+	Unknown			 = 1,
+	BadInput		 = 2,
+	RateLimit		 = 100,
+	NotReachable	 = 101,
+	ModelNotFound	 = 102,
+	AuthRequired	 = 103,
+};
+
+/**
+ * A model worth suggesting. `key` doubles as the match token and as the id shown
+ * when the user does not have it yet; `noteKey` is a translation key, not text.
+ */
+export interface AiRecommendedModel {
+	key: string;
+	name: string;
+	noteKey?: string;
+};
+
+/** A recommendation resolved against what the provider actually reported. */
+export interface AiRecommendedResult {
+	id: string;
+	name: string;
+	noteKey?: string;
+	isInstalled: boolean;
+};
+
+/**
+ * One entry in the provider dropdown. `provider` is the wire enum the middleware
+ * understands; several entries share one (every OpenAI-compatible service rides
+ * on OpenAi), which is why `id` — not `provider` — is what gets persisted.
+ */
+export interface AiProviderItem {
+	id: string;
+	name: string;
+	provider: AiProvider;
+	endpoint: string;
+	isLocal?: boolean;
+	isCustom?: boolean;
+	isAnytype?: boolean;
+	needsToken?: boolean;
+	recommended?: AiRecommendedModel[];
+};
+
+export interface ImportAiSettings {
+	enabled: boolean;
+	providerId: string;
+	endpoint: string;
+	model: string;
+	token: string;
+	includeContentSamples: boolean;
+};
+
 export enum ExportType {
 	Markdown	 = 0,
 	Protobuf	 = 1,
@@ -126,6 +209,7 @@ export enum ExportType {
 	Dot			 = 3,
 	Svg			 = 4,
 	GraphJson	 = 5,
+	AnyBlockV2	 = 6,
 
 	Html		 = 100,
 	Pdf			 = 110,
@@ -408,6 +492,15 @@ export interface AppInfo {
 	expireAt: number;
 	scope: LocalApiScope;
 	isActive: boolean;
+	grant?: I.LinkAppGrant;
+};
+
+// Outcome of one bind attempt of the local JSON API server. listenAddr is the bound address on success
+// and the requested one on failure; error is raw OS text for debugging only
+export interface JsonApiStatus {
+	success: boolean;
+	listenAddr: string;
+	error: string;
 };
 
 export enum ImageSize {
@@ -424,6 +517,13 @@ export enum AppDeviceState {
 export enum RecentEditMode {
 	All			 = 0,
 	Me			 = 1,
+};
+
+export enum TreeSortMode {
+	Custom		 = 0,
+	Name		 = 1,
+	LastEdited	 = 2,
+	Created		 = 3,
 };
 
 export interface DragProviderRefProps {
@@ -444,7 +544,7 @@ export interface ImageParam {
 };
 
 export interface StickyScrollbarRef {
-	resize: (config: { width: number; left: number; paddingLeft: number; display: string; trackWidth: number }) => void;
+	resize: (config: Partial<{ width: number; left: number; paddingLeft: number; display: string; trackWidth: number }>) => void;
 	bind: (element: HTMLElement, isSyncing: boolean) => void;
 	unbind: () => void;
 	sync: (element: HTMLElement, isSyncing: boolean) => boolean;

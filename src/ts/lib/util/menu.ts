@@ -688,7 +688,11 @@ class UtilMenu {
 		return U.Common.arrayUniqueObjects(sections, 'id');
 	};
 
-	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
+	/**
+	 * Builds the searchObject menu data for picking a new space homepage.
+	 * Split out of dashboardSelect so it can also be used as a submenu.
+	 */
+	dashboardSelectData (openRoute?: boolean) {
 		const { space } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 
@@ -712,36 +716,40 @@ class UtilMenu {
 			});
 		};
 
+		return {
+			withPlural: true,
+			filters: [
+				{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
+				{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
+			],
+			dataChange: (_ctx: any, items: any) => {
+				const head: any[] = [
+					{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
+				];
+
+				if (items.length) {
+					head.push({ isDiv: true });
+				};
+
+				return head.concat(items);
+			},
+			onSelect: el => {
+				onSelect(el, true);
+
+				const type = U.Space.isSystemDashboard(el.id) ? el.id : I.HomePredefinedId.Existing;
+				analytics.event('ChangeSpaceDashboard', { type });
+			},
+		};
+	};
+
+	dashboardSelect (element: string, openRoute?: boolean, menuParam?: Omit<Partial<I.MenuParam>, 'data'>) {
 		analytics.event('ClickChangeSpaceDashboard');
 
 		S.Menu.open('searchObject', {
 			element,
 			horizontal: I.MenuDirection.Right,
 			...menuParam,
-			data: {
-				withPlural: true,
-				filters: [
-					{ relationKey: 'resolvedLayout', condition: I.FilterCondition.NotIn, value: U.Object.getFileAndSystemLayouts().concat(I.ObjectLayout.Participant).filter(it => !U.Object.isTypeLayout(it)) },
-					{ relationKey: 'type.uniqueKey', condition: I.FilterCondition.NotEqual, value: J.Constant.typeKey.template },
-				],
-				dataChange: (_ctx: any, items: any) => {
-					const head: any[] = [
-						{ id: I.HomePredefinedId.Widget, iconParam: { name: 'settings/home' }, name: translate('commonNoHome') },
-					];
-
-					if (items.length) {
-						head.push({ isDiv: true });
-					};
-
-					return head.concat(items);
-				},
-				onSelect: el => {
-					onSelect(el, true);
-
-					const type = U.Space.isSystemDashboard(el.id) ? el.id : I.HomePredefinedId.Existing;
-					analytics.event('ChangeSpaceDashboard', { type });
-				},
-			}
+			data: this.dashboardSelectData(openRoute),
 		});
 	};
 
@@ -976,6 +984,11 @@ class UtilMenu {
 					break;
 				};
 
+				case 'copyId': {
+					U.Common.copyToast(translate('popupSettingsSpaceIndexSpaceIdTitle'), targetSpaceId);
+					break;
+				};
+
 			};
 		};
 
@@ -985,6 +998,14 @@ class UtilMenu {
 				general: [],
 				actions: [],
 				delete: [],
+			};
+
+			// A channel still being fetched has nothing to manage yet; its id is what a support
+			// conversation or a debug log needs
+			if (isLoading) {
+				return [
+					{ id: 'copyId', iconParam: { name: 'menu/action/copy' }, name: translate('menuSpaceContextCopyId') },
+				];
 			};
 
 			if (isSharePage) {
@@ -1735,7 +1756,7 @@ class UtilMenu {
 		this.menuContext = context;
 	};
 
-	spaceCreate (param: I.MenuParam, route: string) {
+	spaceCreate (param: I.MenuParam, route: string, createOptions?: I.SpaceCreateOptions) {
 		const analyticsName = {
 			[I.SpaceCreateType.Personal]: 'Space',
 			[I.SpaceCreateType.Group]: 'Chat',
@@ -1752,11 +1773,15 @@ class UtilMenu {
 			groupOption.caption = React.createElement(Icon, { name: 'common/alert', className: 'spaceLimit', color: 'grey' });
 		};
 
-		const options = [
+		const options: any[] = [
 			{ id: I.SpaceCreateType.Personal, iconParam: { name: 'menu/spaceCreate/personal' }, name: translate('sidebarMenuSpaceCreateTitlePersonal') },
 			groupOption,
-			{ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') },
 		];
+
+		// Joining produces no new space, so callers waiting on onCreate hide it.
+		if (!createOptions?.noJoin) {
+			options.push({ id: I.SpaceCreateType.Join, iconParam: { name: 'menu/spaceCreate/join', size: 20 }, name: translate('sidebarMenuSpaceCreateTitleJoin') });
+		};
 
 		let prefix = '';
 		switch (route) {
@@ -1777,7 +1802,7 @@ class UtilMenu {
 				options,
 				noVirtualisation: true,
 				onSelect: (e: any, item: any) => {
-					Action.createSpace(item.id, route);
+					Action.createSpace(item.id, route, createOptions);
 
 					analytics.event(`Click${prefix}CreateMenu${analyticsName[item.id]}`);
 				},
@@ -1830,17 +1855,27 @@ class UtilMenu {
 		].map(it => ({ ...it, name: translate(`widgetRecentEditMode${it.id}`) }));
 	};
 
+	treeSortOptions (): I.Option[] {
+		return [
+			{ id: I.TreeSortMode.Custom },
+			{ id: I.TreeSortMode.Name },
+			{ id: I.TreeSortMode.LastEdited },
+			{ id: I.TreeSortMode.Created },
+		].map(it => ({ ...it, name: translate(`widgetTreeSortMode${it.id}`) }));
+	};
+
 	widgetSections (): I.Option[] {
-		const { widgetSections } = S.Common;
+		const { widgetSections, config } = S.Common;
 
 		return [
 			{ id: I.WidgetSection.Pin },
 			{ id: I.WidgetSection.Unread },
 			{ id: I.WidgetSection.MyFavorites },
 			{ id: I.WidgetSection.RecentEdit },
+			config.experimental ? { id: I.WidgetSection.Tree } : null,
 			{ id: I.WidgetSection.Type },
 			{ id: I.WidgetSection.Bin },
-		].sort((c1, c2) => {
+		].filter(it => it).sort((c1, c2) => {
 			const idx1 = widgetSections.findIndex(it => it.id == c1.id);
 			const idx2 = widgetSections.findIndex(it => it.id == c2.id);
 
@@ -1849,10 +1884,12 @@ class UtilMenu {
 	};
 
 	widgetSectionContext (sectionId: I.WidgetSection, menuParam: Partial<I.MenuParam>) {
-		const { recentEditMode } = S.Common;
+		const { recentEditMode, treeSortMode, treeShowBookmarks } = S.Common;
 		const spaceview = U.Space.getSpaceview();
 		const toggle = { id: 'hide', iconParam: { name: 'common/eye0' }, name: translate('widgetHideSection') };
 		const manage = { id: 'manage', iconParam: { name: 'common/edit' }, name: translate('widgetManageSections') };
+		const className = [ menuParam.className ];
+		const data: any = {};
 
 		let options: any[] = [];
 		let value = '';
@@ -1876,6 +1913,22 @@ class UtilMenu {
 
 			value = String(recentEditMode);
 		} else
+		if (sectionId == I.WidgetSection.Tree) {
+			options.push({ name: translate('widgetTreeHint'), isSection: true });
+			options.push({ isDiv: true });
+			options.push({ name: translate('commonSort'), isSection: true });
+			options = options.concat(this.treeSortOptions());
+			options.push({ isDiv: true });
+			options.push({ id: 'treeShowBookmarks', name: translate('widgetTreeShowBookmarks'), checkbox: treeShowBookmarks });
+			options.push({ isDiv: true });
+
+			value = String(treeSortMode);
+
+			// The explanation wraps over several lines, which fixed-height virtualised rows can't fit
+			className.push('menuWidgetTree');
+			data.noVirtualisation = true;
+			data.noScroll = true;
+		} else
 		if (sectionId == I.WidgetSection.Bin) {
 			options.push({ id: 'openBin', name: translate('commonOpen') });
 
@@ -1891,11 +1944,13 @@ class UtilMenu {
 
 		S.Menu.open('select', {
 			...menuParam,
+			className: className.filter(it => it).join(' '),
 			onOpen: context => {
 				this.setContext(context);
 				menuParam.onOpen?.(context);
 			},
 			data: {
+				...data,
 				options,
 				value,
 				onSelect: (e: any, element: any) => {
@@ -1927,6 +1982,11 @@ class UtilMenu {
 							break;
 						};
 
+						case 'treeShowBookmarks': {
+							S.Common.treeShowBookmarksSet(!treeShowBookmarks);
+							break;
+						};
+
 						case 'openBin': {
 							U.Object.openRoute({ layout: I.ObjectLayout.Archive });
 							break;
@@ -1938,13 +1998,57 @@ class UtilMenu {
 						};
 
 						default: {
-							S.Common.recentEditModeSet(Number(element.id));
+							if (sectionId == I.WidgetSection.Tree) {
+								S.Common.treeSortModeSet(Number(element.id));
+							} else {
+								S.Common.recentEditModeSet(Number(element.id));
+							};
 							break;
 						};
 					};
 				},
 			},
 		});
+	};
+
+	/**
+	 * Opens the object context menu for an object row in a sidebar widget.
+	 * @param param.node - Row element, marked active while the menu is open
+	 * @param param.element - Element to anchor the menu to when withElement is set
+	 * @param param.withElement - Anchor to the element instead of the mouse position
+	 * @param param.subId - Subscription the object details come from
+	 * @param param.objectId - Object the menu acts on
+	 * @param param.data - Extra menu data, merged over the defaults
+	 */
+	widgetObjectContext (param: { node: any; element?: any; withElement?: boolean; subId: string; objectId: string; data?: any; }) {
+		const { node, element, withElement, subId, objectId, data } = param;
+		const menuParam: any = {
+			className: 'fixed',
+			classNameWrap: 'fromSidebar',
+			onOpen: () => U.Dom.addClass(node, 'active'),
+			onClose: () => U.Dom.removeClass(node, 'active'),
+			data: {
+				route: analytics.route.widget,
+				objectIds: [ objectId ],
+				subId,
+				allowedNewTab: true,
+				openAfterDuplicate: true,
+				allowedCollection: true,
+			},
+		};
+
+		menuParam.data = Object.assign(menuParam.data, data || {});
+
+		if (withElement) {
+			menuParam.element = element;
+			menuParam.vertical = I.MenuDirection.Center;
+			menuParam.offsetX = 32;
+		} else {
+			const { x, y } = keyboard.mouse.page;
+			menuParam.rect = { width: 0, height: 0, x: x + 4, y };
+		};
+
+		S.Menu.open('objectContext', menuParam);
 	};
 
 	settingsSectionsMap () {
@@ -1960,6 +2064,7 @@ class UtilMenu {
 			spaceNotifications: translate('commonNotifications'),
 			spaceStorage: translate('pageSettingsSpaceRemoteStorage'),
 			archive: translate('commonBin'),
+			spaceDeletionAudit: translate('pageSettingsSpaceDeletionAudit'),
 			types,
 			relations,
 			integrations: translate('pageSettingsSpaceIntegrations'),

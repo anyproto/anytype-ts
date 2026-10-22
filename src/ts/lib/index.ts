@@ -17,6 +17,7 @@ import Mark from './mark';
 import Relation from './relation';
 import Dataview from './dataview';
 import { focus } from './focus';
+import { presence } from './presence';
 import { scrollOnMove } from './scrollOnMove';
 import { analytics } from './analytics';
 import { history } from './history';
@@ -41,6 +42,7 @@ export {
 	keyboard,
 	sidebar,
 	focus,
+	presence,
 	Key,
 	Storage,
 	Mark,

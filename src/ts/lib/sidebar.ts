@@ -117,6 +117,7 @@ class Sidebar {
 	timeoutAnim = 0;
 	timeoutHover = 0;
 	timeoutSubPage = 0;
+	timeoutPanel = 0;
 	subPageOpId = 0;
 	autoHideArmed = false;
 
@@ -255,6 +256,10 @@ class Sidebar {
 		this.setStyle(I.SidebarPanel.Left, false, { width: 0, isClosed: true });
 		this.resizePage(false, dataSubLeft.isClosed ? 0 : dataSubLeft.width, null, animate);
 
+		if (animate) {
+			this.leftPanelAnimationEnd();
+		};
+
 		analytics.event('CollapseVault');
 	};
 
@@ -288,7 +293,45 @@ class Sidebar {
 		this.setData(I.SidebarPanel.Left, false, { isClosed: false, ...(save ? { savedClosed: false } : {}) }, save);
 		this.resizePage(false, width + (dataSubLeft.isClosed ? 0 : dataSubLeft.width), null, animate);
 
+		if (animate) {
+			this.leftPanelAnimationEnd();
+		};
+
 		analytics.event('ExpandVault');
+	};
+
+	/**
+	 * Strips the animation class from the left panel wrappers once a vault transition has finished.
+	 * resizePage applies it through toggleClass, so without this it survives until the next
+	 * non-animated resize. That matters because .subPageWrapper.sidebarAnimation carries
+	 * overflow: hidden, which clips the sub page's resize handle (absolutely positioned at
+	 * right: -12px, outside the box) and leaves the panel unresizable until a reload.
+	 */
+	private leftPanelAnimationEnd (): void {
+		const opId = this.subPageOpId;
+
+		window.clearTimeout(this.timeoutPanel);
+
+		this.timeoutPanel = window.setTimeout(() => {
+			const objLeft = this.leftPanelGetNode();
+			const pageWrapperLeft = U.Dom.select('#pageWrapper', objLeft);
+
+			if (pageWrapperLeft) {
+				U.Dom.removeClass(pageWrapperLeft, 'sidebarAnimation');
+			};
+
+			// A sub page transition started after this one owns the sub page wrapper's class and
+			// clears it itself; bail rather than cutting its animation short.
+			if (opId !== this.subPageOpId) {
+				return;
+			};
+
+			const subPageWrapperLeft = U.Dom.select('#subPageWrapper', objLeft);
+
+			if (subPageWrapperLeft) {
+				U.Dom.removeClass(subPageWrapperLeft, 'sidebarAnimation');
+			};
+		}, J.Constant.delay.sidebar);
 	};
 
 	/**

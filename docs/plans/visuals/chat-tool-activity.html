@@ -1,0 +1,223 @@
+<div id="chat-tool-activity" aria-label="Chat tool activity">
+  <style>
+    #chat-tool-activity { --chat-surface:light-dark(#ffffff,#202020); --chat-text:light-dark(#252525,#eeeeee); --chat-muted:light-dark(#6b6b6b,#acacac); --chat-line:light-dark(#e7e7e7,#3d3d3d); --chat-soft:light-dark(#f5f5f5,#2b2b2b); --chat-green:light-dark(#277546,#83c89c); --chat-red:light-dark(#b13737,#f19a9a); --chat-blue:light-dark(#376bba,#97bdf4); color:var(--chat-text); font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    #chat-tool-activity * { box-sizing:border-box; }
+    #chat-tool-activity .chat-window { background:var(--chat-surface); border:1px solid var(--chat-line); border-radius:16px; overflow:hidden; }
+    #chat-tool-activity .chat-header { padding:18px 22px; border-bottom:1px solid var(--chat-line); display:flex; align-items:center; gap:10px; font-weight:500; }
+    #chat-tool-activity .chat-body { padding:24px 22px; }
+    #chat-tool-activity .chat-message { display:grid; grid-template-columns:28px minmax(0,1fr); gap:12px; }
+    #chat-tool-activity .chat-avatar { background:var(--chat-soft); border-radius:9px; height:28px; display:flex; align-items:center; justify-content:center; color:var(--chat-muted); }
+    #chat-tool-activity .chat-author { font-weight:500; margin-bottom:5px; }
+    #chat-tool-activity .chat-author span { color:var(--chat-muted); font-weight:400; margin-left:8px; }
+    #chat-tool-activity .chat-copy { overflow-wrap:anywhere; }
+    #chat-tool-activity .activity { margin:22px 0 22px 40px; border:1px solid var(--chat-line); border-radius:10px; }
+    #chat-tool-activity button { font:inherit; color:inherit; cursor:pointer; }
+    #chat-tool-activity .group-toggle { width:100%; display:flex; gap:9px; align-items:flex-start; text-align:left; padding:12px; border:0; background:transparent; }
+    #chat-tool-activity .group-copy { min-width:0; flex:1; }
+    #chat-tool-activity .group-main { font-weight:500; }
+    #chat-tool-activity .group-sub { display:flex; flex-wrap:wrap; gap:8px; color:var(--chat-muted); margin-top:3px; }
+    #chat-tool-activity .group-count { color:var(--chat-muted); font-variant-numeric:tabular-nums; }
+    #chat-tool-activity .fail { color:var(--chat-red); }
+    #chat-tool-activity .tool-item { border-top:1px solid var(--chat-line); padding:12px; }
+    #chat-tool-activity .tool-toggle { display:grid; grid-template-columns:16px minmax(0,1fr) auto; width:100%; align-items:start; gap:8px; padding:0; text-align:left; border:0; background:transparent; }
+    #chat-tool-activity .tool-title { font-weight:500; overflow-wrap:anywhere; }
+    #chat-tool-activity .tool-name { color:var(--chat-muted); margin-top:4px; overflow-wrap:anywhere; }
+    #chat-tool-activity .tool-status { display:flex; align-items:center; gap:5px; white-space:nowrap; }
+    #chat-tool-activity .tool-status[data-status="complete"] { color:var(--chat-green); }
+    #chat-tool-activity .tool-status[data-status="in_progress"] { color:var(--chat-blue); }
+    #chat-tool-activity .tool-status[data-status="error"] { color:var(--chat-red); }
+    #chat-tool-activity .tool-chips { margin:10px 0 0 24px; display:flex; gap:6px; flex-wrap:wrap; }
+    #chat-tool-activity .tool-chip { background:var(--chat-soft); border:0; border-radius:5px; padding:4px 7px; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    #chat-tool-activity .tool-details { margin:12px 0 0 24px; }
+    #chat-tool-activity .result-heading { display:flex; justify-content:space-between; align-items:center; gap:8px; color:var(--chat-muted); }
+    #chat-tool-activity .copy-action { display:flex; align-items:center; gap:5px; padding:4px 0; border:0; background:transparent; color:var(--chat-muted); }
+    #chat-tool-activity pre { background:var(--chat-soft); border-radius:7px; padding:12px; margin:6px 0 10px; white-space:pre-wrap; overflow-wrap:anywhere; color:var(--chat-text); font-family:"SFMono-Regular",Consolas,monospace; font-size:inherit; }
+    #chat-tool-activity .tool-footer { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; color:var(--chat-muted); }
+    #chat-tool-activity .empty-result { color:var(--chat-muted); padding:12px 0; }
+    #chat-tool-activity .feedback { padding:0 22px 12px; color:var(--chat-muted); min-height:28px; }
+    #chat-tool-activity [hidden] { display:none !important; }
+    #chat-tool-activity .chevron { margin-top:3px; flex-shrink:0; }
+    #chat-tool-activity button[aria-expanded="true"] > .chevron { transform:rotate(90deg); }
+    #chat-tool-activity .chat-header svg, #chat-tool-activity .chat-avatar svg, #chat-tool-activity button svg { flex-shrink:0; }
+    @media(max-width:480px) {
+      #chat-tool-activity .chat-header { padding:16px; }
+      #chat-tool-activity .chat-body { padding:18px 12px; }
+      #chat-tool-activity .activity { margin-left:0; }
+      #chat-tool-activity .tool-toggle { grid-template-columns:16px minmax(0,1fr); }
+      #chat-tool-activity .tool-status { grid-column:2; }
+      #chat-tool-activity .tool-footer { align-items:flex-start; }
+    }
+    @media(pointer:coarse) {
+      #chat-tool-activity button { min-height:44px; }
+    }
+  </style>
+  <section class="chat-window" aria-label="Travel planning chat">
+    <div class="chat-header"><i data-lucide="messages-square" aria-hidden="true"></i> Travel planning</div>
+    <div class="chat-body">
+      <div class="chat-message">
+        <div class="chat-avatar"><i data-lucide="user-round" aria-hidden="true"></i></div>
+        <div><div class="chat-author">You <span>10:42</span></div><div class="chat-copy">Find train options from Berlin to Amsterdam.</div></div>
+      </div>
+      <section class="activity" aria-label="Agent tool calls">
+        <button class="group-toggle" type="button" aria-expanded="false" aria-controls="tool-activity-items">
+          <i class="chevron" data-lucide="chevron-right" aria-hidden="true"></i>
+          <span class="group-copy"><span class="group-main">3 tool calls</span><span class="group-sub"></span></span>
+        </button>
+        <div id="tool-activity-items" hidden></div>
+      </section>
+      <div class="chat-message">
+        <div class="chat-avatar"><i data-lucide="sparkles" aria-hidden="true"></i></div>
+        <div><div class="chat-author">Agent <span>10:43</span></div><div class="chat-copy">I found a few options. I’m checking the timetable.</div></div>
+      </div>
+    </div>
+    <div class="feedback" role="status" aria-live="polite"></div>
+  </section>
+</div>
+<script>
+(() => {
+  const root = document.getElementById('chat-tool-activity');
+  const groupButton = root.querySelector('.group-toggle');
+  const list = root.querySelector('#tool-activity-items');
+  const feedback = root.querySelector('.feedback');
+  const state = { searchState:'complete', hierarchy:'Status text', summary:'Counts' };
+  const expanded = new Set();
+  let groupOpen = false;
+  let items = [];
+  const nodes = new Map();
+  const phases = {
+    in_progress: { label:'Running', icon:'loader-circle' },
+    complete: { label:'Completed', icon:'circle-check' },
+    error: { label:'Failed', icon:'circle-x' }
+  };
+  function make(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+  function icon(name, className) {
+    const node = make('i', className);
+    node.dataset.lucide = name;
+    node.setAttribute('aria-hidden','true');
+    return node;
+  }
+  function metadata(item) {
+    const data = {...item.data};
+    delete data.result;
+    return data;
+  }
+  function json(value) { return JSON.stringify(value, null, 2); }
+  async function copy(value, label) {
+    try {
+      await navigator.clipboard.writeText(json(value));
+      feedback.textContent = label + ' copied';
+    } catch {
+      feedback.textContent = 'Copy unavailable in this preview';
+    }
+  }
+  function copyButton(label, getValue) {
+    const button = make('button','copy-action');
+    button.type = 'button';
+    button.append(icon('copy'), make('span','',label));
+    button.addEventListener('click', () => copy(getValue(), label.replace('Copy ','').replace(/^./, c => c.toUpperCase())));
+    return button;
+  }
+  function buildItem(item) {
+    const id = item.data.tool_call_id;
+    const row = make('article','tool-item');
+    row.dataset.callId = id;
+    const toggle = make('button','tool-toggle');
+    toggle.type = 'button';
+    toggle.setAttribute('aria-expanded','false');
+    toggle.setAttribute('aria-controls','tool-details-' + id);
+    const labels = make('span','');
+    const title = make('div','tool-title');
+    const name = make('div','tool-name');
+    labels.append(title,name);
+    const status = make('span','tool-status');
+    toggle.append(icon('chevron-right','chevron'),labels,status);
+    const chips = make('div','tool-chips');
+    const details = make('div','tool-details');
+    details.id = 'tool-details-' + id;
+    details.hidden = true;
+    row.append(toggle,chips,details);
+    toggle.addEventListener('click', () => {
+      if (expanded.has(id)) expanded.delete(id); else expanded.add(id);
+      toggle.setAttribute('aria-expanded',String(expanded.has(id)));
+      details.hidden = !expanded.has(id);
+    });
+    list.append(row);
+    const node = {row,toggle,title,name,status,chips,details};
+    nodes.set(id,node);
+    return node;
+  }
+  function render() {
+    const search = state.searchState;
+    const searchData = { tool_call_id:'call_123', tool_name:'web_search', status:search, query:'tickets berlin amsterdam' };
+    if (search === 'complete') searchData.result = {matches:3};
+    if (search === 'error') searchData.result = {error:'Search provider unavailable', code:503};
+    items = [
+      {text:search === 'complete' ? 'Found 3 matching documents' : search === 'error' ? 'Could not search documents' : 'Searching train options', data:searchData},
+      {text:'Reading the timetable', data:{tool_call_id:'call_124',tool_name:'read_document',status:'in_progress',document:'train-options.pdf'}},
+      {text:'Could not load the operator page',data:{tool_call_id:'call_125',tool_name:'fetch_page',status:'error',url:'https://example.org/timetable',result:{error:'The request timed out',timeout_ms:10000}}}
+    ];
+    const running = items.filter(item => item.data.status === 'in_progress').length;
+    const failed = items.filter(item => item.data.status === 'error').length;
+    root.querySelector('.group-main').textContent = state.summary === 'Counts' ? '3 tool calls' : items[0].text;
+    const sub = root.querySelector('.group-sub');
+    sub.replaceChildren();
+    if (state.summary !== 'Counts') sub.append(make('span','group-count','3 tool calls'));
+    sub.append(make('span','',running + ' running'),make('span','fail',failed + ' failed'));
+    items.forEach(item => {
+      const id = item.data.tool_call_id;
+      const node = nodes.get(id) || buildItem(item);
+      node.title.textContent = state.hierarchy === 'Status text' ? item.text : item.data.tool_name;
+      node.name.textContent = state.hierarchy === 'Status text' ? item.data.tool_name : item.text;
+      const phase = phases[item.data.status];
+      node.status.dataset.status = item.data.status;
+      node.status.replaceChildren(icon(phase.icon),make('span','',phase.label));
+      node.chips.replaceChildren();
+      Object.entries(item.data).filter(([key]) => !['tool_call_id','tool_name','status','result'].includes(key)).forEach(([key,value]) => {
+        const chip = make('button','tool-chip',key + ': ' + (typeof value === 'object' ? JSON.stringify(value) : String(value)));
+        chip.type = 'button';
+        chip.dataset.tooltip = json(metadata(item));
+        chip.setAttribute('aria-label','Copy metadata: ' + key);
+        chip.addEventListener('click',() => copy(metadata(item),'Metadata'));
+        node.chips.append(chip);
+      });
+      node.details.replaceChildren();
+      const heading = make('div','result-heading');
+      heading.append(make('span','','Result'));
+      const hasResult = Object.prototype.hasOwnProperty.call(item.data,'result');
+      if (hasResult) heading.append(copyButton('Copy result',() => item.data.result));
+      node.details.append(heading);
+      node.details.append(hasResult ? make('pre','',json(item.data.result)) : make('div','empty-result','No result provided'));
+      const footer = make('div','tool-footer');
+      const fullCopy = copyButton('Copy full data',() => item.data);
+      fullCopy.dataset.tooltip = json(item.data);
+      footer.append(make('span','',id),fullCopy);
+      node.details.append(footer);
+      node.details.hidden = !expanded.has(id);
+      node.toggle.setAttribute('aria-expanded',String(expanded.has(id)));
+    });
+    list.hidden = !groupOpen;
+    groupButton.setAttribute('aria-expanded',String(groupOpen));
+    if (globalThis.lucide) lucide.createIcons({attrs:{width:16,height:16}});
+  }
+  groupButton.addEventListener('click',() => {
+    groupOpen = !groupOpen;
+    list.hidden = !groupOpen;
+    groupButton.setAttribute('aria-expanded',String(groupOpen));
+  });
+  render();
+  if (globalThis.Tweak) {
+    const tweak = new Tweak({container:root,onChange:() => {
+      render();
+      feedback.textContent = 'web_search: ' + phases[state.searchState].label + ' · 3 tool calls';
+    }});
+    tweak.addSelect(state,'searchState',{label:'Search call state',options:[{label:'Running',value:'in_progress'},{label:'Completed',value:'complete'},{label:'Failed',value:'error'}]});
+    tweak.addSelect(state,'hierarchy',{label:'Primary row label',options:['Status text','Tool name']});
+    tweak.addSelect(state,'summary',{label:'Collapsed group summary',options:['Counts','Latest text']});
+  }
+})();
+</script>

@@ -38,6 +38,7 @@
 
                 .caption { color: var(--color-text-secondary); text-align: right; @include text-overflow-nw; }
                 .caption.join { color: var(--color-system-accent-100); }
+                .caption.new { color: var(--color-system-accent-100); }
                 .caption.alert { width: 20px; height: 20px; line-height: 20px; text-align: center; background-color: var(--color-red); color: var(--color-control-bg); border-radius: 50%; }
             }
 

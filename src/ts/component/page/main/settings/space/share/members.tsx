@@ -1,11 +1,17 @@
-import React, { forwardRef, useRef, useEffect } from 'react';
-import { Title, Label, Icon, Button, IconObject, ObjectName } from 'Component';
+import React, { forwardRef, useState, useRef, useEffect } from 'react';
+import { Label, Icon, Button, IconObject, ObjectName } from 'Component';
 import * as I from 'Interface';
 
 const SUB_ID = 'settingsPendingMembers';
 
-const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
+interface Props extends I.PageSettingsComponent {
+	search?: string;
+};
 
+const Members = forwardRef<I.PageRef, Props>((props, ref) => {
+
+	const { search = '' } = props;
+	const [ tab, setTab ] = useState(I.MemberTab.All);
 	const { space } = S.Common;
 	const spaceview = U.Space.getSpaceview();
 	const participant = U.Space.getParticipant();
@@ -42,6 +48,10 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 		Action.membershipUpgrade({ type, route: analytics.route.settingsSpaceShare });
 	};
 
+	/**
+	 * Members matching the active tab and the search, in the order the list renders them:
+	 * owner first, then admins, then join requests oldest first, then everyone else.
+	 */
 	const getParticipantList = () => {
 		const statuses = [ I.ParticipantStatus.Active ];
 
@@ -49,7 +59,34 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 			statuses.push(I.ParticipantStatus.Joining);
 		};
 
-		return U.Space.getParticipantsList(statuses).sort((c1, c2) => {
+		let list = U.Space.getParticipantsList(statuses);
+
+		switch (tab) {
+			case I.MemberTab.Request: {
+				list = list.filter(it => it.isJoining);
+				break;
+			};
+
+			case I.MemberTab.Editor: {
+				list = list.filter(it => it.isActive && (it.isWriter || it.isAdmin || it.isOwner));
+				break;
+			};
+
+			case I.MemberTab.Viewer: {
+				list = list.filter(it => it.isActive && it.isReader);
+				break;
+			};
+		};
+
+		if (search) {
+			const s = search.toLowerCase();
+
+			list = list.filter(it => {
+				return it.name?.toLowerCase().includes(s) || it.globalName?.toLowerCase().includes(s);
+			});
+		};
+
+		return list.sort((c1, c2) => {
 			const isOwner1 = c1.permissions == I.ParticipantPermissions.Owner;
 			const isOwner2 = c2.permissions == I.ParticipantPermissions.Owner;
 			const isAdmin1 = c1.permissions == I.ParticipantPermissions.Admin;
@@ -183,7 +220,22 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 		seen.add(it.identity);
 		return true;
 	});
-	const length = members.length;
+
+	// Counts come from the whole space, not from the list the active tab has filtered down to.
+	const allStatuses = canModerate ? [ I.ParticipantStatus.Active, I.ParticipantStatus.Joining ] : [ I.ParticipantStatus.Active ];
+	const allMembers = U.Space.getParticipantsList(allStatuses);
+	const requestCnt = allMembers.filter(it => it.isJoining).length;
+
+	const tabs: any[] = [
+		{ id: I.MemberTab.All, name: translate('commonAll'), cnt: allMembers.length },
+	];
+
+	if (canModerate) {
+		tabs.push({ id: I.MemberTab.Request, name: translate('popupSettingsSpaceShareTabRequests'), cnt: requestCnt, withDot: !!requestCnt });
+	};
+
+	tabs.push({ id: I.MemberTab.Editor, name: translate('popupSettingsSpaceShareTabEditors') });
+	tabs.push({ id: I.MemberTab.Viewer, name: translate('popupSettingsSpaceShareTabViewers') });
 
 	let limitLabel = '';
 	let limitButton = '';
@@ -282,9 +334,18 @@ const Members = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 				</div>
 			) : ''}
 
-			<div className="membersTitle">
-				<Title text={translate('commonMembers')} />
-				{length > 1 ? <Label text={String(length)} /> : ''}
+			<div className="tabs">
+				{tabs.map((item: any) => {
+					const cn = [ 'tab', item.id == tab ? 'active' : '' ];
+
+					return (
+						<div key={item.id} className={cn.join(' ')} onClick={() => setTab(item.id)}>
+							<Label text={item.name} />
+							{item.cnt ? <Label className="cnt" text={String(item.cnt)} /> : ''}
+							{item.withDot ? <div className="dot" /> : ''}
+						</div>
+					);
+				})}
 			</div>
 
 			{showLimit ? (
