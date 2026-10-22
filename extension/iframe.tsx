@@ -51,8 +51,7 @@ const Iframe: FC = () => {
 		U.Router.init(history);
 		U.Smile.init();
 
-		/* @ts-ignore */
-		chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+		const handleMessage = (msg: any, sender: any, sendResponse: (response?: any) => void) => {
 			switch (msg.type) {
 				case 'initIframe':
 					const { appKey, gatewayPort, serverPort } = msg;
@@ -64,6 +63,10 @@ const Iframe: FC = () => {
 					break;
 
 				case 'clickMenu': {
+					if (msg.source !== 'foreground') {
+						break;
+					};
+
 					S.Extension.setTabUrl(msg.url);
 					S.Extension.setHtml(msg.html);
 
@@ -74,7 +77,15 @@ const Iframe: FC = () => {
 
 			};
 			return true;
-		});
+		};
+
+		const handleWindowMessage = (event: MessageEvent) => {
+			if (event.origin !== window.location.origin || event.data?.type !== 'clickMenu') {
+				return;
+			};
+
+			handleMessage(event.data, null, () => {});
+		};
 
 		const onBeforeUnload = () => {
 			if (!S.Auth.token) {
@@ -85,6 +96,17 @@ const Iframe: FC = () => {
 		};
 
 		window.addEventListener('beforeunload', onBeforeUnload);
+		window.addEventListener('message', handleWindowMessage);
+
+		/* @ts-ignore */
+		chrome.runtime.onMessage.addListener(handleMessage);
+
+		return () => {
+			/* @ts-ignore */
+			chrome.runtime.onMessage.removeListener(handleMessage);
+			window.removeEventListener('beforeunload', onBeforeUnload);
+			window.removeEventListener('message', handleWindowMessage);
+		};
 	}, []);
 
 	return (
