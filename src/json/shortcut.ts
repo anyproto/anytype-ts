@@ -109,6 +109,7 @@ const getSections = () => {
 						{ id: 'print', name: translate('popupShortcutMainBasics8'), keys: [ cmdKey, 'p' ] },
 						{ id: 'history', name: translate('popupShortcutMainBasics11'), keys: [ cmdKey, 'alt', 'h' ] },
 						{ id: 'searchText', name: translate('popupShortcutMainBasics9'), keys: [ cmdKey, 'f' ] },
+						{ id: 'replaceText', name: translate('menuObjectSearchAndReplace'), keys: [ 'ctrl', 'h' ] },
 						{ id: 'pageLock', name: translate('popupShortcutMainBasics24'), keys: [ 'ctrl', 'shift', 'l' ] },
 					]
 				},
