@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout text.json
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           repository: anyproto/anytype-ts
           sparse-checkout: |
@@ -23,7 +23,7 @@ jobs:
           path: anytype-ts
 
       - name: Checkout l10n-anytype-ts
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
         with:
           repository: anyproto/l10n-anytype-ts
           path: l10n-anytype-ts
@@ -43,13 +43,13 @@ jobs:
           git commit -m "Update source file"
           git push origin main
 
-      - name: Send message to Slack
-        id: slack
-        uses: slackapi/slack-github-action@v1.24.0
+      - name: Notify Telegram
+        uses: appleboy/telegram-action@v1.1.1
         with:
-          payload: |
-            {
-              "diff_link": "${{ github.event.compare }}"
-            }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          to: ${{ secrets.TELEGRAM_CHAT_ID_RELEASE_TRAIN }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          message: |
+            🌐 *text.json updated in l10n\-anytype\-ts*
+
+            *Diff:* ${{ github.event.compare }}
