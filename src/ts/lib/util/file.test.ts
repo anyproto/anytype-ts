@@ -49,6 +49,19 @@ describe('UtilFile', () => {
 		});
 	});
 
+	describe('getExtensionsByLayout', () => {
+		it('should allow m4a and m4b for Audio', () => {
+			const extensions = UtilFile.getExtensionsByLayout(I.ObjectLayout.Audio);
+
+			expect(extensions).toContain('m4a');
+			expect(extensions).toContain('m4b');
+		});
+
+		it('should not allow m4b for Video', () => {
+			expect(UtilFile.getExtensionsByLayout(I.ObjectLayout.Video)).not.toContain('m4b');
+		});
+	});
+
 	describe('date', () => {
 		it('should return an ISO date string', () => {
 			const result = UtilFile.date();

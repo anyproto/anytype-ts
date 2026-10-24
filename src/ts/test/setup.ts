@@ -255,7 +255,7 @@ vi.mock('Lib', () => {
 			fileExtension: {
 				image: ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'heic', 'heif'],
 				video: ['mp4', 'm4v', 'mov'],
-				audio: ['mp3', 'm4a', 'flac', 'ogg', 'wav'],
+				audio: ['mp3', 'm4a', 'm4b', 'flac', 'ogg', 'wav'],
 				pdf: ['pdf'],
 			},
 			googleMaps: '',
