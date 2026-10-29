@@ -628,9 +628,10 @@ class Mark {
 	 * Parses HTML into marks and text, handling restrictions.
 	 * @param {string} html - The HTML string.
 	 * @param {I.MarkType[]} restricted - Restricted mark types.
+	 * @param {string} [prev] - Text before the latest edit; when set, only markdown touched by that edit is converted.
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
-	fromHtml(html: string, restricted: I.MarkType[]): I.FromHtmlResult {
+	fromHtml(html: string, restricted: I.MarkType[], prev?: string): I.FromHtmlResult {
 		RE_HTML_TAGS.lastIndex = 0;
 		const rh = RE_HTML_TAGS;
 		const rp = RE_DATA_PARAM;
@@ -737,7 +738,34 @@ class Mark {
 		});
 
 		const parsed = this.fromUnicode(text, marks, text !== html);
-		return this.fromMarkdown(parsed.text, parsed.marks, restricted, parsed.adjustMarks, parsed.updatedValue);
+		const typed = (prev === undefined) ? undefined : this.typedRange(prev, parsed.text);
+
+		return this.fromMarkdown(parsed.text, parsed.marks, restricted, parsed.adjustMarks, parsed.updatedValue, typed);
+	};
+
+	/**
+	 * Returns the range of `next` inserted relative to `prev` (empty when text was only removed).
+	 * @param {string} prev - The text before the edit.
+	 * @param {string} next - The text after the edit.
+	 * @returns {I.TextRange} The inserted range in `next`.
+	 */
+	typedRange(prev: string, next: string): I.TextRange {
+		prev = String(prev || '');
+		next = String(next || '');
+
+		const max = Math.min(prev.length, next.length);
+
+		let start = 0;
+		while ((start < max) && (prev[start] == next[start])) {
+			start++;
+		};
+
+		let end = 0;
+		while ((end < max - start) && (prev[prev.length - 1 - end] == next[next.length - 1 - end])) {
+			end++;
+		};
+
+		return { from: start, to: Math.max(start, next.length - end) };
 	};
 
 	/**
@@ -747,9 +775,10 @@ class Mark {
 	 * @param {I.MarkType[]} restricted - Restricted mark types.
 	 * @param {boolean} adjustMarks - Whether to adjust marks.
 	 * @param {boolean} updatedValue - Whether the value has been updated.
+	 * @param {I.TextRange} [typed] - Just-typed range; when set, only a pair whose opening or closing marker it touches is converted.
 	 * @returns {I.FromHtmlResult} The parsed result.
 	 */
-	fromMarkdown(html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean, updatedValue: boolean): I.FromHtmlResult {
+	fromMarkdown(html: string, marks: I.Mark[], restricted: I.MarkType[], adjustMarks: boolean, updatedValue: boolean, typed?: I.TextRange): I.FromHtmlResult {
 		// Underscore emphasis requires a Unicode word boundary on both sides of
 		// the _/__ pair so identifiers like _physics_process() and non-Latin
 		// text like слово_физика_процесс never get italicized/bolded mid-word
@@ -766,8 +795,16 @@ class Mark {
 
 		let text = html;
 
-		html.replace(reg1, (s: string, p1: string, p2: string, o: number) => {
+		// Literal markup the user did not just type (e.g. revealed by deleting an escaping backslash) must stay as is
+		const touched = (from: number, to: number): boolean => !typed || ((typed.from < to) && (from < typed.to));
+		let converted = false;
+
+		html.replace(typed ? new RegExp(reg1.source, 'gu') : reg1, (s: string, p1: string, p2: string, o: number) => {
 			o = Number(o) || 0;
+
+			if (converted) {
+				return s;
+			};
 
 			const m = p2.match(reg2);
 			if (!m) {
@@ -810,6 +847,11 @@ class Mark {
 			const length = symbol.length;
 			const from = o + p1l;
 			const to = from + p2l - length * 2;
+
+			if (!touched(from, from + length) && !touched(from + p2l - length, from + p2l)) {
+				return s;
+			};
+
 			const hasZws = ZWS_TYPES.includes(type);
 			const suffix = hasZws ? '' : ' ';
 			const replace = p2.replace(new RegExp(U.String.regexEscape(symbol), 'g'), '') + suffix;
@@ -844,6 +886,7 @@ class Mark {
 
 			text = U.String.insert(text, replace, o + p1l, o + p1l + p2l);
 			adjustMarks = true;
+			converted = true;
 
 			return s;
 		});
@@ -851,10 +894,16 @@ class Mark {
 		marks = this.checkRanges(text, marks);
 
 		// Links
-		html.replace(/\[([^\[\]]+)\]\(([^\(\)]+)\)(\s|$)/g, (s: string, p1: string, p2: string, p3: string) => {
+		html.replace(/\[([^\[\]]+)\]\(([^\(\)]+)\)(\s|$)/g, (s: string, p1: string, p2: string, p3: string, o: number) => {
 			p1 = String(p1 || '');
 			p2 = String(p2 || '');
 			p3 = String(p3 || '');
+
+			const end = (Number(o) || 0) + s.length;
+
+			if (!touched(end - p3.length - 1, end)) {
+				return s;
+			};
 
 			const from = (Number(text.indexOf(s)) || 0);
 			const to = from + p1.length;

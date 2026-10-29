@@ -81,6 +81,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 	const clickCnt = useRef(0);
 	const prevStyleRef = useRef(style);
 	const phantomNewlineRef = useRef(false);
+	const lastValueRef = useRef('');
 
 	// live presence: carriages of the people editing this block right now (see Lib/presence).
 	// The parent Block observes S.Presence and re-renders us, so plain reads stay fresh here.
@@ -258,6 +259,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		};
 
 		textRef.current = text;
+		lastValueRef.current = text;
 		let html = text;
 
 		if (block.isTextCode()) {
@@ -377,7 +379,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		return editableRef.current?.getRange();
 	};
 	
-	const getMarksFromHtml = (): I.FromHtmlResult => {
+	const getMarksFromHtml = (prev?: string): I.FromHtmlResult => {
 		let value = getHtmlValue();
 
 		// Strip phantom <br/> that was added to make trailing newlines visible in contenteditable
@@ -387,7 +389,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		const restricted: I.MarkType[] = block.isTextHeader() ? [ I.MarkType.Bold ] : [];
 
-		return Mark.fromHtml(value, restricted);
+		return Mark.fromHtml(value, restricted, prev);
 	};
 
 	const onInput = () => {
@@ -764,7 +766,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 			} else 
 			if (!menuOpenAdd && !menuOpenMention && !menuOpenEmoji && !range.to) {
 				if (block.canHaveMarks()) {
-					const parsed = getMarksFromHtml();
+					const parsed = getMarksFromHtml(value);
 
 					marksRef.current = parsed.marks;
 				};
@@ -926,8 +928,11 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		let parsed: any = {};
 		let adjustMarks = false;
 
+		const prevValue = lastValueRef.current;
+		lastValueRef.current = value;
+
 		if (block.canHaveMarks()) {
-			parsed = getMarksFromHtml();
+			parsed = getMarksFromHtml(prevValue);
 			adjustMarks = parsed.adjustMarks;
 			marksRef.current = parsed.marks;
 		} else
@@ -1728,6 +1733,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		// Use provided value and range if available, fallback to current
 		const v = value !== undefined ? value : getTextValue();
 		const r = range !== undefined ? range : getRange();
+		const prevValue = lastValueRef.current;
 
 		if (block.canHaveMarks() && r) {
 			const diff = v.length - textRef.current.length;
@@ -1750,7 +1756,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		// on the settled value, using the fresh composition range for the caret
 		// math (JS-9071)
 		if (block.canHaveMarks() && r) {
-			const parsed = getMarksFromHtml();
+			const parsed = getMarksFromHtml(prevValue);
 
 			marksRef.current = parsed.marks;
 

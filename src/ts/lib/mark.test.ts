@@ -896,6 +896,105 @@ describe('Mark', () => {
 		});
 	});
 
+	describe('typedRange', () => {
+		it('should return the inserted range', () => {
+			expect(Mark.typedRange('ab', 'aXb')).toEqual({ from: 1, to: 2 });
+			expect(Mark.typedRange('ab', 'ab*')).toEqual({ from: 2, to: 3 });
+		});
+
+		it('should return the replaced range', () => {
+			expect(Mark.typedRange('abc', 'aXc')).toEqual({ from: 1, to: 2 });
+		});
+
+		it('should return an empty range when text was only removed', () => {
+			expect(Mark.typedRange('a\\b', 'ab')).toEqual({ from: 1, to: 1 });
+		});
+	});
+
+	describe('fromMarkdown with a just-typed range (#2329)', () => {
+		it('should convert when the closing marker was just typed', () => {
+			const result = Mark.fromMarkdown('word *italic*', [], [], false, false, { from: 12, to: 13 });
+
+			expect(result.text).toBe('word italic');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+
+		it('should convert when the opening marker was just typed', () => {
+			const result = Mark.fromMarkdown('word *italic* word', [], [], false, false, { from: 5, to: 6 });
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+
+		it('should keep literal markup when nothing was typed', () => {
+			const result = Mark.fromMarkdown('word *italic* word', [], [], false, false, { from: 5, to: 5 });
+
+			expect(result.text).toBe('word *italic* word');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should keep literal markup when typing elsewhere in the block', () => {
+			const result = Mark.fromMarkdown('word *italic* words', [], [], false, false, { from: 18, to: 19 });
+
+			expect(result.text).toBe('word *italic* words');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should skip an older literal pair and convert the one just closed', () => {
+			const result = Mark.fromMarkdown('a *old* b *new*', [], [], false, false, { from: 14, to: 15 });
+
+			expect(result.text).toBe('a *old* b new');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+			expect(result.marks[0].range).toEqual({ from: 10, to: 13 });
+		});
+
+		it('should convert bold when its closing marker was just typed', () => {
+			const result = Mark.fromMarkdown('x **bold**', [], [], false, false, { from: 9, to: 10 });
+
+			expect(result.text).toBe('x bold');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Bold);
+		});
+
+		it('should convert a link only when its end was just typed', () => {
+			const typed = Mark.fromMarkdown('see [a](u) ', [], [], false, false, { from: 10, to: 11 });
+
+			expect(typed.text).toBe('see a ');
+			expect(typed.marks).toEqual([ { type: I.MarkType.Link, range: { from: 4, to: 5 }, param: 'u' } ]);
+
+			const literal = Mark.fromMarkdown('see [a](u) ', [], [], false, false, { from: 11, to: 11 });
+
+			expect(literal.text).toBe('see [a](u) ');
+			expect(literal.marks).toHaveLength(0);
+		});
+	});
+
+	describe('fromHtml with the previous value (#2329)', () => {
+		it('should keep asterisks literal after deleting the escaping backslash', () => {
+			const result = Mark.fromHtml('word *italic* word', [], 'word \\*italic* word');
+
+			expect(result.text).toBe('word *italic* word');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should still convert when the closing asterisk was just typed', () => {
+			const result = Mark.fromHtml('word *italic*', [], 'word *italic');
+
+			expect(result.text).toBe('word italic');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+
+		it('should convert as before when no previous value is given', () => {
+			const result = Mark.fromHtml('word *italic* word', []);
+
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].type).toBe(I.MarkType.Italic);
+		});
+	});
+
 	describe('fromHtml', () => {
 		it('should keep user-typed <a> as literal text (JS-7238)', () => {
 			const result = Mark.fromHtml('typed &lt;a&gt; tag', []);
