@@ -493,8 +493,9 @@ class UtilDom {
 			const onClick = (e: MouseEvent) => {
 				const href = link.getAttribute('href') || link.getAttribute('xlink:href');
 
+				// Always through openUrl, links can come from synced content and local targets need its confirmation
 				e.preventDefault();
-				link.classList.contains('path') ? Action.openPath(href) : Action.openUrl(href);
+				Action.openUrl(href);
 			};
 
 			const onAux = (e: MouseEvent) => e.preventDefault();

@@ -11,7 +11,12 @@ const PageMainOneToOne = forwardRef<I.PageRef, I.PageComponent>((props, ref) => 
 	const frameRef = useRef(null);
 
 	const init = () => {
-		U.Space.openOneToOne(param.id, param.key, analytics.route.link);
+		if (!param.id) {
+			setError(translate('popupConfirmInviteError'));
+			return;
+		};
+
+		U.Space.openOneToOneLink(param.id, param.key, analytics.route.link);
 	};
 
 	const resize = () => {

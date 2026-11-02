@@ -1,4 +1,5 @@
 import * as I from 'Interface';
+import { getObjectLink } from 'Lib/objectLink';
 
 const DOMAINS: any = {};
 DOMAINS[I.EmbedProcessor.Youtube] = [ 'youtube.com', 'youtu.be', 'youtube-nocookie.com' ];
@@ -488,6 +489,51 @@ class UtilEmbed {
 		};
 
 		return '';
+	};
+
+	// Embeds run untrusted code, the desktop app serves them from a separate origin so they cannot reach the app window
+	getIframeUrl (theme?: string): string {
+		const { embedOrigin } = U.Common.getElectron();
+		const url = embedOrigin ? `${embedOrigin}/embed/iframe.html` : './embed/iframe.html';
+
+		return url + (theme ? `?theme=${theme}` : '');
+	};
+
+	// Target origin for messages to the embed frame, so content never reaches a frame that navigated elsewhere
+	getIframeOrigin (): string {
+		return U.Common.getElectron().embedOrigin || '*';
+	};
+
+	/**
+	 * What a link inside an embed may open, empty when nothing. Embed scripts can send links without a click, so only web pages
+	 * and objects open: other app routes act on arrival (invites, new chats) and other schemes reach native handlers.
+	 * Links without a scheme are taken as web links.
+	 */
+	getLinkTarget (url: string): string {
+		url = String(url || '');
+		if (!url || (url.length > 2048)) {
+			return '';
+		};
+
+		const target = U.String.urlScheme(url) ? url : `https://${url}`;
+
+		if (U.Common.getRouteFromUrl(target)) {
+			return getObjectLink(target);
+		};
+
+		return J.Constant.allowedSchemes.includes(U.String.urlScheme(target)) ? target : '';
+	};
+
+	// Permissions nested players ask for, a cross-origin embed frame has to delegate them explicitly
+	getIframeAllow (processor?: I.EmbedProcessor): string {
+		const list = [ 'accelerometer', 'autoplay', 'clipboard-write', 'encrypted-media', 'fullscreen', 'gyroscope', 'picture-in-picture', 'web-share' ];
+
+		// Reading the clipboard is only delegated to boards that paste from it
+		if (processor == I.EmbedProcessor.Miro) {
+			list.push('clipboard-read');
+		};
+
+		return list.join('; ');
 	};
 
 	// Allow to use presentation mode in iframe sandbox

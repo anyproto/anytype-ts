@@ -210,6 +210,7 @@
 
 	"script-src-elem": [
 		"file://*",
+		"anytype-embed:",
 		"'unsafe-inline'",
 		"http://localhost:*",
 		"https://sentry.io",
@@ -259,8 +260,7 @@
 
 	"frame-src": [
 		"chrome-extension://react-developer-tools",
-		"file://*",
-		"http://localhost:*/embed/iframe.html",
+		"anytype-embed:",
 		"https://*.youtube.com",
 		"https://*.youtube-nocookie.com",
 		"https://*.spotify.com",

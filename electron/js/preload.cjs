@@ -298,6 +298,8 @@ contextBridge.exposeInMainWorld('Electron', {
 	storeDelete: key => ipcRenderer.sendSync('storeDelete', key),
 
 	isPackaged: app.isPackaged,
+	// Origin embeds are served from, kept apart from the app (electron/ts/lib/embedProtocol.ts)
+	embedOrigin: 'anytype-embed://app',
 	userPath: () => app.getPath('userData'),
 	tmpPath,
 	commonPath,

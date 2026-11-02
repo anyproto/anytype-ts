@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, vi } from 'vitest';
 import Mark from './mark';
 import * as I from 'Interface';
 import { U, S } from 'Lib';
@@ -896,6 +896,35 @@ describe('Mark', () => {
 		});
 	});
 
+	describe('toHtml', () => {
+		const link = (text: string, param: string) => Mark.toHtml(text, [ { type: I.MarkType.Link, range: { from: 0, to: text.length }, param } ]);
+
+		it('should keep a quote in a param inside its attribute', () => {
+			const html = link('link', 'https://example.com/" data-injected="yes');
+
+			expect(html).toContain('data-param="https://example.com/&quot; data-injected=&quot;yes"');
+			expect(html).not.toMatch(/ data-injected="/);
+		});
+
+		it('should not turn markup in a param into elements', () => {
+			const html = link('link', 'https://example.com/"><b>bold</b>');
+
+			expect(html).not.toContain('<b>');
+			expect(html).toContain('data-param="https://example.com/&quot;&gt;&lt;b&gt;bold&lt;/b&gt;"');
+		});
+
+		it('should keep entities in a param literal', () => {
+			expect(link('link', 'https://example.com/?a=1&lt;2')).toContain('data-param="https://example.com/?a=1&amp;lt;2"');
+		});
+
+		it('should escape every special character of the text, inside marks too', () => {
+			const bold = Mark.toHtml('a&b<c>', [ { type: I.MarkType.Bold, range: { from: 0, to: 6 }, param: '' } ]);
+
+			expect(bold).toContain('a&amp;b&lt;c&gt;</markupbold>');
+			expect(link('&x<', 'https://example.com/?a=1&b=2')).toContain('&amp;x&lt;</a>');
+		});
+	});
+
 	describe('fromHtml', () => {
 		it('should keep user-typed <a> as literal text (JS-7238)', () => {
 			const result = Mark.fromHtml('typed &lt;a&gt; tag', []);
@@ -974,6 +1003,45 @@ describe('Mark', () => {
 			expect(result.marks[0].param).toBe('https://x.com');
 			expect(result.marks[0].range).toEqual({ from: 0, to: 4 });
 		});
+
+		// Serialized the way the browser writes attribute values back
+		it('should read quotes and entities in a param back unchanged', () => {
+			const quote = Mark.fromHtml('<a href="u" class="markuplink" data-param="https://x.com/?q=&quot;x&quot;" data-range="0-4">link</a>', []);
+			const entity = Mark.fromHtml('<a href="u" class="markuplink" data-param="https://x.com/?a=1&amp;lt;2" data-range="0-4">link</a>', []);
+
+			expect(quote.marks[0].param).toBe('https://x.com/?q="x"');
+			expect(entity.marks[0].param).toBe('https://x.com/?a=1&lt;2');
+		});
+
+		it('should decode a param once, so a literal entity stays literal', () => {
+			const result = Mark.fromHtml('<a href="u" class="markuplink" data-param="https://x.com/?q=&amp;quot;" data-range="0-4">link</a>', []);
+
+			expect(result.marks[0].param).toBe('https://x.com/?q=&quot;');
+		});
+
+		it('should not let text that looks like a tag claim another tag\'s param', () => {
+			const literal = '&lt;a data-param="\u00010"&gt;x&lt;/a&gt;';
+			const result = Mark.fromHtml(`<a href="u" class="markuplink" data-param="https://x.com" data-range="0-4">link</a> ${literal}`, []);
+			const params = result.marks.map(it => it.param);
+
+			expect(params).toContain('https://x.com');
+			expect(params.filter(it => it == 'https://x.com')).toHaveLength(1);
+		});
+
+		it('should keep a link without a param as literal text', () => {
+			const result = Mark.fromHtml('<a href="u" data-param="">link</a>', []);
+
+			expect(result.text).not.toContain('\u0001');
+			expect(result.marks).toHaveLength(0);
+		});
+
+		it('should read brackets in a param back and keep the mark', () => {
+			const result = Mark.fromHtml('<a href="https://x.com/?q=&lt;b&gt;" class="markuplink" data-param="https://x.com/?q=&lt;b&gt;" data-range="0-4">link</a> end', []);
+
+			expect(result.text).toBe('link end');
+			expect(result.marks).toHaveLength(1);
+			expect(result.marks[0].param).toBe('https://x.com/?q=<b>');
+		});
 	});
 
 	describe('paramToAttr', () => {
@@ -994,6 +1062,21 @@ describe('Mark', () => {
 			const attr = Mark.paramToAttr(I.MarkType.BgColor, 'yellow');
 
 			expect(attr).toContain('bgColor-yellow');
+		});
+
+		it('should escape a link after normalizing it, so long links keep their href', () => {
+			// urlFix drops urls over 2048 characters
+			const spy = vi.spyOn(U.String, 'urlFix').mockImplementation((url: string) => (url.length > 2048) ? '' : url);
+			const url = `https://example.com/?${'a=1&'.repeat(500)}b="x"`;
+			const attr = Mark.paramToAttr(I.MarkType.Link, url);
+
+			spy.mockRestore();
+			expect(attr).toBe(`href="${url.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}" class="markuplink"`);
+		});
+
+		it('should not let a color add classes of its own', () => {
+			expect(Mark.paramToAttr(I.MarkType.Color, 'red other')).toBe('class="textColor textColor-redother"');
+			expect(Mark.paramToAttr(I.MarkType.BgColor, 'red" other="')).toMatch(/^class="bgColor bgColor-[\w-]+"$/);
 		});
 
 		it('should generate contenteditable for Mention type', () => {

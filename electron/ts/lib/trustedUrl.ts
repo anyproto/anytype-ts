@@ -1,4 +1,5 @@
 import path from 'path';
+import { getObjectLink } from '../../../src/ts/lib/objectLink';
 
 interface TrustedUrlParam {
 	isDevelopment: boolean;
@@ -31,8 +32,12 @@ export const isTrustedUrl = (url: string, param: TrustedUrlParam): boolean => {
 		};
 
 		// Compare against the URL exactly as window.ts builds it, so the same normalization applies to both
-		// Chromium and Node encode a few path characters differently (e.g. '|'), align both sides
-		const fold = (v: string) => (param.isWindows ? v.toLowerCase() : v).replace(/[|^]/g, c => encodeURIComponent(c));
+		// Chromium and Node encode a few path characters differently (e.g. '|'), align both sides.
+		// Encoded before lowercasing, so both sides end up with the same case of the escape
+		const fold = (v: string) => {
+			v = v.replace(/[|^]/g, c => encodeURIComponent(c));
+			return param.isWindows ? v.toLowerCase() : v;
+		};
 		const dist = new URL('file://' + path.join(param.appPath, 'dist') + path.sep);
 
 		// UNC installs are parsed with the server as host by Chromium and as part of the path by Node, so compare both together
@@ -44,16 +49,20 @@ export const isTrustedUrl = (url: string, param: TrustedUrlParam): boolean => {
 	};
 };
 
-const EXTERNAL_PROTOCOLS = [ 'http:', 'https:', 'mailto:', 'anytype:' ];
+const EXTERNAL_PROTOCOLS = [ 'http:', 'https:', 'mailto:' ];
 
 /**
- * Whether a URL requested by a page (window.open) may be handed to the OS.
- * The app's own deep links are allowed; other schemes would invoke arbitrary native protocol handlers.
+ * The URL a page may hand to the OS through window.open, empty when none. Other schemes would invoke arbitrary native protocol handlers.
+ * The app's own deep links come back into the app as routes, so only plain object links pass, other routes act on arrival (invites, new chats).
  */
-export const isExternalUrlAllowed = (url: string): boolean => {
+export const getExternalUrl = (url: string): string => {
 	try {
-		return EXTERNAL_PROTOCOLS.includes(new URL(url).protocol);
+		if (EXTERNAL_PROTOCOLS.includes(new URL(url).protocol)) {
+			return url;
+		};
 	} catch (e) {
-		return false;
+		return '';
 	};
+
+	return getObjectLink(url);
 };

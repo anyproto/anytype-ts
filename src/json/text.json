@@ -1633,6 +1633,10 @@
 	"popupConfirmInviteResetText": "The current link stops working for everyone who has it, including the people you meant to invite. A new link is created in its place.",
 	"popupConfirmInviteResetConfirm": "Reset link",
 
+	"popupConfirmOneToOneTitle": "Start a 1-1 channel?",
+	"popupConfirmOneToOneText": "This link creates a 1-1 channel with the person it belongs to and sends them your profile. Continue only if you know who shared it.",
+	"popupConfirmOneToOneConfirm": "Start channel",
+
 	"popupConfirmInviteError": "The link you have tried to use does not seem to work",
 	"popupConfirmSpaceDeleted": "The channel you try to access has been deleted",
 

@@ -1,5 +1,8 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import Constant from 'json/constant';
 import UtilEmbed from './embed';
+import UtilCommon from './common';
+import UtilString from './string';
 import * as I from 'Interface';
 
 describe('UtilEmbed', () => {
@@ -335,6 +338,58 @@ describe('UtilEmbed', () => {
 		it('should handle empty or missing inputs', () => {
 			expect(UtilEmbed.pruneExcalidrawFiles([], null)).toEqual({});
 			expect(UtilEmbed.pruneExcalidrawFiles(null, { a: {} })).toEqual({});
+		});
+	});
+
+	describe('getIframeAllow', () => {
+		it('should delegate players their permissions', () => {
+			expect(UtilEmbed.getIframeAllow(I.EmbedProcessor.Youtube)).toContain('fullscreen');
+		});
+
+		it('should delegate reading the clipboard to Miro only', () => {
+			expect(UtilEmbed.getIframeAllow(I.EmbedProcessor.Miro)).toContain('clipboard-read');
+			expect(UtilEmbed.getIframeAllow(I.EmbedProcessor.Chart)).not.toContain('clipboard-read');
+			expect(UtilEmbed.getIframeAllow()).not.toContain('clipboard-read');
+		});
+	});
+
+	describe('getLinkTarget', () => {
+		beforeEach(() => {
+			vi.stubGlobal('J', { Constant });
+			vi.stubGlobal('U', { String: UtilString, Common: UtilCommon });
+		});
+
+		afterEach(() => {
+			vi.unstubAllGlobals();
+		});
+
+		it('should open web links, taking links without a scheme as web links', () => {
+			expect(UtilEmbed.getLinkTarget('https://example.com/a')).toBe('https://example.com/a');
+			expect(UtilEmbed.getLinkTarget('mailto:a@example.com')).toBe('mailto:a@example.com');
+			expect(UtilEmbed.getLinkTarget('www.example.com/docs')).toBe('https://www.example.com/docs');
+		});
+
+		it('should open object and message links, rebuilt from their fields', () => {
+			expect(UtilEmbed.getLinkTarget('anytype://object?objectId=1&spaceId=2&messageId=3')).toBe('anytype://object?objectId=1&spaceId=2&messageId=3');
+			expect(UtilEmbed.getLinkTarget('https://object.any.coop/1?spaceId=2')).toBe('anytype://object?objectId=1&spaceId=2');
+			expect(UtilEmbed.getLinkTarget('anytype://object?objectId=1&spaceId=2&page=main&action=oneToOne')).toBe('anytype://object?objectId=1&spaceId=2');
+		});
+
+		it('should not open app routes that act on arrival', () => {
+			expect(UtilEmbed.getLinkTarget('anytype://main/settings/account')).toBe('');
+			expect(UtilEmbed.getLinkTarget('anytype://object?objectId=1&spaceId=2&cid=3&key=4')).toBe('');
+			expect(UtilEmbed.getLinkTarget('https://object.any.coop/1?spaceId=2&inviteId=3#4')).toBe('');
+			expect(UtilEmbed.getLinkTarget('https://invite.any.coop/1#2')).toBe('');
+			expect(UtilEmbed.getLinkTarget('https://hi.any.coop/1#2')).toBe('');
+		});
+
+		it('should not open local files or other schemes', () => {
+			expect(UtilEmbed.getLinkTarget('file:///C:/Users/me/setup.exe')).toBe('');
+			expect(UtilEmbed.getLinkTarget('C:\\Users\\me\\setup.exe')).toBe('');
+			expect(UtilEmbed.getLinkTarget('smb://host/share')).toBe('');
+			expect(UtilEmbed.getLinkTarget('zoommtg://zoom.us/join')).toBe('');
+			expect(UtilEmbed.getLinkTarget('javascript:void(0)')).toBe('');
+			expect(UtilEmbed.getLinkTarget('')).toBe('');
 		});
 	});
 

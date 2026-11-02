@@ -215,19 +215,25 @@ class Action {
 		const cb = () => Renderer.send('openUrl', url);
 		const allowedSchemes = J.Constant.allowedSchemes.concat(J.Constant.protocol);
 		const isAllowed = allowedSchemes.includes(scheme);
-		const isDangerous = [ 
-			'javascript', 
-			'data', 
-			'ws', 
-			'wss', 
-			'chrome', 
-			'about', 
-			'ssh', 
+		// Always confirmed, never remembered. Local files, single letter schemes (Windows drive paths), network shares and OS handlers reach local code
+		const isDangerous = [
+			'javascript',
+			'data',
+			'ws',
+			'wss',
+			'chrome',
+			'about',
+			'ssh',
 			'blob',
-			'ms-msdt',
 			'search-ms',
-			'ms-officecmd',
-		].includes(scheme);
+			'file',
+			'smb',
+			'afp',
+			'nfs',
+			'shell',
+			'vbscript',
+			'jar',
+		].includes(scheme) || (scheme.length == 1) || scheme.startsWith('ms-');
 		const storageKey = isDangerous ? '' : 'openUrl';
 
 		if (isDangerous || (!Storage.get(storageKey) && !isAllowed)) {
@@ -235,7 +241,8 @@ class Action {
 				data: {
 					iconParam: { name: 'popup/header/confirm', color: 'orange' },
 					title: translate('popupConfirmOpenExternalLinkTitle'),
-					text: U.String.sprintf(translate('popupConfirmOpenExternalLinkText'), U.String.shorten(url, 120)),
+					// Shown as text with both ends visible, the url is untrusted and its end names the file
+					text: U.String.sprintf(translate('popupConfirmOpenExternalLinkText'), U.String.htmlSpecialChars(U.String.shortMask(url, 80, 40))),
 					textConfirm: translate('commonYes'),
 					storageKey,
 					onConfirm: cb,

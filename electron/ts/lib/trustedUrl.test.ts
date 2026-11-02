@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import path from 'path';
-import { isTrustedUrl, isExternalUrlAllowed } from './trustedUrl';
+import { isTrustedUrl, getExternalUrl } from './trustedUrl';
 
 const dev = { isDevelopment: true, port: '8080', appPath: '/app', isWindows: false };
 const root = path.resolve(path.sep, 'Applications', 'Anytype.app', 'Contents', 'Resources');
@@ -54,6 +54,12 @@ describe('isTrustedUrl', () => {
 			expect(isTrustedUrl(fileUrl(p, 'dist', 'index.html'), { ...prod, appPath: p })).toBe(true);
 		});
 
+		it('accepts install paths containing a caret on Windows', () => {
+			const p = path.join(root, 'Anytype^Beta', 'app.asar');
+
+			expect(isTrustedUrl(fileUrl(p, 'dist', 'index.html').replace('^', '%5E'), { ...prod, appPath: p, isWindows: true })).toBe(true);
+		});
+
 		it('accepts UNC installs parsed with the server as host', () => {
 			const p = '\\\\server\\share\\Anytype\\app.asar';
 			const chromium = 'file://server/share/Anytype/app.asar/dist/tabs.html';
@@ -87,18 +93,30 @@ describe('isTrustedUrl', () => {
 
 });
 
-describe('isExternalUrlAllowed', () => {
+describe('getExternalUrl', () => {
 	it('allows web and mail links', () => {
-		expect(isExternalUrlAllowed('https://example.com/a?b=1')).toBe(true);
-		expect(isExternalUrlAllowed('http://example.com')).toBe(true);
-		expect(isExternalUrlAllowed('mailto:a@example.com')).toBe(true);
-		expect(isExternalUrlAllowed('anytype://object?objectId=1&spaceId=2')).toBe(true);
+		expect(getExternalUrl('https://example.com/a?b=1')).toBe('https://example.com/a?b=1');
+		expect(getExternalUrl('http://example.com')).toBe('http://example.com');
+		expect(getExternalUrl('mailto:a@example.com')).toBe('mailto:a@example.com');
+	});
+
+	it('allows object and message links, rebuilt from their fields', () => {
+		expect(getExternalUrl('anytype://object?objectId=1&spaceId=2&messageId=3')).toBe('anytype://object?objectId=1&spaceId=2&messageId=3');
+		expect(getExternalUrl('anytype://object/?objectId=1&spaceId=2&page=main&action=oneToOne')).toBe('anytype://object?objectId=1&spaceId=2');
+	});
+
+	it('rejects other app routes and invites', () => {
+		expect(getExternalUrl('anytype://hi/?id=1&key=2')).toBe('');
+		expect(getExternalUrl('anytype://invite/?cid=1&key=2')).toBe('');
+		expect(getExternalUrl('anytype://main/settings')).toBe('');
+		expect(getExternalUrl('anytype://object?objectId=1&cid=2&key=3')).toBe('');
+		expect(getExternalUrl('anytype://object?spaceId=2')).toBe('');
 	});
 
 	it('rejects native protocol handlers and garbage', () => {
-		expect(isExternalUrlAllowed('search-ms:query=x')).toBe(false);
-		expect(isExternalUrlAllowed('file:///etc/passwd')).toBe(false);
-		expect(isExternalUrlAllowed('javascript:alert(1)')).toBe(false);
-		expect(isExternalUrlAllowed('not a url')).toBe(false);
+		expect(getExternalUrl('search-ms:query=x')).toBe('');
+		expect(getExternalUrl('file:///etc/passwd')).toBe('');
+		expect(getExternalUrl('javascript:alert(1)')).toBe('');
+		expect(getExternalUrl('not a url')).toBe('');
 	});
 });

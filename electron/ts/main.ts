@@ -26,6 +26,8 @@ import Server from './server';
 import DownloadManager from './download';
 import { registerChatStatus } from './chatStatus';
 import { powerState, parseDropList, PowerEvent } from './lib/powerState';
+import { registerEmbedScheme, handleEmbedScheme, EMBED_ORIGIN } from './lib/embedProtocol';
+import { registerPermissionHandlers } from './lib/permissions';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
@@ -44,6 +46,7 @@ if (is.windows) {
 };
 
 storage.setDataPath(app.getPath('userData'));
+registerEmbedScheme();
 
 const csp: string[] = [];
 
@@ -52,8 +55,14 @@ let waitLibraryPromise: Promise<any> | null = null;
 let mainWindow: AppWindow | null = null;
 let isReady: boolean = false;
 
+// In production the app's own pages allow no inline scripts, so javascript: links and injected inline script elements do not run there
+const cspApp: string[] = [];
+
 for (const i in Cors) {
-	csp.push([ i ].concat((Cors as any)[i]).join(' '));
+	const list: string[] = (Cors as any)[i];
+
+	csp.push([ i ].concat(list).join(' '));
+	cspApp.push([ i ].concat((i == 'script-src-elem') ? list.filter(it => it != `'unsafe-inline'`) : list).join(' '));
 };
 
 app.commandLine.appendSwitch('ignore-connections-limit', 'localhost, 127.0.0.1');
@@ -415,10 +424,26 @@ app.on('web-contents-created', (e: Electron.Event, contents: Electron.WebContent
 
 	contents.on('will-navigate', (event: Electron.Event, url: string) => guard(event, url));
 
-	// Embeds (subframes) legitimately follow redirects, only the privileged main frame is restricted
+	// Subframes are embeds and third-party content, loading the app bundle would put them on the app's own origin
+	const subframeGuard = (event: Electron.Event, url: string) => {
+		if (Util.isTrustedUrl(url)) {
+			event.preventDefault();
+			Util.log('error', '[Navigation] blocked subframe:', url);
+		};
+	};
+
+	// Embeds (subframes) legitimately follow redirects, the privileged main frame stays in the app bundle and subframes stay out of it
 	contents.on('will-redirect', (event: Electron.Event, url: string, isInPlace: boolean, isMainFrame: boolean) => {
 		if (isMainFrame) {
 			guard(event, url);
+		} else {
+			subframeGuard(event, url);
+		};
+	});
+
+	contents.on('will-frame-navigate', (details: Electron.Event<Electron.WebContentsWillFrameNavigateEventParams>) => {
+		if (!details.isMainFrame) {
+			subframeGuard(details, details.url);
 		};
 	});
 });
@@ -426,30 +451,48 @@ app.on('web-contents-created', (e: Electron.Event, contents: Electron.WebContent
 app.on('ready', async () => {
 	await maybeStartStartupTrace();
 
+	handleEmbedScheme(fixPathForAsarUnpack(path.join(Util.appPath, 'dist')));
+	registerPermissionHandlers(session.defaultSession, url => Util.isTrustedUrl(url), WindowManager.getUrlForNewTab());
+
 	session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+		// Embeds and third-party frames keep the permissive policy, so does development where the dev server injects an inline React refresh preamble
+		const policy = (!is.development && Util.isTrustedUrl(details.url)) ? cspApp : csp;
+
 		callback({
 			responseHeaders: {
 				...details.responseHeaders,
-				'Content-Security-Policy': [ csp.join('; ') ]
+				'Content-Security-Policy': [ policy.join('; ') ]
 			}
 		});
 	});
 
-	// Intercept requests and add referrer/origin for YouTube only
+	// Intercept requests and add referrer/origin for YouTube, normalize the embed origin for Kroki
 	session.defaultSession.webRequest.onBeforeSendHeaders({
 		urls: [
 			'*://www.youtube.com/*',
 			'*://www.youtube-nocookie.com/*',
+			'*://kroki.io/*',
 		],
 	}, (details, callBack) => {
 		const headers = details.requestHeaders;
 
-		// Detect missing or file:// origin
+		// Kroki rejects custom scheme origins and answers others with a wildcard, send the opaque origin embeds had on file://
+		if (new URL(details.url).hostname === 'kroki.io') {
+			if (headers['Origin'] === EMBED_ORIGIN) {
+				headers['Origin'] = 'null';
+			};
+
+			callBack({ requestHeaders: headers });
+			return;
+		};
+
+		// Detect missing, file:// or embed origin
 		const currentOrigin = headers['Origin'];
 		const isFileOrigin =
 			!currentOrigin ||
 			(currentOrigin === 'null') ||
-			currentOrigin.startsWith('file://');
+			currentOrigin.startsWith('file://') ||
+			(currentOrigin === EMBED_ORIGIN);
 
 		if (isFileOrigin) {
 			details.requestHeaders['Referer'] = 'https://localhost/';

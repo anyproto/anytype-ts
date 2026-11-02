@@ -138,14 +138,14 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove, onChange }: Props) =>
 						data.html = DOMPurify.sanitize(html, sanitizeParam).toString();
 					};
 
-					iframe.contentWindow?.postMessage(data, '*');
+					iframe.contentWindow?.postMessage(data, U.Embed.getIframeOrigin());
 				} catch (e) {
 					// ignore
 				};
 			};
 
 			U.Dom.addEvent(iframe, 'load', onLoad);
-			iframe.src = './embed/iframe.html';
+			iframe.src = U.Embed.getIframeUrl();
 
 			return () => U.Dom.removeEvent(iframe, 'load', onLoad);
 		};
@@ -207,6 +207,7 @@ const EmbedPreview = ({ processor, text, onEdit, onRemove, onChange }: Props) =>
 				ref={iframeRef}
 				className="embedIframe"
 				sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
+				allow={U.Embed.getIframeAllow(processor)}
 			/>
 		);
 	};

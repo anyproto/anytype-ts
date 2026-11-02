@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import Chat from './chat';
+import UtilString from './string';
 import * as I from 'Interface';
 
 const F = '```';
@@ -195,10 +196,10 @@ describe('Chat', () => {
 	});
 
 	describe('getSearchResultHtml', () => {
-		// getSearchResultHtml sanitizes via the U auto-import global, which vitest
+		// getSearchResultHtml escapes via the U auto-import global, which vitest
 		// does not provide (the AutoImport plugin only runs in the Vite build)
 		beforeAll(() => {
-			(globalThis as any).U = { String: { sanitize: (s: string) => String(s || '') } };
+			(globalThis as any).U = { String: UtilString };
 		});
 
 		afterAll(() => {
@@ -251,6 +252,14 @@ describe('Chat', () => {
 			};
 
 			expect(Chat.getSearchResultHtml(result)).toBe('matched snippet');
+		});
+
+		it('keeps markup in message text literal', () => {
+			const highlight = '<b>bold</b> & <img src="x">';
+			const ranges = [ { from: 3, to: 7 } ];
+
+			expect(Chat.getSearchResultHtml({ highlight, highlightRanges: ranges })).toBe('&lt;b&gt;<span class="highlight">bold</span>&lt;/b&gt; &amp; &lt;img src="x"&gt;');
+			expect(Chat.getSearchResultHtml({ highlight: '', highlightRanges: [], message: { content: { text: '<b>x</b>' } } as any })).toBe('&lt;b&gt;x&lt;/b&gt;');
 		});
 	});
 

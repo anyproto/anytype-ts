@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import UtilSpace from './space';
 import Storage from '../storage';
 import * as I from 'Interface';
@@ -370,4 +370,91 @@ describe('UtilSpace.getTierLimits', () => {
 		vi.stubGlobal('S', { Membership: { isStatusKnown: true, data: { getTopProduct: () => product } } });
 		expect(UtilSpace.getTierLimits()).toEqual({ writersLimit: 9, readersLimit: 5 });
 	});
+});
+
+describe('UtilSpace.openOneToOneLink (confirm before creating)', () => {
+
+	let popups: any[];
+
+	beforeEach(() => {
+		vi.restoreAllMocks();
+		vi.useFakeTimers();
+
+		popups = [];
+
+		vi.stubGlobal('translate', (key: string) => key);
+		vi.stubGlobal('J', { Constant: { delay: { popup: 100 } } });
+		vi.stubGlobal('S', {
+			Auth: { account: { id: 'me' } },
+			Popup: { open: (id: string, param: any) => popups.push({ id, param }) },
+		});
+
+		vi.spyOn(UtilSpace, 'getList').mockReturnValue([
+			{ isOneToOne: true, oneToOneIdentity: 'friend', targetSpaceId: 'space1' },
+		] as any);
+		vi.spyOn(UtilSpace, 'openDashboardOrVoid').mockImplementation((param: any) => param.onRouteChange());
+	});
+
+	afterEach(() => {
+		vi.useRealTimers();
+	});
+
+	it('opens an existing channel without asking', () => {
+		const open = vi.spyOn(UtilSpace, 'openOneToOne').mockImplementation(() => {});
+
+		UtilSpace.openOneToOneLink('friend', 'key', 'Link');
+		vi.runAllTimers();
+
+		expect(open).toHaveBeenCalledWith('friend', 'key', 'Link');
+		expect(popups).toEqual([]);
+	});
+
+	it('opens the own link without asking', () => {
+		const open = vi.spyOn(UtilSpace, 'openOneToOne').mockImplementation(() => {});
+
+		UtilSpace.openOneToOneLink('me', 'key', 'Link');
+		vi.runAllTimers();
+
+		expect(open).toHaveBeenCalledWith('me', 'key', 'Link');
+		expect(popups).toEqual([]);
+	});
+
+	it('creates a new channel only after the user confirms', () => {
+		const open = vi.spyOn(UtilSpace, 'openOneToOne').mockImplementation(() => {});
+
+		UtilSpace.openOneToOneLink('stranger', 'key', 'Link');
+		vi.runAllTimers();
+
+		expect(open).not.toHaveBeenCalled();
+		expect(popups.length).toBe(1);
+		expect(popups[0].id).toBe('confirm');
+		expect(popups[0].param.data.title).toBe('popupConfirmOneToOneTitle');
+
+		popups[0].param.data.onConfirm();
+		expect(open).toHaveBeenCalledWith('stranger', 'key', 'Link', expect.any(Function));
+	});
+
+	it('shows the error when the channel cannot be created', () => {
+		vi.spyOn(UtilSpace, 'openOneToOne').mockImplementation((id, key, route, callBack) => callBack({ error: { code: 1, description: 'failed' } }));
+
+		UtilSpace.openOneToOneLink('stranger', 'key', 'Link');
+		vi.runAllTimers();
+		popups[0].param.data.onConfirm();
+		vi.runAllTimers();
+
+		expect(popups.length).toBe(2);
+		expect(popups[1].param.data.text).toBe('failed');
+	});
+
+	it('shows nothing more once the channel opens', () => {
+		vi.spyOn(UtilSpace, 'openOneToOne').mockImplementation((id, key, route, callBack) => callBack());
+
+		UtilSpace.openOneToOneLink('stranger', 'key', 'Link');
+		vi.runAllTimers();
+		popups[0].param.data.onConfirm();
+		vi.runAllTimers();
+
+		expect(popups.length).toBe(1);
+	});
+
 });

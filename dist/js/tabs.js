@@ -239,15 +239,19 @@ $(() => {
 			cn.push('isPinned');
 		};
 
+		// Title and icon come from synced objects, set them as text and style so they are never parsed as markup
 		const tab = $(`
-			<div id="tab-${item.id}" class="${cn.join(' ')}" data-id="${item.id}" data-pinned="${isPinned}">
+			<div class="${cn.join(' ')}" data-pinned="${isPinned}">
 				<div class="clickable">
-					<div class="name">${title}</div>
+					<div class="name"></div>
 					<div class="icon close withBackground"></div>
 				</div>
 				<div class="div"></div>
 			</div>
 		`);
+
+		tab.attr({ id: `tab-${item.id}`, 'data-id': item.id });
+		tab.find('.name').text(title);
 
 		const clickable = tab.find('.clickable');
 		if (icon) {
@@ -256,11 +260,10 @@ $(() => {
 				cn.push('isImage');
 			};
 
-			clickable.prepend($(`
-				<div class="iconWrapper">
-					<div class="${cn.join(' ')}" style="background-image: url('${icon}')" />
-				</div>
-			`));
+			const wrapper = $('<div class="iconWrapper"><div></div></div>');
+
+			wrapper.children().addClass(cn.join(' ')).css('background-image', `url(${JSON.stringify(icon)})`);
+			clickable.prepend(wrapper);
 		};
 
 		clickable.off('click').on('click', () => {

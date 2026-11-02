@@ -156,6 +156,63 @@ class UtilSpace {
 	}
 
 	/**
+	 * Gets the one-to-one spaceview with given identity.
+	 * @param {string} id - target user identity.
+	 * @returns {any|null} The spaceview or null if there is none.
+	 */
+	getOneToOne (id: string) {
+		return this.getList().find(it => it.isOneToOne && (it.oneToOneIdentity == id)) || null;
+	};
+
+	/**
+	 * Opens a one-to-one link. Links come from synced content and other apps, and a new channel sends
+	 * your profile to the link's owner, so creating one waits for the user to confirm.
+	 * @param {string} id - target user identity.
+	 * @param {string} key - target user metadata key.
+	 * @param {string} route - The route context for analytics.
+	 */
+	openOneToOneLink (id: string, key: string, route: string) {
+		if ((id == S.Auth.account?.id) || this.getOneToOne(id)) {
+			this.openOneToOne(id, key, route);
+			return;
+		};
+
+		const onCreate = (message?: any) => {
+			if (!message?.error?.code) {
+				return;
+			};
+
+			window.setTimeout(() => {
+				S.Popup.open('confirm', {
+					data: {
+						iconParam: { name: 'popup/header/error', color: 'orange' },
+						title: translate('commonError'),
+						text: message.error.description,
+						textConfirm: translate('commonOkay'),
+						canCancel: false,
+					},
+				});
+			}, J.Constant.delay.popup);
+		};
+
+		this.openDashboardOrVoid({
+			onRouteChange: () => {
+				window.setTimeout(() => {
+					S.Popup.open('confirm', {
+						data: {
+							iconParam: { name: 'popup/header/confirm', color: 'orange' },
+							title: translate('popupConfirmOneToOneTitle'),
+							text: translate('popupConfirmOneToOneText'),
+							textConfirm: translate('popupConfirmOneToOneConfirm'),
+							onConfirm: () => this.openOneToOne(id, key, route, onCreate),
+						},
+					});
+				}, J.Constant.delay.popup);
+			},
+		});
+	};
+
+	/**
 	 * Opens or creates one-to-one space with given identity.
 	 * @param {string} [id] - target user identity.
 	 * @param {() => void} [callBack] - Optional callback fn.
@@ -168,7 +225,7 @@ class UtilSpace {
 			return;
 		};
 
-		const spaceExists = this.getList().filter(it => it.isOneToOne && (it.oneToOneIdentity == id))[0];
+		const spaceExists = this.getOneToOne(id);
 
 		if (spaceExists) {
 			U.Router.switchSpace(spaceExists.targetSpaceId, '', true, { onRouteChange: callBack }, false);

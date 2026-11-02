@@ -637,12 +637,17 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						data.html = DOMPurify.sanitize(text, sanitizeParam).toString();
 					};
 
-					iw.postMessage(data, '*');
+					iw.postMessage(data, U.Embed.getIframeOrigin());
 
 					if (messageHandlerRef.current) {
 						U.Dom.removeEvent(window, 'message', messageHandlerRef.current);
 					};
 					messageHandlerRef.current = (e: MessageEvent) => {
+						// Only this block's own embed frame, not frames nested inside it or other embeds
+						if (e.source !== iframe?.contentWindow) {
+							return;
+						};
+
 						const { type, height, blockId, url } = e.data || {};
 
 						if (blockId != block.id) {
@@ -658,7 +663,11 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 							};
 
 							case 'openUrl': {
-								Action.openUrl(url);
+								const target = U.Embed.getLinkTarget(url);
+
+								if (target) {
+									Action.openUrl(target);
+								};
 								break;
 							};
 
@@ -685,10 +694,11 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 				if (!iframe) {
 					iframe = document.createElement('iframe');
 					iframe.id = 'receiver';
-					iframe.src = U.Common.fixAsarPath(`./embed/iframe.html?theme=${S.Common.getThemeClass()}`);
+					iframe.src = U.Embed.getIframeUrl(S.Common.getThemeClass());
 					iframe.setAttribute('frameborder', '0');
 					iframe.setAttribute('scrolling', 'no');
 					iframe.setAttribute('sandbox', sandbox.join(' '));
+					iframe.setAttribute('allow', U.Embed.getIframeAllow(processor));
 					iframe.setAttribute('allowtransparency', 'true');
 					iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
 
@@ -794,6 +804,9 @@ const BlockEmbed = forwardRef<I.BlockRef, I.BlockComponent>((props, ref) => {
 						if (value) {
 							value.innerHTML = '';
 							value.appendChild(res.renderSVGElement(text));
+
+							// Node links keep any scheme from the source, never let the app window follow them
+							U.Dom.renderLinks(value);
 						};
 					} catch (e) {
 						console.error(e);

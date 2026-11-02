@@ -15,6 +15,9 @@ const URL_REGEX = /^(?:([a-zA-Z][a-zA-Z0-9+.-]*):([^\s]+)|(?:(?:[^:@\s]+(?::[^@\
 const ALLOWED_PROTOCOLS = [ 'mailto', 'tel', 'anytype' ];
 const SCHEME_REGEX = /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//;
 
+// Characters an email may consist of: ASCII word characters, dot, dash and anything outside the Latin script
+const EMAIL_CHARS_REGEX = /^[-.\w\P{Script_Extensions=Latin}]+$/u;
+
 // Intentionally tight allowlist of TLDs eligible for auto-linking bare (scheme-less)
 // domains. Kept small on purpose so prose like "hey.how" or "readme.md" is not turned
 // into a link. URLs with an explicit scheme (https://…) bypass this list entirely.
@@ -357,10 +360,21 @@ class UtilString {
 			return '';
 		};
 
-		const uc = '\\P{Script_Extensions=Latin}';
-		const m = v.match(new RegExp(`^[-\\.\\w${uc}]+@([-\\.\\w${uc}]+\\.)+[-\\w${uc}]{2,12}$`, 'gu'));
+		if (!EMAIL_CHARS_REGEX.test(v)) {
+			return '';
+		};
 
-		return String(((m && m.length) ? m[0] : '') || '').trim();
+		// local@domain.tld with a 2-12 character tld, located with plain index lookups over characters (code points).
+		// A single pattern needs a repeated group over characters that include the dot, which backtracks exponentially on long input
+		const chars = Array.from(v);
+		const at = chars.indexOf('@', 1);
+		const dot = chars.lastIndexOf('.', chars.length - 3);
+
+		if ((at < 0) || (dot < at + 2) || (chars.length - dot - 1 > 12)) {
+			return '';
+		};
+
+		return v.trim();
 	};
 
 	/**

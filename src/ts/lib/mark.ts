@@ -13,6 +13,16 @@ const TagSet = new Set(Object.values(Tags));
 const RE_HTML_TAGS = new RegExp(`<(\/)?(${TagValues})\\b(?:([^>]*)>|>)`, 'ig');
 const RE_DATA_PARAM = new RegExp('data-param="([^"]*)"', 'i');
 
+// toHtml output is parsed as HTML, text and attribute values are escaped before markup goes around them
+const HTML_ENTITIES: { [key: string]: string } = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
+const escapeText = (s: string): string => s.replace(/[&<>]/g, c => HTML_ENTITIES[c]);
+const escapeAttr = (s: string): string => s.replace(/[&<>"]/g, c => HTML_ENTITIES[c]);
+
+// Entities the browser writes into attribute values when it serializes them
+const ATTR_ENTITIES: { [key: string]: string } = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&nbsp;': '\u00a0' };
+const decodeAttr = (s: string): string => s.replace(/&(?:amp|lt|gt|quot|nbsp);/g, e => ATTR_ENTITIES[e]);
+const RE_MARK_OPEN_TAGS = new RegExp(`<(?:${TagValues})\\b[^<>]*>`, 'ig');
+
 const Patterns: { [key: string]: string } = {
 	// Arrows and Directional Indicators
 	'->': '→',
@@ -429,7 +439,7 @@ class Mark {
 		text = String(text || '');
 		marks = this.checkRanges(text, marks || []);
 
-		const r = text.split('');
+		const r = text.split('').map(escapeText);
 		const parts: I.Mark[] = [];
 		const ranges: I.TextRange[] = [];
 		const hasParam = [
@@ -493,7 +503,7 @@ class Mark {
 			const data = [];
 
 			if (param) {
-				data.push(`data-param="${fixedParam}"`);
+				data.push(`data-param="${escapeAttr(fixedParam)}"`);
 			};
 
 			if ([I.MarkType.Link, I.MarkType.Object, I.MarkType.Mention].includes(mark.type)) {
@@ -535,13 +545,6 @@ class Mark {
 			if (!priorityRender.includes(mark.type)) {
 				render(mark);
 			};
-		};
-
-		// Replace tags in text
-		for (let i = 0; i < r.length; ++i) {
-			r[i] = r[i].replace(/&/, '&amp;');
-			r[i] = r[i].replace(/<$/, '&lt;');
-			r[i] = r[i].replace(/^>/, '&gt;');
 		};
 
 		return r.join('');
@@ -659,6 +662,22 @@ class Mark {
 			return p;
 		});
 
+		// Params are taken out and decoded once on their own, and brackets in the other attributes of their tags stay encoded.
+		// Decoded with the text, a literal entity in a param would be decoded twice, and a quote or bracket would end its tag early.
+		// References carry a random key, so text that only looks like a tag cannot claim another tag's param
+		const params: string[] = [];
+		const ref = `\u0001${Math.random().toString(36).substring(2)}:`;
+
+		text = text.replace(RE_MARK_OPEN_TAGS, (tag: string) => {
+			const pm = tag.match(rp);
+			if (!pm || !pm[1]) {
+				return tag;
+			};
+
+			params.push(decodeAttr(pm[1]));
+			return tag.replace(rp, `data-param="${ref}${params.length - 1}"`).replace(/&(lt|gt);/g, '&amp;$1;');
+		});
+
 		// Fix html special symbols
 		text = U.String.fromHtmlSpecialChars(text);
 
@@ -712,7 +731,8 @@ class Mark {
 				};
 			} else {
 				const pm = p3.match(rp);
-				const param = pm ? pm[1] : '';
+				const value = pm ? pm[1] : '';
+				const param = value.startsWith(ref) ? params[Number(value.substring(ref.length))] : value;
 
 				// Link markup rendered by toHtml always carries data-param, so a bare
 				// <a>/<a ...> is user-typed literal text (e.g. inside inline code) —
@@ -952,15 +972,16 @@ class Mark {
 	paramToAttr(type: I.MarkType, param: string): string {
 		param = String(param || '');
 		param = param.replace(/\r?\n/g, '');
-		param = param.replace(/</g, '&lt;');
-		param = param.replace(/>/g, '&gt;');
-		param = param.replace(/"/g, '&quot;');
 		param = param.replace(/```/g, '');
+
+		// Color names become class names, anything else in them would add classes of its own
+		const color = param.replace(/[^\w-]/g, '');
 
 		let attr = '';
 		switch (type) {
 			case I.MarkType.Link: {
-				attr = `href="${U.String.urlFix(param)}" class="markuplink"`;
+				// Normalized before escaping, escaping lengthens the url and urlFix drops long ones
+				attr = `href="${escapeAttr(U.String.urlFix(param))}" class="markuplink"`;
 				break;
 			};
 
@@ -971,12 +992,12 @@ class Mark {
 			};
 
 			case I.MarkType.Color: {
-				attr = `class="textColor textColor-${param}"`;
+				attr = `class="textColor textColor-${color}"`;
 				break;
 			};
 
 			case I.MarkType.BgColor: {
-				attr = `class="bgColor bgColor-${param}"`;
+				attr = `class="bgColor bgColor-${color}"`;
 				break;
 			};
 

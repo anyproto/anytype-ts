@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import UtilDom from './dom';
 
 describe('UtilDom', () => {
@@ -78,6 +78,40 @@ describe('UtilDom', () => {
 
 		it('should return -1 without headers', () => {
 			expect(UtilDom.getActiveHeaderIndex([], ANCHOR)).toBe(-1);
+		});
+
+	});
+
+	describe('renderLinks', () => {
+
+		afterEach(() => {
+			vi.unstubAllGlobals();
+		});
+
+		const fakeLink = (href: string, cn: string[]) => {
+			const handlers: Record<string, any> = {};
+
+			return {
+				handlers,
+				getAttribute: (name: string) => (name == 'href') ? href : null,
+				classList: { contains: (c: string) => cn.includes(c) },
+				addEventListener: (name: string, handler: any) => { handlers[name] = handler; },
+				removeEventListener: () => {},
+			};
+		};
+
+		it('should open every link through openUrl, a class on synced markup grants no local file access', () => {
+			const Action = { openUrl: vi.fn(), openPath: vi.fn() };
+			const link = fakeLink('C:\\Users\\me\\setup.exe', [ 'path' ]);
+
+			vi.stubGlobal('Action', Action);
+			vi.stubGlobal('HTMLElement', class {});
+
+			UtilDom.renderLinks({ querySelectorAll: () => [ link ] });
+			link.handlers.click({ preventDefault: () => {} });
+
+			expect(Action.openUrl).toHaveBeenCalledWith('C:\\Users\\me\\setup.exe');
+			expect(Action.openPath).not.toHaveBeenCalled();
 		});
 
 	});

@@ -63,8 +63,9 @@ const MediaExcalidraw = forwardRef<{}, Props>(({
 				}}
 				theme={(theme ? 'dark' : 'light')}
 				validateEmbeddable={(url: string | URL) => {
+					// Excalidraw matches its own providers anywhere in the link, so the whole link has to be an object link
 					const s = typeof url === 'string' ? url : url.toString();
-					return s.startsWith('anytype://') || /^https?:\/\/object\.any\.coop(\/|$|\?)/.test(s);
+					return /^anytype:\/\/object\?[\w.=&%-]+$/.test(s) || /^https:\/\/object\.any\.coop\/[\w.-]+(\?[\w.=&%-]*)?(#[\w.=&%-]*)?$/.test(s);
 				}}
 				UIOptions={{
 					tools: {

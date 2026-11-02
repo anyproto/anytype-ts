@@ -201,6 +201,36 @@ describe('UtilString', () => {
 			expect(UtilString.matchEmail('')).toBe('');
 			expect(UtilString.matchEmail('ab')).toBe('');
 		});
+
+		it('should match subdomains and non-Latin addresses', () => {
+			expect(UtilString.matchEmail('first.last@mail.example.org')).toBe('first.last@mail.example.org');
+			expect(UtilString.matchEmail('почта@пример.рф')).toBe('почта@пример.рф');
+		});
+
+		it('should require a dot after the domain and a 2-12 character tld', () => {
+			expect(UtilString.matchEmail('ab@.com')).toBe('');
+			expect(UtilString.matchEmail('a@b.c')).toBe('');
+			expect(UtilString.matchEmail('a@b.cc')).toBe('a@b.cc');
+			expect(UtilString.matchEmail('a@b.abcdefghijkl')).toBe('a@b.abcdefghijkl');
+			expect(UtilString.matchEmail('a@b.abcdefghijklm')).toBe('');
+		});
+
+		it('should trim surrounding whitespace', () => {
+			expect(UtilString.matchEmail(' a@b.cc ')).toBe('a@b.cc');
+		});
+
+		it('should count the tld in characters, not UTF-16 units', () => {
+			expect(UtilString.matchEmail('ab@c.😀')).toBe('');
+			expect(UtilString.matchEmail(`ab@c.${'😀'.repeat(7)}`)).toBe(`ab@c.${'😀'.repeat(7)}`);
+		});
+
+		it('should reject long malformed input in linear time', () => {
+			// A backtracking pattern takes seconds on this and grows exponentially with every extra dot
+			const start = performance.now();
+
+			expect(UtilString.matchEmail(`a@${'.'.repeat(41)}é`)).toBe('');
+			expect(performance.now() - start).toBeLessThan(1000);
+		});
 	});
 
 	describe('matchDomain', () => {

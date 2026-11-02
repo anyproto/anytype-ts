@@ -1020,7 +1020,8 @@ class UtilCommon {
 				continue;
 			};
 
-			const escaped = U.String.htmlSpecialChars(m).replace(/\$/g, '&#36;');
+			// The source goes into an attribute, quotes in it would end the attribute early
+			const escaped = U.String.htmlSpecialChars(m).replace(/"/g, '&quot;').replace(/\$/g, '&#36;');
 			res = res.replace(m, `<${tag} data-latex="${escaped}" data-latex-length="${m.length}">${render(body)}</${tag}>`);
 		};
 

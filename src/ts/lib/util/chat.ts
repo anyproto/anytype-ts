@@ -356,8 +356,9 @@ class UtilChat {
 	};
 
 	/**
-	 * Builds sanitized HTML for a ChatSearch result: the highlight snippet with
+	 * Builds HTML for a ChatSearch result: the highlight snippet with
 	 * `<span class="highlight">` around the matched ranges, falling back to the raw message text.
+	 * The text is plain message text, so it is escaped rather than sanitized: markup in it stays literal.
 	 * Discussion messages carry their text in blocks with an empty content.text -
 	 * rebuild the preview from the text blocks then.
 	 */
@@ -368,11 +369,11 @@ class UtilChat {
 			const message = result.message;
 			const text = message?.content?.text || (message?.blocks?.length ? this.blocksToText(message.blocks).text : '');
 
-			return U.String.sanitize(text);
+			return U.String.htmlSpecialChars(text);
 		};
 
 		if (!highlightRanges || !highlightRanges.length) {
-			return U.String.sanitize(highlight);
+			return U.String.htmlSpecialChars(highlight);
 		};
 
 		const sorted = [ ...highlightRanges ].sort((a, b) => a.from - b.from);
@@ -381,12 +382,12 @@ class UtilChat {
 		let last = 0;
 
 		for (const range of sorted) {
-			ret += U.String.sanitize(highlight.substring(last, range.from));
-			ret += `<span class="highlight">${U.String.sanitize(highlight.substring(range.from, range.to))}</span>`;
+			ret += U.String.htmlSpecialChars(highlight.substring(last, range.from));
+			ret += `<span class="highlight">${U.String.htmlSpecialChars(highlight.substring(range.from, range.to))}</span>`;
 			last = range.to;
 		};
 
-		ret += U.String.sanitize(highlight.substring(last));
+		ret += U.String.htmlSpecialChars(highlight.substring(last));
 		return ret;
 	};
 
