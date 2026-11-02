@@ -608,6 +608,9 @@ class UtilSubscription {
 				filters: [
 					{ relationKey: 'id', condition: I.FilterCondition.In, value: ids },
 				],
+				// these objects are looked up by id, not discovered: a hidden flag must not drop
+				// the own participant, or every ownership check reads it as missing
+				ignoreHidden: false,
 				ignoreArchived: false,
 				noDeps: true,
 			});
