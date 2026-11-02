@@ -794,51 +794,48 @@ class Api {
 	};
 
 	async linuxDistro (win: AppWindow): Promise<{ os: string; name: string; release: string; code: string }> {
-		try {
-			// Read /etc/os-release (standard on modern Linux) or /etc/lsb-release (older)
-			const paths = [ '/etc/os-release', '/usr/lib/os-release', '/etc/lsb-release' ];
-			let content = '';
+		const fallback = { os: 'Unknown', name: 'Unknown', release: '', code: '' };
 
-			for (const p of paths) {
-				try {
-					content = fs.readFileSync(p, 'utf-8');
-					break;
-				} catch (_) {};
+		// /run/host/os-release is the host's file inside Flatpak and other sandboxes, where /etc/os-release
+		// describes the runtime. Per the os-release spec the first file that exists wins, even if empty.
+		// lsb-release covers distros that predate os-release.
+		const paths = [ '/run/host/os-release', '/etc/os-release', '/usr/lib/os-release', '/etc/lsb-release' ];
+
+		let content = '';
+		for (const p of paths) {
+			try {
+				content = fs.readFileSync(p, 'utf8');
+				break;
+			} catch (e) {};
+		};
+
+		if (!content) {
+			Util.log('error', '[Api].linuxDistro: no os-release or lsb-release data found');
+			return fallback;
+		};
+
+		const vars = new Map<string, string>();
+
+		for (const line of content.split('\n')) {
+			const trimmed = line.trim();
+			const eq = trimmed.indexOf('=');
+
+			if (!trimmed || trimmed.startsWith('#') || (eq < 0)) {
+				continue;
 			};
 
-			if (!content) {
-				return { os: 'Linux', name: 'Unknown', release: '', code: '' };
-			};
+			const key = trimmed.slice(0, eq).trim().toLowerCase();
+			const value = trimmed.slice(eq + 1).trim().replace(/^(['"])(.*)\1$/, '$2');
 
-			const parse = (text: string): Map<string, string> => {
-				const map = new Map<string, string>();
-				for (const line of text.split('\n')) {
-					const trimmed = line.trim();
-					if (!trimmed || trimmed.startsWith('#')) continue;
-					const eq = trimmed.indexOf('=');
-					if (eq < 0) continue;
-					const key = trimmed.slice(0, eq).trim();
-					let val = trimmed.slice(eq + 1).trim();
-					if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-						val = val.slice(1, -1);
-					};
-					map.set(key.toLowerCase(), val);
-				};
-				return map;
-			};
+			vars.set(key, value);
+		};
 
-			const vars = parse(content);
-
-			return {
-				os: vars.get('id') || vars.get('distrib_id') || 'linux',
-				name: vars.get('pretty_name') || vars.get('name') || vars.get('distrib_description') || '',
-				release: vars.get('version_id') || vars.get('distrib_release') || '',
-				code: vars.get('version_codename') || vars.get('distrib_codename') || '',
-			};
-		} catch (e: any) {
-			Util.log('error', `[Api].linuxDistro: ${e.message}`);
-			return { os: 'Unknown', name: 'Unknown', release: '', code: '' };
-		}
+		return {
+			os: vars.get('id') || vars.get('distrib_id') || fallback.os,
+			name: vars.get('pretty_name') || vars.get('name') || vars.get('distrib_description') || fallback.name,
+			release: vars.get('version_id') || vars.get('distrib_release') || '',
+			code: vars.get('version_codename') || vars.get('distrib_codename') || '',
+		};
 	};
 
 	menu (win: AppWindow): void {

@@ -156,7 +156,6 @@
 		"lazy-val": "^1.0.4",
 		"lexical": "^0.40.0",
 		"libphonenumber-js": "^1.12.31",
-		"linux-distro": "^4.0.1",
 		"lodash": "^4.18.1",
 		"lodash.isequal": "^4.5.0",
 		"mermaid": "^11.17.2",
@@ -193,15 +192,13 @@
 	},
 	"overrides": {
 		"async": "^3.2.5",
-		"getos": "^3.2.1",
 		"jsonfile": "^6.1.0",
 		"lodash-es": "^4.17.23",
 		"micromatch": "^4.0.8",
 		"node-abi": "^4.35.0",
 		"node-gyp": "^12.1.0",
 		"tar": "^7.5.7",
-		"tmp": "^0.2.4",
-		"trim-newlines": "^3.0.1"
+		"tmp": "^0.2.4"
 	},
 	"build": {
 		"npmRebuild": true,
@@ -339,10 +336,6 @@
 				"to": "node_modules/argparse"
 			},
 			{
-				"from": "node_modules/array-find-index",
-				"to": "node_modules/array-find-index"
-			},
-			{
 				"from": "node_modules/async",
 				"to": "node_modules/async"
 			},
@@ -369,14 +362,6 @@
 			{
 				"from": "node_modules/builder-util-runtime",
 				"to": "node_modules/builder-util-runtime"
-			},
-			{
-				"from": "node_modules/camelcase",
-				"to": "node_modules/camelcase"
-			},
-			{
-				"from": "node_modules/camelcase-keys",
-				"to": "node_modules/camelcase-keys"
 			},
 			{
 				"from": "node_modules/check-disk-space",
@@ -407,20 +392,8 @@
 				"to": "node_modules/cross-spawn"
 			},
 			{
-				"from": "node_modules/cross-spawn-async",
-				"to": "node_modules/cross-spawn-async"
-			},
-			{
-				"from": "node_modules/currently-unhandled",
-				"to": "node_modules/currently-unhandled"
-			},
-			{
 				"from": "node_modules/debug",
 				"to": "node_modules/debug"
-			},
-			{
-				"from": "node_modules/decamelize",
-				"to": "node_modules/decamelize"
 			},
 			{
 				"from": "node_modules/decompress-response",
@@ -527,10 +500,6 @@
 				"to": "node_modules/get-stream"
 			},
 			{
-				"from": "node_modules/getos",
-				"to": "node_modules/getos"
-			},
-			{
 				"from": "node_modules/github-from-package",
 				"to": "node_modules/github-from-package"
 			},
@@ -575,10 +544,6 @@
 				"to": "node_modules/imurmurhash"
 			},
 			{
-				"from": "node_modules/indent-string",
-				"to": "node_modules/indent-string"
-			},
-			{
 				"from": "node_modules/inflight",
 				"to": "node_modules/inflight"
 			},
@@ -597,10 +562,6 @@
 			{
 				"from": "node_modules/is-core-module",
 				"to": "node_modules/is-core-module"
-			},
-			{
-				"from": "node_modules/is-finite",
-				"to": "node_modules/is-finite"
 			},
 			{
 				"from": "node_modules/is-fullwidth-code-point",
@@ -655,10 +616,6 @@
 				"to": "node_modules/lie"
 			},
 			{
-				"from": "node_modules/linux-distro",
-				"to": "node_modules/linux-distro"
-			},
-			{
 				"from": "node_modules/load-json-file",
 				"to": "node_modules/load-json-file"
 			},
@@ -683,20 +640,8 @@
 				"to": "node_modules/lodash.isequal"
 			},
 			{
-				"from": "node_modules/loud-rejection",
-				"to": "node_modules/loud-rejection"
-			},
-			{
 				"from": "node_modules/lru-cache",
 				"to": "node_modules/lru-cache"
-			},
-			{
-				"from": "node_modules/map-obj",
-				"to": "node_modules/map-obj"
-			},
-			{
-				"from": "node_modules/meow",
-				"to": "node_modules/meow"
 			},
 			{
 				"from": "node_modules/merge-stream",
@@ -771,10 +716,6 @@
 				"to": "node_modules/npm-run-path"
 			},
 			{
-				"from": "node_modules/object-assign",
-				"to": "node_modules/object-assign"
-			},
-			{
 				"from": "node_modules/once",
 				"to": "node_modules/once"
 			},
@@ -827,20 +768,12 @@
 				"to": "node_modules/path-type"
 			},
 			{
-				"from": "node_modules/pify",
-				"to": "node_modules/pify"
-			},
-			{
 				"from": "node_modules/prebuild-install",
 				"to": "node_modules/prebuild-install"
 			},
 			{
 				"from": "node_modules/process-nextick-args",
 				"to": "node_modules/process-nextick-args"
-			},
-			{
-				"from": "node_modules/pseudomap",
-				"to": "node_modules/pseudomap"
 			},
 			{
 				"from": "node_modules/pump",
@@ -859,24 +792,12 @@
 				"to": "node_modules/read-pkg"
 			},
 			{
-				"from": "node_modules/read-pkg-up",
-				"to": "node_modules/read-pkg-up"
-			},
-			{
 				"from": "node_modules/readable-stream",
 				"to": "node_modules/readable-stream"
 			},
 			{
-				"from": "node_modules/redent",
-				"to": "node_modules/redent"
-			},
-			{
 				"from": "node_modules/regedit",
 				"to": "node_modules/regedit"
-			},
-			{
-				"from": "node_modules/repeating",
-				"to": "node_modules/repeating"
 			},
 			{
 				"from": "node_modules/resolve",
@@ -979,10 +900,6 @@
 				"to": "node_modules/strip-bom"
 			},
 			{
-				"from": "node_modules/strip-eof",
-				"to": "node_modules/strip-eof"
-			},
-			{
 				"from": "node_modules/strip-final-newline",
 				"to": "node_modules/strip-final-newline"
 			},
@@ -1025,10 +942,6 @@
 			{
 				"from": "node_modules/token-types",
 				"to": "node_modules/token-types"
-			},
-			{
-				"from": "node_modules/trim-newlines",
-				"to": "node_modules/trim-newlines"
 			},
 			{
 				"from": "node_modules/truncate-utf8-bytes",
