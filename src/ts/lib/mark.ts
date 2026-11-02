@@ -285,7 +285,7 @@ class Mark {
 				![I.MarkType.Mention, I.MarkType.Emoji].includes(prev.type) &&
 				(prev.range.to >= mark.range.from) &&
 				(prev.type == mark.type) &&
-				(prev.param == mark.param)) {
+				((prev.param || '') == (mark.param || ''))) {
 				prev.range.to = mark.range.to;
 				del = true;
 			};
