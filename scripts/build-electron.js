@@ -26,7 +26,6 @@ const buildOptions = {
 		'check-disk-space',
 		'sanitize-filename',
 		'mime-types',
-		'linux-distro',
 		'regedit',
 	],
 	tsconfig: path.join(__dirname, '..', 'tsconfig.electron.json'),
