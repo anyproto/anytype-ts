@@ -1021,8 +1021,11 @@ class BlockStore {
 
 				const old = text.substring(from, to);
 				const name = U.String.shorten(U.Object.name(object, true).trim(), J.Constant.limit.string.mention);
+				const defaultName = U.String.shorten(U.Object.name({ layout: object.layout }, true).trim(), J.Constant.limit.string.mention);
+				const prevName = S.Detail.getPrevName(rootId, mark.param);
+				const shouldUpdate = (old != name) && (!old || (old == defaultName) || (!!prevName && (old == prevName)));
 
-				if (old != name) {
+				if (shouldUpdate) {
 					const d = String(old || '').length - String(name || '').length;
 					text = U.String.insert(text, name, mark.range.from, mark.range.to);
 
@@ -1049,6 +1052,8 @@ class BlockStore {
 				this.updateContent(rootId, block.id, { text, marks });
 			};
 		};
+
+		S.Detail.clearPrevNames(rootId);
 	};
 
 	/**

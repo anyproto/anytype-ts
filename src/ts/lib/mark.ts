@@ -1346,6 +1346,45 @@ class Mark {
 		};
 	};
 
+	/**
+	 * Parses a mention or wikilink filter string for optional pipe alias syntax
+	 * (e.g. "Victor|Vic", "Victor.md|Vic", "[[Victor|Vic]]", "[Victor.md|Vic]").
+	 * @param {string} rawFilter - Raw filter text from mention menu or S.Common.filter.
+	 * @returns {{ query: string; alias: string; hasPipe: boolean; isClosed: boolean }}
+	 */
+	parseMentionFilter (rawFilter: string): { query: string; alias: string; hasPipe: boolean; isClosed: boolean } {
+		const raw = String(rawFilter || '');
+		const isDoubleBracket = raw.startsWith('[[');
+		const isSingleBracket = !isDoubleBracket && raw.startsWith('[');
+		const stripped = raw.replace(/^[@\[]+/, '');
+		const pipeIndex = stripped.indexOf('|');
+		const hasPipe = pipeIndex >= 0;
+
+		const withoutClosing = stripped.replace(/\]+$/, '');
+
+		if (!hasPipe) {
+			const query = withoutClosing.replace(/\.md$/i, '').trim();
+			const isClosed = isDoubleBracket && stripped.endsWith(']]') && (query.length > 0);
+			return { query, alias: '', hasPipe: false, isClosed };
+		};
+
+		const rawTarget = withoutClosing.slice(0, withoutClosing.indexOf('|'));
+		const rawAlias = withoutClosing.slice(withoutClosing.indexOf('|') + 1);
+		const query = rawTarget.replace(/\.md$/i, '').trim();
+		const alias = rawAlias.trim();
+
+		const isClosed = isDoubleBracket
+			? (stripped.endsWith(']]') && (query.length > 0))
+			: (isSingleBracket ? (stripped.endsWith(']') && !stripped.endsWith(']]') && (query.length > 0) && (alias.length > 0)) : false);
+
+		return {
+			query,
+			alias,
+			hasPipe: true,
+			isClosed,
+		};
+	};
+
 };
 
 export default new Mark();
