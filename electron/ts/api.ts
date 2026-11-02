@@ -796,10 +796,15 @@ class Api {
 	async linuxDistro (win: AppWindow): Promise<{ os: string; name: string; release: string; code: string }> {
 		const fallback = { os: 'Unknown', name: 'Unknown', release: '', code: '' };
 
-		// /run/host/os-release is the host's file inside Flatpak and other sandboxes, where /etc/os-release
-		// describes the runtime. Per the os-release spec the first file that exists wins, even if empty.
+		// Per the os-release spec the first file that exists wins, even if empty.
 		// lsb-release covers distros that predate os-release.
-		const paths = [ '/run/host/os-release', '/etc/os-release', '/usr/lib/os-release', '/etc/lsb-release' ];
+		const paths = [ '/etc/os-release', '/usr/lib/os-release', '/etc/lsb-release' ];
+
+		// Inside Flatpak /etc/os-release describes the runtime (Freedesktop SDK), the user's distro is in /run/host.
+		// Only trust it under Flatpak: systemd-nspawn also provides /run/host/os-release, but there /etc is the real desktop OS.
+		if (fs.existsSync('/.flatpak-info')) {
+			paths.unshift('/run/host/os-release');
+		};
 
 		let content = '';
 		for (const p of paths) {
