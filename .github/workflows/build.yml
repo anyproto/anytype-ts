@@ -20,11 +20,6 @@ jobs:
           - windows-2025
 
     steps:
-      - name: Setup
-        run: |
-          git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
-          git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@api.github.com/".insteadOf "https://api.github.com/"
-
       - name: Install Go
         uses: actions/setup-go@v7
         with:
@@ -60,6 +55,12 @@ jobs:
 
       - name: Check out Git repository
         uses: actions/checkout@v7
+
+      # Must run after checkout: with these credentials in the URL, checkout's fetch hangs in the macOS keychain credential helper.
+      - name: Setup
+        run: |
+          git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://${{secrets.USER}}:${{secrets.TOKEN}}@api.github.com/".insteadOf "https://api.github.com/"
 
       - name: Fail if middleware.version contains nightly
         shell: bash
