@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeAll, beforeEach } from 'vitest';
 import { Block as BlockStore } from 'Store/block';
+import { Detail as DetailStore } from 'Store/detail';
 import Block from 'Model/block';
+import Mark from 'Lib/mark';
 import * as I from 'Interface';
 
 const ROOT = 'root';
@@ -58,9 +60,33 @@ describe('BlockStore tree helpers', () => {
 
 	beforeAll(() => {
 		// U is an auto-import global in the app bundle; the store only needs objectCopy here
+		(globalThis as any).J = {
+			Constant: {
+				missingObjectId: '_missing_object',
+				limit: { string: { mention: 128 } },
+			},
+		};
+		(globalThis as any).translate = () => 'Untitled';
+		(globalThis as any).Relation = {
+			getStringValue: (v: any) => String(v || ''),
+		};
+		(globalThis as any).Mark = Mark;
+		(globalThis as any).S = { Detail: DetailStore, Block: BlockStore };
 		(globalThis as any).U = {
 			Common: {
 				objectCopy: (o: any) => JSON.parse(JSON.stringify(typeof o === 'undefined' ? {} : o)),
+			},
+			Object: {
+				name: (obj: any) => String(obj?.name || obj?.snippet || 'Untitled'),
+				defaultName: () => 'Untitled',
+				isRelationLayout: () => false,
+				isTypeLayout: () => false,
+				isSpaceViewLayout: () => false,
+				isInFileLayouts: () => false,
+			},
+			String: {
+				insert: (s: string, ins: string, from: number, to: number) => s.substring(0, from) + ins + s.substring(to),
+				shorten: (s: string) => String(s || ''),
 			},
 		};
 	});
@@ -112,6 +138,47 @@ describe('BlockStore tree helpers', () => {
 			expect(slice).not.toContain('header');
 			expect(slice).not.toContain('featuredRelations');
 			expect(slice).not.toContain('divA');
+		});
+	});
+
+	describe('updateMarkup mention alias preservation', () => {
+		it('preserves custom mention display text (alias) when object details arrive', () => {
+			DetailStore.clear(ROOT);
+			DetailStore.update(ROOT, { id: 'obj-victor', details: { id: 'obj-victor', name: 'Victor' } }, false);
+
+			BlockStore.updateContent(ROOT, 'a1', {
+				style: I.TextStyle.Paragraph,
+				text: 'Hello Vic today',
+				marks: [
+					{ type: I.MarkType.Mention, param: 'obj-victor', range: { from: 6, to: 9 } },
+				],
+			});
+			BlockStore.updateMarkup(ROOT);
+
+			const updated = BlockStore.getLeaf(ROOT, 'a1');
+			expect(updated.getText()).toBe('Hello Vic today');
+			expect(updated.content.marks[0].range).toEqual({ from: 6, to: 9 });
+		});
+
+		it('still updates standard mentions when the target object is renamed', () => {
+			DetailStore.clear(ROOT);
+			DetailStore.update(ROOT, { id: 'obj-victor', details: { id: 'obj-victor', name: 'Victor' } }, false);
+
+			BlockStore.updateContent(ROOT, 'a1', {
+				style: I.TextStyle.Paragraph,
+				text: 'Hello Victor today',
+				marks: [
+					{ type: I.MarkType.Mention, param: 'obj-victor', range: { from: 6, to: 12 } },
+				],
+			});
+
+			// Rename Victor -> Victor Hugo
+			DetailStore.update(ROOT, { id: 'obj-victor', details: { id: 'obj-victor', name: 'Victor Hugo' } }, false);
+			BlockStore.updateMarkup(ROOT);
+
+			const updated = BlockStore.getLeaf(ROOT, 'a1');
+			expect(updated.getText()).toBe('Hello Victor Hugo today');
+			expect(updated.content.marks[0].range).toEqual({ from: 6, to: 17 });
 		});
 	});
 

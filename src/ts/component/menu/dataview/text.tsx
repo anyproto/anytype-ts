@@ -6,7 +6,7 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	
 	const { param, getId, getContainer, position, setActive, onKeyDown, setHover, close } = props;
 	const { data } = param;
-	const { value, placeholder, canEdit, noResize, cellId, onChange, relationKey, actions = [], onSelect } = data;
+	const { value, placeholder, canEdit, noResize, cellId, onChange, relationKey, actions = [], onSelect, submitOnEnter } = data;
 	const relation = S.Record.getRelationByKey(relationKey);
 	const isSingleLine = [ I.RelationType.Url, I.RelationType.Email, I.RelationType.Phone, I.RelationType.Number ].includes(relation?.relationFormat);
 	const inputWrapper = useRef(null);
@@ -63,7 +63,8 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 
 	const getValue = () => {
 		const v = isSingleLine ? inputRef.current?.getValue() : inputRef.current?.getTextValue();
-		return String(v || '').trim();
+		const cleaned = submitOnEnter ? String(v || '').replace(/[\u200B\r\n]+/g, ' ') : String(v || '');
+		return cleaned.trim();
 	};
 
 	const onKeyDownHandler = (e: any) => {
@@ -83,10 +84,11 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				});
 			};
 
-			if (isSingleLine) {
+			if (isSingleLine || submitOnEnter) {
 				keyboard.shortcut(`enter`, e, () => {
 					e.preventDefault();
 					ret = true;
+					valueRef.current = getValue();
 					close();
 				});
 			};
@@ -166,6 +168,7 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const onClear = () => {
+		valueRef.current = '';
 		inputRef.current.setValue('');
 		inputRef.current.placeholderCheck?.();
 		inputRef.current.setFocus();
@@ -227,6 +230,16 @@ const MenuDataviewText = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 						onPaste={(e) => onInput(e, '')}
 						onFocus={onFocus}
 						onBlur={onBlur}
+						onKeyDown={(e) => {
+							if (submitOnEnter) {
+								keyboard.shortcut('enter', e, () => {
+									e.preventDefault();
+									e.stopPropagation();
+									valueRef.current = getValue();
+									close();
+								});
+							};
+						}}
 					/>
 				)}
 			</div>

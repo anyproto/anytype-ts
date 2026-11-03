@@ -14,18 +14,21 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const { param, getId, getContainer, close, position, setActive } = props;
 	const { data, className, classNameWrap } = param;
 	const { pronounId, withCaption, canAdd, skipIds, onChange } = data;
-	const { filterText, space } = S.Common;
+	const { space } = S.Common;
+	const parsedFilter = Mark.parseMentionFilter(S.Common.filter.text);
+	const searchQuery = parsedFilter.query;
+	const aliasText = parsedFilter.alias;
 	const [ isLoading, setIsLoading ] = useState(false);
 	const [ dummy, setDummy ] = useState(0);
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
 	const listRef = useRef(null);
 	const itemsRef = useRef([]);
+	const searchIdRef = useRef(0);
 	const n = useRef(0);
 	const offset = useRef(0);
 
 	useEffect(() => {
 		rebind();
-		load(true);
 
 		return () => {
 			unbind();
@@ -36,7 +39,54 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		n.current = 0;
 		offset.current = 0;
 		load(true);
-	}, [ filterText ]);
+	}, [ searchQuery ]);
+
+	useEffect(() => {
+		cache.current.clearAll();
+		listRef.current?.forceUpdateGrid?.();
+		setDummy(d => d + 1);
+		position();
+	}, [ aliasText ]);
+
+	const getAutoSelectCandidate = () => {
+		const currentItems = getItems();
+		if ((n.current > 0) && currentItems[n.current] && !currentItems[n.current].isDiv && ![ 'add', 'selectDate' ].includes(currentItems[n.current].id)) {
+			return currentItems[n.current];
+		};
+
+		const currentQuery = Mark.parseMentionFilter(S.Common.filter.text).query.toLowerCase();
+		if (currentQuery) {
+			const exactMatch = currentItems.find(it => !it.isDiv && ![ 'add', 'selectDate' ].includes(it.id) && !U.Object.isDateLayout(it.layout) && (U.Object.name(it, true).trim().toLowerCase() === currentQuery));
+			if (exactMatch) {
+				return exactMatch;
+			};
+		};
+
+		const nonDateObject = currentItems.find(it => !it.isDiv && ![ 'add', 'selectDate' ].includes(it.id) && !U.Object.isDateLayout(it.layout));
+		if (nonDateObject) {
+			return nonDateObject;
+		};
+
+		return currentItems.find(it => !it.isDiv && ![ 'add', 'selectDate' ].includes(it.id)) || null;
+	};
+
+	// Closed bracket ([[Target]], [Target|Alias]): link to the best match, or —
+	// when nothing matches — close the menu and leave the typed text as is, so
+	// the menu never swallows the text typed after it
+	const onClosedFilter = () => {
+		const candidate = getAutoSelectCandidate();
+		if (candidate) {
+			onClick(new MouseEvent('click'), candidate);
+		} else {
+			close();
+		};
+	};
+
+	useEffect(() => {
+		if (parsedFilter.isClosed && !isLoading) {
+			onClosedFilter();
+		};
+	}, [ parsedFilter.isClosed, isLoading ]);
 
 	const keydownHandler = useRef(null);
 
@@ -55,7 +105,8 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	};
 
 	const getSections = () => {
-		const filter = S.Common.filterText;
+		const { query, alias } = Mark.parseMentionFilter(S.Common.filter.text);
+		const filter = query || alias;
 		const sections: any[] = [];
 		
 		let items = U.Common.objectCopy(itemsRef.current);
@@ -63,6 +114,15 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		const dates = items.filter(it => U.Object.isDateLayout(it.layout));
 
 		items = items.filter(it => !U.Object.isDateLayout(it.layout));
+
+		if (query) {
+			const queryLower = query.trim().toLowerCase();
+			items.sort((a: any, b: any) => {
+				const aExact = (U.Object.name(a, true).trim().toLowerCase() === queryLower) ? 1 : 0;
+				const bExact = (U.Object.name(b, true).trim().toLowerCase() === queryLower) ? 1 : 0;
+				return bExact - aExact;
+			});
+		};
 		
 		const length = items.length;
 		
@@ -132,14 +192,21 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			setIsLoading(true);
 		};
 
+		const reqId = clear ? ++searchIdRef.current : searchIdRef.current;
+		const currentQuery = Mark.parseMentionFilter(S.Common.filter.text).query;
+
 		U.Subscription.search({
 			filters,
 			sorts,
 			keys: J.Relation.default.concat([ '_final_score' ]),
-			fullText: filterText,
+			fullText: currentQuery,
 			offset: offset.current,
 			limit: J.Constant.limit.menuRecords,
 		}, (message: any) => {
+			if (reqId !== searchIdRef.current) {
+				return;
+			};
+
 			setIsLoading(false);
 
 			if (message.error.code) {
@@ -151,10 +218,16 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 			};
 
 			itemsRef.current = itemsRef.current.concat(message.records || []);
-			setDummy(dummy + 1);
+			cache.current.clearAll();
+			listRef.current?.forceUpdateGrid?.();
+			setDummy(d => d + 1);
 			position();
 			raf(() => raf(() => setActive()));
 			callBack?.(null);
+
+			if (clear && Mark.parseMentionFilter(S.Common.filter.text).isClosed) {
+				onClosedFilter();
+			};
 		});
 	};
 
@@ -181,8 +254,10 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		const { from } = S.Common.filter;
+		const { query, alias } = Mark.parseMentionFilter(S.Common.filter.text);
 		const cb = (object: any) => {
-			const name = U.String.shorten(U.Object.name(object, true), J.Constant.limit.string.mention);
+			const rawName = alias || U.Object.name(object, true);
+			const name = U.String.shorten(rawName, J.Constant.limit.string.mention);
 			const to = from + name.length;
 
 			let marks = U.Common.objectCopy(data.marks || []);
@@ -200,7 +275,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		};
 
 		if (item.id == 'add') {
-			const name = S.Common.filterText;
+			const name = query || alias || S.Common.filterText;
 
 			U.Object.create('', '', { name }, I.BlockPosition.Bottom, '', [ I.ObjectFlag.SelectTemplate ], analytics.route.mention, (message: any) => {
 				cb(message.details);
@@ -288,7 +363,7 @@ const MenuBlockMention = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 				<MenuItemVertical
 					id={item.id}
 					object={object}
-					name={<ObjectName object={item} withPlural={true} withPronoun={withPronoun} />}
+					name={<ObjectName object={item} alias={object ? aliasText : ''} withPlural={true} withPronoun={withPronoun} />}
 					onMouseEnter={e => onOver(e, item)} 
 					onClick={e => onClick(e, item)}
 					caption={withCaption && type ? <ObjectType object={type} /> : ''}

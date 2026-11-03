@@ -5,6 +5,7 @@ import * as I from 'Interface';
 interface Props {
 	object: any;
 	className?: string;
+	alias?: string;
 	withLatex?: boolean;
 	withPlural?: boolean;
 	withPronoun?: boolean;
@@ -18,6 +19,7 @@ interface Props {
 const ObjectName: FC<Props> = ({
 	object = {},
 	className = 'name',
+	alias = '',
 	withLatex = false,
 	withPlural = false,
 	withPronoun = false,
@@ -96,9 +98,10 @@ const ObjectName: FC<Props> = ({
 	if (withPronoun) {
 		you = <span className="you"> ({translate('commonYou')})</span>;
 	};
+	const aliasEl = alias ? <span className="you"> → {alias}</span> : null;
 
 	if (!empty && !latex) {
-		content = <span>{name}{you}</span>;
+		content = <span>{name}{you}{aliasEl}</span>;
 	};
 
 	return (
