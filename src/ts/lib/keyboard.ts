@@ -109,6 +109,10 @@ class Keyboard {
 		U.Dom.addEvent(window, 'keydown', this._handlers.shiftTracker, true);
 		U.Dom.addEvent(window, 'keyup', this._handlers.shiftTracker, true);
 
+		// Track mousedown in capture phase, before any handler can stop propagation
+		this._handlers.pointerTracker = () => focus.onMouseDown();
+		U.Dom.addEvent(window, 'mousedown', this._handlers.pointerTracker, true);
+
 		U.Dom.addEvents(window, [
 			[ 'keydown', this._handlers.keydown ],
 			[ 'keyup', this._handlers.keyup ],
@@ -217,6 +221,10 @@ class Keyboard {
 		if (this._handlers.shiftTracker) {
 			U.Dom.removeEvent(window, 'keydown', this._handlers.shiftTracker, true);
 			U.Dom.removeEvent(window, 'keyup', this._handlers.shiftTracker, true);
+		};
+
+		if (this._handlers.pointerTracker) {
+			U.Dom.removeEvent(window, 'mousedown', this._handlers.pointerTracker, true);
 		};
 
 		this._handlers = {};

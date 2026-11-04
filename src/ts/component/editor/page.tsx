@@ -979,7 +979,7 @@ const EditorPage = forwardRef<I.BlockRef, Props>((props, ref) => {
 			};
 
 			selection.clear();
-			focus.restore();
+			focus.restore(I.FocusSource.Program);
 			focus.apply();
 
 			ret = true;

@@ -26,6 +26,8 @@ class Focus {
 		focused: '', 
 		range: { from: 0, to: 0 } 
 	};
+
+	isMouseDown = false;
 	
 	/**
 	 * Sets the focus state to the given block and range.
@@ -42,12 +44,24 @@ class Focus {
 		// after it has been materialized — resolve to the real block id
 		id = virtualBlock.resolve(String(id || ''));
 
+		// The focus handler of a block does not tell how the block got the focus. A click sends
+		// the focus event in the same task as mousedown. apply() and a window that gets the focus
+		// back send it again for the block that is already focused.
+		let source = I.FocusSource.Program;
+		if (this.isMouseDown) {
+			source = I.FocusSource.Pointer;
+		} else
+		if (id == this.state.focused) {
+			source = this.state.source;
+		};
+
 		this.state = {
 			focused: id,
 			range: {
 				from: Math.max(0, Number(range.from) || 0),
 				to: Math.max(0, Number(range.to) || 0),
 			},
+			source,
 		};
 		this.backup = U.Common.objectCopy(this.state);
 
@@ -68,10 +82,23 @@ class Focus {
 	};
 
 	/**
-	 * Restores the focus state from backup.
+	 * Marks the focus events of the current task as caused by a click.
 	 */
-	restore () {
+	onMouseDown () {
+		this.isMouseDown = true;
+		window.setTimeout(() => this.isMouseDown = false);
+	};
+
+	/**
+	 * Restores the focus state from backup.
+	 * @param {I.FocusSource} source - Overrides how the focus got to the block.
+	 */
+	restore (source?: I.FocusSource) {
 		this.state = U.Common.objectCopy(this.backup);
+
+		if (source !== undefined) {
+			this.state.source = source;
+		};
 	};
 
 	/**
@@ -116,7 +143,7 @@ class Focus {
 	 * @returns {Focus} The Focus instance.
 	 */
 	apply (): Focus {
-		const { focused, range } = this.state;
+		const { focused, range, source } = this.state;
 		if (!focused) {
 			return;
 		};
@@ -133,10 +160,10 @@ class Focus {
 
 		node.focus({ preventScroll: true });
 
-		// Show selection overlay for non-text blocks.
+		// Show selection overlay for non-text blocks, unless the block was clicked.
 		// Must be after node.focus() because the previous text block's
 		// blur handler calls focus.clear() which would remove the class.
-		if (!U.Dom.hasClass(node, 'value')) {
+		if (!U.Dom.hasClass(node, 'value') && (source != I.FocusSource.Pointer)) {
 			const target = U.Dom.get(`selectionTarget-${focused}`);
 			if (target) {
 				U.Dom.addClass(target, 'isKeyboardFocused');
