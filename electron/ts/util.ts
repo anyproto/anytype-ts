@@ -64,8 +64,14 @@ class Util {
 		return nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
 	};
 
+	/**
+	 * Converts a deeplink to an in-app route. A bare `anytype://` has nothing to open and
+	 * would route to '/', a blank page without any controls, so it yields an empty route.
+	 */
 	getRouteFromUrl (url: string): string {
-		return String(url || '').replace(`${protocol}://`, '/');
+		const route = String(url || '').replace(`${protocol}://`, '/');
+
+		return route.replace(/^\/+/, '').length ? route : '';
 	};
 
 	getTheme (): string {

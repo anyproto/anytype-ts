@@ -536,8 +536,10 @@ app.on('second-instance', (event, argv) => {
 		deeplinkingUrl = argv.find(arg => arg.startsWith(`${protocol}://`));
 	};
 
-	if (deeplinkingUrl) {
-		Util.send(mainWindow, 'route', Util.getRouteFromUrl(deeplinkingUrl));
+	const route = Util.getRouteFromUrl(deeplinkingUrl);
+
+	if (route) {
+		Util.send(mainWindow, 'route', route);
 	};
 
 	if (mainWindow.isMinimized()) {
@@ -612,7 +614,11 @@ app.on('open-url', (e, url) => {
 		return;
 	};
 
-	Util.send(mainWindow, 'route', Util.getRouteFromUrl(url));
+	const route = Util.getRouteFromUrl(url);
+
+	if (route) {
+		Util.send(mainWindow, 'route', route);
+	};
 
 	if (mainWindow.isMinimized()) {
 		mainWindow.restore();
