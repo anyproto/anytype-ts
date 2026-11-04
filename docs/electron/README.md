@@ -6,6 +6,7 @@ Electron main process files for desktop app integration. TypeScript source in `t
 
 - `main.ts` - Main entry point: app lifecycle, window creation, IPC handlers, signal handling, publishes `global.serverAddress` and `global.localApiSecret` for renderers
 - `api.ts` - IPC API handlers for renderer-to-main communication
+  - Touch ID authenticates in the main process and uses the existing PIN unlock broadcast; concurrent prompts and results from an earlier lock/session or sleep cycle are rejected.
 - `config.ts` - App configuration management
 - `menu.ts` - Native application menu (File, Edit, View, etc.)
 - `server.ts` - Local gRPC server management (anytypeHelper): spawn, stdin parent lifeline (`secret <base64url>` first, then `shutdown`), graceful stop

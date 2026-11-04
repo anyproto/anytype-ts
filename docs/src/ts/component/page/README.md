@@ -21,7 +21,7 @@ Navigation uses `U.Router.go(path, options)`. Authentication guards redirect una
 | `select.tsx` | Login/signup selection screen |
 | `login.tsx` | Seed phrase recovery form |
 | `setup.tsx` | Account initialization after recovery |
-| `pinCheck.tsx` | PIN verification |
+| `pinCheck.tsx` | PIN verification, with optional Touch ID on macOS |
 | `onboard.tsx` | Post-registration onboarding |
 | `deleted.tsx` | Deleted/pending account display |
 | `migrate.tsx` | Account migration handler |
@@ -55,6 +55,7 @@ Navigation uses `U.Router.go(path, options)`. Authentication guards redirect una
 Hierarchical settings with `index.tsx` dispatcher:
 - **Account**: `account.tsx`, `delete.tsx`, `personal.tsx`, `phrase.tsx`, `language.tsx`, `api.tsx`
 - **PIN**: `pin/index.tsx` -> `pin/select.tsx` -> `pin/confirm.tsx`
+- Touch ID is opt-in per account on this device; enabling it requires the current PIN. Changing or removing the PIN resets the option.
 - **Import**: `import/index.tsx` -> `import/notion.tsx` (with `notion/help.tsx`, `notion/warning.tsx`), `import/csv.tsx`, `import/obsidian.tsx`; `import/aiSettings.tsx` - AI structure enrichment settings section rendered on the index page: one merged provider dropdown (local providers shielded, cloud, custom), a model dropdown populated by `AIListModels` with recommended entries pinned on top, and the data disclosure
 - **Export**: `export/index.tsx` -> `export/protobuf.tsx` (Any-Block v1), `export/markdown.tsx`, `export/anyBlockV2.tsx` (Any-Block v2, preview)
 - **Space**: `space/index.tsx` -> `space/home.tsx`, `space/list.tsx`, `space/storage.tsx`, `space/notifications.tsx`, `space/share.tsx` (with `share/members.tsx`)
