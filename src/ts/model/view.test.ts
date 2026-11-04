@@ -89,6 +89,20 @@ describe('View', () => {
 
 			expect(view.isBoard()).toBe(false);
 		});
+
+		it('isSplit should return true for Split type', () => {
+			const view = makeView({ type: I.ViewType.Split });
+
+			expect(view.isSplit()).toBe(true);
+			expect(view.isList()).toBe(false);
+			expect(view.isGrid()).toBe(false);
+		});
+
+		it('isSplit should return false for non-Split type', () => {
+			const view = makeView({ type: I.ViewType.List });
+
+			expect(view.isSplit()).toBe(false);
+		});
 	});
 
 	describe('getRelation', () => {

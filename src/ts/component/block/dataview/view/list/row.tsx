@@ -11,7 +11,7 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 
 	const {
 		rootId, block, recordId, style, getRecord, getView, onRefCell, onContext, getIdPrefix, isInline, isCollection,
-		onDragRecordStart, onSelectToggle, onEditModeClick, canCellEdit, onCellClick,
+		onDragRecordStart, onSelectToggle, onEditModeClick, canCellEdit, onCellClick, onRecordClick,
 	} = props;
 	const [ isEditing, setIsEditing ] = useState(false);
 	const nodeRef = useRef(null);
@@ -97,6 +97,12 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 			return;
 		};
 
+		// Split view selects the record in place instead of navigating; a modified click
+		// still falls through to the default open-in-tab/window behaviour.
+		if ((e.button == 0) && !keyboard.withCommand(e) && onRecordClick?.(e, record.id)) {
+			return;
+		};
+
 		if (cb[e.button]) {
 			cb[e.button]();
 		};
@@ -111,6 +117,12 @@ const ListRow = forwardRef<I.RowRef, Props>((props, ref) => {
 
 		e.preventDefault();
 		e.stopPropagation();
+
+		// The row handler is bypassed by stopPropagation, so the host view has to be given
+		// the same chance to claim the click here.
+		if ((e.button == 0) && !keyboard.withCommand(e) && onRecordClick?.(e, record.id)) {
+			return;
+		};
 
 		onCellClick(e, relation.relationKey, record.id);
 	};

@@ -459,6 +459,7 @@ const MenuViewLayout = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 		[I.ViewType.Board]: 'dataview/view/kanban',
 		[I.ViewType.Calendar]: 'dataview/view/calendar',
 		[I.ViewType.Graph]: 'dataview/view/graph',
+		[I.ViewType.Split]: 'dataview/view/split',
 	};
 
 	const layouts = U.Menu.getViews().map((it: any) => {
