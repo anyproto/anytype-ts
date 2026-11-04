@@ -52,6 +52,7 @@ class UpdateManager {
 		autoUpdater.on('error', (err: Error) => {
 			Util.log(`Error: ${err}`);
 			Util.send(this.win, 'update-error', err, this.autoUpdate, this.isDownloading);
+			this.isUpdating = false;
 			this.isDownloading = false;
 		});
 
