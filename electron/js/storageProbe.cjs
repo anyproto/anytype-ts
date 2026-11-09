@@ -1,5 +1,5 @@
 // Where does the vault data physically live: drive type, filesystem, bus. Feeds the storage_* tags on
-// middleware reports (MW_DB_CORRUPTION and friends) and the Windows half of the vault location warning.
+// middleware diagnostic reports and the Windows half of the vault location warning.
 // Pure helpers plus an injectable PowerShell runner: no electron imports, so electron/ts/storageProbe.test.ts
 // can load this file. preload.cjs wires it to the real system.
 
@@ -35,8 +35,54 @@ const WIN_BUS_TYPES = [
 	'sd', 'mmc', 'virtual', 'file_backed_virtual', 'storage_spaces', 'nvme', 'scm', 'ufs',
 ];
 
-// Lowercase identifier safe for a Sentry tag: "File Backed Virtual" -> "file_backed_virtual", "NTFS" -> "ntfs"
+// Lowercase identifier: "File Backed Virtual" -> "file_backed_virtual", "NTFS" -> "ntfs"
 const token = (v) => String(v || '').trim().toLowerCase().replace(/[^a-z0-9.]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 32);
+
+// Filesystems that live on a local device: the only ones that make a location 'local'
+const LOCAL_FS_TYPES = new Set([
+	'apfs', 'hfs', 'ntfs', 'ntfs3', 'refs', 'exfat', 'fat', 'fat16', 'fat32', 'vfat', 'msdos',
+	'ext2', 'ext3', 'ext4', 'btrfs', 'xfs', 'zfs', 'f2fs', 'jfs', 'reiserfs', 'bcachefs', 'fuseblk',
+	'udf', 'cdfs', 'iso9660', 'tmpfs',
+]);
+
+// Network or ambiguous filesystems: reported by name, never taken as proof of 'local'
+const OTHER_FS_TYPES = new Set([
+	'nfs', 'nfs4', 'smbfs', 'cifs', 'smb3', 'afpfs', 'webdav', 'davfs', 'ftp', '9p', 'ceph', 'glusterfs', 'afs',
+	'fuse', 'macfuse', 'osxfuse', 'fuse.sshfs', 'fuse.rclone', 'fuse.davfs2', 'fuse.gcsfuse', 'fuse.s3fs',
+	'overlay', 'nullfs', 'ecryptfs', 'squashfs', 'lifs',
+]);
+
+const BUS_TYPES = new Set([ ...WIN_BUS_TYPES, 'network', 'other' ]);
+const BUS_ALIASES = { spaces: 'storage_spaces', filebackedvirtual: 'file_backed_virtual', fibre: 'fibre_channel' };
+
+// Allowlisted values only: these end up in diagnostics, and a fuse subtype or an odd driver name is free text
+const fsTypeOf = (v) => {
+	const t = token(v);
+
+	if (!t || (t == UNKNOWN)) {
+		return UNKNOWN;
+	};
+	if (LOCAL_FS_TYPES.has(t) || OTHER_FS_TYPES.has(t)) {
+		return t;
+	};
+	return t.startsWith('fuse.') ? 'fuse' : 'other';
+};
+
+const busTypeOf = (v) => {
+	const s = String(v || '').trim();
+
+	if (!s) {
+		return UNKNOWN;
+	};
+	if (/^\d+$/.test(s)) {
+		return WIN_BUS_TYPES[Number(s)] || 'other';
+	};
+
+	const t = token(s);
+	const b = BUS_ALIASES[t] || t;
+
+	return BUS_TYPES.has(b) ? b : 'other';
+};
 
 const unknownDrive = () => ({ driveType: UNKNOWN, fsType: UNKNOWN, busType: UNKNOWN });
 
@@ -87,12 +133,11 @@ const parseWinDriveOutput = (out) => {
 
 		if ((parts[0] == 'D') && (parts.length >= 2)) {
 			ret.driveType = WIN_DRIVE_TYPES[token(parts[1])] || UNKNOWN;
-			ret.fsType = token(parts[2]) || UNKNOWN;
+			ret.fsType = fsTypeOf(parts[2]);
 		};
 
 		if ((parts[0] == 'B') && (parts.length >= 2)) {
-			const b = String(parts[1] || '').trim();
-			ret.busType = /^\d+$/.test(b) ? (WIN_BUS_TYPES[Number(b)] || UNKNOWN) : (token(b) || UNKNOWN);
+			ret.busType = busTypeOf(parts[1]);
 		};
 	});
 
@@ -279,8 +324,8 @@ const parseLinuxMounts = (text) => {
 			return;
 		};
 
-		const mnt = parts[1].replace(/\\([0-7]{3})/g, (s, oct) => String.fromCharCode(parseInt(oct, 8)));
-		ret.push({ mnt, type: parts[2] });
+		const unescape = (s) => s.replace(/\\([0-7]{3})/g, (m, oct) => String.fromCharCode(parseInt(oct, 8)));
+		ret.push({ dev: unescape(parts[0]), mnt: unescape(parts[1]), type: parts[2] });
 	});
 	return ret;
 };
@@ -310,13 +355,53 @@ const findMount = (p, entries, lastWins) => {
 	return best;
 };
 
-// The volume the OS boots from. On macOS user data is on the Data volume, which /Users etc. reach through
-// firmlinks, so a path there resolves to "/" in the mount table.
-const isSystemMount = (mnt, platform) => {
-	if (platform == 'darwin') {
-		return [ '/', '/System/Volumes/Data' ].includes(mnt);
+// Whether mount is on the volume the OS boots from: true, false, or null when that cannot be told.
+// macOS: user data is on the Data volume, which /Users etc. reach through firmlinks, so a path there
+// resolves to "/" in the mount table.
+// Linux: same block device as "/". That keeps /home on a Btrfs subvolume of the root filesystem on the
+// system drive (st_dev would not: every subvolume gets its own). Without a /dev source on both sides
+// (overlay, tmpfs, sandboxes) the answer is null, not a guess.
+const isSystemVolume = (mount, platform, entries) => {
+	if (!mount) {
+		return null;
 	};
-	return mnt == '/';
+	if (platform == 'darwin') {
+		return [ '/', '/System/Volumes/Data' ].includes(mount.mnt);
+	};
+	if (mount.mnt == '/') {
+		return true;
+	};
+
+	const root = findMount('/', entries, true);
+	const isDevice = (dev) => /^\/dev\//.test(String(dev || ''));
+
+	if (!root || !isDevice(root.dev) || !isDevice(mount.dev)) {
+		return null;
+	};
+	return mount.dev == root.dev;
+};
+
+// read() behind a ttl cache. get(true) always reads (and refreshes the cache): for checks the user acts on,
+// where a share mounted seconds ago must show up. A failed read caches null.
+const cachedReader = (read, param) => {
+	param = param || {};
+
+	const ttl = param.ttl || 30000;
+	const now = param.now || Date.now;
+
+	let cache = null;
+
+	return (fresh) => {
+		if (!fresh && cache && ((now() - cache.time) < ttl)) {
+			return cache.value;
+		};
+
+		let value = null;
+		try { value = read(); } catch (e) {};
+
+		cache = { time: now(), value };
+		return value;
+	};
 };
 
 const normalizeForCompare = (p, platform) => {
@@ -332,24 +417,28 @@ const normalizeForCompare = (p, platform) => {
 	return ((platform == 'win32') || (platform == 'darwin')) ? s.toLowerCase() : s;
 };
 
-// p is base itself or inside it. Plain string logic, so "C:\Anytype2" is not inside "C:\Anytype".
-const isInside = (p, base, platform) => {
+// p is one of the places the app puts data by default: the default userData itself, or its data folder
+// (plain, or per alpha/beta channel). Anything else, a DATA_PATH inside userData included, is a moved location.
+const isDefaultDataPath = (p, defaultUserData, platform) => {
 	const a = normalizeForCompare(p, platform);
-	const b = normalizeForCompare(base, platform);
+	const b = normalizeForCompare(defaultUserData, platform);
 	const sep = (platform == 'win32') ? '\\' : '/';
 
 	if (!a || !b) {
 		return false;
 	};
-	return (a == b) || a.startsWith(b + sep);
+	return [ b, `${b}${sep}data`, `${b}${sep}alpha${sep}data`, `${b}${sep}beta${sep}data` ].includes(a);
 };
 
 const tri = (v) => ((v === true) || (v === false)) ? v : null;
 
+// Windows drive types that are the OS's own word for a local device
+const LOCAL_DRIVE_TYPES = [ 'fixed', 'removable', 'other' ];
+
 // Flags only: the path never makes it into the result. Every field is set, unknowns explicitly.
-// check: vault path classification ({ kind: ''|'cloud'|'network', provider }).
+// check: vault path classification ({ kind: ''|'cloud'|'network', provider, resolved }).
 // drive: Windows drive info, or null. mount: macOS/Linux mount table entry, or null.
-// netKnown: whether "no network found" is conclusive (drive type resolved, or mount found).
+// 'local' needs positive evidence: a local Windows drive type, or a filesystem on LOCAL_FS_TYPES.
 const buildStorageInfo = (param) => {
 	param = param || {};
 
@@ -357,17 +446,27 @@ const buildStorageInfo = (param) => {
 	const drive = param.drive || null;
 	const mount = param.mount || null;
 	const known = param.knownProviders || null;
+	const isDefaultWorkdir = !!param.isDefaultWorkdir;
+
+	// Unresolvable path (dead link, missing folder): the unresolved path only describes where the link
+	// itself sits, not the data, so nothing about the storage is known
+	if (check.resolved === false) {
+		return { kind: UNKNOWN, provider: '', driveType: UNKNOWN, fsType: UNKNOWN, busType: UNKNOWN, onSystemDrive: null, isDefaultWorkdir };
+	};
+
+	const fsType = drive ? fsTypeOf(drive.fsType) : (mount ? fsTypeOf(mount.type) : UNKNOWN);
 
 	let driveType = drive ? (drive.driveType || UNKNOWN) : ((check.kind == 'network') ? 'remote' : UNKNOWN);
-	let kind = '';
+	let kind = UNKNOWN;
 
 	if ((check.kind == 'cloud') || (check.kind == 'network')) {
 		kind = check.kind;
 	} else
 	if (driveType == 'remote') {
 		kind = 'network';
-	} else {
-		kind = param.netKnown ? 'local' : UNKNOWN;
+	} else
+	if (drive ? LOCAL_DRIVE_TYPES.includes(driveType) : LOCAL_FS_TYPES.has(fsType)) {
+		kind = 'local';
 	};
 
 	if ((kind == 'network') && (driveType == UNKNOWN)) {
@@ -384,8 +483,7 @@ const buildStorageInfo = (param) => {
 		provider = 'Other';
 	};
 
-	const fsType = drive ? (drive.fsType || UNKNOWN) : ((mount && token(mount.type)) || UNKNOWN);
-	let busType = drive ? (drive.busType || UNKNOWN) : UNKNOWN;
+	let busType = drive ? busTypeOf(drive.busType) : UNKNOWN;
 
 	if ((driveType == 'remote') && (busType == UNKNOWN)) {
 		busType = 'network';
@@ -398,7 +496,7 @@ const buildStorageInfo = (param) => {
 		fsType,
 		busType,
 		onSystemDrive: tri(param.onSystemDrive),
-		isDefaultWorkdir: !!param.isDefaultWorkdir,
+		isDefaultWorkdir,
 	};
 };
 
@@ -416,10 +514,16 @@ module.exports = {
 	createDriveCache,
 	winNetworkType,
 	winClassifyPending,
+	LOCAL_FS_TYPES,
+	OTHER_FS_TYPES,
+	BUS_TYPES,
+	fsTypeOf,
+	busTypeOf,
 	parseMacMounts,
 	parseLinuxMounts,
 	findMount,
-	isSystemMount,
-	isInside,
+	isSystemVolume,
+	cachedReader,
+	isDefaultDataPath,
 	buildStorageInfo,
 };

@@ -44,6 +44,10 @@ const SKIP_ERROR_CODES = {
 // Commands whose response mapper also runs when the RPC returned an error
 const MAP_ON_ERROR = [ 'ObjectListExport', 'ObjectExport', 'MembershipV2GetStatus', 'MembershipV2GetProducts' ];
 
+// Longest a middleware report waits for its storage tags: the Windows drive lookup is bounded at 3s, and
+// whatever it printed by then is used. An unload in the meantime sends the report untagged
+const STORAGE_TAGS_WAIT = 3500;
+
 /**
  * Dispatcher class handles all communication between the Electron frontend
  * and the anytype-heart middleware via gRPC.
@@ -364,17 +368,16 @@ class Dispatcher {
 
 					console.log('[DebugProfileCreated] event:', mapped);
 
-					// Storage flags split reports such as MW_DB_CORRUPTION by where the data lives (network share,
-					// cloud folder, USB drive, exFAT...). S.Common.dataPath is the root AccountSelect opens, set in
-					// onInit before that runs. storageInfo is bounded and never rejects, so the report always goes out
-					const report = (storage: any) => Sentry.withScope(scope => {
+					// Storage flags split the reports by where the data lives (network share, cloud folder, USB drive,
+					// exFAT...). S.Common.dataPath is the root AccountSelect opens, set in onInit before that runs.
+					// withStorageTags sends exactly once: tagged within the wait, or untagged on unload
+					const report = (tags: Record<string, string>) => Sentry.withScope(scope => {
 						scope.setLevel('info');
 						scope.setTag('report', 'mw_profile');
 						scope.setTag('reason', reason);
 						scope.setFingerprint([ 'mw-profile', reason ]);
 
 						try {
-							const tags = U.Common.storageTags(storage);
 							for (const key in tags) {
 								scope.setTag(key, tags[key]);
 							};
@@ -406,7 +409,7 @@ class Dispatcher {
 						Sentry.captureMessage(`MW_${reason}`);
 					});
 
-					U.Common.storageInfo(S.Common.dataPath).then(report, () => report(null));
+					U.Common.withStorageTags(S.Common.dataPath, report, STORAGE_TAGS_WAIT);
 					break;
 				};
 

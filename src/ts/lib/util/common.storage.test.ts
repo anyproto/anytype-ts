@@ -49,6 +49,10 @@ describe('storageTags', () => {
 		expect(got.storage_kind).toBe('local');
 	});
 
+	it('reads unknown, not none, for the provider of an unknown location', () => {
+		expect(UtilCommon.storageTags({ kind: 'unknown', provider: '' }).storage_provider).toBe('unknown');
+	});
+
 	it('reads unknown everywhere when there is no info, never local', () => {
 		const want = {
 			storage_kind: 'unknown',
@@ -129,5 +133,82 @@ describe('checkVaultPathReady', () => {
 
 	it('resolves the web fallback outside electron', async () => {
 		await expect(UtilCommon.checkVaultPathReady('/x')).resolves.toEqual({ unsafe: false, kind: '', provider: '', path: '/x' });
+	});
+});
+
+describe('withStorageTags', () => {
+	const UNKNOWN_TAGS = UtilCommon.storageTags(null);
+
+	// The test window is a plain object: give it just enough of an event target
+	const listen = () => {
+		const listeners: Record<string, Set<any>> = {};
+		const win = (globalThis as any).window;
+
+		win.addEventListener = (type: string, fn: any) => (listeners[type] = listeners[type] || new Set()).add(fn);
+		win.removeEventListener = (type: string, fn: any) => listeners[type]?.delete(fn);
+
+		return {
+			fire: (type: string) => [ ...(listeners[type] || []) ].forEach(fn => fn()),
+			count: () => Object.values(listeners).reduce((n, set) => n + set.size, 0),
+		};
+	};
+
+	it('sends once with the tags when the info arrives, and stops listening', async () => {
+		const events = listen();
+		const send = vi.fn();
+
+		setElectron({ storageInfo: () => Promise.resolve({ kind: 'local', provider: '', driveType: 'fixed', fsType: 'ntfs', busType: 'nvme', onSystemDrive: true, isDefaultWorkdir: true }) });
+		UtilCommon.withStorageTags('C:\\data', send, 100);
+
+		await vi.waitFor(() => expect(send).toHaveBeenCalledTimes(1));
+		expect(send.mock.calls[0][0]).toMatchObject({ storage_kind: 'local', storage_fs_type: 'ntfs' });
+		expect(events.count()).toBe(0);
+
+		events.fire('pagehide');
+		expect(send).toHaveBeenCalledTimes(1);
+	});
+
+	it('sends once with unknown tags when the lookup fails', async () => {
+		listen();
+		const send = vi.fn();
+
+		setElectron({ storageInfo: () => Promise.reject(new Error('powershell blocked')) });
+		UtilCommon.withStorageTags('Z:\\data', send, 100);
+
+		await vi.waitFor(() => expect(send).toHaveBeenCalledTimes(1));
+		expect(send).toHaveBeenCalledWith(UNKNOWN_TAGS);
+	});
+
+	it('sends once with unknown tags when the lookup times out', async () => {
+		vi.useFakeTimers();
+		listen();
+		const send = vi.fn();
+
+		setElectron({ storageInfo: () => new Promise(() => {}) });
+		UtilCommon.withStorageTags('Z:\\data', send, 100);
+
+		await vi.advanceTimersByTimeAsync(150);
+		expect(send).toHaveBeenCalledTimes(1);
+		expect(send).toHaveBeenCalledWith(UNKNOWN_TAGS);
+	});
+
+	it('sends at once on unload, and ignores the answer that comes later', async () => {
+		const events = listen();
+		const send = vi.fn();
+
+		let answer: (v: any) => void = () => {};
+		setElectron({ storageInfo: () => new Promise(resolve => { answer = resolve; }) });
+		UtilCommon.withStorageTags('Z:\\data', send, 1000);
+
+		events.fire('beforeunload');
+		expect(send).toHaveBeenCalledTimes(1);
+		expect(send).toHaveBeenCalledWith(UNKNOWN_TAGS);
+
+		events.fire('pagehide');
+		answer({ kind: 'network' });
+		await new Promise(resolve => setTimeout(resolve, 0));
+
+		expect(send).toHaveBeenCalledTimes(1);
+		expect(events.count()).toBe(0);
 	});
 });

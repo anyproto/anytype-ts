@@ -127,20 +127,48 @@ class UtilCommon {
 	storageTags (info: any): Record<string, string> {
 		const flag = (v: any) => ((v === true) || (v === false)) ? String(v) : 'unknown';
 
-		// No info at all (web mode, lookup failed or timed out): even "no provider" is not known then
-		const provider = info ? String(info.provider || 'none') : 'unknown';
-
 		info = info || {};
+
+		// "No provider" is only a fact for a location known to be local
+		const provider = info.provider || ((info.kind == 'local') ? 'none' : 'unknown');
 
 		return {
 			storage_kind: String(info.kind || 'unknown'),
-			storage_provider: provider,
+			storage_provider: String(provider),
 			storage_drive_type: String(info.driveType || 'unknown'),
 			storage_fs_type: String(info.fsType || 'unknown'),
 			storage_bus_type: String(info.busType || 'unknown'),
 			storage_on_system_drive: flag(info.onSystemDrive),
 			storage_is_default_workdir: flag(info.isDefaultWorkdir),
 		};
+	};
+
+	/**
+	 * Calls send exactly once with the storage tags for a path: when storageInfo answers (at most timeout ms),
+	 * or at once with all-unknown tags if the page unloads first, so a reload never swallows the report.
+	 * @param {string} p - The path to describe.
+	 * @param {function} send - Receives the tags (see storageTags).
+	 * @param {number} [timeout] - Upper bound on the wait for storageInfo.
+	 */
+	withStorageTags (p: string, send: (tags: Record<string, string>) => void, timeout?: number) {
+		const events = [ 'pagehide', 'beforeunload' ];
+
+		let done = false;
+
+		const finish = (info: any) => {
+			if (done) {
+				return;
+			};
+
+			done = true;
+			events.forEach(it => window.removeEventListener(it, onUnload));
+			send(this.storageTags(info));
+		};
+
+		const onUnload = () => finish(null);
+
+		events.forEach(it => window.addEventListener(it, onUnload));
+		this.storageInfo(p, timeout).then(finish, () => finish(null));
 	};
 
 	/**

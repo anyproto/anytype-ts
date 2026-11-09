@@ -115,21 +115,10 @@ const dropboxFolders = () => {
 // macOS mount names that mean a remote filesystem.
 const MAC_REMOTE_FSTYPES = { smbfs: 'SMB', nfs: 'NFS', webdav: 'WebDAV', afpfs: 'AFP', ftp: 'FTP' };
 
-// Mount tables: [{ mnt, type }], or null when unreadable. macOS shells out, so its table is cached.
-const MOUNT_CACHE_TTL = 30000;
-let macMountCache = null;
-
-const macMounts = () => {
-	if (macMountCache && ((Date.now() - macMountCache.time) < MOUNT_CACHE_TTL)) {
-		return macMountCache.list;
-	};
-
-	let list = null;
-	try { list = Probe.parseMacMounts(execFileSync('/sbin/mount', { encoding: 'utf8', timeout: 2000 })); } catch (e) {};
-
-	macMountCache = { time: Date.now(), list };
-	return list;
-};
+// Mount tables: [{ mnt, type }], or null when unreadable. macOS shells out: macMounts(true) reads afresh
+// (vault location checks, so a share mounted a moment ago counts), macMounts(false) may reuse a read from
+// the last 30s (diagnostics).
+const macMounts = Probe.cachedReader(() => Probe.parseMacMounts(execFileSync('/sbin/mount', { encoding: 'utf8', timeout: 2000 })), { ttl: 30000 });
 
 const linuxMounts = () => {
 	try {
@@ -139,13 +128,13 @@ const linuxMounts = () => {
 	};
 };
 
-// The mount containing p, or null when the table is unreadable or nothing matches.
-const mountFor = (p) => {
+// Mount table for the diagnostics, or null where there is none to read.
+const mountTable = () => {
 	if (process.platform == 'darwin') {
-		return Probe.findMount(p, macMounts(), false);
+		return macMounts(false);
 	};
 	if (process.platform == 'linux') {
-		return Probe.findMount(p, linuxMounts(), true);
+		return linuxMounts();
 	};
 	return null;
 };
@@ -196,7 +185,7 @@ const networkType = (p) => {
 
 	// macOS: statfs.type is not a usable name — parse the mount table instead.
 	if (process.platform == 'darwin') {
-		const mount = Probe.findMount(p, macMounts(), false);
+		const mount = Probe.findMount(p, macMounts(true), false);
 		if (mount && MAC_REMOTE_FSTYPES[mount.type]) {
 			return MAC_REMOTE_FSTYPES[mount.type];
 		};
@@ -206,16 +195,17 @@ const networkType = (p) => {
 };
 
 // Classifies a path as a cloud-synced or network location.
-// Returns { unsafe, kind: ''|'cloud'|'network', provider, path }.
+// Returns { unsafe, kind: ''|'cloud'|'network', provider, path, resolved: whether realpath succeeded }.
 const vaultPathClassify = (input) => {
 	let p = String(input || app.getPath('userData'));
-	try { p = fs.realpathSync.native(p); } catch (e) {};   // resolve symlinks — users symlink userData into synced folders
+	let resolved = false;
+	try { p = fs.realpathSync.native(p); resolved = true; } catch (e) {};   // resolve symlinks — users symlink userData into synced folders
 
 	// Windows realpath can return long-path form: "\\?\C:\..." or "\\?\UNC\server\share".
 	// Normalize it or every Windows path would match the UNC test below.
 	p = p.replace(/^\\\\\?\\UNC\\/i, '\\\\').replace(/^\\\\\?\\/, '');
 
-	const result = { unsafe: false, kind: '', provider: '', path: p };
+	const result = { unsafe: false, kind: '', provider: '', path: p, resolved };
 	const home = os.homedir();
 	const sep = path.sep;
 	const lc = p.toLowerCase();
@@ -338,28 +328,35 @@ const storageInfo = (input) => {
 
 		// Default workdir = the data was never moved (Settings, userDataPath, DATA_PATH). Compared unresolved:
 		// a symlinked default location still counts as default, its target shows up in the other flags
-		isDefaultWorkdir = Probe.isInside(raw, path.join(app.getPath('appData'), app.getName()), platform);
+		isDefaultWorkdir = Probe.isDefaultDataPath(raw, path.join(app.getPath('appData'), app.getName()), platform);
 
 		const p = check.path;
+
+		// Unresolvable (dead link, missing folder): nothing to probe, everything reads unknown
+		if (check.resolved === false) {
+			return Promise.resolve(build({}));
+		};
 
 		if (platform == 'win32') {
 			const letter = Probe.winDriveLetter(p);
 
 			if (!letter) {
 				const isUnc = Probe.isUncPath(p);
-				return Promise.resolve(build({ drive: isUnc ? Probe.REMOTE_DRIVE : null, netKnown: isUnc, onSystemDrive: isUnc ? false : null }));
+				return Promise.resolve(build({ drive: isUnc ? Probe.REMOTE_DRIVE : null, onSystemDrive: isUnc ? false : null }));
 			};
 
 			const onSystemDrive = letter == winSystemLetter();
 
 			return winDrives.get(letter).then(
-				drive => build({ drive, netKnown: drive.driveType != Probe.UNKNOWN, onSystemDrive }),
+				drive => build({ drive, onSystemDrive }),
 				() => build({ onSystemDrive }),
 			);
 		};
 
-		const mount = mountFor(p);
-		return Promise.resolve(build({ mount, netKnown: !!mount, onSystemDrive: mount ? Probe.isSystemMount(mount.mnt, platform) : null }));
+		const table = mountTable();
+		const mount = Probe.findMount(p, table, platform == 'linux');
+
+		return Promise.resolve(build({ mount, onSystemDrive: Probe.isSystemVolume(mount, platform, table) }));
 	} catch (e) {
 		try {
 			return Promise.resolve(build({}));

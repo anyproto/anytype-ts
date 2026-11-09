@@ -110,7 +110,7 @@ describe('parseWinDriveOutput', () => {
 		expect(Probe.parseWinDriveOutput('D|4|NTFS')).toEqual({ driveType: 'remote', fsType: 'ntfs', busType: 'network' });
 		expect(Probe.parseWinDriveOutput('D|3|FAT32\nB|11')).toEqual({ driveType: 'fixed', fsType: 'fat32', busType: 'sata' });
 		expect(Probe.parseWinDriveOutput('D|2|exFAT\nB|7')).toEqual({ driveType: 'removable', fsType: 'exfat', busType: 'usb' });
-		expect(Probe.parseWinDriveOutput('D|5|CDFS\nB|99')).toEqual({ driveType: 'other', fsType: 'cdfs', busType: 'unknown' });
+		expect(Probe.parseWinDriveOutput('D|5|CDFS\nB|99')).toEqual({ driveType: 'other', fsType: 'cdfs', busType: 'other' });
 	});
 
 	it('normalizes multi-word bus names', () => {
@@ -311,6 +311,34 @@ describe('winNetworkType and winClassifyPending', () => {
 	});
 });
 
+describe('fsTypeOf and busTypeOf', () => {
+	it('keeps allowlisted filesystems', () => {
+		expect(Probe.fsTypeOf('NTFS')).toBe('ntfs');
+		expect(Probe.fsTypeOf('exFAT')).toBe('exfat');
+		expect(Probe.fsTypeOf('FAT32')).toBe('fat32');
+		expect(Probe.fsTypeOf('ReFS')).toBe('refs');
+		expect(Probe.fsTypeOf('apfs')).toBe('apfs');
+		expect(Probe.fsTypeOf('fuse.sshfs')).toBe('fuse.sshfs');
+	});
+
+	it('never passes free text through', () => {
+		expect(Probe.fsTypeOf('fuse.roman@nas-backup')).toBe('fuse');
+		expect(Probe.fsTypeOf('mycompanyfs')).toBe('other');
+		expect(Probe.fsTypeOf('')).toBe('unknown');
+		expect(Probe.fsTypeOf('unknown')).toBe('unknown');
+	});
+
+	it('maps bus names and codes onto the allowlist', () => {
+		expect(Probe.busTypeOf('NVMe')).toBe('nvme');
+		expect(Probe.busTypeOf('7')).toBe('usb');
+		expect(Probe.busTypeOf('Spaces')).toBe('storage_spaces');
+		expect(Probe.busTypeOf('File Backed Virtual')).toBe('file_backed_virtual');
+		expect(Probe.busTypeOf('Some Vendor Bus')).toBe('other');
+		expect(Probe.busTypeOf('42')).toBe('other');
+		expect(Probe.busTypeOf('')).toBe('unknown');
+	});
+});
+
 describe('mount tables', () => {
 	it('parses macOS mount output, mount points with " (" included', () => {
 		const mounts = Probe.parseMacMounts(MAC_MOUNTS);
@@ -333,65 +361,150 @@ describe('mount tables', () => {
 	it('parses Linux mounts with escapes and picks the mount on top', () => {
 		const mounts = Probe.parseLinuxMounts(LINUX_MOUNTS);
 
-		expect(Probe.findMount('/media/roman/My Drive/anytype', mounts, true)).toEqual({ mnt: '/media/roman/My Drive', type: 'exfat' });
-		expect(Probe.findMount('/mnt/nas/anytype', mounts, true)).toEqual({ mnt: '/mnt/nas', type: 'fuseblk' });
-		expect(Probe.findMount('/home/roman/.config/anytype', mounts, true)).toEqual({ mnt: '/', type: 'ext4' });
+		expect(Probe.findMount('/media/roman/My Drive/anytype', mounts, true)).toMatchObject({ dev: '/dev/sda1', mnt: '/media/roman/My Drive', type: 'exfat' });
+		expect(Probe.findMount('/mnt/nas/anytype', mounts, true)).toMatchObject({ dev: '/dev/sdb1', mnt: '/mnt/nas', type: 'fuseblk' });
+		expect(Probe.findMount('/home/roman/.config/anytype', mounts, true)).toMatchObject({ dev: '/dev/nvme0n1p2', mnt: '/', type: 'ext4' });
 	});
 
 	it('returns null without a table', () => {
 		expect(Probe.findMount('/x', null, true)).toBe(null);
 		expect(Probe.findMount('/x', [], false)).toBe(null);
 	});
+});
 
-	it('knows the boot volume', () => {
-		expect(Probe.isSystemMount('/', 'darwin')).toBe(true);
-		expect(Probe.isSystemMount('/System/Volumes/Data', 'darwin')).toBe(true);
-		expect(Probe.isSystemMount('/Volumes/T7', 'darwin')).toBe(false);
-		expect(Probe.isSystemMount('/', 'linux')).toBe(true);
-		expect(Probe.isSystemMount('/home', 'linux')).toBe(false);
+describe('isSystemVolume', () => {
+	const linux = (text: string) => Probe.parseLinuxMounts(text);
+	const on = (p: string, entries: any[]) => Probe.isSystemVolume(Probe.findMount(p, entries, true), 'linux', entries);
+
+	it('knows the macOS system and data volumes', () => {
+		const mounts = Probe.parseMacMounts(MAC_MOUNTS);
+		const mac = (p: string) => Probe.isSystemVolume(Probe.findMount(p, mounts, false), 'darwin', mounts);
+
+		expect(mac('/Users/me/Library/Application Support/anytype/data')).toBe(true);
+		expect(mac('/Volumes/T7/anytype')).toBe(false);
+	});
+
+	it('keeps a Btrfs /home subvolume of the root filesystem on the system drive', () => {
+		const entries = linux([
+			'/dev/nvme0n1p2 / btrfs rw,subvol=/@ 0 0',
+			'/dev/nvme0n1p2 /home btrfs rw,subvol=/@home 0 0',
+		].join('\n'));
+
+		expect(on('/home/me/.config/anytype/data', entries)).toBe(true);
+	});
+
+	it('tells a separate partition or a USB drive apart', () => {
+		const entries = linux([
+			'/dev/nvme0n1p2 / ext4 rw 0 0',
+			'/dev/nvme0n1p3 /home ext4 rw 0 0',
+			'/dev/sda1 /media/me/usb exfat rw 0 0',
+		].join('\n'));
+
+		expect(on('/home/me/.config/anytype/data', entries)).toBe(false);
+		expect(on('/media/me/usb/anytype', entries)).toBe(false);
+		expect(on('/etc/anytype', entries)).toBe(true);
+	});
+
+	it('answers null when the devices cannot be compared', () => {
+		const entries = linux([
+			'overlay / overlay rw 0 0',
+			'/dev/sda2 /home ext4 rw 0 0',
+		].join('\n'));
+
+		expect(on('/home/me/anytype', entries)).toBe(null);
+		expect(Probe.isSystemVolume(null, 'linux', entries)).toBe(null);
 	});
 });
 
-describe('isInside', () => {
-	it('compares Windows paths case-insensitively, either slash, long-path prefix stripped', () => {
-		const base = 'C:\\Users\\Me\\AppData\\Roaming\\anytype';
+describe('cachedReader', () => {
+	it('reuses a recent read, and reads afresh when asked to', () => {
+		let time = 0;
+		const read = vi.fn(() => `table ${read.mock.calls.length}`);
+		const get = Probe.cachedReader(read, { ttl: 1000, now: () => time });
 
-		expect(Probe.isInside('c:\\users\\me\\appdata\\roaming\\Anytype\\data', base, 'win32')).toBe(true);
-		expect(Probe.isInside('C:/Users/Me/AppData/Roaming/anytype/beta/data', base, 'win32')).toBe(true);
-		expect(Probe.isInside('\\\\?\\C:\\Users\\Me\\AppData\\Roaming\\anytype', base, 'win32')).toBe(true);
-		expect(Probe.isInside('C:\\Users\\Me\\AppData\\Roaming\\anytype2\\data', base, 'win32')).toBe(false);
-		expect(Probe.isInside('D:\\anytype\\data', base, 'win32')).toBe(false);
+		expect(get(false)).toBe('table 1');
+		expect(get(false)).toBe('table 1');
+
+		// A share mounted a moment ago must show up for a check the user acts on
+		expect(get(true)).toBe('table 2');
+		expect(get(false)).toBe('table 2');
+
+		time = 2000;
+		expect(get(false)).toBe('table 3');
+		expect(read).toHaveBeenCalledTimes(3);
+	});
+
+	it('caches a failed read as null', () => {
+		const get = Probe.cachedReader(() => {
+			throw new Error('no mount');
+		});
+
+		expect(get(true)).toBe(null);
+		expect(get(false)).toBe(null);
+	});
+});
+
+describe('isDefaultDataPath', () => {
+	const winBase = 'C:\\Users\\Me\\AppData\\Roaming\\anytype';
+
+	it('accepts the default userData and its data folders, any case or slash on Windows', () => {
+		expect(Probe.isDefaultDataPath('c:\\users\\me\\appdata\\roaming\\Anytype\\data', winBase, 'win32')).toBe(true);
+		expect(Probe.isDefaultDataPath('C:/Users/Me/AppData/Roaming/anytype/beta/data', winBase, 'win32')).toBe(true);
+		expect(Probe.isDefaultDataPath('\\\\?\\C:\\Users\\Me\\AppData\\Roaming\\anytype\\', winBase, 'win32')).toBe(true);
+	});
+
+	it('rejects moved locations, inside the default folder included', () => {
+		expect(Probe.isDefaultDataPath('C:\\Users\\Me\\AppData\\Roaming\\anytype\\custom-vault', winBase, 'win32')).toBe(false);
+		expect(Probe.isDefaultDataPath('C:\\Users\\Me\\AppData\\Roaming\\anytype2\\data', winBase, 'win32')).toBe(false);
+		expect(Probe.isDefaultDataPath('D:\\anytype\\data', winBase, 'win32')).toBe(false);
 	});
 
 	it('is case-sensitive on Linux', () => {
-		expect(Probe.isInside('/home/me/.config/anytype/data', '/home/me/.config/anytype/', 'linux')).toBe(true);
-		expect(Probe.isInside('/home/me/.config/Anytype/data', '/home/me/.config/anytype', 'linux')).toBe(false);
+		expect(Probe.isDefaultDataPath('/home/me/.config/anytype/data', '/home/me/.config/anytype/', 'linux')).toBe(true);
+		expect(Probe.isDefaultDataPath('/home/me/.config/Anytype/data', '/home/me/.config/anytype', 'linux')).toBe(false);
 	});
 
 	it('is false for empty input', () => {
-		expect(Probe.isInside('', '/a', 'linux')).toBe(false);
-		expect(Probe.isInside('/a', '', 'linux')).toBe(false);
+		expect(Probe.isDefaultDataPath('', '/a', 'linux')).toBe(false);
+		expect(Probe.isDefaultDataPath('/a/data', '', 'linux')).toBe(false);
 	});
 });
 
 describe('buildStorageInfo', () => {
 	const KEYS = [ 'busType', 'driveType', 'fsType', 'isDefaultWorkdir', 'kind', 'onSystemDrive', 'provider' ];
-	const local = (path: string) => ({ unsafe: false, kind: '', provider: '', path });
+	const KINDS = [ 'local', 'cloud', 'network', 'unknown' ];
+	const DRIVE_TYPES = [ 'fixed', 'removable', 'remote', 'other', 'unknown' ];
+	const FS_TYPES = new Set([ ...Probe.LOCAL_FS_TYPES, ...Probe.OTHER_FS_TYPES, 'fuse', 'other', 'unknown' ]);
+	const local = (path: string) => ({ unsafe: false, kind: '', provider: '', path, resolved: true });
 
-	it('returns flags only, never the path', () => {
-		const path = 'D:\\Secret Project\\anytype\\data';
-		const got = Probe.buildStorageInfo({
-			check: local(path),
-			drive: { driveType: 'fixed', fsType: 'exfat', busType: 'usb' },
-			netKnown: true,
-			onSystemDrive: false,
-			isDefaultWorkdir: false,
-			knownProviders: KNOWN,
-		});
-
+	// Every value is from a closed set, so no path or account text can get through
+	const expectFlagsOnly = (got: any) => {
 		expect(Object.keys(got).sort()).toEqual(KEYS);
-		expect(JSON.stringify(got)).not.toContain('Secret');
-		expect(JSON.stringify(got)).not.toContain('anytype');
+		expect(KINDS).toContain(got.kind);
+		expect(DRIVE_TYPES).toContain(got.driveType);
+		expect(FS_TYPES.has(got.fsType)).toBe(true);
+		expect(Probe.BUS_TYPES.has(got.busType)).toBe(true);
+		expect([ true, false, null ]).toContain(got.onSystemDrive);
+		expect(typeof got.isDefaultWorkdir).toBe('boolean');
+		expect(got.provider == '' || KNOWN.has(got.provider) || got.provider == 'Other').toBe(true);
+	};
+
+	it('returns flags only, never the path, from closed sets', () => {
+		const path = 'D:\\Secret Project\\anytype\\data';
+		const cases = [
+			{ check: local(path), drive: Probe.parseWinDriveOutput('D|Fixed|Secret FS\r\nB|Secret Bus'), onSystemDrive: false },
+			{ check: local('/media/secret'), mount: { mnt: '/media/secret', type: 'fuse.secret-user@host' }, onSystemDrive: null },
+			{ check: { ...local(path), kind: 'cloud', provider: 'secret@example.com' }, drive: Probe.parseWinDriveOutput('D|Fixed|NTFS') },
+			{ check: { ...local(path), resolved: false } },
+			undefined,
+		];
+
+		for (const param of cases) {
+			const got = Probe.buildStorageInfo(param ? { ...param, knownProviders: KNOWN } : param);
+
+			expectFlagsOnly(got);
+			expect(JSON.stringify(got).toLowerCase()).not.toMatch(/secret|anytype|example/);
+		};
 	});
 
 	it('reports a USB SSD as local, with its drive details', () => {
@@ -408,7 +521,6 @@ describe('buildStorageInfo', () => {
 		expect(Probe.buildStorageInfo({
 			check: local('E:\\anytype'),
 			drive: { driveType: 'fixed', fsType: 'exfat', busType: 'usb' },
-			netKnown: true,
 			onSystemDrive: false,
 			knownProviders: KNOWN,
 		})).toEqual(want);
@@ -428,7 +540,6 @@ describe('buildStorageInfo', () => {
 		expect(Probe.buildStorageInfo({
 			check: local('Z:\\anytype'),
 			drive: Probe.parseWinDriveOutput('D|Network|NTFS'),
-			netKnown: true,
 			onSystemDrive: false,
 			knownProviders: KNOWN,
 		})).toEqual(want);
@@ -438,23 +549,39 @@ describe('buildStorageInfo', () => {
 		const got = Probe.buildStorageInfo({
 			check: local('C:\\Users\\me\\AppData\\Roaming\\anytype\\data'),
 			drive: Probe.parseWinDriveOutput(''),
-			netKnown: false,
 			onSystemDrive: true,
 			isDefaultWorkdir: true,
 			knownProviders: KNOWN,
 		});
 
-		expect(got.kind).toBe('unknown');
-		expect(got.driveType).toBe('unknown');
-		expect(got.onSystemDrive).toBe(true);
-		expect(got.isDefaultWorkdir).toBe(true);
+		expect(got).toMatchObject({ kind: 'unknown', driveType: 'unknown', onSystemDrive: true, isDefaultWorkdir: true });
+	});
+
+	it('reports everything unknown for a path that could not be resolved', () => {
+		const want = {
+			kind: 'unknown',
+			provider: '',
+			driveType: 'unknown',
+			fsType: 'unknown',
+			busType: 'unknown',
+			onSystemDrive: null,
+			isDefaultWorkdir: true,
+		};
+
+		// C:\vault is a link to an unreachable share: the C: details describe the link, not the data
+		expect(Probe.buildStorageInfo({
+			check: { ...local('C:\\vault'), resolved: false },
+			drive: { driveType: 'fixed', fsType: 'ntfs', busType: 'nvme' },
+			onSystemDrive: true,
+			isDefaultWorkdir: true,
+			knownProviders: KNOWN,
+		})).toEqual(want);
 	});
 
 	it('keeps the cloud classification and the drive details', () => {
 		const got = Probe.buildStorageInfo({
-			check: { unsafe: true, kind: 'cloud', provider: 'OneDrive', path: 'C:\\Users\\me\\OneDrive\\anytype' },
+			check: { unsafe: true, kind: 'cloud', provider: 'OneDrive', path: 'C:\\Users\\me\\OneDrive\\anytype', resolved: true },
 			drive: { driveType: 'fixed', fsType: 'ntfs', busType: 'nvme' },
-			netKnown: true,
 			onSystemDrive: true,
 			knownProviders: KNOWN,
 		});
@@ -464,16 +591,14 @@ describe('buildStorageInfo', () => {
 
 	it('uses the mount table on macOS and Linux', () => {
 		const share = Probe.buildStorageInfo({
-			check: { unsafe: true, kind: 'network', provider: 'SMB', path: '/Volumes/share/anytype' },
+			check: { unsafe: true, kind: 'network', provider: 'SMB', path: '/Volumes/share/anytype', resolved: true },
 			mount: { mnt: '/Volumes/share', type: 'smbfs' },
-			netKnown: true,
 			onSystemDrive: false,
 			knownProviders: KNOWN,
 		});
 		const usb = Probe.buildStorageInfo({
 			check: local('/Volumes/T7/anytype'),
 			mount: { mnt: '/Volumes/T7', type: 'exfat' },
-			netKnown: true,
 			onSystemDrive: false,
 			knownProviders: KNOWN,
 		});
@@ -482,16 +607,26 @@ describe('buildStorageInfo', () => {
 		expect(usb).toMatchObject({ kind: 'local', provider: '', driveType: 'unknown', fsType: 'exfat', busType: 'unknown' });
 	});
 
+	it('only calls a mount local for a known local filesystem', () => {
+		const kindOf = (type: string) => Probe.buildStorageInfo({ check: local('/m/anytype'), mount: { mnt: '/m', type }, knownProviders: KNOWN }).kind;
+
+		expect(kindOf('apfs')).toBe('local');
+		expect(kindOf('ext4')).toBe('local');
+		expect(kindOf('macfuse')).toBe('unknown');
+		expect(kindOf('fuse.sshfs')).toBe('unknown');
+		expect(kindOf('fuse.someother')).toBe('unknown');
+		expect(kindOf('overlay')).toBe('unknown');
+	});
+
 	it('reports unknown when no mount was found', () => {
-		const got = Probe.buildStorageInfo({ check: local('/data'), mount: null, netKnown: false, onSystemDrive: null, knownProviders: KNOWN });
+		const got = Probe.buildStorageInfo({ check: local('/data'), mount: null, onSystemDrive: null, knownProviders: KNOWN });
 
 		expect(got).toMatchObject({ kind: 'unknown', fsType: 'unknown', onSystemDrive: null });
 	});
 
 	it('never passes an unknown provider name through', () => {
 		const got = Probe.buildStorageInfo({
-			check: { unsafe: true, kind: 'cloud', provider: 'roman@example.com', path: '/x' },
-			netKnown: true,
+			check: { unsafe: true, kind: 'cloud', provider: 'roman@example.com', path: '/x', resolved: true },
 			knownProviders: KNOWN,
 		});
 
