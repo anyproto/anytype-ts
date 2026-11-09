@@ -14,6 +14,7 @@ export default {
 		FILE_LOAD_ERROR:						8,
 		INSUFFICIENT_PERMISSIONS:				9,
 		ACCOUNT_STORE_NOT_MIGRATED:				113,
+		NOT_ENOUGH_FREE_SPACE:					114,
 
 		AccountRecoveryState: {
 			ACCOUNT_IS_NOT_RUNNING:						101,

@@ -738,6 +738,7 @@
 
 	"pageAuthMigrateTitle": "Update is in progress...",
 	"pageAuthMigrateText": "This may take some time. Please don't close the app until the process is complete.",
+	"errorAccountSelectNotEnoughSpace": "Not enough free disk space to update your local data. Please free up approximately %s and open Anytype again.",
 	"pageAuthMigrateErrorNotEnoughSpaceTitle": "Not enough space",
 	"pageAuthMigrateErrorNotEnoughSpaceText": "Please clear approximately %s of space and run the process again.",
 	"pageAuthMigrateTryAgain": "Try again",

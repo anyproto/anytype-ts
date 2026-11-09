@@ -521,6 +521,20 @@ class UtilCommon {
 	 * @param {number} code - The error code.
 	 * @returns {boolean} True if no critical error, false otherwise.
 	 */
+	/**
+	 * Returns the text to show for a failed AccountSelect.
+	 * @param {number} code - The error code.
+	 * @param {string} description - The middleware's description of the error.
+	 * @param {number} requiredSpace - Bytes that must be free, set with NOT_ENOUGH_FREE_SPACE.
+	 * @returns {string} The text to show.
+	 */
+	getAccountSelectError (code: number, description: string, requiredSpace?: number): string {
+		if (code == J.Error.Code.NOT_ENOUGH_FREE_SPACE) {
+			return U.String.sprintf(translate('errorAccountSelectNotEnoughSpace'), U.File.size(requiredSpace || 0));
+		};
+		return description;
+	};
+
 	checkErrorCommon (code: number): boolean {
 		if (!code) {
 			return true;

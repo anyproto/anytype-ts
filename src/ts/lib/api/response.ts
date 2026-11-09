@@ -32,6 +32,7 @@ export const AccountCreate = (response: any) => {
 export const AccountSelect = (response: any) => {
 	return {
 		account: Mapper.From.Account(response.account),
+		requiredSpace: response.error?.requiredSpace,
 	};
 };
 
