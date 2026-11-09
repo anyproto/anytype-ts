@@ -364,11 +364,23 @@ class Dispatcher {
 
 					console.log('[DebugProfileCreated] event:', mapped);
 
-					Sentry.withScope(scope => {
+					// Storage flags split reports such as MW_DB_CORRUPTION by where the data lives (network share,
+					// cloud folder, USB drive, exFAT...). S.Common.dataPath is the root AccountSelect opens, set in
+					// onInit before that runs. storageInfo is bounded and never rejects, so the report always goes out
+					const report = (storage: any) => Sentry.withScope(scope => {
 						scope.setLevel('info');
 						scope.setTag('report', 'mw_profile');
 						scope.setTag('reason', reason);
 						scope.setFingerprint([ 'mw-profile', reason ]);
+
+						try {
+							const tags = U.Common.storageTags(storage);
+							for (const key in tags) {
+								scope.setTag(key, tags[key]);
+							};
+						} catch (e) {
+							console.error('[DebugProfileCreated] storage tags failed:', e);
+						};
 
 						try {
 							scope.setContext('info', JSON.parse(mapped.jsonInfo));
@@ -393,6 +405,8 @@ class Dispatcher {
 
 						Sentry.captureMessage(`MW_${reason}`);
 					});
+
+					U.Common.storageInfo(S.Common.dataPath).then(report, () => report(null));
 					break;
 				};
 

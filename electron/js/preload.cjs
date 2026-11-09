@@ -5,6 +5,7 @@ const os = require('os');
 const path = require('path');
 const mime = require('mime-types');
 const { execFileSync } = require('child_process');
+const Probe = require('./storageProbe.cjs');
 const tmpPath = () => app.getPath('temp');
 const commonPath = () => {
 	const dir = path.join(app.getPath('userData'), 'common');
@@ -111,43 +112,67 @@ const dropboxFolders = () => {
 	return out;
 };
 
-// Linux: resolve the fstype of the mount containing p via /proc/self/mounts.
-// Returns a remote-FS name, '' when the mount is a known local type, or null when undetermined.
-const linuxMountType = (p) => {
+// macOS mount names that mean a remote filesystem.
+const MAC_REMOTE_FSTYPES = { smbfs: 'SMB', nfs: 'NFS', webdav: 'WebDAV', afpfs: 'AFP', ftp: 'FTP' };
+
+// Mount tables: [{ mnt, type }], or null when unreadable. macOS shells out, so its table is cached.
+const MOUNT_CACHE_TTL = 30000;
+let macMountCache = null;
+
+const macMounts = () => {
+	if (macMountCache && ((Date.now() - macMountCache.time) < MOUNT_CACHE_TTL)) {
+		return macMountCache.list;
+	};
+
+	let list = null;
+	try { list = Probe.parseMacMounts(execFileSync('/sbin/mount', { encoding: 'utf8', timeout: 2000 })); } catch (e) {};
+
+	macMountCache = { time: Date.now(), list };
+	return list;
+};
+
+const linuxMounts = () => {
 	try {
-		const lines = fs.readFileSync('/proc/self/mounts', 'utf8').split('\n');
-		let best = '';
-		let bestType = '';
-
-		for (const line of lines) {
-			const parts = line.split(' ');
-			if (parts.length < 3) {
-				continue;
-			};
-
-			const mnt = parts[1].replace(/\\040/g, ' ').replace(/\\011/g, '\t');
-			const type = parts[2];
-			const pref = mnt.endsWith('/') ? mnt : (mnt + '/');
-
-			if (((p == mnt) || p.startsWith(pref)) && (mnt.length >= best.length)) {
-				best = mnt;
-				bestType = type;
-			};
-		};
-
-		if (!bestType) {
-			return null;
-		};
-		return LINUX_REMOTE_FSTYPES[bestType] || '';
+		return Probe.parseLinuxMounts(fs.readFileSync('/proc/self/mounts', 'utf8'));
 	} catch (e) {
 		return null;
 	};
 };
 
+// The mount containing p, or null when the table is unreadable or nothing matches.
+const mountFor = (p) => {
+	if (process.platform == 'darwin') {
+		return Probe.findMount(p, macMounts(), false);
+	};
+	if (process.platform == 'linux') {
+		return Probe.findMount(p, linuxMounts(), true);
+	};
+	return null;
+};
+
+// Windows drive letters: type, filesystem and bus via one PowerShell run per letter, cached in this renderer.
+// Never awaited by the synchronous checks — they read whatever has landed.
+const winDrives = Probe.createDriveCache();
+const winSystemLetter = () => Probe.winDriveLetter(process.env.SystemDrive || 'C:');
+
+// Linux: resolve the fstype of the mount containing p via /proc/self/mounts.
+// Returns a remote-FS name, '' when the mount is a known local type, or null when undetermined.
+const linuxMountType = (p) => {
+	const mount = Probe.findMount(p, linuxMounts(), true);
+	if (!mount || !mount.type) {
+		return null;
+	};
+	return LINUX_REMOTE_FSTYPES[mount.type] || '';
+};
+
 const networkType = (p) => {
-	// Windows UNC path (\\server\share). Mapped network drive LETTERS are NOT detected in v1.
-	if ((process.platform == 'win32') && /^\\\\/.test(p)) {
-		return 'Network drive';
+	// Windows: UNC path (\\server\share), or a drive letter already known to be a mapped network drive.
+	// An unknown letter starts its lookup here; vaultPathInfo does not cache the provisional answer.
+	if (process.platform == 'win32') {
+		const t = Probe.winNetworkType(p, winDrives, winSystemLetter());
+		if (t) {
+			return t;
+		};
 	};
 
 	// Linux: fstype from the mount table is authoritative (distinguishes remote FUSE from local FUSE).
@@ -171,33 +196,10 @@ const networkType = (p) => {
 
 	// macOS: statfs.type is not a usable name — parse the mount table instead.
 	if (process.platform == 'darwin') {
-		try {
-			const out = execFileSync('/sbin/mount', { encoding: 'utf8', timeout: 2000 });
-			const NET = { smbfs: 'SMB', nfs: 'NFS', webdav: 'WebDAV', afpfs: 'AFP', ftp: 'FTP' };
-			let best = '';
-			let bestType = '';
-
-			out.split('\n').forEach(line => {
-				// "//u@host/share on /Volumes/x (smbfs, ...)" — greedy so mount points containing " (" parse correctly
-				const m = line.match(/ on (.+) \(([^,)]+)/);
-				if (!m) {
-					return;
-				};
-
-				const mnt = m[1];
-				const type = m[2];
-				const pref = mnt.endsWith('/') ? mnt : (mnt + '/');
-
-				if (((p == mnt) || p.startsWith(pref)) && (mnt.length > best.length)) {
-					best = mnt;
-					bestType = type;
-				};
-			});
-
-			if (NET[bestType]) {
-				return NET[bestType];
-			};
-		} catch (e) {};
+		const mount = Probe.findMount(p, macMounts(), false);
+		if (mount && MAC_REMOTE_FSTYPES[mount.type]) {
+			return MAC_REMOTE_FSTYPES[mount.type];
+		};
 	};
 
 	return '';
@@ -274,6 +276,12 @@ const vaultPathInfo = (input) => {
 
 	const result = vaultPathClassify(input);
 
+	// Provisional while the drive letter is still being looked up (it may be a mapped network drive):
+	// leave it uncached so the next call sees the real answer
+	if ((process.platform == 'win32') && Probe.winClassifyPending(result, winDrives, winSystemLetter())) {
+		return result;
+	};
+
 	// Bound the cache — the path argument comes from the renderer
 	if (vaultPathCache.size >= 50) {
 		vaultPathCache.delete(vaultPathCache.keys().next().value);
@@ -281,6 +289,84 @@ const vaultPathInfo = (input) => {
 
 	vaultPathCache.set(key, { time: Date.now(), result });
 	return result;
+};
+
+// vaultPathInfo once it is final: waits for a pending Windows drive lookup (bounded by its timeout), so a
+// mapped network drive letter is reported as such. Resolves at once everywhere else. Never rejects.
+const vaultPathReady = (input) => {
+	try {
+		const result = vaultPathInfo(input);
+		const letter = (process.platform == 'win32') ? Probe.winClassifyPending(result, winDrives, winSystemLetter()) : '';
+
+		if (!letter) {
+			return Promise.resolve(result);
+		};
+		return winDrives.get(letter).then(() => vaultPathInfo(input), () => result);
+	} catch (e) {
+		return Promise.resolve(null);
+	};
+};
+
+// --- Storage flags for diagnostics ---
+
+// Every provider name the classifiers above can produce; anything else is reported as 'Other'
+const KNOWN_PROVIDERS = new Set([
+	...CLOUD_MARKERS.map(it => it[1]),
+	...Object.values(NET_MAGIC),
+	...Object.values(LINUX_REMOTE_FSTYPES),
+	...Object.values(MAC_REMOTE_FSTYPES),
+	Probe.NETWORK_DRIVE,
+	'Cloud storage',
+]);
+
+// Where the data for path p physically lives, as flags only — the path itself is never part of the result:
+// { kind: 'local'|'cloud'|'network'|'unknown', provider, driveType: 'fixed'|'removable'|'remote'|'other'|'unknown',
+//   fsType, busType, onSystemDrive: bool|null, isDefaultWorkdir }.
+// Async because Windows needs a PowerShell run (cached per letter, bounded by its timeout). Never rejects.
+const storageInfo = (input) => {
+	const platform = process.platform;
+
+	let raw = '';
+	let check = null;
+	let isDefaultWorkdir = false;
+
+	const build = (param) => Probe.buildStorageInfo({ check, knownProviders: KNOWN_PROVIDERS, isDefaultWorkdir, ...param });
+
+	try {
+		raw = String(input || app.getPath('userData'));
+		check = vaultPathInfo(raw);
+
+		// Default workdir = the data was never moved (Settings, userDataPath, DATA_PATH). Compared unresolved:
+		// a symlinked default location still counts as default, its target shows up in the other flags
+		isDefaultWorkdir = Probe.isInside(raw, path.join(app.getPath('appData'), app.getName()), platform);
+
+		const p = check.path;
+
+		if (platform == 'win32') {
+			const letter = Probe.winDriveLetter(p);
+
+			if (!letter) {
+				const isUnc = Probe.isUncPath(p);
+				return Promise.resolve(build({ drive: isUnc ? Probe.REMOTE_DRIVE : null, netKnown: isUnc, onSystemDrive: isUnc ? false : null }));
+			};
+
+			const onSystemDrive = letter == winSystemLetter();
+
+			return winDrives.get(letter).then(
+				drive => build({ drive, netKnown: drive.driveType != Probe.UNKNOWN, onSystemDrive }),
+				() => build({ onSystemDrive }),
+			);
+		};
+
+		const mount = mountFor(p);
+		return Promise.resolve(build({ mount, netKnown: !!mount, onSystemDrive: mount ? Probe.isSystemMount(mount.mnt, platform) : null }));
+	} catch (e) {
+		try {
+			return Promise.resolve(build({}));
+		} catch (e2) {
+			return Promise.resolve(null);
+		};
+	};
 };
 
 contextBridge.exposeInMainWorld('Electron', {
@@ -318,6 +404,8 @@ contextBridge.exposeInMainWorld('Electron', {
 	},
 	defaultPath: () => path.join(app.getPath('appData'), app.getName()),
 	checkVaultPath: p => vaultPathInfo(p),
+	checkVaultPathReady: p => vaultPathReady(p),
+	storageInfo: p => storageInfo(p),
 	getTheme: () => ipcRenderer.sendSync('getTheme'),
 	getBgColor: () => ipcRenderer.sendSync('getBgColor'),
 	getConfig: () => ipcRenderer.sendSync('getConfig'),

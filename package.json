@@ -241,6 +241,7 @@
 			"electron/img/*",
 			"electron/img/icons/*",
 			"electron/js/preload.cjs",
+			"electron/js/storageProbe.cjs",
 			"build",
 			"node_modules/keytar/build/Release/keytar.node",
 			"node_modules/read-chunk",

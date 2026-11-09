@@ -62,6 +62,88 @@ class UtilCommon {
 	};
 
 	/**
+	 * checkVaultPath once the answer is final: on Windows a drive letter is only known to be a mapped network
+	 * drive after its drive lookup, which this waits for (at most timeout ms). Never rejects.
+	 * @param {string} [p] - The path to check; empty defaults to the current userData dir.
+	 * @param {number} [timeout] - Upper bound on the wait; past it, the synchronous answer is used.
+	 * @returns {Promise<any>} Same shape as checkVaultPath.
+	 */
+	checkVaultPathReady (p?: string, timeout?: number): Promise<any> {
+		const electron = this.getElectron();
+		const sync = () => this.checkVaultPath(p);
+
+		if (!electron.checkVaultPathReady) {
+			return Promise.resolve(sync());
+		};
+
+		return new Promise(resolve => {
+			const timer = window.setTimeout(() => resolve(sync()), timeout || 5000);
+			const done = (v: any) => {
+				window.clearTimeout(timer);
+				resolve(v || sync());
+			};
+
+			try {
+				Promise.resolve(electron.checkVaultPathReady(p || '')).then(done, () => done(null));
+			} catch (e) {
+				done(null);
+			};
+		});
+	};
+
+	/**
+	 * Where the data at a path physically lives, as flags only (never the path). Waits for the Windows drive
+	 * lookup, at most timeout ms.
+	 * @param {string} [p] - The path to check; empty defaults to the current userData dir.
+	 * @param {number} [timeout] - Upper bound on the wait.
+	 * @returns {Promise<any>} { kind, provider, driveType, fsType, busType, onSystemDrive, isDefaultWorkdir }, or null when unavailable. Never rejects.
+	 */
+	storageInfo (p?: string, timeout?: number): Promise<any> {
+		const electron = this.getElectron();
+
+		if (!electron.storageInfo) {
+			return Promise.resolve(null); // web mode / non-electron
+		};
+
+		return new Promise(resolve => {
+			const timer = window.setTimeout(() => resolve(null), timeout || 5000);
+			const done = (v: any) => {
+				window.clearTimeout(timer);
+				resolve(v || null);
+			};
+
+			try {
+				Promise.resolve(electron.storageInfo(p || '')).then(done, () => done(null));
+			} catch (e) {
+				done(null);
+			};
+		});
+	};
+
+	/**
+	 * Sentry tags for a storageInfo result, prefixed storage_. Missing values read 'unknown', never 'local'.
+	 * @param {any} info - Result of storageInfo, or null.
+	 */
+	storageTags (info: any): Record<string, string> {
+		const flag = (v: any) => ((v === true) || (v === false)) ? String(v) : 'unknown';
+
+		// No info at all (web mode, lookup failed or timed out): even "no provider" is not known then
+		const provider = info ? String(info.provider || 'none') : 'unknown';
+
+		info = info || {};
+
+		return {
+			storage_kind: String(info.kind || 'unknown'),
+			storage_provider: provider,
+			storage_drive_type: String(info.driveType || 'unknown'),
+			storage_fs_type: String(info.fsType || 'unknown'),
+			storage_bus_type: String(info.busType || 'unknown'),
+			storage_on_system_drive: flag(info.onSystemDrive),
+			storage_is_default_workdir: flag(info.isDefaultWorkdir),
+		};
+	};
+
+	/**
 	 * Returns the global configuration object from the window.
 	 */
 	getGlobalConfig () {
