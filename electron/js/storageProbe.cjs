@@ -635,7 +635,8 @@ const LOCAL_DRIVE_TYPES = [ 'fixed', 'removable', 'other' ];
 // Flags only: the path never makes it into the result. Every field is set, unknowns explicitly.
 // check: vault path classification ({ kind: ''|'cloud'|'network', provider, resolved }).
 // drive: Windows drive info, or null. mount: macOS/Linux mount table entry, or null.
-// 'local' needs positive evidence: a local Windows drive type, or a filesystem on LOCAL_FS_TYPES.
+// 'local' needs positive evidence: a local Windows drive type, or a filesystem on LOCAL_FS_TYPES, and no
+// incomplete read (param.incomplete) that could have found a cloud folder instead.
 const buildStorageInfo = (param) => {
 	param = param || {};
 
@@ -677,7 +678,8 @@ const buildStorageInfo = (param) => {
 		kind = 'network';
 	} else
 	if (drive ? LOCAL_DRIVE_TYPES.includes(driveType) : LOCAL_FS_TYPES.has(fsType)) {
-		kind = 'local';
+		// incomplete: a read that could rule out a cloud folder failed, so local is not established
+		kind = param.incomplete ? UNKNOWN : 'local';
 	};
 
 	if ((kind == 'network') && (driveType == UNKNOWN)) {
@@ -746,11 +748,19 @@ const createStorageInfo = (deps) => {
 		let timedOut = false;
 
 		const bounded = (fn, fallback) => withTimeout(fn, timeout, fallback, () => { timedOut = true; });
-		const readText = (file) => bounded(() => fs.promises.readFile(file, 'utf8'), '');
+
+		// '' for a file that is not there, null for one that could not be read (timeout, other error):
+		// a missing Dropbox info.json means no Dropbox, an unreadable one means it is not known
+		const readOptional = (file) => bounded(() => fs.promises.readFile(file, 'utf8').catch(e => {
+			if (e && [ 'ENOENT', 'ENOTDIR' ].includes(e.code)) {
+				return '';
+			};
+			throw e;
+		}), null);
 
 		const readMounts = () => {
 			if (platform == 'linux') {
-				return readText('/proc/self/mounts').then(text => text ? parseLinuxMounts(text) : null);
+				return bounded(() => fs.promises.readFile('/proc/self/mounts', 'utf8'), '').then(text => text ? parseLinuxMounts(text) : null);
 			};
 			if (platform == 'darwin') {
 				const run = () => new Promise((resolve, reject) => {
@@ -761,11 +771,13 @@ const createStorageInfo = (deps) => {
 			return Promise.resolve(null);
 		};
 
-		const [ real, dropbox, mounts ] = await Promise.all([
+		const [ real, dropboxTexts, mounts ] = await Promise.all([
 			bounded(() => fs.promises.realpath(input), null),
-			Promise.all(dropboxInfoFiles(platform, env, deps.home).map(readText)).then(texts => texts.flatMap(t => t ? parseDropboxInfo(t) : [])),
+			Promise.all(dropboxInfoFiles(platform, env, deps.home).map(readOptional)),
 			readMounts(),
 		]);
+
+		const dropbox = dropboxTexts.flatMap(t => t ? parseDropboxInfo(t) : []);
 
 		const resolved = (real !== null);
 		const p = resolved ? String(real) : input;
@@ -792,6 +804,10 @@ const createStorageInfo = (deps) => {
 		const param = {
 			check,
 			isDefaultWorkdir: isDefaultDataPath(input, read(deps.defaultUserData), platform),
+			// Without the Dropbox folders a custom-named Dropbox root would pass for local. The other reads
+			// decide 'local' themselves: no mount table or drive type, no local fs type. statfs only backs up
+			// a missing mount entry, which reads unknown already
+			incomplete: dropboxTexts.includes(null),
 		};
 
 		if (!resolved) {

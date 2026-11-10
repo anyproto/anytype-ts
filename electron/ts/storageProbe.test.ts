@@ -569,6 +569,14 @@ describe('buildStorageInfo', () => {
 		})).toEqual(want);
 	});
 
+	it('does not call a location local when a read that could find a cloud folder failed', () => {
+		const base = { mount: { mnt: '/', type: 'ext4' }, onSystemDrive: true, incomplete: true, knownProviders: KNOWN };
+
+		expect(Probe.buildStorageInfo({ ...base, check: local('/home/me/Work/anytype') })).toMatchObject({ kind: 'unknown', provider: '', fsType: 'ext4', onSystemDrive: true });
+		expect(Probe.buildStorageInfo({ ...base, check: { ...local('/x'), kind: 'cloud', provider: 'Dropbox' } })).toMatchObject({ kind: 'cloud', provider: 'Dropbox' });
+		expect(Probe.buildStorageInfo({ ...base, drive: Probe.parseWinDriveOutput('D|Network|NTFS'), check: local('Z:\\x') })).toMatchObject({ kind: 'network', driveType: 'remote' });
+	});
+
 	it('keeps the cloud classification and the drive details', () => {
 		const got = Probe.buildStorageInfo({
 			check: { unsafe: true, kind: 'cloud', provider: 'OneDrive', path: 'C:\\Users\\me\\OneDrive\\anytype', resolved: true },
@@ -738,6 +746,8 @@ describe('createStorageInfo', () => {
 		expect(execFileSync).not.toHaveBeenCalled();
 	};
 
+	const enoent = () => Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
+
 	const execFileWith = (stdout: string) => vi.fn((file: string, args: string[], options: any, cb: any) => {
 		setTimeout(() => cb(null, stdout, ''), 0);
 		return {};
@@ -782,7 +792,7 @@ describe('createStorageInfo', () => {
 		const execFile = execFileWith(MAC_MOUNTS);
 		const fs = fakeFs({
 			realpath: vi.fn(async (p: string) => p),
-			readFile: vi.fn(async () => { throw new Error('ENOENT'); }),
+			readFile: vi.fn(async () => { throw enoent(); }),
 			statfs: vi.fn(async () => ({ type: 0x1a })),
 		});
 		const storageInfo = Probe.createStorageInfo({ fs, execFile, execFileSync, platform: 'darwin', home: '/Users/me', defaultUserData: () => '/x' });
@@ -828,7 +838,7 @@ describe('createStorageInfo', () => {
 		const drives = Probe.createDriveCache({ lookup: async (letter: string) => ({ C: 'D|Fixed|NTFS\nB|NVMe', Z: 'D|Network|NTFS', E: 'D|Fixed|exFAT\nB|USB' } as any)[letter] });
 		const fs = fakeFs({
 			realpath: vi.fn(async (p: string) => p),
-			readFile: vi.fn(async () => { throw new Error('ENOENT'); }),
+			readFile: vi.fn(async () => { throw enoent(); }),
 			statfs: vi.fn(async () => ({ type: 0 })),
 		});
 		const storageInfo = Probe.createStorageInfo({
@@ -850,11 +860,91 @@ describe('createStorageInfo', () => {
 		expectNoSyncCalls(fs, vi.fn());
 	});
 
+	const linuxMounts = '/dev/nvme0n1p2 / ext4 rw 0 0\n';
+	const hang = () => new Promise(() => {});
+
+	it('reports unknown, not local, while the Dropbox info is unreadable, and retries after the timeout ttl', async () => {
+		vi.useFakeTimers();
+
+		try {
+			let slow = true;
+			const readFile = vi.fn(async (f: string) => {
+				if (f == '/proc/self/mounts') {
+					return linuxMounts;
+				};
+				return slow ? hang() : '{"personal":{"path":"/home/me/Work"}}';
+			});
+			const fs = fakeFs({ realpath: vi.fn(async (p: string) => p), readFile, statfs: vi.fn(async () => ({ type: 0xef53 })) });
+			const storageInfo = Probe.createStorageInfo({ fs, execFile: vi.fn(), platform: 'linux', home: '/home/me', timeout: 2000, defaultUserData: () => '/x' });
+
+			const first = storageInfo('/home/me/Work/anytype');
+			await vi.advanceTimersByTimeAsync(2000);
+
+			// The established fields stay, only the verdict is not known
+			await expect(first).resolves.toMatchObject({ kind: 'unknown', provider: '', fsType: 'ext4', onSystemDrive: true });
+
+			slow = false;
+			await vi.advanceTimersByTimeAsync(10 * 60 * 1000);
+
+			// /home/me/Work is the Dropbox folder: found once info.json can be read
+			await expect(storageInfo('/home/me/Work/anytype')).resolves.toMatchObject({ kind: 'cloud', provider: 'Dropbox', fsType: 'ext4' });
+		} finally {
+			vi.useRealTimers();
+		};
+	});
+
+	it('reports unknown, not local, for an info.json that exists but cannot be read', async () => {
+		const readFile = vi.fn(async (f: string) => {
+			if (f == '/proc/self/mounts') {
+				return linuxMounts;
+			};
+			throw Object.assign(new Error('EACCES'), { code: 'EACCES' });
+		});
+		const fs = fakeFs({ realpath: vi.fn(async (p: string) => p), readFile, statfs: vi.fn(async () => ({ type: 0xef53 })) });
+		const storageInfo = Probe.createStorageInfo({ fs, execFile: vi.fn(), platform: 'linux', home: '/home/me', defaultUserData: () => '/x' });
+
+		await expect(storageInfo('/home/me/anytype')).resolves.toMatchObject({ kind: 'unknown', fsType: 'ext4' });
+	});
+
+	it('reports unknown, not local, when the mount table cannot be read in time', async () => {
+		vi.useFakeTimers();
+
+		try {
+			const readFile = vi.fn(async (f: string) => (f == '/proc/self/mounts') ? hang() : Promise.reject(enoent()));
+			const fs = fakeFs({ realpath: vi.fn(async (p: string) => p), readFile, statfs: vi.fn(async () => ({ type: 0xef53 })) });
+			const storageInfo = Probe.createStorageInfo({ fs, execFile: vi.fn(), platform: 'linux', home: '/home/me', timeout: 2000, defaultUserData: () => '/x' });
+
+			const promise = storageInfo('/home/me/anytype');
+			await vi.advanceTimersByTimeAsync(2000);
+
+			await expect(promise).resolves.toMatchObject({ kind: 'unknown', fsType: 'unknown', onSystemDrive: null });
+		} finally {
+			vi.useRealTimers();
+		};
+	});
+
+	it('reports unknown, not local, when the macOS mount table cannot be read in time', async () => {
+		vi.useFakeTimers();
+
+		try {
+			const execFile = vi.fn(() => ({}));
+			const fs = fakeFs({ realpath: vi.fn(async (p: string) => p), readFile: vi.fn(async () => { throw enoent(); }), statfs: vi.fn(async () => ({ type: 0x1a })) });
+			const storageInfo = Probe.createStorageInfo({ fs, execFile, platform: 'darwin', home: '/Users/me', timeout: 2000, defaultUserData: () => '/x' });
+
+			const promise = storageInfo('/Users/me/anytype');
+			await vi.advanceTimersByTimeAsync(2000);
+
+			await expect(promise).resolves.toMatchObject({ kind: 'unknown', fsType: 'unknown', onSystemDrive: null });
+		} finally {
+			vi.useRealTimers();
+		};
+	});
+
 	it('keeps the network verdict of an unresolvable UNC path, and leaves a dead local link unknown', async () => {
 		const lookup = vi.fn(async () => 'D|Fixed|NTFS\nB|NVMe');
 		const fs = fakeFs({
 			realpath: vi.fn(async () => { throw Object.assign(new Error('EACCES'), { code: 'EACCES' }); }),
-			readFile: vi.fn(async () => { throw new Error('ENOENT'); }),
+			readFile: vi.fn(async () => { throw enoent(); }),
 			statfs: vi.fn(async () => ({ type: 0 })),
 		});
 		const storageInfo = Probe.createStorageInfo({
