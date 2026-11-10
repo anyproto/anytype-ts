@@ -1131,7 +1131,8 @@ class UtilMenu {
 		};
 
 		const items = U.Space.getList().map(it => {
-				const counters = S.Chat.getSpaceCounters(it.targetSpaceId);
+				// The counter of a one-to-one space is shown in any notification mode
+				const counters = S.Chat.getSpaceCounters(it.targetSpaceId, it.isOneToOne);
 				return {
 					...it,
 					counters,
