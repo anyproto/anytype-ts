@@ -24,7 +24,7 @@ Electron main process files for desktop app integration. TypeScript source in `t
 
 ## JavaScript (`js/`)
 - `preload.cjs` - Preload script for renderer process security
-- `storageProbe.cjs` - Pure helpers behind `Electron.storageInfo` (drive type, filesystem, bus of the data location; Windows via one cached PowerShell run per drive letter). Required by the preload, so it is in `asarUnpack` too
+- `storageProbe.cjs` - Vault location classifier (cloud/network, shared by the synchronous check and the diagnostics) and `Electron.storageInfo` (drive type, filesystem, bus of the data location, asynchronous bounded I/O only; Windows via one cached PowerShell run per drive letter). Required by the preload, so it is in `asarUnpack` too
 
 ## JSON Configuration (`json/`)
 - `constant.json` - Enabled languages list (26 locales)

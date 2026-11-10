@@ -416,34 +416,6 @@ describe('isSystemVolume', () => {
 	});
 });
 
-describe('cachedReader', () => {
-	it('reuses a recent read, and reads afresh when asked to', () => {
-		let time = 0;
-		const read = vi.fn(() => `table ${read.mock.calls.length}`);
-		const get = Probe.cachedReader(read, { ttl: 1000, now: () => time });
-
-		expect(get(false)).toBe('table 1');
-		expect(get(false)).toBe('table 1');
-
-		// A share mounted a moment ago must show up for a check the user acts on
-		expect(get(true)).toBe('table 2');
-		expect(get(false)).toBe('table 2');
-
-		time = 2000;
-		expect(get(false)).toBe('table 3');
-		expect(read).toHaveBeenCalledTimes(3);
-	});
-
-	it('caches a failed read as null', () => {
-		const get = Probe.cachedReader(() => {
-			throw new Error('no mount');
-		});
-
-		expect(get(true)).toBe(null);
-		expect(get(false)).toBe(null);
-	});
-});
-
 describe('isDefaultDataPath', () => {
 	const winBase = 'C:\\Users\\Me\\AppData\\Roaming\\anytype';
 
@@ -578,6 +550,25 @@ describe('buildStorageInfo', () => {
 		})).toEqual(want);
 	});
 
+	it('keeps a network verdict the unresolved path carries itself, the rest unknown', () => {
+		const want = {
+			kind: 'network',
+			provider: Probe.NETWORK_DRIVE,
+			driveType: 'remote',
+			fsType: 'unknown',
+			busType: 'unknown',
+			onSystemDrive: null,
+			isDefaultWorkdir: false,
+		};
+
+		// Canonicalizing \\nas\share\anytype failed (access denied on a parent): it is a share all the same
+		expect(Probe.buildStorageInfo({
+			check: { unsafe: true, kind: 'network', provider: Probe.NETWORK_DRIVE, path: '\\\\nas\\share\\anytype', resolved: false },
+			drive: Probe.REMOTE_DRIVE,
+			knownProviders: KNOWN,
+		})).toEqual(want);
+	});
+
 	it('keeps the cloud classification and the drive details', () => {
 		const got = Probe.buildStorageInfo({
 			check: { unsafe: true, kind: 'cloud', provider: 'OneDrive', path: 'C:\\Users\\me\\OneDrive\\anytype', resolved: true },
@@ -638,5 +629,253 @@ describe('buildStorageInfo', () => {
 
 		expect(Object.keys(got).sort()).toEqual(KEYS);
 		expect(got).toMatchObject({ kind: 'unknown', driveType: 'unknown', fsType: 'unknown', busType: 'unknown', onSystemDrive: null, isDefaultWorkdir: false });
+	});
+});
+
+describe('classifyVaultPath', () => {
+	const mac = (p: string, ctx: any = {}) => Probe.classifyVaultPath(p, { platform: 'darwin', home: '/Users/me', resolved: true, ...ctx });
+	const linux = (p: string, ctx: any = {}) => Probe.classifyVaultPath(p, { platform: 'linux', home: '/home/me', resolved: true, ...ctx });
+	const win = (p: string, ctx: any = {}) => Probe.classifyVaultPath(p, { platform: 'win32', home: 'C:\\Users\\me', resolved: true, systemLetter: 'C', ...ctx });
+	const verdict = (r: any) => ({ unsafe: r.unsafe, kind: r.kind, provider: r.provider });
+
+	it('finds cloud folders', () => {
+		expect(verdict(mac('/Users/me/Library/CloudStorage/GoogleDrive-me@example.com/anytype'))).toEqual({ unsafe: true, kind: 'cloud', provider: 'Google Drive' });
+		expect(verdict(mac('/Users/me/Library/Mobile Documents/com~apple~CloudDocs/anytype'))).toEqual({ unsafe: true, kind: 'cloud', provider: 'iCloud Drive' });
+		expect(verdict(win('D:\\Sync\\anytype', { env: { OneDrive: 'D:\\Sync' } }))).toEqual({ unsafe: true, kind: 'cloud', provider: 'OneDrive' });
+		expect(verdict(linux('/data/box/anytype', { dropboxFolders: () => [ '/data/box' ] }))).toEqual({ unsafe: true, kind: 'cloud', provider: 'Dropbox' });
+		expect(verdict(linux('/home/me/Nextcloud/anytype'))).toEqual({ unsafe: true, kind: 'cloud', provider: 'Nextcloud' });
+	});
+
+	it('finds network locations through the readers', () => {
+		const linuxMounts = () => Probe.parseLinuxMounts(LINUX_MOUNTS);
+		const macMounts = () => Probe.parseMacMounts(MAC_MOUNTS);
+
+		expect(verdict(linux('/mnt/nas/anytype', { linuxMounts: () => Probe.parseLinuxMounts('nas:/x /mnt/nas nfs4 rw 0 0') }))).toEqual({ unsafe: true, kind: 'network', provider: 'NFS' });
+		expect(verdict(linux('/home/me/.config/anytype', { linuxMounts }))).toEqual({ unsafe: false, kind: '', provider: '' });
+		expect(verdict(mac('/Volumes/share/anytype', { macMounts }))).toEqual({ unsafe: true, kind: 'network', provider: 'SMB' });
+		expect(verdict(mac('/Volumes/x/anytype', { statfsType: () => 0xfe534d42 }))).toEqual({ unsafe: true, kind: 'network', provider: 'SMB' });
+		expect(verdict(win('\\\\?\\UNC\\nas\\share\\anytype'))).toEqual({ unsafe: true, kind: 'network', provider: Probe.NETWORK_DRIVE });
+	});
+
+	it('reads lazily: a cloud verdict needs no mount table', () => {
+		const macMounts = vi.fn(() => []);
+
+		mac('/Users/me/Library/CloudStorage/Dropbox/anytype', { macMounts });
+		expect(macMounts).not.toHaveBeenCalled();
+	});
+
+	it('treats a throwing reader as nothing known', () => {
+		const boom = () => {
+			throw new Error('EIO');
+		};
+
+		expect(verdict(mac('/Users/me/anytype', { macMounts: boom, statfsType: boom, dropboxFolders: boom }))).toEqual({ unsafe: false, kind: '', provider: '' });
+	});
+
+	it('strips the long-path prefix and passes resolved through', () => {
+		const got = win('\\\\?\\C:\\Users\\me\\anytype', { resolved: false });
+
+		expect(got.path).toBe('C:\\Users\\me\\anytype');
+		expect(got.resolved).toBe(false);
+	});
+});
+
+describe('dropbox info', () => {
+	it('knows where info.json lives', () => {
+		expect(Probe.dropboxInfoFiles('darwin', {}, '/Users/me')).toEqual([ '/Users/me/.dropbox/info.json' ]);
+		expect(Probe.dropboxInfoFiles('win32', { APPDATA: 'C:\\A', LOCALAPPDATA: 'C:\\L' }, '')).toEqual([ 'C:\\A\\Dropbox\\info.json', 'C:\\L\\Dropbox\\info.json' ]);
+	});
+
+	it('reads the folders, and nothing from garbage', () => {
+		expect(Probe.parseDropboxInfo('{"personal":{"path":"/Users/me/Dropbox"},"business":{"path":"/Users/me/Work"}}')).toEqual([ '/Users/me/Dropbox', '/Users/me/Work' ]);
+		expect(Probe.parseDropboxInfo('not json')).toEqual([]);
+	});
+});
+
+describe('withTimeout', () => {
+	it('passes the value, and the fallback on errors', async () => {
+		await expect(Probe.withTimeout(async () => 1, 100, 0)).resolves.toBe(1);
+		await expect(Probe.withTimeout(async () => { throw new Error('x'); }, 100, 0)).resolves.toBe(0);
+		await expect(Probe.withTimeout(() => { throw new Error('x'); }, 100, 0)).resolves.toBe(0);
+	});
+
+	it('gives up after the timeout', async () => {
+		vi.useFakeTimers();
+
+		try {
+			const onTimeout = vi.fn();
+			const promise = Probe.withTimeout(() => new Promise(() => {}), 100, 'fallback', onTimeout);
+
+			await vi.advanceTimersByTimeAsync(100);
+			await expect(promise).resolves.toBe('fallback');
+			expect(onTimeout).toHaveBeenCalledTimes(1);
+		} finally {
+			vi.useRealTimers();
+		};
+	});
+});
+
+describe('createStorageInfo', () => {
+	const SYNC_FNS = [ 'realpathSync', 'readFileSync', 'statfsSync', 'statSync', 'lstatSync', 'existsSync', 'readdirSync', 'accessSync', 'openSync' ];
+
+	// A fake fs whose every synchronous function throws and records the call: the lookup must not use any
+	const fakeFs = (promises: any) => {
+		const fs: any = { promises };
+
+		for (const name of SYNC_FNS) {
+			fs[name] = vi.fn(() => {
+				throw new Error(`sync call: ${name}`);
+			});
+		};
+		fs.realpathSync.native = fs.realpathSync;
+		return fs;
+	};
+
+	const expectNoSyncCalls = (fs: any, execFileSync: any) => {
+		for (const name of SYNC_FNS) {
+			expect(fs[name]).not.toHaveBeenCalled();
+		};
+		expect(execFileSync).not.toHaveBeenCalled();
+	};
+
+	const execFileWith = (stdout: string) => vi.fn((file: string, args: string[], options: any, cb: any) => {
+		setTimeout(() => cb(null, stdout, ''), 0);
+		return {};
+	});
+
+	it('describes a local Linux vault without any synchronous call', async () => {
+		const execFileSync = vi.fn();
+		const fs = fakeFs({
+			realpath: vi.fn(async (p: string) => p),
+			readFile: vi.fn(async (f: string) => {
+				if (f == '/proc/self/mounts') {
+					return '/dev/nvme0n1p2 / btrfs rw,subvol=/@ 0 0\n/dev/nvme0n1p2 /home btrfs rw,subvol=/@home 0 0\n';
+				};
+				throw Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
+			}),
+			statfs: vi.fn(async () => ({ type: 0x9123683e })),
+		});
+		const storageInfo = Probe.createStorageInfo({
+			fs,
+			execFile: vi.fn(),
+			execFileSync,
+			platform: 'linux',
+			home: '/home/me',
+			defaultUserData: () => '/home/me/.config/anytype',
+		});
+		const want = {
+			kind: 'local',
+			provider: '',
+			driveType: 'unknown',
+			fsType: 'btrfs',
+			busType: 'unknown',
+			onSystemDrive: true,
+			isDefaultWorkdir: true,
+		};
+
+		await expect(storageInfo('/home/me/.config/anytype/data')).resolves.toEqual(want);
+		expectNoSyncCalls(fs, execFileSync);
+	});
+
+	it('reads the macOS mount table through the asynchronous execFile', async () => {
+		const execFileSync = vi.fn();
+		const execFile = execFileWith(MAC_MOUNTS);
+		const fs = fakeFs({
+			realpath: vi.fn(async (p: string) => p),
+			readFile: vi.fn(async () => { throw new Error('ENOENT'); }),
+			statfs: vi.fn(async () => ({ type: 0x1a })),
+		});
+		const storageInfo = Probe.createStorageInfo({ fs, execFile, execFileSync, platform: 'darwin', home: '/Users/me', defaultUserData: () => '/x' });
+
+		await expect(storageInfo('/Volumes/T7/anytype')).resolves.toMatchObject({ kind: 'local', fsType: 'exfat', onSystemDrive: false });
+		await expect(storageInfo('/Volumes/share/anytype')).resolves.toMatchObject({ kind: 'network', provider: 'SMB', driveType: 'remote' });
+		expect(execFile.mock.calls[0][0]).toBe('/sbin/mount');
+		expectNoSyncCalls(fs, execFileSync);
+	});
+
+	it('answers within the timeout with unknown fields when the filesystem hangs, and does not ask again', async () => {
+		vi.useFakeTimers();
+
+		try {
+			const hang = () => new Promise(() => {});
+			const fs = fakeFs({ realpath: vi.fn(hang), readFile: vi.fn(hang), statfs: vi.fn(hang) });
+			const storageInfo = Probe.createStorageInfo({ fs, execFile: vi.fn(), platform: 'linux', home: '/home/me', timeout: 2000, defaultUserData: () => '/x' });
+			const want = {
+				kind: 'unknown',
+				provider: '',
+				driveType: 'unknown',
+				fsType: 'unknown',
+				busType: 'unknown',
+				onSystemDrive: null,
+				isDefaultWorkdir: false,
+			};
+
+			const promise = storageInfo('/mnt/dead/anytype');
+			await vi.advanceTimersByTimeAsync(2000);
+			await expect(promise).resolves.toEqual(want);
+
+			// A stalled lookup is remembered: the next report does not start more stalled calls
+			await vi.advanceTimersByTimeAsync(5 * 60 * 1000);
+			await expect(storageInfo('/mnt/dead/anytype')).resolves.toEqual(want);
+			expect(fs.promises.realpath).toHaveBeenCalledTimes(1);
+			expect(fs.promises.statfs).not.toHaveBeenCalled();
+		} finally {
+			vi.useRealTimers();
+		};
+	});
+
+	it('describes Windows drives through the drive lookup', async () => {
+		const drives = Probe.createDriveCache({ lookup: async (letter: string) => ({ C: 'D|Fixed|NTFS\nB|NVMe', Z: 'D|Network|NTFS', E: 'D|Fixed|exFAT\nB|USB' } as any)[letter] });
+		const fs = fakeFs({
+			realpath: vi.fn(async (p: string) => p),
+			readFile: vi.fn(async () => { throw new Error('ENOENT'); }),
+			statfs: vi.fn(async () => ({ type: 0 })),
+		});
+		const storageInfo = Probe.createStorageInfo({
+			fs,
+			execFile: vi.fn(),
+			platform: 'win32',
+			env: { APPDATA: 'C:\\Users\\me\\AppData\\Roaming' },
+			home: 'C:\\Users\\me',
+			drives,
+			systemLetter: 'C',
+			defaultUserData: () => 'C:\\Users\\me\\AppData\\Roaming\\anytype',
+		});
+
+		await expect(storageInfo('C:\\Users\\me\\AppData\\Roaming\\anytype\\data')).resolves.toEqual({
+			kind: 'local', provider: '', driveType: 'fixed', fsType: 'ntfs', busType: 'nvme', onSystemDrive: true, isDefaultWorkdir: true,
+		});
+		await expect(storageInfo('Z:\\anytype')).resolves.toMatchObject({ kind: 'network', provider: Probe.NETWORK_DRIVE, driveType: 'remote' });
+		await expect(storageInfo('E:\\anytype')).resolves.toMatchObject({ kind: 'local', driveType: 'fixed', fsType: 'exfat', busType: 'usb', onSystemDrive: false });
+		expectNoSyncCalls(fs, vi.fn());
+	});
+
+	it('keeps the network verdict of an unresolvable UNC path, and leaves a dead local link unknown', async () => {
+		const lookup = vi.fn(async () => 'D|Fixed|NTFS\nB|NVMe');
+		const fs = fakeFs({
+			realpath: vi.fn(async () => { throw Object.assign(new Error('EACCES'), { code: 'EACCES' }); }),
+			readFile: vi.fn(async () => { throw new Error('ENOENT'); }),
+			statfs: vi.fn(async () => ({ type: 0 })),
+		});
+		const storageInfo = Probe.createStorageInfo({
+			fs,
+			execFile: vi.fn(),
+			platform: 'win32',
+			home: 'C:\\Users\\me',
+			drives: Probe.createDriveCache({ lookup }),
+			systemLetter: 'C',
+			defaultUserData: () => 'C:\\Users\\me\\AppData\\Roaming\\anytype',
+		});
+
+		await expect(storageInfo('\\\\nas\\share\\anytype')).resolves.toEqual({
+			kind: 'network', provider: Probe.NETWORK_DRIVE, driveType: 'remote', fsType: 'unknown', busType: 'unknown', onSystemDrive: null, isDefaultWorkdir: false,
+		});
+		await expect(storageInfo('C:\\vault')).resolves.toEqual({
+			kind: 'unknown', provider: '', driveType: 'unknown', fsType: 'unknown', busType: 'unknown', onSystemDrive: null, isDefaultWorkdir: false,
+		});
+
+		// The drive under a dead link describes the link, not the data: no lookup for it
+		expect(lookup).not.toHaveBeenCalled();
+		expect(fs.promises.statfs).not.toHaveBeenCalled();
 	});
 });

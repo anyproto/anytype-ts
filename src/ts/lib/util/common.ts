@@ -121,7 +121,7 @@ class UtilCommon {
 	};
 
 	/**
-	 * Sentry tags for a storageInfo result, prefixed storage_. Missing values read 'unknown', never 'local'.
+	 * Report tags for a storageInfo result, prefixed storage_. Missing values read 'unknown', never 'local'.
 	 * @param {any} info - Result of storageInfo, or null.
 	 */
 	storageTags (info: any): Record<string, string> {

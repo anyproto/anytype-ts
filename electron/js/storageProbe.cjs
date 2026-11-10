@@ -4,6 +4,7 @@
 // can load this file. preload.cjs wires it to the real system.
 
 const { execFile } = require('child_process');
+const path = require('path');
 
 const UNKNOWN = 'unknown';
 const NETWORK_DRIVE = 'Network drive';
@@ -381,27 +382,223 @@ const isSystemVolume = (mount, platform, entries) => {
 	return mount.dev == root.dev;
 };
 
-// read() behind a ttl cache. get(true) always reads (and refreshes the cache): for checks the user acts on,
-// where a share mounted seconds ago must show up. A failed read caches null.
-const cachedReader = (read, param) => {
-	param = param || {};
+// --- Vault location classification ---
+// Pure: every read it needs (Dropbox folders, mount tables, statfs) comes in through ctx, so the synchronous
+// vault location check and the asynchronous diagnostics share it, each with its own I/O.
 
-	const ttl = param.ttl || 30000;
-	const now = param.now || Date.now;
+// Segment-level markers (tested against each path segment to avoid "Sandbox" → "box" false positives).
+const CLOUD_MARKERS = [
+	[ /dropbox/i, 'Dropbox' ],
+	[ /onedrive/i, 'OneDrive' ],
+	[ /^google\s?drive/i, 'Google Drive' ],
+	[ /googledrive/i, 'Google Drive' ],       // macOS File Provider: "GoogleDrive-<email>"
+	[ /icloud/i, 'iCloud Drive' ],
+	[ /nextcloud/i, 'Nextcloud' ],
+	[ /owncloud/i, 'ownCloud' ],
+	[ /^box( sync)?$/i, 'Box' ],
+	[ /pcloud/i, 'pCloud' ],
+	[ /^mega(sync)?$/i, 'MEGA' ],
+	[ /yandex\.?disk/i, 'Yandex.Disk' ],
+	[ /baidu(net|sync)disk/i, 'Baidu' ],
+	[ /syncthing/i, 'Syncthing' ],
+	[ /creative cloud files/i, 'Creative Cloud' ],
+];
 
-	let cache = null;
+// Linux statfs f_type magic numbers for remote filesystems.
+// No FUSE magic here: FUSE also backs local filesystems (ntfs-3g, gocryptfs, exfat-fuse) —
+// remote FUSE backends (sshfs, rclone) are resolved by fstype via /proc/self/mounts instead.
+const NET_MAGIC = {
+	0x6969:     'NFS',
+	0x517b:     'SMB',
+	0xfe534d42: 'SMB',   // SMB2
+	0xff534d42: 'SMB',   // CIFS
+	0x564c:     'NetWare',
+	0xaad7aaea: 'PanFS',
+	0x01021997: 'V9FS',
+	0x73757245: 'Coda',
+};
 
-	return (fresh) => {
-		if (!fresh && cache && ((now() - cache.time) < ttl)) {
-			return cache.value;
+// Linux fstype names (3rd field of /proc/self/mounts) that mean a remote filesystem.
+const LINUX_REMOTE_FSTYPES = {
+	nfs:            'NFS',
+	nfs4:           'NFS',
+	cifs:           'SMB',
+	smb3:           'SMB',
+	smbfs:          'SMB',
+	davfs:          'WebDAV',
+	'fuse.davfs2':  'WebDAV',
+	'fuse.sshfs':   'SSHFS',
+	'fuse.rclone':  'rclone',
+	'fuse.gcsfuse': 'gcsfuse',
+	'fuse.s3fs':    's3fs',
+	'9p':           '9P',
+	ceph:           'Ceph',
+	glusterfs:      'GlusterFS',
+	afs:            'AFS',
+};
+
+// macOS mount names that mean a remote filesystem.
+const MAC_REMOTE_FSTYPES = { smbfs: 'SMB', nfs: 'NFS', webdav: 'WebDAV', afpfs: 'AFP', ftp: 'FTP' };
+
+// Every provider name the classifier can produce; anything else is reported as 'Other'
+const KNOWN_PROVIDERS = new Set([
+	...CLOUD_MARKERS.map(it => it[1]),
+	...Object.values(NET_MAGIC),
+	...Object.values(LINUX_REMOTE_FSTYPES),
+	...Object.values(MAC_REMOTE_FSTYPES),
+	NETWORK_DRIVE,
+	'Cloud storage',
+]);
+
+const pathFor = (platform) => (platform == 'win32') ? path.win32 : path.posix;
+
+// Windows realpath can return long-path form: "\\?\C:\..." or "\\?\UNC\server\share".
+// Normalize it or every Windows path would match the UNC test.
+const stripLongPath = (p) => String(p || '').replace(/^\\\\\?\\UNC\\/i, '\\\\').replace(/^\\\\\?\\/, '');
+
+const providerFromSegment = (seg) => {
+	seg = String(seg || '');
+	for (const [ re, name ] of CLOUD_MARKERS) {
+		if (re.test(seg)) {
+			return name;
 		};
-
-		let value = null;
-		try { value = read(); } catch (e) {};
-
-		cache = { time: now(), value };
-		return value;
 	};
+	return seg.split('-')[0] || '';   // File Provider folders are "<Provider>-<account>"
+};
+
+const providerFromPath = (p) => {
+	const segs = String(p).split(/[\/\\]+/).filter(Boolean);
+	for (const seg of segs) {
+		for (const [ re, name ] of CLOUD_MARKERS) {
+			if (re.test(seg)) {
+				return name;
+			};
+		};
+	};
+	return '';
+};
+
+// Where Dropbox keeps info.json, which names its real folder(s) whatever they are called
+const dropboxInfoFiles = (platform, env, home) => {
+	const P = pathFor(platform);
+
+	if (platform == 'win32') {
+		return [ env.APPDATA, env.LOCALAPPDATA ].filter(Boolean).map(d => P.join(d, 'Dropbox', 'info.json'));
+	};
+	return [ P.join(String(home || ''), '.dropbox', 'info.json') ];
+};
+
+const parseDropboxInfo = (text) => {
+	try {
+		const data = JSON.parse(text);
+		return Object.keys(data).filter(k => data[k] && data[k].path).map(k => data[k].path);
+	} catch (e) {
+		return [];
+	};
+};
+
+// A ctx reader that is missing or throws reads as "nothing known"
+const read = (fn, ...args) => {
+	try {
+		return (typeof fn == 'function') ? fn(...args) : null;
+	} catch (e) {
+		return null;
+	};
+};
+
+const networkTypeOf = (p, ctx) => {
+	const platform = ctx.platform;
+
+	// Windows: UNC path (\\server\share), or a drive letter already known to be a mapped network drive.
+	if (platform == 'win32') {
+		const t = winNetworkType(p, ctx.drives, ctx.systemLetter);
+		if (t) {
+			return t;
+		};
+	};
+
+	// Linux: fstype from the mount table is authoritative (distinguishes remote FUSE from local FUSE).
+	if (platform == 'linux') {
+		const mount = findMount(p, read(ctx.linuxMounts), true);
+		if (mount && mount.type) {
+			return LINUX_REMOTE_FSTYPES[mount.type] || '';
+		};
+	};
+
+	// Fallback: statfs f_type magic.
+	const magic = read(ctx.statfsType, p);
+	if ((magic !== null) && NET_MAGIC[Number(magic) >>> 0]) {
+		return NET_MAGIC[Number(magic) >>> 0];
+	};
+
+	// macOS: statfs.type is not a usable name — parse the mount table instead.
+	if (platform == 'darwin') {
+		const mount = findMount(p, read(ctx.macMounts), false);
+		if (mount && MAC_REMOTE_FSTYPES[mount.type]) {
+			return MAC_REMOTE_FSTYPES[mount.type];
+		};
+	};
+
+	return '';
+};
+
+// Classifies a path (already through realpath, when that worked) as a cloud-synced or network location.
+// ctx: { platform, home, env, resolved, drives, systemLetter, and the readers dropboxFolders(), linuxMounts(),
+// macMounts(), statfsType(p) }. Readers are called lazily, only when the check before did not decide.
+// Returns { unsafe, kind: ''|'cloud'|'network', provider, path, resolved }.
+const classifyVaultPath = (p, ctx) => {
+	ctx = ctx || {};
+
+	const P = pathFor(ctx.platform);
+	const env = ctx.env || {};
+	const home = String(ctx.home || '');
+	const sep = P.sep;
+
+	p = stripLongPath(p);
+
+	const result = { unsafe: false, kind: '', provider: '', path: p, resolved: !!ctx.resolved };
+	const lc = p.toLowerCase();
+	const startsWith = (base) => !!base && lc.startsWith(String(base).toLowerCase().replace(/[\/\\]+$/, '') + sep);
+
+	// Cloud: canonical macOS File Provider roots
+	const cloudStorage = P.join(home, 'Library', 'CloudStorage');    // Dropbox, GoogleDrive-*, OneDrive-*, Box
+	const mobileDocs = P.join(home, 'Library', 'Mobile Documents');  // iCloud Drive
+
+	if (home && startsWith(cloudStorage)) {
+		const seg = (p.slice(cloudStorage.length + 1).split(sep)[0]) || '';
+		return { ...result, unsafe: true, kind: 'cloud', provider: providerFromSegment(seg) || 'Cloud storage' };
+	};
+	if (home && startsWith(mobileDocs)) {
+		return { ...result, unsafe: true, kind: 'cloud', provider: 'iCloud Drive' };
+	};
+
+	// Cloud: OneDrive env vars (Windows)
+	for (const v of [ 'OneDrive', 'OneDriveConsumer', 'OneDriveCommercial' ]) {
+		if (startsWith(env[v])) {
+			return { ...result, unsafe: true, kind: 'cloud', provider: 'OneDrive' };
+		};
+	};
+
+	// Cloud: Dropbox info.json real path(s)
+	for (const dp of (read(ctx.dropboxFolders) || [])) {
+		if (startsWith(dp) || (lc == String(dp).toLowerCase())) {
+			return { ...result, unsafe: true, kind: 'cloud', provider: 'Dropbox' };
+		};
+	};
+
+	// Cloud: per-segment name markers (low-confidence fallback — warn, not block, so false positives are tolerable)
+	const provider = providerFromPath(p);
+	if (provider) {
+		return { ...result, unsafe: true, kind: 'cloud', provider };
+	};
+
+	// Network / remote filesystem
+	const net = networkTypeOf(p, ctx);
+	if (net) {
+		return { ...result, unsafe: true, kind: 'network', provider: net };
+	};
+
+	return result;
 };
 
 const normalizeForCompare = (p, platform) => {
@@ -445,13 +642,27 @@ const buildStorageInfo = (param) => {
 	const check = param.check || {};
 	const drive = param.drive || null;
 	const mount = param.mount || null;
-	const known = param.knownProviders || null;
+	const known = param.knownProviders || KNOWN_PROVIDERS;
 	const isDefaultWorkdir = !!param.isDefaultWorkdir;
 
-	// Unresolvable path (dead link, missing folder): the unresolved path only describes where the link
-	// itself sits, not the data, so nothing about the storage is known
+	// Provider names are ours (cloud markers, network fs names); anything else, e.g. a File Provider
+	// folder named after an account, is reported as 'Other' and never verbatim
+	const providerOf = (kind) => {
+		let provider = String(check.provider || '');
+		if (!provider && (kind == 'network')) {
+			provider = NETWORK_DRIVE;
+		};
+		return (provider && known && !known.has(provider)) ? 'Other' : provider;
+	};
+
+	// Unresolvable path (dead link, missing folder, access denied on the way): the drive or mount under the
+	// unresolved path may be the link's, not the data's, so fs, bus and system drive are unknown. A cloud or
+	// network verdict the path itself carries (a UNC path, a cloud folder name) still stands
 	if (check.resolved === false) {
-		return { kind: UNKNOWN, provider: '', driveType: UNKNOWN, fsType: UNKNOWN, busType: UNKNOWN, onSystemDrive: null, isDefaultWorkdir };
+		const kind = ((check.kind == 'cloud') || (check.kind == 'network')) ? check.kind : UNKNOWN;
+		const driveType = (kind == 'network') ? 'remote' : UNKNOWN;
+
+		return { kind, provider: providerOf(kind), driveType, fsType: UNKNOWN, busType: UNKNOWN, onSystemDrive: null, isDefaultWorkdir };
 	};
 
 	const fsType = drive ? fsTypeOf(drive.fsType) : (mount ? fsTypeOf(mount.type) : UNKNOWN);
@@ -473,15 +684,7 @@ const buildStorageInfo = (param) => {
 		driveType = 'remote';
 	};
 
-	// Provider names are ours (cloud markers, network fs names); anything else, e.g. a File Provider
-	// folder named after an account, is reported as 'Other' and never verbatim
-	let provider = String(check.provider || '');
-	if (!provider && (kind == 'network')) {
-		provider = NETWORK_DRIVE;
-	};
-	if (provider && known && !known.has(provider)) {
-		provider = 'Other';
-	};
+	const provider = providerOf(kind);
 
 	let busType = drive ? busTypeOf(drive.busType) : UNKNOWN;
 
@@ -497,6 +700,140 @@ const buildStorageInfo = (param) => {
 		busType,
 		onSystemDrive: tri(param.onSystemDrive),
 		isDefaultWorkdir,
+	};
+};
+
+// --- Diagnostics: asynchronous, never on the renderer thread ---
+
+const IO_TIMEOUT = 2000;
+const INFO_CACHE_TTL = 60 * 1000;
+const INFO_CACHE_HUNG_TTL = 10 * 60 * 1000;
+
+// Resolves with what fn() resolves with, or with fallback when it rejects, throws or takes longer than ms.
+// A call that hangs keeps its libuv thread, but nothing waits for it.
+const withTimeout = (fn, ms, fallback, onTimeout) => new Promise(resolve => {
+	const timer = setTimeout(() => {
+		if (onTimeout) {
+			onTimeout();
+		};
+		resolve(fallback);
+	}, ms);
+
+	const done = (v) => {
+		clearTimeout(timer);
+		resolve(v);
+	};
+
+	Promise.resolve().then(fn).then(done, () => done(fallback));
+});
+
+// Storage flags for diagnostics, built only from asynchronous I/O, each call bounded: a dead mount or a
+// redirected profile folder can stall a call, never the renderer. deps:
+//   fs (only fs.promises is used), execFile, platform, env, home, drives (createDriveCache), systemLetter,
+//   defaultUserData() -> string, timeout (per call), now.
+// Returns (input) => Promise<flags>, never rejecting. Results are cached per input, a result that hit a
+// timeout for longer, so repeated reports do not pile up stalled calls.
+const createStorageInfo = (deps) => {
+	deps = deps || {};
+
+	const { fs, platform } = deps;
+	const env = deps.env || {};
+	const timeout = deps.timeout || IO_TIMEOUT;
+	const now = deps.now || Date.now;
+	const cache = new Map();
+
+	const lookup = async (input) => {
+		let timedOut = false;
+
+		const bounded = (fn, fallback) => withTimeout(fn, timeout, fallback, () => { timedOut = true; });
+		const readText = (file) => bounded(() => fs.promises.readFile(file, 'utf8'), '');
+
+		const readMounts = () => {
+			if (platform == 'linux') {
+				return readText('/proc/self/mounts').then(text => text ? parseLinuxMounts(text) : null);
+			};
+			if (platform == 'darwin') {
+				const run = () => new Promise((resolve, reject) => {
+					deps.execFile('/sbin/mount', [], { encoding: 'utf8', timeout }, (err, stdout) => err ? reject(err) : resolve(stdout));
+				});
+				return bounded(run, '').then(out => out ? parseMacMounts(out) : null);
+			};
+			return Promise.resolve(null);
+		};
+
+		const [ real, dropbox, mounts ] = await Promise.all([
+			bounded(() => fs.promises.realpath(input), null),
+			Promise.all(dropboxInfoFiles(platform, env, deps.home).map(readText)).then(texts => texts.flatMap(t => t ? parseDropboxInfo(t) : [])),
+			readMounts(),
+		]);
+
+		const resolved = (real !== null);
+		const p = resolved ? String(real) : input;
+		const canStatfs = resolved && fs.promises && (typeof fs.promises.statfs == 'function');
+		const magic = canStatfs ? await bounded(() => fs.promises.statfs(p).then(st => Number(st.type) >>> 0), null) : null;
+
+		// Windows: wait for the drive lookup (bounded by its own timeout) so the verdict below is final
+		const letter = ((platform == 'win32') && resolved) ? winDriveLetter(stripLongPath(p)) : '';
+		const drive = (letter && deps.drives) ? await deps.drives.get(letter) : null;
+
+		const check = classifyVaultPath(p, {
+			platform,
+			env,
+			home: deps.home,
+			resolved,
+			drives: deps.drives,
+			systemLetter: deps.systemLetter,
+			dropboxFolders: () => dropbox,
+			linuxMounts: () => mounts,
+			macMounts: () => mounts,
+			statfsType: () => magic,
+		});
+
+		const param = {
+			check,
+			isDefaultWorkdir: isDefaultDataPath(input, read(deps.defaultUserData), platform),
+		};
+
+		if (!resolved) {
+			return { info: buildStorageInfo(param), timedOut };
+		};
+
+		if (platform == 'win32') {
+			const isUnc = isUncPath(check.path);
+
+			param.drive = letter ? drive : (isUnc ? REMOTE_DRIVE : null);
+			param.onSystemDrive = letter ? (letter == systemLetterOf(deps.systemLetter)) : (isUnc ? false : null);
+		} else {
+			param.mount = findMount(check.path, mounts, platform == 'linux');
+			param.onSystemDrive = isSystemVolume(param.mount, platform, mounts);
+		};
+
+		return { info: buildStorageInfo(param), timedOut };
+	};
+
+	return (input) => {
+		const key = String(input || '');
+		const hit = cache.get(key);
+
+		if (hit && ((now() - hit.time) < hit.ttl)) {
+			return hit.promise;
+		};
+
+		const entry = { time: now(), ttl: INFO_CACHE_TTL, promise: null };
+
+		entry.promise = Promise.resolve()
+			.then(() => lookup(key))
+			.then(ret => {
+				entry.ttl = ret.timedOut ? INFO_CACHE_HUNG_TTL : INFO_CACHE_TTL;
+				return ret.info;
+			})
+			.catch(() => buildStorageInfo({}));
+
+		if (cache.size >= 20) {
+			cache.delete(cache.keys().next().value);
+		};
+		cache.set(key, entry);
+		return entry.promise;
 	};
 };
 
@@ -523,7 +860,12 @@ module.exports = {
 	parseLinuxMounts,
 	findMount,
 	isSystemVolume,
-	cachedReader,
 	isDefaultDataPath,
+	KNOWN_PROVIDERS,
+	dropboxInfoFiles,
+	parseDropboxInfo,
+	classifyVaultPath,
 	buildStorageInfo,
+	withTimeout,
+	createStorageInfo,
 };
