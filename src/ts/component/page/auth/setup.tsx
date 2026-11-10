@@ -74,7 +74,7 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 				return;
 			};
 
-			if (setErrorHandler(message.error) || !account) {
+			if (setErrorHandler(message.error, message.requiredSpace) || !account) {
 				return;
 			};
 
@@ -120,7 +120,7 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 		});
 	};
 
-	const setErrorHandler = (error: I.Error) => {
+	const setErrorHandler = (error: I.Error, requiredSpace?: number) => {
 		if (!error.code) {
 			return false;
 		};
@@ -130,7 +130,7 @@ const PageAuthSetup = forwardRef<I.PageRef, I.PageComponent>((props, ref) => {
 			return;
 		};
 
-		setError(error);
+		setError({ code: error.code, description: U.Common.getAccountSelectError(error.code, error.description, requiredSpace) });
 		return U.Common.checkErrorCommon(error.code);
 	};
 

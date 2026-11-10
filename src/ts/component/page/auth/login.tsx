@@ -59,7 +59,7 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 
 				S.Auth.accountListClear();
 				U.Data.createSession(phrase, '', '', (message: any) => {
-					if (setErrorHandler(message.error.code, message.error.description)) {
+					if (setErrorHandler(message.error.code, U.Common.getAccountSelectError(message.error.code, message.error.description, message.requiredSpace))) {
 						return;
 					};
 
@@ -75,7 +75,7 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 					// Middleware older than GO-7495 answers with an empty accountId and still needs
 					// the event. Remove once middleware.version is past it
 					C.AccountRecover(message => {
-						setErrorHandler(message.error.code, message.error.description);
+						setErrorHandler(message.error.code, U.Common.getAccountSelectError(message.error.code, message.error.description, message.requiredSpace));
 					});
 				});
 			});
@@ -116,7 +116,7 @@ const PageAuthLogin = forwardRef<I.PageRef, I.PageComponent>((props, ref: any) =
 				return;
 			};
 
-			if (setErrorHandler(message.error.code, message.error.description) || !message.account) {
+			if (setErrorHandler(message.error.code, U.Common.getAccountSelectError(message.error.code, message.error.description, message.requiredSpace)) || !message.account) {
 				// Re-opening the guard while the list still holds the account would let the
 				// next render select it again. The two error codes that route away, and a
 				// success carrying no account, never clear the list on their own
