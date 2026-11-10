@@ -1513,21 +1513,24 @@ class Action {
 	 * Re-warns if the user later moves data to a different unsafe location.
 	 */
 	vaultLocationWarningOnStart () {
-		const check = U.Common.checkVaultPath('');
-		if (!check.unsafe) {
-			return;
-		};
+		// A Windows drive letter other than the system one is only known to be a mapped network drive once its
+		// drive lookup lands: wait for it (bounded, never rejects)
+		U.Common.checkVaultPathReady('').then(check => {
+			if (!check || !check.unsafe) {
+				return;
+			};
 
-		const ack = () => Storage.set('vaultLocationWarned', check.path);
+			const ack = () => Storage.set('vaultLocationWarned', check.path);
 
-		if (Storage.get('vaultLocationWarned') == check.path) {
-			return;
-		};
+			if (Storage.get('vaultLocationWarned') == check.path) {
+				return;
+			};
 
-		this.vaultLocationWarning(check, {
-			route: analytics.route.app,
-			onConfirm: ack,
-			onCancel: ack,
+			this.vaultLocationWarning(check, {
+				route: analytics.route.app,
+				onConfirm: ack,
+				onCancel: ack,
+			});
 		});
 	};
 
