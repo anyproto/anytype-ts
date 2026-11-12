@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import 'Component';
 import PageAuthPinCheck from './pinCheck';
 
 const meta: Meta<typeof PageAuthPinCheck> = {
@@ -8,7 +9,7 @@ const meta: Meta<typeof PageAuthPinCheck> = {
 	tags: ['autodocs'],
 	decorators: [
 		(Story) => (
-			<div style={{ width: 480, minHeight: 400, margin: '0 auto' }}>
+			<div className="pageAuth pageAuthPinCheck" style={{ width: 480, minHeight: 400, margin: '0 auto' }}>
 				<Story />
 			</div>
 		),
@@ -25,4 +26,17 @@ export const Default: Story = {
 			return <Story />;
 		},
 	],
+};
+
+export const TouchId: Story = {
+	...Default,
+	beforeEach: () => {
+		const electron = U.Common.getElectron();
+		const api = electron.Api;
+
+		electron.Api = (id, cmd, args) => (cmd == 'getTouchIdState') ?
+			Promise.resolve({ available: true, enabled: true }) : api(id, cmd, args);
+
+		return () => { electron.Api = api; };
+	},
 };
