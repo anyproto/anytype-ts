@@ -108,7 +108,7 @@ export default {
 		image:			 [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp', 'heic', 'heif' ],
 		video:			 [ 'mp4', 'm4v', 'mov' ],
 		cover:			 [ 'jpg', 'jpeg', 'png', 'gif', 'webp' ],
-		audio:			 [ 'mp3', 'm4a', 'flac', 'ogg', 'wav' ],
+		audio:			 [ 'mp3', 'm4a', 'm4b', 'flac', 'ogg', 'wav' ],
 		pdf:			 [ 'pdf' ],
 
 		// Handed to the system handler after a download. Everything outside this
@@ -122,7 +122,7 @@ export default {
 			'ppt', 'pptx', 'odp',
 			'jpg', 'jpeg', 'png', 'gif', 'webp', 'heic', 'heif', 'bmp', 'tiff',
 			'mp4', 'm4v', 'mov', 'mkv', 'webm',
-			'mp3', 'm4a', 'flac', 'ogg', 'wav', 'aac', 'opus',
+			'mp3', 'm4a', 'm4b', 'flac', 'ogg', 'wav', 'aac', 'opus',
 		],
 
 		import: {
