@@ -387,9 +387,15 @@ export interface GraphSettings {
 	timeline: boolean;
 };
 
+export enum FocusSource {
+	Program		 = 0,
+	Pointer		 = 1,
+};
+
 export interface FocusState {
 	focused: string;
 	range: I.TextRange;
+	source?: FocusSource;
 };
 
 export interface RouteParam {
