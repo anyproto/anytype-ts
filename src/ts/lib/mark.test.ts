@@ -1092,6 +1092,94 @@ describe('Mark', () => {
 		});
 	});
 
+	describe('parseMentionFilter', () => {
+		it('should parse plain @ mention queries without pipe', () => {
+			expect(Mark.parseMentionFilter('@Victor')).toEqual({
+				query: 'Victor',
+				alias: '',
+				hasPipe: false,
+				isClosed: false,
+			});
+		});
+
+		it('should parse @Target|Alias syntax', () => {
+			expect(Mark.parseMentionFilter('@Victor|Vic')).toEqual({
+				query: 'Victor',
+				alias: 'Vic',
+				hasPipe: true,
+				isClosed: false,
+			});
+		});
+
+		it('should strip .md extension from target query in @Target.md|Alias', () => {
+			expect(Mark.parseMentionFilter('@Victor.md|Vic')).toEqual({
+				query: 'Victor',
+				alias: 'Vic',
+				hasPipe: true,
+				isClosed: false,
+			});
+		});
+
+		it('should parse [[Target|Alias]] wikilink syntax and detect closing ]]', () => {
+			expect(Mark.parseMentionFilter('[[Victor|Vic')).toEqual({
+				query: 'Victor',
+				alias: 'Vic',
+				hasPipe: true,
+				isClosed: false,
+			});
+
+			expect(Mark.parseMentionFilter('[[Victor|Vic]]')).toEqual({
+				query: 'Victor',
+				alias: 'Vic',
+				hasPipe: true,
+				isClosed: true,
+			});
+
+			expect(Mark.parseMentionFilter('[[Victor.md|Vic]]')).toEqual({
+				query: 'Victor',
+				alias: 'Vic',
+				hasPipe: true,
+				isClosed: true,
+			});
+		});
+
+		it('should parse Obsidian-style single-bracket [Target.md|Alias] syntax and detect closing ]', () => {
+			expect(Mark.parseMentionFilter('[Victor.md|Vic')).toEqual({
+				query: 'Victor',
+				alias: 'Vic',
+				hasPipe: true,
+				isClosed: false,
+			});
+
+			expect(Mark.parseMentionFilter('[Victor.md|Vic]')).toEqual({
+				query: 'Victor',
+				alias: 'Vic',
+				hasPipe: true,
+				isClosed: true,
+			});
+		});
+
+		it('should support agglutinative suffixes (e.g. Turkish)', () => {
+			expect(Mark.parseMentionFilter('[[Kitap|Kitabın]]')).toEqual({
+				query: 'Kitap',
+				alias: 'Kitabın',
+				hasPipe: true,
+				isClosed: true,
+			});
+		});
+
+		it('should preserve custom alias text in Mark.toHtml', () => {
+			const text = 'Hello Vic today';
+			const marks: I.Mark[] = [
+				{ type: I.MarkType.Mention, param: 'victor-id', range: { from: 6, to: 9 } },
+			];
+
+			const html = Mark.toHtml(text, marks);
+			expect(Mark.stripZws(html)).toContain('<name>Vic</name>');
+			expect(html).toContain('data-param="victor-id"');
+		});
+	});
+
 	describe('stripZws', () => {
 
 		// Minimal element-like node: a single text node, the way a code block renders

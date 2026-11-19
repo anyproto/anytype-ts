@@ -766,19 +766,50 @@ const Block = forwardRef<Ref, Props>((props, ref) => {
 						return;
 					};
 
+					const from = Number(range[0]) || 0;
+					const to = Number(range[1]) || 0;
+
 					Preview.previewShow({
 						target: object.id,
 						markType: I.MarkType.Mention,
 						object,
 						element: name,
-						range: {
-							from: Number(range[0]) || 0,
-							to: Number(range[1]) || 0,
-						},
+						range: { from, to },
 						noUnlink: true,
+						noEdit: readonly,
 						withPlural: true,
 						marks,
 						onChange: marks => setMarksCallback(getValue(), marks, param.onChange),
+						onRename: (newName: string) => {
+							const text = getValue();
+							const trimmed = String(newName || '').replace(/\u200B/g, '').trim() || U.Object.name(object, true);
+							const shortened = U.String.shorten(trimmed, J.Constant.limit.string.mention);
+							if (!shortened) {
+								return;
+							};
+
+							const oldLen = to - from;
+							const diff = shortened.length - oldLen;
+							const nextText = text.substring(0, from) + shortened + text.substring(to);
+							let nextMarks = U.Common.objectCopy(marks || []).map((m: I.Mark) => {
+								if ((m.type == I.MarkType.Mention) && (m.range.from == from) && (m.range.to == to)) {
+									return { ...m, range: { from, to: from + shortened.length } };
+								};
+								if (m.range.from >= to) {
+									return { ...m, range: { from: m.range.from + diff, to: m.range.to + diff } };
+								};
+								if (m.range.to > from) {
+									return { ...m, range: { from: m.range.from, to: m.range.to + diff } };
+								};
+								return m;
+							});
+
+							setMarksCallback(nextText, nextMarks, param.onChange);
+
+							if (shortened !== text.substring(from, to)) {
+								Preview.toastShow({ text: translate('previewMentionTextUpdated') });
+							};
+						},
 					});
 				};
 			};

@@ -52,6 +52,7 @@ keyMap[I.ObjectLayout.Space] = keyMap[I.ObjectLayout.SpaceView];
 class DetailStore {
 
 	private map: Map<string, Map<string, Map<string, any>>> = new Map();
+	private prevNameMap: Map<string, Map<string, string>> = new Map();
 
 	/**
 	 * Per-(rootId, id, args) computed cache for get(): inside reactive contexts the
@@ -111,6 +112,8 @@ class DetailStore {
 			return;
 		};
 
+		this.prevNameMap.delete(rootId);
+
 		const map = observable.map(new Map());
 
 		for (const item of items) {
@@ -118,6 +121,38 @@ class DetailStore {
 		};
 
 		this.map.set(rootId, map);
+	};
+
+	private recordPrevName (rootId: string, id: string): void {
+		const map = this.map.get(rootId);
+		if (!map || !map.has(id)) {
+			return;
+		};
+
+		let rootPrev = this.prevNameMap.get(rootId);
+		if (rootPrev && rootPrev.has(id)) {
+			return;
+		};
+
+		const prevObj = this.build(rootId, id, [ 'name', 'layout', 'snippet', 'fileExt', 'timestamp' ], true);
+		if (prevObj && !prevObj._empty_) {
+			const prevName = U.String.shorten(U.Object.name(prevObj, true).trim(), J.Constant.limit.string.mention);
+			if (prevName) {
+				if (!rootPrev) {
+					rootPrev = new Map();
+					this.prevNameMap.set(rootId, rootPrev);
+				};
+				rootPrev.set(id, prevName);
+			};
+		};
+	};
+
+	public getPrevName (rootId: string, id: string): string {
+		return this.prevNameMap.get(rootId)?.get(id) || '';
+	};
+
+	public clearPrevNames (rootId: string): void {
+		this.prevNameMap.delete(rootId);
 	};
 
 	/**
@@ -135,6 +170,10 @@ class DetailStore {
 		if (!item.details) {
 			console.log('[S.Detail].update: details are not defined');
 			return;
+		};
+
+		if (('name' in item.details) || ('snippet' in item.details) || ('timestamp' in item.details) || ('pluralName' in item.details)) {
+			this.recordPrevName(rootId, item.id);
 		};
 
 		let map = this.map.get(rootId);
@@ -189,6 +228,7 @@ class DetailStore {
 	 */
 	public clear (rootId: string): void {
 		this.map.delete(rootId);
+		this.prevNameMap.delete(rootId);
 	};
 
 	/**
@@ -196,6 +236,7 @@ class DetailStore {
 	 */
 	public clearAll (): void {
 		this.map.clear();
+		this.prevNameMap.clear();
 	};
 
 	/**
@@ -213,6 +254,10 @@ class DetailStore {
 		const map = this.map.get(rootId);
 		if (!map) {
 			return;
+		};
+
+		if (!keys || keys.includes('name') || keys.includes('snippet') || keys.includes('pluralName')) {
+			this.recordPrevName(rootId, id);
 		};
 
 		if (keys && keys.length) {

@@ -22,6 +22,7 @@ const prismLangModules = import.meta.glob([
 ]);
 
 (async () => {
+	await Promise.resolve();
 	for (const lang of U.Prism.components) {
 		const loader = prismLangModules[`/node_modules/prismjs/components/prism-${lang}.js`];
 		if (loader) {
@@ -779,7 +780,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				S.Menu.close('blockAdd');
 			};
 
-			if (menuOpenMention && ((oneSymbolBefore == '@') || (oneSymbolBefore == '['))) {
+			if (menuOpenMention && ((oneSymbolBefore == '@') || (oneSymbolBefore == '[') || ((oneSymbolBefore == '|') && S.Common.filter.text.startsWith('[') && !S.Common.filter.text.startsWith('[[')))) {
 				S.Menu.close('blockMention');
 			};
 
@@ -919,6 +920,8 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const canOpenMenuAdd = !menuOpenAdd && (oneSymbolBefore == '/') && isAllowedMenu;
 		const canOpenMenuMention = !menuOpenMention && (oneSymbolBefore == '@') && isAllowedMenu;
 		const canOpenMenuLink = !menuOpenMention && (oneSymbolBefore == '[') && (twoSymbolBefore == '[') && isAllowedMenu;
+		const pipeLinkMatch = (!menuOpenMention && (oneSymbolBefore == '|') && isAllowedMenuBase && range) ? value.substring(0, range.from).match(/(?:^|[\s(['"])(\[([^\[\]\n|]+)\|)$/) : null;
+		const canOpenMenuPipeLink = !!pipeLinkMatch;
 		const canOpenMenuEmoji = !menuOpenEmoji && (twoSymbolBefore == ':') && /\S/.test(oneSymbolBefore) && isAllowedMenuBase && (!range || (range.from <= 2) || [ ' ', '\n', '(', '[', '"', '\'' ].includes(threeSymbolBefore));
 
 		preventMenu.current = false;
@@ -997,13 +1000,22 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 
 		// Open mention menu
 		if (canOpenMenuMention) {
+			window.clearTimeout(timeoutText.current);
 			U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => onMention(1));
 			return;
 		};
 
 		// Open link menu
 		if (canOpenMenuLink) {
+			window.clearTimeout(timeoutText.current);
 			U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => onMention(2));
+			return;
+		};
+
+		// Open Obsidian-style [Target|Alias] link menu
+		if (canOpenMenuPipeLink && pipeLinkMatch) {
+			window.clearTimeout(timeoutText.current);
+			U.Data.blockSetText(rootId, block.id, value, marksRef.current, true, () => onMention(pipeLinkMatch[1].length));
 			return;
 		};
 
@@ -1196,15 +1208,17 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 		const element = `#block-${U.Common.esc(blockId)}`;
 
 		let value = getTextValue();
+		const triggerText = value.substring(range.from - d, range.from);
 
 		// Extract the word after the cursor to use as initial filter (for when @ is typed before existing text)
 		const textAfterCursor = value.substring(range.from);
 		const wordMatch = textAfterCursor.match(/^([^\s\n]*)/);
 		const nextWord = wordMatch ? wordMatch[1] : '';
 
-		value = U.String.cut(value, range.from - d, range.from);
+		value = U.String.cut(value, range.from - d, range.from + nextWord.length);
+		const adjustedMarks = Mark.adjust(marksRef.current, range.from - d, -(d + nextWord.length));
 
-		S.Common.filterSet(range.from - d, nextWord);
+		S.Common.filterSet(range.from - d, triggerText + nextWord);
 
 		raf(() => {
 			S.Menu.open('blockMention', {
@@ -1223,7 +1237,7 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 				data: {
 					rootId,
 					blockId,
-					marks: marksRef.current,
+					marks: adjustedMarks,
 					skipIds: [ rootId ],
 					canAdd: true,
 					withCaption: true,
@@ -1232,11 +1246,15 @@ const BlockText = forwardRef<I.BlockRef, Props>((props, ref) => {
 							return;
 						};
 
+						if (object?.id) {
+							S.Detail.update(rootId, { id: object.id, details: object }, false);
+						};
+
 						value = U.String.insert(value, text, from, from);
 
 						U.Data.blockSetText(rootId, block.id, value, marks, true, () => {
 							// Try to fix async detailsUpdate event
-							focus.setWithTimeout(block.id, { from: to, to }, 500);
+							focus.setWithTimeout(block.id, { from: to, to }, 30);
 						});
 					},
 				},

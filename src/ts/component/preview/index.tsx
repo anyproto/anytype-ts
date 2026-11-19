@@ -10,7 +10,7 @@ const PreviewIndex = forwardRef(() => {
 	const nodeRef = useRef(null);
 	const polygonRef = useRef(null);
 	const { preview } = S.Common;
-	const { type, markType, target, object: initialObject, marks, range, noUnlink, noEdit, x, y, width, height, onChange, withPlural, classNameWrap } = preview;
+	const { type, markType, target, object: initialObject, marks, range, noUnlink, noEdit, x, y, width, height, onChange, onRename, withPlural, classNameWrap } = preview;
 	const [ object, setObject ] = useState(null);
 	const cn = [ 'previewWrapper' ];
 
@@ -63,6 +63,28 @@ const PreviewIndex = forwardRef(() => {
 		const previewEl = U.Dom.get('preview');
 		const domRect = previewEl?.getBoundingClientRect();
 		const rect = domRect ? U.Common.objectCopy(domRect) : null;
+
+		if ((markType === I.MarkType.Mention) && onRename) {
+			const currentText = ((preview.element instanceof HTMLElement) ? String(preview.element.textContent || '') : U.Object.name(object, true)).replace(/\u200B/g, '');
+			S.Menu.open('dataviewText', {
+				classNameWrap: 'fromBlock',
+				width: J.Size.menu.value,
+				rect: rect ? { ...rect, height: 0, y: rect.y + window.scrollY } : null,
+				horizontal: I.MenuDirection.Center,
+				onOpen: () => Preview.previewHide(true),
+				data: {
+					value: currentText,
+					submitOnEnter: true,
+					placeholder: U.Object.name(object, true) || translate('commonName'),
+					canEdit: true,
+					noResize: true,
+					onChange: (val: string) => {
+						onRename(val);
+					},
+				},
+			});
+			return;
+		};
 
 		S.Menu.open('blockLink', {
 			classNameWrap: 'fromBlock',
@@ -228,8 +250,14 @@ const PreviewIndex = forwardRef(() => {
 		};
 
 		case I.PreviewType.Object: {
-			if (!noUnlink) {
-				head = <div className="head">{unlink}</div>;
+			const canEditMention = !noEdit && (markType === I.MarkType.Mention) && !!preview.onRename;
+			if (!noUnlink || canEditMention) {
+				head = (
+					<div className="head">
+						{canEditMention ? <div id="button-edit" className="item" onClick={onEdit}>{translate('previewEdit')}</div> : ''}
+						{!noUnlink ? unlink : ''}
+					</div>
+				);
 			};
 
 			content = <PreviewObject {...props} />;
@@ -237,8 +265,14 @@ const PreviewIndex = forwardRef(() => {
 		};
 
 		case I.PreviewType.Default: {
-			if (!noUnlink) {
-				head = <div className="head">{unlink}</div>;
+			const canEditMention = !noEdit && (markType === I.MarkType.Mention) && !!preview.onRename;
+			if (!noUnlink || canEditMention) {
+				head = (
+					<div className="head">
+						{canEditMention ? <div id="button-edit" className="item" onClick={onEdit}>{translate('previewEdit')}</div> : ''}
+						{!noUnlink ? unlink : ''}
+					</div>
+				);
 			};
 
 			content = <PreviewDefault {...props} />;

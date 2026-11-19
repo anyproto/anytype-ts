@@ -46,4 +46,5 @@ export interface Preview {
 	width?: number;
 	height?: number;
 	onChange?(marks: I.Mark[]): void;
+	onRename?(name: string): void;
 };
