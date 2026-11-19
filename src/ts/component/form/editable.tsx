@@ -26,6 +26,12 @@ interface Props {
 	onCompositionStart?: (e: any) => void;
 	onCompositionEnd?: (e: any, value: string, range: I.TextRange) => void;
 	onBeforeInput?: (e: any) => void;
+	/**
+	 * When true, skip Mark ZWS dom/model offset conversion. Prism code fields never
+	 * use mark ZWS anchors; conversion breaks caret/backspace if U+200B appears in
+	 * pasted source (#2196).
+	 */
+	plainDomTextOffsets?: boolean;
 };
 
 interface EditableRefProps {
@@ -69,6 +75,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	onCompositionStart,
 	onCompositionEnd,
 	onBeforeInput,
+	plainDomTextOffsets = false,
 }, ref) => {
 
 	const nodeRef = useRef(null);
@@ -139,7 +146,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		};
 
 		// Convert DOM offsets (with ZWS) to model offsets (without ZWS)
-		if (Mark.hasZws(editableRef.current)) {
+		if (!plainDomTextOffsets && Mark.hasZws(editableRef.current)) {
 			return {
 				from: Mark.domToModel(range.start, editableRef.current),
 				to: Mark.domToModel(range.end, editableRef.current),
@@ -157,7 +164,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 		editableRef.current.focus({ preventScroll: true });
 
 		// Convert model offsets (without ZWS) to DOM offsets (with ZWS)
-		if (Mark.hasZws(editableRef.current)) {
+		if (!plainDomTextOffsets && Mark.hasZws(editableRef.current)) {
 			const domFrom = Mark.modelToDom(range.from, editableRef.current);
 			const domTo = Mark.modelToDom(range.to, editableRef.current);
 
@@ -353,7 +360,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	}, []);
 
 	const isAtDomEnd = (): boolean => {
-		if (!editableRef.current || !Mark.hasZws(editableRef.current)) {
+		if (!editableRef.current || plainDomTextOffsets || !Mark.hasZws(editableRef.current)) {
 			return true;
 		};
 
@@ -366,7 +373,7 @@ const Editable = forwardRef<EditableRefProps, Props>(({
 	};
 
 	const isAtDomStart = (): boolean => {
-		if (!editableRef.current || !Mark.hasZws(editableRef.current)) {
+		if (!editableRef.current || plainDomTextOffsets || !Mark.hasZws(editableRef.current)) {
 			return true;
 		};
 
