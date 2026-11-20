@@ -63,6 +63,10 @@ function waitForLocalhost (port) {
 function startElectron () {
 	const args = isWindows ? [ 'electron.cmd', '.' ] : [ 'electron', '.' ];
 
+	// Forward extra arguments (e.g. --isolate-dev, --user-data-dir=...) to Electron, quoted for the shell:
+	// double quotes for cmd.exe, which keeps backslashes in Windows paths as they are; single quotes elsewhere
+	args.push(...process.argv.slice(2).map(arg => isWindows ? `"${arg.replace(/"/g, '\\"')}"` : `'${arg.replace(/'/g, `'\\''`)}'`));
+
 	electronProcess = childProcess.spawn('bunx', args, {
 		stdio: 'inherit',
 		shell: true,

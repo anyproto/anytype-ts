@@ -8,6 +8,7 @@ import UpdateManager from './update';
 import WindowManager from './window';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
+import { isIsolatedDev, DEV_NAME, withAppName } from './lib/isolateDev';
 import { AppWindow, TabView } from './types';
 
 const Separator: Electron.MenuItemConstructorOptions = { type: 'separator' };
@@ -110,13 +111,13 @@ class MenuManager {
 
 		const menuParam: Electron.MenuItemConstructorOptions[] = [
 			{
-				label: 'Anytype',
+				label: isIsolatedDev() ? DEV_NAME : 'Anytype',
 				submenu: [
-					{ label: Util.translate('electronMenuAbout'), click: () => Util.send(this.win, 'popup', 'about', {}, true) },
+					{ label: withAppName(Util.translate('electronMenuAbout')), click: () => Util.send(this.win, 'popup', 'about', {}, true) },
 
 					Separator,
 
-					{ role: 'hide', label: Util.translate('electronMenuHide') },
+					{ role: 'hide', label: withAppName(Util.translate('electronMenuHide')) },
 					{ role: 'hideOthers', label: Util.translate('electronMenuHideOthers') },
 					{ role: 'unhide', label: Util.translate('electronMenuUnhide') },
 
@@ -129,7 +130,7 @@ class MenuManager {
 
 					Separator,
 
-					{ label: Util.translate('electronMenuQuit'), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, '', false, false) },
+					{ label: withAppName(Util.translate('electronMenuQuit')), accelerator: this.getAccelerator('close'), click: () => Api.exit(this.win, '', false, false) },
 				]
 			},
 			{
@@ -498,9 +499,9 @@ class MenuManager {
 		const icon = this.getTrayIcon();
 
 		this.tray = new Tray(this.toTrayImage(icon));
-		this.tray.setToolTip('Anytype');
+		this.tray.setToolTip(withAppName('Anytype'));
 		this.tray.setContextMenu(Menu.buildFromTemplate([
-			{ label: Util.translate('electronMenuOpenApp'), click: () => this.winShow() },
+			{ label: withAppName(Util.translate('electronMenuOpenApp')), click: () => this.winShow() },
 			{ label: Util.translate('electronMenuSearch'), accelerator: this.getAccelerator('globalSearch'), click: () => this.onGlobalSearch() },
 
 			Separator,
@@ -514,7 +515,7 @@ class MenuManager {
 
 			Separator,
 
-			{ label: Util.translate('electronMenuQuit'), click: () => { this.winHide(); Api.exit(this.win, '', false, false); } },
+			{ label: withAppName(Util.translate('electronMenuQuit')), click: () => { this.winHide(); Api.exit(this.win, '', false, false); } },
 		]));
 
 		// Force on top and focus because in some case Electron fail with this.winShow()
@@ -661,7 +662,7 @@ class MenuManager {
 			Separator,
 
 			{
-				label: Util.translate('electronMenuShowTray'), type: 'checkbox', checked: !config.hideTray, click: () => {
+				label: withAppName(Util.translate('electronMenuShowTray')), type: 'checkbox', checked: !config.hideTray, click: () => {
 					Api.setConfig(this.win, { hideTray: !config.hideTray });
 					this.initTray();
 				}

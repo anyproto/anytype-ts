@@ -109,7 +109,7 @@ class WindowManager {
 
 	createMain (options: CreateMainOptions): AppWindow {
 		const { isChild, initialBounds, initialTabData, restoredTabs } = options;
-		const image = nativeImage.createFromPath(path.join(Util.imagePath(), 'icons', '512x512.png'));
+		const image = nativeImage.createFromPath(path.join(Util.appIconPath(), 'icons', '512x512.png'));
 
 		let state: ReturnType<typeof windowStateKeeper> | Record<string, any> = {};
 		let param: Record<string, any> = {
@@ -124,13 +124,13 @@ class WindowManager {
 
 			param.frame = false;
 			param.titleBarStyle = 'hidden';
-			param.icon = path.join(Util.imagePath(), 'icon.icns');
+			param.icon = path.join(Util.appIconPath(), 'icon.icns');
 			param.trafficLightPosition = { x: 12, y: 19 };
 		} else
 		if (is.windows) {
 			param.frame = false;
 			param.titleBarStyle = 'hidden';
-			param.icon = path.join(Util.imagePath(), 'icons', '256x256.ico');
+			param.icon = path.join(Util.appIconPath(), 'icons', '256x256.ico');
 		} else
 		if (is.linux) {
 			param.icon = image;
