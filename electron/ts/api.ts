@@ -14,12 +14,14 @@ import UpdateManager from './update';
 import Server from './server';
 import Util from './util';
 import { getSafeStorage } from './safeStorage';
+import { isIsolatedDev } from './lib/isolateDev';
 import LinkApprovalManager from './linkApproval';
 import { powerState, PowerSnapshot } from './lib/powerState';
 import DownloadManager, { DownloadRequest } from './download';
 import { AppWindow, TabView, TabData, CreateTabOptions, AppConfig, Bounds } from './types';
 
-const KEYTAR_SERVICE = 'Anytype';
+// Isolated dev runs keep their recovery phrases apart from the installed app's
+const keytarService = (): string => (isIsolatedDev() ? 'Anytype Dev' : 'Anytype');
 
 /**
  * Local-link pairing prompts. Main owns them because Event.Account.LinkApprovalRequest reaches every
@@ -360,7 +362,7 @@ class Api {
 
 	keytarSet (win: AppWindow, key: string, value: string): void {
 		if (key && value) {
-			keytar.setPassword(KEYTAR_SERVICE, key, value);
+			keytar.setPassword(keytarService(), key, value);
 		};
 	};
 
@@ -381,7 +383,7 @@ class Api {
 			let shouldRetry = false;
 
 			try {
-				value = await keytar.getPassword(KEYTAR_SERVICE, key);
+				value = await keytar.getPassword(keytarService(), key);
 				shouldRetry = (value === null);
 			} catch (err: unknown) {
 				shouldRetry = true;
@@ -400,7 +402,7 @@ class Api {
 	};
 
 	keytarDelete (win: AppWindow, key: string): void {
-		keytar.deletePassword(KEYTAR_SERVICE, key);
+		keytar.deletePassword(keytarService(), key);
 	};
 
 	updateCheck (win: AppWindow): void {
