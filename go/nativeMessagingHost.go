@@ -150,11 +150,13 @@ func isFileGateway(port string) (bool, error) {
 	ioutil.ReadAll(bu)
 
 	defer resp.Body.Close()
-	// should return 301 redirect Location: /file/
-	if resp.StatusCode == 301 {
-		return true, err
+	// The gateway redirects /file to /file/. Middleware versions use different
+	// redirect codes; the destination distinguishes it from unrelated services.
+	switch resp.StatusCode {
+	case http.StatusMovedPermanently, http.StatusFound, http.StatusTemporaryRedirect, http.StatusPermanentRedirect:
+		return resp.Header.Get("Location") == "/file/", nil
 	}
-	return false, err
+	return false, nil
 }
 
 func isGrpcWebServer(port string) (bool, error) {
