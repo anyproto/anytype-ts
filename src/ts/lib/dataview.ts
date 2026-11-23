@@ -305,9 +305,11 @@ class Dataview {
 	 * @param {any} view - The dataview view object.
 	 * @param {any} it - The filter or sort object.
 	 * @param {any} [param] - Additional parameters, e.g., rootId.
-	 * @returns {any} The mapped object.
+	 * @returns {any} The mapped copy, the original filter is left unchanged.
 	 */
 	filterMapper (it: any, param?: any) {
+		it = { ...it };
+
 		if (it.relationKey) {
 			const relation = S.Record.getRelationByKey(it.relationKey);
 			if (!relation) {

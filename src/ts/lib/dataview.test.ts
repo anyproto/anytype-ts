@@ -15,6 +15,7 @@ import Dataview from './dataview';
 
 const relations: any = {
 	name: { relationKey: 'name', isDeleted: false, isArchived: false },
+	assignee: { relationKey: 'assignee', format: I.RelationType.Object, isDeleted: false, isArchived: false },
 	deletedKey: { relationKey: 'deletedKey', isDeleted: true, isArchived: false },
 	archivedKey: { relationKey: 'archivedKey', isDeleted: false, isArchived: true },
 };
@@ -22,6 +23,22 @@ const relations: any = {
 (globalThis as any).S = {
 	Record: {
 		getRelationByKey: (relationKey: string) => relations[relationKey] || null,
+	},
+	Auth: { account: { id: 'alice' } },
+	Common: { space: 'space1' },
+};
+
+(globalThis as any).U = {
+	Space: {
+		getParticipantId: (space: string, accountId: string) => `${space}_${accountId}`,
+	},
+};
+
+(globalThis as any).Relation = {
+	isArrayType: (format: I.RelationType) => format == I.RelationType.Object,
+	formatValue: (relation: any, value: any) => value,
+	getFilterTemplateOption: (id: string) => {
+		return id == '_filter_template_2_' ? { id, templateType: I.FilterValueTemplate.Participant } : null;
 	},
 };
 
@@ -127,6 +144,24 @@ describe('Dataview.getFilteredSorts', () => {
 
 	it('should handle empty input', () => {
 		expect(Dataview.getFilteredSorts(null as any)).toEqual([]);
+	});
+
+});
+
+describe('Dataview.filterMapper', () => {
+
+	it('should resolve the Current User template without changing the view filter', () => {
+		const filter: any = {
+			id: 'f1',
+			relationKey: 'assignee',
+			condition: I.FilterCondition.In,
+			value: [ '_filter_template_2_' ],
+		};
+
+		const mapped = Dataview.filterMapper(filter, { rootId: 'root' });
+
+		expect(mapped.value).toEqual([ 'space1_alice' ]);
+		expect(filter.value).toEqual([ '_filter_template_2_' ]);
 	});
 
 });
