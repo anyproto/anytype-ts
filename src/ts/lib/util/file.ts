@@ -262,7 +262,7 @@ class UtilFile {
 				return [ 'mp4', 'mov', 'avi', 'mkv', 'webm', 'flv', 'wmv', 'm4v', 'ogv', '3gp' ];
 
 			case I.ObjectLayout.Audio:
-				return [ 'mp3', 'wav', 'flac', 'aac', 'ogg', 'wma', 'm4a', 'aiff', 'aif', 'opus' ];
+				return [ 'mp3', 'wav', 'flac', 'aac', 'ogg', 'wma', 'm4a', 'm4b', 'aiff', 'aif', 'opus' ];
 
 			case I.ObjectLayout.Pdf:
 				return [ 'pdf' ];
