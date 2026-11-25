@@ -28,6 +28,7 @@ const UpsellBanner = forwardRef<{}, Props>(({
 	};
 
 	const product = S.Membership.data?.getTopProduct();
+	const isDebug = Boolean(S.Common.config.debug?.upsell);
 
 	const getConditions = (item): { isShown: boolean; isRed: boolean } => {
 		let isShown = false;
@@ -116,6 +117,12 @@ const UpsellBanner = forwardRef<{}, Props>(({
 		};
 
 		return component;
+	};
+
+	// Debug → Flags → Upsell Banners: show the first banner whatever the plan, usage and limits
+	if (isDebug) {
+		const DebugComponent = Components[components[0]] || null;
+		return DebugComponent ? <DebugComponent className={className} route={route} isRed={getConditions(components[0]).isRed} /> : null;
 	};
 
 	const c = getComponent();

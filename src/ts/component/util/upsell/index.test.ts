@@ -79,6 +79,7 @@ describe('UpsellBanner', () => {
 	let writersLimit: number;
 	let editors: number;
 	let sharedSpaces: number;
+	let debug: Record<string, boolean>;
 
 	const setStatus = (item: MembershipV2_Product) => {
 		store.applyResult(Status, { fetchState: null, value: Mapper.From.MembershipData(statusData(item)), errorCode: 0 });
@@ -105,10 +106,14 @@ describe('UpsellBanner', () => {
 		writersLimit = 4;
 		editors = 4;
 		sharedSpaces = 3;
+		debug = {};
 
 		vi.stubGlobal('S', {
 			Membership: store,
-			Common: { get spaceStorage () { return { bytesLimit, localUsage: 0, spaces: [] }; } },
+			Common: {
+				config: { get debug () { return debug; } },
+				get spaceStorage () { return { bytesLimit, localUsage: 0, spaces: [] }; },
+			},
 			Auth: { getNotSynced: () => ({ total: 0 }) },
 			Popup: { open: vi.fn() },
 		});
@@ -284,6 +289,26 @@ describe('UpsellBanner', () => {
 			setPlan(ULTRA);
 
 			expect(render('space')).toBe('');
+		});
+	});
+
+	describe('debug flag', () => {
+
+		it('shows the banner whatever the plan and usage', () => {
+			setPlan(ULTRA);
+			bytesUsed = LIMIT * 0.1;
+			debug = { upsell: true };
+
+			const html = render('storage');
+
+			expect(classes(html)).toContain('upsellStorage');
+			expect(classes(html)).not.toContain('isRed');
+		});
+
+		it('shows the first of several banners', () => {
+			debug = { upsell: true };
+
+			expect(classes(render('members', 'space'))).toContain('upsellMembers');
 		});
 	});
 
