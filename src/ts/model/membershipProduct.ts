@@ -16,6 +16,7 @@ class MembershipProduct implements I.MembershipProduct {
 	isTopLevel = false;
 	isIntro = false;
 	isHidden = false;
+	isUpgradeable = false;
 	color = '';
 	offer = '';
 	pricesYearly: I.MembershipAmount[] = [];
@@ -39,6 +40,7 @@ class MembershipProduct implements I.MembershipProduct {
 		this.isTopLevel = Boolean(props.isTopLevel);
 		this.isIntro = Boolean(props.isIntro);
 		this.isHidden = Boolean(props.isHidden);
+		this.isUpgradeable = Boolean(props.isUpgradeable);
 		this.color = String(props.color || '');
 		this.offer = String(props.offer || '');
 
@@ -74,6 +76,7 @@ class MembershipProduct implements I.MembershipProduct {
 			isTopLevel: observable,
 			isIntro: observable,
 			isHidden: observable,
+			isUpgradeable: observable,
 			color: observable,
 			offer: observable,
 			pricesYearly: observable,

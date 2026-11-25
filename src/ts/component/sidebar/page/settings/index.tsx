@@ -3,6 +3,7 @@ import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
 import { apiKeyIsNew, apiKeyMarkSeen } from 'Lib/apiKey';
+import Storage from 'Lib/storage';
 
 const LIMIT = 30;
 const HEIGHT_ITEM = 28;
@@ -31,7 +32,14 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 	const cache = useRef(new CellMeasurerCache({ fixedHeight: true, defaultHeight: HEIGHT_ITEM }));
 
 	useEffect(() => {
-		if (!isSpace) {
+		if (isSpace) {
+			return;
+		};
+
+		// The hint points at the Membership item: opened right on that page (e.g. from Upgrade), it has nothing left to show
+		if (param.id == 'membership') {
+			Storage.setOnboarding('membership');
+		} else {
 			Onboarding.start('membership', false);
 		};
 	}, []);

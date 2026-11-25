@@ -5,6 +5,7 @@ import * as I from 'Interface';
 
 const HEIGHT = 28;
 const WARNING_HEIGHT = 52; // .dataLocationWarning: 44px padding box + 8px top margin
+const BANNER_SPACING = 18; // .upsellBanner: 14px top margin + 4px content gap, on top of its measured height
 const LIMIT = 12;
 const SUB_ID = 'syncStatusObjectsList';
 
@@ -347,7 +348,9 @@ const MenuSyncStatus = forwardRef<I.MenuRef, I.Menu>((props, ref) => {
 	const beforePosition = () => {
 		const items = getItems().slice(0, LIMIT);
 		const content = U.Dom.select('.content', getContainer());
-		const height = (items.length ? items.length * HEIGHT + 64 : 160) + (vaultCheck.unsafe ? WARNING_HEIGHT : 0);
+		const banner = U.Dom.select('.upsellBanner', content);
+		const bannerHeight = banner?.offsetHeight ? banner.offsetHeight + BANNER_SPACING : 0;
+		const height = (items.length ? items.length * HEIGHT + 64 : 160) + (vaultCheck.unsafe ? WARNING_HEIGHT : 0) + bannerHeight;
 
 		U.Dom.css(content, { height: `${height}px` });
 	};

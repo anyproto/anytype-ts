@@ -318,6 +318,7 @@ class MenuManager {
 			ui: Util.translate('electronMenuFlagInterface'),
 			hiddenObject: Util.translate('electronMenuFlagHidden'),
 			analytics: Util.translate('electronMenuFlagAnalytics'),
+			upsell: Util.translate('electronMenuFlagUpsell'),
 		};
 
 		const flagsMw: { [key: string]: string } = {

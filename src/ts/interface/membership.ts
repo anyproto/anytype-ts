@@ -69,7 +69,7 @@ export interface MembershipProduct {
 	isTopLevel: boolean;
 	isIntro: boolean;
 	isHidden: boolean;
-	isUpgradeable?: boolean;
+	isUpgradeable: boolean;
 	color: string;
 	offer: string;
 	pricesYearly: MembershipAmount[];
