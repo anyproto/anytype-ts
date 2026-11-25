@@ -37,6 +37,13 @@ const UpsellBanner = forwardRef<{}, Props>(({
 			case 'storage': {
 				const { spaceStorage } = S.Common;
 				const { bytesLimit } = spaceStorage;
+
+				// The limit is 0 until FileNodeUsage answers, while FileSpaceUsage events can already
+				// report usage: an unknown limit is not a full one
+				if (!bytesLimit) {
+					break;
+				};
+
 				const bytesUsed = U.Common.calculateStorageUsage();
 				const notSyncedCounter = S.Auth.getNotSynced().total;
 				const usagePercent = bytesUsed / bytesLimit * 100;
@@ -48,7 +55,10 @@ const UpsellBanner = forwardRef<{}, Props>(({
 
 			case 'members': {
 				const space = U.Space.getSpaceview();
-				if (!space || space.isOneToOne) {
+
+				// writersLimit is 0 until the coordinator reports the space limits, and the owner alone
+				// would then count as a reached limit
+				if (!space || space.isOneToOne || !space.writersLimit) {
 					return { isShown, isRed };
 				};
 

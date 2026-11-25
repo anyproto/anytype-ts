@@ -650,6 +650,7 @@ export const Mapper = {
 				isTopLevel: obj.isTopLevel,
 				isIntro: obj.isIntro,
 				isHidden: obj.isHidden,
+				isUpgradeable: obj.isUpgradeable,
 				color: obj.colorStr,
 				offer: obj.offer,
 				pricesYearly: (obj.pricesYearly || []).map(Mapper.From.MembershipAmount),
