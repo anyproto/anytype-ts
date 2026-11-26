@@ -12,13 +12,18 @@
  * this field (mac.minimumSystemVersion only reaches Info.plist), so it is added here, after electron-builder runs
  * and before the files are uploaded.
  *
+ * The release workflow is the only place feeds are stamped and published. Feeds from local dist:* and publish:*
+ * builds carry no floor and must never be uploaded by hand.
+ *
  * Usage: node scripts/mac-update-floor.js [dir]   (dir defaults to dist/)
- * Exits non-zero when the folder has no *-mac.yml, or when any of them fails verification afterwards.
+ * Exits non-zero when the folder has no *-mac.yml, when any of them has a version other than package.json's (a stale
+ * feed from an earlier build, nothing is written then), or when any of them fails verification afterwards.
  */
 
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
+const { version: VERSION } = require('../package.json');
 
 const KEY = 'minimumSystemVersion';
 const FLOOR = '22.0.0';
@@ -51,14 +56,32 @@ if (!names.length) {
 	fail(`no *-mac.yml in ${dir}`);
 };
 
-const before = {};
+// Every feed is checked before any is written, a feed left over from another build must not be stamped as current
+const feeds = {};
+const stale = [];
 
 for (const name of names) {
 	const data = read(name);
 
+	feeds[name] = data;
+
+	if (data?.version !== VERSION) {
+		stale.push(`${name}: version is ${JSON.stringify(data?.version)}, package.json has ${JSON.stringify(VERSION)}`);
+	};
+};
+
+if (stale.length) {
+	fail(`not stamping feeds from another build, no file was changed:\n${stale.join('\n')}`);
+};
+
+const before = {};
+
+for (const name of names) {
+	const data = feeds[name];
+
 	before[name] = snapshot(data);
 
-	if (data && (typeof data == 'object') && (KEY in data)) {
+	if (KEY in data) {
 		console.log(`[MacUpdateFloor]: ${name} already has ${KEY} ${JSON.stringify(data[KEY])}`);
 		continue;
 	};
@@ -86,8 +109,8 @@ for (const name of names) {
 		errors.push(`${name}: ${KEY} is ${JSON.stringify(data[KEY])}, expected ${JSON.stringify(FLOOR)}`);
 	};
 
-	if (!data.version) {
-		errors.push(`${name}: version is missing`);
+	if (data.version !== VERSION) {
+		errors.push(`${name}: version is ${JSON.stringify(data.version)}, package.json has ${JSON.stringify(VERSION)}`);
 	};
 
 	if (!Array.isArray(data.files) || !data.files.length || data.files.some(it => !it?.url || !it?.sha512)) {
