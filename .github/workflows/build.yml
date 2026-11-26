@@ -219,6 +219,30 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
 
+      # electron-updater skips an update whose yml has a minimumSystemVersion above os.release(), which on macOS is the
+      # Darwin version, not the macOS one: 22.0.0 is macOS 13, the oldest Electron 44+ runs on. "13.0" is not valid
+      # semver, the comparison throws, is caught, and silently blocks nobody. electron-builder never writes this field
+      # (mac.minimumSystemVersion only reaches Info.plist), so it is added here, before the yml upload below.
+      - name: Set macOS update floor
+        if: ${{ startsWith(matrix.os, 'macos-') }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          for FILE in dist/latest-mac.yml dist/beta-mac.yml dist/alpha-mac.yml; do
+            if [[ ! -f "$FILE" ]]; then
+              continue
+            fi
+            if grep -q '^minimumSystemVersion:' "$FILE"; then
+              echo "$FILE already has minimumSystemVersion"
+              continue
+            fi
+            if [[ -n "$(tail -c 1 "$FILE")" ]]; then
+              echo >> "$FILE"
+            fi
+            echo "minimumSystemVersion: '22.0.0'" >> "$FILE"
+            echo "$FILE: minimumSystemVersion 22.0.0"
+          done
+
       - name: Package and publish Other
         if: ${{ !startsWith(matrix.os, 'macos-') }}
         run: bunx electron-builder ${{ startsWith(matrix.os, 'windows-') && '--windows' || '--linux' }} ${{ startsWith(github.ref, 'refs/tags/v') && '--publish always' || '' }}
