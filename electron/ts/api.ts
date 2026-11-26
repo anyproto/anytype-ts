@@ -410,7 +410,7 @@ class Api {
 	};
 
 	updateDownload (win: AppWindow): void {
-		UpdateManager.download();
+		UpdateManager.retry();
 	};
 
 	updateConfirm (win: AppWindow): void {

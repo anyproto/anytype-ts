@@ -422,7 +422,7 @@ class MenuManager {
 		const channels = ConfigManager.getChannels().map((it) => ({
 			...it,
 			click: () => {
-				if (!UpdateManager.isUpdating) {
+				if (!UpdateManager.isUpdating && !UpdateManager.isDownloading) {
 					Util.send(this.win, 'commandGlobal', 'releaseChannel', it.id);
 				};
 			},

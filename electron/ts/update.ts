@@ -7,6 +7,13 @@ import { AppWindow, DownloadProgress } from './types';
 
 const TIMEOUT_UPDATE = 600 * 1000;
 
+// Feed of builds for operating systems that the regular channels have dropped. An update
+// whose feed declares a minimumSystemVersion above this OS is skipped by electron-updater,
+// which compares it with os.release(): the Darwin version on macOS, so macOS 13 is 22.0.0.
+// The check then falls back to this feed: legacy-mac.yml (both architectures), legacy.yml
+// (Windows), legacy-linux.yml (Linux x64) or legacy-linux-<arch>.yml (other Linux architectures).
+const LEGACY_CHANNEL = 'legacy';
+
 class UpdateManager {
 
 	win: AppWindow | null = null;
@@ -14,6 +21,11 @@ class UpdateManager {
 	isDownloading: boolean = false;
 	isRelaunching: boolean = false;
 	autoUpdate: boolean = false;
+	channel: string = '';
+	isChecking: boolean = false;
+	isLegacyLookup: boolean = false;
+	isUnsupported: boolean = false;
+	isCheckPending: boolean = false;
 	timeout: ReturnType<typeof setTimeout> | null = null;
 
 	setWindow (win: AppWindow): void {
@@ -30,6 +42,19 @@ class UpdateManager {
 		autoUpdater.autoDownload = false;
 		autoUpdater.autoInstallOnAppQuit = false;
 		autoUpdater.channel = channel;
+		this.channel = channel;
+
+		// Note when the update on the user's channel does not run on this OS, so the check can fall back to the legacy feed
+		const isUpdateSupported = autoUpdater.isUpdateSupported;
+
+		autoUpdater.isUpdateSupported = async (info: UpdateInfo) => {
+			const ret = await isUpdateSupported(info);
+
+			if (!ret) {
+				this.isUnsupported = true;
+			};
+			return ret;
+		};
 
 		this.setTimeout();
 
@@ -38,20 +63,53 @@ class UpdateManager {
 		});
 
 		autoUpdater.on('update-available', (info: UpdateInfo) => {
-			this.clearTimeout();
-
 			Util.log('info', `Update available: ${JSON.stringify(info, null, 3)}`);
+
+			// The user picked another channel while this check ran: its own check decides
+			if (this.isCheckPending) {
+				return;
+			};
+
+			this.clearTimeout();
 			this.download();
 		});
 
 		autoUpdater.on('update-not-available', (info: UpdateInfo) => {
 			Util.log('info', `Update not available: ${JSON.stringify(info, null, 3)}`);
+
+			// The legacy feed answers instead, or the check for a channel picked meanwhile does
+			if (this.needsLegacyCheck() || this.isCheckPending) {
+				return;
+			};
+
 			Util.send(this.win, 'update-not-available', this.autoUpdate);
 		});
 
-		autoUpdater.on('error', (err: Error) => {
+		autoUpdater.on('error', (err: Error & { code?: string; statusCode?: number }) => {
 			Util.log(`Error: ${err}`);
+
+			if (!this.isDownloading) {
+				// The check for a channel picked meanwhile reports instead
+				if (this.isCheckPending) {
+					return;
+				};
+
+				// No legacy feed published means there is no update for this OS. The release bucket
+				// answers 403, not 404, for a key that does not exist
+				if (this.isLegacyLookup && this.isMissingFeed(err)) {
+					Util.send(this.win, 'update-not-available', this.autoUpdate);
+					return;
+				};
+			};
+
 			Util.send(this.win, 'update-error', err, this.autoUpdate, this.isDownloading);
+
+			// A failed download must not block later checks
+			if (this.isDownloading) {
+				this.isUpdating = false;
+				this.setTimeout();
+			};
+
 			this.isDownloading = false;
 		});
 
@@ -69,9 +127,9 @@ class UpdateManager {
 			Util.send(this.win, 'download-progress', progress);
 		});
 
+		// isDownloading stays set until the download promise settles: electron-updater still copies the blockmap after this event
 		autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
 			this.isUpdating = false;
-			this.isDownloading = false;
 
 			Util.log('info', `Update downloaded: ${JSON.stringify(info, null, 3)}`);
 			Util.send(this.win, 'update-downloaded', info);
@@ -110,27 +168,104 @@ class UpdateManager {
 	};
 
 	setChannel (channel: string): void {
-		autoUpdater.channel = channel;
+		this.channel = channel;
+
+		// Never switch channels under a running check: run a fresh one once it settles
+		if (this.isChecking) {
+			this.isCheckPending = true;
+			return;
+		};
+
 		this.checkUpdate(false);
 	};
 
 	checkUpdate (auto: boolean): void {
-		if (!this.isAllowed() || this.isUpdating) {
+		if (!this.isAllowed() || this.isUpdating || this.isDownloading) {
 			return;
 		};
 
-		autoUpdater.checkForUpdatesAndNotify().catch((err: Error) => {
-			Util.log('info', `checkForUpdatesAndNotify error: ${err}`);
-		});
-
 		this.setTimeout();
+
+		// A check is already running: it reports to the user if any caller asked by hand
+		if (this.isChecking) {
+			this.autoUpdate = this.autoUpdate && auto;
+			return;
+		};
+
 		this.autoUpdate = auto;
+		this.check();
+	};
+
+	/**
+	 * Retry after an error. A fresh check, not a download of whatever the last check found: that
+	 * update may belong to a channel the user has left, or to a feed this OS no longer reads.
+	 */
+	retry (): void {
+		this.checkUpdate(false);
+	};
+
+	/**
+	 * One check: the user's channel and, when its update does not run on this OS, the legacy feed.
+	 * Nothing else touches the updater's channel while it runs, because a pending check reads
+	 * allowDowngrade only when its feed answers.
+	 */
+	async check (): Promise<void> {
+		this.isChecking = true;
+		this.isUnsupported = false;
+
+		// The channel setter allows downgrades, as the user's channel always has
+		autoUpdater.channel = this.channel;
+
+		try {
+			await autoUpdater.checkForUpdatesAndNotify();
+
+			if (this.isUnsupported && !this.isCheckPending) {
+				Util.log('info', `Update on channel ${this.channel} does not run on this OS, checking ${LEGACY_CHANNEL}`);
+
+				autoUpdater.channel = LEGACY_CHANNEL;
+
+				// Never go back to an older build from this feed
+				autoUpdater.allowDowngrade = false;
+
+				this.isLegacyLookup = true;
+				try {
+					await autoUpdater.checkForUpdatesAndNotify();
+				} finally {
+					this.isLegacyLookup = false;
+				};
+			};
+		} catch (err) {
+			Util.log('info', `checkForUpdatesAndNotify error: ${err}`);
+		} finally {
+			this.isChecking = false;
+		};
+
+		if (this.isCheckPending) {
+			this.isCheckPending = false;
+			this.checkUpdate(false);
+		};
+	};
+
+	isMissingFeed (err: Error & { code?: string; statusCode?: number }): boolean {
+		return (err?.code == 'ERR_UPDATER_CHANNEL_FILE_NOT_FOUND') || (err?.statusCode == 403);
+	};
+
+	needsLegacyCheck (): boolean {
+		return !this.isLegacyLookup && this.isUnsupported;
 	};
 
 	download (): void {
 		this.isDownloading = true;
+		this.clearTimeout();
 		Util.send(this.win, 'download-started');
-		autoUpdater.downloadUpdate();
+
+		// Failures arrive through the error event. A call made while a download runs gets that
+		// download's promise and no events of its own, so the flag clears when the promise settles
+		autoUpdater.downloadUpdate().catch((err: Error) => {
+			Util.log('info', `downloadUpdate error: ${err}`);
+		}).finally(() => {
+			this.isDownloading = false;
+		});
 	};
 
 	relaunch (): void {
