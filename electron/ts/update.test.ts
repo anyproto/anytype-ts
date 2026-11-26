@@ -42,6 +42,7 @@ class TestUpdater extends AppUpdater {
 	hold = false;
 	downloadError = '';
 	holdAfterDownloaded = false;
+	failAfterDownloaded = '';
 	heldDownload: (() => void) | null = null;
 
 	constructor (version: string) {
@@ -105,6 +106,10 @@ class TestUpdater extends AppUpdater {
 		// electron-updater still copies the blockmap after announcing the download
 		if (this.holdAfterDownloaded) {
 			await new Promise<void>(resolve => this.heldDownload = resolve);
+		};
+
+		if (this.failAfterDownloaded) {
+			throw new Error(this.failAfterDownloaded);
 		};
 		return [];
 	};
@@ -417,23 +422,41 @@ describe('legacy update feed', () => {
 		expect(updater.downloaded).toEqual([ '0.57.12-beta' ]);
 	});
 
-	test('a download call that joins a running download does not leave the updater busy', async () => {
+	test('a download stays busy until electron-updater finishes it, after the downloaded event too', async () => {
 		await start('0.57.10', MACOS_12, { latest: { version: '0.57.11' } });
 		updater.holdAfterDownloaded = true;
 
 		Update.checkUpdate(true);
 		await flush();
-		expect(Update.isDownloading).toBe(false);
-
-		// Between the downloaded event and the end of the transfer, a second call joins it
-		Update.download();
+		expect(sent('update-downloaded')).toHaveLength(1);
 		expect(Update.isDownloading).toBe(true);
+
+		// No check starts while the transfer is still being finished
+		Update.checkUpdate(false);
+		await flush();
+		expect(updater.requests).toEqual([ 'latest' ]);
 
 		updater.heldDownload?.();
 		await flush();
 
 		expect(updater.downloaded).toEqual([ '0.57.11' ]);
 		expect(Update.isDownloading).toBe(false);
+	});
+
+	test('a failure after the downloaded event re-arms polling', async () => {
+		await start('0.57.10', MACOS_12, { latest: { version: '0.57.11' } });
+		updater.failAfterDownloaded = 'ENOSPC: copying current.blockmap';
+		const rearm = vi.spyOn(Update, 'setTimeout');
+
+		Update.checkUpdate(true);
+		await flush();
+
+		expect(sent('update-error')).toHaveLength(1);
+		expect(Update.isDownloading).toBe(false);
+		expect(Update.isUpdating).toBe(false);
+
+		// Once when the check starts, once more after the failure
+		expect(rearm).toHaveBeenCalledTimes(2);
 	});
 
 });

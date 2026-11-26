@@ -127,9 +127,9 @@ class UpdateManager {
 			Util.send(this.win, 'download-progress', progress);
 		});
 
+		// isDownloading stays set until the download promise settles: electron-updater still copies the blockmap after this event
 		autoUpdater.on('update-downloaded', (info: UpdateInfo) => {
 			this.isUpdating = false;
-			this.isDownloading = false;
 
 			Util.log('info', `Update downloaded: ${JSON.stringify(info, null, 3)}`);
 			Util.send(this.win, 'update-downloaded', info);
