@@ -38,7 +38,7 @@
 		"dist:linuxamd-appimage": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux appImage --x64",
 		"dist:linuxarm": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux --arm64",
 		"dist:linuxarm-appimage": "bun run build:electron && bun run build:deps && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` electron-builder --linux appImage --arm64",
-		"publish:mac": "bun run build:electron && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always",
+		"publish:mac": "bun run build:electron && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --macos --publish  always && node scripts/mac-update-floor.js",
 		"publish:linux": "bun run build:electron && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --linux --publish  always",
 		"publish:win": "bun run build:electron && vite build --config vite.config.ts && DATE=`date '+%Y-%m-%d_%H_%M'` GIT_COMMIT=`git rev-parse --short HEAD` BUILD_NUMBER=`git rev-parse --short HEAD` electron-builder --windows --publish  always",
 		"postinstall": "bunx patch-package && electron-builder install-app-deps",
