@@ -27,7 +27,7 @@ import DownloadManager from './download';
 import { registerChatStatus } from './chatStatus';
 import { powerState, parseDropList, PowerEvent } from './lib/powerState';
 import { registerEmbedScheme, handleEmbedScheme, EMBED_ORIGIN } from './lib/embedProtocol';
-import { registerPermissionHandlers } from './lib/permissions';
+import { registerPermissionHandlers, onSelectClientCertificate } from './lib/permissions';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
@@ -408,6 +408,8 @@ function createWindow () {
 		};
 	});
 };
+
+app.on('select-client-certificate', onSelectClientCertificate);
 
 // The preload bridge (window.Electron.Api) stays attached across navigations, so a page
 // that was redirected away from the app bundle (e.g. via injected <meta http-equiv="refresh">)
