@@ -9,7 +9,7 @@ Electron main process files for desktop app integration. TypeScript source in `t
 - `config.ts` - App configuration management
 - `menu.ts` - Native application menu (File, Edit, View, etc.)
 - `server.ts` - Local gRPC server management (anytypeHelper): spawn, stdin parent lifeline (`secret <base64url>` first, then `shutdown`), graceful stop
-- `update.ts` - Auto-update logic
+- `update.ts` - Auto-update logic (electron-updater, generic provider). When the update on the user's channel declares a `minimumSystemVersion` above this OS (compared with `os.release()`, the Darwin version on macOS: macOS 13 is `22.0.0`), the check falls back to the `legacy` feed (`legacy-mac.yml`, `legacy.yml`, `legacy-linux.yml`) without allowing downgrades, so builds for dropped OS versions can still ship there
 - `util.ts` - Utility functions (paths, platform detection, logging)
 - `window.ts` - Window management (create, close, focus, tabs, local-link approval window)
 - `download.ts` - Gateway file downloads: queues transfers one at a time (electron-dl reports concurrent ones over each other), broadcasts per-file progress and one terminal event, cancels a running or queued transfer by id, and reuses a copy already on disk instead of transferring again. A `temporary` request — a file being opened rather than saved — is given a folder of its own under `openedRoot()` (`<temp>/anytype/open/<objectId>`) and overwritten there, so its path is the same on every open; `prune()` sweeps folders untouched for a week and runs on app ready

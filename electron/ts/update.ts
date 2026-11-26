@@ -7,6 +7,12 @@ import { AppWindow, DownloadProgress } from './types';
 
 const TIMEOUT_UPDATE = 600 * 1000;
 
+// Feed of builds for operating systems that the regular channels have dropped. An update
+// whose feed declares a minimumSystemVersion above this OS is skipped by electron-updater,
+// which compares it with os.release(): the Darwin version on macOS, so macOS 13 is 22.0.0.
+// The check then falls back to this feed (legacy-mac.yml, legacy.yml, legacy-linux.yml).
+const LEGACY_CHANNEL = 'legacy';
+
 class UpdateManager {
 
 	win: AppWindow | null = null;
@@ -14,6 +20,9 @@ class UpdateManager {
 	isDownloading: boolean = false;
 	isRelaunching: boolean = false;
 	autoUpdate: boolean = false;
+	channel: string = '';
+	isLegacyCheck: boolean = false;
+	isUnsupported: boolean = false;
 	timeout: ReturnType<typeof setTimeout> | null = null;
 
 	setWindow (win: AppWindow): void {
@@ -30,6 +39,19 @@ class UpdateManager {
 		autoUpdater.autoDownload = false;
 		autoUpdater.autoInstallOnAppQuit = false;
 		autoUpdater.channel = channel;
+		this.channel = channel;
+
+		// Note when the update on the user's channel does not run on this OS, so the check can fall back to the legacy feed
+		const isUpdateSupported = autoUpdater.isUpdateSupported;
+
+		autoUpdater.isUpdateSupported = async (info: UpdateInfo) => {
+			const ret = await isUpdateSupported(info);
+
+			if (!ret) {
+				this.isUnsupported = true;
+			};
+			return ret;
+		};
 
 		this.setTimeout();
 
@@ -46,11 +68,24 @@ class UpdateManager {
 
 		autoUpdater.on('update-not-available', (info: UpdateInfo) => {
 			Util.log('info', `Update not available: ${JSON.stringify(info, null, 3)}`);
+
+			// The legacy feed answers instead
+			if (this.needsLegacyCheck()) {
+				return;
+			};
+
 			Util.send(this.win, 'update-not-available', this.autoUpdate);
 		});
 
 		autoUpdater.on('error', (err: Error) => {
 			Util.log(`Error: ${err}`);
+
+			// A missing or unreachable legacy feed means there is no update for this OS
+			if (this.isLegacyCheck && !this.isDownloading) {
+				Util.send(this.win, 'update-not-available', this.autoUpdate);
+				return;
+			};
+
 			Util.send(this.win, 'update-error', err, this.autoUpdate, this.isDownloading);
 			this.isDownloading = false;
 		});
@@ -111,6 +146,7 @@ class UpdateManager {
 
 	setChannel (channel: string): void {
 		autoUpdater.channel = channel;
+		this.channel = channel;
 		this.checkUpdate(false);
 	};
 
@@ -119,12 +155,37 @@ class UpdateManager {
 			return;
 		};
 
-		autoUpdater.checkForUpdatesAndNotify().catch((err: Error) => {
+		this.autoUpdate = auto;
+		this.check(false);
+		this.setTimeout();
+	};
+
+	check (isLegacy: boolean): void {
+		this.isLegacyCheck = isLegacy;
+		this.isUnsupported = false;
+
+		if (isLegacy) {
+			autoUpdater.channel = LEGACY_CHANNEL;
+
+			// The channel setter allows downgrades: never go back to an older build from this feed
+			autoUpdater.allowDowngrade = false;
+		} else
+		if (autoUpdater.channel != this.channel) {
+			autoUpdater.channel = this.channel;
+		};
+
+		autoUpdater.checkForUpdatesAndNotify().then(() => {
+			if (!isLegacy && this.isUnsupported) {
+				Util.log('info', `Update on channel ${this.channel} does not run on this OS, checking ${LEGACY_CHANNEL}`);
+				this.check(true);
+			};
+		}).catch((err: Error) => {
 			Util.log('info', `checkForUpdatesAndNotify error: ${err}`);
 		});
+	};
 
-		this.setTimeout();
-		this.autoUpdate = auto;
+	needsLegacyCheck (): boolean {
+		return !this.isLegacyCheck && this.isUnsupported;
 	};
 
 	download (): void {
