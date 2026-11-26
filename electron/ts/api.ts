@@ -368,8 +368,8 @@ class Api {
 	 * Writes text to the system clipboard from the main process. The renderer's copy goes through
 	 * execCommand, which Chromium only honours inside a page gesture; an app-menu click is not one
 	 */
-	clipboardWrite (win: AppWindow, text: string): void {
-		clipboard.writeText(String(text || ''));
+	clipboardWrite (win: AppWindow, text: string): Promise<void> {
+		return clipboard.writeText(String(text || ''));
 	};
 
 	async keytarGet (win: AppWindow, key: string): Promise<string | null> {

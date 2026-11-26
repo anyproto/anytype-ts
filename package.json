@@ -86,7 +86,7 @@
 		"@vitejs/plugin-react-swc": "^4.2.0",
 		"ajv": "^7.2.4",
 		"cross-env": "^10.1.0",
-		"electron": "^43.7.3",
+		"electron": "^45.5.0",
 		"electron-builder": "^26.16.1",
 		"eslint": "^9.26.0",
 		"eslint-plugin-react": "^7.37.5",
@@ -1019,6 +1019,7 @@
 			"gatekeeperAssess": false,
 			"entitlements": "electron/entitlements.mac.plist",
 			"entitlementsInherit": "electron/entitlements.mac.plist",
+			"minimumSystemVersion": "13.0",
 			"target": {
 				"target": "default",
 				"arch": [
