@@ -77,21 +77,29 @@ class UpdateManager {
 		autoUpdater.on('update-not-available', (info: UpdateInfo) => {
 			Util.log('info', `Update not available: ${JSON.stringify(info, null, 3)}`);
 
-			// The legacy feed answers instead
-			if (this.needsLegacyCheck()) {
+			// The legacy feed answers instead, or the check for a channel picked meanwhile does
+			if (this.needsLegacyCheck() || this.isCheckPending) {
 				return;
 			};
 
 			Util.send(this.win, 'update-not-available', this.autoUpdate);
 		});
 
-		autoUpdater.on('error', (err: Error & { code?: string }) => {
+		autoUpdater.on('error', (err: Error & { code?: string; statusCode?: number }) => {
 			Util.log(`Error: ${err}`);
 
-			// No legacy feed published means there is no update for this OS
-			if (this.isLegacyLookup && !this.isDownloading && (err?.code == 'ERR_UPDATER_CHANNEL_FILE_NOT_FOUND')) {
-				Util.send(this.win, 'update-not-available', this.autoUpdate);
-				return;
+			if (!this.isDownloading) {
+				// The check for a channel picked meanwhile reports instead
+				if (this.isCheckPending) {
+					return;
+				};
+
+				// No legacy feed published means there is no update for this OS. The release bucket
+				// answers 403, not 404, for a key that does not exist
+				if (this.isLegacyLookup && this.isMissingFeed(err)) {
+					Util.send(this.win, 'update-not-available', this.autoUpdate);
+					return;
+				};
 			};
 
 			Util.send(this.win, 'update-error', err, this.autoUpdate, this.isDownloading);
@@ -176,6 +184,8 @@ class UpdateManager {
 			return;
 		};
 
+		this.setTimeout();
+
 		// A check is already running: it reports to the user if any caller asked by hand
 		if (this.isChecking) {
 			this.autoUpdate = this.autoUpdate && auto;
@@ -183,8 +193,15 @@ class UpdateManager {
 		};
 
 		this.autoUpdate = auto;
-		this.setTimeout();
 		this.check();
+	};
+
+	/**
+	 * Retry after an error. A fresh check, not a download of whatever the last check found: that
+	 * update may belong to a channel the user has left, or to a feed this OS no longer reads.
+	 */
+	retry (): void {
+		this.checkUpdate(false);
 	};
 
 	/**
@@ -202,7 +219,7 @@ class UpdateManager {
 		try {
 			await autoUpdater.checkForUpdatesAndNotify();
 
-			if (this.isUnsupported) {
+			if (this.isUnsupported && !this.isCheckPending) {
 				Util.log('info', `Update on channel ${this.channel} does not run on this OS, checking ${LEGACY_CHANNEL}`);
 
 				autoUpdater.channel = LEGACY_CHANNEL;
@@ -229,17 +246,25 @@ class UpdateManager {
 		};
 	};
 
+	isMissingFeed (err: Error & { code?: string; statusCode?: number }): boolean {
+		return (err?.code == 'ERR_UPDATER_CHANNEL_FILE_NOT_FOUND') || (err?.statusCode == 403);
+	};
+
 	needsLegacyCheck (): boolean {
 		return !this.isLegacyLookup && this.isUnsupported;
 	};
 
 	download (): void {
 		this.isDownloading = true;
+		this.clearTimeout();
 		Util.send(this.win, 'download-started');
 
-		// Failures arrive through the error event
+		// Failures arrive through the error event. A call made while a download runs gets that
+		// download's promise and no events of its own, so the flag clears when the promise settles
 		autoUpdater.downloadUpdate().catch((err: Error) => {
 			Util.log('info', `downloadUpdate error: ${err}`);
+		}).finally(() => {
+			this.isDownloading = false;
 		});
 	};
 
