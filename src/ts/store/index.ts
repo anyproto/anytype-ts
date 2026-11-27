@@ -15,6 +15,7 @@ import { Recovery } from './recovery';
 import { SparkOnboarding } from './sparkOnboarding';
 import { Presence } from './presence';
 import { ChatStatus } from './chatStatus';
+import { AiConnect } from './aiConnect';
 
 export {
 	Common,
@@ -34,4 +35,5 @@ export {
 	SparkOnboarding,
 	Presence,
 	ChatStatus,
+	AiConnect,
 };

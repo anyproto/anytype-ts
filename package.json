@@ -68,6 +68,7 @@
 	},
 	"homepage": "https://anytype.io",
 	"devDependencies": {
+		"@anthropic-ai/mcpb": "2.1.2",
 		"@biomejs/biome": "^2.4.8",
 		"@electron/notarize": "^3.1.1",
 		"@storybook/addon-essentials": "^8",
@@ -92,11 +93,14 @@
 		"eslint-plugin-react": "^7.37.5",
 		"globals": "^16.0.0",
 		"husky": "^8.0.3",
+		"jsonc-parser": "^3.3.1",
+		"jszip": "^3.10.1",
 		"license-checker": "^25.0.1",
 		"lint-staged": "^13.0.3",
 		"npm-run-all": "^4.1.5",
 		"patch-package": "^6.4.7",
 		"sass": "1.77.6",
+		"smol-toml": "^1.9.1",
 		"storybook": "^8",
 		"terser": "^5.36.0",
 		"ts-proto": "^2.11.5",
@@ -105,7 +109,8 @@
 		"unplugin-auto-import": "^21.0.0",
 		"vite": "^6.3.0",
 		"vite-plugin-static-copy": "^2.3.0",
-		"vitest": "^4.1.0"
+		"vitest": "^4.1.0",
+		"yaml": "^2.8.3"
 	},
 	"dependencies": {
 		"@bufbuild/protobuf": "^2.11.0",
@@ -225,6 +230,8 @@
 			"dist/lib",
 			"dist/anytypeHelper",
 			"dist/anytypeHelper.exe",
+			"dist/anytype-mcp",
+			"dist/anytype-mcp.exe",
 			"dist/nativeMessagingHost.exe",
 			"dist/nativeMessagingHost",
 			"dist/font/**/*",
@@ -234,6 +241,7 @@
 			"dist/wasm/**/*",
 			"dist/embed/**/*",
 			"dist/linkApproval/**/*",
+			"dist/mcp/**/*",
 			"dist/img/**/*",
 			"dist/css/**/*",
 			"dist/js/**/*",
@@ -276,6 +284,7 @@
 			"dist/tabs.html",
 			"dist/embed/**/*",
 			"dist/linkApproval/**/*",
+			"dist/mcp/**/*",
 			"dist/lib/**/*",
 			"!dist/lib/pb/**/*",
 			"!dist/lib/pkg/**/*",
@@ -289,6 +298,8 @@
 			"!dist/js/main.js.map",
 			"dist/anytypeHelper.exe",
 			"dist/anytypeHelper",
+			"dist/anytype-mcp.exe",
+			"dist/anytype-mcp",
 			"dist/nativeMessagingHost.exe",
 			"dist/nativeMessagingHost",
 			"dist/*.node",
@@ -1041,7 +1052,8 @@
 				".*\\.jpg$",
 				".*\\.gif$",
 				".*\\.mp4$",
-				".*\\.icns$"
+				".*\\.icns$",
+				".*/dist/anytype-mcp$"
 			]
 		},
 		"win": {

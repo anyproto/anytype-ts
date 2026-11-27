@@ -1,5 +1,8 @@
 import amplitude from 'amplitude-js';
 import * as I from 'Interface';
+import type { AiErrorCategory, AiErrorStage, AiMethod, AiNextStep, AiRoute } from 'Interface';
+import { CATALOG } from 'Lib/aiConnect/catalog';
+import { OPEN_ROUTES } from 'Lib/aiConnect/deeplink';
 
 const KEYS = [ 
 	'method', 'id', 'action', 'style', 'code', 'route', 'format', 'color', 'step',
@@ -7,9 +10,41 @@ const KEYS = [
 	'tab', 'document', 'page', 'count', 'suggestCount', 'context', 'originalId', 'length', 'group', 'view', 'limit', 'usecase', 'name',
 	'processor', 'emptyType', 'status', 'sort', 'origin', 'apiAppName', 'unreadMessageCount', 'hasMentions',
 	'spaceType', 'usage', 'chatId', 'hasMention', 'hasAttachments',
-	'errorType', 'filesCount',
+	'errorType', 'filesCount', 'app', 'stage', 'category', 'by',
 ];
 const URL = 'amplitude.anytype.io';
+
+/** The keys of an exhaustive map: a value added to the type must be added here too */
+const domain = <T extends string>(o: Record<T, true>): string[] => Object.keys(o);
+
+const AI_APPS: string[] = CATALOG.map(it => it.id);
+const AI_ROUTES = domain<AiRoute>({ http: true, stdio: true, skill: true });
+const AI_METHODS = domain<AiMethod>({ cli: true, package: true, keyfile: true, config: true, deeplink: true, manual: true, command: true });
+const AI_STEPS = domain<AiNextStep>({ none: true, confirmInApp: true, restart: true, newSession: true, reloadServer: true, toggle: true });
+const AI_STAGES = domain<AiErrorStage>({
+	validate: true, detect: true, read: true, parse: true, write: true, verify: true, cli: true, open: true, restart: true, probe: true, key: true,
+});
+const AI_CATEGORIES = domain<AiErrorCategory>({
+	unparseable: true, unsupportedForm: true, permission: true, notFound: true, cliFailed: true, cliTooOld: true, timeout: true, changed: true,
+	conflict: true, stale: true, outsideHome: true, unsupportedPackage: true, keyNotFound: true, unreachable: true, unauthorized: true, apiOff: true,
+	unknown: true, unsaved: true, storeDenied: true, installFailed: true,
+});
+
+/**
+ * Connect to AI apps: each event's payload is exactly these fields, each one required and from its finite domain
+ * (R2-26, Z10). Nothing else is added: no space, participant, context or object data. An event with a missing
+ * or unknown value, and any AiConnect* code missing here (AiConnectConnected), is dropped whole.
+ */
+export const AI_CONNECT_EVENTS: Record<string, Record<string, string[]>> = {
+	AiConnectOpen: { route: OPEN_ROUTES },
+	AiConnectStart: { app: AI_APPS, route: AI_ROUTES },
+	AiConnectDelivered: { app: AI_APPS, method: AI_METHODS },
+	AiConnectNextStep: { app: AI_APPS, step: AI_STEPS },
+	AiConnectProbeOk: { app: AI_APPS },
+	AiConnectFailed: { app: AI_APPS, stage: AI_STAGES, category: AI_CATEGORIES },
+	AiConnectRemoved: { app: AI_APPS, by: [ 'user', 'selfheal' ] },
+	AiConnectUnsupportedShown: { app: AI_APPS },
+};
 
 class Analytics {
 	
@@ -27,6 +62,7 @@ class Analytics {
 		settings: 'Settings',
 		featured: 'FeaturedRelations',
 		notification: 'Notification',
+		deeplink: 'Deeplink',
 		deleted: 'Deleted',
 		banner: 'Banner',
 		widget: 'Widget',
@@ -85,6 +121,7 @@ class Analytics {
 		settingsMembership: 'ScreenSettingsMembership',
 		settingsStorage: 'ScreenSettingsSpaceStorage',
 		settingsAccount: 'ScreenSettingsAccount',
+		settingsApi: 'ScreenSettingsApi',
 
 		inviteLink: 'InviteLink',
 		inviteConfirm: 'ScreenInviteConfirm',
@@ -315,6 +352,11 @@ class Analytics {
 		data.params = data.params || {};
 
 		if (!this.instance || !this.isAllowed() || !code) {
+			return;
+		};
+
+		if (code.startsWith('AiConnect')) {
+			this.aiConnectEvent(code, data);
 			return;
 		};
 
@@ -711,7 +753,35 @@ class Analytics {
 		};
 
 		param = Object.assign(param, converted);
-		
+
+		this.instance.logEvent(code, param);
+		this.log(`[Analytics].event: ${code}`, param);
+	};
+
+	/**
+	 * An AiConnect* event: the payload is built from the event's allow-list and nothing else (AI_CONNECT_EVENTS).
+	 * Every field is required and must be one of its domain's values; otherwise nothing is sent or logged.
+	 * @param {string} code - The event code.
+	 * @param {any} data - The event data.
+	 */
+	aiConnectEvent (code: string, data: any) {
+		const spec = Object.prototype.hasOwnProperty.call(AI_CONNECT_EVENTS, code) ? AI_CONNECT_EVENTS[code] : null;
+
+		if (!spec) {
+			return;
+		};
+
+		const param: any = {};
+
+		for (const k of Object.keys(spec)) {
+			const v = data?.[k];
+
+			if ((typeof v != 'string') || !spec[k].includes(v)) {
+				return;
+			};
+			param[k] = v;
+		};
+
 		this.instance.logEvent(code, param);
 		this.log(`[Analytics].event: ${code}`, param);
 	};

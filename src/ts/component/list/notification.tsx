@@ -1,6 +1,7 @@
 import React, { forwardRef, useRef, useEffect } from 'react';
 import { Notification, Icon } from 'Component';
 import * as I from 'Interface';
+import { notificationReplyClose } from 'Lib/notificationReply';
 
 const LIMIT = 5;
 
@@ -35,7 +36,7 @@ const ListNotification = forwardRef(() => {
 	};
 
 	const onClear = () => {
-		C.NotificationReply(S.Notification.list.map(it => it.id), I.NotificationAction.Close);
+		notificationReplyClose(S.Notification.list);
 		S.Notification.clear();
 	};
 

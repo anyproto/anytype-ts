@@ -52,6 +52,7 @@ if [ "$platform" = "windows-latest" ]; then
 
   echo "Moving... "
   mv -fv grpc-server.exe "$folder/anytypeHelper.exe"
+  mcp_ext=".exe"
 else
   echo -n "Uncompressing... "
   tar -zxf $FILE
@@ -59,7 +60,22 @@ else
 
   echo "Moving... "
   mv -fv grpc-server "$folder/anytypeHelper"
+  mcp_ext=""
 fi;
+
+# anytype-mcp, the stdio forwarder AI apps start (Connect to AI). A development build takes the
+# development-namespace binary, which can never read or write a production key item; the release one is
+# only for update-ci.sh. To use a locally built forwarder instead, leave this alone and set
+# ANYTYPE_MCP_BIN=<file> for the build (scripts/prepare-forwarder.js).
+if [ -f "anytype-mcp-dev$mcp_ext" ]; then
+  mv -fv "anytype-mcp-dev$mcp_ext" "$folder/anytype-mcp$mcp_ext"
+  chmod +x "$folder/anytype-mcp$mcp_ext"
+else
+  # Never keep the forwarder of an earlier middleware next to this one
+  rm -f "$folder/anytype-mcp$mcp_ext"
+  echo "NOTE: this middleware archive has no anytype-mcp-dev$mcp_ext (heart older than the forwarder): Connect to AI's stdio routes are off unless ANYTYPE_MCP_BIN is set"
+fi;
+rm -f "anytype-mcp-release$mcp_ext" "anytype-mcp-dev$mcp_ext"
 
 rm -rf dist/lib/pb
 rm -rf dist/lib/pkg

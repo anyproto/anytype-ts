@@ -6,6 +6,7 @@ Application infrastructure: API communication, constants, services, utilities, a
 
 | Directory | Purpose |
 |-----------|---------|
+| `aiConnect/` | Connect to AI apps, renderer side: `flow.ts` (every IPC and key RPC; the key lives only in its operation), `controller.ts` (the popup's state machine), `catalog.ts`, `gallery.ts`, `steps.ts`, `deeplink.ts` (canonical AI routes in any spelling, shared with main), `link.ts` (an incoming link waits as its catalog id until an app page shows), `entry.ts` (the AI apps page's one-shot target, API Keys backlink), `startup.ts` (self-heal reaction and the discovery nudge, started in `app.tsx`), `events.ts` (AiConnect* analytics), `icons.ts` (the card → bundled mark map, themed via `S.Common.getThemePath()`), `session.ts`; `testHarness.ts` fakes heart and main |
 | `api/` | gRPC communication layer (commands, dispatcher, mapper, service client, struct encoding) |
 | `constant/` | Application constants (spark onboarding configuration) |
 | `service/` | Singleton services (spark onboarding event bus) |
@@ -20,7 +21,8 @@ Application infrastructure: API communication, constants, services, utilities, a
 | `storage.ts` | `Storage` | LocalStorage abstraction |
 | `renderer.ts` | `Renderer` | Electron IPC communication |
 | `sidebar.ts` | `sidebar` | Sidebar state management |
-| `analytics.ts` | `analytics` | Event tracking |
+| `analytics.ts` | `analytics` | Event tracking; an `AiConnect*` event's payload is exactly its allow-listed fields, each required and from its finite domain (`AI_CONNECT_EVENTS`), else dropped: no space, participant or context data |
+| `notificationReply.ts` | `notificationReplyClose` | Replies Close to heart for its notifications (its `isLocal` imports/exports too); only the renderer's AI nudge is skipped |
 | `focus.ts` | `focus` | Focus/cursor management |
 | `mark.ts` | `Mark` | Rich text mark handling (bold, italic, links, etc.) |
 | `action.ts` | `Action` | Common user actions (delete, archive, duplicate, etc.) |
@@ -54,3 +56,4 @@ The `index.ts` re-exports everything above plus:
 - `reactionScheduler.test.ts` - Reaction scheduler pause/resume tests
 - `linkApproval.test.ts` - Local-link caller identity and space-catalog filtering tests
 - `api/linkApproval.test.ts` - Approval RPC grant payloads and grant validation
+- `analytics.aiConnect.test.ts` - Exact AiConnect* payloads with an active space and context

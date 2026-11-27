@@ -1,6 +1,6 @@
 # page/ - Page-Level Components
 
-Full-page components mapped via URL routing. Contains **67 files** across 4 subdirectories.
+Full-page components mapped via URL routing. Contains **77 files** across 4 subdirectories.
 
 ## Routing
 
@@ -47,13 +47,15 @@ Navigation uses `U.Router.go(path, options)`. Authentication guards redirect una
 | `invite.tsx` | Space invitation handler |
 | `import.tsx` | Import handler |
 | `membership.tsx` | Membership page |
+| `aiConnect.tsx` | Fallback for `/ai/connect?app=<id>` reached as a route: replaces its own entry with the targeted AI apps page. Links themselves never become routes (`lib/aiConnect/link.ts`) |
 | `blank.tsx` | Blank page |
 | `void.tsx` | Void/empty page |
 
 ## Settings Pages (`main/settings/`)
 
 Hierarchical settings with `index.tsx` dispatcher:
-- **Account**: `account.tsx`, `delete.tsx`, `personal.tsx`, `phrase.tsx`, `language.tsx`, `api.tsx`
+- **Account**: `account.tsx`, `delete.tsx`, `personal.tsx`, `phrase.tsx`, `language.tsx`, `api.tsx` (a key a connection uses gets `apiKeyAiAppsLink.tsx`, "Created by AI apps" → that connection's Manage; `apiAgentPrompt.tsx`: "Copy prompt" with the skill URL `J.Url.agentSkill` and the live port, disabled while the Local API is off)
+- **AI apps**: `aiApps.tsx` (container: load, check, row actions) over the props-driven `aiAppsList.tsx`. `Action.openAiApps(target, route)` opens it with a one-shot `app` / `connection` / `route` in the route; a `GalleryVisit` (`lib/aiConnect/entry.ts`) takes it off the history entry on arrival (`U.Router.replaceCurrent`) and opens the popup once the list is loaded (a record after the opening check; an absent app shows its row)
 - **PIN**: `pin/index.tsx` -> `pin/select.tsx` -> `pin/confirm.tsx`
 - **Import**: `import/index.tsx` -> `import/notion.tsx` (with `notion/help.tsx`, `notion/warning.tsx`), `import/csv.tsx`, `import/obsidian.tsx`; `import/aiSettings.tsx` - AI structure enrichment settings section rendered on the index page: one merged provider dropdown (local providers shielded, cloud, custom), a model dropdown populated by `AIListModels` with recommended entries pinned on top, and the data disclosure
 - **Export**: `export/index.tsx` -> `export/protobuf.tsx` (Any-Block v1), `export/markdown.tsx`, `export/anyBlockV2.tsx` (Any-Block v2, preview)

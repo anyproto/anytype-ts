@@ -99,6 +99,14 @@ class Notification implements I.Notification {
 				break;
 			};
 
+			case I.NotificationType.AiConnect: {
+				const appName = String(this.payload.appName || '');
+
+				this.title = U.String.sprintf(this.title, appName);
+				this.text = (Number(this.payload.count) > 1) ? translate('notificationAiConnectSuccessTextMany') : U.String.sprintf(this.text, appName);
+				break;
+			};
+
 		};
 	};
 

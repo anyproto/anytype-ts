@@ -15,6 +15,9 @@ import { approvalSpaces } from 'Lib/linkApproval';
 import Download from 'Lib/download';
 import { powerState } from 'Lib/powerState';
 import { membership } from 'Lib/membership';
+import { closeTabSession } from 'Lib/aiConnect/session';
+import { aiConnectTabActivated, startAiConnect, windowEnv } from 'Lib/aiConnect/startup';
+import { aiLinkArrived, consumeAiLink, takeAiLink } from 'Lib/aiConnect/link';
 
 configure({ enforceActions: 'never', reactionScheduler: (f) => scheduleReaction(f) });
 
@@ -142,7 +145,11 @@ const App: FC = () => {
 		// Keep <html> class in sync with history even if React Router's subscription
 		// gets desynced (e.g. after HMR module swaps). Without this, the tree can end
 		// up on the wrong page after an HMR full-reload with the tab route restored.
-		history.listen(() => keyboard.setBodyClass());
+		history.listen(() => {
+			keyboard.setBodyClass();
+			// An AI link waiting for an app page (cold start, account selection, PIN) opens here
+			consumeAiLink();
+		});
 
 		if (window.isWebVersion) {
 			import('./lib/web/routeSync').then(({ initRouteSync }) => initRouteSync(history, U.Router));
@@ -243,6 +250,8 @@ const App: FC = () => {
 
 			if (isActive) {
 				U.Data.updateTabsDimmer();
+				// AI apps: a check main refused while this tab was in the background runs now
+				aiConnectTabActivated();
 			};
 		});
 
@@ -351,6 +360,15 @@ const App: FC = () => {
 
 		// Validate tab route — don't restore blank/void/auth routes
 		let route = String(data.route || redirect || '');
+
+		// An AI link is never restored as a route: it waits as its catalog id until an app page shows. Main hands a
+		// cold link over on its own (`aiLink`), next to the tab's own route (A8)
+		if (takeAiLink(route)) {
+			route = '';
+		};
+		if (typeof data.aiLink == 'string') {
+			aiLinkArrived(data.aiLink);
+		};
 
 		if (route) {
 			const rp = U.Router.getParam(route);
@@ -580,9 +598,8 @@ const App: FC = () => {
 		const currentTabId = electron.tabId();
 
 		clearReactionQueue();
-		U.Data.closeSession(() => {
-			Renderer.sendIpc('tab-session-closed', tabId || currentTabId);
-		});
+		// A key minted for an AI app and not delivered yet is revoked first, while this session still can (bounded)
+		closeTabSession(tabId, currentTabId);
 	};
 
 	const onNotificationCallback = (e: any, cmd: string, payload: any) => {
@@ -695,6 +712,11 @@ const App: FC = () => {
 	};
 
 	const onRoute = (route: string) => {
+		// An AI link opens AI apps in one step from inside the app, or waits for an app page (never a redirect)
+		if (takeAiLink(route)) {
+			return;
+		};
+
 		if (keyboard.isMain()) {
 			U.Router.go(route, {});
 		} else {
@@ -731,9 +753,12 @@ const App: FC = () => {
 			spaces => Renderer.send('linkApprovalSpaces', { spaces }),
 			{ equals: comparer.structural },
 		);
+		// AI apps: self-heal on account / Local API changes, and the discovery nudge (desktop only)
+		const disposeAiConnect = startAiConnect({ ...windowEnv(), notify: item => S.Notification.add(new M.Notification(item)) });
 
 		return () => {
 			disposeApprovalSpaces();
+			disposeAiConnect();
 			unregisterIpcEvents();
 		};
 	}, []);

@@ -32,6 +32,7 @@ import PopupSpaceHome from './space/home';
 import PopupLogout from './logout';
 import PopupOnboarding from './onboarding';
 import PopupApiCreate from './api/create';
+import PopupAiConnect from './aiConnect';
 import PopupAIOnboarding from './aiOnboarding';
 import PopupIntroduceChats from './introduceChats';
 import PopupUpload from './upload';
@@ -197,6 +198,7 @@ const Popup = forwardRef<{}, I.Popup>((props, ref) => {
 		logout: 				 PopupLogout,
 		onboarding:				 PopupOnboarding,
 		apiCreate:				 PopupApiCreate,
+		aiConnect:				 PopupAiConnect,
 		aiOnboarding:			 PopupAIOnboarding,
 		introduceChats:			 PopupIntroduceChats,
 		upload:					 PopupUpload,

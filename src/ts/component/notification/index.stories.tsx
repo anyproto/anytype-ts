@@ -82,3 +82,33 @@ export const Gallery: Story = {
 		resize: noop,
 	},
 };
+
+/** The AI apps discovery nudge (local): Connect and Close are native buttons */
+export const AiConnectNudge: Story = {
+	args: {
+		item: {
+			id: 'aiConnectNudge',
+			type: I.NotificationType.AiConnect,
+			status: I.NotificationStatus.Created,
+			createTime: 0,
+			isLocal: true,
+			title: 'Use Anytype in Cursor',
+			text: 'Anytype found Cursor on this computer. Connect it to use your spaces there.',
+			payload: { appId: 'cursor', appName: 'Cursor', count: 1 },
+		},
+		style: { position: 'relative', left: 0, top: 0 },
+		resize: noop,
+	},
+};
+
+export const AiConnectNudgeMany: Story = {
+	args: {
+		...AiConnectNudge.args,
+		item: {
+			...AiConnectNudge.args.item,
+			title: 'Use Anytype in Claude Desktop',
+			text: 'Anytype found AI apps on this computer. Connect one to use your spaces there.',
+			payload: { appId: 'claude-desktop', appName: 'Claude Desktop', count: 3 },
+		},
+	},
+};

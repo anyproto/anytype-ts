@@ -255,6 +255,8 @@ export default defineConfig(({ mode }) => {
 				targets: [
 					{ src: path.join(cMapsDir, '*').replace(/\\/g, '/'), dest: 'cmaps' },
 					{ src: path.join(wasmDir, '*').replace(/\\/g, '/'), dest: 'wasm' },
+					// Sources, licenses (incl. the MIT notices) and the trademark notice of the bundled AI app icons; packaged with dist/assets
+					{ src: 'src/img/icon/aiApp/NOTICE.md', dest: 'assets/licenses', rename: 'aiAppIcons.md' },
 				],
 			}),
 		],

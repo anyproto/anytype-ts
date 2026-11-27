@@ -18,6 +18,15 @@ export const apiKeyMarkSeen = (): void => {
 	Storage.setOnboarding(SEEN_KEY);
 };
 
+/** The "New" badge on Settings ▸ AI apps: the only thing the feature keeps in Storage */
+const AI_APPS_SEEN_KEY = 'settingsAiApps';
+
+export const aiAppsIsNew = (): boolean => !Storage.getOnboarding(AI_APPS_SEEN_KEY);
+
+export const aiAppsMarkSeen = (): void => {
+	Storage.setOnboarding(AI_APPS_SEEN_KEY);
+};
+
 export const API_KEY_NAME_MAX_BYTES = 128;
 
 /** Grant presence, not the key's string format, determines legacy status and API-v1 compatibility. */

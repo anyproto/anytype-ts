@@ -15,6 +15,7 @@ All static image assets used in the app.
 
 | Directory | Contents |
 |-----------|----------|
+| `aiApp/` | AI app marks for the AI apps cards (claude, claudeCode, openai, codex, cursor, copilot, lmstudio, gemini, geminiCli, antigravity, opencode, hermes, mcp); card map in `lib/aiConnect/icons.ts`; sources, licenses and the trademark notice in `aiApp/NOTICE.md` (not shipped) |
 | `arrow/` | Gallery/pager swiper arrows (`swiper.svg`, `swiper-hover.svg`) |
 | `migration/` | Migration flow illustrations (`init.svg`, `process.svg`, `data.svg`, `error.svg`) |
 | `onboarding/` | Onboarding images: `chats/` (feed, header, intro, oneToOne, sidebar PNGs), `options/` (use-case PNGs: artist, developer, writer, etc.), `primitives/` (arrow, close SVGs), plus standalone assets (`copy.svg`, `tick.svg`, `productHunt.png`) |
@@ -30,6 +31,7 @@ Dark mode asset variants, mirroring the light icon structure:
 
 | Directory | Contents |
 |-----------|----------|
+| `icon/aiApp/` | White variants of the monochrome AI app marks (openai, codex, cursor, copilot, geminiCli, antigravity, opencode, hermes, mcp) |
 | `icon/arrow/` | `swiper.svg` |
 | `icon/menu/` | Various menu icons (`checkbox0/1.svg`, `chk.svg`, `sortArrow.svg`, plus subdirs: `dataview/`, `inviteLink/`, `onboarding/`, `spaceCreate/`, `syncStatus/`) |
 | `icon/onboarding/` | `chats/`, `primitives/` |

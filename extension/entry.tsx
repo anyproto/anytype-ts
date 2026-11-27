@@ -3,6 +3,7 @@ import Popup from './popup';
 import Iframe from './iframe';
 import Auth from './auth';
 import Util from './lib/util';
+import { extensionBridge } from './lib/bridge';
 
 import './scss/common.scss';
 
@@ -18,17 +19,7 @@ declare global {
 };
 
 window.isExtension = true;
-window.Electron = {
-	currentWindow: () => ({}),
-	Api: () => {},
-	platform: '',
-	tabId: () => null,
-	winId: () => 0,
-	on: () => {},
-	removeAllListeners: () => {},
-	send: () => {},
-	getTheme: () => '',
-};
+window.Electron = extensionBridge;
 
 window.Anytype = {
 	Lib: {

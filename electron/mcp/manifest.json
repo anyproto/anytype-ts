@@ -1,0 +1,16 @@
+{
+  "manifest_version": "0.3",
+  "name": "anytype",
+  "display_name": "Anytype",
+  "version": "2.0.0",
+  "description": "Your Anytype spaces in Claude",
+  "author": { "name": "Anytype" },
+  "icon": "icon.png",
+  "server": {
+    "type": "binary",
+    "entry_point": "server/anytype-mcp",
+    "mcp_config": { "command": "${__dirname}/server/anytype-mcp", "args": ["serve", "--connection", "claude-desktop"] }
+  },
+  "tools_generated": true,
+  "compatibility": { "platforms": ["darwin"] }
+}

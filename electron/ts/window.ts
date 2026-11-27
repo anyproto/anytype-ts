@@ -736,8 +736,8 @@ class WindowManager {
 
 			ipcMain.on('tab-session-closed', handler);
 
-			// Tell the tab to close its session
-			Util.sendToTab(win, view.id, 'close-session');
+			// Tell the tab to close its session: straight to its view, which is no longer in win.views
+			view.webContents.send('close-session');
 		};
 	};
 

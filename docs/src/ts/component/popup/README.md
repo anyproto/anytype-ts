@@ -1,6 +1,6 @@
 # popup/ - Modal Dialogs
 
-Modal popup system with **36 TSX files** (plus 10 Storybook story files). Managed by the `PopupStore` in `src/ts/store/popup.ts`.
+Modal popup system with **45 TSX files** (plus 38 Storybook story files). Managed by the `PopupStore` in `src/ts/store/popup.ts`.
 
 ## Architecture
 
@@ -62,4 +62,5 @@ Open a popup: `S.Popup.open('confirm', { data: { ... } })`
 ### Other
 - `about.tsx` - About/info popup
 - `share.tsx` - App sharing link
+- `aiConnect/` - Connect to AI apps (id `aiConnect`): `index.tsx` renders `lib/aiConnect/controller.ts` (state machine, no React) and owns dialog focus; pure views `form.tsx` (Connect sheet), `finish.tsx` (delivery and next step), `manage.tsx`, `manual.tsx` (set up by hand), `unsupported.tsx`; `text.ts` translates controller messages. Opened from Settings ▸ AI apps only
 - `api/create.tsx` - Creates API v2 keys or edits an existing key's grant in place through the shared `form/apiKeyEditor` (space access, permission, creation-time expiry, legacy compatibility).

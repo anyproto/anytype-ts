@@ -113,6 +113,7 @@ if [[ "$OS" =~ ^windows-.*$ ]]; then
 
     echo "Moving... "
     mv -fv grpc-server.exe "$FOLDER/anytypeHelper.exe"
+    MCP_EXT=".exe"
 else
     echo -n "Uncompressing... "
     tar -zxf $FILE || exit 1
@@ -122,7 +123,20 @@ else
     rm -rf "$FOLDER"
     mkdir -p "$FOLDER"
     mv -fv grpc-server "$FOLDER/anytypeHelper"
+    MCP_EXT=""
 fi
+
+# anytype-mcp, the stdio forwarder AI apps start (Connect to AI). Release and nightly builds take the
+# release-namespace binary (the only one that uses the production key folder); it is stored as
+# anytype-mcp[.exe] next to anytypeHelper and signed by scripts/prepare-forwarder.js before the frontend build.
+# A middleware archive without it can't be released.
+if [[ ! -f "anytype-mcp-release$MCP_EXT" ]]; then
+    echo "ERROR: the middleware archive has no anytype-mcp-release$MCP_EXT (anytype-heart older than the forwarder)" 1>&2
+    exit 1
+fi
+mv -fv "anytype-mcp-release$MCP_EXT" "$FOLDER/anytype-mcp$MCP_EXT"
+chmod +x "$FOLDER/anytype-mcp$MCP_EXT"
+rm -f "anytype-mcp-dev$MCP_EXT"
 
 rm -rf dist/lib/pb
 rm -rf dist/lib/pkg

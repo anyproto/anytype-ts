@@ -38,6 +38,9 @@
 			.buttons { display: flex; flex-direction: row; gap: 0px 8px; margin: 12px 0px 0px 0px; }
 			.buttons:empty { display: none; }
 			.button { @include text-small; font-weight: 500; }
+			// Native buttons (the AI apps nudge): the text font, and the keyboard focus ring used elsewhere
+			button.button { font-family: inherit; }
+			button.button:focus-visible { outline: 2px solid var(--color-system-accent-100); outline-offset: 2px; }
 
 			.element { display: inline; }
 			.element {

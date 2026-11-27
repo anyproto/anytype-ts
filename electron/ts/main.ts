@@ -28,6 +28,7 @@ import { registerChatStatus } from './chatStatus';
 import { powerState, parseDropList, PowerEvent } from './lib/powerState';
 import { registerEmbedScheme, handleEmbedScheme, EMBED_ORIGIN } from './lib/embedProtocol';
 import { registerPermissionHandlers } from './lib/permissions';
+import { aiConnectSenderAllowed } from './lib/aiConnect/validate';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
@@ -99,7 +100,7 @@ if (!is.macos && (process.argv.length >= 2)) {
 	if (process.defaultApp && !is.linux) {
 		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
 	};
-	deeplinkingUrl = process.argv.find(arg => arg.startsWith(`${protocol}://`));
+	deeplinkingUrl = Util.canonicalDeepLink(process.argv.find(arg => arg.startsWith(`${protocol}://`)));
 };
 
 powerState.setDropList(parseDropList(process.env, process.argv, app.isPackaged));
@@ -169,6 +170,11 @@ if (!is.development && !app.requestSingleInstanceLock()) {
 	Api.exit(mainWindow, '', false, false);
 	process.exit(0);
 };
+
+// heart's last Local API bind outcome belongs to one run of the app: a reloaded window restores it from here, a new
+// start waits for heart's status event instead of trusting the previous run's. Only the instance that holds the
+// lock clears it: a second process (a deep link on Windows / Linux) must not wipe the running app's value (H13)
+store.delete('localApiBind');
 
 remote.initialize();
 Util.setAppPath(path.join(__dirname));
@@ -390,6 +396,29 @@ function createWindow () {
 			return;
 		};
 
+		// AI apps: only the active tab's top frame of a normal app window (not Quick Search, the approval
+		// prompt, the tab strip, a background tab or a sub-frame); claiming the nudge also needs focus
+		if (String(cmd || '').startsWith('aiConnect')) {
+			const activeView = Util.getActiveView(win);
+			const frame = e.senderFrame;
+			const main = e.sender.mainFrame;
+			const allowed = aiConnectSenderAllowed({
+				isQuickSearch: !!win.isQuickSearch,
+				isApproval: !!win.isApproval,
+				isFocused: win.isFocused(),
+				activeViewId: (activeView && !activeView.webContents.isDestroyed()) ? activeView.webContents.id : null,
+			}, {
+				cmd,
+				senderId: e.sender.id,
+				isMainFrame: !!frame && !!main && (frame.processId == main.processId) && (frame.routingId == main.routingId),
+			});
+
+			if (!allowed) {
+				Util.log('warn', '[Api] aiConnect sender not allowed:', cmd);
+				return;
+			};
+		};
+
 		// For events that should only be processed once per broadcast,
 		// skip if the sender is not the active tab
 		if (Api.activeTabOnly?.has(cmd)) {
@@ -533,7 +562,7 @@ app.on('second-instance', (event, argv) => {
 	};
 
 	if (!is.macos) {
-		deeplinkingUrl = argv.find(arg => arg.startsWith(`${protocol}://`));
+		deeplinkingUrl = Util.canonicalDeepLink(argv.find(arg => arg.startsWith(`${protocol}://`)));
 	};
 
 	if (deeplinkingUrl) {
@@ -606,7 +635,7 @@ app.on('activate', () => {
 app.on('open-url', (e, url) => {
 	e.preventDefault();
 
-	deeplinkingUrl = url;
+	deeplinkingUrl = Util.canonicalDeepLink(url);
 
 	if (!mainWindow) {
 		return;

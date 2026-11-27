@@ -1,0 +1,14 @@
+@import "~scss/_mixins";
+
+.aiAppIcon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px; overflow: hidden; }
+.aiAppIcon {
+	img { display: block; width: 100%; height: 100%; object-fit: contain; }
+	.letter { @include text-common; font-weight: 600; }
+}
+.aiAppIcon.isLetter { background: var(--color-shape-tertiary); color: var(--color-text-secondary); }
+
+// A bundled mark sits in the letter's tile
+.aiAppIcon.isMark { background: var(--color-shape-tertiary); }
+.aiAppIcon.isMark {
+	img { width: 20px; height: 20px; }
+}

@@ -42,20 +42,7 @@ const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
 		});
 	};
 
-	const onSuccess = () => {
-		const { account } = S.Auth;
-		const { redirect } = S.Common;
-
-		keyboard.setPinChecked(true);
-
-		if (account) {
-			redirect ? U.Router.go(redirect, {}) : U.Space.openDashboard();
-		} else {
-			U.Router.go('/auth/select', { replace: true });
-		};
-
-		S.Common.redirectSet('');
-	};
+	const onSuccess = () => keyboard.onPinChecked();
 
 	useEffect(() => {
 		rebind();

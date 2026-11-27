@@ -2,6 +2,8 @@ import { action, computed, makeObservable, observable, set } from 'mobx';
 import { setReactionsPaused } from 'Lib/reactionScheduler';
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
+import { isAiParam } from 'Lib/aiConnect/deeplink';
+import { takeAiLink } from 'Lib/aiConnect/link';
 
 interface Filter {
 	from: number;
@@ -974,7 +976,17 @@ class CommonStore {
 	 * @param {string} v - The redirect value.
 	 */
 	redirectSet (v: string) {
+		// An AI link waits as its catalog id (Lib/aiConnect/link), never as a redirect; an AI route keeps only its allowed fields
+		if (takeAiLink(v)) {
+			return;
+		};
+
 		const param = U.Router.getParam(v);
+
+		// The router's final params for an AI page are already filtered: stored as rebuilt from them (B1)
+		if (isAiParam(param)) {
+			v = U.Router.build(param);
+		};
 
 		if (param.page == 'auth') {
 			return;

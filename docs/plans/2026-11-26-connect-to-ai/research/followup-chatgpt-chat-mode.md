@@ -1,0 +1,32 @@
+# Gap 1: does the ChatGPT desktop app expose local MCP tools? (researched 2026-11-26/27)
+
+## Verdict
+- A hand-edited ~/.codex/config.toml entry IS loaded by the app (Settings > Plugins > MCPs lists it, status=ready, tools/list succeeds). That part works.
+- But tools are NOT reliably exposed to the model in the app's ordinary **Chat** mode. Open bug openai/codex#38162 (opened 2026-08-12, still OPEN, last activity 2026-11-25, ~30+ comments, macOS/Windows/Linux, stdio AND local/remote HTTP). No OpenAI maintainer has replied (only github-actions bot; all commenters association NONE). No fix, no workaround from OpenAI.
+- **Work** mode and **Codex** mode (and Codex CLI) do expose them in many reports. Not universal: one Windows report (2026-10-27) says unavailable in both Chat and Work; one macOS report (2026-10-29) says projectless Work/Codex threads omit it while project-scoped threads expose it.
+- Treat as: "Connect ChatGPT" via config.toml = works in Codex/Work modes (flaky), unsupported in Chat. Label honestly; do not promise Chat.
+
+## Evidence
+- #38162 (https://github.com/openai/codex/issues/38162): "ChatGPT Desktop: local MCP tools are discovered successfully but not exposed to Chat sessions". Wire capture: initialize + tools/list OK, resources/list; Chat says server not in namespaces. CLI control works. Labels bug, windows-os, mcp, app.
+- HillsCloud comment 2026-10-19 (Win11, desktop 26.1013.40934, Codex CLI 0.162.1): local Streamable HTTP `url = "http://127.0.0.1:<port>/mcp"` in ~/.codex/config.toml: NOT exposed in Chat, works in Work tab, same config. Workarounds that did not help for Chat: startup_timeout_sec=90, required=true, mcp_optional_startup_grace_ms=15000. This is the closest match to Anytype's setup (localhost HTTP, native url entry).
+- HillsCloud 2026-10-27: server access log shows zero requests from a Chat turn; Work spawns a new client mid-turn and calls tools. Startup discovery clients are cancelled (`serve finished quit_reason=Cancelled`, "omitting MCP server without an exact ready client"). Occasionally an approval prompt flashes and vanishes; clicking Allow when it stays makes tools work (user-observed, unverified).
+- Proginji2000 2026-10-05/12 (Windows): same plugin+stdio server: Work outside a ChatGPT Project passes (real tools/call), normal Chat and Work inside a Project do not.
+- mantou-111 2026-10-29 (macOS build 26.1023.50603, core 0.165.0-alpha.1.2, stdio in ~/.codex/config.toml): project-scoped conversation exposes tool; 5 fresh projectless conversations from global composer do not; switching Work/Codex did not help.
+- Still reproducing on latest builds: macOS 26.1120.41243 (ajkatom, 2026-11-24), 26.1117.41037 (RomThpt, 2026-11-25), Windows 2026-11-23 (js1734419-stack). Linux 26.1007.21434 reported 2026-10-10.
+- Workaround reported 2026-10-17 (zplitzcreen): OpenAI Secure MCP Tunnel + Settings > Plugins > Add custom MCP server > Tunnel made tools appear in Chat. Needs Platform org + tunnel client; not local-config based; not a fit for Anytype.
+- #37976 (remote HTTP, regression in desktop 26.803.61601/81509): CLOSED 2026-08-12 (closed same day as a duplicate-flagged report, marked duplicate of #37567 by bot; no fix commit seen). Its symptom persists under #38162 and #58061 (opened 2026-10-29, open: remote HTTP MCP exposes zero tools in Codex Desktop, macOS 26.1023.51421). So it is NOT resolved.
+- Related open issues: #38342 (macOS plugin stdio MCP tools absent after full restart), #38857 (Windows lists local stdio MCP as enabled but zero tools), #45555, #50982, #58061.
+
+## Sub-questions
+1. Does regular chat expose MCP tools? Unreliable/No for Chat mode per above; official docs (https://learn.chatgpt.com/docs/extend/mcp, read 2026-11-27) say only "The ChatGPT desktop app, Codex CLI, and IDE extension share this configuration" and never mention Chat mode. Docs say "ChatGPT web doesn't read local Codex configuration files". Help article https://help.openai.com/en/articles/20001276 describes modes Chat/Work/Codex ("Codex remains a separate view"), says nothing of MCP.
+2. Loads hand-edited config.toml [mcp_servers.x] url + http_headers? Yes loaded (status=ready in logs; same file the CLI uses; HillsCloud confirmed a native `url=` localhost entry with config.toml). Exposure per mode is the problem. Official docs state `http_headers` exists in config.toml only; the Settings form has no header/bearer field (name, STDIO|Streamable HTTP, command/URL only).
+3. Restart enough? Docs: after saving in UI select Restart. Reporters did full quit+restart and new chats; restart does not fix the Chat-mode bug. For config.toml edits a full app restart is needed to load it (not live; liveness of file watcher unconfirmed). Only new threads see changes.
+4. Works without Codex CLI installed? Yes for loading: the app bundles its own codex core/app-server (/Applications/ChatGPT.app/Contents/Resources/codex-cli; mcpServerStatus via "bundled app-server"). No separate CLI install needed. ~/.codex/ is created by the app. (Confirmed locally in earlier report; ajkatom ran the bundled app-server directly.)
+5. Windows config path: OFFICIALLY CONFIRMED `%USERPROFILE%\.codex` (https://learn.chatgpt.com/docs/windows/windows-app: "uses the same Codex home directory as native Codex on Windows: %USERPROFILE%\.codex"); reporters use C:\Users\<user>\.codex\config.toml (guywall 2026-11-16, HillsCloud). WSL mode reads Linux home unless CODEX_HOME set.
+6. codex:// scheme on Windows: docs use `codex://settings` as a link in the Windows app page, implying it is registered, but no explicit registration doc. Unconfirmed by test; verify via registry HKCR\codex or by invoking `start codex://settings`.
+
+## Implications for the Anytype flow
+- Offer ONE honest "ChatGPT app" tile whose success text says: "Use Anytype in Work or Codex mode (Chat mode doesn't support local tools yet)". Keep CLI as separate tile (dependable). Add post-write verification: run bundled `codex mcp list` (or the Anytype side detect the first /mcp initialize + tools/list request from the client) to show "ChatGPT connected" only once heart sees a request.
+- Anytype can positively detect connection: heart logs a tools/list from user-agent "codex-mcp-client" even if Chat never calls tools. A tools/call arriving = real use.
+- Watch #38162; re-test per build before enabling Chat claims. Known env hints: project-scoped threads more reliable than projectless; Work mode > Chat mode.
+- Do not rely on the Secure MCP Tunnel for the zero-config flow.
