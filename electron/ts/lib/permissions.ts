@@ -1,4 +1,4 @@
-import { Session, WebContents } from 'electron';
+import { Certificate, Session, WebContents } from 'electron';
 
 // Players go fullscreen and play protected media, widgets copy links
 const EMBED_PERMISSIONS = [ 'fullscreen', 'mediaKeySystem', 'clipboard-sanitized-write' ];
@@ -65,4 +65,14 @@ export const registerPermissionHandlers = (ses: Session, isTrusted: (url: string
 	ses.setPermissionCheckHandler((webContents, permission, requestingOrigin, details) => {
 		return isPermissionAllowed(permission, getRequestingUrl(webContents, details.requestingUrl, requestingOrigin, isTrusted, appUrl), isTrusted);
 	});
+};
+
+// Since Electron 44 main process net requests (updater, DevTools download) ask too, with no webContents: send no certificate rather than the first one in the OS store
+export const onSelectClientCertificate = (event: Electron.Event, webContents: WebContents | null, url: string, list: Certificate[], callback: (certificate?: Certificate) => void): void => {
+	if (webContents) {
+		return;
+	};
+
+	event.preventDefault();
+	callback();
 };

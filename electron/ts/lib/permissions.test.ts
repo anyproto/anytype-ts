@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { isPermissionAllowed, registerPermissionHandlers } from './permissions';
+import { isPermissionAllowed, registerPermissionHandlers, onSelectClientCertificate } from './permissions';
 
 const APP = 'file:///Applications/Anytype.app/Contents/Resources/app.asar/dist/index.html';
 const EMBED = 'anytype-embed://app/embed/iframe.html';
@@ -85,6 +85,34 @@ describe('registerPermissionHandlers', () => {
 		expect(check(null, 'fileSystem', 'file:///', { isMainFrame: false })).toBe(true);
 		expect(check(null, 'fileSystem', 'anytype-embed://app', { isMainFrame: false })).toBe(false);
 		expect(check(null, 'fileSystem', 'https://example.com', { isMainFrame: false })).toBe(false);
+	});
+
+});
+
+describe('onSelectClientCertificate', () => {
+
+	const certificate: any = { subjectName: 'user' };
+	const select = (webContents: any) => {
+		const event: any = { preventDefault: vi.fn() };
+		const callback = vi.fn();
+
+		onSelectClientCertificate(event, webContents, 'https://example.com/', [ certificate ], callback);
+		return { event, callback };
+	};
+
+	it('sends no certificate for main process requests', () => {
+		const { event, callback } = select(null);
+
+		expect(event.preventDefault).toHaveBeenCalledTimes(1);
+		expect(callback).toHaveBeenCalledTimes(1);
+		expect(callback.mock.calls[0]).toEqual([]);
+	});
+
+	it('leaves page requests to Electron', () => {
+		const { event, callback } = select({ id: 1 });
+
+		expect(event.preventDefault).not.toHaveBeenCalled();
+		expect(callback).not.toHaveBeenCalled();
 	});
 
 });

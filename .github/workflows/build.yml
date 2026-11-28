@@ -219,6 +219,11 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
 
+      # Must run before the yml upload below; why the floor is a Darwin version is explained in the script
+      - name: Set macOS update floor
+        if: ${{ startsWith(matrix.os, 'macos-') }}
+        run: node scripts/mac-update-floor.js
+
       - name: Package and publish Other
         if: ${{ !startsWith(matrix.os, 'macos-') }}
         run: bunx electron-builder ${{ startsWith(matrix.os, 'windows-') && '--windows' || '--linux' }} ${{ startsWith(github.ref, 'refs/tags/v') && '--publish always' || '' }}

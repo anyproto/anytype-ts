@@ -27,7 +27,7 @@ import DownloadManager from './download';
 import { registerChatStatus } from './chatStatus';
 import { powerState, parseDropList, PowerEvent } from './lib/powerState';
 import { registerEmbedScheme, handleEmbedScheme, EMBED_ORIGIN } from './lib/embedProtocol';
-import { registerPermissionHandlers } from './lib/permissions';
+import { registerPermissionHandlers, onSelectClientCertificate } from './lib/permissions';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
@@ -179,7 +179,7 @@ Util.setAppPath(path.join(__dirname));
  *
  * Enable by launching with ANYTYPE_TRACE_STARTUP=1. Optional ANYTYPE_TRACE_DURATION (ms,
  * default 20000) bounds the capture window — bump it if the middleware/server is slow to start.
- * The resulting .json opens in https://ui.perfetto.dev (preferred) or chrome://tracing.
+ * Electron records in the Perfetto protobuf format; the resulting .pftrace opens in https://ui.perfetto.dev.
  */
 async function maybeStartStartupTrace () {
 	const flag = String(process.env.ANYTYPE_TRACE_STARTUP || '').toLowerCase();
@@ -224,11 +224,11 @@ async function maybeStartStartupTrace () {
 
 		setTimeout(async () => {
 			try {
-				const out = path.join(app.getPath('userData'), `startup-trace-${Date.now()}.json`);
+				const out = path.join(app.getPath('userData'), `startup-trace-${Date.now()}.pftrace`);
 				await contentTracing.stopRecording(out);
 
 				console.log(`[Trace] Saved: ${out}`);
-				console.log('[Trace] Open at https://ui.perfetto.dev or chrome://tracing');
+				console.log('[Trace] Open at https://ui.perfetto.dev');
 			} catch (e) {
 				console.error('[Trace] Failed to stop recording:', (e as Error).message);
 			};
@@ -408,6 +408,8 @@ function createWindow () {
 		};
 	});
 };
+
+app.on('select-client-certificate', onSelectClientCertificate);
 
 // The preload bridge (window.Electron.Api) stays attached across navigations, so a page
 // that was redirected away from the app bundle (e.g. via injected <meta http-equiv="refresh">)

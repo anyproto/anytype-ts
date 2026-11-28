@@ -14,6 +14,10 @@ Polls a localhost port until it responds. Used internally by the dev scripts to 
 
 Starts anytypeHelper + Vite for browser-only development (no Electron). See `bun run start:web`.
 
+## mac-update-floor.js
+
+Adds `minimumSystemVersion: '22.0.0'` (Darwin 22, macOS 13) to every `dist/*-mac.yml` electron-builder writes, so installed builds on macOS 12 skip updates they cannot run. It runs after electron-builder in the release workflow, which is the only place feeds are stamped and published: feeds from local `dist:*` and `publish:*` builds carry no floor and must never be uploaded by hand. Fails when there is no `*-mac.yml`, when any of them has a version other than `package.json`'s (a stale feed from an earlier build, nothing is written then), or when any file does not verify afterwards. The comment at the top explains why the value is a Darwin version.
+
 ---
 
 # Protobuf Generation
