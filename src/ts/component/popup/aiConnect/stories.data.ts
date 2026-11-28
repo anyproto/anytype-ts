@@ -68,6 +68,12 @@ export const PLAN_CLAUDE_DESKTOP_REPLACE: I.AiPlan = {
 	replace: { targetPath: '/Users/me/Library/Application Support/Claude/claude_desktop_config.json', foreignDigest: 'b'.repeat(64) },
 };
 
+/** An entry the writer can't remove (two `anytype` members): never offered for Replace (R6) */
+export const PLAN_CLAUDE_DESKTOP_CANT_REMOVE: I.AiPlan = {
+	...PLAN_CLAUDE_DESKTOP, canApply: false, method: 'manual', sentenceKey: 'aiConnectPlanManual', needsKey: false, targetPath: undefined,
+	note: 'aiConnectClaudeReplaceCantRemove', error: { stage: 'parse', category: 'unparseable' },
+};
+
 /** A development build without the connector and its bundle: nothing to install, with the hint how to build it */
 export const PLAN_CLAUDE_DESKTOP_NO_BUNDLE: I.AiPlan = {
 	...PLAN_CLAUDE_DESKTOP, canApply: false, method: 'manual', sentenceKey: 'aiConnectPlanManual', needsKey: false, targetPath: undefined,

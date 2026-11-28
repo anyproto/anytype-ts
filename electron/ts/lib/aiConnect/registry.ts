@@ -130,6 +130,9 @@ const OPTIONAL_FIELDS: Record<string, (v: any) => boolean> = {
 	confirmed: isInstallLatch,
 	armed: isInstallLatch,
 	reconfirm: isBool,
+	// Claude's extension between its first save and its last settings-file check (R1): the record as it was, and the intent that save took
+	staged: v => !!v && (typeof v == 'object') && ((v.before === null) || (isValidRecord(v.before) && (v.before.staged === undefined)))
+		&& ((v.intent === undefined) || isValidIntent(v.intent)),
 };
 
 export const isValidRecord = (v: any): v is AiRecord => {
@@ -454,12 +457,13 @@ export class Registry {
 	};
 
 	/**
-	 * Undoes a commit whose delivery couldn't go on (Claude's extension couldn't remove the settings-file entry it
-	 * replaces), in one save: the record as it was before (`prior`; null: there was none) and the mint intent of the
-	 * key that commit took (null: it had none), so that key is the renderer's undelivered one again
+	 * Undoes a commit whose delivery couldn't go on (Claude's extension: the last check of its settings file refused,
+	 * or that delivery never finished), in one save: the record as it was before (`prior`; null: there was none) and
+	 * the mint intent of the key that commit took (null: none), so that key is the renderer's undelivered one again;
+	 * or, when nothing holds that key any more, its hash as an orphan (`orphan`), so it is revoked
 	 */
-	revert (accountId: string, id: string, prior: AiRecord | null, intent: MintIntent | null): void {
-		if ((prior && (!isValidRecord(prior) || (prior.accountId != accountId) || (prior.id != id))) || (intent && !isValidIntent(intent))) {
+	revert (accountId: string, id: string, prior: AiRecord | null, intent: MintIntent | null, orphan = ''): void {
+		if ((prior && (!isValidRecord(prior) || (prior.accountId != accountId) || (prior.id != id))) || (intent && !isValidIntent(intent)) || (orphan && !isHash(orphan))) {
 			throw Object.assign(new Error('invalid record'), { code: 'EREGISTRYRECORD' });
 		};
 
@@ -477,6 +481,9 @@ export class Registry {
 			};
 			if (intent) {
 				draft.mintIntents = [ ...(draft.mintIntents || []).filter(it => it.id != intent.id), copy(intent) ];
+			};
+			if (orphan && !draft.orphanHashes.some(it => (it.accountId == accountId) && (it.hash == orphan))) {
+				draft.orphanHashes.push({ accountId, hash: orphan });
 			};
 		});
 	};

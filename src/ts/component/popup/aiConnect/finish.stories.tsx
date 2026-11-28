@@ -52,7 +52,12 @@ export const FinishBundleCleared: Story = {
 	args: { appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'bundle', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundle: { ...BUNDLE, copied: false }, ...BUNDLE_ACTIONS },
 };
 
-/** Installed but switched off in Claude */
+/** Configure, after Anytype quit Claude to remove its settings-file entry and couldn't start it again (R11) */
+export const FinishBundleConfigureRelaunchFailed: Story = {
+	args: { appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'bundle', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundle: { ...BUNDLE, state: 'notConfirmed', configure: true, openFailed: true }, ...BUNDLE_ACTIONS },
+};
+
+/** Installed but switched off in Claude: the new key goes in through Configure (R15) */
 export const FinishBundleOff: Story = {
 	args: { appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'bundle', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundle: { ...BUNDLE, state: 'off' }, ...BUNDLE_ACTIONS },
 };

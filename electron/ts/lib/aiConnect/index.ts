@@ -24,9 +24,11 @@
  *   candidate whose CLI may still be running is never retired by an absent entry; the record waits.
  * - Anytype keeps no copy of a key (tokens-plan §3). Claude's config route saves the new key as a candidate
  *   (entry digest and fingerprint) before the entry is written; Claude's extension saves the record `waiting`
- *   (the commit) before the key is copied to the clipboard and the bundle opened; an Anytype entry in Claude's settings
- *   file the user agreed to replace goes right after that commit (`removeEntry`), and when it can't, the commit is
- *   undone (the record and the key's mint intent as before) and nothing is copied or opened. Disconnect of the extension and
+ *   twice: first `staged` (the earlier record kept, none of its keys queued), then, once Claude's settings file passed
+ *   its last check (`settleEntry`: an entry the user agreed to replace goes), the commit; only after it is the key
+ *   copied and the bundle opened. A refusal undoes the first save; a staged record any later call finds (a crash, an
+ *   undo that couldn't be saved) is put back, its never-delivered key kept for this run's flow or orphaned (R1, R2).
+ *   Disconnect of the extension and
  *   of manual records queues every hash first; the config route queues once the entry is known to be ours,
  *   before it is deleted; HTTP adapters as before (a refused Disconnect queues nothing).
  * - The endpoint file (endpoint.ts) is kept in step with the Local API by `syncEndpoint`, the only writer.
@@ -60,7 +62,7 @@ import { getSafeStorage } from '../../safeStorage';
 import { Registry } from './registry';
 import { detectAll, resolveHomes, targetFor, toDetection } from './detect';
 import { probe } from './probe';
-import { bundleInfo, bundlePath, copyPath } from './bundle';
+import { bundleInfo, bundlePath, bundleUsable, copyPath } from './bundle';
 import { createNodeEnv } from './exec';
 import { isLocalAbsolute, pathOf, resolveTarget, sweepTemps } from './fsSafe';
 import { keyFingerprint } from './digest';
@@ -134,6 +136,8 @@ export class AiConnectService {
 	private unsaved = new Map<string, { rec: AiRecord; file: string; intentId?: string }>();
 	/** Mint intents saved by this run: their flows may still be going on, so they are never reported as left over */
 	private liveIntents = new Set<string>();
+	/** Claude extension records staged by this run (account and record): this run's flow may still hold their new key (R1) */
+	private stagedHere = new Set<string>();
 	/** Claude's extension rows that aren't "Connected" yet: which step is missing (per account and record) */
 	private bundleStates = new Map<string, AiBundleState>();
 	/** Claude rows in `conflict` because both of Claude's routes are there */
@@ -169,6 +173,7 @@ export class AiConnectService {
 		this.icons.clear();
 		this.unsaved.clear();
 		this.liveIntents.clear();
+		this.stagedHere.clear();
 		this.bundleStates.clear();
 		this.bothRoutes.clear();
 		this.sweptTargets = false;
@@ -240,6 +245,7 @@ export class AiConnectService {
 			this.scan = null;
 			this.statuses.clear();
 			this.bundleStates.clear();
+			this.stagedHere.clear();
 			this.clipboard.clear(this.setup.env);
 		});
 	};
@@ -414,6 +420,11 @@ export class AiConnectService {
 			return await (queued ? this.enqueue(() => {
 				this.flushUnsaved();
 
+				// R1: an extension delivery that never finished is put back before anything reads, judges or revokes
+				if (!this.recoverStaged() && MUTATING.includes(method)) {
+					return UNSAVED as any;
+				};
+
 				// Another account is signed in now: the previous one's copied key leaves the clipboard
 				if (p.accountId && this.clipboard.owner() && (this.clipboard.owner().accountId != p.accountId)) {
 					this.clipboard.clear(this.env);
@@ -455,6 +466,42 @@ export class AiConnectService {
 				this.log('aiConnectSave', e);
 			};
 		};
+	};
+
+	/**
+	 * R1: Claude extension records whose first save is on disk but whose delivery never finished (Anytype stopped in
+	 * between, or the undo of a refused delivery couldn't be saved) are put back: the earlier record, nothing of it
+	 * queued (its key may still be in Claude's settings file). The new key was never handed out. While this run's flow
+	 * may still hold it (staged in this run) its mint intent comes back with it, and the flow releases or reuses it;
+	 * otherwise its hash goes to the orphans and is revoked (R2: also after a save whose undo file stayed). False: one
+	 * couldn't be put back
+	 */
+	private recoverStaged (): boolean {
+		let list: AiRecord[] = [];
+		let ok = true;
+
+		try {
+			list = this.reg.all().filter(rec => !!rec.staged);
+		} catch (e) {
+			// The registry can't be read now: every call that needs it fails on its own
+			return true;
+		};
+
+		for (const rec of list) {
+			const key = this.statusKey(rec.accountId, rec.id);
+			const before = rec.staged.before;
+			const here = this.stagedHere.has(key);
+			const owned = !!before && ((before.appHash == rec.appHash) || candidateHashes(before).includes(rec.appHash));
+
+			try {
+				this.reg.revert(rec.accountId, rec.id, before, (here && rec.staged.intent) || null, (!here && rec.appHash && !owned) ? rec.appHash : '');
+				this.stagedHere.delete(key);
+			} catch (e) {
+				this.log('aiConnectSave', e);
+				ok = false;
+			};
+		};
+		return ok;
 	};
 
 	/**
@@ -544,9 +591,14 @@ export class AiConnectService {
 		if ((status == 'conflict') && this.bothRoutes.has(this.statusKey(rec.accountId, rec.id))) {
 			view.bothRoutes = true;
 		};
-		// The key this record copied hasn't left the clipboard yet (as main knows it: the clipboard isn't read for this)
-		if (this.clipboard.holds(o => (o.accountId == rec.accountId) && ((o.connectionId == rec.id) || (!!rec.appHash && (o.appHash == rec.appHash))))) {
+		delete view.staged;
+		// The record's own key (not a snippet, not an earlier key) was copied and hasn't left the clipboard yet, as main
+		// knows it: the clipboard itself isn't read (R7). With its deadline, for the sheet's own timer (R10)
+		const until = this.clipboard.keyUntil(o => (o.accountId == rec.accountId) && ((o.connectionId == rec.id) || (!!rec.appHash && (o.appHash == rec.appHash))), rec.keyFp);
+
+		if (until) {
 			view.keyCopied = true;
+			view.keyCopiedUntil = until;
 		};
 		return view;
 	};
@@ -890,54 +942,62 @@ export class AiConnectService {
 				};
 			};
 
-			// Claude's extension (§3.3): this save is the commit — the key is copied and the bundle opened only after it
+			// Claude's extension (§3.3): saved twice. First `staged` (the record `waiting`, the key's mint intent consumed, the
+			// earlier record and nothing of it queued); then Claude's settings file passes its last check (an entry the user
+			// agreed to replace goes); then the second save (the earlier key queued) is the commit, and only after it the key
+			// is copied and the bundle opened. Any failure before the commit undoes the first save, and an undo that can't be
+			// saved is put back by the next call (R1, R3)
 			if (out.deliver) {
-				// The extension replaces the Anytype entry in Claude's settings file: the record no longer names one
-				if (out.removeEntry) {
-					delete fresh.entryDigest;
-					delete fresh.configPath;
-				};
+				// The extension's record names no settings-file entry, whatever the earlier record owned (R12)
+				delete fresh.entryDigest;
+				delete fresh.configPath;
 
-				// For an undo of this commit: the key's mint intent as it is now (the record as it was is `rec`)
-				const intent = (out.removeEntry && p.intentId) ? (this.reg.listIntents(p.accountId).find(it => it.id == p.intentId) || null) : null;
-				const intentLive = !!p.intentId && this.liveIntents.has(p.intentId);
+				const key = this.statusKey(fresh.accountId, fresh.id);
+				const intent = p.intentId ? (this.reg.listIntents(p.accountId).find(it => it.id == p.intentId) || null) : null;
+				const staged: AiRecord = { ...fresh, revokePending: [ ...(rec?.revokePending || []) ], staged: { before: rec, ...(intent ? { intent } : {}) } };
 
 				try {
-					this.reg.upsert(fresh, p.intentId);
-					this.liveIntents.delete(p.intentId);
+					this.reg.upsert(staged, p.intentId);
+					this.stagedHere.add(key);
 				} catch (e) {
 					this.log('aiConnectSave', e);
 					return UNSAVED;
 				};
 
-				// The entry the user agreed to replace goes as late as possible: after the commit, before the key leaves
-				// Anytype. When it can't, nothing of this delivery happened: the commit is undone, the key is the
-				// renderer's undelivered one again (released or reused by it) and the user's entry is untouched
-				let refused: Awaited<ReturnType<NonNullable<typeof out.removeEntry>>> = null;
+				let refused: Awaited<ReturnType<NonNullable<typeof out.settleEntry>>> = null;
 
 				try {
-					refused = out.removeEntry ? await out.removeEntry() : null;
+					refused = out.settleEntry ? await out.settleEntry() : null;
 				} catch (e) {
 					this.log('aiConnectApply', e);
 					refused = { error: { stage: 'write', category: 'unknown' } };
 				};
 				if (refused) {
+					// Nothing was delivered: the earlier record and the key's intent are back, the key is the renderer's undelivered one
 					try {
 						this.reg.revert(p.accountId, targetId, rec, intent);
-						if (intentLive) {
-							this.liveIntents.add(p.intentId);
-						};
-						return ('needs' in refused) ? { ok: false, needs: refused.needs } : { ok: false, error: refused.error };
+						this.stagedHere.delete(key);
 					} catch (e) {
-						// The undo can't be saved: the commit stands, with nothing copied or opened (Cancel setup disconnects it)
+						// Not undone: never reported as done either; the next call puts the earlier record back (R1)
 						this.log('aiConnectSave', e);
-						this.setStatus(fresh, 'pending');
-						this.bundleStates.set(this.statusKey(fresh.accountId, fresh.id), 'finish');
-						return { ok: true, connection: this.view(fresh), copyFailed: true, openFailed: true };
+						return UNSAVED;
 					};
+					return ('needs' in refused) ? { ok: false, needs: refused.needs } : { ok: false, error: refused.error };
 				};
 
-				const copied = !this.closing && (session == this.session) && this.clipboard.copy(this.env, p.key, { accountId: p.accountId, connectionId: fresh.id });
+				// The commit: the entry is gone (or never was), so the earlier record's key may be revoked now (R1)
+				try {
+					this.reg.upsert(fresh);
+					this.stagedHere.delete(key);
+					this.liveIntents.delete(p.intentId);
+				} catch (e) {
+					// Not saved: nothing is copied or opened, the next call puts the earlier record back (the key never left Anytype)
+					this.log('aiConnectSave', e);
+					await out.abort?.();
+					return UNSAVED;
+				};
+
+				const keyCopied = !this.closing && (session == this.session) && this.clipboard.copy(this.env, p.key, { accountId: p.accountId, connectionId: fresh.id });
 				let opened = false;
 
 				try {
@@ -947,11 +1007,12 @@ export class AiConnectService {
 				};
 				this.setStatus(fresh, 'pending');
 				// A launch that failed stays actionable (Open again), whatever is installed
-				this.bundleStates.set(this.statusKey(fresh.accountId, fresh.id), (out.install && (out.configure || opened)) ? 'notConfirmed' : 'finish');
+				this.bundleStates.set(key, (out.install && (out.configure || opened)) ? 'notConfirmed' : 'finish');
 
+				// With Configure `openFailed` is a Claude that Anytype quit and couldn't start again (R11)
 				return {
 					ok: true, connection: this.view(fresh),
-					...(copied ? {} : { copyFailed: true }), ...(opened ? {} : { openFailed: true }), ...(out.configure ? { configure: true } : {}),
+					...(keyCopied ? {} : { copyFailed: true }), ...(opened ? {} : { openFailed: true }), ...(out.configure ? { configure: true } : {}),
 				};
 			};
 
@@ -1935,9 +1996,10 @@ export class AiConnectService {
 	};
 
 	bundleInfo (param: any): Promise<AiBundleInfoResult> {
+		// null: no bundle Claude could install (none in this build, or damaged); Manage offers the extension only otherwise (R8)
 		return this.call<AiBundleInfoResult>('aiConnectBundleInfo', param, null, () => {
 			const info = bundleInfo(this.env);
-			return info ? { signed: info.signed } : null;
+			return bundleUsable(info) ? { signed: info.signed } : null;
 		}, false);
 	};
 

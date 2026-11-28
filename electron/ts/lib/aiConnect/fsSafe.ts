@@ -406,8 +406,10 @@ export type WriteResult = { ok: true; createdDirs: string[] } | { ok: false; cha
  *    never unlinked first.
  * 6. A parent or target that changed → `changed`, the temp discarded where it really is; the caller re-plans once.
  * 7. New files 0600; an existing file keeps its mode, except a file gaining a secret loses group/other bits.
+ * 8. `beforeRename` runs right before every rename attempt of the new text, Windows retries included: an error
+ *    stops the write there (the temp discarded, the target as it was), e.g. the app that owns the file started (R5).
  */
-export const writeFileSafe = async (env: Env, real: string, text: string, opt: { snapshot: Snapshot; secret: boolean }): Promise<WriteResult> => {
+export const writeFileSafe = async (env: Env, real: string, text: string, opt: { snapshot: Snapshot; secret: boolean; beforeRename?: () => Promise<AiError | null> }): Promise<WriteResult> => {
 	const P = pathOf(env);
 	const { snapshot, secret } = opt;
 	const root = realHome(env);
@@ -491,6 +493,15 @@ export const writeFileSafe = async (env: Env, real: string, text: string, opt: {
 		for (let attempt = 0; ; attempt++) {
 			if (!sameDir(env, dir, root) || !unchangedSince(env, real, snapshot)) {
 				return abandon();
+			};
+
+			const stop = opt.beforeRename ? await opt.beforeRename() : null;
+
+			if (stop) {
+				discardTemp(env, temp);
+				temp = null;
+				removeCreatedDirs(env, created);
+				return { ok: false, error: stop };
 			};
 
 			try {

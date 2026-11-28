@@ -161,6 +161,13 @@ export interface AiRecord {
 	armed?: { appHash: string; version: string; installedAt: string };
 	/** Extension route: a confirmation was dropped by an extension update (the row says "not reconfirmed") */
 	reconfirm?: boolean;
+	/**
+	 * Claude's extension, main only (never in a view): saved with the record's first save and cleared once Claude's
+	 * settings file passed its last check. While it is there the new key wasn't handed out and nothing of the earlier
+	 * record was queued: `before` is the record as it was (null: none) and `intent` the mint intent that save took.
+	 * Any later call puts `before` back (R1)
+	 */
+	staged?: { before: AiRecord | null; intent?: AiMintIntent & { accountId: string } };
 };
 
 /** A key that is about to be created (saved before CreateApp); `time` in seconds */
@@ -211,11 +218,13 @@ export interface AiConnection extends AiRecord {
 	/** Claude Desktop, status `conflict`: both of Claude's routes are there (the settings-file entry and the extension); the user removes one */
 	bothRoutes?: boolean;
 	/**
-	 * The latest key main put on the clipboard is this record's and main hasn't cleared it yet (deadline, "Connected",
-	 * Cancel setup, account switch, quit). Main never reads the clipboard for this, so text the user copied over it
-	 * later doesn't count
+	 * The latest text main put on the clipboard is this record's own key (not a snippet, not an earlier key) and main
+	 * hasn't cleared it yet (deadline, "Connected", Cancel setup, account switch, quit). Main never reads the clipboard
+	 * for this: text the user copied over it later doesn't count, so the sheet says the key *was* copied
 	 */
 	keyCopied?: boolean;
+	/** With `keyCopied`: when main takes it off the clipboard (ms since the epoch) */
+	keyCopiedUntil?: number;
 };
 
 export interface AiStep {
@@ -328,6 +337,7 @@ export type AiRestartResult = { ok: true } | AiFail;
 export type AiRevealResult = { ok: boolean };
 export type AiOpenAppResult = { ok: boolean };
 export type AiClaimNudgeResult = { claimed: boolean };
+/** null: this build has no bundle Claude could install (none, or damaged) */
 export type AiBundleInfoResult = { signed: boolean } | null;
 export type AiOrphanResult = { ok: true } | AiFail;
 /** `time`: the one main saved (seconds) */

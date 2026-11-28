@@ -1,16 +1,20 @@
+import fs from 'fs';
+import path from 'path';
 import { describe, expect, test, vi } from 'vitest';
 
 vi.mock('electron', () => ({ app: { isPackaged: false, getPath: () => '/nonexistent', getAppPath: () => '/nonexistent', getVersion: () => '0.0.0', getFileIcon: vi.fn(), getApplicationInfoForProtocol: vi.fn() }, shell: { openExternal: vi.fn(), showItemInFolder: vi.fn() }, clipboard: { readText: vi.fn(), writeText: vi.fn() } }));
 vi.mock('electron-util', () => ({ fixPathForAsarUnpack: (p: string) => p }));
 
 import { FORWARDER_BIN, FORWARDER_FILES, KEY_A, KEY_B, MCP_DIR, REGISTRY, STABLE_BIN, STABLE_BIN_RELEASE, applyParam, mac, planParam, service } from '../testKit';
-import { CLAUDE_PACKAGES, CLAUDE_PACKAGE_QUERY, EXTENSION_ID, EXTENSION_ID_DEV, extensionState, windowsClaudeExe } from './claudeDesktop';
+import { CLAUDE_PACKAGES, CLAUDE_PACKAGE_QUERY, EXTENSIONS_DIR, EXTENSION_ID, EXTENSION_ID_DEV, extensionInfo, extensionState, windowsClaudeExe } from './claudeDesktop';
 import { bundleInfo } from '../bundle';
 import { canonicalDigest } from '../digest';
 import { FAKE_REV, FAKE_SIGNER, fakeEnv, type FakeEnv, type FakeSpec } from '../testEnv';
 import type { AiRecord } from '../types';
 
 const DIR = '/Users/me/Library/Application Support/Claude';
+/** The manifest template the build packs (its server block: electron/mcp/manifest.json) */
+const MANIFEST = path.resolve(__dirname, '../../../../mcp/manifest.json');
 const CONFIG = `${DIR}/claude_desktop_config.json`;
 const COPY_DIR = '/Users/me/.anytype/ai-connect';
 const APP = '/Applications/Claude.app';
@@ -134,7 +138,7 @@ describe('Claude Desktop: extension state', () => {
 		expect(extensionState(release.env, bundleInfo(release.env))).toBe('absent');
 	});
 
-	test('a missing settings file is unreadable; on a signed build a missing or different signer is outdated, enabled or not', () => {
+	test('a missing settings file is unreadable; on a signed build a different signer is outdated, and no signer with no installed files to check is unreadable (R17), enabled or not', () => {
 		const noSettings = machine({ ext: {} });
 
 		noSettings.env.unlink(`${DIR}/Claude Extensions Settings/${EXTENSION_ID_DEV}.json`);
@@ -146,9 +150,73 @@ describe('Claude Desktop: extension state', () => {
 			const right = machine({ signed: true, ext: { signer: FAKE_SIGNER, enabled } });
 
 			expect(extensionState(wrong.env, bundleInfo(wrong.env))).toBe('outdated');
-			expect(extensionState(missing.env, bundleInfo(missing.env))).toBe('outdated');
+			expect(extensionState(missing.env, bundleInfo(missing.env))).toBe('unreadable');
 			expect(extensionState(right.env, bundleInfo(right.env))).toBe(enabled ? 'installed' : 'disabled');
 		};
+	});
+});
+
+/** What Claude unpacks for an installed bundle: the manifest as build-mcp.js writes its server block, and the forwarder */
+const installedFiles = (id: string, binary: string, server: any = null) => ({
+	[`${DIR}/${EXTENSIONS_DIR}/${id}/manifest.json`]: JSON.stringify({
+		name: 'anytype', version: VERSION,
+		server: server || {
+			type: 'binary', entry_point: 'server/anytype-mcp',
+			mcp_config: { command: '${__dirname}/server/anytype-mcp', args: [ 'serve', '--tier', 'full' ], env: JSON.parse(fs.readFileSync(MANIFEST, 'utf8')).server.mcp_config.env },
+		},
+	}),
+	[`${DIR}/${EXTENSIONS_DIR}/${id}/server/anytype-mcp`]: binary,
+});
+
+describe('Claude Desktop: a signed build knows its installed extension by its files (R17)', () => {
+	// Current Claude (mcpb 2.1.2) records every bundle `unsigned`, with no fingerprint
+	const ours = FORWARDER_FILES[FORWARDER_BIN];
+
+	test('R17: a signed build, Claude\'s record `unsigned` and our forwarder\'s bytes installed → installed, verified, Configure offered', () => {
+		const { env } = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, ours) });
+
+		expect(extensionInfo(env, bundleInfo(env))).toMatchObject({ state: 'installed', verified: true, configurable: true, present: 'record' });
+	});
+
+	test('R17: the same with other bytes, or a manifest that starts something else or puts the key elsewhere → outdated', () => {
+		const other = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, 'SOMETHING-ELSE') });
+		const command = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, ours, { type: 'binary', entry_point: 'server/anytype-mcp', mcp_config: { command: '/bin/sh', args: [ 'serve', '--tier', 'full' ], env: { ANYTYPE_API_KEY: '${user_config.api_key}' } } }) });
+		const env = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, ours, { type: 'binary', entry_point: 'server/anytype-mcp', mcp_config: { command: '${__dirname}/server/anytype-mcp', args: [ 'serve', '--tier', 'full' ], env: { ANYTYPE_API_KEY: '${user_config.api_key}', DYLD_INSERT_LIBRARIES: '/tmp/x' } } }) });
+
+		for (const m of [ other, command, env ]) {
+			expect(extensionInfo(m.env, bundleInfo(m.env))).toMatchObject({ state: 'outdated', verified: false, configurable: false });
+		};
+	});
+
+	test('R17: a signer Claude does report must be ours: a different fingerprint is outdated whatever the files say', () => {
+		const { env } = machine({ signed: true, ext: { signer: 'cd'.repeat(32) }, files: installedFiles(EXTENSION_ID, ours) });
+
+		expect(extensionInfo(env, bundleInfo(env))).toMatchObject({ state: 'outdated', verified: false });
+	});
+
+	test('R17: installed files that can\'t be read fail closed (unreadable, not ours); a development build behaves as before', () => {
+		const { env } = machine({ signed: true, ext: {} });
+
+		expect(extensionInfo(env, bundleInfo(env))).toMatchObject({ state: 'unreadable', verified: false, configurable: false, present: 'record' });
+
+		// A development build: our id and version are enough, with or without the installed files
+		const dev = machine({ ext: {} });
+		const devOther = machine({ ext: {}, files: installedFiles(EXTENSION_ID_DEV, 'SOMETHING-ELSE') });
+
+		for (const m of [ dev, devOther ]) {
+			expect(extensionInfo(m.env, bundleInfo(m.env))).toMatchObject({ state: 'installed', verified: true, configurable: true });
+		};
+	});
+
+	test('R17: on a signed build the row turns "Connected" once Claude uses the key (the extension is ours by its files)', async () => {
+		const { svc } = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, ours) });
+
+		expect(await svc.apply(cd({ method: 'package', tier: 'full' }))).toMatchObject({ ok: true, configure: true, connection: { bundleState: 'notConfirmed' } });
+		expect(await checkStatus(svc)).toMatchObject({ status: 'pending', bundleState: 'notConfirmed' });
+
+		const res: any = await check(svc, 31009, [ { hash: 'hash-a1', present: true, active: true } ]);
+
+		expect(res.connections[0]).toMatchObject({ status: 'ok' });
 	});
 });
 

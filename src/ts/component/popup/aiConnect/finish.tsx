@@ -131,6 +131,8 @@ const AiConnectFinish = (props: AiConnectFinishProps) => {
 			// The bundle Anytype had to open didn't open: its error and Open again, whatever Claude reports, until it
 			// opens or the key is confirmed (D1C-17); never while Claude has both routes (D1C-14)
 			const launchFailed = b.openFailed && !b.configure && !b.bothRoutes;
+			// Configure opens nothing: there `openFailed` is a Claude that Anytype quit and couldn't start again (R11)
+			const relaunchFailed = b.openFailed && b.configure;
 			const openAgain = !b.bothRoutes && ((b.state == 'finish') || launchFailed);
 			let how = 'aiConnectBundleConfigure';
 
@@ -141,12 +143,13 @@ const AiConnectFinish = (props: AiConnectFinishProps) => {
 				how = 'aiConnectBundleTurnOn';
 			};
 
-			// Where the key is: on the clipboard (until main clears it), or not any more (Copy key again). A key that
-			// couldn't be copied has its own notice above. In Configure the user pastes it without being asked
+			// Where the key is: copied to the clipboard (until main clears it), or not any more (Copy key again). A key that
+			// couldn't be copied has its own notice above. Only Claude's install dialog asks for it; in Configure (also for
+			// an extension that is switched off, which may hold an older key, R15) the user pastes it there
 			let clipboard = '';
 
 			if (b.copied) {
-				clipboard = (how == 'aiConnectBundleConfigure') ? translate('aiConnectBundleClipboardConfigure') : tr('aiConnectBundleClipboard', appName);
+				clipboard = finishing ? tr('aiConnectBundleClipboard', appName) : translate('aiConnectBundleClipboardConfigure');
 			} else
 			if (!b.copyFailed) {
 				clipboard = translate('aiConnectBundleClipboardCleared');
@@ -159,6 +162,7 @@ const AiConnectFinish = (props: AiConnectFinishProps) => {
 					</div>
 					<p className="description">{tr(how, appName)}</p>
 					{b.copyFailed ? <p className="accessNotice">{translate('aiConnectBundleCopyFailed')}</p> : null}
+					{relaunchFailed ? <p className="accessNotice">{tr('aiConnectErrorReopen', appName)}</p> : null}
 					{launchFailed ? (
 						<div className="accessNotice">
 							<p>{tr('aiConnectOpenFailed', appName)}</p>

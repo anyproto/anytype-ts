@@ -144,6 +144,8 @@ export interface AiConnectState {
 	override: 'accessEnded' | 'conflict' | null;
 	/** After a disconnect: what is left; `path` the leftover file, revealed only where main reveals that file (W19) */
 	result: { lines: AiMsg[]; reveal: boolean; path: string } | null;
+	/** Manage of Claude's settings-file (or manual) record, with a bundle Claude could install: "Use Claude's extension" (R8) */
+	canUseExtension: boolean;
 };
 
 export interface AiConnectUi {
@@ -277,6 +279,7 @@ export class AiConnectController {
 			manageNotice: null,
 			override: null,
 			result: null,
+			canUseExtension: false,
 		};
 	};
 
@@ -312,7 +315,7 @@ export class AiConnectController {
 		this.closing = true;
 		this.disposed = true;
 		this.pollToken++;
-		this.clipboardTimer(false);
+		this.clipboardTimer(0);
 		this.listeners.clear();
 		return Promise.all([ flow.releasePendingKey(), ...copied.map(appHash => flow.clearCopied({ appHash })) ]).then(() => {});
 	};
@@ -675,7 +678,7 @@ export class AiConnectController {
 		this.attempt = null;
 		this.set({
 			view: 'manage', connectionId: id, reconnect: null, formLocked: false, movedTo: '', movedFrom: '', busy: false, access: null, override: null, result: null,
-			manageNotice: notice,
+			manageNotice: notice, canUseExtension: false,
 		});
 		this.loadManage();
 	};
@@ -822,9 +825,9 @@ export class AiConnectController {
 				this.sheet = { accountId: accountNow(), id: res.connection.id, appHash: res.connection.appHash };
 				this.set({
 					connectionId: res.connection.id, plan: res.plan, unsaved: !res.recordSaved, phase: 'bundle',
-					bundle: { copyFailed: res.copyFailed, openFailed: res.openFailed, configure: res.configure, stopped: false, copied: !res.copyFailed },
+					bundle: { copyFailed: res.copyFailed, openFailed: res.openFailed, configure: res.configure, stopped: false, copied: false },
 				});
-				this.clipboardTimer(!res.copyFailed);
+				this.followClipboard(res.connection);
 				this.pollBundle();
 				return;
 			};
@@ -860,9 +863,13 @@ export class AiConnectController {
 					this.backToForm(null, lines);
 					return;
 				};
-				// A replace whose entry changed since the preview: show the new one
-				if ((error.stage == 'validate') && (error.category == 'conflict') && ((res.plan?.existing == 'foreign') || !!res.plan?.replace)) {
-					this.backToForm(null, []);
+				// A replace whose entry changed since the preview, or an entry in Claude's settings file that appeared after it
+				// (R9): a fresh preview with the Replace to agree to. The flow keeps its pending key; a Claude that Anytype
+				// quit and couldn't start again is said
+				const claudeEntry = (this.data.appId == 'claude-desktop') && (res.plan?.method == 'package');
+
+				if ((error.stage == 'validate') && (error.category == 'conflict') && ((res.plan?.existing == 'foreign') || !!res.plan?.replace || claudeEntry)) {
+					this.backToForm(null, error.openFailed ? [ { key: 'aiConnectErrorReopen', args: [ app ] } ] : []);
 					return;
 				};
 				this.set({
@@ -955,8 +962,9 @@ export class AiConnectController {
 		// Claude's extension, not "Connected" yet: its Finish view, watching heart's isActive again
 		if ((c.method == 'package') && (c.status != 'ok') && !c.removed && c.appHash) {
 			this.sheet = { accountId: accountNow(), id: c.id, appHash: c.appHash };
-			// Whether its key is still on the clipboard is main's to say (a copy made before the sheet was closed)
-			this.set({ phase: 'bundle', bundle: { copyFailed: false, openFailed: false, configure: false, stopped: false, copied: !!c.keyCopied } });
+			// Whether its key is still on the clipboard, and until when, is main's to say (a copy made before the sheet was closed, R10)
+			this.set({ phase: 'bundle', bundle: { copyFailed: false, openFailed: false, configure: false, stopped: false, copied: false } });
+			this.followClipboard(c);
 			this.pollBundle();
 		} else {
 			this.routeTo(c);
@@ -1040,10 +1048,10 @@ export class AiConnectController {
 
 			const c = S.AiConnect.getById(id);
 
-			// Main cleared the key from the clipboard (its deadline, another copy, an account switch): the sheet says so
-			if (this.state.bundle?.copied && c && !c.keyCopied && !this.alivePoll(token)()) {
-				this.clipboardTimer(false);
-				this.set({ bundle: { ...this.state.bundle, copied: false } });
+			// The clipboard line follows main both ways: cleared (its deadline, another copy, an account switch), or copied
+			// again from another window (R10)
+			if (!this.alivePoll(token)()) {
+				this.followClipboard(c);
 			};
 			return settled(c);
 		}, this.alivePoll(token), {
@@ -1077,15 +1085,35 @@ export class AiConnectController {
 	};
 
 	/**
-	 * The Finish sheet's key reaches main's clipboard deadline (§3.4): from a copy (`on`) the sheet says it is on the
-	 * clipboard until then, also when the watch has run out; a check that finds it cleared earlier says so sooner
+	 * The Finish sheet's clipboard line as main has it (R10): its key copied until main's deadline (`keyCopiedUntil`),
+	 * or not. A copy main confirms also clears a failed one. Every successful check and a reopened sheet call this
 	 */
-	private clipboardTimer (on: boolean): void {
+	private followClipboard (c: AiConnection | null): void {
+		const b = this.state.bundle;
+
+		if (!b || !c) {
+			return;
+		};
+
+		const until = c.keyCopied ? (c.keyCopiedUntil || (Date.now() + flow.flowConfig.clipboardTtl)) : 0;
+		const on = (until > Date.now());
+
+		if ((on != b.copied) || (on && b.copyFailed)) {
+			this.set({ bundle: { ...b, copied: on, copyFailed: on ? false : b.copyFailed } });
+		};
+		this.clipboardTimer(on ? (until - Date.now()) : 0);
+	};
+
+	/**
+	 * The Finish sheet's key reaches main's clipboard deadline (§3.4) in `ms`: the sheet says it was copied until then,
+	 * also when the watch has run out or checks fail; 0 disarms it
+	 */
+	private clipboardTimer (ms: number): void {
 		if (this.clipTimer) {
 			clearTimeout(this.clipTimer);
 			this.clipTimer = null;
 		};
-		if (!on || this.disposed) {
+		if ((ms <= 0) || this.disposed) {
 			return;
 		};
 		this.clipTimer = setTimeout(() => {
@@ -1093,7 +1121,7 @@ export class AiConnectController {
 			if (this.state.bundle?.copied) {
 				this.set({ bundle: { ...this.state.bundle, copied: false } });
 			};
-		}, flow.flowConfig.clipboardTtl);
+		}, ms);
 	};
 
 	/** Finish view: the watch again after it ran out */
@@ -1161,7 +1189,7 @@ export class AiConnectController {
 		};
 		if (ok && this.state.bundle) {
 			this.set({ bundle: { ...this.state.bundle, copyFailed: false, copied: true } });
-			this.clipboardTimer(true);
+			this.clipboardTimer(flow.flowConfig.clipboardTtl);
 		};
 		this.ui.toast({ key: ok ? 'aiConnectKeyCopied' : 'aiConnectKeyCopyFailed' });
 	};
@@ -1881,12 +1909,14 @@ export class AiConnectController {
 
 		// The plan Reconnect delivers with (Claude's config route keeps its method)
 		const planned = await flow.plan({ appId: c.appId, route: c.route, tier: c.tier, connectionId: c.id, method: flow.planMethodOf(c) });
+		// Claude's settings-file or manual record can move to the extension, where this build has one Claude could install (R8)
+		const offer = (c.appId == 'claude-desktop') && !c.removed && [ 'config', 'manual' ].includes(c.method) && !!(await flow.bundleInfo());
 		const now = this.connection();
 
 		if (this.disposed || (now?.id != c.id)) {
 			return;
 		};
-		this.set({ access: recordAccess(now), override: null, plan: ('error' in planned) ? this.state.plan : planned.plan });
+		this.set({ access: recordAccess(now), override: null, plan: ('error' in planned) ? this.state.plan : planned.plan, canUseExtension: offer });
 	};
 
 	/** Try again after a failed key lookup */
@@ -2058,6 +2088,33 @@ export class AiConnectController {
 
 		this.attempt = null;
 		this.prefillReconnect({ connection: c, grant: present ? access.grant : c.grant, expireAt: present ? access.expireAt : c.expireAt, keyGone: !present }, present ? null : 'reconnect');
+		this.set({ view: 'connect', formErrors: [] });
+		this.loadPlan();
+	};
+
+	/**
+	 * "Use Claude's extension" from Manage of a Claude settings-file or manual record (R8): the extension's preview,
+	 * with this record as the one the delivery replaces and heart's access and expiry for its key, read on the click
+	 * (W2). The Replace of its settings-file entry is then agreed on the sheet; the old key goes once main committed
+	 */
+	async useExtension (): Promise<void> {
+		const c = this.connection();
+
+		if (!c || this.state.busy || !this.state.canUseExtension) {
+			return;
+		};
+
+		const access = await this.knownAccess(c);
+
+		if (!access || this.disposed) {
+			return;
+		};
+
+		const present = access.present;
+
+		this.attempt = null;
+		this.prefillReconnect({ connection: c, grant: present ? access.grant : c.grant, expireAt: present ? access.expireAt : c.expireAt, keyGone: !present }, present ? null : 'reconnect');
+		this.method = 'package';
 		this.set({ view: 'connect', formErrors: [] });
 		this.loadPlan();
 	};

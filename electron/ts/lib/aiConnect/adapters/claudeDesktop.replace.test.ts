@@ -36,6 +36,10 @@ interface Opt {
 	/** The forwarder ships, the bundle doesn't */
 	noBundle?: boolean;
 	links?: Record<string, string>;
+	/** The build's metadata text (default: computed from the files) */
+	meta?: string | null;
+	/** `open -a Claude` without a bundle (starting Claude again) fails */
+	relaunchFails?: boolean;
 };
 
 /** A Mac with Claude Desktop: processes, the quit and every `open` recorded */
@@ -47,10 +51,13 @@ const machine = (opt: Opt = {}) => {
 		...(opt.files || {}),
 	};
 	const env = mac({
-		apps: [ 'Claude' ], dirs: [ DIR ], signed: opt.signed, files, links: opt.links,
+		apps: [ 'Claude' ], dirs: [ DIR ], signed: opt.signed, files, links: opt.links, ...((opt.meta !== undefined) ? { meta: opt.meta } : {}),
 		run: call => {
 			if (call.file == '/usr/bin/open') {
 				state.opened.push(call.args);
+				if (opt.relaunchFails && (call.args.length == 2)) {
+					return { code: 1, stdout: '' };
+				};
 				// `open -a Claude …` starts Claude, with or without a bundle
 				state.running = true;
 				return { code: 0, stdout: '' };
@@ -368,7 +375,8 @@ describe('Claude Desktop: the key on the clipboard, as main reports it', () => {
 
 describe('Claude Desktop: a build without a usable bundle', () => {
 	test('bundle-missing: a development build without the forwarder → `bundleMissing` with the development hint, never `unsupportedPackage`; plan and apply', async () => {
-		const { env, svc } = machine({ bare: true });
+		// What scripts/build-mcp.js writes for a development build without a forwarder
+		const { env, svc } = machine({ bare: true, meta: JSON.stringify({ signed: false, forwarder: null, mcpb: null }) });
 		const res: any = await planOf(svc);
 
 		expect(res).toMatchObject({ ok: true, canApply: false, method: 'manual', steps: [], needsKey: false, error: { stage: 'verify', category: 'bundleMissing', devBuild: true } });
@@ -395,5 +403,306 @@ describe('Claude Desktop: a build without a usable bundle', () => {
 		const { svc } = machine({ bare: true });
 
 		expect(JSON.stringify(await planOf(svc))).not.toContain('unsupportedPackage');
+	});
+});
+
+describe('Claude Desktop: review round 1 (main)', () => {
+	const TXN = `${REGISTRY}.txn`;
+	const own = async (m: ReturnType<typeof machine>) => {
+		expect(await m.svc.apply(config())).toMatchObject({ ok: true, connection: { method: 'config', appHash: 'hash-a1' } });
+
+		const shown: any = await planOf(m.svc);
+
+		expect(shown).toMatchObject({ existing: 'ours', replace: { targetPath: CONFIG } });
+		return shown;
+	};
+	const intentOf = async (svc: any): Promise<string> => ((await svc.mintIntent({ accountId: 'acc-a', name: 'Claude Desktop', time: 1 })) as any).id;
+	const rotate = (shown: any, over: Record<string, any> = {}) => bundle({ key: KEY_B, appHash: 'hash-a2', expectedHash: 'hash-a1', replace: shown.replace, ...over });
+
+	test('R1: Anytype stops right after the first save (waiting for Claude to quit) → the next run has the earlier record back, its key never queued, and the new key orphaned', async () => {
+		const m = machine({ files: { [CONFIG]: '{}' } });
+		const shown = await own(m);
+		const intentId = await intentOf(m.svc);
+		let snapshot: { reg: string; config: string } | null = null;
+		const kill = m.env.kill;
+
+		m.state.running = true;
+		m.env.kill = (pid, signal) => {
+			snapshot = snapshot || { reg: m.env.readText(REGISTRY), config: m.env.files()[CONFIG] };
+			return kill(pid, signal);
+		};
+		expect(await m.svc.apply(rotate(shown, { allowQuit: true, intentId }))).toMatchObject({ ok: true });
+
+		// The first save, as it was on disk while Claude was quitting: staged, the old key not queued
+		const first = JSON.parse(snapshot.reg).connections[0];
+
+		expect(first).toMatchObject({ method: 'package', appHash: 'hash-a2', revokePending: [], staged: { before: { method: 'config', appHash: 'hash-a1' } } });
+
+		// Anytype stopped right then: the disk as it was, a new run
+		put(m.env, REGISTRY, snapshot.reg);
+		put(m.env, CONFIG, snapshot.config);
+
+		const next = service(m.env);
+		const listed: any = await next.list({ accountId: 'acc-a' });
+
+		expect(listed.connections).toHaveLength(1);
+		expect(listed.connections[0]).toMatchObject({ method: 'config', appHash: 'hash-a1', revokePending: [] });
+		expect(listed.connections[0].staged).toBeUndefined();
+		expect(listed.orphanHashes).toEqual([ 'hash-a2' ]);
+		expect(records(m.env)[0].staged).toBeUndefined();
+		// The entry Claude uses is untouched, and its key is no one's to revoke
+		expect(JSON.parse(m.env.files()[CONFIG]).mcpServers.anytype.env.ANYTYPE_API_KEY).toBe(KEY_A);
+		expect(registry(m.env).mintIntents).toBeUndefined();
+	});
+
+	test('R1: the removal fails and its undo can\'t be saved → not reported as done, the old key never queued; the next call puts the earlier record and the intent back', async () => {
+		const m = machine({ files: { [CONFIG]: '{}' } });
+		const shown = await own(m);
+		const before = records(m.env)[0];
+		const intentId = await intentOf(m.svc);
+		const rename = m.env.rename;
+		let failRegistry = false;
+
+		m.state.running = true;
+		// Claude won't quit (an unsaved-work dialog); from then on the registry can't be saved
+		m.env.kill = (pid: number) => {
+			m.state.killed.push(pid);
+			failRegistry = true;
+			return true;
+		};
+		m.env.rename = (from, to) => {
+			if (failRegistry && (to == REGISTRY)) {
+				throw Object.assign(new Error('EIO'), { code: 'EIO' });
+			};
+			rename(from, to);
+		};
+
+		expect(await m.svc.apply(rotate(shown, { allowQuit: true, intentId }))).toEqual({ ok: false, error: { stage: 'write', category: 'unsaved' } });
+		expect(records(m.env)[0]).toMatchObject({ method: 'package', appHash: 'hash-a2', revokePending: [], staged: { before: { appHash: 'hash-a1' } } });
+		expect(m.env.clip.writes).toEqual([]);
+		expect(m.env.files()[CONFIG]).toContain(KEY_A);
+
+		failRegistry = false;
+		await m.svc.list({ accountId: 'acc-a' });
+		expect(records(m.env)).toEqual([ before ]);
+		// This run's flow still holds the new key: its intent is back (the flow releases or reuses it), never an orphan
+		expect(registry(m.env).mintIntents).toEqual([ expect.objectContaining({ id: intentId }) ]);
+		expect(registry(m.env).orphanHashes).toEqual([]);
+	});
+
+	test('R2: Anytype stops between the commit\'s rename and its undo file\'s removal → the next run has the earlier record and the new key tracked (an orphan)', async () => {
+		const m = machine({ files: { [CONFIG]: '{}' } });
+		const shown = await own(m);
+		const intentId = await intentOf(m.svc);
+		const unlink = m.env.unlink;
+		const list = m.env.listProcesses;
+		let armed = false;
+
+		// The first save writes no undo (it queues nothing); the commit's undo file can't go: Anytype "stops" there
+		m.env.listProcesses = async () => {
+			armed = armed || !!records(m.env)[0]?.staged;
+			return list();
+		};
+		m.env.unlink = p => {
+			if (armed && (p == TXN)) {
+				throw Object.assign(new Error('EIO'), { code: 'EIO' });
+			};
+			unlink(p);
+		};
+
+		expect(await m.svc.apply(rotate(shown, { intentId }))).toEqual({ ok: false, error: { stage: 'write', category: 'unsaved' } });
+		expect(m.env.exists(TXN)).toBe(true);
+		expect(m.env.clip.writes).toEqual([]);
+
+		// A new run: the undo file puts the staged record back, and that is undone in turn
+		armed = false;
+
+		const next = service(m.env);
+		const listed: any = await next.list({ accountId: 'acc-a' });
+
+		expect(listed.connections).toEqual([ expect.objectContaining({ method: 'config', appHash: 'hash-a1', revokePending: [] }) ]);
+		expect(listed.orphanHashes).toEqual([ 'hash-a2' ]);
+		expect(registry(m.env).mintIntents).toBeUndefined();
+	});
+
+	test('R3: the agreed entry is gone at apply\'s locked read and back before the save → the last check removes it before the key is copied', async () => {
+		const m = machine({ files: { [CONFIG]: CONFIG_TEXT } });
+		const shown: any = await planOf(m.svc);
+		const list = m.env.listProcesses;
+		const rename = m.env.rename;
+		let gone = false;
+
+		m.env.listProcesses = async () => {
+			if (!records(m.env).length && !gone) {
+				gone = true;
+				put(m.env, CONFIG, '{"mcpServers":{}}');
+			};
+			return list();
+		};
+		m.env.rename = (from, to) => {
+			rename(from, to);
+			// The first save: the entry is back (another profile, the user)
+			if ((to == REGISTRY) && gone && records(m.env)[0]?.staged) {
+				put(m.env, CONFIG, CONFIG_TEXT);
+			};
+		};
+
+		expect(await m.svc.apply(bundle({ replace: shown.replace }))).toMatchObject({ ok: true });
+		expect(JSON.parse(m.env.files()[CONFIG]).mcpServers.anytype).toBeUndefined();
+		expect(m.env.clip.writes).toEqual([ KEY_A ]);
+		expect(m.state.opened).toHaveLength(1);
+	});
+
+	test('R3: an entry that appears after apply\'s checks, with no Replace agreed → refused at the last check, the save undone, nothing copied or opened', async () => {
+		const m = machine({ files: { [CONFIG]: '{}' } });
+		const rename = m.env.rename;
+		let added = false;
+
+		m.env.rename = (from, to) => {
+			rename(from, to);
+			if ((to == REGISTRY) && !added && records(m.env)[0]?.staged) {
+				added = true;
+				put(m.env, CONFIG, JSON.stringify({ mcpServers: { anytype: FOREIGN } }));
+			};
+		};
+
+		expect(await m.svc.apply(bundle())).toMatchObject({ ok: false, error: { stage: 'validate', category: 'conflict' } });
+		expect(records(m.env)).toEqual([]);
+		expect(m.env.clip.writes).toEqual([]);
+		expect(m.state.opened).toEqual([]);
+		expect(JSON.parse(m.env.files()[CONFIG]).mcpServers.anytype).toEqual(FOREIGN);
+	});
+
+	test('R4: Claude stopped at the first lookup and running at the next one → never quit without quit consent; the user is asked', async () => {
+		const m = machine({ files: { [CONFIG]: CONFIG_TEXT } });
+		const shown: any = await planOf(m.svc);
+		let lookups = 0;
+
+		m.env.listProcesses = async () => ((++lookups > 1) ? [ { pid: 42, ppid: 1, exe: EXE, cmd: '' } ] : []);
+		expect(await m.svc.apply(bundle({ replace: shown.replace }))).toEqual({ ok: false, needs: 'quitApp' });
+		expect(m.state.killed).toEqual([]);
+		expect(m.env.files()[CONFIG]).toBe(CONFIG_TEXT);
+		expect(records(m.env)).toEqual([]);
+	});
+
+	test('R5: Claude starts between the writer\'s check and its rename → the rename doesn\'t happen, the entry stays, the save is undone', async () => {
+		const m = machine({ files: { [CONFIG]: CONFIG_TEXT } });
+		const shown: any = await planOf(m.svc);
+		const rename = m.env.rename;
+		let renamed = false;
+		let lookups = 0;
+
+		// Lookups: apply's check, the last check's two (the entry's, the writer's), then the one right before the rename
+		m.env.listProcesses = async () => ((++lookups >= 4) ? [ { pid: 42, ppid: 1, exe: EXE, cmd: '' } ] : []);
+		m.env.rename = (from, to) => {
+			renamed = renamed || (to == CONFIG);
+			rename(from, to);
+		};
+
+		expect(await m.svc.apply(bundle({ replace: shown.replace }))).toEqual({ ok: false, needs: 'quitApp' });
+		expect(renamed).toBe(false);
+		expect(m.env.files()[CONFIG]).toBe(CONFIG_TEXT);
+		expect(records(m.env)).toEqual([]);
+		expect(leftovers(m.env)).toEqual([]);
+	});
+
+	test('R6: an entry the writer can\'t remove (two `anytype` members) is never offered for Replace; apply refuses it before quitting Claude', async () => {
+		const twice = `{"mcpServers":{"anytype":${JSON.stringify(FOREIGN)},"anytype":${JSON.stringify(FOREIGN)}}}`;
+		const m = machine({ running: true, files: { [CONFIG]: twice } });
+		const res: any = await planOf(m.svc);
+
+		expect(res).toMatchObject({ canApply: false, method: 'manual', note: 'aiConnectClaudeReplaceCantRemove', error: { stage: 'parse' } });
+		expect(res.replace).toBeUndefined();
+		expect(await m.svc.apply(bundle({ replace: consentFor(FOREIGN), allowQuit: true }))).toMatchObject({ ok: false, error: { stage: 'parse' } });
+		expect(m.state.killed).toEqual([]);
+		expect(m.env.files()[CONFIG]).toBe(twice);
+		expect(records(m.env)).toEqual([]);
+	});
+
+	test('R7: `keyCopied` only for the record\'s own key: never for a snippet with it or for another key, with the copy\'s deadline', async () => {
+		const m = machine();
+		let now = 1000;
+
+		m.env.now = () => now;
+
+		const res: any = await m.svc.apply(bundle());
+
+		expect(res.connection).toMatchObject({ keyCopied: true, keyCopiedUntil: 1000 + CLIPBOARD_TTL_MS });
+
+		const view = async () => (await m.svc.check({ accountId: 'acc-a', apiListening: true, port: 31009, keys: null }) as any).connections[0];
+
+		now = 2000;
+		expect(await m.svc.copySecret({ accountId: 'acc-a', connectionId: 'claude-desktop', text: `{"env":{"ANYTYPE_API_KEY":"${KEY_A}"}}` })).toEqual({ ok: true });
+		expect((await view()).keyCopied).toBeUndefined();
+		expect(await m.svc.copySecret({ accountId: 'acc-a', connectionId: 'claude-desktop', text: KEY_B })).toEqual({ ok: true });
+		expect((await view()).keyCopied).toBeUndefined();
+		expect(await m.svc.copySecret({ accountId: 'acc-a', connectionId: 'claude-desktop', text: KEY_A })).toEqual({ ok: true });
+		expect(await view()).toMatchObject({ keyCopied: true, keyCopiedUntil: 2000 + CLIPBOARD_TTL_MS });
+	});
+
+	test('R11: Configure after Anytype quit Claude: a failed start is reported (openFailed), not hidden', async () => {
+		const ext = 'local.mcpb.anytype.anytype-dev';
+		const m = machine({
+			running: true, relaunchFails: true,
+			files: {
+				[CONFIG]: CONFIG_TEXT,
+				[`${DIR}/extensions-installations.json`]: JSON.stringify({ extensions: { [ext]: { id: ext, version: '2.6.0', installedAt: 't1' } } }),
+				[`${DIR}/Claude Extensions Settings/${ext}.json`]: JSON.stringify({ isEnabled: true }),
+			},
+		});
+		const shown: any = await planOf(m.svc);
+
+		expect(shown).toMatchObject({ configure: true });
+		expect(await m.svc.apply(bundle({ replace: shown.replace, allowQuit: true }))).toMatchObject({ ok: true, configure: true, openFailed: true });
+		expect(m.state.opened).toEqual([ [ '-a', APP ] ]);
+	});
+
+	test('R12: a config record whose entry the user removed before apply → the extension\'s record keeps no settings-file ownership', async () => {
+		const m = machine({ files: { [CONFIG]: '{}' } });
+		const shown = await own(m);
+
+		expect(records(m.env)[0]).toMatchObject({ entryDigest: expect.any(String), configPath: CONFIG });
+		put(m.env, CONFIG, '{"mcpServers":{}}');
+		expect(await m.svc.apply(rotate(shown))).toMatchObject({ ok: true, connection: { method: 'package', appHash: 'hash-a2', revokePending: [ 'hash-a1' ] } });
+		expect(records(m.env)[0].entryDigest).toBeUndefined();
+		expect(records(m.env)[0].configPath).toBeUndefined();
+	});
+
+	test('R13: the development hint only for metadata that says `signed: false`; missing or broken metadata gets the reinstall text', async () => {
+		for (const meta of [ null, '{ broken', '{"forwarder":null}' ]) {
+			const { svc } = machine({ bare: true, meta });
+			const res: any = await planOf(svc);
+
+			expect(res.error).toEqual({ stage: 'verify', category: 'bundleMissing' });
+		};
+
+		const dev = machine({ bare: true, meta: JSON.stringify({ signed: false, forwarder: null, mcpb: null }) });
+
+		expect((await planOf(dev.svc) as any).error).toEqual({ stage: 'verify', category: 'bundleMissing', devBuild: true });
+	});
+
+	test('R16: Claude rewrites the entry while it quits → the changed entry survives, the earlier record and the intent come back, no key is copied, Claude is started again', async () => {
+		const m = machine({ files: { [CONFIG]: '{}' } });
+		const shown = await own(m);
+		const before = records(m.env)[0];
+		const intentId = await intentOf(m.svc);
+		const rewritten = JSON.stringify({ mcpServers: { anytype: { ...serveCommand(m.env, { tier: 'large', key: KEY_A }), args: [ 'serve', '--tier', 'small' ] } } });
+
+		m.state.running = true;
+		// Claude's shutdown writes its cached settings before the process ends
+		m.env.kill = (pid: number) => {
+			m.state.killed.push(pid);
+			put(m.env, CONFIG, rewritten);
+			m.state.running = false;
+			return true;
+		};
+
+		expect(await m.svc.apply(rotate(shown, { allowQuit: true, intentId }))).toMatchObject({ ok: false, error: { stage: 'validate', category: 'conflict' } });
+		expect(m.state.killed).toEqual([ 42 ]);
+		expect(m.env.files()[CONFIG]).toBe(rewritten);
+		expect(records(m.env)).toEqual([ before ]);
+		expect(registry(m.env).mintIntents).toEqual([ expect.objectContaining({ id: intentId }) ]);
+		expect(m.env.clip.writes).toEqual([]);
+		expect(m.state.opened).toEqual([ [ '-a', APP ] ]);
 	});
 });

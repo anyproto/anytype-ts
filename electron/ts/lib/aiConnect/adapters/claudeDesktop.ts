@@ -25,10 +25,15 @@
  * One connection, one server (`claudeRoutes`): the settings-file route is refused while the extension is there
  * (Anytype can't remove an extension), before a key is minted; a check that finds both says `conflict`. The
  * extension replaces an Anytype entry in Claude's settings file only after the user's Replace for exactly that
- * entry (`ctx.replace`, its digest), Claude closed first: the plan asks before any key exists, apply checks the
- * consent again under the lock, and the service removes the entry (`removeEntry`) right after the record's save,
- * before the key is copied; when that fails the save is undone. A settings file that can't be read is refused as
- * before. Anytype removes nothing without that Replace.
+ * entry (`ctx.replace`, its digest), and only one the writer can remove (R6); Claude closed first, quit only with
+ * the user's quit consent (R4). The plan asks before any key exists, apply checks the consent again under the lock,
+ * and every extension delivery ends with `settleEntry`, the last locked check right after the record's first save
+ * and before the key is copied (R3): no entry → go on, the agreed one → removed (Claude's state checked again
+ * before every rename, R5), anything else → refused and the save undone. A settings file that can't be read is
+ * refused as before. Anytype removes nothing without that Replace.
+ *
+ * A signed build knows its installed extension by a signer Claude reports, else by the installed files (R17):
+ * Claude's `Claude Extensions/<id>/` must hold our manifest's start command and our forwarder's exact bytes.
  *
  * Extension state files (UNVERIFIED field names): `extensions-installations.json` → the record of the extension
  * id (version, installedAt, signatureInfo), and `Claude Extensions Settings/<id>.json` → `isEnabled` (the only
@@ -36,10 +41,10 @@
  */
 import type { Adapter, AiError, AiPlan, AiRecord, AiStep, AiTier, ApplyOutcome, CheckOutcome, Ctx, Detected, Env } from '../types';
 import { dirsWritable, isLocalAbsolute, pathOf, readSnapshot, resolveTarget, writeFileSafe } from '../fsSafe';
-import { canonicalDigest, keyFingerprint } from '../digest';
+import { canonicalDigest, canonicalJson, keyFingerprint } from '../digest';
 import { claudeDesktopDir, powershellPath } from '../detect';
 import { bundleDir, bundleInfo, bundleUsable, copyBundle, ensureStoreDir, loadBundle, type BundleInfo } from '../bundle';
-import { KEY_VAR, buildMeta, ensureInstalled, serveCommand, stdioSupported, usable, withLock } from '../forwarder';
+import { KEY_VAR, buildMeta, ensureInstalled, platformKey, serveCommand, sha256, stdioSupported, usable, withLock } from '../forwarder';
 import { preflight } from '../endpoint';
 import { UTF8_OUTPUT, launch, quit, runningState } from '../restart';
 import { basePlan, displayPath, err, goneError, manualPlan, mayWrite, mergeStep, placeholder, protectedError, protectedTarget } from './common';
@@ -59,6 +64,16 @@ export const INSTALLATIONS_FILE = 'extensions-installations.json';
  */
 export const CLAUDE_SIGNED_STATUS: string | null = null;
 export const SETTINGS_DIR = 'Claude Extensions Settings';
+/** Where Claude unpacks an installed extension: `<this>/<extension id>/` (UNVERIFIED name, research/claude-desktop.md) */
+export const EXTENSIONS_DIR = 'Claude Extensions';
+/**
+ * The environment our manifest gives the forwarder: the key only from `user_config.api_key`, and the forwarder's
+ * files-folder variable from `user_config.files_dir` (electron/mcp/manifest.json); nothing else
+ */
+const manifestEnvOk = (v: any): boolean => !!v && (typeof v == 'object') && !Array.isArray(v) && (Object.keys(v).length == 2)
+	&& (v.ANYTYPE_API_KEY === '${user_config.api_key}')
+	&& Object.keys(v).every(k => (k == 'ANYTYPE_API_KEY') || (/^ANYTYPE_MCP_[A-Z_]+$/.test(k) && (v[k] === '${user_config.files_dir}')));
+const MAX_BINARY_BYTES = 64 * 1024 * 1024;
 
 export type ExtensionState = 'installed' | 'disabled' | 'outdated' | 'absent' | 'unreadable';
 
@@ -139,10 +154,80 @@ const signerOf = (record: any): string => {
 	return String(raw).toLowerCase().replace(/[^0-9a-f]/g, '');
 };
 
+/** sha256 of an installed file, kept while its identity and time stay the same (a check runs every 5 s while Finish is open) */
+const installedDigests = new WeakMap<Env, Map<string, { stamp: string; sha: string }>>();
+
+/** sha256 of the regular file `file` (never through a link at its end), or null when it can't be read */
+const installedDigest = (env: Env, file: string): string | null => {
+	const st = env.stat(file);
+	const ls = env.lstat(file);
+
+	if (!st || !ls || !st.isFile || ls.isSymlink) {
+		return null;
+	};
+
+	const stamp = `${st.dev}:${st.ino}:${ls.mtimeMs ?? ''}`;
+	const cache = installedDigests.get(env) || new Map();
+	const known = cache.get(file);
+
+	if (known && (known.stamp == stamp)) {
+		return known.sha;
+	};
+
+	const res = env.readFile(file, MAX_BINARY_BYTES, { noFollow: true });
+
+	if (!('data' in res)) {
+		return null;
+	};
+
+	const sha = sha256(res.data);
+
+	cache.set(file, { stamp, sha });
+	installedDigests.set(env, cache);
+	return sha;
+};
+
+/**
+ * R17: whether the extension Claude unpacked for `id` is this build's bundle, from its own files. Claude's signature
+ * verdict can't be relied on (current Claude records every bundle `unsigned`, without a fingerprint). Ours: the
+ * manifest starts `server/anytype-mcp[.exe]` with `serve --tier full` and the key only from `user_config`, and
+ * that file has exactly the bytes of this build's forwarder (the bundle packs that same signed file). `unknown`:
+ * the files can't be read, or aren't where they should be
+ */
+const installedIdentity = (env: Env, id: string): 'ours' | 'other' | 'unknown' => {
+	const P = pathOf(env);
+	const expected = buildMeta(env)?.forwarder?.sha256?.[platformKey(env)];
+	const exe = (env.platform == 'win32') ? 'anytype-mcp.exe' : 'anytype-mcp';
+	const entry = `server/${exe}`;
+	const dir = P.join(claudeDesktopDir(env), EXTENSIONS_DIR, id);
+	const manifest = readClaudeJson(env, P.join(dir, 'manifest.json'));
+
+	if (!expected || (manifest.kind != 'ok')) {
+		return 'unknown';
+	};
+
+	const server = manifest.value?.server;
+	const config = server?.mcp_config;
+	const started = (server?.type === 'binary') && (server?.entry_point === entry) && (config?.command === `\${__dirname}/${entry}`)
+		&& (canonicalJson(config?.args) === canonicalJson([ 'serve', '--tier', 'full' ])) && manifestEnvOk(config?.env);
+
+	if (!started) {
+		return 'other';
+	};
+
+	const sha = installedDigest(env, P.join(dir, 'server', exe));
+
+	if (!sha) {
+		return 'unknown';
+	};
+	return (sha === expected) ? 'ours' : 'other';
+};
+
 /**
  * The extension's current state (table in the plan, §3.8) and whether it is known to be one Anytype must
  * not hand a key to. Version and signer come first: a known mismatch is `outdated` even when the settings
- * file is missing or broken.
+ * file is missing or broken. A signed build knows its extension by a signer Claude reports (it must be ours),
+ * else by the installed files (R17); files that can't be read are `unreadable`, not ours.
  */
 export const extensionInfo = (env: Env, bundle: BundleInfo | null): ExtensionInfo => {
 	const P = pathOf(env);
@@ -169,13 +254,20 @@ export const extensionInfo = (env: Env, bundle: BundleInfo | null): ExtensionInf
 	const version = String(record.version || record.manifest?.version || '');
 	const installedAt = String(record.installedAt ?? record.installed_at ?? '');
 	const versionOk = bundleUsable(bundle) && !!version && (compareVersions(version, bundle.version) >= 0);
-	const signerOk = bundleUsable(bundle) && (!bundle.signed || (signerOf(record) === bundle.signerFingerprint));
-	// A signed build also needs Claude's own verdict on the signature, whose literal isn't known yet: until then never
-	const statusOk = !bundle?.signed || ((CLAUDE_SIGNED_STATUS !== null) && (record?.signatureInfo?.status === CLAUDE_SIGNED_STATUS));
+	const signer = signerOf(record);
+	const files = (bundleUsable(bundle) && bundle.signed) ? installedIdentity(env, id) : null;
+	// A signer Claude reports must be ours; without one (current Claude) the installed files decide (R17)
+	const signerOk = bundleUsable(bundle) && (!bundle.signed || (signer ? (signer === bundle.signerFingerprint) : (files == 'ours')));
+	// The key may go in through Configure on a signed build once the installed files are ours, or Claude's own verdict says signed
+	const statusOk = !bundle?.signed || (files == 'ours') || ((CLAUDE_SIGNED_STATUS !== null) && (record?.signatureInfo?.status === CLAUDE_SIGNED_STATUS));
 	const identity = { version, installedAt };
 
-	if (!versionOk || !signerOk) {
+	if (!versionOk || (!signerOk && (signer || (files != 'unknown')))) {
 		return { state: 'outdated', present: 'record', verified: false, enabled: on, configurable: false, ...identity };
+	};
+	// The installed files can't be read: not known to be ours (fail closed), and not known to be another one either
+	if (!signerOk) {
+		return { state: 'unreadable', present: 'record', verified: false, enabled: on, configurable: false, ...identity };
 	};
 
 	if (typeof enabled != 'boolean') {
@@ -286,10 +378,11 @@ const bothRoutesPlan = (plan: AiPlan, other: 'config' | 'extension'): AiPlan => 
 
 /**
  * No bundle Claude could install: none in this build (a development build without a forwarder) or one that fails
- * its digest check. Never `unsupportedPackage` (that is the Linux sandbox only); a development build's text says
- * how to put the forwarder in place
+ * its digest check. Never `unsupportedPackage` (that is the Linux sandbox only). Only a build whose metadata says it
+ * is a development one (`signed: false`) gets the text on how to build it; missing or broken metadata is a damaged
+ * copy (reinstall, R13)
  */
-export const bundleMissing = (env: Env): AiError => ({ ...err('verify', 'bundleMissing'), ...(buildMeta(env)?.signed ? {} : { devBuild: true }) });
+export const bundleMissing = (env: Env): AiError => ({ ...err('verify', 'bundleMissing'), ...((buildMeta(env)?.signed === false) ? { devBuild: true } : {}) });
 
 /**
  * S8: Claude's config file is shared by every account and every Anytype profile, so deciding whose the entry is
@@ -320,6 +413,12 @@ const quitNeeded = async (ctx: Ctx, det: Detected): Promise<'quitApp' | 'quitApp
 		return ctx.allowQuit ? null : 'quitApp';
 	};
 	return null;
+};
+
+/** R6: the writer can remove this entry (its own edit, dry-run); else the error that edit gives */
+const unremovable = (t: ConfigTarget): AiError | null => {
+	const edit = CONFIG.remove(t.text);
+	return ('text' in edit) ? null : err('parse', edit.category, t.real);
 };
 
 const primary = {
@@ -359,6 +458,13 @@ const primary = {
 			return manualPlan(plan, denied, []);
 		};
 		if (present(t.value)) {
+			// An entry the writer couldn't remove (two `anytype` members, …) is never offered: nothing is minted or quit (R6)
+			const stuck = unremovable(t);
+
+			if (stuck) {
+				return { ...manualPlan(plan, stuck, []), note: 'aiConnectClaudeReplaceCantRemove' };
+			};
+
 			plan.existing = entryOurs(t.value, rec) ? 'ours' : 'foreign';
 			plan.replace = { targetPath: t.real, foreignDigest: canonicalDigest(t.value) };
 			plan.note = 'aiConnectClaudeReplaceConfig';
@@ -394,9 +500,17 @@ const primary = {
 		if ('error' in pre) {
 			return { ok: false, error: err('validate', 'conflict') };
 		};
-		// An Anytype entry in Claude's settings file only with the user's Replace for exactly this entry
-		if (present(pre.value) && !entryConsent(ctx, pre)) {
-			return { ok: false, error: err('validate', 'conflict', pre.real) };
+		// An Anytype entry in Claude's settings file only with the user's Replace for exactly this entry, and only one the writer can remove (R6)
+		if (present(pre.value)) {
+			if (!entryConsent(ctx, pre)) {
+				return { ok: false, error: err('validate', 'conflict', pre.real) };
+			};
+
+			const stuck = unremovable(pre);
+
+			if (stuck) {
+				return { ok: false, error: stuck };
+			};
 		};
 
 		const own = usable(ctx.env);
@@ -411,9 +525,7 @@ const primary = {
 			return { ok: false, error: denied };
 		};
 
-		let replacing = present(pre.value);
-
-		if (replacing) {
+		if (present(pre.value)) {
 			const needs = await quitNeeded(ctx, det);
 
 			if (needs) {
@@ -421,96 +533,118 @@ const primary = {
 			};
 
 			// The consent against the file as it is now, under Claude's config lock (every profile's writer and removal wait for it)
-			const now = await configLock(ctx.env, async (): Promise<AiError | 'gone' | 'agreed'> => {
+			const now = await configLock(ctx.env, async (): Promise<AiError | 'ok'> => {
 				const t = loadConfig(ctx.env);
 
 				if ('error' in t) {
 					return err('validate', 'conflict');
 				};
+				// Gone meanwhile: the last check after the save decides (R3)
 				if (!present(t.value)) {
-					return 'gone';
+					return 'ok';
 				};
-				return entryConsent(ctx, t) ? 'agreed' : err('validate', 'conflict', t.real);
+				return entryConsent(ctx, t) ? (unremovable(t) || 'ok') : err('validate', 'conflict', t.real);
 			});
 
 			// Not acquired (another profile is at it): nothing was done
 			if (!now) {
 				return { ok: false, error: err('write', 'changed') };
 			};
-			if ((now != 'gone') && (now != 'agreed')) {
+			if (now != 'ok') {
 				return { ok: false, error: now };
 			};
-			// Removed meanwhile (the user's own edit): nothing left to replace
-			replacing = (now == 'agreed');
 		};
 
 		const info = extensionInfo(ctx.env, bundle);
 		const configure = info.configurable;
 		const install = info.version ? { version: info.version, installedAt: info.installedAt } : null;
+		// The bundle copy is written before the record is saved (it holds no key): after the last check only the open is left (R3)
+		const copy = configure ? null : await copyBundle(ctx.env, loaded.data);
 		/** Anytype quit Claude to remove the entry: it is started again on every path that doesn't open the bundle */
 		let quitted = false;
-		const relaunch = async (): Promise<boolean> => !quitted || !('error' in (await launch(ctx.env, det)));
+		const relaunch = async (): Promise<boolean> => {
+			const back = !quitted || !('error' in (await launch(ctx.env, det)));
+
+			quitted = false;
+			return back;
+		};
 
 		/**
-		 * After the commit, before the key is copied: the entry the user agreed to replace goes. Claude is quit first
-		 * when it runs (and Anytype may); under the lock the entry must still be exactly that one (gone already is
-		 * fine), and only `mcpServers.anytype` is removed, by the config route's writer (a secret write: no backup,
-		 * no temp left behind, every other byte of the file as it was). A refusal starts Claude again if Anytype quit it
+		 * The last check of Claude's settings file before the key leaves Anytype, run by the service right after the
+		 * record's first save; always, whatever an earlier read found (R3). An entry the user agreed to replace first
+		 * needs Claude closed: Anytype quits it only with the user's quit consent (R4). Then, under the lock: no entry →
+		 * go on; exactly the agreed one → only `mcpServers.anytype` is removed by the config route's writer (a secret
+		 * write: no backup, no temp left behind, every other byte as it was), Claude's state checked again before every
+		 * rename (R5); anything else (another entry, one Claude wrote on its way out, another file) → refused (R16). A
+		 * refusal starts Claude again if Anytype quit it
 		 */
-		const removeEntry = async (): Promise<null | { needs: 'quitApp' | 'quitAppSelf' } | { error: AiError }> => {
-			const needs = await quitNeeded(ctx, det);
+		const settleEntry = async (): Promise<null | { needs: 'quitApp' | 'quitAppSelf' } | { error: AiError }> => {
+			const seen = loadConfig(ctx.env);
 
-			if (needs) {
-				return { needs };
-			};
+			if (!('error' in seen) && present(seen.value) && entryConsent(ctx, seen)) {
+				const running = await runningState(ctx.env, det);
 
-			if ((await runningState(ctx.env, det)).state == 'running') {
-				const res = await quit(ctx.env, det, ctx.signalled || new Set());
+				if (running.state == 'unknown') {
+					if (!ctx.quitConfirmed) {
+						return { needs: 'quitAppSelf' };
+					};
+				} else
+				if (running.state == 'running') {
+					// Several main processes: none can be picked to signal, the user quits Claude
+					if (!running.pid) {
+						return { needs: 'quitAppSelf' };
+					};
+					// Never without the user's quit consent, whatever an earlier lookup found (R4)
+					if (!ctx.allowQuit) {
+						return { needs: 'quitApp' };
+					};
 
-				if ('error' in res) {
-					// Another instance started meanwhile: left alone, the user is asked again
-					return (res.error.category == 'changed') ? { needs: 'quitApp' } : { error: res.error };
+					const res = await quit(ctx.env, det, ctx.signalled || new Set());
+
+					if ('error' in res) {
+						// Another instance started meanwhile: left alone, the user is asked again
+						return (res.error.category == 'changed') ? { needs: 'quitApp' } : { error: res.error };
+					};
+					quitted = true;
 				};
-				quitted = true;
 			};
 
-			const mayEdit = async (): Promise<boolean> => {
+			const stopped = async (): Promise<AiError | null> => {
 				const now = await runningState(ctx.env, det);
-				return (now.state == 'stopped') || ((now.state == 'unknown') && !!ctx.quitConfirmed);
+				return ((now.state == 'stopped') || ((now.state == 'unknown') && !!ctx.quitConfirmed)) ? null : STILL_RUNNING;
 			};
 			const locked = await configLock(ctx.env, () => writeConfigEntry(ctx.env, undefined, async t => {
-				if (!(await mayEdit())) {
-					return STILL_RUNNING;
-				};
 				if (!present(t.value)) {
 					return 'skip';
 				};
-				return entryConsent(ctx, t) ? null : err('validate', 'conflict', t.real);
-			}));
+				if (!entryConsent(ctx, t)) {
+					return err('validate', 'conflict', t.real);
+				};
+				return stopped();
+			}, undefined, stopped));
 			const res = locked || { ok: false as const, error: err('write', 'changed') };
 
-			if ('error' in res) {
-				const back = await relaunch();
-
-				quitted = false;
-				if (res.error.stage == 'restart') {
-					return { needs: 'quitApp' };
-				};
-				return { error: back ? res.error : { ...res.error, openFailed: true } };
+			if (!('error' in res)) {
+				return null;
 			};
-			return null;
+
+			const back = await relaunch();
+
+			// Claude is running (again): the user is asked to quit it
+			if (res.error.stage == 'restart') {
+				return { needs: (await quitNeeded({ ...ctx, allowQuit: false }, det)) || 'quitApp' };
+			};
+			return { error: back ? res.error : { ...res.error, openFailed: true } };
 		};
 
-		// Run by the service once the record is saved (and the entry removed) and the key copied: no key is in the bundle or its copy
+		// Run by the service once the entry passed its last check and the key is copied: no key is in the bundle or its copy
 		const deliver = async (): Promise<boolean> => {
+			// Nothing is opened for Configure: a Claude that Anytype quit is started again, and a start that failed is reported (R11)
 			if (configure) {
-				// Nothing is opened: a Claude that Anytype quit is started again for its Configure
-				await relaunch();
-				return true;
+				return relaunch();
 			};
 
-			const copy = await copyBundle(ctx.env, loaded.data);
-			const opened = ('path' in copy) && (await openBundle(ctx.env, det, copy.path));
+			const opened = !!copy && ('path' in copy) && (await openBundle(ctx.env, det, copy.path));
 
 			// Opening the bundle starts Claude; one that wasn't opened is started again after Anytype quit it
 			if (!opened) {
@@ -518,11 +652,11 @@ const primary = {
 			};
 			return opened;
 		};
-
-		return {
-			ok: true, method: 'package', nextStep: 'confirmInApp', targetPath: '', observedInstalled: false, createdDirs: [], deliver, configure, install,
-			...(replacing ? { removeEntry } : {}),
+		const abort = async (): Promise<void> => {
+			await relaunch();
 		};
+
+		return { ok: true, method: 'package', nextStep: 'confirmInApp', targetPath: '', observedInstalled: false, createdDirs: [], deliver, configure, install, settleEntry, abort };
 	},
 };
 
@@ -584,7 +718,9 @@ const entryConsent = (ctx: Ctx, t: ConfigTarget): boolean => present(t.value) &&
  * attempt: null → write; an error → refused; 'skip' → nothing to do. Always a secret write: the file holds a
  * key (ours, or another one), so no backup and no temp of it is left behind
  */
-const writeConfigEntry = async (env: Env, value: any, expect: (current: ConfigTarget, attempt: number) => Promise<AiError | 'skip' | null>, file?: string): Promise<{ ok: true; real: string; createdDirs: string[] } | { ok: false; error: AiError }> => {
+const writeConfigEntry = async (
+	env: Env, value: any, expect: (current: ConfigTarget, attempt: number) => Promise<AiError | 'skip' | null>, file?: string, beforeRename?: () => Promise<AiError | null>,
+): Promise<{ ok: true; real: string; createdDirs: string[] } | { ok: false; error: AiError }> => {
 	for (let attempt = 0; attempt < 2; attempt++) {
 		const t = loadConfig(env, file);
 
@@ -607,7 +743,8 @@ const writeConfigEntry = async (env: Env, value: any, expect: (current: ConfigTa
 			return { ok: false, error: err('parse', edit.category, t.real) };
 		};
 
-		const res = await writeFileSafe(env, t.real, edit.text, { snapshot: t.snapshot, secret: true });
+		// `beforeRename`: Claude must still be closed right before every rename attempt, Windows retries included (R5)
+		const res = await writeFileSafe(env, t.real, edit.text, { snapshot: t.snapshot, secret: true, beforeRename });
 
 		if ('createdDirs' in res) {
 			return { ok: true, real: t.real, createdDirs: res.createdDirs };
@@ -835,7 +972,7 @@ const fallback = {
 					return err('validate', 'conflict', t.real);
 				};
 				return (verdict == 'gone') ? goneError('install', t.real) : null;
-			}, real);
+			}, real, async () => (await mayEdit()) ? null : STILL_RUNNING);
 
 			if ('error' in merged) {
 				return (merged.error.stage == 'restart') ? { ok: false, needs } : { ok: false, error: merged.error };
@@ -882,7 +1019,9 @@ const removeConfig = async (ctx: Ctx, rec: AiRecord): Promise<Awaited<ReturnType
 		return { ok: true, left: 'entry' };
 	};
 
-	const res = await writeConfigEntry(ctx.env, undefined, async cur => entryOurs(cur.value, rec) ? null : err('validate', 'conflict', cur.real), t.real);
+	// Claude closed right before every rename attempt too (R5): one that started meanwhile keeps the entry (its key is revoked)
+	const stillStopped = async (): Promise<AiError | null> => (det && ((await runningState(ctx.env, det)).state == 'stopped')) ? null : STILL_RUNNING;
+	const res = await writeConfigEntry(ctx.env, undefined, async cur => entryOurs(cur.value, rec) ? null : err('validate', 'conflict', cur.real), t.real, stillStopped);
 	return { ok: true, ...(('error' in res) ? { left: 'entry' as const } : {}) };
 };
 

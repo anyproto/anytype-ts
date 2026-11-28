@@ -1518,7 +1518,8 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 				return CANCELLED;
 			};
 			S.AiConnect.upsert(saved.connection);
-			return { kind: 'bundle', connection: saved.connection, plan: current, copyFailed: true, openFailed: false, configure: !!current.configure, recordSaved: true };
+			// Whether main put the key on the clipboard is on the record it listed (R10)
+			return { kind: 'bundle', connection: saved.connection, plan: current, copyFailed: !saved.connection.keyCopied, openFailed: false, configure: !!current.configure, recordSaved: true };
 		};
 		if (saved.state == 'unknown') {
 			undecided(op);

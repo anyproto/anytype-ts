@@ -16,6 +16,7 @@ vi.mock('Component', () => ({ Loader: () => null }));
 
 import AiConnectFinish from '../../component/popup/aiConnect/finish';
 import AiConnectForm from '../../component/popup/aiConnect/form';
+import AiConnectManage from '../../component/popup/aiConnect/manage';
 import { errorText, planReason } from '../../component/popup/aiConnect/text';
 import { AiConnectController, type AiConnectPopupData } from './controller';
 import * as flow from './flow';
@@ -182,12 +183,12 @@ describe('Claude Desktop: the waiting view says where the key is', () => {
 		const copiedConfigure = esc(TEXT.aiConnectBundleClipboardConfigure);
 		const cleared = esc(TEXT.aiConnectBundleClipboardCleared);
 		const cases: [ any, string ][] = [
-			// The install dialog, and switched off: Claude asks for the key
+			// The install dialog: Claude asks for the key
 			[ { state: 'finish' }, copied ],
 			[ { state: 'finish', openFailed: true }, copied ],
 			[ { state: 'finish', stopped: true }, copied ],
-			[ { state: 'off' }, copied ],
-			// Configure (installed, not confirmed or updated): the user pastes it there
+			// Configure (switched off too, R15; installed, not confirmed or updated): the user pastes it there
+			[ { state: 'off' }, copiedConfigure ],
 			[ { state: 'notConfirmed' }, copiedConfigure ],
 			[ { state: 'updated' }, copiedConfigure ],
 			[ { state: 'finish', configure: true }, copiedConfigure ],
@@ -238,9 +239,12 @@ describe('Claude Desktop: the waiting view says where the key is', () => {
 	});
 
 	test('finish-clipboard: the sheet opened again later shows what main says (key still copied, or not)', async () => {
+		const row = h.heart.add('hash-b', GRANT, 0, APP);
+
 		h.existing({ ...record({ id: 'claude-desktop', appId: 'claude-desktop', name: APP, route: 'stdio', tier: 'full', method: 'package', targetPath: '', appHash: 'hash-b' }) });
 		h.main.m.statuses.set('claude-desktop', 'pending');
-		h.main.m.clipboard = { text: 'x', connectionId: 'claude-desktop' };
+		h.main.m.clipboard = { text: row.apiKey, connectionId: 'claude-desktop' };
+		h.main.m.clipboardUntil = Date.now() + 60000;
 		await flow.load();
 
 		const ctrl = await open({ appId: 'claude-desktop', connectionId: 'claude-desktop', view: 'finish' } as any);
@@ -269,5 +273,209 @@ describe('Claude Desktop: a build without a usable bundle (text)', () => {
 
 		// The Linux package's text stays for the Linux package only
 		expect(errorText({ stage: 'detect', category: 'unsupportedPackage' }, APP)).toBe(TEXT.aiConnectErrorUnsupportedPackage);
+	});
+});
+
+describe('Claude Desktop: review round 1 (renderer)', () => {
+	const CONFIG_PLAN: any = {
+		...BASE_PLAN, appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', tier: 'large', method: 'config', targetPath: CONFIG, displayTarget: '~/Library/Application Support/Claude/claude_desktop_config.json',
+	};
+	const manageHtml = (connection: any, onUseExtension?: () => void) => renderToStaticMarkup(React.createElement(AiConnectManage, {
+		appName: APP, appId: 'claude-desktop', connection, access: { ok: true, present: true, grant: connection.grant, expireAt: connection.expireAt },
+		spaces: [], siblings: [], busy: false, apiListening: true, formatDate: String,
+		onSaveAccess: vi.fn(), onSaveTier: vi.fn(), onReveal: vi.fn(), onReconnect: vi.fn(), onReplace: vi.fn(), onDisconnect: vi.fn(), onForget: vi.fn(), onRetry: vi.fn(),
+		onRetryCheck: vi.fn(), onManual: vi.fn(), onClose: vi.fn(), onUseExtension,
+	} as any));
+	const configRecord = () => {
+		h.heart.add('hash-old', GRANT, 0, APP);
+		return h.existing({
+			id: 'claude-desktop', appId: 'claude-desktop', name: APP, route: 'stdio', tier: 'large', recommendedTier: 'full', method: 'config', appHash: 'hash-old',
+			targetPath: '/Users/me/.anytype/ai-connect/claude-desktop.json',
+		});
+	};
+
+	test('R7: the waiting view says the key *was* copied (main never reads the clipboard: something copied over it isn\'t known)', () => {
+		views();
+
+		expect(TEXT.aiConnectBundleClipboard).toMatch(/^Your key was copied to the clipboard\./);
+		expect(TEXT.aiConnectBundleClipboardConfigure).toMatch(/^Your key was copied to the clipboard\./);
+		expect(finishHtml({ copied: true })).toContain(esc(fill('aiConnectBundleClipboard', APP)));
+	});
+
+	test('R8: Manage of a Claude settings-file record, opened from its card, offers "Use Claude\'s extension"; it opens the extension\'s preview, Replace moves the record and the old key goes after the commit', async () => {
+		views();
+		configRecord();
+		h.main.m.plans['claude-desktop'] = CONFIG_PLAN;
+		h.main.m.bundleInfo = { signed: false };
+
+		// The card's normal entry point: a mapped record opens its Manage
+		const ctrl = await open({ appId: 'claude-desktop' });
+
+		expect(ctrl.get().view).toBe('manage');
+		expect(await until(() => ctrl.get().canUseExtension)).toBe(true);
+		expect(manageHtml(ctrl.connection(), () => {})).toContain(`>${esc(TEXT.aiConnectUseExtension)}<`);
+
+		h.main.m.plans['claude-desktop'] = replacePlan('ours');
+		await ctrl.useExtension();
+		await until(() => !ctrl.get().planLoading && (ctrl.get().plan?.method == 'package'));
+		expect(ctrl.get().view).toBe('connect');
+		expect(h.calls('aiConnectPlan').pop().param).toMatchObject({ method: 'package', tier: 'full' });
+		// The grant and expiry stay the record's
+		expect(ctrl.get().form).toMatchObject({ grant: GRANT, name: APP });
+
+		ctrl.submit();
+		await until(() => (ctrl.get().phase == 'bundle') && h.heart.state.revokes.includes('hash-old'));
+
+		const [ apply ] = h.calls('aiConnectApply');
+
+		expect(apply.param).toMatchObject({ method: 'package', tier: 'full', expectedHash: 'hash-old', replace: REPLACE, grant: GRANT });
+		expect(h.cmds()).not.toContain('aiConnectRetire');
+		expect(h.heart.state.order.indexOf('CreateApp')).toBeLessThan(h.heart.state.order.indexOf('RevokeApp:hash-old'));
+		expect([ ...h.main.m.records.values() ]).toEqual([ expect.objectContaining({ id: 'claude-desktop', method: 'package', appHash: 'hash-1', revokePending: [] }) ]);
+	});
+
+	test('R8: no "Use Claude\'s extension" without a bundle Claude could install, or for an extension record', async () => {
+		views();
+		configRecord();
+		h.main.m.plans['claude-desktop'] = CONFIG_PLAN;
+
+		const ctrl = await open({ appId: 'claude-desktop' });
+
+		await until(() => !!ctrl.get().access);
+		expect(ctrl.get().canUseExtension).toBe(false);
+		expect(manageHtml(ctrl.connection())).not.toContain(TEXT.aiConnectUseExtension);
+
+		h.main.m.bundleInfo = { signed: false };
+		h.existing({ ...record({ id: 'claude-desktop', appId: 'claude-desktop', name: APP, route: 'stdio', tier: 'full', method: 'package', targetPath: '', appHash: 'hash-old' }) });
+		await ctrl.loadManage();
+		expect(ctrl.get().canUseExtension).toBe(false);
+	});
+
+	test('R9: an entry that appeared in Claude\'s settings file after the preview (main: conflict) → the sheet again with the Replace preview, the pending key kept, a failed restart of Claude said', async () => {
+		h.main.m.apply = () => {
+			h.main.m.plans['claude-desktop'] = replacePlan('foreign');
+			h.main.m.apply = null;
+			return { ok: false, error: { stage: 'validate', category: 'conflict', path: CONFIG, openFailed: true } };
+		};
+
+		const ctrl = await open({ appId: 'claude-desktop' });
+
+		ctrl.submit();
+		expect(await until(() => !ctrl.get().busy && (ctrl.get().view == 'connect') && !!ctrl.get().plan?.replace)).toBe(true);
+		expect(ctrl.get().phase).not.toBe('error');
+		expect(ctrl.get().formErrors).toEqual([ { key: 'aiConnectErrorReopen', args: [ APP ] } ]);
+		expect(h.heart.state.creates).toBe(1);
+
+		// Replace and connect: the same pending key goes, nothing minted again
+		ctrl.submit();
+		await until(() => ctrl.get().phase == 'bundle');
+		expect(h.heart.state.creates).toBe(1);
+		expect(h.calls('aiConnectApply')[1].param).toMatchObject({ appHash: 'hash-1', replace: REPLACE });
+	});
+
+	test('R10: the sheet follows main both ways: cleared, then copied again from another window (its failed-copy notice gone)', async () => {
+		flow.flowConfig.bundlePollTimeout = 5000;
+		h.main.m.bundleCopyFails = true;
+
+		const ctrl = await open({ appId: 'claude-desktop' });
+
+		ctrl.submit();
+		await until(() => ctrl.get().phase == 'bundle');
+		expect(ctrl.get().bundle).toMatchObject({ copied: false, copyFailed: true });
+
+		// Another window copies this key: the next check says so, and the failure notice goes
+		h.main.m.clipboard = { text: h.heart.rows.get('hash-1').apiKey, connectionId: 'claude-desktop' };
+		h.main.m.clipboardUntil = Date.now() + 60000;
+		expect(await until(() => ctrl.get().bundle.copied)).toBe(true);
+		expect(ctrl.get().bundle.copyFailed).toBe(false);
+
+		h.main.m.clipboard = null;
+		expect(await until(() => !ctrl.get().bundle.copied)).toBe(true);
+	});
+
+	test('R10: a sheet opened again arms its timer for the copy\'s remaining time: "copied" ends on time even when every check fails', async () => {
+		const row = h.heart.add('hash-b', GRANT, 0, APP);
+
+		h.existing({ ...record({ id: 'claude-desktop', appId: 'claude-desktop', name: APP, route: 'stdio', tier: 'full', method: 'package', targetPath: '', appHash: 'hash-b' }) });
+		h.main.m.statuses.set('claude-desktop', 'pending');
+		h.main.m.clipboard = { text: row.apiKey, connectionId: 'claude-desktop' };
+		h.main.m.clipboardUntil = Date.now() + 60;
+		await flow.load();
+		flow.flowConfig.bundlePollTimeout = 5000;
+		h.main.m.checkUnsaved = true;
+
+		const ctrl = await open({ appId: 'claude-desktop', connectionId: 'claude-desktop', view: 'finish' } as any);
+
+		await until(() => ctrl.get().phase == 'bundle');
+		expect(ctrl.get().bundle.copied).toBe(true);
+		await new Promise(r => setTimeout(r, 120));
+		expect(ctrl.get().bundle.copied).toBe(false);
+	});
+
+	test('R10: a lost Apply reply takes "copied" from the record main listed, not a guess', async () => {
+		const committed = (copied: boolean) => (p: any) => {
+			h.main.m.records.set('claude-desktop', record({ id: 'claude-desktop', appId: 'claude-desktop', name: APP, route: 'stdio', tier: 'full', method: 'package', targetPath: '', appHash: p.appHash, grant: p.grant, expireAt: p.expireAt }));
+			h.main.m.statuses.set('claude-desktop', 'pending');
+			if (copied) {
+				h.main.m.clipboard = { text: p.key, connectionId: 'claude-desktop' };
+				h.main.m.clipboardUntil = Date.now() + 60000;
+			};
+			return null;
+		};
+		const input: flow.ConnectInput = { appId: 'claude-desktop', route: 'stdio', tier: 'full', recommendedTier: 'full', grant: GRANT, name: APP, expireAt: 0, method: 'package', existing: null, shown: BUNDLE_PLAN };
+
+		h.main.m.apply = committed(true);
+		expect(await flow.connect(input)).toMatchObject({ kind: 'bundle', copyFailed: false });
+		await flow.releasePendingKey();
+
+		h.main.m.records.clear();
+		h.main.m.clipboard = null;
+		h.main.m.apply = committed(false);
+		expect(await flow.connect(input)).toMatchObject({ kind: 'bundle', copyFailed: true });
+		await flow.releasePendingKey();
+
+		// The sheet shows it
+		h.main.m.records.clear();
+		h.main.m.apply = committed(true);
+
+		const ctrl = await open({ appId: 'claude-desktop', view: 'connect' });
+
+		ctrl.submit();
+		await until(() => ctrl.get().phase == 'bundle');
+		expect(ctrl.get().bundle).toMatchObject({ copyFailed: false, copied: true });
+	});
+
+	test('R11: Configure after Anytype quit Claude and couldn\'t start it again → the sheet says to open it', () => {
+		views();
+
+		const reopen = esc(fill('aiConnectErrorReopen', APP));
+
+		expect(finishHtml({ state: 'notConfirmed', configure: true, openFailed: true, copied: true })).toContain(reopen);
+		expect(finishHtml({ state: 'notConfirmed', configure: true, copied: true })).not.toContain(reopen);
+	});
+
+	test('R14: the development text names update.sh\'s arguments and the rebuild', () => {
+		views();
+
+		const dev = errorText({ stage: 'verify', category: 'bundleMissing', devBuild: true }, APP);
+
+		expect(dev).toContain('./update.sh <platform> <arch> (e.g. macos-latest arm64)');
+		expect(dev).toContain('ANYTYPE_MCP_BIN');
+		expect(dev).toContain('bun run build:electron');
+		expect(fs.readFileSync(path.resolve(__dirname, '../../../../update.sh'), 'utf8')).toMatch(/platform=\$\{1:-ubuntu-latest\};\narch=\$2;/);
+		expect(fs.readFileSync(path.resolve(__dirname, '../../../../update.sh'), 'utf8')).toContain('"macos-latest"');
+	});
+
+	test('R15: a switched-off extension: paste the new key in its Configure, then switch it on; never the install dialog\'s "when it asks"', () => {
+		views();
+
+		const html = finishHtml({ state: 'off', copied: true });
+
+		expect(html).toContain(esc(fill('aiConnectBundleTurnOn', APP)));
+		expect(TEXT.aiConnectBundleTurnOn).toContain('Configure');
+		expect(html).toContain(esc(TEXT.aiConnectBundleClipboardConfigure));
+		expect(html).not.toContain(esc(fill('aiConnectBundleClipboard', APP)));
+		// The install dialog keeps its wording
+		expect(finishHtml({ state: 'finish', copied: true })).toContain(esc(fill('aiConnectBundleClipboard', APP)));
 	});
 });

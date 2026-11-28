@@ -7,6 +7,7 @@
  */
 import crypto from 'crypto';
 import type { Env } from './types';
+import { keyFingerprint } from './digest';
 
 /** How long a copied key stays on the clipboard */
 export const CLIPBOARD_TTL_MS = 5 * 60 * 1000;
@@ -22,7 +23,8 @@ const digest = (text: string): string => crypto.createHash('sha256').update(text
 
 export class SecretClipboard {
 
-	private held: { hash: string; generation: number; owner: SecretOwner; cancel: () => void } | null = null;
+	/** `fp`: the text's key fingerprint (equal to a record's `keyFp` only when the text is exactly that key); `until`: the deadline */
+	private held: { hash: string; fp: string; until: number; generation: number; owner: SecretOwner; cancel: () => void } | null = null;
 	private generation = 0;
 
 	/** Writes `text`; false when the clipboard can't be written */
@@ -38,7 +40,7 @@ export class SecretClipboard {
 		const generation = ++this.generation;
 		const cancel = env.setTimer(() => this.clearGeneration(env, generation), CLIPBOARD_TTL_MS);
 
-		this.held = { hash: digest(text), generation, owner: { ...owner }, cancel };
+		this.held = { hash: digest(text), fp: keyFingerprint(text), until: env.now() + CLIPBOARD_TTL_MS, generation, owner: { ...owner }, cancel };
 		return true;
 	};
 
@@ -47,9 +49,12 @@ export class SecretClipboard {
 		return this.held ? { ...this.held.owner } : null;
 	};
 
-	/** The latest copy, not cleared yet, is the one `match` names (the clipboard itself is not read) */
-	holds (match: (owner: SecretOwner) => boolean): boolean {
-		return !!this.held && match({ ...this.held.owner });
+	/**
+	 * The latest copy, not cleared yet, is exactly the key with fingerprint `fp` (not a snippet, not another key) and
+	 * the one `match` names: its deadline, else 0. The clipboard itself is not read (R7)
+	 */
+	keyUntil (match: (owner: SecretOwner) => boolean, fp: string): number {
+		return (this.held && !!fp && (this.held.fp == fp) && match({ ...this.held.owner })) ? this.held.until : 0;
 	};
 
 	/** Clears the latest copy when `match` (default: any) says it is the one */

@@ -375,6 +375,7 @@ content = (
 					onRetryLookup={() => ctrl.retryLookup()}
 					onManual={() => ctrl.enterManual('done', connection)}
 					onContinue={() => S.Popup.update(POPUP_ID, { data: { appId, connectionId: connection.id, view: 'finish' } })}
+					onUseExtension={state.canUseExtension ? () => ctrl.useExtension() : undefined}
 					onClose={() => close()}
 				/>
 			) : null;

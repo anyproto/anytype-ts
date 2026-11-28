@@ -44,6 +44,8 @@ export interface AiConnectManageProps {
 	onManual: () => void;
 	/** Claude's extension, not "Connected" yet: its Finish view again */
 	onContinue?: () => void;
+	/** Claude's settings-file or manual record, with a bundle Claude could install: the extension's preview (R8) */
+	onUseExtension?: () => void;
 	onClose: () => void;
 };
 
@@ -55,7 +57,7 @@ const EDIT_FOCUSABLE = 'select:not(:disabled), input:not(:disabled), button:not(
 const AiConnectManage = (props: AiConnectManageProps) => {
 	const {
 		appName, appId, icon, connection, access, spaces, siblings, notice, busy, apiListening, moved, override, lookupFailed, initialEditing, formatDate,
-		onSaveAccess, onSaveTier, onReveal, onReconnect, onReplace, onDisconnect, onForget, onRetry, onRetryCheck, onRetryLookup, onManual, onContinue, onClose,
+		onSaveAccess, onSaveTier, onReveal, onReconnect, onReplace, onDisconnect, onForget, onRetry, onRetryCheck, onRetryLookup, onManual, onContinue, onUseExtension, onClose,
 	} = props;
 	const [ editing, setEditing ] = useState<'access' | 'tier' | null>(initialEditing || null);
 	const [ draft, setDraft ] = useState<I.LinkAppGrant>(access?.grant || connection.grant);
@@ -311,6 +313,7 @@ const AiConnectManage = (props: AiConnectManageProps) => {
 			<div className="apiKeyButtons">
 				<div className="aside">
 					{!removed ? link(translate('aiConnectSetUpManually'), onManual) : null}
+					{(!removed && onUseExtension) ? link(translate('aiConnectUseExtension'), onUseExtension, !apiListening || lookupFailed) : null}
 					{probeFailed ? link(translate('aiAppsRetryCheck'), onRetryCheck, !apiListening) : null}
 				</div>
 				{removed ? (

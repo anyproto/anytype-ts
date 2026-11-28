@@ -61,6 +61,17 @@ export const ManageShared: Story = {
 };
 
 /** An Other-app connection: no file, the tool set is part of what the user pasted */
+/** Claude Desktop set up through its settings file, with a bundle Claude could install: "Use Claude's extension" (R8) */
+export const ManageClaudeUseExtension: Story = {
+	args: {
+		appName: 'Claude Desktop', appId: 'claude-desktop', onUseExtension: noop,
+		connection: connection({
+			id: 'claude-desktop', appId: 'claude-desktop', name: 'Claude Desktop', route: 'stdio', method: 'config',
+			targetPath: '/Users/me/Library/Application Support/Claude/claude_desktop_config.json', displayTarget: '~/Library/Application Support/Claude/claude_desktop_config.json',
+		}),
+	},
+};
+
 export const ManageOther: Story = { args: { appName: 'Zed', appId: 'other', connection: CONNECTION_OTHER, access: { grant: GRANT_READ_ONE, expireAt: 0, present: true } } };
 
 /** After a disconnect that left the entry in place */

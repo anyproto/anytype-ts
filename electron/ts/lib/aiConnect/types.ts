@@ -261,11 +261,14 @@ export type ApplyOutcome =
 		/** With `deliver`: Claude's install identity at apply time (the latch starts from it) */
 		install?: { version: string; installedAt: string } | null;
 		/**
-		 * With `deliver`: the Anytype entry in Claude's settings file that the user agreed to replace goes. The service runs
-		 * this right after the commit, before the key is copied and the bundle handed to Claude; null: removed (or gone
-		 * already). Anything else removed nothing: the service undoes the commit and answers with it
+		 * With `deliver`: the last check of Claude's settings file, under its lock, right after the record's first save
+		 * and before the key is copied and the bundle handed to Claude. No entry → go on; the entry the user agreed to
+		 * replace → removed (Claude closed first); anything else → refused. null: go on. Anything else changed nothing
+		 * there: the service undoes the save and answers with it (R1, R3)
 		 */
-		removeEntry?: () => Promise<null | { needs: 'quitApp' | 'quitAppSelf' } | { error: AiError }>;
+		settleEntry?: () => Promise<null | { needs: 'quitApp' | 'quitAppSelf' } | { error: AiError }>;
+		/** With `deliver`: the service won't deliver after all (its save failed); a Claude that Anytype quit is started again */
+		abort?: () => Promise<void>;
 	}
 	| { ok: false; needs: 'quitApp' | 'quitAppSelf' }
 	| { ok: false; error: AiError };

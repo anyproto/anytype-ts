@@ -251,6 +251,12 @@ export const makeMain = () => {
 		hold: {} as Record<string, { promise: Promise<any>; resolve: (v?: any) => void }>,
 		/** What main put on the clipboard last (aiConnectCopySecret, or a bundle apply), and what it is bound to */
 		clipboard: null as null | { text: string; connectionId?: string; appHash?: string },
+		/** When main takes that copy off the clipboard (ms) */
+		clipboardUntil: 0,
+		/** A key by its hash, as heart has it (set by installHarness): `keyCopied` only for the record's own key, as main (R7) */
+		keyOf: (hash: string): string => '',
+		/** aiConnectBundleInfo: null when the build has no bundle Claude could install */
+		bundleInfo: null as null | { signed: boolean },
 		/** A bundle apply: main couldn't copy the key / open the bundle; the installed extension takes the key in Configure */
 		bundleCopyFails: false,
 		bundleOpenFails: false,
@@ -261,11 +267,17 @@ export const makeMain = () => {
 
 	/** Records whose current absence was reported (main keeps it on the record: removedReported) */
 	const reported = new Set<string>();
-	// As main: `keyCopied` while the latest copy is this record's and wasn't cleared
-	const copiedFor = (r: any): boolean => !!m.clipboard && ((m.clipboard.connectionId == r.id) || (!!r.appHash && (m.clipboard.appHash == r.appHash)));
+	// As main: `keyCopied` (with its deadline) while the latest copy is this record's own key and wasn't cleared
+	const copiedFor = (r: any): boolean => !!m.clipboard && ((m.clipboard.connectionId == r.id) || (!!r.appHash && (m.clipboard.appHash == r.appHash)))
+		&& !!r.appHash && (m.clipboard.text === m.keyOf(r.appHash));
 	const view = (r: any): AiConnection => ({
-		...r, status: m.statuses.get(r.id) || (r.removed ? 'removed' : 'ok'), displayTarget: r.targetPath ? '~/x' : '', ...(copiedFor(r) ? { keyCopied: true } : {}),
+		...r, status: m.statuses.get(r.id) || (r.removed ? 'removed' : 'ok'), displayTarget: r.targetPath ? '~/x' : '',
+		...(copiedFor(r) ? { keyCopied: true, keyCopiedUntil: m.clipboardUntil || (Date.now() + flow.flowConfig.clipboardTtl) } : {}),
 	});
+	const copied = (c: { text: string; connectionId?: string; appHash?: string }): void => {
+		m.clipboard = c;
+		m.clipboardUntil = Date.now() + flow.flowConfig.clipboardTtl;
+	};
 	const list = () => [ ...records.values() ].map(view);
 	const planFor = (appId: string): AiPlan => m.plans[appId] || { ...BASE_PLAN, appId: appId as any };
 
@@ -346,10 +358,10 @@ export const makeMain = () => {
 			// As main: the record first, then the key onto the clipboard, then the bundle
 			if (bundle && res.ok) {
 				if (!m.bundleCopyFails) {
-					m.clipboard = { text: p.key, connectionId: res.connection.id };
+					copied({ text: p.key, connectionId: res.connection.id });
 				};
 				return {
-					...res,
+					...res, connection: view(records.get(res.connection.id)),
 					...(m.bundleCopyFails ? { copyFailed: true } : {}), ...(m.bundleOpenFails ? { openFailed: true } : {}), ...(m.bundleConfigure ? { configure: true } : {}),
 				};
 			};
@@ -387,7 +399,7 @@ export const makeMain = () => {
 			if (m.copyFails) {
 				return { ok: false };
 			};
-			m.clipboard = { text: p.text, ...(p.connectionId ? { connectionId: p.connectionId } : { appHash: p.appHash }) };
+			copied({ text: p.text, ...(p.connectionId ? { connectionId: p.connectionId } : { appHash: p.appHash }) });
 			return { ok: true };
 		},
 		aiConnectRecordManual: p => m.recordManual ? m.recordManual(p) : deliver(p.connectionId || ((p.appId == 'other') ? 'other-0a1b2c3d' : p.appId), p, 'manual'),
@@ -523,6 +535,7 @@ export const makeMain = () => {
 			return { claimed };
 		},
 		aiConnectRestartApp: () => ({ ok: true }),
+		aiConnectBundleInfo: () => m.bundleInfo,
 		aiConnectOpenApp: () => ({ ok: true }),
 		aiConnectReveal: () => ({ ok: true }),
 	};
@@ -586,6 +599,7 @@ export const installHarness = (): Harness => {
 	};
 
 	listening(true);
+	main.m.keyOf = (hash: string) => heart.rows.get(hash)?.apiKey || '';
 	vi.stubGlobal('C', heart.C);
 	vi.stubGlobal('Renderer', { send: main.send });
 	vi.stubGlobal('S', { Auth: auth, AiConnect: store });

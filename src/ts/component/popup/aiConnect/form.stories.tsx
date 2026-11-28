@@ -7,7 +7,8 @@ import * as I from 'Interface';
 import { DEFAULT_GRANT } from 'Lib/aiConnect/catalog';
 import AiConnectForm, { type AiConnectFormProps } from './form';
 import {
-	formatDate, GRANT_ALL, GRANT_READ_ONE, noop, PLAN_CLAUDE_CODE_SANDBOX, PLAN_CLAUDE_DESKTOP, PLAN_CLAUDE_DESKTOP_NO_BUNDLE, PLAN_CLAUDE_DESKTOP_REPLACE, PLAN_CURSOR, PLAN_CURSOR_FOREIGN,
+	formatDate, GRANT_ALL, GRANT_READ_ONE, noop, PLAN_CLAUDE_CODE_SANDBOX, PLAN_CLAUDE_DESKTOP, PLAN_CLAUDE_DESKTOP_CANT_REMOVE, PLAN_CLAUDE_DESKTOP_NO_BUNDLE, PLAN_CLAUDE_DESKTOP_REPLACE,
+	PLAN_CURSOR, PLAN_CURSOR_FOREIGN,
 	PLAN_CURSOR_MANUAL, SPACES,
 } from './stories.data';
 
@@ -93,6 +94,11 @@ export const ConnectClaudeExtension: Story = {
 /** Claude Desktop's extension over an Anytype entry in Claude's settings file: Replace and connect removes that entry */
 export const ConnectClaudeExtensionReplace: Story = {
 	args: { appName: 'Claude Desktop', appId: 'claude-desktop', routes: [ 'stdio' ], route: 'stdio', tier: 'full', plan: PLAN_CLAUDE_DESKTOP_REPLACE, fullOnly: true, onConfigRoute: noop },
+};
+
+/** An entry in Claude's settings file that Anytype can't remove safely: not offered for Replace (R6) */
+export const ConnectClaudeCantRemove: Story = {
+	args: { appName: 'Claude Desktop', appId: 'claude-desktop', routes: [ 'stdio' ], route: 'stdio', tier: 'full', plan: PLAN_CLAUDE_DESKTOP_CANT_REMOVE, fullOnly: true },
 };
 
 /** A development build without Claude's extension bundle: what is missing and how to build it */
