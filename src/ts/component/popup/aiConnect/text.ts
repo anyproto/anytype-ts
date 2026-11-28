@@ -79,6 +79,7 @@ export const tierNote = (tier: I.AiTier, route: I.AiRoute): string => {
 const CATEGORIES: I.AiErrorCategory[] = [
 	'unparseable', 'unsupportedForm', 'permission', 'outsideHome', 'changed', 'conflict', 'stale', 'cliFailed', 'cliTooOld', 'notFound',
 	'timeout', 'apiOff', 'keyNotFound', 'unsupportedPackage', 'unauthorized', 'unreachable', 'unsaved', 'unknown', 'storeDenied', 'installFailed',
+	'bundleMissing',
 ];
 
 /**
@@ -110,6 +111,10 @@ export const errorText = (error: I.AiError, app: string, target?: string): strin
 	// Anytype's own connector (anytype-mcp): missing from this build or not the one it was built with
 	if ((stage == 'verify') && (category == 'notFound')) {
 		return translate('aiConnectErrorConnectorMissing');
+	};
+	// Claude's extension isn't in this copy of Anytype (or is damaged); a development build also says how to build it
+	if (category == 'bundleMissing') {
+		return tr(error.devBuild ? 'aiConnectErrorBundleMissingDev' : 'aiConnectErrorBundleMissing', app);
 	};
 
 	const key = CATEGORIES.includes(category) ? errorKey(category) : 'aiConnectErrorUnknown';

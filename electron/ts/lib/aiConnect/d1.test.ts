@@ -214,11 +214,17 @@ describe('D1: Claude\'s extension route', () => {
 });
 
 describe('D1: both Claude routes, Disconnect order', () => {
-	test('D1-17: config present then bundle plan; bundle present then config plan — refused before mint, each naming the other; both appear after setup → conflict at the check', async () => {
+	test('D1-17: config present then bundle plan → Replace asked (an unreadable config still refused); bundle present then config plan — refused before mint, naming the extension; both appear after setup → conflict at the check', async () => {
 		const withConfig = machine({ files: { [CONFIG]: JSON.stringify({ mcpServers: { anytype: { command: 'x' } } }) } });
 
-		expect(await withConfig.svc.plan(planParam({ appId: 'claude-desktop', route: 'stdio', tier: 'full', method: 'package' }))).toMatchObject({ canApply: false, error: { category: 'conflict' }, note: 'aiConnectClaudeBothConfig' });
+		// The extension replaces the entry only with the user's Replace (claudeDesktop.replace.test.ts has the whole flow)
+		expect(await withConfig.svc.plan(planParam({ appId: 'claude-desktop', route: 'stdio', tier: 'full', method: 'package' }))).toMatchObject({ canApply: true, existing: 'foreign', replace: { targetPath: CONFIG }, note: 'aiConnectClaudeReplaceConfig' });
 		expect(await withConfig.svc.apply(bundle())).toMatchObject({ ok: false, error: { category: 'conflict' } });
+
+		const unreadable = machine({ files: { [CONFIG]: '{ broken' } });
+
+		expect(await unreadable.svc.plan(planParam({ appId: 'claude-desktop', route: 'stdio', tier: 'full', method: 'package' }))).toMatchObject({ canApply: false, error: { category: 'conflict' }, note: 'aiConnectClaudeBothConfig' });
+		expect(await unreadable.svc.apply(bundle())).toMatchObject({ ok: false, error: { category: 'conflict' } });
 
 		const withExtension = machine({ files: { [CONFIG]: '{}', ...extension() } });
 

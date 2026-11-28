@@ -22,8 +22,13 @@
  * - The entry's presence comes from the snapshot taken BEFORE Claude was quit: one that vanished while Claude
  *   quit is the user's removal, never re-added.
  *
- * One connection, one server (`claudeRoutes`): either route is refused while the other one is there, before a
- * key is minted; a check that finds both says `conflict`. Anytype removes neither by itself.
+ * One connection, one server (`claudeRoutes`): the settings-file route is refused while the extension is there
+ * (Anytype can't remove an extension), before a key is minted; a check that finds both says `conflict`. The
+ * extension replaces an Anytype entry in Claude's settings file only after the user's Replace for exactly that
+ * entry (`ctx.replace`, its digest), Claude closed first: the plan asks before any key exists, apply checks the
+ * consent again under the lock, and the service removes the entry (`removeEntry`) right after the record's save,
+ * before the key is copied; when that fails the save is undone. A settings file that can't be read is refused as
+ * before. Anytype removes nothing without that Replace.
  *
  * Extension state files (UNVERIFIED field names): `extensions-installations.json` → the record of the extension
  * id (version, installedAt, signatureInfo), and `Claude Extensions Settings/<id>.json` → `isEnabled` (the only
@@ -280,6 +285,13 @@ const bothRoutesPlan = (plan: AiPlan, other: 'config' | 'extension'): AiPlan => 
 });
 
 /**
+ * No bundle Claude could install: none in this build (a development build without a forwarder) or one that fails
+ * its digest check. Never `unsupportedPackage` (that is the Linux sandbox only); a development build's text says
+ * how to put the forwarder in place
+ */
+export const bundleMissing = (env: Env): AiError => ({ ...err('verify', 'bundleMissing'), ...(buildMeta(env)?.signed ? {} : { devBuild: true }) });
+
+/**
  * S8: Claude's config file is shared by every account and every Anytype profile, so deciding whose the entry is
  * and changing it run one at a time across processes: an exclusive `~/.anytype/ai-connect/claude-desktop.lock`
  * (the stable copy's lock rules). null: not acquired, and nothing was done.
@@ -289,8 +301,29 @@ const configLock = async <T>(env: Env, fn: () => Promise<T>): Promise<T | null> 
 
 // ---------------------- the extension ---------------------- //
 
+/**
+ * Whether Claude may be written behind for removing the entry, before any key exists (plan) or before the commit
+ * (apply): Claude rewrites its settings file while it runs, so it is closed first, as on the config route. null:
+ * it may (stopped, or unknown after the user said they quit it, or running and Anytype may quit it)
+ */
+const quitNeeded = async (ctx: Ctx, det: Detected): Promise<'quitApp' | 'quitAppSelf' | null> => {
+	const running = await runningState(ctx.env, det);
+
+	if (running.state == 'unknown') {
+		return ctx.quitConfirmed ? null : 'quitAppSelf';
+	};
+	if (running.state == 'running') {
+		// Several main processes: none can be picked to signal, the user quits Claude
+		if (!running.pid) {
+			return 'quitAppSelf';
+		};
+		return ctx.allowQuit ? null : 'quitApp';
+	};
+	return null;
+};
+
 const primary = {
-	plan: async (ctx: Ctx, base: AiPlan): Promise<AiPlan> => {
+	plan: async (ctx: Ctx, det: Detected, rec: AiRecord | null, base: AiPlan): Promise<AiPlan> => {
 		const bundle = bundleInfo(ctx.env);
 		// Always Full (§3.3): the bundle's manifest starts `serve --tier full`
 		const plan: AiPlan = { ...base, tier: 'full', method: 'package', nextStep: 'confirmInApp', sentenceKey: 'aiConnectPlanPackage', steps: [], bundleSigned: !!bundle?.signed };
@@ -302,9 +335,15 @@ const primary = {
 			if (claudeRoutes(ctx.env).extension) {
 				return bothRoutesPlan(plan, 'extension');
 			};
-			return { ...manualPlan({ ...plan, tier: ctx.tier }, err('verify', 'unsupportedPackage'), steps), needsKey: !!steps.length };
+			return { ...manualPlan({ ...plan, tier: ctx.tier }, bundleMissing(ctx.env), steps), needsKey: !!steps.length };
 		};
-		if (claudeRoutes(ctx.env).config) {
+
+		// Claude's settings file: one that can't be read (or isn't Anytype's to write) is refused as before; an
+		// Anytype entry in it is replaced, only after the user's Replace (bound to its digest; its contents, which can
+		// hold a key, are never shown)
+		const t = loadConfig(ctx.env);
+
+		if ('error' in t) {
 			return bothRoutesPlan(plan, 'config');
 		};
 
@@ -319,13 +358,25 @@ const primary = {
 		if (denied) {
 			return manualPlan(plan, denied, []);
 		};
+		if (present(t.value)) {
+			plan.existing = entryOurs(t.value, rec) ? 'ours' : 'foreign';
+			plan.replace = { targetPath: t.real, foreignDigest: canonicalDigest(t.value) };
+			plan.note = 'aiConnectClaudeReplaceConfig';
+
+			// Asked before any key exists: Anytype quits Claude (one process), or the user does
+			const needs = await quitNeeded({ ...ctx, allowQuit: false, quitConfirmed: false }, det);
+
+			if (needs) {
+				plan.preflight = needs;
+			};
+		};
 		if (extensionInfo(ctx.env, bundle).configurable) {
 			return { ...plan, configure: true, sentenceKey: 'aiConnectPlanPackageConfigure' };
 		};
 		return plan;
 	},
 
-	apply: async (ctx: Ctx, det: Detected): Promise<ApplyOutcome> => {
+	apply: async (ctx: Ctx, det: Detected, rec: AiRecord | null): Promise<ApplyOutcome> => {
 		// Main forces Full on this route and refuses anything else (D1-18)
 		if (ctx.tier != 'full') {
 			return { ok: false, error: err('validate', 'unknown') };
@@ -335,10 +386,17 @@ const primary = {
 		const bundle = loaded?.info || null;
 
 		if (!loaded || !bundleUsable(bundle)) {
-			return { ok: false, error: err('verify', 'unsupportedPackage') };
+			return { ok: false, error: bundleMissing(ctx.env) };
 		};
-		if (claudeRoutes(ctx.env).config) {
+
+		const pre = loadConfig(ctx.env);
+
+		if ('error' in pre) {
 			return { ok: false, error: err('validate', 'conflict') };
+		};
+		// An Anytype entry in Claude's settings file only with the user's Replace for exactly this entry
+		if (present(pre.value) && !entryConsent(ctx, pre)) {
+			return { ok: false, error: err('validate', 'conflict', pre.real) };
 		};
 
 		const own = usable(ctx.env);
@@ -353,20 +411,118 @@ const primary = {
 			return { ok: false, error: denied };
 		};
 
+		let replacing = present(pre.value);
+
+		if (replacing) {
+			const needs = await quitNeeded(ctx, det);
+
+			if (needs) {
+				return { ok: false, needs };
+			};
+
+			// The consent against the file as it is now, under Claude's config lock (every profile's writer and removal wait for it)
+			const now = await configLock(ctx.env, async (): Promise<AiError | 'gone' | 'agreed'> => {
+				const t = loadConfig(ctx.env);
+
+				if ('error' in t) {
+					return err('validate', 'conflict');
+				};
+				if (!present(t.value)) {
+					return 'gone';
+				};
+				return entryConsent(ctx, t) ? 'agreed' : err('validate', 'conflict', t.real);
+			});
+
+			// Not acquired (another profile is at it): nothing was done
+			if (!now) {
+				return { ok: false, error: err('write', 'changed') };
+			};
+			if ((now != 'gone') && (now != 'agreed')) {
+				return { ok: false, error: now };
+			};
+			// Removed meanwhile (the user's own edit): nothing left to replace
+			replacing = (now == 'agreed');
+		};
+
 		const info = extensionInfo(ctx.env, bundle);
 		const configure = info.configurable;
 		const install = info.version ? { version: info.version, installedAt: info.installedAt } : null;
-		// Run by the service once the record is saved and the key copied: no key is in the bundle or its copy
+		/** Anytype quit Claude to remove the entry: it is started again on every path that doesn't open the bundle */
+		let quitted = false;
+		const relaunch = async (): Promise<boolean> => !quitted || !('error' in (await launch(ctx.env, det)));
+
+		/**
+		 * After the commit, before the key is copied: the entry the user agreed to replace goes. Claude is quit first
+		 * when it runs (and Anytype may); under the lock the entry must still be exactly that one (gone already is
+		 * fine), and only `mcpServers.anytype` is removed, by the config route's writer (a secret write: no backup,
+		 * no temp left behind, every other byte of the file as it was). A refusal starts Claude again if Anytype quit it
+		 */
+		const removeEntry = async (): Promise<null | { needs: 'quitApp' | 'quitAppSelf' } | { error: AiError }> => {
+			const needs = await quitNeeded(ctx, det);
+
+			if (needs) {
+				return { needs };
+			};
+
+			if ((await runningState(ctx.env, det)).state == 'running') {
+				const res = await quit(ctx.env, det, ctx.signalled || new Set());
+
+				if ('error' in res) {
+					// Another instance started meanwhile: left alone, the user is asked again
+					return (res.error.category == 'changed') ? { needs: 'quitApp' } : { error: res.error };
+				};
+				quitted = true;
+			};
+
+			const mayEdit = async (): Promise<boolean> => {
+				const now = await runningState(ctx.env, det);
+				return (now.state == 'stopped') || ((now.state == 'unknown') && !!ctx.quitConfirmed);
+			};
+			const locked = await configLock(ctx.env, () => writeConfigEntry(ctx.env, undefined, async t => {
+				if (!(await mayEdit())) {
+					return STILL_RUNNING;
+				};
+				if (!present(t.value)) {
+					return 'skip';
+				};
+				return entryConsent(ctx, t) ? null : err('validate', 'conflict', t.real);
+			}));
+			const res = locked || { ok: false as const, error: err('write', 'changed') };
+
+			if ('error' in res) {
+				const back = await relaunch();
+
+				quitted = false;
+				if (res.error.stage == 'restart') {
+					return { needs: 'quitApp' };
+				};
+				return { error: back ? res.error : { ...res.error, openFailed: true } };
+			};
+			return null;
+		};
+
+		// Run by the service once the record is saved (and the entry removed) and the key copied: no key is in the bundle or its copy
 		const deliver = async (): Promise<boolean> => {
 			if (configure) {
+				// Nothing is opened: a Claude that Anytype quit is started again for its Configure
+				await relaunch();
 				return true;
 			};
 
 			const copy = await copyBundle(ctx.env, loaded.data);
-			return ('path' in copy) && openBundle(ctx.env, det, copy.path);
+			const opened = ('path' in copy) && (await openBundle(ctx.env, det, copy.path));
+
+			// Opening the bundle starts Claude; one that wasn't opened is started again after Anytype quit it
+			if (!opened) {
+				await relaunch();
+			};
+			return opened;
 		};
 
-		return { ok: true, method: 'package', nextStep: 'confirmInApp', targetPath: '', observedInstalled: false, createdDirs: [], deliver, configure, install };
+		return {
+			ok: true, method: 'package', nextStep: 'confirmInApp', targetPath: '', observedInstalled: false, createdDirs: [], deliver, configure, install,
+			...(replacing ? { removeEntry } : {}),
+		};
 	},
 };
 
@@ -750,10 +906,10 @@ export const claudeDesktop: Adapter = {
 
 	plan: async (ctx, det, rec) => {
 		const base: AiPlan = { ...basePlan(ctx, { targetId: TARGET_ID, method: 'package', nextStep: 'confirmInApp', displayTarget: '', sentenceKey: 'aiConnectPlanPackage' }), instructions: INSTRUCTIONS };
-		return useConfigRoute(ctx) ? fallback.plan(ctx, det, rec, base) : primary.plan(ctx, base);
+		return useConfigRoute(ctx) ? fallback.plan(ctx, det, rec, base) : primary.plan(ctx, det, rec, base);
 	},
 
-	apply: (ctx, det, rec) => useConfigRoute(ctx) ? fallback.apply(ctx, det, rec) : primary.apply(ctx, det),
+	apply: (ctx, det, rec) => useConfigRoute(ctx) ? fallback.apply(ctx, det, rec) : primary.apply(ctx, det, rec),
 
 	remove: async (ctx, rec) => {
 		if (rec.method == 'config') {

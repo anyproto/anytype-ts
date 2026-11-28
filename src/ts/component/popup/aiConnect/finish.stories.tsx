@@ -41,11 +41,21 @@ export const FinishNeedsQuit: Story = { args: { appName: 'Claude Desktop', appId
 
 export const FinishNeedsQuitSelf: Story = { args: { appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'needsQuitSelf', instructions: PLAN_CLAUDE_DESKTOP.instructions } };
 
-const BUNDLE = { state: 'finish' as const, copyFailed: false, openFailed: false, configure: false, stopped: false };
+const BUNDLE = { state: 'finish' as const, copyFailed: false, openFailed: false, configure: false, stopped: false, copied: true };
 const BUNDLE_ACTIONS = { onCopyKey: noop, onOpenBundle: noop, onCancelSetup: noop, onCheckBundle: noop };
 
 /** Claude's extension after Connect: the key is on the clipboard, Claude asks for it while it installs the extension (§3.3) */
 export const FinishBundle: Story = { args: { appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'bundle', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundle: BUNDLE, ...BUNDLE_ACTIONS } };
+
+/** Five minutes later (or another copy replaced it): the key is off the clipboard, Copy key again */
+export const FinishBundleCleared: Story = {
+	args: { appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'bundle', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundle: { ...BUNDLE, copied: false }, ...BUNDLE_ACTIONS },
+};
+
+/** Installed but switched off in Claude */
+export const FinishBundleOff: Story = {
+	args: { appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'bundle', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundle: { ...BUNDLE, state: 'off' }, ...BUNDLE_ACTIONS },
+};
 
 /** Installed and on, but Claude hasn't used the key yet: Copy key and Configure */
 export const FinishBundleNotConfirmed: Story = {
@@ -56,7 +66,7 @@ export const FinishBundleNotConfirmed: Story = {
 export const FinishBundleFailed: Story = {
 	args: {
 		appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'bundle', instructions: PLAN_CLAUDE_DESKTOP.instructions,
-		bundle: { ...BUNDLE, copyFailed: true, openFailed: true, stopped: true }, ...BUNDLE_ACTIONS,
+		bundle: { ...BUNDLE, copyFailed: true, openFailed: true, stopped: true, copied: false }, ...BUNDLE_ACTIONS,
 	},
 };
 

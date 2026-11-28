@@ -94,6 +94,8 @@ export interface AiBundleState {
 	configure: boolean;
 	/** The 10-minute watch for heart's isActive ran out: Check again */
 	stopped: boolean;
+	/** The sheet's key is on the clipboard: main copied it and hasn't cleared it yet (the deadline, another copy, …) */
+	copied: boolean;
 };
 
 export interface AiConnectState {
@@ -216,6 +218,8 @@ export class AiConnectController {
 	private sheet: Shown | null = null;
 	/** The keys the manual view put on the clipboard (by hash): closing the popup takes them off (D1S-11) */
 	private copied = new Set<string>();
+	/** The Finish sheet's copied key reaches main's clipboard deadline (§3.4) */
+	private clipTimer: ReturnType<typeof setTimeout> | null = null;
 	/** Manage's load in flight (its plan): Replace waits for it (W2) */
 	private manageLoad: Promise<void> | null = null;
 	/** The expiry choice the connect attempt was submitted with (X1) */
@@ -308,6 +312,7 @@ export class AiConnectController {
 		this.closing = true;
 		this.disposed = true;
 		this.pollToken++;
+		this.clipboardTimer(false);
 		this.listeners.clear();
 		return Promise.all([ flow.releasePendingKey(), ...copied.map(appHash => flow.clearCopied({ appHash })) ]).then(() => {});
 	};
@@ -551,7 +556,7 @@ export class AiConnectController {
 		};
 		// A same-key delivery that met a foreign entry: Replace adds only the consent to the entry shown (W3)
 		if (formLocked && (a?.kind == 'connect') && a.input.sameKey) {
-			a.input = { ...a.input, shown: plan, replace: ((plan.existing == 'foreign') && plan.replace) ? { ...plan.replace } : undefined };
+			a.input = { ...a.input, shown: plan, replace: plan.replace ? { ...plan.replace } : undefined };
 			this.deliver({});
 			return;
 		};
@@ -584,7 +589,7 @@ export class AiConnectController {
 			method: bundle ? 'package' : ((this.method == 'config') ? 'config' : undefined),
 			existing,
 			shown: plan,
-			replace: (plan.existing == 'foreign') && plan.replace ? { ...plan.replace } : undefined,
+			replace: plan.replace ? { ...plan.replace } : undefined,
 			reread: (reconnect && !reconnect.keyGone) ? { hash: reconnect.connection.appHash, grant: reconnect.grant, expireAt: reconnect.expireAt } : undefined,
 		};
 
@@ -817,8 +822,9 @@ export class AiConnectController {
 				this.sheet = { accountId: accountNow(), id: res.connection.id, appHash: res.connection.appHash };
 				this.set({
 					connectionId: res.connection.id, plan: res.plan, unsaved: !res.recordSaved, phase: 'bundle',
-					bundle: { copyFailed: res.copyFailed, openFailed: res.openFailed, configure: res.configure, stopped: false },
+					bundle: { copyFailed: res.copyFailed, openFailed: res.openFailed, configure: res.configure, stopped: false, copied: !res.copyFailed },
 				});
+				this.clipboardTimer(!res.copyFailed);
 				this.pollBundle();
 				return;
 			};
@@ -855,7 +861,7 @@ export class AiConnectController {
 					return;
 				};
 				// A replace whose entry changed since the preview: show the new one
-				if ((error.stage == 'validate') && (error.category == 'conflict') && (res.plan?.existing == 'foreign')) {
+				if ((error.stage == 'validate') && (error.category == 'conflict') && ((res.plan?.existing == 'foreign') || !!res.plan?.replace)) {
 					this.backToForm(null, []);
 					return;
 				};
@@ -949,7 +955,8 @@ export class AiConnectController {
 		// Claude's extension, not "Connected" yet: its Finish view, watching heart's isActive again
 		if ((c.method == 'package') && (c.status != 'ok') && !c.removed && c.appHash) {
 			this.sheet = { accountId: accountNow(), id: c.id, appHash: c.appHash };
-			this.set({ phase: 'bundle', bundle: { copyFailed: false, openFailed: false, configure: false, stopped: false } });
+			// Whether its key is still on the clipboard is main's to say (a copy made before the sheet was closed)
+			this.set({ phase: 'bundle', bundle: { copyFailed: false, openFailed: false, configure: false, stopped: false, copied: !!c.keyCopied } });
 			this.pollBundle();
 		} else {
 			this.routeTo(c);
@@ -1023,7 +1030,23 @@ export class AiConnectController {
 		// Another account, or another key on the record (another window's Reconnect): not this sheet's key any more (D1C-08)
 		const changed = (): boolean => !!shown && ((accountNow() != shown.accountId) || (S.AiConnect.getById(id)?.appHash != shown.appHash));
 		const settled = (c: AiConnection | null): boolean => !c || c.removed || changed() || (c.status == 'ok') || ATTENTION.includes(c.status);
-		const res = await flow.pollUntil(async () => changed() || (((await flow.check('finish')) == 'ok') && settled(S.AiConnect.getById(id))), this.alivePoll(token), {
+		const res = await flow.pollUntil(async () => {
+			if (changed()) {
+				return true;
+			};
+			if ((await flow.check('finish')) != 'ok') {
+				return false;
+			};
+
+			const c = S.AiConnect.getById(id);
+
+			// Main cleared the key from the clipboard (its deadline, another copy, an account switch): the sheet says so
+			if (this.state.bundle?.copied && c && !c.keyCopied && !this.alivePoll(token)()) {
+				this.clipboardTimer(false);
+				this.set({ bundle: { ...this.state.bundle, copied: false } });
+			};
+			return settled(c);
+		}, this.alivePoll(token), {
 			interval: flow.flowConfig.bundlePollInterval,
 			timeout: flow.flowConfig.bundlePollTimeout,
 		});
@@ -1051,6 +1074,26 @@ export class AiConnectController {
 			return;
 		};
 		this.set({ phase: 'connected' });
+	};
+
+	/**
+	 * The Finish sheet's key reaches main's clipboard deadline (§3.4): from a copy (`on`) the sheet says it is on the
+	 * clipboard until then, also when the watch has run out; a check that finds it cleared earlier says so sooner
+	 */
+	private clipboardTimer (on: boolean): void {
+		if (this.clipTimer) {
+			clearTimeout(this.clipTimer);
+			this.clipTimer = null;
+		};
+		if (!on || this.disposed) {
+			return;
+		};
+		this.clipTimer = setTimeout(() => {
+			this.clipTimer = null;
+			if (this.state.bundle?.copied) {
+				this.set({ bundle: { ...this.state.bundle, copied: false } });
+			};
+		}, flow.flowConfig.clipboardTtl);
 	};
 
 	/** Finish view: the watch again after it ran out */
@@ -1117,7 +1160,8 @@ export class AiConnectController {
 			return;
 		};
 		if (ok && this.state.bundle) {
-			this.set({ bundle: { ...this.state.bundle, copyFailed: false } });
+			this.set({ bundle: { ...this.state.bundle, copyFailed: false, copied: true } });
+			this.clipboardTimer(true);
 		};
 		this.ui.toast({ key: ok ? 'aiConnectKeyCopied' : 'aiConnectKeyCopyFailed' });
 	};

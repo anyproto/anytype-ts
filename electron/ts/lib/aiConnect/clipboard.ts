@@ -47,6 +47,11 @@ export class SecretClipboard {
 		return this.held ? { ...this.held.owner } : null;
 	};
 
+	/** The latest copy, not cleared yet, is the one `match` names (the clipboard itself is not read) */
+	holds (match: (owner: SecretOwner) => boolean): boolean {
+		return !!this.held && match({ ...this.held.owner });
+	};
+
 	/** Clears the latest copy when `match` (default: any) says it is the one */
 	clear (env: Env, match?: (owner: SecretOwner) => boolean): void {
 		if (this.held && (!match || match(this.held.owner))) {

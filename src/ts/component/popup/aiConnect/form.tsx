@@ -91,7 +91,7 @@ const AiConnectForm = (props: AiConnectFormProps) => {
 	if (manualOnly) {
 		primary = 'aiConnectSetUpManually';
 	} else
-	if (plan?.existing == 'foreign') {
+	if ((plan?.existing == 'foreign') || plan?.replace) {
 		primary = 'aiConnectReplaceButton';
 	} else
 	if (movedPath) {
@@ -109,8 +109,9 @@ const AiConnectForm = (props: AiConnectFormProps) => {
 	if (movedPath) {
 		notices.push(movedFrom ? tr('aiConnectTargetMovedSame', appName, movedPath, movedFrom) : tr('aiConnectTargetMovedApp', appName, movedPath));
 	};
-	// Only a plan that offers Replace says Connecting replaces it (Hermes never does, H9)
-	if (plan?.replace) {
+	// Only a plan that offers Replace says Connecting replaces it (Hermes never does, H9); Claude's extension says
+	// what it replaces in its note (the entry in Claude's settings file, whoever made it)
+	if (plan?.replace && (plan.method != 'package')) {
 		notices.push(tr('aiConnectReplaceNotice', appName));
 	};
 	if (plan && (plan.note || !plan.canApply)) {

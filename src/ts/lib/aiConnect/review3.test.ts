@@ -318,7 +318,8 @@ describe('X7: Claude Desktop\'s manual fallback can finish', () => {
 		const env = mac({ apps: [ 'Claude' ], dirs: [ CLAUDE_DIR ], files: { ...FORWARDER_FILES } });
 		const real = await realPlan(env, { appId: 'claude-desktop', route: 'stdio' });
 
-		expect(real).toMatchObject({ method: 'manual', canApply: false, needsKey: true, error: { category: 'unsupportedPackage' } });
+		// No bundle in this build: its own error (a development build says how to build one), never the Linux package's
+		expect(real).toMatchObject({ method: 'manual', canApply: false, needsKey: true, error: { stage: 'verify', category: 'bundleMissing', devBuild: true } });
 		expect(JSON.parse(real.steps.find((it: any) => it.snippet).snippet).mcpServers.anytype.env).toEqual({ ANYTYPE_API_KEY: '<KEY>' });
 		h.main.m.plans['claude-desktop'] = real;
 
@@ -430,7 +431,8 @@ describe('Y: the verification round', () => {
 		const damaged = await realPlan(env, { appId: 'claude-desktop', route: 'stdio' });
 
 		// The config route needs no extension, so it is still offered by hand
-		expect(damaged).toMatchObject({ canApply: false, method: 'manual', needsKey: true, error: { stage: 'verify', category: 'unsupportedPackage' } });
+		expect(damaged).toMatchObject({ canApply: false, method: 'manual', needsKey: true, error: { stage: 'verify', category: 'bundleMissing' } });
+		expect(damaged.error.devBuild).toBeUndefined();
 		expect(damaged.steps.map((it: any) => it.textKey)).toEqual([ 'aiConnectManualMerge', 'aiConnectManualKeepPrivate', 'aiConnectStepRestartSelf' ]);
 
 		// The forwarder itself replaced: nothing can be verified, so nothing is offered

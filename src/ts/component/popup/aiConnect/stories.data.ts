@@ -62,6 +62,18 @@ export const PLAN_CLAUDE_DESKTOP = plan({
 	steps: [],
 });
 
+/** Claude's extension over an Anytype entry in Claude's settings file: Replace and connect removes that entry (Claude is quit first) */
+export const PLAN_CLAUDE_DESKTOP_REPLACE: I.AiPlan = {
+	...PLAN_CLAUDE_DESKTOP, existing: 'foreign', note: 'aiConnectClaudeReplaceConfig', preflight: 'quitApp', targetPath: undefined,
+	replace: { targetPath: '/Users/me/Library/Application Support/Claude/claude_desktop_config.json', foreignDigest: 'b'.repeat(64) },
+};
+
+/** A development build without the connector and its bundle: nothing to install, with the hint how to build it */
+export const PLAN_CLAUDE_DESKTOP_NO_BUNDLE: I.AiPlan = {
+	...PLAN_CLAUDE_DESKTOP, canApply: false, method: 'manual', sentenceKey: 'aiConnectPlanManual', needsKey: false, targetPath: undefined,
+	error: { stage: 'verify', category: 'bundleMissing', devBuild: true },
+};
+
 /** Claude Desktop by hand: its settings file's command entry, the key in `env` */
 export const PLAN_CLAUDE_DESKTOP_MANUAL = plan({
 	appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', tier: 'full', method: 'config', nextStep: 'restart', displayTarget: '~/Library/Application Support/Claude/claude_desktop_config.json',

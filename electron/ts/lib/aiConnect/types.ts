@@ -260,6 +260,12 @@ export type ApplyOutcome =
 		configure?: boolean;
 		/** With `deliver`: Claude's install identity at apply time (the latch starts from it) */
 		install?: { version: string; installedAt: string } | null;
+		/**
+		 * With `deliver`: the Anytype entry in Claude's settings file that the user agreed to replace goes. The service runs
+		 * this right after the commit, before the key is copied and the bundle handed to Claude; null: removed (or gone
+		 * already). Anything else removed nothing: the service undoes the commit and answers with it
+		 */
+		removeEntry?: () => Promise<null | { needs: 'quitApp' | 'quitAppSelf' } | { error: AiError }>;
 	}
 	| { ok: false; needs: 'quitApp' | 'quitAppSelf' }
 	| { ok: false; error: AiError };

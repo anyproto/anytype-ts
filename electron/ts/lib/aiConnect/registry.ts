@@ -453,6 +453,34 @@ export class Registry {
 		});
 	};
 
+	/**
+	 * Undoes a commit whose delivery couldn't go on (Claude's extension couldn't remove the settings-file entry it
+	 * replaces), in one save: the record as it was before (`prior`; null: there was none) and the mint intent of the
+	 * key that commit took (null: it had none), so that key is the renderer's undelivered one again
+	 */
+	revert (accountId: string, id: string, prior: AiRecord | null, intent: MintIntent | null): void {
+		if ((prior && (!isValidRecord(prior) || (prior.accountId != accountId) || (prior.id != id))) || (intent && !isValidIntent(intent))) {
+			throw Object.assign(new Error('invalid record'), { code: 'EREGISTRYRECORD' });
+		};
+
+		this.mutate(draft => {
+			const index = draft.connections.findIndex(it => (it.accountId == accountId) && (it.id == id));
+
+			if (prior && (index >= 0)) {
+				draft.connections[index] = copy(prior);
+			} else
+			if (prior) {
+				draft.connections.push(copy(prior));
+			} else
+			if (index >= 0) {
+				draft.connections.splice(index, 1);
+			};
+			if (intent) {
+				draft.mintIntents = [ ...(draft.mintIntents || []).filter(it => it.id != intent.id), copy(intent) ];
+			};
+		});
+	};
+
 	patch (accountId: string, id: string, partial: Partial<AiRecord>): AiRecord | null {
 		if (!this.get(accountId, id)) {
 			return null;

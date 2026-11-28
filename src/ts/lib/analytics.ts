@@ -27,7 +27,7 @@ const AI_STAGES = domain<AiErrorStage>({
 const AI_CATEGORIES = domain<AiErrorCategory>({
 	unparseable: true, unsupportedForm: true, permission: true, notFound: true, cliFailed: true, cliTooOld: true, timeout: true, changed: true,
 	conflict: true, stale: true, outsideHome: true, unsupportedPackage: true, keyNotFound: true, unreachable: true, unauthorized: true, apiOff: true,
-	unknown: true, unsaved: true, storeDenied: true, installFailed: true,
+	unknown: true, unsaved: true, storeDenied: true, installFailed: true, bundleMissing: true,
 });
 
 /**

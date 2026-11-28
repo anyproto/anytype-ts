@@ -46,6 +46,8 @@ export const flowConfig = {
 	/** Claude's extension: heart's isActive is read this often while the Finish view is open, for at most this long (§3.3) */
 	bundlePollInterval: 5000,
 	bundlePollTimeout: 10 * 60 * 1000,
+	/** Main takes a key it copied off the clipboard after this long (§3.4, electron clipboard.ts CLIPBOARD_TTL_MS) */
+	clipboardTtl: 5 * 60 * 1000,
 	/** A mint intent that matches no key is kept this long (a grant heart couldn't read for a moment is not lost), then dropped */
 	intentKeepSec: 24 * 3600,
 	/** CreateApp runs right after its mint intent is saved: only a key created this soon after the intent can be its key (D1C-06) */
@@ -1347,10 +1349,11 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 		return { kind: 'plan', reason: 'changed', plan: current };
 	};
 
-	// 2. Consents, bound to what the user saw: another entry, another place, or none any more → a new preview
+	// 2. Consents, bound to what the user saw: another entry, another place, or none any more → a new preview. Claude's
+	// extension asks for Replace before it removes the Anytype entry in Claude's settings file, its own one too
 	let replace: AiReplace | undefined;
 
-	if (current.existing == 'foreign') {
+	if ((current.existing == 'foreign') || current.replace) {
 		const agreed = input.replace;
 
 		if (!agreed || !current.replace || (agreed.targetPath != current.replace.targetPath) || (agreed.foreignDigest != current.replace.foreignDigest)) {
@@ -1386,12 +1389,14 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 		};
 	};
 
-	// Claude's extension: main takes its new key only over a record without a live one, so every rotation (a
-	// Reconnect, the form it went back to, a Replace) retires the old key here: after the plan, the consents and
-	// the re-read, before a key is minted (§3.3, D1C-04)
+	// Claude's extension: main takes its new key only over a record without a live one, so every rotation of an
+	// extension record (a Reconnect, the form it went back to, a Replace) retires the old key here: after the plan, the
+	// consents and the re-read, before a key is minted (§3.3, D1C-04). A settings-file (or manual) record the extension
+	// replaces keeps its key until main has committed the new one and removed its entry: main queues the old key in that
+	// commit, and it is revoked after the delivery like any rotation's
 	let existing = input.existing || null;
 
-	if ((current.method == 'package') && existing?.appHash && !input.sameKey) {
+	if ((current.method == 'package') && (existing?.method == 'package') && existing.appHash && !input.sameKey) {
 		const retired = await retireBundle(op, existing, { grant: input.grant, expireAt: input.expireAt });
 
 		if (!alive(op)) {
@@ -1727,7 +1732,7 @@ const reconnectBundle = async (op: Operation, connection: AiConnection, access: 
 
 	return connectIn(op, {
 		appId: connection.appId, route: connection.route, tier: 'full', recommendedTier: connection.recommendedTier, grant: access.grant, name: op.pending?.name || connection.name,
-		expireAt: access.expireAt, method: 'package', existing, shown: opts.plan || null,
+		expireAt: access.expireAt, method: 'package', existing, shown: opts.plan || null, replace: opts.replace, allowQuit: opts.allowQuit, quitConfirmed: opts.quitConfirmed,
 		...(existing.appHash ? { reread: { hash: existing.appHash, grant: opts.shown?.grant || access.grant, expireAt: opts.shown ? opts.shown.expireAt : access.expireAt } } : {}),
 	});
 };

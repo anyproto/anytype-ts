@@ -24,7 +24,9 @@
  *   candidate whose CLI may still be running is never retired by an absent entry; the record waits.
  * - Anytype keeps no copy of a key (tokens-plan §3). Claude's config route saves the new key as a candidate
  *   (entry digest and fingerprint) before the entry is written; Claude's extension saves the record `waiting`
- *   (the commit) before the key is copied to the clipboard and the bundle opened. Disconnect of the extension and
+ *   (the commit) before the key is copied to the clipboard and the bundle opened; an Anytype entry in Claude's settings
+ *   file the user agreed to replace goes right after that commit (`removeEntry`), and when it can't, the commit is
+ *   undone (the record and the key's mint intent as before) and nothing is copied or opened. Disconnect of the extension and
  *   of manual records queues every hash first; the config route queues once the entry is known to be ours,
  *   before it is deleted; HTTP adapters as before (a refused Disconnect queues nothing).
  * - The endpoint file (endpoint.ts) is kept in step with the Local API by `syncEndpoint`, the only writer.
@@ -542,6 +544,10 @@ export class AiConnectService {
 		if ((status == 'conflict') && this.bothRoutes.has(this.statusKey(rec.accountId, rec.id))) {
 			view.bothRoutes = true;
 		};
+		// The key this record copied hasn't left the clipboard yet (as main knows it: the clipboard isn't read for this)
+		if (this.clipboard.holds(o => (o.accountId == rec.accountId) && ((o.connectionId == rec.id) || (!!rec.appHash && (o.appHash == rec.appHash))))) {
+			view.keyCopied = true;
+		};
 		return view;
 	};
 
@@ -886,12 +892,49 @@ export class AiConnectService {
 
 			// Claude's extension (§3.3): this save is the commit — the key is copied and the bundle opened only after it
 			if (out.deliver) {
+				// The extension replaces the Anytype entry in Claude's settings file: the record no longer names one
+				if (out.removeEntry) {
+					delete fresh.entryDigest;
+					delete fresh.configPath;
+				};
+
+				// For an undo of this commit: the key's mint intent as it is now (the record as it was is `rec`)
+				const intent = (out.removeEntry && p.intentId) ? (this.reg.listIntents(p.accountId).find(it => it.id == p.intentId) || null) : null;
+				const intentLive = !!p.intentId && this.liveIntents.has(p.intentId);
+
 				try {
 					this.reg.upsert(fresh, p.intentId);
 					this.liveIntents.delete(p.intentId);
 				} catch (e) {
 					this.log('aiConnectSave', e);
 					return UNSAVED;
+				};
+
+				// The entry the user agreed to replace goes as late as possible: after the commit, before the key leaves
+				// Anytype. When it can't, nothing of this delivery happened: the commit is undone, the key is the
+				// renderer's undelivered one again (released or reused by it) and the user's entry is untouched
+				let refused: Awaited<ReturnType<NonNullable<typeof out.removeEntry>>> = null;
+
+				try {
+					refused = out.removeEntry ? await out.removeEntry() : null;
+				} catch (e) {
+					this.log('aiConnectApply', e);
+					refused = { error: { stage: 'write', category: 'unknown' } };
+				};
+				if (refused) {
+					try {
+						this.reg.revert(p.accountId, targetId, rec, intent);
+						if (intentLive) {
+							this.liveIntents.add(p.intentId);
+						};
+						return ('needs' in refused) ? { ok: false, needs: refused.needs } : { ok: false, error: refused.error };
+					} catch (e) {
+						// The undo can't be saved: the commit stands, with nothing copied or opened (Cancel setup disconnects it)
+						this.log('aiConnectSave', e);
+						this.setStatus(fresh, 'pending');
+						this.bundleStates.set(this.statusKey(fresh.accountId, fresh.id), 'finish');
+						return { ok: true, connection: this.view(fresh), copyFailed: true, openFailed: true };
+					};
 				};
 
 				const copied = !this.closing && (session == this.session) && this.clipboard.copy(this.env, p.key, { accountId: p.accountId, connectionId: fresh.id });

@@ -37,7 +37,9 @@ export type AiErrorCategory = 'unparseable' | 'unsupportedForm' | 'permission' |
 	/** Anytype's folder in the home folder (~/.anytype/ai-connect, or the connector's own) failed one of the connector's rules: `path` names it */
 	| 'storeDenied'
 	/** The connector couldn't be installed into ~/.anytype/bin */
-	| 'installFailed';
+	| 'installFailed'
+	/** This copy of Anytype has no usable Claude extension bundle (none in this build, or damaged); `devBuild` adds how to build one */
+	| 'bundleMissing';
 
 export interface AiError {
 	stage: AiErrorStage;
@@ -50,6 +52,8 @@ export interface AiError {
 	left?: 'extension' | 'entry';
 	/** Anytype quit the app for this delivery and couldn't open it again: the user has to start it */
 	openFailed?: boolean;
+	/** `bundleMissing` on a development build (`signed: false`): the text says how to put the missing part in place */
+	devBuild?: boolean;
 };
 
 export interface AiAppCatalogItem {
@@ -206,6 +210,12 @@ export interface AiConnection extends AiRecord {
 	bundleState?: AiBundleState;
 	/** Claude Desktop, status `conflict`: both of Claude's routes are there (the settings-file entry and the extension); the user removes one */
 	bothRoutes?: boolean;
+	/**
+	 * The latest key main put on the clipboard is this record's and main hasn't cleared it yet (deadline, "Connected",
+	 * Cancel setup, account switch, quit). Main never reads the clipboard for this, so text the user copied over it
+	 * later doesn't count
+	 */
+	keyCopied?: boolean;
 };
 
 export interface AiStep {
@@ -251,7 +261,10 @@ export interface AiPlan {
 	note?: string;
 	/** Claude Desktop only, from the build's metadata */
 	bundleSigned?: boolean;
-	/** Set exactly when `existing` is 'foreign': what Replace would replace; the renderer passes it back as is */
+	/**
+	 * What Replace would replace; the renderer passes it back as is. Set when `existing` is 'foreign', and on Claude's
+	 * extension route whenever it would remove the Anytype entry from Claude's settings file (`existing` 'ours' too)
+	 */
 	replace?: AiReplace;
 	/**
 	 * The canonical file this delivery writes, as previewed. The renderer passes it back unchanged as

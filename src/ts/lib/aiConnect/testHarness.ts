@@ -261,7 +261,11 @@ export const makeMain = () => {
 
 	/** Records whose current absence was reported (main keeps it on the record: removedReported) */
 	const reported = new Set<string>();
-	const view = (r: any): AiConnection => ({ ...r, status: m.statuses.get(r.id) || (r.removed ? 'removed' : 'ok'), displayTarget: r.targetPath ? '~/x' : '' });
+	// As main: `keyCopied` while the latest copy is this record's and wasn't cleared
+	const copiedFor = (r: any): boolean => !!m.clipboard && ((m.clipboard.connectionId == r.id) || (!!r.appHash && (m.clipboard.appHash == r.appHash)));
+	const view = (r: any): AiConnection => ({
+		...r, status: m.statuses.get(r.id) || (r.removed ? 'removed' : 'ok'), displayTarget: r.targetPath ? '~/x' : '', ...(copiedFor(r) ? { keyCopied: true } : {}),
+	});
 	const list = () => [ ...records.values() ].map(view);
 	const planFor = (appId: string): AiPlan => m.plans[appId] || { ...BASE_PLAN, appId: appId as any };
 
@@ -272,8 +276,9 @@ export const makeMain = () => {
 		if (((rec?.appHash || null) !== p.expectedHash) || rec?.removed) {
 			return { ok: false, error: { stage: 'validate', category: 'stale' } };
 		};
-		// As main: the extension's new key only over a record without another live one (every rotation retires first)
-		if ((method == 'package') && rec?.appHash && (rec.appHash != p.appHash)) {
+		// As main: the extension's new key only over an extension record without another live one (every rotation of one
+		// retires first); a settings-file record it replaces is rotated by this commit
+		if ((method == 'package') && (rec?.method == 'package') && rec?.appHash && (rec.appHash != p.appHash)) {
 			return { ok: false, error: { stage: 'validate', category: 'stale' } };
 		};
 

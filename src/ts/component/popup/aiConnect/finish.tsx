@@ -40,9 +40,10 @@ export interface AiConnectFinishProps {
 	/**
 	 * Phase `bundle`, Claude's extension until "Connected" (§3.3): the step the record is at (main's
 	 * `bundleState`), and what main couldn't do after the record's save. `bothRoutes`: Claude has the
-	 * settings-file entry too, so the bundle isn't opened again
+	 * settings-file entry too, so the bundle isn't opened again. `copied`: the key is on the clipboard now
+	 * (copied, not cleared yet); otherwise the sheet points to Copy key again
 	 */
-	bundle?: { state: I.AiBundleState; copyFailed: boolean; openFailed: boolean; configure: boolean; stopped: boolean; bothRoutes?: boolean } | null;
+	bundle?: { state: I.AiBundleState; copyFailed: boolean; openFailed: boolean; configure: boolean; stopped: boolean; bothRoutes?: boolean; copied?: boolean } | null;
 	/** The probe after the delivery passed */
 	probeOk?: boolean;
 	/** Translated error lines (phase `error`) */
@@ -125,7 +126,7 @@ const AiConnectFinish = (props: AiConnectFinishProps) => {
 		};
 
 		case 'bundle': {
-			const b = bundle || { state: 'finish' as I.AiBundleState, copyFailed: false, openFailed: false, configure: false, stopped: false };
+			const b = bundle || { state: 'finish' as I.AiBundleState, copyFailed: false, openFailed: false, configure: false, stopped: false, copied: false };
 			const finishing = (b.state == 'finish') && !b.configure;
 			// The bundle Anytype had to open didn't open: its error and Open again, whatever Claude reports, until it
 			// opens or the key is confirmed (D1C-17); never while Claude has both routes (D1C-14)
@@ -138,6 +139,17 @@ const AiConnectFinish = (props: AiConnectFinishProps) => {
 			} else
 			if (b.state == 'off') {
 				how = 'aiConnectBundleTurnOn';
+			};
+
+			// Where the key is: on the clipboard (until main clears it), or not any more (Copy key again). A key that
+			// couldn't be copied has its own notice above. In Configure the user pastes it without being asked
+			let clipboard = '';
+
+			if (b.copied) {
+				clipboard = (how == 'aiConnectBundleConfigure') ? translate('aiConnectBundleClipboardConfigure') : tr('aiConnectBundleClipboard', appName);
+			} else
+			if (!b.copyFailed) {
+				clipboard = translate('aiConnectBundleClipboardCleared');
 			};
 
 			body = (
@@ -153,7 +165,7 @@ const AiConnectFinish = (props: AiConnectFinishProps) => {
 							<button type="button" className="linkButton" disabled={busy} onClick={onRevealBundle}>{translate('aiConnectReveal')}</button>
 						</div>
 					) : null}
-					<p className="description">{translate('aiConnectBundleClipboard')}</p>
+					{clipboard ? <p className="description">{clipboard}</p> : null}
 					{b.stopped ? <p className="accessNotice" role="status">{tr('aiConnectBundleStopped', appName)}</p> : null}
 				</>
 			);
