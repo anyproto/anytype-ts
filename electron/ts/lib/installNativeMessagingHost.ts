@@ -23,7 +23,6 @@ const EXTENSION_IDS = [
 	'lcamkcmpcofgmbmloefimnelnjpcdpfn',
  ];
 const GECKO_ID = 'anytype@anytype.io';
-const USER_PATH = app.getPath('userData');
 const EXE_PATH = app.getPath('exe');
 
 const getManifestPath = (): string => {
@@ -116,7 +115,7 @@ const installToLinux = (): void => {
 };
 
 const installToWindows = (): void => {
-	const dir = path.join(USER_PATH, 'browsers');
+	const dir = path.join(app.getPath('userData'), 'browsers');
 
 	const chromeManifestPath = path.join(dir, 'chrome.json');
 	const firefoxManifestPath = path.join(dir, 'firefox.json');

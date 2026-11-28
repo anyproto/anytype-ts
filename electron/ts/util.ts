@@ -8,6 +8,7 @@ import ConfigManager from './config';
 import Constant from '../json/constant.json';
 import { AppWindow, TabView } from './types';
 import { isTrustedUrl } from './lib/trustedUrl';
+import { isIsolatedDev, isolatedDataPath } from './lib/isolateDev';
 
 const protocol = 'anytype';
 
@@ -96,6 +97,11 @@ class Util {
 
 	imagePath (): string {
 		return path.join(this.electronPath(), 'img');
+	};
+
+	// App icons: isolated dev runs use the dev set next to the official one
+	appIconPath (): string {
+		return isIsolatedDev() ? path.join(this.imagePath(), 'dev') : this.imagePath();
 	};
 
 	userPath (): string {
@@ -320,7 +326,7 @@ class Util {
 	};
 
 	defaultUserDataPath (): string {
-		return path.join(app.getPath('appData'), app.getName());
+		return isIsolatedDev() ? isolatedDataPath() : path.join(app.getPath('appData'), app.getName());
 	};
 
 	registerLinuxProtocolHandler (): void {

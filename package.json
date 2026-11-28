@@ -270,6 +270,7 @@
 			"electron/env.json",
 			"electron/img/*",
 			"electron/img/icons/*",
+			"!electron/img/dev{,/**/*}",
 			"build",
 			"!dist/*",
 			"dist/index.html",

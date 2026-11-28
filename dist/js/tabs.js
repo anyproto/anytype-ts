@@ -53,6 +53,11 @@ $(() => {
 	};
 
 	body.addClass(`platform-${electron.platform}`);
+
+	// Windows and Linux draw the app menu button in the window: name isolated dev runs as on macOS
+	if (electron.isIsolatedDev) {
+		menuBar.find('#window-menu .txt').text('Anytype Dev');
+	};
 	body.toggleClass('isFullScreen', isFullScreen);
 	body.addClass('tabsHidden'); // Start hidden, will be shown when tabs load
 

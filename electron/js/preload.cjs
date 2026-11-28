@@ -145,6 +145,8 @@ contextBridge.exposeInMainWorld('Electron', {
 	storeDelete: key => ipcRenderer.sendSync('storeDelete', key),
 
 	isPackaged: app.isPackaged,
+	// Run from source with --isolate-dev (electron/ts/lib/isolateDev.ts)
+	isIsolatedDev: !app.isPackaged && app.commandLine.hasSwitch('isolate-dev'),
 	// Origin embeds are served from, kept apart from the app (electron/ts/lib/embedProtocol.ts)
 	embedOrigin: 'anytype-embed://app',
 	userPath: () => app.getPath('userData'),

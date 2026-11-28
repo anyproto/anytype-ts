@@ -28,9 +28,12 @@ import { registerChatStatus } from './chatStatus';
 import { powerState, parseDropList, PowerEvent } from './lib/powerState';
 import { registerEmbedScheme, handleEmbedScheme, EMBED_ORIGIN } from './lib/embedProtocol';
 import { registerPermissionHandlers } from './lib/permissions';
+import { applyIsolatedDev, isIsolatedDev } from './lib/isolateDev';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
+
+applyIsolatedDev();
 
 const protocol = 'anytype';
 const binPath = fixPathForAsarUnpack(path.join(__dirname, 'dist', `anytypeHelper${is.windows ? '.exe' : ''}`));
@@ -358,7 +361,10 @@ function createWindow () {
 	MenuManager.initDock();
 	MenuManager.initGlobalShortcuts();
 
-	installNativeMessagingHost();
+	// Isolated dev runs leave the browser web clipper connected to the installed app
+	if (!isIsolatedDev()) {
+		installNativeMessagingHost();
+	};
 	Util.registerLinuxProtocolHandler();
 
 	// The approval window has no session and no Api id, so it reports the user's decision directly
