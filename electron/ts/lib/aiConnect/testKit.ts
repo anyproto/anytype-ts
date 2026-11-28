@@ -12,7 +12,7 @@ export const APP_ROOT_MAC = '/Applications/Anytype.app/Contents/Resources/app.as
 export const MCP_DIR = `${APP_ROOT_MAC}/dist/mcp`;
 export const GRANT: LinkAppGrant = { spaceIds: [], allSpaces: true, perm: 1 };
 
-/** The forwarder this fake build ships (the fake env computes its metadata from it and answers its key verbs in memory) */
+/** The forwarder this fake build ships (the fake env computes its metadata from it and answers `endpoint` and `version --json`) */
 export const FORWARDER_BIN = `${APP_ROOT_MAC}/dist/anytype-mcp`;
 export const FORWARDER_FILES: Record<string, string> = {
 	[FORWARDER_BIN]: 'FORWARDER-BYTES',
@@ -21,8 +21,8 @@ export const FORWARDER_FILES: Record<string, string> = {
 export const STABLE_BIN = `${MAC_HOME}/.anytype/bin-dev/anytype-mcp`;
 /** The same for a release build (`signed: true`) */
 export const STABLE_BIN_RELEASE = `${MAC_HOME}/.anytype/bin/anytype-mcp`;
-/** The label of Claude Desktop's item on a development build (never a file anytype-ts reads) */
-export const CLAUDE_ITEM = `${MAC_HOME}/.anytype/ai-connect/items-dev/claude-desktop.item`;
+/** The endpoint file a development build writes */
+export const ENDPOINT_DEV = `${MAC_HOME}/.anytype/ai-connect/endpoint-dev.json`;
 
 /** Keys as heart issues them (printable, no quotes); SENTINEL- so leaks are easy to find */
 export const KEY_A = 'SENTINEL-key-a-0123456789abcdef';
@@ -102,11 +102,17 @@ export const mac = (opt: MachineOpt = {}): FakeEnv => {
 	return fakeEnv(spec);
 };
 
-/** A service on `env` with its own queue and caches */
-export const service = (env: FakeEnv, registryFile = REGISTRY): AiConnectService => {
-	const svc = new AiConnectService(() => ({ env, registryFile }));
+/** The Local API as the renderer's shared settings describe it: listening on 31009 unless a test changes it */
+export interface ApiSettings { localApi: any; bind: any };
 
-	svc.configure({ env, registryFile });
+export const listening = (port = 31009): ApiSettings => ({ localApi: { enabled: true, port }, bind: { addr: `127.0.0.1:${port}`, success: true, error: '' } });
+
+/** A service on `env` with its own queue and caches; `api` is what main reads for the endpoint file */
+export const service = (env: FakeEnv, registryFile = REGISTRY, api: ApiSettings = listening()): AiConnectService => {
+	const setup = { env, registryFile, apiState: () => api };
+	const svc = new AiConnectService(() => setup);
+
+	svc.configure(setup);
 	return svc;
 };
 

@@ -3,7 +3,7 @@
  * this computer and the account's connections go in; sections of rows come out, each with its status text
  * key and its one action. The page and the stories render this model; nothing here touches a key.
  */
-import type { AiAppCatalogItem, AiAppId, AiConnection, AiDetection, AiTargetId } from '../../interface/aiConnect';
+import type { AiAppCatalogItem, AiAppId, AiBundleState, AiConnection, AiDetection, AiTargetId } from '../../interface/aiConnect';
 import { searchCatalog } from './catalog';
 
 /** The lookup a card needs: by app id (a Map, MobX's observable map, or a plain object) */
@@ -82,7 +82,9 @@ export const isMovedRecord = (c: AiConnection, detections: DetectionMap): boolea
 export type RowState =
 	| 'connect' | 'notInstalled' | 'unknown' | 'shared' | 'unsupported' | 'other'
 	| 'added' | 'connected' | 'finish' | 'pending' | 'probeFailed'
-	| 'removed' | 'accessEnded' | 'unreadable' | 'reconnect' | 'conflict' | 'revokeFailed' | 'gone' | 'checking';
+	| 'removed' | 'accessEnded' | 'unreadable' | 'reconnect' | 'conflict' | 'revokeFailed' | 'gone' | 'checking'
+	/** Claude's extension: set up, not "Connected" yet (`connection.bundleState` says which step); its key retired for a Reconnect */
+	| 'bundle' | 'disconnected';
 
 export type RowAction = 'connect' | 'getApp' | 'setUpManually' | 'setUpRemote' | 'manage' | 'continue' | 'retryCheck' | 'fix' | 'retry' | 'forget' | 'details' | 'setUp';
 
@@ -91,6 +93,8 @@ export interface RowStatus {
 	key: string;
 	args?: string[];
 	dot?: 'success' | 'error';
+	/** A text key shown after it (`aiAppsStatusRevokePending`: a replaced key heart hasn't confirmed revoked yet) */
+	suffix?: string;
 };
 
 export interface GalleryRow {
@@ -151,8 +155,15 @@ export const connectionState = (c: AiConnection): RowState => {
 		case 'notInstalled': {
 			return 'gone';
 		};
+		case 'disconnected': {
+			return 'disconnected';
+		};
 	};
 
+	// Claude's extension: "Connected" is heart's isActive, latched by main (status `ok`); never probed (§3.3)
+	if (c.method == 'package') {
+		return (c.status == 'ok') ? 'connected' : 'bundle';
+	};
 	if (![ 'none', 'ok' ].includes(c.lastProbe)) {
 		return 'probeFailed';
 	};
@@ -170,8 +181,22 @@ export const connectionState = (c: AiConnection): RowState => {
 	return c.firstUsedAt ? 'connected' : 'added';
 };
 
+/**
+ * A surviving record (live or retired) with a replaced key heart hasn't confirmed revoked: "Revocation pending"
+ * next to its state until heart does (tokens-plan §3.2, D1C-16). A removed one says so in its own state
+ */
+export const revocationPending = (c: AiConnection | null): boolean => !!c && !c.removed && (c.revokePending || []).some(h => !!h && (h != c.appHash));
+
+/** The status text of Claude's extension before "Connected", by main's `bundleState` (§3.3) */
+export const BUNDLE_STATUS: Record<AiBundleState, string> = {
+	finish: 'aiAppsStatusBundleFinish',
+	off: 'aiAppsStatusBundleOff',
+	notConfirmed: 'aiAppsStatusBundleNotConfirmed',
+	updated: 'aiAppsStatusBundleUpdated',
+};
+
 /** Status line and action of a state; `name` is the card's name */
-const describe = (state: RowState, name: string, item: AiAppCatalogItem | null, apiListening: boolean): Pick<GalleryRow, 'status' | 'actions'> => {
+const describe = (state: RowState, name: string, item: AiAppCatalogItem | null, apiListening: boolean, c: AiConnection | null = null): Pick<GalleryRow, 'status' | 'actions'> => {
 	const act = (id: RowAction, needsApi = false) => ({ id, disabled: needsApi && !apiListening });
 
 	switch (state) {
@@ -226,13 +251,22 @@ const describe = (state: RowState, name: string, item: AiAppCatalogItem | null, 
 			return { status: { key: 'aiAppsStatusAttention', dot: 'error' }, actions: [ act('fix', true) ] };
 		};
 		case 'conflict': {
-			return { status: { key: 'aiAppsStatusConflict', dot: 'error' }, actions: [ act('fix', true) ] };
+			// Claude has Anytype twice (the settings-file entry and the extension): Manage says which to remove (D1C-14)
+			const status: RowStatus = c?.bothRoutes ? { key: 'aiAppsStatusBothRoutes', args: [ name ], dot: 'error' } : { key: 'aiAppsStatusConflict', dot: 'error' };
+
+			return { status, actions: [ act('fix', true) ] };
 		};
 		case 'revokeFailed': {
 			return { status: { key: 'aiAppsStatusRevokeFailed', dot: 'error' }, actions: [ act('retry') ] };
 		};
 		case 'gone': {
 			return { status: { key: 'aiAppsNotInstalled' }, actions: [ act('forget') ] };
+		};
+		case 'bundle': {
+			return { status: { key: BUNDLE_STATUS[c?.bundleState || 'finish'], args: [ name ] }, actions: [ act('continue') ] };
+		};
+		case 'disconnected': {
+			return { status: { key: 'aiAppsStatusDisconnected', dot: 'error' }, actions: [ act('fix', true) ] };
 		};
 	};
 	return { status: null, actions: [] };
@@ -253,7 +287,12 @@ export const buildGallery = (input: GalleryInput): Gallery => {
 		const state = connectionState(c);
 		const alsoIn = siblingCards(c, catalog, detections).map(id => nameOf(byId(id)));
 
-		return strip({ id: c.id, appId: c.appId, name, connection: c, state, alsoIn, ...describe(state, name, item, apiListening) });
+		const described = describe(state, name, item, apiListening, c);
+
+		if (described.status && revocationPending(c)) {
+			described.status = { ...described.status, suffix: 'aiAppsStatusRevokePending' };
+		};
+		return strip({ id: c.id, appId: c.appId, name, connection: c, state, alsoIn, ...described });
 	});
 	const connected = [
 		...named.filter(it => it.appId != 'other'),

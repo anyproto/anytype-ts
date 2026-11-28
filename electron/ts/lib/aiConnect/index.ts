@@ -22,11 +22,13 @@
  * - Unconfirmed CLI deliveries are a list of candidates, each with its own target and access data; a check
  *   reads each candidate's own target first (whatever resolves today) and keeps the installed one. A
  *   candidate whose CLI may still be running is never retired by an absent entry; the record waits.
- * - Connections whose key is in the forwarder's item (Claude Desktop, Other app's Command; anytype-mcp-plan §2.9):
- *   every item change is saved first. `key set`: the new key as a candidate (`unconfirmed`) before the verb, so
- *   a lost receipt is settled by `key check` (the item's fingerprint decides which key lives). `key retarget`:
- *   the intended port, tier and revision; nothing is ever revoked for it. `key delete`: the record is marked
- *   removed with every hash in `revokePending` before the verb runs.
+ * - Anytype keeps no copy of a key (tokens-plan §3). Claude's config route saves the new key as a candidate
+ *   (entry digest and fingerprint) before the entry is written; Claude's extension saves the record `waiting`
+ *   (the commit) before the key is copied to the clipboard and the bundle opened. Disconnect of the extension and
+ *   of manual records queues every hash first; the config route queues once the entry is known to be ours,
+ *   before it is deleted; HTTP adapters as before (a refused Disconnect queues nothing).
+ * - The endpoint file (endpoint.ts) is kept in step with the Local API by `syncEndpoint`, the only writer.
+ * - Keys reach the clipboard only through `copySecret` (clipboard.ts).
  * - A queued revocation leaves `revokePending` (or the orphans) only through `aiConnectRevoked` /
  *   `aiConnectOrphan { done }`, which the renderer calls after RevokeApp answered success or "not found". A key
  *   list that lacks the hash proves nothing and prunes nothing.
@@ -34,12 +36,12 @@
  *   key is delivered or released. One left by an earlier run is handed to the renderer (`mintIntents`), which
  *   finds that key and queues it as an orphan — through `aiConnectOrphan { intentId }`, which main refuses for a
  *   hash a record or candidate owns, or while a mint of this run for the same name is unresolved (S3).
- * - `method: 'command'` records (Other app) are routed by their own id, before any app detection.
+ * - Other app's Command setup is a manual record (`setup: 'command'`): never checked, healed or rewritten.
  * - Apply and update resolve the config homes afresh; apply refuses (`changed`) when the previewed target
  *   (`previewTarget`, or the Replace's file) is no longer one of the card's targets, update when the
  *   record's target no longer is (Disconnect still works on a stored old location).
  */
-import { app, shell } from 'electron';
+import { app, clipboard, shell } from 'electron';
 import { fixPathForAsarUnpack } from 'electron-util';
 import crypto from 'crypto';
 import fs from 'fs';
@@ -48,20 +50,22 @@ import path from 'path';
 import type {
 	AiApplyResult, AiBundleInfoResult, AiCheckResult, AiClaimNudgeResult, AiConnection, AiFail, AiListResult, AiMintIntentResult, AiOpenAppResult, AiOrphanResult,
 	AiCandidate, AiPlanResult, AiProbeResult, AiRecord, AiRecordManualResult, AiRemoveResult, AiRestartResult, AiRevealResult, AiRevokedResult, AiStatus,
-	AiStepDoneResult, AiTargetId, AiUpdateResult, Adapter, CheckOutcome, Ctx, Detected, Env, Homes,
+	AiStepDoneResult, AiTargetId, AiUpdateResult, Adapter, CheckOutcome, Ctx, Detected, Env, Homes, AiBundleState, AiRetireResult, AiCopySecretResult,
 } from './types';
+import { KEY_PLACEHOLDER } from '../../../../src/ts/lib/aiConnect/catalog';
 import { liveApiListening, validateParam, VALIDATION_ERROR } from './validate';
 import { getSafeStorage } from '../../safeStorage';
 import { Registry } from './registry';
 import { detectAll, resolveHomes, targetFor, toDetection } from './detect';
 import { probe } from './probe';
-import { BUNDLE_NAME, bundleDir, bundleInfo, bundlePath } from './bundle';
+import { bundleInfo, bundlePath, copyPath } from './bundle';
 import { createNodeEnv } from './exec';
-import { isLocalAbsolute, pathOf, resolveTarget } from './fsSafe';
+import { isLocalAbsolute, pathOf, resolveTarget, sweepTemps } from './fsSafe';
 import { keyFingerprint } from './digest';
-import { deleteItem } from './item';
-import { keyStoreConfig } from './keyStore';
 import { buildMeta } from './forwarder';
+import { SecretClipboard, type SecretOwner } from './clipboard';
+import { clearEndpoint, publishablePort, syncEndpoint, withdrawEndpoint, type ApiState } from './endpoint';
+import { claudeRoutes, openBundleAgain } from './adapters/claudeDesktop';
 import { restart } from './restart';
 import { hermesEnvFile } from './adapters/hermes';
 import { adapterFor } from './adapters';
@@ -80,16 +84,16 @@ const UNSAVED: AiFail = { ok: false, error: { stage: 'write', category: 'unsaved
 const CHANGED: AiFail = { ok: false, error: { stage: 'write', category: 'changed' } };
 
 /** Calls that change state: refused while a committed record waits for its save */
-const MUTATING = [ 'aiConnectApply', 'aiConnectRecordManual', 'aiConnectUpdate', 'aiConnectRemove', 'aiConnectRevoked', 'aiConnectCheck', 'aiConnectStepDone', 'aiConnectOrphan', 'aiConnectMintIntent' ];
+/** heart stamps a key with this machine's clock in whole seconds: an intent's time lies this much before CreateApp */
+const INTENT_SKEW = 2;
 
-/** Other app's Command setup: a managed connection with its own id and no detected app */
-const isCommand = (rec: AiRecord | null): boolean => rec?.method == 'command';
+const MUTATING = [ 'aiConnectApply', 'aiConnectRecordManual', 'aiConnectUpdate', 'aiConnectRemove', 'aiConnectRevoked', 'aiConnectCheck', 'aiConnectStepDone', 'aiConnectOrphan', 'aiConnectMintIntent', 'aiConnectRetire' ];
 
-/** For a call that concerns no detected app (a Command connection): no CLI, no config home */
-const NO_HOMES = { shellOk: true, cli: {}, cliShim: {}, path: '', overrides: {}, rejected: [], codexHome: '', copilotHome: '', claudeHome: '', claudeConfigDir: '' } as unknown as Homes;
+/** Claude Desktop's own records (extension and config route) carry the build flavour that made them (T3) */
+const flavoured = (rec: AiRecord): boolean => (rec.appId == 'claude-desktop') && (rec.method != 'manual');
 
-/** The record's key is in the forwarder's item (connection id = record id) */
-const holdsItem = (rec: AiRecord): boolean => isCommand(rec) || ((rec.appId == 'claude-desktop') && (rec.method != 'manual'));
+/** Claude's extension route */
+const isBundle = (rec: AiRecord | null): boolean => (rec?.appId == 'claude-desktop') && (rec.method == 'package');
 
 /** Cards whose manual setup puts the key into a settings file Anytype knows (checked for its mode afterwards) */
 const MANUAL_FILE_CARDS = [ 'cursor', 'vscode', 'lmstudio', 'chatgpt', 'codex', 'gemini-cli', 'antigravity', 'opencode' ];
@@ -106,6 +110,8 @@ interface Setup {
 	icon?: (appPath: string) => Promise<string | null>;
 	/** The Local API listens on this port right now (production: `storedLiveApi`); tests may leave it out */
 	liveApi?: (port: number) => boolean;
+	/** The renderer's shared Local API settings (production: the safe storage); the endpoint file follows them */
+	apiState?: () => { localApi: any; bind: any };
 };
 
 export class AiConnectService {
@@ -123,9 +129,30 @@ export class AiConnectService {
 	 * Records whose delivery committed but whose save failed, with the registry they belong to (kept across a
 	 * profile switch, retried against that same registry before every later call until it takes them)
 	 */
-	private unsaved = new Map<string, { rec: AiRecord; file: string }>();
+	private unsaved = new Map<string, { rec: AiRecord; file: string; intentId?: string }>();
 	/** Mint intents saved by this run: their flows may still be going on, so they are never reported as left over */
 	private liveIntents = new Set<string>();
+	/** Claude's extension rows that aren't "Connected" yet: which step is missing (per account and record) */
+	private bundleStates = new Map<string, AiBundleState>();
+	/** Claude rows in `conflict` because both of Claude's routes are there */
+	private bothRoutes = new Set<string>();
+	/** The one guarded copy (§3.4) */
+	private clipboard = new SecretClipboard();
+	/** The port this instance last wrote into the endpoint file (null: none) */
+	private published: number | null = null;
+	/** An account is open (false from logout until heart reports its next bind) */
+	private accountOpen = true;
+	/** The app is quitting: nothing is published or copied any more */
+	private closing = false;
+	/**
+	 * The account session: bumped synchronously by logout and quit. A probe, a clipboard copy or an endpoint write
+	 * that started under an earlier one sends, copies and renames nothing (D1S-20, D1C-24)
+	 */
+	private session = 0;
+	/** Probes on the network now: aborted when the session ends */
+	private probes = new Set<AbortController>();
+	/** Every card's target was swept for leftover temps in this run */
+	private sweptTargets = false;
 
 	constructor (private factory: () => Setup) {};
 
@@ -140,6 +167,15 @@ export class AiConnectService {
 		this.icons.clear();
 		this.unsaved.clear();
 		this.liveIntents.clear();
+		this.bundleStates.clear();
+		this.bothRoutes.clear();
+		this.sweptTargets = false;
+		this.closing = false;
+		this.clipboard = new SecretClipboard();
+		this.published = null;
+		this.accountOpen = true;
+		this.session++;
+		this.probes.clear();
 		this.queue = Promise.resolve();
 	};
 
@@ -157,6 +193,14 @@ export class AiConnectService {
 	/** Anytype's profile folder (registry, logs, data) is never another app's target */
 	private protect (): void {
 		this.setup.env.protectedDirs = [ pathOf(this.setup.env).dirname(this.setup.registryFile) ];
+	};
+
+	/**
+	 * The key may be sent to `port` now: the API listens there (`liveApi`) and heart's bind is one 127.0.0.1 reaches —
+	 * the endpoint file's own rule (a `[::1]` bind may share its port number with another program on 127.0.0.1)
+	 */
+	private sendable (port: number): boolean {
+		return this.liveApi(port) && (!this.setup?.apiState || (publishablePort(this.apiNow()) == port));
 	};
 
 	/** May a check heal entries for `port` now (tests without `liveApi`: as the caller says) */
@@ -193,7 +237,148 @@ export class AiConnectService {
 			this.registry = new Registry(this.setup.env, registryFile);
 			this.scan = null;
 			this.statuses.clear();
+			this.bundleStates.clear();
+			this.clipboard.clear(this.setup.env);
 		});
+	};
+
+	// ---------------------- the endpoint file and the clipboard (app lifecycle) ---------------------- //
+
+	/** The state the endpoint file should describe now */
+	private apiNow (): ApiState {
+		this.ensureSetup();
+
+		const state = this.setup.apiState?.() || { localApi: null, bind: null };
+		return { localApi: state.localApi, bind: state.bind, account: this.accountOpen && !this.closing };
+	};
+
+	/**
+	 * Makes the endpoint file match the Local API (inside the queue). A write lands only while its session is the
+	 * current one and the API still publishes that port, checked right before every rename (D1C-24); after a logout
+	 * or quit, the withdrawal that ran then owns `published`
+	 */
+	private async endpointNow (): Promise<void> {
+		const session = this.session;
+		const live = (port: number): boolean => (session == this.session) && !this.closing && (publishablePort(this.apiNow()) == port);
+		const published = await syncEndpoint(this.env, this.apiNow(), this.published, code => this.log('aiConnectEndpoint', { code }), live);
+
+		if (session == this.session) {
+			this.published = published;
+		};
+	};
+
+	/** Synchronously: the session ends, its probes stop, the endpoint file this instance wrote goes (logout, quit) */
+	private endSession (): void {
+		this.session++;
+		this.accountOpen = false;
+		for (const probe of this.probes) {
+			probe.abort();
+		};
+		this.probes.clear();
+		this.clipboard.clear(this.env);
+		this.published = withdrawEndpoint(this.env, this.published, code => this.log('aiConnectEndpoint', { code }));
+	};
+
+	/**
+	 * App start, once the profile folder is known (`dir`, after a custom userDataPath was applied) and before any
+	 * account is selected: the service is bound to that profile's registry, the endpoint file is deleted whatever it
+	 * says, and every record's settings file loses the temps a killed writer left (older than a minute)
+	 */
+	startup (dir: string): Promise<void> {
+		return this.enqueue(async () => {
+			try {
+				this.ensureSetup();
+
+				const registryFile = pathOf(this.setup.env).join(dir, 'aiConnect.json');
+
+				if (registryFile != this.setup.registryFile) {
+					this.setup = { ...this.setup, registryFile };
+					this.protect();
+					this.registry = new Registry(this.setup.env, registryFile);
+					this.scan = null;
+					this.statuses.clear();
+					this.bundleStates.clear();
+				};
+				// A file that couldn't be removed stays ours: every later lifecycle call finishes the withdrawal (D1C-25)
+				const left = await clearEndpoint(this.env);
+
+				if (left !== null) {
+					this.published = left;
+					this.log('aiConnectStartup', { code: 'EENDPOINT' });
+				};
+				this.sweep(this.reg.all().flatMap(rec => this.secretFiles(rec)));
+			} catch (e) {
+				this.log('aiConnectStartup', e);
+			};
+		});
+	};
+
+	/** Every file a record's adapter puts a key into: its target and config file, and Hermes' .env beside them */
+	private secretFiles (rec: AiRecord): string[] {
+		return union([ rec.configPath, rec.targetPath, ...(rec.unconfirmed || []).map(c => c.configPath || c.targetPath), ...((rec.appId == 'hermes') ? [ hermesEnvFile(this.env) ] : []) ]);
+	};
+
+	/**
+	 * Deletes the leftover temps of `files` (fsSafe.sweepTemps). One too young to be a dead writer's is looked at
+	 * again once it is old enough (a quick restart, D1S-25), through the queue and the same identity checks
+	 */
+	private sweep (files: string[]): void {
+		let wait = 0;
+
+		for (const file of files) {
+			wait = Math.max(wait, sweepTemps(this.env, file));
+		};
+		if (wait > 0) {
+			this.env.setTimer(() => {
+				this.enqueue(() => {
+					if (!this.closing) {
+						this.sweep(files);
+					};
+				});
+			}, wait);
+		};
+	};
+
+	/** `localApi` or `localApiBind` changed (main.ts storeSet): a new bind means an account is open */
+	apiChanged (key: string): Promise<void> {
+		// A bind reported before a logout that is still queued behind it opens nothing for the next session
+		const session = this.session;
+
+		return this.enqueue(async () => {
+			if ((key == 'localApiBind') && (session == this.session) && (this.apiNow().bind?.success === true) && !this.closing) {
+				this.accountOpen = true;
+			};
+			await this.endpointNow();
+		});
+	};
+
+	/** The account stopped (logout, account switch): nothing is published, the clipboard is cleared */
+	accountStopped (): Promise<void> {
+		// At once, not behind adapter work in the queue (D1S-20)
+		try {
+			this.endSession();
+		} catch (e) {
+			this.log('aiConnectLogout', e);
+		};
+		return this.enqueue(() => this.endpointNow());
+	};
+
+	/**
+	 * Quit (every path: Api.exit, will-quit): the endpoint file this instance wrote goes, and the clipboard is cleared
+	 * (only while it still holds the copied key). Synchronous, best effort, idempotent; afterwards nothing queued
+	 * publishes the endpoint or copies a key again
+	 */
+	shutdown (): void {
+		this.closing = true;
+		this.session++;
+		if (!this.setup) {
+			return;
+		};
+		try {
+			this.endSession();
+		} catch (e) {
+			this.log('aiConnectShutdown', e);
+		};
 	};
 
 	private log (method: string, e: any): void {
@@ -227,6 +412,11 @@ export class AiConnectService {
 			return await (queued ? this.enqueue(() => {
 				this.flushUnsaved();
 
+				// Another account is signed in now: the previous one's copied key leaves the clipboard
+				if (p.accountId && this.clipboard.owner() && (this.clipboard.owner().accountId != p.accountId)) {
+					this.clipboard.clear(this.env);
+				};
+
 				// A committed record still waits for its save: nothing acts on the stale one on disk
 				if (this.pendingSaves().length && MUTATING.includes(method)) {
 					return UNSAVED as any;
@@ -254,10 +444,11 @@ export class AiConnectService {
 
 	/** Saves the records kept in memory after a failed save, each into its own registry; a failure keeps them for the next call */
 	private flushUnsaved (): void {
-		for (const [ k, { rec, file } ] of [ ...this.unsaved ]) {
+		for (const [ k, { rec, file, intentId } ] of [ ...this.unsaved ]) {
 			try {
-				(file == this.setup.registryFile) ? this.reg.upsert(rec) : new Registry(this.setup.env, file).upsert(rec);
+				(file == this.setup.registryFile) ? this.reg.upsert(rec, intentId) : new Registry(this.setup.env, file).upsert(rec, intentId);
 				this.unsaved.delete(k);
+				this.liveIntents.delete(intentId);
 			} catch (e) {
 				this.log('aiConnectSave', e);
 			};
@@ -266,22 +457,24 @@ export class AiConnectService {
 
 	/**
 	 * Saves the record of a delivery that already committed: retried once, else kept in memory (listed, and
-	 * saved again before every later call). False when it isn't on disk yet.
+	 * saved again before every later call). False when it isn't on disk yet. `intentId`: the mint intent of its key
+	 * goes in the same save, so a delivered key never comes back to name-and-time recovery (D1C-21)
 	 */
-	private saveCommitted (rec: AiRecord): boolean {
+	private saveCommitted (rec: AiRecord, intentId?: string): boolean {
 		const file = this.setup.registryFile;
 		const k = this.unsavedKey(file, rec.accountId, rec.id);
 
 		for (let attempt = 0; attempt < 2; attempt++) {
 			try {
-				this.reg.upsert(rec);
+				this.reg.upsert(rec, intentId);
 				this.unsaved.delete(k);
+				this.liveIntents.delete(intentId);
 				return true;
 			} catch (e) {
 				this.log('aiConnectSave', e);
 			};
 		};
-		this.unsaved.set(k, { rec, file });
+		this.unsaved.set(k, { rec, file, ...(intentId ? { intentId } : {}) });
 		return false;
 	};
 
@@ -326,6 +519,9 @@ export class AiConnectService {
 		if (rec.removed) {
 			return rec.revokePending.length ? 'revokeFailed' : 'removed';
 		};
+		if (isBundle(rec) && !rec.appHash) {
+			return 'disconnected';
+		};
 		return (rec.method == 'manual') ? 'ok' : 'pending';
 	};
 
@@ -334,17 +530,31 @@ export class AiConnectService {
 	};
 
 	private view (rec: AiRecord): AiConnection {
-		return {
-			...rec,
-			status: this.statuses.get(this.statusKey(rec.accountId, rec.id)) || this.defaultStatus(rec),
-			displayTarget: displayPath(this.env, rec.targetPath),
+		const status = this.statuses.get(this.statusKey(rec.accountId, rec.id)) || this.defaultStatus(rec);
+		const bundleState = (status == 'pending') ? this.bundleStates.get(this.statusKey(rec.accountId, rec.id)) : undefined;
+		const view: AiConnection = { ...rec, status, displayTarget: displayPath(this.env, rec.targetPath) };
+
+		// Internal bookkeeping of the latch stays in main
+		delete view.armed;
+		if (bundleState) {
+			view.bundleState = bundleState;
 		};
+		if ((status == 'conflict') && this.bothRoutes.has(this.statusKey(rec.accountId, rec.id))) {
+			view.bothRoutes = true;
+		};
+		return view;
 	};
 
 	private async rescan (force: boolean): Promise<{ scanOk: boolean; items: Detected[] }> {
 		const createdDirs = this.reg.all().flatMap(it => it.createdDirs || []);
 		const res = await detectAll(this.env, { createdDirs, force });
 		const items = res.items.map(det => ({ ...det, canRestart: !!adapterFor(det.appId)?.canRestart(this.env, det) }));
+
+		// Once per run: the temps a writer killed during a FIRST delivery left (no record names that file yet)
+		if (!this.sweptTargets) {
+			this.sweptTargets = true;
+			this.sweep(union(items.flatMap(det => det.targetPaths), [ hermesEnvFile(this.env) ]));
+		};
 
 		this.scan = { scanOk: res.scanOk, items };
 		return this.scan;
@@ -416,12 +626,18 @@ export class AiConnectService {
 				connections: this.records(p.accountId).map(it => this.view(it)),
 				orphanHashes: this.reg.listOrphans(p.accountId),
 				// Left by an earlier run (this run's flows still hold theirs)
-				mintIntents: this.reg.listIntents(p.accountId).filter(it => !this.liveIntents.has(it.id)).map(it => ({ id: it.id, name: it.name, time: it.time })),
+				mintIntents: this.reg.listIntents(p.accountId).filter(it => !this.liveIntents.has(it.id)).map(it => ({
+					id: it.id, name: it.name, time: it.time, ...(it.grant ? { grant: it.grant } : {}), ...((it.expireAt !== undefined) ? { expireAt: it.expireAt } : {}),
+				})),
 			};
 		});
 	};
 
-	/** Saved before the renderer calls CreateApp (`name`, `time`); `id` + `done` clears it (the key was released) */
+	/**
+	 * Saved before the renderer calls CreateApp (`name`, `time`, and the `grant` and `expireAt` the key is made with);
+	 * `id` + `done` clears it (the key was released). The time is main's when it saved it, if later than the
+	 * renderer's: a wait in the queue never moves CreateApp out of the intent's window (D1C-22). The reply names it
+	 */
 	mintIntent (param: any): Promise<AiMintIntentResult> {
 		return this.call<AiMintIntentResult>('aiConnectMintIntent', param, FAIL, p => {
 			if (p.done) {
@@ -430,10 +646,13 @@ export class AiConnectService {
 			};
 
 			const id = crypto.randomBytes(8).toString('hex');
+			const time = Math.max(p.time, Math.floor(this.env.now() / 1000) - INTENT_SKEW);
 
-			this.reg.addIntent({ id, accountId: p.accountId, name: p.name, time: p.time });
+			this.reg.addIntent({
+				id, accountId: p.accountId, name: p.name, time, ...(p.grant ? { grant: p.grant } : {}), ...((p.expireAt !== undefined) ? { expireAt: p.expireAt } : {}),
+			});
 			this.liveIntents.add(id);
-			return { ok: true, id };
+			return { ok: true, id, time };
 		});
 	};
 
@@ -451,15 +670,14 @@ export class AiConnectService {
 		};
 	};
 
-	/** The namespace of the forwarder this build ships (`items` or `items-dev`); null: the build has none */
+	/** The namespace (build flavour) of the forwarder this build ships; null: the build has none */
 	private namespace (): AiRecord['ns'] | null {
 		return buildMeta(this.env)?.forwarder?.namespace || null;
 	};
 
 	/**
-	 * T3: the record's key is in the item store of the other build flavour (release `items` vs development
-	 * `items-dev`), which this build's forwarder can't read. Nothing of it is judged, settled, retired or
-	 * rewritten here: "no item" in this build's store says nothing about it
+	 * T3: the record was set up by the other build flavour (its extension id, its stable copy, its endpoint
+	 * file). Nothing of it is judged, settled, retired or rewritten here
 	 */
 	private otherBuild (rec: AiRecord | null): boolean {
 		return !!rec?.ns && (rec.ns != this.namespace());
@@ -484,9 +702,7 @@ export class AiConnectService {
 				continue;
 			};
 
-			const ctx = isCommand(rec)
-				? this.itemCtx(rec, rec.port)
-				: this.ctx(homes, items, { appId: rec.appId, accountId: rec.accountId, port: rec.port, tier: rec.tier, route: rec.route }, { targetId: rec.id });
+			const ctx = this.ctx(homes, items, { appId: rec.appId, accountId: rec.accountId, port: rec.port, tier: rec.tier, route: rec.route }, { targetId: rec.id });
 			const found = await adapter.installedFp(ctx, rec);
 
 			if (found === 'unreadable') {
@@ -514,27 +730,6 @@ export class AiConnectService {
 		return c.running && (!c.until || (this.env.now() < c.until));
 	};
 
-	/** A context for a record that needs no detected app (Other app's Command) */
-	private itemCtx (rec: AiRecord, port: number, extra: Partial<Ctx> = {}): Ctx {
-		return this.ctx(NO_HOMES, [], { appId: rec.appId, accountId: rec.accountId, port, tier: rec.tier, route: rec.route }, { targetId: rec.id, ...extra });
-	};
-
-	/** Saves the intent of a `key retarget` on the record before the verb runs (§2.9) */
-	private retargetJournal (rec: AiRecord): Ctx['journal'] {
-		return {
-			set: () => false,
-			retarget: intent => {
-				try {
-					// S6: the writer may commit until its deadline, whatever happened to Anytype meanwhile
-					this.reg.patch(rec.accountId, rec.id, { retarget: { ...intent, until: this.env.now() + keyStoreConfig.timeout + 5000 } });
-					return true;
-				} catch (e) {
-					this.log('aiConnectSave', e);
-					return false;
-				};
-			},
-		};
-	};
 
 	/** Reads, never writes; the renderer mints a key only after `canApply` (and any consent) */
 	plan (param: any): Promise<AiPlanResult> {
@@ -552,92 +747,89 @@ export class AiConnectService {
 			};
 
 			// A Command plan is for a Command record (or for a new connection), never another kind of record
-			if ((p.method == 'command') && ((p.appId != 'other') || (rec && !isCommand(rec)))) {
+			if ((p.method == 'command') && ((p.appId != 'other') || (rec && (rec.setup != 'command')))) {
 				return FAIL;
 			};
+			// T3: the other build flavour's record gets no snippet or plan from here (Forget only)
+			if (rec && !rec.removed && this.otherBuild(rec)) {
+				return { ok: false, error: { stage: 'validate', category: 'conflict' } };
+			};
 
-			const ctx = this.ctx(homes, items, p, { targetId: det.targetId || rec?.id, method: p.method });
+			const ctx = this.ctx(homes, items, p, { targetId: det.targetId || rec?.id, method: p.method, syncEndpoint: () => this.endpointNow() });
 			const plan = await adapter.plan(ctx, det, (rec && !rec.removed) ? rec : null);
+			// A plan whose steps hold the key's placeholder needs a key for its manual setup (the screen masks it)
+			const needsKey = plan.needsKey ?? plan.steps.some(it => String(it.snippet || '').includes(KEY_PLACEHOLDER));
 
-			return { ok: true, ...plan };
+			return { ok: true, ...plan, needsKey };
 		});
 	};
 
 	apply (param: any): Promise<AiApplyResult> {
+		// The key is copied only in the session the request arrived in (D1S-20)
+		const session = this.session;
+
 		return this.call<AiApplyResult>('aiConnectApply', param, FAIL, async p => {
-			// Other app's Command: its own id (allocated once, here), no detected target, so no app is looked for
-			const command = (p.method == 'command');
-			const scan = command ? null : await this.scanned();
+			const scan = await this.scanned();
 			// Fresh, never the cached answer: the key goes exactly where the card points now
-			const homes = command ? NO_HOMES : await resolveHomes(this.env, { force: true });
-			const items = command ? [] : this.retarget(scan.items, homes);
+			const homes = await resolveHomes(this.env, { force: true });
+			const items = this.retarget(scan.items, homes);
 			const det = this.detectionOf(items, p.appId);
 			const adapter = adapterFor(p.appId);
 
-			if (!adapter || (command ? (p.appId != 'other') : (!det.targetId || !!p.connectionId))) {
+			if (!adapter || !det.targetId) {
 				return FAIL;
 			};
 
-			const rec = command ? (p.connectionId ? this.record(p.accountId, p.connectionId) : null) : this.recordFor(p.accountId, det);
-
-			if (command && p.connectionId && !isCommand(rec)) {
-				return FAIL;
-			};
-
-			const targetId: AiTargetId = command ? (rec?.id || `other-${crypto.randomBytes(4).toString('hex')}`) : det.targetId;
+			const rec = this.recordFor(p.accountId, det);
+			const targetId: AiTargetId = det.targetId;
 
 			// The location the user saw (or agreed to replace) moved since the preview: a fresh preview first
-			if (!command && (((p.previewTarget !== undefined) && !this.isTarget(det, p.previewTarget)) || (p.replace && !this.isTarget(det, p.replace.targetPath)))) {
+			if (((p.previewTarget !== undefined) && !this.isTarget(det, p.previewTarget)) || (p.replace && !this.isTarget(det, p.replace.targetPath))) {
 				return CHANGED;
 			};
 			if (!this.previewIsWritten(adapter, det, p)) {
 				return CHANGED;
 			};
-			if (((rec?.appHash ?? null) !== p.expectedHash) || rec?.removed) {
+			// A bundle record retired for its Reconnect has no key: the new one is expected over "none"
+			if (((rec?.appHash || null) !== p.expectedHash) || rec?.removed) {
 				return STALE;
 			};
-			// T3: its key lives in the other build flavour's item store — nothing is delivered over it from here
+			// T3: set up by the other build flavour — nothing is delivered over it from here
 			if (this.otherBuild(rec)) {
 				return { ok: false, error: { stage: 'validate', category: 'conflict' } };
+			};
+			// Claude's extension: the old key goes first (aiConnectRetire); a new key over a live one is never delivered
+			if (isBundle(rec) && rec.appHash && (rec.appHash != p.appHash) && (p.method != 'config')) {
+				return STALE;
 			};
 
 			const fp = keyFingerprint(p.key);
 			/** The candidate a delivery of this key leaves while its outcome isn't known */
-			type Delivered = {
-				method: AiRecord['method']; route?: AiRecord['route']; targetPath: string; nextStep: AiRecord['nextStep'];
-				configEntry?: AiRecord['configEntry']; entryDigest?: string; configPath?: string;
-			};
-			/** `until`: a key verb has ended by then whatever happened to Anytype meanwhile (heart bounds every verb, Q3) */
-			const candidateOf = (it: Delivered, running: boolean, until?: number): AiCandidate => ({
+			type Delivered = { method: AiRecord['method']; route?: AiRecord['route']; targetPath: string; nextStep: AiRecord['nextStep']; entryDigest?: string; configPath?: string };
+			const candidateOf = (it: Delivered, running: boolean): AiCandidate => ({
 				appHash: p.appHash, keyFp: fp, route: it.route || p.route, method: it.method, targetPath: it.targetPath, tier: p.tier, recommendedTier: p.recommendedTier,
 				port: p.port, nextStep: it.nextStep, name: p.name, grant: p.grant, expireAt: p.expireAt, created: !rec, running,
-				...((running && until) ? { until } : {}),
-				// Q15: a config-route delivery carries the entry it wrote
-				...(it.configEntry ? { configEntry: it.configEntry } : {}), ...(it.entryDigest ? { entryDigest: it.entryDigest } : {}), ...(it.configPath ? { configPath: it.configPath } : {}),
+				...(it.entryDigest ? { entryDigest: it.entryDigest } : {}), ...(it.configPath ? { configPath: it.configPath } : {}),
 			});
-			/** What `journal.set` saved for this delivery, before the verb ran */
+			/** What `journal.set` saved for this delivery, before the key went into the file */
 			let journaledIntent: Delivered | null = null;
-			const withCandidate = (given: Delivered, running: boolean, until?: number): AiRecord => {
-				// S7: the candidate keeps the config entry it journaled, whatever the verb's outcome carries — a lost
-				// receipt must not cost the record its ownership of the entry
+			const withCandidate = (given: Delivered, running: boolean): AiRecord => {
+				// S7: the candidate keeps the digest it journaled, whatever the outcome carries
 				const it: Delivered = {
 					...given,
-					...((!given.configEntry && journaledIntent?.configEntry) ? { configEntry: journaledIntent.configEntry } : {}),
 					...((!given.entryDigest && journaledIntent?.entryDigest) ? { entryDigest: journaledIntent.entryDigest } : {}),
 					...((!given.configPath && journaledIntent?.configPath) ? { configPath: journaledIntent.configPath } : {}),
 				};
-				const { configEntry: _e, entryDigest: _d, configPath: _p, ...plain } = it;
+				const { entryDigest: _d, configPath: _p, ...plain } = it;
 				const base: AiRecord = rec || { ...this.freshRecord(targetId, p, { ok: true, observedInstalled: false, createdDirs: [], ...plain }, fp, null), observedInstalled: false };
-				return { ...base, unconfirmed: [ ...(base.unconfirmed || []).filter(c => c.appHash != p.appHash), candidateOf(it, running, until) ] };
+				return { ...base, unconfirmed: [ ...(base.unconfirmed || []).filter(c => c.appHash != p.appHash), candidateOf(it, running) ] };
 			};
-			const verbDeadline = (): number => this.env.now() + keyStoreConfig.timeout + 5000;
-			// §2.9: the new key is saved as a candidate before `key set` runs
+			// The new key is saved as a candidate before it goes into Claude's config
 			let journaled = false;
 			const journal: Ctx['journal'] = {
 				set: intent => {
 					try {
-						// Q3: in flight until the verb's deadline — a restarted Anytype must not retire it while the helper may still write
-						this.reg.upsert(withCandidate(intent, true, verbDeadline()));
+						this.reg.upsert(withCandidate(intent, false));
 						journaled = true;
 						journaledIntent = intent;
 						return true;
@@ -646,16 +838,15 @@ export class AiConnectService {
 						return false;
 					};
 				},
-				retarget: () => false,
 			};
 			const ctx = this.ctx(homes, items, p, {
-				targetId, key: p.key, method: p.method, manual: !!p.manual, allowQuit: !!p.allowQuit, quitConfirmed: !!p.quitConfirmed, replace: p.replace,
-				previewTarget: p.previewTarget, journal,
+				targetId, key: p.key, method: p.method, allowQuit: !!p.allowQuit, quitConfirmed: !!p.quitConfirmed, replace: p.replace,
+				previewTarget: p.previewTarget, journal, syncEndpoint: () => this.endpointNow(),
 			});
 			const out = await adapter.apply(ctx, det, rec);
 
 			if (('needs' in out) || ('error' in out)) {
-				// Nothing was written to the item: the candidate goes (a save that fails leaves it for the next check, which retires it)
+				// Nothing was written: the candidate goes (a save that fails leaves it for the next check, which retires it)
 				if (journaled) {
 					try {
 						rec ? this.reg.upsert(rec) : this.reg.remove(p.accountId, targetId);
@@ -665,22 +856,18 @@ export class AiConnectService {
 				};
 			};
 			if ('needs' in out) {
-				return out.openFailed ? { ok: false, needs: out.needs, openFailed: true } : { ok: false, needs: out.needs };
+				return { ok: false, needs: out.needs };
 			};
 			if ('error' in out) {
 				return { ok: false, error: out.error };
 			};
 
-
 			if (out.unconfirmed) {
 				// Maybe delivered: the record stays as it is (or a pending one is created) with one more candidate; the next check decides
-				// A key verb that was stopped without a confirmed end may still write until its deadline (Q2, Q3)
-				const kept = withCandidate(out, !!out.running, (journaled && out.running) ? verbDeadline() : undefined);
+				const kept = withCandidate(out, !!out.running);
 
-				// Q6: the intent goes only once the record that holds the key is on disk
-				if (this.saveCommitted(kept)) {
-					this.dropIntent(p.accountId, p.intentId);
-				};
+				// Q6: the intent goes only with the record that holds the key, in the same save
+				this.saveCommitted(kept, p.intentId);
 				this.setStatus(kept, 'pending');
 				return { ok: false, unconfirmed: true, error: { stage: 'cli', category: 'timeout' }, connection: this.view(kept) };
 			};
@@ -697,11 +884,35 @@ export class AiConnectService {
 				};
 			};
 
-			const saved = this.saveCommitted(fresh);
+			// Claude's extension (§3.3): this save is the commit — the key is copied and the bundle opened only after it
+			if (out.deliver) {
+				try {
+					this.reg.upsert(fresh, p.intentId);
+					this.liveIntents.delete(p.intentId);
+				} catch (e) {
+					this.log('aiConnectSave', e);
+					return UNSAVED;
+				};
 
-			if (saved) {
-				this.dropIntent(p.accountId, p.intentId);
+				const copied = !this.closing && (session == this.session) && this.clipboard.copy(this.env, p.key, { accountId: p.accountId, connectionId: fresh.id });
+				let opened = false;
+
+				try {
+					opened = await out.deliver();
+				} catch (e) {
+					this.log('aiConnectApply', e);
+				};
+				this.setStatus(fresh, 'pending');
+				// A launch that failed stays actionable (Open again), whatever is installed
+				this.bundleStates.set(this.statusKey(fresh.accountId, fresh.id), (out.install && (out.configure || opened)) ? 'notConfirmed' : 'finish');
+
+				return {
+					ok: true, connection: this.view(fresh),
+					...(copied ? {} : { copyFailed: true }), ...(opened ? {} : { openFailed: true }), ...(out.configure ? { configure: true } : {}),
+				};
 			};
+
+			const saved = this.saveCommitted(fresh, p.intentId);
 			this.setStatus(fresh, fresh.observedInstalled ? 'ok' : 'pending');
 
 			const ret: AiApplyResult = { ok: true, connection: this.view(fresh) };
@@ -743,8 +954,7 @@ export class AiConnectService {
 			createdDirs: union(rec?.createdDirs || [], out.createdDirs),
 		};
 
-		// A keyless config entry stays known after a switch to another method (disconnect still removes it)
-		const configEntry = out.configEntry || rec?.configEntry;
+		// The config entry stays known after a switch to another method (disconnect still removes it)
 		const entryDigest = out.entryDigest || rec?.entryDigest;
 
 		const configPath = out.configPath || rec?.configPath;
@@ -752,9 +962,6 @@ export class AiConnectService {
 		// reason it exists, so its expiry retires only its own hash, never the record
 		const running = (rec?.unconfirmed || []).filter(c => this.stillRunning(c) && (c.appHash != p.appHash)).map(c => ({ ...c, created: false }));
 
-		if (configEntry) {
-			fresh.configEntry = configEntry;
-		};
 		if (configPath) {
 			fresh.configPath = configPath;
 		};
@@ -764,15 +971,16 @@ export class AiConnectService {
 		if (entryDigest) {
 			fresh.entryDigest = entryDigest;
 		};
-		if (out.itemRev) {
-			fresh.itemRev = out.itemRev;
-		};
 		if (rec?.prior && !((rec.prior.route == fresh.route) && (rec.prior.targetPath == fresh.targetPath))) {
 			fresh.prior = rec.prior;
 		};
-		// T3: an item-backed record names the store (build flavour) its key is in
-		if (holdsItem(fresh) && this.namespace()) {
+		// T3: Claude's records name the build flavour that set them up
+		if (flavoured(fresh) && this.namespace()) {
 			fresh.ns = this.namespace();
+		};
+		// The extension: a new key was never used, so its first use under whatever install Claude has confirms it (§3.3)
+		if (isBundle(fresh)) {
+			fresh.armed = { appHash: fresh.appHash, version: out.install?.version || '', installedAt: out.install?.installedAt || '' };
 		};
 		return fresh;
 	};
@@ -823,8 +1031,8 @@ export class AiConnectService {
 		return this.call<AiRecordManualResult>('aiConnectRecordManual', param, FAIL, async p => {
 			let rec = p.connectionId ? this.reg.get(p.accountId, p.connectionId) : null;
 
-			// A Command connection is reconnected as one (aiConnectApply): its item would be left behind here
-			if (p.connectionId && (!rec || isCommand(rec))) {
+			// Either setup is reconnected by its id (§3.2)
+			if (p.connectionId && !rec) {
 				return FAIL;
 			};
 
@@ -839,6 +1047,10 @@ export class AiConnectService {
 
 			if (((rec?.appHash ?? null) !== p.expectedHash) || rec?.removed) {
 				return STALE;
+			};
+			// T3: a manual stdio record names the forwarder (and endpoint file) of the build that set it up
+			if (this.otherBuild(rec)) {
+				return { ok: false, error: { stage: 'validate', category: 'conflict' } };
 			};
 
 			const manualAdapter = adapterFor(p.appId);
@@ -869,14 +1081,15 @@ export class AiConnectService {
 				revokePending: union(rec?.revokePending || [], [ rec?.appHash, ...candidateHashes(rec) ].filter(h => h && (h != p.appHash))),
 				removed: false,
 				createdDirs: rec?.createdDirs || [],
+				setup: p.setup || 'url',
+			};
+
+			if ((next.route == 'stdio') && this.namespace()) {
+				next.ns = this.namespace();
 			};
 
 			// The user already put this key into the app ("I've updated"): committed even when the save fails
-			const saved = this.saveCommitted(next);
-
-			if (saved) {
-				this.dropIntent(p.accountId, p.intentId);
-			};
+			const saved = this.saveCommitted(next, p.intentId);
 			const fileMode = this.tightenManualFile(det, p);
 			const ret: AiRecordManualResult = { ok: true, connection: this.view(next) };
 
@@ -947,44 +1160,29 @@ export class AiConnectService {
 				return { ok: false, error: { stage: 'validate', category: 'unsupportedForm' } };
 			};
 
-			let ctx: Ctx;
-
-			if (isCommand(rec)) {
-				// By its own id: no app, no file of another app
-				ctx = this.itemCtx({ ...rec, tier: p.tier || rec.tier }, p.port, { journal: this.retargetJournal(rec) });
-			} else {
-				const scan = await this.scanned();
-				const homes = await resolveHomes(this.env, { force: true });
-				const items = this.retarget(scan.items, homes);
-
-				// Only where an app reads it now (a moved home: reconnect; Disconnect still cleans the stored place)
-				if (!items.some(d => (d.targetId == rec.id) && this.isTarget(d, rec.targetPath))) {
-					return CHANGED;
-				};
-				ctx = this.ctx(homes, items, { appId: rec.appId, accountId: rec.accountId, port: p.port, tier: p.tier || rec.tier, route: rec.route }, { targetId: rec.id, journal: this.retargetJournal(rec) });
+			// Claude's extension is always Full (§3.3)
+			if (isBundle(rec) && p.tier && (p.tier != 'full')) {
+				return FAIL;
 			};
 
+			const scan = await this.scanned();
+			const homes = await resolveHomes(this.env, { force: true });
+			const items = this.retarget(scan.items, homes);
+
+			// Only where an app reads it now (a moved home: reconnect; Disconnect still cleans the stored place)
+			if (!isBundle(rec) && !items.some(d => (d.targetId == rec.id) && this.isTarget(d, rec.targetPath))) {
+				return CHANGED;
+			};
+
+			const ctx = this.ctx(homes, items, { appId: rec.appId, accountId: rec.accountId, port: p.port, tier: p.tier || rec.tier, route: rec.route }, { targetId: rec.id });
 			const res = await adapter.update(ctx, rec, { tier: p.tier, port: p.port });
-			// As saved by the journal (a `retarget` intent), or unchanged
-			const now = this.reg.get(p.accountId, p.connectionId) || rec;
 
 			if (!res.ok) {
-				// Nothing was written: the intent goes. A lost receipt keeps it, and the next check takes what the item holds
-				if (now.retarget && !res.unconfirmed) {
-					const back = { ...now };
-
-					delete back.retarget;
-					this.reg.upsert(back);
-				};
 				return { ok: false, error: res.error || { stage: 'write', category: 'unknown' } };
 			};
 
-			const next: AiRecord = { ...now, port: p.port, tier: p.tier || rec.tier, nextStep: res.nextStep || rec.nextStep };
+			const next: AiRecord = { ...rec, port: p.port, tier: p.tier || rec.tier, nextStep: res.nextStep || rec.nextStep };
 
-			if (now.retarget) {
-				next.itemRev = now.retarget.rev;
-				delete next.retarget;
-			};
 			return { ok: true, connection: this.view(this.reg.upsert(next)) };
 		});
 	};
@@ -992,6 +1190,9 @@ export class AiConnectService {
 	/**
 	 * Cleanup (skipped with `forget`), then the record becomes `removed` with its hash (and an unconfirmed
 	 * one) added to `revokePending`. An entry that isn't ours → `conflict`, nothing changes (Forget instead).
+	 * Order (§3.2): the extension and manual records queue first; Claude's config route queues once its entry is
+	 * known to be ours, before deleting it (`ctx.queue`); HTTP adapters queue after their cleanup. A save that
+	 * fails stops everything after it: nothing is deleted outside, and no revoke follows.
 	 */
 	remove (param: any): Promise<AiRemoveResult> {
 		return this.call<AiRemoveResult>('aiConnectRemove', param, FAIL, async p => {
@@ -1000,68 +1201,55 @@ export class AiConnectService {
 			if (!rec) {
 				return FAIL;
 			};
-			if (rec.appHash !== p.expectedHash) {
+			if ((rec.appHash || null) !== p.expectedHash) {
 				return STALE;
 			};
 			if (rec.removed) {
 				return { ok: true, connection: this.view(rec), removedNow: false };
 			};
-			// T3: this build can't clean up the other flavour's item (Forget still revokes the key and drops the record)
+			// T3: this build can't clean up what the other flavour set up (Forget still revokes the key and drops the record)
 			if (this.otherBuild(rec) && !p.forget) {
 				return { ok: false, error: { stage: 'validate', category: 'conflict' } };
 			};
 
-			let left: AiRecord['left'];
+			// Cancel setup / Disconnect: a key this record copied leaves the clipboard
+			this.clipboard.clear(this.env, o => (o.accountId == rec.accountId) && ((o.connectionId == rec.id) || (!!rec.appHash && (o.appHash == rec.appHash))));
 
-			let priorLeft = false;
-			let itemLeft = false;
-			/** `withItem`: the item may still be there — the record keeps every fingerprint it may hold, so a retry recognises it (Q4) */
-			const cleanup = !p.forget && (rec.method != 'manual');
-			/**
-			 * S6: a `key set` of this record may still be waiting for the item's lock (its journaled deadline hasn't
-			 * passed). Until then an absent item proves nothing: the record keeps `itemDelete`, so a key the helper
-			 * writes after this disconnect is deleted by a later check
-			 */
-			const writerUntil = cleanup ? Math.max(0, ...(rec.unconfirmed || []).filter(c => this.stillRunning(c)).map(c => c.until || 0)) : 0;
-			const removedRecord = (withItem: boolean): AiRecord => {
+			const removedRecord = (): AiRecord => {
 				const next: AiRecord = { ...rec, removed: true, revokePending: union(rec.revokePending, [ rec.appHash, ...candidateHashes(rec) ]) };
 
-				if (withItem || writerUntil) {
-					next.itemDelete = true;
-					next.itemFps = union([ rec.keyFp ], (rec.unconfirmed || []).map(c => c.keyFp));
-				};
-				if (writerUntil) {
-					next.itemUntil = writerUntil;
-				};
 				delete next.unconfirmed;
-				delete next.retarget;
 				delete next.left;
 				return next;
 			};
-
-			// §2.9: before `key delete`, every hash of the record is queued for revocation and the record marked removed
-			if (cleanup && holdsItem(rec)) {
-				this.reg.upsert({ ...removedRecord(true), ...(rec.prior ? { prior: rec.prior } : {}) });
+			const cleanup = !p.forget && (rec.method != 'manual');
+			let queued = false;
+			/** Saves the record removed with every hash queued; false: not saved, nothing outside may change */
+			const queue = (): boolean => {
+				try {
+					this.reg.upsert(removedRecord());
+					queued = true;
+					return true;
+				} catch (e) {
+					this.log('aiConnectSave', e);
+					return false;
+				};
 			};
+
+			let left: AiRecord['left'];
+			let priorLeft = false;
 
 			if (cleanup) {
 				const adapter = adapterFor(rec.appId);
-				let ctx: Ctx;
-
-				if (isCommand(rec)) {
-					ctx = this.itemCtx(rec, rec.port);
-				} else {
-					const scan = await this.scanned();
-					const homes = await resolveHomes(this.env);
-
-					ctx = this.ctx(homes, this.retarget(scan.items, homes), { appId: rec.appId, accountId: rec.accountId, port: rec.port, tier: rec.tier, route: rec.route }, { targetId: rec.id });
-				};
-
+				const scan = await this.scanned();
+				const homes = await resolveHomes(this.env);
+				const ctx = this.ctx(homes, this.retarget(scan.items, homes), { appId: rec.appId, accountId: rec.accountId, port: rec.port, tier: rec.tier, route: rec.route }, { targetId: rec.id, queue });
 				const res: Awaited<ReturnType<Adapter['remove']>> = adapter ? await adapter.remove(ctx, rec) : { ok: true };
 
-				itemLeft = !!res.itemLeft;
+				// Not ours (nothing queued), not saved, or Claude's lock not taken: nothing was deleted
+				const category = res.error?.category;
 
-				if (!res.ok && (res.error?.category == 'conflict')) {
+				if (!res.ok && ((category == 'conflict') || (category == 'unsaved') || ((category == 'changed') && (rec.appId == 'claude-desktop')))) {
 					return { ok: false, error: res.error };
 				};
 				left = res.left || (res.ok ? undefined : 'entry');
@@ -1071,9 +1259,12 @@ export class AiConnectService {
 					priorLeft = !!(await this.removePrevious(adapter, ctx, { ...rec, ...rec.prior }));
 					left = left || (priorLeft ? 'entry' : undefined);
 				};
+			} else
+			if (!queue()) {
+				return UNSAVED;
 			};
 
-			const next = removedRecord(itemLeft);
+			const next = removedRecord();
 
 			if (!priorLeft) {
 				delete next.prior;
@@ -1082,8 +1273,17 @@ export class AiConnectService {
 				next.left = left;
 			};
 
-			this.reg.upsert(next);
+			try {
+				this.reg.upsert(next);
+			} catch (e) {
+				this.log('aiConnectSave', e);
+				// Queued before the cleanup: the hashes are on disk, the next check finishes the row
+				if (!queued) {
+					return UNSAVED;
+				};
+			};
 			this.setStatus(next, 'removed');
+			this.bundleStates.delete(this.statusKey(next.accountId, next.id));
 			return { ok: true, connection: this.view(next), removedNow: true };
 		});
 	};
@@ -1099,7 +1299,7 @@ export class AiConnectService {
 
 			const next: AiRecord = { ...rec, revokePending: rec.revokePending.filter(h => h != p.hash) };
 
-			if (next.removed && !next.revokePending.length && !next.itemDelete) {
+			if (next.removed && !next.revokePending.length) {
 				this.reg.remove(p.accountId, p.connectionId);
 				this.statuses.delete(this.statusKey(p.accountId, p.connectionId));
 				return { ok: true, connection: null };
@@ -1110,15 +1310,77 @@ export class AiConnectService {
 		});
 	};
 
+	/**
+	 * Bundle Reconnect, before the new key is minted (§3.3): the old key goes first. Its hash (and candidates')
+	 * move to `revokePending`, the key and the latch are cleared, the record is `disconnected` and saved; grant and
+	 * expiry stay for the new key. The renderer revokes, then connects again on the same record.
+	 */
+	retire (param: any): Promise<AiRetireResult> {
+		return this.call<AiRetireResult>('aiConnectRetire', param, FAIL, p => {
+			const rec = this.reg.get(p.accountId, p.connectionId);
+
+			if (!rec || !isBundle(rec)) {
+				return FAIL;
+			};
+			if ((rec.appHash !== p.expectedHash) || rec.removed) {
+				return STALE;
+			};
+			if (this.otherBuild(rec)) {
+				return { ok: false, error: { stage: 'validate', category: 'conflict' } };
+			};
+
+			const next: AiRecord = { ...rec, appHash: '', keyFp: '', revokePending: union(rec.revokePending, [ rec.appHash, ...candidateHashes(rec) ]), lastProbe: 'none' };
+
+			// The access the user just confirmed (read live): a Reconnect resumed after a crash mints exactly that
+			if (p.grant) {
+				next.grant = p.grant;
+			};
+			if (p.expireAt !== undefined) {
+				next.expireAt = p.expireAt;
+			};
+
+			delete next.unconfirmed;
+			delete next.confirmed;
+			delete next.armed;
+			delete next.reconfirm;
+
+			this.clipboard.clear(this.env, o => (o.accountId == rec.accountId) && (o.connectionId == rec.id));
+			this.reg.upsert(next);
+			this.setStatus(next, 'disconnected');
+			this.bundleStates.delete(this.statusKey(next.accountId, next.id));
+			return { ok: true, connection: this.view(next) };
+		});
+	};
+
+	/** The only way a key (or a snippet with one) reaches the clipboard (§3.4) */
+	copySecret (param: any): Promise<AiCopySecretResult> {
+		// A copy asked for before a logout never lands after it (D1S-20)
+		const session = this.session;
+
+		return this.call<AiCopySecretResult>('aiConnectCopySecret', param, { ok: false }, p => {
+			const owner: SecretOwner = { accountId: p.accountId, ...(p.connectionId ? { connectionId: p.connectionId } : { appHash: p.appHash }) };
+
+			// Cancel of a sheet: that owner's copy goes (if it is still the latest and still on the clipboard)
+			if (p.clear) {
+				this.clipboard.clear(this.env, o => (o.accountId == owner.accountId) && (o.connectionId == owner.connectionId) && (o.appHash == owner.appHash));
+				return { ok: true };
+			};
+			return { ok: !this.closing && (session == this.session) && this.clipboard.copy(this.env, p.text, owner) };
+		});
+	};
+
 	/** Reconciles keys (only after a successful ListApps), then checks each record (heals only while the API listens) */
 	check (param: any): Promise<AiCheckResult> {
 		return this.call<AiCheckResult>('aiConnectCheck', param, FAIL, async p => {
-			const keys: { hash: string; present: boolean; grant?: any; expireAt?: number }[] | null = p.keys;
+			const keys: { hash: string; present: boolean; grant?: any; expireAt?: number; active?: boolean }[] | null = p.keys;
 			const byHash = new Map((keys || []).map(k => [ k.hash, k ]));
 			const absent = (h: string): boolean => (keys !== null) && byHash.has(h) && !byHash.get(h).present;
 			const healed: string[] = [];
 			/** Records this check found removed in their app for the first time (reported once, Z12) */
 			const removed: string[] = [];
+
+			// Every check starts with the endpoint file in step with the Local API
+			await this.endpointNow();
 
 			// Orphans and pending revocations are never dropped here: a key list that lacks a hash proves nothing
 			// (heart skips grant files it can't read). Only a RevokeApp answer clears them (aiConnectRevoked / aiConnectOrphan).
@@ -1164,20 +1426,8 @@ export class AiConnectService {
 					// settleUnconfirmed does, after reading the candidate's own target
 				};
 
-				// A disconnect that couldn't confirm its `key delete`: once more (only this record's own item is ever removed)
-				if (rec.removed && rec.itemDelete) {
-					const gone = await deleteItem(this.env, rec.id, rec);
-
-					// S6: "no item" is final only once a writer that outlived the disconnect can no longer commit
-					if ((gone.done === true) && ((gone.owner != 'none') || !rec.itemUntil || (this.env.now() >= rec.itemUntil))) {
-						delete rec.itemDelete;
-						delete rec.itemFps;
-						delete rec.itemUntil;
-					};
-				};
-
-				// Q4: gone only when every revoke was confirmed AND the item is confirmed gone (or not ours)
-				if (rec.removed && !rec.revokePending.length && !rec.itemDelete) {
+				// Gone only when every revoke was confirmed
+				if (rec.removed && !rec.revokePending.length) {
 					this.reg.remove(rec.accountId, rec.id);
 					this.statuses.delete(this.statusKey(rec.accountId, rec.id));
 					continue;
@@ -1186,12 +1436,8 @@ export class AiConnectService {
 				let status: AiStatus;
 				let waiting = false;
 				const adapter = adapterFor(rec.appId);
-				const command = isCommand(rec);
-				const live = { stillLive: () => this.liveApi(p.port), journal: this.retargetJournal(rec) };
-				// A Command record is checked by its own id, whatever the app scan says (and without one)
-				const ctx = command
-					? this.itemCtx(rec, p.apiListening ? p.port : 0, live)
-					: ((p.apiListening && scan) ? this.ctx(homes, items, { appId: rec.appId, accountId: rec.accountId, port: p.port, tier: rec.tier, route: rec.route }, { targetId: rec.id, ...live }) : null);
+				const live = { stillLive: () => this.liveApi(p.port) };
+				const ctx = (p.apiListening && scan) ? this.ctx(homes, items, { appId: rec.appId, accountId: rec.accountId, port: p.port, tier: rec.tier, route: rec.route }, { targetId: rec.id, ...live }) : null;
 				/** What a check of the record's own target says, written onto the record */
 				const take = (res: CheckOutcome): void => {
 					if ((status == 'removed') && !rec.removedReported) {
@@ -1212,25 +1458,12 @@ export class AiConnectService {
 					if (res.observedInstalled) {
 						rec.observedInstalled = true;
 					};
-					if (res.configEntry && res.entryDigest) {
-						rec.configEntry = res.configEntry;
-						rec.entryDigest = res.entryDigest;
+					if (res.bothRoutes) {
+						this.bothRoutes.add(this.statusKey(rec.accountId, rec.id));
 					};
-					// The item was read with the record's own key in it: the record takes its port, tier and revision,
-					// which also settles a retarget whose receipt was lost (nothing is revoked for it)
-					if (res.item) {
-						// Q19: a tier change recovered from a lost receipt: the running `serve` is pinned to the old tier
-						if (rec.retarget && (res.item.tier != rec.tier)) {
-							rec.nextStep = 'restart';
-						};
-						rec.itemRev = res.item.rev;
-						rec.port = res.item.port;
-						rec.tier = res.item.tier;
-						// S6: an item still at the revision before the intent, with the writer's deadline not passed, settles
-						// nothing — the helper may yet commit, and clearing the intent now would heal its change back later
-						if (!rec.retarget || (res.item.rev >= rec.retarget.rev) || !rec.retarget.until || (this.env.now() >= rec.retarget.until)) {
-							delete rec.retarget;
-						};
+					// Claude's extension: "Connected" is heart's isActive for this key, latched to Claude's install identity
+					if (isBundle(rec) && res.install && (status == 'pending')) {
+						status = this.latch(rec, res.install, byHash.get(rec.appHash)?.active);
 					};
 				};
 
@@ -1245,9 +1478,15 @@ export class AiConnectService {
 					waiting = !!rec.unconfirmed?.some(c => this.stillRunning(c)) && !rec.removed && ((await adapter.installedFp?.(ctx, rec)) !== rec.keyFp);
 				};
 
+				this.bundleStates.delete(this.statusKey(rec.accountId, rec.id));
+				this.bothRoutes.delete(this.statusKey(rec.accountId, rec.id));
+
 				if (rec.removed) {
-					// Only the item is left to delete: nothing for the user to do, the row stays hidden
 					status = rec.revokePending.length ? 'revokeFailed' : 'removed';
+				} else
+				if (isBundle(rec) && !rec.appHash) {
+					// Retired for a Reconnect that hasn't delivered its new key: nothing to check
+					status = 'disconnected';
 				} else
 				if (waiting) {
 					status = 'pending';
@@ -1255,6 +1494,16 @@ export class AiConnectService {
 				if (rec.method == 'manual') {
 					// A failed lookup proves nothing: the last status stands
 					status = absent(rec.appHash) ? 'accessEnded' : ((keys === null) ? (last || 'ok') : 'ok');
+
+					// Claude set up by hand is one of Claude's two routes: with the extension there as well, the user removes one
+					if ((rec.appId == 'claude-desktop') && (status == 'ok')) {
+						const routes = claudeRoutes(this.env);
+
+						if (routes.config && routes.extension) {
+							status = 'conflict';
+							this.bothRoutes.add(this.statusKey(rec.accountId, rec.id));
+						};
+					};
 				} else
 				if (absent(rec.appHash) && !rec.unconfirmed?.length) {
 					status = 'accessEnded';
@@ -1262,13 +1511,6 @@ export class AiConnectService {
 				if ((keys === null) && (last == 'accessEnded')) {
 					// Known revoked, and the lookup failed: still ended, and nothing is healed with that key
 					status = 'accessEnded';
-				} else
-				if (command) {
-					// No app to find: the item itself is the connection
-					const res = await adapter.check(ctx, rec);
-
-					status = res.status;
-					take(res);
 				} else
 				// The API's state now, inside the queue and after every await above: another window may have
 				// disabled it or moved its port meanwhile (A1)
@@ -1307,6 +1549,65 @@ export class AiConnectService {
 	};
 
 	/**
+	 * The confirmation latch of Claude's extension (§3.3), on `rec` in place; returns the row's status.
+	 * - `confirmed` is dropped when the install identity (the extension's `version` + `installedAt`) or the key
+	 *   changes; a dropped one leaves `reconfirm` ("Updated in Claude · key not reconfirmed").
+	 * - `armed`: heart said "not active" for this key under this identity. A key that was never confirmed carries
+	 *   it over to a new identity (a new key starts not active, so a fresh connect or Reconnect confirms on first use).
+	 * - `isActive` true while armed → `confirmed`, and the key this record copied leaves the clipboard.
+	 * `active` is undefined when the key lookup failed: nothing is learned.
+	 */
+	private latch (rec: AiRecord, install: { state: 'finish' | 'off' | 'on' | 'unknown'; version: string; installedAt: string }, active: boolean | undefined): AiStatus {
+		const key = this.statusKey(rec.accountId, rec.id);
+
+		if (install.state == 'finish') {
+			this.bundleStates.set(key, 'finish');
+			return 'pending';
+		};
+		// Claude's switch can't be read: nothing is learned or confirmed, the latch is kept, the row is not "Connected"
+		if (install.state == 'unknown') {
+			this.bundleStates.set(key, 'off');
+			return 'pending';
+		};
+
+		const hash = rec.appHash;
+		const same = (l?: { appHash: string; version: string; installedAt: string }): boolean => !!l && (l.appHash == hash) && (l.version == install.version) && (l.installedAt == install.installedAt);
+
+		if (rec.confirmed && !same(rec.confirmed)) {
+			if (rec.confirmed.appHash == hash) {
+				rec.reconfirm = true;
+			};
+			delete rec.confirmed;
+		};
+		if (rec.armed && !same(rec.armed)) {
+			const carried = (rec.armed.appHash == hash) && !rec.reconfirm;
+
+			delete rec.armed;
+			if (carried) {
+				rec.armed = { appHash: hash, version: install.version, installedAt: install.installedAt };
+			};
+		};
+		if (active === false) {
+			rec.armed = { appHash: hash, version: install.version, installedAt: install.installedAt };
+		} else
+		if ((active === true) && same(rec.armed) && !same(rec.confirmed)) {
+			rec.confirmed = { appHash: hash, version: install.version, installedAt: install.installedAt };
+			delete rec.reconfirm;
+			this.clipboard.clear(this.env, o => (o.accountId == rec.accountId) && ((o.connectionId == rec.id) || (o.appHash == hash)));
+		};
+
+		if (install.state == 'off') {
+			this.bundleStates.set(key, 'off');
+			return 'pending';
+		};
+		if (same(rec.confirmed)) {
+			return 'ok';
+		};
+		this.bundleStates.set(key, rec.reconfirm ? 'updated' : 'notConfirmed');
+		return 'pending';
+	};
+
+	/**
 	 * Unconfirmed CLI deliveries: each candidate's own target is read (the route and file its CLI wrote,
 	 * not the record's, whatever resolves today). The one installed becomes the record's key, with that
 	 * target and its own access data (the record's old hash and every other candidate are retired; a
@@ -1325,7 +1626,7 @@ export class AiConnectService {
 		const fps: (string | null)[] = [];
 
 		for (const c of list) {
-			const fp = await adapter.installedFp(ctx, { ...rec, route: c.route, targetPath: c.targetPath });
+			const fp = await adapter.installedFp(ctx, { ...rec, route: c.route, method: c.method, targetPath: c.targetPath, ...(c.configPath ? { configPath: c.configPath } : {}) });
 
 			if (fp === 'unreadable') {
 				return rec;
@@ -1377,8 +1678,7 @@ export class AiConnectService {
 		next.lastProbe = 'none';
 		next.observedInstalled = true;
 		// Q15: the config entry that delivery wrote is the record's now
-		if (winner.configEntry && winner.entryDigest) {
-			next.configEntry = winner.configEntry;
+		if (winner.entryDigest) {
 			next.entryDigest = winner.entryDigest;
 		};
 		if (winner.configPath) {
@@ -1396,7 +1696,16 @@ export class AiConnectService {
 	async probe (param: any): Promise<AiProbeResult> {
 		const invalid: AiProbeResult = { ok: false, category: 'unknown' };
 
+		// Bound to the session it arrived in: a logout stops it before its next request and aborts the one in flight (D1S-20)
+		const session = this.session;
+		const sendable = (port: number): boolean => (session == this.session) && !this.closing && this.sendable(port);
+
 		return this.call<AiProbeResult>('aiConnectProbe', param, invalid, async p => {
+			// Nothing is sent unless main itself sees the API listening on that port now (§3.2), asked again before every request
+			if (!sendable(p.port)) {
+				return { ok: false, category: 'apiOff' };
+			};
+
 			const fp = keyFingerprint(p.key);
 			let bound: { appHash: string; keyFp: string } | null = null;
 
@@ -1412,7 +1721,21 @@ export class AiConnectService {
 				bound = { appHash: rec.appHash, keyFp: rec.keyFp };
 			};
 
-			const result = await probe({ port: p.port, tier: p.tier, route: p.route, key: p.key }, { version: this.setup?.version });
+			if (!sendable(p.port)) {
+				return { ok: false, category: 'apiOff' };
+			};
+
+			const abort = new AbortController();
+
+			this.probes.add(abort);
+
+			let result: AiProbeResult;
+
+			try {
+				result = await probe({ port: p.port, tier: p.tier, route: p.route, key: p.key }, { version: this.setup?.version, gate: () => sendable(p.port), signal: abort.signal });
+			} finally {
+				this.probes.delete(abort);
+			};
 
 			if (bound) {
 				await this.enqueue(() => {
@@ -1485,18 +1808,17 @@ export class AiConnectService {
 	/** Shows a file in Finder / Explorer: a record's target, or a card's bundle / target before any record exists */
 	reveal (param: any): Promise<AiRevealResult> {
 		return this.call<AiRevealResult>('aiConnectReveal', param, { ok: false }, async p => {
-			const P = pathOf(this.env);
 			let file = '';
 
 			if (p.connectionId) {
 				file = this.revealable(this.record(p.accountId, p.connectionId)?.targetPath || '');
 			} else
 			if (p.what == 'bundle') {
-				const copy = P.join(bundleDir(this.env), BUNDLE_NAME);
+				const copy = copyPath(this.env);
 				const own = bundlePath(this.env);
 
 				// The copy in Anytype's folder; before there is one, the app's own bundle (its location comes from the app, never from stored data)
-				file = this.env.exists(copy) ? this.revealable(copy) : ((isLocalAbsolute(this.env, own) && this.env.exists(own)) ? own : '');
+				file = (copy && this.env.exists(copy)) ? this.revealable(copy) : ((isLocalAbsolute(this.env, own) && this.env.exists(own)) ? own : '');
 			} else {
 				file = this.revealable(this.detectionOf((await this.scanned()).items, p.appId).targetPaths[0] || '');
 			};
@@ -1513,6 +1835,11 @@ export class AiConnectService {
 	openApp (param: any): Promise<AiOpenAppResult> {
 		return this.call<AiOpenAppResult>('aiConnectOpenApp', param, { ok: false }, async p => {
 			const det = this.detectionOf((await this.scanned()).items, p.appId);
+
+			// Claude's "Open again": the bundle copy, opened in Claude (an update when the extension is outdated, never a new key)
+			if (p.bundle) {
+				return { ok: await openBundleAgain(this.env, det) };
+			};
 
 			if ((this.env.platform == 'darwin') && det.appPath) {
 				return { ok: (await this.env.run('/usr/bin/open', [ '-a', det.appPath ], { timeout: 10000 })).code == 0 };
@@ -1613,6 +1940,8 @@ const createElectronEnv = (): Env => {
 			};
 		},
 		showItemInFolder: p => shell.showItemInFolder(p),
+		clipboardRead: () => clipboard.readText(),
+		clipboardWrite: text => clipboard.writeText(text),
 	});
 };
 
@@ -1626,6 +1955,10 @@ export const storedLiveApi = (port: number): boolean => {
 export const aiConnect = new AiConnectService(() => ({
 	env: createElectronEnv(),
 	liveApi: storedLiveApi,
+	apiState: () => {
+		const store = getSafeStorage();
+		return { localApi: store.get('localApi'), bind: store.get('localApiBind') };
+	},
 	registryFile: path.join(app.getPath('userData'), 'aiConnect.json'),
 	version: app.getVersion(),
 	icon: async appPath => {

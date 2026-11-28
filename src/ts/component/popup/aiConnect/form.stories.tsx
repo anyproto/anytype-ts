@@ -6,7 +6,7 @@ import { withPopup, withThemeSync } from '../../../../../.storybook/decorators';
 import * as I from 'Interface';
 import { DEFAULT_GRANT } from 'Lib/aiConnect/catalog';
 import AiConnectForm, { type AiConnectFormProps } from './form';
-import { formatDate, GRANT_ALL, GRANT_READ_ONE, noop, PLAN_CLAUDE_CODE_SANDBOX, PLAN_CURSOR, PLAN_CURSOR_FOREIGN, PLAN_CURSOR_MANUAL, SPACES } from './stories.data';
+import { formatDate, GRANT_ALL, GRANT_READ_ONE, noop, PLAN_CLAUDE_CODE_SANDBOX, PLAN_CLAUDE_DESKTOP, PLAN_CURSOR, PLAN_CURSOR_FOREIGN, PLAN_CURSOR_MANUAL, SPACES } from './stories.data';
 
 /** The sheet's values live in its container; here in story state */
 const Stateful = (props: AiConnectFormProps) => {
@@ -81,6 +81,11 @@ export const ConnectMoved: Story = {
 
 /** The Local API is off: Connect is disabled */
 export const ConnectApiOff: Story = { args: { apiListening: false } };
+
+/** Claude Desktop's extension: the tool set is Full only; Advanced offers Claude's settings file instead (§3.3) */
+export const ConnectClaudeExtension: Story = {
+	args: { appName: 'Claude Desktop', appId: 'claude-desktop', routes: [ 'stdio' ], route: 'stdio', tier: 'full', plan: PLAN_CLAUDE_DESKTOP, fullOnly: true, onConfigRoute: noop, initialAdvanced: true },
+};
 
 /** While delivering */
 export const ConnectBusy: Story = { args: { busy: true } };

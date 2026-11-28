@@ -1,53 +1,43 @@
 /**
- * Claude Desktop (targetId `claude-desktop`).
+ * Claude Desktop (targetId `claude-desktop`). Anytype keeps no copy of the key (tokens-plan §3): it lives only
+ * where Claude keeps it.
  *
- * The key lives in the forwarder's item for the connection `claude-desktop` (one private file, written only
- * through `anytype-mcp key …`; see item.ts and plan §3). Nothing here reads or writes that file.
- *
- * Primary (macOS, Windows): one static `Anytype.mcpb` (a `binary` bundle with the signed forwarder inside,
- * no key). The extension's state decides: installed / disabled → `key set` only; on a signed build an
- * extension that isn't verified (expected id, version ≥ the bundle's, the expected signer) gets no key: the
- * bundle is opened and NOTHING is written (`needs: 'installExtension'`) until the verified one is there;
- * absent / unreadable on an unsigned build → `key set` (commit), then the bundle is copied and opened. A
- * bundle whose archive fails its digest check is never used.
+ * Extension (`method: 'package'`, macOS and Windows): one static `.mcpb` (the signed forwarder inside, no key)
+ * whose manifest asks for the key in a required, sensitive `user_config` field and starts `serve --tier full`
+ * (always Full). Apply checks everything first (the bundle, the two-server guard, the preflight); the service
+ * then saves the record `waiting` (the commit), copies the key to the clipboard and only then runs `deliver`:
+ * the bundle copy is opened in Claude, or nothing when the installed extension is ours and the key goes in
+ * through Claude's Configure (`configure`). A check reports Claude's install identity; the service decides
+ * "Connected" from heart's `isActive` (the confirmation latch).
  *
  * Config route (`method: 'config'`; the only route on Linux, needs forwarder.stdioSupported): Claude must be
- * closed (consent before any key exists), the stable copy is installed (`~/.anytype/bin`), the keyless entry
- * `anytype-mcp serve --connection claude-desktop` is merged into claude_desktop_config.json, `key set` is the
- * commit, and Claude is relaunched on every path after Anytype quit it. It needs no extension; with the
- * Anytype extension installed and enabled as well the plan is refused (two servers for one connection).
- * - Ownership of that entry = canonicalDigest(entry) === rec.entryDigest. An entry identical to the command
- *   Anytype writes today holds no key and is the same for every account, so it never needs a Replace.
- * - Two objects can be someone else's (the entry and the item): Replace is offered bound to the one that is
- *   foreign; when both are, the plan is manual-only (one consent can't stand for both).
+ * closed (consent before any key exists), the stable copy is installed (`~/.anytype/bin`), the preflight runs
+ * on it, and the entry `anytype-mcp serve --tier <t>` with the key in `env` is merged into
+ * claude_desktop_config.json under `claude-desktop.lock`, after the candidate (entry digest and key
+ * fingerprint) was saved; Claude is relaunched on every path after Anytype quit it. The entry is ours exactly
+ * when its digest is the record's; any other entry is Needs attention ▸ Reconnect. A tier change is a Reconnect.
  * - Running state unknown (Linux: no verified executable; Windows MSIX; a failed process query): the user
  *   quits Claude and confirms (`quitConfirmed`). Before every config write the state is read again: a
  *   running Claude (a new instance, or several processes, included) is never written behind.
- * - The entry's and the item's presence come from the snapshot taken BEFORE Claude was quit: one that
- *   vanished while Claude quit is the user's removal, never re-added.
- * - A failed relaunch is reported (`openFailed`, restart step; `error.openFailed` on a failed apply); a
- *   rollback that can't put the previous entry back is reported (`error.left: 'entry'`).
+ * - The entry's presence comes from the snapshot taken BEFORE Claude was quit: one that vanished while Claude
+ *   quit is the user's removal, never re-added.
  *
- * Manual (`ctx.manual`): Anytype's side only (the item, the stable copy or the bundle copy); nothing is
- * opened, no config edit, no quit. The record waits (pending) until check sees the extension or the entry.
+ * One connection, one server (`claudeRoutes`): either route is refused while the other one is there, before a
+ * key is minted; a check that finds both says `conflict`. Anytype removes neither by itself.
  *
- * Check: an unreadable config on the config route is `unreadable`; a port or tier change is a
- * `key retarget` (never a new key); a failed heal is `reconnect`; an owned entry that isn't today's command
- * is rewritten while Claude is stopped, else `reconnect`.
- *
- * Extension state files (UNVERIFIED field names, no extension was installed on the dev Mac):
- * `extensions-installations.json` → the record of the extension id (version, signatureInfo), and
- * `Claude Extensions Settings/<id>.json` → `isEnabled`.
+ * Extension state files (UNVERIFIED field names): `extensions-installations.json` → the record of the extension
+ * id (version, installedAt, signatureInfo), and `Claude Extensions Settings/<id>.json` → `isEnabled` (the only
+ * field read; the parsed object is never kept).
  */
-import type { Adapter, AiError, AiPlan, AiRecord, AiStep, ApplyOutcome, CheckOutcome, Ctx, Detected, Env } from '../types';
+import type { Adapter, AiError, AiPlan, AiRecord, AiStep, AiTier, ApplyOutcome, CheckOutcome, Ctx, Detected, Env } from '../types';
 import { dirsWritable, isLocalAbsolute, pathOf, readSnapshot, resolveTarget, writeFileSafe } from '../fsSafe';
-import { canonicalDigest } from '../digest';
+import { canonicalDigest, keyFingerprint } from '../digest';
 import { claudeDesktopDir, powershellPath } from '../detect';
-import { BUNDLE_NAME, bundleDir, bundleInfo, bundleUsable, copyBundle, ensureStoreDir, loadBundle, type BundleInfo } from '../bundle';
-import { buildMeta, ensureInstalled, serveCommand, stdioSupported, usable, withLock } from '../forwarder';
-import { commitItem, deleteItem, itemState, retargetItem, type ItemState } from '../item';
+import { bundleDir, bundleInfo, bundleUsable, copyBundle, ensureStoreDir, loadBundle, type BundleInfo } from '../bundle';
+import { KEY_VAR, buildMeta, ensureInstalled, serveCommand, stdioSupported, usable, withLock } from '../forwarder';
+import { preflight } from '../endpoint';
 import { UTF8_OUTPUT, launch, quit, runningState } from '../restart';
-import { basePlan, displayPath, err, goneError, manualPlan, mayWrite, mergeStep, protectedError, protectedTarget, stillLive } from './common';
+import { basePlan, displayPath, err, goneError, manualPlan, mayWrite, mergeStep, placeholder, protectedError, protectedTarget } from './common';
 import { jsonFormat } from './jsonEntry';
 
 export const TARGET_ID = 'claude-desktop';
@@ -58,12 +48,22 @@ export const EXTENSION_ID_DEV = 'local.mcpb.anytype.anytype-dev';
 
 export const extensionId = (env: Env): string => buildMeta(env)?.signed ? EXTENSION_ID : EXTENSION_ID_DEV;
 export const INSTALLATIONS_FILE = 'extensions-installations.json';
+/**
+ * The value of `signatureInfo.status` Claude writes for a bundle whose signature it verified. UNVERIFIED: read off
+ * a signed install on the alpha (§5 D2); while it is null a signed build always opens the bundle, never Configure
+ */
+export const CLAUDE_SIGNED_STATUS: string | null = null;
 export const SETTINGS_DIR = 'Claude Extensions Settings';
 
 export type ExtensionState = 'installed' | 'disabled' | 'outdated' | 'absent' | 'unreadable';
 
 export interface ExtensionInfo {
 	state: ExtensionState;
+	/** The installation record's `version` and `installedAt`: Claude's install identity, which the confirmation latch is bound to */
+	version: string;
+	installedAt: string;
+	/** Verified, and (signed build) Claude reports the extension's signature as valid: the key may go in through Configure */
+	configurable: boolean;
 	/** Is an extension there: none installed, an installation record, or unknown (the file can't be read) */
 	present: 'none' | 'record' | 'unknown';
 	/** The installation record is Anytype's: expected id, version ≥ the bundle's, and (signed build) the expected signer */
@@ -144,15 +144,17 @@ export const extensionInfo = (env: Env, bundle: BundleInfo | null): ExtensionInf
 	const dir = claudeDesktopDir(env);
 	const installations = readClaudeJson(env, P.join(dir, INSTALLATIONS_FILE));
 
+	const none = { version: '', installedAt: '', configurable: false };
+
 	if (installations.kind != 'ok') {
-		return { state: 'unreadable', present: (installations.kind == 'missing') ? 'none' : 'unknown', verified: false, enabled: false };
+		return { state: 'unreadable', present: (installations.kind == 'missing') ? 'none' : 'unknown', verified: false, enabled: false, ...none };
 	};
 
 	const id = extensionId(env);
 	const record = installationRecord(installations.value, id);
 
 	if (!record) {
-		return { state: 'absent', present: 'none', verified: false, enabled: false };
+		return { state: 'absent', present: 'none', verified: false, enabled: false, ...none };
 	};
 
 	// Read for every record, also an outdated one: Claude runs whatever is installed and switched on
@@ -160,50 +162,29 @@ export const extensionInfo = (env: Env, bundle: BundleInfo | null): ExtensionInf
 	const enabled = (settings.kind == 'ok') ? settings.value?.isEnabled : undefined;
 	const on = (enabled !== false);
 	const version = String(record.version || record.manifest?.version || '');
+	const installedAt = String(record.installedAt ?? record.installed_at ?? '');
 	const versionOk = bundleUsable(bundle) && !!version && (compareVersions(version, bundle.version) >= 0);
 	const signerOk = bundleUsable(bundle) && (!bundle.signed || (signerOf(record) === bundle.signerFingerprint));
+	// A signed build also needs Claude's own verdict on the signature, whose literal isn't known yet: until then never
+	const statusOk = !bundle?.signed || ((CLAUDE_SIGNED_STATUS !== null) && (record?.signatureInfo?.status === CLAUDE_SIGNED_STATUS));
+	const identity = { version, installedAt };
 
 	if (!versionOk || !signerOk) {
-		return { state: 'outdated', present: 'record', verified: false, enabled: on };
+		return { state: 'outdated', present: 'record', verified: false, enabled: on, configurable: false, ...identity };
 	};
 
 	if (typeof enabled != 'boolean') {
-		return { state: 'unreadable', present: 'record', verified: true, enabled: on };
+		return { state: 'unreadable', present: 'record', verified: true, enabled: on, configurable: statusOk, ...identity };
 	};
-	return { state: enabled ? 'installed' : 'disabled', present: 'record', verified: true, enabled: on };
+	return { state: enabled ? 'installed' : 'disabled', present: 'record', verified: true, enabled: on, configurable: statusOk, ...identity };
 };
 
 export const extensionState = (env: Env, bundle: BundleInfo | null): ExtensionState => extensionInfo(env, bundle).state;
 
-/** The key may go to the installed extension on the bundle route: unsigned development build by state, a signed one only when verified */
-const extensionReady = (bundle: BundleInfo, info: ExtensionInfo): boolean => bundle.signed ? info.verified : ((info.state == 'installed') || (info.state == 'disabled'));
+export const configFile = (env: Env): string => pathOf(env).join(claudeDesktopDir(env), 'claude_desktop_config.json');
 
-const configFile = (env: Env): string => pathOf(env).join(claudeDesktopDir(env), 'claude_desktop_config.json');
-
-/** The entry Anytype writes into Claude's config: the stable copy, no key, no `env` */
-const entryOf = (env: Env) => serveCommand(env, TARGET_ID);
-
-/**
- * A manual plan that prepares the item ("Create key" runs `key set`, `manualPrepare`) names the item as its
- * target, with the Replace an item of someone else's needs: the renderer binds Create key to it
- * (`previewTarget`, X7). Without a usable store the plan stays without a target (not actionable).
- */
-const manualKeyPlan = async (ctx: Ctx, rec: AiRecord | null, plan: AiPlan, error: AiError, steps: AiStep[]): Promise<AiPlan> => {
-	const prepares = steps.some(s => s.textKey == 'aiConnectManualPrepare');
-	const manual = manualPlan(plan, error, steps);
-	const own = prepares ? await itemState(ctx.env, TARGET_ID, rec, ctx.accountId) : null;
-
-	if (!own || ('error' in own)) {
-		return manual;
-	};
-
-	const ret: AiPlan = { ...manual, targetPath: own.label, existing: own.existing };
-
-	if (own.existing == 'foreign') {
-		ret.replace = { targetPath: own.label, foreignDigest: own.digest };
-	};
-	return ret;
-};
+/** The entry Anytype writes into Claude's config: the stable copy, the tier, the key in `env` */
+const entryOf = (env: Env, tier: AiTier, key: string) => serveCommand(env, { tier, key });
 
 /**
  * Windows: the Claude.exe of the installation detection found, never another package. The classic
@@ -246,217 +227,163 @@ export const windowsClaudeExe = async (env: Env, det: Detected): Promise<string 
 };
 
 /** Opens the bundle in Claude: macOS `open -a <app> <file>`, Windows `Claude.exe <file>`; false when it can't */
-const openBundle = async (ctx: Ctx, det: Detected, file: string): Promise<boolean> => {
-	if (ctx.env.platform == 'darwin') {
+const openBundle = async (env: Env, det: Detected, file: string): Promise<boolean> => {
+	if (env.platform == 'darwin') {
 		if (!det.appPath) {
 			return false;
 		};
-		return (await ctx.env.run('/usr/bin/open', [ '-a', det.appPath, file ], { timeout: 10000 })).code == 0;
+		return (await env.run('/usr/bin/open', [ '-a', det.appPath, file ], { timeout: 10000 })).code == 0;
 	};
-	if (ctx.env.platform == 'win32') {
-		const exe = await windowsClaudeExe(ctx.env, det);
-		return exe ? ctx.env.launch(exe, [ file ]) : false;
+	if (env.platform == 'win32') {
+		const exe = await windowsClaudeExe(env, det);
+		return exe ? env.launch(exe, [ file ]) : false;
 	};
 	return false;
 };
 
-const primarySteps = (env: Env): AiStep[] => [
-	{ textKey: 'aiConnectManualPrepare' },
-	{ textKey: 'aiConnectManualInstallFile', path: pathOf(env).join(bundleDir(env), BUNDLE_NAME) },
-	{ textKey: 'aiConnectStepRestartSelf', args: [ 'Claude' ] },
-];
-
-const configSteps = (env: Env): AiStep[] => [
-	{ textKey: 'aiConnectManualPrepare' },
-	mergeStep({ mcpServers: { anytype: entryOf(env) } }, configFile(env)),
+/** The manual steps of the config route: the entry with the key placeholder, kept private, then a restart */
+const configSteps = (env: Env, tier: AiTier): AiStep[] => [
+	mergeStep({ mcpServers: { anytype: entryOf(env, tier, placeholder) } }, configFile(env)),
+	{ textKey: 'aiConnectManualKeepPrivate' },
 	{ textKey: 'aiConnectStepRestartSelf', args: [ 'Claude' ] },
 ];
 
 const useConfigRoute = (ctx: Ctx): boolean => (ctx.method == 'config') || (ctx.env.platform == 'linux');
 
-/** An Anytype extension is installed and not switched off (any version, any signer): the config route would start a second server for the same connection (Q14) */
-const extensionEnabled = (env: Env): boolean => {
-	const info = extensionInfo(env, bundleInfo(env));
+/**
+ * Both of Claude's routes, as they are now (§3.2 "one guard for both routes"): `config` — claude_desktop_config.json
+ * has `mcpServers.anytype`; `extension` — an Anytype extension (either flavour) is installed and not switched off.
+ * A file that exists but can't be read counts as present
+ */
+export const claudeRoutes = (env: Env): { config: boolean; extension: boolean } => {
+	const t = loadConfig(env);
+	const config = ('error' in t) || present(t.value);
+	const installations = readClaudeJson(env, pathOf(env).join(claudeDesktopDir(env), INSTALLATIONS_FILE));
+	let extension = (installations.kind == 'unreadable');
 
-	// S9: an installation registry that exists but can't be read (too large, damaged) may describe an enabled
-	// extension; only a missing one says there is none
-	return info.enabled || (info.present == 'unknown');
+	if (installations.kind == 'ok') {
+		for (const id of [ EXTENSION_ID, EXTENSION_ID_DEV ]) {
+			if (installationRecord(installations.value, id)) {
+				const settings = readClaudeJson(env, pathOf(env).join(claudeDesktopDir(env), SETTINGS_DIR, `${id}.json`));
+
+				extension = extension || (settings.kind != 'ok') || (settings.value?.isEnabled !== false);
+			};
+		};
+	};
+	return { config, extension };
 };
 
+/** The two-server refusal of a plan: which of the two is in the way */
+const bothRoutesPlan = (plan: AiPlan, other: 'config' | 'extension'): AiPlan => ({
+	...manualPlan(plan, err('validate', 'conflict'), []),
+	note: (other == 'config') ? 'aiConnectClaudeBothConfig' : 'aiConnectClaudeBothExtension',
+});
+
 /**
- * S8: Claude's config entry is the same text for every account and every Anytype profile, so the steps that
- * decide whose it is and then change it — an apply from the config merge through `key set`, a removal from
- * `key delete` through the config edit — run one at a time across processes: an exclusive
- * `~/.anytype/ai-connect/claude-desktop.lock` (beside the item folders, never inside one; the wait and the
- * staleness of the stable copy's lock). null: not acquired, and nothing was done.
+ * S8: Claude's config file is shared by every account and every Anytype profile, so deciding whose the entry is
+ * and changing it run one at a time across processes: an exclusive `~/.anytype/ai-connect/claude-desktop.lock`
+ * (the stable copy's lock rules). null: not acquired, and nothing was done.
  */
 const LOCK_NAME = 'claude-desktop.lock';
 const configLock = async <T>(env: Env, fn: () => Promise<T>): Promise<T | null> => ((await ensureStoreDir(env)) ? withLock(env, bundleDir(env), fn, LOCK_NAME) : null);
 
-/** What a committed `key set` becomes: the outcome, or the unconfirmed one the service keeps as a candidate */
-const unconfirmedOutcome = (method: 'keyfile' | 'package' | 'config', nextStep: 'restart' | 'toggle' | 'confirmInApp', targetPath: string, running?: boolean): ApplyOutcome => ({
-	ok: true, method, nextStep, targetPath, observedInstalled: false, createdDirs: [], unconfirmed: true, ...(running ? { running: true } : {}),
-});
-
-// ---------------------- primary: bundle + item ---------------------- //
+// ---------------------- the extension ---------------------- //
 
 const primary = {
-	plan: async (ctx: Ctx, rec: AiRecord | null, base: AiPlan): Promise<AiPlan> => {
+	plan: async (ctx: Ctx, base: AiPlan): Promise<AiPlan> => {
 		const bundle = bundleInfo(ctx.env);
-		const plan: AiPlan = { ...base, steps: primarySteps(ctx.env), bundleSigned: !!bundle?.signed };
+		// Always Full (§3.3): the bundle's manifest starts `serve --tier full`
+		const plan: AiPlan = { ...base, tier: 'full', method: 'package', nextStep: 'confirmInApp', sentenceKey: 'aiConnectPlanPackage', steps: [], bundleSigned: !!bundle?.signed };
 
 		if (!bundleUsable(bundle)) {
-			// No bundle to install (damaged, or a build without one): the config route by hand, where it can run
-			const steps = usable(ctx.env).ok ? configSteps(ctx.env) : [];
+			// No bundle to install (damaged, or a build without one): Claude's settings file by hand, where it can run
+			const steps = usable(ctx.env).ok ? configSteps(ctx.env, ctx.tier) : [];
 
-			// S9: the same guard as the config route's own plan — no Create key that `manualPrepare` would then refuse
-			if (extensionEnabled(ctx.env)) {
-				return { ...manualPlan(plan, err('validate', 'conflict'), []), note: 'aiConnectClaudeBothRoutes' };
+			if (claudeRoutes(ctx.env).extension) {
+				return bothRoutesPlan(plan, 'extension');
 			};
-			return manualKeyPlan(ctx, rec, { ...plan, steps }, err('verify', 'unsupportedPackage'), steps);
+			return { ...manualPlan({ ...plan, tier: ctx.tier }, err('verify', 'unsupportedPackage'), steps), needsKey: !!steps.length };
+		};
+		if (claudeRoutes(ctx.env).config) {
+			return bothRoutesPlan(plan, 'config');
 		};
 
-		const own = await itemState(ctx.env, TARGET_ID, rec, ctx.accountId);
+		const own = usable(ctx.env);
 
-		if ('error' in own) {
+		if (!('path' in own)) {
 			return manualPlan(plan, own.error, []);
 		};
 
-		plan.displayTarget = displayPath(ctx.env, own.label);
-		plan.targetPath = own.label;
-		plan.existing = own.existing;
-		if (own.existing == 'foreign') {
-			plan.replace = { targetPath: own.label, foreignDigest: own.digest };
-		};
+		const denied = await preflight(ctx, own.path);
 
-		const info = extensionInfo(ctx.env, bundle);
-
-		if (extensionReady(bundle, info)) {
-			return { ...plan, method: 'keyfile', nextStep: (info.state == 'disabled') ? 'toggle' : 'restart', sentenceKey: 'aiConnectPlanKeyfile' };
+		if (denied) {
+			return manualPlan(plan, denied, []);
 		};
-		return { ...plan, method: 'package', nextStep: 'confirmInApp', sentenceKey: 'aiConnectPlanPackage' };
+		if (extensionInfo(ctx.env, bundle).configurable) {
+			return { ...plan, configure: true, sentenceKey: 'aiConnectPlanPackageConfigure' };
+		};
+		return plan;
 	},
 
-	apply: async (ctx: Ctx, det: Detected, rec: AiRecord | null): Promise<ApplyOutcome> => {
+	apply: async (ctx: Ctx, det: Detected): Promise<ApplyOutcome> => {
+		// Main forces Full on this route and refuses anything else (D1-18)
+		if (ctx.tier != 'full') {
+			return { ok: false, error: err('validate', 'unknown') };
+		};
+
 		const loaded = loadBundle(ctx.env);
 		const bundle = loaded?.info || null;
 
 		if (!loaded || !bundleUsable(bundle)) {
 			return { ok: false, error: err('verify', 'unsupportedPackage') };
 		};
-
-		const info = extensionInfo(ctx.env, bundle);
-
-		// Signed build, the installed extension not verified (absent, unreadable, another signer or version): the key must not exist yet
-		if (bundle.signed && !info.verified) {
-			const copy = await copyBundle(ctx.env, loaded.data);
-
-			if (!('path' in copy)) {
-				return { ok: false, error: copy.error };
-			};
-
-			const opened = await openBundle(ctx, det, copy.path);
-			return opened ? { ok: false, needs: 'installExtension' } : { ok: false, needs: 'installExtension', openFailed: true };
-		};
-
-		const ready = extensionReady(bundle, info);
-		const method = ready ? 'keyfile' : 'package';
-		const nextStep = ready ? ((info.state == 'disabled') ? 'toggle' : 'restart') : 'confirmInApp';
-		// Commit: the item
-		const res = await commitItem(ctx, TARGET_ID, rec, { method, route: ctx.route, nextStep });
-
-		if ('unconfirmed' in res) {
-			return unconfirmedOutcome(method, nextStep, res.label, res.running);
-		};
-		if ('error' in res) {
-			return { ok: false, error: res.error };
-		};
-		if (ready) {
-			return { ok: true, method, nextStep, targetPath: res.label, observedInstalled: true, createdDirs: [], itemRev: res.rev };
-		};
-
-		const copy = await copyBundle(ctx.env, loaded.data);
-		const opened = ('path' in copy) && (await openBundle(ctx, det, copy.path));
-
-		return { ok: true, method, nextStep, targetPath: res.label, observedInstalled: false, createdDirs: [], itemRev: res.rev, ...(opened ? {} : { openFailed: true }) };
-	},
-};
-
-// ---------------------- manual: Anytype's side only ---------------------- //
-
-/**
- * "Set up manually" → Create key: the item (and, for the bundle route, the bundle copy the user installs;
- * for the config route, the stable copy the entry starts); nothing is opened, no config is edited, Claude
- * is not quit. The config route records the entry it shows, so check recognises it once the user added
- * exactly that.
- */
-const manualPrepare = async (ctx: Ctx, rec: AiRecord | null): Promise<ApplyOutcome> => {
-	const loaded = loadBundle(ctx.env);
-	const bundle = loaded?.info || null;
-
-	if (useConfigRoute(ctx) || !loaded || !bundleUsable(bundle)) {
-		// One connection, one server (Q14): checked before anything is installed or stored
-		if (extensionEnabled(ctx.env)) {
+		if (claudeRoutes(ctx.env).config) {
 			return { ok: false, error: err('validate', 'conflict') };
 		};
 
-		// The entry the user is told to add must be able to start
-		const installed = await ensureInstalled(ctx.env);
+		const own = usable(ctx.env);
 
-		if (!('path' in installed)) {
-			return { ok: false, error: installed.error };
+		if (!('path' in own)) {
+			return { ok: false, error: own.error };
 		};
 
-		const entry = entryOf(ctx.env);
-		const target = resolveTarget(ctx.env, configFile(ctx.env));
-		// S8: one at a time with another profile's removal (which decides by the item whose the entry is)
-		const res = await configLock(ctx.env, () => commitItem(ctx, TARGET_ID, rec, {
-			method: 'config', route: ctx.route, nextStep: 'restart',
-			...(('real' in target) ? { targetPath: target.real, configEntry: entry, entryDigest: canonicalDigest(entry), configPath: target.real } : {}),
-		}));
+		const denied = await preflight(ctx, own.path);
 
-		if (!res) {
-			return { ok: false, error: err('write', 'changed') };
-		};
-		if ('unconfirmed' in res) {
-			return unconfirmedOutcome('config', 'restart', ('real' in target) ? target.real : res.label, res.running);
-		};
-		if ('error' in res) {
-			return { ok: false, error: res.error };
+		if (denied) {
+			return { ok: false, error: denied };
 		};
 
-		return {
-			ok: true, method: 'config', nextStep: 'restart', targetPath: ('real' in target) ? target.real : res.label, observedInstalled: false, createdDirs: [],
-			configEntry: entry, entryDigest: canonicalDigest(entry), itemRev: res.rev, ...(('real' in target) ? { configPath: target.real } : {}),
+		const info = extensionInfo(ctx.env, bundle);
+		const configure = info.configurable;
+		const install = info.version ? { version: info.version, installedAt: info.installedAt } : null;
+		// Run by the service once the record is saved and the key copied: no key is in the bundle or its copy
+		const deliver = async (): Promise<boolean> => {
+			if (configure) {
+				return true;
+			};
+
+			const copy = await copyBundle(ctx.env, loaded.data);
+			return ('path' in copy) && openBundle(ctx.env, det, copy.path);
 		};
-	};
 
-	const info = extensionInfo(ctx.env, bundle);
-	const copy = await copyBundle(ctx.env, loaded.data);
-
-	if (!('path' in copy)) {
-		return { ok: false, error: copy.error };
-	};
-	// The user installs the signed bundle first; the key follows once the verified extension is there
-	if (bundle.signed && !info.verified) {
-		return { ok: false, needs: 'installExtension' };
-	};
-
-	const ready = extensionReady(bundle, info);
-	const method = ready ? 'keyfile' : 'package';
-	const nextStep = ready ? ((info.state == 'disabled') ? 'toggle' : 'restart') : 'confirmInApp';
-	const res = await commitItem(ctx, TARGET_ID, rec, { method, route: ctx.route, nextStep });
-
-	if ('unconfirmed' in res) {
-		return unconfirmedOutcome(method, nextStep, res.label, res.running);
-	};
-	if ('error' in res) {
-		return { ok: false, error: res.error };
-	};
-	return { ok: true, method, nextStep, targetPath: res.label, observedInstalled: ready, createdDirs: [], itemRev: res.rev };
+		return { ok: true, method: 'package', nextStep: 'confirmInApp', targetPath: '', observedInstalled: false, createdDirs: [], deliver, configure, install };
+	},
 };
 
-// ---------------------- config route: config entry + item ---------------------- //
+/** "Open again" (no key involved): the bundle copy is written and opened in Claude */
+export const openBundleAgain = async (env: Env, det: Detected): Promise<boolean> => {
+	const loaded = loadBundle(env);
+
+	// Never a second server: not while Claude's settings file has an Anytype entry
+	if (!loaded || !bundleUsable(loaded.info) || claudeRoutes(env).config) {
+		return false;
+	};
+
+	const copy = await copyBundle(env, loaded.data);
+	return ('path' in copy) && openBundle(env, det, copy.path);
+};
+
+// ---------------------- config route: the entry with the key ---------------------- //
 
 interface ConfigTarget {
 	real: string;
@@ -490,18 +417,16 @@ const loadConfig = (env: Env, file?: string): ConfigTarget | { error: AiError } 
 	return { real: target.real, snapshot, text: snapshot.text, value: parsed.value };
 };
 
-/** The entry this record wrote (its digest); decides heal, remove and rollback */
+/** The entry this record wrote (its digest, key included); decides check and remove */
 const entryOurs = (value: any, rec: AiRecord | null): boolean => present(value) && !!rec?.entryDigest && (canonicalDigest(value) == rec.entryDigest);
-
-/** Exactly the entry Anytype writes today: no key in it, the same for every account; writing it again changes nothing */
-const entryShared = (env: Env, value: any): boolean => present(value) && (canonicalDigest(value) == canonicalDigest(entryOf(env)));
 
 /** A replace consent that names exactly this config entry */
 const entryConsent = (ctx: Ctx, t: ConfigTarget): boolean => present(t.value) && !!ctx.replace && (ctx.replace.targetPath == t.real) && (ctx.replace.foreignDigest == canonicalDigest(t.value));
 
 /**
- * Sets (or removes, with undefined) `mcpServers.anytype`; one retry on `changed`. `expect` runs before
- * every attempt: null → write; an error → refused; 'skip' → nothing to do.
+ * Sets (or removes, with undefined) `mcpServers.anytype`; one retry on `changed`. `expect` runs before every
+ * attempt: null → write; an error → refused; 'skip' → nothing to do. Always a secret write: the file holds a
+ * key (ours, or another one), so no backup and no temp of it is left behind
  */
 const writeConfigEntry = async (env: Env, value: any, expect: (current: ConfigTarget, attempt: number) => Promise<AiError | 'skip' | null>, file?: string): Promise<{ ok: true; real: string; createdDirs: string[] } | { ok: false; error: AiError }> => {
 	for (let attempt = 0; attempt < 2; attempt++) {
@@ -526,7 +451,7 @@ const writeConfigEntry = async (env: Env, value: any, expect: (current: ConfigTa
 			return { ok: false, error: err('parse', edit.category, t.real) };
 		};
 
-		const res = await writeFileSafe(env, t.real, edit.text, { snapshot: t.snapshot, secret: false });
+		const res = await writeFileSafe(env, t.real, edit.text, { snapshot: t.snapshot, secret: true });
 
 		if ('createdDirs' in res) {
 			return { ok: true, real: t.real, createdDirs: res.createdDirs };
@@ -543,69 +468,64 @@ const STILL_RUNNING = err('restart', 'changed');
 
 const fallback = {
 	plan: async (ctx: Ctx, det: Detected, rec: AiRecord | null, base: AiPlan): Promise<AiPlan> => {
-		const plan: AiPlan = { ...base, method: 'config', nextStep: 'restart', sentenceKey: 'aiConnectPlanConfigRestart', steps: configSteps(ctx.env) };
+		const plan: AiPlan = { ...base, method: 'config', nextStep: 'restart', sentenceKey: 'aiConnectPlanConfigRestart', steps: configSteps(ctx.env, ctx.tier), needsKey: true };
 
 		// Stated before any key exists: this package can't be started by Claude
 		if (!stdioSupported(ctx.env)) {
-			return { ...plan, canApply: false, method: 'manual', error: err('detect', 'unsupportedPackage'), note: 'aiConnectLinuxPackageLimit', steps: [] };
+			return { ...plan, canApply: false, method: 'manual', error: err('detect', 'unsupportedPackage'), note: 'aiConnectLinuxPackageLimit', steps: [], needsKey: false };
 		};
 
 		// The forwarder this build ships must be there and match its metadata, or no entry could start
 		const own0 = usable(ctx.env);
 
 		if (!('path' in own0)) {
-			return manualPlan(plan, own0.error, []);
+			return { ...manualPlan(plan, own0.error, []), needsKey: false };
 		};
-		// One connection, one server: with the extension switched on as well, Claude would run two
-		if (extensionEnabled(ctx.env)) {
-			return { ...manualPlan(plan, err('validate', 'conflict'), []), note: 'aiConnectClaudeBothRoutes' };
+		// One connection, one server: with the extension there as well, Claude would run two
+		if (claudeRoutes(ctx.env).extension) {
+			return { ...bothRoutesPlan(plan, 'extension'), needsKey: false };
+		};
+
+		// The entry names the stable copy: installed now, and the preflight runs on exactly that file
+		const installed = await ensureInstalled(ctx.env);
+
+		if (!('path' in installed)) {
+			return { ...manualPlan(plan, installed.error, []), needsKey: false };
+		};
+
+		const denied = await preflight(ctx, installed.path);
+
+		if (denied) {
+			return { ...manualPlan(plan, denied, []), needsKey: false };
 		};
 
 		const t = loadConfig(ctx.env);
 
 		if ('error' in t) {
-			return manualKeyPlan(ctx, rec, plan, t.error, plan.steps);
+			return { ...manualPlan(plan, t.error, plan.steps), needsKey: true };
 		};
 
 		// The writer's own edit and directory rules on the previewed file
-		const dry = CONFIG.set(t.text, entryOf(ctx.env));
+		const dry = CONFIG.set(t.text, entryOf(ctx.env, ctx.tier, placeholder));
 
 		if (!('text' in dry)) {
-			return manualKeyPlan(ctx, rec, plan, err('parse', dry.category, t.real), plan.steps);
+			return { ...manualPlan(plan, err('parse', dry.category, t.real), plan.steps), needsKey: true };
 		};
 
 		const dirs = dirsWritable(ctx.env, t.real);
 
 		if (dirs) {
-			return manualKeyPlan(ctx, rec, plan, dirs, plan.steps);
+			return { ...manualPlan(plan, dirs, plan.steps), needsKey: true };
 		};
-
-		const own = await itemState(ctx.env, TARGET_ID, rec, ctx.accountId);
-
-		if ('error' in own) {
-			return manualPlan(plan, own.error, []);
-		};
-
-		const configForeign = present(t.value) && !entryOurs(t.value, rec) && !entryShared(ctx.env, t.value);
-		const keyForeign = own.existing == 'foreign';
 
 		plan.displayTarget = displayPath(ctx.env, t.real);
 		plan.targetPath = t.real;
 
-		// One Replace can't stand for two objects someone else owns: the user removes one first
-		if (configForeign && keyForeign) {
-			return manualPlan(plan, err('validate', 'conflict', t.real), []);
-		};
-		if (configForeign) {
-			plan.existing = 'foreign';
-			plan.replace = { targetPath: t.real, foreignDigest: canonicalDigest(t.value) };
-		} else
-		if (keyForeign) {
-			plan.existing = 'foreign';
-			plan.replace = { targetPath: own.label, foreignDigest: own.digest };
-		} else
-		if (entryOurs(t.value, rec) || (own.existing == 'ours')) {
-			plan.existing = 'ours';
+		if (present(t.value)) {
+			plan.existing = entryOurs(t.value, rec) ? 'ours' : 'foreign';
+			if (plan.existing == 'foreign') {
+				plan.replace = { targetPath: t.real, foreignDigest: canonicalDigest(t.value) };
+			};
 		};
 
 		const running = await runningState(ctx.env, det);
@@ -624,16 +544,16 @@ const fallback = {
 		if (!stdioSupported(ctx.env)) {
 			return { ok: false, error: err('detect', 'unsupportedPackage') };
 		};
-		if (extensionEnabled(ctx.env)) {
+		if (claudeRoutes(ctx.env).extension) {
 			return { ok: false, error: err('validate', 'conflict') };
 		};
 
-		const entry = entryOf(ctx.env);
+		const entry = entryOf(ctx.env, ctx.tier, ctx.key);
 		const digest = canonicalDigest(entry);
 		const needs = (ctx.env.platform == 'linux') ? 'quitAppSelf' : 'quitApp';
 
-		// Everything that can refuse is checked before Claude is touched: the edit, the forwarder, both owners
-		const baseline = async (): Promise<{ pre: ConfigTarget; own: Extract<ItemState, { ok: true }> } | { ok: false; error: AiError }> => {
+		// Everything that can refuse is checked before Claude is touched: the edit, the forwarder, the preflight, the owner
+		const baseline = async (): Promise<{ pre: ConfigTarget } | { ok: false; error: AiError }> => {
 			const pre = loadConfig(ctx.env);
 
 			if ('error' in pre) {
@@ -652,25 +572,22 @@ const fallback = {
 				return { ok: false, error: dirs };
 			};
 
-			// The entry must be able to start: the stable copy, installed or updated now
+			// The entry must be able to start: the stable copy, installed or updated now, and found safe by the forwarder
 			const installed = await ensureInstalled(ctx.env);
 
 			if (!('path' in installed)) {
 				return { ok: false, error: installed.error };
 			};
 
-			const own = await itemState(ctx.env, TARGET_ID, rec, ctx.accountId);
+			const denied = await preflight(ctx, installed.path);
 
-			if ('error' in own) {
-				return { ok: false, error: own.error };
+			if (denied) {
+				return { ok: false, error: denied };
 			};
-			if (present(pre.value) && !entryOurs(pre.value, rec) && !entryShared(ctx.env, pre.value) && !entryConsent(ctx, pre)) {
+			if (present(pre.value) && !entryOurs(pre.value, rec) && !entryConsent(ctx, pre)) {
 				return { ok: false, error: err('validate', 'conflict', pre.real) };
 			};
-			if ((own.existing == 'foreign') && !(ctx.replace && (ctx.replace.targetPath == own.label) && (ctx.replace.foreignDigest == own.digest))) {
-				return { ok: false, error: err('validate', 'conflict', own.label) };
-			};
-			return { pre, own };
+			return { pre };
 		};
 		const first = await baseline();
 
@@ -678,9 +595,8 @@ const fallback = {
 			return first;
 		};
 
-		// What was there before Claude was quit decides whether the entry and the item may be created
+		// What was there before Claude was quit decides whether the entry may be created
 		let entryWasPresent = present(first.pre.value);
-		let keyWasPresent = first.own.existing != 'none';
 		const running = await runningState(ctx.env, det);
 		let quitted = false;
 
@@ -718,7 +634,7 @@ const fallback = {
 			if ('method' in outcome) {
 				return { ...outcome, nextStep: 'restart', openFailed: true };
 			};
-			return ('error' in outcome) ? { ok: false, error: { ...outcome.error, openFailed: true } } : { ...outcome, openFailed: true };
+			return ('error' in outcome) ? { ok: false, error: { ...outcome.error, openFailed: true } } : outcome;
 		};
 
 		/** Claude may be written behind: stopped, or unknown after the user confirmed they quit it */
@@ -727,11 +643,9 @@ const fallback = {
 			return (now.state == 'stopped') || ((now.state == 'unknown') && !!ctx.quitConfirmed);
 		};
 
-		// S8: from the config merge through `key set`, one at a time with every other profile's apply and removal.
-		// Waiting for Claude to quit happened above, outside the lock
+		// S8: one at a time with every other profile's apply and removal. Waiting for Claude to quit happened above, outside the lock
 		const locked = await configLock(ctx.env, async (): Promise<ApplyOutcome> => {
-			// Nothing was done to Claude: what is there now, under the lock, is the state to judge by (another
-			// profile's removal may have finished while this call waited). After a quit the earlier reading stands
+			// Nothing was done to Claude: what is there now, under the lock, is the state to judge by. After a quit the earlier reading stands
 			if (!quitted) {
 				const again = await baseline();
 
@@ -739,10 +653,16 @@ const fallback = {
 					return again;
 				};
 				entryWasPresent = present(again.pre.value);
-				keyWasPresent = again.own.existing != 'none';
 			};
 
-			let previous: any;
+			const nextStep = quitted ? 'none' : 'restart';
+			const real = first.pre.real;
+
+			// The candidate (digest and fingerprint) is saved before the key goes into the file: a crash after the
+			// write is settled by the next check, which reads the entry's key
+			if (ctx.journal && !ctx.journal.set({ method: 'config', route: ctx.route, targetPath: real, nextStep, entryDigest: digest, configPath: real })) {
+				return { ok: false, error: err('write', 'unsaved') };
+			};
 
 			const merged = await writeConfigEntry(ctx.env, entry, async t => {
 				if (!(await mayEdit())) {
@@ -750,11 +670,8 @@ const fallback = {
 				};
 
 				const here = present(t.value);
-
-				previous = t.value;
-
 				const verdict = mayWrite({
-					mode: 'install', present: here, owned: here && (entryOurs(t.value, rec) || entryShared(ctx.env, t.value)), consent: entryConsent(ctx, t),
+					mode: 'install', present: here, owned: here && entryOurs(t.value, rec), consent: entryConsent(ctx, t),
 					consentHere: ctx.replace?.targetPath == t.real, wasPresent: entryWasPresent,
 				});
 
@@ -762,46 +679,12 @@ const fallback = {
 					return err('validate', 'conflict', t.real);
 				};
 				return (verdict == 'gone') ? goneError('install', t.real) : null;
-			});
+			}, real);
 
 			if ('error' in merged) {
 				return (merged.error.stage == 'restart') ? { ok: false, needs } : { ok: false, error: merged.error };
 			};
-
-			const done: ApplyOutcome = {
-				ok: true,
-				method: 'config',
-				nextStep: quitted ? 'none' : 'restart',
-				targetPath: merged.real,
-				observedInstalled: true,
-				createdDirs: merged.createdDirs,
-				configEntry: entry,
-				entryDigest: digest,
-				configPath: merged.real,
-			};
-			// Commit: the item (one that vanished while Claude quit is not recreated)
-			// Q15: the candidate carries the entry this call wrote, so a recovery after a crash still owns it
-			const key = await commitItem(ctx, TARGET_ID, rec, {
-				method: 'config', route: ctx.route, nextStep: done.nextStep, targetPath: merged.real, configEntry: entry, entryDigest: digest, configPath: merged.real,
-			}, keyWasPresent);
-
-			if ('unconfirmed' in key) {
-				// The entry stays: the item may hold the new key, and the next check settles it
-				return { ...done, observedInstalled: false, unconfirmed: true, ...(key.running ? { running: true } : {}) };
-			};
-			if ('error' in key) {
-				// The previous value goes back only while the entry still is exactly what this call wrote; else it is left (and reported)
-				const rollback = await writeConfigEntry(ctx.env, previous, async t => {
-					if (!present(t.value)) {
-						return 'skip';
-					};
-					return (canonicalDigest(t.value) == digest) ? null : err('validate', 'conflict', t.real);
-				}, merged.real);
-
-				return { ok: false, error: { ...key.error, ...(('error' in rollback) ? { left: 'entry' as const } : {}) } };
-			};
-
-			return { ...done, itemRev: key.rev };
+			return { ok: true, method: 'config', nextStep, targetPath: merged.real, observedInstalled: true, createdDirs: merged.createdDirs, entryDigest: digest, configPath: merged.real };
 		});
 
 		// The lock could not be taken (another profile is at it): nothing was written
@@ -812,44 +695,51 @@ const fallback = {
 /** The config file a record's entry was written to (recorded at install); '' when it has none */
 const recordConfig = (rec: AiRecord): string => rec.configPath || (((rec.method == 'config') && rec.entryDigest) ? rec.targetPath : '');
 
-const removeLocked = async (ctx: Ctx, rec: AiRecord): Promise<Awaited<ReturnType<Adapter['remove']>>> => {
-	// The item first: only this record's own (another account's, or none, is done)
-	const item = await deleteItem(ctx.env, TARGET_ID, rec);
-
-	let left: 'extension' | 'entry' | undefined;
-	// Bound to the file the entry was written to, never another profile's config resolved today
+/**
+ * Disconnect of the config route, under the lock (§3.2 revocation order): read the entry; not ours → `conflict`
+ * and nothing queued; ours (or gone) → the hashes are saved in revokePending (`ctx.queue`) → the entry is deleted
+ */
+const removeConfig = async (ctx: Ctx, rec: AiRecord): Promise<Awaited<ReturnType<Adapter['remove']>>> => {
 	const cfg = recordConfig(rec);
-	const t = cfg ? loadConfig(ctx.env, cfg) : { error: err('read', 'notFound') };
+	const t = loadConfig(ctx.env, cfg || undefined);
+	const queued = (): boolean => !ctx.queue || ctx.queue();
 
-	// Q5: the entry is the same text for every account, so the item says whose it is now. Another account's
-	// item: the entry is theirs, left alone and not reported. An item that may still be there: the entry stays too
-	const foreign = ('owner' in item) && (item.owner == 'foreign');
-
-	// Anytype wrote an entry but the config can't be inspected now: it may still be there
-	if (!foreign && ('error' in t) && cfg && rec.entryDigest && (t.error.category != 'notFound')) {
-		left = 'entry';
-	} else
-	if (!foreign && !('error' in t) && entryOurs(t.value, rec) && !item.done) {
-		left = 'entry';
-	} else
-	if (!foreign && !('error' in t) && entryOurs(t.value, rec)) {
-		const det = ctx.detections.find(d => d.appId == 'claude-desktop');
-		const running = det ? await runningState(ctx.env, det) : { state: 'unknown' as const };
-
-		if (running.state == 'stopped') {
-			const res = await writeConfigEntry(ctx.env, undefined, async cur => entryOurs(cur.value, rec) ? null : err('validate', 'conflict', cur.real), cfg);
-			left = ('error' in res) ? 'entry' : undefined;
-		} else {
-			left = 'entry';
+	if (('error' in t) || !present(t.value)) {
+		// Gone already, or it can't be read now (the key is revoked anyway; the entry may still be there)
+		if (!queued()) {
+			return { ok: false, error: err('write', 'unsaved') };
 		};
+		return { ok: true, ...((('error' in t) && (t.error.category != 'notFound')) ? { left: 'entry' as const } : {}) };
+	};
+	if (!entryOurs(t.value, rec)) {
+		return { ok: false, error: err('validate', 'conflict', t.real) };
+	};
+	if (!queued()) {
+		return { ok: false, error: err('write', 'unsaved') };
 	};
 
-	const state = extensionState(ctx.env, bundleInfo(ctx.env));
+	const det = ctx.detections.find(d => d.appId == 'claude-desktop');
+	const running = det ? await runningState(ctx.env, det) : { state: 'unknown' as const };
 
-	if (!left && [ 'installed', 'disabled', 'outdated' ].includes(state)) {
-		left = 'extension';
+	if (running.state != 'stopped') {
+		// Never written behind a running Claude: the entry stays (its key is revoked)
+		return { ok: true, left: 'entry' };
 	};
-	return { ok: true, ...(left ? { left } : {}), ...(item.done ? {} : { itemLeft: true }) };
+
+	const res = await writeConfigEntry(ctx.env, undefined, async cur => entryOurs(cur.value, rec) ? null : err('validate', 'conflict', cur.real), t.real);
+	return { ok: true, ...(('error' in res) ? { left: 'entry' as const } : {}) };
+};
+
+/** The key the record's (or a candidate's) config entry carries now */
+const entryKeyFp = (env: Env, file: string): string | null | 'unreadable' => {
+	const t = loadConfig(env, file || undefined);
+
+	if ('error' in t) {
+		return (t.error.category == 'notFound') ? null : 'unreadable';
+	};
+
+	const key = t.value?.env?.[KEY_VAR];
+	return ((typeof key == 'string') && key) ? keyFingerprint(key) : null;
 };
 
 // ---------------------- the adapter ---------------------- //
@@ -860,138 +750,79 @@ export const claudeDesktop: Adapter = {
 
 	plan: async (ctx, det, rec) => {
 		const base: AiPlan = { ...basePlan(ctx, { targetId: TARGET_ID, method: 'package', nextStep: 'confirmInApp', displayTarget: '', sentenceKey: 'aiConnectPlanPackage' }), instructions: INSTRUCTIONS };
-		return useConfigRoute(ctx) ? fallback.plan(ctx, det, rec, base) : primary.plan(ctx, rec, base);
+		return useConfigRoute(ctx) ? fallback.plan(ctx, det, rec, base) : primary.plan(ctx, base);
 	},
 
-	apply: (ctx, det, rec) => {
-		if (ctx.manual) {
-			return manualPrepare(ctx, rec);
-		};
-		return useConfigRoute(ctx) ? fallback.apply(ctx, det, rec) : primary.apply(ctx, det, rec);
-	},
+	apply: (ctx, det, rec) => useConfigRoute(ctx) ? fallback.apply(ctx, det, rec) : primary.apply(ctx, det),
 
 	remove: async (ctx, rec) => {
-		// S8: from `key delete` through the config edit under the lock — the item says whose the entry is, and no
-		// other profile may connect between that answer and the edit. Not acquired: nothing is deleted, the
-		// record keeps `itemDelete` and the next check tries again
-		const res = await configLock(ctx.env, () => removeLocked(ctx, rec));
+		if (rec.method == 'config') {
+			// S8: deciding whose the entry is and deleting it, one at a time across profiles. Not acquired: nothing queued, nothing deleted
+			const res = await configLock(ctx.env, () => removeConfig(ctx, rec));
+			return res || { ok: false, error: err('write', 'changed') };
+		};
 
-		return res || { ok: true, ...(recordConfig(rec) ? { left: 'entry' as const } : {}), itemLeft: true };
+		// The extension: nothing of Anytype's outside to change; the key is queued, then revoked by the renderer
+		if (ctx.queue && !ctx.queue()) {
+			return { ok: false, error: err('write', 'unsaved') };
+		};
+
+		const state = extensionState(ctx.env, bundleInfo(ctx.env));
+		return { ok: true, ...([ 'installed', 'disabled', 'outdated' ].includes(state) ? { left: 'extension' as const } : {}) };
 	},
 
 	check: async (ctx, rec): Promise<CheckOutcome> => {
-		const own = await itemState(ctx.env, TARGET_ID, rec, rec.accountId);
+		const routes = claudeRoutes(ctx.env);
 
-		if ('error' in own) {
-			return { status: 'unreadable' };
+		// One connection, one server: both there → the user removes one
+		if (routes.config && routes.extension) {
+			return { status: 'conflict', bothRoutes: true };
 		};
-		if (own.existing == 'foreign') {
-			return { status: 'conflict' };
-		};
-		if (own.existing == 'none') {
-			return { status: rec.observedInstalled ? 'removed' : 'pending' };
-		};
-
-		const cfg = recordConfig(rec);
-		const t = cfg ? loadConfig(ctx.env, cfg) : loadConfig(ctx.env);
-
-		// The config route's own file can't be read: unreadable, never "removed"
-		if (('error' in t) && (rec.method == 'config')) {
-			return { status: 'unreadable' };
-		};
-
-		const configValue = ('error' in t) ? undefined : t.value;
-
-		if (rec.entryDigest && present(configValue) && !entryOurs(configValue, rec)) {
-			return { status: 'conflict' };
-		};
-
-		let item = { rev: own.rev, port: own.port, tier: own.tier };
-		let healed = false;
-
-		// A retarget whose receipt was lost: the item says what happened, and the record follows it (never healed back)
-		const tier = rec.retarget ? own.tier : rec.tier;
-
-		if (ctx.port && ((own.port != ctx.port) || (own.tier != tier))) {
-			// The API stopped meanwhile: no heal (the service keeps the last status)
-			if (!stillLive(ctx)) {
-				return { status: 'pending', item };
-			};
-
-			const res = await retargetItem(ctx, TARGET_ID, rec, { port: ctx.port, tier });
-
-			if ('unconfirmed' in res) {
-				// The same key either way: the next check reads what the item holds
-				return { status: 'pending' };
-			};
-			if ('error' in res) {
-				return ('gone' in res) ? { status: rec.observedInstalled ? 'removed' : 'pending' } : { status: 'reconnect', item };
-			};
-			item = { rev: res.rev, port: ctx.port, tier };
-			healed = true;
-		};
-
-		// The config route starts the stable copy: installed or updated by the running Anytype (never downgraded on macOS and Windows)
-		if ((rec.method == 'config') && !('path' in (await ensureInstalled(ctx.env)))) {
-			return { status: 'reconnect', observedInstalled: true, item, ...(healed ? { healed: true, nextStep: 'restart' as const } : {}) };
-		};
-
-		// Our entry, but not the command this Anytype writes (another channel's copy, a moved home): rewritten
-		// while Claude is stopped; else attention
-		let rewritten: { configEntry: AiRecord['configEntry']; entryDigest: string } | null = null;
-		const today = entryOf(ctx.env);
-
-		if (entryOurs(configValue, rec) && !entryShared(ctx.env, configValue)) {
-			const det = ctx.detections.find(d => d.appId == 'claude-desktop');
-			const fixable = 'path' in (await ensureInstalled(ctx.env));
-			const running = (det && fixable) ? await runningState(ctx.env, det) : { state: 'unknown' as const };
-			// Re-checked right before every write attempt: the process lookup above takes time (B2)
-			const res = (running.state == 'stopped') ? await writeConfigEntry(ctx.env, today, async cur => {
-				if (!stillLive(ctx)) {
-					return err('key', 'apiOff');
-				};
-				return entryOurs(cur.value, rec) ? null : err('validate', 'conflict', cur.real);
-			}, cfg || undefined) : null;
-
-			if (!res || ('error' in res)) {
-				return { status: 'reconnect', observedInstalled: true, item, ...(healed ? { healed: true, nextStep: 'restart' as const } : {}) };
-			};
-			rewritten = { configEntry: today, entryDigest: canonicalDigest(today) };
-		};
-
-		const heal = { item, ...((healed || rewritten) ? { healed: true, nextStep: 'restart' as const, ...(rewritten || {}) } : {}) };
 
 		if (rec.method == 'config') {
-			return entryOurs(configValue, rec) ? { status: 'ok', observedInstalled: true, ...heal } : { status: rec.observedInstalled ? 'removed' : 'pending', ...heal };
+			const t = loadConfig(ctx.env, recordConfig(rec) || undefined);
+
+			if ('error' in t) {
+				return { status: 'unreadable' };
+			};
+			if (!present(t.value)) {
+				return { status: rec.observedInstalled ? 'removed' : 'pending' };
+			};
+			// Not the entry Anytype recorded (edited, another account's key, another channel's command): Reconnect
+			if (!entryOurs(t.value, rec)) {
+				return { status: 'reconnect' };
+			};
+			// The entry starts the stable copy: installed or updated by the running Anytype (never downgraded on macOS and Windows)
+			if (!('path' in (await ensureInstalled(ctx.env)))) {
+				return { status: 'reconnect', observedInstalled: true };
+			};
+			return { status: 'ok', observedInstalled: true };
 		};
 
-		switch (extensionState(ctx.env, bundleInfo(ctx.env))) {
-			case 'installed': return { status: 'ok', observedInstalled: true, ...heal };
-			case 'disabled': return { status: 'ok', observedInstalled: true, ...heal, nextStep: 'toggle' };
-			case 'absent': return { status: rec.observedInstalled ? 'removed' : 'pending', ...heal };
-			default: return { status: 'pending', ...heal };
+		const info = extensionInfo(ctx.env, bundleInfo(ctx.env));
+
+		if (!info.verified) {
+			return { status: ((info.state == 'absent') && rec.observedInstalled) ? 'removed' : 'pending', install: { state: 'finish', version: '', installedAt: '' } };
 		};
+
+		// Settled by the service from heart's isActive and this identity (the latch). "On" only when Claude's settings
+		// say `isEnabled: true`; settings that can't be read decide nothing (no confirmation, the latch kept)
+		const identity = { version: info.version, installedAt: info.installedAt };
+		const state = (info.state == 'installed') ? 'on' : ((info.state == 'disabled') ? 'off' : 'unknown');
+
+		return { status: 'pending', observedInstalled: true, install: { state, ...identity } };
 	},
 
 	update: async (ctx, rec, change) => {
-		const res = await retargetItem(ctx, TARGET_ID, rec, { port: change.port || rec.port, tier: change.tier || rec.tier });
-
-		if ('unconfirmed' in res) {
-			// Nothing to revoke either way; the next check takes what the item holds
-			return { ok: false, unconfirmed: true, error: err('write', 'timeout') };
+		// stdio routes need nothing for a port change (the endpoint file); a tier change is a Reconnect
+		if (change.tier && (change.tier != rec.tier)) {
+			return { ok: false, error: err('validate', (rec.method == 'package') ? 'unknown' : 'unsupportedForm') };
 		};
-		return ('error' in res) ? { ok: false, error: res.error } : { ok: true, nextStep: 'restart' };
+		return { ok: true, nextStep: rec.nextStep };
 	},
 
-	installedFp: async (ctx, rec) => {
-		const own = await itemState(ctx.env, TARGET_ID, rec, rec.accountId);
-
-		if ('error' in own) {
-			return 'unreadable';
-		};
-		// Only this account's item can hold one of the record's keys
-		return (('fingerprint' in own) && (own.account == rec.accountId)) ? own.fingerprint : null;
-	},
+	installedFp: async (ctx, rec) => (rec.method == 'config') ? entryKeyFp(ctx.env, rec.configPath || rec.targetPath) : null,
 
 	canRestart: (env, det) => det.installed && (((env.platform == 'darwin') && !!det.appPath) || ((env.platform == 'win32') && !!det.exePath)),
 };
+

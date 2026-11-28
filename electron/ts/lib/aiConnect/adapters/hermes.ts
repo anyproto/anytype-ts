@@ -168,7 +168,7 @@ const writeKey = async (ctx: Ctx, rec: AiRecord | null, key: string, configFile:
 			return { ok: false, error: err('parse', 'unsupportedForm', e.real) };
 		};
 
-		const res = await writeFileSafe(ctx.env, e.real, edit.text, { snapshot: e.snapshot, secret: true, backup: false });
+		const res = await writeFileSafe(ctx.env, e.real, edit.text, { snapshot: e.snapshot, secret: true });
 
 		if ('createdDirs' in res) {
 			return { ok: true, previous: readEnvVar(e.snapshot.text, ENV_VAR), real: e.real, createdDirs: res.createdDirs };
@@ -213,7 +213,7 @@ const restoreKey = async (ctx: Ctx, previous: string | null, key: string): Promi
 			return false;
 		};
 
-		const res = await writeFileSafe(ctx.env, e.real, edit.text, { snapshot: e.snapshot, secret: true, backup: false });
+		const res = await writeFileSafe(ctx.env, e.real, edit.text, { snapshot: e.snapshot, secret: true });
 
 		if ('error' in res) {
 			return false;
@@ -243,7 +243,7 @@ const removeKey = async (ctx: Ctx, rec: AiRecord): Promise<boolean> => {
 			return false;
 		};
 
-		const res = await writeFileSafe(ctx.env, e.real, edit.text, { snapshot: e.snapshot, secret: true, backup: false });
+		const res = await writeFileSafe(ctx.env, e.real, edit.text, { snapshot: e.snapshot, secret: true });
 
 		if ('createdDirs' in res) {
 			return true;

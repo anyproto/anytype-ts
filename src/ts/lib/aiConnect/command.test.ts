@@ -1,19 +1,19 @@
 /**
- * Other app's Command setup through the real renderer-to-main flow (anytype-mcp-plan §7.2): the renderer's
- * controller and flow talk to the real main-process service on a fake Mac with the fake forwarder; heart is
- * the harness's. Only the probe is answered here (no request ever leaves the test).
+ * Other app's two manual setups (URL and key, Command) through the real renderer-to-main flow (tokens-plan §3.2):
+ * the renderer's flow talks to the real main-process service on a fake Mac with the fake forwarder; heart is the
+ * harness's. Only the probe is answered here (no request ever leaves the test).
  */
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-vi.mock('electron', () => ({ app: { isPackaged: false, getPath: () => '/nonexistent', getAppPath: () => '/nonexistent', getVersion: () => '0.0.0', getFileIcon: vi.fn(), getApplicationInfoForProtocol: vi.fn() }, shell: { openExternal: vi.fn(), showItemInFolder: vi.fn() } }));
+vi.mock('electron', () => ({ app: { isPackaged: false, getPath: () => '/nonexistent', getAppPath: () => '/nonexistent', getVersion: () => '0.0.0', getFileIcon: vi.fn(), getApplicationInfoForProtocol: vi.fn() }, shell: { openExternal: vi.fn(), showItemInFolder: vi.fn() }, clipboard: { readText: vi.fn(), writeText: vi.fn() } }));
 vi.mock('electron-util', () => ({ fixPathForAsarUnpack: (p: string) => p }));
 
-import { FORWARDER_FILES, mac, service, STABLE_BIN } from '../../../../electron/ts/lib/aiConnect/testKit';
-import { fakeForwarderRun, type FakeEnv } from '../../../../electron/ts/lib/aiConnect/testEnv';
+import { FORWARDER_FILES, mac, REGISTRY, service, STABLE_BIN } from '../../../../electron/ts/lib/aiConnect/testKit';
+import type { FakeEnv } from '../../../../electron/ts/lib/aiConnect/testEnv';
 import type { AiConnectService } from '../../../../electron/ts/lib/aiConnect';
-import { AiConnectController, type AiConnectPopupData } from './controller';
+import type { AiConnectController } from './controller';
 import * as flow from './flow';
-import { GRANT, installHarness, READ_ONE, SENTINEL, until, type Harness } from './testHarness';
+import { GRANT, installHarness, SENTINEL, type Harness } from './testHarness';
 
 let h: Harness;
 let env: FakeEnv;
@@ -25,24 +25,16 @@ const live: AiConnectController[] = [];
 const METHODS: Record<string, string> = {
 	aiConnectList: 'list', aiConnectPlan: 'plan', aiConnectApply: 'apply', aiConnectRecordManual: 'recordManual', aiConnectUpdate: 'update', aiConnectRemove: 'remove',
 	aiConnectRevoked: 'revoked', aiConnectCheck: 'check', aiConnectStepDone: 'stepDone', aiConnectOrphan: 'orphan', aiConnectMintIntent: 'mintIntent',
+	aiConnectCopySecret: 'copySecret', aiConnectRetire: 'retire',
 };
 
 const snippetOf = (steps: any[]) => JSON.parse(steps.find(s => s.snippet).snippet);
-const item = (id: string) => env.forwarder.items.get(id);
 const input = (over: Partial<flow.ManualInput> = {}): flow.ManualInput => ({
-	appId: 'other', route: 'stdio', method: 'command', tier: 'large', recommendedTier: 'full', grant: GRANT, name: 'My agent', expireAt: 0, ...over,
+	appId: 'other', route: 'stdio', method: 'command', setup: 'command', tier: 'large', recommendedTier: 'full', grant: GRANT, name: 'My agent', expireAt: 0, ...over,
 });
-
-const open = async (data: AiConnectPopupData, name = 'Other app'): Promise<AiConnectController> => {
-	await flow.load();
-
-	const ctrl = new AiConnectController(data, ui, name);
-
-	live.push(ctrl);
-	ctrl.init();
-	await until(() => !ctrl.get().planLoading && !ctrl.get().manual.loading);
-	return ctrl;
-};
+const urlInput = (over: Partial<flow.ManualInput> = {}) => input({ route: 'http', method: undefined, setup: 'url', name: 'URL agent', ...over });
+/** The rows as main lists them */
+const rows = async (): Promise<any[]> => ((await svc.list({ accountId: 'acc-1' })) as any).connections;
 
 beforeEach(() => {
 	h = installHarness();
@@ -72,263 +64,103 @@ afterEach(async () => {
 	flow.resetFlowForTests();
 });
 
-describe('Other app: the Command setup, renderer to main', () => {
-	test('two Command connections: each gets its own id, key and setup text; the key appears in no result, step or file', async () => {
-		const a: any = await flow.createManual(input());
-		const b: any = await flow.createManual(input({ name: 'Another agent' }));
-
-		expect(a.kind).toBe('ok');
-		expect(b.kind).toBe('ok');
-
-		const idA = a.connection.id;
-		const idB = b.connection.id;
-
-		expect(idA).toMatch(/^other-[0-9a-f]{8}$/);
-		expect(idB).toMatch(/^other-[0-9a-f]{8}$/);
-		expect(idA).not.toBe(idB);
-		// The steps the view keeps (it used to drop them): the setup text of exactly this connection
-		expect(snippetOf(a.plan.steps)).toEqual({ mcpServers: { anytype: { command: STABLE_BIN, args: [ 'serve', '--connection', idA ] } } });
-		expect(snippetOf(b.plan.steps).mcpServers.anytype.args).toEqual([ 'serve', '--connection', idB ]);
-		expect(a.connection).toMatchObject({ method: 'command', route: 'stdio', appId: 'other', name: 'My agent' });
-
-		// Each key went to `key set` on stdin, under the account that minted it
-		expect(item(idA)).toMatchObject({ key: h.heart.rows.get('hash-1').apiKey, account: 'acc-1', port: 31009, tier: 'large' });
-		expect(item(idB)).toMatchObject({ key: h.heart.rows.get('hash-2').apiKey, account: 'acc-1' });
-		expect(JSON.stringify([ a, b ])).not.toContain(SENTINEL);
-		expect(JSON.stringify(env.files())).not.toContain(SENTINEL);
-		expect(env.calls.filter(c => JSON.stringify([ c.args, c.opts.env || {} ]).includes(SENTINEL))).toEqual([]);
-
-		// The mint intents were saved before each CreateApp and cleared by the commits
-		const cmds = sent.map(it => it.cmd);
-
-		expect(cmds.indexOf('aiConnectMintIntent')).toBeLessThan(cmds.indexOf('aiConnectApply'));
-		expect(sent.filter(it => it.cmd == 'aiConnectApply').map(it => it.param.method)).toEqual([ 'command', 'command' ]);
-		expect(((await svc.list({ accountId: 'acc-1' })) as any).connections.map((c: any) => c.id).sort()).toEqual([ idA, idB ].sort());
-		expect(JSON.parse(env.readText('/Users/me/Library/Application Support/anytype/aiConnect.json')).mintIntents).toBeUndefined();
-	});
-
-	test('reconnect, a port change and disconnect touch only the chosen connection; the old key is revoked only after the new one is stored', async () => {
-		const a: any = await flow.createManual(input());
+describe('D1-21: Other app\'s manual setups, renderer to main', () => {
+	test('D1-21: one Other URL row and two Other Command rows — check, Retry, reconnect and disconnect each kind; restart: every row stays `manual` with its `setup`, never stale or notInstalled, the other rows untouched', async () => {
+		const url: any = await flow.createManual(urlInput());
 
 		await flow.releasePendingKey();
 
-		const b: any = await flow.createManual(input({ name: 'Another agent' }));
+		const a: any = await flow.createManual(input({ name: 'Agent A' }));
 
 		await flow.releasePendingKey();
 
-		const idA = a.connection.id;
-		const idB = b.connection.id;
-		const keyB = h.heart.rows.get('hash-2').apiKey;
-
-		await flow.load();
-
-		// Reconnect A (from Manage): a new key into A's item, by its own id; the setup text in the app stays valid
-		const shown: any = await flow.plan({ appId: 'other', route: 'stdio', tier: 'large', connectionId: idA, method: 'command' });
-		const again: any = await flow.reconnect(S.AiConnect.getById(idA), { plan: shown.plan });
-
-		expect(again.kind).toBe('ok');
-		expect(again.connection).toMatchObject({ id: idA, appHash: 'hash-3', revokePending: [] });
-		expect(sent.filter(it => it.cmd == 'aiConnectApply').pop().param).toMatchObject({ method: 'command', connectionId: idA, expectedHash: 'hash-1' });
-		expect(item(idA)).toMatchObject({ key: h.heart.rows.get('hash-3').apiKey, rev: 2 });
-		expect(h.heart.rows.has('hash-1')).toBe(false);
-		expect(h.heart.state.order.filter(it => /CreateApp|RevokeApp/.test(it)).slice(-2)).toEqual([ 'CreateApp', 'RevokeApp:hash-1' ]);
-		expect(item(idB)).toEqual({ key: keyB, account: 'acc-1', port: 31009, tier: 'large', rev: 1 });
-		await flow.releasePendingKey();
-
-		// The API moves: one check retargets both items; no key is minted or revoked for it
-		const creates = h.heart.state.creates;
-		const revokes = h.heart.state.revokes.length;
-
-		h.listening(true, 31020);
-		await flow.check('port');
-		expect(item(idA)).toMatchObject({ port: 31020, rev: 3 });
-		expect(item(idB)).toMatchObject({ key: keyB, port: 31020, rev: 2 });
-		expect(h.heart.state.creates).toBe(creates);
-		expect(h.heart.state.revokes).toHaveLength(revokes);
-
-		// A tool set change on B, in place
-		expect(await flow.updateTier(S.AiConnect.getById(idB), 'full')).toMatchObject({ ok: true, connection: { tier: 'full' } });
-		expect(item(idB)).toMatchObject({ key: keyB, tier: 'full', rev: 3 });
-		expect(item(idA)).toMatchObject({ tier: 'large', rev: 3 });
-
-		// Disconnect A: its item goes and its key is revoked; B is as it was
-		await flow.disconnect(S.AiConnect.getById(idA));
-		expect(item(idA)).toBeUndefined();
-		expect(h.heart.rows.has('hash-3')).toBe(false);
-		expect(S.AiConnect.getById(idA)).toBeFalsy();
-		expect(item(idB)).toMatchObject({ key: keyB, tier: 'full', rev: 3 });
-		expect(h.heart.rows.has('hash-2')).toBe(true);
-		expect(S.AiConnect.getById(idB)).toMatchObject({ status: 'ok' });
-	});
-
-	test('the sheet: URL and key first, Command second; choosing mints nothing; Create key stores the key and shows the setup text', async () => {
-		const ctrl = await open({ appId: 'other', view: 'manual' });
-
-		expect(ctrl.get().manual).toMatchObject({ mode: 'create', setup: 'url', setups: [ 'url', 'command' ] });
-		expect(ctrl.get().manual.steps[0].textKey).toBe('aiConnectManualFormatMost');
-
-		await ctrl.setSetup('command');
-		expect(ctrl.get().manual).toMatchObject({ mode: 'create', setup: 'command', key: '' });
-		expect(ctrl.get().manual.steps.map(s => s.textKey)).toEqual([ 'aiConnectManualCommandPrepare' ]);
-		expect(h.heart.state.creates).toBe(0);
-
-		// Back and forth is free
-		await ctrl.setSetup('url');
-		expect(ctrl.get().manual.steps[0].textKey).toBe('aiConnectManualFormatMost');
-		await ctrl.setSetup('command');
-
-		ctrl.setForm({ name: 'My agent', grant: { ...GRANT } });
-		await ctrl.createKey();
-		await until(() => !ctrl.get().busy);
-
-		const m = ctrl.get().manual;
-		const id = ctrl.get().connectionId;
-
-		expect(h.heart.state.creates).toBe(1);
-		expect(m).toMatchObject({ mode: 'done', key: '', notice: { key: 'aiConnectManualCommandCreated' } });
-		expect(id).toMatch(/^other-[0-9a-f]{8}$/);
-		expect(snippetOf(m.steps)).toEqual({ mcpServers: { anytype: { command: STABLE_BIN, args: [ 'serve', '--connection', id ] } } });
-		// The view never holds or shows this key
-		expect(JSON.stringify(ctrl.get())).not.toContain(SENTINEL);
-		expect(item(id).key).toBe(h.heart.rows.get('hash-1').apiKey);
-		// The choice is closed once the connection exists
-		await ctrl.setSetup('url');
-		expect(ctrl.get().manual.setup).toBe('command');
-	});
-
-	test('Manage rebuilds the setup text from the record; "Set up manually" shows it without a key or a new mint', async () => {
-		const made: any = await flow.createManual(input());
-		const id = made.connection.id;
+		const b: any = await flow.createManual(input({ name: 'Agent B' }));
 
 		await flow.releasePendingKey();
 
-		const ctrl = await open({ appId: 'other', connectionId: id, view: 'manage' });
+		for (const it of [ url, a, b ]) {
+			expect(it.kind).toBe('ok');
+		};
+		expect(url.connection).toMatchObject({ method: 'manual', setup: 'url', route: 'http' });
+		expect(a.connection).toMatchObject({ method: 'manual', setup: 'command', route: 'stdio' });
+		expect(b.connection).toMatchObject({ method: 'manual', setup: 'command', route: 'stdio' });
+		expect(new Set([ url.connection.id, a.connection.id, b.connection.id ]).size).toBe(3);
+		// The Command snippet: the stable copy, the key placeholder in `env` (the screen masks it; Copy fills it in main's clipboard)
+		expect(snippetOf(a.plan.steps).mcpServers.anytype).toEqual({ command: STABLE_BIN, args: [ 'serve', '--tier', 'large' ], env: { ANYTYPE_API_KEY: '<KEY>' } });
+		// Each kind is recorded by aiConnectRecordManual, never aiConnectApply
+		expect(sent.filter(it => it.cmd == 'aiConnectApply')).toEqual([]);
+		expect(sent.filter(it => it.cmd == 'aiConnectRecordManual').map(it => it.param.setup)).toEqual([ undefined, 'command', 'command' ]);
 
-		await until(() => !!ctrl.get().plan);
-		expect(snippetOf(ctrl.get().plan.steps).mcpServers.anytype.args).toEqual([ 'serve', '--connection', id ]);
+		const ids = { url: url.connection.id, a: a.connection.id, b: b.connection.id };
+		const byId = async () => Object.fromEntries((await rows()).map(c => [ c.id, c ]));
+		const steady = (c: any) => {
+			expect(c.method).toBe('manual');
+			expect([ 'stale', 'notInstalled' ]).not.toContain(c.status);
+		};
 
-		await ctrl.enterManual('done', S.AiConnect.getById(id));
-		await until(() => !ctrl.get().manual.loading);
-		expect(ctrl.get().manual).toMatchObject({ mode: 'done', key: '', setup: 'command' });
-		expect(snippetOf(ctrl.get().manual.steps).mcpServers.anytype).toEqual({ command: STABLE_BIN, args: [ 'serve', '--connection', id ] });
-		expect(h.heart.state.creates).toBe(1);
-		expect(JSON.stringify(ctrl.get())).not.toContain(SENTINEL);
-	});
+		// check (twice: a heal pass would show on the second), and Retry of each
+		await flow.check('test');
+		await flow.check('test');
+		for (const c of await rows()) {
+			steady(c);
+			expect(c.status).toBe('ok');
+			expect((await flow.retryProbe(S.AiConnect.getById(c.id))).ok).toBe(true);
+		};
 
-	test('Q16: a Create key whose receipt was lost waits for the check — no second mint, no second record; the promoted connection shows its own setup text', async () => {
-		let lose = true;
+		// Reconnect each kind by its id: the old key goes only after the new one is recorded; the other rows don't move
+		const before = await byId();
 
-		env = mac({ files: { ...FORWARDER_FILES }, forwarder: (call, state) => {
-			if (lose && (call.args[1] == 'set')) {
-				fakeForwarderRun(state, call);
-				return { code: 1, stdout: JSON.stringify({ ok: false, unconfirmed: true, reason: 'lost' }) + '\n' };
-			};
-			return null;
-		} });
+		for (const [ id, over ] of [ [ ids.url, urlInput({ name: 'URL agent' }) ], [ ids.a, input({ name: 'Agent A' }) ] ] as const) {
+			const existing = S.AiConnect.getById(id);
+			const shown: any = await flow.plan({ appId: 'other', route: over.route, tier: 'large', method: over.method, connectionId: id });
+			const pending: any = await flow.createManual({ ...over, existing, connectionId: id, shown: shown.plan, port: shown.port });
+
+			expect(pending.kind, id).toBe('pending');
+
+			const done: any = await flow.confirmManual({ ...over, existing, connectionId: id, shown: shown.plan, port: shown.port });
+
+			expect(done, id).toMatchObject({ ok: true, connection: { id, method: 'manual', setup: over.setup } });
+			expect(done.connection.appHash).not.toBe(existing.appHash);
+			expect(h.heart.rows.has(existing.appHash)).toBe(false);
+			await flow.releasePendingKey();
+		};
+
+		const after = await byId();
+
+		expect(after[ids.b]).toMatchObject({ appHash: before[ids.b].appHash, setup: 'command', name: 'Agent B' });
+		expect(snippetOf(((await flow.plan({ appId: 'other', route: 'stdio', tier: 'large', method: 'command', connectionId: ids.b })) as any).plan.steps)).toEqual(snippetOf(a.plan.steps));
+
+		// Restart: a new main on the same registry
 		svc = service(env);
-		flow.flowConfig.pollTimeout = 0;
+		await flow.load();
+		await flow.check('restart');
+		for (const c of await rows()) {
+			steady(c);
+		};
+		expect((await rows()).map(c => [ c.id, c.setup || 'url' ]).sort()).toEqual([ [ ids.url, 'url' ], [ ids.a, 'command' ], [ ids.b, 'command' ] ].sort());
 
-		const ctrl = await open({ appId: 'other', view: 'manual' });
+		// Disconnect each kind: its key revoked, the remaining row unchanged
+		for (const id of [ ids.url, ids.a ]) {
+			const hash = S.AiConnect.getById(id).appHash;
 
-		await ctrl.setSetup('command');
-		ctrl.setForm({ name: 'My agent', grant: { ...GRANT } });
-		await ctrl.createKey();
-		await until(() => !ctrl.get().busy && (ctrl.get().manual.mode == 'waiting') && ctrl.get().pollStopped);
+			await flow.disconnect(S.AiConnect.getById(id));
+			expect(h.heart.rows.has(hash), id).toBe(false);
+		};
+		expect((await rows()).map(c => [ c.id, c.appHash ])).toEqual([ [ ids.b, before[ids.b].appHash ] ]);
 
-		const id = ctrl.get().connectionId;
-
-		expect(id).toMatch(/^other-[0-9a-f]{8}$/);
-		expect(item(id).key).toBe(h.heart.rows.get('hash-1').apiKey);
-		// No click mints again while the outcome isn't known
-		await ctrl.createKey();
-		await ctrl.setSetup('url');
-		expect(ctrl.get().manual).toMatchObject({ mode: 'waiting', setup: 'command' });
-		// (the mode offers no Create key; the controller's own entry point is the only way to one)
-		expect(h.heart.state.creates).toBe(1);
-		expect(h.heart.state.revokes).toEqual([]);
-
-		// The next check promotes the candidate: the same connection, its snippet, one record, one key
-		lose = false;
-		flow.flowConfig.pollTimeout = 2000;
-		ctrl.recheckUnconfirmed();
-		await until(() => ctrl.get().manual.mode == 'done' && !ctrl.get().manual.loading);
-		expect(snippetOf(ctrl.get().manual.steps).mcpServers.anytype.args).toEqual([ 'serve', '--connection', id ]);
-		expect(((await svc.list({ accountId: 'acc-1' })) as any).connections.map((c: any) => [ c.id, c.appHash, !!c.unconfirmed ])).toEqual([ [ id, 'hash-1', false ] ]);
-		expect(h.heart.state.creates).toBe(1);
-		expect(h.heart.rows.has('hash-1')).toBe(true);
+		// No key in any result, file, or child of main
+		expect(JSON.stringify([ url, a, b ])).not.toContain(SENTINEL);
+		expect(JSON.stringify(env.files())).not.toContain(SENTINEL);
+		expect(env.readText(REGISTRY)).not.toContain(SENTINEL);
+		expect(env.calls.filter(c => JSON.stringify([ c.args, c.opts.env || {} ]).includes(SENTINEL))).toEqual([]);
 	});
 
-	test('S2: reconnecting a Command connection whose key is gone delivers exactly the access the form shows, as Command, to the same record', async () => {
-		const made: any = await flow.createManual(input());
-		const id = made.connection.id;
-
-		await flow.releasePendingKey();
-		// The key expired: read-write, all spaces, no expiry is what the record still stores
-		h.heart.rows.get('hash-1').expireAt = Math.floor(Date.now() / 1000) - 60;
-
-		const ctrl = await open({ appId: 'other', connectionId: id, view: 'manage' });
-
-		await until(() => !!ctrl.get().plan);
-		ctrl.reconnect();
-		await until(() => !ctrl.get().busy && (ctrl.get().view == 'connect') && !ctrl.get().planLoading);
-		expect(h.heart.state.creates).toBe(1);
-
-		// The user narrows the access on the sheet: read-only, one space, 30 days
-		ctrl.setForm({ grant: { ...READ_ONE }, days: 30, fixedExpireAt: undefined });
-		ctrl.submit();
-		await until(() => !ctrl.get().busy && (h.heart.state.creates == 2));
-		await until(() => !ctrl.get().busy);
-
-		const now = Math.floor(Date.now() / 1000);
-		const row = h.heart.rows.get('hash-2');
-
-		// Exactly one CreateApp, with the grant and the expiry shown
-		expect(h.heart.state.creates).toBe(2);
-		expect(row.grant).toEqual(READ_ONE);
-		expect(Math.abs(row.expireAt - (now + 30 * 86400))).toBeLessThan(120);
-
-		const applies = sent.filter(it => it.cmd == 'aiConnectApply');
-
-		expect(applies).toHaveLength(2);
-		expect(applies[1].param).toMatchObject({ method: 'command', connectionId: id, expectedHash: 'hash-1', appHash: 'hash-2', grant: READ_ONE, expireAt: row.expireAt });
-		// Never the URL setup: no key shown, no manual record
-		expect(sent.filter(it => it.cmd == 'aiConnectRecordManual')).toEqual([]);
-		expect(ctrl.get().view).not.toBe('manual');
-		expect(ctrl.get().manual.key).toBe('');
-		expect(JSON.stringify(ctrl.get())).not.toContain(SENTINEL);
-		expect(item(id).key).toBe(row.apiKey);
-
-		const list: any = await svc.list({ accountId: 'acc-1' });
-
-		expect(list.connections.filter((c: any) => !c.removed).map((c: any) => [ c.id, c.appHash, c.method ])).toEqual([ [ id, 'hash-2', 'command' ] ]);
-		expect(list.connections[0]).toMatchObject({ grant: READ_ONE, expireAt: row.expireAt });
-	});
-
-	test('S13: Manage shows the restart line after a Command tier change', async () => {
-		const made: any = await flow.createManual(input());
-		const id = made.connection.id;
-
-		await flow.releasePendingKey();
-
-		const ctrl = await open({ appId: 'other', connectionId: id, view: 'manage' });
-
-		await until(() => !!ctrl.get().plan);
-		expect(ctrl.get().plan.instructions).toMatchObject({ restart: 'aiConnectManualCommandRestart' });
-
-		await ctrl.saveTier('full');
-		expect(item(id)).toMatchObject({ tier: 'full', rev: 2 });
-		expect(S.AiConnect.getById(id)).toMatchObject({ tier: 'full', nextStep: 'restart' });
-		expect(ctrl.get().manageNotice).toMatchObject({ key: 'aiConnectManualCommandRestart' });
-	});
-
-	test('not offered where the build ships no forwarder: the sheet has the URL setup only', async () => {
+	test('not offered where the build ships no forwarder: the plan has the URL setup only', async () => {
 		env = mac({});
 		svc = service(env);
 
-		const ctrl = await open({ appId: 'other', view: 'manual' });
+		const res: any = await flow.plan({ appId: 'other', route: 'http', tier: 'large' });
 
-		expect(ctrl.get().manual.setups).toEqual([ 'url' ]);
-		await ctrl.setSetup('command');
-		expect(ctrl.get().manual.setup).toBe('url');
+		expect(res.plan.setups).toEqual([ 'url' ]);
 	});
 });

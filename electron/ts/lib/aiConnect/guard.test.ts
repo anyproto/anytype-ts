@@ -63,7 +63,11 @@ describe('no Electron-as-Node anywhere in the feature', () => {
 		expect(sources).not.toMatch(/command:\s*env\.execPath/);
 		expect(read('scripts/build-mcp.js')).not.toMatch(/\.mjs|vendor['", ]+anytype-mcp/);
 		expect(JSON.parse(read('electron/mcp/manifest.json')).server).toEqual({
-			type: 'binary', entry_point: 'server/anytype-mcp', mcp_config: { command: '${__dirname}/server/anytype-mcp', args: [ 'serve', '--connection', 'claude-desktop' ] },
+			type: 'binary', entry_point: 'server/anytype-mcp',
+			mcp_config: {
+				command: '${__dirname}/server/anytype-mcp', args: [ 'serve', '--tier', 'full' ],
+				env: { ANYTYPE_API_KEY: '${user_config.api_key}', ANYTYPE_MCP_FILES_DIR: '${user_config.files_dir}' },
+			},
 		});
 	});
 
@@ -241,6 +245,9 @@ describe('where the forwarder comes from, and when it is signed', () => {
 		};
 		expect(mac.run).toContain('app.asar.unpacked/dist/anytype-mcp');
 		expect(mac.run).toContain('set -euo pipefail');
+		// D1B-02: each package is verified (and smoked) as its own architecture, never the runner's
+		expect(mac.run).toMatch(/verify-forwarder\.js "\$app" [^\n]*--arch "\$arch"\n/);
+		expect(mac.run).toMatch(/dist\/mac-arm64\/\*\) arch=arm64 ;;\n\s*dist\/mac\/\*\) arch=x64 ;;\n\s*\*\) [^\n]*exit 1 ;;/);
 		expect(win.if).toContain("startsWith(matrix.os, 'windows-')");
 		expect(win.run).toContain('Get-AuthenticodeSignature');
 		expect(win.run).toContain("$sig.Status -ne 'Valid'");
@@ -334,7 +341,7 @@ describe('where the forwarder comes from, and when it is signed', () => {
 
 		expect(text).toMatch(/process\.platform == 'win32'\) && !!BIN/);
 		expect(text).toContain('ensureInstalled(env)');
-		expect(text).toMatch(/keySet\(env[\s\S]*store: 'ok'/);
+		expect(text).toMatch(/syncEndpoint\(env[\s\S]*endpointVerdict\(env, copy\)/);
 	});
 
 	test.each([ '.github/workflows/build.yml', '.github/workflows/nightly.yml' ])('T4: %s runs the Windows store check after the forwarder was signed and before any step that publishes', file => {

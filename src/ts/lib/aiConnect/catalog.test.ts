@@ -74,9 +74,9 @@ describe('result types', () => {
 	// every variant of every IPC result has a fixture, and every fixture fits its type
 	test('every IPC command has fixtures for all of its result variants', () => {
 		expect(Object.keys(IPC_RESULT_FIXTURES).sort()).toEqual([
-			'aiConnectApply', 'aiConnectBundleInfo', 'aiConnectCheck', 'aiConnectClaimNudge', 'aiConnectList', 'aiConnectMintIntent', 'aiConnectOpenApp',
+			'aiConnectApply', 'aiConnectBundleInfo', 'aiConnectCheck', 'aiConnectClaimNudge', 'aiConnectCopySecret', 'aiConnectList', 'aiConnectMintIntent', 'aiConnectOpenApp',
 			'aiConnectOrphan', 'aiConnectPlan', 'aiConnectProbe', 'aiConnectRecordManual', 'aiConnectRemove', 'aiConnectRestartApp',
-			'aiConnectReveal', 'aiConnectRevoked', 'aiConnectStepDone', 'aiConnectUpdate',
+			'aiConnectRetire', 'aiConnectReveal', 'aiConnectRevoked', 'aiConnectStepDone', 'aiConnectUpdate',
 		]);
 		expect(COVERAGE.every(Boolean)).toBe(true);
 		expect(IPC_RESULT_FIXTURES.aiConnectPlan.foreign.replace).toEqual({ targetPath: '/Users/me/.cursor/mcp.json', foreignDigest: 'a'.repeat(64) });

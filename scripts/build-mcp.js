@@ -5,8 +5,8 @@
  * into app.asar:
  *
  *   { "signed": true,
- *     "forwarder": { "rev": 5, "namespace": "release", "teamId": "…", "sha256": { "darwin": "…" } },
- *     "mcpb": { "sha256": "…", "signerFingerprint": "…", "version": "2.5.0" } }
+ *     "forwarder": { "rev": 6, "namespace": "release", "teamId": "…", "sha256": { "darwin": "…" } },
+ *     "mcpb": { "sha256": "…", "signerFingerprint": "…", "version": "2.6.0" } }
  *
  * This script is the only writer of that file. It runs after scripts/prepare-forwarder.js signed the
  * forwarder and after the bundle was packed and signed, and before electron-builder. Only the entries for
@@ -160,7 +160,11 @@ const sign = (file, env) => {
 	return actual;
 };
 
-/** The bundle's manifest for one OS, from the template electron/mcp/manifest.json and the real payload name */
+/**
+ * The bundle's manifest for one OS, from the template electron/mcp/manifest.json and the real payload name
+ * (tokens-plan §3.3): always the Full tool set; the key comes from the required, sensitive `user_config.api_key`
+ * Claude asks for, through `env` only (never an argument); the optional folder for files likewise
+ */
 const manifestFor = (template, opt) => {
 	const entry = `server/${opt.exe}`;
 
@@ -174,7 +178,11 @@ const manifestFor = (template, opt) => {
 		server: {
 			type: 'binary',
 			entry_point: entry,
-			mcp_config: { command: `\${__dirname}/${entry}`, args: [ 'serve', '--connection', 'claude-desktop' ] },
+			mcp_config: {
+				command: `\${__dirname}/${entry}`,
+				args: [ 'serve', '--tier', 'full' ],
+				env: { ANYTYPE_API_KEY: '${user_config.api_key}', ANYTYPE_MCP_FILES_DIR: '${user_config.files_dir}' },
+			},
 		},
 		compatibility: { platforms: [ opt.platform ] },
 	};

@@ -29,6 +29,7 @@ import { powerState, parseDropList, PowerEvent } from './lib/powerState';
 import { registerEmbedScheme, handleEmbedScheme, EMBED_ORIGIN } from './lib/embedProtocol';
 import { registerPermissionHandlers } from './lib/permissions';
 import { aiConnectSenderAllowed } from './lib/aiConnect/validate';
+import { aiConnect } from './lib/aiConnect';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
@@ -160,8 +161,21 @@ powerMonitor.on('resume', () => onPowerEvent('resume'));
 const isTrustedSender = (e: Electron.IpcMainEvent): boolean => Util.isTrustedUrl(e.senderFrame?.url);
 
 ipcMain.on('storeGet', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = isTrustedSender(e) ? store.get(key) : undefined; });
-ipcMain.on('storeSet', (e: Electron.IpcMainEvent, key: string, value: any) => { e.returnValue = isTrustedSender(e) ? store.set(key, value) : undefined; });
-ipcMain.on('storeDelete', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = isTrustedSender(e) ? store.delete(key) : undefined; });
+/** The endpoint file for AI apps follows the Local API settings and heart's bind outcome (aiConnect/endpoint.ts) */
+const localApiChanged = (key: string): void => {
+	if ((key == 'localApi') || (key == 'localApiBind')) {
+		aiConnect.apiChanged(key);
+	};
+};
+
+ipcMain.on('storeSet', (e: Electron.IpcMainEvent, key: string, value: any) => {
+	e.returnValue = isTrustedSender(e) ? store.set(key, value) : undefined;
+	localApiChanged(key);
+});
+ipcMain.on('storeDelete', (e: Electron.IpcMainEvent, key: string) => {
+	e.returnValue = isTrustedSender(e) ? store.delete(key) : undefined;
+	localApiChanged(key);
+});
 ipcMain.on('getTheme', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getTheme(); });
 ipcMain.on('getBgColor', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
 ipcMain.on('getConfig', (e: Electron.IpcMainEvent) => { e.returnValue = ConfigManager.config || {}; });
@@ -254,6 +268,11 @@ function waitForLibraryAndCreateWindows () {
 		currentPath = userDataPath;
 		app.setPath('userData', userDataPath);
 	};
+
+	// AI apps, on the profile this run really uses: no endpoint file before an account is selected, and no temp a
+	// killed writer left in their settings folders
+	aiConnect.startup(currentPath);
+	Server.onCrash = () => aiConnect.shutdown();
 
 	if (process.env.ANYTYPE_USE_SIDE_SERVER) {
 		// use the grpc server started from the outside
@@ -586,6 +605,7 @@ app.on('second-instance', (event, argv) => {
 
 app.on('will-quit', () => {
 	globalShortcut.unregisterAll();
+	aiConnect.shutdown();
 });
 
 app.on('before-quit', (e) => {

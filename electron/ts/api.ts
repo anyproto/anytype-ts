@@ -120,6 +120,7 @@ class Api {
 	logout (win: AppWindow): void {
 		// Nothing recorded so far is replayed into the next account
 		powerState.ackAll();
+		aiConnect.accountStopped();
 		WindowManager.sendToAllTabs('logout');
 	};
 
@@ -606,6 +607,8 @@ class Api {
 		};
 
 		(app as any).isQuiting = true;
+		// AI apps: the endpoint file goes and a copied key leaves the clipboard before heart stops (app.exit skips will-quit)
+		aiConnect.shutdown();
 
 		// Save tabs before closing
 		WindowManager.saveTabs(win);
@@ -1238,6 +1241,14 @@ class Api {
 
 	aiConnectOrphan (win: AppWindow, param: any) {
 		return aiConnect.orphan(param);
+	};
+
+	aiConnectRetire (win: AppWindow, param: any) {
+		return aiConnect.retire(param);
+	};
+
+	aiConnectCopySecret (win: AppWindow, param: any) {
+		return aiConnect.copySecret(param);
 	};
 
 	aiConnectMintIntent (win: AppWindow, param: any) {

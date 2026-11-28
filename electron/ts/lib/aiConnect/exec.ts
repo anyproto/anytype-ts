@@ -411,6 +411,8 @@ export const createNodeEnv = (param: {
 	showItemInFolder?: Env['showItemInFolder'];
 	listProcesses?: Env['listProcesses'];
 	buildMeta?: Env['buildMeta'];
+	clipboardRead?: Env['clipboardRead'];
+	clipboardWrite?: Env['clipboardWrite'];
 }): Env => {
 	const { home } = param;
 
@@ -455,6 +457,19 @@ export const createNodeEnv = (param: {
 		},
 		writeFile: writeTempFile,
 		rename: (from, to) => fs.renameSync(from, to),
+		fsyncDir: p => {
+			if (process.platform == 'win32') {
+				return;
+			};
+
+			const fd = fs.openSync(p, 'r');
+
+			try {
+				fs.fsyncSync(fd);
+			} finally {
+				fs.closeSync(fd);
+			};
+		},
 		chmod: (p, mode) => fs.chmodSync(p, mode),
 		canExecute: p => {
 			try {
@@ -482,6 +497,14 @@ export const createNodeEnv = (param: {
 		openExternal: param.openExternal || (async () => false),
 		protocolHandler: param.protocolHandler || (async () => null),
 		showItemInFolder: param.showItemInFolder || (() => {}),
+		clipboardRead: param.clipboardRead || (() => ''),
+		clipboardWrite: param.clipboardWrite || (() => {}),
+		setTimer: (fn, ms) => {
+			const t = setTimeout(fn, ms);
+
+			t.unref?.();
+			return () => clearTimeout(t);
+		},
 		now: () => Date.now(),
 		sleep: ms => new Promise(resolve => setTimeout(resolve, ms)),
 	};

@@ -1,26 +1,26 @@
 import { describe, expect, test, vi } from 'vitest';
 
-vi.mock('electron', () => ({ app: { isPackaged: false, getPath: () => '/nonexistent', getAppPath: () => '/nonexistent', getVersion: () => '0.0.0', getFileIcon: vi.fn(), getApplicationInfoForProtocol: vi.fn() }, shell: { openExternal: vi.fn(), showItemInFolder: vi.fn() } }));
+vi.mock('electron', () => ({ app: { isPackaged: false, getPath: () => '/nonexistent', getAppPath: () => '/nonexistent', getVersion: () => '0.0.0', getFileIcon: vi.fn(), getApplicationInfoForProtocol: vi.fn() }, shell: { openExternal: vi.fn(), showItemInFolder: vi.fn() }, clipboard: { readText: vi.fn(), writeText: vi.fn() } }));
 vi.mock('electron-util', () => ({ fixPathForAsarUnpack: (p: string) => p }));
 
-import { CLAUDE_ITEM, FORWARDER_BIN, FORWARDER_FILES, KEY_A, KEY_B, MCP_DIR, REGISTRY, STABLE_BIN, STABLE_BIN_RELEASE, applyParam, mac, planParam, service } from '../testKit';
+import { FORWARDER_BIN, FORWARDER_FILES, KEY_A, KEY_B, MCP_DIR, REGISTRY, STABLE_BIN, STABLE_BIN_RELEASE, applyParam, mac, planParam, service } from '../testKit';
 import { CLAUDE_PACKAGES, CLAUDE_PACKAGE_QUERY, EXTENSION_ID, EXTENSION_ID_DEV, extensionState, windowsClaudeExe } from './claudeDesktop';
 import { bundleInfo } from '../bundle';
-import { canonicalDigest, keyFingerprint } from '../digest';
-import { FAKE_SIGNER, fakeEnv, type FakeEnv, type FakeSpec } from '../testEnv';
+import { canonicalDigest } from '../digest';
+import { FAKE_REV, FAKE_SIGNER, fakeEnv, type FakeEnv, type FakeSpec } from '../testEnv';
 import type { AiRecord } from '../types';
 
 const DIR = '/Users/me/Library/Application Support/Claude';
 const CONFIG = `${DIR}/claude_desktop_config.json`;
-const COPY = '/Users/me/.anytype/ai-connect/Anytype.mcpb';
+const COPY_DIR = '/Users/me/.anytype/ai-connect';
 const APP = '/Applications/Claude.app';
 const EXE = `${APP}/Contents/MacOS/Claude`;
 const ARCHIVE = 'mcpb-archive-bytes';
-const VERSION = '2.5.0';
-/** The one command shape Anytype writes into Claude's config: the stable copy, no key, no env */
-const ENTRY = { command: STABLE_BIN, args: [ 'serve', '--connection', 'claude-desktop' ] };
+const VERSION = `2.${FAKE_REV}.0`;
+/** The entry Anytype writes into Claude's config: the stable copy, the tier, the key only in `env` */
+const entry = (key = KEY_A, tier = 'large', command = STABLE_BIN) => ({ command, args: [ 'serve', '--tier', tier ], env: { ANYTYPE_API_KEY: key } });
 
-type Ext = { version?: string; signer?: string; enabled?: boolean; id?: string } | null;
+type Ext = { version?: string; signer?: string; enabled?: boolean; id?: string; installedAt?: string } | null;
 
 /** Extension state files (field names UNVERIFIED: no extension was installed on the dev Mac) */
 const extensionFiles = (ext: Ext, signed: boolean) => {
@@ -31,7 +31,7 @@ const extensionFiles = (ext: Ext, signed: boolean) => {
 	const id = ext.id || (signed ? EXTENSION_ID : EXTENSION_ID_DEV);
 
 	return {
-		[`${DIR}/extensions-installations.json`]: JSON.stringify({ extensions: { [id]: { id, version: ext.version || VERSION, signatureInfo: ext.signer ? { status: 'signed', fingerprint: ext.signer } : { status: 'unsigned' } } } }),
+		[`${DIR}/extensions-installations.json`]: JSON.stringify({ extensions: { [id]: { id, version: ext.version || VERSION, installedAt: ext.installedAt || '2026-11-28T10:00:00Z', signatureInfo: ext.signer ? { status: 'signed', fingerprint: ext.signer } : { status: 'unsigned' } } } }),
 		[`${DIR}/Claude Extensions Settings/${id}.json`]: JSON.stringify({ isEnabled: ext.enabled ?? true }),
 	};
 };
@@ -88,10 +88,12 @@ const cd = (over: Record<string, any> = {}) => applyParam({ appId: 'claude-deskt
 const fb = (over: Record<string, any> = {}) => cd({ method: 'config', ...over });
 const plan = (svc: any, over: Record<string, any> = {}) => svc.plan(planParam({ appId: 'claude-desktop', route: 'stdio', ...over }));
 const records = (env: FakeEnv): AiRecord[] => JSON.parse(env.readText(REGISTRY) || '{"connections":[]}').connections;
-const item = (env: FakeEnv) => env.forwarder.items.get('claude-desktop');
+/** The bundle copies Anytype handed to Claude */
+const copies = (env: FakeEnv): string[] => Object.keys(env.files()).filter(f => f.startsWith(`${COPY_DIR}/Anytype`) && f.endsWith('.mcpb'));
 const check = (svc: any, port = 31009, keys: any = null) => svc.check({ accountId: 'acc-a', apiListening: true, port, keys });
 const checkStatus = async (svc: any, port = 31009) => ((await check(svc, port)) as any).connections[0];
-const verbs = (env: FakeEnv): string[] => env.forwarder.calls.map(c => c.args.slice(0, 2).join(' '));
+/** Every forwarder verb that ran, with the binary it ran on */
+const verbs = (env: FakeEnv): string[] => env.forwarder.calls.map(c => `${c.file} ${c.args[0]}`);
 const rewrite = (env: FakeEnv, file: string, text: string) => {
 	const dir = file.slice(0, file.lastIndexOf('/'));
 
@@ -150,193 +152,114 @@ describe('Claude Desktop: extension state', () => {
 	});
 });
 
-describe('Claude Desktop: bundle + item', () => {
-	test('installed → `key set` only (the key on stdin, never in argv), no open; disabled → the toggle step', async () => {
+describe('Claude Desktop: the extension route', () => {
+	test('the plan is always Full, runs the preflight on the in-app forwarder, and offers Configure for an installed extension of ours', async () => {
+		const fresh = machine();
+
+		expect(await plan(fresh.svc, { method: 'package', tier: 'full' })).toMatchObject({ ok: true, canApply: true, method: 'package', tier: 'full', nextStep: 'confirmInApp' });
+		expect(await plan(fresh.svc, { tier: 'small' })).toMatchObject({ ok: true, tier: 'full', method: 'package' });
+		expect(verbs(fresh.env)).toContain(`${FORWARDER_BIN} endpoint`);
+		expect((await plan(fresh.svc, { tier: 'full' }) as any).configure).toBeUndefined();
+
 		const installed = machine({ ext: {} });
 
-		expect(await plan(installed.svc)).toMatchObject({ ok: true, method: 'keyfile', nextStep: 'restart', bundleSigned: false, targetPath: CLAUDE_ITEM });
-		expect(await installed.svc.apply(cd())).toMatchObject({ ok: true, connection: { method: 'keyfile', nextStep: 'restart', targetPath: CLAUDE_ITEM, observedInstalled: true, itemRev: 1 } });
-		expect(item(installed.env)).toEqual({ key: KEY_A, account: 'acc-a', port: 31009, tier: 'large', rev: 1 });
-		expect(installed.state.opened).toEqual([]);
-
-		const set = installed.env.forwarder.calls.find(c => c.args[1] == 'set');
-
-		expect(set.file).toBe(FORWARDER_BIN);
-		expect(set.args).toEqual([ 'key', 'set', '--connection', 'claude-desktop', '--expect', 'absent' ]);
-		expect(JSON.parse(set.opts.stdin)).toEqual({ key: KEY_A, account: 'acc-a', port: 31009, tier: 'large' });
-		// The child's home is the service's home, and nothing key-like is in its environment or arguments
-		expect(set.opts.env).toEqual({ HOME: '/Users/me', USERPROFILE: '/Users/me' });
-		expect(JSON.stringify(installed.env.calls.map(c => [ c.file, c.args, c.opts.env ]))).not.toContain(KEY_A);
-		// No key file of the old kind, nothing of Anytype's in the items folder, no stable copy on the bundle route
-		expect(Object.keys(installed.env.files()).filter(f => f.startsWith('/Users/me/.anytype'))).toEqual([]);
-		expect(JSON.stringify(installed.env.files())).not.toContain(KEY_A);
-
-		const disabled = machine({ ext: { enabled: false } });
-
-		expect(await disabled.svc.apply(cd())).toMatchObject({ ok: true, connection: { method: 'keyfile', nextStep: 'toggle' } });
-		expect(disabled.state.opened).toEqual([]);
+		expect(await plan(installed.svc, { tier: 'full' })).toMatchObject({ configure: true, sentenceKey: 'aiConnectPlanPackageConfigure' });
 	});
 
-	test('absent → `key set` (commit), then the verified bundle bytes are copied and opened in Claude; manual → copied, not opened; open failure → ok + openFailed', async () => {
-		const absent = machine();
+	test('apply saves the record `waiting` first (the commit), then copies the key, then opens the bundle copy; nothing of the key is written', async () => {
+		const { env, state, svc } = machine();
+		let savedBeforeCopy = false;
+		const write = env.clipboardWrite;
 
-		expect(await absent.svc.apply(cd())).toMatchObject({ ok: true, connection: { method: 'package', nextStep: 'confirmInApp', observedInstalled: false } });
-		expect(item(absent.env).key).toBe(KEY_A);
-		expect(absent.env.files()[COPY]).toBe(ARCHIVE);
-		expect(absent.state.opened).toEqual([ [ '-a', APP, COPY ] ]);
+		env.clipboardWrite = text => {
+			savedBeforeCopy = (records(env)[0]?.appHash == 'hash-a1') && (state.opened.length == 0);
+			write(text);
+		};
 
-		const manual = machine();
+		const res: any = await svc.apply(cd({ method: 'package', tier: 'full', recommendedTier: 'full' }));
+		const [ copy ] = copies(env);
 
-		expect(await manual.svc.apply(cd({ manual: true, previewTarget: CLAUDE_ITEM }))).toMatchObject({ ok: true });
-		expect(manual.env.files()[COPY]).toBe(ARCHIVE);
-		expect(manual.state.opened).toEqual([]);
-
-		const failing = machine({ opens: false });
-
-		expect(await failing.svc.apply(cd())).toMatchObject({ ok: true, openFailed: true });
+		expect(res).toMatchObject({ ok: true, connection: { method: 'package', status: 'pending', bundleState: 'finish', targetPath: '', tier: 'full' } });
+		expect(savedBeforeCopy).toBe(true);
+		expect(env.clip.text).toBe(KEY_A);
+		expect(copy).toMatch(/\/Anytype-dev-[0-9a-f]{12}\.mcpb$/);
+		expect(env.files()[copy]).toBe(ARCHIVE);
+		expect(state.opened).toEqual([ [ '-a', APP, copy ] ]);
+		expect(records(env)[0]).toMatchObject({ appHash: 'hash-a1', keyFp: res.connection.keyFp, ns: 'dev', armed: { appHash: 'hash-a1', version: '', installedAt: '' } });
+		expect(JSON.stringify(env.files())).not.toContain(KEY_A);
 	});
 
-	test('signed build: an extension that isn\'t verified gets NO key — the bundle is opened, no item and no record until the expected one is there (R3-4)', async () => {
-		for (const ext of [ { signer: 'cd'.repeat(32), enabled: true }, { signer: 'cd'.repeat(32), enabled: false }, null ] as Ext[]) {
-			const { env, state, svc } = machine({ signed: true, ext });
+	test('an installed extension of ours is not opened again: Configure; an outdated one is (an update)', async () => {
+		const ours = machine({ ext: {} });
 
-			expect(await plan(svc)).toMatchObject({ ok: true, method: 'package', bundleSigned: true });
-			expect(await svc.apply(cd())).toEqual({ ok: false, needs: 'installExtension' });
-			expect(state.opened).toEqual([ [ '-a', APP, COPY ] ]);
-			expect(item(env)).toBeUndefined();
-			expect(verbs(env)).not.toContain('key set');
+		expect(await ours.svc.apply(cd({ method: 'package', tier: 'full' }))).toMatchObject({ ok: true, configure: true, connection: { bundleState: 'notConfirmed' } });
+		expect(ours.state.opened).toEqual([]);
+		expect(records(ours.env)[0].armed).toEqual({ appHash: 'hash-a1', version: VERSION, installedAt: '2026-11-28T10:00:00Z' });
+
+		const old = machine({ ext: { version: '2.4.0' } });
+
+		expect(await old.svc.apply(cd({ method: 'package', tier: 'full' }))).toMatchObject({ ok: true });
+		expect(old.state.opened).toHaveLength(1);
+	});
+
+	test('a newer build\'s copy replaces the older copy of its flavour; the other flavour\'s copy stays', async () => {
+		const { env, svc } = machine({ files: { [`${COPY_DIR}/Anytype-dev-000000000000.mcpb`]: 'OLD', [`${COPY_DIR}/Anytype-111111111111.mcpb`]: 'RELEASE' } });
+
+		await svc.apply(cd({ method: 'package', tier: 'full' }));
+		expect(copies(env).sort()).toEqual([ `${COPY_DIR}/Anytype-111111111111.mcpb`, expect.stringMatching(/Anytype-dev-[0-9a-f]{12}\.mcpb$/) ].sort());
+	});
+
+	test('a bundle whose archive fails its digest check, a forwarder whose bytes differ, or a build without metadata: refused, no record', async () => {
+		for (const opt of [ { tampered: 'something else' }, { forwarderReplaced: true }, { meta: null } ] as (Opt & { forwarderReplaced?: boolean })[]) {
+			const { env, svc } = machine(opt);
+
+			if (opt.forwarderReplaced) {
+				rewrite(env, FORWARDER_BIN, 'REPLACED');
+			};
+
+			expect(await svc.apply(cd({ method: 'package', tier: 'full' }))).toMatchObject({ ok: false });
 			expect(records(env)).toEqual([]);
-
-			// The user installed the signed bundle: the plan now says keyfile, and the same key is delivered
-			rewrite(env, `${DIR}/extensions-installations.json`, JSON.stringify({ extensions: { [EXTENSION_ID]: { id: EXTENSION_ID, version: VERSION, signatureInfo: { status: 'signed', fingerprint: FAKE_SIGNER } } } }));
-			rewrite(env, `${DIR}/Claude Extensions Settings/${EXTENSION_ID}.json`, JSON.stringify({ isEnabled: true }));
-
-			expect(await plan(svc)).toMatchObject({ method: 'keyfile' });
-			expect(await svc.apply(cd())).toMatchObject({ ok: true, connection: { method: 'keyfile' } });
-			expect(item(env).key).toBe(KEY_A);
+			expect(env.clip.writes).toEqual([]);
 		};
 	});
 
-	test('a bundle whose archive fails its digest check is never used, and gets no key', async () => {
-		const { env, state, svc } = machine({ signed: true, tampered: 'tampered' });
-
-		expect(bundleInfo(env)).toMatchObject({ integrityError: true, signed: false });
-		expect(await plan(svc)).toMatchObject({ ok: true, canApply: false, error: { stage: 'verify', category: 'unsupportedPackage' } });
-		expect(await svc.apply(cd())).toEqual({ ok: false, error: { stage: 'verify', category: 'unsupportedPackage' } });
-		expect(item(env)).toBeUndefined();
-		expect(state.opened).toEqual([]);
-	});
-
-	test('a forwarder whose bytes differ from the metadata is never given a key (and never copied)', async () => {
-		const { env, svc } = machine({ ext: {}, files: { [CONFIG]: '{}' } });
-
-		rewrite(env, FORWARDER_BIN, 'REPLACED-BYTES');
-		expect(await plan(svc)).toMatchObject({ canApply: false, error: { stage: 'verify', category: 'notFound' } });
-		expect(await svc.apply(cd())).toMatchObject({ ok: false, error: { stage: 'verify', category: 'notFound' } });
-		expect(await plan(svc, { method: 'config' })).toMatchObject({ canApply: false, error: { stage: 'verify', category: 'notFound' }, steps: [] });
-		expect(env.forwarder.calls).toEqual([]);
-		expect(env.files()[STABLE_BIN]).toBeUndefined();
-	});
-
-	test('a build without metadata (or whose namespace disagrees with `signed`) refuses the stdio routes', async () => {
-		const none = machine({ ext: {}, meta: null });
-		const sha = require('crypto').createHash('sha256').update('FORWARDER-BYTES').digest('hex');
-		const mismatch = machine({ ext: {}, meta: JSON.stringify({ signed: true, forwarder: { rev: 5, namespace: 'dev', sha256: { darwin: sha } }, mcpb: null }) });
-
-		for (const m of [ none, mismatch ]) {
-			expect(await plan(m.svc, { method: 'config' })).toMatchObject({ canApply: false, error: { category: 'notFound' } });
-			expect(await m.svc.apply(fb())).toMatchObject({ ok: false });
-			expect(m.env.forwarder.calls).toEqual([]);
-		};
-	});
-
-	test('ownership across accounts on the item: Replace names the item as shown (fingerprint@rev); the other account is left with a conflict', async () => {
+	test('remove queues the key and leaves the extension (the user removes it in Claude); the copied key leaves the clipboard', async () => {
 		const { env, svc } = machine({ ext: {} });
 
-		await svc.apply(cd());
+		await svc.apply(cd({ method: 'package', tier: 'full' }));
+		expect(env.clip.text).toBe(KEY_A);
 
-		const planB: any = await plan(svc, { accountId: 'acc-b' });
+		const res: any = await svc.remove({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1' });
 
-		expect(planB).toMatchObject({ existing: 'foreign', replace: { targetPath: CLAUDE_ITEM, foreignDigest: canonicalDigest(`${keyFingerprint(KEY_A)}@1`) } });
-		expect(await svc.apply(cd({ accountId: 'acc-b', key: KEY_B, appHash: 'hash-b1' }))).toMatchObject({ ok: false, error: { category: 'conflict' } });
-		expect(item(env).key).toBe(KEY_A);
-		expect(records(env).filter(r => r.accountId == 'acc-b')).toEqual([]);
-		expect(await svc.apply(cd({ accountId: 'acc-b', key: KEY_B, appHash: 'hash-b1', replace: planB.replace }))).toMatchObject({ ok: true });
-		expect(item(env)).toMatchObject({ key: KEY_B, account: 'acc-b', rev: 2 });
-		// The replacing `key set` named exactly the item the user saw
-		expect(env.forwarder.calls.filter(c => c.args[1] == 'set').pop().args.slice(-2)).toEqual([ '--expect', `${keyFingerprint(KEY_A)}@1` ]);
-
-		expect((await checkStatus(svc, 31010)).status).toBe('conflict');
-		expect(await svc.update({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1', port: 31011 })).toMatchObject({ ok: false, error: { category: 'conflict' } });
-		// Disconnect: another account's item is left alone, and the revocation is queued all the same
-		expect(await svc.remove({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1' })).toMatchObject({ ok: true, connection: { removed: true, revokePending: [ 'hash-a1' ] } });
-		expect(item(env)).toMatchObject({ key: KEY_B, account: 'acc-b', rev: 2 });
-		expect(verbs(env)).not.toContain('key delete');
+		expect(res).toMatchObject({ ok: true, connection: { removed: true, revokePending: [ 'hash-a1' ], left: 'extension' } });
+		expect(env.clip.text).toBe('');
 	});
 
-	test('check: a port change is a `key retarget` (the same key, nothing revoked, restart step); remove deletes the item and reports the extension left behind', async () => {
-		const { env, svc } = machine({ ext: {} });
+	test('update: a port change needs nothing; any tier but Full is refused', async () => {
+		const { svc } = machine();
 
-		await svc.apply(cd());
-		expect(await check(svc, 31010)).toMatchObject({ ok: true, healed: [ 'claude-desktop' ], connections: [ { status: 'ok', port: 31010, itemRev: 2, nextStep: 'restart', revokePending: [] } ] });
-		expect(item(env)).toEqual({ key: KEY_A, account: 'acc-a', port: 31010, tier: 'large', rev: 2 });
-		expect(env.forwarder.calls.find(c => c.args[1] == 'retarget').args).toEqual([
-			'key', 'retarget', '--connection', 'claude-desktop', '--expect', `${keyFingerprint(KEY_A)}@1`, '--account', 'acc-a', '--port', '31010', '--tier', 'large',
-		]);
-		expect(records(env)[0].retarget).toBeUndefined();
-
-		expect(await svc.remove({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1' })).toMatchObject({ ok: true, connection: { removed: true, left: 'extension' } });
-		expect(item(env)).toBeUndefined();
-		expect(env.forwarder.calls.find(c => c.args[1] == 'delete').args).toEqual([ 'key', 'delete', '--connection', 'claude-desktop', '--expect', `${keyFingerprint(KEY_A)}@2`, '--account', 'acc-a' ]);
-	});
-
-	test('update: a tier change is a retarget; the item gone → notFound, never recreated', async () => {
-		const { env, svc } = machine({ ext: {} });
-
-		await svc.apply(cd());
-		expect(await svc.update({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1', port: 31009, tier: 'full' })).toMatchObject({ ok: true, connection: { tier: 'full', itemRev: 2, nextStep: 'restart' } });
-		expect(item(env)).toMatchObject({ key: KEY_A, tier: 'full', rev: 2 });
-
-		env.forwarder.items.clear();
-		expect(await svc.update({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1', port: 31010 })).toMatchObject({ ok: false, error: { category: 'notFound' } });
-		expect(item(env)).toBeUndefined();
-		expect(records(env)[0].retarget).toBeUndefined();
-		expect((await checkStatus(svc)).status).toBe('removed');
-	});
-
-	test('a store that fails its rules (exit 7, denied) is named: nothing is planned, written or healed', async () => {
-		const { env, svc } = machine({ ext: {} });
-
-		env.forwarder.store = 'denied';
-		expect(await plan(svc)).toMatchObject({ canApply: false, error: { category: 'storeDenied', path: CLAUDE_ITEM } });
-		expect(await svc.apply(cd())).toMatchObject({ ok: false, error: { category: 'storeDenied' } });
-		expect(records(env)).toEqual([]);
-
-		env.forwarder.store = 'ok';
-		await svc.apply(cd());
-		env.forwarder.store = 'unreachable';
-		expect((await checkStatus(svc, 31010)).status).toBe('unreadable');
-		expect(item(env).port).toBe(31009);
+		await svc.apply(cd({ method: 'package', tier: 'full' }));
+		expect(await svc.update({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1', port: 31010 })).toMatchObject({ ok: true, connection: { port: 31010 } });
+		expect(await svc.update({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1', port: 31010, tier: 'small' })).toMatchObject({ ok: false });
 	});
 });
 
 describe('Claude Desktop: config route', () => {
-	test('the plan asks for the quit (running) or for the user to quit (unknown) and writes nothing', async () => {
+	test('the plan installs the stable copy, runs the preflight on it, asks for the quit (running) or for the user to quit (unknown), and writes no config', async () => {
 		const running = machine({ running: true, files: { [CONFIG]: '{"x":1}' } });
 
-		expect(await plan(running.svc, { method: 'config' })).toMatchObject({ ok: true, method: 'config', preflight: 'quitApp', targetPath: CONFIG });
+		expect(await plan(running.svc, { method: 'config' })).toMatchObject({ ok: true, method: 'config', preflight: 'quitApp', targetPath: CONFIG, needsKey: true });
 		expect(running.state.killed).toEqual([]);
 		expect(running.env.files()[CONFIG]).toBe('{"x":1}');
-		expect(running.env.files()[STABLE_BIN]).toBeUndefined();
+		expect(verbs(running.env)).toContain(`${STABLE_BIN} endpoint`);
 
 		const unknown = machine({ running: 'unknown' });
 
 		expect(await plan(unknown.svc, { method: 'config' })).toMatchObject({ preflight: 'quitAppSelf' });
 		expect(await unknown.svc.apply(fb({ allowQuit: true }))).toEqual({ ok: false, needs: 'quitAppSelf' });
-		expect(item(unknown.env)).toBeUndefined();
 	});
 
-	test('apply with allowQuit: quit once, install the stable copy, merge the keyless entry, `key set`, configEntry stored, relaunch', async () => {
+	test('apply with allowQuit: quit once, merge the entry with the key in `env`, digest recorded (no entry, no key), 0600, no backup, relaunch', async () => {
 		const { env, state, svc } = machine({ running: true, files: { [CONFIG]: JSON.stringify({ globalShortcut: 'x', mcpServers: { other: { command: 'o' } } }) } });
 
 		expect(await svc.apply(fb())).toEqual({ ok: false, needs: 'quitApp' });
@@ -347,155 +270,101 @@ describe('Claude Desktop: config route', () => {
 		expect(state.killed).toEqual([ 42 ]);
 		expect(config.globalShortcut).toBe('x');
 		expect(config.mcpServers.other).toEqual({ command: 'o' });
-		// One command shape: the stable copy with `serve --connection claude-desktop`; no env, no key, no Electron
-		expect(config.mcpServers.anytype).toEqual(ENTRY);
-		expect(env.files()[CONFIG]).not.toContain(KEY_A);
-		expect(env.files()[CONFIG]).not.toContain('Anytype.app');
+		expect(config.mcpServers.anytype).toEqual(entry());
+		expect(env.modeOf(CONFIG)).toBe(0o600);
+		expect(Object.keys(env.files()).filter(f => f.startsWith(`${DIR}/`) && (f != CONFIG) && !f.includes('Extensions'))).toEqual([]);
 		expect(env.files()[STABLE_BIN]).toBe('FORWARDER-BYTES');
-		expect(env.files()[`${STABLE_BIN}.rev`]).toBe('5\n');
-		expect(env.modeOf(STABLE_BIN)).toBe(0o755);
-		expect(env.modeOf('/Users/me/.anytype/bin-dev')).toBe(0o700);
-		expect(item(env).key).toBe(KEY_A);
-		expect(res).toMatchObject({ ok: true, connection: { method: 'config', nextStep: 'none', targetPath: CONFIG, configEntry: ENTRY, entryDigest: canonicalDigest(ENTRY), itemRev: 1 } });
+		expect(res).toMatchObject({ ok: true, connection: { method: 'config', nextStep: 'none', targetPath: CONFIG, entryDigest: canonicalDigest(entry()), configPath: CONFIG } });
+		expect(JSON.stringify(res)).not.toContain(KEY_A);
+		expect(env.readText(REGISTRY)).not.toContain(KEY_A);
 		expect(state.opened).toEqual([ [ '-a', APP ] ]);
 	});
 
-	test('it needs no extension, also on a signed build with none installed; the release build uses ~/.anytype/bin', async () => {
+	test('it needs no extension, also on a signed build; the release build names ~/.anytype/bin', async () => {
 		const { env, svc } = machine({ signed: true, files: { [CONFIG]: '{}' } });
 
-		expect(await plan(svc, { method: 'config' })).toMatchObject({ canApply: true, method: 'config' });
 		expect(await svc.apply(fb())).toMatchObject({ ok: true, connection: { method: 'config', targetPath: CONFIG } });
-		expect(JSON.parse(env.files()[CONFIG]).mcpServers.anytype).toEqual({ command: STABLE_BIN_RELEASE, args: [ 'serve', '--connection', 'claude-desktop' ] });
-		expect(env.files()[STABLE_BIN_RELEASE]).toBe('FORWARDER-BYTES');
+		expect(JSON.parse(env.files()[CONFIG]).mcpServers.anytype).toEqual(entry(KEY_A, 'large', STABLE_BIN_RELEASE));
 		expect(env.files()[STABLE_BIN]).toBeUndefined();
-		expect(item(env).key).toBe(KEY_A);
-	});
-
-	test('with the Anytype extension installed and enabled as well: refused ("remove one of the two"), nothing written', async () => {
-		const { env, svc } = machine({ ext: {}, files: { [CONFIG]: '{}' } });
-
-		expect(await plan(svc, { method: 'config' })).toMatchObject({ canApply: false, method: 'manual', error: { category: 'conflict' }, note: 'aiConnectClaudeBothRoutes', steps: [] });
-		expect(await svc.apply(fb())).toMatchObject({ ok: false, error: { category: 'conflict' } });
-		expect(env.files()[CONFIG]).toBe('{}');
-		expect(item(env)).toBeUndefined();
-
-		// Switched off, it is no second server
-		const off = machine({ ext: { enabled: false }, files: { [CONFIG]: '{}' } });
-
-		expect(await off.svc.apply(fb())).toMatchObject({ ok: true });
-	});
-
-	test('a `key set` that is refused puts the previous entry back (no leftover reported) and relaunches Claude', async () => {
-		const previous = { command: 'old', args: [] as string[] };
-		const { env, state, svc } = machine({
-			running: true, files: { [CONFIG]: JSON.stringify({ mcpServers: { anytype: previous } }) },
-			forwarder: (call, st) => ((call.args[1] == 'set') ? { code: 7, stdout: JSON.stringify({ ok: false, reason: 'x', store: 'denied' }) + '\n' } : null),
-		});
-		// The user agreed to replace the entry they were shown
-		const replace = { targetPath: CONFIG, foreignDigest: canonicalDigest(previous) };
-		const res: any = await svc.apply(fb({ allowQuit: true, replace }));
-
-		expect(res).toMatchObject({ ok: false, error: { category: 'storeDenied' } });
-		expect(res.error.left).toBeUndefined();
-		expect(state.killed).toEqual([ 42 ]);
-		expect(JSON.parse(env.files()[CONFIG]).mcpServers.anytype).toEqual(previous);
-		expect(state.opened).toEqual([ [ '-a', APP ] ]);
-		// Exit 7 means nothing was written: no record and no candidate stays
-		expect(records(env)).toEqual([]);
-	});
-
-	test('a store that can\'t be used is refused before Claude is quit', async () => {
-		const { env, state, svc } = machine({ running: true, files: { [CONFIG]: '{}' } });
-
-		env.forwarder.store = 'denied';
-		expect(await svc.apply(fb({ allowQuit: true }))).toMatchObject({ ok: false, error: { category: 'storeDenied' } });
-		expect(state.killed).toEqual([]);
-		expect(state.opened).toEqual([]);
-		expect(env.files()[CONFIG]).toBe('{}');
-	});
-
-	test('an edit between the merge and a refused `key set` is left alone (no rollback): `left: entry` reported', async () => {
-		const { env, svc } = machine({
-			files: { [CONFIG]: '{}' },
-			forwarder: call => {
-				if (call.args[1] != 'set') {
-					return null;
-				};
-
-				const doc = JSON.parse(env.readText(CONFIG));
-
-				doc.mcpServers.anytype.args.push('--extra');
-				rewrite(env, CONFIG, JSON.stringify(doc));
-				return { code: 7, stdout: JSON.stringify({ ok: false, reason: 'x', store: 'unreachable' }) + '\n' };
-			},
-		});
-
-		expect(await svc.apply(fb())).toMatchObject({ ok: false, error: { left: 'entry' } });
-		expect(JSON.parse(env.files()[CONFIG]).mcpServers.anytype.args).toContain('--extra');
 	});
 
 	test('a parse failure after the quit relaunches Claude', async () => {
 		const { env, state, svc } = machine({ running: true, files: { [CONFIG]: '{}' } });
-		const p: any = await plan(svc, { method: 'config' });
 		const kill = env.kill;
 
-		// Claude rewrites its config on the way out, broken
 		env.kill = (pid, signal) => {
 			const ret = kill(pid, signal);
 
 			rewrite(env, CONFIG, '{ broken');
 			return ret;
 		};
-		expect(p.canApply).toBe(true);
-		expect(await svc.apply(fb({ allowQuit: true }))).toMatchObject({ ok: false, error: { category: 'unparseable' } });
-		expect(state.killed).toEqual([ 42 ]);
+		expect(await svc.apply(fb({ allowQuit: true }))).toMatchObject({ ok: false });
 		expect(state.opened).toEqual([ [ '-a', APP ] ]);
-		expect(item(env)).toBeUndefined();
 	});
 
-	test('ownership by digest: an edit of our entry → conflict on check, left alone on remove (the item still goes)', async () => {
+	test('check: our entry → ok; edited (another key, another command) → reconnect; gone → removed; unparseable → unreadable', async () => {
 		const { env, svc } = machine({ files: { [CONFIG]: '{}' } });
 
 		await svc.apply(fb());
+		expect((await checkStatus(svc)).status).toBe('ok');
 
-		const doc = JSON.parse(env.readText(CONFIG));
+		rewrite(env, CONFIG, JSON.stringify({ mcpServers: { anytype: entry(KEY_B) } }));
+		expect((await checkStatus(svc)).status).toBe('reconnect');
 
-		doc.mcpServers.anytype.env = { NODE_OPTIONS: '--inspect' };
-		rewrite(env, CONFIG, JSON.stringify(doc));
+		rewrite(env, CONFIG, JSON.stringify({ mcpServers: { anytype: entry(KEY_A, 'large', '/elsewhere/anytype-mcp') } }));
+		expect((await checkStatus(svc)).status).toBe('reconnect');
 
-		const bytes = env.files()[CONFIG];
+		rewrite(env, CONFIG, '{ broken');
+		expect((await checkStatus(svc)).status).toBe('unreadable');
 
-		expect((await checkStatus(svc)).status).toBe('conflict');
-		expect(await svc.remove({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1' })).toMatchObject({ ok: true });
-		expect(env.files()[CONFIG]).toBe(bytes);
-		expect(item(env)).toBeUndefined();
+		rewrite(env, CONFIG, '{}');
+		expect((await checkStatus(svc)).status).toBe('removed');
 	});
 
-	test('remove: our entry is removed while Claude is stopped, left (`entry`) while it runs', async () => {
-		const stopped = machine({ files: { [CONFIG]: '{"mcpServers":{}}' } });
+	test('check keeps the stable copy installed: a deleted or replaced copy is put back; one that can\'t be is `reconnect`', async () => {
+		const { env, svc } = machine({ files: { [CONFIG]: '{}' } });
+
+		await svc.apply(fb());
+		env.unlink(STABLE_BIN);
+		expect((await checkStatus(svc)).status).toBe('ok');
+		expect(env.files()[STABLE_BIN]).toBe('FORWARDER-BYTES');
+
+		rewrite(env, STABLE_BIN, 'SOMETHING-ELSE');
+		expect((await checkStatus(svc)).status).toBe('ok');
+		expect(env.files()[STABLE_BIN]).toBe('FORWARDER-BYTES');
+
+		rewrite(env, FORWARDER_BIN, 'REPLACED');
+		expect((await checkStatus(svc)).status).toBe('reconnect');
+	});
+
+	test('a tier change is a Reconnect: update refuses it', async () => {
+		const { svc } = machine({ files: { [CONFIG]: '{}' } });
+
+		await svc.apply(fb());
+		expect(await svc.update({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1', port: 31009, tier: 'small' })).toMatchObject({ ok: false, error: { category: 'unsupportedForm' } });
+	});
+
+	test('reconnect: the new key replaces our entry, the old hash is queued', async () => {
+		const { env, svc } = machine({ files: { [CONFIG]: '{}' } });
+
+		await svc.apply(fb());
+		expect(await svc.apply(fb({ key: KEY_B, appHash: 'hash-a2', expectedHash: 'hash-a1' }))).toMatchObject({ ok: true, connection: { appHash: 'hash-a2', revokePending: [ 'hash-a1' ] } });
+		expect(JSON.parse(env.files()[CONFIG]).mcpServers.anytype).toEqual(entry(KEY_B));
+	});
+
+	test('remove: our entry is removed while Claude is stopped (no backup holds the key), left (`entry`) while it runs; the key is queued either way', async () => {
+		const stopped = machine({ files: { [CONFIG]: '{}' } });
 
 		await stopped.svc.apply(fb());
-		expect(await stopped.svc.remove({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1' })).toMatchObject({ ok: true });
-		expect(JSON.parse(stopped.env.files()[CONFIG]).mcpServers).toEqual({});
+		expect(await stopped.svc.remove({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1' })).toMatchObject({ ok: true, connection: { revokePending: [ 'hash-a1' ] } });
+		expect(JSON.parse(stopped.env.files()[CONFIG]).mcpServers?.anytype).toBeUndefined();
+		expect(JSON.stringify(stopped.env.files())).not.toContain(KEY_A);
 
-		const running = machine({ files: { [CONFIG]: '{"mcpServers":{}}' } });
+		const running = machine({ files: { [CONFIG]: '{}' } });
 
 		await running.svc.apply(fb());
 		running.state.running = true;
-		expect(await running.svc.remove({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1' })).toMatchObject({ ok: true, connection: { left: 'entry' } });
-	});
-
-	test.each([
-		[ 'Snap', { SNAP: '/snap/anytype/1' } ],
-		[ 'Flatpak', { FLATPAK_ID: 'io.anytype.anytype' } ],
-	])('Linux %s: expected refusal before any key, no steps, no item and no stable copy', async (name, vars) => {
-		const env = fakeEnv({ platform: 'linux', home: '/home/me', vars, dirs: [ '/home/me/.config/Claude', '/home/me/.config/anytype' ], files: { [FORWARDER_BIN]: 'F' }, signed: true });
-		const svc = service(env, '/home/me/.config/anytype/aiConnect.json');
-
-		expect(await plan(svc)).toMatchObject({ ok: true, canApply: false, error: { category: 'unsupportedPackage' }, note: 'aiConnectLinuxPackageLimit', steps: [] });
-		expect(await svc.apply(cd())).toMatchObject({ ok: false, error: { category: 'unsupportedPackage' } });
-		expect(env.forwarder.calls).toEqual([]);
-		expect(Object.keys(env.files()).filter(f => f.startsWith('/home/me/.anytype'))).toEqual([]);
+		expect(await running.svc.remove({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a1' })).toMatchObject({ ok: true, connection: { left: 'entry', revokePending: [ 'hash-a1' ] } });
 	});
 
 	test('Linux: an AppImage in portable-home mode is refused; a normal AppImage is supported', async () => {
@@ -517,11 +386,9 @@ describe('Claude Desktop: config route', () => {
 
 		expect(await plan(svc)).toMatchObject({ canApply: true, method: 'config', preflight: 'quitAppSelf' });
 		expect(await svc.apply(cd())).toEqual({ ok: false, needs: 'quitAppSelf' });
-		expect(env.forwarder.items.size).toBe(0);
 		expect(await svc.apply(cd({ quitConfirmed: true }))).toMatchObject({ ok: true, connection: { method: 'config', nextStep: 'restart' } });
-		expect(JSON.parse(env.files()['/home/me/.config/Claude/claude_desktop_config.json']).mcpServers.anytype).toEqual({ command: '/home/me/.anytype/bin/anytype-mcp', args: [ 'serve', '--connection', 'claude-desktop' ] });
+		expect(JSON.parse(env.files()['/home/me/.config/Claude/claude_desktop_config.json']).mcpServers.anytype).toEqual(entry(KEY_A, 'large', '/home/me/.anytype/bin/anytype-mcp'));
 		expect(env.files()['/home/me/.anytype/bin/anytype-mcp']).toBe('LINUX-FWD');
-		expect(env.forwarder.items.get('claude-desktop').key).toBe(KEY_A);
 		// The production detection supplies no executable: Claude is neither signalled nor opened
 		expect(env.calls.filter(c => /open|taskkill/.test(c.file))).toEqual([]);
 	});
@@ -532,28 +399,6 @@ describe('Claude Desktop: config route', () => {
 		expect(await svc.apply(fb({ allowQuit: true }))).toEqual({ ok: false, needs: 'quitAppSelf' });
 		expect(env.files()[CONFIG]).toBe('{}');
 		expect(await svc.apply(fb({ quitConfirmed: true }))).toMatchObject({ ok: true });
-	});
-
-	test('T10: another account on the config route: the entry is the same for both, so Replace is bound to the item, and completes', async () => {
-		const { env, svc } = machine({ files: { [CONFIG]: '{}' } });
-
-		await svc.apply(fb());
-
-		const configBytes = env.files()[CONFIG];
-		const planB: any = await plan(svc, { accountId: 'acc-b', method: 'config' });
-
-		expect(planB).toMatchObject({ canApply: true, existing: 'foreign', targetPath: CONFIG, replace: { targetPath: CLAUDE_ITEM } });
-		expect(await svc.apply(fb({ accountId: 'acc-b', key: KEY_B, appHash: 'hash-b1' }))).toMatchObject({ ok: false, error: { category: 'conflict' } });
-		expect(await svc.apply(fb({ accountId: 'acc-b', key: KEY_B, appHash: 'hash-b1', replace: planB.replace }))).toMatchObject({ ok: true });
-		expect(env.files()[CONFIG]).toBe(configBytes);
-		expect(item(env)).toMatchObject({ key: KEY_B, account: 'acc-b' });
-	});
-
-	test('T10: both the config entry and the item belong to someone else: manual only, before any key', async () => {
-		const { env, svc } = machine({ files: { [CONFIG]: JSON.stringify({ mcpServers: { anytype: { command: 'someone' } } }) } });
-
-		env.forwarder.items.set('claude-desktop', { key: KEY_B, account: 'acc-b', port: 31009, tier: 'large', rev: 3 });
-		expect(await plan(svc, { method: 'config' })).toMatchObject({ canApply: false, error: { category: 'conflict' }, steps: [] });
 	});
 
 	test('T10: a relaunch that fails after the commit is reported (openFailed, restart step)', async () => {
@@ -568,90 +413,11 @@ describe('Claude Desktop: config route', () => {
 		expect(await plan(svc, { method: 'config' })).toMatchObject({ canApply: false, method: 'manual', error: { category: 'unparseable' } });
 	});
 
-	test('T12: manual setup on the config route prepares Anytype\'s side only (the stable copy and the item): no quit, no config edit; pending until the user adds the entry', async () => {
-		const { env, state, svc } = machine({ running: true, files: { [CONFIG]: '{"x":1}' } });
-		const shown: any = await plan(svc, { method: 'config' });
-		const entry = JSON.parse(shown.steps[1].snippet).mcpServers.anytype;
-		const res: any = await svc.apply(fb({ manual: true }));
-
-		expect(entry).toEqual(ENTRY);
-		expect(JSON.stringify(shown.steps)).not.toMatch(/KEY|Bearer|ELECTRON/);
-		expect(res).toMatchObject({ ok: true, connection: { method: 'config', observedInstalled: false, targetPath: CONFIG, entryDigest: canonicalDigest(entry) } });
-		expect(state.killed).toEqual([]);
-		expect(state.opened).toEqual([]);
-		expect(env.files()[CONFIG]).toBe('{"x":1}');
-		expect(env.files()[STABLE_BIN]).toBe('FORWARDER-BYTES');
-		expect(item(env).key).toBe(KEY_A);
-
-		state.running = false;
-		expect((await checkStatus(svc)).status).toBe('pending');
-
-		// The user pasted exactly the step's entry
-		rewrite(env, CONFIG, JSON.stringify({ x: 1, mcpServers: { anytype: entry } }));
-		expect((await checkStatus(svc)).status).toBe('ok');
-	});
-
-	test('T13: an owned entry that isn\'t today\'s command (another channel\'s copy): rewritten while Claude is stopped, reconnect while it runs', async () => {
-		const { env, state, svc } = machine({ files: { [CONFIG]: '{}' } });
-		const other = { command: STABLE_BIN_RELEASE, args: ENTRY.args };
-
-		await svc.apply(fb());
-		// As a release build of this account had written it
-		rewrite(env, CONFIG, JSON.stringify({ mcpServers: { anytype: other } }));
-		rewrite(env, REGISTRY, env.readText(REGISTRY).split(canonicalDigest(ENTRY)).join(canonicalDigest(other)).split(JSON.stringify(ENTRY.command)).join(JSON.stringify(other.command)));
-
-		const again = service(env);
-
-		state.running = true;
-		expect((await checkStatus(again)).status).toBe('reconnect');
-		expect(JSON.parse(env.files()[CONFIG]).mcpServers.anytype).toEqual(other);
-
-		state.running = false;
-
-		const res: any = await check(again);
-
-		expect(res).toMatchObject({ healed: [ 'claude-desktop' ], connections: [ { status: 'ok', nextStep: 'restart' } ] });
-		expect(JSON.parse(env.files()[CONFIG]).mcpServers.anytype).toEqual(ENTRY);
-		expect(records(env)[0]).toMatchObject({ configEntry: ENTRY, entryDigest: canonicalDigest(ENTRY) });
-	});
-
-	test('B2: the API stops before a heal: nothing is retargeted, nothing healed', async () => {
-		const { env, svc } = machine({ files: { [CONFIG]: '{}' } });
-		let live = true;
-
-		svc.configure({ env, registryFile: REGISTRY, liveApi: () => live });
-		await svc.apply(fb());
-		live = false;
-
-		const res: any = await check(svc, 31010);
-
-		expect(res).toMatchObject({ ok: true, healed: [] });
-		expect(item(env)).toMatchObject({ port: 31009, rev: 1 });
-		expect(verbs(env)).not.toContain('key retarget');
-	});
-
 	test('T13: an unparseable config on the config route is unreadable, not removed', async () => {
 		const { env, svc } = machine({ files: { [CONFIG]: '{}' } });
 
 		await svc.apply(fb());
 		rewrite(env, CONFIG, '{ broken');
-		expect((await checkStatus(svc)).status).toBe('unreadable');
-	});
-
-	test('check keeps the stable copy installed: a deleted or replaced copy is put back; one that can\'t be is `reconnect`', async () => {
-		const { env, svc } = machine({ files: { [CONFIG]: '{}' } });
-
-		await svc.apply(fb());
-		env.unlink(STABLE_BIN);
-		expect((await checkStatus(svc)).status).toBe('ok');
-		expect(env.files()[STABLE_BIN]).toBe('FORWARDER-BYTES');
-
-		rewrite(env, STABLE_BIN, 'SOMETHING-ELSE');
-		expect((await checkStatus(svc)).status).toBe('ok');
-		expect(env.files()[STABLE_BIN]).toBe('FORWARDER-BYTES');
-
-		// The in-app forwarder no longer matches its metadata: nothing can be verified or installed
-		rewrite(env, FORWARDER_BIN, 'REPLACED');
 		expect((await checkStatus(svc)).status).toBe('unreadable');
 	});
 
@@ -668,7 +434,7 @@ describe('Claude Desktop: config route', () => {
 		expect(await svc.apply(fb({ allowQuit: true }))).toEqual({ ok: false, needs: 'quitApp' });
 		expect(state.killed).toEqual([ 42 ]);
 		expect(env.files()[CONFIG]).toBe('{}');
-		expect(item(env)).toBeUndefined();
+		expect(records(env)).toEqual([]);
 	});
 
 	test('T22 / U8: Windows launches only the detected Claude: the classic exe, or a known MSIX package by exact family AND exact publisher (one constant query)', async () => {
@@ -710,21 +476,7 @@ describe('Claude Desktop: config route', () => {
 	});
 
 
-	test('T24: config → bundle route keeps the config entry\'s ownership; disconnect still removes that entry and the item', async () => {
-		const { env, svc } = machine({ files: { [CONFIG]: '{"mcpServers":{}}' } });
-
-		await svc.apply(fb());
-
-		const digest = records(env)[0].entryDigest;
-
-		expect(await svc.apply(cd({ key: KEY_B, appHash: 'hash-a2', expectedHash: 'hash-a1' }))).toMatchObject({ ok: true, connection: { method: 'package', entryDigest: digest, revokePending: [ 'hash-a1' ] } });
-		expect(item(env)).toMatchObject({ key: KEY_B, rev: 2 });
-		expect(await svc.remove({ accountId: 'acc-a', connectionId: 'claude-desktop', expectedHash: 'hash-a2' })).toMatchObject({ ok: true });
-		expect(JSON.parse(env.files()[CONFIG]).mcpServers).toEqual({});
-		expect(item(env)).toBeUndefined();
-	});
-
-	test('U12: an owned entry Claude removed while quitting stays removed: the rotation stops, Claude is reopened, the item unchanged', async () => {
+	test('U12: an owned entry Claude removed while quitting stays removed: the rotation stops, Claude is reopened, the record unchanged', async () => {
 		const { env, state, svc } = machine({ files: { [CONFIG]: '{}' } });
 
 		await svc.apply(fb());
@@ -741,7 +493,6 @@ describe('Claude Desktop: config route', () => {
 
 		expect(await svc.apply(fb({ allowQuit: true, key: KEY_B, appHash: 'hash-a2', expectedHash: 'hash-a1' }))).toMatchObject({ ok: false, error: { category: 'changed' } });
 		expect(JSON.parse(env.files()[CONFIG]).mcpServers).toEqual({});
-		expect(item(env)).toMatchObject({ key: KEY_A, rev: 1 });
 		expect(state.opened).toEqual([ [ '-a', APP ] ]);
 		expect(records(env)[0]).toMatchObject({ appHash: 'hash-a1' });
 		expect(records(env)[0].unconfirmed).toBeUndefined();

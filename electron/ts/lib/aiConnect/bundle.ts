@@ -5,15 +5,27 @@
  * The bundle is described by the build's metadata (forwarder.buildMeta): the archive's sha256, its signer
  * and its version `2.<forwarder rev>.0`. The bytes main delivers are the bytes it hashed, in memory.
  *
- * The copy goes to `<home>/.anytype/ai-connect/Anytype.mcpb`. That folder also holds the forwarder's
- * `items` / `items-dev`, which anytype-ts never reads or writes. Every directory on the way down from the
- * real home must be a real directory (not a link) and, on POSIX, the user's and not writable by others.
+ * The copy goes to `<home>/.anytype/ai-connect/Anytype[-dev]-<first 12 hex of its sha256>.mcpb` (older copies
+ * of the same flavour are removed). That folder also holds the endpoint file (endpoint.ts) and Claude's
+ * operation lock. Every directory on the way down from the real home must be a real directory (not a link)
+ * and, on POSIX, the user's and not writable by others.
  */
 import type { AiError, Env } from './types';
 import { MODE_DIR, dirIdentity, discardTemp, keepTemp, pathOf, realHome, sameDir, stageTemp, type DirIdentity, type StagedTemp } from './fsSafe';
-import { buildMeta, protectNewDir, sha256 } from './forwarder';
+import { buildMeta, privateOnWindows, protectNewDir, sha256 } from './forwarder';
 
 export const BUNDLE_NAME = 'Anytype.mcpb';
+
+/** The copy's name: the flavour and the archive's digest, so a release and a dev build never share one */
+export const copyName = (signed: boolean, digest: string): string => `${signed ? 'Anytype' : 'Anytype-dev'}-${digest.slice(0, 12)}.mcpb`;
+
+const copyRe = (signed: boolean): RegExp => signed ? /^Anytype-[0-9a-f]{12}\.mcpb$/ : /^Anytype-dev-[0-9a-f]{12}\.mcpb$/;
+
+/** Where the copy of this build's bundle goes (whether or not it is there yet); '' without a bundle */
+export const copyPath = (env: Env): string => {
+	const info = bundleInfo(env);
+	return (info && !info.integrityError) ? pathOf(env).join(bundleDir(env), copyName(info.signed, info.sha256)) : '';
+};
 const MAX_BUNDLE_BYTES = 64 * 1024 * 1024;
 
 export interface BundleInfo {
@@ -120,7 +132,8 @@ const checkChain = async (env: Env, create: boolean): Promise<boolean> => {
 			return false;
 		};
 	};
-	return true;
+	// Windows: folders that were there already pass only when nobody but the user, SYSTEM and Administrators is granted anything (S5's query)
+	return posix(env) || privateOnWindows(env, dirChain(env));
 };
 
 /** `<home>/.anytype/ai-connect` is there and private (created when missing): the folder of the bundle copy and of Claude's operation lock */
@@ -135,7 +148,9 @@ const fail = (category: AiError['category'], path?: string): { ok: false; error:
  */
 export const copyBundle = async (env: Env, data: Buffer): Promise<{ ok: true; path: string } | { ok: false; error: AiError }> => {
 	const P = pathOf(env);
-	const dest = P.join(bundleDir(env), BUNDLE_NAME);
+	const signed = !!buildMeta(env)?.signed;
+	const name = copyName(signed, sha256(data));
+	const dest = P.join(bundleDir(env), name);
 	const destOk = () => {
 		const st = env.lstat(dest);
 		return !st || (!st.isSymlink && st.isFile);
@@ -155,7 +170,7 @@ export const copyBundle = async (env: Env, data: Buffer): Promise<{ ok: true; pa
 	let temp: StagedTemp | null = null;
 
 	try {
-		const staged = stageTemp(env, dir, realHome(env), `.${BUNDLE_NAME}.${env.now()}-${Math.random().toString(16).slice(2, 10)}.tmp`, data, 0o644);
+		const staged = stageTemp(env, dir, realHome(env), `.${name}.${env.now()}-${Math.random().toString(16).slice(2, 10)}.tmp`, data, 0o644);
 
 		if (staged == 'changed') {
 			return fail('permission', dest);
@@ -170,9 +185,18 @@ export const copyBundle = async (env: Env, data: Buffer): Promise<{ ok: true; pa
 			return fail('permission', dest);
 		};
 
-		env.rename(temp.path, P.join(dir.path, BUNDLE_NAME));
+		env.rename(temp.path, P.join(dir.path, name));
 		keepTemp(temp);
 		temp = null;
+
+		// Older copies of this flavour (another build's archive); the other flavour's are left alone
+		for (const it of env.readDir(dir.path) || []) {
+			if ((it != name) && copyRe(signed).test(it)) {
+				try {
+					env.unlink(P.join(dir.path, it));
+				} catch (e) { /* the next copy tries again */ };
+			};
+		};
 	} catch (e) {
 		if (temp) {
 			discardTemp(env, temp);

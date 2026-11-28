@@ -10,7 +10,7 @@ vi.mock('electron-util', () => ({ fixPathForAsarUnpack: (p: string) => p }));
 
 import fs from 'fs';
 import path from 'path';
-import { applyParam, CLAUDE_ITEM, KEY_A, mac, MCP_DIR, planParam, service, FORWARDER_FILES } from '../../../../electron/ts/lib/aiConnect/testKit';
+import { KEY_A, mac, MCP_DIR, planParam, service, FORWARDER_FILES } from '../../../../electron/ts/lib/aiConnect/testKit';
 import type { FakeEnv } from '../../../../electron/ts/lib/aiConnect/testEnv';
 import { AiConnectController, type AiConnectPopupData } from './controller';
 import * as flow from './flow';
@@ -24,7 +24,6 @@ const live: AiConnectController[] = [];
 
 const FUTURE = Math.floor(Date.now() / 1000) + 30 * 86400;
 /** The label of Claude Desktop's item in the connector's store (never a file Anytype reads or writes itself) */
-const KEYFILE = CLAUDE_ITEM;
 const CLAUDE_DIR = '/Users/me/Library/Application Support/Claude';
 const CC_DET = { appId: 'claude-code', installed: true, targetId: 'claude-code', targetPaths: [ '/Users/me/.claude.json' ], canRestart: false } as any;
 
@@ -100,7 +99,7 @@ describe('X1: no older key behind an edited form', () => {
 		ctrl.setForm({ grant: READ_ONE, days: 7 });
 		await ctrl.enterManual('create');
 		await until(() => !ctrl.get().manual.loading);
-		expect(ctrl.get().manual).toMatchObject({ mode: 'create', key: '' });
+		expect(ctrl.get().manual).toMatchObject({ mode: 'create', keyHash: '' });
 		expect(h.heart.state.revokes).toEqual([ 'hash-1' ]);
 
 		await ctrl.createKey();
@@ -123,45 +122,13 @@ describe('X1: no older key behind an edited form', () => {
 		await settled(ctrl);
 		await ctrl.enterManual('create');
 		await until(() => !ctrl.get().manual.loading);
-		expect(ctrl.get().manual).toMatchObject({ mode: 'confirm', key: expect.stringContaining('-key-1-') });
+		expect(ctrl.get().manual).toMatchObject({ mode: 'confirm', keyHash: 'hash-1' });
 		expect(h.heart.state.creates).toBe(1);
 		expect(h.heart.state.revokes).toEqual([]);
 	});
 });
 
 describe('X2: manual reconnect keeps the old key\'s access, read fresh', () => {
-	const CLAUDE_PLAN: any = {
-		...BASE_PLAN, appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', method: 'keyfile', targetPath: KEYFILE,
-		steps: [ { textKey: 'aiConnectManualPrepare' }, { textKey: 'aiConnectManualInstallFile', path: '/Users/me/.anytype/ai-connect/Anytype.mcpb' } ],
-	};
-
-	test('X2: a reconnect that fails (write permission) and continues by hand carries the live grant and absolute expiry', async () => {
-		h.heart.add('hash-old', READ_ONE, FUTURE, 'Claude Desktop');
-		h.existing({ id: 'claude-desktop', appId: 'claude-desktop', name: 'Claude Desktop', route: 'stdio', method: 'keyfile', targetPath: KEYFILE, grant: READ_ONE, expireAt: FUTURE });
-		h.main.m.plans['claude-desktop'] = CLAUDE_PLAN;
-		h.main.m.apply = (p: any) => (p.manual
-			? { ok: true, connection: h.main.view(record({ id: 'claude-desktop', appId: 'claude-desktop', appHash: p.appHash, grant: p.grant, expireAt: p.expireAt })) }
-			: { ok: false, error: { stage: 'write', category: 'permission' } });
-
-		const ctrl = await manage('claude-desktop', 'claude-desktop', 'Claude Desktop');
-
-		await ctrl.reconnect();
-		await settled(ctrl);
-		expect(ctrl.get()).toMatchObject({ phase: 'error', canManual: true });
-
-		await ctrl.enterManual('create');
-		await until(() => !ctrl.get().manual.loading);
-		expect(ctrl.get().form.grant).toEqual(READ_ONE);
-		expect(ctrl.get().manual.expireAt).toBe(FUTURE);
-
-		await ctrl.createKey();
-
-		const applies = h.calls('aiConnectApply').map(it => it.param);
-
-		expect(applies[applies.length - 1]).toMatchObject({ manual: true, grant: READ_ONE, expireAt: FUTURE, appHash: 'hash-1' });
-		expect(h.heart.state.creates).toBe(1);
-	});
-
 	test('X2: the old key narrowed while the plan was loading: shown, nothing minted', async () => {
 		h.heart.add('hash-old', GRANT, 0);
 		h.existing({ method: 'manual', keyFp: '', targetPath: '' });
@@ -177,7 +144,7 @@ describe('X2: manual reconnect keeps the old key\'s access, read fresh', () => {
 		await until(() => (ctrl.get().view == 'manual') && !ctrl.get().manual.loading);
 		expect(h.heart.state.creates).toBe(0);
 		expect(ctrl.get().form.grant).toEqual(READ_ONE);
-		expect(ctrl.get().manual).toMatchObject({ mode: 'create', key: '', notice: { key: 'aiConnectManualGrantChanged' } });
+		expect(ctrl.get().manual).toMatchObject({ mode: 'create', keyHash: '', notice: { key: 'aiConnectManualGrantChanged' } });
 	});
 });
 
@@ -347,11 +314,12 @@ describe('X6: a key that isn\'t listed yet is not forgotten', () => {
 });
 
 describe('X7: Claude Desktop\'s manual fallback can finish', () => {
-	test('X7: the real adapter\'s manual plan (the forwarder shipped, no bundle) leads to one working Create key, no loop', async () => {
+	test('X7: the real adapter\'s manual plan (the forwarder shipped, no bundle) is the settings-file entry with the key placeholder in `env`; one Create key, and main records it as a Command setup', async () => {
 		const env = mac({ apps: [ 'Claude' ], dirs: [ CLAUDE_DIR ], files: { ...FORWARDER_FILES } });
 		const real = await realPlan(env, { appId: 'claude-desktop', route: 'stdio' });
 
-		expect(real).toMatchObject({ method: 'manual', canApply: false, targetPath: KEYFILE, error: { category: 'unsupportedPackage' } });
+		expect(real).toMatchObject({ method: 'manual', canApply: false, needsKey: true, error: { category: 'unsupportedPackage' } });
+		expect(JSON.parse(real.steps.find((it: any) => it.snippet).snippet).mcpServers.anytype.env).toEqual({ ANYTYPE_API_KEY: '<KEY>' });
 		h.main.m.plans['claude-desktop'] = real;
 
 		const ctrl = await open({ appId: 'claude-desktop', view: 'manual' }, 'Claude Desktop');
@@ -359,27 +327,13 @@ describe('X7: Claude Desktop\'s manual fallback can finish', () => {
 		expect(ctrl.get().manual.mode).toBe('create');
 		await ctrl.createKey();
 		expect(h.heart.state.creates).toBe(1);
-		expect(h.calls('aiConnectApply').map(it => it.param)).toEqual([ expect.objectContaining({ manual: true, previewTarget: KEYFILE }) ]);
-		expect(ctrl.get().manual).toMatchObject({ mode: 'done' });
+		expect(h.calls('aiConnectApply')).toHaveLength(0);
 
-		// Main accepts exactly that delivery: the key is stored (`key set`) for this plan's target
-		const res: any = await service(env).apply(applyParam({ appId: 'claude-desktop', route: 'stdio', name: 'Claude Desktop', manual: true, previewTarget: real.targetPath }));
+		// Main accepts exactly that record
+		const res: any = await service(env).recordManual({ accountId: 'acc-a', appId: 'claude-desktop', route: 'stdio', tier: 'full', recommendedTier: 'full', port: 31009, appHash: 'hash-a1', name: 'Claude Desktop', grant: GRANT, expireAt: 0, expectedHash: null, setup: 'command' });
 
-		expect(res).toMatchObject({ ok: true });
-		expect(env.forwarder.items.get('claude-desktop')).toMatchObject({ key: KEY_A, account: 'acc-a' });
+		expect(res).toMatchObject({ ok: true, connection: { method: 'manual', setup: 'command' } });
 		expect(JSON.stringify(env.files())).not.toContain(KEY_A);
-	});
-
-	test('X7: a Claude manual plan without a key-file target offers Check again, never a Create key that loops', async () => {
-		const real = await realPlan(mac({ apps: [ 'Claude' ], dirs: [ CLAUDE_DIR ], files: { ...FORWARDER_FILES } }), { appId: 'claude-desktop', route: 'stdio' });
-
-		h.main.m.plans['claude-desktop'] = { ...real, targetPath: undefined };
-
-		const ctrl = await open({ appId: 'claude-desktop', view: 'manual' }, 'Claude Desktop');
-
-		expect(ctrl.get().manual.mode).toBe('prerequisite');
-		await ctrl.createKey();
-		expect(h.heart.state.creates).toBe(0);
 	});
 });
 
@@ -397,8 +351,8 @@ describe('X8: restore and install are separate choices', () => {
 		await settled(ctrl);
 		expect(ctrl.get()).toMatchObject({ phase: 'error', canManual: true });
 		await ctrl.enterManual('create');
-		await until(() => !ctrl.get().manual.loading && !!ctrl.get().manual.oldKey);
-		expect(ctrl.get().manual).toMatchObject({ mode: 'restoreOld', oldKey: expect.stringContaining('-old-hash-old-') });
+		await until(() => !ctrl.get().manual.loading && !!ctrl.get().manual.oldHash);
+		expect(ctrl.get().manual).toMatchObject({ mode: 'restoreOld', oldHash: 'hash-old' });
 		return ctrl;
 	};
 
@@ -424,11 +378,6 @@ describe('X8: restore and install are separate choices', () => {
 });
 
 // ---------------------- verification round (Y1–Y8) ---------------------- //
-
-const CLAUDE_KEYFILE_PLAN: any = {
-	...BASE_PLAN, appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', method: 'keyfile', targetPath: KEYFILE,
-	steps: [ { textKey: 'aiConnectManualPrepare' }, { textKey: 'aiConnectManualInstallFile', path: '/Users/me/.anytype/ai-connect/Anytype.mcpb' } ],
-};
 
 /** Replaces main's answer to one command (the call is still recorded) */
 const answer = (cmd: string, fn: (p: any, next: () => Promise<any>) => any) => {
@@ -481,8 +430,8 @@ describe('Y: the verification round', () => {
 		const damaged = await realPlan(env, { appId: 'claude-desktop', route: 'stdio' });
 
 		// The config route needs no extension, so it is still offered by hand
-		expect(damaged).toMatchObject({ canApply: false, method: 'manual', error: { stage: 'verify', category: 'unsupportedPackage' }, targetPath: '/Users/me/.anytype/ai-connect/items/claude-desktop.item' });
-		expect(damaged.steps.map((it: any) => it.textKey)).toEqual([ 'aiConnectManualPrepare', 'aiConnectManualMerge', 'aiConnectStepRestartSelf' ]);
+		expect(damaged).toMatchObject({ canApply: false, method: 'manual', needsKey: true, error: { stage: 'verify', category: 'unsupportedPackage' } });
+		expect(damaged.steps.map((it: any) => it.textKey)).toEqual([ 'aiConnectManualMerge', 'aiConnectManualKeepPrivate', 'aiConnectStepRestartSelf' ]);
 
 		// The forwarder itself replaced: nothing can be verified, so nothing is offered
 		for (const f of Object.keys(FORWARDER_FILES)) {
@@ -566,39 +515,9 @@ describe('Y: the verification round', () => {
 		h.heart.rows.get('hash-old').grant = READ_ONE;
 		await ctrl.enterManual('create');
 		await until(() => !ctrl.get().manual.loading);
-		expect(ctrl.get().manual).toMatchObject({ mode: 'create', key: '', notice: { key: 'aiConnectManualGrantChanged' } });
+		expect(ctrl.get().manual).toMatchObject({ mode: 'create', keyHash: '', notice: { key: 'aiConnectManualGrantChanged' } });
 		expect(ctrl.get().form.grant).toEqual(READ_ONE);
 		expect(h.heart.state.revokes).toEqual([ 'hash-1' ]);
-	});
-
-	test('Y5: Claude Desktop reads the old key again after its final plan: narrowed then → nothing written, the replacement released', async () => {
-		h.heart.add('hash-old', GRANT, 0, 'Claude Desktop');
-		h.existing({ id: 'claude-desktop', appId: 'claude-desktop', name: 'Claude Desktop', route: 'stdio', method: 'keyfile', targetPath: KEYFILE });
-		h.main.m.plans['claude-desktop'] = CLAUDE_KEYFILE_PLAN;
-		h.main.m.apply = (p: any) => (p.manual ? { ok: true, connection: h.main.view(record({ id: 'claude-desktop', appId: 'claude-desktop', appHash: p.appHash })) } : { ok: false, error: { stage: 'write', category: 'permission' } });
-
-		const ctrl = await manage('claude-desktop', 'claude-desktop', 'Claude Desktop');
-
-		await ctrl.reconnect();
-		await settled(ctrl);
-		await ctrl.enterManual('create');
-		await until(() => !ctrl.get().manual.loading);
-
-		let plans = 0;
-
-		answer('aiConnectPlan', (p, next) => {
-			if (++plans == 2) {
-				h.heart.rows.get('hash-old').grant = READ_ONE;
-			};
-			return next();
-		});
-		await ctrl.createKey();
-		expect(plans).toBe(2);
-		expect(h.calls('aiConnectApply').filter(it => it.param.manual)).toHaveLength(0);
-		expect(h.heart.state.revokes).toEqual([ 'hash-1' ]);
-		expect(h.heart.rows.has('hash-old')).toBe(true);
-		expect(ctrl.get().manual).toMatchObject({ mode: 'create', notice: { key: 'aiConnectManualGrantChanged' } });
-		expect(ctrl.get().form.grant).toEqual(READ_ONE);
 	});
 
 	test('Y6: a destination that changed after Manage loaded is named as a move (Claude Code skill file), before any key', async () => {

@@ -117,7 +117,7 @@ describe('manual steps', () => {
 
 		const desktop = await steps(svc, { appId: 'claude-desktop', route: 'stdio', method: 'config' });
 
-		expect(jsonFormat([ 'mcpServers', 'anytype' ]).read(desktop[1].snippet).value).toEqual({ command: STABLE_BIN, args: [ 'serve', '--connection', 'claude-desktop' ] });
+		expect(jsonFormat([ 'mcpServers', 'anytype' ]).read(filled(desktop[0].snippet)).value).toEqual({ command: STABLE_BIN, args: [ 'serve', '--tier', 'large' ], env: { ANYTYPE_API_KEY: 'SENTINEL-manual-key-0123456789' } });
 	});
 
 	test('Claude Code skill: the manual steps include saving the marked skill where Anytype would install it (T16)', async () => {
@@ -132,16 +132,15 @@ describe('manual steps', () => {
 		expect(s[2].snippet).toContain('<!-- anytype-desktop:begin -->');
 	});
 
-	test('Claude Desktop (macOS): prepare (Create key), install the file, restart; the config route adds the keyless command (the stable copy)', async () => {
-		const primary = await steps(svc, { appId: 'claude-desktop', route: 'stdio' });
-		const config = await steps(svc, { appId: 'claude-desktop', route: 'stdio', method: 'config' });
+	test('Claude Desktop (macOS): the extension route has no manual steps; the config route\'s steps add the command with the key placeholder in `env`, kept private', async () => {
+		const primary = await steps(svc, { appId: 'claude-desktop', route: 'stdio', tier: 'full', method: 'package' });
+		const config: any = await svc.plan({ accountId: 'acc-a', appId: 'claude-desktop', route: 'stdio', tier: 'large', port: 31009, method: 'config' });
 
-		expect(primary.map(it => it.textKey)).toEqual([ 'aiConnectManualPrepare', 'aiConnectManualInstallFile', 'aiConnectStepRestartSelf' ]);
-		expect(primary[1].path).toBe('/Users/me/.anytype/ai-connect/Anytype.mcpb');
-		expect(config.map(it => it.textKey)).toEqual([ 'aiConnectManualPrepare', 'aiConnectManualMerge', 'aiConnectStepRestartSelf' ]);
-		expect(config[1].snippet).not.toContain(KEY);
-		expect(JSON.parse(config[1].snippet).mcpServers.anytype).toEqual({ command: STABLE_BIN, args: [ 'serve', '--connection', 'claude-desktop' ] });
-		expect(JSON.stringify([ primary, config ])).not.toMatch(/ELECTRON|\.mjs|"env"/);
+		expect(primary).toEqual([]);
+		expect(config.needsKey).toBe(true);
+		expect(config.steps.map((it: AiStep) => it.textKey)).toEqual([ 'aiConnectManualMerge', 'aiConnectManualKeepPrivate', 'aiConnectStepRestartSelf' ]);
+		expect(JSON.parse(config.steps[0].snippet).mcpServers.anytype).toEqual({ command: STABLE_BIN, args: [ 'serve', '--tier', 'large' ], env: { ANYTYPE_API_KEY: KEY } });
+		expect(JSON.stringify(config)).not.toMatch(/ELECTRON|\.mjs|SENTINEL/);
 	});
 
 	test('Other app, URL and key: most apps, then URL / header name / header value; the Command setup is offered where the forwarder can run', async () => {
@@ -162,12 +161,12 @@ describe('manual steps', () => {
 		expect(((await service(snap, '/home/me/.config/anytype/aiConnect.json').plan({ accountId: 'acc-a', appId: 'other', route: 'http', tier: 'large', port: 31009 })) as any).setups).toEqual([ 'url' ]);
 	});
 
-	test('Other app, Command: before the connection exists the plan only says what will happen; no key ever appears in it', async () => {
+	test('Other app, Command: a manual plan whose snippet starts the stable copy with the key placeholder in `env` (never in the command or its arguments)', async () => {
 		const res: any = await svc.plan({ accountId: 'acc-a', appId: 'other', route: 'stdio', tier: 'large', port: 31009, method: 'command' });
 
-		expect(res).toMatchObject({ ok: true, canApply: true, method: 'command', route: 'stdio', targetId: null, setups: [ 'url', 'command' ] });
-		expect(res.steps.map((it: AiStep) => it.textKey)).toEqual([ 'aiConnectManualCommandPrepare' ]);
-		expect(JSON.stringify(res)).not.toContain(KEY);
+		expect(res).toMatchObject({ ok: true, canApply: false, method: 'manual', route: 'stdio', targetId: null, setups: [ 'url', 'command' ], needsKey: true });
+		expect(res.steps.map((it: AiStep) => it.textKey)).toEqual([ 'aiConnectManualCommandEntry', 'aiConnectManualKeepPrivate', 'aiConnectManualCommandRestart' ]);
+		expect(JSON.parse(res.steps[0].snippet).mcpServers.anytype).toEqual({ command: STABLE_BIN, args: [ 'serve', '--tier', 'large' ], env: { ANYTYPE_API_KEY: KEY } });
 	});
 });
 

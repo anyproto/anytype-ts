@@ -229,8 +229,8 @@ describe('result types', () => {
 	});
 
 	test('main-only shapes', () => {
-		const outcomeOk: ApplyOutcome = { ok: true, method: 'package', nextStep: 'confirmInApp', targetPath: '', observedInstalled: false, createdDirs: [], openFailed: true, entryDigest: 'b'.repeat(64), configEntry: { command: 'x', args: [ 'serve', '--connection', 'claude-desktop' ] }, itemRev: 1 };
-		const outcomeNeeds: ApplyOutcome = { ok: false, needs: 'installExtension' };
+		const outcomeOk: ApplyOutcome = { ok: true, method: 'package', nextStep: 'confirmInApp', targetPath: '', observedInstalled: false, createdDirs: [], openFailed: true, entryDigest: 'b'.repeat(64), deliver: async () => true, configure: false, install: null };
+		const outcomeNeeds: ApplyOutcome = { ok: false, needs: 'quitAppSelf' };
 		const outcomeFail: ApplyOutcome = { ok: false, error: { stage: 'write', category: 'changed' } };
 		const ctx: Ctx = { env: null, homes: null, detections: [], appId: 'cursor', targetId: 'codex-home-0a1b2c3d', port: 1, tier: 'large', route: 'http', key: '', replace: PLAN_RESULTS.foreign.replace };
 

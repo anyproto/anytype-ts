@@ -13,7 +13,7 @@ export const KEY_MASK = '••••••••••••';
 /** The step's snippet contains the placeholder: it can't be used before a key exists */
 export const stepNeedsKey = (step: AiStep): boolean => !!step.snippet && step.snippet.includes(KEY_PLACEHOLDER);
 
-/** Some step needs a key the user pastes: the view shows the key row only then (Claude Desktop's key file never does) */
+/** Some step needs a key the user pastes: the view shows the key row only then */
 export const stepsNeedKey = (steps: AiStep[]): boolean => (steps || []).some(stepNeedsKey);
 
 /**
@@ -56,7 +56,7 @@ export const sentenceArgs = (key: string, app: string, target: string, restart =
 			return [ app, target ];
 		};
 		case 'aiConnectPlanPackage':
-		case 'aiConnectPlanKeyfile':
+		case 'aiConnectPlanPackageConfigure':
 		case 'aiConnectPlanSkill': {
 			return [ app, app ];
 		};

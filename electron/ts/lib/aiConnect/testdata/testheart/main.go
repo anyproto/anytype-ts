@@ -8,9 +8,12 @@
 //
 // where the overlay maps <heart>/cmd/anytype-ts-testheart/main.go to this file.
 //
-// stdout: one JSON line {api_url, api_key, app_hash, account_id}; then one line per stdin command
-// "revoke <hash>": {"revoked": "<hash>", "code": <error code, 0 = ok>}. Closing stdin tears the heart down
-// and deletes its data directory.
+// stdout: one JSON line {api_url, api_key, app_hash, account_id}; then one line per stdin command:
+//   - "revoke <hash>": {"revoked": "<hash>", "code": <error code, 0 = ok>};
+//   - "mint <name>": a new key as the desktop's CreateApp makes it (JsonAPI, all spaces, read-write):
+//     {"minted": "<hash>", "key": "<key>"} (hash "" when it failed);
+//   - "active <hash>": heart's AppInfo.isActive for that key: {"hash": "<hash>", "present": bool, "active": bool}.
+// Closing stdin tears the heart down and deletes its data directory.
 package main
 
 import (
@@ -26,6 +29,7 @@ import (
 
 	"github.com/anyproto/anytype-heart/cmd/apiv2eval/heartboot"
 	"github.com/anyproto/anytype-heart/pb"
+	"github.com/anyproto/anytype-heart/pkg/lib/pb/model"
 )
 
 func main() {
@@ -87,6 +91,36 @@ func run() error {
 					code = int(resp.GetError().GetCode())
 				}
 				out, _ := json.Marshal(map[string]any{"revoked": strings.TrimSpace(h), "code": code})
+				fmt.Println(string(out))
+			}
+			if name, found := strings.CutPrefix(text, "mint "); found {
+				minted, key := "", ""
+				resp, err := client.AccountLocalLinkCreateApp(heart.GRPCContext(ctx), &pb.RpcAccountLocalLinkCreateAppRequest{App: &model.AccountAuthAppInfo{
+					AppName: strings.TrimSpace(name), Scope: model.AccountAuth_JsonAPI, Grant: &model.AccountAuthAppGrant{AllSpaces: true, Perm: model.AccountAuthAppGrant_ReadWrite},
+				}})
+				if (err == nil) && (resp.GetError().GetCode() == 0) {
+					key = resp.GetAppKey()
+					if list, err := client.AccountLocalLinkListApps(heart.GRPCContext(ctx), &pb.RpcAccountLocalLinkListAppsRequest{}); err == nil {
+						for _, app := range list.GetApp() {
+							if app.GetAppKey() == key {
+								minted = app.GetAppHash()
+							}
+						}
+					}
+				}
+				out, _ := json.Marshal(map[string]any{"minted": minted, "key": key})
+				fmt.Println(string(out))
+			}
+			if h, found := strings.CutPrefix(text, "active "); found {
+				present, active := false, false
+				if list, err := client.AccountLocalLinkListApps(heart.GRPCContext(ctx), &pb.RpcAccountLocalLinkListAppsRequest{}); err == nil {
+					for _, app := range list.GetApp() {
+						if app.GetAppHash() == strings.TrimSpace(h) {
+							present, active = true, app.GetIsActive()
+						}
+					}
+				}
+				out, _ := json.Marshal(map[string]any{"hash": strings.TrimSpace(h), "present": present, "active": active})
 				fmt.Println(string(out))
 			}
 		}

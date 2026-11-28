@@ -6,7 +6,7 @@ import { withPopup, withThemeSync } from '../../../../../.storybook/decorators';
 import * as I from 'Interface';
 import { DEFAULT_GRANT } from 'Lib/aiConnect/catalog';
 import AiConnectManual, { type AiConnectManualProps } from './manual';
-import { GRANT_ALL, noop, PLAN_CLAUDE_CODE_SANDBOX, PLAN_CLAUDE_DESKTOP, PLAN_CURSOR, PLAN_OTHER, PLAN_OTHER_COMMAND, SPACES, STEPS_OTHER_COMMAND_DONE, STORY_KEY } from './stories.data';
+import { GRANT_ALL, noop, PLAN_CLAUDE_CODE_SANDBOX, PLAN_CLAUDE_DESKTOP_MANUAL, PLAN_CURSOR, PLAN_OTHER, PLAN_OTHER_COMMAND, SPACES } from './stories.data';
 
 /** Name and access live in the container; here in story state */
 const Stateful = (props: AiConnectManualProps) => {
@@ -37,7 +37,7 @@ const meta: Meta<typeof AiConnectManual> = {
 		mode: 'done',
 		steps: PLAN_CURSOR.steps,
 		planLoading: false,
-		apiKey: STORY_KEY,
+		hasKey: true,
 		withName: false,
 		name: 'Cursor',
 		// The new default: no space chosen yet (H20)
@@ -47,52 +47,53 @@ const meta: Meta<typeof AiConnectManual> = {
 		apiListening: true,
 		onDone: noop,
 		onCancel: noop,
+		onCopySecret: noop,
 	},
 };
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Cursor's steps with the key in place, masked until Show */
+/** Cursor's steps with the key in place, always masked; Copy puts the real one on the clipboard */
 export const Manual: Story = { args: { grant: GRANT_ALL } };
 
 /** After a failed delivery: the new key, recorded only by "I've updated Cursor" */
 export const ManualConfirm: Story = { args: { mode: 'confirm', grant: GRANT_ALL } };
 
 /** Other app before Create key: a name, the access, the steps with <KEY> */
-export const ManualOther: Story = { args: { appName: 'Other app', appId: 'other', mode: 'create', apiKey: '', withName: true, name: 'Other app', steps: PLAN_OTHER.steps } };
+export const ManualOther: Story = { args: { appName: 'Other app', appId: 'other', mode: 'create', hasKey: false, withName: true, name: 'Other app', steps: PLAN_OTHER.steps } };
 
 /** Other app, the URL setup chosen, with the choice of setups on a computer that offers both */
 export const ManualOtherSetups: Story = {
-	args: { appName: 'Other app', appId: 'other', mode: 'create', apiKey: '', withName: true, name: 'Other app', steps: PLAN_OTHER.steps, setups: [ 'url', 'command' ], setup: 'url', onSetup: noop },
+	args: { appName: 'Other app', appId: 'other', mode: 'create', hasKey: false, withName: true, name: 'Other app', steps: PLAN_OTHER.steps, setups: [ 'url', 'command' ], setup: 'url', onSetup: noop },
 };
 
-/** Other app, Command chosen: the key will stay in a private file in the Anytype folder; no <KEY> anywhere */
+/** Other app, Command chosen: the app starts Anytype's connector, the key in the entry's `env` */
 export const ManualOtherCommand: Story = {
-	args: { appName: 'Other app', appId: 'other', mode: 'create', apiKey: '', withName: true, name: 'Other app', steps: PLAN_OTHER_COMMAND.steps, setups: [ 'url', 'command' ], setup: 'command', onSetup: noop },
+	args: { appName: 'Other app', appId: 'other', mode: 'create', hasKey: false, withName: true, name: 'Other app', steps: PLAN_OTHER_COMMAND.steps, setups: [ 'url', 'command' ], setup: 'command', onSetup: noop },
 };
 
-/** Other app, Command, after Create key: the setup text with the connection's id, and nothing to copy but it */
+/** Other app, Command, after Create key: the entry with the key masked; Copy fills it in */
 export const ManualOtherCommandDone: Story = {
-	args: { appName: 'My agent', appId: 'other', mode: 'done', apiKey: '', steps: STEPS_OTHER_COMMAND_DONE, notice: 'The key is saved. Add the setup text above to the app.' },
+	args: { appName: 'My agent', appId: 'other', mode: 'done', hasKey: true, steps: PLAN_OTHER_COMMAND.steps },
 };
 
-/** Claude Desktop: Anytype keeps the key in its own folder; nothing to copy */
-export const ManualClaudeDesktop: Story = { args: { appName: 'Claude Desktop', appId: 'claude-desktop', mode: 'create', apiKey: '', steps: PLAN_CLAUDE_DESKTOP.steps } };
+/** Claude Desktop by hand: its settings file's command entry, the key in `env` */
+export const ManualClaudeDesktop: Story = { args: { appName: 'Claude Desktop', appId: 'claude-desktop', mode: 'confirm', hasKey: true, steps: PLAN_CLAUDE_DESKTOP_MANUAL.steps } };
 
 /** Claude Code's command removed the old entry and didn't add the new one */
 export const ManualRestoreOld: Story = {
-	args: { appName: 'Claude Code', appId: 'claude-code', mode: 'restoreOld', steps: PLAN_CLAUDE_CODE_SANDBOX.steps, oldKey: 'storybook-previous-key-not-real', onRestored: noop },
+	args: { appName: 'Claude Code', appId: 'claude-code', mode: 'restoreOld', steps: PLAN_CLAUDE_CODE_SANDBOX.steps, hasOldKey: true, onRestored: noop },
 };
 
 /** An outdated Claude CLI: the prerequisite only, Check again, no key (V8) */
 export const ManualPrerequisite: Story = {
-	args: { appName: 'Claude Code', appId: 'claude-code', mode: 'prerequisite', apiKey: '', steps: [ { textKey: 'aiConnectManualUpdateCli', args: [ 'Claude Code', '2.1.327' ] } ] },
+	args: { appName: 'Claude Code', appId: 'claude-code', mode: 'prerequisite', hasKey: false, steps: [ { textKey: 'aiConnectManualUpdateCli', args: [ 'Claude Code', '2.1.327' ] } ] },
 };
 
 /** No steps: this package can't be started by other apps */
 export const ManualUnavailable: Story = {
-	args: { appName: 'Claude Desktop', appId: 'claude-desktop', mode: 'create', apiKey: '', steps: [], reason: 'This Anytype package can\'t be started by other apps, so it can\'t be added to Claude Desktop. Use the .deb, .rpm or tar.gz build.' },
+	args: { appName: 'Claude Desktop', appId: 'claude-desktop', mode: 'create', hasKey: false, steps: [], reason: 'This Anytype package can\'t be started by other apps, so it can\'t be added to Claude Desktop. Use the .deb, .rpm or tar.gz build.' },
 };
 
 /** Recorded, but the settings file is readable by others and the list couldn't be saved: both notices, Save again (W14) */
@@ -104,13 +105,10 @@ export const ManualUnsaved: Story = {
 };
 
 /** Recorded, but the check with the new key failed: Retry check (W14) */
-export const ManualProbeFailed: Story = { args: { appName: 'Other app', appId: 'other', apiKey: STORY_KEY, steps: PLAN_OTHER.steps, probeFailed: true } };
-
-/** Claude Desktop with a key file of someone else's: Create key replaces exactly that one (W8) */
-export const ManualClaudeReplace: Story = { args: { appName: 'Claude Desktop', appId: 'claude-desktop', mode: 'create', apiKey: '', steps: PLAN_CLAUDE_DESKTOP.steps, replace: true } };
+export const ManualProbeFailed: Story = { args: { appName: 'Other app', appId: 'other', hasKey: true, steps: PLAN_OTHER.steps, probeFailed: true } };
 
 /** The Local API isn't listening on the steps' address: the key is withheld, the steps redacted (X4) */
-export const ManualApiOff: Story = { args: { mode: 'confirm', apiKey: '', keyHidden: true, apiListening: false } };
+export const ManualApiOff: Story = { args: { mode: 'confirm', hasKey: false, keyHidden: true, apiListening: false } };
 
 /** Hermes already uses Anytype through the gateway's bot account: never replaced; the same entry under anytype_me, by hand */
 export const ManualHermesGateway: Story = {

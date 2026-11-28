@@ -121,14 +121,20 @@ describe('writeFileSafe', () => {
 		expect(fs.readFileSync(file, 'utf8')).toBe('new');
 	});
 
-	test('the backup holds the snapshot text and is 0600', async () => {
+	test('the backup of a write without a key holds the snapshot text and is 0600; a secret write leaves no backup', async () => {
 		const file = path.join(home, 'mcp.json');
 
 		fs.writeFileSync(file, 'snapshot text');
 		const s = snap(file);
 
-		expect(await writeFileSafe(env, file, 'new text', { snapshot: s, secret: true })).toMatchObject({ ok: true });
+		expect(await writeFileSafe(env, file, 'new text', { snapshot: s, secret: false })).toMatchObject({ ok: true });
 		expect(fs.readFileSync(file + BACKUP_SUFFIX, 'utf8')).toBe('snapshot text');
+
+		const other = path.join(home, 'secret.json');
+
+		fs.writeFileSync(other, 'old key');
+		expect(await writeFileSafe(env, other, 'new key', { snapshot: snap(other), secret: true })).toMatchObject({ ok: true });
+		expect(fs.existsSync(other + BACKUP_SUFFIX)).toBe(false);
 		if (posix) {
 			expect(modeOf(file + BACKUP_SUFFIX)).toBe(0o600);
 		};
@@ -143,7 +149,7 @@ describe('writeFileSafe', () => {
 		fs.writeFileSync(elsewhere, 'untouched');
 		fs.symlinkSync(elsewhere, file + BACKUP_SUFFIX);
 
-		expect(await writeFileSafe(env, file, 'new', { snapshot: snap(file), secret: true })).toMatchObject({ ok: false, error: { stage: 'write', category: 'permission' } });
+		expect(await writeFileSafe(env, file, 'new', { snapshot: snap(file), secret: false })).toMatchObject({ ok: false, error: { stage: 'write', category: 'permission' } });
 		expect(fs.readFileSync(file, 'utf8')).toBe('original');
 		expect(fs.readFileSync(elsewhere, 'utf8')).toBe('untouched');
 		expect(leftovers(home)).toEqual([]);
@@ -196,7 +202,7 @@ describe('writeFileSafe', () => {
 		expect(await writeFileSafe(env, target, '{"a":1}', { snapshot: snap(target), secret: true })).toMatchObject({ ok: true });
 		expect(fs.lstatSync(link).isSymbolicLink()).toBe(true);
 		expect(fs.readFileSync(link, 'utf8')).toBe('{"a":1}');
-		expect(fs.readFileSync(real + BACKUP_SUFFIX, 'utf8')).toBe('{}');
+		expect(fs.existsSync(real + BACKUP_SUFFIX)).toBe(false);
 	});
 
 	test('the temp file is removed when the rename fails', async () => {
@@ -230,7 +236,7 @@ describe('writeFileSafe', () => {
 		const bom = Buffer.concat([ Buffer.from([ 0xEF, 0xBB, 0xBF ]), Buffer.from('{"name":"André"}') ]);
 
 		fs.writeFileSync(file, bom);
-		expect(await writeFileSafe(env, file, '{}', { snapshot: snap(file), secret: true })).toMatchObject({ ok: true });
+		expect(await writeFileSafe(env, file, '{}', { snapshot: snap(file), secret: false })).toMatchObject({ ok: true });
 		expect(fs.readFileSync(file + BACKUP_SUFFIX).equals(bom)).toBe(true);
 	});
 
@@ -293,7 +299,7 @@ describe('writeFileSafe on Windows', () => {
 
 		expect(await writeFileSafe(env, file, '{"a":1}', { snapshot: s, secret: true })).toMatchObject({ ok: false, error: { stage: 'write' } });
 		expect(attempts).toBe(4);
-		expect(Object.keys(env.files()).sort()).toEqual([ file, file + BACKUP_SUFFIX ].sort());
+		expect(Object.keys(env.files()).sort()).toEqual([ file ]);
 		expect(env.files()[file]).toBe('{}');
 	});
 
@@ -343,7 +349,7 @@ describe('writeFileSafe: the parent directory is rechecked', () => {
 	 * ~/.cursor to ~/.cursor-moved and puts a link to a directory outside home in its place, at the
 	 * moment `when` says. The write must report `changed`, and neither directory may keep the secret.
 	 */
-	const swapDuring = async (when: (call: { op: string; p: string; to?: string }) => boolean) => {
+	const swapDuring = async (when: (call: { op: string; p: string; to?: string }) => boolean, secret = true) => {
 		const outside = tempDir('aic-out-');
 		const cursor = path.join(home, '.cursor');
 		const moved = path.join(home, '.cursor-moved');
@@ -378,7 +384,7 @@ describe('writeFileSafe: the parent directory is rechecked', () => {
 				},
 			};
 
-			const res = await writeFileSafe(hooked, target, `{"key":"${SECRET}"}`, { snapshot: s, secret: true });
+			const res = await writeFileSafe(hooked, target, `{"key":"${SECRET}"}`, { snapshot: s, secret });
 
 			expect(swapped).toBe(true);
 			expect(res).toEqual({ ok: false, changed: true });
@@ -393,20 +399,20 @@ describe('writeFileSafe: the parent directory is rechecked', () => {
 	};
 
 	testLink('swapped right before the backup temp is created → changed, no temp anywhere', async () => {
-		const { moved } = await swapDuring(c => (c.op == 'lstat') && c.p.endsWith(BACKUP_SUFFIX));
+		const { moved } = await swapDuring(c => (c.op == 'lstat') && c.p.endsWith(BACKUP_SUFFIX), false);
 
 		expect(leftovers(moved)).toEqual([]);
 	});
 
 	testLink('swapped after the backup temp is written, before its rename → changed, the stranded backup temp is emptied', async () => {
-		const { moved } = await swapDuring(c => (c.op == 'chmod') && c.p.includes('.backup-'));
+		const { moved } = await swapDuring(c => (c.op == 'chmod') && c.p.includes('.backup-'), false);
 
 		expect(holding(moved, 'OLD-KEY').map(p => path.basename(p))).toEqual([ 'mcp.json' ]);
 		expect(leftovers(moved).every(n => fs.statSync(path.join(moved, n)).size == 0)).toBe(true);
 	});
 
 	testLink('swapped after the backup is published, before the new temp is created → changed, no secret temp', async () => {
-		const { moved } = await swapDuring(c => (c.op == 'rename') && !!c.to?.endsWith(BACKUP_SUFFIX));
+		const { moved } = await swapDuring(c => (c.op == 'rename') && !!c.to?.endsWith(BACKUP_SUFFIX), false);
 
 		expect(leftovers(moved)).toEqual([]);
 		expect(fs.readFileSync(path.join(moved, 'mcp.json' + BACKUP_SUFFIX), 'utf8')).toBe('{"old":"OLD-KEY"}');

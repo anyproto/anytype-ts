@@ -21,6 +21,8 @@ export interface ProbeRequest {
 	timeoutMs: number;
 	/** Called as soon as the status and headers arrive, before the body is read */
 	onHeaders?: (status: number, headers: Record<string, string>) => void;
+	/** Aborted: the request in flight is torn down (a logout, D1S-20) */
+	signal?: AbortSignal;
 };
 
 export interface ProbeResponse {
@@ -89,6 +91,11 @@ export const httpTransport: Transport = req => new Promise((resolve, reject) => 
 	});
 
 	timer = setTimeout(() => r.destroy(timeoutError()), req.timeoutMs);
+	if (req.signal?.aborted) {
+		r.destroy(Object.assign(new Error('aborted'), { name: 'AbortError' }));
+	} else {
+		req.signal?.addEventListener('abort', () => r.destroy(Object.assign(new Error('aborted'), { name: 'AbortError' })), { once: true });
+	};
 	r.on('error', e => done(e));
 	r.end(req.body);
 });
@@ -141,12 +148,21 @@ export interface ProbeParam {
 	key: string;
 };
 
-export const probe = async (param: ProbeParam, opt: { transport?: Transport; version?: string; timeoutMs?: number } = {}): Promise<AiProbeResult> => {
+/**
+ * `gate`: asked right before every request that carries the key (session cleanup included); false → nothing is
+ * sent and the probe answers `apiOff` (main: the API listens on that port, bound where 127.0.0.1 reaches it).
+ * `signal`: aborted, the request in flight is torn down and nothing more is sent (`apiOff`)
+ */
+export const probe = async (param: ProbeParam, opt: { transport?: Transport; version?: string; timeoutMs?: number; gate?: () => boolean; signal?: AbortSignal } = {}): Promise<AiProbeResult> => {
 	const transport = opt.transport || httpTransport;
 	const timeoutMs = opt.timeoutMs || TIMEOUT_MS;
 	const auth = `Bearer ${param.key}`;
 
 	const request = async (method: string, path: string, headers: Record<string, string>, body?: any, onHeaders?: ProbeRequest['onHeaders']) => {
+		if (opt.signal?.aborted || (opt.gate && !opt.gate())) {
+			throw new ProbeError('apiOff');
+		};
+
 		const res = await transport({
 			port: param.port,
 			method,
@@ -155,8 +171,12 @@ export const probe = async (param: ProbeParam, opt: { transport?: Transport; ver
 			body: (body === undefined) ? undefined : JSON.stringify(body),
 			timeoutMs,
 			onHeaders,
+			signal: opt.signal,
 		});
 
+		if (opt.signal?.aborted) {
+			throw new ProbeError('apiOff');
+		};
 		if ((res.status == 401) || (res.status == 403)) {
 			throw new ProbeError('unauthorized');
 		};

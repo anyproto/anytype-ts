@@ -7,7 +7,7 @@
 import type {
 	AiApplyResult, AiBundleInfoResult, AiCheckResult, AiClaimNudgeResult, AiConnection, AiError, AiListResult, AiOpenAppResult,
 	AiMintIntentResult, AiOrphanResult, AiPlanResult, AiProbeResult, AiRecordManualResult, AiRemoveResult, AiRestartResult, AiRevealResult,
-	AiRevokedResult, AiStepDoneResult, AiUpdateResult,
+	AiRevokedResult, AiStepDoneResult, AiUpdateResult, AiRetireResult, AiCopySecretResult,
 } from '../../interface/aiConnect';
 
 export const FIXTURE_CONNECTION: AiConnection = {
@@ -51,7 +51,9 @@ export const APPLY_RESULTS = {
 	ok: { ok: true, connection: FIXTURE_CONNECTION, openFailed: true },
 	// Delivered, but the registry couldn't be saved yet: still committed (the key is kept)
 	okUnsaved: { ok: true, connection: FIXTURE_CONNECTION, recordSaved: false },
-	needs: { ok: false, needs: 'installExtension', openFailed: true },
+	needs: { ok: false, needs: 'quitApp' },
+	// Claude's extension: the record saved (the commit), the key not copied, the bundle not opened
+	bundle: { ok: true, connection: { ...FIXTURE_CONNECTION, method: 'package', status: 'pending', bundleState: 'finish' }, copyFailed: true, openFailed: true, configure: false },
 	unconfirmed: {
 		ok: false, unconfirmed: true, error: { stage: 'cli', category: 'timeout' },
 		connection: {
@@ -139,6 +141,16 @@ export const MINT_INTENT_RESULTS = {
 	fail: { ok: false, error: ERROR },
 } satisfies Record<string, AiMintIntentResult>;
 
+export const RETIRE_RESULTS = {
+	ok: { ok: true, connection: { ...FIXTURE_CONNECTION, appHash: '', keyFp: '', status: 'disconnected' } },
+	fail: { ok: false, error: ERROR },
+} satisfies Record<string, AiRetireResult>;
+
+export const COPY_SECRET_RESULTS = {
+	ok: { ok: true },
+	fail: { ok: false },
+} satisfies Record<string, AiCopySecretResult>;
+
 type Values<T> = T[keyof T];
 
 /** true when every member of the union U has a fixture in F that fits it */
@@ -162,6 +174,8 @@ const claimNudgeCovered: Covers<AiClaimNudgeResult, Values<typeof CLAIM_NUDGE_RE
 const bundleInfoCovered: Covers<AiBundleInfoResult, Values<typeof BUNDLE_INFO_RESULTS>> = true;
 const orphanCovered: Covers<AiOrphanResult, Values<typeof ORPHAN_RESULTS>> = true;
 const mintIntentCovered: Covers<AiMintIntentResult, Values<typeof MINT_INTENT_RESULTS>> = true;
+const retireCovered: Covers<AiRetireResult, Values<typeof RETIRE_RESULTS>> = true;
+const copySecretCovered: Covers<AiCopySecretResult, Values<typeof COPY_SECRET_RESULTS>> = true;
 
 /** Every result type, by IPC command, with all its fixtures */
 export const IPC_RESULT_FIXTURES = {
@@ -182,10 +196,13 @@ export const IPC_RESULT_FIXTURES = {
 	aiConnectBundleInfo: BUNDLE_INFO_RESULTS,
 	aiConnectOrphan: ORPHAN_RESULTS,
 	aiConnectMintIntent: MINT_INTENT_RESULTS,
+	aiConnectRetire: RETIRE_RESULTS,
+	aiConnectCopySecret: COPY_SECRET_RESULTS,
 };
 
 /** The compile-time coverage guards, kept as values so they are used */
 export const COVERAGE = [
 	listCovered, planCovered, applyCovered, recordManualCovered, updateCovered, removeCovered, revokedCovered, checkCovered,
 	probeCovered, stepDoneCovered, restartCovered, revealCovered, openAppCovered, claimNudgeCovered, bundleInfoCovered, orphanCovered, mintIntentCovered,
+	retireCovered, copySecretCovered,
 ];

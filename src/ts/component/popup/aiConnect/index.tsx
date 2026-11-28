@@ -180,7 +180,9 @@ const PopupAiConnectFlow = observer(({ data, close, position }: { data: AiConnec
 
 		const siblings = S.AiConnect.siblings(target).map(cardName);
 		const shared = (target.appId == 'vscode') ? translate('aiConnectDisconnectSharedVscode') : (siblings.length ? tr('aiConnectDisconnectShared', siblings.join(', ')) : '');
-		const text = [ tr('aiConnectDisconnectText', displayName), shared ].filter(it => it).join(' ');
+		// Claude's extension stays installed: the user removes it in Claude (§3.3)
+		const extension = (target.method == 'package') ? tr('aiConnectDisconnectExtension', displayName) : '';
+		const text = [ tr('aiConnectDisconnectText', displayName), shared, extension ].filter(it => it).join(' ');
 
 		// The confirm closes first; the disconnect starts from its close callback, so no close can bring it back (V27)
 		S.Popup.open('confirm', {
@@ -191,6 +193,29 @@ const PopupAiConnectFlow = observer(({ data, close, position }: { data: AiConnec
 				colorConfirm: 'red',
 				noCloseOnConfirm: true,
 				onConfirm: () => S.Popup.close('confirm', () => ctrl.disconnect(false, shown)),
+			},
+		});
+	};
+
+	/** Reconnect; on Claude's extension route the old key goes at once, so the user confirms first (§3.3) */
+	const onReconnect = () => {
+		const target = connection;
+
+		if (!target || (target.method != 'package') || !target.appHash) {
+			ctrl.reconnect();
+			return;
+		};
+
+		// The confirm stands for this record with this key: a replacement made meanwhile (another window) is never retired (D1C-08)
+		const confirmed = { accountId: String(S.Auth.account?.id || ''), id: target.id, appHash: target.appHash };
+
+		S.Popup.open('confirm', {
+			data: {
+				title: tr('aiConnectBundleReconnectTitle', displayName),
+				text: tr('aiConnectBundleReconnectText', displayName),
+				textConfirm: translate('aiConnectReconnect'),
+				noCloseOnConfirm: true,
+				onConfirm: () => S.Popup.close('confirm', () => ctrl.reconnect({ confirmed })),
 			},
 		});
 	};
@@ -237,6 +262,8 @@ const PopupAiConnectFlow = observer(({ data, close, position }: { data: AiConnec
 					errors={state.formErrors.map(msgText)}
 					busy={state.busy}
 					apiListening={listening}
+					fullOnly={ctrl.bundlePlan()}
+					onConfigRoute={(appId == 'claude-desktop') ? () => ctrl.useConfigRoute() : undefined}
 					formatDate={formatDate}
 					onGrant={grant => ctrl.setForm({ grant })}
 					onName={name => ctrl.setForm({ name })}
@@ -269,6 +296,7 @@ const PopupAiConnectFlow = observer(({ data, close, position }: { data: AiConnec
 					bundleSigned={state.plan?.bundleSigned}
 					openFailed={state.openFailed}
 					fileRoute={ctrl.fileRouteKind() || (state.fileRouteFromError ? 'lmstudio' : null)}
+					bundle={state.bundle ? { ...state.bundle, state: connection?.bundleState || 'finish', bothRoutes: !!connection?.bothRoutes } : null}
 					probeOk={state.probeOk}
 					errorLines={state.errors.map(msgText)}
 					canManual={state.canManual || (state.phase == 'stalled')}
@@ -288,6 +316,10 @@ const PopupAiConnectFlow = observer(({ data, close, position }: { data: AiConnec
 					onRevealBundle={() => ctrl.revealBundle()}
 					onSaveRetry={() => ctrl.retrySave()}
 					onCheckAgain={() => ctrl.checkAgain()}
+					onCopyKey={() => ctrl.copyKey()}
+					onOpenBundle={() => ctrl.openBundle()}
+					onCancelSetup={() => ctrl.cancelSetup()}
+					onCheckBundle={() => ctrl.checkBundleAgain()}
 					onClose={() => close()}
 				/>
 			);
@@ -334,7 +366,7 @@ content = (
 					onSaveAccess={grant => ctrl.saveAccess(grant)}
 					onSaveTier={tier => ctrl.saveTier(tier)}
 					onReveal={() => ctrl.revealConnection()}
-					onReconnect={() => ctrl.reconnect()}
+					onReconnect={onReconnect}
 					onReplace={() => ctrl.replace()}
 					onDisconnect={onDisconnect}
 					onForget={() => ctrl.disconnect(true)}
@@ -342,6 +374,7 @@ content = (
 					onRetryCheck={() => ctrl.retryCheck()}
 					onRetryLookup={() => ctrl.retryLookup()}
 					onManual={() => ctrl.enterManual('done', connection)}
+					onContinue={() => S.Popup.update(POPUP_ID, { data: { appId, connectionId: connection.id, view: 'finish' } })}
 					onClose={() => close()}
 				/>
 			) : null;
@@ -366,16 +399,15 @@ content = (
 					planLoading={m.loading}
 					reason={reason}
 					tierHint={tierNote(state.form.tier, m.plan?.route || state.form.route)}
-					apiKey={live ? m.key : ''}
-					oldKey={live ? m.oldKey : ''}
-					keyHidden={!live && !!m.plan && !!(m.key || m.oldKey)}
+					hasKey={live && !!m.keyHash}
+					hasOldKey={live && !!m.oldHash}
+					keyHidden={!live && !!m.plan && !!(m.keyHash || m.oldHash)}
 					withName={(appId == 'other') && !m.existing}
 					name={state.form.name}
 					grant={state.form.grant}
 					spaces={spaces}
 					notice={msgText(m.notice)}
 					error={msgText(m.error)}
-					replace={(appId == 'claude-desktop') && (m.plan?.existing == 'foreign')}
 					setups={m.existing ? [] : m.setups}
 					setup={m.setup}
 					onSetup={setup => ctrl.setSetup(setup)}
@@ -389,13 +421,14 @@ content = (
 					onGrant={grant => ctrl.setForm({ grant })}
 					onCreateKey={() => ctrl.createKey()}
 					onConfirm={() => ctrl.confirmManual()}
-					onRecheck={() => ((m.mode == 'waiting') ? ctrl.recheckUnconfirmed() : ctrl.recheck())}
+					onRecheck={() => ctrl.recheck()}
 					onSaveRetry={() => ctrl.retrySave()}
 					onRetryCheck={() => ctrl.retryCheck()}
 					onRestored={() => ctrl.restoredOld()}
 					onDone={() => close()}
 					onCancel={() => close()}
 					onCopy={(value, label) => U.Common.copyToast(label, value)}
+					onCopySecret={(template, which) => ctrl.copyStep(template, which)}
 					onReveal={step => ctrl.revealStep(step)}
 				/>
 			);

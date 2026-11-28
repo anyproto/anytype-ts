@@ -10,7 +10,6 @@
 import crypto from 'crypto';
 import type { AiAppId, AiDetection, AiError, AiTargetId, CliName, Detected, Env, HomeVar, Homes } from './types';
 import { canonicalPath, isInside, isLocalAbsolute, pathOf, realHome, resolveTarget } from './fsSafe';
-import { itemLabel } from './forwarder';
 import { CATALOG } from '../../../../src/ts/lib/aiConnect/catalog';
 
 export const CLI_NAMES: CliName[] = [ 'claude', 'codex', 'code', 'copilot', 'agent', 'cursor', 'lms', 'chatgpt', 'gemini', 'agy', 'opencode', 'hermes' ];
@@ -655,7 +654,7 @@ export const targetFor = (env: Env, homes: Homes, appId: AiAppId): { targetId?: 
 
 	switch (appId) {
 		case 'claude-desktop': {
-			return { targetId: 'claude-desktop', targetPaths: canon(P.join(claudeDesktopDir(env), 'claude_desktop_config.json'), itemLabel(env, 'claude-desktop')) };
+			return { targetId: 'claude-desktop', targetPaths: canon(P.join(claudeDesktopDir(env), 'claude_desktop_config.json')) };
 		};
 		case 'claude-code': {
 			// A rejected CLAUDE_CONFIG_DIR: no automatic target, never the default profile instead

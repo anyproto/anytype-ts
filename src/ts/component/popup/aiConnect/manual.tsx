@@ -3,7 +3,8 @@ import * as I from 'Interface';
 import AppGrantFields from 'Component/form/appGrantFields';
 import AiAppIcon from 'Component/util/aiAppIcon';
 import ChevronDown from 'Component/util/icons/arrow/chevronDown';
-import { canCopyStep, fillStep, keyText, stepsNeedKey } from 'Lib/aiConnect/steps';
+import { KEY_PLACEHOLDER } from 'Lib/aiConnect/catalog';
+import { canCopyStep, fillStep, KEY_MASK, keyText, stepNeedsKey, stepsNeedKey } from 'Lib/aiConnect/steps';
 import { apiKeyCreateError } from 'Lib/apiKey';
 import { linkApprovalGrant } from 'Lib/linkApprovalGrant';
 import { spaceSummary, tr } from './text';
@@ -24,10 +25,10 @@ export interface AiConnectManualProps {
 	reason?: string;
 	/** Full over stdio: the local file tools note, beside the command steps (H15) */
 	tierHint?: string;
-	/** The key of this view: the new one (pending or recorded) */
-	apiKey?: string;
-	/** restoreOld: the previous key */
-	oldKey?: string;
+	/** This view has a key (the new one, pending or recorded): shown masked only, never held here (tokens-plan §3.2) */
+	hasKey?: boolean;
+	/** restoreOld: the previous key exists */
+	hasOldKey?: boolean;
 	/** Other app: a name of the user's own */
 	withName: boolean;
 	name: string;
@@ -35,12 +36,10 @@ export interface AiConnectManualProps {
 	spaces: I.LinkApprovalSpace[];
 	notice?: string;
 	error?: string;
-	/** Claude Desktop: a key of someone else's is stored for it; Create key replaces exactly the one shown (W8) */
-	replace?: boolean;
 	/** Other app, before a connection exists: the setups this computer offers and the one chosen */
-	setups?: ('url' | 'command')[];
-	setup?: 'url' | 'command';
-	onSetup?: (setup: 'url' | 'command') => void;
+	setups?: I.AiSetup[];
+	setup?: I.AiSetup;
+	onSetup?: (setup: I.AiSetup) => void;
 	/** Recorded, but Anytype couldn't save its list yet: Save again (W14) */
 	unsaved?: boolean;
 	/** Recorded, but the check with the new key failed: Retry check (W14) */
@@ -66,20 +65,21 @@ export interface AiConnectManualProps {
 	onRestored?: () => void;
 	onDone: () => void;
 	onCancel: () => void;
+	/** Plain text (a path, a snippet without the key) */
 	onCopy: (value: string, label: string) => void;
+	/** A snippet with the key (or the key alone, KEY_PLACEHOLDER): main fills it in and clears the clipboard later (§3.4) */
+	onCopySecret: (template: string, which: 'new' | 'old') => void;
 	onReveal: (step: I.AiStep) => void;
 };
 
-/** Steps the user follows in the app, the key masked until asked for (§5.6) */
+/** Steps the user follows in the app, the key always masked; Copy puts the real one on the clipboard (§5.6, §3.4) */
 const AiConnectManual = (props: AiConnectManualProps) => {
 	const {
-		appName, appId, icon, mode, steps, planLoading, reason, tierHint, apiKey, oldKey, withName, name, grant, spaces, notice, error, replace, unsaved, probeFailed, keyHidden, busy,
+		appName, appId, icon, mode, steps, planLoading, reason, tierHint, hasKey, hasOldKey, withName, name, grant, spaces, notice, error, unsaved, probeFailed, keyHidden, busy,
 		setups = [], setup = 'url', onSetup,
 		apiListening, initialSpaces, onName, onGrant, onCreateKey, onConfirm, onRecheck, canConfirm = true, canReveal, onSaveRetry, onRetryCheck, onRestored, onDone,
-		onCancel, onCopy, onReveal,
+		onCancel, onCopy, onCopySecret, onReveal,
 	} = props;
-	// Each key shows on its own: the previous and the new one (V29)
-	const [ visible, setVisible ] = useState<Record<string, boolean>>({});
 	// Nothing chosen yet (a new connection): the picker is open, so the choice is one click away
 	const [ spacesOpen, setSpacesOpen ] = useState(!!initialSpaces || (!grant.allSpaces && !grant.spaceIds.length));
 	const ids = { perm: useId(), name: useId(), spaces: useId(), setup: useId() };
@@ -90,14 +90,15 @@ const AiConnectManual = (props: AiConnectManualProps) => {
 	const canCreate = !busy && !planLoading && !invalid && apiListening && (!!steps.length || !reason);
 
 	const stepText = (step: I.AiStep) => tr(step.textKey, ...(step.args || []));
+	// The view never has the key: the mask stands for it, and only marks that one exists
+	const marker = (has: boolean) => has ? KEY_MASK : '';
+	const copySnippet = (step: I.AiStep, which: 'new' | 'old') => stepNeedsKey(step) ? onCopySecret(step.snippet, which) : onCopy(step.snippet, translate('aiConnectManualSnippet'));
 
-	const isVisible = (prefix: string) => !!visible[prefix];
-	const toggle = (prefix: string) => setVisible({ ...visible, [prefix]: !visible[prefix] });
-
-	const renderSteps = (key: string, prefix: string) => (
+	const renderSteps = (has: boolean, prefix: string, which: 'new' | 'old') => (
 		<ol className="steps">
 			{steps.map((step, i) => {
-				const shown = fillStep(step, key, !isVisible(prefix));
+				const key = marker(has);
+				const shown = fillStep(step, key, true);
 				const revealable = !!step.path && (!canReveal || canReveal(step));
 				const copyCn = [ 'linkButton', (canCopyStep(step, key) ? '' : 'disabled') ];
 
@@ -112,7 +113,7 @@ const AiConnectManual = (props: AiConnectManualProps) => {
 									type="button"
 									className={copyCn.join(' ')}
 									disabled={!canCopyStep(step, key)}
-									onClick={() => onCopy(fillStep(step, key, false), translate('aiConnectManualSnippet'))}
+									onClick={() => copySnippet(step, which)}
 								>
 									{translate('commonCopy')}
 								</button>
@@ -129,12 +130,11 @@ const AiConnectManual = (props: AiConnectManualProps) => {
 		</ol>
 	);
 
-	const keyRow = (key: string, prefix: string) => (needsKey && key) ? (
+	const keyRow = (has: boolean, which: 'new' | 'old') => (needsKey && has) ? (
 		<div className="keyRow">
 			<span className="keyLabel">{translate('aiConnectManualKey')}</span>
-			<code className="keyValue">{keyText(key, isVisible(prefix))}</code>
-			<button type="button" className="linkButton" aria-pressed={isVisible(prefix)} onClick={() => toggle(prefix)}>{translate(isVisible(prefix) ? 'aiConnectManualHide' : 'aiConnectManualShow')}</button>
-			<button type="button" className="linkButton" onClick={() => onCopy(key, translate('aiConnectManualKey'))}>{translate('commonCopy')}</button>
+			<code className="keyValue">{keyText(marker(has), false)}</code>
+			<button type="button" className="linkButton" onClick={() => onCopySecret(KEY_PLACEHOLDER, which)}>{translate('commonCopy')}</button>
 		</div>
 	) : null;
 
@@ -144,23 +144,18 @@ const AiConnectManual = (props: AiConnectManualProps) => {
 		case 'create': {
 			const cn = [ 'button', 'black', (canCreate ? '' : 'disabled') ];
 
-			const text = busy ? 'aiConnectConnecting' : (replace ? 'aiConnectManualReplaceKey' : 'aiConnectManualCreateKey');
+			const text = busy ? 'aiConnectConnecting' : 'aiConnectManualCreateKey';
 
 			primary = <button type="button" className={cn.join(' ')} disabled={!canCreate} data-primary="true" onClick={onCreateKey}>{translate(text)}</button>;
 			break;
 		};
 		case 'confirm':
 		case 'restoreOld': {
-			primary = <button type="button" className="button black" disabled={busy || !apiKey || !canConfirm} data-primary="true" onClick={onConfirm}>{tr('aiConnectManualUpdated', appName)}</button>;
+			primary = <button type="button" className="button black" disabled={busy || !hasKey || !canConfirm} data-primary="true" onClick={onConfirm}>{tr('aiConnectManualUpdated', appName)}</button>;
 			break;
 		};
 		case 'prerequisite': {
 			primary = <button type="button" className="button black" disabled={busy || planLoading} data-primary="true" onClick={onRecheck}>{translate('aiConnectManualRecheck')}</button>;
-			break;
-		};
-		case 'waiting': {
-			// The key may be saved; Anytype is checking. No second Create key until that is known
-			primary = <button type="button" className="button black" disabled={busy || !onRecheck} data-primary="true" onClick={onRecheck}>{translate('aiConnectManualRecheck')}</button>;
 			break;
 		};
 		case 'done': {
@@ -220,32 +215,31 @@ const AiConnectManual = (props: AiConnectManualProps) => {
 							<ChevronDown aria-hidden="true" focusable="false" />
 						</div>
 					</div>
-					<p className="description tierHint">{translate((setup == 'command') ? 'aiConnectSetupCommandHint' : 'aiConnectSetupUrlHint')}</p>
+					<p className="description tierHint">{translate((setup == 'command') ? 'aiConnectSetupCommandKeyHint' : 'aiConnectSetupUrlHint')}</p>
 				</>
 			) : null}
 
 			{reason ? <p className="accessNotice">{reason}</p> : null}
 			{(tierHint && steps.length) ? <p className="description tierHint">{tierHint}</p> : null}
-			{(replace && (mode == 'create')) ? <p className="accessNotice">{tr('aiConnectReplaceNotice', appName)}</p> : null}
 
 			{(mode == 'restoreOld') ? (
 				<>
 					<h3 className="blockTitle">{translate('aiConnectManualRestoreOld')}</h3>
-					{renderSteps(oldKey || '', 'old')}
-					{keyRow(oldKey || '', 'old')}
+					{renderSteps(!!hasOldKey, 'old', 'old')}
+					{keyRow(!!hasOldKey, 'old')}
 					{onRestored ? (
 						<div className="restoreActions">
 							<button type="button" className="button blank size28" disabled={busy} onClick={onRestored}>{translate('aiConnectManualRestored')}</button>
 						</div>
 					) : null}
 					<h3 className="blockTitle">{translate('aiConnectManualUseNew')}</h3>
-					{renderSteps(apiKey || '', 'new')}
-					{keyRow(apiKey || '', 'new')}
+					{renderSteps(!!hasKey, 'new', 'new')}
+					{keyRow(!!hasKey, 'new')}
 				</>
 			) : (
 				<>
-					{steps.length ? renderSteps(apiKey || '', 'step') : null}
-					{keyRow(apiKey || '', 'step')}
+					{steps.length ? renderSteps(!!hasKey, 'step', 'new') : null}
+					{keyRow(!!hasKey, 'new')}
 				</>
 			)}
 

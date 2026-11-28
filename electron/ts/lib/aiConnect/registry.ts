@@ -16,9 +16,14 @@
  *   A candidate above MAX_BYTES is never saved (the next start could not read it back).
  * - Hashes (appHash, revokePending, orphanHashes) follow the IPC hash rule, so every stored hash is one
  *   reconciliation accepts.
+ * - A save that queues a record's hash for revocation (Disconnect, retire, a rotation) first writes its undo,
+ *   `aiConnect.json.txn`: those records as they were, each with the digest of the version this save writes. It
+ *   goes once the save is durable. While it is there and the file still holds exactly that version, loading puts
+ *   the earlier record back: a save reported as failed never revokes a key after a restart (D1C-20, D1S-22).
  */
+import crypto from 'crypto';
 import type { AiRecord, Env } from './types';
-import { MODE_SECRET, dirIdentity, discardTemp, keepTemp, pathOf, sameDir, stageTemp, type StagedTemp } from './fsSafe';
+import { MODE_SECRET, dirIdentity, discardTemp, keepTemp, pathOf, sameDir, stageTemp, type DirIdentity, type StagedTemp } from './fsSafe';
 import { isHash } from './validate';
 import { CATALOG, TIERS, isValidPort } from '../../../../src/ts/lib/aiConnect/catalog';
 import { isValidLinkGrant } from '../../../../src/ts/lib/linkApprovalGrant';
@@ -40,6 +45,9 @@ export interface MintIntent {
 	name: string;
 	/** Seconds; a key of that name created at or after it that no record manages is this one */
 	time: number;
+	/** The access and expiry the key is made with: only a key with exactly these is this one (D1S-18) */
+	grant?: any;
+	expireAt?: number;
 };
 
 interface RegistryFile {
@@ -63,32 +71,34 @@ const isStr = (v: any): boolean => (typeof v == 'string');
 const isBool = (v: any): boolean => (typeof v == 'boolean');
 const isNum = (v: any): boolean => Number.isSafeInteger(v) && (v >= 0);
 const isStrArray = (v: any): boolean => Array.isArray(v) && v.every(isStr);
-const isStrMap = (v: any): boolean => !!v && (typeof v == 'object') && !Array.isArray(v) && Object.keys(v).every(k => isStr(v[k]));
 const oneOf = (list: readonly string[]) => (v: any): boolean => list.includes(v);
 
 const APP_IDS = CATALOG.map(it => it.id);
 const ROUTES = [ 'http', 'stdio', 'skill' ];
-const METHODS = [ 'cli', 'package', 'keyfile', 'config', 'deeplink', 'manual', 'command' ];
+const METHODS = [ 'cli', 'package', 'config', 'deeplink', 'manual' ];
 const NEXT_STEPS = [ 'none', 'confirmInApp', 'restart', 'newSession', 'reloadServer', 'toggle' ];
 
 const isFp = (v: any): boolean => isStr(v) && /^[0-9a-f]{16}$/.test(v);
 
-const isConfigEntry = (v: any): boolean => !!v && isStr(v.command) && isStrArray(v.args) && ((v.env === undefined) || isStrMap(v.env));
 const isDigest = (v: any): boolean => isStr(v) && /^[0-9a-f]{64}$/.test(v);
 
 /** One unconfirmed delivery (AiCandidate) */
 const isCandidate = (v: any): boolean => !!v && (typeof v == 'object') && isHash(v.appHash) && isFp(v.keyFp) && oneOf(ROUTES)(v.route)
 	&& oneOf(METHODS)(v.method) && isStr(v.targetPath) && oneOf(TIERS)(v.tier) && oneOf(TIERS)(v.recommendedTier) && isValidPort(v.port)
 	&& oneOf(NEXT_STEPS)(v.nextStep) && isStr(v.name) && isValidLinkGrant(v.grant) && isNum(v.expireAt) && isBool(v.created) && isBool(v.running)
-	&& ((v.until === undefined) || isNum(v.until)) && ((v.configEntry === undefined) || isConfigEntry(v.configEntry))
+	&& ((v.until === undefined) || isNum(v.until))
 	&& ((v.entryDigest === undefined) || isDigest(v.entryDigest)) && ((v.configPath === undefined) || isStr(v.configPath));
+
+/** A latch of the extension route: the key's hash and Claude's install identity */
+const isInstallLatch = (v: any): boolean => !!v && (typeof v == 'object') && isStr(v.appHash) && isStr(v.version) && isStr(v.installedAt);
 
 /** Every field a record must carry, and its type */
 const RECORD_FIELDS: Record<string, (v: any) => boolean> = {
 	id: v => isStr(v) && /^[a-z0-9-]{1,64}$/.test(v),
 	appId: oneOf(APP_IDS),
 	accountId: v => isStr(v) && !!v,
-	appHash: isHash,
+	// '' only on a bundle record whose key was retired for a Reconnect (aiConnectRetire)
+	appHash: v => isHash(v) || (v === ''),
 	keyFp: isStr,
 	name: isStr,
 	route: oneOf(ROUTES),
@@ -110,18 +120,16 @@ const RECORD_FIELDS: Record<string, (v: any) => boolean> = {
 
 const OPTIONAL_FIELDS: Record<string, (v: any) => boolean> = {
 	left: oneOf([ 'extension', 'entry', 'envKey' ]),
-	configEntry: v => !!v && isStr(v.command) && isStrArray(v.args) && ((v.env === undefined) || isStrMap(v.env)),
 	entryDigest: v => isStr(v) && /^[0-9a-f]{64}$/.test(v),
 	configPath: isStr,
 	unconfirmed: v => Array.isArray(v) && v.every(isCandidate),
 	prior: v => !!v && (typeof v == 'object') && oneOf(ROUTES)(v.route) && isStr(v.targetPath) && isFp(v.keyFp),
 	removedReported: isBool,
-	itemRev: v => Number.isSafeInteger(v) && (v > 0),
-	retarget: v => !!v && (typeof v == 'object') && isValidPort(v.port) && oneOf(TIERS)(v.tier) && Number.isSafeInteger(v.rev) && (v.rev > 0) && ((v.until === undefined) || isNum(v.until)),
-	itemDelete: isBool,
-	itemUntil: isNum,
 	ns: oneOf([ 'release', 'dev' ]),
-	itemFps: v => Array.isArray(v) && v.every(isFp),
+	setup: oneOf([ 'url', 'command' ]),
+	confirmed: isInstallLatch,
+	armed: isInstallLatch,
+	reconfirm: isBool,
 };
 
 export const isValidRecord = (v: any): v is AiRecord => {
@@ -130,13 +138,43 @@ export const isValidRecord = (v: any): v is AiRecord => {
 	};
 
 	return Object.keys(RECORD_FIELDS).every(k => Object.prototype.hasOwnProperty.call(v, k) && RECORD_FIELDS[k](v[k]))
-		&& Object.keys(OPTIONAL_FIELDS).every(k => (v[k] === undefined) || OPTIONAL_FIELDS[k](v[k]));
+		&& Object.keys(OPTIONAL_FIELDS).every(k => (v[k] === undefined) || OPTIONAL_FIELDS[k](v[k]))
+		&& ((v.appHash !== '') || (v.method == 'package'));
 };
 
 const isValidOrphan = (v: any): v is Orphan => !!v && isStr(v.accountId) && !!v.accountId && isHash(v.hash);
 
 const isValidIntent = (v: any): v is MintIntent => !!v && isStr(v.id) && /^[0-9a-f]{16}$/.test(v.id) && isStr(v.accountId) && !!v.accountId
-	&& isStr(v.name) && !!v.name && (v.name.length <= 512) && isNum(v.time);
+	&& isStr(v.name) && !!v.name && (v.name.length <= 512) && isNum(v.time)
+	&& ((v.grant === undefined) || isValidLinkGrant(v.grant)) && ((v.expireAt === undefined) || isNum(v.expireAt));
+
+/** One record of a destructive save's undo */
+interface Undo {
+	accountId: string;
+	id: string;
+	/** sha256 of the record as that save wrote it */
+	digest: string;
+	prior: AiRecord;
+};
+
+const digestOf = (rec: AiRecord): string => crypto.createHash('sha256').update(JSON.stringify(rec)).digest('hex');
+
+const isValidUndo = (v: any): v is { v: 1; records: Undo[] } => !!v && (v.v === 1) && Array.isArray(v.records)
+	&& v.records.every((it: any) => !!it && isStr(it.accountId) && isStr(it.id) && isDigest(it.digest) && isValidRecord(it.prior) && (it.prior.accountId == it.accountId) && (it.prior.id == it.id));
+
+/** The records of `next` whose revokePending gained a hash over `before`, as `before` had them */
+const undoOf = (before: RegistryFile | null, next: RegistryFile): Undo[] => {
+	const ret: Undo[] = [];
+
+	for (const rec of next.connections) {
+		const prior = before?.connections.find(it => (it.accountId == rec.accountId) && (it.id == rec.id));
+
+		if (prior && rec.revokePending.some(h => !prior.revokePending.includes(h))) {
+			ret.push({ accountId: rec.accountId, id: rec.id, digest: digestOf(rec), prior: copy(prior) });
+		};
+	};
+	return ret;
+};
 
 const isValidFile = (v: any): boolean => !!v && (typeof v == 'object') && (v.version === VERSION) && isBool(v.nudgeClaimed)
 	&& Array.isArray(v.connections) && v.connections.every(isValidRecord)
@@ -179,12 +217,77 @@ export class Registry {
 
 		if (isValidFile(parsed)) {
 			this.absent = false;
-			return { ...parsed, orphanHashes: parsed.orphanHashes || [] };
+			return this.undone({ ...parsed, orphanHashes: parsed.orphanHashes || [] } as RegistryFile);
 		};
 
 		this.quarantine();
 		this.absent = true;
 		return empty();
+	};
+
+	private get undoFile (): string {
+		return `${this.file}.txn`;
+	};
+
+	/**
+	 * A destructive save whose undo is still there and whose version is still on disk was not confirmed: its records
+	 * are what they were before it. Nothing is written here; the next save writes this state (and drops the undo)
+	 */
+	private undone (state: RegistryFile): RegistryFile {
+		const res = this.env.readFile(this.undoFile, this.maxBytes, { noFollow: true });
+		let undo: any = null;
+
+		if (!('data' in res)) {
+			return state;
+		};
+		try {
+			undo = JSON.parse(res.data.toString('utf8'));
+		} catch (e) { /* not one */ };
+		if (!isValidUndo(undo)) {
+			return state;
+		};
+
+		for (const it of undo.records) {
+			const index = state.connections.findIndex(rec => (rec.accountId == it.accountId) && (rec.id == it.id));
+
+			if ((index >= 0) && (digestOf(state.connections[index]) == it.digest)) {
+				state.connections[index] = it.prior;
+			};
+		};
+		return state;
+	};
+
+	/** Writes the undo of a destructive save (temp, rename, folder fsync); throws when it isn't durable */
+	private writeUndo (dir: DirIdentity, records: Undo[]): void {
+		const P = pathOf(this.env);
+		const staged = stageTemp(this.env, dir, null, `.${P.basename(this.undoFile)}.${this.env.now()}-${Math.random().toString(16).slice(2, 10)}.tmp`, JSON.stringify({ v: 1, records }) + '\n', MODE_SECRET);
+
+		if (staged == 'changed') {
+			throw Object.assign(new Error('registry directory changed'), { code: 'EREGISTRYDIR' });
+		};
+		try {
+			this.env.rename(staged.path, P.join(dir.path, P.basename(this.undoFile)));
+			keepTemp(staged);
+		} catch (e) {
+			discardTemp(this.env, staged);
+			throw e;
+		};
+		this.env.fsyncDir(dir.path);
+	};
+
+	/** The undo goes once the state it guards against is no longer what the file holds; false: it is still there */
+	private dropUndo (dir: string): boolean {
+		try {
+			this.env.unlink(this.undoFile);
+		} catch (e) {
+			return ((e as any)?.code == 'ENOENT');
+		};
+		try {
+			this.env.fsyncDir(dir);
+		} catch (e) {
+			return false;
+		};
+		return true;
 	};
 
 	/** The profile directory exists and can be listed: only then does "no file" mean "no registry yet" */
@@ -210,8 +313,10 @@ export class Registry {
 	};
 
 	/** Saves `next` (staged next to the file under the fsSafe identity contract), and only then makes it the cached state */
-	private commit (next: RegistryFile): void {
+	private commit (next: RegistryFile, restoring = false): void {
 		const P = pathOf(this.env);
+		const before = this.data;
+		const wasAbsent = this.absent;
 		const text = JSON.stringify(next, null, 2) + '\n';
 
 		if (Buffer.byteLength(text, 'utf8') > this.maxBytes) {
@@ -226,6 +331,12 @@ export class Registry {
 		};
 
 		let temp: StagedTemp | null = null;
+		const undo = restoring ? [] : undoOf(before, next);
+
+		// Durable before the file changes: a failure here changes nothing
+		if (undo.length) {
+			this.writeUndo(dir, undo);
+		};
 
 		try {
 			const staged = stageTemp(this.env, dir, null, `.${P.basename(this.file)}.${this.env.now()}-${Math.random().toString(16).slice(2, 10)}.tmp`, text, MODE_SECRET);
@@ -248,11 +359,36 @@ export class Registry {
 			keepTemp(temp);
 			temp = null;
 			this.absent = false;
+			// The rename itself must be durable before anything outside Anytype changes: a failure is "not saved".
+			// The new text is visible already, so the previous state is put back first (best effort): a restart must
+			// not act on a save this call reports as failed (a queued revocation of a Disconnect that didn't happen)
+			try {
+				this.env.fsyncDir(dir.path);
+			} catch (e) {
+				if (!restoring) {
+					try {
+						if (before) {
+							this.commit(before, true);
+						} else
+						if (wasAbsent) {
+							this.env.unlink(this.file);
+							this.absent = true;
+						};
+					} catch (e2) { /* indeterminate: the next save retries */ };
+				};
+				throw Object.assign(new Error('registry not durable'), { code: 'EREGISTRYSYNC' });
+			};
 		} catch (e) {
 			if (temp) {
 				discardTemp(this.env, temp);
 			};
 			throw e;
+		};
+
+		// Durable: the undo of this save (or one an earlier failed save left) has done its job. One that can't go
+		// makes this save "not saved", as the next start would put those records back
+		if (!this.dropUndo(dir.path) && undo.length) {
+			throw Object.assign(new Error('registry undo left'), { code: 'EREGISTRYSYNC' });
 		};
 
 		this.data = next;
@@ -292,7 +428,8 @@ export class Registry {
 		return rec ? copy(rec) : null;
 	};
 
-	upsert (record: AiRecord): AiRecord {
+	/** `intentId`: the mint intent of the record's key goes in the same save (a delivery that committed, D1C-21) */
+	upsert (record: AiRecord, intentId?: string): AiRecord {
 		if (!isValidRecord(record)) {
 			throw Object.assign(new Error('invalid record'), { code: 'EREGISTRYRECORD' });
 		};
@@ -305,6 +442,12 @@ export class Registry {
 				draft.connections[index] = rec;
 			} else {
 				draft.connections.push(rec);
+			};
+			if (intentId && draft.mintIntents) {
+				draft.mintIntents = draft.mintIntents.filter(it => !((it.accountId == record.accountId) && (it.id == intentId)));
+				if (!draft.mintIntents.length) {
+					delete draft.mintIntents;
+				};
 			};
 			return copy(rec);
 		});

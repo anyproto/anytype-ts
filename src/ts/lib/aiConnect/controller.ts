@@ -3,16 +3,16 @@
  * popup renders `get()` and calls the methods; every call to main or heart goes through `flow`. A test
  * drives this class with deferred replies exactly as the popup does.
  *
- * The only key it holds is the one the manual view shows (`manual.key`, `manual.oldKey`): popup state,
- * never MobX, Storage, a route or a log. Messages are text keys with arguments, or errors; the popup
- * translates them.
+ * It holds no key (tokens-plan §3.2): the manual view knows its key only by hash (`manual.keyHash`,
+ * `manual.oldHash`) and shows it masked; every Copy goes through `flow.copySecret`, which fetches the key for
+ * that one call. Messages are text keys with arguments, or errors; the popup translates them.
  */
 import type {
-	AiAppId, AiConnection, AiError, AiNextStep, AiPlan, AiProbeResult, AiRoute, AiStep, AiTier,
+	AiAppId, AiConnection, AiError, AiNextStep, AiPlan, AiProbeResult, AiRoute, AiSetup, AiStep, AiTier,
 } from '../../interface/aiConnect';
 import type { LinkAppGrant } from '../../interface/linkApproval';
 import { isValidLinkGrant } from '../linkApprovalGrant';
-import { DEFAULT_GRANT, getCatalogItem } from './catalog';
+import { DEFAULT_GRANT, getCatalogItem, KEY_PLACEHOLDER } from './catalog';
 import { track } from './events';
 import * as flow from './flow';
 import { isMovedRecord, movedConnection } from './gallery';
@@ -20,8 +20,9 @@ import { withFinishingStep } from './steps';
 
 export type AiConnectView = 'connect' | 'finish' | 'manage' | 'manual' | 'unsupported' | 'remote';
 
+/** `bundle`: Claude's extension, from the record's save until heart says Claude uses the key (§3.3) */
 export type AiFinishPhase =
-	| 'delivering' | 'needsQuit' | 'needsQuitSelf' | 'installExtension' | 'step' | 'afterRestart' | 'added' | 'connected'
+	| 'delivering' | 'needsQuit' | 'needsQuitSelf' | 'bundle' | 'step' | 'afterRestart' | 'added' | 'connected'
 	| 'stalled' | 'unconfirmed' | 'error';
 
 /**
@@ -29,8 +30,7 @@ export type AiFinishPhase =
  * place. restoreOld: the previous entry was removed (Claude Code): the old key, or the new one. prerequisite:
  * the instructions have nothing to deliver yet (install or update a CLI first): Recheck, no key.
  */
-/** `waiting`: Create key ran but its outcome isn't known yet (Q16): no Create is offered until a check settles it */
-export type AiManualMode = 'create' | 'confirm' | 'done' | 'restoreOld' | 'prerequisite' | 'waiting';
+export type AiManualMode = 'create' | 'confirm' | 'done' | 'restoreOld' | 'prerequisite';
 
 /** A message for the popup to translate: a text key with arguments, or an error (with the file it concerns) */
 export type AiMsg = { key: string; args?: string[] } | { error: AiError; target?: string };
@@ -65,8 +65,10 @@ export interface AiReconnectInput {
 
 export interface AiManualState {
 	mode: AiManualMode;
-	key: string;
-	oldKey: string;
+	/** The hash of the key this view sets up (pending or recorded); '' before Create key. The key itself is never here */
+	keyHash: string;
+	/** restoreOld: the previous key's hash */
+	oldHash: string;
 	plan: AiPlan | null;
 	steps: AiStep[];
 	loading: boolean;
@@ -79,9 +81,19 @@ export interface AiManualState {
 	planPort: number;
 	/** The key was recorded but its probe failed: Retry check (W14) */
 	probeFailed: boolean;
-	/** Other app: the setups this computer offers, and the one chosen (`command`: a managed connection, no key in the app's settings) */
-	setups: ('url' | 'command')[];
-	setup: 'url' | 'command';
+	/** Other app: the setups this computer offers, and the one chosen (`command`: the app starts Anytype's connector, the key in its `env`) */
+	setups: AiSetup[];
+	setup: AiSetup;
+};
+
+/** Claude's extension after the record's save: what main could and couldn't do (§3.3, step 4) */
+export interface AiBundleState {
+	copyFailed: boolean;
+	openFailed: boolean;
+	/** The installed extension takes the key in Claude's Configure; the bundle wasn't opened */
+	configure: boolean;
+	/** The 10-minute watch for heart's isActive ran out: Check again */
+	stopped: boolean;
 };
 
 export interface AiConnectState {
@@ -119,6 +131,8 @@ export interface AiConnectState {
 	/** The wait for an unconfirmed CLI write ran out: Check again (W12) */
 	pollStopped: boolean;
 	lastError: AiError | null;
+	/** Phase `bundle` */
+	bundle: AiBundleState | null;
 
 	manual: AiManualState;
 
@@ -137,6 +151,11 @@ export interface AiConnectUi {
 
 type Consent = { allowQuit?: boolean; quitConfirmed?: boolean };
 
+/** A record with the key a sheet or a confirmation showed, under the account it was shown for (D1C-08) */
+export type Shown = { accountId: string; id: string; appHash: string };
+
+const accountNow = (): string => String(S.Auth.account?.id || '');
+
 /** The approved delivery, resolved once on submit; a retry adds only its new consent (V15) */
 type Attempt =
 	| { kind: 'connect'; input: flow.ConnectInput }
@@ -147,12 +166,12 @@ const daysToExpireAt = (days: number): number => days ? Math.floor(Date.now() / 
 const isError = (m: any): m is { error: AiError } => !!m && ('error' in m);
 
 const EMPTY_MANUAL: AiManualState = {
-	mode: 'create', key: '', oldKey: '', plan: null, steps: [], loading: false, notice: null, error: null, existing: null, expireAt: 0, planPort: 0, probeFailed: false,
+	mode: 'create', keyHash: '', oldHash: '', plan: null, steps: [], loading: false, notice: null, error: null, existing: null, expireAt: 0, planPort: 0, probeFailed: false,
 	setups: [], setup: 'url',
 };
 
 /** Statuses that need the user's decision in Manage: a finishing step can't go on past them (W12) */
-const ATTENTION: AiConnection['status'][] = [ 'removed', 'accessEnded', 'conflict', 'reconnect', 'unreadable', 'notInstalled', 'revokeFailed' ];
+const ATTENTION: AiConnection['status'][] = [ 'removed', 'accessEnded', 'conflict', 'reconnect', 'unreadable', 'notInstalled', 'revokeFailed', 'disconnected' ];
 
 /** What Retry check found, as a message (W15): a failed lookup is not a failed probe */
 export const probeMessage = (res: flow.RetryProbeResult): AiMsg => {
@@ -164,6 +183,14 @@ export const probeMessage = (res: flow.RetryProbeResult): AiMsg => {
 	};
 	return { error: { stage: 'probe', category: ('category' in res) ? res.category : 'unknown' } };
 };
+
+/**
+ * The access Manage shows for a record: its own, as main's last check reconciled it with heart (no key lookup,
+ * D1S-15). `present: false` for a key that ended (status `accessEnded`) or a retired one (appHash '')
+ */
+const recordAccess = (c: AiConnection): flow.LiveAccess => ({
+	ok: true, present: !!c.appHash && (c.status != 'accessEnded') && !c.removed, grant: c.grant, expireAt: c.expireAt,
+});
 
 export class AiConnectController {
 
@@ -182,7 +209,14 @@ export class AiConnectController {
 	private formExisting: string | null | undefined = undefined;
 	/** The hash of the key this attempt delivered: its finishing follows that key (W12) */
 	private followed = '';
-	/** Manage's key lookup in flight: Replace and Reconnect wait for it (W2) */
+	/**
+	 * The record and key the Finish sheet of Claude's extension stands for, as shown (D1C-08): its watch, Copy key
+	 * and Cancel setup act on that key only; another key there now ends the sheet
+	 */
+	private sheet: Shown | null = null;
+	/** The keys the manual view put on the clipboard (by hash): closing the popup takes them off (D1S-11) */
+	private copied = new Set<string>();
+	/** Manage's load in flight (its plan): Replace waits for it (W2) */
 	private manageLoad: Promise<void> | null = null;
 	/** The expiry choice the connect attempt was submitted with (X1) */
 	private submitted: { days: number; fixedExpireAt?: number } | null = null;
@@ -233,6 +267,7 @@ export class AiConnectController {
 			unsaved: false,
 			pollStopped: false,
 			lastError: null,
+			bundle: null,
 			manual: { ...EMPTY_MANUAL },
 			access: null,
 			manageNotice: null,
@@ -262,13 +297,19 @@ export class AiConnectController {
 		this.set({ manual: { ...this.state.manual, ...patch } });
 	};
 
-	/** The popup closed (any path): polls stop and the flow's pending key is released (§5.2); idempotent */
+	/**
+	 * The popup closed (any path): polls stop, the flow's pending key is released (§5.2) and what the manual view
+	 * copied leaves the clipboard (D1S-11); idempotent
+	 */
 	dispose (): Promise<void> {
+		const copied = [ ...this.copied ];
+
+		this.copied.clear();
 		this.closing = true;
 		this.disposed = true;
 		this.pollToken++;
 		this.listeners.clear();
-		return flow.releasePendingKey();
+		return Promise.all([ flow.releasePendingKey(), ...copied.map(appHash => flow.clearCopied({ appHash })) ]).then(() => {});
 	};
 
 	/**
@@ -354,16 +395,15 @@ export class AiConnectController {
 		return (id == this.data.appId) ? this.appName : (getCatalogItem(id)?.name || this.appName);
 	};
 
-	/** Which settings-file route the finishing view offers: Claude's config, LM Studio's mcp.json, or none */
-	fileRouteKind (): 'claude' | 'lmstudio' | null {
-		const { appId } = this.data;
-		const { plan, phase } = this.state;
+	/**
+	 * Which settings-file route the finishing view offers: LM Studio's mcp.json, or none. Claude's settings file
+	 * is chosen on the sheet, before a key is minted (`useConfigRoute`, §3.3)
+	 */
+	fileRouteKind (): 'lmstudio' | null {
+		const { plan } = this.state;
 		const c = this.connection();
 
-		if ((appId == 'claude-desktop') && (plan?.method != 'config') && (this.method != 'config') && [ 'installExtension', 'step', 'stalled' ].includes(phase)) {
-			return 'claude';
-		};
-		if ((appId == 'lmstudio') && (this.method != 'config') && ((plan?.method == 'deeplink') || (c?.method == 'deeplink'))) {
+		if ((this.data.appId == 'lmstudio') && (this.method != 'config') && ((plan?.method == 'deeplink') || (c?.method == 'deeplink'))) {
 			return 'lmstudio';
 		};
 		return null;
@@ -426,7 +466,9 @@ export class AiConnectController {
 		this.set({ planLoading: true });
 
 		const { form } = this.state;
-		const res = await flow.plan({ appId: this.data.appId, route: form.route, tier: form.tier, method: this.method });
+		// Claude's extension always gets the Full tool set (§3.3)
+		const tier = (this.method == 'package') ? 'full' : form.tier;
+		const res = await flow.plan({ appId: this.data.appId, route: form.route, tier, method: this.method });
 
 		// A reply to an older request (another route or tier asked since) changes nothing (W13)
 		if (this.disposed || (seq != this.planSeq)) {
@@ -436,7 +478,25 @@ export class AiConnectController {
 			this.set({ planLoading: false, plan: null, formErrors: [ { error: res.error } ] });
 			return;
 		};
+		// The extension's plan: the sheet shows "Tool set: Full", and that is what is delivered
+		if ((res.plan.method == 'package') && (form.tier != 'full')) {
+			this.set({ form: { ...form, tier: 'full' } });
+		};
 		this.showPlan(res.plan);
+	};
+
+	/** Claude Desktop, Advanced: its settings file instead of the extension, chosen before a key is minted (§3.3) */
+	useConfigRoute (): void {
+		if ((this.data.appId != 'claude-desktop') || this.state.busy || (this.method == 'config')) {
+			return;
+		};
+		this.method = 'config';
+		this.loadPlan();
+	};
+
+	/** The sheet's plan is Claude's extension route (Full only) */
+	bundlePlan (): boolean {
+		return (this.data.appId == 'claude-desktop') && (this.state.plan?.method == 'package');
 	};
 
 	/** The preview shown, and the record it would replace as of now (W7) */
@@ -460,10 +520,11 @@ export class AiConnectController {
 	private prefillReconnect (r: AiReconnectInput, notice: 'reconnect' | 'grantChanged' | null): void {
 		const c = r.connection;
 
-		// S2: a Command connection stays one on the form too — the submit delivers what the form shows, to this
-		// record, through `key set` (never the URL setup, which would reload the record's stored access)
-		if (c.method == 'command') {
-			this.method = 'command';
+		// S2: a Command connection stays one on the form too, and Claude's config route keeps its method
+		const method = flow.planMethodOf(c);
+
+		if ((method == 'command') || (method == 'config')) {
+			this.method = method;
 		};
 
 		this.set({
@@ -511,15 +572,16 @@ export class AiConnectController {
 			return;
 		};
 
+		const bundle = (plan.method == 'package');
 		const input: flow.ConnectInput = {
 			appId: this.data.appId,
 			route: plan.route,
-			tier: form.tier,
+			tier: bundle ? 'full' : form.tier,
 			recommendedTier: this.recommended(),
 			grant: copyGrant(form.grant),
 			name: form.name.trim(),
 			expireAt: form.fixedExpireAt || daysToExpireAt(form.days),
-			method: this.method,
+			method: bundle ? 'package' : ((this.method == 'config') ? 'config' : undefined),
 			existing,
 			shown: plan,
 			replace: (plan.existing == 'foreign') && plan.replace ? { ...plan.replace } : undefined,
@@ -562,15 +624,27 @@ export class AiConnectController {
 		this.deliver({ [which]: true });
 	};
 
-	/** The record's attempt as a reconnect (V2): the form, when it returns there, keeps its values */
+	/**
+	 * The record's attempt as a reconnect (V2): the form, when it returns there, keeps its values. Claude's
+	 * extension whose key this flow retired (D1C-04) continues on the record as it is now, keyless, with the access
+	 * it stored
+	 */
 	private reconnectContinuation (): AiReconnectInput | null {
 		const a = this.attempt;
+		let r = this.state.reconnect;
 
 		if (a?.kind == 'reconnect') {
 			const shown = a.opts.shown;
-			return { connection: a.connection, grant: shown?.grant || a.connection.grant, expireAt: shown ? shown.expireAt : a.connection.expireAt, keyGone: false };
+
+			r = { connection: a.connection, grant: shown?.grant || a.connection.grant, expireAt: shown ? shown.expireAt : a.connection.expireAt, keyGone: false };
 		};
-		return this.state.reconnect;
+
+		const now = r ? S.AiConnect.getById(r.connection.id) : null;
+
+		if (now && !now.removed && (now.method == 'package') && !now.appHash && r.connection.appHash) {
+			return { connection: now, grant: now.grant, expireAt: now.expireAt, keyGone: true };
+		};
+		return r;
 	};
 
 	/** A manual record stays on the manual path through every reconnect continuation (W4) */
@@ -738,9 +812,14 @@ export class AiConnectController {
 				return;
 			};
 
-			case 'installExtension': {
-				this.set({ plan: res.plan, openFailed: res.openFailed, phase: 'installExtension' });
-				this.pollExtension();
+			case 'bundle': {
+				this.followed = res.connection.appHash;
+				this.sheet = { accountId: accountNow(), id: res.connection.id, appHash: res.connection.appHash };
+				this.set({
+					connectionId: res.connection.id, plan: res.plan, unsaved: !res.recordSaved, phase: 'bundle',
+					bundle: { copyFailed: res.copyFailed, openFailed: res.openFailed, configure: res.configure, stopped: false },
+				});
+				this.pollBundle();
 				return;
 			};
 
@@ -867,7 +946,14 @@ export class AiConnectController {
 			return;
 		};
 
-		this.routeTo(c);
+		// Claude's extension, not "Connected" yet: its Finish view, watching heart's isActive again
+		if ((c.method == 'package') && (c.status != 'ok') && !c.removed && c.appHash) {
+			this.sheet = { accountId: accountNow(), id: c.id, appHash: c.appHash };
+			this.set({ phase: 'bundle', bundle: { copyFailed: false, openFailed: false, configure: false, stopped: false } });
+			this.pollBundle();
+		} else {
+			this.routeTo(c);
+		};
 
 		const res = await flow.plan({ appId: c.appId, route: c.route, tier: c.tier, connectionId: c.id, method: flow.planMethodOf(c) });
 
@@ -925,22 +1011,171 @@ export class AiConnectController {
 		this.routeTo(c);
 	};
 
-	/** The signed extension: once Claude installed it, the key file follows with the same key (R3-4) */
-	private async pollExtension (): Promise<void> {
+	/**
+	 * Claude's extension (§3.3): heart's isActive, read through a check every 5 s while the Finish view is open,
+	 * for at most 10 minutes. "Connected" ends it (main clears the clipboard then); a record that needs the user
+	 * goes to Manage; one that is gone closes the view. A watch that runs out offers Check again.
+	 */
+	private async pollBundle (): Promise<void> {
 		const token = ++this.pollToken;
-		const res = await flow.pollUntil(async () => {
-			const p = await flow.plan({ appId: this.data.appId, route: this.route(), tier: this.state.form.tier, method: this.method });
-			return !('error' in p) && (p.plan.method == 'keyfile');
-		}, this.alivePoll(token));
+		const shown = this.sheet;
+		const id = shown?.id || this.state.connectionId;
+		// Another account, or another key on the record (another window's Reconnect): not this sheet's key any more (D1C-08)
+		const changed = (): boolean => !!shown && ((accountNow() != shown.accountId) || (S.AiConnect.getById(id)?.appHash != shown.appHash));
+		const settled = (c: AiConnection | null): boolean => !c || c.removed || changed() || (c.status == 'ok') || ATTENTION.includes(c.status);
+		const res = await flow.pollUntil(async () => changed() || (((await flow.check('finish')) == 'ok') && settled(S.AiConnect.getById(id))), this.alivePoll(token), {
+			interval: flow.flowConfig.bundlePollInterval,
+			timeout: flow.flowConfig.bundlePollTimeout,
+		});
 
 		if (this.alivePoll(token)()) {
 			return;
 		};
-		if (res == 'done') {
-			this.deliver({});
-		} else {
-			this.set({ phase: 'stalled' });
+		if (res != 'done') {
+			this.set({ bundle: { ...this.state.bundle, stopped: true } });
+			return;
 		};
+		if (changed()) {
+			this.recordChanged(shown);
+			return;
+		};
+
+		const c = S.AiConnect.getById(id);
+
+		if (!c) {
+			this.ui.close();
+			return;
+		};
+		if (c.removed || ATTENTION.includes(c.status)) {
+			this.openManage(c.id);
+			return;
+		};
+		this.set({ phase: 'connected' });
+	};
+
+	/** Finish view: the watch again after it ran out */
+	checkBundleAgain (): void {
+		if (this.state.phase == 'bundle') {
+			this.set({ bundle: { ...this.state.bundle, stopped: false } });
+			this.pollBundle();
+		};
+	};
+
+	/**
+	 * The Finish sheet's record, only while it still has the key the sheet showed under the same account (D1C-08);
+	 * none once the sheet ended
+	 */
+	private sheetRecord (): AiConnection | null {
+		const shown = this.sheet;
+
+		if (!shown) {
+			return null;
+		};
+
+		const c = (accountNow() == shown.accountId) ? S.AiConnect.getById(shown.id) : null;
+
+		return (c && !c.removed && (c.appHash == shown.appHash)) ? c : null;
+	};
+
+	/**
+	 * The record a sheet or a confirmation stood for has another key now (another window replaced it), is gone, or
+	 * another account signed in: that operation ends, and Manage shows the record as it is now (or the popup closes)
+	 */
+	private recordChanged (shown: Shown): void {
+		const notice: AiMsg = { error: { stage: 'validate', category: 'stale' } };
+		const now = (accountNow() == shown.accountId) ? S.AiConnect.getById(shown.id) : null;
+
+		this.pollToken++;
+		this.sheet = null;
+		if (!now || now.removed) {
+			this.attempt = null;
+			this.ui.toast(notice);
+			this.ui.close();
+			return;
+		};
+		this.openManage(now.id, notice);
+	};
+
+	/** "Copy key" / "Copy key again": the sheet's key from heart's list onto the clipboard through main (§3.4) */
+	async copyKey (): Promise<void> {
+		if (this.state.busy) {
+			return;
+		};
+
+		const c = this.sheetRecord();
+
+		if (!c?.appHash) {
+			if (this.sheet) {
+				this.recordChanged(this.sheet);
+			};
+			return;
+		};
+
+		const ok = await flow.copySecret({ template: KEY_PLACEHOLDER, appHash: c.appHash, connectionId: c.id });
+
+		if (this.disposed) {
+			return;
+		};
+		if (ok && this.state.bundle) {
+			this.set({ bundle: { ...this.state.bundle, copyFailed: false } });
+		};
+		this.ui.toast({ key: ok ? 'aiConnectKeyCopied' : 'aiConnectKeyCopyFailed' });
+	};
+
+	/** "Open again": the bundle copy in Claude (no new key; an installed extension is updated) */
+	async openBundle (): Promise<void> {
+		const ok = await flow.openBundle();
+
+		if (this.disposed) {
+			return;
+		};
+		if (this.state.bundle) {
+			this.set({ bundle: { ...this.state.bundle, openFailed: !ok } });
+		};
+		if (!ok) {
+			this.ui.toast({ key: 'aiConnectOpenAppFailed', args: [ this.appName ] });
+		};
+	};
+
+	/**
+	 * "Cancel setup" in the Finish view: Disconnect of the key the sheet showed (the key is revoked, main clears the
+	 * clipboard); another key there now is never removed: Manage shows the record instead (D1C-08)
+	 */
+	async cancelSetup (): Promise<void> {
+		const shown = this.sheet;
+		const c = this.sheetRecord();
+
+		if (shown && !c && !this.state.busy) {
+			this.recordChanged(shown);
+			return;
+		};
+		if (!c || this.state.busy) {
+			this.ui.close();
+			return;
+		};
+
+		this.pollToken++;
+		this.set({ busy: true });
+
+		const res = await flow.disconnect(c);
+
+		if (this.disposed) {
+			return;
+		};
+		this.set({ busy: false });
+		if ('error' in res) {
+			if (res.stale && shown) {
+				await flow.load();
+				if (!this.disposed) {
+					this.recordChanged(shown);
+				};
+				return;
+			};
+			this.set({ phase: 'error', errors: [ { error: res.error } ], canManual: false });
+			return;
+		};
+		this.ui.toast({ key: res.revoked ? 'aiConnectDisconnected' : 'aiConnectRevokeFailed', args: [ this.appName ] });
+		this.ui.close();
 	};
 
 	/**
@@ -1098,7 +1333,7 @@ export class AiConnectController {
 	};
 
 	/**
-	 * The settings-file route instead of the app's own install (Claude, LM Studio). The key: this flow's pending
+	 * The settings-file route instead of the app's own install (LM Studio's link). The key: this flow's pending
 	 * one with the approved input, or the record's delivered key with the record's own values (V15).
 	 */
 	useFileRoute (): void {
@@ -1146,29 +1381,31 @@ export class AiConnectController {
 		const base = (a?.kind == 'connect') ? a.input : null;
 		const p = manual.plan;
 
+		const command = this.commandSetup();
+
 		return {
 			appId: this.data.appId,
-			route: this.commandSetup() ? 'stdio' : (base?.route || rec?.route || this.route()),
+			route: command ? 'stdio' : (base?.route || rec?.route || this.route()),
 			tier: base?.tier || rec?.tier || form.tier,
 			recommendedTier: base?.recommendedTier || rec?.recommendedTier || this.recommended(),
 			grant: copyGrant(form.grant),
 			name: form.name.trim(),
 			expireAt: manual.expireAt,
 			method: this.method,
+			...(command ? { setup: 'command' as const } : {}),
 			existing: rec,
 			connectionId: rec?.id,
 			shown: p,
 			port: manual.planPort || undefined,
 			reread: (reconnect && !reconnect.keyGone && rec && (reconnect.connection.id == rec.id)) ? { hash: rec.appHash, grant: reconnect.grant, expireAt: reconnect.expireAt } : undefined,
-			// Claude Desktop: the Replace button stands for exactly the foreign item this plan shows (W8)
-			replace: ((this.data.appId == 'claude-desktop') && (p?.existing == 'foreign') && p.replace) ? { ...p.replace } : undefined,
 		};
 	};
 
 	/**
-	 * The manual view (§5.6). Claude Desktop and Other app's Command setup store the key through Anytype's
-	 * connector and never show it (V6); other apps show the key this flow holds (pending → "I've updated"), the
-	 * record's key from Manage (done), or none until Create key.
+	 * The manual view (§5.6): the steps with the key this flow holds (pending → "I've updated"), the record's
+	 * key from Manage (done), or none until Create key — always masked, by hash only: opening the view looks up
+	 * no key (tokens-plan §3.2). Claude Desktop by hand is its settings file's command entry, with the key in
+	 * the entry's `env` (`setup: 'command'`).
 	 * `preset`: the plan a key was just minted for (a manual reconnect), shown as it is.
 	 */
 	async enterManual (mode: 'create' | 'confirm' | 'done', record?: AiConnection | null, preset?: { plan: AiPlan; port: number } | null, notice: AiMsg | null = null): Promise<void> {
@@ -1198,13 +1435,15 @@ export class AiConnectController {
 
 		const rec = (record !== undefined) ? record : (this.connection() || this.existingRecord());
 
-		// A Command connection stays one: its setup text and its reconnect are asked with its method
-		if (rec?.method == 'command') {
+		// A Command connection stays one: its setup text and its reconnect are asked with its method. Claude
+		// Desktop by hand is always its settings file's entry (the config route's steps)
+		if (flow.isCommand(rec) && (this.data.appId == 'other')) {
 			this.method = 'command';
 		};
+		if (this.data.appId == 'claude-desktop') {
+			this.method = 'config';
+		};
 
-		// No key is ever shown for these: Anytype's connector holds it
-		const isClaude = (this.data.appId == 'claude-desktop') || this.commandSetup();
 		// The expiry an attempt resolved stays while the choice is the one submitted (its pending key fits as it
 		// is); a choice edited since is resolved from the latest form (V15, X1)
 		const expiry = (): number => {
@@ -1217,7 +1456,7 @@ export class AiConnectController {
 		let held = flow.heldKey();
 
 		// A key minted with other values than the sheet shows now is released, never shown (X1)
-		if (!isClaude && held && !held.committed && (release || !flow.pendingFits({ name: this.state.form.name.trim(), grant: this.state.form.grant, expireAt: expiry() }))) {
+		if (held && !held.committed && (release || !flow.pendingFits({ name: this.state.form.name.trim(), grant: this.state.form.grant, expireAt: expiry() }))) {
 			await flow.releasePending();
 			if (this.disposed) {
 				return;
@@ -1229,34 +1468,26 @@ export class AiConnectController {
 		const expireAt = expiry();
 
 		let next: AiManualMode = mode;
-		let key = held?.key || '';
+		let keyHash = held?.appHash || '';
 
-		if (isClaude) {
-			next = (held?.committed || (mode == 'done')) ? 'done' : 'create';
-			key = '';
-		} else
 		if (mode == 'create') {
 			next = held ? (held.committed ? 'done' : 'confirm') : 'create';
 		};
-		if (!isClaude && this.state.lastError?.removedOld && rec && held && !held.committed) {
+		// The record's own key (Manage ▸ Set up manually): by its hash, nothing is looked up now
+		if ((next == 'done') && rec && !keyHash) {
+			keyHash = rec.appHash || '';
+		};
+		if (this.state.lastError?.removedOld && rec && held && !held.committed) {
 			next = 'restoreOld';
 		};
 
 		this.set({
 			view: 'manual', busy: false,
-			manual: { ...EMPTY_MANUAL, mode: next, key, existing: rec, loading: !preset, expireAt, notice, setup: this.commandSetup() ? 'command' : 'url', setups: this.state.manual.setups },
+			manual: {
+				...EMPTY_MANUAL, mode: next, keyHash, oldHash: (next == 'restoreOld') ? (rec?.appHash || '') : '', existing: rec, loading: !preset, expireAt, notice,
+				setup: this.commandSetup() ? 'command' : 'url', setups: this.state.manual.setups,
+			},
 		});
-
-		if (!isClaude && (next == 'done') && rec && !key) {
-			const found = await flow.keyFor(rec);
-
-			this.setManual({ key: found || '' });
-		};
-		if (next == 'restoreOld') {
-			const old = await flow.keyFor(rec);
-
-			this.setManual({ oldKey: old || '' });
-		};
 
 		if (preset) {
 			this.manualSeq++;
@@ -1270,7 +1501,7 @@ export class AiConnectController {
 	async loadManualPlan (): Promise<void> {
 		const { manual } = this.state;
 		const rec = manual.existing;
-		const useRecord = !!rec && ((manual.mode == 'done') || (rec.method == 'manual') || (rec.method == 'command'));
+		const useRecord = !!rec && ((manual.mode == 'done') || (rec.method == 'manual'));
 		const seq = ++this.manualSeq;
 
 		this.setManual({ loading: true });
@@ -1302,30 +1533,31 @@ export class AiConnectController {
 		const { manual } = this.state;
 		const usable = flow.manualUsable(p);
 		let mode = manual.mode;
-		let key = manual.key;
+		let keyHash = manual.keyHash;
 
 		if (((mode == 'create') || (mode == 'confirm')) && !usable) {
 			mode = 'prerequisite';
-			key = '';
+			keyHash = '';
 		} else
 		if ((mode == 'prerequisite') && usable) {
 			mode = 'create';
 		};
-		this.setManual({ loading: false, plan: p, planPort: port, steps: withFinishingStep(p, this.restartName(p.nextStep)), mode, key, setups: p.setups || [] });
+		this.setManual({ loading: false, plan: p, planPort: port, steps: withFinishingStep(p, this.restartName(p.nextStep)), mode, keyHash, setups: p.setups || [] });
 	};
 
-	/** Other app's Command setup is the one chosen (or the record's) */
+	/**
+	 * The command setup (the app starts Anytype's connector with the key in its `env`): Other app's Command, or
+	 * Claude Desktop by hand (its settings file's entry)
+	 */
 	private commandSetup (): boolean {
-		return this.method == 'command';
+		return (this.method == 'command') || ((this.data.appId == 'claude-desktop') && (this.method == 'config'));
 	};
 
 	/**
 	 * Other app, before a connection exists: "URL and key" (the key goes into the app's settings) or "Command"
-	 * (the key stays in a private file in the Anytype folder; the app starts Anytype's connector). Nothing is
-	 * minted by the choice.
+	 * (the app starts Anytype's connector, the key in the entry's `env`). Nothing is minted by the choice.
 	 */
-	async setSetup (setup: 'url' | 'command'): Promise<void> {
-		// (a waiting Create key keeps its setup: mode 'waiting' is not in the list below)
+	async setSetup (setup: AiSetup): Promise<void> {
 		const { manual } = this.state;
 
 		if (this.state.busy || (this.data.appId != 'other') || manual.existing || ![ 'create', 'prerequisite' ].includes(manual.mode) || !manual.setups.includes(setup) || (manual.setup == setup)) {
@@ -1400,14 +1632,13 @@ export class AiConnectController {
 			this.prefillReconnect({ ...r, grant: access.grant, expireAt: access.present ? access.expireAt : r.expireAt, keyGone: !access.present }, null);
 		};
 		this.setManual({
-			mode: 'create', key: '', expireAt: access.present ? access.expireAt : this.state.manual.expireAt,
+			mode: 'create', keyHash: '', expireAt: access.present ? access.expireAt : this.state.manual.expireAt,
 			notice: { key: access.present ? 'aiConnectManualGrantChanged' : 'aiConnectManualReconnectConfirm' },
 		});
 	};
 
 	async createKey (): Promise<void> {
-		// Q16: an unconfirmed Create key is still being settled — never a second key meanwhile
-		if (this.state.busy || !isValidLinkGrant(this.state.form.grant) || (this.state.manual.mode == 'waiting')) {
+		if (this.state.busy || !isValidLinkGrant(this.state.form.grant)) {
 			return;
 		};
 		this.set({ busy: true });
@@ -1429,11 +1660,7 @@ export class AiConnectController {
 			};
 			case 'pending': {
 				this.applyManualPlan(res.plan, res.port);
-				this.setManual({ key: flow.heldKey()?.key || '', mode: 'confirm' });
-				break;
-			};
-			case 'installExtension': {
-				this.setManual({ notice: { key: 'aiConnectManualInstallFirst' } });
+				this.setManual({ keyHash: flow.heldKey()?.appHash || '', mode: 'confirm' });
 				break;
 			};
 			case 'grantChanged': {
@@ -1445,24 +1672,13 @@ export class AiConnectController {
 				break;
 			};
 			case 'ok': {
-				const command = this.commandSetup();
-				const isClaude = (this.data.appId == 'claude-desktop') || command;
-				const created: AiMsg = command ? { key: 'aiConnectManualCommandCreated' } : { key: 'aiConnectManualKeyCreated' };
-
 				this.set({ connectionId: res.connection.id, unsaved: !res.recordSaved });
-				// Other app: the fresh plan's steps, with the port the record got (W13); Command: the setup text of the new connection
+				// Other app: the fresh plan's steps, with the port the record got (W13)
 				this.applyManualPlan(res.plan, res.port);
 				this.setManual({
-					key: isClaude ? '' : (flow.heldKey()?.key || ''), mode: 'done', probeFailed: !res.probe.ok, existing: command ? res.connection : this.state.manual.existing,
-					notice: (res.fileMode == 'loose') ? { key: 'aiConnectManualFileLoose', args: [ this.appName ] } : (isClaude ? created : null),
+					keyHash: res.connection.appHash, mode: 'done', probeFailed: !res.probe.ok, existing: this.commandSetup() ? res.connection : this.state.manual.existing,
+					notice: (res.fileMode == 'loose') ? { key: 'aiConnectManualFileLoose', args: [ this.appName ] } : null,
 				});
-				break;
-			};
-			case 'unconfirmed': {
-				this.followed = flow.heldKey()?.appHash || '';
-				this.set({ connectionId: res.connection.id });
-				this.setManual({ mode: 'waiting', key: '', notice: { key: 'aiConnectErrorStoreUnconfirmed' } });
-				this.pollManualUnconfirmed();
 				break;
 			};
 			case 'error': {
@@ -1473,50 +1689,26 @@ export class AiConnectController {
 	};
 
 	/**
-	 * Q16: a manual Create key whose receipt was lost. The check settles it: promoted → the record's own setup
-	 * (rebuilt from the record, as Manage does); retired or still unknown → the sheet says so, and Create is
-	 * offered again only once the candidate is gone.
+	 * Copy of a step (or the key row) in the manual view: a snippet that needs the key goes through main with the
+	 * key fetched for that call (§3.4); one without it is plain text. `which`: the new key, or the previous one
+	 * (restoreOld)
 	 */
-	private async pollManualUnconfirmed (): Promise<void> {
-		const token = ++this.pollToken;
-		const id = this.state.connectionId;
-		const followed = this.followed;
-		const res = await flow.pollUntil(async () => {
-			if ((await flow.check('unconfirmed')) != 'ok') {
-				return false;
-			};
+	async copyStep (template: string, which: 'new' | 'old' = 'new'): Promise<boolean> {
+		const { manual } = this.state;
+		const appHash = (which == 'old') ? manual.oldHash : manual.keyHash;
 
-			const c = S.AiConnect.getById(id);
-			return !c || !this.waiting(c);
-		}, this.alivePoll(token));
-
-		if (this.alivePoll(token)() || (this.state.view != 'manual')) {
-			return;
-		};
-		if (res != 'done') {
-			// Still unknown: no second key; Check again asks once more
-			this.setManual({ mode: 'waiting', notice: { key: 'aiConnectErrorStoreUnconfirmed' } });
-			this.set({ pollStopped: true });
-			return;
+		if (!appHash || !this.keyLive()) {
+			return false;
 		};
 
-		const c = S.AiConnect.getById(id);
+		this.copied.add(appHash);
 
-		if (c && !c.removed && (!followed || (c.appHash == followed))) {
-			await this.enterManual('done', c, null, { key: (c.method == 'command') ? 'aiConnectManualCommandCreated' : 'aiConnectManualKeyCreated' });
-			return;
-		};
-		// The key was never stored (main queued it for revocation): back to Create
-		this.set({ connectionId: '' });
-		this.setManual({ mode: 'create', notice: null, error: { error: { stage: 'write', category: 'unknown' } } });
-	};
+		const ok = await flow.copySecret({ template, appHash });
 
-	/** Check again in the manual view while a Create key is unconfirmed */
-	recheckUnconfirmed (): void {
-		if ((this.state.manual.mode == 'waiting') && !this.state.busy) {
-			this.set({ pollStopped: false });
-			this.pollManualUnconfirmed();
+		if (!this.disposed) {
+			this.ui.toast({ key: ok ? 'aiConnectManualCopied' : 'aiConnectKeyCopyFailed' });
 		};
+		return ok;
 	};
 
 	/** "I've updated <App>": records the key with the previewed file (or none), then the old key goes (V7) */
@@ -1568,7 +1760,7 @@ export class AiConnectController {
 			};
 			if (res.error.category == 'stale') {
 				// The key was released: never shown again; the record as it is now decides (W7)
-				this.setManual({ key: '', mode: 'create' });
+				this.setManual({ keyHash: '', mode: 'create' });
 				this.afterStale();
 				return;
 			};
@@ -1621,8 +1813,8 @@ export class AiConnectController {
 	// ---------------------- manage ---------------------- //
 
 	/**
-	 * heart's access for the key now: a confirmed absence is shown as Access ended; a failed lookup only says
-	 * so, with Try again (V22, W2)
+	 * Manage shows the record's access as main's last check reconciled it: opening it looks up no key (ListApps
+	 * returns every key, D1S-15). An action that needs heart's access now (Replace, Reconnect) reads it then
 	 */
 	loadManage (): Promise<void> {
 		const run = this.loadManageIn();
@@ -1643,20 +1835,14 @@ export class AiConnectController {
 			return;
 		};
 
-		const [ access, planned ] = await Promise.all([
-			flow.liveAccess(c),
-			// The plan Reconnect delivers with (Claude's config route keeps its method)
-			flow.plan({ appId: c.appId, route: c.route, tier: c.tier, connectionId: c.id, method: flow.planMethodOf(c) }),
-		]);
+		// The plan Reconnect delivers with (Claude's config route keeps its method)
+		const planned = await flow.plan({ appId: c.appId, route: c.route, tier: c.tier, connectionId: c.id, method: flow.planMethodOf(c) });
+		const now = this.connection();
 
-		if (this.disposed || (this.connection()?.id != c.id)) {
+		if (this.disposed || (now?.id != c.id)) {
 			return;
 		};
-		this.set({
-			access,
-			override: (access.ok && !access.present && !c.removed) ? 'accessEnded' : null,
-			plan: ('error' in planned) ? this.state.plan : planned.plan,
-		});
+		this.set({ access: recordAccess(now), override: null, plan: ('error' in planned) ? this.state.plan : planned.plan });
 	};
 
 	/** Try again after a failed key lookup */
@@ -1666,20 +1852,27 @@ export class AiConnectController {
 	};
 
 	/**
-	 * The key's access as heart has it, for Replace and Reconnect: waits for a lookup in flight; a failed one
-	 * is no answer (Try again), never "the key is gone" (W2)
+	 * The key's access as heart has it now, for Replace: read on the action (D1S-15), after Manage's load in
+	 * flight; a failed lookup is no answer (Try again), never "the key is gone" (W2)
 	 */
-	private async knownAccess (): Promise<flow.LiveAccess | null> {
-		if (!this.state.access || this.manageLoad) {
-			await (this.manageLoad || this.loadManage());
+	private async knownAccess (c: AiConnection): Promise<flow.LiveAccess | null> {
+		if (this.manageLoad) {
+			await this.manageLoad;
 		};
 		if (this.disposed) {
 			return null;
 		};
 
-		const access = this.state.access;
+		const access = await flow.liveAccess(c);
 
-		return access?.ok ? access : null;
+		if (this.disposed) {
+			return null;
+		};
+		if (!access.ok) {
+			this.set({ access });
+			return null;
+		};
+		return access;
 	};
 
 	async saveAccess (grant: LinkAppGrant): Promise<void> {
@@ -1732,12 +1925,31 @@ export class AiConnectController {
 	/**
 	 * Reconnect from Manage. A record whose card now reads another place (a moved Codex home, R3-7, also a
 	 * manual one, W10): an owned record there is opened as it is (no key, V4); otherwise the card's sheet
-	 * connects that place. Otherwise only with the key's access known (W2).
+	 * connects that place. Otherwise the access Manage shows goes with it, and the flow compares it with heart's
+	 * before it mints (V2). `confirmed`: Claude's extension, the record and key its confirmation showed (D1C-08).
 	 */
-	async reconnect (opts: { tier?: AiTier } = {}): Promise<void> {
+	async reconnect (opts: { tier?: AiTier; confirmed?: Shown } = {}): Promise<void> {
+		if (this.state.busy) {
+			return;
+		};
+		if (this.manageLoad) {
+			await this.manageLoad;
+			if (this.disposed) {
+				return;
+			};
+		};
+
 		const c = this.connection();
 
 		if (!c || this.state.busy) {
+			return;
+		};
+		// The confirmation stood for this record with this key: another one there now is never retired (D1C-08)
+		if (opts.confirmed && ((accountNow() != opts.confirmed.accountId) || (c.id != opts.confirmed.id) || (c.appHash != opts.confirmed.appHash))) {
+			await flow.load();
+			if (!this.disposed) {
+				this.recordChanged(opts.confirmed);
+			};
 			return;
 		};
 
@@ -1755,12 +1967,9 @@ export class AiConnectController {
 			return;
 		};
 
-		const access = await this.knownAccess();
-
-		if (!access || this.disposed) {
-			return;
-		};
-
+		// The access Manage shows (the record's, as reconciled, D1S-15): the flow reads heart's right before it mints,
+		// and another one goes back to the form (grantChanged)
+		const access = recordAccess(c);
 		const displayed = this.state.plan;
 
 		// Its file moved under the same target id (an LM Studio or Copilot home): the new place on the sheet,
@@ -1769,7 +1978,7 @@ export class AiConnectController {
 			const present = access.present;
 
 			this.attempt = null;
-			this.prefillReconnect({ connection: c, grant: present ? access.grant : c.grant, expireAt: present ? access.expireAt : c.expireAt, keyGone: !present }, present ? null : 'reconnect');
+			this.prefillReconnect({ connection: c, grant: c.grant, expireAt: c.expireAt, keyGone: !present }, present ? null : 'reconnect');
 			this.backToForm(displayed, []);
 			this.set({ movedTo: displayed.displayTarget || displayed.targetPath, movedFrom: c.displayTarget || c.targetPath });
 			return;
@@ -1778,15 +1987,15 @@ export class AiConnectController {
 		const shown = access.present ? { grant: access.grant, expireAt: access.expireAt } : undefined;
 
 		// The plan Manage showed: the delivery goes only where it said (W4 for manual records, X3 for the rest)
-		this.attempt = { kind: 'reconnect', connection: c, opts: { tier: opts.tier, shown, method: (c.method == 'command') ? 'command' : this.method, plan: displayed } };
+		this.attempt = { kind: 'reconnect', connection: c, opts: { tier: opts.tier, shown, method: flow.planMethodOf(c) || this.method, plan: displayed } };
 		track.start(this.data.appId, displayed?.route || c.route);
 		this.deliver({});
 	};
 
 	/**
 	 * Replace from Manage (conflict): the fresh preview first, with this record's values; the user then agrees to
-	 * replace exactly the entry shown there (V3). Only with the key's access known: the revoked-key form only
-	 * after a successful lookup found it gone (W2).
+	 * replace exactly the entry shown there (V3). Only with heart's access for the key, read on the click: the
+	 * revoked-key form only after a successful lookup found it gone (W2).
 	 */
 	async replace (): Promise<void> {
 		const c = this.connection();
@@ -1795,7 +2004,7 @@ export class AiConnectController {
 			return;
 		};
 
-		const access = await this.knownAccess();
+		const access = await this.knownAccess(c);
 
 		if (!access || this.disposed) {
 			return;

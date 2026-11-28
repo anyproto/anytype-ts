@@ -2,8 +2,9 @@
  * S12 (Windows only): the REAL forwarder's store-folder rule against folders the desktop created — the check
  * Q17's unit test fakes. A scratch profile whose access list hands `Users` an inheritable read entry (as a
  * home outside `C:\Users` often does); the real Node env runs `ensureInstalled` (`.anytype` and `bin` through
- * `protectNewDir`, then S5's "who may replace the copy" query), and the forwarder's own `key set` / `key check`
- * must accept the store. Without the protected list every key verb there answers `store: denied` (heart N9).
+ * `protectNewDir`, then S5's "who may replace the copy" query), writes the endpoint file (`syncEndpoint`), and
+ * the forwarder's own `endpoint` verb, run on the stable copy, must accept both. Without the protected list it
+ * answers `denied` (heart N9).
  *
  * Opt-in: runs on win32 with ANYTYPE_MCP_BIN set (CI: the packaged exe, right after it was verified). Needs no
  * heart, opens no port, and touches nothing outside its scratch folder.
@@ -13,14 +14,13 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { afterAll, describe, expect, test } from 'vitest';
-import { bundled, ensureInstalled, privateOnWindows, stableDir } from './forwarder';
-import { keyCheck, keySet } from './keyStore';
+import { bundled, endpointVerdict, ensureInstalled, privateOnWindows, stableDir } from './forwarder';
+import { syncEndpoint } from './endpoint';
 import { nodeEnv, tempDir } from './testEnv';
 
 const BIN = process.env.ANYTYPE_MCP_BIN || '';
 const enabled = (process.platform == 'win32') && !!BIN && fs.existsSync(BIN);
 const USERS = '*S-1-5-32-545';
-const ID = 'other-0a1b2c3d';
 
 let dir = '';
 
@@ -31,7 +31,7 @@ afterAll(() => {
 });
 
 describe.skipIf(!enabled)('S12: the real anytype-mcp on Windows, in folders the desktop created', () => {
-	test('S12: `.anytype` and `bin` get the protected list, the stable copy passes the ACL check, and `key set` / `key check` answer store: ok', async () => {
+	test('D1-05 / S12: `.anytype` and `bin` get the protected list, the stable copy passes the ACL check, and the real forwarder accepts the endpoint file the desktop wrote', async () => {
 		dir = tempDir('aic-win-');
 
 		const home = path.join(dir, 'home');
@@ -76,26 +76,44 @@ describe.skipIf(!enabled)('S12: the real anytype-mcp on Windows, in folders the 
 			expect(list).not.toMatch(/BUILTIN\\Users|S-1-5-32-545/i);
 		};
 
-		// S5 on the real ACLs: the folder and the copy pass; a copy that Users may modify does not
-		expect(await privateOnWindows(env, bin, copy)).toBe(true);
+		// S5 on the real ACLs: the folders and the copy pass; a copy that Users may modify does not
+		expect(await privateOnWindows(env, [ path.join(home, '.anytype'), bin, copy ])).toBe(true);
 
 		const loose = path.join(dir, 'loose');
 
 		fs.mkdirSync(loose);
 		fs.copyFileSync(exe, path.join(loose, 'anytype-mcp.exe'));
 		execFileSync(icacls, [ loose, '/grant', `${USERS}:(OI)(CI)M` ], { stdio: 'pipe' });
-		expect(await privateOnWindows(env, loose, path.join(loose, 'anytype-mcp.exe'))).toBe(false);
+		expect(await privateOnWindows(env, [ loose, path.join(loose, 'anytype-mcp.exe') ])).toBe(false);
 
-		// heart's own folder rule, with the packaged exe: the store is usable
-		const key = `SENTINEL-win-${crypto.randomBytes(12).toString('hex')}`;
-		const set = await keySet(env, ID, 'absent', { key, account: 'acc-windows-test', port: 39999, tier: 'large' });
+		// D1R2-E (D1B-06): a private `bin` and exe under a `.anytype` that Users may change, then under a home that lets
+		// Users replace its children: Anytype refuses the path before it runs either verb
+		const ran: string[] = [];
+		const run = env.run;
 
-		expect(set).toMatchObject({ ok: true, rev: 1 });
-		expect(await keyCheck(env, ID)).toMatchObject({ present: true, rev: 1, account: 'acc-windows-test', port: 39999, tier: 'large' });
+		env.run = (file, args, opts) => {
+			ran.push(file);
+			return run(file, args, opts);
+		};
 
-		const raw = await env.run(exe, [ 'key', 'check', '--connection', ID ], { timeout: 40000, env: { HOME: home, USERPROFILE: home } });
+		const runs = (): number => ran.filter(f => f == copy).length;
+		const before = runs();
+		const anytype = path.join(home, '.anytype');
 
-		expect(raw.code).toBe(0);
-		expect(JSON.parse(String(raw.stdout).trim())).toMatchObject({ present: true, store: 'ok' });
+		execFileSync(icacls, [ anytype, '/grant', `${USERS}:(CI)M` ], { stdio: 'pipe' });
+		execFileSync(icacls, [ bin, '/inheritance:r' ], { stdio: 'pipe' });
+		expect(await privateOnWindows(env, [ bin, copy ])).toBe(true);
+		expect(await ensureInstalled(env)).toMatchObject({ ok: false, error: { category: 'installFailed' } });
+		execFileSync(icacls, [ anytype, '/remove:g', USERS ], { stdio: 'pipe' });
+		execFileSync(icacls, [ home, '/grant', `${USERS}:(DC)` ], { stdio: 'pipe' });
+		expect(await ensureInstalled(env)).toMatchObject({ ok: false, error: { category: 'installFailed' } });
+		execFileSync(icacls, [ home, '/remove:g', USERS ], { stdio: 'pipe' });
+		expect(runs()).toBe(before);
+
+		// heart's own folder rule, with the packaged exe: the endpoint the desktop writes is found, through the stable copy
+		const state = { localApi: { enabled: true, port: 39999 }, bind: { addr: '127.0.0.1:39999', success: true }, account: true };
+
+		expect(await syncEndpoint(env, state, null)).toBe(39999);
+		expect(await endpointVerdict(env, copy)).toEqual({ ok: true, port: 39999 });
 	}, 180000);
 });

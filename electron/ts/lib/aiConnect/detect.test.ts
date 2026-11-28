@@ -500,7 +500,7 @@ describe('detectAll', () => {
 		expect(items.cursor).toMatchObject({ targetId: 'cursor', targetPaths: [ '/Users/me/.cursor/mcp.json' ] });
 		expect(items.vscode).toMatchObject({ targetId: 'copilot', targetPaths: [ '/Users/me/cop/mcp-config.json' ] });
 		expect(items['claude-code']).toMatchObject({ targetId: 'claude-code', targetPaths: [ '/Users/me/cc/settings.json', '/Users/me/cc/.claude.json' ] });
-		expect(items['claude-desktop']).toMatchObject({ targetId: 'claude-desktop', targetPaths: [ '/Users/me/Library/Application Support/Claude/claude_desktop_config.json', '/Users/me/.anytype/ai-connect/items-dev/claude-desktop.item' ] });
+		expect(items['claude-desktop']).toMatchObject({ targetId: 'claude-desktop', targetPaths: [ '/Users/me/Library/Application Support/Claude/claude_desktop_config.json' ] });
 		expect(items.lmstudio).toMatchObject({ targetId: 'lmstudio', targetPaths: [ '/Users/me/.lmstudio/mcp.json' ] });
 		expect(items.other).toEqual({ appId: 'other', installed: false, targetPaths: [], canRestart: false });
 	});

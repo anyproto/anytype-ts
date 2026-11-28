@@ -51,13 +51,24 @@ export const PLAN_CLAUDE_CODE_SANDBOX = plan({
 	],
 });
 
+/** The command entry with the key in its `env` (Other app's Command, Claude Desktop by hand); the screen masks <KEY> */
+const COMMAND_ENTRY = '{\n  "mcpServers": {\n    "anytype": {\n      "command": "/Users/me/.anytype/bin/anytype-mcp",\n      "args": [\n        "serve",\n        "--tier",\n        "full"\n      ],\n      "env": {\n        "ANYTYPE_API_KEY": "<KEY>"\n      }\n    }\n  }\n}';
+
+/** Claude's extension: Full only; the key goes in through Claude's own install dialog */
 export const PLAN_CLAUDE_DESKTOP = plan({
-	appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', method: 'package', nextStep: 'confirmInApp', displayTarget: '~/.anytype/ai-connect/items/claude-desktop.item',
+	appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', tier: 'full', method: 'package', nextStep: 'confirmInApp', displayTarget: '',
 	sentenceKey: 'aiConnectPlanPackage', bundleSigned: false,
 	instructions: { confirmInApp: 'aiConnectStepConfirm', stalled: 'aiConnectHintClaudeDesktop', restart: 'aiConnectStepRestart', toggle: 'aiConnectStepEnableExtension' },
+	steps: [],
+});
+
+/** Claude Desktop by hand: its settings file's command entry, the key in `env` */
+export const PLAN_CLAUDE_DESKTOP_MANUAL = plan({
+	appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', tier: 'full', method: 'config', nextStep: 'restart', displayTarget: '~/Library/Application Support/Claude/claude_desktop_config.json',
+	sentenceKey: 'aiConnectPlanConfigRestart', needsKey: true, instructions: { restart: 'aiConnectStepRestart' },
 	steps: [
-		{ textKey: 'aiConnectManualPrepare' },
-		{ textKey: 'aiConnectManualInstallFile', path: '/Users/me/.anytype/ai-connect/Anytype.mcpb' },
+		{ textKey: 'aiConnectManualMerge', snippet: COMMAND_ENTRY, lang: 'json', path: '/Users/me/Library/Application Support/Claude/claude_desktop_config.json' },
+		{ textKey: 'aiConnectManualKeepPrivate' },
 		{ textKey: 'aiConnectStepRestartSelf', args: [ 'Claude' ] },
 	],
 });
@@ -72,21 +83,16 @@ export const PLAN_CHATGPT = plan({
 	instructions: { restart: 'aiConnectStepRestart', newSession: 'aiConnectStepNewSession', added: 'aiConnectChatgptModes' },
 });
 
-/** Other app's Command setup, before the connection exists (the choice is offered) and after Create key (the setup text, no key in it) */
+/** Other app's Command setup: a manual plan whose entry carries the key in its `env` (masked on screen) */
 export const PLAN_OTHER_COMMAND = plan({
-	appId: 'other', targetId: null, route: 'stdio', method: 'command', nextStep: 'none', displayTarget: '', canApply: true, sentenceKey: 'aiConnectPlanCommand', instructions: {},
-	targetPath: undefined, setups: [ 'url', 'command' ],
-	steps: [ { textKey: 'aiConnectManualCommandPrepare' } ],
+	appId: 'other', targetId: null, route: 'stdio', method: 'manual', nextStep: 'none', displayTarget: '', canApply: false, sentenceKey: 'aiConnectPlanManual', instructions: {},
+	targetPath: undefined, setups: [ 'url', 'command' ], needsKey: true,
+	steps: [
+		{ textKey: 'aiConnectManualCommandEntry', snippet: COMMAND_ENTRY, lang: 'json' },
+		{ textKey: 'aiConnectManualKeepPrivate' },
+		{ textKey: 'aiConnectManualCommandRestart' },
+	],
 });
-
-export const STEPS_OTHER_COMMAND_DONE: I.AiStep[] = [
-	{ textKey: 'aiConnectManualCommandPrepare' },
-	{
-		textKey: 'aiConnectManualCommandAdd', lang: 'json',
-		snippet: '{\n  "mcpServers": {\n    "anytype": {\n      "command": "/Users/me/.anytype/bin/anytype-mcp",\n      "args": [\n        "serve",\n        "--connection",\n        "other-1a2b3c4d"\n      ]\n    }\n  }\n}',
-	},
-	{ textKey: 'aiConnectManualCommandRestart' },
-];
 
 export const PLAN_OTHER = plan({
 	appId: 'other', targetId: null, method: 'manual', nextStep: 'none', displayTarget: '', canApply: true, sentenceKey: 'aiConnectPlanManual', instructions: {},

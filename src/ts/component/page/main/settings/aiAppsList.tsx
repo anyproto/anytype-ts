@@ -85,7 +85,7 @@ const AiAppsList = (props: AiAppsListProps) => {
 					{status ? (
 						<div className="status">
 							{status.dot ? <span className={dotCn.join(' ')} aria-hidden="true" /> : null}
-							<span>{t(status.key, status.args)}</span>
+							<span>{[ t(status.key, status.args), (status.suffix ? translate(status.suffix) : '') ].filter(it => it).join(' · ')}</span>
 						</div>
 					) : null}
 					{row.alsoIn.length ? <div className="status">{t('aiAppsAlsoIn', [ row.alsoIn.join(', ') ])}</div> : null}

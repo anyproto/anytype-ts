@@ -110,6 +110,8 @@ export interface Env {
 	 */
 	writeFile (p: string, data: string | Buffer, mode: number): TempFile;
 	rename (from: string, to: string): void;
+	/** POSIX: fsync of a directory (a rename in it is durable); no-op on Windows; throws on failure */
+	fsyncDir (p: string): void;
 	chmod (p: string, mode: number): void;
 	/** POSIX: the kernel would run this file for the user (`access(X_OK)`: false on a `noexec` mount) */
 	canExecute (p: string): boolean;
@@ -128,6 +130,11 @@ export interface Env {
 	openExternal (url: string): Promise<boolean>;
 	protocolHandler (scheme: string): Promise<{ name: string; path: string } | null>;
 	showItemInFolder (p: string): void;
+	/** The system clipboard's plain text (main writes keys there only through clipboard.ts) */
+	clipboardRead (): string;
+	clipboardWrite (text: string): void;
+	/** Runs `fn` after `ms` (the clipboard's deadline); returns a cancel function */
+	setTimer (fn: () => void, ms: number): () => void;
 	now (): number;
 	sleep (ms: number): Promise<void>;
 	/**
@@ -194,29 +201,30 @@ export interface Ctx {
 	/** Every card's detection (a sibling card can decide a step, e.g. ChatGPT for the Codex file) */
 	detections: Detected[];
 	appId: AiAppId;
-	/** The account the call is for ('' in tests that don't care): an item of another account is never ours */
+	/** The account the call is for ('' in tests that don't care) */
 	accountId?: string;
 	targetId: AiTargetId;
 	/**
-	 * Bookkeeping before an item changes (§2.9): `set` saves the new key as a candidate, `retarget` the
-	 * intended port, tier and revision. False: the registry couldn't be saved, so the verb must not run.
+	 * Bookkeeping before a key goes into a file (Claude's config route): `set` saves the new key as a candidate
+	 * with the digest of the entry about to be written. False: the registry couldn't be saved, so nothing is written.
 	 */
 	journal?: {
-		set (intent: {
-			method: AiMethod; route: AiRoute; targetPath: string; nextStep: AiNextStep;
-			configEntry?: { command: string; args: string[]; env?: Record<string, string> }; entryDigest?: string; configPath?: string;
-		}): boolean;
-		retarget (intent: { port: number; tier: AiTier; rev: number }): boolean;
+		set (intent: { method: AiMethod; route: AiRoute; targetPath: string; nextStep: AiNextStep; entryDigest?: string; configPath?: string }): boolean;
 	};
+	/**
+	 * Disconnect, once the adapter knows the entry is ours and before it deletes it: the record's hashes are saved
+	 * in `revokePending` (§3.2 revocation order). False: not saved, so nothing is deleted.
+	 */
+	queue?: () => boolean;
+	/** Brings the endpoint file up to date (the service's syncEndpoint); every stdio preflight calls it first */
+	syncEndpoint?: () => Promise<void>;
 	port: number;
 	tier: AiTier;
 	route: AiRoute;
 	/** Apply only; '' elsewhere. `port` is 0 in a reconcile-only check (the API isn't listening): no heals */
 	key: string;
-	/** Ask for Claude's config route explicitly (`config`), or for Other app's Command setup (`command`) */
-	method?: 'config' | 'command';
-	/** Manual setup: prepare Anytype's side, open nothing */
-	manual?: boolean;
+	/** Ask for Claude's extension (`package`) or a settings-file route (`config`), or Other app's Command setup (`command`, plans only) */
+	method?: 'package' | 'config' | 'command';
 	/** Anytype may quit the app (plan.preflight 'quitApp') */
 	allowQuit?: boolean;
 	/** The user said they quit the app themselves (plan.preflight 'quitAppSelf'): an unknown running state may proceed */
@@ -232,8 +240,8 @@ export interface Ctx {
 export type ApplyOutcome =
 	| {
 		ok: true; method: AiMethod; nextStep: AiNextStep; targetPath: string; observedInstalled: boolean; createdDirs: string[];
-		configEntry?: { command: string; args: string[]; env?: Record<string, string> }; entryDigest?: string; openFailed?: boolean;
-		/** Claude Desktop: the canonical config file the keyless entry went into (cleanup stays bound to it) */
+		entryDigest?: string; openFailed?: boolean;
+		/** Claude Desktop: the canonical config file the entry went into (cleanup stays bound to it) */
 		configPath?: string;
 		/** A CLI timed out and its end couldn't be confirmed: the key may or may not be installed */
 		unconfirmed?: boolean;
@@ -241,12 +249,19 @@ export type ApplyOutcome =
 		running?: boolean;
 		/** The route really used when the adapter switched it (Claude Code with its sandbox on → http) */
 		route?: AiRoute;
-		/** The item's revision after `key set` */
-		itemRev?: number;
-		/** Manual steps the user still has to do (Other app's Command: the snippet with the connection's id) */
+		/** Manual steps the user still has to do */
 		steps?: AiStep[];
+		/**
+		 * Claude's extension (§3.3): the service saves the record first (the commit), copies the key, and only then
+		 * runs this (opens the bundle, or nothing when `configure`); false: it couldn't be opened
+		 */
+		deliver?: () => Promise<boolean>;
+		/** With `deliver`: the extension is installed and ours, the user pastes the key in Claude's Configure */
+		configure?: boolean;
+		/** With `deliver`: Claude's install identity at apply time (the latch starts from it) */
+		install?: { version: string; installedAt: string } | null;
 	}
-	| { ok: false; needs: 'quitApp' | 'quitAppSelf' | 'installExtension'; openFailed?: boolean }
+	| { ok: false; needs: 'quitApp' | 'quitAppSelf' }
 	| { ok: false; error: AiError };
 
 export interface Adapter {
@@ -254,17 +269,15 @@ export interface Adapter {
 	target (env: Env, det: Detected, appId: AiAppId): { targetId: AiTargetId; path: string } | null;
 	plan (ctx: Ctx, det: Detected, rec: AiRecord | null): Promise<AiPlan>;
 	apply (ctx: Ctx, det: Detected, rec: AiRecord | null): Promise<ApplyOutcome>;
-	/** `itemLeft`: the connector's item may still be there (`key delete` gave no receipt, or the store couldn't be used) */
-	remove (ctx: Ctx, rec: AiRecord): Promise<{ ok: boolean; left?: 'extension' | 'entry' | 'envKey'; error?: AiError; itemLeft?: boolean }>;
-	/** `configEntry` / `entryDigest`: a healed keyless entry Anytype rewrote (persisted by the service) */
+	remove (ctx: Ctx, rec: AiRecord): Promise<{ ok: boolean; left?: 'extension' | 'entry' | 'envKey'; error?: AiError }>;
+	/** `install`: Claude's extension as this check read it (the service keeps the confirmation latch) */
 	check (ctx: Ctx, rec: AiRecord): Promise<{
 		status: AiStatus; healed?: boolean; nextStep?: AiNextStep; observedInstalled?: boolean;
-		configEntry?: { command: string; args: string[]; env?: Record<string, string> }; entryDigest?: string;
-		/** The connector's item as read by this check (its own key): the record takes its port, tier and revision */
-		item?: { rev: number; port: number; tier: AiTier };
+		install?: { state: 'finish' | 'off' | 'on' | 'unknown'; version: string; installedAt: string };
+		/** Claude: status `conflict` because both of its routes are there */
+		bothRoutes?: boolean;
 	}>;
-	/** `unconfirmed`: a `key retarget` gave no receipt; the item may hold either state and the next check reads it */
-	update (ctx: Ctx, rec: AiRecord, change: { tier?: AiTier; port?: number }): Promise<{ ok: boolean; nextStep?: AiNextStep; error?: AiError; unconfirmed?: boolean }>;
+	update (ctx: Ctx, rec: AiRecord, change: { tier?: AiTier; port?: number }): Promise<{ ok: boolean; nextStep?: AiNextStep; error?: AiError }>;
 	canRestart (env: Env, det: Detected): boolean;
 	/** The key fingerprint the installed entry carries now (null: none; 'unreadable'); for `unconfirmed` deliveries */
 	installedFp? (ctx: Ctx, rec: AiRecord): Promise<string | null | 'unreadable'>;

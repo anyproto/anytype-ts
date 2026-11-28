@@ -62,9 +62,16 @@ export const cleanName = (v: any): string => {
 
 const isName: Rule = v => !!cleanName(v);
 
-const isCheckKey: Rule = v => checkShape(v, { hash: isHash, present: isBool }, { grant: isGrant, expireAt: isExpireAt });
+/** `active`: heart's AppInfo.isActive (a session was minted from that key in heart's current run) */
+const isCheckKey: Rule = v => checkShape(v, { hash: isHash, present: isBool }, { grant: isGrant, expireAt: isExpireAt, active: isBool });
 const isCheckKeys: Rule = v => (v === null) || (Array.isArray(v) && (v.length <= KEYS_MAX) && v.every(isCheckKey));
-const isMethod: Rule = v => (v === 'config') || (v === 'command');
+/** Plans: `package` Claude's extension, `config` an app's settings-file route, `command` Other app's stdio setup */
+const isPlanMethod: Rule = v => [ 'package', 'config', 'command' ].includes(v);
+/** Apply: Other app's Command setup is manual (aiConnectRecordManual), so it never comes here */
+const isApplyMethod: Rule = v => [ 'package', 'config' ].includes(v);
+const isSetup: Rule = v => [ 'url', 'command' ].includes(v);
+/** What goes to the clipboard through main (a key, or a snippet with it) */
+const isSecretText: Rule = v => (typeof v == 'string') && (v.length >= 1) && (v.length <= 64 * 1024);
 const isIntentId: Rule = v => (typeof v == 'string') && /^[0-9a-f]{16}$/.test(v);
 const isIntentTime: Rule = v => Number.isSafeInteger(v) && (v >= 0);
 const isWhat: Rule = v => [ 'bundle', 'target' ].includes(v);
@@ -105,8 +112,19 @@ const checkShape = (v: any, required: Record<string, Rule>, optional: Record<str
 	return true;
 };
 
-/** `command` is Other app's stdio setup only (`config`: an app's settings-file route) */
-const methodOfApp = (p: any): boolean => (p.method !== 'command') || ((p.appId == 'other') && (p.route == 'stdio'));
+/**
+ * `command` is Other app's stdio setup only (`config`: an app's settings-file route); `package` is Claude's
+ * extension, which always gets the Full tool set (§3.3): any other tier is refused
+ */
+const methodOfApp = (p: any): boolean => {
+	if (p.method === 'command') {
+		return (p.appId == 'other') && (p.route == 'stdio');
+	};
+	if (p.method === 'package') {
+		return (p.appId == 'claude-desktop') && (p.tier == 'full');
+	};
+	return true;
+};
 
 /** The route must be one the card offers */
 const routeOfApp = (appId: AiAppId, route: AiRoute): boolean => !!getCatalogItem(appId)?.routes.includes(route);
@@ -118,7 +136,7 @@ const SHAPES: Record<string, { required: Record<string, Rule>; optional?: Record
 	},
 	aiConnectPlan: {
 		required: { accountId: isHash, appId: isAppId, route: isRoute, tier: isTier, port: isValidPort },
-		optional: { method: isMethod, connectionId: isConnectionId, fresh: isBool },
+		optional: { method: isPlanMethod, connectionId: isConnectionId, fresh: isBool },
 		extra: p => routeOfApp(p.appId, p.route) && methodOfApp(p),
 	},
 	aiConnectApply: {
@@ -126,20 +144,20 @@ const SHAPES: Record<string, { required: Record<string, Rule>; optional?: Record
 			accountId: isHash, appId: isAppId, route: isRoute, tier: isTier, recommendedTier: isTier, port: isValidPort, key: isKey,
 			appHash: isHash, name: isName, grant: isGrant, expireAt: isExpireAt, expectedHash: isExpectedHash,
 		},
-		// `connectionId`: only with `method: 'command'` (reconnects that Command connection); `intentId`: the mint intent this key came from
+		// `intentId`: the mint intent this key came from
 		optional: {
-			method: isMethod, allowQuit: isBool, quitConfirmed: isBool, replace: isReplace, manual: isBool, previewTarget: isPreviewTarget,
-			connectionId: isConnectionId, intentId: isIntentId,
+			method: isApplyMethod, allowQuit: isBool, quitConfirmed: isBool, replace: isReplace, previewTarget: isPreviewTarget, intentId: isIntentId,
 		},
-		extra: p => routeOfApp(p.appId, p.route) && methodOfApp(p) && (!p.connectionId || (p.method == 'command')),
+		extra: p => routeOfApp(p.appId, p.route) && methodOfApp(p),
 	},
 	aiConnectRecordManual: {
 		required: {
 			accountId: isHash, appId: isAppId, route: isRoute, tier: isTier, recommendedTier: isTier, port: isValidPort,
 			appHash: isHash, name: isName, grant: isGrant, expireAt: isExpireAt, expectedHash: isExpectedHash,
 		},
-		optional: { connectionId: isConnectionId, previewTarget: isPreviewTarget, intentId: isIntentId },
-		extra: p => routeOfApp(p.appId, p.route),
+		// `connectionId` reconnects that manual record (either setup); `setup: 'command'` is a stdio setup
+		optional: { connectionId: isConnectionId, previewTarget: isPreviewTarget, intentId: isIntentId, setup: isSetup },
+		extra: p => routeOfApp(p.appId, p.route) && ((p.setup !== 'command') || (p.route == 'stdio')),
 	},
 	aiConnectUpdate: {
 		required: { accountId: isHash, connectionId: isConnectionId, expectedHash: isExpectedHash, port: isValidPort },
@@ -182,7 +200,10 @@ const SHAPES: Record<string, { required: Record<string, Rule>; optional?: Record
 		},
 	},
 	aiConnectOpenApp: {
+		// `bundle`: Claude Desktop's "Open again" — the bundle copy is opened in Claude (no key involved)
 		required: { appId: isAppId },
+		optional: { bundle: isBool },
+		extra: p => !p.bundle || (p.appId == 'claude-desktop'),
 	},
 	aiConnectClaimNudge: {
 		required: { accountId: isHash },
@@ -193,8 +214,23 @@ const SHAPES: Record<string, { required: Record<string, Rule>; optional?: Record
 	aiConnectMintIntent: {
 		// Before CreateApp: the key's name and the time (seconds). Afterwards: `id` + `done` once the key was released
 		required: { accountId: isHash },
-		optional: { name: isName, time: isIntentTime, id: isIntentId, done: isBool },
-		extra: p => (p.done === true) ? (!!p.id && (p.name === undefined) && (p.time === undefined)) : (!!p.name && (p.time !== undefined) && (p.id === undefined) && (p.done === undefined)),
+		optional: { name: isName, time: isIntentTime, id: isIntentId, done: isBool, grant: isGrant, expireAt: isExpireAt },
+		extra: p => (p.done === true)
+			? (!!p.id && (p.name === undefined) && (p.time === undefined) && (p.grant === undefined) && (p.expireAt === undefined))
+			: (!!p.name && (p.time !== undefined) && (p.id === undefined) && (p.done === undefined)),
+	},
+	aiConnectRetire: {
+		// Bundle Reconnect, before the new key is minted: the old key goes to revokePending and the record waits for the new one
+		required: { accountId: isHash, connectionId: isConnectionId, expectedHash: isHash },
+		// The access the user just confirmed (read live): the record keeps it for the new key, also across a crash
+		optional: { grant: isGrant, expireAt: isExpireAt },
+	},
+	aiConnectCopySecret: {
+		// The only way a key (or a snippet with it) reaches the clipboard: bound to a record (`connectionId`) or a key (`appHash`)
+		// `clear: true` instead of `text`: that owner's copy leaves the clipboard (Cancel), if it is still the latest and still there
+		required: { accountId: isHash },
+		optional: { text: isSecretText, clear: isBool, connectionId: isConnectionId, appHash: isHash },
+		extra: p => (!!p.connectionId != !!p.appHash) && ((p.text !== undefined) != (p.clear === true)),
 	},
 	aiConnectOrphan: {
 		// A key whose release failed (`done` absent), or one whose revoke has now succeeded (`done: true`)
@@ -225,6 +261,10 @@ const cleanValue = (k: string, v: any): any => {
 		case 'keys': {
 			return (v === null) ? null : v.map((it: any) => {
 				const key = Object.assign(Object.create(null), { hash: it.hash, present: it.present });
+
+				if (own(it, 'active') && (it.active !== undefined)) {
+					key.active = it.active;
+				};
 
 				if (own(it, 'grant') && (it.grant !== undefined)) {
 					key.grant = cleanGrant(it.grant);

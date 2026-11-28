@@ -312,3 +312,23 @@ const { probe } = require(${JSON.stringify(out)});
 		expect(seen[0]['mcp-session-id']).toBe('early');
 	});
 });
+
+describe('D1R1-F: the gate before every authenticated request', () => {
+	test('D1R1-F: the API stops between two requests of one probe: nothing more is sent, not even the session cleanup', async () => {
+		let open = true;
+		const fake = fakeTransport(req => {
+			// Right after the first answer the user switches the API off
+			open = false;
+			return mcpServer({ session: 's' })(req);
+		});
+		const res = await probe({ port: 1, tier: 'small', route: 'http', key: KEY }, { transport: fake.transport, gate: () => open });
+
+		expect(res).toEqual({ ok: false, category: 'apiOff' });
+		expect(fake.requests.map(r => r.method)).toEqual([ 'POST' ]);
+
+		const closed = fakeTransport(mcpServer({ session: 's' }));
+
+		expect(await probe({ port: 1, tier: 'small', route: 'skill', key: KEY }, { transport: closed.transport, gate: () => false })).toEqual({ ok: false, category: 'apiOff' });
+		expect(closed.requests).toEqual([]);
+	});
+});

@@ -52,7 +52,8 @@ describe('Cursor (jsonEntry)', () => {
 		expect(once).toContain('// my servers');
 		expect(once).toContain('// keep');
 		expect({ ...(readJson(once) as any).value.mcpServers.other }).toEqual({ url: 'http://x' });
-		expect(env.files()[CURSOR + '.anytype-backup']).toBe(original);
+		// A file Anytype writes a key into keeps no backup copy (tokens-plan §1)
+		expect(env.files()[CURSOR + '.anytype-backup']).toBeUndefined();
 
 		expect(await svc.apply(applyParam({ expectedHash: 'hash-a1' }))).toMatchObject({ ok: true });
 		expect(env.files()[CURSOR]).toBe(once);

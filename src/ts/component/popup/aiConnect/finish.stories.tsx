@@ -41,14 +41,33 @@ export const FinishNeedsQuit: Story = { args: { appName: 'Claude Desktop', appId
 
 export const FinishNeedsQuitSelf: Story = { args: { appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'needsQuitSelf', instructions: PLAN_CLAUDE_DESKTOP.instructions } };
 
+const BUNDLE = { state: 'finish' as const, copyFailed: false, openFailed: false, configure: false, stopped: false };
+const BUNDLE_ACTIONS = { onCopyKey: noop, onOpenBundle: noop, onCancelSetup: noop, onCheckBundle: noop };
+
+/** Claude's extension after Connect: the key is on the clipboard, Claude asks for it while it installs the extension (§3.3) */
+export const FinishBundle: Story = { args: { appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'bundle', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundle: BUNDLE, ...BUNDLE_ACTIONS } };
+
+/** Installed and on, but Claude hasn't used the key yet: Copy key and Configure */
+export const FinishBundleNotConfirmed: Story = {
+	args: { appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'bundle', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundle: { ...BUNDLE, state: 'notConfirmed' }, ...BUNDLE_ACTIONS },
+};
+
+/** The key couldn't be copied and the bundle couldn't be opened; the 10-minute watch ran out */
+export const FinishBundleFailed: Story = {
+	args: {
+		appName: 'Claude Desktop', appId: 'claude-desktop', phase: 'bundle', instructions: PLAN_CLAUDE_DESKTOP.instructions,
+		bundle: { ...BUNDLE, copyFailed: true, openFailed: true, stopped: true }, ...BUNDLE_ACTIONS,
+	},
+};
+
 /** Claude's install dialog, from an unsigned build, with the settings-file route offered */
 export const FinishConfirm: Story = {
-	args: { appName: 'Claude Desktop', appId: 'claude-desktop', step: 'confirmInApp', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundleSigned: false, fileRoute: 'claude' },
+	args: { appName: 'Claude Desktop', appId: 'claude-desktop', step: 'confirmInApp', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundleSigned: false },
 };
 
 /** The bundle couldn't be opened: Reveal it */
 export const FinishConfirmOpenFailed: Story = {
-	args: { appName: 'Claude Desktop', appId: 'claude-desktop', step: 'confirmInApp', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundleSigned: true, openFailed: true, fileRoute: 'claude' },
+	args: { appName: 'Claude Desktop', appId: 'claude-desktop', step: 'confirmInApp', instructions: PLAN_CLAUDE_DESKTOP.instructions, bundleSigned: true, openFailed: true },
 };
 
 /** Cursor: added, one restart left, which Anytype offers */
@@ -76,7 +95,7 @@ export const FinishUnconfirmed: Story = { args: { appName: 'Claude Code', appId:
 
 /** Installed in the app, but Anytype couldn't save that: Retry saves only, before the install's own buttons (W14) */
 export const FinishConfirmAckFailed: Story = {
-	args: { appName: 'Claude Desktop', appId: 'claude-desktop', step: 'confirmInApp', instructions: PLAN_CLAUDE_DESKTOP.instructions, ackFailed: true, fileRoute: 'claude' },
+	args: { appName: 'Claude Desktop', appId: 'claude-desktop', step: 'confirmInApp', instructions: PLAN_CLAUDE_DESKTOP.instructions, ackFailed: true },
 };
 
 /** The wait for Claude Code to save the key ran out: Check again (W12) */

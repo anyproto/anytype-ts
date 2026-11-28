@@ -11,11 +11,13 @@
  *   on Linux the running Anytype always installs its own (C2 of caller-binding-plan.md).
  * - Not supported: Snap, Flatpak and an AppImage in portable-home mode. Those keep the URL routes.
  *
- * Nothing here starts Electron in Node mode, and nothing here reads or writes the forwarder's items.
+ * Nothing here starts Electron in Node mode. The key reaches the forwarder only through the environment
+ * of the app that starts it (`ANYTYPE_API_KEY`, §2.1): never an argument, never a file of Anytype's.
  */
 import crypto from 'crypto';
-import type { AiError, Env } from './types';
-import { MODE_DIR, canonicalPath, pathOf } from './fsSafe';
+import type { AiError, AiTier, Env } from './types';
+import FORWARDER_CONTRACT from '../../../json/aiConnect.forwarder.json';
+import { MODE_DIR, pathOf } from './fsSafe';
 import { UTF8_OUTPUT } from './restart';
 import { powershellPath, systemRoot } from './detect';
 
@@ -26,6 +28,10 @@ const MAX_BINARY_BYTES = 64 * 1024 * 1024;
 const LOCK_STALE_MS = 60 * 1000;
 const LOCK_WAIT_MS = 10 * 1000;
 const LOCK_RETRY_MS = 200;
+/** The oldest forwarder this desktop works with (Rev 6: the key in the environment, the endpoint file); shared with scripts/prepare-forwarder.js */
+export const MIN_FORWARDER_REV: number = FORWARDER_CONTRACT.minRev;
+/** The environment variable the forwarder reads its key from (§2.1) */
+export const KEY_VAR = 'ANYTYPE_API_KEY';
 
 export type Namespace = 'release' | 'dev';
 
@@ -46,6 +52,8 @@ export interface BuildMeta {
 export interface ServeCommand {
 	command: string;
 	args: string[];
+	/** The key, only here: never in `command` or `args` */
+	env: Record<string, string>;
 };
 
 const isSha = (v: any): boolean => (typeof v == 'string') && /^[0-9a-f]{64}$/.test(v);
@@ -70,7 +78,8 @@ export const buildMeta = (env: Env): BuildMeta | null => {
 	const f = data.forwarder;
 	const m = data.mcpb;
 
-	if (f && Number.isSafeInteger(f.rev) && (f.rev > 0) && [ 'release', 'dev' ].includes(f.namespace) && f.sha256 && (typeof f.sha256 == 'object')
+	// A forwarder older than MIN_FORWARDER_REV can't take its key from the environment: the stdio routes are off
+	if (f && Number.isSafeInteger(f.rev) && (f.rev >= MIN_FORWARDER_REV) && [ 'release', 'dev' ].includes(f.namespace) && f.sha256 && (typeof f.sha256 == 'object')
 		&& Object.keys(f.sha256).every(k => isSha(f.sha256[k]))) {
 		ret.forwarder = { rev: f.rev, namespace: f.namespace, sha256: { ...f.sha256 } };
 		if ((typeof f.teamId == 'string') && /^[A-Z0-9]{1,32}$/.test(f.teamId)) {
@@ -122,18 +131,56 @@ export const stableDir = (env: Env): string => pathOf(env).join(anytypeDir(env),
 /** The stable copy: the only forwarder path Anytype writes into another app's settings */
 export const stable = (env: Env): string => pathOf(env).join(stableDir(env), exeName(env));
 
-/** One command shape for preview, install, digest and heal; no `env` field */
-export const serveCommand = (env: Env, id: string): ServeCommand => ({ command: stable(env), args: [ 'serve', '--connection', id ] });
+/**
+ * One command shape for previews (`key` = the placeholder), the config route's entry and its digest: the stable
+ * copy, the tier, the key in `env`. No files folder: the forwarder makes its own fresh temp folder per process
+ */
+export const serveCommand = (env: Env, opt: { tier: AiTier; key: string }): ServeCommand => ({
+	command: stable(env),
+	args: [ 'serve', '--tier', opt.tier ],
+	env: { [KEY_VAR]: opt.key },
+});
+
+export type EndpointVerdict = { ok: true; port: number } | { ok: false; reason: string; path?: string; rule?: string };
 
 /**
- * Where the forwarder keeps a connection's item. A label only (previews, the record's target, Replace):
- * anytype-ts never reads or writes anything in `items` or `items-dev`.
+ * `anytype-mcp endpoint` on `file`, the exact binary a config will name (§2.1): would it find Anytype safely, on
+ * which port. Read-only; nothing secret in its environment. It judges the home Anytype writes the endpoint file
+ * to (`env.home`), whatever this process inherited. Anything not understood is `unreachable`.
  */
-export const itemLabel = (env: Env, id: string): string => {
-	const ns = buildMeta(env)?.forwarder?.namespace;
-	const raw = pathOf(env).join(anytypeDir(env), 'ai-connect', (ns == 'release') ? 'items' : 'items-dev', `${id}.item`);
+export const endpointVerdict = async (env: Env, file: string): Promise<EndpointVerdict> => {
+	const home = (env.platform == 'win32') ? { USERPROFILE: env.home } : { HOME: env.home };
+	const res = await env.run(file, [ 'endpoint' ], { timeout: 15000, env: { [KEY_VAR]: null, ...home } });
+	let data: any = null;
 
-	return canonicalPath(env, raw) || raw;
+	try {
+		data = JSON.parse(String(res.stdout || '').trim().split('\n').pop() || '');
+	} catch (e) { /* not understood */ };
+
+	if ((res.code == 0) && (data?.ok === true) && Number.isInteger(data.port)) {
+		return { ok: true, port: data.port };
+	};
+	if ((res.code == 1) && data && (data.ok === false) && (typeof data.reason == 'string')) {
+		const str = (v: any): string => ((typeof v == 'string') ? v.slice(0, 1024) : '');
+		return { ok: false, reason: data.reason, ...(str(data.path) ? { path: str(data.path) } : {}), ...(str(data.rule) ? { rule: str(data.rule) } : {}) };
+	};
+	return { ok: false, reason: 'unreachable' };
+};
+
+/**
+ * `version --json` of a stable copy Anytype keeps although its bytes aren't the in-app forwarder's (a higher
+ * `.rev`, or a Windows copy that can't be replaced): it must be Rev MIN_FORWARDER_REV or later and of this
+ * build's namespace, or no app could start it with its key in the environment
+ */
+const compatibleCopy = async (env: Env, file: string, meta: BuildMeta): Promise<boolean> => {
+	const res = await env.run(file, [ 'version', '--json' ], { timeout: 15000, env: { [KEY_VAR]: null, ...((env.platform == 'win32') ? { USERPROFILE: env.home } : { HOME: env.home }) } });
+	let data: any = null;
+
+	try {
+		data = JSON.parse(String(res.stdout || '').trim());
+	} catch (e) { /* not understood */ };
+
+	return (res.code == 0) && Number.isSafeInteger(data?.rev) && (data.rev >= MIN_FORWARDER_REV) && (data.namespace === meta.forwarder?.namespace);
 };
 
 const fail = (stage: AiError['stage'], category: AiError['category'], path?: string): { ok: false; error: AiError } => ({ ok: false, error: { stage, category, ...(path ? { path } : {}) } });
@@ -270,39 +317,44 @@ const WIN_SYSTEM = 'S-1-5-18';
 const WIN_ADMINS = 'S-1-5-32-544';
 const SID_RE = /^S-1-[0-9-]{3,180}$/;
 
-/** Stable copies whose folder and file passed `privateOnWindows` in this run */
-const passedAcl = new WeakMap<Env, Set<string>>();
+/**
+ * Rights on the home folder that let an account replace one of its children (rename `.anytype` away and put its
+ * own there) or give itself that right: DeleteSubdirectoriesAndFiles, ChangePermissions, TakeOwnership, GenericAll
+ */
+const WIN_REPLACE_RIGHTS = 0x40 | 0x40000 | 0x80000 | 0x10000000;
 
 /**
- * Windows (S5): no other account can replace the stable copy — the owner and every allow entry of `bin` and
- * of the exe are the user, SYSTEM or Administrators (heart's own rule for its store). A restored or foreign
- * folder that grants anyone else anything is refused; nothing is repaired. A passing answer is kept for the
- * run: only an account that may already change the list could widen it, and such an account never passes.
+ * Windows (S5, D1S-17): no other account can replace a file Anytype runs or a folder on its way to it. `paths` (the
+ * store folders below the home, top down, and the exe) must each name only the user, SYSTEM or Administrators as
+ * owner and in every allow entry — heart's own rule for its store; the home folder itself must give nobody else
+ * the right to replace its children. A restored or foreign folder is refused; nothing is repaired. Asked every
+ * time, never cached: a path that passed once may name another file now. Runs nothing it judges.
  */
-export const privateOnWindows = async (env: Env, dir: string, file: string): Promise<boolean> => {
+export const privateOnWindows = async (env: Env, paths: string[]): Promise<boolean> => {
 	if (env.platform != 'win32') {
 		return true;
 	};
-
-	const id = `${dir}|${file}`;
-
-	if (passedAcl.get(env)?.has(id)) {
-		return true;
+	if (!paths.length || paths.some(p => !p || p.includes('|'))) {
+		return false;
 	};
 
-	// The paths go through the environment, never into the script text
+	// The paths go through the environment, never into the script text. Inherit-only entries don't apply to the home itself
+	const rules = `@($a.GetAccessRules($true, $true, $t) | Where-Object { $_.AccessControlType -eq 'Allow' }`;
 	const script = `${UTF8_OUTPUT} $ErrorActionPreference = 'Stop'; $t = [Security.Principal.SecurityIdentifier]; `
 		+ `'user|' + [Security.Principal.WindowsIdentity]::GetCurrent().User.Value; `
-		+ `foreach ($p in @($env:ANYTYPE_MCP_ACL_DIR, $env:ANYTYPE_MCP_ACL_FILE)) { $a = Get-Acl -LiteralPath $p; `
-		+ `$s = @($a.GetOwner($t).Value) + @($a.GetAccessRules($true, $true, $t) | Where-Object { $_.AccessControlType -eq 'Allow' } | ForEach-Object { $_.IdentityReference.Value }); `
+		+ `$a = Get-Acl -LiteralPath $env:ANYTYPE_MCP_ACL_HOME; `
+		+ `$s = @($a.GetOwner($t).Value + ':-1') + ${rules} | Where-Object { -not ($_.PropagationFlags -band [Security.AccessControl.PropagationFlags]::InheritOnly) } | ForEach-Object { $_.IdentityReference.Value + ':' + [int64]$_.FileSystemRights }); `
+		+ `'home|' + ($s -join ','); `
+		+ `foreach ($p in $env:ANYTYPE_MCP_ACL_PATHS.Split('|')) { $a = Get-Acl -LiteralPath $p; `
+		+ `$s = @($a.GetOwner($t).Value) + ${rules} | ForEach-Object { $_.IdentityReference.Value }); `
 		+ `'path|' + ($s -join ',') }; 'end|'`;
 	const res = await env.run(powershellPath(env), [ '-NoProfile', '-NonInteractive', '-Command', script ], {
-		timeout: 20000, env: { ANYTYPE_MCP_ACL_DIR: dir, ANYTYPE_MCP_ACL_FILE: file },
+		timeout: 20000, env: { ANYTYPE_MCP_ACL_HOME: env.home, ANYTYPE_MCP_ACL_PATHS: paths.join('|') },
 	});
 	const lines = String(res.stdout || '').split(/\r?\n/).map(it => it.trim()).filter(Boolean);
 
-	// Exactly: the user, one line per path, the end mark. Anything else is no answer
-	if ((res.code != 0) || (lines.length != 4) || !lines[0].startsWith('user|') || (lines[3] != 'end|')) {
+	// Exactly: the user, the home, one line per path, the end mark. Anything else is no answer
+	if ((res.code != 0) || (lines.length != (paths.length + 3)) || !lines[0].startsWith('user|') || !lines[1].startsWith('home|') || (lines[lines.length - 1] != 'end|')) {
 		return false;
 	};
 
@@ -312,15 +364,19 @@ export const privateOnWindows = async (env: Env, dir: string, file: string): Pro
 	if (!SID_RE.test(user)) {
 		return false;
 	};
-	for (const line of lines.slice(1, 3)) {
+
+	const home = lines[1].slice(5).split(',').map(it => /^(S-1-[0-9-]{3,180}):(-1|[0-9]{1,12})$/.exec(it));
+
+	if (!home.length || home.some(m => !m || (!allowed.has(m[1]) && ((m[2] == '-1') || (Number(m[2]) & WIN_REPLACE_RIGHTS))))) {
+		return false;
+	};
+	for (const line of lines.slice(2, -1)) {
 		const sids = line.startsWith('path|') ? line.slice(5).split(',') : [];
 
 		if (!sids.length || sids.some(sid => !SID_RE.test(sid) || !allowed.has(sid))) {
 			return false;
 		};
 	};
-
-	passedAcl.set(env, (passedAcl.get(env) || new Set()).add(id));
 	return true;
 };
 
@@ -402,8 +458,8 @@ export type InstallResult = { ok: true; path: string; installed: boolean } | { o
 export const ensureInstalled = async (env: Env): Promise<InstallResult> => {
 	const res = await install(env);
 
-	// S5: handed out only when no other OS user can replace it — on every path that returns it
-	if (res.ok && !(await privateOnWindows(env, stableDir(env), res.path))) {
+	// S5: handed out only when no other OS user can replace it or a folder on its way — on every path that returns it
+	if (res.ok && !(await privateOnWindows(env, [ anytypeDir(env), stableDir(env), res.path ]))) {
 		return fail('write', 'installFailed', res.path);
 	};
 	return res;
@@ -470,6 +526,12 @@ const install = async (env: Env): Promise<InstallResult> => {
 		return { ok: true, path: file, installed: false };
 	};
 
+	/**
+	 * A copy Anytype keeps although its bytes aren't the in-app forwarder's: on Windows nobody else may replace it
+	 * (S5) BEFORE it is run for its version, then it must take its key from the environment
+	 */
+	const kept = async (copy: string): Promise<boolean> => (await privateOnWindows(env, [ anytypeDir(env), dir, copy ])) && (await compatibleCopy(env, copy, own.meta));
+
 	const done = await withLock(env, dir, async (): Promise<InstallResult> => {
 		// Another Anytype may have finished the same job while this one waited; right bytes with a wrong mode are repaired
 		if (same()) {
@@ -483,8 +545,9 @@ const install = async (env: Env): Promise<InstallResult> => {
 		if (st && (st.isSymlink || !st.isFile)) {
 			return fail('write', 'installFailed', file);
 		};
-		if (st && (env.platform != 'linux') && Number.isSafeInteger(theirs) && (theirs > rev) && (await signedByUs(env, file, own.meta))) {
-			return makeStartable() ? { ok: true, path: file, installed: false } : fail('write', 'installFailed', file);
+		// Only a signed build can tell its own copy from another one; nothing is run before its access list passed (Windows)
+		if (st && own.meta.signed && (env.platform != 'linux') && Number.isSafeInteger(theirs) && (theirs > rev) && (await signedByUs(env, file, own.meta))) {
+			return (makeStartable() && (await kept(file))) ? { ok: true, path: file, installed: false } : fail('write', 'installFailed', file);
 		};
 
 		try {
@@ -500,8 +563,8 @@ const install = async (env: Env): Promise<InstallResult> => {
 					env.rename(file, aside);
 				} catch (e) {
 					tryUnlink(env, temp);
-					// A running client holds the exe: it stays only when it is one of ours
-					return (await signedByUs(env, file, own.meta)) ? { ok: true, path: file, installed: false } : fail('write', 'installFailed', file);
+					// A running client holds the exe: it stays only when it is one of ours (a signed build), and one that takes its key from the environment
+					return (own.meta.signed && (await signedByUs(env, file, own.meta)) && (await kept(file))) ? { ok: true, path: file, installed: false } : fail('write', 'installFailed', file);
 				};
 				try {
 					env.rename(temp, file);

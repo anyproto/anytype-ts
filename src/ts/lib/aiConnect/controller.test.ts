@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { AiConnectController, type AiConnectPopupData } from './controller';
 import * as flow from './flow';
+import { connectionState } from './gallery';
 import { isValidLinkGrant } from '../linkApprovalGrant';
 import { BASE_PLAN, GRANT, installHarness, READ_ONE, record, until, type Harness } from './testHarness';
 
@@ -183,7 +184,7 @@ describe('disconnect (V5, V22, V27)', () => {
 		expect(ctrl.get().result.lines.map((it: any) => it.key)).toEqual([ 'aiConnectLeftExtension', 'aiConnectKeyDeleted' ]);
 	});
 
-	test('a conflict found by Disconnect shows the conflict actions; a revoked key found by Manage shows Access ended', async () => {
+	test('a conflict found by Disconnect shows the conflict actions; a key main found ended shows Access ended without a key lookup (D1S-15)', async () => {
 		h.heart.add('hash-old');
 		h.existing();
 		h.main.m.removeConflict = true;
@@ -194,31 +195,42 @@ describe('disconnect (V5, V22, V27)', () => {
 		await ctrl.disconnect();
 		expect(ctrl.get().override).toBe('conflict');
 
+		// Main's check found the key gone: the record says Access ended, and Manage reads no key list for it
 		h.heart.rows.delete('hash-old');
+		h.main.m.statuses.set('cursor', 'accessEnded');
 
+		const lists = h.heart.state.lists;
 		const again = await open({ appId: 'cursor', connectionId: 'cursor', view: 'manage' });
 
 		await until(() => !!again.get().access);
-		expect(again.get().override).toBe('accessEnded');
+		expect(connectionState(again.connection())).toBe('accessEnded');
+		expect(again.get().access).toMatchObject({ ok: true, present: false });
+		expect(h.heart.state.lists).toBe(lists);
 
+		// Replace reads heart's access when clicked: a failed lookup is shown as such, with Try again (the view's
+		// lookupFailed), never as Access ended
+		h.main.m.statuses.delete('cursor');
 		h.heart.state.listFails = true;
 
 		const failing = await open({ appId: 'cursor', connectionId: 'cursor', view: 'manage' });
 
 		await until(() => !!failing.get().access);
+		expect(failing.get().access.ok).toBe(true);
+		await failing.replace();
 		expect(failing.get().override).toBeNull();
-		// A failed lookup is shown as such, with Try again (the view's lookupFailed), never as Access ended
-		expect(failing.get().access.ok).toBe(false);
+		expect(failing.get()).toMatchObject({ view: 'manage', access: { ok: false } });
 	});
 });
 
 describe('Claude Desktop manual fallback (V6)', () => {
-	test('after a failed automatic delivery, manual setup applies manual: true with the pending key; nothing recorded by hand', async () => {
+	test('after a failed automatic delivery, manual setup is the settings file\'s entry with the pending key, recorded by "I\'ve updated" as a command setup', async () => {
+		const entry = '{"mcpServers":{"anytype":{"command":"/Users/me/.anytype/bin/anytype-mcp","args":["serve","--tier","full"],"env":{"ANYTYPE_API_KEY":"<KEY>"}}}}';
+
 		h.main.m.plans['claude-desktop'] = {
-			...BASE_PLAN, appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', method: 'keyfile', targetPath: '/Users/me/.anytype/ai-connect/claude-desktop.json',
-			steps: [ { textKey: 'aiConnectManualPrepare' }, { textKey: 'aiConnectManualInstallFile', path: '/Users/me/.anytype/ai-connect/Anytype.mcpb' } ],
+			...BASE_PLAN, appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', method: 'config', targetPath: '/Users/me/Library/Application Support/Claude/claude_desktop_config.json',
+			steps: [ { textKey: 'aiConnectManualMerge', snippet: entry, lang: 'json' }, { textKey: 'aiConnectManualKeepPrivate' } ],
 		};
-		h.main.m.apply = (p: any) => (p.manual ? { ok: true, connection: h.main.view(record({ id: 'claude-desktop', appId: 'claude-desktop', appHash: p.appHash })) } : { ok: false, error: { stage: 'write', category: 'permission' } });
+		h.main.m.apply = () => ({ ok: false, error: { stage: 'write', category: 'permission' } });
 
 		const ctrl = await open({ appId: 'claude-desktop' }, 'Claude Desktop');
 
@@ -226,13 +238,14 @@ describe('Claude Desktop manual fallback (V6)', () => {
 		await settled(ctrl);
 		expect(ctrl.get()).toMatchObject({ phase: 'error', canManual: true });
 
+		// The key the automatic attempt minted stays pending and is the one shown (masked) for the entry
 		await ctrl.enterManual('create');
-		expect(ctrl.get().manual.mode).toBe('create');
-		expect(ctrl.get().manual.key).toBe('');
+		expect(ctrl.get().manual).toMatchObject({ mode: 'confirm', keyHash: 'hash-1' });
+		expect(h.calls('aiConnectPlan').slice(-1)[0].param.method).toBe('config');
 
-		await ctrl.createKey();
-		expect(h.calls('aiConnectApply').map(it => [ it.param.manual, it.param.appHash ])).toEqual([ [ undefined, 'hash-1' ], [ true, 'hash-1' ] ]);
-		expect(h.calls('aiConnectRecordManual')).toHaveLength(0);
+		await ctrl.confirmManual();
+		expect(h.calls('aiConnectApply')).toHaveLength(1);
+		expect(h.calls('aiConnectRecordManual')[0].param).toMatchObject({ appHash: 'hash-1', setup: 'command', route: 'stdio' });
 		expect(h.heart.state.creates).toBe(1);
 	});
 });
@@ -245,7 +258,9 @@ describe('manual setup (V7, V8, V24, V25)', () => {
 
 		expect(ctrl.get().manual.mode).toBe('create');
 		await ctrl.createKey();
-		expect(ctrl.get().manual).toMatchObject({ mode: 'confirm', key: expect.stringContaining('-key-1-') });
+		expect(ctrl.get().manual).toMatchObject({ mode: 'confirm', keyHash: 'hash-1' });
+		// The view knows the key by its hash only (tokens-plan §3.2)
+		expect(JSON.stringify(ctrl.get())).not.toContain('SENTINEL');
 		expect(h.calls('aiConnectRecordManual')).toHaveLength(0);
 
 		await ctrl.confirmManual();
@@ -268,12 +283,12 @@ describe('manual setup (V7, V8, V24, V25)', () => {
 
 		await ctrl.createKey();
 
-		const key = ctrl.get().manual.key;
+		const keyHash = ctrl.get().manual.keyHash;
 		const plans = h.calls('aiConnectPlan').length;
 
 		await ctrl.confirmManual();
 		await until(() => !ctrl.get().manual.loading && (h.calls('aiConnectPlan').length > plans));
-		expect(ctrl.get().manual).toMatchObject({ mode: 'confirm', key, notice: { key: 'aiConnectManualChanged' } });
+		expect(ctrl.get().manual).toMatchObject({ mode: 'confirm', keyHash, notice: { key: 'aiConnectManualChanged' } });
 
 		// Recorded: the popup closes with its toast; the key it holds is the one created before
 		await ctrl.confirmManual();
@@ -311,7 +326,7 @@ describe('manual setup (V7, V8, V24, V25)', () => {
 		await ctrl.createKey();
 		h.existing({ appHash: 'hash-someone' });
 		await ctrl.confirmManual();
-		expect(ctrl.get().manual).toMatchObject({ key: '', mode: 'create' });
+		expect(ctrl.get().manual).toMatchObject({ keyHash: '', mode: 'create' });
 		expect(ctrl.get()).toMatchObject({ view: 'manage', connectionId: 'cursor', manageNotice: { error: { category: 'stale' } } });
 		expect(h.heart.state.revokes).toEqual([ 'hash-1' ]);
 	});
@@ -328,21 +343,20 @@ describe('manual setup (V7, V8, V24, V25)', () => {
 });
 
 describe('delivery snapshot (V15)', () => {
-	test('a 7-day expiry resolved once: the install poll\'s second apply reuses the same key and expiry', async () => {
+	test('a 7-day expiry resolved once: the second apply after the quit consent reuses the same key and expiry', async () => {
 		let now = 1_900_000_000_000;
 
 		vi.spyOn(Date, 'now').mockImplementation(() => now);
-		h.main.m.plans['claude-desktop'] = { ...BASE_PLAN, appId: 'claude-desktop', route: 'stdio', method: 'package', nextStep: 'confirmInApp' };
-		h.main.m.apply = (p: any) => ((h.calls('aiConnectApply').length == 1) ? { ok: false, needs: 'installExtension' } : { ok: true, connection: h.main.view(record({ id: 'claude-desktop', appId: 'claude-desktop', appHash: p.appHash, nextStep: 'restart' })) });
+		h.main.m.apply = (p: any) => ((h.calls('aiConnectApply').length == 1) ? { ok: false, needs: 'quitApp' } : { ok: true, connection: h.main.view(record({ appHash: p.appHash, nextStep: 'restart' })) });
 
-		const ctrl = await open({ appId: 'claude-desktop' }, 'Claude Desktop');
+		const ctrl = await open({ appId: 'cursor' });
 
 		ctrl.setForm({ days: 7 });
 		ctrl.submit();
-		await until(() => ctrl.get().phase == 'installExtension');
+		await until(() => ctrl.get().phase == 'needsQuit');
 
 		now += 5000;
-		h.main.m.plans['claude-desktop'] = { ...h.main.m.plans['claude-desktop'], method: 'keyfile' };
+		ctrl.consent('allowQuit');
 		await until(() => h.calls('aiConnectApply').length == 2);
 		await settled(ctrl);
 
@@ -412,23 +426,23 @@ describe('finishing (V16, V17, V18, V19, V23)', () => {
 		expect(checks).toBeGreaterThanOrEqual(2);
 	});
 
-	test('the install poll follows main: a disabled extension is the toggle step, not Added', async () => {
-		h.main.m.plans['claude-desktop'] = { ...BASE_PLAN, appId: 'claude-desktop', route: 'stdio', method: 'package', nextStep: 'confirmInApp' };
+	test('the install poll follows main: a disabled server is the toggle step, not Added', async () => {
+		h.main.m.plans.lmstudio = { ...BASE_PLAN, appId: 'lmstudio', targetId: 'lmstudio', method: 'deeplink', nextStep: 'confirmInApp', targetPath: '/Users/me/.lmstudio/mcp.json' };
 		h.main.m.apply = (p: any) => {
-			const rec = record({ id: 'claude-desktop', appId: 'claude-desktop', appHash: p.appHash, nextStep: 'confirmInApp', observedInstalled: false });
+			const rec = record({ id: 'lmstudio', appId: 'lmstudio', appHash: p.appHash, method: 'deeplink', nextStep: 'confirmInApp', observedInstalled: false });
 
-			h.main.m.records.set('claude-desktop', rec);
+			h.main.m.records.set('lmstudio', rec);
 			return { ok: true, connection: h.main.view(rec) };
 		};
 		h.main.m.onCheck = () => {
-			const rec = h.main.m.records.get('claude-desktop');
+			const rec = h.main.m.records.get('lmstudio');
 
 			if (rec) {
-				h.main.m.records.set('claude-desktop', { ...rec, observedInstalled: true, nextStep: 'toggle' });
+				h.main.m.records.set('lmstudio', { ...rec, observedInstalled: true, nextStep: 'toggle' });
 			};
 		};
 
-		const ctrl = await open({ appId: 'claude-desktop' }, 'Claude Desktop');
+		const ctrl = await open({ appId: 'lmstudio' }, 'LM Studio');
 
 		ctrl.submit();
 		await until(() => ctrl.get().step == 'toggle');

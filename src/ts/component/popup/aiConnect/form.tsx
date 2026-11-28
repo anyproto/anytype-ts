@@ -7,7 +7,7 @@ import { EXPIRY_DAYS } from 'Lib/aiConnect/catalog';
 import { sentenceArgs } from 'Lib/aiConnect/steps';
 import { apiKeyCreateError } from 'Lib/apiKey';
 import { linkApprovalGrant } from 'Lib/linkApprovalGrant';
-import { planReason, spaceSummary, tierNote, tierOptions, tr } from './text';
+import { planReason, spaceSummary, tierLabel, tierNote, tierOptions, tr } from './text';
 
 export interface AiConnectFormProps {
 	appName: string;
@@ -44,6 +44,10 @@ export interface AiConnectFormProps {
 	errors?: string[];
 	busy: boolean;
 	apiListening: boolean;
+	/** Claude's extension route: the tool set is Full and can't be chosen (§3.3) */
+	fullOnly?: boolean;
+	/** Claude Desktop, Advanced: "Use Claude's settings file instead", chosen before a key exists */
+	onConfigRoute?: () => void;
 	/** Stories: open sections from the start */
 	initialAdvanced?: boolean;
 	initialSpaces?: boolean;
@@ -64,7 +68,7 @@ export interface AiConnectFormProps {
 const AiConnectForm = (props: AiConnectFormProps) => {
 	const {
 		appName, appId, restartName, locked, icon, routes, route, tier, savedTier, grant, spaces, name, days, fixedExpireAt, plan, planLoading, movedPath, movedFrom, notice,
-		errors, busy, apiListening, initialAdvanced, initialSpaces, formatDate, onGrant, onName, onDays, onTier, onRoute, onSubmit, onManual, onCancel,
+		errors, busy, apiListening, fullOnly, onConfigRoute, initialAdvanced, initialSpaces, formatDate, onGrant, onName, onDays, onTier, onRoute, onSubmit, onManual, onCancel,
 	} = props;
 	const fixed = busy || !!locked;
 	const [ advancedOpen, setAdvancedOpen ] = useState(!!initialAdvanced);
@@ -191,7 +195,13 @@ const AiConnectForm = (props: AiConnectFormProps) => {
 
 			{advancedOpen ? (
 				<div id={ids.advanced} className="advanced">
-					{showTier ? (
+					{(showTier && fullOnly) ? (
+						<div className="expiryRow">
+							<span>{translate('aiConnectTier')}</span>
+							<span>{tierLabel('full')}</span>
+						</div>
+					) : null}
+					{(showTier && !fullOnly) ? (
 						<div className="expiryRow">
 							<label htmlFor={ids.tier}>{translate('aiConnectTier')}</label>
 							<div className="expirySelect">
@@ -200,6 +210,11 @@ const AiConnectForm = (props: AiConnectFormProps) => {
 								</select>
 								<ChevronDown aria-hidden="true" focusable="false" />
 							</div>
+						</div>
+					) : null}
+					{(fullOnly && onConfigRoute) ? (
+						<div className="expiryRow">
+							<button type="button" className="linkButton" disabled={fixed} onClick={onConfigRoute}>{translate('aiConnectUseConfigInstead')}</button>
 						</div>
 					) : null}
 

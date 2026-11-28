@@ -7,7 +7,7 @@ import { parseAiConnectRoute } from './deeplink';
 const KEY = 'SENTINEL-key-abcdefghijklmnop';
 const withKey: AiStep = { textKey: 'aiConnectManualMerge', snippet: `{"Authorization":"Bearer ${KEY_PLACEHOLDER}","x":"${KEY_PLACEHOLDER}"}`, lang: 'json' };
 const noKey: AiStep = { textKey: 'aiConnectManualRun', snippet: 'claude mcp add-json --scope user anytype -', lang: 'sh' };
-const textOnly: AiStep = { textKey: 'aiConnectManualPrepare' };
+const textOnly: AiStep = { textKey: 'aiConnectManualKeepPrivate' };
 
 describe('steps', () => {
 	test('before a key exists the placeholder stays and Copy is off for snippets that need it', () => {

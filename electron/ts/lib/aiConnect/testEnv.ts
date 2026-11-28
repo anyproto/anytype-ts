@@ -150,111 +150,73 @@ export interface FakeSpec {
 	forwarder?: (call: RunCall, state: ForwarderState) => RunResult | null;
 };
 
-// ---------------------- a fake `anytype-mcp` (the §13 contract, in memory) ---------------------- //
-
-export interface FakeItem { key: string; account: string; port: number; tier: string; rev: number };
+// ---------------------- a fake `anytype-mcp` (the Rev 6 contract, in memory) ---------------------- //
 
 export interface ForwarderState {
-	items: Map<string, FakeItem>;
-	/** Stored values that are not items (`key check` says present: false, invalid: true) */
-	invalid: Set<string>;
-	/** Every verb exits 7 with this store state while set */
-	store: 'ok' | 'denied' | 'unreachable';
+	/**
+	 * What `anytype-mcp endpoint` answers. null (default): the endpoint file of this flavour as the fake file
+	 * system holds it — `{"ok":true,"port":N}` when it is there and valid, else `missing`
+	 */
+	verdict: { ok: true; port: number } | { ok: false; reason: string; path?: string; rule?: string } | null;
+	/** What `version --json` reports, per file (default: FAKE_REV and the build's namespace) */
+	versions: Map<string, { rev: number; namespace: string }>;
 	calls: RunCall[];
 };
 
 export const FAKE_SID = 'S-1-5-21-1111-2222-3333-1001';
-export const FAKE_REV = 5;
+export const FAKE_REV = 6;
 export const FAKE_SIGNER = 'ab'.repeat(32);
 export const FAKE_TEAM = 'TEAM123456';
 
-const fpOf = (key: string): string => crypto.createHash('sha256').update(key, 'utf8').digest('hex').slice(0, 16);
-
 const line = (code: number, value: any): RunResult => ({ code, stdout: JSON.stringify(value) + '\n' });
 
-/** One verb of the fake forwarder; null when the call isn't a key verb (e.g. `serve`) */
-export const fakeForwarderRun = (state: ForwarderState, call: RunCall, namespace = 'dev'): RunResult | null => {
-	const [ group, verb, ...rest ] = call.args;
+/**
+ * One verb of the fake forwarder (`file` is the binary it was started as); null when the call isn't one it
+ * answers (e.g. `serve`). `readEndpoint` gives the endpoint file's text, or null.
+ */
+export const fakeForwarderRun = (state: ForwarderState, call: RunCall, namespace = 'dev', readEndpoint: () => string | null = () => null): RunResult | null => {
+	const [ verb, ...rest ] = call.args;
 
-	if (group != 'key') {
+	if ((verb == 'version') && (rest[0] == '--json')) {
+		const v = state.versions.get(call.file) || { rev: FAKE_REV, namespace };
+		return line(0, { version: 'dev', commit: 'fake', rev: v.rev, namespace: v.namespace, impl: 'go' });
+	};
+	if (verb != 'endpoint') {
 		return null;
 	};
-
-	const flag = (name: string): string => {
-		const i = rest.indexOf(`--${name}`);
-		return (i >= 0) ? String(rest[i + 1] ?? '') : '';
-	};
-	const id = flag('connection');
-	const cur = state.items.get(id);
-	const stamp = cur ? `${fpOf(cur.key)}@${cur.rev}` : '';
-	const fail = (code: number, reason: string) => line(code, { ok: false, reason });
-
-	if (!/^[a-z0-9-]{1,64}$/.test(id)) {
-		return { code: 2, stdout: '' };
-	};
-	if (state.store != 'ok') {
-		return (verb == 'check')
-			? line(7, { present: null, store: state.store, kind: 'file', namespace })
-			: line(7, { ok: false, reason: 'the store could not be used', store: state.store });
+	if (state.verdict) {
+		return line(state.verdict.ok ? 0 : 1, state.verdict);
 	};
 
-	switch (verb) {
-		case 'check': {
-			if (cur) {
-				return line(0, { present: true, fingerprint: fpOf(cur.key), rev: cur.rev, account: cur.account, port: cur.port, tier: cur.tier, store: 'ok', kind: 'file', namespace });
-			};
-			return line(3, { present: false, ...(state.invalid.has(id) ? { invalid: true } : {}), store: 'ok', kind: 'file', namespace });
-		};
-		case 'set': {
-			let p: any = null;
+	let data: any = null;
 
-			try {
-				p = JSON.parse(String(call.opts.stdin || ''));
-			} catch (e) { /* invalid */ };
-			if (!p || (typeof p.key != 'string') || !p.key || !p.account || !p.port || !p.tier || (Object.keys(p).length != 4)) {
-				return fail(6, 'the payload is not {key, account, port, tier}');
-			};
+	try {
+		data = JSON.parse(readEndpoint() || '');
+	} catch (e) { /* missing or invalid */ };
 
-			const expect = flag('expect');
-
-			if ((expect == 'absent') ? !!cur : (expect != stamp)) {
-				return fail(5, 'precondition failed: the item is not in the expected state');
-			};
-
-			const next = { key: p.key, account: p.account, port: p.port, tier: p.tier, rev: (cur?.rev || 0) + 1 };
-
-			state.items.set(id, next);
-			state.invalid.delete(id);
-			return line(0, { ok: true, fingerprint: fpOf(next.key), rev: next.rev });
-		};
-		case 'retarget':
-		case 'delete': {
-			if (!cur) {
-				return fail(3, 'no item for this connection');
-			};
-			if ((flag('expect') != stamp) || (flag('account') != cur.account)) {
-				return fail(5, 'precondition failed: the item is not in the expected state');
-			};
-			if (verb == 'delete') {
-				state.items.delete(id);
-				return line(0, { ok: true });
-			};
-
-			const next = { ...cur, port: Number(flag('port')), tier: flag('tier'), rev: cur.rev + 1 };
-
-			state.items.set(id, next);
-			return line(0, { ok: true, fingerprint: fpOf(next.key), rev: next.rev });
-		};
+	if (!data) {
+		return line(1, { ok: false, reason: 'missing' });
 	};
-	return { code: 2, stdout: '' };
+	return ((data.v === 1) && Number.isInteger(data.port)) ? line(0, { ok: true, port: data.port }) : line(1, { ok: false, reason: 'invalid' });
 };
 
 type Entry = ({ type: 'file'; text: string } | { type: 'dir' } | { type: 'link'; target: string } | { type: 'fifo' }) & { mode: number; ino: number; uid: number; mtime?: number };
 
 const fsError = (code: string, p: string): Error => Object.assign(new Error(`${code}: ${p}`), { code });
 
+export interface FakeClipboard {
+	text: string;
+	/** Every text written, in order */
+	writes: string[];
+	/** Pending Env.setTimer callbacks (tests fire them with `fireTimers`) */
+	timers: { fn: () => void; at: number }[];
+};
+
 export type FakeEnv = Env & {
 	calls: RunCall[];
+	clip: FakeClipboard;
+	/** Runs every timer due at env.now() */
+	fireTimers: () => void;
 	/** The fake forwarder's store and the calls it got */
 	forwarder: ForwarderState;
 	files: () => Record<string, string>;
@@ -366,7 +328,7 @@ export const fakeEnv = (spec: FakeSpec): FakeEnv => {
 	const appRoot = (spec.platform == 'win32') ? 'C:\\Program Files\\Anytype\\resources\\app.asar.unpacked' : '/Applications/Anytype.app/Contents/Resources/app.asar.unpacked';
 	const arch = spec.arch || ((spec.platform == 'darwin') ? 'arm64' : 'x64');
 	const forwarderPath = P.join(appRoot, 'dist', (spec.platform == 'win32') ? 'anytype-mcp.exe' : 'anytype-mcp');
-	const forwarder: ForwarderState = { items: new Map(), invalid: new Set(), store: 'ok', calls: [] };
+	const forwarder: ForwarderState = { verdict: null, versions: new Map(), calls: [] };
 	const sha = (text: string): string => crypto.createHash('sha256').update(Buffer.from(text, 'utf8')).digest('hex');
 	const initial = (p: string): string | undefined => Object.entries(spec.files || {}).find(([ k ]) => key(k) == key(p))?.[1];
 	/** What scripts/build-mcp.js would have written for the files this machine started with */
@@ -385,9 +347,17 @@ export const fakeEnv = (spec: FakeSpec): FakeEnv => {
 		});
 	};
 
+	const clip: FakeClipboard = { text: '', writes: [], timers: [] };
 	const env: FakeEnv = {
 		calls,
 		forwarder,
+		clip,
+		fireTimers: () => {
+			const due = clip.timers.filter(t => t.at <= env.now());
+
+			clip.timers = clip.timers.filter(t => t.at > env.now());
+			due.forEach(t => t.fn());
+		},
 		arch,
 		buildMeta: () => (spec.meta !== undefined) ? spec.meta : defaultMeta(),
 		files: () => {
@@ -478,6 +448,7 @@ export const fakeEnv = (spec: FakeSpec): FakeEnv => {
 				},
 			};
 		},
+		fsyncDir: () => {},
 		rename: (from, to) => {
 			const src = locate(from);
 			const dst = locate(to);
@@ -548,25 +519,34 @@ export const fakeEnv = (spec: FakeSpec): FakeEnv => {
 
 			calls.push(call);
 
-			// The in-app forwarder: a test's own answer first, then the in-memory fake
-			if (key(file) == key(forwarderPath)) {
+			// The in-app forwarder or a stable copy: a test's own answer first, then the in-memory fake
+			if ((key(file) == key(forwarderPath)) || (/^anytype-mcp(\.exe)?$/.test(P.basename(file)) && [ 'bin', 'bin-dev' ].includes(P.basename(P.dirname(file))))) {
 				forwarder.calls.push(call);
 
-				const res = spec.forwarder?.(call, forwarder) || fakeForwarderRun(forwarder, call, spec.signed ? 'release' : 'dev');
+				const endpointFile = P.join(spec.home, '.anytype', 'ai-connect', spec.signed ? 'endpoint.json' : 'endpoint-dev.json');
+				const readEndpoint = (): string | null => {
+					const e = entries.get(key(endpointFile));
+					return (e?.type == 'file') ? e.text : null;
+				};
+				const res = spec.forwarder?.(call, forwarder) || fakeForwarderRun(forwarder, call, spec.signed ? 'release' : 'dev', readEndpoint);
 
 				if (res) {
 					return res;
 				};
 			};
 			// forwarder.ts's "who may replace the stable copy" query (S5): the user, SYSTEM and Administrators, plus `spec.acl`
-			if (opts.env?.ANYTYPE_MCP_ACL_DIR) {
+			if (opts.env?.ANYTYPE_MCP_ACL_PATHS) {
 				if (spec.acl === null) {
 					return { code: 1, stdout: '' };
 				};
 
-				const sids = (p: string) => [ FAKE_SID, 'S-1-5-18', 'S-1-5-32-544', ...(Object.entries(spec.acl || {}).find(([ k ]) => key(k) == key(p))?.[1] || []) ].join(',');
+				const foreign = (p: string): string[] => Object.entries(spec.acl || {}).find(([ k ]) => key(k) == key(p))?.[1] || [];
+				const sids = (p: string) => [ FAKE_SID, 'S-1-5-18', 'S-1-5-32-544', ...foreign(p) ].join(',');
+				// The home: its owner, and Full control for each SID (a foreign one may replace its children)
+				const home = [ `${FAKE_SID}:-1`, ...[ FAKE_SID, 'S-1-5-18', 'S-1-5-32-544', ...foreign(opts.env.ANYTYPE_MCP_ACL_HOME) ].map(sid => `${sid}:2032127`) ].join(',');
+				const paths = opts.env.ANYTYPE_MCP_ACL_PATHS.split('|');
 
-				return { code: 0, stdout: [ `user|${FAKE_SID}`, `path|${sids(opts.env.ANYTYPE_MCP_ACL_DIR)}`, `path|${sids(opts.env.ANYTYPE_MCP_ACL_FILE)}`, 'end|', '' ].join('\r\n') };
+				return { code: 0, stdout: [ `user|${FAKE_SID}`, `home|${home}`, ...paths.map(p => `path|${sids(p)}`), 'end|', '' ].join('\r\n') };
 			};
 			return spec.run ? spec.run(call) : { code: 1, stdout: '' };
 		},
@@ -576,6 +556,19 @@ export const fakeEnv = (spec: FakeSpec): FakeEnv => {
 		openExternal: async () => false,
 		protocolHandler: async () => null,
 		showItemInFolder: () => {},
+		clipboardRead: () => clip.text,
+		clipboardWrite: text => {
+			clip.text = text;
+			clip.writes.push(text);
+		},
+		setTimer: (fn, ms) => {
+			const t = { fn, at: env.now() + ms };
+
+			clip.timers.push(t);
+			return () => {
+				clip.timers = clip.timers.filter(it => it !== t);
+			};
+		},
 		now: () => 1000,
 		sleep: async () => {},
 	};

@@ -78,14 +78,14 @@ describe('isDesktop', () => {
 		expect(await flow.load()).toBe(false);
 	});
 
-	test('V14: key listing is gated too (keyFor, liveAccess, reconnect) with the web and extension bridges', async () => {
+	test('V14: key listing is gated too (copySecret, liveAccess, reconnect) with the web and extension bridges', async () => {
 		const { extensionBridge } = await import('../../../../extension/lib/bridge');
 		const old = h.existing();
 
 		h.heart.add('hash-old');
 		for (const bridge of [ { Api: vi.fn() }, extensionBridge ]) {
 			(window as any).Electron = bridge;
-			expect(await flow.keyFor(old)).toBeNull();
+			expect(await flow.copySecret({ template: '<KEY>', appHash: old.appHash })).toBe(false);
 			expect((await flow.liveAccess(old)).ok).toBe(false);
 			expect((await flow.reconnect(old)).kind).toBe('error');
 			await flow.releasePendingKey();
@@ -136,7 +136,7 @@ describe('mintKey', () => {
 		const res: any = await flow.mintKey({ name: 'Cursor', grant: GRANT, expireAt: 0 });
 		const sent = h.calls('aiConnectMintIntent')[0].param;
 
-		expect(sent).toEqual({ accountId: 'acc-1', name: 'Cursor', time: expect.any(Number) });
+		expect(sent).toEqual({ accountId: 'acc-1', name: 'Cursor', time: expect.any(Number), grant: GRANT, expireAt: 0 });
 		expect(sent.time).toBeLessThanOrEqual(before);
 		expect(sent.time).toBeGreaterThan(before - 10);
 		// Saved first, and still held while the key is undelivered
@@ -736,14 +736,23 @@ describe('manual setup', () => {
 		expect(h.heart.state.creates).toBe(0);
 	});
 
-	test('createManual for Claude Desktop applies manual: true with the flow\'s pending key', async () => {
-		h.main.m.plans['claude-desktop'] = { ...BASE_PLAN, appId: 'claude-desktop', route: 'stdio', steps: [ { textKey: 'aiConnectManualPrepare' } ] };
+	test('createManual for Claude Desktop: the settings file\'s entry waits for "I\'ve updated", recorded as a command setup; never an apply', async () => {
+		const entry = '{"mcpServers":{"anytype":{"command":"/Users/me/.anytype/bin/anytype-mcp","args":["serve","--tier","full"],"env":{"ANYTYPE_API_KEY":"<KEY>"}}}}';
 
-		const res = await flow.createManual({ ...input({ appId: 'claude-desktop', route: 'stdio', name: 'Claude Desktop' }) });
+		h.main.m.plans['claude-desktop'] = { ...BASE_PLAN, appId: 'claude-desktop', route: 'stdio', method: 'config', steps: [ { textKey: 'aiConnectManualMerge', snippet: entry, lang: 'json' } ] };
 
-		expect(res.kind).toBe('ok');
-		expect(h.calls('aiConnectApply')[0].param).toMatchObject({ manual: true, appId: 'claude-desktop' });
-		expect(h.calls('aiConnectRecordManual')).toHaveLength(0);
+		const manual = { ...input({ appId: 'claude-desktop', route: 'stdio', name: 'Claude Desktop' }), method: 'config' as const, setup: 'command' as const };
+		const res = await flow.createManual(manual);
+
+		expect(res.kind).toBe('pending');
+		expect(h.calls('aiConnectPlan')[0].param.method).toBe('config');
+
+		const done = await flow.confirmManual(manual);
+
+		expect(done.ok).toBe(true);
+		expect(h.calls('aiConnectApply')).toHaveLength(0);
+		expect(h.calls('aiConnectRecordManual')[0].param).toMatchObject({ appId: 'claude-desktop', setup: 'command', route: 'stdio', appHash: 'hash-1' });
+		expect(flow.heldKey()).toEqual({ appHash: 'hash-1', committed: true });
 	});
 });
 
@@ -852,7 +861,8 @@ describe('check', () => {
 		h.heart.rows.set('hash-lost', { hash: 'hash-lost', apiKey: 'k-lost', name: 'Cursor', createdAt: now, grant: GRANT, expireAt: 0 });
 		h.heart.rows.set('hash-mine', { hash: 'hash-mine', apiKey: 'k-mine', name: 'My script', createdAt: now, grant: GRANT, expireAt: 0 });
 		h.heart.rows.set('hash-before', { hash: 'hash-before', apiKey: 'k-before', name: 'Cursor', createdAt: now - 500, grant: GRANT, expireAt: 0 });
-		h.heart.rows.get('hash-old').createdAt = now;
+		// The record's key is older than the intent: a managed key in its window would make the match ambiguous (D1R2-B)
+		h.heart.rows.get('hash-old').createdAt = now - 3600;
 		h.main.m.staleIntents = [ { id: '00000000000000aa', name: 'Cursor', time: now - 5 } ];
 
 		await flow.check('test');
@@ -951,7 +961,7 @@ describe('check', () => {
 	test('S9: a Claude preview refused by the two-server guard (no steps, no target) mints nothing on Create key', async () => {
 		h.main.m.plans['claude-desktop'] = {
 			...BASE_PLAN, appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', method: 'manual', canApply: false, steps: [], targetPath: undefined,
-			note: 'aiConnectClaudeBothRoutes', error: { stage: 'validate', category: 'conflict' },
+			note: 'aiConnectClaudeBothExtension', error: { stage: 'validate', category: 'conflict' },
 		} as any;
 
 		const res: any = await flow.createManual({ appId: 'claude-desktop', route: 'stdio', tier: 'large', recommendedTier: 'large', grant: GRANT, name: 'Claude Desktop', expireAt: 0, shown: h.main.m.plans['claude-desktop'] } as any);

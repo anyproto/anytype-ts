@@ -5,7 +5,7 @@
  */
 import crypto from 'crypto';
 import { describe, expect, test } from 'vitest';
-import { buildMeta, bundled, ensureInstalled, itemLabel, platformKey, serveCommand, signedByUs, stable, stableDir, stdioSupported, usable } from './forwarder';
+import { buildMeta, bundled, ensureInstalled, platformKey, serveCommand, signedByUs, stable, stableDir, stdioSupported, usable } from './forwarder';
 import { FAKE_TEAM, fakeEnv, type FakeEnv, type FakeSpec, type RunCall } from './testEnv';
 
 const BYTES = 'FORWARDER-REV-5';
@@ -32,7 +32,7 @@ const machine = (platform: NodeJS.Platform, opt: Opt = {}): FakeEnv & { signatur
 	const key = (platform == 'darwin') ? 'darwin' : (win ? 'win32-x64' : `linux-${arch}`);
 	const signatureCalls: RunCall[] = [];
 	const env = fakeEnv({
-		platform, home, arch,
+		platform, home, arch, signed,
 		vars: win ? { SystemRoot: 'C:\\Windows', ...(opt.vars || {}) } : (opt.vars || {}),
 		files: { [bin]: bytes, ...(opt.files || {}) },
 		dirs: opt.dirs,
@@ -40,7 +40,7 @@ const machine = (platform: NodeJS.Platform, opt: Opt = {}): FakeEnv & { signatur
 		foreign: opt.foreign,
 		meta: (opt.meta !== undefined) ? opt.meta : JSON.stringify({
 			signed,
-			forwarder: { rev: opt.rev ?? 5, namespace: signed ? 'release' : 'dev', ...(signed ? { teamId: FAKE_TEAM } : {}), sha256: { [key]: sha(bytes) } },
+			forwarder: { rev: opt.rev ?? 6, namespace: signed ? 'release' : 'dev', ...(signed ? { teamId: FAKE_TEAM } : {}), sha256: { [key]: sha(bytes) } },
 			mcpb: null,
 		}),
 		run: call => {
@@ -81,15 +81,12 @@ describe('the build\'s metadata and the in-app forwarder', () => {
 		expect(bundled(mac)).toBe(`${MAC_ROOT}/dist/anytype-mcp`);
 		expect(bundled(win)).toBe(`${WIN_ROOT}\\dist\\anytype-mcp.exe`);
 		expect(stable(mac)).toBe('/Users/me/.anytype/bin/anytype-mcp');
-		// A build that isn't a release never touches the production copy or the production items
+		// A build that isn't a release never touches the production copy
 		expect(stableDir(dev)).toBe('/Users/me/.anytype/bin-dev');
-		expect(itemLabel(dev, 'claude-desktop')).toBe('/Users/me/.anytype/ai-connect/items-dev/claude-desktop.item');
-		expect(itemLabel(mac, 'claude-desktop')).toBe('/Users/me/.anytype/ai-connect/items/claude-desktop.item');
 		expect(stable(win)).toBe('C:\\Users\\me\\.anytype\\bin\\anytype-mcp.exe');
-		expect(serveCommand(mac, 'other-1a2b3c4d')).toEqual({ command: '/Users/me/.anytype/bin/anytype-mcp', args: [ 'serve', '--connection', 'other-1a2b3c4d' ] });
-		// No `env` field, no key, no --files-dir: the forwarder makes its own fresh temp folder per process
-		expect(Object.keys(serveCommand(mac, 'x'))).toEqual([ 'command', 'args' ]);
-		expect(JSON.stringify(serveCommand(mac, 'x'))).not.toMatch(/files-dir|ELECTRON|Anytype\.app/);
+		// The key only in `env`; no --files-dir unless asked for (the forwarder makes its own temp folder)
+		expect(serveCommand(mac, { tier: 'small', key: 'K' })).toEqual({ command: '/Users/me/.anytype/bin/anytype-mcp', args: [ 'serve', '--tier', 'small' ], env: { ANYTYPE_API_KEY: 'K' } });
+		expect(JSON.stringify(serveCommand(mac, { tier: 'full', key: 'K' }))).not.toMatch(/files-dir|ELECTRON|Anytype\.app/);
 	});
 
 	test.each([
@@ -126,7 +123,7 @@ describe('the build\'s metadata and the in-app forwarder', () => {
 	});
 
 	test('a signed mcpb entry needs its signer; the bundle entry is dropped otherwise', () => {
-		const env = machine('darwin', { meta: JSON.stringify({ signed: true, forwarder: { rev: 5, namespace: 'release', sha256: { darwin: sha(BYTES) } }, mcpb: { sha256: sha('zip'), version: '2.5.0' } }) });
+		const env = machine('darwin', { meta: JSON.stringify({ signed: true, forwarder: { rev: 6, namespace: 'release', sha256: { darwin: sha(BYTES) } }, mcpb: { sha256: sha('zip'), version: '2.6.0' } }) });
 
 		expect(buildMeta(env)).toMatchObject({ signed: true, mcpb: null });
 	});
@@ -162,7 +159,7 @@ describe('the stable copy (§4.2, §4.3)', () => {
 
 		expect(await ensureInstalled(env)).toEqual({ ok: true, path: STABLE, installed: true });
 		expect(env.files()[STABLE]).toBe(BYTES);
-		expect(env.files()[`${STABLE}.rev`]).toBe('5\n');
+		expect(env.files()[`${STABLE}.rev`]).toBe('6\n');
 		expect(env.modeOf(STABLE)).toBe(0o755);
 		expect(env.modeOf('/Users/me/.anytype/bin')).toBe(0o700);
 		expect(env.readDir('/Users/me/.anytype/bin').sort()).toEqual([ 'anytype-mcp', 'anytype-mcp.rev' ]);
@@ -203,7 +200,7 @@ describe('the stable copy (§4.2, §4.3)', () => {
 		expect(order).toEqual([ `${STABLE}.rev`, STABLE ]);
 	});
 
-	test.each([ [ 'lower', '4\n' ], [ 'equal', '5\n' ], [ 'missing', null ], [ 'not a number', 'x\n' ] ])('macOS: another copy with a %s `.rev` is replaced', async (name, rev) => {
+	test.each([ [ 'lower', '5\n' ], [ 'equal', '6\n' ], [ 'missing', null ], [ 'not a number', 'x\n' ] ])('macOS: another copy with a %s `.rev` is replaced', async (name, rev) => {
 		const env = machine('darwin', { signatureOk: true });
 
 		put(env, STABLE, 'OTHER-BYTES');
@@ -212,7 +209,7 @@ describe('the stable copy (§4.2, §4.3)', () => {
 		};
 		expect(await ensureInstalled(env)).toMatchObject({ ok: true, installed: true });
 		expect(env.files()[STABLE]).toBe(BYTES);
-		expect(env.files()[`${STABLE}.rev`]).toBe('5\n');
+		expect(env.files()[`${STABLE}.rev`]).toBe('6\n');
 	});
 
 	test('macOS: never downgrade — a copy with a higher `.rev` and our signature is left alone; without our signature it is replaced', async () => {
@@ -233,7 +230,7 @@ describe('the stable copy (§4.2, §4.3)', () => {
 		put(planted, `${STABLE}.rev`, '99\n', 0o644);
 		expect(await ensureInstalled(planted)).toMatchObject({ ok: true, installed: true });
 		expect(planted.files()[STABLE]).toBe(BYTES);
-		expect(planted.files()[`${STABLE}.rev`]).toBe('5\n');
+		expect(planted.files()[`${STABLE}.rev`]).toBe('6\n');
 	});
 
 	test('Linux (C2): the running Anytype always installs its own forwarder, also over a higher `.rev`; one hash per architecture', async () => {
@@ -245,19 +242,19 @@ describe('the stable copy (§4.2, §4.3)', () => {
 			put(env, `${file}.rev`, '9\n', 0o644);
 			expect(await ensureInstalled(env)).toEqual({ ok: true, path: file, installed: true });
 			expect(env.files()[file]).toBe(BYTES);
-			expect(env.files()[`${file}.rev`]).toBe('5\n');
+			expect(env.files()[`${file}.rev`]).toBe('6\n');
 			// Linux has no signature to ask about
 			expect(env.signatureCalls).toEqual([]);
 		};
 
 		// The other architecture's hash is not this machine's
-		const wrong = machine('linux', { arch: 'arm64', meta: JSON.stringify({ signed: true, forwarder: { rev: 5, namespace: 'release', sha256: { 'linux-x64': sha(BYTES) } }, mcpb: null }) });
+		const wrong = machine('linux', { arch: 'arm64', meta: JSON.stringify({ signed: true, forwarder: { rev: 6, namespace: 'release', sha256: { 'linux-x64': sha(BYTES) } }, mcpb: null }) });
 
 		expect(await ensureInstalled(wrong)).toMatchObject({ ok: false, error: { category: 'notFound' } });
 	});
 
 	test('an update that dies right after `.rev`: an older Anytype leaves the copy alone, the newer one finishes the job', async () => {
-		const newer = machine('darwin', { rev: 6, bytes: 'FORWARDER-REV-6', signatureOk: true });
+		const newer = machine('darwin', { rev: 7, bytes: 'FORWARDER-REV-7', signatureOk: true });
 		const rename = newer.rename;
 
 		put(newer, STABLE, 'FORWARDER-REV-4');
@@ -270,11 +267,11 @@ describe('the stable copy (§4.2, §4.3)', () => {
 			rename(from, to);
 		};
 		expect(await ensureInstalled(newer)).toMatchObject({ ok: false, error: { category: 'installFailed' } });
-		expect(newer.files()[`${STABLE}.rev`]).toBe('6\n');
+		expect(newer.files()[`${STABLE}.rev`]).toBe('7\n');
 		expect(newer.files()[STABLE]).toBe('FORWARDER-REV-4');
 
-		// An older build (rev 5, other bytes) starts on the same home: `.rev` names a higher revision → left alone
-		const older = machine('darwin', { rev: 5, signatureOk: true, files: { [STABLE]: 'FORWARDER-REV-4', [`${STABLE}.rev`]: '6\n' } });
+		// An older build (rev 6, other bytes) starts on the same home: `.rev` names a higher revision → left alone
+		const older = machine('darwin', { rev: 6, signatureOk: true, files: { [STABLE]: 'FORWARDER-REV-4', [`${STABLE}.rev`]: '7\n' } });
 
 		expect(await ensureInstalled(older)).toEqual({ ok: true, path: STABLE, installed: false });
 		expect(older.files()[STABLE]).toBe('FORWARDER-REV-4');
@@ -282,12 +279,12 @@ describe('the stable copy (§4.2, §4.3)', () => {
 		// The newer build again: a different hash → it finishes
 		newer.rename = rename;
 		expect(await ensureInstalled(newer)).toMatchObject({ ok: true, installed: true });
-		expect(newer.files()[STABLE]).toBe('FORWARDER-REV-6');
+		expect(newer.files()[STABLE]).toBe('FORWARDER-REV-7');
 		expect(newer.readDir('/Users/me/.anytype/bin').sort()).toEqual([ 'anytype-mcp', 'anytype-mcp.rev' ]);
 	});
 
 	test('an update that dies right after the binary rename leaves a complete, usable copy', async () => {
-		const env = machine('darwin', { rev: 6, bytes: 'FORWARDER-REV-6' });
+		const env = machine('darwin', { rev: 7, bytes: 'FORWARDER-REV-7' });
 
 		put(env, STABLE, 'FORWARDER-REV-4');
 		await ensureInstalled(env);
@@ -405,5 +402,44 @@ describe('the stable copy on Windows', () => {
 		put(env, 'C:\\Users\\me\\.anytype\\bin\\anytype-mcp.exe.old-0a1b2c3d', 'OLDER');
 		expect(await ensureInstalled(env)).toEqual({ ok: true, path: STABLE, installed: true });
 		expect(env.readDir('C:\\Users\\me\\.anytype\\bin').sort()).toEqual([ 'anytype-mcp.exe', 'anytype-mcp.exe.rev' ]);
+	});
+});
+
+describe('D1-07: a stable copy Anytype keeps must take its key from the environment', () => {
+	test('D1-07: `.rev` = 7 beside a signed rev 5 stable copy, and a blocked Windows rename over a rev 5 copy → installFailed', async () => {
+		const STABLE_MAC = '/Users/me/.anytype/bin/anytype-mcp';
+		const higher = machine('darwin', { signatureOk: true });
+
+		put(higher, STABLE_MAC, 'SIGNED-REV-5');
+		put(higher, `${STABLE_MAC}.rev`, '7\n', 0o644);
+		higher.forwarder.versions.set(STABLE_MAC, { rev: 5, namespace: 'release' });
+		expect(await ensureInstalled(higher)).toMatchObject({ ok: false, error: { category: 'installFailed' } });
+		expect(higher.files()[STABLE_MAC]).toBe('SIGNED-REV-5');
+
+		// The same with a Rev 6 copy of this namespace is kept (never downgraded)
+		higher.forwarder.versions.set(STABLE_MAC, { rev: 6, namespace: 'release' });
+		expect(await ensureInstalled(higher)).toEqual({ ok: true, path: STABLE_MAC, installed: false });
+
+		const STABLE_WIN = 'C:\\Users\\me\\.anytype\\bin\\anytype-mcp.exe';
+		const blocked = machine('win32', { signatureOk: true });
+		const rename = blocked.rename;
+
+		put(blocked, STABLE_WIN, 'SIGNED-REV-5');
+		blocked.forwarder.versions.set(STABLE_WIN, { rev: 5, namespace: 'release' });
+		blocked.rename = (from, to) => {
+			if (from.toLowerCase() == STABLE_WIN.toLowerCase()) {
+				throw Object.assign(new Error('busy'), { code: 'EBUSY' });
+			};
+			rename(from, to);
+		};
+		expect(await ensureInstalled(blocked)).toMatchObject({ ok: false, error: { category: 'installFailed' } });
+		expect(blocked.files()[STABLE_WIN]).toBe('SIGNED-REV-5');
+	});
+
+	test('D1-07: metadata naming a forwarder older than Rev 6 switches the stdio routes off', () => {
+		const old = machine('darwin', { rev: 5 });
+
+		expect(buildMeta(old).forwarder).toBeNull();
+		expect(usable(old)).toMatchObject({ ok: false });
 	});
 });

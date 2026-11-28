@@ -3,7 +3,7 @@ import * as I from 'Interface';
 import AppGrantFields from 'Component/form/appGrantFields';
 import AiAppIcon from 'Component/util/aiAppIcon';
 import ChevronDown from 'Component/util/icons/arrow/chevronDown';
-import { connectionState } from 'Lib/aiConnect/gallery';
+import { BUNDLE_STATUS, connectionState, revocationPending } from 'Lib/aiConnect/gallery';
 import { isValidLinkGrant, linkApprovalGrant } from 'Lib/linkApprovalGrant';
 import { accessSummary, spaceSummary, tierLabel, tierNote, tierOptions, tr } from './text';
 
@@ -42,6 +42,8 @@ export interface AiConnectManageProps {
 	onRetryCheck: () => void;
 	onRetryLookup?: () => void;
 	onManual: () => void;
+	/** Claude's extension, not "Connected" yet: its Finish view again */
+	onContinue?: () => void;
 	onClose: () => void;
 };
 
@@ -53,7 +55,7 @@ const EDIT_FOCUSABLE = 'select:not(:disabled), input:not(:disabled), button:not(
 const AiConnectManage = (props: AiConnectManageProps) => {
 	const {
 		appName, appId, icon, connection, access, spaces, siblings, notice, busy, apiListening, moved, override, lookupFailed, initialEditing, formatDate,
-		onSaveAccess, onSaveTier, onReveal, onReconnect, onReplace, onDisconnect, onForget, onRetry, onRetryCheck, onRetryLookup, onManual, onClose,
+		onSaveAccess, onSaveTier, onReveal, onReconnect, onReplace, onDisconnect, onForget, onRetry, onRetryCheck, onRetryLookup, onManual, onContinue, onClose,
 	} = props;
 	const [ editing, setEditing ] = useState<'access' | 'tier' | null>(initialEditing || null);
 	const [ draft, setDraft ] = useState<I.LinkAppGrant>(access?.grant || connection.grant);
@@ -61,6 +63,8 @@ const AiConnectManage = (props: AiConnectManageProps) => {
 	const ids = { perm: useId(), tier: useId() };
 
 	const isManual = (connection.method == 'manual');
+	// Claude's extension: always the Full tool set, never changed in place (§3.3)
+	const isBundle = (connection.method == 'package');
 	const grant = access?.grant || connection.grant;
 	const expireAt = access ? access.expireAt : connection.expireAt;
 	const state = override || connectionState(connection);
@@ -69,6 +73,8 @@ const AiConnectManage = (props: AiConnectManageProps) => {
 	const removed = connection.removed;
 	const changeable = !removed && !override;
 	const probeFailed = (state == 'probeFailed');
+	// Claude has Anytype twice: the settings-file entry and the extension (status `conflict`); the user removes one (D1C-14)
+	const bothRoutes = (state == 'conflict') && !!connection.bothRoutes;
 
 	useEffect(() => {
 		if (!editing) {
@@ -117,9 +123,11 @@ const AiConnectManage = (props: AiConnectManageProps) => {
 			case 'accessEnded': return { key: 'aiAppsStatusAccessEnded', dot: 'isError' };
 			case 'unreadable': return { key: 'aiAppsStatusUnreadable', dot: 'isError' };
 			case 'reconnect': return { key: 'aiAppsStatusAttention', dot: 'isError' };
-			case 'conflict': return { key: 'aiAppsStatusConflict', dot: 'isError' };
+			case 'conflict': return { key: (bothRoutes ? 'aiAppsStatusBothRoutes' : 'aiAppsStatusConflict'), dot: 'isError' };
 			case 'revokeFailed': return { key: 'aiAppsStatusRevokeFailed', dot: 'isError' };
 			case 'gone': return { key: 'aiAppsNotInstalled', dot: '' };
+			case 'bundle': return { key: BUNDLE_STATUS[connection.bundleState || 'finish'], dot: '' };
+			case 'disconnected': return { key: 'aiAppsStatusDisconnected', dot: 'isError' };
 		};
 		return null;
 	})();
@@ -152,6 +160,11 @@ const AiConnectManage = (props: AiConnectManageProps) => {
 			break;
 		};
 		case 'conflict': {
+			if (bothRoutes) {
+				attention = { text: tr('aiConnectAttentionBothRoutes', appName), actions: null };
+				break;
+			};
+
 			// Hermes never replaces an entry it didn't write: set it up by hand instead (H9)
 			const replace = (appId == 'hermes') ? link(translate('aiConnectSetUpManually'), onManual) : link(translate('aiConnectReplace'), onReplace, !apiListening || lookupFailed);
 
@@ -170,11 +183,21 @@ const AiConnectManage = (props: AiConnectManageProps) => {
 			attention = { text: tr('aiConnectAttentionPending', appName), actions: null };
 			break;
 		};
+		case 'bundle': {
+			attention = { text: tr('aiConnectAttentionBundle', appName), actions: onContinue ? link(translate('aiAppsContinue'), onContinue) : null };
+			break;
+		};
+		case 'disconnected': {
+			attention = { text: tr('aiConnectAttentionDisconnected', appName), actions: link(translate('aiConnectReconnect'), onReconnect, !apiListening) };
+			break;
+		};
 	};
 
 	const tiers = tierOptions(connection.tier);
 	const tierHint = tierNote(tierDraft, connection.route);
 	const statusCn = [ 'localApiStatus', status?.dot || '' ];
+	// A replaced key heart hasn't confirmed revoked yet, next to the record's own state (D1C-16)
+	const statusText = status ? [ tr(status.key, appName), (revocationPending(connection) ? translate('aiAppsStatusRevokePending') : '') ].filter(it => it).join(' · ') : '';
 	const saveAccessCn = [ 'button', 'black', 'size28', (isValidLinkGrant(draft) ? '' : 'disabled') ];
 
 	return (
@@ -185,7 +208,7 @@ const AiConnectManage = (props: AiConnectManageProps) => {
 				{status ? (
 					<div className="statusLine">
 						{status.dot ? <span className={statusCn.join(' ')} aria-hidden="true" /> : null}
-						<span>{tr(status.key, appName)}</span>
+						<span>{statusText}</span>
 					</div>
 				) : null}
 			</div>
@@ -238,7 +261,7 @@ const AiConnectManage = (props: AiConnectManageProps) => {
 					<div className="manageRow">
 						<dt>{translate('aiConnectTier')}</dt>
 						<dd>{isManual ? translate('aiConnectOtherTierHint') : tierLabel(connection.tier)}</dd>
-						{!isManual && changeable && (editing != 'tier') ? change('tier', !apiListening) : null}
+						{!isManual && !isBundle && changeable && (editing != 'tier') ? change('tier', !apiListening) : null}
 					</div>
 				) : null}
 

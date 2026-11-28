@@ -3,6 +3,7 @@ import * as I from 'Interface';
 import { Loader } from 'Component';
 import AiAppIcon from 'Component/util/aiAppIcon';
 import type { AiFinishPhase } from 'Lib/aiConnect/controller';
+import { BUNDLE_STATUS } from 'Lib/aiConnect/gallery';
 import { tr } from './text';
 
 export type { AiFinishPhase };
@@ -34,8 +35,14 @@ export interface AiConnectFinishProps {
 	bundleSigned?: boolean;
 	/** The app (or the bundle) couldn't be opened */
 	openFailed?: boolean;
-	/** The settings-file route this app offers instead of its own install dialog */
-	fileRoute?: 'claude' | 'lmstudio' | null;
+	/** The settings-file route this app offers instead of its own install dialog (LM Studio's link) */
+	fileRoute?: 'lmstudio' | null;
+	/**
+	 * Phase `bundle`, Claude's extension until "Connected" (§3.3): the step the record is at (main's
+	 * `bundleState`), and what main couldn't do after the record's save. `bothRoutes`: Claude has the
+	 * settings-file entry too, so the bundle isn't opened again
+	 */
+	bundle?: { state: I.AiBundleState; copyFailed: boolean; openFailed: boolean; configure: boolean; stopped: boolean; bothRoutes?: boolean } | null;
 	/** The probe after the delivery passed */
 	probeOk?: boolean;
 	/** Translated error lines (phase `error`) */
@@ -55,6 +62,11 @@ export interface AiConnectFinishProps {
 	onRevealBundle: () => void;
 	onSaveRetry?: () => void;
 	onCheckAgain?: () => void;
+	/** Phase `bundle`: Copy key (again), Open again, Cancel setup (= Disconnect), Check again after the watch ran out */
+	onCopyKey?: () => void;
+	onOpenBundle?: () => void;
+	onCancelSetup?: () => void;
+	onCheckBundle?: () => void;
 	onClose: () => void;
 };
 
@@ -63,7 +75,7 @@ const AiConnectFinish = (props: AiConnectFinishProps) => {
 	const {
 		appName, appId, restartName, icon, phase, step, instructions, canRestart, canOpen = true, ackFailed, unsaved, pollStopped, restartFailed, bundleSigned, openFailed, fileRoute,
 		probeOk, errorLines, canManual, busy, onCancel, onQuitContinue, onContinueSelf, onOpenApp, onRestart, onDone, onLater, onManual, onFileRoute, onRevealBundle, onSaveRetry,
-		onCheckAgain, onClose,
+		onCheckAgain, onCopyKey, onOpenBundle, onCancelSetup, onCheckBundle, onClose, bundle,
 	} = props;
 	const restartApp = restartName || appName;
 
@@ -80,10 +92,9 @@ const AiConnectFinish = (props: AiConnectFinishProps) => {
 		return <button type="button" className={cn.join(' ')} disabled={disabled || busy} data-primary={primary ? 'true' : undefined} onClick={onClick}>{text}</button>;
 	};
 	const fileRouteButton = fileRoute ? (
-		<button type="button" className="linkButton" disabled={busy} onClick={onFileRoute}>
-			{translate((fileRoute == 'claude') ? 'aiConnectUseConfigInstead' : 'aiConnectUseFileInsteadLmstudio')}
-		</button>
+		<button type="button" className="linkButton" disabled={busy} onClick={onFileRoute}>{translate('aiConnectUseFileInsteadLmstudio')}</button>
 	) : null;
+	const link = (text: string, onClick?: () => void) => onClick ? <button type="button" className="linkButton" disabled={busy} onClick={onClick}>{text}</button> : null;
 	const manualButton = canManual ? <button type="button" className="linkButton" disabled={busy} onClick={onManual}>{translate('aiConnectSetUpManually')}</button> : null;
 
 	let body: React.ReactNode = null;
@@ -113,9 +124,53 @@ const AiConnectFinish = (props: AiConnectFinishProps) => {
 			break;
 		};
 
-		case 'installExtension':
+		case 'bundle': {
+			const b = bundle || { state: 'finish' as I.AiBundleState, copyFailed: false, openFailed: false, configure: false, stopped: false };
+			const finishing = (b.state == 'finish') && !b.configure;
+			// The bundle Anytype had to open didn't open: its error and Open again, whatever Claude reports, until it
+			// opens or the key is confirmed (D1C-17); never while Claude has both routes (D1C-14)
+			const launchFailed = b.openFailed && !b.configure && !b.bothRoutes;
+			const openAgain = !b.bothRoutes && ((b.state == 'finish') || launchFailed);
+			let how = 'aiConnectBundleConfigure';
+
+			if (finishing) {
+				how = 'aiConnectBundlePaste';
+			} else
+			if (b.state == 'off') {
+				how = 'aiConnectBundleTurnOn';
+			};
+
+			body = (
+				<>
+					<div className="statusLine" role="status">
+						<span>{tr(BUNDLE_STATUS[b.state], appName)}</span>
+					</div>
+					<p className="description">{tr(how, appName)}</p>
+					{b.copyFailed ? <p className="accessNotice">{translate('aiConnectBundleCopyFailed')}</p> : null}
+					{launchFailed ? (
+						<div className="accessNotice">
+							<p>{tr('aiConnectOpenFailed', appName)}</p>
+							<button type="button" className="linkButton" disabled={busy} onClick={onRevealBundle}>{translate('aiConnectReveal')}</button>
+						</div>
+					) : null}
+					<p className="description">{translate('aiConnectBundleClipboard')}</p>
+					{b.stopped ? <p className="accessNotice" role="status">{tr('aiConnectBundleStopped', appName)}</p> : null}
+				</>
+			);
+			aside = (
+				<>
+					{link(translate(b.copyFailed ? 'aiConnectCopyKey' : 'aiConnectCopyKeyAgain'), onCopyKey)}
+					{openAgain ? link(translate('aiConnectOpenAgain'), onOpenBundle) : null}
+					{b.stopped ? link(translate('aiConnectManualRecheck'), onCheckBundle) : null}
+					{link(translate('aiConnectCancelSetup'), onCancelSetup)}
+				</>
+			);
+			buttons = btn(translate('aiConnectFinishLater'), onLater, 'black', true);
+			break;
+		};
+
 		case 'step': {
-			const current = (phase == 'installExtension') ? 'confirmInApp' : step;
+			const current = step;
 
 			if (ackFailed) {
 				// Done in the app, not saved here: saving again, never another restart or install (before any step's own controls, W14)

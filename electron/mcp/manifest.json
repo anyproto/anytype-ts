@@ -9,7 +9,15 @@
   "server": {
     "type": "binary",
     "entry_point": "server/anytype-mcp",
-    "mcp_config": { "command": "${__dirname}/server/anytype-mcp", "args": ["serve", "--connection", "claude-desktop"] }
+    "mcp_config": {
+      "command": "${__dirname}/server/anytype-mcp",
+      "args": ["serve", "--tier", "full"],
+      "env": { "ANYTYPE_API_KEY": "${user_config.api_key}", "ANYTYPE_MCP_FILES_DIR": "${user_config.files_dir}" }
+    }
+  },
+  "user_config": {
+    "api_key": { "type": "string", "title": "Anytype key", "description": "Anytype copied it for you. Paste it here.", "sensitive": true, "required": true },
+    "files_dir": { "type": "directory", "title": "Folder for files (optional)", "description": "The only folder Claude may upload from and download to. Leave it empty to use a temporary folder. Your home folder can't be used.", "required": false }
   },
   "tools_generated": true,
   "compatibility": { "platforms": ["darwin"] }

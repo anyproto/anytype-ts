@@ -177,6 +177,51 @@ export const tempName = (env: Env, real: string, tag: string): string => {
 	return P.join(P.dirname(real), `.${P.basename(real)}.${tag}-${env.now()}-${rand}.tmp`);
 };
 
+/** A temp file is left for the sweep only once it is this old (a writer still at work is younger) */
+export const SWEEP_AGE_MS = 60 * 1000;
+
+const escapeRe = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * Deletes what a killed writer left beside `real`: siblings named exactly as `tempName` names them for that
+ * basename, regular files owned by the user, older than SWEEP_AGE_MS. No journal of temp names is kept, so
+ * this is the only cleanup (before every secret write, and once at start for every record's target).
+ * Returns the milliseconds until the youngest one left for its age may be deleted (0: none was left for that).
+ */
+export const sweepTemps = (env: Env, real: string): number => {
+	if (!real || !isLocalAbsolute(env, real)) {
+		return 0;
+	};
+
+	const P = pathOf(env);
+	const dir = P.dirname(real);
+	const re = new RegExp(`^\\.${escapeRe(P.basename(real))}\\.[a-z]+-[0-9]+-[0-9a-f]{1,8}\\.tmp$`);
+	let wait = 0;
+
+	for (const name of env.readDir(dir) || []) {
+		if (!re.test(name)) {
+			continue;
+		};
+
+		const file = P.join(dir, name);
+		const st = env.lstat(file);
+
+		if (!st || st.isSymlink || !st.isFile || ((env.uid !== null) && (st.uid != env.uid))) {
+			continue;
+		};
+
+		const age = env.now() - (st.mtimeMs || env.now());
+
+		// Maybe a live writer's: left, and the caller looks again once it is old enough
+		if (age < SWEEP_AGE_MS) {
+			wait = Math.max(wait, SWEEP_AGE_MS - age + 1000);
+			continue;
+		};
+		tryUnlink(env, file);
+	};
+	return wait;
+};
+
 export const tryUnlink = (env: Env, p: string): void => {
 	try {
 		env.unlink(p);
@@ -353,18 +398,24 @@ export type WriteResult = { ok: true; createdDirs: string[] } | { ok: false; cha
  * 2. The parent's identity is taken once; every temp is created only after it is rechecked, and every
  *    rename happens only after it is rechecked again.
  * 3. Existing file: the snapshot text goes to `<real>.anytype-backup` (0600, never through a link), unless
- *    `backup: false` (a credentials file such as Hermes' .env: no copy of other secrets is left behind).
- * 4. The new text goes to a sibling temp file.
+ *    the write is `secret` (it puts a key into the file): then no copy of the file is ever left behind.
+ * 4. The new text goes to a sibling temp file; a secret write's temp is created 0600, and older temps of a
+ *    killed writer are swept first (`sweepTemps`).
  * 5. Right before every rename attempt the parent and the target are compared with the plan and the
  *    snapshot; on Windows a busy target is retried (recheck included) up to three times. The target is
  *    never unlinked first.
  * 6. A parent or target that changed → `changed`, the temp discarded where it really is; the caller re-plans once.
  * 7. New files 0600; an existing file keeps its mode, except a file gaining a secret loses group/other bits.
  */
-export const writeFileSafe = async (env: Env, real: string, text: string, opt: { snapshot: Snapshot; secret: boolean; backup?: boolean }): Promise<WriteResult> => {
+export const writeFileSafe = async (env: Env, real: string, text: string, opt: { snapshot: Snapshot; secret: boolean }): Promise<WriteResult> => {
 	const P = pathOf(env);
 	const { snapshot, secret } = opt;
 	const root = realHome(env);
+
+	if (secret) {
+		sweepTemps(env, real);
+	};
+
 	const parent = P.dirname(real);
 	const dirs = ensureDirs(env, parent, root);
 
@@ -402,7 +453,7 @@ export const writeFileSafe = async (env: Env, real: string, text: string, opt: {
 	};
 
 	try {
-		if ((snapshot.text !== null) && (opt.backup !== false)) {
+		if ((snapshot.text !== null) && !secret) {
 			const backup = real + BACKUP_SUFFIX;
 			const existing = env.lstat(backup);
 
@@ -428,7 +479,7 @@ export const writeFileSafe = async (env: Env, real: string, text: string, opt: {
 			temp = null;
 		};
 
-		const staged = stageTemp(env, dir, root, P.basename(tempName(env, real, 'new')), text, mode);
+		const staged = stageTemp(env, dir, root, P.basename(tempName(env, real, 'new')), text, secret ? MODE_SECRET : mode);
 
 		if (staged == 'changed') {
 			return changed();

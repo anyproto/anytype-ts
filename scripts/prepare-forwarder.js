@@ -14,6 +14,13 @@
  * credentials the job already has — macOS `codesign` with the Developer ID identity (hardened runtime,
  * timestamp, identifier com.anytype.mcp, no entitlements), Windows the existing hook electron/hook/sign.js —
  * or fails. Every other build ships the development-namespace binary as it is (`signed: false`), or none.
+ *
+ * Revision (tokens-plan §3.2): every file shipped — each macOS slice before `lipo`, each Linux architecture, the
+ * Windows exe — names its revision in the plain marker `anytype-mcp-rev:<N>` and its namespace in the namespace
+ * marker, read with a byte search (any OS, any architecture, without running it). All must agree and be at least
+ * MIN_FORWARDER_REV (electron/json/aiConnect.forwarder.json): otherwise a release build fails and a development
+ * build ships no forwarder (the stdio routes are off; the turned-down copy in dist/ is removed, so the packaging
+ * lists don't pick it up).
  */
 const fs = require('fs');
 const path = require('path');
@@ -23,7 +30,9 @@ const { execFileSync, spawnSync } = require('child_process');
 const ROOT = path.join(__dirname, '..');
 const NAME = 'anytype-mcp';
 const IDENTIFIER = 'com.anytype.mcp';
-const RELEASE_MARKER = Buffer.from('anytype-mcp-namespace:release', 'utf8');
+/** One constant for this script, the packaged-app check and main */
+const MIN_FORWARDER_REV = require('../electron/json/aiConnect.forwarder.json').minRev;
+const { forwarderMarkers } = require('../electron/hook/verify-forwarder.js');
 
 const log = (...args) => console.log('[prepare-forwarder]', ...args);
 
@@ -37,8 +46,46 @@ const isFile = (p) => {
 	};
 };
 
-/** Read off the file, for any OS and architecture: only the release build contains the marker */
-const namespaceOf = (file) => fs.readFileSync(file).includes(RELEASE_MARKER) ? 'release' : 'dev';
+/** Each slice of a file (a universal macOS file has two): its revision marker and namespace; throws when unreadable */
+const slicesOf = (file) => {
+	const markers = forwarderMarkers(fs.readFileSync(file));
+
+	if (!markers) {
+		throw new Error(`${path.basename(file)}: its universal header names slices outside the file`);
+	};
+	return markers;
+};
+
+/** The same file (another spelling, a hard link): what a development build must not remove when it is ANYTYPE_MCP_BIN */
+const sameFile = (a, b) => {
+	try {
+		const x = fs.statSync(a);
+		const y = fs.statSync(b);
+
+		return (x.dev == y.dev) && (x.ino == y.ino);
+	} catch (e) {
+		return false;
+	};
+};
+
+/** Read off the file, for any OS and architecture: only the release build contains the marker (a universal file: release only when every slice is) */
+const namespaceOf = (file) => slicesOf(file).every(m => m.namespace == 'release') ? 'release' : 'dev';
+
+/** Why these files can't ship as one forwarder (no revision marker, revisions that differ, one below the minimum); '' when they can */
+const revisionProblem = (files) => {
+	const revs = [ ...new Set(files.flatMap(f => slicesOf(f).map(m => m.rev))) ];
+
+	if (revs.includes(null)) {
+		return 'a forwarder file has no revision marker (anytype-mcp-rev:<N>)';
+	};
+	if (revs.length != 1) {
+		return `the forwarder files have different revisions (${revs.sort().join(', ')})`;
+	};
+	if (revs[0] < MIN_FORWARDER_REV) {
+		return `the forwarder is revision ${revs[0]}, this desktop needs at least ${MIN_FORWARDER_REV}`;
+	};
+	return '';
+};
 
 /** `version --json` of a binary this machine can run, or null */
 const versionOf = (file) => {
@@ -176,6 +223,12 @@ const prepare = async (opt = {}) => {
 					throw new Error(`a release build needs the release-namespace forwarder for both architectures: ${path.relative(root, part)} is not one`);
 				};
 			};
+			// Each slice's revision before they are joined, for the same reason
+			const problem = revisionProblem(parts);
+
+			if (problem) {
+				throw new Error(`a release build needs one forwarder revision: ${problem}`);
+			};
 			// One universal file from heart's two; signed below
 			run('/usr/bin/lipo', [ '-create', '-output', main, ...parts ]);
 			fs.chmodSync(main, 0o755);
@@ -216,11 +269,28 @@ const prepare = async (opt = {}) => {
 		files[(platform == 'darwin') ? 'darwin' : ((platform == 'win32') ? 'win32-x64' : `linux-${arch}`)] = main;
 	};
 
-	const list = Object.values(files);
-	const namespaces = [ ...new Set(list.map(namespaceOf)) ];
+	/**
+	 * A development build that can't use its forwarder ships none: the staged copy dist/<exe> is removed (D1B-03),
+	 * or the packaging lists would ship it next to `forwarder: null`. Never the caller's ANYTYPE_MCP_BIN itself
+	 */
+	const discard = (why) => {
+		const own = !!env.ANYTYPE_MCP_BIN && sameFile(env.ANYTYPE_MCP_BIN, main);
 
-	if (namespaces.length != 1) {
+		if (!own) {
+			fs.rmSync(main, { force: true });
+		};
+		log(`${why}: not used by this development build (the stdio routes are off); dist/${exe} ${own ? 'kept (it is ANYTYPE_MCP_BIN)' : 'removed'}`);
+		return null;
+	};
+
+	const list = Object.values(files);
+	const namespaces = [ ...new Set(list.flatMap(f => slicesOf(f).map(m => m.namespace))) ];
+
+	if ((namespaces.length != 1) && release) {
 		throw new Error('the forwarder binaries of this build have different namespaces');
+	};
+	if (namespaces.length != 1) {
+		return discard('the forwarder has slices of different namespaces');
 	};
 
 	const namespace = namespaces[0];
@@ -230,15 +300,24 @@ const prepare = async (opt = {}) => {
 	};
 	if (!release && (namespace != 'dev')) {
 		// Never the production key folder or the production stable copy from a build that isn't a release
-		log('dist/' + exe + ' is a release-namespace forwarder: not used by a development build (the stdio routes are off)');
-		return null;
+		return discard(`dist/${exe} is a release-namespace forwarder`);
 	};
 
+	const problem = revisionProblem(list);
+
+	if (problem && release) {
+		throw new Error(`the release forwarder can't be shipped: ${problem}`);
+	};
+	if (problem) {
+		return discard(problem);
+	};
+
+	const rev = slicesOf(list[0])[0].rev;
 	// One of them runs on this machine (macOS: the universal file; Linux: this architecture's)
 	const versions = list.map(versionOf).filter(Boolean);
 	const version = versions[0];
 
-	if (!version || versions.some(v => (v.rev != version.rev) || (v.namespace != namespace))) {
+	if (!version || versions.some(v => (v.rev != rev) || (v.namespace != namespace))) {
 		throw new Error('`anytype-mcp version --json` does not agree with the binary (revision or namespace)');
 	};
 
@@ -266,7 +345,7 @@ const prepare = async (opt = {}) => {
 	};
 };
 
-module.exports = { prepare, verifyMac, authenticodeStatus, namespaceOf, sha256, NAME, IDENTIFIER };
+module.exports = { prepare, verifyMac, authenticodeStatus, namespaceOf, sha256, NAME, IDENTIFIER, MIN_FORWARDER_REV };
 
 if (require.main === module) {
 	prepare().then(info => {

@@ -19,7 +19,7 @@ const domain = <T extends string>(o: Record<T, true>): string[] => Object.keys(o
 
 const AI_APPS: string[] = CATALOG.map(it => it.id);
 const AI_ROUTES = domain<AiRoute>({ http: true, stdio: true, skill: true });
-const AI_METHODS = domain<AiMethod>({ cli: true, package: true, keyfile: true, config: true, deeplink: true, manual: true, command: true });
+const AI_METHODS = domain<AiMethod>({ cli: true, package: true, config: true, deeplink: true, manual: true });
 const AI_STEPS = domain<AiNextStep>({ none: true, confirmInApp: true, restart: true, newSession: true, reloadServer: true, toggle: true });
 const AI_STAGES = domain<AiErrorStage>({
 	validate: true, detect: true, read: true, parse: true, write: true, verify: true, cli: true, open: true, restart: true, probe: true, key: true,

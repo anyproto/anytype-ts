@@ -16,11 +16,16 @@ let ui: { close: () => void; toast: (msg: any) => void };
 const live: AiConnectController[] = [];
 
 const FUTURE = Math.floor(Date.now() / 1000) + 30 * 86400;
-const KEYFILE = '/Users/me/.anytype/ai-connect/claude-desktop.json';
+const CLAUDE_CONFIG = '/Users/me/Library/Application Support/Claude/claude_desktop_config.json';
 const CC_DET = { appId: 'claude-code', installed: true, targetId: 'claude-code', targetPaths: [ '/Users/me/.claude.json' ], canRestart: false } as any;
+/** Claude Desktop's settings-file route: its manual steps are the command entry with the key in `env` */
 const CLAUDE_PLAN: any = {
-	...BASE_PLAN, appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', method: 'keyfile', targetPath: KEYFILE, displayTarget: '~/.anytype',
-	steps: [ { textKey: 'aiConnectManualPrepare' }, { textKey: 'aiConnectManualInstallFile', path: '/Users/me/.anytype/ai-connect/Anytype.mcpb' } ],
+	...BASE_PLAN, appId: 'claude-desktop', targetId: 'claude-desktop', route: 'stdio', method: 'config', targetPath: CLAUDE_CONFIG, displayTarget: '~/Library/Application Support/Claude/claude_desktop_config.json',
+	needsKey: true,
+	steps: [
+		{ textKey: 'aiConnectManualMerge', snippet: '{"mcpServers":{"anytype":{"command":"/Users/me/.anytype/bin/anytype-mcp","args":["serve","--tier","full"],"env":{"ANYTYPE_API_KEY":"<KEY>"}}}}', lang: 'json' },
+		{ textKey: 'aiConnectManualKeepPrivate' },
+	],
 };
 
 const candidate = (appHash: string, running = true) => ({
@@ -98,7 +103,12 @@ describe('W1: the access on screen is the access minted', () => {
 
 		const ctrl = await manage();
 
+		// Manage shows the record's access (no key lookup, D1S-15); Reconnect reads heart's, which changed: the sheet
+		// shows it first, and the user goes on from there
 		await ctrl.reconnect();
+		await until(() => (ctrl.get().view == 'connect') && !ctrl.get().planLoading);
+		expect(ctrl.get()).toMatchObject({ formNotice: 'grantChanged', form: { grant: READ_ONE, fixedExpireAt: FUTURE } });
+		ctrl.submit();
 		await until(() => (ctrl.get().view == 'manual') && !ctrl.get().manual.loading);
 		expect(ctrl.get().form.grant).toEqual(READ_ONE);
 		expect(ctrl.get().manual).toMatchObject({ mode: 'create', expireAt: FUTURE });
@@ -111,9 +121,9 @@ describe('W1: the access on screen is the access minted', () => {
 		expect(h.calls('aiConnectRecordManual')[0].param).toMatchObject({ appHash: 'hash-1', grant: READ_ONE, expireAt: FUTURE, expectedHash: 'hash-old', connectionId: 'cursor' });
 	});
 
-	test('W1: Claude Desktop\'s fallback: access narrowed on the manual sheet is what is minted and applied; the earlier key is released', async () => {
+	test('W1: Claude Desktop\'s fallback: access narrowed on the manual sheet is what is minted and recorded; the earlier key is released', async () => {
 		h.main.m.plans['claude-desktop'] = CLAUDE_PLAN;
-		h.main.m.apply = (p: any) => (p.manual ? { ok: true, connection: h.main.view(record({ id: 'claude-desktop', appId: 'claude-desktop', appHash: p.appHash })) } : { ok: false, error: { stage: 'write', category: 'permission' } });
+		h.main.m.apply = () => ({ ok: false, error: { stage: 'write', category: 'permission' } });
 
 		const ctrl = await open({ appId: 'claude-desktop' }, 'Claude Desktop');
 
@@ -123,11 +133,10 @@ describe('W1: the access on screen is the access minted', () => {
 		await ctrl.enterManual('create');
 		ctrl.setForm({ grant: READ_ONE });
 		await ctrl.createKey();
+		await ctrl.confirmManual();
 
-		const applies = h.calls('aiConnectApply').map(it => it.param);
-
-		expect(applies[0]).toMatchObject({ grant: GRANT, appHash: 'hash-1' });
-		expect(applies[1]).toMatchObject({ manual: true, grant: READ_ONE, appHash: 'hash-2' });
+		expect(h.calls('aiConnectApply').map(it => it.param)).toEqual([ expect.objectContaining({ grant: GRANT, appHash: 'hash-1' }) ]);
+		expect(h.calls('aiConnectRecordManual')[0].param).toMatchObject({ grant: READ_ONE, appHash: 'hash-2', setup: 'command', route: 'stdio' });
 		expect(h.heart.state.revokes).toEqual([ 'hash-1' ]);
 	});
 });
@@ -225,7 +234,7 @@ describe('W4: manual reconnect is safe', () => {
 
 		await ctrl.reconnect();
 		await until(() => (ctrl.get().view == 'manual') && !ctrl.get().manual.loading);
-		expect(ctrl.get().manual).toMatchObject({ mode: 'prerequisite', key: '' });
+		expect(ctrl.get().manual).toMatchObject({ mode: 'prerequisite', keyHash: '' });
 
 		await ctrl.confirmManual();
 		expect(h.heart.state.creates).toBe(0);
@@ -255,7 +264,8 @@ describe('W4: manual reconnect is safe', () => {
 
 		const ctrl = await manage();
 
-		expect(ctrl.get().override).toBe('accessEnded');
+		// Manage reads no key list (D1S-15); Reconnect finds the key gone
+		expect(ctrl.get().override).toBeNull();
 		await ctrl.reconnect();
 		await until(() => (ctrl.get().view == 'manual') && !ctrl.get().manual.loading);
 		expect(ctrl.get().manual.mode).toBe('create');
@@ -272,13 +282,13 @@ describe('W4: manual reconnect is safe', () => {
 
 		await ctrl.reconnect();
 		await until(() => (ctrl.get().manual.mode == 'confirm') && !ctrl.get().manual.loading);
-		expect(ctrl.get().manual.key).toContain('-key-1-');
+		expect(ctrl.get().manual.keyHash).toBe('hash-1');
 
 		h.heart.rows.get('hash-old').grant = READ_ONE;
 		await ctrl.confirmManual();
 		expect(h.calls('aiConnectRecordManual')).toHaveLength(0);
 		expect(h.heart.state.revokes).toEqual([ 'hash-1' ]);
-		expect(ctrl.get().manual).toMatchObject({ mode: 'create', key: '', notice: { key: 'aiConnectManualGrantChanged' } });
+		expect(ctrl.get().manual).toMatchObject({ mode: 'create', keyHash: '', notice: { key: 'aiConnectManualGrantChanged' } });
 		expect(ctrl.get().form.grant).toEqual(READ_ONE);
 
 		await ctrl.createKey();
@@ -529,37 +539,18 @@ describe('W7: a stale retry never adopts another record', () => {
 	});
 });
 
-describe('W8: Claude manual preparation is bound to the displayed plan', () => {
+describe('W8: Claude manual setup is bound to the displayed plan', () => {
 	test('W8: a delivery plan for another file, or a refused one, goes back to the screen; nothing minted or applied', async () => {
 		h.main.m.plans['claude-desktop'] = CLAUDE_PLAN;
 
 		const ctrl = await open({ appId: 'claude-desktop', view: 'manual' }, 'Claude Desktop');
 		let plans = 0;
 
-		answer('aiConnectPlan', p => ((++plans == 2) ? { ok: true, ...CLAUDE_PLAN, targetPath: '/Users/me/other.json', steps: [], canApply: false, error: { stage: 'read', category: 'outsideHome' } } : { ok: true, ...CLAUDE_PLAN, tier: p.tier }));
+		answer('aiConnectPlan', p => ((++plans == 1) ? { ok: true, ...CLAUDE_PLAN, targetPath: '/Users/me/other.json', steps: [], needsKey: false, canApply: false, error: { stage: 'read', category: 'outsideHome' } } : { ok: true, ...CLAUDE_PLAN, tier: p.tier }));
 		await ctrl.createKey();
 		expect(h.heart.state.creates).toBe(0);
 		expect(h.calls('aiConnectApply')).toHaveLength(0);
 		expect(ctrl.get().manual).toMatchObject({ mode: 'prerequisite', notice: { key: 'aiConnectManualChanged' }, plan: { targetPath: '/Users/me/other.json' } });
-	});
-
-	test('W8: a foreign key file is replaced only with the Replace shown; the write carries the bound previewTarget', async () => {
-		const shown = { targetPath: KEYFILE, foreignDigest: 'c'.repeat(64) };
-		const other = { ...shown, foreignDigest: 'd'.repeat(64) };
-
-		h.main.m.plans['claude-desktop'] = { ...CLAUDE_PLAN, existing: 'foreign', replace: shown };
-
-		const ctrl = await open({ appId: 'claude-desktop', view: 'manual' }, 'Claude Desktop');
-
-		// Another file there by the click: the new preview, nothing minted
-		h.main.m.plans['claude-desktop'] = { ...CLAUDE_PLAN, existing: 'foreign', replace: other };
-		await ctrl.createKey();
-		expect(h.heart.state.creates).toBe(0);
-		expect(ctrl.get().manual).toMatchObject({ notice: { key: 'aiConnectManualChanged' }, plan: { replace: other } });
-
-		await ctrl.createKey();
-		expect(h.calls('aiConnectApply')[0].param).toMatchObject({ manual: true, replace: other, previewTarget: KEYFILE });
-		expect(h.heart.state.creates).toBe(1);
 	});
 });
 
@@ -627,21 +618,16 @@ describe('W10: manual reconnect keeps its record', () => {
 });
 
 describe('W11: close cancels synchronously', () => {
-	test('W11: a poll reply between the close (onClose) and the unmount starts no delivery; the unmount releases the key', async () => {
-		h.main.m.plans['claude-desktop'] = { ...BASE_PLAN, appId: 'claude-desktop', route: 'stdio', method: 'package', nextStep: 'confirmInApp' };
-		h.main.m.apply = () => ({ ok: false, needs: 'installExtension' });
+	test('W11: a consent between the close (onClose) and the unmount starts no delivery; the unmount releases the key', async () => {
+		h.main.m.apply = () => ({ ok: false, needs: 'quitApp' });
 
-		const ctrl = await open({ appId: 'claude-desktop' }, 'Claude Desktop');
+		const ctrl = await open({ appId: 'cursor' });
 
 		ctrl.submit();
-		await until(() => ctrl.get().phase == 'installExtension');
+		await until(() => ctrl.get().phase == 'needsQuit');
 
-		const held = h.main.holdNext('aiConnectPlan');
-		const asked = h.calls('aiConnectPlan').length;
-
-		await until(() => h.calls('aiConnectPlan').length > asked);
 		ctrl.cancel();
-		held.resolve({ ok: true, ...BASE_PLAN, appId: 'claude-desktop', route: 'stdio', method: 'keyfile' });
+		ctrl.consent('allowQuit');
 		await until(() => false, 20);
 		expect(h.calls('aiConnectApply')).toHaveLength(1);
 
@@ -652,20 +638,20 @@ describe('W11: close cancels synchronously', () => {
 
 describe('W12: finishing follows the current status and the followed key', () => {
 	const install = (status: string) => {
-		h.main.m.plans['claude-desktop'] = { ...BASE_PLAN, appId: 'claude-desktop', route: 'stdio', method: 'package', nextStep: 'confirmInApp' };
+		h.main.m.plans.lmstudio = { ...BASE_PLAN, appId: 'lmstudio', targetId: 'lmstudio', method: 'deeplink', nextStep: 'confirmInApp', targetPath: '/Users/me/.lmstudio/mcp.json' };
 		h.main.m.apply = (p: any) => {
-			const rec = record({ id: 'claude-desktop', appId: 'claude-desktop', appHash: p.appHash, nextStep: 'confirmInApp', observedInstalled: true });
+			const rec = record({ id: 'lmstudio', appId: 'lmstudio', appHash: p.appHash, method: 'deeplink', nextStep: 'confirmInApp', observedInstalled: true });
 
-			h.main.m.records.set('claude-desktop', rec);
+			h.main.m.records.set('lmstudio', rec);
 			return { ok: true, connection: h.main.view(rec) };
 		};
-		h.main.m.onCheck = () => h.main.m.statuses.set('claude-desktop', status);
+		h.main.m.onCheck = () => h.main.m.statuses.set('lmstudio', status);
 	};
 
 	test.each([ 'accessEnded', 'conflict', 'removed' ])('W12: the install poll meets %s: Manage with its actions, never Added', async status => {
 		install(status);
 
-		const ctrl = await open({ appId: 'claude-desktop' }, 'Claude Desktop');
+		const ctrl = await open({ appId: 'lmstudio' }, 'LM Studio');
 
 		ctrl.submit();
 		await until(() => ctrl.get().view == 'manage');
@@ -679,7 +665,7 @@ describe('W12: finishing follows the current status and the followed key', () =>
 			h.main.m.checkUnsaved = true;
 		};
 
-		const ctrl = await open({ appId: 'claude-desktop' }, 'Claude Desktop');
+		const ctrl = await open({ appId: 'lmstudio' }, 'LM Studio');
 
 		ctrl.submit();
 		await until(() => ctrl.get().phase == 'stalled', 1000);
@@ -788,7 +774,7 @@ describe('W13: previews are bound to their request', () => {
 
 	test('W13: Other app: the steps shown after an immediate record are the fresh plan\'s, with the recorded port', async () => {
 		answer('aiConnectPlan', p => ({
-			ok: true, ...BASE_PLAN, appId: 'other', targetId: undefined, targetPath: undefined,
+			ok: true, ...BASE_PLAN, appId: 'other', targetId: undefined, targetPath: undefined, needsKey: true,
 			steps: [ { textKey: 'aiConnectManualMerge', snippet: `{"url":"http://127.0.0.1:${p.port}/mcp","key":"<KEY>"}`, lang: 'json' } ],
 		}));
 
@@ -851,23 +837,23 @@ describe('W14: every save failure has a retry', () => {
 	});
 
 	test('W14: a failed install acknowledgement: Retry repeats only the acknowledgement', async () => {
-		h.main.m.plans['claude-desktop'] = { ...BASE_PLAN, appId: 'claude-desktop', route: 'stdio', method: 'package', nextStep: 'confirmInApp' };
+		h.main.m.plans.lmstudio = { ...BASE_PLAN, appId: 'lmstudio', targetId: 'lmstudio', method: 'deeplink', nextStep: 'confirmInApp', targetPath: '/Users/me/.lmstudio/mcp.json' };
 		h.main.m.apply = (p: any) => {
-			const rec = record({ id: 'claude-desktop', appId: 'claude-desktop', appHash: p.appHash, nextStep: 'confirmInApp', observedInstalled: false });
+			const rec = record({ id: 'lmstudio', appId: 'lmstudio', appHash: p.appHash, method: 'deeplink', nextStep: 'confirmInApp', observedInstalled: false });
 
-			h.main.m.records.set('claude-desktop', rec);
+			h.main.m.records.set('lmstudio', rec);
 			return { ok: true, connection: h.main.view(rec) };
 		};
 		h.main.m.onCheck = () => {
-			const rec = h.main.m.records.get('claude-desktop');
+			const rec = h.main.m.records.get('lmstudio');
 
 			if (rec) {
-				h.main.m.records.set('claude-desktop', { ...rec, observedInstalled: true });
+				h.main.m.records.set('lmstudio', { ...rec, observedInstalled: true });
 			};
 		};
 		h.main.m.stepDoneFails = true;
 
-		const ctrl = await open({ appId: 'claude-desktop' }, 'Claude Desktop');
+		const ctrl = await open({ appId: 'lmstudio' }, 'LM Studio');
 
 		ctrl.submit();
 		await until(() => ctrl.get().ackFailed);

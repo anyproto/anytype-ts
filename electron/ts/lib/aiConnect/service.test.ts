@@ -2,7 +2,9 @@
  * The service's bookkeeping (plan §3.11) on a fake Mac: queue, staleness, the revocation set,
  * reconciliation, manual records; plus the main-process sentinel-key sweep and a source scan.
  */
+import { spawnSync } from 'child_process';
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 
@@ -218,7 +220,7 @@ describe('service: accounts, persistence, other methods', () => {
 });
 
 describe('sentinel key (main)', () => {
-	test('every adapter\'s apply / update / check / remove ran, and the key is only in the target files, the forwarder\'s stdin, CLI stdin and the deeplink', async () => {
+	test('D1-01: a sentinel key through every flow (bundle, Claude config, Other URL, Other Command, Cursor), after the candidate save, a failed write, promotion, reload, an HTTP port heal and Disconnect: in no registry write, IPC result or log; keycheck passes on userData and ~/.anytype; only live config files hold it', async () => {
 		const logged: string[] = [];
 
 		for (const m of [ 'log', 'info', 'warn', 'error', 'debug' ] as const) {
@@ -228,6 +230,7 @@ describe('sentinel key (main)', () => {
 		};
 
 		const claude = '/Users/me/.local/bin/claude';
+		const DESKTOP = '/Users/me/Library/Application Support/Claude/claude_desktop_config.json';
 		let env: FakeEnv = null;
 
 		env = mac({
@@ -236,6 +239,8 @@ describe('sentinel key (main)', () => {
 			files: {
 				[claude]: '',
 				[`${MCP_DIR}/Anytype.mcpb`]: 'zip',
+				[DESKTOP]: '{}',
+				'/Users/me/.cursor/mcp.json': '{"mcpServers":{}}',
 				...FORWARDER_FILES,
 				[`${MCP_DIR}/skill/SKILL.md`]: '---\nname: anytype-api\n---\nbody\n',
 				[`${MCP_DIR}/skill/PREAMBLE.md`]: '<!-- anytype-desktop:begin -->\nx\n<!-- anytype-desktop:end -->\n',
@@ -262,11 +267,12 @@ describe('sentinel key (main)', () => {
 			},
 		});
 
-		// Every write as it happens (temps, backups, the registry), every external open, every service log line
+		// Every write as it happens (temps, backups, the registry), every external open, every service log line, every IPC result
 		const writes: { p: string; data: string }[] = [];
 		const write = env.writeFile;
 		const opened: string[] = [];
 		const svcLog: string[] = [];
+		const results: any[] = [];
 
 		env.writeFile = (p, data, mode) => {
 			writes.push({ p, data: String(data) });
@@ -278,79 +284,148 @@ describe('sentinel key (main)', () => {
 			return true;
 		};
 
-		const svc = new AiConnectService(() => ({ env, registryFile: REGISTRY }));
+		const api = { localApi: { enabled: true, port: 31009 }, bind: { addr: '127.0.0.1:31009', success: true } };
+		const setup = { env, registryFile: REGISTRY, apiState: () => api, log: (method: string, code: string) => svcLog.push(`${method} ${code}`) };
+		let svc = new AiConnectService(() => setup);
+		const call = async (res: Promise<any>) => {
+			const v = await res;
 
-		svc.configure({ env, registryFile: REGISTRY, log: (method, code) => svcLog.push(`${method} ${code}`) });
+			results.push(v);
+			return v;
+		};
 
-		const cards: [ string, string, string ][] = [ [ 'cursor', 'http', 'config' ], [ 'vscode', 'http', 'config' ], [ 'chatgpt', 'http', 'config' ], [ 'lmstudio', 'http', 'deeplink' ], [ 'claude-desktop', 'stdio', 'package' ], [ 'claude-code', 'skill', 'config' ] ];
+		svc.configure(setup);
 
-		for (const [ appId, route, method ] of cards) {
-			let res: any = await svc.apply(applyParam({ appId, route, key: KEY_C, appHash: `hash-${appId}` }));
+		const cards: [ string, string, string, Record<string, any> ][] = [
+			[ 'cursor', 'http', 'config', {} ], [ 'vscode', 'http', 'config', {} ], [ 'chatgpt', 'http', 'config', {} ], [ 'lmstudio', 'http', 'deeplink', {} ],
+			[ 'claude-desktop', 'stdio', 'package', { method: 'package', tier: 'full', recommendedTier: 'full' } ], [ 'claude-code', 'skill', 'config', {} ],
+		];
+
+		for (const [ appId, route, method, over ] of cards) {
+			let res: any = await call(svc.apply(applyParam({ appId, route, key: KEY_C, appHash: `hash-${appId}`, ...over })));
 
 			expect(res, appId).toMatchObject({ ok: true, connection: { method } });
-			expect(JSON.stringify(res)).not.toContain(KEY_C);
 
 			// LM Studio: the deeplink delivered it; the file fallback with the same key makes the update possible
 			if (appId == 'lmstudio') {
-				res = await svc.apply(applyParam({ appId, route, key: KEY_C, appHash: `hash-${appId}`, expectedHash: `hash-${appId}`, method: 'config' }));
+				res = await call(svc.apply(applyParam({ appId, route, key: KEY_C, appHash: `hash-${appId}`, expectedHash: `hash-${appId}`, method: 'config' })));
 				expect(res).toMatchObject({ ok: true, connection: { method: 'config' } });
 			};
 
-			const update = await svc.update({ accountId: 'acc-a', connectionId: res.connection.id, expectedHash: `hash-${appId}`, port: 31010 });
-
-			expect(update, appId).toMatchObject({ ok: true });
-			expect(JSON.stringify(update)).not.toContain(KEY_C);
+			expect(await call(svc.update({ accountId: 'acc-a', connectionId: res.connection.id, expectedHash: `hash-${appId}`, port: 31010 })), appId).toMatchObject({ ok: true });
 		};
 
 		expect(opened).toHaveLength(1);
 		expect(opened[0]).toMatch(/^lmstudio:\/\/add_mcp\?/);
 
-		const check: any = await svc.check({ accountId: 'acc-a', apiListening: true, port: 31011, keys: null });
+		// The bundle key went to the clipboard through the one guarded copy; Copy key again the same way
+		expect(env.clip.text).toBe(KEY_C);
+		expect(await call(svc.copySecret({ accountId: 'acc-a', connectionId: 'claude-desktop', text: KEY_C }))).toEqual({ ok: true });
 
-		expect(check.ok).toBe(true);
-		expect(check.healed.length).toBeGreaterThan(0);
-		expect(JSON.stringify(check)).not.toContain(KEY_C);
+		// Other URL and Other Command: manual records, the key never reaches main except as clipboard text
+		await call(svc.recordManual({ accountId: 'acc-a', appId: 'other', route: 'http', tier: 'large', recommendedTier: 'large', port: 31009, appHash: 'hash-other-url', name: 'Other', grant: GRANT, expireAt: 0, expectedHash: null }));
+		await call(svc.recordManual({ accountId: 'acc-a', appId: 'other', route: 'stdio', tier: 'full', recommendedTier: 'full', port: 31009, appHash: 'hash-other-cmd', name: 'Other', grant: GRANT, expireAt: 0, expectedHash: null, setup: 'command' }));
+		await call(svc.copySecret({ accountId: 'acc-a', appHash: 'hash-other-cmd', text: `{"env":{"ANYTYPE_API_KEY":"${KEY_C}"}}` }));
 
-		// The Claude Code MCP route: the key only on the CLI's stdin
-		expect(await svc.remove({ accountId: 'acc-a', connectionId: 'claude-code', expectedHash: 'hash-claude-code' })).toMatchObject({ ok: true });
-		await svc.revoked({ accountId: 'acc-a', connectionId: 'claude-code', hash: 'hash-claude-code' });
-		expect(await svc.apply(applyParam({ appId: 'claude-code', route: 'http', key: KEY_C, appHash: 'hash-cc2' }))).toMatchObject({ ok: true, connection: { method: 'cli' } });
-		expect(env.calls.filter(c => (c.file == claude) && (c.args[1] == 'add-json') && c.opts.stdin.includes(KEY_C))).toHaveLength(1);
+		// A failed write: Cursor's rename refused once — the reconnect fails, its temp is gone
+		const rename = env.rename;
+		let refuse = true;
 
-		for (const rec of records(env)) {
-			const res = await svc.remove({ accountId: 'acc-a', connectionId: rec.id, expectedHash: rec.appHash });
+		env.rename = (from, to) => {
+			if (refuse && (to == '/Users/me/.cursor/mcp.json')) {
+				refuse = false;
+				throw Object.assign(new Error('denied'), { code: 'EACCES' });
+			};
+			rename(from, to);
+		};
+		expect(await call(svc.apply(applyParam({ appId: 'cursor', route: 'http', key: KEY_A, appHash: 'hash-cursor-2', expectedHash: 'hash-cursor' })))).toMatchObject({ ok: false });
 
-			expect(res, rec.id).toMatchObject({ ok: true });
-			expect(JSON.stringify(res)).not.toContain(KEY_C);
+		// Claude's config route: the candidate is saved, the entry written, then the record's own save fails (Anytype "dies")
+		let candidateWritten = false;
+		let failRegistry = false;
+
+		env.rename = (from, to) => {
+			if (failRegistry && (to == REGISTRY)) {
+				throw Object.assign(new Error('disk full'), { code: 'ENOSPC' });
+			};
+			rename(from, to);
+			// Once the candidate is on disk, every later registry save fails
+			failRegistry = failRegistry || ((to == REGISTRY) && candidateWritten);
 		};
 
-		// Claude Desktop's key went to `anytype-mcp key set` on stdin: Anytype itself writes it to no file at all
-		const allowed = /(mcp\.json|mcp-config\.json|config\.toml|settings\.json|\.claude\.json)(\.anytype-backup)?$/;
-		const tempOf = /^\.(mcp\.json|mcp-config\.json|config\.toml|settings\.json|\.claude\.json)\.(new|backup)[.-].*\.tmp$/;
-		const keyed = writes.filter(w => w.data.includes(KEY_C));
+		const journal = env.writeFile;
 
-		expect(keyed.length).toBeGreaterThan(0);
-		// No registry write ever carried it, not even a transient one
+		env.writeFile = (p, data, mode) => {
+			candidateWritten = candidateWritten || (p.startsWith(path.dirname(REGISTRY)) && String(data).includes('"hash-cd-config"'));
+			return journal(p, data, mode);
+		};
+		expect(await call(svc.apply(applyParam({ appId: 'claude-desktop', route: 'stdio', method: 'config', key: KEY_C, appHash: 'hash-cd-config', expectedHash: 'hash-claude-desktop', quitConfirmed: true })))).toMatchObject({ ok: true, recordSaved: false });
+		env.writeFile = journal;
+		env.rename = rename;
+
+		// Reload: a new service reads the registry the crash left; its check promotes the candidate by the entry's key
+		svc = new AiConnectService(() => setup);
+		svc.configure(setup);
+		expect(records(env).find(r => r.id == 'claude-desktop')).toMatchObject({ appHash: 'hash-claude-desktop', unconfirmed: [ { appHash: 'hash-cd-config' } ] });
+
+		// An HTTP port heal (Cursor's entry rewritten with the key on the new port), the promotion, and a list
+		const check: any = await call(svc.check({ accountId: 'acc-a', apiListening: true, port: 31011, keys: null }));
+
+		expect(check.ok).toBe(true);
+		expect(check.healed).toContain('cursor');
+		expect(records(env).find(r => r.id == 'claude-desktop')).toMatchObject({ appHash: 'hash-cd-config', method: 'config', revokePending: [ 'hash-claude-desktop' ] });
+		await call(svc.list({ accountId: 'acc-a' }));
+
+		// The Claude Code MCP route: the key only on the CLI's stdin
+		expect(await call(svc.remove({ accountId: 'acc-a', connectionId: 'claude-code', expectedHash: 'hash-claude-code' }))).toMatchObject({ ok: true });
+		await call(svc.revoked({ accountId: 'acc-a', connectionId: 'claude-code', hash: 'hash-claude-code' }));
+		expect(await call(svc.apply(applyParam({ appId: 'claude-code', route: 'http', key: KEY_C, appHash: 'hash-cc2' })))).toMatchObject({ ok: true, connection: { method: 'cli' } });
+		expect(env.calls.filter(c => (c.file == claude) && (c.args[1] == 'add-json') && c.opts.stdin.includes(KEY_C))).toHaveLength(1);
+
+		// Live config files hold the key now (and only they): Cursor, VS Code, ChatGPT, LM Studio, Claude Code, Claude's config
+		const holding = () => Object.keys(env.files()).filter(f => env.files()[f].includes(KEY_C)).sort();
+
+		expect(holding().every(f => /(mcp\.json|mcp-config\.json|config\.toml|settings\.json|\.claude\.json|claude_desktop_config\.json)$/.test(f)), JSON.stringify(holding())).toBe(true);
+
+		// Disconnect
+		for (const rec of records(env)) {
+			expect(await call(svc.remove({ accountId: 'acc-a', connectionId: rec.id, expectedHash: rec.appHash || null })), rec.id).toMatchObject({ ok: true });
+		};
+
+		// Anytype's own files never held it: no registry write (not even a transient one), nothing in ~/.anytype
 		expect(writes.filter(w => w.p.startsWith(path.dirname(REGISTRY))).every(w => !w.data.includes(KEY_C))).toBe(true);
-		expect(keyed.every(w => allowed.test(w.p) || tempOf.test(path.basename(w.p))), JSON.stringify(keyed.map(w => w.p))).toBe(true);
+		expect(writes.filter(w => w.p.startsWith('/Users/me/.anytype/')).every(w => !w.data.includes(KEY_C))).toBe(true);
+		// No backup and no temp of a file Anytype wrote a key into is left, anywhere
+		expect(Object.keys(env.files()).filter(f => f.endsWith('.anytype-backup') || f.endsWith('.tmp'))).toEqual([]);
+		expect(JSON.stringify(results)).not.toContain(KEY_C);
+		expect(JSON.stringify(results)).not.toContain(KEY_A);
 		expect(logged.join('\n')).not.toContain(KEY_C);
 		expect(svcLog.join('\n')).not.toContain(KEY_C);
+		// No child got the key in argv or in its environment; only the Claude CLI got it, on stdin
 		expect(env.calls.filter(c => c.args.join(' ').includes(KEY_C))).toEqual([]);
-		expect(env.calls.filter(c => (c.opts.stdin || '').includes(KEY_C)).every(c => (c.file == claude) || ((c.file == FORWARDER_BIN) && (c.args.slice(0, 2).join(' ') == 'key set')))).toBe(true);
-		expect(env.forwarder.calls.filter(c => c.args[1] == 'set')).toHaveLength(1);
 		expect(env.calls.filter(c => JSON.stringify(c.opts.env || {}).includes(KEY_C))).toEqual([]);
-		expect(Object.keys(env.files()).filter(f => f.startsWith('/Users/me/.anytype/ai-connect/') && !f.endsWith('Anytype.mcpb'))).toEqual([]);
+		expect(env.calls.filter(c => (c.opts.stdin || '').includes(KEY_C)).every(c => c.file == claude)).toBe(true);
 
-		// The deeplink carries the key encoded: neither the URL nor its config value (raw or decoded) went anywhere else (U23)
-		const url = opened[0];
-		const config = new URL(url).searchParams.get('config');
-		const raw = url.slice(url.indexOf('config=') + 'config='.length);
-		const traces = [ url, config, raw, Buffer.from(config, 'base64').toString('utf8') ];
-		const everywhere = [ logged.join('\n'), svcLog.join('\n'), ...writes.map(w => w.data), ...env.calls.map(c => [ ...c.args, c.opts.stdin || '' ].join(' ')) ].join('\n');
+		// scripts/ai-connect-keycheck.js on the fake userData and ~/.anytype, written out to real folders
+		const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'aic-d1-')));
 
-		expect(Buffer.from(config, 'base64').toString('utf8')).toContain(KEY_C);
-		for (const trace of traces) {
-			expect(everywhere.includes(trace)).toBe(false);
+		try {
+			for (const [ f, text ] of Object.entries(env.files())) {
+				if (f.startsWith(path.dirname(REGISTRY)) || f.startsWith('/Users/me/.anytype/')) {
+					fs.mkdirSync(path.dirname(path.join(root, f)), { recursive: true });
+					fs.writeFileSync(path.join(root, f), text);
+				};
+			};
+			for (const dir of [ path.dirname(REGISTRY), '/Users/me/.anytype' ]) {
+				fs.mkdirSync(path.join(root, dir), { recursive: true });
+
+				const res = spawnSync(process.execPath, [ path.join(__dirname, '../../../../scripts/ai-connect-keycheck.js'), path.join(root, dir) ], { input: KEY_C, encoding: 'utf8' });
+
+				expect(res.status, dir).toBe(0);
+				expect(res.stdout).toMatch(/^PASS/);
+			};
+		} finally {
+			fs.rmSync(root, { recursive: true, force: true });
 		};
 	});
 });

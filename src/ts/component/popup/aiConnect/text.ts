@@ -111,10 +111,6 @@ export const errorText = (error: I.AiError, app: string, target?: string): strin
 	if ((stage == 'verify') && (category == 'notFound')) {
 		return translate('aiConnectErrorConnectorMissing');
 	};
-	// The connector gave no receipt: the key may or may not be saved, and the next check settles it
-	if ((stage == 'write') && (category == 'timeout')) {
-		return translate('aiConnectErrorStoreUnconfirmed');
-	};
 
 	const key = CATEGORIES.includes(category) ? errorKey(category) : 'aiConnectErrorUnknown';
 	const byFile = [ 'unparseable', 'permission' ].includes(category);
@@ -148,8 +144,7 @@ export const manualReason = (plan: I.AiPlan, steps: I.AiStep[], app: string): st
 
 /**
  * Why a plan can't be applied, as one line: its note (the sandbox, a skill of the user's own, the Linux
- * package), else its error. A Claude Desktop config entry and stored key both owned by someone else have a
- * text of their own (one Replace can't stand for two objects).
+ * package, Claude's two routes at once), else its error.
  */
 export const planReason = (plan: I.AiPlan, app: string): string => {
 	if (!plan) {
@@ -160,9 +155,6 @@ export const planReason = (plan: I.AiPlan, app: string): string => {
 	};
 	if (!plan.error) {
 		return '';
-	};
-	if ((plan.appId == 'claude-desktop') && (plan.error.stage == 'validate') && (plan.error.category == 'conflict')) {
-		return translate('aiConnectErrorConflictBoth');
 	};
 	return errorText(plan.error, app, plan.displayTarget);
 };

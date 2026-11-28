@@ -7,12 +7,13 @@ import { vi } from 'vitest';
 import { AiConnectStore } from '../../store/aiConnect';
 import type { AiConnection, AiDetection, AiPlan } from '../../interface/aiConnect';
 import * as flow from './flow';
+import { stepsNeedKey } from './steps';
 
 export const GRANT = { spaceIds: [], allSpaces: true, perm: 1 };
 export const READ_ONE = { spaceIds: [ 'space-1' ], allSpaces: false, perm: 0 };
 export const SENTINEL = 'SENTINEL';
 
-export interface Row { hash: string; apiKey: string; name: string; createdAt?: number; grant: any; expireAt: number };
+export interface Row { hash: string; apiKey: string; name: string; createdAt?: number; grant: any; expireAt: number; isActive?: boolean };
 
 export const deferred = <T = any>() => {
 	let resolve: (v?: T) => void;
@@ -248,6 +249,14 @@ export const makeMain = () => {
 		denied: false,
 		/** Holds the next answer to a command until resolved */
 		hold: {} as Record<string, { promise: Promise<any>; resolve: (v?: any) => void }>,
+		/** What main put on the clipboard last (aiConnectCopySecret, or a bundle apply), and what it is bound to */
+		clipboard: null as null | { text: string; connectionId?: string; appHash?: string },
+		/** A bundle apply: main couldn't copy the key / open the bundle; the installed extension takes the key in Configure */
+		bundleCopyFails: false,
+		bundleOpenFails: false,
+		bundleConfigure: false,
+		/** aiConnectCopySecret answers `ok: false` */
+		copyFails: false,
 	};
 
 	/** Records whose current absence was reported (main keeps it on the record: removedReported) */
@@ -259,23 +268,41 @@ export const makeMain = () => {
 	const deliver = (id: string, p: any, method: string) => {
 		const rec = records.get(id);
 
-		if (((rec?.appHash ?? null) !== p.expectedHash) || rec?.removed) {
+		// A retired bundle record has appHash '': it is expected as null, as by main (tokens-plan §3.5)
+		if (((rec?.appHash || null) !== p.expectedHash) || rec?.removed) {
+			return { ok: false, error: { stage: 'validate', category: 'stale' } };
+		};
+		// As main: the extension's new key only over a record without another live one (every rotation retires first)
+		if ((method == 'package') && rec?.appHash && (rec.appHash != p.appHash)) {
 			return { ok: false, error: { stage: 'validate', category: 'stale' } };
 		};
 
 		// Main's recordManual (index.ts): every earlier hash, candidates included, goes to revokePending and
 		// `unconfirmed` is dropped; apply keeps the candidates
 		const manual = (method == 'manual');
+		const bundle = (method == 'package');
 		const earlier = manual ? [ rec?.appHash, ...(rec?.unconfirmed || []).map((c: any) => c.appHash) ] : [ rec?.appHash ];
 		const next = record({
 			...(rec || {}), id, appId: p.appId, appHash: p.appHash, name: p.name, grant: p.grant, expireAt: p.expireAt, tier: p.tier,
-			route: p.route, method, nextStep: manual ? 'none' : 'restart', lastProbe: 'none', removed: false, port: p.port,
+			route: p.route, method, nextStep: (manual || bundle) ? 'none' : 'restart', lastProbe: 'none', removed: false, port: p.port,
 			keyFp: manual ? '' : 'fedcba9876543210',
 			revokePending: union(rec?.revokePending || [], earlier.filter(h => h && (h != p.appHash))),
 		});
 
 		if (manual) {
 			delete next.unconfirmed;
+			if (p.setup) {
+				next.setup = p.setup;
+			};
+		};
+		// Claude's extension: saved `waiting` (the commit) until heart's isActive confirms it (§3.3)
+		if (bundle) {
+			next.observedInstalled = false;
+			next.bundleState = 'finish';
+			delete next.confirmed;
+			m.statuses.set(id, 'pending');
+		} else {
+			m.statuses.delete(id);
 		};
 		records.set(id, next);
 		// The key belongs to a record now: its mint intent has done its job
@@ -301,13 +328,68 @@ export const makeMain = () => {
 			intents.set(id, { id, accountId: p.accountId, name: p.name, time: p.time });
 			return { ok: true, id };
 		},
-		aiConnectPlan: p => ({ ok: true, ...planFor(p.appId), route: planFor(p.appId).route || p.route, tier: p.tier }),
-		aiConnectApply: p => m.apply ? m.apply(p) : deliver((p.appId == 'cursor') ? 'cursor' : p.appId, p, p.manual ? 'keyfile' : 'config'),
+		// As main: a plan whose steps hold the key placeholder says so (`needsKey`)
+		aiConnectPlan: p => ({ ok: true, needsKey: stepsNeedKey(planFor(p.appId).steps), ...planFor(p.appId), route: planFor(p.appId).route || p.route, tier: p.tier }),
+		aiConnectApply: p => {
+			if (m.apply) {
+				return m.apply(p);
+			};
+
+			const bundle = (p.method == 'package');
+			const res: any = deliver((p.appId == 'cursor') ? 'cursor' : p.appId, p, bundle ? 'package' : 'config');
+
+			// As main: the record first, then the key onto the clipboard, then the bundle
+			if (bundle && res.ok) {
+				if (!m.bundleCopyFails) {
+					m.clipboard = { text: p.key, connectionId: res.connection.id };
+				};
+				return {
+					...res,
+					...(m.bundleCopyFails ? { copyFailed: true } : {}), ...(m.bundleOpenFails ? { openFailed: true } : {}), ...(m.bundleConfigure ? { configure: true } : {}),
+				};
+			};
+			return res;
+		},
+		aiConnectRetire: p => {
+			const rec = records.get(p.connectionId);
+
+			if (!rec || (rec.appHash !== p.expectedHash) || rec.removed || (rec.method != 'package')) {
+				return { ok: false, error: { stage: 'validate', category: 'stale' } };
+			};
+
+			// As main: the access the user just confirmed stays on the record, for the new key
+			const next = {
+				...rec, appHash: '', revokePending: union(rec.revokePending, [ rec.appHash ]),
+				...((p.grant !== undefined) ? { grant: p.grant } : {}), ...((p.expireAt !== undefined) ? { expireAt: p.expireAt } : {}),
+			};
+
+			delete next.confirmed;
+			delete next.bundleState;
+			records.set(rec.id, next);
+			m.statuses.set(rec.id, 'disconnected');
+			return { ok: true, connection: view(next) };
+		},
+		aiConnectCopySecret: p => {
+			// `clear`: off the clipboard only while it is still this owner's copy (main also checks the clipboard's text)
+			if (p.clear) {
+				const c = m.clipboard;
+
+				if (c && (p.connectionId ? (c.connectionId == p.connectionId) : (!!p.appHash && (c.appHash == p.appHash)))) {
+					m.clipboard = null;
+				};
+				return { ok: true };
+			};
+			if (m.copyFails) {
+				return { ok: false };
+			};
+			m.clipboard = { text: p.text, ...(p.connectionId ? { connectionId: p.connectionId } : { appHash: p.appHash }) };
+			return { ok: true };
+		},
 		aiConnectRecordManual: p => m.recordManual ? m.recordManual(p) : deliver(p.connectionId || ((p.appId == 'other') ? 'other-0a1b2c3d' : p.appId), p, 'manual'),
 		aiConnectRemove: p => {
 			const rec = records.get(p.connectionId);
 
-			if (!rec || (rec.appHash !== p.expectedHash)) {
+			if (!rec || ((rec.appHash || null) !== p.expectedHash)) {
 				return { ok: false, error: { stage: 'validate', category: 'stale' } };
 			};
 			if (m.removeConflict && !p.forget) {
@@ -317,10 +399,15 @@ export const makeMain = () => {
 				return { ok: true, connection: view(rec), removedNow: false };
 			};
 
-			const next = { ...rec, removed: true, revokePending: union(rec.revokePending, [ rec.appHash ]) };
+			const next = { ...rec, removed: true, revokePending: union(rec.revokePending, [ rec.appHash ].filter(Boolean)) };
 
 			delete next.unconfirmed;
 			records.set(rec.id, next);
+			m.statuses.delete(rec.id);
+			// Disconnect clears a key of this record from the clipboard (§3.4)
+			if (m.clipboard?.connectionId == rec.id) {
+				m.clipboard = null;
+			};
 			return { ok: true, connection: view(next), removedNow: true };
 		},
 		aiConnectRevoked: p => {
@@ -368,6 +455,20 @@ export const makeMain = () => {
 			for (const rec of [ ...records.values() ]) {
 				if (rec.removed && !rec.revokePending.length) {
 					records.delete(rec.id);
+				};
+				// Claude's extension: heart's isActive for the record's key confirms it ("Connected"), and the key leaves the clipboard
+				if ((rec.method == 'package') && rec.appHash && !rec.removed) {
+					const key = (p.keys || []).find((k: any) => k.hash == rec.appHash);
+
+					if (key?.active || rec.confirmed) {
+						records.set(rec.id, { ...rec, confirmed: true, bundleState: undefined });
+						m.statuses.set(rec.id, 'ok');
+						if (m.clipboard?.connectionId == rec.id) {
+							m.clipboard = null;
+						};
+					} else {
+						m.statuses.set(rec.id, 'pending');
+					};
 				};
 			};
 			// Main names an entry found gone once per absence (Z12)
@@ -491,6 +592,8 @@ export const installHarness = (): Harness => {
 	flow.flowConfig.lookupDelay = 0;
 	flow.flowConfig.pollInterval = 0;
 	flow.flowConfig.pollTimeout = 200;
+	flow.flowConfig.bundlePollInterval = 0;
+	flow.flowConfig.bundlePollTimeout = 200;
 	flow.flowConfig.rpcTimeout = 30000;
 	flow.resetFlowForTests();
 

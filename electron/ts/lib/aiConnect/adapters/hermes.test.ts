@@ -116,7 +116,7 @@ describe('Hermes: connect', () => {
 		expect(env.files()[CONFIG]).toBe(CONFIG_TEXT.replace(`    - '@modelcontextprotocol/server-github'\n`, `    - '@modelcontextprotocol/server-github'\n${OUR_LINES}`));
 		expect(env.files()[ENV]).toBe(`${ENV_TEXT}MCP_ANYTYPE_API_KEY=${KEY_A}\n`);
 		expect(env.modeOf(ENV)).toBe(0o600);
-		expect(env.files()[`${CONFIG}.anytype-backup`]).toBe(CONFIG_TEXT);
+		expect(env.files()[`${CONFIG}.anytype-backup`]).toBeUndefined();
 
 		// Ours: the check is ok, a port change heals only the entry
 		const checked: any = await svc.check({ accountId: 'acc-a', apiListening: true, port: 31010, keys: keysOf([ 'hash-a1' ]) });

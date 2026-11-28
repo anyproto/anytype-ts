@@ -2,10 +2,11 @@
  * Connect to AI apps: renderer orchestration (§4.2, §4.3).
  *
  * Every call to main or heart goes through here; the popup controller and the page only call these
- * functions. A key lives in exactly two places in the renderer: this module's `operation` (one per connect /
- * reconnect / manual flow; never MobX, Storage, a route, analytics or a log) and, for the manual view only,
- * the popup's own state. Closing the popup never abandons a delivery: `releasePendingKey()` waits for the
- * call in flight, then keeps a committed key or revokes an uncommitted one (R3-1).
+ * functions. A key lives in one place in the renderer: this module's `operation`, only while it is
+ * undelivered (one per connect / reconnect / manual flow; never MobX, Storage, a route, analytics, a log or a
+ * component's state). Once main or the user has it, only its hash stays (tokens-plan §3.2): a Copy fetches it
+ * from heart's list by that hash into the call (`copySecret`). Closing the popup never abandons a delivery:
+ * `releasePendingKey()` waits for the call in flight, then keeps a committed key or revokes an uncommitted one (R3-1).
  *
  * An operation belongs to the account that started it: after every await it stops when it was cancelled
  * or the account changed, and its cleanup never runs under another account's session.
@@ -13,13 +14,13 @@
  * Uses the app's globals `C`, `S`, `Renderer` and `analytics` (through `events.ts`; tests stub them) and nothing from `U`.
  */
 import type {
-	AiApiState, AiAppId, AiApplyResult, AiBundleInfoResult, AiCheckResult, AiClaimNudgeResult, AiConnection, AiError, AiErrorCategory, AiListResult, AiMintIntentResult, AiOpenAppResult,
-	AiOrphanResult, AiPlan, AiPlanResult, AiProbeResult, AiRecordManualResult, AiRemoveResult, AiReplace, AiRestartResult,
-	AiRevealResult, AiRevokedResult, AiRoute, AiStep, AiStepDoneResult, AiTier, AiUpdateResult,
+	AiApiState, AiAppId, AiApplyResult, AiBundleInfoResult, AiCheckResult, AiClaimNudgeResult, AiConnection, AiCopySecretResult, AiError, AiErrorCategory, AiListResult,
+	AiMintIntentResult, AiOpenAppResult, AiOrphanResult, AiPlan, AiPlanResult, AiProbeResult, AiRecordManualResult, AiRemoveResult, AiReplace, AiRestartResult,
+	AiRetireResult, AiRevealResult, AiRevokedResult, AiRoute, AiSetup, AiStep, AiStepDoneResult, AiTier, AiUpdateResult,
 } from '../../interface/aiConnect';
 import type { LinkAppGrant } from '../../interface/linkApproval';
 import { isValidLinkGrant } from '../linkApprovalGrant';
-import { isValidPort } from './catalog';
+import { isValidPort, KEY_PLACEHOLDER } from './catalog';
 import { track } from './events';
 import { stepsNeedKey } from './steps';
 
@@ -42,6 +43,13 @@ export const flowConfig = {
 	rpcTimeout: 30000,
 	pollInterval: 3000,
 	pollTimeout: 120000,
+	/** Claude's extension: heart's isActive is read this often while the Finish view is open, for at most this long (§3.3) */
+	bundlePollInterval: 5000,
+	bundlePollTimeout: 10 * 60 * 1000,
+	/** A mint intent that matches no key is kept this long (a grant heart couldn't read for a moment is not lost), then dropped */
+	intentKeepSec: 24 * 3600,
+	/** CreateApp runs right after its mint intent is saved: only a key created this soon after the intent can be its key (D1C-06) */
+	intentWindowSec: 10 * 60,
 	/** A closing tab waits this long for its undelivered key to be revoked (X5); main gives the tab 5 s in all */
 	closeTimeout: 2500,
 };
@@ -141,7 +149,17 @@ const rpc = <T>(start: (done: (v: T) => void) => void, fallback: T): Promise<T> 
 	};
 });
 
-interface AppRow { hash: string; apiKey: string; name?: string; createdAt?: number; grant?: LinkAppGrant; expireAt: number };
+interface AppRow { hash: string; apiKey: string; name?: string; createdAt?: number; grant?: LinkAppGrant; expireAt: number; isActive?: boolean };
+
+/**
+ * The first 16 hex of sha256(key), as main's keyFingerprint: what the renderer keeps of a key it couldn't
+ * identify yet (never the key itself)
+ */
+export const keyFingerprint = async (key: string): Promise<string> => {
+	const digest = await globalThis.crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(key || '')));
+
+	return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
+};
 
 /** The key list (key-bearing): only in the desktop app (V14) */
 const listApps = (): Promise<{ ok: boolean; list: AppRow[] }> => {
@@ -200,10 +218,11 @@ const planOf = (res: AiPlanResult): AiPlan => {
 /**
  * Undelivered keys whose revoke failed and that main couldn't take as orphans either (or whose account isn't
  * signed in now), retried by every check of that account (V12). Usually only the hash; a key minted whose
- * hash couldn't be looked up under its own account (a late CreateApp, an account switch) keeps the key
- * itself until that account can look it up (W6). Module memory only: never MobX, Storage or a log.
+ * hash couldn't be looked up under its own account (a late CreateApp, an account switch) keeps the key's
+ * fingerprint until that account's list shows a key with it (W6, tokens-plan §3.2). Module memory only:
+ * never MobX, Storage or a log.
  */
-const leftovers: { accountId: string; hash: string; key: string; attempts: number; misses: number; intentId?: string }[] = [];
+const leftovers: { accountId: string; hash: string; fp: string; attempts: number; misses: number; intentId?: string; ifUnowned?: boolean }[] = [];
 
 /** The mint intent's time lies a little before CreateApp: heart stamps the key with this machine's clock, in whole seconds */
 const INTENT_SKEW = 2;
@@ -218,13 +237,18 @@ const clearIntent = async (account: string, intentId?: string): Promise<void> =>
 /** An unidentified key missing from this many successful lists of its account was revoked elsewhere (X6) */
 const MAX_MISSES = 5;
 
-const remember = (account: string, hash: string, key = '', intentId?: string): void => {
-	if (!account || (!hash && !key)) {
+/**
+ * A key to revoke later: its hash, or (not identified yet) its fingerprint. `ifUnowned`: a delivery whose answer
+ * was lost and whose outcome no list could tell (D1C-03): revoked only once a successful list shows that no
+ * record owns it; a record that has it means main committed it, and it is dropped from here
+ */
+const remember = (account: string, hash: string, fp = '', intentId?: string, ifUnowned = false): void => {
+	if (!account || (!hash && !fp)) {
 		return;
 	};
-	if (!leftovers.some(it => (it.accountId == account) && ((hash && (it.hash == hash)) || (key && (it.key == key))))) {
+	if (!leftovers.some(it => (it.accountId == account) && ((hash && (it.hash == hash)) || (fp && (it.fp == fp))))) {
 		// The intent stays with main until this key is gone: if Anytype dies first, the next run finds the key by it
-		leftovers.push({ accountId: account, hash, key: hash ? '' : key, attempts: 0, misses: 0, ...(intentId ? { intentId } : {}) });
+		leftovers.push({ accountId: account, hash, fp: hash ? '' : fp, attempts: 0, misses: 0, ...(intentId ? { intentId } : {}), ...(ifUnowned ? { ifUnowned } : {}) });
 	};
 	if (accountId() == account) {
 		S.AiConnect.setCleanupFailed(cleanupFailed());
@@ -266,7 +290,10 @@ const releaseKey = async (hash: string, account: string, intentId?: string): Pro
 
 // ---------------------- the operation ---------------------- //
 
-/** A key this flow holds, with what it was minted with */
+/**
+ * A key this flow holds, with what it was minted with. `key` is '' once a Copy handed it over (D1S-11): only its
+ * hash stays, and an action that needs the key again reads it from heart's list by that hash
+ */
 interface HeldKey { key: string; appHash: string; name: string; grant: LinkAppGrant; expireAt: number; intentId?: string };
 
 interface Operation {
@@ -275,8 +302,8 @@ interface Operation {
 	accountId: string;
 	/** Minted for this flow and not delivered yet: revoked when the flow ends */
 	pending: HeldKey | null;
-	/** Delivered (or left with main as unconfirmed): never revoked here; kept for a same-key second delivery */
-	committed: HeldKey | null;
+	/** Delivered (or left with main as unconfirmed): never revoked here. Its hash only: the key went to main or the user */
+	committed: Omit<HeldKey, 'key'> | null;
 	/** The call that hasn't answered yet */
 	inFlight: Promise<unknown> | null;
 	cancelRequested: boolean;
@@ -319,18 +346,20 @@ const inOperation = async <T>(fn: (op: Operation) => Promise<T>, busy: T): Promi
 };
 
 /**
- * The key this flow holds, for the manual view only: the pending (undelivered) one, else the one it
- * delivered. null once the flow ended.
+ * The key this flow holds, by its hash only: the pending (undelivered) one, else the one it delivered. null
+ * once the flow ended. Never the key: a view that shows one masks it, and Copy goes through `copySecret`.
  */
-export const heldKey = (): { key: string; appHash: string; committed: boolean } | null => {
+export const heldKey = (): { appHash: string; committed: boolean } | null => {
 	const held = operation?.pending || operation?.committed;
-	return held ? { key: held.key, appHash: held.appHash, committed: !operation.pending } : null;
+	return held ? { appHash: held.appHash, committed: !operation.pending } : null;
 };
 
-/** A delivery committed: the pending key belongs to the record now */
+/** A delivery committed: the pending key belongs to the record now, and only its hash stays here (§3.2) */
 const commit = (op: Operation): void => {
 	if (op.pending) {
-		op.committed = op.pending;
+		const { key: _key, ...rest } = op.pending;
+
+		op.committed = rest;
 		op.pending = null;
 	};
 };
@@ -350,6 +379,19 @@ const dropPending = async (op: Operation): Promise<void> => {
 	op.pending = null;
 	if (held) {
 		await releaseKey(held.appHash, op.accountId, held.intentId);
+	};
+};
+
+/**
+ * A delivery whose answer was lost, and no list could say whether main committed it (D1C-03): the pending key
+ * leaves the flow unrevoked, and only its hash waits for a successful list of its account (`remember`'s `ifUnowned`)
+ */
+const undecided = (op: Operation): void => {
+	const held = op.pending;
+
+	op.pending = null;
+	if (held) {
+		remember(op.accountId, held.appHash, '', held.intentId, true);
 	};
 };
 
@@ -478,10 +520,23 @@ export const mintKey = async (app: { name: string; grant: LinkAppGrant; expireAt
 		return { ok: false, error: UNKNOWN };
 	};
 
-	const intent = await ipc<AiMintIntentResult>('aiConnectMintIntent', { accountId: account, name: app.name, time: Math.max(0, nowSec() - INTENT_SKEW) });
+	// The intent names the access and expiry too: recovery takes only a key made with exactly these (D1S-18)
+	const save = () => ipc<AiMintIntentResult>('aiConnectMintIntent', { accountId: account, name: app.name, time: Math.max(0, nowSec() - INTENT_SKEW), grant: app.grant, expireAt: app.expireAt });
+	let intent = await save();
 
 	if (!intent?.ok) {
 		return { ok: false, error: { stage: 'write', category: 'unsaved' } };
+	};
+	// The time main saved (its queue may have kept the request waiting). A window that has run out since (the machine
+	// slept) gets a fresh intent first: CreateApp always runs inside its intent's window (D1C-22)
+	if ((accountId() == account) && ((nowSec() - (intent.time ?? nowSec())) >= (flowConfig.intentWindowSec / 2))) {
+		const old = intent.id;
+
+		intent = await save();
+		await clearIntent(account, old);
+		if (!intent?.ok) {
+			return { ok: false, error: { stage: 'write', category: 'unsaved' } };
+		};
 	};
 	// Another account signed in while main saved it: nothing was created
 	if (accountId() != account) {
@@ -518,8 +573,9 @@ export const mintKey = async (app: { name: string; grant: LinkAppGrant; expireAt
 	const hash = await hashOf(first.key, account);
 
 	if (!hash) {
-		// Created but not identified (the list didn't show it, or another account signed in): its account's next check releases it
-		remember(account, '', first.key, intentId);
+		// Created but not identified (the list didn't show it, or another account signed in): its account's next
+		// check releases it, found by the key's fingerprint
+		remember(account, '', await keyFingerprint(first.key), intentId);
 		return { ok: false, error: { stage: 'key', category: 'keyNotFound' } };
 	};
 	return { ok: true, key: first.key, appHash: hash, intentId };
@@ -535,7 +591,7 @@ const releaseUnknown = async (key: string, account: string, intentId?: string): 
 	if (hash) {
 		await releaseKey(hash, account, intentId);
 	} else {
-		remember(account, '', key, intentId);
+		remember(account, '', await keyFingerprint(key), intentId);
 	};
 };
 
@@ -573,12 +629,63 @@ const lookupKey = async (connection: AiConnection): Promise<{ ok: boolean; key: 
 	return { ok: res.ok, key: (row && !isExpired(row) && row.apiKey) ? row.apiKey : '' };
 };
 
-/** The live key of a connection (its record holds only the hash), or null */
-export const keyFor = async (connection: AiConnection): Promise<string | null> => {
+/** The live key of a connection (its record holds only the hash), or null; for one call, never kept */
+const keyFor = async (connection: AiConnection): Promise<string | null> => {
 	if (!connection?.appHash) {
 		return null;
 	};
 	return (await lookupKey(connection)).key || null;
+};
+
+/**
+ * The only way a key, or a snippet with it, reaches the clipboard (§3.4): main writes the text and removes it
+ * after 5 minutes. `template` holds KEY_PLACEHOLDER where the key goes (KEY_PLACEHOLDER alone: the key). The key
+ * is this flow's undelivered one, else heart's by `appHash`, read into this call and dropped. `connectionId`
+ * binds the copy to a record (main clears it once that record is "Connected"), else it is bound to the key.
+ */
+export const copySecret = async (p: { template: string; appHash: string; connectionId?: string }): Promise<boolean> => {
+	const account = accountId();
+
+	if (!account || !isDesktop() || !p.appHash) {
+		return false;
+	};
+
+	const pending = operation?.pending;
+	const own = (pending && (pending.appHash == p.appHash) && (operation.accountId == account)) ? pending : null;
+	let key = own?.key || '';
+
+	if (!key) {
+		key = (await keyFor({ appHash: p.appHash } as AiConnection)) || '';
+	};
+	if (!key || (accountId() != account)) {
+		return false;
+	};
+
+	const text = String(p.template || KEY_PLACEHOLDER).split(KEY_PLACEHOLDER).join(key);
+	const param = p.connectionId ? { accountId: account, connectionId: p.connectionId, text } : { accountId: account, appHash: p.appHash, text };
+
+	key = '';
+	// Handed over: the undelivered key keeps only its hash and access here (D1S-11); "I've updated" reads it back by hash
+	if (own) {
+		own.key = '';
+	};
+	return !!(await ipc<AiCopySecretResult>('aiConnectCopySecret', param))?.ok;
+};
+
+/**
+ * Takes this owner's copy off the clipboard (a manual sheet's Cancel or close, D1S-11). Main clears it only while
+ * it is still the latest copy and still on the clipboard (§3.4)
+ */
+export const clearCopied = async (p: { appHash?: string; connectionId?: string }): Promise<void> => {
+	const account = accountId();
+
+	if (!account || !isDesktop() || (!p.appHash && !p.connectionId)) {
+		return;
+	};
+
+	const param = p.connectionId ? { accountId: account, connectionId: p.connectionId, clear: true } : { accountId: account, appHash: p.appHash, clear: true };
+
+	await ipc<AiCopySecretResult>('aiConnectCopySecret', param);
 };
 
 export interface LiveAccess { ok: boolean; present: boolean; grant: LinkAppGrant; expireAt: number };
@@ -724,8 +831,12 @@ const checkOnce = async (): Promise<CheckStatus> => {
 				continue;
 			};
 
-			const row = res.list.find(r => r.apiKey === it.key);
+			const fps = await Promise.all(res.list.map(r => keyFingerprint(r.apiKey)));
+			const row = res.list.find((r, i) => !!r.apiKey && (fps[i] == it.fp));
 
+			if (moved()) {
+				return 'stale';
+			};
 			// Not listed (yet): heart can show a new key late, so it is kept with the hint (X6); only after
 			// MAX_MISSES successful lists without it is it taken as revoked elsewhere
 			if (!row?.hash) {
@@ -736,7 +847,13 @@ const checkOnce = async (): Promise<CheckStatus> => {
 				continue;
 			};
 			it.hash = row.hash;
-			it.key = '';
+			it.fp = '';
+		};
+		// A delivery whose answer was lost (D1C-03): a record (or main's orphan list) that has the key now means main
+		// committed it, and it isn't this list's to revoke; only a successful list with no owner makes it an orphan
+		if (it.ifUnowned && managedHashes(listed.connections, listed.orphanHashes).includes(it.hash)) {
+			leftovers.splice(leftovers.indexOf(it), 1);
+			continue;
 		};
 
 		let done = (await revokeApp(it.hash)) != 'failed';
@@ -767,16 +884,32 @@ const checkOnce = async (): Promise<CheckStatus> => {
 	};
 
 	// Keys an earlier run of Anytype was about to create and never accounted for (it died between CreateApp and
-	// the delivery): a key of that name, created at or after the intent, that nothing manages is queued as an
-	// orphan and revoked below. Only a successful list can say; an intent with no such key is simply dropped
+	// the delivery): the one key of that name, access and expiry created within `intentWindowSec` of the intent
+	// (CreateApp runs right after it is saved) is queued as an orphan and revoked below — only when nothing manages
+	// it and no managed key shares that window. Only a successful list can say. Two such keys, one heart can't
+	// identify, or one beside a managed key are ambiguous: nothing is revoked and the intent waits; managed keys alone
+	// account for it (D1C-06, D1C-21). An intent with no such key is kept until it is `intentKeepSec` old (heart skips
+	// a grant file it can't read for a moment, so the key may show later), then dropped. A key made outside its
+	// window is never matched: it stays (when in doubt, a key is kept)
 	const orphanHashes = [ ...(listed.orphanHashes || []) ];
 
 	for (const intent of (apps.ok ? (listed.mintIntents || []) : [])) {
 		const known = new Set(managedHashes(listed.connections, orphanHashes));
-		const found = apps.list.filter(it => !!it.hash && (it.name === intent.name) && ((Number(it.createdAt) || 0) >= intent.time) && !known.has(it.hash));
-		let queued = true;
+		const created = (row: AppRow): number => Number(row.createdAt) || 0;
+		// A key made with another access or expiry is not this intent's (an intent from before D1R2 names neither)
+		const made = (row: AppRow): boolean => ((intent.grant === undefined) || sameGrant(row.grant, intent.grant)) && ((intent.expireAt === undefined) || ((Number(row.expireAt) || 0) == intent.expireAt));
+		const inWindow = apps.list.filter(it => (it.name === intent.name) && made(it) && (created(it) >= (intent.time - INTENT_SKEW)) && (created(it) <= (intent.time + flowConfig.intentWindowSec)));
+		const found = inWindow.filter(it => !!it.hash && !known.has(it.hash));
+		const owned = inWindow.some(it => !!it.hash && known.has(it.hash));
+		const unidentified = inWindow.some(it => !it.hash);
+		const expired = (nowSec() - intent.time) >= flowConfig.intentKeepSec;
+		let queued = false;
 
-		for (const row of found) {
+		// Only the one key of the window, unowned, is the intent's: beside a key a record owns it may be another app's
+		// key of the same name (the committed delivery's intent went with its record, D1C-21), and it is kept
+		if ((found.length == 1) && !unidentified && !owned) {
+			const row = found[0];
+
 			if (moved()) {
 				return 'stale';
 			};
@@ -786,9 +919,15 @@ const checkOnce = async (): Promise<CheckStatus> => {
 			// settings file is promoted there, never revoked
 			if ((await ipc<AiOrphanResult>('aiConnectOrphan', { accountId: account, hash: row.hash, intentId: intent.id, key: row.apiKey }))?.ok) {
 				orphanHashes.push(row.hash);
-			} else {
-				queued = false;
+				queued = true;
 			};
+		} else
+		if (!found.length && !unidentified) {
+			// A key it made that a record now has (its delivery committed) accounts for it too
+			queued = (inWindow.length > 0) || expired;
+		} else {
+			// Ambiguous: revokes nothing; dropped once old, so main's intent list never fills up with it
+			queued = expired;
 		};
 		if (moved()) {
 			return 'stale';
@@ -853,13 +992,15 @@ const checkOnce = async (): Promise<CheckStatus> => {
 	const keys = apps.ok ? managed.map(hash => {
 		const row = rows.get(hash);
 		const has = !gone.has(hash) && present(hash);
-		const key: { hash: string; present: boolean; grant?: LinkAppGrant; expireAt?: number } = { hash, present: has };
+		const key: { hash: string; present: boolean; grant?: LinkAppGrant; expireAt?: number; active?: boolean } = { hash, present: has };
 
 		if (has && row.grant) {
 			key.grant = row.grant;
 		};
 		if (has) {
 			key.expireAt = Number(row.expireAt) || 0;
+			// heart's AppInfo.isActive: Claude's extension used the key in heart's current run ("Connected", §3.3)
+			key.active = !!row.isActive;
 		};
 		return key;
 	}) : null;
@@ -961,14 +1102,30 @@ export const retrySave = async (): Promise<boolean> => (await check('save')) == 
 
 // ---------------------- connect ---------------------- //
 
-export type AiSetupMethod = 'config' | 'command';
+/** `package`: Claude's extension; `config`: an app's settings-file route; `command`: Other app's stdio setup (manual) */
+export type AiSetupMethod = 'package' | 'config' | 'command';
 
-/** The method a record's plan and reconnect are asked with: Claude Desktop's config route and Other app's Command keep theirs */
+/** Other app's Command setup, and Claude Desktop set up by hand with the command entry: manual records with `setup: 'command'` */
+export const isCommand = (c: AiConnection | null | undefined): boolean => (c?.method == 'manual') && (c.setup == 'command');
+
+/**
+ * The method a record's plan and reconnect are asked with: Claude Desktop's extension and config route, its
+ * manual setup (the config route's entry) and Other app's Command keep theirs
+ */
 export const planMethodOf = (c: AiConnection | null | undefined): AiSetupMethod | undefined => {
-	if (c?.method == 'command') {
+	if (!c) {
+		return undefined;
+	};
+	if ((c.appId == 'other') && isCommand(c)) {
 		return 'command';
 	};
-	return ((c?.appId == 'claude-desktop') && (c.method == 'config')) ? 'config' : undefined;
+	if (c.appId != 'claude-desktop') {
+		return undefined;
+	};
+	if (c.method == 'package') {
+		return 'package';
+	};
+	return ((c.method == 'config') || isCommand(c)) ? 'config' : undefined;
 };
 
 export interface ConnectInput {
@@ -980,8 +1137,8 @@ export interface ConnectInput {
 	name: string;
 	/** Absolute seconds, resolved once when the user submitted (V15) */
 	expireAt: number;
-	/** `config`: an app's settings-file route; `command`: Other app's Command setup (a managed connection) */
-	method?: AiSetupMethod;
+	/** `package`: Claude's extension (always the Full tool set); `config`: an app's settings-file route */
+	method?: 'package' | 'config';
 	/** The record this delivery replaces (its hash is `expectedHash`; a different new hash is a rotation) */
 	existing?: AiConnection | null;
 	/** The plan the user saw: a delivery whose target moved since then needs a new preview */
@@ -996,8 +1153,6 @@ export interface ConnectInput {
 	sameKey?: boolean;
 	/** Reconnect: heart's grant and expiry of the old key must still be these, before minting and before delivering (R3-8, V2) */
 	reread?: { hash: string; grant: LinkAppGrant; expireAt: number };
-	/** Claude Desktop's manual setup: Anytype's side only, nothing opened */
-	manual?: boolean;
 };
 
 export interface Prefill {
@@ -1018,8 +1173,12 @@ export type ConnectResult =
 	| { kind: 'grantChanged'; grant: LinkAppGrant; expireAt: number; plan: AiPlan | null }
 	/** Reconnect: the old key is gone; the form opens prefilled */
 	| { kind: 'needsForm'; prefill: Prefill }
-	/** Claude must install the signed extension first; the key stays pending (poll the plan, then connect again) */
-	| { kind: 'installExtension'; openFailed: boolean; plan: AiPlan }
+	/**
+	 * Claude's extension (§3.3): main saved the record `waiting` (the commit) and put the key on the clipboard
+	 * (`copyFailed`: it couldn't), then opened the bundle (`openFailed`: it couldn't) or not (`configure`: the
+	 * installed extension takes the key in its Configure). No probe: "Connected" comes from heart's isActive
+	 */
+	| { kind: 'bundle'; connection: AiConnection; plan: AiPlan; copyFailed: boolean; openFailed: boolean; configure: boolean; recordSaved: boolean }
 	/** Main keeps the new key as unconfirmed: it is never released here, and the old one stays */
 	| { kind: 'unconfirmed'; connection: AiConnection; plan: AiPlan }
 	/** Not delivered; `hasKey`: the new key is still pending (manual setup can use it) */
@@ -1036,7 +1195,7 @@ const CANCELLED: ConnectResult = { kind: 'cancelled' };
  * The plan for a card as it would be delivered now (reads only; the configured port while the API is off).
  * `port`: the port it was requested with, which its key-bearing steps contain (W13).
  */
-export const plan = async (p: { appId: AiAppId; route: AiRoute; tier: AiTier; method?: 'config' | 'command'; connectionId?: string; fresh?: boolean }): Promise<{ ok: true; plan: AiPlan; port: number } | { ok: false; error: AiError }> => {
+export const plan = async (p: { appId: AiAppId; route: AiRoute; tier: AiTier; method?: AiSetupMethod; connectionId?: string; fresh?: boolean }): Promise<{ ok: true; plan: AiPlan; port: number } | { ok: false; error: AiError }> => {
 	const account = accountId();
 
 	if (!account || !isDesktop()) {
@@ -1044,7 +1203,8 @@ export const plan = async (p: { appId: AiAppId; route: AiRoute; tier: AiTier; me
 	};
 
 	const port = previewPort();
-	const param: any = { accountId: account, appId: p.appId, route: p.route, tier: p.tier, port };
+	// Claude's extension is planned with the Full tool set only (main refuses any other, §3.3)
+	const param: any = { accountId: account, appId: p.appId, route: p.route, tier: (p.method == 'package') ? 'full' : p.tier, port };
 
 	if (p.method) {
 		param.method = p.method;
@@ -1094,6 +1254,59 @@ const probeDelivered = async (connection: AiConnection, key: string, account: st
 };
 
 /**
+ * Whether main saved a record with this key (by its hash), for a delivery whose reply was lost: `present` (it
+ * committed), `absent` (main's list has no such record) or `unknown` (no list now: it failed, or another account
+ * signed in), which decides nothing (D1C-03)
+ */
+const savedWith = async (appHash: string, account: string): Promise<{ state: 'present'; connection: AiConnection } | { state: 'absent' | 'unknown' }> => {
+	if (accountId() != account) {
+		return { state: 'unknown' };
+	};
+
+	const res = await ipc<AiListResult>('aiConnectList', { accountId: account });
+
+	if (!res?.ok || (accountId() != account)) {
+		return { state: 'unknown' };
+	};
+
+	const connection = res.connections.find(c => (c.appHash == appHash) && !c.removed);
+
+	return connection ? { state: 'present', connection } : { state: 'absent' };
+};
+
+/**
+ * Claude's extension: the old key goes first (§3.3). Main moves the record's hash to `revokePending`, keeps the
+ * access the new key is minted with (`grant`, `expireAt`: what the user just confirmed, D1C-05) and saves the
+ * record `disconnected`; RevokeApp follows (a failure leaves it queued, "Revocation pending", and doesn't stop the
+ * flow). `expectedHash`: the key the user saw; another one there now is `stale`
+ */
+const retireBundle = async (op: Operation, record: AiConnection, access: { grant: LinkAppGrant; expireAt: number }): Promise<{ ok: true; connection: AiConnection } | { ok: false; error: AiError }> => {
+	const account = op.accountId;
+
+	if (accountId() != account) {
+		return { ok: false, error: UNKNOWN };
+	};
+
+	const res = await ipc<AiRetireResult>('aiConnectRetire', { accountId: account, connectionId: record.id, expectedHash: record.appHash, grant: access.grant, expireAt: access.expireAt });
+
+	if (!res) {
+		return { ok: false, error: UNKNOWN };
+	};
+	if ('error' in res) {
+		if (res.error.category == 'stale') {
+			await load();
+		};
+		return { ok: false, error: res.error };
+	};
+	if (accountId() == account) {
+		S.AiConnect.upsert(res.connection);
+	};
+	// The old key, revoked now; one that can't be is left queued and every check tries again
+	await revokeOutstanding(res.connection, account);
+	return { ok: true, connection: ((accountId() == account) && S.AiConnect.getById(res.connection.id)) || res.connection };
+};
+
+/**
  * plan → consents → key (pending, or a fresh mint) → deliver → revoke the old key → probe (§4.3), inside
  * the operation `op`. Nothing is minted before the plan says it can be applied and every consent is given;
  * every step that changes something first checks that the operation may go on.
@@ -1106,10 +1319,7 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 	};
 
 	// 1. The plan, fresh, and the port it was requested with (W13)
-	// A Command connection is planned and delivered by its own id (it has no detected app)
-	const command = (input.method == 'command');
-	const commandId = (command && input.existing) ? input.existing.id : undefined;
-	const planned = await plan({ appId: input.appId, route: input.route, tier: input.tier, method: input.method, connectionId: commandId, fresh: true });
+	const planned = await plan({ appId: input.appId, route: input.route, tier: input.tier, method: input.method, fresh: true });
 
 	if (!alive(op)) {
 		return CANCELLED;
@@ -1121,12 +1331,11 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 	const current = planned.plan;
 	const planPort = planned.port;
 
-	// Claude Desktop's manual setup prepares Anytype's side even where the automatic route can't run, but only
-	// from a usable manual plan with a bound key file (W8)
-	if (!current.canApply && !input.manual) {
+	if (!current.canApply) {
 		return { kind: 'plan', reason: current.steps.length ? 'manual' : 'cantApply', plan: current };
 	};
-	if (input.manual && (!manualUsable(current) || (!current.targetPath && !command) || !input.shown)) {
+	// Claude's extension and its settings file are separate routes: the one the user saw is the one delivered
+	if (input.shown && (input.shown.method != current.method) && ((input.shown.method == 'package') || (current.method == 'package'))) {
 		return { kind: 'plan', reason: 'changed', plan: current };
 	};
 	// A record's file that moved under the same target id (an LM Studio or Copilot home): a delivery goes
@@ -1152,7 +1361,7 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 	if (input.replace) {
 		return { kind: 'plan', reason: 'changed', plan: current };
 	};
-	if (!input.manual && (((current.preflight == 'quitApp') && !input.allowQuit) || ((current.preflight == 'quitAppSelf') && !input.quitConfirmed))) {
+	if (((current.preflight == 'quitApp') && !input.allowQuit) || ((current.preflight == 'quitAppSelf') && !input.quitConfirmed)) {
 		return { kind: 'needsQuit', preflight: current.preflight, plan: current };
 	};
 
@@ -1177,13 +1386,31 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 		};
 	};
 
+	// Claude's extension: main takes its new key only over a record without a live one, so every rotation (a
+	// Reconnect, the form it went back to, a Replace) retires the old key here: after the plan, the consents and
+	// the re-read, before a key is minted (§3.3, D1C-04)
+	let existing = input.existing || null;
+
+	if ((current.method == 'package') && existing?.appHash && !input.sameKey) {
+		const retired = await retireBundle(op, existing, { grant: input.grant, expireAt: input.expireAt });
+
+		if (!alive(op)) {
+			return CANCELLED;
+		};
+		if ('error' in retired) {
+			return { kind: 'error', error: retired.error, plan: current, hasKey: !!op.pending };
+		};
+		existing = retired.connection;
+	};
+
 	// 4. The key: the one delivered before (same-key fallback), this flow's pending one, or a new one
 	let key: { key: string; appHash: string; intentId?: string } | null = null;
 	let grant = input.grant;
 	let expireAt = input.expireAt;
 
 	if (input.sameKey && input.existing && !op.pending) {
-		const again = (op.committed?.appHash == input.existing.appHash) ? op.committed.key : await keyFor(input.existing);
+		// Only its hash is kept once delivered: the key comes from heart's list, for this delivery only
+		const again = await keyFor(input.existing);
 
 		if (!alive(op)) {
 			return CANCELLED;
@@ -1204,6 +1431,19 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 		key = minted.held;
 		grant = minted.held.grant;
 		expireAt = minted.held.expireAt;
+
+		// A pending key a Copy handed over keeps only its hash here (D1S-11): read back by it, for this delivery only
+		if (!key.key) {
+			const again = await keyFor({ appHash: key.appHash } as AiConnection);
+
+			if (!alive(op)) {
+				return CANCELLED;
+			};
+			if (!again) {
+				return { kind: 'error', error: { stage: 'key', category: 'unauthorized' }, plan: current, hasKey: !!op.pending };
+			};
+			key = { ...key, key: again };
+		};
 	};
 
 	// 5. The port again, right before the key goes out: stopped or moved → a new preview, the key kept (V9)
@@ -1213,19 +1453,22 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 		return { kind: 'plan', reason: 'changed', plan: current };
 	};
 
+	// Claude's extension always gets the Full tool set (main refuses any other tier, §3.3)
+	const bundle = (current.method == 'package');
+	// A retired bundle record has no key (appHash ''): nothing to replace, as for a new connection
 	const param: any = {
-		accountId: account, appId: input.appId, route: current.route, tier: input.tier, recommendedTier: input.recommendedTier, port,
-		key: key.key, appHash: key.appHash, name: input.name, grant, expireAt, expectedHash: input.existing?.appHash ?? null,
+		accountId: account, appId: input.appId, route: current.route, tier: bundle ? 'full' : input.tier, recommendedTier: input.recommendedTier, port,
+		key: key.key, appHash: key.appHash, name: input.name, grant, expireAt, expectedHash: existing?.appHash || null,
 	};
 
 	if (current.targetPath) {
 		param.previewTarget = current.targetPath;
 	};
-	if (input.method) {
-		param.method = input.method;
-	};
-	if (commandId) {
-		param.connectionId = commandId;
+	if (bundle) {
+		param.method = 'package';
+	} else
+	if (input.method == 'config') {
+		param.method = 'config';
 	};
 	// Main clears the mint intent of this key when the delivery commits
 	if (key.intentId) {
@@ -1240,12 +1483,17 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 	if (replace) {
 		param.replace = replace;
 	};
-	if (input.manual) {
-		param.manual = true;
-	};
 
 	if (accountId() != account) {
 		return CANCELLED;
+	};
+
+	// Main has the key from here on: the flow keeps only its hash and intent (a retry reads it back by hash), and the
+	// probe below uses this call's own copy (D1S-19)
+	const plain = key.key;
+
+	if (op.pending) {
+		op.pending.key = '';
 	};
 
 	const res = await ipc<AiApplyResult>('aiConnectApply', param);
@@ -1254,12 +1502,26 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 	const here = () => (accountId() == account);
 
 	if (!res) {
+		// Claude's extension: main's record save is the commit, and the reply may be what got lost. The record is
+		// looked for by the key's hash before anything is released (§3.3, step 4); with no list to say, the key is
+		// never released here and its hash waits for one (D1C-03)
+		const saved = bundle ? await savedWith(key.appHash, account) : { state: 'absent' as const };
+
+		if (saved.state == 'present') {
+			commit(op);
+			if (!here()) {
+				return CANCELLED;
+			};
+			S.AiConnect.upsert(saved.connection);
+			return { kind: 'bundle', connection: saved.connection, plan: current, copyFailed: true, openFailed: false, configure: !!current.configure, recordSaved: true };
+		};
+		if (saved.state == 'unknown') {
+			undecided(op);
+			return { kind: 'error', error: UNKNOWN, plan: current, hasKey: false };
+		};
 		return { kind: 'error', error: UNKNOWN, plan: current, hasKey: !!op.pending };
 	};
 	if ('needs' in res) {
-		if (res.needs == 'installExtension') {
-			return { kind: 'installExtension', openFailed: !!res.openFailed, plan: current };
-		};
 		return { kind: 'needsQuit', preflight: res.needs, plan: current };
 	};
 	if ('unconfirmed' in res) {
@@ -1287,7 +1549,24 @@ const connectIn = async (op: Operation, input: ConnectInput): Promise<ConnectRes
 	S.AiConnect.upsert(res.connection);
 	await revokeOutstanding(res.connection, account);
 
-	const probe = await probeDelivered(res.connection, key.key, account);
+	// Claude's extension: no bearer probe, at apply or on Retry (§3.3, step 5); the Finish view follows isActive
+	if (bundle) {
+		if (!here()) {
+			return CANCELLED;
+		};
+		await load();
+
+		// The Finish sheet stands for the key main just committed, never one another window put there during the
+		// reload: then the sheet sees the change and Manage shows the record (D1C-18)
+		const stored = S.AiConnect.getById(res.connection.id);
+
+		return {
+			kind: 'bundle', connection: (stored && (stored.appHash == res.connection.appHash)) ? stored : res.connection, plan: current,
+			copyFailed: !!res.copyFailed, openFailed: !!res.openFailed, configure: !!res.configure, recordSaved: (res.recordSaved !== false),
+		};
+	};
+
+	const probe = await probeDelivered(res.connection, plain, account);
 
 	if (!here()) {
 		return CANCELLED;
@@ -1323,6 +1602,10 @@ const trackDelivery = <T>(op: Operation, appId: AiAppId, res: T): T => {
 	};
 	if (r.connection && r.probe && ((r.kind == 'ok') || (r.ok === true))) {
 		trackSettled(appId, r.connection, r.probe);
+	} else
+	if (r.connection && (r.kind == 'bundle')) {
+		// Claude's extension: committed with the record; whether Claude uses the key shows later ("Connected")
+		track.delivered(appId, r.connection.method);
 	} else
 	if (r.error && ((r.kind == 'error') || ((r.ok === false) && !r.reason)) && (r.error.category != 'stale')) {
 		track.failed(appId, r.error);
@@ -1362,11 +1645,22 @@ export interface ReconnectOptions {
  */
 export const reconnect = (connection: AiConnection, opts: ReconnectOptions = {}): Promise<ReconnectResult> => inOperation<ReconnectResult>(async op => trackDelivery(op, connection.appId, await reconnectIn(op, connection, opts)), { kind: 'busy' });
 
-const reconnectIn = async (op: Operation, connection: AiConnection, opts: ReconnectOptions): Promise<ReconnectResult> => {
+const reconnectIn = async (op: Operation, shownRecord: AiConnection, opts: ReconnectOptions): Promise<ReconnectResult> => {
+	const latest = ((shownRecord.method == 'package') && shownRecord.appHash) ? S.AiConnect.getById(shownRecord.id) : null;
+	// Claude's extension whose shown key this Reconnect already retired (a retry after a failed plan or mint): it goes
+	// on from the retired record, which has no live key left to break
+	const connection = (latest && !latest.removed && (latest.method == 'package') && !latest.appHash) ? latest : shownRecord;
 	let access = op.pending ? { grant: op.pending.grant, expireAt: op.pending.expireAt } : null;
 
 	if (!alive(op)) {
 		return CANCELLED;
+	};
+	// A bundle record whose key was retired (a Reconnect that didn't finish): the record's own access, unless it expired
+	if (!access && (connection.method == 'package') && !connection.appHash) {
+		if (connection.expireAt && (connection.expireAt <= nowSec())) {
+			return { kind: 'needsForm', prefill: prefillOf(connection) };
+		};
+		access = { grant: connection.grant, expireAt: connection.expireAt };
 	};
 	if (!access) {
 		const live = await liveAccess(connection);
@@ -1389,14 +1683,52 @@ const reconnectIn = async (op: Operation, connection: AiConnection, opts: Reconn
 	if (connection.method == 'manual') {
 		return reconnectManual(op, connection, access, opts);
 	};
+	if (connection.method == 'package') {
+		return reconnectBundle(op, connection, access, opts);
+	};
 
 	const method = opts.method || planMethodOf(connection);
 
 	return connectIn(op, {
 		appId: connection.appId, route: connection.route, tier: opts.tier || connection.tier, recommendedTier: connection.recommendedTier,
-		grant: access.grant, name: op.pending?.name || connection.name, expireAt: access.expireAt, method, existing: connection,
+		grant: access.grant, name: op.pending?.name || connection.name, expireAt: access.expireAt, method: (method == 'command') ? undefined : method, existing: connection,
 		shown: opts.plan || null, replace: opts.replace, allowQuit: opts.allowQuit, quitConfirmed: opts.quitConfirmed,
 		reread: { hash: connection.appHash, grant: opts.shown?.grant || access.grant, expireAt: opts.shown ? opts.shown.expireAt : access.expireAt },
+	});
+};
+
+/**
+ * Reconnect on Claude's extension route (§3.3): the old key goes first. The user confirmed (Claude stops
+ * working until the new key is pasted); Connect on the same record re-reads the old key and retires it
+ * (aiConnectRetire, then RevokeApp) before it mints. A failed mint, or a crash anywhere after the retire, leaves
+ * the row "Disconnected · Reconnect" with the old key queued or revoked. A retired record mints with the access it
+ * stored, the one last confirmed (D1C-05).
+ */
+const reconnectBundle = async (op: Operation, connection: AiConnection, access: { grant: LinkAppGrant; expireAt: number }, opts: ReconnectOptions): Promise<ReconnectResult> => {
+	if (!alive(op)) {
+		return CANCELLED;
+	};
+
+	let existing = connection;
+
+	// Confirmed, and the shown key's access was just read live: that key is queued (durably) and revoked before
+	// anything else, the plan included. A plan that fails afterwards leaves "Disconnected · Reconnect" (D1C-19)
+	if (connection.appHash && !op.pending) {
+		const retired = await retireBundle(op, connection, access);
+
+		if (!alive(op)) {
+			return CANCELLED;
+		};
+		if ('error' in retired) {
+			return { kind: 'error', error: retired.error, plan: opts.plan || null, hasKey: false };
+		};
+		existing = retired.connection;
+	};
+
+	return connectIn(op, {
+		appId: connection.appId, route: connection.route, tier: 'full', recommendedTier: connection.recommendedTier, grant: access.grant, name: op.pending?.name || connection.name,
+		expireAt: access.expireAt, method: 'package', existing, shown: opts.plan || null,
+		...(existing.appHash ? { reread: { hash: existing.appHash, grant: opts.shown?.grant || access.grant, expireAt: opts.shown ? opts.shown.expireAt : access.expireAt } } : {}),
 	});
 };
 
@@ -1410,7 +1742,7 @@ const reconnectManual = async (op: Operation, connection: AiConnection, access: 
 		return { kind: 'stillSaving' };
 	};
 
-	const planned = await plan({ appId: connection.appId, route: connection.route, tier: opts.tier || connection.tier, connectionId: connection.id, fresh: true });
+	const planned = await plan({ appId: connection.appId, route: connection.route, tier: opts.tier || connection.tier, method: planMethodOf(connection), connectionId: connection.id, fresh: true });
 
 	if (!alive(op)) {
 		return CANCELLED;
@@ -1461,6 +1793,8 @@ export interface ManualInput {
 	name: string;
 	expireAt: number;
 	method?: AiSetupMethod;
+	/** `command`: the app starts Anytype's connector with the key in its `env` (Other app's Command, Claude Desktop by hand) */
+	setup?: AiSetup;
 	/** The record the manual delivery replaces (its old key is revoked only after "I've updated") */
 	existing?: AiConnection | null;
 	/** The record a reconnect updates: every record keeps its identity (W10) */
@@ -1473,8 +1807,6 @@ export interface ManualInput {
 	port?: number;
 	/** Reconnect: the old key's access when the view opened, re-read before minting and before recording (W4) */
 	reread?: { hash: string; grant: LinkAppGrant; expireAt: number };
-	/** Claude Desktop: consent to replace exactly the foreign item shown (W8) */
-	replace?: AiReplace;
 };
 
 export type ManualResult =
@@ -1550,6 +1882,10 @@ const confirmManualIn = async (op: Operation, input: ManualInput): Promise<Manua
 	if (input.connectionId) {
 		param.connectionId = input.connectionId;
 	};
+	if (input.setup == 'command') {
+		param.setup = 'command';
+		param.route = 'stdio';
+	};
 	if (input.previewTarget !== undefined) {
 		param.previewTarget = input.previewTarget;
 	};
@@ -1587,7 +1923,9 @@ const confirmManualIn = async (op: Operation, input: ManualInput): Promise<Manua
 	S.AiConnect.upsert(res.connection);
 	await revokeOutstanding(res.connection, account);
 
-	const probe = await probeDelivered(res.connection, key.key, account);
+	// A key a Copy handed over is read back by its hash for the probe, for this call only (D1S-11)
+	const plain = key.key || (await keyFor({ appHash: key.appHash } as AiConnection)) || '';
+	const probe: AiProbeResult = plain ? await probeDelivered(res.connection, plain, account) : { ok: false, category: 'unknown' };
 
 	if (!here()) {
 		return { ok: false, error: UNKNOWN, reason: 'cancelled' };
@@ -1610,12 +1948,8 @@ export type CreateManualResult =
 	| { kind: 'pending'; plan: AiPlan; port: number }
 	/** Nothing minted: the fresh plan has no key to deliver, or it differs from the one shown (place, port) (V8, W13) */
 	| { kind: 'plan'; plan: AiPlan; port: number }
-	/** Claude Desktop on a signed build: the user installs the extension file first; the key stays pending */
-	| { kind: 'installExtension' }
-	/** Recorded (Other app, with the fresh plan's steps) or, for Claude Desktop, Anytype's side prepared */
+	/** Recorded (Other app, with the fresh plan's steps) */
 	| { kind: 'ok'; connection: AiConnection; fileMode?: 'tightened' | 'loose'; recordSaved: boolean; probe: AiProbeResult; plan: AiPlan; port: number }
-	/** The key may be stored (a lost receipt): main keeps it as a candidate of `connection`; the next check decides */
-	| { kind: 'unconfirmed'; connection: AiConnection }
 	/** Reconnect: the old key's access changed since the view opened; nothing minted (W4) */
 	| ({ kind: 'grantChanged' } & AccessNow)
 	/** A CLI of the record may still be writing an earlier key: nothing minted (W5) */
@@ -1624,20 +1958,16 @@ export type CreateManualResult =
 	| { kind: 'cancelled' }
 	| { kind: 'busy' };
 
-/**
- * A manual plan can deliver a key: a step needs it, or Claude Desktop prepares its side — at a named
- * target, which the write is bound to (X7) — or Other app's Command setup stores it for the connector
- */
-export const manualUsable = (p: AiPlan | null): boolean => !!p && (stepsNeedKey(p.steps) || ((p.appId == 'claude-desktop') && !!p.targetPath && p.steps.some(s => s.textKey == 'aiConnectManualPrepare')) || commandPlan(p));
+/** A manual plan can deliver a key: main says its steps need one (`needsKey`; they hold KEY_PLACEHOLDER) */
+export const manualUsable = (p: AiPlan | null): boolean => !!p?.needsKey;
 
-/** Other app's Command setup: "Create key" stores the key in the connector's item (no key ever appears in a step) */
-export const commandPlan = (p: AiPlan | null): boolean => !!p && (p.appId == 'other') && (p.method == 'command') && p.canApply && p.steps.some(s => s.textKey == 'aiConnectManualCommandPrepare');
+/** Other app's Command setup: the app starts Anytype's connector, the key in the entry's `env` */
+export const commandPlan = (p: AiPlan | null): boolean => !!p && (p.appId == 'other') && !!p.setups?.includes('command') && !!p.needsKey && p.steps.some(s => s.textKey == 'aiConnectManualCommandEntry');
 
 /**
  * "Create key" in the manual view, in one operation from its plan (V1): plan → mint → (Other app: record;
- * Claude Desktop: Anytype's key file; any other app: the key waits for "I've updated"). Mints only with a
- * fresh plan that can deliver the key to the place and port shown (V8, W13), after a reconnect's re-read of
- * the old key (W4).
+ * any other app: the key waits for "I've updated"). Mints only with a fresh plan that can deliver the key to
+ * the place and port shown (V8, W13), after a reconnect's re-read of the old key (W4).
  */
 export const createManual = (input: ManualInput): Promise<CreateManualResult> => inOperation<CreateManualResult>(async op => trackDelivery(op, input.appId, await createManualIn(op, input)), { kind: 'busy' });
 
@@ -1679,44 +2009,6 @@ const createManualIn = async (op: Operation, input: ManualInput): Promise<Create
 		};
 	};
 
-	if ((input.appId == 'claude-desktop') || (input.method == 'command')) {
-		// Bound to the plan shown: the same target, and a Replace only of the foreign one shown (W8)
-		// The reread stays: the old key is read again after this final plan, before the key is stored (Y5)
-		const res = await connectIn(op, { ...input, manual: true, shown: fresh, replace: input.replace });
-
-		switch (res.kind) {
-			case 'grantChanged': {
-				return { kind: 'grantChanged', present: true, grant: res.grant, expireAt: res.expireAt };
-			};
-			case 'needsForm': {
-				return { kind: 'grantChanged', present: false, grant: input.grant, expireAt: input.expireAt };
-			};
-			case 'ok': {
-				// Other app's Command: the plan now carries the setup text of the connection main just made
-				const done: AiPlan = res.steps?.length ? { ...fresh, targetId: res.connection.id, targetPath: res.connection.targetPath, steps: [ ...fresh.steps, ...res.steps ] } : fresh;
-				return { kind: 'ok', connection: res.connection, recordSaved: res.recordSaved, probe: res.probe, plan: done, port };
-			};
-			case 'unconfirmed': {
-				// Q16: the key may be stored. Main holds it as a candidate of this connection, and only the check settles
-				// it: the view waits for that instead of offering a second Create (a second grant and a second record)
-				return { kind: 'unconfirmed', connection: res.connection };
-			};
-			case 'error': {
-				return { kind: 'error', error: res.error };
-			};
-			case 'cancelled': {
-				return { kind: 'cancelled' };
-			};
-			case 'installExtension': {
-				return { kind: 'installExtension' };
-			};
-			case 'plan': {
-				return { kind: 'plan', plan: res.plan, port: previewPort() };
-			};
-		};
-		return { kind: 'error', error: UNKNOWN };
-	};
-
 	const minted = await mintPending(op, { name: input.name, grant: input.grant, expireAt: input.expireAt });
 
 	if (!alive(op)) {
@@ -1754,28 +2046,26 @@ export const retryProbe = async (connection: AiConnection): Promise<RetryProbeRe
 	if (!isDesktop() || (apiState() != 'listening')) {
 		return { ok: false, category: 'apiOff' };
 	};
-
-	const account = accountId();
-	// The key this flow just delivered (a promoted CLI candidate, W9), else the record's key from the list
-	const held = operation?.committed;
-	let key = (held && (held.appHash == connection.appHash) && (operation.accountId == account)) ? held.key : '';
-
-	if (!key) {
-		const found = await lookupKey(connection);
-
-		if (accountId() != account) {
-			return { ok: false, category: 'unknown' };
-		};
-		if (!found.ok) {
-			return { ok: false, category: 'unknown', lookupFailed: true };
-		};
-		if (!found.key) {
-			return { ok: false, category: 'unauthorized' };
-		};
-		key = found.key;
+	// Claude's extension is never probed with its key (§3.3): heart's isActive says whether Claude uses it
+	if (connection?.method == 'package') {
+		return { ok: false, category: 'unknown' };
 	};
 
-	const res = await probeDelivered(connection, key, account);
+	const account = accountId();
+	// The record's key from the list: only its hash is kept once delivered
+	const found = await lookupKey(connection);
+
+	if (accountId() != account) {
+		return { ok: false, category: 'unknown' };
+	};
+	if (!found.ok) {
+		return { ok: false, category: 'unknown', lookupFailed: true };
+	};
+	if (!found.key) {
+		return { ok: false, category: 'unauthorized' };
+	};
+
+	const res = await probeDelivered(connection, found.key, account);
 
 	await load();
 	return res;
@@ -1831,7 +2121,8 @@ export type DisconnectResult =
  */
 export const disconnect = async (connection: AiConnection, forgetOnly = false): Promise<DisconnectResult> => {
 	const account = accountId();
-	const param: any = { accountId: account, connectionId: connection.id, expectedHash: connection.appHash };
+	// A bundle record retired for a Reconnect has no key (appHash ''): no record hash expected
+	const param: any = { accountId: account, connectionId: connection.id, expectedHash: connection.appHash || null };
 
 	if (forgetOnly) {
 		param.forget = true;
@@ -1886,6 +2177,9 @@ export const stepDone = async (connection: AiConnection): Promise<boolean> => {
 export const restartApp = async (appId: AiAppId): Promise<boolean> => !!(await ipc<AiRestartResult>('aiConnectRestartApp', { appId }))?.ok;
 
 export const openApp = async (appId: AiAppId): Promise<boolean> => !!(await ipc<AiOpenAppResult>('aiConnectOpenApp', { appId }))?.ok;
+
+/** Claude's "Open again": main opens the bundle copy in Claude (no key involved); an installed extension is updated, not re-keyed */
+export const openBundle = async (): Promise<boolean> => !!(await ipc<AiOpenAppResult>('aiConnectOpenApp', { appId: 'claude-desktop', bundle: true }))?.ok;
 
 /** A record's target, or a card's bundle / target before any record exists */
 export const reveal = async (p: { connectionId: string } | { appId: AiAppId; what: 'bundle' | 'target' }): Promise<boolean> => {

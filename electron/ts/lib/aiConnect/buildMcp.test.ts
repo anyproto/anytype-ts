@@ -12,6 +12,8 @@ import { tempDir } from './testEnv';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const buildMcp = require('../../../../scripts/build-mcp.js');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const verifier = require('../../../hook/verify-forwarder.js');
 
 const ROOT = path.join(__dirname, '..', '..', '..', '..');
 
@@ -54,7 +56,7 @@ let fwd = '';
 let metaFile = '';
 
 /** What scripts/prepare-forwarder.js hands over: here a stand-in binary */
-const forwarder = (over: Record<string, any> = {}) => ({ signed: false, namespace: 'dev', rev: 5, files: { darwin: fwd }, bundleFile: fwd, ...over });
+const forwarder = (over: Record<string, any> = {}) => ({ signed: false, namespace: 'dev', rev: 6, files: { darwin: fwd }, bundleFile: fwd, ...over });
 
 /** A build into the temp folder, never into the repo's dist/ or electron/json */
 const build = (over: Record<string, any> = {}) => buildMcp.build({ outDir: path.join(dir, 'mcp'), metaFile, platform: 'darwin', env: {}, forwarder: forwarder(), ...over });
@@ -101,19 +103,32 @@ describe('build-mcp', () => {
 		expect(manifest).toMatchObject({
 			manifest_version: '0.3',
 			name: 'anytype-dev',
-			version: '2.5.0',
+			version: '2.6.0',
 			author: { name: 'Anytype' },
-			server: { type: 'binary', entry_point: 'server/anytype-mcp', mcp_config: { command: '${__dirname}/server/anytype-mcp', args: [ 'serve', '--connection', 'claude-desktop' ] } },
+			server: {
+				type: 'binary', entry_point: 'server/anytype-mcp',
+				mcp_config: {
+					command: '${__dirname}/server/anytype-mcp', args: [ 'serve', '--tier', 'full' ],
+					env: { ANYTYPE_API_KEY: '${user_config.api_key}', ANYTYPE_MCP_FILES_DIR: '${user_config.files_dir}' },
+				},
+			},
+			user_config: {
+				api_key: { type: 'string', title: 'Anytype key', sensitive: true, required: true },
+				files_dir: { type: 'directory', title: 'Folder for files (optional)', required: false },
+			},
 			tools_generated: true,
 			compatibility: { platforms: [ 'darwin' ] },
 		});
+		expect(Object.keys(manifest.user_config)).toEqual([ 'api_key', 'files_dir' ]);
 		expect(manifest.compatibility.runtimes).toBeUndefined();
-		expect(JSON.stringify(manifest)).not.toMatch(/KEY|Bearer|env|node|\.mjs/);
+		// No key and no tier field: the key reaches the forwarder only through `env`, the tool set is always Full
+		expect(JSON.stringify(manifest.server.mcp_config.args)).not.toMatch(/user_config|KEY|small|large/);
+		expect(JSON.stringify(manifest)).not.toMatch(/Bearer|node|\.mjs|"tier"/);
 
 		expect(readMeta()).toEqual({
 			signed: false,
-			forwarder: { rev: 5, namespace: 'dev', sha256: { darwin: sha256(fs.readFileSync(fwd)) } },
-			mcpb: { sha256: sha256(bundle), version: '2.5.0' },
+			forwarder: { rev: 6, namespace: 'dev', sha256: { darwin: sha256(fs.readFileSync(fwd)) } },
+			mcpb: { sha256: sha256(bundle), version: '2.6.0' },
 		});
 		expect(info).toEqual(readMeta());
 	});
@@ -128,7 +143,14 @@ describe('build-mcp', () => {
 		const manifest = JSON.parse(await zip.file('manifest.json').async('string'));
 
 		expect(Object.keys(zip.files).sort()).toEqual([ 'icon.png', 'manifest.json', 'server/anytype-mcp.exe' ]);
-		expect(manifest.server).toEqual({ type: 'binary', entry_point: 'server/anytype-mcp.exe', mcp_config: { command: '${__dirname}/server/anytype-mcp.exe', args: [ 'serve', '--connection', 'claude-desktop' ] } });
+		expect(manifest.server).toEqual({
+			type: 'binary', entry_point: 'server/anytype-mcp.exe',
+			mcp_config: {
+				command: '${__dirname}/server/anytype-mcp.exe', args: [ 'serve', '--tier', 'full' ],
+				env: { ANYTYPE_API_KEY: '${user_config.api_key}', ANYTYPE_MCP_FILES_DIR: '${user_config.files_dir}' },
+			},
+		});
+		expect(() => verifier.verifyManifest(manifest, 'anytype-mcp.exe')).not.toThrow();
 		expect(manifest.compatibility).toEqual({ platforms: [ 'win32' ] });
 		expect(info.forwarder.sha256).toEqual({ 'win32-x64': sha256(fs.readFileSync(exe)) });
 	});
@@ -142,7 +164,7 @@ describe('build-mcp', () => {
 
 		expect(info).toEqual({
 			signed: true,
-			forwarder: { rev: 5, namespace: 'release', sha256: { 'linux-x64': sha256(fs.readFileSync(fwd)), 'linux-arm64': sha256(fs.readFileSync(arm)) } },
+			forwarder: { rev: 6, namespace: 'release', sha256: { 'linux-x64': sha256(fs.readFileSync(fwd)), 'linux-arm64': sha256(fs.readFileSync(arm)) } },
 			mcpb: null,
 		});
 		expect(fs.existsSync(path.join(dir, 'mcp', 'Anytype.mcpb'))).toBe(false);
@@ -167,7 +189,7 @@ describe('build-mcp', () => {
 		const release = forwarder({ signed: true, namespace: 'release' });
 		const info = await build({ forwarder: release });
 
-		expect(info).toEqual({ signed: true, forwarder: { rev: 5, namespace: 'release', sha256: { darwin: sha256(fs.readFileSync(fwd)) } }, mcpb: null });
+		expect(info).toEqual({ signed: true, forwarder: { rev: 6, namespace: 'release', sha256: { darwin: sha256(fs.readFileSync(fwd)) } }, mcpb: null });
 		expect(readMeta()).toEqual(info);
 		expect(fs.readdirSync(path.join(dir, 'mcp'))).toEqual([ 'skill' ]);
 
@@ -227,7 +249,7 @@ describe('build-mcp', () => {
 			const expected = fingerprint.replace(/:/g, '').toLowerCase();
 
 			// The bundle is signed; `signed` itself says whether the forwarder is a release one (here it isn't)
-			expect(info.mcpb).toEqual({ sha256: sha256(bundle), signerFingerprint: expected, version: '2.5.0' });
+			expect(info.mcpb).toEqual({ sha256: sha256(bundle), signerFingerprint: expected, version: '2.6.0' });
 			expect(info.signed).toBe(false);
 			expect(readMeta()).toEqual(info);
 			expect(buildMcp.verifySignedBundle(file)).toBe(expected);

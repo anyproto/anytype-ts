@@ -1,7 +1,9 @@
 /**
- * The REAL forwarder (heart's cmd/anytype-mcp) against a throwaway heart, driven by the real service on a
- * scratch home: connect → `key set` → `serve` (initialize, tools/list, a tool call) → port heal and tier
- * change (`key retarget`) → disconnect (`key delete`).
+ * The REAL forwarder (heart's cmd/anytype-mcp, Rev 6) against a throwaway heart, driven by the real service on a
+ * scratch home: the endpoint file the desktop writes, the preflight (`anytype-mcp endpoint`) on the stable copy,
+ * Other app's Command setup with the key only in the entry's `env` → `serve` (initialize, tools/list, a tool
+ * call; heart's isActive turns true) → a port move and the API switched off (nothing is sent) → Disconnect,
+ * RevokeApp → heart rejects the key. And an unsafe Anytype folder: the real forwarder refuses, the stdio plan too.
  *
  * Runs only when the binaries are given (it starts a heart process):
  *
@@ -23,9 +25,9 @@ vi.mock('electron', () => ({ app: { isPackaged: false, getPath: () => '/nonexist
 vi.mock('electron-util', () => ({ fixPathForAsarUnpack: (p: string) => p }));
 
 import { AiConnectService } from './index';
-import { keyCheck } from './keyStore';
+import { liveApiListening } from './validate';
 import { modeOf, nodeEnv, tempDir } from './testEnv';
-import type { Env } from './types';
+import type { Env, RunOptions } from './types';
 
 const BIN = process.env.ANYTYPE_MCP_BIN || '';
 const EVALHEART = process.env.TESTHEART_BIN || '';
@@ -40,6 +42,19 @@ let env: Env = null;
 let svc: AiConnectService = null;
 let heart: ChildProcessWithoutNullStreams = null;
 let api = { port: 0, key: '', account: '', hash: '' };
+/** What main reads as the renderer's shared Local API settings (the endpoint file follows it) */
+const shared = { localApi: { enabled: true, port: 0 } as any, bind: { addr: '', success: true } as any };
+const listen = (port: number, enabled = true) => {
+	shared.localApi = { enabled, port };
+	shared.bind = { addr: `127.0.0.1:${port}`, success: true };
+};
+/** Every child the service started: binary and verb, never its environment */
+const runs: string[] = [];
+/** One command to the throwaway heart, its one-line answer */
+const ask = async (line: string): Promise<any> => {
+	heart.stdin.write(`${line}\n`);
+	return JSON.parse(await nextHeartLine());
+};
 /** The heart helper's stdout, line by line */
 const heartLines: string[] = [];
 const nextHeartLine = async (): Promise<string> => {
@@ -63,9 +78,9 @@ const freePort = (): Promise<number> => new Promise(resolve => {
 	});
 });
 
-/** A minimal MCP client over the child's pipes: newline-delimited JSON-RPC */
-const serve = (command: string, args: string[]) => {
-	const child = spawn(command, args, { cwd: home, env: { HOME: home, USERPROFILE: home, TMPDIR: path.join(dir, 'tmp'), PATH: process.env.PATH }, stdio: [ 'pipe', 'pipe', 'pipe' ] });
+/** A minimal MCP client over the child's pipes: newline-delimited JSON-RPC; `vars` as the AI app passes the entry's `env` */
+const serve = (command: string, args: string[], vars: Record<string, string> = {}) => {
+	const child = spawn(command, args, { cwd: home, env: { HOME: home, USERPROFILE: home, TMPDIR: path.join(dir, 'tmp'), PATH: process.env.PATH, ...vars }, stdio: [ 'pipe', 'pipe', 'pipe' ] });
 	const waiting = new Map<number, (v: any) => void>();
 	let buf = '';
 	let stderr = '';
@@ -109,8 +124,8 @@ const serve = (command: string, args: string[]) => {
 };
 
 /** initialize → notifications/initialized, as an AI app does */
-const connected = async (command: string, args: string[]) => {
-	const client = serve(command, args);
+const connected = async (command: string, args: string[], vars: Record<string, string> = {}) => {
+	const client = serve(command, args, vars);
 	const init = await client.request('initialize', { protocolVersion: '2025-06-18', capabilities: {}, clientInfo: { name: 'anytype-ts-integration', version: '0' } });
 
 	client.notify('notifications/initialized');
@@ -147,11 +162,18 @@ describe.skipIf(!enabled)('the real anytype-mcp against a throwaway heart', () =
 		fs.chmodSync(path.join(dir, 'app', 'dist', 'anytype-mcp'), 0o755);
 
 		const key = (process.platform == 'darwin') ? 'darwin' : `${process.platform}-${process.arch}`;
-		const meta = JSON.stringify({ signed: false, forwarder: { rev: 5, namespace: 'dev', sha256: { [key]: crypto.createHash('sha256').update(fs.readFileSync(BIN)).digest('hex') } }, mcpb: null });
+		const meta = JSON.stringify({ signed: false, forwarder: { rev: 6, namespace: 'dev', sha256: { [key]: crypto.createHash('sha256').update(fs.readFileSync(BIN)).digest('hex') } }, mcpb: null });
+		const base = nodeEnv(home, { appRoot: path.join(dir, 'app'), vars: { PATH: process.env.PATH }, buildMeta: () => meta });
 
-		env = nodeEnv(home, { appRoot: path.join(dir, 'app'), vars: { PATH: process.env.PATH }, buildMeta: () => meta });
-		svc = new AiConnectService(() => ({ env, registryFile: path.join(dir, 'profile', 'aiConnect.json') }));
-		svc.configure({ env, registryFile: path.join(dir, 'profile', 'aiConnect.json') });
+		env = { ...base, run: (file: string, args: string[], opts: RunOptions) => {
+			runs.push(`${file} ${args[0]}`);
+			return base.run(file, args, opts);
+		} };
+
+		const setup = { env, registryFile: path.join(dir, 'profile', 'aiConnect.json'), apiState: () => shared, liveApi: (port: number) => liveApiListening(port, shared.localApi, shared.bind) };
+
+		svc = new AiConnectService(() => setup);
+		svc.configure(setup);
 
 		// A throwaway heart: local-only account, its own data folder, a port the kernel picked
 		heart = spawn(EVALHEART, [ '-heart-binary', HEART ], { stdio: [ 'pipe', 'pipe', 'pipe' ], env: { ...process.env, HOME: home, TMPDIR: path.join(dir, 'tmp') } });
@@ -171,6 +193,7 @@ describe.skipIf(!enabled)('the real anytype-mcp against a throwaway heart', () =
 		const info = JSON.parse(line);
 
 		api = { port: Number(new URL(info.api_url).port), key: info.api_key, account: info.account_id, hash: info.app_hash };
+		listen(api.port);
 		expect(api.hash).toBeTruthy();
 		expect(new URL(info.api_url).hostname).toBe('127.0.0.1');
 		// Never the port a real Anytype listens on
@@ -193,119 +216,117 @@ describe.skipIf(!enabled)('the real anytype-mcp against a throwaway heart', () =
 		};
 	}, 60000);
 
-	test('Q20: connect → key set → serve (initialize, tools/list, a tool call) → retarget → key delete → RevokeApp → heart rejects the key', async () => {
-		// --- connect: Other app's Command setup, through the service as the renderer's aiConnectApply does
-		const applied: any = await svc.apply({
-			accountId: api.account, appId: 'other', route: 'stdio', method: 'command', tier: 'full', recommendedTier: 'full', port: api.port, key: api.key,
-			appHash: api.hash, name: 'Integration', grant: GRANT, expireAt: 0, expectedHash: null,
+	test('D1-05 / D1-10: the endpoint the desktop writes → preflight on the stable copy → Command with the key in `env` → serve; isActive turns true; port move and API off send nothing; Disconnect → RevokeApp → 401', async () => {
+		const endpoint = path.join(home, '.anytype', 'ai-connect', 'endpoint-dev.json');
+		const stable = path.join(home, '.anytype', 'bin-dev', 'anytype-mcp');
+
+		// --- the plan of Other app's Command setup: the stable copy installed, the endpoint written, the real forwarder judges it
+		const planned: any = await svc.plan({ accountId: api.account, appId: 'other', route: 'stdio', tier: 'full', port: api.port, method: 'command' });
+
+		expect(planned).toMatchObject({ ok: true, needsKey: true, setups: [ 'url', 'command' ] });
+		expect(JSON.parse(fs.readFileSync(endpoint, 'utf8'))).toEqual({ v: 1, port: api.port });
+		expect(modeOf(endpoint)).toBe(0o600);
+		expect(runs).toContain(`${fs.realpathSync(stable)} endpoint`);
+		expect(fs.readFileSync(`${stable}.rev`, 'utf8')).toBe('6\n');
+
+		const entry = JSON.parse(planned.steps.find((it: any) => it.snippet).snippet).mcpServers.anytype;
+
+		expect(entry).toEqual({ command: fs.realpathSync(stable), args: [ 'serve', '--tier', 'full' ], env: { ANYTYPE_API_KEY: '<KEY>' } });
+
+		// --- a real minted key, recorded as the manual Command connection the user set up
+		const minted = await ask('mint Integration Command');
+
+		expect(minted.minted).toBeTruthy();
+		expect(await ask(`active ${minted.minted}`)).toMatchObject({ present: true, active: false });
+
+		const recorded: any = await svc.recordManual({
+			accountId: api.account, appId: 'other', route: 'stdio', tier: 'full', recommendedTier: 'full', port: api.port, appHash: minted.minted,
+			name: 'Integration Command', grant: GRANT, expireAt: 0, expectedHash: null, setup: 'command',
 		});
 
-		expect(applied).toMatchObject({ ok: true, connection: { appId: 'other', method: 'command', route: 'stdio', itemRev: 1 } });
+		expect(recorded).toMatchObject({ ok: true, connection: { method: 'manual', setup: 'command', route: 'stdio' } });
 
-		const id: string = applied.connection.id;
-		const entry = JSON.parse(applied.steps.find((s: any) => s.snippet).snippet).mcpServers.anytype;
-		const stable = path.join(home, '.anytype', 'bin-dev', 'anytype-mcp');
-		const item = path.join(home, '.anytype', 'ai-connect', 'items-dev', `${id}.item`);
+		// --- serve, exactly as the app starts the entry: the key only in the environment
+		const full = await connected(entry.command, entry.args, { ANYTYPE_API_KEY: minted.key });
 
-		// The command Anytype hands out: the stable copy, the connection's id, no key
-		expect(entry).toEqual({ command: fs.realpathSync(stable), args: [ 'serve', '--connection', id ] });
-		expect(JSON.stringify(applied)).not.toContain(api.key);
-		expect(fs.readFileSync(stable)).toEqual(fs.readFileSync(BIN));
-		expect(modeOf(stable)).toBe(0o755);
-		expect(fs.readFileSync(`${stable}.rev`, 'utf8')).toBe('5\n');
-
-		// --- key set: one private file per connection, written by the forwarder itself
-		expect(modeOf(item)).toBe(0o600);
-		expect(modeOf(path.dirname(item))).toBe(0o700);
-		expect(await keyCheck(env, id)).toMatchObject({ present: true, rev: 1, account: api.account, port: api.port, tier: 'full' });
-		// The key is in no file under the home or the profile except its own item
-		expect(filesWith(home, api.key)).toEqual([ item ]);
-		expect(filesWith(path.join(dir, 'profile'), api.key)).toEqual([]);
-
-		// --- serve: exactly the command from the setup text, as an AI app would start it
-		const full = await connected(entry.command, entry.args);
-
-		expect(full.client.argv.join(' ')).not.toContain(api.key);
+		expect(full.client.argv.join(' ')).not.toContain(minted.key);
 		expect(full.init.result.capabilities).toHaveProperty('tools');
 
-		const listed = await full.client.request('tools/list');
-		const names: string[] = listed.result.tools.map((t: any) => t.name);
+		const names: string[] = (await full.client.request('tools/list')).result.tools.map((t: any) => t.name);
 
 		expect(names).toContain('list_spaces');
-		// The full tier adds the two local file tools; no --files-dir was passed, so they use a fresh temp folder of this process
 		expect(names.slice(-2)).toEqual([ 'download_file', 'upload_local_file' ]);
-		expect(full.client.stderr()).toMatch(new RegExp(`file tools: folder ${fs.realpathSync(path.join(dir, 'tmp')).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/anytype-mcp-files-`));
 
 		const call = await full.client.request('tools/call', { name: 'list_spaces', arguments: {} });
 
 		expect(call.error).toBeUndefined();
 		expect(call.result.isError).toBeFalsy();
-		expect(JSON.stringify(call.result)).toMatch(/"data"|spaces|has_more/);
 		expect(await full.client.close()).toBe(0);
+		// One authenticated request: heart's isActive for this key (what "Connected" on the extension route reads)
+		expect(await ask(`active ${minted.minted}`)).toMatchObject({ present: true, active: true });
 
-		// --- port heal: heart "moved" to another port → check retargets the item; the same key, nothing revoked
+		// --- the API "moved": the next check rewrites the endpoint, and the forwarder sends nothing to the old port
 		const elsewhere = await freePort();
 
 		expect(elsewhere).not.toBe(31009);
-		expect(await svc.check({ accountId: api.account, apiListening: true, port: elsewhere, keys: [ { hash: api.hash, present: true } ] })).toMatchObject({
-			healed: [ id ], connections: [ { status: 'ok', port: elsewhere, itemRev: 2, revokePending: [] } ],
-		});
-		expect(await keyCheck(env, id)).toMatchObject({ present: true, rev: 2, port: elsewhere });
+		listen(elsewhere);
+		await svc.check({ accountId: api.account, apiListening: true, port: elsewhere, keys: null });
+		expect(JSON.parse(fs.readFileSync(endpoint, 'utf8'))).toEqual({ v: 1, port: elsewhere });
 
-		// Nothing listens there: the forwarder answers every request itself, and never sends the key anywhere else
-		const away = await connected(entry.command, entry.args);
-		const refused = await away.client.request('tools/list');
+		const away = await connected(entry.command, entry.args, { ANYTYPE_API_KEY: minted.key });
 
-		// -32001 on initialize (Anytype is not running), then -32002 for a request before a successful initialize
 		expect(away.init.error?.code).toBe(-32001);
-		expect(away.init.result).toBeUndefined();
-		expect(refused.error?.code).toBe(-32002);
 		await away.client.close();
 
-		// …and back, with a tier change on top (an in-place update: `key retarget`)
-		await svc.check({ accountId: api.account, apiListening: true, port: api.port, keys: [ { hash: api.hash, present: true } ] });
-		expect(await svc.update({ accountId: api.account, connectionId: id, expectedHash: api.hash, port: api.port, tier: 'large' })).toMatchObject({ ok: true, connection: { tier: 'large', itemRev: 4 } });
-		expect(await keyCheck(env, id)).toMatchObject({ present: true, rev: 4, port: api.port, tier: 'large' });
-		expect(filesWith(home, api.key)).toEqual([ item ]);
+		// --- the API switched off: the endpoint file goes; Anytype "can't be reached"
+		listen(api.port, false);
+		await svc.check({ accountId: api.account, apiListening: false, keys: null });
+		expect(fs.existsSync(endpoint)).toBe(false);
 
-		const large = await connected(entry.command, entry.args);
-		const largeNames: string[] = (await large.client.request('tools/list')).result.tools.map((t: any) => t.name);
+		const off = await connected(entry.command, entry.args, { ANYTYPE_API_KEY: minted.key });
 
-		// A curated tier lists and serves nothing local; heart still accepts the retargeted key
-		expect(largeNames).not.toContain('upload_local_file');
-		expect(largeNames).toContain('spaces');
-		expect(largeNames).not.toContain('list_spaces');
+		expect(off.init.error?.code).toBe(-32001);
+		await off.client.close();
 
-		const largeCall = await large.client.request('tools/call', { name: 'spaces', arguments: {} });
+		// --- back on
+		listen(api.port);
+		await svc.check({ accountId: api.account, apiListening: true, port: api.port, keys: null });
 
-		expect(largeCall.error).toBeUndefined();
-		expect(largeCall.result.isError).toBeFalsy();
-		await large.client.close();
+		const back = await connected(entry.command, entry.args, { ANYTYPE_API_KEY: minted.key });
 
-		// --- disconnect: the revocation is queued, the item deleted
-		// heart accepts the key right up to the disconnect
-		expect(await statusWith(api.key)).toBe(200);
-		expect(await svc.remove({ accountId: api.account, connectionId: id, expectedHash: api.hash })).toMatchObject({ ok: true, connection: { removed: true, revokePending: [ api.hash ] } });
+		expect(back.init.result.capabilities).toHaveProperty('tools');
+		await back.client.close();
 
-		// Q20: the renderer's step — RevokeApp under the account's session, then aiConnectRevoked — and heart rejects the key
-		heart.stdin.write(`revoke ${api.hash}\n`);
-		expect(JSON.parse(await nextHeartLine())).toEqual({ revoked: api.hash, code: 0 });
-		expect(await svc.revoked({ accountId: api.account, connectionId: id, hash: api.hash })).toEqual({ ok: true, connection: null });
-		expect(await statusWith(api.key)).toBe(401);
-		expect(JSON.parse(fs.readFileSync(path.join(dir, 'profile', 'aiConnect.json'), 'utf8')).connections).toEqual([]);
-		expect(fs.existsSync(item)).toBe(false);
-		expect(await keyCheck(env, id)).toEqual({ present: false });
-		expect(filesWith(home, api.key)).toEqual([]);
+		// --- Disconnect: the hash queued first; RevokeApp; heart rejects the key, and the forwarder says so
+		expect(await statusWith(minted.key)).toBe(200);
+		expect(await svc.remove({ accountId: api.account, connectionId: recorded.connection.id, expectedHash: minted.minted })).toMatchObject({ ok: true, connection: { removed: true, revokePending: [ minted.minted ] } });
+		expect(await ask(`revoke ${minted.minted}`)).toEqual({ revoked: minted.minted, code: 0 });
+		expect(await svc.revoked({ accountId: api.account, connectionId: recorded.connection.id, hash: minted.minted })).toEqual({ ok: true, connection: null });
+		expect(await statusWith(minted.key)).toBe(401);
 
-		// The command is still in the user's app: a `serve` without an item stays not connected
-		const gone = await connected(entry.command, entry.args);
+		const gone = await connected(entry.command, entry.args, { ANYTYPE_API_KEY: minted.key });
 		const after = await gone.client.request('tools/list');
 
-		expect(gone.init.error?.code).toBe(-32001);
-		expect(after.result).toBeUndefined();
+		expect(JSON.stringify([ gone.init, after ])).toMatch(/no longer accepts this key/);
 		await gone.client.close();
 
-		// No key ever reached the registry
-		expect(fs.readFileSync(path.join(dir, 'profile', 'aiConnect.json'), 'utf8')).not.toContain(api.key);
+		// The key never reached a file of Anytype's: not the home (endpoint, stable copy), not the profile
+		expect(filesWith(home, minted.key)).toEqual([]);
+		expect(filesWith(path.join(dir, 'profile'), minted.key)).toEqual([]);
 	}, 180000);
+
+	test('D1-05: an Anytype folder others can write — the real forwarder says `denied`, the Command plan is refused with its rule and path; the URL plan is unaffected', async () => {
+		const folder = path.join(home, '.anytype', 'ai-connect');
+
+		fs.chmodSync(folder, 0o770);
+		try {
+			const planned: any = await svc.plan({ accountId: api.account, appId: 'other', route: 'stdio', tier: 'full', port: api.port, method: 'command' });
+
+			expect(planned).toMatchObject({ ok: true, canApply: false, needsKey: false, error: { category: 'storeDenied', path: fs.realpathSync(folder) } });
+			expect(planned.error.rule).toBeTruthy();
+			expect(await svc.plan({ accountId: api.account, appId: 'other', route: 'http', tier: 'full', port: api.port })).toMatchObject({ ok: true, needsKey: true });
+		} finally {
+			fs.chmodSync(folder, 0o700);
+		};
+	}, 60000);
 });

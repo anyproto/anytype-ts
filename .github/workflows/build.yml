@@ -314,9 +314,15 @@ jobs:
           set -euo pipefail
           count=0
           for app in dist/mac*/*.app; do
+            # The package's own architecture: its smoke starts that slice (the Intel one through Rosetta)
+            case "$app" in
+              dist/mac-arm64/*) arch=arm64 ;;
+              dist/mac/*) arch=x64 ;;
+              *) echo "::error::no architecture for $app"; exit 1 ;;
+            esac
             fwd="$app/Contents/Resources/app.asar.unpacked/dist/anytype-mcp"
             codesign --verify --strict --verbose=2 "$fwd"
-            node electron/hook/verify-forwarder.js "$app" --require-signed --require-bundle
+            node electron/hook/verify-forwarder.js "$app" --require-signed --require-bundle --arch "$arch"
             count=$((count + 1))
           done
           if [ "$count" -ne 2 ]; then
