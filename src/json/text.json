@@ -3621,7 +3621,7 @@
 	"aiConnectPlanPackageConfigure": "The Anytype extension is already in %s. Anytype copies a new key; paste it in %s ▸ Settings ▸ Extensions ▸ Anytype ▸ Configure.",
 	"aiConnectClaudeBothConfig": "Claude's settings file already starts Anytype. Remove one of the two: the Anytype entry in claude_desktop_config.json, or don't add the extension.",
 	"aiConnectClaudeBothExtension": "The Anytype extension is installed in Claude. Remove one of the two: the extension in Claude ▸ Settings ▸ Extensions, or don't add Anytype to the settings file.",
-	"aiConnectClaudeReplaceConfig": "%s's settings file (claude_desktop_config.json) already has an Anytype entry. Connecting the extension removes that entry.",
+	"aiConnectClaudeReplaceConfig": "%s's settings file (claude_desktop_config.json) already has an Anytype entry. The extension is a safer and more efficient way to connect. Connecting removes the old entry.",
 	"aiConnectPlanConfigRestart": "Anytype will add itself to %s's settings (%s). You'll need to restart %s.",
 	"aiConnectPlanConfigSession": "Anytype will add itself to %s's settings (%s). Start a new session afterwards.",
 	"aiConnectPlanConfigReload": "Anytype will add itself to %s (%s). Start a new chat afterwards.",
