@@ -43,7 +43,7 @@ import type { Adapter, AiError, AiPlan, AiRecord, AiStep, AiTier, ApplyOutcome, 
 import { dirsWritable, isLocalAbsolute, pathOf, readSnapshot, resolveTarget, writeFileSafe } from '../fsSafe';
 import { canonicalDigest, canonicalJson, keyFingerprint } from '../digest';
 import { claudeDesktopDir, powershellPath } from '../detect';
-import { bundleDir, bundleInfo, bundleUsable, copyBundle, ensureStoreDir, loadBundle, type BundleInfo } from '../bundle';
+import { bundleDir, bundleInfo, bundleManifest, bundleUsable, copyBundle, ensureStoreDir, loadBundle, type BundleInfo } from '../bundle';
 import { KEY_VAR, buildMeta, ensureInstalled, platformKey, serveCommand, sha256, stdioSupported, usable, withLock } from '../forwarder';
 import { preflight } from '../endpoint';
 import { UTF8_OUTPUT, launch, quit, runningState } from '../restart';
@@ -66,13 +66,6 @@ export const CLAUDE_SIGNED_STATUS: string | null = null;
 export const SETTINGS_DIR = 'Claude Extensions Settings';
 /** Where Claude unpacks an installed extension: `<this>/<extension id>/` (UNVERIFIED name, research/claude-desktop.md) */
 export const EXTENSIONS_DIR = 'Claude Extensions';
-/**
- * The environment our manifest gives the forwarder: the key only from `user_config.api_key`, and the forwarder's
- * files-folder variable from `user_config.files_dir` (electron/mcp/manifest.json); nothing else
- */
-const manifestEnvOk = (v: any): boolean => !!v && (typeof v == 'object') && !Array.isArray(v) && (Object.keys(v).length == 2)
-	&& (v.ANYTYPE_API_KEY === '${user_config.api_key}')
-	&& Object.keys(v).every(k => (k == 'ANYTYPE_API_KEY') || (/^ANYTYPE_MCP_[A-Z_]+$/.test(k) && (v[k] === '${user_config.files_dir}')));
 const MAX_BINARY_BYTES = 64 * 1024 * 1024;
 
 export type ExtensionState = 'installed' | 'disabled' | 'outdated' | 'absent' | 'unreadable';
@@ -187,35 +180,39 @@ const installedDigest = (env: Env, file: string): string | null => {
 	return sha;
 };
 
+/** A bundle-relative file name (`server/anytype-mcp`): no absolute path, no `..` */
+const relativeEntry = (v: any): string[] | null => {
+	const parts = (typeof v == 'string') ? v.split('/') : [];
+
+	return (parts.length && parts.every(it => /^[A-Za-z0-9._-]+$/.test(it) && (it != '.') && (it != '..'))) ? parts : null;
+};
+
 /**
  * R17: whether the extension Claude unpacked for `id` is this build's bundle, from its own files. Claude's signature
- * verdict can't be relied on (current Claude records every bundle `unsigned`, without a fingerprint). Ours: the
- * manifest starts `server/anytype-mcp[.exe]` with `serve --tier full` and the key only from `user_config`, and
- * that file has exactly the bytes of this build's forwarder (the bundle packs that same signed file). `unknown`:
- * the files can't be read, or aren't where they should be
+ * verdict can't be relied on (current Claude records every bundle `unsigned`, without a fingerprint). Ours: its
+ * manifest's `server` (the start command, `platform_overrides` included) and `user_config` are exactly those of the
+ * bundle this build ships (F1), and the file at its entry point has exactly the bytes of this build's forwarder
+ * (the bundle packs that same signed file). `unknown`: the files can't be read, or aren't where they should be
  */
-const installedIdentity = (env: Env, id: string): 'ours' | 'other' | 'unknown' => {
+const installedIdentity = (env: Env, id: string, bundle: BundleInfo | null): 'ours' | 'other' | 'unknown' => {
 	const P = pathOf(env);
 	const expected = buildMeta(env)?.forwarder?.sha256?.[platformKey(env)];
-	const exe = (env.platform == 'win32') ? 'anytype-mcp.exe' : 'anytype-mcp';
-	const entry = `server/${exe}`;
+	const shipped = bundleManifest(env, bundle);
 	const dir = P.join(claudeDesktopDir(env), EXTENSIONS_DIR, id);
 	const manifest = readClaudeJson(env, P.join(dir, 'manifest.json'));
+	const entry = relativeEntry(shipped?.server?.entry_point);
 
-	if (!expected || (manifest.kind != 'ok')) {
+	if (!expected || !shipped || !entry || (manifest.kind != 'ok')) {
 		return 'unknown';
 	};
 
-	const server = manifest.value?.server;
-	const config = server?.mcp_config;
-	const started = (server?.type === 'binary') && (server?.entry_point === entry) && (config?.command === `\${__dirname}/${entry}`)
-		&& (canonicalJson(config?.args) === canonicalJson([ 'serve', '--tier', 'full' ])) && manifestEnvOk(config?.env);
+	const same = (a: any, b: any): boolean => canonicalJson(a ?? null) === canonicalJson(b ?? null);
 
-	if (!started) {
+	if (!same(manifest.value?.server, shipped.server) || !same(manifest.value?.user_config, shipped.user_config)) {
 		return 'other';
 	};
 
-	const sha = installedDigest(env, P.join(dir, 'server', exe));
+	const sha = installedDigest(env, P.join(dir, ...entry));
 
 	if (!sha) {
 		return 'unknown';
@@ -255,7 +252,7 @@ export const extensionInfo = (env: Env, bundle: BundleInfo | null): ExtensionInf
 	const installedAt = String(record.installedAt ?? record.installed_at ?? '');
 	const versionOk = bundleUsable(bundle) && !!version && (compareVersions(version, bundle.version) >= 0);
 	const signer = signerOf(record);
-	const files = (bundleUsable(bundle) && bundle.signed) ? installedIdentity(env, id) : null;
+	const files = (bundleUsable(bundle) && bundle.signed) ? installedIdentity(env, id, bundle) : null;
 	// A signer Claude reports must be ours; without one (current Claude) the installed files decide (R17)
 	const signerOk = bundleUsable(bundle) && (!bundle.signed || (signer ? (signer === bundle.signerFingerprint) : (files == 'ours')));
 	// The key may go in through Configure on a signed build once the installed files are ours, or Claude's own verdict says signed
@@ -415,6 +412,9 @@ const quitNeeded = async (ctx: Ctx, det: Detected): Promise<'quitApp' | 'quitApp
 	return null;
 };
 
+/** The same canonical file (case-insensitive on Windows) */
+const samePath = (env: Env, a: string, b: string): boolean => (env.platform == 'win32') ? (a.toLowerCase() == b.toLowerCase()) : (a == b);
+
 /** R6: the writer can remove this entry (its own edit, dry-run); else the error that edit gives */
 const unremovable = (t: ConfigTarget): AiError | null => {
 	const edit = CONFIG.remove(t.text);
@@ -539,6 +539,9 @@ const primary = {
 				if ('error' in t) {
 					return err('validate', 'conflict');
 				};
+				if (!samePath(ctx.env, t.real, pre.real)) {
+					return err('validate', 'conflict', t.real);
+				};
 				// Gone meanwhile: the last check after the save decides (R3)
 				if (!present(t.value)) {
 					return 'ok';
@@ -558,8 +561,13 @@ const primary = {
 		const info = extensionInfo(ctx.env, bundle);
 		const configure = info.configurable;
 		const install = info.version ? { version: info.version, installedAt: info.installedAt } : null;
-		// The bundle copy is written before the record is saved (it holds no key): after the last check only the open is left (R3)
+		// The bundle copy is written before the record is saved (it holds no key): after the last check only the open is left
+		// (R3). One that can't be written stops here, before anything is saved, quit or edited (F5)
 		const copy = configure ? null : await copyBundle(ctx.env, loaded.data);
+
+		if (copy && !('path' in copy)) {
+			return { ok: false, error: copy.error };
+		};
 		/** Anytype quit Claude to remove the entry: it is started again on every path that doesn't open the bundle */
 		let quitted = false;
 		const relaunch = async (): Promise<boolean> => {
@@ -581,7 +589,7 @@ const primary = {
 		const settleEntry = async (): Promise<null | { needs: 'quitApp' | 'quitAppSelf' } | { error: AiError }> => {
 			const seen = loadConfig(ctx.env);
 
-			if (!('error' in seen) && present(seen.value) && entryConsent(ctx, seen)) {
+			if (!('error' in seen) && samePath(ctx.env, seen.real, pre.real) && present(seen.value) && entryConsent(ctx, seen)) {
 				const running = await runningState(ctx.env, det);
 
 				if (running.state == 'unknown') {
@@ -614,6 +622,10 @@ const primary = {
 				return ((now.state == 'stopped') || ((now.state == 'unknown') && !!ctx.quitConfirmed)) ? null : STILL_RUNNING;
 			};
 			const locked = await configLock(ctx.env, () => writeConfigEntry(ctx.env, undefined, async t => {
+				// The file pinned when apply checked it: Claude's settings resolving elsewhere now proves nothing (F3)
+				if (!samePath(ctx.env, t.real, pre.real)) {
+					return err('validate', 'conflict', t.real);
+				};
 				if (!present(t.value)) {
 					return 'skip';
 				};
@@ -743,8 +755,9 @@ const writeConfigEntry = async (
 			return { ok: false, error: err('parse', edit.category, t.real) };
 		};
 
-		// `beforeRename`: Claude must still be closed right before every rename attempt, Windows retries included (R5)
-		const res = await writeFileSafe(env, t.real, edit.text, { snapshot: t.snapshot, secret: true, beforeRename });
+		// `beforeRename`: Claude must still be closed before every rename attempt, Windows retries included (R5). Durable:
+		// the change survives a power loss before anything acts on it, e.g. the key the removed entry held is revoked (F4)
+		const res = await writeFileSafe(env, t.real, edit.text, { snapshot: t.snapshot, secret: true, beforeRename, durable: true });
 
 		if ('createdDirs' in res) {
 			return { ok: true, real: t.real, createdDirs: res.createdDirs };

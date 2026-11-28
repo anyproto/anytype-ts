@@ -5,7 +5,7 @@ import { describe, expect, test, vi } from 'vitest';
 vi.mock('electron', () => ({ app: { isPackaged: false, getPath: () => '/nonexistent', getAppPath: () => '/nonexistent', getVersion: () => '0.0.0', getFileIcon: vi.fn(), getApplicationInfoForProtocol: vi.fn() }, shell: { openExternal: vi.fn(), showItemInFolder: vi.fn() }, clipboard: { readText: vi.fn(), writeText: vi.fn() } }));
 vi.mock('electron-util', () => ({ fixPathForAsarUnpack: (p: string) => p }));
 
-import { FORWARDER_BIN, FORWARDER_FILES, KEY_A, KEY_B, MCP_DIR, REGISTRY, STABLE_BIN, STABLE_BIN_RELEASE, applyParam, mac, planParam, service } from '../testKit';
+import { FORWARDER_BIN, FORWARDER_FILES, KEY_A, KEY_B, MCP_DIR, REGISTRY, STABLE_BIN, STABLE_BIN_RELEASE, applyParam, mac, planParam, service, storedZip } from '../testKit';
 import { CLAUDE_PACKAGES, CLAUDE_PACKAGE_QUERY, EXTENSIONS_DIR, EXTENSION_ID, EXTENSION_ID_DEV, extensionInfo, extensionState, windowsClaudeExe } from './claudeDesktop';
 import { bundleInfo } from '../bundle';
 import { canonicalDigest } from '../digest';
@@ -45,7 +45,7 @@ interface Opt {
 	/** The archive on disk when it differs from the one the build's metadata describes */
 	tampered?: string;
 	ext?: Ext;
-	files?: Record<string, string>;
+	files?: Record<string, string | Buffer>;
 	running?: boolean | 'unknown';
 	opens?: boolean;
 	forwarder?: FakeSpec['forwarder'];
@@ -156,17 +156,22 @@ describe('Claude Desktop: extension state', () => {
 	});
 });
 
-/** What Claude unpacks for an installed bundle: the manifest as build-mcp.js writes its server block, and the forwarder */
-const installedFiles = (id: string, binary: string, server: any = null) => ({
-	[`${DIR}/${EXTENSIONS_DIR}/${id}/manifest.json`]: JSON.stringify({
-		name: 'anytype', version: VERSION,
-		server: server || {
-			type: 'binary', entry_point: 'server/anytype-mcp',
-			mcp_config: { command: '${__dirname}/server/anytype-mcp', args: [ 'serve', '--tier', 'full' ], env: JSON.parse(fs.readFileSync(MANIFEST, 'utf8')).server.mcp_config.env },
-		},
-	}),
+/** The manifest this build ships (scripts/build-mcp.js: the template with this build's version) and its bundle, a real zip */
+const SHIPPED = { ...JSON.parse(fs.readFileSync(MANIFEST, 'utf8')), version: VERSION };
+const bundleZip = (manifest: any = SHIPPED) => storedZip([ [ 'manifest.json', JSON.stringify(manifest, null, 2) + '\n' ], [ 'server/anytype-mcp', FORWARDER_FILES[FORWARDER_BIN] ], [ 'icon.png', 'png' ] ]);
+
+/** What Claude unpacks for an installed bundle: its manifest and the forwarder at the entry point */
+const installedFiles = (id: string, binary: string, manifest: any = SHIPPED) => ({
+	[`${MCP_DIR}/Anytype.mcpb`]: bundleZip(),
+	[`${DIR}/${EXTENSIONS_DIR}/${id}/manifest.json`]: JSON.stringify(manifest),
 	[`${DIR}/${EXTENSIONS_DIR}/${id}/server/anytype-mcp`]: binary,
 });
+const withServer = (change: (server: any) => void) => {
+	const m = JSON.parse(JSON.stringify(SHIPPED));
+
+	change(m.server);
+	return m;
+};
 
 describe('Claude Desktop: a signed build knows its installed extension by its files (R17)', () => {
 	// Current Claude (mcpb 2.1.2) records every bundle `unsigned`, with no fingerprint
@@ -180,12 +185,37 @@ describe('Claude Desktop: a signed build knows its installed extension by its fi
 
 	test('R17: the same with other bytes, or a manifest that starts something else or puts the key elsewhere → outdated', () => {
 		const other = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, 'SOMETHING-ELSE') });
-		const command = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, ours, { type: 'binary', entry_point: 'server/anytype-mcp', mcp_config: { command: '/bin/sh', args: [ 'serve', '--tier', 'full' ], env: { ANYTYPE_API_KEY: '${user_config.api_key}' } } }) });
-		const env = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, ours, { type: 'binary', entry_point: 'server/anytype-mcp', mcp_config: { command: '${__dirname}/server/anytype-mcp', args: [ 'serve', '--tier', 'full' ], env: { ANYTYPE_API_KEY: '${user_config.api_key}', DYLD_INSERT_LIBRARIES: '/tmp/x' } } }) });
+		const command = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, ours, withServer(s => { s.mcp_config.command = '/bin/sh'; })) });
+		const env = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, ours, withServer(s => { s.mcp_config.env.DYLD_INSERT_LIBRARIES = '/tmp/x'; })) });
 
 		for (const m of [ other, command, env ]) {
 			expect(extensionInfo(m.env, bundleInfo(m.env))).toMatchObject({ state: 'outdated', verified: false, configurable: false });
 		};
+	});
+
+	test('F1: the installed manifest must equal the shipped one in `server` (platform_overrides included) and `user_config`; key order and formatting don\'t matter', () => {
+		const overrides = withServer(s => {
+			s.platform_overrides = { darwin: { command: '/bin/sh', args: [ '-c', 'cat' ] } };
+		});
+		const userConfig = { ...JSON.parse(JSON.stringify(SHIPPED)), user_config: { ...SHIPPED.user_config, api_key: { ...SHIPPED.user_config.api_key, sensitive: false } } };
+		const extraConfig = { ...JSON.parse(JSON.stringify(SHIPPED)), user_config: { ...SHIPPED.user_config, other: { type: 'string', title: 'x', default: '/tmp' } } };
+
+		for (const manifest of [ overrides, userConfig, extraConfig ]) {
+			const { env } = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, ours, manifest) });
+
+			expect(extensionInfo(env, bundleInfo(env))).toMatchObject({ state: 'outdated', verified: false, configurable: false });
+		};
+
+		// The same content in another key order: ours
+		const reordered = { user_config: SHIPPED.user_config, server: { mcp_config: SHIPPED.server.mcp_config, entry_point: SHIPPED.server.entry_point, type: SHIPPED.server.type }, name: 'anytype' };
+		const same = machine({ signed: true, ext: {}, files: installedFiles(EXTENSION_ID, ours, reordered) });
+
+		expect(extensionInfo(same.env, bundleInfo(same.env))).toMatchObject({ state: 'installed', verified: true, configurable: true });
+
+		// A bundle whose own manifest can't be read: nothing is proven
+		const unreadable = machine({ signed: true, ext: {}, files: { ...installedFiles(EXTENSION_ID, ours), [`${MCP_DIR}/Anytype.mcpb`]: ARCHIVE } });
+
+		expect(extensionInfo(unreadable.env, bundleInfo(unreadable.env))).toMatchObject({ state: 'unreadable', verified: false, configurable: false });
 	});
 
 	test('R17: a signer Claude does report must be ours: a different fingerprint is outdated whatever the files say', () => {
@@ -195,7 +225,7 @@ describe('Claude Desktop: a signed build knows its installed extension by its fi
 	});
 
 	test('R17: installed files that can\'t be read fail closed (unreadable, not ours); a development build behaves as before', () => {
-		const { env } = machine({ signed: true, ext: {} });
+		const { env } = machine({ signed: true, ext: {}, files: { [`${MCP_DIR}/Anytype.mcpb`]: bundleZip() } });
 
 		expect(extensionInfo(env, bundleInfo(env))).toMatchObject({ state: 'unreadable', verified: false, configurable: false, present: 'record' });
 

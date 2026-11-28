@@ -48,6 +48,8 @@ export interface MintIntent {
 	/** The access and expiry the key is made with: only a key with exactly these is this one (D1S-18) */
 	grant?: any;
 	expireAt?: number;
+	/** Put back by main after a refused delivery: the exact key, revoked by its hash in a later run (F7) */
+	appHash?: string;
 };
 
 interface RegistryFile {
@@ -149,7 +151,8 @@ const isValidOrphan = (v: any): v is Orphan => !!v && isStr(v.accountId) && !!v.
 
 const isValidIntent = (v: any): v is MintIntent => !!v && isStr(v.id) && /^[0-9a-f]{16}$/.test(v.id) && isStr(v.accountId) && !!v.accountId
 	&& isStr(v.name) && !!v.name && (v.name.length <= 512) && isNum(v.time)
-	&& ((v.grant === undefined) || isValidLinkGrant(v.grant)) && ((v.expireAt === undefined) || isNum(v.expireAt));
+	&& ((v.grant === undefined) || isValidLinkGrant(v.grant)) && ((v.expireAt === undefined) || isNum(v.expireAt))
+	&& ((v.appHash === undefined) || isHash(v.appHash));
 
 /** One record of a destructive save's undo */
 interface Undo {

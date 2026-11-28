@@ -706,3 +706,210 @@ describe('Claude Desktop: review round 1 (main)', () => {
 		expect(m.state.opened).toEqual([ [ '-a', APP ] ]);
 	});
 });
+
+describe('Claude Desktop: final review (main)', () => {
+	const own = async (m: ReturnType<typeof machine>) => {
+		expect(await m.svc.apply(config())).toMatchObject({ ok: true, connection: { method: 'config', appHash: 'hash-a1' } });
+		return planOf(m.svc) as Promise<any>;
+	};
+	const rotate = (shown: any, over: Record<string, any> = {}) => bundle({ key: KEY_B, appHash: 'hash-a2', expectedHash: 'hash-a1', replace: shown.replace, ...over });
+	const queues = (env: FakeEnv, file: string, hash: string): boolean => (JSON.parse(env.readText(file) || '{"connections":[]}').connections || []).some((r: any) => (r.revokePending || []).includes(hash));
+
+	test('F2: an edit made while the writer looks Claude up is never written over: the changed entry and the new preference survive, the save is undone', async () => {
+		const m = machine({ files: { [CONFIG]: CONFIG_TEXT } });
+		const shown: any = await planOf(m.svc);
+		const edited = CONFIG_TEXT.replace(FOREIGN_KEY, 'SENTINEL-edited-key-0123456789abcdef').replace('"menuBar": true', '"menuBar": true, "theme": "dark"');
+		let lookups = 0;
+
+		// Lookups: apply's check, the last check's two (the entry's, the writer's), then the one right before the rename
+		m.env.listProcesses = async () => {
+			if (++lookups == 4) {
+				put(m.env, CONFIG, edited);
+			};
+			return [];
+		};
+
+		expect(await m.svc.apply(bundle({ replace: shown.replace }))).toMatchObject({ ok: false, error: { stage: 'validate', category: 'conflict' } });
+		expect(m.env.files()[CONFIG]).toBe(edited);
+		expect(records(m.env)).toEqual([]);
+		expect(m.env.clip.writes).toEqual([]);
+	});
+
+	test('F2: a preference Claude saves during that lookup (the entry unchanged) is kept: the entry goes, the preference stays', async () => {
+		const m = machine({ files: { [CONFIG]: CONFIG_TEXT } });
+		const shown: any = await planOf(m.svc);
+		const edited = CONFIG_TEXT.replace('"menuBar": true', '"menuBar": true, "theme": "dark"');
+		let lookups = 0;
+
+		m.env.listProcesses = async () => {
+			if (++lookups == 4) {
+				put(m.env, CONFIG, edited);
+			};
+			return [];
+		};
+
+		expect(await m.svc.apply(bundle({ replace: shown.replace }))).toMatchObject({ ok: true });
+
+		const after = JSON.parse(m.env.files()[CONFIG]);
+
+		expect(after.mcpServers).toEqual({ other: { command: 'o', args: [ 'x' ] } });
+		expect(after.preferences).toEqual({ menuBar: true, theme: 'dark' });
+	});
+
+	test('F3: Claude\'s settings resolving to another (empty) file after the first save → refused, the earlier record back, its key not queued, its entry where it was', async () => {
+		const A = `${DIR}/settings-a.json`;
+		const B = `${DIR}/settings-b.json`;
+		const m = machine({ files: { [A]: '{}', [B]: '{}' }, links: { [CONFIG]: A } });
+
+		expect(await m.svc.apply(config())).toMatchObject({ ok: true, connection: { method: 'config', appHash: 'hash-a1', configPath: A } });
+
+		const before = records(m.env)[0];
+		const shown: any = await planOf(m.svc);
+		const rename = m.env.rename;
+
+		expect(shown).toMatchObject({ existing: 'ours', replace: { targetPath: A } });
+		m.env.rename = (from, to) => {
+			rename(from, to);
+			if ((to == REGISTRY) && records(m.env)[0]?.staged) {
+				m.env.link(CONFIG, B);
+			};
+		};
+
+		expect(await m.svc.apply(rotate(shown))).toMatchObject({ ok: false, error: { stage: 'validate', category: 'conflict' } });
+		expect(records(m.env)).toEqual([ before ]);
+		expect(JSON.parse(m.env.files()[A]).mcpServers.anytype.env.ANYTYPE_API_KEY).toBe(KEY_A);
+		expect(m.env.files()[B]).toBe('{}');
+		expect(m.env.clip.writes).toEqual([]);
+	});
+
+	test('F4: the settings file\'s folder is synced after the entry\'s removal and before the save that queues the old key; a sync that fails queues nothing', async () => {
+		const m = machine({ files: { [CONFIG]: '{}' } });
+		const shown = await own(m);
+		const events: string[] = [];
+		const rename = m.env.rename;
+		const fsync = m.env.fsyncDir;
+
+		m.env.rename = (from, to) => {
+			if (to == CONFIG) {
+				events.push('config');
+			};
+			if ((to == REGISTRY) && queues(m.env, from, 'hash-a1')) {
+				events.push('queue');
+			};
+			rename(from, to);
+		};
+		m.env.fsyncDir = p => {
+			if (p == DIR) {
+				events.push('sync');
+			};
+			fsync(p);
+		};
+
+		expect(await m.svc.apply(rotate(shown))).toMatchObject({ ok: true });
+		expect(events).toEqual([ 'config', 'sync', 'queue' ]);
+
+		// The same with a sync that fails: not reported as done, nothing queued
+		const f = machine({ files: { [CONFIG]: '{}' } });
+		const again = await own(f);
+		const before = records(f.env)[0];
+
+		f.env.fsyncDir = p => {
+			if (p == DIR) {
+				throw Object.assign(new Error('EIO'), { code: 'EIO' });
+			};
+		};
+
+		expect(await f.svc.apply(rotate(again))).toMatchObject({ ok: false, error: { stage: 'write' } });
+		expect(records(f.env)).toEqual([ before ]);
+		expect(f.env.clip.writes).toEqual([]);
+	});
+
+	test('F5: a bundle copy that can\'t be written stops apply before anything is saved, quit or edited', async () => {
+		const m = machine({ running: true, files: { [CONFIG]: CONFIG_TEXT } });
+		const shown: any = await planOf(m.svc);
+		const rename = m.env.rename;
+
+		m.env.rename = (from, to) => {
+			if (to.endsWith('.mcpb')) {
+				throw Object.assign(new Error('EACCES'), { code: 'EACCES' });
+			};
+			rename(from, to);
+		};
+
+		expect(await m.svc.apply(bundle({ replace: shown.replace, allowQuit: true }))).toMatchObject({ ok: false, error: { stage: 'write' } });
+		expect(m.state.killed).toEqual([]);
+		expect(m.env.files()[CONFIG]).toBe(CONFIG_TEXT);
+		expect(records(m.env)).toEqual([]);
+		expect(m.env.clip.writes).toEqual([]);
+		expect(m.state.opened).toEqual([]);
+	});
+
+	test('F6: while a staged record can\'t be put back, the list shows the last committed record, and its key isn\'t copied or its bundle opened', async () => {
+		const m = machine({ files: { [CONFIG]: '{}' } });
+		const shown = await own(m);
+		const before = records(m.env)[0];
+		const rename = m.env.rename;
+		let failRegistry = false;
+
+		m.state.running = true;
+		m.env.kill = (pid: number) => {
+			m.state.killed.push(pid);
+			failRegistry = true;
+			return true;
+		};
+		m.env.rename = (from, to) => {
+			if (failRegistry && (to == REGISTRY)) {
+				throw Object.assign(new Error('EIO'), { code: 'EIO' });
+			};
+			rename(from, to);
+		};
+
+		expect(await m.svc.apply(rotate(shown, { allowQuit: true }))).toMatchObject({ ok: false, error: { category: 'unsaved' } });
+		expect(records(m.env)[0].staged).toBeDefined();
+
+		const listed: any = await m.svc.list({ accountId: 'acc-a' });
+
+		expect(listed.connections).toEqual([ expect.objectContaining({ method: 'config', appHash: 'hash-a1' }) ]);
+		expect(JSON.stringify(listed)).not.toContain('hash-a2');
+		expect(await m.svc.copySecret({ accountId: 'acc-a', connectionId: 'claude-desktop', text: KEY_B })).toEqual({ ok: false });
+		expect(await m.svc.copySecret({ accountId: 'acc-a', appHash: 'hash-a2', text: KEY_B })).toEqual({ ok: false });
+		// Open again refuses it even with no settings-file entry in the way (the user removed it meanwhile)
+		put(m.env, CONFIG, '{}');
+		m.state.opened.length = 0;
+		expect(await m.svc.openApp({ appId: 'claude-desktop', bundle: true })).toEqual({ ok: false });
+		expect(m.state.opened).toEqual([]);
+		expect(m.env.clip.writes).toEqual([]);
+
+		// Storage works again: the earlier record is back on disk
+		failRegistry = false;
+		await m.svc.list({ accountId: 'acc-a' });
+		expect(records(m.env)).toEqual([ before ]);
+	});
+
+	test('F7: a refused delivery puts its mint intent back with the exact hash; a later run revokes exactly that key, even beside an ambiguous intent', async () => {
+		const m = machine({ files: { [CONFIG]: CONFIG_TEXT } });
+		const shown: any = await planOf(m.svc);
+		const intent: any = await m.svc.mintIntent({ accountId: 'acc-a', name: 'Claude Desktop', time: 1 });
+		const twin: any = await m.svc.mintIntent({ accountId: 'acc-a', name: 'Claude Desktop', time: 1 });
+		const rename = m.env.rename;
+
+		// The entry changes after the first save: the last check refuses
+		m.env.rename = (from, to) => {
+			rename(from, to);
+			if ((to == REGISTRY) && records(m.env)[0]?.staged) {
+				put(m.env, CONFIG, CONFIG_TEXT.replace(FOREIGN_KEY, 'SENTINEL-edited-key-0123456789abcdef'));
+			};
+		};
+
+		expect(await m.svc.apply(bundle({ replace: shown.replace, intentId: intent.id }))).toMatchObject({ ok: false, error: { category: 'conflict' } });
+		expect(registry(m.env).mintIntents).toEqual(expect.arrayContaining([ expect.objectContaining({ id: intent.id, appHash: 'hash-a1' }) ]));
+
+		// Anytype stopped before the flow released the key: the next run knows exactly which key it was
+		const next = service(m.env);
+		const listed: any = await next.list({ accountId: 'acc-a' });
+
+		expect(listed.orphanHashes).toEqual([ 'hash-a1' ]);
+		expect(listed.mintIntents.map((it: any) => it.id)).toEqual([ twin.id ]);
+		expect(registry(m.env).mintIntents.map((it: any) => it.id)).toEqual([ twin.id ]);
+	});
+});

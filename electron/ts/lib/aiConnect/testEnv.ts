@@ -118,8 +118,8 @@ export interface FakeSpec {
 	platform: NodeJS.Platform;
 	home: string;
 	vars?: Record<string, string>;
-	/** path → content */
-	files?: Record<string, string>;
+	/** path → content (a Buffer keeps its exact bytes: a zip archive, a binary) */
+	files?: Record<string, string | Buffer>;
 	dirs?: string[];
 	/** path → target */
 	links?: Record<string, string>;
@@ -200,7 +200,10 @@ export const fakeForwarderRun = (state: ForwarderState, call: RunCall, namespace
 	return ((data.v === 1) && Number.isInteger(data.port)) ? line(0, { ok: true, port: data.port }) : line(1, { ok: false, reason: 'invalid' });
 };
 
-type Entry = ({ type: 'file'; text: string } | { type: 'dir' } | { type: 'link'; target: string } | { type: 'fifo' }) & { mode: number; ino: number; uid: number; mtime?: number };
+/** A file's `text`; `bytes` when it was written as a Buffer (read back exactly) */
+type Entry = ({ type: 'file'; text: string; bytes?: Buffer } | { type: 'dir' } | { type: 'link'; target: string } | { type: 'fifo' }) & { mode: number; ino: number; uid: number; mtime?: number };
+
+const fileOf = (data: string | Buffer): { type: 'file'; text: string; bytes?: Buffer } => Buffer.isBuffer(data) ? { type: 'file', text: data.toString('utf8'), bytes: Buffer.from(data) } : { type: 'file', text: String(data) };
 
 const fsError = (code: string, p: string): Error => Object.assign(new Error(`${code}: ${p}`), { code });
 
@@ -222,6 +225,8 @@ export type FakeEnv = Env & {
 	files: () => Record<string, string>;
 	dirs: () => string[];
 	modeOf: (p: string) => number;
+	/** Tests only: puts a symbolic link at `p` (whatever was there goes), as another process could */
+	link: (p: string, target: string) => void;
 };
 
 export const fakeEnv = (spec: FakeSpec): FakeEnv => {
@@ -261,7 +266,7 @@ export const fakeEnv = (spec: FakeSpec): FakeEnv => {
 
 	add(spec.home, make(spec.home, { type: 'dir' }, 0o755));
 	(spec.dirs || []).forEach(d => add(d, make(d, { type: 'dir' }, 0o755)));
-	Object.entries(spec.files || {}).forEach(([ p, text ]) => add(p, make(p, { type: 'file', text }, 0o644)));
+	Object.entries(spec.files || {}).forEach(([ p, data ]) => add(p, make(p, fileOf(data), 0o644)));
 	Object.entries(spec.links || {}).forEach(([ p, target ]) => add(p, make(p, { type: 'link', target }, 0o777)));
 	(spec.fifos || []).forEach(p => add(p, make(p, { type: 'fifo' }, 0o644)));
 
@@ -320,7 +325,7 @@ export const fakeEnv = (spec: FakeSpec): FakeEnv => {
 			return { error: 'notFile' };
 		};
 
-		const data = Buffer.from(e.text, 'utf8');
+		const data = e.bytes ? Buffer.from(e.bytes) : Buffer.from(e.text, 'utf8');
 		return (data.length > maxBytes) ? { error: 'tooLarge' } : { data };
 	};
 
@@ -329,8 +334,8 @@ export const fakeEnv = (spec: FakeSpec): FakeEnv => {
 	const arch = spec.arch || ((spec.platform == 'darwin') ? 'arm64' : 'x64');
 	const forwarderPath = P.join(appRoot, 'dist', (spec.platform == 'win32') ? 'anytype-mcp.exe' : 'anytype-mcp');
 	const forwarder: ForwarderState = { verdict: null, versions: new Map(), calls: [] };
-	const sha = (text: string): string => crypto.createHash('sha256').update(Buffer.from(text, 'utf8')).digest('hex');
-	const initial = (p: string): string | undefined => Object.entries(spec.files || {}).find(([ k ]) => key(k) == key(p))?.[1];
+	const sha = (data: string | Buffer): string => crypto.createHash('sha256').update(Buffer.isBuffer(data) ? data : Buffer.from(data, 'utf8')).digest('hex');
+	const initial = (p: string): string | Buffer | undefined => Object.entries(spec.files || {}).find(([ k ]) => key(k) == key(p))?.[1];
 	/** What scripts/build-mcp.js would have written for the files this machine started with */
 	const defaultMeta = (): string | null => {
 		const binary = initial(forwarderPath);
@@ -379,6 +384,10 @@ export const fakeEnv = (spec: FakeSpec): FakeEnv => {
 			return ret;
 		},
 		modeOf: p => entries.get(key(locate(p)))?.mode ?? -1,
+		link: (p, target) => {
+			drop(locate(p));
+			add(locate(p), make(p, { type: 'link', target }, 0o777));
+		},
 		platform: spec.platform,
 		home: spec.home,
 		uid,
@@ -430,7 +439,7 @@ export const fakeEnv = (spec: FakeSpec): FakeEnv => {
 				throw fsError('ENOENT', p);
 			};
 
-			const entry: Entry = { type: 'file', text: String(data), mode, ino: ino++, uid: uid ?? -1, mtime: env.now() };
+			const entry: Entry = { ...fileOf(data), mode, ino: ino++, uid: uid ?? -1, mtime: env.now() };
 			let open = true;
 
 			put(at, entry);
@@ -441,6 +450,7 @@ export const fakeEnv = (spec: FakeSpec): FakeEnv => {
 				wipe: () => {
 					if (open && (entry.type == 'file')) {
 						entry.text = '';
+						delete entry.bytes;
 					};
 				},
 				close: () => {

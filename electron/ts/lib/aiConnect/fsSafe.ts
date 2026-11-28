@@ -406,10 +406,16 @@ export type WriteResult = { ok: true; createdDirs: string[] } | { ok: false; cha
  *    never unlinked first.
  * 6. A parent or target that changed → `changed`, the temp discarded where it really is; the caller re-plans once.
  * 7. New files 0600; an existing file keeps its mode, except a file gaining a secret loses group/other bits.
- * 8. `beforeRename` runs right before every rename attempt of the new text, Windows retries included: an error
- *    stops the write there (the temp discarded, the target as it was), e.g. the app that owns the file started (R5).
+ * 8. `beforeRename` runs before every rename attempt of the new text, Windows retries included: an error stops the
+ *    write there (the temp discarded, the target as it was), e.g. the app that owns the file started (R5). It may
+ *    take time, so the parent and the snapshot are compared only after it, synchronously, right before the rename:
+ *    an edit made meanwhile is never written over (F2).
+ * 9. `durable`: the parent is fsynced after the rename (POSIX; a no-op on Windows), and a failure is an error, so a
+ *    caller acts on the change (revokes the key the file held) only once it survives a power loss (F4).
  */
-export const writeFileSafe = async (env: Env, real: string, text: string, opt: { snapshot: Snapshot; secret: boolean; beforeRename?: () => Promise<AiError | null> }): Promise<WriteResult> => {
+export const writeFileSafe = async (
+	env: Env, real: string, text: string, opt: { snapshot: Snapshot; secret: boolean; beforeRename?: () => Promise<AiError | null>; durable?: boolean },
+): Promise<WriteResult> => {
 	const P = pathOf(env);
 	const { snapshot, secret } = opt;
 	const root = realHome(env);
@@ -491,10 +497,6 @@ export const writeFileSafe = async (env: Env, real: string, text: string, opt: {
 		env.chmod(temp.path, mode);
 
 		for (let attempt = 0; ; attempt++) {
-			if (!sameDir(env, dir, root) || !unchangedSince(env, real, snapshot)) {
-				return abandon();
-			};
-
 			const stop = opt.beforeRename ? await opt.beforeRename() : null;
 
 			if (stop) {
@@ -503,11 +505,18 @@ export const writeFileSafe = async (env: Env, real: string, text: string, opt: {
 				removeCreatedDirs(env, created);
 				return { ok: false, error: stop };
 			};
+			// After the (slow) check, with nothing awaited until the rename: the file as the writer read it
+			if (!sameDir(env, dir, root) || !unchangedSince(env, real, snapshot)) {
+				return abandon();
+			};
 
 			try {
 				env.rename(temp.path, real);
 				keepTemp(temp);
 				temp = null;
+				if (opt.durable) {
+					env.fsyncDir(dir.path);
+				};
 				break;
 			} catch (e) {
 				if ((env.platform != 'win32') || !isBusy(e) || (attempt >= RENAME_RETRIES)) {

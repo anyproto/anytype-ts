@@ -102,6 +102,12 @@ const isBundle = (rec: AiRecord | null): boolean => (rec?.appId == 'claude-deskt
 /** Cards whose manual setup puts the key into a settings file Anytype knows (checked for its mode afterwards) */
 const MANUAL_FILE_CARDS = [ 'cursor', 'vscode', 'lmstudio', 'chatgpt', 'codex', 'gemini-cli', 'antigravity', 'opencode' ];
 
+/**
+ * The last committed version of a record: a staged one (an extension delivery that never finished, R1) is the record
+ * it replaced, or none (F6)
+ */
+const committed = (rec: AiRecord | null): AiRecord | null => (rec?.staged ? rec.staged.before : rec) || null;
+
 /** The hashes of a record's unconfirmed deliveries */
 const candidateHashes = (rec: AiRecord | null): string[] => (rec?.unconfirmed || []).map(c => c.appHash);
 
@@ -494,7 +500,10 @@ export class AiConnectService {
 			const owned = !!before && ((before.appHash == rec.appHash) || candidateHashes(before).includes(rec.appHash));
 
 			try {
-				this.reg.revert(rec.accountId, rec.id, before, (here && rec.staged.intent) || null, (!here && rec.appHash && !owned) ? rec.appHash : '');
+				// The intent comes back with the exact key it stands for (F7)
+				const intent = (here && rec.staged.intent) ? { ...rec.staged.intent, ...(rec.appHash ? { appHash: rec.appHash } : {}) } : null;
+
+				this.reg.revert(rec.accountId, rec.id, before, intent, (!here && rec.appHash && !owned) ? rec.appHash : '');
 				this.stagedHere.delete(key);
 			} catch (e) {
 				this.log('aiConnectSave', e);
@@ -529,12 +538,22 @@ export class AiConnectService {
 
 	/** One record, the one kept in memory first */
 	private record (accountId: string, id: string): AiRecord | null {
-		return this.unsaved.get(this.unsavedKey(this.setup.registryFile, accountId, id))?.rec || this.reg.get(accountId, id);
+		return committed(this.unsaved.get(this.unsavedKey(this.setup.registryFile, accountId, id))?.rec || this.reg.get(accountId, id));
+	};
+
+	/** A staged record that couldn't be put back yet (F6): its key isn't one to copy or open anything for */
+	private stagedKey (accountId: string, match: { connectionId?: string; appHash?: string }): boolean {
+		try {
+			return this.reg.all().some(rec => !!rec.staged && (rec.accountId == accountId) && ((rec.id == match.connectionId) || (!!match.appHash && (rec.appHash == match.appHash))));
+		} catch (e) {
+			return false;
+		};
 	};
 
 	/** The account's records, the ones kept in memory included */
 	private records (accountId: string): AiRecord[] {
-		const list = this.reg.list(accountId);
+		// While a staged record can't be put back, the last committed version is the one anything shows (F6)
+		const list = this.reg.list(accountId).map(committed).filter(Boolean);
 
 		for (const rec of this.pendingSaves()) {
 			if (rec.accountId == accountId) {
@@ -677,6 +696,8 @@ export class AiConnectService {
 				detections.push(toDetection(it, await this.icon(it), this.env.platform));
 			};
 
+			this.settleExactIntents(p.accountId);
+
 			return {
 				ok: true,
 				scanOk: scan.scanOk,
@@ -689,6 +710,27 @@ export class AiConnectService {
 				})),
 			};
 		});
+	};
+
+	/**
+	 * F7: a mint intent an earlier run put back after a refused delivery names its exact key (`appHash`). Nothing holds
+	 * that key now and it was never delivered: it is queued as an orphan (unless a record owns it after all) and the
+	 * intent goes, so no name-and-time guess is needed and an ambiguous window never keeps it alive
+	 */
+	private settleExactIntents (accountId: string): void {
+		try {
+			for (const it of this.reg.listIntents(accountId).filter(i => !!i.appHash && !this.liveIntents.has(i.id))) {
+				const owned = this.records(accountId).some(rec => (rec.appHash == it.appHash) || candidateHashes(rec).includes(it.appHash));
+
+				if (!owned) {
+					this.reg.addOrphan(accountId, it.appHash);
+				};
+				this.reg.removeIntent(accountId, it.id);
+			};
+		} catch (e) {
+			// Kept: the next list tries again
+			this.log('aiConnectSave', e);
+		};
 	};
 
 	/**
@@ -975,7 +1017,8 @@ export class AiConnectService {
 				if (refused) {
 					// Nothing was delivered: the earlier record and the key's intent are back, the key is the renderer's undelivered one
 					try {
-						this.reg.revert(p.accountId, targetId, rec, intent);
+						// The intent comes back with the exact key it stands for: a later run revokes that one, never a guess (F7)
+						this.reg.revert(p.accountId, targetId, rec, intent ? { ...intent, appHash: p.appHash } : null);
 						this.stagedHere.delete(key);
 					} catch (e) {
 						// Not undone: never reported as done either; the next call puts the earlier record back (R1)
@@ -1469,6 +1512,10 @@ export class AiConnectService {
 				this.clipboard.clear(this.env, o => (o.accountId == owner.accountId) && (o.connectionId == owner.connectionId) && (o.appHash == owner.appHash));
 				return { ok: true };
 			};
+			// The key of a staged record (its delivery never finished) is never handed out (F6)
+			if (this.stagedKey(p.accountId, owner)) {
+				return { ok: false };
+			};
 			return { ok: !this.closing && (session == this.session) && this.clipboard.copy(this.env, p.text, owner) };
 		});
 	};
@@ -1942,6 +1989,10 @@ export class AiConnectService {
 
 			// Claude's "Open again": the bundle copy, opened in Claude (an update when the extension is outdated, never a new key)
 			if (p.bundle) {
+				// Not for a staged Claude record (its delivery never finished, F6)
+				if (this.reg.all().some(rec => !!rec.staged && (rec.appId == 'claude-desktop'))) {
+					return { ok: false };
+				};
 				return { ok: await openBundleAgain(this.env, det) };
 			};
 

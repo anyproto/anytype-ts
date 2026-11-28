@@ -10,6 +10,7 @@
  * operation lock. Every directory on the way down from the real home must be a real directory (not a link)
  * and, on POSIX, the user's and not writable by others.
  */
+import zlib from 'zlib';
 import type { AiError, Env } from './types';
 import { MODE_DIR, dirIdentity, discardTemp, keepTemp, pathOf, realHome, sameDir, stageTemp, type DirIdentity, type StagedTemp } from './fsSafe';
 import { buildMeta, privateOnWindows, protectNewDir, sha256 } from './forwarder';
@@ -81,6 +82,123 @@ export const bundleInfo = (env: Env): BundleInfo | null => loadBundle(env)?.info
 
 /** The bundle may be installed (and its extension given a key): present, and its archive matches the metadata */
 export const bundleUsable = (info: BundleInfo | null): boolean => !!info && !info.integrityError;
+
+const SIG_HEADER = Buffer.from('MCPB_SIG_V1', 'utf8');
+const SIG_FOOTER = Buffer.from('MCPB_SIG_END', 'utf8');
+
+/** A signed bundle ends with `MCPB_SIG_V1 <u32le length> <DER> MCPB_SIG_END` (scripts/sign-mcpb-azure.js): the zip is what precedes it */
+const zipPart = (buf: Buffer): Buffer => {
+	const footer = buf.length - SIG_FOOTER.length;
+
+	if ((footer < 0) || !buf.subarray(footer).equals(SIG_FOOTER)) {
+		return buf;
+	};
+
+	const header = buf.lastIndexOf(SIG_HEADER, footer);
+	const lenAt = header + SIG_HEADER.length;
+
+	if ((header < 0) || ((lenAt + 4) > footer) || ((lenAt + 4 + buf.readUInt32LE(lenAt)) != footer)) {
+		return buf;
+	};
+	return buf.subarray(0, header);
+};
+
+/**
+ * One file of a zip archive by its exact name (stored or deflated), at most `maxBytes`; null when it isn't there
+ * or the archive isn't one this reader understands. Only for the bundle's own, digest-checked archive
+ */
+export const zipEntry = (archive: Buffer, name: string, maxBytes: number): Buffer | null => {
+	const zip = zipPart(archive);
+	let end = -1;
+
+	for (let i = zip.length - 22; (i >= 0) && (i >= (zip.length - 22 - 0xffff)); i--) {
+		if (zip.readUInt32LE(i) == 0x06054b50) {
+			end = i;
+			break;
+		};
+	};
+	if (end < 0) {
+		return null;
+	};
+
+	const count = zip.readUInt16LE(end + 10);
+	let at = zip.readUInt32LE(end + 16);
+
+	for (let n = 0; n < count; n++) {
+		if (((at + 46) > zip.length) || (zip.readUInt32LE(at) != 0x02014b50)) {
+			return null;
+		};
+
+		const method = zip.readUInt16LE(at + 10);
+		const packed = zip.readUInt32LE(at + 20);
+		const size = zip.readUInt32LE(at + 24);
+		const nameLen = zip.readUInt16LE(at + 28);
+		const local = zip.readUInt32LE(at + 42);
+		const entry = zip.toString('utf8', at + 46, at + 46 + nameLen);
+
+		at += 46 + nameLen + zip.readUInt16LE(at + 30) + zip.readUInt16LE(at + 32);
+		if (entry != name) {
+			continue;
+		};
+		if ((size > maxBytes) || ((local + 30) > zip.length) || (zip.readUInt32LE(local) != 0x04034b50)) {
+			return null;
+		};
+
+		const start = local + 30 + zip.readUInt16LE(local + 26) + zip.readUInt16LE(local + 28);
+
+		if ((start + packed) > zip.length) {
+			return null;
+		};
+
+		const raw = zip.subarray(start, start + packed);
+
+		try {
+			const data = (method == 0) ? Buffer.from(raw) : ((method == 8) ? zlib.inflateRawSync(raw, { maxOutputLength: maxBytes }) : null);
+			return (data && (data.length == size)) ? data : null;
+		} catch (e) {
+			return null;
+		};
+	};
+	return null;
+};
+
+/** The manifest of the bundle this build ships, per archive digest (the archive is read and hashed once) */
+const shippedManifests = new WeakMap<Env, { sha256: string; manifest: any }>();
+
+/**
+ * The manifest of the bundle this build ships, read out of its digest-checked archive; null without a usable
+ * bundle, or when it can't be read. What Claude installed must match it exactly (F1)
+ */
+export const bundleManifest = (env: Env, info: BundleInfo | null): any | null => {
+	if (!info || !bundleUsable(info)) {
+		return null;
+	};
+
+	const known = shippedManifests.get(env);
+
+	if (known && (known.sha256 == info.sha256)) {
+		return known.manifest;
+	};
+
+	const loaded = loadBundle(env);
+
+	if (!loaded || !bundleUsable(loaded.info) || (loaded.info.sha256 != info.sha256)) {
+		return null;
+	};
+
+	const data = zipEntry(loaded.data, 'manifest.json', 1024 * 1024);
+	let manifest: any = null;
+
+	try {
+		manifest = data ? JSON.parse(data.toString('utf8')) : null;
+	} catch (e) { /* not one */ };
+
+	if (manifest && (typeof manifest == 'object')) {
+		shippedManifests.set(env, { sha256: info.sha256, manifest });
+		return manifest;
+	};
+	return null;
+};
 
 /** `<home>/.anytype/ai-connect`, outermost directory first */
 const dirChain = (env: Env): string[] => {

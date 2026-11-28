@@ -178,6 +178,8 @@ export interface AiMintIntent {
 	/** The access and expiry the key was to be made with (an intent saved before D1R2 has none) */
 	grant?: LinkAppGrant;
 	expireAt?: number;
+	/** Main only: put back after a refused delivery with the exact key's hash, which a later run revokes (F7) */
+	appHash?: string;
 };
 
 /** One unconfirmed delivery: the key, where it went, and the record fields it would bring */

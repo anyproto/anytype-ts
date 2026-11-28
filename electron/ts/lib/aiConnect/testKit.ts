@@ -46,7 +46,7 @@ export interface MachineOpt {
 	apps?: string[];
 	/** Labelled login-shell output (CLI paths, PATH, homes) */
 	shell?: Record<string, string>;
-	files?: Record<string, string>;
+	files?: Record<string, string | Buffer>;
 	dirs?: string[];
 	links?: Record<string, string>;
 	modes?: Record<string, number>;
@@ -128,3 +128,72 @@ export const keysOf = (present: string[], absent: string[] = []) => [
 	...present.map(hash => ({ hash, present: true })),
 	...absent.map(hash => ({ hash, present: false })),
 ];
+
+const CRC_TABLE = (() => {
+	const t: number[] = [];
+
+	for (let n = 0; n < 256; n++) {
+		let c = n;
+
+		for (let k = 0; k < 8; k++) {
+			c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+		};
+		t.push(c >>> 0);
+	};
+	return t;
+})();
+
+const crc32 = (buf: Buffer): number => {
+	let c = 0xffffffff;
+
+	for (const b of buf) {
+		c = CRC_TABLE[(c ^ b) & 0xff] ^ (c >>> 8);
+	};
+	return (c ^ 0xffffffff) >>> 0;
+};
+
+/** A stored (uncompressed) zip, as scripts/build-mcp.js packs Anytype.mcpb: the bundle's real shape for the main-process reader */
+export const storedZip = (entries: [ string, string | Buffer ][]): Buffer => {
+	const locals: Buffer[] = [];
+	const centrals: Buffer[] = [];
+	let offset = 0;
+
+	for (const [ name, content ] of entries) {
+		const data = Buffer.isBuffer(content) ? content : Buffer.from(content, 'utf8');
+		const fileName = Buffer.from(name, 'utf8');
+		const crc = crc32(data);
+		const local = Buffer.alloc(30);
+
+		local.writeUInt32LE(0x04034b50, 0);
+		local.writeUInt16LE(20, 4);
+		local.writeUInt32LE(crc, 14);
+		local.writeUInt32LE(data.length, 18);
+		local.writeUInt32LE(data.length, 22);
+		local.writeUInt16LE(fileName.length, 26);
+
+		const central = Buffer.alloc(46);
+
+		central.writeUInt32LE(0x02014b50, 0);
+		central.writeUInt16LE(20, 4);
+		central.writeUInt16LE(20, 6);
+		central.writeUInt32LE(crc, 16);
+		central.writeUInt32LE(data.length, 20);
+		central.writeUInt32LE(data.length, 24);
+		central.writeUInt16LE(fileName.length, 28);
+		central.writeUInt32LE(offset, 42);
+
+		locals.push(local, fileName, data);
+		centrals.push(central, fileName);
+		offset += local.length + fileName.length + data.length;
+	};
+
+	const directory = Buffer.concat(centrals);
+	const end = Buffer.alloc(22);
+
+	end.writeUInt32LE(0x06054b50, 0);
+	end.writeUInt16LE(entries.length, 8);
+	end.writeUInt16LE(entries.length, 10);
+	end.writeUInt32LE(directory.length, 12);
+	end.writeUInt32LE(offset, 16);
+	return Buffer.concat([ ...locals, directory, end ]);
+};
