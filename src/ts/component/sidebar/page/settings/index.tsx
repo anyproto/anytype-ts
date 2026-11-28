@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect, useState } from 'react';
 import { Icon, IconObject, Label } from 'Component';
 import { AutoSizer, CellMeasurer, InfiniteLoader, List, CellMeasurerCache } from 'react-virtualized';
 import * as I from 'Interface';
-import { apiKeyIsNew, apiKeyMarkSeen } from 'Lib/apiKey';
+import { aiAppsIsNew, aiAppsMarkSeen, apiKeyIsNew, apiKeyMarkSeen } from 'Lib/apiKey';
 import Storage from 'Lib/storage';
 
 const LIMIT = 30;
@@ -121,6 +121,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 					{ id: 'dataIndex', iconParam: { name: 'settings/storage' } },
 					{ id: 'spaceList', iconParam: { name: 'settings/spaces' } },
 					{ id: 'dataPublish', iconParam: { name: 'settings/sites' } },
+					{ id: 'aiApps', iconParam: { name: 'settings/api' } },
 					{ id: 'api', iconParam: { name: 'settings/api' } },
 				],
 			},
@@ -181,6 +182,9 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 			// rather than lingering until the page mounts and clears it
 			if (item.id == 'api') {
 				apiKeyMarkSeen();
+			};
+			if (item.id == 'aiApps') {
+				aiAppsMarkSeen();
 			};
 
 			setActiveId(item.id);
@@ -282,7 +286,7 @@ const SidebarPageSettingsIndex = forwardRef<{}, I.SidebarPageComponent>((props, 
 				caption = item.alert;
 				ccn.push('alert');
 			} else
-			if ((item.id == 'api') && apiKeyIsNew()) {
+			if (((item.id == 'api') && apiKeyIsNew()) || ((item.id == 'aiApps') && aiAppsIsNew())) {
 				caption = translate('commonNew');
 				ccn.push('new');
 			};

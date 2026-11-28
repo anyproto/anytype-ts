@@ -26,6 +26,11 @@ middleware/
 /compilation-stats.json
 dist/index.html
 dist/linkApproval/
+dist/mcp/
+dist/anytype-mcp
+dist/anytype-mcp.exe
+# written by scripts/build-mcp.js: the forwarder's and the Claude bundle's hashes of this build
+electron/json/aiConnect.build.json
 dist/js/chunks/
 
 # generated from electron/*.ts

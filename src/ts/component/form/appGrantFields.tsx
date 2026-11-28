@@ -10,12 +10,14 @@ interface Props {
 	preserveUnavailableSpaces?: boolean;
 	/** Pulses the picker to point at the unmade choice when the caller blocks on an empty grant. */
 	highlight?: boolean;
+	/** The permission row; off where the caller asks for the permission itself (the AI apps sheet) */
+	withPermission?: boolean;
 	t: (key: string) => string;
 	onChange: (grant: I.LinkAppGrant) => void;
 };
 
 /** Shared by pairing approval and API-key settings; the caller supplies the vault-ordered catalog. */
-const AppGrantFields = ({ spaces, value, disabled, preserveUnavailableSpaces, highlight, t, onChange }: Props) => {
+const AppGrantFields = ({ spaces, value, disabled, preserveUnavailableSpaces, highlight, withPermission = true, t, onChange }: Props) => {
 	const permissionId = useId();
 	const [ query, setQuery ] = useState('');
 	const previousSelection = useRef<string[]>([]);
@@ -70,16 +72,18 @@ const AppGrantFields = ({ spaces, value, disabled, preserveUnavailableSpaces, hi
 					</span>
 				</label>
 			</fieldset>
-			<div className="permissionRow">
-				<label htmlFor={permissionId}>{t('linkApprovalPermission')}</label>
-				<div className="permissionSelect">
-					<select id={permissionId} value={perm} disabled={disabled} onChange={e => onChange({ ...value, perm: Number(e.target.value) })}>
-						<option value={I.LocalApiPermission.Read}>{t('linkApprovalRead')}</option>
-						<option value={I.LocalApiPermission.ReadWrite}>{t('linkApprovalReadWrite')}</option>
-					</select>
-					<ChevronDown className="permissionChevron" aria-hidden="true" focusable="false" />
+			{withPermission ? (
+				<div className="permissionRow">
+					<label htmlFor={permissionId}>{t('linkApprovalPermission')}</label>
+					<div className="permissionSelect">
+						<select id={permissionId} value={perm} disabled={disabled} onChange={e => onChange({ ...value, perm: Number(e.target.value) })}>
+							<option value={I.LocalApiPermission.Read}>{t('linkApprovalRead')}</option>
+							<option value={I.LocalApiPermission.ReadWrite}>{t('linkApprovalReadWrite')}</option>
+						</select>
+						<ChevronDown className="permissionChevron" aria-hidden="true" focusable="false" />
+					</div>
 				</div>
-			</div>
+			) : null}
 		</div>
 	);
 };

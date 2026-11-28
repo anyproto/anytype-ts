@@ -11,6 +11,8 @@ export enum NotificationType {
 	Remove		 = 'participantRemove',
 	Decline		 = 'participantRequestDecline',
 	Permission	 = 'participantPermissionsChange',
+	/** Local only: the AI apps discovery nudge */
+	AiConnect	 = 'aiConnect',
 };
 
 export enum NotificationStatus {

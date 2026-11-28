@@ -2079,6 +2079,7 @@ class UtilMenu {
 			spaceList: translate('popupSettingsSpacesListTitle'),
 			dataPublish: translate('popupSettingsDataManagementDataPublishTitle'),
 			api: translate('popupSettingsApiTitle'),
+			aiApps: translate('aiAppsTitle'),
 			set: types,
 			relation: relations,
 		};

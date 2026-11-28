@@ -17,6 +17,8 @@ import { getSafeStorage } from './safeStorage';
 import LinkApprovalManager from './linkApproval';
 import { powerState, PowerSnapshot } from './lib/powerState';
 import DownloadManager, { DownloadRequest } from './download';
+import { aiConnect } from './lib/aiConnect';
+import { aiLinkOf } from '../../src/ts/lib/aiConnect/deeplink';
 import { AppWindow, TabView, TabData, CreateTabOptions, AppConfig, Bounds } from './types';
 
 const KEYTAR_SERVICE = 'Anytype';
@@ -57,6 +59,14 @@ class Api {
 
 		win.route = '';
 
+		// A cold AI link is never the tab's boot route: the tab restores its own route (a pinned one too) and the
+		// link goes along as its catalog id, opened once the app is ready (A8)
+		const link = aiLinkOf(route);
+
+		if (link) {
+			route = '';
+		};
+
 		// Try to get route from active tab data
 		if (!route && tabId && win.views && (win.views.length > 0)) {
 			const tab = win.views.find((it: TabView) => it.id == tabId);
@@ -73,6 +83,7 @@ class Api {
 			isDark: Util.isDarkTheme(),
 			isChild: win.isChild,
 			route,
+			aiLink: link ? link.app : null,
 			spaceId: tab?.data?.spaceId || '',
 			isPinChecked: this.isPinChecked,
 			isPinned: tab?.data?.isPinned || false,
@@ -109,6 +120,7 @@ class Api {
 	logout (win: AppWindow): void {
 		// Nothing recorded so far is replayed into the next account
 		powerState.ackAll();
+		aiConnect.accountStopped();
 		WindowManager.sendToAllTabs('logout');
 	};
 
@@ -595,6 +607,8 @@ class Api {
 		};
 
 		(app as any).isQuiting = true;
+		// AI apps: the endpoint file goes and a copied key leaves the clipboard before heart stops (app.exit skips will-quit)
+		aiConnect.shutdown();
 
 		// Save tabs before closing
 		WindowManager.saveTabs(win);
@@ -714,6 +728,8 @@ class Api {
 	setUserDataPath (win: AppWindow, p: string): void {
 		this.setConfig(win, { userDataPath: p });
 		app.setPath('userData', p);
+		// AI apps keep their registry in the profile folder
+		aiConnect.setUserData(app.getPath('userData'));
 		WindowManager.sendToAllTabs('data-path', Util.dataPath());
 	};
 
@@ -1157,6 +1173,86 @@ class Api {
 		};
 
 		Util.sendToActiveTab(win, 'payload-broadcast', payload);
+	};
+
+	// ---------------------- AI apps (Settings ▸ AI apps) ---------------------- //
+	// One plain object per call, validated by the service. Callers pass main.ts's sender gate first.
+
+	aiConnectList (win: AppWindow, param: any) {
+		return aiConnect.list(param);
+	};
+
+	aiConnectPlan (win: AppWindow, param: any) {
+		return aiConnect.plan(param);
+	};
+
+	aiConnectApply (win: AppWindow, param: any) {
+		return aiConnect.apply(param);
+	};
+
+	aiConnectRecordManual (win: AppWindow, param: any) {
+		return aiConnect.recordManual(param);
+	};
+
+	aiConnectUpdate (win: AppWindow, param: any) {
+		return aiConnect.update(param);
+	};
+
+	aiConnectRemove (win: AppWindow, param: any) {
+		return aiConnect.remove(param);
+	};
+
+	aiConnectRevoked (win: AppWindow, param: any) {
+		return aiConnect.revoked(param);
+	};
+
+	aiConnectCheck (win: AppWindow, param: any) {
+		// The API's live state is read inside the queued check, right before a heal (A1)
+		return aiConnect.check(param);
+	};
+
+	aiConnectProbe (win: AppWindow, param: any) {
+		return aiConnect.probe(param);
+	};
+
+	aiConnectStepDone (win: AppWindow, param: any) {
+		return aiConnect.stepDone(param);
+	};
+
+	aiConnectRestartApp (win: AppWindow, param: any) {
+		return aiConnect.restartApp(param);
+	};
+
+	aiConnectReveal (win: AppWindow, param: any) {
+		return aiConnect.reveal(param);
+	};
+
+	aiConnectOpenApp (win: AppWindow, param: any) {
+		return aiConnect.openApp(param);
+	};
+
+	aiConnectClaimNudge (win: AppWindow, param: any) {
+		return aiConnect.claimNudge(param);
+	};
+
+	aiConnectBundleInfo (win: AppWindow, param: any) {
+		return aiConnect.bundleInfo(param);
+	};
+
+	aiConnectOrphan (win: AppWindow, param: any) {
+		return aiConnect.orphan(param);
+	};
+
+	aiConnectRetire (win: AppWindow, param: any) {
+		return aiConnect.retire(param);
+	};
+
+	aiConnectCopySecret (win: AppWindow, param: any) {
+		return aiConnect.copySecret(param);
+	};
+
+	aiConnectMintIntent (win: AppWindow, param: any) {
+		return aiConnect.mintIntent(param);
 	};
 
 };

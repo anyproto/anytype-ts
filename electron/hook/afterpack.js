@@ -2,6 +2,9 @@ const SentryCli = require('@sentry/cli');
 const cli = new SentryCli();
 
 exports.default = async function (context) {
+	// Linux has no afterSign: the packaged forwarder is checked here, before any artifact exists (anytype-mcp-plan §4.4)
+	await require('./verify-forwarder.js').verifyLinux(context);
+
 	if (process.env.ELECTRON_SKIP_SENTRY) {
 		return;
 	};

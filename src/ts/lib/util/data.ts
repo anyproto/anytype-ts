@@ -9,6 +9,7 @@ import { focus } from 'Lib/focus';
 import { virtualBlock } from 'Lib/virtualBlock';
 import { membership } from 'Lib/membership';
 import { powerState } from 'Lib/powerState';
+import { pendingAiLink } from 'Lib/aiConnect/link';
 
 const TYPE_KEYS = {
 	default: [
@@ -431,27 +432,31 @@ class UtilData {
 				U.Space.checkInviteSecurity(space);
 
 				this.initPin(() => {
+					const rp = route ? U.Router.getParam(route) : {};
+					const isRestorable = route && !(rp.page == 'auth') && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
+					let afterPin = '';
+
 					if (S.Common.pin && !keyboard.isPinChecked) {
+						// With an AI link waiting, the restored route opens in this tab once the PIN is entered
+						// (keyboard.onPinChecked): a pinned tab keeps its page and the link opens from there (B3).
+						// Without one, unlock goes to the dashboard as before
+						afterPin = (isRestorable && pendingAiLink()) ? route : '';
 						U.Router.go('/auth/pin-check', routeParam);
+					} else
+					if (isRestorable) {
+						U.Router.go(route, routeParam);
 					} else {
-						const rp = route ? U.Router.getParam(route) : {};
-						const isRestorable = route && !(rp.page == 'auth') && !((rp.page == 'main') && [ 'blank', 'void' ].includes(rp.action));
+						const last = U.Space.getLastObject();
+						const lastRoute = last ? U.Object.route(last) : '';
 
-						if (isRestorable) {
-							U.Router.go(route, routeParam);
+						if (lastRoute) {
+							U.Router.go(lastRoute, routeParam);
 						} else {
-							const last = U.Space.getLastObject();
-							const lastRoute = last ? U.Object.route(last) : '';
-
-							if (lastRoute) {
-								U.Router.go(lastRoute, routeParam);
-							} else {
-								U.Space.openDashboard(routeParam);
-							};
+							U.Space.openDashboard(routeParam);
 						};
 					};
 
-					S.Common.redirectSet('');
+					S.Common.redirectSet(afterPin);
 					this.preloadRemainingSpaces();
 					callBack?.();
 				});

@@ -1,6 +1,19 @@
 import React, { FC, useRef, useEffect } from 'react';
 import { Icon, Title, Label, Button, } from 'Component';
 import * as I from 'Interface';
+import { notificationReplyClose } from 'Lib/notificationReply';
+
+/**
+ * The AI apps nudge's controls: native buttons (Tab, Enter, Space as any button). Their keystrokes stay theirs:
+ * none reaches the editor's or the app's window shortcuts, so Enter on Connect never adds a block and Tab is
+ * never taken as indentation (A5).
+ */
+export const NudgeButtons = ({ onConnect, onClose }: { onConnect: (e: any) => void; onClose: (e: any) => void }) => (
+	<div className="buttons" onKeyDown={e => e.stopPropagation()}>
+		<button type="button" className="button black size28" aria-label={translate('aiAppsConnect')} onClick={onConnect}>{translate('aiAppsConnect')}</button>
+		<button type="button" className="button blank size28" aria-label={translate('commonClose')} onClick={onClose}>{translate('commonClose')}</button>
+	</div>
+);
 
 const Notification: FC<I.NotificationComponent> = (props) => {
 
@@ -14,6 +27,8 @@ const Notification: FC<I.NotificationComponent> = (props) => {
 	const participant = U.Space.getMyParticipant(spaceId);
 	const spaceCheck = spaceview && (spaceview.isAccountRemoving || spaceview.isAccountDeleted);
 	const participantCheck = participant && participant.isJoining;
+	// The AI apps nudge has its own native buttons (keyboard reachable); other types keep their markup
+	const isAiConnect = (type == I.NotificationType.AiConnect);
 
 	let buttons = [];
 
@@ -118,6 +133,13 @@ const Notification: FC<I.NotificationComponent> = (props) => {
 		onDelete(e);
 	};
 
+	const onAiConnect = (e: any): void => {
+		e.stopPropagation();
+
+		Action.openAiApps({ app: payload.appId }, analytics.route.notification);
+		onDelete(e);
+	};
+
 	const onDelete = (e: any): void => {
 		e.stopPropagation();
 
@@ -125,7 +147,7 @@ const Notification: FC<I.NotificationComponent> = (props) => {
 
 		window.clearTimeout(timeout.current);
 		timeout.current = window.setTimeout(() => {
-			C.NotificationReply([ item.id ], I.NotificationAction.Close);
+			notificationReplyClose([ item ]);
 
 			S.Notification.delete(item.id);
 			resize();
@@ -164,6 +186,8 @@ const Notification: FC<I.NotificationComponent> = (props) => {
 						))}
 					</div>
 				) : ''}
+
+				{isAiConnect ? <NudgeButtons onConnect={onAiConnect} onClose={onDelete} /> : ''}
 			</div>
 		</div>
 	);

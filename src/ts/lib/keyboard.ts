@@ -715,11 +715,35 @@ class Keyboard {
 			};
 
 			if (prev) {
-				const route = U.Router.getParam(prev.pathname);
+				let route = U.Router.getParam(prev.pathname);
 
 				let substituteIndex = -1;
 				let substitute = '';
+				// AI apps is opened as one entry by its own entry points (a link, Help, the nudge, a backlink): Back is
+				// one ordinary step to where it was opened from, version history included
+				const fromAiApps = (current.page == 'main') && (current.action == 'settings') && (current.id == 'aiApps');
 
+				if (fromAiApps) {
+					substituteIndex = -1;
+
+					// A PIN round trip (… → AI apps → PIN → AI apps) is collapsed first: the PIN entry and the copy of
+					// this page before it go, so Back reaches what was before and Forward this page (B4)
+					const isPin = (p: any) => (p.page == 'auth') && (p.action == 'pin-check');
+					let i = history.index - 1;
+
+					while ((i >= 0) && isPin(U.Router.getParam(history.entries[i].pathname))) {
+						i--;
+					};
+					if ((i < history.index - 1) && (i >= 0) && (history.entries[i].pathname == history.location.pathname)) {
+						i--;
+					};
+					if (i < history.index - 1) {
+						history.entries = [ ...history.entries.slice(0, i + 1), ...history.entries.slice(history.index) ];
+						history.index = i + 1;
+						history.length = history.entries.length;
+					};
+					route = U.Router.getParam(history.entries[history.index - 1]?.pathname);
+				} else
 				if (U.Router.isDoubleRedirect(route.page, route.action)) {
 					substituteIndex = history.index - 2;
 				} else
@@ -850,7 +874,7 @@ class Keyboard {
 	 * @param {any} arg - The command argument.
 	 */
 	onCommand (cmd: string, arg: any) {
-		if (!this.isMain() && [ 'search', 'print', 'quickSearchShow' ].includes(cmd) || this.isShortcutEditing) {
+		if (!this.isMain() && [ 'search', 'print', 'quickSearchShow', 'aiConnect' ].includes(cmd) || this.isShortcutEditing) {
 			return;
 		};
 
@@ -902,6 +926,11 @@ class Keyboard {
 
 			case 'contact': {
 				this.onContactUrl();
+				break;
+			};
+
+			case 'aiConnect': {
+				Action.openAiApps(undefined, analytics.route.menuHelp);
 				break;
 			};
 
@@ -1900,6 +1929,25 @@ class Keyboard {
 		this.isPinChecked = v;
 		// Pass pin timeout and whether a PIN is set to main process
 		Renderer.send('setPinChecked', v, v ? S.Common.pinTime : 0, Boolean(S.Common.pin));
+	};
+
+	/**
+	 * The PIN was entered: on to where the app was going in this tab (the restored route U.Data.onSpaceSwitch kept
+	 * through the PIN, so a pinned tab gets its page back and a waiting AI link opens, B3), else the dashboard.
+	 */
+	onPinChecked () {
+		const { account } = S.Auth;
+		const { redirect } = S.Common;
+
+		this.setPinChecked(true);
+
+		if (account) {
+			redirect ? U.Router.go(redirect, {}) : U.Space.openDashboard();
+		} else {
+			U.Router.go('/auth/select', { replace: true });
+		};
+
+		S.Common.redirectSet('');
 	};
 
 	/**

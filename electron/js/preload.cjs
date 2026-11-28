@@ -145,6 +145,8 @@ contextBridge.exposeInMainWorld('Electron', {
 	storeDelete: key => ipcRenderer.sendSync('storeDelete', key),
 
 	isPackaged: app.isPackaged,
+	// Positive capability for Settings ▸ AI apps: only the real desktop bridge has it (not the web or extension mocks)
+	aiConnect: true,
 	// Origin embeds are served from, kept apart from the app (electron/ts/lib/embedProtocol.ts)
 	embedOrigin: 'anytype-embed://app',
 	userPath: () => app.getPath('userData'),

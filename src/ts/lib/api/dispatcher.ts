@@ -7,6 +7,8 @@ import * as Response from './response';
 import type { ClientReadableStream } from 'grpc-web';
 import { ServiceClient } from './service';
 import { unaryInterceptors, streamInterceptors } from './grpc-devtools';
+// Requests and responses that carry API keys or pairing secrets: never in the debug log or DevTools
+import { SKIP_LOG } from './sensitive';
 import * as I from 'Interface';
 import * as M from 'Model';
 import { presence } from '../presence';
@@ -1823,7 +1825,9 @@ class Dispatcher {
 			this.service.request(type, data, this.metadata(), (error: any, response: any) => {
 				if (error) {
 					console.error('GRPC Error', type, error);
-					callBack?.({ error: { code: error.code, description: error.message } });
+					// `transport`: grpc-web made this error (its code is mapped from the HTTP status), heart didn't
+					// answer. A caller that reads a code as heart's own answer must not act on it
+					callBack?.({ error: { code: error.code, description: error.message, transport: true } });
 					return;
 				};
 
@@ -1832,7 +1836,7 @@ class Dispatcher {
 					// eventually completing (e.g. in-flight save accounting) —
 					// silently dropping it would leak their pending state
 					console.error('Empty response', type);
-					callBack?.({ error: { code: 1, description: 'Empty response' } });
+					callBack?.({ error: { code: 1, description: 'Empty response', transport: true } });
 					return;
 				};
 
@@ -1921,6 +1925,10 @@ class Dispatcher {
 	 * @returns True if the request should be logged
 	 */
 	needRequestLog (type: string) {
+		if (SKIP_LOG.includes(type)) {
+			return false;
+		};
+
 		const { config } = S.Common;
 		const debugRequest = config.flagsMw.request;
 		const debugSubscribe = config.flagsMw.subscribe;

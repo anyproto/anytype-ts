@@ -28,6 +28,7 @@ export default {
 	publish:			 'any.coop/%s',
 	api:				 '127.0.0.1:31009',
 	developerPortal:	 'https://developers.anytype.io',
+	agentSkill:			 'https://developers.anytype.io/skill.md',
 	mcp:				 'https://github.com/anyproto/anytype-mcp',
 
 	productHuntChats:	 'https://www.producthunt.com/products/anytype/launches/anytype-chats',

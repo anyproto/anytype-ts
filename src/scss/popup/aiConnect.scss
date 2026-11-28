@@ -1,0 +1,113 @@
+@import "~scss/_mixins";
+
+// Layout of the AI connect popup only; its controls are the API key editor's (.apiKeyEditor in apiCreate.scss)
+.popups .popup.popupAiConnect {
+	.aiConnectHead { display: flex; align-items: center; gap: 0px 12px; margin: 0px 0px 12px; }
+	.aiConnectHead {
+		.title { flex: 1; min-width: 0; margin: 0px; @include text-overflow-nw; }
+		.statusLine { flex-shrink: 0; }
+	}
+
+	.statusLine { display: flex; align-items: center; gap: 0px 8px; @include text-common; margin: 0px 0px 12px; }
+	.aiConnectHead .statusLine { margin: 0px; }
+
+	.sentenceRow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-height: 32px; @include text-common; margin: 0px 0px 12px; flex-shrink: 0; }
+	.sentenceRow {
+		.expirySelect { max-width: none; }
+	}
+
+	button.spaceSummary { border: 0; background: none; font: inherit; color: inherit; padding: 0; }
+	button.spaceSummary, .advancedToggle { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; }
+	button.spaceSummary {
+		svg { width: 20px; height: 20px; flex-shrink: 0; }
+	}
+	button.spaceSummary.isOpen svg, .advancedToggle.isOpen svg { transform: rotate(180deg); }
+	.advancedToggle { align-self: flex-start; margin: 0px 0px 4px; flex-shrink: 0; }
+	.advancedToggle {
+		svg { width: 20px; height: 20px; flex-shrink: 0; }
+	}
+
+	.spacesWrap { display: flex; flex-direction: column; flex-shrink: 0; margin: -12px 0px 12px; }
+	.advanced { display: flex; flex-direction: column; gap: 8px; margin: 0px 0px 12px; flex-shrink: 0; }
+	.advanced {
+		.expiryRow { margin-top: 0px; }
+		.expiryRow .nameInput { height: 32px; max-width: 65%; }
+	}
+
+	.apiKeyButtons { align-items: center; }
+	.apiKeyButtons {
+		.aside, .manualLink { margin-right: auto; }
+		.aside { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+		.button { white-space: nowrap; }
+	}
+	.finishLinks { display: flex; flex-wrap: wrap; gap: 8px 12px; margin: 0px 0px 12px; @include text-common; }
+
+	// Close plus one button per installed app the card offers (Claude on the web: two): the row wraps instead of clipping (W22)
+	.aiConnectUnsupported {
+		.apiKeyButtons { flex-wrap: wrap; }
+	}
+
+	.delivering { display: flex; align-items: center; gap: 0px 8px; min-height: 36px; margin: 0px 0px 12px; }
+	.delivering {
+		.description { margin: 0px; }
+	}
+
+	.accessNotice {
+		.noticeActions { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 6px; }
+	}
+	.apiKeyError {
+		p { margin: 0px; }
+	}
+
+	.manageRows { display: flex; flex-direction: column; margin: 0px 0px 12px; }
+	.manageRow { display: flex; align-items: center; gap: 0px 12px; min-height: 32px; @include text-common; }
+	.manageRow {
+		dt { flex-shrink: 0; width: 30%; color: var(--color-text-secondary); }
+		dd { flex: 1; min-width: 0; margin: 0px; @include text-overflow-nw; }
+		.linkButton { flex-shrink: 0; }
+	}
+	.manageEdit { display: flex; flex-direction: column; gap: 8px; margin: 4px 0px 12px; }
+	.manageEdit {
+		.sentenceRow { margin: 0px; }
+		.expiryRow { margin-top: 0px; }
+		.editButtons { display: flex; justify-content: flex-end; gap: 8px; }
+	}
+
+	.blockTitle { @include text-common; font-weight: 600; margin: 0px 0px 8px; }
+	// "I've put it back": the restore's own completion, under its steps (X8)
+	.restoreActions { display: flex; justify-content: flex-end; gap: 8px; margin: 0px 0px 12px; }
+	.steps { display: flex; flex-direction: column; gap: 12px; margin: 0px 0px 12px; padding-left: 1.35em; @include text-common; }
+	.step, .snippet { min-width: 0; }
+	.step {
+		.stepHead { display: flex; align-items: flex-start; gap: 0px 12px; }
+		.stepText { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+		.snippet { margin-top: 6px; }
+		.linkButton { flex-shrink: 0; }
+	}
+	.snippet pre { margin: 0px; padding: 12px; border: 1px solid var(--color-shape-primary); border-radius: 8px; background: var(--color-shape-tertiary); overflow-x: auto; }
+	.snippet code, .keyValue { font-family: 'Plex Mono', monospace; font-size: 13px; line-height: 18px; color: var(--color-text-primary); }
+	.snippet code { white-space: pre; }
+
+	// Hermes: the optional guides under its sheet (collapsed), and the "another machine" view
+	.hermesGuide { display: flex; flex-direction: column; gap: 8px 0px; margin: 16px 0px 0px; padding-top: 12px; border-top: 1px solid var(--color-shape-secondary); }
+	.hermesGuide {
+		.advancedToggle { margin: 0px; }
+		.hermesBody { margin-top: 8px; }
+		.description, .hermesNote { @include text-small; color: var(--color-text-secondary); margin: 0px 0px 12px; }
+		// Long command lines wrap; Copy still copies the original lines (HX)
+		.snippet code { white-space: pre-wrap; overflow-wrap: anywhere; }
+	}
+	.aiConnectHermesRemote {
+		.hermesGuide { margin: 0px; padding-top: 0px; border-top: 0px; }
+		.hermesBody { margin-top: 0px; }
+	}
+	.keyValue { overflow-wrap: anywhere; }
+	.aiConnectManual {
+		.nameField { margin: 0px 0px 12px; }
+	}
+	.keyRow { display: flex; align-items: center; gap: 0px 12px; min-height: 32px; @include text-common; margin: 0px 0px 12px; }
+	.keyRow {
+		.keyLabel { color: var(--color-text-secondary); }
+		.keyValue { flex: 1; min-width: 0; }
+	}
+}

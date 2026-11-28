@@ -24,6 +24,7 @@ import PageMainImport from './main/import';
 import PageMainInvite from './main/invite';
 import PageMainOneToOne from './main/oneToOne';
 import PageMainMembership from './main/membership';
+import PageMainAiConnect from './main/aiConnect';
 import PageMainObject from './main/object';
 import PageMainChat from './main/chat';
 import PageMainDate from './main/date';
@@ -57,6 +58,7 @@ const Components = {
 	'main/invite':			 PageMainInvite,
 	'main/oneToOne':		 PageMainOneToOne,
 	'main/membership':		 PageMainMembership,
+	'main/aiConnect':		 PageMainAiConnect,
 	'main/object':			 PageMainObject,
 	'main/chat':			 PageMainChat,
 	'main/void':			 PageMainVoid,

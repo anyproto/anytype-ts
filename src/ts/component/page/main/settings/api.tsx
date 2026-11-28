@@ -3,6 +3,10 @@ import { Title, Icon, Button, EmptyState, Label, Switch, Input } from 'Component
 import * as I from 'Interface';
 import { apiKeySpaceTooltip, apiKeySupportsV1, apiKeyMarkSeen } from 'Lib/apiKey';
 import { approvalSpaces } from 'Lib/linkApproval';
+import { connectionForKey } from 'Lib/aiConnect/entry';
+import * as aiConnectFlow from 'Lib/aiConnect/flow';
+import ApiKeyAiAppsLink from './apiKeyAiAppsLink';
+import ApiAgentPrompt from './apiAgentPrompt';
 
 const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
@@ -15,6 +19,8 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 	const statusPort = Number(String(jsonApiStatus?.listenAddr || '').split(':').pop());
 	const port = S.Auth.isValidLocalApiPort(statusPort) ? statusPort : localApi.port;
 	const spaces = approvalSpaces(U.Menu.getVaultItems(), S.Auth.account?.info?.techSpaceId || '');
+	// Read here, where the page observes it (Row is a component of its own)
+	const aiConnections = [ ...S.AiConnect.connectionList ];
 
 	// The date columns are too narrow for a full month name, so they render abbreviated (M is
 	// always 3 characters in every locale); the title keeps the account's own date format.
@@ -184,6 +190,7 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 		const expireDate = item.expireAt ? shortDate(item.expireAt) : translate('apiKeyNeverExpires');
 		const expireTitle = item.expireAt ? fullDate(item.expireAt) : translate('apiKeyNeverExpires');
 		const access = grant ? translate(grant.perm == I.LocalApiPermission.ReadWrite ? 'linkApprovalReadWrite' : 'linkApprovalRead') : translate('apiKeyUnrestricted');
+		const aiConnection = connectionForKey(item.hash, aiConnections);
 
 		return (
 			<div className="row">
@@ -191,6 +198,7 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 					<div className="appDetails">
 						<div className="name" title={name}>{name}</div>
 						<div className="keyMeta">{scope}</div>
+						{aiConnection ? <ApiKeyAiAppsLink onClick={() => Action.openAiApps({ connection: aiConnection.id }, analytics.route.settingsApi)} /> : null}
 					</div>
 				</div>
 				<div
@@ -228,6 +236,11 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 
 	useEffect(() => {
 		load();
+
+		// The connections behind the "Created by AI apps" links
+		if (aiConnectFlow.isDesktop()) {
+			aiConnectFlow.load();
+		};
 
 		// Clears the "New" badge the settings sidebar shows on this entry
 		apiKeyMarkSeen();
@@ -275,6 +288,7 @@ const PageMainSettingsApi = forwardRef<I.PageRef, I.PageSettingsComponent>((prop
 						<Switch className="big" value={localApi.enabled} onChange={(e: any, v: boolean) => onToggle(v)} />
 					</div>
 				</div>
+				<ApiAgentPrompt enabled={localApi.enabled} status={jsonApiStatus} />
 			</div>
 
 			{list.length ? (

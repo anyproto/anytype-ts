@@ -1,5 +1,7 @@
 const esbuild = require('esbuild');
 const path = require('path');
+const buildMcp = require('./build-mcp');
+const prepareForwarder = require('./prepare-forwarder');
 
 const watch = process.argv.includes('--watch');
 
@@ -33,6 +35,9 @@ const buildOptions = {
 };
 
 async function build() {
+	// The forwarder first: placed in dist/ and signed, so dist/mcp/Anytype.mcpb packs the signed bytes
+	const forwarder = await prepareForwarder.prepare();
+
 	if (watch) {
 		const ctx = await esbuild.context(buildOptions);
 		await ctx.watch();
@@ -40,6 +45,10 @@ async function build() {
 	} else {
 		await esbuild.build(buildOptions);
 	}
+
+	// dist/mcp (the skill and the Claude bundle) and the build's metadata electron/json/aiConnect.build.json
+	// (once, also in watch mode)
+	await buildMcp.build({ forwarder });
 }
 
 build().catch((err) => {

@@ -5,6 +5,7 @@ import Storage from 'Lib/storage';
 import { chatStatus } from 'Lib/chatStatus';
 import { membership } from 'Lib/membership';
 import { powerState } from 'Lib/powerState';
+import { clearAiLink } from 'Lib/aiConnect/link';
 
 interface NetworkConfig {
 	mode: I.NetworkMode;
@@ -30,7 +31,8 @@ class AuthStore {
 	public appKey = '';
 	public startingId: Map<string, string> = new Map();
 	public syncStatusMap: Map<string, I.SyncStatus> = new Map();
-	public jsonApiStatusItem: I.JsonApiStatus = null;
+	/** undefined: this window hasn't seen a status yet (e.g. after a reload); null: disabled or unknown */
+	public jsonApiStatusItem: I.JsonApiStatus = undefined;
 	
 	constructor () {
 		makeObservable(this, {
@@ -71,7 +73,16 @@ class AuthStore {
 	};
 
 	get jsonApiStatus (): I.JsonApiStatus {
-		return this.jsonApiStatusItem;
+		if (this.jsonApiStatusItem !== undefined) {
+			return this.jsonApiStatusItem;
+		};
+
+		// A reloaded window (Cmd-R) gets no new status event: heart bound the API before the reload, and main keeps
+		// the session. It takes this run's last bind outcome, shared by the windows (main clears it on app start)
+		// A failed bind (no address) keeps its reason; a cleared status is null (H12)
+		const bind = Storage.get('localApiBind');
+
+		return (bind && (typeof bind == 'object')) ? { success: !!bind.success, listenAddr: String(bind.addr || ''), error: String(bind.error || '') } : null;
 	};
 
 	get localApiConfig (): LocalApiConfig {
@@ -118,6 +129,8 @@ class AuthStore {
 	 */
 	jsonApiStatusSet (status: I.JsonApiStatus) {
 		this.jsonApiStatusItem = status;
+		// heart's last bind outcome, shared with main: a self-heal there runs only while it says "listening" (A1)
+		Storage.set('localApiBind', status ? { addr: String(status.listenAddr || ''), success: !!status.success, error: String(status.error || '') } : null);
 	};
 
 	/**
@@ -355,6 +368,8 @@ class AuthStore {
 			S.Notification.clear();
 			S.Chat.clearAll();
 			S.Membership.clearAll();
+			S.AiConnect.clear();
+			clearAiLink();
 			membership.reset();
 
 			// Storage first: the account-scoped keys it drops need the account still set

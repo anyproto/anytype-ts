@@ -1,6 +1,7 @@
 import * as I from 'Interface';
 import Storage from 'Lib/storage';
 import { focus } from 'Lib/focus';
+import { allowAiParam, canonicalAiRoute, isAiParam, parseAiConnectRoute } from 'Lib/aiConnect/deeplink';
 
 interface RouteParam {
 	page: string;
@@ -45,7 +46,13 @@ class UtilRouter {
 	 * @returns {RouteParam} The parsed route parameters.
 	 */
 	getParam (route: string): any {
-		route = String(route || '');
+		// AI routes keep only their allowed fields: a link only its catalog id, the AI apps page its target
+		route = canonicalAiRoute(String(route || '')) ?? String(route || '');
+
+		const ai = parseAiConnectRoute(route);
+		if (ai) {
+			return { page: 'main', action: 'aiConnect', id: '', app: ai.app };
+		};
 
 		const parts = route.split('?');
 		if (!parts.length) {
@@ -95,7 +102,8 @@ class UtilRouter {
 			out[U.Common.safeDecodeUri(k)] = U.Common.safeDecodeUri(ret[k]);
 		};
 
-		return out;
+		// An AI page keeps only its allowed fields, whatever alias led here (B1)
+		return allowAiParam(out);
 	};
 
 	/**
@@ -324,8 +332,34 @@ class UtilRouter {
 		return String(this.history?.location?.search || '');
 	};
 
+	/**
+	 * Replaces only the current history entry, and the tab's saved route with it: no push, no history reset,
+	 * popups stay open. Drops a one-shot route parameter once it was used, so Back / Forward and a restored
+	 * tab don't replay it.
+	 * @param {string} route - The route string.
+	 */
+	replaceCurrent (route: string) {
+		if (!route || !this.history?.replace) {
+			return;
+		};
+
+		const routeParam = this.getParam(route);
+
+		// An AI page: rebuilt from its allowed fields only (B1)
+		if (isAiParam(routeParam)) {
+			route = this.build(routeParam);
+		};
+		this.history.replace(route);
+
+		const isTransientMain = (routeParam.page == 'main') && [ 'blank', 'void' ].includes(routeParam.action);
+
+		if (![ 'index', 'auth' ].includes(routeParam.page) && !isTransientMain) {
+			Renderer.send('updateTab', U.Common.getElectron().tabId(), { route });
+		};
+	};
+
 	isDoubleRedirect (page: string, action: string): boolean {
-		if ((page == 'main') && [ 'object', 'invite', 'membership', 'blank' ].includes(action)) {
+		if ((page == 'main') && [ 'object', 'invite', 'membership', 'blank', 'aiConnect' ].includes(action)) {
 			return true;
 		};
 

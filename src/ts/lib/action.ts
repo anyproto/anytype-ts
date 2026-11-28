@@ -6,6 +6,7 @@ import Storage from 'Lib/storage';
 import Download from 'Lib/download';
 import { focus } from 'Lib/focus';
 import { getExportResultStatus } from 'Lib/util/exportReport';
+import { aiAppsObject } from 'Lib/aiConnect/entry';
 
 class Action {
 
@@ -1394,6 +1395,16 @@ class Action {
 
 	openSpaceShare (route: string) {
 		this.openSettings('spaceShare', route);
+	};
+
+	/**
+	 * Settings ▸ AI apps (§5.8). Once the page loaded it opens the popup for the target: `connection` (a record
+	 * id) → its Manage, `app` (a catalog id) → the card's sheet; then drops the target from the route.
+	 * @param {Object} [target] - What to open: a connection id, or else a catalog id.
+	 * @param {string} [route] - The analytics route of AiConnectOpen.
+	 */
+	openAiApps (target?: { app?: string; connection?: string }, route?: string) {
+		U.Object.openRoute(aiAppsObject(target, route));
 	};
 
 	setChatNotificationMode (spaceId: string, ids: string[], mode: I.NotificationMode, route: string, callBack?: (message: any) => void) {

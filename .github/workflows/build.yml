@@ -187,13 +187,8 @@ jobs:
         env:
           CGO_ENABLED: 0
 
-      - name: Build frontend
-        run: bun run build
-        env:
-          NODE_OPTIONS: --max-old-space-size=8192
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-
+      # Before the frontend build: scripts/prepare-forwarder.js signs anytype-mcp (the Connect-to-AI forwarder) with the
+      # same Developer ID identity the app gets, and scripts/build-mcp.js packs those signed bytes into Anytype.mcpb
       - name: Import macOS certificates
         if: ${{ startsWith(matrix.os, 'macos-') }}
         run: |
@@ -207,11 +202,77 @@ jobs:
           MAC_CERT_TEXT: ${{ secrets.MAC_CERT_TEXT }}
           MAC_CERT_PASS: ${{ secrets.MAC_CERT_PASS }}
 
+      # Windows: the forwarder (dist/anytype-mcp.exe) is signed in a step of its own: scripts/prepare-forwarder.js checks it
+      # (namespace, revision, `version --json` run with none of this step's secrets), signs it with the existing hook
+      # electron/hook/sign.js (AzureSignTool, the secrets of the packaging step) and checks the signature (valid,
+      # timestamped, our publisher). "Build frontend" runs prepare-forwarder.js again without the secrets and keeps that exe
+      - name: Sign the forwarder Windows
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        run: node scripts/prepare-forwarder.js
+        env:
+          FORWARDER_SIGN_REQUIRED: '1'
+          WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
+          AZURE_KEY_VAULT_URI: ${{ secrets.AZURE_KEY_VAULT_URI }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+      # No Azure secret here: Vite, its plugins and the downloaded forwarder's probe run in this step
+      - name: Build frontend
+        run: bun run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+          # Tag builds on macOS and Windows: the Claude Desktop bundle (dist/mcp/Anytype.mcpb) is built unsigned and kept for
+          # "Sign the Claude Desktop bundle" below. Linux builds no bundle
+          MCPB_SIGN_DEFERRED: ${{ startsWith(github.ref, 'refs/tags/v') && !startsWith(matrix.os, 'ubuntu-') && '1' || '' }}
+          # The release flavour of the forwarder: it must be signed (Windows: by "Sign the forwarder Windows"), or the build fails
+          FORWARDER_SIGN_REQUIRED: '1'
+          # The exact subject of the Windows code-signing certificate (repository variable; public, so not a secret): the
+          # signed forwarder and the bundle's signer must have it, or the build fails
+          WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
+
+      # Tag builds on macOS and Windows: the bundle "Build frontend" left unsigned is signed with the Windows code-signing
+      # certificate in Azure Key Vault, remotely (scripts/sign-mcpb-azure.js: the key never leaves the vault), verified
+      # (signature, chain, signer), and the build's metadata (electron/json/aiConnect.build.json) rewritten for the signed
+      # bytes. Before packaging, only this step and "Sign the forwarder Windows" hold the Azure secrets
+      - name: Sign the Claude Desktop bundle
+        if: ${{ startsWith(github.ref, 'refs/tags/v') && !startsWith(matrix.os, 'ubuntu-') }}
+        run: node scripts/build-mcp.js --sign
+        env:
+          WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
+          AZURE_KEY_VAULT_URI: ${{ secrets.AZURE_KEY_VAULT_URI }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+      # S12 / T4: the real forwarder's own store-folder rule (heart N9) in folders the desktop creates — a scratch profile
+      # that Users may read, `.anytype` and `bin` made by Anytype's code, then `key set` / `key check`. BEFORE packaging:
+      # electron-builder publishes as it packages, so a forwarder that can't use its store must fail the job first. The exe
+      # is the one "Sign the forwarder Windows" signed; afterSign then proves the package holds exactly these bytes.
+      - name: Check the forwarder's store folders Windows
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        shell: pwsh
+        env:
+          ANYTYPE_MCP_BIN: dist/anytype-mcp.exe
+        run: |
+          if (-not (Test-Path -LiteralPath $env:ANYTYPE_MCP_BIN)) {
+            Write-Output "::error::$env:ANYTYPE_MCP_BIN is missing"
+            exit 1
+          }
+          bunx vitest run electron/ts/lib/aiConnect/forwarder.windows.integration.test.ts
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Package and publish Mac OS
         if: ${{ startsWith(matrix.os, 'macos-') }}
         run: bunx electron-builder --macos --arm64 --x64 ${{ startsWith(github.ref, 'refs/tags/v') && '--publish always' || '' }}
         env:
           DEBUG: electron-builder
+          FORWARDER_SIGN_REQUIRED: '1'
+          MCPB_SIGN_REQUIRED: '1'
           APPLEID: ${{ secrets.APPLEID }}
           APPLEIDPASS: ${{ secrets.APPLEIDPASS }}
           APPLETEAM: ${{ secrets.APPLETEAM }}
@@ -224,14 +285,69 @@ jobs:
         run: bunx electron-builder ${{ startsWith(matrix.os, 'windows-') && '--windows' || '--linux' }} ${{ startsWith(github.ref, 'refs/tags/v') && '--publish always' || '' }}
         env:
           DEBUG: electron-builder
+          FORWARDER_SIGN_REQUIRED: '1'
+          MCPB_SIGN_REQUIRED: ${{ !startsWith(matrix.os, 'ubuntu-') && '1' || '' }}
           USE_HARD_LINKS: false
-          AZURE_KEY_VAULT_URI: ${{ secrets.AZURE_KEY_VAULT_URI }}
-          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_KEY_VAULT_URI: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_KEY_VAULT_URI || '' }}
+          AZURE_CLIENT_ID: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_CLIENT_ID || '' }}
+          AZURE_CLIENT_SECRET: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_CLIENT_SECRET || '' }}
+          AZURE_CERT_NAME: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_CERT_NAME || '' }}
+          AZURE_TENANT_ID: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_TENANT_ID || '' }}
+          WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+
+      # The finished packages: the nested forwarder is still the binary that was signed before the build
+      # (electron/hook/verify-forwarder.js). These automate the plan's spikes S2 and S4 and fail the build on a mismatch:
+      # macOS — `mac.signIgnore` kept the signature (codesign --verify --strict, identifier com.anytype.mcp, hardened
+      # runtime, no entitlements, both architectures); Windows — the sign hook's early return left the exe alone (Authenticode Valid,
+      # timestamped, our publisher);
+      # everywhere — its sha256 equals the build's metadata and the copy inside Anytype.mcpb.
+      - name: Verify the packaged forwarder Mac OS
+        if: ${{ startsWith(matrix.os, 'macos-') }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          for app in dist/mac*/*.app; do
+            # The package's own architecture: its smoke starts that slice (the Intel one through Rosetta)
+            case "$app" in
+              dist/mac-arm64/*) arch=arm64 ;;
+              dist/mac/*) arch=x64 ;;
+              *) echo "::error::no architecture for $app"; exit 1 ;;
+            esac
+            fwd="$app/Contents/Resources/app.asar.unpacked/dist/anytype-mcp"
+            codesign --verify --strict --verbose=2 "$fwd"
+            node electron/hook/verify-forwarder.js "$app" --require-signed --require-bundle --arch "$arch"
+            count=$((count + 1))
+          done
+          if [ "$count" -ne 2 ]; then
+            echo "::error::expected two packaged apps (arm64 and x64), found $count"
+            exit 1
+          fi
+
+      - name: Verify the packaged forwarder Windows
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        shell: pwsh
+        env:
+          WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
+        run: |
+          $fwd = "dist/win-unpacked/resources/app.asar.unpacked/dist/anytype-mcp.exe"
+          $sig = Get-AuthenticodeSignature -LiteralPath $fwd
+          if ($sig.Status -ne 'Valid') {
+            Write-Output "::error::$fwd Authenticode status is $($sig.Status)"
+            exit 1
+          }
+          node electron/hook/verify-forwarder.js dist/win-unpacked --require-signed --require-bundle
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Verify the packaged forwarder Linux
+        if: ${{ startsWith(matrix.os, 'ubuntu-') }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          # The one package this job builds (`electron-builder --linux` on an x64 runner); afterPack already checked it before publishing
+          node electron/hook/verify-forwarder.js dist/linux-unpacked --require-signed --arch x64
 
       - name: Make artifacts dir
         run: |
@@ -253,6 +369,7 @@ jobs:
         if: ${{ startsWith(matrix.os, 'windows-') }}
         run: |
           rm dist/anytypeHelper.exe
+          rm dist/anytype-mcp.exe
           rm dist/nativeMessagingHost.exe
           mv dist/*.exe artifacts
 

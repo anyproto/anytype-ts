@@ -1,5 +1,18 @@
 @import "~scss/_mixins";
 
+// The status dot and the text-button affordance, shared by the API keys page, the AI apps page and the AI connect popup
+.settingsPageContainer > .pageSettingsApi,
+.settingsPageContainer > .pageSettingsAiApps,
+.popups .popup.popupAiConnect {
+	.localApiStatus { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+	.localApiStatus.isSuccess { background: var(--color-lime); }
+	.localApiStatus.isError { background: var(--color-red); }
+	.apiKeyAccess:hover, .linkButton:not(:disabled):hover { color: var(--color-system-accent-100); }
+	.apiKeyAccess:focus-visible, .linkButton:focus-visible { outline: 2px solid var(--color-system-accent-100); outline-offset: 2px; border-radius: 4px; }
+	button.linkButton { border: 0; background: none; font: inherit; color: inherit; padding: 0; }
+	button.linkButton:disabled { color: var(--color-text-secondary); }
+}
+
 .settingsPage.pageSettingsSet,
 .settingsPage.pageSettingsRelation {
     .header {
@@ -416,20 +429,19 @@
         .emptyState { border-style: solid; border-color: var(--color-shape-secondary); border-top-width: 1px; border-bottom-width: 1px; }
     }
 
-	> .pageSettingsApi {
+	> .pageSettingsApi,
+	> .pageSettingsAiApps {
 		.title { margin: 0px !important; }
 		.titleWrapper { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 		.apiKeyIntro { @include text-small; color: var(--color-text-secondary); margin: 0 0 24px; }
+	}
+
+	> .pageSettingsApi {
 		.keyMeta { display: block; @include text-small; color: var(--color-text-secondary); margin-top: 4px; white-space: normal; }
 		.appDetails { min-width: 0; }
 		.apiKeyAccess { display: block; width: 100%; min-width: 0; padding: 4px 0; border: 0; text-align: left; font: inherit; color: inherit; background: none; }
-		.apiKeyAccess:hover { color: var(--color-system-accent-100); }
-		.apiKeyAccess:focus-visible { outline: 2px solid var(--color-system-accent-100); outline-offset: 2px; border-radius: 4px; }
 		.colAccess .keyMeta { @include text-overflow-nw; }
 
-		.localApiStatus { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-		.localApiStatus.isSuccess { background: var(--color-lime); }
-		.localApiStatus.isError { background: var(--color-red); }
 		.localApiServer {
 			> .flex { gap: 0px 8px; }
 			> .flex {
@@ -443,11 +455,43 @@
 			.button.change { margin-right: 0px; }
 		}
 
+		.actionItems > .item.agentPrompt { gap: 0px 16px; }
+		.agentPrompt {
+			.info { display: flex; flex-direction: column; gap: 4px 0px; flex: 1; min-width: 0; }
+			.description, .hint { @include text-small; color: var(--color-text-secondary); margin: 0px; }
+			.button.copyPrompt { flex-shrink: 0; margin-right: 0px; }
+		}
+
 		.items {
             .row { grid-template-columns: minmax(0, 1fr) 70px 105px 105px minmax(0, 1fr) 28px; align-items: center; }
 			.col { min-width: 0; }
 			.col.colExpire { @include text-overflow-nw; }
 		}
+	}
+
+	> .pageSettingsAiApps {
+		.actionItems.notice > .item { gap: 0px 12px; }
+		.aiAppsSection { margin-bottom: 24px; }
+		.aiAppsSection {
+			.label.section { display: block; }
+			.filter { margin-bottom: 12px; }
+		}
+		.actionItems > .item.aiAppRow { justify-content: flex-start; gap: 0px 12px; }
+		.aiAppRow {
+			.info { flex: 1; min-width: 0; }
+			.name { @include text-common; @include text-overflow-nw; display: block; max-width: 100%; text-align: left; }
+			.status { display: flex; align-items: center; gap: 0px 8px; @include text-small; color: var(--color-text-secondary); }
+			.status > span:last-child { @include text-overflow-nw; }
+			.actions { display: flex; flex-shrink: 0; align-items: center; gap: 0px 12px; }
+			// The row buttons keep their own border and place (the generic .actionItems button rule strips both)
+			.actions .button { margin-right: 0px; }
+			.actions .button.blank { border: solid 1px var(--color-shape-primary); }
+			// Keyboard focus on the row's buttons, as on its text buttons (W18)
+			.actions .button:focus-visible { outline: 2px solid var(--color-system-accent-100); outline-offset: 2px; }
+		}
+		.nothingDetected { padding: 8px 0px 0px; }
+		.emptyState { margin-bottom: 24px; }
+		.aiAppsFooter { @include text-small; color: var(--color-text-secondary); margin-top: 24px; }
 	}
 
     > .pageSettingsDataPublish {

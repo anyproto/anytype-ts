@@ -3433,6 +3433,7 @@ const PopupSearch = forwardRef<{}, I.Popup>((props, ref) => {
 				{ id: 'phrase', iconParam: { name: 'settings/phrase' }, icon: 'settings-phrase', name: translate('popupSettingsPhraseTitle') },
 				{ id: 'spaceList', iconParam: { name: 'settings/spaces' }, icon: 'settings-spaces', name: translate('popupSettingsSpacesListTitle') },
 				{ id: 'dataPublish', iconParam: { name: 'settings/sites' }, icon: 'settings-sites', name: translate('popupSettingsDataManagementDataPublishTitle') },
+				{ id: 'aiApps', iconParam: { name: 'settings/api' }, icon: 'settings-api', name: translate('aiAppsTitle') },
 				{ id: 'api', iconParam: { name: 'settings/api' }, icon: 'settings-api', name: translate('popupSettingsApiTitle') },
 			];
 

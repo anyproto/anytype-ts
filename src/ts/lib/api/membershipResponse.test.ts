@@ -119,6 +119,6 @@ describe('membership responses on RPC errors', () => {
 		const done = vi.fn();
 		dispatcher.request('MembershipV2GetStatus', {}, done);
 
-		expect(done).toHaveBeenCalledWith({ error: { code: 14, description: 'unavailable' } });
+		expect(done).toHaveBeenCalledWith({ error: { code: 14, description: 'unavailable', transport: true } });
 	});
 });

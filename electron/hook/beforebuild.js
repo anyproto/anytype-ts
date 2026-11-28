@@ -21,6 +21,13 @@ exports.default = async function (context) {
 
 	const files = [ 'anytypeHelper', 'anytypeHelper.exe' ];
 
+	// The forwarder is one file per architecture on Linux only (macOS ships one universal file, signed before the
+	// frontend build; it must not be replaced here)
+	// Only in the release flavour (update-ci.sh's per-arch files): a local build ships what is in dist/ already
+	if ((platform.name == 'linux') && (process.env.FORWARDER_SIGN_REQUIRED == '1')) {
+		files.push('anytype-mcp');
+	};
+
 	files.forEach(it => {
 		const src = `./${folder}/${it}`;
 		const dst = `./dist/${it}`;

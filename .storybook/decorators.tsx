@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import type { Decorator } from '@storybook/react';
+import { runInAction } from 'mobx';
 
 /**
  * Global decorator that sets html/body classes to match the real app environment.
@@ -15,6 +16,37 @@ export const withAppClass: Decorator = (Story) => {
 	}, []);
 
 	return <Story />;
+};
+
+/**
+ * Keeps the app's theme store in step with html.themeDark (toggled by hand or by a screenshot script), so themed
+ * images picked with S.Common.getThemePath() follow it as in the app. The store comes from the story
+ * (`withThemeSync(() => S.Common)`): importing it here would load it before the stories and hit the Component barrel cycle.
+ */
+export const withThemeSync = (getCommon: () => { themeId: string }): Decorator => {
+	return (Story) => {
+		useEffect(() => {
+			const html = document.documentElement;
+			const common = getCommon();
+			const sync = () => {
+				const theme = html.classList.contains('themeDark') ? 'dark' : '';
+
+				if (common.themeId != theme) {
+					runInAction(() => {
+						common.themeId = theme;
+					});
+				};
+			};
+			const observer = new MutationObserver(sync);
+
+			sync();
+			observer.observe(html, { attributes: true, attributeFilter: [ 'class' ] });
+
+			return () => observer.disconnect();
+		}, []);
+
+		return <Story />;
+	};
 };
 
 /**

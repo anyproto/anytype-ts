@@ -8,6 +8,7 @@ import ConfigManager from './config';
 import Constant from '../json/constant.json';
 import { AppWindow, TabView } from './types';
 import { isTrustedUrl } from './lib/trustedUrl';
+import { canonicalAiRoute } from '../../src/ts/lib/aiConnect/deeplink';
 
 const protocol = 'anytype';
 
@@ -64,8 +65,25 @@ class Util {
 		return nativeTheme.shouldUseDarkColors || nativeTheme.shouldUseHighContrastColors || nativeTheme.shouldUseInvertedColorScheme;
 	};
 
+	/** The renderer route of a deep link; an AI route keeps only its allowed fields (never a key) */
 	getRouteFromUrl (url: string): string {
-		return String(url || '').replace(`${protocol}://`, '/');
+		const route = String(url || '').replace(`${protocol}://`, '/');
+
+		return canonicalAiRoute(route) ?? route;
+	};
+
+	/** A deep link as main keeps it pending: an AI link reduced to its canonical form, '' for none */
+	canonicalDeepLink (url: string): string {
+		const value = String(url || '');
+
+		if (!value.startsWith(`${protocol}://`)) {
+			return '';
+		};
+
+		const route = value.replace(`${protocol}://`, '/');
+		const canonical = canonicalAiRoute(route);
+
+		return (canonical === null) ? value : `${protocol}://${canonical.replace(/^\//, '')}`;
 	};
 
 	getTheme (): string {

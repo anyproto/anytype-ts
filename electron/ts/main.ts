@@ -28,6 +28,8 @@ import { registerChatStatus } from './chatStatus';
 import { powerState, parseDropList, PowerEvent } from './lib/powerState';
 import { registerEmbedScheme, handleEmbedScheme, EMBED_ORIGIN } from './lib/embedProtocol';
 import { registerPermissionHandlers } from './lib/permissions';
+import { aiConnectSenderAllowed } from './lib/aiConnect/validate';
+import { aiConnect } from './lib/aiConnect';
 import Util from './util';
 import Cors from '../json/cors.json';
 import { AppWindow } from './types';
@@ -99,7 +101,7 @@ if (!is.macos && (process.argv.length >= 2)) {
 	if (process.defaultApp && !is.linux) {
 		app.setAsDefaultProtocolClient(protocol, process.execPath, [ path.resolve(process.argv[1]) ]);
 	};
-	deeplinkingUrl = process.argv.find(arg => arg.startsWith(`${protocol}://`));
+	deeplinkingUrl = Util.canonicalDeepLink(process.argv.find(arg => arg.startsWith(`${protocol}://`)));
 };
 
 powerState.setDropList(parseDropList(process.env, process.argv, app.isPackaged));
@@ -159,8 +161,21 @@ powerMonitor.on('resume', () => onPowerEvent('resume'));
 const isTrustedSender = (e: Electron.IpcMainEvent): boolean => Util.isTrustedUrl(e.senderFrame?.url);
 
 ipcMain.on('storeGet', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = isTrustedSender(e) ? store.get(key) : undefined; });
-ipcMain.on('storeSet', (e: Electron.IpcMainEvent, key: string, value: any) => { e.returnValue = isTrustedSender(e) ? store.set(key, value) : undefined; });
-ipcMain.on('storeDelete', (e: Electron.IpcMainEvent, key: string) => { e.returnValue = isTrustedSender(e) ? store.delete(key) : undefined; });
+/** The endpoint file for AI apps follows the Local API settings and heart's bind outcome (aiConnect/endpoint.ts) */
+const localApiChanged = (key: string): void => {
+	if ((key == 'localApi') || (key == 'localApiBind')) {
+		aiConnect.apiChanged(key);
+	};
+};
+
+ipcMain.on('storeSet', (e: Electron.IpcMainEvent, key: string, value: any) => {
+	e.returnValue = isTrustedSender(e) ? store.set(key, value) : undefined;
+	localApiChanged(key);
+});
+ipcMain.on('storeDelete', (e: Electron.IpcMainEvent, key: string) => {
+	e.returnValue = isTrustedSender(e) ? store.delete(key) : undefined;
+	localApiChanged(key);
+});
 ipcMain.on('getTheme', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getTheme(); });
 ipcMain.on('getBgColor', (e: Electron.IpcMainEvent) => { e.returnValue = Util.getBgColor(Util.getTheme()); });
 ipcMain.on('getConfig', (e: Electron.IpcMainEvent) => { e.returnValue = ConfigManager.config || {}; });
@@ -169,6 +184,11 @@ if (!is.development && !app.requestSingleInstanceLock()) {
 	Api.exit(mainWindow, '', false, false);
 	process.exit(0);
 };
+
+// heart's last Local API bind outcome belongs to one run of the app: a reloaded window restores it from here, a new
+// start waits for heart's status event instead of trusting the previous run's. Only the instance that holds the
+// lock clears it: a second process (a deep link on Windows / Linux) must not wipe the running app's value (H13)
+store.delete('localApiBind');
 
 remote.initialize();
 Util.setAppPath(path.join(__dirname));
@@ -248,6 +268,11 @@ function waitForLibraryAndCreateWindows () {
 		currentPath = userDataPath;
 		app.setPath('userData', userDataPath);
 	};
+
+	// AI apps, on the profile this run really uses: no endpoint file before an account is selected, and no temp a
+	// killed writer left in their settings folders
+	aiConnect.startup(currentPath);
+	Server.onCrash = () => aiConnect.shutdown();
 
 	if (process.env.ANYTYPE_USE_SIDE_SERVER) {
 		// use the grpc server started from the outside
@@ -388,6 +413,29 @@ function createWindow () {
 		if (!win) {
 			console.error('[Api] window is not defined', cmd, id);
 			return;
+		};
+
+		// AI apps: only the active tab's top frame of a normal app window (not Quick Search, the approval
+		// prompt, the tab strip, a background tab or a sub-frame); claiming the nudge also needs focus
+		if (String(cmd || '').startsWith('aiConnect')) {
+			const activeView = Util.getActiveView(win);
+			const frame = e.senderFrame;
+			const main = e.sender.mainFrame;
+			const allowed = aiConnectSenderAllowed({
+				isQuickSearch: !!win.isQuickSearch,
+				isApproval: !!win.isApproval,
+				isFocused: win.isFocused(),
+				activeViewId: (activeView && !activeView.webContents.isDestroyed()) ? activeView.webContents.id : null,
+			}, {
+				cmd,
+				senderId: e.sender.id,
+				isMainFrame: !!frame && !!main && (frame.processId == main.processId) && (frame.routingId == main.routingId),
+			});
+
+			if (!allowed) {
+				Util.log('warn', '[Api] aiConnect sender not allowed:', cmd);
+				return;
+			};
 		};
 
 		// For events that should only be processed once per broadcast,
@@ -533,7 +581,7 @@ app.on('second-instance', (event, argv) => {
 	};
 
 	if (!is.macos) {
-		deeplinkingUrl = argv.find(arg => arg.startsWith(`${protocol}://`));
+		deeplinkingUrl = Util.canonicalDeepLink(argv.find(arg => arg.startsWith(`${protocol}://`)));
 	};
 
 	if (deeplinkingUrl) {
@@ -557,6 +605,7 @@ app.on('second-instance', (event, argv) => {
 
 app.on('will-quit', () => {
 	globalShortcut.unregisterAll();
+	aiConnect.shutdown();
 });
 
 app.on('before-quit', (e) => {
@@ -606,7 +655,7 @@ app.on('activate', () => {
 app.on('open-url', (e, url) => {
 	e.preventDefault();
 
-	deeplinkingUrl = url;
+	deeplinkingUrl = Util.canonicalDeepLink(url);
 
 	if (!mainWindow) {
 		return;

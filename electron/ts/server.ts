@@ -30,6 +30,8 @@ export class Server {
 	secret: string = '';
 	isRunning: boolean = false;
 	stopTriggered: boolean = false;
+	/** Runs before the "helper crashed" dialog, which ends the app with app.exit and skips every quit hook */
+	onCrash: (() => void) | null = null;
 	stopPromise: Promise<boolean> | null = null;
 	startPromise: Promise<boolean> | null = null;
 	lastErrors: string[] = [];
@@ -201,6 +203,11 @@ export class Server {
 					if (this.stopTriggered) {
 						return;
 					};
+
+					// AI apps (main.ts): the endpoint file names a port nothing listens on any more, a copied key leaves the clipboard (D1S-21)
+					try {
+						this.onCrash?.();
+					} catch (e) { /* the crash report still shows */ };
 
 					const log = path.join(logPath, `crash_${Util.dateForFile()}.log`);
 					try {
