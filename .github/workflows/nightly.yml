@@ -395,6 +395,23 @@ jobs:
           MAC_CERT_TEXT: ${{ secrets.MAC_CERT_TEXT }}
           MAC_CERT_PASS: ${{ secrets.MAC_CERT_PASS }}
 
+      # Windows: the forwarder (dist/anytype-mcp.exe) is signed in a step of its own: scripts/prepare-forwarder.js checks it
+      # (namespace, revision, `version --json` run with none of this step's secrets), signs it with the existing hook
+      # electron/hook/sign.js (AzureSignTool, the secrets of the packaging step) and checks the signature (valid,
+      # timestamped, our publisher). "Build frontend" runs prepare-forwarder.js again without the secrets and keeps that exe
+      - name: Sign the forwarder Windows
+        if: ${{ startsWith(matrix.os, 'windows-') }}
+        run: node scripts/prepare-forwarder.js
+        env:
+          FORWARDER_SIGN_REQUIRED: '1'
+          WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
+          AZURE_KEY_VAULT_URI: ${{ secrets.AZURE_KEY_VAULT_URI }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
+      # No Azure secret here: Vite, its plugins and the downloaded forwarder's probe run in this step
       - name: Build frontend
         run: bun run build
         env:
@@ -403,27 +420,33 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_NIGHTLY }}
           # PENDING (Roma): whether nightlies must sign the Claude Desktop bundle. The default is no: a nightly ships no
           # Anytype.mcpb (Claude uses the config route there). ONE SWITCH: set the repository variable
-          # NIGHTLY_MCPB_SIGN_REQUIRED to 1 and a macOS / Windows nightly signs the bundle as a release does (the Windows
-          # certificate in Azure Key Vault, scripts/sign-mcpb-azure.js) and fails without a valid signature. Linux builds no bundle
-          MCPB_SIGN_REQUIRED: ${{ !startsWith(matrix.os, 'ubuntu-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1' && '1' || '' }}
-          # Windows: scripts/prepare-forwarder.js signs anytype-mcp.exe with the existing hook electron/hook/sign.js
-          # (the same AzureSignTool command and secrets as the packaging step); the forwarder must be signed, or the build fails
+          # NIGHTLY_MCPB_SIGN_REQUIRED to 1 and a macOS / Windows nightly keeps its unsigned bundle here for "Sign the Claude
+          # Desktop bundle" below, as a release does. Linux builds no bundle
+          MCPB_SIGN_DEFERRED: ${{ vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1' && !startsWith(matrix.os, 'ubuntu-') && '1' || '' }}
+          # The release flavour of the forwarder: it must be signed (Windows: by "Sign the forwarder Windows"), or the build fails
           FORWARDER_SIGN_REQUIRED: '1'
           # The exact subject of the Windows code-signing certificate (repository variable; public, so not a secret): the
           # signed forwarder and the bundle's signer must have it, or the build fails
           WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
-          # The Azure secrets reach this step on Windows (the forwarder, and the bundle with the switch on) and, only with
-          # the switch on, on macOS (the bundle); never on Linux, and on macOS no other step gets them
-          AZURE_KEY_VAULT_URI: ${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1')) && secrets.AZURE_KEY_VAULT_URI || '' }}
-          AZURE_CLIENT_ID: ${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1')) && secrets.AZURE_CLIENT_ID || '' }}
-          AZURE_CLIENT_SECRET: ${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1')) && secrets.AZURE_CLIENT_SECRET || '' }}
-          AZURE_CERT_NAME: ${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1')) && secrets.AZURE_CERT_NAME || '' }}
-          AZURE_TENANT_ID: ${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1')) && secrets.AZURE_TENANT_ID || '' }}
+
+      # Only with NIGHTLY_MCPB_SIGN_REQUIRED=1, on macOS and Windows: as in a release, the bundle "Build frontend" left unsigned
+      # is signed with the Windows certificate in Azure Key Vault (scripts/sign-mcpb-azure.js), verified, and the build's
+      # metadata rewritten for it. Before packaging, only this step and "Sign the forwarder Windows" hold the Azure secrets
+      - name: Sign the Claude Desktop bundle
+        if: ${{ vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1' && !startsWith(matrix.os, 'ubuntu-') }}
+        run: node scripts/build-mcp.js --sign
+        env:
+          WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
+          AZURE_KEY_VAULT_URI: ${{ secrets.AZURE_KEY_VAULT_URI }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
       # S12 / T4: the real forwarder's own store-folder rule (heart N9) in folders the desktop creates — a scratch profile
       # that Users may read, `.anytype` and `bin` made by Anytype's code, then `key set` / `key check`. BEFORE packaging:
       # electron-builder publishes as it packages, so a forwarder that can't use its store must fail the job first. The exe
-      # is the one "Build frontend" just signed; afterSign then proves the package holds exactly these bytes.
+      # is the one "Sign the forwarder Windows" signed; afterSign then proves the package holds exactly these bytes.
       - name: Check the forwarder's store folders Windows
         if: ${{ startsWith(matrix.os, 'windows-') }}
         shell: pwsh
@@ -459,11 +482,11 @@ jobs:
           DEBUG: electron-builder
           FORWARDER_SIGN_REQUIRED: '1'
           USE_HARD_LINKS: false
-          AZURE_KEY_VAULT_URI: ${{ secrets.AZURE_KEY_VAULT_URI }}
-          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
-          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_KEY_VAULT_URI: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_KEY_VAULT_URI || '' }}
+          AZURE_CLIENT_ID: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_CLIENT_ID || '' }}
+          AZURE_CLIENT_SECRET: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_CLIENT_SECRET || '' }}
+          AZURE_CERT_NAME: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_CERT_NAME || '' }}
+          AZURE_TENANT_ID: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_TENANT_ID || '' }}
           WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_NIGHTLY }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_NIGHTLY }}

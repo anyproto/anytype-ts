@@ -9,15 +9,18 @@
  *     "mcpb": { "sha256": "…", "signerFingerprint": "…", "version": "2.6.0" } }
  *
  * This script is the only writer of that file. It runs after scripts/prepare-forwarder.js signed the
- * forwarder and after the bundle was packed and signed, and before electron-builder. Only the entries for
+ * forwarder and after the bundle was packed (and signed, unless that is deferred to `--sign`, below), and before
+ * electron-builder. Only the entries for
  * the build's OS are present (Linux: one per architecture, and no bundle). No forwarder → `forwarder: null`
  * and no bundle: the stdio routes are off in that build.
  *
- * Bundle signing: MCPB_SIGN_REQUIRED=1 (tag builds on macOS and Windows; a nightly with NIGHTLY_MCPB_SIGN_REQUIRED)
- * signs the bundle with Anytype's Windows code-signing certificate in Azure Key Vault, remotely
- * (scripts/sign-mcpb-azure.js; the AZURE_* secrets AzureSignTool uses), verifies the signature and the chain, and
+ * Bundle signing: with Anytype's Windows code-signing certificate in Azure Key Vault, remotely
+ * (scripts/sign-mcpb-azure.js; the AZURE_* secrets AzureSignTool uses). The release workflows build with
+ * MCPB_SIGN_DEFERRED=1 (no Azure secret in the frontend build) and sign in a step of their own,
+ * `node scripts/build-mcp.js --sign` (tag builds on macOS and Windows; a nightly with NIGHTLY_MCPB_SIGN_REQUIRED);
+ * MCPB_SIGN_REQUIRED=1 signs during the build instead. Either way the signer verifies the signature and the chain, and
  * requires the signer's subject to be exactly WIN_PUBLISHER_SUBJECT (a repository variable, read through
- * electron/hook/verify-forwarder.js). Without the switch the bundle stays unsigned. `signerFingerprint` is the
+ * electron/hook/verify-forwarder.js). Without either switch the bundle stays unsigned. `signerFingerprint` is the
  * SHA-256 of the signer certificate's DER, the fingerprint Claude Desktop records for an installed extension.
  */
 const fs = require('fs');
@@ -60,27 +63,41 @@ const pack = async (files) => {
 };
 
 /**
- * Signs the bundle when the build must be signed (MCPB_SIGN_REQUIRED=1), with the Windows code-signing certificate in
- * Azure Key Vault; any other build leaves it unsigned. Returns the signer certificate's SHA-256 (lowercase hex) or null.
+ * MCPB_SIGN_DEFERRED=1 (the release workflows' frontend build, which holds no Azure secret): the bundle is left
+ * unsigned for the step that signs it (`node scripts/build-mcp.js --sign`, `signBuilt`) and kept in the metadata even
+ * for a release-namespace forwarder. MCPB_SIGN_REQUIRED=1 signs at once instead
+ */
+const deferred = (env) => (env.MCPB_SIGN_DEFERRED == '1') && (env.MCPB_SIGN_REQUIRED != '1');
+
+/**
+ * Signs `file` with the Windows code-signing certificate in Azure Key Vault (scripts/sign-mcpb-azure.js) and returns
+ * the signer certificate's SHA-256 (lowercase hex). `why` names what asked for it in the error about missing settings;
  * `opt` reaches the signer (tests: its fetch, chain check and chain)
  */
-const sign = async (file, env, opt = {}) => {
-	if (env.MCPB_SIGN_REQUIRED != '1') {
-		log(`${BUNDLE} is UNSIGNED`);
-		return null;
-	};
-
+const signFile = async (file, env, opt, why) => {
 	const missing = azureSigner.missingSettings(env);
 
 	if (missing.length) {
-		throw new Error(`MCPB_SIGN_REQUIRED=1 but ${missing.join(', ')} ${(missing.length == 1) ? 'is' : 'are'} not set: ${BUNDLE} is signed with the Windows code-signing certificate in Azure Key Vault, whose subject must be WIN_PUBLISHER_SUBJECT`);
+		throw new Error(`${why} but ${missing.join(', ')} ${(missing.length == 1) ? 'is' : 'are'} not set: ${BUNDLE} is signed with the Windows code-signing certificate in Azure Key Vault, whose subject must be WIN_PUBLISHER_SUBJECT`);
 	};
 
-	const res = await azureSigner.sign(file, { ...opt, env });
+	const res = await azureSigner.sign(file, { ...(opt || {}), env });
 
 	// Public values: the certificate is in every signed Anytype.exe
 	log(`${BUNDLE} is signed by "${res.subject}" (certificate SHA-256 ${res.fingerprint}); signature verified, chain ${(res.status == 'signed') ? 'trusted for code signing' : 'not checked on this OS'}`);
 	return res.fingerprint;
+};
+
+/**
+ * Signs the bundle when the build must be signed (MCPB_SIGN_REQUIRED=1); any other build leaves it unsigned (for the
+ * signing step, with MCPB_SIGN_DEFERRED=1). Returns the signer certificate's SHA-256 (lowercase hex) or null
+ */
+const sign = async (file, env, opt = {}) => {
+	if (env.MCPB_SIGN_REQUIRED != '1') {
+		log(deferred(env) ? `${BUNDLE} is left unsigned for the signing step (node scripts/build-mcp.js --sign)` : `${BUNDLE} is UNSIGNED`);
+		return null;
+	};
+	return signFile(file, env, opt, 'MCPB_SIGN_REQUIRED=1');
 };
 
 /**
@@ -183,10 +200,11 @@ const build = async (opt = {}) => {
 			// MCPB_SIGN_REQUIRED=1 (a release): no signature fails the build
 			const signerFingerprint = await sign(bundleTemp, env, opt.signing);
 
-			if (fwd.signed && !signerFingerprint) {
+			if (fwd.signed && !signerFingerprint && !deferred(env)) {
 				// A release-namespace build whose bundle wasn't signed (a nightly without NIGHTLY_MCPB_SIGN_REQUIRED) ships
 				// no bundle: the desktop only hands a key to an extension whose signer it can verify, so Claude uses the
-				// config route there
+				// config route there. Deferred, the signing step signs it before packaging (verify-forwarder fails a
+				// release-namespace build whose bundle has no signer)
 				log(`${BUNDLE} is not shipped: a release-namespace build needs a signed bundle`);
 				fs.rmSync(bundleTemp, { force: true });
 			} else {
@@ -215,10 +233,70 @@ const build = async (opt = {}) => {
 	return meta;
 };
 
-module.exports = { build, manifestFor, META };
+/**
+ * The release workflows' signing step, `node scripts/build-mcp.js --sign` — the only step before packaging with the
+ * Azure secrets: signs the bundle the frontend build left unsigned (MCPB_SIGN_DEFERRED=1), verifies it, and rewrites
+ * the metadata to describe the signed bytes (`mcpb.sha256`, `mcpb.signerFingerprint`). `signed`, which says whether the
+ * forwarder is a release one, is not the bundle's and stays. The bundle must be the one the metadata describes. The
+ * old metadata goes first and the new last, as in `build`; a failure before that changes nothing.
+ *
+ * @param {{ outDir?: string, rootDir?: string, metaFile?: string, env?: Record<string, string | undefined>, signing?: object }} [opt]
+ * @returns {Promise<{ signed: boolean, forwarder: object | null, mcpb: object }>} the metadata written
+ */
+const signBuilt = async (opt = {}) => {
+	const root = opt.rootDir || ROOT;
+	const outDir = opt.outDir || path.join(root, 'dist', 'mcp');
+	const metaFile = opt.metaFile || path.join(root, 'electron', 'json', META);
+	const env = opt.env || process.env;
+	const bundle = path.join(outDir, BUNDLE);
+	const bundleTemp = path.join(outDir, `.${BUNDLE}.${process.pid}.tmp`);
+	const metaTemp = `${metaFile}.${process.pid}.tmp`;
+	let meta = null;
+	let data = null;
+
+	try {
+		meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+	} catch (e) {
+		throw new Error(`no build metadata (${META}) to sign the bundle of: run the frontend build first`);
+	};
+	if (!meta?.mcpb) {
+		throw new Error(`this build has no ${BUNDLE} to sign`);
+	};
+	if (meta.mcpb.signerFingerprint) {
+		throw new Error(`${BUNDLE} is signed already`);
+	};
+	try {
+		data = fs.readFileSync(bundle);
+	} catch (e) {
+		throw new Error(`the build's ${BUNDLE} is missing`);
+	};
+	if (sha256(data) != meta.mcpb.sha256) {
+		throw new Error(`${BUNDLE} is not the archive the build's metadata describes`);
+	};
+
+	try {
+		fs.writeFileSync(bundleTemp, data);
+
+		const fingerprint = await signFile(bundleTemp, env, opt.signing, 'the signing step (--sign) runs');
+		const next = { ...meta, mcpb: { ...meta.mcpb, sha256: sha256(fs.readFileSync(bundleTemp)), signerFingerprint: fingerprint } };
+
+		fs.writeFileSync(metaTemp, JSON.stringify(next, null, 2) + '\n');
+		fs.rmSync(metaFile, { force: true });
+		fs.renameSync(bundleTemp, bundle);
+		fs.renameSync(metaTemp, metaFile);
+		return next;
+	} finally {
+		fs.rmSync(bundleTemp, { force: true });
+		fs.rmSync(metaTemp, { force: true });
+	};
+};
+
+module.exports = { build, signBuilt, manifestFor, META };
 
 if (require.main === module) {
-	require('./prepare-forwarder').prepare().then(forwarder => build({ forwarder })).catch((e) => {
+	const run = process.argv.includes('--sign') ? () => signBuilt() : () => require('./prepare-forwarder').prepare().then(forwarder => build({ forwarder }));
+
+	run().catch((e) => {
 		console.error('[build-mcp]', e.message);
 		process.exit(1);
 	});

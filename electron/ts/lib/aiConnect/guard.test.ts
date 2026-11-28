@@ -211,24 +211,50 @@ describe('where the forwarder comes from, and when it is signed', () => {
 
 		expect(at('Import macOS certificates')).toBeGreaterThan(-1);
 		expect(at('Import macOS certificates')).toBeLessThan(at('Build frontend'));
-		// The bundle is signed in "Build frontend" through Azure Key Vault: no key file is written, no step prepares or removes one
+		// No key file is written, no step prepares or removes one: the bundle is signed through Azure Key Vault
 		expect(at('Prepare .mcpb signing files')).toBe(-1);
 		expect(at('Remove .mcpb signing files')).toBe(-1);
-		expect(build.env.MCPB_SIGN_REQUIRED).toBeTruthy();
 		for (const k of [ 'MCPB_SIGN_CERT', 'MCPB_SIGN_KEY', 'MCPB_SIGN_FINGERPRINT' ]) {
 			expect(read(file), k).not.toContain(k);
 		};
-		// Q11: the Azure secrets reach "Build frontend" on Windows (the forwarder, the bundle) and on macOS only when the
-		// bundle is signed there (a tag; a nightly with the switch on) — never on Linux
-		const macSigns = file.endsWith('build.yml') ? "startsWith(github.ref, 'refs/tags/v')" : "vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1'";
+		// F9: "Build frontend" (Vite, its plugins, the downloaded forwarder's probe) holds no Azure value and signs nothing:
+		// it leaves the bundle unsigned for "Sign the Claude Desktop bundle", right after it; the Windows forwarder is
+		// signed by "Sign the forwarder Windows", right before it. Those two are the only steps before packaging with the
+		// Azure secrets
+		const AZURE = [ 'AZURE_KEY_VAULT_URI', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET', 'AZURE_CERT_NAME', 'AZURE_TENANT_ID' ];
+		const gate = file.endsWith('build.yml') ? "startsWith(github.ref, 'refs/tags/v')" : "vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1'";
+		const signFwd = steps[at('Sign the forwarder Windows')];
+		const signBundle = steps[at('Sign the Claude Desktop bundle')];
 
-		for (const k of [ 'AZURE_KEY_VAULT_URI', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET', 'AZURE_CERT_NAME', 'AZURE_TENANT_ID' ]) {
-			expect(build.env[k], k).toBe(`\${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && ${macSigns})) && secrets.${k} || '' }}`);
-		};
+		expect(Object.keys(build.env).filter(k => /^AZURE_/.test(k))).toEqual([]);
+		expect(build.env.MCPB_SIGN_REQUIRED).toBeUndefined();
+		expect(build.env.MCPB_SIGN_DEFERRED).toBe(`\${{ ${gate} && !startsWith(matrix.os, 'ubuntu-') && '1' || '' }}`);
 		expect(build.env.FORWARDER_SIGN_REQUIRED).toBe('1');
+		expect(at('Sign the forwarder Windows')).toBe(at('Build frontend') - 1);
+		expect(signFwd.if).toBe("${{ startsWith(matrix.os, 'windows-') }}");
+		expect(signFwd.run).toBe('node scripts/prepare-forwarder.js');
+		expect(signFwd.env.FORWARDER_SIGN_REQUIRED).toBe('1');
+		expect(at('Sign the Claude Desktop bundle')).toBe(at('Build frontend') + 1);
+		expect(signBundle.if).toBe(`\${{ ${gate} && !startsWith(matrix.os, 'ubuntu-') }}`);
+		expect(signBundle.run).toBe('node scripts/build-mcp.js --sign');
+		for (const s of [ signFwd, signBundle ]) {
+			expect(Object.keys(s.env).sort(), s.name).toEqual([ ...AZURE, 'WIN_PUBLISHER_SUBJECT', ...((s == signFwd) ? [ 'FORWARDER_SIGN_REQUIRED' ] : []) ].sort());
+			for (const k of AZURE) {
+				expect(s.env[k], `${s.name}: ${k}`).toBe(`\${{ secrets.${k} }}`);
+			};
+		};
+		for (const [ i, s ] of steps.entries()) {
+			if ((i < Math.min(at('Package and publish Mac OS'), at('Package and publish Other'))) && Object.keys(s.env || {}).some(k => AZURE.includes(k))) {
+				expect([ 'Sign the forwarder Windows', 'Sign the Claude Desktop bundle' ], `${file}: ${s.name}`).toContain(s.name);
+			};
+		};
+		// F10: no Azure value reaches the Linux packaging
+		for (const k of AZURE) {
+			expect(steps[at('Package and publish Other')].env[k], k).toBe(`\${{ startsWith(matrix.os, 'windows-') && secrets.${k} || '' }}`);
+		};
 		// Q13: the publisher's subject comes from the repository variable, in every step that checks a Windows signature
 		// (prepare-forwarder, afterSign, the verify step) or signs the bundle
-		for (const name of [ 'Build frontend', 'Package and publish Other', 'Verify the packaged forwarder Windows' ]) {
+		for (const name of [ 'Sign the forwarder Windows', 'Build frontend', 'Sign the Claude Desktop bundle', 'Package and publish Other', 'Verify the packaged forwarder Windows' ]) {
 			expect(steps[at(name)].env?.WIN_PUBLISHER_SUBJECT, name).toBe('${{ vars.WIN_PUBLISHER_SUBJECT }}');
 		};
 
@@ -290,21 +316,18 @@ describe('where the forwarder comes from, and when it is signed', () => {
 		for (const name of [ 'Verify the packaged forwarder Mac OS', 'Verify the packaged forwarder Windows' ]) {
 			expect(step(nightly, name).run).not.toContain('--require-bundle');
 		};
-		expect(step(release, 'Build frontend').env.MCPB_SIGN_REQUIRED).toBe("${{ startsWith(github.ref, 'refs/tags/v') && !startsWith(matrix.os, 'ubuntu-') && '1' || '' }}");
-		expect(step(nightly, 'Build frontend').env.MCPB_SIGN_REQUIRED).toBe("${{ !startsWith(matrix.os, 'ubuntu-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1' && '1' || '' }}");
+		expect(step(release, 'Sign the Claude Desktop bundle').if).toBe("${{ startsWith(github.ref, 'refs/tags/v') && !startsWith(matrix.os, 'ubuntu-') }}");
+		expect(step(nightly, 'Sign the Claude Desktop bundle').if).toBe("${{ vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1' && !startsWith(matrix.os, 'ubuntu-') }}");
 	});
 
 	test('S11: the nightly .mcpb signature follows the switch; on macOS the Azure secrets reach only the step that signs the bundle', () => {
 		const SWITCH = "vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1'";
 		const AZURE = [ 'AZURE_KEY_VAULT_URI', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET', 'AZURE_CERT_NAME', 'AZURE_TENANT_ID' ];
 		const nightly = stepsOf('.github/workflows/nightly.yml');
-		const build = nightly.find(s => s.name == 'Build frontend');
 
-		// With the switch off a macOS nightly gets no Azure secret and signs no bundle, whatever secrets exist
-		expect(build.env.MCPB_SIGN_REQUIRED).toContain(SWITCH);
-		for (const k of AZURE) {
-			expect(build.env[k], k).toContain(`startsWith(matrix.os, 'macos-') && ${SWITCH}`);
-		};
+		// With the switch off no nightly keeps an unsigned bundle or runs the signing step, whatever secrets exist
+		expect(nightly.find(s => s.name == 'Build frontend').env.MCPB_SIGN_DEFERRED).toContain(SWITCH);
+		expect(nightly.find(s => s.name == 'Sign the Claude Desktop bundle').if).toContain(SWITCH);
 
 		for (const file of [ '.github/workflows/build.yml', '.github/workflows/nightly.yml' ]) {
 			// No .mcpb key exists any more: no secret, no key file
@@ -315,14 +338,10 @@ describe('where the forwarder comes from, and when it is signed', () => {
 				const offMac = guard.includes("!startsWith(matrix.os, 'macos-')") || /startsWith\(matrix\.os, '(windows|ubuntu)-'\)/.test(guard.replace(/!startsWith/g, ''));
 				const azure = Object.entries(s.env || {}).filter(([ k ]) => AZURE.includes(k));
 
-				// A step that can run on macOS with an Azure secret is "Build frontend", and its macOS part is gated
+				// The one step that can run on macOS with an Azure secret signs the bundle, and only when the bundle is signed
 				if (azure.length && !offMac) {
-					expect(s.name, `${file}: ${s.name}`).toBe('Build frontend');
-					const gate = file.endsWith('build.yml') ? "startsWith(github.ref, 'refs/tags/v')" : SWITCH;
-
-					for (const [ k, v ] of azure) {
-						expect(String(v), `${file}: ${k}`).toBe(`\${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && ${gate})) && secrets.${k} || '' }}`);
-					};
+					expect(s.name, `${file}: ${s.name}`).toBe('Sign the Claude Desktop bundle');
+					expect(guard).toContain(file.endsWith('build.yml') ? "startsWith(github.ref, 'refs/tags/v')" : SWITCH);
 				};
 			};
 		};

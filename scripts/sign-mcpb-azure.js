@@ -3,8 +3,10 @@
  * Azure Key Vault. The private key never leaves the vault: Key Vault signs a digest (docs/plans/…/anytype-mcp-plan.md
  * §4.4). The result is the file `mcpb sign` would write with that certificate and key (@anthropic-ai/mcpb 2.1.2,
  * `signMcpbFile`): a detached PKCS#7 SignedData built by node-forge (SHA-256, rsaEncryption, the authenticated
- * attributes contentType / messageDigest / signingTime, the certificates leaf first, then the chain), appended as
- * `MCPB_SIG_V1 <u32le length> <DER> MCPB_SIG_END`.
+ * attributes contentType, messageDigest and signingTime, the certificates leaf first, then the chain), appended as
+ * `MCPB_SIG_V1 <u32le length> <DER> MCPB_SIG_END` — with one deliberate difference: the authenticated attributes are
+ * in DER order (contentType, signingTime, messageDigest: a SET OF sorted by encoding, X.690 §11.6). mcpb keeps them in
+ * the order given, which a strict verifier that re-encodes them (Bouncy Castle) rejects; OpenSSL and forge accept both.
  *
  * forge signs synchronously and Key Vault answers asynchronously, so the SignedData is built twice with one fixed
  * signingTime: the first pass captures the SHA-256 of the DER of the authenticated attributes (what an RSA signer
@@ -270,8 +272,10 @@ const signatureBlock = (signature) => {
 
 /**
  * The SignedData of `signMcpbFile`: forge, detached, SHA-256, the three authenticated attributes (signingTime given,
- * so both passes encode the same one), the certificates in order. `rsaSign` is the whole RSA operation: it gets the
- * SHA-256 of the DER SET of the authenticated attributes and returns the PKCS#1 v1.5 signature.
+ * so both passes encode the same one), the certificates in order. forge encodes the attributes in the order given, so
+ * they are given in DER order: contentType (30 18 …), signingTime (30 1c …, 30 1e … as GeneralizedTime from 2050),
+ * messageDigest (30 2f …); `verify` checks it. `rsaSign` is the whole RSA operation: it gets the SHA-256 of the DER
+ * SET of the authenticated attributes and returns the PKCS#1 v1.5 signature.
  */
 const buildSignedData = (forge, content, certs, signingTime, rsaSign) => {
 	const parsed = certs.map(c => forge.pki.certificateFromAsn1(forge.asn1.fromDer(c.toString('binary'))));
@@ -294,8 +298,8 @@ const buildSignedData = (forge, content, certs, signingTime, rsaSign) => {
 		digestAlgorithm: forge.pki.oids.sha256,
 		authenticatedAttributes: [
 			{ type: forge.pki.oids.contentType, value: forge.pki.oids.data },
-			{ type: forge.pki.oids.messageDigest },
 			{ type: forge.pki.oids.signingTime, value: signingTime },
+			{ type: forge.pki.oids.messageDigest },
 		],
 	});
 	p7.sign({ detached: true });
@@ -346,6 +350,12 @@ const parseSignedData = (buf) => {
 	};
 
 	const attributes = {};
+	const encoded = items(attrs).map(a => a.bytes);
+
+	// DER: a SET OF in ascending order of its encodings; a verifier that re-encodes the attributes checks that order
+	if (encoded.some((a, i) => (i > 0) && (Buffer.compare(encoded[i - 1], a) > 0))) {
+		fail('the authenticated attributes are not in DER order: a verifier that re-encodes them (Bouncy Castle) rejects the signature');
+	};
 
 	for (const attr of items(attrs)) {
 		const [ attrType, values ] = items(expectTag(attr, 0x30, 'attribute'));
@@ -473,8 +483,9 @@ const defaultChainCheck = (platform = process.platform) => ({ darwin: macChainTr
  * 2. forge reads the signature as mcpb does (SignedData, certificates, the first one the signer), and its fingerprint
  *    of the signer — the one Claude records — is the SHA-256 of the signer's DER;
  * 3. the PKCS#7 signature (what forge can't verify): one SignerInfo for the first certificate (issuer and serial),
- *    SHA-256 with rsaEncryption, contentType data, messageDigest = SHA-256 of the archive, a signingTime, and the RSA
- *    signature over the DER SET of those attributes verified with the signer's public key;
+ *    SHA-256 with rsaEncryption, contentType data, messageDigest = SHA-256 of the archive, a signingTime, the
+ *    attributes in DER order (so a verifier that re-encodes them checks the same bytes), and the RSA signature over
+ *    the DER SET of those attributes verified with the signer's public key;
  * 4. the chain against the OS trust store with the code-signing policy (`opt.chainCheck`, by default this host's;
  *    each attempt up to three times): "signed" (or "self-signed": issuer CN equals subject CN, as mcpb decides) when
  *    trusted, "untrusted" when not, "not-checked" without a check.

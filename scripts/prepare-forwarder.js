@@ -87,10 +87,24 @@ const revisionProblem = (files) => {
 	return '';
 };
 
-/** `version --json` of a binary this machine can run, or null */
+/** What a run of the downloaded forwarder may see of this process's environment: nothing a CI step's secrets are in */
+const PROBE_ENV = [ 'PATH', 'Path', 'SystemRoot', 'SYSTEMROOT', 'windir', 'WINDIR', 'TEMP', 'TMP', 'TMPDIR', 'HOME', 'USERPROFILE', 'LANG' ];
+
+const probeEnv = (env = process.env) => {
+	const ret = {};
+
+	for (const k of PROBE_ENV) {
+		if (env[k]) {
+			ret[k] = env[k];
+		};
+	};
+	return ret;
+};
+
+/** `version --json` of a binary this machine can run, or null. It runs before it is signed: no secret of the step reaches it */
 const versionOf = (file) => {
 	try {
-		const data = JSON.parse(execFileSync(file, [ 'version', '--json' ], { encoding: 'utf8', stdio: [ 'ignore', 'pipe', 'ignore' ], timeout: 20000 }));
+		const data = JSON.parse(execFileSync(file, [ 'version', '--json' ], { encoding: 'utf8', stdio: [ 'ignore', 'pipe', 'ignore' ], timeout: 20000, env: probeEnv() }));
 		return (Number.isSafeInteger(data.rev) && (data.rev > 0) && [ 'release', 'dev' ].includes(data.namespace) && (data.impl == 'go')) ? data : null;
 	} catch (e) {
 		return null;
@@ -161,17 +175,30 @@ const signMac = (file, env, pkg) => {
 	return verifyMac(file);
 };
 
-/** `opt.signHook` / `opt.winSignature`: injected by tests */
+/**
+ * The release workflows sign the exe in a step of its own, "Sign the forwarder Windows" (`node
+ * scripts/prepare-forwarder.js`; with "Sign the Claude Desktop bundle" the only steps before packaging with the Azure
+ * secrets), so the frontend build that runs this again later has none: an exe that already carries a valid,
+ * timestamped signature of our publisher is kept as it is. Otherwise the existing hook signs it. `opt.signHook` /
+ * `opt.winSignature`: injected by tests
+ */
 const signWindows = async (file, env, pkg, root, opt = {}) => {
 	const hook = opt.signHook || require(path.join(root, 'electron', 'hook', 'sign.js')).default;
 	const verifier = require(path.join(ROOT, 'electron', 'hook', 'verify-forwarder.js'));
+	const check = () => verifier.verifyWindowsSignature(file, ...(opt.winSignature ? [ opt.winSignature, opt.winPublisher ] : []));
+
+	try {
+		check();
+		log(`${path.basename(file)} is signed by our publisher already: kept`);
+		return {};
+	} catch (e) { /* not signed yet */ };
 
 	// The existing hook, the same tool and secrets; `forwarder` tells it this is the early call. It throws
 	// without the command line (which holds the client secret)
 	await hook({ path: file, site: pkg.homepage || 'https://anytype.io', forwarder: true });
 
 	// Valid, timestamped, and exactly our publisher
-	verifier.verifyWindowsSignature(file, ...(opt.winSignature ? [ opt.winSignature, opt.winPublisher ] : []));
+	check();
 	return {};
 };
 
@@ -345,7 +372,7 @@ const prepare = async (opt = {}) => {
 	};
 };
 
-module.exports = { prepare, verifyMac, authenticodeStatus, namespaceOf, sha256, NAME, IDENTIFIER, MIN_FORWARDER_REV };
+module.exports = { prepare, verifyMac, authenticodeStatus, namespaceOf, probeEnv, sha256, NAME, IDENTIFIER, MIN_FORWARDER_REV };
 
 if (require.main === module) {
 	prepare().then(info => {

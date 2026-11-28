@@ -15,6 +15,10 @@ import { AZURE, KID, LEAKS, SIGNING_ENV, SUBJECT, TOKEN, VAULT, failWith, fakeAz
 const signer = require('../../../../scripts/sign-mcpb-azure.js');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const verifier = require('../../../hook/verify-forwarder.js');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const buildMcp = require('../../../../scripts/build-mcp.js');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const prepareForwarder = require('../../../../scripts/prepare-forwarder.js');
 
 const MCPB_DIR = path.dirname(require.resolve('@anthropic-ai/mcpb'));
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -32,6 +36,31 @@ const hasOpenssl = (() => {
 
 const sha256 = (buf: Buffer) => crypto.createHash('sha256').update(buf).digest('hex');
 const NOW = new Date('2026-11-28T12:34:56Z');
+const OIDS = { contentType: '1.2.840.113549.1.9.3', signingTime: '1.2.840.113549.1.9.5', messageDigest: '1.2.840.113549.1.9.4' };
+
+const derOf = (node: any): Buffer => Buffer.from(forge.asn1.toDer(node).getBytes(), 'binary');
+
+/** A detached SignedData read with forge's ASN.1: its fields before SignerInfos, and the one SignerInfo's */
+const signedDataOf = (signature: Buffer) => {
+	const fields = forge.asn1.fromDer(signature.toString('binary')).value[1].value[0].value;
+	const signerInfo = fields[fields.length - 1].value[0].value;
+
+	return { head: fields.slice(0, -1).map(derOf), signerInfo, attributes: signerInfo[3].value, rsa: Buffer.from(signerInfo[5].value, 'binary') };
+};
+
+/**
+ * A strict verifier's view (what Bouncy Castle does): the authenticated attributes re-encoded as DER — a SET OF in
+ * ascending order of the encodings, X.690 §11.6 — and the RSA signature checked over those bytes, not the file's
+ */
+const reencodedVerify = (signature: Buffer, cert: Buffer): boolean => {
+	const sd = signedDataOf(signature);
+	const sorted = [ ...sd.attributes ].sort((a: any, b: any) => Buffer.compare(derOf(a), derOf(b)));
+	const set = derOf(forge.asn1.create(forge.asn1.Class.UNIVERSAL, forge.asn1.Type.SET, true, sorted));
+
+	return crypto.verify('sha256', set, new crypto.X509Certificate(cert).publicKey, sd.rsa);
+};
+
+const attributeOids = (signature: Buffer): string[] => signedDataOf(signature).attributes.map((a: any) => forge.asn1.derToOid(a.value[0].value));
 
 let pki: TestPki;
 let dir = '';
@@ -72,7 +101,7 @@ const failure = async (run: Promise<any>): Promise<string> => {
 };
 
 describe('sign-mcpb-azure', () => {
-	test('the signature is byte for byte what `mcpb sign` writes with the same certificate, chain, key and time', async () => {
+	test('F8: the SignedData is what `mcpb sign` writes, with the authenticated attributes in DER order: a verifier that re-encodes them accepts ours and rejects mcpb\'s', async () => {
 		const azure = fakeAzure(pki.leaf);
 		const res = await sign(azure);
 		const ours = fs.readFileSync(file);
@@ -96,17 +125,40 @@ describe('sign-mcpb-azure', () => {
 		signMcpbFile(copy, files.cert, files.key, [ files.inter, files.root ]);
 		vi.useRealTimers();
 
-		expect(ours.equals(fs.readFileSync(copy))).toBe(true);
+		const theirs = fs.readFileSync(copy);
+		const a = signer.splitSigned(ours);
+		const b = signer.splitSigned(theirs);
+		const sa = signedDataOf(a.signature);
+		const sb = signedDataOf(b.signature);
+
+		// Everything but the order of the attributes (and so the signature) is mcpb's: archive, version, algorithms,
+		// certificates, signer id, digest and signature algorithms, the attributes themselves
+		expect(a.content.equals(b.content)).toBe(true);
+		expect(sa.head).toEqual(sb.head);
+		for (const i of [ 0, 1, 2, 4 ]) {
+			expect(derOf(sa.signerInfo[i]).equals(derOf(sb.signerInfo[i])), `SignerInfo field ${i}`).toBe(true);
+		};
+		expect(sa.attributes.map(derOf).sort(Buffer.compare)).toEqual(sb.attributes.map(derOf).sort(Buffer.compare));
+		expect(attributeOids(a.signature)).toEqual([ OIDS.contentType, OIDS.signingTime, OIDS.messageDigest ]);
+		expect(attributeOids(b.signature)).toEqual([ OIDS.contentType, OIDS.messageDigest, OIDS.signingTime ]);
+		// Ours encode in ascending order (30 18 …, 30 1c …, 30 2f …): the re-encoding is the same bytes
+		const encoded = sa.attributes.map(derOf);
+
+		expect(encoded.map((e: Buffer) => e.subarray(0, 2).toString('hex'))).toEqual([ '3018', '301c', '302f' ]);
+		expect([ ...encoded ].sort(Buffer.compare)).toEqual(encoded);
+
+		// The strict verifier accepts ours and rejects mcpb's, which signed the attributes in the order given
+		expect(reencodedVerify(a.signature, pki.leaf.der)).toBe(true);
+		expect(reencodedVerify(b.signature, pki.leaf.der)).toBe(false);
+		// Our own check refuses mcpb's order, so a build can't ship it
+		await expect(signer.verify(copy, { chainCheck: testChainCheck(pki.root.der) })).rejects.toThrow(/not in DER order/);
 
 		// One token, one certificate, one signature; the digest Key Vault signed is the SHA-256 of the DER SET of the
 		// authenticated attributes, and the request carried nothing else
 		expect(azure.calls.map(c => c.kind)).toEqual([ 'token', 'certificate', 'sign' ]);
 
-		const sd = signer.splitSigned(ours);
-		const parsed = forge.pkcs7.messageFromAsn1(forge.asn1.fromDer(sd.signature.toString('binary')));
-		const attrs = parsed.rawCapture.signerInfos[0].value[3];
-		const set = forge.asn1.create(forge.asn1.Class.UNIVERSAL, forge.asn1.Type.SET, true, attrs.value);
-		const digest = crypto.createHash('sha256').update(Buffer.from(forge.asn1.toDer(set).getBytes(), 'binary')).digest();
+		const set = derOf(forge.asn1.create(forge.asn1.Class.UNIVERSAL, forge.asn1.Type.SET, true, sa.attributes));
+		const digest = crypto.createHash('sha256').update(set).digest();
 
 		expect(JSON.parse(azure.calls[2].init.body)).toEqual({ alg: 'RS256', value: digest.toString('base64url') });
 	});
@@ -379,6 +431,144 @@ describe('sign-mcpb-azure', () => {
 
 			expect(await signer.macChainTrusted([ released(), ...chain ], { offline: true })).toBe(true);
 			expect(await signer.macChainTrusted([ released(), chain[0] ], { offline: true })).toBe(false);
+		});
+	});
+
+	describe('F9: the Azure secrets only in the signing steps', () => {
+		let out = '';
+		let metaFile = '';
+		let fwd = '';
+
+		beforeEach(() => {
+			out = path.join(dir, 'mcp');
+			metaFile = path.join(dir, 'json', 'aiConnect.build.json');
+			fwd = path.join(dir, 'anytype-mcp');
+			fs.writeFileSync(fwd, 'FORWARDER-BYTES', { mode: 0o755 });
+			vi.spyOn(console, 'log').mockImplementation(() => {});
+		});
+
+		const signing = (azure = fakeAzure(pki.leaf)) => ({ fetch: azure.fetch, chain: pki.chain, chainCheck: testChainCheck(pki.root.der), now: NOW, sleep: async () => {} });
+		const forwarder = { signed: true, namespace: 'release', rev: 6, files: { darwin: '' }, bundleFile: '' };
+		/** "Build frontend": a release-namespace build with MCPB_SIGN_DEFERRED=1 and no Azure value */
+		const buildDeferred = (azure = fakeAzure(pki.leaf)) => buildMcp.build({
+			outDir: out, metaFile, platform: 'darwin', env: { MCPB_SIGN_DEFERRED: '1' }, signing: signing(azure),
+			forwarder: { ...forwarder, files: { darwin: fwd }, bundleFile: fwd },
+		});
+		const signStep = (over: Record<string, any> = {}) => buildMcp.signBuilt({ outDir: out, metaFile, env: SIGNING_ENV, signing: signing(), ...over });
+		const snapshot = () => [ fs.readFileSync(path.join(out, 'Anytype.mcpb')), fs.readFileSync(metaFile, 'utf8') ];
+
+		test('"Build frontend" keeps the release bundle unsigned and calls no Azure endpoint; --sign signs it and rewrites the metadata', async () => {
+			const azure = fakeAzure(pki.leaf);
+			const built = await buildDeferred(azure);
+			const unsigned = fs.readFileSync(path.join(out, 'Anytype.mcpb'));
+
+			expect(azure.calls).toEqual([]);
+			expect(built.signed).toBe(true);
+			expect(built.mcpb).toEqual({ sha256: sha256(unsigned), version: '2.6.0' });
+			expect(signer.splitSigned(unsigned)).toBeNull();
+
+			const next = await signStep();
+			const bundle = fs.readFileSync(path.join(out, 'Anytype.mcpb'));
+
+			expect(next).toEqual({ ...built, mcpb: { sha256: sha256(bundle), version: '2.6.0', signerFingerprint: sha256(pki.leaf.der) } });
+			expect(JSON.parse(fs.readFileSync(metaFile, 'utf8'))).toEqual(next);
+			expect(signer.splitSigned(bundle).content.equals(unsigned)).toBe(true);
+			expect(await signer.verify(path.join(out, 'Anytype.mcpb'), { chainCheck: testChainCheck(pki.root.der) })).toMatchObject({ status: 'signed', fingerprint: sha256(pki.leaf.der) });
+			expect(fs.readdirSync(out).filter(n => n.endsWith('.tmp'))).toEqual([]);
+			expect(fs.readdirSync(path.dirname(metaFile)).filter(n => n.endsWith('.tmp'))).toEqual([]);
+
+			// Once only
+			await expect(signStep()).rejects.toThrow(/signed already/);
+		});
+
+		test('--sign refuses what it can\'t vouch for and changes nothing on a failure', async () => {
+			await buildDeferred();
+
+			const before = snapshot();
+			const failing = fakeAzure(pki.leaf, { sign: failWith(403, { error: { code: 'Forbidden' } }) });
+
+			await expect(signStep({ signing: signing(failing) })).rejects.toThrow(/sign request failed: HTTP 403/);
+			expect(snapshot()).toEqual(before);
+			await expect(signStep({ signing: signing(fakeAzure(pki.other)) })).rejects.toThrow(/not Anytype's Windows publisher/);
+			expect(snapshot()).toEqual(before);
+			await expect(signStep({ env: { ...SIGNING_ENV, AZURE_CLIENT_SECRET: '' } })).rejects.toThrow(/the signing step \(--sign\) runs but AZURE_CLIENT_SECRET is not set/);
+			expect(snapshot()).toEqual(before);
+			expect(fs.readdirSync(out).filter(n => n.endsWith('.tmp'))).toEqual([]);
+
+			// Not the archive the metadata describes
+			fs.appendFileSync(path.join(out, 'Anytype.mcpb'), 'x');
+			await expect(signStep()).rejects.toThrow(/not the archive the build's metadata describes/);
+
+			// No bundle in the metadata; no metadata at all
+			fs.writeFileSync(metaFile, JSON.stringify({ signed: true, forwarder: null, mcpb: null }));
+			await expect(signStep()).rejects.toThrow(/no Anytype\.mcpb to sign/);
+			fs.rmSync(metaFile);
+			await expect(signStep()).rejects.toThrow(/run the frontend build first/);
+		});
+
+		test.skipIf(process.platform == 'win32')('the downloaded forwarder\'s `version --json` sees none of the step\'s secrets', async () => {
+			const root = path.join(dir, 'repo');
+			const seen = path.join(dir, 'probe-env.txt');
+			const before = { ...process.env };
+
+			fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
+			fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ homepage: 'https://anytype.io', build: { mac: {} } }));
+			fs.writeFileSync(path.join(root, 'dist', 'anytype-mcp'), [
+				'#!/bin/sh', '# a development build', '# anytype-mcp-rev:6', `env > '${seen}'`,
+				`echo '${JSON.stringify({ version: 'test', commit: 'c', rev: 6, namespace: 'dev', impl: 'go' })}'`, '',
+			].join('\n'), { mode: 0o755 });
+			Object.assign(process.env, AZURE, { SENTRY_AUTH_TOKEN: 'SENTINEL-sentry-token' });
+			try {
+				expect(await prepareForwarder.prepare({ rootDir: root, env: {}, platform: 'linux', arch: 'x64' })).toMatchObject({ rev: 6, namespace: 'dev' });
+			} finally {
+				for (const k of Object.keys(process.env)) {
+					if (!(k in before)) {
+						delete process.env[k];
+					};
+				};
+				Object.assign(process.env, before);
+			};
+
+			const env = fs.readFileSync(seen, 'utf8');
+
+			expect(env).toContain('PATH=');
+			for (const leak of [ ...LEAKS, 'SENTINEL-sentry-token', 'AZURE_' ]) {
+				expect(env, leak).not.toContain(leak);
+			};
+			expect(prepareForwarder.probeEnv({ PATH: '/bin', HOME: '/h', AZURE_CLIENT_SECRET: 's', SENTRY_AUTH_TOKEN: 't', MAC_CERT_PASS: 'p' })).toEqual({ PATH: '/bin', HOME: '/h' });
+		});
+
+		test.skipIf(process.platform == 'win32')('Windows: a forwarder the signing step signed is kept by the frontend build, without the hook (it has no secret to sign with)', async () => {
+			const root = path.join(dir, 'repo');
+			const exe = path.join(root, 'dist', 'anytype-mcp.exe');
+			const calls: any[] = [];
+			let status = 'NotSigned||';
+
+			fs.mkdirSync(path.dirname(exe), { recursive: true });
+			fs.writeFileSync(path.join(root, 'package.json'), JSON.stringify({ homepage: 'https://anytype.io', build: { mac: {} } }));
+			fs.writeFileSync(exe, [
+				'#!/bin/sh', '# anytype-mcp-namespace:release', '# anytype-mcp-rev:6',
+				`echo '${JSON.stringify({ version: 'test', commit: 'c', rev: 6, namespace: 'release', impl: 'go' })}'`, '',
+			].join('\n'), { mode: 0o755 });
+
+			const prepare = () => prepareForwarder.prepare({
+				rootDir: root, env: { FORWARDER_SIGN_REQUIRED: '1' }, platform: 'win32', arch: 'x64',
+				signHook: async (ctx: any) => {
+					calls.push(ctx);
+					status = `Valid|True|${SUBJECT}`;
+				},
+				winSignature: () => status, winPublisher: SUBJECT,
+			});
+
+			// "Sign the forwarder Windows": not signed yet, so the hook signs it
+			expect(await prepare()).toMatchObject({ signed: true, namespace: 'release' });
+			expect(calls).toEqual([ { path: exe, site: 'https://anytype.io', forwarder: true } ]);
+			// "Build frontend": signed by our publisher already, kept as it is
+			expect(await prepare()).toMatchObject({ signed: true, namespace: 'release' });
+			expect(calls.length).toBe(1);
+			// Signed by another publisher: the hook runs, and the result must still be ours
+			status = 'Valid|True|CN=Other';
+			await expect(prepareForwarder.prepare({ rootDir: root, env: { FORWARDER_SIGN_REQUIRED: '1' }, platform: 'win32', arch: 'x64', signHook: async () => {}, winSignature: () => status, winPublisher: SUBJECT })).rejects.toThrow(/could not be signed: .*another publisher/);
 		});
 	});
 });
