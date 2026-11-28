@@ -2,29 +2,22 @@
  * scripts/build-mcp.js: the static Claude Desktop bundle (a binary bundle with the forwarder inside), its
  * manifest and signing, and the build's metadata file.
  */
-import { execFileSync } from 'child_process';
 import crypto from 'crypto';
 import fs from 'fs';
 import JSZip from 'jszip';
 import path from 'path';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { tempDir } from './testEnv';
+import { AZURE, LEAKS, SIGNING_ENV, SUBJECT, failWith, fakeAzure, rs256, testChainCheck, testPki, type TestPki } from './testSigning';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const buildMcp = require('../../../../scripts/build-mcp.js');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const verifier = require('../../../hook/verify-forwarder.js');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const signer = require('../../../../scripts/sign-mcpb-azure.js');
 
 const ROOT = path.join(__dirname, '..', '..', '..', '..');
-
-const hasOpenssl = (() => {
-	try {
-		execFileSync('openssl', [ 'version' ], { stdio: 'pipe' });
-		return true;
-	} catch (e) {
-		return false;
-	};
-})();
 
 /** Central-directory entries of a zip: name and compression method (0 = stored) */
 const zipEntries = (buf: Buffer): { name: string; method: number; size: number; compressed: number }[] => {
@@ -205,10 +198,12 @@ describe('build-mcp', () => {
 		expect(a.mcpb.sha256).toBe(b.mcpb.sha256);
 	});
 
-	test('MCPB_SIGN_REQUIRED=1 without a certificate fails and leaves no bundle', async () => {
+	test('MCPB_SIGN_REQUIRED=1 without the Azure Key Vault settings fails and leaves no bundle', async () => {
 		const out = path.join(dir, 'mcp');
 
-		await expect(build({ env: { MCPB_SIGN_REQUIRED: '1' } })).rejects.toThrow(/MCPB_SIGN_REQUIRED/);
+		await expect(build({ env: { MCPB_SIGN_REQUIRED: '1' } })).rejects.toThrow(/MCPB_SIGN_REQUIRED=1 but AZURE_KEY_VAULT_URI, AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, AZURE_CERT_NAME, WIN_PUBLISHER_SUBJECT are not set/);
+		await expect(build({ env: { ...SIGNING_ENV, AZURE_CLIENT_SECRET: '', MCPB_SIGN_REQUIRED: '1' } })).rejects.toThrow(/MCPB_SIGN_REQUIRED=1 but AZURE_CLIENT_SECRET is not set/);
+		await expect(build({ env: { ...AZURE, MCPB_SIGN_REQUIRED: '1' } })).rejects.toThrow(/MCPB_SIGN_REQUIRED=1 but WIN_PUBLISHER_SUBJECT is not set/);
 		expect(fs.existsSync(path.join(out, 'Anytype.mcpb'))).toBe(false);
 		expect(fs.existsSync(metaFile)).toBe(false);
 	});
@@ -225,102 +220,115 @@ describe('build-mcp', () => {
 		expect(fs.readdirSync(out).filter(n => n.endsWith('.tmp'))).toEqual([]);
 	});
 
-	test('only one of certificate and key fails', async () => {
-		await expect(build({ env: { MCPB_SIGN_CERT: '/x.pem' } })).rejects.toThrow(/both/);
+	test('the Azure settings without MCPB_SIGN_REQUIRED=1 (a Windows nightly signs only its forwarder) leave the bundle unsigned', async () => {
+		const azure = fakeAzure(testPki().leaf);
+		const info = await build({ env: { ...SIGNING_ENV }, signing: { fetch: azure.fetch } });
+
+		expect(info.mcpb.signerFingerprint).toBeUndefined();
+		expect(azure.calls).toEqual([]);
 	});
 
-	describe.skipIf(!hasOpenssl)('signing with a throwaway certificate', () => {
-		let cert = '';
-		let key = '';
-		let fingerprint = '';
+	describe('signing with the certificate in Azure Key Vault (a local fake and test PKI)', () => {
+		let pki: TestPki;
 
-		beforeEach(() => {
-			cert = path.join(dir, 'cert.pem');
-			key = path.join(dir, 'key.pem');
-			execFileSync('openssl', [ 'req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', key, '-out', cert, '-days', '1', '-subj', '/CN=Anytype Test' ], { stdio: 'pipe' });
-			fingerprint = new crypto.X509Certificate(fs.readFileSync(cert)).fingerprint256;
+		beforeAll(() => {
+			pki = testPki();
 		});
 
-		test('signed: true, the signer fingerprint and the final digest match; a flipped byte fails verification', async () => {
+		const REQUIRED = { ...SIGNING_ENV, MCPB_SIGN_REQUIRED: '1' };
+		const signing = (azure = fakeAzure(pki.leaf), over: Record<string, any> = {}) => ({ fetch: azure.fetch, chain: pki.chain, chainCheck: testChainCheck(pki.root.der), sleep: async () => {}, ...over });
+
+		test('signed: the signer\'s fingerprint and the final digest in the metadata; the bundle verifies; a release keeps its bundle', async () => {
 			const out = path.join(dir, 'mcp');
-			const info = await build({ env: { MCPB_SIGN_CERT: cert, MCPB_SIGN_KEY: key, MCPB_SIGN_FINGERPRINT: fingerprint, MCPB_SIGN_REQUIRED: '1' } });
+			const info = await build({ env: REQUIRED, signing: signing() });
 			const file = path.join(out, 'Anytype.mcpb');
 			const bundle = fs.readFileSync(file);
-			const expected = fingerprint.replace(/:/g, '').toLowerCase();
+			const fingerprint = sha256(pki.leaf.der);
 
 			// The bundle is signed; `signed` itself says whether the forwarder is a release one (here it isn't)
-			expect(info.mcpb).toEqual({ sha256: sha256(bundle), signerFingerprint: expected, version: '2.6.0' });
+			expect(info.mcpb).toEqual({ sha256: sha256(bundle), signerFingerprint: fingerprint, version: '2.6.0' });
 			expect(info.signed).toBe(false);
 			expect(readMeta()).toEqual(info);
-			expect(buildMcp.verifySignedBundle(file)).toBe(expected);
+			expect(await signer.verify(file, { chainCheck: testChainCheck(pki.root.der) })).toMatchObject({ status: 'signed', subject: SUBJECT, fingerprint });
 
 			// The signature block is appended after the zip
-			const parts = buildMcp.splitSigned(bundle);
+			const parts = signer.splitSigned(bundle);
 			expect(zipEntries(parts.content).map(e => e.name)).toEqual([ 'manifest.json', 'server/anytype-mcp', 'icon.png' ]);
 
-			// Flip one byte inside the archive part
-			const tampered = Buffer.from(bundle);
-			tampered[200] ^= 0x01;
-			fs.writeFileSync(path.join(dir, 'tampered.mcpb'), tampered);
-			expect(() => buildMcp.verifySignedBundle(path.join(dir, 'tampered.mcpb'))).toThrow(/verification failed/);
+			// The forwarder inside is still readable through the signature block (verify-forwarder reads the zip part)
+			const zip = await JSZip.loadAsync(parts.content);
+			expect(await zip.file('server/anytype-mcp').async('nodebuffer')).toEqual(fs.readFileSync(fwd));
 
-			// And one inside the signature
-			const badSig = Buffer.from(bundle);
-			badSig[bundle.length - 40] ^= 0x01;
-			fs.writeFileSync(path.join(dir, 'badsig.mcpb'), badSig);
-			expect(() => buildMcp.verifySignedBundle(path.join(dir, 'badsig.mcpb'))).toThrow();
+			// Q12: a release-namespace build with MCPB_SIGN_REQUIRED=1 ships its signed bundle
+			const release = await build({ outDir: path.join(dir, 'release'), forwarder: forwarder({ signed: true, namespace: 'release' }), env: REQUIRED, signing: signing() });
 
-			// An unsigned archive has no signature block at all
-			expect(() => buildMcp.verifySignedBundle(path.join(dir, 'cert.pem'))).toThrow(/no signature block/);
+			expect(release.signed).toBe(true);
+			expect(release.mcpb.signerFingerprint).toBe(fingerprint);
+			expect(fs.existsSync(path.join(dir, 'release', 'Anytype.mcpb'))).toBe(true);
 		});
 
-		test('Z14: a signed build logs that the signer was verified, never the fingerprint', async () => {
+		test('a signed build logs the signer, never a secret, the token or the key id', async () => {
 			const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
-			const expected = fingerprint.replace(/:/g, '').toLowerCase();
 
-			await build({ env: { MCPB_SIGN_CERT: cert, MCPB_SIGN_KEY: key, MCPB_SIGN_FINGERPRINT: fingerprint, MCPB_SIGN_REQUIRED: '1' } });
+			await build({ env: REQUIRED, signing: signing() });
 
-			const logged = JSON.stringify(spy.mock.calls);
+			const logged = spy.mock.calls.flat().join('\n');
 
 			spy.mockRestore();
-			expect(logged).toContain('signer verified');
-			expect(logged).not.toContain(expected);
-			expect(logged.toLowerCase()).not.toContain(fingerprint.toLowerCase());
+			expect(logged).toContain(`is signed by "${SUBJECT}"`);
+			for (const leak of LEAKS) {
+				expect(logged, leak).not.toContain(leak);
+			};
 		});
 
-		test('A14: a signer mismatch fails without either fingerprint in the output, and leaves no bundle', async () => {
-			const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+		test('a certificate of another publisher fails the build, and leaves neither a bundle nor metadata', async () => {
 			const out = path.join(dir, 'mcp');
-			const wrong = 'AB:'.repeat(31) + 'AB';
-			const actual = fingerprint.replace(/:/g, '').toLowerCase();
+
+			await expect(build({ env: REQUIRED, signing: signing(fakeAzure(pki.other)) })).rejects.toThrow(/not Anytype's Windows publisher/);
+			expect(fs.existsSync(path.join(out, 'Anytype.mcpb'))).toBe(false);
+			expect(fs.existsSync(metaFile)).toBe(false);
+			expect(fs.readdirSync(out).filter(n => n.endsWith('.tmp'))).toEqual([]);
+		});
+
+		test('a tampered signature fails the build', async () => {
+			const tampered: any = ({ init }) => {
+				const sig = rs256(pki.leaf.key, Buffer.from(JSON.parse(init.body).value, 'base64url'));
+
+				sig[sig.length - 1] ^= 0x01;
+				return new Response(JSON.stringify({ value: sig.toString('base64url') }), { status: 200 });
+			};
+
+			await expect(build({ env: REQUIRED, signing: signing(fakeAzure(pki.leaf, { sign: tampered })) })).rejects.toThrow(/does not verify/);
+			expect(fs.existsSync(path.join(dir, 'mcp', 'Anytype.mcpb'))).toBe(false);
+			expect(fs.existsSync(metaFile)).toBe(false);
+		});
+
+		test('an untrusted chain fails the build', async () => {
+			await expect(build({ env: REQUIRED, signing: signing(fakeAzure(pki.leaf), { chainCheck: async () => false }) })).rejects.toThrow(/chain is untrusted/);
+			expect(fs.existsSync(metaFile)).toBe(false);
+		});
+
+		test('a failing Azure call fails the build without a secret in the error or the log, and leaves no bundle', async () => {
+			const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+			const azure = fakeAzure(pki.leaf, { token: failWith(500, { error: 'server_error', error_description: `AADSTS50000: failed for ${AZURE.AZURE_CLIENT_ID} with ${AZURE.AZURE_CLIENT_SECRET}` }) });
 			let message = '';
 
 			try {
-				await build({ env: { MCPB_SIGN_CERT: cert, MCPB_SIGN_KEY: key, MCPB_SIGN_FINGERPRINT: wrong, MCPB_SIGN_REQUIRED: '1' } });
+				await build({ env: REQUIRED, signing: signing(azure) });
 			} catch (e) {
 				message = String(e?.stack || e);
 			};
 
-			const output = (message + JSON.stringify(spy.mock.calls)).toLowerCase();
+			const output = message + JSON.stringify(spy.mock.calls);
 
 			spy.mockRestore();
-			expect(message).toMatch(/does not match/);
-			for (const fp of [ actual, wrong.toLowerCase(), wrong.replace(/:/g, '').toLowerCase(), fingerprint.toLowerCase() ]) {
-				expect(output).not.toContain(fp);
+			expect(message).toMatch(/the Azure AD token request failed: HTTP 500 \(server_error, AADSTS50000\) \(after 3 attempts\)/);
+			expect(azure.count('token')).toBe(3);
+			for (const leak of LEAKS) {
+				expect(output, leak).not.toContain(leak);
 			};
-			expect(fs.existsSync(path.join(out, 'Anytype.mcpb'))).toBe(false);
-		});
-
-		test('a wrong MCPB_SIGN_FINGERPRINT fails the build', async () => {
-			const out = path.join(dir, 'mcp');
-
-			await expect(build({ env: { MCPB_SIGN_CERT: cert, MCPB_SIGN_KEY: key, MCPB_SIGN_FINGERPRINT: 'ab'.repeat(32) } })).rejects.toThrow(/does not match/);
-			expect(fs.existsSync(path.join(out, 'Anytype.mcpb'))).toBe(false);
+			expect(fs.existsSync(path.join(dir, 'mcp', 'Anytype.mcpb'))).toBe(false);
 			expect(fs.existsSync(metaFile)).toBe(false);
-		});
-
-		test('a missing MCPB_SIGN_FINGERPRINT fails the build', async () => {
-			await expect(build({ env: { MCPB_SIGN_CERT: cert, MCPB_SIGN_KEY: key } })).rejects.toThrow(/MCPB_SIGN_FINGERPRINT/);
 		});
 	});
 });

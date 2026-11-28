@@ -211,17 +211,26 @@ describe('where the forwarder comes from, and when it is signed', () => {
 
 		expect(at('Import macOS certificates')).toBeGreaterThan(-1);
 		expect(at('Import macOS certificates')).toBeLessThan(at('Build frontend'));
-		expect(at('Prepare .mcpb signing files')).toBeLessThan(at('Build frontend'));
-		expect(at('Remove .mcpb signing files')).toBe(at('Build frontend') + 1);
-		// The same Azure secrets the packaging step has, for the early call of the sign hook
-		for (const k of [ 'MCPB_SIGN_REQUIRED', 'MCPB_SIGN_CERT', 'MCPB_SIGN_KEY', 'MCPB_SIGN_FINGERPRINT' ]) {
-			expect(build.env[k], k).toBeTruthy();
+		// The bundle is signed in "Build frontend" through Azure Key Vault: no key file is written, no step prepares or removes one
+		expect(at('Prepare .mcpb signing files')).toBe(-1);
+		expect(at('Remove .mcpb signing files')).toBe(-1);
+		expect(build.env.MCPB_SIGN_REQUIRED).toBeTruthy();
+		for (const k of [ 'MCPB_SIGN_CERT', 'MCPB_SIGN_KEY', 'MCPB_SIGN_FINGERPRINT' ]) {
+			expect(read(file), k).not.toContain(k);
 		};
-		// Q11: the Azure secrets reach "Build frontend" on Windows only (the one job whose build signs with them)
+		// Q11: the Azure secrets reach "Build frontend" on Windows (the forwarder, the bundle) and on macOS only when the
+		// bundle is signed there (a tag; a nightly with the switch on) — never on Linux
+		const macSigns = file.endsWith('build.yml') ? "startsWith(github.ref, 'refs/tags/v')" : "vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1'";
+
 		for (const k of [ 'AZURE_KEY_VAULT_URI', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET', 'AZURE_CERT_NAME', 'AZURE_TENANT_ID' ]) {
-			expect(build.env[k], k).toBe(`\${{ startsWith(matrix.os, 'windows-') && secrets.${k} || '' }}`);
+			expect(build.env[k], k).toBe(`\${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && ${macSigns})) && secrets.${k} || '' }}`);
 		};
 		expect(build.env.FORWARDER_SIGN_REQUIRED).toBe('1');
+		// Q13: the publisher's subject comes from the repository variable, in every step that checks a Windows signature
+		// (prepare-forwarder, afterSign, the verify step) or signs the bundle
+		for (const name of [ 'Build frontend', 'Package and publish Other', 'Verify the packaged forwarder Windows' ]) {
+			expect(steps[at(name)].env?.WIN_PUBLISHER_SUBJECT, name).toBe('${{ vars.WIN_PUBLISHER_SUBJECT }}');
+		};
 
 		// After electron-builder: S2 (macOS) and S4 (Windows) as build steps that fail on a mismatch
 		const pack = Math.max(at('Package and publish Mac OS'), at('Package and publish Other'));
@@ -281,45 +290,39 @@ describe('where the forwarder comes from, and when it is signed', () => {
 		for (const name of [ 'Verify the packaged forwarder Mac OS', 'Verify the packaged forwarder Windows' ]) {
 			expect(step(nightly, name).run).not.toContain('--require-bundle');
 		};
+		expect(step(release, 'Build frontend').env.MCPB_SIGN_REQUIRED).toBe("${{ startsWith(github.ref, 'refs/tags/v') && !startsWith(matrix.os, 'ubuntu-') && '1' || '' }}");
 		expect(step(nightly, 'Build frontend').env.MCPB_SIGN_REQUIRED).toBe("${{ !startsWith(matrix.os, 'ubuntu-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1' && '1' || '' }}");
-		expect(step(nightly, 'Build frontend').env.MCPB_SIGN_CERT).toContain("steps.mcpb.outputs.ready == '1'");
-
-		const prepare = step(nightly, 'Prepare .mcpb signing files');
-
-		// No key file on the Linux job (it builds no bundle)
-		expect(prepare.if).toContain("!startsWith(matrix.os, 'ubuntu-')");
 	});
 
-	test('S11: the nightly .mcpb signature follows the switch, and the signing key reaches only the jobs that sign a bundle', () => {
-		const NOT_LINUX = "!startsWith(matrix.os, 'ubuntu-')";
+	test('S11: the nightly .mcpb signature follows the switch; on macOS the Azure secrets reach only the step that signs the bundle', () => {
 		const SWITCH = "vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1'";
+		const AZURE = [ 'AZURE_KEY_VAULT_URI', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET', 'AZURE_CERT_NAME', 'AZURE_TENANT_ID' ];
 		const nightly = stepsOf('.github/workflows/nightly.yml');
-		const prepare = nightly.find(s => s.name == 'Prepare .mcpb signing files');
+		const build = nightly.find(s => s.name == 'Build frontend');
 
-		// With the switch off no PEM is written, whatever secrets exist: `ready` is never set, so no path is passed
-		expect(prepare.if).toBe(`\${{ ${NOT_LINUX} && ${SWITCH} }}`);
-		expect(prepare.run).not.toContain('exit 0');
-		expect(prepare.run).toMatch(/-z "\$MCPB_KEY_PEM"[\s\S]*exit 1[\s\S]*key\.pem[\s\S]*ready=1/);
-		for (const k of [ 'MCPB_SIGN_CERT', 'MCPB_SIGN_KEY', 'MCPB_SIGN_FINGERPRINT' ]) {
-			expect(nightly.find(s => s.name == 'Build frontend').env[k], k).toMatch(/^\$\{\{ steps\.mcpb\.outputs\.ready == '1' && /);
+		// With the switch off a macOS nightly gets no Azure secret and signs no bundle, whatever secrets exist
+		expect(build.env.MCPB_SIGN_REQUIRED).toContain(SWITCH);
+		for (const k of AZURE) {
+			expect(build.env[k], k).toContain(`startsWith(matrix.os, 'macos-') && ${SWITCH}`);
 		};
 
 		for (const file of [ '.github/workflows/build.yml', '.github/workflows/nightly.yml' ]) {
-			for (const s of stepsOf(file)) {
-				const text = JSON.stringify(s);
-				const guard = String(s.if || '');
-				const offLinux = guard.includes(NOT_LINUX) || /startsWith\(matrix\.os, '(macos|windows)-'\)/.test(guard) && !guard.includes('!startsWith(matrix.os, \'macos-\')');
+			// No .mcpb key exists any more: no secret, no key file
+			expect(read(file)).not.toMatch(/secrets\.MCPB_SIGN_|mcpb-sign\//);
 
-				// A step that reads the signing secrets or writes the PEMs never runs on ubuntu
-				if (/secrets\.MCPB_SIGN_(CERT|KEY)\b/.test(text) || /mcpb-sign\/(cert|key)\.pem/.test(String(s.run || ''))) {
-					expect(offLinux, `${file}: ${s.name}`).toBe(true);
-				};
-				// No MCPB_SIGN_* value reaches a step on ubuntu: the step is off there, or the value is empty there
-				for (const [ k, v ] of Object.entries(s.env || {}) as [ string, string ][]) {
-					if (!k.startsWith('MCPB_SIGN_') || offLinux) {
-						continue;
+			for (const s of stepsOf(file)) {
+				const guard = String(s.if || '');
+				const offMac = guard.includes("!startsWith(matrix.os, 'macos-')") || /startsWith\(matrix\.os, '(windows|ubuntu)-'\)/.test(guard.replace(/!startsWith/g, ''));
+				const azure = Object.entries(s.env || {}).filter(([ k ]) => AZURE.includes(k));
+
+				// A step that can run on macOS with an Azure secret is "Build frontend", and its macOS part is gated
+				if (azure.length && !offMac) {
+					expect(s.name, `${file}: ${s.name}`).toBe('Build frontend');
+					const gate = file.endsWith('build.yml') ? "startsWith(github.ref, 'refs/tags/v')" : SWITCH;
+
+					for (const [ k, v ] of azure) {
+						expect(String(v), `${file}: ${k}`).toBe(`\${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && ${gate})) && secrets.${k} || '' }}`);
 					};
-					expect(String(v).includes(NOT_LINUX) || String(v).includes("steps.mcpb.outputs.ready == '1'"), `${file}: ${s.name}: ${k}`).toBe(true);
 				};
 			};
 		};

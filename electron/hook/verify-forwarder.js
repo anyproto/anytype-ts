@@ -36,12 +36,16 @@ const RELEASE_MARKER = Buffer.from('anytype-mcp-namespace:release', 'utf8');
 /** A synthetic key for the smoke: valid for the forwarder (visible ASCII), never a real one */
 const SMOKE_KEY = 'anytype-mcp-smoke-0123456789abcdef0123456789abcdef';
 /**
- * The exact subject of the certificate Anytype's Windows binaries are signed with:
- * `(Get-AuthenticodeSignature Anytype.exe).SignerCertificate.Subject` of a released build.
- * TODO(Roma): fill in before merging — the repository holds no copy of it (the certificate is picked by the
- * AZURE_CERT_NAME secret). While it is empty, a signed Windows build fails this check.
+ * The exact subject of the certificate Anytype's Windows binaries are signed with (the one AZURE_CERT_NAME picks in
+ * Azure Key Vault), as `(Get-AuthenticodeSignature Anytype.exe).SignerCertificate.Subject` prints it: the RDNs of the
+ * certificate's subject last to first, labels E and S. It comes from the CI configuration — the repository variable
+ * WIN_PUBLISHER_SUBJECT, which the workflows pass as the environment variable of the same name to the steps that check
+ * a Windows signature or sign Anytype.mcpb — so a renewed certificate needs no commit. For the certificate in use
+ * (serial 0FD7E7DE746431EF564D40D3, GlobalSign GCC R45 CodeSigning CA 2020, valid to 2027-07-03) it is
+ * `E=association@anytype.io, CN=Any Association, O=Any Association, L=Zug, S=Zug, C=CH`. One reader for this check and
+ * the Anytype.mcpb signer (scripts/sign-mcpb-azure.js); empty, every check that needs it fails.
  */
-const WIN_PUBLISHER_SUBJECT = '';
+const winPublisherSubject = (env = process.env) => String(env.WIN_PUBLISHER_SUBJECT || '').trim();
 const SIG_HEADER = Buffer.from('MCPB_SIG_V1', 'utf8');
 const SIG_FOOTER = Buffer.from('MCPB_SIG_END', 'utf8');
 
@@ -121,7 +125,7 @@ const windowsSignature = (file) => {
 };
 
 /** Valid, timestamped, and signed by exactly our publisher (Q13); `query` and `expected` are injected by tests */
-const verifyWindowsSignature = (file, query = windowsSignature, expected = WIN_PUBLISHER_SUBJECT) => {
+const verifyWindowsSignature = (file, query = windowsSignature, expected = winPublisherSubject()) => {
 	const [ status, stamped, ...rest ] = String(query(file) || '').split('|');
 	const subject = rest.join('|');
 
@@ -129,7 +133,7 @@ const verifyWindowsSignature = (file, query = windowsSignature, expected = WIN_P
 		fail(`the forwarder's Authenticode signature is not valid and timestamped (${status || 'no answer'}): ${file}`);
 	};
 	if (!expected) {
-		fail('WIN_PUBLISHER_SUBJECT is not set in electron/hook/verify-forwarder.js: the signer of the forwarder can\'t be checked');
+		fail('WIN_PUBLISHER_SUBJECT is not set (the repository variable, passed to this step): the signer of the forwarder can\'t be checked');
 	};
 	if (subject !== expected) {
 		fail(`the forwarder is signed by another publisher than Anytype's: ${subject}`);
@@ -524,7 +528,7 @@ const verifyLinux = async (context, check = verifyPackaged) => {
 	};
 };
 
-module.exports = { verify, verifyPackaged, verifyLinux, verifyWindowsSignature, forwarderMarkers, verifyManifest, smoke, mcpbResolver, MIN_REV, WIN_PUBLISHER_SUBJECT };
+module.exports = { verify, verifyPackaged, verifyLinux, verifyWindowsSignature, forwarderMarkers, verifyManifest, smoke, mcpbResolver, MIN_REV, winPublisherSubject };
 
 if (require.main === module) {
 	const args = process.argv.slice(2);

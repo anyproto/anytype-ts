@@ -1,43 +1,31 @@
 /**
- * Z14: the release workflow's .mcpb signing steps — tag builds only, the key folder owner-only before a PEM is
- * written (POSIX umask, Windows ACL), removed after the build.
+ * Z14: the release workflow signs the .mcpb on tag builds only, through Azure Key Vault (scripts/sign-mcpb-azure.js):
+ * no signing key exists in the repository's secrets or on a runner's disk.
  */
 import fs from 'fs';
 import path from 'path';
 import { expect, test } from 'vitest';
 import YAML from 'yaml';
 
-const workflow = YAML.parse(fs.readFileSync(path.resolve(__dirname, '../../../../.github/workflows/build.yml'), 'utf8'));
+const text = fs.readFileSync(path.resolve(__dirname, '../../../../.github/workflows/build.yml'), 'utf8');
+const workflow = YAML.parse(text);
 const steps: any[] = workflow.jobs.release.steps;
 const step = (name: string) => steps.find(s => s.name == name);
 const TAG = "startsWith(github.ref, 'refs/tags/v')";
 
-test('Z14: on Windows the signing folder gets an owner-only ACL before either PEM is written', () => {
-	const prepare = step('Prepare .mcpb signing files');
-	const run: string = prepare.run;
-	const acl = run.indexOf('icacls "$dir" /inheritance:r /grant:r');
-	const firstWrite = run.indexOf('printf');
-
-	expect(prepare.if).toContain(TAG);
-	expect(prepare.shell).toBe('bash');
-	expect(run).toContain('umask 077');
-	expect(run).toContain('if [ "$RUNNER_OS" = "Windows" ]');
-	expect(run).toContain('MSYS_NO_PATHCONV=1');
-	expect(acl).toBeGreaterThan(run.indexOf('mkdir -p "$dir"'));
-	expect(acl).toBeLessThan(firstWrite);
-	expect(run).not.toMatch(/echo[^\n]*\$MCPB_(CERT|KEY)_PEM/);
+test('Z14: no .mcpb key is written anywhere: no PEM step, no MCPB_SIGN_* secret, no key file', () => {
+	expect(step('Prepare .mcpb signing files')).toBeUndefined();
+	expect(step('Remove .mcpb signing files')).toBeUndefined();
+	expect(text).not.toMatch(/MCPB_SIGN_(CERT|KEY|FINGERPRINT)|mcpb-sign\/|MCPB_(CERT|KEY)_PEM/);
 });
 
-test('Z14: only tag builds sign; the files are removed whatever happened', () => {
+test('Z14: only tag builds sign the bundle; on macOS the Azure secrets reach "Build frontend" on tag builds only', () => {
 	const env = step('Build frontend').env;
 
-	for (const k of [ 'MCPB_SIGN_REQUIRED', 'MCPB_SIGN_CERT', 'MCPB_SIGN_KEY', 'MCPB_SIGN_FINGERPRINT' ]) {
-		expect(env[k]).toContain(TAG);
+	expect(env.MCPB_SIGN_REQUIRED).toContain(TAG);
+	for (const k of [ 'AZURE_KEY_VAULT_URI', 'AZURE_CLIENT_ID', 'AZURE_CLIENT_SECRET', 'AZURE_CERT_NAME', 'AZURE_TENANT_ID' ]) {
+		expect(env[k]).toContain(`(startsWith(matrix.os, 'macos-') && ${TAG})`);
+		expect(env[k]).not.toContain('ubuntu');
 	};
-
-	const cleanup = step('Remove .mcpb signing files');
-
-	expect(cleanup.if).toContain('always()');
-	expect(cleanup.run).toContain('rm -rf "$RUNNER_TEMP/mcpb-sign"');
-	expect(steps.indexOf(cleanup)).toBe(steps.indexOf(step('Build frontend')) + 1);
+	expect(step('Package and publish Mac OS').env.AZURE_CLIENT_SECRET).toBeUndefined();
 });

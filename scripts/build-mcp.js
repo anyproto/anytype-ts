@@ -13,10 +13,12 @@
  * the build's OS are present (Linux: one per architecture, and no bundle). No forwarder → `forwarder: null`
  * and no bundle: the stdio routes are off in that build.
  *
- * Bundle signing (release CI): MCPB_SIGN_CERT + MCPB_SIGN_KEY (PEM file paths) and MCPB_SIGN_FINGERPRINT
- * (SHA-256 of the signer certificate). MCPB_SIGN_REQUIRED=1 fails the build when they are missing.
- * `mcpb verify` (2.1.2) can't verify anything (node-forge has no PKCS#7 verify), so the signature is
- * checked with `openssl cms -verify` here and the signer's fingerprint compared with the expected one.
+ * Bundle signing: MCPB_SIGN_REQUIRED=1 (tag builds on macOS and Windows; a nightly with NIGHTLY_MCPB_SIGN_REQUIRED)
+ * signs the bundle with Anytype's Windows code-signing certificate in Azure Key Vault, remotely
+ * (scripts/sign-mcpb-azure.js; the AZURE_* secrets AzureSignTool uses), verifies the signature and the chain, and
+ * requires the signer's subject to be exactly WIN_PUBLISHER_SUBJECT (a repository variable, read through
+ * electron/hook/verify-forwarder.js). Without the switch the bundle stays unsigned. `signerFingerprint` is the
+ * SHA-256 of the signer certificate's DER, the fingerprint Claude Desktop records for an installed extension.
  */
 const fs = require('fs');
 const os = require('os');
@@ -24,11 +26,10 @@ const path = require('path');
 const crypto = require('crypto');
 const { execFileSync } = require('child_process');
 const JSZip = require('jszip');
+const azureSigner = require('./sign-mcpb-azure');
 
 const ROOT = path.join(__dirname, '..');
 const FIXED_DATE = new Date('2026-01-01T00:00:00Z');
-const SIG_HEADER = Buffer.from('MCPB_SIG_V1', 'utf8');
-const SIG_FOOTER = Buffer.from('MCPB_SIG_END', 'utf8');
 const BUNDLE = 'Anytype.mcpb';
 const META = 'aiConnect.build.json';
 
@@ -47,74 +48,6 @@ const runMcpb = (args) => {
 
 const sha256 = (buf) => crypto.createHash('sha256').update(buf).digest('hex');
 
-const normalizeFingerprint = (s) => String(s || '').replace(/:/g, '').trim().toLowerCase();
-
-/** The zip and the PKCS#7 signature appended by `mcpb sign`, or null when the file isn't signed that way */
-const splitSigned = (buf) => {
-	const footer = buf.length - SIG_FOOTER.length;
-
-	if ((footer < 0) || !buf.subarray(footer).equals(SIG_FOOTER)) {
-		return null;
-	};
-
-	const header = buf.lastIndexOf(SIG_HEADER, footer);
-	if (header < 0) {
-		return null;
-	};
-
-	const lenAt = header + SIG_HEADER.length;
-	const len = buf.readUInt32LE(lenAt);
-
-	if ((lenAt + 4 + len) != footer) {
-		return null;
-	};
-
-	return { content: buf.subarray(0, header), signature: buf.subarray(lenAt + 4, footer) };
-};
-
-/**
- * Verifies the detached PKCS#7 signature over the archive and returns the signer certificate's
- * SHA-256 fingerprint (lowercase hex). The chain isn't checked: the expected fingerprint is the pin.
- */
-const verifySignedBundle = (file, opt = {}) => {
-	const parts = splitSigned(fs.readFileSync(file));
-
-	if (!parts) {
-		throw new Error(`${path.basename(file)} has no signature block`);
-	};
-
-	const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'anytype-mcpb-verify-'));
-
-	try {
-		const content = path.join(dir, 'content.bin');
-		const sig = path.join(dir, 'sig.der');
-		const signer = path.join(dir, 'signer.pem');
-
-		fs.writeFileSync(content, parts.content);
-		fs.writeFileSync(sig, parts.signature);
-
-		try {
-			execFileSync(opt.openssl || 'openssl', [
-				'cms', '-verify', '-binary', '-inform', 'DER', '-in', sig, '-content', content,
-				'-noverify', '-signer', signer, '-out', path.join(dir, 'out.bin'),
-			], { stdio: 'pipe', cwd: dir });
-		} catch (e) {
-			throw new Error(`signature verification failed: ${String(e.stderr || e.message).trim()}`);
-		};
-
-		const pem = fs.readFileSync(signer, 'utf8');
-		const count = (pem.match(/-----BEGIN CERTIFICATE-----/g) || []).length;
-
-		if (count != 1) {
-			throw new Error(`expected one signer certificate, found ${count}`);
-		};
-
-		return normalizeFingerprint(new crypto.X509Certificate(pem).fingerprint256);
-	} finally {
-		fs.rmSync(dir, { recursive: true, force: true });
-	};
-};
-
 /** Stored (not deflated) entries with fixed dates, in a fixed order; `mode` is the entry's Unix mode (0755 for the binary) */
 const pack = async (files) => {
 	const zip = new JSZip();
@@ -126,38 +59,28 @@ const pack = async (files) => {
 	return zip.generateAsync({ type: 'nodebuffer', compression: 'STORE', platform: 'UNIX' });
 };
 
-const sign = (file, env) => {
-	const cert = env.MCPB_SIGN_CERT;
-	const key = env.MCPB_SIGN_KEY;
-
-	if (!cert && !key) {
-		if (env.MCPB_SIGN_REQUIRED == '1') {
-			throw new Error('MCPB_SIGN_REQUIRED=1 but MCPB_SIGN_CERT / MCPB_SIGN_KEY are not set');
-		};
+/**
+ * Signs the bundle when the build must be signed (MCPB_SIGN_REQUIRED=1), with the Windows code-signing certificate in
+ * Azure Key Vault; any other build leaves it unsigned. Returns the signer certificate's SHA-256 (lowercase hex) or null.
+ * `opt` reaches the signer (tests: its fetch, chain check and chain)
+ */
+const sign = async (file, env, opt = {}) => {
+	if (env.MCPB_SIGN_REQUIRED != '1') {
 		log(`${BUNDLE} is UNSIGNED`);
 		return null;
 	};
 
-	if (!cert || !key) {
-		throw new Error('set both MCPB_SIGN_CERT and MCPB_SIGN_KEY, or neither');
+	const missing = azureSigner.missingSettings(env);
+
+	if (missing.length) {
+		throw new Error(`MCPB_SIGN_REQUIRED=1 but ${missing.join(', ')} ${(missing.length == 1) ? 'is' : 'are'} not set: ${BUNDLE} is signed with the Windows code-signing certificate in Azure Key Vault, whose subject must be WIN_PUBLISHER_SUBJECT`);
 	};
 
-	const expected = normalizeFingerprint(env.MCPB_SIGN_FINGERPRINT);
-	if (!/^[0-9a-f]{64}$/.test(expected)) {
-		throw new Error('MCPB_SIGN_FINGERPRINT must be the SHA-256 fingerprint of the signing certificate');
-	};
+	const res = await azureSigner.sign(file, { ...opt, env });
 
-	runMcpb([ 'sign', file, '--cert', cert, '--key', key ]);
-
-	const actual = verifySignedBundle(file, { openssl: env.MCPB_OPENSSL });
-	if (actual != expected) {
-		// Neither fingerprint goes to the output (CI passes the expected one as a secret)
-		throw new Error(`${BUNDLE} signer does not match MCPB_SIGN_FINGERPRINT`);
-	};
-
-	// The fingerprint itself stays out of the log (CI passes it as a secret, possibly in another spelling)
-	log(`${BUNDLE} is signed; signer verified`);
-	return actual;
+	// Public values: the certificate is in every signed Anytype.exe
+	log(`${BUNDLE} is signed by "${res.subject}" (certificate SHA-256 ${res.fingerprint}); signature verified, chain ${(res.status == 'signed') ? 'trusted for code signing' : 'not checked on this OS'}`);
+	return res.fingerprint;
 };
 
 /**
@@ -192,7 +115,8 @@ const manifestFor = (template, opt) => {
  * @param {{
  *   outDir?: string, rootDir?: string, metaFile?: string, platform?: string, env?: Record<string, string | undefined>,
  *   forwarder?: null | { signed: boolean, namespace: string, rev: number, teamId?: string, files: Record<string, string>, bundleFile: string | null },
- * }} opt
+ *   signing?: object,
+ * }} opt `signing`: options for scripts/sign-mcpb-azure.js `sign` (tests)
  * @returns {Promise<{ signed: boolean, forwarder: object | null, mcpb: object | null }>} the metadata written
  */
 const build = async (opt = {}) => {
@@ -257,10 +181,10 @@ const build = async (opt = {}) => {
 			fs.writeFileSync(bundleTemp, zip);
 
 			// MCPB_SIGN_REQUIRED=1 (a release): no signature fails the build
-			const signerFingerprint = sign(bundleTemp, env);
+			const signerFingerprint = await sign(bundleTemp, env, opt.signing);
 
 			if (fwd.signed && !signerFingerprint) {
-				// A release-namespace build whose bundle wasn't signed (a nightly without the MCPB_SIGN_* secrets) ships
+				// A release-namespace build whose bundle wasn't signed (a nightly without NIGHTLY_MCPB_SIGN_REQUIRED) ships
 				// no bundle: the desktop only hands a key to an extension whose signer it can verify, so Claude uses the
 				// config route there
 				log(`${BUNDLE} is not shipped: a release-namespace build needs a signed bundle`);
@@ -291,7 +215,7 @@ const build = async (opt = {}) => {
 	return meta;
 };
 
-module.exports = { build, verifySignedBundle, splitSigned, normalizeFingerprint, manifestFor, META };
+module.exports = { build, manifestFor, META };
 
 if (require.main === module) {
 	require('./prepare-forwarder').prepare().then(forwarder => build({ forwarder })).catch((e) => {

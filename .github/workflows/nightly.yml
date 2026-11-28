@@ -395,60 +395,30 @@ jobs:
           MAC_CERT_TEXT: ${{ secrets.MAC_CERT_TEXT }}
           MAC_CERT_PASS: ${{ secrets.MAC_CERT_PASS }}
 
-      # PENDING (Roma): whether nightlies must sign the Claude Desktop bundle. The default is no: a nightly ships no
-      # Anytype.mcpb, whatever secrets the repository holds, and Claude uses the config route there. ONE SWITCH: set the
-      # repository variable NIGHTLY_MCPB_SIGN_REQUIRED to 1 and a nightly signs the bundle and fails without one, as a
-      # release does. macOS and Windows only (Linux builds no bundle). The key never reaches the log: it goes from the
-      # secret to a file only this runner account can read, removed after the build.
-      - name: Prepare .mcpb signing files
-        id: mcpb
-        if: ${{ !startsWith(matrix.os, 'ubuntu-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1' }}
-        shell: bash
-        env:
-          MCPB_CERT_PEM: ${{ secrets.MCPB_SIGN_CERT }}
-          MCPB_KEY_PEM: ${{ secrets.MCPB_SIGN_KEY }}
-          MCPB_FINGERPRINT: ${{ secrets.MCPB_SIGN_FINGERPRINT }}
-        run: |
-          if [ -z "$MCPB_CERT_PEM" ] || [ -z "$MCPB_KEY_PEM" ] || [ -z "$MCPB_FINGERPRINT" ]; then
-            echo "::error::MCPB_SIGN_CERT, MCPB_SIGN_KEY and MCPB_SIGN_FINGERPRINT must be set (NIGHTLY_MCPB_SIGN_REQUIRED=1)"
-            exit 1
-          fi
-          dir="$RUNNER_TEMP/mcpb-sign"
-          umask 077
-          mkdir -p "$dir"
-          if [ "$RUNNER_OS" = "Windows" ]; then
-            # Git Bash mounts with noacl, so umask protects nothing there: the folder inherits no ACL and only the
-            # runner's own account may use it, before either PEM is written
-            MSYS_NO_PATHCONV=1 icacls "$dir" /inheritance:r /grant:r "${USERNAME}:(OI)(CI)F" > /dev/null
-          fi
-          printf '%s\n' "$MCPB_CERT_PEM" > "$RUNNER_TEMP/mcpb-sign/cert.pem"
-          printf '%s\n' "$MCPB_KEY_PEM" > "$RUNNER_TEMP/mcpb-sign/key.pem"
-          echo "ready=1" >> "$GITHUB_OUTPUT"
-
       - name: Build frontend
         run: bun run build
         env:
           NODE_OPTIONS: --max-old-space-size=8192
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_NIGHTLY }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_NIGHTLY }}
-          # Only the jobs that build a bundle, and only with the switch on (the step above ran: `ready`)
+          # PENDING (Roma): whether nightlies must sign the Claude Desktop bundle. The default is no: a nightly ships no
+          # Anytype.mcpb (Claude uses the config route there). ONE SWITCH: set the repository variable
+          # NIGHTLY_MCPB_SIGN_REQUIRED to 1 and a macOS / Windows nightly signs the bundle as a release does (the Windows
+          # certificate in Azure Key Vault, scripts/sign-mcpb-azure.js) and fails without a valid signature. Linux builds no bundle
           MCPB_SIGN_REQUIRED: ${{ !startsWith(matrix.os, 'ubuntu-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1' && '1' || '' }}
-          MCPB_SIGN_CERT: ${{ steps.mcpb.outputs.ready == '1' && format('{0}/mcpb-sign/cert.pem', runner.temp) || '' }}
-          MCPB_SIGN_KEY: ${{ steps.mcpb.outputs.ready == '1' && format('{0}/mcpb-sign/key.pem', runner.temp) || '' }}
-          MCPB_SIGN_FINGERPRINT: ${{ steps.mcpb.outputs.ready == '1' && secrets.MCPB_SIGN_FINGERPRINT || '' }}
           # Windows: scripts/prepare-forwarder.js signs anytype-mcp.exe with the existing hook electron/hook/sign.js
           # (the same AzureSignTool command and secrets as the packaging step); the forwarder must be signed, or the build fails
           FORWARDER_SIGN_REQUIRED: '1'
-          AZURE_KEY_VAULT_URI: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_KEY_VAULT_URI || '' }}
-          AZURE_CLIENT_ID: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_CLIENT_ID || '' }}
-          AZURE_CLIENT_SECRET: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_CLIENT_SECRET || '' }}
-          AZURE_CERT_NAME: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_CERT_NAME || '' }}
-          AZURE_TENANT_ID: ${{ startsWith(matrix.os, 'windows-') && secrets.AZURE_TENANT_ID || '' }}
-
-      - name: Remove .mcpb signing files
-        if: ${{ always() }}
-        shell: bash
-        run: rm -rf "$RUNNER_TEMP/mcpb-sign"
+          # The exact subject of the Windows code-signing certificate (repository variable; public, so not a secret): the
+          # signed forwarder and the bundle's signer must have it, or the build fails
+          WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
+          # The Azure secrets reach this step on Windows (the forwarder, and the bundle with the switch on) and, only with
+          # the switch on, on macOS (the bundle); never on Linux, and on macOS no other step gets them
+          AZURE_KEY_VAULT_URI: ${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1')) && secrets.AZURE_KEY_VAULT_URI || '' }}
+          AZURE_CLIENT_ID: ${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1')) && secrets.AZURE_CLIENT_ID || '' }}
+          AZURE_CLIENT_SECRET: ${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1')) && secrets.AZURE_CLIENT_SECRET || '' }}
+          AZURE_CERT_NAME: ${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1')) && secrets.AZURE_CERT_NAME || '' }}
+          AZURE_TENANT_ID: ${{ (startsWith(matrix.os, 'windows-') || (startsWith(matrix.os, 'macos-') && vars.NIGHTLY_MCPB_SIGN_REQUIRED == '1')) && secrets.AZURE_TENANT_ID || '' }}
 
       # S12 / T4: the real forwarder's own store-folder rule (heart N9) in folders the desktop creates — a scratch profile
       # that Users may read, `.anytype` and `bin` made by Anytype's code, then `key set` / `key check`. BEFORE packaging:
@@ -494,6 +464,7 @@ jobs:
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_CERT_NAME: ${{ secrets.AZURE_CERT_NAME }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_NIGHTLY }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_NIGHTLY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.NIGHTLY_AWS_ACCESS_KEY_ID }}
@@ -531,6 +502,8 @@ jobs:
       - name: Verify the packaged forwarder Windows
         if: ${{ startsWith(matrix.os, 'windows-') }}
         shell: pwsh
+        env:
+          WIN_PUBLISHER_SUBJECT: ${{ vars.WIN_PUBLISHER_SUBJECT }}
         run: |
           $fwd = "dist/win-unpacked/resources/app.asar.unpacked/dist/anytype-mcp.exe"
           $sig = Get-AuthenticodeSignature -LiteralPath $fwd
