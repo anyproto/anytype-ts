@@ -1,11 +1,12 @@
-import React, { forwardRef } from 'react';
-import { Title, Label, Select, Button, Icon } from 'Component';
+import React, { forwardRef, useState, useEffect } from 'react';
+import { Title, Label, Select, Button, Icon, Switch } from 'Component';
 import * as I from 'Interface';
 
 const PageMainSettingsPinIndex = forwardRef<I.PageRef, I.PageSettingsComponent>((props, ref) => {
 
 	const { onPage, setConfirmPin } = props;
 	const { pin } = S.Common;
+	const [ touchId, setTouchId ] = useState({ available: false, enabled: false });
 	const pinTime = S.Common.pinTime / 1000;
 	const times = [ 60, 300, 600, 3600 ].map(time => ({ id: time, name: U.Date.duration(time) }));
 
@@ -30,6 +31,26 @@ const PageMainSettingsPinIndex = forwardRef<I.PageRef, I.PageSettingsComponent>(
 		analytics.event('PinCodeChange');
 	};
 
+	const onTouchId = (e: any, enabled: boolean) => {
+		setConfirmPin(() => {
+			Renderer.send('setTouchIdEnabled', S.Common.pinId(), enabled);
+			onPage('pinIndex');
+		});
+		onPage('pinConfirm');
+	};
+
+	useEffect(() => {
+		let disposed = false;
+
+		Renderer.send('getTouchIdState', S.Common.pinId()).then(state => {
+			if (!disposed && state) {
+				setTouchId(state);
+			};
+		});
+
+		return () => { disposed = true; };
+	}, []);
+
 	return (
 		<>
 			<Title text={translate('popupSettingsPinTitle')} />
@@ -37,6 +58,12 @@ const PageMainSettingsPinIndex = forwardRef<I.PageRef, I.PageSettingsComponent>(
 			
 			{pin ? (
 				<div className="actionItems">
+					{touchId.available ? (
+						<div className="item">
+							<Label text={translate('popupSettingsPinTouchId')} />
+							<Switch value={touchId.enabled} onChange={onTouchId} />
+						</div>
+					) : null}
 					<div className="item">
 						<Label text={translate('popupSettingsPinCheckTimeOut')} />
 

@@ -1,5 +1,5 @@
 import React, { forwardRef, useRef, useState, useEffect } from 'react';
-import { Frame, Title, Error, Pin, Header } from 'Component';
+import { Frame, Title, Error, Pin, Header, Button } from 'Component';
 import * as I from 'Interface';
 
 const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
@@ -7,6 +7,8 @@ const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
 	const pinRef = useRef(null);
 	const { pin } = S.Common;
 	const [ error, setError ] = useState('');
+	const [ touchIdAvailable, setTouchIdAvailable ] = useState(false);
+	const touchIdRef = useRef(null);
 
 	const focusHandler = useRef(null);
 
@@ -26,6 +28,22 @@ const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
 	const onError = () => {
 		pinRef.current?.reset();
 		setError(translate('authPinCheckError'));
+	};
+
+	const onTouchId = async () => {
+		if (touchIdRef.current?.isLoading()) {
+			return;
+		};
+
+		touchIdRef.current?.setLoading(true);
+		setError('');
+
+		try {
+			await Renderer.send('touchIdUnlock', S.Common.pinId(), S.Common.pinTime);
+		} finally {
+			touchIdRef.current?.setLoading(false);
+			pinRef.current?.focus();
+		};
 	};
 
 	const onForgot = () => {
@@ -58,8 +76,18 @@ const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
 	};
 
 	useEffect(() => {
+		let disposed = false;
+
+		Renderer.send('getTouchIdState', S.Common.pinId()).then(state => {
+			if (!disposed) {
+				setTouchIdAvailable(!!state?.available && !!state?.enabled);
+			};
+		});
 		rebind();
-		return () => unbind();
+		return () => {
+			disposed = true;
+			unbind();
+		};
 	}, []);
 
 	return (
@@ -76,6 +104,7 @@ const PageAuthPinCheck = forwardRef<I.PageRef, I.PageComponent>(() => {
 				<Error text={error} />
 
 				<div className="buttons">
+					{touchIdAvailable ? <Button ref={touchIdRef} size={36} text={translate('authPinCheckTouchId')} onClick={onTouchId} /> : null}
 					<div className="small" onClick={onForgot}>{translate('authPinCheckForgot')}</div>
 				</div>
 			</Frame>
